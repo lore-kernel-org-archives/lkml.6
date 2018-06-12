@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CF0BFC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:11:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0589EC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 903DE208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:11:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 903DE208AE
+	by mail.kernel.org (Postfix) with ESMTP id B049B208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:11:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B049B208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933789AbeFLILG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:11:06 -0400
-Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:6070 "EHLO
+        id S933951AbeFLILn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:11:43 -0400
+Received: from seldsegrel01.sonyericsson.com ([37.139.156.29]:6045 "EHLO
         SELDSEGREL01.sonyericsson.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933776AbeFLIJ7 (ORCPT
+        by vger.kernel.org with ESMTP id S933714AbeFLIJy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:09:59 -0400
+        Tue, 12 Jun 2018 04:09:54 -0400
 From:   Peter Enderborg <peter.enderborg@sony.com>
 To:     <peter.enderborg@sony.com>, Paul Moore <paul@paul-moore.com>,
         Stephen Smalley <sds@tycho.nsa.gov>,
@@ -32,9 +32,9 @@ To:     <peter.enderborg@sony.com>, Paul Moore <paul@paul-moore.com>,
         <linux-security-module@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>,
         "Serge E . Hallyn" <serge@hallyn.com>
-Subject: [PATCH 10/13] selinux: Cleanup printk logging in netport
-Date:   Tue, 12 Jun 2018 10:09:09 +0200
-Message-ID: <20180612080912.7827-11-peter.enderborg@sony.com>
+Subject: [PATCH 07/13] selinux: Cleanup printk logging in selinuxfs
+Date:   Tue, 12 Jun 2018 10:09:06 +0200
+Message-ID: <20180612080912.7827-8-peter.enderborg@sony.com>
 X-Mailer: git-send-email 2.15.1
 In-Reply-To: <20180612080912.7827-1-peter.enderborg@sony.com>
 References: <20180612080912.7827-1-peter.enderborg@sony.com>
@@ -49,25 +49,58 @@ Replace printk with pr_* to avoid checkpatch warnings.
 
 Signed-off-by: Peter Enderborg <peter.enderborg@sony.com>
 ---
- security/selinux/netport.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ security/selinux/selinuxfs.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/security/selinux/netport.c b/security/selinux/netport.c
-index 9ed4c5064a5e..7a141cadbffc 100644
---- a/security/selinux/netport.c
-+++ b/security/selinux/netport.c
-@@ -173,9 +173,8 @@ static int sel_netport_sid_slow(u8 protocol, u16 pnum, u32 *sid)
- out:
- 	spin_unlock_bh(&sel_netport_lock);
- 	if (unlikely(ret)) {
--		printk(KERN_WARNING
--		       "SELinux: failure in sel_netport_sid_slow(),"
--		       " unable to determine network port label\n");
-+		pr_warn("SELinux: failure in %s(), unable to determine network port label\n",
-+			__func__);
- 		kfree(new);
+diff --git a/security/selinux/selinuxfs.c b/security/selinux/selinuxfs.c
+index c0cadbc5f85c..2adfade99945 100644
+--- a/security/selinux/selinuxfs.c
++++ b/security/selinux/selinuxfs.c
+@@ -620,7 +620,7 @@ static ssize_t sel_write_context(struct file *file, char *buf, size_t size)
+ 
+ 	length = -ERANGE;
+ 	if (len > SIMPLE_TRANSACTION_LIMIT) {
+-		printk(KERN_ERR "SELinux: %s:  context size (%u) exceeds "
++		pr_err("SELinux: %s:  context size (%u) exceeds "
+ 			"payload max\n", __func__, len);
+ 		goto out;
  	}
- 	return ret;
+@@ -956,7 +956,7 @@ static ssize_t sel_write_create(struct file *file, char *buf, size_t size)
+ 
+ 	length = -ERANGE;
+ 	if (len > SIMPLE_TRANSACTION_LIMIT) {
+-		printk(KERN_ERR "SELinux: %s:  context size (%u) exceeds "
++		pr_err("SELinux: %s:  context size (%u) exceeds "
+ 			"payload max\n", __func__, len);
+ 		goto out;
+ 	}
+@@ -1147,7 +1147,7 @@ static ssize_t sel_write_member(struct file *file, char *buf, size_t size)
+ 
+ 	length = -ERANGE;
+ 	if (len > SIMPLE_TRANSACTION_LIMIT) {
+-		printk(KERN_ERR "SELinux: %s:  context size (%u) exceeds "
++		pr_err("SELinux: %s:  context size (%u) exceeds "
+ 			"payload max\n", __func__, len);
+ 		goto out;
+ 	}
+@@ -1996,7 +1996,7 @@ static int sel_fill_super(struct super_block *sb, void *data, int silent)
+ 		goto err;
+ 	return 0;
+ err:
+-	printk(KERN_ERR "SELinux: %s:  failed while creating inodes\n",
++	pr_err("SELinux: %s:  failed while creating inodes\n",
+ 		__func__);
+ 
+ 	selinux_fs_info_free(sb);
+@@ -2046,7 +2046,7 @@ static int __init init_sel_fs(void)
+ 
+ 	selinux_null.mnt = selinuxfs_mount = kern_mount(&sel_fs_type);
+ 	if (IS_ERR(selinuxfs_mount)) {
+-		printk(KERN_ERR "selinuxfs:  could not mount!\n");
++		pr_err("selinuxfs:  could not mount!\n");
+ 		err = PTR_ERR(selinuxfs_mount);
+ 		selinuxfs_mount = NULL;
+ 	}
 -- 
 2.15.1
 
