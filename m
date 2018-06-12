@@ -3,130 +3,203 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 155FDC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:50:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 73D83C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:51:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6678208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:50:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 132A3208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:51:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=dev-mellanox-co-il.20150623.gappssmtp.com header.i=@dev-mellanox-co-il.20150623.gappssmtp.com header.b="W8/459Cp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6678208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dev.mellanox.co.il
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="JeyKewZP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 132A3208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754317AbeFLIuz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:50:55 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:33016 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754288AbeFLIuv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:50:51 -0400
-Received: by mail-wr0-f193.google.com with SMTP id k16-v6so23177711wro.0
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 01:50:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dev-mellanox-co-il.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :organization:mime-version:content-transfer-encoding;
-        bh=rGvQK5YRGAyByZ8L7eAApjSv/A3t2HTz+QF3YvQpfEg=;
-        b=W8/459CpNvwDR7TQk4uzZTfOO+RSlR/paGoYoKEQPA0LUt/7SqfzXyrDC2bxPieAEf
-         CrKHnwJDuqnxGpXlGxWG+DVyQfQIUNczABMgI0rEJlURKbGTnevRLO79SRWEe0i2fUv4
-         sDXwWjPTxqeiwD/yA1LD5FVsSFb1J9q87KPR53M0G9JKkCmmz/mwsDUvMSYqk2T4/3UZ
-         GZPU2vIGI0WzzB3ihMAFEMJtKIy1h2QG+CFwcQARxSeNoi8daaREYx6ov/TLG2O89A/T
-         nQelHFHKuN94ZvIeFJgHU2kZFK//qnYAePwrrsi+uBlwofVITLP+BGFKf875bDnbAxU7
-         WjFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:organization:mime-version:content-transfer-encoding;
-        bh=rGvQK5YRGAyByZ8L7eAApjSv/A3t2HTz+QF3YvQpfEg=;
-        b=YHoLK1b/wiOTPS9o2/aAgm5lmqY+tJtQSMdFBK5xiMxFwNPuvN0bwCBdEKzqrlsfz8
-         M0Z2ncHG19BIxejwwEYE2btNlAi7WWhqZgfATIfd9mQ9UcdNo9/OfQ+tT2fPKgz1v8Zd
-         f38juyssDVJB0a7YRSi23vsyk/1u0fMn5aaEooJDJYZh0ZLcbF2CJHWzfanpleIpUPlC
-         DrjMuxJx+KKTWNUIW0CYLfEQ3esrRIl2CO8FTtnX4yXsGMUlDzan15i+3ycS9QCF41ZX
-         WxFe2CzyVM09AnpWt/xhPgrqoKG073satf+MU95m4ODpKPWQnFPm1pPOmWhNvVz7sQ0+
-         MQHA==
-X-Gm-Message-State: APt69E1LkSXpeZYM6lPYvMiEhk6J5kB3c7oG1w/+HB8f2HSi5/L7L2j9
-        orCpbc53THfgn5FXEQPt2sq9xw==
-X-Google-Smtp-Source: ADUXVKJPU1bXf2zZq7EutFd3qKbt9B1xPpd0Sxm6xns0+/Y7l0c9/bMdEpP9ZjgezYRbGScGY2IAXA==
-X-Received: by 2002:adf:8854:: with SMTP id e20-v6mr2094293wre.30.1528793450375;
-        Tue, 12 Jun 2018 01:50:50 -0700 (PDT)
-Received: from localhost ([141.226.165.75])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm504640wre.83.2018.06.12.01.50.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 01:50:49 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 11:50:46 +0300
-From:   jackm <jackm@dev.mellanox.co.il>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-rdma@vger.kernel.org,
-        =?ISO-8859-1?Q?H=E5kon?= Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] IB/mad: Use IDR for agent IDs
-Message-ID: <20180612115046.00007213@dev.mellanox.co.il>
-In-Reply-To: <20180608174218.32455-3-willy@infradead.org>
-References: <20180608174218.32455-1-willy@infradead.org>
-        <20180608174218.32455-3-willy@infradead.org>
-Organization: Mellanox
-X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; i686-w64-mingw32)
+        id S933785AbeFLIvc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:51:32 -0400
+Received: from mail-eopbgr00089.outbound.protection.outlook.com ([40.107.0.89]:10336
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933363AbeFLIv2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 04:51:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vOpJzMcmU2PQ7vTwJF6kBC7uMcTw6i3g/8X3MpJr6m0=;
+ b=JeyKewZP/Ju/w8Hyf5kP4DwXCBPH3FhujE5puWS1quhr2poXxoozmBPVuFX8BUiO7SgPhxcjH5AhcgfT3Jh4dliMgh4HE3+7t7amXg4wXiVnFhl7VQgVBncS8XKBDgCwBil2NjOM8W/ALzqsIDMlqwBibep9jQOjTMJwGHeBwvo=
+Received: from DB6PR0402MB2838.eurprd04.prod.outlook.com (10.172.247.10) by
+ DB6PR0402MB2838.eurprd04.prod.outlook.com (10.172.247.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.14; Tue, 12 Jun 2018 08:51:25 +0000
+Received: from DB6PR0402MB2838.eurprd04.prod.outlook.com
+ ([fe80::49a5:1040:801d:2b97]) by DB6PR0402MB2838.eurprd04.prod.outlook.com
+ ([fe80::49a5:1040:801d:2b97%2]) with mapi id 15.20.0863.010; Tue, 12 Jun 2018
+ 08:51:25 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+CC:     "richard@nod.at" <richard@nod.at>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        Han Xu <han.xu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        Frieder Schrempf <frieder.schrempf@exceet.de>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        David Wolfe <david.wolfe@nxp.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: RE: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Topic: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Index: AQHT+BiB2hXNm2lXyUydyOG4FdlBjqRWHnBAgABANgCABEvZ8IAAFd0AgAAehWCAAAtnAIAAAPSwgAFUQ+CAAAoIAIAAGBOg
+Date:   Tue, 12 Jun 2018 08:51:25 +0000
+Message-ID: <DB6PR0402MB28387FE79F2742C9BEBD4037997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
+        <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
+        <DB6PR0402MB283845A1A98672FE63C89550997B0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180608145130.09f979f9@bbrezillon>
+        <DB6PR0402MB2838D514CF38AC5E6C004E8499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180611094616.5c8f82cf@bbrezillon>
+        <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180611121618.40f4b609@bbrezillon>
+        <DB6PR0402MB28388D9DEB86629BB58DD5E499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <DB6PR0402MB2838563F1BA71A9A21ABBE01997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+ <20180612091328.67734adb@bbrezillon>
+In-Reply-To: <20180612091328.67734adb@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR0402MB2838;7:fl7CoWOcI20ajpaySlGoZ9TDrh+Y7iRZcIQq9AJy+5nggGOl/5eCjBTXxPM4Vu/CDk2UfS0TRrMX3Dj+jdD9APsHNfH2gzhNkFhfgQxlh8OuZDgDcW4KKxAK+H9bxLZojRn9YJIK2sbMrVNCPPyrZ3ivQ55rKonTkjQfuCH5gwTw7gZLGwvzaiSuXbgCjfPuV6cQTl9BPwGRl3b3VQT/xAMAt1aw1iB1td1DhmIJx0FGUEXwIx3tUO1RCBzdCETw
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DB6PR0402MB2838;
+x-ms-traffictypediagnostic: DB6PR0402MB2838:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-microsoft-antispam-prvs: <DB6PR0402MB2838016E1C90968D822DAE5B997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DB6PR0402MB2838;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0402MB2838;
+x-forefront-prvs: 07013D7479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(396003)(376002)(346002)(39380400002)(366004)(13464003)(189003)(199004)(81156014)(81166006)(3280700002)(5660300001)(3660700001)(6916009)(8676002)(7416002)(8936002)(2906002)(229853002)(478600001)(14454004)(55016002)(9686003)(93886005)(316002)(6116002)(3846002)(99286004)(54906003)(33656002)(6436002)(97736004)(105586002)(86362001)(74316002)(106356001)(575784001)(26005)(4326008)(186003)(7736002)(39060400002)(68736007)(11346002)(305945005)(446003)(7696005)(6246003)(102836004)(5250100002)(25786009)(6506007)(59450400001)(76176011)(53546011)(55236004)(66066001)(476003)(53936002)(2900100001)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0402MB2838;H:DB6PR0402MB2838.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: EVHu6+0y330AiRsCYRVScz4bCKDVha4gdySLeOpQYLm10WgjusGa0vJW4NvYLdzsQ0MvTfTls8vmy7qtn6rdEZtFG299zEJ6woh1VPB/TP1aMs3faqQcLRUnVGao5XabbQJr3bHJbq0UVIV6/avSrlz/7tZWfQTnmU6FwMcMk0rF4iqlUz0m8ewxO8oaqbBF
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-MS-Office365-Filtering-Correlation-Id: 14fb666a-db9b-466c-b7a1-08d5d041ae47
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14fb666a-db9b-466c-b7a1-08d5d041ae47
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2018 08:51:25.7555
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2838
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri,  8 Jun 2018 10:42:18 -0700
-Matthew Wilcox <willy@infradead.org> wrote:
+Hi Boris,
 
-> +		rcu_read_lock();
-> +		mad_agent = idr_find(&ib_mad_clients, hi_tid);
-> +		if (mad_agent
-> && !atomic_inc_not_zero(&mad_agent->refcount))
-> +			mad_agent = NULL;
-> +		rcu_read_unlock();
+-----Original Message-----
+From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]=20
+Sent: Tuesday, June 12, 2018 12:43 PM
+To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc: richard@nod.at; Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>; Han Xu=
+ <han.xu@nxp.com>; linux-kernel@vger.kernel.org; linux-spi@vger.kernel.org;=
+ marek.vasut@gmail.com; Frieder Schrempf <frieder.schrempf@exceet.de>; broo=
+nie@kernel.org; linux-mtd@lists.infradead.org; miquel.raynal@bootlin.com; F=
+abio Estevam <fabio.estevam@nxp.com>; David Wolfe <david.wolfe@nxp.com>; co=
+mputersforpeace@gmail.com; dwmw2@infradead.org
+Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI =
+controller
 
-Hi Matthew,
+On Tue, 12 Jun 2018 06:42:42 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
 
-I don't see the flow which can explain using atomic_inc_not_zero() here.
+> I have tried JFFS2 mounting with smaller partition size but still getting=
+ failure.
+> For partition size equal or less than 1MB, getting errors as
+>     [   25.044930] jffs2: Too few erase blocks (4)
+> Thus, need to have size more than 1MB.
+>=20
+> For 2MB partition size getting error message from jffs2_scan_eraseblock()=
+.
+>     root@ls1012ardb:~# cat /proc/mtd
+>     dev:    size   erasesize  name
+>     mtd0: 04000000 00040000 "20c0000.quadspi-0"
+>     mtd1: 00500000 00040000 "rcw"
+>     mtd2: 00a00000 00040000 "test"
+>     mtd3: 00200000 00040000 "rootfs"
+>     root@ls1012ardb:~#  mkdir /media/ram ; flash_eraseall /dev/mtd3
+>     flash_eraseall has been replaced by `flash_erase <mtddev> 0 0`; pleas=
+e use it
+>     Erasing 256 Kibyte @ 1c0000 -- 100 % complete
+>     root@ls1012ardb:~# mount -t jffs2 /dev/mtdblock3 /media/ram/
+>     [   26.380989] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 n=
+ot found at 0x00000000: 0x0dd0 instead
+>     [   26.390509] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 n=
+ot found at 0x0000004c: 0x7366 instead
+>     [   26.399999] jffs2: jffs2_scan_eraseblock(): Magic bitmask 0x1985 n=
+ot found at 0x00000050: 0x736c instead
 
-The refcount will go to zero only when unregister_mad_agent() is
-called (code below, see asterisks):
-        idr_lock(&ib_mad_clients);
- ***    idr_remove(&ib_mad_clients, mad_agent_priv->agent.hi_tid);
-        idr_unlock(&ib_mad_clients);
+That's weird. Can you tell me on which platform you're testing?
+lsxxx or vf610? Can you dump the NOR after the erase to make sure the memor=
+y is actually erased (filled with 0xff)?
 
-        flush_workqueue(port_priv->wq);
-        ib_cancel_rmpp_recvs(mad_agent_priv);
+I am working on lsxxx platform. With further debugging, I found that my era=
+se operation for second flash device is not working properly.
+Need to have debugging for this in Frieder Patch.
 
- ***    deref_mad_agent(mad_agent_priv);
-		[JPM] The call to idr_find in the interrupt context
-		would need to occur here for the refcount to have a
-		possibility of being zero.
-		Shouldn't idr_find in the interrupt context fail, since
-		idr_remove has already been invoked?
-	wait_for_completion(&mad_agent_priv->comp);
+When I have created multiple partition for First flash device, then JFFS2 m=
+ounting and booting of Linux kernel from rootfstype=3Djffs2 is successful.
+    root@ls1012ardb:~# cat /proc/mtd
+    dev:    size   erasesize  name
+    mtd0: 00500000 00040000 "rcw"
+    mtd1: 00a00000 00040000 "test"
+    mtd2: 02e00000 00040000 "rootfs"
+    mtd3: 04000000 00040000 "20c0000.quadspi-1"
+In above list, for MTD2 partition, able to perform JFFS2 mounting.
 
-The refcount will be able to go to zero only after deref_mad_agent is
-called above.  Before this, however, idr_remove() has been called --
-so, if my understanding is correct, the idr_find call in
-find_mad_agent() should not succeed since the refcount can get to zero
-only AFTER the idr_remove call.
+Below is logs of erase for both flashes:
+    root@ls1012ardb:~# cat /proc/mtd
+    dev:    size   erasesize  name
+    mtd0: 04000000 00040000 "20c0000.quadspi-0"
+    mtd1: 04000000 00040000 "20c0000.quadspi-1"
+    root@ls1012ardb:~# mtd_debug erase /dev/mtd0 0x1000000 0x2000000
+    Erased 33554432 bytes from address 0x01000000 in flash
+    root@ls1012ardb:~#
+    root@ls1012ardb:~# mtd_debug read /dev/mtd0 0x1000000 0xa00000 rp
+    Copied 10485760 bytes from address 0x01000000 in flash to rp
+    root@ls1012ardb:~# hexdump rp
+    0000000 ffff ffff ffff ffff ffff ffff ffff ffff
+    *
+    0a00000
+    root@ls1012ardb:~#
+    root@ls1012ardb:~# mtd_debug erase /dev/mtd1 0x1000000 0x2000000
+     [   25.023027] random: crng init done
+    Erased 33554432 bytes from address 0x01000000 in flash
+    root@ls1012ardb:~# mtd_debug read /dev/mtd1 0x1000000 0xa00000 rp
+    Copied 10485760 bytes from address 0x01000000 in flash to rp
+    root@ls1012ardb:~#
+    root@ls1012ardb:~# hexdump rp
+    0000000 1985 2003 000c 0000 b0b1 e41e ffff ffff
+    0000010 ffff ffff ffff ffff ffff ffff ffff ffff
+    *
+    0040000 1985 2003 000c 0000 b0b1 e41e ffff ffff
+    0040010 ffff ffff ffff ffff ffff ffff ffff ffff
 
-Could you please explain the flow which can result in idr_find
-succeeding (in the interrupt context) after idr_remove has been invoked
-(in the process context)?  Will idr_find succeed even after
-idr_remove, and only fail after kfree_rcu is invoked as well? (or,
-maybe after some garbage-collection delay?)
-
-Thx!
-
--Jack
+--
+Yogesh Gaur
