@@ -2,243 +2,230 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A6DD9C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:28:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A4D23C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465332086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:28:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="bHtybPdZ";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="QV7ProYX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465332086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 63A272086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63A272086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soulik.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934599AbeFLP2P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:28:15 -0400
-Received: from esa4.hgst.iphmx.com ([216.71.154.42]:8042 "EHLO
-        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933818AbeFLP2H (ORCPT
+        id S934575AbeFLP2M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:28:12 -0400
+Received: from kozue.soulik.info ([108.61.200.231]:45582 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933609AbeFLP2J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:28:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1528817287; x=1560353287;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=KtqqedLV7HywSyQdcWsXn+7KUEh0jtv0Kqnf+wwu6RI=;
-  b=bHtybPdZkca6gL5n7bP+6le0s6zODw1G4AOwY9f9exEeiEaAxG8wZ0Px
-   DfkNuiuDmyjxutTByjX4lyTyKCwQkAFzJS0tMjcyTaWBREs304HoJyJsS
-   zVK4FEb1VYRFi1VF94h6N6N6+Rrf32Ez7olTHDyA/sqhsdFjlanhGWc3T
-   co2N5Qhqb5507da3gjR4zHdxNn2gb9NzlenZG1CojfQBXXHjcMg5oo6+S
-   I/IvIiUGRJXZpKk/oFhFk8npOwP09LyP5SzN7SrhVyrFh06RKcKlvucdK
-   bhnujHMrQO9gvYaZDEnQjM3hjBd/SN/UV7boo5pWbp3zU3GqXuwXGYmZV
-   g==;
-X-IronPort-AV: E=Sophos;i="5.51,215,1526313600"; 
-   d="scan'208";a="80190444"
-Received: from mail-dm3nam05lp0115.outbound.protection.outlook.com (HELO NAM05-DM3-obe.outbound.protection.outlook.com) ([216.32.181.115])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Jun 2018 23:28:06 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KtqqedLV7HywSyQdcWsXn+7KUEh0jtv0Kqnf+wwu6RI=;
- b=QV7ProYX869NNwQ2QUTk7PddFXnSOf8kduUP3/SXWTTlZbyxdGSLUWpJWM3U39YV7xkJv62emkBOBxuksknBdOLow8ehn444sIEIgnjtjmm3bjYJZrjQXzIgp4GawrK7hyjP76FuLAJWJX5UURQtWQnTcp2xn4hErKsGPVxpKGE=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0272.namprd04.prod.outlook.com (10.169.202.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.841.14; Tue, 12 Jun 2018 15:28:04 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::9de4:3c8d:39af:e4c5]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::9de4:3c8d:39af:e4c5%8]) with mapi id 15.20.0841.019; Tue, 12 Jun 2018
- 15:28:04 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-CC:     "hch@lst.de" <hch@lst.de>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
- 4.17.0-x64-08428-g7d3bf613e99a
-Thread-Topic: kernel BUG at drivers/scsi/scsi_error.c:197! - git
- 4.17.0-x64-08428-g7d3bf613e99a
-Thread-Index: AQHUAAMZua1YyRgXLkK20lpHRZbdF6Rcw+AA
-Date:   Tue, 12 Jun 2018 15:28:03 +0000
-Message-ID: <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com>
-References: <201806091606.51078.randrianasulu@gmail.com>
-         <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org>
-In-Reply-To: <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [199.255.44.174]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0272;7:Z/dGXH+N+77JSRo3NzU+gWCzoFXFK1P9JCcjq8ajwF8IZSYfBr+wNf8SXVVigRz9iglXGtNFewirv8EvJdzn8tGTqYNUli9zGiy7/fUO+C4QZBDdfa81OU9xyQoXgT4C40NCIXn/KQIwuWI9tFlrsnLMkdQjYvxAHQ9VQAJA9i1s4tkoTFK5bEbzcsYRmeReFiEqoGu0qdGJ6BbHoRjBlECNqj9hVp5+Ig0rRhW9AWFVPQ7yh8Qz+jHBMuk/dn6F;20:chxIhQPNp5pkGPZPyU2Pl+RA2e/FOYSZSpqRyt3SxWy++KlRWbTpz2oYnf3r9KAEZp3MbgcrOYMmmfBfHak216wVcYfD0DETnw+3C7ivfBdr7/ejZnbXjumhfpNvJUXDYtcll6sggiGrCyWWVyqvL8NZ50cH+GoxvGu8Ddqw/hY=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0272;
-x-ms-traffictypediagnostic: MWHPR04MB0272:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB027224A79A05045F3B94BF12987F0@MWHPR04MB0272.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0272;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0272;
-x-forefront-prvs: 07013D7479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(366004)(39860400002)(396003)(376002)(51234002)(189003)(199004)(59450400001)(45080400002)(39060400002)(53936002)(186003)(26005)(102836004)(8936002)(305945005)(476003)(7736002)(11346002)(2616005)(446003)(72206003)(6512007)(478600001)(5890100001)(14454004)(229853002)(25786009)(76176011)(118296001)(5250100002)(6246003)(3846002)(6116002)(68736007)(81156014)(66066001)(81166006)(6506007)(4326008)(6436002)(8676002)(6486002)(54906003)(97736004)(2201001)(86362001)(316002)(110136005)(3660700001)(3280700002)(2906002)(106356001)(486006)(99286004)(36756003)(2501003)(53546011)(105586002)(5660300001)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0272;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: 8bgyUUFEDoQkHbX1+uAL4OOvCM0i1t+3mBqdwYz5dDjKInTFXOBX+iHaBPqOFIzX78wJYW1m23BtIa2y8nP3BrzuDK7oO1TNwWzuEqsfqVG07VNErA7tACOWVlYY3TyhasyasnfGHWsj2aYTTYHEAO5hqhDSLcWV3BWROL7gzZSnz5gWM0xhKgrZ2oK+TpTMANGfgP7brswVOcdr0fsT8A==
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <EB25A89F3977884087012965F3010969@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-MS-Office365-Filtering-Correlation-Id: bbb600b4-34e4-47c1-9641-08d5d079171a
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bbb600b4-34e4-47c1-9641-08d5d079171a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jun 2018 15:28:03.8350
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0272
+        Tue, 12 Jun 2018 11:28:09 -0400
+Received: from misaki.sumomo.pri (unknown [192.168.0.134])
+        by kozue.soulik.info (Postfix) with ESMTPA id 46940100D35;
+        Wed, 13 Jun 2018 00:28:32 +0900 (JST)
+From:   Randy Li <ayaka@soulik.info>
+To:     linux-rockchip@lists.infradead.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, catalin.marinas@arm.com,
+        will.deacon@arm.com, heiko@sntech.de,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Randy Li <ayaka@soulik.info>
+Subject: [PATCH] ARM64: dts: rockchip: add some pins to rk3399
+Date:   Tue, 12 Jun 2018 23:25:44 +0800
+Message-Id: <20180612152544.3812-1-ayaka@soulik.info>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gU2F0LCAyMDE4LTA2LTA5IGF0IDA4OjAyIC0wNzAwLCBSYW5keSBEdW5sYXAgd3JvdGU6DQo+
-IE9uIDA2LzA5LzIwMTggMDY6MDYgQU0sIEFuZHJldyBSYW5kcmlhbmFzdWx1IHdyb3RlOg0KPiA+
-IEhlbGxvLCBldmVyeW9uZSENCj4gPiANCj4gPiBJIHdhcyB0cnlpbmcgdG8gdGVzdCBub3QteWV0
-LWNvbXBsZXRlZCA0LjE4LXJjMSwgYW5kIHJ1biBpbnRvIHRoaXMgYnVnLCBwcm9iYWJseSANCj4g
-PiBkdWUgdG8gSEFMICh5ZXMsIEkgc3RpbGwgdXNlIHRoaXMpIHRyeWluZyB0byBwb2xsIGVtcHR5
-IERWRC1SVyBkcml2ZToNCj4gPiANCj4gPiBbICAgMzUuMDQwMTY3XSAtLS0tLS0tLS0tLS1bIGN1
-dCBoZXJlIF0tLS0tLS0tLS0tLS0NCj4gPiBbICAgMzUuMDQwMTcxXSBrZXJuZWwgQlVHIGF0IGRy
-aXZlcnMvc2NzaS9zY3NpX2Vycm9yLmM6MTk3IQ0KPiA+IFsgICAzNS4wNDAxOTZdIGludmFsaWQg
-b3Bjb2RlOiAwMDAwIFsjMV0gU01QIE5PUFRJDQo+ID4gWyAgIDM1LjA0MDIxMF0gQ1BVOiAyIFBJ
-RDogMTE3IENvbW06IGt3b3JrZXIvMjoxSCBOb3QgdGFpbnRlZCANCj4gPiA0LjE3LjAteDY0LTA4
-NDI4LWc3ZDNiZjYxM2U5OWEtZGlydHkgIzE4DQo+ID4gWyAgIDM1LjA0MDIyNV0gSGFyZHdhcmUg
-bmFtZTogTVNJIE1TLTc2OTMvOTcwQS1HNDYgKE1TLTc2OTMpLCBCSU9TIFYyLjggDQo+ID4gMDEv
-MDgvMjAxNg0KPiA+IFsgICAzNS4wNDAyNDRdIFdvcmtxdWV1ZToga2Jsb2NrZCBibGtfbXFfdGlt
-ZW91dF93b3JrDQo+ID4gWyAgIDM1LjA0MDI4M10gUklQOiAwMDEwOnNjc2lfdGltZXNfb3V0KzB4
-ZTkvMHgxYTYgW3Njc2lfbW9kXQ0KPiA+IFsgICAzNS4wNDAyODddIENvZGU6IDAzIDc2IDE4IDQ4
-IGM3IGMyIGY5IGMyIDAxIGEwIDQ4IDg5IGVlIDQ4IGM3IGM3IDE0IGJlIDAxIGEwIA0KPiA+IDMx
-IGMwIGU4IDc2IGFkIDAwIDAwIDQ4IDhiIDgzIDk4IDAxIDAwIDAwIGE4IDAxIDBmIDg0IGE1IDAw
-IDAwIDAwIDwwZj4gMGIgNDkgOGIgDQo+ID4gN2MgMjQgMzggZTggOGYgYmEgNGIgZTEgNDEgODMg
-YmMgMjQgMmMgMDENCj4gPiAgMDAgMDAgZmYgNzQNCj4gPiBbICAgMzUuMDQwMzEyXSBSU1A6IDAw
-MTg6ZmZmZmM5MDAwMDI5M2Q5OCBFRkxBR1M6IDAwMDEwMjAyDQo+ID4gWyAgIDM1LjA0MDMxOF0g
-UkFYOiBmZmZmODgwMzFmMjQwNjA1IFJCWDogZmZmZjg4MDMxZWVkODUwMCBSQ1g6IDAwMDAwMDAw
-ZmZmZWZkNDANCj4gPiBbICAgMzUuMDQwMzIzXSBSRFg6IGZmZmZjOTAwMDAyOTNlODAgUlNJOiAw
-MDAwMDAwMDAwMDAyMDA3IFJESTogZmZmZjg4MDMxZWVkODYzOA0KPiA+IFsgICAzNS4wNDAzMjdd
-IFJCUDogZmZmZjg4MDMxZWVkODYzOCBSMDg6IGZmZmY4ODAzMWVlZDg1ZDggUjA5OiAwMDAwMDAw
-MDAwMDAwMDAwDQo+ID4gWyAgIDM1LjA0MDMzMl0gUjEwOiAwMDAwMDAwMDAwMDAwMDQwIFIxMTog
-ZmVmZWZlZmVmZWZlZmVmZiBSMTI6IGZmZmY4ODAzMWYyYTg4MDANCj4gPiBbICAgMzUuMDQwMzM2
-XSBSMTM6IGZmZmY4ODAzMWYyYTg4MDAgUjE0OiBmZmZmODgwMzFmMjllOTEwIFIxNTogMDAwMDAw
-MDAwMDAwMDAwMQ0KPiA+IFsgICAzNS4wNDAzNDFdIEZTOiAgMDAwMDAwMDAwMDAwMDAwMCgwMDAw
-KSBHUzpmZmZmODgwMzJlZDAwMDAwKDAwMDApIA0KPiA+IGtubEdTOjAwMDAwMDAwMDAwMDAwMDAN
-Cj4gPiBbICAgMzUuMDQwMzQ2XSBDUzogIDAwMTAgRFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAw
-MDAwMDgwMDUwMDMzDQo+ID4gWyAgIDM1LjA0MDM1MF0gQ1IyOiAwMDAwMDAwMGY3ZWE4M2MwIENS
-MzogMDAwMDAwMDMxZTE5NDAwMCBDUjQ6IDAwMDAwMDAwMDAwNDA2ZTANCj4gPiBbICAgMzUuMDQw
-MzU0XSBDYWxsIFRyYWNlOg0KPiA+IFsgICAzNS4wNDAzNjBdICBibGtfbXFfY2hlY2tfZXhwaXJl
-ZCsweGRjLzB4MTBjDQo+ID4gWyAgIDM1LjA0MDM2NV0gIGJ0X2l0ZXIrMHg0Mi8weDQ1DQo+ID4g
-WyAgIDM1LjA0MDM2OV0gIF9fc2JpdG1hcF9mb3JfZWFjaF9zZXQuY29uc3Rwcm9wLjEyKzB4ODMv
-MHhhYw0KPiA+IFsgICAzNS4wNDAzNzRdICA/IGJsa19tcV91cGRhdGVfbnJfcmVxdWVzdHMrMHhh
-ZC8weGFkDQo+ID4gWyAgIDM1LjA0MDU5NV0gID8gYmxrX21xX2V4aXRfaGN0eCsweGRhLzB4ZGEN
-Cj4gPiBbICAgMzUuMDQxNTk1XSAgYmxrX21xX3F1ZXVlX3RhZ19idXN5X2l0ZXIrMHhhMy8weGI0
-DQo+ID4gWyAgIDM1LjA0MjU3OF0gID8gYmxrX21xX2V4aXRfaGN0eCsweGRhLzB4ZGENCj4gPiBb
-ICAgMzUuMDQzNTUwXSAgYmxrX21xX3RpbWVvdXRfd29yaysweDZiLzB4Y2ENCj4gPiBbICAgMzUu
-MDQ0NTA1XSAgcHJvY2Vzc19vbmVfd29yaysweDE3Yy8weDJhNg0KPiA+IFsgICAzNS4wNDU0NDVd
-ICB3b3JrZXJfdGhyZWFkKzB4MTlmLzB4MjQzDQo+ID4gWyAgIDM1LjA0NjM5M10gID8gcmVzY3Vl
-cl90aHJlYWQrMHgyNjIvMHgyNjINCj4gPiBbICAgMzUuMDQ3MzQ2XSAga3RocmVhZCsweDEwMC8w
-eDEwOA0KPiA+IFsgICAzNS4wNDgyOTBdICA/IGt0aHJlYWRfZGVzdHJveV93b3JrZXIrMHgzZS8w
-eDNlDQo+ID4gWyAgIDM1LjA0OTI0Ml0gIHJldF9mcm9tX2ZvcmsrMHgyNy8weDUwDQo+ID4gWyAg
-IDM1LjA1MDE5Ml0gTW9kdWxlcyBsaW5rZWQgaW46IGJyaWRnZSBzdHAgbGxjIGJuZXAgcmZjb21t
-IGhpZHAgc25kX2Fsb29wIGlwdjYgDQo+ID4gcGNtY2lhIHBjbWNpYV9jb3JlIHhmcyBsaWJjcmMz
-MmMgbHAgcGFycG9ydCBmNzE4ODJmZyBpbnB1dF9sZWRzIG1vdXNlZGV2IA0KPiA+IGhpZF9nZW5l
-cmljIHVzYmhpZCBoaWQgYnR1c2IgYnRpbnRlbCBidGJjbSBidHJ0bCBibHVldG9vdGggbm91dmVh
-dSBlY2RoX2dlbmVyaWMgDQo+ID4gcmZraWxsIG1vcnVzMTI4MF9zc2UyIG1vcnVzMTI4MF9nbHVl
-IG1vcnVzNjQwX3NzZTIgbW9ydXM2NDBfZ2x1ZSB0dG0gDQo+ID4gZHJtX2ttc19oZWxwZXIgZ2hh
-c2hfY2xtdWxuaV9pbnRlbCBkcm0gY3JjdDEwZGlmX3BjbG11bCBjcmMzMl9wY2xtdWwgDQo+ID4g
-ZHJtX3BhbmVsX29yaWVudGF0aW9uX3F1aXJrcyBjcmMzMmNfaW50ZWwgYWVnaXMyNTZfYWVzbmkg
-Y2ZiY29weWFyZWEgDQo+ID4gZmJfc3lzX2ZvcHMgc3lzaW1nYmx0IHBjYmMgc3lzZmlsbHJlY3Qg
-Y2ZiaW1nYmx0IHN5c2NvcHlhcmVhIGNmYmZpbGxyZWN0IA0KPiA+IGFlc25pX2ludGVsIGdsdWVf
-aGVscGVyIGkyY19hbGdvX2JpdCBjcnlwdG9fc2ltZCBhZXNfeDg2XzY0IG9oY2lfcGNpIA0KPiA+
-IHNuZF9oZGFfY29kZWNfcmVhbHRlayBhZWdpczEyOGxfYWVzbmkgcGt0Y2R2ZCBhZWdpczEyOF9h
-ZXNuaSBhZ3BnYXJ0IG9oY2lfaGNkIA0KPiA+IHNuZF9oZGFfY29kZWNfZ2VuZXJpYyBjcnlwdGQg
-eGhjaV9wY2kga3ZtX2FtZCB4aGNpX2hjZCBlaGNpX3BjaSBzbmRfaGRhX2ludGVsIA0KPiA+IGVo
-Y2lfaGNkIHNuZF9oZGFfY29kZWMga3ZtIHVzYmNvcmUgbGVkX2NsYXNzIHNuZF9oZGFfY29yZSB2
-aWRlbyB1c2JfY29tbW9uDQo+ID4gWyAgIDM1LjA1NTgxNF0gIGJhY2tsaWdodCBpcnFieXBhc3Mg
-ZmIgc25kX2h3ZGVwIHNuZF9wY20gbXhtX3dtaSByODE2OSBmYmRldiANCj4gPiBtYWNfaGlkIGZh
-bTE1aF9wb3dlciBrMTB0ZW1wIG1paSBzbmRfdGltZXIgY2NwIGV2ZGV2IHNuZCBybmdfY29yZSBo
-d21vbiB3bWkgDQo+ID4gaTJjX3BpaXg0IHNoYTFfZ2VuZXJpYyBzaGEyNTZfZ2VuZXJpYyBidXR0
-b24gc291bmRjb3JlIGZvbnQgc3JfbW9kIGFjcGlfY3B1ZnJlcSANCj4gPiBydGNfY21vcyBzZyBp
-MmNfY29yZSBjZHJvbSBlZGFjX21jZV9hbWQgc2RfbW9kIGFoY2kgbGliYWhjaSBsaWJhdGEgc2Nz
-aV9tb2QgDQo+ID4gW2xhc3QgdW5sb2FkZWQ6IHBjbWNpYV9jb3JlXQ0KPiA+IFsgICAzNS4wNTg0
-MjZdIC0tLVsgZW5kIHRyYWNlIGZkYzllOGM2NzgxMzhhNzUgXS0tLQ0KPiA+IFsgICAzNS4wNTk3
-MjVdIFJJUDogMDAxMDpzY3NpX3RpbWVzX291dCsweGU5LzB4MWE2IFtzY3NpX21vZF0NCj4gPiBb
-ICAgMzUuMDU5NzI2XSBDb2RlOiAwMyA3NiAxOCA0OCBjNyBjMiBmOSBjMiAwMSBhMCA0OCA4OSBl
-ZSA0OCBjNyBjNyAxNCBiZSAwMSBhMCANCj4gPiAzMSBjMCBlOCA3NiBhZCAwMCAwMCA0OCA4YiA4
-MyA5OCAwMSAwMCAwMCBhOCAwMSAwZiA4NCBhNSAwMCAwMCAwMCA8MGY+IDBiIDQ5IDhiIA0KPiA+
-IDdjIDI0IDM4IGU4IDhmIGJhIDRiIGUxIDQxIDgzIGJjIDI0IDJjIDAxIDAwIDAwIGZmIDc0DQo+
-ID4gWyAgIDM1LjA2Mzc5NF0gUlNQOiAwMDE4OmZmZmZjOTAwMDAyOTNkOTggRUZMQUdTOiAwMDAx
-MDIwMg0KPiA+IFsgICAzNS4wNjM3OTZdIFJBWDogZmZmZjg4MDMxZjI0MDYwNSBSQlg6IGZmZmY4
-ODAzMWVlZDg1MDAgUkNYOiAwMDAwMDAwMGZmZmVmZDQwDQo+ID4gWyAgIDM1LjA2Mzc5N10gUkRY
-OiBmZmZmYzkwMDAwMjkzZTgwIFJTSTogMDAwMDAwMDAwMDAwMjAwNyBSREk6IGZmZmY4ODAzMWVl
-ZDg2MzgNCj4gPiBbICAgMzUuMDYzNzk4XSBSQlA6IGZmZmY4ODAzMWVlZDg2MzggUjA4OiBmZmZm
-ODgwMzFlZWQ4NWQ4IFIwOTogMDAwMDAwMDAwMDAwMDAwMA0KPiA+IFsgICAzNS4wNjkxOThdIFIx
-MDogMDAwMDAwMDAwMDAwMDA0MCBSMTE6IGZlZmVmZWZlZmVmZWZlZmYgUjEyOiBmZmZmODgwMzFm
-MmE4ODAwDQo+ID4gWyAgIDM1LjA2OTE5OF0gUjEzOiBmZmZmODgwMzFmMmE4ODAwIFIxNDogZmZm
-Zjg4MDMxZjI5ZTkxMCBSMTU6IDAwMDAwMDAwMDAwMDAwMDENCj4gPiBbICAgMzUuMDY5MjAwXSBG
-UzogIDAwMDAwMDAwMDAwMDAwMDAoMDAwMCkgR1M6ZmZmZjg4MDMyZWQwMDAwMCgwMDAwKSANCj4g
-PiBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQo+ID4gWyAgIDM1LjA3MzE5MV0gQ1M6ICAwMDEwIERT
-OiAwMDAwIEVTOiAwMDAwIENSMDogMDAwMDAwMDA4MDA1MDAzMw0KPiA+IFsgICAzNS4wNzMxOTJd
-IENSMjogMDAwMDAwMDBmN2VhODNjMCBDUjM6IDAwMDAwMDAzMWUxOTQwMDAgQ1I0OiAwMDAwMDAw
-MDAwMDQwNmUwDQo+ID4gDQo+ID4gDQo+ID4gYW5kIHRoaXMgcmVzdWx0ZWQgbGF0ZXIgb24gaW4g
-ZmFpbHVyZSB0byBlbnRlciBzdXNwZW5kLXRvLXJhbToNCj4gPiANCj4gPiBbICAxODEuOTEyOTg1
-XSBQTTogc3VzcGVuZCBlbnRyeSAoZGVlcCkNCj4gPiBbICAxODEuOTEyOTkzXSBQTTogU3luY2lu
-ZyBmaWxlc3lzdGVtcyAuLi4gZG9uZS4NCj4gPiBbICAxODIuMDI2NTYxXSBGcmVlemluZyB1c2Vy
-IHNwYWNlIHByb2Nlc3NlcyAuLi4NCj4gPiBbICAyMDIuMDI5MDg0XSBGcmVlemluZyBvZiB0YXNr
-cyBmYWlsZWQgYWZ0ZXIgMjAuMDAyIHNlY29uZHMgKDEgdGFza3MgcmVmdXNpbmcgDQo+ID4gdG8g
-ZnJlZXplLCB3cV9idXN5PTApOg0KPiA+IFsgIDIwMi4wMjkxMDZdIGhhbGQtYWRkb24tc3RvciBE
-ICAgIDAgICA5MDkgICAgODQ5IDB4MjAwMjAwMDQNCj4gPiBbICAyMDIuMDI5MTEzXSBDYWxsIFRy
-YWNlOg0KPiA+IFsgIDIwMi4wMjkxMjhdICA/IF9fc2NoZWR1bGUrMHgzN2YvMHg1N2YNCj4gPiBb
-ICAyMDIuMDI5MTM0XSAgPyB1c2xlZXBfcmFuZ2UrMHg1MS8weDUxDQo+ID4gWyAgMjAyLjAyOTEz
-OV0gIHNjaGVkdWxlKzB4N2YvMHg4OQ0KPiA+IFsgIDIwMi4wMjkxNDRdICBzY2hlZHVsZV90aW1l
-b3V0KzB4MjEvMHhjNw0KPiA+IFsgIDIwMi4wMjkxNTFdICA/IGNoZWNrX3ByZWVtcHRfY3Vycisw
-eDJlLzB4NjgNCj4gPiBbICAyMDIuMDI5MTU3XSAgZG9fd2FpdF9mb3JfY29tbW9uKzB4MTAyLzB4
-MTMzDQo+ID4gWyAgMjAyLjAyOTE2M10gID8gd2FrZV91cF9xKzB4NDcvMHg0Nw0KPiA+IFsgIDIw
-Mi4wMjkxNjldICB3YWl0X2Zvcl9jb21tb24rMHgzNi8weDRlDQo+ID4gWyAgMjAyLjAyOTE3NF0g
-IGZsdXNoX3dvcmsrMHgxMmUvMHgxNGINCj4gPiBbICAyMDIuMDI5MTc5XSAgPyB3YWtlX3VwX3dv
-cmtlcisweDI1LzB4MjUNCj4gPiBbICAyMDIuMDI5MTg1XSAgX19jYW5jZWxfd29ya190aW1lcisw
-eGZiLzB4MTRmDQo+ID4gWyAgMjAyLjAyOTE5MF0gID8ga29ial9sb29rdXArMHhmYy8weDEzMA0K
-PiA+IFsgIDIwMi4wMjkxOTZdICBkaXNrX2Jsb2NrX2V2ZW50cysweDVmLzB4NzgNCj4gPiBbICAy
-MDIuMDI5MjAyXSAgX19ibGtkZXZfZ2V0KzB4YWEvMHgzZjcNCj4gPiBbICAyMDIuMDI5MjA3XSAg
-YmxrZGV2X2dldCsweDgzLzB4MmEzDQo+ID4gWyAgMjAyLjAyOTIxMV0gID8gYmRncmFiKzB4MTIv
-MHgxNw0KPiA+IFsgIDIwMi4wMjkyMTZdICA/IGJkX2FjcXVpcmUrMHgzYS8weGFkDQo+ID4gWyAg
-MjAyLjAyOTIyMF0gID8gYmRfYWNxdWlyZSsweGFkLzB4YWQNCj4gPiBbICAyMDIuMDI5MjI2XSAg
-ZG9fZGVudHJ5X29wZW4uaXNyYS4yMisweDE2Yi8weDIyZA0KPiA+IFsgIDIwMi4wMjkyMzJdICBw
-YXRoX29wZW5hdCsweDk4Zi8weGIyNw0KPiA+IFsgIDIwMi4wMjkyMzhdICA/IF9yYXdfc3Bpbl91
-bmxvY2tfaXJxcmVzdG9yZSsweDE4LzB4MjMNCj4gPiBbICAyMDIuMDI5MjQzXSAgZG9fZmlscF9v
-cGVuKzB4NGQvMHhhMw0KPiA+IFsgIDIwMi4wMjkyNDldICA/IF9fYmxrZGV2X3B1dCsweDE1NC8w
-eDE3MA0KPiA+IFsgIDIwMi4wMjkyNTRdICA/IF9jb25kX3Jlc2NoZWQrMHgyNS8weDI5DQo+ID4g
-WyAgMjAyLjAyOTI2MF0gID8gc2xhYl9wcmVfYWxsb2NfaG9vaysweDJkLzB4NTMNCj4gPiBbICAy
-MDIuMDI5MjY1XSAgPyBzbGFiX3Bvc3RfYWxsb2NfaG9vay5pc3JhLjYyKzB4YS8weDFhDQo+ID4g
-WyAgMjAyLjAyOTI3MF0gID8ga21lbV9jYWNoZV9hbGxvYysweGEwLzB4MTBiDQo+ID4gWyAgMjAy
-LjAyOTI3N10gID8gZG9fc3lzX29wZW4rMHg2YS8weGVmDQo+ID4gWyAgMjAyLjAyOTI4MV0gIGRv
-X3N5c19vcGVuKzB4NmEvMHhlZg0KPiA+IFsgIDIwMi4wMjkyODddICBkb19pbnQ4MF9zeXNjYWxs
-XzMyKzB4NTIvMHg1Zg0KPiA+IFsgIDIwMi4wMjkyOTNdICBlbnRyeV9JTlQ4MF9jb21wYXQrMHg4
-NS8weDkwDQo+ID4gWyAgMjAyLjAyOTMxNl0gT09NIGtpbGxlciBlbmFibGVkLg0KPiA+IFsgIDIw
-Mi4wMjkzMThdIFJlc3RhcnRpbmcgdGFza3MgLi4uIGRvbmUuDQo+ID4gWyAgMjAyLjAzNTIxMF0g
-UE06IHN1c3BlbmQgZXhpdA0KPiA+IA0KPiA+IGZ1bGwgZG1lc2cgYXR0YWNoZWQNCj4gDQo+IFth
-ZGQgbGludXgtc2NzaSBtLWxdDQoNCihhZGRlZCBsaW51eC1ibG9jaykNCg0KSXMgdGhpcyBzb21l
-dGhpbmcgdGhhdCBoYXBwZW5zIHN5c3RlbWF0aWNhbGx5IG9yIHNwb3JhZGljYWxseT8gQWRkaXRp
-b25hbGx5LA0KaGF2ZSB5b3UgdmVyaWZpZWQgd2hldGhlciBvciBub3QgdGhpcyBjYW4gYmUgdHJp
-Z2dlcmVkIHdpdGgga2VybmVsIHY0LjE3PyBJJ20NCndvbmRlcmluZyB3aGV0aGVyIG9yIG5vdCB0
-aGlzIGlzIGEgcmVncmVzc2lvbiB0aGF0IHdhcyBpbnRyb2R1Y2VkIGluIHRoZSBtZXJnZQ0Kd2lu
-ZG93Lg0KDQpUaGFua3MsDQoNCkJhcnQuDQoNCg0K
+Those pins would be used by many boards.
+
+Signed-off-by: Randy Li <ayaka@soulik.info>
+---
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi | 97 +++++++++++++++++++++++++++-----
+ 1 file changed, 83 insertions(+), 14 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index e0040b648f43..9fa629857929 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -160,7 +160,7 @@
+ 		};
+ 	};
+ 
+-	display-subsystem {
++	display_subsystem: display-subsystem {
+ 		compatible = "rockchip,display-subsystem";
+ 		ports = <&vopl_out>, <&vopb_out>;
+ 	};
+@@ -1936,19 +1936,49 @@
+ 			drive-strength = <12>;
+ 		};
+ 
++		pcfg_pull_none_13ma: pcfg-pull-none-13ma {
++			bias-disable;
++			drive-strength = <13>;
++		};
++
++		pcfg_pull_none_18ma: pcfg-pull-none-18ma {
++			bias-disable;
++			drive-strength = <18>;
++		};
++
++		pcfg_pull_none_20ma: pcfg-pull-none-20ma {
++			bias-disable;
++			drive-strength = <20>;
++		};
++
++		pcfg_pull_up_2ma: pcfg-pull-up-2ma {
++			bias-pull-up;
++			drive-strength = <2>;
++		};
++
+ 		pcfg_pull_up_8ma: pcfg-pull-up-8ma {
+ 			bias-pull-up;
+ 			drive-strength = <8>;
+ 		};
+ 
++		pcfg_pull_up_18ma: pcfg-pull-up-18ma {
++			bias-pull-up;
++			drive-strength = <18>;
++		};
++
++		pcfg_pull_up_20ma: pcfg-pull-up-20ma {
++			bias-pull-up;
++			drive-strength = <20>;
++		};
++
+ 		pcfg_pull_down_4ma: pcfg-pull-down-4ma {
+ 			bias-pull-down;
+ 			drive-strength = <4>;
+ 		};
+ 
+-		pcfg_pull_up_2ma: pcfg-pull-up-2ma {
+-			bias-pull-up;
+-			drive-strength = <2>;
++		pcfg_pull_down_8ma: pcfg-pull-down-8ma {
++			bias-pull-down;
++			drive-strength = <8>;
+ 		};
+ 
+ 		pcfg_pull_down_12ma: pcfg-pull-down-12ma {
+@@ -1956,9 +1986,22 @@
+ 			drive-strength = <12>;
+ 		};
+ 
+-		pcfg_pull_none_13ma: pcfg-pull-none-13ma {
+-			bias-disable;
+-			drive-strength = <13>;
++		pcfg_pull_down_18ma: pcfg-pull-down-18ma {
++			bias-pull-down;
++			drive-strength = <18>;
++		};
++
++		pcfg_pull_down_20ma: pcfg-pull-down-20ma {
++			bias-pull-down;
++			drive-strength = <18>;
++		};
++
++		pcfg_output_high: pcfg-output-high {
++			output-high;	
++		};
++
++		pcfg_output_low: pcfg-output-low {
++			output-low;	
+ 		};
+ 
+ 		clock {
+@@ -2484,10 +2527,21 @@
+ 					<4 18 RK_FUNC_1 &pcfg_pull_none>;
+ 			};
+ 
++			pwm0_pin_pull_down: pwm0-pin-pull-down {
++				rockchip,pins =
++					<4 18 RK_FUNC_1 &pcfg_pull_down>;
++			};
++
+ 			vop0_pwm_pin: vop0-pwm-pin {
+ 				rockchip,pins =
+ 					<4 18 RK_FUNC_2 &pcfg_pull_none>;
+ 			};
++
++			vop1_pwm_pin: vop1-pwm-pin {
++				rockchip,pins =
++					<4 18 RK_FUNC_3 &pcfg_pull_none>;
++			};
++
+ 		};
+ 
+ 		pwm1 {
+@@ -2496,9 +2550,9 @@
+ 					<4 22 RK_FUNC_1 &pcfg_pull_none>;
+ 			};
+ 
+-			vop1_pwm_pin: vop1-pwm-pin {
++			pwm1_pin_pull_down: pwm1-pin-pull-down {
+ 				rockchip,pins =
+-					<4 18 RK_FUNC_3 &pcfg_pull_none>;
++					<4 22 RK_FUNC_1 &pcfg_pull_down>;
+ 			};
+ 		};
+ 
+@@ -2507,6 +2561,11 @@
+ 				rockchip,pins =
+ 					<1 19 RK_FUNC_1 &pcfg_pull_none>;
+ 			};
++
++			pwm2_pin_pull_down: pwm2-pin-pull-down {
++				rockchip,pins =
++					<1 19 RK_FUNC_1 &pcfg_pull_none>;
++			};
+ 		};
+ 
+ 		pwm3a {
+@@ -2526,25 +2585,35 @@
+ 		hdmi {
+ 			hdmi_i2c_xfer: hdmi-i2c-xfer {
+ 				rockchip,pins =
+-					<4 RK_PC1 RK_FUNC_3 &pcfg_pull_none>,
+-					<4 RK_PC0 RK_FUNC_3 &pcfg_pull_none>;
++					<4 17 RK_FUNC_3 &pcfg_pull_none>,
++					<4 16 RK_FUNC_3 &pcfg_pull_none>;
+ 			};
+ 
+ 			hdmi_cec: hdmi-cec {
+ 				rockchip,pins =
+-					<4 RK_PC7 RK_FUNC_1 &pcfg_pull_none>;
++					<4 23 RK_FUNC_1 &pcfg_pull_none>;
+ 			};
+ 		};
+ 
+ 		pcie {
++			pcie_clkreqn: pci-clkreqn {
++				rockchip,pins =
++					<2 26 RK_FUNC_2 &pcfg_pull_none>;
++			};
++
++			pcie_clkreqnb: pci-clkreqnb {
++				rockchip,pins =
++					<4 24 RK_FUNC_1 &pcfg_pull_none>;
++			};
++
+ 			pcie_clkreqn_cpm: pci-clkreqn-cpm {
+ 				rockchip,pins =
+-					<2 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
++					<2 26 RK_FUNC_GPIO &pcfg_pull_none>;
+ 			};
+ 
+ 			pcie_clkreqnb_cpm: pci-clkreqnb-cpm {
+ 				rockchip,pins =
+-					<4 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
++					<4 24 RK_FUNC_GPIO &pcfg_pull_none>;
+ 			};
+ 		};
+ 
+-- 
+2.14.4
+
