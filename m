@@ -2,172 +2,138 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3EFEBC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:40:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BF658C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:41:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD4852086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:40:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="L5gthDtT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD4852086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7EE1820693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:41:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EE1820693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932941AbeFLFj6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:39:58 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40379 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753943AbeFLFj4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:39:56 -0400
-Received: by mail-pf0-f195.google.com with SMTP id z24-v6so11480330pfe.7
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 22:39:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rT7/2cQm+XgPbqD4s2gQ3emxw6lyO4aTylJUGXMzl78=;
-        b=L5gthDtTqAoqrgmImfzIVVtCol1IuAPrQeehbXfasTLcgC5ChxcTm0YB3HxvsJR1RB
-         batmpqrtPsvgREmYRtPX7thr+ahZsYLbIqtXd6F62wWckcKaW+VrB++lk3AZ6EO/PeZ3
-         2GyFwUtk0oMWuAXJhXpqiG3Tffe3wD3UVeQv8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rT7/2cQm+XgPbqD4s2gQ3emxw6lyO4aTylJUGXMzl78=;
-        b=SYWAV36JLo2X0FgJSSp11cSsgBbsKD7x32vnKGygsAjYvy4esyF1S5IWF8fg4ICptv
-         Mi8yRRAJkKNMgEQEfNJQxsujcHtNOD09GNr1N8HYyb4BjtTOSg9Bm8p5eH1J4Ab5NmbD
-         M046kULgwQjjp6W84s5TqGbL5B7jI5YIogNKAqnf2Bv4DavmvoSoMWplM1mO7Q1FPQSR
-         qybgr3nZpELZ6T1RgqQm1TbVj39NrmIZj/2p17j7Y35tMdlB0LTBdAT8CpU1HZUBMAAx
-         L05mTREY1DEHUjLZz1+pkLljrNxY+TPLZ4275jYbJvfaDlgNB6LHnl6rXXC796RorpSs
-         cMwg==
-X-Gm-Message-State: APt69E3lDJHZ3pzVKJVooDStIoJ0mpaYrkfjVHnaCWaPbYeiTF5Qg6O9
-        1DqbxKqhXOkx+Y8PM7wpkop+1w==
-X-Google-Smtp-Source: ADUXVKLzt5AdgPiw1llsyCCIoVo+MPuKIjgqCO6OvekmzhsmQ7ZxZ2HJ0gHdnsn0lyfniyPevzLEYA==
-X-Received: by 2002:a62:3ad8:: with SMTP id v85-v6mr2329652pfj.184.1528781996155;
-        Mon, 11 Jun 2018 22:39:56 -0700 (PDT)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l26-v6sm120505pgn.55.2018.06.11.22.39.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 11 Jun 2018 22:39:55 -0700 (PDT)
-Date:   Mon, 11 Jun 2018 22:39:53 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
-        ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 5/7] dt-bindings: power: Add qcom rpmh power domain
- driver bindings
-Message-ID: <20180612053953.GA18050@builder>
-References: <20180612044052.4402-1-rnayak@codeaurora.org>
- <20180612044052.4402-6-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612044052.4402-6-rnayak@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        id S933097AbeFLFlI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 01:41:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:5546 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932619AbeFLFlG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 01:41:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 22:41:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,213,1526367600"; 
+   d="scan'208";a="58480365"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by orsmga003.jf.intel.com with ESMTP; 11 Jun 2018 22:40:58 -0700
+From:   Songjun Wu <songjun.wu@linux.intel.com>
+To:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com
+Cc:     linux-mips@linux-mips.org, qi-ming.wu@intel.com,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Songjun Wu <songjun.wu@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        James Hogan <jhogan@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Jiri Slaby <jslaby@suse.com>,
+        linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: [PATCH 0/7] MIPS: intel: add initial support for Intel MIPS SoCs
+Date:   Tue, 12 Jun 2018 13:40:27 +0800
+Message-Id: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 11 Jun 21:40 PDT 2018, Rajendra Nayak wrote:
+This patch series is for adding the support for Intel MIPS interAptiv SoC GRX500 family.
+It includes CCF support, serial driver optimization and DTS modification.
 
-> Add DT bindings to describe the rpmh powerdomains found on Qualcomm
-> Technologies, Inc. SoCs. These power domains communicate a performance
-> state to RPMh, which then translates it into corresponding voltage on
-> a PMIC rail.
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  .../devicetree/bindings/power/qcom,rpmhpd.txt | 65 +++++++++++++++++++
->  1 file changed, 65 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmhpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
-> new file mode 100644
-> index 000000000000..41ef7afa6b24
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/qcom,rpmhpd.txt
-> @@ -0,0 +1,65 @@
-> +Qualcomm RPMh Power domains
-> +
-> +For RPMh Power domains, we communicate a performance state to RPMh
-> +which then translates it into a corresponding voltage on a rail
-> +
-> +Required Properties:
-> + - compatible: Should be one of the following
-> +	* qcom,sdm845-rpmhpd: RPMh Power domain for the sdm845 family of SoC
+This patch series is applied on top of v4.17.1. Basic verification is performed on GRX500 board.
+Any comments on this would be appreciated.
 
-Afaict this binding is identical to the one introduced in patch 1, so I
-would suggest that you just add the compatible there.
+We propose merging this patch series into MIPS Linux tree.
 
-Regards,
-Bjorn
 
-> + - power-domain-cells: number of cells in power domain specifier
-> +	must be 1
-> + - operating-points-v2: Phandle to the OPP table for the power-domain.
-> +	Refer to Documentation/devicetree/bindings/power/power_domain.txt
-> +	and Documentation/devicetree/bindings/opp/qcom-opp.txt for more details
-> +
-> +Example:
-> +
-> +	rpmhpd: power-controller {
-> +		compatible = "qcom,sdm845-rpmhpd";
-> +		#power-domain-cells = <1>;
-> +		operating-points-v2 = <&rpmhpd_opp_table>;
-> +	};
-> +
-> +	rpmhpd_opp_table: opp-table {
-> +		compatible = "operating-points-v2-qcom-level";
-> +
-> +		rpmhpd_opp_ret: opp1 {
-> +			qcom-level = <16>;
-> +		};
-> +
-> +		rpmhpd_opp_min_svs: opp2 {
-> +			qcom-level = <48>;
-> +		};
-> +
-> +		rpmhpd_opp_low_svs: opp3 {
-> +			qcom-level = <64>;
-> +		};
-> +
-> +		rpmhpd_opp_svs: opp4 {
-> +			qcom-level = <128>;
-> +		};
-> +
-> +		rpmhpd_opp_svs_l1: opp5 {
-> +			qcom-level = <192>;
-> +		};
-> +
-> +		rpmhpd_opp_nom: opp6 {
-> +			qcom-level = <256>;
-> +		};
-> +
-> +		rpmhpd_opp_nom_l1: opp7 {
-> +			qcom-level = <320>;
-> +		};
-> +
-> +		rpmhpd_opp_nom_l2: opp8 {
-> +			qcom-level = <336>;
-> +		};
-> +
-> +		rpmhpd_opp_turbo: opp9 {
-> +			qcom-level = <384>;
-> +		};
-> +
-> +		rpmhpd_opp_turbo_l1: opp10 {
-> +			qcom-level = <416>;
-> +		};
-> +	};
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
+Hua Ma (1):
+  MIPS: intel: Add initial support for Intel MIPS SoCs
+
+Songjun Wu (5):
+  MIPS: dts: Add aliases node for lantiq danube serial
+  tty: serial: lantiq: Always use readl()/writel()
+  tty: serial: lantiq: Convert global lock to per device lock
+  tty: serial: lantiq: Remove unneeded header includes and macros
+  tty: serial: lantiq: Add CCF support
+
+Yixin Zhu (1):
+  clk: intel: Add clock driver for GRX500 SoC
+
+ .../devicetree/bindings/clock/intel,grx500-clk.txt |  46 ++
+ .../devicetree/bindings/serial/lantiq_asc.txt      |  15 +
+ arch/mips/Kbuild.platforms                         |   1 +
+ arch/mips/Kconfig                                  |  37 +-
+ arch/mips/boot/dts/Makefile                        |   1 +
+ arch/mips/boot/dts/intel-mips/Makefile             |   3 +
+ arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  20 +
+ arch/mips/boot/dts/intel-mips/xrx500.dtsi          | 196 ++++++
+ arch/mips/boot/dts/lantiq/danube.dtsi              |   6 +-
+ arch/mips/configs/grx500_defconfig                 | 165 +++++
+ .../asm/mach-intel-mips/cpu-feature-overrides.h    |  61 ++
+ arch/mips/include/asm/mach-intel-mips/ioremap.h    |  39 ++
+ arch/mips/include/asm/mach-intel-mips/irq.h        |  17 +
+ .../asm/mach-intel-mips/kernel-entry-init.h        |  76 +++
+ arch/mips/include/asm/mach-intel-mips/spaces.h     |  29 +
+ arch/mips/include/asm/mach-intel-mips/war.h        |  18 +
+ arch/mips/intel-mips/Kconfig                       |  22 +
+ arch/mips/intel-mips/Makefile                      |   3 +
+ arch/mips/intel-mips/Platform                      |  11 +
+ arch/mips/intel-mips/irq.c                         |  36 ++
+ arch/mips/intel-mips/prom.c                        | 184 ++++++
+ arch/mips/intel-mips/time.c                        |  56 ++
+ drivers/clk/Kconfig                                |   1 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/intel/Kconfig                          |  21 +
+ drivers/clk/intel/Makefile                         |   7 +
+ drivers/clk/intel/clk-cgu-api.c                    | 676 +++++++++++++++++++++
+ drivers/clk/intel/clk-cgu-api.h                    | 120 ++++
+ drivers/clk/intel/clk-grx500.c                     | 236 +++++++
+ drivers/tty/serial/Kconfig                         |   2 +-
+ drivers/tty/serial/lantiq.c                        | 415 ++++++++-----
+ include/dt-bindings/clock/intel,grx500-clk.h       |  61 ++
+ 32 files changed, 2418 insertions(+), 164 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
+ create mode 100644 arch/mips/boot/dts/intel-mips/Makefile
+ create mode 100644 arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+ create mode 100644 arch/mips/boot/dts/intel-mips/xrx500.dtsi
+ create mode 100644 arch/mips/configs/grx500_defconfig
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/cpu-feature-overrides.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/ioremap.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/irq.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/kernel-entry-init.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/spaces.h
+ create mode 100644 arch/mips/include/asm/mach-intel-mips/war.h
+ create mode 100644 arch/mips/intel-mips/Kconfig
+ create mode 100644 arch/mips/intel-mips/Makefile
+ create mode 100644 arch/mips/intel-mips/Platform
+ create mode 100644 arch/mips/intel-mips/irq.c
+ create mode 100644 arch/mips/intel-mips/prom.c
+ create mode 100644 arch/mips/intel-mips/time.c
+ create mode 100644 drivers/clk/intel/Kconfig
+ create mode 100644 drivers/clk/intel/Makefile
+ create mode 100644 drivers/clk/intel/clk-cgu-api.c
+ create mode 100644 drivers/clk/intel/clk-cgu-api.h
+ create mode 100644 drivers/clk/intel/clk-grx500.c
+ create mode 100644 include/dt-bindings/clock/intel,grx500-clk.h
+
+-- 
+2.11.0
+
