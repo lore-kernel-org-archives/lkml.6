@@ -2,116 +2,179 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 36203C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:10:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DE90EC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB6B5208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:10:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="E1AUs9zp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB6B5208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8ABC120693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:13:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ABC120693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933039AbeFLJKm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:10:42 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43853 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932497AbeFLJKj (ORCPT
+        id S1754333AbeFLJM6 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 05:12:58 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34061 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754154AbeFLJM4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:10:39 -0400
-Received: by mail-io0-f194.google.com with SMTP id t6-v6so27167934iob.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 02:10:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=8JO5NmeeG8gYKNC3jBCfh/uJphCDaKh6Wq+neCS8bkM=;
-        b=E1AUs9zp4mO9s57WAqZsQtHjTsBKKlX/+mlPaYLkP++3NSZYIQoC7KZpJLGsBW8c5w
-         7lMXsam5DKfGwYgKz+fqsrVX9ETX6g3fY2LdC4CPfMRxprhcOTMIQllxhd3wsOhIPSBV
-         lvuwsepHErTJjJ2mxpyr8a4w+gTXhpH9bz6Hg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=8JO5NmeeG8gYKNC3jBCfh/uJphCDaKh6Wq+neCS8bkM=;
-        b=TQVaj7xoEe9UGHdWsoVLXD8i5leGF6RthyC0I0w1ZNdPxw7T64qLdSbsWbonQ4qk6J
-         DmetIkHswarakuZeKo8a86omNcjaYuVECGgK1K/hIMQOD0dyZsSyiIVNp7DXNdZxl/io
-         Qtn0qPg6Fk6js8oxxZYE1QCHGYBpoajaLqj+9NggZoQJnE0gK6r/A0zrUP73cZPFWnVj
-         AqndcEe40lEcGxjTaTBnJK3MoyhcIvdR6Rl+JaLYk0OJRNgoKo4hPgTe1sDWSRD3K2Ef
-         jq40dByqBIjIHIv+gIG37qXGbZUl0CihWge19peeV0skvsR/WMCdRNzcGdvEMVO3lb4n
-         lfwg==
-X-Gm-Message-State: APt69E3ZwWJhFJP07GNM4tqONQSFJ3fonh19v/i/rPgJec6/MB8uvIPj
-        AY7c9eeqRiKNhC+0ijOd5Q3l5NI9PmKPVBY/a9+XSQ==
-X-Google-Smtp-Source: ADUXVKKPQ+ph6zwXUqh/wxb5zyj1EvLejDfwlKhzSfC58gbltrNQwm0zpL8xpoAU1VhrKBosQEMGmNtDCxVjQoMox2E=
-X-Received: by 2002:a6b:1884:: with SMTP id 126-v6mr2387459ioy.183.1528794638882;
- Tue, 12 Jun 2018 02:10:38 -0700 (PDT)
+        Tue, 12 Jun 2018 05:12:56 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fSfME-0005FY-9f; Tue, 12 Jun 2018 09:12:54 +0000
+Subject: Re: [PATCH] [media] cx18: remove redundant zero check on retval
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Stefan Richter <stefanr@s5r6.in-berlin.de>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Andy Walls <awalls@md.metrocast.net>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-media@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180611151045.22535-1-colin.king@canonical.com>
+ <20180612090745.2k6jmljl73bwj6lm@mwanda>
+From:   Colin Ian King <colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <341f5097-1c15-21b4-7e58-bab62f9ea913@canonical.com>
+Date:   Tue, 12 Jun 2018 10:12:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a6b:304a:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 02:10:18
- -0700 (PDT)
-In-Reply-To: <cf1f65b9-26cf-24ab-e7b1-0503f2b5e65c@arm.com>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-9-git-send-email-vincent.guittot@linaro.org> <cf1f65b9-26cf-24ab-e7b1-0503f2b5e65c@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Tue, 12 Jun 2018 11:10:18 +0200
-Message-ID: <CAKfTPtCCi665e45Ar52VLvaeem4Acin0jgo_563nAhYEkhHacw@mail.gmail.com>
-Subject: Re: [PATCH v6 08/11] cpufreq/schedutil: take into account interrupt
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180612090745.2k6jmljl73bwj6lm@mwanda>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 June 2018 at 10:54, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> On 06/08/2018 02:09 PM, Vincent Guittot wrote:
->
-> [...]
->
->> @@ -182,21 +183,30 @@ static void sugov_get_util(struct sugov_cpu *sg_cpu)
->>         sg_cpu->util_dl  = cpu_util_dl(rq);
->>         sg_cpu->bw_dl    = cpu_bw_dl(rq);
->>         sg_cpu->util_rt  = cpu_util_rt(rq);
->> +       sg_cpu->util_irq = cpu_util_irq(rq);
->>   }
->>     static unsigned long sugov_aggregate_util(struct sugov_cpu *sg_cpu)
->>   {
->>         struct rq *rq = cpu_rq(sg_cpu->cpu);
->> -       unsigned long util;
->> +       unsigned long util, max = sg_cpu->max;
->>         if (rq->rt.rt_nr_running)
->>                 return sg_cpu->max;
->>   +     if (unlikely(sg_cpu->util_irq >= max))
->> +               return max;
->> +
->> +       /* Sum rq utilization */
->>         util = sg_cpu->util_cfs;
->>         util += sg_cpu->util_rt;
->>   -     if ((util + sg_cpu->util_dl) >= sg_cpu->max)
->> -               return sg_cpu->max;
->> :confirm b9
->
->
-> This didn't let me apply the patch ;-) After removing this line it worked.
+On 12/06/18 10:07, Dan Carpenter wrote:
+> You accidentally committed several changes...
 
-Argh ... i have done something wrong
-I'm going to resend it
->
-> [...]
+Sheesh, I was on some strong pain killers yesterday for a slipped disc,
+I think they are impacting on my ability to think straight.
+
+Colin
+
+> 
+> regards,
+> dan carpenter
+> 
+> On Mon, Jun 11, 2018 at 04:10:45PM +0100, Colin King wrote:
+>> From: Colin Ian King <colin.king@canonical.com>
+>>
+>> The check for a zero retval is redundant as all paths that lead to
+>> this point have set retval to an error return value that is non-zero.
+>> Remove the redundant check.
+>>
+>> Detected by CoverityScan, CID#102589 ("Logically dead code")
+>>
+>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>> ---
+>>  drivers/media/firewire/firedtv-fw.c  | 3 +++
+>>  drivers/media/pci/cx18/cx18-driver.c | 2 --
+>>  drivers/regulator/vctrl-regulator.c  | 2 +-
+>>  3 files changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/firewire/firedtv-fw.c b/drivers/media/firewire/firedtv-fw.c
+>> index 92f4112d2e37..eed55be21836 100644
+>> --- a/drivers/media/firewire/firedtv-fw.c
+>> +++ b/drivers/media/firewire/firedtv-fw.c
+>> @@ -271,6 +271,9 @@ static int node_probe(struct fw_unit *unit, const struct ieee1394_device_id *id)
+>>  
+>>  	name_len = fw_csr_string(unit->directory, CSR_MODEL,
+>>  				 name, sizeof(name));
+>> +	if (name_len < 0)
+>> +		return name_len;
+>> +
+>>  	for (i = ARRAY_SIZE(model_names); --i; )
+>>  		if (strlen(model_names[i]) <= name_len &&
+>>  		    strncmp(name, model_names[i], name_len) == 0)
+>> diff --git a/drivers/media/pci/cx18/cx18-driver.c b/drivers/media/pci/cx18/cx18-driver.c
+>> index 8f314ca320c7..0c389a3fb4e5 100644
+>> --- a/drivers/media/pci/cx18/cx18-driver.c
+>> +++ b/drivers/media/pci/cx18/cx18-driver.c
+>> @@ -1134,8 +1134,6 @@ static int cx18_probe(struct pci_dev *pci_dev,
+>>  free_workqueues:
+>>  	destroy_workqueue(cx->in_work_queue);
+>>  err:
+>> -	if (retval == 0)
+>> -		retval = -ENODEV;
+>>  	CX18_ERR("Error %d on initialization\n", retval);
+>>  
+>>  	v4l2_device_unregister(&cx->v4l2_dev);
+>> diff --git a/drivers/regulator/vctrl-regulator.c b/drivers/regulator/vctrl-regulator.c
+>> index 78de002037c7..044e5a5ca163 100644
+>> --- a/drivers/regulator/vctrl-regulator.c
+>> +++ b/drivers/regulator/vctrl-regulator.c
+>> @@ -340,7 +340,7 @@ static int vctrl_init_vtable(struct platform_device *pdev)
+>>  		}
+>>  	}
+>>  
+>> -	if (rdesc->n_voltages == 0) {
+>> +	if (rdesc->n_voltages <= 0) {
+>>  		dev_err(&pdev->dev, "invalid configuration\n");
+>>  		return -EINVAL;
+>>  	}
+>> -- 
+>> 2.17.0
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+
