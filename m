@@ -2,93 +2,126 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B1ACFC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:12:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4345DC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 686082089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:12:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="i76w100/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 686082089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 036FE2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 036FE2089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934844AbeFLWMm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:12:42 -0400
-Received: from mail-wm0-f47.google.com ([74.125.82.47]:55724 "EHLO
-        mail-wm0-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933727AbeFLWMl (ORCPT
+        id S934514AbeFLWOD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:14:03 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:40309 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933727AbeFLWOC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:12:41 -0400
-Received: by mail-wm0-f47.google.com with SMTP id v16-v6so1325500wmh.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 15:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=QrRG76F6VztNr3hyktc/xR1i7Kkcp0JSjXEUIKzbhbg=;
-        b=i76w100/NReSnB5VHXZi7QgYCuvPnYuMFMkREH7GlNiuXzN9gUhbFc6hFEMznkbBdu
-         KfiGWZ+ZvPBhXEsDgRYtvvU8LpZ60vx87nyOY2PNl2J0eeNOZqPk/WreEIWSUPwx00J/
-         xBMFbtNhPSH9J/z5uT4DZoN5rcmpxMHbnup0I=
+        Tue, 12 Jun 2018 18:14:02 -0400
+Received: by mail-yw0-f195.google.com with SMTP id p129-v6so195255ywg.7;
+        Tue, 12 Jun 2018 15:14:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=QrRG76F6VztNr3hyktc/xR1i7Kkcp0JSjXEUIKzbhbg=;
-        b=qZDQHwlnD1ccJ/33otsexcv3EGSSGizUS4d5En5aIm/5IWqsBwIRrTLcgmJQDGrAF1
-         z+5hwbtTQ3sfsZRD/W1bv1bihLml/nBNgOwzUpmJEQjr70EGMbSPps3y3F11N+oaKBgG
-         xhSaEoooBOtCFAEWB0ksVATOxDM+zJk2U7SPRGJ6drpmrGU+AwMiCRBK1k36X/7l4AZ6
-         955sZ5wrVi8WIiOPEvrJAWDuA2X0QgEwQyU7POB/ayojqY4YykFdplJoZkHxWA/UIP9D
-         LR7EzJeQ9ZSLz9/9a1Ns056xNhgE/HMz0tRWSqSDRzQvIKJfpQnr+72KdHFsv84m1G3z
-         jayg==
-X-Gm-Message-State: APt69E2nWt8ccHxshiY8XWvyX49Uhf3yVcxnQ8pYVkg4X20vz48lZAoR
-        Rf1vmsHyXs95fYDwmb5FPOx86fR4UuEnxRa+qEIeVw==
-X-Google-Smtp-Source: ADUXVKIzkEIkCjjfcUzfegWXrKkzP+b6luqmJVLa9qy4NCsWP7+i0iif1P8KsYmh9abdvXlzteM7GCRyI7B3Er3jvTY=
-X-Received: by 2002:a1c:da4e:: with SMTP id r75-v6mr1744663wmg.64.1528841559788;
- Tue, 12 Jun 2018 15:12:39 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zMW7qF1SXylCLXA6wjFGXhtDR81KgTht+4Bp40q6yGk=;
+        b=mf0nPXa+ILyUtHiIJB1/3mYgQQzkeMbPiPdyl0kL9tIbwUEiwHguEWq2q0IH9wu/81
+         ZtNb9ly/qVGRoEH97jgKLwTLBf0PNd8ikiFsYwbEtwPBxdCBZKsqxmT2DIT6C3mDQ5bl
+         X7gOwFJf0u34WQiX02dEHsywDmXugz3Zvt1Be99OR4ypp4bgniUxK6S0XUNS5T8H0nbK
+         kxel6PiFvhZF11470JbEEolg6AM5bZbg/D43PFyAYESdda0PPpu5KhCiHo267LuZiGlr
+         4KuS48XhFdjKcqKJ7qbCCxMZUje5shwuc010kiBYLs+D8l9Evowt4UuWlX5rwL09ayKx
+         03OA==
+X-Gm-Message-State: APt69E0Ys9FntgnhHB9paXpiEtEpji2rs8Y4JJ+NUVDfac5vLffwBsAW
+        QyqlYZt1vD47mlI/cyBAtQ==
+X-Google-Smtp-Source: ADUXVKKvBsCjiyWdsu2J1903YivinDsobpeaQ9T6pilAvGNL/HbCyujrPIQx3xPwDAK2QRKFlAs6Kg==
+X-Received: by 2002:a81:e403:: with SMTP id r3-v6mr1166490ywl.429.1528841641335;
+        Tue, 12 Jun 2018 15:14:01 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id p81-v6sm487438ywb.71.2018.06.12.15.14.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 15:14:00 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 16:13:59 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] ASoC: pxa: add binding for pxa2xx-ac97 audio complex
+Message-ID: <20180612221359.GA26741@rob-hp-laptop>
+References: <20180611202211.15501-1-robert.jarzmik@free.fr>
 MIME-Version: 1.0
-Received: by 2002:a1c:8ac3:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 15:12:38
- -0700 (PDT)
-From:   John Stultz <john.stultz@linaro.org>
-Date:   Tue, 12 Jun 2018 15:12:38 -0700
-Message-ID: <CALAqxLW=nrX-S9eibsTc+S_4YsZ166OJgZGj_1TZRWZ2ut7aFQ@mail.gmail.com>
-Subject: REGRESSION: "wlcore: sdio: allow pm to handle sdio power" breaks wifi
- on HiKey960
-To:     Kalle Valo <kvalo@codeaurora.org>, Eyal Reizer <eyalr@ti.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180611202211.15501-1-robert.jarzmik@free.fr>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Folks,
-  I noticed with linus/master wifi wasn't coming up on HiKey960. I
-bisected it down and it seems to be due to:
+On Mon, Jun 11, 2018 at 10:22:10PM +0200, Robert Jarzmik wrote:
+> This adds a binding for the Marvell PXA audio complex, available in
+> pxa2xx and pxa3xx variants.
+> 
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> ---
+>  .../bindings/sound/marvell,pxa2xx-ac97.txt         | 25 ++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt b/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
+> new file mode 100644
+> index 000000000000..b3f2882d9c7d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
+> @@ -0,0 +1,25 @@
+> +Marvell PXA2xx audio complex
+> +
+> +This descriptions matches the AC97 controller found in pxa2xx and pxa3xx series.
+> +
+> +Required properties:
+> +  - compatible: "marvell,pxa2xx-ac97"
 
-60f36637bbbd ("wlcore: sdio: allow pm to handle sdio power")  and
-728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
+Don't use wildcards in compatible strings. Though this is so old...
 
+> +  - reg: device MMIO address space
+> +  - interrupts: single interrupt generated by AC97 IP
+> +  - clocks: input clock of the AC97 IP, refer to clock-bindings.txt
+> +
+> +Optional properties:
+> +  - pinctrl-names, pinctrl-0: refer to pinctrl-bindings.txt
+> +  - reset-gpio: gpio used for AC97 reset, refer to gpio.txt
 
-When wifi fails to load, the only useful error message I see is:
-[    8.466097] wl1271_sdio mmc1:0001:2: wl12xx_sdio_power_on: failed
-to get_sync(-13)
+reset-gpios
 
-Reverting those two changes gets wifi working again for me:
-[    8.754953] wlcore: wl18xx HW: 183x or 180x, PG 2.2 (ROM 0x11)
-[    8.761778] random: crng init done
-[    8.765185] random: 7 urandom warning(s) missed due to ratelimiting
-[    8.779149] wlcore: loaded
-...
-[   12.945903] wlcore: PHY firmware version: Rev 8.2.0.0.237
-[   13.058077] wlcore: firmware booted (Rev 8.9.0.0.70)
+> +
+> +Example:
+> +	ac97: sound@40500000 {
+> +	      	compatible = "marvell,pxa2xx-ac97";
+> +		reg = < 0x40500000 0x1000 >;
+> +		interrupts = <14>;
+> +		reset-gpio = <&gpio 113 GPIO_ACTIVE_HIGH>;
+> +		#sound-dai-cells = <1>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = < &pmux_ac97_default >;
+> +		status = "okay";
 
+Don't show status in examples.
 
-Any suggestions how to resolve this w/o a revert?
-
-thanks
--john
+> +	};
+> -- 
+> 2.11.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
