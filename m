@@ -2,94 +2,139 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 51D0EC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:09:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4E9CFC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC5D020693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:09:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IUh851Jh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC5D020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DBDC9208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:10:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBDC9208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753934AbeFLFJn (ORCPT
+        id S1754214AbeFLFKs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:09:43 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:55031 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752612AbeFLFJm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:09:42 -0400
-Received: by mail-wm0-f65.google.com with SMTP id o13-v6so18192928wmf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 22:09:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YxAhb/+HtOxLdlzgZn2r2s02sJSh6IqrDgDaPuwqhvA=;
-        b=IUh851Jhs9e12bJCnjFf+fFosws6iE/y/bZlaHjUQKAY4q2knWfe1kRyVSvDRLUVXo
-         Ttf0AfMLB1z1bc29vcCl3JZS5aR2JdRPhHPRRj4M+el38k7ZnqygeI7JUZ1lJIqHMm73
-         3+nouy3JMMR1HeLAKw9QJ7ICrXWlOCPjMXhoOhSH5lSf70bqmbfcC28S3+ZvFOlrK9Hk
-         itgSZrVuXW6OsPd5iwEeuE6BNf5CJ4m1NW+W3r5Yv3KSz8Z9xVsYJ8NuOlt4bE3pIHee
-         lF4c0c51R6dIq7i89HeEZOf6tH0iN0LH5Q7yn35o7Rr0Cf8Q4qgElxags1UKarK5ddZU
-         +g7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YxAhb/+HtOxLdlzgZn2r2s02sJSh6IqrDgDaPuwqhvA=;
-        b=ttFBVWb/pvzXlsiy94ozGrSdqoGlBRnuXNTrDLDv/l2bb2Fppa6lYIdTK4g5OvKO3A
-         kZ1GlnKzc7azNCOJPcxeKfTAs7zqYzpk/IFJju7SZIdX0onu0jpyWScTCBcjzKmNss63
-         dURnrHNIS+UiFpFr06CH1t0ZPmVAIYy/fJNOZvr0bhyXyE5idePAjYmepCS8K8SEJKMV
-         bF5eks8WVUQa2z2qSbN7eTEDItokCwcqk1Lr0fu0h+VxvOYAQ08kkVy0P3g7APE+dB++
-         At/vMtmxVuqAF4DXkTbqKf6W8aJAwPz3sPTZXYSGNLPWTOAS432JVX0iDqaPqZjwJJGT
-         rS3g==
-X-Gm-Message-State: APt69E2+yWq0/YmXasM/9BkkEZqARxQd2oSKHDwBE14SB/mWC8jCD8wl
-        BxsPqmjLpKcbAyAHgKDuNw==
-X-Google-Smtp-Source: ADUXVKL6GpBPL/eDWUEJWFZ10+++7xb4k4HxaJQ3pnU5IKFYDzJOvY3+THd1ftepcr93VHFTKqzUQQ==
-X-Received: by 2002:a1c:f106:: with SMTP id p6-v6mr999212wmh.68.1528780181012;
-        Mon, 11 Jun 2018 22:09:41 -0700 (PDT)
-Received: from avx2 (nat4-minsk-pool-46-53-177-92.telecom.by. [46.53.177.92])
-        by smtp.gmail.com with ESMTPSA id i10-v6sm302134wmf.4.2018.06.11.22.09.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 22:09:40 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 08:09:38 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] proc: add error handling for kmem_cache_create
-Message-ID: <20180612050937.GA2985@avx2>
-References: <1528777434-40324-1-git-send-email-jiazhouyang09@gmail.com>
+        Tue, 12 Jun 2018 01:10:48 -0400
+Received: from a.mx.secunet.com ([62.96.220.36]:37494 "EHLO a.mx.secunet.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753958AbeFLFKq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 01:10:46 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by a.mx.secunet.com (Postfix) with ESMTP id 8891E2007F;
+        Tue, 12 Jun 2018 07:10:45 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 9JUo7rOP_Ja8; Tue, 12 Jun 2018 07:10:45 +0200 (CEST)
+Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by a.mx.secunet.com (Postfix) with ESMTPS id 0F3CA2006E;
+        Tue, 12 Jun 2018 07:10:45 +0200 (CEST)
+Received: from [10.182.7.41] (10.182.7.41) by mail-essen-01.secunet.de
+ (10.53.40.204) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 12 Jun
+ 2018 07:10:44 +0200
+Subject: [PATCH v2 1/2] ALSA: hda: add dock and led support for HP EliteBook
+ 830 G5
+To:     Takashi Iwai <tiwai@suse.de>,
+        =?UTF-8?Q?Jer=c3=b3nimo_Borque?= <jeronimo@borque.com.ar>,
+        Hui Wang <hui.wang@canonical.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Florin Tudorache <florin_tudorache@live.com>,
+        Jaroslav Kysela <perex@perex.cz>
+CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+References: <0cd9e66b-460a-4dc3-cd9c-3b0124b8284c@secunet.com>
+ <s5ho9ghbgt4.wl-tiwai@suse.de>
+From:   Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dennis.wassenberg@secunet.com; prefer-encrypt=mutual; keydata=
+ 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
+ YPsSSSBN/R6Xmw==
+Organization: secunet Security Networks
+Message-ID: <524c49c9-b9bf-2f27-e428-fcc65ebbb65b@secunet.com>
+Date:   Tue, 12 Jun 2018 07:10:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1528777434-40324-1-git-send-email-jiazhouyang09@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <s5ho9ghbgt4.wl-tiwai@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: de-DE
+Content-Transfer-Encoding: 8bit
+X-G-Data-MailSecurity-for-Exchange-State: 0
+X-G-Data-MailSecurity-for-Exchange-Error: 0
+X-G-Data-MailSecurity-for-Exchange-Sender: 23
+X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+X-G-Data-MailSecurity-for-Exchange-Guid: 61283587-96DF-4237-B6CE-593A339FFF4A
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 12:23:52PM +0800, Zhouyang Jia wrote:
-> When kmem_cache_create fails, the lack of error-handling code may
-> cause unexpected results.
-> 
-> This patch adds error-handling code after calling kmem_cache_create.
+This patch adds missing initialisation for HP 2013 UltraSlim Dock
+Line-In/Out PINs and activates keyboard mute/micmute leds
+for HP EliteBook 830 G5
 
->  	pde_opener_cache =
->  		kmem_cache_create("pde_opener", sizeof(struct pde_opener), 0,
->  				  SLAB_ACCOUNT|SLAB_PANIC, NULL);
-> +	if (!proc_inode_cachep || !pde_opener_cache)
-> +		return -ENOMEM;
+Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
+---
+ sound/pci/hda/patch_conexant.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-SLAB_PANIC was added to not worry about error handling.
+diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
+index 5b4dbcec6de8..bca71f35b34f 100644
+--- a/sound/pci/hda/patch_conexant.c
++++ b/sound/pci/hda/patch_conexant.c
+@@ -958,6 +958,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x8079, "HP EliteBook 840 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
++	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
+ 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
+ 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
+ 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+-- 
+2.17.1
+
