@@ -2,133 +2,83 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2D0E0C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:28:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3F475C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1DE020891
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:28:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DE020891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 001462089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:29:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 001462089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933174AbeFLT2J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:28:09 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42196 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932490AbeFLT2I (ORCPT
+        id S933429AbeFLT3F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:29:05 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:43603 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932589AbeFLT3D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:28:08 -0400
-Received: from p4fea5fc6.dip0.t-ipconnect.de ([79.234.95.198] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fSoxS-0003EY-7M; Tue, 12 Jun 2018 21:27:58 +0200
-Date:   Tue, 12 Jun 2018 21:27:57 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Yang Li <pku.leo@gmail.com>
-cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linuxfoundation.org>,
-        Andrew Morton <akpm@linuxfoundation.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Rob Herring <rob.herring@linaro.org>,
-        Jonas Oberg <jonas@fsfe.org>, Joe Perches <joe@perches.com>,
-        linux-xfs@vger.kernel.org,
-        Charlemagne Lasse <charlemagnelasse@gmail.com>,
-        Carmen Bianca Bakker <carmenbianca@fsfe.org>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Subject: Re: [patch V5 01/11] Documentation: Add license-rules.rst to describe
- how to properly identify file licenses
-In-Reply-To: <CADRPPNTK1x_47fnk4Tor5QSPk2DEuEwNUQQ4dGu1P3QkQDyZeQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1806122111400.1592@nanos.tec.linutronix.de>
-References: <20171228152710.891701433@linutronix.de> <20171228153308.286787253@linutronix.de> <alpine.DEB.2.20.1712282315030.1899@nanos> <CADRPPNTK1x_47fnk4Tor5QSPk2DEuEwNUQQ4dGu1P3QkQDyZeQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 12 Jun 2018 15:29:03 -0400
+Received: by mail-pf0-f194.google.com with SMTP id y8-v6so43779pfm.10;
+        Tue, 12 Jun 2018 12:29:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PXZgGT8NZg6RW+0cNLbOg6bKPi/2/MFWxVqa/8ngDd8=;
+        b=LCbB6Wi7BSGX0tG8Mtw/ApZpO2rjd5y96SP5rJoQHUlbvpoHeUt3iamdLZtm39Hvqf
+         +ESgzo+h/I+FG1iFCHW0feryC8y21BIxMTllWmMVy+jq9riUzugfpthSsLDVID1XPkvc
+         npUi5ybaRxoR7o9QhNLKZA+gBlmWJS3AjxZ3oZ/wCTjTiPl6tpGdT/CFrCBQCfdjpav+
+         vyFidJpKfnsJw8BUinubx5wASfKeSFpmdB8A9ewtm6tT9TPtXoXnfOXdnXD9Ul0BTlWm
+         JZibYxQ+DJ5R68j6I8EUHhEXYW2kh7+A5jbGHs5ZoDtVbaKjgWzUbcCcRVxlPJa3wjWf
+         ev/g==
+X-Gm-Message-State: APt69E2/TpQi727rDRG/4bstBU3Sr/bb3cVSMmANC/WbvbFcsvUUYjM8
+        gsv9Z5LMwFMUw0eGGZBcUg==
+X-Google-Smtp-Source: ADUXVKJ/v5YIQv5eI9++y5YanEINIg0OHjL3YmXYWiXwA7gUY6i8ErLWRWKGiEH0mtlf1arUyABUfg==
+X-Received: by 2002:a63:b147:: with SMTP id g7-v6mr1402482pgp.379.1528831742562;
+        Tue, 12 Jun 2018 12:29:02 -0700 (PDT)
+Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
+        by smtp.gmail.com with ESMTPSA id o87-v6sm1165737pfa.106.2018.06.12.12.29.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 12:29:01 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 13:28:59 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, rnayak@codeaurora.org,
+        linux-arm-msm@vger.kernel.org, bjorn.andersson@linaro.org,
+        edubezval@gmail.com, Zhang Rui <rui.zhang@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v2 4/5] thermal: tsens: Add support for SDM845
+Message-ID: <20180612192859.GA14933@rob-hp-laptop>
+References: <cover.1528799892.git.amit.kucheria@linaro.org>
+ <f048a97d1599a54aef3d00126a379f4e5c937057.1528799892.git.amit.kucheria@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f048a97d1599a54aef3d00126a379f4e5c937057.1528799892.git.amit.kucheria@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yang,
-
-On Tue, 12 Jun 2018, Yang Li wrote:
-> On Thu, Dec 28, 2017 at 4:17 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> > On Thu, 28 Dec 2017, Thomas Gleixner wrote:
-> >
-> > Sorry for the spam. I somehow missed to refresh the patch before generating
-> > the mbox. Find below the correct version of that one which has ALL braces
-> > removed which we don't need.
-
-> I'm not sure how we reached the conclusion that we should remove ALL
-> braces?  I cannot find related discussion in the archive except for
-> the "WITH" case.
-
-https://lkml.kernel.org/r/CAOFm3uEpM_tBErkOvqghcy+wbw0i4mSnafPBRC3HYZVQjsSyMw@mail.gmail.com
-
-> This is conflicting with the current SPDX spec at
-> https://spdx.org/spdx-specification-21-web-version quoted below and
-> also the explenation in your own file.
+On Tue, Jun 12, 2018 at 01:54:56PM +0300, Amit Kucheria wrote:
+> SDM845 uses the TSENS v2 IP block
 > 
-> Quote from SPDX spec 2.1: More expressive composite license
-> expressions can be constructed using "OR", "AND", and "WITH" operators
-> similar to constructing mathematical expressions using arithmetic
-> operators. For the Tag:value format, any license expression that
-> consists of more than one license identifier and/or LicenseRef, should
-> be encapsulated by parentheses: "( )".
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.txt |  1 +
 
-This is not relevant here:
+Acked-by: Rob Herring <robh@kernel.org>
 
-   For the Tag:value format, .....
-
-The kernel does not generate SPDX files in Tag:value format. The kernel
-uses SPDX license identifiers to reflect the actual license of a file.
-
-> > +   A <SPDX License Expression> is either an SPDX short form license
-> > +   identifier found on the SPDX License List, or the combination of two
-> > +   SPDX short form license identifiers separated by "WITH" when a license
-> > +   exception applies. When multiple licenses apply, an expression consists
-> > +   of keywords "AND", "OR" separating sub-expressions and surrounded by
-> > +   "(", ")" .
-> 
-> Conflicting with the example
-
-No, The keyword is 'separating sub-expressions'. It does not say license
-identifiers.
-
-So these examples are completely compliant with the documentation:
-
-> > +      // SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
-> > +      // SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note
-> > +      // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-
-Two license (exception) identifiers plus a operator. That's perfectly well
-defined.
-
-> > +      // SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR MIT
-
-This is actually a case where you need parentheses and they separate the
-sub-expression 'ID with EXC'.
-
-Adding extra parentheses around any simple 'ID operator [ID|EXC]'
-expression is really overkill and does not make stuff more
-readable. Likewise in programming languages. Why would anyone write:
-
-C et al.:	a = (b || c);
-Pyhton:		a = (b and c)
-
-Thanks,
-
-	tglx
+>  drivers/thermal/qcom/Makefile                            |  2 +-
+>  drivers/thermal/qcom/tsens-sdm845.c                      | 15 +++++++++++++++
+>  drivers/thermal/qcom/tsens.c                             |  3 +++
+>  drivers/thermal/qcom/tsens.h                             |  5 ++++-
+>  5 files changed, 24 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/thermal/qcom/tsens-sdm845.c
