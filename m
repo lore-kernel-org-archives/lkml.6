@@ -3,37 +3,43 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8FB24C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A6988C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50F9F204EE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F9F204EE
+	by mail.kernel.org (Postfix) with ESMTP id 66663204EE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66663204EE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933182AbeFLGp7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 02:45:59 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57612 "EHLO mx2.suse.de"
+        id S933234AbeFLGqX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 02:46:23 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57694 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932944AbeFLGp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 02:45:58 -0400
+        id S932749AbeFLGqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 02:46:22 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2A2AEACE0;
-        Tue, 12 Jun 2018 06:45:57 +0000 (UTC)
-Date:   Tue, 12 Jun 2018 08:45:56 +0200
-Message-ID: <s5hsh5szemz.wl-tiwai@suse.de>
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id EC0ABAD20;
+        Tue, 12 Jun 2018 06:46:20 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 08:46:17 +0200
+Message-ID: <s5hr2lczeme.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
-To:     "Zhouyang Jia" <jiazhouyang09@gmail.com>
-Cc:     <alsa-devel@alsa-project.org>,
-        "Bhumika Goyal" <bhumirks@gmail.com>,
-        "Jaroslav Kysela" <perex@perex.cz>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: lx6464es: add error handling for pci_ioremap_bar
-In-Reply-To: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
+To:     Dennis Wassenberg <dennis.wassenberg@secunet.com>
+Cc:     Jer3nimo Borque <jeronimo@borque.com.ar>,
+        Hui Wang <hui.wang@canonical.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Florin Tudorache <florin_tudorache@live.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] ALSA: hda: add dock and led support for HP EliteBook 830 G5
+In-Reply-To: <524c49c9-b9bf-2f27-e428-fcc65ebbb65b@secunet.com>
+References: <0cd9e66b-460a-4dc3-cd9c-3b0124b8284c@secunet.com>
+        <s5ho9ghbgt4.wl-tiwai@suse.de>
+        <524c49c9-b9bf-2f27-e428-fcc65ebbb65b@secunet.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -44,50 +50,16 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 05:23:14 +0200,
-Zhouyang Jia wrote:
+On Tue, 12 Jun 2018 07:10:59 +0200,
+Dennis Wassenberg wrote:
 > 
-> When pci_ioremap_bar fails, the lack of error-handling code may
-> cause unexpected results.
+> This patch adds missing initialisation for HP 2013 UltraSlim Dock
+> Line-In/Out PINs and activates keyboard mute/micmute leds
+> for HP EliteBook 830 G5
 > 
-> This patch adds error-handling code after calling pci_ioremap_bar.
-> 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
-This patch makes no sense, sorry.  The whole lx6464es error handling
-there is buggy.  We need to fix it more properly.
+Applied, thanks.
 
-And, you must have noticed a bad smell in that change before
-submitting this.  Basically, using the same goto label for the error
-handling of the next step is already fishy.  In this case, you'd have
-to unmap at the error path after this point.  If you can use the same
-label, it means that the unmap is missing -- already something wrong.
-
-
-thanks,
 
 Takashi
-
-> ---
->  sound/pci/lx6464es/lx6464es.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/sound/pci/lx6464es/lx6464es.c b/sound/pci/lx6464es/lx6464es.c
-> index 9655b08..6157b6d 100644
-> --- a/sound/pci/lx6464es/lx6464es.c
-> +++ b/sound/pci/lx6464es/lx6464es.c
-> @@ -1016,6 +1016,10 @@ static int snd_lx6464es_create(struct snd_card *card,
->  
->  	/* dsp port */
->  	chip->port_dsp_bar = pci_ioremap_bar(pci, 2);
-> +	if (!chip->port_dsp_bar) {
-> +		dev_err(card->dev, "cannot remap PCI memory region\n");
-> +		goto request_irq_failed;
-> +	}
->  
->  	err = request_threaded_irq(pci->irq, lx_interrupt, lx_threaded_irq,
->  				   IRQF_SHARED, KBUILD_MODNAME, chip);
-> -- 
-> 2.7.4
-> 
-> 
