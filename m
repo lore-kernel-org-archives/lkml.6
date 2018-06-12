@@ -2,74 +2,139 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7D85DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:33:35 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 43BB0C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 299EE2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:33:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ancPOg1J"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 299EE2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id EE7D320660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:36:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7D320660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933083AbeFLGdd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 02:33:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52468 "EHLO mail.kernel.org"
+        id S932918AbeFLGgf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 02:36:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:55787 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932626AbeFLGd2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 02:33:28 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BE9920660;
-        Tue, 12 Jun 2018 06:33:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528785208;
-        bh=09/+Zxsce0uUxYOdblz1k8o4ZgwyqUghzzhaLsT7U30=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ancPOg1Jv4Y2aixK63fIFLBAnX3og1+tAeDrGjWsW8tfvs0jDyiu31+/x6UMq47Kv
-         bhIKlmoDRbN+sU/B+87ZkHCmXUyuR/fY6zopT0jmgH8+Ve2TM6PWyC9lWWZmOsp5s+
-         2Nm5fkUb2Eqob/r2utNFXLL3k8slLLQF7LRvqpiI=
-Date:   Tue, 12 Jun 2018 08:33:06 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Samuel Iglesias =?iso-8859-1?Q?Gons=E1lvez?= 
-        <siglesias@igalia.com>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Jens Taprogge <jens.taprogge@taprogge.org>,
-        industrypack-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ipack: add error handling for ioremap_nocache
-Message-ID: <20180612063306.GG23073@kroah.com>
-References: <1528772844-36988-1-git-send-email-jiazhouyang09@gmail.com>
- <e33e47ca-a948-1678-fe68-8cd8e7f01287@igalia.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e33e47ca-a948-1678-fe68-8cd8e7f01287@igalia.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1752122AbeFLGge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 02:36:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 95CB0ABEC;
+        Tue, 12 Jun 2018 06:36:32 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 08:36:32 +0200
+Message-ID: <s5htvq8zf2n.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Davidlohr Bueso <dbueso@suse.de>, linux-kernel@vger.kernel.org,
+        Waiman Long <longman@redhat.com>
+Subject: Re: [PATCH] ipc: Limit sysctl value to IPCMNI
+In-Reply-To: <20180611161845.6164d3a6c2df353fe11895bf@linux-foundation.org>
+References: <20180608134949.12672-1-tiwai@suse.de>
+        <20180608141659.8a517b128c756b4d0b813c9e@linux-foundation.org>
+        <s5ha7s43167.wl-tiwai@suse.de>
+        <20180611161845.6164d3a6c2df353fe11895bf@linux-foundation.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 07:00:55AM +0200, Samuel Iglesias Gonsálvez wrote:
-> Hello Markus,
+On Tue, 12 Jun 2018 01:18:45 +0200,
+Andrew Morton wrote:
 > 
-> Thanks for the patch!
+> On Sat, 09 Jun 2018 08:48:48 +0200 Takashi Iwai <tiwai@suse.de> wrote:
 > 
-> Patch is,
+> > On Fri, 08 Jun 2018 23:16:59 +0200,
+> > Andrew Morton wrote:
+> > > 
+> > > On Fri,  8 Jun 2018 15:49:49 +0200 Takashi Iwai <tiwai@suse.de> wrote:
+> > > 
+> > > > Currently shmmni proc entry accepts all entered integer values, but
+> > > > the practical limit is IPCMNI (32768).  This confuses user as if a
+> > > > bigger value were accepted but not applied correctly.
+> > > > 
+> > > > This patch changes the proc entry to use *_minmax variant to limit the
+> > > > accepted values accordingly.
+> > > 
+> > > Waiman Long was working on a (vastly more complicated) patchset to
+> > > address this.
+> > 
+> > That's great.  Any patch available for testing?
 > 
-> Acked-by: Samuel Iglesias Gonsalvez <siglesias@igalia.com>
+> I think
+> http://lkml.kernel.org/r/1520885744-1546-1-git-send-email-longman@redhat.com
+> is the most recent version.
 > 
-> Greg, Would you mind picking this patch series through your char-misc
-> tree?
+> > 
+> > > > --- a/ipc/ipc_sysctl.c
+> > > > +++ b/ipc/ipc_sysctl.c
+> > > > @@ -99,6 +99,7 @@ static int proc_ipc_auto_msgmni(struct ctl_table *table, int write,
+> > > >  static int zero;
+> > > >  static int one = 1;
+> > > >  static int int_max = INT_MAX;
+> > > > +static int ipcmni = IPCMNI;
+> > > >  
+> > > >  static struct ctl_table ipc_kern_table[] = {
+> > > >  	{
+> > > > @@ -120,7 +121,9 @@ static struct ctl_table ipc_kern_table[] = {
+> > > >  		.data		= &init_ipc_ns.shm_ctlmni,
+> > > >  		.maxlen		= sizeof(init_ipc_ns.shm_ctlmni),
+> > > >  		.mode		= 0644,
+> > > > -		.proc_handler	= proc_ipc_dointvec,
+> > > > +		.proc_handler	= proc_ipc_dointvec_minmax,
+> > > > +		.extra1		= &zero,
+> > > > +		.extra2		= &ipcmni,
+> > > >  	},
+> > > >  	{
+> > > >  		.procname	= "shm_rmid_forced",
+> > > 
+> > > What is the back-compatibility situation here?
+> > 
+> > It's obviously an error to set such a high value and suppose that it
+> > were accepted.  So relying on that behavior must be broken in
+> > anyway...
+> 
+> Well the present behaviour is to convert higher values downwards, yes?
+> 
+> int ipc_addid(struct ipc_ids *ids, struct kern_ipc_perm *new, int limit)
+> {
+> 	kuid_t euid;
+> 	kgid_t egid;
+> 	int id, err;
+> 
+> 	if (limit > IPCMNI)
+> 		limit = IPCMNI;
+> 
+> So if someone out there is presently setting this to 999999 then their
+> kernel will work just fine.  After your proposed change, it will no
+> longer do so - the tuning attempt will fail with -EINVAL.
+> 
+> It really does us no good to say "you shouldn't have been doing that". 
+> The fact that they *are* doing it and that it works OK is the kernel
+> developers' fault for not applying suitable checking on day one.  I
+> think we're stuck with continuing to accept such input.
 
-Will do after 4.18-rc1 is out, thanks.
+Hm, that's one concern, yes.
 
-greg k-h
+OTOH, we do secretly ignore the input value, and this isn't what's
+expected by user, either.  Moreover, user-space has no slightest idea
+which value can be accepted and which not.
+
+Actually I posted it just because of requests from customers who
+needed to raise the bar, but didn't notice the effect.
+
+Maybe another possible solution would be to add another proc entry to
+handle this correctly, and make the old one only for compatibility.
+
+
+thanks,
+
+Takashi
