@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D34C9C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:42:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2F60EC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8784F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:42:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C16BC208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:42:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mcrb7dJG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GX8j2PFT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8784F2086D
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="bighUakt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="RvZONzzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C16BC208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933176AbeFLEm3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 00:42:29 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:35646 "EHLO
+        id S932704AbeFLElS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 00:41:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:35506 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932711AbeFLElT (ORCPT
+        with ESMTP id S932584AbeFLElN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 00:41:19 -0400
+        Tue, 12 Jun 2018 00:41:13 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2D1B6606DB; Tue, 12 Jun 2018 04:41:19 +0000 (UTC)
+        id B0CCC602B8; Tue, 12 Jun 2018 04:41:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528778479;
-        bh=q7zi9y0W19hjB9TsL4sEV8qAKA0xd1m7ROX9+9vCSVw=;
+        s=default; t=1528778472;
+        bh=kcEoKzvq4bj5Ym701mwZwutvLoMbOCaDK9hSPXA5a6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mcrb7dJGR+B70xIambloob78CNAYbISLMfPgE1rfFegpa27TCJnxPdgUJTQG0WXIj
-         C15AH+NI93HwbZZdYtBDQ5sJsLaoNc75WsqFSq6qnHT73pSIq2eTyzmif5yURXSuxA
-         Lm41ncpXNLFVXTZOuMtgdti6EJ9AQGT0NgSzYApk=
+        b=bighUaktbo/GFHzdQPh1XXVgoVAlXqCSSOZZxMlP0VyUOrMyLKZ26Ym2uAPEFyalC
+         ZjPiUMWYOSvOrNDQbMTc2Hj1qO7lWfLbi+ZHWX72KhuqrHZ5n2pAf6ZHZrH88q0D/K
+         0wBTXzTAMNm/LoPYyTk1kkULqbZAtpw2SwqHT4/A=
 Received: from blr-ubuntu-173.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rnayak@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 95334607E4;
-        Tue, 12 Jun 2018 04:41:15 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 59B39606DB;
+        Tue, 12 Jun 2018 04:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528778478;
-        bh=q7zi9y0W19hjB9TsL4sEV8qAKA0xd1m7ROX9+9vCSVw=;
+        s=default; t=1528778471;
+        bh=kcEoKzvq4bj5Ym701mwZwutvLoMbOCaDK9hSPXA5a6k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GX8j2PFTjKK15j7ENMwZcmx4Vbr9+azNTQvFVaCDagBBIiIz1JhMT/grMleFLN1Qk
-         On9vMsn1z+7KRYi5rR7O0oOoacSHu2cNUKf+z8XLyteiPB8Ih2tO1KLm6BBxbF6RtJ
-         riuBlM2Vqxy3faUcIP+3KlZaSza9dnMoTvAn/5i0=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 95334607E4
+        b=RvZONzzdukusM3UYrkBl56XrhtsLurA+JjZzvIEyBLQ+zxxFs3O8zXJj3ILhohKwc
+         LvXNPs5GyW2QCpD88hfmRj8X9SXnHCeK3MRq6TWfgt3Ay4a8q6WqyiJ4sc1TBK5E26
+         UarzkfBT/9wYjDFRC+RmgmUuRJLN1XJwYaUYJaLs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 59B39606DB
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
 From:   Rajendra Nayak <rnayak@codeaurora.org>
@@ -56,9 +56,9 @@ To:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
 Cc:     devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Rajendra Nayak <rnayak@codeaurora.org>
-Subject: [PATCH v3 4/7] arm64: dts: msm8996: Add rpmpd device node
-Date:   Tue, 12 Jun 2018 10:10:49 +0530
-Message-Id: <20180612044052.4402-5-rnayak@codeaurora.org>
+Subject: [PATCH v3 2/7] soc: qcom: rpmpd: Add a Power domain driver to model corners
+Date:   Tue, 12 Jun 2018 10:10:47 +0530
+Message-Id: <20180612044052.4402-3-rnayak@codeaurora.org>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180612044052.4402-1-rnayak@codeaurora.org>
 References: <20180612044052.4402-1-rnayak@codeaurora.org>
@@ -67,59 +67,383 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add rpmpd device node and its OPP table
+The Power domains for corners just pass the performance state set by the
+consumers to the RPM (Remote Power manager) which then takes care
+of setting the appropriate voltage on the corresponding rails to
+meet the performance needs.
+
+We add all Power domain data needed on msm8996 here. This driver can easily
+be extended by adding data for other qualcomm SoCs as well.
 
 Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 34 +++++++++++++++++++++++++++
- 1 file changed, 34 insertions(+)
+ drivers/soc/qcom/Kconfig               |   9 +
+ drivers/soc/qcom/Makefile              |   1 +
+ drivers/soc/qcom/rpmpd.c               | 301 +++++++++++++++++++++++++
+ include/dt-bindings/power/qcom-rpmpd.h |  16 ++
+ 4 files changed, 327 insertions(+)
+ create mode 100644 drivers/soc/qcom/rpmpd.c
+ create mode 100644 include/dt-bindings/power/qcom-rpmpd.h
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 8c7f9ca25b53..404a08630ccd 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -308,6 +308,40 @@
- 				#clock-cells = <1>;
- 			};
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 9dc02f390ba3..5c54931a7b99 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -74,6 +74,15 @@ config QCOM_RMTFS_MEM
  
-+			rpmpd: power-controller {
-+				compatible = "qcom,msm8996-rpmpd";
-+				#power-domain-cells = <1>;
-+				operating-points-v2 = <&rpmpd_opp_table>;
-+			};
-+
-+			rpmpd_opp_table: opp-table {
-+				compatible = "operating-points-v2-qcom-level";
-+
-+				rpmpd_opp1: opp1 {
-+					qcom,level = <1>;
-+				};
-+
-+				rpmpd_opp2: opp2 {
-+					qcom,level = <2>;
-+				};
-+
-+				rpmpd_opp3: opp3 {
-+					qcom,level = <3>;
-+				};
-+
-+				rpmpd_opp4: opp4 {
-+					qcom,level = <4>;
-+				};
-+
-+				rpmpd_opp5: opp5 {
-+					qcom,level = <5>;
-+				};
-+
-+				rpmpd_opp6: opp6 {
-+					qcom,level = <6>;
-+				};
-+			};
-+
- 			pm8994-regulators {
- 				compatible = "qcom,rpm-pm8994-regulators";
+ 	  Say y here if you intend to boot the modem remoteproc.
  
++config QCOM_RPMPD
++	tristate "Qualcomm RPM Power domain driver"
++	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
++	help
++	  QCOM RPM Power domain driver to support power-domains with
++	  performance states. The driver communicates a performance state
++	  value to RPM which then translates it into corresponding voltage
++	  for the voltage rail.
++
+ config QCOM_SMEM
+ 	tristate "Qualcomm Shared Memory Manager (SMEM)"
+ 	depends on ARCH_QCOM
+diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
+index 19dcf957cb3a..9550c170de93 100644
+--- a/drivers/soc/qcom/Makefile
++++ b/drivers/soc/qcom/Makefile
+@@ -15,3 +15,4 @@ obj-$(CONFIG_QCOM_SMP2P)	+= smp2p.o
+ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
+ obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
+ obj-$(CONFIG_QCOM_APR) += apr.o
++obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
+diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+new file mode 100644
+index 000000000000..c5e7a91f278c
+--- /dev/null
++++ b/drivers/soc/qcom/rpmpd.c
+@@ -0,0 +1,301 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2017-2018, The Linux Foundation. All rights reserved. */
++
++#include <linux/err.h>
++#include <linux/export.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mutex.h>
++#include <linux/pm_domain.h>
++#include <linux/mfd/qcom_rpm.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/soc/qcom/smd-rpm.h>
++
++#include <dt-bindings/mfd/qcom-rpm.h>
++#include <dt-bindings/power/qcom-rpmpd.h>
++
++#define domain_to_rpmpd(domain) container_of(domain, struct rpmpd, pd)
++
++/* Resource types */
++#define RPMPD_SMPA 0x61706d73
++#define RPMPD_LDOA 0x616f646c
++
++/* Operation Keys */
++#define KEY_CORNER		0x6e726f63 /* corn */
++#define KEY_ENABLE		0x6e657773 /* swen */
++#define KEY_FLOOR_CORNER	0x636676   /* vfc */
++
++#define DEFINE_RPMPD_CORN_SMPA(_platform, _name, _active, r_id)		\
++	static struct rpmpd _platform##_##_active;			\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = {	.name = #_name,	},				\
++		.peer = &_platform##_##_active,				\
++		.res_type = RPMPD_SMPA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	};								\
++	static struct rpmpd _platform##_##_active = {			\
++		.pd = { .name = #_active, },				\
++		.peer = &_platform##_##_name,				\
++		.active_only = true,					\
++		.res_type = RPMPD_SMPA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	}
++
++#define DEFINE_RPMPD_CORN_LDOA(_platform, _name, r_id)			\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = { .name = #_name, },				\
++		.res_type = RPMPD_LDOA,					\
++		.res_id = r_id,						\
++		.key = KEY_CORNER,					\
++	}
++
++#define DEFINE_RPMPD_VFC(_platform, _name, r_id, r_type)		\
++	static struct rpmpd _platform##_##_name = {			\
++		.pd = { .name = #_name, },				\
++		.res_type = r_type,					\
++		.res_id = r_id,						\
++		.key = KEY_FLOOR_CORNER,				\
++	}
++
++#define DEFINE_RPMPD_VFC_SMPA(_platform, _name, r_id)			\
++	DEFINE_RPMPD_VFC(_platform, _name, r_id, RPMPD_SMPA)
++
++#define DEFINE_RPMPD_VFC_LDOA(_platform, _name, r_id)			\
++	DEFINE_RPMPD_VFC(_platform, _name, r_id, RPMPD_LDOA)
++
++struct rpmpd_req {
++	__le32 key;
++	__le32 nbytes;
++	__le32 value;
++};
++
++struct rpmpd {
++	struct generic_pm_domain pd;
++	struct rpmpd *peer;
++	const bool active_only;
++	unsigned int corner;
++	bool enabled;
++	const char *res_name;
++	const int res_type;
++	const int res_id;
++	struct qcom_smd_rpm *rpm;
++	__le32 key;
++};
++
++struct rpmpd_desc {
++	struct rpmpd **rpmpds;
++	size_t num_pds;
++};
++
++static DEFINE_MUTEX(rpmpd_lock);
++
++/* msm8996 RPM Power domains */
++DEFINE_RPMPD_CORN_SMPA(msm8996, vddcx, vddcx_ao, 1);
++DEFINE_RPMPD_CORN_SMPA(msm8996, vddmx, vddmx_ao, 2);
++DEFINE_RPMPD_CORN_LDOA(msm8996, vddsscx, 26);
++
++DEFINE_RPMPD_VFC_SMPA(msm8996, vddcx_vfc, 1);
++DEFINE_RPMPD_VFC_LDOA(msm8996, vddsscx_vfc, 26);
++
++static struct rpmpd *msm8996_rpmpds[] = {
++	[MSM8996_VDDCX] =	&msm8996_vddcx,
++	[MSM8996_VDDCX_AO] =	&msm8996_vddcx_ao,
++	[MSM8996_VDDCX_VFC] =	&msm8996_vddcx_vfc,
++	[MSM8996_VDDMX] =	&msm8996_vddmx,
++	[MSM8996_VDDMX_AO] =	&msm8996_vddmx_ao,
++	[MSM8996_VDDSSCX] =	&msm8996_vddsscx,
++	[MSM8996_VDDSSCX_VFC] =	&msm8996_vddsscx_vfc,
++};
++
++static const struct rpmpd_desc msm8996_desc = {
++	.rpmpds = msm8996_rpmpds,
++	.num_pds = ARRAY_SIZE(msm8996_rpmpds),
++};
++
++static const struct of_device_id rpmpd_match_table[] = {
++	{ .compatible = "qcom,msm8996-rpmpd", .data = &msm8996_desc },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, rpmpd_match_table);
++
++static int rpmpd_send_enable(struct rpmpd *pd, bool enable)
++{
++	struct rpmpd_req req = {
++		.key = KEY_ENABLE,
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(enable),
++	};
++
++	return qcom_rpm_smd_write(pd->rpm, QCOM_RPM_ACTIVE_STATE, pd->res_type,
++				  pd->res_id, &req, sizeof(req));
++}
++
++static int rpmpd_send_corner(struct rpmpd *pd, int state, unsigned int corner)
++{
++	struct rpmpd_req req = {
++		.key = pd->key,
++		.nbytes = cpu_to_le32(sizeof(u32)),
++		.value = cpu_to_le32(corner),
++	};
++
++	return qcom_rpm_smd_write(pd->rpm, state, pd->res_type, pd->res_id,
++				  &req, sizeof(req));
++};
++
++static void to_active_sleep(struct rpmpd *pd, unsigned int corner,
++			    unsigned int *active, unsigned int *sleep)
++{
++	*active = corner;
++
++	if (pd->active_only)
++		*sleep = 0;
++	else
++		*sleep = *active;
++}
++
++static int rpmpd_aggregate_corner(struct rpmpd *pd)
++{
++	int ret;
++	struct rpmpd *peer = pd->peer;
++	unsigned int active_corner, sleep_corner;
++	unsigned int this_active_corner = 0, this_sleep_corner = 0;
++	unsigned int peer_active_corner = 0, peer_sleep_corner = 0;
++
++	to_active_sleep(pd, pd->corner, &this_active_corner, &this_sleep_corner);
++
++	if (peer && peer->enabled)
++		to_active_sleep(peer, peer->corner, &peer_active_corner,
++				&peer_sleep_corner);
++
++	active_corner = max(this_active_corner, peer_active_corner);
++
++	ret = rpmpd_send_corner(pd, QCOM_RPM_ACTIVE_STATE, active_corner);
++	if (ret)
++		return ret;
++
++	sleep_corner = max(this_sleep_corner, peer_sleep_corner);
++
++	return rpmpd_send_corner(pd, QCOM_RPM_SLEEP_STATE, sleep_corner);
++}
++
++static int rpmpd_power_on(struct generic_pm_domain *domain)
++{
++	int ret;
++	struct rpmpd *pd = domain_to_rpmpd(domain);
++
++	mutex_lock(&rpmpd_lock);
++
++	ret = rpmpd_send_enable(pd, true);
++	if (ret)
++		goto out;
++
++	pd->enabled = true;
++
++	if (pd->corner)
++		ret = rpmpd_aggregate_corner(pd);
++
++out:
++	mutex_unlock(&rpmpd_lock);
++
++	return ret;
++}
++
++static int rpmpd_power_off(struct generic_pm_domain *domain)
++{
++	int ret;
++	struct rpmpd *pd = domain_to_rpmpd(domain);
++
++	mutex_lock(&rpmpd_lock);
++
++	ret = rpmpd_send_enable(pd, false);
++	if (!ret)
++		pd->enabled = false;
++
++	mutex_unlock(&rpmpd_lock);
++
++	return ret;
++}
++
++static int rpmpd_probe(struct platform_device *pdev)
++{
++	int i;
++	size_t num;
++	struct genpd_onecell_data *data;
++	struct qcom_smd_rpm *rpm;
++	struct rpmpd **rpmpds;
++	const struct rpmpd_desc *desc;
++
++	rpm = dev_get_drvdata(pdev->dev.parent);
++	if (!rpm) {
++		dev_err(&pdev->dev, "Unable to retrieve handle to RPM\n");
++		return -ENODEV;
++	}
++
++	desc = of_device_get_match_data(&pdev->dev);
++	if (!desc)
++		return -EINVAL;
++
++	rpmpds = desc->rpmpds;
++	num = desc->num_pds;
++
++	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
++				     GFP_KERNEL);
++	data->num_domains = num;
++
++	for (i = 0; i < num; i++) {
++		if (!rpmpds[i]) {
++			dev_warn(&pdev->dev, "rpmpds[] with empty entry at index=%d\n",
++				 i);
++			continue;
++		}
++
++		rpmpds[i]->rpm = rpm;
++		rpmpds[i]->pd.power_off = rpmpd_power_off;
++		rpmpds[i]->pd.power_on = rpmpd_power_on;
++		pm_genpd_init(&rpmpds[i]->pd, NULL, true);
++
++		data->domains[i] = &rpmpds[i]->pd;
++	}
++
++	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
++}
++
++static int rpmpd_remove(struct platform_device *pdev)
++{
++	of_genpd_del_provider(pdev->dev.of_node);
++	return 0;
++}
++
++static struct platform_driver rpmpd_driver = {
++	.driver = {
++		.name = "qcom-rpmpd",
++		.of_match_table = rpmpd_match_table,
++	},
++	.probe = rpmpd_probe,
++	.remove = rpmpd_remove,
++};
++
++static int __init rpmpd_init(void)
++{
++	return platform_driver_register(&rpmpd_driver);
++}
++core_initcall(rpmpd_init);
++
++static void __exit rpmpd_exit(void)
++{
++	platform_driver_unregister(&rpmpd_driver);
++}
++module_exit(rpmpd_exit);
++
++MODULE_DESCRIPTION("Qualcomm Technologies, Inc. RPM Power Domain Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:qcom-rpmpd");
+diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+new file mode 100644
+index 000000000000..59f47317b81f
+--- /dev/null
++++ b/include/dt-bindings/power/qcom-rpmpd.h
+@@ -0,0 +1,16 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++
++#ifndef _DT_BINDINGS_POWER_QCOM_RPMPD_H
++#define _DT_BINDINGS_POWER_QCOM_RPMPD_H
++
++/* MSM8996 Power Domain Indexes */
++#define MSM8996_VDDCX		0
++#define MSM8996_VDDCX_AO	1
++#define MSM8996_VDDCX_VFC	2
++#define MSM8996_VDDMX		3
++#define MSM8996_VDDMX_AO	4
++#define MSM8996_VDDSSCX		5
++#define MSM8996_VDDSSCX_VFC	6
++
++#endif
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
