@@ -3,251 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 919BCC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 806F3C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 477B32086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477B32086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 408FB2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:06:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 408FB2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934361AbeFLPGO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:06:14 -0400
-Received: from mga06.intel.com ([134.134.136.31]:10586 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932905AbeFLPGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:06:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 08:06:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,215,1526367600"; 
-   d="scan'208";a="58608801"
-Received: from 2b52.sc.intel.com (HELO [143.183.136.147]) ([143.183.136.147])
-  by orsmga003.jf.intel.com with ESMTP; 12 Jun 2018 08:06:09 -0700
-Message-ID: <1528815781.8271.15.camel@2b52.sc.intel.com>
-Subject: Re: [PATCH 01/10] x86/cet: User-mode shadow stack support
-From:   Yu-cheng Yu <yu-cheng.yu@intel.com>
-To:     Balbir Singh <bsingharora@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Date:   Tue, 12 Jun 2018 08:03:01 -0700
-In-Reply-To: <0e80c181-83b2-457f-a419-01e79f94ca1c@gmail.com>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com>
-         <20180607143807.3611-2-yu-cheng.yu@intel.com>
-         <0e80c181-83b2-457f-a419-01e79f94ca1c@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S934370AbeFLPGu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:06:50 -0400
+Received: from cloudserver094114.home.pl ([79.96.170.134]:45995 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932905AbeFLPGt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 11:06:49 -0400
+Received: from 79.184.255.56.ipv4.supernova.orange.pl (79.184.255.56) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83)
+ id 3ce46dd2d57245a2; Tue, 12 Jun 2018 17:06:47 +0200
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Chen Yu <yu.c.chen@intel.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Artem S Tashkinov <t.artem@mailcity.com>,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH][v2] sched: cpufreq: Fix long idle judgement logic in load calculation
+Date:   Tue, 12 Jun 2018 17:05:46 +0200
+Message-ID: <3199989.mUnO823ZlS@aspire.rjw.lan>
+In-Reply-To: <20180608040413.2pjfr6by3me5qymk@vireshk-i7>
+References: <1528420053-22884-1-git-send-email-yu.c.chen@intel.com> <20180608040413.2pjfr6by3me5qymk@vireshk-i7>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-12 at 21:56 +1000, Balbir Singh wrote:
-> 
-> On 08/06/18 00:37, Yu-cheng Yu wrote:
-> > This patch adds basic shadow stack enabling/disabling routines.
-> > A task's shadow stack is allocated from memory with VM_SHSTK
-> > flag set and read-only protection.  The shadow stack is
-> > allocated to a fixed size and that can be changed by the system
-> > admin.
+On Friday, June 8, 2018 6:04:13 AM CEST Viresh Kumar wrote:
+> On 08-06-18, 09:07, Chen Yu wrote:
+> > According to current code implementation, detecting the long
+> > idle period is done by checking if the interval between two
+> > adjacent utilization update handers is long enough. Although
+> > this mechanism can detect if the idle period is long enough
+> > (no utilization hooks invoked during idle period), it might
+> > not contain a corner case: if the task has occupied the cpu
+> > for too long which causes no context switch during that
+> > period, then no utilization handler will be launched until this
+> > high prio task is switched out. As a result, the idle_periods
+> > field might be calculated incorrectly because it regards the
+> > 100% load as 0% and makes the conservative governor who uses
+> > this field confusing.
 > > 
-> 
-> I presume a read-only permission on the kernel side, but it
-> can be written by hardware?
-
-Yes, the shadow stack is written by the processor when a call
-instruction is executed.
-
-...
-
+> > Change the judgement to compare the idle_time with sampling_rate
+> > directly.
 > > 
-> > diff --git a/arch/x86/include/asm/cet.h b/arch/x86/include/asm/cet.h
-> > new file mode 100644
-> > index 000000000000..9d5bc1efc9b7
-> > --- /dev/null
-> > +++ b/arch/x86/include/asm/cet.h
-> > @@ -0,0 +1,32 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 */
-> > +#ifndef _ASM_X86_CET_H
-> > +#define _ASM_X86_CET_H
-> > +
-> > +#ifndef __ASSEMBLY__
-> > +#include <linux/types.h>
-> > +
-> > +struct task_struct;
-> > +/*
-> > + * Per-thread CET status
-> > + */
-> > +struct cet_stat {
+> > Reported-by: Artem S. Tashkinov <t.artem@mailcity.com>
+> > Cc: Artem S Tashkinov <t.artem@mailcity.com>
+> > Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+> > Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> > Cc: linux-pm@vger.kernel.org
+> > Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> > ---
+> > v2: Per Viresh's suggestion, ignore idle_time longer than 30mins and
+> >     simplify the code.
+> > ---
+> >  drivers/cpufreq/cpufreq_governor.c | 12 +++++-------
+> >  1 file changed, 5 insertions(+), 7 deletions(-)
 > 
-> stat sounds like statistics, just expand out to status please
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-I will make it 'cet_status'.
+Patch applied, thanks!
 
-> > +	unsigned long	shstk_base;
-> > +	unsigned long	shstk_size;
-> > +	unsigned int	shstk_enabled:1;
-> > +};
-> > +
-> > +#ifdef CONFIG_X86_INTEL_CET
-> > +unsigned long cet_get_shstk_ptr(void);
-> 
-> For the current task? Why does _ptr routine return an unsigned long?
-
-What about cet_get_shstk_addr()?
-
-...
-
-> > diff --git a/arch/x86/include/asm/msr-index.h b/arch/x86/include/asm/msr-index.h
-> > index fda2114197b3..428d13828ba9 100644
-> > --- a/arch/x86/include/asm/msr-index.h
-> > +++ b/arch/x86/include/asm/msr-index.h
-> > @@ -770,4 +770,18 @@
-> >  #define MSR_VM_IGNNE                    0xc0010115
-> >  #define MSR_VM_HSAVE_PA                 0xc0010117
-> >  
-> > +/* Control-flow Enforcement Technology MSRs */
-> > +#define MSR_IA32_U_CET		0x6a0
-> > +#define MSR_IA32_S_CET		0x6a2
-> > +#define MSR_IA32_PL0_SSP	0x6a4
-> > +#define MSR_IA32_PL3_SSP	0x6a7
-> > +#define MSR_IA32_INT_SSP_TAB	0x6a8
-> 
-> some comments on the purpose of the MSR would be nice
-
-Sure.
-
-...
-
-> 
-> I think there was a comment about this being TASK_SIZE_MAX
-> 
-> > +
-> > +	rdmsrl(MSR_IA32_U_CET, r);
-> > +	wrmsrl(MSR_IA32_U_CET, r | MSR_IA32_CET_SHSTK_EN);
-> > +	wrmsrl(MSR_IA32_PL3_SSP, addr);
-> 
-> Should the enable happen before setting addr? I would expect to do this in the opposite order.
-
-I will check.
-
-> > +	return 0;
-> > +}
-> > +
-> > +unsigned long cet_get_shstk_ptr(void)
-> > +{
-> > +	unsigned long ptr;
-> > +
-> > +	if (!current->thread.cet.shstk_enabled)
-> > +		return 0;
-> > +
-> > +	rdmsrl(MSR_IA32_PL3_SSP, ptr);
-> > +	return ptr;
-> > +}
-> > +
-> > +static unsigned long shstk_mmap(unsigned long addr, unsigned long len)
-> > +{
-> > +	struct mm_struct *mm = current->mm;
-> > +	unsigned long populate;
-> > +
-> > +	down_write(&mm->mmap_sem);
-> > +	addr = do_mmap(NULL, addr, len, PROT_READ,
-> > +		       MAP_ANONYMOUS | MAP_PRIVATE, VM_SHSTK,
-> > +		       0, &populate, NULL);
-> > +	up_write(&mm->mmap_sem);
-> 
-> What happens if the mmap fails for any reason? I presume the caller disables shadow stack on this process?
-
-This is from exec(), and that fails.
-
-> > +
-> > +	if (populate)
-> > +		mm_populate(addr, populate);
-> > +
-> > +	return addr;
-> > +}
-> > +
-> > +int cet_setup_shstk(void)
-> > +{
-> > +	unsigned long addr, size;
-> > +
-> > +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	size = SHSTK_SIZE;
-> > +	addr = shstk_mmap(0, size);
-> > +
-> > +	if (addr >= TASK_SIZE)
-> > +		return -ENOMEM;
-> > +
-> 
-> TASK_SIZE_MAX?
-
-Yes.
-
-> 
-> > +	cet_set_shstk_ptr(addr + size - sizeof(void *));
-> > +	current->thread.cet.shstk_base = addr;
-> > +	current->thread.cet.shstk_size = size;
-> > +	current->thread.cet.shstk_enabled = 1;
-> > +	return 0;
-> > +}
-> > +
-> > +void cet_disable_shstk(void)
-> > +{
-> > +	u64 r;
-> > +
-> > +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK))
-> > +		return;
-> > +
-> > +	rdmsrl(MSR_IA32_U_CET, r);
-> > +	r &= ~(MSR_IA32_CET_SHSTK_EN);
-> > +	wrmsrl(MSR_IA32_U_CET, r);
-> > +	wrmsrl(MSR_IA32_PL3_SSP, 0);
-> 
-> Again, I'd expect the order to be the reverse
-> 
-> > +	current->thread.cet.shstk_enabled = 0;
-> > +}
-> > +
-> > +void cet_disable_free_shstk(struct task_struct *tsk)
-> > +{
-> > +	if (!cpu_feature_enabled(X86_FEATURE_SHSTK) ||
-> > +	    !tsk->thread.cet.shstk_enabled)
-> > +		return;
-> > +
-> > +	if (tsk == current)
-> > +		cet_disable_shstk();
-> > +
-> > +	/*
-> > +	 * Free only when tsk is current or shares mm
-> > +	 * with current but has its own shstk.
-> > +	 */
-> > +	if (tsk->mm && (tsk->mm == current->mm) &&
-> > +	    (tsk->thread.cet.shstk_base)) {
-> 
-> Does the caller hold a reference to tsk->mm?
-
-If (tsk->mm == current->mm), i.e. it is current or it is a pthread of
-current, then yes.
-
-Yu-cheng
 
