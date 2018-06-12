@@ -2,155 +2,108 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DABA9C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:43:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D34D2C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 877722086E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:43:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IFREy+HM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877722086E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 940232089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:43:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 940232089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933878AbeFLTnw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:43:52 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:55647 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933328AbeFLTnr (ORCPT
+        id S933963AbeFLTn4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:43:56 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:42230 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933328AbeFLTny (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:43:47 -0400
-Received: by mail-it0-f65.google.com with SMTP id 16-v6so801084itl.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 12:43:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=K/1i4PQppEy6ckp9J9hJDoKmD2VBt+4PgWc9u6ykU4U=;
-        b=IFREy+HMjSWQHkha6C+/055/c4zFDEzkgN1wtw+gtO4uq5b1XfSetee6NMuD+6Bw/g
-         qIy8he+8oWA5GiNaYB0T50cOuayTO+EZid6x3/uZXI1NMJK+RDJdlsk7oCxxEZ5WPDBU
-         N091DhgBzQ1FgOFHJRAM82sRKfb/fAVwP+YGA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=K/1i4PQppEy6ckp9J9hJDoKmD2VBt+4PgWc9u6ykU4U=;
-        b=KZ/Er9kHkUQl7W46bI9lksVYcpkU8KnqJhvTWUGZTAZYnphdsy+A8SgdNVA3KGVu3C
-         3JpvxIfgEd9+G9Jg4XmPaWpdk5nUQN4UisPPQemkAyx/jZ4q5HuAzG/2lDRKyJ7h8G3M
-         FAM3SjrqPoYIxWYXL2LTEcs5U50gXWqlmyC3gO1UfKb5KfcJuDjznyKGyLDAtwdYGNBc
-         jbfff0+Vsl+HItdfWeQQKapM0WZYp2l2FtGqAHi6yw0l1v/TqPIfHYb5twpl9F+RsviO
-         leX8ZsAX7H2lzwHBop1SZt8SyyUa5K7rtFG01DYkNNK5+rKRV25zFy1JTSI1BH2iMkLO
-         CdUA==
-X-Gm-Message-State: APt69E3pE4KUaCuN2oGKQ1x9Sk0drggEZ9agJPGMre50c2I+Dj1r5apj
-        rKqQ5f5p/Z+4a9qFxFr6MfUyexTn0TXdUCa3r++vbg==
-X-Google-Smtp-Source: ADUXVKJ3oIVWw2w67ERPpJrNpuIOEQ9dd8ZE8gA6PeuGuZZqDzvsqnefIryZgz8mDYO2vqcwRFHRnenEZqC2EfrFczM=
-X-Received: by 2002:a24:308:: with SMTP id e8-v6mr1982899ite.102.1528832626651;
- Tue, 12 Jun 2018 12:43:46 -0700 (PDT)
+        Tue, 12 Jun 2018 15:43:54 -0400
+Received: from p4fea5fc6.dip0.t-ipconnect.de ([79.234.95.198] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fSpCm-0003N0-Kn; Tue, 12 Jun 2018 21:43:48 +0200
+Date:   Tue, 12 Jun 2018 21:43:48 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+cc:     =?ISO-8859-15?Q?Andreas_Gr=FCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, quilt-dev@nongnu.org
+Subject: Re: [PATCH 0/3] sched/swait: Convert to full exclusive mode
+In-Reply-To: <CA+55aFx81igOjFZcvO03mvDFd3=pxsq2QuNrWrPW+4pvJy780A@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1806122134410.1592@nanos.tec.linutronix.de>
+References: <20180612083449.100099222@infradead.org> <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com> <CAHpGcMJSb4pqWF7X3K7yrk+N=FwcSrbjWm9xvprpaLRGgdE24A@mail.gmail.com>
+ <CA+55aFx81igOjFZcvO03mvDFd3=pxsq2QuNrWrPW+4pvJy780A@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 12:43:45
- -0700 (PDT)
-In-Reply-To: <20180612124424eucas1p101e61369a42132234d103ce52918b08e~3akoRUwbQ3138731387eucas1p17@eucas1p1.samsung.com>
-References: <CGME20180612110807epcas5p10e076681eac6f50b01840c0052748d12@epcas5p1.samsung.com>
- <10125310.W3e2TP0641@aspire.rjw.lan> <20180612124424eucas1p101e61369a42132234d103ce52918b08e~3akoRUwbQ3138731387eucas1p17@eucas1p1.samsung.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Tue, 12 Jun 2018 21:43:45 +0200
-Message-ID: <CAPDyKFpSx7Kif_AtrVNtPSW0gy4058VBCfFQgMqMWVQGq+2BXA@mail.gmail.com>
-Subject: Re: [PATCH] PM / core: Fix supplier device runtime PM usage counter imbalance
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/mixed; boundary="8323329-1222144824-1528832628=:1592"
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 June 2018 at 14:44, Marek Szyprowski <m.szyprowski@samsung.com> wrote:
-> Hi Rafael,
->
-> On 2018-06-12 13:00, Rafael J. Wysocki wrote:
->> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>
->> If a device link is added via device_link_add() by the driver of the
->> link's consumer device, the supplier's runtime PM usage counter is
->> going to be dropped by the pm_runtime_put_suppliers() call in
->> driver_probe_device().  However, in that case it is not incremented
->> unless the supplier driver is already present and the link is not
->> stateless.  That leads to a runtime PM usage counter imbalance for
->> the supplier device in a few cases.
->>
->> To prevent that from happening, bump up the supplier runtime
->> PM usage counter in device_link_add() for all links with the
->> DL_FLAG_PM_RUNTIME flag set that are added at the consumer probe
->> time.  Use pm_runtime_get_noresume() for that as the callers of
->> device_link_add() who want the supplier to be resumed by it should
->> pass DL_FLAG_RPM_ACTIVE in flags to it anyway.
->>
->> Fixes: 21d5c57b3726 (PM / runtime: Use device links)
->> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
->> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->> ---
->>
->> This is a replacement for commit 1e8378619841 (PM / runtime: Fixup
->> reference counting of device link suppliers at probe) that is going
->> to be reverted.
->
-> Thanks Rafael for the patch. I've applied it and now I'm a bit puzzled.
-> Let's get back to my IOMMU and codec case, mentioned here:
-> https://marc.info/?l=linux-pm&m=152878741527962&w=2
->
-> Now, after applying your patch, when IOMMU creates a link with
-> DL_FLAG_PM_RUNTIME to the jpeg device (this happens when jpeg device is
-> being probed), it is not IOMMU is not runtime resumed anymore (that's
-> because the patch changes pm_runtime_get_sync to pm_runtime_get_noresume).
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-According to your earlier replies, I thought this is what you wanted. No?
+--8323329-1222144824-1528832628=:1592
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-> This means that until jpeg driver enables runtime pm for its device and
-> finally performs runtime pm suspends/resume cycle, the supplier won't be
-> resumed.
+On Tue, 12 Jun 2018, Linus Torvalds wrote:
+> On Tue, Jun 12, 2018 at 11:52 AM Andreas Grünbacher
+> <andreas.gruenbacher@gmail.com> wrote:
+> >
+> > Quilt uses those Content-Disposition headers to preserve the patch
+> > filenames;
+> 
+> That' what I was assuming, but does anybody really care?
 
-What's the problem with that? When does the IOMMU device needs to be
-runtime resumed?
+People might have scripts using it but I doubt anyone still relies on that
+because git mail never did that inline/filename dance so scripts which
+convert mboxes to quilt need to have a mechanism to create filenames
+anyway. My personal script uses the subject line to create the filenames
+and I never tried to use the inline filename as those filenames are often
+enough complete garbage.
 
-> On the other hand, when I add DL_FLAG_RPM_ACTIVE flag to link
-> creation, the supplier is properly resumed, but then, once the jpeg
-> device probe finishes, the supplier is still in runtime active state
-> until a next runtime suspend/resume cycle of jpeg device.
+> (Even if they use quilt to manage patches, maybe they don't _send_
+> them that way?)
 
-Could you elaborate on the what happens in jpeg driver during probe,
-in regards to runtime PM. Perhaps you can also point me to what driver
-it is?
+Many quilt users still do.
 
-> If I understand
-> right, the DL_FLAG_RPM_ACTIVE flag should be there from the beginning,
-> but that time it runtime pm part of links worked in a bit different way
-> than now.
+> How long has quilt been doing it?
 
-Just to make sure, you also reverted 1e8378619841, before trying
-Rafael's change on top?
+Forever.
 
->
-> Is there any way to keep old behavior?
+> Also, note that I'm not at all sure that it's _just_ the
+> 
+>     Content-Disposition: inline
+> 
+> that triggers this. There might be something else in those emails that
+> triggers it but that's the thing that stands out.
 
-I think the old behavior is sub-optimal. I am sure there are users
-that really don't want the driver core to runtime resume the supplier
-unconditionally.
+It is. There is nothing else in the headers which could cause that. quilt
+mail format is pretty simplistic.
 
-I would rather go and fix the few users of device_link_add(), to use
-DL_FLAG_RPM_ACTIVE, in cases when they need it. Of course I am fine if
-we do these changes in a step by step basis as well.
+> > I'm not sure whose workflows would break if we kill those headers
+> > altogether, but maybe we can omit them by default.
+> 
+> That would be lovely at least for my case.
 
-[...]
+No objections.
 
-Kind regards
-Uffe
+Thanks,
+
+	tglx
+--8323329-1222144824-1528832628=:1592--
