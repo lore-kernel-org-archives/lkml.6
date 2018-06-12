@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ECE21C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 86502C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23DF208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31DFB208B8
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:47:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hv48kKr5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A23DF208B8
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WkKUc0br"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31DFB208B8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934887AbeFLQry (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:47:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:32910 "EHLO mail.kernel.org"
+        id S934914AbeFLQr4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:47:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33128 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934744AbeFLQrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:47:51 -0400
+        id S934882AbeFLQry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:47:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 74412208B7;
-        Tue, 12 Jun 2018 16:47:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35E66208B8;
+        Tue, 12 Jun 2018 16:47:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822071;
-        bh=Lhsik9VY3/qtRndCmZMCs85od6fhZ7ZeI/ow8uDNJ+8=;
+        s=default; t=1528822073;
+        bh=LaCoN77cgk+VNMcIT+wQCmaNIrlAOXR/2N+vTHNDfuA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hv48kKr5wz1OT9FVCvtZ5XN8d62YqLS6BVAOKCoTq9FrENuJ4OGYO2c943kgaM9/s
-         UJ/x5TbNxNvi047mmgu5tu105ZTCWmfzjtkuum1x+H3Em9cxJL8tTNsuJw4HlnblCL
-         /C3rM0UjAo3wZxgFG9P3+zZRC1XgUFPFg9wBQ6Z8=
+        b=WkKUc0brycbRoEr46bSUeWI0+wuom0V7+a/mrPqK7/vVxgL7XOQug+vp7CltLlNBj
+         uDzB9mZAaz1rDBmvO6EI04/Sc7uSM1NlYBTV0lM+UEGReqr2k/fcUP22ZH5A97Zgl1
+         9AtiTBH3m5vWD975/8yC4YinWq3HDaW8OKmlDFxo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Tariq Toukan <tariqt@mellanox.com>,
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 24/31] net/mlx4: Fix irq-unsafe spinlock usage
-Date:   Tue, 12 Jun 2018 18:46:27 +0200
-Message-Id: <20180612164621.741710164@linuxfoundation.org>
+Subject: [PATCH 4.9 25/31] rtnetlink: validate attributes in do_setlink()
+Date:   Tue, 12 Jun 2018 18:46:28 +0200
+Message-Id: <20180612164621.784249228@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
 References: <20180612164620.797338191@linuxfoundation.org>
@@ -61,72 +61,139 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit d546b67cda015fb92bfee93d5dc0ceadb91deaee ]
+[ Upstream commit 644c7eebbfd59e72982d11ec6cc7d39af12450ae ]
 
-spin_lock/unlock was used instead of spin_un/lock_irq
-in a procedure used in process space, on a spinlock
-which can be grabbed in an interrupt.
+It seems that rtnl_group_changelink() can call do_setlink
+while a prior call to validate_linkmsg(dev = NULL, ...) could
+not validate IFLA_ADDRESS / IFLA_BROADCAST
 
-This caused the stack trace below to be displayed (on kernel
-4.17.0-rc1 compiled with Lock Debugging enabled):
+Make sure do_setlink() calls validate_linkmsg() instead
+of letting its callers having this responsibility.
 
-[  154.661474] WARNING: SOFTIRQ-safe -> SOFTIRQ-unsafe lock order detected
-[  154.668909] 4.17.0-rc1-rdma_rc_mlx+ #3 Tainted: G          I
-[  154.675856] -----------------------------------------------------
-[  154.682706] modprobe/10159 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-[  154.690254] 00000000f3b0e495 (&(&qp_table->lock)->rlock){+.+.}, at: mlx4_qp_remove+0x20/0x50 [mlx4_core]
-[  154.700927]
-and this task is already holding:
-[  154.707461] 0000000094373b5d (&(&cq->lock)->rlock/1){....}, at: destroy_qp_common+0x111/0x560 [mlx4_ib]
-[  154.718028] which would create a new lock dependency:
-[  154.723705]  (&(&cq->lock)->rlock/1){....} -> (&(&qp_table->lock)->rlock){+.+.}
-[  154.731922]
-but this new dependency connects a SOFTIRQ-irq-safe lock:
-[  154.740798]  (&(&cq->lock)->rlock){..-.}
-[  154.740800]
-... which became SOFTIRQ-irq-safe at:
-[  154.752163]   _raw_spin_lock_irqsave+0x3e/0x50
-[  154.757163]   mlx4_ib_poll_cq+0x36/0x900 [mlx4_ib]
-[  154.762554]   ipoib_tx_poll+0x4a/0xf0 [ib_ipoib]
-...
-to a SOFTIRQ-irq-unsafe lock:
-[  154.815603]  (&(&qp_table->lock)->rlock){+.+.}
-[  154.815604]
-... which became SOFTIRQ-irq-unsafe at:
-[  154.827718] ...
-[  154.827720]   _raw_spin_lock+0x35/0x50
-[  154.833912]   mlx4_qp_lookup+0x1e/0x50 [mlx4_core]
-[  154.839302]   mlx4_flow_attach+0x3f/0x3d0 [mlx4_core]
+With help from Dmitry Vyukov, thanks a lot !
 
-Since mlx4_qp_lookup() is called only in process space, we can
-simply replace the spin_un/lock calls with spin_un/lock_irq calls.
+BUG: KMSAN: uninit-value in is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
+BUG: KMSAN: uninit-value in eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
+BUG: KMSAN: uninit-value in eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
+CPU: 1 PID: 8695 Comm: syz-executor3 Not tainted 4.17.0-rc5+ #103
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x149/0x260 mm/kmsan/kmsan.c:1084
+ __msan_warning_32+0x6e/0xc0 mm/kmsan/kmsan_instr.c:686
+ is_valid_ether_addr include/linux/etherdevice.h:199 [inline]
+ eth_prepare_mac_addr_change net/ethernet/eth.c:275 [inline]
+ eth_mac_addr+0x203/0x2b0 net/ethernet/eth.c:308
+ dev_set_mac_address+0x261/0x530 net/core/dev.c:7157
+ do_setlink+0xbc3/0x5fc0 net/core/rtnetlink.c:2317
+ rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
+ rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x455a09
+RSP: 002b:00007fc07480ec68 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00007fc07480f6d4 RCX: 0000000000455a09
+RDX: 0000000000000000 RSI: 00000000200003c0 RDI: 0000000000000014
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000000005d0 R14: 00000000006fdc20 R15: 0000000000000000
 
-Fixes: 6dc06c08bef1 ("net/mlx4: Fix the check in attaching steering rules")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Tariq Toukan <tariqt@mellanox.com>
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:294 [inline]
+ kmsan_internal_chain_origin+0x12b/0x210 mm/kmsan/kmsan.c:685
+ kmsan_memcpy_origins+0x11d/0x170 mm/kmsan/kmsan.c:527
+ __msan_memcpy+0x109/0x160 mm/kmsan/kmsan_instr.c:478
+ do_setlink+0xb84/0x5fc0 net/core/rtnetlink.c:2315
+ rtnl_group_changelink net/core/rtnetlink.c:2824 [inline]
+ rtnl_newlink+0x1fe9/0x37a0 net/core/rtnetlink.c:2976
+ rtnetlink_rcv_msg+0xa32/0x1560 net/core/rtnetlink.c:4646
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2448
+ rtnetlink_rcv+0x50/0x60 net/core/rtnetlink.c:4664
+ netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+ netlink_unicast+0x1678/0x1750 net/netlink/af_netlink.c:1336
+ netlink_sendmsg+0x104f/0x1350 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:279 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:189
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:315
+ kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan.c:322
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2753 [inline]
+ __kmalloc_node_track_caller+0xb32/0x11b0 mm/slub.c:4395
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x2cb/0x9e0 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:988 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1182 [inline]
+ netlink_sendmsg+0x76e/0x1350 net/netlink/af_netlink.c:1876
+ sock_sendmsg_nosec net/socket.c:629 [inline]
+ sock_sendmsg net/socket.c:639 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+ __sys_sendmsg net/socket.c:2155 [inline]
+ __do_sys_sendmsg net/socket.c:2164 [inline]
+ __se_sys_sendmsg net/socket.c:2162 [inline]
+ __x64_sys_sendmsg+0x331/0x460 net/socket.c:2162
+ do_syscall_64+0x152/0x230 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+Fixes: e7ed828f10bd ("netlink: support setting devgroup parameters")
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlx4/qp.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ net/core/rtnetlink.c |    8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlx4/qp.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
-@@ -392,11 +392,11 @@ struct mlx4_qp *mlx4_qp_lookup(struct ml
- 	struct mlx4_qp_table *qp_table = &mlx4_priv(dev)->qp_table;
- 	struct mlx4_qp *qp;
+--- a/net/core/rtnetlink.c
++++ b/net/core/rtnetlink.c
+@@ -1914,6 +1914,10 @@ static int do_setlink(const struct sk_bu
+ 	const struct net_device_ops *ops = dev->netdev_ops;
+ 	int err;
  
--	spin_lock(&qp_table->lock);
-+	spin_lock_irq(&qp_table->lock);
++	err = validate_linkmsg(dev, tb);
++	if (err < 0)
++		return err;
++
+ 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]) {
+ 		struct net *net = rtnl_link_get_net(dev_net(dev), tb);
+ 		if (IS_ERR(net)) {
+@@ -2234,10 +2238,6 @@ static int rtnl_setlink(struct sk_buff *
+ 		goto errout;
+ 	}
  
- 	qp = __mlx4_qp_lookup(dev, qpn);
- 
--	spin_unlock(&qp_table->lock);
-+	spin_unlock_irq(&qp_table->lock);
- 	return qp;
- }
- 
+-	err = validate_linkmsg(dev, tb);
+-	if (err < 0)
+-		goto errout;
+-
+ 	err = do_setlink(skb, dev, ifm, tb, ifname, 0);
+ errout:
+ 	return err;
 
 
