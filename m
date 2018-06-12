@@ -2,173 +2,216 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8287AC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:44:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C9DFFC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DF002089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:44:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 763022089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 12:44:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MIwd5SOC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DF002089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FZcSw0p7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763022089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933598AbeFLMoJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 08:44:09 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35108 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754290AbeFLMoH (ORCPT
+        id S933684AbeFLMoa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 08:44:30 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58535 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932976AbeFLMo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 08:44:07 -0400
-Received: by mail-lf0-f66.google.com with SMTP id i15-v6so25494063lfc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 05:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=loMCp3Ado1Vrtw7xRucYfMKgzCliS4iLPIjSCwYpQ5U=;
-        b=MIwd5SOCn+Vx8BXdwu5wfISidI4//lvOM3hPnacnnHfEx2MZM2zommE9aqBAjWRh1N
-         BiZc7JJcQXx1neDkiJc44LFmeAnL9GXlv0lm4REoANlLBtKOmikbJiSPXyB1W6ei8CEt
-         Y8um4xFykKutMCEZ6gmxRXDJK6KTYhLk+xSXU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=loMCp3Ado1Vrtw7xRucYfMKgzCliS4iLPIjSCwYpQ5U=;
-        b=TcbNvMENmo1LXWg+syNgpV7pfgjzPTaHmofIUKJVQfmm8kFpDA64K5OeQrGuRtixsn
-         y2sSoVSAEqxpN/e8QIbt809Jz7MShMvzo5g3tMNsgQGhi1Ssw3BnzZmeFKXmVa/JmzoL
-         5eqJq77KGOYrmXUvyiGlCWJsIicDAlFXeSWl/K7fvSopYSS9245gh+pSWjU0geWqGama
-         st/C3veIc2Rplxtm4sxVGH87L7G9sKfnj4Jy+ipFgbQMe5jHkxFvWqyhQH0u5Igdhfrf
-         VoZStyuRRHLeGQ6IIT+eWLb4p7Ul73GeGSiizOLDTUQNH0yLRlecfYgIdoMlbMWJeebl
-         5J0Q==
-X-Gm-Message-State: APt69E1h4shPs6XD5A/NG9Nrz9MSQv5nd87ZsI9PfyoSskE80NYJVKrT
-        AxSxk/oz9im4+UUhe31QC/t9Ig==
-X-Google-Smtp-Source: ADUXVKL5lniFCPjxWkj8Fk12ZuIRrgsDJmfJ9mO2oaH4sKKY4/dybXfek5MT5sPQ7GbTFpxzTY91dg==
-X-Received: by 2002:a19:4e86:: with SMTP id u6-v6mr130062lfk.105.1528807445586;
-        Tue, 12 Jun 2018 05:44:05 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id n84-v6sm18449lfi.19.2018.06.12.05.44.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 05:44:05 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 14:44:03 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Govind Singh <govinds@codeaurora.org>, bjorn.andersson@linaro.org
-Cc:     kvalo@codeaurora.org, davem@davemloft.net, netdev@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: FW: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
-Message-ID: <20180612124403.GA26986@centauri.lan>
-References: <20180612113907.15043-1-niklas.cassel@linaro.org>
- <20180612113907.15043-2-niklas.cassel@linaro.org>
- <7058492257914633b55fcd423e4c0b59@aphydexm01b.ap.qualcomm.com>
- <47cf8ec1b11d727ea928a307a431d4a2@codeaurora.org>
+        Tue, 12 Jun 2018 08:44:28 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180612124426euoutp01872149b6578012d3930be4107703b77e~3akp5T4Gt0630506305euoutp01i
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 12:44:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180612124426euoutp01872149b6578012d3930be4107703b77e~3akp5T4Gt0630506305euoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1528807466;
+        bh=5Cp+z7KyqdDLvd22Gzq1AMdd4Scj7rZQp7+rtXMJA3s=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=FZcSw0p7hLOvH2tghZ1Ct3LXiN9pQDUOh103EzFfO/+a4yH1IQg4J9xdLe++h5C5z
+         eYmht82fhPOfHKbmQkSna9sbXslMXt2F5qY1nbJVwxt/NLoJBC3lq0mG/BqDIZ+mE+
+         JJsgv/nh3C0wHQ1Ht4z1hWde83IltFpPBul9qqHc=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20180612124425eucas1p24f09df067254c32e75b322c4142e3aad~3akpL5cxA2650026500eucas1p2e;
+        Tue, 12 Jun 2018 12:44:25 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 93.B1.17380.920CF1B5; Tue, 12
+        Jun 2018 13:44:25 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20180612124424eucas1p101e61369a42132234d103ce52918b08e~3akoRUwbQ3138731387eucas1p17;
+        Tue, 12 Jun 2018 12:44:24 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20180612124424eusmtrp17f58fb2d892458ebcc6cfef147fd9be3~3akoAVFFn0306903069eusmtrp1-;
+        Tue, 12 Jun 2018 12:44:24 +0000 (GMT)
+X-AuditID: cbfec7f4-713ff700000043e4-7c-5b1fc029f95c
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id CA.AC.04183.820CF1B5; Tue, 12
+        Jun 2018 13:44:24 +0100 (BST)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20180612124424eusmtip23e848e823f0be27f20b33e8e01db75e7~3aknoFPS01131011310eusmtip2P;
+        Tue, 12 Jun 2018 12:44:24 +0000 (GMT)
+Subject: Re: [PATCH] PM / core: Fix supplier device runtime PM usage counter
+ imbalance
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Linux PM <linux-pm@vger.kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Lukas Wunner <lukas@wunner.de>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Jon Hunter <jonathanh@nvidia.com>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Date:   Tue, 12 Jun 2018 14:44:23 +0200
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+        Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <47cf8ec1b11d727ea928a307a431d4a2@codeaurora.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <10125310.W3e2TP0641@aspire.rjw.lan>
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djP87qaB+SjDT6vkrXYOGM9q0Xz4vVs
+        Fi2zFrFYXN41h83ic+8RRosXz6Utzpy+xGpxfG24A4fHnWt72Dz2z13D7tHb/I7NY8vVdhaP
+        vi2rGD0+b5LzmNG+jTWAPYrLJiU1J7MstUjfLoErY8LaSewFM+QqDr3pYWlgnCbRxcjBISFg
+        InH6qUIXIxeHkMAKRokHhyYwQjhfGCWWnf/HAuF8ZpSY1bSarYuRE6xjXcNcJhBbSGA5o8TG
+        9iiIoveMEju3rGIGSQgLREg0fHrDCGKLCARJrJ07iw2kiFngL6PEv9YzYAk2AUOJrrddbCB3
+        sAioSvx55QgSFhWIkdh2+QELiM0rIChxcuYTMJsTqPzjlOesIDazgLzE9rdzmCFscYlbT+Yz
+        gcyXEDjELjFrwXSo5jKJi78nMkNc7SJxueEiO4QtLPHq+BYoW0bi9OQeFojmZkaJ9hmz2CGc
+        HkaJrXN2QP1sLXH4+EVWkEuZBTQl1u/Shwg7SjxbO50dEpB8EjfeCkIcxCcxadt0Zogwr0RH
+        mxBEtZrErOPr4NYevHCJeQKj0iwkb85C8tosJK/NQti7gJFlFaN4amlxbnpqsVFearlecWJu
+        cWleul5yfu4mRmByOv3v+JcdjLv+JB1iFOBgVOLhjaiUixZiTSwrrsw9xCjBwawkwhu4VT5a
+        iDclsbIqtSg/vqg0J7X4EKM0B4uSOG+cRl2UkEB6YklqdmpqQWoRTJaJg1OqgXH1FP1nN5/U
+        b197Ljzi3cNXnVwpNu9OX6hU+t5zfQVDSMXGuCqvU7ff7dae2GttaHKMS2Tf2zli7TrbYt0n
+        du7uXZp6XHdpwqe7tbOOH5faG1V1X9FV92LXQ/aYzzcmyzmf9wvcszTXVnmPoP/GpQ7xIf8Z
+        VeefcPTkUp3jyHxHjSH7qb79nGlKLMUZiYZazEXFiQCf+/5JSgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrJIsWRmVeSWpSXmKPExsVy+t/xe7oaB+SjDd7dV7TYOGM9q0Xz4vVs
+        Fi2zFrFYXN41h83ic+8RRosXz6Utzpy+xGpxfG24A4fHnWt72Dz2z13D7tHb/I7NY8vVdhaP
+        vi2rGD0+b5LzmNG+jTWAPUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/O
+        JiU1J7MstUjfLkEvY8LaSewFM+QqDr3pYWlgnCbRxcjJISFgIrGuYS5TFyMXh5DAUkaJK9ca
+        2SASMhInpzWwQtjCEn+udYHFhQTeMkq8eO4LYgsLREg0fHrDCGKLCARJ3J/3hwXEZhb4zyhx
+        YWcKxNAWRolfM7+DDWITMJToegsxiFfATmL7ulNANgcHi4CqxJ9XjiBhUYEYidUbL7NDlAhK
+        nJz5BGwmJ1DrxynPWSHmm0nM2/yQGcKWl9j+dg6ULS5x68l8pgmMQrOQtM9C0jILScssJC0L
+        GFlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBEbjtmM/t+xg7HoXfIhRgINRiYd3Q7VctBBr
+        YllxZe4hRgkOZiUR3sCt8tFCvCmJlVWpRfnxRaU5qcWHGE2BfpvILCWanA9MFHkl8YamhuYW
+        lobmxubGZhZK4rznDSqjhATSE0tSs1NTC1KLYPqYODilGhgPy6h9eay5xGBi7FqFq/qaC3Zm
+        mr1/9k4gTsTlRvSKu8YHp6Yem3LU9HGRe9beY++tru05t4h3X76F3Qnpj/utr+l9fr+vRTXd
+        9YdsG/vH7FLptu2xF5YX7eaLnxSW+OjrZkd9OZ6WwI+pB0K94/i2zrjl+2rn7PyyAPmAvCf+
+        Btxf5kwzYvmuxFKckWioxVxUnAgA3BPfodwCAAA=
+Message-Id: <20180612124424eucas1p101e61369a42132234d103ce52918b08e~3akoRUwbQ3138731387eucas1p17@eucas1p1.samsung.com>
+X-CMS-MailID: 20180612124424eucas1p101e61369a42132234d103ce52918b08e
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20180612110807epcas5p10e076681eac6f50b01840c0052748d12
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20180612110807epcas5p10e076681eac6f50b01840c0052748d12
+References: <CGME20180612110807epcas5p10e076681eac6f50b01840c0052748d12@epcas5p1.samsung.com>
+        <10125310.W3e2TP0641@aspire.rjw.lan>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 06:02:48PM +0530, Govind Singh wrote:
-> On 2018-06-12 17:45, Govind Singh wrote:
-> > -----Original Message-----
-> > From: ath10k <ath10k-bounces@lists.infradead.org> On Behalf Of Niklas
-> > Cassel
-> > Sent: Tuesday, June 12, 2018 5:09 PM
-> > To: Kalle Valo <kvalo@codeaurora.org>; David S. Miller
-> > <davem@davemloft.net>
-> > Cc: Niklas Cassel <niklas.cassel@linaro.org>; netdev@vger.kernel.org;
-> > linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > ath10k@lists.infradead.org
-> > Subject: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
-> > 
-> > ATH10K_SNOC builds just fine with COMPILE_TEST, so make that possible.
-> > 
-> > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> > ---
-> >  drivers/net/wireless/ath/ath10k/Kconfig | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/net/wireless/ath/ath10k/Kconfig
-> > b/drivers/net/wireless/ath/ath10k/Kconfig
-> > index 54ff5930126c..6572a43590a8 100644
-> > --- a/drivers/net/wireless/ath/ath10k/Kconfig
-> > +++ b/drivers/net/wireless/ath/ath10k/Kconfig
-> > @@ -42,7 +42,8 @@ config ATH10K_USB
-> > 
-> >  config ATH10K_SNOC
-> >  	tristate "Qualcomm ath10k SNOC support (EXPERIMENTAL)"
-> > -	depends on ATH10K && ARCH_QCOM
-> > +	depends on ATH10K
-> > +	depends on ARCH_QCOM || COMPILE_TEST
-> >  	---help---
-> >  	  This module adds support for integrated WCN3990 chip connected
-> >  	  to system NOC(SNOC). Currently work in progress and will not
-> 
-> Thanks Niklas for enabling COMPILE_TEST. With QMI set of
-> changes(https://patchwork.kernel.org/patch/10448183/), we need to enable
-> COMPILE_TEST for
-> QCOM_SCM/QMI_HELPERS which seems broken today. Are you planning to fix the
-> same.
+Hi Rafael,
 
+On 2018-06-12 13:00, Rafael J. Wysocki wrote:
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> If a device link is added via device_link_add() by the driver of the
+> link's consumer device, the supplier's runtime PM usage counter is
+> going to be dropped by the pm_runtime_put_suppliers() call in
+> driver_probe_device().  However, in that case it is not incremented
+> unless the supplier driver is already present and the link is not
+> stateless.  That leads to a runtime PM usage counter imbalance for
+> the supplier device in a few cases.
+>
+> To prevent that from happening, bump up the supplier runtime
+> PM usage counter in device_link_add() for all links with the
+> DL_FLAG_PM_RUNTIME flag set that are added at the consumer probe
+> time.  Use pm_runtime_get_noresume() for that as the callers of
+> device_link_add() who want the supplier to be resumed by it should
+> pass DL_FLAG_RPM_ACTIVE in flags to it anyway.
+>
+> Fixes: 21d5c57b3726 (PM / runtime: Use device links)
+> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>
+> This is a replacement for commit 1e8378619841 (PM / runtime: Fixup
+> reference counting of device link suppliers at probe) that is going
+> to be reverted.
 
-Argh..
+Thanks Rafael for the patch. I've applied it and now I'm a bit puzzled.
+Let's get back to my IOMMU and codec case, mentioned here:
+https://marc.info/?l=linux-pm&m=152878741527962&w=2
 
-qcom_scm seems fine, it is just missing a single definition in the
-#else clause of include/linux/qcom_scm.h.
+Now, after applying your patch, when IOMMU creates a link with
+DL_FLAG_PM_RUNTIME to the jpeg device (this happens when jpeg device is
+being probed), it is not IOMMU is not runtime resumed anymore (that's
+because the patch changes pm_runtime_get_sync to pm_runtime_get_noresume).
+This means that until jpeg driver enables runtime pm for its device and
+finally performs runtime pm suspends/resume cycle, the supplier won't be
+resumed. On the other hand, when I add DL_FLAG_RPM_ACTIVE flag to link
+creation, the supplier is properly resumed, but then, once the jpeg
+device probe finishes, the supplier is still in runtime active state
+until a next runtime suspend/resume cycle of jpeg device. If I understand
+right, the DL_FLAG_RPM_ACTIVE flag should be there from the beginning,
+but that time it runtime pm part of links worked in a bit different way
+than now.
 
-+++ b/include/linux/qcom_scm.h
-@@ -89,6 +89,10 @@ static inline int qcom_scm_pas_mem_setup(u32 peripheral, phys_addr_t addr,                                     
- static inline int
- qcom_scm_pas_auth_and_reset(u32 peripheral) { return -ENODEV; }
- static inline int qcom_scm_pas_shutdown(u32 peripheral) { return -ENODEV; }                                                      
-+static inline int qcom_scm_assign_mem(phys_addr_t mem_addr, size_t mem_sz,                                                       
-+                                     unsigned int *src,
-+                                     struct qcom_scm_vmperm *newvm,                                                              
-+                                     int dest_cnt) { return -ENODEV; }                                                           
- static inline void qcom_scm_cpu_power_down(u32 flags) {}
- static inline u32 qcom_scm_get_version(void) { return 0; }
+Is there any way to keep old behavior?
 
+> ---
+>   drivers/base/core.c |   15 +++++++--------
+>   1 file changed, 7 insertions(+), 8 deletions(-)
+>
+> Index: linux-pm/drivers/base/core.c
+> ===================================================================
+> --- linux-pm.orig/drivers/base/core.c
+> +++ linux-pm/drivers/base/core.c
+> @@ -216,6 +216,13 @@ struct device_link *device_link_add(stru
+>   			link->rpm_active = true;
+>   		}
+>   		pm_runtime_new_link(consumer);
+> +		/*
+> +		 * If the link is being added by the consumer driver at probe
+> +		 * time, balance the decrementation of the supplier's runtime PM
+> +		 * usage counter after consumer probe in driver_probe_device().
+> +		 */
+> +		if (consumer->links.status == DL_DEV_PROBING)
+> +			pm_runtime_get_noresume(supplier);
+>   	}
+>   	get_device(supplier);
+>   	link->supplier = supplier;
+> @@ -234,14 +241,6 @@ struct device_link *device_link_add(stru
+>   		case DL_DEV_DRIVER_BOUND:
+>   			switch (consumer->links.status) {
+>   			case DL_DEV_PROBING:
+> -				/*
+> -				 * Balance the decrementation of the supplier's
+> -				 * runtime PM usage counter after consumer probe
+> -				 * in driver_probe_device().
+> -				 */
+> -				if (flags & DL_FLAG_PM_RUNTIME)
+> -					pm_runtime_get_sync(supplier);
+> -
+>   				link->status = DL_STATE_CONSUMER_PROBE;
+>   				break;
+>   			case DL_DEV_DRIVER_BOUND:
+>
+>
+>
+>
 
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
-include/linux/soc/qcom/qmi.h on the other hand doesn't have any
-dummy defintions at all.
-I think that it makes sense to be able to compile test
-the QMI helpers also on other archs..
-
-Bjorn, any opinion?
-
-
-> 
->  config QCOM_SCM
->  	bool
-> -	depends on ARM || ARM64
-> +	depends on ARM || ARM64 || COMPILE_TEST
->  	select RESET_CONTROLLER
-> 
-> 
->  config QCOM_SCM_64
->  	def_bool y
-> -	depends on QCOM_SCM && ARM64
-> +	depends on QCOM_SCM && ARM64 || COMPILE_TEST
-> 
->  config QCOM_QMI_HELPERS
->  	tristate
-> -	depends on ARCH_QCOM && NET
-> +	depends on (ARCH_QCOM || COMPILE_TEST) && NET
-> 
-> -obj-$(CONFIG_ARCH_QCOM)		+= qcom/
-> +obj-y				+= qcom/
-> 
-> __qcom_scm_init/qcom_scm_call wrapper to support COMPILE_TEST.
-> 
-> 
-> 
-> BR,
-> Govind
