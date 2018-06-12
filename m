@@ -3,112 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F05CCC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:45:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8FB24C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A69C7204EE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:45:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A69C7204EE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 50F9F204EE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50F9F204EE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933096AbeFLGpg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 02:45:36 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57562 "EHLO mx2.suse.de"
+        id S933182AbeFLGp7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 02:45:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57612 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753677AbeFLGpe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 02:45:34 -0400
+        id S932944AbeFLGp6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 02:45:58 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 0040CACE0;
-        Tue, 12 Jun 2018 06:45:32 +0000 (UTC)
-Subject: Re: [Xen-devel] [PATCH] xen/netfront: raise max number of slots in
- xennet_get_responses()
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org,
-        netdev@vger.kernel.org
-Cc:     davem@davemloft.net
-References: <20180611075742.1691-1-jgross@suse.com>
- <e970a52b-d4ad-30c1-65ca-15d7679951da@oracle.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <788aa6a6-3fb2-f136-6219-d69b952a55c6@suse.com>
-Date:   Tue, 12 Jun 2018 08:45:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <e970a52b-d4ad-30c1-65ca-15d7679951da@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 2A2AEACE0;
+        Tue, 12 Jun 2018 06:45:57 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 08:45:56 +0200
+Message-ID: <s5hsh5szemz.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     "Zhouyang Jia" <jiazhouyang09@gmail.com>
+Cc:     <alsa-devel@alsa-project.org>,
+        "Bhumika Goyal" <bhumirks@gmail.com>,
+        "Jaroslav Kysela" <perex@perex.cz>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ALSA: lx6464es: add error handling for pci_ioremap_bar
+In-Reply-To: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/06/18 20:59, Boris Ostrovsky wrote:
-> On 06/11/2018 03:57 AM, Juergen Gross wrote:
->> The max number of slots used in xennet_get_responses() is set to
->> MAX_SKB_FRAGS + (rx->status <= RX_COPY_THRESHOLD).
->>
->> In old kernel-xen MAX_SKB_FRAGS was 18, while nowadays it is 17. This
->> difference is resulting in frequent messages "too many slots" and a
->> reduced network throughput for some workloads (factor 10 below that of
->> a kernel-xen based guest).
->>
->> Replacing MAX_SKB_FRAGS by XEN_NETIF_NR_SLOTS_MIN for calculation of
->> the max number of slots to use solves that problem (tests showed no
->> more messages "too many slots" and throughput was as high as with the
->> kernel-xen based guest system).
->>
->> Signed-off-by: Juergen Gross <jgross@suse.com>
+On Tue, 12 Jun 2018 05:23:14 +0200,
+Zhouyang Jia wrote:
 > 
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+> When pci_ioremap_bar fails, the lack of error-handling code may
+> cause unexpected results.
 > 
-> I wonder also whether netfront_tx_slot_available() is meant to be
+> This patch adds error-handling code after calling pci_ioremap_bar.
 > 
-> return (queue->tx.req_prod_pvt - queue->tx.rsp_cons) <
->                 (NET_TX_RING_SIZE - XEN_NETIF_NR_SLOTS_MIN - 1);
-> 
-> which is the same numeric value but provides a more accurate description
-> of what is being tested.
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 
-Yes, this is a sensible idea. I'll add that, keeping your R-b.
+This patch makes no sense, sorry.  The whole lx6464es error handling
+there is buggy.  We need to fix it more properly.
+
+And, you must have noticed a bad smell in that change before
+submitting this.  Basically, using the same goto label for the error
+handling of the next step is already fishy.  In this case, you'd have
+to unmap at the error path after this point.  If you can use the same
+label, it means that the unmap is missing -- already something wrong.
 
 
-Juergen
+thanks,
 
+Takashi
+
+> ---
+>  sound/pci/lx6464es/lx6464es.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+> 
+> diff --git a/sound/pci/lx6464es/lx6464es.c b/sound/pci/lx6464es/lx6464es.c
+> index 9655b08..6157b6d 100644
+> --- a/sound/pci/lx6464es/lx6464es.c
+> +++ b/sound/pci/lx6464es/lx6464es.c
+> @@ -1016,6 +1016,10 @@ static int snd_lx6464es_create(struct snd_card *card,
+>  
+>  	/* dsp port */
+>  	chip->port_dsp_bar = pci_ioremap_bar(pci, 2);
+> +	if (!chip->port_dsp_bar) {
+> +		dev_err(card->dev, "cannot remap PCI memory region\n");
+> +		goto request_irq_failed;
+> +	}
+>  
+>  	err = request_threaded_irq(pci->irq, lx_interrupt, lx_threaded_irq,
+>  				   IRQF_SHARED, KBUILD_MODNAME, chip);
+> -- 
+> 2.7.4
+> 
+> 
