@@ -3,109 +3,98 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 19C3CC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:50:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 83F8BC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:52:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3CC82086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:50:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3CC82086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 3AC16208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 13:52:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AC16208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933715AbeFLNuN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 09:50:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:37236 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933203AbeFLNuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 09:50:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id D4512ADCA;
-        Tue, 12 Jun 2018 13:50:10 +0000 (UTC)
-Subject: Re: [PATCH v5 3/3] Input: xen-kbdfront - allow better run-time
- configuration
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dmitry.torokhov@gmail.com,
-        lyan@suse.com, boris.ostrovsky@oracle.com
-Cc:     konrad.wilk@oracle.com, andrii_chepurnyi@epam.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180612074856.28451-1-andr2000@gmail.com>
- <20180612074856.28451-4-andr2000@gmail.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <5fbac8d0-a3cf-af8a-690e-947752a53ab6@suse.com>
-Date:   Tue, 12 Jun 2018 15:50:08 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180612074856.28451-4-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+        id S933753AbeFLNwy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 09:52:54 -0400
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:54046 "EHLO
+        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S933203AbeFLNww (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 09:52:52 -0400
+Received: from e110455-lin.cambridge.arm.com (e110455-lin.cambridge.arm.com [10.2.131.61])
+        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id w5CDqX1l016479;
+        Tue, 12 Jun 2018 14:52:33 +0100
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     Gustavo Padovan <gustavo@padovan.org>
+Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Eric Anholt <eric@anholt.net>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Stone <daniels@collabora.com>,
+        Rob Clark <robdclark@gmail.com>
+Subject: [PATCH v10 0/3] drm: Introduce writeback connectors
+Date:   Tue, 12 Jun 2018 14:52:30 +0100
+Message-Id: <20180612135233.18575-1-Liviu.Dudau@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/18 09:48, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> 
-> It is now only possible to control if multi-touch virtual device
-> is created or not (via the corresponding XenStore entries),
-> but keyboard and pointer devices are always created.
-> In some cases this is not desirable. For example, if virtual
-> keyboard device is exposed to Android then the latter won't
-> automatically show on-screen keyboard as it expects that a
-> physical keyboard device can be used for typing.
-> 
-> Utilize keyboard and pointer device XenStore feature fields to
-> configure which virtual devices are created:
->  - set "feature-disable-keyboard" to 1 if no keyboard device
->    needs to be created
->  - set "feature-disable-pointer" to 1 if no pointer device
->    needs to be created
-> Keep old behavior by default.
-> 
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> Suggested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
-> Tested-by: Andrii Chepurnyi <andrii_chepurnyi@epam.com>
+Hi,
 
-Reviewed-by: Juergen Gross <jgross@suse.com>
+This is v10 of the writeback connector series. Compared to v9 I've
+reverted to the v6 way of cleaning up the writeback job in the cleanup_work()
+function, where we also drop the reference to the job's framebuffer. I was
+trying to come up with a reference counted implementation for the job, but
+Sean Paul pointed out to Brian that it seems to be safe to free work_struct
+structures in the workqueue callback, so we are going back to the original
+implementation.
 
+While doing that, I've also updated the patcheset to use the latest
+drm_framebuffer_{put,get,assign} functions for managing the framebuffer
+reference that the wriback job holds.
 
-Juergen
+I will ask Gustavo to pull this series into drm-misc if there are no further
+comments.
+
+Best regards,
+Liviu
+
+Brian Starkey (2):
+  drm: Add writeback connector type
+  drm: writeback: Add out-fences for writeback connectors
+
+Liviu Dudau (1):
+  drm: writeback: Add client capability for exposing writeback
+    connectors
+
+ Documentation/gpu/drm-kms.rst            |   9 +
+ drivers/gpu/drm/Makefile                 |   2 +-
+ drivers/gpu/drm/drm_atomic.c             | 223 ++++++++++++++-
+ drivers/gpu/drm/drm_atomic_helper.c      |  25 ++
+ drivers/gpu/drm/drm_connector.c          |   4 +-
+ drivers/gpu/drm/drm_ioctl.c              |   7 +
+ drivers/gpu/drm/drm_mode_config.c        |   5 +
+ drivers/gpu/drm/drm_writeback.c          | 350 +++++++++++++++++++++++
+ include/drm/drm_atomic.h                 |  11 +
+ include/drm/drm_connector.h              |  13 +
+ include/drm/drm_file.h                   |   7 +
+ include/drm/drm_mode_config.h            |  23 ++
+ include/drm/drm_modeset_helper_vtables.h |  11 +
+ include/drm/drm_writeback.h              | 130 +++++++++
+ include/uapi/drm/drm.h                   |   9 +
+ include/uapi/drm/drm_mode.h              |   1 +
+ 16 files changed, 819 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/gpu/drm/drm_writeback.c
+ create mode 100644 include/drm/drm_writeback.h
+
+-- 
+2.17.1
+
