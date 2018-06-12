@@ -2,657 +2,83 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 022E5C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:36:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 96A83C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:38:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B62B208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:36:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzakXj4b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B62B208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3ECA7208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 09:38:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ECA7208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934011AbeFLJgO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 05:36:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933974AbeFLJgK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 05:36:10 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C0C9F208B0;
-        Tue, 12 Jun 2018 09:36:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528796170;
-        bh=WfKBFqG5myqdTQtKCY0sdWJ1GR/xEjOB45sy+5Mg2VI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WzakXj4bYV/JeHxLIU6yky9XnO9Qb2xqDGPoeSP+2DmS/BJ7jHCkUZIRQYIcNfzJ9
-         7fIhLA1ER7A3syZG696VYLwioZ9dqSevPOfhxOyu6CwDRM+Ffs1MqWgZxB31ISKD1G
-         BhuEf4mQ4qcpZoBDkvhHWF+wKWe2W3cReWWHGw0c=
-Date:   Tue, 12 Jun 2018 11:35:49 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 4.17.1
-Message-ID: <20180612093549.GB26677@kroah.com>
-References: <20180612093539.GA26677@kroah.com>
+        id S1754322AbeFLJiM (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 05:38:12 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:34601 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754182AbeFLJiL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 05:38:11 -0400
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1fSfkb-0006T6-3V; Tue, 12 Jun 2018 09:38:05 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        David Airlie <airlied@linux.ie>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][V3] drm/i915/guc: fix GEM_BUG_ON check
+Date:   Tue, 12 Jun 2018 10:38:04 +0100
+Message-Id: <20180612093804.11341-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.17.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612093539.GA26677@kroah.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Documentation/networking/netdev-FAQ.txt b/Documentation/networking/netdev-FAQ.txt
-index 2a3278d5cf35..fa951b820b25 100644
---- a/Documentation/networking/netdev-FAQ.txt
-+++ b/Documentation/networking/netdev-FAQ.txt
-@@ -179,6 +179,15 @@ A: No.  See above answer.  In short, if you think it really belongs in
-    dash marker line as described in Documentation/process/submitting-patches.rst to
-    temporarily embed that information into the patch that you send.
+From: Colin Ian King <colin.king@canonical.com>
+
+The check for level being less than zero always false because flags
+is currently unsigned and can never be negative. Fix this by making
+level a s32.
+
+Detected by CoverityScan, CID#1468363 ("Macro compares unsigned to 0")
+
+Fixes: cb5d64e9f13e ("drm/i915/guc: Allow user to control default GuC logging")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+
+---
+V3: Make level s32 and add the missing Fixes: tag, thanks to Dan Carpenter and
+Jani Nikula for correcting my mistakes
+
+---
+ drivers/gpu/drm/i915/intel_guc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/i915/intel_guc.c b/drivers/gpu/drm/i915/intel_guc.c
+index 116f4ccf1bbd..bdb1fab322bf 100644
+--- a/drivers/gpu/drm/i915/intel_guc.c
++++ b/drivers/gpu/drm/i915/intel_guc.c
+@@ -205,7 +205,7 @@ void intel_guc_fini(struct intel_guc *guc)
  
-+Q: Are all networking bug fixes backported to all stable releases?
-+
-+A: Due to capacity, Dave could only take care of the backports for the last
-+   2 stable releases. For earlier stable releases, each stable branch maintainer
-+   is supposed to take care of them. If you find any patch is missing from an
-+   earlier stable branch, please notify stable@vger.kernel.org with either a
-+   commit ID or a formal patch backported, and CC Dave and other relevant
-+   networking developers.
-+
- Q: Someone said that the comment style and coding convention is different
-    for the networking content.  Is this true?
- 
-diff --git a/Makefile b/Makefile
-index 554dcaddbce4..e551c9af6a06 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,7 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- VERSION = 4
- PATCHLEVEL = 17
--SUBLEVEL = 0
-+SUBLEVEL = 1
- EXTRAVERSION =
- NAME = Merciless Moray
- 
-diff --git a/drivers/net/dsa/b53/b53_common.c b/drivers/net/dsa/b53/b53_common.c
-index 3da5fca77cbd..bbc6cc609ec3 100644
---- a/drivers/net/dsa/b53/b53_common.c
-+++ b/drivers/net/dsa/b53/b53_common.c
-@@ -684,7 +684,8 @@ static int b53_switch_reset(struct b53_device *dev)
- 	 * still use this driver as a library and need to perform the reset
- 	 * earlier.
- 	 */
--	if (dev->chip_id == BCM58XX_DEVICE_ID) {
-+	if (dev->chip_id == BCM58XX_DEVICE_ID ||
-+	    dev->chip_id == BCM583XX_DEVICE_ID) {
- 		b53_read8(dev, B53_CTRL_PAGE, B53_SOFTRESET, &reg);
- 		reg |= SW_RST | EN_SW_RST | EN_CH_RST;
- 		b53_write8(dev, B53_CTRL_PAGE, B53_SOFTRESET, reg);
-@@ -1879,6 +1880,18 @@ static const struct b53_chip_data b53_switch_chips[] = {
- 		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
- 		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
- 	},
-+	{
-+		.chip_id = BCM583XX_DEVICE_ID,
-+		.dev_name = "BCM583xx/11360",
-+		.vlans = 4096,
-+		.enabled_ports = 0x103,
-+		.arl_entries = 4,
-+		.cpu_port = B53_CPU_PORT,
-+		.vta_regs = B53_VTA_REGS,
-+		.duplex_reg = B53_DUPLEX_STAT_GE,
-+		.jumbo_pm_reg = B53_JUMBO_PORT_MASK,
-+		.jumbo_size_reg = B53_JUMBO_MAX_SIZE,
-+	},
- 	{
- 		.chip_id = BCM7445_DEVICE_ID,
- 		.dev_name = "BCM7445",
-diff --git a/drivers/net/dsa/b53/b53_priv.h b/drivers/net/dsa/b53/b53_priv.h
-index 3b57f47d0e79..b232aaae20aa 100644
---- a/drivers/net/dsa/b53/b53_priv.h
-+++ b/drivers/net/dsa/b53/b53_priv.h
-@@ -62,6 +62,7 @@ enum {
- 	BCM53018_DEVICE_ID = 0x53018,
- 	BCM53019_DEVICE_ID = 0x53019,
- 	BCM58XX_DEVICE_ID = 0x5800,
-+	BCM583XX_DEVICE_ID = 0x58300,
- 	BCM7445_DEVICE_ID = 0x7445,
- 	BCM7278_DEVICE_ID = 0x7278,
- };
-@@ -181,6 +182,7 @@ static inline int is5301x(struct b53_device *dev)
- static inline int is58xx(struct b53_device *dev)
+ static u32 get_log_control_flags(void)
  {
- 	return dev->chip_id == BCM58XX_DEVICE_ID ||
-+		dev->chip_id == BCM583XX_DEVICE_ID ||
- 		dev->chip_id == BCM7445_DEVICE_ID ||
- 		dev->chip_id == BCM7278_DEVICE_ID;
- }
-diff --git a/drivers/net/dsa/b53/b53_srab.c b/drivers/net/dsa/b53/b53_srab.c
-index c37ffd1b6833..8247481eaa06 100644
---- a/drivers/net/dsa/b53/b53_srab.c
-+++ b/drivers/net/dsa/b53/b53_srab.c
-@@ -364,7 +364,7 @@ static const struct of_device_id b53_srab_of_match[] = {
- 	{ .compatible = "brcm,bcm53018-srab" },
- 	{ .compatible = "brcm,bcm53019-srab" },
- 	{ .compatible = "brcm,bcm5301x-srab" },
--	{ .compatible = "brcm,bcm11360-srab", .data = (void *)BCM58XX_DEVICE_ID },
-+	{ .compatible = "brcm,bcm11360-srab", .data = (void *)BCM583XX_DEVICE_ID },
- 	{ .compatible = "brcm,bcm58522-srab", .data = (void *)BCM58XX_DEVICE_ID },
- 	{ .compatible = "brcm,bcm58525-srab", .data = (void *)BCM58XX_DEVICE_ID },
- 	{ .compatible = "brcm,bcm58535-srab", .data = (void *)BCM58XX_DEVICE_ID },
-@@ -372,7 +372,7 @@ static const struct of_device_id b53_srab_of_match[] = {
- 	{ .compatible = "brcm,bcm58623-srab", .data = (void *)BCM58XX_DEVICE_ID },
- 	{ .compatible = "brcm,bcm58625-srab", .data = (void *)BCM58XX_DEVICE_ID },
- 	{ .compatible = "brcm,bcm88312-srab", .data = (void *)BCM58XX_DEVICE_ID },
--	{ .compatible = "brcm,cygnus-srab", .data = (void *)BCM58XX_DEVICE_ID },
-+	{ .compatible = "brcm,cygnus-srab", .data = (void *)BCM583XX_DEVICE_ID },
- 	{ .compatible = "brcm,nsp-srab", .data = (void *)BCM58XX_DEVICE_ID },
- 	{ /* sentinel */ },
- };
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-index 7dd83d0ef0a0..22243c480a05 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -588,7 +588,7 @@ static void bnx2x_ets_e3b0_nig_disabled(const struct link_params *params,
- 	 * slots for the highest priority.
- 	 */
- 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
--		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
-+		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
- 	/* Mapping between the CREDIT_WEIGHT registers and actual client
- 	 * numbers
- 	 */
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index ddb6bf85a59c..e141563a4682 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -1004,7 +1004,8 @@ static void team_port_disable(struct team *team,
- static void __team_compute_features(struct team *team)
- {
- 	struct team_port *port;
--	u32 vlan_features = TEAM_VLAN_FEATURES & NETIF_F_ALL_FOR_ALL;
-+	netdev_features_t vlan_features = TEAM_VLAN_FEATURES &
-+					  NETIF_F_ALL_FOR_ALL;
- 	netdev_features_t enc_features  = TEAM_ENC_FEATURES;
- 	unsigned short max_hard_header_len = ETH_HLEN;
- 	unsigned int dst_release_flag = IFF_XMIT_DST_RELEASE |
-diff --git a/drivers/pci/host/pci-hyperv.c b/drivers/pci/host/pci-hyperv.c
-index 50cdefe3f6d3..c75199538c05 100644
---- a/drivers/pci/host/pci-hyperv.c
-+++ b/drivers/pci/host/pci-hyperv.c
-@@ -556,6 +556,26 @@ static void put_pcichild(struct hv_pci_dev *hv_pcidev,
- static void get_hvpcibus(struct hv_pcibus_device *hv_pcibus);
- static void put_hvpcibus(struct hv_pcibus_device *hv_pcibus);
+-	u32 level = i915_modparams.guc_log_level;
++	s32 level = i915_modparams.guc_log_level;
+ 	u32 flags = 0;
  
-+/*
-+ * There is no good way to get notified from vmbus_onoffer_rescind(),
-+ * so let's use polling here, since this is not a hot path.
-+ */
-+static int wait_for_response(struct hv_device *hdev,
-+			     struct completion *comp)
-+{
-+	while (true) {
-+		if (hdev->channel->rescind) {
-+			dev_warn_once(&hdev->device, "The device is gone.\n");
-+			return -ENODEV;
-+		}
-+
-+		if (wait_for_completion_timeout(comp, HZ / 10))
-+			break;
-+	}
-+
-+	return 0;
-+}
-+
- /**
-  * devfn_to_wslot() - Convert from Linux PCI slot to Windows
-  * @devfn:	The Linux representation of PCI slot
-@@ -1568,7 +1588,8 @@ static struct hv_pci_dev *new_pcichild_device(struct hv_pcibus_device *hbus,
- 	if (ret)
- 		goto error;
- 
--	wait_for_completion(&comp_pkt.host_event);
-+	if (wait_for_response(hbus->hdev, &comp_pkt.host_event))
-+		goto error;
- 
- 	hpdev->desc = *desc;
- 	refcount_set(&hpdev->refs, 1);
-@@ -2069,15 +2090,16 @@ static int hv_pci_protocol_negotiation(struct hv_device *hdev)
- 				sizeof(struct pci_version_request),
- 				(unsigned long)pkt, VM_PKT_DATA_INBAND,
- 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
-+		if (!ret)
-+			ret = wait_for_response(hdev, &comp_pkt.host_event);
-+
- 		if (ret) {
- 			dev_err(&hdev->device,
--				"PCI Pass-through VSP failed sending version reqquest: %#x",
-+				"PCI Pass-through VSP failed to request version: %d",
- 				ret);
- 			goto exit;
- 		}
- 
--		wait_for_completion(&comp_pkt.host_event);
--
- 		if (comp_pkt.completion_status >= 0) {
- 			pci_protocol_version = pci_protocol_versions[i];
- 			dev_info(&hdev->device,
-@@ -2286,11 +2308,12 @@ static int hv_pci_enter_d0(struct hv_device *hdev)
- 	ret = vmbus_sendpacket(hdev->channel, d0_entry, sizeof(*d0_entry),
- 			       (unsigned long)pkt, VM_PKT_DATA_INBAND,
- 			       VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
-+	if (!ret)
-+		ret = wait_for_response(hdev, &comp_pkt.host_event);
-+
- 	if (ret)
- 		goto exit;
- 
--	wait_for_completion(&comp_pkt.host_event);
--
- 	if (comp_pkt.completion_status < 0) {
- 		dev_err(&hdev->device,
- 			"PCI Pass-through VSP failed D0 Entry with status %x\n",
-@@ -2330,11 +2353,10 @@ static int hv_pci_query_relations(struct hv_device *hdev)
- 
- 	ret = vmbus_sendpacket(hdev->channel, &message, sizeof(message),
- 			       0, VM_PKT_DATA_INBAND, 0);
--	if (ret)
--		return ret;
-+	if (!ret)
-+		ret = wait_for_response(hdev, &comp);
- 
--	wait_for_completion(&comp);
--	return 0;
-+	return ret;
- }
- 
- /**
-@@ -2404,11 +2426,11 @@ static int hv_send_resources_allocated(struct hv_device *hdev)
- 				size_res, (unsigned long)pkt,
- 				VM_PKT_DATA_INBAND,
- 				VMBUS_DATA_PACKET_FLAG_COMPLETION_REQUESTED);
-+		if (!ret)
-+			ret = wait_for_response(hdev, &comp_pkt.host_event);
- 		if (ret)
- 			break;
- 
--		wait_for_completion(&comp_pkt.host_event);
--
- 		if (comp_pkt.completion_status < 0) {
- 			ret = -EPROTO;
- 			dev_err(&hdev->device,
-diff --git a/include/linux/mroute_base.h b/include/linux/mroute_base.h
-index d617fe45543e..d633f737b3c6 100644
---- a/include/linux/mroute_base.h
-+++ b/include/linux/mroute_base.h
-@@ -307,16 +307,6 @@ static inline void vif_device_init(struct vif_device *v,
- {
- }
- 
--static inline void *
--mr_table_alloc(struct net *net, u32 id,
--	       struct mr_table_ops *ops,
--	       void (*expire_func)(struct timer_list *t),
--	       void (*table_set)(struct mr_table *mrt,
--				 struct net *net))
--{
--	return NULL;
--}
--
- static inline void *mr_mfc_find_parent(struct mr_table *mrt,
- 				       void *hasharg, int parent)
- {
-diff --git a/include/net/ipv6.h b/include/net/ipv6.h
-index 836f31af1369..a406f2e8680a 100644
---- a/include/net/ipv6.h
-+++ b/include/net/ipv6.h
-@@ -906,6 +906,11 @@ static inline __be32 ip6_make_flowinfo(unsigned int tclass, __be32 flowlabel)
- 	return htonl(tclass << IPV6_TCLASS_SHIFT) | flowlabel;
- }
- 
-+static inline __be32 flowi6_get_flowlabel(const struct flowi6 *fl6)
-+{
-+	return fl6->flowlabel & IPV6_FLOWLABEL_MASK;
-+}
-+
- /*
-  *	Prototypes exported by ipv6
-  */
-diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
-index d29f09bc5ff9..0234f8d1f0ac 100644
---- a/net/core/flow_dissector.c
-+++ b/net/core/flow_dissector.c
-@@ -1334,7 +1334,7 @@ __u32 __get_hash_from_flowi6(const struct flowi6 *fl6, struct flow_keys *keys)
- 	keys->ports.src = fl6->fl6_sport;
- 	keys->ports.dst = fl6->fl6_dport;
- 	keys->keyid.keyid = fl6->fl6_gre_key;
--	keys->tags.flow_label = (__force u32)fl6->flowlabel;
-+	keys->tags.flow_label = (__force u32)flowi6_get_flowlabel(fl6);
- 	keys->basic.ip_proto = fl6->flowi6_proto;
- 
- 	return flow_hash_from_keys(keys);
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index 45936922d7e2..19f6ab5de6e1 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -2256,6 +2256,10 @@ static int do_setlink(const struct sk_buff *skb,
- 	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
- 
-+	err = validate_linkmsg(dev, tb);
-+	if (err < 0)
-+		return err;
-+
- 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD] || tb[IFLA_IF_NETNSID]) {
- 		struct net *net = rtnl_link_get_net_capable(skb, dev_net(dev),
- 							    tb, CAP_NET_ADMIN);
-@@ -2619,10 +2623,6 @@ static int rtnl_setlink(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		goto errout;
- 	}
- 
--	err = validate_linkmsg(dev, tb);
--	if (err < 0)
--		goto errout;
--
- 	err = do_setlink(skb, dev, ifm, extack, tb, ifname, 0);
- errout:
- 	return err;
-diff --git a/net/ipv4/fib_semantics.c b/net/ipv4/fib_semantics.c
-index c27122f01b87..cfae17335705 100644
---- a/net/ipv4/fib_semantics.c
-+++ b/net/ipv4/fib_semantics.c
-@@ -717,6 +717,8 @@ bool fib_metrics_match(struct fib_config *cfg, struct fib_info *fi)
- 			nla_strlcpy(tmp, nla, sizeof(tmp));
- 			val = tcp_ca_get_key_by_name(fi->fib_net, tmp, &ecn_ca);
- 		} else {
-+			if (nla_len(nla) != sizeof(u32))
-+				return false;
- 			val = nla_get_u32(nla);
- 		}
- 
-@@ -1043,6 +1045,8 @@ fib_convert_metrics(struct fib_info *fi, const struct fib_config *cfg)
- 			if (val == TCP_CA_UNSPEC)
- 				return -EINVAL;
- 		} else {
-+			if (nla_len(nla) != sizeof(u32))
-+				return -EINVAL;
- 			val = nla_get_u32(nla);
- 		}
- 		if (type == RTAX_ADVMSS && val > 65535 - 40)
-diff --git a/net/ipv4/ipmr_base.c b/net/ipv4/ipmr_base.c
-index 30221701614c..cafb0506c8c9 100644
---- a/net/ipv4/ipmr_base.c
-+++ b/net/ipv4/ipmr_base.c
-@@ -35,17 +35,19 @@ mr_table_alloc(struct net *net, u32 id,
- 				 struct net *net))
- {
- 	struct mr_table *mrt;
-+	int err;
- 
- 	mrt = kzalloc(sizeof(*mrt), GFP_KERNEL);
- 	if (!mrt)
--		return NULL;
-+		return ERR_PTR(-ENOMEM);
- 	mrt->id = id;
- 	write_pnet(&mrt->net, net);
- 
- 	mrt->ops = *ops;
--	if (rhltable_init(&mrt->mfc_hash, mrt->ops.rht_params)) {
-+	err = rhltable_init(&mrt->mfc_hash, mrt->ops.rht_params);
-+	if (err) {
- 		kfree(mrt);
--		return NULL;
-+		return ERR_PTR(err);
- 	}
- 	INIT_LIST_HEAD(&mrt->mfc_cache_list);
- 	INIT_LIST_HEAD(&mrt->mfc_unres_queue);
-diff --git a/net/ipv4/netfilter/nf_flow_table_ipv4.c b/net/ipv4/netfilter/nf_flow_table_ipv4.c
-index 0cd46bffa469..fc3923932eda 100644
---- a/net/ipv4/netfilter/nf_flow_table_ipv4.c
-+++ b/net/ipv4/netfilter/nf_flow_table_ipv4.c
-@@ -213,7 +213,7 @@ nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
- 	enum flow_offload_tuple_dir dir;
- 	struct flow_offload *flow;
- 	struct net_device *outdev;
--	const struct rtable *rt;
-+	struct rtable *rt;
- 	struct iphdr *iph;
- 	__be32 nexthop;
- 
-@@ -234,7 +234,7 @@ nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
- 	dir = tuplehash->tuple.dir;
- 	flow = container_of(tuplehash, struct flow_offload, tuplehash[dir]);
- 
--	rt = (const struct rtable *)flow->tuplehash[dir].tuple.dst_cache;
-+	rt = (struct rtable *)flow->tuplehash[dir].tuple.dst_cache;
- 	if (unlikely(nf_flow_exceeds_mtu(skb, rt)))
- 		return NF_ACCEPT;
- 
-@@ -251,6 +251,7 @@ nf_flow_offload_ip_hook(void *priv, struct sk_buff *skb,
- 
- 	skb->dev = outdev;
- 	nexthop = rt_nexthop(rt, flow->tuplehash[!dir].tuple.src_v4.s_addr);
-+	skb_dst_set_noref(skb, &rt->dst);
- 	neigh_xmit(NEIGH_ARP_TABLE, outdev, &nexthop, skb);
- 
- 	return NF_STOLEN;
-diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 7b6d1689087b..af49f6cb5d3e 100644
---- a/net/ipv6/ip6_output.c
-+++ b/net/ipv6/ip6_output.c
-@@ -507,7 +507,8 @@ int ip6_forward(struct sk_buff *skb)
- 	   send redirects to source routed frames.
- 	   We don't send redirects to frames decapsulated from IPsec.
- 	 */
--	if (skb->dev == dst->dev && opt->srcrt == 0 && !skb_sec_path(skb)) {
-+	if (IP6CB(skb)->iif == dst->dev->ifindex &&
-+	    opt->srcrt == 0 && !skb_sec_path(skb)) {
- 		struct in6_addr *target = NULL;
- 		struct inet_peer *peer;
- 		struct rt6_info *rt;
-diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-index 298fd8b6ed17..37936671dcb3 100644
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -227,8 +227,8 @@ static int __net_init ip6mr_rules_init(struct net *net)
- 	INIT_LIST_HEAD(&net->ipv6.mr6_tables);
- 
- 	mrt = ip6mr_new_table(net, RT6_TABLE_DFLT);
--	if (!mrt) {
--		err = -ENOMEM;
-+	if (IS_ERR(mrt)) {
-+		err = PTR_ERR(mrt);
- 		goto err1;
- 	}
- 
-@@ -301,8 +301,13 @@ static int ip6mr_fib_lookup(struct net *net, struct flowi6 *flp6,
- 
- static int __net_init ip6mr_rules_init(struct net *net)
- {
--	net->ipv6.mrt6 = ip6mr_new_table(net, RT6_TABLE_DFLT);
--	return net->ipv6.mrt6 ? 0 : -ENOMEM;
-+	struct mr_table *mrt;
-+
-+	mrt = ip6mr_new_table(net, RT6_TABLE_DFLT);
-+	if (IS_ERR(mrt))
-+		return PTR_ERR(mrt);
-+	net->ipv6.mrt6 = mrt;
-+	return 0;
- }
- 
- static void __net_exit ip6mr_rules_exit(struct net *net)
-@@ -1757,9 +1762,11 @@ int ip6_mroute_setsockopt(struct sock *sk, int optname, char __user *optval, uns
- 
- 		rtnl_lock();
- 		ret = 0;
--		if (!ip6mr_new_table(net, v))
--			ret = -ENOMEM;
--		raw6_sk(sk)->ip6mr_table = v;
-+		mrt = ip6mr_new_table(net, v);
-+		if (IS_ERR(mrt))
-+			ret = PTR_ERR(mrt);
-+		else
-+			raw6_sk(sk)->ip6mr_table = v;
- 		rtnl_unlock();
- 		return ret;
- 	}
-diff --git a/net/ipv6/ndisc.c b/net/ipv6/ndisc.c
-index 9de4dfb126ba..525051a886bc 100644
---- a/net/ipv6/ndisc.c
-+++ b/net/ipv6/ndisc.c
-@@ -1576,6 +1576,12 @@ void ndisc_send_redirect(struct sk_buff *skb, const struct in6_addr *target)
- 	   ops_data_buf[NDISC_OPS_REDIRECT_DATA_SPACE], *ops_data = NULL;
- 	bool ret;
- 
-+	if (netif_is_l3_master(skb->dev)) {
-+		dev = __dev_get_by_index(dev_net(skb->dev), IPCB(skb)->iif);
-+		if (!dev)
-+			return;
-+	}
-+
- 	if (ipv6_get_lladdr(dev, &saddr_buf, IFA_F_TENTATIVE)) {
- 		ND_PRINTK(2, warn, "Redirect: no link-local address on %s\n",
- 			  dev->name);
-diff --git a/net/ipv6/netfilter/nf_flow_table_ipv6.c b/net/ipv6/netfilter/nf_flow_table_ipv6.c
-index 207cb35569b1..2d6652146bba 100644
---- a/net/ipv6/netfilter/nf_flow_table_ipv6.c
-+++ b/net/ipv6/netfilter/nf_flow_table_ipv6.c
-@@ -243,6 +243,7 @@ nf_flow_offload_ipv6_hook(void *priv, struct sk_buff *skb,
- 
- 	skb->dev = outdev;
- 	nexthop = rt6_nexthop(rt, &flow->tuplehash[!dir].tuple.src_v6);
-+	skb_dst_set_noref(skb, &rt->dst);
- 	neigh_xmit(NEIGH_ND_TABLE, outdev, nexthop, skb);
- 
- 	return NF_STOLEN;
-diff --git a/net/ipv6/route.c b/net/ipv6/route.c
-index f4d61736c41a..4530a82aaa2e 100644
---- a/net/ipv6/route.c
-+++ b/net/ipv6/route.c
-@@ -1868,7 +1868,7 @@ static void ip6_multipath_l3_keys(const struct sk_buff *skb,
- 	} else {
- 		keys->addrs.v6addrs.src = key_iph->saddr;
- 		keys->addrs.v6addrs.dst = key_iph->daddr;
--		keys->tags.flow_label = ip6_flowinfo(key_iph);
-+		keys->tags.flow_label = ip6_flowlabel(key_iph);
- 		keys->basic.ip_proto = key_iph->nexthdr;
- 	}
- }
-@@ -1889,7 +1889,7 @@ u32 rt6_multipath_hash(const struct net *net, const struct flowi6 *fl6,
- 		} else {
- 			hash_keys.addrs.v6addrs.src = fl6->saddr;
- 			hash_keys.addrs.v6addrs.dst = fl6->daddr;
--			hash_keys.tags.flow_label = (__force u32)fl6->flowlabel;
-+			hash_keys.tags.flow_label = (__force u32)flowi6_get_flowlabel(fl6);
- 			hash_keys.basic.ip_proto = fl6->flowi6_proto;
- 		}
- 		break;
-diff --git a/net/l2tp/l2tp_ppp.c b/net/l2tp/l2tp_ppp.c
-index 1fd9e145076a..466f17646625 100644
---- a/net/l2tp/l2tp_ppp.c
-+++ b/net/l2tp/l2tp_ppp.c
-@@ -428,16 +428,6 @@ static void pppol2tp_put_sk(struct rcu_head *head)
-  */
- static void pppol2tp_session_close(struct l2tp_session *session)
- {
--	struct pppol2tp_session *ps;
--
--	ps = l2tp_session_priv(session);
--	mutex_lock(&ps->sk_lock);
--	ps->__sk = rcu_dereference_protected(ps->sk,
--					     lockdep_is_held(&ps->sk_lock));
--	RCU_INIT_POINTER(ps->sk, NULL);
--	if (ps->__sk)
--		call_rcu(&ps->rcu, pppol2tp_put_sk);
--	mutex_unlock(&ps->sk_lock);
- }
- 
- /* Really kill the session socket. (Called from sock_put() if
-@@ -480,15 +470,24 @@ static int pppol2tp_release(struct socket *sock)
- 	sock_orphan(sk);
- 	sock->sk = NULL;
- 
--	/* If the socket is associated with a session,
--	 * l2tp_session_delete will call pppol2tp_session_close which
--	 * will drop the session's ref on the socket.
--	 */
- 	session = pppol2tp_sock_to_session(sk);
- 	if (session) {
-+		struct pppol2tp_session *ps;
-+
- 		l2tp_session_delete(session);
--		/* drop the ref obtained by pppol2tp_sock_to_session */
--		sock_put(sk);
-+
-+		ps = l2tp_session_priv(session);
-+		mutex_lock(&ps->sk_lock);
-+		ps->__sk = rcu_dereference_protected(ps->sk,
-+						     lockdep_is_held(&ps->sk_lock));
-+		RCU_INIT_POINTER(ps->sk, NULL);
-+		mutex_unlock(&ps->sk_lock);
-+		call_rcu(&ps->rcu, pppol2tp_put_sk);
-+
-+		/* Rely on the sock_put() call at the end of the function for
-+		 * dropping the reference held by pppol2tp_sock_to_session().
-+		 * The last reference will be dropped by pppol2tp_put_sk().
-+		 */
- 	}
- 
- 	release_sock(sk);
-@@ -742,7 +741,8 @@ static int pppol2tp_connect(struct socket *sock, struct sockaddr *uservaddr,
- 		 */
- 		mutex_lock(&ps->sk_lock);
- 		if (rcu_dereference_protected(ps->sk,
--					      lockdep_is_held(&ps->sk_lock))) {
-+					      lockdep_is_held(&ps->sk_lock)) ||
-+		    ps->__sk) {
- 			mutex_unlock(&ps->sk_lock);
- 			error = -EEXIST;
- 			goto end;
-@@ -803,7 +803,6 @@ static int pppol2tp_connect(struct socket *sock, struct sockaddr *uservaddr,
- 
- out_no_ppp:
- 	/* This is how we get the session context from the socket. */
--	sock_hold(sk);
- 	sk->sk_user_data = session;
- 	rcu_assign_pointer(ps->sk, sk);
- 	mutex_unlock(&ps->sk_lock);
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index acb7b86574cd..60c2a252bdf5 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -4282,7 +4282,7 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
- 			goto out;
- 		if (po->tp_version >= TPACKET_V3 &&
- 		    req->tp_block_size <=
--			  BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv))
-+		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
- 			goto out;
- 		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
- 					po->tp_reserve))
-diff --git a/net/sctp/transport.c b/net/sctp/transport.c
-index 47f82bd794d9..03fc2c427aca 100644
---- a/net/sctp/transport.c
-+++ b/net/sctp/transport.c
-@@ -634,7 +634,7 @@ unsigned long sctp_transport_timeout(struct sctp_transport *trans)
- 	    trans->state != SCTP_PF)
- 		timeout += trans->hbinterval;
- 
--	return timeout;
-+	return max_t(unsigned long, timeout, HZ / 5);
- }
- 
- /* Reset transport variables to their initial values */
+ 	GEM_BUG_ON(level < 0);
+-- 
+2.17.0
+
