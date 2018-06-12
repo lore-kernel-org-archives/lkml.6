@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 71AE2C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:29:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B2D7AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2551E208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:29:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D7E220693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 08:30:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MAGlRHFO";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MAGlRHFO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2551E208B1
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Rge6kUlb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cOjZ3zFC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D7E220693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933776AbeFLI31 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 04:29:27 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47352 "EHLO
+        id S933894AbeFLIaP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 04:30:15 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48130 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933790AbeFLI3Z (ORCPT
+        with ESMTP id S933572AbeFLIaM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 04:29:25 -0400
+        Tue, 12 Jun 2018 04:30:12 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 9531560116; Tue, 12 Jun 2018 08:29:24 +0000 (UTC)
+        id 2AF5B60791; Tue, 12 Jun 2018 08:30:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528792164;
-        bh=E3ux/QqRgo6n1lJofttxerzRRsuNuvf4yw6O2Bhrr+Q=;
+        s=default; t=1528792212;
+        bh=fHXpdvOfIYpPCVHFsZqw34XsrHkBPXNvSfPVZ1++T9g=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MAGlRHFOVJfvQdqxkqU4TK4jXFXj3NRQhNnt9C4K3TzX1irNUbdWDsC0EVWaLKhAu
-         5EEc2gDMu+bcJYfbQ+uWebbKJcYLl4b/zjiftlCVz7fpVGSD5jxGGYDnpxRzqIf4cj
-         FELeQcg8oEPkJfo/3KaY0XXxb5IaYBCd5OKqmTMc=
+        b=Rge6kUlb+wmpu1kJqc2WfEFQ5dENEHQATrdy2utrPzNn1RCPOi5FV5vZH28g29NV0
+         cKSPQhNeA2/eP3wdc5vf0tisWSjrOs3hwNAQ70xJ2Wi1ECTY/R65Q2P0LSGZXaWckr
+         VbH3a0OCBH4VRqigPIOAcKR/sbgwm4BmXDYl26zE=
 Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 2DCC9602BD;
-        Tue, 12 Jun 2018 08:29:24 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTP id 2E592606DB;
+        Tue, 12 Jun 2018 08:30:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528792164;
-        bh=E3ux/QqRgo6n1lJofttxerzRRsuNuvf4yw6O2Bhrr+Q=;
+        s=default; t=1528792211;
+        bh=fHXpdvOfIYpPCVHFsZqw34XsrHkBPXNvSfPVZ1++T9g=;
         h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=MAGlRHFOVJfvQdqxkqU4TK4jXFXj3NRQhNnt9C4K3TzX1irNUbdWDsC0EVWaLKhAu
-         5EEc2gDMu+bcJYfbQ+uWebbKJcYLl4b/zjiftlCVz7fpVGSD5jxGGYDnpxRzqIf4cj
-         FELeQcg8oEPkJfo/3KaY0XXxb5IaYBCd5OKqmTMc=
+        b=cOjZ3zFCk51sGeNN28tI5BT8cIraLefBUjij8mIHDH3UNCWpbb2+U0Y9HrQO0hEcr
+         YFHD3NbnDBvDjU17wisOEoxJ36ZRwgFa/C1suxlYvAu6oKZIV5063hMHUcj5umfIuK
+         hxyuovaJwe0oxIiQnZNd0hqG/xKKLx8f/GVVh2Hs=
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII;
  format=flowed
 Content-Transfer-Encoding: 7bit
-Date:   Tue, 12 Jun 2018 13:59:24 +0530
+Date:   Tue, 12 Jun 2018 14:00:11 +0530
 From:   poza@codeaurora.org
 To:     Ray Jui <ray.jui@broadcom.com>
 Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -57,12 +57,12 @@ Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         linux-kernel@vger.kernel.org,
         bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
         linux-pci-owner@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] PCI: iproc: Disable MSI parsing in certain PAXC
- blocks
-In-Reply-To: <1528762867-16823-4-git-send-email-ray.jui@broadcom.com>
+Subject: Re: [PATCH v2 4/5] PCI: iproc: Reject unconfigured physical functions
+ from PAXC
+In-Reply-To: <1528762867-16823-5-git-send-email-ray.jui@broadcom.com>
 References: <1528762867-16823-1-git-send-email-ray.jui@broadcom.com>
- <1528762867-16823-4-git-send-email-ray.jui@broadcom.com>
-Message-ID: <8f6d7771baec3f56e0ccf5efd0efe2a2@codeaurora.org>
+ <1528762867-16823-5-git-send-email-ray.jui@broadcom.com>
+Message-ID: <2f545a86aa5433526b17071d64f68e50@codeaurora.org>
 X-Sender: poza@codeaurora.org
 User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,83 +71,133 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 2018-06-12 05:51, Ray Jui wrote:
-> The internal MSI parsing logic in certain revisions of PAXC root
-> complexes does not work properly and can casue corruptions on the
-> writes. They need to be disabled
+> PAXC is an emulated PCIe root complex internally in various Broadcom
+> based SoCs. PAXC internally connects to the embedded network processor
+> within these SoCs, with the embedeed network processor exposed as an
+> endpoint device
+> 
+> The number of physical functions from the embedded network processor
+> that can be accessed depend on the firmware configuration.
+> Unfortunately, due to an ASIC bug, unconfigured physical functions 
+> cannot
+> be properly hidden from the root complex during enumerattion. As a
+> result, config write access to these unconfigured physical functions
+> during enumeration will cause a bus lock up on the embedded network
+> processor
+> 
+> Fortunately, these unconfigured physical functions contain a very
+> specific, staled PCIe device ID 0x168e. By making use of this device 
+> ID,
+> one is able to terminate the enumeration early in the vendor/device ID
+> config read
 > 
 > Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 > Reviewed-by: Scott Branden <scott.branden@broadcom.com>
 > ---
->  drivers/pci/host/pcie-iproc.c | 34 ++++++++++++++++++++++++++++++++--
->  1 file changed, 32 insertions(+), 2 deletions(-)
+>  drivers/pci/host/pcie-iproc.c | 26 +++++++++++++++++++++++++-
+>  drivers/pci/host/pcie-iproc.h |  5 +++++
+>  2 files changed, 30 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/pci/host/pcie-iproc.c 
 > b/drivers/pci/host/pcie-iproc.c
-> index 680f6b1..0804aa2 100644
+> index 0804aa2..59be1e0 100644
 > --- a/drivers/pci/host/pcie-iproc.c
 > +++ b/drivers/pci/host/pcie-iproc.c
-> @@ -1197,10 +1197,22 @@ static int iproc_pcie_paxb_v2_msi_steer(struct
-> iproc_pcie *pcie, u64 msi_addr)
->  	return ret;
+> @@ -582,6 +582,25 @@ static int iproc_pcie_config_read(struct pci_bus
+> *bus, unsigned int devfn,
+>  	if (size <= 2)
+>  		*val = (data >> (8 * (where & 3))) & ((1 << (size * 8)) - 1);
+> 
+> +	/*
+> +	 * For PAXC and PAXCv2, the total number of PFs that one can 
+> enumerate
+> +	 * depends on the firmware configuration. Unfortunately, due to an 
+> ASIC
+> +	 * bug, unconfigured PFs cannot be properly hidden from the root
+> +	 * complex. As a result, write access to these PFs will cause bus 
+> lock
+> +	 * up on the embedded processor
+> +	 *
+> +	 * Since all unconfigured PFs are left with an incorrect, staled 
+> device
+> +	 * ID of 0x168e (PCI_DEVICE_ID_NX2_57810), we try to catch those 
+> access
+> +	 * early here and reject them all
+> +	 */
+> +#define DEVICE_ID_MASK     0xffff0000
+> +#define DEVICE_ID_SHIFT    16
+> +	if (pcie->rej_unconfig_pf &&
+> +	    (where & CFG_ADDR_REG_NUM_MASK) == PCI_VENDOR_ID)
+> +		if ((*val & DEVICE_ID_MASK) ==
+> +		    (PCI_DEVICE_ID_NX2_57810 << DEVICE_ID_SHIFT))
+> +			return PCIBIOS_FUNC_NOT_SUPPORTED;
+> +
+>  	return PCIBIOS_SUCCESSFUL;
 >  }
 > 
-> -static void iproc_pcie_paxc_v2_msi_steer(struct iproc_pcie *pcie, u64 
-> msi_addr)
-> +static void iproc_pcie_paxc_v2_msi_steer(struct iproc_pcie *pcie, u64 
-> msi_addr,
-> +					 bool enable)
->  {
->  	u32 val;
+> @@ -681,7 +700,7 @@ static int iproc_pcie_config_read32(struct pci_bus
+> *bus, unsigned int devfn,
+>  	struct iproc_pcie *pcie = iproc_data(bus);
 > 
-> +	if (!enable) {
-> +		/*
-> +		 * Disable PAXC MSI steering. All write transfers will be
-> +		 * treated as non-MSI transfers
-> +		 */
-> +		val = iproc_pcie_read_reg(pcie, IPROC_PCIE_MSI_EN_CFG);
-> +		val &= ~MSI_ENABLE_CFG;
-> +		iproc_pcie_write_reg(pcie, IPROC_PCIE_MSI_EN_CFG, val);
-> +		return;
-can be dropped.
-> +	}
-> +
->  	/*
->  	 * Program bits [43:13] of address of GITS_TRANSLATER register into
->  	 * bits [30:0] of the MSI base address register.  In fact, in all 
-> iProc
-> @@ -1254,7 +1266,7 @@ static int iproc_pcie_msi_steer(struct iproc_pcie 
-> *pcie,
->  			return ret;
+>  	iproc_pcie_apb_err_disable(bus, true);
+> -	if (pcie->type == IPROC_PCIE_PAXB_V2)
+> +	if (pcie->iproc_cfg_read)
+>  		ret = iproc_pcie_config_read(bus, devfn, where, size, val);
+>  	else
+>  		ret = pci_generic_config_read32(bus, devfn, where, size, val);
+> @@ -1336,6 +1355,7 @@ static int iproc_pcie_rev_init(struct iproc_pcie 
+> *pcie)
+>  		break;
+>  	case IPROC_PCIE_PAXB:
+>  		regs = iproc_pcie_reg_paxb;
+> +		pcie->iproc_cfg_read = true;
+>  		pcie->has_apb_err_disable = true;
+>  		if (pcie->need_ob_cfg) {
+>  			pcie->ob_map = paxb_ob_map;
+> @@ -1358,10 +1378,14 @@ static int iproc_pcie_rev_init(struct 
+> iproc_pcie *pcie)
+>  	case IPROC_PCIE_PAXC:
+>  		regs = iproc_pcie_reg_paxc;
+>  		pcie->ep_is_internal = true;
+> +		pcie->iproc_cfg_read = true;
+> +		pcie->rej_unconfig_pf = true;
 >  		break;
 >  	case IPROC_PCIE_PAXC_V2:
-> -		iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr);
-> +		iproc_pcie_paxc_v2_msi_steer(pcie, msi_addr, true);
+>  		regs = iproc_pcie_reg_paxc_v2;
+>  		pcie->ep_is_internal = true;
+> +		pcie->iproc_cfg_read = true;
+> +		pcie->rej_unconfig_pf = true;
+>  		pcie->need_msi_steer = true;
 >  		break;
 >  	default:
->  		return -EINVAL;
-> @@ -1480,6 +1492,24 @@ int iproc_pcie_remove(struct iproc_pcie *pcie)
->  }
->  EXPORT_SYMBOL(iproc_pcie_remove);
-> 
-> +/*
-> + * The MSI parsing logic in certain revisions of Broadcom PAXC based 
-> root
-> + * complex does not work and needs to be disabled
-> + */
-> +static void quirk_paxc_disable_msi_parsing(struct pci_dev *pdev)
-> +{
-> +	struct iproc_pcie *pcie = iproc_data(pdev->bus);
-> +
-> +	if (pdev->hdr_type == PCI_HEADER_TYPE_BRIDGE)
-> +		iproc_pcie_paxc_v2_msi_steer(pcie, 0, false);
-> +}
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0x16f0,
-> +			quirk_paxc_disable_msi_parsing);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd802,
-> +			quirk_paxc_disable_msi_parsing);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_BROADCOM, 0xd804,
-> +			quirk_paxc_disable_msi_parsing);
-> +
->  MODULE_AUTHOR("Ray Jui <rjui@broadcom.com>");
->  MODULE_DESCRIPTION("Broadcom iPROC PCIe common driver");
->  MODULE_LICENSE("GPL v2");
+> diff --git a/drivers/pci/host/pcie-iproc.h 
+> b/drivers/pci/host/pcie-iproc.h
+> index 9d5cfee..4f03ea5 100644
+> --- a/drivers/pci/host/pcie-iproc.h
+> +++ b/drivers/pci/host/pcie-iproc.h
+> @@ -58,6 +58,9 @@ struct iproc_msi;
+>   * @phy: optional PHY device that controls the Serdes
+>   * @map_irq: function callback to map interrupts
+>   * @ep_is_internal: indicates an internal emulated endpoint device is 
+> connected
+> + * @iproc_cfg_read: indicates the iProc config read function should be 
+> used
+> + * @rej_unconfig_pf: indicates the root complex needs to detect and 
+> reject
+> + * enumeration against unconfigured physical functions emulated in the 
+> ASIC
+>   * @has_apb_err_disable: indicates the controller can be configured to 
+> prevent
+>   * unsupported request from being forwarded as an APB bus error
+>   * @fix_paxc_cap: indicates the controller has corrupted capability 
+> list in its
+> @@ -86,6 +89,8 @@ struct iproc_pcie {
+>  	struct phy *phy;
+>  	int (*map_irq)(const struct pci_dev *, u8, u8);
+>  	bool ep_is_internal;
+> +	bool iproc_cfg_read;
+> +	bool rej_unconfig_pf;
+>  	bool has_apb_err_disable;
+>  	bool fix_paxc_cap;
+
+Reviewed-by: Oza Pawandeep <poza@codeaurora.org>
