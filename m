@@ -2,94 +2,82 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8F6D8C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:45:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ECC2AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A63208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:45:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Km68lXO/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44A63208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id ACE39208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:49:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACE39208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933308AbeFLLpF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:45:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37538 "EHLO mail.kernel.org"
+        id S933481AbeFLLtm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:49:42 -0400
+Received: from mout.gmx.net ([212.227.15.15]:44903 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932313AbeFLLpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:45:04 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 26419208B0;
-        Tue, 12 Jun 2018 11:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528803903;
-        bh=feLEjvg+sQs44YKG51Q6CRV2Vm7tYiW4mSsnqZjHg1k=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Km68lXO/BRSHrPDI/cQ8Rmw3DI/u13+HpASP3Gui7Se7QBiU+NVY5K0LHwBNaDS0w
-         e8Jm2z4xBKXX2zqiTH4JGUlS+qJBWbpaeckKKBTe4WzVHRxZYNHpUKCosEP2IBp7Dh
-         dTUCjcU7/c09v24pNMuGLzd7jmxTFI5fx+GqliGc=
-Date:   Tue, 12 Jun 2018 13:44:42 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        openbmc@lists.ozlabs.org
-Subject: Re: [GIT PULL v2]  FSI updates for 4.17
-Message-ID: <20180612114442.GB5777@kroah.com>
-References: <7c268f5bb58cb45a2868020b3c5b8f48ac6844ea.camel@kernel.crashing.org>
- <5c7f9044fefed8bc0e4ca5688801ffa379f38f62.camel@kernel.crashing.org>
- <20180612111839.GA3536@kroah.com>
- <01ffcf6a777323eb3bde1bbb5cb72dc849f404e3.camel@kernel.crashing.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <01ffcf6a777323eb3bde1bbb5cb72dc849f404e3.camel@kernel.crashing.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1754019AbeFLLtl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 07:49:41 -0400
+Received: from juanniu018037.ss.mogujie.org ([122.225.81.134]) by mail.gmx.com
+ (mrgmx002 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 0MId0S-1fQVwK39jM-002CVv; Tue, 12 Jun 2018 13:49:09 +0200
+From:   Chengguang Xu <cgxu519@gmx.com>
+To:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com
+Cc:     x86@kernel.org, linux-kernel@vger.kernel.org,
+        Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH v2] x86: remove redundant check for kmem_cache_create()
+Date:   Tue, 12 Jun 2018 19:48:52 +0800
+Message-Id: <1528804132-154948-1-git-send-email-cgxu519@gmx.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Provags-ID: V03:K1:SRzQPuPqcxm7EN2BdxdWGb4Uhp7UFUVLDjTo++bX1e7FUwdUit1
+ CKKk4rPDd+rfWmVgB6g0c8GR2haax96xh3PKiorQN1oAW0oeRIdbcs5hthaWLm6KD3RO/f9
+ WF05839oTnbdgZVDYUnngPBROoNGT5rBIW5eDVQUWfRm4ZvMGp0vnUwPFkWNzlmyxSkl4gg
+ s904BYj4DvPel0U2Ra2yQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:3XYV9chKzRg=:Oh4mm8fqcUehXdR4/4WcH6
+ EPtQuwnTOuFfBK2t59RUNq37i8e8hMxEY7/UOK0r1pD9ySrlJT474IWZO1YKQpAH15YSeDPKv
+ HS8XyJvtHJO5VYVtB/ONuc3QTHQNdHWNwlpu+UxvSYKazK5wrluVeOq9pap/eno8EB6nUBWJH
+ 7OtKpYTr/wxp9fT0pdrzoqs/ar9imLNL+2J0mhoPKT4yiEsVFdRqT3E9ZXtfPjjBNypFm/9Ea
+ jhaEkGnmTnYnxtYe7y+gT0h/Gh3UimvzpgSqxK7IZEb46e69Ojz9uapfRVDc//oEbI7qUWdIN
+ Uw8zSjIy/2gEb72Vo/DMZYBhhTntR1klM+IpiZ1NJokNgVuUz2uuJGUWYT22pUqzZQXur78lX
+ u6fWHUYPTpsMy+g1q7c8s2Yu0Sya0Us4BkhP2XUVrzhu5yR2nw2lxJ5+Jo+jk0HExAUkFz0l4
+ 98LBe6cCnRkiE/TgKhcNMNl3G4lzrUw09flD5NBQrI8wYy6GOGZcOw8r02TBYQnbQsOZlw1iP
+ fGMvdi4QoSAm7U4vVMFakGJXvI1KtRr1OHRo4yFF2clDjTGwj26VDDIxUZnMH8jkEw31mvcd2
+ qetI0jSHuQQCff2MIKfffAEMGMCBHw/nq4JmUBki3pnXp6462+hxwddMg6hQR8m8iQs4KhP4Z
+ pkSRlepLkOL8oTcxdgThHzzwLFr1rGTt9L1mNUYWAtM/6LhYl7hhJ4ci2UZiOyOkooBv+4poH
+ yVZFhM/10HIYsEu7HC7VAW+tW/MSJUE5KcKv2graIC5LZH2sdsLXVIKTbc0=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 09:25:11PM +1000, Benjamin Herrenschmidt wrote:
-> On Tue, 2018-06-12 at 13:18 +0200, Greg Kroah-Hartman wrote:
-> > On Tue, Jun 12, 2018 at 08:54:39PM +1000, Benjamin Herrenschmidt wrote:
-> > > Hi Greg !
-> > > 
-> > > There are a first round of updates of the FSI stack, aiming at reducing/removing
-> > > he gap with the OpenBMC tree and a first step in getting dependent drivers
-> > > upstream.
-> > > 
-> > > These changes significantly improve the FSI bitbanging driver performance
-> > > and reliability, and add the new "sbefifo" driver for communicating with
-> > > the POWER9 Self Boot Engine (which will be needed for some upcoming
-> > > additional drivers).
-> > > 
-> > > These were posted to the list as patches a couple of weeks ago and were
-> > > prior to that tested in the OpenBMC tree and CI. Some subsequent driver
-> > > work depends on some of these, so merging early is probably the best.
-> > 
-> > Yeah, but as they are not "regression fixes", I'll put them into my
-> > -next branch for merging with 4.19-rc1.  I'll do that once 4.18-rc1 is
-> > released, can't touch my trees until that happens.
-> 
-> We are in regression only mode even before -rc1 these days ? including
-> for code that is basically completely unused upstream (which is what
-> this is trying to fix) ? :-) That's rather full-on ...
+The flag 'SLAB_PANIC' implies panic when encouter failure,
+So there is no need to check NULL pointer for cache creation.
 
-For code that goes into -rc1, it has to be in linux-next _BEFORE_ -final
-comes out.  That's been the rule for years, you should know that...
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+---
+v1->v2:
+- Keep return type as int instead of changing to void.
 
-> Anyway no biggie, it will just slow down some getting some of the other
-> drivers I suppose, though we can always explicitly list the dependency
-> on this tag to work around it.
+ arch/x86/mm/pgtable.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-There should not be a rush here, remember, kernel development does not
-have deadlines :)
+diff --git a/arch/x86/mm/pgtable.c b/arch/x86/mm/pgtable.c
+index 47b5951..406873d 100644
+--- a/arch/x86/mm/pgtable.c
++++ b/arch/x86/mm/pgtable.c
+@@ -329,9 +329,6 @@ static int __init pgd_cache_init(void)
+ 	 */
+ 	pgd_cache = kmem_cache_create("pgd_cache", PGD_SIZE, PGD_ALIGN,
+ 				      SLAB_PANIC, NULL);
+-	if (!pgd_cache)
+-		return -ENOMEM;
+-
+ 	return 0;
+ }
+ core_initcall(pgd_cache_init);
+-- 
+1.8.3.1
 
-greg k-h
