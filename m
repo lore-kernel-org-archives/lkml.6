@@ -5,182 +5,120 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1216DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:37:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 903F4C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7F3F2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:37:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F3F2086D
+	by mail.kernel.org (Postfix) with ESMTP id 4D97E2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:40:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D97E2089C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934952AbeFLWhb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:37:31 -0400
-Received: from mail-yb0-f195.google.com ([209.85.213.195]:44910 "EHLO
-        mail-yb0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933988AbeFLWh3 (ORCPT
+        id S934922AbeFLWj6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:39:58 -0400
+Received: from mail-yb0-f196.google.com ([209.85.213.196]:40621 "EHLO
+        mail-yb0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934418AbeFLWjz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:37:29 -0400
-Received: by mail-yb0-f195.google.com with SMTP id w74-v6so213313ybe.11;
-        Tue, 12 Jun 2018 15:37:28 -0700 (PDT)
+        Tue, 12 Jun 2018 18:39:55 -0400
+Received: by mail-yb0-f196.google.com with SMTP id v17-v6so219528ybe.7;
+        Tue, 12 Jun 2018 15:39:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=53kEHG5lKbURjjpkY0ACPI+UlIMLyYbI0CswZHQRbzY=;
-        b=BO7Wfwg1wvWs+zKRq0TjnYzQJb7sjQe/uhd9tZ3RYIYH5etQG3UoNjOKrRMpTDQzFe
-         7fRNO//zmcqaN9mMsV/IuLa7JLEG4cPuGJ0JOamqpRm2rWaVERZO0EPjbe96Nt/ZNPZn
-         /NJfGVNQgSy8uovOTtpihgvRLRKT8TlgDPiDVa19CNucgVlmOScniMBBinORKQemQxQV
-         KoTkeDsSjAxkIU0IabIqdH0SA9Q//YxbFFRV+5mBaxnPCB5ZJR4lpel/6WId4yOVMzKS
-         5IqUlbQQpfoywOeScg6rfipF3AAsjNQvGww13sSsFBslcqqcTl3CSuirKG0eL1Ltelwz
-         EgeQ==
-X-Gm-Message-State: APt69E3IcmJt9ZYCGx/0GVx2WT1rwQDcys2SWaxzeVb+T/JYECSUsI3g
-        yE4xZbav/AHQLGX/k/9+Ig==
-X-Google-Smtp-Source: ADUXVKJ2GuxjiLSG6sD2rq1r/wJef1EFSzOAArwzuF8FsOwdVKaALSxyK2GMsjI5ZWn61SNaNwkdlw==
-X-Received: by 2002:a25:5e89:: with SMTP id s131-v6mr1183106ybb.230.1528843048293;
-        Tue, 12 Jun 2018 15:37:28 -0700 (PDT)
+        bh=9VxIY8A1QgTl9wG8rWxmmjfVioRKwSc3V0fBAbeN1L4=;
+        b=TK4QSK5SKicWT1ElrG8xyLBfgmz1BcYcWQGDkB+LH1TkrxC1pRbVK+1EsoaRkcmYbd
+         QZS2MtNQojmBqijOsabvaV6oRqVxxzLe6JFFVx8iWoUqhd6SZhzNPoySOXFG4qQN9ahm
+         ZyxZjYnp4xAInTfoLtgpl4zT2jahp+7kjfNOhRcYjxaYBSjTKV1pGgZolPvfSi0Y3Ad9
+         ghPzBlGitSx38L3OG4Nj17NzxSu9+pc4DodR/ufXBa/swYjfG72D/Pkjt+KTHi+ilRII
+         ZHZ78qYdp4Zh6v880uikr9CS+zipRoF6zeK23t/DuEh08f44Lklc4kwyiqlJDRXtEPTs
+         EgRg==
+X-Gm-Message-State: APt69E13t/7T9RVa3KRzOOuTRQXKRLC27zF8n+ntM/KZO/lyry/QdEFo
+        qioquXyuVqCZcy8IjUt2qB+k+NRvUw==
+X-Google-Smtp-Source: ADUXVKJ2mjvZ2ESBoC4mnqRXKKg8conwXymjqZZZSF96yMP1h6iEdQm8oyJMt8QZpctwkPn8XuuXlA==
+X-Received: by 2002:a25:7910:: with SMTP id u16-v6mr1138500ybc.209.1528843194920;
+        Tue, 12 Jun 2018 15:39:54 -0700 (PDT)
 Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id n204-v6sm516651ywb.72.2018.06.12.15.37.27
+        by smtp.gmail.com with ESMTPSA id u17-v6sm542970ywu.16.2018.06.12.15.39.53
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 15:37:27 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 16:37:25 -0600
+        Tue, 12 Jun 2018 15:39:54 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 16:39:53 -0600
 From:   Rob Herring <robh@kernel.org>
 To:     Songjun Wu <songjun.wu@linux.intel.com>
 Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
         chuanhua.lei@intel.com, linux-mips@linux-mips.org,
         qi-ming.wu@intel.com, linux-clk@vger.kernel.org,
         linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 2/7] clk: intel: Add clock driver for GRX500 SoC
-Message-ID: <20180612223725.GC2197@rob-hp-laptop>
+Subject: Re: [PATCH 7/7] tty: serial: lantiq: Add CCF support
+Message-ID: <20180612223953.GA21621@rob-hp-laptop>
 References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-3-songjun.wu@linux.intel.com>
+ <20180612054034.4969-8-songjun.wu@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180612054034.4969-3-songjun.wu@linux.intel.com>
+In-Reply-To: <20180612054034.4969-8-songjun.wu@linux.intel.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 01:40:29PM +0800, Songjun Wu wrote:
-> From: Yixin Zhu <yixin.zhu@linux.intel.com>
-> 
-> PLL of GRX500 provide clock to DDR, CPU, and peripherals as show below
-> 
->                  +---------+
-> 	    |--->| LCPLL3 0|--PCIe clk-->
->    XO       |    +---------+
-> +-----------|
->             |    +---------+
->             |    |        3|--PAE clk-->
->             |--->| PLL0B  2|--GSWIP clk-->
->             |    |        1|--DDR clk-->DDR PHY clk-->
->             |    |        0|--CPU1 clk--+   +-----+
->             |    +---------+            |--->0    |
->             |                               | MUX |--CPU clk-->
->             |    +---------+            |--->1    |
->             |    |        0|--CPU0 clk--+   +-----+
->             |--->| PLLOA  1|--SSX4 clk-->
->                  |        2|--NGI clk-->
->                  |        3|--CBM clk-->
->                  +---------+
-> 
-> VCO of all PLLs of GRX500 is not supposed to be reprogrammed.
-> DDR PHY clock is created to show correct clock rate in software
-> point of view.
-> CPU clock of 1Ghz from PLL0B otherwise from PLL0A.
-> Signed-off-by: Yixin Zhu <yixin.zhu@linux.intel.com>
+On Tue, Jun 12, 2018 at 01:40:34PM +0800, Songjun Wu wrote:
+> Previous implementation uses platform-dependent API to get the clock.
+> Those functions are not available for other SoC which uses the same IP.
+> The CCF (Common Clock Framework) have an abstraction based APIs
+> for clock.
+> Change to use CCF APIs to get clock and rate.
+> So that different SoCs can use the same driver.
+> Clocks and clock-names are updated in device tree binding.
 > 
 > Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-
-Need a blank line before the SoB's and not one in the middle.
-
+> 
 > ---
 > 
->  .../devicetree/bindings/clock/intel,grx500-clk.txt |  46 ++
+>  .../devicetree/bindings/serial/lantiq_asc.txt      |  15 +++
 
 Please split bindings to separate patch.
 
->  drivers/clk/Kconfig                                |   1 +
->  drivers/clk/Makefile                               |   1 +
->  drivers/clk/intel/Kconfig                          |  21 +
->  drivers/clk/intel/Makefile                         |   7 +
->  drivers/clk/intel/clk-cgu-api.c                    | 676 +++++++++++++++++++++
->  drivers/clk/intel/clk-cgu-api.h                    | 120 ++++
->  drivers/clk/intel/clk-grx500.c                     | 236 +++++++
->  include/dt-bindings/clock/intel,grx500-clk.h       |  61 ++
->  9 files changed, 1169 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
->  create mode 100644 drivers/clk/intel/Kconfig
->  create mode 100644 drivers/clk/intel/Makefile
->  create mode 100644 drivers/clk/intel/clk-cgu-api.c
->  create mode 100644 drivers/clk/intel/clk-cgu-api.h
->  create mode 100644 drivers/clk/intel/clk-grx500.c
->  create mode 100644 include/dt-bindings/clock/intel,grx500-clk.h
+>  drivers/tty/serial/Kconfig                         |   2 +-
+>  drivers/tty/serial/lantiq.c                        | 101 +++++++++++++++++----
+>  3 files changed, 98 insertions(+), 20 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-> new file mode 100644
-> index 000000000000..dd761d900dc9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/intel,grx500-clk.txt
-> @@ -0,0 +1,46 @@
-> +Device Tree Clock bindings for GRX500 PLL controller.
+> diff --git a/Documentation/devicetree/bindings/serial/lantiq_asc.txt b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
+> index 3acbd309ab9d..608f0c87a4af 100644
+> --- a/Documentation/devicetree/bindings/serial/lantiq_asc.txt
+> +++ b/Documentation/devicetree/bindings/serial/lantiq_asc.txt
+> @@ -6,6 +6,10 @@ Required properties:
+>  - interrupts: the 3 (tx rx err) interrupt numbers. The interrupt specifier
+>    depends on the interrupt-parent interrupt controller.
+>  
+> +Optional properties:
+> +- clocks: Should contain frequency clock and gate clock
+> +- clock-names: Should be "freq" and "asc"
 > +
-> +This binding uses the common clock binding:
-> +	Documentation/devicetree/bindings/clock/clock-bindings.txt
+>  Example:
+>  
+>  asc1: serial@e100c00 {
+> @@ -14,3 +18,14 @@ asc1: serial@e100c00 {
+>  	interrupt-parent = <&icu0>;
+>  	interrupts = <112 113 114>;
+>  };
 > +
-> +This GRX500 PLL controller provides the 5 main clock domain of the SoC: CPU/DDR, XBAR,
-> +Voice, WLAN, PCIe and gate clocks for HW modules.
-> +
-> +Required properties for osc clock node
-> +- compatible: Should be intel,grx500-xxx-clk
+> +asc0: serial@600000 {
+> +	compatible = "lantiq,asc";
+> +	reg = <0x600000 0x100000>;
 
-These would need to be enumerated with all possible values. However, see 
-below.
+1MB of address space? That wastes a lot of virtual space on 32-bit 
+systems. Just make the size the actual used range.
 
-> +- reg: offset address of the controller memory area.
-> +- clocks: phandle of the external reference clock
-> +- #clock-cells: can be one or zero.
-> +- clock-output-names: Names of the output clocks.
-> +
-> +Example:
-> +	pll0aclk: pll0aclk {
-> +		#clock-cells = <1>;
-> +		compatible = "intel,grx500-pll0a-clk";
-> +		clocks = <&pll0a>;
-> +		reg = <0x8>;
-> +		clock-output-names = "cbmclk", "ngiclk", "ssx4clk", "cpu0clk";
-> +	};
-> +
-> +	cpuclk: cpuclk {
-> +		#clock-cells = <0>;
-> +		compatible = "intel,grx500-cpu-clk";
-> +		clocks = <&pll0aclk CPU0_CLK>, <&pll0bclk CPU1_CLK>;
-> +		reg = <0x8>;
-> +		clock-output-names = "cpu";
-> +	};
-> +
-> +Required properties for gate node:
-> +- compatible: Should be intel,grx500-gatex-clk
-> +- reg: offset address of the controller memory area.
-> +- #clock-cells: Should be <1>
-> +- clock-output-names: Names of the output clocks.
-> +
-> +Example:
-> +	clkgate0: clkgate0 {
-> +		#clock-cells = <1>;
-> +		compatible = "intel,grx500-gate0-clk";
-> +		reg = <0x114>;
-> +		clock-output-names = "gate_xbar0", "gate_xbar1", "gate_xbar2",
-> +		"gate_xbar3", "gate_xbar6", "gate_xbar7";
-> +	};
-
-We generally don't do a clock node per clock or few clocks but rather 1 
-clock node per clock controller block. See any recent clock bindings.
-
-Rob
+> +	interrupt-parent = <&gic>;
+> +	interrupts = <GIC_SHARED 103 IRQ_TYPE_LEVEL_HIGH>,
+> +	<GIC_SHARED 105 IRQ_TYPE_LEVEL_HIGH>,
+> +	<GIC_SHARED 106 IRQ_TYPE_LEVEL_HIGH>;
+> +	clocks = <&pll0aclk SSX4_CLK>, <&clkgate1 GATE_URT_CLK>;
+> +	clock-names = "freq", "asc";
+> +};
