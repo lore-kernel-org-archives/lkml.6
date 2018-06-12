@@ -3,99 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7DA5C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:07:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 20840C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:08:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C563208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:07:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9E17208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="BgBDqwhW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C563208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IecsdGvS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E17208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933261AbeFLLHf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:07:35 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:34765 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754120AbeFLLHe (ORCPT
+        id S933436AbeFLLH7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:07:59 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37857 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932543AbeFLLH5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:07:34 -0400
-Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com [209.85.213.49]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w5CB7R8H031381;
-        Tue, 12 Jun 2018 20:07:28 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w5CB7R8H031381
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528801648;
-        bh=FyihJFQCAiYL1TyVuyJyFV5C/g6LW+Tll5ZbOJWLsiI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=BgBDqwhWOhEvwEdM8OGim718ANo6m9gO55DrfxmCFzfx1wMnUlfAlkLXtF9fYSrK+
-         wGwelLZE7NokwDt+LrELLkt0BTTX76Yi4jX9Jy1+HA+K1W5HRdlUgkxyxEBTZBIl3e
-         gy03unOkpdv5KWVYh9bYawOez9Kgkfog5awlz7WnyoBpkpfL22YMN4eftrPavbqbDt
-         Ir2WD9oprU7uIvg+KHWcsHcxgSIKm8yZJ3rQSncQf9ytOhZEHiWUgaZHGQuP9uLczp
-         n1Aa1HS05eYw6Dg2PV6YeXeKTYa3EAKe1wFB1bSI2mvJljm2RD4js3sPmoEu7PYPtg
-         rzXbW4V2pyQYw==
-X-Nifty-SrcIP: [209.85.213.49]
-Received: by mail-vk0-f49.google.com with SMTP id x4-v6so14105609vkx.11;
-        Tue, 12 Jun 2018 04:07:28 -0700 (PDT)
-X-Gm-Message-State: APt69E3jNpIXyaOdk03MyOZ/cz55uoUspFQ3dh05P0zZy74lJPE4SDf4
-        3eheALS0tjb3/VcbCIiuz6ShoaGENnvctBAFV7k=
-X-Google-Smtp-Source: ADUXVKIFtweA/MBKfTxCYiBvcIF31JhE0tj85vRoSKuqZc1Bhjgs+UQYdKQFgZ3a3/E2tKewA85SUk4KvEuIu7wjyYc=
-X-Received: by 2002:a1f:9615:: with SMTP id y21-v6mr1779721vkd.154.1528801646086;
- Tue, 12 Jun 2018 04:07:26 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 04:06:45
- -0700 (PDT)
-In-Reply-To: <20180612130329.1c17311f@bbrezillon>
-References: <1528799515-1356-1-git-send-email-yamada.masahiro@socionext.com>
- <1528799515-1356-2-git-send-email-yamada.masahiro@socionext.com>
- <CAK7LNASM53scdd-OZOj_7404Eru3a98uNLagip_GdkrSSaG3-Q@mail.gmail.com> <20180612130329.1c17311f@bbrezillon>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 12 Jun 2018 20:06:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATr54Eo-0PcTSLZvgmdTTngpTYXte=__17X4xRtywAgEg@mail.gmail.com>
-Message-ID: <CAK7LNATr54Eo-0PcTSLZvgmdTTngpTYXte=__17X4xRtywAgEg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mtd: rawnand: denali: add more clocks
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Richard Weinberger <richard@sigma-star.at>,
-        DTML <devicetree@vger.kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Philipp Rosenberger <p.rosenberger@linutronix.de>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 12 Jun 2018 07:07:57 -0400
+Received: by mail-lf0-f68.google.com with SMTP id g21-v6so33376460lfb.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 04:07:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CeMboJ8+PxGmQH0deFDvxeeEvIZBjafaepSG6nMV/80=;
+        b=IecsdGvSX8AjmIQC8cuPaoN0YoUOG19XBoaNIczM3CHAgVOpieGtwWCIRd/T3Bv99F
+         XqNsu5mZhKidkoH171mV7b0Faxa01CxGGW9S4eum7GgngGuemKFzNR21Loh3vZvY9Nl4
+         yMFefDvzHIIZNxog5LG8Zkx4eyOk3gRTXaxHw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CeMboJ8+PxGmQH0deFDvxeeEvIZBjafaepSG6nMV/80=;
+        b=OZQKmIrkBKnuTb+bhVieedqyb2h5m22qCYILt262UvhBsuj+4JeKVYN1cpBIGx54gH
+         DmS00XLQZ3WBrt7KTR6JCRXS3ur32eseFRYiC6UAnyVeSO0bog4qtj3yyr1ICfneBv4i
+         i44reXl+ofvwcux5fYnF+x5RFPdAFBvTj+z/H+PeaRdGLy1/ocOF4bCDRmDzuYTmKEuw
+         qzuQreuffc3bcvOnJIAGvcBgzRDoK9jkvQg91GEavhgXIG6eBuwFHBqGnXGJoLewzjTp
+         PVzlgiK2nU3DZbQTTO69UliBfqxBOgW3DFQotL6rv4VgS6Z8sDbpwl4EadErpyzZWPb5
+         feWw==
+X-Gm-Message-State: APt69E1cuZdNl/yJ1dMTU6MVirBhuqfQ8IDwQqUdo5RFYiF49zKHNY6A
+        70F7PdfiYjKZn3iumuugdrHvkw==
+X-Google-Smtp-Source: ADUXVKK1qzDmQ74OxbOl74pBQ9nCJmuo26jOitIMrvQfjenQa8LH9TWhs9Y74ySfbr5RrGkY9l7qJg==
+X-Received: by 2002:a2e:1414:: with SMTP id u20-v6mr2176718ljd.134.1528801675661;
+        Tue, 12 Jun 2018 04:07:55 -0700 (PDT)
+Received: from localhost (c-2c3d70d5.07-21-73746f28.bbcust.telenor.se. [213.112.61.44])
+        by smtp.gmail.com with ESMTPSA id h77-v6sm147921lfk.47.2018.06.12.04.07.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 04:07:54 -0700 (PDT)
+From:   Anders Roxell <anders.roxell@linaro.org>
+To:     ast@kernel.org, daniel@iogearbox.net, shuah@kernel.org
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: [PATCH] selftests: bpf: config: add config fragments
+Date:   Tue, 12 Jun 2018 13:05:10 +0200
+Message-Id: <20180612110510.11731-1-anders.roxell@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-12 20:03 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
-> On Tue, 12 Jun 2018 19:36:06 +0900
-> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->
->> Maybe, the commit title should be:
->>
->> mtd: rawnand: denali: add more clocks and improve setup_data_interface
->
-> Or you split that in 2 commits, one retrieving the new clks, and the
-> other one fixing/improving ->setup_data_interface().
+Tests test_tunnel.sh fails due to config fragments ins't enabled.
 
+Fixes: 933a741e3b82 ("selftests/bpf: bpf tunnel test.")
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+---
 
-Good idea.
+All tests passes except ip6gretap that still fails. I'm unsure why.
+Ideas?
 
-I will try that in v2.
+Cheers,
+Anders
 
+ tools/testing/selftests/bpf/config | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-
-
+diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
+index 1eefe211a4a8..7eb613ffef55 100644
+--- a/tools/testing/selftests/bpf/config
++++ b/tools/testing/selftests/bpf/config
+@@ -7,3 +7,13 @@ CONFIG_CGROUP_BPF=y
+ CONFIG_NETDEVSIM=m
+ CONFIG_NET_CLS_ACT=y
+ CONFIG_NET_SCH_INGRESS=y
++CONFIG_NET_IPIP=y
++CONFIG_IPV6=y
++CONFIG_NET_IPGRE_DEMUX=y
++CONFIG_NET_IPGRE=y
++CONFIG_IPV6_GRE=y
++CONFIG_CRYPTO_USER_API_HASH=m
++CONFIG_CRYPTO_HMAC=m
++CONFIG_CRYPTO_SHA256=m
++CONFIG_VXLAN=y
++CONFIG_GENEVE=y
 -- 
-Best Regards
-Masahiro Yamada
+2.17.1
+
