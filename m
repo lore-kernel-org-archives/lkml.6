@@ -2,100 +2,121 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3CFF0C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:01:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 23D47C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:02:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E66C72086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:01:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CbltW3w9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E66C72086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id D498E2086D
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:02:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D498E2086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934600AbeFLWBx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:01:53 -0400
-Received: from lelnx194.ext.ti.com ([198.47.27.80]:65416 "EHLO
-        lelnx194.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933912AbeFLWBu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:01:50 -0400
-Received: from dlelxv90.itg.ti.com ([172.17.2.17])
-        by lelnx194.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5CM1QxU003279;
-        Tue, 12 Jun 2018 17:01:26 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1528840886;
-        bh=h1yClt9nfF8rsruUUxn+qIC1kgaq7QdvKsgHdVo03Fc=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=CbltW3w9eQAyFKS2hcgGj4jyFQpZnaVzC4wedp3pxxbupk5PAYpDaZUyS5jDnGUCc
-         elLg04NLLvAfOvzmJX2CCXpBvzlYzWP5YdXvHBXlae76YpFvrO0m5ACFLikOVX4uYK
-         gotADl05FyczY3Bgm3hbDxnrIjtSincDuM/nO4Rw=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5CM1QnF010344;
-        Tue, 12 Jun 2018 17:01:26 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 12
- Jun 2018 17:01:25 -0500
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 12 Jun 2018 17:01:25 -0500
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5CM1P04010342;
-        Tue, 12 Jun 2018 17:01:25 -0500
-Date:   Tue, 12 Jun 2018 17:01:25 -0500
-From:   Nishanth Menon <nm@ti.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Santosh Shilimkar <ssantosh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-serial@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Tony Lindgren <tony@atomide.com>, Vignesh R <vigneshr@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFC PATCH 1/6] Documentation: arm: ti: Add bindings for AM654
- SoC
-Message-ID: <20180612220125.3scgr6by62wifirp@kahuna>
-References: <20180605060125.9518-1-nm@ti.com>
- <20180605060125.9518-2-nm@ti.com>
- <20180612210519.GA17653@rob-hp-laptop>
+        id S934674AbeFLWCM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 18:02:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36021 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933912AbeFLWCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 18:02:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 32084AF5F;
+        Tue, 12 Jun 2018 22:02:10 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        trondmy@hammerspace.com, Paul McKenney <paulmck@linux.vnet.ibm.com>
+Date:   Wed, 13 Jun 2018 08:01:58 +1000
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: Re: [GIT PULL] Please pull NFS client changes for 4.18
+In-Reply-To: <CA+55aFz3jmGST_cOB+qH6qZTFa5HJcw2JoeWxJEZdWgeO4=vNQ@mail.gmail.com>
+References: <e5c90488937d14e9df81752a024be9d1e73ed398.camel@hammerspace.com> <CA+55aFxYMg+F9Jdi_25X-Qtt=7imqjQhLnjEyQXOQ6+eJvy83A@mail.gmail.com> <CA+55aFw+2+xCRAaMo8qgvZ7qNgRMo6D=WkwP7APQndG-y5b3dw@mail.gmail.com> <CA+55aFz3jmGST_cOB+qH6qZTFa5HJcw2JoeWxJEZdWgeO4=vNQ@mail.gmail.com>
+Message-ID: <87vaanirzd.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180612210519.GA17653@rob-hp-laptop>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21:05-20180612, Rob Herring wrote:
-> On Tue, Jun 05, 2018 at 01:01:20AM -0500, Nishanth Menon wrote:
-[...]
-> > +Boards based on K3 Multicore SoC architecture shall have the following property:
-> > +- compatible: Every hardware block introduced in K3 Multicore SoC
-> > +  architecture shall be of the form:
-> > +  "ti,XXX-YYY", where:
-> > +     'XXX' represents the specific SoC part for which the support is added.
-> > +     'YYY' represents the corresponding peripheral in SoC being supported.
-> 
-> No need to explain standard DT convention here. (But I don't think we 
-> have this convention documented anywhere, so patches welcome. :))
-> 
+--=-=-=
+Content-Type: text/plain
 
-Thanks. Will drop off from my series (will skip the generic dts
-convention for now ;) ).
--- 
-Regards,
-Nishanth Menon
+On Tue, Jun 12 2018, Linus Torvalds wrote:
+
+> Final note (for now) on this: I've merged the nfs code, but I really
+> am obviously not happy with these crazy random ad-hoc
+> cursor-not-cursor list games.
+>
+>                 Linus
+Hi Linus,
+ thanks for merging the code despite your reservations.
+
+ Yes, we could create a generic rcu-list cursor.  I have given it some
+ thought but didn't like the added complexity.  As there were existing
+ objects in the list that could be used as a cursor, that seemed to me to
+ be the better solution.
+
+ As you say, and cursor would need to be allocated from a slab, not on
+ the stack. We could use a SLAB_TYPESAFE_BY_RCU and not need to use rcu
+ to delay the freeing.
+ The lsb in the next pointer of the cursor would be 1 to indicate the
+ cursor.
+
+ Any iteration of the list would need to look out for this flag.
+ When found it would need to skip over any cursors to the next
+ non-cursor, then repeat the skip and make sure it found the same
+ non-cursor.  This guards against the cursor moving while it is being
+ examined.
+
+ Any walk that needed to place a cursor would need to get an exclusive
+ lock on the list from the start.  This is more locking overhead than
+ just grabbing the lock to optimistically take a reference on the
+ "current" item which I did in the NFS patch.  If the lists were
+ normally short that might not be a problem. In this case the list can
+ get quite long so the extra locking might be noticeable.
+
+ Deleting objects from the list would need to be careful to preserve the
+ flag bit, but that is the least difficult part.
+
+ FYI I have an open proposal to improve the cursor used by rhashtable
+ for rhashtable_walk - it sometimes needs to drop out of RCU in the
+ middle of a bucket chain.  In that case the chain is normally short (16 is
+ considered so long that the hash must have been compromised) and I
+ propose an insertion sort to keep the addresses of objects in numerical
+ order.  This way the address of the last object found can work as a stable
+ cursor - we just search through the list until an object has a larger
+ address.
+
+ So my perspective is that while an rcu_cursor_list could be developed,
+ I'm not sure it would always (or ever?) be the best solution to a
+ given problem.
+ I can turn these thoughts into a patch if you like and see what people
+ think.
+
+Thanks,
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsgQtcACgkQOeye3VZi
+gbmz5RAAioOOcswDSiWP6oZywwC4s4LduFMli65WhiEeDoYFABnCVQi7fNzN2nGq
+puLVJ6dcD6lDnF0Jx/S0IhxNUslK4kW4J+wP6Zyh1YXzykZjdWXuPlhF08x7WexL
+8Vfnzr20zkd0EOOMLTb35gJ8G1Iwf08u8bveAKONNBWu+Hu5+oGMzVRdTo7zMSnJ
+3ExeN8t/16aA+J6aSeyqju0qZcugi4pRvY6aNB5o7w3nHOxfeh6dL7kDjNQs/GS2
+sjcPbZkamKyTUhgeAbUrRPIFYmFoKCoM5zpjtuDV1ULureoDuznoxUlzy6WcpfI/
+dhgz2xsL3npf6xx2SwUmlziGC9Wv+me3dW22mJevdEdra/OioU14SUzFhct2dCOy
+kN44rodufVxDcdMvcmRsQDfj1XamAscI5C06aToxDPrd6NNCTGJ/Ohn80Dc8rIz3
+ZokLfp2taNHHW52EGbLRJHeALdD/miHcGBGTB9dp1Tg2lVH0vdkPtoNJ8hsDz3ba
+OyI09swWOoYjpoiEmGZUAf7AfhGL2+IPFlmzcMonhXF7McVKGU6kc1DWwqbwkazg
+eBv77JR1vLqnYDf7oD2QC3A8EDOMlYTvttB7vpzqFxMWcA+ZiVumXSoXYeTGImv/
+xJoEch+7iIrDqRXwOi8HBXe8d/vKoTLMAlqNttr4ucbFArXs50k=
+=jDil
+-----END PGP SIGNATURE-----
+--=-=-=--
