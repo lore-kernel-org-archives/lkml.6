@@ -2,104 +2,98 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 97DE8C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:31:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D8538C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:32:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC4C20660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC4C20660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 8E11A20660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:32:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mce+LpMk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E11A20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754217AbeFLSb1 (ORCPT
+        id S1754350AbeFLSco (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 14:31:27 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:35684 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753455AbeFLSbZ (ORCPT
+        Tue, 12 Jun 2018 14:32:44 -0400
+Received: from mail-ot0-f194.google.com ([74.125.82.194]:37033 "EHLO
+        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753455AbeFLScn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 14:31:25 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fSo4h-0001W4-Gr; Tue, 12 Jun 2018 18:31:23 +0000
-Date:   Tue, 12 Jun 2018 19:31:23 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 14/39] ovl: stack file ops
-Message-ID: <20180612183123.GB30522@ZenIV.linux.org.uk>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
- <20180529144339.16538-15-mszeredi@redhat.com>
- <20180610041243.GJ30522@ZenIV.linux.org.uk>
- <CAJfpegtEGuBqmJ+6Kzd0456o0xyebe3LBk66xWQcuzsenqKVeg@mail.gmail.com>
- <20180612022926.GY30522@ZenIV.linux.org.uk>
- <20180612024029.GZ30522@ZenIV.linux.org.uk>
- <CAJfpegvUkcUw0GXxFesT6V2f27EXW7jkvBpvnG4XB49BPdvjjA@mail.gmail.com>
- <20180612182423.GA30522@ZenIV.linux.org.uk>
+        Tue, 12 Jun 2018 14:32:43 -0400
+Received: by mail-ot0-f194.google.com with SMTP id 101-v6so29246461oth.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 11:32:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Q8SH/QULBlEc4bPFxR4Odt4vlZslWhj+cWAQ0hbXaSI=;
+        b=mce+LpMk8LjgDPNiyBb+Fuf6cNhSEyUFOYGfumZZLy7dNdqj6IfLpliazvq2wIk2lz
+         OiqDbgY2dKnoTAM6kKlVRsekSwu2YqP/b0+7PvHgIy8StzX0izrZrme889eCvegb5y+N
+         Ow8KeFwVj1yZ1Gp85tGqAU3v7l6pwecePiaRBYC377LPDrtlmnX0+AVSgK3tfVXN82vL
+         8yVpzAjwY7aZ+ZDkh5lPPdGIBXmuDjvpMBRJ5nDT2uf0CXKHSyFTsieVJ/7OGgd7R1Q1
+         WcDzYMNS4oY1V7n7vG5GWiBItO/6pcv5zxA6QNQvGk68+tQDGlb/1GPCDpxH3dVjuTux
+         xNhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Q8SH/QULBlEc4bPFxR4Odt4vlZslWhj+cWAQ0hbXaSI=;
+        b=WzcpBSmUSxJ7vu/gscJ3yt799R7MMMoUyYgKig44Nweu/ZcFohgcTWUYJVeiE/EN/t
+         Djuc36wBZ36O32LJoyQM8GmyZ0b5HkpUxeAzEM8X3uQ2+tBq4KQ2Gdbe7anEPZ18FIxI
+         6/c1wYnWgxXU6BSOv1SS1T/F61QyIjRcvXk73AuhRkNa0/2RTWdJOQwmsP9PbEfl0Pvk
+         tk2BOQn36/vZL80SbORhjTkLAWNsjd21WNgEfuWkPfwpeyn/JtXj3b//B375biGE66Z6
+         qjhzStvFXX/s1eqYcm2HRuyA8WTi9/wdUiY4sYi1vGgH0TF5HRuuks/0rzpQcPY3U3Vp
+         XAfw==
+X-Gm-Message-State: APt69E2gZ8C6a+j3xEHhfJweFEt8V6yTqvambR+rc8wjDpVM0KPeOS0N
+        lGbRd8N+uydfUrx5ETb6F/ylGzBfVnFCxeBC1CY=
+X-Google-Smtp-Source: ADUXVKKLiumlynO3UEbDdsXVCP+jqRW66vBtY8jGFzD8s8AfpAchZbab0px6EeTOdBUS4Z+EtTn7vYGZTCHqiXinX+Y=
+X-Received: by 2002:a9d:62d3:: with SMTP id z19-v6mr975422otk.159.1528828362469;
+ Tue, 12 Jun 2018 11:32:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612182423.GA30522@ZenIV.linux.org.uk>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 11:32:42
+ -0700 (PDT)
+In-Reply-To: <1528828122-9276-1-git-send-email-leoyang.li@nxp.com>
+References: <1528828122-9276-1-git-send-email-leoyang.li@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Tue, 12 Jun 2018 15:32:42 -0300
+Message-ID: <CAOMZO5C0pk-27ztxeJSENBN_-i9o+2sCoS9Cc75Q_Y=-_z_dQg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: freescale: Update to use SPDX identifiers
+To:     Li Yang <leoyang.li@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 07:24:23PM +0100, Al Viro wrote:
-> On Tue, Jun 12, 2018 at 11:24:39AM +0200, Miklos Szeredi wrote:
-> 
-> > > Note that anything that uses file_dentry() anywhere near ->open(),
-> > > ->read_iter() or ->write_iter() is an instant trouble with your scheme.
-> > > Such as
-> > > int nfs_open(struct inode *inode, struct file *filp)
-> > > {
-> > >         struct nfs_open_context *ctx;
-> > >
-> > >         ctx = alloc_nfs_open_context(file_dentry(filp), filp->f_mode, filp);
-> > >         if (IS_ERR(ctx))
-> > >                 return PTR_ERR(ctx);
-> > >         nfs_file_set_open_context(filp, ctx);
-> > >         put_nfs_open_context(ctx);
-> > >         nfs_fscache_open_file(inode, filp);
-> > >         return 0;
-> > > }
-> > >
-> > > You do want to support NFS for lower layers, right?
-> > 
-> > There's no change regarding how file_dentry() works.  We've just
-> > pushed these weird files (f_path points to overlay, f_inode points to
-> > underlay) down into the guts of overlayfs and are not directly
-> > referenced from the file table anymore.  That shouldn't make *any*
-> > difference from the lower fs's pov.
-> 
-> *owwww*
-> I'd managed to push that particular nest of horrors out of mind ;-/
-> Having dug out my notes from back then and grepped around...  The real
-> mess is not even /proc/*/maps - it's /proc/*/map_files/* and yes, the
-> reasons for that kludge are still valid ;-/
-> 
-> Fuck.  OK, so we want to get rid of ->f_path.dentry accesses and see
-> that they don't come back.  Leaving them around due to "it won't come
-> anywhere near overlayfs" was a mistake of the same kind as leaving
-> d_add() in ->lookup() instances where we'd been certain that filesystem
-> would never get exported over NFS.  Just as we'd got open-by-handle for
-> e.g. NFS, we'd got nothing to prevent ecryptfs as lower layer in
-> overlayfs...
-> 
-> I hate it, but... consider path_open() objections withdrawn for now.
-> Uses of ->vm_file (and rules for those) are too convoluted to untangle
-> at the moment.  I still would love to get that straightened out, but
-> it's not this cycle fodder, more's the pity...
+Hi Li,
 
-PS: conversion of ->f_path.dentry is easy and that can probably go this
-cycle - it's a fairly trivial change, with no functional changes unless
-overlayfs is used with <filesystem>, fixing really bad shit if it ever
-gets used thus.  I'm not asking to put that into overlayfs pull *and*
-it's independent from the "want to kill that fucking kludge" stuff.
-The latter is too hard for this cycle, unfortunately.
+On Tue, Jun 12, 2018 at 3:28 PM, Li Yang <leoyang.li@nxp.com> wrote:
+
+> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts b/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
+> index 7286b1e..f90c040 100644
+> --- a/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
+> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a-frdm.dts
+> @@ -1,45 +1,9 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+
+Here you use GPL-2.0+
+
+>  /*
+>   * Device Tree file for Freescale LS1012A Freedom Board.
+>   *
+>   * Copyright 2016 Freescale Semiconductor, Inc.
+>   *
+> - * This file is dual-licensed: you can use it either under the terms
+> - * of the GPLv2 or the X11 license, at your option. Note that this dual
+
+,but the original text says  GPL-2.0, not  GPL-2.0+, so there is a mismatch.
