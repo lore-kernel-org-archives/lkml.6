@@ -2,122 +2,121 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 11F3DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:50:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E8ACDC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB5B208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:50:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=cmpxchg.org header.i=@cmpxchg.org header.b="vwyJL/yy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB5B208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=cmpxchg.org
+	by mail.kernel.org (Postfix) with ESMTP id A57D4208B6
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:51:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57D4208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934384AbeFLPub (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:50:31 -0400
-Received: from gum.cmpxchg.org ([85.214.110.215]:54262 "EHLO gum.cmpxchg.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933137AbeFLPua (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:50:30 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=cmpxchg.org
-        ; s=x; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:
-        Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=XGFA4u88S9/eagEXpICkjHR3Y7OszNKgAfVQPcDRimI=; b=vwyJL/yys8tmDpsj2y19G8tCfJ
-        i5h6DJ0T5bzrcqOJjdeZo4Uu22WJmAYarx+aBfDg5pmCyfnXYC8yZGhjvH+HhLJ8gqsKgN6F4T76M
-        Th4naIZS6A+bwSrX083lezUZICWXGn4vR0L1hWDgupfpN8soLHsAs3hZfFOYQ/+LJ9x8=;
-Date:   Tue, 12 Jun 2018 11:52:42 -0400
-From:   Johannes Weiner <hannes@cmpxchg.org>
-To:     Roman Gushchin <guro@fb.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        linux-mm@kvack.org, kernel-team@fb.com,
-        linux-kernel@vger.kernel.org,
-        Vladimir Davydov <vdavydov.dev@gmail.com>,
-        Greg Thelen <gthelen@google.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linuxfoundation.org>
-Subject: Re: [PATCH v2 2/3] mm, memcg: propagate memory effective protection
- on setting memory.min/low
-Message-ID: <20180612155242.GA6300@cmpxchg.org>
-References: <20180611175418.7007-1-guro@fb.com>
- <20180611175418.7007-3-guro@fb.com>
+        id S1754384AbeFLPvN (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:51:13 -0400
+Received: from szxga04-in.huawei.com ([45.249.212.190]:8667 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933469AbeFLPvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 11:51:11 -0400
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id EB434B7472FE4;
+        Tue, 12 Jun 2018 23:50:54 +0800 (CST)
+Received: from [127.0.0.1] (10.142.68.147) by DGGEMS404-HUB.china.huawei.com
+ (10.3.19.204) with Microsoft SMTP Server id 14.3.382.0; Tue, 12 Jun 2018
+ 23:50:54 +0800
+Subject: Re: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add KVM_GET/SET_VCPU_EVENTS
+To:     James Morse <james.morse@arm.com>
+CC:     <rkrcmar@redhat.com>, <corbet@lwn.net>, <christoffer.dall@arm.com>,
+        <marc.zyngier@arm.com>, <linux@armlinux.org.uk>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <kvm@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>
+References: <1528487320-2873-1-git-send-email-gengdongjiu@huawei.com>
+ <1528487320-2873-3-git-send-email-gengdongjiu@huawei.com>
+ <45e94aae-ed9f-1fb7-f10e-d95c2f969ddd@arm.com>
+ <f7f59176-16a1-3b24-5acc-87bf1b4c1490@huawei.com>
+ <6887237f-d252-5b9e-02cb-5a44fef27080@arm.com>
+From:   gengdongjiu <gengdongjiu@huawei.com>
+Message-ID: <2455dc33-ae8d-79e6-e915-4181050e1e65@huawei.com>
+Date:   Tue, 12 Jun 2018 23:48:16 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180611175418.7007-3-guro@fb.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <6887237f-d252-5b9e-02cb-5a44fef27080@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.142.68.147]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 10:54:17AM -0700, Roman Gushchin wrote:
-> Explicitly propagate effective memory min/low values down by the tree.
-> 
-> If there is the global memory pressure, it's not really necessary.
-> Effective memory guarantees will be propagated automatically as we
-> traverse memory cgroup tree in the reclaim path.
-> 
-> But if there is no global memory pressure, effective memory protection
-> still matters for local (memcg-scoped) memory pressure.  So, we have to
-> update effective limits in the subtree, if a user changes memory.min and
-> memory.low values.
-> 
-> Link: http://lkml.kernel.org/r/20180522132528.23769-1-guro@fb.com
-> Signed-off-by: Roman Gushchin <guro@fb.com>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
-> Cc: Greg Thelen <gthelen@google.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Signed-off-by: Andrew Morton <akpm@linuxfoundation.org>
-> ---
->  mm/memcontrol.c | 14 ++++++++++++--
->  1 file changed, 12 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 5a3873e9d657..485df6f63d26 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -5084,7 +5084,7 @@ static int memory_min_show(struct seq_file *m, void *v)
->  static ssize_t memory_min_write(struct kernfs_open_file *of,
->  				char *buf, size_t nbytes, loff_t off)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(of_css(of));
-> +	struct mem_cgroup *iter, *memcg = mem_cgroup_from_css(of_css(of));
->  	unsigned long min;
->  	int err;
->  
-> @@ -5095,6 +5095,11 @@ static ssize_t memory_min_write(struct kernfs_open_file *of,
->  
->  	page_counter_set_min(&memcg->memory, min);
->  
-> +	rcu_read_lock();
-> +	for_each_mem_cgroup_tree(iter, memcg)
-> +		mem_cgroup_protected(NULL, iter);
-> +	rcu_read_unlock();
 
-I'm not quite following. mem_cgroup_protected() is a just-in-time
-query that depends on the groups' usage. How does it make sense to run
-this at the time the limit is set?
 
-Also, why is target reclaim different from global reclaim here? We
-have all the information we need, even if we don't start at the
-root_mem_cgroup. If we enter target reclaim against a specific cgroup,
-yes, we don't know the elow it receives from its parents. What we *do*
-know, though, is that it hit its own hard limit. What is happening
-higher up that group doesn't matter for the purpose of protection.
+On 2018/6/12 23:29, James Morse wrote:
+> Hi gengdongjiu,
+> 
+> On 12/06/18 15:50, gengdongjiu wrote:
+>> On 2018/6/11 21:36, James Morse wrote:
+>>> On 08/06/18 20:48, Dongjiu Geng wrote:
+>>>> For the migrating VMs, user space may need to know the exception
+>>>> state. For example, in the machine A, KVM make an SError pending,
+>>>> when migrate to B, KVM also needs to pend an SError.
+>>>>
+>>>> This new IOCTL exports user-invisible states related to SError.
+>>>> Together with appropriate user space changes, user space can get/set
+>>>> the SError exception state to do migrate/snapshot/suspend.
+> 
+> 
+>>>> diff --git a/arch/arm/include/uapi/asm/kvm.h b/arch/arm/include/uapi/asm/kvm.h
+>>>> index caae484..c3e6975 100644
+>>>> --- a/arch/arm/include/uapi/asm/kvm.h
+>>>> +++ b/arch/arm/include/uapi/asm/kvm.h
+>>>> @@ -124,6 +124,18 @@ struct kvm_sync_regs {
+>>>>  struct kvm_arch_memory_slot {
+>>>>  };
+>>>>  
+>>>> +/* for KVM_GET/SET_VCPU_EVENTS */
+>>>> +struct kvm_vcpu_events {
+>>>> +	struct {
+>>>> +		__u8 serror_pending;
+>>>> +		__u8 serror_has_esr;
+>>>> +		/* Align it to 8 bytes */
+>>>> +		__u8 pad[6];
+>>>> +		__u64 serror_esr;
+>>>> +	} exception;
+>>>> +	__u32 reserved[12];
+>>>> +};
+>>>> +
+>>>
+>>> You haven't defined __KVM_HAVE_VCPU_EVENTS for 32bit, so presumably this struct
+>>> will never be used. Why is it here?
+> 
+>>   if not add it for 32 bits. the 32 arm platform will build Fail, whether you have good
+>>    idea to avoid this Failure if not add this struct for the 32 bit?
+> 
+> How does this 32bit code build without this patch?
+> If do you provide the struct, how will that code build with older headers?
+> 
+> As far as I can see, this is what the __KVM_HAVE_VCPU_EVENTS define is for.
+> 
+> This should be both, or neither. Having just the struct is useless.
+It because the caller of kvm_arm_vcpu_get/set_events() is in "virt/kvm/arm/arm.c".
+the virt/kvm/arm/arm.c will used by both arm64 and arm.
+so It needs to add kvm_arm_vcpu_get/set_events() for the 32 bits, however, kvm_arm_vcpu_get/set_events() will directly return,
 
-I.e. it seems to me that instead of this patch we should be treating
-the reclaim root and its first-level children the same way we treat
-root_mem_cgroup and top-level cgroups: no protection for the root,
-first children use their low setting as the elow, all descendants get
-the proportional low-usage distribution.
+I attached the build erros below:
+https://lkml.org/lkml/2018/6/4/918
+https://lkml.org/lkml/2018/6/4/873
+
+
+[..]
+I will continue check below comments, thanks
+
