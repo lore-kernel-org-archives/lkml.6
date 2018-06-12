@@ -2,592 +2,202 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8170CC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:06:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9875DC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CC99208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:06:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CC99208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4F24B20660
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:07:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="uzGnMsfx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F24B20660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934172AbeFLTGf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:06:35 -0400
-Received: from mail-yb0-f193.google.com ([209.85.213.193]:42520 "EHLO
-        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934050AbeFLTG3 (ORCPT
+        id S934381AbeFLTH3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:07:29 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:39170 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933321AbeFLTFv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:06:29 -0400
-Received: by mail-yb0-f193.google.com with SMTP id d123-v6so15729ybh.9;
-        Tue, 12 Jun 2018 12:06:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0AQv7g8iMIdltRJwLr/9vLAcfVRow7f59kJk3ssfiiI=;
-        b=TU3++WrLNspWyCN9aCnWL3CLKcd4nKiXDIL4vMatbTIzNgmVqKdFqS1kNvS/bc/exB
-         qAxZ3/4kcgPbLyVL5ky4ouSBG6a/DI/KbPYScf/qsLV3vqTQyY8WiRhC5Jw48KqYkMOt
-         KlVLihXeciK6vrpb2FacRjvybGEV7XVoSGB03LovAQlaoB61H3qC19Duu8tAlKSXy0Tg
-         t9boh5Xe2hW3sdj5Za3VZoZ3cptoWqY/MohwcwfbJn9eIosfi1uTVK0nE/sICjDs0Ula
-         2oz0gVIBok3kzjrTDVV8g82e+s82731hnJQOck7ZAaXqroVDnNZxyYXU9+i9kD8D5OBc
-         uNdw==
-X-Gm-Message-State: APt69E1nPNcS6OnAvCGPoR/PZwbsmMCMBqfFgjqdgGQLUni49EQzrKhb
-        IEo/l9Vw4RBW6Pxvr1hQSw==
-X-Google-Smtp-Source: ADUXVKKblM8hwlAVjYnLdDWe6MGdtvDgAxPff8+WfYfSYbUUgF3xkIqhm8xbDPWewc8/54uVRnbNow==
-X-Received: by 2002:a25:b09a:: with SMTP id f26-v6mr831985ybj.167.1528830388674;
-        Tue, 12 Jun 2018 12:06:28 -0700 (PDT)
-Received: from localhost (24-223-123-72.static.usa-companies.net. [24.223.123.72])
-        by smtp.gmail.com with ESMTPSA id g32-v6sm328163ywk.15.2018.06.12.12.06.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 12:06:27 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 13:06:26 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     viresh.kumar@linaro.org, sboyd@kernel.org, andy.gross@linaro.org,
-        ulf.hansson@linaro.org, collinsd@codeaurora.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/7] soc: qcom: Add RPMh Power domain driver
-Message-ID: <20180612190626.GA23589@rob-hp-laptop>
-References: <20180612044052.4402-1-rnayak@codeaurora.org>
- <20180612044052.4402-7-rnayak@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612044052.4402-7-rnayak@codeaurora.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 12 Jun 2018 15:05:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QDYBaXSZD3DE9qAWvEFRrZU+wXiSKmoqNtRllHYqjEE=; b=uzGnMsfxbFDTEAjsfyzd8jS/N
+        77ym7m5pifK6Mig27z8Cv2h3BBCDWLB+EHcoSbE06XUEr7xQ42gmi2f58kuYPGbSRz8D0vG5lrAmg
+        85i+xdP3XndU7mGtYUvU01ecRP9SC7Gsbg/l9LzZlZG4tH9OnNdKRvFCal3eeZ5C7iLOtO3pofoJr
+        3gKySfEVfjoyH3W3jmdqDfRCfk7USw0KIni4R6gW7BrK/owjDCJTwNxLyRq4Cn3EbP+FPQps/xfjp
+        UD/bHeRXxFaeN7fsiuhIBhAouRTIvajznUxaOR6PKSqPEni4t7KA6nxtUEozPVVxvXUZRbpyiCR0l
+        jIx1iGxmQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSoc2-0002ui-CB; Tue, 12 Jun 2018 19:05:50 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-usb@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        qla2xxx-upstream@qlogic.com,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Cc:     Matthew Wilcox <willy@infradead.org>
+Subject: [PATCH 1/3] target: Abstract tag freeing
+Date:   Tue, 12 Jun 2018 12:05:43 -0700
+Message-Id: <20180612190545.10781-2-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180612190545.10781-1-willy@infradead.org>
+References: <20180612190545.10781-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 10:10:51AM +0530, Rajendra Nayak wrote:
-> The RPMh Power domain driver aggregates the corner votes from various
-> consumers for the ARC resources and communicates it to RPMh.
-> 
-> We also add data for all power domains on sdm845 SoC as part of the patch.
-> The driver can be extended to support other SoCs which support RPMh
-> 
-> Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
-> ---
->  drivers/soc/qcom/Kconfig                |   9 +
->  drivers/soc/qcom/Makefile               |   1 +
->  drivers/soc/qcom/rpmhpd.c               | 427 ++++++++++++++++++++++++
->  include/dt-bindings/power/qcom-rpmhpd.h |  31 ++
+Introduce target_free_tag() and convert all drivers to use it.
 
-These includes should go with the binding.
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+---
+ drivers/scsi/qla2xxx/qla_target.c        | 4 ++--
+ drivers/target/iscsi/iscsi_target_util.c | 2 +-
+ drivers/target/sbp/sbp_target.c          | 2 +-
+ drivers/target/tcm_fc/tfc_cmd.c          | 4 ++--
+ drivers/usb/gadget/function/f_tcm.c      | 2 +-
+ drivers/vhost/scsi.c                     | 2 +-
+ drivers/xen/xen-scsiback.c               | 4 +---
+ include/target/target_core_base.h        | 5 +++++
+ 8 files changed, 14 insertions(+), 11 deletions(-)
 
->  4 files changed, 468 insertions(+)
->  create mode 100644 drivers/soc/qcom/rpmhpd.c
->  create mode 100644 include/dt-bindings/power/qcom-rpmhpd.h
-> 
-> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-> index 5c54931a7b99..7cb7eba2b997 100644
-> --- a/drivers/soc/qcom/Kconfig
-> +++ b/drivers/soc/qcom/Kconfig
-> @@ -74,6 +74,15 @@ config QCOM_RMTFS_MEM
->  
->  	  Say y here if you intend to boot the modem remoteproc.
->  
-> +config QCOM_RPMHPD
-> +	tristate "Qualcomm RPMh Power domain driver"
-> +	depends on QCOM_RPMH && QCOM_COMMAND_DB
-> +	help
-> +	  QCOM RPMh Power domain driver to support power-domains with
-> +	  performance states. The driver communicates a performance state
-> +	  value to RPMh which then translates it into corresponding voltage
-> +	  for the voltage rail.
-> +
->  config QCOM_RPMPD
->  	tristate "Qualcomm RPM Power domain driver"
->  	depends on MFD_QCOM_RPM && QCOM_SMD_RPM
-> diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-> index 9550c170de93..499513f63bef 100644
-> --- a/drivers/soc/qcom/Makefile
-> +++ b/drivers/soc/qcom/Makefile
-> @@ -16,3 +16,4 @@ obj-$(CONFIG_QCOM_SMSM)	+= smsm.o
->  obj-$(CONFIG_QCOM_WCNSS_CTRL) += wcnss_ctrl.o
->  obj-$(CONFIG_QCOM_APR) += apr.o
->  obj-$(CONFIG_QCOM_RPMPD) += rpmpd.o
-> +obj-$(CONFIG_QCOM_RPMHPD) += rpmhpd.o
-> diff --git a/drivers/soc/qcom/rpmhpd.c b/drivers/soc/qcom/rpmhpd.c
-> new file mode 100644
-> index 000000000000..7083ec1590ff
-> --- /dev/null
-> +++ b/drivers/soc/qcom/rpmhpd.c
-> @@ -0,0 +1,427 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* Copyright (c) 2018, The Linux Foundation. All rights reserved.*/
-> +
-> +#include <linux/err.h>
-> +#include <linux/export.h>
-> +#include <linux/init.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/pm_domain.h>
-> +#include <linux/slab.h>
-> +#include <linux/of.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/pm_opp.h>
-> +#include <soc/qcom/cmd-db.h>
-> +#include <soc/qcom/rpmh.h>
-> +#include <dt-bindings/power/qcom-rpmhpd.h>
-> +
-> +#define domain_to_rpmhpd(domain) container_of(domain, struct rpmhpd, pd)
-> +
-> +#define DEFINE_RPMHPD_AO(_platform, _name, _active)			\
-> +	static struct rpmhpd _platform##_##_active;			\
-> +	static struct rpmhpd _platform##_##_name = {			\
-> +		.pd = {	.name = #_name,	},				\
-> +		.peer = &_platform##_##_active,				\
-> +		.res_name = #_name".lvl",				\
-> +		.valid_state_mask = (BIT(RPMH_ACTIVE_ONLY_STATE) |	\
-> +					BIT(RPMH_WAKE_ONLY_STATE) |	\
-> +					BIT(RPMH_SLEEP_STATE)),		\
-> +	};								\
-> +	static struct rpmhpd _platform##_##_active = {			\
-> +		.pd = { .name = #_active, },				\
-> +		.peer = &_platform##_##_name,				\
-> +		.active_only = true,					\
-> +		.res_name = #_name".lvl",				\
-> +		.valid_state_mask = (BIT(RPMH_ACTIVE_ONLY_STATE) |	\
-> +					BIT(RPMH_WAKE_ONLY_STATE) |	\
-> +					BIT(RPMH_SLEEP_STATE)),		\
-> +	}
-> +
-> +#define DEFINE_RPMHPD(_platform, _name)					\
-> +	static struct rpmhpd _platform##_##_name = {			\
-> +		.pd = { .name = #_name, },				\
-> +		.res_name = #_name".lvl",				\
-> +		.valid_state_mask = BIT(RPMH_ACTIVE_ONLY_STATE),	\
-> +	}
-> +
-> +/*
-> + * This is the number of bytes used for each command DB aux data entry of an
-> + * ARC resource.
-> + */
-> +#define RPMH_ARC_LEVEL_SIZE	2
-> +#define RPMH_ARC_MAX_LEVELS	16
-> +
-> +struct rpmhpd {
-> +	struct device	*dev;
-> +	struct generic_pm_domain pd;
-> +	struct rpmhpd	*peer;
-> +	const bool	active_only;
-> +	unsigned int	corner;
-> +	unsigned int	active_corner;
-> +	u32		level[RPMH_ARC_MAX_LEVELS];
-> +	int		level_count;
-> +	bool		enabled;
-> +	const char	*res_name;
-> +	u32		addr;
-> +	u8		valid_state_mask;
-> +};
-> +
-> +struct rpmhpd_desc {
-> +	struct rpmhpd **rpmhpds;
-> +	size_t num_pds;
-> +};
-> +
-> +static DEFINE_MUTEX(rpmhpd_lock);
-> +
-> +/* sdm845 RPMh Power domains */
-> +DEFINE_RPMHPD(sdm845, ebi);
-> +DEFINE_RPMHPD_AO(sdm845, mx, mx_ao);
-> +DEFINE_RPMHPD_AO(sdm845, cx, cx_ao);
-> +DEFINE_RPMHPD(sdm845, lmx);
-> +DEFINE_RPMHPD(sdm845, lcx);
-> +DEFINE_RPMHPD(sdm845, gfx);
-> +DEFINE_RPMHPD(sdm845, mss);
-> +
-> +static struct rpmhpd *sdm845_rpmhpds[] = {
-> +	[SDM845_EBI] = &sdm845_ebi,
-> +	[SDM845_MX] = &sdm845_mx,
-> +	[SDM845_MX_AO] = &sdm845_mx_ao,
-> +	[SDM845_CX] = &sdm845_cx,
-> +	[SDM845_CX_AO] = &sdm845_cx_ao,
-> +	[SDM845_LMX] = &sdm845_lmx,
-> +	[SDM845_LCX] = &sdm845_lcx,
-> +	[SDM845_GFX] = &sdm845_gfx,
-> +	[SDM845_MSS] = &sdm845_mss,
-> +};
-> +
-> +static const struct rpmhpd_desc sdm845_desc = {
-> +	.rpmhpds = sdm845_rpmhpds,
-> +	.num_pds = ARRAY_SIZE(sdm845_rpmhpds),
-> +};
-> +
-> +static const struct of_device_id rpmhpd_match_table[] = {
-> +	{ .compatible = "qcom,sdm845-rpmhpd", .data = &sdm845_desc },
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, rpmhpd_match_table);
-> +
-> +static int rpmhpd_send_corner(struct rpmhpd *pd, int state,
-> +			      unsigned int corner, bool sync)
-> +{
-> +	struct tcs_cmd cmd = {
-> +		.addr = pd->addr,
-> +		.data = corner,
-> +	};
-> +
-> +	if (sync)
-> +		return rpmh_write(pd->dev, state, &cmd, 1);
-> +	else
-> +		return rpmh_write_async(pd->dev, state, &cmd, 1);
-> +}
-> +
-> +static int rpmhpd_send_corner_sync(struct rpmhpd *pd, int state,
-> +				   unsigned int corner)
-> +{
-> +	return rpmhpd_send_corner(pd, state, corner, true);
-> +}
-> +
-> +static int rpmhpd_send_corner_async(struct rpmhpd *pd, int state,
-> +				    unsigned int corner)
-> +{
-> +	return rpmhpd_send_corner(pd, state, corner, false);
-> +};
-> +
-> +static void to_active_sleep(struct rpmhpd *pd, unsigned int corner,
-> +			    unsigned int *active, unsigned int *sleep)
-> +{
-> +	*active = corner;
-> +
-> +	if (pd->active_only)
-> +		*sleep = 0;
-> +	else
-> +		*sleep = *active;
-> +}
-> +
-> +/*
-> + * This function is used to aggregate the votes across the active only
-> + * resources and its peers. The aggregated votes are send to RPMh as
-> + * ACTIVE_ONLY votes (which take effect immediately), as WAKE_ONLY votes
-> + * (applied by RPMh on system wakeup) and as SLEEP votes (applied by RPMh
-> + * on system sleep).
-> + * We send ACTIVE_ONLY votes for resources without any peers. For others,
-> + * which have an active only peer, all 3 Votes are sent.
-> + */
-> +static int rpmhpd_aggregate_corner(struct rpmhpd *pd, unsigned int corner)
-> +{
-> +	int ret = -EINVAL;
-> +	struct rpmhpd *peer = pd->peer;
-> +	unsigned int active_corner, sleep_corner;
-> +	unsigned int this_active_corner = 0, this_sleep_corner = 0;
-> +	unsigned int peer_active_corner = 0, peer_sleep_corner = 0;
-> +
-> +	to_active_sleep(pd, corner, &this_active_corner, &this_sleep_corner);
-> +
-> +	if (peer && peer->enabled)
-> +		to_active_sleep(peer, peer->corner, &peer_active_corner,
-> +				&peer_sleep_corner);
-> +
-> +	active_corner = max(this_active_corner, peer_active_corner);
-> +
-> +	if (pd->valid_state_mask & BIT(RPMH_ACTIVE_ONLY_STATE)) {
-> +		/*
-> +		 * Wait for an ack only when we are increasing the
-> +		 * perf state of the power domain
-> +		 */
-> +		if (active_corner > pd->active_corner)
-> +			ret = rpmhpd_send_corner_sync(pd,
-> +						      RPMH_ACTIVE_ONLY_STATE,
-> +						      active_corner);
-> +		else
-> +			ret = rpmhpd_send_corner_async(pd,
-> +						       RPMH_ACTIVE_ONLY_STATE,
-> +						       active_corner);
-> +		if (ret)
-> +			return ret;
-> +		pd->active_corner = active_corner;
-> +		if (peer)
-> +			peer->active_corner = active_corner;
-> +	}
-> +
-> +	if (pd->valid_state_mask & BIT(RPMH_WAKE_ONLY_STATE)) {
-> +		ret = rpmhpd_send_corner_async(pd, RPMH_WAKE_ONLY_STATE,
-> +					       active_corner);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	sleep_corner = max(this_sleep_corner, peer_sleep_corner);
-> +
-> +	if (pd->valid_state_mask & BIT(RPMH_SLEEP_STATE))
-> +		ret = rpmhpd_send_corner_async(pd, RPMH_SLEEP_STATE,
-> +					       sleep_corner);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rpmhpd_power_on(struct generic_pm_domain *domain)
-> +{
-> +	struct rpmhpd *pd = domain_to_rpmhpd(domain);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&rpmhpd_lock);
-> +
-> +	pd->enabled = true;
-> +
-> +	if (pd->corner)
-> +		ret = rpmhpd_aggregate_corner(pd, pd->corner);
-> +
-> +	mutex_unlock(&rpmhpd_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rpmhpd_power_off(struct generic_pm_domain *domain)
-> +{
-> +	struct rpmhpd *pd = domain_to_rpmhpd(domain);
-> +	int ret = 0;
-> +
-> +	mutex_lock(&rpmhpd_lock);
-> +
-> +	if (pd->level[0] == 0)
-> +		ret = rpmhpd_aggregate_corner(pd, 0);
-> +
-> +	if (!ret)
-> +		pd->enabled = false;
-> +
-> +	mutex_unlock(&rpmhpd_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static int rpmhpd_set_performance(struct generic_pm_domain *domain,
-> +				  unsigned int state)
-> +{
-> +	struct rpmhpd *pd = domain_to_rpmhpd(domain);
-> +	int ret = 0, i;
-> +
-> +	mutex_lock(&rpmhpd_lock);
-> +
-> +	for (i = 0; i < pd->level_count; i++)
-> +		if (state <= pd->level[i])
-> +			break;
-> +
-> +	if (i == pd->level_count) {
-> +		ret = -EINVAL;
-> +		dev_err(pd->dev, "invalid state=%u for domain %s",
-> +			state, pd->pd.name);
-> +			goto out;
-> +	}
-> +
-> +	pd->corner = i;
-> +
-> +	if (!pd->enabled)
-> +		goto out;
-> +
-> +	ret = rpmhpd_aggregate_corner(pd, i);
-> +out:
-> +	mutex_unlock(&rpmhpd_lock);
-> +
-> +	return ret;
-> +}
-> +
-> +static unsigned int rpmhpd_get_performance(struct generic_pm_domain *genpd,
-> +					   struct dev_pm_opp *opp)
-> +{
-> +	struct device_node *np;
-> +	unsigned int corner = 0;
-> +
-> +	np = dev_pm_opp_get_of_node(opp);
-> +	if (of_property_read_u32(np, "qcom,level", &corner)) {
-> +		pr_err("%s: missing 'qcom,level' property\n", __func__);
-> +		return 0;
-> +	}
-> +
-> +	of_node_put(np);
-> +
-> +	return corner;
-> +}
-> +
-> +static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
-> +{
-> +	int i, j, len, ret;
-> +	u8 buf[RPMH_ARC_MAX_LEVELS * RPMH_ARC_LEVEL_SIZE];
-> +
-> +	len = cmd_db_read_aux_data_len(rpmhpd->res_name);
-> +	if (len <= 0)
-> +		return len;
-> +
-> +	if (len > RPMH_ARC_MAX_LEVELS * RPMH_ARC_LEVEL_SIZE)
-> +		return -EINVAL;
-> +
-> +	ret = cmd_db_read_aux_data(rpmhpd->res_name, buf, len);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	rpmhpd->level_count = len / RPMH_ARC_LEVEL_SIZE;
-> +
-> +	for (i = 0; i < rpmhpd->level_count; i++) {
-> +		rpmhpd->level[i] = 0;
-> +		for (j = 0; j < RPMH_ARC_LEVEL_SIZE; j++)
-> +			rpmhpd->level[i] |=
-> +				buf[i * RPMH_ARC_LEVEL_SIZE + j] << (8 * j);
-> +
-> +		/*
-> +		 * The AUX data may be zero padded.  These 0 valued entries at
-> +		 * the end of the map must be ignored.
-> +		 */
-> +		if (i > 0 && rpmhpd->level[i] == 0) {
-> +			rpmhpd->level_count = i;
-> +			break;
-> +		}
-> +		pr_dbg("%s: ARC hlvl=%2d --> vlvl=%4u\n", rpmhpd->res_name, i,
-> +		       rpmhpd->level[i]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int rpmhpd_probe(struct platform_device *pdev)
-> +{
-> +	int i, ret;
-> +	size_t num;
-> +	struct genpd_onecell_data *data;
-> +	struct rpmhpd **rpmhpds;
-> +	const struct rpmhpd_desc *desc;
-> +
-> +	desc = of_device_get_match_data(&pdev->dev);
-> +	if (!desc)
-> +		return -EINVAL;
-> +
-> +	rpmhpds = desc->rpmhpds;
-> +	num = desc->num_pds;
-> +
-> +	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->domains = devm_kcalloc(&pdev->dev, num, sizeof(*data->domains),
-> +				     GFP_KERNEL);
-> +	data->num_domains = num;
-> +
-> +	ret = cmd_db_ready();
-> +	if (ret) {
-> +		if (ret != -EPROBE_DEFER)
-> +			dev_err(&pdev->dev, "Command DB unavailable, ret=%d\n",
-> +				ret);
-> +		return ret;
-> +	}
-> +
-> +	for (i = 0; i < num; i++) {
-> +		if (!rpmhpds[i]) {
-> +			dev_warn(&pdev->dev, "rpmhpds[] with empty entry at index=%d\n",
-> +				 i);
-> +			continue;
-> +		}
-> +
-> +		rpmhpds[i]->dev = &pdev->dev;
-> +		rpmhpds[i]->addr = cmd_db_read_addr(rpmhpds[i]->res_name);
-> +		if (!rpmhpds[i]->addr) {
-> +			dev_err(&pdev->dev, "Could not find RPMh address for resource %s\n",
-> +				rpmhpds[i]->res_name);
-> +			return -ENODEV;
-> +		}
-> +
-> +		ret = cmd_db_read_slave_id(rpmhpds[i]->res_name);
-> +		if (ret != CMD_DB_HW_ARC) {
-> +			dev_err(&pdev->dev, "RPMh slave ID mismatch\n");
-> +			return -EINVAL;
-> +		}
-> +
-> +		ret = rpmhpd_update_level_mapping(rpmhpds[i]);
-> +		if (ret)
-> +			return ret;
-> +
-> +		rpmhpds[i]->pd.power_off = rpmhpd_power_off;
-> +		rpmhpds[i]->pd.power_on = rpmhpd_power_on;
-> +		rpmhpds[i]->pd.set_performance_state = rpmhpd_set_performance;
-> +		rpmhpds[i]->pd.opp_to_performance_state = rpmhpd_get_performance;
-> +		pm_genpd_init(&rpmhpds[i]->pd, NULL, true);
-> +
-> +		data->domains[i] = &rpmhpds[i]->pd;
-> +	}
-> +
-> +	return of_genpd_add_provider_onecell(pdev->dev.of_node, data);
-> +}
-> +
-> +static int rpmhpd_remove(struct platform_device *pdev)
-> +{
-> +	of_genpd_del_provider(pdev->dev.of_node);
-> +	return 0;
-> +}
-> +
-> +static struct platform_driver rpmhpd_driver = {
-> +	.driver = {
-> +		.name = "qcom-rpmhpd",
-> +		.of_match_table = rpmhpd_match_table,
-> +	},
-> +	.probe = rpmhpd_probe,
-> +	.remove = rpmhpd_remove,
-> +};
-> +
-> +static int __init rpmhpd_init(void)
-> +{
-> +	return platform_driver_register(&rpmhpd_driver);
-> +}
-> +core_initcall(rpmhpd_init);
-> +
-> +static void __exit rpmhpd_exit(void)
-> +{
-> +	platform_driver_unregister(&rpmhpd_driver);
-> +}
-> +module_exit(rpmhpd_exit);
-> +
-> +MODULE_DESCRIPTION("Qualcomm Technologies, Inc. RPMh Power Domain Driver");
-> +MODULE_LICENSE("GPL v2");
-> +MODULE_ALIAS("platform:qcom-rpmhpd");
-> diff --git a/include/dt-bindings/power/qcom-rpmhpd.h b/include/dt-bindings/power/qcom-rpmhpd.h
-> new file mode 100644
-> index 000000000000..b01ae2452603
-> --- /dev/null
-> +++ b/include/dt-bindings/power/qcom-rpmhpd.h
-> @@ -0,0 +1,31 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
-> +
-> +#ifndef _DT_BINDINGS_POWER_QCOM_RPMHPD_H
-> +#define _DT_BINDINGS_POWER_QCOM_RPMHPD_H
-> +
-> +/* SDM845 Power Domain Indexes */
-> +#define SDM845_EBI	0
-> +#define SDM845_MX	1
-> +#define SDM845_MX_AO	2
-> +#define SDM845_CX	3
-> +#define SDM845_CX_AO	4
-> +#define SDM845_LMX	5
-> +#define SDM845_LCX	6
-> +#define SDM845_GFX	7
-> +#define SDM845_MSS	8
-> +
-> +/* SDM845 Power Domain performance levels */
-> +#define RPMH_REGULATOR_LEVEL_OFF	0
-> +#define RPMH_REGULATOR_LEVEL_RETENTION	16
-> +#define RPMH_REGULATOR_LEVEL_MIN_SVS	48
-> +#define RPMH_REGULATOR_LEVEL_LOW_SVS	64
-> +#define RPMH_REGULATOR_LEVEL_SVS	128
-> +#define RPMH_REGULATOR_LEVEL_SVS_L1	192
-> +#define RPMH_REGULATOR_LEVEL_NOM	256
-> +#define RPMH_REGULATOR_LEVEL_NOM_L1	320
-> +#define RPMH_REGULATOR_LEVEL_NOM_L2	336
-> +#define RPMH_REGULATOR_LEVEL_TURBO	384
-> +#define RPMH_REGULATOR_LEVEL_TURBO_L1	416
-> +
-> +#endif
-> -- 
-> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-> of Code Aurora Forum, hosted by The Linux Foundation
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/scsi/qla2xxx/qla_target.c b/drivers/scsi/qla2xxx/qla_target.c
+index b85c833099ff..05290966e630 100644
+--- a/drivers/scsi/qla2xxx/qla_target.c
++++ b/drivers/scsi/qla2xxx/qla_target.c
+@@ -3783,7 +3783,7 @@ void qlt_free_cmd(struct qla_tgt_cmd *cmd)
+ 		return;
+ 	}
+ 	cmd->jiffies_at_free = get_jiffies_64();
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag);
++	target_free_tag(sess->se_sess, &cmd->se_cmd);
+ }
+ EXPORT_SYMBOL(qlt_free_cmd);
+ 
+@@ -4146,7 +4146,7 @@ static void __qlt_do_work(struct qla_tgt_cmd *cmd)
+ 	qlt_send_term_exchange(qpair, NULL, &cmd->atio, 1, 0);
+ 
+ 	qlt_decr_num_pend_cmds(vha);
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag);
++	target_free_tag(sess->se_sess, &cmd->se_cmd);
+ 	spin_unlock_irqrestore(qpair->qp_lock_ptr, flags);
+ 
+ 	spin_lock_irqsave(&ha->tgt.sess_lock, flags);
+diff --git a/drivers/target/iscsi/iscsi_target_util.c b/drivers/target/iscsi/iscsi_target_util.c
+index 4435bf374d2d..7e98697cfb8e 100644
+--- a/drivers/target/iscsi/iscsi_target_util.c
++++ b/drivers/target/iscsi/iscsi_target_util.c
+@@ -711,7 +711,7 @@ void iscsit_release_cmd(struct iscsi_cmd *cmd)
+ 	kfree(cmd->iov_data);
+ 	kfree(cmd->text_in_ptr);
+ 
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, se_cmd->map_tag);
++	target_free_tag(sess->se_sess, se_cmd);
+ }
+ EXPORT_SYMBOL(iscsit_release_cmd);
+ 
+diff --git a/drivers/target/sbp/sbp_target.c b/drivers/target/sbp/sbp_target.c
+index fb1003921d85..679ae29d25ab 100644
+--- a/drivers/target/sbp/sbp_target.c
++++ b/drivers/target/sbp/sbp_target.c
+@@ -1460,7 +1460,7 @@ static void sbp_free_request(struct sbp_target_request *req)
+ 	kfree(req->pg_tbl);
+ 	kfree(req->cmd_buf);
+ 
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	target_free_tag(se_sess, se_cmd);
+ }
+ 
+ static void sbp_mgt_agent_process(struct work_struct *work)
+diff --git a/drivers/target/tcm_fc/tfc_cmd.c b/drivers/target/tcm_fc/tfc_cmd.c
+index ec372860106f..13e4efbe1ce7 100644
+--- a/drivers/target/tcm_fc/tfc_cmd.c
++++ b/drivers/target/tcm_fc/tfc_cmd.c
+@@ -92,7 +92,7 @@ static void ft_free_cmd(struct ft_cmd *cmd)
+ 	if (fr_seq(fp))
+ 		fc_seq_release(fr_seq(fp));
+ 	fc_frame_free(fp);
+-	percpu_ida_free(&sess->se_sess->sess_tag_pool, cmd->se_cmd.map_tag);
++	target_free_tag(sess->se_sess, &cmd->se_cmd);
+ 	ft_sess_put(sess);	/* undo get from lookup at recv */
+ }
+ 
+@@ -461,7 +461,7 @@ static void ft_recv_cmd(struct ft_sess *sess, struct fc_frame *fp)
+ 	cmd->sess = sess;
+ 	cmd->seq = fc_seq_assign(lport, fp);
+ 	if (!cmd->seq) {
+-		percpu_ida_free(&se_sess->sess_tag_pool, tag);
++		target_free_tag(se_sess, &cmd->se_cmd);
+ 		goto busy;
+ 	}
+ 	cmd->req_frame = fp;		/* hold frame during cmd */
+diff --git a/drivers/usb/gadget/function/f_tcm.c b/drivers/usb/gadget/function/f_tcm.c
+index d78dbb73bde8..9f670d9224b9 100644
+--- a/drivers/usb/gadget/function/f_tcm.c
++++ b/drivers/usb/gadget/function/f_tcm.c
+@@ -1288,7 +1288,7 @@ static void usbg_release_cmd(struct se_cmd *se_cmd)
+ 	struct se_session *se_sess = se_cmd->se_sess;
+ 
+ 	kfree(cmd->data_buf);
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	target_free_tag(se_sess, se_cmd);
+ }
+ 
+ static u32 usbg_sess_get_index(struct se_session *se_sess)
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index 7ad57094d736..70d35e696533 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -324,7 +324,7 @@ static void vhost_scsi_release_cmd(struct se_cmd *se_cmd)
+ 	}
+ 
+ 	vhost_scsi_put_inflight(tv_cmd->inflight);
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	target_free_tag(se_sess, se_cmd);
+ }
+ 
+ static u32 vhost_scsi_sess_get_index(struct se_session *se_sess)
+diff --git a/drivers/xen/xen-scsiback.c b/drivers/xen/xen-scsiback.c
+index 7bc88fd43cfc..ec6635258ed8 100644
+--- a/drivers/xen/xen-scsiback.c
++++ b/drivers/xen/xen-scsiback.c
+@@ -1377,9 +1377,7 @@ static int scsiback_check_stop_free(struct se_cmd *se_cmd)
+ 
+ static void scsiback_release_cmd(struct se_cmd *se_cmd)
+ {
+-	struct se_session *se_sess = se_cmd->se_sess;
+-
+-	percpu_ida_free(&se_sess->sess_tag_pool, se_cmd->map_tag);
++	target_free_tag(se_cmd->se_sess, se_cmd);
+ }
+ 
+ static u32 scsiback_sess_get_index(struct se_session *se_sess)
+diff --git a/include/target/target_core_base.h b/include/target/target_core_base.h
+index 922a39f45abc..260c2f3e9460 100644
+--- a/include/target/target_core_base.h
++++ b/include/target/target_core_base.h
+@@ -934,4 +934,9 @@ static inline void atomic_dec_mb(atomic_t *v)
+ 	smp_mb__after_atomic();
+ }
+ 
++static inline void target_free_tag(struct se_session *sess, struct se_cmd *cmd)
++{
++	percpu_ida_free(&sess->sess_tag_pool, cmd->map_tag);
++}
++
+ #endif /* TARGET_CORE_BASE_H */
+-- 
+2.17.1
+
