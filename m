@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9CC3DC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:02:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 77DE9C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF2B20660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:02:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF2B20660
+	by mail.kernel.org (Postfix) with ESMTP id 38ECE2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 20:02:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38ECE2089C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933842AbeFLUB7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 16:01:59 -0400
-Received: from mailoutvs28.siol.net ([185.57.226.219]:38186 "EHLO
+        id S933983AbeFLUCF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 16:02:05 -0400
+Received: from mailoutvs26.siol.net ([185.57.226.217]:38260 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933611AbeFLUBz (ORCPT
+        with ESMTP id S933611AbeFLUCA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 16:01:55 -0400
+        Tue, 12 Jun 2018 16:02:00 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 9EBF65212DC;
-        Tue, 12 Jun 2018 22:01:53 +0200 (CEST)
+        by mail.siol.net (Zimbra) with ESMTP id A34D852212F;
+        Tue, 12 Jun 2018 22:01:58 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id z2XhzOmGv6UR; Tue, 12 Jun 2018 22:01:53 +0200 (CEST)
+        with ESMTP id SpG0yji_IhvB; Tue, 12 Jun 2018 22:01:58 +0200 (CEST)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id D1EDF521ED2;
-        Tue, 12 Jun 2018 22:01:52 +0200 (CEST)
+        by mail.siol.net (Zimbra) with ESMTPS id F0503521FAC;
+        Tue, 12 Jun 2018 22:01:57 +0200 (CEST)
 Received: from localhost.localdomain (unknown [194.152.15.144])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id 49C8E5212DC;
-        Tue, 12 Jun 2018 22:01:50 +0200 (CEST)
+        by mail.siol.net (Zimbra) with ESMTPSA id 711A652212F;
+        Tue, 12 Jun 2018 22:01:55 +0200 (CEST)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     maxime.ripard@bootlin.com, wens@csie.org, robh+dt@kernel.org
 Cc:     airlied@linux.ie, gustavo@padovan.org,
@@ -44,9 +44,9 @@ Cc:     airlied@linux.ie, gustavo@padovan.org,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH v2 02/27] clk: sunxi-ng: r40: Allow setting parent rate to display related clocks
-Date:   Tue, 12 Jun 2018 22:00:11 +0200
-Message-Id: <20180612200036.21483-3-jernej.skrabec@siol.net>
+Subject: [PATCH v2 04/27] dt-bindings: display: sunxi-drm: Add TCON TOP description
+Date:   Tue, 12 Jun 2018 22:00:13 +0200
+Message-Id: <20180612200036.21483-5-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
 References: <20180612200036.21483-1-jernej.skrabec@siol.net>
@@ -55,53 +55,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Display related peripherals need precise clocks to operate correctly.
-
-Allow DE2, TCONs and HDMI to set parent clock.
+TCON TOP main purpose is to configure whole display pipeline. It
+determines relationships between mixers and TCONs, selects source TCON
+for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
+clock source and contains additional TV TCON and DSI gates.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ .../bindings/display/sunxi/sun4i-drm.txt      | 45 +++++++++++++++++++
+ include/dt-bindings/clock/sun8i-tcon-top.h    | 11 +++++
+ 2 files changed, 56 insertions(+)
+ create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index c16a62a7bdbd..fa5317719684 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -655,7 +655,8 @@ static SUNXI_CCU_GATE(dram_deinterlace_clk,	"dram-deinterlace",	"dram",
+diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+index 3346c1e2a7a0..ef64c589a4b3 100644
+--- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
++++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+@@ -187,6 +187,51 @@ And on the A23, A31, A31s and A33, you need one more clock line:
+    - 'lvds-alt': An alternative clock source, separate from the TCON channel 0
+                  clock, that can be used to drive the LVDS clock
  
- static const char * const de_parents[] = { "pll-periph0-2x", "pll-de" };
- static SUNXI_CCU_M_WITH_MUX_GATE(de_clk, "de", de_parents,
--				 0x104, 0, 4, 24, 3, BIT(31), 0);
-+				 0x104, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(mp_clk, "mp", de_parents,
- 				 0x108, 0, 4, 24, 3, BIT(31), 0);
++TCON TOP
++--------
++
++TCON TOPs main purpose is to configure whole display pipeline. It determines
++relationships between mixers and TCONs, selects source TCON for HDMI, muxes
++LCD and TV encoder GPIO output, selects TV encoder clock source and contains
++additional TV TCON and DSI gates.
++
++It allows display pipeline to be configured in very different ways:
++
++                             / LCD0/LVDS0
++                 / TCON-LCD0
++                 |           \ MIPI DSI
++ mixer0          |
++        \        / TCON-LCD1 - LCD1/LVDS1
++         TCON-TOP
++        /        \ TCON-TV0 - TVE0/RGB
++ mixer1          |          \
++                 |           TCON-TOP - HDMI
++                 |          /
++                 \ TCON-TV1 - TVE1/RGB
++
++Note that both TCON TOP references same physical unit.
++
++Required properties:
++  - compatible: value must be one of:
++    * allwinner,sun8i-r40-tcon-top
++  - reg: base address and size of the memory-mapped region.
++  - clocks: phandle to the clocks feeding the TCON TOP
++    * bus: TCON TOP interface clock
++  - clock-names: clock name mentioned above
++  - resets: phandle to the reset line driving the DRC
++    * rst: TCON TOP reset line
++  - reset-names: reset name mentioned above
++  - #clock-cells : must contain 1
++
++- ports: A ports node with endpoint definitions as defined in
++    Documentation/devicetree/bindings/media/video-interfaces.txt. The first port
++    should be the input for mixer0 mux. The second should be the output for that
++    mux. Third port should be input for mixer1 mux. Fourth port should be output
++    for mixer1 mux. Fifth port should be input for HDMI mux. Sixth port should
++    be output for it. All output endpoints should have reg property with the id
++    of the target TCON. All ports should have only one enpoint connected to
++    remote endpoint.
++
+ DRC
+ ---
  
-@@ -667,9 +668,11 @@ static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd0_clk, "tcon-lcd0", tcon_parents,
- static SUNXI_CCU_MUX_WITH_GATE(tcon_lcd1_clk, "tcon-lcd1", tcon_parents,
- 			       0x114, 24, 3, BIT(31), CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv0_clk, "tcon-tv0", tcon_parents,
--				 0x118, 0, 4, 24, 3, BIT(31), 0);
-+				 0x118, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- static SUNXI_CCU_M_WITH_MUX_GATE(tcon_tv1_clk, "tcon-tv1", tcon_parents,
--				 0x11c, 0, 4, 24, 3, BIT(31), 0);
-+				 0x11c, 0, 4, 24, 3, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static const char * const deinterlace_parents[] = { "pll-periph0",
- 						    "pll-periph1" };
-@@ -699,7 +702,8 @@ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
- 
- static const char * const hdmi_parents[] = { "pll-video0", "pll-video1" };
- static SUNXI_CCU_M_WITH_MUX_GATE(hdmi_clk, "hdmi", hdmi_parents,
--				 0x150, 0, 4, 24, 2, BIT(31), 0);
-+				 0x150, 0, 4, 24, 2, BIT(31),
-+				 CLK_SET_RATE_PARENT);
- 
- static SUNXI_CCU_GATE(hdmi_slow_clk,	"hdmi-slow",	"osc24M",
- 		      0x154, BIT(31), 0);
+diff --git a/include/dt-bindings/clock/sun8i-tcon-top.h b/include/dt-bindings/clock/sun8i-tcon-top.h
+new file mode 100644
+index 000000000000..c05e92770402
+--- /dev/null
++++ b/include/dt-bindings/clock/sun8i-tcon-top.h
+@@ -0,0 +1,11 @@
++/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
++/* Copyright (C) 2018 Jernej Skrabec <jernej.skrabec@siol.net> */
++
++#ifndef _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
++#define _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_
++
++#define CLK_BUS_TCON_TOP_DSI	0
++#define CLK_BUS_TCON_TOP_TV0	1
++#define CLK_BUS_TCON_TOP_TV1	2
++
++#endif /* _DT_BINDINGS_CLOCK_SUN8I_TCON_TOP_H_ */
 -- 
 2.17.1
 
