@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8791EC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:52:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2E63AC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:52:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33ABD208C0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:52:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8838208B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:52:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="baeloe0Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33ABD208C0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZO9lg6Mx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8838208B9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935061AbeFLQwp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:52:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48094 "EHLO mail.kernel.org"
+        id S935080AbeFLQww (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:52:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934968AbeFLQwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:52:41 -0400
+        id S934968AbeFLQws (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:52:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAED8208B9;
-        Tue, 12 Jun 2018 16:52:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 05E5C208B4;
+        Tue, 12 Jun 2018 16:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528822361;
-        bh=9bi6Z6N1KnOiT8OyBV1V3/UenQJIyTAywn8MXGZprG0=;
+        s=default; t=1528822367;
+        bh=r87PFb0bx4Gd283S1V03+FAqiuxt9TYUdldeb4YLTj0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=baeloe0YWXxIF9hWk4UfTb8FOSq55uImtHiqdsb93+chbOnJhVEl7MoahAZcLMSi7
-         MiyCdKfGQRPNTFbwRlxkHgjtvjcqCdYUIllJPkl0HwckHwrrEkzdT6Ayv80xH3vbFA
-         bV+m+B9fNK75mFb6qa3f65JT29ghYHWKw5pV501E=
+        b=ZO9lg6MxExW1anz9lTjSVnSHzA6JGN7ubf3DWg+vaEF+LzvLQvF0cZgaptIjxHICj
+         pboIdWVldkZUeV13sMJxTQyAPpxqija0mWvjIR2mdvg/3ttJyfG4x8saK7b30FhBvM
+         c3A/U/uT3Rvri/iR/OYQzQ4fq+62zWPXjV/kNsRI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com,
-        Alexey Kodanev <alexey.kodanev@oracle.com>,
+        stable@vger.kernel.org, Sabrina Dubroca <sd@queasysnail.net>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 10/24] dccp: dont free ccid2_hc_tx_sock struct in dccp_disconnect()
-Date:   Tue, 12 Jun 2018 18:51:54 +0200
-Message-Id: <20180612164817.081920047@linuxfoundation.org>
+Subject: [PATCH 4.4 12/24] ip6mr: only set ip6mr_table from setsockopt when ip6mr_new_table succeeds
+Date:   Tue, 12 Jun 2018 18:51:56 +0200
+Message-Id: <20180612164817.181262749@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180612164816.587001852@linuxfoundation.org>
 References: <20180612164816.587001852@linuxfoundation.org>
@@ -61,145 +59,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Kodanev <alexey.kodanev@oracle.com>
+From: Sabrina Dubroca <sd@queasysnail.net>
 
-[ Upstream commit 2677d20677314101293e6da0094ede7b5526d2b1 ]
+[ Upstream commit 848235edb5c93ed086700584c8ff64f6d7fc778d ]
 
-Syzbot reported the use-after-free in timer_is_static_object() [1].
+Currently, raw6_sk(sk)->ip6mr_table is set unconditionally during
+ip6_mroute_setsockopt(MRT6_TABLE). A subsequent attempt at the same
+setsockopt will fail with -ENOENT, since we haven't actually created
+that table.
 
-This can happen because the structure for the rto timer (ccid2_hc_tx_sock)
-is removed in dccp_disconnect(), and ccid2_hc_tx_rto_expire() can be
-called after that.
+A similar fix for ipv4 was included in commit 5e1859fbcc3c ("ipv4: ipmr:
+various fixes and cleanups").
 
-The report [1] is similar to the one in commit 120e9dabaf55 ("dccp:
-defer ccid_hc_tx_delete() at dismantle time"). And the fix is the same,
-delay freeing ccid2_hc_tx_sock structure, so that it is freed in
-dccp_sk_destruct().
-
-[1]
-
-==================================================================
-BUG: KASAN: use-after-free in timer_is_static_object+0x80/0x90
-kernel/time/timer.c:607
-Read of size 8 at addr ffff8801bebb5118 by task syz-executor2/25299
-
-CPU: 1 PID: 25299 Comm: syz-executor2 Not tainted 4.17.0-rc5+ #54
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  timer_is_static_object+0x80/0x90 kernel/time/timer.c:607
-  debug_object_activate+0x2d9/0x670 lib/debugobjects.c:508
-  debug_timer_activate kernel/time/timer.c:709 [inline]
-  debug_activate kernel/time/timer.c:764 [inline]
-  __mod_timer kernel/time/timer.c:1041 [inline]
-  mod_timer+0x4d3/0x13b0 kernel/time/timer.c:1102
-  sk_reset_timer+0x22/0x60 net/core/sock.c:2742
-  ccid2_hc_tx_rto_expire+0x587/0x680 net/dccp/ccids/ccid2.c:147
-  call_timer_fn+0x230/0x940 kernel/time/timer.c:1326
-  expire_timers kernel/time/timer.c:1363 [inline]
-  __run_timers+0x79e/0xc50 kernel/time/timer.c:1666
-  run_timer_softirq+0x4c/0x70 kernel/time/timer.c:1692
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-  invoke_softirq kernel/softirq.c:365 [inline]
-  irq_exit+0x1d1/0x200 kernel/softirq.c:405
-  exiting_irq arch/x86/include/asm/apic.h:525 [inline]
-  smp_apic_timer_interrupt+0x17e/0x710 arch/x86/kernel/apic/apic.c:1052
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-  </IRQ>
-...
-Allocated by task 25374:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  ccid_new+0x25b/0x3e0 net/dccp/ccid.c:151
-  dccp_hdlr_ccid+0x27/0x150 net/dccp/feat.c:44
-  __dccp_feat_activate+0x184/0x270 net/dccp/feat.c:344
-  dccp_feat_activate_values+0x3a7/0x819 net/dccp/feat.c:1538
-  dccp_create_openreq_child+0x472/0x610 net/dccp/minisocks.c:128
-  dccp_v4_request_recv_sock+0x12c/0xca0 net/dccp/ipv4.c:408
-  dccp_v6_request_recv_sock+0x125d/0x1f10 net/dccp/ipv6.c:415
-  dccp_check_req+0x455/0x6a0 net/dccp/minisocks.c:197
-  dccp_v4_rcv+0x7b8/0x1f3f net/dccp/ipv4.c:841
-  ip_local_deliver_finish+0x2e3/0xd80 net/ipv4/ip_input.c:215
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_local_deliver+0x1e1/0x720 net/ipv4/ip_input.c:256
-  dst_input include/net/dst.h:450 [inline]
-  ip_rcv_finish+0x81b/0x2200 net/ipv4/ip_input.c:396
-  NF_HOOK include/linux/netfilter.h:288 [inline]
-  ip_rcv+0xb70/0x143d net/ipv4/ip_input.c:492
-  __netif_receive_skb_core+0x26f5/0x3630 net/core/dev.c:4592
-  __netif_receive_skb+0x2c/0x1e0 net/core/dev.c:4657
-  process_backlog+0x219/0x760 net/core/dev.c:5337
-  napi_poll net/core/dev.c:5735 [inline]
-  net_rx_action+0x7b7/0x1930 net/core/dev.c:5801
-  __do_softirq+0x2e0/0xaf5 kernel/softirq.c:285
-
-Freed by task 25374:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  ccid_hc_tx_delete+0xc3/0x100 net/dccp/ccid.c:190
-  dccp_disconnect+0x130/0xc66 net/dccp/proto.c:286
-  dccp_close+0x3bc/0xe60 net/dccp/proto.c:1045
-  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:427
-  inet6_release+0x50/0x70 net/ipv6/af_inet6.c:460
-  sock_release+0x96/0x1b0 net/socket.c:594
-  sock_close+0x16/0x20 net/socket.c:1149
-  __fput+0x34d/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:191 [inline]
-  exit_to_usermode_loop+0x2bd/0x310 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:196 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:265 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801bebb4cc0
-  which belongs to the cache ccid2_hc_tx_sock of size 1240
-The buggy address is located 1112 bytes inside of
-  1240-byte region [ffff8801bebb4cc0, ffff8801bebb5198)
-The buggy address belongs to the page:
-page:ffffea0006faed00 count:1 mapcount:0 mapping:ffff8801bebb41c0
-index:0xffff8801bebb5240 compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801bebb41c0 ffff8801bebb5240 0000000100000003
-raw: ffff8801cdba3138 ffffea0007634120 ffff8801cdbaab40 0000000000000000
-page dumped because: kasan: bad access detected
-...
-==================================================================
-
-Reported-by: syzbot+5d47e9ec91a6f15dbd6f@syzkaller.appspotmail.com
-Signed-off-by: Alexey Kodanev <alexey.kodanev@oracle.com>
+Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
+Signed-off-by: Sabrina Dubroca <sd@queasysnail.net>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/dccp/proto.c |    2 --
- 1 file changed, 2 deletions(-)
+ net/ipv6/ip6mr.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -280,9 +280,7 @@ int dccp_disconnect(struct sock *sk, int
- 
- 	dccp_clear_xmit_timers(sk);
- 	ccid_hc_rx_delete(dp->dccps_hc_rx_ccid, sk);
--	ccid_hc_tx_delete(dp->dccps_hc_tx_ccid, sk);
- 	dp->dccps_hc_rx_ccid = NULL;
--	dp->dccps_hc_tx_ccid = NULL;
- 
- 	__skb_queue_purge(&sk->sk_receive_queue);
- 	__skb_queue_purge(&sk->sk_write_queue);
+--- a/net/ipv6/ip6mr.c
++++ b/net/ipv6/ip6mr.c
+@@ -1787,7 +1787,8 @@ int ip6_mroute_setsockopt(struct sock *s
+ 		ret = 0;
+ 		if (!ip6mr_new_table(net, v))
+ 			ret = -ENOMEM;
+-		raw6_sk(sk)->ip6mr_table = v;
++		else
++			raw6_sk(sk)->ip6mr_table = v;
+ 		rtnl_unlock();
+ 		return ret;
+ 	}
 
 
