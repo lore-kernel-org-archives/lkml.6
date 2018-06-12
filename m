@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A6988C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AC804C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66663204EE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66663204EE
+	by mail.kernel.org (Postfix) with ESMTP id 69F09204EE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 06:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F09204EE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933234AbeFLGqX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 02:46:23 -0400
-Received: from mx2.suse.de ([195.135.220.15]:57694 "EHLO mx2.suse.de"
+        id S933272AbeFLGqe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 02:46:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:57742 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932749AbeFLGqW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 02:46:22 -0400
+        id S932663AbeFLGqd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 02:46:33 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id EC0ABAD20;
-        Tue, 12 Jun 2018 06:46:20 +0000 (UTC)
-Date:   Tue, 12 Jun 2018 08:46:17 +0200
-Message-ID: <s5hr2lczeme.wl-tiwai@suse.de>
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C967FAD20;
+        Tue, 12 Jun 2018 06:46:32 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 08:46:32 +0200
+Message-ID: <s5hpo0wzelz.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     Dennis Wassenberg <dennis.wassenberg@secunet.com>
 Cc:     Jer3nimo Borque <jeronimo@borque.com.ar>,
@@ -35,11 +35,9 @@ Cc:     Jer3nimo Borque <jeronimo@borque.com.ar>,
         Florin Tudorache <florin_tudorache@live.com>,
         Jaroslav Kysela <perex@perex.cz>,
         <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] ALSA: hda: add dock and led support for HP EliteBook 830 G5
-In-Reply-To: <524c49c9-b9bf-2f27-e428-fcc65ebbb65b@secunet.com>
-References: <0cd9e66b-460a-4dc3-cd9c-3b0124b8284c@secunet.com>
-        <s5ho9ghbgt4.wl-tiwai@suse.de>
-        <524c49c9-b9bf-2f27-e428-fcc65ebbb65b@secunet.com>
+Subject: Re: [PATCH v2 2/2] ALSA: hda: add dock and led support for HP ProBook 640 G4
+In-Reply-To: <0a9dcf10-44ea-7b6c-a952-3ae4944d1f44@secunet.com>
+References: <0a9dcf10-44ea-7b6c-a952-3ae4944d1f44@secunet.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -50,12 +48,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 07:10:59 +0200,
+On Tue, 12 Jun 2018 07:11:11 +0200,
 Dennis Wassenberg wrote:
 > 
 > This patch adds missing initialisation for HP 2013 UltraSlim Dock
 > Line-In/Out PINs and activates keyboard mute/micmute leds
-> for HP EliteBook 830 G5
+> for HP ProBook 640 G4
 > 
 > Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
 
