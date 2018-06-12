@@ -2,101 +2,126 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9C894C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:33:29 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C185BC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:34:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F6B6208B6
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:33:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSiFLWxO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6B6208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 81846208B4
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 16:34:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81846208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934585AbeFLQd1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 12:33:27 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52030 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933658AbeFLQdZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 12:33:25 -0400
-Received: from localhost (unknown [104.132.1.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC7A5208B4;
-        Tue, 12 Jun 2018 16:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528821205;
-        bh=tVaDVhSYqs7DOEmDEij/aBy8WfVFrQKWgRk1pH79KY8=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=LSiFLWxOZZJ0ANKv9Rr4Ndb6SOoaYfb6MMWAZ+LQup+6qG8d47OcDZ2qG/07BizGk
-         NUsnxKsCxHmOAFVVkOm96K1OEOcg7JCLkP54dM23BNqYFDPYbhsFZA4z8NfHTzzqQZ
-         nwhWDxasH7uo7W7P7NU5mwI87DZr9PtfbdpipBVQ=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-        alexandre.belloni@bootlin.com, alsa-devel@alsa-project.org,
-        boris.brezillon@bootlin.com, broonie@kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        nicolas.ferre@microchip.com, robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
-Cc:     Cristian.Birsan@microchip.com
-References: <1527251668-31396-1-git-send-email-codrin.ciubotariu@microchip.com>
- <1527251668-31396-3-git-send-email-codrin.ciubotariu@microchip.com>
- <152778039660.144038.4743783065942615925@swboyd.mtv.corp.google.com>
- <d2558674-9aee-8b08-293f-34754fd2b185@microchip.com>
-Message-ID: <152882120419.16708.16947882037246176868@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH v4 2/7] clk: at91: add I2S clock mux driver
-Date:   Tue, 12 Jun 2018 09:33:24 -0700
+        id S934663AbeFLQeL convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 12:34:11 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35916 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934543AbeFLQeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 12:34:09 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D54311529;
+        Tue, 12 Jun 2018 09:34:08 -0700 (PDT)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.27.191])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 73AA53F318;
+        Tue, 12 Jun 2018 09:34:06 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 17:34:03 +0100
+Message-ID: <86d0ww7ymc.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org, sboyd@kernel.org
+Subject: Re: [PATCH] irqchip/gic-v3: do not access GICR_WAKER if its secured register.
+In-Reply-To: <20180612145516.30897-1-srinivas.kandagatla@linaro.org>
+References: <20180612145516.30897-1-srinivas.kandagatla@linaro.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Codrin Ciubotariu (2018-06-04 01:20:29)
-> On 31.05.2018 18:26, Stephen Boyd wrote:
-> > Quoting Codrin Ciubotariu (2018-05-25 05:34:23)
-> > =
+On Tue, 12 Jun 2018 15:55:16 +0100,
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org> wrote:
+> 
+> GICR_WAKER can be a secured register, check this before accessing it
+> as its done in power management code.
 
-> >> +       .get_parent =3D clk_i2s_mux_get_parent,
-> >> +       .set_parent =3D clk_i2s_mux_set_parent,
-> >> +       .determine_rate =3D __clk_mux_determine_rate,
-> >> +};
-> >> +
-> >> +static struct clk_hw * __init
-> >> +at91_clk_i2s_mux_register(struct regmap *regmap, const char *name,
-> >> +                         const char * const *parent_names,
-> >> +                         unsigned int num_parents, u32 bus_id)
-> >> +{
-> >> +       struct clk_init_data init =3D {};
-> >> +       struct clk_i2s_mux *i2s_ck;
-> >> +       int ret;
-> >> +
-> >> +       i2s_ck =3D kzalloc(sizeof(*i2s_ck), GFP_KERNEL);
-> >> +       if (!i2s_ck)
-> >> +               return ERR_PTR(-ENOMEM);
-> >> +
-> >> +       init.name =3D name;
-> >> +       init.ops =3D &clk_i2s_mux_ops;
-> >> +       init.parent_names =3D parent_names;
-> >> +       init.num_parents =3D num_parents;
-> >> +       init.flags =3D CLK_IGNORE_UNUSED;
-> > =
+NAK.
 
-> > Really? Why?
-> =
+From the GICv3 spec:
 
-> I am thinking that there is no need to gate this clock, since there is =
+* When GICD_CTLR.DS==1, this register is always accessible.
+* When GICD_CTLR.DS==0, this is a Secure register. This register is
+  RAZ/WI to Non-secure accesses.
 
-> no way to gate this clock in HW.
+> Without this patch Qualcomm DB820c board crashes.
 
-This flag is not necessary if the clk can't be gated via hardware
-control registers. Please remove the flag.
+I suggest you find out how the GIC has been integrated on this
+platform. If you take a fault on accessing this register, this very
+much looks like an integration bug, and it should be quirked as such.
 
+Thanks,
+
+	M.
+	
+> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/irqchip/irq-gic-v3.c | 14 ++++++++------
+>  1 file changed, 8 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 5a67ec084588..38136d6e9ca5 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -656,6 +656,12 @@ static int gic_dist_supports_lpis(void)
+>  	return !!(readl_relaxed(gic_data.dist_base + GICD_TYPER) & GICD_TYPER_LPIS) && !gicv3_nolpi;
+>  }
+>  
+> +/* Check whether it's single security state view */
+> +static bool gic_dist_security_disabled(void)
+> +{
+> +	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
+> +}
+> +
+>  static void gic_cpu_init(void)
+>  {
+>  	void __iomem *rbase;
+> @@ -664,7 +670,8 @@ static void gic_cpu_init(void)
+>  	if (gic_populate_rdist())
+>  		return;
+>  
+> -	gic_enable_redist(true);
+> +	if (gic_dist_security_disabled())
+> +		gic_enable_redist(true);
+>  
+>  	rbase = gic_data_rdist_sgi_base();
+>  
+> @@ -819,11 +826,6 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+>  #endif
+>  
+>  #ifdef CONFIG_CPU_PM
+> -/* Check whether it's single security state view */
+> -static bool gic_dist_security_disabled(void)
+> -{
+> -	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
+> -}
+>  
+>  static int gic_cpu_pm_notifier(struct notifier_block *self,
+>  			       unsigned long cmd, void *v)
+> -- 
+> 2.16.2
+> 
+
+-- 
+Jazz is not dead, it just smell funny.
