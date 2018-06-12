@@ -3,137 +3,194 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=no
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A6019C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:05:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 08339C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:05:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E63020660
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:05:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E63020660
+	by mail.kernel.org (Postfix) with ESMTP id B7B2B208C0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:05:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7B2B208C0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932607AbeFLTFi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 15:05:38 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:18332 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754176AbeFLTFd (ORCPT
+        id S933189AbeFLTFj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:05:39 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:36894 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1754437AbeFLTFi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 15:05:33 -0400
+        Tue, 12 Jun 2018 15:05:38 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 12 Jun 2018 12:05:30 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 12 Jun 2018 12:05:09 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 0ECC34058A;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 76A1140D77;
         Tue, 12 Jun 2018 12:05:33 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>
-CC:     Nadav Amit <namit@vmware.com>
-Subject: [PATCH v4 0/9] x86: macrofying inline asm for better compilation
-Date:   Tue, 12 Jun 2018 04:50:41 -0700
-Message-ID: <20180612115050.185112-1-namit@vmware.com>
+CC:     Nadav Amit <namit@vmware.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>
+Subject: [PATCH v4 9/9] x86: jump-labels: use macros instead of inline assembly
+Date:   Tue, 12 Jun 2018 04:50:50 -0700
+Message-ID: <20180612115050.185112-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180612115050.185112-1-namit@vmware.com>
+References: <20180612115050.185112-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch-set deals with an interesting yet stupid problem: kernel code
-that does not get inlined despite its simplicity. There are several
-causes for this behavior: "cold" attribute on __init, different function
-optimization levels; conditional constant computations based on
-__builtin_constant_p(); and finally large inline assembly blocks.
+Use assembly macros for jump-labels and call them from inline assembly.
+This not only makes the code more readable, but also improves
+compilation decision, specifically inline decisions which GCC base on
+the number of new lines in inline assembly.
 
-This patch-set deals with the inline assembly problem. I separated these
-patches from the others (that were sent in the RFC) for easier
-inclusion. I also separated the removal of unnecessary new-lines which
-would be sent separately.
-
-The problem with inline assembly is that inline assembly is often used
-by the kernel for things that are other than code - for example,
-assembly directives and data. GCC however is oblivious to the content of
-the blocks and assumes their cost in space and time is proportional to
-the number of the perceived assembly "instruction", according to the
-number of newlines and semicolons. Alternatives, paravirt and other
-mechanisms are affected, causing code not to be inlined, and degrading
-compilation quality in general.
-
-The solution that this patch-set carries for this problem is to create
-an assembly macro, and then call it from the inline assembly block.  As
-a result, the compiler sees a single "instruction" and assigns the more
-appropriate cost to the code.
-
-To avoid uglification of the code, as many noted, the macros are first
-precompiled into an assembly file, which is later assembled together
-with the C files. This also enables to avoid duplicate implementation
-that was set before for the asm and C code. This can be seen in the
-exception table changes.
-
-Overall this patch-set slightly increases the kernel size (my build was
-done using my Ubuntu 18.04 config + localyesconfig for the record):
+As a result the code size is slightly increased.
 
    text	   data	    bss	    dec	    hex	filename
-18140829 10224724 2957312 31322865 1ddf2f1 ./vmlinux before
-18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+0.1%)
+18163528 10226300 2957312 31347140 1de51c4 ./vmlinux before
+18163608 10227348 2957312 31348268 1de562c ./vmlinux after (+1128)
 
-The number of static functions in the image is reduced by 379, but
-actually inlining is even better, which does not always shows in these
-numbers: a function may be inlined causing the calling function not to
-be inlined.
+And functions such as intel_pstate_adjust_policy_max(),
+kvm_cpu_accept_dm_intr(), kvm_register_readl() are inlined.
 
-The Makefile stuff may not be too clean. Ideas for improvements are
-welcome.
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
 
-v3->v4: * Changed naming of macros in 2 patches (PeterZ)
-	* Minor cleanup of the paravirt patch
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ arch/x86/include/asm/jump_label.h | 65 ++++++++++++++++++-------------
+ arch/x86/kernel/macros.S          |  1 +
+ 2 files changed, 39 insertions(+), 27 deletions(-)
 
-v2->v3: * Several build issues resolved (0-day)
-	* Wrong comments fix (Josh)
-	* Change asm vs C order in refcount (Kees)
-
-v1->v2:	* Compiling the macros into a separate .s file, improving
-	  readability (Linus)
-	* Improving assembly formatting, applying most of the comments
-	  according to my judgment (Jan)
-	* Adding exception-table, cpufeature and jump-labels
-	* Removing new-line cleanup; to be submitted separately
-
-
-Nadav Amit (9):
-  Makefile: Prepare for using macros for inline asm
-  x86: objtool: use asm macro for better compiler decisions
-  x86: refcount: prevent gcc distortions
-  x86: alternatives: macrofy locks for better inlining
-  x86: bug: prevent gcc distortions
-  x86: prevent inline distortion by paravirt ops
-  x86: extable: use macros instead of inline assembly
-  x86: cpufeature: use macros instead of inline assembly
-  x86: jump-labels: use macros instead of inline assembly
-
- Makefile                               |  9 ++-
- arch/x86/Makefile                      | 11 ++-
- arch/x86/include/asm/alternative-asm.h | 20 ++++--
- arch/x86/include/asm/alternative.h     | 11 +--
- arch/x86/include/asm/asm.h             | 61 +++++++---------
- arch/x86/include/asm/bug.h             | 98 +++++++++++++++-----------
- arch/x86/include/asm/cpufeature.h      | 82 ++++++++++++---------
- arch/x86/include/asm/jump_label.h      | 65 ++++++++++-------
- arch/x86/include/asm/paravirt_types.h  | 56 +++++++--------
- arch/x86/include/asm/refcount.h        | 74 +++++++++++--------
- arch/x86/kernel/Makefile               |  6 ++
- arch/x86/kernel/macros.S               | 16 +++++
- include/asm-generic/bug.h              |  8 +--
- include/linux/compiler.h               | 56 +++++++++++----
- scripts/Kbuild.include                 |  4 +-
- 15 files changed, 344 insertions(+), 233 deletions(-)
- create mode 100644 arch/x86/kernel/macros.S
-
+diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
+index 8c0de4282659..f321a50e6727 100644
+--- a/arch/x86/include/asm/jump_label.h
++++ b/arch/x86/include/asm/jump_label.h
+@@ -2,19 +2,6 @@
+ #ifndef _ASM_X86_JUMP_LABEL_H
+ #define _ASM_X86_JUMP_LABEL_H
+ 
+-#ifndef HAVE_JUMP_LABEL
+-/*
+- * For better or for worse, if jump labels (the gcc extension) are missing,
+- * then the entire static branch patching infrastructure is compiled out.
+- * If that happens, the code in here will malfunction.  Raise a compiler
+- * error instead.
+- *
+- * In theory, jump labels and the static branch patching infrastructure
+- * could be decoupled to fix this.
+- */
+-#error asm/jump_label.h included on a non-jump-label kernel
+-#endif
+-
+ #define JUMP_LABEL_NOP_SIZE 5
+ 
+ #ifdef CONFIG_X86_64
+@@ -28,18 +15,27 @@
+ 
+ #ifndef __ASSEMBLY__
+ 
++#ifndef HAVE_JUMP_LABEL
++/*
++ * For better or for worse, if jump labels (the gcc extension) are missing,
++ * then the entire static branch patching infrastructure is compiled out.
++ * If that happens, the code in here will malfunction.  Raise a compiler
++ * error instead.
++ *
++ * In theory, jump labels and the static branch patching infrastructure
++ * could be decoupled to fix this.
++ */
++#error asm/jump_label.h included on a non-jump-label kernel
++#endif
++
+ #include <linux/stringify.h>
+ #include <linux/types.h>
+ 
+ static __always_inline bool arch_static_branch(struct static_key *key, bool branch)
+ {
+-	asm_volatile_goto("1:"
+-		".byte " __stringify(STATIC_KEY_INIT_NOP) "\n\t"
+-		".pushsection __jump_table,  \"aw\" \n\t"
+-		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
+-		".popsection \n\t"
+-		: :  "i" (key), "i" (branch) : : l_yes);
++	asm_volatile_goto("STATIC_BRANCH_NOP l_yes=\"%l[l_yes]\" key=\"%c0\" "
++			  "branch=\"%c1\""
++			: :  "i" (key), "i" (branch) : : l_yes);
+ 
+ 	return false;
+ l_yes:
+@@ -48,13 +44,8 @@ static __always_inline bool arch_static_branch(struct static_key *key, bool bran
+ 
+ static __always_inline bool arch_static_branch_jump(struct static_key *key, bool branch)
+ {
+-	asm_volatile_goto("1:"
+-		".byte 0xe9\n\t .long %l[l_yes] - 2f\n\t"
+-		"2:\n\t"
+-		".pushsection __jump_table,  \"aw\" \n\t"
+-		_ASM_ALIGN "\n\t"
+-		_ASM_PTR "1b, %l[l_yes], %c0 + %c1 \n\t"
+-		".popsection \n\t"
++	asm_volatile_goto("STATIC_BRANCH_JMP l_yes=\"%l[l_yes]\" key=\"%c0\" "
++			  "branch=\"%c1\""
+ 		: :  "i" (key), "i" (branch) : : l_yes);
+ 
+ 	return false;
+@@ -108,6 +99,26 @@ struct jump_entry {
+ 	.popsection
+ .endm
+ 
++.macro STATIC_BRANCH_NOP l_yes:req key:req branch:req
++1:
++	.byte STATIC_KEY_INIT_NOP
++	.pushsection __jump_table, "aw"
++	_ASM_ALIGN
++	_ASM_PTR 1b, \l_yes, \key + \branch
++	.popsection
++.endm
++
++.macro STATIC_BRANCH_JMP l_yes:req key:req branch:req
++1:
++	.byte 0xe9
++	.long \l_yes - 2f
++2:
++	.pushsection __jump_table, "aw"
++	_ASM_ALIGN
++	_ASM_PTR 1b, \l_yes, \key + \branch
++	.popsection
++.endm
++
+ #endif	/* __ASSEMBLY__ */
+ 
+ #endif
+diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+index bf8b9c93e255..161c95059044 100644
+--- a/arch/x86/kernel/macros.S
++++ b/arch/x86/kernel/macros.S
+@@ -13,3 +13,4 @@
+ #include <asm/paravirt.h>
+ #include <asm/asm.h>
+ #include <asm/cpufeature.h>
++#include <asm/jump_label.h>
 -- 
 2.17.0
 
