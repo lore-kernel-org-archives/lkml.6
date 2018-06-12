@@ -2,334 +2,168 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1CB68C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:03:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CE91AC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:06:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A89C6208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:03:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B542089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 14:06:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iX1jxknt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A89C6208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gNcqRb0f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71B542089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933848AbeFLOD5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 10:03:57 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:50761 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933295AbeFLODz (ORCPT
+        id S933809AbeFLOGj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 10:06:39 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:40636 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933350AbeFLOGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 10:03:55 -0400
-Received: by mail-wm0-f67.google.com with SMTP id e16-v6so20796266wmd.0;
-        Tue, 12 Jun 2018 07:03:54 -0700 (PDT)
+        Tue, 12 Jun 2018 10:06:37 -0400
+Received: by mail-lf0-f66.google.com with SMTP id q11-v6so36219173lfc.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 07:06:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=NJS4WYZmQ2iV/5b5lcl8H2Qd4uBS2xzAYUXtKbMJ4qQ=;
-        b=iX1jxkntEIgF1D9bCvHv2EuS4sm2955LxP2vxgtPUh3NnwgkNdyM+Xv8Vk2idg68fl
-         ILuveog6jMe56HF8KRQjWnu0JIHpsvDYbRH7Sa6LOtd4IRqF1F135JAilANfRL8EKgYY
-         foQ9Ho0DpmQEomncnZMydlxu2QQVA0EfPgJ2I5jBlZaK0ubHOuA4u47PbygrNFjXza6v
-         vvMmNCtv0TNt9MYahkk92dLjgw9h6mZySnbEa2fHiaHfQa6Zk3Lm9Fk3+SjkIseFmf5h
-         w9Q0V7Slv/CraLzXSxaGIp9RyIP7evvXxA5ZcA/VN9DP6Oiao1X26SHmqxDV6zMZpYC+
-         ga6A==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=bbYeUhSZMyYlqPxKC4a0fHeNlHuE1zrgnUaaMS2fhN8=;
+        b=gNcqRb0fy36Zt6OBN2yDbB8loauSoFqV+ucACccZHu2utICLpdcrFcr7aTdGLLNBHD
+         6GuVeQjx+uvGJPuadmOul6xsknsfKR1VPKeKcnP8tHEzgXGusPLTJ3M4AkVE0lwXn5gx
+         DiSbQ7Svt4jAtAdSHvs+2FqBzj41D/eHe7zlE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=NJS4WYZmQ2iV/5b5lcl8H2Qd4uBS2xzAYUXtKbMJ4qQ=;
-        b=kb3OEZRaWWvYBEXbHwbh6+PEfZRIPLa1zlJSkYl5ynHQFIGXz+nq7C/wBVVngQiFzt
-         5nAhfs2B4MTjJcV6qpy8wtMDEe+bK/+Zb7PEyfBaqnSBOdvRQAXQaj5MfC0DjdrzPZpE
-         89ViSQP+TpqKdZm7xoJVtdTuVarAYRdwnoLXTrc6eW14U5h0DpokaH50PmRsK/gxnc7j
-         4yicP0ZCJykIbXf2iaWivPWFkZPL/VBUb9Nr3xsrQLo+PmCPbAoxeYNbbmJWnmb1pdky
-         3HfTyj3zhmXKiJ608vdrRXQqBohT+y093zy4atvdkBBrbEah4eQsz68ZlCaQY8AiJEkK
-         7LAg==
-X-Gm-Message-State: APt69E0AYkj+HtUe1IYYbuFfqegSb6Orh2RJIngl/81w83cMH8T89MbU
-        LZFC4WyEdgdebfVCYNMOa7s=
-X-Google-Smtp-Source: ADUXVKIt621rcyd+oeU7MruFE7yr2x5ttaec6tIwdw2LKV5GtvAFdLTYLBCSymi8Pnj+cJy2pyoyVg==
-X-Received: by 2002:a1c:aa12:: with SMTP id t18-v6mr360667wme.54.1528812233776;
-        Tue, 12 Jun 2018 07:03:53 -0700 (PDT)
-Received: from 640k.lan ([82.84.102.137])
-        by smtp.gmail.com with ESMTPSA id w2-v6sm117197wrn.77.2018.06.12.07.03.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 07:03:52 -0700 (PDT)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM changes for 4.18 merge window
-Date:   Tue, 12 Jun 2018 16:03:49 +0200
-Message-Id: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bbYeUhSZMyYlqPxKC4a0fHeNlHuE1zrgnUaaMS2fhN8=;
+        b=hkVoyYhWHeKhbpEq8Ldx2SLEOfOKuIGp5Zv0rwOge0+FTrWR7jlXUVpnt5R2Dh35WZ
+         t35C4pbxBY0rZlB9Rx0cikCG0Vdj3sDZck2ckttW8MmHgw7qhtLzWZGENUXiPCifRPdL
+         npXdQslHLYn9X3EvgOHkUMw24JFw406SpQR3sGDRau/2nibT8h9yXEDGvxcyXff1ozDP
+         QradUWOxrwpjK+s3Ksrs3t1cP/YEN5YibTkDYh/DZS4Tx18JUxZtHm6+D19JERNWAB3g
+         tqEMKjUJBaIkpBIsiBbsqfgaESFnv71pxKkItm34E9vB7IoIIKEvMl0LpncXsIorqDp+
+         WhLw==
+X-Gm-Message-State: APt69E2sl5LXzo0OEQLk2ddXS+T4dOkdpl1taCpfBvLBDP+s1duuTDTU
+        y4oRrQHj5qrAo2Y4secxImFMaw==
+X-Google-Smtp-Source: ADUXVKKVpbNnZnsmDKtIYrt2VdK3lQfiwIp9RsMgrWjiWR7mWSKZ6aMyRvGJM/2XMfSrnf8Xxtj5zg==
+X-Received: by 2002:a19:cb96:: with SMTP id b144-v6mr331700lfg.72.1528812396033;
+        Tue, 12 Jun 2018 07:06:36 -0700 (PDT)
+Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
+        by smtp.gmail.com with ESMTPSA id o25-v6sm50854lfg.41.2018.06.12.07.06.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 07:06:35 -0700 (PDT)
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND] iommu/msm: Don't call iommu_device_{,un}link from atomic context
+Date:   Tue, 12 Jun 2018 16:06:10 +0200
+Message-Id: <20180612140610.31190-1-niklas.cassel@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Fixes the following splat during boot:
 
-The following changes since commit 73fcb1a370c76b202d406e95d9dabb76eaccf484:
+BUG: sleeping function called from invalid context at kernel/locking/mutex.c:747
+in_atomic(): 1, irqs_disabled(): 128, pid: 77, name: kworker/2:1
+4 locks held by kworker/2:1/77:
+ #0: (ptrval) ((wq_completion)"events"){+.+.}, at: process_one_work+0x1fc/0x8fc
+ #1: (ptrval) (deferred_probe_work){+.+.}, at: process_one_work+0x1fc/0x8fc
+ #2: (ptrval) (&dev->mutex){....}, at: __device_attach+0x40/0x178
+ #3: (ptrval) (msm_iommu_lock){....}, at: msm_iommu_add_device+0x28/0xcc
+irq event stamp: 348
+hardirqs last  enabled at (347): [<c049dc18>] kfree+0xe0/0x3c0
+hardirqs last disabled at (348): [<c0c35cac>] _raw_spin_lock_irqsave+0x2c/0x68
+softirqs last  enabled at (0): [<c0322fd8>] copy_process.part.5+0x280/0x1a68
+softirqs last disabled at (0): [<00000000>]   (null)
+Preemption disabled at:
+[<00000000>]   (null)
+CPU: 2 PID: 77 Comm: kworker/2:1 Not tainted 4.17.0-rc5-wt-ath-01075-gaca0516bb4cf #239
+Hardware name: Generic DT based system
+Workqueue: events deferred_probe_work_func
+[<c0314e00>] (unwind_backtrace) from [<c030fc70>] (show_stack+0x20/0x24)
+[<c030fc70>] (show_stack) from [<c0c16ad8>] (dump_stack+0xa0/0xcc)
+[<c0c16ad8>] (dump_stack) from [<c035a978>] (___might_sleep+0x1f8/0x2d4)
+ath10k_sdio mmc2:0001:1: Direct firmware load for ath10k/QCA9377/hw1.0/board-2.bin failed with error -2
+[<c035a978>] (___might_sleep) from [<c035aac4>] (__might_sleep+0x70/0xa8)
+[<c035aac4>] (__might_sleep) from [<c0c3066c>] (__mutex_lock+0x50/0xb28)
+[<c0c3066c>] (__mutex_lock) from [<c0c31170>] (mutex_lock_nested+0x2c/0x34)
+ath10k_sdio mmc2:0001:1: board_file api 1 bmi_id N/A crc32 544289f7
+[<c0c31170>] (mutex_lock_nested) from [<c052d798>] (kernfs_find_and_get_ns+0x30/0x5c)
+[<c052d798>] (kernfs_find_and_get_ns) from [<c0531cc8>] (sysfs_add_link_to_group+0x28/0x58)
+[<c0531cc8>] (sysfs_add_link_to_group) from [<c07ef75c>] (iommu_device_link+0x50/0xb4)
+[<c07ef75c>] (iommu_device_link) from [<c07f2288>] (msm_iommu_add_device+0xa0/0xcc)
+[<c07f2288>] (msm_iommu_add_device) from [<c07ec6d0>] (add_iommu_group+0x3c/0x64)
+[<c07ec6d0>] (add_iommu_group) from [<c07f9d40>] (bus_for_each_dev+0x84/0xc4)
+[<c07f9d40>] (bus_for_each_dev) from [<c07ec7c8>] (bus_set_iommu+0xd0/0x10c)
+[<c07ec7c8>] (bus_set_iommu) from [<c07f1a68>] (msm_iommu_probe+0x5b8/0x66c)
+[<c07f1a68>] (msm_iommu_probe) from [<c07feaa8>] (platform_drv_probe+0x60/0xbc)
+[<c07feaa8>] (platform_drv_probe) from [<c07fc1fc>] (driver_probe_device+0x30c/0x4cc)
+[<c07fc1fc>] (driver_probe_device) from [<c07fc59c>] (__device_attach_driver+0xac/0x14c)
+[<c07fc59c>] (__device_attach_driver) from [<c07f9e14>] (bus_for_each_drv+0x68/0xc8)
+[<c07f9e14>] (bus_for_each_drv) from [<c07fbd3c>] (__device_attach+0xe4/0x178)
+[<c07fbd3c>] (__device_attach) from [<c07fc698>] (device_initial_probe+0x1c/0x20)
+[<c07fc698>] (device_initial_probe) from [<c07faee8>] (bus_probe_device+0x98/0xa0)
+[<c07faee8>] (bus_probe_device) from [<c07fb4f4>] (deferred_probe_work_func+0x74/0x198)
+[<c07fb4f4>] (deferred_probe_work_func) from [<c0348eb4>] (process_one_work+0x2c4/0x8fc)
+[<c0348eb4>] (process_one_work) from [<c03497b0>] (worker_thread+0x2c4/0x5cc)
+[<c03497b0>] (worker_thread) from [<c0350d10>] (kthread+0x180/0x188)
+[<c0350d10>] (kthread) from [<c03010b4>] (ret_from_fork+0x14/0x20)
 
-  Merge branch 'akpm' (patches from Andrew) (2018-05-18 21:24:26 -0700)
+Fixes: 42df43b36163 ("iommu/msm: Make use of iommu_device_register interface")
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+ drivers/iommu/msm_iommu.c | 16 +++++-----------
+ 1 file changed, 5 insertions(+), 11 deletions(-)
 
-are available in the git repository at:
+diff --git a/drivers/iommu/msm_iommu.c b/drivers/iommu/msm_iommu.c
+index 0d3350463a3f..9a95c9b9d0d8 100644
+--- a/drivers/iommu/msm_iommu.c
++++ b/drivers/iommu/msm_iommu.c
+@@ -395,20 +395,15 @@ static int msm_iommu_add_device(struct device *dev)
+ 	struct msm_iommu_dev *iommu;
+ 	struct iommu_group *group;
+ 	unsigned long flags;
+-	int ret = 0;
+ 
+ 	spin_lock_irqsave(&msm_iommu_lock, flags);
+-
+ 	iommu = find_iommu_for_dev(dev);
++	spin_unlock_irqrestore(&msm_iommu_lock, flags);
++
+ 	if (iommu)
+ 		iommu_device_link(&iommu->iommu, dev);
+ 	else
+-		ret = -ENODEV;
+-
+-	spin_unlock_irqrestore(&msm_iommu_lock, flags);
+-
+-	if (ret)
+-		return ret;
++		return -ENODEV;
+ 
+ 	group = iommu_group_get_for_dev(dev);
+ 	if (IS_ERR(group))
+@@ -425,13 +420,12 @@ static void msm_iommu_remove_device(struct device *dev)
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&msm_iommu_lock, flags);
+-
+ 	iommu = find_iommu_for_dev(dev);
++	spin_unlock_irqrestore(&msm_iommu_lock, flags);
++
+ 	if (iommu)
+ 		iommu_device_unlink(&iommu->iommu, dev);
+ 
+-	spin_unlock_irqrestore(&msm_iommu_lock, flags);
+-
+ 	iommu_group_remove_device(dev);
+ }
+ 
+-- 
+2.17.1
 
-
-  git://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to 766d3571d8e50d3a73b77043dc632226f9e6b389:
-
-  kvm: fix typo in flag name (2018-06-12 15:06:35 +0200)
-
-Sorry for the late pull request, I really wanted to get the top four
-patches in because a (wrong) patch for that bug was sent to the list
-about a week ago.  I didn't get as much attention/as many reviews as I
-hoped for, but here they are anyway.  They aren't complicated, only
-a bit tedious, so I'm not (too) worried.
-
-Paolo
-
-----------------------------------------------------------------
-Small update for KVM.
-
-* ARM: lazy context-switching of FPSIMD registers on arm64, "split"
-regions for vGIC redistributor
-
-* s390: cleanups for nested, clock handling, crypto, storage keys and
-control register bits
-
-* x86: many bugfixes, implement more Hyper-V super powers,
-implement lapic_timer_advance_ns even when the LAPIC timer
-is emulated using the processor's VMX preemption timer.  Two
-security-related bugfixes at the top of the branch.
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      KVM: x86: use timespec64 for KVM_HC_CLOCK_PAIRING
-
-Christian Borntraeger (1):
-      Merge tag 'kvm-s390-master-4.17-1'
-
-Christoffer Dall (1):
-      KVM: arm/arm64: Introduce kvm_arch_vcpu_run_pid_change
-
-Dan Carpenter (1):
-      KVM: x86: prevent integer overflows in KVM_MEMORY_ENCRYPT_REG_REGION
-
-Dave Martin (18):
-      arm64: fpsimd: Fix TIF_FOREIGN_FPSTATE after invalidating cpu regs
-      thread_info: Add update_thread_flag() helpers
-      arm64: Use update{,_tsk}_thread_flag()
-      KVM: arm64: Convert lazy FPSIMD context switch trap to C
-      arm64: fpsimd: Generalise context saving for non-task contexts
-      arm64: fpsimd: Avoid FPSIMD context leakage for the init task
-      arm64: fpsimd: Eliminate task->mm checks
-      arm64/sve: Refactor user SVE trap maintenance for external use
-      KVM: arm64: Repurpose vcpu_arch.debug_flags for general-purpose flags
-      KVM: arm64: Optimise FPSIMD handling to reduce guest/host thrashing
-      arm64/sve: Move read_zcr_features() out of cpufeature.h
-      arm64/sve: Switch sve_pffr() argument from task to thread
-      arm64/sve: Move sve_pffr() to fpsimd.h and make inline
-      KVM: arm64: Save host SVE context as appropriate
-      KVM: arm64: Remove eager host SVE state saving
-      KVM: arm64: Remove redundant *exit_code changes in fpsimd_guest_exit()
-      KVM: arm64: Fold redundant exit code checks out of fixup_guest_exit()
-      KVM: arm64: Invoke FPSIMD context switch trap from C
-
-David Hildenbrand (4):
-      KVM: s390: introduce defines for control registers
-      KVM: s390: no need to inititalize kvm->arch members to 0
-      KVM: s390: generalize kvm_s390_get_tod_clock_ext()
-      KVM: s390: vsie: simplify < 8k address checks
-
-Eric Auger (13):
-      KVM: arm/arm64: Set dist->spis to NULL after kfree
-      KVM: arm/arm64: Document KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-      KVM: arm/arm64: Replace the single rdist region by a list
-      KVM: arm/arm64: Helper to locate free rdist index
-      KVM: arm/arm64: Revisit Redistributor TYPER last bit computation
-      KVM: arm/arm64: Adapt vgic_v3_check_base to multiple rdist regions
-      KVM: arm/arm64: Helper to register a new redistributor region
-      KVM: arm/arm64: Remove kvm_vgic_vcpu_early_init
-      KVM: arm/arm64: Check vcpu redist base before registering an iodev
-      KVM: arm/arm64: Check all vcpu redistributors are set on map_resources
-      KVM: arm/arm64: Add KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-      KVM: arm/arm64: Implement KVM_VGIC_V3_ADDR_TYPE_REDIST_REGION
-      KVM: arm/arm64: Bump VGIC_V3_MAX_CPUS to 512
-
-Felix Wilhelm (1):
-      kvm: nVMX: Enforce cpl=0 for VMX instructions
-
-Greg Kroah-Hartman (1):
-      kvm: no need to check return value of debugfs_create functions
-
-Janosch Frank (1):
-      KVM: s390: Add storage key facility interpretation control
-
-Jim Mattson (11):
-      kvm: vmx: Introduce lapic_mode enumeration
-      kvm: vmx: Basic APIC virtualization controls have three settings
-      kvm: nVMX: Eliminate APIC access page sharing between L1 and L2
-      kvm: mmu: Add guest_mode to kvm_mmu_page_role
-      kvm: mmu: Don't expose private memslots to L2
-      kvm: nVMX: Use nested_run_pending rather than from_vmentry
-      KVM: nVMX: Restore the VMCS12 offsets for v4.0 fields
-      KVM: nVMX: Ensure that VMCS12 field offsets do not change
-      kvm: x86: Amend the KVM_GET_SUPPORTED_CPUID API documentation
-      kvm: nVMX: Restrict VMX capability MSR changes
-      kvm: nVMX: Add support for "VMWRITE to any supported field"
-
-Jingqi Liu (1):
-      KVM: x86: Expose CLDEMOTE CPU feature to guest VM
-
-Junaid Shahid (1):
-      kvm: x86: Refactor mmu_free_roots()
-
-K. Y. Srinivasan (5):
-      X86/Hyper-V: Enlighten APIC access
-      X86/Hyper-V: Enable IPI enlightenments
-      X86/Hyper-V: Enhanced IPI enlightenment
-      X86/Hyper-V: Consolidate code for converting cpumask to vpset
-      X86/Hyper-V: Consolidate the allocation of the hypercall input page
-
-Liran Alon (6):
-      KVM: nVMX: Use vmx local var for referencing vpid02
-      KVM: nVMX: Don't flush TLB when vmcs12 uses VPID
-      KVM: nVMX: Emulate L1 individual-address invvpid by L0 individual-address invvpid
-      KVM: docs: mmu: Fix link to NPT presentation from KVM Forum 2008
-      KVM: docs: mmu: KVM support exposing SLAT to guests
-      KVM: docs: nVMX: Remove known limitations as they do not exist now
-
-Marc Orr (1):
-      kvm: Make VM ioctl do valloc for some archs
-
-Mark Rutland (1):
-      arm64: KVM: Use lm_alias() for kvm_ksym_ref()
-
-Michael S. Tsirkin (1):
-      kvm: fix typo in flag name
-
-Paolo Bonzini (5):
-      Merge tag 'kvmarm-for-v4.18' of git://git.kernel.org/.../kvmarm/kvmarm into HEAD
-      Merge tag 'kvm-s390-next-4.18-1' of git://git.kernel.org/.../kvms390/linux into HEAD
-      KVM: x86: introduce linear_{read,write}_system
-      KVM: x86: pass kvm_vcpu to kvm_read_guest_virt and kvm_write_guest_virt_system
-      kvm: x86: use correct privilege level for sgdt/sidt/fxsave/fxrstor access
-
-Radim Krčmář (1):
-      Merge branch 'x86/hyperv' of git://git.kernel.org/.../tip/tip
-
-Sean Christopherson (1):
-      KVM: x86: remove obsolete EXPORT... of handle_mmio_page_fault
-
-Souptick Joarder (1):
-      kvm: Change return type to vm_fault_t
-
-Thomas Gleixner (2):
-      x86/Hyper-V/hv_apic: Include asm/apic.h
-      x86/Hyper-V/hv_apic: Build the Hyper-V APIC conditionally
-
-Tony Krowiak (1):
-      KVM: s390: reset crypto attributes for all vcpus
-
-Vitaly Kuznetsov (8):
-      KVM: x86: VMX: hyper-v: Enlightened MSR-Bitmap support
-      x86/hyper-v: move struct hv_flush_pcpu{,ex} definitions to common header
-      KVM: x86: hyperv: use defines when parsing hypercall parameters
-      KVM: x86: hyperv: do rep check for each hypercall separately
-      KVM: introduce kvm_make_vcpus_request_mask() API
-      KVM: x86: hyperv: simplistic HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE} implementation
-      KVM: x86: hyperv: simplistic HVCALL_FLUSH_VIRTUAL_ADDRESS_{LIST,SPACE}_EX implementation
-      KVM: x86: hyperv: declare KVM_CAP_HYPERV_TLBFLUSH capability
-
-Wanpeng Li (2):
-      KVM: X86: Fix reserved bits check for MOV to CR3
-      KVM: VMX: Optimize tscdeadline timer latency
-
- Documentation/virtual/kvm/api.txt                 |  27 +-
- Documentation/virtual/kvm/devices/arm-vgic-v3.txt |  30 +-
- Documentation/virtual/kvm/mmu.txt                 |   6 +-
- Documentation/virtual/kvm/nested-vmx.txt          |  11 -
- arch/arm/include/asm/kvm_host.h                   |  14 +-
- arch/arm/include/uapi/asm/kvm.h                   |   1 +
- arch/arm64/Kconfig                                |   7 +
- arch/arm64/include/asm/cpufeature.h               |  29 --
- arch/arm64/include/asm/fpsimd.h                   |  21 +
- arch/arm64/include/asm/kvm_asm.h                  |   8 +-
- arch/arm64/include/asm/kvm_host.h                 |  49 ++-
- arch/arm64/include/asm/processor.h                |  15 +-
- arch/arm64/include/asm/thread_info.h              |  13 +-
- arch/arm64/include/uapi/asm/kvm.h                 |   1 +
- arch/arm64/kernel/fpsimd.c                        | 177 ++++----
- arch/arm64/kernel/ptrace.c                        |   1 +
- arch/arm64/kvm/Kconfig                            |   1 +
- arch/arm64/kvm/Makefile                           |   2 +-
- arch/arm64/kvm/debug.c                            |   8 +-
- arch/arm64/kvm/fpsimd.c                           | 110 +++++
- arch/arm64/kvm/hyp/debug-sr.c                     |   6 +-
- arch/arm64/kvm/hyp/entry.S                        |  43 --
- arch/arm64/kvm/hyp/hyp-entry.S                    |  19 -
- arch/arm64/kvm/hyp/switch.c                       | 124 ++++--
- arch/arm64/kvm/hyp/sysreg-sr.c                    |   4 +-
- arch/arm64/kvm/sys_regs.c                         |   9 +-
- arch/mips/kvm/mips.c                              |   2 +-
- arch/powerpc/kvm/book3s_hv.c                      |   3 +-
- arch/powerpc/kvm/powerpc.c                        |   2 +-
- arch/s390/include/asm/ctl_reg.h                   |  12 +
- arch/s390/include/asm/kvm_host.h                  |   1 +
- arch/s390/include/asm/mmu.h                       |   2 +-
- arch/s390/include/asm/mmu_context.h               |   2 +-
- arch/s390/include/asm/pgtable.h                   |   4 +-
- arch/s390/kvm/guestdbg.c                          |   2 +-
- arch/s390/kvm/interrupt.c                         |  20 +-
- arch/s390/kvm/kvm-s390.c                          |  61 +--
- arch/s390/kvm/kvm-s390.h                          |  13 +
- arch/s390/kvm/priv.c                              |  28 +-
- arch/s390/kvm/vsie.c                              |  10 +-
- arch/s390/mm/gmap.c                               |   6 +-
- arch/s390/mm/pgtable.c                            |   4 +-
- arch/x86/hyperv/Makefile                          |   3 +-
- arch/x86/hyperv/hv_apic.c                         | 256 +++++++++++
- arch/x86/hyperv/hv_init.c                         |  32 +-
- arch/x86/hyperv/mmu.c                             |  97 +----
- arch/x86/include/asm/hyperv-tlfs.h                |  55 ++-
- arch/x86/include/asm/kvm_emulate.h                |   6 +-
- arch/x86/include/asm/kvm_host.h                   |   7 +-
- arch/x86/include/asm/mshyperv.h                   |  44 +-
- arch/x86/include/asm/vmx.h                        |   2 +
- arch/x86/kvm/cpuid.c                              |   3 +-
- arch/x86/kvm/emulate.c                            |  76 ++--
- arch/x86/kvm/hyperv.c                             | 171 +++++++-
- arch/x86/kvm/lapic.c                              |  12 +-
- arch/x86/kvm/lapic.h                              |  14 +
- arch/x86/kvm/mmu.c                                |  78 ++--
- arch/x86/kvm/svm.c                                |  16 +-
- arch/x86/kvm/trace.h                              |  51 +++
- arch/x86/kvm/vmx.c                                | 489 +++++++++++++++++-----
- arch/x86/kvm/x86.c                                |  97 +++--
- arch/x86/kvm/x86.h                                |   4 +-
- include/kvm/arm_vgic.h                            |  17 +-
- include/linux/kvm_host.h                          |  19 +-
- include/linux/sched.h                             |   6 +
- include/linux/thread_info.h                       |  11 +
- include/uapi/linux/kvm.h                          |   5 +-
- tools/include/uapi/linux/kvm.h                    |   4 +-
- virt/kvm/Kconfig                                  |   3 +
- virt/kvm/arm/arm.c                                |  32 +-
- virt/kvm/arm/vgic/vgic-debug.c                    |  17 +-
- virt/kvm/arm/vgic/vgic-init.c                     | 100 +++--
- virt/kvm/arm/vgic/vgic-kvm-device.c               |  53 ++-
- virt/kvm/arm/vgic/vgic-mmio-v3.c                  | 112 ++++-
- virt/kvm/arm/vgic/vgic-v3.c                       |  99 ++++-
- virt/kvm/arm/vgic/vgic.h                          |  46 +-
- virt/kvm/kvm_main.c                               |  83 ++--
- 77 files changed, 2191 insertions(+), 837 deletions(-)
- create mode 100644 arch/arm64/kvm/fpsimd.c
- create mode 100644 arch/x86/hyperv/hv_apic.c
