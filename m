@@ -2,431 +2,100 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7B3AEC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:20:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5C7B4C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:21:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2403C208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:20:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2403C208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E7792089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 00:21:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CqvvLovk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E7792089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934545AbeFLAU3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 20:20:29 -0400
-Received: from mga07.intel.com ([134.134.136.100]:44496 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934366AbeFLAUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 20:20:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Jun 2018 17:20:24 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,212,1526367600"; 
-   d="scan'208";a="231780806"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.162])
-  by orsmga005.jf.intel.com with ESMTP; 11 Jun 2018 17:20:24 -0700
-Subject: [PATCH v2 2/2] tpm: add support for nonblocking operation
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        tadeusz.struk@intel.com, linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Mon, 11 Jun 2018 17:20:24 -0700
-Message-ID: <152876282414.19591.7972634639749417028.stgit@tstruk-mobl1.jf.intel.com>
-In-Reply-To: <152876281395.19591.3681365717212126222.stgit@tstruk-mobl1.jf.intel.com>
-References: <152876281395.19591.3681365717212126222.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/0.17.1-dirty
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+        id S934550AbeFLAVU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 20:21:20 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:46211 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932688AbeFLAVS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 20:21:18 -0400
+Received: by mail-qt0-f193.google.com with SMTP id h5-v6so22112782qtm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 17:21:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=bGa1QubF+VL63ZyqOjzfg2sxhD2JabjZpgmRbPgptac=;
+        b=CqvvLovkt+Wpi//Nkaul6ZhlHvJyfYpnXs18NMDnuuFHMkdEPXG/vujOu3oLKDYAtS
+         jcfdb85cXAcCQdsug5HmieQkaUMVj2gor+ROrLkfJmQkP/jusLhziKW6ITwoxmUfVWvv
+         iR1OzjSG47QNdOMtmTScQsLKM74j2JYrKCApg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bGa1QubF+VL63ZyqOjzfg2sxhD2JabjZpgmRbPgptac=;
+        b=TdUvEhq7PquLUkXKsq38oeXDDGIQ/3cjQoi29Zn9sFe6aeEr2h1S7McvtCtFj2jX4g
+         /RusYLX2fabr2uR3WDMKSqrIwMFj2BpBbNvmb39TP49/CmVeURl4a2u6QdZ+Rehdh0tA
+         PGS0zdQjox4/WM6L1oMrW/z5GSc5k5YAtU4OCTSZmf2hwv1zf8wAlJMZWkDio1Q4zFt1
+         u753DLUG4UeazjBZyC6bel29g6sJuiVrZsxehs8qQRqk6ZNHFEFpikqp2NuCylgWX5kl
+         eYbjY7RRc2L6umxyO/V3a1voDxYSJULI1djApbmK2i8CWBuZz0nKvbJ1MB9Xu4MEp8Su
+         sh1g==
+X-Gm-Message-State: APt69E3sG844D4KEzPiibnCx7Zz6DnbMA9xpK++UQNFhQLSTz7OtJgBJ
+        d1oKpd3MZ7RkYMyARwdiyphg5w==
+X-Google-Smtp-Source: ADUXVKKOLG+8c7SMbWxCEEV+WHIAA61PXCBXmMe9O1XlVZLjFX8L8cBDg9N0EFIsdWSNEFcpKQiRvw==
+X-Received: by 2002:a0c:81b2:: with SMTP id 47-v6mr1374405qvd.31.1528762877752;
+        Mon, 11 Jun 2018 17:21:17 -0700 (PDT)
+Received: from lbrmn-lnxub44-1.ric.broadcom.com ([192.19.228.250])
+        by smtp.gmail.com with ESMTPSA id v26-v6sm31470299qtc.12.2018.06.11.17.21.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 11 Jun 2018 17:21:16 -0700 (PDT)
+From:   Ray Jui <ray.jui@broadcom.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Bjorn Helgaas <bhelgaas@google.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>, linux-kernel@vger.kernel.org,
+        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
+        Ray Jui <ray.jui@broadcom.com>
+Subject: [PATCH v2 0/5] Improve Broadcom PAXC support
+Date:   Mon, 11 Jun 2018 17:21:02 -0700
+Message-Id: <1528762867-16823-1-git-send-email-ray.jui@broadcom.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently the TPM driver only supports blocking calls, which doesn't allow
-asynchronous IO operations to the TPM hardware.
-This patch changes it and adds support for nonblocking write and a new poll
-function to enable applications, which want to take advantage of this.
+This patch series improves the Broadcom PAXC support by 1) adding more
+quirks for specific versions of PAXC controllers; 2) adding logic to
+reject internally unconfigured physical functions from the embedded
+network processor acting as endpoint; 3) reducing verbose print level
+in the outbound/inbound mapping code
 
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
- drivers/char/tpm/tpm-dev-common.c |  148 ++++++++++++++++++++++++++++---------
- drivers/char/tpm/tpm-dev.c        |   16 +++-
- drivers/char/tpm/tpm-dev.h        |   16 +++-
- drivers/char/tpm/tpmrm-dev.c      |   19 ++++-
- 4 files changed, 146 insertions(+), 53 deletions(-)
+This patch series is based off v4.17 and is available on GIHUB:
+repo: https://github.com/Broadcom/arm64-linux.git
+branch: sr-paxc-v2
 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index f0c033b69b62..97625639e20f 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -17,11 +17,35 @@
-  * License.
-  *
-  */
-+#include <linux/poll.h>
-+#include <linux/sched/signal.h>
- #include <linux/slab.h>
- #include <linux/uaccess.h>
-+#include <linux/workqueue.h>
- #include "tpm.h"
- #include "tpm-dev.h"
- 
-+static struct workqueue_struct *tpm_dev_wq;
-+static DEFINE_MUTEX(tpm_dev_wq_lock);
-+
-+static void tpm_async_work(struct work_struct *work)
-+{
-+	struct file_priv *priv =
-+			container_of(work, struct file_priv, async_work);
-+	ssize_t ret;
-+
-+	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
-+			   sizeof(priv->data_buffer), 0);
-+
-+	tpm_put_ops(priv->chip);
-+	if (ret > 0) {
-+		priv->data_pending = ret;
-+		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
-+	}
-+	mutex_unlock(&priv->buffer_mutex);
-+	wake_up_interruptible(&priv->async_wait);
-+}
-+
- static void user_reader_timeout(struct timer_list *t)
- {
- 	struct file_priv *priv = from_timer(priv, t, user_read_timer);
-@@ -29,30 +53,44 @@ static void user_reader_timeout(struct timer_list *t)
- 	pr_warn("TPM user space timeout is deprecated (pid=%d)\n",
- 		task_tgid_nr(current));
- 
--	schedule_work(&priv->work);
-+	schedule_work(&priv->timeout_work);
- }
- 
--static void timeout_work(struct work_struct *work)
-+static void tpm_timeout_work(struct work_struct *work)
- {
--	struct file_priv *priv = container_of(work, struct file_priv, work);
-+	struct file_priv *priv = container_of(work, struct file_priv,
-+					      timeout_work);
- 
- 	mutex_lock(&priv->buffer_mutex);
- 	priv->data_pending = 0;
- 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
- 	mutex_unlock(&priv->buffer_mutex);
-+	wake_up_interruptible(&priv->async_wait);
- }
- 
--void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv, struct tpm_space *space)
-+int tpm_common_open(struct file *file, struct tpm_chip *chip,
-+		    struct file_priv *priv, struct tpm_space *space)
- {
- 	priv->chip = chip;
- 	priv->space = space;
- 
- 	mutex_init(&priv->buffer_mutex);
- 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
--	INIT_WORK(&priv->work, timeout_work);
--
-+	INIT_WORK(&priv->timeout_work, tpm_timeout_work);
-+	INIT_WORK(&priv->async_work, tpm_async_work);
-+	init_waitqueue_head(&priv->async_wait);
- 	file->private_data = priv;
-+	mutex_lock(&tpm_dev_wq_lock);
-+	if (!tpm_dev_wq) {
-+		tpm_dev_wq = alloc_workqueue("tpm_dev_wq", WQ_MEM_RECLAIM, 0);
-+		if (!tpm_dev_wq) {
-+			mutex_unlock(&tpm_dev_wq_lock);
-+			return -ENOMEM;
-+		}
-+	}
-+
-+	mutex_unlock(&tpm_dev_wq_lock);
-+	return 0;
- }
- 
- ssize_t tpm_common_read(struct file *file, char __user *buf,
-@@ -63,15 +101,17 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
- 	int rc;
- 
- 	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->work);
-+	flush_work(&priv->timeout_work);
- 	mutex_lock(&priv->buffer_mutex);
- 
- 	if (priv->data_pending) {
- 		ret_size = min_t(ssize_t, size, priv->data_pending);
--		rc = copy_to_user(buf, priv->data_buffer, ret_size);
--		memset(priv->data_buffer, 0, priv->data_pending);
--		if (rc)
--			ret_size = -EFAULT;
-+		if (ret_size > 0) {
-+			rc = copy_to_user(buf, priv->data_buffer, ret_size);
-+			memset(priv->data_buffer, 0, priv->data_pending);
-+			if (rc)
-+				ret_size = -EFAULT;
-+		}
- 
- 		priv->data_pending = 0;
- 	}
-@@ -84,10 +124,9 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 			 size_t size, loff_t *off)
- {
- 	struct file_priv *priv = file->private_data;
--	size_t in_size = size;
--	ssize_t out_size;
-+	int ret = 0;
- 
--	if (in_size > TPM_BUFSIZE)
-+	if (size > TPM_BUFSIZE)
- 		return -E2BIG;
- 
- 	mutex_lock(&priv->buffer_mutex);
-@@ -97,20 +136,19 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	 * buffered writes from blocking here.
- 	 */
- 	if (priv->data_pending != 0) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EBUSY;
-+		ret = -EBUSY;
-+		goto out;
- 	}
- 
--	if (copy_from_user
--	    (priv->data_buffer, (void __user *) buf, in_size)) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EFAULT;
-+	if (copy_from_user(priv->data_buffer, buf, size)) {
-+		ret = -EFAULT;
-+		goto out;
- 	}
- 
--	if (in_size < 6 ||
--	    in_size < be32_to_cpu(*((__be32 *) (priv->data_buffer + 2)))) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EINVAL;
-+	if (size < 6 ||
-+	    size < be32_to_cpu(*((__be32 *)(priv->data_buffer + 2)))) {
-+		ret = -EINVAL;
-+		goto out;
- 	}
- 
- 	/* atomic tpm command send and result receive. We only hold the ops
-@@ -118,25 +156,48 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 	 * the char dev is held open.
- 	 */
- 	if (tpm_try_get_ops(priv->chip)) {
--		mutex_unlock(&priv->buffer_mutex);
--		return -EPIPE;
-+		ret = -EPIPE;
-+		goto out;
- 	}
--	out_size = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
--				sizeof(priv->data_buffer), 0);
- 
--	tpm_put_ops(priv->chip);
--	if (out_size < 0) {
--		mutex_unlock(&priv->buffer_mutex);
--		return out_size;
-+	/*
-+	 * If in nonblocking mode schedule an async job to send
-+	 * the command return the size.
-+	 * In case of error the err code will be returned in
-+	 * the subsequent read call.
-+	 */
-+	if (file->f_flags & O_NONBLOCK) {
-+		queue_work(tpm_dev_wq, &priv->async_work);
-+		return size;
- 	}
- 
--	priv->data_pending = out_size;
-+	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
-+			   sizeof(priv->data_buffer), 0);
-+	tpm_put_ops(priv->chip);
-+
-+	if (ret > 0) {
-+		priv->data_pending = ret;
-+		mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
-+		ret = size;
-+	}
-+out:
- 	mutex_unlock(&priv->buffer_mutex);
-+	return ret;
-+}
-+
-+__poll_t tpm_common_poll(struct file *file, poll_table *wait)
-+{
-+	struct file_priv *priv = file->private_data;
-+	__poll_t mask = 0;
- 
--	/* Set a timeout by which the reader must come claim the result */
--	mod_timer(&priv->user_read_timer, jiffies + (120 * HZ));
-+	poll_wait(file, &priv->async_wait, wait);
- 
--	return in_size;
-+	if (priv->data_pending)
-+		mask = EPOLLIN | EPOLLRDNORM;
-+	else
-+		mask = EPOLLOUT | EPOLLWRNORM;
-+
-+	return mask;
- }
- 
- /*
-@@ -144,8 +205,19 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
-  */
- void tpm_common_release(struct file *file, struct file_priv *priv)
- {
-+	flush_work(&priv->async_work);
- 	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->work);
-+	flush_work(&priv->timeout_work);
- 	file->private_data = NULL;
- 	priv->data_pending = 0;
- }
-+
-+static void __exit tpm_dev_common_exit(void)
-+{
-+	if (tpm_dev_wq) {
-+		destroy_workqueue(tpm_dev_wq);
-+		tpm_dev_wq = NULL;
-+	}
-+}
-+
-+__exitcall(tpm_dev_common_exit);
-diff --git a/drivers/char/tpm/tpm-dev.c b/drivers/char/tpm/tpm-dev.c
-index 98b9630c3a36..1e353a4f4b7e 100644
---- a/drivers/char/tpm/tpm-dev.c
-+++ b/drivers/char/tpm/tpm-dev.c
-@@ -24,6 +24,7 @@ static int tpm_open(struct inode *inode, struct file *file)
- {
- 	struct tpm_chip *chip;
- 	struct file_priv *priv;
-+	int rc = -ENOMEM;
- 
- 	chip = container_of(inode->i_cdev, struct tpm_chip, cdev);
- 
-@@ -37,15 +38,21 @@ static int tpm_open(struct inode *inode, struct file *file)
- 
- 	priv = kzalloc(sizeof(*priv), GFP_KERNEL);
- 	if (priv == NULL)
--		goto out;
-+		goto out_clear;
- 
--	tpm_common_open(file, chip, priv, NULL);
-+	rc = tpm_common_open(file, chip, priv, NULL);
-+	if (rc)
-+		goto out_free;
- 
- 	return 0;
- 
-- out:
-+out_free:
-+	kfree(priv);
-+
-+out_clear:
- 	clear_bit(0, &chip->is_open);
--	return -ENOMEM;
-+
-+	return rc;
- }
- 
- /*
-@@ -68,5 +75,6 @@ const struct file_operations tpm_fops = {
- 	.open = tpm_open,
- 	.read = tpm_common_read,
- 	.write = tpm_common_write,
-+	.poll = tpm_common_poll,
- 	.release = tpm_release,
- };
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index 4048677bbd78..fa49c885a2cb 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -2,28 +2,32 @@
- #ifndef _TPM_DEV_H
- #define _TPM_DEV_H
- 
-+#include <linux/poll.h>
- #include "tpm.h"
- 
- struct file_priv {
- 	struct tpm_chip *chip;
- 	struct tpm_space *space;
- 
--	/* Data passed to and from the tpm via the read/write calls */
--	size_t data_pending;
-+	/* Holds the amount of data passed or an error code from async op */
-+	ssize_t data_pending;
- 	struct mutex buffer_mutex;
- 
- 	struct timer_list user_read_timer;      /* user needs to claim result */
--	struct work_struct work;
-+	struct work_struct timeout_work;
-+	struct work_struct async_work;
-+	wait_queue_head_t async_wait;
- 
- 	u8 data_buffer[TPM_BUFSIZE];
- };
- 
--void tpm_common_open(struct file *file, struct tpm_chip *chip,
--		     struct file_priv *priv, struct tpm_space *space);
-+int tpm_common_open(struct file *file, struct tpm_chip *chip,
-+		    struct file_priv *priv, struct tpm_space *space);
- ssize_t tpm_common_read(struct file *file, char __user *buf,
- 			size_t size, loff_t *off);
- ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 			 size_t size, loff_t *off);
--void tpm_common_release(struct file *file, struct file_priv *priv);
-+__poll_t tpm_common_poll(struct file *file, poll_table *wait);
- 
-+void tpm_common_release(struct file *file, struct file_priv *priv);
- #endif
-diff --git a/drivers/char/tpm/tpmrm-dev.c b/drivers/char/tpm/tpmrm-dev.c
-index 96006c6b9696..f131c97c1577 100644
---- a/drivers/char/tpm/tpmrm-dev.c
-+++ b/drivers/char/tpm/tpmrm-dev.c
-@@ -23,14 +23,22 @@ static int tpmrm_open(struct inode *inode, struct file *file)
- 		return -ENOMEM;
- 
- 	rc = tpm2_init_space(&priv->space);
--	if (rc) {
--		kfree(priv);
--		return -ENOMEM;
--	}
-+	if (rc)
-+		goto out_free;
- 
--	tpm_common_open(file, chip, &priv->priv, &priv->space);
-+	rc = tpm_common_open(file, chip, &priv->priv, &priv->space);
-+	if (rc)
-+		goto out_del_space;
- 
- 	return 0;
-+
-+out_del_space:
-+	tpm2_del_space(chip, &priv->space);
-+
-+out_free:
-+	kfree(priv);
-+
-+	return rc;
- }
- 
- static int tpmrm_release(struct inode *inode, struct file *file)
-@@ -51,5 +59,6 @@ const struct file_operations tpmrm_fops = {
- 	.open = tpmrm_open,
- 	.read = tpm_common_read,
- 	.write = tpm_common_write,
-+	.poll = tpm_common_poll,
- 	.release = tpmrm_release,
- };
+Changes since v1:
+ - consolidate 2 PAXC related patch series into 1
+ - change the way how the capability list corruption is handled, per
+recommendation from Bjorn. Now handle and fix up the corruption at
+the config register read
+ - rebase to v4.17
+
+Ray Jui (5):
+  PCI: iproc: Activate PAXC bridge quirk for more devices
+  PCI: iproc: Fix up corrupted PAXC root complex config registers
+  PCI: iproc: Disable MSI parsing in certain PAXC blocks
+  PCI: iproc: Reject unconfigured physical functions from PAXC
+  PCI: iproc: Reduce inbound/outbound mapping print level
+
+ drivers/pci/host/pcie-iproc.c | 159 +++++++++++++++++++++++++++++++++++-------
+ drivers/pci/host/pcie-iproc.h |   8 +++
+ drivers/pci/quirks.c          |   3 +
+ 3 files changed, 144 insertions(+), 26 deletions(-)
+
+-- 
+2.1.4
 
