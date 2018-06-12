@@ -2,122 +2,86 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 03800C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:06:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9834FC433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F4F208B1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4608C2089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:09:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JqbR2v11"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F4F208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqxqdZP1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4608C2089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935005AbeFLXGJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 19:06:09 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37368 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934598AbeFLXGH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 19:06:07 -0400
-Received: by mail-pg0-f68.google.com with SMTP id r21-v6so287202pgv.4
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 16:06:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=pvItt6oAFBkADy3l+CzHSJ7RBcRJ9eSggzIXENWZdLY=;
-        b=JqbR2v11vk90IJctqnepj/VQlMooGMhdSyJQRgtliOPwfNc7Ia4UvvZkXeBvKSHjil
-         m6kN4bfHKtViKEo4OaJG4YZ0OrLcmmaJF6dxHE2x5Q/DMx9ChvijIs9aGIrWtNLWP3Tc
-         tTJi4cQWaPRm9WKPzZxrpgSpZtqXinKNEMl14=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=pvItt6oAFBkADy3l+CzHSJ7RBcRJ9eSggzIXENWZdLY=;
-        b=FYabGNVMB0KsX/F3pJmM/iWcAZwseMX969RIm72mCmRoTc6IWZLE/GRdv0JMHqwf0r
-         9uHDoKgMR6Z9zGCiKBiKWh2kPqVtGvsnuGNHXAmAcKtksKhQeG99TD4iyvqfCDail4A0
-         hAGFeI8efA0GsheRqTyREN1fTZUv4ABOz5QoKF0VQT/Air/EOLQ2+WqQstAHSS40LvxU
-         BQbUbs0J+mSMR3j0d4gPSoyRG4ERvbVjXeG3q5lWtxZCdfraC1Ubs2DvvevuF3WTD8SV
-         ILSctigSZC6wi5PanJXCyqfHH9RFFNz0dPZDPqkrESacDUTLr6w58Mh2ZvavlfTQpD4S
-         ekhA==
-X-Gm-Message-State: APt69E0AM6TCMTVKnFP39ZUb/1QTTKFNmPnkXIlf4HjLekGG06x47mN5
-        n/rq6utq731+j9sBGRl2DZXBPg==
-X-Google-Smtp-Source: ADUXVKIyO92W5ARjUY+dReZPu647Lr+F/jWFwodTnxtiaWQ6MPySTBok7jcckBbjEohsdIS40IxiGw==
-X-Received: by 2002:a63:715d:: with SMTP id b29-v6mr1960858pgn.325.1528844767175;
-        Tue, 12 Jun 2018 16:06:07 -0700 (PDT)
-Received: from swboyd.mtv.corp.google.com ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id b22-v6sm1365358pfi.144.2018.06.12.16.06.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 16:06:06 -0700 (PDT)
-From:   Stephen Boyd <swboyd@chromium.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        devicetree@vger.kernel.org
-Subject: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to binding
-Date:   Tue, 12 Jun 2018 16:06:04 -0700
-Message-Id: <20180612230604.137880-1-swboyd@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+        id S934723AbeFLXJx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 19:09:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46810 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934063AbeFLXJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 19:09:52 -0400
+Received: from localhost (unknown [69.71.4.100])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACA202084E;
+        Tue, 12 Jun 2018 23:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528844991;
+        bh=8sRZe2dpKc8iFEmseYeTt+Wvfu3WiFL9RiLmI4vIBKc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kqxqdZP19wJCifUrm76rVDriNrc90exgI0ODZKV9W966JWQT4DLRit2gO1hxdu5oz
+         9Tl/AVdOc6gIfyxIu2ubn+76dY9SgCU83PVP0ti5Zrx5azhR0GYhdQBJmtuuWKg9Zx
+         eZqGKE/LsCd33cP2FjNSw79rPFDkiTZRy6PcrjQw=
+Date:   Tue, 12 Jun 2018 18:09:50 -0500
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-pci@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        shawn.lin@rock-chips.com
+Subject: Re: [GIT PULL] PCI changes for v4.18, part 2
+Message-ID: <20180612230950.GB96078@bhelgaas-glaptop.roam.corp.google.com>
+References: <20180612210820.GA70310@bhelgaas-glaptop.roam.corp.google.com>
+ <CA+55aFyo-NmP_zkyjnMXxJEq-93ha4akLDpF8biiFQ-hhWnZmg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+55aFyo-NmP_zkyjnMXxJEq-93ha4akLDpF8biiFQ-hhWnZmg@mail.gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Update the binding for two more PMICs supported by the same driver.
-While we're here, remove the duplicate pmi8994 lines because that
-support got merged twice.
+On Tue, Jun 12, 2018 at 03:08:53PM -0700, Linus Torvalds wrote:
+> On Tue, Jun 12, 2018 at 2:08 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> >
+> >   - squash AER directory into drivers/pci/pcie/aer.c (Bjorn Helgaas)
+> 
+> Could we please see *reasons* for this series of commits?
+> 
+> Those commit messages have trivial "what", but no explanations "why".
 
-Cc: Rajendra Nayak <rnayak@codeaurora.org>
-Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc: <devicetree@vger.kernel.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt          | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+The reason for this was to consolidate the AER-related code in one
+file instead of several little ones:
 
-diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-index 5c25fcb29fb5..ffd4345415f3 100644
---- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-@@ -7,6 +7,7 @@ PMIC's from Qualcomm.
- 	Usage: required
- 	Value type: <string>
- 	Definition: must be one of:
-+		    "qcom,pm8005-gpio"
- 		    "qcom,pm8018-gpio"
- 		    "qcom,pm8038-gpio"
- 		    "qcom,pm8058-gpio"
-@@ -15,7 +16,7 @@ PMIC's from Qualcomm.
- 		    "qcom,pm8921-gpio"
- 		    "qcom,pm8941-gpio"
- 		    "qcom,pm8994-gpio"
--		    "qcom,pmi8994-gpio"
-+		    "qcom,pm8998-gpio"
- 		    "qcom,pma8084-gpio"
- 		    "qcom,pmi8994-gpio"
- 
-@@ -78,6 +79,7 @@ to specify in a pin configuration subnode:
- 	Value type: <string-array>
- 	Definition: List of gpio pins affected by the properties specified in
- 		    this subnode.  Valid pins are:
-+		    gpio1-gpio4 for pm8005
- 		    gpio1-gpio6 for pm8018
- 		    gpio1-gpio12 for pm8038
- 		    gpio1-gpio40 for pm8058
-@@ -86,7 +88,7 @@ to specify in a pin configuration subnode:
- 		    gpio1-gpio44 for pm8921
- 		    gpio1-gpio36 for pm8941
- 		    gpio1-gpio22 for pm8994
--		    gpio1-gpio10 for pmi8994
-+		    gpio1-gpio26 for pm8998
- 		    gpio1-gpio22 for pma8084
- 		    gpio1-gpio10 for pmi8994
- 
--- 
-Sent by a computer through tubes
+  $ wc -l drivers/pci/pcie/aer/*
+    141 drivers/pci/pcie/aer/aerdrv_acpi.c
+    371 drivers/pci/pcie/aer/aerdrv.c
+    496 drivers/pci/pcie/aer/aerdrv_core.c
+    260 drivers/pci/pcie/aer/aerdrv_errprint.c
+     95 drivers/pci/pcie/aer/aerdrv.h
+    550 drivers/pci/pcie/aer/aer_inject.c
+    117 drivers/pci/pcie/aer/ecrc.c
+     29 drivers/pci/pcie/aer/Kconfig
+     19 drivers/pci/pcie/aer/Kconfig.debug
+     13 drivers/pci/pcie/aer/Makefile
 
+The original separation made logical sense but ended up being a hassle
+in practice because following a thread of execution is always being
+interrupted by having to find something in a different file.
+
+Bjorn
