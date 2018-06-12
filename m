@@ -3,703 +3,284 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 89F0FC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:11:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B0DACC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:11:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FFE32089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 534F52089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 17:11:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="sNKCDyuY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FFE32089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VvXZmZee"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 534F52089C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934427AbeFLRLh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 13:11:37 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:34558 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933762AbeFLRLe (ORCPT
+        id S934552AbeFLRLq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 13:11:46 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:40070 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933378AbeFLRLm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 13:11:34 -0400
-Received: by mail-lf0-f68.google.com with SMTP id o9-v6so37176214lfk.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 10:11:33 -0700 (PDT)
+        Tue, 12 Jun 2018 13:11:42 -0400
+Received: by mail-pl0-f67.google.com with SMTP id t12-v6so14716630plo.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 10:11:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=bZFa2fZ+6aNzhATKf+XwPW04Q/ZQmrnFuc+/DTbwnDA=;
-        b=sNKCDyuYB7qZYDlbb1wzDVk3hoUmtars/dYFbCaWTAXkh+KkxDT6e+vGLT9AUjwiEf
-         nfpoLtV8G6acgMFDVFWf7Lbk7qymRf5aRqJQHX3agBflkVJxCqZOm53Aq3djKYp+tpTC
-         y6IEldaImD5x3L8NTJkcaAaERkwVdsd9eSSmT7pqOybvx2H5MJfCO4WnvIOr/PqSnT7e
-         lNY5uvq/zGELQwuU1FQFFv2CE1j1taM/l9ldNOkJKvnF4Jb3u0rZEP1UZBNKamWA/B1/
-         fTSCGHDBcTuStKKZpR2BKySmHx2eqiyJBuoMjNr5jlQh9zYB5ttl8XCEdb1NBwt/AaN8
-         1jlw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CTgg8gPlTwhUHXLLqZ0WLIQmFs68ncNU+w2zhAlVHEM=;
+        b=VvXZmZeeQTXR234NPPT2tqEb/vMUE508G4hnsMbs4a1NWspNuSpiMwKiRsIYW1dDyO
+         yD2XW3ykZ4XVQl1MqgJ9EHgxubS1mIIHiEfcoWrxt+RWMA/8zm16DbHovGXw56FPEBDh
+         Kn0yC37lqSbLEa0P9Jc2/dN0/AUW4viuJUhsk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=bZFa2fZ+6aNzhATKf+XwPW04Q/ZQmrnFuc+/DTbwnDA=;
-        b=BcIeHO74EKojAjk42Tj07iTarXzGi1dgGavXodc2y1efUEdxYrMsYOBGWQown13n3S
-         DKqocnM85Gjtl5PEbzrfqN1EfLRLsIrG4GkZZQaqHZt8a07uCG/hB4oK6ZThzvydXK48
-         5Dq1flag0vPKDGIjgPEgjlS4IgX3wZvue2TO4LpMJV7Ljk5hXLt+8F0o0DABSJ+T9ugz
-         K8Dz1QIcsbcj60QIjDm+hWEYITFu+swdLW9ZM7rMvxBrz7K5hf9OoA03yrjekSSuxJVr
-         TVCh7ah++6WM5sIkd0xu3D0q1HVD7p7tKxoSiJ64U4lKSHqaQ9vzTI7jAp3vB+LttERm
-         /VUw==
-X-Gm-Message-State: APt69E1RY+t/KQgf385pNhSbBo4XSdDpMan43T/94RtK/3xVtJ/GxFW2
-        wmUwzaonVlI/0YkdV+uAsP9HKrWt
-X-Google-Smtp-Source: ADUXVKL0PO0wxMHXDLb4U+gdEumnUE8OdM1QMz4sETyEhqvrfMwJFaVmMa9Vkf4mvYRUqNw2PHG+0A==
-X-Received: by 2002:a19:12c7:: with SMTP id 68-v6mr775970lfs.10.1528823492763;
-        Tue, 12 Jun 2018 10:11:32 -0700 (PDT)
-Received: from [192.168.0.10] (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.googlemail.com with ESMTPSA id f203-v6sm118186lff.27.2018.06.12.10.11.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 10:11:31 -0700 (PDT)
-Subject: Re: [PATCH 1/2] lightnvm: move NVM_DEBUG to pblk
-To:     Javier Gonzalez <javier@cnexlabs.com>
-Cc:     "Konopko, Igor J" <igor.j.konopko@intel.com>,
-        "marcin.dziegielewski@intel.com" <marcin.dziegielewski@intel.com>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20180612112918.25795-1-mb@lightnvm.io>
- <871AB6B2-E790-48A0-A081-6C68EAF9D171@cnexlabs.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <5951e248-6699-912e-1027-36890d3c5367@lightnvm.io>
-Date:   Tue, 12 Jun 2018 19:11:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CTgg8gPlTwhUHXLLqZ0WLIQmFs68ncNU+w2zhAlVHEM=;
+        b=C2iIPeuNOpfKDgDzznRLtNu/tEBSIxjVe7ER2oo1ejR+x/KFGgNaTHBYFpp4pQwlkn
+         F5ezD1B7RySGlBy36ymhjB+2ikm5tEumuvZgHiPWEU/gQS+KjJWCcdF0J+03LU306XWc
+         fo0su6NAflfqrGNCtNj8GCOOpZpi7Ce6ATfKacdNvEaVsuCdhGE+5sYvZhaVyHqktJ1P
+         OLO8I54lViuXhfDq5w8LkTOSyxPbzk0EwuWTJLEePaOE87FJZBAMkvajbT/mSkDqBEta
+         Hj/Dae7BScPf6KceQdYN/tXwgmHXQzyCYPGNX4Ve5OkBH6W2jzMKMx28KIVgIukGMwAi
+         LHpg==
+X-Gm-Message-State: APt69E17hmNzaLdrSMAQvJtb2rH4gBhYGq8B8M4VDkI27Gq1Jt1qnhPM
+        9bs/QMl/wYmmYnxe6l2tKOk2JQ==
+X-Google-Smtp-Source: ADUXVKJq33chyDAe8QkkDKOYl6qvZjS3BZn94na7TAwDg8jTvC4dPeXyzWWlogPzKcQmndZDyrq6NQ==
+X-Received: by 2002:a17:902:3281:: with SMTP id z1-v6mr1355977plb.226.1528823501494;
+        Tue, 12 Jun 2018 10:11:41 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id u14-v6sm869538pfd.103.2018.06.12.10.11.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 10:11:40 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 10:11:40 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Subject: Re: [PATCH v2 09/11] misc: throttler: Add core support for
+ non-thermal throttling
+Message-ID: <20180612171140.GH88063@google.com>
+References: <20180607181214.30338-1-mka@chromium.org>
+ <20180607181214.30338-10-mka@chromium.org>
+ <20180612014911.GA35749@rodete-desktop-imager.corp.google.com>
 MIME-Version: 1.0
-In-Reply-To: <871AB6B2-E790-48A0-A081-6C68EAF9D171@cnexlabs.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180612014911.GA35749@rodete-desktop-imager.corp.google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 04:44 PM, Javier Gonzalez wrote:
->> On 12 Jun 2018, at 04.29, Matias Bjørling <mb@lightnvm.io> wrote:
->>
->> There is no users of CONFIG_NVM_DEBUG in the LightNVM subsystem. All
->> users are in pblk. Rename NVM_DEBUG to NVM_PBLK_DEBUG and enable
->> only for pblk.
->>
->> Also fix up the CONFIG_NVM_PBLK entry to follow the code style for
->> Kconfig files.
->>
->> Signed-off-by: Matias Bjørling <mb@lightnvm.io>
->> ---
->> drivers/lightnvm/Kconfig      | 32 +++++++++++++++++---------------
->> drivers/lightnvm/pblk-cache.c |  4 ++--
->> drivers/lightnvm/pblk-core.c  | 26 +++++++++++++-------------
->> drivers/lightnvm/pblk-gc.c    |  2 +-
->> drivers/lightnvm/pblk-init.c  |  8 ++++----
->> drivers/lightnvm/pblk-rb.c    | 16 ++++++++--------
->> drivers/lightnvm/pblk-read.c  | 28 ++++++++++++++--------------
->> drivers/lightnvm/pblk-sysfs.c |  8 ++++----
->> drivers/lightnvm/pblk-write.c | 14 +++++++-------
->> drivers/lightnvm/pblk.h       |  6 +++---
->> 10 files changed, 73 insertions(+), 71 deletions(-)
->>
->> diff --git a/drivers/lightnvm/Kconfig b/drivers/lightnvm/Kconfig
->> index 10c08982185a..7a281a91f1c1 100644
->> --- a/drivers/lightnvm/Kconfig
->> +++ b/drivers/lightnvm/Kconfig
->> @@ -17,23 +17,25 @@ menuconfig NVM
->>
->> if NVM
->>
->> -config NVM_DEBUG
->> -	bool "Open-Channel SSD debugging support"
->> -	default n
->> -	---help---
->> -	Exposes a debug management interface to create/remove targets at:
->> -
->> -	  /sys/module/lnvm/parameters/configure_debug
->> -
->> -	It is required to create/remove targets without IOCTLs.
->> -
->> config NVM_PBLK
->> 	tristate "Physical Block Device Open-Channel SSD target"
->> -	---help---
->> -	Allows an open-channel SSD to be exposed as a block device to the
->> -	host. The target assumes the device exposes raw flash and must be
->> -	explicitly managed by the host.
->> +	help
->> +	  Allows an open-channel SSD to be exposed as a block device to the
->> +	  host. The target assumes the device exposes raw flash and must be
->> +	  explicitly managed by the host.
->>
->> -	Please note the disk format is considered EXPERIMENTAL for now.
->> +	  Please note the disk format is considered EXPERIMENTAL for now.
->> +
->> +if NVM_PBLK
->> +
->> +config NVM_PBLK_DEBUG
->> +	bool "PBlk Debug Support"
->> +	default n
->> +	help
->> +	  Enables debug support for pblk. This includes extra checks, more
->> +	  vocal error messages, and extra tracking fields in the pblk sysfs
->> +	  entries.
->> +
->> +endif # NVM_PBLK_DEBUG
->>
->> endif # NVM
->> diff --git a/drivers/lightnvm/pblk-cache.c b/drivers/lightnvm/pblk-cache.c
->> index b1c6d7eb6115..77d811962818 100644
->> --- a/drivers/lightnvm/pblk-cache.c
->> +++ b/drivers/lightnvm/pblk-cache.c
->> @@ -67,7 +67,7 @@ int pblk_write_to_cache(struct pblk *pblk, struct bio *bio, unsigned long flags)
->>
->> 	atomic64_add(nr_entries, &pblk->user_wa);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(nr_entries, &pblk->inflight_writes);
->> 	atomic_long_add(nr_entries, &pblk->req_writes);
->> #endif
->> @@ -123,7 +123,7 @@ int pblk_write_gc_to_cache(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
->>
->> 	atomic64_add(valid_entries, &pblk->gc_wa);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(valid_entries, &pblk->inflight_writes);
->> 	atomic_long_add(valid_entries, &pblk->recov_gc_writes);
->> #endif
->> diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
->> index ed9cc977c8b3..66ab1036f2fb 100644
->> --- a/drivers/lightnvm/pblk-core.c
->> +++ b/drivers/lightnvm/pblk-core.c
->> @@ -194,7 +194,7 @@ void pblk_map_invalidate(struct pblk *pblk, struct ppa_addr ppa)
->> 	u64 paddr;
->> 	int line_id;
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Callers must ensure that the ppa points to a device address */
->> 	BUG_ON(pblk_addr_in_cache(ppa));
->> 	BUG_ON(pblk_ppa_empty(ppa));
->> @@ -430,7 +430,7 @@ void pblk_discard(struct pblk *pblk, struct bio *bio)
->> void pblk_log_write_err(struct pblk *pblk, struct nvm_rq *rqd)
->> {
->> 	atomic_long_inc(&pblk->write_failed);
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	pblk_print_failed_rqd(pblk, rqd, rqd->error);
->> #endif
->> }
->> @@ -454,7 +454,7 @@ void pblk_log_read_err(struct pblk *pblk, struct nvm_rq *rqd)
->> 	default:
->> 		pr_err("pblk: unknown read error:%d\n", rqd->error);
->> 	}
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	pblk_print_failed_rqd(pblk, rqd, rqd->error);
->> #endif
->> }
->> @@ -470,7 +470,7 @@ int pblk_submit_io(struct pblk *pblk, struct nvm_rq *rqd)
->>
->> 	atomic_inc(&pblk->inflight_io);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	if (pblk_check_io(pblk, rqd))
->> 		return NVM_IO_ERR;
->> #endif
->> @@ -484,7 +484,7 @@ int pblk_submit_io_sync(struct pblk *pblk, struct nvm_rq *rqd)
->>
->> 	atomic_inc(&pblk->inflight_io);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	if (pblk_check_io(pblk, rqd))
->> 		return NVM_IO_ERR;
->> #endif
->> @@ -1726,7 +1726,7 @@ void pblk_line_close(struct pblk *pblk, struct pblk_line *line)
->> 	struct list_head *move_list;
->> 	int i;
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	WARN(!bitmap_full(line->map_bitmap, lm->sec_per_line),
->> 				"pblk: corrupt closed line %d\n", line->id);
->> #endif
->> @@ -1856,7 +1856,7 @@ static void __pblk_down_page(struct pblk *pblk, struct ppa_addr *ppa_list,
->> 	 * Only send one inflight I/O per LUN. Since we map at a page
->> 	 * granurality, all ppas in the I/O will map to the same LUN
->> 	 */
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	int i;
->>
->> 	for (i = 1; i < nr_ppas; i++)
->> @@ -1901,7 +1901,7 @@ void pblk_up_page(struct pblk *pblk, struct ppa_addr *ppa_list, int nr_ppas)
->> 	struct pblk_lun *rlun;
->> 	int pos = pblk_ppa_to_pos(geo, ppa_list[0]);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	int i;
->>
->> 	for (i = 1; i < nr_ppas; i++)
->> @@ -1951,7 +1951,7 @@ void pblk_update_map(struct pblk *pblk, sector_t lba, struct ppa_addr ppa)
->> void pblk_update_map_cache(struct pblk *pblk, sector_t lba, struct ppa_addr ppa)
->> {
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Callers must ensure that the ppa points to a cache address */
->> 	BUG_ON(!pblk_addr_in_cache(ppa));
->> 	BUG_ON(pblk_rb_pos_oob(&pblk->rwb, pblk_addr_to_cacheline(ppa)));
->> @@ -1966,7 +1966,7 @@ int pblk_update_map_gc(struct pblk *pblk, sector_t lba, struct ppa_addr ppa_new,
->> 	struct ppa_addr ppa_l2p, ppa_gc;
->> 	int ret = 1;
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Callers must ensure that the ppa points to a cache address */
->> 	BUG_ON(!pblk_addr_in_cache(ppa_new));
->> 	BUG_ON(pblk_rb_pos_oob(&pblk->rwb, pblk_addr_to_cacheline(ppa_new)));
->> @@ -2003,14 +2003,14 @@ void pblk_update_map_dev(struct pblk *pblk, sector_t lba,
->> {
->> 	struct ppa_addr ppa_l2p;
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Callers must ensure that the ppa points to a device address */
->> 	BUG_ON(pblk_addr_in_cache(ppa_mapped));
->> #endif
->> 	/* Invalidate and discard padded entries */
->> 	if (lba == ADDR_EMPTY) {
->> 		atomic64_inc(&pblk->pad_wa);
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 		atomic_long_inc(&pblk->padded_wb);
->> #endif
->> 		if (!pblk_ppa_empty(ppa_mapped))
->> @@ -2036,7 +2036,7 @@ void pblk_update_map_dev(struct pblk *pblk, sector_t lba,
->> 		goto out;
->> 	}
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	WARN_ON(!pblk_addr_in_cache(ppa_l2p) && !pblk_ppa_empty(ppa_l2p));
->> #endif
->>
->> diff --git a/drivers/lightnvm/pblk-gc.c b/drivers/lightnvm/pblk-gc.c
->> index df88f1bdd921..1a4186ddca4b 100644
->> --- a/drivers/lightnvm/pblk-gc.c
->> +++ b/drivers/lightnvm/pblk-gc.c
->> @@ -521,7 +521,7 @@ static int pblk_gc_reader_ts(void *data)
->> 		io_schedule();
->> 	}
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	pr_info("pblk: flushing gc pipeline, %d lines left\n",
->> 		atomic_read(&gc->pipeline_gc));
->> #endif
->> diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
->> index ce561f5d48ce..5957744c3aab 100644
->> --- a/drivers/lightnvm/pblk-init.c
->> +++ b/drivers/lightnvm/pblk-init.c
->> @@ -91,7 +91,7 @@ static size_t pblk_trans_map_size(struct pblk *pblk)
->> 	return entry_size * pblk->rl.nr_secs;
->> }
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> static u32 pblk_l2p_crc(struct pblk *pblk)
->> {
->> 	size_t map_size;
->> @@ -122,7 +122,7 @@ static int pblk_l2p_recover(struct pblk *pblk, bool factory_init)
->> 		}
->> 	}
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	pr_info("pblk init: L2P CRC: %x\n", pblk_l2p_crc(pblk));
->> #endif
->>
->> @@ -1165,7 +1165,7 @@ static void pblk_exit(void *private, bool graceful)
->> 	pblk_gc_exit(pblk, graceful);
->> 	pblk_tear_down(pblk, graceful);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	pr_info("pblk exit: L2P CRC: %x\n", pblk_l2p_crc(pblk));
->> #endif
->>
->> @@ -1216,7 +1216,7 @@ static void *pblk_init(struct nvm_tgt_dev *dev, struct gendisk *tdisk,
->> 	spin_lock_init(&pblk->trans_lock);
->> 	spin_lock_init(&pblk->lock);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_set(&pblk->inflight_writes, 0);
->> 	atomic_long_set(&pblk->padded_writes, 0);
->> 	atomic_long_set(&pblk->padded_wb, 0);
->> diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
->> index 00cd1f20a196..a81a97e8ea6d 100644
->> --- a/drivers/lightnvm/pblk-rb.c
->> +++ b/drivers/lightnvm/pblk-rb.c
->> @@ -111,7 +111,7 @@ int pblk_rb_init(struct pblk_rb *rb, struct pblk_rb_entry *rb_entry_base,
->> 	} while (iter > 0);
->> 	up_write(&pblk_rb_lock);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_set(&rb->inflight_flush_point, 0);
->> #endif
->>
->> @@ -308,7 +308,7 @@ void pblk_rb_write_entry_user(struct pblk_rb *rb, void *data,
->>
->> 	entry = &rb->entries[ring_pos];
->> 	flags = READ_ONCE(entry->w_ctx.flags);
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Caller must guarantee that the entry is free */
->> 	BUG_ON(!(flags & PBLK_WRITABLE_ENTRY));
->> #endif
->> @@ -332,7 +332,7 @@ void pblk_rb_write_entry_gc(struct pblk_rb *rb, void *data,
->>
->> 	entry = &rb->entries[ring_pos];
->> 	flags = READ_ONCE(entry->w_ctx.flags);
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Caller must guarantee that the entry is free */
->> 	BUG_ON(!(flags & PBLK_WRITABLE_ENTRY));
->> #endif
->> @@ -362,7 +362,7 @@ static int pblk_rb_flush_point_set(struct pblk_rb *rb, struct bio *bio,
->> 		return 0;
->> 	}
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_inc(&rb->inflight_flush_point);
->> #endif
->>
->> @@ -588,7 +588,7 @@ unsigned int pblk_rb_read_to_bio(struct pblk_rb *rb, struct nvm_rq *rqd,
->> 		atomic64_add(pad, &pblk->pad_wa);
->> 	}
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(pad, &pblk->padded_writes);
->> #endif
->>
->> @@ -613,7 +613,7 @@ int pblk_rb_copy_to_bio(struct pblk_rb *rb, struct bio *bio, sector_t lba,
->> 	int ret = 1;
->>
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Caller must ensure that the access will not cause an overflow */
->> 	BUG_ON(pos >= rb->nr_entries);
->> #endif
->> @@ -820,7 +820,7 @@ ssize_t pblk_rb_sysfs(struct pblk_rb *rb, char *buf)
->> 			rb->subm,
->> 			rb->sync,
->> 			rb->l2p_update,
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 			atomic_read(&rb->inflight_flush_point),
->> #else
->> 			0,
->> @@ -838,7 +838,7 @@ ssize_t pblk_rb_sysfs(struct pblk_rb *rb, char *buf)
->> 			rb->subm,
->> 			rb->sync,
->> 			rb->l2p_update,
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 			atomic_read(&rb->inflight_flush_point),
->> #else
->> 			0,
->> diff --git a/drivers/lightnvm/pblk-read.c b/drivers/lightnvm/pblk-read.c
->> index 18694694e5f0..6e93c489ce57 100644
->> --- a/drivers/lightnvm/pblk-read.c
->> +++ b/drivers/lightnvm/pblk-read.c
->> @@ -28,7 +28,7 @@ static int pblk_read_from_cache(struct pblk *pblk, struct bio *bio,
->> 				sector_t lba, struct ppa_addr ppa,
->> 				int bio_iter, bool advanced_bio)
->> {
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Callers must ensure that the ppa points to a cache address */
->> 	BUG_ON(pblk_ppa_empty(ppa));
->> 	BUG_ON(!pblk_addr_in_cache(ppa));
->> @@ -79,7 +79,7 @@ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
->> 			WARN_ON(test_and_set_bit(i, read_bitmap));
->> 			meta_list[i].lba = cpu_to_le64(lba);
->> 			advanced_bio = true;
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 			atomic_long_inc(&pblk->cache_reads);
->> #endif
->> 		} else {
->> @@ -97,7 +97,7 @@ static void pblk_read_ppalist_rq(struct pblk *pblk, struct nvm_rq *rqd,
->> 	else
->> 		rqd->flags = pblk_set_read_mode(pblk, PBLK_READ_RANDOM);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(nr_secs, &pblk->inflight_reads);
->> #endif
->> }
->> @@ -117,7 +117,7 @@ static void pblk_read_check_seq(struct pblk *pblk, struct nvm_rq *rqd,
->> 			continue;
->>
->> 		if (lba != blba + i) {
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 			struct ppa_addr *p;
->>
->> 			p = (nr_lbas == 1) ? &rqd->ppa_list[i] : &rqd->ppa_addr;
->> @@ -149,7 +149,7 @@ static void pblk_read_check_rand(struct pblk *pblk, struct nvm_rq *rqd,
->> 		meta_lba = le64_to_cpu(meta_lba_list[j].lba);
->>
->> 		if (lba != meta_lba) {
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 			struct ppa_addr *p;
->> 			int nr_ppas = rqd->nr_ppas;
->>
->> @@ -185,7 +185,7 @@ static void pblk_read_put_rqd_kref(struct pblk *pblk, struct nvm_rq *rqd)
->>
->> static void pblk_end_user_read(struct bio *bio)
->> {
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	WARN_ONCE(bio->bi_status, "pblk: corrupted read bio\n");
->> #endif
->> 	bio_endio(bio);
->> @@ -212,7 +212,7 @@ static void __pblk_end_io_read(struct pblk *pblk, struct nvm_rq *rqd,
->> 	if (put_line)
->> 		pblk_read_put_rqd_kref(pblk, rqd);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(rqd->nr_ppas, &pblk->sync_reads);
->> 	atomic_long_sub(rqd->nr_ppas, &pblk->inflight_reads);
->> #endif
->> @@ -285,7 +285,7 @@ static int pblk_partial_read(struct pblk *pblk, struct nvm_rq *rqd,
->>
->> 	if (rqd->error) {
->> 		atomic_long_inc(&pblk->read_failed);
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 		pblk_print_failed_rqd(pblk, rqd, rqd->error);
->> #endif
->> 	}
->> @@ -359,7 +359,7 @@ static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd, struct bio *bio,
->>
->> 	pblk_lookup_l2p_seq(pblk, &ppa, lba, 1);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_inc(&pblk->inflight_reads);
->> #endif
->>
->> @@ -382,7 +382,7 @@ static void pblk_read_rq(struct pblk *pblk, struct nvm_rq *rqd, struct bio *bio,
->> 		WARN_ON(test_and_set_bit(0, read_bitmap));
->> 		meta_list[0].lba = cpu_to_le64(lba);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 		atomic_long_inc(&pblk->cache_reads);
->> #endif
->> 	} else {
->> @@ -514,7 +514,7 @@ static int read_ppalist_rq_gc(struct pblk *pblk, struct nvm_rq *rqd,
->> 		rqd->ppa_list[valid_secs++] = ppa_list_l2p[i];
->> 	}
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(valid_secs, &pblk->inflight_reads);
->> #endif
->>
->> @@ -548,7 +548,7 @@ static int read_rq_gc(struct pblk *pblk, struct nvm_rq *rqd,
->> 	rqd->ppa_addr = ppa_l2p;
->> 	valid_secs = 1;
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_inc(&pblk->inflight_reads);
->> #endif
->>
->> @@ -619,12 +619,12 @@ int pblk_submit_read_gc(struct pblk *pblk, struct pblk_gc_rq *gc_rq)
->>
->> 	if (rqd.error) {
->> 		atomic_long_inc(&pblk->read_failed_gc);
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 		pblk_print_failed_rqd(pblk, &rqd, rqd.error);
->> #endif
->> 	}
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(gc_rq->secs_to_gc, &pblk->sync_reads);
->> 	atomic_long_add(gc_rq->secs_to_gc, &pblk->recov_gc_reads);
->> 	atomic_long_sub(gc_rq->secs_to_gc, &pblk->inflight_reads);
->> diff --git a/drivers/lightnvm/pblk-sysfs.c b/drivers/lightnvm/pblk-sysfs.c
->> index 88a0a7c407aa..b0e5e93a9d5f 100644
->> --- a/drivers/lightnvm/pblk-sysfs.c
->> +++ b/drivers/lightnvm/pblk-sysfs.c
->> @@ -421,7 +421,7 @@ static ssize_t pblk_sysfs_get_padding_dist(struct pblk *pblk, char *page)
->> 	return sz;
->> }
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> static ssize_t pblk_sysfs_stats_debug(struct pblk *pblk, char *page)
->> {
->> 	return snprintf(page, PAGE_SIZE,
->> @@ -598,7 +598,7 @@ static struct attribute sys_padding_dist = {
->> 	.mode = 0644,
->> };
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> static struct attribute sys_stats_debug_attr = {
->> 	.name = "stats",
->> 	.mode = 0444,
->> @@ -619,7 +619,7 @@ static struct attribute *pblk_attrs[] = {
->> 	&sys_write_amp_mileage,
->> 	&sys_write_amp_trip,
->> 	&sys_padding_dist,
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	&sys_stats_debug_attr,
->> #endif
->> 	NULL,
->> @@ -654,7 +654,7 @@ static ssize_t pblk_sysfs_show(struct kobject *kobj, struct attribute *attr,
->> 		return pblk_sysfs_get_write_amp_trip(pblk, buf);
->> 	else if (strcmp(attr->name, "padding_dist") == 0)
->> 		return pblk_sysfs_get_padding_dist(pblk, buf);
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	else if (strcmp(attr->name, "stats") == 0)
->> 		return pblk_sysfs_stats_debug(pblk, buf);
->> #endif
->> diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
->> index f353e52941f5..5f44df999aed 100644
->> --- a/drivers/lightnvm/pblk-write.c
->> +++ b/drivers/lightnvm/pblk-write.c
->> @@ -38,7 +38,7 @@ static unsigned long pblk_end_w_bio(struct pblk *pblk, struct nvm_rq *rqd,
->> 			/* Release flags on context. Protect from writes */
->> 			smp_store_release(&w_ctx->flags, flags);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 			atomic_dec(&rwb->inflight_flush_point);
->> #endif
->> 		}
->> @@ -51,7 +51,7 @@ static unsigned long pblk_end_w_bio(struct pblk *pblk, struct nvm_rq *rqd,
->> 		pblk_bio_free_pages(pblk, rqd->bio, c_ctx->nr_valid,
->> 							c_ctx->nr_padded);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(rqd->nr_ppas, &pblk->sync_writes);
->> #endif
->>
->> @@ -78,7 +78,7 @@ static void pblk_complete_write(struct pblk *pblk, struct nvm_rq *rqd,
->> 	unsigned long flags;
->> 	unsigned long pos;
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_sub(c_ctx->nr_valid, &pblk->inflight_writes);
->> #endif
->>
->> @@ -196,7 +196,7 @@ static void pblk_queue_resubmit(struct pblk *pblk, struct pblk_c_ctx *c_ctx)
->> 	list_add_tail(&r_ctx->list, &pblk->resubmit_list);
->> 	spin_unlock(&pblk->resubmit_lock);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(c_ctx->nr_valid, &pblk->recov_writes);
->> #endif
->> }
->> @@ -258,7 +258,7 @@ static void pblk_end_io_write(struct nvm_rq *rqd)
->> 		pblk_end_w_fail(pblk, rqd);
->> 		return;
->> 	}
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	else
->> 		WARN_ONCE(rqd->bio->bi_status, "pblk: corrupted write error\n");
->> #endif
->> @@ -356,7 +356,7 @@ static int pblk_calc_secs_to_sync(struct pblk *pblk, unsigned int secs_avail,
->>
->> 	secs_to_sync = pblk_calc_secs(pblk, secs_avail, secs_to_flush);
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	if ((!secs_to_sync && secs_to_flush)
->> 			|| (secs_to_sync < 0)
->> 			|| (secs_to_sync > secs_avail && !secs_to_flush)) {
->> @@ -640,7 +640,7 @@ static int pblk_submit_write(struct pblk *pblk)
->> 	if (pblk_submit_io_set(pblk, rqd))
->> 		goto fail_free_bio;
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_long_add(secs_to_sync, &pblk->sub_writes);
->> #endif
->>
->> diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
->> index 34cc1d64a9d4..6d25c940f6ba 100644
->> --- a/drivers/lightnvm/pblk.h
->> +++ b/drivers/lightnvm/pblk.h
->> @@ -193,7 +193,7 @@ struct pblk_rb {
->> 	spinlock_t w_lock;		/* Write lock */
->> 	spinlock_t s_lock;		/* Sync lock */
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	atomic_t inflight_flush_point;	/* Not served REQ_FLUSH | REQ_FUA */
->> #endif
->> };
->> @@ -639,7 +639,7 @@ struct pblk {
->> 	u64 nr_flush_rst;		/* Flushes reset value for pad dist.*/
->> 	atomic64_t nr_flush;		/* Number of flush/fua I/O */
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> 	/* Non-persistent debug counters, 4kb sector I/Os */
->> 	atomic_long_t inflight_writes;	/* Inflight writes (user and gc) */
->> 	atomic_long_t padded_writes;	/* Sectors padded due to flush/fua */
->> @@ -1282,7 +1282,7 @@ static inline int pblk_io_aligned(struct pblk *pblk, int nr_secs)
->> 	return !(nr_secs % pblk->min_write_pgs);
->> }
->>
->> -#ifdef CONFIG_NVM_DEBUG
->> +#ifdef CONFIG_NVM_PBLK_DEBUG
->> static inline void print_ppa(struct nvm_geo *geo, struct ppa_addr *p,
->> 			     char *msg, int error)
->> {
->> --
->> 2.11.0
-> 
-> Are you sure you do not want any form of extra debug when you go around
-> pblk and use the BLK_DEV_ZONED path?
-> 
+Hi,
 
-I'm not sure what you mean. When exposing the drive as a zoned block 
-device, an I/O would not go through the lightnvm subsystem. If 
-debugging, we would use what the block layer provides.
-
-> If so, I'm ok with moving it inside of pblk.
+On Mon, Jun 11, 2018 at 06:49:13PM -0700, Brian Norris wrote:
+> Hi!
 > 
-> Reviewed-by: Javier González <javier@cnexlabs.com>
+> A few comments, but I didn't get to finish a thorough review yet.
 > 
+> 
+> On Thu, Jun 07, 2018 at 11:12:12AM -0700, Matthias Kaehlcke wrote:
+> > The purpose of the throttler is to provide support for non-thermal
+> > throttling. Throttling is triggered by external event, e.g. the
+> > detection of a high battery discharge current, close to the OCP limit
+> > of the battery. The throttler is only in charge of the throttling, not
+> > the monitoring, which is done by another (possibly platform specific)
+> > driver.
+> > 
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> > Changes in v2:
+> > - completely reworked the driver to support configuration through OPPs, which
+> >   requires a more dynamic handling
+> > - added sysfs attribute to set the level for debugging and testing
+> > - Makefile: depend on Kconfig option to traverse throttler directory
+> > - Kconfig: removed 'default n'
+> > - added SPDX line instead of license boiler-plate
+> > - added entry to MAINTAINERS file
+> > 
+> > 
+> >  MAINTAINERS                     |   7 +
+> >  drivers/misc/Kconfig            |   1 +
+> >  drivers/misc/Makefile           |   1 +
+> >  drivers/misc/throttler/Kconfig  |  14 +
+> >  drivers/misc/throttler/Makefile |   1 +
+> >  drivers/misc/throttler/core.c   | 642 ++++++++++++++++++++++++++++++++
+> >  include/linux/throttler.h       |  11 +
+> >  7 files changed, 677 insertions(+)
+> >  create mode 100644 drivers/misc/throttler/Kconfig
+> >  create mode 100644 drivers/misc/throttler/Makefile
+> >  create mode 100644 drivers/misc/throttler/core.c
+> >  create mode 100644 include/linux/throttler.h
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 92e47b5b0480..f9550e5680ce 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -13938,6 +13938,13 @@ T:	git git://repo.or.cz/linux-2.6/linux-acpi-2.6/ibm-acpi-2.6.git
+> >  S:	Maintained
+> >  F:	drivers/platform/x86/thinkpad_acpi.c
+> >  
+> > +THROTTLER DRIVERS
+> > +M:	Matthias Kaehlcke <mka@chromium.org>
+> > +L:	linux-pm@vger.kernel.org
+> > +S:	Maintained
+> > +F:	drivers/misc/throttler/
+> > +F:	include/linux/throttler.h
+> > +
+> >  THUNDERBOLT DRIVER
+> >  M:	Andreas Noever <andreas.noever@gmail.com>
+> >  M:	Michael Jamet <michael.jamet@intel.com>
+> > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> > index 5d713008749b..691d9625d83c 100644
+> > --- a/drivers/misc/Kconfig
+> > +++ b/drivers/misc/Kconfig
+> > @@ -513,4 +513,5 @@ source "drivers/misc/echo/Kconfig"
+> >  source "drivers/misc/cxl/Kconfig"
+> >  source "drivers/misc/ocxl/Kconfig"
+> >  source "drivers/misc/cardreader/Kconfig"
+> > +source "drivers/misc/throttler/Kconfig"
+> >  endmenu
+> > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> > index 20be70c3f118..b549ccad5215 100644
+> > --- a/drivers/misc/Makefile
+> > +++ b/drivers/misc/Makefile
+> > @@ -57,3 +57,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
+> >  obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
+> >  obj-$(CONFIG_OCXL)		+= ocxl/
+> >  obj-$(CONFIG_MISC_RTSX)		+= cardreader/
+> > +obj-$(CONFIG_THROTTLER)		+= throttler/
+> > diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
+> > new file mode 100644
+> > index 000000000000..e561f1df5085
+> > --- /dev/null
+> > +++ b/drivers/misc/throttler/Kconfig
+> > @@ -0,0 +1,14 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +
+> > +menuconfig THROTTLER
+> > +	bool "Throttler support"
+> > +	depends on OF
+> > +	select CPU_FREQ
+> > +	select PM_DEVFREQ
+> 
+> I'm curious whether we're actually truly compile-time dependent on
+> {CPU,DEV}FREQ? It seems like those subsystems mostly stub out stuff so
+> they fall back to no-ops if not built in.
+>
+> I know that's not very useful for your existing throttler, since it
+> wouldn't be very effective if one or both were disabled.
 
+The idea is not to depend on both options being enabled, since
+throttling of one type might be all that is needed.
+
+As the build bot pointed out cpufreq doesn't stub out all functions.
+Probably the cleanest way to work around this is to define a stub for
+cpufreq_update_policy() in the throttler when CONFIG_CPU_FREQ is not
+defined.
+
+> > diff --git a/drivers/misc/throttler/core.c b/drivers/misc/throttler/core.c
+> > new file mode 100644
+> > index 000000000000..15b50c111032
+> > --- /dev/null
+> > +++ b/drivers/misc/throttler/core.c
+> > ...
+> > +// #define DEBUG_THROTTLER
+> 
+> Did you mean to leave your debug code in? Seems like you have some
+> related dead code under #ifdefs.
+
+Yes, I left it in intentionally.
+
+> (If you do want this, maybe it'd be better under debugfs, until somebody
+> really wants to formalize and document it.)
+
+Since it is code that is never enabled in an official kernel build I
+found it simpler to use sysfs with a direct association with the
+device, instead of having <debugfs>/throttler/<throttler_name>/level.
+
+If folks have strong opinions about using debugfs or not having the
+debug code at all I'm fine with changing/dropping it.
+
+> > +static int thr_init_freq_table(struct throttler *thr, struct device *opp_dev,
+> > +			       struct thr_freq_table *ft)
+> > +{
+> > +	struct device_node *np_opp_desc, *np_opp;
+> > +	int nchilds;
+> > +	uint32_t *freqs;
+> > +	int nfreqs = 0;
+> > +	int err = 0;
+> > +
+> > +	np_opp_desc = dev_pm_opp_of_get_opp_desc_node(opp_dev);
+> > +	if (!np_opp_desc)
+> > +		return -EINVAL;
+> > +
+> > +	nchilds = of_get_child_count(np_opp_desc);
+> > +	if (!nchilds) {
+> > +		err = -EINVAL;
+> > +		goto out_node_put;
+> > +	}
+> > +
+> > +	freqs = kzalloc(nchilds * sizeof(uint32_t), GFP_KERNEL);
+> > +	if (!freqs) {
+> > +		err = -ENOMEM;
+> > +		goto out_node_put;
+> > +	}
+> > +
+> > +	/* determine which OPPs are used by this throttler (if any) */
+> > +	for_each_child_of_node(np_opp_desc, np_opp) {
+> > +		int num_thr;
+> > +		int i;
+> > +
+> > +		num_thr = of_property_count_u32_elems(np_opp, "opp-throttlers");
+> > +		if (num_thr < 0)
+> > +			continue;
+> > +
+> > +		for (i = 0; i < num_thr; i++) {
+> > +			struct device_node *np_thr;
+> > +			struct platform_device *pdev;
+> > +
+> > +			np_thr = of_parse_phandle(np_opp, "opp-throttlers", i);
+> > +			if (!np_thr) {
+> > +				dev_err(thr->dev,
+> > +					"failed to parse phandle %d: %s\n", i,
+> > +					np_opp->full_name);
+> > +				continue;
+> > +			}
+> > +
+> > +			pdev = of_find_device_by_node(np_thr);
+> > +			if (!pdev) {
+> > +				dev_err(thr->dev,
+> > +					"could not find throttler dev: %s\n",
+> > +					 np_thr->full_name);
+> > +				of_node_put(np_thr);
+> > +				continue;
+> > +			}
+> > +
+> > +			/* OPP is used by this throttler */
+> > +			if (&pdev->dev == thr->dev) {
+> 
+> So you're assuming that all throttlers are platform devices? Seems
+> slightly shaky; I could easily imagine a similar device that's a SPI or
+> I2C device.
+
+As of now that's the only existing throttler. Adding handling for
+throttlers on other buses that might never be implemented seems
+premature. If throttlers with other bus types are added the core
+code can be extended to support this using
+of_find_i2c_device_by_node(), of_find_spi_device_by_node(), etc
+
+Thanks
+
+Matthias
