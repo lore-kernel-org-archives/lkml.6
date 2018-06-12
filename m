@@ -2,130 +2,174 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 70BECC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:59:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 005D9C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2774D2086D
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 18:59:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2774D2086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 94AE72086E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 19:03:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuknLxxY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94AE72086E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754371AbeFLS7b (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 14:59:31 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:42043 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754026AbeFLS72 (ORCPT
+        id S932886AbeFLTDe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 15:03:34 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:32869 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754047AbeFLTDc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 14:59:28 -0400
-Received: from p4fea5fc6.dip0.t-ipconnect.de ([79.234.95.198] helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fSoVn-0002u8-4d; Tue, 12 Jun 2018 20:59:23 +0200
-Date:   Tue, 12 Jun 2018 20:59:22 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     "H.J. Lu" <hjl.tools@gmail.com>
-cc:     Andy Lutomirski <luto@kernel.org>,
-        Yu-cheng Yu <yu-cheng.yu@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        mike.kravetz@oracle.com
-Subject: Re: [PATCH 06/10] x86/cet: Add arch_prctl functions for shadow
- stack
-In-Reply-To: <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1806122046520.1592@nanos.tec.linutronix.de>
-References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <20180607143807.3611-7-yu-cheng.yu@intel.com> <CALCETrU6axo158CiSCRRkC4GC5hib9hypC98t7LLjA3gDaacsw@mail.gmail.com> <1528403417.5265.35.camel@2b52.sc.intel.com> <CALCETrXz3WWgZwUXJsDTWvmqKUArQFuMH1xJdSLVKFpTysNWxg@mail.gmail.com>
- <CAMe9rOr49V8rqRa_KVsw61PWd+crkQvPDgPKtvowazjmsfgWWQ@mail.gmail.com> <alpine.DEB.2.21.1806121155450.2157@nanos.tec.linutronix.de> <CAMe9rOoCiXQ4iVD3j_AHGrvEXtoaVVZVs7H7fCuqNEuuR5j+2Q@mail.gmail.com> <CALCETrXO8R+RQPhJFk4oiA4PF77OgSS2Yro_POXQj1zvdLo61A@mail.gmail.com>
- <CAMe9rOpLxPussn7gKvn0GgbOB4f5W+DKOGipe_8NMam+Afd+RA@mail.gmail.com> <CALCETrWmGRkQvsUgRaj+j0CP4beKys+TT5aDR5+18nuphwr+Cw@mail.gmail.com> <CAMe9rOpzcCdje=bUVs+C1WrY6GuwA-8AUFVLOG325LGz7KHJxw@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Tue, 12 Jun 2018 15:03:32 -0400
+Received: by mail-io0-f193.google.com with SMTP id d185-v6so666009ioe.0;
+        Tue, 12 Jun 2018 12:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=1tXikmjrljb2EqOv0btgOMQ/liPl9BFGQn6Scd/f9zw=;
+        b=SuknLxxYgBtYL1vYDkYRSORfl2Aoi7IG3GwtsNEqg5S9N4ibaPZNMTlA9S0tciQS1P
+         k8ouiOxPNDIxQe0rw1jUCfFvoGMPx5P2g5VVHHAEU4CiAjO77UPA12EfESufSy1z3LRA
+         3+FlmvkQtyVoWnZGZeD2axEkx5vkzJqwQ+4cwgBWZmi8kmp4Hof8/athwq1WDxkQynS+
+         5HSdv/+b0UdpJwoc+uFwD+Q5CAJeTwgOwpgGSDf60/m4BSpvT/rHgcilW9fiHpsp8cJn
+         MgrIaVs4FJ6xgChtVodTL/K4z57xqxl56kcOS3Yz7+RI0uhQbYd5TDn9xRS9BAasPpSZ
+         fc4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=1tXikmjrljb2EqOv0btgOMQ/liPl9BFGQn6Scd/f9zw=;
+        b=isADB6UFuLq+RvaGbsrIXEC9CsCRi/yrQ+PPrnabQefmxXQYoWwDWw+sED2+rgOOMK
+         TwR7t862VgRiNbGS4k1SDD7mpaN2dfnswszDssGBei25FGHZydI+hm0STwqC4cI+s76a
+         EHLLF/gYwWFJfgY6ti13Qcz7s0Xv+nitaJjB0/aIxPGav5cso24gLIAQOzpBD+irTTdT
+         +OtfB1UAtZ/CAlaicMYFBsAOqMVEnuvkz4LyziqR00/pjBMASR4P+Afu4MQnhZEMhtmo
+         XEkbRhVyTH3QwaWYJr32ZMP1sH760P8Jh+1qHyNACZ4ME2RT7GW3XK7S7Ok1vFGD/A/R
+         oLGA==
+X-Gm-Message-State: APt69E1gQxYGAcUjWK/NAJmw14FE+t0so00H02+iHxtFejSxsIq8Ss+P
+        fG1pwaRbl85pPzWqi+Cv4BHJwZk8POSrex1oeiM=
+X-Google-Smtp-Source: ADUXVKKfkDJeklPmxPs7PLiunWePWxabXlEbbuAPV0n4k8O/r0TzgRF5od3m8HbX24ITKI6yP471Bd8q2scZaV/Xc38=
+X-Received: by 2002:a6b:c544:: with SMTP id v65-v6mr1705956iof.278.1528830211909;
+ Tue, 12 Jun 2018 12:03:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Received: by 2002:a02:7b26:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 12:03:31
+ -0700 (PDT)
+In-Reply-To: <alpine.DEB.2.20.1712282315030.1899@nanos>
+References: <20171228152710.891701433@linutronix.de> <20171228153308.286787253@linutronix.de>
+ <alpine.DEB.2.20.1712282315030.1899@nanos>
+From:   Yang Li <pku.leo@gmail.com>
+Date:   Tue, 12 Jun 2018 14:03:31 -0500
+Message-ID: <CADRPPNTK1x_47fnk4Tor5QSPk2DEuEwNUQQ4dGu1P3QkQDyZeQ@mail.gmail.com>
+Subject: Re: [patch V5 01/11] Documentation: Add license-rules.rst to describe
+ how to properly identify file licenses
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linuxfoundation.org>,
+        Andrew Morton <akpm@linuxfoundation.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Rob Herring <rob.herring@linaro.org>,
+        Jonas Oberg <jonas@fsfe.org>, Joe Perches <joe@perches.com>,
+        linux-xfs@vger.kernel.org,
+        Charlemagne Lasse <charlemagnelasse@gmail.com>,
+        Carmen Bianca Bakker <carmenbianca@fsfe.org>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018, H.J. Lu wrote:
-> On Tue, Jun 12, 2018 at 9:34 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> > On Tue, Jun 12, 2018 at 9:05 AM H.J. Lu <hjl.tools@gmail.com> wrote:
-> >> On Tue, Jun 12, 2018 at 9:01 AM, Andy Lutomirski <luto@kernel.org> wrote:
-> >> > On Tue, Jun 12, 2018 at 4:43 AM H.J. Lu <hjl.tools@gmail.com> wrote:
-> >> >> On Tue, Jun 12, 2018 at 3:03 AM, Thomas Gleixner <tglx@linutronix.de> wrote:
-> >> >> > That works for stuff which loads all libraries at start time, but what
-> >> >> > happens if the program uses dlopen() later on? If CET is force locked and
-> >> >> > the library is not CET enabled, it will fail.
-> >> >>
-> >> >> That is to prevent disabling CET by dlopening a legacy shared library.
-> >> >>
-> >> >> > I don't see the point of trying to support CET by magic. It adds complexity
-> >> >> > and you'll never be able to handle all corner cases correctly. dlopen() is
-> >> >> > not even a corner case.
-> >> >>
-> >> >> That is a price we pay for security.  To enable CET, especially shadow
-> >> >> shack, the program and all of shared libraries it uses should be CET
-> >> >> enabled.  Most of programs can be enabled with CET by compiling them
-> >> >> with -fcf-protection.
-> >> >
-> >> > If you charge too high a price for security, people may turn it off.
-> >> > I think we're going to need a mode where a program says "I want to use
-> >> > the CET, but turn it off if I dlopen an unsupported library".  There
-> >> > are programs that load binary-only plugins.
-> >>
-> >> You can do
-> >>
-> >> # export GLIBC_TUNABLES=glibc.tune.hwcaps=-SHSTK
-> >>
-> >> which turns off shadow stack.
-> >>
-> >
-> > Which exactly illustrates my point.  By making your security story too
-> > absolute, you'll force people to turn it off when they don't need to.
-> > If I'm using a fully CET-ified distro and I'm using a CET-aware
-> > program that loads binary plugins, and I may or may not have an old
-> > (binary-only, perhaps) plugin that doesn't support CET, then the
-> > behavior I want is for CET to be on until I dlopen() a program that
-> > doesn't support it.  Unless there's some ABI reason why that can't be
-> > done, but I don't think there is.
-> 
-> We can make it opt-in via GLIBC_TUNABLES.  But by default, the legacy
-> shared object is disallowed when CET is enabled.
+On Thu, Dec 28, 2017 at 4:17 PM, Thomas Gleixner <tglx@linutronix.de> wrote:
+> On Thu, 28 Dec 2017, Thomas Gleixner wrote:
+>
+> Sorry for the spam. I somehow missed to refresh the patch before generating
+> the mbox. Find below the correct version of that one which has ALL braces
+> removed which we don't need.
 
-That's a bad idea. Stuff has launchers which people might not be able to
-change. So they will simply turn of CET completely or it makes them hack
-horrible crap into init, e.g. the above export.
+Hi Thomas,
 
-Give them sane kernel options:
+I'm not sure how we reached the conclusion that we should remove ALL
+braces?  I cannot find related discussion in the archive except for
+the "WITH" case.
 
-     cet = off, relaxed, forced
+This is conflicting with the current SPDX spec at
+https://spdx.org/spdx-specification-21-web-version quoted below and
+also the explenation in your own file.
 
-where relaxed allows to run binary plugins. Then let dlopen() call into the
-kernel with the filepath of the library to check for CET and that will tell
-you whether its ok or or not and do the necessary magic in the kernel when
-CET has to be disabled due to a !CET library/application.
-
-That's also making the whole thing independent of magic glibc environment
-options and allows it to be used all over the place in the same way.
-
-Thanks,
-
-	tglx
+Quote from SPDX spec 2.1: More expressive composite license
+expressions can be constructed using "OR", "AND", and "WITH" operators
+similar to constructing mathematical expressions using arithmetic
+operators. For the Tag:value format, any license expression that
+consists of more than one license identifier and/or LicenseRef, should
+be encapsulated by parentheses: "( )".
 
 
+> +
+> +   A <SPDX License Expression> is either an SPDX short form license
+> +   identifier found on the SPDX License List, or the combination of two
+> +   SPDX short form license identifiers separated by "WITH" when a license
+> +   exception applies. When multiple licenses apply, an expression consists
+> +   of keywords "AND", "OR" separating sub-expressions and surrounded by
+> +   "(", ")" .
 
+Conflicting with the example
 
-
+> +
+> +   License identifiers for licenses like [L]GPL with the 'or later' option
+> +   are constructed by using a "+" for indicating the 'or later' option.::
+> +
+> +      // SPDX-License-Identifier: GPL-2.0+
+> +      // SPDX-License-Identifier: LGPL-2.1+
+> +
+> +   WITH should be used when there is a modifier to a license needed.
+> +   For example, the linux kernel UAPI files use the expression::
+> +
+> +      // SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
+> +      // SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note
+> +
+> +   Other examples using WITH exceptions found in the kernel are::
+> +
+> +      // SPDX-License-Identifier: GPL-2.0 WITH mif-exception
+> +      // SPDX-License-Identifier: GPL-2.0+ WITH GCC-exception-2.0
+> +
+> +   Exceptions can only be used with particular License identifiers. The
+> +   valid License identifiers are listed in the tags of the exception text
+> +   file. For details see the point `Exceptions`_ in the chapter `License
+> +   identifiers`_.
+> +
+> +   OR should be used if the file is dual licensed and only one license is
+> +   to be selected.  For example, some dtsi files are available under dual
+> +   licenses::
+> +
+> +      // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> +
+> +   Examples from the kernel for license expressions in dual licensed files::
+> +
+> +      // SPDX-License-Identifier: GPL-2.0 OR MIT
+> +      // SPDX-License-Identifier: GPL-2.0 OR BSD-2-Clause
+> +      // SPDX-License-Identifier: GPL-2.0 OR Apache-2.0
+> +      // SPDX-License-Identifier: GPL-2.0 OR MPL-1.1
+> +      // SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) OR MIT
+> +      // SPDX-License-Identifier: GPL-1.0+ OR BSD-3-Clause OR OpenSSL
+> +
+> +   AND should be used if the file has multiple licenses whose terms all
+> +   apply to use the file. For example, if code is inherited from another
+> +   project and permission has been given to put it in the kernel, but the
+> +   original license terms need to remain in effect::
+> +
+> +      // SPDX-License-Identifier: (GPL-2.0 WITH Linux-syscall-note) AND MIT
+> +
+> +   Another other example where both sets of license terms need to be
+> +   adhered to is::
+> +
+> +      // SPDX-License-Identifier: GPL-1.0+ AND LGPL-2.1+
+> +
