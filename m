@@ -2,96 +2,100 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A9C0BC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:06:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7DA5C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B902208B0
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C563208B0
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 11:07:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFJ6qDTk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B902208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="BgBDqwhW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C563208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932944AbeFLLG5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 07:06:57 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:32892 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752705AbeFLLGz (ORCPT
+        id S933261AbeFLLHf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 07:07:35 -0400
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:34765 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754120AbeFLLHe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 07:06:55 -0400
-Received: by mail-lf0-f68.google.com with SMTP id y20-v6so35390966lfy.0;
-        Tue, 12 Jun 2018 04:06:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=DhPo4x9uYe2CoNJTBkCFjCnbpbyEmhHhreCIPWv7qB8=;
-        b=eFJ6qDTkxr/IadjyLilfFmfmb9e5FbliK6zzOJ10fBQOBBAdjlR4RAMNoBZmUGl40N
-         m1/SJsZsb7lSuT+vAr8mmXuR0l9l1gyt9YWL0NA1YZ8gUNV+LjMav/Of7d3Iw++TkmmN
-         EsPeq6H3LWEuJ4JKSwufde0UfVlxTzMwjtpFRRRucxkmpSsXXcBxfPJPg5HMqfeWlRBz
-         mZ4Ure9SEDvVZP1WnKUtQ6p1XRNSLY+iKKbeccBAq5xZzhdOEabxmJMV/Jh81F+6t+J0
-         68hustHlZrb9wfThm4M+wIT4/CIl7o84ZkyfacGcmRw1Xf5q5N2z6/VWhU3EcYCkYaKJ
-         GZpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=DhPo4x9uYe2CoNJTBkCFjCnbpbyEmhHhreCIPWv7qB8=;
-        b=qECy+fBo67xgjPFNrqO3gadzaWTv2xnvvuyu+Gb4BKtMc3gePb1P03dkKfV+cC8ChR
-         UdY/MhXgPKMSn5KRpfa8AzCAF88yYPA2+L7A6nV34lyQYxJpZYgTtfYE8td/26toMze6
-         x1iTBCgEvDZ/9V/X0aMqUdPDHV7D2rQ7jpSFK51YwirLBYNYF9lxTrJI23qiRqcPp3OT
-         3bWpSB7qkOZ1M4QK8KQ/0KFDI/lZWGHzt44dOptv0f91PfimOQMt9g7FtOewWeLTj7ly
-         O2+fHr9lPOiY3ioSEyJngsg7JWtkWHz7YO3iVwTw0p2hn9ZQzaTE6j36cNA5GUutYhVz
-         yCwQ==
-X-Gm-Message-State: APt69E1aXtJHV21Cgm+I5aoXOeoYZ9ObDhsBBpSr6kTCROxUPMm0Fgl1
-        hPUdlLM+bTWenRt0+wSAbFk=
-X-Google-Smtp-Source: ADUXVKLp5wWrl2AkpzdlHFNlQA9mGfVJ3pGS9oQWm9phEnpCLItBVmt3zWVaPb9+Oxav0XLUbePu5g==
-X-Received: by 2002:a19:9390:: with SMTP id w16-v6mr1918389lfk.70.1528801613864;
-        Tue, 12 Jun 2018 04:06:53 -0700 (PDT)
-Received: from dimapc.localnet ([109.252.55.139])
-        by smtp.gmail.com with ESMTPSA id q78-v6sm147912lfd.35.2018.06.12.04.06.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 04:06:52 -0700 (PDT)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Mikko Perttunen <cyndis@kapsi.fi>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: tegra: emc: Avoid out-of-bounds bug
-Date:   Tue, 12 Jun 2018 14:06:51 +0300
-Message-ID: <2271626.NalpgXIy8M@dimapc>
-In-Reply-To: <152878956397.16708.14349666570210193783@swboyd.mtv.corp.google.com>
-References: <20180605121232.7121-1-digetx@gmail.com> <152878956397.16708.14349666570210193783@swboyd.mtv.corp.google.com>
+        Tue, 12 Jun 2018 07:07:34 -0400
+Received: from mail-vk0-f49.google.com (mail-vk0-f49.google.com [209.85.213.49]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id w5CB7R8H031381;
+        Tue, 12 Jun 2018 20:07:28 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w5CB7R8H031381
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528801648;
+        bh=FyihJFQCAiYL1TyVuyJyFV5C/g6LW+Tll5ZbOJWLsiI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=BgBDqwhWOhEvwEdM8OGim718ANo6m9gO55DrfxmCFzfx1wMnUlfAlkLXtF9fYSrK+
+         wGwelLZE7NokwDt+LrELLkt0BTTX76Yi4jX9Jy1+HA+K1W5HRdlUgkxyxEBTZBIl3e
+         gy03unOkpdv5KWVYh9bYawOez9Kgkfog5awlz7WnyoBpkpfL22YMN4eftrPavbqbDt
+         Ir2WD9oprU7uIvg+KHWcsHcxgSIKm8yZJ3rQSncQf9ytOhZEHiWUgaZHGQuP9uLczp
+         n1Aa1HS05eYw6Dg2PV6YeXeKTYa3EAKe1wFB1bSI2mvJljm2RD4js3sPmoEu7PYPtg
+         rzXbW4V2pyQYw==
+X-Nifty-SrcIP: [209.85.213.49]
+Received: by mail-vk0-f49.google.com with SMTP id x4-v6so14105609vkx.11;
+        Tue, 12 Jun 2018 04:07:28 -0700 (PDT)
+X-Gm-Message-State: APt69E3jNpIXyaOdk03MyOZ/cz55uoUspFQ3dh05P0zZy74lJPE4SDf4
+        3eheALS0tjb3/VcbCIiuz6ShoaGENnvctBAFV7k=
+X-Google-Smtp-Source: ADUXVKIFtweA/MBKfTxCYiBvcIF31JhE0tj85vRoSKuqZc1Bhjgs+UQYdKQFgZ3a3/E2tKewA85SUk4KvEuIu7wjyYc=
+X-Received: by 2002:a1f:9615:: with SMTP id y21-v6mr1779721vkd.154.1528801646086;
+ Tue, 12 Jun 2018 04:07:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 04:06:45
+ -0700 (PDT)
+In-Reply-To: <20180612130329.1c17311f@bbrezillon>
+References: <1528799515-1356-1-git-send-email-yamada.masahiro@socionext.com>
+ <1528799515-1356-2-git-send-email-yamada.masahiro@socionext.com>
+ <CAK7LNASM53scdd-OZOj_7404Eru3a98uNLagip_GdkrSSaG3-Q@mail.gmail.com> <20180612130329.1c17311f@bbrezillon>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 12 Jun 2018 20:06:45 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATr54Eo-0PcTSLZvgmdTTngpTYXte=__17X4xRtywAgEg@mail.gmail.com>
+Message-ID: <CAK7LNATr54Eo-0PcTSLZvgmdTTngpTYXte=__17X4xRtywAgEg@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mtd: rawnand: denali: add more clocks
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
+        Richard Weinberger <richard@sigma-star.at>,
+        DTML <devicetree@vger.kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Philipp Rosenberger <p.rosenberger@linutronix.de>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tuesday, 12 June 2018 10:46:03 MSK Stephen Boyd wrote:
-> Quoting Dmitry Osipenko (2018-06-05 05:12:32)
-> 
-> > Apparently there was an attempt to avoid out-of-bounds accesses when there
-> > is only one memory timing available, but there is a typo in the code that
-> > neglects that attempt.
-> > 
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Fixes: tag?
-
-This is kinda a minor fix for an issue that shouldn't happen because today 
-AFAIK nothing on Tegra imposes the max/min clock rate constraints. There is no 
-need to backport this patch.
+2018-06-12 20:03 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
+> On Tue, 12 Jun 2018 19:36:06 +0900
+> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+>
+>> Maybe, the commit title should be:
+>>
+>> mtd: rawnand: denali: add more clocks and improve setup_data_interface
+>
+> Or you split that in 2 commits, one retrieving the new clks, and the
+> other one fixing/improving ->setup_data_interface().
 
 
+Good idea.
+
+I will try that in v2.
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
