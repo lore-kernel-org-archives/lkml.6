@@ -2,105 +2,127 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 22514C004E4
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:09:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D0361C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2CF5208B8
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:09:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AF672089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:11:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sp0t8AAa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2CF5208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=kudzu-us.20150623.gappssmtp.com header.i=@kudzu-us.20150623.gappssmtp.com header.b="iJG5tK1Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AF672089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kudzu.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964841AbeFLDJl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 23:09:41 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:32877 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935193AbeFLDJj (ORCPT
+        id S935264AbeFLDLX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 23:11:23 -0400
+Received: from mail-yw0-f195.google.com ([209.85.161.195]:46668 "EHLO
+        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935193AbeFLDLV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 23:09:39 -0400
-Received: by mail-pl0-f66.google.com with SMTP id n10-v6so13494607plp.0
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 20:09:39 -0700 (PDT)
+        Mon, 11 Jun 2018 23:11:21 -0400
+Received: by mail-yw0-f195.google.com with SMTP id v197-v6so7030378ywc.13
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 20:11:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=FeSs9z2tOvd9LpmD0hBtuH9rGnCqqNaLK9dCQT5zjvA=;
-        b=Sp0t8AAaCMZMHhQsyGRCzlW8D78KBvNpDEOtzHzQFzUX5h962EXga6N+l2K9kNmfnO
-         r2AcS3ho/s3XbDSk/2NhbB3b6WM3o2E6ugiT5o/IzR4FrIwk6RszpYfF+QEkEoULSX9V
-         uDpWKUiCHjbKsfHb3UDWe1jFnWvZ4MZ/chXMxVmK89Sz6gIU4Nl7NDVz32nJx0dy085t
-         FzDYm/EOixlR/tYWSwjMAK2kh5JYwflcYII2T3Xemh5qgd5tJau7VEoYoD1YsWscDEY2
-         iykUEsJdcIwLm7Rv+wT8HKEqzQuVvL7MlLIUpVwUEB0EChMxwrOA4GNaTDYjkiRO9u3n
-         VHNw==
+        d=kudzu-us.20150623.gappssmtp.com; s=20150623;
+        h=from:date:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=l7uwSF1c+axVBeZ2M50qMmhyN71XFhMZL/gBpcud2XE=;
+        b=iJG5tK1YFbDhA5cUd5uf/Au6sVCIwACof4YB0E7chqEDLvKzG8vuwra+iEY0ef4TbX
+         y8w2hSH+qcgTngzss8Qz4/tZi7NFBDSV7ib9VPsmW31CjLxctb6qr0TzmVldDnWDsc6L
+         3Sb1UWuW+mH35BP5OekkYSFBeXpgQ4lhEzoxqekcIStYCMZ2GD4qlMb8eOT4747dUdc8
+         A0dQCGWmYcAyBnEC8VnjJmdiuSERCYRsxKgeYxL3ezt3uAx2muThDL9qIqE9LKYufg95
+         4Srjqy0gkWXipImBh+iCHZ2eDlAqN3Gw2Baxt4J9gl4uhygTWh6BnXISn2vfSM1R925k
+         XX9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FeSs9z2tOvd9LpmD0hBtuH9rGnCqqNaLK9dCQT5zjvA=;
-        b=mg4aWZyW1YTkG9jm53NVB3hN0DLJ2iBctNGtI3il26GjTBBKiluYgrkoIVVI/8KbDC
-         MQm427nBLsyJoBdG2E8uxF8e6ZDn9e+3F2uHUaXV86rMfhwMbRxmVjnKZ736HtMQswlI
-         vMp94d9xhkQlaU7tV43wCkNhpvZTCEodhvpY/5mDegud2GJiqFDkcHFZtm/RNVxF9wVs
-         uI48V9cyakcFyAXOGmbZZrCYWdbMnMI4QPZJWgyTTuTJTctAgcFx9wzarkZXRVYlHo13
-         WQyoNxvahnaAAF2xUqWH2vDckYWNlMjTPtqtODJ7vStQ7mXsc6JAeLQTdt+yTIl/En/B
-         asTQ==
-X-Gm-Message-State: APt69E3m4Pjolx7UsWpzuJ82iR6ilUJIGlSLXI+fGsIs8vYcEj5tgc+L
-        8sW3+Wsz6j1+Kx1JDLjU54I=
-X-Google-Smtp-Source: ADUXVKI3qQSnijZY+ShEVinelsh4doMOmG1+jC+z1iAsaKk2N1/6h7s02zyELNZpZIS3EJM4xxlg3A==
-X-Received: by 2002:a17:902:6acc:: with SMTP id i12-v6mr1968754plt.278.1528772979253;
-        Mon, 11 Jun 2018 20:09:39 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id l14-v6sm40985662pfi.6.2018.06.11.20.09.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 20:09:38 -0700 (PDT)
-From:   Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Samuel Iglesias Gonsalvez <siglesias@igalia.com>,
-        Jens Taprogge <jens.taprogge@taprogge.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        industrypack-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ipack: add error handling for ioremap_nocache
-Date:   Tue, 12 Jun 2018 11:07:21 +0800
-Message-Id: <1528772844-36988-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:from:date:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=l7uwSF1c+axVBeZ2M50qMmhyN71XFhMZL/gBpcud2XE=;
+        b=cAeNnsPsTHaViELj98CKdbzacrsw6ER3duOuy2LrcbyYmQjVg4jIEw8mMDeMlB5UC1
+         iwLEDK3dXZnhzkChON+CQI1UX4KxM+knJ938f7AqklWtkHCOc5eLSqTKOgsfECi0thD5
+         eRYBRlB2cjaXdxIj67H6JCcJWTxxgnm1HntFX8r3RVG4xDPFdsZEOl8aI/bjJllsQCMr
+         TOmGAqrPkFx2Vs3/SfvVXiKX0Q0p0F8LXXeFamBYEX1iKx4wf0hYsLILd4XCmD67M17T
+         TaB/+hNJziufC+bGiegYypWEizlICmhZ3ZLsq4I6RLqURp1EKIYHfzNojdHzWU1+Yyqy
+         Iy7g==
+X-Gm-Message-State: APt69E2ENwoc08rqFoAnYuS8KpikS0+bh+Zy9oF2CH8SJz6KQ+RSE4Je
+        JkQH6Ryp+YjmUzWxdqWJlFvxvA==
+X-Google-Smtp-Source: ADUXVKLifkotl0F6VCtaKGBaZ64CXCUZm7Kmov5+K/QJWwqaAgNS/nz/oSeoayCH9r/LkQvBfvpGPg==
+X-Received: by 2002:a81:209:: with SMTP id 9-v6mr725953ywc.401.1528773081123;
+        Mon, 11 Jun 2018 20:11:21 -0700 (PDT)
+Received: from graymalkin (76-230-155-4.lightspeed.rlghnc.sbcglobal.net. [76.230.155.4])
+        by smtp.gmail.com with ESMTPSA id y2-v6sm18377390ywc.23.2018.06.11.20.11.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 11 Jun 2018 20:11:20 -0700 (PDT)
+From:   Jon Mason <jdmason@kudzu.us>
+X-Google-Original-From: Jon Mason <jdm@graymalkin.kudzu.us>
+Received: by graymalkin (sSMTP sendmail emulation); Mon, 11 Jun 2018 23:11:18 -0400
+Date:   Mon, 11 Jun 2018 23:11:18 -0400
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com
+Subject: [GIT PULL] NTB changes for v4.18
+Message-ID: <20180612031118.GA11519@graymalkin.kudzu.us>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When ioremap_nocache fails, the lack of error-handling code may
-cause unexpected results.
+Hello Linus,
+Here are a few NTB changes for v4.18.  They were tested earlier today by
+Dave Jiang, and have been in linux-next for some time.  Please consider
+pulling them.
 
-This patch adds error-handling code after calling ioremap_nocache.
+Thanks,
+Jon
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
----
- drivers/ipack/carriers/tpci200.c | 7 +++++++
- 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/ipack/carriers/tpci200.c b/drivers/ipack/carriers/tpci200.c
-index 9b23843..1612f51 100644
---- a/drivers/ipack/carriers/tpci200.c
-+++ b/drivers/ipack/carriers/tpci200.c
-@@ -304,6 +304,13 @@ static int tpci200_register(struct tpci200_board *tpci200)
- 		ioremap_nocache(pci_resource_start(tpci200->info->pdev,
- 					   TPCI200_IP_INTERFACE_BAR),
- 			TPCI200_IFACE_SIZE);
-+	if (!tpci200->info->interface_regs) {
-+		dev_err(&tpci200->info->pdev->dev,
-+			"(bn 0x%X, sn 0x%X) failed to map driver user space!",
-+			tpci200->info->pdev->bus->number,
-+			tpci200->info->pdev->devfn);
-+		goto out_release_mem8_space;
-+	}
- 
- 	/* Initialize lock that protects interface_regs */
- 	spin_lock_init(&tpci200->regs_lock);
--- 
-2.7.4
 
+The following changes since commit 29dcea88779c856c7dc92040a0c01233263101d4:
+
+  Linux 4.17 (2018-06-03 14:15:21 -0700)
+
+are available in the Git repository at:
+
+  git://github.com/jonmason/ntb tags/ntb-4.18
+
+for you to fetch changes up to c9160b69258ef46ab62c27a09decb8fef311e700:
+
+  ntb: ntb_transport: Replace GFP_ATOMIC with GFP_KERNEL in ntb_transport_create_queue (2018-06-11 15:20:59 -0400)
+
+----------------------------------------------------------------
+Reorg and clean-up of the Intel NTB driver, a trivial comment change,
+and changes of GFP_ATOMIC to GFP_KERNEL where appropriate.
+
+----------------------------------------------------------------
+Dave Jiang (3):
+      ntb: intel: header definitions refactor
+      ntb: intel: split out the gen3 code
+      ntb: intel: change references of skx to gen3
+
+Jia-Ju Bai (2):
+      ntb: ntb_transport: Replace GFP_ATOMIC with GFP_KERNEL in ntb_transport_setup_qp_mw
+      ntb: ntb_transport: Replace GFP_ATOMIC with GFP_KERNEL in ntb_transport_create_queue
+
+Wolfram Sang (1):
+      NTB: ntb_hw_idt: fix typo 'can by' to 'can be'
+
+ drivers/ntb/hw/idt/ntb_hw_idt.c                    |   2 +-
+ drivers/ntb/hw/intel/Makefile                      |   1 +
+ .../ntb/hw/intel/{ntb_hw_intel.c => ntb_hw_gen1.c} | 713 ++-------------------
+ drivers/ntb/hw/intel/ntb_hw_gen1.h                 | 182 ++++++
+ drivers/ntb/hw/intel/ntb_hw_gen3.c                 | 597 +++++++++++++++++
+ drivers/ntb/hw/intel/ntb_hw_gen3.h                 | 110 ++++
+ drivers/ntb/hw/intel/ntb_hw_intel.h                | 203 ++----
+ drivers/ntb/ntb_transport.c                        |   6 +-
+ 8 files changed, 1001 insertions(+), 813 deletions(-)
+ rename drivers/ntb/hw/intel/{ntb_hw_intel.c => ntb_hw_gen1.c} (74%)
+ create mode 100644 drivers/ntb/hw/intel/ntb_hw_gen1.h
+ create mode 100644 drivers/ntb/hw/intel/ntb_hw_gen3.c
+ create mode 100644 drivers/ntb/hw/intel/ntb_hw_gen3.h
