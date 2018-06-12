@@ -2,117 +2,80 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 36CF8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:12:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 01A18C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:21:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E67F0208B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:12:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E67F0208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AB832208B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 15:21:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB832208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934367AbeFLPMM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 11:12:12 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58328 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934257AbeFLPMK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 11:12:10 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C49178011059;
-        Tue, 12 Jun 2018 15:12:09 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A17010194;
-        Tue, 12 Jun 2018 15:12:08 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
-Cc:     "pbonzini\@redhat.com" <pbonzini@redhat.com>,
-        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
-        "tglx\@linutronix.de" <tglx@linutronix.de>,
-        "mingo\@redhat.com" <mingo@redhat.com>,
-        "hpa\@zytor.com" <hpa@zytor.com>,
-        "x86\@kernel.org" <x86@kernel.org>,
-        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>
-Subject: Re: [RFC Patch 3/3] KVM/x86: Add tlb_remote_flush callback support for vmcs
-References: <20180604090749.489-1-Tianyu.Lan@microsoft.com>
-        <20180604090749.489-4-Tianyu.Lan@microsoft.com>
-Date:   Tue, 12 Jun 2018 17:12:07 +0200
-In-Reply-To: <20180604090749.489-4-Tianyu.Lan@microsoft.com> (Tianyu Lan's
-        message of "Mon, 4 Jun 2018 09:08:34 +0000")
-Message-ID: <87h8m8qbso.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S1754376AbeFLPVB (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 11:21:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48819 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754196AbeFLPVA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 11:21:00 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id D454AABE6;
+        Tue, 12 Jun 2018 15:20:58 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 17:20:57 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Punit Agrawal <punit.agrawal@arm.com>
+Cc:     Bjorn Helgaas <helgaas@kernel.org>,
+        Xie XiuQi <xiexiuqi@huawei.com>,
+        Hanjun Guo <guohanjun@huawei.com>, tnowicki@caviumnetworks.com,
+        linux-pci@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-mm@kvack.org, wanghuiqiang@huawei.com,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zhongjiang <zhongjiang@huawei.com>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
+Message-ID: <20180612152057.GA13364@dhcp22.suse.cz>
+References: <CAErSpo6S0qtR42tjGZrFu4aMFFyThx1hkHTSowTt6t3XerpHnA@mail.gmail.com>
+ <20180607105514.GA13139@dhcp22.suse.cz>
+ <5ed798a0-6c9c-086e-e5e8-906f593ca33e@huawei.com>
+ <20180607122152.GP32433@dhcp22.suse.cz>
+ <a880df29-b656-d98d-3037-b04761c7ed78@huawei.com>
+ <20180611085237.GI13364@dhcp22.suse.cz>
+ <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
+ <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
+ <20180611145330.GO13364@dhcp22.suse.cz>
+ <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 12 Jun 2018 15:12:09 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Tue, 12 Jun 2018 15:12:09 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tianyu Lan <Tianyu.Lan@microsoft.com> writes:
+On Tue 12-06-18 16:08:03, Punit Agrawal wrote:
+> Michal Hocko <mhocko@kernel.org> writes:
+[...]
+> > Well, the standard way to handle memory less NUMA nodes is to simply
+> > fallback to the closest NUMA node. We even have an API for that
+> > (numa_mem_id).
+> 
+> CONFIG_HAVE_MEMORYLESS node is not enabled on arm64 which means we end
+> up returning the original node in the fallback path.
 
-> Register tlb_remote_flush callback for vmcs when hyperv capability of
-> nested guest mapping flush is detected. The interface can help to reduce
-> overhead when flush ept table among vcpus for nested VM. The tradition way
-> is to send IPIs to all affected vcpus and executes INVEPT on each vcpus.
-> It will trigger several vmexits for IPI and INVEPT emulation. Hyperv provides
-> such hypercall to do flush for all vcpus.
->
-> Signed-off-by: Lan Tianyu <Tianyu.Lan@microsoft.com>
-> ---
->  arch/x86/kvm/vmx.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index e50beb76d846..6cb241c05690 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -4737,6 +4737,17 @@ static inline void __vmx_flush_tlb(struct kvm_vcpu *vcpu, int vpid,
->  	}
->  }
->
-> +static int vmx_remote_flush_tlb(struct kvm *kvm)
-> +{
-> +	struct kvm_vcpu *vcpu = kvm_get_vcpu(kvm, 0);
-> +
-> +	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
-> +		return -1;
-
-Why vcpu0? Can arch.mmu.root_hpa-s differ across vCPUs? What happens if
-they do?
-
-> +
-> +	return hyperv_flush_guest_mapping(construct_eptp(vcpu,
-> +		vcpu->arch.mmu.root_hpa));
-> +}
-
-The 'vmx_remote_flush_tlb' name looks generic enough but it is actually
-Hyper-V-specific. I'd suggest renaming to something like
-hv_remote_flush_tlb().
-
-> +
->  static void vmx_flush_tlb(struct kvm_vcpu *vcpu, bool invalidate_gpa)
->  {
->  	__vmx_flush_tlb(vcpu, to_vmx(vcpu)->vpid, invalidate_gpa);
-> @@ -7495,6 +7506,10 @@ static __init int hardware_setup(void)
->  	if (enable_ept && !cpu_has_vmx_ept_2m_page())
->  		kvm_disable_largepages();
->
-> +	if (ms_hyperv.nested_features & HV_X64_NESTED_GUSET_MAPPING_FLUSH
-> +	    && enable_ept)
-> +		kvm_x86_ops->tlb_remote_flush = vmx_remote_flush_tlb;
-> +
->  	if (!cpu_has_vmx_ple()) {
->  		ple_gap = 0;
->  		ple_window = 0;
-
+Yes this makes more sense.
 -- 
-  Vitaly
+Michal Hocko
+SUSE Labs
