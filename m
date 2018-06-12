@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 85F0DC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:16:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 417C5C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:19:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C1320693
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:16:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCDF720693
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 04:19:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p0NXaujO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C1320693
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tzNB/PWK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCDF720693
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753569AbeFLEQM (ORCPT
+        id S1752861AbeFLETm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 00:16:12 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33643 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750811AbeFLEQK (ORCPT
+        Tue, 12 Jun 2018 00:19:42 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40349 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750811AbeFLETk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 00:16:10 -0400
-Received: by mail-pf0-f193.google.com with SMTP id b17-v6so11392953pfi.0;
-        Mon, 11 Jun 2018 21:16:10 -0700 (PDT)
+        Tue, 12 Jun 2018 00:19:40 -0400
+Received: by mail-pl0-f68.google.com with SMTP id t12-v6so13577580plo.7;
+        Mon, 11 Jun 2018 21:19:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id;
-        bh=2e58dYCyHjCrRMzvDJHZ4B3vN5K2NBtjTra2hTQl9ng=;
-        b=p0NXaujO2gFA7R17e3n4gMS9ahNGRQy4ijuKc8o2+xegxT11KFX3m/Rv4CboJfE0QB
-         p1WSsJo33JB4aAKxCY5lb9Uh5qNBw3Wy2mAX85452Yk164l/Anmp2YIjO8D7QwLJMk4c
-         uUqO295UNoAVxMRdPf4MECuFIr5MiW5CkxPDIo9+YnAnzr5i0YPUKXj3k8voAGI9Ndr0
-         IvZ7b8hlWzCI4lp+pqrCRB9T0rP7noaUu5DpikAJMgJHGRCBVj6ZeFwwqihh0CEYj+UE
-         CgG35ZNej49VhqMnRuNedfYgPv5fjygZWWJ0jY2Dq5nYl4d9Vo8vqtcXeYWoOprFZbfv
-         VoKw==
+        bh=F+GFV2KjdqB0bR40IfmTpZtntOLDxZbv1eGUZATGvUQ=;
+        b=tzNB/PWK+sqmOwMAXvDTIH0IZyEcQV6JZazPi+1yATccYhqAyOdFOHtwCxm5q4ALZy
+         k23Pp/3tMQZ5nMsbo6gi9d/xUkPiFBzihOAEYqNFGDrYr4EQ8gFHWdLJSJzTB+a5Ug6x
+         gYfPKxOMvd+OTGdjnTLEvBeZvd7Pqx7QRco4B2Bp9aghZ7LBsRhNEsboSyhBHC0D7qj2
+         TtHdDrfQKLU6mE0svvl2VmElHipep8k2k9wUgrm1jq+cTH1c2q1Oo81B1l8/ThGn3Ajb
+         9TBiHq5XpovSNpThK9uCxGNHPdadMfQ8pwrbqC5IwLtB5n8ECA7tOJwaSNEFkpQpkDFH
+         GYgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2e58dYCyHjCrRMzvDJHZ4B3vN5K2NBtjTra2hTQl9ng=;
-        b=FWx6+4T2ewYjn3VXPkSf6DHiTCVEXO6riUZlT6E+4iuxZC2JoHi/uHXfj8bo6huw2D
-         0ib/kiWVbW9FW0UalAZcJhVcRRqga+0XoZRKfQQ3KCuwnDFeO8V1bQTQTEXvbVLX+Fb/
-         grnZT37yanBfzQnlyNVL/zN2+UtriPaoyObzO8fr2bi/gk3WkOHBVZj8iaXj2epK3H+k
-         OGp2rXFkcIHpn04vZfnUv+XhUrjtQPVVQcXgh/3+7viwgKXOFtOOuvNDIVc3UFbhkYBF
-         wcgL17RJoDHNKNqdI5lCvtnbZtAFJqBZApcNNonw3wR4ZtSQbfBJTT/DU8qa7P7BrEWa
-         IuzQ==
-X-Gm-Message-State: APt69E0wEcIYp9uM8hl82CqMj7C+UPepZv+S9hS2FIfkcXjLmvS91cTM
-        mChcJqcWcIIsrQ0MfMJ25M2DMtEXyiA=
-X-Google-Smtp-Source: ADUXVKIwgQkKnUqfzzLCJk1ELh0L13YYQ9beOblajiYPwd132z3Ja7+hk/QVyYwQPRJyZ/bwL4lGSA==
-X-Received: by 2002:a62:e401:: with SMTP id r1-v6mr2092542pfh.172.1528776970506;
-        Mon, 11 Jun 2018 21:16:10 -0700 (PDT)
+        bh=F+GFV2KjdqB0bR40IfmTpZtntOLDxZbv1eGUZATGvUQ=;
+        b=Djqo8LFZysIxkUB/ELzSr3NAwyr5IW4G0Z7ubr51GPfGxPQQAyTc+qI4z+AZ6jI/PQ
+         O1lTmgqyWNq2zJimJMRDjd/4atzHz7yAtxxlOshp7YKzMQtn5bjCUUImIxe+gNj0IQBi
+         b8/jlb8wiIPaUjg6sjC8UgRoUc7/Lek+AwMDF9VtCz0aNVFf6dmSOS3BCAD1GMxpK0qK
+         6fsUG8knRPCTm9mIn/3vDmqnFJjIhpa9/i0Wh0HkZsQZxrC693mHjpqsYtF2sC48mAeK
+         uI67FKnF472qoLB8lbHku9lrj+w8Kd0D9v8eklvSieezI9PZbKOkZyt3re+jxb+p4m2w
+         vwQQ==
+X-Gm-Message-State: APt69E3PldcNq46HP//s5ov8BEHlvFGcglo1EeCjoSPBfBCkfxF5YW82
+        FPPJHxVgtbspXLvIExOXKBk=
+X-Google-Smtp-Source: ADUXVKIQwD/vLkhjnsZKGOJ6jB1ZX9aS7A9JajMM9GzDquqB+wP15ObjUMICSZtFjvGUtg3mv7xRuw==
+X-Received: by 2002:a17:902:6b0c:: with SMTP id o12-v6mr2150507plk.159.1528777180237;
+        Mon, 11 Jun 2018 21:19:40 -0700 (PDT)
 Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id a11-v6sm103315474pgn.64.2018.06.11.21.16.09
+        by smtp.gmail.com with ESMTPSA id o77-v6sm84856375pfj.0.2018.06.11.21.19.39
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 21:16:09 -0700 (PDT)
+        Mon, 11 Jun 2018 21:19:39 -0700 (PDT)
 From:   Zhouyang Jia <jiazhouyang09@gmail.com>
 Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>, Jan Kara <jack@suse.cz>,
         Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] fsnotify: add error handling for kmem_cache_create
-Date:   Tue, 12 Jun 2018 12:16:04 +0800
-Message-Id: <1528776964-39826-1-git-send-email-jiazhouyang09@gmail.com>
+Subject: [PATCH] fanotify: add error handling for kmem_cache_create
+Date:   Tue, 12 Jun 2018 12:19:34 +0800
+Message-Id: <1528777174-40045-1-git-send-email-jiazhouyang09@gmail.com>
 X-Mailer: git-send-email 2.7.4
 To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -78,23 +78,28 @@ This patch adds error-handling code after calling kmem_cache_create.
 
 Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- fs/notify/dnotify/dnotify.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/notify/fanotify/fanotify_user.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/notify/dnotify/dnotify.c b/fs/notify/dnotify/dnotify.c
-index 63a1ca4..216b411 100644
---- a/fs/notify/dnotify/dnotify.c
-+++ b/fs/notify/dnotify/dnotify.c
-@@ -387,6 +387,9 @@ static int __init dnotify_init(void)
- 	dnotify_struct_cache = KMEM_CACHE(dnotify_struct, SLAB_PANIC);
- 	dnotify_mark_cache = KMEM_CACHE(dnotify_mark, SLAB_PANIC);
- 
-+	if (!dnotify_struct_cache || !dnotify_mark_cache)
+diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+index ec4d8c5..e3fa861 100644
+--- a/fs/notify/fanotify/fanotify_user.c
++++ b/fs/notify/fanotify/fanotify_user.c
+@@ -959,9 +959,14 @@ static int __init fanotify_user_setup(void)
+ {
+ 	fanotify_mark_cache = KMEM_CACHE(fsnotify_mark, SLAB_PANIC);
+ 	fanotify_event_cachep = KMEM_CACHE(fanotify_event_info, SLAB_PANIC);
++	if (!fanotify_mark_cache || !fanotify_event_cachep)
 +		return -ENOMEM;
 +
- 	dnotify_group = fsnotify_alloc_group(&dnotify_fsnotify_ops);
- 	if (IS_ERR(dnotify_group))
- 		panic("unable to allocate fsnotify group for dnotify\n");
+ 	if (IS_ENABLED(CONFIG_FANOTIFY_ACCESS_PERMISSIONS)) {
+ 		fanotify_perm_event_cachep =
+ 			KMEM_CACHE(fanotify_perm_event_info, SLAB_PANIC);
++		if (!fanotify_perm_event_cachep)
++			return -ENOMEM;
+ 	}
+ 
+ 	return 0;
 -- 
 2.7.4
 
