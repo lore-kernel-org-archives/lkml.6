@@ -3,117 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6C606C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:30:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DEE30C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E75208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A82208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:34:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="kfvru/5e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E75208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lightnvm.io
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="K/jV6Wk3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90A82208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754380AbeFLKal (ORCPT
+        id S1754264AbeFLKei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:30:41 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39613 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754100AbeFLKai (ORCPT
+        Tue, 12 Jun 2018 06:34:38 -0400
+Received: from conuserg-10.nifty.com ([210.131.2.77]:31391 "EHLO
+        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752659AbeFLKeg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:30:38 -0400
-Received: by mail-lf0-f66.google.com with SMTP id t134-v6so35197973lff.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 03:30:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=seVdsKj0EQqMOF4CwT0aE9lpFmK2oc2WEb1GlFRmp/w=;
-        b=kfvru/5eFh3HH50kPj1Q3ZaJHW0/PUE3dV5WJJ/XbvNqzmJx64N9kM5R6Cx1sjO3Cn
-         RZ5+S432OPanaEwHLfOjnG9R2zz/QRNvPGXppF6VBY4QGvXcckztD3vheSAEhnaviCU5
-         qCHRzdpcGOIhRVQw2KU7YamR/z8ILcnQeRYR0iGErCrXCdsqc8UMVkhugAbvWinyoKxW
-         W9uxHMaqnE1k5i/T/+sfEXlNObAzVLoGecMoZKtoVKLwQpunTkMF7jCHaG8WXq64nZVD
-         2U/ChbGpI8s5xtaXP09B91T2xZ7lu6671eKzJCB0Eynd9UIqvoUaYXbdLtzIpvrE4JEX
-         pqNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=seVdsKj0EQqMOF4CwT0aE9lpFmK2oc2WEb1GlFRmp/w=;
-        b=quMUtrgy6zcoVG6Juxol+bOVCmDzXDyra5J8hJ8Y5LVRQWkxL/OrF+kfAXLbf6Wev2
-         PwscA+vFuIsiASPiptlcl/wBknSwH3OEjv4rcDSgkFj6nd4sWoiKM5CA5UdOBP+7FXcs
-         z2NZFEHYN8JmUXaxLGvHEqxLAsMZokBY3abAwID8VV5WvWuNQxp/WPMTx2gzAyZ7rs5J
-         E9OeBkgmG7Z/+DxHmDuU1ZvWrYxUYVQDYbc1/CQC81gxKrGbhb1F71X7UGqHO/MIOKA7
-         10uzZWfMw8Ku4N6LZ+3tqDt1gukr1WPlHHlTk1LN4SU1IW7X0FzRdSA469KfpAaGrie5
-         esrQ==
-X-Gm-Message-State: APt69E3j6v2hI6oOsSowNfIeNWYzOVkNcHfj7r59n/1GJIi2byzK5fy0
-        hjGQZOJBgf4ORYNDQCe0CbRbKg==
-X-Google-Smtp-Source: ADUXVKKsNvUn99+ld/27T7eJE+tis6jZ6hHbZ0A/7pC9heWUx51QVgHsPTzFZWuFuK7XhsTv+KqmjA==
-X-Received: by 2002:a2e:330b:: with SMTP id d11-v6mr1932969ljc.67.1528799437622;
-        Tue, 12 Jun 2018 03:30:37 -0700 (PDT)
-Received: from Macroninja.cnexlabs.com (95-166-82-66-cable.dk.customer.tdc.net. [95.166.82.66])
-        by smtp.gmail.com with ESMTPSA id f63-v6sm142211lje.79.2018.06.12.03.30.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 03:30:36 -0700 (PDT)
-From:   =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-To:     igor.j.konopko@intel.com, marcin.dziegielewski@intel.com,
-        javier@cnexlabs.com, hans.holmberg@cnexlabs.com
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>
-Subject: [PATCH] lightnvm: pblk: limit get chk meta request size
-Date:   Tue, 12 Jun 2018 12:30:08 +0200
-Message-Id: <20180612103008.19436-1-mb@lightnvm.io>
-X-Mailer: git-send-email 2.11.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Tue, 12 Jun 2018 06:34:36 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-10.nifty.com with ESMTP id w5CAWQLv002200;
+        Tue, 12 Jun 2018 19:32:26 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com w5CAWQLv002200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528799547;
+        bh=xlmkvhS34IsF0Tfr28zTqZ9AIGpKQH78cmpXUmOKdkI=;
+        h=From:To:Cc:Subject:Date:From;
+        b=K/jV6Wk3ujLEU8nxf8u3SIcjXVWU7kPB+VqYiB73skYLM8Rlpolb18cbyLMtXo7OZ
+         CWh6iTUseXm4TIOAWiYL5l5lV6XC6yzehgeN0EpejHP0FQEu4WXj9tHyg6m/tEBwHT
+         A/G8c8vIqHnzo8Y19uVGCNtBU6flwVUiWFBJxD7r8Ua7qtzWpP0j3JQZtEOfsKhc3G
+         nujqRRvvTwMP0sp2IJvNHATeGYmEGNpeeLJQX+RoHUPrRgdx9CTBV4LpOn1H0Jm7xE
+         l7c4xKG/K21djMWIZ9HaoWbGMd2qvnlY4laEu84AXZzEEbgL4EeipZrkQDtU5mrdQ7
+         kIxkmLqy9FSTw==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Richard Weinberger <richard@sigma-star.at>,
+        Philipp Rosenberger <p.rosenberger@linutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH 1/2] mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
+Date:   Tue, 12 Jun 2018 19:31:54 +0900
+Message-Id: <1528799515-1356-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For devices that does not specify a limit on its transfer size, the
-get_chk_meta command may send down a single I/O retrieving the full
-chunk metadata table. Resulting in large 2-4MB I/O requests. Instead,
-split up the I/Os to a maximum of 256KB and issue them separately to
-improve I/O latency.
+Add 'dev' as a shorthand before adding more code that takes a
+pointer to struce device.
 
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/nvme/host/lightnvm.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvme/host/lightnvm.c b/drivers/nvme/host/lightnvm.c
-index b9989717418d..3b644b0e9713 100644
---- a/drivers/nvme/host/lightnvm.c
-+++ b/drivers/nvme/host/lightnvm.c
-@@ -583,7 +583,13 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
- 	struct ppa_addr ppa;
- 	size_t left = nchks * sizeof(struct nvme_nvm_chk_meta);
- 	size_t log_pos, offset, len;
--	int ret, i;
-+	int ret, i, max_len;
-+
-+	/*
-+	 * limit requests to maximum 256K to avoid issuing arbitrary large
-+	 * requests when the device does not specific a maximum transfer size.
-+	 */
-+	max_len = min_t(unsigned int, ctrl->max_hw_sectors << 9, 256 * 1024);
+ drivers/mtd/nand/raw/denali_dt.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
+index cfd33e6..d923cfa 100644
+--- a/drivers/mtd/nand/raw/denali_dt.c
++++ b/drivers/mtd/nand/raw/denali_dt.c
+@@ -79,44 +79,45 @@ MODULE_DEVICE_TABLE(of, denali_nand_dt_ids);
  
- 	/* Normalize lba address space to obtain log offset */
- 	ppa.ppa = slba;
-@@ -596,7 +602,7 @@ static int nvme_nvm_get_chk_meta(struct nvm_dev *ndev,
- 	offset = log_pos * sizeof(struct nvme_nvm_chk_meta);
+ static int denali_dt_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct resource *res;
+ 	struct denali_dt *dt;
+ 	const struct denali_dt_data *data;
+ 	struct denali_nand_info *denali;
+ 	int ret;
  
- 	while (left) {
--		len = min_t(unsigned int, left, ctrl->max_hw_sectors << 9);
-+		len = min_t(unsigned int, left, max_len);
+-	dt = devm_kzalloc(&pdev->dev, sizeof(*dt), GFP_KERNEL);
++	dt = devm_kzalloc(dev, sizeof(*dt), GFP_KERNEL);
+ 	if (!dt)
+ 		return -ENOMEM;
+ 	denali = &dt->denali;
  
- 		ret = nvme_get_log_ext(ctrl, ns, NVME_NVM_LOG_REPORT_CHUNK,
- 				dev_meta, len, offset);
+-	data = of_device_get_match_data(&pdev->dev);
++	data = of_device_get_match_data(dev);
+ 	if (data) {
+ 		denali->revision = data->revision;
+ 		denali->caps = data->caps;
+ 		denali->ecc_caps = data->ecc_caps;
+ 	}
+ 
+-	denali->dev = &pdev->dev;
++	denali->dev = dev;
+ 	denali->irq = platform_get_irq(pdev, 0);
+ 	if (denali->irq < 0) {
+-		dev_err(&pdev->dev, "no irq defined\n");
++		dev_err(dev, "no irq defined\n");
+ 		return denali->irq;
+ 	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "denali_reg");
+-	denali->reg = devm_ioremap_resource(&pdev->dev, res);
++	denali->reg = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(denali->reg))
+ 		return PTR_ERR(denali->reg);
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "nand_data");
+-	denali->host = devm_ioremap_resource(&pdev->dev, res);
++	denali->host = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(denali->host))
+ 		return PTR_ERR(denali->host);
+ 
+-	dt->clk = devm_clk_get(&pdev->dev, NULL);
++	dt->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(dt->clk)) {
+-		dev_err(&pdev->dev, "no clk available\n");
++		dev_err(dev, "no clk available\n");
+ 		return PTR_ERR(dt->clk);
+ 	}
+ 	ret = clk_prepare_enable(dt->clk);
 -- 
-2.11.0
+2.7.4
 
