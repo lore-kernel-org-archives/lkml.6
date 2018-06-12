@@ -2,110 +2,119 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D87C6C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:30:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 59426C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:31:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97A90208AF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:30:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97A90208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0C5B6208B9
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 03:31:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gR+Of7qE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C5B6208B9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933468AbeFLDa2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 23:30:28 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:39306 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932757AbeFLDa0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 23:30:26 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 48413402346B;
-        Tue, 12 Jun 2018 03:30:25 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6C38F1134CA2;
-        Tue, 12 Jun 2018 03:30:06 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        robh+dt@kernel.org, dan.j.williams@intel.com,
-        nicolas.pitre@linaro.org, josh@joshtriplett.org,
-        fengguang.wu@intel.com, bp@suse.de
-Cc:     patrik.r.jakobsson@gmail.com, airlied@linux.ie, kys@microsoft.com,
-        haiyangz@microsoft.com, sthemmin@microsoft.com,
-        dmitry.torokhov@gmail.com, frowand.list@gmail.com,
-        keith.busch@intel.com, jonathan.derrick@intel.com,
-        lorenzo.pieralisi@arm.com, bhelgaas@google.com, tglx@linutronix.de,
-        brijesh.singh@amd.com, jglisse@redhat.com, thomas.lendacky@amd.com,
-        gregkh@linuxfoundation.org, baiyaowei@cmss.chinamobile.com,
-        richard.weiyang@gmail.com, devel@linuxdriverproject.org,
-        linux-input@vger.kernel.org, linux-nvdimm@lists.01.org,
-        devicetree@vger.kernel.org, linux-pci@vger.kernel.org,
-        ebiederm@xmission.com, vgoyal@redhat.com, dyoung@redhat.com,
-        yinghai@kernel.org, kexec@lists.infradead.org, monstr@monstr.eu,
-        davem@davemloft.net, chris@zankel.net, jcmvbkbc@gmail.com,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, linux-parisc@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, Baoquan He <bhe@redhat.com>
-Subject: [PATCH v5 4/4] kexec_file: Load kernel at top of system RAM if required
-Date:   Tue, 12 Jun 2018 11:28:31 +0800
-Message-Id: <20180612032831.29747-5-bhe@redhat.com>
-In-Reply-To: <20180612032831.29747-1-bhe@redhat.com>
-References: <20180612032831.29747-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 12 Jun 2018 03:30:25 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Tue, 12 Jun 2018 03:30:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bhe@redhat.com' RCPT:''
+        id S933157AbeFLDbh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 23:31:37 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:42049 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932650AbeFLDbg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 11 Jun 2018 23:31:36 -0400
+Received: by mail-pf0-f195.google.com with SMTP id w7-v6so11320401pfn.9;
+        Mon, 11 Jun 2018 20:31:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=iUn5c6aafdlTZaO1jFoZ5EmuAqZIUkHskaPyuidu2L0=;
+        b=gR+Of7qEBtT/VJuEVqqEsimWdBmy7dwFhuunhWUfteQljGLnBaqV3kOSmyFNVNIPLx
+         3ukulCkUJsiXWuYa5iuQxXwIQjVZsKGX2U4Dt27hdlEr9kVe7jS7wT+o1q+m7KhaSF0n
+         +jGKYtTlgTnnv/zqKx/5n5vwv7Eh3kfpTOrpDagIytoekh13T1mpvNP2YeLcUJkCmyEG
+         M04o0wWdb8Cp3bKTSRCIVBpZOWobFP2lcqGFot1o9VXRairGjMENJq3TeQR2TD+hrMba
+         0+sOOgdGKx6NIdMF0reHYirISTYrKdcHClOzkUZAKnG1wDhnSaZU2jLlRuL7MNxAirhI
+         1PFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=iUn5c6aafdlTZaO1jFoZ5EmuAqZIUkHskaPyuidu2L0=;
+        b=F3Z8qmjf62eOdII9p99+77GBSpNAAhY/mfr46jWP5W67aYi9i8WDPap+UArYMZM8yR
+         AB1R4wFOmw0QumslPhHjcnodse2grGwuGx73picX9Lzm5MWKXbbjEjWM3A/eMC1ommDG
+         EWSF+S4xPclczI4qYXFxQUKgImNBADb5YJhBjsNPWknzmI03GxIShmUEU0Lfsd4r+35v
+         TwL9TzjfPSW7oLVSRS24vgKDiIWPpPo0UjXDYLWVXH/1tNZZlOQQmlfDNpk2o59YoqRB
+         PmZ1fnykrg7Yn8nGm+0leGB6ENdbyeLHYsPiy8ozrEwR3KOul5q1vmv/78Wxd6lDkUYr
+         +JuQ==
+X-Gm-Message-State: APt69E1ENDXX6M55f9BJlM5qDGpKPYmHviD1XuKtp+hSCKZ2lBNjwl+D
+        8ASmS/Sn4xIWo8YhRjw0CWSusyICsUA=
+X-Google-Smtp-Source: ADUXVKKsHJtnNKvDl+tKEMUJU7n7YPs6Dnp2ur6ZYqUWNVOU+VXaXuPCHez7KgmApfG1u3BHxzZlXQ==
+X-Received: by 2002:a65:6101:: with SMTP id z1-v6mr1614989pgu.282.1528774295711;
+        Mon, 11 Jun 2018 20:31:35 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id l11-v6sm7280641pgp.56.2018.06.11.20.31.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 11 Jun 2018 20:31:35 -0700 (PDT)
+From:   Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Jean Delvare <jdelvare@suse.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: (w83792d) add error handling for i2c_new_dummy
+Date:   Tue, 12 Jun 2018 11:31:28 +0800
+Message-Id: <1528774289-38443-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For kexec_file loading, if kexec_buf.top_down is 'true', the memory which
-is used to load kernel/initrd/purgatory is supposed to be allocated from
-top to down. This is what we have been doing all along in the old kexec
-loading interface and the kexec loading is still default setting in some
-distributions. However, the current kexec_file loading interface doesn't
-do likt this. The function arch_kexec_walk_mem() it calls ignores checking
-kexec_buf.top_down, but calls walk_system_ram_res() directly to go through
-all resources of System RAM from bottom to up, to try to find memory region
-which can contain the specific kexec buffer, then call locate_mem_hole_callback()
-to allocate memory in that found memory region from top to down. This brings
-confusion especially when KASLR is widely supported , users have to make clear
-why kexec/kdump kernel loading position is different between these two
-interfaces in order to exclude unnecessary noises. Hence these two interfaces
-need be unified on behaviour.
+When i2c_new_dummy fails, the lack of error-handling code may
+cause unexpected results.
 
-Here add checking if kexec_buf.top_down is 'true' in arch_kexec_walk_mem(),
-if yes, call the newly added walk_system_ram_res_rev() to find memory region
-from top to down to load kernel.
+This patch adds error-handling code after calling i2c_new_dummy.
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
-Cc: Eric Biederman <ebiederm@xmission.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Dave Young <dyoung@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yinghai Lu <yinghai@kernel.org>
-Cc: kexec@lists.infradead.org
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 ---
- kernel/kexec_file.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/hwmon/w83792d.c | 15 ++++++++++++++-
+ 1 file changed, 14 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index 75d8e7cf040e..7a66d9d5a534 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -518,6 +518,8 @@ int __weak arch_kexec_walk_mem(struct kexec_buf *kbuf,
- 					   IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY,
- 					   crashk_res.start, crashk_res.end,
- 					   kbuf, func);
-+	else if (kbuf->top_down)
-+		return walk_system_ram_res_rev(0, ULONG_MAX, kbuf, func);
- 	else
- 		return walk_system_ram_res(0, ULONG_MAX, kbuf, func);
- }
+diff --git a/drivers/hwmon/w83792d.c b/drivers/hwmon/w83792d.c
+index 76aa39e..2c168c5 100644
+--- a/drivers/hwmon/w83792d.c
++++ b/drivers/hwmon/w83792d.c
+@@ -961,8 +961,15 @@ w83792d_detect_subclients(struct i2c_client *new_client)
+ 	}
+ 
+ 	val = w83792d_read_value(new_client, W83792D_REG_I2C_SUBADDR);
+-	if (!(val & 0x08))
++	if (!(val & 0x08)) {
+ 		data->lm75[0] = i2c_new_dummy(adapter, 0x48 + (val & 0x7));
++		if (data->lm75[0] == NULL) {
++			dev_err(&new_client->dev,
++				"Failed to allocate I2C device\n");
++			err = -ENODEV;
++			goto ERROR_SC_1;
++		}
++	}
+ 	if (!(val & 0x80)) {
+ 		if ((data->lm75[0] != NULL) &&
+ 			((val & 0x7) == ((val >> 4) & 0x7))) {
+@@ -974,6 +981,12 @@ w83792d_detect_subclients(struct i2c_client *new_client)
+ 		}
+ 		data->lm75[1] = i2c_new_dummy(adapter,
+ 					      0x48 + ((val >> 4) & 0x7));
++		if (data->lm75[1] == NULL) {
++			dev_err(&new_client->dev,
++				"Failed to allocate I2C device\n");
++			err = -ENODEV;
++			goto ERROR_SC_1;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
-2.13.6
+2.7.4
 
