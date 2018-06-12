@@ -6,39 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1C742C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C33CFC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFC29208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFC29208AE
+	by mail.kernel.org (Postfix) with ESMTP id 78949208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 10:29:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78949208AE
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754362AbeFLK3W (ORCPT
+        id S1754344AbeFLK3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 06:29:22 -0400
+        Tue, 12 Jun 2018 06:29:40 -0400
 Received: from mga09.intel.com ([134.134.136.24]:34353 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932608AbeFLKW1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 06:22:27 -0400
+        id S932433AbeFLKWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 06:22:25 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 03:22:27 -0700
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 03:22:25 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,214,1526367600"; 
-   d="scan'208";a="66321900"
+   d="scan'208";a="66321894"
 Received: from hao-dev.bj.intel.com ([10.238.157.61])
-  by orsmga002.jf.intel.com with ESMTP; 12 Jun 2018 03:22:25 -0700
+  by orsmga002.jf.intel.com with ESMTP; 12 Jun 2018 03:22:23 -0700
 From:   Wu Hao <hao.wu@intel.com>
 To:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
         linux-kernel@vger.kernel.org
 Cc:     linux-api@vger.kernel.org, luwei.kang@intel.com,
         yi.z.zhang@intel.com, hao.wu@intel.com
-Subject: [PATCH v6 04/29] fpga: mgr: add compat_id support
-Date:   Tue, 12 Jun 2018 18:10:18 +0800
-Message-Id: <1528798243-2029-5-git-send-email-hao.wu@intel.com>
+Subject: [PATCH v6 03/29] fpga: mgr: add status for fpga-manager
+Date:   Tue, 12 Jun 2018 18:10:17 +0800
+Message-Id: <1528798243-2029-4-git-send-email-hao.wu@intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
 References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
@@ -47,56 +47,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces compat_id support to fpga manager, it adds
-a fpga_compat_id pointer to fpga manager data structure to allow
-fpga manager drivers to save the compatibility id. This compat_id
-could be used for compatibility checking before doing partial
-reconfiguration to associated fpga regions.
+This patch adds status sysfs interface for fpga manager, it's a
+read only interface which allows user to get fpga manager status,
+including full/partial reconfiguration error and other status
+information. It adds a status callback to fpga_manager_ops too,
+allows each fpga_manager driver to define its own method to
+collect latest status from hardware.
+
+The following sysfs file is created:
+* /sys/class/fpga_manager/<fpga>/status
+  Return status of fpga manager, including reconfiguration errors.
 
 Signed-off-by: Wu Hao <hao.wu@intel.com>
 Acked-by: Alan Tull <atull@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
 ---
-v6: add Acked-by from Alan.
+v3: add one line description for status
+    add status callback function to fpga_manager_ops
+    update fpga-mgr status if any failure or during initialization
+    s/INCOMPATIBLE_BS_ERR/INCOMPATIBLE_IMAGE_ERR/
+v4: simply code per suggestion from Alan.
+    add supported status strings (and descriptions) in sysfs document.
+    remove unused error code (SECURE_LOAD_ERR).
+v5: fix the wrong commit message and add Acked-by from Alan and Moritz.
+v6: rebase.
 ---
- include/linux/fpga/fpga-mgr.h | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ Documentation/ABI/testing/sysfs-class-fpga-manager | 24 +++++++++++++++++++
+ drivers/fpga/fpga-mgr.c                            | 28 ++++++++++++++++++++++
+ include/linux/fpga/fpga-mgr.h                      |  9 +++++++
+ 3 files changed, 61 insertions(+)
 
+diff --git a/Documentation/ABI/testing/sysfs-class-fpga-manager b/Documentation/ABI/testing/sysfs-class-fpga-manager
+index 23056c5..2aadf59 100644
+--- a/Documentation/ABI/testing/sysfs-class-fpga-manager
++++ b/Documentation/ABI/testing/sysfs-class-fpga-manager
+@@ -35,3 +35,27 @@ Description:	Read fpga manager state as a string.
+ 		* write complete	= Doing post programming steps
+ 		* write complete error	= Error while doing post programming
+ 		* operating		= FPGA is programmed and operating
++
++What:		/sys/class/fpga_manager/<fpga>/status
++Date:		June 2018
++KernelVersion:	4.18
++Contact:	Wu Hao <hao.wu@intel.com>
++Description:	Read fpga manager status as a string.
++		If FPGA programming operation fails, it could be caused by crc
++		error or incompatible bitstream image. The intent of this
++		interface is to provide more detailed information for FPGA
++		programming errors to userspace. This is a list of strings for
++		the supported status.
++
++		* reconfig operation error 	- invalid operations detected by
++						  reconfiguration hardware.
++						  e.g start reconfiguration
++						  with errors not cleared
++		* reconfig CRC error		- CRC error detected by
++						  reconfiguration hardware.
++		* reconfig incompatible image	- reconfiguration image is
++						  incompatible with hardware
++		* reconfig IP protocol error	- protocol errors detected by
++						  reconfiguration hardware
++		* reconfig fifo overflow error	- FIFO overflow detected by
++						  reconfiguration hardware
+diff --git a/drivers/fpga/fpga-mgr.c b/drivers/fpga/fpga-mgr.c
+index c1564cf..a41b07e 100644
+--- a/drivers/fpga/fpga-mgr.c
++++ b/drivers/fpga/fpga-mgr.c
+@@ -406,12 +406,40 @@ static ssize_t state_show(struct device *dev,
+ 	return sprintf(buf, "%s\n", state_str[mgr->state]);
+ }
+ 
++static ssize_t status_show(struct device *dev,
++			   struct device_attribute *attr, char *buf)
++{
++	struct fpga_manager *mgr = to_fpga_manager(dev);
++	u64 status;
++	int len = 0;
++
++	if (!mgr->mops->status)
++		return -ENOENT;
++
++	status = mgr->mops->status(mgr);
++
++	if (status & FPGA_MGR_STATUS_OPERATION_ERR)
++		len += sprintf(buf + len, "reconfig operation error\n");
++	if (status & FPGA_MGR_STATUS_CRC_ERR)
++		len += sprintf(buf + len, "reconfig CRC error\n");
++	if (status & FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR)
++		len += sprintf(buf + len, "reconfig incompatible image\n");
++	if (status & FPGA_MGR_STATUS_IP_PROTOCOL_ERR)
++		len += sprintf(buf + len, "reconfig IP protocol error\n");
++	if (status & FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR)
++		len += sprintf(buf + len, "reconfig fifo overflow error\n");
++
++	return len;
++}
++
+ static DEVICE_ATTR_RO(name);
+ static DEVICE_ATTR_RO(state);
++static DEVICE_ATTR_RO(status);
+ 
+ static struct attribute *fpga_mgr_attrs[] = {
+ 	&dev_attr_name.attr,
+ 	&dev_attr_state.attr,
++	&dev_attr_status.attr,
+ 	NULL,
+ };
+ ATTRIBUTE_GROUPS(fpga_mgr);
 diff --git a/include/linux/fpga/fpga-mgr.h b/include/linux/fpga/fpga-mgr.h
-index e249b72..8942e61 100644
+index 3eb6b9d..e249b72 100644
 --- a/include/linux/fpga/fpga-mgr.h
 +++ b/include/linux/fpga/fpga-mgr.h
-@@ -136,11 +136,23 @@ struct fpga_manager_ops {
- #define FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR	BIT(4)
+@@ -101,6 +101,7 @@ struct fpga_image_info {
+  * struct fpga_manager_ops - ops for low level fpga manager drivers
+  * @initial_header_size: Maximum number of bytes that should be passed into write_init
+  * @state: returns an enum value of the FPGA's state
++ * @status: returns status of the FPGA, including reconfiguration error code
+  * @write_init: prepare the FPGA to receive confuration data
+  * @write: write count bytes of configuration data to the FPGA
+  * @write_sg: write the scatter list of configuration data to the FPGA
+@@ -115,6 +116,7 @@ struct fpga_image_info {
+ struct fpga_manager_ops {
+ 	size_t initial_header_size;
+ 	enum fpga_mgr_states (*state)(struct fpga_manager *mgr);
++	u64 (*status)(struct fpga_manager *mgr);
+ 	int (*write_init)(struct fpga_manager *mgr,
+ 			  struct fpga_image_info *info,
+ 			  const char *buf, size_t count);
+@@ -126,6 +128,13 @@ struct fpga_manager_ops {
+ 	const struct attribute_group **groups;
+ };
  
- /**
-+ * struct fpga_compat_id - id for compatibility check
-+ *
-+ * @id_h: high 64bit of the compat_id
-+ * @id_l: low 64bit of the compat_id
-+ */
-+struct fpga_compat_id {
-+	u64 id_h;
-+	u64 id_l;
-+};
++/* FPGA manager status: Partial/Full Reconfiguration errors */
++#define FPGA_MGR_STATUS_OPERATION_ERR		BIT(0)
++#define FPGA_MGR_STATUS_CRC_ERR			BIT(1)
++#define FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR	BIT(2)
++#define FPGA_MGR_STATUS_IP_PROTOCOL_ERR		BIT(3)
++#define FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR	BIT(4)
 +
-+/**
+ /**
   * struct fpga_manager - fpga manager structure
   * @name: name of low level fpga manager
-  * @dev: fpga manager device
-  * @ref_mutex: only allows one reference to fpga manager
-  * @state: state of fpga manager
-+ * @compat_id: FPGA manager id for compatibility check.
-  * @mops: pointer to struct of fpga manager ops
-  * @priv: low level driver private date
-  */
-@@ -149,6 +161,7 @@ struct fpga_manager {
- 	struct device dev;
- 	struct mutex ref_mutex;
- 	enum fpga_mgr_states state;
-+	struct fpga_compat_id *compat_id;
- 	const struct fpga_manager_ops *mops;
- 	void *priv;
- };
 -- 
 1.8.3.1
 
