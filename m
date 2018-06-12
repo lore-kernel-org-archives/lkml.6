@@ -6,151 +6,89 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 40F4DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:03:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D3307C433EF
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1DEA2089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:03:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 842262089C
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 01:04:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="f8gRuVED"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DEA2089C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="JoD+em0y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 842262089C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934896AbeFLBDj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 11 Jun 2018 21:03:39 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45338 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934864AbeFLBDh (ORCPT
+        id S934902AbeFLBEr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 11 Jun 2018 21:04:47 -0400
+Received: from mail-io0-f169.google.com ([209.85.223.169]:33903 "EHLO
+        mail-io0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934315AbeFLBEq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 11 Jun 2018 21:03:37 -0400
-Received: by mail-qt0-f196.google.com with SMTP id i18-v6so22213489qtp.12
-        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 18:03:37 -0700 (PDT)
+        Mon, 11 Jun 2018 21:04:46 -0400
+Received: by mail-io0-f169.google.com with SMTP id e15-v6so26148018iog.1
+        for <linux-kernel@vger.kernel.org>; Mon, 11 Jun 2018 18:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KhcKphqSSxJuZIcrzu6V5Tj36vrgJpuM8g/Qzk85E7s=;
-        b=f8gRuVED3rKNLAoBlhEWtsYxDwJvu3CSnr4N6VL0DtsEPi4xFKDuD3DNopdPhbiHGM
-         ISW795M6tq58feIoHt7VTc6Q9L/mZIgknAI2uDpLSUBq0/Pr+m6IAGWeMymA+/0xA6pM
-         CPBVxqf94b05p/8dGY9+MFhTdbSlPvtSq7gfo=
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=s9CtnB5PTakKhR2oybOA6CcNCYSheVb5PT1xfdRRG0Y=;
+        b=JoD+em0yFA5RtkiXeUh9cqqL7TXtP39a9nMf3r6lhAzn7754XQWs8MTZ8rSOr2oYhM
+         yRn1VH8ARUOfzsGWYBMpxAS0dB+i2kUaAjaAbrE0i8NYE7sQ0u5MqepnjTL50g/M6wGF
+         DDyW33fuEKAvJEgryNDtojaPHQU9fbHkWvA3g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KhcKphqSSxJuZIcrzu6V5Tj36vrgJpuM8g/Qzk85E7s=;
-        b=I9t40N9fgn5oLK9y0GMuTs7YQWBsXHF0vgjIWv4y7DqQrLEy0I1HIKELQoJX0qaWae
-         kOh0+2nk/Ao7qhNmj0CIcyr7uywOGG5xOborbNfasI8h/uK3eue0tZcxvSQqHrq9dF5P
-         KU6lKe8+gg2vkdykMFD4DcwZ6oSphQaOxFtitGEuCacnK+S0nycR+3Jjt3N0YzFj19EA
-         xYbSB/E8kXetqXzXYfo62rBFtjHjtF/+U2qoPjwsY4aOzAXa2tQb4qLI79EMCZlKjx2p
-         UzifC618f/UQDXrxqJAa6w5aGEIavnnq1u018Y8WgFQ9GDD2Yyr0jWCAVxdfgvTaGc1n
-         wPXw==
-X-Gm-Message-State: APt69E2K9/vz+TO5ZHGyrfdtJ7bpu6Xs5HyD26HUHrTeQNESkw7Suf9C
-        7irBfM4zmNl6/cfsCLDLmzMwhQ==
-X-Google-Smtp-Source: ADUXVKIpcv/8IndO+ybxzNllBjKqkEmOnP/T/lG7+pNKegoiLTq3rQCapau+A1HJ7hsRHWZ5Hb1rcw==
-X-Received: by 2002:aed:238d:: with SMTP id j13-v6mr1451965qtc.384.1528765416832;
-        Mon, 11 Jun 2018 18:03:36 -0700 (PDT)
-Received: from [10.136.8.248] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id b38-v6sm4549448qta.96.2018.06.11.18.03.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 11 Jun 2018 18:03:35 -0700 (PDT)
-Subject: Re: [PATCH 3/6] arm: dts: Change PCIe INTx mapping for Cygnus
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org,
-        bcm-kernel-feedback-list@broadcom.com, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <1527631130-20045-1-git-send-email-ray.jui@broadcom.com>
- <1527631130-20045-4-git-send-email-ray.jui@broadcom.com>
- <f5aa804e-3174-affd-1117-31b0a5b59fc5@gmail.com>
- <522816f9-c33f-ee58-619e-84ee86dba418@broadcom.com>
- <D95617BA-7C31-4737-9514-BA3F7B09DCE2@gmail.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <f4451a5c-ab0c-358a-60e8-ec03a5daa298@broadcom.com>
-Date:   Mon, 11 Jun 2018 18:03:33 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=s9CtnB5PTakKhR2oybOA6CcNCYSheVb5PT1xfdRRG0Y=;
+        b=DG6X2k0dzVZNqL3APIvbeIHCNKnXDnPlDO63hlakvlp3530ZG/Gtdr0n4Ld8C92xP/
+         VVV2pvAWJAw/Lx9hiV3UJ5Odq+w03CR9gKjDhpnYs5kNRJhmuHPlpCtxtHKnWPSKB8CT
+         GH1eY8J6/gjDlqsYOJsXGJveX6zkjt210G03bW9M6yCQJE68w4XIvolrrXx0PHG+SF12
+         UgeCZvuxfy+zcYIp+l/JcLdf0oYuc7YRUYWdaru1kyiQ9nyWuuHFgzs9FmappaoCXYi0
+         dKsFSZ9SjbjkOVD9IKtWubHwGAaHdB7DgpvcTrSOkYZESNAlSB62JoIcFBtY3L4Td5J6
+         Xeiw==
+X-Gm-Message-State: APt69E03ycJe1MK9OcMRlRmnWhBoGFwUMrhppuhZdu4XtzcdE1EUIfSH
+        L8A3xF9YTwAsTj5108XS4oq3R0QNXb/58RlGoC8=
+X-Google-Smtp-Source: ADUXVKJQsHsIMD8rV8yJB2l5Srqe5eZ5jV/hFa7NsRSxgysNGaNvt+lH3prz12gF+NfN/ITJgsxkvxZR9KY1G2d7wq4=
+X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr1435294iov.203.1528765485738;
+ Mon, 11 Jun 2018 18:04:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <D95617BA-7C31-4737-9514-BA3F7B09DCE2@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180612000142.28883-1-olof@lixom.net> <20180612000142.28883-3-olof@lixom.net>
+In-Reply-To: <20180612000142.28883-3-olof@lixom.net>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 11 Jun 2018 18:04:34 -0700
+Message-ID: <CA+55aFy2sOHqcO-6LaKOZ5omyAow15gq+=Z7aOTZisrDihoecw@mail.gmail.com>
+Subject: Re: [GIT PULL 2/4] ARM: Device-tree updates
+To:     Olof Johansson <olof@lixom.net>
+Cc:     ARM SoC <arm@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 11, 2018 at 5:02 PM Olof Johansson <olof@lixom.net> wrote:
+>
+> - Qualcomm:
+> + SDM845, a.k.a Snapdragon 845, an 4+4-core Kryo 385/845
+> (Cortex-A75/A55 derivative) SoC that's one of the current high-end
+> mobile SoCs.
+>
+> It's great to see mainline support for it. So far, you
+> can't do much with it, since a lot of peripherals are not yet in the
+> DTs but driver support for USB, GPU and other pieces are starting to
+> trickle in. This might end up being a well-supported SoC upstream if
+> the momentum keeps up.
 
+Isn't the Qualcomm 845 also the SoC in some of the new WARM laptops?
 
-On 6/11/2018 5:55 PM, Florian Fainelli wrote:
-> On June 11, 2018 5:27:20 PM PDT, Ray Jui <ray.jui@broadcom.com> wrote:
->>
->>
->> On 6/11/2018 3:36 PM, Florian Fainelli wrote:
->>> On 05/29/2018 02:58 PM, Ray Jui wrote:
->>>> Change the PCIe INTx mapping to model the 4 INTx interrupts in the
->>>> IRQ domain of the iProc PCIe controller itself
->>>>
->>>> Signed-off-by: Ray Jui <ray.jui@broadcom.com>
->>>> ---
->>>>    arch/arm/boot/dts/bcm-cygnus.dtsi | 18 ++++++++++++++----
->>>>    1 file changed, 14 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi
->> b/arch/arm/boot/dts/bcm-cygnus.dtsi
->>>> index 699fdf9..6de21ef 100644
->>>> --- a/arch/arm/boot/dts/bcm-cygnus.dtsi
->>>> +++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
->>>> @@ -254,9 +254,14 @@
->>>>    			compatible = "brcm,iproc-pcie";
->>>>    			reg = <0x18012000 0x1000>;
->>>>    
->>>> +			interrupt-controller;
->>>>    			#interrupt-cells = <1>;
->>>> -			interrupt-map-mask = <0 0 0 0>;
->>>> -			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
->>>> +			interrupt-map-mask = <0 0 0 7>;
->>>> +			interrupt-map = <0 0 0 1 &pcie0 1>,
->>>> +					<0 0 0 2 &pcie0 2>,
->>>> +					<0 0 0 3 &pcie0 3>,
->>>> +					<0 0 0 4 &pcie0 4>;
->>>> +			interrupts = <GIC_SPI 100 IRQ_TYPE_NONE>;
->>>
->>> You would want to fix those IRQ_TYPE_NONE values as well because
->> since
->>> commit 83a86fbb5b56b5eed8a476cc3fe214077d7c4f49 ("irqchip/gic: Loudly
->>> complain about the use of IRQ_TYPE_NONE") this is going to create
->> some
->>> nice warnings on boot.
->>>
->>> I am about to send fixes for NSP and HR2 since that's what I have
->> access
->>> to at the moment, but it would be good if you could send updates to
->> the
->>> Cygnus and NS2 DTS files?
->>>
->>> Thanks
->>>
->>
->> Okay. Thanks for letting me know. How do you want this to be done for
->> Cygnus and NS2?
->>
->> I guess I should have the fix patches to DTS done and sent out first,
->> and then rebase this INTx patch series against the patches with the
->> fix.
->>
->> Does that make sense to you?
-> 
-> Yes it does. As soon as v4.18-rc1 is tagged I will send the Device Tree fixes pull request, if I can have yours for Cygnus and NS2 in the next few days I could lump those together. Then we can either base your changes off v4.18-rc2 or a later tag that already has the DTS fixes.
-> 
+I asked one person that had an older one (ASUS NovaGo - Qualcomm 835),
+and apparently you can actually disable secure boot on that thing and
+boot from USB.
 
-Okay that sounds good. I'll try to get those fixes out for you within 
-the next few days.
+In other words, it might _actually_ act like a normal laptop.
 
-Thanks!
+I'd love to have something that is actually a real honest-to-goodness
+ARM laptop finally. Are we getting at all close to that?
 
-Ray
+                    Linus
