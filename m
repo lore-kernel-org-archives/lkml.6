@@ -2,83 +2,122 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0FCB8C433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:58:44 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 03800C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:06:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE7682089C
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 22:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE7682089C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 93F4F208B1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:06:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JqbR2v11"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F4F208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934924AbeFLW6l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 18:58:41 -0400
-Received: from gate.crashing.org ([63.228.1.57]:38606 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934002AbeFLW6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 18:58:39 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5CMwZUv014923;
-        Tue, 12 Jun 2018 17:58:36 -0500
-Message-ID: <5d932502d9985cdfa6540480ea5ce6b0730502a1.camel@kernel.crashing.org>
-Subject: Re: [PATCH] drivers/of: Add devm_of_iomap()
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Date:   Wed, 13 Jun 2018 08:58:34 +1000
-In-Reply-To: <CAHp75Vcdaejn=eq740YNdscSv9zX9xj3RzYp=AFs8HFprw34_Q@mail.gmail.com>
-References: <23be2945b593a36d8fa1970bb579389c0f892a3e.camel@kernel.crashing.org>
-         <CAHp75VfJNrviiiam9p49+6_oSjW+YH8vwjcZ2hn5Ux5mHgDCQw@mail.gmail.com>
-         <53ef03b26a17738dc1465ce85562c9611ad415f8.camel@kernel.crashing.org>
-         <CAHp75Vcdaejn=eq740YNdscSv9zX9xj3RzYp=AFs8HFprw34_Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S935005AbeFLXGJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 19:06:09 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:37368 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934598AbeFLXGH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 19:06:07 -0400
+Received: by mail-pg0-f68.google.com with SMTP id r21-v6so287202pgv.4
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 16:06:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=pvItt6oAFBkADy3l+CzHSJ7RBcRJ9eSggzIXENWZdLY=;
+        b=JqbR2v11vk90IJctqnepj/VQlMooGMhdSyJQRgtliOPwfNc7Ia4UvvZkXeBvKSHjil
+         m6kN4bfHKtViKEo4OaJG4YZ0OrLcmmaJF6dxHE2x5Q/DMx9ChvijIs9aGIrWtNLWP3Tc
+         tTJi4cQWaPRm9WKPzZxrpgSpZtqXinKNEMl14=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=pvItt6oAFBkADy3l+CzHSJ7RBcRJ9eSggzIXENWZdLY=;
+        b=FYabGNVMB0KsX/F3pJmM/iWcAZwseMX969RIm72mCmRoTc6IWZLE/GRdv0JMHqwf0r
+         9uHDoKgMR6Z9zGCiKBiKWh2kPqVtGvsnuGNHXAmAcKtksKhQeG99TD4iyvqfCDail4A0
+         hAGFeI8efA0GsheRqTyREN1fTZUv4ABOz5QoKF0VQT/Air/EOLQ2+WqQstAHSS40LvxU
+         BQbUbs0J+mSMR3j0d4gPSoyRG4ERvbVjXeG3q5lWtxZCdfraC1Ubs2DvvevuF3WTD8SV
+         ILSctigSZC6wi5PanJXCyqfHH9RFFNz0dPZDPqkrESacDUTLr6w58Mh2ZvavlfTQpD4S
+         ekhA==
+X-Gm-Message-State: APt69E0AM6TCMTVKnFP39ZUb/1QTTKFNmPnkXIlf4HjLekGG06x47mN5
+        n/rq6utq731+j9sBGRl2DZXBPg==
+X-Google-Smtp-Source: ADUXVKIyO92W5ARjUY+dReZPu647Lr+F/jWFwodTnxtiaWQ6MPySTBok7jcckBbjEohsdIS40IxiGw==
+X-Received: by 2002:a63:715d:: with SMTP id b29-v6mr1960858pgn.325.1528844767175;
+        Tue, 12 Jun 2018 16:06:07 -0700 (PDT)
+Received: from swboyd.mtv.corp.google.com ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
+        by smtp.gmail.com with ESMTPSA id b22-v6sm1365358pfi.144.2018.06.12.16.06.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 16:06:06 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to binding
+Date:   Tue, 12 Jun 2018 16:06:04 -0700
+Message-Id: <20180612230604.137880-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-06-12 at 19:53 +0300, Andy Shevchenko wrote:
-> 
-> > > It feels like a wrong approach.
-> > > Can OF graph help here? Would it be better approach?
-> > 
-> > I don't quite understand what your objection is nor what "OF graph"
-> > is...
-> 
-> There is no objection per se, just a doubt that this is a right thing to do.
-> I might be wrong, of course.
-> 
-> OF graph nodes is a special API that allows you to access like you
-> said "different node of device-tree".
-> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/graph.txt
+Update the binding for two more PMICs supported by the same driver.
+While we're here, remove the duplicate pmi8994 lines because that
+support got merged twice.
 
-So I had a look and this is just an example on how to use phandles to
-link ports and endpoints... I fail to see how that relates to what this
-patch does.
+Cc: Rajendra Nayak <rnayak@codeaurora.org>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: <devicetree@vger.kernel.org>
+Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+---
+ .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt          | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-In the driver I'm doing for example, I do use a similar technique to
-"point" to the other node. In this case, this is a coprocessor in the
-SoC and I'm linking to the node that represent its interrupt controller
-(and its not a full fledged OS running there so we don't have a full
-interrupt tree for it).
-
-But once you have such a "graph", the question of mapping whatever
-memory resources (ie. "reg" properties) remains.
-
-Today, people will use of_address_to_resource() with ioremap, or
-of_iomap () to do that ...
-
-This patch just provides a devm_ variant of the latter, which also does
-a request_mem_resource() on it (which is missing from of_iomap), so
-generally is a better alternative.
-
-Cheers,
-Ben.
+diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+index 5c25fcb29fb5..ffd4345415f3 100644
+--- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
++++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+@@ -7,6 +7,7 @@ PMIC's from Qualcomm.
+ 	Usage: required
+ 	Value type: <string>
+ 	Definition: must be one of:
++		    "qcom,pm8005-gpio"
+ 		    "qcom,pm8018-gpio"
+ 		    "qcom,pm8038-gpio"
+ 		    "qcom,pm8058-gpio"
+@@ -15,7 +16,7 @@ PMIC's from Qualcomm.
+ 		    "qcom,pm8921-gpio"
+ 		    "qcom,pm8941-gpio"
+ 		    "qcom,pm8994-gpio"
+-		    "qcom,pmi8994-gpio"
++		    "qcom,pm8998-gpio"
+ 		    "qcom,pma8084-gpio"
+ 		    "qcom,pmi8994-gpio"
+ 
+@@ -78,6 +79,7 @@ to specify in a pin configuration subnode:
+ 	Value type: <string-array>
+ 	Definition: List of gpio pins affected by the properties specified in
+ 		    this subnode.  Valid pins are:
++		    gpio1-gpio4 for pm8005
+ 		    gpio1-gpio6 for pm8018
+ 		    gpio1-gpio12 for pm8038
+ 		    gpio1-gpio40 for pm8058
+@@ -86,7 +88,7 @@ to specify in a pin configuration subnode:
+ 		    gpio1-gpio44 for pm8921
+ 		    gpio1-gpio36 for pm8941
+ 		    gpio1-gpio22 for pm8994
+-		    gpio1-gpio10 for pmi8994
++		    gpio1-gpio26 for pm8998
+ 		    gpio1-gpio22 for pma8084
+ 		    gpio1-gpio10 for pmi8994
+ 
+-- 
+Sent by a computer through tubes
 
