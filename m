@@ -2,111 +2,179 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 224B1C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:16:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EFE72C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C41F02084E
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:16:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C9882084E
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 23:16:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9hd4Hmn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C41F02084E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="YeOURg+M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C9882084E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tycho.ws
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934763AbeFLXQJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 19:16:09 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:43782 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934322AbeFLXQH (ORCPT
+        id S934852AbeFLXQU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 19:16:20 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:44056 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934322AbeFLXQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 19:16:07 -0400
-Received: by mail-vk0-f65.google.com with SMTP id d74-v6so406977vke.10;
-        Tue, 12 Jun 2018 16:16:07 -0700 (PDT)
+        Tue, 12 Jun 2018 19:16:17 -0400
+Received: by mail-pl0-f65.google.com with SMTP id z9-v6so346257plk.11
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 16:16:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=K4sg31/j6WPgARkwoSjw8kZeg2YNHtVo4FHFBr2KFwc=;
-        b=Z9hd4HmnfDqSA9m7SxeZXdmDUb7Ne+gIGfKiJaWU9HRUHJsxIj8kDzOLa9REm/lcMC
-         1HGd5X5qVlHLjcQdoUHunxWVO9aOBmPuzKrVyq9/Qj+8f1rh++A4KCUUPLV3+htTACE/
-         /X0XSRVZPchoF1WXwJePwdVlkXpqu3jAKWPT5JHAxTYg/tbWVNGTt9J3z8Zuq/mLGhWJ
-         TH2eYVw0/8OrIg95B1t8dmmozQNtnp9Du5roZXi1xSU73pWLlEruEaDCn92H3PqXA2rr
-         UJNw06KRlhcbW4kmsz5CF9S2Q2XzUr7Y8TGKHPTQ8CrkaTAGdhsQ+i2V6o9hgitGriwD
-         c83A==
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hSk+BWwWvJ1oCRxLvBFa9PHhZTRFiiGxRl0Lqe3WWIQ=;
+        b=YeOURg+MhaHmsQ1UjUgltqKJO6UnOFXKE3Q27Jjdc0zO3A02v1RjyIWDeT2sCS8OLL
+         tFtqJ6RE2M1s+w3C5U8a1ahVeKTacYCuIr5IC+JnPlv4kG3fcY+k6TSrazAMmG3mzoA3
+         RAhFzLS/mp274BzBqOmZz5ihCx0vxHBE4dZ3sBvrOWPFHlk7CirG/2g/lhiH+jZQDRrt
+         yUfZnTdHF/UVgtQrD0vb381ib/8hfiKpwcsujMA68YKg+KWJPfwRnMbTT2DQZw0G4Jiv
+         ZEZjsWuKEmpLC8cLqG1lVQXS8Lbedm06qCVMNOYCkwfMPjQ3EVmHwlizGNN3yuHJuge6
+         xE+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=K4sg31/j6WPgARkwoSjw8kZeg2YNHtVo4FHFBr2KFwc=;
-        b=HF5ZVeOO9kk5ReDaCjHLzmo9yqBCfR6lRY+rzjdYyz9Q7+9YYjiqvQu1+YLYgfWViL
-         MtWb11G8+cwp7mR6Qg7Me4Dhl8vHNCgGeCCAShUSZcr9t1ySvmfjHtXHTOwMskoISuK1
-         h0kIFCON7qhFhYmB+KIfuzRvAdgpSE8+KpBMO6K1y17mu0NPC3euJYy03VxL/MNBsi2E
-         TW9rWNbX9GGGt5N7V86ZAn09h/z6RaX2P61n5B6iVLw5n5y9z2MQsXkmj1kJXr6Dnzvi
-         EncqxMNEZJ0UyoWSqoXW2JGQYLTuLXSCUU1ljh4VkSeTXAYYPJzrbTWRQeXhmX5qgRac
-         PdAA==
-X-Gm-Message-State: APt69E2laFyA7NCrQ9LpoZBipeBsierWnqRAhXKaqzpo9HOZhXBiSr63
-        +9V9rTkLk36T1dSC4c1WM7qN8usGJ5WC6Lx9acGvKpti
-X-Google-Smtp-Source: ADUXVKKnl0xLVxVc6SUkuYjXE8z34o+hWunVQbdaYCaboAs221ajFgnvPLEE3tIhQJSNrCz9nQx77uPvRnGl/Nr537Q=
-X-Received: by 2002:a1f:7283:: with SMTP id n125-v6mr1610981vkc.26.1528845367076;
- Tue, 12 Jun 2018 16:16:07 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hSk+BWwWvJ1oCRxLvBFa9PHhZTRFiiGxRl0Lqe3WWIQ=;
+        b=cJVhRso7aBx0yb2bAReKbklT+necoLa94sEzJ3dsUMseX1RnuwaXxfY8clUYj6jeHe
+         a1IgWab6rcAOwIE7ICOCX5MUwUkQ+eq+D27ixKEyYbL7DMsp61pFLp7UZQRhavZP8A7h
+         mzITiEqCTOep5Ib3Fo8F7IX/EpiwuKjUMwNOyKQ8NSvqMYTrrRhPumLzAoQszRpVVmXH
+         Bzgzpv9Qz1d8V1EVXaBqW8RhnrobkR+DEC4OJKZ+IYd5HHdbb2j2+QbDV48Sh0UDHp36
+         o0PccS4UoJWMkJkaKbl3BC7JMQJiV2uyUnmiOlSngLCmN0kpn/jKFvAyr1Umvf5u9nMx
+         qUSg==
+X-Gm-Message-State: APt69E0jkGEZZDQCZhGS83ucsFqxTqoE6zlkc0RLyst5gf57uEuPjVa0
+        0GG2YW1OayCpL5u6glvtcQRvIQ==
+X-Google-Smtp-Source: ADUXVKLlXk1sjoGLVyDVceEeFyWGvOh0npHTfirsG94YKw65zkJ+Rp5S7W4kC9g0OjKk4W0RXTeRCQ==
+X-Received: by 2002:a17:902:3041:: with SMTP id u59-v6mr2515204plb.208.1528845376831;
+        Tue, 12 Jun 2018 16:16:16 -0700 (PDT)
+Received: from cisco ([2001:420:28d:1250:4fa:4ea4:93fe:a612])
+        by smtp.gmail.com with ESMTPSA id i65-v6sm2204916pfd.17.2018.06.12.16.16.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 12 Jun 2018 16:16:14 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 16:16:10 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     Matthew Helsley <matt.helsley@gmail.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        containers@lists.linux-foundation.org,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Kees Cook <keescook@chromium.org>,
+        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian.brauner@ubuntu.com>,
+        Tyler Hicks <tyhicks@canonical.com>
+Subject: Re: [PATCH v3 1/4] seccomp: add a return code to trap to userspace
+Message-ID: <20180612231610.GA3837@cisco>
+References: <20180531144949.24995-1-tycho@tycho.ws>
+ <20180531144949.24995-2-tycho@tycho.ws>
+ <CA+RrjuW98m2coL+TOKq5cL0QhAb=HYxo2DpNoqMzdiwjqhc2BA@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 16:16:05
- -0700 (PDT)
-In-Reply-To: <5d932502d9985cdfa6540480ea5ce6b0730502a1.camel@kernel.crashing.org>
-References: <23be2945b593a36d8fa1970bb579389c0f892a3e.camel@kernel.crashing.org>
- <CAHp75VfJNrviiiam9p49+6_oSjW+YH8vwjcZ2hn5Ux5mHgDCQw@mail.gmail.com>
- <53ef03b26a17738dc1465ce85562c9611ad415f8.camel@kernel.crashing.org>
- <CAHp75Vcdaejn=eq740YNdscSv9zX9xj3RzYp=AFs8HFprw34_Q@mail.gmail.com> <5d932502d9985cdfa6540480ea5ce6b0730502a1.camel@kernel.crashing.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 13 Jun 2018 02:16:05 +0300
-Message-ID: <CAHp75VfV7actoXkMUbh9KwAXR1FKR_VZ5RAuaL-pKLSynFi-3g@mail.gmail.com>
-Subject: Re: [PATCH] drivers/of: Add devm_of_iomap()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+RrjuW98m2coL+TOKq5cL0QhAb=HYxo2DpNoqMzdiwjqhc2BA@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 1:58 AM, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
-> On Tue, 2018-06-12 at 19:53 +0300, Andy Shevchenko wrote:
->>
->> > > It feels like a wrong approach.
->> > > Can OF graph help here? Would it be better approach?
->> >
->> > I don't quite understand what your objection is nor what "OF graph"
->> > is...
->>
->> There is no objection per se, just a doubt that this is a right thing to do.
->> I might be wrong, of course.
->>
->> OF graph nodes is a special API that allows you to access like you
->> said "different node of device-tree".
->> https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/graph.txt
->
-> So I had a look and this is just an example on how to use phandles to
-> link ports and endpoints... I fail to see how that relates to what this
-> patch does.
+Hi Matthew,
 
-Because your patch does nothing except another layring of the existing APIs.
+On Tue, Jun 12, 2018 at 02:39:03PM -0700, Matthew Helsley wrote:
+> On Thu, May 31, 2018 at 7:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
+> 
+> <snip>
+> 
+> 
+> > +struct seccomp_notif {
+> > +       __u64 id;
+> > +       pid_t pid;
+> > +       struct seccomp_data data;
+> > +};
+> >
+> 
+> Since it's part of the UAPI I think it would be good to add documentation
+> to this patch series. Part of that documentation should talk about which
+> pid namespaces this pid value is relevant in. This is especially important
+> since the feature is designed for use by things like container/sandbox
+> managers.
 
-> In the driver I'm doing for example, I do use a similar technique to
-> "point" to the other node. In this case, this is a coprocessor in the
-> SoC and I'm linking to the node that represent its interrupt controller
-> (and its not a full fledged OS running there so we don't have a full
-> interrupt tree for it).
+Yes, at least Documentation/userspace-api/seccomp_filter.txt should be
+updated. I'll add that for the next series.
 
-Hmm... So, you are trying to solve problem with other methods which
-might be not so suitable at all?
+> > +static void seccomp_do_user_notification(int this_syscall,
+> > +                                        struct seccomp_filter *match,
+> > +                                        const struct seccomp_data *sd)
+> > +{
+> > +       int err;
+> > +       long ret = 0;
+> > +       struct seccomp_knotif n = {};
+> > +
+> > +       mutex_lock(&match->notify_lock);
+> > +       err = -ENOSYS;
+> > +       if (!match->has_listener)
+> > +               goto out;
+> > +
+> > +       n.pid = current->pid;
+> >
+> 
+> How have you tested this code for correctness? I don't see many
+> combinations being tested below nor here:
+> https://github.com/tych0/kernel-utils/blob/master/seccomp/notify_stress.c
+> 
+> What about processes in different pid namespaces? Make tests that vary key
+> parameters like these between the task generating the notifications and the
+> task interested in processing the notifications. Make tests that try to
+> kill them at interesting times too. etc. Make tests that pass the
+> notification fd around and see how they work (or not).
+> 
+> I ask about testing because you're effectively returning a pid value to
+> userspace here but not using the proper macros to access the task's struct
+> pid for that purpose. That will work so long as both processes are in the
+> same pid namespace but breaks otherwise.
+> 
+> Furthermore, a pid value is not the best solution for the queueing of these
+> notifications because a single pid value is not meaningful/correct outside
+> current's pid namespace and the seccomp notification file descriptor could
+> be passed on to processes in another pid namespaces; this pid value will
+> almost always not be relevant or correct there hence taking a reference to
 
--- 
-With Best Regards,
-Andy Shevchenko
+Well, it *has* to be relevant in some cases: if you want to access
+some of the task's memory to e.g. read the args to the syscall, you
+need to ptrace or map_files to access the memory. So we do need to
+pass it, but,
+
+> the struct pid is useful. Then, during read(), the code would use the
+> proper macro to turn the struct pid reference into a pid value relevant in
+> the *reader's* pid namespace *or* return something obviously bogus if the
+> reader is in a pid namespace that can't see that pid. This could prevent
+> management processes from being tricked into clobbering the wrong process,
+> feeding the wrong process sensitive information via syscall results, etc.
+
+Yes, this makes sense. Seems like we need to do some magic about
+passing the tracee's task struct to the listener, so it can do
+task_pid_vnr(). We could perhaps require the listener to be in the
+init_pid_ns case, but I think things like socket() might still be
+useful even if you can't read the tracee's memory.
+
+> Alternately, you could choose to specify that the seccomp manager is
+> expected to be in the pid namespace of the process it's managing at all
+> times. That's not necessarily trivial either because the process(es) it
+> manages could potentially create new child pid namespaces. It also means
+> that the processes being managed can "see" the manager process at all times.
+
+Right, I think we don't want to require this.
+
+> Regardless, you still need to use the proper macros to access current's pid
+> for export to userspace.
+
+Yes, thanks.
+
+Tycho
