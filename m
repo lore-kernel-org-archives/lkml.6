@@ -2,135 +2,105 @@ Return-Path: <SRS0=cKeY=I6=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0835DC433EF
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:11:03 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A1AA0C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE410208AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:11:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE410208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E486208AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 12 Jun 2018 05:18:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="jhhExfVn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E486208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932336AbeFLFLA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 01:11:00 -0400
-Received: from a.mx.secunet.com ([62.96.220.36]:37516 "EHLO a.mx.secunet.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753890AbeFLFK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 01:10:59 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by a.mx.secunet.com (Postfix) with ESMTP id 16DFB2007F;
-        Tue, 12 Jun 2018 07:10:58 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-        by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id VAHxgnHUYrKZ; Tue, 12 Jun 2018 07:10:57 +0200 (CEST)
-Received: from mail-essen-01.secunet.de (mail-essen-01.secunet.de [10.53.40.204])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by a.mx.secunet.com (Postfix) with ESMTPS id 76A682006E;
-        Tue, 12 Jun 2018 07:10:57 +0200 (CEST)
-Received: from [10.182.7.41] (10.182.7.41) by mail-essen-01.secunet.de
- (10.53.40.204) with Microsoft SMTP Server (TLS) id 14.3.399.0; Tue, 12 Jun
- 2018 07:10:57 +0200
-From:   Dennis Wassenberg <dennis.wassenberg@secunet.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dennis.wassenberg@secunet.com; prefer-encrypt=mutual; keydata=
- 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
- YPsSSSBN/R6Xmw==
-Organization: secunet Security Networks
-To:     Takashi Iwai <tiwai@suse.de>,
-        =?UTF-8?Q?Jer=c3=b3nimo_Borque?= <jeronimo@borque.com.ar>,
-        Hui Wang <hui.wang@canonical.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Florin Tudorache <florin_tudorache@live.com>,
-        Jaroslav Kysela <perex@perex.cz>
-CC:     <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] ALSA: hda: add dock and led support for HP ProBook 640
- G4
-Message-ID: <0a9dcf10-44ea-7b6c-a952-3ae4944d1f44@secunet.com>
-Date:   Tue, 12 Jun 2018 07:11:11 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1754089AbeFLFSZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 01:18:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:40902 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752995AbeFLFSX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 01:18:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=T4rC2sJuSL2jhBpi3Qctx/1Tm76SWDUvhlkqU7f5FZY=; b=jhhExfVn5wtXGHCPGr7+0cCQU
+        WAUI9/uUdydrfccUHyUM4tWL9PTBqBypGl0zFOxo4d9iJA0x4S8H8BZoonA63oCHg5kG2EWQZM3Nq
+        I/G2bvMf1fPvgpv/rXZNnwl8NxY+yffdCitoSOXlLJmjxMokFq6wi+TVs4zZvgUbe5PUQH0dlMWOr
+        MThSkyoANiHs+4Kiy0ihfYYrw75rmBAweXLiHdjRD21Llxp/YtUbFEVtXgrXoZUFKw/VmLaCOYJqA
+        uUHxk0ssX2gZpbqUGv/HKTfrg2A68Oew7CuFzsJXXBeb1CjjNe6jWrGlQ48q5nIoul/PP5EoRMNH5
+        K+bkCNk3g==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSbhG-0000RQ-8B; Tue, 12 Jun 2018 05:18:22 +0000
+Date:   Mon, 11 Jun 2018 22:18:19 -0700
+From:   Darren Hart <dvhart@infradead.org>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: linux-next: build failure after merge of the drivers-x86 tree
+Message-ID: <20180612051819.GB112645@localhost.localdomain>
+References: <20180612112310.2d77e1c3@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Language: de-DE
-Content-Transfer-Encoding: 8bit
-X-G-Data-MailSecurity-for-Exchange-State: 0
-X-G-Data-MailSecurity-for-Exchange-Error: 0
-X-G-Data-MailSecurity-for-Exchange-Sender: 23
-X-G-Data-MailSecurity-for-Exchange-Server: d65e63f7-5c15-413f-8f63-c0d707471c93
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
-X-G-Data-MailSecurity-for-Exchange-Guid: 0B20DEEA-7BFE-4B03-8E5D-3DF9E7BB7AC3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180612112310.2d77e1c3@canb.auug.org.au>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds missing initialisation for HP 2013 UltraSlim Dock
-Line-In/Out PINs and activates keyboard mute/micmute leds
-for HP ProBook 640 G4
+On Tue, Jun 12, 2018 at 11:23:10AM +1000, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the drivers-x86 tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> drivers/platform/x86/silead_dmi.c:84:21: error: variable 'chuwi_vi10_data' has initializer but incomplete type
+>  static const struct ts_dmi_data chuwi_vi10_data = {
+>                      ^~~~~~~~~~~
+> drivers/platform/x86/silead_dmi.c:85:3: error: 'const struct ts_dmi_data' has no member named 'acpi_name'
+>   .acpi_name      = "MSSL0002:00",
+>    ^~~~~~~~~
+> drivers/platform/x86/silead_dmi.c:85:20: warning: excess elements in struct initializer
+>   .acpi_name      = "MSSL0002:00",
+>                     ^~~~~~~~~~~~~
+> drivers/platform/x86/silead_dmi.c:85:20: note: (near initialization for 'chuwi_vi10_data')
+> drivers/platform/x86/silead_dmi.c:86:3: error: 'const struct ts_dmi_data' has no member named 'properties'
+>   .properties     = chuwi_vi10_props,
+>    ^~~~~~~~~~
+> drivers/platform/x86/silead_dmi.c:86:20: warning: excess elements in struct initializer
+>   .properties     = chuwi_vi10_props,
+>                     ^~~~~~~~~~~~~~~~
+> drivers/platform/x86/silead_dmi.c:86:20: note: (near initialization for 'chuwi_vi10_data')
+> drivers/platform/x86/silead_dmi.c:84:33: error: storage size of 'chuwi_vi10_data' isn't known
+>  static const struct ts_dmi_data chuwi_vi10_data = {
+>                                  ^~~~~~~~~~~~~~~
+> 
+> Caused by commit
+> 
+>   2da502a0aea7 ("platform/x86: silead_dmi: Add touchscreen info for the Chuwi Vi10 tablet")
+> 
+> I have reverted that commit for today.  More care please.
 
-Signed-off-by: Dennis Wassenberg <dennis.wassenberg@secunet.com>
----
- sound/pci/hda/patch_conexant.c | 1 +
- 1 file changed, 1 insertion(+)
+Thank you Stephen. We caught this earlier, but failed to remove it from for-next
+while repairing the series. Our apologies. I have removed this series back to
+the known good patch in for-next:
 
-diff --git a/sound/pci/hda/patch_conexant.c b/sound/pci/hda/patch_conexant.c
-index bca71f35b34f..ff0c52e98977 100644
---- a/sound/pci/hda/patch_conexant.c
-+++ b/sound/pci/hda/patch_conexant.c
-@@ -959,6 +959,7 @@ static const struct snd_pci_quirk cxt5066_fixups[] = {
- 	SND_PCI_QUIRK(0x103c, 0x807C, "HP EliteBook 820 G3", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x80FD, "HP ProBook 640 G2", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x83b3, "HP EliteBook 830 G5", CXT_FIXUP_HP_DOCK),
-+	SND_PCI_QUIRK(0x103c, 0x83d3, "HP ProBook 640 G4", CXT_FIXUP_HP_DOCK),
- 	SND_PCI_QUIRK(0x103c, 0x8174, "HP Spectre x360", CXT_FIXUP_HP_SPECTRE),
- 	SND_PCI_QUIRK(0x103c, 0x8115, "HP Z1 Gen3", CXT_FIXUP_HP_GATE_MIC),
- 	SND_PCI_QUIRK(0x103c, 0x814f, "HP ZBook 15u G3", CXT_FIXUP_MUTE_LED_GPIO),
+26ed9d1 platform/x86: silead_dmi: Add entry for Chuwi Hi8 tablet touchscreen
+
+Andy has this reworked already and is working on completing
+testing before pushing the update to for-next.
+
 -- 
-2.17.1
-
+Darren Hart
+VMware Open Source Technology Center
