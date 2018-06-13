@@ -2,190 +2,141 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9D88FC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:02:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E9E94C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 521F620020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:02:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QQ8q9oeR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521F620020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id A8B0320020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:03:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8B0320020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935520AbeFMMCV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 08:02:21 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:58538 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935494AbeFMMCT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 08:02:19 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5DBxWeg195402;
-        Wed, 13 Jun 2018 12:02:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=11BwG5on6RgWSLmSUTMyUyQ6CvnUuBHx2Hiv//568K4=;
- b=QQ8q9oeRx7458bxuLZzK4JIclG2tLJ+oRk15k6dp5wdPOkZd/5TZp+TWGZ7pu8Bc1e9V
- TFv+I7zciwg78O93+xf5Ayq8kPZsdBWEZ5f5/kSFzEZcSo0aWDq6KkbV1EVyQ3SWDhOi
- ZBx8tknjV1jZPO57SookI4gYQvdev+Cig6XuBVcEURcrAGCFS8mCyDMStnwIsczCT1MS
- qYIPEq7RzN9XrHcvW/bJA24dJufr04KqRDlUQWysi75/Fg9x1311BL9gjwqC6vrqsA52
- 0XGrXvrCu0rHdsjSjTyuvYK267wAAcXVlbSgPvFWIWPTImbW8lxRko+QXr4gl96tphxp 2g== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2jk0xr8d2g-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 12:02:08 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5DC27n2024134
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 12:02:07 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5DC27lP017359;
-        Wed, 13 Jun 2018 12:02:07 GMT
-Received: from [10.39.203.215] (/10.39.203.215)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jun 2018 05:02:07 -0700
-Subject: Re: [PATCH v3 3/9] xen/balloon: Share common memory reservation
- routines
-To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com
-References: <20180612134200.17456-1-andr2000@gmail.com>
- <20180612134200.17456-4-andr2000@gmail.com>
- <d63f0cf5-5154-f2a3-155e-fdb6dd0959e2@oracle.com>
- <cbaeec5c-0d69-881c-2b42-54855e53015a@epam.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <b79713a9-3a2d-6465-3b22-622bfb7a4d3e@oracle.com>
-Date:   Wed, 13 Jun 2018 08:02:05 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935523AbeFMMDM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 08:03:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35887 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935106AbeFMMDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 08:03:11 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E67BEAEF3;
+        Wed, 13 Jun 2018 12:03:09 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     David Laight <David.Laight@ACULAB.COM>,
+        'Zhouyang Jia' <jiazhouyang09@gmail.com>
+Date:   Wed, 13 Jun 2018 22:02:55 +1000
+Cc:     Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        James Simmons <jsimmons@infradead.org>,
+        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
+        "lustre-devel\@lists.lustre.org" <lustre-devel@lists.lustre.org>,
+        "devel\@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] staging: lustre: add error handling for try_module_get
+In-Reply-To: <ed5d91f54b5a4776a66df87b645b0ee9@AcuMS.aculab.com>
+References: <1528778968-42225-1-git-send-email-jiazhouyang09@gmail.com> <ed5d91f54b5a4776a66df87b645b0ee9@AcuMS.aculab.com>
+Message-ID: <87k1r2j3m8.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-In-Reply-To: <cbaeec5c-0d69-881c-2b42-54855e53015a@epam.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130134
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jun 13 2018, David Laight wrote:
 
-On 06/13/2018 02:26 AM, Oleksandr Andrushchenko wrote:
-> On 06/13/2018 03:47 AM, Boris Ostrovsky wrote:
->>
->>
->> On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
->>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->>> diff --git a/include/xen/mem-reservation.h 
->>> b/include/xen/mem-reservation.h
->>> new file mode 100644
->>> index 000000000000..e0939387278d
->>> --- /dev/null
->>> +++ b/include/xen/mem-reservation.h
->>> @@ -0,0 +1,64 @@
->>> +/* SPDX-License-Identifier: GPL-2.0 */
->>> +
->>> +/*
->>> + * Xen memory reservation utilities.
->>> + *
->>> + * Copyright (c) 2003, B Dragovic
->>> + * Copyright (c) 2003-2004, M Williamson, K Fraser
->>> + * Copyright (c) 2005 Dan M. Smith, IBM Corporation
->>> + * Copyright (c) 2010 Daniel Kiper
->>> + * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
->>> + */
->>> +
->>> +#ifndef _XENMEM_RESERVATION_H
->>> +#define _XENMEM_RESERVATION_H
->>> +
->>> +#include <linux/kernel.h>
->>> +#include <linux/slab.h>
->>> +
->>> +#include <asm/xen/hypercall.h>
->>> +#include <asm/tlb.h>
->>> +
->>> +#include <xen/interface/memory.h>
->>> +#include <xen/page.h>
->>
->>
->> I should have noticed this in the previous post but I suspect most of 
->> these includes belong in the C file. For example, there is no reason 
->> for hypercall.h here.
->>
-> Yes, it seems that the header can only have
-> #include <xen/page.h>
-> Will move the rest into the .c file
+> From: Zhouyang Jia
+>> Sent: 12 June 2018 05:49
+>>=20
+>> When try_module_get fails, the lack of error-handling code may
+>> cause unexpected results.
+>>=20
+>> This patch adds error-handling code after calling try_module_get.
+> ...
+>> +++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
+>> @@ -2422,7 +2422,10 @@ ksocknal_base_startup(void)
+>>=20
+>>  	/* flag lists/ptrs/locks initialised */
+>>  	ksocknal_data.ksnd_init =3D SOCKNAL_INIT_DATA;
+>> -	try_module_get(THIS_MODULE);
+>> +	if (!try_module_get(THIS_MODULE)) {
+>> +		CERROR("%s: cannot get module\n", __func__);
+>> +		goto failed;
+>> +	}
+>
+>
+> Can try_module_get(THIS_MODULE) ever fail?
 
+Yes.
 
-You may need something for clear_highpage() and maybe for Xen feature 
-flags. But you'll find out for sure when you try to build. ;-)
+> Since you are running code in 'THIS_MODULE' the caller must have a
+> reference that can't go away.
 
--boris
+Not necessarily, though it does usually work that way.
 
+try_module_get() can fail while the exit function is running, but it is
+safe to run code in the module until the exit function completes.
+So if the exit function takes a lock, then other code can safely run
+code in the module while holding the lock, but not holding a reference
+to the module.  If this code calls try_module_get(), it could fail.
 
+That is exactly what is happening here.
+ksoclnd_exit() calls lnet_unregister_lnd() which takes
+the_lnet.ln_lnd_mutex.
 
->> -boris
->>
->>
->>> +
->>> +static inline void xenmem_reservation_scrub_page(struct page *page)
->>> +{
->>> +#ifdef CONFIG_XEN_SCRUB_PAGES
->>> +    clear_highpage(page);
->>> +#endif
->>> +}
->>> +
->>> +#ifdef CONFIG_XEN_HAVE_PVMMU
->>> +void __xenmem_reservation_va_mapping_update(unsigned long count,
->>> +                        struct page **pages,
->>> +                        xen_pfn_t *frames);
->>> +
->>> +void __xenmem_reservation_va_mapping_reset(unsigned long count,
->>> +                       struct page **pages);
->>> +#endif
->>> +
->>> +static inline void xenmem_reservation_va_mapping_update(unsigned 
->>> long count,
->>> +                            struct page **pages,
->>> +                            xen_pfn_t *frames)
->>> +{
->>> +#ifdef CONFIG_XEN_HAVE_PVMMU
->>> +    if (!xen_feature(XENFEAT_auto_translated_physmap))
->>> +        __xenmem_reservation_va_mapping_update(count, pages, frames);
->>> +#endif
->>> +}
->>> +
->>> +static inline void xenmem_reservation_va_mapping_reset(unsigned long 
->>> count,
->>> +                               struct page **pages)
->>> +{
->>> +#ifdef CONFIG_XEN_HAVE_PVMMU
->>> +    if (!xen_feature(XENFEAT_auto_translated_physmap))
->>> +        __xenmem_reservation_va_mapping_reset(count, pages);
->>> +#endif
->>> +}
->>> +
->>> +int xenmem_reservation_increase(int count, xen_pfn_t *frames);
->>> +
->>> +int xenmem_reservation_decrease(int count, xen_pfn_t *frames);
->>> +
->>> +#endif
->>>
-> 
+ksocknal_base_startup() is called from ksocknal_startup()
+which is the_ksocklnd.lnd_startup and is called, from
+lnet_startup_lndni(), with that lock held.
+
+> So try_module_get() just increments the count that is already greater
+> than zero.
+>
+> Similarly module_put(THIS_MODULE) must never be able to release the
+> last reference.
+
+It can if a suitable lock is held.
+
+> Any such calls that aren't in error paths after try_module_get() are
+> probably buggy.
+Being in an error path doesn't make it safe.
+module_put(THIS_MODULE) can only be safe if a lock is held which
+prevents the exit function from completing.  Some code outside the
+module must release the lock.
+
+Having said that, I don't really like this approach.  I much prefer for
+the module reference to be taken and put outside of the module - it
+seems less error-prone.
+
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlshB+8ACgkQOeye3VZi
+gbkCZw/9FrECKIQT3G+ijzOoxZD5El9y460/0CJEZ+X+XECNJw5BGGh4oj46H5SF
+Xb5bRcXdQ3gX76stT/rcJ6rhS2Az6KvVdBA9B1gJQtysFiu9nLU6AqPm5+2S0XkK
+zN0YCh5+RRHBiY8BPjzP7rciOYiIBj+S4rb/GDRoGhh+2JL2hiyUYBRqNLcdtrjL
+VBNnnUaSD/YO8B37uyQkErrRVXsPh5qUOZF6zMCO+1l3ltdtLUB5/mP+4robNaXk
+VKB9IspcbXncde8ES/ND1nlFm0Hb8d26a5bYWOA+iVj8I4x0/x0Zphb8d2pIETfc
+28m6zlF6hqgwBWFy4M6igSfboWoAx4TzXNA81XZjeVw5Ar/oCo3bbOsNaGM48uTG
+dWznJ65lEXADIox+o81oarjcY9kDZr6vkvK9KsfPUM2KfetX8TQsGakmlKdBS4t6
+S1+fG3IvvRi4c3/XUVdqa0DT7X3yFlGspOOzCHLmEsLRSJzKit3bXIFERwoLRpS6
+/4ntc7ry/jL7ssYu1u7F3H4OP7VLpOLGXP9XSjcsdrg6RmwGL56MumuGnT+vJ9kA
+hxJukz8g6ImK4yeWtDgfNZCTK3XRRO8dNPUsAj2TBm+uAddJ/nGv6BDp+1iNK8Or
+57mxVq7cuD/LSwqrxRb5C2oVT4f4aRbEgf9AnI53BZsFF7FDadc=
+=1gn9
+-----END PGP SIGNATURE-----
+--=-=-=--
