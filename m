@@ -2,159 +2,96 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 10642C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:41:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AC546C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:41:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3C4208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:41:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3C4208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D874208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:41:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Fm5olaNB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D874208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934487AbeFMHl1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:41:27 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42246 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S933912AbeFMHlZ (ORCPT
+        id S934610AbeFMHlw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:41:52 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47882 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754476AbeFMHlu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:41:25 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5D7d6Ta069999
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 03:41:25 -0400
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jjwwytvc0-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 03:41:24 -0400
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 13 Jun 2018 08:41:22 +0100
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Jun 2018 08:41:19 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5D7fHeu29819030
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 07:41:17 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C488FAE055;
-        Wed, 13 Jun 2018 08:30:07 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ED44AAE051;
-        Wed, 13 Jun 2018 08:30:06 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Jun 2018 08:30:06 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
- device driver
-To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org
-Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        cohuck@redhat.com, kwankhede@nvidia.com,
-        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
-        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
-        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
-        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
-        pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 13 Jun 2018 09:41:16 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 13 Jun 2018 03:41:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oohRmM6XIpwCupB6S6+SVaE2yvOq+ENRUZwzW+aYdzI=; b=Fm5olaNB4WseSDN76h0KPd4ey
+        OMa1qq7Wef/kJM7pMgld3a7URE+YER+MzAKgpp5GxXeUiFZ8++ro6Zb8UYsGyaoXDp8RDI6HeZu+Y
+        XMIkAJqxp4i7Nmc27tzhGv2FN2IH1fzyHKnhDEJUUMxxR/qRX3rJtFC8wdZzcOjPrDQD7qWX2BKXa
+        gb7MeCIkIa/wziAms6lKLqQ5M4QCIklvK2sjwheO5yEkEADHDB28sy3YTdUNMGr9XbtcVKX8dtLxc
+        KuBX+UV2/eXEQOEXKAADGxOyVoFScS79vIcrrx73tR0syqb1qnq79hgjM0rFA4TotFNoIsy8e9qV6
+        llHZHkI9w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fT0PW-0006Yd-4h; Wed, 13 Jun 2018 07:41:42 +0000
+Date:   Wed, 13 Jun 2018 00:41:41 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc:     Ram Pai <linuxram@us.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>, robh@kernel.org,
+        pawel.moll@arm.com, Tom Lendacky <thomas.lendacky@amd.com>,
+        aik@ozlabs.ru, jasowang@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+Message-ID: <20180613074141.GA12033@infradead.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+ <20180523213703-mutt-send-email-mst@kernel.org>
+ <20180524072104.GD6139@ram.oc3035372033.ibm.com>
+ <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
+ <20180531204320-mutt-send-email-mst@kernel.org>
+ <20180607052306.GA1532@infradead.org>
+ <20180607185234-mutt-send-email-mst@kernel.org>
+ <20180611023909.GA5726@ram.oc3035372033.ibm.com>
+ <07b804fccd7373c650be79ac9fa77ae7f2375ced.camel@kernel.crashing.org>
 MIME-Version: 1.0
-In-Reply-To: <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18061307-4275-0000-0000-0000028D36EE
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061307-4276-0000-0000-000037945F40
-Message-Id: <889b8d41-e08c-0eb5-2de0-a1d6669a03b3@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806130089
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07b804fccd7373c650be79ac9fa77ae7f2375ced.camel@kernel.crashing.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 07/05/2018 17:11, Tony Krowiak wrote:
-> Introduces a new AP device driver. This device driver
-> is built on the VFIO mediated device framework. The framework
-> provides sysfs interfaces that facilitate passthrough
-> access by guests to devices installed on the linux host.
-...snip...
+On Mon, Jun 11, 2018 at 01:29:18PM +1000, Benjamin Herrenschmidt wrote:
+> At the risk of repeating myself, let's just do the first pass which is
+> to switch virtio over to always using the DMA API in the actual data
+> flow code, with a hook at initialization time that replaces the DMA ops
+> with some home cooked "direct" ops in the case where the IOMMU flag
+> isn't set.
+> 
+> This will be equivalent to what we have today but avoids having 2
+> separate code path all over the driver.
+> 
+> Then a second stage, I think, is to replace this "hook" so that the
+> architecture gets a say in the matter.
 
-> +static int vfio_ap_matrix_dev_create(void)
-> +{
-> +	int ret;
-> +
-> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
-> +
-> +	if (IS_ERR(vfio_ap_root_device)) {
-> +		ret = PTR_ERR(vfio_ap_root_device);
-> +		goto done;
-> +	}
-> +
-> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
-> +	if (!ap_matrix) {
-> +		ret = -ENOMEM;
-> +		goto matrix_alloc_err;
-> +	}
-> +
-> +	ap_matrix->device.type = &vfio_ap_dev_type;
-> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
-> +	ap_matrix->device.parent = vfio_ap_root_device;
-> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
-> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
-> +
-> +	ret = device_register(&ap_matrix->device);
-> +	if (ret)
-> +		goto matrix_reg_err;
-> +
-> +	goto done;
-> +
-> +matrix_reg_err:
-> +	put_device(&ap_matrix->device);
+I don't think we can actually use dma_direct_ops.  It still allows
+architectures to override parts of the dma setup, which virtio seems
+to blindly assume phys == dma and not cache flushing.
 
-Did not see this before but here you certainly want to
-do a kfree and not a put_device.
-
-
-
-> +
-> +matrix_alloc_err:
-> +	root_device_unregister(vfio_ap_root_device);
-> +
-> +done:
-> +	return ret;
-> +}
-> +
-> +static void vfio_ap_matrix_dev_destroy(struct ap_matrix *ap_matrix)
-> +{
-> +	device_unregister(&ap_matrix->device);
-> +	root_device_unregister(vfio_ap_root_device);
-
-Also here you need a kfree(ap_matrix) too .
-
-Pierre
-
-
--- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
-
+I think the right way forward is to either add a new
+VIRTIO_F_IS_PCI_DEVICE (or redefine the existing iommu flag if deemed
+possible).  And then make sure recent qemu always sets it.
