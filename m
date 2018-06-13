@@ -2,94 +2,157 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 654F8C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:19 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5A64DC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19C9E208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cW/+Q+7S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C9E208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 0EDB7208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EDB7208CC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935486AbeFMSqR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:46:17 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:53064 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935043AbeFMSqP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:46:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=QLZ9jKIJE4YrHQA/ybmrY0ELKKqTJHo0QGS+Ii1RyEc=; b=cW/+Q+7SR2PtsmW9Sm0N3Fuyl
-        NnWgMPBDsIhANmGuYoa0roKP/dGYj3tsKsoi/ccQ+2HJuod9QwaTtkS9uwyaLB8ayr7e+O1Fo0Q/S
-        csYWqEVA2frlaeC4kK+CIdRCad/x92OhWq31ATkXTe+u4cdf8YpscXxSe3RRO5ljbBYDQje0ZnfA6
-        tWg5sqQJbSvS3ZXRZCmkmUw9CKu7hUzfV3k8ceetwHGRwyNu1Ck81OPcaopM4L45fR1Tr+E7GsYCX
-        yKoAv0BjsCyMiW9WSk/4T59BBoDQhjITUaGZ+tzQMibWjm9xRDkl+vx1H4j8QKkKwX7yUheQku2rz
-        Jxd0ZVEyQ==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fTAmQ-0001Tz-R6; Wed, 13 Jun 2018 18:46:02 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-rdma@vger.kernel.org,
-        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] IDR: Expose the XArray lock
-Date:   Wed, 13 Jun 2018 11:45:55 -0700
-Message-Id: <20180613184555.4503-1-willy@infradead.org>
-X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180613123403.25233-2-willy@infradead.org>
-References: <20180613123403.25233-2-willy@infradead.org>
+        id S964776AbeFMSqh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:46:37 -0400
+Received: from mga03.intel.com ([134.134.136.65]:52220 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935154AbeFMSqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 14:46:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 11:46:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
+   d="scan'208";a="49095970"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2018 11:46:34 -0700
+Subject: Re: [PATCHv3 17/17] x86: Introduce CONFIG_X86_INTEL_MKTME
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-18-kirill.shutemov@linux.intel.com>
+Cc:     Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <43ea6cea-b88c-e08a-3f4e-64c39b20ae59@intel.com>
+Date:   Wed, 13 Jun 2018 11:46:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180612143915.68065-18-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow users of the IDR to use the XArray lock for their own
-synchronisation purposes.  The IDR continues to rely on the caller to
-handle locking, but this lets the caller use the lock embedded in the
-IDR data structure instead of allocating their own lock.
+On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
+> Add new config option to enabled/disable Multi-Key Total Memory
+> Encryption support.
+> 
+> MKTME uses MEMORY_PHYSICAL_PADDING to reserve enough space in per-KeyID
+> direct mappings for memory hotplug.
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- include/linux/idr.h | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+Isn't it really *the* direct mapping primarily?  We make all of them
+larger, but the direct mapping is impacted too.  This makes it sound
+like it applies only to the MKTME mappings.
 
-diff --git a/include/linux/idr.h b/include/linux/idr.h
-index e856f4e0ab35..3e8215b2c371 100644
---- a/include/linux/idr.h
-+++ b/include/linux/idr.h
-@@ -98,6 +98,17 @@ static inline void idr_set_cursor(struct idr *idr, unsigned int val)
-  * period).
-  */
- 
-+#define idr_lock(idr)		xa_lock(&(idr)->idr_rt)
-+#define idr_unlock(idr)		xa_unlock(&(idr)->idr_rt)
-+#define idr_lock_bh(idr)	xa_lock_bh(&(idr)->idr_rt)
-+#define idr_unlock_bh(idr)	xa_unlock_bh(&(idr)->idr_rt)
-+#define idr_lock_irq(idr)	xa_lock_irq(&(idr)->idr_rt)
-+#define idr_unlock_irq(idr)	xa_unlock_irq(&(idr)->idr_rt)
-+#define idr_lock_irqsave(idr, flags) \
-+				xa_lock_irqsave(&(idr)->idr_rt, flags)
-+#define idr_unlock_irqrestore(idr, flags) \
-+				xa_unlock_irqrestore(&(idr)->idr_rt, flags)
-+
- void idr_preload(gfp_t gfp_mask);
- 
- int idr_alloc(struct idr *, void *ptr, int start, int end, gfp_t);
--- 
-2.17.1
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 4fa2cf807321..d013495bb4ae 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -1513,6 +1513,23 @@ config ARCH_USE_MEMREMAP_PROT
+>  	def_bool y
+>  	depends on AMD_MEM_ENCRYPT
+>  
+> +config X86_INTEL_MKTME
+> +	bool "Intel Multi-Key Total Memory Encryption"
+> +	select DYNAMIC_PHYSICAL_MASK
+> +	select PAGE_EXTENSION
+> +	depends on X86_64 && CPU_SUP_INTEL
+> +	---help---
+> +	  Say yes to enable support for Multi-Key Total Memory Encryption.
+> +	  This requires Intel processor that has support of the feature.
+
+"requires an Intel processor"...
+
+> +	  Multikey Total Memory Encryption (MKTME) is a technology that allows
+> +	  transparent memory encryption in upcoming Intel platforms.
+
+"in an upcoming"
+
+> +	  MKTME is built on top of TME. TME allows encryption of the entirety
+> +	  of system memory using a single key. MKTME allows to have multiple
+
+"allows having multiple"...
+
+> +	  encryption domains, each having own key -- different memory pages can
+> +	  be encrypted with different keys.
+> +
+>  # Common NUMA Features
+>  config NUMA
+>  	bool "Numa Memory Allocation and Scheduler Support"
+> @@ -2189,7 +2206,7 @@ config RANDOMIZE_MEMORY
+>  
+>  config MEMORY_PHYSICAL_PADDING
+>  	hex "Physical memory mapping padding" if EXPERT
+> -	depends on RANDOMIZE_MEMORY
+> +	depends on RANDOMIZE_MEMORY || X86_INTEL_MKTME
+>  	default "0xa" if MEMORY_HOTPLUG
+>  	default "0x0"
+>  	range 0x1 0x40 if MEMORY_HOTPLUG
+> 
 
