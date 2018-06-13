@@ -2,140 +2,86 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 47D00C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:09:48 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7D867C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07854208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:09:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07854208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 33175208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:10:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nh2rvWSZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33175208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935904AbeFMOJq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:09:46 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52354 "EHLO mail.bootlin.com"
+        id S935856AbeFMOKW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:10:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935778AbeFMOHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:07:19 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2F2D320A20; Wed, 13 Jun 2018 16:07:18 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id F3024203B4;
-        Wed, 13 Jun 2018 16:07:17 +0200 (CEST)
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 4/9] media: cedrus: make engine type more generic
-Date:   Wed, 13 Jun 2018 16:07:09 +0200
-Message-Id: <20180613140714.1686-5-maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+        id S935765AbeFMOKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:10:20 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1DC42208B0;
+        Wed, 13 Jun 2018 14:10:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528899019;
+        bh=xX1OGik/Tziv/0lvTJG2pYC4S00eWNY3THJsQcJVsHM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Nh2rvWSZ778R7vVbQbV/YUj2wW6wA5F5UELyczbTZ1VWmhbKtQDMzjWQpTU1j6vkr
+         a+/uu0ANBZJ8zCk2+P13hSI9hjOmmvE40m8nrI0sfoCwaOwCQv1zr8HlHo6oHRYHas
+         S+qV2sibz7gAH9EtN68WXC+sNiNhfvSVA/s2gHXA=
+Date:   Wed, 13 Jun 2018 16:09:57 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 3.18 00/21] 3.18.113-stable review
+Message-ID: <20180613140957.GB5117@kroah.com>
+References: <20180612164825.401145490@linuxfoundation.org>
+ <bc0f332d-bb9f-35c6-18b0-8dfd282bbf1c@roeck-us.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bc0f332d-bb9f-35c6-18b0-8dfd282bbf1c@roeck-us.net>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The sunxi_cedrus_engine enum actually enumerates pretty much the codecs to
-use (or we can easily infer the codec engine from the codec).
+On Wed, Jun 13, 2018 at 06:48:05AM -0700, Guenter Roeck wrote:
+> On 06/12/2018 09:51 AM, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 3.18.113 release.
+> > There are 21 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Thu Jun 14 16:48:15 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> 
+> Build results:
+> 	total: 138 pass: 136 fail: 2
+> Failed builds:
+> 	i386:tools/perf
+> 	x86_64:tools/perf
+> Qemu test results:
+> 	total: 127 pass: 127 fail: 0
+> 
+> The perf test only fails because I run "make tools/perf" instead of
+> "(cd tools/perf; make)". Fixing this requires the following two patches.
+> 
+> 379a9a28a1b4 tools build: No need to make libapi for perf explicitly
+> 16671c1e1cac tools build: Fix Makefile(s) to properly invoke tools build
 
-Since we will need the codec type as well in some later refactoring, make
-that structure more useful by just enumerating the codec, and converting
-the existing users.
+Thanks for this, and the other 3 results.  I'll just add these commits
+to the next kernel as this is not a new failure.
 
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h | 6 ++++++
- drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c     | 6 +++---
- drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h     | 6 +-----
- drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c  | 2 +-
- 4 files changed, 11 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-index b1ed1c8cb130..a5f83c452006 100644
---- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-+++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
-@@ -61,6 +61,12 @@ struct sunxi_cedrus_run {
- 	};
- };
- 
-+enum sunxi_cedrus_codec {
-+	SUNXI_CEDRUS_CODEC_MPEG2,
-+
-+	SUNXI_CEDRUS_CODEC_LAST,
-+};
-+
- struct sunxi_cedrus_ctx {
- 	struct v4l2_fh fh;
- 	struct sunxi_cedrus_dev	*dev;
-diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-index fc688a5c1ea3..bb46a01214e0 100644
---- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-+++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.c
-@@ -41,7 +41,7 @@
- #define SYSCON_SRAM_C1_MAP_VE	0x7fffffff
- 
- int sunxi_cedrus_engine_enable(struct sunxi_cedrus_dev *dev,
--			       enum sunxi_cedrus_engine engine)
-+			       enum sunxi_cedrus_codec codec)
- {
- 	u32 reg = 0;
- 
-@@ -53,8 +53,8 @@ int sunxi_cedrus_engine_enable(struct sunxi_cedrus_dev *dev,
- 
- 	reg |= VE_CTRL_CACHE_BUS_BW_128;
- 
--	switch (engine) {
--	case SUNXI_CEDRUS_ENGINE_MPEG:
-+	switch (codec) {
-+	case SUNXI_CEDRUS_CODEC_MPEG2:
- 		reg |= VE_CTRL_DEC_MODE_MPEG;
- 		break;
- 
-diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h
-index 34f3fae462a8..3236c80bfcf4 100644
---- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h
-+++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_hw.h
-@@ -23,12 +23,8 @@
- #ifndef _SUNXI_CEDRUS_HW_H_
- #define _SUNXI_CEDRUS_HW_H_
- 
--enum sunxi_cedrus_engine {
--	SUNXI_CEDRUS_ENGINE_MPEG,
--};
--
- int sunxi_cedrus_engine_enable(struct sunxi_cedrus_dev *dev,
--			       enum sunxi_cedrus_engine engine);
-+			       enum sunxi_cedrus_codec codec);
- void sunxi_cedrus_engine_disable(struct sunxi_cedrus_dev *dev);
- 
- int sunxi_cedrus_hw_probe(struct sunxi_cedrus_dev *dev);
-diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-index 5be3e3b9ceef..85e6fc2fbdb2 100644
---- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-+++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_mpeg2.c
-@@ -83,7 +83,7 @@ void sunxi_cedrus_mpeg2_setup(struct sunxi_cedrus_ctx *ctx,
- 	}
- 
- 	/* Activate MPEG engine. */
--	sunxi_cedrus_engine_enable(dev, SUNXI_CEDRUS_ENGINE_MPEG);
-+	sunxi_cedrus_engine_enable(dev, SUNXI_CEDRUS_CODEC_MPEG2);
- 
- 	/* Set quantization matrices. */
- 	for (i = 0; i < 64; i++) {
--- 
-2.17.0
-
+greg k-h
