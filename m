@@ -2,99 +2,94 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D499CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 654F8C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 872C9208D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 872C9208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 19C9E208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:46:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cW/+Q+7S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19C9E208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935361AbeFMSqF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:46:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46624 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935043AbeFMSqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:46:04 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF45E208CD;
-        Wed, 13 Jun 2018 18:46:02 +0000 (UTC)
-Date:   Wed, 13 Jun 2018 14:46:01 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Tobin C. Harding" <me@tobin.cc>
-Cc:     "Theodore Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Kees Cook <keescook@chromium.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 4/4] vsprintf: Add command line option
- debug_boot_weak_hash
-Message-ID: <20180613144601.54855796@gandalf.local.home>
-In-Reply-To: <1528763954-27731-5-git-send-email-me@tobin.cc>
-References: <1528763954-27731-1-git-send-email-me@tobin.cc>
-        <1528763954-27731-5-git-send-email-me@tobin.cc>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S935486AbeFMSqR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:46:17 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:53064 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935043AbeFMSqP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 14:46:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
+        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=QLZ9jKIJE4YrHQA/ybmrY0ELKKqTJHo0QGS+Ii1RyEc=; b=cW/+Q+7SR2PtsmW9Sm0N3Fuyl
+        NnWgMPBDsIhANmGuYoa0roKP/dGYj3tsKsoi/ccQ+2HJuod9QwaTtkS9uwyaLB8ayr7e+O1Fo0Q/S
+        csYWqEVA2frlaeC4kK+CIdRCad/x92OhWq31ATkXTe+u4cdf8YpscXxSe3RRO5ljbBYDQje0ZnfA6
+        tWg5sqQJbSvS3ZXRZCmkmUw9CKu7hUzfV3k8ceetwHGRwyNu1Ck81OPcaopM4L45fR1Tr+E7GsYCX
+        yKoAv0BjsCyMiW9WSk/4T59BBoDQhjITUaGZ+tzQMibWjm9xRDkl+vx1H4j8QKkKwX7yUheQku2rz
+        Jxd0ZVEyQ==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTAmQ-0001Tz-R6; Wed, 13 Jun 2018 18:46:02 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-rdma@vger.kernel.org,
+        =?UTF-8?q?H=C3=A5kon=20Bugge?= <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] IDR: Expose the XArray lock
+Date:   Wed, 13 Jun 2018 11:45:55 -0700
+Message-Id: <20180613184555.4503-1-willy@infradead.org>
+X-Mailer: git-send-email 2.14.3
+In-Reply-To: <20180613123403.25233-2-willy@infradead.org>
+References: <20180613123403.25233-2-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018 10:39:14 +1000
-"Tobin C. Harding" <me@tobin.cc> wrote:
+Allow users of the IDR to use the XArray lock for their own
+synchronisation purposes.  The IDR continues to rely on the caller to
+handle locking, but this lets the caller use the lock embedded in the
+IDR data structure instead of allocating their own lock.
 
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+---
+ include/linux/idr.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> +/* Make pointers available for printing early in the boot sequence. */
-> +static int debug_boot_weak_hash __ro_after_init;
-> +EXPORT_SYMBOL(debug_boot_weak_hash);
-> +
-> +static int __init debug_boot_weak_hash_enable(char *str)
-> +{
-> +	debug_boot_weak_hash = 1;
-> +	pr_info("debug_boot_weak_hash enabled\n");
-> +	return 0;
-> +}
-> +early_param("debug_boot_weak_hash", debug_boot_weak_hash_enable);
-> +
->  static DEFINE_STATIC_KEY_TRUE(not_filled_random_ptr_key);
->  static siphash_key_t ptr_key __read_mostly;
->  
-> @@ -1703,6 +1715,12 @@ static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
->  	const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
->  	unsigned long hashval;
->  
-> +	/* When debugging early boot use non-cryptographically secure hash */
-> +	if (unlikely(debug_boot_weak_hash)) {
-
-I was hoping to find a way to make the debug_boot_weak_hash into a
-static_branch, but its setting is too early to have for a jump label.
-
-I toyed with nesting this inside a static_branch too, but it seems too
-much overkill.
-
-Hence, I'll just punt and accept this patch as is ;-)
-
-Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-
--- Steve
-
-> +		hashval = hash_long((unsigned long)ptr, 32);
-> +		return pointer_string(buf, end, (const void *)hashval, spec);
-> +	}
-> +
->  	if (static_branch_unlikely(&not_filled_random_ptr_key)) {
->  		spec.field_width = 2 * sizeof(ptr);
->  		/* string length must be less than default_width */
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index e856f4e0ab35..3e8215b2c371 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -98,6 +98,17 @@ static inline void idr_set_cursor(struct idr *idr, unsigned int val)
+  * period).
+  */
+ 
++#define idr_lock(idr)		xa_lock(&(idr)->idr_rt)
++#define idr_unlock(idr)		xa_unlock(&(idr)->idr_rt)
++#define idr_lock_bh(idr)	xa_lock_bh(&(idr)->idr_rt)
++#define idr_unlock_bh(idr)	xa_unlock_bh(&(idr)->idr_rt)
++#define idr_lock_irq(idr)	xa_lock_irq(&(idr)->idr_rt)
++#define idr_unlock_irq(idr)	xa_unlock_irq(&(idr)->idr_rt)
++#define idr_lock_irqsave(idr, flags) \
++				xa_lock_irqsave(&(idr)->idr_rt, flags)
++#define idr_unlock_irqrestore(idr, flags) \
++				xa_unlock_irqrestore(&(idr)->idr_rt, flags)
++
+ void idr_preload(gfp_t gfp_mask);
+ 
+ int idr_alloc(struct idr *, void *ptr, int start, int end, gfp_t);
+-- 
+2.17.1
 
