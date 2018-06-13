@@ -2,125 +2,109 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AF0FCC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:54:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1E82FC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:56:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F3F5208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:54:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F3F5208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id C6F84208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:56:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IRtLfZ4Y";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Z8YGnyrs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6F84208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935137AbeFMJyu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:54:50 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56491 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934987AbeFMJyt (ORCPT
+        id S935156AbeFMJ4K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:56:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:47960 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934279AbeFMJ4I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:54:49 -0400
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fT2UH-0001K1-9e; Wed, 13 Jun 2018 11:54:45 +0200
-Received: from sha by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <sha@pengutronix.de>)
-        id 1fT2UG-0005NC-Td; Wed, 13 Jun 2018 11:54:44 +0200
-Date:   Wed, 13 Jun 2018 11:54:44 +0200
-From:   Sascha Hauer <s.hauer@pengutronix.de>
-To:     Robin Gong <yibin.gong@nxp.com>
-Cc:     vkoul@kernel.org, dan.j.williams@intel.com,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-imx@nxp.com
-Subject: Re: [PATCH v3 5/6] dmaengine: imx-sdma: remove the maximum limation
- for bd numbers
-Message-ID: <20180613095444.uek6uzczdhx3rh56@pengutronix.de>
-References: <1528729173-28684-1-git-send-email-yibin.gong@nxp.com>
- <1528729173-28684-6-git-send-email-yibin.gong@nxp.com>
+        Wed, 13 Jun 2018 05:56:08 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5048C606DB; Wed, 13 Jun 2018 09:56:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528883768;
+        bh=cwXDZjf0VI/k25MlgHjqTx0zEFXMzMvnL67qhaZHSx0=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=IRtLfZ4YFIMmweVBm+kFehwC6MK4Oiv1tCPmB7cnqjbD00dSaySe9RM2N5FlhAVYp
+         zqfB2ibIk2eJz4Vb24QUbDI9a0QUtL0NdCqKEna40PQfAjvBLUYubclguASCTP2w+j
+         I6CMio9dFdNTcp8Ceqg8ID6FmRAlcloYHiyJjXPs=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 09B81602BC;
+        Wed, 13 Jun 2018 09:56:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528883767;
+        bh=cwXDZjf0VI/k25MlgHjqTx0zEFXMzMvnL67qhaZHSx0=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=Z8YGnyrszOa0LLyXf2Sj5JbdPFNrLKxVZRLBySFLrtNzAruGw3aP6P2M9V0zRHuQa
+         l1ID46Pwl2o3uJV7Qhpg5aoPoEgpJjTP9UnGMojr+W5MkhVnGGOd6J6Uj7j3s0jjOI
+         ailo/FFIwz6Vlpnqcnsb3CN/rZ+y49LEl1YITIEQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 09B81602BC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Niklas Cassel <niklas.cassel@linaro.org>, kbuild-all@01.org,
+        "David S. Miller" <davem@davemloft.net>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
+References: <20180612113907.15043-2-niklas.cassel@linaro.org>
+        <201806122228.8vAQXcD6%fengguang.wu@intel.com>
+Date:   Wed, 13 Jun 2018 12:56:02 +0300
+In-Reply-To: <201806122228.8vAQXcD6%fengguang.wu@intel.com> (kbuild test
+        robot's message of "Tue, 12 Jun 2018 22:50:37 +0800")
+Message-ID: <87h8m7au31.fsf@kamboji.qca.qualcomm.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528729173-28684-6-git-send-email-yibin.gong@nxp.com>
-X-Sent-From: Pengutronix Hildesheim
-X-URL:  http://www.pengutronix.de/
-X-IRC:  #ptxdist @freenode
-X-Accept-Language: de,en
-X-Accept-Content-Type: text/plain
-X-Uptime: 11:53:45 up 19:02, 42 users,  load average: 0.01, 0.07, 0.08
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: sha@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+kbuild test robot <lkp@intel.com> writes:
 
-In the subject: s/limation/limitation/
+> Thank you for the patch! Perhaps something to improve:
+>
+> [auto build test WARNING on ath6kl/ath-next]
+> [also build test WARNING on next-20180612]
+> [cannot apply to v4.17]
+> [if your patch is applied to the wrong git tree, please drop us a note
+> to help improve the system]
+>
+> url:
+> https://github.com/0day-ci/linux/commits/Niklas-Cassel/ath10k-do-not-mix-spaces-and-tabs-in-Kconfig/20180612-194241
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/kvalo/ath.git ath-next
+> reproduce:
+>         # apt-get install sparse
+>         make ARCH=x86_64 allmodconfig
+>         make C=1 CF=-D__CHECK_ENDIAN__
+>
+>
+> sparse warnings: (new ones prefixed by >>)
+>
+>>> drivers/net/wireless/ath/ath10k/snoc.c:823:5: sparse: symbol
+>>> 'ath10k_snoc_get_ce_id_from_irq' was not declared. Should it be
+>>> static?
+>>> drivers/net/wireless/ath/ath10k/snoc.c:871:6: sparse: symbol
+>>> 'ath10k_snoc_init_napi' was not declared. Should it be static?
+>
+> Please review and possibly fold the followup patch.
 
-Sascha
+There's already a patch pending to fix these:
 
-On Mon, Jun 11, 2018 at 10:59:32PM +0800, Robin Gong wrote:
-> No this limitation now after virtual dma used since bd is allocated
-> dynamically instead of static.
-> 
-> Signed-off-by: Robin Gong <yibin.gong@nxp.com>
-> ---
->  drivers/dma/imx-sdma.c | 14 --------------
->  1 file changed, 14 deletions(-)
-> 
-> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index f150b38..0b0588d2 100644
-> --- a/drivers/dma/imx-sdma.c
-> +++ b/drivers/dma/imx-sdma.c
-> @@ -292,7 +292,6 @@ struct sdma_context_data {
->  	u32  scratch7;
->  } __attribute__ ((packed));
->  
-> -#define NUM_BD (int)(PAGE_SIZE / sizeof(struct sdma_buffer_descriptor))
->  
->  struct sdma_engine;
->  
-> @@ -1296,13 +1295,6 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
->  	if (ret)
->  		goto err_bd_out;
->  
-> -	if (sg_len > NUM_BD) {
-> -		dev_err(sdma->dev, "SDMA channel %d: maximum number of sg exceeded: %d > %d\n",
-> -				channel, sg_len, NUM_BD);
-> -		ret = -EINVAL;
-> -		goto err_bd_out;
-> -	}
-> -
->  	desc->chn_count = 0;
->  	for_each_sg(sgl, sg, sg_len, i) {
->  		struct sdma_buffer_descriptor *bd = &desc->bd[i];
-> @@ -1412,12 +1404,6 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
->  	if (ret)
->  		goto err_bd_out;
->  
-> -	if (num_periods > NUM_BD) {
-> -		dev_err(sdma->dev, "SDMA channel %d: maximum number of sg exceeded: %d > %d\n",
-> -				channel, num_periods, NUM_BD);
-> -		goto err_bd_out;
-> -	}
-> -
->  	if (period_len > 0xffff) {
->  		dev_err(sdma->dev, "SDMA channel %d: maximum period size exceeded: %zu > %d\n",
->  				channel, period_len, 0xffff);
-> -- 
-> 2.7.4
-> 
-> 
+ath10k: make some functions static
+
+https://patchwork.kernel.org/patch/10440159/
 
 -- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Kalle Valo
