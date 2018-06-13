@@ -5,128 +5,141 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 57D9DC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:43:12 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 56610C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:43:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 134B5208D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134B5208D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 14F8F208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:43:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14F8F208C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935455AbeFMSnK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:43:10 -0400
-Received: from mga07.intel.com ([134.134.136.100]:58580 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935117AbeFMSnI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:43:08 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 11:43:08 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
-   d="scan'208";a="49095207"
-Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2018 11:43:08 -0700
-Subject: Re: [PATCHv3 16/17] x86/mm: Handle encrypted memory in page_to_virt()
- and __pa()
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-17-kirill.shutemov@linux.intel.com>
-Cc:     Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <f8b9da42-1f7b-529c-bfdd-e82f669f6fe8@intel.com>
-Date:   Wed, 13 Jun 2018 11:43:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935537AbeFMSnX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:43:23 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51412 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935117AbeFMSnV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 14:43:21 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C3A2E873C3;
+        Wed, 13 Jun 2018 18:43:20 +0000 (UTC)
+Received: from warthog.procyon.org.uk (ovpn-120-250.rdu2.redhat.com [10.10.120.250])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F0361C640;
+        Wed, 13 Jun 2018 18:43:20 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+ Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+ Kingdom.
+ Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH] proc: Make inline name size calculation automatic
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 13 Jun 2018 19:43:19 +0100
+Message-ID: <152891539958.23512.10618044594537218194.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/0.17.1-dirty
 MIME-Version: 1.0
-In-Reply-To: <20180612143915.68065-17-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 13 Jun 2018 18:43:20 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 13 Jun 2018 18:43:20 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dhowells@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> diff --git a/arch/x86/include/asm/mktme.h b/arch/x86/include/asm/mktme.h
-> index efc0d4bb3b35..d6edcabacfc7 100644
-> --- a/arch/x86/include/asm/mktme.h
-> +++ b/arch/x86/include/asm/mktme.h
-> @@ -43,6 +43,9 @@ void mktme_disable(void);
->  void setup_direct_mapping_size(void);
->  int sync_direct_mapping(void);
->  
-> +#define page_to_virt(x) \
-> +	(__va(PFN_PHYS(page_to_pfn(x))) + page_keyid(x) * direct_mapping_size)
+Make calculation of the size of the inline name in struct proc_dir_entry
+automatic, rather than having to manually encode the numbers and failing to
+allow for lockdep.
 
-This looks like a super important memory management function being
-defined in some obscure Intel-specific feature header.  How does that work?
+Require a minimum inline name size of 33+1 to allow for names that look
+like two hex numbers with a dash between.
 
->  #else
->  #define mktme_keyid_mask	((phys_addr_t)0)
->  #define mktme_nr_keyids		0
-> diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_64.h
-> index 53c32af895ab..ffad496aadad 100644
-> --- a/arch/x86/include/asm/page_64.h
-> +++ b/arch/x86/include/asm/page_64.h
-> @@ -23,7 +23,7 @@ static inline unsigned long __phys_addr_nodebug(unsigned long x)
->  	/* use the carry flag to determine if x was < __START_KERNEL_map */
->  	x = y + ((x > y) ? phys_base : (__START_KERNEL_map - PAGE_OFFSET));
->  
-> -	return x;
-> +	return x % direct_mapping_size;
->  }
+Reported-by: Al Viro <viro@ZenIV.linux.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
 
-What are the performance implications of this patch?
+ fs/proc/generic.c  |    2 +-
+ fs/proc/inode.c    |    5 ++---
+ fs/proc/internal.h |   18 ++++++++++++------
+ fs/proc/root.c     |    3 +--
+ 4 files changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index fa5b28f0a3a3..6ac1c92997ea 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -409,7 +409,7 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+ 	if (!ent)
+ 		goto out;
+ 
+-	if (qstr.len + 1 <= sizeof(ent->inline_name)) {
++	if (qstr.len + 1 <= SIZEOF_PDE_INLINE_NAME) {
+ 		ent->name = ent->inline_name;
+ 	} else {
+ 		ent->name = kmalloc(qstr.len + 1, GFP_KERNEL);
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index 7aa86dd65ba8..38155bec4a54 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -104,9 +104,8 @@ void __init proc_init_kmemcache(void)
+ 		kmem_cache_create("pde_opener", sizeof(struct pde_opener), 0,
+ 				  SLAB_ACCOUNT|SLAB_PANIC, NULL);
+ 	proc_dir_entry_cache = kmem_cache_create_usercopy(
+-		"proc_dir_entry", sizeof(struct proc_dir_entry), 0, SLAB_PANIC,
+-		offsetof(struct proc_dir_entry, inline_name),
+-		sizeof_field(struct proc_dir_entry, inline_name), NULL);
++		"proc_dir_entry", SIZEOF_PDE_SLOT, 0, SLAB_PANIC,
++		OFFSETOF_PDE_NAME, SIZEOF_PDE_INLINE_NAME, NULL);
+ }
+ 
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index 0644b29e53b7..539c6566752a 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -62,14 +62,20 @@ struct proc_dir_entry {
+ 	char *name;
+ 	umode_t mode;
+ 	u8 namelen;
+-#ifdef CONFIG_64BIT
+-#define SIZEOF_PDE_INLINE_NAME	(192-155)
+-#else
+-#define SIZEOF_PDE_INLINE_NAME	(128-95)
+-#endif
+-	char inline_name[SIZEOF_PDE_INLINE_NAME];
++	char inline_name[];
+ } __randomize_layout;
+ 
++#define OFFSETOF_PDE_NAME offsetof(struct proc_dir_entry, inline_name)
++#define SIZEOF_PDE_SLOT					\
++	(OFFSETOF_PDE_NAME + 34 <= 64 ? 64 :		\
++	 OFFSETOF_PDE_NAME + 34 <= 128 ? 128 :		\
++	 OFFSETOF_PDE_NAME + 34 <= 192 ? 192 :		\
++	 OFFSETOF_PDE_NAME + 34 <= 256 ? 256 :		\
++	 OFFSETOF_PDE_NAME + 34 <= 512 ? 512 :		\
++	 0)
++
++#define SIZEOF_PDE_INLINE_NAME (SIZEOF_PDE_SLOT - OFFSETOF_PDE_NAME)
++
+ extern struct kmem_cache *proc_dir_entry_cache;
+ void pde_free(struct proc_dir_entry *pde);
+ 
+diff --git a/fs/proc/root.c b/fs/proc/root.c
+index a379edccd880..efbdc08a3c86 100644
+--- a/fs/proc/root.c
++++ b/fs/proc/root.c
+@@ -288,8 +288,7 @@ struct proc_dir_entry proc_root = {
+ 	.proc_fops	= &proc_root_operations,
+ 	.parent		= &proc_root,
+ 	.subdir		= RB_ROOT,
+-	.name		= proc_root.inline_name,
+-	.inline_name	= "/proc",
++	.name		= "/proc",
+ };
+ 
+ int pid_ns_prepare_proc(struct pid_namespace *ns)
+
