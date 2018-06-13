@@ -2,184 +2,132 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D8F8DC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:23:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AE7C4C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F73D208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:23:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F73D208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 68455204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:27:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68455204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935337AbeFMLXW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 07:23:22 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:59112 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935107AbeFMLXU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:23:20 -0400
-Received: from static-50-53-48-205.bvtn.or.frontiernet.net ([50.53.48.205] helo=[192.168.192.153])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:DHE_RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <john.johansen@canonical.com>)
-        id 1fT3ry-0007Zs-GQ; Wed, 13 Jun 2018 11:23:18 +0000
-From:   John Johansen <john.johansen@canonical.com>
-Subject: [GIT PULL] apparmor updates for v4.18
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     LKLM <linux-kernel@vger.kernel.org>,
-        "open list:SECURITY SUBSYSTEM" 
-        <linux-security-module@vger.kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=john.johansen@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Organization: Canonical
-Message-ID: <7a8e5491-fd2c-b904-33cc-b32e5e9f8896@canonical.com>
-Date:   Wed, 13 Jun 2018 04:23:15 -0700
+        id S935310AbeFML06 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 07:26:58 -0400
+Received: from foss.arm.com ([217.140.101.70]:46200 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935121AbeFML04 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 07:26:56 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 451961529;
+        Wed, 13 Jun 2018 04:26:56 -0700 (PDT)
+Received: from [10.1.210.28] (e107155-lin.cambridge.arm.com [10.1.210.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 621AB3F25D;
+        Wed, 13 Jun 2018 04:26:54 -0700 (PDT)
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org, robh@kernel.org, skannan@codeaurora.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
+ bindings
+To:     Taniya Das <tdas@codeaurora.org>, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org
+References: <1528801355-18719-1-git-send-email-tdas@codeaurora.org>
+ <1528801355-18719-2-git-send-email-tdas@codeaurora.org>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <0f3f0223-3539-dc66-5300-8f30d827445d@arm.com>
+Date:   Wed, 13 Jun 2018 12:26:53 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <1528801355-18719-2-git-send-email-tdas@codeaurora.org>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
 
-Please pull these apparmor changes for v4.18
+On 12/06/18 12:02, Taniya Das wrote:
+> Add QCOM cpufreq firmware device bindings for Qualcomm Technology Inc's
+> SoCs. This is required for managing the cpu frequency transitions which are
+> controlled by firmware.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../bindings/cpufreq/cpufreq-qcom-fw.txt           | 173 +++++++++++++++++++++
+>  1 file changed, 173 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+> new file mode 100644
+> index 0000000..e3087ec
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/cpufreq/cpufreq-qcom-fw.txt
+> @@ -0,0 +1,173 @@
+> +Qualcomm Technologies, Inc. CPUFREQ Bindings
+> +
+> +CPUFREQ FW is a hardware engine used by some Qualcomm Technologies, Inc. (QTI)
+> +SoCs to manage frequency in hardware. It is capable of controlling frequency
+> +for multiple clusters.
+> +
 
-Thanks!
+You are bit inconsistent on the wordings. Some places you refer this as
+hardware engine. If so, please drop all references to firmware/FW. If
+it's firmware then update accordingly.
 
-- John
+> +Properties:
+> +- compatible
+> +	Usage:		required
+> +	Value type:	<string>
+> +	Definition:	must be "qcom,cpufreq-fw".
+> +
+> +* Property qcom,freq-domain
+> +Devices supporting freq-domain must set their "qcom,freq-domain" property with
+> +phandle to a freq_domain_table in their DT node.
+> +
+> +* Frequency Domain Table Node
+> +
+> +This describes the frequency domain belonging to a device.
+> +This node can have following properties:
+> +
+> +- reg
+> +	Usage:		required
+> +	Value type:	<prop-encoded-array>
+> +	Definition:	Addresses and sizes for the memory of the perf
+> +			, lut and enable bases.
+> +			perf - indicates the base address for the desired
+> +			performance state to be set.
+> +			lut - indicates the look up table base address for the
+> +			cpufreq	driver to read frequencies.
+> +			enable - indicates the enable register for firmware.
 
 
-The following changes since commit 552c69b36ebd966186573b9c7a286b390935cce1:
+You still didn't answer my earlier question.
 
-  Merge tag 'v4.17-rc3' into apparmor-next (2018-05-02 00:38:52 -0700)
+OS might touch one or 2 registers in lots of IP blocks. I am not sure
+why those are any different from these. Are you trying to align with any
+other bindings or specification. Are you trying to make this binding
+generic here ? I understand if it was trying to generalize the firmware
+interface, but you also state it's a hardware engine. So I fail to see
+the need for such specificity here. Why not define the whole IP block
+and the driver knows where to access these specific ones as they are
+specific to this hardware block. In that way if you decide to add more
+data, it's extensible easily without the need for patching DT.
 
-are available in the git repository at:
+Eg. Suppose you need some information on power curve for EAS energy
+model, I really hate to update DT for that or even do a mix with DT just
+because f/w is no longer modifiable.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/jj/linux-apparmor tags/apparmor-pr-2018-06-13
-
-for you to fetch changes up to 338d0be437ef10e247a35aed83dbab182cf406a2:
-
-  apparmor: fix ptrace read check (2018-06-07 01:51:02 -0700)
-
-----------------------------------------------------------------
-+ Features
-  - add support for mapping secids and using secctxes
-  - add the ability to get a task's secid
-  - add support for audit rule filtering
-
-+ Cleanups
-  - multiple typo fixes
-  - Convert to use match_string() helper
-  - update git and wiki locations in AppArmor docs
-  - improve get_buffers macro by using get_cpu_ptr
-  - Use an IDR to allocate apparmor secids
-
-+ Bug fixes
-  - fix '*seclen' is never less than zero
-  - fix mediation of prlimit
-  - fix memory leak when deduping profile load
-  - fix ptrace read check
-  - fix memory leak of rule on error exit path
-
-----------------------------------------------------------------
-Andy Shevchenko (1):
-      apparmor: Convert to use match_string() helper
-
-John Johansen (9):
-      apparmor: add support for mapping secids and using secctxes
-      apparmor: add the ability to get a task's secid
-      apparmor: fix '*seclen' is never less than zero
-      apparmor: improve get_buffers macro by using get_cpu_ptr
-      apparmor: modify audit rule support to support profile stacks
-      apparmor: fixup secid map conversion to using IDR
-      apparmor: fix mediation of prlimit
-      apparmor: fix memory leak when deduping profile load
-      apparmor: fix ptrace read check
-
-Jordan Glover (1):
-      apparmor: update git and wiki locations in AppArmor docs
-
-Matthew Garrett (1):
-      apparmor: Add support for audit rule filtering
-
-Matthew Wilcox (1):
-      apparmor: Use an IDR to allocate apparmor secids
-
-Tyler Hicks (1):
-      apparmor: Fix memory leak of rule on error exit path
-
-Zygmunt Krynicki (7):
-      apparmor: fix typo "loosen"
-      apparmor: fix typo "comparison"
-      apparmor: fix typo "replace"
-      apparmor: fix typo "type"
-      apparmor: fix typo "traverse"
-      apparmor: fix typo "independent"
-      apparmor: fix typo "preconfinement"
-
- Documentation/admin-guide/LSM/apparmor.rst |   6 +-
- security/apparmor/audit.c                  |  90 ++++++++++++++++-
- security/apparmor/domain.c                 |   2 +-
- security/apparmor/include/audit.h          |   6 ++
- security/apparmor/include/label.h          |   2 +-
- security/apparmor/include/path.h           |  33 +++----
- security/apparmor/include/secid.h          |  17 +++-
- security/apparmor/label.c                  |  15 ++-
- security/apparmor/lib.c                    |   2 +-
- security/apparmor/lsm.c                    |  50 +++++++---
- security/apparmor/match.c                  |   2 +-
- security/apparmor/mount.c                  |   2 +-
- security/apparmor/policy.c                 |   7 +-
- security/apparmor/resource.c               |   2 +-
- security/apparmor/secid.c                  | 151 +++++++++++++++++++++++++----
- 15 files changed, 313 insertions(+), 74 deletions(-)
+-- 
+Regards,
+Sudeep
