@@ -1,99 +1,193 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DC76BC07D5C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:51:18 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 72474C07D5C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:51:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 856782086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:51:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBdvgo1S"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 856782086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2661B2086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:51:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2661B2086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933600AbeFMCvE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 22:51:04 -0400
-Received: from mail-ot0-f194.google.com ([74.125.82.194]:34791 "EHLO
-        mail-ot0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932697AbeFMCvC (ORCPT
+        id S933814AbeFMCvW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 22:51:22 -0400
+Received: from mail-it0-f72.google.com ([209.85.214.72]:40172 "EHLO
+        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933226AbeFMCvD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 22:51:02 -0400
-Received: by mail-ot0-f194.google.com with SMTP id r18-v6so1276690otk.1;
-        Tue, 12 Jun 2018 19:51:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=muzq9Bq1otCH2GDqfPCVa6DMMCB87kzly/WHra9HY5w=;
-        b=NBdvgo1SNeaa1R/BecrjzyY3nHv6f9NLIU/UOjthYmFnB34FQkB/oSULf7Y9cIoPu+
-         uUXIZhBzT4uRGbzuAq+qZjwxXDA/Je6E7PI/rVKs0H8jwIPBLhRG/EIzvftTL4i9ogg4
-         m24f2MbQJ5J6te+rR1+X2EfeIo4AjTwPkNIZn0UpCOs11JsHV+/UlM/rp77HJB8FRehL
-         MmjDJuBz32amCGYQ8vpuHF5wNZQ6nxWlSEGLkmKpeOn1OPOt/AyFsN27+xOz/YvrPxLC
-         HMqTwTwIPLfla19f73VIxaKKEdQ2C310hkeSek3UY+UKMaoCISSPQKMGn599sWEpfJXu
-         bewQ==
+        Tue, 12 Jun 2018 22:51:03 -0400
+Received: by mail-it0-f72.google.com with SMTP id m131-v6so1305900itm.5
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 19:51:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=muzq9Bq1otCH2GDqfPCVa6DMMCB87kzly/WHra9HY5w=;
-        b=E5QAIAjAt7QwKG80WtxtMhMo/XaPy0pr+LkKD7Ho28/YQ1tFdNknijNhbi3Q0x2Bdu
-         xVS64YizrO87U3AH7MbAnYSM6M7S0ymBYUVxChvd118Zk2jhz/oAiReXtfM2QZGEwXL9
-         ArMyT37M6XYK6XAAde8bBjOSGL8Fh6gmdYLbmyPBA6VNhlphtVWuvu7EB8YSJQ3aFXKz
-         5Up5yWrmcuvzSuEvuXVwyExWVJD1VZxaTwaPpbQ68h4aNUGD0XaoPUimsMPoR61CNEUS
-         sFh7hu60urIz2EBYUdZb6hFBlX2ivx3mnr8+2QPmNsNPZLUxSqzU1X92FdTfFccLbnv0
-         Szjg==
-X-Gm-Message-State: APt69E1sZn8leFyvEK+7ZteZuDj3quqKKDyhZ42qnnBsmeU/kP0rrrhH
-        k6zjzLSkPdULKZXTYijUhZyPJmPo6kUDRfhXec0=
-X-Google-Smtp-Source: ADUXVKJkwWY8NmLdq/EJIXGcZKM0E4VLHfSkXtM0U585kfddguAv6v7sa/flgOyY4b/ljK5rjBbwK3dB2e08jQ9JeJI=
-X-Received: by 2002:a9d:caf:: with SMTP id b44-v6mr1884892otb.270.1528858261962;
- Tue, 12 Jun 2018 19:51:01 -0700 (PDT)
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=5ub7yknKvMW3i4+lq5sHzoTOWz90v2OSVyr4mUNZv9s=;
+        b=SXba89oj/Ll12lDfcs7QwRTYsW0nEFbozkj1ku3kqltMCjBNU9+tCVToTlOhnMJ0Lc
+         KGbCRmQN8+7PpDONN2pa87HuN4/cPVrVFkR1rEWonOsGJzZLpsDtsBZgbu/PA/vJxjs/
+         2Y93inVIBGQWGcdKDazPot/EHulpDinSjKEKLtOwsnCqdOZXv3PpJPUScHz2fQMopixN
+         YG5vxaArnHcMssvwNK/CnWejUdyHwtjJmPZ/oq7hM0/J/h8ci818morqkNIOpPBBs/WA
+         072y20wzqSayvAHrz3zvuWJanV2ucomphBiBCxw8czp44jZM9exI9iAqxN4/Mi2sDNmV
+         +ZhA==
+X-Gm-Message-State: APt69E08js/7kWNVCRr9C/KXLO/GWovYZ9AZ1VuB1U7l9rYo8ifljKcN
+        WIkgB1XPFogyENH2jTD2Wnif5NxbOsjhwY4KfSfkezxSEWcj
+X-Google-Smtp-Source: ADUXVKJyXFKsXKUk21WrD+H7WQGJhzQnIivpnmnvOZcD8npYxqh5oxl9ct0x2nEusQL1a655w0/1FZf4ZeB2ZZZMPEX+ssK1EYg4
 MIME-Version: 1.0
-References: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
- <CA+55aFwvE5G7MV7AV4naAXdbFoszc4JNKEj_QtYqpLFfa2RXtA@mail.gmail.com> <CA+55aFza9udpsCY=_YuBoshgVoXSce-Ja-nsqRbm5eJ6MgXK1g@mail.gmail.com>
-In-Reply-To: <CA+55aFza9udpsCY=_YuBoshgVoXSce-Ja-nsqRbm5eJ6MgXK1g@mail.gmail.com>
-From:   Wanpeng Li <kernellwp@gmail.com>
-Date:   Wed, 13 Jun 2018 10:50:58 +0800
-Message-ID: <CANRm+Cx194zWU0TwoiCaiTy+3tuHp4Ki1mk2VUfv5-z00j23jA@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM changes for 4.18 merge window
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Radim Krcmar <rkrcmar@redhat.com>, kvm <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Received: by 2002:a6b:b242:: with SMTP id b63-v6mr1398204iof.47.1528858262517;
+ Tue, 12 Jun 2018 19:51:02 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 19:51:02 -0700
+In-Reply-To: <089e08e548431cd0f90565c9f4e5@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a643e4056e7d0db4@google.com>
+Subject: Re: KASAN: use-after-free Read in rds_cong_queue_updates
+From:   syzbot <syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Jun 2018 at 10:42, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Tue, Jun 12, 2018 at 7:18 PM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > The attached patch _may_ be the right thing to do. It's not pretty.
->
-> .. and when I decided to actually do some minimal kvm testing with
-> that patch, I notice that we've apparently broken kvm entirely during
-> this merge window, and I just get
->
->   Error: KVM_CREATE_VM ioctl
->   Warning: Failed init: kvm__init
->
-> when doing lkvm run.
->
-> Bisecting. But that's unrelated to the recent kvm build breakage.
+syzbot has found a reproducer for the following crash on:
 
-Yeah, it happens before the KVM GIT PULL on Linus's tree, you will see
-the warning above unless you lauch the guest w/ root user, maybe other
-subsystems' modifications break something.
+HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1461f03f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=4c20b3866171ce8441d2
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16cbfeaf800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165227f7800000
 
-Regards,
-Wanpeng Li
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
+
+IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+IPVS: ftp: loaded support on port[0] = 21
+IPVS: ftp: loaded support on port[0] = 21
+==================================================================
+BUG: KASAN: use-after-free in atomic_read  
+include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:42  
+[inline]
+BUG: KASAN: use-after-free in check_net include/net/net_namespace.h:236  
+[inline]
+BUG: KASAN: use-after-free in rds_destroy_pending net/rds/rds.h:897 [inline]
+BUG: KASAN: use-after-free in rds_cong_queue_updates+0x255/0x590  
+net/rds/cong.c:226
+Read of size 4 at addr ffff8801ab180044 by task syz-executor199/4800
+
+CPU: 1 PID: 4800 Comm: syz-executor199 Not tainted 4.17.0+ #84
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+  refcount_read include/linux/refcount.h:42 [inline]
+  check_net include/net/net_namespace.h:236 [inline]
+  rds_destroy_pending net/rds/rds.h:897 [inline]
+  rds_cong_queue_updates+0x255/0x590 net/rds/cong.c:226
+  rds_recv_rcvbuf_delta.part.3+0x211/0x350 net/rds/recv.c:126
+  rds_recv_rcvbuf_delta net/rds/recv.c:735 [inline]
+  rds_clear_recv_queue+0x2f0/0x4c0 net/rds/recv.c:735
+  rds_release+0x15c/0x550 net/rds/af_rds.c:72
+  __sock_release+0xd7/0x260 net/socket.c:603
+  sock_close+0x19/0x20 net/socket.c:1186
+  __fput+0x353/0x890 fs/file_table.c:209
+  ____fput+0x15/0x20 fs/file_table.c:243
+  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1aee/0x2730 kernel/exit.c:865
+  do_group_exit+0x16f/0x430 kernel/exit.c:968
+  get_signal+0x886/0x1960 kernel/signal.c:2468
+  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+  exit_to_usermode_loop+0x2cf/0x360 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x44f439
+Code: e8 ac be 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 5b ff fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fc65567dcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00000000006edadc RCX: 000000000044f439
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000006edadc
+RBP: 00000000006edad8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007fff3df31b1f R14: 00007fc65567e9c0 R15: 0000000000000061
+
+Allocated by task 4800:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+  kmem_cache_zalloc include/linux/slab.h:696 [inline]
+  net_alloc net/core/net_namespace.c:383 [inline]
+  copy_net_ns+0x159/0x4c0 net/core/net_namespace.c:423
+  create_new_namespaces+0x69d/0x8f0 kernel/nsproxy.c:107
+  unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
+  ksys_unshare+0x708/0xf90 kernel/fork.c:2411
+  __do_sys_unshare kernel/fork.c:2479 [inline]
+  __se_sys_unshare kernel/fork.c:2477 [inline]
+  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2477
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 746:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+  net_free net/core/net_namespace.c:399 [inline]
+  net_drop_ns.part.14+0x11a/0x130 net/core/net_namespace.c:406
+  net_drop_ns net/core/net_namespace.c:405 [inline]
+  cleanup_net+0x6a1/0xb20 net/core/net_namespace.c:541
+  process_one_work+0xc64/0x1b70 kernel/workqueue.c:2153
+  worker_thread+0x181/0x13a0 kernel/workqueue.c:2296
+  kthread+0x345/0x410 kernel/kthread.c:240
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+
+The buggy address belongs to the object at ffff8801ab180040
+  which belongs to the cache net_namespace(17:syz0) of size 8896
+The buggy address is located 4 bytes inside of
+  8896-byte region [ffff8801ab180040, ffff8801ab182300)
+The buggy address belongs to the page:
+page:ffffea0006ac6000 count:1 mapcount:0 mapping:ffff8801aeaa0080 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000008100(slab|head)
+raw: 02fffc0000008100 ffff8801d3827048 ffff8801d3827048 ffff8801aeaa0080
+raw: 0000000000000000 ffff8801ab180040 0000000100000001 ffff8801ab7cae40
+page dumped because: kasan: bad access detected
+page->mem_cgroup:ffff8801ab7cae40
+
+Memory state around the buggy address:
+  ffff8801ab17ff00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801ab17ff80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ffff8801ab180000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+                                            ^
+  ffff8801ab180080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8801ab180100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
