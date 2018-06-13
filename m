@@ -2,110 +2,163 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3C1E7C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:25:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EAB12C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6F5E20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:25:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6F5E20891
+	by mail.kernel.org (Postfix) with ESMTP id AAF02208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:26:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAF02208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934918AbeFMKZZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 06:25:25 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45504 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754096AbeFMKZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 06:25:24 -0400
+        id S935109AbeFMK0P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 06:26:15 -0400
+Received: from foss.arm.com ([217.140.101.70]:45544 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754096AbeFMK0O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 06:26:14 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C38A780D;
-        Wed, 13 Jun 2018 03:25:23 -0700 (PDT)
-Received: from [10.1.207.70] (e112298-lin.cambridge.arm.com [10.1.207.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DDFDB3F25D;
-        Wed, 13 Jun 2018 03:25:19 -0700 (PDT)
-Subject: Re: [RFC PATCH 03/23] genirq: Introduce IRQF_DELIVER_AS_NMI
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Doug Berger <opendmb@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        iommu@lists.linux-foundation.org
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <20180613083419.GS12258@hirez.programming.kicks-ass.net>
- <26687332-ab8f-7f6d-909a-f0918dbfea86@arm.com>
- <alpine.DEB.2.21.1806131104570.2280@nanos.tec.linutronix.de>
- <344b838e-81e3-97d8-f90d-315fed7879c1@arm.com>
- <alpine.DEB.2.21.1806131149410.2280@nanos.tec.linutronix.de>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <5c52d916-e405-e689-8fa1-d2dfb28ab3fd@arm.com>
-Date:   Wed, 13 Jun 2018 11:25:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 031D480D;
+        Wed, 13 Jun 2018 03:26:14 -0700 (PDT)
+Received: from e107564-lin.cambridge.arm.com (e107564-lin.cambridge.arm.com [10.2.131.9])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A020D3F25D;
+        Wed, 13 Jun 2018 03:26:11 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 11:26:05 +0100
+From:   Brian Starkey <brian.starkey@arm.com>
+To:     Liviu Dudau <Liviu.Dudau@arm.com>
+Cc:     Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        David Airlie <airlied@linux.ie>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Eric Anholt <eric@anholt.net>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Daniel Stone <daniels@collabora.com>,
+        Rob Clark <robdclark@gmail.com>
+Subject: Re: [PATCH v10 3/3] drm: writeback: Add client capability for
+ exposing writeback connectors
+Message-ID: <20180613102605.GA8131@e107564-lin.cambridge.arm.com>
+References: <20180612135233.18575-1-Liviu.Dudau@arm.com>
+ <20180612135233.18575-4-Liviu.Dudau@arm.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1806131149410.2280@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20180612135233.18575-4-Liviu.Dudau@arm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Liviu,
 
+On Tue, Jun 12, 2018 at 02:52:33PM +0100, Liviu Dudau wrote:
+>Due to the fact that writeback connectors behave in a special way
+>in DRM (they always report being disconnected) we might confuse some
+>userspace. Add a client capability for writeback connectors that will
+>filter them out for clients that don't understand the capability.
+>
+>Changelog:
+> - only accept the capability if the client has already set the
+>DRM_CLIENT_CAP_ATOMIC one.
+>
+>Cc: Sean Paul <seanpaul@chromium.org>
+>Cc: Brian Starkey <brian.starkey@arm.com>
+>Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
 
-On 13/06/18 10:57, Thomas Gleixner wrote:
-> On Wed, 13 Jun 2018, Julien Thierry wrote:
->> On 13/06/18 10:20, Thomas Gleixner wrote:
->>> Adding NMI delivery support at low level architecture irq chip level is
->>> perfectly fine, but the exposure of that needs to be restricted very
->>> much. Adding it to the generic interrupt control interfaces is not going to
->>> happen. That's doomed to begin with and a complete abuse of the interface
->>> as the handler can not ever be used for that.
->>>
->>
->> Understood, however the need would be to provide a way for a driver to request
->> an interrupt to be delivered as an NMI (if irqchip supports it).
-> 
-> s/driver/specialized code written by people who know what they are doing/
-> 
->> But from your response this would be out of the question (in the
->> interrupt/irq/irqchip definitions).
-> 
-> Adding some magic to the irq chip is fine, because that's where the low
-> level integration needs to be done, but exposing it through the generic
-> interrupt subsystem is a NONO for obvious reasons.
-> 
->> Or somehow the concerned irqchip informs the arch it supports NMI delivery and
->> it is up to the interested drivers to query the arch whether NMI delivery is
->> supported by the system?
-> 
-> Yes, we need some infrastructure for that, but that needs to be separate
-> and with very limited exposure.
-> 
+LGTM,
 
-Right, makes sense. I'll check with Marc how such an infrastructure 
-should be introduced.
+Reviewed-by: Brian Starkey <brian.starkey@arm.com>
 
 Thanks,
+-Brian
 
--- 
-Julien Thierry
+>---
+> drivers/gpu/drm/drm_ioctl.c       | 7 +++++++
+> drivers/gpu/drm/drm_mode_config.c | 5 +++++
+> include/drm/drm_file.h            | 7 +++++++
+> include/uapi/drm/drm.h            | 9 +++++++++
+> 4 files changed, 28 insertions(+)
+>
+>diff --git a/drivers/gpu/drm/drm_ioctl.c b/drivers/gpu/drm/drm_ioctl.c
+>index 0d4cfb232576f..fe49fb0356b5a 100644
+>--- a/drivers/gpu/drm/drm_ioctl.c
+>+++ b/drivers/gpu/drm/drm_ioctl.c
+>@@ -334,6 +334,13 @@ drm_setclientcap(struct drm_device *dev, void *data, struct drm_file *file_priv)
+> 			return -EINVAL;
+> 		file_priv->aspect_ratio_allowed = req->value;
+> 		break;
+>+	case DRM_CLIENT_CAP_WRITEBACK_CONNECTORS:
+>+		if (!file_priv->atomic)
+>+			return -EINVAL;
+>+		if (req->value > 1)
+>+			return -EINVAL;
+>+		file_priv->writeback_connectors = req->value;
+>+		break;
+> 	default:
+> 		return -EINVAL;
+> 	}
+>diff --git a/drivers/gpu/drm/drm_mode_config.c b/drivers/gpu/drm/drm_mode_config.c
+>index e5c653357024d..21e353bd3948e 100644
+>--- a/drivers/gpu/drm/drm_mode_config.c
+>+++ b/drivers/gpu/drm/drm_mode_config.c
+>@@ -145,6 +145,11 @@ int drm_mode_getresources(struct drm_device *dev, void *data,
+> 	count = 0;
+> 	connector_id = u64_to_user_ptr(card_res->connector_id_ptr);
+> 	drm_for_each_connector_iter(connector, &conn_iter) {
+>+		/* only expose writeback connectors if userspace understands them */
+>+		if (!file_priv->writeback_connectors &&
+>+		    (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK))
+>+			continue;
+>+
+> 		if (drm_lease_held(file_priv, connector->base.id)) {
+> 			if (count < card_res->count_connectors &&
+> 			    put_user(connector->base.id, connector_id + count)) {
+>diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+>index 027ac16da3d15..26485acc51d79 100644
+>--- a/include/drm/drm_file.h
+>+++ b/include/drm/drm_file.h
+>@@ -192,6 +192,13 @@ struct drm_file {
+> 	 */
+> 	unsigned aspect_ratio_allowed:1;
+>
+>+	/**
+>+	 * @writeback_connectors:
+>+	 *
+>+	 * True if client understands writeback connectors
+>+	 */
+>+	unsigned writeback_connectors:1;
+>+
+> 	/**
+> 	 * @is_master:
+> 	 *
+>diff --git a/include/uapi/drm/drm.h b/include/uapi/drm/drm.h
+>index 9c660e1688abe..300f336633f28 100644
+>--- a/include/uapi/drm/drm.h
+>+++ b/include/uapi/drm/drm.h
+>@@ -687,6 +687,15 @@ struct drm_get_cap {
+>  */
+> #define DRM_CLIENT_CAP_ASPECT_RATIO    4
+>
+>+/**
+>+ * DRM_CLIENT_CAP_WRITEBACK_CONNECTORS
+>+ *
+>+ * If set to 1, the DRM core will expose special connectors to be used for
+>+ * writing back to memory the scene setup in the commit. Depends on client
+>+ * also supporting DRM_CLIENT_CAP_ATOMIC
+>+ */
+>+#define DRM_CLIENT_CAP_WRITEBACK_CONNECTORS	5
+>+
+> /** DRM_IOCTL_SET_CLIENT_CAP ioctl argument type */
+> struct drm_set_client_cap {
+> 	__u64 capability;
+>-- 
+>2.17.1
+>
