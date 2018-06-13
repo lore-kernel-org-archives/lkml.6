@@ -2,156 +2,150 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 88377C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:32:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CB80DC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1BF2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:32:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E1BF2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 5EA1D208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:36:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="0F5qNTjv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5EA1D208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754516AbeFMGcZ (ORCPT
+        id S1754525AbeFMGgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 02:32:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58270 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754452AbeFMGcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 02:32:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3D841AC64;
-        Wed, 13 Jun 2018 06:32:21 +0000 (UTC)
-Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
- MLOCK_ONFAULT
-To:     Jason Baron <jbaron@akamai.com>, Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-api@vger.kernel.org, emunson@mgebm.net
-References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
- <20180611072005.GC13364@dhcp22.suse.cz>
- <4c4de46d-c55a-99a8-469f-e1e634fb8525@akamai.com>
- <20180611150330.GQ13364@dhcp22.suse.cz>
- <775adf2d-140c-1460-857f-2de7b24bafe7@akamai.com>
- <20180612074646.GS13364@dhcp22.suse.cz>
- <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <0daccb7c-f642-c5ce-ca7a-3b3e69025a1e@suse.cz>
-Date:   Wed, 13 Jun 2018 08:32:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 13 Jun 2018 02:36:08 -0400
+Received: from mail-by2nam01on0083.outbound.protection.outlook.com ([104.47.34.83]:34321
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754416AbeFMGgF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 02:36:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zbjDuRuyazbib41YlXnR3MN85w5AMscS21otGWI4QCE=;
+ b=0F5qNTjvEcFMast2j8cf6FCLH5wJBLyKfKqQ/8SwvRfkJX7ANVsajlYQsAzMn55S59VrevbRIqIOZBPHwIo2JJ1HpY4tnaViA8REf63Dg88lJco6ZYQpcsBMKxkVCGwxg8FDM6NVM9/qJ1zX0LZEb8BOpasbXHBtMMWH/XJzXhE=
+Received: from BN7PR02CA0010.namprd02.prod.outlook.com (2603:10b6:408:20::23)
+ by DM6PR02MB4955.namprd02.prod.outlook.com (2603:10b6:5:11::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.841.19; Wed, 13 Jun
+ 2018 06:36:03 +0000
+Received: from BL2NAM02FT018.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e46::207) by BN7PR02CA0010.outlook.office365.com
+ (2603:10b6:408:20::23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.863.14 via Frontend
+ Transport; Wed, 13 Jun 2018 06:36:02 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
+ smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
+ header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
+ header.from=xilinx.com;
+Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ BL2NAM02FT018.mail.protection.outlook.com (10.152.77.170) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.863.11
+ via Frontend Transport; Wed, 13 Jun 2018 06:36:02 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1fSzNx-0005SE-MU; Tue, 12 Jun 2018 23:36:01 -0700
+Received: from [127.0.0.1] (helo=localhost)
+        by xsj-pvapsmtp01 with smtp (Exim 4.63)
+        (envelope-from <radhey.shyam.pandey@xilinx.com>)
+        id 1fSzNs-0001Z5-Jj; Tue, 12 Jun 2018 23:35:56 -0700
+Received: from xsj-pvapsmtp01 (xsj-smtp.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id w5D6Zsdx031109;
+        Tue, 12 Jun 2018 23:35:54 -0700
+Received: from [172.23.37.80] (helo=xhd-paegbuild40.xilinx.com)
+        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
+        (envelope-from <radheys@xilinx.com>)
+        id 1fSzNp-0001Yg-Sm; Tue, 12 Jun 2018 23:35:54 -0700
+Received: by xhd-paegbuild40.xilinx.com (Postfix, from userid 13245)
+        id 0D5C6B20749; Wed, 13 Jun 2018 12:05:53 +0530 (IST)
+From:   Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+To:     <davem@davemloft.net>, <michal.simek@xilinx.com>,
+        <radhey.shyam.pandey@xilinx.com>
+CC:     <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 0/4] emaclite bug fixes and code cleanup
+Date:   Wed, 13 Jun 2018 12:05:15 +0530
+Message-ID: <1528871719-1681-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+X-Mailer: git-send-email 2.4.4
+X-RCIS-Action: ALLOW
+X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
+X-TM-AS-User-Approved-Sender: Yes;Yes
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(396003)(39860400002)(39380400002)(376002)(2980300002)(438002)(189003)(199004)(4326008)(478600001)(26005)(90966002)(2201001)(48376002)(47776003)(7049001)(36756003)(54906003)(110136005)(316002)(42186006)(16586007)(186003)(336012)(52956003)(50466002)(476003)(356003)(486006)(126002)(2616005)(426003)(81156014)(36386004)(51416003)(6666003)(106466001)(50226002)(6266002)(106002)(103686004)(2906002)(5660300001)(8936002)(81166006)(63266004)(8676002)(305945005)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4955;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BL2NAM02FT018;1:dxq5Q0Ny7bHwQHRnRvqPl61jDwhkcA1CVU2mwDSuLJ1/skw0LWlTFrlAutGVec2ldjVuC7IvgbZwd5XVHWbCGSA1g/0nZbZQ0RphLn66osvk7WIX46yB28jAPQ69AxxC
 MIME-Version: 1.0
-In-Reply-To: <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: ea984cca-f556-47b7-72bc-08d5d0f7eecf
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(711020)(4608076)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060);SRVR:DM6PR02MB4955;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4955;3:xyALGKZk7zQQ1rWfSxBvzkuqiR3fQZfZvTMZr7WFCNOBvmlIOQXVHQhWE2h7/mQqGE5vhByjfrpYrJXjnomcXcb9fOlZkmoPqaB7aacFYZl7SuZIEtxPg8UIJF1MYif6F/1bCgyiJTpq5YvIPzIS0VUtGcM0r3Nkp+YrIo0MRPYZYgYMeAc7wUoL+eZmAl5U9LE6tT8rdo6BE23TDcnI0ye3vbGyD3oSDH6XcT/Ak62o/IYPQl1YIDG3FaD/EkunnQdv2EGhaonYAoYU6+Oq8BnB8duajkd+d3/spt40u3rZonKVhqJ9WTNUky2+d4vOVwzDYI+FUW40oq4o0kQTGBHKJWl77CoXHwqbrH6iEyU=;25:Z4PliNZu6383eQ9WPQalXYGU3GBWUkYQ11Y7EqCgXjt79+P/KQXcYk1/spdJ59SXo6KLRAH8NBai1zVSQ+H+KOEZwedlCWIbeda0nn318hdX52UNmgEY7nVz6Wct1ztFrFWpibrvIP+jP8owItQ9DXLZzxl96AHCaSx83AE45HeT71fJlx+AgWW0Ty+Mb9hhQZM/ehAnVmdVpoHFlHifVKSYP9ASmdOtlgXrvg4D3QqWVc6SDlaWpLx7PkPiDitDy9FgjMOAHZcA5JDllKnrYOamuRXJFMI0ShHloXJUgQwOEfZJvIyEXtRboGoEXLEIM3zsgAKsb1uu0Gihvj1hgg==
+X-MS-TrafficTypeDiagnostic: DM6PR02MB4955:
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4955;31:vdySYthmcpkGBqJbIGOimPEBirhxwmCk7rZWqRJ2tat9WH86URRPPrOP5/zw7Mz0GkTC9BtuRByG3P6hun0s1niTgcwDfa9opQS3wbcy4E4g8UzPq0+uFDynyQo+zUmNEzP2Jcnb8GutCf87mAUe5vFvrGp8agAGdk8ZsOfwWQwslTxJYutvazn0OV6tgQKCnxeeXjBopdt6Qsnd/Owlumm+aiFxqVNDnlAp6X3//uc=;20:NtJ3LAEWICOWQx0ywLbA3ePjeQcqaKD8XC+nQ/wA50DM0cAgy5YChV1VOvDeDrFbRL1PQIWsBqXD8Buure+4qLnP0CQM6lsLQSrgMICXbeHjGO2WxdjXkNhHt1JBYuZQoygdKSCBRO5JhPz3GDqICwYz+GKB3ozmoQESvinmWgYOpmEWyiSk6SItZFij1NeT2e4pAog0IxcsZz18cBA2zfLJGMPXt5Efo78p7T95jfa49ZxVngCXZ1aNv+n19XLyTGvOo9VlohFGf4yJuebAHZtUqBE3/GTVgdM1RK0GFu+HGoLOt0pBWOdUMf+XzdCKmt6CC+ZBucmMWCakU48V/YCKJvOvBA50rmHPILiWkEsusll2J1k4RAANkP3/H5Y11wuUEoqIcsvKqiGWfkV9XW+xBGIL8fDTA8egNYwO1ZuMNbhb8cXHktY02izGgiGMfrJobLRKA+1bzHw+mgtO7nsG0kLPV8srd3F8SmjQ2IxJxc5O/zzg6wnRrePq5E0O
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-Microsoft-Antispam-PRVS: <DM6PR02MB49555421F486655D09876795C77E0@DM6PR02MB4955.namprd02.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93004095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123564045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:DM6PR02MB4955;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4955;
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4955;4:tz8AU1CY9zxITE2QFrKzoCdhK6Vr7I4lC6FmgvUjxv0FjComKCfk7dbNb5cVaRTKHUtgj9TqbUEitbnhCsSDAZqnKbEY8OJf5RahaoXHH5j1ykv4j9bWmwYSeya8918DW1TfU+kafMqwRoq+bNoKkDDvbE7+rt9d9i/6dP7xGhtAo7E+HfZerxO61SpVNwEv3+rOIaT5XD7cKTpCYQrz8ZLa1wdDB3QQDYv1FU12opsVC9qaNNzDo4AJodI/8EiCvqpCnDJlUtfipIp0l02aMg==
+X-Forefront-PRVS: 07025866F6
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM6PR02MB4955;23:VOBxbBTAhPSvXcbC08uvSzJgcRbcImooudMQNmIpz?=
+ =?us-ascii?Q?SKE6tylLndWS2O3ZS+jzxKVNgO0ndG8XDKe4sAAwfAHjd46PqsauiaPs4Pq+?=
+ =?us-ascii?Q?ZcmDf5oN1mPQFD8T+NRLyKdxzuJcE8sk50ZMOzxz993Xtg3wzwW18U2KxZo+?=
+ =?us-ascii?Q?Ym2AtHAUAzY+v5THqU5GcBLvwxBX7MLGxvSkc+6CFLqBIpocLuqhA2jmExr+?=
+ =?us-ascii?Q?8XCl+60kes0DNvKShUd4PVw4PaUwTBCV3bzXDhLIgl8outcapXuLqTzp27aI?=
+ =?us-ascii?Q?XC6EOV5amIw6B6+n58Ru5qYoVPqD8PIYAs7Yn5EDLRGaQmkP2b7F38T8z/oj?=
+ =?us-ascii?Q?a5iQ4XqEktFQO2Ml+p2f/3HZUVDBwZgkEcYBaaH74oXTceIjZYtxjksyzSoJ?=
+ =?us-ascii?Q?5HTCgJxVvTfNjIohkfkZmiPgWVGVZgpcKugcSg+exrpUz6QEDXH++yspLuP9?=
+ =?us-ascii?Q?oY+6/EET+v0i5lY0H1oheSW2UGpjDB3wq2pmyBvBEe5ihiv+d9TKbKyJP7SX?=
+ =?us-ascii?Q?a+pD2AW57iLCs7jzECc7oWejYuDfMHHRwOXKNKRDbeuSf/Xe901CLk1JHLG7?=
+ =?us-ascii?Q?yik1jTS1Sm24FAe11JI3pi+vLldsWeLrVzUC5NaJVAp/ahKUbQBKwvuhbE8p?=
+ =?us-ascii?Q?KplWhbU/tBsYUeK+QxxQoc8BdEavrHvnSLDm/vMR8ICv/aHWewG5mo5gNXLR?=
+ =?us-ascii?Q?nemjuGAjXVsawaZ41sgJ8DUL/tJQduIBZ7HCEDNlsEpIAZGA4N66ELacJjDW?=
+ =?us-ascii?Q?EeV+HiESSa8tJtrHTdf/ghxB8osxh53LAczzktHrcW5VyiDXLSknQuQvUP/z?=
+ =?us-ascii?Q?qZgOpvGjIpqjt6J56v7BPpnwU596IGNkRTsIIpVqT1U9Y9TGduApYc+CJwqR?=
+ =?us-ascii?Q?gWKwWjRBmbiBhOtBna1qhfEnCKNOZVtOYdSeQ+4oRl+UywU4oJMWU/qd85H+?=
+ =?us-ascii?Q?VSqQ6KSC4wbcvgK4aM0pPTpjJf++E8smRJD3ughDlnkqZIS+lBTboaWz2N9V?=
+ =?us-ascii?Q?+6dKoobnvK4tmAj03aP+wDdkcN+uzdD/Lf8Z2e/zdMeAhk3timwPNteb3N3b?=
+ =?us-ascii?Q?gXm74iHTEt5kM/hnDWZpvJonQwc+5uXd7zm+JHUALL0768wejEllLDWJCEM3?=
+ =?us-ascii?Q?KZ/UNL27CY=3D?=
+X-Microsoft-Antispam-Message-Info: sZVO/EO+KP4ZhzVYUxDF2ps1LMI/w+59GlNfzyohr9SpKIb+gswodYQj/mldr7h3HWkWknlZTzZSUbfXokG2nf12b54NrKDe839up0NOd2CnfcrjzNj0cvW+D3RdjEu+3auk9ZOdV8BEDLKKrZyvcacoKHP66QKjzQ++zEmXd2ND+sNOgE10bzadWi/yQ+Qg
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4955;6:rolp6MzYir7oh6Fm23DOzLueuhiyPjZhmEbhlmkU1y/vi9POQOsm6mmAXXigso2V8PdS2MpjhAVjFVHtR186m0ipiBbgSjz09ikWxQmozx1pIwgpHhaWrLjkxrtqmK+GNDs8AryCiaU4r7IBMTZi5Pe5aLYc/9yTPSJCphCXayROZOcpQYo14ExY78KTs20DNPCPjaQQl5bUIgSr8Q502ZFvg7yIlT1tzeWZdT9Sjy7fXLx5JEvnjnYNK3AIRf3ib3pzPf7xi/eUNlwSK1V8bmXW+ci5/pdtqk6+qW8jTLDs98uWEDp0Bm1Nb9ecRfOQFGtCxLKVMaishDuNVHYc19oWUZZcs0LPWd3ySFsX/0QSPcdVj67SqjL4SGueLWfPEunLtMweiy0RFFd5odGqe/Ty970lt1orqSE5vNnKlXXF1Onng0TgeW3wl36tYskfs/IyIRhxNxWPO9x8yqOYVg==;5:thFcp5hNMARZ4sYeA96CXs/YLcpIcbB79eOHW7Pt02vtobnUyB1zkc4d7aWVAoex6jNDt2cEEYeMv1fgp8p+wGu07rLvPqt/hfYhZVbdgIPSjpPySPoggPuqBeka+RDiNs4cZAPwjacypF9Spx4/YsFqDx67QgwJnuK201lTIVI=;24:aOcEBQ81Kl4SH5jzhGruGMHVCzTh2QPwnYcs1B9Owl2dioPxPs4Jmdk1Hyk2HlXongMhhNFsc+HXdmqF78c/cVOTz3YP7SqBad506RRu8zA=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;DM6PR02MB4955;7:UNOqG+XbW0gYtg4QOGO/u66Z13qR/l1dEF9XEYHku/oKZjM7PvCCmSVmXq+GniSnQ7vFvFMNL8gVAf4VylFwbbVp0G9Tht2jTSP5dm0tGTbinvs/cLG5Gt9RYxkD0C7tP0ooOe/vd9RQIeynlIMCDciN4m8c0nZwYGNAwBONfYCcK8d4txeBXsIi9kxhvyCIJYSHuEtaIHO/khgKAX1W5nxuBbSKhWPdQaHaM4fU18TVar/idcZ+ZebbDN4Mjxch
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2018 06:36:02.2990
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea984cca-f556-47b7-72bc-08d5d0f7eecf
+X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4955
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 04:11 PM, Jason Baron wrote:
-> 
-> 
-> On 06/12/2018 03:46 AM, Michal Hocko wrote:
->> On Mon 11-06-18 12:23:58, Jason Baron wrote:
->>> On 06/11/2018 11:03 AM, Michal Hocko wrote:
->>>> So can we start discussing whether we want to allow MADV_DONTNEED on
->>>> mlocked areas and what downsides it might have? Sure it would turn the
->>>> strong mlock guarantee to have the whole vma resident but is this
->>>> acceptable for something that is an explicit request from the owner of
->>>> the memory?
->>>>
->>>
->>> If its being explicity requested by the owner it makes sense to me. I
->>> guess there could be a concern about this breaking some userspace that
->>> relied on MADV_DONTNEED not freeing locked memory?
->>
->> Yes, this is always the fear when changing user visible behavior.  I can
->> imagine that a userspace allocator calling MADV_DONTNEED on free could
->> break. The same would apply to MLOCK_ONFAULT/MCL_ONFAULT though. We
->> have the new flag much shorter so the probability is smaller but the
->> problem is very same. So I _think_ we should treat both the same because
->> semantically they are indistinguishable from the MADV_DONTNEED POV. Both
->> remove faulted and mlocked pages. Mlock, once applied, should guarantee
->> no later major fault and MADV_DONTNEED breaks that obviously.
+This patch series fixes bug in emaclite remove and mdio_setup routines.
+It does minor code cleanup.
 
-I think more concerning than guaranteeing no later major fault is
-possible data loss, e.g. replacing data with zero-filled pages.
+Radhey Shyam Pandey (4):
+  net: emaclite: Fix position of lp->mii_bus assignment
+  net: emaclite: Fix MDIO bus unregister bug
+  net: emaclite: Remove unused 'has_mdio' flag.
+  net: emaclite: Remove xemaclite_mdio_setup return check
 
-The madvise manpage is also quite specific about not allowing
-MADV_DONTNEED and MADV_FREE for locked pages.
-
-So I don't think we should risk changing that for all mlocked pages.
-Maybe we can risk MCL_ONFAULT, since it's relatively new and has few users?
-
->> So the more I think about it the more I am worried about this but I am
->> more and more convinced that making ONFAULT special is just a wrong way
->> around this.
->>
-> 
-> Ok, I share the concern that there is a chance that userspace is relying
-> on MADV_DONTNEED not free'ing locked memory. In that case, what if we
-> introduce a MADV_DONTNEED_FORCE, which does everything that
-> MADV_DONTNEED currently does but in addition will also free mlock areas.
-> That way there is no concern about breaking something.
-
-A new niche case flag? Sad :(
-
-BTW I didn't get why we should allow this for MADV_DONTNEED but not
-MADV_FREE. Can you expand on that?
-
-> Thanks,
-> 
-> -Jason
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-api" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+ drivers/net/ethernet/xilinx/xilinx_emaclite.c |   12 ++++--------
+ 1 files changed, 4 insertions(+), 8 deletions(-)
 
