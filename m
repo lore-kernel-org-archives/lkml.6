@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F114EC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7340EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A573F204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28FDE204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:34:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DHjcCH44"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A573F204EC
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZEpVWiWr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28FDE204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935491AbeFMLdx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 07:33:53 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:33936 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935459AbeFMLdu (ORCPT
+        id S935514AbeFMLeG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 07:34:06 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:33945 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935498AbeFMLd6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:33:50 -0400
-Received: by mail-pg0-f66.google.com with SMTP id q4-v6so1152903pgr.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:33:49 -0700 (PDT)
+        Wed, 13 Jun 2018 07:33:58 -0400
+Received: by mail-pg0-f65.google.com with SMTP id q4-v6so1153058pgr.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:33:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=2jKomMyu3aPBvQwHnJ5xi/PxkWHSmOUr0jIrlPwlqUo=;
-        b=DHjcCH44PAE//jlj19ah6Lf6VjIsxwDZljyjvo8mQDpaISZEmORUdgHGSx4ht3wvIo
-         pNE8+itgpZQ4tEBXVSCgOJGMq8RAxczNzXxO4kOtXjs0s0uoyPuMMkwm2LD6nr6tiWdT
-         1b9HW6mWoxEHvbOSLIhKIRT/00Lf48AZgpap0=
+        bh=eYsaNDXipDe/lJhotbiCb787ugqu/85X8+2xC+bpmGQ=;
+        b=ZEpVWiWrP7BA3MdccZkJpaRhQkH3n9pAVvH5/bFfXXkW51iMrGyt2iXRekl+tw0nxI
+         LvR6KaRN9p8OErUhzSYvQSrUj8EvefINyX3KU4ETegdqyWOC8UnlZH5HUVCkSOHXJvH/
+         hFXnJPioHEiQSdQfRimDnXyAAIifQxb+IyRxw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=2jKomMyu3aPBvQwHnJ5xi/PxkWHSmOUr0jIrlPwlqUo=;
-        b=bhwHpXf9j11tDi0ZwO1VTKW5XVthSmjAvJDc+XMvq4QsEvcRDP9/YoL6qD3qiG1FZ/
-         zqNEDRRshv4CGjvUS9GWECHao1fLaDwHUqx5rj194cMjxM5bCl7iengk8hBTZayidGYa
-         sDLqkjvxRdHWAO/H1uHV9Kw8OxxyOeELFd1IXVv7gCxCCLsryfed5RlI/pUtLkdfc9dR
-         CzQjl0Vbm4RyqyXKvFntJWbol6BOH5wxN9oFZzJi6l0mOmQw/OE9ZKsQr0yJt9rU7h4m
-         6eIsg6cY5H62Ttc60rfrN0zWPbXFyOx34hZlfQI+r38DYTXxA1ClaqugXNO8bFlJuokO
-         FuGg==
-X-Gm-Message-State: APt69E1AjDoq8usrrjZsyat9U/eRkFOHIiNK/xWAtVfB5YV86zzhDi4o
-        gHJiUVWGY6ihAJqOvTgxS+DZhQ==
-X-Google-Smtp-Source: ADUXVKLTizWTXbXFsSjgSErRHW7sVMXM1YRtFLO1ja/eanjd30bHW28hZhyerTht2cfBRKmYv0wYgA==
-X-Received: by 2002:a63:7707:: with SMTP id s7-v6mr3862017pgc.426.1528889629540;
-        Wed, 13 Jun 2018 04:33:49 -0700 (PDT)
+        bh=eYsaNDXipDe/lJhotbiCb787ugqu/85X8+2xC+bpmGQ=;
+        b=EqOu3Ch09JloKiayCaeLNill6Hb11Ct4NMGD9dl3ig5DAvKF+ACKhdyxjKg3HcmYyv
+         668n7Ird38hJP7RnTPhVfFlr2GhTW+ZuBJt3j1ikbo+SaGATeHIAd2M404I2IjJWAN8A
+         TXjvJBPo+gyOcvrhsgeI4D3GTm3MIT4xkPT6EVBc9v84X/Rtg5fxr/WXGmwCFySAKuaE
+         AfyEjfqto+YONTf8ikyEp5cvyu2Mns+e++L3y0KT0RuZcio0DS2+QOx/9FpY7SdrFb7v
+         O456Cg/7PzRp+3vHrHYKiAPjFvgg6pUPDwwvkLU2pXQWztEht3THrhSizOTa3dAykeMP
+         JFFQ==
+X-Gm-Message-State: APt69E163V496OjrDSDzvDHC7pweu5PZuArNqrpEff1evgjsh5KWb9ra
+        XtIkYwRs5SSVZDGf8tOiVxh42w==
+X-Google-Smtp-Source: ADUXVKLrn+a9fFXavYXiRSsORht7x3JF+vrVsGt06RtkqBYlaFxl6lnxrZYbeGpO/xWVtLXkP33jtw==
+X-Received: by 2002:a65:6148:: with SMTP id o8-v6mr3707740pgv.93.1528889637833;
+        Wed, 13 Jun 2018 04:33:57 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm2745370pgq.35.2018.06.13.04.33.41
+        by smtp.gmail.com with ESMTPSA id h8-v6sm2745370pgq.35.2018.06.13.04.33.49
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Jun 2018 04:33:49 -0700 (PDT)
+        Wed, 13 Jun 2018 04:33:57 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     tglx@linutronix.de, john.stultz@linaro.org,
         daniel.lezcano@linaro.org, arnd@arndb.de, tony@atomide.com,
@@ -71,9 +71,9 @@ Cc:     baolin.wang@linaro.org, broonie@kernel.org,
         x86@kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org
-Subject: [PATCH 6/8] clocksource: time-pistachio: Register the persistent clock
-Date:   Wed, 13 Jun 2018 19:32:33 +0800
-Message-Id: <e00f46be05f74439eecd9c4fb43baa4cd0dae297.1528878545.git.baolin.wang@linaro.org>
+Subject: [PATCH 7/8] x86: tsc: Register the persistent clock
+Date:   Wed, 13 Jun 2018 19:32:34 +0800
+Message-Id: <3010faf8a1dda56be4eac0d5aa393fbfb96f3077.1528878545.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1528878545.git.baolin.wang@linaro.org>
 References: <cover.1528878545.git.baolin.wang@linaro.org>
@@ -84,49 +84,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the timer on pistachio platform is always available, we can
-register it as one persistent clock to compensate the suspend time
-for the OS time.
+Register the tsc as one persistent clock to compensate the suspend time
+if the tsc clocksource is always available.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/clocksource/Kconfig          |    1 +
- drivers/clocksource/time-pistachio.c |    3 +++
- 2 files changed, 4 insertions(+)
+ arch/x86/Kconfig      |    1 +
+ arch/x86/kernel/tsc.c |   21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 3cd136f..af552ba 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -255,6 +255,7 @@ config CLKSRC_PISTACHIO
- 	bool "Clocksource for Pistachio SoC" if COMPILE_TEST
- 	depends on HAS_IOMEM
- 	select TIMER_OF
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 297789a..549dd01 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -200,6 +200,7 @@ config X86
+ 	select USER_STACKTRACE_SUPPORT
+ 	select VIRT_TO_BUS
+ 	select X86_FEATURE_NAMES		if PROC_FS
 +	select PERSISTENT_CLOCK
- 	help
- 	  Enables the clocksource for the Pistachio SoC.
  
-diff --git a/drivers/clocksource/time-pistachio.c b/drivers/clocksource/time-pistachio.c
-index a2dd85d..5c3eb71 100644
---- a/drivers/clocksource/time-pistachio.c
-+++ b/drivers/clocksource/time-pistachio.c
-@@ -20,6 +20,7 @@
- #include <linux/mfd/syscon.h>
- #include <linux/of.h>
- #include <linux/of_address.h>
+ config INSTRUCTION_DECODER
+ 	def_bool y
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 74392d9..cb4f495 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -11,6 +11,7 @@
+ #include <linux/delay.h>
+ #include <linux/clocksource.h>
+ #include <linux/percpu.h>
 +#include <linux/persistent_clock.h>
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/sched_clock.h>
-@@ -212,6 +213,8 @@ static int __init pistachio_clksrc_of_init(struct device_node *node)
+ #include <linux/timex.h>
+ #include <linux/static_key.h>
  
- 	raw_spin_lock_init(&pcs_gpt.lock);
- 	sched_clock_register(pistachio_read_sched_clock, 32, rate);
-+	persistent_clock_init_and_register(pistachio_read_sched_clock,
-+					   CLOCKSOURCE_MASK(32), rate, 0);
- 	return clocksource_register_hz(&pcs_gpt.cs, rate);
+@@ -1032,6 +1033,11 @@ static u64 read_tsc(struct clocksource *cs)
+ 	return (u64)rdtsc_ordered();
  }
- TIMER_OF_DECLARE(pistachio_gptimer, "img,pistachio-gptimer",
+ 
++static u64 notrace tsc_read_persistent_clock(void)
++{
++	return (u64)rdtsc_ordered();
++}
++
+ static void tsc_cs_mark_unstable(struct clocksource *cs)
+ {
+ 	if (tsc_unstable)
+@@ -1300,6 +1306,14 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 	if (boot_cpu_has(X86_FEATURE_ART))
+ 		art_related_clocksource = &clocksource_tsc;
+ 	clocksource_register_khz(&clocksource_tsc, tsc_khz);
++
++	if (clocksource_tsc.flags & CLOCK_SOURCE_SUSPEND_NONSTOP) {
++		persistent_clock_init_and_register(tsc_read_persistent_clock,
++						   CLOCKSOURCE_MASK(64),
++						   tsc_khz * 1000, 0);
++		persistent_clock_start_alarmtimer();
++	}
++
+ unreg:
+ 	clocksource_unregister(&clocksource_tsc_early);
+ }
+@@ -1327,6 +1341,13 @@ static int __init init_tsc_clocksource(void)
+ 		if (boot_cpu_has(X86_FEATURE_ART))
+ 			art_related_clocksource = &clocksource_tsc;
+ 		clocksource_register_khz(&clocksource_tsc, tsc_khz);
++
++		if (clocksource_tsc.flags & CLOCK_SOURCE_SUSPEND_NONSTOP) {
++			persistent_clock_init_and_register(tsc_read_persistent_clock,
++							   CLOCKSOURCE_MASK(64),
++							   tsc_khz * 1000, 0);
++			persistent_clock_start_alarmtimer();
++		}
+ unreg:
+ 		clocksource_unregister(&clocksource_tsc_early);
+ 		return 0;
 -- 
 1.7.9.5
 
