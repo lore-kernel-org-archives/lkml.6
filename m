@@ -1,107 +1,177 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 23CA9C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:59:29 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 27CCAC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D89BB20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:59:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D89BB20891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id D970620891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:01:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D970620891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934963AbeFMI7Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:59:25 -0400
-Received: from foss.arm.com ([217.140.101.70]:44440 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934436AbeFMI7W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:59:22 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 63C3380D;
-        Wed, 13 Jun 2018 01:59:22 -0700 (PDT)
-Received: from [10.1.207.70] (e112298-lin.cambridge.arm.com [10.1.207.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 71F743F557;
-        Wed, 13 Jun 2018 01:59:18 -0700 (PDT)
-Subject: Re: [RFC PATCH 03/23] genirq: Introduce IRQF_DELIVER_AS_NMI
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Doug Berger <opendmb@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        iommu@lists.linux-foundation.org
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <20180613083419.GS12258@hirez.programming.kicks-ass.net>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <26687332-ab8f-7f6d-909a-f0918dbfea86@arm.com>
-Date:   Wed, 13 Jun 2018 09:59:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934893AbeFMJBK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:01:10 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:34650 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1750922AbeFMJBH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 05:01:07 -0400
+X-UUID: a8fa29aec3314fd69014f21a0accf94d-20180613
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 386226893; Wed, 13 Jun 2018 17:01:02 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 17:01:01 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 17:01:01 +0800
+Message-ID: <1528880461.18148.1.camel@mtksdaap41>
+Subject: Re: [PATCH 19/28] drm/mediatek: add connection from RDMA2 to DPI1
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 17:01:01 +0800
+In-Reply-To: <1528880291.11190.45.camel@mtksdccf07>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-20-git-send-email-stu.hsieh@mediatek.com>
+         <1528874037.30263.6.camel@mtksdaap41>
+         <1528876862.11190.35.camel@mtksdccf07>
+         <1528877675.30263.27.camel@mtksdaap41>
+         <1528880291.11190.45.camel@mtksdccf07>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20180613083419.GS12258@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Peter, Ricardo,
+Hi, Stu:
 
-On 13/06/18 09:34, Peter Zijlstra wrote:
-> On Tue, Jun 12, 2018 at 05:57:23PM -0700, Ricardo Neri wrote:
->> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
->> index 5426627..dbc5e02 100644
->> --- a/include/linux/interrupt.h
->> +++ b/include/linux/interrupt.h
->> @@ -61,6 +61,8 @@
->>    *                interrupt handler after suspending interrupts. For system
->>    *                wakeup devices users need to implement wakeup detection in
->>    *                their interrupt handlers.
->> + * IRQF_DELIVER_AS_NMI - Configure interrupt to be delivered as non-maskable, if
->> + *                supported by the chip.
->>    */
+On Wed, 2018-06-13 at 16:58 +0800, Stu Hsieh wrote:
+> Hi, CK:
 > 
-> NAK on the first 6 patches. You really _REALLY_ don't want to expose
-> NMIs to this level.
+> On Wed, 2018-06-13 at 16:14 +0800, CK Hu wrote:
+> > Hi, Stu:
+> > 
+> > On Wed, 2018-06-13 at 16:01 +0800, Stu Hsieh wrote:
+> > > Hi, CK:
+> > > 
+> > > 
+> > > On Wed, 2018-06-13 at 15:13 +0800, CK Hu wrote:
+> > > > Hi, Stu:
+> > > > 
+> > > > On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> > > > > This patch add the connection from RDMA2 to DPI1
+> > > > > 
+> > > > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > > > ---
+> > > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+> > > > >  1 file changed, 8 insertions(+)
+> > > > > 
+> > > > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > > index 31a0832ef9ec..2d883815d79c 100644
+> > > > > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > > @@ -93,9 +93,11 @@
+> > > > >  #define RDMA1_MOUT_DPI0			0x2
+> > > > >  #define RDMA1_MOUT_DPI1			0x3
+> > > > >  #define RDMA2_MOUT_DPI0			0x2
+> > > > > +#define RDMA2_MOUT_DPI1			0x3
+> > > > 
+> > > > Usually, each bit of a mout register represent a output enable. Is this
+> > > > value 0x3 a correct value?
+> > > > 
+> > > > Regards,
+> > > > CK
+> > > > 
+> > > In HW CONFIG SPEC or MT2712_E2_MMSYS_Change_note show as following:
+> > > 
+> > > Bit(s)	Name			Description
+> > > 2:0	DISP_RDMA2_SOUT_SEL_IN	0: output to dsi0
+> > > 				1: outptu to dsi1
+> > > 				2: output to dpi0
+> > > 				3: output to dpi1
+> > > 				4: output to dsi2
+> > > 				5: output to dsi3
+> > > 
+> > > So, 0x3 is correct value.
+> > 
+> > The data sheet use the term SOUT match its function, so I think driver
+> > have better change the naming to SOUT.
+> > 
+> > Regards,
+> > CK
+> > 
+> 
+> The definition DISP_REG_CONFIG_DISP_RDMA2_SOUT is use term SOUT in this
+> patch.
 > 
 
-I've been working on something similar on arm64 side, and effectively 
-the one thing that might be common to arm64 and intel is the interface 
-to set an interrupt as NMI. So I guess it would be nice to agree on the 
-right approach for this.
+I know, but RDMA2_MOUT_DPI1 should be changed to RDMA2_SOUT_DPI1.
 
-The way I did it was by introducing a new irq_state and let the irqchip 
-driver handle most of the work (if it supports that state):
+Regards,
+CK
 
-https://lkml.org/lkml/2018/5/25/181
+> Regard,
+> Stu
+> 
+> > > 
+> > > Regard,
+> > > Stu
+> > > 
+> > > > >  #define DPI0_SEL_IN_RDMA1		0x1
+> > > > >  #define DPI0_SEL_IN_RDMA2		0x3
+> > > > >  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+> > > > > +#define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+> > > > >  #define DSI1_SEL_IN_RDMA1		0x1
+> > > > >  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+> > > > >  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+> > > > > @@ -199,6 +201,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> > > > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+> > > > >  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> > > > >  		value = RDMA2_MOUT_DPI0;
+> > > > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> > > > > +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> > > > > +		value = RDMA2_MOUT_DPI1;
+> > > > >  	} else {
+> > > > >  		value = 0;
+> > > > >  	}
+> > > > > @@ -233,6 +238,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+> > > > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+> > > > >  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > > > >  		value = DPI0_SEL_IN_RDMA2;
+> > > > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> > > > > +		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > > > > +		value = DPI1_SEL_IN_RDMA2;
+> > > > >  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+> > > > >  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+> > > > >  		value = COLOR1_SEL_IN_OVL1;
+> > > > 
+> > > > 
+> > > 
+> > > 
+> > 
+> > 
+> 
+> 
 
-This has not been ACKed nor NAKed. So I am just asking whether this is a 
-more suitable approach, and if not, is there any suggestions on how to 
-do this?
 
-Thanks,
-
--- 
-Julien Thierry
