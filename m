@@ -2,131 +2,315 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7609CC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:44:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 30BAEC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 270F9208E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:44:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270F9208E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mev.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id CD694208D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:44:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="r2+/MO+o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD694208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935407AbeFMRoa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:44:30 -0400
-Received: from smtp81.ord1d.emailsrvr.com ([184.106.54.81]:50738 "EHLO
-        smtp81.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751898AbeFMRo3 (ORCPT
+        id S935459AbeFMRov (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:44:51 -0400
+Received: from conssluserg-01.nifty.com ([210.131.2.80]:55877 "EHLO
+        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754493AbeFMRot (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:44:29 -0400
-Received: from smtp11.relay.ord1d.emailsrvr.com (localhost [127.0.0.1])
-        by smtp11.relay.ord1d.emailsrvr.com (SMTP Server) with ESMTP id 96BF16036E;
-        Wed, 13 Jun 2018 13:44:28 -0400 (EDT)
-X-Auth-ID: siepeng@mev.co.uk
-Received: by smtp11.relay.ord1d.emailsrvr.com (Authenticated sender: siepeng-AT-mev.co.uk) with ESMTPSA id A2AB96042A;
-        Wed, 13 Jun 2018 13:44:27 -0400 (EDT)
-X-Sender-Id: siepeng@mev.co.uk
-Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Wed, 13 Jun 2018 13:44:28 -0400
-Subject: Re: [PATCH v5] staging: comedi: Improved readability of function
- comedi_nsamples_left.
-To:     Chris Opperman <eklikeroomys@gmail.com>
-Cc:     H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Simo Koskinen <koskisoft@gmail.com>,
-        Frank Mori Hess <fmh6jj@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-References: <1528910104-1360-1-git-send-email-eklikeroomys@gmail.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <4c33a400-f840-0a21-efad-2a9318dfdb09@mev.co.uk>
-Date:   Wed, 13 Jun 2018 18:44:26 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 13 Jun 2018 13:44:49 -0400
+Received: from mail-vk0-f54.google.com (mail-vk0-f54.google.com [209.85.213.54]) (authenticated)
+        by conssluserg-01.nifty.com with ESMTP id w5DHibVv005168;
+        Thu, 14 Jun 2018 02:44:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w5DHibVv005168
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528911878;
+        bh=AVC5X2edo5duxBhJuj8rb2v8jXoQkhMb8a+4ILgR3sg=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=r2+/MO+oixz9IMHOk1CxnOmKI10Jk+uAKJb6l36kRJJw8FCer9pDnEDPmRxYRJgbD
+         SFBnH3djV0LZ85zqJozUKtHt9xKlhFJANmzUY6JsAWlKQrLWTyt7oJqKUls60/+IgS
+         gmcFf2dxAec3FE3q8a2tGRQlhyguHLmDBP+9Mtvg5RJlV/n8lTriFIvZzH69kN3W3S
+         x9D5w3j13/lmntZIHM/EdiuiTorJBBJQoQixd/yViIP5Kpwv5KgCX96tX1F2OZMjlt
+         SKgJ+QbP2ZNjzn+nTSyH/z+5ECfOVL15YG9AQRd6F2QdgqeCeIH3jafEFP/7mMbcFo
+         tP5uH7p5g8NnA==
+X-Nifty-SrcIP: [209.85.213.54]
+Received: by mail-vk0-f54.google.com with SMTP id w8-v6so2040399vkh.4;
+        Wed, 13 Jun 2018 10:44:37 -0700 (PDT)
+X-Gm-Message-State: APt69E0G0LrVQy4oi2pFbsnO+HiI3apBPdmcFEKRC5mLhe9tCYmOedPn
+        s73ofQOZlnjE7AHviDqtGOSrEYtryzX69tDM+8Y=
+X-Google-Smtp-Source: ADUXVKKw9fxYsXFoi77zLEB+SOStNUp2Sj/Fm6KDwkcfl6LYHtJykI7tNtB2ck85j1evJle9RJpTBEUsUoTWdC1rbV8=
+X-Received: by 2002:a1f:1941:: with SMTP id 62-v6mr3673075vkz.34.1528911876617;
+ Wed, 13 Jun 2018 10:44:36 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1528910104-1360-1-git-send-email-eklikeroomys@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 10:43:56
+ -0700 (PDT)
+In-Reply-To: <20180612115050.185112-2-namit@vmware.com>
+References: <20180612115050.185112-1-namit@vmware.com> <20180612115050.185112-2-namit@vmware.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Thu, 14 Jun 2018 02:43:56 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATmjTi4Odp5AfbVHCemn7S_tB9nKvgNOf5sp8BiVJma7Q@mail.gmail.com>
+Message-ID: <CAK7LNATmjTi4Odp5AfbVHCemn7S_tB9nKvgNOf5sp8BiVJma7Q@mail.gmail.com>
+Subject: Re: [PATCH v4 1/9] Makefile: Prepare for using macros for inline asm
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/18 18:14, Chris Opperman wrote:
-> Improve readability of comedi_nsamples_left:
-> a) Reduce nesting by using more return statements.
-> b) Declare variables scans_left and samples_left at start of function.
-> c) Change type of scans_Left to unsigned long long to avoid cast.
-> 
-> Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
+Hi.
+
+
+2018-06-12 20:50 GMT+09:00 Nadav Amit <namit@vmware.com>:
+> Using macros for inline assembly improves both readability and
+> compilation decisions that are distorted by big assembly blocks that use
+> alternative sections. Compile macros.S and use it to assemble all C
+> files. Currently, only x86 will use it.
+>
+> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Cc: Michal Marek <michal.lkml@markovi.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: x86@kernel.org
+> Cc: linux-kbuild@vger.kernel.org
+>
+> Signed-off-by: Nadav Amit <namit@vmware.com>
+
+
+I have not fully understood this series yet.
+
+I do not have enough skill in x86 architecture,
+but just some comments from the build system point of view.
+
+
+
+I guess this will probably break the parallel building.
+
+Kbuild can build 'prepare' and 'scripts' simultaneously.
+
+
+I locally modified the following line:
+
+
+diff --git a/Makefile b/Makefile
+index 2dea909440..6ad484a 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1030,7 +1030,7 @@ $(sort $(vmlinux-deps)): $(vmlinux-dirs) ;
+ # Error messages still appears in the original language
+
+ PHONY += $(vmlinux-dirs)
+-$(vmlinux-dirs): prepare scripts
++$(vmlinux-dirs): scripts prepare
+        $(Q)$(MAKE) $(build)=$@ need-builtin=1
+
+ define filechk_kernel.release
+
+
+
+masahiro@grover:~/workspace/linux-kbuild$ make  defconfig
+  HOSTCC  scripts/basic/fixdep
+  HOSTCC  scripts/kconfig/conf.o
+  YACC    scripts/kconfig/zconf.tab.c
+  LEX     scripts/kconfig/zconf.lex.c
+  HOSTCC  scripts/kconfig/zconf.tab.o
+  HOSTLD  scripts/kconfig/conf
+*** Default configuration is based on 'x86_64_defconfig'
+#
+# configuration written to .config
+#
+masahiro@grover:~/workspace/linux-kbuild$ make all
+scripts/kconfig/conf  --syncconfig Kconfig
+  WRAP    arch/x86/include/generated/uapi/asm/bpf_perf_event.h
+  WRAP    arch/x86/include/generated/uapi/asm/poll.h
+  WRAP    arch/x86/include/generated/asm/dma-contiguous.h
+  WRAP    arch/x86/include/generated/asm/early_ioremap.h
+  WRAP    arch/x86/include/generated/asm/mcs_spinlock.h
+  WRAP    arch/x86/include/generated/asm/mm-arch-hooks.h
+  CC      scripts/mod/empty.o
+Assembler messages:
+Error: can't open arch/x86/kernel/macros.s for reading: No such file
+or directory
+make[2]: *** [scripts/Makefile.build:318: scripts/mod/empty.o] Error 1
+make[1]: *** [scripts/Makefile.build:558: scripts/mod] Error 2
+make: *** [Makefile:1050: scripts] Error 2
+
+
+
+
+
+
+
 > ---
-> 
-> Changes v5:
-> a) Moved additional text to below the cut-off line.
-> 
-
-The "Changes v5" text is a bit incomplete without the earlier change 
-history, but let's forget that since the previous change history was a 
-bit messed up anyway.
-
->   drivers/staging/comedi/drivers.c | 26 +++++++++++++-------------
->   1 file changed, 13 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
-> index 9d73347..57dd63d 100644
-> --- a/drivers/staging/comedi/drivers.c
-> +++ b/drivers/staging/comedi/drivers.c
-> @@ -473,21 +473,21 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
->   {
->   	struct comedi_async *async = s->async;
->   	struct comedi_cmd *cmd = &async->cmd;
-> +	unsigned long long scans_left;
-> +	unsigned long long samples_left;
-> 
-> -	if (cmd->stop_src == TRIG_COUNT) {
-> -		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
-> -		unsigned int scan_pos =
-> -		    comedi_bytes_to_samples(s, async->scan_progress);
-> -		unsigned long long samples_left = 0;
-> -
-> -		if (scans_left) {
-> -			samples_left = ((unsigned long long)scans_left *
-> -					cmd->scan_end_arg) - scan_pos;
-> -		}
-> +	if (cmd->stop_src != TRIG_COUNT)
-> +		return nsamples;
-> 
-> -		if (samples_left < nsamples)
-> -			nsamples = samples_left;
-> -	}
-> +	scans_left = __comedi_nscans_left(s, cmd->stop_arg);
-> +	if (!scans_left)
-> +		return 0;
+>  Makefile                 |  9 +++++++--
+>  arch/x86/Makefile        | 11 +++++++++--
+>  arch/x86/kernel/Makefile |  6 ++++++
+>  arch/x86/kernel/macros.S |  7 +++++++
+>  scripts/Kbuild.include   |  4 +++-
+>  5 files changed, 32 insertions(+), 5 deletions(-)
+>  create mode 100644 arch/x86/kernel/macros.S
+>
+> diff --git a/Makefile b/Makefile
+> index 554dcaddbce4..026586db2f26 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1085,7 +1085,7 @@ scripts: scripts_basic include/config/auto.conf include/config/tristate.conf \
+>  # version.h and scripts_basic is processed / created.
+>
+>  # Listed in dependency order
+> -PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
+> +PHONY += prepare archprepare macroprepare prepare0 prepare1 prepare2 prepare3
+>
+>  # prepare3 is used to check if we are building in a separate output directory,
+>  # and if so do:
+> @@ -1109,7 +1109,9 @@ prepare1: prepare2 $(version_h) $(autoksyms_h) include/generated/utsrelease.h \
+>                     include/config/auto.conf
+>         $(cmd_crmodverdir)
+>
+> -archprepare: archheaders archscripts prepare1 scripts_basic
+> +macroprepare: prepare1 archmacros
 > +
-> +	samples_left = scans_left * cmd->scan_end_arg -
-> +		comedi_bytes_to_samples(s, async->scan_progress);
+> +archprepare: archheaders archscripts macroprepare scripts_basic
+
+
+Are you planning to support for all architectures, or x86-specific?
+
+Currently, there are some hooks to do arch-specific things such as
+'archprepare', 'archscripts'.
+
+
+
+
+>  prepare0: archprepare gcc-plugins
+>         $(Q)$(MAKE) $(build)=.
+> @@ -1214,6 +1216,9 @@ archheaders:
+>  PHONY += archscripts
+>  archscripts:
+>
+> +PHONY += archmacros
+> +archmacros:
 > +
-> +	if (samples_left < nsamples)
-> +		return samples_left;
->   	return nsamples;
->   }
->   EXPORT_SYMBOL_GPL(comedi_nsamples_left);
+>  PHONY += __headers
+>  __headers: $(version_h) scripts_basic uapi-asm-generic archheaders archscripts
+>         $(Q)$(MAKE) $(build)=scripts build_unifdef
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 60135cbd905c..6b82314776fd 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -235,8 +235,8 @@ ifdef CONFIG_X86_64
+>  LDFLAGS += $(call ld-option, -z max-page-size=0x200000)
+>  endif
+>
+> -# Speed up the build
+> -KBUILD_CFLAGS += -pipe
+> +# We cannot use -pipe flag since we give an additional .s file to the compiler
+> +#KBUILD_CFLAGS += -pipe
+>  # Workaround for a gcc prelease that unfortunately was shipped in a suse release
+>  KBUILD_CFLAGS += -Wno-sign-compare
+>  #
+> @@ -258,11 +258,18 @@ archscripts: scripts_basic
+>  archheaders:
+>         $(Q)$(MAKE) $(build)=arch/x86/entry/syscalls all
+>
+> +archmacros:
+> +       $(Q)$(MAKE) $(build)=arch/x86/kernel macros
+> +
+>  archprepare:
+>  ifeq ($(CONFIG_KEXEC_FILE),y)
+>         $(Q)$(MAKE) $(build)=arch/x86/purgatory arch/x86/purgatory/kexec-purgatory.c
+>  endif
+>
+> +ASM_MACRO_FLAGS = -Wa,arch/x86/kernel/macros.s
+> +export ASM_MACRO_FLAGS
+> +KBUILD_CFLAGS += $(ASM_MACRO_FLAGS)
+> +
+>  ###
+>  # Kernel objects
+>
+> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+> index 02d6f5cf4e70..fdb6c5b2a922 100644
+> --- a/arch/x86/kernel/Makefile
+> +++ b/arch/x86/kernel/Makefile
+> @@ -9,6 +9,12 @@ extra-y        += ebda.o
+>  extra-y        += platform-quirks.o
+>  extra-y        += vmlinux.lds
+>
+> +$(obj)/macros.s: $(obj)/macros.S FORCE
+> +       $(call if_changed_dep,cpp_s_S)
+
+This is unnecessary.
+
+Kbuild will find the correct pattern rule
+in scripts/Makefile.build
+
+
+
+
+
+> +macros: $(obj)/macros.s
+> +       @:
+
+If you add a phony target, it should be added to 'PHONY'.
+
+Like this:
+
+
+PHONY += macros
+macros: $(obj)/macros.s
+       @:
+
+
+
+>  CPPFLAGS_vmlinux.lds += -U$(UTS_MACHINE)
+>
+>  ifdef CONFIG_FUNCTION_TRACER
+> diff --git a/arch/x86/kernel/macros.S b/arch/x86/kernel/macros.S
+> new file mode 100644
+> index 000000000000..cfc1c7d1a6eb
+> --- /dev/null
+> +++ b/arch/x86/kernel/macros.S
+> @@ -0,0 +1,7 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * This file includes headers whose assembly part includes macros which are
+> + * commonly used. The macros are precompiled into assmebly file which is later
+> + * assembled together with each compiled file.
+> + */
+> diff --git a/scripts/Kbuild.include b/scripts/Kbuild.include
+> index 50cee534fd64..ad2c02062aa4 100644
+> --- a/scripts/Kbuild.include
+> +++ b/scripts/Kbuild.include
+> @@ -189,7 +189,9 @@ __cc-option = $(call try-run-cached,\
+>
+>  # Do not attempt to build with gcc plugins during cc-option tests.
+>  # (And this uses delayed resolution so the flags will be up to date.)
+> -CC_OPTION_CFLAGS = $(filter-out $(GCC_PLUGINS_CFLAGS),$(KBUILD_CFLAGS))
+> +# In addition, do not include the asm macros which are built later.
+> +CC_OPTION_FILTERED = $(GCC_PLUGINS_CFLAGS) $(ASM_MACRO_FLAGS)
+> +CC_OPTION_CFLAGS = $(filter-out $(CC_OPTION_FILTERED),$(KBUILD_CFLAGS))
+>
+>  # cc-option
+>  # Usage: cflags-y += $(call cc-option,-march=winchip-c6,-march=i586)
 > --
-> 2.1.4
-> 
+> 2.17.0
+>
 
-The actual patch looks fine thanks!
 
-Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
 
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+Best Regards
+Masahiro Yamada
