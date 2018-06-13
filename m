@@ -3,56 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68C39C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:09:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BE50FC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EEC7208C0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:09:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74388208B7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:09:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HAvcH6mT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EEC7208C0
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OoBGAH3x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74388208B7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964864AbeFMPJi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:09:38 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:38314 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936020AbeFMPJb (ORCPT
+        id S936075AbeFMPJn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:09:43 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:34378 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964852AbeFMPJi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:09:31 -0400
-Received: by mail-wr0-f194.google.com with SMTP id e18-v6so3154166wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:30 -0700 (PDT)
+        Wed, 13 Jun 2018 11:09:38 -0400
+Received: by mail-wr0-f196.google.com with SMTP id a12-v6so3165136wro.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+ssufRupM9PR8pPvQwm/oq0OgQo86xh959S5/coLDU0=;
-        b=HAvcH6mT/lQ1wclNDe8VS5pd8ZPeAO+ONYeGGJw3nArgNCX1nyd/vsR4nbLvDyj3ww
-         Ffm2reqWvkQK8RVDPYEe1EjarTCCw0I9s3VyRbKQP/d/f1jlou+7bUBzOLMfNcyIAqwT
-         zvL13Op5aT18qk0+FSQjjOSbAA1xItbxrEOHk=
+        bh=VRMNPzwCVtxgb0LfMFtJgW6g4iKfhAD4kYYPw52509I=;
+        b=OoBGAH3xOCYloy6CF7yFWDTUCJCYyO/yPSHl0WZ9/P9oswx2CHsRAtKRpHNCLEBmxD
+         9aFvCzzfAkDa2qC9kBgpUk29i6+KAShPU4sCgUGLJyvGZ0Cwl2bSGK+Srhy2GgMkndjQ
+         5ruxZAEUuDWlpA+hqvuQUSvMaBLJvT6qRv5oY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+ssufRupM9PR8pPvQwm/oq0OgQo86xh959S5/coLDU0=;
-        b=hEzioAOsNLYizKKYNAQpAdHhSfmOZH0HOYE0JHnurqUfj7ZUCvBrc9prYeKbzaYeF0
-         aHhOXDZsYhmfERH3e5NIMm6O4Eyd5mGmXW9xp/qVUg5wWdJHjLZThFDt93m1PKH1O4bV
-         Q8mnz69nNdsclAl9m/onLc2Q5lokyIr+SYwUzsV7LqArtZY0+mXHtOg3cQHtsvCgQzhG
-         ocsagyAAQa+m2lLkzfRAK3jZK8MN4I53rFZvz1DNqK5+glZ0ETOwl7VddC2dfFUyuuap
-         BYAD6aVyWNB8cgkiaqqewKQMZ78CbGEL81aNHy/JIYDxJNtMteOVArR8OXyWnjH3Szh7
-         OuLg==
-X-Gm-Message-State: APt69E0B14ESnuWz8gtxF6WPmxRn8cOQvpFx4Cr+ER5/Ap/8DGHLFNMH
-        D9ReebSoLWSeHa3BIg5BtWCr2g==
-X-Google-Smtp-Source: ADUXVKK1OCaNJt/TIM+qIPO1Xsx4zt3B755zUxkpUij0t0DQ2Dzobr9nDqx2ebA2a391Id/c3wQjSQ==
-X-Received: by 2002:adf:ac37:: with SMTP id v52-v6mr4684099wrc.56.1528902569996;
-        Wed, 13 Jun 2018 08:09:29 -0700 (PDT)
+        bh=VRMNPzwCVtxgb0LfMFtJgW6g4iKfhAD4kYYPw52509I=;
+        b=m/PsVdtE0S0LvorokiAJg2j0r9k58EZDWPYwgERf5xTx3HRlO/hmwV0h0hDFNlXut8
+         OK2b8thzeAkdE6aKu+b76Tj2KDyJw+dT3vEuA5cT3XcRCHqyiqfkQVRu74DvYMupmqKR
+         ZEcsUFrxMKSTE3lBKcL91yNGQcVNYUOyqQzTNwiH/4IDu0e5wNTzDcFjsuX0bq7VvFvy
+         +VkdjQp2rsSBc1u/+NXWVp7krGZ4m8URdHP/K4ZDEYZtzXEBEFecPye4PujnPp/G2MzR
+         8d1qzL5nTsiOHyC16fgn6xBSvJPkKfUP2ukmHHM2lo+a/A2JXhim0cx4hpDB/cXaFxC8
+         4qLQ==
+X-Gm-Message-State: APt69E0Qi0X8lYRdO27iaW1L7m7dcL2Ysfy9pNEwKs6QZInY4vdrmtZu
+        jHNOhYir1+3I2eUQMn02tBnkqw==
+X-Google-Smtp-Source: ADUXVKKTHKFkKWKdZj8Z/BVUQUU8HRAzPR7W874It3dlr+Jh55XrJEW8hWJovFghISRyzQLJAtRuyw==
+X-Received: by 2002:adf:efcf:: with SMTP id i15-v6mr4795449wrp.195.1528902576980;
+        Wed, 13 Jun 2018 08:09:36 -0700 (PDT)
 Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.28
+        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 08:09:29 -0700 (PDT)
+        Wed, 13 Jun 2018 08:09:36 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -61,9 +61,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v3 15/27] venus: helpers: add helper function to set actual buffer size
-Date:   Wed, 13 Jun 2018 18:07:49 +0300
-Message-Id: <20180613150801.11702-16-stanimir.varbanov@linaro.org>
+Subject: [PATCH v3 21/27] venus: helpers: add a helper to return opb buffer sizes
+Date:   Wed, 13 Jun 2018 18:07:55 +0300
+Message-Id: <20180613150801.11702-22-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
 References: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
@@ -72,81 +72,78 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add and use a helper function to set actual buffer size for
-particular buffer type. This is also preparation to use
-the second decoder output.
+Add a helper function to return current output picture buffer size.
+OPB sizes can vary depending on the selected decoder output(s).
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 12 ++++++++++++
+ drivers/media/platform/qcom/venus/core.h    |  6 ++++++
+ drivers/media/platform/qcom/venus/helpers.c | 15 +++++++++++++++
  drivers/media/platform/qcom/venus/helpers.h |  1 +
- drivers/media/platform/qcom/venus/vdec.c    | 10 ++--------
- 3 files changed, 15 insertions(+), 8 deletions(-)
+ 3 files changed, 22 insertions(+)
 
+diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+index 1d1a59a5d343..f8e4d92ff0e1 100644
+--- a/drivers/media/platform/qcom/venus/core.h
++++ b/drivers/media/platform/qcom/venus/core.h
+@@ -239,6 +239,9 @@ struct venus_buffer {
+  * @num_output_bufs:	holds number of output buffers
+  * @input_buf_size	holds input buffer size
+  * @output_buf_size:	holds output buffer size
++ * @output2_buf_size:	holds secondary decoder output buffer size
++ * @opb_buftype:	output picture buffer type
++ * @opb_fmt:		output picture buffer raw format
+  * @reconfig:	a flag raised by decoder when the stream resolution changed
+  * @reconfig_width:	holds the new width
+  * @reconfig_height:	holds the new height
+@@ -288,6 +291,9 @@ struct venus_inst {
+ 	unsigned int num_output_bufs;
+ 	unsigned int input_buf_size;
+ 	unsigned int output_buf_size;
++	unsigned int output2_buf_size;
++	u32 opb_buftype;
++	u32 opb_fmt;
+ 	bool reconfig;
+ 	u32 reconfig_width;
+ 	u32 reconfig_height;
 diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index e3dc2772946f..0cce664f093d 100644
+index e332c9682b9c..6b31c91528ed 100644
 --- a/drivers/media/platform/qcom/venus/helpers.c
 +++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -541,6 +541,18 @@ int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
+@@ -608,6 +608,21 @@ int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype)
  }
- EXPORT_SYMBOL_GPL(venus_helper_set_dyn_bufmode);
+ EXPORT_SYMBOL_GPL(venus_helper_set_bufsize);
  
-+int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype)
++unsigned int venus_helper_get_opb_size(struct venus_inst *inst)
 +{
-+	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_SIZE_ACTUAL;
-+	struct hfi_buffer_size_actual bufsz;
++	/* the encoder has only one output */
++	if (inst->session_type == VIDC_SESSION_TYPE_ENC)
++		return inst->output_buf_size;
 +
-+	bufsz.type = buftype;
-+	bufsz.size = bufsize;
++	if (inst->opb_buftype == HFI_BUFFER_OUTPUT)
++		return inst->output_buf_size;
++	else if (inst->opb_buftype == HFI_BUFFER_OUTPUT2)
++		return inst->output2_buf_size;
 +
-+	return hfi_session_set_property(inst, ptype, &bufsz);
++	return 0;
 +}
-+EXPORT_SYMBOL_GPL(venus_helper_set_bufsize);
++EXPORT_SYMBOL_GPL(venus_helper_get_opb_size);
 +
  static void delayed_process_buf_func(struct work_struct *work)
  {
  	struct venus_buffer *buf, *n;
 diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 52b961ed491e..cd306bd8978f 100644
+index 8ff4bd3ef958..92be45894a69 100644
 --- a/drivers/media/platform/qcom/venus/helpers.h
 +++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -41,6 +41,7 @@ int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs);
+@@ -48,6 +48,7 @@ int venus_helper_set_raw_format(struct venus_inst *inst, u32 hfi_format,
  int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
  int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
-+int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype);
+ int venus_helper_set_bufsize(struct venus_inst *inst, u32 bufsize, u32 buftype);
++unsigned int venus_helper_get_opb_size(struct venus_inst *inst);
  void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
  void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
  void venus_helper_init_instance(struct venus_inst *inst);
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 92669a358a90..eae9c651ac91 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -710,7 +710,6 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
- {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
- 	struct venus_core *core = inst->core;
--	u32 ptype;
- 	int ret;
- 
- 	mutex_lock(&inst->lock);
-@@ -740,13 +739,8 @@ static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
- 		goto deinit_sess;
- 
- 	if (core->res->hfi_version == HFI_VERSION_3XX) {
--		struct hfi_buffer_size_actual buf_sz;
--
--		ptype = HFI_PROPERTY_PARAM_BUFFER_SIZE_ACTUAL;
--		buf_sz.type = HFI_BUFFER_OUTPUT;
--		buf_sz.size = inst->output_buf_size;
--
--		ret = hfi_session_set_property(inst, ptype, &buf_sz);
-+		ret = venus_helper_set_bufsize(inst, inst->output_buf_size,
-+					       HFI_BUFFER_OUTPUT);
- 		if (ret)
- 			goto deinit_sess;
- 	}
 -- 
 2.14.1
 
