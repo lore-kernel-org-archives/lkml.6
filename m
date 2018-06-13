@@ -2,119 +2,98 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 18186C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:39:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ED20BC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC6B6208D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:39:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC6B6208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FF73208D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:40:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pgAWzluZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF73208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935769AbeFMUi6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 16:38:58 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:55384 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935381AbeFMUi4 (ORCPT
+        id S935831AbeFMUkY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 16:40:24 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:33573 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935461AbeFMUkX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 16:38:56 -0400
-Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DKXwXG006198
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 16:38:56 -0400
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jk9rn1qab-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 16:38:56 -0400
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <alifm@linux.ibm.com>;
-        Wed, 13 Jun 2018 16:38:55 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Jun 2018 16:38:51 -0400
-Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DKcoXQ8716716
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 20:38:50 GMT
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CB666AC05E;
-        Wed, 13 Jun 2018 16:40:11 -0400 (EDT)
-Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B1D31AC05B;
-        Wed, 13 Jun 2018 16:40:11 -0400 (EDT)
-Received: from alifm-ThinkPad-T470p.pok.ibm.com (unknown [9.56.58.93])
-        by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed, 13 Jun 2018 16:40:11 -0400 (EDT)
-From:   Farhan Ali <alifm@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     mst@redhat.com, qemu-devel@nongnu.org, arei.gonglei@huawei.com,
-        longpeng2@huawei.com, pasic@linux.ibm.com, frankja@linux.ibm.com,
-        borntraeger@de.ibm.com, alifm@linux.ibm.com
-Subject: [PATCH v2 0/2] Detect & register virtio-crypto algos only if it can be supported by backend
-Date:   Wed, 13 Jun 2018 16:38:47 -0400
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 18061320-2213-0000-0000-000002B94251
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009185; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01046514; UDB=6.00535974; IPR=6.00825490;
- MB=3.00021630; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 20:38:53
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061320-2214-0000-0000-00005A78DD1D
-Message-Id: <cover.1528921468.git.alifm@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=776 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806130218
+        Wed, 13 Jun 2018 16:40:23 -0400
+Received: by mail-vk0-f65.google.com with SMTP id 200-v6so2359212vkc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 13:40:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=EPeo9UeHKeiHJXFUW5N7la1kCqykKTA5JGuxFV8vwoE=;
+        b=pgAWzluZc3AjJ9JC87szu8vT69Q8frK1Ysa47SAJ33gG9DXFRmEQ4vKksFS4RzXfVa
+         w5L2IgZr6+MyH5xyGsoAC4CqwwX55CFsMm0nnLw+23fmNRg3iKAaDMm/qStIs6ok+fOt
+         XQjxYKuEcNNcxpvjMl2jxFAJngzoojymKs24Mk3L64s2YYUD0q4rgVpcfiWHrpDMVIjK
+         5KaJxOKIPBgkhHRtuQyvZBp0EXybE+uDqf7YBc6dyOZSAtnWsT185t+AMYBxOVh9+MdQ
+         QTcH9AiszD0KnP2pVFPCfmWJgXuaQb59vkp6Vh45xNLD6Am4Qee4SHydK/90VsuwCjZr
+         mwAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=EPeo9UeHKeiHJXFUW5N7la1kCqykKTA5JGuxFV8vwoE=;
+        b=DYW+JJQyW3qMqIfbRZBZIbByMDZysWofKrSm3vVcaOOlpPxrtNVP8GcKGBNssReCit
+         erjJ23jXAS8u+25uRN9iY2tVCs+4+KBeZ+Xm+VfoUt0vc34MNcu1E/q/qYjCyrweQ6Fb
+         zyQnUiOyNZZwYJ0yHbBHvL/9QJvPMxk6zyhnpi93VvsF4PJG1Np9c1IITiD777X+5BT9
+         MNtrRO/kxOaTxyEHygtxcK0ISapgSvFc0MHNqWojQGkJxyWWjjjf4X5Q7MvUXIdaJVm1
+         vkSy5WoMcIh43VE0sRQ+TAwRcbuzs4YyxCxVfnUEh8iZfB7CGLlnpZNCgplxMZbPzyFL
+         0gEQ==
+X-Gm-Message-State: APt69E08c1YTgNsv+X/IR7YBDAdHsZYJVIRQ9Ej13LjxOKRYXZj2yOjl
+        +exEbQu4xp6sCYqXUcqThI0=
+X-Google-Smtp-Source: ADUXVKIJjQjQfesmBqDKbY33PT1xn6kq7OtGhY93/ftMlZxBRm/8AuobZzL70E5ZafbkUsfCO/6Esw==
+X-Received: by 2002:a1f:2758:: with SMTP id n85-v6mr3966310vkn.117.1528922422807;
+        Wed, 13 Jun 2018 13:40:22 -0700 (PDT)
+Received: from javier-Z97X ([2601:582:c500:a66c::21e8])
+        by smtp.gmail.com with ESMTPSA id j191-v6sm718340vke.6.2018.06.13.13.40.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Jun 2018 13:40:22 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 16:40:15 -0400
+From:   Javier Martinez <javiermlinux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     jhogan@kernel.org, aaro.koskinen@iki.fi,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Staging: octeon-usb: octeon-hcd.c: style fix line length
+ warning
+Message-ID: <20180613204015.GA15689@javier-Z97X>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Checkpatch.pl issued a warning in the top of the commment within
+octeon-hcd.c. This is a simple style fix for that.
 
-Currently the Linux virtio-crypto driver registers the crypto
-algorithm without verifying if the backend actually supports the
-algorithm.
+Signed-off-by: Javier Martinez <javiermlinux@gmail.com>
+---
+ drivers/staging/octeon-usb/octeon-hcd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This kernel patch series adds support for registering algorithm
-with Linux crypto layer, only if the algorithm is supported by
-the backend device. This also makes the driver more compliant with
-the virtio-crypto spec [1].
-
-I would appreciate any feedback or comments on this.
-
-Thank you
-Farhan
-
-Reference
----------
-[1] Virtio crypto spec proposal https://lists.gnu.org/archive/html/qemu-devel/2017-12/msg00816.html
-
-ChangeLog
----------
-v1 -> v2
-   - Modify comment as suggested by Arei (patch 1)
-   - Modify error message as suggested by Arei (patch 2)
-
-
-Farhan Ali (2):
-  crypto/virtio-crypto: Read crypto services and algorithm masks
-  crypto/virtio-crypto: Register an algo only if it's supported
-
- drivers/crypto/virtio/virtio_crypto_algs.c   | 112 ++++++++++++++++++---------
- drivers/crypto/virtio/virtio_crypto_common.h |  25 +++++-
- drivers/crypto/virtio/virtio_crypto_core.c   |  29 +++++++
- drivers/crypto/virtio/virtio_crypto_mgr.c    |  81 +++++++++++++++++--
- 4 files changed, 202 insertions(+), 45 deletions(-)
-
+diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
+index cded30f145aa..768b0148f3d5 100644
+--- a/drivers/staging/octeon-usb/octeon-hcd.c
++++ b/drivers/staging/octeon-usb/octeon-hcd.c
+@@ -1,5 +1,5 @@
+ /*
+- * This file is subject to the terms and conditions of the GNU General Public
++ * This file is subject to the terms and conditions of the GPL
+  * License.  See the file "COPYING" in the main directory of this archive
+  * for more details.
+  *
 -- 
-2.7.4
+2.17.1
 
