@@ -2,101 +2,83 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 23E1CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:13:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CB8F0C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:14:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC4562086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:13:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC4562086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 803F52086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:14:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MuE+qv1h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 803F52086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933857AbeFMENw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 00:13:52 -0400
-Received: from muru.com ([72.249.23.125]:46900 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753924AbeFMENv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 00:13:51 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 1196180E4;
-        Wed, 13 Jun 2018 04:16:26 +0000 (UTC)
-Date:   Tue, 12 Jun 2018 21:13:19 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Kalle Valo <kvalo@codeaurora.org>, Eyal Reizer <eyalr@ti.com>,
-        Valentin Schneider <Valentin.Schneider@arm.com>,
-        lkml <linux-kernel@vger.kernel.org>
-Subject: Re: REGRESSION: "wlcore: sdio: allow pm to handle sdio power" breaks
- wifi on HiKey960
-Message-ID: <20180613041319.GA112168@atomide.com>
-References: <CALAqxLW=nrX-S9eibsTc+S_4YsZ166OJgZGj_1TZRWZ2ut7aFQ@mail.gmail.com>
+        id S934132AbeFMEOs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 00:14:48 -0400
+Received: from mail-ot0-f175.google.com ([74.125.82.175]:40932 "EHLO
+        mail-ot0-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933889AbeFMEOq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 00:14:46 -0400
+Received: by mail-ot0-f175.google.com with SMTP id w9-v6so1413041otj.7
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 21:14:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=2lcJ10BLvwaeJwAmVsMXcpDndGSDwTfXI2yigMMVnBE=;
+        b=MuE+qv1hzr3ud6VXtzC9Uac8ZTyQQYPTgoWscm05t805lf/7xLx4o+2klZfLowAk9+
+         +u7hZmxUeUla4L3EBMi/2zhU1nlO9R/e2gXaEv7bolgJyHIilXqMYMmEQyZf45PNXIVk
+         TTLO7PileUYAuThZfFdHP0TqnlmKKTgadwiq0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=2lcJ10BLvwaeJwAmVsMXcpDndGSDwTfXI2yigMMVnBE=;
+        b=cru9yudXXoImofUC6zEcAAAykgh7Vwbp82NZIIacncvA3L3+O/biARh7L/bgVtL1hC
+         MwTD3bKgl5GBG4ZIalSsVJZfaaSiJBGr1dWeRrWtktm1Ln3bH8PkdGM2mkvY0nnG/yjC
+         sFQgYE1WfZ6KUCY0VvET8aooE+DC0KjG4WTC/MdK+8vbFqEWaxjso0bB6PHuoqs6jhTQ
+         m7Gf2bvofDV1xlFQfmDEZwtIosS0uhbtDA2jIDVWnWKpy7hJpjo2DEeREopMrEt3bshY
+         XQ/okoCD9gUAsk/dK9HF7Xl6pGLnchCsOMeYCIoe6lRnAqSwv25rpzxmxwNdWCzFg7l8
+         yGHQ==
+X-Gm-Message-State: APt69E3cffTl5yv3KGM5h0cnTKvpvpozTF3hqcKXS503amzYoP229Mk8
+        alT9agmXAZ1542BAjNEl1CxzDXu77oXcoTknjmhEFKmH
+X-Google-Smtp-Source: ADUXVKI1nj3frX+CVawmFcuzFnSSzsokj5In791hWBcX0cnOA3xoU29IIhFTvQFW0DgBlKkYp6LiN9oEFtv4jiM8wAk=
+X-Received: by 2002:a9d:1490:: with SMTP id d16-v6mr1924988ote.299.1528863286210;
+ Tue, 12 Jun 2018 21:14:46 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CALAqxLW=nrX-S9eibsTc+S_4YsZ166OJgZGj_1TZRWZ2ut7aFQ@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a9d:4044:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 21:14:45
+ -0700 (PDT)
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Wed, 13 Jun 2018 09:44:45 +0530
+Message-ID: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+Subject: ACPI support in common clock framework
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* John Stultz <john.stultz@linaro.org> [180612 22:15]:
-> Hey Folks,
->   I noticed with linus/master wifi wasn't coming up on HiKey960. I
-> bisected it down and it seems to be due to:
-> 
-> 60f36637bbbd ("wlcore: sdio: allow pm to handle sdio power")  and
-> 728a9dc61f13 ("wlcore: sdio: Fix flakey SDIO runtime PM handling")
->
-> When wifi fails to load, the only useful error message I see is:
-> [    8.466097] wl1271_sdio mmc1:0001:2: wl12xx_sdio_power_on: failed
-> to get_sync(-13)
+Hi Michael, Stephen,
 
-Sorry to hear about that.
+We are adding ACPI support in our Linux based platform.
+At present our clock hierarchy using common clock framework through DTS.
+Now we required ACPI support in common clock framework to upgrade our platform.
 
-> Reverting those two changes gets wifi working again for me:
-> [    8.754953] wlcore: wl18xx HW: 183x or 180x, PG 2.2 (ROM 0x11)
-> [    8.761778] random: crng init done
-> [    8.765185] random: 7 urandom warning(s) missed due to ratelimiting
-> [    8.779149] wlcore: loaded
-> ...
-> [   12.945903] wlcore: PHY firmware version: Rev 8.2.0.0.237
-> [   13.058077] wlcore: firmware booted (Rev 8.9.0.0.70)
-> 
-> 
-> Any suggestions how to resolve this w/o a revert?
+For example, clk_get API called in many drivers to get clock device is
+tightly coupled with DT framework.
 
-Sounds like we need to ignore also -EACCES if runtime PM is
-disabled for MMC. Care to try and see if the patch below
-helps?
+Please let us know, if anybody in Open Source community have plans to
+add ACPI support for common clock framework.
+If not please suggest us alternative method to use common clock
+framework in ACPI use case.
+
+Thanks in advance.
 
 Regards,
-
-Tony
-
-8< ------------------------
-diff --git a/drivers/net/wireless/ti/wlcore/sdio.c b/drivers/net/wireless/ti/wlcore/sdio.c
---- a/drivers/net/wireless/ti/wlcore/sdio.c
-+++ b/drivers/net/wireless/ti/wlcore/sdio.c
-@@ -155,7 +155,7 @@ static int wl12xx_sdio_power_on(struct wl12xx_sdio_glue *glue)
- 	struct mmc_card *card = func->card;
- 
- 	ret = pm_runtime_get_sync(&card->dev);
--	if (ret < 0) {
-+	if (ret < 0 && ret != -EACCES) {
- 		pm_runtime_put_noidle(&card->dev);
- 		dev_err(glue->dev, "%s: failed to get_sync(%d)\n",
- 			__func__, ret);
-@@ -182,7 +182,7 @@ static int wl12xx_sdio_power_off(struct wl12xx_sdio_glue *glue)
- 
- 	/* Let runtime PM know the card is powered off */
- 	error = pm_runtime_put(&card->dev);
--	if (error < 0 && error != -EBUSY) {
-+	if (error < 0 && error != -EBUSY && error != -EACCES) {
- 		dev_err(&card->dev, "%s failed: %i\n", __func__, error);
- 
- 		return error;
+Srinath.
