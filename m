@@ -2,81 +2,97 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8BD28C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:37:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1321AC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B18E2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:37:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B18E2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id A8D3F2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:40:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQL/TsYE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8D3F2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935473AbeFMQhn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:37:43 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:47983 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935042AbeFMQhl (ORCPT
+        id S935026AbeFMQkt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:40:49 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:40984 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934388AbeFMQks (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:37:41 -0400
-Received: from [148.252.241.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fT8m8-0003Gi-5P; Wed, 13 Jun 2018 17:37:36 +0100
-Message-ID: <1528907855.2289.157.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 110/268] nvme-pci: Fix nvme queue cleanup if IRQ
- setup fails
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Keith Busch <keith.busch@intel.com>
-Cc:     Jianchao Wang <jianchao.w.wang@oracle.com>, stable@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 13 Jun 2018 17:37:35 +0100
-In-Reply-To: <20180613163007.GD5574@localhost.localdomain>
-References: <20180528100202.045206534@linuxfoundation.org>
-         <20180528100214.621806271@linuxfoundation.org>
-         <1528906474.2289.155.camel@codethink.co.uk>
-         <20180613163007.GD5574@localhost.localdomain>
-Organization: Codethink Ltd.
+        Wed, 13 Jun 2018 12:40:48 -0400
+Received: by mail-ua0-f196.google.com with SMTP id a5-v6so2151340uao.8;
+        Wed, 13 Jun 2018 09:40:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=vKlqzKLNUQyzuvO2xsE1DkhfiDWBVgBuJj2p/IiMitg=;
+        b=SQL/TsYE6gqIu7eKDr5vhIAamcpGGrLqFRRJa7vg2iZz65bxfhd6uAUXr/GWsDsT4w
+         gt0SphNJexCnIc8fEoy+be4nKmxxukNAI/PHqBGqKuEnwHQC1kmrO/ikXieSTQQNtV7+
+         61qaXrJU58IFTDE5Qiww2fOiXJ9yNhSSNZ/t1/piqba6pvtgeGAjEIz92Lzj5wriE7Hf
+         umycBiOhEkN81yQ8puncRIt/iW7qpN4de9p+1OWjBgckOxBh/zI1iLm1hOt0ghFcCrFF
+         +bQgFOFXxCAe+ZnHBku7Z6mMwcdDaPbCA4kcQONQ6JQEEviAcxsojD14eTb404dwIboA
+         k0vg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=vKlqzKLNUQyzuvO2xsE1DkhfiDWBVgBuJj2p/IiMitg=;
+        b=nw+TME2QSr/g8LApJHIAOySq9h9U/0D6WFMfDR0Wjx+Mw2IP3CXi08VP1W4dSjihqP
+         oxQ+BxT5fG+Eu6/WviABP1dpdpTLpepYt8krQlGvV93QCc2nHWvn18SiWjEM/v4A3C9x
+         uUfj65id8AIs0mZzX3GjwFy4V++Kz/rBCn0lbTNYUO43i+QomeY3Yj68zCRlVgsih+8d
+         KQXNoiSsRLh7/Eu0jrDwnw0StkSEGoGsLezaupXxQg1m6kw7yUlztV5trrWJv3uGDNGQ
+         vWZlfHwxtb/tzedEzu06t+nTwktfel14zhdAtYTK+u2967qiW6ichRxGv1nQk3QWMZWF
+         XoZw==
+X-Gm-Message-State: APt69E2jDBg7oM+27Z20+0QKKNhC84N1A+RgzRkPCJgH5cS3UjLsZSxN
+        dOk1Io2dCLIVDLBhpIw9yxG1In2926eQY6BX5nFSxA==
+X-Google-Smtp-Source: ADUXVKKbQDhnPInS/atf61mMxph26P+aMHv+g6jIS10KnsC+cnplFasgPADlJaFROtmxr8JR8RoiepHnyOkolRZFoho=
+X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr3862745uae.12.1528908047286;
+ Wed, 13 Jun 2018 09:40:47 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 09:40:46
+ -0700 (PDT)
+In-Reply-To: <20180613140724.GA31698@raj-desk2.iind.intel.com>
+References: <CAHp75Vdxz2h1N_bLQ4wxrYoo-kRAHQK=+36Db0BfK1QR4iwVPw@mail.gmail.com>
+ <20180609000237.7896-1-david.e.box@intel.com> <20180613140724.GA31698@raj-desk2.iind.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 13 Jun 2018 19:40:46 +0300
+Message-ID: <CAHp75VcZgdgwQsNhomvsCy1p_X33MvbcAFpBY2s+SCyL5tbM=Q@mail.gmail.com>
+Subject: Re: [V3] platform/x86: intel_pmc_core: Add CNP SLPS0 debug registers
+To:     Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+Cc:     "Box, David E" <david.e.box@intel.com>,
+        Vishwanath Somayaji <vishwanath.somayaji@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        kyle.d.pelton@linux.intel.com,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-13 at 10:30 -0600, Keith Busch wrote:
-> On Wed, Jun 13, 2018 at 05:14:34PM +0100, Ben Hutchings wrote:
-> > On Mon, 2018-05-28 at 12:01 +0200, Greg Kroah-Hartman wrote:
-> > >  	result = adapter_alloc_sq(dev, qid, nvmeq);
-> > >  	if (result < 0)
-> > > @@ -1597,9 +1597,12 @@ static int nvme_create_queue(struct nvme
-> > >  	return result;
-> > >  
-> > >   release_sq:
-> > > +	dev->online_queues--;
-> > 
-> > This addition looks wrong.  dev->online_queues is incremented by
-> > nvme_init_queue(), but this function only calls that at a point where
-> > it is sure to succeed.  So why would a failure path need to decrement
-> > it?
-> 
-> Thank you very much the catching that. This particular patch is indeed
-> not correct without the following:
-> 
->   161b8be2bd6ab ("nvme-pci: initialize queue memory before interrupts")
+On Wed, Jun 13, 2018 at 5:07 PM, Rajneesh Bhardwaj
+<rajneesh.bhardwaj@intel.com> wrote:
+> On Fri, Jun 08, 2018 at 05:02:37PM -0700, Box, David E wrote:
+>
+> I am ok with the design and approach and also verified it on a Cannonlake
+> system. I wont insist for a V4 unless Andy feels a need for respin but there
+> are minor things that were missed.
 
-Oh, now I see.  Do you think that commit is suitable for stable
-branches?
+> Also ISCLK_OC / ISCLK_MAIN suggestion is missing.
 
-Ben.
+I missed this in discussion, so, please send v4 with settled fixes.
+
+Meanwhile I keep v3 in my review and testing queue, thanks!
+
 
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+With Best Regards,
+Andy Shevchenko
