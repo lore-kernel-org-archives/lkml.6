@@ -2,209 +2,671 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5CA7DC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:19:56 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D03B8C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:20:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AAC5208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:19:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73D372087E
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:20:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NtDNLZ4+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AAC5208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qUcc2oO1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73D372087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935923AbeFMWTy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 18:19:54 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:56460 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935320AbeFMWTw (ORCPT
+        id S935928AbeFMWUv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 18:20:51 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39372 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935060AbeFMWUt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 18:19:52 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5DMIfkp055371;
-        Wed, 13 Jun 2018 22:19:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=Kt/XR48DA13QvYfJVvMPmtd/1uI3mEB1dpQ9O9+kyPI=;
- b=NtDNLZ4+dDXIZPVPZCF4Q4ekLuApGvGnOyofQiEFZtmmVGHeD5tsgnL4AVaKyc4bHiDJ
- 471V0ZIOqWSXLtsP9oj0/20wxxLIMkvx/vuQxGfNHyBwX8aoOO4cj9J1/NjKBWBqE4hX
- om3ljoIb89QM1usq/6I+mgZ/IkfYXmFGuLavKcupUtkoUmgtivitfOChc6X6z3uykAPF
- giSvw6dzD7hIWnGATrqoIDJNBC603ITFj12PEXBXE3gO4G3m0hOuE580Tgpw606nSPqE
- XnMvsaWQKmFrWJekc30OicHBLYgZgIXkPiPW1iUEs+2wTsRZKSVtasssyiNpH1YegzAr +w== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2jk0xrakph-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 22:19:42 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5DMJfnR018682
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 22:19:41 GMT
-Received: from abhmp0012.oracle.com (abhmp0012.oracle.com [141.146.116.18])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5DMJexE031597;
-        Wed, 13 Jun 2018 22:19:40 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jun 2018 15:19:40 -0700
-Subject: Re: [PATCH v3 8/9] xen/gntdev: Implement dma-buf export functionality
-To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com
-References: <20180612134200.17456-1-andr2000@gmail.com>
- <20180612134200.17456-9-andr2000@gmail.com>
- <bd5adb0e-af98-528f-d6f9-9d5888ff2412@oracle.com>
- <5c50f951-47db-782d-1ac2-162892f7ec91@epam.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <35fb3f9b-2817-f284-6318-588a72c71f98@oracle.com>
-Date:   Wed, 13 Jun 2018 18:19:26 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 13 Jun 2018 18:20:49 -0400
+Received: by mail-pg0-f67.google.com with SMTP id w12-v6so1934307pgc.6;
+        Wed, 13 Jun 2018 15:20:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=olZyJE7JtFdgkVw68gX+gLKD/adFLvepswQyMDrNi6Q=;
+        b=qUcc2oO1NVqahuzYjmMOzlBJxBrcDudTWlQPw2LHD5kSqamkns3dnqi8OJ9rf2D0vR
+         z1kkaF770WjZiu/EdPHS5cqAaYu5HAo+zv1x5HXqPoAwxe8knUMUE4WQf9xeUBLzmha6
+         /rI2d2ZoIPJwURTurp819L3EZoX8DJvQQ4YMNYwPcMA+cEfBOmhYafwakZ69S8//PKD2
+         FhZZPDjQPGLzcHoCTjqjAtEJNecT85NAdPbbDLK4FJM81D9iuz4lsuVf0Ad0kjhfJDcY
+         ZASjuGRUh6j98/MbW5BqLPIWc/aVZt4oW8iXsfmsyPMSCLyEOzgkZ954mFX0lh/YuJ85
+         sLUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=olZyJE7JtFdgkVw68gX+gLKD/adFLvepswQyMDrNi6Q=;
+        b=K/xW3wydwXaGpQRlWvqFYQ4mxMi1G3HEx+RmzpwVLyVDMzlAAtOMZY9HgimhGc0P7s
+         tOmjYLjtCLPW8ro0jPxCStnwcokdRswfYTVQ+Eo+q/vcmiGVPNk/rdjGJANQcg8cs6Qh
+         8bmuxeeiCszqK6+RN/nlCcRPNAHqefKBUGeDhwZsJP7doOx9/wnWd9Qo/onm9nq03cXp
+         Q9Q9BsfAykgs7cbvssa4IPNsTs/wLrIS2IBE0S7pCaazjgrKJmCDyEeZUaeyrXaJDAh/
+         knVtkpVAh7ulaNIeH8yw9RuVUBIvWd94/c0PIk16WUas3tibEp9TzShtLLFubLmy7cUC
+         hQPw==
+X-Gm-Message-State: APt69E0xr71/sMjEzUrTzZx4+4xaZ0SX1fWaRgPhrTXWMgUEOlIGk9bK
+        nG1C/r+fHPEzo2lx/OdEK/k=
+X-Google-Smtp-Source: ADUXVKLfO3chzLVtfBtUPJkCzOlmTCp4akCgquRHq9W70Ba8DtXDQY9BqDZ7e6llp0UsVREMDenrWA==
+X-Received: by 2002:a62:c16:: with SMTP id u22-v6mr6669085pfi.177.1528928448170;
+        Wed, 13 Jun 2018 15:20:48 -0700 (PDT)
+Received: from dtor-ws ([2620:0:1000:1511:8de6:27a8:ed13:2ef5])
+        by smtp.gmail.com with ESMTPSA id m11-v6sm9864136pfj.25.2018.06.13.15.20.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Jun 2018 15:20:46 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 15:20:44 -0700
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hs@denx.de" <hs@denx.de>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>
+Subject: Re: [PATCH v5] Input: add bu21029 touch driver
+Message-ID: <20180613222044.GC62746@dtor-ws>
+References: <73b4ea3ce1aa453681fae87b7bad5cab@de.bosch.com>
 MIME-Version: 1.0
-In-Reply-To: <5c50f951-47db-782d-1ac2-162892f7ec91@epam.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8923 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=954
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130238
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <73b4ea3ce1aa453681fae87b7bad5cab@de.bosch.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/13/2018 07:57 AM, Oleksandr Andrushchenko wrote:
-> On 06/13/2018 05:58 AM, Boris Ostrovsky wrote:
->>
->>
->> On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
->>>
->>> +
->>> +static struct gntdev_dmabuf *
->>> +dmabuf_exp_wait_obj_get_by_fd(struct gntdev_dmabuf_priv *priv, int fd)
->>
->>
->> The name of this routine implies (to me) that we are getting a wait
->> object but IIUIC we are getting a gntdev_dmabuf that we are going to
->> later associate with a wait object.
->>
-> How about dmabuf_exp_wait_obj_get_dmabuf_by_fd?
-> I would like to keep function prefixes, e.g. dmabuf_exp_wait_obj_
-> just to show to which functionality a routine belongs.
+Hi Mark,
+
+On Wed, Jun 13, 2018 at 03:27:16PM +0000, Jonas Mark (BT-FIR/ENG1) wrote:
+> Hello Dmitry,
+> 
+> > > [PATCH v5] Input: add bu21029 touch driver
+> > >
+> > > Add Rohm BU21029 resistive touch panel controller support with I2C
+> > > interface.
+> > 
+> > Is the patch ready to be pushed upstream? Is there anything I still need to do?
+> 
+> I would like to kindly remind you of the BU21029 touch screen driver.
+> Could you please forward it to the mainline kernel?
+
+Sorry for the delay. Could you please tell me if the patch below (shoudl
+apply on top of your v5 version) works?
+
+Thanks!
+
+-- 
+Dmitry
 
 
-That's too long IMO. If you really want to keep the prefix then let's
-keep this the way it is. Maybe it's just me who read it that way.
+Input: bu - misc fixes
 
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
->>
->>>
->>>   +#ifdef CONFIG_XEN_GNTDEV_DMABUF
->>> +void gntdev_remove_map(struct gntdev_priv *priv, struct
->>> gntdev_grant_map *map)
->>> +{
->>> +    mutex_lock(&priv->lock);
->>> +    list_del(&map->next);
->>> +    gntdev_put_map(NULL /* already removed */, map);
->>
->>
->> Why not pass call gntdev_put_map(priv, map) and then not have this
->> routine at all?
->>
-> Well, I wish I could, but the main difference when calling
-> gntdev_put_map(priv, map)
-> with priv != NULL and my code is that:
->
-> void gntdev_put_map(struct gntdev_priv *priv, struct gntdev_grant_map
-> *map)
-> {
->     [...]
->     if (populate_freeable_maps && priv) {
->     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->         mutex_lock(&priv->lock);
->         list_del(&map->next);
->         mutex_unlock(&priv->lock);
->     }
->     [...]
-> }
->
-> and
->
-> #define populate_freeable_maps use_ptemod
->                                ^^^^^^^^^^
-> which means the map will never be removed from the list in my case
-> because use_ptemod == false for dma-buf.
-> This is why I do that by hand, e.g. remove the item from the list
-> and then pass NULL for priv.
->
-> Also, I will remove gntdev_remove_map as I can now access
-> priv->lock and gntdev_put_map directly form gntdev-dmabuf.c
+- add support for VDD supply
+- reset GPIO is optional - it is not necessarily wired to AP
+- add OF match table
+- rudimentary handling of touchscreen as wakeup source
+- removed bu21029_remove() as we have ->close method so touchscreen will be
+  disabled/powered down upon unregistration
+- misc code rearrangements
 
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+ .../bindings/input/touchscreen/bu21029.txt         |    3 
+ drivers/input/touchscreen/bu21029_ts.c             |  325 ++++++++++----------
+ 2 files changed, 169 insertions(+), 159 deletions(-)
 
-Yes, that's a good idea.
-
->
->> I really dislike the fact that we are taking a lock here that
->> gntdev_put_map() takes as well, although not with NULL argument. (And
->> yes, I see that gntdev_release() does it too.)
->>
-> This can be re-factored later I guess?
-
-OK.
-
--boris
-
+diff --git a/Documentation/devicetree/bindings/input/touchscreen/bu21029.txt b/Documentation/devicetree/bindings/input/touchscreen/bu21029.txt
+index 030a888365dff..1aaa647cc3eaa 100644
+--- a/Documentation/devicetree/bindings/input/touchscreen/bu21029.txt
++++ b/Documentation/devicetree/bindings/input/touchscreen/bu21029.txt
+@@ -5,13 +5,14 @@ Required properties:
+  - reg                     : i2c device address of the chip (0x40 or 0x41)
+  - interrupt-parent        : the phandle for the gpio controller
+  - interrupts              : (gpio) interrupt to which the chip is connected
+- - reset-gpios             : gpio pin to reset the chip (active low)
+  - rohm,x-plate-ohms       : x-plate resistance in Ohm
+ 
+ Optional properties:
++ - reset-gpios             : gpio pin to reset the chip (active low)
+  - touchscreen-size-x      : horizontal resolution of touchscreen (in pixels)
+  - touchscreen-size-y      : vertical resolution of touchscreen (in pixels)
+  - touchscreen-max-pressure: maximum pressure value
++ - vdd-supply              : power supply for the controoler
+ 
+ Example:
+ 
+diff --git a/drivers/input/touchscreen/bu21029_ts.c b/drivers/input/touchscreen/bu21029_ts.c
+index 5a7267187e7b1..65469c8617630 100644
+--- a/drivers/input/touchscreen/bu21029_ts.c
++++ b/drivers/input/touchscreen/bu21029_ts.c
+@@ -16,6 +16,7 @@
+ #include <linux/input/touchscreen.h>
+ #include <linux/interrupt.h>
+ #include <linux/module.h>
++#include <linux/regulator/consumer.h>
+ #include <linux/timer.h>
+ 
+ /*
+@@ -34,8 +35,8 @@
+  * HW_IDH: high 8bits of IC's ID
+  * HW_IDL: low  8bits of IC's ID
+  */
+-#define BU21029_HWID_REG (0x0E << 3)
+-#define SUPPORTED_HWID    0x0229
++#define BU21029_HWID_REG	(0x0E << 3)
++#define SUPPORTED_HWID		0x0229
+ 
+ /*
+  * CFR0 Register (PAGE=0, ADDR=0x00, Reset value=0x20)
+@@ -49,8 +50,8 @@
+  * INTRM: 0 = INT output depend on "pen down" (*)
+  *        1 = INT output always "0"
+  */
+-#define BU21029_CFR0_REG (0x00 << 3)
+-#define CFR0_VALUE        0x00
++#define BU21029_CFR0_REG	(0x00 << 3)
++#define CFR0_VALUE		0x00
+ 
+ /*
+  * CFR1 Register (PAGE=0, ADDR=0x01, Reset value=0xA6)
+@@ -65,8 +66,8 @@
+  *               if AVE>SMPL, then AVE=SMPL (=3)
+  * SMPL: SMPL+1 = number of conversion samples for MAV (=7)
+  */
+-#define BU21029_CFR1_REG (0x01 << 3)
+-#define CFR1_VALUE        0xA6
++#define BU21029_CFR1_REG	(0x01 << 3)
++#define CFR1_VALUE		0xA6
+ 
+ /*
+  * CFR2 Register (PAGE=0, ADDR=0x02, Reset value=0x04)
+@@ -81,8 +82,8 @@
+  * TIME_ST_ADC: waiting time between application of voltage
+  *              to panel and start of A/D conversion (=100us)
+  */
+-#define BU21029_CFR2_REG (0x02 << 3)
+-#define CFR2_VALUE        0xC9
++#define BU21029_CFR2_REG	(0x02 << 3)
++#define CFR2_VALUE		0xC9
+ 
+ /*
+  * CFR3 Register (PAGE=0, ADDR=0x0B, Reset value=0x72)
+@@ -102,8 +103,8 @@
+  * PIDAC_OFS: dual touch detection circuit adjustment, it is not necessary
+  *            to change this from initial value
+  */
+-#define BU21029_CFR3_REG (0x0B << 3)
+-#define CFR3_VALUE        0x42
++#define BU21029_CFR3_REG	(0x0B << 3)
++#define CFR3_VALUE		0x42
+ 
+ /*
+  * LDO Register (PAGE=0, ADDR=0x0C, Reset value=0x00)
+@@ -115,8 +116,8 @@
+  * PVDD: output voltage of panel output regulator (=2.000V)
+  * AVDD: output voltage of analog circuit regulator (=2.000V)
+  */
+-#define BU21029_LDO_REG  (0x0C << 3)
+-#define LDO_VALUE         0x77
++#define BU21029_LDO_REG		(0x0C << 3)
++#define LDO_VALUE		0x77
+ 
+ /*
+  * Serial Interface Command Byte 1 (CID=1)
+@@ -132,7 +133,7 @@
+  *      1 = keep power on after convert function stops
+  * STP: 1 = abort current conversion and power down, set to "0" automatically
+  */
+-#define BU21029_AUTOSCAN  0x80
++#define BU21029_AUTOSCAN	0x80
+ 
+ /*
+  * The timeout value needs to be larger than INTVL_TIME + tConv4 (sample and
+@@ -140,40 +141,31 @@
+  * tPON + tDLY1 + (tTIME_ST_ADC + (tADC * tSMPL) * 2 + tDLY2) * 3
+  * see figure 8 in datasheet p15 for details of each field.
+  */
+-#define PEN_UP_TIMEOUT msecs_to_jiffies(50)
++#define PEN_UP_TIMEOUT_MS	50
+ 
+-#define STOP_DELAY_MIN_US 50
+-#define STOP_DELAY_MAX_US 1000
+-#define START_DELAY_MS    2
+-#define BUF_LEN           8
+-#define SCALE_12BIT       (1 << 12)
+-#define MAX_12BIT         ((1 << 12) - 1)
+-#define DRIVER_NAME       "bu21029"
++#define STOP_DELAY_MIN_US	50
++#define STOP_DELAY_MAX_US	1000
++#define START_DELAY_MS		2
++#define BUF_LEN			8
++#define SCALE_12BIT		(1 << 12)
++#define MAX_12BIT		((1 << 12) - 1)
++#define DRIVER_NAME		"bu21029"
+ 
+ struct bu21029_ts_data {
+-	struct i2c_client            *client;
+-	struct input_dev             *in_dev;
+-	struct timer_list             timer;
+-	struct gpio_desc             *reset_gpios;
+-	u32                           x_plate_ohms;
+-	struct touchscreen_properties prop;
++	struct i2c_client		*client;
++	struct input_dev		*in_dev;
++	struct timer_list		timer;
++	struct regulator		*vdd;
++	struct gpio_desc		*reset_gpios;
++	u32				x_plate_ohms;
++	struct touchscreen_properties	prop;
+ };
+ 
+-static int bu21029_touch_report(struct bu21029_ts_data *bu21029)
++static void bu21029_touch_report(struct bu21029_ts_data *bu21029, const u8 *buf)
+ {
+-	struct i2c_client *i2c = bu21029->client;
+-	u8 buf[BUF_LEN];
+ 	u16 x, y, z1, z2;
+ 	u32 rz;
+-	s32 max_pressure = bu21029->in_dev->absinfo[ABS_PRESSURE].maximum;
+-
+-	/* read touch data and deassert INT (by restarting the autoscan mode) */
+-	int error = i2c_smbus_read_i2c_block_data(i2c,
+-						  BU21029_AUTOSCAN,
+-						  BUF_LEN,
+-						  buf);
+-	if (error < 0)
+-		return error;
++	s32 max_pressure = input_abs_get_max(bu21029->in_dev, ABS_PRESSURE);
+ 
+ 	/*
+ 	 * compose upper 8 and lower 4 bits into a 12bit value:
+@@ -190,31 +182,28 @@ static int bu21029_touch_report(struct bu21029_ts_data *bu21029)
+ 	z1 = (buf[4] << 4) | (buf[5] >> 4);
+ 	z2 = (buf[6] << 4) | (buf[7] >> 4);
+ 
+-	if (z1 == 0 || z2 == 0)
+-		return 0;
+-
+-	/*
+-	 * calculate Rz (pressure resistance value) by equation:
+-	 * Rz = Rx * (x/Q) * ((z2/z1) - 1), where
+-	 * Rx is x-plate resistance,
+-	 * Q  is the touch screen resolution (8bit = 256, 12bit = 4096)
+-	 * x, z1, z2 are the measured positions.
+-	 */
+-	rz  = z2 - z1;
+-	rz *= x;
+-	rz *= bu21029->x_plate_ohms;
+-	rz /= z1;
+-	rz  = DIV_ROUND_CLOSEST(rz, SCALE_12BIT);
+-	if (rz <= max_pressure) {
+-		touchscreen_report_pos(bu21029->in_dev, &bu21029->prop,
+-				       x, y, false);
+-		input_report_abs(bu21029->in_dev, ABS_PRESSURE,
+-				 max_pressure - rz);
+-		input_report_key(bu21029->in_dev, BTN_TOUCH, 1);
+-		input_sync(bu21029->in_dev);
++	if (z1 && z2) {
++		/*
++		 * calculate Rz (pressure resistance value) by equation:
++		 * Rz = Rx * (x/Q) * ((z2/z1) - 1), where
++		 * Rx is x-plate resistance,
++		 * Q  is the touch screen resolution (8bit = 256, 12bit = 4096)
++		 * x, z1, z2 are the measured positions.
++		 */
++		rz  = z2 - z1;
++		rz *= x;
++		rz *= bu21029->x_plate_ohms;
++		rz /= z1;
++		rz  = DIV_ROUND_CLOSEST(rz, SCALE_12BIT);
++		if (rz <= max_pressure) {
++			touchscreen_report_pos(bu21029->in_dev, &bu21029->prop,
++					       x, y, false);
++			input_report_abs(bu21029->in_dev, ABS_PRESSURE,
++					 max_pressure - rz);
++			input_report_key(bu21029->in_dev, BTN_TOUCH, 1);
++			input_sync(bu21029->in_dev);
++		}
+ 	}
+-
+-	return 0;
+ }
+ 
+ static void bu21029_touch_release(struct timer_list *t)
+@@ -229,32 +218,34 @@ static void bu21029_touch_release(struct timer_list *t)
+ static irqreturn_t bu21029_touch_soft_irq(int irq, void *data)
+ {
+ 	struct bu21029_ts_data *bu21029 = data;
++	u8 buf[BUF_LEN];
++	int error;
+ 
+ 	/*
+-	 * report touch and deassert interrupt (will assert again after
++	 * Read touch data and deassert interrupt (will assert again after
+ 	 * INTVL_TIME + tConv4 for continuous touch)
+ 	 */
+-	int error = bu21029_touch_report(bu21029);
++	error = i2c_smbus_read_i2c_block_data(bu21029->client, BU21029_AUTOSCAN,
++					      sizeof(buf), buf);
++	if (error < 0)
++		goto out;
+ 
+-	if (error)
+-		return IRQ_NONE;
++	bu21029_touch_report(bu21029, buf);
+ 
+ 	/* reset timer for pen up detection */
+-	mod_timer(&bu21029->timer, jiffies + PEN_UP_TIMEOUT);
++	mod_timer(&bu21029->timer,
++		  jiffies + msecs_to_jiffies(PEN_UP_TIMEOUT_MS));
+ 
++out:
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void bu21029_stop_chip(struct input_dev *dev)
++static void bu21029_put_chip_in_reset(struct bu21029_ts_data *bu21029)
+ {
+-	struct bu21029_ts_data *bu21029 = input_get_drvdata(dev);
+-
+-	disable_irq(bu21029->client->irq);
+-	del_timer_sync(&bu21029->timer);
+-
+-	/* put chip into reset */
+-	gpiod_set_value_cansleep(bu21029->reset_gpios, 1);
+-	usleep_range(STOP_DELAY_MIN_US, STOP_DELAY_MAX_US);
++	if (bu21029->reset_gpios) {
++		gpiod_set_value_cansleep(bu21029->reset_gpios, 1);
++		usleep_range(STOP_DELAY_MIN_US, STOP_DELAY_MAX_US);
++	}
+ }
+ 
+ static int bu21029_start_chip(struct input_dev *dev)
+@@ -274,23 +265,30 @@ static int bu21029_start_chip(struct input_dev *dev)
+ 	int error, i;
+ 	__be16 hwid;
+ 
++	error = regulator_enable(bu21029->vdd);
++	if (error) {
++		dev_err(&i2c->dev, "failed to power up chip: %d", error);
++		return error;
++	}
++
+ 	/* take chip out of reset */
+-	gpiod_set_value_cansleep(bu21029->reset_gpios, 0);
+-	msleep(START_DELAY_MS);
++	if (bu21029->reset_gpios) {
++		gpiod_set_value_cansleep(bu21029->reset_gpios, 0);
++		msleep(START_DELAY_MS);
++	}
+ 
+-	error = i2c_smbus_read_i2c_block_data(i2c,
+-					      BU21029_HWID_REG,
+-					      2,
+-					      (u8 *)&hwid);
++	error = i2c_smbus_read_i2c_block_data(i2c, BU21029_HWID_REG,
++					      sizeof(hwid), (u8 *)&hwid);
+ 	if (error < 0) {
+ 		dev_err(&i2c->dev, "failed to read HW ID\n");
+-		goto out;
++		goto err_out;
+ 	}
+ 
+ 	if (be16_to_cpu(hwid) != SUPPORTED_HWID) {
+-		dev_err(&i2c->dev, "unsupported HW ID 0x%x\n", hwid);
++		dev_err(&i2c->dev,
++			"unsupported HW ID 0x%x\n", be16_to_cpu(hwid));
+ 		error = -ENODEV;
+-		goto out;
++		goto err_out;
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(init_table); ++i) {
+@@ -299,50 +297,37 @@ static int bu21029_start_chip(struct input_dev *dev)
+ 						  init_table[i].value);
+ 		if (error < 0) {
+ 			dev_err(&i2c->dev,
+-				"failed to write 0x%x to register 0x%x\n",
+-				init_table[i].value,
+-				init_table[i].reg);
+-			goto out;
++				"failed to write %#02x to register %#02x: %d\n",
++				init_table[i].value, init_table[i].reg,
++				error);
++			goto err_out;
+ 		}
+ 	}
+ 
+ 	error = i2c_smbus_write_byte(i2c, BU21029_AUTOSCAN);
+ 	if (error < 0) {
+ 		dev_err(&i2c->dev, "failed to start autoscan\n");
+-		goto out;
++		goto err_out;
+ 	}
+ 
+ 	enable_irq(bu21029->client->irq);
+ 	return 0;
+ 
+-out:
+-	bu21029_stop_chip(dev);
++err_out:
++	bu21029_put_chip_in_reset(bu21029);
++	regulator_disable(bu21029->vdd);
+ 	return error;
+ }
+ 
+-static int bu21029_parse_dt(struct bu21029_ts_data *bu21029)
++static void bu21029_stop_chip(struct input_dev *dev)
+ {
+-	struct device *dev = &bu21029->client->dev;
+-	int error;
+-
+-	bu21029->reset_gpios = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+-	if (IS_ERR(bu21029->reset_gpios)) {
+-		error = PTR_ERR(bu21029->reset_gpios);
+-		if (error != -EPROBE_DEFER)
+-			dev_err(dev, "invalid 'reset-gpios':%d\n", error);
+-		return error;
+-	}
+-
+-	error = device_property_read_u32(dev, "rohm,x-plate-ohms",
+-					 &bu21029->x_plate_ohms);
+-	if (error) {
+-		dev_err(dev, "invalid 'x-plate-ohms' supplied:%d\n", error);
+-		return error;
+-	}
++	struct bu21029_ts_data *bu21029 = input_get_drvdata(dev);
+ 
+-	touchscreen_parse_properties(bu21029->in_dev, false, &bu21029->prop);
++	disable_irq(bu21029->client->irq);
++	del_timer_sync(&bu21029->timer);
+ 
+-	return 0;
++	bu21029_put_chip_in_reset(bu21029);
++	regulator_disable(bu21029->vdd);
+ }
+ 
+ static int bu21029_probe(struct i2c_client *client,
+@@ -365,6 +350,33 @@ static int bu21029_probe(struct i2c_client *client,
+ 	if (!bu21029)
+ 		return -ENOMEM;
+ 
++	error = device_property_read_u32(&client->dev, "rohm,x-plate-ohms",
++					 &bu21029->x_plate_ohms);
++	if (error) {
++		dev_err(&client->dev,
++			"invalid 'x-plate-ohms' supplied: %d\n", error);
++		return error;
++	}
++
++	bu21029->vdd = devm_regulator_get(&client->dev, "vdd");
++	if (IS_ERR(bu21029->vdd)) {
++		error = PTR_ERR(bu21029->vdd);
++		if (error != -EPROBE_DEFER)
++			dev_err(&client->dev,
++				"failed to acquire 'vdd' supply: %d\n", error);
++		return error;
++	}
++
++	bu21029->reset_gpios = devm_gpiod_get_optional(&client->dev,
++						       "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(bu21029->reset_gpios)) {
++		error = PTR_ERR(bu21029->reset_gpios);
++		if (error != -EPROBE_DEFER)
++			dev_err(&client->dev,
++				"failed to acquire 'reset' gpio: %d\n", error);
++		return error;
++	}
++
+ 	in_dev = devm_input_allocate_device(&client->dev);
+ 	if (!in_dev) {
+ 		dev_err(&client->dev, "unable to allocate input device\n");
+@@ -372,42 +384,36 @@ static int bu21029_probe(struct i2c_client *client,
+ 	}
+ 
+ 	bu21029->client = client;
+-	bu21029->in_dev	= in_dev;
++	bu21029->in_dev = in_dev;
+ 	timer_setup(&bu21029->timer, bu21029_touch_release, 0);
+ 
+-	in_dev->name       = DRIVER_NAME;
+-	in_dev->id.bustype = BUS_I2C;
+-	in_dev->open       = bu21029_start_chip;
+-	in_dev->close      = bu21029_stop_chip;
++	in_dev->name		= DRIVER_NAME;
++	in_dev->id.bustype	= BUS_I2C;
++	in_dev->open		= bu21029_start_chip;
++	in_dev->close		= bu21029_stop_chip;
+ 
+ 	input_set_capability(in_dev, EV_KEY, BTN_TOUCH);
+ 	input_set_abs_params(in_dev, ABS_X, 0, MAX_12BIT, 0, 0);
+ 	input_set_abs_params(in_dev, ABS_Y, 0, MAX_12BIT, 0, 0);
+ 	input_set_abs_params(in_dev, ABS_PRESSURE, 0, MAX_12BIT, 0, 0);
+-
+-	error = bu21029_parse_dt(bu21029);
+-	if (error)
+-		return error;
++	touchscreen_parse_properties(in_dev, false, &bu21029->prop);
+ 
+ 	input_set_drvdata(in_dev, bu21029);
+ 
+-	error = devm_request_threaded_irq(&client->dev,
+-					  client->irq,
+-					  NULL,
+-					  bu21029_touch_soft_irq,
+-					  IRQF_ONESHOT,
+-					  DRIVER_NAME,
+-					  bu21029);
++	irq_set_status_flags(client->irq, IRQ_NOAUTOEN);
++	error = devm_request_threaded_irq(&client->dev, client->irq,
++					  NULL, bu21029_touch_soft_irq,
++					  IRQF_ONESHOT, DRIVER_NAME, bu21029);
+ 	if (error) {
+-		dev_err(&client->dev, "unable to request touch irq\n");
++		dev_err(&client->dev,
++			"unable to request touch irq: %d\n", error);
+ 		return error;
+ 	}
+ 
+-	bu21029_stop_chip(in_dev);
+-
+ 	error = input_register_device(in_dev);
+ 	if (error) {
+-		dev_err(&client->dev, "unable to register input device\n");
++		dev_err(&client->dev,
++			"unable to register input device: %d\n", error);
+ 		return error;
+ 	}
+ 
+@@ -416,24 +422,17 @@ static int bu21029_probe(struct i2c_client *client,
+ 	return 0;
+ }
+ 
+-static int bu21029_remove(struct i2c_client *client)
+-{
+-	struct bu21029_ts_data *bu21029 = i2c_get_clientdata(client);
+-
+-	bu21029_stop_chip(bu21029->in_dev);
+-
+-	return 0;
+-}
+-
+ static int __maybe_unused bu21029_suspend(struct device *dev)
+ {
+ 	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct bu21029_ts_data *bu21029 = i2c_get_clientdata(i2c);
+ 
+-	mutex_lock(&bu21029->in_dev->mutex);
+-	if (bu21029->in_dev->users)
+-		bu21029_stop_chip(bu21029->in_dev);
+-	mutex_unlock(&bu21029->in_dev->mutex);
++	if (!device_may_wakeup(dev)) {
++		mutex_lock(&bu21029->in_dev->mutex);
++		if (bu21029->in_dev->users)
++			bu21029_stop_chip(bu21029->in_dev);
++		mutex_unlock(&bu21029->in_dev->mutex);
++	}
+ 
+ 	return 0;
+ }
+@@ -443,29 +442,39 @@ static int __maybe_unused bu21029_resume(struct device *dev)
+ 	struct i2c_client *i2c = to_i2c_client(dev);
+ 	struct bu21029_ts_data *bu21029 = i2c_get_clientdata(i2c);
+ 
+-	mutex_lock(&bu21029->in_dev->mutex);
+-	if (bu21029->in_dev->users)
+-		bu21029_start_chip(bu21029->in_dev);
+-	mutex_unlock(&bu21029->in_dev->mutex);
++	if (!device_may_wakeup(dev)) {
++		mutex_lock(&bu21029->in_dev->mutex);
++		if (bu21029->in_dev->users)
++			bu21029_start_chip(bu21029->in_dev);
++		mutex_unlock(&bu21029->in_dev->mutex);
++	}
+ 
+ 	return 0;
+ }
+ static SIMPLE_DEV_PM_OPS(bu21029_pm_ops, bu21029_suspend, bu21029_resume);
+ 
+ static const struct i2c_device_id bu21029_ids[] = {
+-	{DRIVER_NAME, 0},
+-	{}
++	{ DRIVER_NAME, 0 },
++	{ /* sentinel */ }
+ };
+ MODULE_DEVICE_TABLE(i2c, bu21029_ids);
+ 
++#ifdef CONFIG_OF
++static const struct of_device_id bu21029_of_ids[] = {
++	{ .compatible = "rohm,bu21029" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, bu21029_of_ids);
++#endif
++
+ static struct i2c_driver bu21029_driver = {
+-	.driver = {
+-		.name = DRIVER_NAME,
+-		.pm   = &bu21029_pm_ops,
++	.driver	= {
++		.name		= DRIVER_NAME,
++		.of_match_table	= of_match_ptr(bu21029_of_ids),
++		.pm		= &bu21029_pm_ops,
+ 	},
+-	.id_table = bu21029_ids,
+-	.probe    = bu21029_probe,
+-	.remove   = bu21029_remove,
++	.id_table	= bu21029_ids,
++	.probe		= bu21029_probe,
+ };
+ module_i2c_driver(bu21029_driver);
+ 
