@@ -2,125 +2,89 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 33A86C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:29:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0A3EDC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5892087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:29:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5892087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id AFF18208D8
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:31:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFF18208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935816AbeFMW3m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 18:29:42 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60145 "EHLO mx2.suse.de"
+        id S935857AbeFMWbt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 18:31:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935256AbeFMW3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 18:29:41 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4362EADCC;
-        Wed, 13 Jun 2018 22:29:40 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     James Simmons <jsimmons@infradead.org>
-Date:   Thu, 14 Jun 2018 08:29:28 +1000
-Cc:     Andreas Dilger <andreas.dilger@intel.com>,
-        Oleg Drokin <oleg.drokin@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>,
-        Doug Oucharek <dougso@me.com>,
-        Amir Shehata <amir.shehata@intel.com>
-Subject: Re: [PATCH v2 01/25] staging: lustre: libcfs: restore UMP handling
-In-Reply-To: <alpine.LFD.2.21.1806132248500.12664@casper.infradead.org>
-References: <1527603725-30560-1-git-send-email-jsimmons@infradead.org> <1527603725-30560-2-git-send-email-jsimmons@infradead.org> <87muwiuiuz.fsf@notabene.neil.brown.name> <alpine.LFD.2.21.1806132248500.12664@casper.infradead.org>
-Message-ID: <87h8m6ialz.fsf@notabene.neil.brown.name>
+        id S935256AbeFMWbs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 18:31:48 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F4562087E;
+        Wed, 13 Jun 2018 22:31:47 +0000 (UTC)
+Date:   Wed, 13 Jun 2018 18:31:45 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ming Lei <ming.lei@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] usb: don't offload isochronous urb completions to
+ ksoftirq
+Message-ID: <20180613183145.17564d82@gandalf.local.home>
+In-Reply-To: <alpine.LRH.2.02.1806131521540.26196@file01.intranet.prod.int.rdu2.redhat.com>
+References: <Pine.LNX.4.44L0.1806131442230.1476-100000@iolanthe.rowland.org>
+        <alpine.LRH.2.02.1806131521540.26196@file01.intranet.prod.int.rdu2.redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Wed, 13 Jun 2018 15:30:31 -0400 (EDT)
+Mikulas Patocka <mpatocka@redhat.com> wrote:
 
-On Wed, Jun 13 2018, James Simmons wrote:
+> On Wed, 13 Jun 2018, Alan Stern wrote:
+> 
+> > [Steve: Sorry for dumping you into the middle of this discussion.  
+> > Please see especially the last two paragraphs below.  Mikulas is
+> > getting dropouts with USB audio because part of the processing uses a
+> > tasklet.]  
+> 
+> The problem is this:
+> 
+> I have a single core machine with a usb2 sound card. When I increase the 
+> priority of a music player, the audio starts skipping.
+> 
+> The reason for the skipping is that the ehci usb driver is offloading urb 
+> callbacks using tasklet_hi_schedule, the callbacks end up being offloaded 
+> to the ksoftirqd thread (that has priority 0), the music player with 
+> elevated priority preempts ksoftirqd and causes delays in the urb 
+> callbacks.
+> 
+> Is this some deficiency in the softirq subsystem? (should we perhaps treat 
+> tasklet_hi specially and not offload it as much as the others?) Or should 
+> the ehci driver be fixed not to use tasklets?
+> 
 
->> > With the cleanup of the libcfs SMP handling all UMP handling
->> > was removed. In the process now various NULL pointers and
->> > empty fields are return in the UMP case which causes lustre
->> > to crash hard. Restore the proper UMP handling so Lustre can
->> > properly function.
->>=20
->> Can't we just get lustre to handle the NULL pointer?
->> Is most cases, the pointer is accessed through an accessor function, and
->> on !CONFIG_SMP, that can be a static inline that doesn't even look at
->> the pointer.
->
-> Lots of NULL pointer checks for a structure allocated at libcfs module=20
-> start and only cleaned up at libcfs removal is not a clean approach.
-> So I have thought about it and I have to ask why allocate a global
-> struct cfs_cpu_table. It could be made static and fill it in which would
-> avoid the whole NULL pointer issue. Plus for the UMP case why allocate
-> a new cfs_cpu_table with cfs_cpt_table_alloc() which is exactly like
-> the default UMP cfs_cpu_table. Instead we could just return the pointer
-> to the static default cfs_cpt_tab every time. We still have the NULL
-> ctb_cpumask field to deal with. Does that sound like a better solution
-> to you? Doug what do you think?
+What we do for softirqs in the RT patch is to have whoever raised the
+softirq run the softirq. If local_bh_disabled() is active (bh is
+disabled) then a bit is set in the current task struct, where when
+local_bh_enable() is called, it will then execute the softirqs that it
+raised while bh was disabled.
 
-I'm not convinced there will be lots of NULL pointer checks - maybe one
-or two.  Most the accesses to the structure are inside helper
-functions which are empty inlines in the UP build.
+Perhaps try out the PREEMPT_RT patch and see if the problem goes away.
+Hopefully this softirq work may make it into the kernel soon. We could
+even enabled it without full PREEMPT_RT.
 
-However I don't object to a static cfs_cpt_tab if that turns out to make
-some code simpler.   I would want it to be clear up-front which code was
-simplified so that an informed decision could be made.
+ https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/4.16/patch-4.16.12-rt5.patch.xz
 
-Thanks,
-NeilBrown
-
-
->=20=20
->> I really think this is a step backwards.  If you can identify specific
->> problems caused by the current code, I'm sure we can fix them.
->>=20
->> >
->> > Signed-off-by: James Simmons <uja.ornl@yahoo.com>
->> > Signed-off-by: Amir Shehata <amir.shehata@intel.com>
->> > Intel-bug-id: https://jira.hpdd.intel.com/browse/LU-7734
->>=20
->> This bug doesn't seem to mention this patch at all
->>=20
->> > Reviewed-on: http://review.whamcloud.com/18916
->>=20
->> Nor does this review.
->
-> Yeah its mutated so much from what is in the Intel tree.
-> I do believe it was the last patch to touch this.
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlshmskACgkQOeye3VZi
-gbkCyw/8DHMh+/vX07Z8VbS+vKTIfYGW1lcLo9Q7cZ4/2PPf9CaEjs0TXxpqW2Kn
-L4TPlbH5mAW+CNDEcwGW7BPO74nGFpVQ3k1gU1seJm5lf5zutytH0r7SqKZIO7dQ
-QaiukvUoUdFboaJ5P2VCrzePbFP9MdM/jvDFAn3gmOYD68FmY9MD5u/tqk2vSLnF
-qJTFsIX3/e/HWRfNPQzDXWVxsL7sJNVnurpxq/i4QtKvg4BawWYUeV9Ix3Kqxtn9
-lBmCiIfHRa4nu9vPmYS2LJNHoPxujUkF7IyJLsU09yg1nJiolNf0/m4l4pPQTZ5C
-UaVF639xTxbF5ZKT5FNgOIplOjADEpbIFZ6LdyAyySgPwMbjW3J2BCR0GNpOjHON
-0MxXwJE6BRnLuPA/TtV5hv3MCQTFZCRba+Q/krnumL91XTX0M5EBmElXmpwgWT59
-4srSRyUvkFNF853m6irGt4H6N14DFIIkINNYd1G7ZMOD8JTGAhnXqWPKlOnw0pjG
-nSkmdUeBUbFTxGsTUd5OIKar0E5G0nbdpIMQGNMKOst3BE3jDUVzeyElIX9TSRVm
-iyM5jvSW4Zp9Uloqr0cB4NRo4qidu4TGcHsSTstts9pWvrfDjKwCTXkNVgBPP1kM
-Z5E6AsQag0nqdrX3P1K8289orzLvz+Ev2y5NLPYYOOGbJmFXNVA=
-=tx9D
------END PGP SIGNATURE-----
---=-=-=--
+-- Steve
