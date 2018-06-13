@@ -2,98 +2,116 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ED20BC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:40:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E2164C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FF73208D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:40:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pgAWzluZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FF73208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id A229C208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:40:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A229C208CC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935831AbeFMUkY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 16:40:24 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:33573 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935461AbeFMUkX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 16:40:23 -0400
-Received: by mail-vk0-f65.google.com with SMTP id 200-v6so2359212vkc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 13:40:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=EPeo9UeHKeiHJXFUW5N7la1kCqykKTA5JGuxFV8vwoE=;
-        b=pgAWzluZc3AjJ9JC87szu8vT69Q8frK1Ysa47SAJ33gG9DXFRmEQ4vKksFS4RzXfVa
-         w5L2IgZr6+MyH5xyGsoAC4CqwwX55CFsMm0nnLw+23fmNRg3iKAaDMm/qStIs6ok+fOt
-         XQjxYKuEcNNcxpvjMl2jxFAJngzoojymKs24Mk3L64s2YYUD0q4rgVpcfiWHrpDMVIjK
-         5KaJxOKIPBgkhHRtuQyvZBp0EXybE+uDqf7YBc6dyOZSAtnWsT185t+AMYBxOVh9+MdQ
-         QTcH9AiszD0KnP2pVFPCfmWJgXuaQb59vkp6Vh45xNLD6Am4Qee4SHydK/90VsuwCjZr
-         mwAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=EPeo9UeHKeiHJXFUW5N7la1kCqykKTA5JGuxFV8vwoE=;
-        b=DYW+JJQyW3qMqIfbRZBZIbByMDZysWofKrSm3vVcaOOlpPxrtNVP8GcKGBNssReCit
-         erjJ23jXAS8u+25uRN9iY2tVCs+4+KBeZ+Xm+VfoUt0vc34MNcu1E/q/qYjCyrweQ6Fb
-         zyQnUiOyNZZwYJ0yHbBHvL/9QJvPMxk6zyhnpi93VvsF4PJG1Np9c1IITiD777X+5BT9
-         MNtrRO/kxOaTxyEHygtxcK0ISapgSvFc0MHNqWojQGkJxyWWjjjf4X5Q7MvUXIdaJVm1
-         vkSy5WoMcIh43VE0sRQ+TAwRcbuzs4YyxCxVfnUEh8iZfB7CGLlnpZNCgplxMZbPzyFL
-         0gEQ==
-X-Gm-Message-State: APt69E08c1YTgNsv+X/IR7YBDAdHsZYJVIRQ9Ej13LjxOKRYXZj2yOjl
-        +exEbQu4xp6sCYqXUcqThI0=
-X-Google-Smtp-Source: ADUXVKIJjQjQfesmBqDKbY33PT1xn6kq7OtGhY93/ftMlZxBRm/8AuobZzL70E5ZafbkUsfCO/6Esw==
-X-Received: by 2002:a1f:2758:: with SMTP id n85-v6mr3966310vkn.117.1528922422807;
-        Wed, 13 Jun 2018 13:40:22 -0700 (PDT)
-Received: from javier-Z97X ([2601:582:c500:a66c::21e8])
-        by smtp.gmail.com with ESMTPSA id j191-v6sm718340vke.6.2018.06.13.13.40.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 13:40:22 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 16:40:15 -0400
-From:   Javier Martinez <javiermlinux@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     jhogan@kernel.org, aaro.koskinen@iki.fi,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] Staging: octeon-usb: octeon-hcd.c: style fix line length
- warning
-Message-ID: <20180613204015.GA15689@javier-Z97X>
+        id S935810AbeFMUku (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 16:40:50 -0400
+Received: from mga12.intel.com ([192.55.52.136]:14048 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935461AbeFMUkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 16:40:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 13:40:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
+   d="scan'208";a="49115880"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2018 13:40:49 -0700
+Subject: Re: [PATCHv3 03/17] mm/ksm: Do not merge pages with different KeyIDs
+From:   Dave Hansen <dave.hansen@intel.com>
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-4-kirill.shutemov@linux.intel.com>
+ <63b7e88f-33d6-c5c1-f6cb-1bbb780e2cc4@intel.com>
+ <20180613203108.k63fda4hvsqyczw7@black.fi.intel.com>
+ <355d6b1f-9188-e93b-9cf1-01ece1879cad@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <2fd62aa9-968d-c547-a509-dad3b28019ce@intel.com>
+Date:   Wed, 13 Jun 2018 13:40:48 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <355d6b1f-9188-e93b-9cf1-01ece1879cad@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Checkpatch.pl issued a warning in the top of the commment within
-octeon-hcd.c. This is a simple style fix for that.
+On 06/13/2018 01:35 PM, Dave Hansen wrote:
+> On 06/13/2018 01:31 PM, Kirill A. Shutemov wrote:
+>>> What actually happens without this patch in place?
+>> One of processes would get the page mapped with wrong KeyID and see
+>> garbage. 
+> OK, but what about two pages with the same KeyID?  It's actually totally
+> possible for KSM to determine that two pages have the same plaintext and
+> merge them.  Why don't we do that?
 
-Signed-off-by: Javier Martinez <javiermlinux@gmail.com>
----
- drivers/staging/octeon-usb/octeon-hcd.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+/me goes back to look at the patch... which is doing exactly that
 
-diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
-index cded30f145aa..768b0148f3d5 100644
---- a/drivers/staging/octeon-usb/octeon-hcd.c
-+++ b/drivers/staging/octeon-usb/octeon-hcd.c
-@@ -1,5 +1,5 @@
- /*
-- * This file is subject to the terms and conditions of the GNU General Public
-+ * This file is subject to the terms and conditions of the GPL
-  * License.  See the file "COPYING" in the main directory of this archive
-  * for more details.
-  *
--- 
-2.17.1
-
+But, this still needs a stronger explanation of what goes wrong if this
+patch is not in place.
