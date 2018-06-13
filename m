@@ -2,122 +2,166 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9B37FC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:06:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 151BBC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:06:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F9120660
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:06:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F9120660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BC6EF20660
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:06:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DIjlG6gI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC6EF20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935280AbeFMBGg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:06:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64688 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754136AbeFMBBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:01:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:31 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
-   d="scan'208";a="47283464"
-Received: from voyager.sc.intel.com ([10.3.52.149])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:31 -0700
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        iommu@lists.linux-foundation.org
-Subject: [RFC PATCH 04/23] iommu/vt-d/irq_remapping: Add support for IRQCHIP_CAN_DELIVER_AS_NMI
-Date:   Tue, 12 Jun 2018 17:57:24 -0700
-Message-Id: <1528851463-21140-5-git-send-email-ricardo.neri-calderon@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        id S935342AbeFMBGo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:06:44 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:56712 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935098AbeFMBGl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 21:06:41 -0400
+Received: from dlelxv90.itg.ti.com ([172.17.2.17])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5D16eoa015962;
+        Tue, 12 Jun 2018 20:06:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1528852000;
+        bh=TWUvItduixIkOw56byGxL+W2n5ombMrmiYXLfeXscC0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=DIjlG6gI9k+5r20hnPHF9WOwhjgouDK4y7ieWu4+DVy26Om18HEhOShLrKJvsZ0U6
+         MmEYZ80w2fxKqbrj6M7+XYhLxhXISAjQcg9PZYAKgI3yc0iASmKVDIGFrPP95aGIAj
+         W4oR0QeAUuC6bDRIhTR/FpmkgfiIATm7Zb42mZSQ=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+        by dlelxv90.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5D16eWm017713;
+        Tue, 12 Jun 2018 20:06:40 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 12
+ Jun 2018 20:06:40 -0500
+Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 12 Jun 2018 20:06:40 -0500
+Received: from [172.22.219.132] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5D16aVA013415;
+        Tue, 12 Jun 2018 20:06:37 -0500
+Subject: Re: [PATCH v3 2/2] gpio: davinci: Do not assume continuous IRQ
+ numbering
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        <linus.walleij@linaro.org>
+CC:     <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <t-kristo@ti.com>
+References: <1528790356-15945-1-git-send-email-j-keerthy@ti.com>
+ <1528790356-15945-2-git-send-email-j-keerthy@ti.com>
+ <4ef40eb2-774e-925c-f4f1-5ed431ec1268@ti.com>
+From:   "J, KEERTHY" <j-keerthy@ti.com>
+Message-ID: <af41c620-6c3c-a348-80c1-89918d0db898@ti.com>
+Date:   Wed, 13 Jun 2018 06:36:36 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <4ef40eb2-774e-925c-f4f1-5ed431ec1268@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Intel IOMMU is capable of delivering remapped interrupts as non-
-maskable. Add the IRQCHIP_CAN_DELIVER_AS_NMI flag to its irq_chip
-structure to declare this capability. The delivery mode of each interrupt
-can be set separately.
 
-By default, the deliver mode is taken from the configuration field of the
-interrupt data. If non-maskable delivery is requested in the interrupt
-state flags, the respective entry in the remapping table is updated.
 
-When remapping an interrupt from an IO APIC, modify the delivery
-field in the interrupt remapping table entry. When remapping an MSI
-interrupt, simply update the delivery mode when composing the message.
+On 6/13/2018 1:36 AM, Grygorii Strashko wrote:
+> 
+> 
+> On 06/12/2018 02:59 AM, Keerthy wrote:
+>> Currently the driver assumes that the interrupts are continuous
+>> and does platform_get_irq only once and assumes the rest are continuous,
+>> instead call platform_get_irq for all the interrupts and store them
+>> in an array for later use.
+>>
+>> Signed-off-by: Keerthy <j-keerthy@ti.com>
+>> ---
+>>
+>> Tested for GPIO Interrupts on da850-lcdk board.
+>>
+>> Changes in v3:
+>>
+>>     * Changed irqs type from unsigned to int
+>>
+>> Changes in v2:
+>>
+>>     * Extended the logic of using saved IRQs to unbanked IRQs
+>>       as per Grygorii's suggestion.
+>>
+>>    drivers/gpio/gpio-davinci.c                | 54 +++++++++++++++++++-----------
+>>    include/linux/platform_data/gpio-davinci.h |  3 +-
+>>    2 files changed, 36 insertions(+), 21 deletions(-)
+>>
+> 
+> [...]
+> 
+>>    
+>> @@ -383,7 +396,7 @@ static int gpio_to_irq_unbanked(struct gpio_chip *chip, unsigned offset)
+>>    	 * can provide direct-mapped IRQs to AINTC (up to 32 GPIOs).
+>>    	 */
+>>    	if (offset < d->gpio_unbanked)
+>> -		return d->base_irq + offset;
+>> +		return d->irqs[offset];
+> 
+> this one seems right
+> 
+>>    	else
+>>    		return -ENODEV;
+>>    }
+>> @@ -396,7 +409,7 @@ static int gpio_irq_type_unbanked(struct irq_data *data, unsigned trigger)
+>>    
+>>    	d = (struct davinci_gpio_controller *)irq_data_get_irq_handler_data(data);
+>>    	g = (struct davinci_gpio_regs __iomem *)d->regs[0];
+>> -	mask = __gpio_mask(data->irq - d->base_irq);
+>> +	mask = __gpio_mask(data->irq - d->irqs[0]);
+> 
+> but this one is not. You can't do "base + offset" or "irq - base" ops
+> if Irqs range is not sequential. So, in my opinion, here you need to
+> convert irq to gpio bank offset (hwirq value in irq_data is not offset
+> - gic specific value) which means - walk through d->irqs[x] and find
+> item with d->irqs[x] == irq which will give gpio bank offset.
+> Than offset can be used to build mask.
 
-Cc: Ashok Raj <ashok.raj@intel.com>
-Cc: Andi Kleen <andi.kleen@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Borislav Petkov <bp@suse.de>
-Cc: Jacob Pan <jacob.jun.pan@intel.com>
-Cc: Joerg Roedel <joro@8bytes.org>
-Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
-Cc: x86@kernel.org
-Cc: iommu@lists.linux-foundation.org
-Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
----
- drivers/iommu/intel_irq_remapping.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Agreed.
 
-diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
-index 9f3a04d..b6cf7c4 100644
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -1128,10 +1128,14 @@ static void intel_ir_reconfigure_irte(struct irq_data *irqd, bool force)
- 	struct irte *irte = &ir_data->irte_entry;
- 	struct irq_cfg *cfg = irqd_cfg(irqd);
- 
-+	if (irqd_deliver_as_nmi(irqd))
-+		cfg->delivery_mode = dest_NMI;
-+
- 	/*
- 	 * Atomically updates the IRTE with the new destination, vector
- 	 * and flushes the interrupt entry cache.
- 	 */
-+	irte->dlvry_mode = cfg->delivery_mode;
- 	irte->vector = cfg->vector;
- 	irte->dest_id = IRTE_DEST(cfg->dest_apicid);
- 
-@@ -1182,6 +1186,9 @@ static void intel_ir_compose_msi_msg(struct irq_data *irq_data,
- {
- 	struct intel_ir_data *ir_data = irq_data->chip_data;
- 
-+	if (irqd_deliver_as_nmi(irq_data))
-+		ir_data->irte_entry.dlvry_mode = dest_NMI;
-+
- 	*msg = ir_data->msi_entry;
- }
- 
-@@ -1227,6 +1234,7 @@ static struct irq_chip intel_ir_chip = {
- 	.irq_set_affinity	= intel_ir_set_affinity,
- 	.irq_compose_msi_msg	= intel_ir_compose_msi_msg,
- 	.irq_set_vcpu_affinity	= intel_ir_set_vcpu_affinity,
-+	.flags			= IRQCHIP_CAN_DELIVER_AS_NMI,
- };
- 
- static void intel_irq_remapping_prepare_irte(struct intel_ir_data *data,
--- 
-2.7.4
-
+> 
+>>    
+>>    	if (trigger & ~(IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
+>>    		return -EINVAL;
+>> @@ -458,7 +471,7 @@ static struct irq_chip *keystone_gpio_get_irq_chip(unsigned int irq)
+>>     * (dm6446) can be set appropriately for GPIOV33 pins.
+>>     */
+>>    
+>> -static int davinci_gpio_irq_setup(struct platform_device *pdev, int bank_irq)
+> 
+> 
+> [...]
+> 
+>>    #include <asm-generic/gpio.h>
+>>    
+>>    #define MAX_REGS_BANKS		5
+>> +#define MAX_INT_PER_BANK 32
+>>    
+>>    struct davinci_gpio_platform_data {
+>>    	u32	ngpio;
+>> @@ -41,7 +42,7 @@ struct davinci_gpio_controller {
+>>    	spinlock_t		lock;
+>>    	void __iomem		*regs[MAX_REGS_BANKS];
+>>    	int			gpio_unbanked;
+>> -	unsigned int		base_irq;
+>> +	int			irqs[MAX_INT_PER_BANK];
+>>    	unsigned int		base;
+>>    };
+>>    
+>>
+> 
