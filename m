@@ -2,103 +2,107 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 09773C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:50:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EBEADC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B41AD208C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:50:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T2VRpVTd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B41AD208C4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id AC40E208D7
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:51:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC40E208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935535AbeFMRue (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:50:34 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39288 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935469AbeFMRu2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:50:28 -0400
-Received: by mail-pg0-f67.google.com with SMTP id w12-v6so1630674pgc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 10:50:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=en6JlW/eubpEXwzzx51YdRdw0IRcV/N/RiaBflwTF8k=;
-        b=T2VRpVTdRy+DeHsNo0DIgNDg8rcPYQ9nMGo1vRCIXqkQtYsId/HYChfoDHA+Ot+4Uw
-         qlx7nB32meTPfVx8Lg5KNb8yIzpAbqlDeSELgI29Fq7aCnaCTL6tzGLFmTKvE0zk14vL
-         Nn4C65VBikwsxLR/uoTljH4jLOOWED3UaTD5c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=en6JlW/eubpEXwzzx51YdRdw0IRcV/N/RiaBflwTF8k=;
-        b=huhTuGXRIn+kc7ajIP3Ub2N4JCgmSc0i57RO1Vfv6KP0mqSfP4LVLxp5acyYFhstgP
-         w2Ci/viPTrTIzaEl76Q4XIMh6vG+rBJsXL54+m3/s196v8jP+Fb3GaQOkLUwHKByNhza
-         4kLJXNVoGwpoV120tcbeNR9njT3SKkuEe3Z9pyoOuySv4i6vU06NdQ441bQp1lLTXND+
-         Uce35YmK4SZAmSA2bvax7NwJ6gyb2YsYd+zexC53MH4qiUWOz1wyYSWdF0vpN0iEgdoU
-         GP+CvtwooK7MfMpNImLB8nlEFsqNGIMLPu3IMiC9+kZxxDIx8YUspzkzh+CjTIlNN75g
-         /4DQ==
-X-Gm-Message-State: APt69E3oOqy9T5Z+GJUVlqdg7ncvzRvbYmnEC7lL4ys0vnM1vNfxZHZ9
-        VaPf4qEVy+T8wUokDM4OGXbmlQ==
-X-Google-Smtp-Source: ADUXVKI0TNpeaY+hAnYXeuwXHj1YesuDMmJJrThVUteqG3HmR2sY/V9KtEO9C5GtkKNEozq3BWclXA==
-X-Received: by 2002:a63:ae43:: with SMTP id e3-v6mr4721554pgp.181.1528912228362;
-        Wed, 13 Jun 2018 10:50:28 -0700 (PDT)
-Received: from tictac2.mtv.corp.google.com ([2620:0:1000:1501:38e4:86fe:ec0c:4007])
-        by smtp.gmail.com with ESMTPSA id e68-v6sm6330778pfl.65.2018.06.13.10.50.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 10:50:27 -0700 (PDT)
-From:   Douglas Anderson <dianders@chromium.org>
-To:     andy.gross@linaro.org, bjorn.andersson@linaro.org
-Cc:     kramasub@codeaurora.org, wsa@the-dreams.de,
-        Douglas Anderson <dianders@chromium.org>,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        David Brown <david.brown@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: soc: qcom: Fix default clock-freq for qcom,geni-i2c
-Date:   Wed, 13 Jun 2018 10:50:11 -0700
-Message-Id: <20180613175011.217585-1-dianders@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+        id S935585AbeFMRvw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:51:52 -0400
+Received: from mga07.intel.com ([134.134.136.100]:56028 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935042AbeFMRvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 13:51:51 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 10:51:50 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
+   d="scan'208";a="49081375"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2018 10:51:50 -0700
+Subject: Re: [PATCHv3 03/17] mm/ksm: Do not merge pages with different KeyIDs
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-4-kirill.shutemov@linux.intel.com>
+Cc:     Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <63b7e88f-33d6-c5c1-f6cb-1bbb780e2cc4@intel.com>
+Date:   Wed, 13 Jun 2018 10:51:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180612143915.68065-4-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In an early version of the I2C patch that was posted to the list the
-default I2C frequency (if none was specified) was 400 kHz.  There was
-debate on the list and we decided that it would be more consistent
-with the rest of i2c if we defaulted to 100 kHz.  ...but we never
-updated the bindings.  Let's fix this.
+On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
+> Pages encrypted with different encryption keys are not subject to KSM
+> merge. Otherwise it would cross security boundary.
 
-NOTE: since the i2c driver itself hasn't actually landed yet and the
-SoC here is very new it seems terribly unlikely that anyone was
-relying on the old 400 kHz number, so I'll assume this is an OK
-"incompatible" device tree change.
-
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-
- Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-index d330c73de9a2..68b7d6207e3d 100644
---- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-+++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-@@ -39,7 +39,7 @@ Required properties:
- 
- Optional property:
- - clock-frequency:	Desired I2C bus clock frequency in Hz.
--			When missing default to 400000Hz.
-+			When missing default to 100000Hz.
- 
- Child nodes should conform to I2C bus binding as described in i2c.txt.
- 
--- 
-2.18.0.rc1.244.gcf134e6275-goog
-
+This needs a much stronger explanation.  Which KeyID would be used for
+access in the new direct mappings?  What actually happens without this
+patch in place?
