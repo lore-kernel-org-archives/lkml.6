@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 185DBC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:07:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D2E45C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD416208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:07:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD416208B2
+	by mail.kernel.org (Postfix) with ESMTP id 92FB6208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:07:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92FB6208B2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935840AbeFMOHX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:07:23 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52344 "EHLO mail.bootlin.com"
+        id S964793AbeFMOHf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:07:35 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:52480 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935769AbeFMOHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:07:19 -0400
+        id S935750AbeFMOHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:07:32 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D083520981; Wed, 13 Jun 2018 16:07:17 +0200 (CEST)
+        id E338A20A46; Wed, 13 Jun 2018 16:07:30 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A412D203B4;
-        Wed, 13 Jun 2018 16:07:17 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id DD31D20A58;
+        Wed, 13 Jun 2018 16:07:19 +0200 (CEST)
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     hans.verkuil@cisco.com, acourbot@chromium.org,
         sakari.ailus@linux.intel.com,
@@ -38,9 +38,9 @@ Cc:     tfiga@chromium.org, posciak@chromium.org,
         linux-sunxi@googlegroups.com,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 3/9] media: cedrus: Add a macro to check for the validity of a control
-Date:   Wed, 13 Jun 2018 16:07:08 +0200
-Message-Id: <20180613140714.1686-4-maxime.ripard@bootlin.com>
+Subject: [PATCH 8/9] media: cedrus: Add start and stop decoder operations
+Date:   Wed, 13 Jun 2018 16:07:13 +0200
+Message-Id: <20180613140714.1686-9-maxime.ripard@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180613140714.1686-1-maxime.ripard@bootlin.com>
 References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
@@ -49,58 +49,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During our frame decoding setup, we need to check a number of controls to
-make sure that they are properly filled before trying to access them.
+Some codec needs to perform some additional task when a decoding is started
+and stopped, and not only at every frame.
 
-It's not too bad with MPEG2 since there's just a single one, but with the
-upcoming increase of codecs, and the integration of more complex codecs,
-this logic will be duplicated a significant number of times. H264 for
-example uses 4 different controls.
+For example, the H264 decoding support needs to allocate buffers that will
+be used in the decoding process, but do not need to change over time, or at
+each frame.
 
-Add a macro that expands to the proper check in order to reduce the
-duplication.
+In order to allow that for codecs, introduce a start and stop hook that
+will be called if present at start_streaming and stop_streaming time.
 
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- .../platform/sunxi/cedrus/sunxi_cedrus_dec.c     | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+ .../platform/sunxi/cedrus/sunxi_cedrus_common.h    |  2 ++
+ .../platform/sunxi/cedrus/sunxi_cedrus_video.c     | 14 +++++++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c
-index 8c92af34ebeb..c19acf9626c4 100644
---- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c
-+++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_dec.c
-@@ -110,15 +110,16 @@ void sunxi_cedrus_device_run(void *priv)
+diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+index a2a507eb9fc9..20c78ec1f037 100644
+--- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
++++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_common.h
+@@ -120,6 +120,8 @@ struct sunxi_cedrus_dec_ops {
+ 	enum sunxi_cedrus_irq_status (*irq_status)(struct sunxi_cedrus_ctx *ctx);
+ 	void (*setup)(struct sunxi_cedrus_ctx *ctx,
+ 		      struct sunxi_cedrus_run *run);
++	int (*start)(struct sunxi_cedrus_ctx *ctx);
++	void (*stop)(struct sunxi_cedrus_ctx *ctx);
+ 	void (*trigger)(struct sunxi_cedrus_ctx *ctx);
+ };
  
- 	spin_lock_irqsave(&ctx->dev->irq_lock, flags);
+diff --git a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
+index fb7b081a5bb7..d93461178857 100644
+--- a/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
++++ b/drivers/media/platform/sunxi/cedrus/sunxi_cedrus_video.c
+@@ -416,6 +416,8 @@ static int sunxi_cedrus_buf_prepare(struct vb2_buffer *vb)
+ static int sunxi_cedrus_start_streaming(struct vb2_queue *q, unsigned int count)
+ {
+ 	struct sunxi_cedrus_ctx *ctx = vb2_get_drv_priv(q);
++	struct sunxi_cedrus_dev *dev = ctx->dev;
++	int ret = 0;
  
-+#define CHECK_CONTROL(ctx, ctrl)					\
-+	if (!ctx->ctrls[(ctrl)]) {					\
-+		v4l2_err(&(ctx)->dev->v4l2_dev, "Invalid " #ctrl " control\n"); \
-+		(ctx)->job_abort = 1;					\
-+		goto unlock_complete;					\
-+	}
-+
  	switch (ctx->vpu_src_fmt->fourcc) {
  	case V4L2_PIX_FMT_MPEG2_FRAME:
--		if (!ctx->ctrls[SUNXI_CEDRUS_CTRL_DEC_MPEG2_FRAME_HDR]) {
--			v4l2_err(&ctx->dev->v4l2_dev,
--				 "Invalid MPEG2 frame header control\n");
--			ctx->job_abort = 1;
--			goto unlock_complete;
--		}
--
-+		CHECK_CONTROL(ctx, SUNXI_CEDRUS_CTRL_DEC_MPEG2_FRAME_HDR);
- 		run.mpeg2.hdr = get_ctrl_ptr(ctx, SUNXI_CEDRUS_CTRL_DEC_MPEG2_FRAME_HDR);
- 		sunxi_cedrus_mpeg2_setup(ctx, &run);
- 
-@@ -128,6 +129,7 @@ void sunxi_cedrus_device_run(void *priv)
- 	default:
- 		ctx->job_abort = 1;
+@@ -425,16 +427,26 @@ static int sunxi_cedrus_start_streaming(struct vb2_queue *q, unsigned int count)
+ 		return -EINVAL;
  	}
-+#undef CHECK_CONTROL
  
- unlock_complete:
- 	spin_unlock_irqrestore(&ctx->dev->irq_lock, flags);
+-	return 0;
++	if (V4L2_TYPE_IS_OUTPUT(q->type) &&
++	    dev->dec_ops[ctx->current_codec]->start)
++		ret = dev->dec_ops[ctx->current_codec]->start(ctx);
++
++	return ret;
+ }
+ 
+ static void sunxi_cedrus_stop_streaming(struct vb2_queue *q)
+ {
+ 	struct sunxi_cedrus_ctx *ctx = vb2_get_drv_priv(q);
++	struct sunxi_cedrus_dev *dev = ctx->dev;
+ 	struct vb2_v4l2_buffer *vbuf;
+ 	unsigned long flags;
+ 
+ 	flush_scheduled_work();
++
++	if (V4L2_TYPE_IS_OUTPUT(q->type) &&
++	    dev->dec_ops[ctx->current_codec]->stop)
++		dev->dec_ops[ctx->current_codec]->stop(ctx);
++
+ 	for (;;) {
+ 		spin_lock_irqsave(&ctx->dev->irq_lock, flags);
+ 
 -- 
 2.17.0
 
