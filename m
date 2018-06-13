@@ -6,105 +6,259 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2972CC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:21:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 558EEC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 987BC208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:21:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1032208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:21:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="NXRMswSB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 987BC208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nYZ2NG3Z";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j9Bz/9FO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1032208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754560AbeFMJVd (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:21:33 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:38356 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754479AbeFMJVb (ORCPT
+        id S935034AbeFMJVq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:21:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54034 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754479AbeFMJVm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:21:31 -0400
-Received: by mail-ot0-f196.google.com with SMTP id p95-v6so2172009ota.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 02:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9CN2g1jd/+sD/yB1G7/vdyAMX/msJKlWeMJq3zF/z44=;
-        b=NXRMswSBTNBSYfbI1yWwOFrxbDsygs60xxOXKQgZ7ZNuMwmZCumOnykLOQHLYcT2PH
-         QPqKAMaaUrSp0VHjQSdvpZ1GgU42XsBRrbKNuNVXIn2s/TE4ET9EpNU8PKO9pWZEJnSq
-         zyWrxCV5KkyPmchpKGxov6JGRcIi+teybM3gU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9CN2g1jd/+sD/yB1G7/vdyAMX/msJKlWeMJq3zF/z44=;
-        b=ZRwp4Rjtls1TyIc6HTcA7PDl7mwl5hS8Zk1ubpyQ8ZuYaE0Pw2qF0ETHquZCDlx1m9
-         Tc4AHTINUVIkgJFW8oTxsriFKh+Lc7FwLrvCklbjTvrSB9WEJYu3i2WCI65k9l8MkCMF
-         kY4tzeCld8ddPgQXn4bEfReO8yCSVn1p+/3zkfju4Pwn5gyzkjm///QwIM5X//PpxEjb
-         a5z+K6sQ9Aqmpzwm8OKRltt6bjdCAq6hTVo9YEF7Q0rF7p3l+qvh4td+EHzver83b9HB
-         wodD3lElExsXHUSeHAd5Ohw0DA/JcRRPqIml6hgXPYQUjqd5jIh7qxMEtgOSs9RIcACK
-         +a+w==
-X-Gm-Message-State: APt69E2t5QO8yDwzUgSXlr80iFyWiXFh8UjdJ3nr+hnZ0o/qUUZ3HBZL
-        qI9POk2eBARXqIN/abL7O228afgxyoJ8OJAq2i5WoA==
-X-Google-Smtp-Source: ADUXVKJoBCcsnnck8VjS36joU0FxB/ZWcS9lGtvlevklgez4lN+sVTBbKhJfHTUuBJrxp+Bfh/YX8fjXsF7wPYaZ0mU=
-X-Received: by 2002:a9d:1531:: with SMTP id u46-v6mr2801813otf.197.1528881690831;
- Wed, 13 Jun 2018 02:21:30 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:1123:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 02:21:30
- -0700 (PDT)
-X-Originating-IP: [176.63.54.97]
-In-Reply-To: <20180612183123.GB30522@ZenIV.linux.org.uk>
-References: <20180529144339.16538-1-mszeredi@redhat.com> <20180529144339.16538-15-mszeredi@redhat.com>
- <20180610041243.GJ30522@ZenIV.linux.org.uk> <CAJfpegtEGuBqmJ+6Kzd0456o0xyebe3LBk66xWQcuzsenqKVeg@mail.gmail.com>
- <20180612022926.GY30522@ZenIV.linux.org.uk> <20180612024029.GZ30522@ZenIV.linux.org.uk>
- <CAJfpegvUkcUw0GXxFesT6V2f27EXW7jkvBpvnG4XB49BPdvjjA@mail.gmail.com>
- <20180612182423.GA30522@ZenIV.linux.org.uk> <20180612183123.GB30522@ZenIV.linux.org.uk>
-From:   Miklos Szeredi <miklos@szeredi.hu>
-Date:   Wed, 13 Jun 2018 11:21:30 +0200
-Message-ID: <CAJfpegsnvxUNCaE4c1_UDKq169i8WBTMuWzyvyo8UvenqZCUXg@mail.gmail.com>
-Subject: Re: [PATCH 14/39] ovl: stack file ops
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 13 Jun 2018 05:21:42 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 38300600D0; Wed, 13 Jun 2018 09:21:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528881702;
+        bh=vQWxGFVmlRE4fKo0zA6HXHpXNszshuc3iqvLbkf7Gcg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=nYZ2NG3ZSgFMzFCu9ho15xBv833lDD/xXRwBOiEd92n2aKTLm9bWLclaSlPU4RzsY
+         1hKLZ4tJEmaaNp790MYmMeLq5m6KITYeUgjX+gYCzqTE098OhT34JzOiUQ1c9YHjNG
+         DGiyl/T/jK3txzHfMeFlBWAQWWuAx3FImLuxSpD0=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DC81E600D0;
+        Wed, 13 Jun 2018 09:21:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528881701;
+        bh=vQWxGFVmlRE4fKo0zA6HXHpXNszshuc3iqvLbkf7Gcg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=j9Bz/9FOZRQxEXWWEXJHfBcUgzIbPBPEbmN9FQCLLKtBiKpYsB+ScpKH+h/ypdvxw
+         swjRYqYSe1Slq/7ZVICxYqnn/ZjWvm6RBMGrUJrwIApaWgHxM9+YExk8zEkIXPcuyz
+         62gGUu4zkK9q0sPj6ZPoQ6veg2xKe8n/KqOnMg0s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DC81E600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH] clk: qcom: Move frequency table macro to common file
+Date:   Wed, 13 Jun 2018 14:51:30 +0530
+Message-Id: <1528881690-10177-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 8:31 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> On Tue, Jun 12, 2018 at 07:24:23PM +0100, Al Viro wrote:
+Frequency table macro is used by multiple clock drivers, move frequency
+table macro to common header file.
 
->> I hate it, but... consider path_open() objections withdrawn for now.
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+---
+ drivers/clk/qcom/clk-rcg.h      | 2 ++
+ drivers/clk/qcom/gcc-apq8084.c  | 2 --
+ drivers/clk/qcom/gcc-ipq4019.c  | 2 --
+ drivers/clk/qcom/gcc-ipq8074.c  | 2 --
+ drivers/clk/qcom/gcc-msm8916.c  | 2 --
+ drivers/clk/qcom/gcc-msm8974.c  | 2 --
+ drivers/clk/qcom/gcc-msm8994.c  | 2 --
+ drivers/clk/qcom/gcc-msm8996.c  | 2 --
+ drivers/clk/qcom/gcc-msm8998.c  | 2 --
+ drivers/clk/qcom/gcc-sdm845.c   | 2 --
+ drivers/clk/qcom/mmcc-apq8084.c | 2 --
+ drivers/clk/qcom/mmcc-msm8974.c | 2 --
+ drivers/clk/qcom/mmcc-msm8996.c | 2 --
+ 13 files changed, 2 insertions(+), 24 deletions(-)
 
-Is that an ACK for the pull if I follow up with fixes for mmap botch, etc?
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index b209a2f..dbd5a9e 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -7,6 +7,8 @@
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
 
->> Uses of ->vm_file (and rules for those) are too convoluted to untangle
->> at the moment.  I still would love to get that straightened out, but
->> it's not this cycle fodder, more's the pity...
++#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
++
+ struct freq_tbl {
+ 	unsigned long freq;
+ 	u8 src;
+diff --git a/drivers/clk/qcom/gcc-apq8084.c b/drivers/clk/qcom/gcc-apq8084.c
+index 486d961..9c99a71 100644
+--- a/drivers/clk/qcom/gcc-apq8084.c
++++ b/drivers/clk/qcom/gcc-apq8084.c
+@@ -106,8 +106,6 @@ enum {
+ 	"sleep_clk_src",
+ };
 
-Looked at some other options...  What coda mmap does looks very
-dubious.  It only sets f_mapping, not vm_file.  That's going to get
-into all sorts of trouble when underlying fs tries to look at
-file_inode() or worse, ->private_data.  Looks like that should be
-converted to what overlayfs does, to have a remote chance of actually
-not crashing on most filesystems.  Does anybody actually use coda
-still?
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll gpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/gcc-ipq4019.c b/drivers/clk/qcom/gcc-ipq4019.c
+index 46cb256..8902ad4 100644
+--- a/drivers/clk/qcom/gcc-ipq4019.c
++++ b/drivers/clk/qcom/gcc-ipq4019.c
+@@ -179,8 +179,6 @@ struct clk_fepll {
+ 	"ddrpllapss",
+ };
 
-> PS: conversion of ->f_path.dentry is easy and that can probably go this
-> cycle - it's a fairly trivial change, with no functional changes unless
-> overlayfs is used with <filesystem>, fixing really bad shit if it ever
-> gets used thus.  I'm not asking to put that into overlayfs pull *and*
-> it's independent from the "want to kill that fucking kludge" stuff.
-> The latter is too hard for this cycle, unfortunately.
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static const struct freq_tbl ftbl_gcc_audio_pwm_clk[] = {
+ 	F(48000000, P_XO, 1, 0, 0),
+ 	F(200000000, P_FEPLL200, 1, 0, 0),
+diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
+index 0462f4a..505c626 100644
+--- a/drivers/clk/qcom/gcc-ipq8074.c
++++ b/drivers/clk/qcom/gcc-ipq8074.c
+@@ -32,8 +32,6 @@
+ #include "clk-regmap-mux.h"
+ #include "reset.h"
 
-So this is about adding a file_dentry_check() (or whatever we want to
-call it) helper to be used by all filesystems when dereferecing
-f_path.dentry, right?
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_GPLL0,
+diff --git a/drivers/clk/qcom/gcc-msm8916.c b/drivers/clk/qcom/gcc-msm8916.c
+index d6c7f50..ac2b0aa 100644
+--- a/drivers/clk/qcom/gcc-msm8916.c
++++ b/drivers/clk/qcom/gcc-msm8916.c
+@@ -264,8 +264,6 @@ enum {
+ 	"sleep_clk",
+ };
 
-Thanks,
-Miklos
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll gpll0 = {
+ 	.l_reg = 0x21004,
+ 	.m_reg = 0x21008,
+diff --git a/drivers/clk/qcom/gcc-msm8974.c b/drivers/clk/qcom/gcc-msm8974.c
+index 348e30d..08e2900d 100644
+--- a/drivers/clk/qcom/gcc-msm8974.c
++++ b/drivers/clk/qcom/gcc-msm8974.c
+@@ -62,8 +62,6 @@ enum {
+ 	"gpll4_vote",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll gpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/gcc-msm8994.c b/drivers/clk/qcom/gcc-msm8994.c
+index 1e38efc..53f0f36 100644
+--- a/drivers/clk/qcom/gcc-msm8994.c
++++ b/drivers/clk/qcom/gcc-msm8994.c
+@@ -57,8 +57,6 @@ enum {
+ 	"gpll4",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_fixed_factor xo = {
+ 	.mult = 1,
+ 	.div = 1,
+diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
+index 9f35b3f..9d3756c 100644
+--- a/drivers/clk/qcom/gcc-msm8996.c
++++ b/drivers/clk/qcom/gcc-msm8996.c
+@@ -32,8 +32,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_GPLL0,
+diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+index 78d87f5..9f0ae40 100644
+--- a/drivers/clk/qcom/gcc-msm8998.c
++++ b/drivers/clk/qcom/gcc-msm8998.c
+@@ -25,8 +25,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_AUD_REF_CLK,
+ 	P_CORE_BI_PLL_TEST_SE,
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index e78e6f5..19b470f 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -25,8 +25,6 @@
+ #include "gdsc.h"
+ #include "reset.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_BI_TCXO,
+ 	P_AUD_REF_CLK,
+diff --git a/drivers/clk/qcom/mmcc-apq8084.c b/drivers/clk/qcom/mmcc-apq8084.c
+index 30777f9..4ce1d7c 100644
+--- a/drivers/clk/qcom/mmcc-apq8084.c
++++ b/drivers/clk/qcom/mmcc-apq8084.c
+@@ -219,8 +219,6 @@ enum {
+ 	"sleep_clk_src",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll mmpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+index 715e7cd..9181851 100644
+--- a/drivers/clk/qcom/mmcc-msm8974.c
++++ b/drivers/clk/qcom/mmcc-msm8974.c
+@@ -184,8 +184,6 @@ enum {
+ 	"dsi1pllbyte",
+ };
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ static struct clk_pll mmpll0 = {
+ 	.l_reg = 0x0004,
+ 	.m_reg = 0x0008,
+diff --git a/drivers/clk/qcom/mmcc-msm8996.c b/drivers/clk/qcom/mmcc-msm8996.c
+index 1a25ee4..60f08b3 100644
+--- a/drivers/clk/qcom/mmcc-msm8996.c
++++ b/drivers/clk/qcom/mmcc-msm8996.c
+@@ -34,8 +34,6 @@
+ #include "reset.h"
+ #include "gdsc.h"
+
+-#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+-
+ enum {
+ 	P_XO,
+ 	P_MMPLL0,
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
