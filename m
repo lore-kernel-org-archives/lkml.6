@@ -2,120 +2,181 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A8322C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:29:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DAA2DC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:35:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F8C5208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:29:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="Wnwmd9cv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F8C5208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+	by mail.kernel.org (Postfix) with ESMTP id 97BC820891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:35:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97BC820891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934676AbeFMH3v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:29:51 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:38814 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933912AbeFMH3u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:29:50 -0400
-Received: by mail-pg0-f68.google.com with SMTP id c9-v6so840684pgf.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 00:29:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=gJn7vtCuRWcJVvZ8LqF/DdD+ZiVLujvzHzvweu3OB6Y=;
-        b=Wnwmd9cvIFpqIrmav885JAMqSX1l9ol59fmU+i1MjPcaQq+ehaJ+vSIcmsnByhJnH3
-         LHikcDOMRpdZP+KbGrh5Q38FCU1Ed1sbLulf3RpiauBLEjaOoSPzSHKhduwgAaLp1hyq
-         8xryHGDc4ra/SOG3wOZq5B85udOzBXLDRVN9Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gJn7vtCuRWcJVvZ8LqF/DdD+ZiVLujvzHzvweu3OB6Y=;
-        b=DG/fbRyZN2BaeCxTyi0+Ak16K9WHZCZVD0HgrDDaPJaX1g0K7Qe51Ah0v3oZdAK6B/
-         42iXk64mhs4ChwePUJkVjcSTtv8AzmfSD8wJ2W0rciVatJY46FSymr47LIC97kq/az7A
-         QQq+Ve95+WFFI+kVE5e9TfeZC4g1KNsOsJlBPWuORqJ7daMiQSOHpvvMCdqB06FyQ4eS
-         1tu81PkNWxeyp5sMuvL2etRgx862wWM4VUwtFzuIOJJeMTvg0qWtGw8Obl3pyRMrf6ZN
-         9lMwiQtb64bq5GPNhDtAQM8h9lYDtIuSegPgYolQhuMCLljh/6stBkp4fZQUt3KD6e/f
-         awQg==
-X-Gm-Message-State: APt69E1fMhMVWu2YtDqpxPdmS7D6k6tfsV44xg8j+YoNKvrpr6p1uB6W
-        v4AGuwOfOlsVRaUPCBqIFRTlig==
-X-Google-Smtp-Source: ADUXVKJdeE5k2zUYB/2NdHKFoOhQTS4kZwYN7smber4eZOmjw/z2egxTleBTkXLLGDXc7RsyidmNww==
-X-Received: by 2002:a63:770b:: with SMTP id s11-v6mr3151023pgc.339.1528874989346;
-        Wed, 13 Jun 2018 00:29:49 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1600:3122:ea9c:d178:eb])
-        by smtp.gmail.com with ESMTPSA id c27-v6sm4464460pfl.63.2018.06.13.00.29.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 00:29:48 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 00:29:48 -0700
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     kernel test robot <xiaolong.ye@intel.com>
-Cc:     Joel Fernandes <joelaf@google.com>, linux-kernel@vger.kernel.org,
-        kernel-team@android.com, Josh Triplett <josh@joshtriplett.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        mingo@redhat.com, "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, tglx@linutronix.de,
-        lkp@01.org
-Subject: Re: [lkp-robot] [rcutorture]  46e26223e3:
- WARNING:at_kernel/rcu/rcutorture.c:#rcu_torture_stats_print
-Message-ID: <20180613072948.GA142000@joelaf.mtv.corp.google.com>
-References: <20180610234544.150933-2-joel@joelfernandes.org>
- <20180613065711.GZ16472@yexl-desktop>
+        id S934419AbeFMHfA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:35:00 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41794 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933759AbeFMHe6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:34:58 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D94A12092B; Wed, 13 Jun 2018 09:34:56 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A731620720;
+        Wed, 13 Jun 2018 09:34:56 +0200 (CEST)
+Date:   Wed, 13 Jun 2018 09:34:56 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 04/27] dt-bindings: display: sunxi-drm: Add TCON TOP
+ description
+Message-ID: <20180613073456.jk72zw4rt4ysjco7@flea>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <20180612200036.21483-5-jernej.skrabec@siol.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="uzd22rhmxyob4kzr"
 Content-Disposition: inline
-In-Reply-To: <20180613065711.GZ16472@yexl-desktop>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180612200036.21483-5-jernej.skrabec@siol.net>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-(I'm actually not working this week, but still thought of replying :))
 
-On Wed, Jun 13, 2018 at 02:57:11PM +0800, kernel test robot wrote:
-> 
-> FYI, we noticed the following commit (built with gcc-4.9):
-> 
-> commit: 46e26223e39c64763e321f229e324be15179c505 ("rcutorture: Make boost test more robust")
-> url: https://github.com/0day-ci/linux/commits/Joel-Fernandes/rcutorture-Disable-RT-throttling-for-boost-tests/20180611-074731
-> base: https://git.kernel.org/cgit/linux/kernel/git/paulmck/linux-rcu.git rcu/next
-> 
-> in testcase: trinity
-> with following parameters:
-> 
-> 	runtime: 300s
-> 
-> test-description: Trinity is a linux system call fuzz tester.
-> test-url: http://codemonkey.org.uk/projects/trinity/
+--uzd22rhmxyob4kzr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll try to reproduce this, but it could be because after this patch, the
-boost test is actually working.
+Hi,
 
-The reason for the rcutorture test failure could be that the default
-kthread_prio for the system's RCU threads is set to 1 (unless overridden by
-rcutree.kthread_prio) which is also equal to the priority of the rcutorture's
-boost threads. Due to this the rcutorture test could starve the RCU threads
-as well and defeat the boosting mechanism. I was able to solve a similar
-issue by just passing rcutree.kthread_prio of 50 on the kernel command line.
+Thanks for working on this!
 
-Paul, would it be ok if we changed the default kthread_prio to something > 1
-so that rcutorture can test properly without needing to pass any extra
-rcutree.* parameters?
+On Tue, Jun 12, 2018 at 10:00:13PM +0200, Jernej Skrabec wrote:
+> TCON TOP main purpose is to configure whole display pipeline. It
+> determines relationships between mixers and TCONs, selects source TCON
+> for HDMI, muxes LCD and TV encoder GPIO output, selects TV encoder
+> clock source and contains additional TV TCON and DSI gates.
+>=20
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  .../bindings/display/sunxi/sun4i-drm.txt      | 45 +++++++++++++++++++
+>  include/dt-bindings/clock/sun8i-tcon-top.h    | 11 +++++
+>  2 files changed, 56 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/sun8i-tcon-top.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> index 3346c1e2a7a0..ef64c589a4b3 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
+> @@ -187,6 +187,51 @@ And on the A23, A31, A31s and A33, you need one more=
+ clock line:
+>     - 'lvds-alt': An alternative clock source, separate from the TCON cha=
+nnel 0
+>                   clock, that can be used to drive the LVDS clock
+> =20
+> +TCON TOP
+> +--------
+> +
+> +TCON TOPs main purpose is to configure whole display pipeline. It determ=
+ines
+> +relationships between mixers and TCONs, selects source TCON for HDMI, mu=
+xes
+> +LCD and TV encoder GPIO output, selects TV encoder clock source and cont=
+ains
+> +additional TV TCON and DSI gates.
+> +
+> +It allows display pipeline to be configured in very different ways:
+> +
+> +                             / LCD0/LVDS0
+> +                 / TCON-LCD0
+> +                 |           \ MIPI DSI
+> + mixer0          |
+> +        \        / TCON-LCD1 - LCD1/LVDS1
+> +         TCON-TOP
+> +        /        \ TCON-TV0 - TVE0/RGB
+> + mixer1          |          \
+> +                 |           TCON-TOP - HDMI
+> +                 |          /
+> +                 \ TCON-TV1 - TVE1/RGB
+> +
+> +Note that both TCON TOP references same physical unit.
+> +
+> +Required properties:
+> +  - compatible: value must be one of:
+> +    * allwinner,sun8i-r40-tcon-top
+> +  - reg: base address and size of the memory-mapped region.
+> +  - clocks: phandle to the clocks feeding the TCON TOP
+> +    * bus: TCON TOP interface clock
+> +  - clock-names: clock name mentioned above
+> +  - resets: phandle to the reset line driving the DRC
 
-so something like this in kernel/rcu/tree.c ?
+s/DRC/TCON TOP/ ?
 
-static int kthread_prio = IS_ENABLED(CONFIG_RCU_BOOST) ? 2 : 0;
+> +    * rst: TCON TOP reset line
 
-thanks!
+Remaining consistent with the clock name would be great
 
- - Joel
+> +  - reset-names: reset name mentioned above
+> +  - #clock-cells : must contain 1
 
+An example would be nice here
+
+> +- ports: A ports node with endpoint definitions as defined in
+> +    Documentation/devicetree/bindings/media/video-interfaces.txt. The fi=
+rst port
+> +    should be the input for mixer0 mux. The second should be the output =
+for that
+> +    mux. Third port should be input for mixer1 mux. Fourth port should b=
+e output
+> +    for mixer1 mux. Fifth port should be input for HDMI mux. Sixth port =
+should
+> +    be output for it. All output endpoints should have reg property with=
+ the id
+> +    of the target TCON. All ports should have only one enpoint connected=
+ to
+
+                                                          ^ endpoint
+
+I guess it would me more readable if you were to make it a bullet
+list, but this works for me otherwise.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--uzd22rhmxyob4kzr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsgyR8ACgkQ0rTAlCFN
+r3QN5w//bI6wGq8N0eSl7T8E11SnbC71KgWyFoknB2TB1nWsvRnt7GVBFcz+lUe2
+PqZZHDnzL9J2Wd8M+Q4BEsRIO0m5uCvqZ2ce/8iRggqz8U8OUfmChJW1kY3kfcw4
+TAL7OxScdSeRZnyyALlbMr5kSDsZLmUa+kbCeS3YSQm6wiVu6V+I5kYyQylHqgnL
+E0DKcNY49zMwHs1UB6g7ena5EUGMUgoptkbGpdVntnQKoTXOdv0/BJf8TYYHuTNL
+dX97904/ocljZF0hnVKCGAyk+H+gNKgZXMVq1JVVYA9co2w59c9rvAX7LWuFpBiw
+B+xsyxxdH3qdOBvyxcvwQztF+2UCqkcAEGrthJHq3yUnaGsMrdGMt8615+ZjW56S
+HIsUKJ3Lx48xnz2qGlRzjaUfds/R7T39Nz4rQBJ5622pw2RzaJQjxMUqgpP44e5W
+bgoxh3v8OMAaZYDSfFiSEElMhEKHmO75gx8J9eNRyB3YvG6uzWiB3TNior1byu0G
+5DCm0UhsKkKFAa+o698qKMUvkrhzu1z5hQIAfxQY1dePp2mIfZ02fpAvfiLBwyud
+atb++whW+WVRCdP0PmEk5/VOjdPVNOXsLDU1NmaxIkUpCcwTz/6okIOSzMnxQe7u
+67x76Ux9bHdKjSAjb1HcbTyMaCoCn6Ad6miOISU03d9hFQumZRs=
+=oyTu
+-----END PGP SIGNATURE-----
+
+--uzd22rhmxyob4kzr--
