@@ -2,110 +2,129 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 806BAC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:30:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5642DC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34685208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09D2C208D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:31:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="G6oTQ3xR";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I3zAVPxQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34685208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="K6Kou6Z+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D2C208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935399AbeFMRaj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:30:39 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:47061 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935042AbeFMRag (ORCPT
+        id S935439AbeFMRbF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:31:05 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45162 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935361AbeFMRbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:30:36 -0400
-Received: by mail-ua0-f194.google.com with SMTP id d7-v6so2242484uam.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 10:30:36 -0700 (PDT)
+        Wed, 13 Jun 2018 13:31:03 -0400
+Received: by mail-wr0-f196.google.com with SMTP id o12-v6so3584351wrm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 10:31:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=VyvOiEa44h873tWuWSnwTmHKgUr6NGdKQeQ8EfJZ9p8=;
-        b=G6oTQ3xR/alXzCwYoW6d2aZVIZGT6sCQNQLnatpUnZ6kIsu6QEE9HTOvJLOcX+AR5H
-         fB/utF4KtqDag/pffkc0y9SogOOg85XPz+tt3OGB924gdQTGQOZApA7CUDZ4k+8+QntK
-         AU6tML8TYqx4ORwRcKVlOsF1qfhsqRxxCb8NXw62p+C1h1vmJvK4pofuCn2nvXsgAeD+
-         LFHVXuqxnNOSTw0JsavM6fnHFATNslqwk8jueRbXgEujzvW1EDhfAWIkJbB1rGnAyohb
-         uPJZk+Sz8q3GP8WyK0bMOMQPrAg0hHQsTeAxRLiZ54FGVqd70f8kcTp26urkkuDsy21V
-         tvUA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=VyvOiEa44h873tWuWSnwTmHKgUr6NGdKQeQ8EfJZ9p8=;
-        b=I3zAVPxQZZC8a5gQtywM6sKFn5nY9dgpH39H8rcsOjgGI2vPN7laVNlgqtNoaSx00e
-         bY5AFG4eMHSQuyJ3pYoXH1nRuKtE+bauFfEWj2pXhWt60my+kKOYt/vqdroyWGXNIyQq
-         5P/Ke8DseBp+Z072oAlsv2kuoTiEhFXc7QbDc=
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3cf0UjHW/aO/yu7azLc1Bt/+6dP8sYkOxxVsr0JZ4pA=;
+        b=K6Kou6Z+QwXzftoDDqP1ibsQC5oARgnOgAe2UEDWSYEDiEwN1oaageCpGiVm7TF6NP
+         E4IlxVRJ1QIea0ku7ljHjsr7DIqGAd6KsBtXe3oTE/KVKrSSrKJqyQRrw5oaQMCWH8eG
+         4d/vSon331TzpdfqsE82FBpG37Z9wNC/+Vx7bclUMz5nCwkftqM8eFdMsvjhWj37chis
+         xNkpZAPHrVNeeBnMOfdEMagfUoFxVEtS8qh/DOLlmNs8Jdj6n6xEpa+LQCyoplwLNaKA
+         vv7QcFxwOCWIYgCg/GJSEVaRPwtRsaNkEHVsmyW/7Y0e3pJKjV3VPPT8LrPRWl9haCBU
+         KAZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=VyvOiEa44h873tWuWSnwTmHKgUr6NGdKQeQ8EfJZ9p8=;
-        b=C7kPYCfuAuYBeAQjuquW0moS1r98SlU1kfIkXcLTIFFmJzk4+MkrxkUDNiENCHXThC
-         075z094W/W21toKIVuWp2d8K+jTk3q4udSR6yUgj04o3iotjynBU76DH4h9BNM5dDCRP
-         h4AVue88DQphMQAHO6YFQCO3kpwgTSacHF6lcMC4wQ+55UNUwJLVtzqKgZJJ6ZsJFwHO
-         8v6RPQRwhGLnwVa4xgcp3aJJ5nF3qhAkAviJlVk/RN9c0Un86EW4McA0iBRnmKzvAxQM
-         ayC5uxMT5oyU4sBsvSby6VdvGS8AS5BtqNvrVv2OpL7QFettKHpeuBFAbFvQrhmb8axh
-         q5WA==
-X-Gm-Message-State: APt69E0UmP5ssJ8Ya9+0tFYIO6PgzD454eWDgOiVkm9H9TQgyfAgqUfL
-        +2weihCgH+TObnrfPMmaW7TpNCtosu3PBmo1XCfsRA==
-X-Google-Smtp-Source: ADUXVKI/3jeNFj43sge/NkmEpAWsv4DGIgB8F7+E7iWmFhZMExHo0JwX7PfiByu+iO6ZKgiikBrl4ZNn3dwsLFv9SNo=
-X-Received: by 2002:ab0:17d2:: with SMTP id p18-v6mr3716007uaf.121.1528911035757;
- Wed, 13 Jun 2018 10:30:35 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3cf0UjHW/aO/yu7azLc1Bt/+6dP8sYkOxxVsr0JZ4pA=;
+        b=DLlSQ5XBHMwqV8z6l0Iiq5eF6TEFzlEeq8WuE9cQpVaNf+MEu/ezPBy7tkEBzRWB4h
+         RQWCneLhGjjue7sYxx6OsL9+NKmF/MKNKQqVpHtf8WaKdKFU7zk5VUAIz7VnEhkPHP3w
+         IjVblHa4ftV9lyOWqMN1qpZbzne1zd4oPMo51Hc841oq9iTXR3cK7dL3xG9zpVGUyORn
+         Pvbbxd8PzLgLbB8BqDLj0DBNdUh/8dXaiTvkmfJ7cC/8PEUcG+paPnOJQZYlgU0dDR7T
+         xLBc0fSPTKgaZ3htalP3zRzn45GT0h1uTHDOKHHX7uvRbpMq1NiAfhcSmhiAkYx539Dt
+         0kSw==
+X-Gm-Message-State: APt69E1MMXRCb02yA95QpzffvT4i85+1JID3/CPaXjo6uq9z6reLRL5Z
+        UEB6rTWz64eSvw58hLnQEIS6dyX73Ng=
+X-Google-Smtp-Source: ADUXVKJhRWzCVqx8wjGbb4UPWpE+UR0MP956mHydTeanoY7GjzMe9EhtBMPUkMK8way2mTI4/Oqp1Q==
+X-Received: by 2002:adf:f7cf:: with SMTP id a15-v6mr4867863wrq.108.1528911062233;
+        Wed, 13 Jun 2018 10:31:02 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id j13-v6sm3922665wre.38.2018.06.13.10.31.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Jun 2018 10:31:01 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fT9bl-000796-2S; Wed, 13 Jun 2018 11:30:57 -0600
+Date:   Wed, 13 Jun 2018 11:30:57 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        linux-rdma@vger.kernel.org,
+        =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] IDR: Expose the XArray lock
+Message-ID: <20180613173057.GA27281@ziepe.ca>
+References: <20180613123403.25233-1-willy@infradead.org>
+ <20180613123403.25233-2-willy@infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 10:30:35
- -0700 (PDT)
-In-Reply-To: <1528823348-30532-5-git-send-email-kramasub@codeaurora.org>
-References: <1528823348-30532-1-git-send-email-kramasub@codeaurora.org> <1528823348-30532-5-git-send-email-kramasub@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 13 Jun 2018 10:30:35 -0700
-X-Google-Sender-Auth: eV-erlP7e1K3B_6KgjQU3cE2cJ0
-Message-ID: <CAD=FV=W05DBCbL9h_40wUJsgjaAxjDbWMp+BUNCkV+GH1JASwQ@mail.gmail.com>
-Subject: Re: [PATCH v7 4/4] arm64: dts: sdm845: Add support for an instance of
- I2C controller
-To:     Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, linux-i2c@vger.kernel.org,
-        Evan Green <evgreen@chromium.org>, acourbot@chromium.org,
-        Stephen Boyd <swboyd@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180613123403.25233-2-willy@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed, Jun 13, 2018 at 05:34:02AM -0700, Matthew Wilcox wrote:
+> Allow users of the IDR to use the XArray lock for their own
+> synchronisation purposes.  The IDR continues to rely on the caller to
+> handle locking, but this lets the caller use the lock embedded in the
+> IDR data structure instead of allocating their own lock.
+> 
+> Signed-off-by: Matthew Wilcox <willy@infradead.org>
+>  include/linux/idr.h | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/include/linux/idr.h b/include/linux/idr.h
+> index e856f4e0ab35..109d7a3c8d56 100644
+> +++ b/include/linux/idr.h
+> @@ -98,6 +98,17 @@ static inline void idr_set_cursor(struct idr *idr, unsigned int val)
+>   * period).
+>   */
+>  
+> +#define idr_lock(idr)		xa_lock(&(idr)->idr_xa)
+> +#define idr_unlock(idr)		xa_unlock(&(idr)->idr_xa)
+> +#define idr_lock_bh(idr)	xa_lock_bh(&(idr)->idr_xa)
+> +#define idr_unlock_bh(idr)	xa_unlock_bh(&(idr)->idr_xa)
+> +#define idr_lock_irq(idr)	xa_lock_irq(&(idr)->idr_xa)
+> +#define idr_unlock_irq(idr)	xa_unlock_irq(&(idr)->idr_xa)
+> +#define idr_lock_irqsave(idr, flags) \
+> +				xa_lock_irqsave(&(idr)->idr_xa, flags)
+> +#define idr_unlock_irqrestore(idr, flags) \
+> +				xa_unlock_irqrestore(&(idr)->idr_xa, flags)
+> +
+>  void idr_preload(gfp_t gfp_mask);
 
-On Tue, Jun 12, 2018 at 10:09 AM, Karthikeyan Ramasubramanian
-<kramasub@codeaurora.org> wrote:
-> Add one instance of GENI based I2C master controller to enable testing
-> I2C driver using EEPROM slave.
->
-> Signed-off-by: Karthikeyan Ramasubramanian <kramasub@codeaurora.org>
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> ---
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts | 19 +++++++++++++++++++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi    | 28 ++++++++++++++++++++++++++++
->  2 files changed, 47 insertions(+)
+Hmm, what do I need to apply this?
 
-Similar for to patch #3 in this series, let's move the discussion to
-<https://patchwork.kernel.org/patch/10462687/> and
-<https://patchwork.kernel.org/patch/10462683/>.
+drivers/infiniband/core/mad.c: In function ‘ib_register_mad_agent’:
+drivers/infiniband/core/mad.c:387:34: error: ‘struct idr’ has no member named ‘idr_xa’; did you mean ‘idr_rt’?
+  idr_lock(&ib_mad_clients);
+                                  ^     
+                                  idr_rt
 
--Doug
+Linus's master (be779f03d563981)  doesn't seem to have idr_xa?
+
+Jason
