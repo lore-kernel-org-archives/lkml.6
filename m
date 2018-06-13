@@ -6,87 +6,125 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7684AC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:08:56 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 35C7FC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3529B208C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:08:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3529B208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id E039E208AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:15:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E039E208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935012AbeFMAIy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 20:08:54 -0400
-Received: from www62.your-server.de ([213.133.104.62]:51342 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932596AbeFMAIw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 20:08:52 -0400
-Received: from [178.197.248.16] (helo=linux.home)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fStLG-0004QG-Gm; Wed, 13 Jun 2018 02:08:50 +0200
-Subject: Re: [PATCH] selftests: bpf: config: add config fragments
-To:     Anders Roxell <anders.roxell@linaro.org>, ast@kernel.org,
-        shuah@kernel.org
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org, William Tu <u9012063@gmail.com>
-References: <20180612110510.11731-1-anders.roxell@linaro.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <d6851756-ae3b-09ec-f487-1eeece6bd4c6@iogearbox.net>
-Date:   Wed, 13 Jun 2018 02:08:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
-MIME-Version: 1.0
-In-Reply-To: <20180612110510.11731-1-anders.roxell@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        id S934904AbeFMAPC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 20:15:02 -0400
+Received: from mga18.intel.com ([134.134.136.126]:51421 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933029AbeFMAPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 20:15:01 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 17:15:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
+   d="scan'208";a="63575007"
+Received: from ppenchax-mobl.amr.corp.intel.com ([10.254.98.204])
+  by fmsmga001.fm.intel.com with ESMTP; 12 Jun 2018 17:15:00 -0700
+Message-ID: <e40e926c35ae036c4b6f9ebc33223a2dc5c3eff2.camel@linux.intel.com>
+Subject: Re: [PATCH] hid: intel_ish-hid: ipc: register more pm callbacks to
+ support hibernation
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     "Xu, Even" <even.xu@intel.com>, Jiri Kosina <jikos@kernel.org>
+Cc:     "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Tue, 12 Jun 2018 17:14:59 -0700
+In-Reply-To: <9577C59DB499174B9340876B077C2E9569DF11EC@SHSMSX101.ccr.corp.intel.com>
+References: <20180611015650.51385-1-srinivas.pandruvada@linux.intel.com>
+         <nycvar.YFH.7.76.1806121651460.6203@cbobk.fhfr.pm>
+         <634cd945beca786dc77876f71e39459cef6fbd75.camel@linux.intel.com>
+         <9577C59DB499174B9340876B077C2E9569DF11EC@SHSMSX101.ccr.corp.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.99.3/24657/Tue Jun 12 22:48:09 2018)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 01:05 PM, Anders Roxell wrote:
-> Tests test_tunnel.sh fails due to config fragments ins't enabled.
-> 
-> Fixes: 933a741e3b82 ("selftests/bpf: bpf tunnel test.")
-> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-> ---
-> 
-> All tests passes except ip6gretap that still fails. I'm unsure why.
-> Ideas?
+On Wed, 2018-06-13 at 00:05 +0000, Xu, Even wrote:
+> Ok, sure, I will update patch comments and resubmit.
+Can you also add in the sign-off area
 
-William (Cc) might be able to help you out.
 
-Applied the one below in the mean-time to bpf, thanks!
+Cc: stable@vger.kernel.org
 
-> Cheers,
-> Anders
-> 
->  tools/testing/selftests/bpf/config | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/bpf/config b/tools/testing/selftests/bpf/config
-> index 1eefe211a4a8..7eb613ffef55 100644
-> --- a/tools/testing/selftests/bpf/config
-> +++ b/tools/testing/selftests/bpf/config
-> @@ -7,3 +7,13 @@ CONFIG_CGROUP_BPF=y
->  CONFIG_NETDEVSIM=m
->  CONFIG_NET_CLS_ACT=y
->  CONFIG_NET_SCH_INGRESS=y
-> +CONFIG_NET_IPIP=y
-> +CONFIG_IPV6=y
-> +CONFIG_NET_IPGRE_DEMUX=y
-> +CONFIG_NET_IPGRE=y
-> +CONFIG_IPV6_GRE=y
-> +CONFIG_CRYPTO_USER_API_HASH=m
-> +CONFIG_CRYPTO_HMAC=m
-> +CONFIG_CRYPTO_SHA256=m
-> +CONFIG_VXLAN=y
-> +CONFIG_GENEVE=y
-> 
+Thanks,
+Srinivas
 
+> Thanks Srinivas!
+> 
+> Best Regards,
+> Even Xu
+> 
+> 
+> 
+> -----Original Message-----
+> From: Srinivas Pandruvada [mailto:srinivas.pandruvada@linux.intel.com
+> ] 
+> Sent: Tuesday, June 12, 2018 11:31 PM
+> To: Jiri Kosina <jikos@kernel.org>; Xu, Even <even.xu@intel.com>
+> Cc: benjamin.tissoires@redhat.com; linux-input@vger.kernel.org; linux
+> -kernel@vger.kernel.org; Xu, Even <even.xu@intel.com>
+> Subject: Re: [PATCH] hid: intel_ish-hid: ipc: register more pm
+> callbacks to support hibernation
+> 
+> On Tue, 2018-06-12 at 16:53 +0200, Jiri Kosina wrote:
+> > On Sun, 10 Jun 2018, Srinivas Pandruvada wrote:
+> > 
+> > > From: Even Xu <even.xu@intel.com>
+> > > 
+> > > Current ish driver only register resume/suspend PM callbacks
+> > > which 
+> > > don't support hibernation (suspend to disk). Now use the
+> > > SIMPLE_DEV_PM_OPS() MACRO instead of struct dev_pm_ops directly.
+> > > The suspend and resume functions will now be used for both
+> > > suspend 
+> > > to RAM and hibernation.
+> > > 
+> > > If power management is disable, SIMPLE_DEV_PM_OPS will do
+> > > nothing, 
+> > > the suspend and resume related functions won't be used, so mark
+> > > them 
+> > > as __maybe_unused to clarify that this is intended behavior, and 
+> > > remove #ifdefs for power management.
+> > 
+> > This describes details the patch does on code level, but what are
+> > the 
+> > user observable effects? Hibernation resume doesn't fail any more?
+> > Hibernation
+> > is possible (and wasn't before)? Did kernel crash while trying to 
+> > hibernate and this is the fix? Or ... ?
+> 
+> Even,
+> Can you add more details and resubmit ASAP?
+> 
+> Basically after hiberation, the ISH can't resume properly and user
+> may not see sensor events (for example: screen rotation may not
+> work).
+> User will not see a crash or panic or anything except the following
+> message in log:
+> hid-sensor-hub 001F:8086:22D8.0001: timeout waiting for response from
+> ISHTP device 
+> 
+> So this is adding support for S4/hiberbation to ISH.
+> 
+> 
+> 
+> Thanks,
+> Srinivas
+> 
+> > 
+> > Thanks,
+> > 
