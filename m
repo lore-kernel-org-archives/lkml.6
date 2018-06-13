@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4D05CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:15:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3168EC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 035BE208B3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:15:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBDF420891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:15:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IZSQqhk5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 035BE208B3
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WYahaee9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBDF420891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936094AbeFMPPO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:15:14 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:51516 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935999AbeFMPJU (ORCPT
+        id S936052AbeFMPPM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:15:12 -0400
+Received: from mail-wr0-f194.google.com ([209.85.128.194]:37072 "EHLO
+        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936009AbeFMPJV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:09:20 -0400
-Received: by mail-wm0-f68.google.com with SMTP id r15-v6so5359959wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:19 -0700 (PDT)
+        Wed, 13 Jun 2018 11:09:21 -0400
+Received: by mail-wr0-f194.google.com with SMTP id d8-v6so3153355wro.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iP3OBq3KmmkdIHc4ClU6RmJI5t+xyWo9eNZ9y9WZFKg=;
-        b=IZSQqhk5croRiez/q3h2TX1sKS+RYjVRd8n/uuYbuYWdX44k/XyiddD+uigw30icW3
-         rpD5FW+0IKVZJvgygJQKkM3x314H6elaik0Yb3v6v24eDC/kfZ8AnnxKcvdWc616E8qr
-         mbmLf6NraRqLm/Lk9O7hGJvsKQawAFgJfmyhk=
+        bh=uzFPQjolv+jdPi2Rzia1jtwxKrkKgXp+JYTymg81g5w=;
+        b=WYahaee9FKtN9RHnrOnFKlknZvB2h0rYgwo/5nedys4o7g2YZYgQRAdBQ2GhGH/712
+         JsC0sFJRZLEZM+P8FYfehiho8g9UjKvTg3m1t8NoMTie3nZ5Kz2U+bpbPBW2U3FNpQ6o
+         Z0PSeSnIQKuROVwvjRr07jbLFfEibnFT3BXNk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=iP3OBq3KmmkdIHc4ClU6RmJI5t+xyWo9eNZ9y9WZFKg=;
-        b=n3F5GPAghzH9kYkvJ30kcVBwf1YBpUdAfRFuuZXcIW2ZR3q0nb1eaEjOhEDJ79Wz0D
-         193ZDccJZQSFL/RfGoaCsbQIofnXKb5iB5QrkXv2Ph7WoN+/1FuBtYHie+QNq8gqZVt2
-         iiRcLPNceydMHGevKCvUNUbFjJHLUf5k7xiOUi0pRFiDnKdCUn50t9l85pjhYs+Khyf5
-         rsW/LGryKuiVTUGvIZPlDJcQPhzpwoJzRPFntwe2cJfF4omqBdmE3bMws06QNyqisod0
-         Hd7d8JvNtjMF0y2siIXXLEX0Kql3sdAm1O1DufiDaLQyVUFXE/Tpo+rDtGwS4f/i92q5
-         xIRw==
-X-Gm-Message-State: APt69E3tNcakO/MghTXB/PctjcfyIyRGH+7LoDY3rAcElY00dUUT0uot
-        MvfkoPQRpeTabU4WUNUSjYg15g==
-X-Google-Smtp-Source: ADUXVKKX60fOb2G7Ee9FNd8AniwNzZl0RTk6F07QiYN1VJ1Dm7PLOlgnQ1swApdVWPA1pwZiPtaDeg==
-X-Received: by 2002:a1c:9e95:: with SMTP id h143-v6mr3542325wme.105.1528902558857;
-        Wed, 13 Jun 2018 08:09:18 -0700 (PDT)
+        bh=uzFPQjolv+jdPi2Rzia1jtwxKrkKgXp+JYTymg81g5w=;
+        b=nw+6K+nIMalGcb1dQKS6sqktV2gAIdu8HL+KcDDLQKodqk6vlTP4Q/9vlEoh43UqYS
+         BhCgkjOVTO7rA8iVRGRaUeI4aM5/wtB1qmoaR4DZnh/2QcJOqxDD0kOwA3xywmObzuip
+         OeGSV0hTaDKvE0zmJn8DCc0+vd1zBojFA9Jw1gqxEg0272jH4TrJPD/hpigKwUgnGaxh
+         FSpKpG6NiUsN/QwCxKoadLPAvw5PhUI3d3rKKvFwI6L20PTmpiw1kwrGRArJD9r4XwKV
+         ctWQSf484Gpvtp/fqPk0yqjQT+rWDSqDKA8NIxJzlXbAnL7DblcK0NOBfMabFswPYCaV
+         UNaw==
+X-Gm-Message-State: APt69E3Fk/qA/4V1nPhZx0qhq5GEBapZaxzwBVeYIqNNjY+OjcNzwVmg
+        klXcDnMXEsz+AJKTBGdIJMSdTg==
+X-Google-Smtp-Source: ADUXVKKa1wPmXKRJn8Og7rxfv3cjsYleDMUwSgyqd3uxIfVz6xUFV8lCO8n4fTiQsDDsQ86klwwO8g==
+X-Received: by 2002:adf:c00b:: with SMTP id z11-v6mr4284919wre.268.1528902560453;
+        Wed, 13 Jun 2018 08:09:20 -0700 (PDT)
 Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.17
+        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 08:09:18 -0700 (PDT)
+        Wed, 13 Jun 2018 08:09:20 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -61,9 +61,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v3 09/27] venus: hfi_venus: move set of default properties to core init
-Date:   Wed, 13 Jun 2018 18:07:43 +0300
-Message-Id: <20180613150801.11702-10-stanimir.varbanov@linaro.org>
+Subject: [PATCH v3 10/27] venus: hfi_venus: add suspend functionality for Venus 4xx
+Date:   Wed, 13 Jun 2018 18:07:44 +0300
+Message-Id: <20180613150801.11702-11-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
 References: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
@@ -72,47 +72,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This moves setting of default properties (firmware debug, idle
-indicator and low power mode) from session init to core init.
-All of those properties are need to be enabled/disabled early
-so that they could be used before the clients are even initialized.
-
-The other reason is to set idle indicator property early before
-we enter into venus_suspend function where we need to check for
-ARM9 WFI.
+This adds suspend (power collapse) functionality by reusing
+the suspend function for Venus 3xx and also enables idle indicator
+property for Venus 4xx (where it is disabled by default).
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 ---
- drivers/media/platform/qcom/venus/hfi_venus.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/platform/qcom/venus/hfi_venus.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/media/platform/qcom/venus/hfi_venus.c b/drivers/media/platform/qcom/venus/hfi_venus.c
-index 72a8547eab39..7a83e967a8ea 100644
+index 7a83e967a8ea..9366dae16b0a 100644
 --- a/drivers/media/platform/qcom/venus/hfi_venus.c
 +++ b/drivers/media/platform/qcom/venus/hfi_venus.c
-@@ -1091,6 +1091,10 @@ static int venus_core_init(struct venus_core *core)
+@@ -879,6 +879,14 @@ static int venus_sys_set_default_properties(struct venus_hfi_device *hdev)
  	if (ret)
- 		dev_warn(dev, "failed to send image version pkt to fw\n");
+ 		dev_warn(dev, "setting fw debug msg ON failed (%d)\n", ret);
  
-+	ret = venus_sys_set_default_properties(hdev);
-+	if (ret)
-+		return ret;
++	/*
++	 * Idle indicator is disabled by default on some 4xx firmware versions,
++	 * enable it explicitly in order to make suspend functional by checking
++	 * WFI (wait-for-interrupt) bit.
++	 */
++	if (IS_V4(hdev->core))
++		venus_sys_idle_indicator = true;
 +
- 	return 0;
- }
- 
-@@ -1135,10 +1139,6 @@ static int venus_session_init(struct venus_inst *inst, u32 session_type,
- 	struct hfi_session_init_pkt pkt;
- 	int ret;
- 
--	ret = venus_sys_set_default_properties(hdev);
--	if (ret)
--		return ret;
--
- 	ret = pkt_session_init(&pkt, inst, session_type, codec);
+ 	ret = venus_sys_set_idle_message(hdev, venus_sys_idle_indicator);
  	if (ret)
- 		goto err;
+ 		dev_warn(dev, "setting idle response ON failed (%d)\n", ret);
+@@ -1533,7 +1541,8 @@ static int venus_suspend_3xx(struct venus_core *core)
+ 
+ static int venus_suspend(struct venus_core *core)
+ {
+-	if (core->res->hfi_version == HFI_VERSION_3XX)
++	if (core->res->hfi_version == HFI_VERSION_3XX ||
++	    core->res->hfi_version == HFI_VERSION_4XX)
+ 		return venus_suspend_3xx(core);
+ 
+ 	return venus_suspend_1xx(core);
 -- 
 2.14.1
 
