@@ -2,103 +2,244 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9C410C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:43:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 31386C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51EC520891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:43:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8EC820660
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:45:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WY6QUJH2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51EC520891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PKBmGzt1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8EC820660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936016AbeFMPnX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:43:23 -0400
-Received: from mail-oi0-f68.google.com ([209.85.218.68]:35134 "EHLO
-        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935833AbeFMPnW (ORCPT
+        id S936023AbeFMPpE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:45:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58516 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935833AbeFMPpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:43:22 -0400
-Received: by mail-oi0-f68.google.com with SMTP id e8-v6so2755470oii.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:43:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rbv3LFQpwkrqD8YmW+XftjO/vG3Ok/eabDEVpMqWqS0=;
-        b=WY6QUJH2BgVIOi8HHAOq85YMU9v7WznhC3V9NZFtjk0Y1kGbF2uap06owHgsr9HtZj
-         j+7lBrlts6OsC0QD4D8pIYZ1qmboqsI7JA2zbGENLVENtb9fCKxt5r861AoUGtyEHYxJ
-         4qqmb+VjLma0yWXqldE4GYJO7IESgzRW8/HEgq2IAwl04Bocn5hgzO0LdNX36mUqkpXp
-         /3zKfbfB9PIQ205VeYYpK92o+z2FVpO8qrJ9hGnB797nGB3NpGDIjl/16PW+QkGwi8yt
-         15LJDI1Wih7s0FCYLa4eU4biabomY8O6h3+9Yar/6Tpc1YfI/kcsN7DV4/ng4gj1h0Gm
-         IcCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rbv3LFQpwkrqD8YmW+XftjO/vG3Ok/eabDEVpMqWqS0=;
-        b=byNSXDH5dhfp+wENstmYyNT21mZQ/3xnZdA5iJitAzfnnfPvEih04uQMovGrgrUkv7
-         GdyZk3o3au3NYvQhCQ99m1++z7MCxsqa92MioTiPHs34rQNKBNG/teoK7kSkjCkfv7+B
-         lDqtMzembFutFk4JfsSOV/Qrjola5Nn+WsrfmCSlUBrBrj1xTSlTyYVbNs/WW2e7bmKR
-         VS2PC2rkhJddpRsxf/yOncZMKHAMdpPCbERAnbC/gNS+9FpRPcSBSl/1oiU6mtQbebvB
-         vmmeFSG5ZZKliM3H2K02MyVBtQyOi1JO/pxPPpMMHUqQIUP55d7OEy+zSDeQ7yvjHo+T
-         9Fig==
-X-Gm-Message-State: APt69E0TixTpZPPlcI8l+oGGzRqUbvzup3fRVnKfPWr4oMh+hjw5xEuR
-        ZxesrjoJiD7AH+wMwwKjs5UvBNT9xuOMMyja5M8bDQ==
-X-Google-Smtp-Source: ADUXVKJxQAF9n6frGQNPsZ15Ug12CDo1euKCHkZkcqdg/S5yo83FyEy4qMtqUvPNdnHeZokHUBzGUXdKfdZc3dFIkAA=
-X-Received: by 2002:aca:3048:: with SMTP id w69-v6mr4390349oiw.29.1528904601256;
- Wed, 13 Jun 2018 08:43:21 -0700 (PDT)
+        Wed, 13 Jun 2018 11:45:03 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=zhNUq/nluPl4EX8p5kLhFmyHsXOaKiM3aQzizi34jlE=; b=PKBmGzt1DT2KYNn+48bbtpVeu
+        yLZGDkd0aLKVgK6xBBrx6sRy1SfNdUWqGMRC/Fl9Ld+uQ/08LNspXqN3i2a55YcudQ9GaYj/gzL9e
+        vzr2WBR+qPzfRyhWqBt/ibZVMY9vRajnJ2q1prff2lVFHWNCv4Y60O7KNMkZIwPv+qw6q++ncXJO2
+        4+R65FwgJx7N0CXfuWEwaRqIqEqDr3VFTVDamQN0cSiDKDg89kNuyK7geRbuZnMDTm2SKYTxVoyhx
+        yrxcl5lh3TGMzXs8jA0+VxoMFy4L99qcTkJJ7GE13JTRegA2mTmHRrNBoG/QcFVsKuiXCIH0DJgGJ
+        wtrztIgWQ==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fT7xD-0001RB-7j; Wed, 13 Jun 2018 15:45:01 +0000
+Date:   Wed, 13 Jun 2018 08:44:57 -0700
+From:   Darren Hart <dvhart@infradead.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>
+Subject: [GIT PULL] platform-drivers-x86 for 4.18-1
+Message-ID: <20180613154457.GA121841@localhost.localdomain>
 MIME-Version: 1.0
-References: <20180531144949.24995-1-tycho@tycho.ws> <20180531144949.24995-2-tycho@tycho.ws>
- <CAG48ez3x9HSkLZc-da6zjPbckyfdPvwyQa3p9P6EzQ5sGk53eg@mail.gmail.com>
- <20180604001812.GE15998@cisco> <CAG48ez2ZD1fMFcTfro-axUzC7g2Nb4ACnHPKXgr2q=_BchJuYg@mail.gmail.com>
-In-Reply-To: <CAG48ez2ZD1fMFcTfro-axUzC7g2Nb4ACnHPKXgr2q=_BchJuYg@mail.gmail.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Wed, 13 Jun 2018 17:43:08 +0200
-Message-ID: <CAG48ez01T_FZ5GWnx6YnSb4QU5HQbJGuwxc-gzQhSUxdTSc9PQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] seccomp: add a return code to trap to userspace
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     kernel list <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Kees Cook <keescook@chromium.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        suda.akihiro@lab.ntt.co.jp, "Tobin C. Harding" <me@tobin.cc>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 5:32 PM Jann Horn <jannh@google.com> wrote:
->
-> On Mon, Jun 4, 2018 at 2:18 AM Tycho Andersen <tycho@tycho.ws> wrote:
-> >
-> > Hi Jann,
-> >
-> > On Sun, Jun 03, 2018 at 08:41:01PM +0200, Jann Horn wrote:
-> > > On Sun, Jun 3, 2018 at 2:29 PM Tycho Andersen <tycho@tycho.ws> wrote:
-> > > >
-> > > > This patch introduces a means for syscalls matched in seccomp to notify
-> > > > some other task that a particular filter has been triggered.
-[...]
+Hi Linus,
 
-By the way: You should probably CC linux-api@ on the next version of
-this patchset.
-Documentation/process/submitting-patches.rst says:
+The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-| If changes affect userland-kernel interfaces, please send the MAN-PAGES
-| maintainer (as listed in the MAINTAINERS file) a man-pages patch, or at
-| least a notification of the change, so that some information makes its way
-| into the manual pages.  User-space API changes should also be copied to
-| linux-api@vger.kernel.org.
+  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+
+are available in the git repository at:
+
+  git://git.infradead.org/linux-platform-drivers-x86.git tags/platform-drivers-x86-v4.18-1
+
+for you to fetch changes up to 26ed9d1c07efa5c3a3810dbb7c668e132e91d426:
+
+  platform/x86: silead_dmi: Add entry for Chuwi Hi8 tablet touchscreen (2018-06-08 14:22:15 +0300)
+
+Thanks,
+
+Darren Hart
+VMware Open Source Technology Center
+----------------------------------------------------------------
+platform-drivers-x86 for v4.18-1
+
+Several incremental improvements including new keycodes, new models, new
+quirks, and related documentation. Adds LED platform driver activation
+for Mellanox systems.  Some minor optimizations and cleanups. Includes
+several bug fixes, message silencing, mostly minor.
+
+The following commits were previously merged during the 4.17 RC cycle:
+ - 06b8b00b33 platform/x86: asus-wireless: Fix NULL pointer dereference
+ - 6ed66c3ce0 platform/x86: Kconfig: Fix dell-laptop dependency chain.
+ - 74783c99bf platform/x86: DELL_WMI use depends on instead of select for DELL_SMBIOS
+ - cf48bf9eee platform/x86: asus-wmi: Fix NULL pointer dereference
+
+The following is an automated git shortlog grouped by driver:
+
+acer-wmi:
+ -  add another KEY_POWER keycode
+
+apple-gmux:
+ -  fix gmux_get_client_id()'s return type
+
+asus-laptop:
+ -  Simplify getting .drvdata
+
+asus-wireless:
+ -  Fix format specifier
+
+dell-laptop:
+ -  Fix keyboard backlight timeout on XPS 13 9370
+
+dell-smbios:
+ -  Match on www.dell.com in OEM strings too
+
+dell-wmi:
+ -  Ignore new rfkill and fn-lock events
+ -  Set correct keycode for Fn + left arrow
+
+fujitsu-laptop:
+ -  Simplify soft key handling
+
+ideapad-laptop:
+ -  Add E42-80 to no_hw_rfkill
+ -  Add fn-lock setting
+ -  Add MIIX 720-12IKB to no_hw_rfkill
+
+lib/string_helpers:
+ -  Add missed declaration of struct task_struct
+
+intel_scu_ipc:
+ -  Replace mdelay with usleep_range in intel_scu_ipc_i2c_cntrl
+
+mlx-platform:
+ -  Add LED platform driver activation
+
+platform/mellanox:
+ -  Add new ODM system types to mlx-platform
+ -  mlxreg-hotplug: add extra cycle for hotplug work queue
+ -  mlxreg-hotplug: Document fixes for hotplug private data
+
+platform_data/mlxreg:
+ -  Document fixes for hotplug device
+
+silead_dmi:
+ -  Add entry for Chuwi Hi8 tablet touchscreen
+ -  Add touchscreen info for the Onda V891w tablet
+ -  Add info for the PoV mobii TAB-P800W (v2.0)
+ -  Add touchscreen info for the Jumper EZpad 6 Pro
+
+thinkpad_acpi:
+ -  silence false-positive-prone pr_warn
+ -  do not report thermal sensor state for tablet mode switch
+ -  silence HKEY 0x6032, 0x60f0, 0x6030
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      lib/string_helpers: Add missed declaration of struct task_struct
+
+Antonio Rosario Intilisano (1):
+      platform/x86: acer-wmi: add another KEY_POWER keycode
+
+Darren Hart (1):
+      platform/x86: DELL_WMI use depends on instead of select for DELL_SMBIOS
+
+Darren Hart (VMware) (1):
+      platform/x86: fujitsu-laptop: Simplify soft key handling
+
+Hans de Goede (3):
+      platform/x86: silead_dmi: Add touchscreen info for the Jumper EZpad 6 Pro
+      platform/x86: silead_dmi: Add info for the PoV mobii TAB-P800W (v2.0)
+      platform/x86: silead_dmi: Add touchscreen info for the Onda V891w tablet
+
+Henk Vergonet (1):
+      platform/x86: dell-wmi: Set correct keycode for Fn + left arrow
+
+Henrique de Moraes Holschuh (3):
+      platform/x86: thinkpad_acpi: silence HKEY 0x6032, 0x60f0, 0x6030
+      platform/x86: thinkpad_acpi: do not report thermal sensor state for tablet mode switch
+      platform/x86: thinkpad_acpi: silence false-positive-prone pr_warn
+
+Jia-Ju Bai (1):
+      platform: x86: intel_scu_ipc: Replace mdelay with usleep_range in intel_scu_ipc_i2c_cntrl
+
+João Paulo Rechi Vita (3):
+      platform/x86: asus-wireless: Fix NULL pointer dereference
+      platform/x86: asus-wmi: Fix NULL pointer dereference
+      platform/x86: asus-wireless: Fix format specifier
+
+Kai Heng Feng (1):
+      platform/x86: dell-wmi: Ignore new rfkill and fn-lock events
+
+Luc Van Oostenryck (1):
+      platform/x86: apple-gmux: fix gmux_get_client_id()'s return type
+
+Mario Limonciello (2):
+      platform/x86: dell-smbios: Match on www.dell.com in OEM strings too
+      platform/x86: Kconfig: Fix dell-laptop dependency chain.
+
+Oleg Keri (1):
+      platform/x86: ideapad-laptop: Add fn-lock setting
+
+Takashi Iwai (1):
+      platform/x86: ideapad-laptop: Add MIIX 720-12IKB to no_hw_rfkill
+
+Timur Kristóf (1):
+      platform/x86: dell-laptop: Fix keyboard backlight timeout on XPS 13 9370
+
+Vadim Pasternak (5):
+      platform_data/mlxreg: Document fixes for hotplug device
+      platform/mellanox: mlxreg-hotplug: Document fixes for hotplug private data
+      platform/mellanox: mlxreg-hotplug: add extra cycle for hotplug work queue
+      platform/mellanox: Add new ODM system types to mlx-platform
+      platform/x86: mlx-platform: Add LED platform driver activation
+
+Wolfram Sang (1):
+      platform/x86: Simplify getting .drvdata
+
+dylanchu (1):
+      platform/x86: ideapad-laptop: Add E42-80 to no_hw_rfkill
+
+yuk7 (1):
+      platform/x86: silead_dmi: Add entry for Chuwi Hi8 tablet touchscreen
+
+ .../ABI/testing/sysfs-platform-ideapad-laptop      |  13 +
+ Documentation/laptops/thinkpad-acpi.txt            |   2 +
+ drivers/platform/mellanox/mlxreg-hotplug.c         |  54 ++--
+ drivers/platform/x86/Kconfig                       |   4 +-
+ drivers/platform/x86/acer-wmi.c                    |   1 +
+ drivers/platform/x86/apple-gmux.c                  |   2 +-
+ drivers/platform/x86/asus-laptop.c                 |   3 +-
+ drivers/platform/x86/asus-wireless.c               |   6 +-
+ drivers/platform/x86/asus-wmi.c                    |  26 +-
+ drivers/platform/x86/dell-laptop.c                 |  17 +-
+ drivers/platform/x86/dell-smbios-base.c            |   5 +-
+ drivers/platform/x86/dell-wmi.c                    |  16 +-
+ drivers/platform/x86/fujitsu-laptop.c              |  47 ++--
+ drivers/platform/x86/ideapad-laptop.c              |  66 ++++-
+ drivers/platform/x86/intel_scu_ipc.c               |   4 +-
+ drivers/platform/x86/mlx-platform.c                | 289 ++++++++++++++++++++-
+ drivers/platform/x86/samsung-laptop.c              |   3 +-
+ drivers/platform/x86/silead_dmi.c                  | 101 ++++++-
+ drivers/platform/x86/thinkpad_acpi.c               |  30 ++-
+ include/linux/platform_data/mlxreg.h               |   3 +-
+ include/linux/string_helpers.h                     |   1 +
+ 21 files changed, 603 insertions(+), 90 deletions(-)
+
+-- 
+Darren Hart
+VMware Open Source Technology Center
