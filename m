@@ -2,113 +2,122 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 082E9C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:27:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5BD05C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:28:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1681208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:27:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1681208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 39E42208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:27:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E42208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935805AbeFMO1F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:27:05 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:53682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935560AbeFMO1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:27:04 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 782D94021FCA;
-        Wed, 13 Jun 2018 14:27:03 +0000 (UTC)
-Received: from [10.36.118.61] (unknown [10.36.118.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CCD721C5A5;
-        Wed, 13 Jun 2018 14:26:49 +0000 (UTC)
-Subject: Re: [GIT PULL] KVM changes for 4.18 merge window
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-References: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
- <CA+55aFwvE5G7MV7AV4naAXdbFoszc4JNKEj_QtYqpLFfa2RXtA@mail.gmail.com>
- <6570c00b-bbec-82c3-16e2-1ba96d8e263b@redhat.com>
- <CA+55aFxyQ0HE6ShB_pF1yXS9VjQv78OyseJpZjLXu=rbBTEPTQ@mail.gmail.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <c982edb3-d2fe-87f9-f1ac-2125901d7013@redhat.com>
-Date:   Wed, 13 Jun 2018 16:26:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S935822AbeFMO1q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:27:46 -0400
+Received: from verein.lst.de ([213.95.11.211]:41275 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935560AbeFMO1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:27:45 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id 6840168DBC; Wed, 13 Jun 2018 16:35:58 +0200 (CEST)
+Date:   Wed, 13 Jun 2018 16:35:58 +0200
+From:   "hch@lst.de" <hch@lst.de>
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc:     "hch@lst.de" <hch@lst.de>,
+        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>,
+        "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
+        4.17.0-x64-08428-g7d3bf613e99a
+Message-ID: <20180613143558.GA1163@lst.de>
+References: <201806091606.51078.randrianasulu@gmail.com> <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org> <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com> <5ca74fb7-af70-31c3-0e3f-bace058e5a57@oracle.com> <20180613140411.GA32701@lst.de> <09e8bd7605febd091679172d68ca1e9ca3990c91.camel@wdc.com>
 MIME-Version: 1.0
-In-Reply-To: <CA+55aFxyQ0HE6ShB_pF1yXS9VjQv78OyseJpZjLXu=rbBTEPTQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 13 Jun 2018 14:27:03 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 13 Jun 2018 14:27:03 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09e8bd7605febd091679172d68ca1e9ca3990c91.camel@wdc.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2018 15:56, Linus Torvalds wrote:
-> On Wed, Jun 13, 2018 at 3:09 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
->>
->> On 13/06/2018 04:18, Linus Torvalds wrote:
->>>
->>> Hmm? And why was this not found before it hit my tree?
->>
->> Because I should do more "make randconfig"s, probably.
-> 
-> Well, being in linux-next should have found it too. I know linux-next
-> had a lot of kvm stuff in it, was this not there?
+On Wed, Jun 13, 2018 at 02:08:12PM +0000, Bart Van Assche wrote:
+> __blk_mq_complete_request() is already called today by blk_mq_complete_request().
+> However, it's not clear to me why that function is exported by Jianchao's patch.
 
-It was, I suppose that's how Arnd found it.
+True.  I had missed that the patch also started calling the new
+mark_rq_complete function from the error handler.
 
-I also checked my reflog in case I force-pushed something by mistake
-(kvm/next doesn't rebase, but you never know) and that didn't happen
-either.  I'll fix the "no virt stuff" build in my pre-pull-request
-routine.  I already have KVM-but-no-CONFIG_KVM_GUEST build---and the
-other way round---I'll remove CONFIG_HYPERV too from the former.
+> The SCSI error handler already waits until all pending requests have finished
+> before it starts handling timed out commands. This e-mail thread started with a
+> report of a crash in the SCSI error handler, which is a regression introduced in
+> the v4.18 merge window.
 
-Paolo
+ut-requests-again-that-are-in-the.patch
+Yeah.  I've read back a bit.  If your theory of a double invocation of
+the timeout handler is correct something like the patch below should sort
+it out, right?
+
+---
+From d408928360f087c0ad24e31d1d25533c698b8b35 Mon Sep 17 00:00:00 2001
+From: Christoph Hellwig <hch@lst.de>
+Date: Wed, 13 Jun 2018 16:25:40 +0200
+Subject: blk-mq: don't time out requests again that are in the timeout handler
+
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+---
+ block/blk-mq.c         | 4 ++++
+ include/linux/blkdev.h | 2 ++
+ 2 files changed, 6 insertions(+)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index e9da5e6a8526..8a2895fed078 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -770,6 +770,7 @@ EXPORT_SYMBOL(blk_mq_tag_to_rq);
+ 
+ static void blk_mq_rq_timed_out(struct request *req, bool reserved)
+ {
++	req->rq_flags |= RQF_TIMED_OUT;
+ 	if (req->q->mq_ops->timeout) {
+ 		enum blk_eh_timer_return ret;
+ 
+@@ -779,6 +780,7 @@ static void blk_mq_rq_timed_out(struct request *req, bool reserved)
+ 		WARN_ON_ONCE(ret != BLK_EH_RESET_TIMER);
+ 	}
+ 
++	req->rq_flags &= ~RQF_TIMED_OUT;
+ 	blk_add_timer(req);
+ }
+ 
+@@ -788,6 +790,8 @@ static bool blk_mq_req_expired(struct request *rq, unsigned long *next)
+ 
+ 	if (blk_mq_rq_state(rq) != MQ_RQ_IN_FLIGHT)
+ 		return false;
++	if (rq->rq_flags & RQF_TIMED_OUT)
++		return false;
+ 
+ 	deadline = blk_rq_deadline(rq);
+ 	if (time_after_eq(jiffies, deadline))
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index bca3a92eb55f..fa6f11751430 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -127,6 +127,8 @@ typedef __u32 __bitwise req_flags_t;
+ #define RQF_ZONE_WRITE_LOCKED	((__force req_flags_t)(1 << 19))
+ /* already slept for hybrid poll */
+ #define RQF_MQ_POLL_SLEPT	((__force req_flags_t)(1 << 20))
++/* ->timeout has been called, don't expire again */
++#define RQF_TIMED_OUT		((__force req_flags_t)(1 << 21))
+ 
+ /* flags that prevent us from merging requests: */
+ #define RQF_NOMERGE_FLAGS \
+-- 
+2.17.1
+
