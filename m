@@ -2,118 +2,271 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 66652C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:05:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5D199C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:05:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1184020020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:05:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="n0o/KVyJ";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="Rd4d3dno"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1184020020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	by mail.kernel.org (Postfix) with ESMTP id 141D220020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:05:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 141D220020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935593AbeFMNFM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:05:12 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:48556 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754478AbeFMNFK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:05:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1528895110; x=1560431110;
-  h=from:to:subject:date:message-id:references:in-reply-to:
-   content-id:content-transfer-encoding:mime-version;
-  bh=CDWb79yzSxEk0p0QbiDcJYOpkvsP/rFbu18VBSyKzXk=;
-  b=n0o/KVyJ/11BQC7z2JQGW9i86zRYxD1CM833B+ng98wmdsrH5Xps2goE
-   JoRhIATwPc3jd7R945+BXvDH7dRxQ5ceo2Mao3mnAUQXwAU7U2F3uv6o3
-   vkN26ErR2IiypGcnTYGBZnsH6fatSBrXvxRnK6f7Slw8Z0D2QRBGKFXPj
-   WUmzCLLAdw05p5EGSiV/qBMqLsckJHHLgzCPqgoTVA70bWL4fvXIjKnRu
-   zEn8WI6BgX+pyoIa20pbDJ7aGHSrhQbVwXJDU7jW7j1o4B1w+xeWlMR5M
-   PBNpkEKsz8Bq7mtX0qN0tRbieyZS2ckoSu7rnB90L8m9ym5MJ6dN7Tpso
-   A==;
-X-IronPort-AV: E=Sophos;i="5.51,218,1526313600"; 
-   d="scan'208";a="82408177"
-Received: from mail-co1nam03lp0019.outbound.protection.outlook.com (HELO NAM03-CO1-obe.outbound.protection.outlook.com) ([216.32.181.19])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2018 21:05:09 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CDWb79yzSxEk0p0QbiDcJYOpkvsP/rFbu18VBSyKzXk=;
- b=Rd4d3dnoatkTl69PyO+eTfRkbXpsrp5qIPunvrD1DG84LrHk2DJv/lest+IdZFftYB2gITTokUk44R/ujKEL2P+epkV96DuAolhbZbpNS/TEk+qcLQuxZaFGSnrSVHD4109EPpfJQUhfNro+8Gy7Oygj87aqOXwB87jN0pasGQE=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0880.namprd04.prod.outlook.com (10.174.174.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.841.18; Wed, 13 Jun 2018 13:05:08 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::9de4:3c8d:39af:e4c5]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::9de4:3c8d:39af:e4c5%8]) with mapi id 15.20.0841.019; Wed, 13 Jun 2018
- 13:05:07 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-Subject: Re: Fwd: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
- 4.17.0-x64-08428-g7d3bf613e99a
-Thread-Topic: Fwd: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
- 4.17.0-x64-08428-g7d3bf613e99a
-Thread-Index: AQHUAsVwkM7cfrEV4EWfUb5bnyHWyKReKMEA
-Date:   Wed, 13 Jun 2018 13:05:07 +0000
-Message-ID: <3ab38d8d65c34d4109195f29bae61429f30b13aa.camel@wdc.com>
-References: <201806130602.59441.randrianasulu@gmail.com>
-In-Reply-To: <201806130602.59441.randrianasulu@gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [76.103.130.147]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0880;7:DR3gVBPxnbuYd+152FmtobZF72+OTRumdlOQpPTg9u4G0Hv0pPz3jBdCweucdo6uWzckQvUaVcZyrrLPFokSHMeMONSyd9InBwETOpGAVuLt+9P1nUPcmew5yaYKroeFrcVaENbX0snqyLPtl4at79BQQU3TCDf4FqWL6bJ2w1asn/DAtE+okvaBJvlBmRfnPwOnO8Oo4ojz4WhFFW6fy4SJwfnCURqnx37BF/Iezmn3qC3owmhEyGAtZgNgNLlg;20:fYcJx4n99u28x1bpnixHbfH9DXBpelS+iqE+nkASpvA0+ugIBciqMHsdsPMXrKd+3rLEIYCcBCuOxQ+AbWNWysWDxrlLh8Ya2WnW2KJA1M8duWCeKGdc9cNnhdt5rsNB8eDL5rw8DrE1e9Qjp1aaIxYV7mdjB4KH/ZiQlcv+RcA=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: f3626edb-3774-418b-6fd8-08d5d12e49d0
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0880;
-x-ms-traffictypediagnostic: MWHPR04MB0880:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB088088D4CA462E01D31C500D987E0@MWHPR04MB0880.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0880;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0880;
-x-forefront-prvs: 07025866F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(376002)(39850400004)(366004)(396003)(199004)(189003)(66066001)(2501003)(72206003)(76176011)(99286004)(186003)(486006)(5660300001)(5250100002)(26005)(6436002)(446003)(11346002)(14454004)(2616005)(476003)(68736007)(86362001)(2201001)(478600001)(6506007)(316002)(110136005)(102836004)(7736002)(305945005)(6246003)(3660700001)(3280700002)(97736004)(2900100001)(6116002)(106356001)(8936002)(81166006)(2906002)(36756003)(39060400002)(81156014)(229853002)(6512007)(3846002)(105586002)(118296001)(6486002)(53936002)(25786009)(8676002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0880;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-x-microsoft-antispam-message-info: 9OlSpXR/ZTJN9DeVqWdNeZj0QeYTO67YlMwsF+Ol/3BvUpPteNiurTSp1Gu0kDGkOvvlP0hzUhBJmMlMH5KDI6XwuuRPPBE46rIGfoEnBekz0BWMXCUgf/80hN7tmjoHXPG9nuOexPQu/SexMff3VnK/AECpapTa8K44iAa6ie3yxCqmefvsbwF7bte8NlQM
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DFD1BF45589A9E408800B34A1B81917A@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        id S935628AbeFMNFc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:05:32 -0400
+Received: from foss.arm.com ([217.140.101.70]:47378 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935481AbeFMNFa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 09:05:30 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A370F1529;
+        Wed, 13 Jun 2018 06:05:30 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0838C3F25D;
+        Wed, 13 Jun 2018 06:05:28 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 14:05:26 +0100
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Agustin Vega-Frias <agustinv@codeaurora.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Will Deacon <will.deacon@arm.com>,
+        Jeremy Linton <jeremy.linton@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        timur@codeaurora.org
+Subject: Re: [RFC V2 3/3] perf: qcom: Add Falkor CPU PMU IMPLEMENTATION
+ DEFINED event support
+Message-ID: <20180613130526.y3xgqm5qjrke6vto@lakrids.cambridge.arm.com>
+References: <1528379808-27970-1-git-send-email-agustinv@codeaurora.org>
+ <1528379808-27970-4-git-send-email-agustinv@codeaurora.org>
+ <20180612144055.m2h26n64spfm6k6o@lakrids.cambridge.arm.com>
+ <9957219b64252d3b2e19724db04a1179@codeaurora.org>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f3626edb-3774-418b-6fd8-08d5d12e49d0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 13:05:07.9030
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0880
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9957219b64252d3b2e19724db04a1179@codeaurora.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTA2LTEzIGF0IDA2OjAyICswMzAwLCBBbmRyZXcgUmFuZHJpYW5hc3VsdSB3
-cm90ZToNCj4gYWZ0ZXIgcmV0ZXN0aW5nIHdpdGggZ2l0IHVwIHRvIA0KPiA0LjE3LjAteDY0LTEx
-NzAxLWc0NTk3ZmNmZjA3MDQtZGlydHkNCj4gDQo+IEJVRyBsaW5lIGlzIGdvbmUgLCB5ZXQgczJy
-YW0gc3RpbGwgbm90IHdvcmtpbmc6DQoNCkhlbGxvIEFuZHJldywNCg0KSGF2ZSB5b3UgYWxyZWFk
-eSB2ZXJpZmllZCB3aGV0aGVyIHMycmFtIHdvcmtzIGFnYWluIGFmdGVyIGhhdmluZyBhcHBsaWVk
-DQpKaWFuY2hhbydzIHBhdGNoPw0KDQpUaGFua3MsDQoNCkJhcnQuDQoNCg0KDQo=
+On Tue, Jun 12, 2018 at 04:41:32PM -0400, Agustin Vega-Frias wrote:
+> On 2018-06-12 10:40, Mark Rutland wrote:
+> > On Thu, Jun 07, 2018 at 09:56:48AM -0400, Agustin Vega-Frias wrote:
+> > > +/*
+> > > + * Qualcomm Technologies CPU PMU IMPLEMENTATION DEFINED extensions
+> > > support
+> > > + *
+> > > + * Current extensions supported:
+> > > + *
+> > > + * - Matrix-based microarchitectural events support
+> > > + *
+> > > + *   Selection of these events can be envisioned as indexing them
+> > > from
+> > > + *   a 3D matrix:
+> > > + *   - the first index selects a Region Event Selection Register
+> > > (PMRESRx_EL0)
+> > > + *   - the second index selects a group from which only one event
+> > > at a time
+> > > + *     can be selected
+> > > + *   - the third index selects the event
+> > > + *
+> > > + *   The event is encoded into perf_event_attr.config as 0xPRCCG,
+> > > where:
+> > > + *     P  [config:16   ] = prefix   (flag that indicates a
+> > > matrix-based event)
+> > > + *     R  [config:12-15] = register (specifies the PMRESRx_EL0
+> > > instance)
+> > > + *     G  [config:0-3  ] = group    (specifies the event group)
+> > > + *     CC [config:4-11 ] = code     (specifies the event)
+> > > + *
+> > > + *   Events with the P flag set to zero are treated as common PMUv3
+> > > events
+> > > + *   and are directly programmed into PMXEVTYPERx_EL0.
+> > 
+> > When PMUv3 is given a raw event code, the config fields should be the
+> > PMU event number, and this conflicts with RESERVED encodings.
+> > 
+> > I'd rather we used a separate field for the QC extension events. e.g.
+> > turn config1 into a flags field, and move the P flag there.
+> > 
+> > We *should* add code to sanity check those fields are zero in the PMUv3
+> > driver, even though it's a potential ABI break to start now.
+> 
+> I should have stated clearly that in this case the event code is directly
+> programmed into PMXEVTYPERx_EL0.evtCount, not by this code, but by the PMUv3
+> code, which will do the masking and ensure reserved bits are not touched.
+
+I understand this may be fine on the HW side; it's more to do with the
+userspace ABI expected with PMUv3. The config encoding should be the
+(PMUv3) type field, and I don't want a potential clash if/when PMUv3
+gets extended in future beyond the current 16 bits.
+
+I'd very much like to keep the QC extension bits separate from that.
+
+> IOW, that case is no different from the raw event or a common event case.
+> 
+> I would prefer to keep the flag in config because it allows the use of
+> raw code encodings to access these events more easily, and given that
+> the flag is never propagated to any register I believe it is safe.
+
+You can easily add sysfs fields to make this easy, e.g. have reg map to
+config1:x-y, and the user can specify the event based on that, e.g.
+
+  perf ${cmd} -e qcom_pmuv3/reg=0xf,.../
+
+Which means they're *explicitly* asking for the QC extension bits, and
+we can be sure they're not asking for something from baseline PMUv3.
+
+We *might* want to namespace the qc fields, in case we want to add
+anything similar to PMUv3 in future.
+
+[...]
+
+> > > +/*
+> > > + * Check if e1 and e2 conflict with each other
+> > > + *
+> > > + * e1 is a matrix-based microarchitectural event we are checking
+> > > against e2.
+> > > + * A conflict exists if the events use the same reg, group, and a
+> > > different
+> > > + * code. Events with the same code are allowed because they could
+> > > be using
+> > > + * different filters (e.g. one to count user space and the other to
+> > > count
+> > > + * kernel space events).
+> > > + */
+
+> > Does the filter matter at all? When happens if I open two identical
+> > events, both counting the same reg, group, and code, with the same
+> > filter?
+> 
+> That is possible and allowed, similar to counting the same common event
+> in two configurable counters. Only problem is wasting a counter resource.
+
+Ok. Please drop the mention of filtering from the comment -- it makes it
+sound like there's a potential problem, and it isn't relevant.
+
+[...]
+
+> > > +		/* Matrix event, program the appropriate PMRESRx_EL0 */
+> > > +		struct arm_pmu *pmu = to_arm_pmu(event->pmu);
+> > > +		struct pmu_hw_events *events = this_cpu_ptr(pmu->hw_events);
+> > > +		u64 reg = QC_EVT_REG(event->attr.config);
+> > > +		u64 code = QC_EVT_CODE(event->attr.config);
+> > > +		u64 group = QC_EVT_GROUP(event->attr.config);
+> > > +		unsigned long flags;
+> > > +
+> > > +		raw_spin_lock_irqsave(&events->pmu_lock, flags);
+> > > +		falkor_set_resr(reg, group, code);
+> > > +		raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+> > 
+> > Why is the spinlock required?
+> > 
+> > AFACIT this should only ever be called in contexts where IRQs are
+> > disabled already.
+> > 
+> 
+> falkor_set_resr is a read-modify-write operation. The PMUv3 code uses
+> the spinlock to protect the counter selection too (armv8pmu_enable_event).
+
+As I mention, that only happens in contexts where IRQs are disabled, so
+that shouldn't be a problem.
+
+> I believe this is to deal with event rotation which can potentially
+> be active when we are creating new events.
+
+Event rotation happens off the back of a hrtimer callback, with IRQs
+disabled. There's a lockdep assert to that effect in
+perf_mux_hrtimer_handler(), before it calls perf_rotate_context().
+
+> > > +	}
+> > > +
+> > > +	/* Let the original op handle the rest */
+> > > +	def_ops->enable(event);
+> > > +}
+> > > +
+> > > +/*
+> > > + * Disable the given event
+> > > + */
+> > > +static void falkor_disable(struct perf_event *event)
+> > > +{
+> > > +	/* Use the original op to disable the counter and interrupt  */
+> > > +	def_ops->enable(event);
+> > > +
+> > > +	if (!!(event->attr.config & QC_EVT_PFX_MASK)) {
+> > > +		/* Matrix event, de-program the appropriate PMRESRx_EL0 */
+> > > +		struct arm_pmu *pmu = to_arm_pmu(event->pmu);
+> > > +		struct pmu_hw_events *events = this_cpu_ptr(pmu->hw_events);
+> > > +		u64 reg = QC_EVT_REG(event->attr.config);
+> > > +		u64 group = QC_EVT_GROUP(event->attr.config);
+> > > +		unsigned long flags;
+> > > +
+> > > +		raw_spin_lock_irqsave(&events->pmu_lock, flags);
+> > > +		falkor_clear_resr(reg, group);
+> > > +		raw_spin_unlock_irqrestore(&events->pmu_lock, flags);
+> > > +	}
+> > > +}
+> > 
+> > Same comments as with falkor_enable().
+> > 
+> > > +
+> > > +PMU_FORMAT_ATTR(event,  "config:0-15");
+> > > +PMU_FORMAT_ATTR(prefix, "config:16");
+> > > +PMU_FORMAT_ATTR(reg,    "config:12-15");
+> > > +PMU_FORMAT_ATTR(code,   "config:4-11");
+> > > +PMU_FORMAT_ATTR(group,  "config:0-3");
+> > 
+> > What sort of events are available? Do you plan to add anything to the
+> > userspace event database in tools/perf/pmu-events/ ?
+> > 
+> 
+> Yes, we are still doing some internal work to see what we can put in
+> the driver or as JSON events.
+
+Please put them in userspace. Events living in the kernel is really a
+legacy thing, and we've placed all other IMP-DEF events in userspace for
+ACPI systems.
+
+[...]
+
+> > > +	pmu->name = "qcom_pmuv3";
+> > 
+> > All the other CPU PMUs on an ARM ACPI system will have an index suffix,
+> > e.g. "armv8_pmuv3_0". I can see why we might want to change the name to
+> > indicate the QC extensions, but I think we should keep the existing
+> > pattern, with a '_0' suffix here.
+> 
+> This overrides the name before the suffix is added, so the PMU name will be
+> qcom_pmuv3_0 for Centriq 2400 which has only Falkor CPUs.
+
+Ok.
+
+[...]
+
+> > > +	/* Override the necessary ops */
+> > > +	pmu->map_event     = falkor_map_event;
+> > > +	pmu->get_event_idx = falkor_get_event_idx;
+> > > +	pmu->reset         = falkor_reset;
+> > > +	pmu->enable        = falkor_enable;
+> > > +	pmu->disable       = falkor_disable;
+> > 
+> > I'm somewhat concerned by hooking into the existing PMU code at this
+> > level, but I don't currently have a better suggestion.
+> > 
+> 
+> IMO this is no different from other PMUs implemented on top of the arm_pmu
+> framework. The difference is of course that I'm calling back into the base
+> PMUv3 ops, 
+
+Yup, the latter is what I'm concerned about. e.g. when you take the
+pmu_lock, if PMUv3 code has already taken this, there'll be a deadlock,
+and it means that we can't consider the PMUv3 code in isolation.
+
+As long as we can keep this *simple*, that'll just leave me uneasy.
+
+Thanks,
+Mark.
