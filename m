@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BA037C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:12:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CA94EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:12:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D37020660
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:12:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7723C208B3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:12:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Peysxwj/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D37020660
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DWtf5/vA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7723C208B3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964842AbeFMPJf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:09:35 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:35901 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964794AbeFMPJ2 (ORCPT
+        id S936089AbeFMPM3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:12:29 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:46582 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964832AbeFMPJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:09:28 -0400
-Received: by mail-wm0-f68.google.com with SMTP id v131-v6so6113013wma.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:27 -0700 (PDT)
+        Wed, 13 Jun 2018 11:09:35 -0400
+Received: by mail-wr0-f196.google.com with SMTP id v13-v6so3123758wrp.13
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tdgb7i3pHOc18juXBnV581NGwky8g4nU20Ecgz01uNo=;
-        b=Peysxwj/SxfKV2HWMBS22WXjOKTcC4lZjBQI9R80bN+ZxC3VZcVtRvL+YNKbzybTRz
-         I6Bzi9UPL4pM2ajXjyAga3Ihmiv3p74n3CZWAeWuXB98WxmaiKZKzBwViRVRKtm5eG+K
-         iQ0g0Ev2epWxrIHAWaUPnY6b87df6s4dfC+k4=
+        bh=88FFyjErotOxDmhgzqLVFCd4JC06AOb71V78xZlxmq0=;
+        b=DWtf5/vAnk4J0ykQlmOj12hv6UzFLjEPzAdjszIInMO3CSQiHOauLKP6/0UJ3MDK2P
+         l9vuvljcNT0DJtwFYVOd5DiayQpoHJ4uqi90HRMO7QycM57o9omIAefUOMiDsCicvN15
+         dImRiwksxCmivl1tiIqZdgvKno+vTscTXo1YA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=tdgb7i3pHOc18juXBnV581NGwky8g4nU20Ecgz01uNo=;
-        b=N1XVaetj6+a77OS5gFo4at7igXwPKuM+AOrzaETka1BXgL9/Ajx9Zofz+DNcoLr0LH
-         epHRZbRkBKn881kZ0wHqP5itrvimjnRoLYBremO9klMchRWmq+Q8e4dcmrGAkm8QQ3Lz
-         IuNyyo8kECxi4DPerw1Bd+CHKGxIEyaVn2hvQErUvfcDUH99mEpXl/aiKc1BU18trh8P
-         LuWXTIPlNoVdvWQalGM985ds2S2cdvQk5tKf/wwBR49Z0bm6LQ9hTxkePdLBo9dsBcpY
-         gGlm1POP1r+vz6q39svvWk47UCi5wk0cs6vW861jJ2aA+hJdtkLzBj+J5QlV6OtNYq1z
-         O7Cg==
-X-Gm-Message-State: APt69E2rPIvFo8u6UT3ZcV6gDJN4TRyVC7DeTEzI257kHgR4NihZswA3
-        NbANFanNCeN/9Ax3tk/BOveaKw==
-X-Google-Smtp-Source: ADUXVKKtpHV676mXgW+4EADMRYQatXr9Of697ldoDrN8/oJckkIV24v1j76bCcwjLxRE7o8ze4+CbQ==
-X-Received: by 2002:a1c:40d4:: with SMTP id n203-v6mr3687240wma.101.1528902567203;
-        Wed, 13 Jun 2018 08:09:27 -0700 (PDT)
+        bh=88FFyjErotOxDmhgzqLVFCd4JC06AOb71V78xZlxmq0=;
+        b=J0pqTsEYZ+5qUrUHPwIewy5ipuaoirftLShhUwerkL+6VKOHMgNY5Zt2z2P4bOWjIv
+         aOT3VvczxhudtUbNnJQjHnE5ha6RgEreHeHXJYNDt8ZoYsgCwJQGeA25lS4nZ9IkvNJW
+         vruo/+8oao+3a7LD/LLYR2A3Gk8h90ce0UhIPZ2X923W80pev3WmhdYka1t4h0INhUl4
+         tjzhCC5n18rLHPIquVmicxuU7J84OUp1NTD9jHghTK1WZZtCVvK4mvBb4xPkCR64dusH
+         7YZTPV/us0U76r3+i5wngp3WPeW3AH0vsi9xG+INjIRRfy+9KHQZ8QmuH1Ar3g8OMQNP
+         HMlg==
+X-Gm-Message-State: APt69E1cb3w/2PuFSwwtQurjaWJO5CQ5v82Obou/HjWVa0PndAY2Qe1l
+        CMh89p8FjIgftnkSTdXudkxmpg==
+X-Google-Smtp-Source: ADUXVKIaxig0sinBfY28J8GIWtDovqQRqpZ24KY9TIVW44p899weekzlYY/yFN3OmTLYvdeBCyzSFQ==
+X-Received: by 2002:a5d:45cb:: with SMTP id b11-v6mr4588034wrs.106.1528902574620;
+        Wed, 13 Jun 2018 08:09:34 -0700 (PDT)
 Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.26
+        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 08:09:26 -0700 (PDT)
+        Wed, 13 Jun 2018 08:09:34 -0700 (PDT)
 From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
 To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         Hans Verkuil <hverkuil@xs4all.nl>
@@ -61,9 +61,9 @@ Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         Vikash Garodia <vgarodia@codeaurora.org>,
         Tomasz Figa <tfiga@chromium.org>,
         Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v3 14/27] venus: helpers: add a helper function to set dynamic buffer mode
-Date:   Wed, 13 Jun 2018 18:07:48 +0300
-Message-Id: <20180613150801.11702-15-stanimir.varbanov@linaro.org>
+Subject: [PATCH v3 19/27] venus: helpers,vdec,venc: add helpers to set work mode and core usage
+Date:   Wed, 13 Jun 2018 18:07:53 +0300
+Message-Id: <20180613150801.11702-20-stanimir.varbanov@linaro.org>
 X-Mailer: git-send-email 2.14.1
 In-Reply-To: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
 References: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
@@ -72,88 +72,108 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adds a new helper function to set dynamic buffer mode if it is
-supported by current HFI version. The dynamic buffer mode is
-set unconditionally for both decoder outputs.
+These are new properties applicable to Venus version 4xx. Add the
+helpers and call them from decoder and encoder drivers.
 
 Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 22 ++++++++++++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  1 +
- drivers/media/platform/qcom/venus/vdec.c    | 15 +++------------
- 3 files changed, 26 insertions(+), 12 deletions(-)
+ drivers/media/platform/qcom/venus/helpers.c | 28 ++++++++++++++++++++++++++++
+ drivers/media/platform/qcom/venus/helpers.h |  2 ++
+ drivers/media/platform/qcom/venus/vdec.c    |  8 ++++++++
+ drivers/media/platform/qcom/venus/venc.c    |  8 ++++++++
+ 4 files changed, 46 insertions(+)
 
 diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 03121dbb4175..e3dc2772946f 100644
+index a1590d5cc921..2295cca3c22a 100644
 --- a/drivers/media/platform/qcom/venus/helpers.c
 +++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -519,6 +519,28 @@ int venus_helper_set_color_format(struct venus_inst *inst, u32 pixfmt)
+@@ -481,6 +481,34 @@ int venus_helper_set_output_resolution(struct venus_inst *inst,
  }
- EXPORT_SYMBOL_GPL(venus_helper_set_color_format);
+ EXPORT_SYMBOL_GPL(venus_helper_set_output_resolution);
  
-+int venus_helper_set_dyn_bufmode(struct venus_inst *inst)
++int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode)
 +{
-+	u32 ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
-+	struct hfi_buffer_alloc_mode mode;
-+	int ret;
++	u32 ptype = HFI_PROPERTY_PARAM_WORK_MODE;
++	struct hfi_video_work_mode wm;
 +
-+	if (!is_dynamic_bufmode(inst))
++	if (!IS_V4(inst->core))
 +		return 0;
 +
-+	mode.type = HFI_BUFFER_OUTPUT;
-+	mode.mode = HFI_BUFFER_MODE_DYNAMIC;
++	wm.video_work_mode = mode;
 +
-+	ret = hfi_session_set_property(inst, ptype, &mode);
-+	if (ret)
-+		return ret;
-+
-+	mode.type = HFI_BUFFER_OUTPUT2;
-+
-+	return hfi_session_set_property(inst, ptype, &mode);
++	return hfi_session_set_property(inst, ptype, &wm);
 +}
-+EXPORT_SYMBOL_GPL(venus_helper_set_dyn_bufmode);
++EXPORT_SYMBOL_GPL(venus_helper_set_work_mode);
 +
- static void delayed_process_buf_func(struct work_struct *work)
++int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage)
++{
++	u32 ptype = HFI_PROPERTY_CONFIG_VIDEOCORES_USAGE;
++	struct hfi_videocores_usage_type cu;
++
++	if (!IS_V4(inst->core))
++		return 0;
++
++	cu.video_core_enable_mask = usage;
++
++	return hfi_session_set_property(inst, ptype, &cu);
++}
++EXPORT_SYMBOL_GPL(venus_helper_set_core_usage);
++
+ int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
+ 			      unsigned int output_bufs)
  {
- 	struct venus_buffer *buf, *n;
 diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 0e64aa95624a..52b961ed491e 100644
+index 79af7845efbd..d5e727e1ecab 100644
 --- a/drivers/media/platform/qcom/venus/helpers.h
 +++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -40,6 +40,7 @@ int venus_helper_set_output_resolution(struct venus_inst *inst,
+@@ -38,6 +38,8 @@ int venus_helper_set_input_resolution(struct venus_inst *inst,
+ int venus_helper_set_output_resolution(struct venus_inst *inst,
+ 				       unsigned int width, unsigned int height,
+ 				       u32 buftype);
++int venus_helper_set_work_mode(struct venus_inst *inst, u32 mode);
++int venus_helper_set_core_usage(struct venus_inst *inst, u32 usage);
  int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
  			      unsigned int output_bufs);
- int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
-+int venus_helper_set_dyn_bufmode(struct venus_inst *inst);
- void venus_helper_acquire_buf_ref(struct vb2_v4l2_buffer *vbuf);
- void venus_helper_release_buf_ref(struct venus_inst *inst, unsigned int idx);
- void venus_helper_init_instance(struct venus_inst *inst);
+ int venus_helper_set_raw_format(struct venus_inst *inst, u32 hfi_format,
 diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 31a240ab142b..92669a358a90 100644
+index eae9c651ac91..f1cf4678d013 100644
 --- a/drivers/media/platform/qcom/venus/vdec.c
 +++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -557,18 +557,9 @@ static int vdec_set_properties(struct venus_inst *inst)
- 			return ret;
- 	}
+@@ -550,6 +550,14 @@ static int vdec_set_properties(struct venus_inst *inst)
+ 	u32 ptype;
+ 	int ret;
  
--	if (core->res->hfi_version == HFI_VERSION_3XX ||
--	    inst->cap_bufs_mode_dynamic) {
--		struct hfi_buffer_alloc_mode mode;
--
--		ptype = HFI_PROPERTY_PARAM_BUFFER_ALLOC_MODE;
--		mode.type = HFI_BUFFER_OUTPUT;
--		mode.mode = HFI_BUFFER_MODE_DYNAMIC;
--
--		ret = hfi_session_set_property(inst, ptype, &mode);
--		if (ret)
--			return ret;
--	}
-+	ret = venus_helper_set_dyn_bufmode(inst);
++	ret = venus_helper_set_work_mode(inst, VIDC_WORK_MODE_2);
 +	if (ret)
 +		return ret;
++
++	ret = venus_helper_set_core_usage(inst, VIDC_CORE_ID_1);
++	if (ret)
++		return ret;
++
+ 	if (core->res->hfi_version == HFI_VERSION_1XX) {
+ 		ptype = HFI_PROPERTY_PARAM_VDEC_CONTINUE_DATA_TRANSFER;
+ 		ret = hfi_session_set_property(inst, ptype, &en);
+diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+index 1d7f87e0f5b3..4f0a5daa97e2 100644
+--- a/drivers/media/platform/qcom/venus/venc.c
++++ b/drivers/media/platform/qcom/venus/venc.c
+@@ -643,6 +643,14 @@ static int venc_set_properties(struct venus_inst *inst)
+ 	u32 ptype, rate_control, bitrate, profile = 0, level = 0;
+ 	int ret;
  
- 	if (ctr->post_loop_deb_mode) {
- 		ptype = HFI_PROPERTY_CONFIG_VDEC_POST_LOOP_DEBLOCKER;
++	ret = venus_helper_set_work_mode(inst, VIDC_WORK_MODE_2);
++	if (ret)
++		return ret;
++
++	ret = venus_helper_set_core_usage(inst, VIDC_CORE_ID_2);
++	if (ret)
++		return ret;
++
+ 	ptype = HFI_PROPERTY_CONFIG_FRAME_RATE;
+ 	frate.buffer_type = HFI_BUFFER_OUTPUT;
+ 	frate.framerate = inst->fps * (1 << 16);
 -- 
 2.14.1
 
