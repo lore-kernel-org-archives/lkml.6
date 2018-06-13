@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D3D0DC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:34:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A7213C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:34:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 759E3208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:34:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D65B208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:34:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NEHHr+8v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 759E3208B0
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="L9Dd9TL8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D65B208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935580AbeFMMe0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 08:34:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:46004 "EHLO
+        id S935591AbeFMMes (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 08:34:48 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:45968 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935328AbeFMMeW (ORCPT
+        with ESMTP id S935532AbeFMMeU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 08:34:22 -0400
+        Wed, 13 Jun 2018 08:34:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=CY/YeSmsA0vDGeVumb9yVyTr2isXSjzthzOSFmdIinM=; b=NEHHr+8vO/Rc5D517qyNJ4+L1
-        y8jyhFsiRAkCx/385V4D/lqNair2TdvXPUSL6i+XClAMIDcjHIbat8P5XrNGk5x3vB8psK/aqRFBf
-        yf6wcp7+VPeETyvisPg+tLkgPzvpTHFCX6+1vR0irzDZBvQZEAFZsDdhhNtctK+k31aTtjO9POWQv
-        qryMR6gBFPPMODyeNfYYbR6QEiAFtsP2sfdM8UwpxtW+UvLAiYUiU50AMF80GMjxHufD32lJe7vWW
-        oNrlZ0EBokPPUA3HxWBBE4AodeHQ/36NJSkzhWajeJbdvZLaXPxZ/JGo1v/W3j/fuP5CmlK7tzkOW
-        p8ufnBnJQ==;
+         bh=6GCH4DC4PucOzLi8btKRs7ExvIRBsvLryy3XDDjNapg=; b=L9Dd9TL8zFgap+k6dRzYMmKF0
+        9wSrvC75XxnDtKDIE+Ywv8evjIaPe4uybCngfxxSVm6MLSGabjWoF3C8TcaFcr6ACTpy3fWUamFiv
+        06UnV8FnZIbpZWgHL8f6OLS75WpRzEC8wFqu2Uw9IfpisYHYuAUe+AudtxqlEESXt+QtXq0oZQ6Dh
+        D0bYlVW/SNne/fF4nwEQaMmKnFaKGtRA+XtEAUfl0mtjYqDnF0Rk8ZFqoa5y2rDeedg4NVWQ/1tt3
+        4Ns05Su9PA3pU+QoovX5GdzSfve+Xu+UxfizfjPaM7aIw+8MW9DI6jOWovNJlarmAlj/u7GpD97bm
+        4vryGHbUg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fT4ye-0006lI-29; Wed, 13 Jun 2018 12:34:16 +0000
+        id 1fT4yd-0006l3-Id; Wed, 13 Jun 2018 12:34:15 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
         Jason Gunthorpe <jgg@mellanox.com>
@@ -46,11 +46,10 @@ Cc:     Matthew Wilcox <willy@infradead.org>, linux-rdma@vger.kernel.org,
         Parav Pandit <parav@mellanox.com>,
         Jack Morgenstein <jackm@dev.mellanox.co.il>,
         Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        linux-kernel@vger.kernel.org,
-        Matthew Wilcox <mawilcox@microsoft.com>
-Subject: [PATCH v3 2/2] IB/mad: Use IDR for agent IDs
-Date:   Wed, 13 Jun 2018 05:34:03 -0700
-Message-Id: <20180613123403.25233-3-willy@infradead.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 1/2] IDR: Expose the XArray lock
+Date:   Wed, 13 Jun 2018 05:34:02 -0700
+Message-Id: <20180613123403.25233-2-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180613123403.25233-1-willy@infradead.org>
 References: <20180613123403.25233-1-willy@infradead.org>
@@ -59,263 +58,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allocate agent IDs from a global IDR instead of an atomic variable.
-This eliminates the possibility of reusing an ID which is already in
-use after 4 billion registrations.  We limit the assigned ID to be less
-than 2^24 as the mlx4 driver uses the most significant byte of the agent
-ID to store the slave number.  Users unlucky enough to see a collision
-between agent numbers and slave numbers see messages like:
+Allow users of the IDR to use the XArray lock for their own
+synchronisation purposes.  The IDR continues to rely on the caller to
+handle locking, but this lets the caller use the lock embedded in the
+IDR data structure instead of allocating their own lock.
 
- mlx4_ib: egress mad has non-null tid msb:1 class:4 slave:0
-
-and the MAD layer stops working.
-
-We look up the agent under protection of the RCU lock, which means we
-have to free the agent using kfree_rcu, and only increment the reference
-counter if it is not 0.
-
-Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-Reported-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-Acked-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Tested-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- drivers/infiniband/core/mad.c      | 83 ++++++++++++++++++------------
- drivers/infiniband/core/mad_priv.h |  7 +--
- 2 files changed, 55 insertions(+), 35 deletions(-)
+ include/linux/idr.h | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/drivers/infiniband/core/mad.c b/drivers/infiniband/core/mad.c
-index 68f4dda916c8..b854aeddd221 100644
---- a/drivers/infiniband/core/mad.c
-+++ b/drivers/infiniband/core/mad.c
-@@ -38,6 +38,7 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index e856f4e0ab35..109d7a3c8d56 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -98,6 +98,17 @@ static inline void idr_set_cursor(struct idr *idr, unsigned int val)
+  * period).
+  */
  
- #include <linux/dma-mapping.h>
-+#include <linux/idr.h>
- #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/security.h>
-@@ -58,8 +59,13 @@ MODULE_PARM_DESC(send_queue_size, "Size of send queue in number of work requests
- module_param_named(recv_queue_size, mad_recvq_size, int, 0444);
- MODULE_PARM_DESC(recv_queue_size, "Size of receive queue in number of work requests");
- 
-+/*
-+ * The mlx4 driver uses the top byte to distinguish which virtual function
-+ * generated the MAD, so we must avoid using it.
-+ */
-+#define AGENT_ID_LIMIT		(1 << 24)
-+static DEFINE_IDR(ib_mad_clients);
- static struct list_head ib_mad_port_list;
--static atomic_t ib_mad_client_id = ATOMIC_INIT(0);
- 
- /* Port list lock */
- static DEFINE_SPINLOCK(ib_mad_port_list_lock);
-@@ -377,13 +383,24 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 		goto error4;
- 	}
- 
--	spin_lock_irq(&port_priv->reg_lock);
--	mad_agent_priv->agent.hi_tid = atomic_inc_return(&ib_mad_client_id);
-+	idr_preload(GFP_KERNEL);
-+	idr_lock(&ib_mad_clients);
-+	ret2 = idr_alloc_cyclic(&ib_mad_clients, mad_agent_priv, 0,
-+			AGENT_ID_LIMIT, GFP_ATOMIC);
-+	idr_unlock(&ib_mad_clients);
-+	idr_preload_end();
++#define idr_lock(idr)		xa_lock(&(idr)->idr_xa)
++#define idr_unlock(idr)		xa_unlock(&(idr)->idr_xa)
++#define idr_lock_bh(idr)	xa_lock_bh(&(idr)->idr_xa)
++#define idr_unlock_bh(idr)	xa_unlock_bh(&(idr)->idr_xa)
++#define idr_lock_irq(idr)	xa_lock_irq(&(idr)->idr_xa)
++#define idr_unlock_irq(idr)	xa_unlock_irq(&(idr)->idr_xa)
++#define idr_lock_irqsave(idr, flags) \
++				xa_lock_irqsave(&(idr)->idr_xa, flags)
++#define idr_unlock_irqrestore(idr, flags) \
++				xa_unlock_irqrestore(&(idr)->idr_xa, flags)
 +
-+	if (ret2 < 0) {
-+		ret = ERR_PTR(ret2);
-+		goto error5;
-+	}
-+	mad_agent_priv->agent.hi_tid = ret2;
+ void idr_preload(gfp_t gfp_mask);
  
- 	/*
- 	 * Make sure MAD registration (if supplied)
- 	 * is non overlapping with any existing ones
- 	 */
-+	spin_lock_irq(&port_priv->reg_lock);
- 	if (mad_reg_req) {
- 		mgmt_class = convert_mgmt_class(mad_reg_req->mgmt_class);
- 		if (!is_vendor_class(mgmt_class)) {
-@@ -394,7 +411,7 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 				if (method) {
- 					if (method_in_use(&method,
- 							   mad_reg_req))
--						goto error5;
-+						goto error6;
- 				}
- 			}
- 			ret2 = add_nonoui_reg_req(mad_reg_req, mad_agent_priv,
-@@ -410,24 +427,25 @@ struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
- 					if (is_vendor_method_in_use(
- 							vendor_class,
- 							mad_reg_req))
--						goto error5;
-+						goto error6;
- 				}
- 			}
- 			ret2 = add_oui_reg_req(mad_reg_req, mad_agent_priv);
- 		}
- 		if (ret2) {
- 			ret = ERR_PTR(ret2);
--			goto error5;
-+			goto error6;
- 		}
- 	}
--
--	/* Add mad agent into port's agent list */
--	list_add_tail(&mad_agent_priv->agent_list, &port_priv->agent_list);
- 	spin_unlock_irq(&port_priv->reg_lock);
- 
- 	return &mad_agent_priv->agent;
--error5:
-+error6:
- 	spin_unlock_irq(&port_priv->reg_lock);
-+	idr_lock(&ib_mad_clients);
-+	idr_remove(&ib_mad_clients, mad_agent_priv->agent.hi_tid);
-+	idr_unlock(&ib_mad_clients);
-+error5:
- 	ib_mad_agent_security_cleanup(&mad_agent_priv->agent);
- error4:
- 	kfree(reg_req);
-@@ -589,8 +607,10 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
- 
- 	spin_lock_irq(&port_priv->reg_lock);
- 	remove_mad_reg_req(mad_agent_priv);
--	list_del(&mad_agent_priv->agent_list);
- 	spin_unlock_irq(&port_priv->reg_lock);
-+	idr_lock(&ib_mad_clients);
-+	idr_remove(&ib_mad_clients, mad_agent_priv->agent.hi_tid);
-+	idr_unlock(&ib_mad_clients);
- 
- 	flush_workqueue(port_priv->wq);
- 	ib_cancel_rmpp_recvs(mad_agent_priv);
-@@ -601,7 +621,7 @@ static void unregister_mad_agent(struct ib_mad_agent_private *mad_agent_priv)
- 	ib_mad_agent_security_cleanup(&mad_agent_priv->agent);
- 
- 	kfree(mad_agent_priv->reg_req);
--	kfree(mad_agent_priv);
-+	kfree_rcu(mad_agent_priv, rcu);
- }
- 
- static void unregister_mad_snoop(struct ib_mad_snoop_private *mad_snoop_priv)
-@@ -1722,22 +1742,19 @@ find_mad_agent(struct ib_mad_port_private *port_priv,
- 	struct ib_mad_agent_private *mad_agent = NULL;
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&port_priv->reg_lock, flags);
- 	if (ib_response_mad(mad_hdr)) {
- 		u32 hi_tid;
--		struct ib_mad_agent_private *entry;
- 
- 		/*
- 		 * Routing is based on high 32 bits of transaction ID
- 		 * of MAD.
- 		 */
- 		hi_tid = be64_to_cpu(mad_hdr->tid) >> 32;
--		list_for_each_entry(entry, &port_priv->agent_list, agent_list) {
--			if (entry->agent.hi_tid == hi_tid) {
--				mad_agent = entry;
--				break;
--			}
--		}
-+		rcu_read_lock();
-+		mad_agent = idr_find(&ib_mad_clients, hi_tid);
-+		if (mad_agent && !atomic_inc_not_zero(&mad_agent->refcount))
-+			mad_agent = NULL;
-+		rcu_read_unlock();
- 	} else {
- 		struct ib_mad_mgmt_class_table *class;
- 		struct ib_mad_mgmt_method_table *method;
-@@ -1746,6 +1763,7 @@ find_mad_agent(struct ib_mad_port_private *port_priv,
- 		const struct ib_vendor_mad *vendor_mad;
- 		int index;
- 
-+		spin_lock_irqsave(&port_priv->reg_lock, flags);
- 		/*
- 		 * Routing is based on version, class, and method
- 		 * For "newer" vendor MADs, also based on OUI
-@@ -1785,20 +1803,19 @@ find_mad_agent(struct ib_mad_port_private *port_priv,
- 							  ~IB_MGMT_METHOD_RESP];
- 			}
- 		}
-+		if (mad_agent)
-+			atomic_inc(&mad_agent->refcount);
-+out:
-+		spin_unlock_irqrestore(&port_priv->reg_lock, flags);
- 	}
- 
--	if (mad_agent) {
--		if (mad_agent->agent.recv_handler)
--			atomic_inc(&mad_agent->refcount);
--		else {
--			dev_notice(&port_priv->device->dev,
--				   "No receive handler for client %p on port %d\n",
--				   &mad_agent->agent, port_priv->port_num);
--			mad_agent = NULL;
--		}
-+	if (mad_agent && !mad_agent->agent.recv_handler) {
-+		dev_notice(&port_priv->device->dev,
-+			   "No receive handler for client %p on port %d\n",
-+			   &mad_agent->agent, port_priv->port_num);
-+		deref_mad_agent(mad_agent);
-+		mad_agent = NULL;
- 	}
--out:
--	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
- 
- 	return mad_agent;
- }
-@@ -3161,7 +3178,6 @@ static int ib_mad_port_open(struct ib_device *device,
- 	port_priv->device = device;
- 	port_priv->port_num = port_num;
- 	spin_lock_init(&port_priv->reg_lock);
--	INIT_LIST_HEAD(&port_priv->agent_list);
- 	init_mad_qp(port_priv, &port_priv->qp_info[0]);
- 	init_mad_qp(port_priv, &port_priv->qp_info[1]);
- 
-@@ -3340,6 +3356,9 @@ int ib_mad_init(void)
- 
- 	INIT_LIST_HEAD(&ib_mad_port_list);
- 
-+	/* Client ID 0 is used for snoop-only clients */
-+	idr_alloc(&ib_mad_clients, NULL, 0, 0, GFP_KERNEL);
-+
- 	if (ib_register_client(&mad_client)) {
- 		pr_err("Couldn't register ib_mad client\n");
- 		return -EINVAL;
-diff --git a/drivers/infiniband/core/mad_priv.h b/drivers/infiniband/core/mad_priv.h
-index 28669f6419e1..d84ae1671898 100644
---- a/drivers/infiniband/core/mad_priv.h
-+++ b/drivers/infiniband/core/mad_priv.h
-@@ -89,7 +89,6 @@ struct ib_rmpp_segment {
- };
- 
- struct ib_mad_agent_private {
--	struct list_head agent_list;
- 	struct ib_mad_agent agent;
- 	struct ib_mad_reg_req *reg_req;
- 	struct ib_mad_qp_info *qp_info;
-@@ -105,7 +104,10 @@ struct ib_mad_agent_private {
- 	struct list_head rmpp_list;
- 
- 	atomic_t refcount;
--	struct completion comp;
-+	union {
-+		struct completion comp;
-+		struct rcu_head rcu;
-+	};
- };
- 
- struct ib_mad_snoop_private {
-@@ -203,7 +205,6 @@ struct ib_mad_port_private {
- 
- 	spinlock_t reg_lock;
- 	struct ib_mad_mgmt_version_table version[MAX_MGMT_VERSION];
--	struct list_head agent_list;
- 	struct workqueue_struct *wq;
- 	struct ib_mad_qp_info qp_info[IB_MAD_QPS_CORE];
- };
+ int idr_alloc(struct idr *, void *ptr, int start, int end, gfp_t);
 -- 
 2.17.1
 
