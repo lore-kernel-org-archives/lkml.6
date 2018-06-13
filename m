@@ -3,150 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E95C1C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:00:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3F6EDC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BEAF2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:00:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD62B208AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:04:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jD/F4e06"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BEAF2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="oqAyWu60"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD62B208AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935125AbeFMCAl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 22:00:41 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:34317 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933577AbeFMCAj (ORCPT
+        id S1754381AbeFMCEL (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 22:04:11 -0400
+Received: from conssluserg-06.nifty.com ([210.131.2.91]:52776 "EHLO
+        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753517AbeFMCEJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 22:00:39 -0400
-Received: by mail-pg0-f68.google.com with SMTP id q4-v6so468969pgr.1
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 19:00:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Py890PMstqOcXWoqrtw5FaRdH/xk5vhj4C0AzhCHURk=;
-        b=jD/F4e06/1JNhAqrNEQF/6SrkGrFanloip8IqWueQOT/ukJrIQK8O+IXYRWKawc1JR
-         1qbkZ8WfV/sEzi5C0nodCxUIKl8HaQXd9tFVcBXQhtY0SEM7IHoPiR7i6dkAsa9MdeHX
-         hUGmsq24x0Mq1KC85+O4bju+MlCfvB5+AjPGE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Py890PMstqOcXWoqrtw5FaRdH/xk5vhj4C0AzhCHURk=;
-        b=LJT3fbdk/aMYzRN4RoHufAUi1/gnzJr0AnfUog0Zhu6VoUjqJ1adU+G7bI31CMU13s
-         AWajTCCs4jYsgcz+PkVfuDsUu+jloxY0blQGg2PGAD4HZYwPBqZ9PGsHsZ1DpAm/JFUX
-         nOb9b1IYMytWv4NkhiH7F/srS7L6JWfnTOlrAVyyeudgEP+e9WNDBiuL+6IopMenFj2y
-         UF3KbFL37+C+RP37xIPZsWA3bG4K+601MfhKtdhAHLYqq/8y4qwIj0GzS/9An17CDi3t
-         my//74VSSlEzjb1tbCcsBS11x5l1dv2tv+hDHJmZZXI/zas9AEQ/qoFY06dy1BiWlhrS
-         F5VA==
-X-Gm-Message-State: APt69E1TeVJT/STL/C93eWvjAGoS5+Bqa2S1ZtgIR5/SyQ2f6ycoUh8z
-        T9XNApgn3Q1OBkDXa5isiPpMEg==
-X-Google-Smtp-Source: ADUXVKIOJTBhpwlQmTlRf2lq+yI1mUibm1Aptlg8xyXnGVIQdNg+uaPETZ2HsosAmtcxogG/2nlgjg==
-X-Received: by 2002:a65:6517:: with SMTP id x23-v6mr2428237pgv.268.1528855238826;
-        Tue, 12 Jun 2018 19:00:38 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id b83-v6sm2074088pfe.159.2018.06.12.19.00.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 12 Jun 2018 19:00:38 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 19:00:37 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Douglas Anderson <dianders@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Subject: Re: [PATCH v2 10/11] dt-bindings: misc: add bindings for
- cros_ec_throttler
-Message-ID: <20180613020037.GK88063@google.com>
-References: <20180607181214.30338-1-mka@chromium.org>
- <20180607181214.30338-11-mka@chromium.org>
- <20180612191011.GA26266@rob-hp-laptop>
- <20180612204018.GB99983@rodete-desktop-imager.corp.google.com>
+        Tue, 12 Jun 2018 22:04:09 -0400
+Received: from mail-vk0-f46.google.com (mail-vk0-f46.google.com [209.85.213.46]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id w5D23nih004342;
+        Wed, 13 Jun 2018 11:03:50 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5D23nih004342
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528855430;
+        bh=h75hTC0L064IJ0rxB6g18x+4cTB8uFbcIdADIo7QYHo=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=oqAyWu60yiOsbwDLQWu2b56AfNRNklnXmPMhWYQiKmJtfce2eFDf9czsNDNuYv176
+         67zCDTSDMJUDRL2cwD749YCXlWsG001F5ubqbErfIYRZSbW85F0iJ3BuGjVOJBjFQu
+         9frn4TNiHkvlqaoek2CFYRrMVDlLA5Nq5HlH4/nN0F3/TsosiTGm6XKhDi8xdIcKnn
+         kMuYHeGiKkejZBhge9Tk9PSjDPiK0d4d/YRsl5Ida6bQekCzHFbUCg0wU0LpSirj6u
+         mtHNy2QYp0dF7Y2aMzWodf9ECQRMm3t4Vatq8wN7zOaEG+y+XdA5l7auh838vZk1xO
+         lQC1DOLYCzf6Q==
+X-Nifty-SrcIP: [209.85.213.46]
+Received: by mail-vk0-f46.google.com with SMTP id o17-v6so596707vka.2;
+        Tue, 12 Jun 2018 19:03:49 -0700 (PDT)
+X-Gm-Message-State: APt69E2BMBJy2U6UA1GjETx5rOWfJG4Bg0GT73T7Wm7ZYnJB7pegT/gS
+        ytbDzsJdlNebvW1ot+bFI7v5a99nY80GTkL3FtY=
+X-Google-Smtp-Source: ADUXVKJRjwpBgpuQpIH2p21/+iNBfGqaXPffI3uChZ+tT6/UTt6esiVgvtBndg7d28lDfhGaC6vZm6Mlfho+DaK1zxY=
+X-Received: by 2002:a1f:ba4a:: with SMTP id k71-v6mr1866446vkf.11.1528855428670;
+ Tue, 12 Jun 2018 19:03:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180612204018.GB99983@rodete-desktop-imager.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 19:03:08
+ -0700 (PDT)
+In-Reply-To: <20180612003224.3658-2-labbott@redhat.com>
+References: <20180612003224.3658-1-labbott@redhat.com> <20180612003224.3658-2-labbott@redhat.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 13 Jun 2018 11:03:08 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASJw4JjHD3RSmyBExvw+v+GE916RQiSZTQA+U-d4FXt1w@mail.gmail.com>
+Message-ID: <CAK7LNASJw4JjHD3RSmyBExvw+v+GE916RQiSZTQA+U-d4FXt1w@mail.gmail.com>
+Subject: Re: [PATCHv4 1/3] scripts: Preprocess module-common.lds
+To:     Laura Abbott <labbott@redhat.com>
+Cc:     Andy Lutomirski <luto@kernel.org>,
+        Mark Wielaard <mjw@fedoraproject.org>,
+        "H . J . Lu" <hjl.tools@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        X86 ML <x86@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Nick Clifton <nickc@redhat.com>,
+        Cary Coutant <ccoutant@gmail.com>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 01:40:22PM -0700, Brian Norris wrote:
-> Hi Rob,
-> 
-> On Tue, Jun 12, 2018 at 01:10:11PM -0600, Rob Herring wrote:
-> > On Thu, Jun 07, 2018 at 11:12:13AM -0700, Matthias Kaehlcke wrote:
-> > > The cros_ec_throttler monitors events from the Chrome OS Embedded
-> > > Controller to throttle the system if needed, using the mechanisms
-> > > provided by the throttler core.
-> > > 
-> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > > ---
-> > > Changes in v2:
-> > > - patch added to series
-> > > 
-> > >  Documentation/devicetree/bindings/misc/cros_ec_throttler.txt | 4 ++++
-> > >  1 file changed, 4 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/misc/cros_ec_throttler.txt
-> > > 
-> > > diff --git a/Documentation/devicetree/bindings/misc/cros_ec_throttler.txt b/Documentation/devicetree/bindings/misc/cros_ec_throttler.txt
-> > > new file mode 100644
-> > > index 000000000000..7316dcc0ef75
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/misc/cros_ec_throttler.txt
-> > > @@ -0,0 +1,4 @@
-> > > +* cros_ec_throttler driver
-> > 
-> > Bindings are for h/w, not drivers.
-> 
-> (OK, sure, don't call this "driver". And maybe this could use some more
-> description about what kind of events are emitted by this sort of
-> device.)
-> 
-> > I continue to fail to see why this needs to be in DT. There are other 
-> > ways to instantiate drivers.
-> 
-> This is mostly relevant to:
-> [PATCH v2 08/11] dt-bindings: PM / OPP: add opp-throttlers property
-> 
-> so it's probably good to take a look at that one too.
-> 
-> The primary purpose is to have a target to point at when determining who
-> is the source of throttling. This is similar to other CrOS EC subdevices
-> (e.g., PWM) where we technically don't require a subnode (the EC
-> firmware can its own PWM hardware without DT), but it is important that,
-> e.g., a backlight device has something to point at when it's using a PWM
-> attached to the EC. So we have a PWM subnode.
-> 
-> In this case, we're a little vague about what exactly the hardware is
-> here, but there *is* hardware that's emitting "throttle" events (hint:
-> here, it's related to sensing too high of system current). This is all
-> abstracted by firmware, which simply tells us we need to scale back our
-> power usage.
-> 
-> So, what do you think of patch 8? Should OPPs have phandles to such a
-> throttler? If so, should the phandle just point at the main EC device
-> (see mfd/cros-ec.txt), or is it reasonable to have a subnode to
-> represent something more specific?
+2018-06-12 9:32 GMT+09:00 Laura Abbott <labbott@redhat.com>:
 >
-> Or maybe this is entirely on the wrong track. But this is the resulting
-> proposal after your comments on v1, so it's probably best we have a
-> clearer overall review of what makes sense here, so we don't just go in
-> cycles on new proposals that get rejected.
+> In preparation for some upcoming work, allow module-common.lds
+> to be run through the preprocessor.
+>
+> Signed-off-by: Laura Abbott <labbott@redhat.com>
+> ---
+>  scripts/.gitignore                                 | 1 +
+>  scripts/Makefile                                   | 2 +-
+>  scripts/{module-common.lds => module-common.lds.S} | 0
+>  3 files changed, 2 insertions(+), 1 deletion(-)
+>  rename scripts/{module-common.lds => module-common.lds.S} (100%)
+>
+> diff --git a/scripts/.gitignore b/scripts/.gitignore
+> index 0442c06eefcb..afd1de57d9c6 100644
+> --- a/scripts/.gitignore
+> +++ b/scripts/.gitignore
+> @@ -13,3 +13,4 @@ asn1_compiler
+>  extract-cert
+>  sign-file
+>  insert-sys-cert
+> +module-common.lds
+> diff --git a/scripts/Makefile b/scripts/Makefile
+> index 25ab143cbe14..631d9d1a71e4 100644
+> --- a/scripts/Makefile
+> +++ b/scripts/Makefile
+> @@ -25,7 +25,7 @@ HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
+>  HOSTLOADLIBES_sign-file = -lcrypto
+>  HOSTLOADLIBES_extract-cert = -lcrypto
+>
+> -always         := $(hostprogs-y) $(hostprogs-m)
+> +always         := $(hostprogs-y) $(hostprogs-m) module-common.lds
 
-I also think we need to clarify if this is the right direction. Since
-Rob proposed the OPP hints and didn't object when I replied with the
-opp-throttlers example I assumed he was ok with it.
+
+You do not need to generate module-common.lds all the time.
+It is necessary only when the module feature is enabled.
+
+You can do like this:
+
+extra-$(CONFIG_MODULES)  +=  module-common.lds
+
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
