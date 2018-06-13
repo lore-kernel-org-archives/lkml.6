@@ -2,129 +2,111 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D2F19C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:08:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D13F1C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:10:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85BBB20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:08:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 783BD20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:10:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JdGKYrwd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BBB20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nwdO47/8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 783BD20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935130AbeFMBIP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:08:15 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:39698 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933390AbeFMBIN (ORCPT
+        id S935054AbeFMBKM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:10:12 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:46428 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754425AbeFMBKK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:08:13 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D16cJW098452;
-        Wed, 13 Jun 2018 01:08:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=O5iB7Aprjifud8uNCkKZxA7YdMfp8ogwznxDszLTQYA=;
- b=JdGKYrwdj7ypewBJIuPc+3U54JExZfCZ9Px1pOA4htOrQMsMLP9wLXrYT0nTfWGG2PEB
- RR8Td0POCifZ+uTaEVuN+F7cjho9nRO8DI0CVaTVfONt7cex344Pg9eGa6MIlnZJu2Zp
- vmbNsBvV2mM0VMNXYlqvlXfs0zafX9Hqn4EPAulU2R3yFIMOEB0uSpB+d686gqM3YFuS
- j+hOq45i716+QMT1kLvJ2wyoa5XGlTIt0TkMlOFPxLPoyxK1r0DRYHMDbB+N5pjw5ZPq
- 4z2RHQ5GppKJt9h54BFSE0rC8kgisvqvqj3hmdFBVhtsKnojpJ5qeMoO+FaJOT+VzYgy mA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2jjp6c8bq5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 01:08:02 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5D1820S013927
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 01:08:02 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D181V5005320;
-        Wed, 13 Jun 2018 01:08:01 GMT
-Received: from [10.154.144.7] (/10.154.144.7)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 18:08:01 -0700
-Subject: Re: [PATCH v3 3/9] xen/balloon: Share common memory reservation
- routines
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180612134200.17456-1-andr2000@gmail.com>
- <20180612134200.17456-4-andr2000@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <124f3832-63b4-021d-0c6f-470229c7a056@oracle.com>
-Date:   Tue, 12 Jun 2018 21:07:59 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Tue, 12 Jun 2018 21:10:10 -0400
+Received: by mail-lf0-f67.google.com with SMTP id j13-v6so1225682lfb.13;
+        Tue, 12 Jun 2018 18:10:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=OMKVDkcDMBadt57O6X3RGTeaAPv3YFu6AM+q/mfdVro=;
+        b=nwdO47/8B8JN0pbdi+sYIaf4AVhQ/t3ay0g6NFk6+bKcXjBgPUhEIzrGAR1QYXNwuG
+         ajUfXNqcVoatryF3l+dBS2Gy7oeOMjkNRa5vMiiqWwtcW5zkHNEjkgT+XNGdUZec+OWi
+         ZNk4sSw4yREhieZknDvQfb/sGBDTXspS83iiaqOOb7dlVXrVfIC840eysvwRNWeevMkS
+         aZjot8M4zoiymTL5rKRBInKRl5P5V9KZsk+pE+o0iVLgOyZYo5SyTSrdHjDFuF9gv6Qm
+         QULZCWqV4VV34pC5J0RtHgxltQa1Vxwt7eg8QmYuw6u7PemFAUMDcc4uOEbe9lWBlhie
+         ncqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=OMKVDkcDMBadt57O6X3RGTeaAPv3YFu6AM+q/mfdVro=;
+        b=fkpksGg+VhVPf5KZOavdPCg54C7hqmm77hWAmIdCTzPQGcE9g252kf9NQiDYcifqD5
+         TXmQ4OTAGR5M/8cKOnrW/oRCoEdsk079QQ/Bdlkvf5/BH/DfZxG8Mc6Dwgx3ydJTJq+Q
+         QsTYJ1p5wqhv8MJQmll1+JERNcKIor3UYkrQuRauitbEEA0LpMh0dm9CgseQGQw6mQnl
+         3ecSir7FzfR2hYcxgEmObdw34HH7G1ayqDj2060+3ExgKqga5K5DiCdVDOzQEaWNMaWG
+         wI0oTMejrMQTIMHR00OJftbd9TcXlAzEYVDVW/RHRqN9F4r9n0obaV8upItUUGwNVj3V
+         wQ1Q==
+X-Gm-Message-State: APt69E1IhTJdoIYwzY2meaebxbG8q5dyw71f6cmFC7CXLVaeFuf4hNPn
+        NnRsS5nDOfGq+fhPzDsZ/Y4=
+X-Google-Smtp-Source: ADUXVKIFCXjmgBp6hcJI6rHLolgNipEgRsmbAlTFZ244GMbNfaHbQ5ZGzJshLgaNWTwfJAdTuCIpHg==
+X-Received: by 2002:a2e:28b:: with SMTP id y11-v6mr1591615lje.27.1528852208418;
+        Tue, 12 Jun 2018 18:10:08 -0700 (PDT)
+Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
+        by smtp.gmail.com with ESMTPSA id g5-v6sm290907lje.21.2018.06.12.18.10.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 18:10:07 -0700 (PDT)
+From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        "David S . Miller" <davem@davemloft.net>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Subject: Re: [PATCH 09/10] Input: ams_delta_serio: use IRQ resource
+Date:   Wed, 13 Jun 2018 03:10:31 +0200
+Message-ID: <1688832.aCTLqTvW5e@z50>
+In-Reply-To: <20180612222104.GC38773@dtor-ws>
+References: <20180609140224.32606-1-jmkrzyszt@gmail.com> <20180609140224.32606-9-jmkrzyszt@gmail.com> <20180612222104.GC38773@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <20180612134200.17456-4-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=525
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130011
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wednesday, June 13, 2018 12:21:04 AM CEST Dmitry Torokhov wrote:
+> On Sat, Jun 09, 2018 at 04:02:23PM +0200, Janusz Krzysztofik wrote:
+> > ...
+> > @@ -141,14 +141,11 @@ static int ams_delta_serio_init(struct
+> > platform_device *pdev)> 
+> >  	 * at FIQ level, switch back from edge to simple interrupt handler
+> >  	 * to avoid bad interaction.
+> >  	 */
+> > 
+> > -	irq_set_handler(gpio_to_irq(AMS_DELTA_GPIO_PIN_KEYBRD_CLK),
+> > -			handle_simple_irq);
+> > +	irq_set_handler(irq, handle_simple_irq);
+> 
+> Do we still need to do this here, or it can be moved into board file?
+
+You're right, it should be possible to move it. I'll check possible options 
+and submit a follow up patch.
+
+Thanks,
+Janusz
 
 
-On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
 
-
-
-One more thing: please add a comment here saying that frames array is 
-array of PFNs (in Xen granularity), which is what 
-XENMEM_populate_physmap requires. And remove (or update to name the 
-actual call you are making) the corresponding comment in 
-increase_reservation().
-
-
-> +
-> +int xenmem_reservation_increase(int count, xen_pfn_t *frames)
-> +{
-> +	struct xen_memory_reservation reservation = {
-> +		.address_bits = 0,
-> +		.extent_order = EXTENT_ORDER,
-> +		.domid        = DOMID_SELF
-> +	};
-> +
-> +	set_xen_guest_handle(reservation.extent_start, frames);
-> +	reservation.nr_extents = count;
-> +	return HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
-> +}
-> +EXPORT_SYMBOL_GPL(xenmem_reservation_increase);
-
-
-And similarly, here we are requesting GFNs, and update 
-decrease_reservation().
-
-
--boris
-
-> +
-> +int xenmem_reservation_decrease(int count, xen_pfn_t *frames)
-> +{
-> +	struct xen_memory_reservation reservation = {
-> +		.address_bits = 0,
-> +		.extent_order = EXTENT_ORDER,
-> +		.domid        = DOMID_SELF
-> +	};
-> +
-> +	set_xen_guest_handle(reservation.extent_start, frames);
-> +	reservation.nr_extents = count;
-> +	return HYPERVISOR_memory_op(XENMEM_decrease_reservation, &reservation);
