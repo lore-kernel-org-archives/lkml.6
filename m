@@ -2,142 +2,125 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 38A03C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:20:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A1D8CC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A22A820891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:20:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A22A820891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 4BA1120891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:24:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R4WOwwdv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BA1120891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754480AbeFMFUS (ORCPT
+        id S1754488AbeFMFYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 01:20:18 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:46691 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754430AbeFMFUR (ORCPT
+        Wed, 13 Jun 2018 01:24:15 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49188 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754443AbeFMFYN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 01:20:17 -0400
-X-IronPort-AV: E=Sophos;i="5.51,217,1526335200"; 
-   d="scan'208";a="331558471"
-Received: from palace.lip6.fr (HELO localhost.localdomain) ([132.227.105.202])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/AES128-SHA256; 13 Jun 2018 07:20:15 +0200
-From:   Julia Lawall <Julia.Lawall@lip6.fr>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] mfd: kempld-core: constify variables that point to const structure
-Date:   Wed, 13 Jun 2018 06:48:09 +0200
-Message-Id: <1528865289-3875-1-git-send-email-Julia.Lawall@lip6.fr>
-X-Mailer: git-send-email 1.9.1
+        Wed, 13 Jun 2018 01:24:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=eCEgptQR1teWTG/65Tz56lueOzoN5/Ck2r0jMUMy69I=; b=R4WOwwdvgykQhrYKFt9byDNFY
+        J/LZORw0h+8vLWhm1gm6ZXwhha+0E4fT5Roy7iXWOuP+uaCO8PsTbZ90i8jhNc+8YSjSXp2Sdjvqh
+        iuPJLJ/oRHnDsSyIPiLDWfy6oxokNuRA4CqN4ZelfdXhf6S4hrJYKgtgpJK10usn1huDLVmkSXPu6
+        OMyY6pIkFfTkHigf5445hmZEfjtTXKpw0DePpNVDqXinqVFfM4Dhnalp159l2PBZrHxuLsxg7GkdC
+        9fZCDg04/ZfYVrBWo4kYq+Ug/hk3WNWGEYdLykow1VDifT9dqJBdSwQBF5kXOZUdbqBcHflOYeseJ
+        TueZ57eTA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fSyG9-0003lB-AK; Wed, 13 Jun 2018 05:23:53 +0000
+Subject: Re: [RFC PATCH 16/23] watchdog/hardlockup: Add an HPET-based
+ hardlockup detector
+To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        iommu@lists.linux-foundation.org
+References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <1528851463-21140-17-git-send-email-ricardo.neri-calderon@linux.intel.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <1e5bc136-4123-328a-2d2e-e6f2faef5bf4@infradead.org>
+Date:   Tue, 12 Jun 2018 22:23:47 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1528851463-21140-17-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add const to the declaration of various local variables of type
-kempld_platform_data for which the referenced value is always only
-dereferenced or passed to a const parameter, to record the fact that
-kempld_platform_data_generic is declared as const.
+Hi,
 
-The semantic match that finds this issue is as follows:
-(http://coccinelle.lip6.fr/)
+On 06/12/2018 05:57 PM, Ricardo Neri wrote:
+> diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> index c40c7b7..6e79833 100644
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -828,6 +828,16 @@ config HARDLOCKUP_DETECTOR_PERF
+>  	bool
+>  	select SOFTLOCKUP_DETECTOR
+>  
+> +config HARDLOCKUP_DETECTOR_HPET
+> +	bool "Use HPET Timer for Hard Lockup Detection"
+> +	select SOFTLOCKUP_DETECTOR
+> +	select HARDLOCKUP_DETECTOR
+> +	depends on HPET_TIMER && HPET
+> +	help
+> +	  Say y to enable a hardlockup detector that is driven by an High-Precision
+> +	  Event Timer. In addition to selecting this option, the command-line
+> +	  parameter nmi_watchdog option. See Documentation/admin-guide/kernel-parameters.rst
 
-// <smpl>
-@r@
-identifier i,j;
-@@
-const struct i j = { ... };
+The "In addition ..." thing is a broken (incomplete) sentence.
 
-@ok@
-identifier r.i;
-position p;
-@@
-const struct i@p *
+> +
+>  #
+>  # Enables a timestamp based low pass filter to compensate for perf based
+>  # hard lockup detection which runs too fast due to turbo modes.
 
-@@
-identifier r.i;
-position p != ok.p;
-@@
-* struct i@p *
-// </smpl>
 
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/mfd/kempld-core.c |   15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/mfd/kempld-core.c b/drivers/mfd/kempld-core.c
-index 390b27c..fb5a10b 100644
---- a/drivers/mfd/kempld-core.c
-+++ b/drivers/mfd/kempld-core.c
-@@ -143,7 +143,7 @@ static int kempld_register_cells_generic(struct kempld_device_data *pld)
- 
- static int kempld_create_platform_device(const struct dmi_system_id *id)
- {
--	struct kempld_platform_data *pdata = id->driver_data;
-+	const struct kempld_platform_data *pdata = id->driver_data;
- 	int ret;
- 
- 	kempld_pdev = platform_device_alloc("kempld", -1);
-@@ -259,7 +259,7 @@ void kempld_write32(struct kempld_device_data *pld, u8 index, u32 data)
-  */
- void kempld_get_mutex(struct kempld_device_data *pld)
- {
--	struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
-+	const struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
- 
- 	mutex_lock(&pld->lock);
- 	pdata->get_hardware_mutex(pld);
-@@ -272,7 +272,7 @@ void kempld_get_mutex(struct kempld_device_data *pld)
-  */
- void kempld_release_mutex(struct kempld_device_data *pld)
- {
--	struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
-+	const struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
- 
- 	pdata->release_hardware_mutex(pld);
- 	mutex_unlock(&pld->lock);
-@@ -290,7 +290,7 @@ void kempld_release_mutex(struct kempld_device_data *pld)
- static int kempld_get_info(struct kempld_device_data *pld)
- {
- 	int ret;
--	struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
-+	const struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
- 	char major, minor;
- 
- 	ret = pdata->get_info(pld);
-@@ -332,7 +332,7 @@ static int kempld_get_info(struct kempld_device_data *pld)
-  */
- static int kempld_register_cells(struct kempld_device_data *pld)
- {
--	struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
-+	const struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
- 
- 	return pdata->register_cells(pld);
- }
-@@ -444,7 +444,8 @@ static int kempld_detect_device(struct kempld_device_data *pld)
- 
- static int kempld_probe(struct platform_device *pdev)
- {
--	struct kempld_platform_data *pdata = dev_get_platdata(&pdev->dev);
-+	const struct kempld_platform_data *pdata =
-+		dev_get_platdata(&pdev->dev);
- 	struct device *dev = &pdev->dev;
- 	struct kempld_device_data *pld;
- 	struct resource *ioport;
-@@ -476,7 +477,7 @@ static int kempld_probe(struct platform_device *pdev)
- static int kempld_remove(struct platform_device *pdev)
- {
- 	struct kempld_device_data *pld = platform_get_drvdata(pdev);
--	struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
-+	const struct kempld_platform_data *pdata = dev_get_platdata(pld->dev);
- 
- 	sysfs_remove_group(&pld->dev->kobj, &pld_attr_group);
- 
-
+-- 
+~Randy
