@@ -2,99 +2,144 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8B0B5C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:12:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3E180C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:14:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AB7208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:12:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XIx4p1wS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41AB7208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id F16A7208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:14:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F16A7208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935350AbeFMLMu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 07:12:50 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:38037 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935328AbeFMLMr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:12:47 -0400
-Received: by mail-it0-f68.google.com with SMTP id v83-v6so3284655itc.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:12:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=mgeI4a8+2rRfM580R67qEpicU3fZbbj/kzMeULj27NA=;
-        b=XIx4p1wSA2AvIAjqVTYeG7+RxmCgwrFIpzZ25DegsYv8M9DMr2oOQnsy4L8gtO20zd
-         owtplfbMykRpwds8S5dQQcJ5hpkOJwl+wp+xEovL7BxhR3ZgkzEMqg5jF5btdXXsbS2M
-         MgjTQfVzpk8Z/bi2KGdmkHuJ57mwRVXDdIr84=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=mgeI4a8+2rRfM580R67qEpicU3fZbbj/kzMeULj27NA=;
-        b=QFuSx9GLrXA2kTnNDQYcD2CikrXHcUGmeJ4Ka8TPqrf7Pr9ZlTl0bFt5QfhsaKyb8r
-         iaFHjG0UH/nQ9WypEDJAV5oiR9vrOBY5YfsHz0ngcQ8WmHR8CLXf17mBnHpDXBmXO2Zp
-         moTa/5EIGC3RuSZoaXRCIcpQxUEVtODmUOu8gVMHIArGUvZ1qTtH43o38LSJCWGZ/Wbk
-         QatEzDF2SbA9G92GiyvCIbNpt2UPHXYBe1VW7SAnNiJSz8p9QQTXuXDak7dtjAQjvrAA
-         VJAK7cqyR78ifDD1J/o8JZODZVysgh+dNfciBrjJ6aXHrQuVrIfAKZC+Cs8AvG/LHKhJ
-         yEVg==
-X-Gm-Message-State: APt69E3GGifSIOz2XrnwSwF096zn6x9zYsX5ibWGzyzFPCNgE+bP+6aY
-        tmXhedkK7pNQdZFXNRKXpWRH2RchX9ubJ11J3UePaQ==
-X-Google-Smtp-Source: ADUXVKJC77AEOupsOxD7YNiN+lHYgQYKUgywR+5cH6JOQ7hOAT6RPypn2lxEWWhIWh9Mj89AUsHE69p6FOgh7Ju9nmQ=
-X-Received: by 2002:a24:690f:: with SMTP id e15-v6mr4150547itc.70.1528888367161;
- Wed, 13 Jun 2018 04:12:47 -0700 (PDT)
+        id S935356AbeFMLON (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 07:14:13 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55214 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934677AbeFMLOL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 07:14:11 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BF62987A82;
+        Wed, 13 Jun 2018 11:14:10 +0000 (UTC)
+Received: from gondolin (dhcp-192-215.str.redhat.com [10.33.192.215])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B3741C5BC;
+        Wed, 13 Jun 2018 11:14:05 +0000 (UTC)
+Date:   Wed, 13 Jun 2018 13:14:02 +0200
+From:   Cornelia Huck <cohuck@redhat.com>
+To:     Pierre Morel <pmorel@linux.ibm.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+Message-ID: <20180613131402.0305d092.cohuck@redhat.com>
+In-Reply-To: <41e7ccbd-f6f5-ba20-f236-7824c682994d@linux.ibm.com>
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+        <889b8d41-e08c-0eb5-2de0-a1d6669a03b3@linux.ibm.com>
+        <20180613094812.1fd1846d.cohuck@redhat.com>
+        <41e7ccbd-f6f5-ba20-f236-7824c682994d@linux.ibm.com>
+Organization: Red Hat GmbH
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 04:12:45
- -0700 (PDT)
-In-Reply-To: <CACRpkdaKMr0qm91Q4LyjBGyKG_H4vvMr7bnRJeai+f2Eg-9r0Q@mail.gmail.com>
-References: <20180407135934.26122-1-ctatlor97@gmail.com> <20180607181306.9766-1-ctatlor97@gmail.com>
- <CACRpkdaKMr0qm91Q4LyjBGyKG_H4vvMr7bnRJeai+f2Eg-9r0Q@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 13 Jun 2018 13:12:45 +0200
-Message-ID: <CACRpkdb-GeOUSPQeJoMe-My-ZugdPWn0DDVQST5e7XFzt1TmHw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] fixp-arith: add a linear interpolation function
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 13 Jun 2018 11:14:10 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 13 Jun 2018 11:14:10 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'cohuck@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 1:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Thu, Jun 7, 2018 at 8:12 PM, Craig Tatlor <ctatlor97@gmail.com> wrote:
->
->> Adds a function to interpolate against two points,
->> this is carried arount as a helper function by tons of drivers.
->>
->> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
->
-> The linear formula seems to fit the most natural form of linear
-> interpolation.
->
-> I bet some John Carmack algorithm type people will soon
-> start to optimize this... :D
+On Wed, 13 Jun 2018 12:54:40 +0200
+Pierre Morel <pmorel@linux.ibm.com> wrote:
 
-For your entertainment here is some sunday reading:
-https://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
+> On 13/06/2018 09:48, Cornelia Huck wrote:
+> > On Wed, 13 Jun 2018 09:41:16 +0200
+> > Pierre Morel <pmorel@linux.ibm.com> wrote:
+> >  
+> >> On 07/05/2018 17:11, Tony Krowiak wrote:  
+> >>> Introduces a new AP device driver. This device driver
+> >>> is built on the VFIO mediated device framework. The framework
+> >>> provides sysfs interfaces that facilitate passthrough
+> >>> access by guests to devices installed on the linux host.  
+> >> ...snip...
+> >>  
+> >>> +static int vfio_ap_matrix_dev_create(void)
+> >>> +{
+> >>> +	int ret;
+> >>> +
+> >>> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
+> >>> +
+> >>> +	if (IS_ERR(vfio_ap_root_device)) {
+> >>> +		ret = PTR_ERR(vfio_ap_root_device);
+> >>> +		goto done;
+> >>> +	}
+> >>> +
+> >>> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
+> >>> +	if (!ap_matrix) {
+> >>> +		ret = -ENOMEM;
+> >>> +		goto matrix_alloc_err;
+> >>> +	}
+> >>> +
+> >>> +	ap_matrix->device.type = &vfio_ap_dev_type;
+> >>> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
+> >>> +	ap_matrix->device.parent = vfio_ap_root_device;
+> >>> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
+> >>> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
+> >>> +
+> >>> +	ret = device_register(&ap_matrix->device);
+> >>> +	if (ret)
+> >>> +		goto matrix_reg_err;
+> >>> +
+> >>> +	goto done;
+> >>> +
+> >>> +matrix_reg_err:
+> >>> +	put_device(&ap_matrix->device);  
+> >> Did not see this before but here you certainly want to
+> >> do a kfree and not a put_device.  
+> > No, this must not be a kfree. Once you've tried to register something
+> > embedding a struct device with the driver core, you need to use
+> > put_device, as another path may have acquired a reference, even if
+> > registering ultimately failed. See the comment for device_register().
+> > IOW, the code is correct.  
+> 
+> learned something again :) ,
+> but still, a kfree is needed for the kzalloc.
+> Does'nt it?
 
-Yours,
-Linus Walleij
+No, the put callback for the embedding structure needs to take care of
+freeing things. Otherwise it is buggy.
+
+> 
+> >  
+> >>
+> >>  
+> >>> +
+> >>> +matrix_alloc_err:
+> >>> +	root_device_unregister(vfio_ap_root_device);
+> >>> +
+> >>> +done:
+> >>> +	return ret;
+> >>> +}
+> >>> +
+> >>> +static void vfio_ap_matrix_dev_destroy(struct ap_matrix *ap_matrix)
+> >>> +{
+> >>> +	device_unregister(&ap_matrix->device);
+> >>> +	root_device_unregister(vfio_ap_root_device);  
+> >> Also here you need a kfree(ap_matrix) too .  
+> > Same here.
+> >  
+> 
+
