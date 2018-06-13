@@ -2,105 +2,152 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9CEE2C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:13:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CDB8EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50B02208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:13:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1hnH3SC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B02208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 8BB2A20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:14:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BB2A20891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754569AbeFMINf (ORCPT
+        id S1754579AbeFMIOn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:13:35 -0400
-Received: from mail-vk0-f45.google.com ([209.85.213.45]:42281 "EHLO
-        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754479AbeFMINa (ORCPT
+        Wed, 13 Jun 2018 04:14:43 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:2430 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754500AbeFMIOl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:13:30 -0400
-Received: by mail-vk0-f45.google.com with SMTP id s187-v6so985655vke.9;
-        Wed, 13 Jun 2018 01:13:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=2H4YwMKEDRVbgnq2YT+Ve6QkezSPYXmZ4W8Ct2Cw2As=;
-        b=U1hnH3SCyWxJIIG4+MTgUOWPMqumoR8k4XpZa++RSGsGO2LF+o4amWL5qRPOg2pLqo
-         qLHDYnKlOu70fv843SE2YOSqk3NvnKBB2H9snd2J4wxB0qyYk1CwaH1opFJDdX+wuFMg
-         D3A8GlIA1JmQLGcZ/JirKr6tag/sKOWQiW6azHgSxyPb70gW1ahRIPbheG+ryfagSd6p
-         kQaBO8Kupa0hIV+zBZsqLNga4dtDa7FHme5izDIoQQZLBG012mle4aSFySJwgwOT6fNw
-         1VMTRlSs3y1ChAJZ/3LlUNGYtNO0InQ/mSqEH0F9goMzdifUEPHUk5XybFH6IY/2hJ+K
-         clDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=2H4YwMKEDRVbgnq2YT+Ve6QkezSPYXmZ4W8Ct2Cw2As=;
-        b=E65TYG9jwU+jb9Aw0o//79hC3I9LDfENXatcosr1vF0iYeImhn3OZN0/T6+QXqf74x
-         3dJvHeWkiUaB8nQVGxlFZlnhWmqkMr/1BDpPKb95zhYg5ujFH5bx+yhvCfzukmYW0hmj
-         2JXiQiBpPRltlkptWX5IdDOqNKjPZ0kIuqEUAjjWwohiBfiyYQNatseJgIyG49LXtW+m
-         RhGRr4WUnFbJX6eI+n3XmYEgFtkZaUnQZ9QwW9bTdoMcnW3Fz5wEC7f/7epu3gUAwJ9x
-         /XgAod4gqclvCk2aRASjsRQc6hh8kkKtwUID2d7DfvnMT016/mIDsWg8VfQ5bHoR18l7
-         ErLg==
-X-Gm-Message-State: APt69E0Ch2apQ1c17BgYhOSsAmJ4Z0XcNAs7qehS+Mt4PLjrDh2juRDW
-        8GQWKYun1AwkuDon274ZASlTS6Ft+jBHJTZfojY=
-X-Google-Smtp-Source: ADUXVKJwmRkRJ6lc6uYuAdpsubDOcMjCArLAFAwDm2bz7CO3jfvAeOmtbPMjWT+zv3g8XaEUzHZbzlueMzyfrCMSmIk=
-X-Received: by 2002:a1f:8e0f:: with SMTP id q15-v6mr2496323vkd.161.1528877609049;
- Wed, 13 Jun 2018 01:13:29 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 01:13:28
- -0700 (PDT)
-In-Reply-To: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 13 Jun 2018 11:13:28 +0300
-Message-ID: <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
-Subject: Re: ACPI support in common clock framework
-To:     Srinath Mannam <srinath.mannam@broadcom.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Wed, 13 Jun 2018 04:14:41 -0400
+X-UUID: 3d3b2693248a4558a8677b6928982d57-20180613
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 942603049; Wed, 13 Jun 2018 16:14:37 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 16:14:35 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 16:14:35 +0800
+Message-ID: <1528877675.30263.27.camel@mtksdaap41>
+Subject: Re: [PATCH 19/28] drm/mediatek: add connection from RDMA2 to DPI1
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 16:14:35 +0800
+In-Reply-To: <1528876862.11190.35.camel@mtksdccf07>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-20-git-send-email-stu.hsieh@mediatek.com>
+         <1528874037.30263.6.camel@mtksdaap41>
+         <1528876862.11190.35.camel@mtksdccf07>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Cc: Rafael, ACPI ML
+Hi, Stu:
 
-On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
-<srinath.mannam@broadcom.com> wrote:
-> Hi Michael, Stephen,
->
-> We are adding ACPI support in our Linux based platform.
-> At present our clock hierarchy using common clock framework through DTS.
-> Now we required ACPI support in common clock framework to upgrade our platform.
->
-> For example, clk_get API called in many drivers to get clock device is
-> tightly coupled with DT framework.
->
-> Please let us know, if anybody in Open Source community have plans to
-> add ACPI support for common clock framework.
-> If not please suggest us alternative method to use common clock
-> framework in ACPI use case.
->
-> Thanks in advance.
->
-> Regards,
-> Srinath.
+On Wed, 2018-06-13 at 16:01 +0800, Stu Hsieh wrote:
+> Hi, CK:
+> 
+> 
+> On Wed, 2018-06-13 at 15:13 +0800, CK Hu wrote:
+> > Hi, Stu:
+> > 
+> > On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> > > This patch add the connection from RDMA2 to DPI1
+> > > 
+> > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > ---
+> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > index 31a0832ef9ec..2d883815d79c 100644
+> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > @@ -93,9 +93,11 @@
+> > >  #define RDMA1_MOUT_DPI0			0x2
+> > >  #define RDMA1_MOUT_DPI1			0x3
+> > >  #define RDMA2_MOUT_DPI0			0x2
+> > > +#define RDMA2_MOUT_DPI1			0x3
+> > 
+> > Usually, each bit of a mout register represent a output enable. Is this
+> > value 0x3 a correct value?
+> > 
+> > Regards,
+> > CK
+> > 
+> In HW CONFIG SPEC or MT2712_E2_MMSYS_Change_note show as following:
+> 
+> Bit(s)	Name			Description
+> 2:0	DISP_RDMA2_SOUT_SEL_IN	0: output to dsi0
+> 				1: outptu to dsi1
+> 				2: output to dpi0
+> 				3: output to dpi1
+> 				4: output to dsi2
+> 				5: output to dsi3
+> 
+> So, 0x3 is correct value.
+
+The data sheet use the term SOUT match its function, so I think driver
+have better change the naming to SOUT.
+
+Regards,
+CK
+
+> 
+> Regard,
+> Stu
+> 
+> > >  #define DPI0_SEL_IN_RDMA1		0x1
+> > >  #define DPI0_SEL_IN_RDMA2		0x3
+> > >  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+> > > +#define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+> > >  #define DSI1_SEL_IN_RDMA1		0x1
+> > >  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+> > >  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+> > > @@ -199,6 +201,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+> > >  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> > >  		value = RDMA2_MOUT_DPI0;
+> > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> > > +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> > > +		value = RDMA2_MOUT_DPI1;
+> > >  	} else {
+> > >  		value = 0;
+> > >  	}
+> > > @@ -233,6 +238,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+> > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+> > >  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > >  		value = DPI0_SEL_IN_RDMA2;
+> > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> > > +		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > > +		value = DPI1_SEL_IN_RDMA2;
+> > >  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+> > >  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+> > >  		value = COLOR1_SEL_IN_OVL1;
+> > 
+> > 
+> 
+> 
 
 
-
--- 
-With Best Regards,
-Andy Shevchenko
