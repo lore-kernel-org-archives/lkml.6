@@ -1,151 +1,166 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 244FAC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:55:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6DB21C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:58:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF4912086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:55:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f05KOYzQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF4912086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2484920891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:58:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2484920891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935050AbeFMIzR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:55:17 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:39943 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934150AbeFMIzO (ORCPT
+        id S1754534AbeFMI6U (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 04:58:20 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:39664 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754475AbeFMI6R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:55:14 -0400
-Received: by mail-pf0-f193.google.com with SMTP id z24-v6so1046617pfe.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 01:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sSL37yrzOQ4dbYa066Ru1UuYzO2b4FLOQBFVZ1IWPRQ=;
-        b=f05KOYzQwm59KnvKoXULTuK7W7QqmM8oHGwfM8NXFFfITQuypU6YOu4RT66yXFpA/B
-         fiewLb9vbAg2oAXQm5OE46K0obceDZJxUMi8wsxpFYL+8Ukqu13ugb3aKPBASGxduM3/
-         b3Pm3wMqX2huvxcTBOsKYm20x4asDJ4xGH6ok=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sSL37yrzOQ4dbYa066Ru1UuYzO2b4FLOQBFVZ1IWPRQ=;
-        b=ScWWBxbjm0ieszsvzNeZvR6KBNLk4s+YlHNIrsC3YoMpDsrFo/kOrCMLmRZwU37+A4
-         UbvlrxQDT14hTDD7ka0UA2jVQ/u/KYeyKsIAhvTNQD1yaT1yQy5nCwK9JXBCFSLXY1RN
-         2+OJ/SWwyZ529vnsygslbdFWEqirBrBs0zbJnFVOkaUsCsauGIYAejV1f1O65v0ngrvm
-         19R7ecTVdTmhdpLe/9Gal4Kb6hNka1ahV9fU6fm2rLu+j5W+8pgyFySLIsQ+QbfIGW+x
-         UWEq+WZFofyoiL1JxAFsgcyBG73GQ87ZS+r4mXn4iQNWPIAvUuDDuunUGfs3apM0mlsy
-         puTA==
-X-Gm-Message-State: APt69E1ql11A9tmvNvdR5Y9frGnNh24pDC1dsm/eB7IuQwj1iS6fA34W
-        qMjnuclZXPwEjMWFgf3NplsuKQ==
-X-Google-Smtp-Source: ADUXVKLKDxwzqfT/aeLjfKOoOXAsu/jEDGe0SXF54DDRXUq0unTv4RN3p3dc47MvJX5a7FB/1CYWIw==
-X-Received: by 2002:a65:51c9:: with SMTP id i9-v6mr3401313pgq.202.1528880113113;
-        Wed, 13 Jun 2018 01:55:13 -0700 (PDT)
-Received: from localhost ([223.226.91.101])
-        by smtp.gmail.com with ESMTPSA id h124-v6sm4400837pfc.100.2018.06.13.01.55.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 01:55:11 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 14:25:09 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Daniel Lezcano <daniel.lezcano@linaro.org>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180613085509.s7ktdespfyjpozuu@vireshk-i7>
-References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
- <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
- <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
- <20180612125247.GO12217@hirez.programming.kicks-ass.net>
- <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
- <20180612140654.GQ12217@hirez.programming.kicks-ass.net>
- <cce05d92-d51a-ab4f-83f2-37dcdee0cd6a@linaro.org>
- <20180612155841.GT12217@hirez.programming.kicks-ass.net>
- <7190a58e-05f2-216c-8b36-70692fa722bf@linaro.org>
- <20180612173514.GV12217@hirez.programming.kicks-ass.net>
+        Wed, 13 Jun 2018 04:58:17 -0400
+X-UUID: e11c36332d6e484a804267f28679ffad-20180613
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1795494233; Wed, 13 Jun 2018 16:58:13 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 16:58:12 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 16:58:11 +0800
+Message-ID: <1528880291.11190.45.camel@mtksdccf07>
+Subject: Re: [PATCH 19/28] drm/mediatek: add connection from RDMA2 to DPI1
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 16:58:11 +0800
+In-Reply-To: <1528877675.30263.27.camel@mtksdaap41>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-20-git-send-email-stu.hsieh@mediatek.com>
+         <1528874037.30263.6.camel@mtksdaap41>
+         <1528876862.11190.35.camel@mtksdccf07>
+         <1528877675.30263.27.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612173514.GV12217@hirez.programming.kicks-ass.net>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-06-18, 19:35, Peter Zijlstra wrote:
-> On Tue, Jun 12, 2018 at 07:02:57PM +0200, Daniel Lezcano wrote:
-> > Mmh, it is unclear for me if the park() vs wakeup() can happen at the
-> > same time.
+Hi, CK:
+
+On Wed, 2018-06-13 at 16:14 +0800, CK Hu wrote:
+> Hi, Stu:
+> 
+> On Wed, 2018-06-13 at 16:01 +0800, Stu Hsieh wrote:
+> > Hi, CK:
 > > 
-> > If the park() function is called, that means the hotplug is allowed.
-> 
-> No, it means we're inside hot-un-plug, but that doesn't stop the hrtimer
-> from firing.
-> 
-> > If the hotplug is allowed, we can modify the online mask.
 > > 
-> > What happens with the online mask when we are processing it in an
-> > interrupt context ?
-> 
-> RCU-like, if you observe a CPU in the online mask, it will stay
-> available, but the bit might get cleared.
-> 
-> > > Maybe avoid the issue entire by having a
-> > > {period,idle} tuple, where your old run := period - idle.
-> > 
-> > Can you elaborate ? I don't get it.
-> 
-> Have a period parameter that specifies the interval in which you have
-> one injected idle, and specify for how long you want to inject idle;
-> then obviously idle < period.
-> 
-> > >>> Furthermore, should you not be using hrtimer_forward(&timer,
-> > >>> idle_duration + run_duration) instead? AFAICT the current scheme is
-> > >>> prone to drifting.
-> > >>
-> > >> (I assume you meant setting the timer in the wakeup task function).
-> > >>
-> > >> Yes, drifting is not an issue if that happens. This scheme is simpler
-> > >> and safer than setting the timer ahead before waking up the tasks with
-> > >> the risk it expires before all the tasks ended their idle cycles.
+> > On Wed, 2018-06-13 at 15:13 +0800, CK Hu wrote:
+> > > Hi, Stu:
 > > > 
-> > > sloppy though..
+> > > On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> > > > This patch add the connection from RDMA2 to DPI1
+> > > > 
+> > > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > > ---
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+> > > >  1 file changed, 8 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > index 31a0832ef9ec..2d883815d79c 100644
+> > > > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > @@ -93,9 +93,11 @@
+> > > >  #define RDMA1_MOUT_DPI0			0x2
+> > > >  #define RDMA1_MOUT_DPI1			0x3
+> > > >  #define RDMA2_MOUT_DPI0			0x2
+> > > > +#define RDMA2_MOUT_DPI1			0x3
+> > > 
+> > > Usually, each bit of a mout register represent a output enable. Is this
+> > > value 0x3 a correct value?
+> > > 
+> > > Regards,
+> > > CK
+> > > 
+> > In HW CONFIG SPEC or MT2712_E2_MMSYS_Change_note show as following:
 > > 
-> > Ok, do you prefer to see the timer set in the wakeup function and thus
-> > having a periodic tick for the idle injection ?
+> > Bit(s)	Name			Description
+> > 2:0	DISP_RDMA2_SOUT_SEL_IN	0: output to dsi0
+> > 				1: outptu to dsi1
+> > 				2: output to dpi0
+> > 				3: output to dpi1
+> > 				4: output to dsi2
+> > 				5: output to dsi3
+> > 
+> > So, 0x3 is correct value.
 > 
-> I think having a HRTIMER_RESTART handler that does hrtimer_forward() is
-> the most sensible. You will end up having to deal with threads not being
-> ready, but I think that's not a real problem.
+> The data sheet use the term SOUT match its function, so I think driver
+> have better change the naming to SOUT.
+> 
+> Regards,
+> CK
+> 
 
-Honestly speaking I am not sure if we can fix all the races we have identified
-until now, with the current design and the fear of using resources after getting
-freed will always be there. Too many corner cases really.
+The definition DISP_REG_CONFIG_DISP_RDMA2_SOUT is use term SOUT in this
+patch.
 
-The requirement we have is to make sure no kthread or hrtimer is still in use
-when the ii_dev is freed from idle_injection_unregister().
+Regard,
+Stu
 
-May be the only sane way to make it work is to call
-smpboot_register_percpu_thread() from idle_injection_register() and then
-unregister those threads from idle_injection_unregister().
+> > 
+> > Regard,
+> > Stu
+> > 
+> > > >  #define DPI0_SEL_IN_RDMA1		0x1
+> > > >  #define DPI0_SEL_IN_RDMA2		0x3
+> > > >  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+> > > > +#define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+> > > >  #define DSI1_SEL_IN_RDMA1		0x1
+> > > >  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+> > > >  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+> > > > @@ -199,6 +201,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> > > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+> > > >  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> > > >  		value = RDMA2_MOUT_DPI0;
+> > > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> > > > +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> > > > +		value = RDMA2_MOUT_DPI1;
+> > > >  	} else {
+> > > >  		value = 0;
+> > > >  	}
+> > > > @@ -233,6 +238,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+> > > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+> > > >  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > > >  		value = DPI0_SEL_IN_RDMA2;
+> > > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> > > > +		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > > > +		value = DPI1_SEL_IN_RDMA2;
+> > > >  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+> > > >  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+> > > >  		value = COLOR1_SEL_IN_OVL1;
+> > > 
+> > > 
+> > 
+> > 
+> 
+> 
 
--- 
-viresh
+
