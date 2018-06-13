@@ -3,109 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A1CFBC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:51:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 06E1BC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 477C1208C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A01B4208C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:53:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="MbfHwAma"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477C1208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="TCXmlJj3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A01B4208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935735AbeFMTvh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 15:51:37 -0400
-Received: from mail-ot0-f182.google.com ([74.125.82.182]:38506 "EHLO
-        mail-ot0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935291AbeFMTvg (ORCPT
+        id S935584AbeFMTxl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 15:53:41 -0400
+Received: from mail.efficios.com ([167.114.142.138]:43412 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935206AbeFMTxk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 15:51:36 -0400
-Received: by mail-ot0-f182.google.com with SMTP id p95-v6so4384421ota.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 12:51:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=p4EHI2ckgnoY/MUT2kmii0i0XU5CENUMZWHELsTd+P8=;
-        b=MbfHwAmacthNUmt42PtZ2iC7LeJdUb52iJ3+eMszq4iW1eq5wP/g1HSwMOEFsCeM/E
-         RzCItu2j3d9JucXJYiOZddWO8J5xtnErd/LUvOdAdbj31ECkUE1tLwi/9H2yiFK9I1oD
-         WYr+ohtPnep/wgWBBuQvus9s0ygPe/gepprmsK476uqMKeeDT7HlB+hjqSNmJL0qr7w3
-         4tQJsm/7esf6sbfseQX4wXJf1crtdaBlimaKjaibI7O1eE0WGLf/knpJ8PhQFF1x2Vdo
-         iOjtTUXdd7cadeZC67V6EDreo5Y2y+avWKSba92SnulKxhIVmfLTWEWpj+xauiWseZ6z
-         4iow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=p4EHI2ckgnoY/MUT2kmii0i0XU5CENUMZWHELsTd+P8=;
-        b=ruzaw9p3gjm4Z56fyHuNoVC2x7P0kBW1DuQoGZzzDeEoUyDPs/CWkoZDSu07Hx6Bf2
-         2+0r3UVFCtmU1fHd9juONDNT652aUp27bluEPYmsrYWjU7qE6l4xJ565Jb5VJrbr+QqB
-         3HvtFOB1tIC6NoNfaMPIE7i7mGcFo9Pfis0+usDBUdrw9jgwRP+qF6+e+YikL6NV9Enz
-         hID9Gu1hrODcSS2aDZX/S1AYEpyJ64hhCzis+UyyDui6HxPUfs16XUaNzVEAom6J5d/p
-         2s1RD9YILPaWKjFaLLkzv27HuBszikjviYif61wfw85C7Q5yGwl+GV8BmuHOmkWGi6ul
-         kddg==
-X-Gm-Message-State: APt69E0ktzw+qM/8mGmp9xIkS6gKPGDRnve1Nu+oMZ5wum/DBBKxTk2m
-        9tH/Q4KIpdsvGA5Z4Pt0z2a4r9fU53SpegSZL0b3hg==
-X-Google-Smtp-Source: ADUXVKKGWiI5+jnx0BSWocm8JV2WGgNvqNNS3fv8xiF80kGzaVPoAzPVF4myClKUbcbNu8pVnlpB73qpyecTdg7tHM4=
-X-Received: by 2002:a9d:1076:: with SMTP id o51-v6mr3716258oto.292.1528919495705;
- Wed, 13 Jun 2018 12:51:35 -0700 (PDT)
+        Wed, 13 Jun 2018 15:53:40 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 6BB7622A902;
+        Wed, 13 Jun 2018 15:53:39 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id U3iqaLrO-PSA; Wed, 13 Jun 2018 15:53:39 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 0A3F522A8FF;
+        Wed, 13 Jun 2018 15:53:39 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 0A3F522A8FF
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1528919619;
+        bh=yd/eeBmKIprsrTxSBO5JeaYBDaAjWghXodKUtL+RhIw=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=TCXmlJj3Ta0gUj3y0wgLFrNUa6Hvq8IVq8pXy/Ewha11h1kDrl14uZpydU3YnRxMv
+         nnsuQy3ad7TEGs1qe1LdKvwcctO9nusuX1U7qgvptzHLwpxWuKWFnLAsYd7yS/YLMJ
+         rByUqhymT7I0RUnoho+rzTy5UgcudtFLCHvz+xaZ2JdVDCN159unyostnT8KGzLlNk
+         PulT8kvnSr7a7NRbHcI8Lz6EeEcwQguEazVYD67vpQq2OsEtBEM9G52dSLSJeMnFFv
+         Bau6BkqnRWtqMA5vjrlll18FRKkWF7uiDfTtAnfaPJc+xSFWbvvJIWZXYa9TIbTe67
+         MBkG+yXZ49zWA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 7A0e2L4c-NyH; Wed, 13 Jun 2018 15:53:38 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id E8B5922A8F8;
+        Wed, 13 Jun 2018 15:53:38 -0400 (EDT)
+Date:   Wed, 13 Jun 2018 15:53:38 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     heiko carstens <heiko.carstens@de.ibm.com>
+Cc:     carlos <carlos@redhat.com>, Florian Weimer <fweimer@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>
+Message-ID: <410804326.12703.1528919618748.JavaMail.zimbra@efficios.com>
+In-Reply-To: <1904010978.12481.1528906458944.JavaMail.zimbra@efficios.com>
+References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com> <20180613114811.GC4342@osiris> <1904010978.12481.1528906458944.JavaMail.zimbra@efficios.com>
+Subject: Re: Restartable Sequences system call merged into Linux
 MIME-Version: 1.0
-Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 12:51:34
- -0700 (PDT)
-In-Reply-To: <CAFhSwD9RNcsaTNdT-4DiE_BKK6zrsdBbNbGBEkBoJuwQn1JdQA@mail.gmail.com>
-References: <CAFhSwD9RNcsaTNdT-4DiE_BKK6zrsdBbNbGBEkBoJuwQn1JdQA@mail.gmail.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Wed, 13 Jun 2018 12:51:34 -0700
-Message-ID: <CAPcyv4hpjNaUz6qpJ0_Wh1SAz9tS9a5HLsYSgeCh_pNZKfY74A@mail.gmail.com>
-Subject: Re: OpenAFS module libafs.ko uses GPL-only symbol '__put_devmap_managed_page'
-To:     Joe Gorse <jhgorse@gmail.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linux MM <linux-mm@kvack.org>, Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: Restartable Sequences system call merged into Linux
+Thread-Index: 03097Zs90n0PWzBVhsrdocLBo0GNP4y7Ih5R
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[ adding Andrew, Christoph, and linux-mm ]
+----- On Jun 13, 2018, at 12:14 PM, Mathieu Desnoyers mathieu.desnoyers@efficios.com wrote:
 
-On Wed, Jun 13, 2018 at 12:33 PM, Joe Gorse <jhgorse@gmail.com> wrote:
-> Greetings,
->
-> Please CC answers & comments to this email. Thanks! =)
->
-> Our build is breaking as of
-> commit e7638488434415aa478e78435cac8f0365737638
-> Author: Dan Williams <dan.j.williams@intel.com>
-> Date: Wed May 16 11:46:08 2018 -0700
->
-> mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_OPS
-> ... snip ...
-> https://patchwork.kernel.org/patch/10412459/
->
-> We do not directly use the GPL-only symbol '__put_devmap_managed_page'. It
-> appears to be picked up from static-inlining in put_page(), which we need.
->
-> How shall we proceed? Would it be reasonable to request the change of the
-> GPL-only exports for this commit?
->
-> Cheers,
-> Joe Gorse
->
-> P.S. The build failure, for the morbidly curious:
->> FATAL: modpost: GPL-incompatible module libafs.ko uses GPL-only symbol
->> '__put_devmap_managed_page'
->> scripts/Makefile.modpost:92: recipe for target '__modpost' failed
->> make[6]: *** [__modpost] Error 1
+> ----- On Jun 13, 2018, at 7:48 AM, heiko carstens heiko.carstens@de.ibm.com
+> wrote:
+[...]
+>> 
+>> Is there any documentation available of what is the exact semantics of the
+>> functions that have to be implemented for additional architectures?
+> 
+> It's documented on top of kernel/rseq.c:
+> 
 
-I think the right answer here is to make __put_devmap_managed_page()
-EXPORT_SYMBOL(), since features like devm_memremap_pages() want to
-change the behavior of all users of put_page(). It again holds that
-devm_memremap_pages() needs to become EXPORT_SYMBOL_GPL() because it,
-not put_page(), is the interface that is leaking control of core
-kernel state/infrastructure to its users.
+[...]
+
+> 
+> The first architecture implemented was rseq-x86.h. Boqun derived rseq-ppc.h
+> from it, and I derived rseq-arm.h from it. Feel free to start from whichever
+> architecture has the instruction set which is most similar to yours.
+
+One more thing: adding full support for your architecture to the rseq selftests
+also requires to extend tools/testing/selftests/rseq/param_test.c to implement
+the RSEQ_INJECT_INPUT, INJECT_ASM_REG, RSEQ_INJECT_CLOBBER and RSEQ_INJECT_ASM
+macros for your architecture. Those are simply defining the inline asm operands
+and assembly code needed to inject delay loops within the rseq critical sections,
+which greatly facilitates testing.
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
