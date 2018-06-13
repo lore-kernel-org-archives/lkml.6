@@ -3,85 +3,114 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7949C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:30:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E1C37C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:32:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3C520020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:30:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D2F020020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:32:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N5wltRlI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3C520020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="dnv9yzVJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2F020020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935791AbeFMO37 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:29:59 -0400
-Received: from mail-io0-f178.google.com ([209.85.223.178]:42393 "EHLO
-        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935664AbeFMO36 (ORCPT
+        id S935811AbeFMOcP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:32:15 -0400
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:26682 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935560AbeFMOcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:29:58 -0400
-Received: by mail-io0-f178.google.com with SMTP id r24-v6so3635653ioh.9;
-        Wed, 13 Jun 2018 07:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fERCi616sZ4nTnswzO8dl4bLx3LEimHKsJqCZI6oZtY=;
-        b=N5wltRlIihCIbjxBZyrdoSyA6QBIeEfzbKmv+vmPAw7CMdyYdv7ep36XJ2Eci32yQI
-         1boJKLqGX334htGED8TU/AetAE1MaJroGBgQZkJLopdjTkIzf4O56huHJSm575YPyHyn
-         AqK8rvSEvUUTCBY9QjmOb42ch9HN3EeKYyKCY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fERCi616sZ4nTnswzO8dl4bLx3LEimHKsJqCZI6oZtY=;
-        b=HTnmPxSJUe+tLF2sy/Kla45fldWIbfDSP5YNBwtk81aJTHbNryL/oWD/astnxdlycX
-         bi06CL7EtJB+eoJeuBSkkDr4IOBZzblpQwBPTj0p1twhNA3FOYvo6nWUGaEY4m1vhGnI
-         WOsf55jsfMdHtn+09/ALhnVmlO9rsCax3dTX5jtpOWVLCGWlKVOWgF6X9WL01AEHj0X+
-         VOEmBNKdk4Ruh7GtM0aI72EgEmyRbq7CCjAZgXLTC00lsX3XluNHi++L99haj708Llfn
-         arn5YwyrWTkGxH7XOARvKEDRZnmR1qECSsdKYFqLW30vRAsw57K+/H2fwPPtHVjus/0V
-         0GQQ==
-X-Gm-Message-State: APt69E3Lnfk/w0HxmNizZc9BLlNB6Ghz9hySfZsmjWHfxa1JiOXsJbt1
-        K7/yPUEoGjzeA3uVOtU7DK1Thk0RgRu/u1tLKEfhCw==
-X-Google-Smtp-Source: ADUXVKJMMHBEg0lBC75y0mUgr8XLsk1PgKBzOZHWwmflk5Zbj0PijRZIVnLTbzmUXL7o60luH/ccz1yvMQqZT4hP+Bg=
-X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr5128853ion.259.1528900197063;
- Wed, 13 Jun 2018 07:29:57 -0700 (PDT)
+        Wed, 13 Jun 2018 10:32:11 -0400
+Received: from mail-ua0-f181.google.com (mail-ua0-f181.google.com [209.85.217.181]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id w5DEW7eX002959;
+        Wed, 13 Jun 2018 23:32:07 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com w5DEW7eX002959
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528900328;
+        bh=duFpFEqOiSgR5OHgZmhEdtOwJ2GQvFfhQmrfWtc6Bbw=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=dnv9yzVJEhTAuYHc+XC/fHx0eR3W/09Ng7nWgecW8iooCN9t+K4iqYwn8+Mx+kpNQ
+         NZVAbLMg31AsFxi1sr7VT2Gl4DTET7M5ZAjhxCUHW+V9JPyw82Dk2liXDBCd+nzwlU
+         B0tywYoLGcFAfd9N8rS3uLMjMmuzvAjpVmbbe2Cc3vytTLZ0+khq28rHkZowQjzHw0
+         Wiv1h/5bRyNdzZP8G4xZtqjnAq/8F0DhYxRlyMuFdLs2xnsqhLtuIyyBMWMC88DLvb
+         +J0UiXhYvFpHrS0b6IbCytFKBdaPuAwtQKMG46IN6hd5mlBpeEeRyPKCi8k6pzEoay
+         f/qdxoRitsjyw==
+X-Nifty-SrcIP: [209.85.217.181]
+Received: by mail-ua0-f181.google.com with SMTP id k14-v6so1843415uao.12;
+        Wed, 13 Jun 2018 07:32:07 -0700 (PDT)
+X-Gm-Message-State: APt69E0RtMF7Eha5Cds/D7pwkhDP6nwnrZzwYJ47cM6yVFaHhICj2tHQ
+        zNI/X8hQVmTMdsM/2R9pGD300RGuic2YeBQy3v8=
+X-Google-Smtp-Source: ADUXVKLGlzoxmwSU6FGP6HbX2xhHvzh5BRKIX1PN2YBlyeFblDWYh2ncrDbyaELfqyd0iVhT2KALv4XCFxQd70ynqng=
+X-Received: by 2002:ab0:7089:: with SMTP id m9-v6mr3427152ual.141.1528900326488;
+ Wed, 13 Jun 2018 07:32:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
- <CA+55aFwvE5G7MV7AV4naAXdbFoszc4JNKEj_QtYqpLFfa2RXtA@mail.gmail.com>
- <6570c00b-bbec-82c3-16e2-1ba96d8e263b@redhat.com> <CA+55aFxyQ0HE6ShB_pF1yXS9VjQv78OyseJpZjLXu=rbBTEPTQ@mail.gmail.com>
- <c982edb3-d2fe-87f9-f1ac-2125901d7013@redhat.com>
-In-Reply-To: <c982edb3-d2fe-87f9-f1ac-2125901d7013@redhat.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 Jun 2018 07:29:45 -0700
-Message-ID: <CA+55aFz50grqj4=Eq5HcoH0ZAZgBtHP38wqxtbjo32-P_Wh5Yg@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM changes for 4.18 merge window
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 07:31:25
+ -0700 (PDT)
+In-Reply-To: <1525852402-29269-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1525852402-29269-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 13 Jun 2018 23:31:25 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQjBYQ1YKGnFodng8uibRDuJ+D9iD4OLQ-qE_8xYOv6Ww@mail.gmail.com>
+Message-ID: <CAK7LNAQjBYQ1YKGnFodng8uibRDuJ+D9iD4OLQ-qE_8xYOv6Ww@mail.gmail.com>
+Subject: Re: [PATCH] sh: remove no-op macro VMLINUX_SYMBOL()
+To:     Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        Linux-sh list <linux-sh@vger.kernel.org>
+Cc:     linux-arch <linux-arch@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 7:27 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
+2018-05-09 16:53 GMT+09:00 Masahiro Yamada <yamada.masahiro@socionext.com>:
+> VMLINUX_SYMBOL() is no-op unless CONFIG_HAVE_UNDERSCORE_SYMBOL_PREFIX
+> is defined.  It has ever been selected only by BLACKFIN and METAG.
+> VMLINUX_SYMBOL() is unneeded for SuperH-specific code.
 >
-> > Well, being in linux-next should have found it too. I know linux-next
-> > had a lot of kvm stuff in it, was this not there?
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+
+
+
+For information for SH maintainers just in case.
+
+I already picked up this patch to my Kbuild tree.
+
+Thanks.
+
+
+
+>  arch/sh/include/asm/vmlinux.lds.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> It was, I suppose that's how Arnd found it.
+> diff --git a/arch/sh/include/asm/vmlinux.lds.h b/arch/sh/include/asm/vmlinux.lds.h
+> index f312813..9929556 100644
+> --- a/arch/sh/include/asm/vmlinux.lds.h
+> +++ b/arch/sh/include/asm/vmlinux.lds.h
+> @@ -7,9 +7,9 @@
+>  #ifdef CONFIG_DWARF_UNWINDER
+>  #define DWARF_EH_FRAME                                                 \
+>         .eh_frame : AT(ADDR(.eh_frame) - LOAD_OFFSET) {                 \
+> -                 VMLINUX_SYMBOL(__start_eh_frame) = .;                 \
+> +                 __start_eh_frame = .;                                 \
+>                   *(.eh_frame)                                          \
+> -                 VMLINUX_SYMBOL(__stop_eh_frame) = .;                  \
+> +                 __stop_eh_frame = .;                                  \
+>         }
+>  #else
+>  #define DWARF_EH_FRAME
+> --
+> 2.7.4
+>
 
-Ok, apparently the 0day bot doesn't trigger this case, or it's just
-that even with randconfig you needed to hit just he right set of
-combinations.
 
-Oh well. Water under the bridge, hopefully your added tests will make
-sure at least _this_ particular issue doesn't happen again...
 
-           Linus
+-- 
+Best Regards
+Masahiro Yamada
