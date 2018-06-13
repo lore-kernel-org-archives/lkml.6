@@ -2,322 +2,170 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2EBCDC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:49:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CFFD6C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:52:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C19AC2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:49:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="OgU/Y70I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C19AC2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 82EA32086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:52:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82EA32086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934953AbeFMItb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:49:31 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:36657 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934480AbeFMIt1 (ORCPT
+        id S934923AbeFMIwP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 04:52:15 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:14153 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933912AbeFMIwN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:49:27 -0400
-Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
-  by relmlie3.idc.renesas.com with ESMTP; 13 Jun 2018 17:49:24 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir3.idc.renesas.com (Postfix) with ESMTP id D278C7A7BB;
-        Wed, 13 Jun 2018 17:49:24 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.51,218,1526310000"; 
-   d="scan'208";a="283882830"
-Received: from mail-ty1jpn01lp0178.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.178])
-  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 13 Jun 2018 17:49:24 +0900
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+8DmjoyyxbgtuVnuQbUREDBcmkEtvP0NJdU1+hHu7zE=;
- b=OgU/Y70IRKZE7slMmDcN4+hu3eWT7DqNEU46+F+NsWmDrD3MxIQCXmX2NJSvYcn+obr7yjnMhq915Z4ZSV5vShC8SgS8nNwMNUmdFCmaUcTCk5taTeILiYjZsFoHEHhtjZC4gO8wYlY4BLFmaUKKxpMJnW+FTiC3D7cHY94LhrU=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.138) by
- TYAPR01MB2080.jpnprd01.prod.outlook.com (2603:1096:404:8::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.841.18; Wed, 13 Jun 2018 08:49:22 +0000
-Message-ID: <8736xrkrci.wl%kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Subject: [PATCH v2] dmaengine: rcar-dmac: don't use DMAC error interrupt
-User-Agent: Wanderlust/2.15.9 Emacs/24.3 Mule/6.0
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        <dmaengine@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Wed, 13 Jun 2018 08:49:22 +0000
-X-Originating-IP: [211.11.155.138]
-X-ClientProxiedBy: TY2PR02CA0005.apcprd02.prod.outlook.com
- (2603:1096:404:56::17) To TYAPR01MB2080.jpnprd01.prod.outlook.com
- (2603:1096:404:8::12)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e0bb4343-0490-45e6-75e8-08d5d10a8f64
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2080;
-X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2080;3:mdOGrNfsm0pKM6r25hCOxRTQdPKo1HvNXCD9M4PwWUdrA8e0gc6zeWJhZMJG6yJ6ZDefJzM3C7/g0ehSowejOvfPPZcPlxF21oppC117vs7XEfXPhGvJw9WlwxLLhQnSXzIBSA60QETqlA22UJR4Oa4o/xP2PLvkzFcjlODUeDzLuXlr0DLLhwyeXfQ5v2ETDl3FPJOG34iQlQcjMehIlbKLusLGMHl5fYhQGQoCym0pPgo3rsXUv6cfHH4unwt1;25:jIYCbZ5RANrDrApaWl40qL1QDHSm7En40G3uFLPe7DIORLvVmFPYwYphBRmP/xF1Wvz/CVFs1BAZ05PSStChxwIx9B2OQUNtLyJW9XelUU27Vwy8LugpeawCQBxrfD23jm5A6gQ5T0l2CQfjhyz49u+AiExOBSdZZfE3KcJaoPNEbdibyIUg78F4XJPHMbDrI2ehO+aNBAtUKE8xpv28SI7yawX2Zb9jESf0fMG00MUB4gOYKDi7gGW4tlnqTEuzQj7rWbDiz8FsLLofDZNJ6XwdzeL89+Ft2F1hOfCqJwacrq2e0JK+LaHdDszSuowpIRgW22vBeKV1R2dsMA/UFw==;31:wq/i6Y7XtjqmKx7sQNKUTBgTh/dGvKDx6alJsT3X35IwNcL1nBPz6cQ2SZj+oH9CTjhPRbtkBy3Z4iUvz9ubwwwm2c0V71MklF2PgkcgvszQP2HBeeMd2GEZAsTqannfIJQ3XcrADxzKgdSA821LySLfX9BDO4ATLnG/Ash5Pt2xXSjc+G48/oaRAt7oYVs+h3gw6ljHiy9ykE1b6g4oFV+vLruDRw0kPbtINjJDEgU=
-X-MS-TrafficTypeDiagnostic: TYAPR01MB2080:
-X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2080;20:rMVUSGAGcDCWQ/tz9U9WFHpmsanxW0p/qW2A+vHVgJA2Xe189BRm7FdwXTjEytbdOtsop5yN6ktMvfo+GAFG1/q88AzisYuKUjOQYWImPnTWeL/I8gSae0v27MGDL8FglPr9eeP3Gjq0ghnf3PXzBlBdVZMWhjLL2l27YGtKEOlIKvUkTTvch0jsheLiMdG7kE5l34Fjmztyr1+G75N0DDQOufPZVnzgwnSGsg93xsRlQTed6zC7vgFfXerFCxnwfgP09+0tVkxqIALTGhXuhxiMWateK4TqPKdsIcXPIE+w4IRwZM4Rw00oIb2IftHXzZ1P2HIkIM6g+k/h4wuiVVl075y2OoNARrpMCGAShzzR6F2l3C67/7Bmb3AUqAJcOiuDwOiXfcgAPum8+nJV+5//kt9LK7o1G1UrqFTOYLJrryAuY/iwD3IyEG+2Zw8sq9xqWqWTDn4uxM8BPp0D4UuACbRKuHme3ODfoNCtsxIzkjYFf7n+lUilnvBFxK5i;4:2jM2knSRi8uobqf7WFNa4y9nNwRPlDL8Y9lRTrQdregokXYxon4pQDdE2+bLQrFMAVhTmyzNeYGw5uf9kQXcj4/ZUg3w5OcILcU30yMdkq/2735thavmxYPwbulY7eBcga+x66WiVTl7X8o4EDaA8Qu2kaCg74B/79GnHhvfWmPThjXpm+MxEb6B5Cj4SxaCbNWGUXpL4G+hZwghBLZfMEsN+7Dvm070i8VOKS5rwxg7kaIRHE8+aDfrGx8qKHOFgZmx+Yg6Tgcf5efoQ5iUEA==
-X-Microsoft-Antispam-PRVS: <TYAPR01MB2080CE2AD4FD6197D94DD6F1D47E0@TYAPR01MB2080.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:TYAPR01MB2080;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2080;
-X-Forefront-PRVS: 07025866F6
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(366004)(376002)(346002)(39380400002)(189003)(199004)(6916009)(39060400002)(106356001)(53416004)(16586007)(36756003)(25786009)(58126008)(105586002)(316002)(386003)(4326008)(7696005)(7416002)(52116002)(81156014)(8936002)(486006)(53936002)(59450400001)(476003)(8676002)(6486002)(956004)(2616005)(47776003)(26005)(97736004)(86362001)(54906003)(81166006)(478600001)(23726003)(186003)(6116002)(3846002)(66066001)(16526019)(7736002)(5660300001)(68736007)(50466002)(69596002)(305945005)(2906002)(21314002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2080;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYAPR01MB2080;23:8aXYvOluqYQ0nZX96dGCeYEb66XfCy8fyXF79Y3Vv?=
- =?us-ascii?Q?qbNuGwmg+5ugs37gsbazoXCr6zQBJzI0QLQDxPMkFV9nUQ+xG8VIO9Iwmwvv?=
- =?us-ascii?Q?jZWc9bMY4btjiatbF2w3nPeglv9xuTuzVPJrweUbdiyOmcl2rWMNORwZkYEN?=
- =?us-ascii?Q?B59SvK38aVbaSXjzfmGWeRLSC+mr0PjQDMwwXFMOeRt2tjWi5PtdRvlpefJp?=
- =?us-ascii?Q?w9yUCeRrZpgqhAM9LS5Pq2PEed0fnT3rMg2TWhyXMdDCtfcvh+KdVxu1DGH3?=
- =?us-ascii?Q?Q1n60dwYcAyjE+m45aaRq1V7yt8w7MCAHqMnDOc4zJ7Bh/jrQaEeVtbKp7eE?=
- =?us-ascii?Q?vNTmKJspOvpNeQpv2D/a5g8D6lVX3VX2aeFDVXI+RsKu+oZzbmLLYgIv2LT5?=
- =?us-ascii?Q?SFczxgNLKSlR2n4jlGG5E3lYJn6HRMy4G8i3G8bARwUEiD1XEfRPl8Ewaj86?=
- =?us-ascii?Q?qho/J1H1c2B/fr/Gu53ed6FlV1rZ+OZpcQdU7FxKh7QbAPkay5YSGQg++Tu4?=
- =?us-ascii?Q?iSgxTBywx/WhFpO+1AWmFEOPuG1kgoNEXCC07nRZSrO/6LxKxICU6rWJpLmj?=
- =?us-ascii?Q?wlLfbiWIvQv9BzikBMHHQ7khdxYfj/xK4S7FyhratcP+W04yM+yfgXJEQ4F0?=
- =?us-ascii?Q?5anJ7K2Huv3182b92VcK3w7lAF0F5CrC32ApPids1VTjNX8F8J1xUclAWFBt?=
- =?us-ascii?Q?lTn1M60koriVQc3uMvLKy0LK8neuLGw1YY7y+WdFTK3etq/+n89YDcmhna6I?=
- =?us-ascii?Q?TPE1SSXva1cJBvT0/JyTIy0sOFHDmhyZKJXbcBSW9Z7AtwdNScjvGmiGaeBG?=
- =?us-ascii?Q?ZINVv6TePGGIGQmuvIMKGzjD20dnNneWqBcvadPolipBYBYyRnavTsYyuuLM?=
- =?us-ascii?Q?QS7NQ3ZpJF2jpFB63NiVfGnheULDq165hEIBGJcKsojzMUF3rur9XYTMnFY+?=
- =?us-ascii?Q?S98mPwXUWNAdlWhoIeimsB1e65RU/obpFsT2iddfI5DGTuvbPARjYmeFWElL?=
- =?us-ascii?Q?Ac83rdv4b5tPd3xTIxzbHOv9wrkBPs//Klfm74wWIH2yTdUsAiDYc6FBqFOd?=
- =?us-ascii?Q?2O6w8lTW0bO7aSfkadzBTgnXPaViJoAI2JwHLrJkBK5EC4hFQIQhqnFd8w0c?=
- =?us-ascii?Q?Rc1hzttobvdyiPbXDbBr8747vSUtTOIJulc3qXcJ8Npsk7e22GZOkTI4WDHO?=
- =?us-ascii?Q?s5tM6+KLStCyfIp4q18EOdsaLmgYNJbqNUAwa0ROQtY0lumvB2bY3UEVhLjg?=
- =?us-ascii?Q?s4VjYPxT8TO/LdPTFg=3D?=
-X-Microsoft-Antispam-Message-Info: PVkG4QqSojvKAinNkqEZV4vf/K2v717HquRCzjt7eQ6SCdi7cGI22DgQCXPfeHZliGyniNPe72dQrO+sC350DAa+ZuLwZv3Co4JEqILdapOvcp/d0bIsD+nlWfIQih0TGnzkyiZk/Is56BJgNtFaBTkzoLZ/jdzEIN7Xf368TuE+Ux4CKICuJjZBBlP2EngS
-X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2080;6:riwTJ3UI1qwpqTU1+4RQAgW7yu19nrvh0J7QTzNx529qyFFZP2VklQvGLepDZ1BWseHmWXav6mY1GN7Q//zJ29CtBBaXgKR6pfWHmV2MCUum5WFWn5Gk0b5KpxXPd6Bs7/M+6DRXIOJ+eekrhN4WlrnN8d3mg6GZ2A+NMAFyExIjH6m0A7xUkXriwWut45V8abTbkFYPPb+Bl/ehtE9VkJBPRvPvLDbAZ4IlfY5eFKPobd7xOAUX8VeiO1ydZ+to/v8o11nUA5SUA9f4Fp5LniS6TlO7KKaoSzQU/ikqFc7RsBTmyo4yhUPbwL5tAmk8oO/9hT5qYtGAShCZ1gU0Tyo+Nzal003p8qUhbEC8kSz99xcRxzyE/0x8GVhkM7HOdUBEfDfZ+NGNqbFHDh0waq6p01Vd9ppyHM2RNu0VS/d+OTQJdC/693RRCGJ2fwcSFz4kBhlCd7z8naWA9mxSjQ==;5:WBDNOlGI/lF5+eIqTz07SiTxG14X0SJosOanZSB3j1CqelX+96AK0oclgx5Di0eFjyRI5UhA+U/bx+S3Zm+Z97I+TUCWDXP+nDn927cuezdkZrW7PdVGTqV0tf19zIdlAQ85QfHB657CK9BN+GnGfylElmkhr/7sUm0bafIQhX8=;24:+ZizZwk93WG0+1WuabnTZ19v3Cf8FLkaAsuLtQqtM4wAzaLt/goco3TjL8GqOP6OHGbIK9hqa7pzF3FkoxgkWoxz9zpeCaMqciq/N9TJ1T4=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2080;7:j7tM4YLfHw7QzSCvHY+bAxalWpT3nvPiiQYFkSLzW8GeR33Xy7kOQQU4PLg6sRCelu4cph5PMefUZ3IslZGn46Hw2Eb69DYUUwfiQ7p9M+UOcTUk9/NBoFKbnRzkMO80QVwNbphfBHc52++rORjMQjPPOKWcQR/DUiE7kr0l6hYYIlx7vux/ENUIO1mgNfQUUCZz/xZjraituuWW533QymlUJonGQxHZOGPLnHUq+M49ddgc2/3ijbA9v5vQo5Z2;20:+jQz9fDNtt7C2WdmjK3VIQ6XueLD/3VdEQsBu51cU5qKPZKjMj30sQHyRrR2X7HHM4g5NpHMX77lhaGHVn5p6c+cp6mXnNaIht7r2+Pk+D5cb4+NeiiBQDDSRRGcroPW9+L2i98scWD6OGJ64hQO/Gx14y8WExM52oukI8g/DYw=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jun 2018 08:49:22.7076 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e0bb4343-0490-45e6-75e8-08d5d10a8f64
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2080
+        Wed, 13 Jun 2018 04:52:13 -0400
+X-UUID: 4ac543b8a64f4994b8e72572b99e009a-20180613
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 386407530; Wed, 13 Jun 2018 16:52:10 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 16:52:08 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 16:52:08 +0800
+Message-ID: <1528879928.11190.39.camel@mtksdccf07>
+Subject: Re: [PATCH 13/28] drm/mediatek: add connection from RDMA0 to DSI3
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 16:52:08 +0800
+In-Reply-To: <1528877112.30263.24.camel@mtksdaap41>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-14-git-send-email-stu.hsieh@mediatek.com>
+         <1528868751.15127.10.camel@mtksdaap41>
+         <1528875983.11190.29.camel@mtksdccf07>
+         <1528877112.30263.24.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, CK:
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+On Wed, 2018-06-13 at 16:05 +0800, CK Hu wrote:
+> Hi, Stu:
+> 
+> On Wed, 2018-06-13 at 15:46 +0800, Stu Hsieh wrote:
+> > Hi, CK:
+> > 
+> > On Wed, 2018-06-13 at 13:45 +0800, CK Hu wrote:
+> > > Hi, Stu:
+> > > 
+> > > Two inline comment.
+> > > 
+> > > On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> > > > This patch add the connection from RDMA0 to DSI3
+> > > > 
+> > > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > > ---
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 4 ++++
+> > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
+> > > >  2 files changed, 5 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > index c08aed8dae44..fed1b5704355 100644
+> > > > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > > @@ -83,6 +83,7 @@
+> > > >  #define GAMMA_MOUT_EN_RDMA1		0x1
+> > > >  #define RDMA0_MOUT_DPI0			0x2
+> > > >  #define RDMA0_MOUT_DSI2			0x4
+> > > > +#define RDMA0_MOUT_DSI3			0x5
+> > > 
+> > > Usually, each bit of a mout register represent a output enable. Is this
+> > > value 0x5 is a correct value?
+> > 
+> > In hw CONFIG SPEC show as following:
+> > Bit(s)	Name			Description
+> > 2:0	DISP_PATH0_SOUT_SEL_IN	0 : Output to DSI0
+> > 				1:  Ooutput to DSI1
+> > 				2:  Ooutput to DPI
+> > 				3:  Ooutput to DPI1
+> > 				4:  Ooutput to DSI2
+> > 				5:  Ooutput to DSI3
+> > 				6 : reserved
+> > 				7:  Ooutput to DISP_UFOE
+> > So, the value 0x5 is correct value.
+> > 
+> 
+> From the definition, it looks like that RDMA0 could only single output
+> (output to only one destination at one moment). The register naming
+> 'DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN' (MOUT means output to multiple
+> destination simultaneously) would confuse me. If the data sheet use the
+> confused naming, I think I could just accept it.
+> 
+> Regards,
+> CK
+> 
+OK, I would change the definition name from
+DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN to DISP_REG_CONFIG_DISP_RDMA0_SOUT_EN
 
-Current rcar-dmac is using DMAC error interrupt which will handle all
-channel's error. But in this design, error handling itself will be
-issue if user want to use virtualization, multi OS, etc.
-This patch removes current DMAC error interrupt handling, and handle it
-on each channel interrupt handler.
+> > Regard,
+> > Stu
+> > 
+> > > 
+> > > >  #define RDMA1_MOUT_DPI0			0x2
+> > > >  #define DPI0_SEL_IN_RDMA1		0x1
+> > > >  #define COLOR1_SEL_IN_OVL1		0x1
+> > > > @@ -164,6 +165,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> > > >  	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI2) {
+> > > >  		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
+> > > >  		value = RDMA0_MOUT_DSI2;
+> > > > +	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI3) {
+> > > > +		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
+> > > > +		value = RDMA0_MOUT_DSI3;
+> > > >  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+> > > >  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+> > > >  		value = RDMA1_MOUT_DPI0;
+> > > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > > > index fe6fdc021fc7..22f4c72fa785 100644
+> > > > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > > > @@ -228,7 +228,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+> > > >  	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
+> > > >  	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
+> > > >  	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		2, NULL },
+> > > > -	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		3, NULL },
+> > > > +	[DDP_COMPONENT_DSI3]	= { MTK_DSI,		3, NULL },
+> > > 
+> > > I think this is not related to this patch.
+> > OK
+> > 
+> > > 
+> > > Regards,
+> > > CK
+> > > 
+> > > >  	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
+> > > >  	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
+> > > >  	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
+> > > 
+> > > 
+> > 
+> > 
+> 
+> 
 
-Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
-[Kuninori: updated patch to adjust DMACHCR/DMAOR]
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
----
-v1 -> v2
-
- - add [Kuninori: xxx] line on git log
- - don't remove DT property
- - tidyup rcar_dmac_isr_channel()
-
- .../devicetree/bindings/dma/renesas,rcar-dmac.txt  |  1 +
- drivers/dma/sh/rcar-dmac.c                         | 72 +++++++---------------
- 2 files changed, 23 insertions(+), 50 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-index b1ba6395..b8e1c13 100644
---- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-+++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
-@@ -38,6 +38,7 @@ Required Properties:
- - interrupt-names: one entry for the error interrupt, named "error", plus one
-   entry per channel, named "ch%u", where %u is the channel number ranging from
-   zero to the number of channels minus one.
-+  # "error" interrupt will be ignored, so far
- 
- - clock-names: "fck" for the functional clock
- - clocks: a list of phandle + clock-specifier pairs, one for each entry
-diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
-index 2a2ccd9..279c930 100644
---- a/drivers/dma/sh/rcar-dmac.c
-+++ b/drivers/dma/sh/rcar-dmac.c
-@@ -431,7 +431,8 @@ static void rcar_dmac_chan_start_xfer(struct rcar_dmac_chan *chan)
- 		chcr |= RCAR_DMACHCR_DPM_DISABLED | RCAR_DMACHCR_IE;
- 	}
- 
--	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr | RCAR_DMACHCR_DE);
-+	rcar_dmac_chan_write(chan, RCAR_DMACHCR,
-+			     chcr | RCAR_DMACHCR_DE | RCAR_DMACHCR_CAIE);
- }
- 
- static int rcar_dmac_init(struct rcar_dmac *dmac)
-@@ -783,7 +784,8 @@ static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
- 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
- 
- 	chcr &= ~(RCAR_DMACHCR_DSE | RCAR_DMACHCR_DSIE | RCAR_DMACHCR_IE |
--		  RCAR_DMACHCR_TE | RCAR_DMACHCR_DE);
-+		  RCAR_DMACHCR_TE | RCAR_DMACHCR_DE |
-+		  RCAR_DMACHCR_CAE | RCAR_DMACHCR_CAIE);
- 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
- 	rcar_dmac_chcr_de_barrier(chan);
- }
-@@ -812,12 +814,7 @@ static void rcar_dmac_chan_reinit(struct rcar_dmac_chan *chan)
- 	}
- }
- 
--static void rcar_dmac_stop(struct rcar_dmac *dmac)
--{
--	rcar_dmac_write(dmac, RCAR_DMAOR, 0);
--}
--
--static void rcar_dmac_abort(struct rcar_dmac *dmac)
-+static void rcar_dmac_stop_all_chan(struct rcar_dmac *dmac)
- {
- 	unsigned int i;
- 
-@@ -829,11 +826,10 @@ static void rcar_dmac_abort(struct rcar_dmac *dmac)
- 		spin_lock(&chan->lock);
- 		rcar_dmac_chan_halt(chan);
- 		spin_unlock(&chan->lock);
--
--		rcar_dmac_chan_reinit(chan);
- 	}
- }
- 
-+
- /* -----------------------------------------------------------------------------
-  * Descriptors preparation
-  */
-@@ -1522,11 +1518,18 @@ static irqreturn_t rcar_dmac_isr_channel(int irq, void *dev)
- 	u32 mask = RCAR_DMACHCR_DSE | RCAR_DMACHCR_TE;
- 	struct rcar_dmac_chan *chan = dev;
- 	irqreturn_t ret = IRQ_NONE;
-+	bool reinit = false;
- 	u32 chcr;
- 
- 	spin_lock(&chan->lock);
- 
- 	chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
-+	if (chcr & RCAR_DMACHCR_CAE) {
-+		rcar_dmac_chan_halt(chan);
-+		reinit = true;
-+		goto spin_lock_end;
-+	}
-+
- 	if (chcr & RCAR_DMACHCR_TE)
- 		mask |= RCAR_DMACHCR_DE;
- 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr & ~mask);
-@@ -1539,8 +1542,16 @@ static irqreturn_t rcar_dmac_isr_channel(int irq, void *dev)
- 	if (chcr & RCAR_DMACHCR_TE)
- 		ret |= rcar_dmac_isr_transfer_end(chan);
- 
-+spin_lock_end:
- 	spin_unlock(&chan->lock);
- 
-+	if (reinit) {
-+		dev_err(chan->chan.device->dev, "Channel Address Error\n");
-+
-+		rcar_dmac_chan_reinit(chan);
-+		ret = IRQ_HANDLED;
-+	}
-+
- 	return ret;
- }
- 
-@@ -1597,24 +1608,6 @@ static irqreturn_t rcar_dmac_isr_channel_thread(int irq, void *dev)
- 	return IRQ_HANDLED;
- }
- 
--static irqreturn_t rcar_dmac_isr_error(int irq, void *data)
--{
--	struct rcar_dmac *dmac = data;
--
--	if (!(rcar_dmac_read(dmac, RCAR_DMAOR) & RCAR_DMAOR_AE))
--		return IRQ_NONE;
--
--	/*
--	 * An unrecoverable error occurred on an unknown channel. Halt the DMAC,
--	 * abort transfers on all channels, and reinitialize the DMAC.
--	 */
--	rcar_dmac_stop(dmac);
--	rcar_dmac_abort(dmac);
--	rcar_dmac_init(dmac);
--
--	return IRQ_HANDLED;
--}
--
- /* -----------------------------------------------------------------------------
-  * OF xlate and channel filter
-  */
-@@ -1784,8 +1777,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 	struct rcar_dmac *dmac;
- 	struct resource *mem;
- 	unsigned int i;
--	char *irqname;
--	int irq;
- 	int ret;
- 
- 	dmac = devm_kzalloc(&pdev->dev, sizeof(*dmac), GFP_KERNEL);
-@@ -1824,17 +1815,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 	if (IS_ERR(dmac->iomem))
- 		return PTR_ERR(dmac->iomem);
- 
--	irq = platform_get_irq_byname(pdev, "error");
--	if (irq < 0) {
--		dev_err(&pdev->dev, "no error IRQ specified\n");
--		return -ENODEV;
--	}
--
--	irqname = devm_kasprintf(dmac->dev, GFP_KERNEL, "%s:error",
--				 dev_name(dmac->dev));
--	if (!irqname)
--		return -ENOMEM;
--
- 	/* Enable runtime PM and initialize the device. */
- 	pm_runtime_enable(&pdev->dev);
- 	ret = pm_runtime_get_sync(&pdev->dev);
-@@ -1885,14 +1865,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
- 			goto error;
- 	}
- 
--	ret = devm_request_irq(&pdev->dev, irq, rcar_dmac_isr_error, 0,
--			       irqname, dmac);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to request IRQ %u (%d)\n",
--			irq, ret);
--		return ret;
--	}
--
- 	/* Register the DMAC as a DMA provider for DT. */
- 	ret = of_dma_controller_register(pdev->dev.of_node, rcar_dmac_of_xlate,
- 					 NULL);
-@@ -1932,7 +1904,7 @@ static void rcar_dmac_shutdown(struct platform_device *pdev)
- {
- 	struct rcar_dmac *dmac = platform_get_drvdata(pdev);
- 
--	rcar_dmac_stop(dmac);
-+	rcar_dmac_stop_all_chan(dmac);
- }
- 
- static const struct of_device_id rcar_dmac_of_ids[] = {
--- 
-1.9.1
 
