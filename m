@@ -1,177 +1,102 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 27CCAC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:01:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2267AC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:02:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D970620891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D970620891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id C8D6220891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:02:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F7uh66Rf";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VdvW0VbY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D6220891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934893AbeFMJBK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:01:10 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:34650 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1750922AbeFMJBH (ORCPT
+        id S1754545AbeFMJCt (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:02:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39644 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750922AbeFMJCq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:01:07 -0400
-X-UUID: a8fa29aec3314fd69014f21a0accf94d-20180613
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 386226893; Wed, 13 Jun 2018 17:01:02 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 13 Jun 2018 17:01:01 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 13 Jun 2018 17:01:01 +0800
-Message-ID: <1528880461.18148.1.camel@mtksdaap41>
-Subject: Re: [PATCH 19/28] drm/mediatek: add connection from RDMA2 to DPI1
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Wed, 13 Jun 2018 17:01:01 +0800
-In-Reply-To: <1528880291.11190.45.camel@mtksdccf07>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-         <1528687580-549-20-git-send-email-stu.hsieh@mediatek.com>
-         <1528874037.30263.6.camel@mtksdaap41>
-         <1528876862.11190.35.camel@mtksdccf07>
-         <1528877675.30263.27.camel@mtksdaap41>
-         <1528880291.11190.45.camel@mtksdccf07>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+        Wed, 13 Jun 2018 05:02:46 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4E5EC607A4; Wed, 13 Jun 2018 09:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528880566;
+        bh=fl6gQW5SIy21oP3dRmfZs3JwXPRdmjmKR+fZnpIVOuY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=F7uh66Rf4i1eWn0tAzAvlZKN4orHtggqJI1eA9amGTvBsov+w+ifhUgni9sSBmVKI
+         81xQ+jbFAKdAt5sOBodRQOZXFZx2VTcHZij2R695Pw6HTQOZ+ru0UUZeoixULiQLqV
+         PPYl2vYQVqP1b8ON3nJBcDP+gw3vhTuyKlHcehHs=
+Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: absahu@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id A2EFB606DB;
+        Wed, 13 Jun 2018 09:02:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528880564;
+        bh=fl6gQW5SIy21oP3dRmfZs3JwXPRdmjmKR+fZnpIVOuY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VdvW0VbYD4pI6bLeUuJwiDfLy0JCGxYKT/6iFMM/+79J5pGSC/3CSd6KRwsFt3o0H
+         CwOkoHQaKGGlwERH/0VOrj5SXS58b83OXyrm5s9c0gIP31Zpck1KJFm0u2Z7fYvFUu
+         xfYBPn7rvUdPDNbW8eJC28Sgl1mFj3ODoYLPwj3U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2EFB606DB
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
+From:   Abhishek Sahu <absahu@codeaurora.org>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mtd@lists.infradead.org,
+        Abhishek Sahu <absahu@codeaurora.org>, <stable@vger.kernel.org>
+Subject: [PATCH] mtd: rawnand: fix return value check for bad block status
+Date:   Wed, 13 Jun 2018 14:32:36 +0530
+Message-Id: <1528880556-20348-1-git-send-email-absahu@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
+Positive return value from read_oob() is making false BAD
+blocks. For some of the NAND controllers, OOB bytes will be
+protected with ECC and read_oob() will return number of bitflips.
+If there is any bitflip in ECC protected OOB bytes for BAD block
+status page, then that block is getting treated as BAD.
 
-On Wed, 2018-06-13 at 16:58 +0800, Stu Hsieh wrote:
-> Hi, CK:
-> 
-> On Wed, 2018-06-13 at 16:14 +0800, CK Hu wrote:
-> > Hi, Stu:
-> > 
-> > On Wed, 2018-06-13 at 16:01 +0800, Stu Hsieh wrote:
-> > > Hi, CK:
-> > > 
-> > > 
-> > > On Wed, 2018-06-13 at 15:13 +0800, CK Hu wrote:
-> > > > Hi, Stu:
-> > > > 
-> > > > On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
-> > > > > This patch add the connection from RDMA2 to DPI1
-> > > > > 
-> > > > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> > > > > ---
-> > > > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
-> > > > >  1 file changed, 8 insertions(+)
-> > > > > 
-> > > > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> > > > > index 31a0832ef9ec..2d883815d79c 100644
-> > > > > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> > > > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> > > > > @@ -93,9 +93,11 @@
-> > > > >  #define RDMA1_MOUT_DPI0			0x2
-> > > > >  #define RDMA1_MOUT_DPI1			0x3
-> > > > >  #define RDMA2_MOUT_DPI0			0x2
-> > > > > +#define RDMA2_MOUT_DPI1			0x3
-> > > > 
-> > > > Usually, each bit of a mout register represent a output enable. Is this
-> > > > value 0x3 a correct value?
-> > > > 
-> > > > Regards,
-> > > > CK
-> > > > 
-> > > In HW CONFIG SPEC or MT2712_E2_MMSYS_Change_note show as following:
-> > > 
-> > > Bit(s)	Name			Description
-> > > 2:0	DISP_RDMA2_SOUT_SEL_IN	0: output to dsi0
-> > > 				1: outptu to dsi1
-> > > 				2: output to dpi0
-> > > 				3: output to dpi1
-> > > 				4: output to dsi2
-> > > 				5: output to dsi3
-> > > 
-> > > So, 0x3 is correct value.
-> > 
-> > The data sheet use the term SOUT match its function, so I think driver
-> > have better change the naming to SOUT.
-> > 
-> > Regards,
-> > CK
-> > 
-> 
-> The definition DISP_REG_CONFIG_DISP_RDMA2_SOUT is use term SOUT in this
-> patch.
-> 
+Fixes: c120e75e0e7d ("mtd: nand: use read_oob() instead of cmdfunc() for bad block check")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
+---
+ drivers/mtd/nand/raw/nand_base.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I know, but RDMA2_MOUT_DPI1 should be changed to RDMA2_SOUT_DPI1.
-
-Regards,
-CK
-
-> Regard,
-> Stu
-> 
-> > > 
-> > > Regard,
-> > > Stu
-> > > 
-> > > > >  #define DPI0_SEL_IN_RDMA1		0x1
-> > > > >  #define DPI0_SEL_IN_RDMA2		0x3
-> > > > >  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
-> > > > > +#define DPI1_SEL_IN_RDMA2		(0x3 << 8)
-> > > > >  #define DSI1_SEL_IN_RDMA1		0x1
-> > > > >  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
-> > > > >  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
-> > > > > @@ -199,6 +201,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
-> > > > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
-> > > > >  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
-> > > > >  		value = RDMA2_MOUT_DPI0;
-> > > > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
-> > > > > +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
-> > > > > +		value = RDMA2_MOUT_DPI1;
-> > > > >  	} else {
-> > > > >  		value = 0;
-> > > > >  	}
-> > > > > @@ -233,6 +238,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
-> > > > >  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
-> > > > >  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
-> > > > >  		value = DPI0_SEL_IN_RDMA2;
-> > > > > +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
-> > > > > +		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
-> > > > > +		value = DPI1_SEL_IN_RDMA2;
-> > > > >  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
-> > > > >  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
-> > > > >  		value = COLOR1_SEL_IN_OVL1;
-> > > > 
-> > > > 
-> > > 
-> > > 
-> > 
-> > 
-> 
-> 
-
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index f28c3a5..4a73f73 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -440,7 +440,7 @@ static int nand_block_bad(struct mtd_info *mtd, loff_t ofs)
+ 
+ 	for (; page < page_end; page++) {
+ 		res = chip->ecc.read_oob(mtd, chip, page);
+-		if (res)
++		if (res < 0)
+ 			return res;
+ 
+ 		bad = chip->oob_poi[chip->badblockpos];
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
+is a member of Code Aurora Forum, hosted by The Linux Foundation
 
