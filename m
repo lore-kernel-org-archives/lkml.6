@@ -2,142 +2,114 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EF985C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:02:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9E00FC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:04:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A306208B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:02:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="HOra5Z8i";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kcw8BKtl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A306208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 542D7208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:04:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 542D7208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934907AbeFMACF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 20:02:05 -0400
-Received: from mail-yw0-f195.google.com ([209.85.161.195]:46661 "EHLO
-        mail-yw0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934634AbeFMACD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 20:02:03 -0400
-Received: by mail-yw0-f195.google.com with SMTP id v197-v6so261546ywc.13
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 17:02:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=rWkz+1Mt3IOjq4J128zktzgOcXHllswKWBfcGQb5kVU=;
-        b=HOra5Z8i2cRiatjnqfm4t0NJPK6QZMHek1VaZZwBhSJ9FWitKEU4IQh9dklgpSv2i+
-         b9PwE+JWk8sHhR6ME0Jv4WVEDnjYpJGJUOibCCNg1UFTxTgiP7Lp5d+I20Td6Ld5dlmb
-         2gdARiXXHPUzylLoBj/pDz8fdI426/xaHdE+S3HhlgdBvqI8ldMDCobVYzrktGlClQXT
-         4vX/++Wp8XJn8G5mu+Kk0GmM69IZO7Y3fWaALBTBts1VQcLI8sy8XCzRQ3XgtAVGYxvT
-         RkO/vs772lLegcnhRNT/GOOC+YPar0RNZLtiTlNErlZ9tkaN7GmgWvWR4YMDLV3UZfYM
-         6lmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=rWkz+1Mt3IOjq4J128zktzgOcXHllswKWBfcGQb5kVU=;
-        b=kcw8BKtldDi8tbmulJtGIqTebNHoRCZFkAQHnVNxoX9+2Tvz+9cnVvObfuGzEyg2k8
-         rgJ0H3EHo9ADn2lv1QtAaIdPx+epd+Vpz36BjYYAK/6uTFXy46WBVIFADbOVjV8u6ibE
-         +R+HWc1VBCtPH5zXztmv4a+3r4/Ff5Tk4mQEU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=rWkz+1Mt3IOjq4J128zktzgOcXHllswKWBfcGQb5kVU=;
-        b=Lk4roit3+Vdn1cWtFVajj9GhJ+XKtVPLJ5suYsJ7hHB5l08QgTJEwCmj5WsG8kFh2c
-         bIddZg+fn7hxw2JUz+60pQM362RJn5vc3iDMf792VGML5x3q4i9hD/eOMH9JTYwEcnb7
-         7+pF7P3FcmJ5w+JksvVDp9QP0V8xfAAyjSxBWRSKLEVh/Q3IVG4TahHKWFG5tTsrbhIe
-         x3gqfJ2+nXwW+nOe7KAIuojGhuJw91A4uqNgaPYsUrvfdv2sJZNt5p5YrOo08KxA6P19
-         JmbYoatDQE1ydRO2QVzKVBgZjNu3ZgucDZdZiaBDb9RFk4cEevYik+JpX3YXSMHFw5lZ
-         nr8Q==
-X-Gm-Message-State: APt69E09lT6Lp9S3HS1e4kTucJkMylor9klVCfSLP5wzbahc51rslRy1
-        eOoLAveEM4x9z1+CVYC4CUpPCzCJfkc+u5DBirARaA==
-X-Google-Smtp-Source: ADUXVKKj4GJ7x+7HlR3JJBDTqUHyUcP7a5DfemBh/Exu+fK0nYr9Qm5DHpie65yoKmahe9dT6atTNWW6cdsIU71aGI8=
-X-Received: by 2002:a81:4a05:: with SMTP id x5-v6mr1329841ywa.116.1528848122865;
- Tue, 12 Jun 2018 17:02:02 -0700 (PDT)
+        id S934864AbeFMAEN convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 20:04:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:58062 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932490AbeFMAEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 20:04:12 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 17:04:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
+   d="scan'208";a="236938041"
+Received: from fmsmsx106.amr.corp.intel.com ([10.18.124.204])
+  by fmsmga006.fm.intel.com with ESMTP; 12 Jun 2018 17:04:11 -0700
+Received: from fmsmsx118.amr.corp.intel.com (10.18.116.18) by
+ FMSMSX106.amr.corp.intel.com (10.18.124.204) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 12 Jun 2018 17:04:11 -0700
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ fmsmsx118.amr.corp.intel.com (10.18.116.18) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Tue, 12 Jun 2018 17:04:11 -0700
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.82]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.87]) with mapi id 14.03.0319.002;
+ Wed, 13 Jun 2018 08:04:09 +0800
+From:   "Xu, Even" <even.xu@intel.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+CC:     "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] hid: intel_ish-hid: ipc: register more pm callbacks to
+ support hibernation
+Thread-Topic: [PATCH] hid: intel_ish-hid: ipc: register more pm callbacks to
+ support hibernation
+Thread-Index: AQHUASd9wHD/F8upPEi0DX5gInteeKRcMcAAgAEenvA=
+Date:   Wed, 13 Jun 2018 00:04:08 +0000
+Message-ID: <9577C59DB499174B9340876B077C2E9569DF11D7@SHSMSX101.ccr.corp.intel.com>
+References: <20180611015650.51385-1-srinivas.pandruvada@linux.intel.com>
+ <nycvar.YFH.7.76.1806121651460.6203@cbobk.fhfr.pm>
+In-Reply-To: <nycvar.YFH.7.76.1806121651460.6203@cbobk.fhfr.pm>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiNGUzY2M3NzktZGNkZC00MjUxLWExYjQtMDE3MWQwNDM1MTljIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiOUJnZ00yODlzT3NVNXlGcTk0aVRNOWNiZXlJRUZyUFVuQ3RXV0NBamd2ajBwM2s3ZWU3OVhmK3R1dnlDWmM2TiJ9
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 17:02:02
- -0700 (PDT)
-In-Reply-To: <20180612232230.27864-1-shuah@kernel.org>
-References: <20180612232230.27864-1-shuah@kernel.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 12 Jun 2018 17:02:02 -0700
-X-Google-Sender-Auth: Oli6NhlZTpVKDuRRowSbqReT5SI
-Message-ID: <CAGXu5j+QyS_RCKgyL-hH9HO4vo1ZR0BuWbeBtzHBt8AnWMPU2A@mail.gmail.com>
-Subject: Re: [PATCH] selftests: pstore: return Kselftest Skip code for skipped tests
-To:     "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Cc:     Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 4:22 PM, Shuah Khan (Samsung OSG)
-<shuah@kernel.org> wrote:
-> When pstore_post_reboot test gets skipped because of unmet dependencies
-> and/or unsupported configuration, it returns 0 which is treated as a pass
-> by the Kselftest framework. This leads to false positive result even when
-> the test could not be run.
->
-> Change it to return kselftest skip code when a test gets skipped to clearly
-> report that the test could not be run.
->
-> Kselftest framework SKIP code is 4 and the framework prints appropriate
-> messages to indicate that the test is skipped.
->
-> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Hi, Jiri Kosina,
 
-Reviewed-by: Kees Cook <keescook@chromium.org>
+If without this patch, the platform with ISH, its hibernation resume will take more than 10s because of ISH resume failure, it will also cause ISH not functional.
+With this patch, everything will go will.
 
-Thanks!
-
--Kees
-
-> ---
->  tools/testing/selftests/pstore/pstore_post_reboot_tests | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/tools/testing/selftests/pstore/pstore_post_reboot_tests b/tools/testing/selftests/pstore/pstore_post_reboot_tests
-> index 6ccb154cb4aa..22f8df1ad7d4 100755
-> --- a/tools/testing/selftests/pstore/pstore_post_reboot_tests
-> +++ b/tools/testing/selftests/pstore/pstore_post_reboot_tests
-> @@ -7,13 +7,16 @@
->  #
->  # Released under the terms of the GPL v2.
->
-> +# Kselftest framework requirement - SKIP code is 4.
-> +ksft_skip=4
-> +
->  . ./common_tests
->
->  if [ -e $REBOOT_FLAG  ]; then
->      rm $REBOOT_FLAG
->  else
->      prlog "pstore_crash_test has not been executed yet. we skip further tests."
-> -    exit 0
-> +    exit $ksft_skip
->  fi
->
->  prlog -n "Mounting pstore filesystem ... "
-> --
-> 2.17.0
->
+Best Regards,
+Even Xu
 
 
+-----Original Message-----
+From: Jiri Kosina [mailto:jikos@kernel.org] 
+Sent: Tuesday, June 12, 2018 10:53 PM
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: benjamin.tissoires@redhat.com; linux-input@vger.kernel.org; linux-kernel@vger.kernel.org; Xu, Even <even.xu@intel.com>
+Subject: Re: [PATCH] hid: intel_ish-hid: ipc: register more pm callbacks to support hibernation
 
--- 
-Kees Cook
-Pixel Security
+On Sun, 10 Jun 2018, Srinivas Pandruvada wrote:
+
+> From: Even Xu <even.xu@intel.com>
+> 
+> Current ish driver only register resume/suspend PM callbacks which 
+> don't support hibernation (suspend to disk). Now use the
+> SIMPLE_DEV_PM_OPS() MACRO instead of struct dev_pm_ops directly.
+> The suspend and resume functions will now be used for both suspend to 
+> RAM and hibernation.
+> 
+> If power management is disable, SIMPLE_DEV_PM_OPS will do nothing, the 
+> suspend and resume related functions won't be used, so mark them as 
+> __maybe_unused to clarify that this is intended behavior, and remove 
+> #ifdefs for power management.
+
+This describes details the patch does on code level, but what are the user observable effects? Hibernation resume doesn't fail any more? Hibernation is possible (and wasn't before)? Did kernel crash while trying to hibernate and this is the fix? Or ... ?
+
+Thanks,
+
+--
+Jiri Kosina
+SUSE Labs
+
