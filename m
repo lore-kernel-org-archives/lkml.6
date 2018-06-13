@@ -2,91 +2,147 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E3952C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:21:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 576F8C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E1B1208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:21:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1B1208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 15E2D208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:22:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E2D208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935610AbeFMNVD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:21:03 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:63817 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935375AbeFMNVC (ORCPT
+        id S935653AbeFMNWE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:22:04 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:56188 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935375AbeFMNWC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:21:02 -0400
-Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5DDKpQa065055;
-        Wed, 13 Jun 2018 22:20:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
- Wed, 13 Jun 2018 22:20:51 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5DDKkL4064988
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Wed, 13 Jun 2018 22:20:51 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional
- processes
-To:     Michal Hocko <mhocko@kernel.org>,
-        David Rientjes <rientjes@google.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
- <20180525072636.GE11881@dhcp22.suse.cz>
- <alpine.DEB.2.21.1805251227380.158701@chino.kir.corp.google.com>
- <20180528081345.GD1517@dhcp22.suse.cz>
- <alpine.DEB.2.21.1805301357100.150424@chino.kir.corp.google.com>
- <20180531063212.GF15278@dhcp22.suse.cz>
- <alpine.DEB.2.21.1805311400260.74563@chino.kir.corp.google.com>
- <20180601074642.GW15278@dhcp22.suse.cz>
- <alpine.DEB.2.21.1806042100200.71129@chino.kir.corp.google.com>
- <20180605085707.GV19202@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <56138495-fd91-62f8-464a-db9960bfeb28@i-love.sakura.ne.jp>
-Date:   Wed, 13 Jun 2018 22:20:49 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 13 Jun 2018 09:22:02 -0400
+Received: by mail-it0-f70.google.com with SMTP id i127-v6so2387528ita.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:22:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=JLuh5yxy4MnqhnwTlij06WylpIOh3rwnHBbI6Eki2NM=;
+        b=q6KD/H5O5N6ytgNMjhSePiCKaYUYrGUmkNLFAx/hQI4d9LgcLWNObVQfHoia0LOH6N
+         1ZLh7Vn2eCyrjwUnKziRJ3PK2cufzpDIniP0GHKwKfYEbQW8KmF6LmRcNAPUprqjrY1+
+         58kFZizA0gH8jMyHqpKFDj1V8Zrh8bxaYUj6akj/r3tnMbwl5x/XSxGrz4glzXK7gi80
+         RxvJwLh36u9PG7BpQKEunuOOGPNj1KH7R1sp5Qx9F+XRXrq3LDcAFOV3VGGlMkpeJ/F8
+         TejCY7buK38tdRQXQI5A9f0Crr/DyeiBnYHjk6ViC1KntgXcV1N3ewEh66lmr2lbv2QG
+         G6SQ==
+X-Gm-Message-State: APt69E3sAf5e5nnesbfe9DW+C5tSCEapeuelrz38q6J5+NdvruIqHfVy
+        uPnWQC65iu35x4045jj2mTYMWpqc4pgVsrWPsMRJ2RerC/x4
+X-Google-Smtp-Source: ADUXVKJGMDUf/yA9P/Rs/GMrqsFj/tpduJRezTOq4aFS15GZrY/5G9WLW7Wh9Kgg5cZMT5o639jv+834sITeHRyGh278z1wRpV7w
 MIME-Version: 1.0
-In-Reply-To: <20180605085707.GV19202@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a6b:a207:: with SMTP id l7-v6mr2148019ioe.134.1528896122051;
+ Wed, 13 Jun 2018 06:22:02 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 06:22:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000040ef1a056e85de5e@google.com>
+Subject: KASAN: use-after-free Read in crypto_morus640_decrypt_chunk
+From:   syzbot <syzbot+d82643ba80bf6937cd44@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/06/05 17:57, Michal Hocko wrote:
->> For this reason, we see testing harnesses often oom killed immediately 
->> after running a unittest that stresses reclaim or compaction by inducing a 
->> system-wide oom condition.  The harness spawns the unittest which spawns 
->> an antagonist memory hog that is intended to be oom killed.  When memory 
->> is mlocked or there are a large number of threads faulting memory for the 
->> antagonist, the unittest and the harness itself get oom killed because the 
->> oom reaper sets MMF_OOM_SKIP; this ends up happening a lot on powerpc.  
->> The memory hog has mm->mmap_sem readers queued ahead of a writer that is 
->> doing mmap() so the oom reaper can't grab the sem quickly enough.
-> 
-> How come the writer doesn't back off. mmap paths should be taking an
-> exclusive mmap sem in killable sleep so it should back off. Or is the
-> holder of the lock deep inside mmap path doing something else and not
-> backing out with the exclusive lock held?
-> 
- 
-Here is an example where the writer doesn't back off.
+Hello,
 
-  http://lkml.kernel.org/r/20180607150546.1c7db21f70221008e14b8bb8@linux-foundation.org
+syzbot found the following crash on:
 
-down_write_killable(&mm->mmap_sem) is nothing but increasing the possibility of
-successfully back off. There is no guarantee that the owner of that exclusive
-mmap sem will not be blocked by other unkillable waits.
+HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
+git tree:       net-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=12286eaf800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=d82643ba80bf6937cd44
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+d82643ba80bf6937cd44@syzkaller.appspotmail.com
+
+netlink: 20 bytes leftover after parsing attributes in process  
+`syz-executor0'.
+netlink: 20 bytes leftover after parsing attributes in process  
+`syz-executor0'.
+==================================================================
+BUG: KASAN: use-after-free in crypto_morus640_load_a crypto/morus640.c:111  
+[inline]
+BUG: KASAN: use-after-free in crypto_morus640_decrypt_chunk+0xcf8/0xd20  
+crypto/morus640.c:278
+Read of size 4 at addr ffff8801bfc84003 by task syz-executor4/11106
+
+CPU: 1 PID: 11106 Comm: syz-executor4 Not tainted 4.17.0+ #84
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
+  crypto_morus640_load_a crypto/morus640.c:111 [inline]
+  crypto_morus640_decrypt_chunk+0xcf8/0xd20 crypto/morus640.c:278
+  crypto_morus640_process_crypt.isra.12+0x153/0x230 crypto/morus640.c:376
+  crypto_morus640_crypt+0x42e/0x9f0 crypto/morus640.c:442
+  crypto_morus640_decrypt+0x23e/0x3d0 crypto/morus640.c:485
+  crypto_aead_decrypt include/crypto/aead.h:370 [inline]
+  _aead_recvmsg crypto/algif_aead.c:315 [inline]
+  aead_recvmsg+0x13cc/0x1ba0 crypto/algif_aead.c:334
+  sock_recvmsg_nosec net/socket.c:818 [inline]
+  sock_recvmsg+0xd0/0x110 net/socket.c:825
+  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2323
+  __sys_recvmsg+0x112/0x260 net/socket.c:2372
+  __do_sys_recvmsg net/socket.c:2382 [inline]
+  __se_sys_recvmsg net/socket.c:2379 [inline]
+  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2379
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455b29
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f76ce020c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
+RAX: ffffffffffffffda RBX: 00007f76ce0216d4 RCX: 0000000000455b29
+RDX: 0000000000000000 RSI: 0000000020002840 RDI: 0000000000000016
+RBP: 000000000072bf50 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004c084a R14: 00000000004cffe8 R15: 0000000000000001
+
+The buggy address belongs to the page:
+page:ffffea0006ff2100 count:0 mapcount:-128 mapping:0000000000000000  
+index:0x1
+flags: 0x2fffc0000000000()
+raw: 02fffc0000000000 ffffea0006ff9308 ffffea0006ff2208 0000000000000000
+raw: 0000000000000001 0000000000000002 00000000ffffff7f 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8801bfc83f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+  ffff8801bfc83f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ffff8801bfc84000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+                    ^
+  ffff8801bfc84080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+  ffff8801bfc84100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
