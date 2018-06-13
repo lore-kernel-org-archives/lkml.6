@@ -2,110 +2,161 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BED80C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:22:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7CF1DC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:25:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 746B8208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15EBA208B3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:25:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oaBcYQU+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 746B8208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RBmX6Qkb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15EBA208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935131AbeFMJWg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:22:36 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48422 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933657AbeFMJWe (ORCPT
+        id S1754588AbeFMJZD (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:25:03 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:41058 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933657AbeFMJZB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:22:34 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D9LEV7152972;
-        Wed, 13 Jun 2018 09:22:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=z5WAZp8w2kMzXNdZtQ26HwU4V+hvfGXhlYPok0EqPXI=;
- b=oaBcYQU+XMYEUndVLBl1ubiFkWF+DUt2nSGW4rKkmG1IuB8hk+DznHnatJpzX5HPvJFK
- iUv0xPe53vePQkWdvK3MVvYVRLNPVYHaKSF555RLf0QQE5t3ZZeffpSsM3pDcBCYappA
- /yBwXd19mFH8KPh8khTdZ0891wVDW9YVgMkM3FDKZA7BzMRi7H50VTpbYfEMi/hmeY7/
- KHULLL+2jqg/ngf46x2eQ4GQNum8YmO5YX+rAS0Wq2aq/Uur+HWp0KTqlGemA8s5bZqI
- IExZ2LahzpE8d8nTJp58c/XA0hRl8eBs+DpHI5vowa5SC88owqw528UJGO27R13R1Mku aA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2120.oracle.com with ESMTP id 2jjp6bskjn-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 09:22:30 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5D9MU97015813
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 09:22:30 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D9MTCS025765;
-        Wed, 13 Jun 2018 09:22:29 GMT
-Received: from mwanda (/197.157.34.169)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jun 2018 02:22:28 -0700
-Date:   Wed, 13 Jun 2018 12:22:18 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Colin King <colin.king@canonical.com>
-Cc:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] WAN: LMC: ensure lmc_trace is reporting return from
- lmc_proto_type
-Message-ID: <20180613092218.cy3r4ugr2logvs3h@mwanda>
-References: <20180613060410.735-1-colin.king@canonical.com>
- <20180613060410.735-2-colin.king@canonical.com>
+        Wed, 13 Jun 2018 05:25:01 -0400
+Received: by mail-io0-f194.google.com with SMTP id t5-v6so2713963ioa.8;
+        Wed, 13 Jun 2018 02:25:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/FHTPthfzToImDrKkQrr2+frxdic6sqcxIYOJRA0RA4=;
+        b=RBmX6QkbUSofC/z34Xp7xsS4NFAMDwInza3gTtIbRgRWJs7RVdVkUrp7hFDZzoh2Ag
+         FV3j1SkVeBzQzKLtDiFXpn8prhlCWiqxzY/P8fgsy6jr/sFveGpW5DXRJNA2KFIEY3Ep
+         dZrsAUrwkjdaiiPg7VVz9ntNSDw1od9ZaanVBVhq4RCmAjtmS7ixFurGSk7YHMx3jmAi
+         SqhUr5Yo1G/q+LJ4kFca5pN62LZThD0umFLoTwvUg90bVQrferMZOTZUn5NQkOLkCm6r
+         U0pPcrncM73j6vEbAGEJtie8d5IH7qNr/pSVKApJLBd0OS9K7JKlpzwydCzTrWRddfQn
+         /yOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/FHTPthfzToImDrKkQrr2+frxdic6sqcxIYOJRA0RA4=;
+        b=tnDEJhsyhAZh+5vHZ3TF6AHkRT4ERYmL/qeuS+or96JxtxDQlIoUJOmWyqDxe7knVg
+         28unlaowmCBfdkENdzqExWbagiti2jhWS+7c4MCYMqs4BbgIHtgL8khRSsGZ0LaSpVVw
+         z6iWggcYIUQ53o1I66m5gO1piPZW/TpX3fRkwwVwOl0aZpO6N3Fw/FoE5rkqdGO2k9aU
+         +dTGnAWKRqFDCKn05MAhHVNgOBjdq89Yo9a8Wab+8SJnCdfq8fKGGsKuivmVibi+AyGR
+         aIuy1hd6hN79pjN8cq6o2aVaZYIp6tWmONZThzDTKKzl1sGvAKcNivSbNuN+ks+tsUmm
+         euBw==
+X-Gm-Message-State: APt69E0XuFnhOW6GAh9X/vO3eZMRRlRLZB40AQK9xoA108ie1c3dMnZd
+        lT037g8WOGMRr26bdz6QNM4Pk4ocmkXl3Ue6ooc=
+X-Google-Smtp-Source: ADUXVKKyRWcXScFDd8uaNzpQQWEz7dZf96sJfqXcN0bEcw4GRhRvqurH8Gr1NcZ+uDm4Xmg7Z2CGArAhCDqi9cBObNU=
+X-Received: by 2002:a6b:1e91:: with SMTP id e139-v6mr613553ioe.36.1528881900767;
+ Wed, 13 Jun 2018 02:25:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613060410.735-2-colin.king@canonical.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130104
+Received: by 2002:a5e:9912:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 02:25:00
+ -0700 (PDT)
+In-Reply-To: <20180613043620.GA22578@ziepe.ca>
+References: <1525769416-14596-1-git-send-email-lidongchen@tencent.com> <20180613043620.GA22578@ziepe.ca>
+From:   858585 jemmy <jemmy858585@gmail.com>
+Date:   Wed, 13 Jun 2018 17:25:00 +0800
+Message-ID: <CAOGPPbe8V45B0TVMUiezKDcm0_d5dJhrubpbu5ARhi-y6MXkUg@mail.gmail.com>
+Subject: Re: [PATCH v2] IB/umem: ib_ucontext already have tgid, remove pid
+ from ib_umem structure
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+Cc:     dledford@redhat.com, akpm@linux-foundation.org,
+        qing.huang@oracle.com, Leon Romanovsky <leon@kernel.org>,
+        artemyko@mellanox.com, dan.j.williams@intel.com,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Adi Dotan <adido@mellanox.com>,
+        Gal Shachaf <galsha@mellanox.com>,
+        Aviad Yehezkel <aviadye@mellanox.com>,
+        Lidong Chen <lidongchen@tencent.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 07:04:10AM +0100, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently the lmc tracing is not reporting the return from function
-> lmc_proto_type and this tracing statement is never executed. Fix
-> this by returning through the end of the function.  Also fix a typo
-> in the function name lmc_proto_type in the trace message.
-> 
-> Detected by CoverityScan, CID#710539 ("Structurally dead code")
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/net/wan/lmc/lmc_proto.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/wan/lmc/lmc_proto.c b/drivers/net/wan/lmc/lmc_proto.c
-> index 5a6c87bce1bf..b98c1ee860de 100644
-> --- a/drivers/net/wan/lmc/lmc_proto.c
-> +++ b/drivers/net/wan/lmc/lmc_proto.c
-> @@ -99,23 +99,27 @@ void lmc_proto_close(lmc_softc_t *sc)
->  
->  __be16 lmc_proto_type(lmc_softc_t *sc, struct sk_buff *skb) /*FOLD00*/
->  {
-> +	__be16 ret;
-> +
->  	lmc_trace(sc->lmc_device, "lmc_proto_type in");
+On Wed, Jun 13, 2018 at 12:36 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
+> On Tue, May 08, 2018 at 04:50:16PM +0800, Lidong Chen wrote:
+>> The userspace may invoke ibv_reg_mr and ibv_dereg_mr by different threads.
+>> If when ibv_dereg_mr invoke and the thread which invoked ibv_reg_mr has
+>> exited, get_pid_task will return NULL, ib_umem_release does not decrease
+>> mm->pinned_vm. This patch fixes it by use tgid in ib_ucontext struct.
+>>
+>> Signed-off-by: Lidong Chen <lidongchen@tencent.com>
+>> ---
+>>  [v2]
+>>  - use ib_ucontext tgid instread of tgid in ib_umem structure
+>
+> I'm looking at this again, and it doesn't seem quite right..
+>
+>> diff --git a/drivers/infiniband/core/umem.c b/drivers/infiniband/core/umem.c
+>> index 9a4e899..2b6c9b5 100644
+>> --- a/drivers/infiniband/core/umem.c
+>> +++ b/drivers/infiniband/core/umem.c
+>> @@ -119,7 +119,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>       umem->length     = size;
+>>       umem->address    = addr;
+>>       umem->page_shift = PAGE_SHIFT;
+>> -     umem->pid        = get_task_pid(current, PIDTYPE_PID);
+>>       /*
+>>        * We ask for writable memory if any of the following
+>>        * access flags are set.  "Local write" and "remote write"
+>> @@ -132,7 +131,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>                IB_ACCESS_REMOTE_ATOMIC | IB_ACCESS_MW_BIND));
+>>
+>>       if (access & IB_ACCESS_ON_DEMAND) {
+>> -             put_pid(umem->pid);
+>>               ret = ib_umem_odp_get(context, umem, access);
+>>               if (ret) {
+>>                       kfree(umem);
+>> @@ -148,7 +146,6 @@ struct ib_umem *ib_umem_get(struct ib_ucontext *context, unsigned long addr,
+>>
+>>       page_list = (struct page **) __get_free_page(GFP_KERNEL);
+>>       if (!page_list) {
+>> -             put_pid(umem->pid);
+>>               kfree(umem);
+>>               return ERR_PTR(-ENOMEM);
+>>       }
+>
+> in ib_umem_get we are doing this:
+>
+>         down_write(&current->mm->mmap_sem);
+>         locked     = npages + current->mm->pinned_vm;
+>
+> And then in release we now do:
+>
+>         task = get_pid_task(umem->context->tgid, PIDTYPE_PID);
+>         if (!task)
+>                 goto out;
+>         mm = get_task_mm(task);
+>         mm->pinned_vm -= diff;
+>
+> But there is no guarantee that context->tgid and 'current' are the
+> same thing during ib_umem_get..
 
-Did you take a look at lmc_trace()?  It's total garbage.  It's better
-to just delete it.
+context->tgid and current maybe different. but different threads in one
+process should point to one mm structure. so it should works for multithread.
 
-regards,
-dan carpenter
+>
+> So in the dysfunctional case where someone forks and keeps the context
+> FD open on both sides of the fork they can cause the pinned_vm
+> counter to become wrong in the processes. Sounds bad..
 
+I am not sure about fork support, I will check this problem.
+
+>
+> Thus, I think we need to go back to storing the tgid in the ib_umem
+> and just fix it to store the group leader not the thread PID?
+>
+> And then even more we need the ib_get_mr_mm() helper to make sense of
+> this, because all the drivers are doing the wrong thing by using the
+> context->tgid too.
+>
+> Is that all right?
+>
+> Jason
