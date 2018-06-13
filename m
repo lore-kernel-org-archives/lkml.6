@@ -3,120 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 49AE4C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:46:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CFE11C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:46:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 006DC208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:46:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 006DC208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9062E208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:46:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9062E208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754524AbeFMHqY (ORCPT
+        id S1754548AbeFMHqd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:46:24 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:42439 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754452AbeFMHqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:46:23 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8B6A120720; Wed, 13 Jun 2018 09:46:21 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5D79320012;
-        Wed, 13 Jun 2018 09:46:21 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 09:46:21 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on
- TV TCONs
-Message-ID: <20180613074621.5phumovcyymbkfbn@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net>
- <20180612200036.21483-15-jernej.skrabec@siol.net>
+        Wed, 13 Jun 2018 03:46:33 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:55098 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754452AbeFMHqa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:46:30 -0400
+X-UUID: 7e12276a99074c9dade534553a7020e6-20180613
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <stu.hsieh@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 527931738; Wed, 13 Jun 2018 15:46:27 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 15:46:23 +0800
+Received: from [172.21.84.99] (172.21.84.99) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 15:46:23 +0800
+Message-ID: <1528875983.11190.29.camel@mtksdccf07>
+Subject: Re: [PATCH 13/28] drm/mediatek: add connection from RDMA0 to DSI3
+From:   Stu Hsieh <stu.hsieh@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 15:46:23 +0800
+In-Reply-To: <1528868751.15127.10.camel@mtksdaap41>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-14-git-send-email-stu.hsieh@mediatek.com>
+         <1528868751.15127.10.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="on6p3lb7ylr4gu64"
-Content-Disposition: inline
-In-Reply-To: <20180612200036.21483-15-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180512
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi, CK:
 
---on6p3lb7ylr4gu64
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Wed, 2018-06-13 at 13:45 +0800, CK Hu wrote:
+> Hi, Stu:
+> 
+> Two inline comment.
+> 
+> On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> > This patch add the connection from RDMA0 to DSI3
+> > 
+> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 4 ++++
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
+> >  2 files changed, 5 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > index c08aed8dae44..fed1b5704355 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > @@ -83,6 +83,7 @@
+> >  #define GAMMA_MOUT_EN_RDMA1		0x1
+> >  #define RDMA0_MOUT_DPI0			0x2
+> >  #define RDMA0_MOUT_DSI2			0x4
+> > +#define RDMA0_MOUT_DSI3			0x5
+> 
+> Usually, each bit of a mout register represent a output enable. Is this
+> value 0x5 is a correct value?
 
-On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
-> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
-> sense to check if panel or bridge is connected to them.
->=20
-> Check if TCON has channel 0 and only then check for connected panel or
-> bridges.
->=20
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
->  1 file changed, 9 insertions(+), 3 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c b/drivers/gpu/drm/sun4i/s=
-un4i_tcon.c
-> index b1205a7bc20f..c9ffa5381185 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops =
-=3D {
->  static int sun4i_tcon_probe(struct platform_device *pdev)
->  {
->  	struct device_node *node =3D pdev->dev.of_node;
-> +	const struct sun4i_tcon_quirks *quirks;
->  	struct drm_bridge *bridge;
->  	struct drm_panel *panel;
->  	int ret;
-> =20
-> -	ret =3D drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
-> -	if (ret =3D=3D -EPROBE_DEFER)
-> -		return ret;
-> +	quirks =3D of_device_get_match_data(&pdev->dev);
+In hw CONFIG SPEC show as following:
+Bit(s)	Name			Description
+2:0	DISP_PATH0_SOUT_SEL_IN	0 : Output to DSI0
+				1:  Ooutput to DSI1
+				2:  Ooutput to DPI
+				3:  Ooutput to DPI1
+				4:  Ooutput to DSI2
+				5:  Ooutput to DSI3
+				6 : reserved
+				7:  Ooutput to DISP_UFOE
+So, the value 0x5 is correct value.
 
-We should probably check ofr the pointer value before dereferencing it.
+Regard,
+Stu
 
-Maxime
+> 
+> >  #define RDMA1_MOUT_DPI0			0x2
+> >  #define DPI0_SEL_IN_RDMA1		0x1
+> >  #define COLOR1_SEL_IN_OVL1		0x1
+> > @@ -164,6 +165,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> >  	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI2) {
+> >  		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
+> >  		value = RDMA0_MOUT_DSI2;
+> > +	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI3) {
+> > +		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
+> > +		value = RDMA0_MOUT_DSI3;
+> >  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+> >  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+> >  		value = RDMA1_MOUT_DPI0;
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > index fe6fdc021fc7..22f4c72fa785 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
+> > @@ -228,7 +228,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
+> >  	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
+> >  	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
+> >  	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		2, NULL },
+> > -	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		3, NULL },
+> > +	[DDP_COMPONENT_DSI3]	= { MTK_DSI,		3, NULL },
+> 
+> I think this is not related to this patch.
+OK
 
---=20
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> 
+> Regards,
+> CK
+> 
+> >  	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
+> >  	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
+> >  	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
+> 
+> 
 
---on6p3lb7ylr4gu64
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsgy8wACgkQ0rTAlCFN
-r3TKsxAAiMdTHSYwfXld6lYjllJDZDxQke3ipIpcBxmX3te3cqIKX5GX25YtR6EK
-M3XrUPsCgfGoVGnifxdC+Ew5CxKaPdGOrgYAHFtbBlPcI1/sX14eVqm628kRWa+Q
-z6GPHG3c8w+ze97sOmJ/pgh30OV9Ugk4rO5/DLJvK65Yqz6JAvbr3wUVteFGM7tf
-Qo5SLUPvtA0dbUa4IsmweBjkAcSRqJXtv+HS3UZB/1u4/skoIS+TRW2YuDwLfRgq
-M14nEOMT/UpsLoG+N+OBksRAgNunN3YFbKWamml/2rJGBXYzhCqNuk3z1AElJb2b
-1fSnahf2iR5Zg2vo4Mzvu+kNHgy7IOh3u5rUnhuQ0666gGFHTqUC7ZS/eHuFFF+C
-SR2HcY9ct/wXan45S/h+OJmtciqXP95kVUZfTyzckdCpuQ9uZTCrx45cbpRRfggx
-7NSqyUmw9E5U76ycqxQTFlCCJaY5dcaCHoP0+DPjrrs9lYicKlCVB8Um85bXaJbP
-/RDrCmBR2+J4c/O5m3namnPbdTJS1nlM2/VakwVK8KF9/WZJT9c7yuk7UwXj8ZAS
-w7slUbXq6JsGH1z03hrDe2NoPPsdfupRaM5jv04+QKpW8aVSPvDihXcqwR80/5hB
-5VURE7lyKbgtf9So5TLG35HgiF3UYsKaQz9tWdyYg1zlOzTtYL4=
-=7udD
------END PGP SIGNATURE-----
-
---on6p3lb7ylr4gu64--
