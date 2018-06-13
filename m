@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6CA81C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2D47BC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C2DE204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C2DE204EC
+	by mail.kernel.org (Postfix) with ESMTP id DC737208B4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC737208B4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935553AbeFMMRc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 08:17:32 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:52421 "EHLO
+        id S964775AbeFMMRh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 08:17:37 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:36499 "EHLO
         mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935510AbeFMMRa (ORCPT
+        with ESMTP id S935539AbeFMMRc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 08:17:30 -0400
-Received: by mail-wm0-f65.google.com with SMTP id p126-v6so4355006wmb.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 05:17:29 -0700 (PDT)
+        Wed, 13 Jun 2018 08:17:32 -0400
+Received: by mail-wm0-f65.google.com with SMTP id v131-v6so4994413wma.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 05:17:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=6SMVSyv+4v+rxLRex8lkbAGAQgAUiM++vv/TY3cqMeI=;
-        b=Gg1MB1dsAAogV+kyQuqgwb1toy6M+yReE7CIa2N2fyGlW1ek+FrolvsPhQwxtIWUU3
-         jIsrz2rbxy+pwxf0m1k4sjKwMIdS7wsqyY+fNL89hbtDN8R3PCSrSXGQCZ6Nro3xAzIc
-         D9FzUNFre+mnB2Ul4NNGwwJ9yGPOIjEDTi5RuGz66ROxd1RIsO4DxQtQXihdGulgFp7n
-         sk8RnFGQPptHKh22XEnD/3onjvU0gzhjgmKaSB71cPDrY0zOYHqH+TQBvmULpcCdabA1
-         hCsL9u7cT5kLD+cKIaTisAiBeQHEzWXHpQTiV5+KE17wbl7PUQv9W/mcx3ybOCdhnz3G
-         dqdw==
-X-Gm-Message-State: APt69E1H+rUy1sOKVr+6cdy5tlrfk1zcyRt5pJmQIDH/M06MRCguXgal
-        fVdkHmCIV+dS7tAf/SxSwtX3Rg==
-X-Google-Smtp-Source: ADUXVKJrUg7/yEtigHzPV1FHxpEOcUhv+B2H8e0Dkwti7fiFOD6SLnbS+nXfqKfSPDalLcXk8iT85w==
-X-Received: by 2002:a1c:3fc2:: with SMTP id m185-v6mr3233832wma.37.1528892248719;
-        Wed, 13 Jun 2018 05:17:28 -0700 (PDT)
+        bh=azAIoic78v8lMlwuZLVdpRYUlXHVjqeoV6ZQxUoPOQQ=;
+        b=jTiMLgUff8xDJL+Iza0bGtN3vCzxRqwINm6vNufJPdq3W7kdWWiCBuFjPixijrlKKG
+         0/m5Sl99+EQKL0C+3RfUJKAJfAK9tg+Qf8VdxIQ3vw0PMeNyzCJGBCszcHqTYvg+Y+Hy
+         NiV3R3jd2KWnFdMIKFfAHZcWgbkWiU0TechMS2YrPi76k7wv+E8XEyKXoP/3/lf2A6XR
+         P49MsdralO6HCKQi88OzF1W4qywRoHQduKlL96+6uHFwz96UMGmRYvH2x8jbLGgpFrUE
+         x86EmzUb7x2wmL7ghGYGLgWL6o6rNUrVlLxPJN9XYxC22E5Om5Qj1y1nAPdZ7LzcVmJr
+         H9sw==
+X-Gm-Message-State: APt69E2N+je/PiEyKOMoEpIWUuH4G7UYXnpBbYhlsxg5HI9UJzjU2fK1
+        38i9pOFICzedl1E0zaJQ8AhxEw==
+X-Google-Smtp-Source: ADUXVKKCWTwGb7qpabu8rHccSb6A/W4A2H3LC7zaEQwHEfoRwyeuSO33iDErhm5Sk8Z3f96bTPEeNw==
+X-Received: by 2002:a1c:7113:: with SMTP id m19-v6mr3393058wmc.150.1528892251270;
+        Wed, 13 Jun 2018 05:17:31 -0700 (PDT)
 Received: from localhost.localdomain.com ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id 137-v6sm4943673wmv.28.2018.06.13.05.17.27
+        by smtp.gmail.com with ESMTPSA id 137-v6sm4943673wmv.28.2018.06.13.05.17.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 05:17:28 -0700 (PDT)
+        Wed, 13 Jun 2018 05:17:30 -0700 (PDT)
 From:   Juri Lelli <juri.lelli@redhat.com>
 To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org
 Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
         claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
         bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: [PATCH v4 2/5] sched/topology: Adding function partition_sched_domains_locked()
-Date:   Wed, 13 Jun 2018 14:17:08 +0200
-Message-Id: <20180613121711.5018-3-juri.lelli@redhat.com>
+        cgroups@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>
+Subject: [PATCH v4 4/5] sched/core: Prevent race condition between cpuset and __sched_setscheduler()
+Date:   Wed, 13 Jun 2018 14:17:10 +0200
+Message-Id: <20180613121711.5018-5-juri.lelli@redhat.com>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180613121711.5018-1-juri.lelli@redhat.com>
 References: <20180613121711.5018-1-juri.lelli@redhat.com>
@@ -63,89 +63,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Mathieu Poirier <mathieu.poirier@linaro.org>
 
-Introducing function partition_sched_domains_locked() by taking
-the mutex locking code out of the original function.  That way
-the work done by partition_sched_domains_locked() can be reused
-without dropping the mutex lock.
+No synchronisation mechanism exist between the cpuset subsystem and calls
+to function __sched_setscheduler().  As such it is possible that new root
+domains are created on the cpuset side while a deadline acceptance test
+is carried out in __sched_setscheduler(), leading to a potential oversell
+of CPU bandwidth.
 
-No change of functionality is introduced by this patch.
+By making available the cpuset_mutex to the core scheduler it is possible
+to prevent situations such as the one described above from happening.
 
 Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+[fixed missing cpuset_unlock() and changed to use mutex_trylock()]
+Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 ---
- include/linux/sched/topology.h | 10 ++++++++++
- kernel/sched/topology.c        | 18 ++++++++++++++----
- 2 files changed, 24 insertions(+), 4 deletions(-)
+ include/linux/cpuset.h |  6 ++++++
+ kernel/cgroup/cpuset.c | 16 ++++++++++++++++
+ kernel/sched/core.c    | 14 ++++++++++++++
+ 3 files changed, 36 insertions(+)
 
-diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-index 26347741ba50..57997caf61b6 100644
---- a/include/linux/sched/topology.h
-+++ b/include/linux/sched/topology.h
-@@ -162,6 +162,10 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
- 	return to_cpumask(sd->span);
- }
+diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+index 934633a05d20..a1970862ab8e 100644
+--- a/include/linux/cpuset.h
++++ b/include/linux/cpuset.h
+@@ -55,6 +55,8 @@ extern void cpuset_init_smp(void);
+ extern void cpuset_force_rebuild(void);
+ extern void cpuset_update_active_cpus(void);
+ extern void cpuset_wait_for_hotplug(void);
++extern int cpuset_lock(void);
++extern void cpuset_unlock(void);
+ extern void cpuset_cpus_allowed(struct task_struct *p, struct cpumask *mask);
+ extern void cpuset_cpus_allowed_fallback(struct task_struct *p);
+ extern nodemask_t cpuset_mems_allowed(struct task_struct *p);
+@@ -176,6 +178,10 @@ static inline void cpuset_update_active_cpus(void)
  
-+extern void partition_sched_domains_locked(int ndoms_new,
-+					   cpumask_var_t doms_new[],
-+					   struct sched_domain_attr *dattr_new);
+ static inline void cpuset_wait_for_hotplug(void) { }
+ 
++static inline int cpuset_lock(void) { return 1; }
 +
- extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 				    struct sched_domain_attr *dattr_new);
- 
-@@ -206,6 +210,12 @@ extern void set_sched_topology(struct sched_domain_topology_level *tl);
- 
- struct sched_domain_attr;
- 
-+static inline void
-+partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-+			       struct sched_domain_attr *dattr_new)
-+{
-+}
++static inline void cpuset_unlock(void) { }
 +
- static inline void
- partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 			struct sched_domain_attr *dattr_new)
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 96eee22fafe8..25a5727d3b48 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -1850,16 +1850,16 @@ static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
-  * ndoms_new == 0 is a special case for destroying existing domains,
-  * and it will not create the default domain.
-  *
-- * Call with hotplug lock held
-+ * Call with hotplug lock and sched_domains_mutex held
-  */
--void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
--			     struct sched_domain_attr *dattr_new)
-+void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-+				    struct sched_domain_attr *dattr_new)
+ static inline void cpuset_cpus_allowed(struct task_struct *p,
+ 				       struct cpumask *mask)
  {
- 	int i, j, n;
- 	int new_topology;
- 
- 	lockdep_assert_cpus_held();
--	mutex_lock(&sched_domains_mutex);
-+	lockdep_assert_held(&sched_domains_mutex);
- 
- 	/* Always unregister in case we don't destroy any domains: */
- 	unregister_sched_domain_sysctl();
-@@ -1924,6 +1924,16 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
- 	ndoms_cur = ndoms_new;
- 
- 	register_sched_domain_sysctl();
-+}
- 
-+/*
-+ * Call with hotplug lock held
-+ */
-+void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-+			     struct sched_domain_attr *dattr_new)
-+{
-+	lockdep_assert_cpus_held();
-+	mutex_lock(&sched_domains_mutex);
-+	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
- 	mutex_unlock(&sched_domains_mutex);
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index b42037e6e81d..d26fd4795aa3 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2409,6 +2409,22 @@ void __init cpuset_init_smp(void)
+ 	BUG_ON(!cpuset_migrate_mm_wq);
  }
+ 
++/**
++ * cpuset_lock - Grab the cpuset_mutex from another subsysytem
++ */
++int cpuset_lock(void)
++{
++	return mutex_trylock(&cpuset_mutex);
++}
++
++/**
++ * cpuset_unlock - Release the cpuset_mutex from another subsysytem
++ */
++void cpuset_unlock(void)
++{
++	mutex_unlock(&cpuset_mutex);
++}
++
+ /**
+  * cpuset_cpus_allowed - return cpus_allowed mask from a tasks cpuset.
+  * @tsk: pointer to task_struct from which to obtain cpuset->cpus_allowed.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ca788f74259d..a5b0c6c25b44 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -4218,6 +4218,14 @@ static int __sched_setscheduler(struct task_struct *p,
+ 		if (attr->sched_flags & SCHED_FLAG_SUGOV)
+ 			return -EINVAL;
+ 
++		/*
++		 * Make sure we don't race with the cpuset subsystem where root
++		 * domains can be rebuilt or modified while operations like DL
++		 * admission checks are carried out.
++		 */
++		if (!cpuset_lock())
++			return -EBUSY;
++
+ 		retval = security_task_setscheduler(p);
+ 		if (retval)
+ 			return retval;
+@@ -4295,6 +4303,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 	if (unlikely(oldpolicy != -1 && oldpolicy != p->policy)) {
+ 		policy = oldpolicy = -1;
+ 		task_rq_unlock(rq, p, &rf);
++		if (user)
++			cpuset_unlock();
+ 		goto recheck;
+ 	}
+ 
+@@ -4352,6 +4362,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 	/* Avoid rq from going away on us: */
+ 	preempt_disable();
+ 	task_rq_unlock(rq, p, &rf);
++	if (user)
++		cpuset_unlock();
+ 
+ 	if (pi)
+ 		rt_mutex_adjust_pi(p);
+@@ -4364,6 +4376,8 @@ static int __sched_setscheduler(struct task_struct *p,
+ 
+ unlock:
+ 	task_rq_unlock(rq, p, &rf);
++	if (user)
++		cpuset_unlock();
+ 	return retval;
+ }
+ 
 -- 
 2.14.3
 
