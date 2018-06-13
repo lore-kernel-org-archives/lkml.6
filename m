@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B3AC5C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4BC7AC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6793D208BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6793D208BA
+	by mail.kernel.org (Postfix) with ESMTP id F3BFC208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3BFC208C4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935144AbeFMBBt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:01:49 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64688 "EHLO mga14.intel.com"
+        id S935165AbeFMBBv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:01:51 -0400
+Received: from mga14.intel.com ([192.55.52.115]:64685 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935095AbeFMBBm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:01:42 -0400
+        id S935085AbeFMBBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 21:01:41 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:36 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
-   d="scan'208";a="47283535"
+   d="scan'208";a="47283530"
 Received: from voyager.sc.intel.com ([10.3.52.149])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:36 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:35 -0700
 From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -67,9 +67,9 @@ Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
         Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
         David Rientjes <rientjes@google.com>,
         iommu@lists.linux-foundation.org
-Subject: [RFC PATCH 22/23] watchdog/hardlockup/hpet: Only enable the HPET watchdog via a boot parameter
-Date:   Tue, 12 Jun 2018 17:57:42 -0700
-Message-Id: <1528851463-21140-23-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Subject: [RFC PATCH 21/23] watchdog/hardlockup/hpet: Adjust timer expiration on the number of monitored CPUs
+Date:   Tue, 12 Jun 2018 17:57:41 -0700
+Message-Id: <1528851463-21140-22-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -78,14 +78,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Keep the HPET-based hardlockup detector disabled unless explicitly enabled
-via a command line argument. If such parameter is not given, the hardlockup
-detector will fallback to use the perf-based implementation.
+Each CPU should be monitored for hardlockups every watchdog_thresh seconds.
+Since all the CPUs in the system are monitored by the same timer and the
+timer interrupt is rotated among the monitored CPUs, the timer must expire
+every watchdog_thresh/N seconds; where N is the number of monitored CPUs.
 
-The function hardlockup_panic_setup() is updated to return 0 in order to
-to allow __setup functions of specific hardlockup detectors (in this case
-hardlockup_detector_hpet_setup()) to inspect the nmi_watchdog boot
-parameter.
+A new member is added to struct hpet_wdt_data to determine the per-CPU
+ticks per second. This quantity is used to program the comparator of the
+timer.
+
+The ticks-per-CPU quantity is updated every time when the number of
+monitored CPUs changes: when the watchdog is enabled or disabled for
+a specific CPU.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
@@ -121,94 +125,100 @@ Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
 Cc: iommu@lists.linux-foundation.org
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
---
-checkpatch gives the following warning:
-
-CHECK: __setup appears un-documented -- check Documentation/admin-guide/kernel-parameters.rst
-+__setup("nmi_watchdog=", hardlockup_detector_hpet_setup);
-
-This is a false-positive as the option nmi_watchdog is already
-documented. The option is re-evaluated in this file as well.
 ---
- Documentation/admin-guide/kernel-parameters.txt |  5 ++++-
- kernel/watchdog.c                               |  2 +-
- kernel/watchdog_hld_hpet.c                      | 13 +++++++++++++
- 3 files changed, 18 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/hpet.h |  1 +
+ kernel/watchdog_hld_hpet.c  | 41 ++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 41 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index f2040d4..a8833c7 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2577,7 +2577,7 @@
- 			Format: [state][,regs][,debounce][,die]
- 
- 	nmi_watchdog=	[KNL,BUGS=X86] Debugging features for SMP kernels
--			Format: [panic,][nopanic,][num]
-+			Format: [panic,][nopanic,][num,][hpet]
- 			Valid num: 0 or 1
- 			0 - turn hardlockup detector in nmi_watchdog off
- 			1 - turn hardlockup detector in nmi_watchdog on
-@@ -2587,6 +2587,9 @@
- 			please see 'nowatchdog'.
- 			This is useful when you use a panic=... timeout and
- 			need the box quickly up again.
-+			When hpet is specified, the NMI watchdog will be driven
-+			by an HPET timer, if available in the system. Otherwise,
-+			the perf-based implementation will be used.
- 
- 			These settings can be accessed at runtime via
- 			the nmi_watchdog and hardlockup_panic sysctls.
-diff --git a/kernel/watchdog.c b/kernel/watchdog.c
-index b94bbe3..b5ce6e4 100644
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -84,7 +84,7 @@ static int __init hardlockup_panic_setup(char *str)
- 		nmi_watchdog_user_enabled = 0;
- 	else if (!strncmp(str, "1", 1))
- 		nmi_watchdog_user_enabled = 1;
--	return 1;
-+	return 0;
- }
- __setup("nmi_watchdog=", hardlockup_panic_setup);
- 
+diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+index 6ace2d1..e67818d 100644
+--- a/arch/x86/include/asm/hpet.h
++++ b/arch/x86/include/asm/hpet.h
+@@ -124,6 +124,7 @@ struct hpet_hld_data {
+ 	u32		irq;
+ 	u32		flags;
+ 	u64		ticks_per_second;
++	u64		ticks_per_cpu;
+ 	struct cpumask	monitored_mask;
+ 	spinlock_t	lock; /* serialized access to monitored_mask */
+ };
 diff --git a/kernel/watchdog_hld_hpet.c b/kernel/watchdog_hld_hpet.c
-index ebb820d..12e5937 100644
+index c40acfd..ebb820d 100644
 --- a/kernel/watchdog_hld_hpet.c
 +++ b/kernel/watchdog_hld_hpet.c
-@@ -17,6 +17,7 @@
- #define pr_fmt(fmt) "NMI hpet watchdog: " fmt
+@@ -65,11 +65,21 @@ static void kick_timer(struct hpet_hld_data *hdata)
+ 	 * are able to update the comparator before the counter reaches such new
+ 	 * value.
+ 	 *
++	 * The timer must monitor each CPU every watch_thresh seconds. Hence the
++	 * timer expiration must be:
++	 *
++	 *    watch_thresh/N
++	 *
++	 * where N is the number of monitored CPUs.
++	 *
++	 * in order to monitor all the online CPUs. ticks_per_cpu gives the
++	 * number of ticks needed to meet the condition above.
++	 *
+ 	 * Let it wrap around if needed.
+ 	 */
+ 	count = get_count();
  
- static struct hpet_hld_data *hld_data;
-+static bool hardlockup_use_hpet;
+-	new_compare = count + watchdog_thresh * hdata->ticks_per_second;
++	new_compare = count + watchdog_thresh * hdata->ticks_per_cpu;
  
- /**
-  * get_count() - Get the current count of the HPET timer
-@@ -488,6 +489,15 @@ static void hardlockup_detector_hpet_stop(void)
- 	spin_unlock(&hld_data->lock);
+ 	set_comparator(hdata, new_compare);
+ }
+@@ -160,6 +170,33 @@ static bool is_hpet_wdt_interrupt(struct hpet_hld_data *hdata)
  }
  
-+static int __init hardlockup_detector_hpet_setup(char *str)
-+{
-+	if (strstr(str, "hpet"))
-+		hardlockup_use_hpet = true;
-+
-+	return 0;
-+}
-+__setup("nmi_watchdog=", hardlockup_detector_hpet_setup);
-+
  /**
-  * hardlockup_detector_hpet_init() - Initialize the hardlockup detector
-  *
-@@ -502,6 +512,9 @@ static int __init hardlockup_detector_hpet_init(void)
- {
- 	int ret;
- 
-+	if (!hardlockup_use_hpet)
-+		return -EINVAL;
++ * update_ticks_per_cpu() - Update the number of HPET ticks per CPU
++ * @hdata:	struct with the timer's the ticks-per-second and CPU mask
++ *
++ * From the overall ticks-per-second of the timer, compute the number of ticks
++ * after which the timer should expire to monitor each CPU every watch_thresh
++ * seconds. The ticks-per-cpu quantity is computed using the number of CPUs that
++ * the watchdog currently monitors.
++ *
++ * Returns:
++ *
++ * None
++ *
++ */
++static void update_ticks_per_cpu(struct hpet_hld_data *hdata)
++{
++	unsigned int num_cpus = cpumask_weight(&hdata->monitored_mask);
++	unsigned long long temp = hdata->ticks_per_second;
 +
- 	if (!is_hpet_enabled())
- 		return -ENODEV;
++	/* Only update if there are monitored CPUs. */
++	if (!num_cpus)
++		return;
++
++	do_div(temp, num_cpus);
++	hdata->ticks_per_cpu = temp;
++}
++
++/**
+  * hardlockup_detector_irq_handler() - Interrupt handler
+  * @irq:	Interrupt number
+  * @data:	Data associated with the interrupt
+@@ -390,6 +427,7 @@ static void hardlockup_detector_hpet_enable(void)
+ 	spin_lock(&hld_data->lock);
  
+ 	cpumask_set_cpu(cpu, &hld_data->monitored_mask);
++	update_ticks_per_cpu(hld_data);
+ 
+ 	/*
+ 	 * If this is the first CPU to be monitored, set everything in motion:
+@@ -425,6 +463,7 @@ static void hardlockup_detector_hpet_disable(void)
+ 	spin_lock(&hld_data->lock);
+ 
+ 	cpumask_clear_cpu(smp_processor_id(), &hld_data->monitored_mask);
++	update_ticks_per_cpu(hld_data);
+ 
+ 	/* Only disable the timer if there are no more CPUs to monitor. */
+ 	if (!cpumask_weight(&hld_data->monitored_mask))
 -- 
 2.7.4
 
