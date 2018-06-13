@@ -3,39 +3,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=no
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AB2B4C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:18:58 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 11F1FC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A74B208C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:18:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A74B208C3
+	by mail.kernel.org (Postfix) with ESMTP id C22B9208C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:19:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C22B9208C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935578AbeFMSS4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:18:56 -0400
+        id S935683AbeFMSTA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:19:00 -0400
 Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:19857 "EHLO
         EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935123AbeFMSSy (ORCPT
+        by vger.kernel.org with ESMTP id S935558AbeFMSS4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:18:54 -0400
+        Wed, 13 Jun 2018 14:18:56 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
  EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
  15.0.1156.6; Wed, 13 Jun 2018 11:18:50 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 8BE9C409BD;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id 9C54D409A5;
         Wed, 13 Jun 2018 11:18:54 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     Xavier Deguillard <xdeguillard@vmware.com>,
         <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
         Nadav Amit <namit@vmware.com>
-Subject: [PATCH 3/7] vmw_balloon: fix inflation of 64-bit GFNs
-Date:   Wed, 13 Jun 2018 04:03:55 -0700
-Message-ID: <20180613110359.109033-4-namit@vmware.com>
+Subject: [PATCH 5/7] vmw_balloon: VMCI_DOORBELL_SET does not check status
+Date:   Wed, 13 Jun 2018 04:03:57 -0700
+Message-ID: <20180613110359.109033-6-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180613110359.109033-1-namit@vmware.com>
 References: <20180613110359.109033-1-namit@vmware.com>
@@ -48,68 +48,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When balloon batching is not supported by the hypervisor, the guest
-frame number (GFN) must fit in 32-bit. However, due to a bug, this check
-was mistakenly ignored. In practice, when total RAM is greater than
-16TB, the balloon does not work currently, making this bug unlikely to
-happen.
+When vmballoon_vmci_init() sets a doorbell using VMCI_DOORBELL_SET, for
+some reason it does not consider the status and looks at the result.
+However, the hypervisor does not update the result - it updates the
+status.
 
-Fixes: ef0f8f112984 ("VMware balloon: partially inline
-vmballoon_reserve_page.")
+Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
 
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ drivers/misc/vmw_balloon.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index a73b5d64403a..496607a9046a 100644
+index db3cf91a515d..6e0b09b79fb5 100644
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -448,7 +448,7 @@ static int vmballoon_send_lock_page(struct vmballoon *b, unsigned long pfn,
+@@ -1034,29 +1034,30 @@ static void vmballoon_vmci_cleanup(struct vmballoon *b)
+  */
+ static int vmballoon_vmci_init(struct vmballoon *b)
+ {
+-	int error = 0;
++	unsigned long error, dummy;
  
- 	pfn32 = (u32)pfn;
- 	if (pfn32 != pfn)
--		return -1;
-+		return -EINVAL;
+-	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) != 0) {
+-		error = vmci_doorbell_create(&b->vmci_doorbell,
+-				VMCI_FLAG_DELAYED_CB,
+-				VMCI_PRIVILEGE_FLAG_RESTRICTED,
+-				vmballoon_doorbell, b);
+-
+-		if (error == VMCI_SUCCESS) {
+-			VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET,
+-					b->vmci_doorbell.context,
+-					b->vmci_doorbell.resource, error);
+-			STATS_INC(b->stats.doorbell_set);
+-		}
+-	}
++	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) == 0)
++		return 0;
  
- 	STATS_INC(b->stats.lock[false]);
+-	if (error != 0) {
+-		vmballoon_vmci_cleanup(b);
++	error = vmci_doorbell_create(&b->vmci_doorbell, VMCI_FLAG_DELAYED_CB,
++				     VMCI_PRIVILEGE_FLAG_RESTRICTED,
++				     vmballoon_doorbell, b);
  
-@@ -458,7 +458,7 @@ static int vmballoon_send_lock_page(struct vmballoon *b, unsigned long pfn,
+-		return -EIO;
+-	}
++	if (error != VMCI_SUCCESS)
++		goto fail;
++
++	error = VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET, b->vmci_doorbell.context,
++				   b->vmci_doorbell.resource, dummy);
++
++	STATS_INC(b->stats.doorbell_set);
++
++	if (error != VMW_BALLOON_SUCCESS)
++		goto fail;
  
- 	pr_debug("%s - ppn %lx, hv returns %ld\n", __func__, pfn, status);
- 	STATS_INC(b->stats.lock_fail[false]);
--	return 1;
+ 	return 0;
++fail:
++	vmballoon_vmci_cleanup(b);
 +	return -EIO;
  }
  
- static int vmballoon_send_batched_lock(struct vmballoon *b,
-@@ -595,11 +595,12 @@ static int vmballoon_lock_page(struct vmballoon *b, unsigned int num_pages,
- 
- 	locked = vmballoon_send_lock_page(b, page_to_pfn(page), &hv_status,
- 								target);
--	if (locked > 0) {
-+	if (locked) {
- 		STATS_INC(b->stats.refused_alloc[false]);
- 
--		if (hv_status == VMW_BALLOON_ERROR_RESET ||
--				hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED) {
-+		if (locked == -EIO &&
-+		    (hv_status == VMW_BALLOON_ERROR_RESET ||
-+		     hv_status == VMW_BALLOON_ERROR_PPN_NOTNEEDED)) {
- 			vmballoon_free_page(page, false);
- 			return -EIO;
- 		}
-@@ -615,7 +616,7 @@ static int vmballoon_lock_page(struct vmballoon *b, unsigned int num_pages,
- 		} else {
- 			vmballoon_free_page(page, false);
- 		}
--		return -EIO;
-+		return locked;
- 	}
- 
- 	/* track allocated page */
+ /*
 -- 
 2.17.0
 
