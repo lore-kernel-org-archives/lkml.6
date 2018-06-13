@@ -4,63 +4,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EEA18C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:50:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4D350C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:50:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A2DB208C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:50:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED10E208C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:50:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jyMM9W5E"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A2DB208C3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KrFX0khx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED10E208C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935619AbeFMTt6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 15:49:58 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:35054 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935381AbeFMTtz (ORCPT
+        id S935647AbeFMTu1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 15:50:27 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:33451 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935381AbeFMTuZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 15:49:55 -0400
-Received: by mail-wm0-f67.google.com with SMTP id j15-v6so7686303wme.0;
-        Wed, 13 Jun 2018 12:49:54 -0700 (PDT)
+        Wed, 13 Jun 2018 15:50:25 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z6-v6so503668wma.0;
+        Wed, 13 Jun 2018 12:50:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=356Z+xQ8sE8vs+GkjoziscL6snRJaDWTX+MkHE42enY=;
-        b=jyMM9W5EBfmHdPQr/rB9/X4J6oueep3kS+p3eQ8T5/58IG8jq5l/ribDcHFDbJQOue
-         0D1XOTd5o4RF5gd5yIDMhXWi0+nLXBO4JmWZ/sfnqQpqYlG+P0Xa9fB6cFrLfcnNN+q3
-         vX8O2fmVpBmff9lpyTaYUiX+hbxkjQCICnvTlDB4+Wog269c1h5AgcApIg2omKpvxcmN
-         hDkZhjH4Br9l3n58ixtTDYn7DHKKUS6fSZMy4EbcqKZNJ5vsOHv6NdOE7KdMneKUVxCs
-         LC34jSQ6kzFOKDvr+RMwrSy5PAMbcyJuK9kjOdD5KFOzpm+K6Kxbx6HyJCbefXCDoKsE
-         1bHQ==
+        bh=lT0CRwSkmUkviCjpQjkfrpfQX85ebac1pGDjLcA/tKA=;
+        b=KrFX0khxodZgYa8ZTWAXB9j/213ivTCwhBHtBQfIM71YvyDnqBDshHJOSkalV+tHbD
+         HGt7+PaWecbRE1+4CaoPS25l6y2NDrtpkfwbm3ioAjMsMk/d4E6Cx+0x1VdatcydpvzZ
+         KHh1veuHH5hcyOAAfjWu8wd9BjjZlvKwJJ2W7aqTzPGGf+9qOGbTWMHfO0X/JtTNiuT7
+         lKsQEBQKXBG8+5XprtyMb+hlSb6+GMGhzCv+z0XDr4aH1t3/dKlSEZ8IvciZjY7gIH7m
+         K3NlLZtGtzDWZmPq79HwVULd5Ogonm4hcubFl+IKwKghqyH+R1i5oabDpNmnRK7OIqSU
+         xD6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=356Z+xQ8sE8vs+GkjoziscL6snRJaDWTX+MkHE42enY=;
-        b=JlPxDVyHTYqXJK53JwVoG0Iz8c3VnbSyQPS1HLS8VWeMfrA89UDrTLPaMT0Am+RHk2
-         dygggMlKkuD1cu73vq9j6JU3MPObZ+6Ks6CWG0fQOsgHhhgurSnOs5lt2pq26ue/Vh32
-         5L1g8JLNcxpufJwjoHhan3/rYHs7GjBBlTUKuMI6qLOv6vatWCw1ZmdqlrKAiFad58Bs
-         OwbjB6mLnekBGLYiEeir/WkjOxNwOWo49f8tppMNNFINiqRVBZDpZEvyCe8sIw7nnr6F
-         AxH3FOJtrwkslscyC8YRH1AcMhBqYGRvNHQQB+6MHhUtHKyvG7cUeajRtpv8U5AExLUw
-         IuGQ==
-X-Gm-Message-State: APt69E3X32awQz0IBq5ob/8ydl1BciHW/V0c+PQwlM0GcrKN0wxq9XJa
-        fmk2SLUo1SAvI0hUw2nzWDzbnVz/
-X-Google-Smtp-Source: ADUXVKKnRZLc/LbbSH+0H27IaG8oArqQICIxt+sqZYfdz7uGmsm3nAgVtM/+Mp/VGT8v0osR2Zbqxg==
-X-Received: by 2002:a50:f294:: with SMTP id f20-v6mr5504455edm.68.1528919394207;
-        Wed, 13 Jun 2018 12:49:54 -0700 (PDT)
+        bh=lT0CRwSkmUkviCjpQjkfrpfQX85ebac1pGDjLcA/tKA=;
+        b=odviGpsrubWCSRx0xsXBZoza9INxRKX8Z2t9ulzWpWwAx3ILPmsj/dzwXiZWsv9+bb
+         xiLROCA4Q1OpKN9tcaIC9/zOZ6MTymVcs8VUZ/K8bF/12v50HFkRjWDvmb3s0SeCwkfw
+         xmzRo6aKDkSwtRxnA57Ww5PcUR65xajlZZRu4DwBQKHjEjoTNcBc3bv44SZM6uCC7o83
+         pNZvGr8QZIWXIAhgR8u8bSHBXbhPpxidoqxVxRsDikmna12NowuCxpxGXi7bUMJWTXFN
+         QLkEFJxpAQlJV7Kk71publSHI4F7GV4wD0jCTks2F7TDXIQUmOWWygpoSX4Dce63DI/g
+         UY8w==
+X-Gm-Message-State: APt69E1OeQ9mcl1s2y5DqVCW+WFyO5whAF4E1dZuRfxz9hYajId1q89M
+        KIqzXOBp2IJkkg0uHzVKujc=
+X-Google-Smtp-Source: ADUXVKJQLxtER8qcnwTj6Biu3reI599jZW9pW8FYe4isCdy1oM0KqF2hFOx0CvlvY+vfBtSKeLxrNQ==
+X-Received: by 2002:a50:884f:: with SMTP id c15-v6mr5550712edc.211.1528919423956;
+        Wed, 13 Jun 2018 12:50:23 -0700 (PDT)
 Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id x2-v6sm1574742edr.24.2018.06.13.12.49.51
+        by smtp.googlemail.com with ESMTPSA id 2-v6sm2138849edz.67.2018.06.13.12.50.20
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 12:49:53 -0700 (PDT)
-Subject: Re: [PATCH 1/5] ARM: dts: cygnus: Fix I2C controller interrupt type
+        Wed, 13 Jun 2018 12:50:22 -0700 (PDT)
+Subject: Re: [PATCH 2/5] ARM: dts: cygnus: Fix PCIe controller interrupt type
 To:     Ray Jui <ray.jui@broadcom.com>,
         linux-arm-kernel@lists.infradead.org,
         Florian Fainelli <f.fainelli@gmail.com>
@@ -68,7 +68,7 @@ Cc:     Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
 References: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
- <1528834891-17807-2-git-send-email-ray.jui@broadcom.com>
+ <1528834891-17807-3-git-send-email-ray.jui@broadcom.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -104,12 +104,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  y5arMQorqTFWlEOgRA8OP47L9knl9i4xuR0euV6DChDrguup2aJVU8JPBBgRAgAPAhsMBQJU
  X9LxBQkeXB3fAAoJEGFXmRW1Y3YOj4UAn3nrFLPZekMeqX5aD/aq/dsbXSfyAKC45Go0YyxV
  HGuUuzv+GKZ6nsysJw==
-Message-ID: <8c368dbc-f654-ec52-0786-1f318156b8b5@gmail.com>
-Date:   Wed, 13 Jun 2018 12:49:43 -0700
+Message-ID: <99e3ab78-a639-5244-75a6-af39e56e7c67@gmail.com>
+Date:   Wed, 13 Jun 2018 12:50:19 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1528834891-17807-2-git-send-email-ray.jui@broadcom.com>
+In-Reply-To: <1528834891-17807-3-git-send-email-ray.jui@broadcom.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -119,49 +119,80 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 06/12/2018 01:21 PM, Ray Jui wrote:
-> Fix I2C controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
+> Fix PCIe controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
 > Cygnus SoC
 > 
-> Fixes: b51c05a331ff ("ARM: dts: add I2C device nodes for Broadcom Cygnus")
+> Fixes: cd590b50a936 ("ARM: dts: enable PCIe support for Cygnus")
 
-This appears to be the only one that is truly needed here, the two
-others below probably just moved things around but the offending commit
-was already introduced in the above commit.
+This one is valid
 
-> Fixes: 0f0b21a83ad2 ("ARM: dts: Move all Cygnus peripherals into axi bus")
+> Fixes: 0f0b21a83ad2 ("ARM: dts: Move all Cygnus peripherals into axi
+> bus")
 > Fixes: 9c5101f7a253 ("ARM: dts: Reorder Cygnus peripherals")
+> Fixes: f6b889358a82 ("ARM: dts: Enable MSI support for Broadcom Cygnus")
+
+And this one too, but the two others, I would probably drop them so we
+can get the backports to be possibly applicable as far as when these two
+commits can be resolved, does that work?
+
 > 
-
-There is no need for an extra line between the last Fixes: tag and your
-Signed-off-by tag.
-
 > Signed-off-by: Ray Jui <ray.jui@broadcom.com>
 > ---
->  arch/arm/boot/dts/bcm-cygnus.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/bcm-cygnus.dtsi | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
 > 
 > diff --git a/arch/arm/boot/dts/bcm-cygnus.dtsi b/arch/arm/boot/dts/bcm-cygnus.dtsi
-> index 9fe4f5a..835a6f7 100644
+> index 835a6f7..2c4df2d 100644
 > --- a/arch/arm/boot/dts/bcm-cygnus.dtsi
 > +++ b/arch/arm/boot/dts/bcm-cygnus.dtsi
-> @@ -216,7 +216,7 @@
->  			reg = <0x18008000 0x100>;
->  			#address-cells = <1>;
->  			#size-cells = <0>;
-> -			interrupts = <GIC_SPI 85 IRQ_TYPE_NONE>;
-> +			interrupts = <GIC_SPI 85 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-frequency = <100000>;
->  			status = "disabled";
+> @@ -256,7 +256,7 @@
+>  
+>  			#interrupt-cells = <1>;
+>  			interrupt-map-mask = <0 0 0 0>;
+> -			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_NONE>;
+> +			interrupt-map = <0 0 0 0 &gic GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>  			linux,pci-domain = <0>;
+>  
+> @@ -278,10 +278,10 @@
+>  				compatible = "brcm,iproc-msi";
+>  				msi-controller;
+>  				interrupt-parent = <&gic>;
+> -				interrupts = <GIC_SPI 96 IRQ_TYPE_NONE>,
+> -					     <GIC_SPI 97 IRQ_TYPE_NONE>,
+> -					     <GIC_SPI 98 IRQ_TYPE_NONE>,
+> -					     <GIC_SPI 99 IRQ_TYPE_NONE>;
+> +				interrupts = <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>;
+>  			};
 >  		};
-> @@ -245,7 +245,7 @@
->  			reg = <0x1800b000 0x100>;
->  			#address-cells = <1>;
->  			#size-cells = <0>;
-> -			interrupts = <GIC_SPI 86 IRQ_TYPE_NONE>;
-> +			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
->  			clock-frequency = <100000>;
->  			status = "disabled";
+>  
+> @@ -291,7 +291,7 @@
+>  
+>  			#interrupt-cells = <1>;
+>  			interrupt-map-mask = <0 0 0 0>;
+> -			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_NONE>;
+> +			interrupt-map = <0 0 0 0 &gic GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>;
+>  
+>  			linux,pci-domain = <1>;
+>  
+> @@ -313,10 +313,10 @@
+>  				compatible = "brcm,iproc-msi";
+>  				msi-controller;
+>  				interrupt-parent = <&gic>;
+> -				interrupts = <GIC_SPI 102 IRQ_TYPE_NONE>,
+> -					     <GIC_SPI 103 IRQ_TYPE_NONE>,
+> -					     <GIC_SPI 104 IRQ_TYPE_NONE>,
+> -					     <GIC_SPI 105 IRQ_TYPE_NONE>;
+> +				interrupts = <GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
+> +					     <GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>;
+>  			};
 >  		};
+>  
 > 
 
 
