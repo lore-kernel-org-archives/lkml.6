@@ -6,126 +6,250 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BEF06C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:45:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2755AC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F1E8208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:45:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F1E8208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id D0E44208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:46:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E44208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964785AbeFMOpf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:45:35 -0400
-Received: from lucky1.263xmail.com ([211.157.147.131]:36282 "EHLO
-        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935345AbeFMOpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:45:33 -0400
-Received: from shawn.lin?rock-chips.com (unknown [192.168.167.232])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 814FB96584;
-        Wed, 13 Jun 2018 22:45:10 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 1
-X-MAIL-DELIVERY: 0
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from [192.168.10.112] (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id A2119308;
-        Wed, 13 Jun 2018 22:45:11 +0800 (CST)
-X-RL-SENDER: shawn.lin@rock-chips.com
-X-FST-TO: linux-arm-kernel@lists.infradead.org
-X-SENDER-IP: 220.200.58.208
-X-LOGIN-NAME: shawn.lin@rock-chips.com
-X-UNIQUE-TAG: <98bba4af37268b80eda2a189c1ba4b46>
-X-ATTACHMENT-NUM: 0
-X-SENDER: lintao@rock-chips.com
-X-DNS-TYPE: 0
-Received: from [192.168.10.112] (unknown [220.200.58.208])
-        by smtp.263.net (Postfix) whith ESMTP id 2743535R9W0;
-        Wed, 13 Jun 2018 22:45:12 +0800 (CST)
-Cc:     shawn.lin@rock-chips.com, linux-rockchip@lists.infradead.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        id S935905AbeFMOqM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:46:12 -0400
+Received: from mx2.suse.de ([195.135.220.15]:53014 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935703AbeFMOqK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:46:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0F8D0ABF4;
+        Wed, 13 Jun 2018 14:46:08 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 7E24B1E0D63; Wed, 13 Jun 2018 16:46:06 +0200 (CEST)
+Date:   Wed, 13 Jun 2018 16:46:06 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] ARM64: dts: rockchip: add some pins to rk3399
-To:     klaus.goger@theobroma-systems.com, Randy Li <ayaka@soulik.info>
-References: <20180612152544.3812-1-ayaka@soulik.info>
- <B649911B-28E0-4466-B3F0-15875FFB9D43@theobroma-systems.com>
-From:   Shawn Lin <shawn.lin@rock-chips.com>
-Message-ID: <e9584bfe-a098-1b90-2660-c27f82ed513c@rock-chips.com>
-Date:   Wed, 13 Jun 2018 22:44:08 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-block@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
+Message-ID: <20180613144606.nvbcyg2rdjpxhf7s@quack2.suse.cz>
+References: <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
+ <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
+ <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
+ <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
+ <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
+ <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
+ <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
+ <20180611172053.GR1351649@devbig577.frc2.facebook.com>
+ <20180612155754.x5k2yndh5t6wlmpy@quack2.suse.cz>
+ <b210e55c-b06a-41ff-8592-0dbe21875779@i-love.sakura.ne.jp>
 MIME-Version: 1.0
-In-Reply-To: <B649911B-28E0-4466-B3F0-15875FFB9D43@theobroma-systems.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="6rjndak2jmeoyd4q"
+Content-Disposition: inline
+In-Reply-To: <b210e55c-b06a-41ff-8592-0dbe21875779@i-love.sakura.ne.jp>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/6/13 2:21, klaus.goger@theobroma-systems.com wrote:
-> Hi Randy,
 
------8<-------------
+--6rjndak2jmeoyd4q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->> 		pcie {
->> +			pcie_clkreqn: pci-clkreqn {
->> +				rockchip,pins =
->> +					<2 26 RK_FUNC_2 &pcfg_pull_none>;
->> +			};
->> +
->> +			pcie_clkreqnb: pci-clkreqnb {
->> +				rockchip,pins =
->> +					<4 24 RK_FUNC_1 &pcfg_pull_none>;
->> +			};
->> +
-> 
-> I’m not sure if pci-clkreqn is functional at all. If not I’m not sure if we should add it to the dtsi.
-> Shawn may know more about it.
+On Wed 13-06-18 19:43:47, Tetsuo Handa wrote:
+> Can't we utilize RCU grace period (like shown below) ?
 
-Please refer to commit 461a00bb9d539e
-("arm64: dts: rockchip: kill pcie_clkreqn and pcie_clkreqnb for rk3399")
+Honestly, the variant 1 looks too ugly to me. However variant 2 looks
+mostly OK. We can also avoid the schedule_timeout_uninterruptible(HZ / 10)
+from your patch by careful handling of the bit waitqueues. Also I'd avoid
+the addition argument to wb_writeback() and split the function instead. The
+patch resulting from your and mine ideas is attached. Thoughts?
 
-CLKREQ# is used for PCI-PM L1.x, but it's not functional for rk3399, so
-we have to support CPM(clock power management), thus I kill them last
-year.
-
-> 
->> 			pcie_clkreqn_cpm: pci-clkreqn-cpm {
->> 				rockchip,pins =
->> -					<2 RK_PD2 RK_FUNC_GPIO &pcfg_pull_none>;
->> +					<2 26 RK_FUNC_GPIO &pcfg_pull_none>;
->> 			};
->>
->> 			pcie_clkreqnb_cpm: pci-clkreqnb-cpm {
->> 				rockchip,pins =
->> -					<4 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
->> +					<4 24 RK_FUNC_GPIO &pcfg_pull_none>;
->> 			};
->> 		};
->>
->> -- 
->> 2.14.4
-> 
-> 
-> Could we actually use RK_Pxx for all new pin definitions? Would increase readability a lot.
-> 
-> Thanks,
-> Klaus
-> 
-> 
-
-
+								Honza
 -- 
-Best Regards
-Shawn Lin
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
+--6rjndak2jmeoyd4q
+Content-Type: text/x-patch; charset=us-ascii
+Content-Disposition: attachment; filename="0001-bdi-Fix-another-oops-in-wb_workfn.patch"
+
+From d0fbfad964ae5b0a331f0d814d527150bd0c305c Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Date: Wed, 13 Jun 2018 16:39:00 +0200
+Subject: [PATCH] bdi: Fix another oops in wb_workfn()
+
+syzbot is reporting NULL pointer dereference at wb_workfn() [1] due to
+wb->bdi->dev being NULL. And Dmitry confirmed that wb->state was
+WB_shutting_down after wb->bdi->dev became NULL. This indicates that
+unregister_bdi() failed to call wb_shutdown() on one of wb objects.
+
+The problem is in cgwb_bdi_unregister() which does cgwb_kill() and thus
+drops bdi's reference to wb structures before going through the list of
+wbs again and calling wb_shutdown() on each of them. This way the loop
+iterating through all wbs can easily miss a wb if that wb has already
+passed through cgwb_remove_from_bdi_list() called from wb_shutdown()
+from cgwb_release_workfn() and as a result fully shutdown bdi although
+wb_workfn() for this wb structure is still running. In fact there are
+also other ways cgwb_bdi_unregister() can race with
+cgwb_release_workfn() leading e.g. to use-after-free issues:
+
+CPU1                            CPU2
+                                cgwb_bdi_unregister()
+                                  cgwb_kill(*slot);
+
+cgwb_release()
+  queue_work(cgwb_release_wq, &wb->release_work);
+cgwb_release_workfn()
+                                  wb = list_first_entry(&bdi->wb_list, ...)
+                                  spin_unlock_irq(&cgwb_lock);
+  wb_shutdown(wb);
+  ...
+  kfree_rcu(wb, rcu);
+                                  wb_shutdown(wb); -> oops use-after-free
+
+We solve these issues by making wb_shutdown() remove the writeback
+structure from the bdi_list only after all the shutdown is done and by
+making sure cgwb_bdi_unregister() properly synchronizes with concurrent
+shutdowns using WB_shutting_down bit.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Jan Kara <jack@suse.cz>
+---
+ mm/backing-dev.c | 69 ++++++++++++++++++++++++++++++++++++++++++++------------
+ 1 file changed, 55 insertions(+), 14 deletions(-)
+
+diff --git a/mm/backing-dev.c b/mm/backing-dev.c
+index 347cc834c04a..433807ae364e 100644
+--- a/mm/backing-dev.c
++++ b/mm/backing-dev.c
+@@ -350,27 +350,21 @@ static int wb_init(struct bdi_writeback *wb, struct backing_dev_info *bdi,
+ 
+ static void cgwb_remove_from_bdi_list(struct bdi_writeback *wb);
+ 
+-/*
+- * Remove bdi from the global list and shutdown any threads we have running
+- */
+-static void wb_shutdown(struct bdi_writeback *wb)
++static bool wb_start_shutdown(struct bdi_writeback *wb)
+ {
+ 	/* Make sure nobody queues further work */
+ 	spin_lock_bh(&wb->work_lock);
+ 	if (!test_and_clear_bit(WB_registered, &wb->state)) {
+ 		spin_unlock_bh(&wb->work_lock);
+-		/*
+-		 * Wait for wb shutdown to finish if someone else is just
+-		 * running wb_shutdown(). Otherwise we could proceed to wb /
+-		 * bdi destruction before wb_shutdown() is finished.
+-		 */
+-		wait_on_bit(&wb->state, WB_shutting_down, TASK_UNINTERRUPTIBLE);
+-		return;
++		return false;
+ 	}
+ 	set_bit(WB_shutting_down, &wb->state);
+ 	spin_unlock_bh(&wb->work_lock);
++	return true;
++}
+ 
+-	cgwb_remove_from_bdi_list(wb);
++static void __wb_shutdown(struct bdi_writeback *wb)
++{
+ 	/*
+ 	 * Drain work list and shutdown the delayed_work.  !WB_registered
+ 	 * tells wb_workfn() that @wb is dying and its work_list needs to
+@@ -379,6 +373,7 @@ static void wb_shutdown(struct bdi_writeback *wb)
+ 	mod_delayed_work(bdi_wq, &wb->dwork, 0);
+ 	flush_delayed_work(&wb->dwork);
+ 	WARN_ON(!list_empty(&wb->work_list));
++	cgwb_remove_from_bdi_list(wb);
+ 	/*
+ 	 * Make sure bit gets cleared after shutdown is finished. Matches with
+ 	 * the barrier provided by test_and_clear_bit() above.
+@@ -387,6 +382,23 @@ static void wb_shutdown(struct bdi_writeback *wb)
+ 	clear_and_wake_up_bit(WB_shutting_down, &wb->state);
+ }
+ 
++/*
++ * Remove bdi from the global list and shutdown any threads we have running
++ */
++static void wb_shutdown(struct bdi_writeback *wb)
++{
++	if (!wb_start_shutdown(wb)) {
++		/*
++		 * Wait for wb shutdown to finish if someone else is just
++		 * running wb_shutdown(). Otherwise we could proceed to wb /
++		 * bdi destruction before wb_shutdown() is finished.
++		 */
++		wait_on_bit(&wb->state, WB_shutting_down, TASK_UNINTERRUPTIBLE);
++		return;
++	}
++	__wb_shutdown(wb);
++}
++
+ static void wb_exit(struct bdi_writeback *wb)
+ {
+ 	int i;
+@@ -706,6 +718,35 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
+ 	return ret;
+ }
+ 
++/*
++ * Mark writeback structure as shutting down. The function returns true if
++ * we successfully marked the structure, false if shutdown was already in
++ * progress (in which case we also wait for it to finish).
++ *
++ * The function requires cgwb_lock to be held and releases it. Note that the
++ * caller need not hold reference to the writeback structure and thus once
++ * cgwb_lock is released, the writeback structure can be freed.
++ */
++static bool cgwb_start_shutdown(struct bdi_writeback *wb)
++	__releases(cgwb_lock)
++{
++	if (!wb_start_shutdown(wb)) {
++		DEFINE_WAIT(wait);
++		wait_queue_head_t *wqh = bit_waitqueue(&wb->state,
++						       WB_shutting_down);
++		bool sleep;
++
++		prepare_to_wait(wqh, &wait, TASK_UNINTERRUPTIBLE);
++		sleep = test_bit(WB_shutting_down, &wb->state);
++		spin_unlock_irq(&cgwb_lock);
++		if (sleep)
++			schedule();
++		return false;
++	}
++	spin_unlock_irq(&cgwb_lock);
++	return true;
++}
++
+ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
+ {
+ 	struct radix_tree_iter iter;
+@@ -721,8 +762,8 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
+ 	while (!list_empty(&bdi->wb_list)) {
+ 		wb = list_first_entry(&bdi->wb_list, struct bdi_writeback,
+ 				      bdi_node);
+-		spin_unlock_irq(&cgwb_lock);
+-		wb_shutdown(wb);
++		if (cgwb_start_shutdown(wb))
++			__wb_shutdown(wb);
+ 		spin_lock_irq(&cgwb_lock);
+ 	}
+ 	spin_unlock_irq(&cgwb_lock);
+-- 
+2.13.7
+
+
+--6rjndak2jmeoyd4q--
