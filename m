@@ -2,189 +2,226 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8B3E6C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:32:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 655BFC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32EFA208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:32:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32EFA208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0526A204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fA4OYevW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0526A204EC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935340AbeFMLcD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 07:32:03 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:44546 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935238AbeFMLcC (ORCPT
+        id S935368AbeFMLdA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 07:33:00 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:44507 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935188AbeFMLc6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:32:02 -0400
-Received: by mail-it0-f72.google.com with SMTP id 202-v6so2213408itw.9
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:32:02 -0700 (PDT)
+        Wed, 13 Jun 2018 07:32:58 -0400
+Received: by mail-pf0-f193.google.com with SMTP id h12-v6so1260010pfk.11
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:32:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=CXStFszA5EJ+fiscSQaTb6bZ4aiPyPz8h16IhbL+vSg=;
+        b=fA4OYevWDrNWlMUG+/AdeAhs+dwcdFUnIkJgiTlQQzDPY1IqCXNUJ7xxUyVN7/P4NX
+         BaJMKDMhVRkhW/z1LbgkQbPTeiZmukfmy3+PHjBG66hmMD04fVWMhGUobP0Ii6thnAPi
+         9DnnGpAJbmbcLS+64CnK637m3pNK9tuDii3cY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=IBoRI2FJjw3oq/Hyhl0lPWkNY6ZindWm8wnTcmibsqw=;
-        b=NxnR4zaojsn9fWvnFpZQDD7R3V9ztAUCmhQlgJUopFK+0BdgaEA80wKOJcd22sE9n0
-         CM8OXfQwCPYUsSlp1LJp/zUyf9MUgdj+mZ34cl8TQWSBmxZaVjGrcvuTT9ALMzy8O6xd
-         DXizYdpXvcKo1HOWRFsKU5nCr9fKpaD/kLTnhbaUtRgNAQPcZEr2+6X4n+aMhgnc8/lQ
-         fy5YBi6kxog/SkBqWS6YHXZv6fBVWrbnZNCPNv++P+5CSRd90YdjOXP6JdnPgnge0spI
-         ZLlkk18sbnMJUaCxGV6vC6GuKPU5ECE1fo0XjNkuUn1sVN0Dx8/06ykp6RreiZE6zPxB
-         AH6Q==
-X-Gm-Message-State: APt69E0KX6pH6htnk1jhNdXDkAA0z5wZBoIVbWxH3P9Wb0k1EwsR1SWC
-        Ju6inJfF7xKPTkOq9CPzNig0crKG6zAYgnH71jNidMneIDxJ
-X-Google-Smtp-Source: ADUXVKK3Y0W4OaN1hOg8RgCOygdos7KD+PGlAVQdPQZAZuQs698R/AqyJ98cm4muPTD2FKaaXrGgMQiUbqdxWaw+5tKNLItO+P8w
-MIME-Version: 1.0
-X-Received: by 2002:a6b:b242:: with SMTP id b63-v6mr1920623iof.47.1528889521747;
- Wed, 13 Jun 2018 04:32:01 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 04:32:01 -0700
-In-Reply-To: <0000000000005abb37056e840d40@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d85140056e845443@google.com>
-Subject: Re: KASAN: slab-out-of-bounds Read in crypto_morus640_decrypt_chunk
-From:   syzbot <syzbot+1fafa9c4cf42df33f716@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=CXStFszA5EJ+fiscSQaTb6bZ4aiPyPz8h16IhbL+vSg=;
+        b=HT7Ncpan916MeG0QdmvKjn3TfNMiKDXTehgzl79kfWV70kw8rfUXHTI0mP/8flGZcH
+         pM8Wd6eh8/yskkbvYigltjFdI5pcocIRiTVqznbBYul8AKlk8fRCXUToEZ1TB7kiqx4Z
+         FRlI3p6Bji7yPZPv8TUBxK4Q4kJj+lfwx/2xXxzEGtYQI3f9Uv5Y28Z25vHgoN1sm6zE
+         WCSCI878w6tlxBJBR8MChd0xdCcisrIe469tMm0eYHdRUSmObFJVkDfShm9T+7AMzH5j
+         0IR57Tyf7uXk7dQhzNc+PxJoRKaTgwTdlhBv79H3VH+ySz1D7q71UbqWj/zM7YnEAXTO
+         RxAg==
+X-Gm-Message-State: APt69E2Q+maFM3HdfZpNt7d6XGgno/k/tiE/aJVUejE2bpvhqLEv231V
+        W1X90qewFqBHHlvhO/El1aRQ4A==
+X-Google-Smtp-Source: ADUXVKLTiRW/N0ayNFW3Suq0KX0t2DkpL5loYrfnQmMJbl68CGC3+7rhP+/Uh5Dq/joFss6C94tJ6A==
+X-Received: by 2002:a65:4c87:: with SMTP id m7-v6mr3863953pgt.364.1528889577733;
+        Wed, 13 Jun 2018 04:32:57 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id h8-v6sm2745370pgq.35.2018.06.13.04.32.49
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 13 Jun 2018 04:32:57 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     tglx@linutronix.de, john.stultz@linaro.org,
+        daniel.lezcano@linaro.org, arnd@arndb.de, tony@atomide.com,
+        aaro.koskinen@iki.fi, linux@armlinux.org.uk, mark.rutland@arm.com,
+        marc.zyngier@arm.com
+Cc:     baolin.wang@linaro.org, broonie@kernel.org,
+        paulmck@linux.vnet.ibm.com, mlichvar@redhat.com,
+        rdunlap@infradead.org, kstewart@linuxfoundation.org,
+        gregkh@linuxfoundation.org, pombredanne@nexb.com,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, heiko@sntech.de,
+        linus.walleij@linaro.org, viresh.kumar@linaro.org,
+        mingo@kernel.org, hpa@zytor.com, peterz@infradead.org,
+        douly.fnst@cn.fujitsu.com, len.brown@intel.com,
+        rajvi.jingar@intel.com, alexandre.belloni@bootlin.com,
+        x86@kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org
+Subject: [PATCH 0/8] Add persistent clock support
+Date:   Wed, 13 Jun 2018 19:32:27 +0800
+Message-Id: <cover.1528878545.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Hi,
 
-HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16685c1f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=1fafa9c4cf42df33f716
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=1122e4cf800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1794783f800000
+We will meet below issues when compensating the suspend time for the timekeeping.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1fafa9c4cf42df33f716@syzkaller.appspotmail.com
+1. We have too many different ways of dealing with persistent timekeeping
+across architectures, so it is hard for one driver to be compatible with
+different architectures. For example, we should register register_persistent_clock()
+on arm architecture, but we should set x86_platform.get_wallclock() on x86
+architecture, and we should implement the read_persistent_clock64() on arm64
+architecture and so on.
 
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-random: sshd: uninitialized urandom read (32 bytes read)
-==================================================================
-BUG: KASAN: slab-out-of-bounds in crypto_morus640_load_a  
-crypto/morus640.c:111 [inline]
-BUG: KASAN: slab-out-of-bounds in crypto_morus640_decrypt_chunk+0xcf8/0xd20  
-crypto/morus640.c:278
-Read of size 4 at addr ffff8801d76dc848 by task syz-executor575/4437
+2. On some platforms (such as Spreadtrum platform), we registered the high
+resolution timer as one clocksource to update the OS time, but the high
+resolution timer will be stopped when system goes into suspend state.
+So we use another one always-on timer (but low resolution) to calculate
+the suspend time to compensate the OS time. Though we can register the
+always-on timer as one clocksource, we need re-calculate the mult/shift
+with one larger conversion range to calculate the suspend time and need
+update the clock in case of running over the always-on timer. 
 
-CPU: 1 PID: 4437 Comm: syz-executor575 Not tainted 4.17.0+ #84
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  crypto_morus640_load_a crypto/morus640.c:111 [inline]
-  crypto_morus640_decrypt_chunk+0xcf8/0xd20 crypto/morus640.c:278
-  crypto_morus640_process_crypt.isra.12+0x153/0x230 crypto/morus640.c:376
-  crypto_morus640_crypt+0x42e/0x9f0 crypto/morus640.c:442
-  crypto_morus640_decrypt+0x23e/0x3d0 crypto/morus640.c:485
-  crypto_aead_decrypt include/crypto/aead.h:370 [inline]
-  _aead_recvmsg crypto/algif_aead.c:315 [inline]
-  aead_recvmsg+0x13cc/0x1ba0 crypto/algif_aead.c:334
-  sock_recvmsg_nosec net/socket.c:818 [inline]
-  sock_recvmsg+0xd0/0x110 net/socket.c:825
-  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2323
-  __sys_recvmsg+0x112/0x260 net/socket.c:2372
-  __do_sys_recvmsg net/socket.c:2382 [inline]
-  __se_sys_recvmsg net/socket.c:2379 [inline]
-  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2379
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x43fef9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 6b 45 00 00 c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd6c88d3b8 EFLAGS: 00000207 ORIG_RAX: 000000000000002f
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fef9
-RDX: 0000000000000000 RSI: 0000000020002840 RDI: 0000000000000004
-RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
-R10: 00000000004002c8 R11: 0000000000000207 R12: 0000000000401820
-R13: 00000000004018b0 R14: 0000000000000000 R15: 0000000000000000
+More duplicate code will be added if other platforms meet this case.
 
-Allocated by task 4437:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  kzalloc include/linux/slab.h:706 [inline]
-  skcipher_next_slow crypto/skcipher.c:253 [inline]
-  skcipher_walk_next+0x750/0x1850 crypto/skcipher.c:357
-  skcipher_walk_first+0x151/0x410 crypto/skcipher.c:442
-  skcipher_walk_aead_common+0x7f8/0xbc0 crypto/skcipher.c:539
-  skcipher_walk_aead_decrypt+0xc7/0x100 crypto/skcipher.c:572
-  crypto_morus640_process_crypt.isra.12+0x9c/0x230 crypto/morus640.c:370
-  crypto_morus640_crypt+0x42e/0x9f0 crypto/morus640.c:442
-  crypto_morus640_decrypt+0x23e/0x3d0 crypto/morus640.c:485
-  crypto_aead_decrypt include/crypto/aead.h:370 [inline]
-  _aead_recvmsg crypto/algif_aead.c:315 [inline]
-  aead_recvmsg+0x13cc/0x1ba0 crypto/algif_aead.c:334
-  sock_recvmsg_nosec net/socket.c:818 [inline]
-  sock_recvmsg+0xd0/0x110 net/socket.c:825
-  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2323
-  __sys_recvmsg+0x112/0x260 net/socket.c:2372
-  __do_sys_recvmsg net/socket.c:2382 [inline]
-  __se_sys_recvmsg net/socket.c:2379 [inline]
-  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2379
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+3. Now we have 3 sources that could be used to compensate the OS time:
+Nonstop clocksource during suspend, persistent clock and rtc device,
+which is complicated. Another hand is that the nonstop clocksource can
+risk wrapping if the system suspend time is too long, so we need one
+mechanism to wake up the system before the nonstop clocksource wrapping.
 
-Freed by task 2800:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  single_release+0x8f/0xb0 fs/seq_file.c:609
-  __fput+0x353/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  tracehook_notify_resume include/linux/tracehook.h:192 [inline]
-  exit_to_usermode_loop+0x302/0x360 arch/x86/entry/common.c:166
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+According to above issues, we can introduce one common persistent clock
+framework to be compatible with different architectures, in future we will
+remove the persistent clock implementation for each architecture. Also
+this framework will implement common code to help drivers to register easily.
+Moreover if we converted all SUSPEND_NONSTOP clocksource to register to
+be one persistent clock, we can remove the SUSPEND_NONSTOP clocksource
+accounting in timekeeping, which means we can only compensate the OS time
+from persistent clock and RTC.
 
-The buggy address belongs to the object at ffff8801d76dc840
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 8 bytes inside of
-  32-byte region [ffff8801d76dc840, ffff8801d76dc860)
-The buggy address belongs to the page:
-page:ffffea00075db700 count:1 mapcount:0 mapping:ffff8801da8001c0  
-index:0xffff8801d76dcfc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffff8801da801238 ffffea00075dcdc8 ffff8801da8001c0
-raw: ffff8801d76dcfc1 ffff8801d76dc000 000000010000003b 0000000000000000
-page dumped because: kasan: bad access detected
+Will be appreciated for any comments. Thank you all.
 
-Memory state around the buggy address:
-  ffff8801d76dc700: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
-  ffff8801d76dc780: fb fb fb fb fc fc fc fc 00 00 fc fc fc fc fc fc
-> ffff8801d76dc800: 00 00 00 00 fc fc fc fc 00 fc fc fc fc fc fc fc
-                                               ^
-  ffff8801d76dc880: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d76dc900: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
+Arnd posted some comments as below last time, but we did not get a general
+consensus, so I post them again. Arnd said:
+
+"I was planning to discuss this with Daniel and John during Linaro Connect,
+but that didn't happen, so I'd like to bring up the bigger picture here again.
+
+Today, we have a number of subsystem-type interfaces that deal with
+time keeping in the wider sense (I might be missing some):
+ - clock source
+ - clock event
+ - sched clock
+ - real time clock
+ - ptp clock
+ - persistent clock
+
+The first five have separate registration interfaces and may all refer
+to different hardware blocks, or (more commonly) have some overlap
+in the hardware. The fifth one is generalized by your series, without it
+it's really architecture specific (as the other ones were one one point).
+
+Are we happy with that structure in the long run? One of my earlier
+comments on this series was that I thought it should be combined with
+the clocksource registration, but upon talking to Baolin about it more,
+I realized that this just follows the same structure that we have for the
+others.
+
+In theory, we could have a more abstract way of registering a clock
+hardware that interfaces with any combination of the six subsystems
+I mentioned above, with a superset of the subsystem specific structures
+and a set of flags that indicate what a particular device is usable for.
+
+Combining all six might be a bit too much (in particular rtc, though
+it clearly overlaps the persistent-clk case), but what your general
+ideas on where we should be heading? Is it worth reworking the
+core kernel portion of the subsystems to simplify the individual
+drivers?"
+
+John also posted some important comments for this patch set, that I quite
+agree with his points. John said:
+
+"For context, these abstractions have grown out of the need for using
+different hardware components for all of these. It was quite common
+for x86 hardware to use the acpi_pm for clocksource, lapic/PIT for
+clockevent, tsc for sched_clock and CMOS RTC for persistent clock.
+While some of these could be backed by the same hardware, it wasn't
+common. However, hardware with less restrictions have allowed in some
+cases for these to be more unified, but I'm not sure if its particularly common.
+
+Another part of the reason that we don't combine the above
+abstractions, even when they are backed by the same hardware, is
+because some of the fields used for freq conversion (mult/shift) have
+different needs for the different types of accounting.
+
+For instance, with a clocksource, we are very focused on avoiding
+error to keep timekeeing accurate, thus we want to use as large a
+shift (and thus mult) as possible (and do our shifting as late as
+possible in our accounting). However, that then shrinks the amount of
+time that can be accumulated in one go w/o causing an overflow.
+
+Where as with sched_clock, we don't worry as much as about accuracy,
+so we can use smaller shifts (and thus mults), and thus can go for
+longer periods of time between accumulating without worrying.
+
+Similarly for the persistent clock case we don't need need to worry as
+much about accuracy, so we can can use smaller shifts, but we are not
+in as much of a hot patch, so we can also"
+
+Changes since RFC V1:
+ - Move the alarmtimer starting into alarmtimer.c.
+ - Export persistent_clock_start_alarmtimer().
+ - Add one memeber to indicate if the alarmtimer was initialized.
+ - Fix build issues.
+
+Baolin Wang (8):
+  time: Add persistent clock support
+  clocksource: sprd: Add one persistent timer for Spreadtrum platform
+  arm: time: Remove the persistent clock support for ARM architecture
+  clocksource: arm_arch_timer: Register the persistent clock
+  clocksource: timer-ti-32k: Register the persistent clock
+  clocksource: time-pistachio: Register the persistent clock
+  x86: tsc: Register the persistent clock
+  time: timekeeping: Remove time compensating from nonstop clocksources
+
+ arch/arm/include/asm/mach/time.h     |    4 -
+ arch/arm/kernel/time.c               |   36 -------
+ arch/arm/plat-omap/Kconfig           |    1 +
+ arch/arm/plat-omap/counter_32k.c     |   44 ++------
+ arch/x86/Kconfig                     |    1 +
+ arch/x86/kernel/tsc.c                |   21 ++++
+ drivers/clocksource/Kconfig          |    4 +
+ drivers/clocksource/arm_arch_timer.c |   10 ++
+ drivers/clocksource/tegra20_timer.c  |   12 ++-
+ drivers/clocksource/time-pistachio.c |    3 +
+ drivers/clocksource/timer-sprd.c     |   80 +++++++++++++++
+ drivers/clocksource/timer-ti-32k.c   |    4 +
+ include/linux/persistent_clock.h     |   23 +++++
+ kernel/time/Kconfig                  |    4 +
+ kernel/time/Makefile                 |    1 +
+ kernel/time/alarmtimer.c             |    4 +
+ kernel/time/persistent_clock.c       |  184 ++++++++++++++++++++++++++++++++++
+ kernel/time/timekeeping.c            |   19 +---
+ 18 files changed, 360 insertions(+), 95 deletions(-)
+ create mode 100644 include/linux/persistent_clock.h
+ create mode 100644 kernel/time/persistent_clock.c
+
+-- 
+1.7.9.5
 
