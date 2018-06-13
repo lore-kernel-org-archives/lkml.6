@@ -2,145 +2,116 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2B324C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:08:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C0BFCC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:14:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5800208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:08:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rqcDYain"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5800208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 76C772086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:14:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C772086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934638AbeFMHIG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:08:06 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43211 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934115AbeFMHIC (ORCPT
+        id S934454AbeFMHOF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:14:05 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:13165 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933999AbeFMHOD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:08:02 -0400
-Received: by mail-lf0-f67.google.com with SMTP id n15-v6so2226865lfn.10;
-        Wed, 13 Jun 2018 00:08:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=QAWQEoFARIkG4dOz9CjfoMlxDtMdgyCbNtsv05T+MNk=;
-        b=rqcDYain9scA8QH04hgPOzZtlmGuC+RPYChoP6Bp3PlXdx9UO8xMh8ZnDYcuG/BIJn
-         YOsBbJTV8Zb0vJSMAb9YvckLOI/lnaaE7DGOuYf5nWmYmqwdIUK1HR0K0pbx+xKEuUjl
-         TjpWVcdi6JJQX9HAJdEaaJhsmU4t8Zsk0GM8rnwD8gjfcaA2GAdTQCW1LDKDfF7h8urh
-         k9eoWjwFItObLigdpiX+NooAW+gXUxo6Z3MV6KX3sg64FG/mNVRbxrUp9C/UBimVWrk3
-         WbCM7Hgt1X8PRklvPQTUXhVpht8bSVKt3lP3w+txX/hBKWTaKNLuOVorUZL9n7gcDQfr
-         VWCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=QAWQEoFARIkG4dOz9CjfoMlxDtMdgyCbNtsv05T+MNk=;
-        b=Rs8IPHJPK26fuaAspUc2YAUMBknvlBBIa631Sh7FaVe8QA3Y0XJdTQzPsh22/ok4+H
-         sx1JifzHKsO8N5c7dSjGOrCqeFm/TblohSUO7PpLHBFo2QakOF/xJB2jDglykeEmim9M
-         hgfu+ODQgY+ri0ysjOUZJU9VkvYnXDdFA2/xWScpzv32JeQOU2DCSqkQyoCv1a06uBgh
-         xtUQxDXVTFlTtjqH2gdaa6Q2cypgFhLJ+GrMehgSW5eiOpN33ngulP6hEttRcn+aKbkN
-         xe5+mAzyuBF5wDc9VGe3xPbLehPHgow+1dpPNSftRwUA9XYbiij0gzNNVt6jdz0EcViP
-         Kl5A==
-X-Gm-Message-State: APt69E3orrbUjFavkeIX9USYTxxk87U/T37tNRhfr7IoWi3oftkIrysF
-        RIN0zMJuZx4GMAaDZ7RIpjI=
-X-Google-Smtp-Source: ADUXVKL34UC9rgQU/FcGLE2lFkO6pMq50kHE837qLRxFcamq39BotrbS+FUIYGdOoNiDR/amRTxwGg==
-X-Received: by 2002:a2e:9d5:: with SMTP id 204-v6mr2189640ljj.40.1528873680613;
-        Wed, 13 Jun 2018 00:08:00 -0700 (PDT)
-Received: from [10.17.182.9] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id v25-v6sm407244ljh.57.2018.06.13.00.07.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 00:07:59 -0700 (PDT)
-Subject: Re: [PATCH v3 4/9] xen/grant-table: Allow allocating buffers suitable
- for DMA
-To:     Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180612134200.17456-1-andr2000@gmail.com>
- <20180612134200.17456-5-andr2000@gmail.com>
- <4ab26c9a-155a-cd04-fbf6-c38c6429959b@oracle.com>
-From:   Oleksandr Andrushchenko <andr2000@gmail.com>
-Message-ID: <ffd6eb5a-b057-8cca-c8cb-75fd97b63a45@gmail.com>
-Date:   Wed, 13 Jun 2018 10:07:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Wed, 13 Jun 2018 03:14:03 -0400
+X-UUID: 95122e980ca8437d89c3b4b03254dc01-20180613
+Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1346891821; Wed, 13 Jun 2018 15:14:00 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 15:13:58 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 15:13:58 +0800
+Message-ID: <1528874037.30263.6.camel@mtksdaap41>
+Subject: Re: [PATCH 19/28] drm/mediatek: add connection from RDMA2 to DPI1
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 15:13:57 +0800
+In-Reply-To: <1528687580-549-20-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-20-git-send-email-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <4ab26c9a-155a-cd04-fbf6-c38c6429959b@oracle.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/13/2018 04:12 AM, Boris Ostrovsky wrote:
->
->
-> On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
->> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->>
->> Extend grant table module API to allow allocating buffers that can
->> be used for DMA operations and mapping foreign grant references
->> on top of those.
->> The resulting buffer is similar to the one allocated by the balloon
->> driver in terms that proper memory reservation is made
->> ({increase|decrease}_reservation and VA mappings updated if needed).
->> This is useful for sharing foreign buffers with HW drivers which
->> cannot work with scattered buffers provided by the balloon driver,
->> but require DMAable memory instead.
->>
->> Signed-off-by: Oleksandr Andrushchenko 
->> <oleksandr_andrushchenko@epam.com>
->
-> Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
->
-> with a small nit below
->
->
->> ---
->>   drivers/xen/Kconfig       | 13 ++++++
->>   drivers/xen/grant-table.c | 97 +++++++++++++++++++++++++++++++++++++++
->>   include/xen/grant_table.h | 18 ++++++++
->>   3 files changed, 128 insertions(+)
->>
->> diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
->> index e5d0c28372ea..39536ddfbce4 100644
->> --- a/drivers/xen/Kconfig
->> +++ b/drivers/xen/Kconfig
->> @@ -161,6 +161,19 @@ config XEN_GRANT_DEV_ALLOC
->>         to other domains. This can be used to implement frontend drivers
->>         or as part of an inter-domain shared memory channel.
->>   +config XEN_GRANT_DMA_ALLOC
->> +    bool "Allow allocating DMA capable buffers with grant reference 
->> module"
->> +    depends on XEN && HAS_DMA
->> +    help
->> +      Extends grant table module API to allow allocating DMA capable
->> +      buffers and mapping foreign grant references on top of it.
->> +      The resulting buffer is similar to one allocated by the balloon
->> +      driver in terms that proper memory reservation is made
->> +      ({increase|decrease}_reservation and VA mappings updated if 
->> needed).
->
-> I think you should drop the word "terms" and say "is made *by*" and 
-> "VA mappings *are* updated"
->
-> And similar change in the commit message.
->
-Will, change, thank you
-> -boris
->
+Hi, Stu:
+
+On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> This patch add the connection from RDMA2 to DPI1
+> 
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 31a0832ef9ec..2d883815d79c 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -93,9 +93,11 @@
+>  #define RDMA1_MOUT_DPI0			0x2
+>  #define RDMA1_MOUT_DPI1			0x3
+>  #define RDMA2_MOUT_DPI0			0x2
+> +#define RDMA2_MOUT_DPI1			0x3
+
+Usually, each bit of a mout register represent a output enable. Is this
+value 0x3 a correct value?
+
+Regards,
+CK
+
+>  #define DPI0_SEL_IN_RDMA1		0x1
+>  #define DPI0_SEL_IN_RDMA2		0x3
+>  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+> +#define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+>  #define DSI1_SEL_IN_RDMA1		0x1
+>  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+>  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+> @@ -199,6 +201,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+>  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+>  		value = RDMA2_MOUT_DPI0;
+> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> +		value = RDMA2_MOUT_DPI1;
+>  	} else {
+>  		value = 0;
+>  	}
+> @@ -233,6 +238,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+>  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+>  		value = DPI0_SEL_IN_RDMA2;
+> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+> +		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> +		value = DPI1_SEL_IN_RDMA2;
+>  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+>  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+>  		value = COLOR1_SEL_IN_OVL1;
+
 
