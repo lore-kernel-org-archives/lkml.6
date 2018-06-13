@@ -2,180 +2,128 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2418FC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:03 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 84382C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C63208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB2BC208C1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S5Mic0l4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4C63208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Z9rPET6N";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="kOy5NTjz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2BC208C1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935661AbeFMNLA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:11:00 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:42124 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeFMNK5 (ORCPT
+        id S935678AbeFMNL1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:11:27 -0400
+Received: from esa3.hgst.iphmx.com ([216.71.153.141]:18742 "EHLO
+        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935346AbeFMNLY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:10:57 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=dwUaVAeHBenjwocjnc99KpFarmFNWd1T1FWXpknMDZk=; b=S5Mic0l4z/EmuxTXzb068pNvo
-        anHZXLRN3f72AI3z7lt5XBvWjpJX37PrOBATX0lAXwzN8V+PphWjHRXwTz0c+30HU6x+hcIUvArRk
-        f+a/xDQtEPqgRfYVN92Feub9mCmerly9pDZB4xA3cwjR9b9mZ7VKi3FTNCDNiujhdFBIMnH1VXJef
-        loB9IVQtVQ6HJhY+PDH4/dB/htI/BOgFbspm/xZ7fqLcVuQgp82m1J+BJlpBk098Hjqn5ntPl2LhN
-        VqqfF81975bJa/gFCEcHgSIlvhMtMAkyewBYeOMnpRNvEhvLZ6oV2AA4vCZA3L9ZNPTm3BpJ4sCGf
-        aZvcv+jEg==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fT5XH-0006IS-Dv; Wed, 13 Jun 2018 13:10:03 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 03D1C201EA7CB; Wed, 13 Jun 2018 15:10:00 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 15:10:00 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 1/2] locking: Implement an algorithm choice for
- Wound-Wait mutexes
-Message-ID: <20180613131000.GX12198@hirez.programming.kicks-ass.net>
-References: <20180613074745.14750-1-thellstrom@vmware.com>
- <20180613074745.14750-2-thellstrom@vmware.com>
- <20180613095012.GW12198@hirez.programming.kicks-ass.net>
- <69f3dee9-4782-bc90-3ee2-813ac6835c4a@vmware.com>
+        Wed, 13 Jun 2018 09:11:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1528895485; x=1560431485;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=Uitf1jZleCwh7rD1w9pIolr4r4r6pQzzToNh1Gtj4Xo=;
+  b=Z9rPET6NKNM3eGgnxG8/4kVksv+PsTQEqo++tLhCSll9RUl/z8/MJXcx
+   bT3MptqsSBYWkpglClyeBEE/dyFfNEQa4XTJWVWtci+AJ+stvBBrc8S5G
+   UfMJA3MTVS07Dt4KHB5/VyU+iSNWd5WhrUwYmly32Z4H1FMkwKwVojCfW
+   /mLSixk/kftQo5Ae0S3d9rM/CT2fIev/5lTtN4W76hWncAqdlMWUdk2AP
+   LZZTVqpqEqEoRh45+m+DYQCOqiXnlvp3ZYx3MDqo+SIFQtHKxNtd+3Dw2
+   +YhoeabcefBDKhomJFdW7bQQW8orR5IT0hCi57dGRvPMAp0cdWSfpEK+C
+   g==;
+X-IronPort-AV: E=Sophos;i="5.51,218,1526313600"; 
+   d="scan'208";a="82408822"
+Received: from mail-bl2nam02lp0079.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([207.46.163.79])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2018 21:11:23 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Uitf1jZleCwh7rD1w9pIolr4r4r6pQzzToNh1Gtj4Xo=;
+ b=kOy5NTjzvVfeslRAmQfGYT0i5mkZbxFVImzV44n5P6u2dKfDXnQvWcdpQFim0e4i62WTo4tLfnEZXFOlwt6G/Ycuh1bNQqH+eDbOVO3VavB4bSHfacw1PKEfm3npWIRwxwueafWOvF6goNACrF3sFKKjBqu85tySbRQV36VlJx0=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0433.namprd04.prod.outlook.com (10.173.48.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.17; Wed, 13 Jun 2018 13:11:19 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::9de4:3c8d:39af:e4c5]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::9de4:3c8d:39af:e4c5%8]) with mapi id 15.20.0841.019; Wed, 13 Jun 2018
+ 13:11:19 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "hch@infradead.org" <hch@infradead.org>,
+        "jthumshirn@suse.de" <jthumshirn@suse.de>
+CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
+Subject: Re: [PATCH v2 3/3] scsi: don't add scsi command result bytes
+Thread-Topic: [PATCH v2 3/3] scsi: don't add scsi command result bytes
+Thread-Index: AQHUAuvzvEj5/zBGu0mBzpDKIWnc5aReFh+AgAAUEAA=
+Date:   Wed, 13 Jun 2018 13:11:19 +0000
+Message-ID: <1c08057c85227d07013b9e3a9d8b9e574c62a068.camel@wdc.com>
+References: <20180613075349.7509-1-jthumshirn@suse.de>
+         <20180613075349.7509-4-jthumshirn@suse.de>
+         <20180613115929.GC12438@infradead.org>
+In-Reply-To: <20180613115929.GC12438@infradead.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [76.103.130.147]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0433;7:DnUjS59STUhwoWoL1sRsK9aTPLvaB/mDj73zjfRK3jT0xG3Lh9JyIqE4WYqjQRUs4IC9LRKbfC81zGj3kvGaLZInBgYUFkXeTJjVPGmTuxaDJHUOHZGU04f/INGk5LZ2Cl99XVfISDwd+H6SWz8pIgglYZ0YttVFV6q1b//rxbcI3PW9ZSf7kUJSvHZ+lGDsOH4So11Gk8vq/MPWw1lkLomWp5QjwxJ1cKXqZWusf0P2SlF+wvy2VUAUsJ5RRYaZ;20:fC4BzmXH7i9TATKv8D/djddffdN9JK4Onlz5DW10Mt+ktLRUGPFNXaVJ7WuXN2kYsk3SAg8zEJW5C8Drxi4aJVYmUoHqOwTG1tpY5AkggCn11eKYB/kkiyH47CKYuaprJmb5e0cVWf77BKivYfecQBleUxbI7xf5F1smp3oGNIE=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 1c475613-9ade-451a-f0a5-08d5d12f274c
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0433;
+x-ms-traffictypediagnostic: MWHPR04MB0433:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0433255744F5401D42F1F092987E0@MWHPR04MB0433.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0433;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0433;
+x-forefront-prvs: 07025866F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(39380400002)(376002)(366004)(189003)(199004)(72206003)(66066001)(36756003)(11346002)(305945005)(86362001)(186003)(446003)(7736002)(2900100001)(26005)(3280700002)(118296001)(476003)(2616005)(4326008)(6246003)(8936002)(5660300001)(6512007)(3660700001)(478600001)(53936002)(8676002)(81166006)(81156014)(5250100002)(54906003)(76176011)(68736007)(97736004)(3846002)(106356001)(2906002)(2501003)(6506007)(110136005)(14454004)(102836004)(6116002)(99286004)(486006)(25786009)(6486002)(316002)(229853002)(105586002)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0433;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: Yg7MVZllpRk91MxHCJC4JW97A8l/OA37f217+5JHroaUIuC5DU5LVLimDCkaGVWVZ5l/X0M4PiMFscV8qvsVB7QnXfRkMELyNhAmZKHODGTBtlRYwm056zTyEAVZbLireq+z9AYE9Tbcqin/CRJbxDXE9x5iDOxm8kU6ktOchzw/PtX4JpwJhFaZ3lNEJzOl
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B9BD69C245029F4ABEE91EDABB200936@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <69f3dee9-4782-bc90-3ee2-813ac6835c4a@vmware.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c475613-9ade-451a-f0a5-08d5d12f274c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 13:11:19.4564
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0433
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 12:40:29PM +0200, Thomas Hellstrom wrote:
-> On 06/13/2018 11:50 AM, Peter Zijlstra wrote:
-> > 
-> > > +
-> > > +	lockdep_assert_held(&lock->wait_lock);
-> > > +
-> > > +	if (owner && hold_ctx && __ww_ctx_stamp_after(hold_ctx, ww_ctx) &&
-> > > +	    ww_ctx->acquired > 0) {
-> > > +		WRITE_ONCE(hold_ctx->wounded, true);
-> > > +		if (owner != current) {
-> > > +			/*
-> > > +			 * wake_up_process() inserts a write memory barrier to
-> > It does no such thing. But yes, it does ensure the wakee sees all prior
-> > stores IFF the wakeup happened.
-> > 
-> > > +			 * make sure owner sees it is wounded before
-> > > +			 * TASK_RUNNING in case it's sleeping on another
-> > > +			 * ww_mutex. Note that owner points to a valid
-> > > +			 * task_struct as long as we hold the wait_lock.
-> > > +			 */
-> > What exactly are you trying to say here ?
-> > 
-> > I'm thinking this is the pairing barrier to the smp_mb() below, with
-> > your list_empty() thing? Might make sense to write a single coherent
-> > comment and refer to the other location.
-> 
-> So what I'm trying to say here is that wake_up_process() ensures that the
-> owner, if in !TASK_RUNNING, sees the write to hold_ctx->wounded before the
-> transition to TASK_RUNNING. This was how I interpreted "woken up" in the
-> wake up process documentation.
-
-There is documentation!? :-) Aaah, you mean that kerneldoc comment with
-wake_up_process() ? Yeah, that needs fixing. /me puts on endless todo
-list.
-
-Anyway, wakeup providing that ordering isn't something that needs a
-comment of that size; and I think the only comment here is that we care
-about the ordering and a reference to the site(s) that pairs with it.
-
-Maybe something like:
-
-	/*
-	 * __ww_mutex_lock_check_stamp() will observe our wounded store.
-	 */
-
-> > > -	if (likely(!(atomic_long_read(&lock->base.owner) & MUTEX_FLAG_WAITERS)))
-> > > +	if (likely(list_empty(&lock->base.wait_list)))
-> > >   		return;
-> > >   	/*
-> > > @@ -653,6 +695,17 @@ __ww_mutex_lock_check_stamp(struct mutex *lock, struct mutex_waiter *waiter,
-> > >   	struct ww_acquire_ctx *hold_ctx = READ_ONCE(ww->ctx);
-> > >   	struct mutex_waiter *cur;
-> > > +	/*
-> > > +	 * If we miss a wounded == true here, we will have a pending
-> > Explain how we can miss that.
-> 
-> This is actually the pairing location of the wake_up_process() comment /
-> code discussed above. Here we should have !TASK_RUNNING, and let's say
-> ctx->wounded is set by another process immediately after we've read it (we
-> "miss" it). At that point there must be a pending wake-up-process() for us
-> and we'll pick up the set value of wounded on the next iteration after
-> returning from schedule().
-
-Right, so that's when the above wakeup isn't the one waking us.
-
-
-> > I can't say I'm a fan. I'm already cursing the ww_mutex stuff every time
-> > I have to look at it, and you just made it worse spagethi.
-
-> Well, I can't speak for the current ww implementation except I didn't think
-> it was too hard to understand for a first time reader.
-> 
-> Admittedly the Wound-Wait path makes it worse since it's a preemptive
-> algorithm and we need to touch other processes a acquire contexts and worry
-> about ordering.
-> 
-> So, assuming your review comments are fixed up, is that a solid NAK or do
-> you have any suggestion that would make you more comfortable with the code?
-> like splitting out ww-stuff to a separate file?
-
-Nah, not a NAK, but we should look at whan can be done to improve code.
-Maybe add a few more comments that explain why. Part of the problem with
-ww_mutex is always that I forget exactly how they work and mutex.c
-doesn't have much useful comments in (most of those are in ww_mutex.h
-and I always forget to look there).
-
-Also; I'm not at all sure about the exact difference between what we
-have and what you propose. I did read the documentation part (I really
-should not have to) but it just doesn't jive.
-
-I suspect you're using preemption entirely different from what we
-usually call a preemption.
-
-
-
-Also, __ww_ctx_stamp_after() is crap; did we want to write:
-
-	return (signed long)(a->stamp - b->stamp) > 0;
-
-or something?
-
-
+T24gV2VkLCAyMDE4LTA2LTEzIGF0IDA0OjU5IC0wNzAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
+ZToNCj4gT24gV2VkLCBKdW4gMTMsIDIwMTggYXQgMDk6NTM6NDlBTSArMDIwMCwgSm9oYW5uZXMg
+VGh1bXNoaXJuIHdyb3RlOg0KPiA+IFNvbWUgZHJpdmVycyBhcmUgQUREaW5nIHRoZSBzY3NpIGNv
+bW1hbmQncyByZXN1bHQgYnl0ZXMgaW5zdGVhZCBvZg0KPiA+IE9SaW5nIHRoZW0uDQo+ID4gDQo+
+ID4gV2hpbGUgdGhpcyBjYW4gcHJvZHVjZSBjb3JyZWN0IHJlc3VsdHMgaXQgaGFzIHVuZXhwZWN0
+ZWQgc2lkZSBlZmZlY3RzLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvaGFubmVzIFRodW1z
+aGlybiA8anRodW1zaGlybkBzdXNlLmRlPg0KPiANCj4gTG9va3MgZ29vZCwNCj4gDQo+IFJldmll
+d2VkLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4NCj4gDQo+ID4gLQkJCWNtZC0+
+cmVzdWx0ID0gKERJRF9PSyA8PCAxNikgKyAobCAmIFNUQVRVU19NQVNLKTsNCj4gPiArCQkJY21k
+LT5yZXN1bHQgPSBESURfT0sgPDwgMTYgfCAobCAmIFNUQVRVU19NQVNLKTsNCj4gDQo+IEFsdGhv
+dWdoIEkgd291bGQgaGF2ZSBrZWVwIHRoZSBicmFjZXMgYXJvdW5kIHRoZSBzaGlmdCBvcGVyYXRv
+cnMNCj4gdG8gc3RpY2sgY2xvc2VyIHRvIHRoZSBvcmlnaW5hbCBjb2RlLiAgQnV0IHRoZSBjb2Rl
+IHNob3VsZCBiZSBmaW5lDQo+IGV2ZW4gd2l0aG91dCB0aGVtLg0KDQpJIHNoYXJlIENocmlzdG9w
+aCdzIG9waW5pb246IEkgcHJlZmVyIHRoYXQgdGhlIHBhcmVudGhlc2VzIHdvdWxkIGJlIGtlcHQg
+YnV0DQpJJ20gYWxzbyBmaW5lIHdpdGhvdXQuIEhlbmNlOg0KDQpSZXZpZXdlZC1ieTogQmFydCBW
+YW4gQXNzY2hlIDxiYXJ0LnZhbmFzc2NoZUB3ZGMuY29tPg0KDQoNCg0K
