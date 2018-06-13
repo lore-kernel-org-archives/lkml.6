@@ -3,147 +3,159 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D81F6C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:18:48 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B50FDC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:20:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DC74208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:18:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A2E3208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:20:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="CdZlWwGN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC74208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aSJP2/02"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A2E3208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935717AbeFMUSq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 16:18:46 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:43309 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935448AbeFMUSp (ORCPT
+        id S964806AbeFMUT5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 16:19:57 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:44634 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935448AbeFMUTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 16:18:45 -0400
-Received: by mail-qk0-f193.google.com with SMTP id g126-v6so2319093qke.10
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 13:18:44 -0700 (PDT)
+        Wed, 13 Jun 2018 16:19:55 -0400
+Received: by mail-wr0-f195.google.com with SMTP id x4-v6so4041688wro.11
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 13:19:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
+        d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=p0rkZQmjU9x5Ctl1ta2mMSuAJuxsEwkNWeoLb+2oulU=;
-        b=CdZlWwGNRoqzPC4TTElsoTT6vp5xKcA6uMtFR8U3ZW7lTv76ZkUJJVWgPjJ57RZob+
-         x3qLHKOCMmJI1FKe7sJITnNWaGzHVd5/HzeEsu3hW7U4Lw3iW1B1FLyHSl0VsrWyO+gF
-         KnE8PRt1bh3vQanXmeIrD0aaOs11lrgugMSsE=
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UwzYd+/acZipdMmeiNeTmeIcT12XuShSgccPhbcZjuA=;
+        b=aSJP2/028Lr+wB8RmN1Xup8k06nI0NlIN/hJJ7gCQwF0+tiAdE0oDh6qK4hp2uMYY4
+         HKgBybC+1fhVZrv5qubbp+QtpUT++7THw8aMN7FjVlBYB6g3MUa9hMgH0wexlL4NSiIE
+         smCWl7USAFzsPfuP9T5CcdOyD5WVoNpV53wRE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=p0rkZQmjU9x5Ctl1ta2mMSuAJuxsEwkNWeoLb+2oulU=;
-        b=LjUe8EpXvDry/+iFdpxWcTr4ag558uw2lIe9wZZb+e7HW/T3zOdiGK2Ox6TrlsGv52
-         wqV2xUw1Wh4hINfXO3P3XydJT5IsFPGaHvV1OgoQVAt+tWY1scLmqNBNXrudGT/wnp/L
-         HCOCQJ1a+6BhF8vwpyhzUrCChNoza9vERCN3LGw+LP/WGzdiZ9Ox+OfXZTnH4sIi6h8s
-         4BRfnx6ySpYRIdOfogbwNKlB7XCa4L1OX8/XcTYG8sNEPCLUC3FbjBFge3ZrHRvFVGWX
-         LN0Co6mRYf0y9w5cTrV5CtFZX/0eTpnGxKmiXVe/lcWNkI0fesdzvjEW0N9Iaw1Ceb/b
-         Huwg==
-X-Gm-Message-State: APt69E2ljXCdVjxU85h2ejaWf3IxR5Uol3t7dYn9reqpy4SIOJPsIng7
-        3ugrU6h57FEYHf+Rky2Tb5Ktd7Px
-X-Google-Smtp-Source: ADUXVKI9o96qjT9IA317ukNuF9AQO/hTM+DAqRYsXQ9tAGBGT9O2A3I50Vt5rw6lZ9sriXacTn6TTA==
-X-Received: by 2002:a37:9486:: with SMTP id w128-v6mr5915686qkd.119.1528921124126;
-        Wed, 13 Jun 2018 13:18:44 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id z135-v6sm3391798qkz.82.2018.06.13.13.18.41
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UwzYd+/acZipdMmeiNeTmeIcT12XuShSgccPhbcZjuA=;
+        b=gvtWvlX6pjHw91b+95ubn66p7yyXmid0Tykcb6SMhrt8r/qdQsOkuVTwWJEiQHvsF7
+         +sEfsJejbC9lY0IsYV50DUp5PUVXKoCxyJdgVh5E2h846xpfPPPJG1PPq8an8gdIQahc
+         7uocSTOPMEtYd7XuUI0QmMw+3+0YVrMU7cQmk0OTPZusubXJ8Md8CUjXyipogZfOg8rh
+         hZrWpsilOy3aAyWVxm4KZX33KN2aVZgD26R4D9NBwH5maNdxLa7ZLlwuqSOVTFn5c6SP
+         GqeYsCf6SCHW0noKivR9qKp1MpQDa/RFAij1k3gPcbrPJuuYJRTyVzPmINUTB5lfYPE/
+         +OiQ==
+X-Gm-Message-State: APt69E0euwQTB/iT4EHTwOJT563yVGJIilwD9LnSlOFujj6aa5jlCH5f
+        gcnpm6Qb8UhthkynvkwWxPzeO965/t0=
+X-Google-Smtp-Source: ADUXVKJhgJz3660GNFQRjyDJp2NXhc2SHfZNnzSwajpObd15iZGJqFDAl7BzhyP/bRFnUVBNDnuMoQ==
+X-Received: by 2002:adf:e6d0:: with SMTP id y16-v6mr5687652wrm.35.1528921194456;
+        Wed, 13 Jun 2018 13:19:54 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:b0fb:9cfa:79ac:305e? ([2001:41d0:fe90:b800:b0fb:9cfa:79ac:305e])
+        by smtp.googlemail.com with ESMTPSA id w67-v6sm4341580wmw.0.2018.06.13.13.19.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 13:18:43 -0700 (PDT)
-Subject: Re: [PATCH] arm64: dts: stingray: use NUM_SATA to configure number of
- sata ports
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1526668446-20048-1-git-send-email-scott.branden@broadcom.com>
- <d35afa1f-e0fd-84f1-7d42-60595e22cc77@gmail.com>
- <395f1fe8-76f1-8310-d09e-63e25bca23d2@broadcom.com>
- <CAL_JsqJEFLXFf-Vq9c9XC41vBpisQwxkd06_v8Fmt6X=gp=2_g@mail.gmail.com>
- <f20222ea-47ac-ca05-a8d3-69f28932de94@gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <0bf3c57c-dac8-8ece-6b8a-3b4d024140fc@broadcom.com>
-Date:   Wed, 13 Jun 2018 13:18:35 -0700
+        Wed, 13 Jun 2018 13:19:53 -0700 (PDT)
+Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle injection
+ framework
+To:     "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "andrea.parri@amarulasolutions.com" 
+        <andrea.parri@amarulasolutions.com>,
+        "kevin.wangtao@linaro.org" <kevin.wangtao@linaro.org>,
+        "leo.yan@linaro.org" <leo.yan@linaro.org>,
+        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "javi.merino@kernel.org" <javi.merino@kernel.org>,
+        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>
+References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
+ <1528905257.48473.4.camel@intel.com>
+ <0b72e862-6bbe-e706-79f8-e1b690982920@linaro.org>
+ <1528920447.48473.11.camel@intel.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <ac38f5d9-80d1-09f2-6f8e-c58085f9a32a@linaro.org>
+Date:   Wed, 13 Jun 2018 22:19:53 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <f20222ea-47ac-ca05-a8d3-69f28932de94@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1528920447.48473.11.camel@intel.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-Thanks for comment - reply inline.
-
-
-On 18-06-13 12:31 PM, Florian Fainelli wrote:
-> On 06/12/2018 03:54 PM, Rob Herring wrote:
->> On Thu, Jun 7, 2018 at 12:53 PM, Scott Branden
->> <scott.branden@broadcom.com> wrote:
->>> Hi Rob,
->>>
->>> Could you please kindly comment on change below.
->>>
->>> It allows board variants to be added easily via a simple define for
->>> different number of SATA ports.
->>>
->>>
->>>
->>> On 18-06-04 09:22 AM, Florian Fainelli wrote:
->>>> On 05/18/2018 11:34 AM, Scott Branden wrote:
->>>>> Move remaining sata configuration to stingray-sata.dtsi and enable
->>>>> ports based on NUM_SATA defined.
->>>>> Now, all that needs to be done is define NUM_SATA per board.
->>>> Rob could you review this and let us know if this approach is okay or
->>>> not? Thank you!
+On 13/06/2018 22:07, Pandruvada, Srinivas wrote:
+> On Wed, 2018-06-13 at 22:00 +0200, Daniel Lezcano wrote:
+>> On 13/06/2018 17:54, Pandruvada, Srinivas wrote:
+>>> On Tue, 2018-06-12 at 14:00 +0200, Daniel Lezcano wrote:
+>>>> Initially, the cpu_cooling device for ARM was changed by adding a
+>>>> new
+>>>> policy inserting idle cycles. The intel_powerclamp driver does a
+>>>> similar action.
 >>>>
->>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>>>> ---
->>>>> diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>> b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>> index 8c68e0c..7f6d176 100644
->>>>> --- a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>> +++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>> @@ -43,7 +43,11 @@
->>>>>                          interrupts = <GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>;
->>>>>                          #address-cells = <1>;
->>>>>                          #size-cells = <0>;
->>>>> +#if (NUM_SATA > 0)
->>>>> +                       status = "okay";
->>>>> +#else
->>>>>                          status = "disabled";
->>>>> +#endif
->> This only works if ports are contiguously enabled (0-N). You might not
->> care, but it is not a pattern that works in general.
-Correct - all board designs that include this dtsi file follow such 
-commonality (ie. design with SATA0 first, etc).  By having common board 
-designs it allows for commonality in dts files rather than duplicating 
-information everywhere.  If somebody designs a bizarro board they are 
-free to create their own dts file of course.
->>   And I'm not a fan
->> of C preprocessing in DT files in general beyond just defines for
->> single numbers.
-The use of a define to specify the number of SATA ports in the board 
-design meets our requirements of being able to maintain many boards.  We 
-need a method to specify the number of ports in the board design rather 
-than copying and pasting the information in many dts files.  If you have 
-an alternative upstreamable mechanism to manage the configuration of 
-many boards without copy and paste that would be ideal?
-> Should we interpret this as a formal NAK?
+>>>> Instead of implementing idle injections privately in the
+>>>> cpu_cooling
+>>>> device, move the idle injection code in a dedicated framework and
+>>>> give
+>>>> the opportunity to other frameworks to make use of it.
+>>>>
+>>>> The framework relies on the smpboot kthreads which handles via
+>>>> its
+>>>> main loop the common code for hotplugging and [un]parking.
+>>>>
+>>>> This code was previously tested with the cpu cooling device and
+>>>> went
+>>>> through several iterations. It results now in split code and API
+>>>> exported in the header file. It was tested with the cpu cooling
+>>>> device
+>>>> with success.
+>>>>
+>>>
+>>> May be I have missed, but I don't see any use of powercap sysfs.
+>>>
+>>> We created powercap sys that user space is presented a common
+>>> interface
+>>> for power capping. The RAPL driver was also submitted as cooling
+>>> device
+>>> before, but suggestion was to create this powercap.
+>>>
+>>> So if powercap interface is not enough then may be we should
+>>> enhance
+>>> that.
+>>
+>> We are creating a framework for idle injection. This framework can
+>> then
+>> be used by the cpu_cooling device, the power_clamp and in addition a
+>> power capping for ARM (if it makes sense).
+> But in this case, why in drivers/powercap folder as this is another
+> framework?
+
+I presented at OSPM 2nd the cpu idle cooling device. It is ARM specific
+but has some similarities with the power clamp driver.
+
+Some board come with power numbers defined in their DT and from there we
+are able to compute a targeted power by injecting idle cycles.
+
+As the idle injection allows to do also power capping, Rafael told me to
+move that to a framework (may be better say a component with exported
+services or library) and put it in drivers/powercap.
+
+From there we can implement a power capping, a cpu idle cooling device
+and power_clamp (if the maintainer is willing to) using the same API.
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
