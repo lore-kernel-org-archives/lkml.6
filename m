@@ -2,92 +2,73 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7B285C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 03:52:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0397BC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 03:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C2E20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 03:52:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MhT211Rx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C2E20891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 592C720693
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 03:58:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 592C720693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933915AbeFMDwV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 23:52:21 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33474 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933483AbeFMDwU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 23:52:20 -0400
-Received: by mail-it0-f67.google.com with SMTP id k17-v6so15903321ita.0;
-        Tue, 12 Jun 2018 20:52:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wPmsHsCK9DoY1D7rXTVitkdAuD9oWSjrfKTKFb5blXc=;
-        b=MhT211RxpfTd/151dPXPkCBrhjkbEASQr/s4ZiJVyN5D5oeZc3cibPP1uSLdRAlZEK
-         9N3TgJMQ3X1iyDQL1o173d2LdFgd3zEmSHs6gJ3JP+hPUs9dtCm2oUCYmhvNFi+tsf1G
-         bWgXhqSok0UPrAj1WfcN1tXO3A9iJazbZH35I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wPmsHsCK9DoY1D7rXTVitkdAuD9oWSjrfKTKFb5blXc=;
-        b=jAVUpyS5LcfIklr4AH0ftdKcRpzChzZD+WpV2iZWbvu+BK+rH2lSsJpxiv0if4FrX/
-         83ktb8u51zcZtty0v5BMvmigEJ3WYLnsOOForppdwM6+oqGMXAeB1F+Hz6FFQLVDjWgz
-         v4kICxjFBlEWoWFzg2SckZZqjnv/GF+yxypgwfP2U9Oi1133CjfvC+jsYzxC/XIoGsYI
-         UJpOTchZdMGW8MrMCH4Wf79FEuouTbGIXcWOsl98d5wWvImRHTu9hhOhKNxNiorzsW0f
-         oIjejU1cRPSOzD0hyMwxY4FErAT4PkEM5S2N3k8kpSd1AGykeW4YbjRRevTfD3H9RC1u
-         LXgA==
-X-Gm-Message-State: APt69E3v5s8xSL5aYdM4DQPy3NShC+nA1roGxcZX70zPFDEipBpH9Aez
-        sypD4bF+h9rMdTTNHVFTlYA1emn2jAiIIcK2RyM=
-X-Google-Smtp-Source: ADUXVKJSsrhShXHNaOJK5oGm4WhAXyNRBGXLMD1CCbYjaZuyfBbARTYEo9VcLAbsSb9syG1GJoBcoBl30dlbq0WmJEA=
-X-Received: by 2002:a24:5b81:: with SMTP id g123-v6mr3014193itb.1.1528861939350;
- Tue, 12 Jun 2018 20:52:19 -0700 (PDT)
+        id S933998AbeFMD61 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 23:58:27 -0400
+Received: from ozlabs.org ([203.11.71.1]:35803 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933696AbeFMD60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 23:58:26 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 415Cf84zfqz9s2g;
+        Wed, 13 Jun 2018 13:58:24 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        Segher Boessenkool <segher@kernel.crashing.org>
+Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, wei.guo.simon@gmail.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v6 3/4] powerpc/lib: implement strlen() in assembly
+In-Reply-To: <baaf4fa9-ff0b-0bcb-8662-dafb794caab4@c-s.fr>
+References: <85de16f5629ac9f4a815230cced361908758b53a.1528791416.git.christophe.leroy@c-s.fr> <8b89f2e21f7e3a865105eeeeda509243db393454.1528791416.git.christophe.leroy@c-s.fr> <20180612145315.GJ27520@gate.crashing.org> <baaf4fa9-ff0b-0bcb-8662-dafb794caab4@c-s.fr>
+Date:   Wed, 13 Jun 2018 13:58:24 +1000
+Message-ID: <877en3tk0v.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-References: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
- <CA+55aFwvE5G7MV7AV4naAXdbFoszc4JNKEj_QtYqpLFfa2RXtA@mail.gmail.com>
- <CA+55aFza9udpsCY=_YuBoshgVoXSce-Ja-nsqRbm5eJ6MgXK1g@mail.gmail.com>
- <CANRm+Cx194zWU0TwoiCaiTy+3tuHp4Ki1mk2VUfv5-z00j23jA@mail.gmail.com>
- <CA+55aFywZ0aX6u-JO8=GciDm9stwXOmXU4oG-u0K8i+o3qLwvg@mail.gmail.com> <CA+55aFxZNyHoytCNV89tPP0TWEiR_-nOja-HA5i4zY446VFCVA@mail.gmail.com>
-In-Reply-To: <CA+55aFxZNyHoytCNV89tPP0TWEiR_-nOja-HA5i4zY446VFCVA@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Jun 2018 20:52:08 -0700
-Message-ID: <CA+55aFw3a1j1GCTtf2C2bDML13G9aZ=bT2ysmXY7=fnHJups2w@mail.gmail.com>
-Subject: Re: [GIT PULL] KVM changes for 4.18 merge window
-To:     Wanpeng Li <kernellwp@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thomas-Mich Richter <tmricht@linux.ibm.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        KVM list <kvm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 8:26 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
+Christophe LEROY <christophe.leroy@c-s.fr> writes:
+
+> Le 12/06/2018 à 16:53, Segher Boessenkool a écrit :
+>> On Tue, Jun 12, 2018 at 09:14:53AM +0000, Christophe Leroy wrote:
+>>> ---
+>>> Not tested on PPC64.
+>> 
+>> It won't be acceptable until that happens.  It also is likely quite bad
+>> performance on all 64-bit CPUs from the last fifteen years or so.  Or you
+>> did nothing to prove otherwise, at least.
 >
-> Ok, so commit 95cde3c59966 ("debugfs: inode: debugfs_create_dir uses
-> mode permission from parent") breaks lkvm, and I think qemu-kvm too.
+> Will it be as bad as the generic implementation which does it byte per 
+> byte ?
 >
-> The commit looks like the RightThing(tm) to do, but we do not break
-> existing work-flows, no matter how much we'd like to.  So it gets
-> reverted.
+> I don't have any 64 bits target, can someone test it using the test app 
+> I have added in selftests ?
 
-I suspect it's the special kvm debugfs entries - see kvm_create_vm_debugfs()
+I /can/ but I won't have time this week.
 
-Anyway, I've verified that both qemu-kvm and kvm-tool work fine with
-the revert in place.
+> Or should I just leave it as is for 64 bits and just do the 
+> implementation for 32 bits until someone wants to try and do it for PPC64 ?
 
-                     Linus
+That's probably best yeah.
+
+cheers
