@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 72616C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F114EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 281C1208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A573F204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:33:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwSPbK0O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 281C1208B2
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DHjcCH44"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A573F204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935475AbeFMLdo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 07:33:44 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:34794 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935459AbeFMLdl (ORCPT
+        id S935491AbeFMLdx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 07:33:53 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:33936 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935459AbeFMLdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:33:41 -0400
-Received: by mail-pl0-f66.google.com with SMTP id g20-v6so1388594plq.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:33:41 -0700 (PDT)
+        Wed, 13 Jun 2018 07:33:50 -0400
+Received: by mail-pg0-f66.google.com with SMTP id q4-v6so1152903pgr.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:33:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=VFxhbhsSuXUmiZ9cQAUkdhNUFAU4y120/7wyv8wzRCU=;
-        b=GwSPbK0OGf/jDreDhJlTg4vRKQl2zMu36mc/NSHeoDaHQ8K0xkwMYZBWZamkImUBzo
-         qWOOGdi/faD9AkLS16WjIwAahe+/R5LAloQxJ1UBATQ6iz27y0U66bAh/7Ll9Td1xoi+
-         6nOFrd3OlxGVfclu7h330U4UkuZTY/m8deJE8=
+        bh=2jKomMyu3aPBvQwHnJ5xi/PxkWHSmOUr0jIrlPwlqUo=;
+        b=DHjcCH44PAE//jlj19ah6Lf6VjIsxwDZljyjvo8mQDpaISZEmORUdgHGSx4ht3wvIo
+         pNE8+itgpZQ4tEBXVSCgOJGMq8RAxczNzXxO4kOtXjs0s0uoyPuMMkwm2LD6nr6tiWdT
+         1b9HW6mWoxEHvbOSLIhKIRT/00Lf48AZgpap0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=VFxhbhsSuXUmiZ9cQAUkdhNUFAU4y120/7wyv8wzRCU=;
-        b=IRlKGgbHUOdfHh1nHFNCyxp1YDb7LpH3AIrCN5ZxsiVaz2sTso19v06quPEw5Yrdrx
-         SDiC1LJEj8CSDyl7XrjLKc6FUZ305dYD2txAK7RJxsi+L35XwyIQNtETi2JlM+Jdy7JA
-         Ol4o7TgzoVRcqCMwExgASNNILQdwAABEENpflpYUoENfPrFr6b1ImLAMWStMU3q2rkOw
-         DiJxpwtBMMXLXe7ciiNqdaKNfnDF3Mzy9mJRIJiINGSJqA9T7eEjNX/omeb/Xw7XfTsY
-         zpRV4UgG5xFlojbNiH73cNYWGjLieJfRQ6KlMmIXOvR5V0xWFwe+fZK9Gee/Sh2gsM3U
-         G8dA==
-X-Gm-Message-State: APt69E3Bl6L9MKKtr1PzPJaRrU/P8UhaETokCpU8qSQ0ShnzVjLmuyv/
-        kjKvtYVbe8GbbwY13mOcZpCzkg==
-X-Google-Smtp-Source: ADUXVKLYIGMkwIV0T29opdgUBlMg5KARNS7oxaxxhPheGD5fpuyIcQnllz5pT6pMVGAP2/FFLwexSg==
-X-Received: by 2002:a17:902:7406:: with SMTP id g6-v6mr4745245pll.90.1528889620901;
-        Wed, 13 Jun 2018 04:33:40 -0700 (PDT)
+        bh=2jKomMyu3aPBvQwHnJ5xi/PxkWHSmOUr0jIrlPwlqUo=;
+        b=bhwHpXf9j11tDi0ZwO1VTKW5XVthSmjAvJDc+XMvq4QsEvcRDP9/YoL6qD3qiG1FZ/
+         zqNEDRRshv4CGjvUS9GWECHao1fLaDwHUqx5rj194cMjxM5bCl7iengk8hBTZayidGYa
+         sDLqkjvxRdHWAO/H1uHV9Kw8OxxyOeELFd1IXVv7gCxCCLsryfed5RlI/pUtLkdfc9dR
+         CzQjl0Vbm4RyqyXKvFntJWbol6BOH5wxN9oFZzJi6l0mOmQw/OE9ZKsQr0yJt9rU7h4m
+         6eIsg6cY5H62Ttc60rfrN0zWPbXFyOx34hZlfQI+r38DYTXxA1ClaqugXNO8bFlJuokO
+         FuGg==
+X-Gm-Message-State: APt69E1AjDoq8usrrjZsyat9U/eRkFOHIiNK/xWAtVfB5YV86zzhDi4o
+        gHJiUVWGY6ihAJqOvTgxS+DZhQ==
+X-Google-Smtp-Source: ADUXVKLTizWTXbXFsSjgSErRHW7sVMXM1YRtFLO1ja/eanjd30bHW28hZhyerTht2cfBRKmYv0wYgA==
+X-Received: by 2002:a63:7707:: with SMTP id s7-v6mr3862017pgc.426.1528889629540;
+        Wed, 13 Jun 2018 04:33:49 -0700 (PDT)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm2745370pgq.35.2018.06.13.04.33.32
+        by smtp.gmail.com with ESMTPSA id h8-v6sm2745370pgq.35.2018.06.13.04.33.41
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 13 Jun 2018 04:33:40 -0700 (PDT)
+        Wed, 13 Jun 2018 04:33:49 -0700 (PDT)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     tglx@linutronix.de, john.stultz@linaro.org,
         daniel.lezcano@linaro.org, arnd@arndb.de, tony@atomide.com,
@@ -71,9 +71,9 @@ Cc:     baolin.wang@linaro.org, broonie@kernel.org,
         x86@kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-omap@vger.kernel.org
-Subject: [PATCH 5/8] clocksource: timer-ti-32k: Register the persistent clock
-Date:   Wed, 13 Jun 2018 19:32:32 +0800
-Message-Id: <904493423cadb90576a712acdb3b512b4ed44887.1528878545.git.baolin.wang@linaro.org>
+Subject: [PATCH 6/8] clocksource: time-pistachio: Register the persistent clock
+Date:   Wed, 13 Jun 2018 19:32:33 +0800
+Message-Id: <e00f46be05f74439eecd9c4fb43baa4cd0dae297.1528878545.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1528878545.git.baolin.wang@linaro.org>
 References: <cover.1528878545.git.baolin.wang@linaro.org>
@@ -84,49 +84,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since the 32K counter is always available, then we can register the
-persistent clock to compensate the suspend time for the OS time.
+Since the timer on pistachio platform is always available, we can
+register it as one persistent clock to compensate the suspend time
+for the OS time.
 
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/clocksource/Kconfig        |    1 +
- drivers/clocksource/timer-ti-32k.c |    4 ++++
- 2 files changed, 5 insertions(+)
+ drivers/clocksource/Kconfig          |    1 +
+ drivers/clocksource/time-pistachio.c |    3 +++
+ 2 files changed, 4 insertions(+)
 
 diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index 5e51fcf..3cd136f 100644
+index 3cd136f..af552ba 100644
 --- a/drivers/clocksource/Kconfig
 +++ b/drivers/clocksource/Kconfig
-@@ -262,6 +262,7 @@ config CLKSRC_TI_32K
- 	bool "Texas Instruments 32.768 Hz Clocksource" if COMPILE_TEST
- 	depends on GENERIC_SCHED_CLOCK
- 	select TIMER_OF if OF
+@@ -255,6 +255,7 @@ config CLKSRC_PISTACHIO
+ 	bool "Clocksource for Pistachio SoC" if COMPILE_TEST
+ 	depends on HAS_IOMEM
+ 	select TIMER_OF
 +	select PERSISTENT_CLOCK
  	help
- 	  This option enables support for Texas Instruments 32.768 Hz clocksource
- 	  available on many OMAP-like platforms.
-diff --git a/drivers/clocksource/timer-ti-32k.c b/drivers/clocksource/timer-ti-32k.c
-index 880a861..353ff9d 100644
---- a/drivers/clocksource/timer-ti-32k.c
-+++ b/drivers/clocksource/timer-ti-32k.c
-@@ -41,6 +41,7 @@
- #include <linux/clocksource.h>
+ 	  Enables the clocksource for the Pistachio SoC.
+ 
+diff --git a/drivers/clocksource/time-pistachio.c b/drivers/clocksource/time-pistachio.c
+index a2dd85d..5c3eb71 100644
+--- a/drivers/clocksource/time-pistachio.c
++++ b/drivers/clocksource/time-pistachio.c
+@@ -20,6 +20,7 @@
+ #include <linux/mfd/syscon.h>
  #include <linux/of.h>
  #include <linux/of_address.h>
 +#include <linux/persistent_clock.h>
+ #include <linux/platform_device.h>
+ #include <linux/regmap.h>
+ #include <linux/sched_clock.h>
+@@ -212,6 +213,8 @@ static int __init pistachio_clksrc_of_init(struct device_node *node)
  
- /*
-  * 32KHz clocksource ... always available, on pretty most chips except
-@@ -120,6 +121,9 @@ static int __init ti_32k_timer_init(struct device_node *np)
- 	}
- 
- 	sched_clock_register(omap_32k_read_sched_clock, 32, 32768);
-+	persistent_clock_init_and_register(omap_32k_read_sched_clock,
-+					   CLOCKSOURCE_MASK(32), 32768, 0);
-+
- 	pr_info("OMAP clocksource: 32k_counter at 32768 Hz\n");
- 
- 	return 0;
+ 	raw_spin_lock_init(&pcs_gpt.lock);
+ 	sched_clock_register(pistachio_read_sched_clock, 32, rate);
++	persistent_clock_init_and_register(pistachio_read_sched_clock,
++					   CLOCKSOURCE_MASK(32), rate, 0);
+ 	return clocksource_register_hz(&pcs_gpt.cs, rate);
+ }
+ TIMER_OF_DECLARE(pistachio_gptimer, "img,pistachio-gptimer",
 -- 
 1.7.9.5
 
