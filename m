@@ -2,136 +2,166 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5E13CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:24:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4CBC4C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:26:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05838208D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:24:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="X3U8qY6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05838208D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	by mail.kernel.org (Postfix) with ESMTP id 01F59208CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:26:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F59208CD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935369AbeFMSYv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:24:51 -0400
-Received: from mail-eopbgr710067.outbound.protection.outlook.com ([40.107.71.67]:44320
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935006AbeFMSYt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:24:49 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W/6XQ1Li2kxwB+MEW1J+4JWvdkoE24jtC+6U/TpgDmA=;
- b=X3U8qY6l9pi+i8U/qwnuHrW6Yk65i2bwLFm9hwqXopmfQz1kk0w8STfYP1B5hiPi5CWHGlj4GBGYDhnoCyhqpea7bZuLAZ5douemLkz7zoKe1KXy/Jsyh0X19T6dDI8FouGkxJZQSUzlqs5lNxg6QUJKM0wNpOHwThCxg3qU4XM=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4021.namprd05.prod.outlook.com (52.135.199.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.6; Wed, 13 Jun 2018 18:24:46 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::1010:9926:76ba:c7b7]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::1010:9926:76ba:c7b7%2]) with mapi id 15.20.0863.016; Wed, 13 Jun 2018
- 18:24:46 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Xavier Deguillard <xdeguillard@vmware.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH 1/7] vmw_balloon: update copyright message
-Thread-Topic: [PATCH 1/7] vmw_balloon: update copyright message
-Thread-Index: AQHUA0L+ZRNuiy6utkCySUB3gWemF6Ref/KAgAABHoA=
-Date:   Wed, 13 Jun 2018 18:24:45 +0000
-Message-ID: <2800794D-1761-4384-B725-55033C571246@vmware.com>
-References: <20180613110359.109033-1-namit@vmware.com>
- <20180613110359.109033-2-namit@vmware.com> <20180613182041.GB29631@kroah.com>
-In-Reply-To: <20180613182041.GB29631@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [208.91.2.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4021;7:hd9rqG0SwzRNVrkSyMqrta8pgSsxQjdjS+k6Eansx56EoXaTg6X5xeVhCAgdZr4aD9grnwdDIi+g65pwjHK0DDW+tGtgs/ATF4fW/DFWX0Y3seEm0LuAmeUeTFV+5BeYmVsjxUbUtBS3oie3itwmRfYyG5VsolGIf7qe0aImmqZRBDAOsD3zcEIf7ohQC1CAK9Uim+pRRA6H6Y0htsXGzgSdtfoekV1y+eRhd8GZKHWP/5nXnVW3IRKV2rQE63ka;20:4ygc5N9kRPxGYwndFaPJ+dRxjDZ9hffU7Z9daEL8OEfmt7lRjnICMxwizhisGdsQX1zfUL7qcrwQSMJQ2HZvCqN5H3u65EYE4/4r7kj/azV1rcn8MtlhU0RwEPdX86yDUUAcUF3z3Nh2lTGBok1wDvPRrzVBDSSFoBqghJ3M0pk=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-X-MS-Office365-Filtering-Correlation-Id: 059e2b33-72b8-4dbd-470a-08d5d15af0ec
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4021;
-x-ms-traffictypediagnostic: BYAPR05MB4021:
-x-microsoft-antispam-prvs: <BYAPR05MB40217C1B1D63937BB8DF42E0D07E0@BYAPR05MB4021.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(61668805478150)(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(3002001)(149027)(150027)(6041310)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BYAPR05MB4021;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4021;
-x-forefront-prvs: 07025866F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(39380400002)(39860400002)(366004)(396003)(346002)(199004)(189003)(229853002)(6512007)(53936002)(54906003)(3846002)(2900100001)(68736007)(6916009)(76176011)(5250100002)(6486002)(6116002)(25786009)(33656002)(14454004)(5660300001)(186003)(3660700001)(59450400001)(6246003)(316002)(99286004)(4326008)(305945005)(97736004)(3280700002)(15650500001)(82746002)(26005)(476003)(36756003)(81166006)(486006)(8676002)(81156014)(106356001)(102836004)(8936002)(6506007)(478600001)(2906002)(83716003)(11346002)(66066001)(6436002)(2616005)(105586002)(7736002)(86362001)(446003)(2004002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4021;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: eGlguE8itO8n/KJZaE+eFWlSeabooxDlMSyxeghVU1xqlShl+b5sQjU4KfP8bqWpzou0Pv6R/dd/RppY9QAsDfpS+MP+5dsKDYgvtSAj9pIifMyZ75wuidUsFW/ok+GO0M/2k0Qk9g2L0ufP1/8J6xkBRz7+zqMqyo5FpAyWpPBM8ksehQahdFTLmL1wZwfr
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <393A976EC22D804BB020D80770D71843@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        id S935477AbeFMS0N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:26:13 -0400
+Received: from mga12.intel.com ([192.55.52.136]:7703 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935006AbeFMS0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 14:26:11 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 11:26:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
+   d="scan'208";a="49090426"
+Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
+  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2018 11:26:11 -0700
+Subject: Re: [PATCHv3 10/17] x86/mm: Implement prep_encrypted_page() and
+ arch_free_page()
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-11-kirill.shutemov@linux.intel.com>
+Cc:     Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <36997c9c-73c0-1d9d-6251-10315a4158f0@intel.com>
+Date:   Wed, 13 Jun 2018 11:26:10 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 059e2b33-72b8-4dbd-470a-08d5d15af0ec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 18:24:45.7227
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4021
+In-Reply-To: <20180612143915.68065-11-kirill.shutemov@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-at 11:20 AM, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
+> prep_encrypted_page() also takes care about zeroing the page. We have to
+> do this after KeyID is set for the page.
 
-> On Wed, Jun 13, 2018 at 04:03:53AM -0700, Nadav Amit wrote:
->> Removing the paragraph about writing to the Free Software Foundation's
->> mailing address from the sample GPL notice according to checkpatch
->> request.
->>=20
->> In addition, updating the year and adding a license tag.
->>=20
->> Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
->> Signed-off-by: Nadav Amit <nadav.amit@gmail.com>
->> ---
->> drivers/misc/vmw_balloon.c | 6 ++----
->> 1 file changed, 2 insertions(+), 4 deletions(-)
->>=20
->> diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
->> index efd733472a35..1d50ed630d30 100644
->> --- a/drivers/misc/vmw_balloon.c
->> +++ b/drivers/misc/vmw_balloon.c
->> @@ -1,7 +1,7 @@
->> /*
->>  * VMware Balloon driver.
->>  *
->> - * Copyright (C) 2000-2014, VMware, Inc. All Rights Reserved.
->> + * Copyright (C) 2000-2018, VMware, Inc. All Rights Reserved.
->>  *
->>  * This program is free software; you can redistribute it and/or modify =
-it
->>  * under the terms of the GNU General Public License as published by the
->> @@ -13,9 +13,7 @@
->>  * NON INFRINGEMENT.  See the GNU General Public License for more
->>  * details.
->>  *
->> - * You should have received a copy of the GNU General Public License
->> - * along with this program; if not, write to the Free Software
->> - * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301=
- USA.
->> + * SPDX-License-Identifier: GPL-2.0
->=20
-> This goes as the first line of the file, please see the documentation
-> files that describes how to do this properly.
+This is an implementation detail that has gone unmentioned until now but
+has impacted at least half a dozen locations in previous patches.  Can
+you rectify that, please?
 
-Of course. I was sure I fixed it... I will resend.
+
+> +void prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
+> +{
+> +	int i;
+> +
+> +	/*
+> +	 * The hardware/CPU does not enforce coherency between mappings of the
+> +	 * same physical page with different KeyIDs or encrypt ion keys.
+
+What are "encrypt ion"s? :)
+
+> +	 * We are responsible for cache management.
+> +	 *
+> +	 * We flush cache before allocating encrypted page
+> +	 */
+> +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
+> +
+> +	for (i = 0; i < (1 << order); i++) {
+> +		WARN_ON_ONCE(lookup_page_ext(page)->keyid);
+
+/* All pages coming out of the allocator should have KeyID 0 */
+
+> +		lookup_page_ext(page)->keyid = keyid;
+> +		/* Clear the page after the KeyID is set. */
+> +		if (zero)
+> +			clear_highpage(page);
+> +	}
+> +}
+
+How expensive is this?
+
+> +void arch_free_page(struct page *page, int order)
+> +{
+> +	int i;
+> 
+
+	/* KeyId-0 pages were not used for MKTME and need no work */
+
+... or something
+
+> +	if (!page_keyid(page))
+> +		return;
+
+Is page_keyid() optimized so that all this goes away automatically when
+MKTME is compiled out or unsupported?
+
+> +	for (i = 0; i < (1 << order); i++) {
+> +		WARN_ON_ONCE(lookup_page_ext(page)->keyid > mktme_nr_keyids);
+> +		lookup_page_ext(page)->keyid = 0;
+> +	}
+> +
+> +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
+> +}
+
+
+
 
