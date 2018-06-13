@@ -3,132 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 21BC0C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:17:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 98ECAC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:17:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5DB72086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:17:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5DB72086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 55BDE2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:17:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55BDE2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934627AbeFMHRj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:17:39 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:34878 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933999AbeFMHRh (ORCPT
+        id S934684AbeFMHRo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:17:44 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:3750 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933999AbeFMHRm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:17:37 -0400
-Received: by mail-ua0-f194.google.com with SMTP id s13-v6so1050469uad.2;
-        Wed, 13 Jun 2018 00:17:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7kiYH9DwiIFzBD3/Rt5861aLo9fia85zzfXULsZivXM=;
-        b=g2sECHrBs8FQiNdTzKpt5hSH0YxPLTRyWrfcbWZ0qU79BEtwOut5FCuqB9wQMFKx+r
-         oaSTIDF4cZOCS+mkB9TVQ3hZepEZ/vI+kTolzjQaM0Wyxfy8RPX633EIc6ZaFS7GQbjr
-         lMBYajd1MwsyO0MWPJ9yle3nfpD7Ohc5Cj3RbJlCCMBkFdYY4EC93nXWxNOzyaZ/OI2M
-         no6xCbbjx/Ao+N2E2ctZCriSgCGd2LfWNpxbn/ZEc7uDO00OaPsAk3adSDDvkzsgTXSw
-         G6mf1oVOi+d8vUiyhi8O/nULl+lpPKVQukDEcaITKHWflBp4f9fRPvYa8oM/rHU849H4
-         ekFg==
-X-Gm-Message-State: APt69E36MBVDd1KjCT/H1bq+swfrmAyY/C0z1eqT6IcVGaeEphnoWicJ
-        lVzVSCKsPoE6poeIic37GhC9qCO7b2OowwZs2t8=
-X-Google-Smtp-Source: ADUXVKIpT4WPkBjlwtinfayzhN7ycvreFHCVp8EP/MkhvDui7I1Kt15BQcaZjFCF6MlTT73KfMhhqr5HZg7fHYTbO5w=
-X-Received: by 2002:ab0:5105:: with SMTP id e5-v6mr2679815uaa.33.1528874256573;
- Wed, 13 Jun 2018 00:17:36 -0700 (PDT)
-MIME-Version: 1.0
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com> <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-In-Reply-To: <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 13 Jun 2018 09:17:24 +0200
-Message-ID: <CAMuHMdUtdRB_L-WsphJYBd9m-3tth3KHGK1wWdr_UJF18S9Z5A@mail.gmail.com>
-Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-To:     Michel Pollet <michel.pollet@bp.renesas.com>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        Wed, 13 Jun 2018 03:17:42 -0400
+X-UUID: d49583569ab64ff095868ea42a4feb27-20180613
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 939864625; Wed, 13 Jun 2018 15:17:36 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 15:17:35 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 15:17:35 +0800
+Message-ID: <1528874255.30263.7.camel@mtksdaap41>
+Subject: Re: [PATCH 20/28] drm/mediatek: add connection from RDMA2 to DSI1
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 15:17:35 +0800
+In-Reply-To: <1528687580-549-21-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-21-git-send-email-stu.hsieh@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Michel,
+Hi, Stu:
 
-On Wed, Jun 13, 2018 at 8:38 AM Michel Pollet
-<michel.pollet@bp.renesas.com> wrote:
-> On 11 June 2018 11:01, Geert wrote:
-> > On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
-> > <michel.pollet@bp.renesas.com> wrote:
-> > > The Renesas R9A06G032 SYSCTRL node description.
-> > >
-> > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> >
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-
-> > sysctr
-> > > +++ l.txt
-> > > @@ -0,0 +1,32 @@
-> > > +* Renesas R9A06G032 SYSCTRL
-> > > +
-> > > +Required Properties:
-> > > +
-> > > +  - compatible: Must be:
-> > > +    - "renesas,r9a06g032-sysctrl"
-> > > +  - reg: Base address and length of the SYSCTRL IO block.
-> > > +  - #clock-cells: Must be 1
-> >
-> > (repeating myself) No clocks/clock-names for the external clock inputs?
-> >
-> > "RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
-> > reference clock outputs for RMII/MII."
->
-> Well, I'm trying to keep the binding as simple as possible, to dodge any
-> further discussion. Adding these will be possible later, I don't need them
-> for the moment anyway.
+On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> This patch add the connection from RDMA2 to DSI1
+> 
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 
-Don't you? The external clock inputs are at the root of the clock tree, so I'd
-say you need them. Bolting them on later may become complicated, especially
-if you care about DTB backwards compatibility.
+Reviewed-by: CK Hu <ck.hu at mediatek.com>
 
-The reset controller subsystem is optional anyway, and used only by a small
-number of drivers, so support for resets can definitely be postponed.
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 2d883815d79c..ae10f8f1e140 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -94,11 +94,13 @@
+>  #define RDMA1_MOUT_DPI1			0x3
+>  #define RDMA2_MOUT_DPI0			0x2
+>  #define RDMA2_MOUT_DPI1			0x3
+> +#define RDMA2_MOUT_DSI1			0x1
+>  #define DPI0_SEL_IN_RDMA1		0x1
+>  #define DPI0_SEL_IN_RDMA2		0x3
+>  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+>  #define DPI1_SEL_IN_RDMA2		(0x3 << 8)
+>  #define DSI1_SEL_IN_RDMA1		0x1
+> +#define DSI1_SEL_IN_RDMA2		0x4
+>  #define DSI2_SEL_IN_RDMA1		(0x1 << 16)
+>  #define DSI3_SEL_IN_RDMA1		(0x1 << 16)
+>  #define COLOR1_SEL_IN_OVL1		0x1
+> @@ -198,6 +200,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
+>  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+>  		value = RDMA1_MOUT_DPI1;
+> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+> +		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+> +		value = RDMA2_MOUT_DSI1;
+>  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI0) {
+>  		*addr = DISP_REG_CONFIG_DISP_RDMA2_SOUT;
+>  		value = RDMA2_MOUT_DPI0;
+> @@ -241,6 +246,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+>  	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DPI1) {
+>  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+>  		value = DPI1_SEL_IN_RDMA2;
+> +	} else if (cur == DDP_COMPONENT_RDMA2 && next == DDP_COMPONENT_DSI1) {
+> +		*addr = DISP_REG_CONFIG_DSIE_SEL_IN;
+> +		value = DSI1_SEL_IN_RDMA2;
+>  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+>  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+>  		value = COLOR1_SEL_IN_OVL1;
 
-> Did you have a chance to review the clock driver proper? I'm pondering
-> sending a v9 since it's been a week (with very minor changes) -- but I
-> don't want to interrupt if you were in the process of reviewing...
 
-I had a quick glance. Looks OK mostly, so it's definitely heading for the right
-direction!
-One remaining question: do you need CLK_OF_DECLARE()?
-Is there any reason your clock driver cannot be a platform driver, which is
-the recommended way?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
