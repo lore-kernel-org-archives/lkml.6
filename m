@@ -2,100 +2,151 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F39ACC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:27:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E3D53C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D0C208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:27:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SL5Xz/3p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9D0C208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id A39CB208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:27:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A39CB208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934711AbeFMI1K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:27:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:43194 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934124AbeFMI1I (ORCPT
+        id S934808AbeFMI1c (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 04:27:32 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:31360 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933912AbeFMI1a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:27:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bLkhRzPct31wf7bKHFXNpTjmxuHtp1rXA3GeUf47UCU=; b=SL5Xz/3p4uERGI0ZCf+sgbl3P
-        omhoyH/mHv0b6MS0dkI0D4Pg12P7znA7RV3FKGyixSCuJXCXawOkDS9qe7mS/MxCOMeTqDciUhFWv
-        7HrBV0TituMvrxMCIBezWiQYyO8ClJDRQ3AUq7E6Dg0nmGTG02MtW84OMH8CIFTcZryLigJ+lNb7V
-        7wSNTTBuficYvRdaZdvFKiC1Y4idBF+EJL0DuKtwLFHBEAKPKD1W/puaVmcM39wetkoSNVOEJ2N/e
-        vTmZXK8v1Q6KXReqp21/QDQiQPUO/KJKy4cN7hapL3c59zOnMiVOe4Qa4vo1znDjnFV3ubVi13y5t
-        6HbRhQ6mA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fT17O-0003cj-GT; Wed, 13 Jun 2018 08:27:02 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 40A62201EA7C8; Wed, 13 Jun 2018 10:27:00 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 10:27:00 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     kernel test robot <xiaolong.ye@intel.com>
-Cc:     mingo@kernel.org, oleg@redhat.com, gkohli@codeaurora.org,
-        tglx@linutronix.de, mpe@ellerman.id.au, bigeasy@linutronix.de,
-        linux-kernel@vger.kernel.org, will.deacon@arm.com,
-        dzickus@redhat.com, lkp@01.org
-Subject: Re: [lkp-robot] [watchdog/softlockup]  4808e7a5dc:
- BUG:KASAN:null-ptr-deref_in_h
-Message-ID: <20180613082700.GV12198@hirez.programming.kicks-ass.net>
-References: <20180612161832.428662402@infradead.org>
- <20180613050838.GK12146@yexl-desktop>
+        Wed, 13 Jun 2018 04:27:30 -0400
+X-UUID: 01414abdb02643798759af65e88de99f-20180613
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 717611996; Wed, 13 Jun 2018 16:27:28 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 16:27:26 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 16:27:26 +0800
+Message-ID: <1528878446.30263.30.camel@mtksdaap41>
+Subject: Re: [PATCH 14/28] drm/mediatek: add connection from RDMA1 to DPI1
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 16:27:26 +0800
+In-Reply-To: <1528876574.11190.32.camel@mtksdccf07>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-15-git-send-email-stu.hsieh@mediatek.com>
+         <1528870410.15127.11.camel@mtksdaap41>
+         <1528876574.11190.32.camel@mtksdccf07>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613050838.GK12146@yexl-desktop>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 01:08:38PM +0800, kernel test robot wrote:
-> [    0.037000] BUG: KASAN: null-ptr-deref in hrtimer_active+0x70/0xa0
-> [    0.037000] Read of size 4 at addr 0000000000000010 by task swapper/1
-> [    0.037000] 
-> [    0.037000] CPU: 0 PID: 1 Comm: swapper Tainted: G                T 4.17.0-11348-g4808e7a #1
-> [    0.037000] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-> [    0.037000] Call Trace:
-> [    0.037000]  ? kasan_report+0xe3/0x360
-> [    0.037000]  ? hrtimer_active+0x70/0xa0
-> [    0.037000]  ? hrtimer_try_to_cancel+0x17/0x210
-> [    0.037000]  ? hrtimer_cancel+0x15/0x20
-> [    0.037000]  ? softlockup_stop_fn+0x11/0x20
-> [    0.037000]  ? lockup_detector_reconfigure+0x25/0xa0
-> [    0.037000]  ? lockup_detector_init+0x51/0x5d
-> [    0.037000]  ? kernel_init_freeable+0xa9/0x243
-> [    0.037000]  ? rest_init+0xd0/0xd0
-> [    0.037000]  ? kernel_init+0xf/0x120
-> [    0.037000]  ? rest_init+0xd0/0xd0
-> [    0.037000]  ? ret_from_fork+0x24/0x30
+Hi, Stu:
 
-ARGH, I thought I fixed that one..
+On Wed, 2018-06-13 at 15:56 +0800, Stu Hsieh wrote:
+> Hi, CK:
+> 
+> On Wed, 2018-06-13 at 14:13 +0800, CK Hu wrote:
+> > Hi, Stu:
+> > 
+> > On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> > > This patch add the connection from RDMA1 to DPI1
+> > > 
+> > > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > > ---
+> > >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > > 
+> > > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > index fed1b5704355..4abd5dabeccf 100644
+> > > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > > @@ -85,7 +85,9 @@
+> > >  #define RDMA0_MOUT_DSI2			0x4
+> > >  #define RDMA0_MOUT_DSI3			0x5
+> > >  #define RDMA1_MOUT_DPI0			0x2
+> > > +#define RDMA1_MOUT_DPI1			0x3
+> > 
+> > Usually, each bit of a mout register represent a output enable. Is this
+> > value 0x3 a correct value?
+> > 
+> > Regards,
+> > CK
+> > 
+> In HW CONFIG SPEC show as following
+> 
+> Bit(s)	Name			Description
+> 2:0	DISP_PATH1_SOUT_SEL_IN	0 : Output to DSI0
+> 				1:  Ooutput to DSI1
+> 				2:  Ooutput to DPI
+> 				3:  Ooutput to DPI1
+> 				4:  Ooutput to DSI2
+> 				5:  Ooutput to DSI3
+> 				6 : reserved
+> 				7:  Ooutput to DISP_UFOE
+> 
+> So, 0x3 is correct value
 
-I think that'll cure things, but let me do a KASAN build myself.
+It looks like that RDMA1 output is also SOUT, use the naming SOUT would
+be better. 
 
---- a/kernel/watchdog.c
-+++ b/kernel/watchdog.c
-@@ -587,8 +587,8 @@ static __init void lockup_detector_setup
- 		return;
- 
- 	mutex_lock(&watchdog_mutex);
--	softlockup_initialized = true;
- 	lockup_detector_reconfigure();
-+	softlockup_initialized = true;
- 	mutex_unlock(&watchdog_mutex);
- }
- 
+Regards,
+CK
+
+> 
+> Regard,
+> Stu
+> 
+> 
+> > >  #define DPI0_SEL_IN_RDMA1		0x1
+> > > +#define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+> > >  #define COLOR1_SEL_IN_OVL1		0x1
+> > >  
+> > >  #define OVL_MOUT_EN_RDMA		0x1
+> > > @@ -171,6 +173,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> > >  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+> > >  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+> > >  		value = RDMA1_MOUT_DPI0;
+> > > +	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
+> > > +		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+> > > +		value = RDMA1_MOUT_DPI1;
+> > >  	} else {
+> > >  		value = 0;
+> > >  	}
+> > > @@ -190,6 +195,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+> > >  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+> > >  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > >  		value = DPI0_SEL_IN_RDMA1;
+> > > +	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
+> > > +		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> > > +		value = DPI1_SEL_IN_RDMA1;
+> > >  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+> > >  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+> > >  		value = COLOR1_SEL_IN_OVL1;
+> > 
+> > 
+> 
+> 
+
+
