@@ -2,136 +2,100 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D1A1EC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:13:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B75D6C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:13:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87AFB208B3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:13:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B7B2208B3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:13:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="OPGRaIpf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87AFB208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=edited-us.20150623.gappssmtp.com header.i=@edited-us.20150623.gappssmtp.com header.b="i0XHNee2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B7B2208B3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=edited.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936066AbeFMPNP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:13:15 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:41195 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936048AbeFMPJd (ORCPT
+        id S964914AbeFMPNV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:13:21 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:33451 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936068AbeFMPNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:09:33 -0400
-Received: by mail-wr0-f195.google.com with SMTP id h10-v6so3123865wrq.8
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:32 -0700 (PDT)
+        Wed, 13 Jun 2018 11:13:17 -0400
+Received: by mail-io0-f193.google.com with SMTP id d185-v6so3826449ioe.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:13:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=87ORcY69pnhjHzwy3ZGqBtyUOPwoa/Ckei7U+5Elc6I=;
-        b=OPGRaIpf+/sYt2380waJ5LQ41bf3I1BZm5nsCVakxqQZJjQE4xFvTTTIa0DLdp+Wwa
-         jZcsXJYP4ym6QvbiO5xqeXiJSV/zYMPAIfrNvSzavIORxbl4VIxCcQgsBfVRS0Mcu0O5
-         vhgMVbtB0DrIF9b8uafC748X+ZZmBHvi1x13E=
+        d=edited-us.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=kdbC/aTOlF3Xkp8zB7cGzTxSBVhcXvbaLItjJcFoO0g=;
+        b=i0XHNee2u06XjymJZllxt1PP3rLUJMCidOr1ibPRykMuIInzTGOmRsrl0BlsL4rZx2
+         /wd9aNbDDJseQHQ3n+dCoNEP7WQJAE4CVLdep3+wy35XFrnHCz4r1MSwlgiHTFNvY3B1
+         xAR2nqzpXnh//IqCd+sXsm+52etm1vaUoOnz2HxWo4fpPBLbIAhtPbo+GgcLou5QOqpQ
+         bKnwjqw9PhNXfZwb8YCRpBwNnLUMChgULCvS3UcZFN5O1T96KRJ7uOfMuBXjcVgHSHxo
+         pOH4v2NC/kvvvooTCyGkOTqNzIpia/7i0Myq+r4+moS6ocRC4sjeo3ZhOmCiYSD+FBfp
+         nKhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=87ORcY69pnhjHzwy3ZGqBtyUOPwoa/Ckei7U+5Elc6I=;
-        b=q336qdjjH/qo9Q4ypuvHPKetAXLl7yfl4orpVH6ywcLC+mxaD4E7BJwmJBXnbA+Zpb
-         EuCrBj2JlHAM2fv137jLNt3UIlMEafmOU6vdoQAOFmJIf09bOZkRKKxa64Gx7ZwYr7eo
-         0603+M8EeqGZXBKTpWIxNvWeGSMNcKHys0lZeCnPmrzUix5jAm1qOPcGDl/vHde0odDF
-         fw2rWVhvU/OI2boquhy/IfwiCjpO2ZW0WSOORDQd5wDv3cBVxOVidP9P6SiqfX8PmCmg
-         ESzFrjPOg+Ozu+9dlu69vpB3kvKtiS+89E8xSHa8eJlBnVLKyCpHC0n40kGqgGmxgx1/
-         /Vsg==
-X-Gm-Message-State: APt69E3yLdwKPIVf3XPViSm7jaA/FqRL84Zkjyt+h6U0u93OwkWr+ut4
-        6c6Sijo7bZi/Hvr+jVeuUn3rWQ==
-X-Google-Smtp-Source: ADUXVKLx7cXSmnciTwyXQ9ijMgs2oEfxNMTD2gS03dGe2V3B5/qUua8ZOl6ijg9XbccsXWfMwkhakQ==
-X-Received: by 2002:adf:a645:: with SMTP id k63-v6mr4762953wrc.231.1528902572269;
-        Wed, 13 Jun 2018 08:09:32 -0700 (PDT)
-Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.31
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kdbC/aTOlF3Xkp8zB7cGzTxSBVhcXvbaLItjJcFoO0g=;
+        b=gZ2/sUJTBYE9pWNfpoUB9hSP+bQ3hYER6c/tiyOH23XPAqeiIBkjNEbxakm+qfI5Xr
+         9sAJjvOL/VrQzqVP/MJLYK74mlbt1+8uzt6iQ+u0fH1JxPPxdzbm797gUogbJ4Ha9IIS
+         h7IdbUi6xon78e23uYa6WczXi6GfjDSRoPP7j8G79CRbx3sW77Tym5qvYMrHv5kqqYOA
+         kZ+uMygUTlVS9vQ+47Cwn42Wv3qpYZzegaaR/S6QH0gL/fD7KWBPTcg3cbhkPpQDb03p
+         r6xwiu3U22nPB/ml8CelfbxrUEkwqz88oiNxL7MgGwDTrfQFxJnnZrpqx4jUIBVyYuWh
+         Pskw==
+X-Gm-Message-State: APt69E3vTURI9pPUqFtg5hbGx8Mr1mm+dUmOMZFgIonwy1O/C9p9m4NK
+        ol9R0m63TB+zrDmFMUapFetYZA==
+X-Google-Smtp-Source: ADUXVKKPBwLGtUi6qxRZ5kuuGbmPKYh2GMkqUd9zOvcp/dyWXU25YgiAhxlS1CPbpDs285meX0v5HQ==
+X-Received: by 2002:a6b:7006:: with SMTP id l6-v6mr4944568ioc.269.1528902796415;
+        Wed, 13 Jun 2018 08:13:16 -0700 (PDT)
+Received: from localhost.localdomain (ip-17-240-239-173.midwest.us.northamericancoax.com. [173.239.240.17])
+        by smtp.gmail.com with ESMTPSA id y20-v6sm1003823iod.39.2018.06.13.08.13.13
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 08:09:31 -0700 (PDT)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v3 17/27] venus: helpers: add buffer type argument to a helper
-Date:   Wed, 13 Jun 2018 18:07:51 +0300
-Message-Id: <20180613150801.11702-18-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
-References: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
+        Wed, 13 Jun 2018 08:13:14 -0700 (PDT)
+From:   Ryan Grachek <ryan@edited.us>
+Cc:     Ryan Grachek <ryan@edited.us>, Wei Xu <xuwei5@hisilicon.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: hikey: Define wl1835 power capabilities
+Date:   Wed, 13 Jun 2018 10:13:05 -0500
+Message-Id: <20180613151305.17240-1-ryan@edited.us>
+X-Mailer: git-send-email 2.11.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds one more function argument to pass buffer type to
-set_output_resolution() helper function. That is a preparation
-to support secondary decoder output.
+These properties are required for compatibility with runtime PM.
+Without these properties, MMC host controller will not be aware
+of power capabilities. When the wlcore driver attempts to power
+on the device, it will erroneously fail with -EACCES.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+Signed-off-by: Ryan Grachek <ryan@edited.us>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 5 +++--
- drivers/media/platform/qcom/venus/helpers.h | 3 ++-
- drivers/media/platform/qcom/venus/venc.c    | 3 ++-
- 3 files changed, 7 insertions(+), 4 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 0cce664f093d..2eeb243e4dbe 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -453,12 +453,13 @@ int venus_helper_set_input_resolution(struct venus_inst *inst,
- EXPORT_SYMBOL_GPL(venus_helper_set_input_resolution);
- 
- int venus_helper_set_output_resolution(struct venus_inst *inst,
--				       unsigned int width, unsigned int height)
-+				       unsigned int width, unsigned int height,
-+				       u32 buftype)
- {
- 	u32 ptype = HFI_PROPERTY_PARAM_FRAME_SIZE;
- 	struct hfi_framesize fs;
- 
--	fs.buffer_type = HFI_BUFFER_OUTPUT;
-+	fs.buffer_type = buftype;
- 	fs.width = width;
- 	fs.height = height;
- 
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index cd306bd8978f..0de9989adcdb 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -36,7 +36,8 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
- int venus_helper_set_input_resolution(struct venus_inst *inst,
- 				      unsigned int width, unsigned int height);
- int venus_helper_set_output_resolution(struct venus_inst *inst,
--				       unsigned int width, unsigned int height);
-+				       unsigned int width, unsigned int height,
-+				       u32 buftype);
- int venus_helper_set_num_bufs(struct venus_inst *inst, unsigned int input_bufs,
- 			      unsigned int output_bufs);
- int venus_helper_set_color_format(struct venus_inst *inst, u32 fmt);
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index aa6b0026d79d..1d7f87e0f5b3 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -795,7 +795,8 @@ static int venc_init_session(struct venus_inst *inst)
- 		goto deinit;
- 
- 	ret = venus_helper_set_output_resolution(inst, inst->width,
--						 inst->height);
-+						 inst->height,
-+						 HFI_BUFFER_OUTPUT);
- 	if (ret)
- 		goto deinit;
+diff --git a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+index 38f881955217..c5feca8cd10b 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
++++ b/arch/arm64/boot/dts/hisilicon/hi6220-hikey.dts
+@@ -323,6 +323,8 @@
+ 			bus-width = <0x4>;
+ 			cap-sd-highspeed;
+ 			non-removable;
++			cap-power-off-card;
++			keep-power-in-suspend;
+ 			vmmc-supply = <&reg_vdd_3v3>;
+ 			mmc-pwrseq = <&wl1835_pwrseq>;
  
 -- 
-2.14.1
+2.11.0
 
