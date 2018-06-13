@@ -2,152 +2,93 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 126A9C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:13:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 234C5C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:13:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB5D4208D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:13:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB5D4208D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D659B208D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:13:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D659B208D6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935396AbeFMSNG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:13:06 -0400
-Received: from mga17.intel.com ([192.55.52.151]:25592 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935179AbeFMSNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:13:04 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 11:13:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
-   d="scan'208";a="49086585"
-Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2018 11:13:03 -0700
-Subject: Re: [PATCHv3 07/17] x86/mm: Preserve KeyID on pte_modify() and
- pgprot_modify()
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-8-kirill.shutemov@linux.intel.com>
-Cc:     Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <8c31f6d2-6512-2726-763e-6dd1cbb0350a@intel.com>
-Date:   Wed, 13 Jun 2018 11:13:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935515AbeFMSN0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:13:26 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:37545 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935445AbeFMSNY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 14:13:24 -0400
+Received: by mail-io0-f200.google.com with SMTP id g20-v6so2839913ioc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 11:13:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to:cc:content-transfer-encoding;
+        bh=M/YQN7wccjyS9CfIXdd3u3Fwrn79BcvVOuFlGXMH5DY=;
+        b=FB9V5VtEeWLfrqMduz4hjpuMuNTjimx8zvyo8eOG5J32skuR0Gs8zEGmtDb0qB2yFv
+         6Yf4FSGy/mwQ3yJOqYXUraniX3aDPolVzwUGsiYjWWmOtS7etLvXHRNqqFPiABkh5fY3
+         T+e2GAwxit3LLyumV25gOIB/OWQoMSS4P2/FNoF4hdn4VYVgXXn8T1rVHIxbbyfl9Yz4
+         RAVG+ZTtDhvVQIgGKdwpUc9txmVsKMl24QXdC1k76cUWYQmYk2aqPv2kPELQcfoAfwWs
+         iQj1IKxp2+9j+1OL1SimAKeIOD6PMCMSc7RpFuS/iUyJTg+AafdtMSgBVFsM3icwbCHX
+         imSQ==
+X-Gm-Message-State: APt69E02l1ANL/PP2+w6kCT1V6nbr235SeMhW8AnA1sE5QrWncr5smvW
+        3rpLFbGp8NO/j9+WBDyP3dFL1KrKJ86C2FZPPpWHjvZNOzRQ
+X-Google-Smtp-Source: ADUXVKJtKBOc+HbwLr/hp1JZP780bsMz+ZW/qHqjDoCjdluZgvOstEyx7xPx8wpEZu1krTQGCL7tR7a+g0wYWR3Y/0iiAwCtIpUM
 MIME-Version: 1.0
-In-Reply-To: <20180612143915.68065-8-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a24:455c:: with SMTP id y89-v6mr2604626ita.0.1528913603861;
+ Wed, 13 Jun 2018 11:13:23 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 11:13:23 -0700
+In-Reply-To: <b3af0f35-b0f8-859d-4f8f-b919d35ebaaa@iogearbox.net>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000402477056e89f067@google.com>
+Subject: Re: Re: KASAN: slab-out-of-bounds Read in bpf_skb_vlan_push
+From:   syzbot <syzbot+76de61614cb1abdd73fc@syzkaller.appspotmail.com>
+To:     Daniel Borkmann <daniel@iogearbox.net>
+Cc:     ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: base64
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
-> Encrypted VMA will have KeyID stored in vma->vm_page_prot. This way we
-
-"An encrypted VMA..."
-
-> don't need to do anything special to setup encrypted page table entries
-> and don't need to reserve space for KeyID in a VMA.
-> 
-> This patch changes _PAGE_CHG_MASK to include KeyID bits. Otherwise they
-> are going to be stripped from vm_page_prot on the first pgprot_modify().
-> 
-> Define PTE_PFN_MASK_MAX similar to PTE_PFN_MASK but based on
-> __PHYSICAL_MASK_SHIFT. This way we include whole range of bits
-> architecturally available for PFN without referencing physical_mask and
-> mktme_keyid_mask variables.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  arch/x86/include/asm/pgtable_types.h | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/include/asm/pgtable_types.h b/arch/x86/include/asm/pgtable_types.h
-> index 1e5a40673953..e8ebe760b88d 100644
-> --- a/arch/x86/include/asm/pgtable_types.h
-> +++ b/arch/x86/include/asm/pgtable_types.h
-> @@ -121,8 +121,13 @@
->   * protection key is treated like _PAGE_RW, for
->   * instance, and is *not* included in this mask since
->   * pte_modify() does modify it.
-> + *
-> + * It includes full range of PFN bits regardless if they were claimed for KeyID
-> + * or not: we want to preserve KeyID on pte_modify() and pgprot_modify().
->   */
-> -#define _PAGE_CHG_MASK	(PTE_PFN_MASK | _PAGE_PCD | _PAGE_PWT |		\
-> +#define PTE_PFN_MASK_MAX \
-> +	(((signed long)PAGE_MASK) & ((1ULL << __PHYSICAL_MASK_SHIFT) - 1))
-
-"signed long" is really unusual to see.  Was that intentional?
-
-> +#define _PAGE_CHG_MASK	(PTE_PFN_MASK_MAX | _PAGE_PCD | _PAGE_PWT |		\
->  			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
->  			 _PAGE_SOFT_DIRTY)
->  #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
-
-This makes me a bit nervous.  We have some places (here) where we
-pretend that the KeyID is part of the paddr and then other places like
-pte_pfn() where it's not.
-
-Seems like something that will come back to bite us.
-
+PiBPbiAwNi8xMy8yMDE4IDA2OjE3IFBNLCBzeXpib3Qgd3JvdGU6DQo+PiBIZWxsbywNCg0KPj4g
+c3l6Ym90IGZvdW5kIHRoZSBmb2xsb3dpbmcgY3Jhc2ggb246DQoNCj4+IEhFQUQgY29tbWl0OsKg
+wqDCoCA3NWQ0ZTcwNGZhOGQgbmV0ZGV2LUZBUTogY2xhcmlmeSBEYXZlTSdzIHBvc2l0aW9uIGZv
+ciAgDQo+PiBzdGFiLi4NCj4+IGdpdCB0cmVlOsKgwqDCoMKgwqDCoCBicGYtbmV4dA0KPj4gY29u
+c29sZSBvdXRwdXQ6IGh0dHBzOi8vc3l6a2FsbGVyLmFwcHNwb3QuY29tL3gvbG9nLnR4dD94PTE3
+NTQ3ODNmODAwMDAwDQo+PiBrZXJuZWwgY29uZmlnOsKgICANCj4+IGh0dHBzOi8vc3l6a2FsbGVy
+LmFwcHNwb3QuY29tL3gvLmNvbmZpZz94PWE2MDFhODBmZWM0NjFkNDQNCj4+IGRhc2hib2FyZCBs
+aW5rOiAgDQo+PiBodHRwczovL3N5emthbGxlci5hcHBzcG90LmNvbS9idWc/ZXh0aWQ9NzZkZTYx
+NjE0Y2IxYWJkZDczZmMNCj4+IGNvbXBpbGVyOsKgwqDCoMKgwqDCoCBnY2MgKEdDQykgOC4wLjEg
+MjAxODA0MTMgKGV4cGVyaW1lbnRhbCkNCj4+IHN5emthbGxlciAgDQo+PiByZXBybzpodHRwczov
+L3N5emthbGxlci5hcHBzcG90LmNvbS94L3JlcHJvLnN5ej94PTEyYzFlMWJmODAwMDAwDQoNCj4+
+IElNUE9SVEFOVDogaWYgeW91IGZpeCB0aGUgYnVnLCBwbGVhc2UgYWRkIHRoZSBmb2xsb3dpbmcg
+dGFnIHRvIHRoZSAgDQo+PiBjb21taXQ6DQo+PiBSZXBvcnRlZC1ieTogc3l6Ym90Kzc2ZGU2MTYx
+NGNiMWFiZGQ3M2ZjQHN5emthbGxlci5hcHBzcG90bWFpbC5jb20NCg0KPj4gSVB2NjogQUREUkNP
+TkYoTkVUREVWX0NIQU5HRSk6IHZldGgxOiBsaW5rIGJlY29tZXMgcmVhZHkNCj4+IElQdjY6IEFE
+RFJDT05GKE5FVERFVl9DSEFOR0UpOiB2ZXRoMDogbGluayBiZWNvbWVzIHJlYWR5DQo+PiA4MDIx
+cTogYWRkaW5nIFZMQU4gMCB0byBIVyBmaWx0ZXIgb24gZGV2aWNlIHRlYW0wDQo+PiA4MDIxcTog
+YWRkaW5nIFZMQU4gMCB0byBIVyBmaWx0ZXIgb24gZGV2aWNlIHRlYW0wDQo+PiA9PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0N
+Cj4+IEJVRzogS0FTQU46IHNsYWItb3V0LW9mLWJvdW5kcyBpbiBza2JfYXRfdGNfaW5ncmVzcyAg
+DQo+PiBpbmNsdWRlL25ldC9zY2hfZ2VuZXJpYy5oOjUzNSBbaW5saW5lXQ0KPj4gQlVHOiBLQVNB
+Tjogc2xhYi1vdXQtb2YtYm91bmRzIGluIGJwZl9wdXNoX21hY19yY3N1bSAgDQo+PiBuZXQvY29y
+ZS9maWx0ZXIuYzoxNjI1IFtpbmxpbmVdDQo+PiBCVUc6IEtBU0FOOiBzbGFiLW91dC1vZi1ib3Vu
+ZHMgaW4gX19fX2JwZl9za2Jfdmxhbl9wdXNoICANCj4+IG5ldC9jb3JlL2ZpbHRlci5jOjI0NDYg
+W2lubGluZV0NCj4+IEJVRzogS0FTQU46IHNsYWItb3V0LW9mLWJvdW5kcyBpbiBicGZfc2tiX3Zs
+YW5fcHVzaCsweDZiNy8weDcyMCAgDQo+PiBuZXQvY29yZS9maWx0ZXIuYzoyNDM3DQo+PiBSZWFk
+IG9mIHNpemUgNSBhdCBhZGRyIGZmZmY4ODAxYjc3MzQ3ZDAgYnkgdGFzayBzeXotZXhlY3V0b3I2
+LzY1MjkNCg0KPiBTaG91bGQgYmUgZml4ZWQgYWxyZWFkeSBieToNCg0KPiAgICAgDQo+IGh0dHBz
+Oi8vZ2l0Lmtlcm5lbC5vcmcvcHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4
+LmdpdC9jb21taXQvP2lkPTU4OTkwZDFmZjNmNzg5NmVlMzQxMDMwZTlhN2MyZTQwMDI1NzA2ODMN
+Cg0KDQo+ICNzeXogdGVzdDogIA0KPiBnaXQ6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4
+L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0DQoNCndhbnQgMiBhcmdzIChyZXBvLCBicmFu
+Y2gpLCBnb3QgMQ0KDQo=
