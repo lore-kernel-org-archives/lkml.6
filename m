@@ -2,123 +2,107 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3F6EDC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:04:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 54DD4C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:18:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD62B208AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F28FD20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:18:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="oqAyWu60"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD62B208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="YGE+tol+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F28FD20891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754381AbeFMCEL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 22:04:11 -0400
-Received: from conssluserg-06.nifty.com ([210.131.2.91]:52776 "EHLO
-        conssluserg-06.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753517AbeFMCEJ (ORCPT
+        id S933443AbeFMCSl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 22:18:41 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:39954 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932661AbeFMCSj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 22:04:09 -0400
-Received: from mail-vk0-f46.google.com (mail-vk0-f46.google.com [209.85.213.46]) (authenticated)
-        by conssluserg-06.nifty.com with ESMTP id w5D23nih004342;
-        Wed, 13 Jun 2018 11:03:50 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com w5D23nih004342
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528855430;
-        bh=h75hTC0L064IJ0rxB6g18x+4cTB8uFbcIdADIo7QYHo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=oqAyWu60yiOsbwDLQWu2b56AfNRNklnXmPMhWYQiKmJtfce2eFDf9czsNDNuYv176
-         67zCDTSDMJUDRL2cwD749YCXlWsG001F5ubqbErfIYRZSbW85F0iJ3BuGjVOJBjFQu
-         9frn4TNiHkvlqaoek2CFYRrMVDlLA5Nq5HlH4/nN0F3/TsosiTGm6XKhDi8xdIcKnn
-         kMuYHeGiKkejZBhge9Tk9PSjDPiK0d4d/YRsl5Ida6bQekCzHFbUCg0wU0LpSirj6u
-         mtHNy2QYp0dF7Y2aMzWodf9ECQRMm3t4Vatq8wN7zOaEG+y+XdA5l7auh838vZk1xO
-         lQC1DOLYCzf6Q==
-X-Nifty-SrcIP: [209.85.213.46]
-Received: by mail-vk0-f46.google.com with SMTP id o17-v6so596707vka.2;
-        Tue, 12 Jun 2018 19:03:49 -0700 (PDT)
-X-Gm-Message-State: APt69E2BMBJy2U6UA1GjETx5rOWfJG4Bg0GT73T7Wm7ZYnJB7pegT/gS
-        ytbDzsJdlNebvW1ot+bFI7v5a99nY80GTkL3FtY=
-X-Google-Smtp-Source: ADUXVKJRjwpBgpuQpIH2p21/+iNBfGqaXPffI3uChZ+tT6/UTt6esiVgvtBndg7d28lDfhGaC6vZm6Mlfho+DaK1zxY=
-X-Received: by 2002:a1f:ba4a:: with SMTP id k71-v6mr1866446vkf.11.1528855428670;
- Tue, 12 Jun 2018 19:03:48 -0700 (PDT)
+        Tue, 12 Jun 2018 22:18:39 -0400
+Received: by mail-it0-f65.google.com with SMTP id 188-v6so1889053ita.5;
+        Tue, 12 Jun 2018 19:18:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=5VE1E1rfk1aKH2aq0M3Nk0RDGajXjvzg4Xctr1+hLhE=;
+        b=YGE+tol+kxh6hRKP2rfFJZIP/hWAZZAUEE7oj4PUu4sHVMfcbNbexqYaD7/ylwgLk5
+         /nmLSj+3FAtPGLacFLfhAWSxF/x7DxVq3FjDxWmIyociAtuJnur0U+H4cQxk/qJtRESE
+         Up1Q8h9Ox/B5fY5XayJQTy6KAoRZpFYE9rPpI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=5VE1E1rfk1aKH2aq0M3Nk0RDGajXjvzg4Xctr1+hLhE=;
+        b=ZVBG8QU79kwwDauOOcd2bdR53MU7L3m1rnVTgsm7QVDpG98WLZRb2aG4qknpwb5BAX
+         8ZdPB53+pIihvS3MIUV1sFT6xLabfPXkv2ncRBp6k2hMdqGLecvwPIb9oHMCmyVin7PU
+         fgBQZeHVyWR76p/W9220T1Pea0pPTCcBAAI95OSOUWiJRajUzDjCJjLQtEZL8nDI622V
+         gCcF2JDPsYeL+0Ck+XnCFolTV1AZJZS/F5o8PCzLtxCtKTTwkiPuX+lU5RCdbeSDfpm2
+         2zaeCHtHSFYD/5rJszM7Hojxwj+UaMgc0JYaNVvzspFkSh+rowogPXHAvFAS2TNn73vv
+         ghoA==
+X-Gm-Message-State: APt69E0r5AGqd45/261KBupOyIMsg7cwyn9WHhC4dwz5vwlPGbGG+i5o
+        eJl0mbraM4mwOg5YvziXwg0T0s+/5GFOIlFtM+KPMz3H
+X-Google-Smtp-Source: ADUXVKJOTGZLf37AOn2pIuxkVxn4VCasmMCSSAw7MRqzRdcLi16CyjMLDOXwqq0UVeCKVsnTPAZinMakRDBbUvumt6M=
+X-Received: by 2002:a24:3cd7:: with SMTP id m206-v6mr2806926ita.113.1528856318658;
+ Tue, 12 Jun 2018 19:18:38 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Tue, 12 Jun 2018 19:03:08
- -0700 (PDT)
-In-Reply-To: <20180612003224.3658-2-labbott@redhat.com>
-References: <20180612003224.3658-1-labbott@redhat.com> <20180612003224.3658-2-labbott@redhat.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 13 Jun 2018 11:03:08 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASJw4JjHD3RSmyBExvw+v+GE916RQiSZTQA+U-d4FXt1w@mail.gmail.com>
-Message-ID: <CAK7LNASJw4JjHD3RSmyBExvw+v+GE916RQiSZTQA+U-d4FXt1w@mail.gmail.com>
-Subject: Re: [PATCHv4 1/3] scripts: Preprocess module-common.lds
-To:     Laura Abbott <labbott@redhat.com>
-Cc:     Andy Lutomirski <luto@kernel.org>,
-        Mark Wielaard <mjw@fedoraproject.org>,
-        "H . J . Lu" <hjl.tools@gmail.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        X86 ML <x86@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Nick Clifton <nickc@redhat.com>,
-        Cary Coutant <ccoutant@gmail.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+References: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
+In-Reply-To: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 12 Jun 2018 19:18:27 -0700
+Message-ID: <CA+55aFwvE5G7MV7AV4naAXdbFoszc4JNKEj_QtYqpLFfa2RXtA@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM changes for 4.18 merge window
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM list <kvm@vger.kernel.org>
+Content-Type: multipart/mixed; boundary="000000000000c975d1056e7c99dd"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-12 9:32 GMT+09:00 Laura Abbott <labbott@redhat.com>:
+--000000000000c975d1056e7c99dd
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, Jun 12, 2018 at 7:03 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> In preparation for some upcoming work, allow module-common.lds
-> to be run through the preprocessor.
->
-> Signed-off-by: Laura Abbott <labbott@redhat.com>
-> ---
->  scripts/.gitignore                                 | 1 +
->  scripts/Makefile                                   | 2 +-
->  scripts/{module-common.lds => module-common.lds.S} | 0
->  3 files changed, 2 insertions(+), 1 deletion(-)
->  rename scripts/{module-common.lds => module-common.lds.S} (100%)
->
-> diff --git a/scripts/.gitignore b/scripts/.gitignore
-> index 0442c06eefcb..afd1de57d9c6 100644
-> --- a/scripts/.gitignore
-> +++ b/scripts/.gitignore
-> @@ -13,3 +13,4 @@ asn1_compiler
->  extract-cert
->  sign-file
->  insert-sys-cert
-> +module-common.lds
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index 25ab143cbe14..631d9d1a71e4 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -25,7 +25,7 @@ HOSTCFLAGS_asn1_compiler.o = -I$(srctree)/include
->  HOSTLOADLIBES_sign-file = -lcrypto
->  HOSTLOADLIBES_extract-cert = -lcrypto
->
-> -always         := $(hostprogs-y) $(hostprogs-m)
-> +always         := $(hostprogs-y) $(hostprogs-m) module-common.lds
+> * x86: many bugfixes, implement more Hyper-V super powers,
 
+Uhhuh, I didn't notice this initially, because my basic sanity tests
+are with everything enabled, but this breaks the build:
 
-You do not need to generate module-common.lds all the time.
-It is necessary only when the module feature is enabled.
+  ERROR: "ms_hyperv" [arch/x86/kvm/kvm-intel.ko] undefined!
 
-You can do like this:
+The attached patch _may_ be the right thing to do. It's not pretty.
 
-extra-$(CONFIG_MODULES)  +=  module-common.lds
+Hmm? And why was this not found before it hit my tree?
 
+                  Linus
 
+--000000000000c975d1056e7c99dd
+Content-Type: text/x-patch; charset="US-ASCII"; name="patch.diff"
+Content-Disposition: attachment; filename="patch.diff"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jichjl3d0>
+X-Attachment-Id: f_jichjl3d0
 
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+IGFyY2gveDg2L2t2bS92bXguYyB8IDMgKysrCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25z
+KCspCgpkaWZmIC0tZ2l0IGEvYXJjaC94ODYva3ZtL3ZteC5jIGIvYXJjaC94ODYva3ZtL3ZteC5j
+CmluZGV4IGZjNjFlMjU5NjZlNC4uZDBkZDM1ZDU4MmRhIDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9r
+dm0vdm14LmMKKysrIGIvYXJjaC94ODYva3ZtL3ZteC5jCkBAIC00NDI5LDYgKzQ0MjksNyBAQCBz
+dGF0aWMgaW50IGFsbG9jX2xvYWRlZF92bWNzKHN0cnVjdCBsb2FkZWRfdm1jcyAqbG9hZGVkX3Zt
+Y3MpCiAJCQlnb3RvIG91dF92bWNzOwogCQltZW1zZXQobG9hZGVkX3ZtY3MtPm1zcl9iaXRtYXAs
+IDB4ZmYsIFBBR0VfU0laRSk7CiAKKyNpZiBJU19FTkFCTEVEKENPTkZJR19IWVBFUlYpCiAJCWlm
+IChzdGF0aWNfYnJhbmNoX3VubGlrZWx5KCZlbmFibGVfZXZtY3MpICYmCiAJCSAgICAobXNfaHlw
+ZXJ2Lm5lc3RlZF9mZWF0dXJlcyAmIEhWX1g2NF9ORVNURURfTVNSX0JJVE1BUCkpIHsKIAkJCXN0
+cnVjdCBodl9lbmxpZ2h0ZW5lZF92bWNzICpldm1jcyA9CkBAIC00NDM2LDYgKzQ0MzcsOCBAQCBz
+dGF0aWMgaW50IGFsbG9jX2xvYWRlZF92bWNzKHN0cnVjdCBsb2FkZWRfdm1jcyAqbG9hZGVkX3Zt
+Y3MpCiAKIAkJCWV2bWNzLT5odl9lbmxpZ2h0ZW5tZW50c19jb250cm9sLm1zcl9iaXRtYXAgPSAx
+OwogCQl9CisjZW5kaWYKKwogCX0KIAlyZXR1cm4gMDsKIAo=
+--000000000000c975d1056e7c99dd--
