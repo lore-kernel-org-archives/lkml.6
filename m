@@ -5,50 +5,50 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8D487C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:36:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 18368C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C061208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:36:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C061208D4
+	by mail.kernel.org (Postfix) with ESMTP id B7ADF208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:36:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7ADF208D4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935609AbeFMTgf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 15:36:35 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50562 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935446AbeFMTgc (ORCPT
+        id S935671AbeFMTgi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 15:36:38 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S935517AbeFMTgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 15:36:32 -0400
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DJYIqJ109558
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 15:36:31 -0400
-Received: from e31.co.us.ibm.com (e31.co.us.ibm.com [32.97.110.149])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jk89135hd-1
+        Wed, 13 Jun 2018 15:36:33 -0400
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DJYIoP041642
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 15:36:32 -0400
+Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jk5k8kbc2-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
         for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 15:36:31 -0400
 Received: from localhost
-        by e31.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
-        Wed, 13 Jun 2018 13:36:30 -0600
+        Wed, 13 Jun 2018 13:36:31 -0600
 Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e31.co.us.ibm.com (192.168.1.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Jun 2018 13:36:25 -0600
+        Wed, 13 Jun 2018 13:36:27 -0600
 Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DJaOL55243184
+        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DJaQB310682754
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 12:36:24 -0700
+        Wed, 13 Jun 2018 12:36:26 -0700
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 54E6DC6059;
-        Wed, 13 Jun 2018 13:36:24 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 26FBFC605F;
+        Wed, 13 Jun 2018 13:36:26 -0600 (MDT)
 Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A8D01C6057;
-        Wed, 13 Jun 2018 13:36:23 -0600 (MDT)
+        by IMSVA (Postfix) with ESMTP id 7000EC6059;
+        Wed, 13 Jun 2018 13:36:25 -0600 (MDT)
 Received: from talon7.ibm.com (unknown [9.41.102.69])
         by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Jun 2018 13:36:23 -0600 (MDT)
+        Wed, 13 Jun 2018 13:36:25 -0600 (MDT)
 From:   Eddie James <eajames@linux.vnet.ibm.com>
 To:     linux-i2c@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
@@ -56,87 +56,321 @@ Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
         rdunlap@infradead.org, andy.shevchenko@gmail.com, peda@axentia.se,
         Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v10 1/7] dt-bindings: i2c: Add FSI-attached I2C master dt binding documentation
-Date:   Wed, 13 Jun 2018 14:36:13 -0500
+Subject: [PATCH v10 2/7] i2c: Add FSI-attached I2C master algorithm
+Date:   Wed, 13 Jun 2018 14:36:14 -0500
 X-Mailer: git-send-email 1.8.3.1
 In-Reply-To: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
 References: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18061319-8235-0000-0000-00000DBFA6BD
+x-cbid: 18061319-0036-0000-0000-000009FCA64F
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009184; HX=3.00000241; KW=3.00000007;
  PH=3.00000004; SC=3.00000265; SDB=6.01046493; UDB=6.00535962; IPR=6.00825469;
- MB=3.00021628; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 19:36:28
+ MB=3.00021628; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 19:36:30
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061319-8236-0000-0000-0000418355BF
-Message-Id: <1528918579-27602-2-git-send-email-eajames@linux.vnet.ibm.com>
+x-cbparentid: 18061319-0037-0000-0000-000047BA5061
+Message-Id: <1528918579-27602-3-git-send-email-eajames@linux.vnet.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=903 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1805220000 definitions=main-1806130207
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document the bindings.
+Add register definitions for FSI-attached I2C master and functions to
+access those registers over FSI. Add an FSI driver so that our I2C bus
+is probed up during an FSI scan.
 
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>>
-Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
 ---
- Documentation/devicetree/bindings/i2c/i2c-fsi.txt | 40 +++++++++++++++++++++++
- 1 file changed, 40 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+ drivers/i2c/busses/Kconfig   |  11 ++
+ drivers/i2c/busses/Makefile  |   1 +
+ drivers/i2c/busses/i2c-fsi.c | 240 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 252 insertions(+)
+ create mode 100644 drivers/i2c/busses/i2c-fsi.c
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-fsi.txt b/Documentation/devicetree/bindings/i2c/i2c-fsi.txt
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 4f8df2e..cddd159 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -1330,4 +1330,15 @@ config I2C_ZX2967
+ 	  This driver can also be built as a module. If so, the module will be
+ 	  called i2c-zx2967.
+ 
++config I2C_FSI
++	tristate "FSI I2C driver"
++	depends on FSI
++	help
++	  Driver for FSI bus attached I2C masters. These are I2C masters that
++	  are connected to the system over an FSI bus, instead of the more
++	  common PCI or MMIO interface.
++
++	  This driver can also be built as a module. If so, the module will be
++	  called as i2c-fsi.
++
+ endmenu
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 5a86914..4909fd6 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -137,5 +137,6 @@ obj-$(CONFIG_I2C_PCA_ISA)	+= i2c-pca-isa.o
+ obj-$(CONFIG_I2C_SIBYTE)	+= i2c-sibyte.o
+ obj-$(CONFIG_I2C_XGENE_SLIMPRO) += i2c-xgene-slimpro.o
+ obj-$(CONFIG_SCx200_ACB)	+= scx200_acb.o
++obj-$(CONFIG_I2C_FSI)		+= i2c-fsi.o
+ 
+ ccflags-$(CONFIG_I2C_DEBUG_BUS) := -DDEBUG
+diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
 new file mode 100644
-index 0000000..b1be2ce
+index 0000000..694bbb4
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/i2c-fsi.txt
-@@ -0,0 +1,40 @@
-+Device-tree bindings for FSI-attached I2C master and busses
-+-----------------------------------------------------------
++++ b/drivers/i2c/busses/i2c-fsi.c
+@@ -0,0 +1,240 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * FSI-attached I2C master algorithm
++ *
++ * Copyright 2018 IBM Corporation
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public License
++ * as published by the Free Software Foundation; either version
++ * 2 of the License, or (at your option) any later version.
++ */
 +
-+Required properties:
-+ - compatible = "ibm,i2c-fsi";
-+ - reg = < address size >;		: The FSI CFAM address and address
-+					  space size.
-+ - #address-cells = <1>;		: Number of address cells in child
-+					  nodes.
-+ - #size-cells = <0>;			: Number of size cells in child nodes.
-+ - child nodes				: Nodes to describe busses off the I2C
-+					  master.
++#include <linux/bitfield.h>
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/errno.h>
++#include <linux/fsi.h>
++#include <linux/i2c.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
 +
-+Child node required properties:
-+ - reg = < port number >		: The port number on the I2C master.
++#define FSI_ENGID_I2C		0x7
 +
-+Child node optional properties:
-+ - child nodes				: Nodes to describe devices on the I2C
-+					  bus.
++#define I2C_DEFAULT_CLK_DIV	6
 +
-+Examples:
++/* i2c registers */
++#define I2C_FSI_FIFO		0x00
++#define I2C_FSI_CMD		0x04
++#define I2C_FSI_MODE		0x08
++#define I2C_FSI_WATER_MARK	0x0C
++#define I2C_FSI_INT_MASK	0x10
++#define I2C_FSI_INT_COND	0x14
++#define I2C_FSI_OR_INT_MASK	0x14
++#define I2C_FSI_INTS		0x18
++#define I2C_FSI_AND_INT_MASK	0x18
++#define I2C_FSI_STAT		0x1C
++#define I2C_FSI_RESET_I2C	0x1C
++#define I2C_FSI_ESTAT		0x20
++#define I2C_FSI_RESET_ERR	0x20
++#define I2C_FSI_RESID_LEN	0x24
++#define I2C_FSI_SET_SCL		0x24
++#define I2C_FSI_PORT_BUSY	0x28
++#define I2C_FSI_RESET_SCL	0x2C
++#define I2C_FSI_SET_SDA		0x30
++#define I2C_FSI_RESET_SDA	0x34
 +
-+    i2c@1800 {
-+        compatible = "ibm,i2c-fsi";
-+        reg = < 0x1800 0x400 >;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
++/* cmd register */
++#define I2C_CMD_WITH_START	BIT(31)
++#define I2C_CMD_WITH_ADDR	BIT(30)
++#define I2C_CMD_RD_CONT		BIT(29)
++#define I2C_CMD_WITH_STOP	BIT(28)
++#define I2C_CMD_FORCELAUNCH	BIT(27)
++#define I2C_CMD_ADDR		GENMASK(23, 17)
++#define I2C_CMD_READ		BIT(16)
++#define I2C_CMD_LEN		GENMASK(15, 0)
 +
-+        i2c-bus@0 {
-+            reg = <0>;
-+        };
++/* mode register */
++#define I2C_MODE_CLKDIV		GENMASK(31, 16)
++#define I2C_MODE_PORT		GENMASK(15, 10)
++#define I2C_MODE_ENHANCED	BIT(3)
++#define I2C_MODE_DIAG		BIT(2)
++#define I2C_MODE_PACE_ALLOW	BIT(1)
++#define I2C_MODE_WRAP		BIT(0)
 +
-+        i2c-bus@1 {
-+            reg = <1>;
++/* watermark register */
++#define I2C_WATERMARK_HI	GENMASK(15, 12)
++#define I2C_WATERMARK_LO	GENMASK(7, 4)
 +
-+            eeprom@50 {
-+                compatible = "vendor,dev-name";
-+            };
-+        };
-+    };
++#define I2C_FIFO_HI_LVL		4
++#define I2C_FIFO_LO_LVL		4
++
++/* interrupt register */
++#define I2C_INT_INV_CMD		BIT(15)
++#define I2C_INT_PARITY		BIT(14)
++#define I2C_INT_BE_OVERRUN	BIT(13)
++#define I2C_INT_BE_ACCESS	BIT(12)
++#define I2C_INT_LOST_ARB	BIT(11)
++#define I2C_INT_NACK		BIT(10)
++#define I2C_INT_DAT_REQ		BIT(9)
++#define I2C_INT_CMD_COMP	BIT(8)
++#define I2C_INT_STOP_ERR	BIT(7)
++#define I2C_INT_BUSY		BIT(6)
++#define I2C_INT_IDLE		BIT(5)
++
++/* status register */
++#define I2C_STAT_INV_CMD	BIT(31)
++#define I2C_STAT_PARITY		BIT(30)
++#define I2C_STAT_BE_OVERRUN	BIT(29)
++#define I2C_STAT_BE_ACCESS	BIT(28)
++#define I2C_STAT_LOST_ARB	BIT(27)
++#define I2C_STAT_NACK		BIT(26)
++#define I2C_STAT_DAT_REQ	BIT(25)
++#define I2C_STAT_CMD_COMP	BIT(24)
++#define I2C_STAT_STOP_ERR	BIT(23)
++#define I2C_STAT_MAX_PORT	GENMASK(19, 16)
++#define I2C_STAT_ANY_INT	BIT(15)
++#define I2C_STAT_SCL_IN		BIT(11)
++#define I2C_STAT_SDA_IN		BIT(10)
++#define I2C_STAT_PORT_BUSY	BIT(9)
++#define I2C_STAT_SELF_BUSY	BIT(8)
++#define I2C_STAT_FIFO_COUNT	GENMASK(7, 0)
++
++#define I2C_STAT_ERR		(I2C_STAT_INV_CMD |			\
++				 I2C_STAT_PARITY |			\
++				 I2C_STAT_BE_OVERRUN |			\
++				 I2C_STAT_BE_ACCESS |			\
++				 I2C_STAT_LOST_ARB |			\
++				 I2C_STAT_NACK |			\
++				 I2C_STAT_STOP_ERR)
++#define I2C_STAT_ANY_RESP	(I2C_STAT_ERR |				\
++				 I2C_STAT_DAT_REQ |			\
++				 I2C_STAT_CMD_COMP)
++
++/* extended status register */
++#define I2C_ESTAT_FIFO_SZ	GENMASK(31, 24)
++#define I2C_ESTAT_SCL_IN_SY	BIT(15)
++#define I2C_ESTAT_SDA_IN_SY	BIT(14)
++#define I2C_ESTAT_S_SCL		BIT(13)
++#define I2C_ESTAT_S_SDA		BIT(12)
++#define I2C_ESTAT_M_SCL		BIT(11)
++#define I2C_ESTAT_M_SDA		BIT(10)
++#define I2C_ESTAT_HI_WATER	BIT(9)
++#define I2C_ESTAT_LO_WATER	BIT(8)
++#define I2C_ESTAT_PORT_BUSY	BIT(7)
++#define I2C_ESTAT_SELF_BUSY	BIT(6)
++#define I2C_ESTAT_VERSION	GENMASK(4, 0)
++
++struct fsi_i2c_master {
++	struct fsi_device	*fsi;
++	u8			fifo_size;
++};
++
++static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
++			    u32 *data)
++{
++	int rc;
++	__be32 data_be;
++
++	rc = fsi_device_read(fsi, reg, &data_be, sizeof(data_be));
++	if (rc)
++		return rc;
++
++	*data = be32_to_cpu(data_be);
++
++	return 0;
++}
++
++static int fsi_i2c_write_reg(struct fsi_device *fsi, unsigned int reg,
++			     u32 *data)
++{
++	__be32 data_be = cpu_to_be32p(data);
++
++	return fsi_device_write(fsi, reg, &data_be, sizeof(data_be));
++}
++
++static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
++{
++	int rc;
++	u32 mode = I2C_MODE_ENHANCED, extended_status, watermark;
++	u32 interrupt = 0;
++
++	/* since we use polling, disable interrupts */
++	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_INT_MASK, &interrupt);
++	if (rc)
++		return rc;
++
++	mode |= FIELD_PREP(I2C_MODE_CLKDIV, I2C_DEFAULT_CLK_DIV);
++	rc = fsi_i2c_write_reg(i2c->fsi, I2C_FSI_MODE, &mode);
++	if (rc)
++		return rc;
++
++	rc = fsi_i2c_read_reg(i2c->fsi, I2C_FSI_ESTAT, &extended_status);
++	if (rc)
++		return rc;
++
++	i2c->fifo_size = FIELD_GET(I2C_ESTAT_FIFO_SZ, extended_status);
++	watermark = FIELD_PREP(I2C_WATERMARK_HI,
++			       i2c->fifo_size - I2C_FIFO_HI_LVL);
++	watermark |= FIELD_PREP(I2C_WATERMARK_LO, I2C_FIFO_LO_LVL);
++
++	return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_WATER_MARK, &watermark);
++}
++
++static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
++			int num)
++{
++	return -EOPNOTSUPP;
++}
++
++static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
++{
++	return I2C_FUNC_I2C | I2C_FUNC_PROTOCOL_MANGLING |
++		I2C_FUNC_10BIT_ADDR | I2C_FUNC_SMBUS_EMUL |
++		I2C_FUNC_SMBUS_BLOCK_DATA;
++}
++
++static const struct i2c_algorithm fsi_i2c_algorithm = {
++	.master_xfer = fsi_i2c_xfer,
++	.functionality = fsi_i2c_functionality,
++};
++
++static int fsi_i2c_probe(struct device *dev)
++{
++	struct fsi_i2c_master *i2c;
++	int rc;
++
++	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
++	if (!i2c)
++		return -ENOMEM;
++
++	i2c->fsi = to_fsi_dev(dev);
++
++	rc = fsi_i2c_dev_init(i2c);
++	if (rc)
++		return rc;
++
++	dev_set_drvdata(dev, i2c);
++
++	return 0;
++}
++
++static const struct fsi_device_id fsi_i2c_ids[] = {
++	{ FSI_ENGID_I2C, FSI_VERSION_ANY },
++	{ }
++};
++
++static struct fsi_driver fsi_i2c_driver = {
++	.id_table = fsi_i2c_ids,
++	.drv = {
++		.name = "i2c-fsi",
++		.bus = &fsi_bus_type,
++		.probe = fsi_i2c_probe,
++	},
++};
++
++module_fsi_driver(fsi_i2c_driver);
++
++MODULE_AUTHOR("Eddie James <eajames@us.ibm.com>");
++MODULE_DESCRIPTION("FSI attached I2C master");
++MODULE_LICENSE("GPL");
 -- 
 1.8.3.1
 
