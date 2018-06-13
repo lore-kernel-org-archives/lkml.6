@@ -2,121 +2,149 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 223C2C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:21:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B7FD2C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:23:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D298E20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:21:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D298E20891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 6396420891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:23:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6396420891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934996AbeFMQVR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:21:17 -0400
-Received: from mailoutvs39.siol.net ([185.57.226.230]:45095 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754498AbeFMQVN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:21:13 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 74222520C01;
-        Wed, 13 Jun 2018 18:21:10 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta11.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta11.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id eMnrL9tp_yVf; Wed, 13 Jun 2018 18:21:09 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id C1FD652106A;
-        Wed, 13 Jun 2018 18:21:09 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id BF79A521069;
-        Wed, 13 Jun 2018 18:21:08 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     linux-sunxi@googlegroups.com, wens@csie.org
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [linux-sunxi] Re: [PATCH v2 14/27] drm/sun4i: Don't check for panel or bridge on TV TCONs
-Date:   Wed, 13 Jun 2018 18:20:07 +0200
-Message-ID: <2662622.yHSNrIAaJ9@jernej-laptop>
-In-Reply-To: <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180613074621.5phumovcyymbkfbn@flea> <CAGb2v66QWr2CQhcfQ9BQds-0xeG=pS4MDzaNn7_HGz+q3gfkWA@mail.gmail.com>
+        id S935095AbeFMQXY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:23:24 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45918 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934533AbeFMQXW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 12:23:22 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 38CF0FFB6D;
+        Wed, 13 Jun 2018 16:23:22 +0000 (UTC)
+Received: from [10.36.118.61] (unknown [10.36.118.61])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 38AB61C5B4;
+        Wed, 13 Jun 2018 16:23:14 +0000 (UTC)
+Subject: Re: [PATCH RESEND] KVM: x86: Expose CLDEMOTE CPU feature to guest VM
+To:     "Liu, Jingqi" <jingqi.liu@intel.com>
+Cc:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wang, Wei W" <wei.w.wang@intel.com>
+References: <1526979687-1262-1-git-send-email-jingqi.liu@intel.com>
+ <09D68D4CF52CAF489B702DEBDD12D3D352728A00@SHSMSX103.ccr.corp.intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <f2a4ab77-3d29-2c8e-2494-df46881df5e4@redhat.com>
+Date:   Wed, 13 Jun 2018 18:23:10 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <09D68D4CF52CAF489B702DEBDD12D3D352728A00@SHSMSX103.ccr.corp.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 13 Jun 2018 16:23:22 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Wed, 13 Jun 2018 16:23:22 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'pbonzini@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne sreda, 13. junij 2018 ob 10:04:20 CEST je Chen-Yu Tsai napisal(a):
-> On Wed, Jun 13, 2018 at 3:46 PM, Maxime Ripard
+On 04/06/2018 09:19, Liu, Jingqi wrote:
+> Hi Paolo,
 > 
-> <maxime.ripard@bootlin.com> wrote:
-> > On Tue, Jun 12, 2018 at 10:00:23PM +0200, Jernej Skrabec wrote:
-> >> TV TCONs are always connected to TV or HDMI encoder, so it doesn't make
-> >> sense to check if panel or bridge is connected to them.
-> >> 
-> >> Check if TCON has channel 0 and only then check for connected panel or
-> >> bridges.
-> >> 
-> >> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >> ---
-> >> 
-> >>  drivers/gpu/drm/sun4i/sun4i_tcon.c | 12 +++++++++---
-> >>  1 file changed, 9 insertions(+), 3 deletions(-)
-> >> 
-> >> diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> b/drivers/gpu/drm/sun4i/sun4i_tcon.c index b1205a7bc20f..c9ffa5381185
-> >> 100644
-> >> --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> >> @@ -1189,13 +1189,19 @@ static const struct component_ops sun4i_tcon_ops
-> >> = {>> 
-> >>  static int sun4i_tcon_probe(struct platform_device *pdev)
-> >>  {
-> >>  
-> >>       struct device_node *node = pdev->dev.of_node;
-> >> 
-> >> +     const struct sun4i_tcon_quirks *quirks;
-> >> 
-> >>       struct drm_bridge *bridge;
-> >>       struct drm_panel *panel;
-> >>       int ret;
-> >> 
-> >> -     ret = drm_of_find_panel_or_bridge(node, 1, 0, &panel, &bridge);
-> >> -     if (ret == -EPROBE_DEFER)
-> >> -             return ret;
-> >> +     quirks = of_device_get_match_data(&pdev->dev);
-> > 
-> > We should probably check ofr the pointer value before dereferencing it.
+> I had changed the Signed-off-by chain.
+> Could you help to review?
+> Thanks.
+
+The patch has been applied, thanks.
+
+Paolo
+
+> On 5/22/2018 5:01 PM, Liu, Jingqi wrote:
 > 
-> I think we've discussed this before. If the driver has data structures
-> for all the supported compatible strings, and it is device tree only,
-> then we should just let it blow up in the user's face, since they are
-> obviously doing something they shouldn't be doing to get the driver
-> to probe without a compatible string match.
-
-TCON can't work with no quirks specified, since that would mean that neither 
-channels are present. Additionally, sun4i_tcon_bind() also doesn't check if 
-quirks are NULL or not. So I concur with Chen-Yu here.
-
-Best regards,
-Jernej
-
-
+>>
+>> The CLDEMOTE instruction hints to hardware that the cache line that contains
+>> the linear address should be moved("demoted") from the cache(s) closest to the
+>> processor core to a level more distant from the processor core. This may
+>> accelerate subsequent accesses to the line by other cores in the same coherence
+>> domain, especially if the line was written by the core that demotes the line.
+>>
+>> This patch exposes the cldemote feature to the guest.
+>>
+>> The release document ref below link:
+>> https://software.intel.com/sites/default/files/managed/c5/15/\
+>> architecture-instruction-set-extensions-programming-reference.pdf
+>> This patch has a dependency on https://lkml.org/lkml/2018/4/23/928
+>>
+>> Signed-off-by: Jingqi Liu <jingqi.liu@intel.com>
+>> ---
+>>  arch/x86/kvm/cpuid.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c index
+>> 82055b9..72d8c49 100644
+>> --- a/arch/x86/kvm/cpuid.c
+>> +++ b/arch/x86/kvm/cpuid.c
+>> @@ -403,7 +403,8 @@ static inline int __do_cpuid_ent(struct
+>> kvm_cpuid_entry2 *entry, u32 function,
+>>  	const u32 kvm_cpuid_7_0_ecx_x86_features =
+>>  		F(AVX512VBMI) | F(LA57) | F(PKU) | 0 /*OSPKE*/ |
+>>  		F(AVX512_VPOPCNTDQ) | F(UMIP) | F(AVX512_VBMI2) | F(GFNI)
+>> |
+>> -		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) |
+>> F(AVX512_BITALG);
+>> +		F(VAES) | F(VPCLMULQDQ) | F(AVX512_VNNI) |
+>> F(AVX512_BITALG) |
+>> +		F(CLDEMOTE);
+>>
+>>  	/* cpuid 7.0.edx*/
+>>  	const u32 kvm_cpuid_7_0_edx_x86_features =
+>> --
+>> 1.8.3.1
+> 
 
