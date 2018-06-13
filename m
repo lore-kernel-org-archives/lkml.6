@@ -2,103 +2,75 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7D83C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:10:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3AC15C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:14:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D49C20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:10:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dGkOYpil"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D49C20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id E682D208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:14:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E682D208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934991AbeFMJKw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:10:52 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35848 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934073AbeFMJKu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:10:50 -0400
-Received: by mail-pl0-f66.google.com with SMTP id a7-v6so1173283plp.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 02:10:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tmJj/AGY7havFFFto6BAqmUv34uYsXwARafmx3s4EDY=;
-        b=dGkOYpildd4JZG6OysptjyuaIx3MT3eOj58pAZSoTKeWj9Ji15/m6kiHyjJUDuiKhQ
-         Deog+D9cMu7BMOkAODxIm3DPhmteQTbPT/ZD5236uN/j0PNSplLE8gfV+dShWn03NqeZ
-         XOK0SpGatPDqZ2ERWGRbdIqykS9GP6O4wWzTo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tmJj/AGY7havFFFto6BAqmUv34uYsXwARafmx3s4EDY=;
-        b=nC36frsI9c59NETudL4WIkjEAgfcwYtfm/TgBXg689/LNOT0V8ttPxAyvAd+WXz0N+
-         NAhLTWnlVjYOnQny8PznMgY7aRI0MOLWSLkZC0C0Kb5xN4Y9kNDv2S1tQq0snEXXAs6T
-         Y/eMjhi3v3hVZaEyXYHNuI0dbGhS0C0iJZvJY3TGphVqBR4bktmd4UyK/+ThX+mmVhgO
-         SxG6TLN1ATY8tBNO5QUPNMSnIS24bMlhietzPpXWnTvFE8QLqaXmDDYlJxNDl7O66T5H
-         wKCtNMQqEHmiebapmzt0iElmetDIHez8UZx4RLvWoEy1SfuDiZ715pDDtaNCKRmgo361
-         yYTw==
-X-Gm-Message-State: APt69E3+/Dr383BDgG2Bx33+Pav+jMoztfoM9Nqw1A1j3qpRB3UNQXbr
-        RafvDds8HXGos52oFOAJRYAdHQ==
-X-Google-Smtp-Source: ADUXVKK/bI3BbsUZv8nEm+Q2C+k2gNtTSVeUpZA3H4W0+FxNTpRiZTKLGNnCaBEpYeK//IBq0iSkTQ==
-X-Received: by 2002:a17:902:3081:: with SMTP id v1-v6mr4406216plb.266.1528881049821;
-        Wed, 13 Jun 2018 02:10:49 -0700 (PDT)
-Received: from localhost ([223.226.91.101])
-        by smtp.gmail.com with ESMTPSA id u14-v6sm3836874pfd.103.2018.06.13.02.10.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 02:10:49 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 14:40:47 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180613091047.mfhtgrdypx2qvndp@vireshk-i7>
-References: <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
- <20180612125247.GO12217@hirez.programming.kicks-ass.net>
- <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
- <20180612140654.GQ12217@hirez.programming.kicks-ass.net>
- <cce05d92-d51a-ab4f-83f2-37dcdee0cd6a@linaro.org>
- <20180612155841.GT12217@hirez.programming.kicks-ass.net>
- <7190a58e-05f2-216c-8b36-70692fa722bf@linaro.org>
- <20180612173514.GV12217@hirez.programming.kicks-ass.net>
- <20180613085509.s7ktdespfyjpozuu@vireshk-i7>
- <b9dba62b-35df-46a9-a66c-3ec0952109b6@linaro.org>
+        id S934884AbeFMJOB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:14:01 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50057 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934115AbeFMJN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 05:13:59 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 14E21ABF1;
+        Wed, 13 Jun 2018 09:13:58 +0000 (UTC)
+Date:   Wed, 13 Jun 2018 11:13:55 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jason Baron <jbaron@akamai.com>
+Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-api@vger.kernel.org, emunson@mgebm.net
+Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
+ MLOCK_ONFAULT
+Message-ID: <20180613091355.GI13364@dhcp22.suse.cz>
+References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
+ <20180611072005.GC13364@dhcp22.suse.cz>
+ <4c4de46d-c55a-99a8-469f-e1e634fb8525@akamai.com>
+ <20180611150330.GQ13364@dhcp22.suse.cz>
+ <775adf2d-140c-1460-857f-2de7b24bafe7@akamai.com>
+ <20180612074646.GS13364@dhcp22.suse.cz>
+ <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b9dba62b-35df-46a9-a66c-3ec0952109b6@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+In-Reply-To: <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-06-18, 11:03, Daniel Lezcano wrote:
-> nr_threads(smpboot) <> nr_threads(idleinject)
-> 
-> If we are facing races issues, it is because we are trying to avoid
-> using locks in the code path. With lock and proper refcounting that
-> should be solved, AFAICT there are similar races with inodes.
+On Tue 12-06-18 10:11:33, Jason Baron wrote:
+[...]
+> Ok, I share the concern that there is a chance that userspace is relying
+> on MADV_DONTNEED not free'ing locked memory. In that case, what if we
+> introduce a MADV_DONTNEED_FORCE, which does everything that
+> MADV_DONTNEED currently does but in addition will also free mlock areas.
 
-I am not sure if locking can make things better here. We aren't using them as we
-don't really need them AFAIU :)
+What about other types of vmas that are not allowed to MADV_DONTNEED?
+_FORCE suggests that the user of the API know what he is doing so why
+shouldn't we allow unmapping hugetlb pages or special PFNMAPS? Or do we
+want to add MADV_DONTNEED_FORCE_FOR_REAL when somebody comes with
+another usecase?
 
+I agree with Vlastimil that adding new madvise mode for niche case
+sounds like a bad idea so we should better be sure that a new flag has
+a reasonable semantic. Just allow mlocked pages is more of a tweak than
+a proper semantic. So making it force for real requires to analyze what
+that would mean for other vmas which are excluded now.
 -- 
-viresh
+Michal Hocko
+SUSE Labs
