@@ -2,156 +2,222 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 47CD1C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:51:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7E5DFC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0722820660
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:51:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0722820660
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2053A208BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:52:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FjkHe3bw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2053A208BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934464AbeFMHv3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:51:29 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41034 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754469AbeFMHv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:51:27 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 1C3CCACB1;
-        Wed, 13 Jun 2018 07:51:26 +0000 (UTC)
-Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
- MLOCK_ONFAULT
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Jason Baron <jbaron@akamai.com>, akpm@linux-foundation.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-api@vger.kernel.org, emunson@mgebm.net
-References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
- <20180611072005.GC13364@dhcp22.suse.cz>
- <4c4de46d-c55a-99a8-469f-e1e634fb8525@akamai.com>
- <20180611150330.GQ13364@dhcp22.suse.cz>
- <775adf2d-140c-1460-857f-2de7b24bafe7@akamai.com>
- <20180612074646.GS13364@dhcp22.suse.cz>
- <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
- <0daccb7c-f642-c5ce-ca7a-3b3e69025a1e@suse.cz>
- <20180613071552.GD13364@dhcp22.suse.cz>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
- KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
- 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
- 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
- tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
- Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
- 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
- LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
- 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
- BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSFWbGFzdGltaWwg
- QmFia2EgPHZiYWJrYUBzdXNlLmNvbT7CwZcEEwEKAEECGwMFCwkIBwMFFQoJCAsFFgIDAQAC
- HgECF4ACGQEWIQSpQNQ0mSwujpkQPVAiT6fnzIKmZAUCWi/zTwUJBbOLuQAKCRAiT6fnzIKm
- ZIpED/4jRN/6LKZZIT4R2xoou0nJkBGVA3nfb+mUMgi3uwn/zC+o6jjc3ShmP0LQ0cdeuSt/
- t2ytstnuARTFVqZT4/IYzZgBsLM8ODFY5vGfPw00tsZMIfFuVPQX3xs0XgLEHw7/1ZCVyJVr
- mTzYmV3JruwhMdUvIzwoZ/LXjPiEx1MRdUQYHAWwUfsl8lUZeu2QShL3KubR1eH6lUWN2M7t
- VcokLsnGg4LTajZzZfq2NqCKEQMY3JkAmOu/ooPTrfHCJYMF/5dpi8YF1CkQF/PVbnYbPUuh
- dRM0m3NzPtn5DdyfFltJ7fobGR039+zoCo6dFF9fPltwcyLlt1gaItfX5yNbOjX3aJSHY2Vc
- A5T+XAVC2sCwj0lHvgGDz/dTsMM9Ob/6rRJANlJPRWGYk3WVWnbgW8UejCWtn1FkiY/L/4qJ
- UsqkId8NkkVdVAenCcHQmOGjRQYTpe6Cf4aQ4HGNDeWEm3H8Uq9vmHhXXcPLkxBLRbGDSHyq
- vUBVaK+dAwAsXn/5PlGxw1cWtur1ep7RDgG3vVQDhIOpAXAg6HULjcbWpBEFaoH720oyGmO5
- kV+yHciYO3nPzz/CZJzP5Ki7Q1zqBb/U6gib2at5Ycvews+vTueYO+rOb9sfD8BFTK386LUK
- uce7E38owtgo/V2GV4LMWqVOy1xtCB6OAUfnGDU2EM7ATQRbGTU1AQgAn0H6UrFiWcovkh6E
- XVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQLa1PQDUi6j00ChlcR66g9/V0sPIcSutacPKf
- dKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMhFmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCT
- sTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sfbAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZO
- rIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq+aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahK
- tQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4njQARAQABwsF8BBgBCgAmFiEEqUDUNJksLo6Z
- ED1QIk+n58yCpmQFAlsZNTUCGwwFCQPCZwAACgkQIk+n58yCpmQ83g/9Frg1sRMdGPn98zV+
- O2eC3h0p5f/oxxQ8MhG5znwHoW4JDG2TuxfcQuz7X7Dd5JWscjlw4VFJ2DD+IrDAGLHwPhCr
- RyfKalnrbYokvbClM9EuU1oUuh7k+Sg5ECNXEsamW9AiWGCaKWNDdHre3Lf4xl+RJWxghOVW
- RiUdpLA/a3yDvJNVr6rxkDHQ1P24ZZz/VKDyP+6g8aty2aWEU0YFNjI+rqYZb2OppDx6fdma
- YnLDcIfDFnkVlDmpznnGCyEqLLyMS3GH52AH13zMT9L9QYgT303+r6QQpKBIxAwn8Jg8dAlV
- OLhgeHXKr+pOQdFf6iu2sXlUR4MkO/5KWM1K0jFR2ug8Pb3aKOhowVMBT64G0TXhQ/kX4tZ2
- ZF0QZLUCHU3Cigvbu4AWWVMNDEOGD/4sn9OoHxm6J04jLUHFUpFKDcjab4NRNWoHLsuLGjve
- Gdbr2RKO2oJ5qZj81K7os0/5vTAA4qHDP2EETAQcunTn6aPlkUnJ8aw6I1Rwyg7/XsU7gQHF
- IM/cUMuWWm7OUUPtJeR8loxZiZciU7SMvN1/B9ycPMFs/A6EEzyG+2zKryWry8k7G/pcPrFx
- O2PkDPy3YmN1RfpIX2HEmnCEFTTCsKgYORangFu/qOcXvM83N+2viXxG4mjLAMiIml1o2lKV
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <5eb9a018-d5ac-5732-04f1-222c343b840a@suse.cz>
-Date:   Wed, 13 Jun 2018 09:51:23 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934768AbeFMHwH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:52:07 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:40247 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934508AbeFMHwF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:52:05 -0400
+Received: by mail-pl0-f68.google.com with SMTP id t12-v6so1048942plo.7
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 00:52:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=e4g2o2YccJBrEfitV4/y0OXOUpDYlmb4JA7OVwSLwoA=;
+        b=FjkHe3bwKmCroFeZICup8TMR/EyjpSMs/OVEX0yxgLsG/n1mAUXBWHgceaCWHXNMK9
+         H7aJlfUkshKQxnkF6q+Vm0tVd+UqNuphTPuLDqwoN/snA1Vawc5xj/X1Gmly1rdV+p2N
+         Cqrc/mvrIN6ikRjuwxzWyHfOL/tPBroJ9xy6b/c4SH+jd2B7f6p/vM4boJrxBzMwrYKt
+         NY02nDG9i1/EPdwnefuixcIXRJ+63ktUp+5OOBzvZrkQJqXwn7dxt7wSiLHXJFK6+iaO
+         Ow1G7tfNyTX8whLVZs+E4eDPVElTfZOYydy+1T/hmkA9Sqkm+49cXKsERQwPpaVDPPsA
+         jNOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=e4g2o2YccJBrEfitV4/y0OXOUpDYlmb4JA7OVwSLwoA=;
+        b=oaGvr/szP9D6KU2bZN1dBJwQqIkfNrx8uhxruRk2SW+V49thagdi1ekeK4IcZGRkDc
+         /mhDujMpRYRqW9tWjaK9gLX1aFaRO18bpXQ/LMbz//AFvIDl5iDWjfh6VgMakteTi0Yl
+         gxtLeVezPrIJMe7DES/8OYtnorI4ybhSRlSZNQnVyAZYdwyFsqQe3uFXeBtkUukexLVo
+         kl1k/4XD0OJ+7m3Hx1tVy8tsjnkB44lObAwwo1wN1sE9r2iwjNBt4q3LNFi9CF2IE2Z5
+         vmHnPDIxEjIsj9xKLH9NI/NPXX2heryMZlfGTp9ziB3lP+xpevnfZDSSONMKH3C7MsLw
+         7y2w==
+X-Gm-Message-State: APt69E02nn/5J+HuYKXInFDJXAlQK6DMnu1uJuEnTqHVjzNl5SJI5ORh
+        q4dDkHTGSENj2QjOABqLGdMH1wxyOWOqa2cGxFLQDg==
+X-Google-Smtp-Source: ADUXVKIlTSOM6xX/nGDpiLCM1jiSLZ3gjoe+Xx6776XI3oM0JS+EFbL4jeoHq4YB5I9wg4Ata/iDbseRdEXOo0uSFOE=
+X-Received: by 2002:a17:902:5a4c:: with SMTP id f12-v6mr4059965plm.85.1528876324605;
+ Wed, 13 Jun 2018 00:52:04 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180613071552.GD13364@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Wed, 13 Jun 2018 00:51:44
+ -0700 (PDT)
+In-Reply-To: <000000000000a643e4056e7d0db4@google.com>
+References: <089e08e548431cd0f90565c9f4e5@google.com> <000000000000a643e4056e7d0db4@google.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Wed, 13 Jun 2018 09:51:44 +0200
+Message-ID: <CACT4Y+b+DFpa34E3UWzSYn6qy-BMmxN80ikdmU_xMe9x9JF2+Q@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in rds_cong_queue_updates
+To:     syzbot <syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com>,
+        Sowmini Varadhan <sowmini.varadhan@oracle.com>
+Cc:     David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        Santosh Shilimkar <santosh.shilimkar@oracle.com>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/13/2018 09:15 AM, Michal Hocko wrote:
-> On Wed 13-06-18 08:32:19, Vlastimil Babka wrote:
->> On 06/12/2018 04:11 PM, Jason Baron wrote:
->>>
->>>
->>> On 06/12/2018 03:46 AM, Michal Hocko wrote:
->>>> On Mon 11-06-18 12:23:58, Jason Baron wrote:
->>>>> On 06/11/2018 11:03 AM, Michal Hocko wrote:
->>>>>> So can we start discussing whether we want to allow MADV_DONTNEED on
->>>>>> mlocked areas and what downsides it might have? Sure it would turn the
->>>>>> strong mlock guarantee to have the whole vma resident but is this
->>>>>> acceptable for something that is an explicit request from the owner of
->>>>>> the memory?
->>>>>>
->>>>>
->>>>> If its being explicity requested by the owner it makes sense to me. I
->>>>> guess there could be a concern about this breaking some userspace that
->>>>> relied on MADV_DONTNEED not freeing locked memory?
->>>>
->>>> Yes, this is always the fear when changing user visible behavior.  I can
->>>> imagine that a userspace allocator calling MADV_DONTNEED on free could
->>>> break. The same would apply to MLOCK_ONFAULT/MCL_ONFAULT though. We
->>>> have the new flag much shorter so the probability is smaller but the
->>>> problem is very same. So I _think_ we should treat both the same because
->>>> semantically they are indistinguishable from the MADV_DONTNEED POV. Both
->>>> remove faulted and mlocked pages. Mlock, once applied, should guarantee
->>>> no later major fault and MADV_DONTNEED breaks that obviously.
->>
->> I think more concerning than guaranteeing no later major fault is
->> possible data loss, e.g. replacing data with zero-filled pages.
-> 
-> But MADV_DONTNEED is an explicit call for data loss. Or do I miss your
-> point?
+On Wed, Jun 13, 2018 at 4:51 AM, syzbot
+<syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com> wrote:
+> syzbot has found a reproducer for the following crash on:
 
-My point is that if somebody is relying on MADV_DONTNEED not affecting
-mlocked pages, the consequences will be unexpected data loss, not just
-extra page faults.
+Woohoo! Please take a look, this is a top crasher.
 
->> The madvise manpage is also quite specific about not allowing
->> MADV_DONTNEED and MADV_FREE for locked pages.
-> 
-> Yeah, but that seems to describe the state of the art rather than
-> explain why.
-
-Right, but as it's explicitly described there, it makes it more likely
-that somebody is relying on it.
-
->> So I don't think we should risk changing that for all mlocked pages.
->> Maybe we can risk MCL_ONFAULT, since it's relatively new and has few users?
-> 
-> That is what Jason wanted but I argued that the two are the same from
-> MADV_DONTNEED point of view. I do not see how treating them differently
-> would be less confusing or error prone. It's new so we can make it
-> behave differently is certainly not an argument.
-
-Right. Might be either this inconsistency, or a new flag.
-
-
+> HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
+> git tree:       net-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1461f03f800000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4c20b3866171ce8441d2
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16cbfeaf800000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165227f7800000
+>
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
+>
+> IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
+> 8021q: adding VLAN 0 to HW filter on device team0
+> IPVS: ftp: loaded support on port[0] = 21
+> IPVS: ftp: loaded support on port[0] = 21
+> ==================================================================
+> BUG: KASAN: use-after-free in atomic_read
+> include/asm-generic/atomic-instrumented.h:21 [inline]
+> BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:42
+> [inline]
+> BUG: KASAN: use-after-free in check_net include/net/net_namespace.h:236
+> [inline]
+> BUG: KASAN: use-after-free in rds_destroy_pending net/rds/rds.h:897 [inline]
+> BUG: KASAN: use-after-free in rds_cong_queue_updates+0x255/0x590
+> net/rds/cong.c:226
+> Read of size 4 at addr ffff8801ab180044 by task syz-executor199/4800
+>
+> CPU: 1 PID: 4800 Comm: syz-executor199 Not tainted 4.17.0+ #84
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+> Google 01/01/2011
+> Call Trace:
+>  __dump_stack lib/dump_stack.c:77 [inline]
+>  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
+>  print_address_description+0x6c/0x20b mm/kasan/report.c:256
+>  kasan_report_error mm/kasan/report.c:354 [inline]
+>  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
+>  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+>  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+>  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+>  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+>  refcount_read include/linux/refcount.h:42 [inline]
+>  check_net include/net/net_namespace.h:236 [inline]
+>  rds_destroy_pending net/rds/rds.h:897 [inline]
+>  rds_cong_queue_updates+0x255/0x590 net/rds/cong.c:226
+>  rds_recv_rcvbuf_delta.part.3+0x211/0x350 net/rds/recv.c:126
+>  rds_recv_rcvbuf_delta net/rds/recv.c:735 [inline]
+>  rds_clear_recv_queue+0x2f0/0x4c0 net/rds/recv.c:735
+>  rds_release+0x15c/0x550 net/rds/af_rds.c:72
+>  __sock_release+0xd7/0x260 net/socket.c:603
+>  sock_close+0x19/0x20 net/socket.c:1186
+>  __fput+0x353/0x890 fs/file_table.c:209
+>  ____fput+0x15/0x20 fs/file_table.c:243
+>  task_work_run+0x1e4/0x290 kernel/task_work.c:113
+>  exit_task_work include/linux/task_work.h:22 [inline]
+>  do_exit+0x1aee/0x2730 kernel/exit.c:865
+>  do_group_exit+0x16f/0x430 kernel/exit.c:968
+>  get_signal+0x886/0x1960 kernel/signal.c:2468
+>  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+>  exit_to_usermode_loop+0x2cf/0x360 arch/x86/entry/common.c:162
+>  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+>  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+>  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:293
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x44f439
+> Code: e8 ac be 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 5b ff fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fc65567dcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+> RAX: fffffffffffffe00 RBX: 00000000006edadc RCX: 000000000044f439
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000006edadc
+> RBP: 00000000006edad8 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007fff3df31b1f R14: 00007fc65567e9c0 R15: 0000000000000061
+>
+> Allocated by task 4800:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
+>  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+>  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
+>  kmem_cache_zalloc include/linux/slab.h:696 [inline]
+>  net_alloc net/core/net_namespace.c:383 [inline]
+>  copy_net_ns+0x159/0x4c0 net/core/net_namespace.c:423
+>  create_new_namespaces+0x69d/0x8f0 kernel/nsproxy.c:107
+>  unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
+>  ksys_unshare+0x708/0xf90 kernel/fork.c:2411
+>  __do_sys_unshare kernel/fork.c:2479 [inline]
+>  __se_sys_unshare kernel/fork.c:2477 [inline]
+>  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2477
+>  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 746:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
+>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>  __cache_free mm/slab.c:3498 [inline]
+>  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
+>  net_free net/core/net_namespace.c:399 [inline]
+>  net_drop_ns.part.14+0x11a/0x130 net/core/net_namespace.c:406
+>  net_drop_ns net/core/net_namespace.c:405 [inline]
+>  cleanup_net+0x6a1/0xb20 net/core/net_namespace.c:541
+>  process_one_work+0xc64/0x1b70 kernel/workqueue.c:2153
+>  worker_thread+0x181/0x13a0 kernel/workqueue.c:2296
+>  kthread+0x345/0x410 kernel/kthread.c:240
+>  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+>
+> The buggy address belongs to the object at ffff8801ab180040
+>  which belongs to the cache net_namespace(17:syz0) of size 8896
+> The buggy address is located 4 bytes inside of
+>  8896-byte region [ffff8801ab180040, ffff8801ab182300)
+> The buggy address belongs to the page:
+> page:ffffea0006ac6000 count:1 mapcount:0 mapping:ffff8801aeaa0080 index:0x0
+> compound_mapcount: 0
+> flags: 0x2fffc0000008100(slab|head)
+> raw: 02fffc0000008100 ffff8801d3827048 ffff8801d3827048 ffff8801aeaa0080
+> raw: 0000000000000000 ffff8801ab180040 0000000100000001 ffff8801ab7cae40
+> page dumped because: kasan: bad access detected
+> page->mem_cgroup:ffff8801ab7cae40
+>
+> Memory state around the buggy address:
+>  ffff8801ab17ff00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>  ffff8801ab17ff80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>                                            ^
+>  ffff8801ab180080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801ab180100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ==================================================================
+>
+> --
+> You received this message because you are subscribed to the Google Groups
+> "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an
+> email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit
+> https://groups.google.com/d/msgid/syzkaller-bugs/000000000000a643e4056e7d0db4%40google.com.
+>
+> For more options, visit https://groups.google.com/d/optout.
