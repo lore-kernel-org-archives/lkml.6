@@ -2,130 +2,238 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 21623C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:00:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4969CC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4BDA2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:00:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uFroVNfr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4BDA2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id F1936208D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1936208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935031AbeFMBAr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:00:47 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:37522 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934873AbeFMBAp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:00:45 -0400
-Received: by mail-lf0-f66.google.com with SMTP id g21-v6so1242454lfb.4;
-        Tue, 12 Jun 2018 18:00:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=ICkPN39nbeJA1vp7TzeaI+ZbTu5evffdYOSeaxXnoFA=;
-        b=uFroVNfrJQtv1/5+IfEbFJapoIhcUljO0eCcoi8qAzdvzeCyB3Dh3PsnulPdY7isiy
-         3wdLNdznvA/WjRs4h5ArWGydSzZca7l8ydqo5gMX3zMQCLHypIG1xb1gNnslQQ1NCY0w
-         JQE/FIJ3/1nNFOy+8bPYWryCmMiXt2b5a2gs17OG7nZAGOfPcrA/IA5ipQH0d0HJMeEJ
-         UG3O0DGi6qkdauai+rJTCyRgiVmIN5y2UayFclAanag4NZaPCPuV0I9sjJ4887xJ0gII
-         xPxDVlfMM/66oHX0uiRlMWRjMngneGrOzjD3LxCf+HS6Q73Ut4lOV6xiezGUJn9avJUy
-         H8ZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=ICkPN39nbeJA1vp7TzeaI+ZbTu5evffdYOSeaxXnoFA=;
-        b=cgzCjRIoIsx57P2HkL1h9b4mvP9a8n91RSeyBQ+yuyjMvTG9J/0PssBqBjOIaflJ6r
-         ykqNOeu9TBsjfJRCKTX4R7FNB623agEIVaIcGCXcku+9dRaKn623fkWTHMq+ZjvUTDyL
-         ZUa8WrN7OAftIAATdSgLiuoaGP/0cXPS9EEzP5nXCLEC5Tu4m3640JwulnYQfptdJjLQ
-         Crl1HosoMNjt+xIOPabxTz8P7ANIshjqsA6hXVzTxY2qpKvJWpVFdSMsoesx3DaarBkV
-         IcSBOKD8SsFrCdT5f4ETvBY36nXcqLqOb1oEL781K4l6oBy9dsZ1I8XdUUkK4EwVcE6l
-         uDHQ==
-X-Gm-Message-State: APt69E0Vo4LVLmQOWpCXeT1/11SrcU5gGLyso7Ftpwrpz+iqBtK4L2wb
-        8MANuMPG1thFhHfHtfsrn6k=
-X-Google-Smtp-Source: ADUXVKIW0uCiKs4OO7HSKCMU5/KB2h8mlKDG9qbGayzgzXVMV0LWhycvCHsKkgq7EluBHkdnTrV+ug==
-X-Received: by 2002:a2e:529c:: with SMTP id n28-v6mr1685979lje.62.1528851643038;
-        Tue, 12 Jun 2018 18:00:43 -0700 (PDT)
-Received: from z50.localnet (93-181-165-181.internetia.net.pl. [93.181.165.181])
-        by smtp.gmail.com with ESMTPSA id a19-v6sm277673lff.84.2018.06.12.18.00.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 18:00:42 -0700 (PDT)
-From:   Janusz Krzysztofik <jmkrzyszt@gmail.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+        id S1754444AbeFMBBd (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:01:33 -0400
+Received: from mga14.intel.com ([192.55.52.115]:64685 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754136AbeFMBBb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 21:01:31 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:30 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
+   d="scan'208";a="47283455"
+Received: from voyager.sc.intel.com ([10.3.52.149])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:30 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-kernel@vger.kernel.org,
-        Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Subject: Re: [PATCH 04/10] Input: ams_delta_serio: Replace power GPIO with regulator
-Date:   Wed, 13 Jun 2018 03:01:05 +0200
-Message-ID: <2655614.ErW8VuCT6r@z50>
-In-Reply-To: <20180612221724.GB38773@dtor-ws>
-References: <20180609140224.32606-1-jmkrzyszt@gmail.com> <20180609140224.32606-4-jmkrzyszt@gmail.com> <20180612221724.GB38773@dtor-ws>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Juergen Gross <jgross@suse.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Wincy Van <fanwenyi0529@gmail.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Baoquan He <bhe@redhat.com>,
+        Dou Liyang <douly.fnst@cn.fujitsu.com>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        iommu@lists.linux-foundation.org
+Subject: [RFC PATCH 01/23] x86/apic: Add a parameter for the APIC delivery mode
+Date:   Tue, 12 Jun 2018 17:57:21 -0700
+Message-Id: <1528851463-21140-2-git-send-email-ricardo.neri-calderon@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wednesday, June 13, 2018 12:17:24 AM CEST Dmitry Torokhov wrote:
-> On Sat, Jun 09, 2018 at 04:02:18PM +0200, Janusz Krzysztofik wrote:
-> > ...
-> > +	priv->vcc = devm_regulator_get(&pdev->dev, "vcc");
-> > +	if (IS_ERR(priv->vcc)) {
-> > +		err = PTR_ERR(priv->vcc);
-> > +		dev_err(&pdev->dev, "regulator request failed (%d)\n", err);
-> > +		/* Fail softly if the regulator is not available yet */
-> > +		if (err == -ENODEV)
-> > +			err = -EPROBE_DEFER;
-> 
-> Hmm, if regulator is not ready yet, devm_regulator_get() should be
-> returning -EPROBE_DEFER already, we should not have to convert -ENODEV
-> to -EPROBE_DEFER...
+Until now, the delivery mode of APIC interrupts is set to the default
+mode set in the APIC driver. However, there are no restrictions in hardware
+to configure each interrupt with a different delivery mode. Specifying the
+delivery mode per interrupt is useful when one is interested in changing
+the delivery mode of a particular interrupt. For instance, this can be used
+to deliver an interrupt as non-maskable.
 
-Regulator is not ready because its initialization at subsys_initcall is 
-deferred by not ready GPIO pin, that in turn is caused by gpio-mmio driver, 
-unlike many other GPIO drivers, registered as late as at device_initcall.
+Add a new member, delivery_mode, to struct irq_cfg. Also, update the
+configuration of the delivery mode in the IO APIC, the MSI APIC and the
+Intel interrupt remapping driver to use this new per-interrupt member to
+configure their respective interrupt tables.
 
-I agree devm_regulator_get() could return -EPROBE_DEFER in this case, but I 
-can see it does that only when of_get_regulator() indicates the regulator 
-should exist. In non-dt case there is apparently no way to justify if it 
-should unless its consumer supply table was already in place. For that,  
-registration of that table would have to be independent of successful 
-registration of the regulator itself while it's not. Maybe it should, but 
-that's a separate topic for a separate discussion, I think.
+In order to keep the current behavior, initialize the delivery mode of
+each interrupt with the with the delivery mode of the APIC driver in use
+when the interrupt data is allocated.
 
-> Is it because we have_full_constraints() returns false? You might need
-> to add call to regulator_has_full_constraints() to your board file.
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Jacob Pan <jacob.jun.pan@intel.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Wincy Van <fanwenyi0529@gmail.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Dou Liyang <douly.fnst@cn.fujitsu.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
+Cc: x86@kernel.org
+Cc: iommu@lists.linux-foundation.org
 
-If have_full_constraints() returned true before the regulator or its consumer 
-supply table is ready, devm_regulator_get() would happily return a dummy 
-regulator and our keyboard would never get its power.
+Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+---
+ arch/x86/include/asm/hw_irq.h       |  5 +++--
+ arch/x86/include/asm/msidef.h       |  3 +++
+ arch/x86/kernel/apic/io_apic.c      |  2 +-
+ arch/x86/kernel/apic/msi.c          |  2 +-
+ arch/x86/kernel/apic/vector.c       |  8 ++++++++
+ arch/x86/platform/uv/uv_irq.c       |  2 +-
+ drivers/iommu/intel_irq_remapping.c | 10 +++++-----
+ 7 files changed, 22 insertions(+), 10 deletions(-)
 
-I'm afraid we have to live with that return code conversion as long as the 
-only user of this driver is not migrated to dt.
-
-Thanks,
-Janusz
-
-
+diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
+index 32e666e..c024e59 100644
+--- a/arch/x86/include/asm/hw_irq.h
++++ b/arch/x86/include/asm/hw_irq.h
+@@ -117,8 +117,9 @@ struct irq_alloc_info {
+ };
+ 
+ struct irq_cfg {
+-	unsigned int		dest_apicid;
+-	unsigned int		vector;
++	unsigned int				dest_apicid;
++	unsigned int				vector;
++	enum ioapic_irq_destination_types	delivery_mode;
+ };
+ 
+ extern struct irq_cfg *irq_cfg(unsigned int irq);
+diff --git a/arch/x86/include/asm/msidef.h b/arch/x86/include/asm/msidef.h
+index ee2f8cc..6aef434 100644
+--- a/arch/x86/include/asm/msidef.h
++++ b/arch/x86/include/asm/msidef.h
+@@ -16,6 +16,9 @@
+ 					 MSI_DATA_VECTOR_MASK)
+ 
+ #define MSI_DATA_DELIVERY_MODE_SHIFT	8
++#define MSI_DATA_DELIVERY_MODE_MASK	0x00000700
++#define MSI_DATA_DELIVERY_MODE(dm)	(((dm) << MSI_DATA_DELIVERY_MODE_SHIFT) & \
++					 MSI_DATA_DELIVERY_MODE_MASK)
+ #define  MSI_DATA_DELIVERY_FIXED	(0 << MSI_DATA_DELIVERY_MODE_SHIFT)
+ #define  MSI_DATA_DELIVERY_LOWPRI	(1 << MSI_DATA_DELIVERY_MODE_SHIFT)
+ 
+diff --git a/arch/x86/kernel/apic/io_apic.c b/arch/x86/kernel/apic/io_apic.c
+index 7553819..10a20f8 100644
+--- a/arch/x86/kernel/apic/io_apic.c
++++ b/arch/x86/kernel/apic/io_apic.c
+@@ -2887,8 +2887,8 @@ static void mp_setup_entry(struct irq_cfg *cfg, struct mp_chip_data *data,
+ 			   struct IO_APIC_route_entry *entry)
+ {
+ 	memset(entry, 0, sizeof(*entry));
+-	entry->delivery_mode = apic->irq_delivery_mode;
+ 	entry->dest_mode     = apic->irq_dest_mode;
++	entry->delivery_mode = cfg->delivery_mode;
+ 	entry->dest	     = cfg->dest_apicid;
+ 	entry->vector	     = cfg->vector;
+ 	entry->trigger	     = data->trigger;
+diff --git a/arch/x86/kernel/apic/msi.c b/arch/x86/kernel/apic/msi.c
+index ce503c9..12202ac 100644
+--- a/arch/x86/kernel/apic/msi.c
++++ b/arch/x86/kernel/apic/msi.c
+@@ -45,7 +45,7 @@ static void irq_msi_compose_msg(struct irq_data *data, struct msi_msg *msg)
+ 	msg->data =
+ 		MSI_DATA_TRIGGER_EDGE |
+ 		MSI_DATA_LEVEL_ASSERT |
+-		MSI_DATA_DELIVERY_FIXED |
++		MSI_DATA_DELIVERY_MODE(cfg->delivery_mode) |
+ 		MSI_DATA_VECTOR(cfg->vector);
+ }
+ 
+diff --git a/arch/x86/kernel/apic/vector.c b/arch/x86/kernel/apic/vector.c
+index bb6f7a2..dfe0a2a 100644
+--- a/arch/x86/kernel/apic/vector.c
++++ b/arch/x86/kernel/apic/vector.c
+@@ -547,6 +547,14 @@ static int x86_vector_alloc_irqs(struct irq_domain *domain, unsigned int virq,
+ 		irqd->chip_data = apicd;
+ 		irqd->hwirq = virq + i;
+ 		irqd_set_single_target(irqd);
++
++		/*
++		 * Initialize the delivery mode of this irq to match
++		 * the default delivery mode of the APIC. This could be
++		 * changed later when the interrupt is activated.
++		 */
++		 apicd->hw_irq_cfg.delivery_mode = apic->irq_delivery_mode;
++
+ 		/*
+ 		 * Legacy vectors are already assigned when the IOAPIC
+ 		 * takes them over. They stay on the same vector. This is
+diff --git a/arch/x86/platform/uv/uv_irq.c b/arch/x86/platform/uv/uv_irq.c
+index e4cb9f4..c88508b 100644
+--- a/arch/x86/platform/uv/uv_irq.c
++++ b/arch/x86/platform/uv/uv_irq.c
+@@ -35,7 +35,7 @@ static void uv_program_mmr(struct irq_cfg *cfg, struct uv_irq_2_mmr_pnode *info)
+ 	mmr_value = 0;
+ 	entry = (struct uv_IO_APIC_route_entry *)&mmr_value;
+ 	entry->vector		= cfg->vector;
+-	entry->delivery_mode	= apic->irq_delivery_mode;
++	entry->delivery_mode	= cfg->delivery_mode;
+ 	entry->dest_mode	= apic->irq_dest_mode;
+ 	entry->polarity		= 0;
+ 	entry->trigger		= 0;
+diff --git a/drivers/iommu/intel_irq_remapping.c b/drivers/iommu/intel_irq_remapping.c
+index 3062a15..9f3a04d 100644
+--- a/drivers/iommu/intel_irq_remapping.c
++++ b/drivers/iommu/intel_irq_remapping.c
+@@ -1045,7 +1045,7 @@ static int reenable_irq_remapping(int eim)
+ 	return -1;
+ }
+ 
+-static void prepare_irte(struct irte *irte, int vector, unsigned int dest)
++static void prepare_irte(struct irte *irte, struct irq_cfg *irq_cfg)
+ {
+ 	memset(irte, 0, sizeof(*irte));
+ 
+@@ -1059,9 +1059,9 @@ static void prepare_irte(struct irte *irte, int vector, unsigned int dest)
+ 	 * irq migration in the presence of interrupt-remapping.
+ 	*/
+ 	irte->trigger_mode = 0;
+-	irte->dlvry_mode = apic->irq_delivery_mode;
+-	irte->vector = vector;
+-	irte->dest_id = IRTE_DEST(dest);
++	irte->dlvry_mode = irq_cfg->delivery_mode;
++	irte->vector = irq_cfg->vector;
++	irte->dest_id = IRTE_DEST(irq_cfg->dest_apicid);
+ 	irte->redir_hint = 1;
+ }
+ 
+@@ -1238,7 +1238,7 @@ static void intel_irq_remapping_prepare_irte(struct intel_ir_data *data,
+ 	struct irte *irte = &data->irte_entry;
+ 	struct msi_msg *msg = &data->msi_entry;
+ 
+-	prepare_irte(irte, irq_cfg->vector, irq_cfg->dest_apicid);
++	prepare_irte(irte, irq_cfg);
+ 	switch (info->type) {
+ 	case X86_IRQ_ALLOC_TYPE_IOAPIC:
+ 		/* Set source-id of interrupt request */
+-- 
+2.7.4
 
