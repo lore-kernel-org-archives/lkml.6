@@ -6,584 +6,194 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DACD6C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:52:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7B2CCC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:53:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71892208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:52:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 238BF208C2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:53:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="sd8fhcN0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71892208B0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xg5iPoKM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 238BF208C2
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935812AbeFMOwo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:52:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47790 "EHLO mail.kernel.org"
+        id S935851AbeFMOxL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:53:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935183AbeFMOwl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:52:41 -0400
+        id S935183AbeFMOxJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:53:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B23C208B0;
-        Wed, 13 Jun 2018 14:52:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D7A8F208B3;
+        Wed, 13 Jun 2018 14:53:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528901561;
-        bh=/4Zlc3HTqg30UDz7AFc6S+lO1chWHWLUq+qCaqX0/oQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=sd8fhcN0Cta4pAIWNT2PcjgHlDmCRlE0nsxWte6vPUZaa7bdq05tn5jw50hRf9mDi
-         XwhNGUJHTGCZ/2Va3NQNvR3CnUC+uTgvMQ+TCdkKy0wCDPQjq5FOthofCN+MLNTB8C
-         k8lJzRs2Ml12DL2Fr4KJCoCV14WVjSm2Qo+LbYxs=
-Date:   Wed, 13 Jun 2018 16:52:18 +0200
+        s=default; t=1528901589;
+        bh=gvmvNGYLpQNBxc/l+Ns8J5sEZLIG7O79eE1hecH/dPM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Xg5iPoKMP63hhmJSkAuItgNbXsZ00AGx4BHeNhou2gr+huHu198kqrclQcL9br47Q
+         cDZnlCRTCtVcAFLXE4E5xkJInkBd9maopq58mVQQQdZ5X+UuX/K0QXCIZcR6LZAIfm
+         qQjau+fxb7j+5Kk90l0diTomWgg1QDX5jIBIMMag=
+Date:   Wed, 13 Jun 2018 16:52:47 +0200
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org,
         Andrew Morton <akpm@linux-foundation.org>,
         torvalds@linux-foundation.org, stable@vger.kernel.org
 Cc:     lwn@lwn.net, Jiri Slaby <jslaby@suse.cz>
-Subject: Re: Linux 3.18.113
-Message-ID: <20180613145218.GB5719@kroah.com>
-References: <20180613145205.GA5719@kroah.com>
+Subject: Linux 4.4.137
+Message-ID: <20180613145247.GA10487@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="VS++wcV0S1rZb1Fb"
 Content-Disposition: inline
-In-Reply-To: <20180613145205.GA5719@kroah.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-diff --git a/Makefile b/Makefile
-index d4658bcd411e..ce40d7cd062e 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1,6 +1,6 @@
- VERSION = 3
- PATCHLEVEL = 18
--SUBLEVEL = 112
-+SUBLEVEL = 113
- EXTRAVERSION =
- NAME = Diseased Newt
- 
-diff --git a/arch/mips/kernel/ptrace.c b/arch/mips/kernel/ptrace.c
-index 74f4750d402f..c1bd750494c1 100644
---- a/arch/mips/kernel/ptrace.c
-+++ b/arch/mips/kernel/ptrace.c
-@@ -713,7 +713,7 @@ long arch_ptrace(struct task_struct *child, long request,
- 				break;
- 			}
- #endif
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
-diff --git a/arch/mips/kernel/ptrace32.c b/arch/mips/kernel/ptrace32.c
-index b4b7e02443e7..d95117e71f69 100644
---- a/arch/mips/kernel/ptrace32.c
-+++ b/arch/mips/kernel/ptrace32.c
-@@ -107,7 +107,7 @@ long compat_arch_ptrace(struct task_struct *child, compat_long_t request,
- 						addr & 1);
- 				break;
- 			}
--			tmp = get_fpr32(&fregs[addr - FPR_BASE], 0);
-+			tmp = get_fpr64(&fregs[addr - FPR_BASE], 0);
- 			break;
- 		case PC:
- 			tmp = regs->cp0_epc;
-diff --git a/drivers/gpu/drm/drm_fops.c b/drivers/gpu/drm/drm_fops.c
-index ed7bc68f7e87..cc67fab11e11 100644
---- a/drivers/gpu/drm/drm_fops.c
-+++ b/drivers/gpu/drm/drm_fops.c
-@@ -155,6 +155,7 @@ static int drm_open_helper(struct file *filp, struct drm_minor *minor)
- 		return -ENOMEM;
- 
- 	filp->private_data = priv;
-+	filp->f_mode |= FMODE_UNSIGNED_OFFSET;
- 	priv->filp = filp;
- 	priv->uid = current_euid();
- 	priv->pid = get_pid(task_pid(current));
-diff --git a/drivers/gpu/drm/i915/intel_lvds.c b/drivers/gpu/drm/i915/intel_lvds.c
-index b7e80bf190f8..ea207e79ffdd 100644
---- a/drivers/gpu/drm/i915/intel_lvds.c
-+++ b/drivers/gpu/drm/i915/intel_lvds.c
-@@ -745,6 +745,14 @@ static const struct dmi_system_id intel_no_lvds[] = {
- 			DMI_EXACT_MATCH(DMI_BOARD_NAME, "D525MW"),
- 		},
- 	},
-+	{
-+		.callback = intel_no_lvds_dmi_callback,
-+		.ident = "Radiant P845",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Radiant Systems Inc"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "P845"),
-+		},
-+	},
- 
- 	{ }	/* terminating entry */
- };
-diff --git a/drivers/isdn/hardware/eicon/diva.c b/drivers/isdn/hardware/eicon/diva.c
-index d91dd580e978..37aaea88a6ad 100644
---- a/drivers/isdn/hardware/eicon/diva.c
-+++ b/drivers/isdn/hardware/eicon/diva.c
-@@ -387,10 +387,10 @@ void divasa_xdi_driver_unload(void)
- **  Receive and process command from user mode utility
- */
- void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
--			    int length,
-+			    int length, void *mptr,
- 			    divas_xdi_copy_from_user_fn_t cp_fn)
- {
--	diva_xdi_um_cfg_cmd_t msg;
-+	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
- 	diva_os_xdi_adapter_t *a = NULL;
- 	diva_os_spin_lock_magic_t old_irql;
- 	struct list_head *tmp;
-@@ -400,21 +400,21 @@ void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
- 			 length, sizeof(diva_xdi_um_cfg_cmd_t)))
- 			return NULL;
- 	}
--	if ((*cp_fn) (os_handle, &msg, src, sizeof(msg)) <= 0) {
-+	if ((*cp_fn) (os_handle, msg, src, sizeof(*msg)) <= 0) {
- 		DBG_ERR(("A: A(?) open, write error"))
- 			return NULL;
- 	}
- 	diva_os_enter_spin_lock(&adapter_lock, &old_irql, "open_adapter");
- 	list_for_each(tmp, &adapter_queue) {
- 		a = list_entry(tmp, diva_os_xdi_adapter_t, link);
--		if (a->controller == (int)msg.adapter)
-+		if (a->controller == (int)msg->adapter)
- 			break;
- 		a = NULL;
- 	}
- 	diva_os_leave_spin_lock(&adapter_lock, &old_irql, "open_adapter");
- 
- 	if (!a) {
--		DBG_ERR(("A: A(%d) open, adapter not found", msg.adapter))
-+		DBG_ERR(("A: A(%d) open, adapter not found", msg->adapter))
- 			}
- 
- 	return (a);
-@@ -436,8 +436,10 @@ void diva_xdi_close_adapter(void *adapter, void *os_handle)
- 
- int
- diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
--	       int length, divas_xdi_copy_from_user_fn_t cp_fn)
-+	       int length, void *mptr,
-+	       divas_xdi_copy_from_user_fn_t cp_fn)
- {
-+	diva_xdi_um_cfg_cmd_t *msg = (diva_xdi_um_cfg_cmd_t *)mptr;
- 	diva_os_xdi_adapter_t *a = (diva_os_xdi_adapter_t *) adapter;
- 	void *data;
- 
-@@ -458,7 +460,13 @@ diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
- 			return (-2);
- 	}
- 
--	length = (*cp_fn) (os_handle, data, src, length);
-+	if (msg) {
-+		*(diva_xdi_um_cfg_cmd_t *)data = *msg;
-+		length = (*cp_fn) (os_handle, (char *)data + sizeof(*msg),
-+				   src + sizeof(*msg), length - sizeof(*msg));
-+	} else {
-+		length = (*cp_fn) (os_handle, data, src, length);
-+	}
- 	if (length > 0) {
- 		if ((*(a->interface.cmd_proc))
- 		    (a, (diva_xdi_um_cfg_cmd_t *) data, length)) {
-diff --git a/drivers/isdn/hardware/eicon/diva.h b/drivers/isdn/hardware/eicon/diva.h
-index e979085d1b89..a0a607c0c32e 100644
---- a/drivers/isdn/hardware/eicon/diva.h
-+++ b/drivers/isdn/hardware/eicon/diva.h
-@@ -19,10 +19,11 @@ int diva_xdi_read(void *adapter, void *os_handle, void __user *dst,
- 		  int max_length, divas_xdi_copy_to_user_fn_t cp_fn);
- 
- int diva_xdi_write(void *adapter, void *os_handle, const void __user *src,
--		   int length, divas_xdi_copy_from_user_fn_t cp_fn);
-+		   int length, void *msg,
-+		   divas_xdi_copy_from_user_fn_t cp_fn);
- 
- void *diva_xdi_open_adapter(void *os_handle, const void __user *src,
--			    int length,
-+			    int length, void *msg,
- 			    divas_xdi_copy_from_user_fn_t cp_fn);
- 
- void diva_xdi_close_adapter(void *adapter, void *os_handle);
-diff --git a/drivers/isdn/hardware/eicon/divasmain.c b/drivers/isdn/hardware/eicon/divasmain.c
-index a2e0ed6c9a4d..91bd2ba0bdd8 100644
---- a/drivers/isdn/hardware/eicon/divasmain.c
-+++ b/drivers/isdn/hardware/eicon/divasmain.c
-@@ -591,19 +591,22 @@ static int divas_release(struct inode *inode, struct file *file)
- static ssize_t divas_write(struct file *file, const char __user *buf,
- 			   size_t count, loff_t *ppos)
- {
-+	diva_xdi_um_cfg_cmd_t msg;
- 	int ret = -EINVAL;
- 
- 	if (!file->private_data) {
- 		file->private_data = diva_xdi_open_adapter(file, buf,
--							   count,
-+							   count, &msg,
- 							   xdi_copy_from_user);
--	}
--	if (!file->private_data) {
--		return (-ENODEV);
-+		if (!file->private_data)
-+			return (-ENODEV);
-+		ret = diva_xdi_write(file->private_data, file,
-+				     buf, count, &msg, xdi_copy_from_user);
-+	} else {
-+		ret = diva_xdi_write(file->private_data, file,
-+				     buf, count, NULL, xdi_copy_from_user);
- 	}
- 
--	ret = diva_xdi_write(file->private_data, file,
--			     buf, count, xdi_copy_from_user);
- 	switch (ret) {
- 	case -1:		/* Message should be removed from rx mailbox first */
- 		ret = -EBUSY;
-@@ -622,11 +625,12 @@ static ssize_t divas_write(struct file *file, const char __user *buf,
- static ssize_t divas_read(struct file *file, char __user *buf,
- 			  size_t count, loff_t *ppos)
- {
-+	diva_xdi_um_cfg_cmd_t msg;
- 	int ret = -EINVAL;
- 
- 	if (!file->private_data) {
- 		file->private_data = diva_xdi_open_adapter(file, buf,
--							   count,
-+							   count, &msg,
- 							   xdi_copy_from_user);
- 	}
- 	if (!file->private_data) {
-diff --git a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-index 549549eaf580..8beea2750808 100644
---- a/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-+++ b/drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c
-@@ -588,7 +588,7 @@ static void bnx2x_ets_e3b0_nig_disabled(const struct link_params *params,
- 	 * slots for the highest priority.
- 	 */
- 	REG_WR(bp, (port) ? NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS :
--		   NIG_REG_P1_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
-+		   NIG_REG_P0_TX_ARB_NUM_STRICT_ARB_SLOTS, 0x100);
- 	/* Mapping between the CREDIT_WEIGHT registers and actual client
- 	 * numbers
- 	 */
-diff --git a/drivers/net/ethernet/cisco/enic/enic_main.c b/drivers/net/ethernet/cisco/enic/enic_main.c
-index 167cd8ede397..14b19aa2125f 100644
---- a/drivers/net/ethernet/cisco/enic/enic_main.c
-+++ b/drivers/net/ethernet/cisco/enic/enic_main.c
-@@ -2362,11 +2362,11 @@ static int enic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 	pci_set_master(pdev);
- 
- 	/* Query PCI controller on system for DMA addressing
--	 * limitation for the device.  Try 64-bit first, and
-+	 * limitation for the device.  Try 47-bit first, and
- 	 * fail to 32-bit.
- 	 */
- 
--	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(64));
-+	err = pci_set_dma_mask(pdev, DMA_BIT_MASK(47));
- 	if (err) {
- 		err = pci_set_dma_mask(pdev, DMA_BIT_MASK(32));
- 		if (err) {
-@@ -2380,10 +2380,10 @@ static int enic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 			goto err_out_release_regions;
- 		}
- 	} else {
--		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(64));
-+		err = pci_set_consistent_dma_mask(pdev, DMA_BIT_MASK(47));
- 		if (err) {
- 			dev_err(dev, "Unable to obtain %u-bit DMA "
--				"for consistent allocations, aborting\n", 64);
-+				"for consistent allocations, aborting\n", 47);
- 			goto err_out_release_regions;
- 		}
- 		using_dac = 1;
-diff --git a/drivers/net/ethernet/mellanox/mlx4/qp.c b/drivers/net/ethernet/mellanox/mlx4/qp.c
-index 87e00742d401..4b588a39bc63 100644
---- a/drivers/net/ethernet/mellanox/mlx4/qp.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/qp.c
-@@ -363,11 +363,11 @@ struct mlx4_qp *mlx4_qp_lookup(struct mlx4_dev *dev, u32 qpn)
- 	struct mlx4_qp_table *qp_table = &mlx4_priv(dev)->qp_table;
- 	struct mlx4_qp *qp;
- 
--	spin_lock(&qp_table->lock);
-+	spin_lock_irq(&qp_table->lock);
- 
- 	qp = __mlx4_qp_lookup(dev, qpn);
- 
--	spin_unlock(&qp_table->lock);
-+	spin_unlock_irq(&qp_table->lock);
- 	return qp;
- }
- 
-diff --git a/drivers/net/team/team.c b/drivers/net/team/team.c
-index 8eb56672887e..e149393bba78 100644
---- a/drivers/net/team/team.c
-+++ b/drivers/net/team/team.c
-@@ -989,7 +989,8 @@ static void team_port_disable(struct team *team,
- static void __team_compute_features(struct team *team)
- {
- 	struct team_port *port;
--	u32 vlan_features = TEAM_VLAN_FEATURES & NETIF_F_ALL_FOR_ALL;
-+	netdev_features_t vlan_features = TEAM_VLAN_FEATURES &
-+					  NETIF_F_ALL_FOR_ALL;
- 	unsigned short max_hard_header_len = ETH_HLEN;
- 	unsigned int dst_release_flag = IFF_XMIT_DST_RELEASE |
- 					IFF_XMIT_DST_RELEASE_PERM;
-diff --git a/drivers/net/usb/cdc_mbim.c b/drivers/net/usb/cdc_mbim.c
-index 96fc8a5bde84..cc2ef8baef79 100644
---- a/drivers/net/usb/cdc_mbim.c
-+++ b/drivers/net/usb/cdc_mbim.c
-@@ -550,7 +550,7 @@ err:
- 
- static const struct driver_info cdc_mbim_info = {
- 	.description = "CDC MBIM",
--	.flags = FLAG_NO_SETINT | FLAG_MULTI_PACKET | FLAG_WWAN,
-+	.flags = FLAG_NO_SETINT | FLAG_MULTI_PACKET | FLAG_WWAN | FLAG_SEND_ZLP,
- 	.bind = cdc_mbim_bind,
- 	.unbind = cdc_mbim_unbind,
- 	.manage_power = cdc_mbim_manage_power,
-diff --git a/fs/aio.c b/fs/aio.c
-index c50cb2b4a9d5..541ceaecadf5 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -560,9 +560,8 @@ static void free_ioctx_users(struct percpu_ref *ref)
- 	while (!list_empty(&ctx->active_reqs)) {
- 		req = list_first_entry(&ctx->active_reqs,
- 				       struct kiocb, ki_list);
--
--		list_del_init(&req->ki_list);
- 		kiocb_cancel(req);
-+		list_del_init(&req->ki_list);
- 	}
- 
- 	spin_unlock_irq(&ctx->ctx_lock);
-diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-index 9891c30e8031..4a2578f10769 100644
---- a/include/linux/tcp.h
-+++ b/include/linux/tcp.h
-@@ -292,7 +292,7 @@ struct tcp_sock {
- 
- /* Receiver queue space */
- 	struct {
--		int	space;
-+		u32	space;
- 		u32	seq;
- 		u32	time;
- 	} rcvq_space;
-diff --git a/include/uapi/linux/nl80211.h b/include/uapi/linux/nl80211.h
-index 81e5bfd46743..35564527fd29 100644
---- a/include/uapi/linux/nl80211.h
-+++ b/include/uapi/linux/nl80211.h
-@@ -2026,7 +2026,7 @@ enum nl80211_attrs {
- #define NL80211_ATTR_KEYS NL80211_ATTR_KEYS
- #define NL80211_ATTR_FEATURE_FLAGS NL80211_ATTR_FEATURE_FLAGS
- 
--#define NL80211_WIPHY_NAME_MAXLEN		128
-+#define NL80211_WIPHY_NAME_MAXLEN		64
- 
- #define NL80211_MAX_SUPP_RATES			32
- #define NL80211_MAX_SUPP_HT_RATES		77
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 4747b476a030..b743e758241e 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -469,9 +469,10 @@ clear_event_triggers(struct trace_array *tr)
- 	struct ftrace_event_file *file;
- 
- 	list_for_each_entry(file, &tr->events, list) {
--		struct event_trigger_data *data;
--		list_for_each_entry_rcu(data, &file->triggers, list) {
-+		struct event_trigger_data *data, *n;
-+		list_for_each_entry_safe(data, n, &file->triggers, list) {
- 			trace_event_trigger_enable_disable(file, 0);
-+			list_del_rcu(&data->list);
- 			if (data->ops->free)
- 				data->ops->free(data->ops, data);
- 		}
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 60ba08e971fb..698d103c904c 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -1271,6 +1271,35 @@ static inline int mlock_future_check(struct mm_struct *mm,
- 	return 0;
- }
- 
-+static inline u64 file_mmap_size_max(struct file *file, struct inode *inode)
-+{
-+	if (S_ISREG(inode->i_mode))
-+		return MAX_LFS_FILESIZE;
-+
-+	if (S_ISBLK(inode->i_mode))
-+		return MAX_LFS_FILESIZE;
-+
-+	/* Special "we do even unsigned file positions" case */
-+	if (file->f_mode & FMODE_UNSIGNED_OFFSET)
-+		return 0;
-+
-+	/* Yes, random drivers might want more. But I'm tired of buggy drivers */
-+	return ULONG_MAX;
-+}
-+
-+static inline bool file_mmap_ok(struct file *file, struct inode *inode,
-+				unsigned long pgoff, unsigned long len)
-+{
-+	u64 maxsize = file_mmap_size_max(file, inode);
-+
-+	if (maxsize && len > maxsize)
-+		return false;
-+	maxsize -= len;
-+	if (pgoff > maxsize >> PAGE_SHIFT)
-+		return false;
-+	return true;
-+}
-+
- /*
-  * The caller must hold down_write(&current->mm->mmap_sem).
-  */
-@@ -1338,6 +1367,9 @@ unsigned long do_mmap_pgoff(struct file *file, unsigned long addr,
- 	if (file) {
- 		struct inode *inode = file_inode(file);
- 
-+		if (!file_mmap_ok(file, inode, pgoff, len))
-+			return -EOVERFLOW;
-+
- 		switch (flags & MAP_TYPE) {
- 		case MAP_SHARED:
- 			if ((prot&PROT_WRITE) && !(file->f_mode&FMODE_WRITE))
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 9fe1f0f8ef80..716915197d9f 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1234,7 +1234,7 @@ int __isolate_lru_page(struct page *page, isolate_mode_t mode)
- 				return ret;
- 
- 			mapping = page_mapping(page);
--			migrate_dirty = mapping && mapping->a_ops->migratepage;
-+			migrate_dirty = !mapping || mapping->a_ops->migratepage;
- 			unlock_page(page);
- 			if (!migrate_dirty)
- 				return ret;
-diff --git a/net/core/rtnetlink.c b/net/core/rtnetlink.c
-index ff864cefd688..9fd2c9eb54e8 100644
---- a/net/core/rtnetlink.c
-+++ b/net/core/rtnetlink.c
-@@ -1503,6 +1503,10 @@ static int do_setlink(const struct sk_buff *skb,
- 	const struct net_device_ops *ops = dev->netdev_ops;
- 	int err;
- 
-+	err = validate_linkmsg(dev, tb);
-+	if (err < 0)
-+		return err;
-+
- 	if (tb[IFLA_NET_NS_PID] || tb[IFLA_NET_NS_FD]) {
- 		struct net *net = rtnl_link_get_net(dev_net(dev), tb);
- 		if (IS_ERR(net)) {
-@@ -1783,10 +1787,6 @@ static int rtnl_setlink(struct sk_buff *skb, struct nlmsghdr *nlh)
- 		goto errout;
- 	}
- 
--	err = validate_linkmsg(dev, tb);
--	if (err < 0)
--		goto errout;
--
- 	err = do_setlink(skb, dev, ifm, tb, ifname, 0);
- errout:
- 	return err;
-diff --git a/net/dccp/proto.c b/net/dccp/proto.c
-index 2b8fd8cd709d..bf5646d1e55f 100644
---- a/net/dccp/proto.c
-+++ b/net/dccp/proto.c
-@@ -280,9 +280,7 @@ int dccp_disconnect(struct sock *sk, int flags)
- 
- 	dccp_clear_xmit_timers(sk);
- 	ccid_hc_rx_delete(dp->dccps_hc_rx_ccid, sk);
--	ccid_hc_tx_delete(dp->dccps_hc_tx_ccid, sk);
- 	dp->dccps_hc_rx_ccid = NULL;
--	dp->dccps_hc_tx_ccid = NULL;
- 
- 	__skb_queue_purge(&sk->sk_receive_queue);
- 	__skb_queue_purge(&sk->sk_write_queue);
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 7904445338f2..556e23235937 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -550,8 +550,8 @@ static inline void tcp_rcv_rtt_measure_ts(struct sock *sk,
- void tcp_rcv_space_adjust(struct sock *sk)
- {
- 	struct tcp_sock *tp = tcp_sk(sk);
-+	u32 copied;
- 	int time;
--	int copied;
- 
- 	time = tcp_time_stamp - tp->rcvq_space.time;
- 	if (time < (tp->rcv_rtt_est.rtt >> 3) || tp->rcv_rtt_est.rtt == 0)
-@@ -573,12 +573,13 @@ void tcp_rcv_space_adjust(struct sock *sk)
- 
- 	if (sysctl_tcp_moderate_rcvbuf &&
- 	    !(sk->sk_userlocks & SOCK_RCVBUF_LOCK)) {
--		int rcvwin, rcvmem, rcvbuf;
-+		int rcvmem, rcvbuf;
-+		u64 rcvwin;
- 
- 		/* minimal window to cope with packet losses, assuming
- 		 * steady state. Add some cushion because of small variations.
- 		 */
--		rcvwin = (copied << 1) + 16 * tp->advmss;
-+		rcvwin = ((u64)copied << 1) + 16 * tp->advmss;
- 
- 		/* If rate increased by 25%,
- 		 *	assume slow start, rcvwin = 3 * copied
-@@ -598,7 +599,8 @@ void tcp_rcv_space_adjust(struct sock *sk)
- 		while (tcp_win_from_space(rcvmem) < tp->advmss)
- 			rcvmem += 128;
- 
--		rcvbuf = min(rcvwin / tp->advmss * rcvmem, sysctl_tcp_rmem[2]);
-+		do_div(rcvwin, tp->advmss);
-+		rcvbuf = min_t(u64, rcvwin * rcvmem, sysctl_tcp_rmem[2]);
- 		if (rcvbuf > sk->sk_rcvbuf) {
- 			sk->sk_rcvbuf = rcvbuf;
- 
-diff --git a/net/ipv6/ip6mr.c b/net/ipv6/ip6mr.c
-index 61bc48ce07a5..7b963b09b972 100644
---- a/net/ipv6/ip6mr.c
-+++ b/net/ipv6/ip6mr.c
-@@ -1788,7 +1788,8 @@ int ip6_mroute_setsockopt(struct sock *sk, int optname, char __user *optval, uns
- 		ret = 0;
- 		if (!ip6mr_new_table(net, v))
- 			ret = -ENOMEM;
--		raw6_sk(sk)->ip6mr_table = v;
-+		else
-+			raw6_sk(sk)->ip6mr_table = v;
- 		rtnl_unlock();
- 		return ret;
- 	}
-diff --git a/net/packet/af_packet.c b/net/packet/af_packet.c
-index 00a5aa252f59..b7df7601eb86 100644
---- a/net/packet/af_packet.c
-+++ b/net/packet/af_packet.c
-@@ -3877,7 +3877,7 @@ static int packet_set_ring(struct sock *sk, union tpacket_req_u *req_u,
- 			goto out;
- 		if (po->tp_version >= TPACKET_V3 &&
- 		    req->tp_block_size <=
--			  BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv))
-+		    BLK_PLUS_PRIV((u64)req_u->req3.tp_sizeof_priv) + sizeof(struct tpacket3_hdr))
- 			goto out;
- 		if (unlikely(req->tp_frame_size < po->tp_hdrlen +
- 					po->tp_reserve))
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index dbca00d996c4..1589cf6a4119 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -1271,7 +1271,7 @@ static int security_context_to_sid_core(const char *scontext, u32 scontext_len,
- 				      scontext_len, &context, def_sid);
- 	if (rc == -EINVAL && force) {
- 		context.str = str;
--		context.len = scontext_len;
-+		context.len = strlen(str) + 1;
- 		str = NULL;
- 	} else if (rc)
- 		goto out_unlock;
+
+--VS++wcV0S1rZb1Fb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+I'm announcing the release of the 4.4.137 kernel.
+
+All users of the 4.4 kernel series must upgrade.
+
+The updated 4.4.y git tree can be found at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable.git linu=
+x-4.4.y
+and can be browsed at the normal kernel.org git web browser:
+	http://git.kernel.org/?p=3Dlinux/kernel/git/stable/linux-stable.git;a=3Dsu=
+mmary
+
+thanks,
+
+greg k-h
+
+------------
+
+ Documentation/networking/netdev-FAQ.txt            |    9 +++++
+ Makefile                                           |    2 -
+ drivers/char/tpm/tpm-chip.c                        |   13 ++++++++
+ drivers/char/tpm/tpm-interface.c                   |    7 ++++
+ drivers/char/tpm/tpm.h                             |    1=20
+ drivers/gpu/drm/drm_fops.c                         |    1=20
+ drivers/isdn/hardware/eicon/diva.c                 |   22 +++++++++-----
+ drivers/isdn/hardware/eicon/diva.h                 |    5 +--
+ drivers/isdn/hardware/eicon/divasmain.c            |   18 +++++++----
+ drivers/net/ethernet/broadcom/bnx2x/bnx2x_link.c   |    2 -
+ drivers/net/ethernet/cisco/enic/enic_main.c        |    8 ++---
+ drivers/net/ethernet/mellanox/mlx4/qp.c            |    4 +-
+ drivers/net/ethernet/qlogic/qed/qed_cxt.c          |    2 -
+ drivers/net/phy/bcm-cygnus.c                       |    6 +--
+ drivers/net/phy/bcm-phy-lib.h                      |    7 ++++
+ drivers/net/phy/bcm7xxx.c                          |    4 +-
+ drivers/net/team/team.c                            |    3 +
+ drivers/net/usb/cdc_mbim.c                         |    2 -
+ drivers/net/wireless/brcm80211/brcmfmac/cfg80211.c |    2 -
+ fs/xfs/xfs_log.c                                   |    7 ----
+ mm/mmap.c                                          |   32 ++++++++++++++++=
++++++
+ net/core/rtnetlink.c                               |    8 ++---
+ net/dccp/proto.c                                   |    2 -
+ net/ipv4/fib_semantics.c                           |    2 +
+ net/ipv4/ip_sockglue.c                             |    2 -
+ net/ipv6/ip6mr.c                                   |    3 +
+ net/packet/af_packet.c                             |    4 +-
+ scripts/kconfig/confdata.c                         |    2 -
+ 28 files changed, 128 insertions(+), 52 deletions(-)
+
+Alexey Kodanev (1):
+      dccp: don't free ccid2_hc_tx_sock struct in dccp_disconnect()
+
+Amir Goldstein (1):
+      xfs: fix incorrect log_flushed on fsync
+
+Chris Chiu (1):
+      tpm: self test failure should not cause suspend to fail
+
+Cong Wang (1):
+      netdev-FAQ: clarify DaveM's position for stable backports
+
+Dan Carpenter (1):
+      team: use netdev_features_t instead of u32
+
+Daniele Palmas (1):
+      net: usb: cdc_mbim: add flag FLAG_SEND_ZLP
+
+Dave Airlie (1):
+      drm: set FMODE_UNSIGNED_OFFSET for drm files
+
+Enric Balletbo i Serra (1):
+      tpm: do not suspend/resume if power stays on
+
+Eric Dumazet (3):
+      net/packet: refine check for priv area size
+      rtnetlink: validate attributes in do_setlink()
+      net: metrics: add proper netlink validation
+
+Florian Fainelli (1):
+      net: phy: broadcom: Fix bcm_write_exp()
+
+Govindarajulu Varadarajan (1):
+      enic: set DMA mask to 47 bit
+
+Greg Kroah-Hartman (1):
+      Linux 4.4.137
+
+Jack Morgenstein (1):
+      net/mlx4: Fix irq-unsafe spinlock usage
+
+Julia Lawall (1):
+      bnx2x: use the right constant
+
+Linus Torvalds (2):
+      mmap: introduce sane default mmap limits
+      mmap: relax file size limit for regular files
+
+Nathan Chancellor (1):
+      kconfig: Avoid format overflow warning from GCC 8.1
+
+Sabrina Dubroca (1):
+      ip6mr: only set ip6mr_table from setsockopt when ip6mr_new_table succ=
+eeds
+
+Shahed Shaikh (1):
+      qed: Fix mask for physical address in ILT entry
+
+Stefan Wahren (1):
+      brcmfmac: Fix check for ISO3166 code
+
+Wenwen Wang (1):
+      isdn: eicon: fix a missing-check bug
+
+Willem de Bruijn (2):
+      ipv4: remove warning in ip_recv_error
+      packet: fix reserve calculation
+
+
+--VS++wcV0S1rZb1Fb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEZH8oZUiU471FcZm+ONu9yGCSaT4FAlshL78ACgkQONu9yGCS
+aT6KQg/+Kq7f+NBRZ/+f+JOW/Uy5Zl090vQ7+NmdkNIUwG49BRk9uCN1JshITBwO
+0mJI3E0glkeBAxh3vjxU7vLRulFjHqZXagArIJMGVdYi4ZxmTwcKU5iDuazSK8j4
+JkmJNKMiAbfVXw9RDKDwHyztlx8oNe66ub6M0Qq1xx7KmF9ATakppQdcF4Qh1Bma
+eBFkTUvwNxsF3+kgFqwV4OZ+H4XcukXsRv+o6Iq960NwXJoALYm9FCQLeaL2WIMA
+SDJN5fyKqA/mqURLpUKaciOMF7sJd9f/ReNZrx6oNTU8QbKyUWjsrHp9GoIGKshq
+PbkaC6dwqIXgT1ekoSDE650jf8u64GahFCugZNRpQ1UdO2md9ZtvH1k3amlNAV+O
+CRUh2yabfwe5JTtFe/u6fMRKBZPMJnJo1f/RR09o4fnhANisHODwyLdLL3qNjt2Q
+ChWVWB0peB0cdWFI7JupAuQKTDyiUErNqy3yljuuHPDkoNKZEm5xp4m64+ebzGYP
+PLX0JVnj1RO/nc+S21HGTcHadcuIAFbKsuQWdu5Vagm0q6TvLPCeTOfbX3n+f70S
+HspFAjf4yCrPZrT1QBtVxneJ3gNx2xlT94bVCCTAz8e2pWhCd3WNYSXJiu2CAmQu
+eiVwjcXH+JppHngpKRQwO7gw/byJDlRAqcED4j8o/Zg30Ts7NLQ=
+=orCZ
+-----END PGP SIGNATURE-----
+
+--VS++wcV0S1rZb1Fb--
