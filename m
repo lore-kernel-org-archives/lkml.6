@@ -2,99 +2,99 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BB408C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:16:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C8E11C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:19:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7020F208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:16:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CFEGv+lh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7020F208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7E9C1208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:19:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9C1208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935629AbeFMNQ2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:16:28 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:33443 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935375AbeFMNQ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:16:26 -0400
-Received: by mail-lf0-f67.google.com with SMTP id y20-v6so3919941lfy.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:16:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=ldBvsljY0FNj7QsJ4vmm+0gDFxd2nEx0SWMhHY0uwA0=;
-        b=CFEGv+lhDnp0wUhNOlxDoA8wjRBuT9jWghRagdn6Kpfo26OjQQ+q2LYHIVvrMuXAC5
-         2HjTaYDqdeyrJtz9wa7qNAo/LQvplqYdpa6j4OvqWc5+IyC5Tg4R0QoA57M1uZgrxJjl
-         /r6NzWMDCnNTv8KgKMnrNQJ1gr1s/W6AlFOvw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=ldBvsljY0FNj7QsJ4vmm+0gDFxd2nEx0SWMhHY0uwA0=;
-        b=ZqDMlcm3nrviyAH+T6Ur8C+wWSad34QrOPIlQ+kTJN9RA/pMVNKsvn6ZI7UYMW0SV+
-         jTk1206DEK+5T4UdTxXAA+DdTANHI1MbmduC4iEjBOXAdXpymkyrR2PQfD2WyVOSqseX
-         ZYuJ8XV734IHsqbtt+lr7xyjseLJwOVvRnL9KtrmWm1aLjw85nD2ccv5ex1h2ix/8BH8
-         hkZSpo6b3epG89hOjsPJ84pVc9crTK9tOekVRhNE5fJZ/20VjeM8S6qZgaxJCDd145wy
-         4ut1nOE8EsCwHwfDO7WAAKdhYOqwhO40I2UTA/SI0iw9gHHphdlsb76UB1RJ0UA8Vumj
-         LVqA==
-X-Gm-Message-State: APt69E2T0+/UltVYojQcweeU6WmLS0chTgPTC+vBscMUaYVVbNuUK72K
-        viyOCZ2k9/3pz1W+CgeLY/KDBQ==
-X-Google-Smtp-Source: ADUXVKLk5RoVkSdJ1SVx8sQSiuhv9CkdL4bnQuRCohIojmTHlygUjfEc89v6vN05R5FK64erOXlAWA==
-X-Received: by 2002:a2e:9614:: with SMTP id v20-v6mr3128139ljh.127.1528895784835;
-        Wed, 13 Jun 2018 06:16:24 -0700 (PDT)
-Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id i28-v6sm576411lfb.89.2018.06.13.06.16.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 06:16:24 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 15:16:22 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Ohad Ben-Cohen <ohad@wizery.com>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        andy.gross@linaro.org
-Cc:     linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 1/5] rpmsg: smd: Add missing include of sizes.h
-Message-ID: <20180613131622.GA12260@centauri.ideon.se>
-References: <20180613125401.11734-1-niklas.cassel@linaro.org>
- <20180613125401.11734-2-niklas.cassel@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20180613125401.11734-2-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S935582AbeFMNTG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:19:06 -0400
+Received: from gate.crashing.org ([63.228.1.57]:46296 "EHLO gate.crashing.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935375AbeFMNTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 09:19:05 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5DDB2CC002330;
+        Wed, 13 Jun 2018 08:11:03 -0500
+Message-ID: <10bbd7122aaa67f51de7a8328df8154212a13f23.camel@kernel.crashing.org>
+Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
+ virito devices
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Ram Pai <linuxram@us.ibm.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>, robh@kernel.org,
+        pawel.moll@arm.com, Tom Lendacky <thomas.lendacky@amd.com>,
+        aik@ozlabs.ru, jasowang@redhat.com, cohuck@redhat.com,
+        linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, joe@perches.com,
+        "Rustad, Mark D" <mark.d.rustad@intel.com>,
+        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
+        elfring@users.sourceforge.net,
+        Anshuman Khandual <khandual@linux.vnet.ibm.com>
+Date:   Wed, 13 Jun 2018 23:11:01 +1000
+In-Reply-To: <5dbcafa73b065bc619fd6adc9ef47eb6367b8378.camel@kernel.crashing.org>
+References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
+         <20180523213703-mutt-send-email-mst@kernel.org>
+         <20180524072104.GD6139@ram.oc3035372033.ibm.com>
+         <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
+         <20180531204320-mutt-send-email-mst@kernel.org>
+         <20180607052306.GA1532@infradead.org>
+         <20180607185234-mutt-send-email-mst@kernel.org>
+         <20180611023909.GA5726@ram.oc3035372033.ibm.com>
+         <07b804fccd7373c650be79ac9fa77ae7f2375ced.camel@kernel.crashing.org>
+         <20180613074141.GA12033@infradead.org>
+         <5dbcafa73b065bc619fd6adc9ef47eb6367b8378.camel@kernel.crashing.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 02:53:56PM +0200, Niklas Cassel wrote:
-> Add missing include of sizes.h.
+On Wed, 2018-06-13 at 22:25 +1000, Benjamin Herrenschmidt wrote:
+> On Wed, 2018-06-13 at 00:41 -0700, Christoph Hellwig wrote:
+> > On Mon, Jun 11, 2018 at 01:29:18PM +1000, Benjamin Herrenschmidt wrote:
+> > > At the risk of repeating myself, let's just do the first pass which is
+> > > to switch virtio over to always using the DMA API in the actual data
+> > > flow code, with a hook at initialization time that replaces the DMA ops
+> > > with some home cooked "direct" ops in the case where the IOMMU flag
+> > > isn't set.
+> > > 
+> > > This will be equivalent to what we have today but avoids having 2
+> > > separate code path all over the driver.
+> > > 
+> > > Then a second stage, I think, is to replace this "hook" so that the
+> > > architecture gets a say in the matter.
+> > 
+> > I don't think we can actually use dma_direct_ops.  It still allows
+> > architectures to override parts of the dma setup, which virtio seems
+> > to blindly assume phys == dma and not cache flushing.
 > 
-> drivers/rpmsg/qcom_smd.c: In function ‘qcom_smd_channel_open’:
-> drivers/rpmsg/qcom_smd.c:809:36: error: ‘SZ_4K’ undeclared (first use in this function)
->   bb_size = min(channel->fifo_size, SZ_4K);
->                                     ^~~~~
+> By direct ops I didn't mean *the* dma_direct_ops but a virtio-local
+> variants that effectively reproduces the existing expectations (ie,
+> virtio-dma-legacy-ops or something).
+
+Actually ... the stuff in lib/dma-direct.c seems to be just it, no ?
+
+There's no cache flushing and there's no architecture hooks that I can
+see other than the AMD security stuff which is probably fine.
+
+Or am I missing something ?
+
+Cheers,
+Ben.
 > 
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> ---
-
-Argh, my git send-email scripts were too stupid to add Andy
-and linux-arm-msm to this patch.
-
-Some of the drivers in drivers/soc/qcom depended on this file.
-
-Not sure if this patch should go via Andy's tree or Bjorn's.
-
-Regards,
-Niklas
+> > I think the right way forward is to either add a new
+> > VIRTIO_F_IS_PCI_DEVICE (or redefine the existing iommu flag if deemed
+> > possible).  And then make sure recent qemu always sets it.
+> 
+> Ben.
