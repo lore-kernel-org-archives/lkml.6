@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C656FC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:33:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6EDBDC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 705F6208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17A65208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MJuFpGkf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BI/WRR3d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 705F6208B0
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QkVDCS3L";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mRVQkWys"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17A65208B0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935059AbeFMKda (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 06:33:30 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39254 "EHLO
+        id S1754576AbeFMKdi (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 06:33:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:39370 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933657AbeFMKd2 (ORCPT
+        with ESMTP id S933657AbeFMKdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 06:33:28 -0400
+        Wed, 13 Jun 2018 06:33:36 -0400
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 16920606DB; Wed, 13 Jun 2018 10:33:28 +0000 (UTC)
+        id 8C887602FC; Wed, 13 Jun 2018 10:33:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528886008;
-        bh=q9/mPLhmVuPBswpPCeZJTDVs28oJ+pV4G3abIJV0eXE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=MJuFpGkfF5ZorYiD4iwL+ZVpS298M+t4urgZjGcywGbiNhF8HOe+nVUEsTqx2Hddo
-         WAYq3d9EzCl7xYhf4wb0HYUf3uIgr8YdvOXeg9fVUcTzSaqWOs23cCsKnc+6wyTXvL
-         196jyq7qjzLgs7EF2O0jbPjzi0A6p9hNqzlwr31w=
+        s=default; t=1528886015;
+        bh=0N8Rad715fu9CuHZByyx5uOJCM9DTfBYBmrjTx9VDEk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QkVDCS3LxCQBeTZwx03H8KWj5e4NNb5tAuSECnfw9xm9hwmUY9KrBynjH2pFVz9ZD
+         1V4LXL8Oe5MHf1TgreuW8HX7wJBVjK8EovbUmoTg3zOSjFgv0dFOOt9vDJcod8qi63
+         x+muXO8GgS0phvRlPHGqfN5zmEWuujEWP97+3Fyg=
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2490260351;
-        Wed, 13 Jun 2018 10:33:23 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C0DBE60351;
+        Wed, 13 Jun 2018 10:33:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528886007;
-        bh=q9/mPLhmVuPBswpPCeZJTDVs28oJ+pV4G3abIJV0eXE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BI/WRR3dXOUeRLIIsignHN19j+HzdE8oiRIB6jIrK5tKXg8Bkdq6dyA/fER2TMALt
-         gh7TdWDe0Y/89Pxk3WqgQ0q8Ed92XOFJtrxpIaCW2tqcml6oakdbFIqsZBNxk6Mve6
-         vhWOonHmrjUI4+8kAF+QCjwUCzIGflFrshIk35tk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2490260351
+        s=default; t=1528886014;
+        bh=0N8Rad715fu9CuHZByyx5uOJCM9DTfBYBmrjTx9VDEk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mRVQkWysEirzUrUwabL6CU0v58h1ig+DwYOZEVO314RgmZESvGAVZCW474vupPruK
+         HOpcosjgSqEcxyUYwT+PsN+MQUw18HzPuItrkZnB6CRQRXM0F+VTrO+I3y7ySqPWHT
+         SSx7Ncy6eOocF5QIIWySwwqFZM+cRLlyrSDrzkxM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C0DBE60351
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -60,46 +61,106 @@ Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 0/2] Add display clock controller driver for SDM845
-Date:   Wed, 13 Jun 2018 16:03:15 +0530
-Message-Id: <1528885997-10311-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v2 1/2] dt-bindings: clock: Introduce QCOM Display clock bindings
+Date:   Wed, 13 Jun 2018 16:03:16 +0530
+Message-Id: <1528885997-10311-2-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1528885997-10311-1-git-send-email-tdas@codeaurora.org>
+References: <1528885997-10311-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
- [v2]
-  * Removed unused header file includes.
-  * Moved the frequency table macro to a common file [1].
-  * Move to pll config to probe.
-  * Update SoC name in device tree binding and
-    also update the Kconfig.
+Add device tree bindings for display clock controller for Qualcomm
+Technology Inc's SDM845 SoCs.
 
-Add support for the display clock controller found on SDM845
-based devices. This would allow display drivers to probe and
-control their clocks.
-
-The Display clock driver depends on the frequency table macro
-movement to a common file [1].
-
- [1]:  https://lkml.org/lkml/2018/6/13/216
-
-Taniya Das (2):
-  dt-bindings: clock: Introduce QCOM Display clock bindings
-  clk: qcom: Add display clock controller driver for SDM845
-
- .../devicetree/bindings/clock/qcom,dispcc.txt      |  19 +
- drivers/clk/qcom/Kconfig                           |  10 +
- drivers/clk/qcom/Makefile                          |   1 +
- drivers/clk/qcom/dispcc-sdm845.c                   | 674 +++++++++++++++++++++
- include/dt-bindings/clock/qcom,dispcc-sdm845.h     |  45 ++
- 5 files changed, 749 insertions(+)
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/qcom,dispcc.txt      | 19 +++++++++
+ include/dt-bindings/clock/qcom,dispcc-sdm845.h     | 45 ++++++++++++++++++++++
+ 2 files changed, 64 insertions(+)
  create mode 100644 Documentation/devicetree/bindings/clock/qcom,dispcc.txt
- create mode 100644 drivers/clk/qcom/dispcc-sdm845.c
  create mode 100644 include/dt-bindings/clock/qcom,dispcc-sdm845.h
 
---
+diff --git a/Documentation/devicetree/bindings/clock/qcom,dispcc.txt b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+new file mode 100644
+index 0000000..d639e18
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,dispcc.txt
+@@ -0,0 +1,19 @@
++Qualcomm Technologies, Inc. Display Clock Controller Binding
++------------------------------------------------------------
++
++Required properties :
++
++- compatible : shall contain "qcom,sdm845-dispcc"
++- reg : shall contain base register location and length.
++- #clock-cells : from common clock binding, shall contain 1.
++- #reset-cells : from common reset binding, shall contain 1.
++- #power-domain-cells : from generic power domain binding, shall contain 1.
++
++Example:
++	dispcc: clock-controller@af00000 {
++		compatible = "qcom,sdm845-dispcc";
++		reg = <0xaf00000 0x100000>;
++		#clock-cells = <1>;
++		#reset-cells = <1>;
++		#power-domain-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/qcom,dispcc-sdm845.h b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+new file mode 100644
+index 0000000..11eed4b
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,dispcc-sdm845.h
+@@ -0,0 +1,45 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++#define _DT_BINDINGS_CLK_SDM_DISP_CC_SDM845_H
++
++/* DISP_CC clock registers */
++#define DISP_CC_MDSS_AHB_CLK					0
++#define DISP_CC_MDSS_AXI_CLK					1
++#define DISP_CC_MDSS_BYTE0_CLK					2
++#define DISP_CC_MDSS_BYTE0_CLK_SRC				3
++#define DISP_CC_MDSS_BYTE0_INTF_CLK				4
++#define DISP_CC_MDSS_BYTE1_CLK					5
++#define DISP_CC_MDSS_BYTE1_CLK_SRC				6
++#define DISP_CC_MDSS_BYTE1_INTF_CLK				7
++#define DISP_CC_MDSS_ESC0_CLK					8
++#define DISP_CC_MDSS_ESC0_CLK_SRC				9
++#define DISP_CC_MDSS_ESC1_CLK					10
++#define DISP_CC_MDSS_ESC1_CLK_SRC				11
++#define DISP_CC_MDSS_MDP_CLK					12
++#define DISP_CC_MDSS_MDP_CLK_SRC				13
++#define DISP_CC_MDSS_MDP_LUT_CLK				14
++#define DISP_CC_MDSS_PCLK0_CLK					15
++#define DISP_CC_MDSS_PCLK0_CLK_SRC				16
++#define DISP_CC_MDSS_PCLK1_CLK					17
++#define DISP_CC_MDSS_PCLK1_CLK_SRC				18
++#define DISP_CC_MDSS_ROT_CLK					19
++#define DISP_CC_MDSS_ROT_CLK_SRC				20
++#define DISP_CC_MDSS_RSCC_AHB_CLK				21
++#define DISP_CC_MDSS_RSCC_VSYNC_CLK				22
++#define DISP_CC_MDSS_VSYNC_CLK					23
++#define DISP_CC_MDSS_VSYNC_CLK_SRC				24
++#define DISP_CC_PLL0						25
++#define DISP_CC_MDSS_BYTE0_DIV_CLK_SRC				26
++#define DISP_CC_MDSS_BYTE1_DIV_CLK_SRC				27
++
++/* DISP_CC Reset */
++#define DISP_CC_MDSS_RSCC_BCR					0
++
++/* DISP_CC GDSCR */
++#define MDSS_GDSC						0
++
++#endif
+-- 
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
 
