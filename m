@@ -2,202 +2,222 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B22C5C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:32:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2740FC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E169208CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:32:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="f92qb37g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E169208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id C6DA7208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:32:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6DA7208CC
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935655AbeFMUc3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 16:32:29 -0400
-Received: from mail-hk2apc01on0132.outbound.protection.outlook.com ([104.47.124.132]:11929
-        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754504AbeFMUc1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 16:32:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7WSIPZHgIbaPbrIZqcZVds5l7Jax7Xa/tvCd0dHMH58=;
- b=f92qb37gtwkS7+TQPD0MVFTEnjdvny4R2ZHgOLZYRFY+Pj9Kslas7HX8zw/1jDhRBCzelVBndxaFVRHqvaEY151dXMLwbQLMD2g4kdXx6fVP41PPmH0Kd/cZV7/0CteMOADNZC18fxo+U7Zm//+wKuZuhQa+rkznxLAc4kZGZOQ=
-Received: from KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM (10.170.167.17) by
- KL1P15301MB0086.APCP153.PROD.OUTLOOK.COM (10.170.164.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.884.12; Wed, 13 Jun 2018 20:32:13 +0000
-Received: from KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
- ([fe80::91a9:30c3:c99f:a8bc]) by KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM
- ([fe80::91a9:30c3:c99f:a8bc%6]) with mapi id 15.20.0884.010; Wed, 13 Jun 2018
- 20:32:13 +0000
-From:   Dexuan Cui <decui@microsoft.com>
-To:     'Bjorn Helgaas' <bhelgaas@google.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        'Lorenzo Pieralisi' <lorenzo.pieralisi@arm.com>,
-        "'linux-pci@vger.kernel.org'" <linux-pci@vger.kernel.org>,
-        KY Srinivasan <kys@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "'olaf@aepfle.de'" <olaf@aepfle.de>,
-        "'apw@canonical.com'" <apw@canonical.com>,
-        "'jasowang@redhat.com'" <jasowang@redhat.com>
-CC:     "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
-        "'driverdev-devel@linuxdriverproject.org'" 
-        <driverdev-devel@linuxdriverproject.org>,
-        "'vkuznets@redhat.com'" <vkuznets@redhat.com>,
-        "'marcelo.cerri@canonical.com'" <marcelo.cerri@canonical.com>
-Subject: RE: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
- hv_compose_msi_msg()
-Thread-Topic: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
- hv_compose_msi_msg()
-Thread-Index: AdPyKucLHxE0xn3+RTSKXedSJeHHcgCNtVtQAmSYQFABWDo6wA==
-Date:   Wed, 13 Jun 2018 20:32:13 +0000
-Message-ID: <KL1P15301MB00069C79B0C674695DDBC8AABF7E0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
-References: <KL1P15301MB0006EE546A7C2567B61EA783BF6B0@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
- <BN6PR21MB016112A4E32D76EC669818C3CA690@BN6PR21MB0161.namprd21.prod.outlook.com>
- <KL1P15301MB0006D8314C8B40A939598056BF640@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
-In-Reply-To: <KL1P15301MB0006D8314C8B40A939598056BF640@KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM>
+        id S935699AbeFMUcz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 16:32:55 -0400
+Received: from mga05.intel.com ([192.55.52.43]:47393 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935302AbeFMUcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 16:32:53 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 13:32:53 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
+   d="p7s'?scan'208";a="236934070"
+Received: from orsmsx103.amr.corp.intel.com ([10.22.225.130])
+  by fmsmga005.fm.intel.com with ESMTP; 13 Jun 2018 13:32:52 -0700
+Received: from orsmsx154.amr.corp.intel.com (10.22.226.12) by
+ ORSMSX103.amr.corp.intel.com (10.22.225.130) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Wed, 13 Jun 2018 13:32:52 -0700
+Received: from orsmsx109.amr.corp.intel.com ([169.254.11.237]) by
+ ORSMSX154.amr.corp.intel.com ([10.22.226.12]) with mapi id 14.03.0319.002;
+ Wed, 13 Jun 2018 13:32:51 -0700
+From:   "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
+To:     "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "Zhang, Rui" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "andrea.parri@amarulasolutions.com" 
+        <andrea.parri@amarulasolutions.com>,
+        "kevin.wangtao@linaro.org" <kevin.wangtao@linaro.org>,
+        "leo.yan@linaro.org" <leo.yan@linaro.org>,
+        "daniel.thompson@linaro.org" <daniel.thompson@linaro.org>,
+        "javi.merino@kernel.org" <javi.merino@kernel.org>,
+        "vincent.guittot@linaro.org" <vincent.guittot@linaro.org>
+Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Thread-Topic: [PATCH V6] powercap/drivers/idle_injection: Add an idle
+ injection framework
+Thread-Index: AQHUAy7K0hOWsj2UDUW8/aeIJzxwIaRfEWGAgAAB54CAAAN5gIAAA5wA
+Date:   Wed, 13 Jun 2018 20:32:50 +0000
+Message-ID: <1528921968.48473.15.camel@intel.com>
+References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
+         <1528905257.48473.4.camel@intel.com>
+         <0b72e862-6bbe-e706-79f8-e1b690982920@linaro.org>
+         <1528920447.48473.11.camel@intel.com>
+         <ac38f5d9-80d1-09f2-6f8e-c58085f9a32a@linaro.org>
+In-Reply-To: <ac38f5d9-80d1-09f2-6f8e-c58085f9a32a@linaro.org>
 Accept-Language: en-US
 Content-Language: en-US
-X-MS-Has-Attach: 
+X-MS-Has-Attach: yes
 X-MS-TNEF-Correlator: 
-msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-05-23T00:18:18.8931354Z;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
- Information Protection;
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
- Sensitivity=General
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=decui@microsoft.com; 
-x-originating-ip: [2001:4898:80e8:a:c9b:1056:d0e5:5bb1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;KL1P15301MB0086;7:9u7oyX30zPApoK7ci1Ris93VkWkCNfOQ+TkbIHqtH+M4lmwSeyzGrwm68pFZhct0nmY+jIUhsTlyqGpiKQUANygpCSlzmZzgIpMJEjJu9NBjPcJrKklFEK7fOiFpoR6P0oOLoAza+9HrK+F6cGVapC8Dy9GFdZKM394n12mHUJ7NHkzQj7eFqlq679drXcUlCMaJVH1zEpSvbY69W0/y8n0TgD9K8Eu1GKZ7wGwm0/lCkAQAk+kxKnC8hCB+11Pk
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 91012310-5a5e-4c75-5885-08d5d16cbf35
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7193020);SRVR:KL1P15301MB0086;
-x-ms-traffictypediagnostic: KL1P15301MB0086:
-x-microsoft-antispam-prvs: <KL1P15301MB0086604C3D51A7545DA633C7BF7E0@KL1P15301MB0086.APCP153.PROD.OUTLOOK.COM>
-x-exchange-antispam-report-test: UriScan:(28532068793085)(180628864354917)(89211679590171)(9452136761055)(211936372134217)(153496737603132)(198206253151910);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:KL1P15301MB0086;BCL:0;PCL:0;RULEID:;SRVR:KL1P15301MB0086;
-x-forefront-prvs: 07025866F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39850400004)(396003)(376002)(346002)(366004)(39380400002)(189003)(199004)(9686003)(53936002)(105586002)(8936002)(81156014)(81166006)(86612001)(7416002)(6246003)(5250100002)(8676002)(1511001)(4326008)(229853002)(55016002)(14454004)(68736007)(5660300001)(10090500001)(8990500004)(305945005)(6116002)(7736002)(6436002)(46003)(74316002)(106356001)(102836004)(316002)(54906003)(76176011)(99286004)(2906002)(7696005)(110136005)(25786009)(53546011)(3280700002)(86362001)(446003)(6506007)(22452003)(97736004)(476003)(575784001)(486006)(478600001)(59450400001)(33656002)(11346002)(2900100001)(186003)(10290500003)(3660700001)(491001);DIR:OUT;SFP:1102;SCL:1;SRVR:KL1P15301MB0086;H:KL1P15301MB0006.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microsoft.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: f3lBez3FWwMArhsjeCAAiG7DK4JMXRiluXUQF8mLlx8ZF9jeYVXdme6LXy0EMLDQ6oClEDgYQ3QCvFmiLotQP9vN58qb2gnIjpnE1aSBX4olrcZZOXLyDYzwbzkUgBr80vQvR6q5wCKAKuIWjj2vM3NyHlLXRbrT7kqu5Cajob/vjKiyka/S3vI5+wmj9fKJ
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-originating-ip: [10.54.75.31]
+Content-Type: multipart/signed; micalg=sha-1;
+        protocol="application/x-pkcs7-signature"; boundary="=-gX4Zuh829QgnFnFjlDWj"
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 91012310-5a5e-4c75-5885-08d5d16cbf35
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 20:32:13.2526
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1P15301MB0086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Dexuan Cui
-> Sent: Wednesday, June 6, 2018 17:15
-> To: Haiyang Zhang <haiyangz@microsoft.com>; Lorenzo Pieralisi
-> <lorenzo.pieralisi@arm.com>; Bjorn Helgaas <bhelgaas@google.com>;
-> linux-pci@vger.kernel.org; KY Srinivasan <kys@microsoft.com>; Stephen
-> Hemminger <sthemmin@microsoft.com>; olaf@aepfle.de;
-> apw@canonical.com; jasowang@redhat.com
-> Cc: linux-kernel@vger.kernel.org; driverdev-devel@linuxdriverproject.org;
-> vkuznets@redhat.com; marcelo.cerri@canonical.com
-> Subject: RE: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
-> hv_compose_msi_msg()
->=20
-> > From: Haiyang Zhang
-> > Sent: Friday, May 25, 2018 12:52
-> > To: Dexuan Cui <decui@microsoft.com>; Lorenzo Pieralisi
-> > <lorenzo.pieralisi@arm.com>; Bjorn Helgaas <bhelgaas@google.com>;
-> > linux-pci@vger.kernel.org; KY Srinivasan <kys@microsoft.com>; Stephen
-> > Hemminger <sthemmin@microsoft.com>; olaf@aepfle.de;
-> > apw@canonical.com; jasowang@redhat.com
-> > Cc: linux-kernel@vger.kernel.org; driverdev-devel@linuxdriverproject.or=
-g;
-> > vkuznets@redhat.com; marcelo.cerri@canonical.com
-> > Subject: RE: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
-> > hv_compose_msi_msg()
-> >
-> > > From: Dexuan Cui
-> > > Sent: Tuesday, May 22, 2018 8:18 PM
-> > > To: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>; Bjorn Helgaas
-> > > <bhelgaas@google.com>; linux-pci@vger.kernel.org; KY Srinivasan
-> > > <kys@microsoft.com>; Stephen Hemminger <sthemmin@microsoft.com>;
-> > > olaf@aepfle.de; apw@canonical.com; jasowang@redhat.com
-> > > Cc: linux-kernel@vger.kernel.org; driverdev-devel@linuxdriverproject.=
-org;
-> > > Haiyang Zhang <haiyangz@microsoft.com>; vkuznets@redhat.com;
-> > > marcelo.cerri@canonical.com
-> > > Subject: [PATCH] PCI: hv: Fix a __local_bh_enable_ip warning in
-> > > hv_compose_msi_msg()
-> > >
-> > >
-> > > Commit de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in
-> > hv_compose_msi_msg()")
-> > > uses local_bh_disable()/enable(), because hv_pci_onchannelcallback() =
-can
-> > also
-> > > run in tasklet context as the channel event callback.
-> > >
-> > > With CONFIG_PROVE_LOCKING=3Dy in the latest mainline, or old kernels =
-that
-> > > don't have commit f71b74bca637 ("irq/softirqs: Use lockdep to assert =
-IRQs
-> > are
-> > > disabled/enabled"), it turns out can we trigger a warning at the begi=
-nning
-> of
-> > > __local_bh_enable_ip(), because the upper layer irq code can call
-> > > hv_compose_msi_msg() with local irqs disabled.
-> > >
-> > > Let's fix the warning by switching to local_irq_save()/restore(). Thi=
-s is not an
-> > > issue because hv_pci_onchannelcallback() is not slow, and it not a ho=
-t path.
-> > >
-> > > Fixes: de0aa7b2f97d ("PCI: hv: Fix 2 hang issues in
-> hv_compose_msi_msg()")
-> > > Signed-off-by: Dexuan Cui <decui@microsoft.com>
-> > > Cc: <stable@vger.kernel.org>
-> > > Cc: Stephen Hemminger <sthemmin@microsoft.com>
-> > > Cc: K. Y. Srinivasan <kys@microsoft.com>
-> > > ---
-> >
-> > Reviewed-by: Haiyang Zhang <haiyangz@microsoft.com>
-> >
-> > Thanks you.
->=20
-> Hi Lorenzo,
->=20
-> Can I have your reply to this patch?
->=20
-> -- Dexuan
+--=-gX4Zuh829QgnFnFjlDWj
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-It looks Lorenzo's pci.git tree has not been updated for 3+ weeks.
-I guess Lorenzo may be on vacation.=20
+On Wed, 2018-06-13 at 22:19 +0200, Daniel Lezcano wrote:
+> On 13/06/2018 22:07, Pandruvada, Srinivas wrote:
+> > On Wed, 2018-06-13 at 22:00 +0200, Daniel Lezcano wrote:
+> > > On 13/06/2018 17:54, Pandruvada, Srinivas wrote:
+> > > > On Tue, 2018-06-12 at 14:00 +0200, Daniel Lezcano wrote:
+> > > > > Initially, the cpu_cooling device for ARM was changed by
+> > > > > adding a
+> > > > > new
+> > > > > policy inserting idle cycles. The intel_powerclamp driver
+> > > > > does a
+> > > > > similar action.
+> > > > >=20
+> > > > > Instead of implementing idle injections privately in the
+> > > > > cpu_cooling
+> > > > > device, move the idle injection code in a dedicated framework
+> > > > > and
+> > > > > give
+> > > > > the opportunity to other frameworks to make use of it.
+> > > > >=20
+> > > > > The framework relies on the smpboot kthreads which handles
+> > > > > via
+> > > > > its
+> > > > > main loop the common code for hotplugging and [un]parking.
+> > > > >=20
+> > > > > This code was previously tested with the cpu cooling device
+> > > > > and
+> > > > > went
+> > > > > through several iterations. It results now in split code and
+> > > > > API
+> > > > > exported in the header file. It was tested with the cpu
+> > > > > cooling
+> > > > > device
+> > > > > with success.
+> > > > >=20
+> > > >=20
+> > > > May be I have missed, but I don't see any use of powercap
+> > > > sysfs.
+> > > >=20
+> > > > We created powercap sys that user space is presented a common
+> > > > interface
+> > > > for power capping. The RAPL driver was also submitted as
+> > > > cooling
+> > > > device
+> > > > before, but suggestion was to create this powercap.
+> > > >=20
+> > > > So if powercap interface is not enough then may be we should
+> > > > enhance
+> > > > that.
+> > >=20
+> > > We are creating a framework for idle injection. This framework
+> > > can
+> > > then
+> > > be used by the cpu_cooling device, the power_clamp and in
+> > > addition a
+> > > power capping for ARM (if it makes sense).
+> >=20
+> > But in this case, why in drivers/powercap folder as this is another
+> > framework?
+>=20
+> I presented at OSPM 2nd the cpu idle cooling device. It is ARM
+> specific
+> but has some similarities with the power clamp driver.
+>=20
+> Some board come with power numbers defined in their DT and from there
+> we
+> are able to compute a targeted power by injecting idle cycles.
+>=20
+> As the idle injection allows to do also power capping, Rafael told me
+> to
+> move that to a framework (may be better say a component with exported
+> services or library) and put it in drivers/powercap.
+So Rafael wants it to be in powercap.
 
-@Bjorn, can this patch go through your tree?
-Should I resubmit it?
+--=-gX4Zuh829QgnFnFjlDWj
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
 
-Thanks,
--- Dexuan
+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
+aQGEV8ArjHXcotL/yLNh30JyB9sygYzIQadqyFvtvhUyiHwAh7Pf6Gl7Gsz0i/QSq7MK49JvgbUM
+F1TCZwc7AgMBAAGjggI9MIICOTAdBgNVHQ4EFgQUf6YLVqF1vjXfk2h4J2GzgJAOB/8wHwYDVR0j
+BBgwFoAUHmkqtNwo/kcYTiELP7ysES/wmPUwZQYDVR0fBF4wXDBaoFigVoZUaHR0cDovL3d3dy5p
+bnRlbC5jb20vcmVwb3NpdG9yeS9DUkwvSW50ZWwlMjBFeHRlcm5hbCUyMEJhc2ljJTIwSXNzdWlu
+ZyUyMENBJTIwNEEuY3JsMIGfBggrBgEFBQcBAQSBkjCBjzBpBggrBgEFBQcwAoZdaHR0cDovL3d3
+dy5pbnRlbC5jb20vcmVwb3NpdG9yeS9jZXJ0aWZpY2F0ZXMvSW50ZWwlMjBFeHRlcm5hbCUyMEJh
+c2ljJTIwSXNzdWluZyUyMENBJTIwNEEuY3J0MCIGCCsGAQUFBzABhhZodHRwOi8vb2NzcC5pbnRl
+bC5jb20vMAsGA1UdDwQEAwIHgDA8BgkrBgEEAYI3FQcELzAtBiUrBgEEAYI3FQiGw4x1hJnlUYP9
+gSiFjp9TgpHACWeB3r05lfBDAgFkAgEJMB8GA1UdJQQYMBYGCCsGAQUFBwMEBgorBgEEAYI3CgMM
+MCkGCSsGAQQBgjcVCgQcMBowCgYIKwYBBQUHAwQwDAYKKwYBBAGCNwoDDDBXBgNVHREEUDBOoC0G
+CisGAQQBgjcUAgOgHwwdc3Jpbml2YXMucGFuZHJ1dmFkYUBpbnRlbC5jb22BHXNyaW5pdmFzLnBh
+bmRydXZhZGFAaW50ZWwuY29tMA0GCSqGSIb3DQEBBQUAA4IBAQDDpWcY9zqtG5P0e1FRJpG/RPQ6
+p6sQJHZ5UwykMtYFqBJYOZn9B8koeLEhE4vOAh6v6fgVoCfOvwxJ57BUAdP3jvkbCaLz3r6nUHNr
+6w6KwnT9rHykdDjZsRUGs2yP+139qVqoXRHTOLfqvnAzcirjgf4Fz3JRPJZraRWrICBehqhYVfFH
+sxxBgOauQ+DTHjZARkomjmrATvlDpLMlN74L/BKZI4rl4R/BjSaLBzAKQnAN0nvWefpPzdeSYuxK
+XaN1xDzINPDnmShXSbQzee0h2CvEnIMtPQDM9DJACUi14Cc9y4o7DqRky4r1+XnksN2lKnu83l4E
+oSxCkDMhszkFMYICFzCCAhMCAQEwgZAweTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAkNBMRQwEgYD
+VQQHEwtTYW50YSBDbGFyYTEaMBgGA1UEChMRSW50ZWwgQ29ycG9yYXRpb24xKzApBgNVBAMTIklu
+dGVsIEV4dGVybmFsIEJhc2ljIElzc3VpbmcgQ0EgNEECEzMAAK0KIyEkTMbH5OYAAAAArQowCQYF
+Kw4DAhoFAKBdMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTE4MDYx
+MzIwMzI0OFowIwYJKoZIhvcNAQkEMRYEFDeX0wOkTDlrJLZfrm+T8hVqNXMcMA0GCSqGSIb3DQEB
+AQUABIIBALX/vN7hRcJ5Ehy9rOhAisjRdx0/UHt8KH6t8+OKbufbOzMBAWqnRhhVuqttr8VhtaH3
+k0PjRLcfww0GJWsBgcFti7RYJuYpmw+Zr8gySuVGuEyiYYegYY3FSf6HCfIUGyt0vBJG4dFloEi3
+w61up7n2Hz3aI1zLFABv7nYE6c40HwnPVlKHgGA4ZpOQuPB8RY1BvWpZ7VjuxELTyk3sWrZhz/qo
+NXlaLSKn0E+XEz7rA2tZVD4uZ6SAXM19zIf7VUnctTQlHSKKbAQSCF9Y4uK3xs/cOlbXwf1/E+A3
+6Jsz8mmpMVPE1NmoCp36AQfYfsXF2VNUBWUp+1mh1N5iHE0AAAAAAAA=
+
+
+--=-gX4Zuh829QgnFnFjlDWj--
