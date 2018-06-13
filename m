@@ -3,100 +3,172 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1A944C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:02:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1CF74C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC4B208B1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:02:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCC4B208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C52DE20660
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:03:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52DE20660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935230AbeFMBCk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:02:40 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:33980 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935200AbeFMBCg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:02:36 -0400
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5D0s5EO146261
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 21:02:36 -0400
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jjrjr9bn3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 21:02:36 -0400
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Tue, 12 Jun 2018 21:02:34 -0400
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 12 Jun 2018 21:02:33 -0400
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5D12WtE6684948
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 01:02:32 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6C979B2064;
-        Tue, 12 Jun 2018 21:02:30 -0400 (EDT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 5A503B205F;
-        Tue, 12 Jun 2018 21:02:30 -0400 (EDT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.189.144])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Tue, 12 Jun 2018 21:02:30 -0400 (EDT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id DFFAD16C99D5; Tue, 12 Jun 2018 18:04:27 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 18:04:27 -0700
-From:   "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     trondmy@hammerspace.com, NeilBrown <neilb@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [GIT PULL] Please pull NFS client changes for 4.18
-Reply-To: paulmck@linux.vnet.ibm.com
-References: <e5c90488937d14e9df81752a024be9d1e73ed398.camel@hammerspace.com>
- <CA+55aFxYMg+F9Jdi_25X-Qtt=7imqjQhLnjEyQXOQ6+eJvy83A@mail.gmail.com>
- <CA+55aFw+2+xCRAaMo8qgvZ7qNgRMo6D=WkwP7APQndG-y5b3dw@mail.gmail.com>
- <CA+55aFz3jmGST_cOB+qH6qZTFa5HJcw2JoeWxJEZdWgeO4=vNQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+55aFz3jmGST_cOB+qH6qZTFa5HJcw2JoeWxJEZdWgeO4=vNQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18061301-0072-0000-0000-0000036DDC9F
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009179; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01046125; UDB=6.00535742; IPR=6.00825103;
- MB=3.00021612; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 01:02:34
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061301-0073-0000-0000-000048587B53
-Message-Id: <20180613010427.GD3593@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-12_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=755 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806130009
+        id S935236AbeFMBDF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:03:05 -0400
+Received: from mga14.intel.com ([192.55.52.115]:64688 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935074AbeFMBBl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 21:01:41 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:35 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
+   d="scan'208";a="47283523"
+Received: from voyager.sc.intel.com ([10.3.52.149])
+  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:35 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
+        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        iommu@lists.linux-foundation.org
+Subject: [RFC PATCH 19/23] watchdog/hardlockup: Make arch_touch_nmi_watchdog() to hpet-based implementation
+Date:   Tue, 12 Jun 2018 17:57:39 -0700
+Message-Id: <1528851463-21140-20-git-send-email-ricardo.neri-calderon@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 11:08:31AM -0700, Linus Torvalds wrote:
-> Final note (for now) on this: I've merged the nfs code, but I really
-> am obviously not happy with these crazy random ad-hoc
-> cursor-not-cursor list games.
+CPU architectures that have an NMI watchdog use arch_touch_nmi_watchdog()
+to briefly ignore the hardlockup detector. If the architecture does not
+have an NMI watchdog, one can be constructed using a source of non-
+maskable interrupts. In this case, arch_touch_nmi_watchdog() is common
+to any underlying hardware resource used to drive the detector and needs
+to be available to other kernel subsystems if hardware different from perf
+drives the detector.
 
-We did review this one, and Neil did make requested changes to the comment
-header and documentation.  However, as you say, I will push back harder
-on future RCU list traversal macros.
+There exists perf-based and HPET-based implementations. Make it available
+to the latter.
 
-							Thanx, Paul
+For clarity, wrap this function in a separate preprocessor conditional
+from functions which are truly specific to the perf-based implementation.
+
+Cc: Ashok Raj <ashok.raj@intel.com>
+Cc: Andi Kleen <andi.kleen@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Jacob Pan <jacob.jun.pan@intel.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Don Zickus <dzickus@redhat.com>
+Cc: Nicholas Piggin <npiggin@gmail.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Babu Moger <babu.moger@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Colin Ian King <colin.king@canonical.com>
+Cc: Byungchul Park <byungchul.park@lge.com>
+Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Christoffer Dall <cdall@linaro.org>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
+Cc: x86@kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: iommu@lists.linux-foundation.org
+Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+---
+ include/linux/nmi.h | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/nmi.h b/include/linux/nmi.h
+index 23e20d2..8b6b814 100644
+--- a/include/linux/nmi.h
++++ b/include/linux/nmi.h
+@@ -89,16 +89,22 @@ static inline void hardlockup_detector_disable(void) {}
+ # define NMI_WATCHDOG_SYSCTL_PERM	0444
+ #endif
+ 
+-#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
++#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF) || \
++    defined(CONFIG_HARDLOCKUP_DETECTOR_HPET)
+ extern void arch_touch_nmi_watchdog(void);
++#else
++# if !defined(CONFIG_HAVE_NMI_WATCHDOG)
++static inline void arch_touch_nmi_watchdog(void) {}
++# endif
++#endif
++
++#if defined(CONFIG_HARDLOCKUP_DETECTOR_PERF)
+ extern void hardlockup_detector_perf_stop(void);
+ extern void hardlockup_detector_perf_restart(void);
+ #else
+ static inline void hardlockup_detector_perf_stop(void) { }
+ static inline void hardlockup_detector_perf_restart(void) { }
+-# if !defined(CONFIG_HAVE_NMI_WATCHDOG)
+-static inline void arch_touch_nmi_watchdog(void) {}
+-# endif
++
+ #endif
+ 
+ /**
+-- 
+2.7.4
 
