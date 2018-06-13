@@ -2,139 +2,81 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D7784C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:37:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8BD28C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 964142086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:37:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964142086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B18E2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:37:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B18E2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935450AbeFMQhZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:37:25 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:1552 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935060AbeFMQgR (ORCPT
+        id S935473AbeFMQhn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:37:43 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:47983 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935042AbeFMQhl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:36:17 -0400
-X-IronPort-AV: E=Sophos;i="5.51,219,1526367600"; 
-   d="scan'208";a="15910924"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Jun 2018 09:36:16 -0700
-Received: from m19893.microchip.com (10.10.76.4) by
- chn-sv-exch07.mchp-main.com (10.10.76.108) with Microsoft SMTP Server id
- 14.3.352.0; Wed, 13 Jun 2018 09:36:15 -0700
-From:   Radu Pirea <radu.pirea@microchip.com>
-To:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
-CC:     <linux-spi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>,
-        Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v7 2/6] dt-bindings: add binding for atmel-usart in SPI mode
-Date:   Wed, 13 Jun 2018 19:36:17 +0300
-Message-ID: <20180613163621.23995-3-radu.pirea@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180613163621.23995-1-radu.pirea@microchip.com>
-References: <20180613163621.23995-1-radu.pirea@microchip.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        Wed, 13 Jun 2018 12:37:41 -0400
+Received: from [148.252.241.226] (helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fT8m8-0003Gi-5P; Wed, 13 Jun 2018 17:37:36 +0100
+Message-ID: <1528907855.2289.157.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 110/268] nvme-pci: Fix nvme queue cleanup if IRQ
+ setup fails
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Keith Busch <keith.busch@intel.com>
+Cc:     Jianchao Wang <jianchao.w.wang@oracle.com>, stable@vger.kernel.org,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 13 Jun 2018 17:37:35 +0100
+In-Reply-To: <20180613163007.GD5574@localhost.localdomain>
+References: <20180528100202.045206534@linuxfoundation.org>
+         <20180528100214.621806271@linuxfoundation.org>
+         <1528906474.2289.155.camel@codethink.co.uk>
+         <20180613163007.GD5574@localhost.localdomain>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the bindings for serial from serial/atmel-usart.txt to
-mfd/atmel-usart.txt and adds bindings for USART in SPI mode.
+On Wed, 2018-06-13 at 10:30 -0600, Keith Busch wrote:
+> On Wed, Jun 13, 2018 at 05:14:34PM +0100, Ben Hutchings wrote:
+> > On Mon, 2018-05-28 at 12:01 +0200, Greg Kroah-Hartman wrote:
+> > >  	result = adapter_alloc_sq(dev, qid, nvmeq);
+> > >  	if (result < 0)
+> > > @@ -1597,9 +1597,12 @@ static int nvme_create_queue(struct nvme
+> > >  	return result;
+> > >  
+> > >   release_sq:
+> > > +	dev->online_queues--;
+> > 
+> > This addition looks wrong.  dev->online_queues is incremented by
+> > nvme_init_queue(), but this function only calls that at a point where
+> > it is sure to succeed.  So why would a failure path need to decrement
+> > it?
+> 
+> Thank you very much the catching that. This particular patch is indeed
+> not correct without the following:
+> 
+>   161b8be2bd6ab ("nvme-pci: initialize queue memory before interrupts")
 
-Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../bindings/{serial => mfd}/atmel-usart.txt  | 25 +++++++++++++++++--
- include/dt-bindings/mfd/at91-usart.h          | 17 +++++++++++++
- 2 files changed, 40 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
- create mode 100644 include/dt-bindings/mfd/at91-usart.h
+Oh, now I see.  Do you think that commit is suitable for stable
+branches?
 
-diff --git a/Documentation/devicetree/bindings/serial/atmel-usart.txt b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-similarity index 76%
-rename from Documentation/devicetree/bindings/serial/atmel-usart.txt
-rename to Documentation/devicetree/bindings/mfd/atmel-usart.txt
-index 7c0d6b2f53e4..3b9e18642c3b 100644
---- a/Documentation/devicetree/bindings/serial/atmel-usart.txt
-+++ b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-@@ -1,6 +1,6 @@
- * Atmel Universal Synchronous Asynchronous Receiver/Transmitter (USART)
- 
--Required properties:
-+Required properties for USART:
- - compatible: Should be "atmel,<chip>-usart" or "atmel,<chip>-dbgu"
-   The compatible <chip> indicated will be the first SoC to support an
-   additional mode or an USART new feature.
-@@ -11,7 +11,13 @@ Required properties:
- 	Required elements: "usart"
- - clocks: phandles to input clocks.
- 
--Optional properties:
-+Required properties for USART in SPI mode:
-+- #size-cells      : Must be <0>
-+- #address-cells   : Must be <1>
-+- cs-gpios: chipselects (internal cs not supported)
-+- atmel,usart-mode : Must be <USART_MODE_SPI> (found in dt-bindings/mfd/at91-usart.h)
-+
-+Optional properties in serial mode:
- - atmel,use-dma-rx: use of PDC or DMA for receiving data
- - atmel,use-dma-tx: use of PDC or DMA for transmitting data
- - {rts,cts,dtr,dsr,rng,dcd}-gpios: specify a GPIO for RTS/CTS/DTR/DSR/RI/DCD line respectively.
-@@ -62,3 +68,18 @@ Example:
- 		dma-names = "tx", "rx";
- 		atmel,fifo-size = <32>;
- 	};
-+
-+- SPI mode:
-+	#include <dt-bindings/mfd/at91-usart.h>
-+
-+	spi0: spi@f001c000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "atmel,at91rm9200-usart", "atmel,at91sam9260-usart";
-+		atmel,usart-mode = <USART_MODE_SPI>;
-+		reg = <0xf001c000 0x100>;
-+		interrupts = <12 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&usart0_clk>;
-+		clock-names = "usart";
-+		cs-gpios = <&pioB 3 0>;
-+	};
-diff --git a/include/dt-bindings/mfd/at91-usart.h b/include/dt-bindings/mfd/at91-usart.h
-new file mode 100644
-index 000000000000..2de5bc312e1e
---- /dev/null
-+++ b/include/dt-bindings/mfd/at91-usart.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides macros for AT91 USART DT bindings.
-+ *
-+ * Copyright (C) 2018 Microchip Technology
-+ *
-+ * Author: Radu Pirea <radu.pirea@microchip.com>
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_AT91_USART_H__
-+#define __DT_BINDINGS_AT91_USART_H__
-+
-+#define AT91_USART_MODE_SERIAL	0
-+#define AT91_USART_MODE_SPI	1
-+
-+#endif /* __DT_BINDINGS_AT91_USART_H__ */
+Ben.
+
 -- 
-2.17.1
-
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
