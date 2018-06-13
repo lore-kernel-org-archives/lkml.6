@@ -4,175 +4,126 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0C6F6C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:03:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ED8AFC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB114208D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:03:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FB58208D9
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 22:03:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="vkmWgiL9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB114208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ejuzm6WS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FB58208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935517AbeFMWDg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 18:03:36 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:52280 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754498AbeFMWDe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 18:03:34 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5DLxFut174650;
-        Wed, 13 Jun 2018 22:03:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=TWzL6CsfT0wMudeF+fU6H1b9sPpU4Jbi8P00GUhfjOU=;
- b=vkmWgiL9TPM/S9jQV7WXnvmlP/kKXceWK+KHxhgmlK+EYa0xi5kaG3MOz+yUU1kqfTHT
- oZrL2vIzkN0j2i8Nbn6cVCqzZwBddpdq5ga2KCTWn6PKb7nO5lvfFI58JgAA+xltf0Ww
- AVigJ2w2TUUBcAtSTyE+OQYRVFsrtIDroa0C/D7A42JGDf8m6PPdwUKVaJDn73oCzRrv
- m2cfyIL7C09lOi9BW1tvH6QH6ZFHXnpA1UZEWh10XJ5aDYw0j2dGgmVLnLtfFPEgje9J
- QQD/5pycrRA+KXjJbx+8LgVSbR7bHNSlGnyvuxg1ejD+iBoR58RtvAzrGVVzybvf3x+l aQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2jk0xqtjbg-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 22:03:23 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5DM3M5o005548
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 22:03:22 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5DM3LOf027651;
-        Wed, 13 Jun 2018 22:03:21 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jun 2018 15:03:21 -0700
-Subject: Re: [PATCH v3 9/9] xen/gntdev: Implement dma-buf import functionality
-To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com
-References: <20180612134200.17456-1-andr2000@gmail.com>
- <20180612134200.17456-10-andr2000@gmail.com>
- <b08fdccf-2f1b-a902-f00b-a4cecf44a1b1@oracle.com>
- <cca7b9dd-a0c6-8052-c294-9e6c5d65e9eb@epam.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <0f1d87e5-823e-8b51-4ee5-029cc94eff99@oracle.com>
-Date:   Wed, 13 Jun 2018 18:03:07 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <cca7b9dd-a0c6-8052-c294-9e6c5d65e9eb@epam.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+        id S935761AbeFMWDm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 18:03:42 -0400
+Received: from mail-eopbgr690112.outbound.protection.outlook.com ([40.107.69.112]:23814
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935524AbeFMWDi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 18:03:38 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=k+GurbtQbXzYDcGLjk7LUqycmuhzNAOSsGYtJ2Bifos=;
+ b=ejuzm6WS49wHyQncyFPek9KK0vPGwehtmkjJWLh9dxrOC8beIN4SwYbOeiwGvOMgHMKEPTbE+TnfcewH/IEaRwEpRipPzip9GpjG33P7hNX0YFWx1yfW+6qy0bqOO4iO6bgudp9Zqle+0dXV+qNgPFxpJPZ0yyMCcRbkNDhmGXk=
+Received: from SN6PR2101MB1135.namprd21.prod.outlook.com (52.132.114.24) by
+ SN6PR2101MB0909.namprd21.prod.outlook.com (52.132.117.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.9; Wed, 13 Jun 2018 22:03:34 +0000
+Received: from SN6PR2101MB1135.namprd21.prod.outlook.com
+ ([fe80::a8d3:afc9:87ec:813a]) by SN6PR2101MB1135.namprd21.prod.outlook.com
+ ([fe80::a8d3:afc9:87ec:813a%7]) with mapi id 15.20.0884.010; Wed, 13 Jun 2018
+ 22:03:34 +0000
+From:   Yidong Ren <Yidong.Ren@microsoft.com>
+To:     Stephen Hemminger <stephen@networkplumber.org>,
+        Yidong Ren <yidren@linuxonhyperv.com>
+CC:     Stephen Hemminger <sthemmin@microsoft.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devel@linuxdriverproject.org" <devel@linuxdriverproject.org>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: RE: [PATCH v2] hv_netvsc: Add per-cpu ethtool stats for netvsc
+Thread-Topic: [PATCH v2] hv_netvsc: Add per-cpu ethtool stats for netvsc
+Thread-Index: AQHUA03xJw7BTbCmTka+qtF/PXCtsKReudiAgAAAajA=
+Date:   Wed, 13 Jun 2018 22:03:34 +0000
+Message-ID: <SN6PR2101MB11353820325BBF4712076573847E0@SN6PR2101MB1135.namprd21.prod.outlook.com>
+References: <20180613193608.444-1-yidren@linuxonhyperv.com>
+ <20180613144813.708f26bf@xeon-e3>
+In-Reply-To: <20180613144813.708f26bf@xeon-e3>
+Accept-Language: en-US
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8923 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=627
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130234
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=yidren@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2018-06-13T22:03:32.1325252Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic;
+ Sensitivity=General
+x-originating-ip: [131.107.160.111]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR2101MB0909;7:cUdU+xauKKalm+EKXBM//Dt1RXPh5oM+mtKkcfAfT12Q+Tn7AHTH6guLpJxrBTYTo5xg2JyxEXH8Nrf5T4wdl25D/RBGpTVbmgol/z8zIfwnNSskBVZ4VlZNCzb/RAJzMvGhskyQQRNEu6I4+OGNkuOGiXudLDmpTHCXqXLCng2Rvyp9ocam+3U/tsYoMff9JCrsO46u9FSrnCqlhpOwFwK7M1KCC3RsBJKZgzTK7sKg+UF0U6WPM++2UF0EO+ta
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+X-MS-Office365-Filtering-Correlation-Id: a115ec0b-4984-450f-b3ac-08d5d1798214
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7193020);SRVR:SN6PR2101MB0909;
+x-ms-traffictypediagnostic: SN6PR2101MB0909:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Yidong.Ren@microsoft.com; 
+x-o365eop-header: O365_EOP: Allow for Unauthenticated Relay
+x-o365ent-eop-header: Message processed by -  O365_ENT: Allow from ranges
+ (Engineering ONLY)
+x-microsoft-antispam-prvs: <SN6PR2101MB0909D1069484E1BFB6C3C0D5847E0@SN6PR2101MB0909.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231254)(2018427008)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:SN6PR2101MB0909;BCL:0;PCL:0;RULEID:;SRVR:SN6PR2101MB0909;
+x-forefront-prvs: 07025866F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39380400002)(376002)(396003)(366004)(39860400002)(199004)(189003)(74316002)(486006)(305945005)(7736002)(102836004)(5660300001)(25786009)(229853002)(4326008)(6506007)(5250100002)(7696005)(26005)(6246003)(105586002)(66066001)(97736004)(186003)(11346002)(446003)(86612001)(8990500004)(76176011)(86362001)(476003)(316002)(2906002)(8936002)(99286004)(10090500001)(3280700002)(33656002)(478600001)(6436002)(14454004)(55016002)(81166006)(54906003)(110136005)(10290500003)(81156014)(53936002)(3846002)(106356001)(72206003)(8676002)(68736007)(22452003)(3660700001)(9686003)(6116002)(2900100001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR2101MB0909;H:SN6PR2101MB1135.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: QXLIk0MtvT51nN1u8Rf6FSt6sAc2Oi1yJXWDVaqrQYOAHLOrNq6qjF6hZDd/bhh/JpDJxd0M0S2x3OZHFBkGUbKx+9IO3zXlJXclwrDJtFmVfrbhMGu68p3DnGc+toiSYARnLyIyIE6jnhjEAnw/VVkByPb43C4N25v79vUSwJgoIss9uEGPp43ssavat3Vc
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a115ec0b-4984-450f-b3ac-08d5d1798214
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 22:03:34.5105
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR2101MB0909
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/13/2018 05:04 AM, Oleksandr Andrushchenko wrote:
-> On 06/13/2018 06:14 AM, Boris Ostrovsky wrote:
->>
->>
->> On 06/12/2018 09:42 AM, Oleksandr Andrushchenko wrote:
->>
->>>   int gntdev_dmabuf_imp_release(struct gntdev_dmabuf_priv *priv, u32
->>> fd)
->>>   {
->>> -    return -EINVAL;
->>> +    struct gntdev_dmabuf *gntdev_dmabuf;
->>> +    struct dma_buf_attachment *attach;
->>> +    struct dma_buf *dma_buf;
->>> +
->>> +    gntdev_dmabuf = dmabuf_imp_find_unlink(priv, fd);
->>> +    if (IS_ERR(gntdev_dmabuf))
->>> +        return PTR_ERR(gntdev_dmabuf);
->>> +
->>> +    pr_debug("Releasing DMA buffer with fd %d\n", fd);
->>> +
->>> +    attach = gntdev_dmabuf->u.imp.attach;
->>> +
->>> +    if (gntdev_dmabuf->u.imp.sgt)
->>> +        dma_buf_unmap_attachment(attach, gntdev_dmabuf->u.imp.sgt,
->>> +                     DMA_BIDIRECTIONAL);
->>> +    dma_buf = attach->dmabuf;
->>> +    dma_buf_detach(attach->dmabuf, attach);
->>> +    dma_buf_put(dma_buf);
->>> +
->>> +    dmabuf_imp_end_foreign_access(gntdev_dmabuf->u.imp.refs,
->>> +                      gntdev_dmabuf->nr_pages);
->>
->>
->>
->> Should you first end foreign access, before doing anything?
->>
-> I am rolling back in reverse order here, so I think we first need
-> to finish local activities with the buffer and then end foreign
-> access.
+> From: devel <driverdev-devel-bounces@linuxdriverproject.org> On Behalf
+> Of Stephen Hemminger
+> > +/* statistics per queue (rx/tx packets/bytes) */ #define
+> > +NETVSC_PCPU_STATS_LEN (num_present_cpus() *
+> ARRAY_SIZE(pcpu_stats))
+>=20
+> Even though Hyper-V/Azure does not support hot plug cpu's it might be
+> better to num_cpu_possible to avoid any possible future surprises.
 
-Looking at gntdev_dmabuf_imp_to_refs(), the order is
-    dmabuf_imp_alloc_storage()
-    dma_buf_attach()
-    dma_buf_map_attachment()
-    dmabuf_imp_grant_foreign_access()
+That will create a very long output (num_cpu_possible =3D 128 on my machine=
+) for ethtool,
+While doesn't provide additional info.
+num_present_cpus() would cause problem only if someone removed cpu=20
+between netvsc_get_sset_count() and netvsc_get_strings() and netvsc_get_eth=
+tool_stats().=20
 
-Or was I looking at wrong place?
-
--boris
+An alternative way could be: Check all stats, and only output if not zero.=
+=20
+This need to be done in two pass. First pass to get the correct count, seco=
+nd pass to print the number.
+Is there an elegant way to do this?=20
