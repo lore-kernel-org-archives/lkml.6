@@ -1,177 +1,157 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2BD20C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:51:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 47CD1C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFAC0208BA
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:51:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFAC0208BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0722820660
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:51:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0722820660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754552AbeFMHvE (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:51:04 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:35773 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754495AbeFMHvC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:51:02 -0400
-Received: by mail-it0-f70.google.com with SMTP id k18-v6so1831051itb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 00:51:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=RnzQKRQmFgM7THym9N3SG7ATiv5ZtfNTrCX7t8Ljx08=;
-        b=XzYzlQ+w2XgHV+wfes9qOyvSFItFcSZmVTaVd0sOsaEmmJElSO7Vtys69QOpAJjBAy
-         17D1HNSYSLBWhpuZ/vQ0IUYueXatuyZawu3f26lgTDwMGAUdSl54lbA/Z4X7HW16Zszl
-         j15/b3dLoBj5zqMBQuz/SNp2tpmuBOj23T2rpF+n9EgjYqYDs0Vxx6Miv//mFXCabR2Y
-         mGwdy6/Fc0LSj/ZXd/T7nV6s4vFrEpAMRNHTOcECyiNGVySe6ezzM4Hsa5RxybzN+oM6
-         MuFlxecLuUrqg46QymTTXyuKdPX9dAx6leTd35TWUISKVoUk5avLyI3nNagbEBiU2zfV
-         Jj1A==
-X-Gm-Message-State: APt69E3fhi/pDjsQy1Z0NxDSfPAQGx6wVT09xZtO7Ujezm8slfiKrzi8
-        Bw4Bfpcy3ec1RepdFoyXqs68X4QrB8yKB8SkhM7wqMIxoVPP
-X-Google-Smtp-Source: ADUXVKJLi5SeA+e54ZnxC7KYCE6/WQ5o7swxRIqu3eNIhK51qSKFH8beCodT7OoQyx5ONO72SpGH7dwWlOHj1OJQ5Pbqp6/wT2Py
+        id S934464AbeFMHv3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:51:29 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41034 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754469AbeFMHv1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:51:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 1C3CCACB1;
+        Wed, 13 Jun 2018 07:51:26 +0000 (UTC)
+Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
+ MLOCK_ONFAULT
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Jason Baron <jbaron@akamai.com>, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-api@vger.kernel.org, emunson@mgebm.net
+References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
+ <20180611072005.GC13364@dhcp22.suse.cz>
+ <4c4de46d-c55a-99a8-469f-e1e634fb8525@akamai.com>
+ <20180611150330.GQ13364@dhcp22.suse.cz>
+ <775adf2d-140c-1460-857f-2de7b24bafe7@akamai.com>
+ <20180612074646.GS13364@dhcp22.suse.cz>
+ <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
+ <0daccb7c-f642-c5ce-ca7a-3b3e69025a1e@suse.cz>
+ <20180613071552.GD13364@dhcp22.suse.cz>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Openpgp: preference=signencrypt
+Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSFWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmNvbT7CwZcEEwEKAEECGwMFCwkIBwMFFQoJCAsFFgIDAQAC
+ HgECF4ACGQEWIQSpQNQ0mSwujpkQPVAiT6fnzIKmZAUCWi/zTwUJBbOLuQAKCRAiT6fnzIKm
+ ZIpED/4jRN/6LKZZIT4R2xoou0nJkBGVA3nfb+mUMgi3uwn/zC+o6jjc3ShmP0LQ0cdeuSt/
+ t2ytstnuARTFVqZT4/IYzZgBsLM8ODFY5vGfPw00tsZMIfFuVPQX3xs0XgLEHw7/1ZCVyJVr
+ mTzYmV3JruwhMdUvIzwoZ/LXjPiEx1MRdUQYHAWwUfsl8lUZeu2QShL3KubR1eH6lUWN2M7t
+ VcokLsnGg4LTajZzZfq2NqCKEQMY3JkAmOu/ooPTrfHCJYMF/5dpi8YF1CkQF/PVbnYbPUuh
+ dRM0m3NzPtn5DdyfFltJ7fobGR039+zoCo6dFF9fPltwcyLlt1gaItfX5yNbOjX3aJSHY2Vc
+ A5T+XAVC2sCwj0lHvgGDz/dTsMM9Ob/6rRJANlJPRWGYk3WVWnbgW8UejCWtn1FkiY/L/4qJ
+ UsqkId8NkkVdVAenCcHQmOGjRQYTpe6Cf4aQ4HGNDeWEm3H8Uq9vmHhXXcPLkxBLRbGDSHyq
+ vUBVaK+dAwAsXn/5PlGxw1cWtur1ep7RDgG3vVQDhIOpAXAg6HULjcbWpBEFaoH720oyGmO5
+ kV+yHciYO3nPzz/CZJzP5Ki7Q1zqBb/U6gib2at5Ycvews+vTueYO+rOb9sfD8BFTK386LUK
+ uce7E38owtgo/V2GV4LMWqVOy1xtCB6OAUfnGDU2EM7ATQRbGTU1AQgAn0H6UrFiWcovkh6E
+ XVcl+SeqyO6JHOPm+e9Wu0Vw+VIUvXZVUVVQLa1PQDUi6j00ChlcR66g9/V0sPIcSutacPKf
+ dKYOBvzd4rlhL8rfrdEsQw5ApZxrA8kYZVMhFmBRKAa6wos25moTlMKpCWzTH84+WO5+ziCT
+ sTUZASAToz3RdunTD+vQcHj0GqNTPAHK63sfbAB2I0BslZkXkY1RLb/YhuA6E7JyEd2pilZO
+ rIuBGl/5q2qSakgnAVFWFBR/DO27JuAksYnq+aH8vI0xGvwn75KqSk4UzAkDzWSmO4ZHuahK
+ tQgZNsMYV+PGayRBX9b9zbldzopoLBdqHc4njQARAQABwsF8BBgBCgAmFiEEqUDUNJksLo6Z
+ ED1QIk+n58yCpmQFAlsZNTUCGwwFCQPCZwAACgkQIk+n58yCpmQ83g/9Frg1sRMdGPn98zV+
+ O2eC3h0p5f/oxxQ8MhG5znwHoW4JDG2TuxfcQuz7X7Dd5JWscjlw4VFJ2DD+IrDAGLHwPhCr
+ RyfKalnrbYokvbClM9EuU1oUuh7k+Sg5ECNXEsamW9AiWGCaKWNDdHre3Lf4xl+RJWxghOVW
+ RiUdpLA/a3yDvJNVr6rxkDHQ1P24ZZz/VKDyP+6g8aty2aWEU0YFNjI+rqYZb2OppDx6fdma
+ YnLDcIfDFnkVlDmpznnGCyEqLLyMS3GH52AH13zMT9L9QYgT303+r6QQpKBIxAwn8Jg8dAlV
+ OLhgeHXKr+pOQdFf6iu2sXlUR4MkO/5KWM1K0jFR2ug8Pb3aKOhowVMBT64G0TXhQ/kX4tZ2
+ ZF0QZLUCHU3Cigvbu4AWWVMNDEOGD/4sn9OoHxm6J04jLUHFUpFKDcjab4NRNWoHLsuLGjve
+ Gdbr2RKO2oJ5qZj81K7os0/5vTAA4qHDP2EETAQcunTn6aPlkUnJ8aw6I1Rwyg7/XsU7gQHF
+ IM/cUMuWWm7OUUPtJeR8loxZiZciU7SMvN1/B9ycPMFs/A6EEzyG+2zKryWry8k7G/pcPrFx
+ O2PkDPy3YmN1RfpIX2HEmnCEFTTCsKgYORangFu/qOcXvM83N+2viXxG4mjLAMiIml1o2lKV
+ cqmP8roqufIAj+Ohhzs=
+Message-ID: <5eb9a018-d5ac-5732-04f1-222c343b840a@suse.cz>
+Date:   Wed, 13 Jun 2018 09:51:23 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b744:: with SMTP id h65-v6mr1633586iof.110.1528876262076;
- Wed, 13 Jun 2018 00:51:02 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 00:51:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000081bd9d056e813e48@google.com>
-Subject: KASAN: out-of-bounds Read in rds_cong_queue_updates (2)
-From:   syzbot <syzbot+287843ad8a4d2870e538@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <20180613071552.GD13364@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 06/13/2018 09:15 AM, Michal Hocko wrote:
+> On Wed 13-06-18 08:32:19, Vlastimil Babka wrote:
+>> On 06/12/2018 04:11 PM, Jason Baron wrote:
+>>>
+>>>
+>>> On 06/12/2018 03:46 AM, Michal Hocko wrote:
+>>>> On Mon 11-06-18 12:23:58, Jason Baron wrote:
+>>>>> On 06/11/2018 11:03 AM, Michal Hocko wrote:
+>>>>>> So can we start discussing whether we want to allow MADV_DONTNEED on
+>>>>>> mlocked areas and what downsides it might have? Sure it would turn the
+>>>>>> strong mlock guarantee to have the whole vma resident but is this
+>>>>>> acceptable for something that is an explicit request from the owner of
+>>>>>> the memory?
+>>>>>>
+>>>>>
+>>>>> If its being explicity requested by the owner it makes sense to me. I
+>>>>> guess there could be a concern about this breaking some userspace that
+>>>>> relied on MADV_DONTNEED not freeing locked memory?
+>>>>
+>>>> Yes, this is always the fear when changing user visible behavior.  I can
+>>>> imagine that a userspace allocator calling MADV_DONTNEED on free could
+>>>> break. The same would apply to MLOCK_ONFAULT/MCL_ONFAULT though. We
+>>>> have the new flag much shorter so the probability is smaller but the
+>>>> problem is very same. So I _think_ we should treat both the same because
+>>>> semantically they are indistinguishable from the MADV_DONTNEED POV. Both
+>>>> remove faulted and mlocked pages. Mlock, once applied, should guarantee
+>>>> no later major fault and MADV_DONTNEED breaks that obviously.
+>>
+>> I think more concerning than guaranteeing no later major fault is
+>> possible data loss, e.g. replacing data with zero-filled pages.
+> 
+> But MADV_DONTNEED is an explicit call for data loss. Or do I miss your
+> point?
 
-syzbot found the following crash on:
+My point is that if somebody is relying on MADV_DONTNEED not affecting
+mlocked pages, the consequences will be unexpected data loss, not just
+extra page faults.
 
-HEAD commit:    0adb32858b0b Linux 4.16
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=138f2d0b800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=df0c336cc3b55d45
-dashboard link: https://syzkaller.appspot.com/bug?extid=287843ad8a4d2870e538
-compiler:       gcc (GCC) 7.1.1 20170620
+>> The madvise manpage is also quite specific about not allowing
+>> MADV_DONTNEED and MADV_FREE for locked pages.
+> 
+> Yeah, but that seems to describe the state of the art rather than
+> explain why.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Right, but as it's explicitly described there, it makes it more likely
+that somebody is relying on it.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+287843ad8a4d2870e538@syzkaller.appspotmail.com
+>> So I don't think we should risk changing that for all mlocked pages.
+>> Maybe we can risk MCL_ONFAULT, since it's relatively new and has few users?
+> 
+> That is what Jason wanted but I argued that the two are the same from
+> MADV_DONTNEED point of view. I do not see how treating them differently
+> would be less confusing or error prone. It's new so we can make it
+> behave differently is certainly not an argument.
 
-==================================================================
-BUG: KASAN: out-of-bounds in __read_once_size include/linux/compiler.h:188  
-[inline]
-BUG: KASAN: out-of-bounds in atomic_read arch/x86/include/asm/atomic.h:27  
-[inline]
-BUG: KASAN: out-of-bounds in refcount_read include/linux/refcount.h:42  
-[inline]
-BUG: KASAN: out-of-bounds in check_net include/net/net_namespace.h:228  
-[inline]
-BUG: KASAN: out-of-bounds in rds_destroy_pending net/rds/rds.h:868 [inline]
-BUG: KASAN: out-of-bounds in rds_cong_queue_updates+0x4d3/0x4f0  
-net/rds/cong.c:226
-Read of size 4 at addr ffff88018d7f2204 by task kworker/u4:6/10561
-
-CPU: 1 PID: 10561 Comm: kworker/u4:6 Not tainted 4.16.0+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: krdsd rds_send_worker
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-kernel msg: ebtables bug: please report to author: Wrong len argument
-  print_address_description+0x73/0x250 mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report+0x23c/0x360 mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  __read_once_size include/linux/compiler.h:188 [inline]
-  atomic_read arch/x86/include/asm/atomic.h:27 [inline]
-  refcount_read include/linux/refcount.h:42 [inline]
-  check_net include/net/net_namespace.h:228 [inline]
-  rds_destroy_pending net/rds/rds.h:868 [inline]
-  rds_cong_queue_updates+0x4d3/0x4f0 net/rds/cong.c:226
-  rds_recv_rcvbuf_delta.part.2+0x289/0x320 net/rds/recv.c:118
-  rds_recv_rcvbuf_delta net/rds/recv.c:377 [inline]
-  rds_recv_incoming+0xeb4/0x11d0 net/rds/recv.c:377
-  rds_loop_xmit+0x149/0x320 net/rds/loop.c:82
-  rds_send_xmit+0xbcd/0x26b0 net/rds/send.c:355
-  rds_send_worker+0x115/0x2a0 net/rds/threads.c:199
-  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
-  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-
-The buggy address belongs to the page:
-page:ffffea000635fc80 count:3 mapcount:2 mapping:0000000000000000 index:0x0
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 0000000000000000 0000000000000000 0000000300000001
-raw: dead000000000100 dead000000000200 0000000000000000 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88018d7f2100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff88018d7f2180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff88018d7f2200: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-                       ^
-  ffff88018d7f2280: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff88018d7f2300: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-Kernel panic - not syncing: panic_on_warn set ...
-
-CPU: 1 PID: 10561 Comm: kworker/u4:6 Tainted: G    B            4.16.0+ #10
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Workqueue: krdsd rds_send_worker
-Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x194/0x24d lib/dump_stack.c:53
-  panic+0x1e4/0x41c kernel/panic.c:183
-  kasan_end_report+0x50/0x50 mm/kasan/report.c:180
-  kasan_report_error mm/kasan/report.c:359 [inline]
-  kasan_report+0x149/0x360 mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  __read_once_size include/linux/compiler.h:188 [inline]
-  atomic_read arch/x86/include/asm/atomic.h:27 [inline]
-  refcount_read include/linux/refcount.h:42 [inline]
-  check_net include/net/net_namespace.h:228 [inline]
-  rds_destroy_pending net/rds/rds.h:868 [inline]
-  rds_cong_queue_updates+0x4d3/0x4f0 net/rds/cong.c:226
-  rds_recv_rcvbuf_delta.part.2+0x289/0x320 net/rds/recv.c:118
-  rds_recv_rcvbuf_delta net/rds/recv.c:377 [inline]
-  rds_recv_incoming+0xeb4/0x11d0 net/rds/recv.c:377
-  rds_loop_xmit+0x149/0x320 net/rds/loop.c:82
-  rds_send_xmit+0xbcd/0x26b0 net/rds/send.c:355
-  rds_send_worker+0x115/0x2a0 net/rds/threads.c:199
-  process_one_work+0xc47/0x1bb0 kernel/workqueue.c:2113
-  worker_thread+0x223/0x1990 kernel/workqueue.c:2247
-  kthread+0x33c/0x400 kernel/kthread.c:238
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:406
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Right. Might be either this inconsistency, or a new flag.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
