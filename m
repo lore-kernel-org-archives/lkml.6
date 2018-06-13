@@ -2,109 +2,100 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1F670C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:48:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 910C1C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:48:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F1C20020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4646820020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:48:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U+7Sta9e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5F1C20020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ITDJMiJV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4646820020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935685AbeFMNsK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:48:10 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:43359 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935279AbeFMNsJ (ORCPT
+        id S935711AbeFMNsX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:48:23 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:51999 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935279AbeFMNsV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:48:09 -0400
-Received: by mail-pg0-f66.google.com with SMTP id a14-v6so1307198pgw.10;
-        Wed, 13 Jun 2018 06:48:08 -0700 (PDT)
+        Wed, 13 Jun 2018 09:48:21 -0400
+Received: by mail-it0-f65.google.com with SMTP id n7-v6so3791359itn.1
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:48:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MqCgEEZ+kVG156NL6oUYOcpyBuyYLQetRujEKs7zvro=;
-        b=U+7Sta9ezidgLPV4beyPVOtJc8tT10gAP5xLV0mKVeWkmDMa5mDAVJV+WkFlh8GJ3b
-         /uxDBevgIYdvCE2PZtDrSF4dZOfGNjv6E9aGy70zKiAPM4pqsVyH0tMmMsLR8+IUP1C7
-         e41cs0ty5SvVTelWLBKGDfohl9wd5+AvYHwNwrnmTdq0qoAe8c6E10jhs4b4CwzyS3jX
-         j9ZiaujWJeim/M+qOG30VlpTGlDBOTSt/Mr9EKEvRneCTkEBkxvoPk7kk8hikoqEbXGM
-         VRg+NO4C4DLlYmOsU0joSxrqaH+Ru6bJ9RYm+b6k5vldBkKvjvEJdEy6ao5IcX8zghWw
-         fyeg==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=zCYwNuo7xCNhSP9gJNM/UqERWvQ2IYMq+5+MRErbM3Q=;
+        b=ITDJMiJV3lBRKOCeZhxKy6jRGHwM1M6v+j9YxEew6wHg3ulYfXfZQ6nWs8onXojiRh
+         96wH9rHmrKnVISAVHenPWooGiQPHjacfd1Lpcl/2W9pxUV1i8xMA4XVtWkUfgjKOvPnq
+         mxN6J5fR++tifJJf1BiHE8POURz7xQplcm+Yk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MqCgEEZ+kVG156NL6oUYOcpyBuyYLQetRujEKs7zvro=;
-        b=hIzWoWOzrZF6uoAZASkDCN+GSmK9RvlO+MRBL4sTt6BWXsTqS78q5Rx2nlhUH5Q82n
-         w9ZmzEw67KCzLBfshWfjE3XPpTPDWXZjM7rEYrLvXKYy0WZQ9KmeMqPLOuYSFvHdGF0k
-         YY85nYPxe0mTEZaXrQu4qm+PEvR+M8XXlagKqzoAqNNxsZQ050Ex2zHlIEZcFGov+udR
-         DX7KzUsAizplGHZEc4Y6gHB1eXliildyKOzBS14kmDK2W57Mv2oO7SadbOtVM6Tql7DJ
-         pWfr3UZUfs7qaoi8WNzt41tfKumz3ERKxOG6OzU0gEqpEXbEUi6CpZjhql+FGFZIgqO3
-         jTCg==
-X-Gm-Message-State: APt69E10TzvmnFiDPZ495Icx2A1uMPTLKrgoXgj1KVkpQsXRRRrCSHkF
-        AZ4YsZVkwM1OBSC3cQlImB3EtQ==
-X-Google-Smtp-Source: ADUXVKJODtto1z9JCmYinsYIPOGlHS84mJ3pqG0rWLGaFCrv2avjInhYC8Zse8OUX18POwDAfxb8Cg==
-X-Received: by 2002:a63:b44f:: with SMTP id n15-v6mr4001047pgu.389.1528897688291;
-        Wed, 13 Jun 2018 06:48:08 -0700 (PDT)
-Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
-        by smtp.gmail.com with ESMTPSA id h27-v6sm7873371pfk.160.2018.06.13.06.48.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 06:48:07 -0700 (PDT)
-Subject: Re: [PATCH 3.18 00/21] 3.18.113-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-References: <20180612164825.401145490@linuxfoundation.org>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <bc0f332d-bb9f-35c6-18b0-8dfd282bbf1c@roeck-us.net>
-Date:   Wed, 13 Jun 2018 06:48:05 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=zCYwNuo7xCNhSP9gJNM/UqERWvQ2IYMq+5+MRErbM3Q=;
+        b=D8DYMKXwUWzROpftzJCYSTpCwYvAoZ8Tk6P7GO1RlVld8etS1TgcFcR0iSEzJcxJQw
+         AphO2fLFLm6HiQ13lt1GZjSKtN+6jKyCHntDYA5xkeTHu6P+symExvxDjL5mb9u6y5nc
+         aQjmWVXQ6cu7oZW9aBOG8dBlY9X1XgFL6nZJvpLEdqitHxb9eqzhWc76hwATbrAruh8c
+         XBwOoi89dS6g+nV9l1htazXS3LE+yX2kNgJ+qrr/r7bU6PX/HHaA6GcT5yGmoqTulTKO
+         P1OvJnkQc1QwW0GT+OXaafpsXbG40fw76ZLS377eKRtyyY4QoJ8z3OSVukw0IHOeKHSR
+         Oknw==
+X-Gm-Message-State: APt69E370cHu2OB7o92HtlZ+0GEgclyDwSMYIPuUOBGI08kvsnmFrcAw
+        Ffg8sXc+WogOBVRywewBuW3FyRdFRIIKxT2XA20=
+X-Google-Smtp-Source: ADUXVKKWM/FEIKb4TLlXYLkj1ThRtBITubz2IFyFhASOHgo4BPbGbXN/ImvyUsXu+6umQeILHiGn47BVQK/JDFlIn7w=
+X-Received: by 2002:a02:89a3:: with SMTP id p32-v6mr386767jaj.10.1528897700937;
+ Wed, 13 Jun 2018 06:48:20 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180612164825.401145490@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180612083449.100099222@infradead.org> <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com>
+ <20180612171420.GU12217@hirez.programming.kicks-ass.net> <20180613143247.1b749c83@endymion>
+ <CAHpGcMKj1MNyc0XJuKxf727jtNhiKpL3AuR_+pRZipWXG+V08w@mail.gmail.com>
+In-Reply-To: <CAHpGcMKj1MNyc0XJuKxf727jtNhiKpL3AuR_+pRZipWXG+V08w@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 13 Jun 2018 06:48:09 -0700
+Message-ID: <CA+55aFy40OkMArs_q3K-SWJhdxTYyqWAwMbkBRRTN=f0ex45Rg@mail.gmail.com>
+Subject: Re: Quilt vs gmail (Was: [PATCH 0/3] sched/swait: Convert to full
+ exclusive mode)
+To:     =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Cc:     Jean Delvare <jdelvare@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 09:51 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 3.18.113 release.
-> There are 21 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu Jun 14 16:48:15 UTC 2018.
-> Anything received after that time might be too late.
-> 
+On Wed, Jun 13, 2018 at 6:27 AM Andreas Gr=C3=BCnbacher
+<andreas.gruenbacher@gmail.com> wrote:
+>
+> All of that may be correct, but those headers apparently do break
+> email based patch reviewing on Thunderbird and Gmail now, and that's
+> not very likely to change.
 
-Build results:
-	total: 138 pass: 136 fail: 2
-Failed builds:
-	i386:tools/perf
-	x86_64:tools/perf
-Qemu test results:
-	total: 127 pass: 127 fail: 0
+I do want to point out that at least for me, it's not a very big
+annoyance. It would be sad if people who actually_use_ quilt lose a
+feature they use for this.
 
-The perf test only fails because I run "make tools/perf" instead of
-"(cd tools/perf; make)". Fixing this requires the following two patches.
+I've seen it twice in the last few months, so it's not  like it's all
+that noticeable. It's a bit annoying when it happens, but it's not a
+show-stopper.
 
-379a9a28a1b4 tools build: No need to make libapi for perf explicitly
-16671c1e1cac tools build: Fix Makefile(s) to properly invoke tools build
+Either I don't interact with a lot of quilt users, or (quite likely)
+people don't always use quilt itself to then send the patches (the
+same way I don't use git send-email to send patches even though I
+obviously use git).
 
-Details are available at http://kerneltests.org/builders/.
-
-Guenter
+                  Linus
