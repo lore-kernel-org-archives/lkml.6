@@ -5,69 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7E7ADC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:36:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 993CEC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EF97208CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:36:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EF97208CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+	by mail.kernel.org (Postfix) with ESMTP id 49105208D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:38:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49105208D6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935751AbeFMUgV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 16:36:21 -0400
-Received: from asavdk3.altibox.net ([109.247.116.14]:56920 "EHLO
-        asavdk3.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935302AbeFMUgT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 16:36:19 -0400
-Received: from ravnborg.org (unknown [158.248.196.126])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk3.altibox.net (Postfix) with ESMTPS id 57FF72003F;
-        Wed, 13 Jun 2018 22:36:15 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 22:36:14 +0200
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Nadav Amit <namit@vmware.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        X86 ML <x86@kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
+        id S935620AbeFMUiJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 16:38:09 -0400
+Received: from mga03.intel.com ([134.134.136.65]:57776 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935352AbeFMUiI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 16:38:08 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 13:38:08 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
+   d="scan'208";a="237219401"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga006.fm.intel.com with ESMTP; 13 Jun 2018 13:38:04 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 1DDC0166; Wed, 13 Jun 2018 23:38:05 +0300 (EEST)
+Date:   Wed, 13 Jun 2018 23:38:04 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH v4 1/9] Makefile: Prepare for using macros for inline asm
-Message-ID: <20180613203614.GB10472@ravnborg.org>
-References: <20180612115050.185112-1-namit@vmware.com>
- <20180612115050.185112-2-namit@vmware.com>
- <CAK7LNATmjTi4Odp5AfbVHCemn7S_tB9nKvgNOf5sp8BiVJma7Q@mail.gmail.com>
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv3 02/17] mm/khugepaged: Do not collapse pages in
+ encrypted VMAs
+Message-ID: <20180613203804.bpeipe4txckja6na@black.fi.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-3-kirill.shutemov@linux.intel.com>
+ <f0e4648f-a458-856e-8a06-d186c280530a@intel.com>
+ <20180613201802.45m2745soztmkxmp@black.fi.intel.com>
+ <7dccd52e-ca46-b417-5a7b-274dc7ff3e44@intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAK7LNATmjTi4Odp5AfbVHCemn7S_tB9nKvgNOf5sp8BiVJma7Q@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=dqr19Wo4 c=1 sm=1 tr=0
-        a=ddpE2eP9Sid01c7MzoqXPA==:117 a=ddpE2eP9Sid01c7MzoqXPA==:17
-        a=kj9zAlcOel0A:10 a=jjLipkqUAu4O4XyU6BwA:9 a=CjuIK1q_8ugA:10
+In-Reply-To: <7dccd52e-ca46-b417-5a7b-274dc7ff3e44@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 13, 2018 at 08:20:28PM +0000, Dave Hansen wrote:
+> On 06/13/2018 01:18 PM, Kirill A. Shutemov wrote:
+> >> Are we really asking the x86 maintainers to merge this feature with this
+> >> restriction in place?
+> > I gave it more thought after your comment and I think I see a way to get
+> > khugepaged work with memory encryption.
 > 
-> > +macros: $(obj)/macros.s
-> > +       @:
-> 
-> If you add a phony target, it should be added to 'PHONY'.
+> So should folks be reviewing this set, or skip it an wait on your new set?
 
-Or this part:
-> +archmacros:
-> +       $(Q)$(MAKE) $(build)=arch/x86/kernel macros
+You gave me fair bit of feedback to work on, but AFAICS it doesn't change
+anything fundamentally.
 
-could be modified to specify the exact filename so this indirection is not needed.
+More feedback is welcome.
 
-PS. Only one file posted to kbuild, so impossible to review as context is missing.
-
-	Sam
+-- 
+ Kirill A. Shutemov
