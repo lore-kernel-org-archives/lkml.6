@@ -2,701 +2,260 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A82E4C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:58:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A710FC07D5C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:59:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D97C20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:58:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DWg9e/1X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D97C20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 5A39F20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:59:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A39F20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933609AbeFMC6r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 22:58:47 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:54624 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932697AbeFMC6p (ORCPT
+        id S933947AbeFMC71 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 22:59:27 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51857 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933611AbeFMC7Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 22:58:45 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D2uqcd051250;
-        Wed, 13 Jun 2018 02:58:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=Tp5dlHUkCApYbdF1Xq/1fs7BszQnnpM3VzSdOlNlSZM=;
- b=DWg9e/1X9nqbBeQfnBcas44kxZj+o9o4614alw7muba0HB3c2bOKXItuzsJSNNMSBefc
- Ks2loE6Lwqpc2zT+WOmYgfwDBuFXcojOPGuLsG0Cq0Je9kEuliaJjcaWpQmzA6pYdaMu
- kcPyvJQJDMBBlrao4wc3XwmjllDOyR/yZ4C+kqpexKCtY+/gUGk8bLeKgqP8894HtIVN
- I9bZfwSAVg4IYzcWdVfju1Y6UIUuS336rs/DLKTzxPqf0FeUTGZ2x9B8n0ulkLTjDjtZ
- jBMKx2m9N8s2wCcQsvpUElgCpONnj9DH6CgtSiKAXSl9VuaiYptHPHkokdTU6KPYzRB1 zQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2120.oracle.com with ESMTP id 2jjp6brgmd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 02:58:34 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5D2wYMw021204
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 02:58:34 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5D2wXro015704;
-        Wed, 13 Jun 2018 02:58:33 GMT
-Received: from [10.154.144.7] (/10.154.144.7)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 19:58:32 -0700
-Subject: Re: [PATCH v3 8/9] xen/gntdev: Implement dma-buf export functionality
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180612134200.17456-1-andr2000@gmail.com>
- <20180612134200.17456-9-andr2000@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <bd5adb0e-af98-528f-d6f9-9d5888ff2412@oracle.com>
-Date:   Tue, 12 Jun 2018 22:58:30 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180612134200.17456-9-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Tue, 12 Jun 2018 22:59:25 -0400
+Received: from mail-pg0-f71.google.com ([74.125.83.71])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fSw0K-0004I2-Kl
+        for linux-kernel@vger.kernel.org; Wed, 13 Jun 2018 02:59:24 +0000
+Received: by mail-pg0-f71.google.com with SMTP id o19-v6so355707pgn.14
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 19:59:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=lvy+GqFzPAD6sTQbAm5Ck/FzBvFoeVnRQmoMyyb04Bs=;
+        b=Bx8b+EQ7+5lW7X0/wKsxwBOOatek7Wj9fxx2e0EyJ2ieg5HOdhvHpnC3jWNzwKNPO8
+         OwXzZiojYtNKClYvI1GUdkjgjTZ0rlw638ZAXSQ/K2TnTDG1s1HudjNo9rD9wSb4vpqo
+         E8XIIJM0o9lzqEFWSs/vijAYPdr3eWSQ0L9RIZcZFH0MM1Z7vmciiPUeLEjpF1YLjE/a
+         rPfZPgb9XIl1tRw0yxqm7Hw/Zna5FSh25vihQ1hGmQ9w45CRJRcSvs6itaIgj1BZFrw0
+         /Ukg5CMK2rEi0ASK+Ko52/Y2Q65y31A/Lb5V7djqPf1ohCLBtrKgxGWYD5u6jsaTzzEE
+         CD2g==
+X-Gm-Message-State: APt69E3wX51PVzCjRkJEZIwc6N/TRe2U3MAUkVMyOZeM0qn45sgUebLo
+        6KqpleajsGoxqBUQNE7d4Hic2uST1wUINOUpiUiOS8imjs/G9xBBVyQhWMxRKH8uqzB4jfEGZxk
+        xZA2kEfsibXqXhsBK/CMUHkQOb6f8YEzQ7OtxDmw6Zg==
+X-Received: by 2002:a17:902:8b85:: with SMTP id ay5-v6mr3235360plb.30.1528858762984;
+        Tue, 12 Jun 2018 19:59:22 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKIZgcm6pU8g9Oq+CAQOeRTjTlh4KALJY3ElEJq2r1Q1BWHL0MKj8TuJBczS2+tAtSu/qpSexg==
+X-Received: by 2002:a17:902:8b85:: with SMTP id ay5-v6mr3235341plb.30.1528858762739;
+        Tue, 12 Jun 2018 19:59:22 -0700 (PDT)
+Received: from [10.101.46.95] ([175.41.48.77])
+        by smtp.gmail.com with ESMTPSA id l71-v6sm1830744pge.8.2018.06.12.19.59.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 19:59:22 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH 2/2] r8169: Reinstate ASPM Support
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <30b033ec-2ac3-6470-be43-06044f87b81d@gmail.com>
+Date:   Wed, 13 Jun 2018 10:59:17 +0800
+Cc:     davem@davemloft.net, ryankao@realtek.com, hayeswang@realtek.com,
+        hau@realtek.com, romieu@fr.zoreil.com, bhelgaas@google.com,
+        netdev@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130033
+Message-Id: <A4FEE5F1-9548-44B9-BE11-4D3A6A463959@canonical.com>
+References: <20180612095759.6828-1-kai.heng.feng@canonical.com>
+ <20180612095759.6828-2-kai.heng.feng@canonical.com>
+ <30b033ec-2ac3-6470-be43-06044f87b81d@gmail.com>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Heiner,
 
+> On Jun 13, 2018, at 3:35 AM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>
+> On 12.06.2018 11:57, Kai-Heng Feng wrote:
+>> On newer Intel platforms, ASPM support in r8169 is the last missing
+>> puzzle to let Package C-State achieves PC8. Without ASPM support, the
+>> deepest Package C-State can hit is PC3.
+>> PC8 can save additional ~3W in comparison with PC3 on my testing
+>> platform.
+> Maybe we should replace PC8 with "beyond PC3". My system
+> (Haswell 2961Y) reaches 50% PC7 + 5% PC9 + 45% PC10 now.
+> It never seems to use PC8.
 
-On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> 
-> 1. Create a dma-buf from grant references provided by the foreign
->     domain. By default dma-buf is backed by system memory pages, but
->     by providing GNTDEV_DMA_FLAG_XXX flags it can also be created
->     as a DMA write-combine/coherent buffer, e.g. allocated with
->     corresponding dma_alloc_xxx API.
->     Export the resulting buffer as a new dma-buf.
-> 
-> 2. Implement waiting for the dma-buf to be released: block until the
->     dma-buf with the file descriptor provided is released.
->     If within the time-out provided the buffer is not released then
->     -ETIMEDOUT error is returned. If the buffer with the file descriptor
->     does not exist or has already been released, then -ENOENT is
->     returned. For valid file descriptors this must not be treated as
->     error.
-> 
-> 3. Make gntdev's common code and structures available to dma-buf.
-> 
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-> ---
->   drivers/xen/gntdev-common.h |   4 +
->   drivers/xen/gntdev-dmabuf.c | 470 +++++++++++++++++++++++++++++++++++-
->   drivers/xen/gntdev.c        |  10 +
->   3 files changed, 482 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/xen/gntdev-common.h b/drivers/xen/gntdev-common.h
-> index a3408fd39b07..72f80dbce861 100644
-> --- a/drivers/xen/gntdev-common.h
-> +++ b/drivers/xen/gntdev-common.h
-> @@ -89,4 +89,8 @@ bool gntdev_account_mapped_pages(int count);
->   
->   int gntdev_map_grant_pages(struct gntdev_grant_map *map);
->   
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +void gntdev_remove_map(struct gntdev_priv *priv, struct gntdev_grant_map *map);
-> +#endif
-> +
->   #endif
-> diff --git a/drivers/xen/gntdev-dmabuf.c b/drivers/xen/gntdev-dmabuf.c
-> index dc57c6a25525..84cba67c6ad7 100644
-> --- a/drivers/xen/gntdev-dmabuf.c
-> +++ b/drivers/xen/gntdev-dmabuf.c
-> @@ -3,13 +3,53 @@
->   /*
->    * Xen dma-buf functionality for gntdev.
->    *
-> + * DMA buffer implementation is based on drivers/gpu/drm/drm_prime.c.
-> + *
->    * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
->    */
->   
-> +#include <linux/dma-buf.h>
->   #include <linux/slab.h>
->   
-> +#include <xen/grant_table.h>
-> +#include <xen/gntdev.h>
-> +
-> +#include "gntdev-common.h"
->   #include "gntdev-dmabuf.h"
->   
-> +struct gntdev_dmabuf {
-> +	struct gntdev_dmabuf_priv *priv;
-> +	struct dma_buf *dmabuf;
-> +	struct list_head next;
-> +	int fd;
-> +
-> +	union {
-> +		struct {
-> +			/* Exported buffers are reference counted. */
-> +			struct kref refcount;
-> +
-> +			struct gntdev_priv *priv;
-> +			struct gntdev_grant_map *map;
-> +		} exp;
-> +	} u;
-> +
-> +	/* Number of pages this buffer has. */
-> +	int nr_pages;
-> +	/* Pages of this buffer. */
-> +	struct page **pages;
-> +};
-> +
-> +struct gntdev_dmabuf_wait_obj {
-> +	struct list_head next;
-> +	struct gntdev_dmabuf *gntdev_dmabuf;
-> +	struct completion completion;
-> +};
-> +
-> +struct gntdev_dmabuf_attachment {
-> +	struct sg_table *sgt;
-> +	enum dma_data_direction dir;
-> +};
-> +
->   struct gntdev_dmabuf_priv {
->   	/* List of exported DMA buffers. */
->   	struct list_head exp_list;
-> @@ -23,17 +63,439 @@ struct gntdev_dmabuf_priv {
->   
->   /* Implementation of wait for exported DMA buffer to be released. */
->   
-> +static void dmabuf_exp_release(struct kref *kref);
-> +
-> +static struct gntdev_dmabuf_wait_obj *
-> +dmabuf_exp_wait_obj_new(struct gntdev_dmabuf_priv *priv,
-> +			struct gntdev_dmabuf *gntdev_dmabuf)
-> +{
-> +	struct gntdev_dmabuf_wait_obj *obj;
-> +
-> +	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
-> +	if (!obj)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	init_completion(&obj->completion);
-> +	obj->gntdev_dmabuf = gntdev_dmabuf;
-> +
-> +	mutex_lock(&priv->lock);
-> +	list_add(&obj->next, &priv->exp_wait_list);
-> +	/* Put our reference and wait for gntdev_dmabuf's release to fire. */
-> +	kref_put(&gntdev_dmabuf->u.exp.refcount, dmabuf_exp_release);
-> +	mutex_unlock(&priv->lock);
-> +	return obj;
-> +}
-> +
-> +static void dmabuf_exp_wait_obj_free(struct gntdev_dmabuf_priv *priv,
-> +				     struct gntdev_dmabuf_wait_obj *obj)
-> +{
-> +	struct gntdev_dmabuf_wait_obj *cur_obj, *q;
-> +
-> +	mutex_lock(&priv->lock);
-> +	list_for_each_entry_safe(cur_obj, q, &priv->exp_wait_list, next)
-> +		if (cur_obj == obj) {
-> +			list_del(&obj->next);
-> +			kfree(obj);
-> +			break;
-> +		}
-> +	mutex_unlock(&priv->lock);
+My original wording are really mouthful. I'll update them in next version.
 
+The platform in question is Coffee Lake. This patch should make systems  
+newer than Skylake to hit > PC3. Older systems may not see significant  
+change.
+I'll also state these info in the next version.
 
-Do we really need to walk the list?
+>
+>> The original patch is from Realtek.
+> Please add a link to this original patch.
 
-And if we do, do we need the safe variant of the walk? We are holding 
-the lock. Here and elsewhere.
+Realtek sent me the patch privately. Is it okay to upload the patch to  
+pastebin or gist?
 
+Kai-Heng
 
-> +}
-> +
-> +static int dmabuf_exp_wait_obj_wait(struct gntdev_dmabuf_wait_obj *obj,
-> +				    u32 wait_to_ms)
-> +{
-> +	if (wait_for_completion_timeout(&obj->completion,
-> +			msecs_to_jiffies(wait_to_ms)) <= 0)
-> +		return -ETIMEDOUT;
-> +
-> +	return 0;
-> +}
-> +
-> +static void dmabuf_exp_wait_obj_signal(struct gntdev_dmabuf_priv *priv,
-> +				       struct gntdev_dmabuf *gntdev_dmabuf)
-> +{
-> +	struct gntdev_dmabuf_wait_obj *obj, *q;
-> +
-> +	list_for_each_entry_safe(obj, q, &priv->exp_wait_list, next)
-> +		if (obj->gntdev_dmabuf == gntdev_dmabuf) {
-> +			pr_debug("Found gntdev_dmabuf in the wait list, wake\n");
-> +			complete_all(&obj->completion);
-> +			break;
-> +		}
-> +}
-> +
-> +static struct gntdev_dmabuf *
-> +dmabuf_exp_wait_obj_get_by_fd(struct gntdev_dmabuf_priv *priv, int fd)
-
-
-The name of this routine implies (to me) that we are getting a wait 
-object but IIUIC we are getting a gntdev_dmabuf that we are going to 
-later associate with a wait object.
-
-
-> +{
-> +	struct gntdev_dmabuf *q, *gntdev_dmabuf, *ret = ERR_PTR(-ENOENT);
-> +
-> +	mutex_lock(&priv->lock);
-> +	list_for_each_entry_safe(gntdev_dmabuf, q, &priv->exp_list, next)
-> +		if (gntdev_dmabuf->fd == fd) {
-> +			pr_debug("Found gntdev_dmabuf in the wait list\n");
-> +			kref_get(&gntdev_dmabuf->u.exp.refcount);
-> +			ret = gntdev_dmabuf;
-> +			break;
-> +		}
-> +	mutex_unlock(&priv->lock);
-> +	return ret;
-> +}
-> +
->   int gntdev_dmabuf_exp_wait_released(struct gntdev_dmabuf_priv *priv, int fd,
->   				    int wait_to_ms)
->   {
-> -	return -EINVAL;
-> +	struct gntdev_dmabuf *gntdev_dmabuf;
-> +	struct gntdev_dmabuf_wait_obj *obj;
-> +	int ret;
-> +
-> +	pr_debug("Will wait for dma-buf with fd %d\n", fd);
-> +	/*
-> +	 * Try to find the DMA buffer: if not found means that
-> +	 * either the buffer has already been released or file descriptor
-> +	 * provided is wrong.
-> +	 */
-> +	gntdev_dmabuf = dmabuf_exp_wait_obj_get_by_fd(priv, fd);
-> +	if (IS_ERR(gntdev_dmabuf))
-> +		return PTR_ERR(gntdev_dmabuf);
-> +
-> +	/*
-> +	 * gntdev_dmabuf still exists and is reference count locked by us now,
-> +	 * so prepare to wait: allocate wait object and add it to the wait list,
-> +	 * so we can find it on release.
-> +	 */
-> +	obj = dmabuf_exp_wait_obj_new(priv, gntdev_dmabuf);
-> +	if (IS_ERR(obj))
-> +		return PTR_ERR(obj);
-> +
-> +	ret = dmabuf_exp_wait_obj_wait(obj, wait_to_ms);
-> +	dmabuf_exp_wait_obj_free(priv, obj);
-> +	return ret;
-> +}
-> +
-> +/* DMA buffer export support. */
-> +
-> +static struct sg_table *
-> +dmabuf_pages_to_sgt(struct page **pages, unsigned int nr_pages)
-> +{
-> +	struct sg_table *sgt;
-> +	int ret;
-> +
-> +	sgt = kmalloc(sizeof(*sgt), GFP_KERNEL);
-> +	if (!sgt) {
-> +		ret = -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	ret = sg_alloc_table_from_pages(sgt, pages, nr_pages, 0,
-> +					nr_pages << PAGE_SHIFT,
-> +					GFP_KERNEL);
-> +	if (ret)
-> +		goto out;
-> +
-> +	return sgt;
-> +
-> +out:
-> +	kfree(sgt);
-> +	return ERR_PTR(ret);
-> +}
-> +
-> +static int dmabuf_exp_ops_attach(struct dma_buf *dma_buf,
-> +				 struct device *target_dev,
-> +				 struct dma_buf_attachment *attach)
-> +{
-> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach;
-> +
-> +	gntdev_dmabuf_attach = kzalloc(sizeof(*gntdev_dmabuf_attach),
-> +				       GFP_KERNEL);
-> +	if (!gntdev_dmabuf_attach)
-> +		return -ENOMEM;
-> +
-> +	gntdev_dmabuf_attach->dir = DMA_NONE;
-> +	attach->priv = gntdev_dmabuf_attach;
-> +	return 0;
-> +}
-> +
-> +static void dmabuf_exp_ops_detach(struct dma_buf *dma_buf,
-> +				  struct dma_buf_attachment *attach)
-> +{
-> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach = attach->priv;
-> +
-> +	if (gntdev_dmabuf_attach) {
-> +		struct sg_table *sgt = gntdev_dmabuf_attach->sgt;
-> +
-> +		if (sgt) {
-> +			if (gntdev_dmabuf_attach->dir != DMA_NONE)
-> +				dma_unmap_sg_attrs(attach->dev, sgt->sgl,
-> +						   sgt->nents,
-> +						   gntdev_dmabuf_attach->dir,
-> +						   DMA_ATTR_SKIP_CPU_SYNC);
-> +			sg_free_table(sgt);
-> +		}
-> +
-> +		kfree(sgt);
-> +		kfree(gntdev_dmabuf_attach);
-> +		attach->priv = NULL;
-> +	}
-> +}
-> +
-> +static struct sg_table *
-> +dmabuf_exp_ops_map_dma_buf(struct dma_buf_attachment *attach,
-> +			   enum dma_data_direction dir)
-> +{
-> +	struct gntdev_dmabuf_attachment *gntdev_dmabuf_attach = attach->priv;
-> +	struct gntdev_dmabuf *gntdev_dmabuf = attach->dmabuf->priv;
-> +	struct sg_table *sgt;
-> +
-> +	pr_debug("Mapping %d pages for dev %p\n", gntdev_dmabuf->nr_pages,
-> +		 attach->dev);
-> +
-> +	if (dir == DMA_NONE || !gntdev_dmabuf_attach)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	/* Return the cached mapping when possible. */
-> +	if (gntdev_dmabuf_attach->dir == dir)
-> +		return gntdev_dmabuf_attach->sgt;
-> +
-> +	/*
-> +	 * Two mappings with different directions for the same attachment are
-> +	 * not allowed.
-> +	 */
-> +	if (gntdev_dmabuf_attach->dir != DMA_NONE)
-> +		return ERR_PTR(-EBUSY);
-> +
-> +	sgt = dmabuf_pages_to_sgt(gntdev_dmabuf->pages,
-> +				  gntdev_dmabuf->nr_pages);
-> +	if (!IS_ERR(sgt)) {
-> +		if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
-> +				      DMA_ATTR_SKIP_CPU_SYNC)) {
-> +			sg_free_table(sgt);
-> +			kfree(sgt);
-> +			sgt = ERR_PTR(-ENOMEM);
-> +		} else {
-> +			gntdev_dmabuf_attach->sgt = sgt;
-> +			gntdev_dmabuf_attach->dir = dir;
-> +		}
-> +	}
-> +	if (IS_ERR(sgt))
-> +		pr_debug("Failed to map sg table for dev %p\n", attach->dev);
-> +	return sgt;
-> +}
-> +
-> +static void dmabuf_exp_ops_unmap_dma_buf(struct dma_buf_attachment *attach,
-> +					 struct sg_table *sgt,
-> +					 enum dma_data_direction dir)
-> +{
-> +	/* Not implemented. The unmap is done at dmabuf_exp_ops_detach(). */
-> +}
-> +
-> +static void dmabuf_exp_release(struct kref *kref)
-> +{
-> +	struct gntdev_dmabuf *gntdev_dmabuf =
-> +		container_of(kref, struct gntdev_dmabuf, u.exp.refcount);
-> +
-> +	dmabuf_exp_wait_obj_signal(gntdev_dmabuf->priv, gntdev_dmabuf);
-> +	list_del(&gntdev_dmabuf->next);
-> +	kfree(gntdev_dmabuf);
-> +}
-> +
-> +static void dmabuf_exp_ops_release(struct dma_buf *dma_buf)
-> +{
-> +	struct gntdev_dmabuf *gntdev_dmabuf = dma_buf->priv;
-> +	struct gntdev_dmabuf_priv *priv = gntdev_dmabuf->priv;
-> +
-> +	gntdev_remove_map(gntdev_dmabuf->u.exp.priv, gntdev_dmabuf->u.exp.map);
-> +	mutex_lock(&priv->lock);
-> +	kref_put(&gntdev_dmabuf->u.exp.refcount, dmabuf_exp_release);
-> +	mutex_unlock(&priv->lock);
-> +}
-> +
-> +static void *dmabuf_exp_ops_kmap_atomic(struct dma_buf *dma_buf,
-> +					unsigned long page_num)
-> +{
-> +	/* Not implemented. */
-> +	return NULL;
-> +}
-> +
-> +static void dmabuf_exp_ops_kunmap_atomic(struct dma_buf *dma_buf,
-> +					 unsigned long page_num, void *addr)
-> +{
-> +	/* Not implemented. */
-> +}
-> +
-> +static void *dmabuf_exp_ops_kmap(struct dma_buf *dma_buf,
-> +				 unsigned long page_num)
-> +{
-> +	/* Not implemented. */
-> +	return NULL;
-> +}
-> +
-> +static void dmabuf_exp_ops_kunmap(struct dma_buf *dma_buf,
-> +				  unsigned long page_num, void *addr)
-> +{
-> +	/* Not implemented. */
-> +}
-> +
-> +static int dmabuf_exp_ops_mmap(struct dma_buf *dma_buf,
-> +			       struct vm_area_struct *vma)
-> +{
-> +	/* Not implemented. */
-> +	return 0;
-> +}
-> +
-> +static const struct dma_buf_ops dmabuf_exp_ops =  {
-> +	.attach = dmabuf_exp_ops_attach,
-> +	.detach = dmabuf_exp_ops_detach,
-> +	.map_dma_buf = dmabuf_exp_ops_map_dma_buf,
-> +	.unmap_dma_buf = dmabuf_exp_ops_unmap_dma_buf,
-> +	.release = dmabuf_exp_ops_release,
-> +	.map = dmabuf_exp_ops_kmap,
-> +	.map_atomic = dmabuf_exp_ops_kmap_atomic,
-> +	.unmap = dmabuf_exp_ops_kunmap,
-> +	.unmap_atomic = dmabuf_exp_ops_kunmap_atomic,
-> +	.mmap = dmabuf_exp_ops_mmap,
-> +};
-> +
-> +struct gntdev_dmabuf_export_args {
-> +	struct gntdev_priv *priv;
-> +	struct gntdev_grant_map *map;
-> +	struct gntdev_dmabuf_priv *dmabuf_priv;
-> +	struct device *dev;
-> +	int count;
-> +	struct page **pages;
-> +	u32 fd;
-> +};
-> +
-> +static int dmabuf_exp_from_pages(struct gntdev_dmabuf_export_args *args)
-> +{
-> +	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-> +	struct gntdev_dmabuf *gntdev_dmabuf;
-> +	int ret = 0;
-
-
-Not necessary.
-
-> +
-> +	gntdev_dmabuf = kzalloc(sizeof(*gntdev_dmabuf), GFP_KERNEL);
-> +	if (!gntdev_dmabuf)
-> +		return -ENOMEM;
-> +
-> +	kref_init(&gntdev_dmabuf->u.exp.refcount);
-> +
-> +	gntdev_dmabuf->priv = args->dmabuf_priv;
-> +	gntdev_dmabuf->nr_pages = args->count;
-> +	gntdev_dmabuf->pages = args->pages;
-> +	gntdev_dmabuf->u.exp.priv = args->priv;
-> +	gntdev_dmabuf->u.exp.map = args->map;
-> +
-> +	exp_info.exp_name = KBUILD_MODNAME;
-> +	if (args->dev->driver && args->dev->driver->owner)
-> +		exp_info.owner = args->dev->driver->owner;
-> +	else
-> +		exp_info.owner = THIS_MODULE;
-> +	exp_info.ops = &dmabuf_exp_ops;
-> +	exp_info.size = args->count << PAGE_SHIFT;
-> +	exp_info.flags = O_RDWR;
-> +	exp_info.priv = gntdev_dmabuf;
-> +
-> +	gntdev_dmabuf->dmabuf = dma_buf_export(&exp_info);
-> +	if (IS_ERR(gntdev_dmabuf->dmabuf)) {
-> +		ret = PTR_ERR(gntdev_dmabuf->dmabuf);
-> +		gntdev_dmabuf->dmabuf = NULL;
-> +		goto fail;
-> +	}
-> +
-> +	ret = dma_buf_fd(gntdev_dmabuf->dmabuf, O_CLOEXEC);
-> +	if (ret < 0)
-> +		goto fail;
-> +
-> +	gntdev_dmabuf->fd = ret;
-> +	args->fd = ret;
-> +
-> +	pr_debug("Exporting DMA buffer with fd %d\n", ret);
-> +
-> +	mutex_lock(&args->dmabuf_priv->lock);
-> +	list_add(&gntdev_dmabuf->next, &args->dmabuf_priv->exp_list);
-> +	mutex_unlock(&args->dmabuf_priv->lock);
-> +	return 0;
-> +
-> +fail:
-> +	if (gntdev_dmabuf->dmabuf)
-> +		dma_buf_put(gntdev_dmabuf->dmabuf);
-> +	kfree(gntdev_dmabuf);
-> +	return ret;
-> +}
-> +
-> +static struct gntdev_grant_map *
-> +dmabuf_exp_alloc_backing_storage(struct gntdev_priv *priv, int dmabuf_flags,
-> +				 int count)
-> +{
-> +	struct gntdev_grant_map *map;
-> +
-> +	if (unlikely(count <= 0))
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	if ((dmabuf_flags & GNTDEV_DMA_FLAG_WC) &&
-> +	    (dmabuf_flags & GNTDEV_DMA_FLAG_COHERENT)) {
-> +		pr_debug("Wrong dma-buf flags: either WC or coherent, not both\n");
-
-Why not just print the value of the flags?
-
-> +		return ERR_PTR(-EINVAL);
-> +	}
-> +
-> +	map = gntdev_alloc_map(priv, count, dmabuf_flags);
-> +	if (!map)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	if (unlikely(gntdev_account_mapped_pages(count))) {
-> +		pr_debug("can't map: over limit\n");
-
-
-I think printing @count value here would be useful.
-
-
-> +		gntdev_put_map(NULL, map);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +	return map;
->   }
->   
->   int gntdev_dmabuf_exp_from_refs(struct gntdev_priv *priv, int flags,
->   				int count, u32 domid, u32 *refs, u32 *fd)
->   {
-> +	struct gntdev_grant_map *map;
-> +	struct gntdev_dmabuf_export_args args;
-> +	int i, ret;
-> +
->   	*fd = -1;
-
-
-Is this still needed?
-
-> -	return -EINVAL;
-> +
-> +	map = dmabuf_exp_alloc_backing_storage(priv, flags, count);
-> +	if (IS_ERR(map))
-> +		return PTR_ERR(map);
-> +
-> +	for (i = 0; i < count; i++) {
-> +		map->grants[i].domid = domid;
-> +		map->grants[i].ref = refs[i];
-> +	}
-> +
-> +	mutex_lock(&priv->lock);
-> +	gntdev_add_map(priv, map);
-> +	mutex_unlock(&priv->lock);
-> +
-> +	map->flags |= GNTMAP_host_map;
-> +#if defined(CONFIG_X86)
-> +	map->flags |= GNTMAP_device_map;
-> +#endif
-> +
-> +	ret = gntdev_map_grant_pages(map);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	args.priv = priv;
-> +	args.map = map;
-> +	args.dev = priv->dma_dev;
-> +	args.dmabuf_priv = priv->dmabuf_priv;
-> +	args.count = map->count;
-> +	args.pages = map->pages;
-> +
-> +	ret = dmabuf_exp_from_pages(&args);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	*fd = args.fd;
-> +	return 0;
-> +
-> +out:
-> +	gntdev_remove_map(priv, map);
-> +	return ret;
->   }
->   
->   /* DMA buffer import support. */
-> @@ -63,6 +525,10 @@ struct gntdev_dmabuf_priv *gntdev_dmabuf_init(void)
->   	if (!priv)
->   		return ERR_PTR(-ENOMEM);
->   
-> +	mutex_init(&priv->lock);
-> +	INIT_LIST_HEAD(&priv->exp_list);
-> +	INIT_LIST_HEAD(&priv->exp_wait_list);
-> +
->   	return priv;
->   }
->   
-> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-> index e82660d81d7e..5f93cd534840 100644
-> --- a/drivers/xen/gntdev.c
-> +++ b/drivers/xen/gntdev.c
-> @@ -262,6 +262,16 @@ void gntdev_put_map(struct gntdev_priv *priv, struct gntdev_grant_map *map)
->   	gntdev_free_map(map);
->   }
->   
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +void gntdev_remove_map(struct gntdev_priv *priv, struct gntdev_grant_map *map)
-> +{
-> +	mutex_lock(&priv->lock);
-> +	list_del(&map->next);
-> +	gntdev_put_map(NULL /* already removed */, map);
-
-
-Why not pass call gntdev_put_map(priv, map) and then not have this 
-routine at all?
-
-I really dislike the fact that we are taking a lock here that 
-gntdev_put_map() takes as well, although not with NULL argument. (And 
-yes, I see that gntdev_release() does it too.)
-
-
--boris
-
-
-> +	mutex_unlock(&priv->lock);
-> +}
-> +#endif
-> +
->   /* ------------------------------------------------------------------ */
->   
->   static int find_grant_ptes(pte_t *pte, pgtable_t token,
-> 
+>
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>> ---
+>> v2:
+>> - Remove module parameter.
+>> - Remove pci_disable_link_state().
+>>
+>>  drivers/net/ethernet/realtek/r8169.c | 41 +++++++++++++++++++---------
+>>  1 file changed, 28 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/realtek/r8169.c  
+>> b/drivers/net/ethernet/realtek/r8169.c
+>> index 9b55ce513a36..85f4e746b040 100644
+>> --- a/drivers/net/ethernet/realtek/r8169.c
+>> +++ b/drivers/net/ethernet/realtek/r8169.c
+>> @@ -5289,6 +5289,18 @@ static void rtl_pcie_state_l2l3_enable(struct  
+>> rtl8169_private *tp, bool enable)
+>>  	RTL_W8(tp, Config3, data);
+>>  }
+>>
+>> +static void rtl_hw_internal_aspm_clkreq_enable(struct rtl8169_private  
+>> *tp,
+>> +					       bool enable)
+>
+> Do we need this hw_internal in the function name?
+>
+>> +{
+>> +	if (enable) {
+>> +		RTL_W8(tp, Config2, RTL_R8(tp, Config2) | ClkReqEn);
+>> +		RTL_W8(tp, Config5, RTL_R8(tp, Config5) | ASPM_en);
+>> +	} else {
+>> +		RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+>> +		RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+>> +	}
+>> +}
+>> +
+>>  static void rtl_hw_start_8168bb(struct rtl8169_private *tp)
+>>  {
+>>  	RTL_W8(tp, Config3, RTL_R8(tp, Config3) & ~Beacon_en);
+>> @@ -5645,9 +5657,9 @@ static void rtl_hw_start_8168g_1(struct  
+>> rtl8169_private *tp)
+>>  	rtl_hw_start_8168g(tp);
+>>
+>>  	/* disable aspm and clock request before access ephy */
+>> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+>> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>>  	rtl_ephy_init(tp, e_info_8168g_1, ARRAY_SIZE(e_info_8168g_1));
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>>  }
+>>
+>>  static void rtl_hw_start_8168g_2(struct rtl8169_private *tp)
+>> @@ -5680,9 +5692,9 @@ static void rtl_hw_start_8411_2(struct  
+>> rtl8169_private *tp)
+>>  	rtl_hw_start_8168g(tp);
+>>
+>>  	/* disable aspm and clock request before access ephy */
+>> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+>> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>>  	rtl_ephy_init(tp, e_info_8411_2, ARRAY_SIZE(e_info_8411_2));
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>>  }
+>>
+>>  static void rtl_hw_start_8168h_1(struct rtl8169_private *tp)
+>> @@ -5699,8 +5711,7 @@ static void rtl_hw_start_8168h_1(struct  
+>> rtl8169_private *tp)
+>>  	};
+>>
+>>  	/* disable aspm and clock request before access ephy */
+>> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+>> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>>  	rtl_ephy_init(tp, e_info_8168h_1, ARRAY_SIZE(e_info_8168h_1));
+>>
+>>  	RTL_W32(tp, TxConfig, RTL_R32(tp, TxConfig) | TXCFG_AUTO_FIFO);
+>> @@ -5779,6 +5790,8 @@ static void rtl_hw_start_8168h_1(struct  
+>> rtl8169_private *tp)
+>>  	r8168_mac_ocp_write(tp, 0xe63e, 0x0000);
+>>  	r8168_mac_ocp_write(tp, 0xc094, 0x0000);
+>>  	r8168_mac_ocp_write(tp, 0xc09e, 0x0000);
+>> +
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>>  }
+>>
+>>  static void rtl_hw_start_8168ep(struct rtl8169_private *tp)
+>> @@ -5830,11 +5843,12 @@ static void rtl_hw_start_8168ep_1(struct  
+>> rtl8169_private *tp)
+>>  	};
+>>
+>>  	/* disable aspm and clock request before access ephy */
+>> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+>> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>>  	rtl_ephy_init(tp, e_info_8168ep_1, ARRAY_SIZE(e_info_8168ep_1));
+>>
+>>  	rtl_hw_start_8168ep(tp);
+>> +
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>>  }
+>>
+>>  static void rtl_hw_start_8168ep_2(struct rtl8169_private *tp)
+>> @@ -5846,14 +5860,15 @@ static void rtl_hw_start_8168ep_2(struct  
+>> rtl8169_private *tp)
+>>  	};
+>>
+>>  	/* disable aspm and clock request before access ephy */
+>> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+>> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>>  	rtl_ephy_init(tp, e_info_8168ep_2, ARRAY_SIZE(e_info_8168ep_2));
+>>
+>>  	rtl_hw_start_8168ep(tp);
+>>
+>>  	RTL_W8(tp, DLLPR, RTL_R8(tp, DLLPR) & ~PFM_EN);
+>>  	RTL_W8(tp, MISC_1, RTL_R8(tp, MISC_1) & ~PFM_D3COLD_EN);
+>> +
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>>  }
+>>
+>>  static void rtl_hw_start_8168ep_3(struct rtl8169_private *tp)
+>> @@ -5867,8 +5882,7 @@ static void rtl_hw_start_8168ep_3(struct  
+>> rtl8169_private *tp)
+>>  	};
+>>
+>>  	/* disable aspm and clock request before access ephy */
+>> -	RTL_W8(tp, Config2, RTL_R8(tp, Config2) & ~ClkReqEn);
+>> -	RTL_W8(tp, Config5, RTL_R8(tp, Config5) & ~ASPM_en);
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, false);
+>>  	rtl_ephy_init(tp, e_info_8168ep_3, ARRAY_SIZE(e_info_8168ep_3));
+>>
+>>  	rtl_hw_start_8168ep(tp);
+>> @@ -5888,6 +5902,8 @@ static void rtl_hw_start_8168ep_3(struct  
+>> rtl8169_private *tp)
+>>  	data = r8168_mac_ocp_read(tp, 0xe860);
+>>  	data |= 0x0080;
+>>  	r8168_mac_ocp_write(tp, 0xe860, data);
+>> +
+>> +	rtl_hw_internal_aspm_clkreq_enable(tp, true);
+>>  }
+>>
+>>  static void rtl_hw_start_8168(struct rtl8169_private *tp)
+>> @@ -7646,7 +7662,6 @@ static int rtl_init_one(struct pci_dev *pdev,  
+>> const struct pci_device_id *ent)
+>>  	mii->reg_num_mask = 0x1f;
+>>  	mii->supports_gmii = cfg->has_gmii;
+>>
+>> -
+>>  	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+>>  	rc = pcim_enable_device(pdev);
+>>  	if (rc < 0) {
