@@ -6,85 +6,116 @@ X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A31EAC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:09:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 84B36C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 645F8208D7
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:09:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 645F8208D7
+	by mail.kernel.org (Postfix) with ESMTP id 45D43208D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:09:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45D43208D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936041AbeFMVJU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 17:09:20 -0400
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:54991 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935837AbeFMVJQ (ORCPT
+        id S964788AbeFMVJV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 17:09:21 -0400
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:49469 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935842AbeFMVJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Jun 2018 17:09:16 -0400
 Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Wed, 13 Jun 2018 14:09:11 -0700
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 13 Jun 2018 14:08:50 -0700
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id E60AC409B1;
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id EA889409B8;
         Wed, 13 Jun 2018 14:09:15 -0700 (PDT)
 From:   Nadav Amit <namit@vmware.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 CC:     Xavier Deguillard <xdeguillard@vmware.com>,
         <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-        Nadav Amit <namit@vmware.com>, <stable@vger.kernel.org>,
-        Nadav Amit <nadav.amit@gmail.com>
-Subject: [PATCH v2 2/7] vmw_balloon: do not use 2MB without batching
-Date:   Wed, 13 Jun 2018 06:54:07 -0700
-Message-ID: <20180613135412.81660-3-namit@vmware.com>
+        Nadav Amit <namit@vmware.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2 3/7] vmw_balloon: VMCI_DOORBELL_SET does not check status
+Date:   Wed, 13 Jun 2018 06:54:08 -0700
+Message-ID: <20180613135412.81660-4-namit@vmware.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180613135412.81660-1-namit@vmware.com>
 References: <20180613135412.81660-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the hypervisor sets 2MB batching is on, while batching is cleared,
-the balloon code breaks. In this case the legacy mechanism is used with
-2MB page. The VM would report a 2MB page is ballooned, and the
-hypervisor would only take the first 4KB.
+When vmballoon_vmci_init() sets a doorbell using VMCI_DOORBELL_SET, for
+some reason it does not consider the status and looks at the result.
+However, the hypervisor does not update the result - it updates the
+status. This might cause VMCI doorbell not to be enabled, resulting in
+degraded performance.
 
-While the hypervisor should not report such settings, make the code more
-robust by not enabling 2MB support without batching.
-
-Fixes: 365bd7ef7ec8e ("VMware balloon: Support 2m page ballooning.")
+Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
 
 Cc: stable@vger.kernel.org
 Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Signed-off-by: Nadav Amit <nadav.amit@gmail.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- drivers/misc/vmw_balloon.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/misc/vmw_balloon.c | 37 +++++++++++++++++++------------------
+ 1 file changed, 19 insertions(+), 18 deletions(-)
 
 diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
-index 28e77ab1e136..60ab83d3d0ef 100644
+index 60ab83d3d0ef..a7df4c24a28d 100644
 --- a/drivers/misc/vmw_balloon.c
 +++ b/drivers/misc/vmw_balloon.c
-@@ -341,7 +341,13 @@ static bool vmballoon_send_start(struct vmballoon *b, unsigned long req_caps)
- 		success = false;
- 	}
+@@ -1036,29 +1036,30 @@ static void vmballoon_vmci_cleanup(struct vmballoon *b)
+  */
+ static int vmballoon_vmci_init(struct vmballoon *b)
+ {
+-	int error = 0;
++	unsigned long error, dummy;
  
--	if (b->capabilities & VMW_BALLOON_BATCHED_2M_CMDS)
-+	/*
-+	 * 2MB pages are only supported with batching. If batching is for some
-+	 * reason disabled, do not use 2MB pages, since otherwise the legacy
-+	 * mechanism is used with 2MB pages, causing a failure.
-+	 */
-+	if ((b->capabilities & VMW_BALLOON_BATCHED_2M_CMDS) &&
-+	    (b->capabilities & VMW_BALLOON_BATCHED_CMDS))
- 		b->supported_page_sizes = 2;
- 	else
- 		b->supported_page_sizes = 1;
+-	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) != 0) {
+-		error = vmci_doorbell_create(&b->vmci_doorbell,
+-				VMCI_FLAG_DELAYED_CB,
+-				VMCI_PRIVILEGE_FLAG_RESTRICTED,
+-				vmballoon_doorbell, b);
+-
+-		if (error == VMCI_SUCCESS) {
+-			VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET,
+-					b->vmci_doorbell.context,
+-					b->vmci_doorbell.resource, error);
+-			STATS_INC(b->stats.doorbell_set);
+-		}
+-	}
++	if ((b->capabilities & VMW_BALLOON_SIGNALLED_WAKEUP_CMD) == 0)
++		return 0;
+ 
+-	if (error != 0) {
+-		vmballoon_vmci_cleanup(b);
++	error = vmci_doorbell_create(&b->vmci_doorbell, VMCI_FLAG_DELAYED_CB,
++				     VMCI_PRIVILEGE_FLAG_RESTRICTED,
++				     vmballoon_doorbell, b);
+ 
+-		return -EIO;
+-	}
++	if (error != VMCI_SUCCESS)
++		goto fail;
++
++	error = VMWARE_BALLOON_CMD(VMCI_DOORBELL_SET, b->vmci_doorbell.context,
++				   b->vmci_doorbell.resource, dummy);
++
++	STATS_INC(b->stats.doorbell_set);
++
++	if (error != VMW_BALLOON_SUCCESS)
++		goto fail;
+ 
+ 	return 0;
++fail:
++	vmballoon_vmci_cleanup(b);
++	return -EIO;
+ }
+ 
+ /*
 -- 
 2.17.0
 
