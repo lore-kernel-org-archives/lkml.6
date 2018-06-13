@@ -2,147 +2,155 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 576F8C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:22:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1BBC1C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:27:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15E2D208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:22:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15E2D208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B02AB208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:27:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tru6OT4r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02AB208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935653AbeFMNWE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:22:04 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:56188 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935375AbeFMNWC (ORCPT
+        id S935625AbeFMN1e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:27:34 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:35119 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935487AbeFMN1d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:22:02 -0400
-Received: by mail-it0-f70.google.com with SMTP id i127-v6so2387528ita.5
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:22:02 -0700 (PDT)
+        Wed, 13 Jun 2018 09:27:33 -0400
+Received: by mail-wm0-f66.google.com with SMTP id j15-v6so5472900wme.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:27:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=9tq5wtaX3UHWBbmao67YZ2afVTFv8LABu7R+AtCWGlE=;
+        b=tru6OT4rH2nonxMubnv+WorBUsPVLjfUKC0IrPcfBL2mT2COvojmFPSlGtu6QX8XRO
+         PSKDjDH+XEMCL3S8lAurY6LBiuS0lGi1mtLv/Yi4L9XuAq0O+M4tk5MlJJQfYcSMPMJA
+         OiM0utT5t70Essv1OSScq4ek0P/Xp3DBCXv+izp3Niuf6dPnhfAqLQH/D0YioMFYDvZp
+         YByhlyEStIbhjih+dzMnH+WPepZpp0OWY1wQyx++b7d+jhJw2ZUs0Qd96c3jJsyvlPWh
+         fAvFezUr1dxtbi5VSfi6hI9ykVtqfhc+3l7lvRQjVbjwybMrlYHLXS6C6xxkU5PUBJM2
+         YOlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=JLuh5yxy4MnqhnwTlij06WylpIOh3rwnHBbI6Eki2NM=;
-        b=q6KD/H5O5N6ytgNMjhSePiCKaYUYrGUmkNLFAx/hQI4d9LgcLWNObVQfHoia0LOH6N
-         1ZLh7Vn2eCyrjwUnKziRJ3PK2cufzpDIniP0GHKwKfYEbQW8KmF6LmRcNAPUprqjrY1+
-         58kFZizA0gH8jMyHqpKFDj1V8Zrh8bxaYUj6akj/r3tnMbwl5x/XSxGrz4glzXK7gi80
-         RxvJwLh36u9PG7BpQKEunuOOGPNj1KH7R1sp5Qx9F+XRXrq3LDcAFOV3VGGlMkpeJ/F8
-         TejCY7buK38tdRQXQI5A9f0Crr/DyeiBnYHjk6ViC1KntgXcV1N3ewEh66lmr2lbv2QG
-         G6SQ==
-X-Gm-Message-State: APt69E3sAf5e5nnesbfe9DW+C5tSCEapeuelrz38q6J5+NdvruIqHfVy
-        uPnWQC65iu35x4045jj2mTYMWpqc4pgVsrWPsMRJ2RerC/x4
-X-Google-Smtp-Source: ADUXVKJGMDUf/yA9P/Rs/GMrqsFj/tpduJRezTOq4aFS15GZrY/5G9WLW7Wh9Kgg5cZMT5o639jv+834sITeHRyGh278z1wRpV7w
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=9tq5wtaX3UHWBbmao67YZ2afVTFv8LABu7R+AtCWGlE=;
+        b=gLdTmjikIQ9CDJk+GPYmg+zcMxZKglbGur25pifpjguQtJOKp/yS/3ybPfe8UCAxWR
+         Ca5qCHu6NkGOd2RBEhNTgXJpMeFtT+geBlAtnMT9tFytBXOrIz3JqtCsi+TTZAIx7SQ0
+         LqA8vlJaTA0oaANfC3rwMKx5hjxOdB6SawZh4bXvMJjfpyC4wJFFitwg8PxranC4sed1
+         fes+Rhs/FG99qaD22ljf4VlNfTxYRcdzSO+UYw245xNLccRWzZrSPEIirvZoffW7zGI9
+         ogn8Ys7rwlpFizCEOpjhIACpfWwb0JeRnnN7e/0GL5+kQbD/E7ddyOMOYB+BdyZUrvsy
+         QL3A==
+X-Gm-Message-State: APt69E0yl/pCnuEziE74rpBwG+rYCLED5oJ4FnLlSOBneJKogTTccIGo
+        J8+0kBKm5Xpgjc5sCZ7ri0nMdGdKFFBvTQMTy10=
+X-Google-Smtp-Source: ADUXVKJXnjdFvaRPNxCbrvFVQ7U/QaeR2yXDllv9lsXZ/ryZUVQZ5T8d26oooBJfNTE3KRjHuIGpLVFtHab4QDziUQY=
+X-Received: by 2002:a1c:3710:: with SMTP id e16-v6mr3663685wma.58.1528896451861;
+ Wed, 13 Jun 2018 06:27:31 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a6b:a207:: with SMTP id l7-v6mr2148019ioe.134.1528896122051;
- Wed, 13 Jun 2018 06:22:02 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 06:22:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000040ef1a056e85de5e@google.com>
-Subject: KASAN: use-after-free Read in crypto_morus640_decrypt_chunk
-From:   syzbot <syzbot+d82643ba80bf6937cd44@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Received: by 2002:adf:e241:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 06:27:31
+ -0700 (PDT)
+In-Reply-To: <20180613143247.1b749c83@endymion>
+References: <20180612083449.100099222@infradead.org> <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com>
+ <20180612171420.GU12217@hirez.programming.kicks-ass.net> <20180613143247.1b749c83@endymion>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Wed, 13 Jun 2018 15:27:31 +0200
+Message-ID: <CAHpGcMKj1MNyc0XJuKxf727jtNhiKpL3AuR_+pRZipWXG+V08w@mail.gmail.com>
+Subject: Re: Quilt vs gmail (Was: [PATCH 0/3] sched/swait: Convert to full
+ exclusive mode)
+To:     Jean Delvare <jdelvare@suse.de>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Jean,
 
-syzbot found the following crash on:
+2018-06-13 14:32 GMT+02:00 Jean Delvare <jdelvare@suse.de>:
+> Hi Peter, Linus, Andreas,
+>
+> On Tue, 12 Jun 2018 19:14:20 +0200, Peter Zijlstra wrote:
+>> On Tue, Jun 12, 2018 at 09:47:34AM -0700, Linus Torvalds wrote:
+>>
+>> > I do note how quilt emails are really hard to read, because that:
+>> >
+>> >     Content-Disposition: inline
+>> >
+>> > makes gmail think it's flowed.
+>> >
+>> > Which works horribly badly for patches, surprise surprise.
+>> >
+>> > So I really wish quilt wouldn't do that. It does smell like a gmail
+>> > bug, but at the same time, why would you use "Content-Disposition:
+>> > inline" when you don't have an actual multi-part email? So I do blame
+>> > quilt too for sending nonsensical headers.
+>> >
+>> > (Yes, yes, I see the "It is permissible to use Content-Disposition on
+>> > the main body" in the RFC. But the RFC also makes it clear that it
+>> > actually matters for how things are presented, so saying "ok, I'll do
+>> > flowed" seems equally insane and equally technically RFC-compliant)
+>>
+>> Quilt people, anything that can be done about that?
+>
+> The purpose of the Content-Disposition header is to let quilt store the
+> original patch file name, so that the recipient can save the email as a
+> patch file having the exact same name as the sender was using, to make
+> communication between developers easier. This is the reason why the
+> header is being added despite the email not being multi-part. As Linus
+> found out already, RFC 2183 allows that. The RFC also explicitly allows
+> the use of a filename parameter for inline parts (see section 2.3.)
+>
+> Using "attachment" instead of "inline" would presumably force the user
+> to save the patch to a file before being able to read it, or, at least,
+> to take additional actions in the MUA to convince it to display the
+> contents inline regardless of what the Content-Disposition header
+> says. This is clearly not desirable.
+>
+> We could try specifying the filename directly, without the "inline"
+> keyword, however that would no longer comply with the RFC
+> ("disposition-parm" is optional, but "disposition-type" is mandatory)
+> and I am afraid that some MUA implementations would either default to
+> disposition-type "attachment" in this case, or ignore the header
+> altogether.
+>
+> I'm not sure I understand what "flowed" means in this context. If you
+> mean that gmail breaks the formatting of the patch, I would say that
+> gmail is infringing the RFC, which clearly stipulates at the beginning
+> that the Content-Disposition header field is only about telling the MUA
+> which parts should be displayed immediately and which parts should not,
+> and not about presentation issues.
+>
+> Considering that "inline" is the default for a non-multi-part message,
+> any MUA which changes its behavior in the presence of
+> "Content-Disposition: inline" is bugged in my opinion.
 
-HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=12286eaf800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=d82643ba80bf6937cd44
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+All of that may be correct, but those headers apparently do break
+email based patch reviewing on Thunderbird and Gmail now, and that's
+not very likely to change. If we continue with our current practice,
+we'll end up frustrating users. On top of that, i we make this an
+optional feature, quilt users may think that using that option is a
+good idea when they will actually break their recipients' workflows.
+As Thomas Gleixner wrote in the other thread, most recipients will
+already have a way to deal with messages from other sources that don't
+include patch filenames, so let's just get rid of Content-Disposition
+headers in quilt for good.
 
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+d82643ba80bf6937cd44@syzkaller.appspotmail.com
-
-netlink: 20 bytes leftover after parsing attributes in process  
-`syz-executor0'.
-netlink: 20 bytes leftover after parsing attributes in process  
-`syz-executor0'.
-==================================================================
-BUG: KASAN: use-after-free in crypto_morus640_load_a crypto/morus640.c:111  
-[inline]
-BUG: KASAN: use-after-free in crypto_morus640_decrypt_chunk+0xcf8/0xd20  
-crypto/morus640.c:278
-Read of size 4 at addr ffff8801bfc84003 by task syz-executor4/11106
-
-CPU: 1 PID: 11106 Comm: syz-executor4 Not tainted 4.17.0+ #84
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  crypto_morus640_load_a crypto/morus640.c:111 [inline]
-  crypto_morus640_decrypt_chunk+0xcf8/0xd20 crypto/morus640.c:278
-  crypto_morus640_process_crypt.isra.12+0x153/0x230 crypto/morus640.c:376
-  crypto_morus640_crypt+0x42e/0x9f0 crypto/morus640.c:442
-  crypto_morus640_decrypt+0x23e/0x3d0 crypto/morus640.c:485
-  crypto_aead_decrypt include/crypto/aead.h:370 [inline]
-  _aead_recvmsg crypto/algif_aead.c:315 [inline]
-  aead_recvmsg+0x13cc/0x1ba0 crypto/algif_aead.c:334
-  sock_recvmsg_nosec net/socket.c:818 [inline]
-  sock_recvmsg+0xd0/0x110 net/socket.c:825
-  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2323
-  __sys_recvmsg+0x112/0x260 net/socket.c:2372
-  __do_sys_recvmsg net/socket.c:2382 [inline]
-  __se_sys_recvmsg net/socket.c:2379 [inline]
-  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2379
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455b29
-Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f76ce020c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
-RAX: ffffffffffffffda RBX: 00007f76ce0216d4 RCX: 0000000000455b29
-RDX: 0000000000000000 RSI: 0000000020002840 RDI: 0000000000000016
-RBP: 000000000072bf50 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c084a R14: 00000000004cffe8 R15: 0000000000000001
-
-The buggy address belongs to the page:
-page:ffffea0006ff2100 count:0 mapcount:-128 mapping:0000000000000000  
-index:0x1
-flags: 0x2fffc0000000000()
-raw: 02fffc0000000000 ffffea0006ff9308 ffffea0006ff2208 0000000000000000
-raw: 0000000000000001 0000000000000002 00000000ffffff7f 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801bfc83f00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff8801bfc83f80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> ffff8801bfc84000: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-                    ^
-  ffff8801bfc84080: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801bfc84100: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Andreas
