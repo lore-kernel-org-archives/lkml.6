@@ -2,106 +2,61 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DA4C5C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:23:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A09C1C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:23:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A63D2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:23:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A63D2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 5719F2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:23:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ZUilLF8C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5719F2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934634AbeFMHXF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:23:05 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:41327 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S934150AbeFMHXC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:23:02 -0400
-X-UUID: 7bccdec80642476299011d2418d55b33-20180613
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1725022314; Wed, 13 Jun 2018 15:23:00 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 13 Jun 2018 15:22:58 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 13 Jun 2018 15:22:58 +0800
-Message-ID: <1528874578.30263.12.camel@mtksdaap41>
-Subject: Re: [PATCH 25/28] drm/mediatek: add DSI3 support for mutex
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Wed, 13 Jun 2018 15:22:58 +0800
-In-Reply-To: <1528687580-549-26-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-         <1528687580-549-26-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        id S934754AbeFMHXI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:23:08 -0400
+Received: from vps0.lunn.ch ([185.16.172.187]:60321 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934150AbeFMHXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:23:06 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=fyfJCRhZ2ft+ylu9AHXd2vApAWoAmi/3yo7VcAyUokM=;
+        b=ZUilLF8Cc6Kngg12PfjY86zrWD9Mb13H124g5ilMELFfv5DjrQn9j0Sl6MT3dFO5DTUt+HWPD5F5k7QoLHbaIBn2XnqaQy2tWcUC+NaH31AxzaCkzhC/cdYH1YFfrE0RvZVHa6hgDCqx/XGZHqqRMh+0L3XyfTxZym6gEPiz7mw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1fT07R-0006gF-GG; Wed, 13 Jun 2018 09:23:01 +0200
+Date:   Wed, 13 Jun 2018 09:23:01 +0200
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+Cc:     davem@davemloft.net, michal.simek@xilinx.com,
+        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] net: emaclite: Fix MDIO bus unregister bug
+Message-ID: <20180613072301.GC24314@lunn.ch>
+References: <1528871719-1681-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <1528871719-1681-3-git-send-email-radhey.shyam.pandey@xilinx.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528871719-1681-3-git-send-email-radhey.shyam.pandey@xilinx.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
-
-On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
-> This patch add the DSI3 support for mutex
+On Wed, Jun 13, 2018 at 12:05:17PM +0530, Radhey Shyam Pandey wrote:
+> Since 'has_mdio' flag is not used,sequence insmod->rmmod-> insmod
+> leads to failure as MDIO unregister doesn't happen in .remove().
+> Fix it by checking MII bus pointer instead.
 > 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-Reviewed-by: CK Hu <ck.hu at mediatek.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index 1e7e3872eccc..28dd8531a7de 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -78,6 +78,7 @@
->  #define MUTEX_SOF_DPI0			3
->  #define MUTEX_SOF_DPI1			4
->  #define MUTEX_SOF_DSI2			5
-> +#define MUTEX_SOF_DSI3			6
->  
->  #define OVL0_MOUT_EN_COLOR0		0x1
->  #define OD_MOUT_EN_RDMA0		0x1
-> @@ -387,6 +388,9 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
->  	case DDP_COMPONENT_DSI2:
->  		reg = MUTEX_SOF_DSI2;
->  		break;
-> +	case DDP_COMPONENT_DSI3:
-> +		reg = MUTEX_SOF_DSI3;
-> +		break;
->  	case DDP_COMPONENT_DPI0:
->  		reg = MUTEX_SOF_DPI0;
->  		break;
-> @@ -425,6 +429,7 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
->  	case DDP_COMPONENT_DSI0:
->  	case DDP_COMPONENT_DSI1:
->  	case DDP_COMPONENT_DSI2:
-> +	case DDP_COMPONENT_DSI3:
->  	case DDP_COMPONENT_DPI0:
->  	case DDP_COMPONENT_DPI1:
->  		writel_relaxed(MUTEX_SOF_SINGLE_MODE,
-
-
+    Andrew
