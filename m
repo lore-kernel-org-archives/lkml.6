@@ -4,172 +4,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 153A9C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:53:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0B083C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:54:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53542086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5DC62086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:54:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFP+T55r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B53542086A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E21Fjgsc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5DC62086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935046AbeFMIxv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:53:51 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:39388 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933732AbeFMIxr (ORCPT
+        id S934834AbeFMIyu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 04:54:50 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:40857 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754478AbeFMIyq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:53:47 -0400
-Received: by mail-pl0-f65.google.com with SMTP id f1-v6so1141712plt.6;
-        Wed, 13 Jun 2018 01:53:47 -0700 (PDT)
+        Wed, 13 Jun 2018 04:54:46 -0400
+Received: by mail-ua0-f193.google.com with SMTP id l11-v6so1198768uak.7;
+        Wed, 13 Jun 2018 01:54:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=dRAwUrqCAvTvutnolJbHOaHl55SyhMZEFEXZmfjbNLQ=;
-        b=KFP+T55rqBRa4J2UMgswmTtCeyx7/1U+7zFapgADCM1e5PxVn3jZkjLDPLgH2TThzw
-         IzQDz7Xhfht6CEmakfDHqZSmwV0yFOLdaHzgGejNuSuPj2WMICSCP38uv6iSjP6q6ZDZ
-         mWJYaE5SYe8D6cwdh4wK86lUX1pfT0OQ4egvXE148dY6XPBQ5S4V50zvo6gHFbvmpnrH
-         W5dh/2vF8xT0pw8l402+zZ2QH7+NdenI6QrHMQc4/ZKdiIemmBJkyM/kejdhcT08/GJz
-         k2ZsRLkzTxo0rziIJBmQs4M+IRbVDqHCsQjSldEYnCYnBYHi9lV5WrNUsyN0H/RPyYhj
-         FoJQ==
+        bh=a3qxDkiAN4hKwO5cZ7g8VB8eVH6YSO4iBLN1kEWxHRE=;
+        b=E21FjgscgR7qST/Q+Ll3A/0w89TxfmmgGm+J/x/o6HYnvjOKN7xlMOarN+gPP0Bs5C
+         eN8PpozgvUnmlkof+57wbpiPHF17jlH9JAPxa0Jxulof8q0siDy+QsHEInWCPnkfyz1v
+         xMnORp2qo4ctLxdOsu4tBbFz1qygDRQS78RBcDg8eme2kO/J7pjf5QEVmHYGBfkZvAfC
+         GmW26CynU60MzBIni8ewet4DRAMuj/AKuVwSKiD4FfO6hq1hcJCWDfcYNuPGAjgBtX7J
+         DKHqdHApmD6GqbatmxUXY6qtFE9mYSlM2EhDn/WWaDysfqqPmIoIC0pZO5LURjYZvG+d
+         XSbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=dRAwUrqCAvTvutnolJbHOaHl55SyhMZEFEXZmfjbNLQ=;
-        b=iGK6d5OtQmkYHFXJbKPuZY9jLclP5dtFBJPoE+Y0/R1VuuH594fSwfRBoLHaGbtsuf
-         GbZGYZFexWNy2EA/QPuVX12vC4ZCS3I4kJkvXc7GXzZ1lj6HA2PAAsjAilANaA79ua4L
-         KRkKnbsqnEDV6ycToPijCR+vVKwXSXm51j/Du9cPZefs2ZnKi0gQFf5lyM008vkez1CL
-         laiRrdvUg6nNzEPUJu41awgqdLIKCpTYPm7brOJW1KgjElZDr4lVshJ5i99uxNjdX3QM
-         ibvtBIx87aJTKLFB3NgD2uIKiQweRHqpEm6o691o1B6utz17jJKMYFbL0uAqlo9U4qw+
-         d5og==
-X-Gm-Message-State: APt69E2EzkkcXd/XosTq5NHjCIyvJ3kRBrmA2/mcROvl1kBZR5qdgjzB
-        RewwCXoHovlgNZ+Ws+bY+caz9pqmPjGjiumiMao=
-X-Google-Smtp-Source: ADUXVKJR6qrHR00M2WNkIN6WtBBlRqSCZ+AO8euIW5eFTUU27NE2nTFgbskG6BzSSV9pE5XrivvqQBuWDWwzhS7dhU0=
-X-Received: by 2002:a17:902:43a4:: with SMTP id j33-v6mr4242750pld.118.1528880026661;
- Wed, 13 Jun 2018 01:53:46 -0700 (PDT)
+        bh=a3qxDkiAN4hKwO5cZ7g8VB8eVH6YSO4iBLN1kEWxHRE=;
+        b=h4TIPyaBkPHAVKtQrGNqlhmbntB3MuNHAn8814zhl8GZajiFnRUQuUcwwW2mgEnCNi
+         v3fh0j6jXrqM2GOtXSiUsUjpKaNkGcJTmhL2Mdl7ftNSPWvB4xNISQQ+6/Njvi9X77/X
+         6gNdaJfxuEc5zqGHG15Kdf5W/t0BTvWESD7uoNEMNzjszDMdWMF/0NSND+LoERqAJ6Zo
+         q0blBThdIiD8box33P6Se1IATDZCaE3ijIBi623FzEyN14wE6cMhTsQp0JUhlCvyq9kq
+         fwRUFGY6Kjx0xriFMVakaxnaTHC5/3tmBUnVferiKoP7/gQnkBLl83qQwikkmoRZoyWH
+         noGQ==
+X-Gm-Message-State: APt69E1Z5gRMtvnpQbXbeQgpuIcoBzfI11bEd8Upa/hZO5tPjNnqf/J3
+        MsGGsStw+p8jt/TviNWUQ/YkaRC1A3UxRXoIPGQ=
+X-Google-Smtp-Source: ADUXVKLIJtKPrumegEUCldF9jxmeuBV5m9I01jHSwPar3m5gfUp/HOhivtX2h4Gcsw8rMxBCI8tCgvF0JQYHsefEvFM=
+X-Received: by 2002:ab0:6008:: with SMTP id j8-v6mr2691871ual.28.1528880085894;
+ Wed, 13 Jun 2018 01:54:45 -0700 (PDT)
 MIME-Version: 1.0
-References: <1528187462-47093-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528187462-47093-3-git-send-email-michel.pollet@bp.renesas.com>
- <CAMuHMdWoE=+sEUtFdPKk4eBGtOn8f7bUPV-HLAvEETuqgVMeVw@mail.gmail.com>
- <OSBPR01MB2054D7F35A31A8331B906E05D27E0@OSBPR01MB2054.jpnprd01.prod.outlook.com>
- <CAMuHMdUtdRB_L-WsphJYBd9m-3tth3KHGK1wWdr_UJF18S9Z5A@mail.gmail.com>
-In-Reply-To: <CAMuHMdUtdRB_L-WsphJYBd9m-3tth3KHGK1wWdr_UJF18S9Z5A@mail.gmail.com>
-From:   M P <buserror@gmail.com>
-Date:   Wed, 13 Jun 2018 09:53:35 +0100
-Message-ID: <CAMMfpEwhpoBvO+JGPFYeNznns9W=+6iZoUec5Ffk-ppUH_9BFg@mail.gmail.com>
-Subject: Re: [PATCH v8 2/5] dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     michel.pollet@bp.renesas.com, linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        buserror+upstream@gmail.com,
-        Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, geert+renesas@glider.be,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 01:54:45
+ -0700 (PDT)
+In-Reply-To: <b59027b3-a48e-f168-5f12-c67758c0c2c7@gmail.com>
+References: <45b8bde6-aaa8-3f3f-0528-81e5e931751c@gmail.com>
+ <bc6846e1-2b6d-dcc2-355c-2699aa1607a2@gmail.com> <CAHp75Vdmqm+r=Orxs6_dCr18y+EwEQ=s-7UgaZKHuKbtjMcOig@mail.gmail.com>
+ <20180609010420.GA112645@localhost.localdomain> <CAHp75VcA5ZWahraDP69_hBHuqxw6cng93zAa1op5EBYfuCSPwg@mail.gmail.com>
+ <b59027b3-a48e-f168-5f12-c67758c0c2c7@gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 13 Jun 2018 11:54:45 +0300
+Message-ID: <CAHp75VcK78jL_7sF+ZGaPpwDED-6Xd+SdH_5WCfSBsVJW2GnDg@mail.gmail.com>
+Subject: Re: [PATCH v3] dcdbas: Add support for WSMT ACPI table
+To:     Stuart Hayes <stuart.w.hayes@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>, Douglas_Warzecha@dell.com,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Jared.Dominguez@dell.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-hi Geert,
-
-On Wed, 13 Jun 2018 at 08:17, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Wed, Jun 13, 2018 at 4:24 AM, Stuart Hayes <stuart.w.hayes@gmail.com> wrote:
 >
-> Hi Michel,
->
-> On Wed, Jun 13, 2018 at 8:38 AM Michel Pollet
-> <michel.pollet@bp.renesas.com> wrote:
-> > On 11 June 2018 11:01, Geert wrote:
-> > > On Tue, Jun 5, 2018 at 10:36 AM Michel Pollet
-> > > <michel.pollet@bp.renesas.com> wrote:
-> > > > The Renesas R9A06G032 SYSCTRL node description.
-> > > >
-> > > > Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> > >
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/clock/renesas,r9a06g032-
-> > > sysctr
-> > > > +++ l.txt
-> > > > @@ -0,0 +1,32 @@
-> > > > +* Renesas R9A06G032 SYSCTRL
-> > > > +
-> > > > +Required Properties:
-> > > > +
-> > > > +  - compatible: Must be:
-> > > > +    - "renesas,r9a06g032-sysctrl"
-> > > > +  - reg: Base address and length of the SYSCTRL IO block.
-> > > > +  - #clock-cells: Must be 1
-> > >
-> > > (repeating myself) No clocks/clock-names for the external clock inputs?
-> > >
-> > > "RZ/N1 has 3 clock sources, 1 reference clock inputs for RGMII, and 2
-> > > reference clock outputs for RMII/MII."
-> >
-> > Well, I'm trying to keep the binding as simple as possible, to dodge any
-> > further discussion. Adding these will be possible later, I don't need them
-> > for the moment anyway.
->
-> Don't you? The external clock inputs are at the root of the clock tree, so I'd
-> say you need them. Bolting them on later may become complicated, especially
-> if you care about DTB backwards compatibility.
+> If the WSMT ACPI table is present and indicates that a fixed communication
+> buffer should be used, use the firmware-specified buffer instead of
+> allocating a buffer in memory for communications between the dcdbas driver
+> and firmare.
 
-Well the input is fixed frequency -- and there is a clock (gate)
-created for it in the driver
-(CLK_RGMII_REF) so you can turn it on/off if you like...
+Thanks for an update. My comments below.
 
-The only configurable bit is a *nightmare* as the selection bit for
-whether it is coming
-from CLKOUT_D8 or from an external input is in a *completely different
-IP block*. I'd
-need another iomap() and all that stuff, and a custom driver for it.
+> -       if ((pos + count) > MAX_SMI_DATA_BUF_SIZE)
+> +       if ((pos + count) > max_smi_data_buf_size)
+>                 return -EINVAL;
 
-If I were to implement it, I'd have to add a custom driver for that
-clock, use the current
-gate as a parent, iomap the selection bit register etc -- basically.
-All of that for a use
-case of *none ever* as most people would probably tweak that bit in
-the bootloader
-anyway -- also, I'd have zero capability for testing it.
+Parens are redundant, but okay, not purpose of the change.
 
-As far as the output, they also have their own gates (already
-created). They are also fixed
-frequency and the only thing that matters to them is the pinmux
-settings. So (soon) with the
-pinmux driver, you can enable that clock properly without a special
-driver, just by adding
-that gate to your ethernet, and add the pinmux config for it.
+> +               /* Calling Interface SMI
 
-So what do I go with that?
+I suppose the style of the comments like
+/*
+ * Calling ...
+...
 
->
-> The reset controller subsystem is optional anyway, and used only by a small
-> number of drivers, so support for resets can definitely be postponed.
->
-> > Did you have a chance to review the clock driver proper? I'm pondering
-> > sending a v9 since it's been a week (with very minor changes) -- but I
-> > don't want to interrupt if you were in the process of reviewing...
->
-> I had a quick glance. Looks OK mostly, so it's definitely heading for the right
-> direction!
-> One remaining question: do you need CLK_OF_DECLARE()?
-> Is there any reason your clock driver cannot be a platform driver, which is
-> the recommended way?
+> +                *
+> +                * Provide physical address of command buffer field within
+> +                * the struct smi_cmd... can't use virt_to_phys on smi_cmd
+> +                * because address may be from memremap.
 
-I copied it straight out of clk-rcar-gen2.c -- I don't 'need' anything more than
-instantiating my driver; does it make a difference? ie a one liner macro vs
-adding an extra struct, 2 functions to do the same thing?
-Just curious, sometime I lose track of that the goalpost is -- for
-years I understood
-that having OF was simpler and better all around?
+Wait, memremap() might return a virtual address. How we be sure that
+we got still physical address here?
 
-Thanks!
-Michel
+(Also note () when referring to functions)
+
+> +                */
+> +               smi_cmd->ebx = smi_data_buf_phys_addr +
+> +                               offsetof(struct smi_cmd, command_buffer);
+
+Btw, can it be one line (~83 character are okay for my opinion).
+
+> +       acpi_get_table(ACPI_SIG_WSMT, 0, (struct acpi_table_header **)&wsmt);
+> +       if (!wsmt)
+> +               return 0;
+> +
+> +       /* Check if WSMT ACPI table shows that protection is enabled */
+> +       if (!(wsmt->protection_flags & ACPI_WSMT_FIXED_COMM_BUFFERS)
+
+> +           || !(wsmt->protection_flags
+> +                & ACPI_WSMT_COMM_BUFFER_NESTED_PTR_PROTECTION))
+
+Better to indent like
+
+if (... ||
+ !(... & ...)
+
+> +               return 0;
+> +
+> +       /* Scan for EPS (entry point structure) */
+> +       for (addr = (u8 *)__va(0xf0000);
+> +            addr < (u8 *)__va(0x100000 - sizeof(struct smm_eps_table));
+
+> +            addr += 1) {
+
+This wasn't commented IIRC and changed. So, why?
+
+-- 
+With Best Regards,
+Andy Shevchenko
