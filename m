@@ -2,115 +2,132 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ACBF5C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:52:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 082AEC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:53:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D977208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:52:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D977208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id B0649208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:53:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wigr2g4D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0649208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935003AbeFMKwF convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 06:52:05 -0400
-Received: from smtp-out6.electric.net ([192.162.217.195]:65284 "EHLO
-        smtp-out6.electric.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754096AbeFMKwD (ORCPT
+        id S935232AbeFMKxk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 06:53:40 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:33165 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934527AbeFMKxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 06:52:03 -0400
-Received: from 1fT3Nc-0001aX-VP by out6d.electric.net with emc1-ok (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fT3Nf-0001vA-U1; Wed, 13 Jun 2018 03:51:59 -0700
-Received: by emcmailer; Wed, 13 Jun 2018 03:51:59 -0700
-Received: from [156.67.243.126] (helo=AcuMS.aculab.com)
-        by out6d.electric.net with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <David.Laight@ACULAB.COM>)
-        id 1fT3Nc-0001aX-VP; Wed, 13 Jun 2018 03:51:56 -0700
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Wed, 13 Jun 2018 11:53:07 +0100
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Wed, 13 Jun 2018 11:53:07 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Zhouyang Jia' <jiazhouyang09@gmail.com>
-CC:     Oleg Drokin <oleg.drokin@intel.com>,
-        Andreas Dilger <andreas.dilger@intel.com>,
-        James Simmons <jsimmons@infradead.org>,
-        "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
-        NeilBrown <neilb@suse.com>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        "lustre-devel@lists.lustre.org" <lustre-devel@lists.lustre.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH] staging: lustre: add error handling for try_module_get
-Thread-Topic: [PATCH] staging: lustre: add error handling for try_module_get
-Thread-Index: AQHUAgjuv8cfdxrCkEmiAy/zv5sqdqReAu6Q
-Date:   Wed, 13 Jun 2018 10:53:07 +0000
-Message-ID: <ed5d91f54b5a4776a66df87b645b0ee9@AcuMS.aculab.com>
-References: <1528778968-42225-1-git-send-email-jiazhouyang09@gmail.com>
-In-Reply-To: <1528778968-42225-1-git-send-email-jiazhouyang09@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.33]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Wed, 13 Jun 2018 06:53:38 -0400
+Received: by mail-wm0-f68.google.com with SMTP id z6-v6so22940138wma.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 03:53:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=cDMnxijUjd91XDWO9/AWbkO3UOoK0s7JrLFfKprtelI=;
+        b=Wigr2g4DMVBvDAUiGtoU8D7sMQIGpIC7fRnjoJO/KH+XEvOJFCX8e2TBspkS3spM+J
+         XqTtLiPt7UI+v/YVFdskVvlyIJ7/62zoOkTOyHrNBfX4Qnw7s/5Cdc/PBrNdRVCCUBwN
+         ZSnFtvCkGRHYYzT2Gj41+8QIU+GygYz7ImK8o=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=cDMnxijUjd91XDWO9/AWbkO3UOoK0s7JrLFfKprtelI=;
+        b=edhF+xvXurrNQGdBySuskmClQwyWV2tnJkNe1tgVkbL++7f4d3cRkQDOhyWF2AYtHV
+         0EXy3TKwuoGbli4StU9vr8PGuP52YHzFLrbLvHEjBzRGbMfPU8MVPkrlN2wogkhn2qBS
+         nPR6yvaehKTlf2BR9TCfdBFZtJYbdg5SkgHRPO1J7q8fHA48cP3RHSUvDhI/eMX0Jtja
+         JwkgoyPNk1RxGg/MVNjvqJMOzQQP3v4FhPXxvfpwQ2oNW41qt37hCiU5/jP+ogoIMw48
+         Di27TZpOrYAo+zmg0/I4YR/ZeIOz4jCVNXn1EGa2go/85f0FI+5tbmntUNDNqZ4Lz9nP
+         c5fw==
+X-Gm-Message-State: APt69E1TeCi5X2m3HjAJYOxlst206pu24mX0Qh5/NS08lOGGV3JnhtYS
+        KmZxtCNr7QEPHcG8Jhh3EjUWcg==
+X-Google-Smtp-Source: ADUXVKLFGpAlaDQRhFsTOGb8l6YHoLGS4IyJegrFa9vVtZZAgMIHR/qd1DIA2qCAz7QL+77VgfeVdg==
+X-Received: by 2002:a1c:443:: with SMTP id 64-v6mr3371653wme.140.1528887217594;
+        Wed, 13 Jun 2018 03:53:37 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id y8-v6sm4601932wrs.0.2018.06.13.03.53.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Jun 2018 03:53:37 -0700 (PDT)
+Subject: Re: [PATCH] irqchip/gic-v3: do not access GICR_WAKER if its secured
+ register.
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        "Nayak, Rajendra" <rnayak@codeaurora.org>,
+        bjorn.andersson@linaro.org, sboyd@kernel.org
+References: <20180612145516.30897-1-srinivas.kandagatla@linaro.org>
+ <86d0ww7ymc.wl-marc.zyngier@arm.com>
+ <c4fafe97-fbf4-1037-394c-94c65fff3e21@linaro.org>
+ <CAPKp9uYQC+Pw+DgdTny317s3sNcyE=Shthvyrh7wn0r=Qy1tSQ@mail.gmail.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <113cbfb5-9701-c62c-75c1-72c2dda8df8c@linaro.org>
+Date:   Wed, 13 Jun 2018 11:53:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-X-Outbound-IP: 156.67.243.126
-X-Env-From: David.Laight@ACULAB.COM
-X-Proto: esmtps
-X-Revdns: 
-X-HELO: AcuMS.aculab.com
-X-TLS:  TLSv1.2:ECDHE-RSA-AES256-SHA384:256
-X-Authenticated_ID: 
-X-PolicySMART: 3396946, 3397078
-X-Virus-Status: Scanned by VirusSMART (c)
-X-Virus-Status: Scanned by VirusSMART (s)
+In-Reply-To: <CAPKp9uYQC+Pw+DgdTny317s3sNcyE=Shthvyrh7wn0r=Qy1tSQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhouyang Jia
-> Sent: 12 June 2018 05:49
+
+
+On 13/06/18 09:45, Sudeep Holla wrote:
+> On Wed, Jun 13, 2018 at 9:21 AM, Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
+>>
+>>
+>> On 12/06/18 17:34, Marc Zyngier wrote:
+>>>
+>>> I suggest you find out how the GIC has been integrated on this
+>>> platform. If you take a fault on accessing this register, this very
+>>> much looks like an integration bug, and it should be quirked as such.
+>>
+>> Thanks for the suggestion, This is a bug in the firmware which is
+>> restricting access to this register. We have been working around this bug
+>> for more than 2 years due to this. Now this platform support is in mainline
+>> and We/I have no hope that this will be fixed in near future atleast for
+>> this platform.
+>>
 > 
-> When try_module_get fails, the lack of error-handling code may
-> cause unexpected results.
+>  From what you are saying, you were aware of the firmware bug for 2 years as
+> you had work-around from then. I wish the firmware had come up with the fix
+> in those lost 2 years. I understand if it was discovered now, but that doesn't
+> seem to be the case here.
 > 
-> This patch adds error-handling code after calling try_module_get.
-...
-> +++ b/drivers/staging/lustre/lnet/klnds/socklnd/socklnd.c
-> @@ -2422,7 +2422,10 @@ ksocknal_base_startup(void)
+> Firmware fixes are now becoming inevitable, so the attitude that firmware can't
+> be fixed has to slowing change. I am not saying I am against the quirk, but in
+> general I have seen the firmware support of QCOM parts are really bad. I waited
+> for almost 2 years for PSCI firmware on previous dragonboard where developer
+> are trying to upstream some feature.
+I agree with you!
+
+We did wait for more than 2 years for firmware to be fixed. But it never 
+happened and very little hopes to get it fixed.
+
+I did try the quirk based on GICD_IIDR and I could boot linus master on 
+DB820c!
+
+I will send it out as RFC soon.
+
+thanks,
+srini
 > 
->  	/* flag lists/ptrs/locks initialised */
->  	ksocknal_data.ksnd_init = SOCKNAL_INIT_DATA;
-> -	try_module_get(THIS_MODULE);
-> +	if (!try_module_get(THIS_MODULE)) {
-> +		CERROR("%s: cannot get module\n", __func__);
-> +		goto failed;
-> +	}
-
-
-Can try_module_get(THIS_MODULE) ever fail?
-Since you are running code in 'THIS_MODULE' the caller must have a
-reference that can't go away.
-So try_module_get() just increments the count that is already greater
-than zero.
-
-Similarly module_put(THIS_MODULE) must never be able to release the
-last reference.
-Any such calls that aren't in error paths after try_module_get() are
-probably buggy.
-
-	David
-
+> --
+> Regards,
+> Sudeep
+> 
