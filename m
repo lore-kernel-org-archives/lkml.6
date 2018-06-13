@@ -2,185 +2,167 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A04A0C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C7B7DC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:15:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C18920020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79F45208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:15:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eXioRuYy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C18920020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqgq36ap"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79F45208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935696AbeFMNLp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:11:45 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46828 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeFMNLo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:11:44 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5DD9jjp049439;
-        Wed, 13 Jun 2018 13:11:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=qT5zajnJ7ai2N9SSUBL0clqojCxw8AwE4ZN17QNl3Kg=;
- b=eXioRuYyVVRPweJodDp8fQj6WsrGb5gTjPMBNfBWnJgnEWwG9TONRl8BO3+ir0eUMfTH
- a1gBS8/bTcvbRdQTJPKo8dhZGKBfxqn4s0Hm9KFO0HHyy9jGsWV4TJeVFymLQDSwp+ay
- QK34DiSrmvEDEQzywukxIW14e3/0e5fSz+rV5x6fcCHC1d9nhcsNz7N3b3voDrK4dgUV
- cFb1TvskIwqPM8vJR9oo8HcwmwueQyjMlX3NLSAH00jgIYYlPIc5tZseyr4e2TztWGl9
- x+w8qpHMMneh2OuKsZPT5jX//GHdzOPzt025+uaUg0+WEgR+K9y27q/S7cZd/RpofQiX gQ== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jk0xr8mjj-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 13:11:02 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5DDB1XW029813
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 13:11:02 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5DDB1aG022649;
-        Wed, 13 Jun 2018 13:11:01 GMT
-Received: from mwanda (/197.157.34.169)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jun 2018 06:11:01 -0700
-Date:   Wed, 13 Jun 2018 16:10:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Josh Poimboeuf <jpoimboe@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: Re: Smatch check for Spectre stuff
-Message-ID: <20180613131049.sf7abp6wwrnpy5ct@mwanda>
-References: <20180419051510.GA21898@mwanda>
- <20180608161219.q3lwvlydvs4l2gxa@treble>
+        id S935594AbeFMNPY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:15:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51718 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935359AbeFMNPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 09:15:23 -0400
+Received: from linux-5o07 (charybdis-ext.suse.de [195.135.221.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E5A2208B0;
+        Wed, 13 Jun 2018 13:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528895722;
+        bh=MKX6b51uBh9EUI5d9hrVwkEbaQAVPAx0YkjS4gSHcro=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kqgq36ap9mF1Nzab6QCfb5Wu8PBy51wnJSZZ4d+DVyPiq7UXvluZgQJ/EWqw+5DGE
+         LMA3/6O83UszhBIIvpi3j7NM5ABbk4EHjXrHU3kAWYMw9ehbllowVKk3YFw9SvNQ9T
+         WQAHz8iueb8ng/XjmsCrulNzxQzxBLXu4RHYfHiI=
+Date:   Wed, 13 Jun 2018 15:15:20 +0200
+From:   Jessica Yu <jeyu@kernel.org>
+To:     "Brett T. Warden" <brett.t.warden@intel.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] module: Implement sig_unenforce parameter
+Message-ID: <20180613131520.uwtwi67meobos3ws@linux-5o07>
+References: <201806062114.40uzFbuB%fengguang.wu@intel.com>
+ <20180606194414.14500-1-brett.t.warden@intel.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="4mpsdi3lywj2u6b4"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20180608161219.q3lwvlydvs4l2gxa@treble>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130144
+In-Reply-To: <20180606194414.14500-1-brett.t.warden@intel.com>
+X-OS:   Linux linux-5o07 4.12.14-lp150.11-default x86_64
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++++ Brett T. Warden [06/06/18 12:44 -0700]:
+>When CONFIG_MODULE_SIG_FORCE is enabled, also provide a boot-time-only
+>parameter, module.sig_unenforce, to disable signature enforcement. This
+>allows distributions to ship with signature verification enforcement
+>enabled by default, but for users to elect to disable it without
+>recompiling, to support building and loading out-of-tree modules.
+>
+>Signed-off-by: Brett T. Warden <brett.t.warden@intel.com>
+>---
+>
+>Added CONFIG_X86 guards around use of boot_params since this structure
+>is arch-specific.
+>
+> .../admin-guide/kernel-parameters.txt         |  4 +++
+> kernel/module.c                               | 31 +++++++++++++++++--
+> 2 files changed, 33 insertions(+), 2 deletions(-)
+>
+>diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+>index 1beb30d8d7fc..87909e021558 100644
+>--- a/Documentation/admin-guide/kernel-parameters.txt
+>+++ b/Documentation/admin-guide/kernel-parameters.txt
+>@@ -2380,6 +2380,10 @@
+> 			Note that if CONFIG_MODULE_SIG_FORCE is set, that
+> 			is always true, so this option does nothing.
+>
+>+	module.sig_unenforce
+>+			[KNL] This parameter allows modules without signatures
+>+			to be loaded, overriding CONFIG_MODULE_SIG_FORCE.
+>+
+> 	module_blacklist=  [KNL] Do not load a comma-separated list of
+> 			modules.  Useful for debugging problem modules.
+>
+>diff --git a/kernel/module.c b/kernel/module.c
+>index c9bea7f2b43e..27f23d85e1ba 100644
+>--- a/kernel/module.c
+>+++ b/kernel/module.c
+>@@ -64,6 +64,7 @@
+> #include <linux/bsearch.h>
+> #include <linux/dynamic_debug.h>
+> #include <linux/audit.h>
+>+#include <linux/efi.h>
+> #include <uapi/linux/module.h>
+> #include "module-internal.h"
+>
+>@@ -274,9 +275,13 @@ static void module_assert_mutex_or_preempt(void)
+> }
+>
+> static bool sig_enforce = IS_ENABLED(CONFIG_MODULE_SIG_FORCE);
+>-#ifndef CONFIG_MODULE_SIG_FORCE
+>+#ifdef CONFIG_MODULE_SIG_FORCE
+>+/* Allow disabling module signature requirement by adding boot param */
+>+static bool sig_unenforce;
+>+module_param(sig_unenforce, bool_enable_only, 0444);
+>+#else /* !CONFIG_MODULE_SIG_FORCE */
+> module_param(sig_enforce, bool_enable_only, 0644);
+>-#endif /* !CONFIG_MODULE_SIG_FORCE */
+>+#endif /* CONFIG_MODULE_SIG_FORCE */
+>
+> /*
+>  * Export sig_enforce kernel cmdline parameter to allow other subsystems rely
+>@@ -415,6 +420,10 @@ extern const s32 __start___kcrctab_unused[];
+> extern const s32 __start___kcrctab_unused_gpl[];
+> #endif
+>
+>+#ifdef CONFIG_X86
+>+extern struct boot_params boot_params;
+>+#endif
+>+
+> #ifndef CONFIG_MODVERSIONS
+> #define symversion(base, idx) NULL
+> #else
+>@@ -4243,6 +4252,24 @@ static const struct file_operations proc_modules_operations = {
+> static int __init proc_modules_init(void)
+> {
+> 	proc_create("modules", 0, NULL, &proc_modules_operations);
+>+
+>+#ifdef CONFIG_MODULE_SIG_FORCE
+>+#ifdef CONFIG_X86
+>+	switch (boot_params.secure_boot) {
+>+	case efi_secureboot_mode_unset:
+>+	case efi_secureboot_mode_unknown:
+>+	case efi_secureboot_mode_disabled:
+>+		/*
+>+		 * sig_unenforce is only applied if SecureBoot is not
+>+		 * enabled.
+>+		 */
+>+		sig_enforce = !sig_unenforce;
+>+	}
+>+#else
+>+	sig_enforce = !sig_unenforce;
+>+#endif
+>+#endif
 
---4mpsdi3lywj2u6b4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I don't want to rope in Secure Boot specifics and arch-specific code
+(other than what's in arch/) into the module loader. I also don't want
+to change the current semantics of CONFIG_MODULE_SIG_FORCE, for any
+existing users who just want to set a build-time policy and already
+assume that unsigned modules can't be loaded, period. Lastly, having
+both sig_enforce and sig_unenforce parameters is really confusing.
+Might as well just make it one parameter - sig_enforce - and make that
+toggleable under a certain configuration.
 
-On Fri, Jun 08, 2018 at 11:12:19AM -0500, Josh Poimboeuf wrote:
-> I have a few questions/comments.
-> 
-> 1) I've noticed a common pattern for many of the false positives.
->    Smatch doesn't seem to detect when the code masks off the array index
->    to ensure that it's safe.
-> 
->    For example:
-> 
->    > ./include/linux/mmzone.h:1161 __nr_to_section() warn: potential spectre issue 'mem_section[(nr / (((1) << 12) / 32))]'
-> 
->    1153 static inline struct mem_section *__nr_to_section(unsigned long nr)
->    1154 {
->    1155 #ifdef CONFIG_SPARSEMEM_EXTREME
->    1156         if (!mem_section)
->    1157                 return NULL;
->    1158 #endif
->    1159         if (!mem_section[SECTION_NR_TO_ROOT(nr)])
->    1160                 return NULL;
->    1161         return &mem_section[SECTION_NR_TO_ROOT(nr)][nr & SECTION_ROOT_MASK];
->    1162 }
-> 
->    In the 2-D array access, it seems to be complaining about the '[nr &
->    SECTION_ROOT_MASK]' reference.  But that appears to be safe because
->    all the unsafe bits are masked off.
->  
->    It would be great if Smatch could detect that situation if possible.
+It sounds like you want to ship with signature enforcement enabled by
+default, but stil want to make this toggleable for users. So maybe
+something in between CONFIG_MODULE_SIG and CONFIG_MODULE_SIG_FORCE.
+Half baked suggestion: Would a new config option that enforces module
+signatures by default but makes sig_enforce toggleable for users suit
+your use case? This would be less strict than CONFIG_MODULE_SIG_FORCE.
 
-I can try.  The thing is that it would have to be masked within the same
-function because that information isn't passed across the function
-calls.
+Thanks,
 
-Also it turns out that mem_section[] is declared in mm/sparse.c and
-Smatch is supposed to be able to figure out the size of it but
-apparently there is a bug...  :(  I'll take a look at that.
-
-> 
-> 2) Looking at the above example, it seems that the value of 'nr' is
->    untrusted.  If so, then I wonder why didn't it warn about the other
->    array accesses in the function: line 1559 and the first dimension
->    access in 1161?
-
-Good point.  I'll change that as well.
-
-> 
-> 3) One thing that I think would help with analyzing the results would be
->    if there was a way to see the call chain for each warning, so that
->    it's clear which value isn't trusted and why.
-
-The information is mostly there in the cross function DB, but the user
-interface is bad...  Use the smdb.py script to see how functions are
-called:
-
-	 ~/smatch/smatch_data/db/smdb.py __nr_to_section
-
-> 
-> 4) Is there a way to put some results in a whitelist to mark them as
->    false positives so they won't show up in future scans?  Something
->    like that would help with automatic detection and reporting of new
->    issues by the 0-day kbuild test robot, for example.
-
-There is a script called smatch_scripts/new_bugs.sh but I use a
-different new_bugs.sh script which I am embarrassed to publish.  I guess
-I'll attach it though.
-
-regards,
-dan carpenter
-
-
-
---4mpsdi3lywj2u6b4
-Content-Type: application/x-sh
-Content-Disposition: attachment; filename="new_bugs.sh"
-Content-Transfer-Encoding: quoted-printable
-
-#!/usr/bin/perl=0A=0Ause strict;=0A=0Amy $store =3D 0;=0Amy $unstore =3D 0;=
-=0Amy $warns_file =3D shift;=0Aif ($warns_file =3D~ /--store/) {=0A    $sto=
-re =3D 1;=0A    $warns_file =3D shift;=0A}=0Aif ($warns_file =3D~ /--unstor=
-e/) {=0A    $unstore =3D 1;=0A    $warns_file =3D shift;=0A}=0A=0Amy $du =
-=3D `du $warns_file`;=0A$du =3D~ s/([0-9]+).*/$1/;=0A$du =3D~ s/\n//;=0A=0A=
-if (int($du) > 100000) {=0A    print "$warns_file is too big\n";=0A    exit=
-(1);=0A}=0A=0Aopen(WARNS, $warns_file);=0A=0Amy ($orig, $file, $line, $msg)=
-;=0Awhile (<WARNS>) {=0A=0A    if (!($_ =3D~ /(error|warn|info)/)) {=0A    =
-    next;=0A    }=0A=0A    $orig =3D $_;=0A    ($file, $line, $msg) =3D spl=
-it(/[: ]/, $_, 3);=0A=0A    $msg =3D~ s/^.*?:\d+(|:\d+:) .*? //;=0A    $msg=
- =3D~ s/[us](16|32|64)(min|max)//g;=0A    $msg =3D~ s/[01234567890]//g;=0A =
-   if ($msg =3D~ /can't/) {=0A        $msg =3D~ s/(.*can't.*').*?('.*)/$1 $=
-2/;=0A    } elsif ($msg =3D~ /don't/) {=0A        $msg =3D~ s/(.*don't.*').=
-*?('.*)/$1 $2/;=0A    } else {=0A        $msg =3D~ s/'.*?'/''/g;=0A    }=0A=
-    $msg =3D~ s/,//g;=0A    $msg =3D~ s/\(\w+ returns null\)/(... returns n=
-ull)/;=0A    $msg =3D~ s/dma on the stack \(.*?\)/dma on the stack (...)/;=
-=0A    $msg =3D~ s/possible ERR_PTR '' to .*/possible ERR_PTR '' to .../;=
-=0A    $msg =3D~ s/inconsistent returns ([^ ]+?) locked \(\)/inconsistent r=
-eturns ... locked ()/;=0A    $msg =3D~ s/(.*) [^ ]* (too large for) [^ ]+ (=
-=2E*)/$1 $2 $3/;=0A    $msg =3D~ s/\n//;=0A    $msg =3D~ s/ /_/g;=0A    $ms=
-g =3D~ s/[\(\)]//g;=0A=0A    $file =3D~ s/\//./g;=0A    $msg =3D~ s/\//./g;=
-=0A=0A    if ($store) {=0A        open(TMP, '>', "old_warnings/$file.$msg")=
- or=0A            print "Error opening: old_warnings/$file.$msg\n";=0A     =
-   close(TMP);=0A        next;=0A    }=0A=0A    if ($unstore) {=0A        u=
-nlink("old_warnings/$file.$msg") and=0A            print "removed: old_warn=
-ings/$file.$msg\n";=0A        next;=0A    }=0A=0A    unless (-e "old_warnin=
-gs/$file.$msg") {=0A        print "$orig";=0A    }=0A}=0A=0Aclose(WARNS);=0A
---4mpsdi3lywj2u6b4--
+Jessica
