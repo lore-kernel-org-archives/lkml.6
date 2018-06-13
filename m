@@ -2,81 +2,87 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 361CAC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:24:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 98392C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C47D5208C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:24:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C47D5208C4
+	by mail.kernel.org (Postfix) with ESMTP id 58DD5208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:24:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58DD5208D4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935803AbeFMVYC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 17:24:02 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:45304 "EHLO
+        id S935880AbeFMVYF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 17:24:05 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:45340 "EHLO
         lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935589AbeFMVYB (ORCPT
+        with ESMTP id S935695AbeFMVYC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 17:24:01 -0400
+        Wed, 13 Jun 2018 17:24:02 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 9CD8F181A6C84;
-        Wed, 13 Jun 2018 23:23:59 +0200 (CEST)
+        by lilium.sigma-star.at (Postfix) with ESMTP id ED503181B504D;
+        Wed, 13 Jun 2018 23:24:00 +0200 (CEST)
 From:   Richard Weinberger <richard@nod.at>
 To:     linux-mtd@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>
-Subject: [PATCH 00/14] ubi: Fastmap updates
-Date:   Wed, 13 Jun 2018 23:23:30 +0200
-Message-Id: <20180613212344.11608-1-richard@nod.at>
+Subject: [PATCH 02/14] ubi: Fix assert in ubi_wl_init
+Date:   Wed, 13 Jun 2018 23:23:32 +0200
+Message-Id: <20180613212344.11608-3-richard@nod.at>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20180613212344.11608-1-richard@nod.at>
+References: <20180613212344.11608-1-richard@nod.at>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-1. Support for preseeded fastmaps.
-A preseeded fastmap is a fastmap created by tools such as ubinize.
-That way fastmap deployment is less painful and fast attach is
-available upon first boot.
+When multiple PEBs are used for a fastmap, found_pebs
+can be wrong and the assert triggers.
 
-2. Refine various checks.
-Detect misconfigured setups better.
+The current approach is broken in two ways:
+1. The "continue" in list_for_each_entry() over all fastmap PEBs
+   misses the counter at all.
+2. When the fastmap changes in size, growing due to a preseeded fastmap
+   or shrinking due to new bad blocks, iterating over the current
+   fastmap will give wrong numbers. We have to exclude the fastmap size
+   at all from the calculation to be able to compare the numbers.
+   At this stage we simply have no longer the information whether the
+   fastmap changed in size.
 
-3. Allow a forcing a full scan.
-Forcing a full scan is useful mostly for debugging and making sure that
-it works.
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+ drivers/mtd/ubi/wl.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-4. Remove the experimental stigma.
-
-Richard Weinberger (14):
-  ubi: fastmap: Read PEB numbers more carefully
-  ubi: Fix assert in ubi_wl_init
-  ubi: fastmap: Add support for flags
-  ubi: fastmap: Add UBI_FM_SB_PRESEEDED_FLG flag
-  ubi: fastmap: Implement PEB translation
-  ubi: fastmap: Handle bad block count for preseeded fastmap case
-  ubi: fastmap: Fixup pool sizes for preseeded fastmaps
-  ubi: fastmap: Scan empty space if fastmap is preseeded
-  ubi: fastmap: Relax size check
-  ubi: fastmap: Change a WARN_ON() to ubi_err()
-  ubi: Add module parameter to force a full scan
-  ubi: uapi: Add mode selector to attach request
-  ubi: Wire up attach mode selector
-  ubi: Remove experimental stigma from Fastmap
-
- drivers/mtd/ubi/Kconfig     |   7 +-
- drivers/mtd/ubi/attach.c    |  14 +-
- drivers/mtd/ubi/build.c     |  18 ++-
- drivers/mtd/ubi/cdev.c      |   7 +-
- drivers/mtd/ubi/fastmap.c   | 326 +++++++++++++++++++++++++++++++++++++++-----
- drivers/mtd/ubi/ubi-media.h |  15 +-
- drivers/mtd/ubi/ubi.h       |   7 +-
- drivers/mtd/ubi/wl.c        |  12 +-
- include/uapi/mtd/ubi-user.h |  14 +-
- 9 files changed, 369 insertions(+), 51 deletions(-)
-
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index f66b3b22f328..6bbb968fe9da 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1695,11 +1695,19 @@ int ubi_wl_init(struct ubi_device *ubi, struct ubi_attach_info *ai)
+ 			err = erase_aeb(ubi, aeb, sync);
+ 			if (err)
+ 				goto out_free;
+-		}
+ 
+-		found_pebs++;
++			/*
++			 * If no fastmap is used, all fastmap PEBs will get be
++			 * erased and are member of ai->fastmap.
++			 */
++			if (!ubi->fm)
++				found_pebs++;
++		}
+ 	}
+ 
++	if (ubi->fm)
++		found_pebs += ubi->fm->used_blocks;
++
+ 	dbg_wl("found %i PEBs", found_pebs);
+ 
+ 	ubi_assert(ubi->good_peb_count == found_pebs);
 -- 
 2.13.6
 
