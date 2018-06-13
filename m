@@ -2,121 +2,102 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ACEB0C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:46:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E1AF1C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:47:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DCC82086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:46:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DCC82086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 97297208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 05:47:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d9QadMAP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97297208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934272AbeFMFqH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 01:46:07 -0400
-Received: from mailgw01.mediatek.com ([210.61.82.183]:45059 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754469AbeFMFqF (ORCPT
+        id S934327AbeFMFrW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 01:47:22 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:40192 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933696AbeFMFrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 01:46:05 -0400
-X-UUID: a1d39078826f4bcfa184cea79f5f72af-20180613
-Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1721347134; Wed, 13 Jun 2018 13:45:59 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 13 Jun 2018 13:45:51 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 13 Jun 2018 13:45:51 +0800
-Message-ID: <1528868751.15127.10.camel@mtksdaap41>
-Subject: Re: [PATCH 13/28] drm/mediatek: add connection from RDMA0 to DSI3
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Wed, 13 Jun 2018 13:45:51 +0800
-In-Reply-To: <1528687580-549-14-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-         <1528687580-549-14-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 13 Jun 2018 01:47:20 -0400
+Received: by mail-lf0-f65.google.com with SMTP id q11-v6so1946450lfc.7;
+        Tue, 12 Jun 2018 22:47:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=wjisFhaJgLsvoiRk5nR3SaXLQ1GZ6+SMxsLjJdtLPpo=;
+        b=d9QadMAPI51EIUQ8WiJwHdl1cC1//A17vU65XA7h/UIIAqlT8LdyfkM4cAasbuV1jF
+         5EjlHDZQBPNe1Tev4ztmMRVdeiTwF5KZBBTfWuhZlUV2r8xsw1LdbN56Jq1+zJ+zZ/jS
+         K+b72hfXYacEdno1Yeg1daaUGpoDCq7pe0lNRA5YqwkFMhpLyTqEoI+SAteJ6T0tc+WX
+         XtRaUDp9Ylc2fYOcbn4Q3Ljfo9cXp3njey2DUQLVJRdXlhQd6yUrkhPFY0RnIKxMuuE+
+         5iJvvb4TVgJbjnN7Wi8RmK+6wDr4AAXCW/gm+hMqkLJTlsZFMPsj5XwNMB+pYONtS/uD
+         RAzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=wjisFhaJgLsvoiRk5nR3SaXLQ1GZ6+SMxsLjJdtLPpo=;
+        b=WyNPO9cOjZmcItjema1IzZbZxeqmD4XkClTpwg14Nz/0/AgH7xOVRNFidXY4bB04AT
+         J1+x3dPhOsfC5qtgVcEOHwqyrtfjuNjkgGxI4Gv71YsMZ3ywuWKg4MZh47Akxz7AljCN
+         Gg9pZQFxJ3eVs+nuXeaHAEmqg+aew4f+jlKFs/NZR4U60s+vzQ3DXXcuTFevDzjvUBsm
+         nklWNma/oar2klYrxdQopDPS2B84Kj30qIeDYMbV7dWqRn25A8W8oAwT4HYBylINWexr
+         qn3++1L5CbGVjUxd1wPELhoNnpF/RJxCSOv6G5R0h5c2+2yTDHIKZpxtmBSHF0x2vxNc
+         mBOQ==
+X-Gm-Message-State: APt69E1m2d9Y55UEA6QCj9Wn/Cot4dTIInKQuuWb1b3+r8fw+yHm30xp
+        vvhZPheCY/l2G+2dYp3up2I=
+X-Google-Smtp-Source: ADUXVKITqTaCgSgs/dnXOCgUhJ6mkttoVOvqov95N9gWjzkxt/iKRG8RVFgrolLDEilB9+Wr0dxNDA==
+X-Received: by 2002:a2e:934d:: with SMTP id m13-v6mr695124ljh.78.1528868838926;
+        Tue, 12 Jun 2018 22:47:18 -0700 (PDT)
+Received: from [10.17.182.9] (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id o68-v6sm380969lfc.85.2018.06.12.22.47.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 22:47:18 -0700 (PDT)
+Subject: Re: [PATCH v5 3/3] Input: xen-kbdfront - allow better run-time
+ configuration
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jgross@suse.com, lyan@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180612074856.28451-1-andr2000@gmail.com>
+ <20180612074856.28451-4-andr2000@gmail.com> <20180612220722.GA38773@dtor-ws>
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+Message-ID: <f9354bee-3e44-eb93-05bc-58b8a9078b72@gmail.com>
+Date:   Wed, 13 Jun 2018 08:47:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180612220722.GA38773@dtor-ws>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-MTK:  N
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Stu:
-
-Two inline comment.
-
-On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
-> This patch add the connection from RDMA0 to DSI3
-> 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_ddp.c      | 4 ++++
->  drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c | 2 +-
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> index c08aed8dae44..fed1b5704355 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
-> @@ -83,6 +83,7 @@
->  #define GAMMA_MOUT_EN_RDMA1		0x1
->  #define RDMA0_MOUT_DPI0			0x2
->  #define RDMA0_MOUT_DSI2			0x4
-> +#define RDMA0_MOUT_DSI3			0x5
-
-Usually, each bit of a mout register represent a output enable. Is this
-value 0x5 is a correct value?
-
->  #define RDMA1_MOUT_DPI0			0x2
->  #define DPI0_SEL_IN_RDMA1		0x1
->  #define COLOR1_SEL_IN_OVL1		0x1
-> @@ -164,6 +165,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
->  	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI2) {
->  		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
->  		value = RDMA0_MOUT_DSI2;
-> +	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI3) {
-> +		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
-> +		value = RDMA0_MOUT_DSI3;
->  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
->  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
->  		value = RDMA1_MOUT_DPI0;
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> index fe6fdc021fc7..22f4c72fa785 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp_comp.c
-> @@ -228,7 +228,7 @@ static const struct mtk_ddp_comp_match mtk_ddp_matches[DDP_COMPONENT_ID_MAX] = {
->  	[DDP_COMPONENT_DSI0]	= { MTK_DSI,		0, NULL },
->  	[DDP_COMPONENT_DSI1]	= { MTK_DSI,		1, NULL },
->  	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		2, NULL },
-> -	[DDP_COMPONENT_DSI2]	= { MTK_DSI,		3, NULL },
-> +	[DDP_COMPONENT_DSI3]	= { MTK_DSI,		3, NULL },
-
-I think this is not related to this patch.
-
-Regards,
-CK
-
->  	[DDP_COMPONENT_GAMMA]	= { MTK_DISP_GAMMA,	0, &ddp_gamma },
->  	[DDP_COMPONENT_OD0]	= { MTK_DISP_OD,	0, &ddp_od },
->  	[DDP_COMPONENT_OD1]	= { MTK_DISP_OD,	1, &ddp_od },
-
+On 06/13/2018 01:07 AM, Dmitry Torokhov wrote:
+> On Tue, Jun 12, 2018 at 10:48:56AM +0300, Oleksandr Andrushchenko wrote:
+>>   
+>> +	if (!(with_kbd | with_ptr | with_mtouch)) {
+> I changed this to logical "OR" and applied, thank you.
+Yes, that's better, thank you
+>> +		ret = -ENXIO;
+>> +		goto error;
+>> +	}
+>> +
+>>   	ret = xenkbd_connect_backend(dev, info);
+>>   	if (ret < 0)
+>>   		goto error;
+>> -- 
+>> 2.17.1
+>>
 
