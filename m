@@ -2,86 +2,106 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 628D9C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:22:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 04956C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:22:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18C91208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:22:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GPNQa4U1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C91208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B91C3208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:22:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91C3208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754533AbeFMHWa (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:22:30 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:45249 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754510AbeFMHW2 (ORCPT
+        id S934285AbeFMHWn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:22:43 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:36270 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933704AbeFMHWl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:22:28 -0400
-Received: by mail-wr0-f194.google.com with SMTP id o12-v6so1521690wrm.12
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 00:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=9dkFgFqvODD0uJIjrCRbRvFwWdb3FI4gdFBJB5tOKcM=;
-        b=GPNQa4U1/MPWwkL5X9Cke/nNlgN9VaGkRneaok7fN7D3amWiRENF+WFYcBQO9EBl0K
-         BqpkMyiyyfKqCJATT+HryAPoECJhXmbeFwuG9ABf9l8UfMSuEqm5z96yHZuP2AAvq0qo
-         6tVG9/WD7eS+030Fj6axOIq1RQJTvCJn+OqOo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9dkFgFqvODD0uJIjrCRbRvFwWdb3FI4gdFBJB5tOKcM=;
-        b=jC7tbDFKjIr7IutDNg6RsCPuosHROlGZwTNVVQQeqOFRFCkv2Q5WTRIZPAaVIjumGk
-         52ZmQ5BW6HnmNcQmGZCUCCzd0K0YtymtdAyPMIpyfyv5vwnJw1s5Hsz5YMvVm54BEy31
-         owdDlXSeTAjiBWKG5xwetiBR8XpK7k8Mr9dmof0LRfn280kURXdf/AkVFHK5j/KEn6Hy
-         oEiWnFnyoUiK/edfzTUzhdZgOz+eNJxaUSYhICnQf6t0FuhoWIv6uioMwjx9ZEd+8zn5
-         p4b7Y0ChsMZ3457Tbnw2jiG8vBno6RvZnuzXz0gbco4NLrne6H6+rBiCITaqKlCvmr1g
-         baQg==
-X-Gm-Message-State: APt69E3lpN4qB2nXdigiayCuJO6FQJmgAebys2dbJofa80g89ZAPcBb8
-        rMLz8vC0dyOZs1+Yo8Q58Et4Mg==
-X-Google-Smtp-Source: ADUXVKKY5NOQgAK0/wd+69Mw+5vgV+VazN9uL42iVD8+F873LSr6CIRL+/e0rIsjn8KRAPzUtC5Klg==
-X-Received: by 2002:adf:a6b8:: with SMTP id t53-v6mr3334744wrc.45.1528874546706;
-        Wed, 13 Jun 2018 00:22:26 -0700 (PDT)
-Received: from localhost (LPuteaux-656-1-48-212.w82-127.abo.wanadoo.fr. [82.127.83.212])
-        by smtp.gmail.com with ESMTPSA id r9-v6sm1476480wrs.63.2018.06.13.00.22.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 00:22:26 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 09:22:24 +0200
-From:   Andy Gross <andy.gross@linaro.org>
-To:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc:     mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
-        david.brown@linaro.org, bjorn.andersson@linaro.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: apq8096-db820c: disable uart0 by default
-Message-ID: <20180613072224.GA4034@hector.bewan>
-References: <20180612144806.19201-1-srinivas.kandagatla@linaro.org>
+        Wed, 13 Jun 2018 03:22:41 -0400
+X-UUID: 85b7c46cfb3847cea60f7aa0b0ec99bc-20180613
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 792362292; Wed, 13 Jun 2018 15:22:36 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 15:22:28 +0800
+Received: from [172.21.77.4] (172.21.77.4) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 15:22:28 +0800
+Message-ID: <1528874548.30263.10.camel@mtksdaap41>
+Subject: Re: [PATCH 23/28] drm/mediatek: add DPI1 support for mutex
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 15:22:28 +0800
+In-Reply-To: <1528687580-549-24-git-send-email-stu.hsieh@mediatek.com>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-24-git-send-email-stu.hsieh@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180612144806.19201-1-srinivas.kandagatla@linaro.org>
-User-Agent: Mutt/1.5.23.1 (2014-03-12)
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 03:48:06PM +0100, Srinivas Kandagatla wrote:
-> Access to UART0 is disabled by bootloaders. By leaving it enabled by
-> default would reboot the board.
-> Disable this for now, this would alteast give a board which boots.
+Hi, Stu:
+
+On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> This patch add the DPI1 support for mutex
 > 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
 
-Thanks for this patch.  I'll queue it up for a fixes-for-rc1
+Reviewed-by: CK Hu <ck.hu at mediatek.com>
+
+> ---
+>  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> index 5a8569fa6505..5916fc11693a 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> @@ -76,6 +76,7 @@
+>  #define MUTEX_SOF_DSI0			1
+>  #define MUTEX_SOF_DSI1			2
+>  #define MUTEX_SOF_DPI0			3
+> +#define MUTEX_SOF_DPI1			4
+>  
+>  #define OVL0_MOUT_EN_COLOR0		0x1
+>  #define OD_MOUT_EN_RDMA0		0x1
+> @@ -385,6 +386,9 @@ void mtk_disp_mutex_add_comp(struct mtk_disp_mutex *mutex,
+>  	case DDP_COMPONENT_DPI0:
+>  		reg = MUTEX_SOF_DPI0;
+>  		break;
+> +	case DDP_COMPONENT_DPI1:
+> +		reg = MUTEX_SOF_DPI1;
+> +		break;
+>  	default:
+>  		if (ddp->mutex_mod[id] < 32) {
+>  			offset = DISP_REG_MUTEX_MOD(mutex->id);
+> @@ -417,6 +421,7 @@ void mtk_disp_mutex_remove_comp(struct mtk_disp_mutex *mutex,
+>  	case DDP_COMPONENT_DSI0:
+>  	case DDP_COMPONENT_DSI1:
+>  	case DDP_COMPONENT_DPI0:
+> +	case DDP_COMPONENT_DPI1:
+>  		writel_relaxed(MUTEX_SOF_SINGLE_MODE,
+>  			       ddp->regs + DISP_REG_MUTEX_SOF(mutex->id));
+>  		break;
 
 
-Andy
