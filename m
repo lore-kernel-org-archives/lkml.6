@@ -2,107 +2,105 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D367AC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:15:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 78CE4C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DC092086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:15:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEpR8qCa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DC092086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 376B720891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:15:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376B720891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=owl.eu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935090AbeFMBPV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:15:21 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:39390 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754136AbeFMBPU (ORCPT
+        id S935089AbeFMBPm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:15:42 -0400
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:49040 "EHLO
+        slow1-d.mail.gandi.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933125AbeFMBPl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:15:20 -0400
-Received: by mail-pl0-f67.google.com with SMTP id f1-v6so495541plt.6
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 18:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=LEiLxHnuXzrJZRR0BP5WDLf653G6R2kAVSdzwr1fE6Y=;
-        b=KEpR8qCa2m0jNqTlc2olPsiFSv6XOk6TBrs5mYz5uoJZRCZ2YP+wpoiYsmxNRS1GJo
-         GeboVCVO13TZxUUePj/4Nbdwcn6CXRRlWqF2Cz7yqqK7bKaUrZQ2B+E4BffZQ3AJNMpD
-         hWp8Pu4A8IRGBPiddksM8SRl5uREJdXOhv0k4ycaHLW3YoA/A7/jkdj1frhlglXrA3Ch
-         RC1d6CAKMHz3HF410UK4bZ6yFKZZskuLdiSfl6wqIxmId8U7VcSK50nRwMUc0nl8z3yi
-         OTmvCPXoM48xjtiIrUz/n7WSrN/crucHYg7SDUcVO6P/2w75jFZWejD/r2nTyJTV60Xr
-         JCVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=LEiLxHnuXzrJZRR0BP5WDLf653G6R2kAVSdzwr1fE6Y=;
-        b=q7de7JbwLeVIuuDIbfroty3VyiuHpLuwpMD4a+NS/CQ+JWGD7HWU+G94lGFlIjR4Wj
-         HBblo92apgljSmAZeYN9SOvQ/iYdwPJNB8Ax71gaPzcHAMuWVvpH/t6Ybf07D74nkcvJ
-         UWhSOzYmD10im8UFszcCJxza3tRRXbV4SC6D2QrclXfPFHE7rAKtNBQpJYccHELs+trK
-         VC7ZN2WZDxeQ9iLH0/f2VbkMHKyfWRYuu0J2I6dFT0FE6g0xwYwhsU7z7BycMQ300b/D
-         tpMUmKopWf7UcD2JpFN8EwXDxd92MDNDf+rIkVNDIenDlkLbGvIH4+9RkLohdt+tUii6
-         MUwQ==
-X-Gm-Message-State: APt69E3X/L5T/XZgpL2NBa35qIZm+0/oPGsOQhtb20PdGeAhNrchjgkY
-        erGD4ttHnvolb7z8+ArYG+U=
-X-Google-Smtp-Source: ADUXVKIHyeTm2b6bYcv87hWl/0gnKsrmOwGSAbJHdgA8R8MMl6LnL7OaQBZKtnzfZwF3rOLQZq7Ohw==
-X-Received: by 2002:a17:902:24e:: with SMTP id 72-v6mr2800665plc.87.1528852519854;
-        Tue, 12 Jun 2018 18:15:19 -0700 (PDT)
-Received: from localhost ([221.218.170.123])
-        by smtp.gmail.com with ESMTPSA id 29-v6sm2105327pfp.24.2018.06.12.18.15.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 12 Jun 2018 18:15:19 -0700 (PDT)
-From:   Peng Donglin <dolinux.peng@gmail.com>
-To:     catalin.marinas@arm.com, will.deacon@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Peng Donglin <dolinux.peng@gmail.com>
-Subject: [PATCH 1/2] ARM: dump: Convert to use DEFINE_SHOW_ATTRIBUTE macro
-Date:   Wed, 13 Jun 2018 09:11:55 +0800
-Message-Id: <b55024472e101a33b3d6b098aa2ce23c5b5dd6f7.1528819790.git.dolinux.peng@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1528819790.git.dolinux.peng@gmail.com>
-References: <cover.1528819790.git.dolinux.peng@gmail.com>
+        Tue, 12 Jun 2018 21:15:41 -0400
+Received: from relay6-d.mail.gandi.net (unknown [217.70.183.198])
+        by slow1-d.mail.gandi.net (Postfix) with ESMTP id 057F53A313B
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 02:58:14 +0200 (CEST)
+X-Originating-IP: 70.80.172.8
+Received: from localhost (modemcable008.172-80-70.mc.videotron.ca [70.80.172.8])
+        (Authenticated sender: hle@owl.eu.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id EE8C9C0003;
+        Wed, 13 Jun 2018 00:58:13 +0000 (UTC)
+Date:   Tue, 12 Jun 2018 20:58:07 -0400
+From:   Hugo Lefeuvre <hle@owl.eu.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        kernelnewbies@kernelnewbies.org, linux-kernel@vger.kernel.org,
+        Valentin Vidic <Valentin.Vidic@CARNet.hr>
+Subject: Re: [PATCH v2] staging: pi433: add mutex fixing concurrency issues.
+Message-ID: <20180613005807.GB2265@hle-laptop.local>
+References: <20180602175649.GA2816@hle-laptop.local>
+ <20180607124216.GA2329@hle-laptop.local>
+ <20180609081244.GP14048@gavran.carpriv.carnet.hr>
+ <20180609154842.GB1826@hle-laptop.local>
+ <20180612121107.xgxdqda5bzhqeizr@mwanda>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="2B/JsCI69OhZNC5r"
+Content-Disposition: inline
+In-Reply-To: <20180612121107.xgxdqda5bzhqeizr@mwanda>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use DEFINE_SHOW_ATTRIBUTE macro to simplify the code.
 
-Signed-off-by: Peng Donglin <dolinux.peng@gmail.com>
----
- arch/arm/mm/ptdump_debugfs.c | 13 +------------
- 1 file changed, 1 insertion(+), 12 deletions(-)
+--2B/JsCI69OhZNC5r
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/arch/arm/mm/ptdump_debugfs.c b/arch/arm/mm/ptdump_debugfs.c
-index be8d87b..79002fe 100644
---- a/arch/arm/mm/ptdump_debugfs.c
-+++ b/arch/arm/mm/ptdump_debugfs.c
-@@ -11,18 +11,7 @@ static int ptdump_show(struct seq_file *m, void *v)
- 	ptdump_walk_pgd(m, info);
- 	return 0;
- }
--
--static int ptdump_open(struct inode *inode, struct file *file)
--{
--	return single_open(file, ptdump_show, inode->i_private);
--}
--
--static const struct file_operations ptdump_fops = {
--	.open		= ptdump_open,
--	.read		= seq_read,
--	.llseek		= seq_lseek,
--	.release	= single_release,
--};
-+DEFINE_SHOW_ATTRIBUTE(ptdump);
- 
- int ptdump_debugfs_register(struct ptdump_info *info, const char *name)
- {
--- 
-2.7.4
+> > case PI433_IOC_WR_TX_CFG:
+> >         if (copy_from_user(&instance->tx_cfg, argp,
+> >                    sizeof(struct pi433_tx_cfg)))
+> >             return -EFAULT;
+> >         break;
+>=20
+> Btw, it looks so wrong to me that we copy partial data to
+> &instance->tx_cfg...  I'd really prefer copying it to a tmp buffer and
+> then verifying it's corrent then memcpy()ing it to &instance->tx_cfg.
 
+AFAIK this piece of code is not supposed to check passed tx config.
+These checks are realised later by rf69_set_tx_cfg (called by
+pi433_tx_thread) after the config has been written to the fifo by
+pi433_write.
+
+What kind of checks do you want to perform exactly ?
+
+But, right, I prefer the idea of the temporary buffer too, and seeing the
+rest of kernel code it seems to be the usual way to go.
+
+Regards,
+ Hugo
+
+--=20
+             Hugo Lefeuvre (hle)    |    www.owl.eu.com
+4096/ 9C4F C8BF A4B0 8FC5 48EB 56B8 1962 765B B9A8 BACA
+
+--2B/JsCI69OhZNC5r
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEE5LpPtQuYJzvmooL3LVy48vb3khkFAlsgbBkACgkQLVy48vb3
+khm69Af+LdHLS+TMk1DD4IyFMv4UX1sRwEDnX9GRhSEMmg2xOg5SS48yGBQKPJ7y
+O79AWowM1bEkP+BfnTPPe+5+UgJ9+KXp1+ULtLlLMexRvD2TtvchR1gh0dw9B1Jm
+3Rr/2CqQmwZEuMtW4o9tFqRjeCAb9BxLwGpAGNpwZypOb+Furvi9ou51qd9axBWQ
+jhelFp7Lx5C6AwHi0N8CYce5LbsaCd8j6Bt8uEfhmDoxEhYEsY9LX+aOjahu5AOK
+iyQwMbw/5qfHGD1ggzB5W+SY7Iamao+XXOncwc+gdZGz3qR5r9ttao/Y+ZsNhii0
+Y76P1WGw9Ppkml44On59acliGWC30A==
+=1PGh
+-----END PGP SIGNATURE-----
+
+--2B/JsCI69OhZNC5r--
