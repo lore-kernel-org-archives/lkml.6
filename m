@@ -2,293 +2,89 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 39F79C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:04:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9B727C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEB5020693
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:04:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AYtiEVOB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEB5020693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 53EBE20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:05:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53EBE20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754401AbeFMEED (ORCPT
+        id S1754446AbeFMEFi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 00:04:03 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48116 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750720AbeFMEEA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 00:04:00 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D40iAU132344;
-        Wed, 13 Jun 2018 04:03:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type; s=corp-2017-10-26;
- bh=7WozX2DUVQeXHmEC8G1OE2RINDrdPObFZDea5lYz20c=;
- b=AYtiEVOBKaqbCZ/aqFAYVw0lXmZTBi+1+3VFPkd/aaRIDXzrbk7WL9KTAQC3Lu8SV4Ez
- owXtt6K04OFg8KahOC6urPrT68LxWZR1BVTrf0iBrE9nlIOwHBQk3iC3/hYkZZ5gvwY2
- HybgbA3NYRAbMqSsRG7ZMFmLDWaCJ5BFNtxb4d3Uh69Blp6xNUkYvDbLEx2owPqWag6b
- m0m7Rm2pm5yYTBrJoUi9VGMkOIe0pi2yTzHFk3hejRJrNk6MtaMgtG/e30qlmGXh0nXl
- 86OLX2pwlgz4fW6D7Q/WckNVP2jXRSRxwj99A5R046OC2EQTFnQnMvTN1zkZEXmKu+Ow 3w== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jjp6brkwu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 04:03:38 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5D43bbK003700
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 04:03:38 GMT
-Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D43aAS011096;
-        Wed, 13 Jun 2018 04:03:37 GMT
-Received: from [10.182.69.179] (/10.182.69.179)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 21:03:36 -0700
-Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
- 4.17.0-x64-08428-g7d3bf613e99a
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-References: <201806091606.51078.randrianasulu@gmail.com>
- <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org>
- <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <5ca74fb7-af70-31c3-0e3f-bace058e5a57@oracle.com>
-Date:   Wed, 13 Jun 2018 12:03:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
-MIME-Version: 1.0
-In-Reply-To: <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com>
-Content-Type: multipart/mixed;
- boundary="------------EE67CD2F84B4B38487383716"
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130046
+        Wed, 13 Jun 2018 00:05:38 -0400
+Received: from mout.gmx.net ([212.227.15.18]:41707 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751136AbeFMEFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 00:05:37 -0400
+Received: from juanniu018037.ss.mogujie.org ([122.225.81.134]) by mail.gmx.com
+ (mrgmx001 [212.227.17.184]) with ESMTPSA (Nemesis) id
+ 0McmFl-1fktYr3J0D-00Hsef; Wed, 13 Jun 2018 06:05:33 +0200
+From:   Chengguang Xu <cgxu519@gmx.com>
+To:     ooo@electrozaur.com
+Cc:     linux-kernel@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>
+Subject: [PATCH 1/2] fs/exofs: fix potential memory leak in mount option parsing
+Date:   Wed, 13 Jun 2018 12:05:13 +0800
+Message-Id: <1528862714-78150-1-git-send-email-cgxu519@gmx.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Provags-ID: V03:K1:zZfIPePDmA/fUt0e1SUj4qykbbJwJ3MZxbQgq7Vua1q3b73Ckd4
+ 5udHNWdqqizXZXH9rErFNE9ycpVZJZTDl4E+oRyGwhiy/ovMzGbL3mi3ez19TFRX4YrcRPM
+ 2WnoC2ewsRrXDOEGwux2LRSQLQh61zOaEk/dH4YSBaEMHHsy/B2mUCHS2tGQf/jpiJOdGA7
+ Wx0ZXqVnNKDMZXyvzE2jw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:BtyDXVW06GA=:XxGVYHUjKdwRU7wHRJB/oL
+ /UHRxFBql6UOUnwkhcAdG4bAGr635pUen3xqCNBzCyg3BCrNSVS8GTtb9gtzZbqjeW+mBam4q
+ bgdk4BJ2uH2b1P10Ft5CK2XH3EnSjv3ao7iNGkSYHh/fFs07CmOVtTTflWPvA4HX6x+U8vnGQ
+ +QT/L/WK4H5pkw+f1x7MQoAgxabps9drLGV5yiVRW2ZB4wAsrOycnsVYFsCjSwAOqoihse4Bh
+ UwWinOAW5BR+vfW12WjQM3BMDlN9LUOFTXin4MS752KSMWNxekaNvJ/71yIFGJUvUkLFM9DMg
+ /g9oCCDCf2L6zybS36cWPxvNj8IETGdiNSV4dWzc+99zdxzn6l2yUyfgGicmWEN/s9iokj3cn
+ v6REWwwjVbWn3/j4oMXmLkiSTlk9NTA6dHJ6QSxw+MvSv8/YDGaLnlSb0SKPNxMyHCXxBig4h
+ Yyx3IlITHNSREu4E2PKM/KLiH26nv0tAU1mMn4VJaL1aoEZzwj/F7zRl39syd6DfiQggdrb48
+ BS/NqvtUIbGX0+OHsghNDF6pwiQ2iieTuI1n10RJOfIZNdR0tlOsFAz+diX0MhO8czcEWVd3J
+ 7f2lvXneIvcy2hJd+tL4IxEkFY0IZBjxHB4LjfbUQr4dqcL/vE6BWGs5J7DdY3Y9rXFhFc5yr
+ 9i+SjdgBzmV0ngKiaoEfgnC7sWdDe8olM9EFuiRLcEeIoQKvCKwK6N3fTtV+d8eDQgfZlXFSq
+ R2qL/6Z6ErN6SINvK91VduD8NdEbluI2Wfc/oevh0bhqzb21NILS3MAEQV4=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------EE67CD2F84B4B38487383716
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+There are some cases can cause memory leak when parsing
+option 'osdname'.
 
-
-
-On 06/12/2018 11:28 PM, Bart Van Assche wrote:
-> On Sat, 2018-06-09 at 08:02 -0700, Randy Dunlap wrote:
->> On 06/09/2018 06:06 AM, Andrew Randrianasulu wrote:
->>> Hello, everyone!
->>>
->>> I was trying to test not-yet-completed 4.18-rc1, and run into this bug, probably 
->>> due to HAL (yes, I still use this) trying to poll empty DVD-RW drive:
->>>
->>> [   35.040167] ------------[ cut here ]------------
->>> [   35.040171] kernel BUG at drivers/scsi/scsi_error.c:197!
->>> [   35.040196] invalid opcode: 0000 [#1] SMP NOPTI
->>> [   35.040210] CPU: 2 PID: 117 Comm: kworker/2:1H Not tainted 
->>> 4.17.0-x64-08428-g7d3bf613e99a-dirty #18
->>> [   35.040225] Hardware name: MSI MS-7693/970A-G46 (MS-7693), BIOS V2.8 
->>> 01/08/2016
->>> [   35.040244] Workqueue: kblockd blk_mq_timeout_work
->>> [   35.040283] RIP: 0010:scsi_times_out+0xe9/0x1a6 [scsi_mod]
->>> [   35.040287] Code: 03 76 18 48 c7 c2 f9 c2 01 a0 48 89 ee 48 c7 c7 14 be 01 a0 
->>> 31 c0 e8 76 ad 00 00 48 8b 83 98 01 00 00 a8 01 0f 84 a5 00 00 00 <0f> 0b 49 8b 
->>> 7c 24 38 e8 8f ba 4b e1 41 83 bc 24 2c 01
->>>  00 00 ff 74
->>> [   35.040312] RSP: 0018:ffffc90000293d98 EFLAGS: 00010202
->>> [   35.040318] RAX: ffff88031f240605 RBX: ffff88031eed8500 RCX: 00000000fffefd40
->>> [   35.040323] RDX: ffffc90000293e80 RSI: 0000000000002007 RDI: ffff88031eed8638
->>> [   35.040327] RBP: ffff88031eed8638 R08: ffff88031eed85d8 R09: 0000000000000000
->>> [   35.040332] R10: 0000000000000040 R11: fefefefefefefeff R12: ffff88031f2a8800
->>> [   35.040336] R13: ffff88031f2a8800 R14: ffff88031f29e910 R15: 0000000000000001
->>> [   35.040341] FS:  0000000000000000(0000) GS:ffff88032ed00000(0000) 
->>> knlGS:0000000000000000
->>> [   35.040346] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>> [   35.040350] CR2: 00000000f7ea83c0 CR3: 000000031e194000 CR4: 00000000000406e0
->>> [   35.040354] Call Trace:
->>> [   35.040360]  blk_mq_check_expired+0xdc/0x10c
->>> [   35.040365]  bt_iter+0x42/0x45
->>> [   35.040369]  __sbitmap_for_each_set.constprop.12+0x83/0xac
->>> [   35.040374]  ? blk_mq_update_nr_requests+0xad/0xad
->>> [   35.040595]  ? blk_mq_exit_hctx+0xda/0xda
->>> [   35.041595]  blk_mq_queue_tag_busy_iter+0xa3/0xb4
->>> [   35.042578]  ? blk_mq_exit_hctx+0xda/0xda
->>> [   35.043550]  blk_mq_timeout_work+0x6b/0xca
->>> [   35.044505]  process_one_work+0x17c/0x2a6
->>> [   35.045445]  worker_thread+0x19f/0x243
->>> [   35.046393]  ? rescuer_thread+0x262/0x262
->>> [   35.047346]  kthread+0x100/0x108
->>> [   35.048290]  ? kthread_destroy_worker+0x3e/0x3e
->>> [   35.049242]  ret_from_fork+0x27/0x50
->>> [   35.050192] Modules linked in: bridge stp llc bnep rfcomm hidp snd_aloop ipv6 
-.....
-> Is this something that happens systematically or sporadically? Additionally,
-> have you verified whether or not this can be triggered with kernel v4.17? I'm
-> wondering whether or not this is a regression that was introduced in the merge
-> window.
-> 
-
-I suspect this is due to we could expire a same request twice or even more.
-For scsi mid-layer, it return BLK_EH_DONE from .timeout, in fact, the request is not
-completed there, but just queue a delayed abort_work (HZ/100). If the blk_mq_timeout_work
-runs again before the abort_work, the request will be timed out again, because there is not
-any mark on it to identify this request has been timed out.
-
-Would please try the patch attached on to see whether this issue could be fixed ?
-(this patch only works for scsi device currently)
-
-Thanks
-Jianchao
- 
-
---------------EE67CD2F84B4B38487383716
-Content-Type: text/x-patch;
- name="0001-blk-mq-protect-timed-out-request-against-completion-.patch"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename*0="0001-blk-mq-protect-timed-out-request-against-completion-.pa";
- filename*1="tch"
-
-From fcc515b3a642c909e8b82d2a240014faff5acd44 Mon Sep 17 00:00:00 2001
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
-Date: Tue, 12 Jun 2018 21:20:13 +0800
-Subject: [PATCH] blk-mq: protect timed out request against completion path
-
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
 ---
- block/blk-mq.c         | 22 +++++++++++++++-------
- include/linux/blk-mq.h |  1 +
- include/linux/blkdev.h |  6 ++++++
- 3 files changed, 22 insertions(+), 7 deletions(-)
+ fs/exofs/super.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 6332940..2714a23 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -473,6 +473,7 @@ static void __blk_mq_free_request(struct request *rq)
- 	struct blk_mq_hw_ctx *hctx = blk_mq_map_queue(q, ctx->cpu);
- 	const int sched_tag = rq->internal_tag;
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 719a315..f3e17a9 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -101,6 +101,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
+ 		token = match_token(p, tokens, args);
+ 		switch (token) {
+ 		case Opt_name:
++			kfree(opts->dev_name);
+ 			opts->dev_name = match_strdup(&args[0]);
+ 			if (unlikely(!opts->dev_name)) {
+ 				EXOFS_ERR("Error allocating dev_name");
+@@ -867,8 +868,10 @@ static struct dentry *exofs_mount(struct file_system_type *type,
+ 	int ret;
  
-+	WRITE_ONCE(rq->state, MQ_RQ_IDLE);
- 	if (rq->tag != -1)
- 		blk_mq_put_tag(hctx, hctx->tags, ctx, rq->tag);
- 	if (sched_tag != -1)
-@@ -509,7 +510,6 @@ void blk_mq_free_request(struct request *rq)
- 	if (blk_rq_rl(rq))
- 		blk_put_rl(blk_rq_rl(rq));
- 
--	WRITE_ONCE(rq->state, MQ_RQ_IDLE);
- 	if (refcount_dec_and_test(&rq->ref))
- 		__blk_mq_free_request(rq);
- }
-@@ -552,15 +552,17 @@ static void __blk_mq_complete_request_remote(void *data)
- 	rq->q->softirq_done_fn(rq);
- }
- 
--static void __blk_mq_complete_request(struct request *rq)
-+/*
-+ * The LLDD timeout path must invoke this interface to complete
-+ * the request.
-+ */
-+void __blk_mq_complete_request(struct request *rq)
- {
- 	struct blk_mq_ctx *ctx = rq->mq_ctx;
- 	bool shared = false;
- 	int cpu;
- 
--	if (cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) !=
--			MQ_RQ_IN_FLIGHT)
--		return;
-+	WARN_ON(blk_mq_rq_state(rq) != MQ_RQ_COMPLETE);
- 
- 	if (rq->internal_tag != -1)
- 		blk_mq_sched_completed_request(rq);
-@@ -584,6 +586,7 @@ static void __blk_mq_complete_request(struct request *rq)
- 	}
- 	put_cpu();
- }
-+EXPORT_SYMBOL(__blk_mq_complete_request);
- 
- static void hctx_unlock(struct blk_mq_hw_ctx *hctx, int srcu_idx)
- 	__releases(hctx->srcu)
-@@ -617,7 +620,9 @@ void blk_mq_complete_request(struct request *rq)
- {
- 	if (unlikely(blk_should_fake_timeout(rq->q)))
- 		return;
--	__blk_mq_complete_request(rq);
-+
-+	if (blk_mq_mark_rq_complete(rq))
-+		__blk_mq_complete_request(rq);
- }
- EXPORT_SYMBOL(blk_mq_complete_request);
- 
-@@ -779,6 +784,7 @@ static void blk_mq_rq_timed_out(struct request *req, bool reserved)
- 		WARN_ON_ONCE(ret != BLK_EH_RESET_TIMER);
- 	}
- 
-+	WRITE_ONCE(req->state, MQ_RQ_IDLE);
- 	blk_add_timer(req);
- }
- 
-@@ -830,8 +836,10 @@ static void blk_mq_check_expired(struct blk_mq_hw_ctx *hctx,
- 	 * expired; if it is not expired, then the request was completed and
- 	 * reallocated as a new request.
- 	 */
--	if (blk_mq_req_expired(rq, next))
-+	if (blk_mq_req_expired(rq, next) &&
-+		blk_mq_mark_rq_complete(rq)) {
- 		blk_mq_rq_timed_out(rq, reserved);
+ 	ret = parse_options(data, &opts);
+-	if (ret)
++	if (ret) {
++		kfree(opts.dev_name);
+ 		return ERR_PTR(ret);
 +	}
- 	if (refcount_dec_and_test(&rq->ref))
- 		__blk_mq_free_request(rq);
- }
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index fb35517..10a496b 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -259,6 +259,7 @@ void blk_mq_add_to_requeue_list(struct request *rq, bool at_head,
- void blk_mq_kick_requeue_list(struct request_queue *q);
- void blk_mq_delay_kick_requeue_list(struct request_queue *q, unsigned long msecs);
- void blk_mq_complete_request(struct request *rq);
-+void __blk_mq_complete_request(struct request *rq);
- bool blk_mq_bio_list_merge(struct request_queue *q, struct list_head *list,
- 			   struct bio *bio);
- bool blk_mq_queue_stopped(struct request_queue *q);
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index bca3a92..4c8b29a 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -270,6 +270,12 @@ struct request {
- #endif
- };
  
-+static inline bool blk_mq_mark_rq_complete(struct request *rq)
-+{
-+	return (cmpxchg(&rq->state, MQ_RQ_IN_FLIGHT, MQ_RQ_COMPLETE) ==
-+			MQ_RQ_IN_FLIGHT);
-+}
-+
- static inline bool blk_op_is_scsi(unsigned int op)
- {
- 	return op == REQ_OP_SCSI_IN || op == REQ_OP_SCSI_OUT;
+ 	if (!opts.dev_name)
+ 		opts.dev_name = dev_name;
 -- 
-2.7.4
+1.8.3.1
 
-
---------------EE67CD2F84B4B38487383716--
