@@ -2,177 +2,129 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D508DC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:07:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D2F19C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8874320660
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:07:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8874320660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 85BBB20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:08:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JdGKYrwd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BBB20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935293AbeFMBHX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:07:23 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64685 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754146AbeFMBBc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:01:32 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:30 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
-   d="scan'208";a="47283452"
-Received: from voyager.sc.intel.com ([10.3.52.149])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:30 -0700
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
-        Borislav Petkov <bp@suse.de>, Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Subject: [RFC PATCH 00/23] Implement an HPET-based hardlockup detector
-Date:   Tue, 12 Jun 2018 17:57:20 -0700
-Message-Id: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S935130AbeFMBIP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:08:15 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:39698 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933390AbeFMBIN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 21:08:13 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D16cJW098452;
+        Wed, 13 Jun 2018 01:08:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=O5iB7Aprjifud8uNCkKZxA7YdMfp8ogwznxDszLTQYA=;
+ b=JdGKYrwdj7ypewBJIuPc+3U54JExZfCZ9Px1pOA4htOrQMsMLP9wLXrYT0nTfWGG2PEB
+ RR8Td0POCifZ+uTaEVuN+F7cjho9nRO8DI0CVaTVfONt7cex344Pg9eGa6MIlnZJu2Zp
+ vmbNsBvV2mM0VMNXYlqvlXfs0zafX9Hqn4EPAulU2R3yFIMOEB0uSpB+d686gqM3YFuS
+ j+hOq45i716+QMT1kLvJ2wyoa5XGlTIt0TkMlOFPxLPoyxK1r0DRYHMDbB+N5pjw5ZPq
+ 4z2RHQ5GppKJt9h54BFSE0rC8kgisvqvqj3hmdFBVhtsKnojpJ5qeMoO+FaJOT+VzYgy mA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jjp6c8bq5-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 01:08:02 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5D1820S013927
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 01:08:02 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D181V5005320;
+        Wed, 13 Jun 2018 01:08:01 GMT
+Received: from [10.154.144.7] (/10.154.144.7)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Jun 2018 18:08:01 -0700
+Subject: Re: [PATCH v3 3/9] xen/balloon: Share common memory reservation
+ routines
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180612134200.17456-1-andr2000@gmail.com>
+ <20180612134200.17456-4-andr2000@gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <124f3832-63b4-021d-0c6f-470229c7a056@oracle.com>
+Date:   Tue, 12 Jun 2018 21:07:59 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180612134200.17456-4-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=525
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806130011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-This patchset demonstrates the implementation of a hardlockup detector
-driven by the High-Precision Event Timer.
-
-== Introduction ==
-
-In CPU architectures that do not have an NMI watchdog, one can be
-constructed using a counter of the Performance Monitoring Unit (PMU).
-Counters in the PMU have high granularity and high visibility of the CPU.
-These capabilities and their limited number make these counters precious
-resources. Unfortunately, the perf-based hardlockup detector permanently
-consumes one of these counters per CPU.
-
-These counters could be freed for profiling purposes if the hardlockup
-detector were driven by another timer.
-
-The hardlockup detector runs relatively infrequently and does not require
-visibility of the CPU activity (in addition to detect locked-up CPUs). A
-timer that is external to the CPU (e.g., in the chipset) can be used to
-drive the detector.
-
-A key requirement is that the timer needs to be capable of issuing a
-non-maskable interrupt to the CPU. In most cases, this can be achieved
-by tweaking the delivery mode of the interrupt in the interrupt controller
-chip (the exception is the IO APIC).
-
-== Parts of this series ==
-
-Several parts of Linux need to be updated to operate the aforementioned
-detector.
-
-   1) Update the interrupt subsystem to accept requests of interrupts as
-      non-maskable. Likewise, handle irqchips that have this capability.
-      Patches 1-5
-   
-   2) Rework the x86 HPET platform code to reserve, configure a timer
-      and its interrupt, and expose the needed interfaces and definitions.
-      Patches 6-11
-
-   3) Rework the hardlockup detector to decouple its generic part from
-      perf. This adds definitions to be implemented using other sources
-      of non-maskable interrupts. Patches 12-14
-
-   4) Add an HPET-based hardlockup detector. This includes probing the
-      hardware resources, configure the interrupt and rotate the
-      destination of the interrupts among all monitored CPUs.
-
-== Details on the HPET-based hardlockup detector
-
-Unlike the the perf-based hardlockup detector, this implementation is
-driven by a single timer. The timer targets one CPU at a time in a round-
-robin manner. This means that if a CPU must be monitored every watch_thresh
-seconds, in a system with N monitored CPUs the timer must expire every
-watch_thresh/N. A timer expiration per CPU attribute is maintained.
-
-The timer expiration time per CPU is updated every time CPUs are put
-online or offline (a CPU hotplug thread enables and disables the watchdog
-in these events).
-
-Also, given that a single timer drives the detector, a cpumask is needed
-to keep track of which online CPUs are allowed to be monitored. This mask
-is updated every time a CPU is put online or offline as well as when the
-user modifies the mask in /proc/sys/kernel/watchdog_cpumask. This mask
-is needed to keep the current behavior of the lockup detector.
 
 
-Thanks and BR,
-Ricardo
+On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
 
-Ricardo Neri (23):
-  x86/apic: Add a parameter for the APIC delivery mode
-  genirq: Introduce IRQD_DELIVER_AS_NMI
-  genirq: Introduce IRQF_DELIVER_AS_NMI
-  iommu/vt-d/irq_remapping: Add support for IRQCHIP_CAN_DELIVER_AS_NMI
-  x86/msi: Add support for IRQCHIP_CAN_DELIVER_AS_NMI
-  x86/ioapic: Add support for IRQCHIP_CAN_DELIVER_AS_NMI with interrupt
-    remapping
-  x86/hpet: Expose more functions to read and write registers
-  x86/hpet: Calculate ticks-per-second in a separate function
-  x86/hpet: Reserve timer for the HPET hardlockup detector
-  x86/hpet: Relocate flag definitions to a header file
-  x86/hpet: Configure the timer used by the hardlockup detector
-  kernel/watchdog: Introduce a struct for NMI watchdog operations
-  watchdog/hardlockup: Define a generic function to detect hardlockups
-  watchdog/hardlockup: Decouple the hardlockup detector from perf
-  kernel/watchdog: Add a function to obtain the watchdog_allowed_mask
-  watchdog/hardlockup: Add an HPET-based hardlockup detector
-  watchdog/hardlockup/hpet: Convert the timer's interrupt to NMI
-  watchdog/hardlockup/hpet: Add the NMI watchdog operations
-  watchdog/hardlockup: Make arch_touch_nmi_watchdog() to hpet-based
-    implementation
-  watchdog/hardlockup/hpet: Rotate interrupt among all monitored CPUs
-  watchdog/hardlockup/hpet: Adjust timer expiration on the number of
-    monitored CPUs
-  watchdog/hardlockup/hpet: Only enable the HPET watchdog via a boot
-    parameter
-  watchdog/hardlockup: Activate the HPET-based lockup detector
 
- Documentation/admin-guide/kernel-parameters.txt |   5 +-
- arch/x86/include/asm/hpet.h                     |  38 ++
- arch/x86/include/asm/hw_irq.h                   |   5 +-
- arch/x86/include/asm/msidef.h                   |   3 +
- arch/x86/kernel/apic/io_apic.c                  |   5 +-
- arch/x86/kernel/apic/msi.c                      |   7 +-
- arch/x86/kernel/apic/vector.c                   |   8 +
- arch/x86/kernel/hpet.c                          | 149 ++++++-
- arch/x86/platform/uv/uv_irq.c                   |   2 +-
- drivers/char/hpet.c                             |  31 +-
- drivers/iommu/intel_irq_remapping.c             |  18 +-
- include/linux/hpet.h                            |   1 +
- include/linux/interrupt.h                       |   3 +
- include/linux/irq.h                             |  15 +
- include/linux/nmi.h                             |  56 ++-
- kernel/Makefile                                 |   3 +-
- kernel/irq/manage.c                             |  22 +-
- kernel/watchdog.c                               |  78 +++-
- kernel/watchdog_hld.c                           | 152 +------
- kernel/watchdog_hld_hpet.c                      | 557 ++++++++++++++++++++++++
- kernel/watchdog_hld_perf.c                      | 182 ++++++++
- lib/Kconfig.debug                               |  10 +
- 22 files changed, 1145 insertions(+), 205 deletions(-)
- create mode 100644 kernel/watchdog_hld_hpet.c
- create mode 100644 kernel/watchdog_hld_perf.c
 
--- 
-2.7.4
+One more thing: please add a comment here saying that frames array is 
+array of PFNs (in Xen granularity), which is what 
+XENMEM_populate_physmap requires. And remove (or update to name the 
+actual call you are making) the corresponding comment in 
+increase_reservation().
 
+
+> +
+> +int xenmem_reservation_increase(int count, xen_pfn_t *frames)
+> +{
+> +	struct xen_memory_reservation reservation = {
+> +		.address_bits = 0,
+> +		.extent_order = EXTENT_ORDER,
+> +		.domid        = DOMID_SELF
+> +	};
+> +
+> +	set_xen_guest_handle(reservation.extent_start, frames);
+> +	reservation.nr_extents = count;
+> +	return HYPERVISOR_memory_op(XENMEM_populate_physmap, &reservation);
+> +}
+> +EXPORT_SYMBOL_GPL(xenmem_reservation_increase);
+
+
+And similarly, here we are requesting GFNs, and update 
+decrease_reservation().
+
+
+-boris
+
+> +
+> +int xenmem_reservation_decrease(int count, xen_pfn_t *frames)
+> +{
+> +	struct xen_memory_reservation reservation = {
+> +		.address_bits = 0,
+> +		.extent_order = EXTENT_ORDER,
+> +		.domid        = DOMID_SELF
+> +	};
+> +
+> +	set_xen_guest_handle(reservation.extent_start, frames);
+> +	reservation.nr_extents = count;
+> +	return HYPERVISOR_memory_op(XENMEM_decrease_reservation, &reservation);
