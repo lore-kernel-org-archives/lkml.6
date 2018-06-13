@@ -2,85 +2,103 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8CCD8C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:42:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3491CC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A15208B4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:42:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE074208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:43:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UQV9EjSc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A15208B4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="E1kLVJJ/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE074208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935855AbeFMOmo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:42:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935345AbeFMOml (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:42:41 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B58D020891;
-        Wed, 13 Jun 2018 14:42:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528900961;
-        bh=iYYp/Q3zpkFufZKyIVvDgnOeJ7SkqIG/HJU20OqwwcA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UQV9EjScxef+h7ZAtQ4Hq2JqxHQ9urNOnqaEN3KAhUmlh7+EhB0C2mQIwip/rkNiS
-         qSnoqWGzLpzgBjL8xLgtQdmYkwwPwiEpkNUrjc5NTWSWAzQS4FG4+QNLiz7Q1IXJSp
-         5eSxCWCShY+9UrKiQitGyiO8PINUU4vS5sjK1Nxg=
-Date:   Wed, 13 Jun 2018 16:42:19 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rafael Tinoco <rafael.tinoco@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net
-Subject: Re: [PATCH 4.9 00/31] 4.9.108-stable review
-Message-ID: <20180613144219.GA19765@kroah.com>
-References: <20180612164620.797338191@linuxfoundation.org>
- <CADtBP2DHZFAC4m6LH1qR8njySdAeXq9Z-fvgRzpikiRzQL7Jzw@mail.gmail.com>
+        id S935882AbeFMOnN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:43:13 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44580 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935659AbeFMOnL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:43:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=gCMIa6LrUFwA/fPPVQGX09Ds0bK0BxkJ0ZP5+Ww61W4=; b=E1kLVJJ/S0UiSryGTawx1bPsAc
+        TTBeIqkGNCA+coXs7xySB86UEn1667R3PRNeVSK7Sh1zM6+ykMnyXAG27KLRw2san64KSigcC4+3D
+        zgR0AT+fv1sjn2bedihd/btw5tRrjybocWY26lVnjhSQJKdjWiVgvII19L6VZwrMrYzKC9wGe6KA5
+        06qIFFCoSVR5LwFy9yLBd3hFsPXSqBV0WfzTUy5Gw4PxItJs7ywZCalwygae8vTKl5Aytnv4tOijX
+        UpScNrxq2XNBAdr+AZSUaGtgDH/zyDnyAtJm6pGAVOXx3SJuWcnXHXulcSVFsLdbhD+ficXvt6GjF
+        M3YvwBtQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fT6z7-0004e5-DZ; Wed, 13 Jun 2018 14:42:53 +0000
+Date:   Wed, 13 Jun 2018 07:42:53 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@fb.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        David Sterba <dsterba@suse.cz>,
+        Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH V6 00/30] block: support multipage bvec
+Message-ID: <20180613144253.GA4693@infradead.org>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+ <20180611164806.GA7452@infradead.org>
+ <20180612034242.GC26412@ming.t460p>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADtBP2DHZFAC4m6LH1qR8njySdAeXq9Z-fvgRzpikiRzQL7Jzw@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180612034242.GC26412@ming.t460p>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 11:13:08AM -0300, Rafael Tinoco wrote:
-> On 12 June 2018 at 13:46, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > This is the start of the stable review cycle for the 4.9.108 release.
-> > There are 31 patches in this series, all will be posted as a response
-> > to this one.  If anyone has any issues with these being applied, please
-> > let me know.
-> >
-> > Responses should be made by Thu Jun 14 16:46:09 UTC 2018.
-> > Anything received after that time might be too late.
-> >
-> > The whole patch series can be found in one patch at:
-> >         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.108-rc1.gz
-> > or in the git tree and branch at:
-> >         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> > and the diffstat can be found below.
-> >
-> > thanks,
-> >
-> > greg k-h
+On Tue, Jun 12, 2018 at 11:42:49AM +0800, Ming Lei wrote:
+> On Mon, Jun 11, 2018 at 09:48:06AM -0700, Christoph Hellwig wrote:
+> > І think the new naming scheme in this series is a nightmare.  It
+> > confuses the heck out of me, and that is despite knowing many bits of
+> > the block layer inside out, and reviewing previous series.
 > 
-> Results from Linaro’s test farm.
-> No regressions on arm64, arm and x86_64.
+> In V5, there isn't such issue, since bio_for_each_segment* is renamed
+> into bio_for_each_page* first before doing the change.
 
-Great, thanks for testing and letting me know.
+But now we are at V6 where that isn't the case..
 
-greg k-h
+> Seems Jens isn't fine with the big renaming, then I follow the suggestion
+> of taking 'chunk' for representing multipage bvec in V6.
+
+Please don't use chunk.  We are iterating over bio_vec structures, while
+we have the concept of a chunk size for something else in the block layer,
+so this just creates confusion.  Nevermind names like
+bio_for_each_chunk_segment_all which just double the confusion.
+
+So assuming that bio_for_each_segment is set to stay as-is for now,
+here is a proposal for sanity by using the vec name.
+
+OLD:	    bio_for_each_segment
+NEW(page):  bio_for_each_segment, to be renamed bio_for_each_page later
+NEW(bvec):  bio_for_each_bvec
+
+OLD:	    __bio_for_each_segment
+NEW(page):  __bio_for_each_segment, to be renamed __bio_for_each_page later
+NEW(bvec):  (no bvec version needed)
+
+OLD:	    bio_for_each_segment_all
+NEW(page):  bio_for_each_page_all (needs updated prototype anyway)
+NEW(bvec):  (no bvec version needed once bcache is fixed up)	
