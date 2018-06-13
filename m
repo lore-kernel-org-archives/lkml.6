@@ -2,173 +2,130 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4F890C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:17:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ED6CDC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:17:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05D732086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:17:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D732086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A2C532086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:17:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="etTuYWY2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C532086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935078AbeFMRRn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:17:43 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:43570 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934737AbeFMRRl (ORCPT
+        id S935309AbeFMRRs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:17:48 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:44976 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934737AbeFMRRp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:17:41 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id AF37F41258;
-        Wed, 13 Jun 2018 17:17:40 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id CHAhB73pKITc; Wed, 13 Jun 2018 17:17:40 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 10BA741378;
-        Wed, 13 Jun 2018 17:17:35 +0000 (UTC)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-From:   Shuah Khan <shuah@kernel.org>
-Subject: [GIT PULL] kselftest update 2 for Linux 4.18-rc1
-Message-ID: <71fff95c-e017-da84-59ea-c4b8612d380a@kernel.org>
-Date:   Wed, 13 Jun 2018 11:17:27 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-Content-Type: multipart/mixed;
- boundary="------------8D009D9C2384C26B6E3177B3"
-Content-Language: en-US
+        Wed, 13 Jun 2018 13:17:45 -0400
+Received: by mail-wr0-f196.google.com with SMTP id x4-v6so3551202wro.11
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 10:17:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=KacoUq519n48FvDeNCOchU55uTEWHppfDAQIj+HGccc=;
+        b=etTuYWY2++usFm9adqBG0cCrfcBo9vymizPcXPb+Y4TEz9gOu5uIrhVZq7//O57EL+
+         ysODTJqZO19X0VPjioo+37Y8/dPJBhIXSfDu2pU+19b1dI+U0kV6aVYZw+GZYpngxrTw
+         ZRI2RbDEw70mZZDjI99fgfiLzv+Fy6YxSMbxWOdnyL/91LtTm81mrbWrmNzbX9vc0k0E
+         vCOxwfllRBgi2s1BxE/xyPg1efVb/0b3pKuyUvEIrdc4DmjIvk2If7sj3GEMoIXacFZ7
+         03hrmVmvlZVzxiJSRVDPdXXPLgnEkyKnO6nxA3gEW9/ZLw4WquakXf4A6tx6I+oIY7zJ
+         QmAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=KacoUq519n48FvDeNCOchU55uTEWHppfDAQIj+HGccc=;
+        b=W5+CaZTizCkDjo8MFOmGOs9zoaZ3Fkzg8HYnW69QgWtU9So+Ll3y1uyjUhqboKIM0s
+         r7vKV1tX9vkTazrnbsXixcb/kxKJaXlNHMeoP95RsZmYeC9TKYb79GDDK327ZQ+UMBgm
+         L1jty6Wgy5VFT6JGw4nuUvnusw9pne35Nzvq7ORKnKogLGrb0pSw5vugzc+3xTkPs7Z2
+         Ej5DD6jVjdXeiRFVOB9cADYAvCV1GXqXR/lvevc4aSJ5Mn0PPenmwg+nCSfVGqpIeAHR
+         zUa/0MPpE8cPxAxt55dRUqXiZZqIrzAUkPl5rPP89SVvYW+9aldVGU+a4+CuHElqAw1b
+         +8ug==
+X-Gm-Message-State: APt69E3bCoPJfrS2FKUEhyN0S/dFd+4PxY6eK/JpkO4/mnuS2Xvm6l/A
+        rDHyyi907V4iNysXKpYMVXU=
+X-Google-Smtp-Source: ADUXVKI3aVV8HFJut4ESK4/hknJzKAPJpFUosUPiKPxP7Zx384P2uhjXke1lQcuUTZ4cn0nvk6Cx5w==
+X-Received: by 2002:adf:91e5:: with SMTP id 92-v6mr4915347wri.124.1528910264133;
+        Wed, 13 Jun 2018 10:17:44 -0700 (PDT)
+Received: from localhost.localdomain (8ta-151-219-142.telkomadsl.co.za. [41.151.219.142])
+        by smtp.googlemail.com with ESMTPSA id l67-v6sm4326853wmb.22.2018.06.13.10.17.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 13 Jun 2018 10:17:43 -0700 (PDT)
+From:   Chris Opperman <eklikeroomys@gmail.com>
+Cc:     eklikeroomys@gmail.com, Ian Abbott <abbotti@mev.co.uk>,
+        H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simo Koskinen <koskisoft@gmail.com>,
+        Frank Mori Hess <fmh6jj@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5] staging: comedi: Improved readability of function comedi_nsamples_left.
+Date:   Wed, 13 Jun 2018 19:14:35 +0200
+Message-Id: <1528910104-1360-1-git-send-email-eklikeroomys@gmail.com>
+X-Mailer: git-send-email 2.1.4
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a multi-part message in MIME format.
---------------8D009D9C2384C26B6E3177B3
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Improve readability of comedi_nsamples_left:
+a) Reduce nesting by using more return statements.
+b) Declare variables scans_left and samples_left at start of function.
+c) Change type of scans_Left to unsigned long long to avoid cast.
 
-Hi Linus,
+Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
+---
 
-Please pull the following Kselftest update 2 for 4.18-rc1
+Changes v5:
+a) Moved additional text to below the cut-off line.
 
-This second Kselftest update for Linux 4.18-rc1:
+ drivers/staging/comedi/drivers.c | 26 +++++++++++++-------------
+ 1 file changed, 13 insertions(+), 13 deletions(-)
 
-- fixes a signedness bug in cgroups test
-- adds ppc support for kprobe args tests
+diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+index 9d73347..57dd63d 100644
+--- a/drivers/staging/comedi/drivers.c
++++ b/drivers/staging/comedi/drivers.c
+@@ -473,21 +473,21 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+ {
+ 	struct comedi_async *async = s->async;
+ 	struct comedi_cmd *cmd = &async->cmd;
++	unsigned long long scans_left;
++	unsigned long long samples_left;
 
-diff is attached.
+-	if (cmd->stop_src == TRIG_COUNT) {
+-		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+-		unsigned int scan_pos =
+-		    comedi_bytes_to_samples(s, async->scan_progress);
+-		unsigned long long samples_left = 0;
+-
+-		if (scans_left) {
+-			samples_left = ((unsigned long long)scans_left *
+-					cmd->scan_end_arg) - scan_pos;
+-		}
++	if (cmd->stop_src != TRIG_COUNT)
++		return nsamples;
 
-thanks,
--- Shuah
-
------------------------------------------------------------------------------------
-The following changes since commit fa32156921daa5c175228e2cac7679d50efd6c52:
-
-  selftests: lib: fix prime_numbers module search and skip logic (2018-05-30 21:32:55 -0600)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest tags/linux-kselftest-4.18-rc1-2
-
-for you to fetch changes up to 53c3daf8cfeae4b1289723c7abeb9540c1630cf8:
-
-  kselftest/cgroup: fix a signedness bug (2018-06-07 13:44:30 -0600)
-
-----------------------------------------------------------------
-linux-kselftest-4.18-rc1-2
-
-This second Kselftest update for Linux 4.18-rc1:
-
-- fixes a signedness bug in cgroups test
-- adds ppc support for kprobe args tests
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      kselftest/cgroup: fix a signedness bug
-
-Naveen N. Rao (1):
-      selftests/ftrace: Add ppc support for kprobe args tests
-
- tools/testing/selftests/cgroup/cgroup_util.c                      | 4 ++--
- .../testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc  | 8 ++++++++
- .../testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc  | 7 +++++++
- 3 files changed, 17 insertions(+), 2 deletions(-)
-
------------------------------------------------------------------------------------
-
---------------8D009D9C2384C26B6E3177B3
-Content-Type: text/x-patch;
- name="linux-kselftest-4.18-rc1-2.diff"
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
- filename="linux-kselftest-4.18-rc1-2.diff"
-
-diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
-index b69bdeb4b9fe..1e9e3c470561 100644
---- a/tools/testing/selftests/cgroup/cgroup_util.c
-+++ b/tools/testing/selftests/cgroup/cgroup_util.c
-@@ -35,7 +35,7 @@ static ssize_t read_text(const char *path, char *buf, size_t max_len)
- 	return len;
+-		if (samples_left < nsamples)
+-			nsamples = samples_left;
+-	}
++	scans_left = __comedi_nscans_left(s, cmd->stop_arg);
++	if (!scans_left)
++		return 0;
++
++	samples_left = scans_left * cmd->scan_end_arg -
++		comedi_bytes_to_samples(s, async->scan_progress);
++
++	if (samples_left < nsamples)
++		return samples_left;
+ 	return nsamples;
  }
- 
--static ssize_t write_text(const char *path, char *buf, size_t len)
-+static ssize_t write_text(const char *path, char *buf, ssize_t len)
- {
- 	int fd;
- 
-@@ -140,7 +140,7 @@ long cg_read_key_long(const char *cgroup, const char *control, const char *key)
- int cg_write(const char *cgroup, const char *control, char *buf)
- {
- 	char path[PATH_MAX];
--	size_t len = strlen(buf);
-+	ssize_t len = strlen(buf);
- 
- 	snprintf(path, sizeof(path), "%s/%s", cgroup, control);
- 
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-index 5ba73035e1d9..a0002563e9ee 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_string.tc
-@@ -24,6 +24,14 @@ arm*)
-   ARG2=%r1
-   OFFS=4
- ;;
-+ppc64*)
-+  ARG2=%r4
-+  OFFS=8
-+;;
-+ppc*)
-+  ARG2=%r4
-+  OFFS=4
-+;;
- *)
-   echo "Please implement other architecture here"
-   exit_untested
-diff --git a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-index 231bcd2c4eb5..d026ff4e562f 100644
---- a/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-+++ b/tools/testing/selftests/ftrace/test.d/kprobe/kprobe_args_syntax.tc
-@@ -34,6 +34,13 @@ arm*)
-   GOODREG=%r0
-   BADREG=%ax
- ;;
-+ppc*)
-+  GOODREG=%r3
-+  BADREG=%msr
-+;;
-+*)
-+  echo "Please implement other architecture here"
-+  exit_untested
- esac
- 
- test_goodarg() # Good-args
+ EXPORT_SYMBOL_GPL(comedi_nsamples_left);
+--
+2.1.4
 
---------------8D009D9C2384C26B6E3177B3--
