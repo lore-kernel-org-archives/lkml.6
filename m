@@ -2,152 +2,112 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E117CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:29:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E9B54C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F4EF2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:29:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EA312086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:30:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ecOMwxPV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F4EF2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sEYenTIa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EA312086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934928AbeFMJ3a (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:29:30 -0400
-Received: from mail-wm0-f50.google.com ([74.125.82.50]:34635 "EHLO
-        mail-wm0-f50.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933498AbeFMJ33 (ORCPT
+        id S1754543AbeFMJae (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:30:34 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:38152 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750939AbeFMJad (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:29:29 -0400
-Received: by mail-wm0-f50.google.com with SMTP id l15-v6so17945299wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 02:29:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfert-encoding;
-        bh=G+u3FEX3sVcxDQLvHTX1yrnc4HzdxVX9v3vb88Fav4Q=;
-        b=ecOMwxPV/8v1UVE24c6MiN19qFKIAnAn7SUZdOglBH55EGQC9WKHTaU3zdxS3x1t8w
-         o+ey25OPxUh2uC1Set7TE2JL2MVmLE8/ZcZs0LKtpfvOsK95eJkyi1pgpugb+ElpL4AQ
-         M6N1W2vv+T6MeRqvHMh+QR+Qp42bkbhuUB8Ho=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfert-encoding;
-        bh=G+u3FEX3sVcxDQLvHTX1yrnc4HzdxVX9v3vb88Fav4Q=;
-        b=Jb8LNEqDh67snuiK5aIRONo8e2XjEFjVn6ztp2zLLEFtLACxHoYzYxHaFRDC1p1KO+
-         4kRFqB5U27qz9jWyYCax6ooJdu4hzEUbeFhTAtwUGHJLJdmfNc5ZQ8rHwWzpSaMJR9D8
-         KzhNpo6pnHdJ4NihS/BUxZCgiARQGWF9JaKoTN4bzeVHfUPOqFj/gr+pxJubBc0qdlmA
-         c5IIiWE6IqLKwxLFMruayotjfymVq7HWs9xqsMmKGerinkOm+PVxFdQpreuqBwXucQZf
-         XuYINnDQoTlh7xrP+/Bw8x5axS8TOqx9WmgqhKoJQWy47unD4G1viikCFND8onzEO5fq
-         gCmA==
-X-Gm-Message-State: APt69E2LiH/a0SWKjk90AVpNj+ySkZ03rxsLyQoD5ADguKkiJAXrzFPU
-        l9o6mM/5WDO2ayS2ZCz5gKLBjA==
-X-Google-Smtp-Source: ADUXVKLPlK7PNQXDsKXUMV/aMT/JwWqYkdfnDtXLpYFjLPwgFQV/wUKrIpbKWTUt3LcsL2jlHq7ShQ==
-X-Received: by 2002:a1c:124f:: with SMTP id 76-v6mr3011270wms.29.1528882168120;
-        Wed, 13 Jun 2018 02:29:28 -0700 (PDT)
-Received: from localhost.localdomain (aig34-1-88-167-228-121.fbx.proxad.net. [88.167.228.121])
-        by smtp.gmail.com with ESMTPSA id v2-v6sm1514392wmh.41.2018.06.13.02.29.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 02:29:27 -0700 (PDT)
-From:   Thierry Escande <thierry.escande@linaro.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Petr Mladek <pmladek@suse.com>
-Cc:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] lib/test_printf.c: call wait_for_random_bytes() before plain %p tests
-Date:   Wed, 13 Jun 2018 11:29:19 +0200
-Message-Id: <20180613092919.24075-1-thierry.escande@linaro.org>
-X-Mailer: git-send-email 2.14.1
+        Wed, 13 Jun 2018 05:30:33 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D9Q2tB114346;
+        Wed, 13 Jun 2018 09:30:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=+KO80sweRiaYxSSDYP2FDj3IBQ4noPPmLqxtHwWRQ7A=;
+ b=sEYenTIareRtSzPxwhF4TdZi+SEXnc1rt2oCRAUQw+ZtTLknQpW1VkzbMIXoqGf0wkUj
+ UtcbvdSYO575TUXRY3aVdlJVcyDHqFyHyuv2Ari3u2C+qZYZblv1ajf2Jz+Wt4RGysnP
+ SNG6/amnuRXgnhN6EEdtfebmJo40B+8YYLq9yQckzWetsEtlJKhBvGQ/g5VnZgZULP1u
+ mN6HKRgtCjrrBlrJFsyJTuPiy6fBDNxw9DQCsnbv/QBH13RPsnPCpzet86Lbdmjlu9kY
+ 17107cCNDQI2koT53xpbkLp7yFRH6DOt6eKcMPlof1EBCkYB4MMQAPR+xi5DQRsqMNOE jQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2jjp6bsmyw-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 09:30:16 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5D9UGG6007879
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 09:30:16 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D9UFZx029919;
+        Wed, 13 Jun 2018 09:30:15 GMT
+Received: from mwanda (/197.157.34.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Jun 2018 02:30:15 -0700
+Date:   Wed, 13 Jun 2018 12:29:55 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Chris Opperman <eklikeroomys@gmail.com>
+Cc:     devel@driverdev.osuosl.org, Frank Mori Hess <fmh6jj@gmail.com>,
+        Simo Koskinen <koskisoft@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
+Subject: Re: [PATCH v4] staging: comedi: Improved readability of function
+ comedi_nsamples_left.
+Message-ID: <20180613092955.vc5impf46prhcur7@mwanda>
+References: <1528837793-11765-1-git-send-email-eklikeroomys@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset = "utf-8"
-Content-Transfert-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528837793-11765-1-git-send-email-eklikeroomys@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=791
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806130106
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the test_printf module is loaded before the crng is initialized, the
-plain 'p' tests will fail because the printed address will not be hashed
-and the buffer will contain "(ptrval)" instead.
-Since we cannot wait for the crng to be initialized for an undefined
-time, both plain 'p' tests now accept the string "(ptrval)" as a valid
-result and print a warning message.
+Sooooooooo close...
 
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
+On Tue, Jun 12, 2018 at 11:09:44PM +0200, Chris Opperman wrote:
+> Changes since v3:
+> a) Reverted u64 to unsigned long long and u32 to unsigned int.
+> b) Added patch versioning.
+> c) Changed type of scans_left to unsigned long long to avoid cast.
+> d) Clarified and updated changelog.
+> 
+> >8-----------------------------------------------------------------------8<
 
----
+This part here needs to go ...
 
-Change in v2:
-- Remove wait_for_random_bytes() usage
-- Removed Acked-by from Tobin as the proposed solution is not the same
-  anymore.
+> 
+> Improve readability of comedi_nsamples_left:
+> a) Reduce nesting by using more return statements.
+> b) Declare variables scans_left and samples_left at start of function.
+> c) Change type of scans_Left to unsigned long long to avoid cast.
+                          ^
+> 
+> Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
+> ---
 
- lib/test_printf.c | 24 ++++++++++++++++++++++--
- 1 file changed, 22 insertions(+), 2 deletions(-)
+... down here, under the --- cut off line.
 
-diff --git a/lib/test_printf.c b/lib/test_printf.c
-index 71ebfa43ad05..a625e3749566 100644
---- a/lib/test_printf.c
-+++ b/lib/test_printf.c
-@@ -206,6 +206,7 @@ test_string(void)
- #define PTR_WIDTH 16
- #define PTR ((void *)0xffff0123456789ab)
- #define PTR_STR "ffff0123456789ab"
-+#define PTR_VAL_NO_CRNG "        (ptrval)"
- #define ZEROS "00000000"	/* hex 32 zero bits */
- 
- static int __init
-@@ -216,7 +217,16 @@ plain_format(void)
- 
- 	nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", PTR);
- 
--	if (nchars != PTR_WIDTH || strncmp(buf, ZEROS, strlen(ZEROS)) != 0)
-+	if (nchars != PTR_WIDTH)
-+		return -1;
-+
-+	if (strncmp(buf, PTR_VAL_NO_CRNG, PTR_WIDTH) == 0) {
-+		pr_warn("crng possibly not yet initialized. plain 'p' buffer contains \"%s\"",
-+			PTR_VAL_NO_CRNG);
-+		return 0;
-+	}
-+
-+	if (strncmp(buf, ZEROS, strlen(ZEROS)) != 0)
- 		return -1;
- 
- 	return 0;
-@@ -227,6 +237,7 @@ plain_format(void)
- #define PTR_WIDTH 8
- #define PTR ((void *)0x456789ab)
- #define PTR_STR "456789ab"
-+#define PTR_VAL_NO_CRNG "(ptrval)"
- 
- static int __init
- plain_format(void)
-@@ -245,7 +256,16 @@ plain_hash(void)
- 
- 	nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", PTR);
- 
--	if (nchars != PTR_WIDTH || strncmp(buf, PTR_STR, PTR_WIDTH) == 0)
-+	if (nchars != PTR_WIDTH)
-+		return -1;
-+
-+	if (strncmp(buf, PTR_VAL_NO_CRNG, PTR_WIDTH) == 0) {
-+		pr_warn("crng possibly not yet initialized. plain 'p' buffer contains \"%s\"",
-+			PTR_VAL_NO_CRNG);
-+		return 0;
-+	}
-+
-+	if (strncmp(buf, PTR_STR, PTR_WIDTH) == 0)
- 		return -1;
- 
- 	return 0;
--- 
-2.14.1
+>  drivers/staging/comedi/drivers.c | 26 +++++++++++++-------------
+>  1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+
+regards,
+dan carpenter
 
