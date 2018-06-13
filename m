@@ -2,152 +2,83 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9374CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:07:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2A53EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4846120891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3751208BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:07:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CjNXDbGF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4846120891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gl1swXOl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3751208BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754612AbeFMJHp (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:07:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:51406 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933618AbeFMJHm (ORCPT
+        id S934873AbeFMJHx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:07:53 -0400
+Received: from mail-it0-f65.google.com ([209.85.214.65]:52780 "EHLO
+        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933732AbeFMJHv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:07:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1HUKscu0mE+ALM2Nlu99F4vZsRKh63EWuYU7CjEm8tA=; b=CjNXDbGF0J7qHXdao79CFwi3e
-        oEPNAD23nUrLD2pwEtbWN9hcPPuskI898+SkPI2BsRkqdWXmwhEQIosYKyNiLD0uNQICYUdYuo+d0
-        KV7gxAjEDbUvpGAo3PLbaZ/pZmZ0AMFp6cg6Ymaj+JnY4ro74/zxr9rPDFyUf4tQQ7mBLTiusVvSJ
-        k0wZhfKe8QPWZOwITMFtbYXBhdMwRfuAbDrxtM0lpH5czCFv/qe2IqSnGWw4G3wrz/UD36/y0KlHq
-        Rv0ariNxMX2fM9nKsVE3LzrlEsk1s3H7ivRu3a8TTM7cnD8ZugWvAaeAjMyPZY427ikuccmstrU4g
-        Lv9ToRFCA==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fT1kQ-0007FG-Ho; Wed, 13 Jun 2018 09:07:22 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 038E1201EA7CB; Wed, 13 Jun 2018 11:07:20 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 11:07:20 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Don Zickus <dzickus@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Babu Moger <babu.moger@oracle.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Christoffer Dall <cdall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [RFC PATCH 17/23] watchdog/hardlockup/hpet: Convert the timer's
- interrupt to NMI
-Message-ID: <20180613090720.GV12258@hirez.programming.kicks-ass.net>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        Wed, 13 Jun 2018 05:07:51 -0400
+Received: by mail-it0-f65.google.com with SMTP id m194-v6so2791388itg.2
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 02:07:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=bi4Q0WQjTsimGF9Ul2NfyHkyQ/4f4hEOKAWHGI9Pfds=;
+        b=gl1swXOlOPPr6OSh8YKAyogjWymVOpv/ljIraMVpka2FfBqE5VXeazLFxK6OUrT2mD
+         +VfZ5uzbKyA2M49OMLF51tdTlpMTEKvU8jwbFbN4jpUMC4UBJIrllTTdtO3uIAEe1wCd
+         JWOLH7ZFxwd2NXJlr3obwyLQjWvi8gasCA+t4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=bi4Q0WQjTsimGF9Ul2NfyHkyQ/4f4hEOKAWHGI9Pfds=;
+        b=YqcIIw37fK6FPcvJ5pe1asZ09cJHSdnl+2IxfYfes4JkSSe0Dd4k+T/PlYqquCq4Hm
+         BGl+wy6b9Dn1mdPFThq5pW1kyc0x8TX3Hf3ydSRu1/nAqT8/O5jzueTU/aGTVovqjHOL
+         ous3Epd3H+5zYxOy+aNZnN0VhDcwHoY6cEJCJL/eWCjnmIokzTdBsFAkbiU98gT8K2FL
+         n4fuiW/0Xdepr2KM7wrCQ/5zHQn1ZQRRsK+A8atFHYyo0qiYA5a5fmkPMgYeYI9S3+6t
+         WT08LwStdOSCAngYRAZyW6RB13DsfAFI8+Oqh9Dr/Lf62GtZm4nzNfM1us+kH2jMGnqt
+         jNWw==
+X-Gm-Message-State: APt69E2iKY8Yw+TP+gaZ1t8fTBjsN4gDK68DJoknVHfzVfkWqqHJRtbm
+        t23jVBPhA/gYSQ8PyQz6RcjBq99yqRkm1cGFtgHHaQ==
+X-Google-Smtp-Source: ADUXVKK5GLuh41qjSBLlXiAKLX0wstq69AITmJE7ZcT/PXh8oB6dfu59e7baBRpmN+kHqZ9QxGbweFXbtFVsTKmqwOE=
+X-Received: by 2002:a24:690f:: with SMTP id e15-v6mr3824127itc.70.1528880870678;
+ Wed, 13 Jun 2018 02:07:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 02:07:49
+ -0700 (PDT)
+In-Reply-To: <20180604141528.15635-1-alexandre.belloni@bootlin.com>
+References: <20180604141528.15635-1-alexandre.belloni@bootlin.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Wed, 13 Jun 2018 11:07:49 +0200
+Message-ID: <CACRpkdZkXQj9xxN-wBjT_Y4Q5Se-Ts488bZzunYyecTau1pOEw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rtc: ftrtc010: switch to devm_rtc_allocate_device
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-rtc@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Hans Ulli Kroll <ulli.kroll@googlemail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 05:57:37PM -0700, Ricardo Neri wrote:
+On Mon, Jun 4, 2018 at 4:15 PM, Alexandre Belloni
+<alexandre.belloni@bootlin.com> wrote:
 
-+static bool is_hpet_wdt_interrupt(struct hpet_hld_data *hdata)
-+{
-+       unsigned long this_isr;
-+       unsigned int lvl_trig;
-+
-+       this_isr = hpet_readl(HPET_STATUS) & BIT(hdata->num);
-+
-+       lvl_trig = hpet_readl(HPET_Tn_CFG(hdata->num)) & HPET_TN_LEVEL;
-+
-+       if (lvl_trig && this_isr)
-+               return true;
-+
-+       return false;
-+}
+> Switch to devm_rtc_allocate_device/rtc_register_device. This allow or
+> further improvement and simplifies ftrtc010_rtc_remove().
+>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-> +static int hardlockup_detector_nmi_handler(unsigned int val,
-> +					   struct pt_regs *regs)
-> +{
-> +	struct hpet_hld_data *hdata = hld_data;
-> +	unsigned int use_fsb;
-> +
-> +	/*
-> +	 * If FSB delivery mode is used, the timer interrupt is programmed as
-> +	 * edge-triggered and there is no need to check the ISR register.
-> +	 */
-> +	use_fsb = hdata->flags & HPET_DEV_FSB_CAP;
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-Please do explain.. That FSB thing basically means MSI. But there's only
-a single NMI vector. How do we know this NMI came from the HPET?
-
-> +
-> +	if (!use_fsb && !is_hpet_wdt_interrupt(hdata))
-
-So you add _2_ HPET reads for every single NMI that gets triggered...
-and IIRC HPET reads are _sllooooowwwwww_.
-
-> +		return NMI_DONE;
-> +
-> +	inspect_for_hardlockups(regs);
-> +
-> +	if (!(hdata->flags & HPET_DEV_PERI_CAP))
-> +		kick_timer(hdata);
-> +
-> +	/* Acknowledge interrupt if in level-triggered mode */
-> +	if (!use_fsb)
-> +		hpet_writel(BIT(hdata->num), HPET_STATUS);
-> +
-> +	return NMI_HANDLED;
-
-So if I read this right, when in FSB/MSI mode, we'll basically _always_
-claim every single NMI as handled?
-
-That's broken.
-
-> +}
+Yours,
+Linus Walleij
