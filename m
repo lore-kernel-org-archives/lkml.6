@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 857DDC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:03:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C8E63C5CFF1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:04:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F59E208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:03:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F59E208B2
+	by mail.kernel.org (Postfix) with ESMTP id 72EBE20660
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:04:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72EBE20660
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935266AbeFMBDw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:03:52 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64688 "EHLO mga14.intel.com"
+        id S935283AbeFMBEL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:04:11 -0400
+Received: from mga14.intel.com ([192.55.52.115]:64691 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934989AbeFMBBk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:01:40 -0400
+        id S935059AbeFMBBj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 21:01:39 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
   by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:34 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
-   d="scan'208";a="47283511"
+   d="scan'208";a="47283504"
 Received: from voyager.sc.intel.com ([10.3.52.149])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:34 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:33 -0700
 From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -41,35 +41,25 @@ Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
         linux-kernel@vger.kernel.org,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Don Zickus <dzickus@redhat.com>,
         Nicholas Piggin <npiggin@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Frederic Weisbecker <frederic@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
         Babu Moger <babu.moger@oracle.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
         Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Masami Hiramatsu <mhiramat@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
         Colin Ian King <colin.king@canonical.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Christoffer Dall <cdall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
         iommu@lists.linux-foundation.org
-Subject: [RFC PATCH 16/23] watchdog/hardlockup: Add an HPET-based hardlockup detector
-Date:   Tue, 12 Jun 2018 17:57:36 -0700
-Message-Id: <1528851463-21140-17-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Subject: [RFC PATCH 14/23] watchdog/hardlockup: Decouple the hardlockup detector from perf
+Date:   Tue, 12 Jun 2018 17:57:34 -0700
+Message-Id: <1528851463-21140-15-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -78,434 +68,441 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the initial implementation of a hardlockup detector driven by an
-HPET timer. This initial implementation includes functions to control
-the timer via its registers. It also requests such timer, installs
-a minimal interrupt handler and performs the initial configuration of
-the timer.
+The current default implementation of the hardlockup detector assumes that
+it is implemented using perf events. However, the hardlockup detector can
+be driven by other sources of non-maskable interrupts (e.g., a properly
+configured timer).
 
-The detector is not functional at this stage. Subsequent changesets will
-populate the NMI watchdog operations and register it with the lockup
-detector.
+Put in a separate file all the code that is specific to perf: create and
+manage events, stop and start the detector. This perf-specific code is put
+in the new file watchdog_hld_perf.c
 
-This detector depends on HPET_TIMER since platform code performs the
-initialization of the timer and maps its registers to memory. It depends
-on HPET to compute the ticks per second of the timer.
+The code generic code used to monitor the timers' thresholds, check
+timestamps and detect hardlockups remains in watchdog_hld.c
+
+Functions and variables are simply relocated to a new file. No functional
+changes were made.
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Borislav Petkov <bp@suse.de>
 Cc: Jacob Pan <jacob.jun.pan@intel.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Cc: Don Zickus <dzickus@redhat.com>
 Cc: Nicholas Piggin <npiggin@gmail.com>
 Cc: Michael Ellerman <mpe@ellerman.id.au>
 Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
 Cc: Babu Moger <babu.moger@oracle.com>
+Cc: "David S. Miller" <davem@davemloft.net>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
 Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Philippe Ombredanne <pombredanne@nexb.com>
 Cc: Colin Ian King <colin.king@canonical.com>
-Cc: Byungchul Park <byungchul.park@lge.com>
-Cc: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
 Cc: "Luis R. Rodriguez" <mcgrof@kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Christoffer Dall <cdall@linaro.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: David Rientjes <rientjes@google.com>
 Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
 Cc: iommu@lists.linux-foundation.org
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- kernel/Makefile            |   1 +
- kernel/watchdog_hld_hpet.c | 334 +++++++++++++++++++++++++++++++++++++++++++++
- lib/Kconfig.debug          |  10 ++
- 3 files changed, 345 insertions(+)
- create mode 100644 kernel/watchdog_hld_hpet.c
+ kernel/Makefile            |   2 +-
+ kernel/watchdog_hld.c      | 162 ----------------------------------------
+ kernel/watchdog_hld_perf.c | 182 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 183 insertions(+), 163 deletions(-)
+ create mode 100644 kernel/watchdog_hld_perf.c
 
 diff --git a/kernel/Makefile b/kernel/Makefile
-index 0a0d86d..73c79b2 100644
+index f85ae5d..0a0d86d 100644
 --- a/kernel/Makefile
 +++ b/kernel/Makefile
-@@ -86,6 +86,7 @@ obj-$(CONFIG_KGDB) += debug/
+@@ -85,7 +85,7 @@ obj-$(CONFIG_FAIL_FUNCTION) += fail_function.o
+ obj-$(CONFIG_KGDB) += debug/
  obj-$(CONFIG_DETECT_HUNG_TASK) += hung_task.o
  obj-$(CONFIG_LOCKUP_DETECTOR) += watchdog.o
- obj-$(CONFIG_HARDLOCKUP_DETECTOR_PERF) += watchdog_hld.o watchdog_hld_perf.o
-+obj-$(CONFIG_HARDLOCKUP_DETECTOR_HPET) += watchdog_hld.o watchdog_hld_hpet.o
+-obj-$(CONFIG_HARDLOCKUP_DETECTOR_PERF) += watchdog_hld.o
++obj-$(CONFIG_HARDLOCKUP_DETECTOR_PERF) += watchdog_hld.o watchdog_hld_perf.o
  obj-$(CONFIG_SECCOMP) += seccomp.o
  obj-$(CONFIG_RELAY) += relay.o
  obj-$(CONFIG_SYSCTL) += utsname_sysctl.o
-diff --git a/kernel/watchdog_hld_hpet.c b/kernel/watchdog_hld_hpet.c
+diff --git a/kernel/watchdog_hld.c b/kernel/watchdog_hld.c
+index 28a00c3..96615a2 100644
+--- a/kernel/watchdog_hld.c
++++ b/kernel/watchdog_hld.c
+@@ -22,12 +22,8 @@
+ 
+ static DEFINE_PER_CPU(bool, hard_watchdog_warn);
+ static DEFINE_PER_CPU(bool, watchdog_nmi_touch);
+-static DEFINE_PER_CPU(struct perf_event *, watchdog_ev);
+-static DEFINE_PER_CPU(struct perf_event *, dead_event);
+-static struct cpumask dead_events_mask;
+ 
+ static unsigned long hardlockup_allcpu_dumped;
+-static atomic_t watchdog_cpus = ATOMIC_INIT(0);
+ 
+ void arch_touch_nmi_watchdog(void)
+ {
+@@ -98,14 +94,6 @@ static inline bool watchdog_check_timestamp(void)
+ }
+ #endif
+ 
+-static struct perf_event_attr wd_hw_attr = {
+-	.type		= PERF_TYPE_HARDWARE,
+-	.config		= PERF_COUNT_HW_CPU_CYCLES,
+-	.size		= sizeof(struct perf_event_attr),
+-	.pinned		= 1,
+-	.disabled	= 1,
+-};
+-
+ void inspect_for_hardlockups(struct pt_regs *regs)
+ {
+ 	if (__this_cpu_read(watchdog_nmi_touch) == true) {
+@@ -155,153 +143,3 @@ void inspect_for_hardlockups(struct pt_regs *regs)
+ 	__this_cpu_write(hard_watchdog_warn, false);
+ 	return;
+ }
+-
+-/* Callback function for perf event subsystem */
+-static void watchdog_overflow_callback(struct perf_event *event,
+-				       struct perf_sample_data *data,
+-				       struct pt_regs *regs)
+-{
+-	/* Ensure the watchdog never gets throttled */
+-	event->hw.interrupts = 0;
+-	inspect_for_hardlockups(regs);
+-}
+-
+-static int hardlockup_detector_event_create(void)
+-{
+-	unsigned int cpu = smp_processor_id();
+-	struct perf_event_attr *wd_attr;
+-	struct perf_event *evt;
+-
+-	wd_attr = &wd_hw_attr;
+-	wd_attr->sample_period = hw_nmi_get_sample_period(watchdog_thresh);
+-
+-	/* Try to register using hardware perf events */
+-	evt = perf_event_create_kernel_counter(wd_attr, cpu, NULL,
+-					       watchdog_overflow_callback, NULL);
+-	if (IS_ERR(evt)) {
+-		pr_info("Perf event create on CPU %d failed with %ld\n", cpu,
+-			PTR_ERR(evt));
+-		return PTR_ERR(evt);
+-	}
+-	this_cpu_write(watchdog_ev, evt);
+-	return 0;
+-}
+-
+-/**
+- * hardlockup_detector_perf_enable - Enable the local event
+- */
+-static void hardlockup_detector_perf_enable(void)
+-{
+-	if (hardlockup_detector_event_create())
+-		return;
+-
+-	/* use original value for check */
+-	if (!atomic_fetch_inc(&watchdog_cpus))
+-		pr_info("Enabled. Permanently consumes one hw-PMU counter.\n");
+-
+-	perf_event_enable(this_cpu_read(watchdog_ev));
+-}
+-
+-/**
+- * hardlockup_detector_perf_disable - Disable the local event
+- */
+-static void hardlockup_detector_perf_disable(void)
+-{
+-	struct perf_event *event = this_cpu_read(watchdog_ev);
+-
+-	if (event) {
+-		perf_event_disable(event);
+-		this_cpu_write(watchdog_ev, NULL);
+-		this_cpu_write(dead_event, event);
+-		cpumask_set_cpu(smp_processor_id(), &dead_events_mask);
+-		atomic_dec(&watchdog_cpus);
+-	}
+-}
+-
+-/**
+- * hardlockup_detector_perf_cleanup - Cleanup disabled events and destroy them
+- *
+- * Called from lockup_detector_cleanup(). Serialized by the caller.
+- */
+-static void hardlockup_detector_perf_cleanup(void)
+-{
+-	int cpu;
+-
+-	for_each_cpu(cpu, &dead_events_mask) {
+-		struct perf_event *event = per_cpu(dead_event, cpu);
+-
+-		/*
+-		 * Required because for_each_cpu() reports  unconditionally
+-		 * CPU0 as set on UP kernels. Sigh.
+-		 */
+-		if (event)
+-			perf_event_release_kernel(event);
+-		per_cpu(dead_event, cpu) = NULL;
+-	}
+-	cpumask_clear(&dead_events_mask);
+-}
+-
+-/**
+- * hardlockup_detector_perf_stop - Globally stop watchdog events
+- *
+- * Special interface for x86 to handle the perf HT bug.
+- */
+-void __init hardlockup_detector_perf_stop(void)
+-{
+-	int cpu;
+-
+-	lockdep_assert_cpus_held();
+-
+-	for_each_online_cpu(cpu) {
+-		struct perf_event *event = per_cpu(watchdog_ev, cpu);
+-
+-		if (event)
+-			perf_event_disable(event);
+-	}
+-}
+-
+-/**
+- * hardlockup_detector_perf_restart - Globally restart watchdog events
+- *
+- * Special interface for x86 to handle the perf HT bug.
+- */
+-void __init hardlockup_detector_perf_restart(void)
+-{
+-	int cpu;
+-
+-	lockdep_assert_cpus_held();
+-
+-	if (!(watchdog_enabled & NMI_WATCHDOG_ENABLED))
+-		return;
+-
+-	for_each_online_cpu(cpu) {
+-		struct perf_event *event = per_cpu(watchdog_ev, cpu);
+-
+-		if (event)
+-			perf_event_enable(event);
+-	}
+-}
+-
+-/**
+- * hardlockup_detector_perf_init - Probe whether NMI event is available at all
+- */
+-static int __init hardlockup_detector_perf_init(void)
+-{
+-	int ret = hardlockup_detector_event_create();
+-
+-	if (ret) {
+-		pr_info("Perf NMI watchdog permanently disabled\n");
+-	} else {
+-		perf_event_release_kernel(this_cpu_read(watchdog_ev));
+-		this_cpu_write(watchdog_ev, NULL);
+-	}
+-
+-	return ret;
+-}
+-
+-struct nmi_watchdog_ops hardlockup_detector_perf_ops = {
+-	.init		= hardlockup_detector_perf_init,
+-	.enable		= hardlockup_detector_perf_enable,
+-	.disable	= hardlockup_detector_perf_disable,
+-	.cleanup	= hardlockup_detector_perf_cleanup,
+-};
+diff --git a/kernel/watchdog_hld_perf.c b/kernel/watchdog_hld_perf.c
 new file mode 100644
-index 0000000..8fa4e55
+index 0000000..abc8edc
 --- /dev/null
-+++ b/kernel/watchdog_hld_hpet.c
-@@ -0,0 +1,334 @@
++++ b/kernel/watchdog_hld_perf.c
+@@ -0,0 +1,182 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * A hardlockup detector driven by an HPET timer.
++ * Detect hard lockups on a system
 + *
-+ * Copyright (C) Intel Corporation 2018
++ * started by Ricardo Neri, Copyright (C) 2018 Intel Corporation.
++ *
++ * Note: All of this code comes from the previous perf-specific hardlockup
++ * detector.
 + */
 +
-+#define pr_fmt(fmt) "NMI hpet watchdog: " fmt
++#define pr_fmt(fmt) "NMI perf watchdog: " fmt
 +
 +#include <linux/nmi.h>
-+#include <linux/hpet.h>
-+#include <asm/hpet.h>
++#include <linux/atomic.h>
++#include <linux/module.h>
++#include <linux/sched/debug.h>
++#include <linux/perf_event.h>
++#include <asm/irq_regs.h>
 +
-+#undef pr_fmt
-+#define pr_fmt(fmt) "NMI hpet watchdog: " fmt
++static DEFINE_PER_CPU(struct perf_event *, watchdog_ev);
++static DEFINE_PER_CPU(struct perf_event *, dead_event);
++static struct cpumask dead_events_mask;
 +
-+static struct hpet_hld_data *hld_data;
++static atomic_t watchdog_cpus = ATOMIC_INIT(0);
 +
-+/**
-+ * get_count() - Get the current count of the HPET timer
-+ *
-+ * Returns:
-+ *
-+ * Value of the main counter of the HPET timer
-+ */
-+static inline unsigned long get_count(void)
++static struct perf_event_attr wd_hw_attr = {
++	.type		= PERF_TYPE_HARDWARE,
++	.config		= PERF_COUNT_HW_CPU_CYCLES,
++	.size		= sizeof(struct perf_event_attr),
++	.pinned		= 1,
++	.disabled	= 1,
++};
++
++/* Callback function for perf event subsystem */
++static void watchdog_overflow_callback(struct perf_event *event,
++				       struct perf_sample_data *data,
++				       struct pt_regs *regs)
 +{
-+	return hpet_readq(HPET_COUNTER);
++	/* Ensure the watchdog never gets throttled */
++	event->hw.interrupts = 0;
++	inspect_for_hardlockups(regs);
++}
++
++static int hardlockup_detector_event_create(void)
++{
++	unsigned int cpu = smp_processor_id();
++	struct perf_event_attr *wd_attr;
++	struct perf_event *evt;
++
++	wd_attr = &wd_hw_attr;
++	wd_attr->sample_period = hw_nmi_get_sample_period(watchdog_thresh);
++
++	/* Try to register using hardware perf events */
++	evt = perf_event_create_kernel_counter(wd_attr, cpu, NULL,
++					       watchdog_overflow_callback, NULL);
++	if (IS_ERR(evt)) {
++		pr_info("Perf event create on CPU %d failed with %ld\n", cpu,
++			PTR_ERR(evt));
++		return PTR_ERR(evt);
++	}
++	this_cpu_write(watchdog_ev, evt);
++	return 0;
 +}
 +
 +/**
-+ * set_comparator() - Update the comparator in an HPET timer instance
-+ * @hdata:	A data structure with the timer instance to update
-+ * @cmp:	The value to write in the in the comparator registere
-+ *
-+ * Returns:
-+ *
-+ * None
++ * hardlockup_detector_perf_enable - Enable the local event
 + */
-+static inline void set_comparator(struct hpet_hld_data *hdata,
-+				  unsigned long cmp)
++static void hardlockup_detector_perf_enable(void)
 +{
-+	hpet_writeq(cmp, HPET_Tn_CMP(hdata->num));
++	if (hardlockup_detector_event_create())
++		return;
++
++	/* use original value for check */
++	if (!atomic_fetch_inc(&watchdog_cpus))
++		pr_info("Enabled. Permanently consumes one hw-PMU counter.\n");
++
++	perf_event_enable(this_cpu_read(watchdog_ev));
 +}
 +
 +/**
-+ * kick_timer() - Reprogram timer to expire in the future
-+ * @hdata:	A data structure with the timer instance to update
-+ *
-+ * Reprogram the timer to expire within watchdog_thresh seconds in the future.
-+ *
-+ * Returns:
-+ *
-+ * None
++ * hardlockup_detector_perf_disable - Disable the local event
 + */
-+static void kick_timer(struct hpet_hld_data *hdata)
++static void hardlockup_detector_perf_disable(void)
 +{
-+	unsigned long new_compare, count;
++	struct perf_event *event = this_cpu_read(watchdog_ev);
 +
-+	/*
-+	 * Update the comparator in increments of watch_thresh seconds relative
-+	 * to the current count. Since watch_thresh is given in seconds, we
-+	 * are able to update the comparator before the counter reaches such new
-+	 * value.
-+	 *
-+	 * Let it wrap around if needed.
-+	 */
-+	count = get_count();
-+
-+	new_compare = count + watchdog_thresh * hdata->ticks_per_second;
-+
-+	set_comparator(hdata, new_compare);
-+}
-+
-+/**
-+ * disable() - Disable an HPET timer instance
-+ * @hdata:	A data structure with the timer instance to disable
-+ *
-+ * Returns:
-+ *
-+ * None
-+ */
-+static void disable(struct hpet_hld_data *hdata)
-+{
-+	unsigned int v;
-+
-+	v = hpet_readl(HPET_Tn_CFG(hdata->num));
-+	v &= ~HPET_TN_ENABLE;
-+	hpet_writel(v, HPET_Tn_CFG(hdata->num));
-+}
-+
-+/**
-+ * enable() - Enable an HPET timer instance
-+ * @hdata:	A data structure with the timer instance to enable
-+ *
-+ * Returns:
-+ *
-+ * None
-+ */
-+static void enable(struct hpet_hld_data *hdata)
-+{
-+	unsigned long v;
-+
-+	/* Clear any previously active interrupt. */
-+	hpet_writel(BIT(hdata->num), HPET_STATUS);
-+
-+	v = hpet_readl(HPET_Tn_CFG(hdata->num));
-+	v |= HPET_TN_ENABLE;
-+	hpet_writel(v, HPET_Tn_CFG(hdata->num));
-+}
-+
-+/**
-+ * set_periodic() - Set an HPET timer instance in periodic mode
-+ * @hdata:	A data structure with the timer instance to enable
-+ *
-+ * If the timer supports periodic mode, configure it in such mode.
-+ * Returns:
-+ *
-+ * None
-+ */
-+static void set_periodic(struct hpet_hld_data *hdata)
-+{
-+	unsigned long v;
-+
-+	v = hpet_readl(HPET_Tn_CFG(hdata->num));
-+	if (v & HPET_TN_PERIODIC_CAP) {
-+		v |= HPET_TN_PERIODIC;
-+		hpet_writel(v, HPET_Tn_CFG(hdata->num));
-+		hdata->flags |= HPET_DEV_PERI_CAP;
++	if (event) {
++		perf_event_disable(event);
++		this_cpu_write(watchdog_ev, NULL);
++		this_cpu_write(dead_event, event);
++		cpumask_set_cpu(smp_processor_id(), &dead_events_mask);
++		atomic_dec(&watchdog_cpus);
 +	}
 +}
 +
 +/**
-+ * is_hpet_wdt_interrupt() - Determine if an HPET timer caused interrupt
-+ * @hdata:	A data structure with the timer instance to enable
++ * hardlockup_detector_perf_cleanup - Cleanup disabled events and destroy them
 + *
-+ * To be used when the timer is programmed in level-triggered mode, determine
-+ * if an instance of an HPET timer indicates that it asserted an interrupt by
-+ * checking the status register.
-+ *
-+ * Returns:
-+ *
-+ * True if a level-triggered timer asserted an interrupt. False otherwise.
++ * Called from lockup_detector_cleanup(). Serialized by the caller.
 + */
-+static bool is_hpet_wdt_interrupt(struct hpet_hld_data *hdata)
++static void hardlockup_detector_perf_cleanup(void)
 +{
-+	unsigned long this_isr;
-+	unsigned int lvl_trig;
++	int cpu;
 +
-+	this_isr = hpet_readl(HPET_STATUS) & BIT(hdata->num);
++	for_each_cpu(cpu, &dead_events_mask) {
++		struct perf_event *event = per_cpu(dead_event, cpu);
 +
-+	lvl_trig = hpet_readl(HPET_Tn_CFG(hdata->num)) & HPET_TN_LEVEL;
-+
-+	if (lvl_trig && this_isr)
-+		return true;
-+
-+	return false;
++		/*
++		 * Required because for_each_cpu() reports  unconditionally
++		 * CPU0 as set on UP kernels. Sigh.
++		 */
++		if (event)
++			perf_event_release_kernel(event);
++		per_cpu(dead_event, cpu) = NULL;
++	}
++	cpumask_clear(&dead_events_mask);
 +}
 +
 +/**
-+ * hardlockup_detector_irq_handler() - Interrupt handler
-+ * @irq:	Interrupt number
-+ * @data:	Data associated with the interrupt
++ * hardlockup_detector_perf_stop - Globally stop watchdog events
 + *
-+ * A simple interrupt handler. Simply kick the timer and acknowledge the
-+ * interrupt.
-+ *
-+ * Returns:
-+ *
-+ * IRQ_NONE if the HPET timer did not cause the interrupt. IRQ_HANDLED
-+ * otherwise.
++ * Special interface for x86 to handle the perf HT bug.
 + */
-+static irqreturn_t hardlockup_detector_irq_handler(int irq, void *data)
++void __init hardlockup_detector_perf_stop(void)
 +{
-+	struct hpet_hld_data *hdata = data;
-+	unsigned int use_fsb;
++	int cpu;
 +
-+	use_fsb = hdata->flags & HPET_DEV_FSB_CAP;
++	lockdep_assert_cpus_held();
 +
-+	if (!use_fsb && !is_hpet_wdt_interrupt(hdata))
-+		return IRQ_NONE;
++	for_each_online_cpu(cpu) {
++		struct perf_event *event = per_cpu(watchdog_ev, cpu);
 +
-+	if (!(hdata->flags & HPET_DEV_PERI_CAP))
-+		kick_timer(hdata);
-+
-+	/* Acknowledge interrupt if in level-triggered mode */
-+	if (!use_fsb)
-+		hpet_writel(BIT(hdata->num), HPET_STATUS);
-+
-+	return IRQ_HANDLED;
++		if (event)
++			perf_event_disable(event);
++	}
 +}
 +
 +/**
-+ * setup_irq_msi_mode() - Configure the timer to deliver an MSI interrupt
-+ * @data:	Data associated with the instance of the HPET timer to configure
++ * hardlockup_detector_perf_restart - Globally restart watchdog events
 + *
-+ * Configure an instance of the HPET timer to deliver interrupts via the Front-
-+ * Side Bus.
-+ *
-+ * Returns:
-+ *
-+ * 0 success. An error code in configuration was unsuccessful.
++ * Special interface for x86 to handle the perf HT bug.
 + */
-+static int setup_irq_msi_mode(struct hpet_hld_data *hdata)
++void __init hardlockup_detector_perf_restart(void)
 +{
-+	unsigned int v;
++	int cpu;
 +
-+	v = hpet_readl(HPET_Tn_CFG(hdata->num));
++	lockdep_assert_cpus_held();
 +
-+	/*
-+	 * If FSB interrupt delivery is used, configure as edge-triggered
-+	 * interrupt. We are certain the interrupt comes from the HPET timer as
-+	 * we receive the MSI message.
-+	 *
-+	 * Also, the FSB delivery mode and the FSB route are configured when the
-+	 * interrupt is unmasked.
-+	 */
-+	v &= ~HPET_TN_LEVEL;
++	if (!(watchdog_enabled & NMI_WATCHDOG_ENABLED))
++		return;
 +
-+	hpet_writel(v, HPET_Tn_CFG(hdata->num));
++	for_each_online_cpu(cpu) {
++		struct perf_event *event = per_cpu(watchdog_ev, cpu);
 +
-+	return 0;
++		if (event)
++			perf_event_enable(event);
++	}
 +}
 +
 +/**
-+ * setup_irq_legacy_mode() - Configure the timer to deliver an pin interrupt
-+ * @data:	Data associated with the instance of the HPET timer to configure
-+ *
-+ * Configure an instance of the HPET timer to deliver interrupts via a pin of
-+ * the IO APIC.
-+ *
-+ * Returns:
-+ *
-+ * 0 success. An error code in configuration was unsuccessful.
++ * hardlockup_detector_perf_init - Probe whether NMI event is available at all
 + */
-+static int setup_irq_legacy_mode(struct hpet_hld_data *hdata)
++static int __init hardlockup_detector_perf_init(void)
 +{
-+	int hwirq = hdata->irq;
-+	unsigned long v;
++	int ret = hardlockup_detector_event_create();
 +
-+	v = hpet_readl(HPET_Tn_CFG(hdata->num));
-+
-+	v |= hwirq << HPET_TN_ROUTE_SHIFT;
-+	hpet_writel(v, HPET_Tn_CFG(hdata->num));
-+
-+	/*
-+	 * If IO APIC interrupt delivery is used, configure as level-triggered.
-+	 * In this way, the ISR register can be used to determine if this HPET
-+	 * timer caused the interrupt at the IO APIC pin.
-+	 */
-+	v |= HPET_TN_LEVEL;
-+
-+	/* Disable Front-Side Bus delivery. */
-+	v &= ~HPET_TN_FSB;
-+
-+	hpet_writel(v, HPET_Tn_CFG(hdata->num));
-+
-+	return 0;
-+}
-+
-+/**
-+ * setup_hpet_irq() - Configure the interrupt delivery of an HPET timer
-+ * @data:	Data associated with the instance of the HPET timer to configure
-+ *
-+ * Configure the interrupt parameters of an HPET timer. If supported, configure
-+ * interrupts to be delivered via the Front-Side Bus. Also, install an interrupt
-+ * handler.
-+ *
-+ * Returns:
-+ *
-+ * 0 success. An error code in configuration was unsuccessful.
-+ */
-+static int setup_hpet_irq(struct hpet_hld_data *hdata)
-+{
-+	int hwirq = hdata->irq, ret;
-+
-+	if (hdata->flags & HPET_DEV_FSB_CAP)
-+		ret = setup_irq_msi_mode(hdata);
-+	else
-+		ret = setup_irq_legacy_mode(hdata);
-+
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Request an interrupt to activate the irq in all the needed domains.
-+	 */
-+	ret = request_irq(hwirq, hardlockup_detector_irq_handler,
-+			  IRQF_TIMER, "hpet_hld", hdata);
++	if (ret) {
++		pr_info("Perf NMI watchdog permanently disabled\n");
++	} else {
++		perf_event_release_kernel(this_cpu_read(watchdog_ev));
++		this_cpu_write(watchdog_ev, NULL);
++	}
 +
 +	return ret;
 +}
 +
-+/**
-+ * hardlockup_detector_hpet_init() - Initialize the hardlockup detector
-+ *
-+ * Only initialize and configure the detector if an HPET is available on the
-+ * system.
-+ *
-+ * Returns:
-+ *
-+ * 0 success. An error code if initialization was unsuccessful.
-+ */
-+static int __init hardlockup_detector_hpet_init(void)
-+{
-+	int ret;
-+
-+	if (!is_hpet_enabled())
-+		return -ENODEV;
-+
-+	hld_data = hpet_hardlockup_detector_assign_timer();
-+	if (!hld_data)
-+		return -ENODEV;
-+
-+	/* Disable before configuring. */
-+	disable(hld_data);
-+
-+	set_periodic(hld_data);
-+
-+	/* Set timer for the first time relative to the current count. */
-+	kick_timer(hld_data);
-+
-+	ret = setup_hpet_irq(hld_data);
-+	if (ret)
-+		return -ENODEV;
-+
-+	/*
-+	 * Timer might have been enabled when the interrupt was unmasked.
-+	 * This should be done via the .enable operation.
-+	 */
-+	disable(hld_data);
-+
-+	return 0;
-+}
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index c40c7b7..6e79833 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -828,6 +828,16 @@ config HARDLOCKUP_DETECTOR_PERF
- 	bool
- 	select SOFTLOCKUP_DETECTOR
- 
-+config HARDLOCKUP_DETECTOR_HPET
-+	bool "Use HPET Timer for Hard Lockup Detection"
-+	select SOFTLOCKUP_DETECTOR
-+	select HARDLOCKUP_DETECTOR
-+	depends on HPET_TIMER && HPET
-+	help
-+	  Say y to enable a hardlockup detector that is driven by an High-Precision
-+	  Event Timer. In addition to selecting this option, the command-line
-+	  parameter nmi_watchdog option. See Documentation/admin-guide/kernel-parameters.rst
-+
- #
- # Enables a timestamp based low pass filter to compensate for perf based
- # hard lockup detection which runs too fast due to turbo modes.
++struct nmi_watchdog_ops hardlockup_detector_perf_ops = {
++	.init		= hardlockup_detector_perf_init,
++	.enable		= hardlockup_detector_perf_enable,
++	.disable	= hardlockup_detector_perf_disable,
++	.cleanup	= hardlockup_detector_perf_cleanup,
++};
 -- 
 2.7.4
 
