@@ -2,143 +2,120 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 21E22C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:42:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0527EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C388B208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF6D7208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:43:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="LVsKOfha"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C388B208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="knklPU56"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF6D7208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935409AbeFMTmf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 15:42:35 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33489 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754484AbeFMTmd (ORCPT
+        id S935570AbeFMTn4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 15:43:56 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:60801 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935445AbeFMTnz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 15:42:33 -0400
-Received: by mail-pl0-f66.google.com with SMTP id 6-v6so1566856plb.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 12:42:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=JnxyggYD9zx2Gt61YHC6ARQk7XLmrJSEvyT6gCFYKRc=;
-        b=LVsKOfhaIf/jDIx1Ja83pOikTQnaRJ+AlGE6Ux1dU9n3r77fBSjp4aYYIxks33rNVP
-         d/MtTU4WxfNAXcw30AEkr9uciuckK8f7J2X2Ap2aSzAYpi/dv8heR9ZwY0b6AQo/jCfI
-         p8crT5SIEJ+Yfd/6HrJI6Bxmm5NwSlyCYOTFNXK3xzgchfDY6pFQQoIXWHuWjaDKAAox
-         UWyRM/znJRtGN2hPMsj7+MO1US3pzPcQE4jWQmoDWvSLWo1r9D1OdObXSeeHuVRgMoy0
-         +sseJTltZakmG4716lpBZqRdgBrgis7kojVtSSCrcUAMtWGxKt/WrJvTMbxfQavlM1cb
-         SM+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=JnxyggYD9zx2Gt61YHC6ARQk7XLmrJSEvyT6gCFYKRc=;
-        b=T0325oU8DzhvQPzrrmI/BcCAcixoN98O0umrv7ETy5yGWTeCsFa0LmcoTApaaV7LbX
-         9JASwwekpmtO4uW+0yUJ5cvNZkBqg8OiznlWa6ZwtAUmP7zaO0TpXExZU4wrdKskG+79
-         X5+5kTPWGH+xnDBV7arFc0s8Tm3W3fWrmoGsWEckQRWaiKOedUPjXR181+jpVarDJZzi
-         MI0Cf9FzKfFjHDPEubcONkM4MNzNdDTIm42urxb3z+SLiz0cZ/H65FeCXbyP4xs2a9/K
-         15BcGpQl6R38airm6D+Iq7QG8ecJDeZwCu6iRhBPL3WmmW2qkzkfOUKkXa/atZdHHDTf
-         jPqQ==
-X-Gm-Message-State: APt69E0cuDVjnPLdM7e1R1wROMLGTEb8BDsU03VUL3GCZIbZjEOhW5FX
-        kwK4r+SdhLWqHNKKvZtEhqxs9Uu7k30=
-X-Google-Smtp-Source: ADUXVKIoSXbvcfcMFKgKkEV99QkpkqXsAc8CqAIAQix092crFluW4wc4XlugnwGUQA7O68Zf/R5Zow==
-X-Received: by 2002:a17:902:7686:: with SMTP id m6-v6mr6590665pll.340.1528918952890;
-        Wed, 13 Jun 2018 12:42:32 -0700 (PDT)
-Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
-        by smtp.gmail.com with ESMTPSA id r26-v6sm8313704pfj.180.2018.06.13.12.42.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 12:42:31 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 12:42:31 -0700 (PDT)
-From:   David Rientjes <rientjes@google.com>
-X-X-Sender: rientjes@chino.kir.corp.google.com
-To:     Vlastimil Babka <vbabka@suse.cz>
-cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Michal Hocko <mhocko@kernel.org>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Subject: Re: [PATCH] mm, page_alloc: actually ignore mempolicies for high
- priority allocations
-In-Reply-To: <20180612122624.8045-1-vbabka@suse.cz>
-Message-ID: <alpine.DEB.2.21.1806131241300.32038@chino.kir.corp.google.com>
-References: <20180612122624.8045-1-vbabka@suse.cz>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Wed, 13 Jun 2018 15:43:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=Message-Id:Date:Subject:Cc:To:From:Sender:
+        Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=4ctpdDcn6q56uXYZI0EgQq/kaSPaa2pjFMX+98Ildrg=; b=knklPU567ZqaE1wzNbNZPDAnHS
+        bAIc/pU95++OGQmIxhkA3RPWQlMQiraiP8eigEFbUZcS5GuMty1hnNfWi09VuM3hOTtAyH71RVlrC
+        YUT9mv2RcVP/C9/NW/8AhZOUP0kQFVM4eN7+5d4T+cVnXLNdDBHx9ZWfDgYh+q0nUE36CthRz6YRL
+        lheLQVLv5X+vjCHfWgOFD7lmt6uwKSjUx21INrD/oBciUiIbXE8HdZv8G+nA8pqUC0e0cPEiXB6j0
+        JkLdFaU5w+hl6o3BzpTvTViFRTgjU5XT+v+tgZVyEAQRQ33DabtFPypQq7Y5AkH8FxI7ntgneadEm
+        u3fKNMnQ==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:59290 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fTBgQ-008qY0-Ea; Wed, 13 Jun 2018 19:43:54 +0000
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greentime Hu <green.hu@gmail.com>
+Cc:     Vincent Chen <deanbo422@gmail.com>, linux-kernel@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>,
+        Matt Redfearn <matt.redfearn@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Palmer Dabbelt <palmer@sifive.com>
+Subject: [PATCH] nds32: Fix build error caused by incomplete configuration flag rename
+Date:   Wed, 13 Jun 2018 12:43:52 -0700
+Message-Id: <1528919032-4874-1-git-send-email-linux@roeck-us.net>
+X-Mailer: git-send-email 2.7.4
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018, Vlastimil Babka wrote:
+GENERIC_ASHLDI3, GENERIC_ASHRDI3, and GENERIC_LSHRDI3 were renamed to
+GENERIC_LIB_ASHLDI3, GENERIC_LIB_ASHRDI3, and GENERIC_LIB_LSHRDI3
+without making the matching changes in arch/nds32. This results in
+the following build errors.
 
-> The __alloc_pages_slowpath() function has for a long time contained code to
-> ignore node restrictions from memory policies for high priority allocations.
-> The current code that resets the zonelist iterator however does effectively
-> nothing after commit 7810e6781e0f ("mm, page_alloc: do not break __GFP_THISNODE
-> by zonelist reset") removed a buggy zonelist reset. Even before that commit,
-> mempolicy restrictions were still not ignored, as they are passed in
-> ac->nodemask which is untouched by the code.
-> 
-> We can either remove the code, or make it work as intended. Since
-> ac->nodemask can be set from task's mempolicy via alloc_pages_current() and
-> thus also alloc_pages(), it may indeed affect kernel allocations, and it makes
-> sense to ignore it to allow progress for high priority allocations.
-> 
-> Thus, this patch resets ac->nodemask to NULL in such cases. This assumes all
-> callers can handle it (i.e. there are no guarantees as in the case of
-> __GFP_THISNODE) which seems to be the case. The same assumption is already
-> present in check_retry_cpuset() for some time.
-> 
-> The expected effect is that high priority kernel allocations in the context of
-> userspace tasks (e.g. OOM victims) restricted by mempolicies will have higher
-> chance to succeed if they are restricted to nodes with depleted memory, while
-> there are other nodes with free memory left.
-> 
+nds32le-linux-ld: kernel/time/timekeeping.o:
+	in function `timekeeping_init':
+timekeeping.c:(.init.text+0x140):
+	undefined reference to `__ashldi3'
+nds32le-linux-ld: timekeeping.c:(.init.text+0x144):
+	undefined reference to `__ashldi3'
+nds32le-linux-ld: timekeeping.c:(.init.text+0x17e):
+	undefined reference to `__lshrdi3'
+nds32le-linux-ld: timekeeping.c:(.init.text+0x182):
+	undefined reference to `__lshrdi3'
+nds32le-linux-ld: drivers/clocksource/mmio.o:
+	in function `clocksource_mmio_init':
+mmio.c:(.init.text+0x54):
+	undefined reference to `__lshrdi3'
+nds32le-linux-ld: mmio.c:(.init.text+0x58):
+	undefined reference to `__lshrdi3'
 
-Hi Vlastimil,
+Fixes: e3d5980568f ("lib: Rename compiler intrinsic selects to GENERIC_LIB_*")
+Cc: Matt Redfearn <matt.redfearn@mips.com>
+Cc: James Hogan <jhogan@kernel.org>
+Cc: Palmer Dabbelt <palmer@sifive.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ arch/nds32/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Is this expected as a change back to previous behavior that we have lost 
-or is this new development for high priority allocations?  I don't think 
-we have ignored mempolicies for things like GFP_ATOMIC allocations in the 
-past.
+diff --git a/arch/nds32/Kconfig b/arch/nds32/Kconfig
+index 6aed974276d8..3a68d9494035 100644
+--- a/arch/nds32/Kconfig
++++ b/arch/nds32/Kconfig
+@@ -12,9 +12,9 @@ config NDS32
+ 	select CLONE_BACKWARDS
+ 	select COMMON_CLK
+ 	select DMA_NONCOHERENT_OPS
+-	select GENERIC_ASHLDI3
+-	select GENERIC_ASHRDI3
+-	select GENERIC_LSHRDI3
++	select GENERIC_LIB_ASHLDI3
++	select GENERIC_LIB_ASHRDI3
++	select GENERIC_LIB_LSHRDI3
+ 	select GENERIC_CMPDI2
+ 	select GENERIC_MULDI3
+ 	select GENERIC_UCMPDI2
+-- 
+2.7.4
 
-> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Mel Gorman <mgorman@techsingularity.net>
-> Cc: Michal Hocko <mhocko@kernel.org>
-> Cc: David Rientjes <rientjes@google.com>
-> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-> ---
->  mm/page_alloc.c | 7 ++++---
->  1 file changed, 4 insertions(+), 3 deletions(-)
-> 
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 07b3c23762ad..ec8c92ff8b3c 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4164,11 +4164,12 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
->  		alloc_flags = reserve_flags;
->  
->  	/*
-> -	 * Reset the zonelist iterators if memory policies can be ignored.
-> -	 * These allocations are high priority and system rather than user
-> -	 * orientated.
-> +	 * Reset the nodemask and zonelist iterators if memory policies can be
-> +	 * ignored. These allocations are high priority and system rather than
-> +	 * user oriented.
->  	 */
->  	if (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
-> +		ac->nodemask = NULL;
->  		ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
->  					ac->high_zoneidx, ac->nodemask);
->  	}
