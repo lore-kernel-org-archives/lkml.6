@@ -2,134 +2,168 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1992DC5CFF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:31:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6053AC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:47:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6CEE208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:31:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6CEE208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0DF12208AE
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:47:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tYh7sMby"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF12208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934982AbeFMAbd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 20:31:33 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:5562 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934860AbeFMAba (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 20:31:30 -0400
-Received: from DGGEML404-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 8C412A11FB3B0;
-        Wed, 13 Jun 2018 08:31:17 +0800 (CST)
-Received: from DGGEML511-MBX.china.huawei.com ([169.254.1.61]) by
- DGGEML404-HUB.china.huawei.com ([fe80::b177:a243:7a69:5ab8%31]) with mapi id
- 14.03.0382.000; Wed, 13 Jun 2018 08:31:11 +0800
-From:   "Gonglei (Arei)" <arei.gonglei@huawei.com>
-To:     Farhan Ali <alifm@linux.ibm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
-CC:     "mst@redhat.com" <mst@redhat.com>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        longpeng <longpeng2@huawei.com>,
-        "pasic@linux.ibm.com" <pasic@linux.ibm.com>,
-        "frankja@linux.ibm.com" <frankja@linux.ibm.com>,
-        "borntraeger@de.ibm.com" <borntraeger@de.ibm.com>
-Subject: RE: [RFC v1 2/2] crypto/virtio-crypto: Register an algo only if
- it's supported
-Thread-Topic: [RFC v1 2/2] crypto/virtio-crypto: Register an algo only if
- it's supported
-Thread-Index: AQHT/1w9irxqESt7g0CZ2KZ6/sbWPKRawPbggAGZ84CAAQDvIA==
-Date:   Wed, 13 Jun 2018 00:31:10 +0000
-Message-ID: <33183CC9F5247A488A2544077AF19020DB018593@dggeml511-mbx.china.huawei.com>
-References: <cover.1528462918.git.alifm@linux.ibm.com>
- <a9a06d82df69387bf1e66975b520d9049e9976e8.1528462918.git.alifm@linux.ibm.com>
- <33183CC9F5247A488A2544077AF19020DB015ABF@dggeml511-mbx.china.huawei.com>
- <7957a36b-6881-1967-fa60-eaeaa38256c0@linux.ibm.com>
-In-Reply-To: <7957a36b-6881-1967-fa60-eaeaa38256c0@linux.ibm.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.177.18.62]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S934984AbeFMAr5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 20:47:57 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:58270 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934897AbeFMArz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 20:47:55 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D0kvhZ087588;
+        Wed, 13 Jun 2018 00:47:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=1o2y63mJoa4ibguG3jofqWmIG73zvUVZORdrK+eyzm8=;
+ b=tYh7sMbyDynidOQmy5J1+GBmL6OApqMK9rswo6mL6SIeS0YgaQnBZaY4NSWrZuLcVJyL
+ nt67OGGBmuoukrtZqxnJ3k43HY+pDWTAcGUlU+ggEZoJOtItXwMjl0tNjj1FKZJ1X0To
+ v3iDec24bYg6E0Iug5HaY+udMDCw55l2YjTTUFE1XOEafgCuCE98Q/shoGMsDpCBPdyw
+ +s6DiZClcWYKYA2zMoJPlMzG7lvr9fGE85aNKKsyOpcRTICTflzUu4sgnWwYG/nyBFhL
+ gJe/M5EMcSXUIYCRqshUr82q82s9+/9w1KyfGe0WrNYp7wcp/GUdRfy40A/zJAVOhPUv 1A== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jjp6c8aqa-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 00:47:42 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5D0lf7p030045
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 00:47:41 GMT
+Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D0lduB020813;
+        Wed, 13 Jun 2018 00:47:40 GMT
+Received: from [10.154.144.7] (/10.154.144.7)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Jun 2018 17:47:39 -0700
+Subject: Re: [PATCH v3 3/9] xen/balloon: Share common memory reservation
+ routines
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180612134200.17456-1-andr2000@gmail.com>
+ <20180612134200.17456-4-andr2000@gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <d63f0cf5-5154-f2a3-155e-fdb6dd0959e2@oracle.com>
+Date:   Tue, 12 Jun 2018 20:47:37 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <20180612134200.17456-4-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806130007
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogRmFyaGFuIEFsaSBbbWFp
-bHRvOmFsaWZtQGxpbnV4LmlibS5jb21dDQo+IFNlbnQ6IFdlZG5lc2RheSwgSnVuZSAxMywgMjAx
-OCAxOjA4IEFNDQo+IFRvOiBHb25nbGVpIChBcmVpKSA8YXJlaS5nb25nbGVpQGh1YXdlaS5jb20+
-OyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOw0KPiBrdm1Admdlci5rZXJuZWwub3JnDQo+
-IENjOiBtc3RAcmVkaGF0LmNvbTsgcWVtdS1kZXZlbEBub25nbnUub3JnOyBsb25ncGVuZw0KPiA8
-bG9uZ3BlbmcyQGh1YXdlaS5jb20+OyBwYXNpY0BsaW51eC5pYm0uY29tOyBmcmFua2phQGxpbnV4
-LmlibS5jb207DQo+IGJvcm50cmFlZ2VyQGRlLmlibS5jb20NCj4gU3ViamVjdDogUmU6IFtSRkMg
-djEgMi8yXSBjcnlwdG8vdmlydGlvLWNyeXB0bzogUmVnaXN0ZXIgYW4gYWxnbyBvbmx5IGlmIGl0
-J3MNCj4gc3VwcG9ydGVkDQo+IA0KPiANCj4gDQo+IE9uIDA2LzExLzIwMTggMDQ6NDggQU0sIEdv
-bmdsZWkgKEFyZWkpIHdyb3RlOg0KPiA+DQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdl
-LS0tLS0NCj4gPj4gRnJvbTogRmFyaGFuIEFsaSBbbWFpbHRvOmFsaWZtQGxpbnV4LmlibS5jb21d
-DQo+ID4+IFNlbnQ6IFNhdHVyZGF5LCBKdW5lIDA5LCAyMDE4IDM6MDkgQU0NCj4gPj4gVG86IGxp
-bnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IGt2bUB2Z2VyLmtlcm5lbC5vcmcNCj4gPj4gQ2M6
-IG1zdEByZWRoYXQuY29tOyBxZW11LWRldmVsQG5vbmdudS5vcmc7IEdvbmdsZWkgKEFyZWkpDQo+
-ID4+IDxhcmVpLmdvbmdsZWlAaHVhd2VpLmNvbT47IGxvbmdwZW5nIDxsb25ncGVuZzJAaHVhd2Vp
-LmNvbT47DQo+ID4+IHBhc2ljQGxpbnV4LmlibS5jb207IGZyYW5ramFAbGludXguaWJtLmNvbTsg
-Ym9ybnRyYWVnZXJAZGUuaWJtLmNvbTsNCj4gPj4gYWxpZm1AbGludXguaWJtLmNvbQ0KPiA+PiBT
-dWJqZWN0OiBbUkZDIHYxIDIvMl0gY3J5cHRvL3ZpcnRpby1jcnlwdG86IFJlZ2lzdGVyIGFuIGFs
-Z28gb25seSBpZiBpdCdzDQo+IHN1cHBvcnRlZA0KPiA+Pg0KPiA+PiBGcm9tOiBGYXJoYW4gQWxp
-IDxhbGlmbUBsaW51eC52bmV0LmlibS5jb20+DQo+ID4+DQo+ID4+IFJlZ2lzdGVyIGEgY3J5cHRv
-IGFsZ28gd2l0aCB0aGUgTGludXggY3J5cHRvIGxheWVyIG9ubHkgaWYNCj4gPj4gdGhlIGFsZ29y
-aXRobSBpcyBzdXBwb3J0ZWQgYnkgdGhlIGJhY2tlbmQgdmlydGlvLWNyeXB0bw0KPiA+PiBkZXZp
-Y2UuDQo+ID4+DQo+ID4+IEFsc28gcm91dGUgY3J5cHRvIHJlcXVlc3RzIHRvIGEgdmlydGlvLWNy
-eXB0bw0KPiA+PiBkZXZpY2UsIG9ubHkgaWYgaXQgY2FuIHN1cHBvcnQgdGhlIHJlcXVlc3RlZCBz
-ZXJ2aWNlIGFuZA0KPiA+PiBhbGdvcml0aG0uDQo+ID4+DQo+ID4+IFNpZ25lZC1vZmYtYnk6IEZh
-cmhhbiBBbGkgPGFsaWZtQGxpbnV4LmlibS5jb20+DQo+ID4+IC0tLQ0KPiA+PiAgIGRyaXZlcnMv
-Y3J5cHRvL3ZpcnRpby92aXJ0aW9fY3J5cHRvX2FsZ3MuYyAgIHwgMTEwDQo+ID4+ICsrKysrKysr
-KysrKysrKysrKy0tLS0tLS0tLQ0KPiA+PiAgIGRyaXZlcnMvY3J5cHRvL3ZpcnRpby92aXJ0aW9f
-Y3J5cHRvX2NvbW1vbi5oIHwgIDExICsrLQ0KPiA+PiAgIGRyaXZlcnMvY3J5cHRvL3ZpcnRpby92
-aXJ0aW9fY3J5cHRvX21nci5jICAgIHwgIDgxDQo+ICsrKysrKysrKysrKysrKysrKy0tDQo+ID4+
-ICAgMyBmaWxlcyBjaGFuZ2VkLCAxNTggaW5zZXJ0aW9ucygrKSwgNDQgZGVsZXRpb25zKC0pDQo+
-ID4+DQo+ID4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2NyeXB0by92aXJ0aW8vdmlydGlvX2NyeXB0
-b19hbGdzLmMNCj4gPj4gYi9kcml2ZXJzL2NyeXB0by92aXJ0aW8vdmlydGlvX2NyeXB0b19hbGdz
-LmMNCj4gPj4gaW5kZXggYmExOTBjZi4uZmVmMTEyYSAxMDA2NDQNCj4gPj4gLS0tIGEvZHJpdmVy
-cy9jcnlwdG8vdmlydGlvL3ZpcnRpb19jcnlwdG9fYWxncy5jDQo+ID4+ICsrKyBiL2RyaXZlcnMv
-Y3J5cHRvL3ZpcnRpby92aXJ0aW9fY3J5cHRvX2FsZ3MuYw0KPiA+PiBAQCAtNDksMTIgKzQ5LDE4
-IEBAIHN0cnVjdCB2aXJ0aW9fY3J5cHRvX3N5bV9yZXF1ZXN0IHsNCj4gPj4gICAJYm9vbCBlbmNy
-eXB0Ow0KPiA+PiAgIH07DQo+ID4+DQo+ID4+ICtzdHJ1Y3QgdmlydGlvX2NyeXB0b19hbGdvIHsN
-Cj4gPj4gKwl1aW50MzJfdCBhbGdvbnVtOw0KPiA+PiArCXVpbnQzMl90IHNlcnZpY2U7DQo+ID4+
-ICsJdW5zaWduZWQgaW50IGFjdGl2ZV9kZXZzOw0KPiA+PiArCXN0cnVjdCBjcnlwdG9fYWxnIGFs
-Z287DQo+ID4+ICt9Ow0KPiA+PiArDQo+ID4+ICAgLyoNCj4gPj4gICAgKiBUaGUgYWxnc19sb2Nr
-IHByb3RlY3RzIHRoZSBiZWxvdyBnbG9iYWwgdmlydGlvX2NyeXB0b19hY3RpdmVfZGV2cw0KPiA+
-PiAgICAqIGFuZCBjcnlwdG8gYWxnb3JpdGhtcyByZWdpc3Rpb24uDQo+ID4+ICAgICovDQo+ID4+
-ICAgc3RhdGljIERFRklORV9NVVRFWChhbGdzX2xvY2spOw0KPiA+PiAtc3RhdGljIHVuc2lnbmVk
-IGludCB2aXJ0aW9fY3J5cHRvX2FjdGl2ZV9kZXZzOw0KPiA+PiAgIHN0YXRpYyB2b2lkIHZpcnRp
-b19jcnlwdG9fYWJsa2NpcGhlcl9maW5hbGl6ZV9yZXEoDQo+ID4+ICAgCXN0cnVjdCB2aXJ0aW9f
-Y3J5cHRvX3N5bV9yZXF1ZXN0ICp2Y19zeW1fcmVxLA0KPiA+PiAgIAlzdHJ1Y3QgYWJsa2NpcGhl
-cl9yZXF1ZXN0ICpyZXEsDQo+ID4+IEBAIC0zMTIsMTMgKzMxOCwxOSBAQCBzdGF0aWMgaW50IHZp
-cnRpb19jcnlwdG9fYWJsa2NpcGhlcl9zZXRrZXkoc3RydWN0DQo+ID4+IGNyeXB0b19hYmxrY2lw
-aGVyICp0Zm0sDQo+ID4+ICAgCQkJCQkgdW5zaWduZWQgaW50IGtleWxlbikNCj4gPj4gICB7DQo+
-ID4+ICAgCXN0cnVjdCB2aXJ0aW9fY3J5cHRvX2FibGtjaXBoZXJfY3R4ICpjdHggPQ0KPiBjcnlw
-dG9fYWJsa2NpcGhlcl9jdHgodGZtKTsNCj4gPj4gKwl1aW50MzJfdCBhbGc7DQo+ID4+ICAgCWlu
-dCByZXQ7DQo+ID4+DQo+ID4+ICsJcmV0ID0gdmlydGlvX2NyeXB0b19hbGdfdmFsaWRhdGVfa2V5
-KGtleWxlbiwgJmFsZyk7DQo+ID4+ICsJaWYgKHJldCkNCj4gPj4gKwkJcmV0dXJuIHJldDsNCj4g
-Pj4gKw0KPiA+PiAgIAlpZiAoIWN0eC0+dmNyeXB0bykgew0KPiA+PiAgIAkJLyogTmV3IGtleSAq
-Lw0KPiA+PiAgIAkJaW50IG5vZGUgPSB2aXJ0aW9fY3J5cHRvX2dldF9jdXJyZW50X25vZGUoKTsN
-Cj4gPj4gICAJCXN0cnVjdCB2aXJ0aW9fY3J5cHRvICp2Y3J5cHRvID0NCj4gPj4gLQkJCQkgICAg
-ICB2aXJ0Y3J5cHRvX2dldF9kZXZfbm9kZShub2RlKTsNCj4gPj4gKwkJCQkgICAgICB2aXJ0Y3J5
-cHRvX2dldF9kZXZfbm9kZShub2RlLA0KPiA+PiArCQkJCSAgICAgIFZJUlRJT19DUllQVE9fU0VS
-VklDRV9DSVBIRVIsIGFsZyk7DQo+ID4+ICAgCQlpZiAoIXZjcnlwdG8pIHsNCj4gPj4gICAJCQlw
-cl9lcnIoInZpcnRpb19jcnlwdG86IENvdWxkIG5vdCBmaW5kIGEgdmlydGlvIGRldmljZSBpbiB0
-aGUNCj4gPj4gc3lzdGVtXG4iKTsNCj4gPg0KPiA+IFdlJ2QgYmV0dGVyIGNoYW5nZSB0aGUgYWJv
-dmUgZXJyb3IgbWVzc2FnZSBub3cuIFdoYXQgYWJvdXQ6DQo+ID4gICAiIHZpcnRpb19jcnlwdG86
-IENvdWxkIG5vdCBmaW5kIGEgdmlydGlvIGRldmljZSBpbiB0aGUgc3lzdGVtIG9yIHVuc3VwcG9y
-dGVkDQo+IGFsZ28iID8NCj4gPg0KPiA+IFJlZ2FyZHMsDQo+ID4gLUdvbmdsZWkNCj4gDQo+IA0K
-PiBTdXJlLCBJIHdpbGwgdXBkYXRlIHRoZSBlcnJvciBtZXNzYWdlLiBCdXQgb3RoZXIgdGhhbiB0
-aGF0IGRvZXMgdGhlIHJlc3QNCj4gb2YgdGhlIGNvZGUgbG9va3MgZ29vZCB0byB5b3U/DQo+IA0K
-WWVzLCBnb29kIHdvcmsuIFlvdSBjYW4gYWRkIG15IGFjayBpbiB2MjoNCg0KQWNrZWQtYnk6IEdv
-bmdsZWkgPGFyZWkuZ29uZ2xlaUBodWF3ZWkuY29tPg0KDQpSZWdhcmRzLA0KLUdvbmdsZWkNCg0K
-DQoNCg==
+
+
+On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+
+> diff --git a/include/xen/mem-reservation.h b/include/xen/mem-reservation.h
+> new file mode 100644
+> index 000000000000..e0939387278d
+> --- /dev/null
+> +++ b/include/xen/mem-reservation.h
+> @@ -0,0 +1,64 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +
+> +/*
+> + * Xen memory reservation utilities.
+> + *
+> + * Copyright (c) 2003, B Dragovic
+> + * Copyright (c) 2003-2004, M Williamson, K Fraser
+> + * Copyright (c) 2005 Dan M. Smith, IBM Corporation
+> + * Copyright (c) 2010 Daniel Kiper
+> + * Copyright (c) 2018 Oleksandr Andrushchenko, EPAM Systems Inc.
+> + */
+> +
+> +#ifndef _XENMEM_RESERVATION_H
+> +#define _XENMEM_RESERVATION_H
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/slab.h>
+> +
+> +#include <asm/xen/hypercall.h>
+> +#include <asm/tlb.h>
+> +
+> +#include <xen/interface/memory.h>
+> +#include <xen/page.h>
+
+
+I should have noticed this in the previous post but I suspect most of 
+these includes belong in the C file. For example, there is no reason for 
+hypercall.h here.
+
+-boris
+
+
+> +
+> +static inline void xenmem_reservation_scrub_page(struct page *page)
+> +{
+> +#ifdef CONFIG_XEN_SCRUB_PAGES
+> +	clear_highpage(page);
+> +#endif
+> +}
+> +
+> +#ifdef CONFIG_XEN_HAVE_PVMMU
+> +void __xenmem_reservation_va_mapping_update(unsigned long count,
+> +					    struct page **pages,
+> +					    xen_pfn_t *frames);
+> +
+> +void __xenmem_reservation_va_mapping_reset(unsigned long count,
+> +					   struct page **pages);
+> +#endif
+> +
+> +static inline void xenmem_reservation_va_mapping_update(unsigned long count,
+> +							struct page **pages,
+> +							xen_pfn_t *frames)
+> +{
+> +#ifdef CONFIG_XEN_HAVE_PVMMU
+> +	if (!xen_feature(XENFEAT_auto_translated_physmap))
+> +		__xenmem_reservation_va_mapping_update(count, pages, frames);
+> +#endif
+> +}
+> +
+> +static inline void xenmem_reservation_va_mapping_reset(unsigned long count,
+> +						       struct page **pages)
+> +{
+> +#ifdef CONFIG_XEN_HAVE_PVMMU
+> +	if (!xen_feature(XENFEAT_auto_translated_physmap))
+> +		__xenmem_reservation_va_mapping_reset(count, pages);
+> +#endif
+> +}
+> +
+> +int xenmem_reservation_increase(int count, xen_pfn_t *frames);
+> +
+> +int xenmem_reservation_decrease(int count, xen_pfn_t *frames);
+> +
+> +#endif
+> 
