@@ -2,295 +2,164 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 03FE5C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:23:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4E563C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:25:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 989AB208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E95172086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:25:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X3ctR/3o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 989AB208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pl9g9RJp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E95172086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933985AbeFMGXY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 02:23:24 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:58275 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933469AbeFMGXV (ORCPT
+        id S1754489AbeFMGZZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 02:25:25 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33243 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754377AbeFMGZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 02:23:21 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180613062319euoutp016dc4496c6a24570355ea93b40c1e2792~3pBLR6CGr2873428734euoutp016
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:23:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180613062319euoutp016dc4496c6a24570355ea93b40c1e2792~3pBLR6CGr2873428734euoutp016
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1528870999;
-        bh=NOBe6JbwRxi7VgANoHolYISXO37FQ4wgNk+EfL1vOxg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=X3ctR/3o10OZ+b0V1WdxKbND/ycHT01zz27dirZO5fTCzvOAavnMspPvZ1BZ4aQs3
-         ultMoPNkxkgSQl9GOUt7E1vRIK4mleqQNsONcF0Fxk4HysgthCf5jmHQnsjmMgqWMw
-         A/8geAd/xG2rB27Cr8c08OSSnhl7dWWOOi5UvDIg=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180613062317eucas1p29b90ffb5af766b3402edacbdd9364bc7~3pBKE_AqX1828918289eucas1p2a;
-        Wed, 13 Jun 2018 06:23:17 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id F2.3B.17380.558B02B5; Wed, 13
-        Jun 2018 07:23:17 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20180613062316eucas1p2655d6b1f286e8d374fc4e7570ede0c95~3pBJGh1rJ0735307353eucas1p2O;
-        Wed, 13 Jun 2018 06:23:16 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180613062316eusmtrp172da78c07233f3d5c76a218f0cf527b3~3pBI1QfSv2392723927eusmtrp1X;
-        Wed, 13 Jun 2018 06:23:16 +0000 (GMT)
-X-AuditID: cbfec7f4-6f9ff700000043e4-1e-5b20b855ee70
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id 8A.15.04178.458B02B5; Wed, 13
-        Jun 2018 07:23:16 +0100 (BST)
-Received: from [106.116.147.30] (unknown [106.116.147.30]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180613062316eusmtip1cab267632f5697de520f78f90645b55e~3pBIU7Bis1224612246eusmtip1l;
-        Wed, 13 Jun 2018 06:23:16 +0000 (GMT)
-Subject: Re: [PATCH] PM / core: Fix supplier device runtime PM usage counter
- imbalance
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc:     Linux PM <linux-pm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Lukas Wunner <lukas@wunner.de>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Jon Hunter <jonathanh@nvidia.com>
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-Date:   Wed, 13 Jun 2018 08:23:15 +0200
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
-        Thunderbird/52.8.0
+        Wed, 13 Jun 2018 02:25:23 -0400
+Received: by mail-pf0-f194.google.com with SMTP id b17-v6so843824pfi.0;
+        Tue, 12 Jun 2018 23:25:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:user-agent:in-reply-to:references:mime-version
+         :content-transfer-encoding:subject:to:cc:from:message-id;
+        bh=jhr/ACJNLvVA7liZnsR38q8LQYJ/QHvBnSDMriT5EBM=;
+        b=Pl9g9RJpcdrlwCciTovZja6XPNJBWKlPez8rHKeK+5FzoHQaLMoRp+eKoGNmllQvRJ
+         Qoyq7jDJAhG+XMVT/lmHxDEhgHKmh1DcCYpeoON8/GRATKjgJjB+m6dCug7Z8rdsroXH
+         yia/OwR0HWJTPH4Cutkq3xyBSXSLyuar4WXcJFSmZIS7HWcbPE54wDUbYDMXgg5JspKd
+         HLfWcSdP5DXXMyS/6KaPQJJXyhBQZIl8UdB+MGe1+06yVRCKlFEE11ykNghmVLLlMnIa
+         O49ONJGIOKeWjkGAMhFpebMEhbLhAYS+aYIryta03tDk8DMPWqJIWowjX6BmJb0yVOv0
+         ++yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:user-agent:in-reply-to:references
+         :mime-version:content-transfer-encoding:subject:to:cc:from
+         :message-id;
+        bh=jhr/ACJNLvVA7liZnsR38q8LQYJ/QHvBnSDMriT5EBM=;
+        b=LjNXg2mtXsYXwY2Jlvs7MdqMgzKerRmSMvga7M8grnl//5LwEj+Xg8iS5dZ1lV1m4g
+         8Dbh14XOxGauKmVhurY6PfdFuIz0vQyrQ8XY3hqUla2uJcp2z6fjvDgrqbh8WipfRV05
+         NXsIF+RJg0iSz5qRlK/0CEPHRY2P9kgQRCE54wUox8enUzWZfgXNsewr3ArpPkzHKwJq
+         m7qjg9VZYyT0EMLeE3iXjMcW9AWJloLot1kF3mYiL1a3T7qxaetT32Mct1GBt1drfzHH
+         vO1rV4im7S9Ov391gGp5uSKISrqAKo2T9Xd02GxNogsRBWYceGcx/w7IPH3KDuSdi85f
+         ke9Q==
+X-Gm-Message-State: APt69E16xIY49TtOA/Z4GnR5ahP26Sfb7n7a0ueZTNYiv+KETkiF/ng/
+        ujqWJVmjuCFqw+B1yTiCNc8=
+X-Google-Smtp-Source: ADUXVKI7FCJtotZ6YVShK8U0EjUaAKreHRmnFs9MrLUGxMoUHxfAnlHcj4yevWmnCkb7Kx0x2wNQXg==
+X-Received: by 2002:a62:211a:: with SMTP id h26-v6mr3556648pfh.133.1528871122565;
+        Tue, 12 Jun 2018 23:25:22 -0700 (PDT)
+Received: from ?IPv6:2601:647:4001:5a00:74b5:73d5:5f92:bd10? ([2601:647:4001:5a00:74b5:73d5:5f92:bd10])
+        by smtp.gmail.com with ESMTPSA id q24-v6sm2766942pfh.26.2018.06.12.23.25.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 23:25:21 -0700 (PDT)
+Date:   Tue, 12 Jun 2018 23:25:17 -0700
+User-Agent: K-9 Mail for Android
+In-Reply-To: <e1d62036-708d-5087-83f2-0ea32f3a6e74@gmail.com>
+References: <20180612074856.28451-1-andr2000@gmail.com> <20180612074856.28451-2-andr2000@gmail.com> <9c579567-ebe2-f465-5443-b3a3e71d34a5@suse.com> <20180612234020.GI38773@dtor-ws> <3605901d-4a72-3f5a-6d74-cb13d2414a0b@gmail.com> <D53587A2-5B1B-4D8F-8772-04D453B93D38@gmail.com> <e1d62036-708d-5087-83f2-0ea32f3a6e74@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <1692795.7GA92aXxMT@aspire.rjw.lan>
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOKsWRmVeSWpSXmKPExsWy7djPc7qhOxSiDR63qFpsnLGe1aJ58Xo2
-        i5ZZi1gsLu+aw2bxufcIo8WL59IWZ05fYrU4vjbcgcPjzrU9bB77565h9+htfsfmseVqO4tH
-        35ZVjB6fN8l5zGjfxhrAHsVlk5Kak1mWWqRvl8CV8W+9eUGXbUXziVWMDYwrDbsYOTkkBEwk
-        Nl29y9bFyMUhJLCCUeLXz4PsEM4XRonG9XdYIZzPjBIfTkxmhmm5+fIsM0RiOaPEsuMrwRJC
-        Au8ZJab84wGxhQUiJBo+vWEEsUUEtCXm9pwCq2EWWMIkcWRPGYjNJmAo0fW2iw3EZhFQlfh3
-        4wKYLSoQI7Ht8gMWEJtXQFDi5MwnYDangIHE8k1LWSDmyEtsfzsHaqa4xK0n85lADpIQOMYu
-        sfjDclaI5jKJTTcWskFc7SJx4vl2KFtY4tXxLewQtozE6ck9LBDNzYwS7TNmsUM4PYwSW+fs
-        gOqwljh8/CLQVA6gdZoS63fpQ4QdJZ6tnc4OEpYQ4JO48VYQ4iA+iUnbpjNDhHklOtqEIKrV
-        JGYdXwe39uCFS8wTGJVmIXlzFpLXZiF5bRbC3gWMLKsYxVNLi3PTU4uN8lLL9YoTc4tL89L1
-        kvNzNzECk9Ppf8e/7GDc9SfpEKMAB6MSD++Di/LRQqyJZcWVuYcYJTiYlUR4J0xViBbiTUms
-        rEotyo8vKs1JLT7EKM3BoiTOG6dRFyUkkJ5YkpqdmlqQWgSTZeLglGpg5DXf3+IyM7eJq2rm
-        iraJ3hrF85ZdDPL+1Xi3/Ij0JOO8eTFTuG8fcNzXu6WLpfAFQ5nGvvsXLuQ2nznAVLi0pPFY
-        h5GNKecTpsoV09zrrELcP326+sd0/2bD5em/bqeyXf/+vl1Ucuqfb407/tmv2/G+6h3jbZWF
-        VX367PsqVnvJv7DJ4P//VomlOCPRUIu5qDgRAJKcFQlKAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xu7ohOxSiDb7NV7bYOGM9q0Xz4vVs
-        Fi2zFrFYXN41h83ic+8RRosXz6Utzpy+xGpxfG24A4fHnWt72Dz2z13D7tHb/I7NY8vVdhaP
-        vi2rGD0+b5LzmNG+jTWAPUrPpii/tCRVISO/uMRWKdrQwkjP0NJCz8jEUs/Q2DzWyshUSd/O
-        JiU1J7MstUjfLkEv499684Iu24rmE6sYGxhXGnYxcnJICJhI3Hx5lrmLkYtDSGApo0RPZxsj
-        REJG4uS0BlYIW1jiz7UuNoiit4wSC78sZgZJCAtESDR8egPWICKgLTG35xTYJGaBJUwSZ7ct
-        YoHomM4kserUcnaQKjYBQ4mutyCjODl4Bewk9mz+C2azCKhK/LtxAcwWFYiRWL3xMjtEjaDE
-        yZlPWEBsTgEDieWbloLZzAJmEvM2P2SGsOUltr+dA2WLS9x6Mp9pAqPQLCTts5C0zELSMgtJ
-        ywJGllWMIqmlxbnpucWGesWJucWleel6yfm5mxiBEbnt2M/NOxgvbQw+xCjAwajEw/vgony0
-        EGtiWXFl7iFGCQ5mJRHeCVMVooV4UxIrq1KL8uOLSnNSiw8xmgI9N5FZSjQ5H5gs8kriDU0N
-        zS0sDc2NzY3NLJTEec8bVEYJCaQnlqRmp6YWpBbB9DFxcEo1MHY16T/+lD57jz7D2oMJH6rt
-        d04LCd0ad+b/XAvNa9pVXJ/a1SK0mRvCT99xNl1ewr/o/NZZCzlfz+6eUar4MXKtEePznbt8
-        p//gt1u7iu0s/6NPN06lPW9u103ba/L3kaFkZ/6ryCPbp2x2vLp1yg3T+MnlR+sF7ns9O5F1
-        hP/w/aY3y7d8lwlQYinOSDTUYi4qTgQA4NLf3t4CAAA=
-Message-Id: <20180613062316eucas1p2655d6b1f286e8d374fc4e7570ede0c95~3pBJGh1rJ0735307353eucas1p2O@eucas1p2.samsung.com>
-X-CMS-MailID: 20180613062316eucas1p2655d6b1f286e8d374fc4e7570ede0c95
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180612110807epcas5p10e076681eac6f50b01840c0052748d12
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180612110807epcas5p10e076681eac6f50b01840c0052748d12
-References: <CGME20180612110807epcas5p10e076681eac6f50b01840c0052748d12@epcas5p1.samsung.com>
-        <10125310.W3e2TP0641@aspire.rjw.lan>
-        <20180612124424eucas1p101e61369a42132234d103ce52918b08e~3akoRUwbQ3138731387eucas1p17@eucas1p1.samsung.com>
-        <1692795.7GA92aXxMT@aspire.rjw.lan>
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 1/3] xen: Sync up with the canonical protocol definitions in Xen
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        Juergen Gross <jgross@suse.com>
+CC:     xen-devel@lists.xenproject.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org, lyan@suse.com,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        andrii_chepurnyi@epam.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Message-ID: <800B1B3B-795F-4D0D-8B61-B66FC77A11A8@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rafael,
+On June 12, 2018 11:13:40 PM PDT, Oleksandr Andrushchenko <andr2000@gmail=
+=2Ecom> wrote:
+>On 06/13/2018 09:11 AM, Dmitry Torokhov wrote:
+>> On June 12, 2018 10:49:31 PM PDT, Oleksandr Andrushchenko
+><andr2000@gmail=2Ecom> wrote:
+>>> On 06/13/2018 02:40 AM, Dmitry Torokhov wrote:
+>>>> On Tue, Jun 12, 2018 at 03:46:10PM +0200, Juergen Gross wrote:
+>>>>> On 12/06/18 09:48, Oleksandr Andrushchenko wrote:
+>>>>>> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam=2Ecom>
+>>>>>>
+>>>>>> This is the sync up with the canonical definitions of the input,
+>>>>>> sound and display protocols in Xen=2E
+>>>>>>
+>>>>>> Changes to kbdif:
+>>>>>> 1=2E Add missing string constants for {feature|request}-raw-pointer
+>>>>>>      to align with the rest of the interface file=2E
+>>>>>>
+>>>>>> 2=2E Add new XenStore feature fields, so it is possible to
+>>> individually
+>>>>>>      control set of exposed virtual devices for each guest OS:
+>>>>>>        - set feature-disable-keyboard to 1 if no keyboard device
+>>> needs
+>>>>>>          to be created
+>>>>>>        - set feature-disable-pointer to 1 if no pointer device
+>needs
+>>>>>>          to be created
+>>>>>>
+>>>>>> 3=2E Move multi-touch device parameters to backend nodes: these are
+>>>>>>       described as a part of frontend's XenBus configuration
+>nodes
+>>>>>>       while they belong to backend's configuration=2E Fix this by
+>>> moving
+>>>>>>       the parameters to the proper section=2E
+>>>>>>
+>>>>>> Unique-id field:
+>>>>>> 1=2E Add unique-id XenBus entry for virtual input and display=2E
+>>>>>>
+>>>>>> 2=2E Change type of unique-id field to string for sndif to align
+>with
+>>>>>> display and input protocols=2E
+>>>>>>
+>>>>>> Signed-off-by: Oleksandr Andrushchenko
+>>> <oleksandr_andrushchenko@epam=2Ecom>
+>>>>>> Cc: Konrad Rzeszutek Wilk <konrad=2Ewilk@oracle=2Ecom>
+>>>>> Reviewed-by: Juergen Gross <jgross@suse=2Ecom>
+>>>>>
+>>>>> I'm fine with this patch being added via the input tree with the
+>>> other
+>>>>> patches=2E In case I should take it via the Xen tree, please send me
+>a
+>>>>> note=2E
+>>>> Juergen,
+>>>>
+>>>> I created an immutable branch off v4=2E17 with these 3 patches in
+>case
+>>> you
+>>>> would want to merge them into your tree without waiting for them to
+>>>> appear in mainline:
+>>>>
+>>>> git pull
+>git://git=2Ekernel=2Eorg/pub/scm/linux/kernel/git/dtor/input=2Egit
+>>> ib/4=2E17-xen-kbdfront-runtime-config
+>>>> Thanks=2E
+>>>>
+>>> Thank you,
+>>> I would prefer the fastest path of course
+>> It will be part of 4=2E19 pull request; the immutable branch is for
+>Juergen if he does not want to wait till 4=2E19 merge window to get the
+>changes=2E
+>Ah, I see=2E Juergen, can we please merge this via Xen tree then which
+>I assume will be faster?
 
-On 2018-06-12 16:24, Rafael J. Wysocki wrote:
-> On Tuesday, June 12, 2018 2:44:23 PM CEST Marek Szyprowski wrote:
->> On 2018-06-12 13:00, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> If a device link is added via device_link_add() by the driver of the
->>> link's consumer device, the supplier's runtime PM usage counter is
->>> going to be dropped by the pm_runtime_put_suppliers() call in
->>> driver_probe_device().  However, in that case it is not incremented
->>> unless the supplier driver is already present and the link is not
->>> stateless.  That leads to a runtime PM usage counter imbalance for
->>> the supplier device in a few cases.
->>>
->>> To prevent that from happening, bump up the supplier runtime
->>> PM usage counter in device_link_add() for all links with the
->>> DL_FLAG_PM_RUNTIME flag set that are added at the consumer probe
->>> time.  Use pm_runtime_get_noresume() for that as the callers of
->>> device_link_add() who want the supplier to be resumed by it should
->>> pass DL_FLAG_RPM_ACTIVE in flags to it anyway.
->>>
->>> Fixes: 21d5c57b3726 (PM / runtime: Use device links)
->>> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
->>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> ---
->>>
->>> This is a replacement for commit 1e8378619841 (PM / runtime: Fixup
->>> reference counting of device link suppliers at probe) that is going
->>> to be reverted.
->> Thanks Rafael for the patch. I've applied it and now I'm a bit puzzled.
-> Thanks for testing! :-)
->
->> Let's get back to my IOMMU and codec case, mentioned here:
->> https://marc.info/?l=linux-pm&m=152878741527962&w=2
->>
->> Now, after applying your patch, when IOMMU creates a link with
->> DL_FLAG_PM_RUNTIME to the jpeg device (this happens when jpeg device is
->> being probed), it is not IOMMU is not runtime resumed anymore (that's
->> because the patch changes pm_runtime_get_sync to pm_runtime_get_noresume).
->> This means that until jpeg driver enables runtime pm for its device and
->> finally performs runtime pm suspends/resume cycle, the supplier won't be
->> resumed. On the other hand, when I add DL_FLAG_RPM_ACTIVE flag to link
->> creation, the supplier is properly resumed, but then, once the jpeg
->> device probe finishes, the supplier is still in runtime active state
->> until a next runtime suspend/resume cycle of jpeg device.
-> That additional suspend-resume cycle should not be necessary in theory
-> unless I'm missing something.
->
-> The pm_request_idle() call in driver_probe_device() should trigger a
-> suspend of the jpeg device after probe (unless blocked by something)
-> and that should drop the RPM usage counter of the IOMMU.  Next, the
-> pm_runtime_put_suppliers() in there should actually suspend it.
+We are in the tail end of 4=2E18 merge window so it should not make it in =
+4=2E18 no matter what tree the patches will go through=2E
 
-I've also would expect such behavior of PM core, but checks on real
-hardware gives other results.
 
-> It looks like the pm_request_idle() doesn't work as expected.
+Thanks=2E
 
-pm_request_idle() calls rpm_idle(), which returns early with -EAGAIN due to
-(dev->power.runtime_status != RPM_ACTIVE) check. The device runtime_status
-is RPM_SUSPENDED as initially set by pm_runtime_init() on device creation.
-Notice that JPEG driver only calls pm_runtime_enable() and nothing more.
-
->> If I understand right, the DL_FLAG_RPM_ACTIVE flag should be there from the
->> beginning, but that time it runtime pm part of links worked in a bit
->> different way than now.
-> Right, and evidently there are callers depending on the existing behavior.
->   
->> Is there any way to keep old behavior?
-> Yes, there is, please test the appended v2 of the $subject patch.
->
-> That said, I'd like to remove the extra supplier resume from there going
-> forward as there may be callers who actually don't want that to happen and
-> DL_FLAG_RPM_ACTIVE is there for a purpose.
-
-Frankly, if the current behavior matches the designed behavior of
-DL_FLAG_RPM_ACTIVE flag, then maybe instead of adding workarounds now, we
-should simply fix all existing callers of device_link_add()? 'git grep' 
-shows
-only 6 places where links are created with DL_FLAG_PM_RUNTIME flag, I see no
-problem to add DL_FLAG_RPM_ACTIVE there to keep current behavior after a fix
-in runtime PM core. The description of DL_FLAG_RPM_ACTIVE should also be 
-a bit
-updated, because I initially thought that it means that the runtime pm 
-counter
-on supplier is increased for the whole lifetime of the device link (it 
-is not
-clear when core will call a corresponding pm_runtime_put()).
-
-The other question is what need to be fixed to get proper behavior 
-without the
-additional suspend/resume cycle mentioned a few paragraphs above.
-
-> ---
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> Subject: [PATCH v2] PM / core: Fix supplier device runtime PM usage counter imbalance
->
-> If a device link is added via device_link_add() by the driver of the
-> link's consumer device, the supplier's runtime PM usage counter is
-> going to be dropped by the pm_runtime_put_suppliers() call in
-> driver_probe_device().  However, in that case it is not incremented
-> unless the supplier driver is already present and the link is not
-> stateless.  That leads to a runtime PM usage counter imbalance for
-> the supplier device in a few cases.
->
-> To prevent that from happening, bump up the supplier runtime
-> PM usage counter in device_link_add() for all links with the
-> DL_FLAG_PM_RUNTIME flag set that are added at the consumer probe
-> time.  Use pm_runtime_get_noresume() for that as the callers of
-> device_link_add() who want the supplier to be resumed by it are
-> expected to pass DL_FLAG_RPM_ACTIVE in flags to it anyway, but
-> additionally resume the supplier if the link is added during
-> consumer driver probe to retain the existing behavior for the
-> callers depending on it.
->
-> Fixes: 21d5c57b3726 (PM / runtime: Use device links)
-> Reported-by: Ulf Hansson <ulf.hansson@linaro.org>
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-
-I've tested this version of the patch and it keeps the current behavior for
-links created with DL_FLAG_PM_RUNTIME flag. The questions is if we really
-want it?
-
-> ---
->   drivers/base/core.c |   15 +++++++++++----
->   1 file changed, 11 insertions(+), 4 deletions(-)
->
-> Index: linux-pm/drivers/base/core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/base/core.c
-> +++ linux-pm/drivers/base/core.c
-> @@ -216,6 +216,13 @@ struct device_link *device_link_add(stru
->   			link->rpm_active = true;
->   		}
->   		pm_runtime_new_link(consumer);
-> +		/*
-> +		 * If the link is being added by the consumer driver at probe
-> +		 * time, balance the decrementation of the supplier's runtime PM
-> +		 * usage counter after consumer probe in driver_probe_device().
-> +		 */
-> +		if (consumer->links.status == DL_DEV_PROBING)
-> +			pm_runtime_get_noresume(supplier);
->   	}
->   	get_device(supplier);
->   	link->supplier = supplier;
-> @@ -235,12 +242,12 @@ struct device_link *device_link_add(stru
->   			switch (consumer->links.status) {
->   			case DL_DEV_PROBING:
->   				/*
-> -				 * Balance the decrementation of the supplier's
-> -				 * runtime PM usage counter after consumer probe
-> -				 * in driver_probe_device().
-> +				 * Some callers expect the link creation during
-> +				 * consumer driver probe to resume the supplier
-> +				 * even without DL_FLAG_RPM_ACTIVE.
->   				 */
->   				if (flags & DL_FLAG_PM_RUNTIME)
-> -					pm_runtime_get_sync(supplier);
-> +					pm_runtime_resume(supplier);
->   
->   				link->status = DL_STATE_CONSUMER_PROBE;
->   				break;
->
->
->
->
-
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
-
+--=20
+Dmitry
