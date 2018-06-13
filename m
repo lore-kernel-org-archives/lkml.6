@@ -2,193 +2,126 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0C5D6C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D479BC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5DDF20020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5DDF20020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8982420020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8982420020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935495AbeFMMRG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 08:17:06 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57236 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935273AbeFMMRF (ORCPT
+        id S935525AbeFMMR3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 08:17:29 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:40113 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935286AbeFMMR1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 08:17:05 -0400
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DCFSqV084355
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:17:05 -0400
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jk0b6fp47-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:17:04 -0400
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
-        Wed, 13 Jun 2018 13:17:02 +0100
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Jun 2018 13:16:58 +0100
-Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DCGupc31916142
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 12:16:57 GMT
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 12EBEAE053;
-        Wed, 13 Jun 2018 13:05:47 +0100 (BST)
-Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 38E2AAE045;
-        Wed, 13 Jun 2018 13:05:46 +0100 (BST)
-Received: from [9.152.224.92] (unknown [9.152.224.92])
-        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Jun 2018 13:05:46 +0100 (BST)
-Reply-To: pmorel@linux.ibm.com
-Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
- device driver
-To:     Cornelia Huck <cohuck@redhat.com>
-Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
-        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
-        pbonzini@redhat.com, alex.williamson@redhat.com,
-        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
-        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
-        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
-        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
-References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
- <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
- <889b8d41-e08c-0eb5-2de0-a1d6669a03b3@linux.ibm.com>
- <20180613094812.1fd1846d.cohuck@redhat.com>
- <41e7ccbd-f6f5-ba20-f236-7824c682994d@linux.ibm.com>
- <20180613131402.0305d092.cohuck@redhat.com>
- <7237751c-66b5-d14c-5b71-cc1cfc79db87@linux.ibm.com>
- <20180613141221.5b924348.cohuck@redhat.com>
-From:   Pierre Morel <pmorel@linux.ibm.com>
-Date:   Wed, 13 Jun 2018 14:16:55 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180613141221.5b924348.cohuck@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18061312-0028-0000-0000-000002D066FD
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061312-0029-0000-0000-0000238788AF
-Message-Id: <65ec9340-6a25-20ac-3078-f67992d5cc15@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806130136
+        Wed, 13 Jun 2018 08:17:27 -0400
+Received: by mail-wm0-f65.google.com with SMTP id n5-v6so4945774wmc.5
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 05:17:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=PKgY4yhdsqbBT9TreIXxdpXyQPOuGke2Y2wj4sR80zk=;
+        b=br196EFCmjpJDRhHxDQWpzJxvZ2X3J9cVplKK5Fe2PXlcMf/OToAj4V14pvZ28r3jI
+         A/hScBao+FfglImzL+z50QCiqVUtTECZQSVvwh7X05f1lWZ3PKlcJbydASibGNzYgYIG
+         EAcoy5i+6kzsDu+o/0BrZqVRd3cb4M4QDAZ6ipuWRYKv6PIkR+/ph5e+WfU+QbyW/2qA
+         Fs+0IHW27yknPTj7pqJM7bRVIt9cc9tM0nbNCB8EvSSh6HpWEW4gswVtrXz6xwumVXlq
+         4liHJ9KBBHVos2pnTMQm0aJ74ghzlztlZkPO0uEoIYpbKAPjxEJJfJQBiIVYtAXrqCCG
+         ymwQ==
+X-Gm-Message-State: APt69E3IhhX3yTsqqebIpu1hcIwhfNUsUWlSroXiLKPCULzabij8rid5
+        xtmp98qPpgZSlC7GpNwoZgvXjg==
+X-Google-Smtp-Source: ADUXVKLrltS5Dk9omvwTPnfRyeYdzPeZFA0vsi5iaIEujDFC2OV08IvOVL0LxTX50y4Kcz+7MCdNkA==
+X-Received: by 2002:a1c:5d0e:: with SMTP id r14-v6mr2675200wmb.152.1528892246147;
+        Wed, 13 Jun 2018 05:17:26 -0700 (PDT)
+Received: from localhost.localdomain.com ([151.15.207.242])
+        by smtp.gmail.com with ESMTPSA id 137-v6sm4943673wmv.28.2018.06.13.05.17.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Jun 2018 05:17:25 -0700 (PDT)
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     peterz@infradead.org, mingo@redhat.com, rostedt@goodmis.org
+Cc:     linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org, Juri Lelli <juri.lelli@redhat.com>
+Subject: [PATCH v4 0/5] sched/deadline: fix cpusets bandwidth accounting
+Date:   Wed, 13 Jun 2018 14:17:06 +0200
+Message-Id: <20180613121711.5018-1-juri.lelli@redhat.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/2018 14:12, Cornelia Huck wrote:
-> On Wed, 13 Jun 2018 14:01:54 +0200
-> Pierre Morel <pmorel@linux.ibm.com> wrote:
->
->> On 13/06/2018 13:14, Cornelia Huck wrote:
->>> On Wed, 13 Jun 2018 12:54:40 +0200
->>> Pierre Morel <pmorel@linux.ibm.com> wrote:
->>>   
->>>> On 13/06/2018 09:48, Cornelia Huck wrote:
->>>>> On Wed, 13 Jun 2018 09:41:16 +0200
->>>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
->>>>>      
->>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
->>>>>>> Introduces a new AP device driver. This device driver
->>>>>>> is built on the VFIO mediated device framework. The framework
->>>>>>> provides sysfs interfaces that facilitate passthrough
->>>>>>> access by guests to devices installed on the linux host.
->>>>>> ...snip...
->>>>>>      
->>>>>>> +static int vfio_ap_matrix_dev_create(void)
->>>>>>> +{
->>>>>>> +	int ret;
->>>>>>> +
->>>>>>> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
->>>>>>> +
->>>>>>> +	if (IS_ERR(vfio_ap_root_device)) {
->>>>>>> +		ret = PTR_ERR(vfio_ap_root_device);
->>>>>>> +		goto done;
->>>>>>> +	}
->>>>>>> +
->>>>>>> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
->>>>>>> +	if (!ap_matrix) {
->>>>>>> +		ret = -ENOMEM;
->>>>>>> +		goto matrix_alloc_err;
->>>>>>> +	}
->>>>>>> +
->>>>>>> +	ap_matrix->device.type = &vfio_ap_dev_type;
->>>>>>> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
->>>>>>> +	ap_matrix->device.parent = vfio_ap_root_device;
->>>>>>> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
->>>>>>> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
->>>>>>> +
->>>>>>> +	ret = device_register(&ap_matrix->device);
->>>>>>> +	if (ret)
->>>>>>> +		goto matrix_reg_err;
->>>>>>> +
->>>>>>> +	goto done;
->>>>>>> +
->>>>>>> +matrix_reg_err:
->>>>>>> +	put_device(&ap_matrix->device);
->>>>>> Did not see this before but here you certainly want to
->>>>>> do a kfree and not a put_device.
->>>>> No, this must not be a kfree. Once you've tried to register something
->>>>> embedding a struct device with the driver core, you need to use
->>>>> put_device, as another path may have acquired a reference, even if
->>>>> registering ultimately failed. See the comment for device_register().
->>>>> IOW, the code is correct.
->>>> learned something again :) ,
->>>> but still, a kfree is needed for the kzalloc.
->>>> Does'nt it?
->>> No, the put callback for the embedding structure needs to take care of
->>> freeing things. Otherwise it is buggy.
->> Seems buggy to me.
->> How does the put_device knows if it is embedded and then in what it is
->> embedded ?
-> It does not need to know; the code registering the structure needs to
-> set up device->release correctly.
+Hi,
 
-yes right, thanks.
+This is v4 of a series of patches, authored by Mathieu (thanks for your
+work and for allowing me to try to move this forward), with the intent
+of fixing a long standing issue of SCHED_DEADLINE bandwidth accounting.
+As originally reported by Steve [1], when hotplug and/or (certain)
+cpuset reconfiguration operations take place, DEADLINE bandwidth
+accounting information is lost since root domains are destroyed and
+recreated.
 
->
->>>   
->>>>>      
->>>>>>      
->>>>>>> +
->>>>>>> +matrix_alloc_err:
->>>>>>> +	root_device_unregister(vfio_ap_root_device);
->>>>>>> +
->>>>>>> +done:
->>>>>>> +	return ret;
->>>>>>> +}
->>>>>>> +
->>>>>>> +static void vfio_ap_matrix_dev_destroy(struct ap_matrix *ap_matrix)
->>>>>>> +{
->>>>>>> +	device_unregister(&ap_matrix->device);
->>>>>>> +	root_device_unregister(vfio_ap_root_device);
->>>>>> Also here you need a kfree(ap_matrix) too .
->>>>> Same here.
->>>>>      
->>
+Mathieu's approach is based on restoring bandwidth accounting info on
+the newly created root domains by iterating through the (DEADLINE) tasks
+belonging to the configured cpuset(s).
+
+v3 still had issues (IMHO) because __sched_setscheduler() might race
+with the aforementioned restore operation (and it actually looks racy
+with cpuset ops in general), but grabbing cpuset_mutex from potential
+atomic contexs is a no-go.
+
+I reworked v3 solution a bit ending-up with something that seems to be
+working [2]. The idea is simply to trylock such mutex and return -EBUSY
+to the user if we raced with cpuset ops. It's gross, but didn't find
+anything better (and working) yet. :/
+
+I also don't particularly like 05/05, as it introduces lot of DEADLINE-
+iness into cpuset.c. I decided not to change Mathieu's patch for the
+moment and see if better approaches are suggested (a per-class thing
+maybe, even though other classes don't suffer from this problem and it
+is so still going to be DEADLINE specific).
+
+I also left out Mathieu's subsequent patches to focus on this crucial
+fix. They can easily come later, IMHO.
+
+Set also available at
+
+ https://github.com/jlelli/linux.git fixes/deadline/root-domain-accounting-v4
+
+Thanks,
+
+- Juri
+
+[1] https://lkml.org/lkml/2016/2/3/966
+[2] compare -before (that confirms what Steve saw) with -after
+    https://git.io/vhKfW
+
+Mathieu Poirier (5):
+  sched/topology: Add check to backup comment about hotplug lock
+  sched/topology: Adding function partition_sched_domains_locked()
+  sched/core: Streamlining calls to task_rq_unlock()
+  sched/core: Prevent race condition between cpuset and
+    __sched_setscheduler()
+  cpuset: Rebuild root domain deadline accounting information
+
+ include/linux/cpuset.h         |  6 ++++
+ include/linux/sched.h          |  5 +++
+ include/linux/sched/deadline.h |  8 +++++
+ include/linux/sched/topology.h | 10 ++++++
+ kernel/cgroup/cpuset.c         | 79 +++++++++++++++++++++++++++++++++++++++++-
+ kernel/sched/core.c            | 38 ++++++++++++++------
+ kernel/sched/deadline.c        | 31 +++++++++++++++++
+ kernel/sched/sched.h           |  3 --
+ kernel/sched/topology.c        | 32 ++++++++++++++---
+ 9 files changed, 193 insertions(+), 19 deletions(-)
 
 -- 
-Pierre Morel
-Linux/KVM/QEMU in Böblingen - Germany
+2.14.3
 
