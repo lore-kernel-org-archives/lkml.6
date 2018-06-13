@@ -2,119 +2,182 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9BC2BC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:55:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7DD23C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48C1E208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:55:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 284FD208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:57:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="MBawlPYA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48C1E208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QYhceELy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 284FD208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935760AbeFMOzr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:55:47 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:36617 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935190AbeFMOzo (ORCPT
+        id S935827AbeFMO5M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:57:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:49874 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935656AbeFMO5L (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:55:44 -0400
-Received: by mail-it0-f67.google.com with SMTP id j135-v6so4280605itj.1;
-        Wed, 13 Jun 2018 07:55:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0ItRmEdnhylmdKeV4H7Os6lQn+0f7Cyy0O9X9R+PiIY=;
-        b=MBawlPYAWkLzg5ZCx+QvRw78upEtrkWDrkBbUcI4yDlWKzAlrBV7+djiALCrww6sOc
-         ZbZcvQj54ZsV//34Xyg3t/3OpHilfWgJipXxQukz4cTtzIiylvovyC4JIAywLmHnShPx
-         +t1GoGletrDGKFBi45WP/RnNTEoj/dBnDZw1Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0ItRmEdnhylmdKeV4H7Os6lQn+0f7Cyy0O9X9R+PiIY=;
-        b=gCx0I0lD4Ye7gWi4uekhFRKAMna52SapQOJs3i4/RVfp6qNttzpCX1ag3FCUfDO6IE
-         l/vlaBuGtWa/eOZG02GnPIMtbZTbNZr8sSNbFY9BrrPfrQ1yjbTY3nVZf/SKNXjdzyWc
-         BrAU0Ub7glujDCe6I+CK1Yh615orbTwJdJ1ZJPait8Nli84QV1sp/cIeWAxoE8fATqEq
-         WyX8e+/rh9E75cbc7/wynzoCZ0WLCUyB7ypTrcU55sCQpjAmdqAvrFhesjOEEkHITpEp
-         qpBFA3Ey18xVsxJcsL50ZoSXKid6k4H8ysJO2eRIdWwJTA5Luw54BcZ0oRaLmZ0PdLH6
-         qvug==
-X-Gm-Message-State: APt69E3AZcNzVYFKsng/wBgl/bPGxA9/UX2WPVbBs7JP2rVx9K6/cVoi
-        W6SKRNlggBLRwG6lin60Ehn0iofb2SuMGdhX0Y4=
-X-Google-Smtp-Source: ADUXVKJt603byvo3OMT7qnQuQiJxzp7/eXwcG1kWK8tPeYBC3lkQOE6lRWkJ6gB5xq1wrdXbXtGFyTTx2JpSHzJd/UI=
-X-Received: by 2002:a24:5b81:: with SMTP id g123-v6mr4825865itb.1.1528901744036;
- Wed, 13 Jun 2018 07:55:44 -0700 (PDT)
+        Wed, 13 Jun 2018 10:57:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Emy3uXuN0Z1AgRSb7jkmiCl7ZhJK0o2+RUDx+bn8hJU=; b=QYhceELyHdCQfWggBnrFz+BKO
+        zoguPujAJrzhZJHveaE/mjKq77jIcF/2IENvMFCPuNSaIPknkNc7Q6B615eHEaYb42l1MhZYAEQlz
+        Zp5dh4tQVwRAxRVlIbEGUiFhM5RrPaym8LuOMs8K6lUg2bEM/LSZVvvtQys2N4cSBbu/3NpmCYERF
+        BspX8hn3tj0EN54Qcg8Xee1YLvZpSUkh6c8a4+Mq5FH7OiStZe25TQlDAa5wtq/CUpFbhWp+svK30
+        DO0e7sXOxl8OfF/j4Gi0Xe84S3dYTMFrPNJB9eg9sBAXhbJDw21Mw9PjI9u+DeszCRGcfb9oearPa
+        Bdjl4gjGQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fT7Cg-0004gr-IN; Wed, 13 Jun 2018 14:56:54 +0000
+Date:   Wed, 13 Jun 2018 07:56:54 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        David Sterba <dsterba@suse.cz>,
+        Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH V6 15/30] block: introduce bio_clone_chunk_bioset()
+Message-ID: <20180613145654.GE4693@infradead.org>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+ <20180609123014.8861-16-ming.lei@redhat.com>
 MIME-Version: 1.0
-References: <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
- <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
- <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
- <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
- <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz> <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
- <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz> <20180611172053.GR1351649@devbig577.frc2.facebook.com>
- <20180612155754.x5k2yndh5t6wlmpy@quack2.suse.cz> <b210e55c-b06a-41ff-8592-0dbe21875779@i-love.sakura.ne.jp>
- <20180613144606.nvbcyg2rdjpxhf7s@quack2.suse.cz>
-In-Reply-To: <20180613144606.nvbcyg2rdjpxhf7s@quack2.suse.cz>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 Jun 2018 07:55:32 -0700
-Message-ID: <CA+55aFzKrUdOV1RU+H4iOXkiCh+CoGmS1pvCP9Rybn8tTgWang@mail.gmail.com>
-Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
-To:     Jan Kara <jack@suse.cz>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Tejun Heo <tj@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block <linux-block@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180609123014.8861-16-ming.lei@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 7:46 AM Jan Kara <jack@suse.cz> wrote:
->
-> On Wed 13-06-18 19:43:47, Tetsuo Handa wrote:
-> > Can't we utilize RCU grace period (like shown below) ?
->
-> Honestly, the variant 1 looks too ugly to me. However variant 2 looks
-> mostly OK.
+On Sat, Jun 09, 2018 at 08:29:59PM +0800, Ming Lei wrote:
+> There is one use case(DM) which requires to clone bio chunk by
+> chunk, so introduce this API.
 
-The versions that don't have that conditional locking look fine to me, yes.
+I don't think DM is the special case here.  The special case is the
+bounce code that only wants single page bios.  Between that, and the
+fact that we only have two callers and one of them is inside the
+block layer I would suggest to fold in the following patch to make
+bio_clone_bioset clone in multi-page bvecs and make the bounce code
+use the low-level interface directly:
 
-> Also I'd avoid the addition argument to wb_writeback() and split the function instead. The
-> patch resulting from your and mine ideas is attached. Thoughts?
-
-Is there a reason for this model:
-
-+               if (cgwb_start_shutdown(wb))
-+                       __wb_shutdown(wb);
-
-when there is just one call site of this? Why not just make the
-function void, and make it do that __wb_shutdown() itself in the true
-case?
-
-IOW, just make it be
-
-+               cgwb_shutdown(wb);
-
-instead?
-
-That's what "wb_shutdown()" does - it does the "wb_start_shutdown()"
-test internally, and does __wb_shutdown() all inside itself, instead
-of expecting the caller to do it.
-
-I dunno.
-
-              Linus
-
-              Linus
+diff --git a/block/bio.c b/block/bio.c
+index 284085ab97e7..cef45c8d0a19 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -644,13 +644,14 @@ struct bio *bio_clone_fast(struct bio *bio, gfp_t gfp_mask, struct bio_set *bs)
+ }
+ EXPORT_SYMBOL(bio_clone_fast);
+ 
+-static struct bio *__bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
+-				      struct bio_set *bs, bool seg)
++struct bio *__bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
++		struct bio_set *bs, bool single_page_only)
+ {
+ 	struct bvec_iter iter;
+ 	struct bio_vec bv;
+ 	struct bio *bio;
+-	int nr_vecs = seg ? bio_segments(bio_src) : bio_chunks(bio_src);
++	int nr_vecs = single_page_only ?
++		bio_segments(bio_src) : bio_chunks(bio_src);
+ 
+ 	/*
+ 	 * Pre immutable biovecs, __bio_clone() used to just do a memcpy from
+@@ -692,7 +693,7 @@ static struct bio *__bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
+ 		bio->bi_io_vec[bio->bi_vcnt++] = bio_src->bi_io_vec[0];
+ 		break;
+ 	default:
+-		if (seg) {
++		if (single_page_only) {
+ 			bio_for_each_segment(bv, bio_src, iter)
+ 				bio->bi_io_vec[bio->bi_vcnt++] = bv;
+ 		} else {
+@@ -728,26 +729,10 @@ static struct bio *__bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
+  */
+ struct bio *bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
+ 			     struct bio_set *bs)
+-{
+-	return __bio_clone_bioset(bio_src, gfp_mask, bs, true);
+-}
+-EXPORT_SYMBOL(bio_clone_bioset);
+-
+-/**
+- * 	bio_clone_seg_bioset - clone a bio segment by segment
+- * 	@bio_src: bio to clone
+- *	@gfp_mask: allocation priority
+- *	@bs: bio_set to allocate from
+- *
+- *	Clone bio. Caller will own the returned bio, but not the actual data it
+- *	points to. Reference count of returned bio will be one.
+- */
+-struct bio *bio_clone_chunk_bioset(struct bio *bio_src, gfp_t gfp_mask,
+-				   struct bio_set *bs)
+ {
+ 	return __bio_clone_bioset(bio_src, gfp_mask, bs, false);
+ }
+-EXPORT_SYMBOL(bio_clone_chunk_bioset);
++EXPORT_SYMBOL(bio_clone_bioset);
+ 
+ /**
+  *	bio_add_pc_page	-	attempt to add page to bio
+diff --git a/block/bounce.c b/block/bounce.c
+index c6af0bd29ec9..62dab528dc1b 100644
+--- a/block/bounce.c
++++ b/block/bounce.c
+@@ -224,8 +224,8 @@ static void __blk_queue_bounce(struct request_queue *q, struct bio **bio_orig,
+ 		generic_make_request(*bio_orig);
+ 		*bio_orig = bio;
+ 	}
+-	bio = bio_clone_bioset(*bio_orig, GFP_NOIO, passthrough ? NULL :
+-			&bounce_bio_set);
++	bio = __bio_clone_bioset(*bio_orig, GFP_NOIO, passthrough ? NULL :
++			&bounce_bio_set, true);
+ 
+ 	bio_for_each_chunk_segment_all(to, bio, i, citer) {
+ 		struct page *page = to->bv_page;
+diff --git a/drivers/md/dm.c b/drivers/md/dm.c
+index 13ca3574d972..98dff36b89a3 100644
+--- a/drivers/md/dm.c
++++ b/drivers/md/dm.c
+@@ -1582,8 +1582,8 @@ static blk_qc_t __split_and_process_bio(struct mapped_device *md,
+ 				 * the usage of io->orig_bio in dm_remap_zone_report()
+ 				 * won't be affected by this reassignment.
+ 				 */
+-				struct bio *b = bio_clone_chunk_bioset(bio, GFP_NOIO,
+-								       &md->queue->bio_split);
++				struct bio *b = bio_clone_bioset(bio, GFP_NOIO,
++								 &md->queue->bio_split);
+ 				ci.io->orig_bio = b;
+ 				bio_advance(bio, (bio_sectors(bio) - ci.sector_count) << 9);
+ 				bio_chain(b, bio);
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 58838dc12d69..5ccafeadbe95 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -486,7 +486,8 @@ extern void bio_put(struct bio *);
+ extern void __bio_clone_fast(struct bio *, struct bio *);
+ extern struct bio *bio_clone_fast(struct bio *, gfp_t, struct bio_set *);
+ extern struct bio *bio_clone_bioset(struct bio *, gfp_t, struct bio_set *bs);
+-extern struct bio *bio_clone_chunk_bioset(struct bio *, gfp_t, struct bio_set *bs);
++extern struct bio *__bio_clone_bioset(struct bio *bio_src, gfp_t gfp_mask,
++		struct bio_set *bs, bool single_page_only);
+ 
+ extern struct bio_set fs_bio_set;
+ 
