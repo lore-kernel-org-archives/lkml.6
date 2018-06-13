@@ -2,176 +2,220 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7C676C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:35:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 53840C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:38:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D421208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:35:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D421208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
+	by mail.kernel.org (Postfix) with ESMTP id ECD88208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:38:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="q9AWbRCN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECD88208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935474AbeFMRfC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:35:02 -0400
-Received: from bran.ispras.ru ([83.149.199.196]:22881 "EHLO smtp.ispras.ru"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934979AbeFMRfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:35:00 -0400
-Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
-        by smtp.ispras.ru (Postfix) with ESMTP id EF82F203CD;
-        Wed, 13 Jun 2018 12:08:06 +0300 (MSK)
-From:   Anton Vasilyev <vasilyev@ispras.ru>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Sinan Kaya <okaya@codeaurora.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        Gaurav Pathak <gauravpathak129@gmail.com>,
-        Hannes Reinecke <hare@suse.de>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
-Subject: [PATCH v3] staging: rts5208: add error handling into rtsx_probe
-Date:   Wed, 13 Jun 2018 20:34:43 +0300
-Message-Id: <20180613173443.32488-1-vasilyev@ispras.ru>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <CAHp75VetOuS+H4GU9UW-Ekczs22-Ju++jXWdvkMJGktbumDzwQ@mail.gmail.com>
+        id S935096AbeFMRim (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:38:42 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:34424 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754487AbeFMRik (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 13:38:40 -0400
+Received: by mail-pg0-f66.google.com with SMTP id q4-v6so1624104pgr.1;
+        Wed, 13 Jun 2018 10:38:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-transfer-encoding:content-language;
+        bh=vQCVuhzHUOYNIPDzZQPMVDe6yQ6JfIdSyZK8SDXiegg=;
+        b=q9AWbRCNMAx8TWQs5t93SyvROk1ogbLwiDxzN7FhvpQ8JNLnRfYZIMP1WtN7N62HBJ
+         2BDYUmXiJDgFIkaZm6x582cUyDA0mA5AHNfmsOZYmM+T5gUcFl/z58B/PlEQKNg3DmB5
+         jxOoYS0swVcsHLn2uzo6eTCoKirvjPMCOOskMKul9VlKVG528kqHF9v+7tSMeBJ/+9JT
+         X1c2uMPyqsEbGAZLtY94rYag74yW3Uo9MZ/m4xlkWECDvYLMV37dp55z3LD8G1zDjUBS
+         ZqDjrgxD8Z7KWsNWhSUk0QKj7fKNU3aw2NMszLVtG0BxvldP1vOaf78G/1irH+5sSdz6
+         h20g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=vQCVuhzHUOYNIPDzZQPMVDe6yQ6JfIdSyZK8SDXiegg=;
+        b=mA3C4h3QHe8UjQfJGwtu+oyeEFBFJaKkJM32EgnaHGsuj3U+yKkQYGHavvlijutjui
+         hIE0VdYCQmylgt+jyNjm560/ICTDSv4XFzK1kSXtugwtyYotXeQtIDW5F2SgcuwOog9G
+         Biz9bX92uF96Av5B6UINITphiTaMzdOGANMH38stbFdjabXa/pv4ujbCp6ovRfWXBSX/
+         DtBfyzQHxK7tMAw4OaLl66y5WUbfg+7x8L8kiVcfsBQcZDgc/N9wJZWjiFNqUgsdRfrB
+         qYG6ButYIjARh6JmT8dHiVC2KnI6zenVdPdJKvfSj+S2b7AzwtLMewG2zTWBpLJBOFtA
+         I6Fw==
+X-Gm-Message-State: APt69E1dSxP4AZTisIF1YEdV30Ur7tX5Y7hmzVsT4PPNJwkop3DEHMkI
+        rkCG3ACXAPmxHvwBdSDvRd4cYzRV
+X-Google-Smtp-Source: ADUXVKKB5cYKZuz0YaN1W/k4F/9tyOaEWak0TEYLe1Q2xNI4R1aBb3Dk+vYxA2/juesP111Q0UKW5w==
+X-Received: by 2002:a65:5d09:: with SMTP id e9-v6mr4878907pgr.150.1528911519849;
+        Wed, 13 Jun 2018 10:38:39 -0700 (PDT)
+Received: from JF-EN-C02V905BHTDF.tld ([12.111.169.54])
+        by smtp.gmail.com with ESMTPSA id z26-v6sm5858611pfd.60.2018.06.13.10.38.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Jun 2018 10:38:39 -0700 (PDT)
+Subject: Re: [PATCH 01/13] selinux: Cleanup printk logging in conditional
+To:     peter enderborg <peter.enderborg@sony.com>,
+        Joe Perches <joe@perches.com>,
+        Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        James Morris <jmorris@namei.org>,
+        Daniel Jurgens <danielj@mellanox.com>,
+        Doug Ledford <dledford@redhat.com>, selinux@tycho.nsa.gov,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, "Serge E . Hallyn" <serge@hallyn.com>
+References: <20180612080912.7827-1-peter.enderborg@sony.com>
+ <20180612080912.7827-2-peter.enderborg@sony.com>
+ <a85d28e8cbd32acda21424ab6a46089f26969671.camel@perches.com>
+ <ef97b4b2-35da-7642-aa9d-de3e968cfb81@sony.com>
+From:   J Freyensee <why2jjj.linux@gmail.com>
+Message-ID: <b7a048ae-830f-9da0-9548-ea6d34db9756@gmail.com>
+Date:   Wed, 13 Jun 2018 10:38:36 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <ef97b4b2-35da-7642-aa9d-de3e968cfb81@sony.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If rtsx_probe() fails to allocate dev->chip, then release_everything()
-will crash on uninitialized dev->cmnd_ready complete.
 
-Patch adds error handling into rtsx_probe.
 
-Found by Linux Driver Verification project (linuxtesting.org).
+On 6/12/18 11:23 PM, peter enderborg wrote:
+> On 06/12/2018 04:38 PM, Joe Perches wrote:
+>> On Tue, 2018-06-12 at 10:09 +0200, Peter Enderborg wrote:
+>>> Replace printk with pr_* to avoid checkpatch warnings.
+>> I believe it would be nicer to remove the
+>> "SELinux: " prefix embbeded in each format
+>> and use a specific
+>>
+>> #define pr_fmt(fmt) "SELinux: " fmt
+>>
+>> to automatically prefix these formats.
+> I cant argument about that, however some of the warnings and debug prints in this set does not have this
+> so it will then change the actual output. (And I also think that they should have a the prefix, but I don't
+> know why they don't) So I am not sure if it appropriate for a cleanup patch, it supposed to have no functional change.
 
-Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
----
-v3: fix subject and commit message
-v2: Add error handling into rtsx_probe based on Dan Carpenter's comment.
-I do not have corresponding hardware, so patch was tested by compilation only.
 
-I faced with inaccuracy at rtsx_remove() and original rtsx_probe():
-there is quiesce_and_remove_host() call with scsi_remove_host() inside,
-whereas release_everything() calls scsi_host_put() after this
-scsi_remove_host() call. This is strange for me.
-Also I do not know is it require to check result value of
-rtsx_init_chip() call on rtsx_probe().
----
- drivers/staging/rts5208/rtsx.c | 38 +++++++++++++++++++++++-----------
- 1 file changed, 26 insertions(+), 12 deletions(-)
+I would suggest that could be a follow-up patch.
 
-diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
-index 70e0b8623110..69e6abe14abf 100644
---- a/drivers/staging/rts5208/rtsx.c
-+++ b/drivers/staging/rts5208/rtsx.c
-@@ -857,7 +857,7 @@ static int rtsx_probe(struct pci_dev *pci,
- 	dev->chip = kzalloc(sizeof(*dev->chip), GFP_KERNEL);
- 	if (!dev->chip) {
- 		err = -ENOMEM;
--		goto errout;
-+		goto chip_alloc_fail;
- 	}
- 
- 	spin_lock_init(&dev->reg_lock);
-@@ -879,7 +879,7 @@ static int rtsx_probe(struct pci_dev *pci,
- 	if (!dev->remap_addr) {
- 		dev_err(&pci->dev, "ioremap error\n");
- 		err = -ENXIO;
--		goto errout;
-+		goto ioremap_fail;
- 	}
- 
- 	/*
-@@ -894,7 +894,7 @@ static int rtsx_probe(struct pci_dev *pci,
- 	if (!dev->rtsx_resv_buf) {
- 		dev_err(&pci->dev, "alloc dma buffer fail\n");
- 		err = -ENXIO;
--		goto errout;
-+		goto dma_alloc_fail;
- 	}
- 	dev->chip->host_cmds_ptr = dev->rtsx_resv_buf;
- 	dev->chip->host_cmds_addr = dev->rtsx_resv_buf_addr;
-@@ -915,7 +915,7 @@ static int rtsx_probe(struct pci_dev *pci,
- 
- 	if (rtsx_acquire_irq(dev) < 0) {
- 		err = -EBUSY;
--		goto errout;
-+		goto irq_acquire_fail;
- 	}
- 
- 	pci_set_master(pci);
-@@ -935,14 +935,14 @@ static int rtsx_probe(struct pci_dev *pci,
- 	if (IS_ERR(th)) {
- 		dev_err(&pci->dev, "Unable to start control thread\n");
- 		err = PTR_ERR(th);
--		goto errout;
-+		goto control_thread_fail;
- 	}
- 	dev->ctl_thread = th;
- 
- 	err = scsi_add_host(host, &pci->dev);
- 	if (err) {
- 		dev_err(&pci->dev, "Unable to add the scsi host\n");
--		goto errout;
-+		goto scsi_add_host_fail;
- 	}
- 
- 	/* Start up the thread for delayed SCSI-device scanning */
-@@ -950,18 +950,16 @@ static int rtsx_probe(struct pci_dev *pci,
- 	if (IS_ERR(th)) {
- 		dev_err(&pci->dev, "Unable to start the device-scanning thread\n");
- 		complete(&dev->scanning_done);
--		quiesce_and_remove_host(dev);
- 		err = PTR_ERR(th);
--		goto errout;
-+		goto scan_thread_fail;
- 	}
- 
- 	/* Start up the thread for polling thread */
- 	th = kthread_run(rtsx_polling_thread, dev, "rtsx-polling");
- 	if (IS_ERR(th)) {
- 		dev_err(&pci->dev, "Unable to start the device-polling thread\n");
--		quiesce_and_remove_host(dev);
- 		err = PTR_ERR(th);
--		goto errout;
-+		goto scan_thread_fail;
- 	}
- 	dev->polling_thread = th;
- 
-@@ -970,9 +968,25 @@ static int rtsx_probe(struct pci_dev *pci,
- 	return 0;
- 
- 	/* We come here if there are any problems */
--errout:
-+scan_thread_fail:
-+	quiesce_and_remove_host(dev);
-+scsi_add_host_fail:
-+	complete(&dev->cmnd_ready);
-+	wait_for_completion(&dev->control_exit);
-+control_thread_fail:
-+	free_irq(dev->irq, (void *)dev);
-+	rtsx_release_chip(dev->chip);
-+irq_acquire_fail:
-+	dev->chip->host_cmds_ptr = NULL;
-+	dev->chip->host_sg_tbl_ptr = NULL;
-+	if (dev->chip->msi_en)
-+		pci_disable_msi(dev->pci);
-+dma_alloc_fail:
-+	iounmap(dev->remap_addr);
-+ioremap_fail:
-+	kfree(dev->chip);
-+chip_alloc_fail:
- 	dev_err(&pci->dev, "%s failed\n", __func__);
--	release_everything(dev);
- 
- 	return err;
- }
--- 
-2.17.1
+I do like the cleanup, and it's better than the status quo.
+
+Acked-by: Jay Freyensee <why2jjj.linux@gmail.com>
+
+
+>>> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+>> []
+>>> @@ -96,7 +96,7 @@ int evaluate_cond_node(struct policydb *p, struct cond_node *node)
+>>>   	if (new_state != node->cur_state) {
+>>>   		node->cur_state = new_state;
+>>>   		if (new_state == -1)
+>>> -			printk(KERN_ERR "SELinux: expression result was undefined - disabling all rules.\n");
+>>> +			pr_err("SELinux: expression result was undefined - disabling all rules.\n");
+>>>   		/* turn the rules on or off */
+>>>   		for (cur = node->true_list; cur; cur = cur->next) {
+>>>   			if (new_state <= 0)
+>> So, for instance, this patch could become:
+>> (etc and so forth for each patch in this series)
+>>
+>> ---
+>>   security/selinux/ss/conditional.c | 18 ++++++++++--------
+>>   1 file changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+>> index c91543a617ac..e96820d92b61 100644
+>> --- a/security/selinux/ss/conditional.c
+>> +++ b/security/selinux/ss/conditional.c
+>> @@ -7,6 +7,8 @@
+>>    *	the Free Software Foundation, version 2.
+>>    */
+>>   
+>> +#define pr_fmt(fmt) "SELinux: " fmt
+>> +
+>>   #include <linux/kernel.h>
+>>   #include <linux/errno.h>
+>>   #include <linux/string.h>
+>> @@ -96,7 +98,7 @@ int evaluate_cond_node(struct policydb *p, struct cond_node *node)
+>>   	if (new_state != node->cur_state) {
+>>   		node->cur_state = new_state;
+>>   		if (new_state == -1)
+>> -			printk(KERN_ERR "SELinux: expression result was undefined - disabling all rules.\n");
+>> +			pr_err("expression result was undefined - disabling all rules\n");
+>>   		/* turn the rules on or off */
+>>   		for (cur = node->true_list; cur; cur = cur->next) {
+>>   			if (new_state <= 0)
+>> @@ -287,7 +289,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   	 */
+>>   	if (k->specified & AVTAB_TYPE) {
+>>   		if (avtab_search(&p->te_avtab, k)) {
+>> -			printk(KERN_ERR "SELinux: type rule already exists outside of a conditional.\n");
+>> +			pr_err("type rule already exists outside of a conditional\n");
+>>   			goto err;
+>>   		}
+>>   		/*
+>> @@ -302,7 +304,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   			node_ptr = avtab_search_node(&p->te_cond_avtab, k);
+>>   			if (node_ptr) {
+>>   				if (avtab_search_node_next(node_ptr, k->specified)) {
+>> -					printk(KERN_ERR "SELinux: too many conflicting type rules.\n");
+>> +					pr_err("too many conflicting type rules\n");
+>>   					goto err;
+>>   				}
+>>   				found = 0;
+>> @@ -313,13 +315,13 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   					}
+>>   				}
+>>   				if (!found) {
+>> -					printk(KERN_ERR "SELinux: conflicting type rules.\n");
+>> +					pr_err("conflicting type rules\n");
+>>   					goto err;
+>>   				}
+>>   			}
+>>   		} else {
+>>   			if (avtab_search(&p->te_cond_avtab, k)) {
+>> -				printk(KERN_ERR "SELinux: conflicting type rules when adding type rule for true.\n");
+>> +				pr_err("conflicting type rules when adding type rule for true\n");
+>>   				goto err;
+>>   			}
+>>   		}
+>> @@ -327,7 +329,7 @@ static int cond_insertf(struct avtab *a, struct avtab_key *k, struct avtab_datum
+>>   
+>>   	node_ptr = avtab_insert_nonunique(&p->te_cond_avtab, k, d);
+>>   	if (!node_ptr) {
+>> -		printk(KERN_ERR "SELinux: could not insert rule.\n");
+>> +		pr_err("could not insert rule\n");
+>>   		rc = -ENOMEM;
+>>   		goto err;
+>>   	}
+>> @@ -387,12 +389,12 @@ static int cond_read_av_list(struct policydb *p, void *fp, struct cond_av_list *
+>>   static int expr_isvalid(struct policydb *p, struct cond_expr *expr)
+>>   {
+>>   	if (expr->expr_type <= 0 || expr->expr_type > COND_LAST) {
+>> -		printk(KERN_ERR "SELinux: conditional expressions uses unknown operator.\n");
+>> +		pr_err("conditional expressions uses unknown operator\n");
+>>   		return 0;
+>>   	}
+>>   
+>>   	if (expr->bool > p->p_bools.nprim) {
+>> -		printk(KERN_ERR "SELinux: conditional expressions uses unknown bool.\n");
+>> +		pr_err("conditional expressions uses unknown bool\n");
+>>   		return 0;
+>>   	}
+>>   	return 1;
+>>
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-security-module" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
