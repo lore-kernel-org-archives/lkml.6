@@ -3,80 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D2415C5CFF1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:12:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9987EC5CFF1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 792562086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:12:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C5D52086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="HBaRgc54"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 792562086D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="DHX7Dbdl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C5D52086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935073AbeFMBME (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:12:04 -0400
-Received: from mail-io0-f172.google.com ([209.85.223.172]:33950 "EHLO
-        mail-io0-f172.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754202AbeFMBMC (ORCPT
+        id S935110AbeFMBMd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:12:33 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57454 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935038AbeFMBMb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:12:02 -0400
-Received: by mail-io0-f172.google.com with SMTP id e15-v6so1657299iog.1;
-        Tue, 12 Jun 2018 18:12:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gYdQyGXKUoDhLkAytoQbsoib6dcyw2JH1le1LnvNqCU=;
-        b=HBaRgc54balIWQ+OaLqYrLJWHJcQeipwpvIa5sWul5SaX0JNGZTVn08a3pXgL+/rue
-         OFU+ywvkRMERsX5iyX36z0+F4Lm809iuD+/hSmLIHUtAayUNqxJnHsGsC06zV/bJCeGh
-         9r2bzA4VGA7zAWUn3BdU0oI54S3wfyS/lOYSA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gYdQyGXKUoDhLkAytoQbsoib6dcyw2JH1le1LnvNqCU=;
-        b=gjcZ9M9WSbmCQ+xtzLYQe36iAjE43oRhwb+TrL5vzk6s+WilzeJpwkx8Iuj/YB7x8N
-         aj7gHKiBipslqQ5Jqb8pHW9Yc/HWddW+6tN5CABBjekEmShb60eW++bL5ts9KyhhNeiy
-         5t0ZUyxB9BAV14J6WlS0+omkXsPbcn3ug7y1vPG2wWO1RnA1TtFvih4CtVdd9fH1H7Av
-         1cdcLaRrgZ81jlOTpwsJCBVmu3NC+Yujz7QtTFHyeDKjG5Ixv/J7dbljHBIap7T544GY
-         yg9xS+0DeaT66AQVhzYv8G698zKg5i/bxqLuueKbi8bHyuDqTGD68ehK2SgiChNYEJPZ
-         RLuA==
-X-Gm-Message-State: APt69E0ZDuQ6sl1R+uh9Qm8mQujT5FxAAr6eNpQRHdAOTeer5SXQctYO
-        kbKMUlZMrh0pV54m0iwz+FR4RA5cZmK+O1Ga9uU=
-X-Google-Smtp-Source: ADUXVKLF6IPWeopwCJ09HuZV8dqlSgGUW00OIq+r61sFiMAeVj94rHu/tSz3mME8Q1DRpFB1p30YJZluGUzR8uIhWvs=
-X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr2905359ion.259.1528852321768;
- Tue, 12 Jun 2018 18:12:01 -0700 (PDT)
+        Tue, 12 Jun 2018 21:12:31 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D15rK7184614;
+        Wed, 13 Jun 2018 01:12:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=dT0EAWnUj/+gHQNtmlaQGicVIPSfFPG0OPF9P7c9SO4=;
+ b=DHX7Dbdlj33X6Iq2m8toWALl5H16LhxWpAPMNQxMdFjszMgyxGW5J/KEHEaqCLU7ClkA
+ 8YO4oxLsYlYED4fHQvzFDT/Tt2wA1QvBanFt86K3Uw/hsP0j+FZzSNHHo1/vft8uR9z/
+ vkNYztt2raW4v+z9zcMTL2aEfKf4DyOAukSHi982qunqs0K0a0OXRugJJpH/Fmsqy4ge
+ +tJ7RsVPiY2aWsej7qs+Rs77/qZeDfmCtS0D7CFg+4RHLz22wyl1pzsUcxyH5V+DQ056
+ GhhGWu1fysNgJEjCj/8f1nB9XgS4YIDnLe+B1msHBsXGdpZRvUqK4hEKklotBdif4QUL 6A== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2jjp6brbtr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 01:12:19 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5D1CI1n010229
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 01:12:18 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D1CHvw007646;
+        Wed, 13 Jun 2018 01:12:17 GMT
+Received: from [10.154.144.7] (/10.154.144.7)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 12 Jun 2018 18:12:17 -0700
+Subject: Re: [PATCH v3 4/9] xen/grant-table: Allow allocating buffers suitable
+ for DMA
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        jgross@suse.com, konrad.wilk@oracle.com
+Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
+        matthew.d.roper@intel.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+References: <20180612134200.17456-1-andr2000@gmail.com>
+ <20180612134200.17456-5-andr2000@gmail.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Message-ID: <4ab26c9a-155a-cd04-fbf6-c38c6429959b@oracle.com>
+Date:   Tue, 12 Jun 2018 21:12:15 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <e5c90488937d14e9df81752a024be9d1e73ed398.camel@hammerspace.com>
- <CA+55aFxYMg+F9Jdi_25X-Qtt=7imqjQhLnjEyQXOQ6+eJvy83A@mail.gmail.com>
- <CA+55aFw+2+xCRAaMo8qgvZ7qNgRMo6D=WkwP7APQndG-y5b3dw@mail.gmail.com>
- <CA+55aFz3jmGST_cOB+qH6qZTFa5HJcw2JoeWxJEZdWgeO4=vNQ@mail.gmail.com> <20180613010427.GD3593@linux.vnet.ibm.com>
-In-Reply-To: <20180613010427.GD3593@linux.vnet.ibm.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Jun 2018 18:11:50 -0700
-Message-ID: <CA+55aFyWS-MC44k=LnGWr-Kq4_DRkJmub00Fj-tVrGxCL-PxGA@mail.gmail.com>
-Subject: Re: [GIT PULL] Please pull NFS client changes for 4.18
-To:     Paul McKenney <paulmck@linux.vnet.ibm.com>
-Cc:     trondmy@hammerspace.com, NeilBrown <neilb@suse.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180612134200.17456-5-andr2000@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806130011
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 6:02 PM Paul E. McKenney
-<paulmck@linux.vnet.ibm.com> wrote:
->
-> We did review this one, and Neil did make requested changes to the comment
-> header and documentation.
 
-Oh, I checked the commit for "acked-by" from you and didn't see any,
-so I was assuming this was just Neil and Trond on their own..
 
-            Linus
+On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
+> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+> 
+> Extend grant table module API to allow allocating buffers that can
+> be used for DMA operations and mapping foreign grant references
+> on top of those.
+> The resulting buffer is similar to the one allocated by the balloon
+> driver in terms that proper memory reservation is made
+> ({increase|decrease}_reservation and VA mappings updated if needed).
+> This is useful for sharing foreign buffers with HW drivers which
+> cannot work with scattered buffers provided by the balloon driver,
+> but require DMAable memory instead.
+> 
+> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+
+with a small nit below
+
+
+> ---
+>   drivers/xen/Kconfig       | 13 ++++++
+>   drivers/xen/grant-table.c | 97 +++++++++++++++++++++++++++++++++++++++
+>   include/xen/grant_table.h | 18 ++++++++
+>   3 files changed, 128 insertions(+)
+> 
+> diff --git a/drivers/xen/Kconfig b/drivers/xen/Kconfig
+> index e5d0c28372ea..39536ddfbce4 100644
+> --- a/drivers/xen/Kconfig
+> +++ b/drivers/xen/Kconfig
+> @@ -161,6 +161,19 @@ config XEN_GRANT_DEV_ALLOC
+>   	  to other domains. This can be used to implement frontend drivers
+>   	  or as part of an inter-domain shared memory channel.
+>   
+> +config XEN_GRANT_DMA_ALLOC
+> +	bool "Allow allocating DMA capable buffers with grant reference module"
+> +	depends on XEN && HAS_DMA
+> +	help
+> +	  Extends grant table module API to allow allocating DMA capable
+> +	  buffers and mapping foreign grant references on top of it.
+> +	  The resulting buffer is similar to one allocated by the balloon
+> +	  driver in terms that proper memory reservation is made
+> +	  ({increase|decrease}_reservation and VA mappings updated if needed).
+
+I think you should drop the word "terms" and say "is made *by*" and "VA 
+mappings *are* updated"
+
+And similar change in the commit message.
+
+-boris
+
