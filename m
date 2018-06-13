@@ -6,46 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 35C7FC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:15:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B80D5C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:18:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E039E208AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:15:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E039E208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DA232086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 00:18:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DA232086D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934904AbeFMAPC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 20:15:02 -0400
-Received: from mga18.intel.com ([134.134.136.126]:51421 "EHLO mga18.intel.com"
+        id S934942AbeFMASa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 20:18:30 -0400
+Received: from gate.crashing.org ([63.228.1.57]:37284 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933029AbeFMAPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 20:15:01 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 17:15:00 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
-   d="scan'208";a="63575007"
-Received: from ppenchax-mobl.amr.corp.intel.com ([10.254.98.204])
-  by fmsmga001.fm.intel.com with ESMTP; 12 Jun 2018 17:15:00 -0700
-Message-ID: <e40e926c35ae036c4b6f9ebc33223a2dc5c3eff2.camel@linux.intel.com>
-Subject: Re: [PATCH] hid: intel_ish-hid: ipc: register more pm callbacks to
- support hibernation
-From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To:     "Xu, Even" <even.xu@intel.com>, Jiri Kosina <jikos@kernel.org>
-Cc:     "benjamin.tissoires@redhat.com" <benjamin.tissoires@redhat.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Tue, 12 Jun 2018 17:14:59 -0700
-In-Reply-To: <9577C59DB499174B9340876B077C2E9569DF11EC@SHSMSX101.ccr.corp.intel.com>
-References: <20180611015650.51385-1-srinivas.pandruvada@linux.intel.com>
-         <nycvar.YFH.7.76.1806121651460.6203@cbobk.fhfr.pm>
-         <634cd945beca786dc77876f71e39459cef6fbd75.camel@linux.intel.com>
-         <9577C59DB499174B9340876B077C2E9569DF11EC@SHSMSX101.ccr.corp.intel.com>
+        id S933126AbeFMAS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 20:18:29 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5D0IOiX018643;
+        Tue, 12 Jun 2018 19:18:25 -0500
+Message-ID: <ddc9a616517f8c4255efe2f57d13d3b3ba81ee89.camel@kernel.crashing.org>
+Subject: Re: [PATCH] drivers/of: Add devm_of_iomap()
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Wed, 13 Jun 2018 10:18:24 +1000
+In-Reply-To: <CAHp75VfV7actoXkMUbh9KwAXR1FKR_VZ5RAuaL-pKLSynFi-3g@mail.gmail.com>
+References: <23be2945b593a36d8fa1970bb579389c0f892a3e.camel@kernel.crashing.org>
+         <CAHp75VfJNrviiiam9p49+6_oSjW+YH8vwjcZ2hn5Ux5mHgDCQw@mail.gmail.com>
+         <53ef03b26a17738dc1465ce85562c9611ad415f8.camel@kernel.crashing.org>
+         <CAHp75Vcdaejn=eq740YNdscSv9zX9xj3RzYp=AFs8HFprw34_Q@mail.gmail.com>
+         <5d932502d9985cdfa6540480ea5ce6b0730502a1.camel@kernel.crashing.org>
+         <CAHp75VfV7actoXkMUbh9KwAXR1FKR_VZ5RAuaL-pKLSynFi-3g@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,78 +47,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-13 at 00:05 +0000, Xu, Even wrote:
-> Ok, sure, I will update patch comments and resubmit.
-Can you also add in the sign-off area
-
-
-Cc: stable@vger.kernel.org
-
-Thanks,
-Srinivas
-
-> Thanks Srinivas!
-> 
-> Best Regards,
-> Even Xu
-> 
-> 
-> 
-> -----Original Message-----
-> From: Srinivas Pandruvada [mailto:srinivas.pandruvada@linux.intel.com
-> ] 
-> Sent: Tuesday, June 12, 2018 11:31 PM
-> To: Jiri Kosina <jikos@kernel.org>; Xu, Even <even.xu@intel.com>
-> Cc: benjamin.tissoires@redhat.com; linux-input@vger.kernel.org; linux
-> -kernel@vger.kernel.org; Xu, Even <even.xu@intel.com>
-> Subject: Re: [PATCH] hid: intel_ish-hid: ipc: register more pm
-> callbacks to support hibernation
-> 
-> On Tue, 2018-06-12 at 16:53 +0200, Jiri Kosina wrote:
-> > On Sun, 10 Jun 2018, Srinivas Pandruvada wrote:
-> > 
-> > > From: Even Xu <even.xu@intel.com>
+On Wed, 2018-06-13 at 02:16 +0300, Andy Shevchenko wrote:
+> On Wed, Jun 13, 2018 at 1:58 AM, Benjamin Herrenschmidt
+> <benh@kernel.crashing.org> wrote:
+> > On Tue, 2018-06-12 at 19:53 +0300, Andy Shevchenko wrote:
 > > > 
-> > > Current ish driver only register resume/suspend PM callbacks
-> > > which 
-> > > don't support hibernation (suspend to disk). Now use the
-> > > SIMPLE_DEV_PM_OPS() MACRO instead of struct dev_pm_ops directly.
-> > > The suspend and resume functions will now be used for both
-> > > suspend 
-> > > to RAM and hibernation.
+> > > > > It feels like a wrong approach.
+> > > > > Can OF graph help here? Would it be better approach?
+> > > > 
+> > > > I don't quite understand what your objection is nor what "OF graph"
+> > > > is...
 > > > 
-> > > If power management is disable, SIMPLE_DEV_PM_OPS will do
-> > > nothing, 
-> > > the suspend and resume related functions won't be used, so mark
-> > > them 
-> > > as __maybe_unused to clarify that this is intended behavior, and 
-> > > remove #ifdefs for power management.
+> > > There is no objection per se, just a doubt that this is a right thing to do.
+> > > I might be wrong, of course.
+> > > 
+> > > OF graph nodes is a special API that allows you to access like you
+> > > said "different node of device-tree".
+> > > https://elixir.bootlin.com/linux/latest/source/Documentation/devicetree/bindings/graph.txt
 > > 
-> > This describes details the patch does on code level, but what are
-> > the 
-> > user observable effects? Hibernation resume doesn't fail any more?
-> > Hibernation
-> > is possible (and wasn't before)? Did kernel crash while trying to 
-> > hibernate and this is the fix? Or ... ?
+> > So I had a look and this is just an example on how to use phandles to
+> > link ports and endpoints... I fail to see how that relates to what this
+> > patch does.
 > 
-> Even,
-> Can you add more details and resubmit ASAP?
+> Because your patch does nothing except another layring of the existing APIs.
+
+I'm really having a hard time understanding what you are going on
+about..
+
+Yes, it's a helper that combines two existing API functions, the goal
+being to generally replace the use of the existing of_iomap whenever
+possible. It makes sense and makes callers simpler and less bug prone.
+
 > 
-> Basically after hiberation, the ISH can't resume properly and user
-> may not see sensor events (for example: screen rotation may not
-> work).
-> User will not see a crash or panic or anything except the following
-> message in log:
-> hid-sensor-hub 001F:8086:22D8.0001: timeout waiting for response from
-> ISHTP device 
+> > In the driver I'm doing for example, I do use a similar technique to
+> > "point" to the other node. In this case, this is a coprocessor in the
+> > SoC and I'm linking to the node that represent its interrupt controller
+> > (and its not a full fledged OS running there so we don't have a full
+> > interrupt tree for it).
 > 
-> So this is adding support for S4/hiberbation to ISH.
-> 
-> 
-> 
-> Thanks,
-> Srinivas
-> 
-> > 
-> > Thanks,
-> > 
+> Hmm... So, you are trying to solve problem with other methods which
+> might be not so suitable at all?
+
+Again, I cannot understand what you are going on about, what is "not
+suitable" to what purpose ?
+
+It's fairly common for nodes to point to each other. We've been doing
+that since the dawn of the device-tree.
+
+In this case, we have a coprocessor bound to a device and pointing to
+its interrupt controller, and we need to get to that and map it, I fail
+to see what the issue is and in what way this is "not suitable".
+
+But there are many other uses of things like of_iomap() which could
+benefit from switching to devm_of_iomap() and thus getting the
+automated cleanup on exit and appropriate request of the memory
+resource.
+
+(hint: I wrote of_iomap and a good bulk of what's in
+drivers/of/address.c...
+
+Ben.
+
