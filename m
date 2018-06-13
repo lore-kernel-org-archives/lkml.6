@@ -1,246 +1,322 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9DA11C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:38:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C3B15C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53831208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:38:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53831208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D61C208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:40:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XLEHOi+V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D61C208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935698AbeFMTiW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 15:38:22 -0400
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:38950 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934978AbeFMTge (ORCPT
+        id S935677AbeFMTkL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 15:40:11 -0400
+Received: from mail-wm0-f45.google.com ([74.125.82.45]:54610 "EHLO
+        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935320AbeFMTkI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 15:36:34 -0400
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DJYMxK061500
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 15:36:34 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2jk8u79uve-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 15:36:34 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
-        Wed, 13 Jun 2018 13:36:33 -0600
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Jun 2018 13:36:29 -0600
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DJaSTe9961898
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 12:36:28 -0700
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1320EC605B;
-        Wed, 13 Jun 2018 13:36:28 -0600 (MDT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6BD7BC6057;
-        Wed, 13 Jun 2018 13:36:27 -0600 (MDT)
-Received: from talon7.ibm.com (unknown [9.41.102.69])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Jun 2018 13:36:27 -0600 (MDT)
-From:   Eddie James <eajames@linux.vnet.ibm.com>
-To:     linux-i2c@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        wsa@the-dreams.de, robh+dt@kernel.org, benh@kernel.crashing.org,
-        joel@jms.id.au, mark.rutland@arm.com, gregkh@linuxfoundation.org,
-        rdunlap@infradead.org, andy.shevchenko@gmail.com, peda@axentia.se,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v10 3/7] i2c: fsi: Add port structures
-Date:   Wed, 13 Jun 2018 14:36:15 -0500
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
-References: <1528918579-27602-1-git-send-email-eajames@linux.vnet.ibm.com>
-X-TM-AS-GCONF: 00
-x-cbid: 18061319-0004-0000-0000-00001452EB79
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009184; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01046493; UDB=6.00535962; IPR=6.00825469;
- MB=3.00021628; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 19:36:32
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061319-0005-0000-0000-000087BADDA7
-Message-Id: <1528918579-27602-4-git-send-email-eajames@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806130207
+        Wed, 13 Jun 2018 15:40:08 -0400
+Received: by mail-wm0-f45.google.com with SMTP id o13-v6so6629935wmf.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 12:40:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=j8xffuvTMzc/YJbqukUKE6C62B3erBMAzfWGDvzC7ug=;
+        b=XLEHOi+V5vObllJytnWmRjQ+m/2okdg+WsAHRlr9k9Wx5cWsLhCuZVPVxn4PE/eIQq
+         a8yuTMQSUhg8V8ouauBos8Eem+TLFIDsFStVejEtfB25KTWO+Kfq01i2DBrJW6e0dBfa
+         XbvO8oZtTrbyRaaPGOAW7pBEnT17ZMTK8Pi94=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=j8xffuvTMzc/YJbqukUKE6C62B3erBMAzfWGDvzC7ug=;
+        b=ePxL0jm0tNJCXQW6JB63KsBPlYd5nBFdAdUy1Ls+37ULOugcWv/3Zzssb7pk4iNRwV
+         WEVgyb1cI+WRfdJ3x89j07Y0EFoHtfzb1hHV4Y23k/yujhvNNZQvD7M3gZHT7y74hFxK
+         UW60wfNOdbYNHK7qf8jfLCEbhRBwcEbJuxY6CFKERuHLNAloXOtKg4kWYj9bx08lxNWT
+         5UwvIxuOqoa9apxTWgD4LybXgOgUrS6usrw4a69Bb1RyUmypFg/HDlrhR60kR0jj9/q3
+         hHTrcmpQb14fNfiETpnHq8H4qjKzBgpJ5f1TthA/Q99eIK23S2eUILbmnrtE+R22e7KA
+         3J4g==
+X-Gm-Message-State: APt69E1xM/WFl5h9Ds2zFk6XqtQzN+p9R3JV5AEzBicZHEieBOUUWFar
+        ROjYS/l5CkiTIREvrhFLzSU7Wi/yXYsCeo2TFuk2zA==
+X-Google-Smtp-Source: ADUXVKKF6W2SQREJRdBGlcrWhAZDwKbGdvuS4iwnhGlCBP8QiO3vG1wRzoP+PaHlypH461cTAFOzlS+BJdf0E4pt/QM=
+X-Received: by 2002:a50:b52a:: with SMTP id y39-v6mr5445821edd.195.1528918807610;
+ Wed, 13 Jun 2018 12:40:07 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a50:a48a:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 12:40:07
+ -0700 (PDT)
+In-Reply-To: <075b99a1-2a29-f6dc-e9f2-99f895c27d35@arm.com>
+References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
+ <1527858967-16047-7-git-send-email-suzuki.poulose@arm.com>
+ <20180612204802.GA15817@rob-hp-laptop> <a1c0749b-9c97-b45f-716f-a62ae07af278@arm.com>
+ <5448BBB7-93FE-400F-9D87-FABF5DE0539C@arm.com> <c0d531ec-9201-bfd8-e6c3-9140698b0697@arm.com>
+ <HE1PR0802MB24127EC935B9AF6F82AB3B6EEE7E0@HE1PR0802MB2412.eurprd08.prod.outlook.com>
+ <075b99a1-2a29-f6dc-e9f2-99f895c27d35@arm.com>
+From:   Mathieu Poirier <mathieu.poirier@linaro.org>
+Date:   Wed, 13 Jun 2018 13:40:07 -0600
+Message-ID: <CANLsYkx9cjV-bWg7aLg-kJT7x7DtwTHdsYzzM8A3+cFFnu_mNg@mail.gmail.com>
+Subject: Re: [RFC PATCH 6/8] dts: coresight: Clean up the device tree graph bindings
+To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Cc:     Matt Sealey <Matt.Sealey@arm.com>, Rob Herring <robh@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Sudeep Holla <Sudeep.Holla@arm.com>,
+        Mark Rutland <Mark.Rutland@arm.com>,
+        "frowand.list@gmail.com" <frowand.list@gmail.com>,
+        Charles Garcia-Tobin <Charles.Garcia-Tobin@arm.com>,
+        John Horley <John.Horley@arm.com>,
+        "mike.leach@linaro.org" <mike.leach@linaro.org>,
+        "coresight@lists.linaro.org" <coresight@lists.linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add and initialize I2C adapters for each port on the FSI-attached I2C
-master. Ports for each master are defined in the devicetree.
+On 13 June 2018 at 11:07, Suzuki K Poulose <Suzuki.Poulose@arm.com> wrote:
+> Hi Matt,
+>
+> On 13/06/18 16:47, Matt Sealey wrote:
+>>
+>> Hi Suzuki,
+>>
+>>>> Why not use =E2=80=9Cunit=E2=80=9D?
+>>>>
+>>>> I believe we had this discussion years ago about numbering serial port=
+s
+>>>> and sdhci (i.e. how do you know it=E2=80=99s UART0 or UART1 from just =
+the
+>>>> address?
+>>>> Some SoC=E2=80=99s don=E2=80=99t address sequentially *or* in a forwar=
+d direction) - I
+>>>> believe it=E2=80=99s not exactly codified in ePAPR, not am I sure wher=
+e it may
+>>>> be
+>>>> otherwise, but it exists.
+>>>
+>>>
+>>> We have different situation here. We need to know *the port number* as
+>>> understood by the hardware, so that we can enable *the specific* port f=
+or
+>>> a given path.
+>>
+>>
+>> For the purposes of abstraction, each port will have the property of
+>> having
+>> a node which is pointed to by other nodes, and in the case of a true ATB
+>> endpoint, no other nodes behind it.
+>>
+>> It doesn't matter what the HW numbers it as as long as the driver can
+>> derive
+>> it from whatever you put in the DT. So a funnel (which is ~8 ports muxed
+>> into
+>> one output):
+>>
+>>     f1p0: port {
+>>        unit =3D <0>;
+>>        endpoint =3D <&f1out>;
+>>     };
+>>     f1p1: port {
+>>        unit =3D <4>;
+>>        endpoint =3D <&f1out>;
+>>     };
+>>     f1out: port {
+>>        endpoint =3D <&etf1>;
+>>     };
+>>
+>> "unit" here is specific to the driver's understanding of ports within it=
+'s
+>
+>
+> I may be missing, but is "unit" something that already exists and used by
+> DT bindings already ? Or is this something new that we are proposing ?
+>
+>> own cycle of the graph. For a replicator you can invert the logic - inpu=
+t
+>> ports don't need a unit, but the two outputs are filtered in CoreSight n=
+ot
+>
+>
+> I would prefer to make the new property mandatory for all the ports to av=
+oid
+> a potential problem in the future.
+>
+> How do you represent a TMC-ETF which has one input and one output connect=
+ion
+> ?
+> Also what happens if we ever get a component which has m-to-n connections=
+ ?
+>
+>> by leg but by transiting ATB ID in groups of 16 IDs. In that case maybe
+>> you would want to describe all 8 possible units on each leg with the fir=
+st
+>> ID it would filter? Or just list tuples of filter IDs <id, first, last>
+>
+>
+> I am failing to follow the ATB ID group description above. As per the TRM=
+,
+> e.g, replicator filters the "trace stream" based on the "trace ID", which=
+ I
+> believe can be programmed via IDFILTER<n> register. So why would we need
+> that
+> to be part of the DT ?
+>
+>>
+>> Who cares, really, as long as the driver knows what it means.
+>>
+>> You don't need to namespace every property.
+>>
+>>> As I mentioned above, we need the hardware numbers to enable the
+>>> "specific" port.
+>>
+>>
+>> Okay and how is this not able to be prescribed in a binding for
+>> "arm,coresight-funnel"
+>> that:
+>>
+>> "input ports are numbered from 0 to N where N is the maximum input port
+>> number. This number is identified with the "unit" property, which direct=
+ly
+>> corresponds to the bit position in the funnel Ctrl_Reg register, and the
+>> bit position multiplied by 3 for each 3-bit priority in the funnel
+>> Priority_Ctrl_Reg, with N having a maximum of the defined register
+>> bitfield
+>> DEVID[PORTCOUNT], minus one, for that component"
+>
+>
+> The description looks over complicated to me at least, even after having
+> known
+> bit of the programming interface of the components. I would prefer stayin=
+g
+> closer to the terms used in the TRM ("slave/master" interfaces) and make =
+it
+> easier for people to write the DT.
+>
+>>
+>> Or a replicator:
+>>
+>> "output ports are numbered per the CoreSight ATB Replicator specificatio=
+n,
+>> unit corresponding to the IDFILTERn register controlling ID filters for
+>> that leg, with a maximum of the defined register bitfield DEVID[PORTNUM]=
+,
+>> minus one"
+>>
+>> One could clarify it, even, with labels for readability ("label"
+>> definitely
+>> is a well defined if also completely arbitrary property).
+>>
+>> ..
+>>
+>>> static void funnel_enable_hw(struct funnel_drvdata *drvdata, int port)
+>>> {
+>>>           u32 functl;
+>>>
+>>>           CS_UNLOCK(drvdata->base);
+>>>
+>>>           functl =3D readl_relaxed(drvdata->base + FUNNEL_FUNCTL);
+>>>           functl &=3D ~FUNNEL_HOLDTIME_MASK;
+>>>           functl |=3D FUNNEL_HOLDTIME;
+>>>           functl |=3D (1 << port);
+>>>           writel_relaxed(functl, drvdata->base + FUNNEL_FUNCTL);
+>>>           writel_relaxed(drvdata->priority, drvdata->base +
+>>> FUNNEL_PRICTL);
+>>>
+>>>           CS_LOCK(drvdata->base);
+>>> }
+>>>
+>>> No we don't need to parse it in both ways, up and down. Btw, the trace
+>>> paths are not statically created. They are done at runtime, as configur=
+ed
+>>> by the user.
+>>
+>>
+>> You do realize this isn't how the hardware works, correct?
+>
+>
+> The "trace paths" mentioned above were indeed the software path, which
+> was constructed at runtime. The graph connections are indeed a one time
+> parsing at probe time and as you said they don't change. And by configuri=
+ng,
+> I mean selecting the "source" and the "sink".
+>
+>>
+>> Trace paths are fixed, they may diverge with different configurations, b=
+ut
+>> the full CoreSight topology (all funnels, replicators and intermediary
+>> Components) is entirely unchangeable.
+>>
+>> The DT should provide the information to provide a reference acyclic
+>> directed
+>> graph of the entire topology (or entirely reasonably programmable topolo=
+gy
+>> where
+>> at all possible) - if a user wants to trace from ETM_0 then they only
+>> have particular paths to particular sinks, for instance ETM_0 and ETF_0
+>> may be on their own path, so you cannot just "configure as a user"
+>> a path from ETM_1 to ETF_0 since there isn't one.
+>
+>
+>>
+>> Walking said graphs with the knowledge that CoreSight specifically
+>> disallows
+>> loopbacks in ATB topology is basic computer science problem - literally =
+a
+>> matter of topological sorting. But let's build a graph once and traverse
+>> it -
+>> don't build the graph partially each time or try and build it to
+>> cross-check
+>> every time. The paths are wires in the design, lets not fake to the user
+>> that there is any configurability in that or try and encode that in the
+>> DT.
+>
+>
+> Sorry for the confusion, as explained above, it is indeed a one time pass=
+.
+>
+>>
+>>> Coming back to your suggestion of "unit", what does it imply ?
+>>
+>>
+>> Whatever the driver likes. For uart and mmc, it was just a spurious numb=
+er
+>> but it could be applied as the end of, say, ttyS<N> or mmcblk<N>p3 or us=
+ed
+>> in any other driver-specific manner. The number you put in is up to you,
+>> but the valid numbers would be in the binding for that particular device=
+.
+>>
+>>> Its too generic a term for something as concrete as a port number.
+>>
+>>
+>> Is it?
+>>
+>> Why would you need a whole other property type to encode a u32 that
+>> describes an arbitrary number specific to that hardware device?
+>
+>
+> So, if the suggestion is to use an existing property "unit", I am fine
+> with it, if people agree to it.
 
-Signed-off-by: Eddie James <eajames@linux.vnet.ibm.com>
----
- drivers/i2c/busses/i2c-fsi.c | 90 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+If we're going to have something sharply different than ACPI I prefer
+Rob's idea.
 
-diff --git a/drivers/i2c/busses/i2c-fsi.c b/drivers/i2c/busses/i2c-fsi.c
-index 694bbb4..695818f 100644
---- a/drivers/i2c/busses/i2c-fsi.c
-+++ b/drivers/i2c/busses/i2c-fsi.c
-@@ -17,7 +17,10 @@
- #include <linux/fsi.h>
- #include <linux/i2c.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
- #include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/slab.h>
- 
- #define FSI_ENGID_I2C		0x7
- 
-@@ -128,6 +131,14 @@
- struct fsi_i2c_master {
- 	struct fsi_device	*fsi;
- 	u8			fifo_size;
-+	struct list_head	ports;
-+};
-+
-+struct fsi_i2c_port {
-+	struct list_head	list;
-+	struct i2c_adapter	adapter;
-+	struct fsi_i2c_master	*master;
-+	u16			port;
- };
- 
- static int fsi_i2c_read_reg(struct fsi_device *fsi, unsigned int reg,
-@@ -181,9 +192,38 @@ static int fsi_i2c_dev_init(struct fsi_i2c_master *i2c)
- 	return fsi_i2c_write_reg(i2c->fsi, I2C_FSI_WATER_MARK, &watermark);
- }
- 
-+static int fsi_i2c_set_port(struct fsi_i2c_port *port)
-+{
-+	int rc;
-+	struct fsi_device *fsi = port->master->fsi;
-+	u32 mode, dummy = 0;
-+
-+	rc = fsi_i2c_read_reg(fsi, I2C_FSI_MODE, &mode);
-+	if (rc)
-+		return rc;
-+
-+	if (FIELD_GET(I2C_MODE_PORT, mode) == port->port)
-+		return 0;
-+
-+	mode = (mode & ~I2C_MODE_PORT) | FIELD_PREP(I2C_MODE_PORT, port->port);
-+	rc = fsi_i2c_write_reg(fsi, I2C_FSI_MODE, &mode);
-+	if (rc)
-+		return rc;
-+
-+	/* reset engine when port is changed */
-+	return fsi_i2c_write_reg(fsi, I2C_FSI_RESET_ERR, &dummy);
-+}
-+
- static int fsi_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
- 			int num)
- {
-+	int rc;
-+	struct fsi_i2c_port *port = adap->algo_data;
-+
-+	rc = fsi_i2c_set_port(port);
-+	if (rc)
-+		return rc;
-+
- 	return -EOPNOTSUPP;
- }
- 
-@@ -202,23 +242,72 @@ static u32 fsi_i2c_functionality(struct i2c_adapter *adap)
- static int fsi_i2c_probe(struct device *dev)
- {
- 	struct fsi_i2c_master *i2c;
-+	struct fsi_i2c_port *port;
-+	struct device_node *np;
- 	int rc;
-+	u32 port_no;
- 
- 	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
- 	if (!i2c)
- 		return -ENOMEM;
- 
- 	i2c->fsi = to_fsi_dev(dev);
-+	INIT_LIST_HEAD(&i2c->ports);
- 
- 	rc = fsi_i2c_dev_init(i2c);
- 	if (rc)
- 		return rc;
- 
-+	/* Add adapter for each i2c port of the master. */
-+	for_each_available_child_of_node(dev->of_node, np) {
-+		rc = of_property_read_u32(np, "reg", &port_no);
-+		if (rc || port_no > USHRT_MAX)
-+			continue;
-+
-+		port = kzalloc(sizeof(*port), GFP_KERNEL);
-+		if (!port)
-+			break;
-+
-+		port->master = i2c;
-+		port->port = port_no;
-+
-+		port->adapter.owner = THIS_MODULE;
-+		port->adapter.dev.of_node = np;
-+		port->adapter.dev.parent = dev;
-+		port->adapter.algo = &fsi_i2c_algorithm;
-+		port->adapter.algo_data = port;
-+
-+		snprintf(port->adapter.name, sizeof(port->adapter.name),
-+			 "i2c_bus-%u", port_no);
-+
-+		rc = i2c_add_adapter(&port->adapter);
-+		if (rc < 0) {
-+			dev_err(dev, "Failed to register adapter: %d\n", rc);
-+			kfree(port);
-+			continue;
-+		}
-+
-+		list_add(&port->list, &i2c->ports);
-+	}
-+
- 	dev_set_drvdata(dev, i2c);
- 
- 	return 0;
- }
- 
-+static int fsi_i2c_remove(struct device *dev)
-+{
-+	struct fsi_i2c_master *i2c = dev_get_drvdata(dev);
-+	struct fsi_i2c_port *port;
-+
-+	list_for_each_entry(port, &i2c->ports, list) {
-+		i2c_del_adapter(&port->adapter);
-+		kfree(port);
-+	}
-+
-+	return 0;
-+}
-+
- static const struct fsi_device_id fsi_i2c_ids[] = {
- 	{ FSI_ENGID_I2C, FSI_VERSION_ANY },
- 	{ }
-@@ -230,6 +319,7 @@ static int fsi_i2c_probe(struct device *dev)
- 		.name = "i2c-fsi",
- 		.bus = &fsi_bus_type,
- 		.probe = fsi_i2c_probe,
-+		.remove = fsi_i2c_remove,
- 	},
- };
- 
--- 
-1.8.3.1
+Mathieu
 
+>
+>
+> Thanks for the comments.
+>
+> Cheers,
+> Suzuki
