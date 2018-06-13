@@ -2,167 +2,105 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4DE44C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:13:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9CEE2C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEB7D20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:13:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50B02208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:13:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="ADycsJse";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kwIaxhPX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEB7D20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U1hnH3SC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50B02208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754538AbeFMINQ (ORCPT
+        id S1754569AbeFMINf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:13:16 -0400
-Received: from mail-ot0-f196.google.com ([74.125.82.196]:35371 "EHLO
-        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754495AbeFMINL (ORCPT
+        Wed, 13 Jun 2018 04:13:35 -0400
+Received: from mail-vk0-f45.google.com ([209.85.213.45]:42281 "EHLO
+        mail-vk0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754479AbeFMINa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:13:11 -0400
-Received: by mail-ot0-f196.google.com with SMTP id q17-v6so1981676otg.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 01:13:11 -0700 (PDT)
+        Wed, 13 Jun 2018 04:13:30 -0400
+Received: by mail-vk0-f45.google.com with SMTP id s187-v6so985655vke.9;
+        Wed, 13 Jun 2018 01:13:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=9MV/ItVzMmJXWaz308SYtRyRPaWVhi1bsWeAx57JmuQ=;
-        b=ADycsJseD4XbWvGcOhOJUUWo7Xe5eG3fL+MoIth+LjhlWATIlHW/foX6hvooo6egXr
-         w/AlckuVcWeHnGSF21ZTNilTHvvcemsCor+aQXBejlwk/85EFgyDmQ9u01Mrb8zyBVVR
-         b35PwV3t4UdLJciONspaW1Jd2QaoShiOf7FiNZen9YDQgPv3XriDjrdc9eoV+WhzmVow
-         edn+7i1eeWNlZ6E6wBTyfB+4JUnVBurAYxJ71J+Dams4wiv8ZILQSj+GdIha2Ypx9mft
-         YXFMco9s6qCjSscu/rObKx3vBHDXosCPb3Ep8/kLIjWPs0ybHOMXrMEwpDNxyjHuwIPj
-         P5aQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=9MV/ItVzMmJXWaz308SYtRyRPaWVhi1bsWeAx57JmuQ=;
-        b=kwIaxhPXmrUWefOlVZyktqyrsk5osi3vI1Z6SVNDb13eQ86DTYcSy5KD1ohRig/pHH
-         LpWQoOrjA65tRs32i+m68Z2585phdxx8M8mXYuulObrRjoqnx6QJVASzJiBs0YpMz6+d
-         hwkFq8bbdCe/wiJhYqfVbSnDq7aVC5KZpmm8Y=
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=2H4YwMKEDRVbgnq2YT+Ve6QkezSPYXmZ4W8Ct2Cw2As=;
+        b=U1hnH3SCyWxJIIG4+MTgUOWPMqumoR8k4XpZa++RSGsGO2LF+o4amWL5qRPOg2pLqo
+         qLHDYnKlOu70fv843SE2YOSqk3NvnKBB2H9snd2J4wxB0qyYk1CwaH1opFJDdX+wuFMg
+         D3A8GlIA1JmQLGcZ/JirKr6tag/sKOWQiW6azHgSxyPb70gW1ahRIPbheG+ryfagSd6p
+         kQaBO8Kupa0hIV+zBZsqLNga4dtDa7FHme5izDIoQQZLBG012mle4aSFySJwgwOT6fNw
+         1VMTRlSs3y1ChAJZ/3LlUNGYtNO0InQ/mSqEH0F9goMzdifUEPHUk5XybFH6IY/2hJ+K
+         clDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=9MV/ItVzMmJXWaz308SYtRyRPaWVhi1bsWeAx57JmuQ=;
-        b=uFFJRuAu27aDllit/cNoxhZ0U5WRyIkxYXUW6thj1iYhVS9I76GBLuTu6IYu+ovBnm
-         0k83TWYtH6VMPxwmWbp61E+UHV5+fRpFBz6uNvD6HZs5HngffoUdO11Sn6GmOv52LNI/
-         t50hzDgLAOA5lo8g4XLI4pQ7fzvjhRVHMeTbzytNwcP6iHLICIj0QV4ens43l6cDb+eJ
-         DL9VqJKGlgOs80n3sej1ZvAXO1GrP6ueV80HgOUCFSpozt6aDkHh/gWAAKHb1q9jvbmC
-         NV9xS0/prnADDbpXQovFxnra568+IeHtOwiMyLvErTDJVKAYlchlS1hVGb4p78NU5H5b
-         zdIw==
-X-Gm-Message-State: APt69E3bIlpMuvG4nHhcjFuG7RIljyCnAhOngHtOyqWK8uexWt6RAfVy
-        fzWof0gOSFjtiaK3O+46ccFl6byaS9diSBqiPcqw/g==
-X-Google-Smtp-Source: ADUXVKJjnY7BL6LvSgRCxG4hURi+2lW/6Exyc5orSl7YXj4nykFxAMdkQkI4/ARdRBOxBG+dpv7rAcRwm1WjZkAoyz8=
-X-Received: by 2002:a9d:3803:: with SMTP id i3-v6mr2311613otc.59.1528877590768;
- Wed, 13 Jun 2018 01:13:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=2H4YwMKEDRVbgnq2YT+Ve6QkezSPYXmZ4W8Ct2Cw2As=;
+        b=E65TYG9jwU+jb9Aw0o//79hC3I9LDfENXatcosr1vF0iYeImhn3OZN0/T6+QXqf74x
+         3dJvHeWkiUaB8nQVGxlFZlnhWmqkMr/1BDpPKb95zhYg5ujFH5bx+yhvCfzukmYW0hmj
+         2JXiQiBpPRltlkptWX5IdDOqNKjPZ0kIuqEUAjjWwohiBfiyYQNatseJgIyG49LXtW+m
+         RhGRr4WUnFbJX6eI+n3XmYEgFtkZaUnQZ9QwW9bTdoMcnW3Fz5wEC7f/7epu3gUAwJ9x
+         /XgAod4gqclvCk2aRASjsRQc6hh8kkKtwUID2d7DfvnMT016/mIDsWg8VfQ5bHoR18l7
+         ErLg==
+X-Gm-Message-State: APt69E0Ch2apQ1c17BgYhOSsAmJ4Z0XcNAs7qehS+Mt4PLjrDh2juRDW
+        8GQWKYun1AwkuDon274ZASlTS6Ft+jBHJTZfojY=
+X-Google-Smtp-Source: ADUXVKJwmRkRJ6lc6uYuAdpsubDOcMjCArLAFAwDm2bz7CO3jfvAeOmtbPMjWT+zv3g8XaEUzHZbzlueMzyfrCMSmIk=
+X-Received: by 2002:a1f:8e0f:: with SMTP id q15-v6mr2496323vkd.161.1528877609049;
+ Wed, 13 Jun 2018 01:13:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4a:99ab:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 01:13:10
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 01:13:28
  -0700 (PDT)
-In-Reply-To: <20180612193507.GO14924@minitux>
-References: <cover.1528799892.git.amit.kucheria@linaro.org>
- <683ceb9a7d283bcad47fc6e8e4fcfbd7e76c1018.1528799892.git.amit.kucheria@linaro.org>
- <20180612193507.GO14924@minitux>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Wed, 13 Jun 2018 11:13:10 +0300
-X-Google-Sender-Auth: QFjmco7sEFf-V6Wz2iDANlwYnD0
-Message-ID: <CAHLCerOaQ6LmuGkBNu6SuVXXX8hQ+yJJ9-N6NAyLhtTp_yCK-w@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] dt: qcom: 8996: thermal: Move to DT initialisation
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>
+In-Reply-To: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 13 Jun 2018 11:13:28 +0300
+Message-ID: <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+Subject: Re: ACPI support in common clock framework
+To:     Srinath Mannam <srinath.mannam@broadcom.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 10:35 PM, Bjorn Andersson
-<bjorn.andersson@linaro.org> wrote:
-> On Tue 12 Jun 03:54 PDT 2018, Amit Kucheria wrote:
->
->> We also split up the regmap address space into two, one for the TM
->> registers, the other for the SROT registers. This was required to deal with
->> different address offsets for the TM and SROT registers across different
->> SoC families.
->>
->> Since tsens-common.c/init_common() currently only registers one address space, the order is important (TM before SROT).This is OK since the code doesn't really use the SROT functionality yet.
->
-> Please line wrap this.
->
->>
->> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
->> ---
->>  arch/arm64/boot/dts/qcom/msm8996.dtsi | 12 +++++++++++-
->>  drivers/thermal/qcom/tsens-8996.c     |  1 -
->>  2 files changed, 11 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
->> index 410ae78..b4aab18 100644
->> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
->> @@ -451,7 +451,17 @@
->>
->>               tsens0: thermal-sensor@4a8000 {
->>                       compatible = "qcom,msm8996-tsens";
->> -                     reg = <0x4a8000 0x2000>;
->> +                     reg = <0x4a9000 0x1000>, /* TM */
->> +                           <0x4a8000 0x1000>; /* SROT */
->> +                     #qcom,sensors = <13>;
->> +                     #thermal-sensor-cells = <1>;
->> +             };
->> +
->> +             tsens1: thermal-sensor@4ac000 {
->> +                     compatible = "qcom,msm8996-tsens";
->> +                     reg = <0x4ad000 0x1000>, /* TM */
->> +                           <0x4ac000 0x1000>; /* SROT */
->> +                     #qcom,sensors = <8>;
->>                       #thermal-sensor-cells = <1>;
->>               };
->>
->> diff --git a/drivers/thermal/qcom/tsens-8996.c b/drivers/thermal/qcom/tsens-8996.c
->> index e1f7781..6e59078 100644
->> --- a/drivers/thermal/qcom/tsens-8996.c
->> +++ b/drivers/thermal/qcom/tsens-8996.c
->> @@ -79,6 +79,5 @@ static const struct tsens_ops ops_8996 = {
->>  };
->>
->>  const struct tsens_data data_8996 = {
->> -     .num_sensors    = 13,
->
-> This will cause the current 8996 dts to fail probing the tsens. I think
-> you should just leave this as is, because specifying qcom,sensors in dts
-> will overwrite this number regardless.
++Cc: Rafael, ACPI ML
 
-Ack, I didn't consider backword compatility of the code with the
-current dts. Will fix.
-
-> It also would make this change dts specific, which is convenient as it
-> breaks the interdependency between the different subsystems.
+On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
+<srinath.mannam@broadcom.com> wrote:
+> Hi Michael, Stephen,
 >
->>       .ops            = &ops_8996,
+> We are adding ACPI support in our Linux based platform.
+> At present our clock hierarchy using common clock framework through DTS.
+> Now we required ACPI support in common clock framework to upgrade our platform.
+>
+> For example, clk_get API called in many drivers to get clock device is
+> tightly coupled with DT framework.
+>
+> Please let us know, if anybody in Open Source community have plans to
+> add ACPI support for common clock framework.
+> If not please suggest us alternative method to use common clock
+> framework in ACPI use case.
+>
+> Thanks in advance.
 >
 > Regards,
-> Bjorn
+> Srinath.
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
