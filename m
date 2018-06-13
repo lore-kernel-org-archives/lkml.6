@@ -2,86 +2,135 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7CD15C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:58:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E0E68C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E62520693
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:58:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E62520693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
+	by mail.kernel.org (Postfix) with ESMTP id A138C20693
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 06:59:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A138C20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934403AbeFMG6C (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 02:58:02 -0400
-Received: from mx3.molgen.mpg.de ([141.14.17.11]:33715 "EHLO mx1.molgen.mpg.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933318AbeFMG6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 02:58:01 -0400
-Received: from [192.168.0.4] (ip5f5aec88.dynamic.kabel-deutschland.de [95.90.236.136])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: pmenzel)
-        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 17D372012BA059;
-        Wed, 13 Jun 2018 08:57:59 +0200 (CEST)
-Subject: Re: nct6775: UBSAN: shift exponent 32 is too large for 32-bit type
- 'long unsigned int'
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <d02001e2-fa4c-6a2e-cc50-a8d9a8146d57@molgen.mpg.de>
- <20180612221218.GA15406@roeck-us.net>
-From:   Paul Menzel <pmenzel+linux-hwmon@molgen.mpg.de>
-Message-ID: <0591d6af-a9f4-c874-3ae8-a9a5c7161934@molgen.mpg.de>
-Date:   Wed, 13 Jun 2018 08:57:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934426AbeFMG7K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 02:59:10 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:2767 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933318AbeFMG7J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 02:59:09 -0400
+X-UUID: d04e0021f9374b4e8bcf77404540494c-20180613
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        (envelope-from <ck.hu@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1482364207; Wed, 13 Jun 2018 14:59:05 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n2.mediatek.inc (172.21.101.79) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 14:59:03 +0800
+Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 14:59:03 +0800
+Message-ID: <1528873143.30263.1.camel@mtksdaap41>
+Subject: Re: [PATCH 15/28] drm/mediatek: add connection from RDMA1 to DSI1
+From:   CK Hu <ck.hu@mediatek.com>
+To:     Stu Hsieh <stu.hsieh@mediatek.com>
+CC:     Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 14:59:03 +0800
+In-Reply-To: <1528872242.27532.0.camel@mtksdaap41>
+References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
+         <1528687580-549-16-git-send-email-stu.hsieh@mediatek.com>
+         <1528872242.27532.0.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
 MIME-Version: 1.0
-In-Reply-To: <20180612221218.GA15406@roeck-us.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: de-DE
 Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dear Guenter,
+Hi, Stu:
 
-
-Am 13.06.2018 um 00:12 schrieb Guenter Roeck:
-
-> On Tue, Jun 12, 2018 at 11:50:45PM +0200, Paul Menzel wrote:
-
->> Building Linux with the undefined behavior sanitizer (UBSAN), loading the
->> module *nct6775* on the ASRock E350M1 shows the error below.
->>
->> ```
->> [   28.322775] UBSAN: Undefined behaviour in drivers/hwmon/nct6775.c:4179:27
->> [   28.322833] shift exponent 32 is too large for 32-bit type 'long unsigned int'
->> ```
->>
->> I believe this was introduced by commit cc66b3038254 (hwmon: (nct6775)
->> Rework temperature source and label handling), but the same issue was
->> already present before.
+On Wed, 2018-06-13 at 14:44 +0800, CK Hu wrote:
+> Hi, Stu:
 > 
-> I don't think so. The code used to be
-> 	for (i = 0; i < data->temp_label_num - 1; i++) {
-> Notice the "- 1". So it should be
-> 	for (i = 0; i < 31; i++) {
+> On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
+> > This patch add the connection from RDMA1 to DSI1
+> > 
+> > Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_drm_ddp.c | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > index 4abd5dabeccf..7e4ad5580cf6 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_drm_ddp.c
+> > @@ -28,6 +28,7 @@
+> >  #define DISP_REG_CONFIG_DISP_UFOE_MOUT_EN	0x050
+> >  #define DISP_REG_CONFIG_DISP_COLOR0_SEL_IN	0x084
+> >  #define DISP_REG_CONFIG_DISP_COLOR1_SEL_IN	0x088
+> > +#define DISP_REG_CONFIG_DSIO_SEL_IN		0x0a8
+> >  #define DISP_REG_CONFIG_DPI_SEL_IN		0x0ac
+> >  #define DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN	0x0c4
+> >  #define DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN	0x0c8
+> > @@ -84,10 +85,12 @@
+> >  #define RDMA0_MOUT_DPI0			0x2
+> >  #define RDMA0_MOUT_DSI2			0x4
+> >  #define RDMA0_MOUT_DSI3			0x5
+> > +#define RDMA1_MOUT_DSI1			0x1
+> >  #define RDMA1_MOUT_DPI0			0x2
+> >  #define RDMA1_MOUT_DPI1			0x3
+> >  #define DPI0_SEL_IN_RDMA1		0x1
+> >  #define DPI1_SEL_IN_RDMA1		(0x1 << 8)
+> > +#define DSI1_SEL_IN_RDMA1		0x1
+> >  #define COLOR1_SEL_IN_OVL1		0x1
+> >  
+> >  #define OVL_MOUT_EN_RDMA		0x1
+> > @@ -170,6 +173,9 @@ static unsigned int mtk_ddp_mout_en(enum mtk_ddp_comp_id cur,
+> >  	} else if (cur == DDP_COMPONENT_RDMA0 && next == DDP_COMPONENT_DSI3) {
+> >  		*addr = DISP_REG_CONFIG_DISP_RDMA0_MOUT_EN;
+> >  		value = RDMA0_MOUT_DSI3;
+> > +	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI1) {
+> > +		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+> > +		value = RDMA1_MOUT_DSI1;
+> >  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI0) {
+> >  		*addr = DISP_REG_CONFIG_DISP_RDMA1_MOUT_EN;
+> >  		value = RDMA1_MOUT_DPI0;
+> > @@ -198,6 +204,9 @@ static unsigned int mtk_ddp_sel_in(enum mtk_ddp_comp_id cur,
+> >  	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DPI1) {
+> >  		*addr = DISP_REG_CONFIG_DPI_SEL_IN;
+> >  		value = DPI1_SEL_IN_RDMA1;
+> > +	} else if (cur == DDP_COMPONENT_RDMA1 && next == DDP_COMPONENT_DSI1) {
+> > +		*addr = DISP_REG_CONFIG_DSIO_SEL_IN;
 > 
-> In practice it doesn't matter because "data->temp_mask & BIT(31 + 1)"
-> will always be false, causing the last loop iteration to abort, but
-> it is nevertheless wrong.
+> Does data sheet use the naming 'DSI0'? You use this register to select
+> DSI1 input.
+
+This is DSIO not DSI0, so it's OK for me.
+
+Reviewed-by: CK Hu <ck.hu at mediatek.com>
+
 > 
-> Thanks a lot for the report. I'll prepare a patch.
+> Regards,
+> CK
+> 
+> > +		value = DSI1_SEL_IN_RDMA1;
+> >  	} else if (cur == DDP_COMPONENT_OVL1 && next == DDP_COMPONENT_COLOR1) {
+> >  		*addr = DISP_REG_CONFIG_DISP_COLOR1_SEL_IN;
+> >  		value = COLOR1_SEL_IN_OVL1;
+> 
 
-Thank you for the instant response. I tested your proposed change, and, 
-as expected, the error is gone.
 
-
-Kind regards,
-
-Paul
