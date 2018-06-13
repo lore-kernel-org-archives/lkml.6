@@ -2,413 +2,99 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AE69EC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:10:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C7469C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE2F208B3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:10:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71D51208B3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YCYzTfJw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FE2F208B3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0vHSd40"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D51208B3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936118AbeFMPKi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:10:38 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:34664 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936058AbeFMPJm (ORCPT
+        id S936129AbeFMPKr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:10:47 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34828 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964778AbeFMPKl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:09:42 -0400
-Received: by mail-wm0-f65.google.com with SMTP id l15-v6so19071726wmc.1
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:09:41 -0700 (PDT)
+        Wed, 13 Jun 2018 11:10:41 -0400
+Received: by mail-lf0-f66.google.com with SMTP id i15-v6so4518122lfc.2;
+        Wed, 13 Jun 2018 08:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BwaBMOBtFU4AkNYUJGU1SJQFvBan9CUJEd06K8viUtI=;
-        b=YCYzTfJwmPuvz82t8EEihY0RAnaAiJJeA1uouGRf+vitvlDif2586bgATGgtXhC/fL
-         CaBiMB0KyxdL4VaRgM5rQJtuRYreM2vJkh6GseYKqRJglVQNSDhQG8Mql0zJL+cSANA+
-         nSXC9CVburOabDQRosHAy0MUT467qYt6sOeUM=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=ntWc8rdo9GfTrwyXxCZTkAseM1hiGlwRnn7L4kwwyZo=;
+        b=h0vHSd40tueTOp2PqGzpUzUHA4iGx8lwr9qr1PAMfuUqsy0Jr0nHpvcsmWN0j2x88U
+         eTceZihj8OXj6zyHo1m6PKhkqvdRhbc0Njq6Ytxa44m1yZcZh9+p5/kXe08OcycHuAkw
+         QkuXvEBnCW5Zvt6UbvyRV501ZFNnOgmcXLe8I5BSf7vAF7mwOjE+3mea6lD09C7b27iQ
+         73KQizXCXNKQMFnOqZX1wdcM1KTTLwah06oGSwnk98u3y9s3Hf08jY7wd6k5pbiz5rcc
+         s7lzcT6T/v1nherMC+mwAEjyMVy+92ywqHL9BCdoHYRtiADlAtPrpzvY8ISJAANzD/Zq
+         Cfng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=BwaBMOBtFU4AkNYUJGU1SJQFvBan9CUJEd06K8viUtI=;
-        b=j8ZuXo1cSBj/5Y+fyLm5wfQPAPqBGcpRoPUPlCPxxz1gbPE0NxHilsFhvKrXMVTRyK
-         xtsOl4UFEnHYnduzfx60EIabvRsF6nMcWKXYJcD4pFog8RmfskZM0orEwMyjR19xArmP
-         wUWKKuhqxY3nJUeP6ZTAUIo1xCNX1HWSmnI0N8y/GJQuAoOmRGDCHsI7/u7Xz5w/OF1Y
-         9nEstOgRKnhYJ/ry0NMIVEuLK+Iaoy0k0snkBJBF60WkIRLVvERS/3jCNEwrB2mNeW2C
-         R997So/taekTuaZC5bRcOJDylnykJ213Z9nYaNVwpSqb77FCvUzlK96Xez4somMZUoMC
-         fmMQ==
-X-Gm-Message-State: APt69E1zq7YWu1FtOiZVmfRYQacDUV2vKSYwDFoogeVY7EMAv2BycHKC
-        atOklQ+g/7KcWs7C3S0WeI4DpA==
-X-Google-Smtp-Source: ADUXVKIxyA1i403EtIBg4qt3pDzS1lYKD7P9/NTVNo0SSQXzQZ9uf5mCKo7zXKFt+qDPVLIk+i5vYQ==
-X-Received: by 2002:a1c:ae8b:: with SMTP id x133-v6mr4052302wme.125.1528902580589;
-        Wed, 13 Jun 2018 08:09:40 -0700 (PDT)
-Received: from mms-0440.qualcomm.mm-sol.com ([37.157.136.206])
-        by smtp.gmail.com with ESMTPSA id e13-v6sm2886548wrm.45.2018.06.13.08.09.39
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=ntWc8rdo9GfTrwyXxCZTkAseM1hiGlwRnn7L4kwwyZo=;
+        b=jqwWe71635gfk+ilhEVBMqj1zoqaDdQHdJOnV9kQI2ZvW1dsUTwb+NeGQ0IoMuTUxX
+         RWvarO5NtY7c0m4KmxYVvRn6sGzH/qVLqyCFlFdNzp77HSgiKotWv5yC3A9J7WqEp2Tz
+         9xoDW6wP7pWdYxCfoQhex6eoteXVKBIDgIeg3apbtVwTtJGGnW5Xqsht842tCGEWcE9g
+         tJoG/0dUL4/Ueq6tvQfvzSywFjI8SOVU+ZJaId/+7Sy0m0stoykkSkAHe+6MJ/ymF7OB
+         zQq5jZjIpGJgMZE6bxlAI5tsoTnqlUkpFg4s58S+JdQXYZC5ACHize5w6oEXuYpWosj5
+         BvbQ==
+X-Gm-Message-State: APt69E25Al++SwLbUINcztB9NNIFT+P5TampdQXfoTR59LR8ZfMZhEYl
+        twvCb0MB1queAnjBWH2gVAk=
+X-Google-Smtp-Source: ADUXVKLDkvwppKliQgmIDCpChfFqN4On8+c6IpScmnw4XiUhVB+B7FwiTsWZPSWH1ujYXJiwmkySwQ==
+X-Received: by 2002:a2e:5b4a:: with SMTP id p71-v6mr2068604ljb.13.1528902639966;
+        Wed, 13 Jun 2018 08:10:39 -0700 (PDT)
+Received: from xi.terra (c-8bb2e655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.178.139])
+        by smtp.gmail.com with ESMTPSA id o26-v6sm575313ljg.39.2018.06.13.08.10.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 08:09:39 -0700 (PDT)
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: [PATCH v3 24/27] venus: helpers: move frame size calculations on common place
-Date:   Wed, 13 Jun 2018 18:07:58 +0300
-Message-Id: <20180613150801.11702-25-stanimir.varbanov@linaro.org>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
-References: <20180613150801.11702-1-stanimir.varbanov@linaro.org>
+        Wed, 13 Jun 2018 08:10:39 -0700 (PDT)
+Received: from johan by xi.terra with local (Exim 4.90_1)
+        (envelope-from <johan@xi.terra>)
+        id 1fT7Pd-0005Sa-MH; Wed, 13 Jun 2018 17:10:17 +0200
+From:   Johan Hovold <johan@kernel.org>
+To:     Rob Herring <robh@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Johan Hovold <johan@kernel.org>,
+        stable <stable@vger.kernel.org>
+Subject: [PATCH] serdev: fix memleak on module unload
+Date:   Wed, 13 Jun 2018 17:08:59 +0200
+Message-Id: <20180613150859.20879-1-johan@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This move the calculations of raw and compressed buffer sizes
-on common helper and make it identical for encoder and decoder.
+Make sure to free all resources associated with the ida on module
+exit.
 
-Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Fixes: cd6484e1830b ("serdev: Introduce new bus for serial attached devices")
+Cc: stable <stable@vger.kernel.org>	# 4.11
+Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/media/platform/qcom/venus/helpers.c | 98 +++++++++++++++++++++++++++++
- drivers/media/platform/qcom/venus/helpers.h |  2 +
- drivers/media/platform/qcom/venus/vdec.c    | 54 ++++------------
- drivers/media/platform/qcom/venus/venc.c    | 56 ++++-------------
- 4 files changed, 126 insertions(+), 84 deletions(-)
+ drivers/tty/serdev/core.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-index 6b31c91528ed..a342472ae2f0 100644
---- a/drivers/media/platform/qcom/venus/helpers.c
-+++ b/drivers/media/platform/qcom/venus/helpers.c
-@@ -452,6 +452,104 @@ int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
- }
- EXPORT_SYMBOL_GPL(venus_helper_get_bufreq);
- 
-+static u32 get_framesize_raw_nv12(u32 width, u32 height)
-+{
-+	u32 y_stride, uv_stride, y_plane;
-+	u32 y_sclines, uv_sclines, uv_plane;
-+	u32 size;
-+
-+	y_stride = ALIGN(width, 128);
-+	uv_stride = ALIGN(width, 128);
-+	y_sclines = ALIGN(height, 32);
-+	uv_sclines = ALIGN(((height + 1) >> 1), 16);
-+
-+	y_plane = y_stride * y_sclines;
-+	uv_plane = uv_stride * uv_sclines + SZ_4K;
-+	size = y_plane + uv_plane + SZ_8K;
-+
-+	return ALIGN(size, SZ_4K);
-+}
-+
-+static u32 get_framesize_raw_nv12_ubwc(u32 width, u32 height)
-+{
-+	u32 y_meta_stride, y_meta_plane;
-+	u32 y_stride, y_plane;
-+	u32 uv_meta_stride, uv_meta_plane;
-+	u32 uv_stride, uv_plane;
-+	u32 extradata = SZ_16K;
-+
-+	y_meta_stride = ALIGN(DIV_ROUND_UP(width, 32), 64);
-+	y_meta_plane = y_meta_stride * ALIGN(DIV_ROUND_UP(height, 8), 16);
-+	y_meta_plane = ALIGN(y_meta_plane, SZ_4K);
-+
-+	y_stride = ALIGN(width, 128);
-+	y_plane = ALIGN(y_stride * ALIGN(height, 32), SZ_4K);
-+
-+	uv_meta_stride = ALIGN(DIV_ROUND_UP(width / 2, 16), 64);
-+	uv_meta_plane = uv_meta_stride * ALIGN(DIV_ROUND_UP(height / 2, 8), 16);
-+	uv_meta_plane = ALIGN(uv_meta_plane, SZ_4K);
-+
-+	uv_stride = ALIGN(width, 128);
-+	uv_plane = ALIGN(uv_stride * ALIGN(height / 2, 32), SZ_4K);
-+
-+	return ALIGN(y_meta_plane + y_plane + uv_meta_plane + uv_plane +
-+		     max(extradata, y_stride * 48), SZ_4K);
-+}
-+
-+u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height)
-+{
-+	switch (hfi_fmt) {
-+	case HFI_COLOR_FORMAT_NV12:
-+	case HFI_COLOR_FORMAT_NV21:
-+		return get_framesize_raw_nv12(width, height);
-+	case HFI_COLOR_FORMAT_NV12_UBWC:
-+		return get_framesize_raw_nv12_ubwc(width, height);
-+	default:
-+		return 0;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_get_framesz_raw);
-+
-+u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height)
-+{
-+	u32 hfi_fmt, sz;
-+	bool compressed;
-+
-+	switch (v4l2_fmt) {
-+	case V4L2_PIX_FMT_MPEG:
-+	case V4L2_PIX_FMT_H264:
-+	case V4L2_PIX_FMT_H264_NO_SC:
-+	case V4L2_PIX_FMT_H264_MVC:
-+	case V4L2_PIX_FMT_H263:
-+	case V4L2_PIX_FMT_MPEG1:
-+	case V4L2_PIX_FMT_MPEG2:
-+	case V4L2_PIX_FMT_MPEG4:
-+	case V4L2_PIX_FMT_XVID:
-+	case V4L2_PIX_FMT_VC1_ANNEX_G:
-+	case V4L2_PIX_FMT_VC1_ANNEX_L:
-+	case V4L2_PIX_FMT_VP8:
-+	case V4L2_PIX_FMT_VP9:
-+	case V4L2_PIX_FMT_HEVC:
-+		compressed = true;
-+		break;
-+	default:
-+		compressed = false;
-+		break;
-+	}
-+
-+	if (compressed) {
-+		sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
-+		return ALIGN(sz, SZ_4K);
-+	}
-+
-+	hfi_fmt = to_hfi_raw_fmt(v4l2_fmt);
-+	if (!hfi_fmt)
-+		return 0;
-+
-+	return venus_helper_get_framesz_raw(hfi_fmt, width, height);
-+}
-+EXPORT_SYMBOL_GPL(venus_helper_get_framesz);
-+
- int venus_helper_set_input_resolution(struct venus_inst *inst,
- 				      unsigned int width, unsigned int height)
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index df93b727e984..9e59f4788589 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -617,6 +617,7 @@ EXPORT_SYMBOL_GPL(__serdev_device_driver_register);
+ static void __exit serdev_exit(void)
  {
-diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-index 92be45894a69..92b167a47166 100644
---- a/drivers/media/platform/qcom/venus/helpers.h
-+++ b/drivers/media/platform/qcom/venus/helpers.h
-@@ -33,6 +33,8 @@ void venus_helper_m2m_device_run(void *priv);
- void venus_helper_m2m_job_abort(void *priv);
- int venus_helper_get_bufreq(struct venus_inst *inst, u32 type,
- 			    struct hfi_buffer_requirements *req);
-+u32 venus_helper_get_framesz_raw(u32 hfi_fmt, u32 width, u32 height);
-+u32 venus_helper_get_framesz(u32 v4l2_fmt, u32 width, u32 height);
- int venus_helper_set_input_resolution(struct venus_inst *inst,
- 				      unsigned int width, unsigned int height);
- int venus_helper_set_output_resolution(struct venus_inst *inst,
-diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-index 4d3f1cd7ed1d..4e8a4086e6fa 100644
---- a/drivers/media/platform/qcom/venus/vdec.c
-+++ b/drivers/media/platform/qcom/venus/vdec.c
-@@ -29,29 +29,6 @@
- #include "helpers.h"
- #include "vdec.h"
- 
--static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
--{
--	u32 y_stride, uv_stride, y_plane;
--	u32 y_sclines, uv_sclines, uv_plane;
--	u32 size;
--
--	y_stride = ALIGN(width, 128);
--	uv_stride = ALIGN(width, 128);
--	y_sclines = ALIGN(height, 32);
--	uv_sclines = ALIGN(((height + 1) >> 1), 16);
--
--	y_plane = y_stride * y_sclines;
--	uv_plane = uv_stride * uv_sclines + SZ_4K;
--	size = y_plane + uv_plane + SZ_8K;
--
--	return ALIGN(size, SZ_4K);
--}
--
--static u32 get_framesize_compressed(unsigned int width, unsigned int height)
--{
--	return ((width * height * 3 / 2) / 2) + 128;
--}
--
- /*
-  * Three resons to keep MPLANE formats (despite that the number of planes
-  * currently is one):
-@@ -160,7 +137,6 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
- 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
- 	const struct venus_format *fmt;
--	unsigned int p;
- 
- 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
- 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
-@@ -191,18 +167,14 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	pixmp->num_planes = fmt->num_planes;
- 	pixmp->flags = 0;
- 
--	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
--		for (p = 0; p < pixmp->num_planes; p++) {
--			pfmt[p].sizeimage =
--				get_framesize_uncompressed(p, pixmp->width,
--							   pixmp->height);
--			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
--		}
--	} else {
--		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
--							     pixmp->height);
-+	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-+						     pixmp->width,
-+						     pixmp->height);
-+
-+	if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-+		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
-+	else
- 		pfmt[0].bytesperline = 0;
--	}
- 
- 	return fmt;
+ 	bus_unregister(&serdev_bus_type);
++	ida_destroy(&ctrl_ida);
  }
-@@ -647,7 +619,7 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 			    unsigned int sizes[], struct device *alloc_devs[])
- {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
--	unsigned int p, in_num, out_num;
-+	unsigned int in_num, out_num;
- 	int ret = 0;
+ module_exit(serdev_exit);
  
- 	if (*num_planes) {
-@@ -677,7 +649,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 	switch (q->type) {
- 	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
- 		*num_planes = inst->fmt_out->num_planes;
--		sizes[0] = get_framesize_compressed(inst->out_width,
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
-+						    inst->out_width,
- 						    inst->out_height);
- 		inst->input_buf_size = sizes[0];
- 		*num_buffers = max(*num_buffers, in_num);
-@@ -686,10 +659,9 @@ static int vdec_queue_setup(struct vb2_queue *q,
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		*num_planes = inst->fmt_cap->num_planes;
--
--		for (p = 0; p < *num_planes; p++)
--			sizes[p] = get_framesize_uncompressed(p, inst->width,
--							      inst->height);
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
-+						    inst->width,
-+						    inst->height);
- 		inst->output_buf_size = sizes[0];
- 		*num_buffers = max(*num_buffers, out_num);
- 		inst->num_output_bufs = *num_buffers;
-diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-index abde7d6d123f..31aafe487fa1 100644
---- a/drivers/media/platform/qcom/venus/venc.c
-+++ b/drivers/media/platform/qcom/venus/venc.c
-@@ -31,32 +31,6 @@
- 
- #define NUM_B_FRAMES_MAX	4
- 
--static u32 get_framesize_uncompressed(unsigned int plane, u32 width, u32 height)
--{
--	u32 y_stride, uv_stride, y_plane;
--	u32 y_sclines, uv_sclines, uv_plane;
--	u32 size;
--
--	y_stride = ALIGN(width, 128);
--	uv_stride = ALIGN(width, 128);
--	y_sclines = ALIGN(height, 32);
--	uv_sclines = ALIGN(((height + 1) >> 1), 16);
--
--	y_plane = y_stride * y_sclines;
--	uv_plane = uv_stride * uv_sclines + SZ_4K;
--	size = y_plane + uv_plane + SZ_8K;
--	size = ALIGN(size, SZ_4K);
--
--	return size;
--}
--
--static u32 get_framesize_compressed(u32 width, u32 height)
--{
--	u32 sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
--
--	return ALIGN(sz, SZ_4K);
--}
--
- /*
-  * Three resons to keep MPLANE formats (despite that the number of planes
-  * currently is one):
-@@ -284,7 +258,6 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
- 	struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
- 	const struct venus_format *fmt;
--	unsigned int p;
- 
- 	memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
- 	memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
-@@ -318,19 +291,14 @@ venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
- 	pixmp->num_planes = fmt->num_planes;
- 	pixmp->flags = 0;
- 
--	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE) {
--		for (p = 0; p < pixmp->num_planes; p++) {
--			pfmt[p].sizeimage =
--				get_framesize_uncompressed(p, pixmp->width,
--							   pixmp->height);
-+	pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-+						     pixmp->width,
-+						     pixmp->height);
- 
--			pfmt[p].bytesperline = ALIGN(pixmp->width, 128);
--		}
--	} else {
--		pfmt[0].sizeimage = get_framesize_compressed(pixmp->width,
--							     pixmp->height);
-+	if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
-+		pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
-+	else
- 		pfmt[0].bytesperline = 0;
--	}
- 
- 	return fmt;
- }
-@@ -845,7 +813,7 @@ static int venc_queue_setup(struct vb2_queue *q,
- 			    unsigned int sizes[], struct device *alloc_devs[])
- {
- 	struct venus_inst *inst = vb2_get_drv_priv(q);
--	unsigned int p, num, min = 4;
-+	unsigned int num, min = 4;
- 	int ret = 0;
- 
- 	if (*num_planes) {
-@@ -880,16 +848,18 @@ static int venc_queue_setup(struct vb2_queue *q,
- 		*num_buffers = max(*num_buffers, num);
- 		inst->num_input_bufs = *num_buffers;
- 
--		for (p = 0; p < *num_planes; ++p)
--			sizes[p] = get_framesize_uncompressed(p, inst->width,
--							      inst->height);
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
-+						    inst->width,
-+						    inst->height);
- 		inst->input_buf_size = sizes[0];
- 		break;
- 	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
- 		*num_planes = inst->fmt_cap->num_planes;
- 		*num_buffers = max(*num_buffers, min);
- 		inst->num_output_bufs = *num_buffers;
--		sizes[0] = get_framesize_compressed(inst->width, inst->height);
-+		sizes[0] = venus_helper_get_framesz(inst->fmt_cap->pixfmt,
-+						    inst->width,
-+						    inst->height);
- 		inst->output_buf_size = sizes[0];
- 		break;
- 	default:
 -- 
-2.14.1
+2.17.1
 
