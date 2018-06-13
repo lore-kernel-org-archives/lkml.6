@@ -2,103 +2,140 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DA98AC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:05:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4F1F0C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93401208DF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:05:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93401208DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
+	by mail.kernel.org (Postfix) with ESMTP id 03EF1208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:05:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Aggl0kSi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03EF1208C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935762AbeFMVFF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 17:05:05 -0400
-Received: from www262.sakura.ne.jp ([202.181.97.72]:19952 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935526AbeFMVFD (ORCPT
+        id S935860AbeFMVFg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 17:05:36 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37443 "EHLO
+        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935448AbeFMVFd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 17:05:03 -0400
-Received: from fsav401.sakura.ne.jp (fsav401.sakura.ne.jp [133.242.250.100])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5DL4DvL009430;
-        Thu, 14 Jun 2018 06:04:13 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav401.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp);
- Thu, 14 Jun 2018 06:04:13 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav401.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5DL47VD009397
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
-        Thu, 14 Jun 2018 06:04:12 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
-To:     Jan Kara <jack@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tejun Heo <tj@kernel.org>, Dmitry Vyukov <dvyukov@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block <linux-block@vger.kernel.org>
-References: <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
- <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
- <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
- <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
- <20180611172053.GR1351649@devbig577.frc2.facebook.com>
- <20180612155754.x5k2yndh5t6wlmpy@quack2.suse.cz>
- <b210e55c-b06a-41ff-8592-0dbe21875779@i-love.sakura.ne.jp>
- <20180613144606.nvbcyg2rdjpxhf7s@quack2.suse.cz>
- <7f4ae045-dfe4-6677-7418-f6f60b6c26f1@i-love.sakura.ne.jp>
- <CA+55aFx=CwNCg08HUeyYWc-WWuPkQBXVJDvHfrBjraTy-3MRWQ@mail.gmail.com>
- <20180613164509.oeb3fsjylfpfzxuh@quack2.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <4a70ca66-3352-10aa-d351-e3fa3baebffc@i-love.sakura.ne.jp>
-Date:   Thu, 14 Jun 2018 06:04:04 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180613164509.oeb3fsjylfpfzxuh@quack2.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Wed, 13 Jun 2018 17:05:33 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 31-v6so2224957plc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 14:05:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=wzxZ2QBCbK+ZPOxBJwHYogS3SvBQEdo6tnoZ9mZk5kc=;
+        b=Aggl0kSiukDmP5AwHBj5ibjWF9jvtLDKiPrNoZZJV09z8RNZlNswg4crvRPBNF562G
+         ADYoMSoniiNUK1ZSxiOe6so58IRekAlhFanh3d+c0AimPOF3ySmHmyQj0QuLgyR0G6CC
+         b3Bbb5/xdQ/dd3F2fRqEN8wcdAo+h0ddXMzYaHR3BXs4ZPJEdu3H7oqxpg8EjjdVK4iU
+         Z257LNKm8n1EjmdeqipDfuelseJuq9VZUyax7sRTNRNEwU6uhJ73DOsNkmUhQmjjoVZp
+         IgOx1panXavc2XTj4D7E8vYr7LJKj6zakX7IUhUcR8nwN4hTm03cOl1QiKaioMIgNGAA
+         WDkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=wzxZ2QBCbK+ZPOxBJwHYogS3SvBQEdo6tnoZ9mZk5kc=;
+        b=Rm8nU+sEKxQgN6ngLhOuFhiOg0LGdBYMiiJIRTGALuprdjG89lGOsdY55sVI4CRfKD
+         j/dv6gJ+DAvUESUS9FiST1U02QlGbngOLpjooEAonxen6Hc8dF5orTET+mN95bt8aM2I
+         Ho6prY740TPwVEDDXgdbkU8vsrW4mQwi46aczi3jHrjNOCr7PTtw6EA/4mpqdMLgJipI
+         5qsSqvGo8H3+KfgX1ZYo0ES8cpZntXWWLxRRS1SkapGcIk1WZP3ABggcPRM5Ltolq7JI
+         XjhvVxLO89/Hise/L+BBqHIDmQqPXy/cgZEWz0OARAl6zRjfRfNVK4osBHaCyHqNWW9E
+         rAVQ==
+X-Gm-Message-State: APt69E1rW9C93mH8UnEwJZ4aqDGPJ/h8M7enkHjr0buz9TpuxjjiYRt+
+        Kr596in02IRbU5rHPKg5Iulw2Q==
+X-Google-Smtp-Source: ADUXVKLwToYK6Qschw2JnYq8Fb4V+LGVinprEzNpmuP10QXqD0XxbQIP0IIAp3xzlf4NEAmVdqGjBA==
+X-Received: by 2002:a17:902:206:: with SMTP id 6-v6mr6804773plc.294.1528923932841;
+        Wed, 13 Jun 2018 14:05:32 -0700 (PDT)
+Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
+        by smtp.gmail.com with ESMTPSA id n76-v6sm8692976pfg.98.2018.06.13.14.05.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Jun 2018 14:05:31 -0700 (PDT)
+From:   Nick Desaulniers <ndesaulniers@google.com>
+To:     akpm@linux-foundation.org, hpa@zytor.com, mingo@redhat.com,
+        tglx@linutronix.de
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
+        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
+        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
+        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
+        ard.biesheuvel@linaro.org, akataria@vmware.com,
+        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
+        ndesaulniers@google.com, thomas.lendacky@amd.com, tweek@google.com,
+        mjg59@google.com, joe@perches.com,
+        andrea.parri@amarulasolutions.com
+Subject: [PATCH v5 0/3] extern inline native_save_fl for paravirt
+Date:   Wed, 13 Jun 2018 14:05:15 -0700
+Message-Id: <20180613210518.113983-1-ndesaulniers@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/06/14 1:45, Jan Kara wrote:
-> On Wed 13-06-18 09:25:03, Linus Torvalds wrote:
->> On Wed, Jun 13, 2018 at 9:21 AM Tetsuo Handa
->> <penguin-kernel@i-love.sakura.ne.jp> wrote:
->>>
->>> Since multiple addresses share bit_wait_table[256], isn't it possible that
->>> cgwb_start_shutdown() prematurely returns false due to wake_up_bit() by
->>> hash-conflicting addresses (i.e. not limited to clear_and_wake_up_bit() from
->>> wb_shutdown())? I think that we cannot be sure without confirming that
->>> test_bit(WB_shutting_down, &wb->state) == false after returning from schedule().
->>
->> Right.
->>
->> That's _always_ true, btw. Something else entirely could have woken
->> you up. TASK_UNINTERRUPTIBLE does not mean "nothing else wakes me", it
->> just means "_signals_ don't wake me".
->>
->> So every single sleep always needs to be in a loop. Always.
-> 
-> Agreed and in my patch it actually is in a loop - the one iterating the
-> list of active writeback structures. If we get a false wakeup, we find the
-> same structure in the list again and wait again...
+paravirt depends on a custom calling convention (callee saved), but
+expects this from a static inline function that it then forces to be
+outlined. This is problematic because different compilers or flags can
+then add a stack guard that violates the calling conventions.
 
-Indeed. I overlooked that wb = list_first_entry() will select same wb again
-if cgwb_remove_from_bdi_list() is not yet called. Well, we could update
-"(in which case we also wait for it to finish)" part or move the body of
-cgwb_start_shutdown() to cgwb_bdi_unregister() so that it becomes clear
-that false wake-up is not a problem in this case.
+Uses extern inline with the out-of-line definition in assembly to
+prevent compilers from adding stack guards to the outlined version.
+
+Other parts of the codebase overwrite KBUILD_CFLAGS, which is *extremely
+problematic* for extern inline, as the sematics are completely the
+opposite depending on what C standard is used.
+http://blahg.josefsipek.net/?p=529
+
+Changes since v4:
+  Take Arnd's and hpa's suggestions properly feature detect gnu_inline
+  attribute to support gcc 4.1.
+
+Changes since v3:
+  Take Joe's suggestion to hoist __inline__ and __inline out of
+  conditional block.
+
+Changes since v2:
+  Take hpa's _ASM_ARG patch into the set in order to simplify cross
+  32b/64b x86 assembly and rebase my final patch to use it.  Apply
+  Sedat's typo fix to commit message and sign off on it. Take Joe's
+  suggestion to simplify __inline__ and __inline. Add Arnd to list of
+  folks who made helpful suggestions.
+
+Changes since v1:
+  Prefer gnu_inline function attribute instead of explicitly setting C
+  standard compiler flag in problematic Makefiles. We should instead
+  carefully evaluate if those Makefiles should be overwriting
+  KBUILD_CFLAGS at all. Dropped the previous first two patches and added
+  a new first patch.
+
+H. Peter Anvin (1):
+  x86/asm: add _ASM_ARG* constants for argument registers to <asm/asm.h>
+
+Nick Desaulniers (2):
+  compiler-gcc.h: add gnu_inline to all inline declarations
+  x86: paravirt: make native_save_fl extern inline
+
+ arch/x86/include/asm/asm.h      | 59 +++++++++++++++++++++++++++++++++
+ arch/x86/include/asm/irqflags.h |  2 +-
+ arch/x86/kernel/Makefile        |  1 +
+ arch/x86/kernel/irqflags.S      | 26 +++++++++++++++
+ include/linux/compiler-gcc.h    | 29 ++++++++++++----
+ 5 files changed, 109 insertions(+), 8 deletions(-)
+ create mode 100644 arch/x86/kernel/irqflags.S
+
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
+
