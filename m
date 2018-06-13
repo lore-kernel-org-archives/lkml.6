@@ -2,155 +2,135 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1BBC1C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:27:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 782EBC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02AB208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:27:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D9CA2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:28:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tru6OT4r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02AB208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fhJX+X2a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D9CA2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935625AbeFMN1e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:27:34 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:35119 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935487AbeFMN1d (ORCPT
+        id S935687AbeFMN2Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:28:25 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:45829 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935655AbeFMN2X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:27:33 -0400
-Received: by mail-wm0-f66.google.com with SMTP id j15-v6so5472900wme.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:27:32 -0700 (PDT)
+        Wed, 13 Jun 2018 09:28:23 -0400
+Received: by mail-lf0-f65.google.com with SMTP id n3-v6so3924344lfe.12
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:28:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9tq5wtaX3UHWBbmao67YZ2afVTFv8LABu7R+AtCWGlE=;
-        b=tru6OT4rH2nonxMubnv+WorBUsPVLjfUKC0IrPcfBL2mT2COvojmFPSlGtu6QX8XRO
-         PSKDjDH+XEMCL3S8lAurY6LBiuS0lGi1mtLv/Yi4L9XuAq0O+M4tk5MlJJQfYcSMPMJA
-         OiM0utT5t70Essv1OSScq4ek0P/Xp3DBCXv+izp3Niuf6dPnhfAqLQH/D0YioMFYDvZp
-         YByhlyEStIbhjih+dzMnH+WPepZpp0OWY1wQyx++b7d+jhJw2ZUs0Qd96c3jJsyvlPWh
-         fAvFezUr1dxtbi5VSfi6hI9ykVtqfhc+3l7lvRQjVbjwybMrlYHLXS6C6xxkU5PUBJM2
-         YOlg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=hxi3E+0EYPM/bWQa6eUMyfy6hnoZblU3LLsSYPTD6nM=;
+        b=fhJX+X2agVQlcqhnyt8sL8XovCen7xMQYj8/TYap9TethGNO8niu/3gNcKun/V1fLX
+         jCP9s0d0fNLInMnWhjmKy+ekk1GYhrcXHo0l2qQEG4qE8rwOAkRnrHtpJSQ/FWacQHtc
+         52B/XxsHpHna6/5P/EblImHZxweDKhZt2y0ac=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9tq5wtaX3UHWBbmao67YZ2afVTFv8LABu7R+AtCWGlE=;
-        b=gLdTmjikIQ9CDJk+GPYmg+zcMxZKglbGur25pifpjguQtJOKp/yS/3ybPfe8UCAxWR
-         Ca5qCHu6NkGOd2RBEhNTgXJpMeFtT+geBlAtnMT9tFytBXOrIz3JqtCsi+TTZAIx7SQ0
-         LqA8vlJaTA0oaANfC3rwMKx5hjxOdB6SawZh4bXvMJjfpyC4wJFFitwg8PxranC4sed1
-         fes+Rhs/FG99qaD22ljf4VlNfTxYRcdzSO+UYw245xNLccRWzZrSPEIirvZoffW7zGI9
-         ogn8Ys7rwlpFizCEOpjhIACpfWwb0JeRnnN7e/0GL5+kQbD/E7ddyOMOYB+BdyZUrvsy
-         QL3A==
-X-Gm-Message-State: APt69E0yl/pCnuEziE74rpBwG+rYCLED5oJ4FnLlSOBneJKogTTccIGo
-        J8+0kBKm5Xpgjc5sCZ7ri0nMdGdKFFBvTQMTy10=
-X-Google-Smtp-Source: ADUXVKJXnjdFvaRPNxCbrvFVQ7U/QaeR2yXDllv9lsXZ/ryZUVQZ5T8d26oooBJfNTE3KRjHuIGpLVFtHab4QDziUQY=
-X-Received: by 2002:a1c:3710:: with SMTP id e16-v6mr3663685wma.58.1528896451861;
- Wed, 13 Jun 2018 06:27:31 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hxi3E+0EYPM/bWQa6eUMyfy6hnoZblU3LLsSYPTD6nM=;
+        b=Yqv9gusuUUp5nPjsnvABWwoZOb8ey1Og6JIdEcs4fv5Wf3edV9PBqo+0Zj1u+vNKot
+         E/WzROMISOzvR88bmi0pSU0tgR/N06HS03xQwX2P1Q9dMxXu+6ndXRDO2uSRcAriKpkD
+         BBKmzQABM/TmYYCk6m6Bsbn5y9cC4WVcdhpxzTqPQiEkFCuoFhspahgImT31IUM6jHnr
+         3kR7+TABteYeSjZUN3NtZZHqpuVvokWwNklJyFjo4HWjs50Ph5yZtspTCAagBvX1UY+1
+         GDIcshDS27F73OyAf2jdFzFko7zsi64GecH7i6s85NODGhXn+pD+zAHHYWPrvXneNp7m
+         py/g==
+X-Gm-Message-State: APt69E0MUshXCUnRm9LAM0GDdl92ulefjSh1QDvkZDBJUg0JGNNtBqPn
+        Q3ZqXHJ8daywYM0zFAXQUmNbEg==
+X-Google-Smtp-Source: ADUXVKITtZTM3LV1ewxKmu4YK2CeFWFvyVdm0mO6VraDhcgLDh1OPLSQXIF7t38sDjxFyZx5eoZAcA==
+X-Received: by 2002:a2e:2161:: with SMTP id h94-v6mr3347983ljh.58.1528896501659;
+        Wed, 13 Jun 2018 06:28:21 -0700 (PDT)
+Received: from centauri.ideon.se ([85.235.10.227])
+        by smtp.gmail.com with ESMTPSA id e27-v6sm572970lfb.86.2018.06.13.06.28.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Jun 2018 06:28:21 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 15:28:19 +0200
+From:   Niklas Cassel <niklas.cassel@linaro.org>
+To:     Govind Singh <govinds@codeaurora.org>, bjorn.andersson@linaro.org
+Cc:     kvalo@codeaurora.org, davem@davemloft.net, netdev@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ath10k@lists.infradead.org
+Subject: Re: FW: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
+Message-ID: <20180613132819.GA12603@centauri.ideon.se>
+References: <20180612113907.15043-1-niklas.cassel@linaro.org>
+ <20180612113907.15043-2-niklas.cassel@linaro.org>
+ <7058492257914633b55fcd423e4c0b59@aphydexm01b.ap.qualcomm.com>
+ <47cf8ec1b11d727ea928a307a431d4a2@codeaurora.org>
+ <20180612124403.GA26986@centauri.lan>
 MIME-Version: 1.0
-Received: by 2002:adf:e241:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 06:27:31
- -0700 (PDT)
-In-Reply-To: <20180613143247.1b749c83@endymion>
-References: <20180612083449.100099222@infradead.org> <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com>
- <20180612171420.GU12217@hirez.programming.kicks-ass.net> <20180613143247.1b749c83@endymion>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Wed, 13 Jun 2018 15:27:31 +0200
-Message-ID: <CAHpGcMKj1MNyc0XJuKxf727jtNhiKpL3AuR_+pRZipWXG+V08w@mail.gmail.com>
-Subject: Re: Quilt vs gmail (Was: [PATCH 0/3] sched/swait: Convert to full
- exclusive mode)
-To:     Jean Delvare <jdelvare@suse.de>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180612124403.GA26986@centauri.lan>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jean,
+On Tue, Jun 12, 2018 at 02:44:03PM +0200, Niklas Cassel wrote:
+> On Tue, Jun 12, 2018 at 06:02:48PM +0530, Govind Singh wrote:
+> > On 2018-06-12 17:45, Govind Singh wrote:
+> > > -----Original Message-----
+> > > From: ath10k <ath10k-bounces@lists.infradead.org> On Behalf Of Niklas
+> > > Cassel
+> > > Sent: Tuesday, June 12, 2018 5:09 PM
+> > > To: Kalle Valo <kvalo@codeaurora.org>; David S. Miller
+> > > <davem@davemloft.net>
+> > > Cc: Niklas Cassel <niklas.cassel@linaro.org>; netdev@vger.kernel.org;
+> > > linux-wireless@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > > ath10k@lists.infradead.org
+> > > Subject: [PATCH 2/2] ath10k: allow ATH10K_SNOC with COMPILE_TEST
+> > > 
+> > > ATH10K_SNOC builds just fine with COMPILE_TEST, so make that possible.
+> > > 
+> > > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> > > ---
+> > >  drivers/net/wireless/ath/ath10k/Kconfig | 3 ++-
+> > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/net/wireless/ath/ath10k/Kconfig
+> > > b/drivers/net/wireless/ath/ath10k/Kconfig
+> > > index 54ff5930126c..6572a43590a8 100644
+> > > --- a/drivers/net/wireless/ath/ath10k/Kconfig
+> > > +++ b/drivers/net/wireless/ath/ath10k/Kconfig
+> > > @@ -42,7 +42,8 @@ config ATH10K_USB
+> > > 
+> > >  config ATH10K_SNOC
+> > >  	tristate "Qualcomm ath10k SNOC support (EXPERIMENTAL)"
+> > > -	depends on ATH10K && ARCH_QCOM
+> > > +	depends on ATH10K
+> > > +	depends on ARCH_QCOM || COMPILE_TEST
+> > >  	---help---
+> > >  	  This module adds support for integrated WCN3990 chip connected
+> > >  	  to system NOC(SNOC). Currently work in progress and will not
+> > 
+> > Thanks Niklas for enabling COMPILE_TEST. With QMI set of
+> > changes(https://patchwork.kernel.org/patch/10448183/), we need to enable
+> > COMPILE_TEST for
+> > QCOM_SCM/QMI_HELPERS which seems broken today. Are you planning to fix the
+> > same.
+> 
+> 
 
-2018-06-13 14:32 GMT+02:00 Jean Delvare <jdelvare@suse.de>:
-> Hi Peter, Linus, Andreas,
->
-> On Tue, 12 Jun 2018 19:14:20 +0200, Peter Zijlstra wrote:
->> On Tue, Jun 12, 2018 at 09:47:34AM -0700, Linus Torvalds wrote:
->>
->> > I do note how quilt emails are really hard to read, because that:
->> >
->> >     Content-Disposition: inline
->> >
->> > makes gmail think it's flowed.
->> >
->> > Which works horribly badly for patches, surprise surprise.
->> >
->> > So I really wish quilt wouldn't do that. It does smell like a gmail
->> > bug, but at the same time, why would you use "Content-Disposition:
->> > inline" when you don't have an actual multi-part email? So I do blame
->> > quilt too for sending nonsensical headers.
->> >
->> > (Yes, yes, I see the "It is permissible to use Content-Disposition on
->> > the main body" in the RFC. But the RFC also makes it clear that it
->> > actually matters for how things are presented, so saying "ok, I'll do
->> > flowed" seems equally insane and equally technically RFC-compliant)
->>
->> Quilt people, anything that can be done about that?
->
-> The purpose of the Content-Disposition header is to let quilt store the
-> original patch file name, so that the recipient can save the email as a
-> patch file having the exact same name as the sender was using, to make
-> communication between developers easier. This is the reason why the
-> header is being added despite the email not being multi-part. As Linus
-> found out already, RFC 2183 allows that. The RFC also explicitly allows
-> the use of a filename parameter for inline parts (see section 2.3.)
->
-> Using "attachment" instead of "inline" would presumably force the user
-> to save the patch to a file before being able to read it, or, at least,
-> to take additional actions in the MUA to convince it to display the
-> contents inline regardless of what the Content-Disposition header
-> says. This is clearly not desirable.
->
-> We could try specifying the filename directly, without the "inline"
-> keyword, however that would no longer comply with the RFC
-> ("disposition-parm" is optional, but "disposition-type" is mandatory)
-> and I am afraid that some MUA implementations would either default to
-> disposition-type "attachment" in this case, or ignore the header
-> altogether.
->
-> I'm not sure I understand what "flowed" means in this context. If you
-> mean that gmail breaks the formatting of the patch, I would say that
-> gmail is infringing the RFC, which clearly stipulates at the beginning
-> that the Content-Disposition header field is only about telling the MUA
-> which parts should be displayed immediately and which parts should not,
-> and not about presentation issues.
->
-> Considering that "inline" is the default for a non-multi-part message,
-> any MUA which changes its behavior in the presence of
-> "Content-Disposition: inline" is bugged in my opinion.
+This patch is good as is.
 
-All of that may be correct, but those headers apparently do break
-email based patch reviewing on Thunderbird and Gmail now, and that's
-not very likely to change. If we continue with our current practice,
-we'll end up frustrating users. On top of that, i we make this an
-optional feature, quilt users may think that using that option is a
-good idea when they will actually break their recipients' workflows.
-As Thomas Gleixner wrote in the other thread, most recipients will
-already have a way to deal with messages from other sources that don't
-include patch filenames, so let's just get rid of Content-Disposition
-headers in quilt for good.
+However, Govind's QMI patch set together with this patch
+resulted in build errors.
 
-Andreas
+FTR, these are fixed by:
+https://marc.info/?l=linux-kernel&m=152880985402356
+https://marc.info/?l=linux-kernel&m=152889452326350
+
+
+Regards,
+Niklas
