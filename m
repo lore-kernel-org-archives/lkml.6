@@ -2,239 +2,94 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0BEF1C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:54:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A74BFC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B73D4208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:54:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B73D4208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 5E013208B1
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:54:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="twVVupp1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E013208B1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934905AbeFMHyZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:54:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:41244 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754570AbeFMHx5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:53:57 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 5DEF4ACB1;
-        Wed, 13 Jun 2018 07:53:56 +0000 (UTC)
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-To:     "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc:     Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>,
-        Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
-        Johannes Thumshirn <jthumshirn@suse.de>
-Subject: [PATCH v2 2/3] scsi: check for equality of result byte values
-Date:   Wed, 13 Jun 2018 09:53:48 +0200
-Message-Id: <20180613075349.7509-3-jthumshirn@suse.de>
-X-Mailer: git-send-email 2.16.4
-In-Reply-To: <20180613075349.7509-1-jthumshirn@suse.de>
-References: <20180613075349.7509-1-jthumshirn@suse.de>
+        id S934989AbeFMHyp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:54:45 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:57378 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934250AbeFMHyX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 03:54:23 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D7p7Ve044598;
+        Wed, 13 Jun 2018 07:54:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=WBAZo9Sul9vuDX9ErGsd6XEQSeGdiQiobQmAa+DwAPo=;
+ b=twVVupp1KlRhJmWrwSfUuHjAuUPF/kE1N/eKb9aBLyTGPywOsuzTXIEtfT3bhB1/4zhD
+ CK3VxP0hi8fiYjAxLi7fHW3kqQl1u8poSiJCrZgz/YgZK5TMnZVICTbw0C4rEkDMcCHL
+ s6TCsjIJY4OsLDGiN4mcg/RpViJyTsdgRV1w096FlGoy0Yt+xaEYo7PhCH+SlSIWNdl9
+ F5J1HIEWMxQNwHsBt+Lo3vgNUvKq64bKRWBjuHmmh01jB+aBS/fLaED9OqTaQf/wBgKL
+ 2Pctowx969Y8jUiqErzYzUeI9UQx37o8lWO8QYjlEsWeT5AZNQ3a37A52UwZoeUH3lZe vQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2jjp6bs8c8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 07:54:17 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5D7sGnq006803
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 07:54:16 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5D7sFmG022090;
+        Wed, 13 Jun 2018 07:54:15 GMT
+Received: from santoshs-mbp.lan (/69.181.241.203)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Jun 2018 00:54:15 -0700
+Subject: Re: KASAN: use-after-free Read in rds_cong_queue_updates
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        syzbot <syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com>
+Cc:     Sowmini Varadhan <sowmini.varadhan@oracle.com>,
+        David Miller <davem@davemloft.net>,
+        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        netdev <netdev@vger.kernel.org>, rds-devel@oss.oracle.com,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>
+References: <089e08e548431cd0f90565c9f4e5@google.com>
+ <000000000000a643e4056e7d0db4@google.com>
+ <CACT4Y+b+DFpa34E3UWzSYn6qy-BMmxN80ikdmU_xMe9x9JF2+Q@mail.gmail.com>
+From:   "santosh.shilimkar@oracle.com" <santosh.shilimkar@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <c1078f20-b8ea-7efe-8b39-0c75fd598e1d@oracle.com>
+Date:   Wed, 13 Jun 2018 00:54:14 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CACT4Y+b+DFpa34E3UWzSYn6qy-BMmxN80ikdmU_xMe9x9JF2+Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=391
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806130091
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When evaluating a SCSI command's result using the field access macros,
-check for equality of the fields and not if a specific bit is set.
 
-This is a preparation patch, for reworking the results field in the
-SCSI command.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-
----
-Changes since v1:
-- Reworked braces (Bart)
----
- drivers/scsi/ch.c                 |  2 +-
- drivers/scsi/dc395x.c             |  3 +--
- drivers/scsi/scsi.c               |  2 +-
- drivers/scsi/scsi_ioctl.c         |  4 ++--
- drivers/scsi/scsi_lib.c           |  4 ++--
- drivers/scsi/scsi_scan.c          |  2 +-
- drivers/scsi/scsi_transport_spi.c |  2 +-
- drivers/scsi/sd.c                 | 14 +++++++-------
- drivers/scsi/ufs/ufshcd.c         |  2 +-
- 9 files changed, 17 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/scsi/ch.c b/drivers/scsi/ch.c
-index c535c52e72e5..1c5051b1c125 100644
---- a/drivers/scsi/ch.c
-+++ b/drivers/scsi/ch.c
-@@ -199,7 +199,7 @@ ch_do_scsi(scsi_changer *ch, unsigned char *cmd, int cmd_len,
- 				  buflength, &sshdr, timeout * HZ,
- 				  MAX_RETRIES, NULL);
- 
--	if (driver_byte(result) & DRIVER_SENSE) {
-+	if (driver_byte(result) == DRIVER_SENSE) {
- 		if (debug)
- 			scsi_print_sense_hdr(ch->device, ch->name, &sshdr);
- 		errno = ch_find_errno(&sshdr);
-diff --git a/drivers/scsi/dc395x.c b/drivers/scsi/dc395x.c
-index 60ef8df42b95..13d83c69e246 100644
---- a/drivers/scsi/dc395x.c
-+++ b/drivers/scsi/dc395x.c
-@@ -3474,8 +3474,7 @@ static void srb_done(struct AdapterCtlBlk *acb, struct DeviceCtlBlk *dcb,
- 	/*if( srb->cmd->cmnd[0] == INQUIRY && */
- 	/*  (host_byte(cmd->result) == DID_OK || status_byte(cmd->result) & CHECK_CONDITION) ) */
- 		if ((cmd->result == (DID_OK << 16)
--		     || status_byte(cmd->result) &
--		     CHECK_CONDITION)) {
-+		     || status_byte(cmd->result) == CHECK_CONDITION)) {
- 			if (!dcb->init_tcq_flag) {
- 				add_dev(acb, dcb, ptr);
- 				dcb->init_tcq_flag = 1;
-diff --git a/drivers/scsi/scsi.c b/drivers/scsi/scsi.c
-index 4c60c260c5da..70ef3c39061d 100644
---- a/drivers/scsi/scsi.c
-+++ b/drivers/scsi/scsi.c
-@@ -162,7 +162,7 @@ void scsi_log_completion(struct scsi_cmnd *cmd, int disposition)
- 		    (level > 1)) {
- 			scsi_print_result(cmd, "Done", disposition);
- 			scsi_print_command(cmd);
--			if (status_byte(cmd->result) & CHECK_CONDITION)
-+			if (status_byte(cmd->result) == CHECK_CONDITION)
- 				scsi_print_sense(cmd);
- 			if (level > 3)
- 				scmd_printk(KERN_INFO, cmd,
-diff --git a/drivers/scsi/scsi_ioctl.c b/drivers/scsi/scsi_ioctl.c
-index 0a875491f5a7..cc30fccc1a2e 100644
---- a/drivers/scsi/scsi_ioctl.c
-+++ b/drivers/scsi/scsi_ioctl.c
-@@ -100,8 +100,8 @@ static int ioctl_internal_command(struct scsi_device *sdev, char *cmd,
- 	SCSI_LOG_IOCTL(2, sdev_printk(KERN_INFO, sdev,
- 				      "Ioctl returned  0x%x\n", result));
- 
--	if ((driver_byte(result) & DRIVER_SENSE) &&
--	    (scsi_sense_valid(&sshdr))) {
-+	if (driver_byte(result) == DRIVER_SENSE &&
-+	    scsi_sense_valid(&sshdr)) {
- 		switch (sshdr.sense_key) {
- 		case ILLEGAL_REQUEST:
- 			if (cmd[0] == ALLOW_MEDIUM_REMOVAL)
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 41e9ac9fc138..d53eda6f1fe0 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1031,7 +1031,7 @@ void scsi_io_completion(struct scsi_cmnd *cmd, unsigned int good_bytes)
- 			 */
- 			if (!level && __ratelimit(&_rs)) {
- 				scsi_print_result(cmd, NULL, FAILED);
--				if (driver_byte(result) & DRIVER_SENSE)
-+				if (driver_byte(result) == DRIVER_SENSE)
- 					scsi_print_sense(cmd);
- 				scsi_print_command(cmd);
- 			}
-@@ -2555,7 +2555,7 @@ scsi_mode_sense(struct scsi_device *sdev, int dbd, int modepage,
- 	 * ILLEGAL REQUEST if the code page isn't supported */
- 
- 	if (use_10_for_ms && !scsi_status_is_good(result) &&
--	    (driver_byte(result) & DRIVER_SENSE)) {
-+	    driver_byte(result) == DRIVER_SENSE) {
- 		if (scsi_sense_valid(sshdr)) {
- 			if ((sshdr->sense_key == ILLEGAL_REQUEST) &&
- 			    (sshdr->asc == 0x20) && (sshdr->ascq == 0)) {
-diff --git a/drivers/scsi/scsi_scan.c b/drivers/scsi/scsi_scan.c
-index 0880d975eed3..78ca63dfba4a 100644
---- a/drivers/scsi/scsi_scan.c
-+++ b/drivers/scsi/scsi_scan.c
-@@ -614,7 +614,7 @@ static int scsi_probe_lun(struct scsi_device *sdev, unsigned char *inq_result,
- 			 * INQUIRY should not yield UNIT_ATTENTION
- 			 * but many buggy devices do so anyway. 
- 			 */
--			if ((driver_byte(result) & DRIVER_SENSE) &&
-+			if (driver_byte(result) == DRIVER_SENSE &&
- 			    scsi_sense_valid(&sshdr)) {
- 				if ((sshdr.sense_key == UNIT_ATTENTION) &&
- 				    ((sshdr.asc == 0x28) ||
-diff --git a/drivers/scsi/scsi_transport_spi.c b/drivers/scsi/scsi_transport_spi.c
-index 2ca150b16764..40b85b752b79 100644
---- a/drivers/scsi/scsi_transport_spi.c
-+++ b/drivers/scsi/scsi_transport_spi.c
-@@ -136,7 +136,7 @@ static int spi_execute(struct scsi_device *sdev, const void *cmd,
- 				      REQ_FAILFAST_TRANSPORT |
- 				      REQ_FAILFAST_DRIVER,
- 				      0, NULL);
--		if (!(driver_byte(result) & DRIVER_SENSE) ||
-+		if (driver_byte(result) != DRIVER_SENSE ||
- 		    sshdr->sense_key != UNIT_ATTENTION)
- 			break;
- 	}
-diff --git a/drivers/scsi/sd.c b/drivers/scsi/sd.c
-index 9421d9877730..c38fd0af2b59 100644
---- a/drivers/scsi/sd.c
-+++ b/drivers/scsi/sd.c
-@@ -1635,7 +1635,7 @@ static int sd_sync_cache(struct scsi_disk *sdkp, struct scsi_sense_hdr *sshdr)
- 	if (res) {
- 		sd_print_result(sdkp, "Synchronize Cache(10) failed", res);
- 
--		if (driver_byte(res) & DRIVER_SENSE)
-+		if (driver_byte(res) == DRIVER_SENSE)
- 			sd_print_sense_hdr(sdkp, sshdr);
- 
- 		/* we need to evaluate the error return  */
-@@ -1737,8 +1737,8 @@ static int sd_pr_command(struct block_device *bdev, u8 sa,
- 	result = scsi_execute_req(sdev, cmd, DMA_TO_DEVICE, &data, sizeof(data),
- 			&sshdr, SD_TIMEOUT, SD_MAX_RETRIES, NULL);
- 
--	if ((driver_byte(result) & DRIVER_SENSE) &&
--	    (scsi_sense_valid(&sshdr))) {
-+	if (driver_byte(result) == DRIVER_SENSE &&
-+	    scsi_sense_valid(&sshdr)) {
- 		sdev_printk(KERN_INFO, sdev, "PR command failed: %d\n", result);
- 		scsi_print_sense_hdr(sdev, NULL, &sshdr);
- 	}
-@@ -2095,10 +2095,10 @@ sd_spinup_disk(struct scsi_disk *sdkp)
- 			retries++;
- 		} while (retries < 3 && 
- 			 (!scsi_status_is_good(the_result) ||
--			  ((driver_byte(the_result) & DRIVER_SENSE) &&
-+			  ((driver_byte(the_result) == DRIVER_SENSE) &&
- 			  sense_valid && sshdr.sense_key == UNIT_ATTENTION)));
- 
--		if ((driver_byte(the_result) & DRIVER_SENSE) == 0) {
-+		if (driver_byte(the_result) == DRIVER_SENSE) {
- 			/* no sense, TUR either succeeded or failed
- 			 * with a status error */
- 			if(!spintime && !scsi_status_is_good(the_result)) {
-@@ -2224,7 +2224,7 @@ static void read_capacity_error(struct scsi_disk *sdkp, struct scsi_device *sdp,
- 			struct scsi_sense_hdr *sshdr, int sense_valid,
- 			int the_result)
- {
--	if (driver_byte(the_result) & DRIVER_SENSE)
-+	if (driver_byte(the_result) == DRIVER_SENSE)
- 		sd_print_sense_hdr(sdkp, sshdr);
- 	else
- 		sd_printk(KERN_NOTICE, sdkp, "Sense not available.\n");
-@@ -3490,7 +3490,7 @@ static int sd_start_stop_device(struct scsi_disk *sdkp, int start)
- 			SD_TIMEOUT, SD_MAX_RETRIES, 0, RQF_PM, NULL);
- 	if (res) {
- 		sd_print_result(sdkp, "Start/Stop Unit failed", res);
--		if (driver_byte(res) & DRIVER_SENSE)
-+		if (driver_byte(res) == DRIVER_SENSE)
- 			sd_print_sense_hdr(sdkp, &sshdr);
- 		if (scsi_sense_valid(&sshdr) &&
- 			/* 0x3a is medium not present */
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 3a811c5f70ba..6b6fafae4071 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7290,7 +7290,7 @@ static int ufshcd_set_dev_pwr_mode(struct ufs_hba *hba,
- 		sdev_printk(KERN_WARNING, sdp,
- 			    "START_STOP failed for power mode: %d, result %x\n",
- 			    pwr_mode, ret);
--		if (driver_byte(ret) & DRIVER_SENSE)
-+		if (driver_byte(ret) == DRIVER_SENSE)
- 			scsi_print_sense_hdr(sdp, NULL, &sshdr);
- 	}
- 
--- 
-2.16.4
-
+On 6/13/18 12:51 AM, Dmitry Vyukov wrote:
+> On Wed, Jun 13, 2018 at 4:51 AM, syzbot
+> <syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com> wrote:
+>> syzbot has found a reproducer for the following crash on:
+> 
+> Woohoo! Please take a look, this is a top crasher.
+> 
+Will have a look Dmitry !!
