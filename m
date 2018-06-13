@@ -2,93 +2,80 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BDDA7C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:34:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 96549C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:37:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E91208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:34:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="t1nTpx0p"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74E91208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 5420D208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:37:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5420D208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934813AbeFMIep (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:34:45 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:52418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934388AbeFMIeb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:34:31 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=F8dNqoUPtF14WJSDZbvOo9ao6LJ4tabuyRNfPNTpqkk=; b=t1nTpx0phqcLjYUnqs0vZEzp9
-        nt7vYSh4eXFH9FPqxCVi0g7SZQ2GpCJ2I6WPmTjfsSqve9CnrXp17j+1/Xx3/02CcdA0joYzKV1bF
-        lOh7vqUsVgucQHI+LmpQnWbFw6njnQ41b9AEjaNMPUJMvgALQSd6GkZP8u8exY8SXQN7YVoAZwjHI
-        9RxYaKqv86gKKeSytnwkq+EeuCbA5XAPTXhKlTJ+TuXmIKDg8UIcGCEx9sDs/UtTYZZZwR7dnJF3h
-        kHCIcXA9Ei4+XybBN3ofD7rHZQlbYoywGFayImNO2TGZy6+s70Wx1VrCA6sTdumSVpuJzCt7d62Mh
-        0DFHrHcWQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fT1ES-0006uT-PD; Wed, 13 Jun 2018 08:34:20 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 0C9FA201EA7CB; Wed, 13 Jun 2018 10:34:19 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 10:34:19 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Doug Berger <opendmb@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [RFC PATCH 03/23] genirq: Introduce IRQF_DELIVER_AS_NMI
-Message-ID: <20180613083419.GS12258@hirez.programming.kicks-ass.net>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
+        id S934750AbeFMIhN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 04:37:13 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45984 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933912AbeFMIhK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 04:37:10 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 08B4CAD88;
+        Wed, 13 Jun 2018 08:37:09 +0000 (UTC)
+Date:   Wed, 13 Jun 2018 10:37:07 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Jason Baron <jbaron@akamai.com>, akpm@linux-foundation.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        linux-api@vger.kernel.org, emunson@mgebm.net
+Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
+ MLOCK_ONFAULT
+Message-ID: <20180613083707.GE13364@dhcp22.suse.cz>
+References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
+ <20180611072005.GC13364@dhcp22.suse.cz>
+ <4c4de46d-c55a-99a8-469f-e1e634fb8525@akamai.com>
+ <20180611150330.GQ13364@dhcp22.suse.cz>
+ <775adf2d-140c-1460-857f-2de7b24bafe7@akamai.com>
+ <20180612074646.GS13364@dhcp22.suse.cz>
+ <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
+ <0daccb7c-f642-c5ce-ca7a-3b3e69025a1e@suse.cz>
+ <20180613071552.GD13364@dhcp22.suse.cz>
+ <5eb9a018-d5ac-5732-04f1-222c343b840a@suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528851463-21140-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
+In-Reply-To: <5eb9a018-d5ac-5732-04f1-222c343b840a@suse.cz>
 User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 05:57:23PM -0700, Ricardo Neri wrote:
-> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> index 5426627..dbc5e02 100644
-> --- a/include/linux/interrupt.h
-> +++ b/include/linux/interrupt.h
-> @@ -61,6 +61,8 @@
->   *                interrupt handler after suspending interrupts. For system
->   *                wakeup devices users need to implement wakeup detection in
->   *                their interrupt handlers.
-> + * IRQF_DELIVER_AS_NMI - Configure interrupt to be delivered as non-maskable, if
-> + *                supported by the chip.
->   */
+On Wed 13-06-18 09:51:23, Vlastimil Babka wrote:
+> On 06/13/2018 09:15 AM, Michal Hocko wrote:
+> > On Wed 13-06-18 08:32:19, Vlastimil Babka wrote:
+[...]
+> >> I think more concerning than guaranteeing no later major fault is
+> >> possible data loss, e.g. replacing data with zero-filled pages.
+> > 
+> > But MADV_DONTNEED is an explicit call for data loss. Or do I miss your
+> > point?
+> 
+> My point is that if somebody is relying on MADV_DONTNEED not affecting
+> mlocked pages, the consequences will be unexpected data loss, not just
+> extra page faults.
 
-NAK on the first 6 patches. You really _REALLY_ don't want to expose
-NMIs to this level.
+OK, I see your point now. I would consider this an application bug
+though. Calling MADV_DONTNEED and wondering that the content is gone is,
+ehm, questionable at best. Why would anybody do that in the first place?
+
+Anyway, I think that we cannot change the behavior because of mlockall
+semantic as mentioned earlier.
+-- 
+Michal Hocko
+SUSE Labs
