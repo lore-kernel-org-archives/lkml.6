@@ -6,83 +6,172 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D8B50C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:34:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7C676C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:35:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86BDD208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:34:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86BDD208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3D421208D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:35:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D421208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ispras.ru
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935465AbeFMRet (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:34:49 -0400
-Received: from foss.arm.com ([217.140.101.70]:50332 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934979AbeFMRes (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:34:48 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D58AF1435;
-        Wed, 13 Jun 2018 10:34:47 -0700 (PDT)
-Received: from [10.1.206.36] (e113632-lin.cambridge.arm.com [10.1.206.36])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 27F7E3F25D;
-        Wed, 13 Jun 2018 10:34:46 -0700 (PDT)
-Subject: Re: [PATCH] arm64: dts: hikey: Define wl1835 power capabilities
-To:     Ryan Grachek <ryan@edited.us>
-Cc:     Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, John Stultz <john.stultz@linaro.org>
-References: <20180613151305.17240-1-ryan@edited.us>
-From:   Valentin Schneider <valentin.schneider@arm.com>
-Message-ID: <521dd38a-29b8-5670-4296-84b300921b3d@arm.com>
-Date:   Wed, 13 Jun 2018 18:34:45 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180613151305.17240-1-ryan@edited.us>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S935474AbeFMRfC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:35:02 -0400
+Received: from bran.ispras.ru ([83.149.199.196]:22881 "EHLO smtp.ispras.ru"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S934979AbeFMRfA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 13:35:00 -0400
+Received: from myklebust.intra.ispras.ru (unknown [10.10.2.207])
+        by smtp.ispras.ru (Postfix) with ESMTP id EF82F203CD;
+        Wed, 13 Jun 2018 12:08:06 +0300 (MSK)
+From:   Anton Vasilyev <vasilyev@ispras.ru>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Anton Vasilyev <vasilyev@ispras.ru>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Johannes Thumshirn <jthumshirn@suse.de>,
+        Gaurav Pathak <gauravpathak129@gmail.com>,
+        Hannes Reinecke <hare@suse.de>, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, ldv-project@linuxtesting.org
+Subject: [PATCH v3] staging: rts5208: add error handling into rtsx_probe
+Date:   Wed, 13 Jun 2018 20:34:43 +0300
+Message-Id: <20180613173443.32488-1-vasilyev@ispras.ru>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <CAHp75VetOuS+H4GU9UW-Ekczs22-Ju++jXWdvkMJGktbumDzwQ@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+If rtsx_probe() fails to allocate dev->chip, then release_everything()
+will crash on uninitialized dev->cmnd_ready complete.
 
-On 13/06/18 16:13, Ryan Grachek wrote:
-> These properties are required for compatibility with runtime PM.
-> Without these properties, MMC host controller will not be aware
-> of power capabilities. When the wlcore driver attempts to power
-> on the device, it will erroneously fail with -EACCES.
-> 
+Patch adds error handling into rtsx_probe.
 
-I don't have a hikey620 to test this, but the hikey960 is suffering from the
-same issue (see [1]). I added these properties to the dwmmc2 node of the
-hikey960 (see snippet) and wlan0 does show up. Would you mind sending a
-similar patch for that board ?
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Thanks !
+Signed-off-by: Anton Vasilyev <vasilyev@ispras.ru>
+---
+v3: fix subject and commit message
+v2: Add error handling into rtsx_probe based on Dan Carpenter's comment.
+I do not have corresponding hardware, so patch was tested by compilation only.
 
-Valentin
+I faced with inaccuracy at rtsx_remove() and original rtsx_probe():
+there is quiesce_and_remove_host() call with scsi_remove_host() inside,
+whereas release_everything() calls scsi_host_put() after this
+scsi_remove_host() call. This is strange for me.
+Also I do not know is it require to check result value of
+rtsx_init_chip() call on rtsx_probe().
+---
+ drivers/staging/rts5208/rtsx.c | 38 +++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 12 deletions(-)
 
-[1]: https://lkml.org/lkml/2018/6/12/930
+diff --git a/drivers/staging/rts5208/rtsx.c b/drivers/staging/rts5208/rtsx.c
+index 70e0b8623110..69e6abe14abf 100644
+--- a/drivers/staging/rts5208/rtsx.c
++++ b/drivers/staging/rts5208/rtsx.c
+@@ -857,7 +857,7 @@ static int rtsx_probe(struct pci_dev *pci,
+ 	dev->chip = kzalloc(sizeof(*dev->chip), GFP_KERNEL);
+ 	if (!dev->chip) {
+ 		err = -ENOMEM;
+-		goto errout;
++		goto chip_alloc_fail;
+ 	}
+ 
+ 	spin_lock_init(&dev->reg_lock);
+@@ -879,7 +879,7 @@ static int rtsx_probe(struct pci_dev *pci,
+ 	if (!dev->remap_addr) {
+ 		dev_err(&pci->dev, "ioremap error\n");
+ 		err = -ENXIO;
+-		goto errout;
++		goto ioremap_fail;
+ 	}
+ 
+ 	/*
+@@ -894,7 +894,7 @@ static int rtsx_probe(struct pci_dev *pci,
+ 	if (!dev->rtsx_resv_buf) {
+ 		dev_err(&pci->dev, "alloc dma buffer fail\n");
+ 		err = -ENXIO;
+-		goto errout;
++		goto dma_alloc_fail;
+ 	}
+ 	dev->chip->host_cmds_ptr = dev->rtsx_resv_buf;
+ 	dev->chip->host_cmds_addr = dev->rtsx_resv_buf_addr;
+@@ -915,7 +915,7 @@ static int rtsx_probe(struct pci_dev *pci,
+ 
+ 	if (rtsx_acquire_irq(dev) < 0) {
+ 		err = -EBUSY;
+-		goto errout;
++		goto irq_acquire_fail;
+ 	}
+ 
+ 	pci_set_master(pci);
+@@ -935,14 +935,14 @@ static int rtsx_probe(struct pci_dev *pci,
+ 	if (IS_ERR(th)) {
+ 		dev_err(&pci->dev, "Unable to start control thread\n");
+ 		err = PTR_ERR(th);
+-		goto errout;
++		goto control_thread_fail;
+ 	}
+ 	dev->ctl_thread = th;
+ 
+ 	err = scsi_add_host(host, &pci->dev);
+ 	if (err) {
+ 		dev_err(&pci->dev, "Unable to add the scsi host\n");
+-		goto errout;
++		goto scsi_add_host_fail;
+ 	}
+ 
+ 	/* Start up the thread for delayed SCSI-device scanning */
+@@ -950,18 +950,16 @@ static int rtsx_probe(struct pci_dev *pci,
+ 	if (IS_ERR(th)) {
+ 		dev_err(&pci->dev, "Unable to start the device-scanning thread\n");
+ 		complete(&dev->scanning_done);
+-		quiesce_and_remove_host(dev);
+ 		err = PTR_ERR(th);
+-		goto errout;
++		goto scan_thread_fail;
+ 	}
+ 
+ 	/* Start up the thread for polling thread */
+ 	th = kthread_run(rtsx_polling_thread, dev, "rtsx-polling");
+ 	if (IS_ERR(th)) {
+ 		dev_err(&pci->dev, "Unable to start the device-polling thread\n");
+-		quiesce_and_remove_host(dev);
+ 		err = PTR_ERR(th);
+-		goto errout;
++		goto scan_thread_fail;
+ 	}
+ 	dev->polling_thread = th;
+ 
+@@ -970,9 +968,25 @@ static int rtsx_probe(struct pci_dev *pci,
+ 	return 0;
+ 
+ 	/* We come here if there are any problems */
+-errout:
++scan_thread_fail:
++	quiesce_and_remove_host(dev);
++scsi_add_host_fail:
++	complete(&dev->cmnd_ready);
++	wait_for_completion(&dev->control_exit);
++control_thread_fail:
++	free_irq(dev->irq, (void *)dev);
++	rtsx_release_chip(dev->chip);
++irq_acquire_fail:
++	dev->chip->host_cmds_ptr = NULL;
++	dev->chip->host_sg_tbl_ptr = NULL;
++	if (dev->chip->msi_en)
++		pci_disable_msi(dev->pci);
++dma_alloc_fail:
++	iounmap(dev->remap_addr);
++ioremap_fail:
++	kfree(dev->chip);
++chip_alloc_fail:
+ 	dev_err(&pci->dev, "%s failed\n", __func__);
+-	release_everything(dev);
+ 
+ 	return err;
+ }
+-- 
+2.17.1
 
---->8
-
-diff --git a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-index 85aadf1b..c706f70 100644
---- a/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-+++ b/arch/arm64/boot/dts/hisilicon/hi3660-hikey960.dts
-@@ -613,6 +613,8 @@
-        vmmc-supply = <&wlan_en>;
-        ti,non-removable;
-        non-removable;
-+       cap-power-off-card;
-+       keep-power-in-suspend;
-        #address-cells = <0x1>;
-        #size-cells = <0x0>;
-        status = "ok";
