@@ -2,128 +2,126 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 732DEC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:22:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BEF1EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:27:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2979E20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:22:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B9E220693
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:27:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ixKUeoTh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2979E20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="eKiV8r59"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B9E220693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.bosch.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935983AbeFMPW3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:22:29 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:46266 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935691AbeFMPW1 (ORCPT
+        id S935938AbeFMP1V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:27:21 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:42106 "EHLO
+        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935691AbeFMP1S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:22:27 -0400
-Received: by mail-io0-f193.google.com with SMTP id d22-v6so3816968iof.13
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fyEXvMhLkO9SZrUqxqlvv8Rm1hSheVFC9tfQ3aTcN/4=;
-        b=ixKUeoThG5kb+DUx+RKTVQXHNkkBT6Wnk/rAgztZljxJ+NUPKRVuRG1G4S2+hXQQ30
-         f7pPf/S+RFGJ7A3KJ1tcM3B8CRAEw7hWXiuDp/5tTN0g2CmGFJ24cik5hs79nIDt1kYl
-         1KfnBG/62I2nE5h8ZkPXD9t5iw9WjmNMHTWN8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fyEXvMhLkO9SZrUqxqlvv8Rm1hSheVFC9tfQ3aTcN/4=;
-        b=IRH4RTidmibICZnZGCtgO0daXtk8Ah0kLBhfXP3AnndYkrIm8VeJS7MFq7epo+Trp5
-         Smr5+M0y+FpeInOLg0AJh0MYTu8PxRVcPWx8ZVQ+w5UYR9N/xc4G1gYzIOuY/WZ2fdW1
-         6KzUh9zS2J6ErBf4PX6Qyb4ukfBbu+j+0ug0cpZEHyVS3QMZdR9YfIjNvvUpRWTFah2U
-         PzU02Jo6yy017slNjKKJKXcX65qwcseZBxriGRgyRwOP0R5Swa/WnRIibHMNLo1JkGba
-         /fODNQBROrtYjMsx7AxmbwRJaOLiSovo9M3oMCSPeZFjaGO4aN9uvboqMfSB/jgFEuO0
-         LNiQ==
-X-Gm-Message-State: APt69E3NdPNxsLCEu0LTtnd+xZN4REUOjs02+77iXiMxo8dLef2Y/Y6Z
-        pphMPlOK7ZK9OJNRr51kUMKuQLmKu6FbPBL+in0sug==
-X-Google-Smtp-Source: ADUXVKIqQUtE1gVAYZVVWHGnMBBTSeD3sogiTewKaGNS72TrH7SJzxR1BBOH6v0Xs2Gpbp5o434q2JcfLzgNYxgCFCY=
-X-Received: by 2002:a6b:6709:: with SMTP id b9-v6mr4971898ioc.170.1528903346831;
- Wed, 13 Jun 2018 08:22:26 -0700 (PDT)
+        Wed, 13 Jun 2018 11:27:18 -0400
+Received: from si0vm1948.rbesz01.com (unknown [139.15.230.188])
+        by si0vms0217.rbdmz01.com (Postfix) with ESMTPS id 415Vx12pLWz4f3kp0;
+        Wed, 13 Jun 2018 17:27:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
+        s=2015-01-21; t=1528903637;
+        bh=HOaT1hrdMtb1781JxR/wpK0GpltgC8HtsieGbtWl1ek=; l=10;
+        h=From:From:Reply-To:Sender;
+        b=eKiV8r59pzbwUCc8ELQMcbiLVZdcIXFcM7qjg4EmVIyMr4fgHkCJap3THVrNdfAX+
+         p5NBtXA10KXtC4oQlngBJNMM3aetrwmO/IFmBcwEoIAjYKXuDNwMp2i6gveyhGBqRB
+         dV9WQryaP6C5MoDC3e0Yl9vPU82NUzYsbq8EfJJo=
+Received: from fe0vm1741.rbesz01.com (unknown [10.58.172.176])
+        by si0vm1948.rbesz01.com (Postfix) with ESMTPS id 415Vx12ch4z4fw;
+        Wed, 13 Jun 2018 17:27:17 +0200 (CEST)
+X-AuditID: 0a3aad15-9f3ff70000007ca2-e1-5b2137de4e8e
+Received: from fe0vm1652.rbesz01.com ( [10.58.173.29])
+        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client did not present a certificate)
+        by fe0vm1741.rbesz01.com (SMG Outbound) with SMTP id 46.66.31906.ED7312B5; Wed, 13 Jun 2018 17:27:26 +0200 (CEST)
+Received: from FE-MBX2051.de.bosch.com (fe-mbx2051.de.bosch.com [10.3.231.61])
+        by fe0vm1652.rbesz01.com (Postfix) with ESMTPS id 415Vx10gKQzBpBg;
+        Wed, 13 Jun 2018 17:27:17 +0200 (CEST)
+Received: from FE-MBX2051.de.bosch.com (10.3.231.61) by
+ FE-MBX2051.de.bosch.com (10.3.231.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.1466.3; Wed, 13 Jun 2018 17:27:16 +0200
+Received: from FE-MBX2051.de.bosch.com ([fe80::d5b5:44fa:ef15:153e]) by
+ FE-MBX2051.de.bosch.com ([fe80::d5b5:44fa:ef15:153e%6]) with mapi id
+ 15.01.1466.008; Wed, 13 Jun 2018 17:27:16 +0200
+From:   "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "hs@denx.de" <hs@denx.de>,
+        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
+        "ZHU Yi (BT-FIR/ENG1-Zhu)" <Yi.Zhu5@cn.bosch.com>,
+        "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
+Subject: Re: [PATCH v5] Input: add bu21029 touch driver
+Thread-Topic: [PATCH v5] Input: add bu21029 touch driver
+Thread-Index: AdQDKorsQCg/6r2vTbqVlvssv9t8Uw==
+Date:   Wed, 13 Jun 2018 15:27:16 +0000
+Message-ID: <73b4ea3ce1aa453681fae87b7bad5cab@de.bosch.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.19.142.147]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 08:22:25
- -0700 (PDT)
-In-Reply-To: <442896963833043f84dd9d0c14d88351@codeaurora.org>
-References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
- <1526653072-7153-2-git-send-email-okaya@codeaurora.org> <26470c5c-55db-9dff-3794-4e4a96c8bcb6@codeaurora.org>
- <CAKv+Gu8UG_D0AAR8Usdi7DrucqaEs+f-JTU1voR-CcrtNY2ZEQ@mail.gmail.com> <442896963833043f84dd9d0c14d88351@codeaurora.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Wed, 13 Jun 2018 17:22:25 +0200
-Message-ID: <CAKv+Gu_ZRNvW9CeqRyUpQGnrkkoOi1Hh08re=_Gz=EGVTAvbsA@mail.gmail.com>
-Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
- translated by the bridge
-To:     Sinan Kaya <okaya@codeaurora.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc:     "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
-        Timur Tabi <timur@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Peter Jones <pjones@redhat.com>,
-        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Brightmail-Tracker: H4sIAAAAAAAAA21TbUxTVxjm9N6WS8OF21s73tWxSDOXxc2u3dxo1CzEzQR/IGxLMErUlfVK
+        u/WD9FIGxmxkRmYVJ9nESQFpGXRIcHVlP9gAu5XqUDMMY0yILXOwzVYri4qVbLPulgu2P/bv
+        Oc/7PO/znvfkEBjtIeSEwVzFWM1ao0IkxsXrT+eunc7PK1NNHpdoIo3DSNMeGBVqhjvCSNMf
+        /BXTTN2JCTXj37aKNF1XxgSaA0OB9AKisPdkLyo86RjBC79xhNILvT12UeFd75Mlwh3ijTrG
+        aKhmrM+/8pZYP9DUgSqPimriP3pRHfoXP4QyCKDWwfwv8UVMUycEcLVNegiJOTyI4LMjXwj4
+        wy0EA1fvpPOH7xAMfmjHEhYRtR4+cl9KT+AVVA08cAeECRFG1WHgPt8iSBSkVD6MRF1LIg24
+        L38l4LESZvumF7NxajUcCNpRApPUBnj408CiHlG5cObM5cUwjMoB75/3hfzcFHQO8jxQMojM
+        xjme4HAetJ7YxMuVMNl0TMTjZ8Htuonx7SVwofl3vBHJHCldHSkWR4rFkWJxIrwHyfYwqmqT
+        On+dWmktZ9i9KrXybYvJi/gXlPUjl6vUjygCKTLJDFVeGS3UVrO1Jj96iRAoZOTWxlVldFa5
+        RVer17L63VabkWEVchKlpaXR0kc0ays3GVjWYDH7ERCYYgW5Ncz5SJ22di9jtfA2P1pJ4Ioc
+        skG3bwdNVWirmHcZppKxLlc3EIQCyCMvczNIrEwFU7PHYKxaLity+czHUiupsQIiw49eJDK5
+        7MOJFiRbqTWxhool++O8nV5mk9aL6FUiWt/QgNG42WJm5Dlkd8JPJZR6m/nRBPInyLKvuUvJ
+        UgrJLjfQFOJ2KCUzuB9BZ3IfJZkNZL+0dTstWSKTphe6OA91HQff1DgCT/wWBgsTF0nwtXyS
+        BR9Pu7Lg7+ambAi22SUw2T0ig4POwHMwf++HtXAlOqbiJH9o4PZR5yYIeEKvwcC1qc1wbM6+
+        BXwXWrfAl/XeIug//n0R2AOuYmg61fImhJ1DpRCMdm2Hg/H9u8DX7t8Nkd52HUR6QhUQHBwz
+        QPifNhN8er2ehanpPhYWHGffv8EtVsAt9ty5xKOyVdqq/1nsEpu8nbwOda95T/iUMf+voaJd
+        tpnRvlhD9l00kXn/NIFFz8qZ5gZccHtbbP78Bw+k48qh2LaHJfuLI6MdodynRTPPxPrUE6s2
+        3tw8HHV2zoR39ouyOwOnZsNvwM/vkKV220p18aXQvRp3vMS6eo54vYbed/jzDk+OpxNHBQu/
+        7dQW+OzX5hQ4q9eq12BWVvsfH+ysLMIEAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13 June 2018 at 17:17,  <okaya@codeaurora.org> wrote:
-> On 2018-06-13 11:06, Ard Biesheuvel wrote:
->>
->> On 13 June 2018 at 16:22, Sinan Kaya <okaya@codeaurora.org> wrote:
->>>
->>> Hi Ard,
->>>
->>> On 5/18/2018 10:17 AM, Sinan Kaya wrote:
->>>>
->>>> A host bridge is allowed to remap BAR addresses using _TRA attribute in
->>>> _CRS windows.
->>>>
->>>> pci_bus 0000:00: root bus resource [mem 0x80100100000-0x8011fffffff
->>>> window] (bus address [0x00100000-0x1fffffff])
->>>> pci 0000:02:00.0: reg 0x10: [mem 0x8011e000000-0x8011effffff]
->>>>
->>>> When a VGA device is behind such a host bridge and the resource is
->>>> translated efifb driver is trying to do ioremap against bus address
->>>> rather than the resource address and is failing to probe.
->>>>
->>>> efifb: probing for efifb
->>>> efifb: cannot reserve video memory at 0x1e000000
->>>> efifb: framebuffer at 0x1e000000, using 1920k, total 1875k
->>>> efifb: mode is 800x600x32, linelength=3200, pages=1
->>>> efifb: scrolling: redraw
->>>> efifb: Truecolor: size=8:8:8:8, shift=24:16:8:0
->>>>
->>>> Use the host bridge offset information to convert bus address to
->>>> resource address in the fixup.
->>>>
->>>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
->>>> ---
->>>
->>>
->>> I didn't see any messages about these getting picked up for 4.18.
->>>
->>> Are they queued on your own branch?
->>>
->>
->> No, you never cc'ed me on them until now.
->
->
-> Ouch, I hoped that you would get it via get_maintainer script. Sorry for
-> that.
+Hello Dmitry,
 
-Actually, get_maintainer is right: this should go through the fbdev
-tree not the EFI tree
+> > [PATCH v5] Input: add bu21029 touch driver
+> >
+> > Add Rohm BU21029 resistive touch panel controller support with I2C
+> > interface.
+>=20
+> Is the patch ready to be pushed upstream? Is there anything I still need =
+to do?
 
-Were you going to resend them? If not, I can find them in my archive
-and ack them, and we will ask Bartlomiej to take them for v4.19
+I would like to kindly remind you of the BU21029 touch screen driver.
+Could you please forward it to the mainline kernel?
+
+Greetings,
+Mark
+
+ Mark Jonas
+
+Building Technologies, Panel Software Fire (BT-FIR/ENG1)=20
+Bosch Sicherheitssysteme GmbH | Postfach 11 11 | 85626 Grasbrunn | GERMANY =
+| www.boschsecurity.com
+
+Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118=20
+Aufsichtsratsvorsitzender: Stefan Hartung; Gesch=E4ftsf=FChrung: Gert van I=
+peren, Andreas Bartz, Thomas Quante, Bernhard Schuster
