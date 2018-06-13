@@ -2,136 +2,97 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B01F9C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:09:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2DD0EC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:10:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63F9F208D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:09:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="YSLxmO1b";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PElfmOpB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63F9F208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id E1D7C208D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:10:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1D7C208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964845AbeFMVJ6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 17:09:58 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:40413 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964828AbeFMVJy (ORCPT
+        id S935965AbeFMVJS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 17:09:18 -0400
+Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:54991 "EHLO
+        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935626AbeFMVJQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 17:09:54 -0400
-Received: by mail-vk0-f67.google.com with SMTP id o71-v6so2400350vke.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 14:09:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=9ldRJ8sRd73u+QInRbQ/mMV8cTDVP9jju/8yssxbQvE=;
-        b=YSLxmO1bFn1zTiH4tCrOLvq2zPTyO+pL8cKRmzONAABK5FHFyAMpXMGNU1j9DQOdu7
-         yR2cHsWR138VanlSgLtnQi3i4Mnm8s9X3jxvDLF4yfcYtVSm/uUp1uukViRtM6gwUu/8
-         fxtjKscd05NxJ9PkqYUs3G4/dapfJ+0Le1h09lk6i/+ER7cDAJSDpr01FEobrWF+9G7D
-         KTdpOjEShhj17OOm+hAL5tMiIhWgdCUdQZLC8wjMCfa2Id2Pn2yURuWRO6C/01dR8iEO
-         LSl7DJUhMPDoLwXPSKrbYhrZrU6UAXNuaV+ZmKaqRL0ADMgBzhuv4kwVY8q8MyFrFvs9
-         UHRA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=9ldRJ8sRd73u+QInRbQ/mMV8cTDVP9jju/8yssxbQvE=;
-        b=PElfmOpBGqW7s05h1LKULDP7HoSP1MkWdFNSyuXQ/B5imKRfn++r6MbbJJiYaflK/c
-         QMGzfVp0623Oo2WnLtNpb8Hqm08t2Cuy285Hi4NGcD1OTiDClp5oDEI/IKoHP6g2nbWl
-         TUK5BS8l+e7x2JCJJBKdtnJVvrPgvpiHPv84k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=9ldRJ8sRd73u+QInRbQ/mMV8cTDVP9jju/8yssxbQvE=;
-        b=OgLvhG4ShtY/fgMXD1BDYJY61TFg72prM+mTpfFY57mLoMfKkiagmInQHJnsdRsREP
-         riKN0XmlxsglUOIt1q4jxdKlfrUGdLQ2+cW0VfNhfQev8u+t9WXlLL50fFQLFTd2AsBV
-         Jlso4MzqwcdM6VvgU52OA8hjzVdoMdQdrNXgED1BhrxJgqF4BPO/2lb0QLyk+Hk7Msid
-         nZrx0kfntr56ylF2vgwdTnsK6zgK9W/cnEx+Z+bqdH9tS8hGMfcZZX2BTL8aM0DO+8YI
-         nDxA2hw07nveBY3xflMjXY17aqt6/155jdjaqcsobfglrumvRz5ZlEjC2CaUpaMef7kg
-         16Cw==
-X-Gm-Message-State: APt69E01jwVwqIhrVfEwW56BzLaoHS086T6rvzFiJYUFTS6XWBG6fVD0
-        /9yWRXNlp9gqDw7baj6TVKA6MPzrJihx8NJbVZlQAQ==
-X-Google-Smtp-Source: ADUXVKLWxjyyAutCGfoTQuAHoHA549lAlW9uHKhJboOzCR8IIvd7hvyMhhwgy6/mdZL1d96DLRzoImeuTQqYo2fb5QI=
-X-Received: by 2002:a1f:7c4:: with SMTP id 187-v6mr4058280vkh.60.1528924193311;
- Wed, 13 Jun 2018 14:09:53 -0700 (PDT)
+        Wed, 13 Jun 2018 17:09:16 -0400
+Received: from sc9-mailhost3.vmware.com (10.113.161.73) by
+ EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
+ 15.0.1156.6; Wed, 13 Jun 2018 14:09:11 -0700
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost3.vmware.com (Postfix) with ESMTP id EEEFA409BF;
+        Wed, 13 Jun 2018 14:09:15 -0700 (PDT)
+From:   Nadav Amit <namit@vmware.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Xavier Deguillard <xdeguillard@vmware.com>,
+        <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Nadav Amit <namit@vmware.com>, <stable@vger.kernel.org>
+Subject: [PATCH v2 4/7] vmw_balloon: fix VMCI use when balloon built into kernel
+Date:   Wed, 13 Jun 2018 06:54:09 -0700
+Message-ID: <20180613135412.81660-5-namit@vmware.com>
+X-Mailer: git-send-email 2.17.0
+In-Reply-To: <20180613135412.81660-1-namit@vmware.com>
+References: <20180613135412.81660-1-namit@vmware.com>
 MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 14:09:52
- -0700 (PDT)
-In-Reply-To: <1528737949-17495-11-git-send-email-rplsssn@codeaurora.org>
-References: <1528737949-17495-1-git-send-email-rplsssn@codeaurora.org> <1528737949-17495-11-git-send-email-rplsssn@codeaurora.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 13 Jun 2018 14:09:52 -0700
-X-Google-Sender-Auth: Bc9CoCMPZOpVwBpP08LeDw_FUwU
-Message-ID: <CAD=FV=Vc_wtLTxM8A9T-RZ8h5XpkSLLUVJzmCQSytXFwOPRkOw@mail.gmail.com>
-Subject: Re: [PATCH v10 10/10] drivers: qcom: rpmh-rsc: allow active requests
- from wake TCS
-To:     Raju P L S S S N <rplsssn@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Lina Iyer <ilina@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Currently, when all modules, including VMCI and VMware balloon are built
+into the kernel, the initialization of the balloon happens before the
+VMCI is probed. As a result, the balloon fails to initialize the VMCI
+doorbell, which it uses to get asynchronous requests for balloon size
+changes.
 
-On Mon, Jun 11, 2018 at 10:25 AM, Raju P L S S S N
-<rplsssn@codeaurora.org> wrote:
-> @@ -148,7 +148,8 @@ int rpmh_rsc_invalidate(struct rsc_drv *drv)
->  static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
->                                          const struct tcs_request *msg)
->  {
-> -       int type;
-> +       int type, ret;
-> +       struct tcs_group *tcs;
->
->         switch (msg->state) {
->         case RPMH_ACTIVE_ONLY_STATE:
-> @@ -164,7 +165,25 @@ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
->                 return ERR_PTR(-EINVAL);
->         }
->
-> -       return get_tcs_of_type(drv, type);
-> +       /*
-> +        * If we are making an active request on a RSC that does not have a
-> +        * dedicated TCS for active state use, then re-purpose a wake TCS to
-> +        * send active votes.
-> +        * NOTE: The driver must be aware that this RSC does not have a
-> +        * dedicated AMC, and therefore would invalidate the sleep and wake
-> +        * TCSes before making an active state request.
-> +        */
-> +       tcs = get_tcs_of_type(drv, type);
-> +       if (msg->state == RPMH_ACTIVE_ONLY_STATE && IS_ERR(tcs)) {
-> +               tcs = get_tcs_of_type(drv, WAKE_TCS);
-> +               if (!IS_ERR(tcs)) {
-> +                       ret = rpmh_rsc_invalidate(drv);
-> +                       if (ret)
-> +                               return ERR_PTR(ret);
+The problem can be seen in the logs, in the form of the following
+message:
+	"vmw_balloon: failed to initialize vmci doorbell"
 
-In v9 you looped as long as the "ret" was -EAGAIN.  Now you're not.
-Are all the callers setup to handle -EAGAIN or should you keep the
-loop in for -EAGAIN?  I don't think callers handle this well.
+The driver would work correctly but slightly less efficiently, probing
+for requests periodically. This patch changes the balloon to be
+initialized using late_initcall() instead of module_init() to address
+this issue. It does not address a situation in which VMCI is built as a
+module and the balloon is built into the kernel.
 
-...or is there some reason that EAGAIN can't happen in this call to
-rpmh_rsc_invalidate()?
+Fixes: 48e3d668b790 ("VMware balloon: Enable notification via VMCI")
 
+Cc: stable@vger.kernel.org
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+---
+ drivers/misc/vmw_balloon.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
--Doug
+diff --git a/drivers/misc/vmw_balloon.c b/drivers/misc/vmw_balloon.c
+index a7df4c24a28d..e7cfc85f6961 100644
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -1297,7 +1297,14 @@ static int __init vmballoon_init(void)
+ 
+ 	return 0;
+ }
+-module_init(vmballoon_init);
++
++/*
++ * Using late_initcall() instead of module_init() allows the balloon to use the
++ * VMCI doorbell even when the balloon is built into the kernel. Otherwise the
++ * VMCI is probed only after the balloon is initialized. If the balloon is used
++ * as a module, late_initcall() is equivalent to module_init().
++ */
++late_initcall(vmballoon_init);
+ 
+ static void __exit vmballoon_exit(void)
+ {
+-- 
+2.17.0
+
