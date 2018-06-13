@@ -2,79 +2,95 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 91171C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:05:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 83BAFC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:05:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C61F208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:05:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GBgui4Qk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C61F208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 404A9208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:05:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404A9208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936069AbeFMQFT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:05:19 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:40135 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935524AbeFMQFS (ORCPT
+        id S936108AbeFMQFb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:05:31 -0400
+Received: from mailoutvs36.siol.net ([185.57.226.227]:50495 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S935524AbeFMQF3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:05:18 -0400
-Received: by mail-io0-f193.google.com with SMTP id g22-v6so3995506iob.7;
-        Wed, 13 Jun 2018 09:05:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=69gvlWzyTfh9ug7mztAh3Uc5jyMdPAwzoUgFiTiwjSI=;
-        b=GBgui4Qk0Erh4fLlVtLrAVGHh1WqFBNW7tbHEa/lcBPigt+wZFttW3u02DZR4KdbME
-         USwIvdAwFWuG23Fl7JFcE5arY5NF3yWg9Xtb3LhIjTiQwwM52bZepEZKu+DzjNPufMTl
-         M0zeWIqf701zw2FdO7XShsPHycqotIlkEi6yI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=69gvlWzyTfh9ug7mztAh3Uc5jyMdPAwzoUgFiTiwjSI=;
-        b=XQz98d90cvrbN9MMT2YF0ZL4PSfl6dtzDixaMLhEi+f+79mXas2eaorcKtQ22iSIZV
-         WY6qNMVbiBVgAaZ28D86Zjz8Hj3b6bMerg4n0YkRl+vT526otYrYrmKU1zDS87dkUJKJ
-         T7l9DCaZpP3JAuxvZgKTTpIYrGuTBgCCTLop839ZW66GqNlK6OdLmlo6gqmod0zh1my7
-         qOIf1tvvE0zxS2trSs/3miLH4G8OU8erGe2ofLjyWbs48x4nVpmsCvO7XmBbJmy/Qi2p
-         TcB9LNP53fRQpV75b1podQavR+VFRm0IFJMZQ80uSmVAr2R5Wg0pxJnnLYsOOHXmxw0T
-         iVGg==
-X-Gm-Message-State: APt69E2+zPGVwZy45v7ikmSz/XC+bT0e+yCqbI7lWfg0ju3Q9wYGL8Tl
-        Mi3YoP/lLR2TSBx++EVbk5fjk5qevs5OIa5HEJc=
-X-Google-Smtp-Source: ADUXVKLoChKyMj0TkuzwLxeJMevgYtX7tn9sWDMxiABhEQGBJrZ6KSFvSkk5BwFGxpjBNIK+5+k1saNc4CxKQrs4NqU=
-X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr5499164ion.259.1528905917255;
- Wed, 13 Jun 2018 09:05:17 -0700 (PDT)
+        Wed, 13 Jun 2018 12:05:29 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTP id 2E0A45213D2;
+        Wed, 13 Jun 2018 18:05:27 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id Rb2ilXWrJxaR; Wed, 13 Jun 2018 18:05:26 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Zimbra) with ESMTPS id 734A6520E52;
+        Wed, 13 Jun 2018 18:05:26 +0200 (CEST)
+Received: from jernej-laptop.localnet (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Zimbra) with ESMTPA id C6616521384;
+        Wed, 13 Jun 2018 18:05:25 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     linux-sunxi@googlegroups.com, maxime.ripard@bootlin.com
+Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [linux-sunxi] Re: [PATCH v2 24/27] drm: of: Export drm_crtc_port_mask()
+Date:   Wed, 13 Jun 2018 18:04:24 +0200
+Message-ID: <1909375.AJdhpVkKnf@jernej-laptop>
+In-Reply-To: <20180613073605.gnhcwrywooxhyryj@flea>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180612200036.21483-25-jernej.skrabec@siol.net> <20180613073605.gnhcwrywooxhyryj@flea>
 MIME-Version: 1.0
-References: <CAK7LNARDLbEhbJGrKY6HGwfxL8ebAMBDa_2A+s2QkzQGEKyFHQ@mail.gmail.com>
- <CA+55aFyxY9f9_eGv3CvA0zwzo8K5WeNbNPDFuyhtCrzRyic85A@mail.gmail.com> <CA+55aFy2KEzTiF=0nG8_RFoPpycaqc=n-hf-mQSbKotMzYJG-w@mail.gmail.com>
-In-Reply-To: <CA+55aFy2KEzTiF=0nG8_RFoPpycaqc=n-hf-mQSbKotMzYJG-w@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 13 Jun 2018 09:05:05 -0700
-Message-ID: <CA+55aFwpobon5SH8XO8r+GKPz5=HzzzNKgr0kjU9+VU8kA4Z8A@mail.gmail.com>
-Subject: Re: [GIT PULL] Kbuild updates for 4.18 (2nd round)
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        masahiroy@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 9:03 AM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> This is a pretty dangerous silent change.
+Dne sreda, 13. junij 2018 ob 09:36:05 CEST je Maxime Ripard napisal(a):
+> On Tue, Jun 12, 2018 at 10:00:33PM +0200, Jernej Skrabec wrote:
+> > Function is useful when drm_of_find_possible_crtcs() can't be used and
+> > custom parsing is needed. This can happen for example when there is a
+> > node with multiple muxes between crtc and encoder.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/gpu/drm/drm_of.c | 4 ++--
+> >  include/drm/drm_of.h     | 8 ++++++++
+> >  2 files changed, 10 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+> > index 1fe122461298..2e9cea3287b2 100644
+> > --- a/drivers/gpu/drm/drm_of.c
+> > +++ b/drivers/gpu/drm/drm_of.c
+> > @@ -22,8 +22,8 @@ static void drm_release_of(struct device *dev, void
+> > *data)> 
+> >   * Given a port OF node, return the possible mask of the corresponding
+> >   * CRTC within a device's list of CRTCs.  Returns zero if not found.
+> >   */
+> > 
+> > -static uint32_t drm_crtc_port_mask(struct drm_device *dev,
+> > -				   struct device_node *port)
+> > +uint32_t drm_crtc_port_mask(struct drm_device *dev,
+> > +			    struct device_node *port)
+> 
+> It should probably be exported too?
 
-I've merged it despite this, but I think we need to revisit the whole
-issue. Possibly by just renaming that option, so that people _see_ the
-change and get asked about it.
+Yes, of course. It will be in next version.
 
-              Linus
+Best regards,
+Jernej
+
+
+
