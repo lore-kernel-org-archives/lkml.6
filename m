@@ -2,143 +2,70 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ADF67C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:57:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 230ACC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:58:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D25A208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:57:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D25A208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CC773208B4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:58:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qUz23QZ4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC773208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935924AbeFMO5v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:57:51 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:53954 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935659AbeFMO5t (ORCPT
+        id S935948AbeFMO6E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:58:04 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:50178 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935498AbeFMO5t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Jun 2018 10:57:49 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DEsLYo051244
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 10:57:48 -0400
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jk4gskd1f-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 10:57:48 -0400
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.vnet.ibm.com>;
-        Wed, 13 Jun 2018 08:57:47 -0600
-Received: from b03cxnp07029.gho.boulder.ibm.com (9.17.130.16)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Jun 2018 08:57:44 -0600
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp07029.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DEvhOE3932562
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 07:57:43 -0700
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8C9786E050;
-        Wed, 13 Jun 2018 08:57:43 -0600 (MDT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 268556E04E;
-        Wed, 13 Jun 2018 08:57:43 -0600 (MDT)
-Received: from [9.41.102.69] (unknown [9.41.102.69])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Wed, 13 Jun 2018 08:57:43 -0600 (MDT)
-Subject: Re: [RFC PATCH 4/5] fsi/scom: Add register definitions
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        openbmc@lists.ozlabs.org
-Cc:     Andrew Jeffery <andrew@aj.id.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <20180612051911.20690-1-benh@kernel.crashing.org>
- <20180612051911.20690-5-benh@kernel.crashing.org>
-From:   Eddie James <eajames@linux.vnet.ibm.com>
-Date:   Wed, 13 Jun 2018 09:57:42 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=v60KChBgVeYLosY0GnefQV4yYzHPT4+1gpHVgNSbQ14=; b=qUz23QZ4kv7vIVsC13VoW4ir1
+        pF8+sJhBy0+kfKj8zlgYC+JrqaWomi7UKmv1aobtcUaRyyBtz7ymHL1rzZEmxfMyuiOxgNZuOJj+d
+        hjF8t0mpZJaRdPM8oZLp/vt5Z3q9CLoprE9u0oD0EZaQxQP/24r2QRTx3zadhnjNH7zRG0cOyQapO
+        LeZCKiUeJbFeMeRBuzaYoaGL2XTRH//9aKdZ94R+3ir1DtoYxSwzmAeQhvCwLcl1AsXLcZXc3cnDj
+        tGsMrWyX1suZM2QsuFMfd/AL2htpk3aPsLV0xsDPaHSAweOHWpLjVeRPe4PM91pM2YoU3QyNp29Dh
+        kzNenOtNg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fT7DL-0004tk-Q8; Wed, 13 Jun 2018 14:57:35 +0000
+Date:   Wed, 13 Jun 2018 07:57:35 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@fb.com>, Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        David Sterba <dsterba@suse.cz>,
+        Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH V6 19/30] md/dm/bcache: conver to
+ bio_for_each_chunk_segment_all and bio_for_each_chunk_all
+Message-ID: <20180613145735.GF4693@infradead.org>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+ <20180609123014.8861-20-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180612051911.20690-5-benh@kernel.crashing.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18061314-0004-0000-0000-000014528995
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009183; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01046401; UDB=6.00535906; IPR=6.00825376;
- MB=3.00021625; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 14:57:46
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061314-0005-0000-0000-000087BA0198
-Message-Id: <4bbb38ae-2d34-b63f-ed67-d55d31673af3@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806130160
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180609123014.8861-20-ming.lei@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/12/2018 12:19 AM, Benjamin Herrenschmidt wrote:
-> Add a few more register and bit definitions, also define and use
-> SCOM_READ_CMD (which is 0 but it makes the code clearer)
->
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-
-Reviewed-by: Eddie James <eajames@linux.vnet.ibm.com>
-
-> ---
->   drivers/fsi/fsi-scom.c | 19 ++++++++++++++++++-
->   1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/fsi/fsi-scom.c b/drivers/fsi/fsi-scom.c
-> index 6ddfb6021420..e98573ecdae1 100644
-> --- a/drivers/fsi/fsi-scom.c
-> +++ b/drivers/fsi/fsi-scom.c
-> @@ -30,8 +30,25 @@
->   #define SCOM_DATA0_REG		0x00
->   #define SCOM_DATA1_REG		0x04
->   #define SCOM_CMD_REG		0x08
-> +#define SCOM_FSI2PIB_RESET_REG	0x18
-> +#define SCOM_STATUS_REG		0x1C /* Read */
-> +#define SCOM_PIB_RESET_REG	0x1C /* Write */
->
-> +/* Command register */
->   #define SCOM_WRITE_CMD		0x80000000
-> +#define SCOM_READ_CMD		0x00000000
-> +
-> +/* Status register bits */
-> +#define SCOM_STATUS_ERR_SUMMARY		0x80000000
-> +#define SCOM_STATUS_PROTECTION		0x01000000
-> +#define SCOM_STATUS_PIB_ABORT		0x00100000
-> +#define SCOM_STATUS_PIB_RESP_MASK	0x00007000
-> +#define SCOM_STATUS_PIB_RESP_SHIFT	12
-> +
-> +#define SCOM_STATUS_ANY_ERR		(SCOM_STATUS_ERR_SUMMARY | \
-> +					 SCOM_STATUS_PROTECTION | \
-> +					 SCOM_STATUS_PIB_ABORT | \
-> +					 SCOM_STATUS_PIB_RESP_MASK)
->
->   struct scom_device {
->   	struct list_head link;
-> @@ -85,7 +102,7 @@ static int get_scom(struct scom_device *scom_dev, uint64_t *value,
->
->   	mutex_lock(&scom_dev->lock);
->   	*value = 0ULL;
-> -	data = cpu_to_be32(addr);
-> +	data = cpu_to_be32(SCOM_READ_CMD | addr);
->   	rc = fsi_device_write(scom_dev->fsi_dev, SCOM_CMD_REG, &data,
->   				sizeof(uint32_t));
->   	if (rc)
-
+s/conver/convert/ in the subject here and a couple other patches.
