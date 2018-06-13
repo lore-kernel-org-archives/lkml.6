@@ -2,130 +2,159 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EBFA5C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:38:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 10642C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4F4D20891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:38:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4F4D20891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id BB3C4208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 07:41:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3C4208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754529AbeFMHim (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 03:38:42 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:22051 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754452AbeFMHil (ORCPT
+        id S934487AbeFMHl1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 03:41:27 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42246 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S933912AbeFMHlZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 03:38:41 -0400
-X-UUID: 005560cd68c9436db934827c8db4b1a4-20180613
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1126950773; Wed, 13 Jun 2018 15:38:39 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs03n2.mediatek.inc (172.21.101.182) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Wed, 13 Jun 2018 15:38:37 +0800
-Received: from [172.21.77.4] (172.21.77.4) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Wed, 13 Jun 2018 15:38:37 +0800
-Message-ID: <1528875517.30263.15.camel@mtksdaap41>
-Subject: Re: [PATCH 27/28] drm/mediatek: add third ddp path
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Stu Hsieh <stu.hsieh@mediatek.com>
-CC:     Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <srv_heupstream@mediatek.com>
-Date:   Wed, 13 Jun 2018 15:38:37 +0800
-In-Reply-To: <1528687580-549-28-git-send-email-stu.hsieh@mediatek.com>
-References: <1528687580-549-1-git-send-email-stu.hsieh@mediatek.com>
-         <1528687580-549-28-git-send-email-stu.hsieh@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Wed, 13 Jun 2018 03:41:25 -0400
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5D7d6Ta069999
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 03:41:25 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jjwwytvc0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 03:41:24 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 13 Jun 2018 08:41:22 +0100
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Jun 2018 08:41:19 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5D7fHeu29819030
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Jun 2018 07:41:17 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id C488FAE055;
+        Wed, 13 Jun 2018 08:30:07 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED44AAE051;
+        Wed, 13 Jun 2018 08:30:06 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Jun 2018 08:30:06 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+To:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Cc:     freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        cohuck@redhat.com, kwankhede@nvidia.com,
+        bjsdjshi@linux.vnet.ibm.com, pbonzini@redhat.com,
+        alex.williamson@redhat.com, pmorel@linux.vnet.ibm.com,
+        alifm@linux.vnet.ibm.com, mjrosato@linux.vnet.ibm.com,
+        jjherne@linux.vnet.ibm.com, thuth@redhat.com,
+        pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 13 Jun 2018 09:41:16 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-MTK:  N
+In-Reply-To: <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18061307-4275-0000-0000-0000028D36EE
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061307-4276-0000-0000-000037945F40
+Message-Id: <889b8d41-e08c-0eb5-2de0-a1d6669a03b3@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806130089
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-06-11 at 11:26 +0800, Stu Hsieh wrote:
-> This patch create third crtc by third ddp path
-> 
-> Signed-off-by: Stu Hsieh <stu.hsieh@mediatek.com>
+On 07/05/2018 17:11, Tony Krowiak wrote:
+> Introduces a new AP device driver. This device driver
+> is built on the VFIO mediated device framework. The framework
+> provides sysfs interfaces that facilitate passthrough
+> access by guests to devices installed on the linux host.
+...snip...
 
-Reviewed-by: CK Hu <ck.hu at mediatek.com>
+> +static int vfio_ap_matrix_dev_create(void)
+> +{
+> +	int ret;
+> +
+> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
+> +
+> +	if (IS_ERR(vfio_ap_root_device)) {
+> +		ret = PTR_ERR(vfio_ap_root_device);
+> +		goto done;
+> +	}
+> +
+> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
+> +	if (!ap_matrix) {
+> +		ret = -ENOMEM;
+> +		goto matrix_alloc_err;
+> +	}
+> +
+> +	ap_matrix->device.type = &vfio_ap_dev_type;
+> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
+> +	ap_matrix->device.parent = vfio_ap_root_device;
+> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
+> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
+> +
+> +	ret = device_register(&ap_matrix->device);
+> +	if (ret)
+> +		goto matrix_reg_err;
+> +
+> +	goto done;
+> +
+> +matrix_reg_err:
+> +	put_device(&ap_matrix->device);
 
-> ---
->  drivers/gpu/drm/mediatek/mtk_drm_crtc.c | 3 +++
->  drivers/gpu/drm/mediatek/mtk_drm_drv.c  | 5 +++++
->  drivers/gpu/drm/mediatek/mtk_drm_drv.h  | 5 ++++-
->  3 files changed, 12 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> index 658b8dd45b83..2d6aa150a9ff 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_crtc.c
-> @@ -539,6 +539,9 @@ int mtk_drm_crtc_create(struct drm_device *drm_dev,
->  	int ret;
->  	int i;
->  
-> +	if (!path)
-> +		return 0;
-> +
->  	for (i = 0; i < path_len; i++) {
->  		enum mtk_ddp_comp_id comp_id = path[i];
->  		struct device_node *node;
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> index 08d5d0b47bfe..3d279a299383 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-> @@ -232,6 +232,11 @@ static int mtk_drm_kms_init(struct drm_device *drm)
->  	if (ret < 0)
->  		goto err_component_unbind;
->  
-> +	ret = mtk_drm_crtc_create(drm, private->data->third_path,
-> +				  private->data->third_len);
-> +	if (ret < 0)
-> +		goto err_component_unbind;
-> +
->  	/* Use OVL device for all DMA memory allocations */
->  	np = private->comp_node[private->data->main_path[0]] ?:
->  	     private->comp_node[private->data->ext_path[0]];
-> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.h b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> index c3378c452c0a..ecc00ca3221d 100644
-> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.h
-> @@ -17,7 +17,7 @@
->  #include <linux/io.h>
->  #include "mtk_drm_ddp_comp.h"
->  
-> -#define MAX_CRTC	2
-> +#define MAX_CRTC	3
->  #define MAX_CONNECTOR	2
->  
->  struct device;
-> @@ -33,6 +33,9 @@ struct mtk_mmsys_driver_data {
->  	unsigned int main_len;
->  	const enum mtk_ddp_comp_id *ext_path;
->  	unsigned int ext_len;
-> +	const enum mtk_ddp_comp_id *third_path;
-> +	unsigned int third_len;
-> +
->  	bool shadow_register;
->  };
->  
+Did not see this before but here you certainly want to
+do a kfree and not a put_device.
 
+
+
+> +
+> +matrix_alloc_err:
+> +	root_device_unregister(vfio_ap_root_device);
+> +
+> +done:
+> +	return ret;
+> +}
+> +
+> +static void vfio_ap_matrix_dev_destroy(struct ap_matrix *ap_matrix)
+> +{
+> +	device_unregister(&ap_matrix->device);
+> +	root_device_unregister(vfio_ap_root_device);
+
+Also here you need a kfree(ap_matrix) too .
+
+Pierre
+
+
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
