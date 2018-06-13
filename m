@@ -6,110 +6,135 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 86BE7C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:25:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 18D93C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:30:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C239208D4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:25:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C239208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C373C208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 19:30:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C373C208C4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935451AbeFMTZA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 15:25:00 -0400
-Received: from mga03.intel.com ([134.134.136.65]:54139 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935245AbeFMTY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 15:24:59 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 12:24:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
-   d="scan'208";a="57047810"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga002.fm.intel.com with ESMTP; 13 Jun 2018 12:24:54 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fTBNy-000OP7-Ka; Thu, 14 Jun 2018 03:24:50 +0800
-Date:   Thu, 14 Jun 2018 03:23:53 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Borys Movchan <borys.movchan@axis.com>
-Cc:     kbuild-all@01.org, linux-iio@vger.kernel.org,
-        devicetree@vger.kernel.org, Borys Movchan <borysmn@axis.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Jeff LaBundy <jeff@labundy.com>,
-        Lorenzo Bianconi <lorenzo.bianconi83@gmail.com>,
-        Brian Masney <masneyb@onstation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 2/2] iio: add ISL29033 Ultra-Low Lux
- ambient-light-sensor
-Message-ID: <201806140109.tvP88cyu%fengguang.wu@intel.com>
-References: <20180613140043.5802-2-borys.movchan@axis.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613140043.5802-2-borys.movchan@axis.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+        id S935357AbeFMTaY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 15:30:24 -0400
+Received: from smtprelay0142.hostedemail.com ([216.40.44.142]:50835 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1751898AbeFMTaX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 15:30:23 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 24C5A837F27D;
+        Wed, 13 Jun 2018 19:30:22 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: heart90_1fe954299fc0d
+X-Filterd-Recvd-Size: 4733
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf05.hostedemail.com (Postfix) with ESMTPA;
+        Wed, 13 Jun 2018 19:30:19 +0000 (UTC)
+Message-ID: <38670733fba157f7acd9c1555b44a296420f0774.camel@perches.com>
+Subject: Re: [-next PATCH] security: use octal not symbolic permissions
+From:   Joe Perches <joe@perches.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     James Morris <jmorris@namei.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
+        selinux@tycho.nsa.gov
+Date:   Wed, 13 Jun 2018 12:30:17 -0700
+In-Reply-To: <CAHC9VhRXBx_Q2eM48FFqX9PbPz0k8R74gfFFoRhwV91n2_BPsQ@mail.gmail.com>
+References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
+         <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com>
+         <alpine.LRH.2.21.1806130631400.13763@namei.org>
+         <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com>
+         <3d890108a942b6a3fb9a5326501174af270707dc.camel@perches.com>
+         <CAHC9VhRHd+nxKQRj5PjoN7Te3NjomtWcb_0ZxzcxAzwX024m9A@mail.gmail.com>
+         <00961ef3fb41930a3304da935f1f73ebe386e83c.camel@perches.com>
+         <CAHC9VhRXBx_Q2eM48FFqX9PbPz0k8R74gfFFoRhwV91n2_BPsQ@mail.gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Borys,
+On Wed, 2018-06-13 at 12:19 -0400, Paul Moore wrote:
+> On Wed, Jun 13, 2018 at 12:04 PM, Joe Perches <joe@perches.com> wrote:
+> > On Wed, 2018-06-13 at 11:49 -0400, Paul Moore wrote:
+> > > On Tue, Jun 12, 2018 at 8:29 PM, Joe Perches <joe@perches.com> wrote:
+> > > > On Tue, 2018-06-12 at 17:12 -0400, Paul Moore wrote:
+> > > > > Joe, in general I really appreciate the fixes you send, but these
+> > > > > patches that cross a lot of subsystem boundaries (this isn't the first
+> > > > > one that does this) causes unnecessary conflicts in -next and during
+> > > > > the merge window.  Could you split your patches up from now on please?
+> > > > 
+> > > > Sorry. No.  Merge conflicts are inherent in this system.
+> > > 
+> > > Yes, merge conflicts are inherent in this system when one makes a
+> > > single change which impacts multiple subsystems, e.g. changing a core
+> > > kernel function which is called by multiple subsystems.  However, that
+> > > isn't what this patch does, it makes a number of self-contained
+> > > changes across multiple subsystems; there are no cross-subsystem
+> > > dependencies in this patch.  You are increasing the likelihood of
+> > > conflicts for no good reason; that is why I'm asking you to split this
+> > > patch and others like it.
+> > 
+> > No.  History shows with high certainty that splitting
+> > patches like this across multiple subsystems of a primary
+> > subsystem means that the entire patchset is not completely
+> > applied.
+> 
+> I think that is due more to a lack of effort on the part of the patch
+> author to keep pushing the individual patches.
 
-Thank you for the patch! Perhaps something to improve:
+Nope.  Try again.
 
-[auto build test WARNING on iio/togreg]
-[also build test WARNING on v4.17 next-20180613]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+Resistance to change and desire for status quo
+occurs in many subsystems.
 
-url:    https://github.com/0day-ci/linux/commits/Borys-Movchan/dt-bindings-iio-light-add-ISL29033-device-bindings/20180613-220725
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git togreg
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
+> > It's _much_ simpler and provides a generic mechanism to
+> > get the entire patch applied to send a single patch to the
+> > top level subsystem maintainer.
+> 
+> I understand it is simpler for you, but it is more difficult for everyone else.
 
+Not true.
 
-sparse warnings: (new ones prefixed by >>)
+It's simply a matter of merge resolution being pushed down
+where and when necessary.
 
->> drivers/iio/light/isl29033.c:235:15: sparse: cast to restricted __be16
->> drivers/iio/light/isl29033.c:235:15: sparse: cast to restricted __be16
->> drivers/iio/light/isl29033.c:235:15: sparse: cast to restricted __be16
->> drivers/iio/light/isl29033.c:235:15: sparse: cast to restricted __be16
+See changes like the additions of the SPDX license tags.
 
-vim +235 drivers/iio/light/isl29033.c
+> Further, where the LSMs are concerned, there is no "top level
+> subsystem maintainer" anymore.  SELinux and AppArmor send pull
+> requests directly to Linus.
 
-   220	
-   221	static int isl29033_read_sensor_input(struct isl29033_chip *chip)
-   222	{
-   223		int ret;
-   224		u16 val;
-   225		struct device *dev = regmap_get_device(chip->regmap);
-   226	
-   227		ret = regmap_bulk_read(chip->regmap, ISL29033_REG_ADD_DATA_LSB,
-   228					(u8 *)&val, 2);
-   229		if (ret < 0) {
-   230			dev_err(dev,
-   231				"Data bulk read error %d\n", ret);
-   232			return ret;
-   233		}
-   234	
- > 235		val = be16_to_cpu(val);
-   236		dev_vdbg(dev, "Data read: %x\n", val);
-   237	
-   238		return val;
-   239	}
-   240	
+MAINTAINERS-SECURITY SUBSYSTEM
+MAINTAINERS-M:  James Morris <jmorris@namei.org>
+MAINTAINERS-M:  "Serge E. Hallyn" <serge@hallyn.com>
+MAINTAINERS-L:  linux-security-module@vger.kernel.org (suggested Cc:)
+MAINTAINERS-T:  git git://git.kernel.org/pub/scm/linux/kernel/git/jmorris/linux-security.git
+MAINTAINERS-W:  http://kernsec.org/
+MAINTAINERS-S:  Supported
+MAINTAINERS:F:  security/
+MAINTAINERS-
 
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+If James is not approving or merging security/selinux or
+security/tomoyo then perhaps the F: entries could be
+augmented with appropriate X: entries or made specific
+by using specific entries like:
+
+F:	security/*
+F:	security/integrity/
+F:	security/keys/
+
