@@ -2,131 +2,157 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6DBA8C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:49:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E8E3BC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18EDF208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97726208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 15:50:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="YUhxhehr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18EDF208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QFwv1SPv";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IaHV8t+x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97726208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935993AbeFMPtj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 11:49:39 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43295 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935878AbeFMPtg (ORCPT
+        id S936048AbeFMPuW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 11:50:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60278 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935934AbeFMPuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 11:49:36 -0400
-Received: by mail-lf0-f68.google.com with SMTP id n15-v6so4687273lfn.10
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:49:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=z/jzzp2HUdVc5uzjwP9XWbghrXXqWPTDFAHT445fTss=;
-        b=YUhxhehrTNex0ZX/buYmzyZx81A+ATielvgpUMfyl4d6et4IrMEqvlHxJKaDVU7Tpc
-         0EemMF8ugdBTt8Gv99nnq7Tv09rs2XpKeexCyyaKb2j85h4cT7kGAtGRCIlUeeLmj3Xa
-         SRsQSAQ2cwKSbfJkEZK8z5X9QpzLhfQWPZs8k9cbm42kOQMGXmqet4w911DGPrSrVY2J
-         mOByIv6vevOaX1NxqBrXjgVgbCmbbfcXWIkmMbl6huBnFLdm78We944+OsM1g2n1eScM
-         mYmpHs7kzq4/8LdrOsMUaixNxVxRyavIWc/XCI37IzaRPqkmRkR22nMQ2QuoA9VOy89r
-         +C7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=z/jzzp2HUdVc5uzjwP9XWbghrXXqWPTDFAHT445fTss=;
-        b=oQVk/EifSW7iK6ZbVv1oPx/AQ51oWn1Xht2VHhZQ/trIWb30pEDrg0NV3rDqmZgyeZ
-         0kZM1gZWCIcu017txUkis1NYdIy/fK4IkJvss7Hw7RgBc+o8BCqyplAZBLev43C9AGU7
-         rxd9coWaE/No4iL8g8LZyCCNbisORheCnDnXtizyNP30GiWixhSIf39lEvxsxRCdPqI+
-         t39ZATE4pP9aVqc28cPu61O6MELVOsOk5WtRSntLEtO//v+9vAOu9qu3y6E4eIB+Jlo5
-         rxSU7SDCMrE95UyYYM82g0E7665SL3zlw1jZtOkv5ki+h+lfqb+0viiwnCN1x8Wsl9kg
-         YJ0g==
-X-Gm-Message-State: APt69E0EWCJGVKnl8iY2ctjIkeoEPvPKhze0TAARNW6CKJcvQvTe9Xn9
-        xF12AJwXXrnv2LkvGKeRGbFr2KCbC93uqSGlJ/S0KFGjVhSj
-X-Google-Smtp-Source: ADUXVKL90tJotlqrhYvgkbSWDMlbTxUGx20+ikpq2IaCxSjajCQRUTEoaOV4AORwNkm4LxKseMBuuBFZKaFVrRE00yg=
-X-Received: by 2002:a19:e497:: with SMTP id x23-v6mr3365304lfi.40.1528904974779;
- Wed, 13 Jun 2018 08:49:34 -0700 (PDT)
+        Wed, 13 Jun 2018 11:50:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 27731606DB; Wed, 13 Jun 2018 15:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528905020;
+        bh=uSFpwtQeOADiMEBtPARH98n2+Mzgx75rAUZiOIManH8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=QFwv1SPvDwwrEY8XI9K/l20Ea0tvE4lUb1kZzyRloYOIB15ewvjDCKcY7eVqmU0ce
+         ae/PP1IyZolaGhn2nuNeB+cbYGtakW9e8wudghr/vV9zXpyvC56LeGEKd6VKVrBX5I
+         tVysHCPCfvyJjJ26oOAuFJDbpO50zkiFbVeIftz8=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 19F0360791;
+        Wed, 13 Jun 2018 15:50:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528905019;
+        bh=uSFpwtQeOADiMEBtPARH98n2+Mzgx75rAUZiOIManH8=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IaHV8t+xp8IQOHQ9aCZ7fqw9/7h/ZwnQ31EqYZmDsiX6Eun/rBYgbop/hZVcsdhSS
+         IdkNMS4T1OaS2k29uuIJbaXH9HZBDqkqr0aH0rqMN3j6uD1ixvCjUVACpo7V1vHds9
+         D7odUvPjiturozVcdlnnA6m/rLwBZCwoHR55wRlU=
 MIME-Version: 1.0
-Received: by 2002:a19:a911:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 08:49:33
- -0700 (PDT)
-X-Originating-IP: [108.20.156.165]
-In-Reply-To: <3d890108a942b6a3fb9a5326501174af270707dc.camel@perches.com>
-References: <1e91f8e10ce76d3208239b6b5899aab76d1543ff.1528743633.git.joe@perches.com>
- <fcac609a-08a8-b3ab-a69e-2e65e2ad63e9@schaufler-ca.com> <alpine.LRH.2.21.1806130631400.13763@namei.org>
- <CAHC9VhTpsYDT5+CjdtiBmLMDEKV9fmGv+DyXVtUuja9d4i2ecg@mail.gmail.com> <3d890108a942b6a3fb9a5326501174af270707dc.camel@perches.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 13 Jun 2018 11:49:33 -0400
-Message-ID: <CAHC9VhRHd+nxKQRj5PjoN7Te3NjomtWcb_0ZxzcxAzwX024m9A@mail.gmail.com>
-Subject: Re: [-next PATCH] security: use octal not symbolic permissions
-To:     Joe Perches <joe@perches.com>
-Cc:     James Morris <jmorris@namei.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        selinux@tycho.nsa.gov
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 13 Jun 2018 11:50:19 -0400
+From:   okaya@codeaurora.org
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     "open list:EFIFB FRAMEBUFFER DRIVER" <linux-fbdev@vger.kernel.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        linux-arm-msm@vger.kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        Peter Jones <pjones@redhat.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
+ translated by the bridge
+In-Reply-To: <CAKv+Gu9+M8zOtACPQ4_UMgp-M1LfZnciYe1VTQNqn_zNWJea4g@mail.gmail.com>
+References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
+ <1526653072-7153-2-git-send-email-okaya@codeaurora.org>
+ <CAKv+Gu9+M8zOtACPQ4_UMgp-M1LfZnciYe1VTQNqn_zNWJea4g@mail.gmail.com>
+Message-ID: <7481eea5c856bf0a285776e28a2c3ce1@codeaurora.org>
+X-Sender: okaya@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 8:29 PM, Joe Perches <joe@perches.com> wrote:
-> On Tue, 2018-06-12 at 17:12 -0400, Paul Moore wrote:
->> Joe, in general I really appreciate the fixes you send, but these
->> patches that cross a lot of subsystem boundaries (this isn't the first
->> one that does this) causes unnecessary conflicts in -next and during
->> the merge window.  Could you split your patches up from now on please?
->
-> Sorry. No.  Merge conflicts are inherent in this system.
+On 2018-06-13 11:45, Ard Biesheuvel wrote:
+> On 18 May 2018 at 16:17, Sinan Kaya <okaya@codeaurora.org> wrote:
+>> A host bridge is allowed to remap BAR addresses using _TRA attribute 
+>> in
+>> _CRS windows.
+>> 
+>> pci_bus 0000:00: root bus resource [mem 0x80100100000-0x8011fffffff 
+>> window] (bus address [0x00100000-0x1fffffff])
+>> pci 0000:02:00.0: reg 0x10: [mem 0x8011e000000-0x8011effffff]
+>> 
+>> When a VGA device is behind such a host bridge and the resource is
+>> translated efifb driver is trying to do ioremap against bus address
+>> rather than the resource address and is failing to probe.
+>> 
+>> efifb: probing for efifb
+>> efifb: cannot reserve video memory at 0x1e000000
+>> efifb: framebuffer at 0x1e000000, using 1920k, total 1875k
+>> efifb: mode is 800x600x32, linelength=3200, pages=1
+>> efifb: scrolling: redraw
+>> efifb: Truecolor: size=8:8:8:8, shift=24:16:8:0
+>> 
+>> Use the host bridge offset information to convert bus address to
+>> resource address in the fixup.
+>> 
+>> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
+> 
+> Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> 
+> Bartlomiej, could you please take these via the fbdev tree for v4.19?
+> Peter already gave his ack but Sinan dropped it (presumably because of
+> the split in v2)
+> 
+> Sinan, does this need to go to -stable? I.e., has it ever worked 
+> before?
+> 
 
-Yes, merge conflicts are inherent in this system when one makes a
-single change which impacts multiple subsystems, e.g. changing a core
-kernel function which is called by multiple subsystems.  However, that
-isn't what this patch does, it makes a number of self-contained
-changes across multiple subsystems; there are no cross-subsystem
-dependencies in this patch.  You are increasing the likelihood of
-conflicts for no good reason; that is why I'm asking you to split this
-patch and others like it.
+Yes, it needs to go to stable. It never worked before. Issue was found 
+during a graphics bring up with AST driver.
 
-> There is just no good way to do this as sending a set
-> of per subsystem patches guarantees partial application
-> of the entire set.
+It needs a 32 bit graphics card and a 32 bit translating host bridge to 
+hit the issue.
 
-Please explain why all of these changes need to be made at the same
-time?  Looking quickly at the patch it would appear that each chunk of
-the patch could be applied independently and the kernel would still
-build and operate correctly.  I'm not suggesting that you decompose
-this patch with that level of granularity, that would be silly, but
-splitting this patch (and many of the others you tend to submit) at
-subsystem boundaries should be possible.
-
-Further, as one could see from the responses of the other LSM
-maintainers, splitting this patch is not just possible, it is
-desirable.
-
-> If you prefer, each sub-subsystem maintainer, at
-> whatever granularity desired, could apply the patch
-> to the appropriate subsystem by using
-> "git am --include=<subsystem_path>".
-
-Or you could split the patch up by subsystem before posting, like so
-many other developers do already.
-
--- 
-paul moore
-www.paul-moore.com
+> 
+> 
+>> ---
+>>  drivers/video/fbdev/efifb.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>> 
+>> diff --git a/drivers/video/fbdev/efifb.c b/drivers/video/fbdev/efifb.c
+>> index 6daac8d..429cc85 100644
+>> --- a/drivers/video/fbdev/efifb.c
+>> +++ b/drivers/video/fbdev/efifb.c
+>> @@ -431,6 +431,7 @@ static void efifb_fixup_resources(struct pci_dev 
+>> *dev)
+>>                 .end = screen_info.lfb_base + screen_info.lfb_size - 
+>> 1,
+>>                 .flags = IORESOURCE_MEM,
+>>         };
+>> +       struct pci_bus_region region;
+>>         int i;
+>> 
+>>         if (efifb_pci_dev || screen_info.orig_video_isVGA != 
+>> VIDEO_TYPE_EFI)
+>> @@ -442,6 +443,10 @@ static void efifb_fixup_resources(struct pci_dev 
+>> *dev)
+>>         if (!screen_res.start)
+>>                 return;
+>> 
+>> +       region.start = screen_res.start;
+>> +       region.end = screen_res.end;
+>> +       pcibios_bus_to_resource(dev->bus, &screen_res, &region);
+>> +
+>>         for (i = 0; i <= PCI_STD_RESOURCE_END; i++) {
+>>                 struct resource *res = &dev->resource[i];
+>> 
+>> --
+>> 2.7.4
+>> 
+>> 
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
