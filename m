@@ -2,114 +2,86 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EAEFCC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:28:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7949C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0BA320020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:28:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E3C520020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:30:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6OA9fZS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0BA320020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="N5wltRlI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E3C520020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935838AbeFMO2M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:28:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42148 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935692AbeFMO2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:28:10 -0400
-Received: from mail-yw0-f182.google.com (mail-yw0-f182.google.com [209.85.161.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3980208B2;
-        Wed, 13 Jun 2018 14:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528900090;
-        bh=uqy+vrAkFXplNRPqoWvQLEAqiq5xO96171wdQZxpOhQ=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=s6OA9fZSnUzuI4fpbcyK1JXGvw6Rl1UvA66qemvNTu+CrtlAwQLJl5K7/P+8DjSB5
-         73Tfe377WHGtL6QorjzOZh8VJy4dW69P4Eq3v3h/r8vlAtH4D9TmXXSiPphuanQ8IM
-         lafosyusYGIkTVZ4ijijTJEhUzQd/pie4YyvzMGk=
-Received: by mail-yw0-f182.google.com with SMTP id p129-v6so940333ywg.7;
-        Wed, 13 Jun 2018 07:28:09 -0700 (PDT)
-X-Gm-Message-State: APt69E0RcjFiCNchhV6Noj7I2+ESM+aM5CJuQP2mwFM6elr4w4tK1ruC
-        Fu/x+q2GicDjIeUZ7lgyITriG1wO9Y8ObcWyc90=
-X-Google-Smtp-Source: ADUXVKL+IUPhxx8cpkFtT35Tvet3hgFHVl1KL99cvEzlRzwo5Uj3oQxbgCrCYpImuc/nhRfDV5/3Z0LWCzoMFgydEaE=
-X-Received: by 2002:a81:ed0e:: with SMTP id k14-v6mr2457183ywm.196.1528900089083;
- Wed, 13 Jun 2018 07:28:09 -0700 (PDT)
+        id S935791AbeFMO37 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:29:59 -0400
+Received: from mail-io0-f178.google.com ([209.85.223.178]:42393 "EHLO
+        mail-io0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935664AbeFMO36 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:29:58 -0400
+Received: by mail-io0-f178.google.com with SMTP id r24-v6so3635653ioh.9;
+        Wed, 13 Jun 2018 07:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fERCi616sZ4nTnswzO8dl4bLx3LEimHKsJqCZI6oZtY=;
+        b=N5wltRlIihCIbjxBZyrdoSyA6QBIeEfzbKmv+vmPAw7CMdyYdv7ep36XJ2Eci32yQI
+         1boJKLqGX334htGED8TU/AetAE1MaJroGBgQZkJLopdjTkIzf4O56huHJSm575YPyHyn
+         AqK8rvSEvUUTCBY9QjmOb42ch9HN3EeKYyKCY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fERCi616sZ4nTnswzO8dl4bLx3LEimHKsJqCZI6oZtY=;
+        b=HTnmPxSJUe+tLF2sy/Kla45fldWIbfDSP5YNBwtk81aJTHbNryL/oWD/astnxdlycX
+         bi06CL7EtJB+eoJeuBSkkDr4IOBZzblpQwBPTj0p1twhNA3FOYvo6nWUGaEY4m1vhGnI
+         WOsf55jsfMdHtn+09/ALhnVmlO9rsCax3dTX5jtpOWVLCGWlKVOWgF6X9WL01AEHj0X+
+         VOEmBNKdk4Ruh7GtM0aI72EgEmyRbq7CCjAZgXLTC00lsX3XluNHi++L99haj708Llfn
+         arn5YwyrWTkGxH7XOARvKEDRZnmR1qECSsdKYFqLW30vRAsw57K+/H2fwPPtHVjus/0V
+         0GQQ==
+X-Gm-Message-State: APt69E3Lnfk/w0HxmNizZc9BLlNB6Ghz9hySfZsmjWHfxa1JiOXsJbt1
+        K7/yPUEoGjzeA3uVOtU7DK1Thk0RgRu/u1tLKEfhCw==
+X-Google-Smtp-Source: ADUXVKJMMHBEg0lBC75y0mUgr8XLsk1PgKBzOZHWwmflk5Zbj0PijRZIVnLTbzmUXL7o60luH/ccz1yvMQqZT4hP+Bg=
+X-Received: by 2002:a6b:274f:: with SMTP id n76-v6mr5128853ion.259.1528900197063;
+ Wed, 13 Jun 2018 07:29:57 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a5b:b87:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 07:27:28 -0700 (PDT)
-In-Reply-To: <CAAtXAHdF_AEcohGW=yoUgoe1OWcxLeCYgp2u3pjsmUn=-z-_bg@mail.gmail.com>
-References: <20180611172049.26630-1-christophe.jaillet@wanadoo.fr> <CAAtXAHdF_AEcohGW=yoUgoe1OWcxLeCYgp2u3pjsmUn=-z-_bg@mail.gmail.com>
-From:   Alan Tull <atull@kernel.org>
-Date:   Wed, 13 Jun 2018 09:27:28 -0500
-X-Gmail-Original-Message-ID: <CANk1AXTWfgaJJvni3e8t9ViOs0GccV=zkc1kX-Yi4jhSwWneVQ@mail.gmail.com>
-Message-ID: <CANk1AXTWfgaJJvni3e8t9ViOs0GccV=zkc1kX-Yi4jhSwWneVQ@mail.gmail.com>
-Subject: Re: [PATCH] fpga: altera-cvp: Fix an error handling path in 'altera_cvp_probe()'
-To:     Moritz Fischer <moritz.fischer@ettus.com>
-Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fpga@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+References: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
+ <CA+55aFwvE5G7MV7AV4naAXdbFoszc4JNKEj_QtYqpLFfa2RXtA@mail.gmail.com>
+ <6570c00b-bbec-82c3-16e2-1ba96d8e263b@redhat.com> <CA+55aFxyQ0HE6ShB_pF1yXS9VjQv78OyseJpZjLXu=rbBTEPTQ@mail.gmail.com>
+ <c982edb3-d2fe-87f9-f1ac-2125901d7013@redhat.com>
+In-Reply-To: <c982edb3-d2fe-87f9-f1ac-2125901d7013@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 13 Jun 2018 07:29:45 -0700
+Message-ID: <CA+55aFz50grqj4=Eq5HcoH0ZAZgBtHP38wqxtbjo32-P_Wh5Yg@mail.gmail.com>
+Subject: Re: [GIT PULL] KVM changes for 4.18 merge window
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM list <kvm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 7:42 AM, Moritz Fischer
-<moritz.fischer@ettus.com> wrote:
-> Hi Christophe,
+On Wed, Jun 13, 2018 at 7:27 AM Paolo Bonzini <pbonzini@redhat.com> wrote:
 >
-> good catch!
+> > Well, being in linux-next should have found it too. I know linux-next
+> > had a lot of kvm stuff in it, was this not there?
+>
+> It was, I suppose that's how Arnd found it.
 
-Yes, thanks!
+Ok, apparently the 0day bot doesn't trigger this case, or it's just
+that even with randconfig you needed to hit just he right set of
+combinations.
 
->
-> On Mon, Jun 11, 2018 at 12:20 PM, Christophe JAILLET
-> <christophe.jaillet@wanadoo.fr> wrote:
->> If 'fpga_mgr_create()' fails, we should release some resources, as done
->> in the other error handling path of the function.
->>
->> Fixes: 7085e2a94f7d ("fpga: manager: change api, don't use drvdata")
->> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Reviewed-by: Moritz Fischer <mdf@kernel.org>
-Acked-by: Alan Tull <atull@kernel.org>
+Oh well. Water under the bridge, hopefully your added tests will make
+sure at least _this_ particular issue doesn't happen again...
 
->> ---
->>  drivers/fpga/altera-cvp.c | 6 ++++--
->>  1 file changed, 4 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
->> index dd4edd8f22ce..7fa793672a7a 100644
->> --- a/drivers/fpga/altera-cvp.c
->> +++ b/drivers/fpga/altera-cvp.c
->> @@ -455,8 +455,10 @@ static int altera_cvp_probe(struct pci_dev *pdev,
->>
->>         mgr = fpga_mgr_create(&pdev->dev, conf->mgr_name,
->>                               &altera_cvp_ops, conf);
->> -       if (!mgr)
->> -               return -ENOMEM;
->> +       if (!mgr) {
->> +               ret = -ENOMEM;
->> +               goto err_unmap;
->> +       }
->>
->>         pci_set_drvdata(pdev, mgr);
->>
->> --
->> 2.17.0
->>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
->> the body of a message to majordomo@vger.kernel.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
-> Thanks,
->
-> Moritz
+           Linus
