@@ -2,104 +2,74 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 32621C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:55:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E8A3FC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:55:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD110208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:55:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D49B204EC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:55:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LDrPK6Lv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD110208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AXAdrAOQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D49B204EC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935652AbeFMMza (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 08:55:30 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40630 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935602AbeFMMzX (ORCPT
+        id S935666AbeFMMzv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 08:55:51 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57642 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935602AbeFMMzt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 08:55:23 -0400
-Received: by mail-lf0-f66.google.com with SMTP id q11-v6so3775622lfc.7
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 05:55:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M6zw4wLJZVQHCaGthfXT2V4RF0fCTGlqbZ+/633hWcY=;
-        b=LDrPK6LvZuOfCk+L00ewYep1TjE7J/hzkLkl+Ev9TTYzdal74wbRiKELMp9IuyMY0M
-         D7NB9uJY3LkoulvlorFBzNK/BBm5iDYFQ7wO191AdXH76YCuhuP/harkXiJgQF7Jx8r6
-         WoUITcsP4dCEOBIJ4Sssg+XoTLtKDaL4qFbNU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M6zw4wLJZVQHCaGthfXT2V4RF0fCTGlqbZ+/633hWcY=;
-        b=X49pZ1rF38x2Y2WEa7kCYow5lYOR4+G0Kf2pP0F2nAGR8CxLIWLtQuqlvEhD6DYJoY
-         xIRVC4COtf/z1QUugqkcfs1vGfdEtjS9qLIJpaf6ZhNyfNYRwTUAHBeaSs/GX99Icmh8
-         KO4Hx2rlQlb2GqbRwKLckQhfGr2Y3NVCkkTEdyVIglo1fcyZu/bRMwqbj/HH77A3IoVn
-         oTjuORYbs9/H7txk2XvCxEOYoWrDsC4w4fzPdO0u6NrrYdFQEmzCbZRxCyPC1VVBunyv
-         gYuyOUM7tQteP5G5pKnjzv/j4neBpv6yZHH4pFdc9yR/UVSCmdcPWc5vEgojrVNaBokK
-         6xqw==
-X-Gm-Message-State: APt69E1Y/iK5s2nTg8IkEpcKp/XOMpiHIMRQ/uQ8+iB9Dmete0NYsZ4S
-        OJF/PxF+JGcmvWRG1ULw9ecWfg==
-X-Google-Smtp-Source: ADUXVKKHnOcV4GY9vloDWNzkNADIt128cXL/7Bh6ATOauh8Mbjmsu4x8ikwjPzYPmq3JNGfEuumXXQ==
-X-Received: by 2002:a2e:9204:: with SMTP id k4-v6mr3088773ljg.144.1528894521763;
-        Wed, 13 Jun 2018 05:55:21 -0700 (PDT)
-Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm526516ljh.3.2018.06.13.05.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 05:55:21 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] soc: qcom: smsm: Add select IRQ_DOMAIN
-Date:   Wed, 13 Jun 2018 14:53:59 +0200
-Message-Id: <20180613125401.11734-5-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180613125401.11734-1-niklas.cassel@linaro.org>
-References: <20180613125401.11734-1-niklas.cassel@linaro.org>
+        Wed, 13 Jun 2018 08:55:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=j28T1sJnLCU7vwmu1h9+HUdk4rIZ6bMNjM4YBzPOYto=; b=AXAdrAOQ6R4fjeWThK+Ouyklf
+        aAdLAaw3zfvN4qChMGNuLc5yW2GWDVyKfMIreLdLXUXgglyrTHCdxaoKMhh4r3hdfzCPkN7Up9bOo
+        nmnOFi+SBr+iR4lDC3jNA8szAiLU4QIresK+G1BYIze5EwvUozJNaTo6/YO0oOBjB5yh8c6KP8uW0
+        6Il98gfvk4cLQ4XsXBLqJKWVEaMGtdbZwutAPD6SRWzQN07eePuaURdBjWcLEX6bJkBrrSwEddspG
+        8kW8s6Y67YUPJD0t/kabgb7pWh1nNZhyr+Kte0F6rENIOmXIyJI4D5OoR9h2q4cjCEaehWsKwt/v5
+        kNuoi9SEw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fT5JS-00038o-MS; Wed, 13 Jun 2018 12:55:46 +0000
+Date:   Wed, 13 Jun 2018 05:55:46 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Nazarewicz <mina86@mina86.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Vlastimil Babka <vbabka@suse.cz>
+Subject: Re: [PATCH] mm: cma: honor __GFP_ZERO flag in cma_alloc()
+Message-ID: <20180613125546.GB32016@infradead.org>
+References: <CGME20180613085851eucas1p20337d050face8ff8ea87674e16a9ccd2@eucas1p2.samsung.com>
+ <20180613085851eucas1p20337d050face8ff8ea87674e16a9ccd2~3rI_9nj8b0455904559eucas1p2C@eucas1p2.samsung.com>
+ <20180613122359.GA8695@bombadil.infradead.org>
+ <20180613124001eucas1p2422f7916367ce19fecd40d6131990383~3uKFrT3ML1977219772eucas1p2G@eucas1p2.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180613124001eucas1p2422f7916367ce19fecd40d6131990383~3uKFrT3ML1977219772eucas1p2G@eucas1p2.samsung.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we are using irq_domain_add_linear(), add a select on IRQ_DOMAIN.
-This is needed in order to be able to remove the depends on ARCH_QCOM.
+On Wed, Jun 13, 2018 at 02:40:00PM +0200, Marek Szyprowski wrote:
+> It is not only the matter of the spinlocks. GFP_ATOMIC is not supported 
+> by the
+> memory compaction code, which is used in alloc_contig_range(). Right, this
+> should be also noted in the documentation.
 
-drivers/soc/qcom/smsm.c: In function ‘smsm_inbound_entry’:
-drivers/soc/qcom/smsm.c:411:18: error: implicit declaration of function
-  ‘irq_domain_add_linear’
-  entry->domain = irq_domain_add_linear(node, 32, &smsm_irq_ops, entry);
-                  ^~~~~~~~~~~~~~~~~~~~~
-
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 2f59d0a835fd..1d4a9f3ada8c 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -115,6 +115,7 @@ config QCOM_SMSM
- 	tristate "Qualcomm Shared Memory State Machine"
- 	depends on QCOM_SMEM
- 	select QCOM_SMEM_STATE
-+	select IRQ_DOMAIN
- 	help
- 	  Say yes here to support the Qualcomm Shared Memory State Machine.
- 	  The state machine is represented by bits in shared memory.
--- 
-2.17.1
-
+Documentation is good, asserts are better.  The code should reject any
+flag not explicitly supported, or even better have its own flags type
+with the few actually supported flags.
