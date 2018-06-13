@@ -6,86 +6,198 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8216CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:45:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 88633C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:45:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 369A5208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:45:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 369A5208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 3D81C208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:45:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D81C208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935251AbeFMQpO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:45:14 -0400
-Received: from mx2.suse.de ([195.135.220.15]:35284 "EHLO mx2.suse.de"
+        id S935330AbeFMQp3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:45:29 -0400
+Received: from mga05.intel.com ([192.55.52.43]:35537 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934619AbeFMQpM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:45:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id BB81FACA1;
-        Wed, 13 Jun 2018 16:45:10 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id DF40D1E0D63; Wed, 13 Jun 2018 18:45:09 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 18:45:09 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Jan Kara <jack@suse.cz>, Tejun Heo <tj@kernel.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com,
-        syzkaller-bugs@googlegroups.com,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block <linux-block@vger.kernel.org>
-Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
-Message-ID: <20180613164509.oeb3fsjylfpfzxuh@quack2.suse.cz>
-References: <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
- <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
- <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
- <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
- <20180611172053.GR1351649@devbig577.frc2.facebook.com>
- <20180612155754.x5k2yndh5t6wlmpy@quack2.suse.cz>
- <b210e55c-b06a-41ff-8592-0dbe21875779@i-love.sakura.ne.jp>
- <20180613144606.nvbcyg2rdjpxhf7s@quack2.suse.cz>
- <7f4ae045-dfe4-6677-7418-f6f60b6c26f1@i-love.sakura.ne.jp>
- <CA+55aFx=CwNCg08HUeyYWc-WWuPkQBXVJDvHfrBjraTy-3MRWQ@mail.gmail.com>
+        id S934619AbeFMQp0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 12:45:26 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 09:45:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,219,1526367600"; 
+   d="scan'208";a="66718647"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.61])
+  by orsmga002.jf.intel.com with ESMTP; 13 Jun 2018 09:45:20 -0700
+Date:   Thu, 14 Jun 2018 00:34:11 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     atull@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luwei.kang@intel.com, yi.z.zhang@intel.com,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: Re: [PATCH v6 12/29] fpga: add FPGA DFL PCIe device driver
+Message-ID: <20180613163411.GA12639@hao-dev>
+References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
+ <1528798243-2029-13-git-send-email-hao.wu@intel.com>
+ <20180613135420.GB3866@archbook>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+55aFx=CwNCg08HUeyYWc-WWuPkQBXVJDvHfrBjraTy-3MRWQ@mail.gmail.com>
-User-Agent: NeoMutt/20170421 (1.8.2)
+In-Reply-To: <20180613135420.GB3866@archbook>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 13-06-18 09:25:03, Linus Torvalds wrote:
-> On Wed, Jun 13, 2018 at 9:21 AM Tetsuo Handa
-> <penguin-kernel@i-love.sakura.ne.jp> wrote:
-> >
-> > Since multiple addresses share bit_wait_table[256], isn't it possible that
-> > cgwb_start_shutdown() prematurely returns false due to wake_up_bit() by
-> > hash-conflicting addresses (i.e. not limited to clear_and_wake_up_bit() from
-> > wb_shutdown())? I think that we cannot be sure without confirming that
-> > test_bit(WB_shutting_down, &wb->state) == false after returning from schedule().
+On Wed, Jun 13, 2018 at 06:54:20AM -0700, Moritz Fischer wrote:
+> On Tue, Jun 12, 2018 at 06:10:26PM +0800, Wu Hao wrote:
+> > From: Zhang Yi <yi.z.zhang@intel.com>
+> > 
+> > This patch implements the basic framework of the driver for FPGA PCIe
+> > device which implements the Device Feature List (DFL) in its MMIO space.
+> > This driver is verified on Intel(R) PCIe based FPGA DFL devices, including
+> > both integrated (e.g Intel Server Platform with In-package FPGA) and
+> > discrete (e.g Intel FPGA PCIe Acceleration Cards) solutions.
+> > 
+> > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+> > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+> > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+> > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+> > Signed-off-by: Zhang Yi <yi.z.zhang@intel.com>
+> > Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Acked-by: Alan Tull <atull@kernel.org>
+> > Acked-by: Moritz Fischer <mdf@kernel.org>
+> > ---
+> > v2: move the code to drivers/fpga folder as suggested by Alan Tull.
+> >     switch to GPLv2 license.
+> >     fix comments from Moritz Fischer.
+> > v3: switch to pci_set_dma_mask/consistent_dma_mask() function.
+> >     remove pci_save_state() in probe function.
+> >     rename driver to INTEL_FPGA_DFL_PCI and intel-dfl-pci.c to indicate
+> >     this driver supports Intel FPGA PCI devices which implement DFL.
+> >     improve Kconfig description for INTEL_FPGA_DFL_PCI
+> > v4: rename to FPGA_DFL_PCI (dfl-pci.c) for better reuse.
+> >     fix SPDX license issue.
+> > v5: use module_pci_driver() instead.
+> >     add Acked-by from Alan and Moritz.
+> > v6: rebase and unify naming in Kconfig
+> > ---
+> >  drivers/fpga/Kconfig   |  15 +++++++
+> >  drivers/fpga/Makefile  |   3 ++
+> >  drivers/fpga/dfl-pci.c | 114 +++++++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 132 insertions(+)
+> >  create mode 100644 drivers/fpga/dfl-pci.c
+> > 
+> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > index 4052532..5faab48 100644
+> > --- a/drivers/fpga/Kconfig
+> > +++ b/drivers/fpga/Kconfig
+> > @@ -146,4 +146,19 @@ config FPGA_DFL
+> >  	  Gate Array (FPGA) solutions which implement Device Feature List.
+> >  	  It provides enumeration APIs, and feature device infrastructure.
+> >  
+> > +config FPGA_DFL_PCI
+> > +	tristate "FPGA DFL PCIe Device Driver"
+> > +	depends on PCI && FPGA_DFL
+> > +	help
+> > +	  Select this option to enable PCIe driver for PCIe based
+> > +	  Field-Programmable Gate Array (FPGA) solutions which implemented
+> > +	  the Device Feature List (DFL). This driver provides interfaces
+> > +	  for userspace applications to configure, enumerate, open and access
+> > +	  FPGA accelerators on the FPGA DFL devices, enables system level
+> > +	  management functions such as FPGA partial reconfiguration, power
+> > +	  management, and virtualization with DFL framework and DFL feature
+> > +	  device drivers.
+> > +
+> > +	  To compile this as a module, choose M here.
+> > +
+> >  endif # FPGA
+> > diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> > index 7a7a117..02e0253 100644
+> > --- a/drivers/fpga/Makefile
+> > +++ b/drivers/fpga/Makefile
+> > @@ -31,3 +31,6 @@ obj-$(CONFIG_OF_FPGA_REGION)		+= of-fpga-region.o
+> >  
+> >  # FPGA Device Feature List Support
+> >  obj-$(CONFIG_FPGA_DFL)			+= dfl.o
+> > +
+> > +# Drivers for FPGAs which implement DFL
+> > +obj-$(CONFIG_FPGA_DFL_PCI)		+= dfl-pci.o
+> > diff --git a/drivers/fpga/dfl-pci.c b/drivers/fpga/dfl-pci.c
+> > new file mode 100644
+> > index 0000000..5824c5e
+> > --- /dev/null
+> > +++ b/drivers/fpga/dfl-pci.c
+> > @@ -0,0 +1,114 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Driver for FPGA Device Feature List (DFL) PCIe device
+> > + *
+> > + * Copyright (C) 2017-2018 Intel Corporation, Inc.
+> > + *
+> > + * Authors:
+> > + *   Zhang Yi <Yi.Z.Zhang@intel.com>
+> > + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> > + *   Joseph Grecco <joe.grecco@intel.com>
+> > + *   Enno Luebbers <enno.luebbers@intel.com>
+> > + *   Tim Whisonant <tim.whisonant@intel.com>
+> > + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> > + *   Henry Mitchel <henry.mitchel@intel.com>
+> > + */
+> > +
+> > +#include <linux/pci.h>
+> > +#include <linux/types.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> > +#include <linux/stddef.h>
+> > +#include <linux/errno.h>
+> > +#include <linux/aer.h>
+> > +
+> > +#define DRV_VERSION	"0.8"
+> > +#define DRV_NAME	"dfl-pci"
+> > +
+> > +/* PCI Device ID */
+> > +#define PCIE_DEVICE_ID_PF_INT_5_X	0xBCBD
+> > +#define PCIE_DEVICE_ID_PF_INT_6_X	0xBCC0
+> > +#define PCIE_DEVICE_ID_PF_DSC_1_X	0x09C4
+> > +/* VF Device */
+> > +#define PCIE_DEVICE_ID_VF_INT_5_X	0xBCBF
+> > +#define PCIE_DEVICE_ID_VF_INT_6_X	0xBCC1
+> > +#define PCIE_DEVICE_ID_VF_DSC_1_X	0x09C5
+> > +
+> > +static struct pci_device_id cci_pcie_id_tbl[] = {
+> > +	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCIE_DEVICE_ID_PF_INT_5_X),},
+> > +	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCIE_DEVICE_ID_VF_INT_5_X),},
+> > +	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCIE_DEVICE_ID_PF_INT_6_X),},
+> > +	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCIE_DEVICE_ID_VF_INT_6_X),},
+> > +	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCIE_DEVICE_ID_PF_DSC_1_X),},
+> > +	{PCI_DEVICE(PCI_VENDOR_ID_INTEL, PCIE_DEVICE_ID_VF_DSC_1_X),},
+> > +	{0,}
+> > +};
+> > +MODULE_DEVICE_TABLE(pci, cci_pcie_id_tbl);
+> > +
+> > +static
+> > +int cci_pci_probe(struct pci_dev *pcidev, const struct pci_device_id *pcidevid)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = pci_enable_device(pcidev);
 > 
-> Right.
-> 
-> That's _always_ true, btw. Something else entirely could have woken
-> you up. TASK_UNINTERRUPTIBLE does not mean "nothing else wakes me", it
-> just means "_signals_ don't wake me".
-> 
-> So every single sleep always needs to be in a loop. Always.
+> Any reason we cannot use pcim_enable_device() here?
 
-Agreed and in my patch it actually is in a loop - the one iterating the
-list of active writeback structures. If we get a false wakeup, we find the
-same structure in the list again and wait again...
+Hi Moritz
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks for the comments, pcim_enable_device() saves code for sure, will switch
+to it in the next version.
+
+Thanks
+Hao
