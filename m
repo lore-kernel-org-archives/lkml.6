@@ -2,101 +2,171 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2267AC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:02:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B86FBC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:03:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8D6220891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:02:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6326D20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:03:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F7uh66Rf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VdvW0VbY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8D6220891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rx+Yi/hP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6326D20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754545AbeFMJCt (ORCPT
+        id S1754585AbeFMJDQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:02:49 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39644 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbeFMJCq (ORCPT
+        Wed, 13 Jun 2018 05:03:16 -0400
+Received: from mail-wr0-f195.google.com ([209.85.128.195]:43596 "EHLO
+        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750939AbeFMJDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:02:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4E5EC607A4; Wed, 13 Jun 2018 09:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528880566;
-        bh=fl6gQW5SIy21oP3dRmfZs3JwXPRdmjmKR+fZnpIVOuY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=F7uh66Rf4i1eWn0tAzAvlZKN4orHtggqJI1eA9amGTvBsov+w+ifhUgni9sSBmVKI
-         81xQ+jbFAKdAt5sOBodRQOZXFZx2VTcHZij2R695Pw6HTQOZ+ru0UUZeoixULiQLqV
-         PPYl2vYQVqP1b8ON3nJBcDP+gw3vhTuyKlHcehHs=
-Received: from absahu-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: absahu@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A2EFB606DB;
-        Wed, 13 Jun 2018 09:02:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528880564;
-        bh=fl6gQW5SIy21oP3dRmfZs3JwXPRdmjmKR+fZnpIVOuY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=VdvW0VbYD4pI6bLeUuJwiDfLy0JCGxYKT/6iFMM/+79J5pGSC/3CSd6KRwsFt3o0H
-         CwOkoHQaKGGlwERH/0VOrj5SXS58b83OXyrm5s9c0gIP31Zpck1KJFm0u2Z7fYvFUu
-         xfYBPn7rvUdPDNbW8eJC28Sgl1mFj3ODoYLPwj3U=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A2EFB606DB
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=absahu@codeaurora.org
-From:   Abhishek Sahu <absahu@codeaurora.org>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org,
-        Abhishek Sahu <absahu@codeaurora.org>, <stable@vger.kernel.org>
-Subject: [PATCH] mtd: rawnand: fix return value check for bad block status
-Date:   Wed, 13 Jun 2018 14:32:36 +0530
-Message-Id: <1528880556-20348-1-git-send-email-absahu@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
+        Wed, 13 Jun 2018 05:03:13 -0400
+Received: by mail-wr0-f195.google.com with SMTP id d2-v6so1858078wrm.10
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 02:03:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=uNDhrysaWONUJsIifi6kbTeclrqvDoCln4Nqj8RkUGo=;
+        b=Rx+Yi/hPCkGE8CNWb/EAXOFlWbwWhewd5znfELefg0kbyf4/rcXSKUeW55zirT5TU/
+         LTEhQ9uKW+SRWyUTKL44HNgPDXjfXy1l5CieeThfjvaytRGkeeUKEBjecv1h25na20O3
+         ecTrWb3i9OUf2awGhM95GvO55x92cX4IVjI34=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=uNDhrysaWONUJsIifi6kbTeclrqvDoCln4Nqj8RkUGo=;
+        b=rezjjEhoLOA4bgICj2JqG8dAsAlAyNZKvI1aB1MzqwoxQBvALvS9z1K99kX5T/SYWV
+         Fhl2ixn8Y6VwRSClToJ8y2hkKWnsm4F+jH4gzOUAmgg8AZj2I8eCiuBzHCiKAsGyZomp
+         Bo59rN2+yDdzi6VFN7TXHkd1maUMykm32MOJsiYSuYrfuZdFdRuJuA5xbV/VM6D5QaCj
+         dhBZkC5/OY1vR79sRpBLKusi9+jBeUp8LpwhfWtmJuTMFo3/QSKH/+ikUMxNL+Q/RRLD
+         OATVe8mTP/jtfQLauZK3/nVdVUo1ttXeKgnKwe7t7plMgtmOkF2im2+cxQ77OiQNZt1S
+         mkiQ==
+X-Gm-Message-State: APt69E2TA2QRcIXm1yamwSK/Z3qFrmstGpOkCK9ZPdEk79Bw+eNdiqdQ
+        RT9AfOF5c9D/0QV/B4ZVUXnUrw==
+X-Google-Smtp-Source: ADUXVKIEJdxn0rnneDClF40Gz2i1KJRqgtdHFHYIKs2SrC5DmfmizAc/OcJPk9HhQiHkX9rrOvKtSw==
+X-Received: by 2002:adf:f344:: with SMTP id e4-v6mr3358424wrp.161.1528880591515;
+        Wed, 13 Jun 2018 02:03:11 -0700 (PDT)
+Received: from ?IPv6:2001:41d0:fe90:b800:b0fb:9cfa:79ac:305e? ([2001:41d0:fe90:b800:b0fb:9cfa:79ac:305e])
+        by smtp.googlemail.com with ESMTPSA id n17-v6sm3490234wmd.14.2018.06.13.02.03.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Jun 2018 02:03:10 -0700 (PDT)
+Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle injection
+ framework
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>,
+        Javi Merino <javi.merino@kernel.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Kevin Wangtao <kevin.wangtao@linaro.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rui Zhang <rui.zhang@intel.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>
+References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
+ <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
+ <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
+ <20180612125247.GO12217@hirez.programming.kicks-ass.net>
+ <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
+ <20180612140654.GQ12217@hirez.programming.kicks-ass.net>
+ <cce05d92-d51a-ab4f-83f2-37dcdee0cd6a@linaro.org>
+ <20180612155841.GT12217@hirez.programming.kicks-ass.net>
+ <7190a58e-05f2-216c-8b36-70692fa722bf@linaro.org>
+ <20180612173514.GV12217@hirez.programming.kicks-ass.net>
+ <20180613085509.s7ktdespfyjpozuu@vireshk-i7>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <b9dba62b-35df-46a9-a66c-3ec0952109b6@linaro.org>
+Date:   Wed, 13 Jun 2018 11:03:09 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180613085509.s7ktdespfyjpozuu@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Positive return value from read_oob() is making false BAD
-blocks. For some of the NAND controllers, OOB bytes will be
-protected with ECC and read_oob() will return number of bitflips.
-If there is any bitflip in ECC protected OOB bytes for BAD block
-status page, then that block is getting treated as BAD.
+On 13/06/2018 10:55, Viresh Kumar wrote:
+> On 12-06-18, 19:35, Peter Zijlstra wrote:
+>> On Tue, Jun 12, 2018 at 07:02:57PM +0200, Daniel Lezcano wrote:
+>>> Mmh, it is unclear for me if the park() vs wakeup() can happen at the
+>>> same time.
+>>>
+>>> If the park() function is called, that means the hotplug is allowed.
+>>
+>> No, it means we're inside hot-un-plug, but that doesn't stop the hrtimer
+>> from firing.
+>>
+>>> If the hotplug is allowed, we can modify the online mask.
+>>>
+>>> What happens with the online mask when we are processing it in an
+>>> interrupt context ?
+>>
+>> RCU-like, if you observe a CPU in the online mask, it will stay
+>> available, but the bit might get cleared.
+>>
+>>>> Maybe avoid the issue entire by having a
+>>>> {period,idle} tuple, where your old run := period - idle.
+>>>
+>>> Can you elaborate ? I don't get it.
+>>
+>> Have a period parameter that specifies the interval in which you have
+>> one injected idle, and specify for how long you want to inject idle;
+>> then obviously idle < period.
+>>
+>>>>>> Furthermore, should you not be using hrtimer_forward(&timer,
+>>>>>> idle_duration + run_duration) instead? AFAICT the current scheme is
+>>>>>> prone to drifting.
+>>>>>
+>>>>> (I assume you meant setting the timer in the wakeup task function).
+>>>>>
+>>>>> Yes, drifting is not an issue if that happens. This scheme is simpler
+>>>>> and safer than setting the timer ahead before waking up the tasks with
+>>>>> the risk it expires before all the tasks ended their idle cycles.
+>>>>
+>>>> sloppy though..
+>>>
+>>> Ok, do you prefer to see the timer set in the wakeup function and thus
+>>> having a periodic tick for the idle injection ?
+>>
+>> I think having a HRTIMER_RESTART handler that does hrtimer_forward() is
+>> the most sensible. You will end up having to deal with threads not being
+>> ready, but I think that's not a real problem.
+> 
+> Honestly speaking I am not sure if we can fix all the races we have identified
+> until now, with the current design and the fear of using resources after getting
+> freed will always be there. Too many corner cases really.
+> 
+> The requirement we have is to make sure no kthread or hrtimer is still in use
+> when the ii_dev is freed from idle_injection_unregister().
+> 
+> May be the only sane way to make it work is to call
+> smpboot_register_percpu_thread() from idle_injection_register() and then
+> unregister those threads from idle_injection_unregister().
 
-Fixes: c120e75e0e7d ("mtd: nand: use read_oob() instead of cmdfunc() for bad block check")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
----
- drivers/mtd/nand/raw/nand_base.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+nr_threads(smpboot) <> nr_threads(idleinject)
 
-diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
-index f28c3a5..4a73f73 100644
---- a/drivers/mtd/nand/raw/nand_base.c
-+++ b/drivers/mtd/nand/raw/nand_base.c
-@@ -440,7 +440,7 @@ static int nand_block_bad(struct mtd_info *mtd, loff_t ofs)
- 
- 	for (; page < page_end; page++) {
- 		res = chip->ecc.read_oob(mtd, chip, page);
--		if (res)
-+		if (res < 0)
- 			return res;
- 
- 		bad = chip->oob_poi[chip->badblockpos];
+If we are facing races issues, it is because we are trying to avoid
+using locks in the code path. With lock and proper refcounting that
+should be solved, AFAICT there are similar races with inodes.
+
+Furthermore, hrtimer_forward approach is probably cleaner.
+
+
+
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc.
-is a member of Code Aurora Forum, hosted by The Linux Foundation
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
