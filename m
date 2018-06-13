@@ -4,115 +4,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 99F47C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:57:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4B056C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41B46208C4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:57:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB5EE208D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 21:00:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Du+rJTxE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41B46208C4
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eIDlq+i3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB5EE208D5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935785AbeFMU5h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 16:57:37 -0400
-Received: from mail-pg0-f66.google.com ([74.125.83.66]:46149 "EHLO
-        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935524AbeFMU5g (ORCPT
+        id S935821AbeFMVAE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 17:00:04 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:37516 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935524AbeFMVAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 16:57:36 -0400
-Received: by mail-pg0-f66.google.com with SMTP id d2-v6so1836541pga.13;
-        Wed, 13 Jun 2018 13:57:35 -0700 (PDT)
+        Wed, 13 Jun 2018 17:00:02 -0400
+Received: by mail-ua0-f193.google.com with SMTP id i3-v6so2676249uad.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 14:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=LxbmLTpsQqjiDN5Skt3GmO+MLvidSMtZHgCmAZ9bNJg=;
-        b=Du+rJTxE7ORG/HY7+aoHTRK1KTaKjAiomjh0bmecx+KHOYKyX4vb0UHQmfXuNJHlqj
-         tY/U3yeyohuNgRWb+lW5AzfLJ2qIoXlI2aYv8h/Fff5weDPcp75O2NeMUg8l6ehRKRRf
-         qpq78JOQESU4aiywMrlnrI+uBS0YMbkM53mgyhR3dx6+ycaa7zXLlz5BV2c7IJyrX3u+
-         0+xRRTrtftVQIpFbesvXQuR8f8pMFPhibqkZPUu9xw8WF306oL13KZqU98i5u+/yExa8
-         eDbOVt3pfSdnJ2ztqSAu/pL4q/iJKo8yXRg7lzuF3lvzhY4eBg+tTOyZfJzU/Y6OLO/U
-         L25w==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=gT7r1sibYLOAhXCDknByiosKTTDrsSY14UqJOEGxSqU=;
+        b=eIDlq+i37Ztjt7HOsbfOy5X5wBT0MoGIlLM8U/bJ7t4bm/PfueXBRO1lzPtlVbERIg
+         2Y+jT3jTNvp7jpYTg4azllfJNALM34yYhHlWmxdbDjU4wg3REsTAsHehEMrZI7MtthV0
+         xwapgEyt35+ytaCyhr3VVFr6XAhxweT2oqHCJjcwG6aXL0uQDRdouoksjHb3bfekrb3G
+         rnOZIBc3B4h2dIcUFzYzim4+5QTyR830qR+pZM5z9+XJd60d5W/F+WXFqDb8/HDKzNwr
+         5HQJvWaB+oVTVEBA4N/I+AVUMfwUg2g9hVIeN6q/+ysHKziX5gsu23i0AYDhTBqs3EXj
+         Sp9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=LxbmLTpsQqjiDN5Skt3GmO+MLvidSMtZHgCmAZ9bNJg=;
-        b=OKEvNbd9Rp4PaeNMzD3lho1CnnA3pprZNlZytga4UkjrAFSZlH/4qu/ghK3C1asz/t
-         EEkmZgDwee8oWUYUmJLz7NAP8axAG28X0pa6/pKS+0aemrZWebMc73T1tpSefDjecPmR
-         XpyamSjo9xr4i4m7SJQcFUjoiL42+z/ZGmjqcnkNLckZXOS8bkbZYTrfGHdv3WH9fxVI
-         shdzzgLsmPe9XrzqFNnc6agPYIyjcFK1y0mdjcdLl2uc8TaP0niLtrsFb9gA4Ni0D5RE
-         xZD+6zkdRk6WSeTRFqf+FI/IprBPWlbFVKrVp44NnWtjGLC9JwB8mkQIMadyRazvD767
-         og/Q==
-X-Gm-Message-State: APt69E0FQKmTTwVdrWgr+GhHohbkWbNvavkgKOZefRkeb0u1PX7wkQkr
-        2+8B3d07lNoSWCk1jzQpFWI=
-X-Google-Smtp-Source: ADUXVKI8AgV0IfArG8ianEJwxvG/xaALGFmrJzu1efCI8DAMB1c0xPi38XQ275DuOPQkZwFO3V04IA==
-X-Received: by 2002:a63:5f54:: with SMTP id t81-v6mr5364604pgb.108.1528923455528;
-        Wed, 13 Jun 2018 13:57:35 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id 15-v6sm6949128pfq.81.2018.06.13.13.57.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 13:57:34 -0700 (PDT)
-Subject: Re: [PATCH v2] hv_netvsc: Add per-cpu ethtool stats for netvsc
-To:     Yidong Ren <yidren@linuxonhyperv.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        devel@linuxdriverproject.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Yidong Ren <yidren@microsoft.com>
-References: <20180613193608.444-1-yidren@linuxonhyperv.com>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <4c853799-44e0-ff33-3555-41982d601ebb@gmail.com>
-Date:   Wed, 13 Jun 2018 13:57:33 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gT7r1sibYLOAhXCDknByiosKTTDrsSY14UqJOEGxSqU=;
+        b=qFmjCgtpbvyftJQHCobFaLGglnfJev9fFxu/whpMOEeK+sI3yZ34WSBmLoZ/RmhSMt
+         JKJiSMA6ZXEYR13v0ClrbcdbFF7AM93wyBKhSGA3xXWC4p8nfY55RvDtA7cMtdd5YS7u
+         YBKHbqnJ11+ohoIuTFo8uXczKIEOY1S0zYnX0si80AjcFsYry/0C96r9uZ8r+YsPM9qF
+         yMrbDwbrYwg3G/4qMMuLPVUCyG6atEhLPvSNWG0z/JPKWjMsp5P0DaFWd2kdWanAvBGY
+         BezjQMN4DPLuRH9+eXUvW41eYoRvMMKvQxq7U5BtqI1Mxn4az9amvhCIXZKZMsPwue58
+         3ztQ==
+X-Gm-Message-State: APt69E1HRuNSLXDdjFna/wfgTPC2liytts68X4l/Ko9l2DbcQdTdkbcD
+        0F65y2EVtvicFGdVtCdfoO5kRHDG
+X-Google-Smtp-Source: ADUXVKI8095yFTth1wktYEHTtubp3hvtVorel2norLd4FP1+ML+SoP6QimYG+EG8GqCHHECSwKiQcA==
+X-Received: by 2002:ab0:4f04:: with SMTP id n4-v6mr4435535uah.172.1528923602052;
+        Wed, 13 Jun 2018 14:00:02 -0700 (PDT)
+Received: from javier-Z97X ([2601:582:c500:a66c::21e8])
+        by smtp.gmail.com with ESMTPSA id j18-v6sm471398uan.2.2018.06.13.14.00.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Jun 2018 14:00:01 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 16:59:55 -0400
+From:   Javier Martinez <javiermlinux@gmail.com>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Staging: octeon-usb: octeon-hcd.c: style fix line length
+ warning
+Message-ID: <20180613205955.GA16029@javier-Z97X>
+References: <20180613204015.GA15689@javier-Z97X>
+ <20180613205255.GA14313@kroah.com>
 MIME-Version: 1.0
-In-Reply-To: <20180613193608.444-1-yidren@linuxonhyperv.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180613205255.GA14313@kroah.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/13/2018 12:36 PM, Yidong Ren wrote:
-> From: Yidong Ren <yidren@microsoft.com>
+On Wed, Jun 13, 2018 at 10:52:55PM +0200, Greg KH wrote:
+> On Wed, Jun 13, 2018 at 04:40:15PM -0400, Javier Martinez wrote:
+> > Checkpatch.pl issued a warning in the top of the commment within
+> > octeon-hcd.c. This is a simple style fix for that.
+> > 
+> > Signed-off-by: Javier Martinez <javiermlinux@gmail.com>
+> > ---
+> >  drivers/staging/octeon-usb/octeon-hcd.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/staging/octeon-usb/octeon-hcd.c b/drivers/staging/octeon-usb/octeon-hcd.c
+> > index cded30f145aa..768b0148f3d5 100644
+> > --- a/drivers/staging/octeon-usb/octeon-hcd.c
+> > +++ b/drivers/staging/octeon-usb/octeon-hcd.c
+> > @@ -1,5 +1,5 @@
+> >  /*
+> > - * This file is subject to the terms and conditions of the GNU General Public
+> > + * This file is subject to the terms and conditions of the GPL
+> >   * License.  See the file "COPYING" in the main directory of this archive
 > 
-> This patch implements following ethtool stats fields for netvsc:
-> cpu<n>_tx/rx_packets/bytes
-> cpu<n>_vf_tx/rx_packets/bytes
+> The grammer is now incorrect :(
+> 
+> Shouldn't we just have a SPDX line at the top here and this whole boiler
+> plate text be removed?
+> 
+> thanks,
+> 
+> greg k-h
 
-...
->  
-> +	pcpu_sum = alloc_percpu(struct netvsc_ethtool_pcpu_stats);
-> +	netvsc_get_pcpu_stats(dev, pcpu_sum);
-> +	for_each_present_cpu(cpu) {
-> +		struct netvsc_ethtool_pcpu_stats *this_sum =
-> +			per_cpu_ptr(pcpu_sum, cpu);
-> +		for (j = 0; j < ARRAY_SIZE(pcpu_stats); j++)
-> +			data[i++] = *(u64 *)((void *)this_sum
-> +					     + pcpu_stats[j].offset);
-> +	}
-> +	free_percpu(pcpu_sum);
->
-
-
-Using alloc_percpu() / free_percpu() for a short section of code makes no sense.
-
-You actually want to allocate memory local to this cpu, possibly in one chunk,
-not spread all over the places.
-
-kvmalloc(nr_cpu_ids * sizeof(struct netvsc_ethtool_pcpu_stats))  should be really better,
-since it would most of the time be satisfied by a single kmalloc()
-
+Sure, will get right to it. I am actually newbie to all this.
+I watched your tutorial on youtube when you were at FOSDEM,
+Huge help, thank you for that.
