@@ -3,127 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1C38DC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:29:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 29FF3C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C343E208C3
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:29:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3D32208C4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:30:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LBzWxVrG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LBzWxVrG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C343E208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKBWEvF9";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FuHJvk0a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3D32208C4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935506AbeFMS3E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:29:04 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:42178 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935202AbeFMS3C (ORCPT
+        id S935595AbeFMSaF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:30:05 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40028 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935540AbeFMSaC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:29:02 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id EAAEE607E4; Wed, 13 Jun 2018 18:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528914541;
-        bh=NoUUW4RU+MChkXxjxz3EgekvSB/hGsWURRRdeWLALHo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LBzWxVrGNZ2r0NW5zJmZe4G0Yc4NfjBeNN+syLTAK0dit2nmLjd9oaVe1ikUMCH9B
-         n8ZT3oyWv0EREXG4VAJ6B3sK8KiceRjhH60RcRgbn2j9lTL1vuuZ5gcfzaabzD9TGQ
-         F0+LmGbyCfXTOPGnXvb9jmEZix1cSXISLjEjCGhE=
-Received: from localhost (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: ilina@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2B0FA60717;
-        Wed, 13 Jun 2018 18:29:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528914541;
-        bh=NoUUW4RU+MChkXxjxz3EgekvSB/hGsWURRRdeWLALHo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LBzWxVrGNZ2r0NW5zJmZe4G0Yc4NfjBeNN+syLTAK0dit2nmLjd9oaVe1ikUMCH9B
-         n8ZT3oyWv0EREXG4VAJ6B3sK8KiceRjhH60RcRgbn2j9lTL1vuuZ5gcfzaabzD9TGQ
-         F0+LmGbyCfXTOPGnXvb9jmEZix1cSXISLjEjCGhE=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2B0FA60717
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=ilina@codeaurora.org
-Date:   Wed, 13 Jun 2018 12:29:00 -0600
-From:   Lina Iyer <ilina@codeaurora.org>
-To:     David Collins <collinsd@codeaurora.org>
-Cc:     Rajendra Nayak <rnayak@codeaurora.org>, viresh.kumar@linaro.org,
-        sboyd@kernel.org, andy.gross@linaro.org, ulf.hansson@linaro.org,
-        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/6] soc: qcom: rpmh powerdomain driver
-Message-ID: <20180613182900.GB22824@codeaurora.org>
-References: <20180525100121.28214-1-rnayak@codeaurora.org>
- <20180525100121.28214-6-rnayak@codeaurora.org>
- <215deee5-6472-d587-9a90-f7158162ed82@codeaurora.org>
+        Wed, 13 Jun 2018 14:30:02 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n5-v6so7188036wmc.5;
+        Wed, 13 Jun 2018 11:30:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=DZW/o1qZyEsJ9KrOihKhMlFM+0/5SlT/2aygmRSAreE=;
+        b=iKBWEvF9wMpAL0w+NB716FPuD3QfkeUVMbv+KRvp6vLJmDmlTXIEh4Aphut7FCiblB
+         wZQpThv5VIJSkoTZQ0WX/1JLd+Nf6GijXkbbuJYFQtuJy6kxcIm5illYIaZVNMeJPThA
+         O2SzFN3gF97C5RB5mWPB/GtRqB2GGef62nn/hco6JfkHACs4SYOS1eKY3ZONIaTQ+Rd+
+         LzEWTPvjwLF8qIieipxlWfTX/53OU7skXDSAq+BwyF1GVs2/s7rlemFxpfW0Kc1sRxdO
+         Rp+TvHJpgWNcd49OioDijU+OSGeg2WiHWduw+Inco0iswBVONPhiJS0kEFzhRs38CSrH
+         jP7A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=DZW/o1qZyEsJ9KrOihKhMlFM+0/5SlT/2aygmRSAreE=;
+        b=FuHJvk0a2F++wVsa+xuGB97QAree4VON3vef/trKhSmbUL1GYT0JCzKRiLJPMvh3Sr
+         peP488LQMMYpuc1ehPksqiZQSxcjx3HX1q8tNpbwv8DiS3Gd+JE0RJWJp6UNPivWGuxK
+         U3jOsmHLUtLPVofF41PdLaNbr8FTMZidsavu8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=DZW/o1qZyEsJ9KrOihKhMlFM+0/5SlT/2aygmRSAreE=;
+        b=Rht66EWcy1mwuPeQVX3hqnN6YtBdJsqE4LUZCKtDbln9Tns7jSEs5bcy+qUx9WWRPB
+         v6ubAu+m56e9fXqU4lZo4Zbow4S7g+LN2fUpDPXvRjD6/rPaLAjutS7qVquM5O0osv+2
+         GDvNbYbKhaM5l1taXytKbcYLJ6WVUqeKq+oRzyndXxLZLQUIMOn0BHXzciK4/2bEs05W
+         d0Zbo3Puw2Qj8Lg2M1x2lZCGB+Kc45j/U9kpIe5nsealLZquvTfVnqjHpV59sL7X1dtA
+         PVe7++AE5jUK1ZKykrfD8FtAu8ehy00QJv7uK0hmUiNTyMqDWXgQ1Bg2GPXTaFgHDiqJ
+         dfFA==
+X-Gm-Message-State: APt69E0xokLf0sYui8dcq6hm0wTfbYS1ZoAY0PR7AR4l+6Zr6R2Ra6Q2
+        RsDcbrcSO6FgNS/7TgVD9ugY1pvCsZJiCitbkrc=
+X-Google-Smtp-Source: ADUXVKJa8U3jJ7Fa71cbVZrinu+tYwlkPd4l9CO0RYyNtC6i0mV3qMR8d4AGU/YcwBiW6F/wEtScX/9XwjVJpExrzyE=
+X-Received: by 2002:a1c:3fc2:: with SMTP id m185-v6mr4099487wma.37.1528914601389;
+ Wed, 13 Jun 2018 11:30:01 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <215deee5-6472-d587-9a90-f7158162ed82@codeaurora.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:a1c:ec56:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 11:30:00
+ -0700 (PDT)
+In-Reply-To: <20180613151305.17240-1-ryan@edited.us>
+References: <20180613151305.17240-1-ryan@edited.us>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Wed, 13 Jun 2018 11:30:00 -0700
+X-Google-Sender-Auth: Sc_YRdBdtDRNxsyM6-syCPtkOu0
+Message-ID: <CANcMJZASEDRxaXwdG96nNeEDPrDm_ap5MjhXonEcg=yHZ8F=qg@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: hikey: Define wl1835 power capabilities
+To:     Ryan Grachek <ryan@edited.us>
+Cc:     Wei Xu <xuwei5@hisilicon.com>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kalle Valo <kvalo@codeaurora.org>, Eyal Reizer <eyalr@ti.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Valentin Schneider <Valentin.Schneider@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, May 25 2018 at 19:08 -0600, David Collins wrote:
->Hello Rajendra,
+On Wed, Jun 13, 2018 at 8:13 AM, Ryan Grachek <ryan@edited.us> wrote:
+> These properties are required for compatibility with runtime PM.
+> Without these properties, MMC host controller will not be aware
+> of power capabilities. When the wlcore driver attempts to power
+> on the device, it will erroneously fail with -EACCES.
 >
->On 05/25/2018 03:01 AM, Rajendra Nayak wrote:
->> +
->> +	to_active_sleep(pd, pd->corner, &this_corner, &this_sleep_corner);
->> +
->> +	if (peer && peer->enabled)
->> +		to_active_sleep(peer, peer->corner, &peer_corner,
->> +				&peer_sleep_corner);
->> +
->> +	active_corner = max(this_corner, peer_corner);
->> +
->> +	ret = rpmhpd_send_corner(pd, RPMH_ACTIVE_ONLY_STATE, active_corner);
->> +	if (ret)
->> +		return ret;
->> +
->> +	sleep_corner = max(this_sleep_corner, peer_sleep_corner);
->> +
->> +	return rpmhpd_send_corner(pd, RPMH_SLEEP_STATE, sleep_corner);
->> +}
->
->This aggregation function as well as the rpmhpd_send_corner() calls below
->are not sufficient for RPMh.  There are 3 states that must all be used:
->RPMH_ACTIVE_ONLY_STATE, RPMH_WAKE_ONLY_STATE, and RPMH_SLEEP_STATE.  The
->naming is somewhat confusing as rpmhpd is defining a different concept of
->active-only.
->
->For power domains without active-only or peers, only
->RPMH_ACTIVE_ONLY_STATE should be used.  This instructs RPMh to issue the
->request immediately.
->
->For power domains with active-only, requests will need to be made for all
->three.  active_corner would be sent for both RPMH_ACTIVE_ONLY_STATE (so
->that the request takes effect immediately) and RPMH_WAKE_ONLY_STATE (so
->that the request is inserted into the wake TCS).  sleep_corner would be
->sent for RPMH_SLEEP_STATE (so that the request is inserted into the sleep
->TCS).
->
->You can see how this is handled in the RPMh clock driver in patch [3].
->
->You may be able to get away with using only RPMH_SLEEP_STATE and
->RPMH_ACTIVE_ONLY_STATE assuming that you issue the RPMH_SLEEP_STATE
->request first due to the rpmh driver caching behavior added in the
->cache_rpm_request() function in [4].  However, could you please confirm
->with Lina that this usage will continue to work in the future?  I'm not
->sure what guarantees are made at the rpmh API level.
->
-We expect to cache all active values into wake if there was a sleep
-value already defined. Expect to continue this behavior in the future
-as well. But it would be safer for you to send sleep and wake votes in
-addition to active votes. It shouldn't add too much of an overhead.
+> Signed-off-by: Ryan Grachek <ryan@edited.us>
 
--- Lina
+Fixes: 60f36637bbbd ("wlcore: sdio: allow pm to handle sdio power")
+Tested-by: John Stultz <john.stultz@linaro.org>
+Acked-by: John Stultz <john.stultz@linaro.org>
 
+Wei Xu: This fixes a functional regression with wifi on the HiKey
+board that was introduced in 4.18-rc with commit 60f36637bbbd
+("wlcore: sdio: allow pm to handle sdio power").
+
+Could you please be sure to queue this for the 4.18-rc ?
+
+thanks
+-john
