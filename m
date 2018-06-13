@@ -5,110 +5,95 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CD961C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:00:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0E6D1C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CD3420020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:00:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CD3420020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C25D8208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:00:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C25D8208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935639AbeFMNAD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:00:03 -0400
-Received: from foss.arm.com ([217.140.101.70]:47246 "EHLO foss.arm.com"
+        id S935646AbeFMNAb convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:00:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40548 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935346AbeFMNAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:00:01 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7CAF41529;
-        Wed, 13 Jun 2018 06:00:01 -0700 (PDT)
-Received: from [10.1.206.75] (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EDD5B3F25D;
-        Wed, 13 Jun 2018 05:59:59 -0700 (PDT)
-Subject: Re: [RFC V2 3/3] perf: qcom: Add Falkor CPU PMU IMPLEMENTATION
- DEFINED event support
-To:     Will Deacon <will.deacon@arm.com>,
-        Agustin Vega-Frias <agustinv@codeaurora.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Jeremy Linton <jeremy.linton@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        timur@codeaurora.org
-References: <1528379808-27970-1-git-send-email-agustinv@codeaurora.org>
- <1528379808-27970-4-git-send-email-agustinv@codeaurora.org>
- <20180612144055.m2h26n64spfm6k6o@lakrids.cambridge.arm.com>
- <9957219b64252d3b2e19724db04a1179@codeaurora.org>
- <20180613103555.GC26280@arm.com>
-From:   Marc Zyngier <marc.zyngier@arm.com>
-Organization: ARM Ltd
-Message-ID: <06c81a64-904f-59fa-5751-62818d6d2107@arm.com>
-Date:   Wed, 13 Jun 2018 13:59:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935346AbeFMNA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 09:00:29 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4EEDFAD4B;
+        Wed, 13 Jun 2018 13:00:28 +0000 (UTC)
+Date:   Wed, 13 Jun 2018 15:00:25 +0200
+From:   Jean Delvare <jdelvare@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>
+Cc:     Andreas =?UTF-8?B?R3LDvG5iYWNoZXI=?= 
+        <andreas.gruenbacher@gmail.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        quilt-dev@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: Re: [Quilt-dev] Quilt vs gmail
+Message-ID: <20180613150025.62cf94ca@endymion>
+In-Reply-To: <CA+55aFx81igOjFZcvO03mvDFd3=pxsq2QuNrWrPW+4pvJy780A@mail.gmail.com>
+References: <20180612083449.100099222@infradead.org>
+        <CA+55aFzLNFO1za9-Lb=jxO_F9NS0jZyti+we=ycr5NTpgzdEbw@mail.gmail.com>
+        <CAHpGcMJSb4pqWF7X3K7yrk+N=FwcSrbjWm9xvprpaLRGgdE24A@mail.gmail.com>
+        <CA+55aFx81igOjFZcvO03mvDFd3=pxsq2QuNrWrPW+4pvJy780A@mail.gmail.com>
+Organization: SUSE Linux
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180613103555.GC26280@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/18 11:35, Will Deacon wrote:
-> On Tue, Jun 12, 2018 at 04:41:32PM -0400, Agustin Vega-Frias wrote:
->> Hi Mark,
->>
->> On 2018-06-12 10:40, Mark Rutland wrote:
->>> Hi,
->>>
->>> On Thu, Jun 07, 2018 at 09:56:48AM -0400, Agustin Vega-Frias wrote:
->>>> Selection of these events can be envisioned as indexing them from
->>>> a 3D matrix:
->>>> - the first index selects a Region Event Selection Register
->>>> (PMRESRx_EL0)
->>>> - the second index selects a group from which only one event at a time
->>>>  can be selected
->>>> - the third index selects the event
->>>>
->>>> The event is encoded into perf_event_attr.config as 0xPRCCG, where:
->>>>  P  [config:16   ] = prefix   (flag that indicates a matrix-based
->>>> event)
->>>>  R  [config:12-15] = register (specifies the PMRESRx_EL0 instance)
->>>>  G  [config:0-3  ] = group    (specifies the event group)
->>>>  CC [config:4-11 ] = code     (specifies the event)
->>>>
->>>> Events with the P flag set to zero are treated as common PMUv3 events
->>>> and are directly programmed into PMXEVTYPERx_EL0.
->>>>
->>>> The first two indexes are set combining the RESR and group number with
->>>> a base number and writing it into the architected PMXEVTYPER_EL0
->>>> register.
->>>> The third index is set by writing the code into the bits corresponding
->>>> with the group into the appropriate IMPLEMENTATION DEFINED PMRESRx_EL0
->>>> register.
->>>
->>> When are the IMP DEF registers accessible at EL0? Are those goverend by
->>> the same controls as the architected registers?
->>
->> No, there is a separate IMP DEF register to control access.
+On Tue, 12 Jun 2018 12:23:26 -0700, Linus Torvalds wrote:
+> On Tue, Jun 12, 2018 at 11:52 AM Andreas Grünbacher
+> <andreas.gruenbacher@gmail.com> wrote:
+> >
+> > Quilt uses those Content-Disposition headers to preserve the patch
+> > filenames;  
 > 
-> Great :( We need to make sure we disable EL0 access during boot then, but
-> that means we need to prove for the existence of this thing in head.S
-> (since the PMU driver might not get loaded).
+> That' what I was assuming, but does anybody really care?
+
+Long ago (probably a decade by now, literally) I wrote a shell script
+named "rename-patch" for Greg KH which suggests a file name for a patch
+received by e-mail. The script first looks for a "filename" attribute
+in the Content-Disposition header, and only if not found, falls back to
+a heuristic which attempts to generate a good-looking file name based
+on the e-mail's subject.
+
+The script used to be published on my kernel.org personal web space,
+but went away when kernel.org got hacked, and I never bothered
+publishing my few scripts again, sorry about that.
+
+I'm still using that script myself, to name patches generated with "git
+show --pretty=email", however there is no Content-Disposition header
+there, so the subject heuristic is always used. I don't know if Greg is
+still using rename-patch in combination with quilt. Greg?
+
+> If you do things one patch at a time, maybe it's convenient, but then
+> it doesn't sound like a huge win either.
 > 
-> Also, what's the kvm story here so that we don't accidentally open up a
-> VM-VM side-channel via these registers? How do the EL1 trapping controls
-> work?
+> And if you do a patch-series, then it won't work anyway, and you'd be
+> saving to an mbox or something. Unless people save patch-series things
+> one by one, but at that point "convenient" is no longer an issue.
 
-We'd trap the IMPDEF register access and inject an UNDEF (assuming that
-the IMPDEF trapping works correctly). I have strictly no plan to support
-this in a guest.
+I'm not sure why it wouldn't work with a series. The name information
+is available in each patch of the series, and I know that some kernel
+developers have all sorts of shortcuts and macros implemented on top of
+their MUA to automate queuing of patches for various testing or
+publishing purposes.
 
-Thanks,
-
-	M.
 -- 
-Jazz is not dead. It just smells funny...
+Jean Delvare
+SUSE L3 Support
