@@ -2,112 +2,149 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7EC67C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:01:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 583C1C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33BEB20693
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:01:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02A6B208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:02:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtmJnDjQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BEB20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="K8yUCP6R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02A6B208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936024AbeFMQBo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:01:44 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:42847 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935697AbeFMQBl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:01:41 -0400
-Received: by mail-pf0-f193.google.com with SMTP id w7-v6so1646193pfn.9;
-        Wed, 13 Jun 2018 09:01:41 -0700 (PDT)
+        id S935572AbeFMQCQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:02:16 -0400
+Received: from mail-cys01nam02on0062.outbound.protection.outlook.com ([104.47.37.62]:55680
+        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935408AbeFMQCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 12:02:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=UplNA1aK0Elz33EWQ9w/0AecY/TuSBQIq3FqQgV78YI=;
-        b=jtmJnDjQmMfhGJz7tb2K4zBVGa/7ZBYDQRAIzKynYDksvqDUM1ohXLA3lqFJIbL03P
-         zbg4JkC7JC5wrrlejZgwUtsBK0V6rRX/2o03wDxZ8zOmQ524MjDlU6VPsEck2vV9TyT8
-         mknHJ8JFzh49H3hoMinjSc1Hk8ssoG7UoUOBLGVee/6mGhJjgFCaaTly6ZT+fKnF+SJy
-         kdwh3b4VeD7alF3LDFiIJhxeMfHOM3Ymc7P93qAKsu2h31mW2i7sQh2moBE2EiG+GiRX
-         oiDYnSSnjru65xbgnyRo0CfiY2yxsBbwlU6UlPDSOvZ+xhH1SeI+M++Z2fvbK3no66Ox
-         bgIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UplNA1aK0Elz33EWQ9w/0AecY/TuSBQIq3FqQgV78YI=;
-        b=TCrAj/tW6c9QqdvhRn9WMDqIl9XFaJvntkn+otR9l6iUCb31ydYrL6GQavNWMpYDvR
-         xx8Ts/DElIKv9WXjjbxywHjMPo2yiFKcsTtu3iEjtC4etRfXkULguohjdWVDd21Zwuyb
-         WI9uykyMt6LcxbTV87l1LdSSrdKLBUvNnxZ7+AerTtaXK+57BcYz2g7qxAy1LbhIO99B
-         NVHp/Cxco6p/IxJmwojos7L0d8t/kzaj2+4EA4JMN3UvJY1OcezNkE71SR9oudj+5ycS
-         Wk/CzQPVVd4EnNMb+QcKGHc4TVHK3NKicSuTvI4hw5abi+Y6j786Xtmp59/wlESQ54b6
-         H4KQ==
-X-Gm-Message-State: APt69E1c1IfLXT4PgnXab/tWfobV1OY8Ou0ERffOKWB8UNXMDS5VyN+F
-        tNSzSORT2UBPDnWWm2fEeg==
-X-Google-Smtp-Source: ADUXVKICBopij0ZKpHQmSr9IK4F6Cwn8i1rqYh7ut3SB3osSFDSj1o4fs04rdsS2uGvS63OTlxyDNQ==
-X-Received: by 2002:a65:6517:: with SMTP id x23-v6mr4658609pgv.268.1528905701085;
-        Wed, 13 Jun 2018 09:01:41 -0700 (PDT)
-Received: from arch (host81-131-105-100.range81-131.btcentralplus.com. [81.131.105.100])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm10904701pfa.34.2018.06.13.09.01.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 09:01:40 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 17:01:29 +0100
-From:   Craig Tatlor <ctatlor97@gmail.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hO1OK83zpxOs96CE+HqtcJcqz4nbHKg2qih4NtXdmjU=;
+ b=K8yUCP6R2fO9bvckm9SYaU3ZRzK8G0WNl8ktXaMXo61XQc5E+arskZrDuiGp7ym9z9OJrzH1/Mxpxw90pNI92ilwiZ1a+hXryZgMLm5TRU5M5paBFhjMebrKKe02fmKHPM2gsQAZhek2PK0YAJh7YKaILpB69pmX8TbMb5Io0BQ=
+Received: from DM6PR02MB4361.namprd02.prod.outlook.com (20.176.105.26) by
+ DM6PR02MB4297.namprd02.prod.outlook.com (20.176.104.138) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.14; Wed, 13 Jun 2018 16:02:12 +0000
+Received: from DM6PR02MB4361.namprd02.prod.outlook.com
+ ([fe80::5560:23d:6ccf:b73d]) by DM6PR02MB4361.namprd02.prod.outlook.com
+ ([fe80::5560:23d:6ccf:b73d%2]) with mapi id 15.20.0841.021; Wed, 13 Jun 2018
+ 16:02:12 +0000
+From:   Radhey Shyam Pandey <radheys@xilinx.com>
+To:     Andrew Lunn <andrew@lunn.ch>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 1/4] fixp-arith: add a linear interpolation function
-Message-ID: <20180613160129.GC10090@arch>
-References: <20180407135934.26122-1-ctatlor97@gmail.com>
- <20180607181306.9766-1-ctatlor97@gmail.com>
- <CACRpkdaKMr0qm91Q4LyjBGyKG_H4vvMr7bnRJeai+f2Eg-9r0Q@mail.gmail.com>
- <CACRpkdb-GeOUSPQeJoMe-My-ZugdPWn0DDVQST5e7XFzt1TmHw@mail.gmail.com>
+Subject: RE: [PATCH 4/4] net: emaclite: Remove xemaclite_mdio_setup return
+ check
+Thread-Topic: [PATCH 4/4] net: emaclite: Remove xemaclite_mdio_setup return
+ check
+Thread-Index: AQHUAuDSyxoj0rQvUUmR5matfG8OY6RdyqiAgACIQOA=
+Date:   Wed, 13 Jun 2018 16:02:11 +0000
+Message-ID: <DM6PR02MB4361C8FE169512A8C8E75E41C77E0@DM6PR02MB4361.namprd02.prod.outlook.com>
+References: <1528871719-1681-1-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <1528871719-1681-5-git-send-email-radhey.shyam.pandey@xilinx.com>
+ <20180613072905.GE24314@lunn.ch>
+In-Reply-To: <20180613072905.GE24314@lunn.ch>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=radheys@xilinx.com; 
+x-originating-ip: [183.83.203.7]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM6PR02MB4297;7:4xVBVuzeGay7xu07+7HmCYSlBN9RsORUv9g0wtZKCZbPDXJL0RXSjyoVm1jg9DADAZlWqaJ3qiqMhYFjXOA5AdNBBtLmDjfutNN8xPgvkOpkn3RjEgdkcC6DYitVAIIzkF7OSmcKGQnM+vADBuyp1RG3PIZQ1mw8TRmWBIzuPfHrAFh/d592hXA8a6PTvBqQVl4fgSvzRteow0y4TdCChYNFb9ayWJi6EZ0Hh/J5bn0us7uwJZzEq2HyL5+fnzVd
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 2cefa051-6935-4368-3091-08d5d1470639
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:DM6PR02MB4297;
+x-ms-traffictypediagnostic: DM6PR02MB4297:
+x-microsoft-antispam-prvs: <DM6PR02MB429708EB3D4C637322876F44C77E0@DM6PR02MB4297.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(192813158149592)(211171220733660);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(3002001)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:DM6PR02MB4297;BCL:0;PCL:0;RULEID:;SRVR:DM6PR02MB4297;
+x-forefront-prvs: 07025866F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(366004)(39380400002)(346002)(376002)(13464003)(199004)(189003)(51914003)(54906003)(55016002)(4326008)(59450400001)(6506007)(53546011)(486006)(105586002)(106356001)(11346002)(102836004)(97736004)(76176011)(7696005)(446003)(476003)(81166006)(86362001)(81156014)(7736002)(6436002)(8676002)(8936002)(316002)(3280700002)(575784001)(68736007)(33656002)(3660700001)(2906002)(3846002)(5660300001)(66066001)(6116002)(74316002)(305945005)(478600001)(99286004)(229853002)(25786009)(9686003)(186003)(2900100001)(5250100002)(14454004)(6916009)(26005)(53936002)(6246003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR02MB4297;H:DM6PR02MB4361.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: HD1ZFTNVxhx1uzHn8FaZVnRm0q7Zz+pCfDAn6k077vmqokU6qnXeqTvtRGTmJy/WM3WvarDltA+LRrqq6J8g//MedixGmkeq1sjlQD78So8KHCZcxYBcg1HKBAdSxxrpEcCOPfbnL17XaGqQk3/NUMrHprVoXpsq6G71Y3QJdiu0UovtoJlCLW7y2ne1WmeQ
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdb-GeOUSPQeJoMe-My-ZugdPWn0DDVQST5e7XFzt1TmHw@mail.gmail.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cefa051-6935-4368-3091-08d5d1470639
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 16:02:11.8837
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR02MB4297
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 01:12:45PM +0200, Linus Walleij wrote:
-> On Wed, Jun 13, 2018 at 1:06 PM, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Thu, Jun 7, 2018 at 8:12 PM, Craig Tatlor <ctatlor97@gmail.com> wrote:
-> >
-> >> Adds a function to interpolate against two points,
-> >> this is carried arount as a helper function by tons of drivers.
-> >>
-> >> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-> >
-> > The linear formula seems to fit the most natural form of linear
-> > interpolation.
-> >
-> > I bet some John Carmack algorithm type people will soon
-> > start to optimize this... :D
-> 
-> For your entertainment here is some sunday reading:
-> https://fgiesen.wordpress.com/2012/08/15/linear-interpolation-past-present-and-future/
-> 
-> Yours,
-> Linus Walleij
 
-Thanks, interesting read.
+> -----Original Message-----
+> From: Andrew Lunn [mailto:andrew@lunn.ch]
+> Sent: Wednesday, June 13, 2018 12:59 PM
+> To: Radhey Shyam Pandey <radheys@xilinx.com>
+> Cc: davem@davemloft.net; michal.simek@xilinx.com;
+> netdev@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH 4/4] net: emaclite: Remove xemaclite_mdio_setup retur=
+n
+> check
+>=20
+> On Wed, Jun 13, 2018 at 12:05:19PM +0530, Radhey Shyam Pandey wrote:
+> > Errors are already reported in xemaclite_mdio_setup so avoid
+> > reporting it again.
+> >
+> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
+> > Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> > ---
+> >  drivers/net/ethernet/xilinx/xilinx_emaclite.c |    4 +---
+> >  1 files changed, 1 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> > index ec4608e..2a0c06e 100644
+> > --- a/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> > +++ b/drivers/net/ethernet/xilinx/xilinx_emaclite.c
+> > @@ -1143,9 +1143,7 @@ static int xemaclite_of_probe(struct
+> platform_device *ofdev)
+> >  	xemaclite_update_address(lp, ndev->dev_addr);
+> >
+> >  	lp->phy_node =3D of_parse_phandle(ofdev->dev.of_node, "phy-
+> handle", 0);
+> > -	rc =3D xemaclite_mdio_setup(lp, &ofdev->dev);
+> > -	if (rc)
+> > -		dev_warn(&ofdev->dev, "error registering MDIO bus\n");
+> > +	xemaclite_mdio_setup(lp, &ofdev->dev);
+> >
+> >  	dev_info(dev, "MAC address is now %pM\n", ndev->dev_addr);
+>=20
+> The patch itself is O.K.
+>=20
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+>=20
+> However, do you want to keep going if the MDIO bus fails? Maybe you
+> should failed the probe?
+Thanks for the review. Yes, I will fix it in next series.
+
+-Radhey
+>=20
+>     Andrew
