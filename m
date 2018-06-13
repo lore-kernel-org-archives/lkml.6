@@ -6,123 +6,124 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EAB0CC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:36:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 50379C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D4F208CC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F162B208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:40:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="dAD4JZFy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D4F208CC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="JLZJrfBC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F162B208CC
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964774AbeFMXgT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 19:36:19 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:33150 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935589AbeFMXgR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 19:36:17 -0400
-Received: by mail-qt0-f196.google.com with SMTP id l10-v6so4169128qtj.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 16:36:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9XHJvoOPFw6Ka19HRGxjxJp9ni+vCfAxmEQDyy+2FK0=;
-        b=dAD4JZFyvYIgcf7wPcBsH2GHzvRBbCVjTakCbpw8+hC62whh9obJsQUnlSaOUe45/w
-         xVUd6sSZZED5YIilVT/O77b10PISZi4sBECsxbIiRcL4Yda+bLVvSqcOnc5I4BILe1nn
-         nhqqm7c8nYgddIn20/WrTdRUp8ipCD4AwSX9Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9XHJvoOPFw6Ka19HRGxjxJp9ni+vCfAxmEQDyy+2FK0=;
-        b=jJPG5n99SNWAM7IGryHleAKLX7nmvZBOwPySyIHIaQuIlXPxGsDdsx60qtsSNZvLu3
-         DBj3IszU+1CFqc8Ly2iw0MkiEe+OoT5fQd8giugdQWH7u7qFV68MjL/VLltonXfjLLlO
-         N/HVKiQtKxITk7s0uVplqHtIxgFri1yCvrpmd3kWg5Lt4XJfN8kXxsPrg5zvoWYo+e7s
-         Ls3ehKZIXNAQe5KqG7N9OxtRBrrlzGxW1+P8dE0qmlxi/8ZOzU8TnkK52DHWHMAuDupA
-         ivTRUTqWmwmZXbHv0h28zhBHOiDCL6yiNRJxcxJQ8CYgg18MWlmWxKQN/RKVdBJs5b8s
-         v+9g==
-X-Gm-Message-State: APt69E32SR4PRk1IvEHpGiwl6V64yfXhwO2VGbz0QxvtKVfygdFiDmWD
-        n6JAR1/y4pBqJT5ePjVnXUFOE0m8nNY=
-X-Google-Smtp-Source: ADUXVKJUggL+mXt/nfQ+juJrvQHHKM5Qd61WvUKTg1dftdhlYUWl7gGgMWguxz6kElCCnGHdL+Jrrw==
-X-Received: by 2002:ac8:2825:: with SMTP id 34-v6mr189864qtq.377.1528932976846;
-        Wed, 13 Jun 2018 16:36:16 -0700 (PDT)
-Received: from [10.136.8.248] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id m128-v6sm2406317qkd.33.2018.06.13.16.36.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 16:36:15 -0700 (PDT)
-Subject: Re: [PATCH 1/5] ARM: dts: cygnus: Fix I2C controller interrupt type
-To:     Florian Fainelli <f.fainelli@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-References: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
- <1528834891-17807-2-git-send-email-ray.jui@broadcom.com>
- <8c368dbc-f654-ec52-0786-1f318156b8b5@gmail.com>
- <21124af0-f867-56a9-753d-cadfce7d1cf2@broadcom.com>
- <fcb1d93a-3e1a-7020-a104-acc9360855e2@gmail.com>
-From:   Ray Jui <ray.jui@broadcom.com>
-Message-ID: <74246880-1fe3-b148-d3d1-f2bcd4ee2ed0@broadcom.com>
-Date:   Wed, 13 Jun 2018 16:36:13 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935933AbeFMXkN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 19:40:13 -0400
+Received: from ozlabs.org ([203.11.71.1]:47571 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935490AbeFMXkM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 19:40:12 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 415jsj1MM2z9s01;
+        Thu, 14 Jun 2018 09:40:08 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1528933209;
+        bh=6NQ4wTWX/azfgfaYiQ+z7bRkypvxKk+A8S5NjdIkRbw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=JLZJrfBCQkSH1MaguE9TisYzot+J8KCuPJxTYCIjmm+UtCp3F1NmbBM2XJZFganJ0
+         joxHYLuxnG2+FvsBwfu2xAIu0iJnjL1Rl3vBAsc2lccTXtxyv45SqxrSvELvvupDhv
+         RjPHNCgG/N7sLHcti7mX20t9N8OHNHPBSgHZpD2pfzhjT9gPT+Eax//yO9TDt6Upjs
+         rXlvXv+ob7VXx6FT2+fjnDHoIayu5+LBOtCPaiufC4T1FrLblJGLDwggscG/9b1Wjv
+         AFtJaA/c7/t85+bs5mU6EDfLlXr6V3Kqy6zeMRkvi2hipp6/832qA8POa6phv4Qbn3
+         wGEqRFrTLlCrQ==
+Date:   Thu, 14 Jun 2018 09:40:05 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Markus Elfring <elfring@users.sourceforge.net>
+Subject: linux-next: manual merge of the fbdev tree with Linus' tree
+Message-ID: <20180614094005.7de2c95e@canb.auug.org.au>
 MIME-Version: 1.0
-In-Reply-To: <fcb1d93a-3e1a-7020-a104-acc9360855e2@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/cLOMUZHCCuKOBXT_COQpXhm"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--Sig_/cLOMUZHCCuKOBXT_COQpXhm
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi Bartlomiej,
 
-On 6/13/2018 4:33 PM, Florian Fainelli wrote:
-> On 06/13/2018 04:32 PM, Ray Jui wrote:
->>
->>
->> On 6/13/2018 12:49 PM, Florian Fainelli wrote:
->>> On 06/12/2018 01:21 PM, Ray Jui wrote:
->>>> Fix I2C controller interrupt to use IRQ_TYPE_LEVEL_HIGH for Broadcom
->>>> Cygnus SoC
->>>>
->>>> Fixes: b51c05a331ff ("ARM: dts: add I2C device nodes for Broadcom
->>>> Cygnus")
->>>
->>> This appears to be the only one that is truly needed here, the two
->>> others below probably just moved things around but the offending commit
->>> was already introduced in the above commit.
->>>
->>
->> Okay thanks. Will remove the other two "Fixes" below.
-> 
-> I can take care of that while applying the patches, no need for you to
-> resubmit, for the whole series I mean.
-> 
+Today's linux-next merge of the fbdev tree got a conflict in:
 
-Excellent! Much appreciated!
+  drivers/video/fbdev/mmp/fb/mmpfb.c
 
->>
->>>> Fixes: 0f0b21a83ad2 ("ARM: dts: Move all Cygnus peripherals into axi
->>>> bus")
->>>> Fixes: 9c5101f7a253 ("ARM: dts: Reorder Cygnus peripherals")
->>>>
->>>
->>> There is no need for an extra line between the last Fixes: tag and your
->>> Signed-off-by tag.
->>>
->>
->> Got it, thanks!
-> 
-> And that as well.
-> 
+between commit:
 
-Thanks again!
+  6396bb221514 ("treewide: kzalloc() -> kcalloc()")
 
-Ray
+from Linus' tree and commit:
+
+  e0e894f59418 ("video: fbdev-MMP: Delete an error message for a failed mem=
+ory allocation in two functions")
+
+from the fbdev tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc drivers/video/fbdev/mmp/fb/mmpfb.c
+index f27697e07c55,292b3e403044..000000000000
+--- a/drivers/video/fbdev/mmp/fb/mmpfb.c
++++ b/drivers/video/fbdev/mmp/fb/mmpfb.c
+@@@ -493,12 -493,11 +493,11 @@@ static int modes_setup(struct mmpfb_inf
+  		return 0;
+  	}
+  	/* put videomode list to info structure */
+ -	videomodes =3D kzalloc(sizeof(struct fb_videomode) * videomode_num,
+ -			GFP_KERNEL);
+ +	videomodes =3D kcalloc(videomode_num, sizeof(struct fb_videomode),
+ +			     GFP_KERNEL);
+- 	if (!videomodes) {
+- 		dev_err(fbi->dev, "can't malloc video modes\n");
++ 	if (!videomodes)
+  		return -ENOMEM;
+- 	}
++=20
+  	for (i =3D 0; i < videomode_num; i++)
+  		mmpmode_to_fbmode(&videomodes[i], &mmp_modes[i]);
+  	fb_videomode_to_modelist(videomodes, videomode_num, &info->modelist);
+
+--Sig_/cLOMUZHCCuKOBXT_COQpXhm
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlshq1UACgkQAVBC80lX
+0Gw6fgf+PeHsaHLzCdwE+tyKvNXYES8QeujT+UEkzGz1lbyTZPJv41UvwqWsDFbI
+B2DpIXuF9TNjEsxtFvxv9zqS92VK8qIcbVxTrR3ul0d3j3nPxMAjLCl9g4EjBdQ+
+8XP7QB6gX8Ov9q+T3VtTazSJYVMe9FE+fysC4IDQKhrH/tVP+2BPK2/XW146u7ku
+5RuQF0OkpVZUoUr07YoMCr+Vb/5AJkLevVCkHq9HawJ+W+eUyAzHVzD1AYHsK3Rv
+AliulTE3WnDWAtSjUut423Ng5XJv57FWJFD8dVbjLgmi+33cR5vKauHODg92sAS9
+UlE6TfpXNHbIlgMn7tTZTT/JhhRB6Q==
+=bBIz
+-----END PGP SIGNATURE-----
+
+--Sig_/cLOMUZHCCuKOBXT_COQpXhm--
