@@ -2,114 +2,246 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=BODY_8BITS,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 29C85C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:44:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3CCA7C07D5C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:46:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46B4208AE
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D05E820660
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:46:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Rp6MbROs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C46B4208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C94d6oKl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05E820660
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934420AbeFMBou (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:44:50 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43638 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932985AbeFMBot (ORCPT
+        id S1754442AbeFMBqZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:46:25 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37310 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754223AbeFMBqW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:44:49 -0400
-Received: by mail-io0-f194.google.com with SMTP id t6-v6so1670914iob.10
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 18:44:49 -0700 (PDT)
+        Tue, 12 Jun 2018 21:46:22 -0400
+Received: by mail-lf0-f68.google.com with SMTP id g21-v6so1358603lfb.4;
+        Tue, 12 Jun 2018 18:46:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1EGq5mKaA+J/QrCSpPPJZCRPMBsK/n4KwlU/7nVN1o4=;
-        b=Rp6MbROspoESa0bdW/BhWiecnxfa22BGPbKXGaAOLE4yl62ZFX42o6x2bGcLsy8x4j
-         w6nmABfK7Ug9iZePWl6iN54/dpQElDSJRukbqasiL5pahunF9VIeImUEgy74wXjo0iaS
-         rFvzp5M8FndRvoU13mcN/74E8k6egQ88iskx0=
+        d=gmail.com; s=20161025;
+        h=from:to:subject:date:user-agent:cc:references:in-reply-to
+         :mime-version:content-transfer-encoding:content-disposition
+         :message-id;
+        bh=l+Yi42hL6+KN243d6aX+su3dthvWSh5uPKeiYM4Dp+k=;
+        b=C94d6oKlUgWOfFyW6+HS/bQ6ZetS1zgtdDvbn5VrHnKxBm7j1Duh1XGQ1CdiP7CwDO
+         sJOMNx0I8nSDWpBtIlQNUXfpmkGPweS14YdqPAXPWKVYClYZjnJxtEIvbE8rEVblO3EO
+         AYlx2YP7ySANJeCzOaRlF6MQHj7qkgwJL5rw6tdJF0dETwW5N0gcZNKZL9kYqJ5yfFO9
+         3OCdM0isYTdUtifNajLqx4r4ByFZHTIzVbgXMhMl29u5X7CwDrxPJIECohqAP/NJVNfS
+         BXItykIo3tN8cW63ylCwQfSEEGECzFW44Ct+zR3yz6G2jRxzPqth+4gPk6s/xzg3kczb
+         NKEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1EGq5mKaA+J/QrCSpPPJZCRPMBsK/n4KwlU/7nVN1o4=;
-        b=SepIYV/O4/tTYUzRW6cUAMxS49+Xk9AP2T0zh5dsvSfNQLAP1FFN1/81jxaQyGEVNp
-         wtaMN2H7B6QlLVahznwnzwDw0pVkv7cPk1oetTp2a+YaAoo7ZbWoN31R1HxgCtCYKpqp
-         s20PFRwT0BcYfHbeIfI1ic9EFnGdogpD5EmHBGtj3MeETK4yWU/utnCN31OCM7hWayHs
-         bZfZZA3mSjTXeuQCElxZCOHe7uJkBCHn5v3huYEd52JFxP0hu7GJGqyLf9ijaq2+8uCO
-         KHZCWmjYnafxtQSaUKq4vz4PrhJUGEJ/XHA2HY19Vnc23kOYOLocbH1c9NnZM7gO2DUI
-         0RXQ==
-X-Gm-Message-State: APt69E3pCkZmLbKCfNodz6JG86JIltBillGCZVMWg3NLZcehIWrkFYjv
-        KajUagJlmDtD0PxaBi5pk0+J1UjhBlmSiNGcFaM=
-X-Google-Smtp-Source: ADUXVKJG1BSqrSdpumoDQCNly7fxm+vJ5vXoM1rr1yNvLqn39rZiqADNg9+3S12OVH+uzV6h7RXIVgKQLsfAVeqrHLc=
-X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr3016698iov.203.1528854288822;
- Tue, 12 Jun 2018 18:44:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:subject:date:user-agent:cc:references
+         :in-reply-to:mime-version:content-transfer-encoding
+         :content-disposition:message-id;
+        bh=l+Yi42hL6+KN243d6aX+su3dthvWSh5uPKeiYM4Dp+k=;
+        b=dIqdhuzdMXG3sT8kIGXmKcQ1JStW6Nk1uHVsJXP2C0Hdvg5xAgwUM+s0/vkpaZox1I
+         0d0g48bxOXrCRc/vrqvhQ4lrje+0DAxwWYQbzp4IfQf+OZAKS77yiRdR13032b+ToO2c
+         8BoCTo7rPQMLuzReiOKyDpmUGsA5OZgbBJNHBntemSfEnushahbbpXEAQGV5qfc6RiUo
+         zChECJBgOw6SEeHjpqvS4JRfkwwxqfmBWHKhl7kXGn8HZMgO9bqmtJmziCjgu0Wzgxhy
+         XHLGPhPL5ugWQWWGUY+uWlJyMZRlWLisG5csPUQltphCUfPWEQZUgMpBGf+skrDUfKvP
+         maCw==
+X-Gm-Message-State: APt69E1zwNoszaVKsIAaH2rx3xVwxEPz+1m8j75pyfgCuM7/itqdRvOn
+        MSTWDu4pJ/6HSi/WncVpwtg=
+X-Google-Smtp-Source: ADUXVKJJDDiwAhQwHATnAoqsldxroizAaIH03FHZ+KZ+PSogVFEDFCiSq9OSAnVBHcbo346czVPo7A==
+X-Received: by 2002:a2e:92cb:: with SMTP id k11-v6mr1664220ljh.18.1528854380804;
+        Tue, 12 Jun 2018 18:46:20 -0700 (PDT)
+Received: from [192.168.1.107] ([176.116.252.109])
+        by smtp.gmail.com with ESMTPSA id g14-v6sm294301lfb.36.2018.06.12.18.46.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 18:46:19 -0700 (PDT)
+From:   Andrew Randrianasulu <randrianasulu@gmail.com>
+To:     Bart Van Assche <Bart.VanAssche@wdc.com>
+Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git 4.17.0-x64-08428-g7d3bf613e99a
+Date:   Wed, 13 Jun 2018 04:28:53 +0300
+User-Agent: KMail/1.9.10
+Cc:     "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "hch@lst.de" <hch@lst.de>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <201806091606.51078.randrianasulu@gmail.com> <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org> <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com>
+In-Reply-To: <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com>
 MIME-Version: 1.0
-References: <20180612233552.GA25041@beast>
-In-Reply-To: <20180612233552.GA25041@beast>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Tue, 12 Jun 2018 18:44:37 -0700
-Message-ID: <CA+55aFy9mqnJCr=6JujNvmTjGu-rm0QYrUNkmKODb0ymQU9O8Q@mail.gmail.com>
-Subject: Re: [GIT PULL] overflow updates (part 2) for v4.18-rc1
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Silvio Cesare <silvio.cesare@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+  charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Message-Id: <201806130428.54491.randrianasulu@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 4:36 PM Kees Cook <keescook@chromium.org> wrote:
+=D0=92 =D1=81=D0=BE=D0=BE=D0=B1=D1=89=D0=B5=D0=BD=D0=B8=D0=B8 =D0=BE=D1=82 =
+Tuesday 12 June 2018 18:28:03 Bart Van Assche =D0=BD=D0=B0=D0=BF=D0=B8=D1=
+=81=D0=B0=D0=BB(=D0=B0):
+> On Sat, 2018-06-09 at 08:02 -0700, Randy Dunlap wrote:
+> > On 06/09/2018 06:06 AM, Andrew Randrianasulu wrote:
+> > > Hello, everyone!
+> > >
+> > > I was trying to test not-yet-completed 4.18-rc1, and run into this bu=
+g,
+> > > probably due to HAL (yes, I still use this) trying to poll empty DVD-=
+RW
+> > > drive:
+> > >
+> > > [   35.040167] ------------[ cut here ]------------
+> > > [   35.040171] kernel BUG at drivers/scsi/scsi_error.c:197!
+> > > [   35.040196] invalid opcode: 0000 [#1] SMP NOPTI
+> > > [   35.040210] CPU: 2 PID: 117 Comm: kworker/2:1H Not tainted
+> > > 4.17.0-x64-08428-g7d3bf613e99a-dirty #18
+> > > [   35.040225] Hardware name: MSI MS-7693/970A-G46 (MS-7693), BIOS V2=
+=2E8
+> > > 01/08/2016
+> > > [   35.040244] Workqueue: kblockd blk_mq_timeout_work
+> > > [   35.040283] RIP: 0010:scsi_times_out+0xe9/0x1a6 [scsi_mod]
+> > > [   35.040287] Code: 03 76 18 48 c7 c2 f9 c2 01 a0 48 89 ee 48 c7 c7 =
+14
+> > > be 01 a0 31 c0 e8 76 ad 00 00 48 8b 83 98 01 00 00 a8 01 0f 84 a5 00 =
+00
+> > > 00 <0f> 0b 49 8b 7c 24 38 e8 8f ba 4b e1 41 83 bc 24 2c 01
+> > >  00 00 ff 74
+> > > [   35.040312] RSP: 0018:ffffc90000293d98 EFLAGS: 00010202
+> > > [   35.040318] RAX: ffff88031f240605 RBX: ffff88031eed8500 RCX:
+> > > 00000000fffefd40 [   35.040323] RDX: ffffc90000293e80 RSI:
+> > > 0000000000002007 RDI: ffff88031eed8638 [   35.040327] RBP:
+> > > ffff88031eed8638 R08: ffff88031eed85d8 R09: 0000000000000000 [ =20
+> > > 35.040332] R10: 0000000000000040 R11: fefefefefefefeff R12:
+> > > ffff88031f2a8800 [   35.040336] R13: ffff88031f2a8800 R14:
+> > > ffff88031f29e910 R15: 0000000000000001 [   35.040341] FS:=20
+> > > 0000000000000000(0000) GS:ffff88032ed00000(0000) knlGS:00000000000000=
+00
+> > > [   35.040346] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [   35.040350] CR2: 00000000f7ea83c0 CR3: 000000031e194000 CR4:
+> > > 00000000000406e0 [   35.040354] Call Trace:
+> > > [   35.040360]  blk_mq_check_expired+0xdc/0x10c
+> > > [   35.040365]  bt_iter+0x42/0x45
+> > > [   35.040369]  __sbitmap_for_each_set.constprop.12+0x83/0xac
+> > > [   35.040374]  ? blk_mq_update_nr_requests+0xad/0xad
+> > > [   35.040595]  ? blk_mq_exit_hctx+0xda/0xda
+> > > [   35.041595]  blk_mq_queue_tag_busy_iter+0xa3/0xb4
+> > > [   35.042578]  ? blk_mq_exit_hctx+0xda/0xda
+> > > [   35.043550]  blk_mq_timeout_work+0x6b/0xca
+> > > [   35.044505]  process_one_work+0x17c/0x2a6
+> > > [   35.045445]  worker_thread+0x19f/0x243
+> > > [   35.046393]  ? rescuer_thread+0x262/0x262
+> > > [   35.047346]  kthread+0x100/0x108
+> > > [   35.048290]  ? kthread_destroy_worker+0x3e/0x3e
+> > > [   35.049242]  ret_from_fork+0x27/0x50
+> > > [   35.050192] Modules linked in: bridge stp llc bnep rfcomm hidp
+> > > snd_aloop ipv6 pcmcia pcmcia_core xfs libcrc32c lp parport f71882fg
+> > > input_leds mousedev hid_generic usbhid hid btusb btintel btbcm btrtl
+> > > bluetooth nouveau ecdh_generic rfkill morus1280_sse2 morus1280_glue
+> > > morus640_sse2 morus640_glue ttm drm_kms_helper ghash_clmulni_intel drm
+> > > crct10dif_pclmul crc32_pclmul drm_panel_orientation_quirks crc32c_int=
+el
+> > > aegis256_aesni cfbcopyarea fb_sys_fops sysimgblt pcbc sysfillrect
+> > > cfbimgblt syscopyarea cfbfillrect aesni_intel glue_helper i2c_algo_bit
+> > > crypto_simd aes_x86_64 ohci_pci snd_hda_codec_realtek aegis128l_aesni
+> > > pktcdvd aegis128_aesni agpgart ohci_hcd snd_hda_codec_generic cryptd
+> > > xhci_pci kvm_amd xhci_hcd ehci_pci snd_hda_intel ehci_hcd snd_hda_cod=
+ec
+> > > kvm usbcore led_class snd_hda_core video usb_common [   35.055814]=20
+> > > backlight irqbypass fb snd_hwdep snd_pcm mxm_wmi r8169 fbdev mac_hid
+> > > fam15h_power k10temp mii snd_timer ccp evdev snd rng_core hwmon wmi
+> > > i2c_piix4 sha1_generic sha256_generic button soundcore font sr_mod
+> > > acpi_cpufreq rtc_cmos sg i2c_core cdrom edac_mce_amd sd_mod ahci
+> > > libahci libata scsi_mod [last unloaded: pcmcia_core]
+> > > [   35.058426] ---[ end trace fdc9e8c678138a75 ]---
+> > > [   35.059725] RIP: 0010:scsi_times_out+0xe9/0x1a6 [scsi_mod]
+> > > [   35.059726] Code: 03 76 18 48 c7 c2 f9 c2 01 a0 48 89 ee 48 c7 c7 =
+14
+> > > be 01 a0 31 c0 e8 76 ad 00 00 48 8b 83 98 01 00 00 a8 01 0f 84 a5 00 =
+00
+> > > 00 <0f> 0b 49 8b 7c 24 38 e8 8f ba 4b e1 41 83 bc 24 2c 01 00 00 ff 74
+> > > [   35.063794] RSP: 0018:ffffc90000293d98 EFLAGS: 00010202
+> > > [   35.063796] RAX: ffff88031f240605 RBX: ffff88031eed8500 RCX:
+> > > 00000000fffefd40 [   35.063797] RDX: ffffc90000293e80 RSI:
+> > > 0000000000002007 RDI: ffff88031eed8638 [   35.063798] RBP:
+> > > ffff88031eed8638 R08: ffff88031eed85d8 R09: 0000000000000000 [ =20
+> > > 35.069198] R10: 0000000000000040 R11: fefefefefefefeff R12:
+> > > ffff88031f2a8800 [   35.069198] R13: ffff88031f2a8800 R14:
+> > > ffff88031f29e910 R15: 0000000000000001 [   35.069200] FS:=20
+> > > 0000000000000000(0000) GS:ffff88032ed00000(0000) knlGS:00000000000000=
+00
+> > > [   35.073191] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > [   35.073192] CR2: 00000000f7ea83c0 CR3: 000000031e194000 CR4:
+> > > 00000000000406e0
+> > >
+> > >
+> > > and this resulted later on in failure to enter suspend-to-ram:
+> > >
+> > > [  181.912985] PM: suspend entry (deep)
+> > > [  181.912993] PM: Syncing filesystems ... done.
+> > > [  182.026561] Freezing user space processes ...
+> > > [  202.029084] Freezing of tasks failed after 20.002 seconds (1 tasks
+> > > refusing to freeze, wq_busy=3D0):
+> > > [  202.029106] hald-addon-stor D    0   909    849 0x20020004
+> > > [  202.029113] Call Trace:
+> > > [  202.029128]  ? __schedule+0x37f/0x57f
+> > > [  202.029134]  ? usleep_range+0x51/0x51
+> > > [  202.029139]  schedule+0x7f/0x89
+> > > [  202.029144]  schedule_timeout+0x21/0xc7
+> > > [  202.029151]  ? check_preempt_curr+0x2e/0x68
+> > > [  202.029157]  do_wait_for_common+0x102/0x133
+> > > [  202.029163]  ? wake_up_q+0x47/0x47
+> > > [  202.029169]  wait_for_common+0x36/0x4e
+> > > [  202.029174]  flush_work+0x12e/0x14b
+> > > [  202.029179]  ? wake_up_worker+0x25/0x25
+> > > [  202.029185]  __cancel_work_timer+0xfb/0x14f
+> > > [  202.029190]  ? kobj_lookup+0xfc/0x130
+> > > [  202.029196]  disk_block_events+0x5f/0x78
+> > > [  202.029202]  __blkdev_get+0xaa/0x3f7
+> > > [  202.029207]  blkdev_get+0x83/0x2a3
+> > > [  202.029211]  ? bdgrab+0x12/0x17
+> > > [  202.029216]  ? bd_acquire+0x3a/0xad
+> > > [  202.029220]  ? bd_acquire+0xad/0xad
+> > > [  202.029226]  do_dentry_open.isra.22+0x16b/0x22d
+> > > [  202.029232]  path_openat+0x98f/0xb27
+> > > [  202.029238]  ? _raw_spin_unlock_irqrestore+0x18/0x23
+> > > [  202.029243]  do_filp_open+0x4d/0xa3
+> > > [  202.029249]  ? __blkdev_put+0x154/0x170
+> > > [  202.029254]  ? _cond_resched+0x25/0x29
+> > > [  202.029260]  ? slab_pre_alloc_hook+0x2d/0x53
+> > > [  202.029265]  ? slab_post_alloc_hook.isra.62+0xa/0x1a
+> > > [  202.029270]  ? kmem_cache_alloc+0xa0/0x10b
+> > > [  202.029277]  ? do_sys_open+0x6a/0xef
+> > > [  202.029281]  do_sys_open+0x6a/0xef
+> > > [  202.029287]  do_int80_syscall_32+0x52/0x5f
+> > > [  202.029293]  entry_INT80_compat+0x85/0x90
+> > > [  202.029316] OOM killer enabled.
+> > > [  202.029318] Restarting tasks ... done.
+> > > [  202.035210] PM: suspend exit
+> > >
+> > > full dmesg attached
+> >
+> > [add linux-scsi m-l]
 >
-> - Treewide conversions of allocators to use either 2-factor argument
->   variant when available, or array_size() and array3_size() as needed (Kees)
+> (added linux-block)
+>
+> Is this something that happens systematically or sporadically?
+> Additionally, have you verified whether or not this can be triggered with
+> kernel v4.17? I'm wondering whether or not this is a regression that was
+> introduced in the merge window.
 
-Ok, some of this smells just a tad too much of automation, but I've
-done the pull and it's going through my build tests.
+same system boots ok with 4.17.1-x64
+will re-try mainline git soon ....
 
-Example nonsensical conversion:
+>
+> Thanks,
+>
+> Bart.
 
--       res = kzalloc(sizeof(struct resource) * 2, GFP_KERNEL);
-+       res = kcalloc(2, sizeof(struct resource), GFP_KERNEL);
 
-which isn't _wrong_, but...
-
-In some of the cases it turns a compile-time constant into a function
-call, ie this just makes for bigger and slower code for no reason
-what-so-ever.
-
--       ch->tx_array = vzalloc(MIC_DMA_DESC_RX_SIZE * sizeof(*ch->tx_array));
-+       ch->tx_array = vzalloc(array_size(MIC_DMA_DESC_RX_SIZE,
-+                                         sizeof(*ch->tx_array)));
-
-At least in the kzalloc/kcalloc conversion it results in more legible code.
-
-The array_size() conversions, in contrast, actually result in *LESS*
-legible code, in worse code generation, and absolutely no upside for
-cases like the above.
-
-To make up for it, there's some conversions *away* from nonsensical expressions:
-
--       hc_name = kzalloc(sizeof(char) * (HSMMC_NAME_LEN + 1), GFP_KERNEL);
-+       hc_name = kzalloc(HSMMC_NAME_LEN + 1, GFP_KERNEL);
-
-but I _really_ think you were way too eager to move to array_size()
-even when it made no sense what-so-ever.
-
-But at least with the kcalloc()/kmalloc_array() conversions now
-preferred, those crazy cases are now a minority rather than "most of
-the patch makes code worse".
-
-I am *not* looking forward to the conflicts this causes, but maybe it
-won't be too bad. Fingers crossed.
-
-              Linus
