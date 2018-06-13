@@ -2,128 +2,185 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 84382C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:29 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A04A0C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB2BC208C1
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C18920020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:11:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="Z9rPET6N";
-	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="kOy5NTjz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB2BC208C1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="eXioRuYy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C18920020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935678AbeFMNL1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:11:27 -0400
-Received: from esa3.hgst.iphmx.com ([216.71.153.141]:18742 "EHLO
-        esa3.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935346AbeFMNLY (ORCPT
+        id S935696AbeFMNLp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:11:45 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:46828 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935346AbeFMNLo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:11:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1528895485; x=1560431485;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=Uitf1jZleCwh7rD1w9pIolr4r4r6pQzzToNh1Gtj4Xo=;
-  b=Z9rPET6NKNM3eGgnxG8/4kVksv+PsTQEqo++tLhCSll9RUl/z8/MJXcx
-   bT3MptqsSBYWkpglClyeBEE/dyFfNEQa4XTJWVWtci+AJ+stvBBrc8S5G
-   UfMJA3MTVS07Dt4KHB5/VyU+iSNWd5WhrUwYmly32Z4H1FMkwKwVojCfW
-   /mLSixk/kftQo5Ae0S3d9rM/CT2fIev/5lTtN4W76hWncAqdlMWUdk2AP
-   LZZTVqpqEqEoRh45+m+DYQCOqiXnlvp3ZYx3MDqo+SIFQtHKxNtd+3Dw2
-   +YhoeabcefBDKhomJFdW7bQQW8orR5IT0hCi57dGRvPMAp0cdWSfpEK+C
-   g==;
-X-IronPort-AV: E=Sophos;i="5.51,218,1526313600"; 
-   d="scan'208";a="82408822"
-Received: from mail-bl2nam02lp0079.outbound.protection.outlook.com (HELO NAM02-BL2-obe.outbound.protection.outlook.com) ([207.46.163.79])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2018 21:11:23 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Uitf1jZleCwh7rD1w9pIolr4r4r6pQzzToNh1Gtj4Xo=;
- b=kOy5NTjzvVfeslRAmQfGYT0i5mkZbxFVImzV44n5P6u2dKfDXnQvWcdpQFim0e4i62WTo4tLfnEZXFOlwt6G/Ycuh1bNQqH+eDbOVO3VavB4bSHfacw1PKEfm3npWIRwxwueafWOvF6goNACrF3sFKKjBqu85tySbRQV36VlJx0=
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
- MWHPR04MB0433.namprd04.prod.outlook.com (10.173.48.138) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.841.17; Wed, 13 Jun 2018 13:11:19 +0000
-Received: from MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::9de4:3c8d:39af:e4c5]) by MWHPR04MB1198.namprd04.prod.outlook.com
- ([fe80::9de4:3c8d:39af:e4c5%8]) with mapi id 15.20.0841.019; Wed, 13 Jun 2018
- 13:11:19 +0000
-From:   Bart Van Assche <Bart.VanAssche@wdc.com>
-To:     "hch@infradead.org" <hch@infradead.org>,
-        "jthumshirn@suse.de" <jthumshirn@suse.de>
-CC:     "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>
-Subject: Re: [PATCH v2 3/3] scsi: don't add scsi command result bytes
-Thread-Topic: [PATCH v2 3/3] scsi: don't add scsi command result bytes
-Thread-Index: AQHUAuvzvEj5/zBGu0mBzpDKIWnc5aReFh+AgAAUEAA=
-Date:   Wed, 13 Jun 2018 13:11:19 +0000
-Message-ID: <1c08057c85227d07013b9e3a9d8b9e574c62a068.camel@wdc.com>
-References: <20180613075349.7509-1-jthumshirn@suse.de>
-         <20180613075349.7509-4-jthumshirn@suse.de>
-         <20180613115929.GC12438@infradead.org>
-In-Reply-To: <20180613115929.GC12438@infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Bart.VanAssche@wdc.com; 
-x-originating-ip: [76.103.130.147]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR04MB0433;7:DnUjS59STUhwoWoL1sRsK9aTPLvaB/mDj73zjfRK3jT0xG3Lh9JyIqE4WYqjQRUs4IC9LRKbfC81zGj3kvGaLZInBgYUFkXeTJjVPGmTuxaDJHUOHZGU04f/INGk5LZ2Cl99XVfISDwd+H6SWz8pIgglYZ0YttVFV6q1b//rxbcI3PW9ZSf7kUJSvHZ+lGDsOH4So11Gk8vq/MPWw1lkLomWp5QjwxJ1cKXqZWusf0P2SlF+wvy2VUAUsJ5RRYaZ;20:fC4BzmXH7i9TATKv8D/djddffdN9JK4Onlz5DW10Mt+ktLRUGPFNXaVJ7WuXN2kYsk3SAg8zEJW5C8Drxi4aJVYmUoHqOwTG1tpY5AkggCn11eKYB/kkiyH47CKYuaprJmb5e0cVWf77BKivYfecQBleUxbI7xf5F1smp3oGNIE=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-ht: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 1c475613-9ade-451a-f0a5-08d5d12f274c
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0433;
-x-ms-traffictypediagnostic: MWHPR04MB0433:
-wdcipoutbound: EOP-TRUE
-x-microsoft-antispam-prvs: <MWHPR04MB0433255744F5401D42F1F092987E0@MWHPR04MB0433.namprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0433;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0433;
-x-forefront-prvs: 07025866F6
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(346002)(39860400002)(39380400002)(376002)(366004)(189003)(199004)(72206003)(66066001)(36756003)(11346002)(305945005)(86362001)(186003)(446003)(7736002)(2900100001)(26005)(3280700002)(118296001)(476003)(2616005)(4326008)(6246003)(8936002)(5660300001)(6512007)(3660700001)(478600001)(53936002)(8676002)(81166006)(81156014)(5250100002)(54906003)(76176011)(68736007)(97736004)(3846002)(106356001)(2906002)(2501003)(6506007)(110136005)(14454004)(102836004)(6116002)(99286004)(486006)(25786009)(6486002)(316002)(229853002)(105586002)(6436002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0433;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-microsoft-antispam-message-info: Yg7MVZllpRk91MxHCJC4JW97A8l/OA37f217+5JHroaUIuC5DU5LVLimDCkaGVWVZ5l/X0M4PiMFscV8qvsVB7QnXfRkMELyNhAmZKHODGTBtlRYwm056zTyEAVZbLireq+z9AYE9Tbcqin/CRJbxDXE9x5iDOxm8kU6ktOchzw/PtX4JpwJhFaZ3lNEJzOl
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B9BD69C245029F4ABEE91EDABB200936@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 13 Jun 2018 09:11:44 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5DD9jjp049439;
+        Wed, 13 Jun 2018 13:11:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=qT5zajnJ7ai2N9SSUBL0clqojCxw8AwE4ZN17QNl3Kg=;
+ b=eXioRuYyVVRPweJodDp8fQj6WsrGb5gTjPMBNfBWnJgnEWwG9TONRl8BO3+ir0eUMfTH
+ a1gBS8/bTcvbRdQTJPKo8dhZGKBfxqn4s0Hm9KFO0HHyy9jGsWV4TJeVFymLQDSwp+ay
+ QK34DiSrmvEDEQzywukxIW14e3/0e5fSz+rV5x6fcCHC1d9nhcsNz7N3b3voDrK4dgUV
+ cFb1TvskIwqPM8vJR9oo8HcwmwueQyjMlX3NLSAH00jgIYYlPIc5tZseyr4e2TztWGl9
+ x+w8qpHMMneh2OuKsZPT5jX//GHdzOPzt025+uaUg0+WEgR+K9y27q/S7cZd/RpofQiX gQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2jk0xr8mjj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 13:11:02 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5DDB1XW029813
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 13:11:02 GMT
+Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5DDB1aG022649;
+        Wed, 13 Jun 2018 13:11:01 GMT
+Received: from mwanda (/197.157.34.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Jun 2018 06:11:01 -0700
+Date:   Wed, 13 Jun 2018 16:10:49 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: Smatch check for Spectre stuff
+Message-ID: <20180613131049.sf7abp6wwrnpy5ct@mwanda>
+References: <20180419051510.GA21898@mwanda>
+ <20180608161219.q3lwvlydvs4l2gxa@treble>
 MIME-Version: 1.0
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1c475613-9ade-451a-f0a5-08d5d12f274c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 13:11:19.4564
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0433
+Content-Type: multipart/mixed; boundary="4mpsdi3lywj2u6b4"
+Content-Disposition: inline
+In-Reply-To: <20180608161219.q3lwvlydvs4l2gxa@treble>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806130144
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE4LTA2LTEzIGF0IDA0OjU5IC0wNzAwLCBDaHJpc3RvcGggSGVsbHdpZyB3cm90
-ZToNCj4gT24gV2VkLCBKdW4gMTMsIDIwMTggYXQgMDk6NTM6NDlBTSArMDIwMCwgSm9oYW5uZXMg
-VGh1bXNoaXJuIHdyb3RlOg0KPiA+IFNvbWUgZHJpdmVycyBhcmUgQUREaW5nIHRoZSBzY3NpIGNv
-bW1hbmQncyByZXN1bHQgYnl0ZXMgaW5zdGVhZCBvZg0KPiA+IE9SaW5nIHRoZW0uDQo+ID4gDQo+
-ID4gV2hpbGUgdGhpcyBjYW4gcHJvZHVjZSBjb3JyZWN0IHJlc3VsdHMgaXQgaGFzIHVuZXhwZWN0
-ZWQgc2lkZSBlZmZlY3RzLg0KPiA+IA0KPiA+IFNpZ25lZC1vZmYtYnk6IEpvaGFubmVzIFRodW1z
-aGlybiA8anRodW1zaGlybkBzdXNlLmRlPg0KPiANCj4gTG9va3MgZ29vZCwNCj4gDQo+IFJldmll
-d2VkLWJ5OiBDaHJpc3RvcGggSGVsbHdpZyA8aGNoQGxzdC5kZT4NCj4gDQo+ID4gLQkJCWNtZC0+
-cmVzdWx0ID0gKERJRF9PSyA8PCAxNikgKyAobCAmIFNUQVRVU19NQVNLKTsNCj4gPiArCQkJY21k
-LT5yZXN1bHQgPSBESURfT0sgPDwgMTYgfCAobCAmIFNUQVRVU19NQVNLKTsNCj4gDQo+IEFsdGhv
-dWdoIEkgd291bGQgaGF2ZSBrZWVwIHRoZSBicmFjZXMgYXJvdW5kIHRoZSBzaGlmdCBvcGVyYXRv
-cnMNCj4gdG8gc3RpY2sgY2xvc2VyIHRvIHRoZSBvcmlnaW5hbCBjb2RlLiAgQnV0IHRoZSBjb2Rl
-IHNob3VsZCBiZSBmaW5lDQo+IGV2ZW4gd2l0aG91dCB0aGVtLg0KDQpJIHNoYXJlIENocmlzdG9w
-aCdzIG9waW5pb246IEkgcHJlZmVyIHRoYXQgdGhlIHBhcmVudGhlc2VzIHdvdWxkIGJlIGtlcHQg
-YnV0DQpJJ20gYWxzbyBmaW5lIHdpdGhvdXQuIEhlbmNlOg0KDQpSZXZpZXdlZC1ieTogQmFydCBW
-YW4gQXNzY2hlIDxiYXJ0LnZhbmFzc2NoZUB3ZGMuY29tPg0KDQoNCg0K
+
+--4mpsdi3lywj2u6b4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Jun 08, 2018 at 11:12:19AM -0500, Josh Poimboeuf wrote:
+> I have a few questions/comments.
+> 
+> 1) I've noticed a common pattern for many of the false positives.
+>    Smatch doesn't seem to detect when the code masks off the array index
+>    to ensure that it's safe.
+> 
+>    For example:
+> 
+>    > ./include/linux/mmzone.h:1161 __nr_to_section() warn: potential spectre issue 'mem_section[(nr / (((1) << 12) / 32))]'
+> 
+>    1153 static inline struct mem_section *__nr_to_section(unsigned long nr)
+>    1154 {
+>    1155 #ifdef CONFIG_SPARSEMEM_EXTREME
+>    1156         if (!mem_section)
+>    1157                 return NULL;
+>    1158 #endif
+>    1159         if (!mem_section[SECTION_NR_TO_ROOT(nr)])
+>    1160                 return NULL;
+>    1161         return &mem_section[SECTION_NR_TO_ROOT(nr)][nr & SECTION_ROOT_MASK];
+>    1162 }
+> 
+>    In the 2-D array access, it seems to be complaining about the '[nr &
+>    SECTION_ROOT_MASK]' reference.  But that appears to be safe because
+>    all the unsafe bits are masked off.
+>  
+>    It would be great if Smatch could detect that situation if possible.
+
+I can try.  The thing is that it would have to be masked within the same
+function because that information isn't passed across the function
+calls.
+
+Also it turns out that mem_section[] is declared in mm/sparse.c and
+Smatch is supposed to be able to figure out the size of it but
+apparently there is a bug...  :(  I'll take a look at that.
+
+> 
+> 2) Looking at the above example, it seems that the value of 'nr' is
+>    untrusted.  If so, then I wonder why didn't it warn about the other
+>    array accesses in the function: line 1559 and the first dimension
+>    access in 1161?
+
+Good point.  I'll change that as well.
+
+> 
+> 3) One thing that I think would help with analyzing the results would be
+>    if there was a way to see the call chain for each warning, so that
+>    it's clear which value isn't trusted and why.
+
+The information is mostly there in the cross function DB, but the user
+interface is bad...  Use the smdb.py script to see how functions are
+called:
+
+	 ~/smatch/smatch_data/db/smdb.py __nr_to_section
+
+> 
+> 4) Is there a way to put some results in a whitelist to mark them as
+>    false positives so they won't show up in future scans?  Something
+>    like that would help with automatic detection and reporting of new
+>    issues by the 0-day kbuild test robot, for example.
+
+There is a script called smatch_scripts/new_bugs.sh but I use a
+different new_bugs.sh script which I am embarrassed to publish.  I guess
+I'll attach it though.
+
+regards,
+dan carpenter
+
+
+
+--4mpsdi3lywj2u6b4
+Content-Type: application/x-sh
+Content-Disposition: attachment; filename="new_bugs.sh"
+Content-Transfer-Encoding: quoted-printable
+
+#!/usr/bin/perl=0A=0Ause strict;=0A=0Amy $store =3D 0;=0Amy $unstore =3D 0;=
+=0Amy $warns_file =3D shift;=0Aif ($warns_file =3D~ /--store/) {=0A    $sto=
+re =3D 1;=0A    $warns_file =3D shift;=0A}=0Aif ($warns_file =3D~ /--unstor=
+e/) {=0A    $unstore =3D 1;=0A    $warns_file =3D shift;=0A}=0A=0Amy $du =
+=3D `du $warns_file`;=0A$du =3D~ s/([0-9]+).*/$1/;=0A$du =3D~ s/\n//;=0A=0A=
+if (int($du) > 100000) {=0A    print "$warns_file is too big\n";=0A    exit=
+(1);=0A}=0A=0Aopen(WARNS, $warns_file);=0A=0Amy ($orig, $file, $line, $msg)=
+;=0Awhile (<WARNS>) {=0A=0A    if (!($_ =3D~ /(error|warn|info)/)) {=0A    =
+    next;=0A    }=0A=0A    $orig =3D $_;=0A    ($file, $line, $msg) =3D spl=
+it(/[: ]/, $_, 3);=0A=0A    $msg =3D~ s/^.*?:\d+(|:\d+:) .*? //;=0A    $msg=
+ =3D~ s/[us](16|32|64)(min|max)//g;=0A    $msg =3D~ s/[01234567890]//g;=0A =
+   if ($msg =3D~ /can't/) {=0A        $msg =3D~ s/(.*can't.*').*?('.*)/$1 $=
+2/;=0A    } elsif ($msg =3D~ /don't/) {=0A        $msg =3D~ s/(.*don't.*').=
+*?('.*)/$1 $2/;=0A    } else {=0A        $msg =3D~ s/'.*?'/''/g;=0A    }=0A=
+    $msg =3D~ s/,//g;=0A    $msg =3D~ s/\(\w+ returns null\)/(... returns n=
+ull)/;=0A    $msg =3D~ s/dma on the stack \(.*?\)/dma on the stack (...)/;=
+=0A    $msg =3D~ s/possible ERR_PTR '' to .*/possible ERR_PTR '' to .../;=
+=0A    $msg =3D~ s/inconsistent returns ([^ ]+?) locked \(\)/inconsistent r=
+eturns ... locked ()/;=0A    $msg =3D~ s/(.*) [^ ]* (too large for) [^ ]+ (=
+=2E*)/$1 $2 $3/;=0A    $msg =3D~ s/\n//;=0A    $msg =3D~ s/ /_/g;=0A    $ms=
+g =3D~ s/[\(\)]//g;=0A=0A    $file =3D~ s/\//./g;=0A    $msg =3D~ s/\//./g;=
+=0A=0A    if ($store) {=0A        open(TMP, '>', "old_warnings/$file.$msg")=
+ or=0A            print "Error opening: old_warnings/$file.$msg\n";=0A     =
+   close(TMP);=0A        next;=0A    }=0A=0A    if ($unstore) {=0A        u=
+nlink("old_warnings/$file.$msg") and=0A            print "removed: old_warn=
+ings/$file.$msg\n";=0A        next;=0A    }=0A=0A    unless (-e "old_warnin=
+gs/$file.$msg") {=0A        print "$orig";=0A    }=0A}=0A=0Aclose(WARNS);=0A
+--4mpsdi3lywj2u6b4--
