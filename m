@@ -2,138 +2,93 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2DB43C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:38:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3664AC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:41:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF36A204EC
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:38:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2D3D208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:41:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WuFXeFJI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF36A204EC
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZYm8eVOi";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PCJP06Qn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2D3D208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935391AbeFMLip (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 07:38:45 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:37289 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935188AbeFMLin (ORCPT
+        id S935435AbeFMLlC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 07:41:02 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:50008 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935188AbeFMLlA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:38:43 -0400
-Received: by mail-pg0-f68.google.com with SMTP id r21-v6so1153594pgv.4;
-        Wed, 13 Jun 2018 04:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=AiAOhGc6/btvEwpfqfojLO2Bvebug21a4REIZ6DvWHs=;
-        b=WuFXeFJIhVhYGnw9wltCVZ3+ir7Pne2E+urNplZlpd7lpQizusf+ryFxLUbLune134
-         QEwE13utjH4NCZG/wHMIGoEUjFFKawDjLXAKJc5oMDGIk7ZgOofDwEKpV6BqQxXGX/lE
-         kNPNolq9YjO9CllMgVPFERZIapPljtx28+9adbjdcTTIdL577eVHoj/FtAbDM4Q0OH2b
-         kzQJHwayli8EMip0Qoe4aeJpISiBqFk+EDA3ZW1DKJEe+3mrHC4x+Q7XbNOau95aGhNm
-         P6ASh2cYPHyrxzYkWuyxsIKNOAuq2He2w4o2IKQqMkYrn0+hkcOif2gP1mnfwAtmpPXv
-         PWZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=AiAOhGc6/btvEwpfqfojLO2Bvebug21a4REIZ6DvWHs=;
-        b=BFOIOBed3826s11ovebaCnJ9PIKBkJn5RoTq+ITegLUbR6WNu7cdsnV4ZKI+ahqka8
-         rxp1S60SRhEJv1H8O8ujpiSmFgSpSDVh4yyZorCZiUwnD34gxGVM4VnKFt72nLw4mVAG
-         MpboofObFK5nL3gaYBRK+7Cce7ZQ94YEZzo7MHrdO1I/jO8dzh9O+b02TacPOfJnTjzn
-         KTIVAO1XuBryn0kFRD3QednGWP9fdSmfDq0bDzyHm9eOCYu69nvsEwU0QlqEgaFd30me
-         tjTbs5edWHhotfCv+4iYS7Zyz00ZIHVhhgT98XU6JBNGErOOpmzZZ3RxiSAy7g6ydsNc
-         xuMg==
-X-Gm-Message-State: APt69E2BH0nsMJkv79F43qjc7rJgOkUqCYT6V04m2Ibb1DkEHBHHXWRp
-        2pUTwLTc+eU6LId0rWpGbk4=
-X-Google-Smtp-Source: ADUXVKIm5kYCBJqNc+9bDj2hqjLK5jQn3Bm6RA1OrW60vu25FLqfiiNx1x/hktFNBZ1y4cvOXfOmrQ==
-X-Received: by 2002:a62:fb05:: with SMTP id x5-v6mr4601869pfm.210.1528889922839;
-        Wed, 13 Jun 2018 04:38:42 -0700 (PDT)
-Received: from bogon.didichuxing.com ([52.229.160.192])
-        by smtp.gmail.com with ESMTPSA id h16-v6sm3625321pfn.80.2018.06.13.04.38.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 04:38:42 -0700 (PDT)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     edumazet@google.com, davem@davemloft.net
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next] tcp: add SNMP counter for zero-window drops
-Date:   Wed, 13 Jun 2018 07:38:28 -0400
-Message-Id: <1528889908-15980-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 13 Jun 2018 07:41:00 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2365F6074D; Wed, 13 Jun 2018 11:41:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528890060;
+        bh=yT4E/GcoDT6iS2GF3X7+VAG9j/njEfQyBDS6gP7X//4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=ZYm8eVOi7m2j8pe89yIfK03PwMqdDgW8/LW/eXuJIagMiiwvoA/yOTH+GYtagNsoK
+         Of5G8OqtHo+rQfhutlvj7AhdEqE1cGlyn/YmzJ9zm2xEiiQTCeQJwpXQgKkwyI8pf5
+         u4PsPyz/QLuXI5RmH0C4BlJYL9Q5rljm90qdy/eo=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E67D7602FC;
+        Wed, 13 Jun 2018 11:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528890059;
+        bh=yT4E/GcoDT6iS2GF3X7+VAG9j/njEfQyBDS6gP7X//4=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=PCJP06QnxRKhGWYVzrrVuzD1ij6aK75ApjopklOJFc6RNsz+at64di1a9hcKzK+kZ
+         +b/3iIb7wEwqAdeOqmEoyRQi4LpS46NY83A492FU/7QdToctzOLgS1tENi10aC1DLI
+         zK5Yi72PSsaT7F4MbbWofji38q66coNiNXqtBtxQ=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E67D7602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: ath10k: htt_tx: mark expected switch fall-throughs
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180524225928.GA19570@embeddedor.com>
+References: <20180524225928.GA19570@embeddedor.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Kalle Valo <kvalo@qca.qualcomm.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180613114100.2365F6074D@smtp.codeaurora.org>
+Date:   Wed, 13 Jun 2018 11:41:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It will be helpful if we could display the drops due to zero window or no
-enough window space.
-So a new SNMP MIB entry is added to track this behavior.
-This entry is named LINUX_MIB_TCPZEROWINDOWDROP and published in
-/proc/net/netstat in TcpExt line as TCPZeroWindowDrop.
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- include/uapi/linux/snmp.h | 1 +
- net/ipv4/proc.c           | 1 +
- net/ipv4/tcp_input.c      | 8 ++++++--
- 3 files changed, 8 insertions(+), 2 deletions(-)
+> In preparation to enabling -Wimplicit-fallthrough, mark switch cases
+> where we are expecting to fall through.
+> 
+> Notice that in this particular case, I replaced "pass through" with
+> a proper "fall through" comment, which is what GCC is expecting
+> to find.
+> 
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-diff --git a/include/uapi/linux/snmp.h b/include/uapi/linux/snmp.h
-index 750d891..97517f3 100644
---- a/include/uapi/linux/snmp.h
-+++ b/include/uapi/linux/snmp.h
-@@ -279,6 +279,7 @@ enum
- 	LINUX_MIB_TCPDELIVERED,			/* TCPDelivered */
- 	LINUX_MIB_TCPDELIVEREDCE,		/* TCPDeliveredCE */
- 	LINUX_MIB_TCPACKCOMPRESSED,		/* TCPAckCompressed */
-+	LINUX_MIB_TCPZEROWINDOWDROP,		/* TCPZeroWindowDrop */
- 	__LINUX_MIB_MAX
- };
- 
-diff --git a/net/ipv4/proc.c b/net/ipv4/proc.c
-index 77350c1..225ef34 100644
---- a/net/ipv4/proc.c
-+++ b/net/ipv4/proc.c
-@@ -287,6 +287,7 @@ static int sockstat_seq_show(struct seq_file *seq, void *v)
- 	SNMP_MIB_ITEM("TCPDelivered", LINUX_MIB_TCPDELIVERED),
- 	SNMP_MIB_ITEM("TCPDeliveredCE", LINUX_MIB_TCPDELIVEREDCE),
- 	SNMP_MIB_ITEM("TCPAckCompressed", LINUX_MIB_TCPACKCOMPRESSED),
-+	SNMP_MIB_ITEM("TCPZeroWindowDrop", LINUX_MIB_TCPZEROWINDOWDROP),
- 	SNMP_MIB_SENTINEL
- };
- 
-diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-index 355d3df..b0482b1 100644
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -4665,8 +4665,10 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
- 	 *  Out of sequence packets to the out_of_order_queue.
- 	 */
- 	if (TCP_SKB_CB(skb)->seq == tp->rcv_nxt) {
--		if (tcp_receive_window(tp) == 0)
-+		if (tcp_receive_window(tp) == 0) {
-+			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPZEROWINDOWDROP);
- 			goto out_of_window;
-+		}
- 
- 		/* Ok. In sequence. In window. */
- queue_and_out:
-@@ -4732,8 +4734,10 @@ static void tcp_data_queue(struct sock *sk, struct sk_buff *skb)
- 		/* If window is closed, drop tail of packet. But after
- 		 * remembering D-SACK for its head made in previous line.
- 		 */
--		if (!tcp_receive_window(tp))
-+		if (!tcp_receive_window(tp)) {
-+			NET_INC_STATS(sock_net(sk), LINUX_MIB_TCPZEROWINDOWDROP);
- 			goto out_of_window;
-+		}
- 		goto queue_and_out;
- 	}
- 
+Patch applied to ath-next branch of ath.git, thanks.
+
+f1d270ae10ff ath10k: htt_tx: mark expected switch fall-throughs
+
 -- 
-1.8.3.1
+https://patchwork.kernel.org/patch/10425691/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
