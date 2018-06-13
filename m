@@ -2,132 +2,171 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 082AEC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:53:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B91ADC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0649208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:53:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wigr2g4D"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0649208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5E886208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 10:54:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E886208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935232AbeFMKxk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 06:53:40 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:33165 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934527AbeFMKxi (ORCPT
+        id S935259AbeFMKyv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 06:54:51 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56280 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S934527AbeFMKyt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 06:53:38 -0400
-Received: by mail-wm0-f68.google.com with SMTP id z6-v6so22940138wma.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 03:53:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=cDMnxijUjd91XDWO9/AWbkO3UOoK0s7JrLFfKprtelI=;
-        b=Wigr2g4DMVBvDAUiGtoU8D7sMQIGpIC7fRnjoJO/KH+XEvOJFCX8e2TBspkS3spM+J
-         XqTtLiPt7UI+v/YVFdskVvlyIJ7/62zoOkTOyHrNBfX4Qnw7s/5Cdc/PBrNdRVCCUBwN
-         ZSnFtvCkGRHYYzT2Gj41+8QIU+GygYz7ImK8o=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=cDMnxijUjd91XDWO9/AWbkO3UOoK0s7JrLFfKprtelI=;
-        b=edhF+xvXurrNQGdBySuskmClQwyWV2tnJkNe1tgVkbL++7f4d3cRkQDOhyWF2AYtHV
-         0EXy3TKwuoGbli4StU9vr8PGuP52YHzFLrbLvHEjBzRGbMfPU8MVPkrlN2wogkhn2qBS
-         nPR6yvaehKTlf2BR9TCfdBFZtJYbdg5SkgHRPO1J7q8fHA48cP3RHSUvDhI/eMX0Jtja
-         JwkgoyPNk1RxGg/MVNjvqJMOzQQP3v4FhPXxvfpwQ2oNW41qt37hCiU5/jP+ogoIMw48
-         Di27TZpOrYAo+zmg0/I4YR/ZeIOz4jCVNXn1EGa2go/85f0FI+5tbmntUNDNqZ4Lz9nP
-         c5fw==
-X-Gm-Message-State: APt69E1TeCi5X2m3HjAJYOxlst206pu24mX0Qh5/NS08lOGGV3JnhtYS
-        KmZxtCNr7QEPHcG8Jhh3EjUWcg==
-X-Google-Smtp-Source: ADUXVKLFGpAlaDQRhFsTOGb8l6YHoLGS4IyJegrFa9vVtZZAgMIHR/qd1DIA2qCAz7QL+77VgfeVdg==
-X-Received: by 2002:a1c:443:: with SMTP id 64-v6mr3371653wme.140.1528887217594;
-        Wed, 13 Jun 2018 03:53:37 -0700 (PDT)
-Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id y8-v6sm4601932wrs.0.2018.06.13.03.53.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 03:53:37 -0700 (PDT)
-Subject: Re: [PATCH] irqchip/gic-v3: do not access GICR_WAKER if its secured
- register.
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        "Nayak, Rajendra" <rnayak@codeaurora.org>,
-        bjorn.andersson@linaro.org, sboyd@kernel.org
-References: <20180612145516.30897-1-srinivas.kandagatla@linaro.org>
- <86d0ww7ymc.wl-marc.zyngier@arm.com>
- <c4fafe97-fbf4-1037-394c-94c65fff3e21@linaro.org>
- <CAPKp9uYQC+Pw+DgdTny317s3sNcyE=Shthvyrh7wn0r=Qy1tSQ@mail.gmail.com>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <113cbfb5-9701-c62c-75c1-72c2dda8df8c@linaro.org>
-Date:   Wed, 13 Jun 2018 11:53:36 +0100
+        Wed, 13 Jun 2018 06:54:49 -0400
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DAsH4E102595
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:54:49 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jk0b0mgef-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 06:54:49 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 13 Jun 2018 11:54:46 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Jun 2018 11:54:42 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DAsfYQ27918356
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Jun 2018 10:54:41 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 52B8DAE055;
+        Wed, 13 Jun 2018 11:43:31 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 7B2C3AE057;
+        Wed, 13 Jun 2018 11:43:30 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Jun 2018 11:43:30 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <889b8d41-e08c-0eb5-2de0-a1d6669a03b3@linux.ibm.com>
+ <20180613094812.1fd1846d.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 13 Jun 2018 12:54:40 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <CAPKp9uYQC+Pw+DgdTny317s3sNcyE=Shthvyrh7wn0r=Qy1tSQ@mail.gmail.com>
+In-Reply-To: <20180613094812.1fd1846d.cohuck@redhat.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061310-4275-0000-0000-0000028D4A41
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061310-4276-0000-0000-000037947365
+Message-Id: <41e7ccbd-f6f5-ba20-f236-7824c682994d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806130122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13/06/2018 09:48, Cornelia Huck wrote:
+> On Wed, 13 Jun 2018 09:41:16 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>
+>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>> Introduces a new AP device driver. This device driver
+>>> is built on the VFIO mediated device framework. The framework
+>>> provides sysfs interfaces that facilitate passthrough
+>>> access by guests to devices installed on the linux host.
+>> ...snip...
+>>
+>>> +static int vfio_ap_matrix_dev_create(void)
+>>> +{
+>>> +	int ret;
+>>> +
+>>> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
+>>> +
+>>> +	if (IS_ERR(vfio_ap_root_device)) {
+>>> +		ret = PTR_ERR(vfio_ap_root_device);
+>>> +		goto done;
+>>> +	}
+>>> +
+>>> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
+>>> +	if (!ap_matrix) {
+>>> +		ret = -ENOMEM;
+>>> +		goto matrix_alloc_err;
+>>> +	}
+>>> +
+>>> +	ap_matrix->device.type = &vfio_ap_dev_type;
+>>> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
+>>> +	ap_matrix->device.parent = vfio_ap_root_device;
+>>> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
+>>> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
+>>> +
+>>> +	ret = device_register(&ap_matrix->device);
+>>> +	if (ret)
+>>> +		goto matrix_reg_err;
+>>> +
+>>> +	goto done;
+>>> +
+>>> +matrix_reg_err:
+>>> +	put_device(&ap_matrix->device);
+>> Did not see this before but here you certainly want to
+>> do a kfree and not a put_device.
+> No, this must not be a kfree. Once you've tried to register something
+> embedding a struct device with the driver core, you need to use
+> put_device, as another path may have acquired a reference, even if
+> registering ultimately failed. See the comment for device_register().
+> IOW, the code is correct.
 
+learned something again :) ,
+but still, a kfree is needed for the kzalloc.
+Does'nt it?
 
-On 13/06/18 09:45, Sudeep Holla wrote:
-> On Wed, Jun 13, 2018 at 9:21 AM, Srinivas Kandagatla
-> <srinivas.kandagatla@linaro.org> wrote:
+>
 >>
 >>
->> On 12/06/18 17:34, Marc Zyngier wrote:
->>>
->>> I suggest you find out how the GIC has been integrated on this
->>> platform. If you take a fault on accessing this register, this very
->>> much looks like an integration bug, and it should be quirked as such.
->>
->> Thanks for the suggestion, This is a bug in the firmware which is
->> restricting access to this register. We have been working around this bug
->> for more than 2 years due to this. Now this platform support is in mainline
->> and We/I have no hope that this will be fixed in near future atleast for
->> this platform.
->>
-> 
->  From what you are saying, you were aware of the firmware bug for 2 years as
-> you had work-around from then. I wish the firmware had come up with the fix
-> in those lost 2 years. I understand if it was discovered now, but that doesn't
-> seem to be the case here.
-> 
-> Firmware fixes are now becoming inevitable, so the attitude that firmware can't
-> be fixed has to slowing change. I am not saying I am against the quirk, but in
-> general I have seen the firmware support of QCOM parts are really bad. I waited
-> for almost 2 years for PSCI firmware on previous dragonboard where developer
-> are trying to upstream some feature.
-I agree with you!
+>>> +
+>>> +matrix_alloc_err:
+>>> +	root_device_unregister(vfio_ap_root_device);
+>>> +
+>>> +done:
+>>> +	return ret;
+>>> +}
+>>> +
+>>> +static void vfio_ap_matrix_dev_destroy(struct ap_matrix *ap_matrix)
+>>> +{
+>>> +	device_unregister(&ap_matrix->device);
+>>> +	root_device_unregister(vfio_ap_root_device);
+>> Also here you need a kfree(ap_matrix) too .
+> Same here.
+>
 
-We did wait for more than 2 years for firmware to be fixed. But it never 
-happened and very little hopes to get it fixed.
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
-I did try the quirk based on GICD_IIDR and I could boot linus master on 
-DB820c!
-
-I will send it out as RFC soon.
-
-thanks,
-srini
-> 
-> --
-> Regards,
-> Sudeep
-> 
