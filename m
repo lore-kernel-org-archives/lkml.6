@@ -2,166 +2,111 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4CBC4C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:26:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1BE6EC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:27:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01F59208CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:26:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01F59208CD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BC0CA208C3
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 18:27:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="OFUqYg+E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC0CA208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935477AbeFMS0N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 14:26:13 -0400
-Received: from mga12.intel.com ([192.55.52.136]:7703 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935006AbeFMS0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 14:26:11 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 11:26:11 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
-   d="scan'208";a="49090426"
-Received: from ray.jf.intel.com (HELO [10.7.201.133]) ([10.7.201.133])
-  by orsmga008.jf.intel.com with ESMTP; 13 Jun 2018 11:26:11 -0700
-Subject: Re: [PATCHv3 10/17] x86/mm: Implement prep_encrypted_page() and
- arch_free_page()
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-11-kirill.shutemov@linux.intel.com>
-Cc:     Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <36997c9c-73c0-1d9d-6251-10315a4158f0@intel.com>
-Date:   Wed, 13 Jun 2018 11:26:10 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180612143915.68065-11-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
+        id S935494AbeFMS1Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 14:27:25 -0400
+Received: from mail-by2nam01on0040.outbound.protection.outlook.com ([104.47.34.40]:52595
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935006AbeFMS1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 14:27:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=veR4nhuapD7bbISGVRh0XsuDMzQxvws+Ox6WYW+xB0U=;
+ b=OFUqYg+EXCU2DVdjkmw1grYMPvpF6UeqygtfM+lV2y+DsCDKcmrx0leS76gB5r1AZZk9bGr1bMzwM7AUAtTge/G1pQVOWUf6I8HuRraWJcFnZ9YIjufM00qqInyKVw5+zH4v+rpBZHJw1yqfMGYC+cXp/JrS7TbpvkCNOGUgwEQ=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4104.namprd05.prod.outlook.com (52.135.199.150) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.6; Wed, 13 Jun 2018 18:27:22 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::1010:9926:76ba:c7b7]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::1010:9926:76ba:c7b7%2]) with mapi id 15.20.0863.016; Wed, 13 Jun 2018
+ 18:27:22 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Xavier Deguillard <xdeguillard@vmware.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 3/7] vmw_balloon: fix inflation of 64-bit GFNs
+Thread-Topic: [PATCH 3/7] vmw_balloon: fix inflation of 64-bit GFNs
+Thread-Index: AQHUA0L/rUOafrnadEG4L9kKimvHMqRegDWAgAABlgA=
+Date:   Wed, 13 Jun 2018 18:27:22 +0000
+Message-ID: <5AE4EB83-47A7-45CB-A5A5-D25607A808BE@vmware.com>
+References: <20180613110359.109033-1-namit@vmware.com>
+ <20180613110359.109033-4-namit@vmware.com> <20180613182137.GC29631@kroah.com>
+In-Reply-To: <20180613182137.GC29631@kroah.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.2]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4104;7:a7dTTjY/OmGcarjvjy7pBLm2NoG84o9+w1jIBJULXmDtEv6q2jsruLc7YIHOMiJf3dioqpE6L6qNKA2EwKVCz3XgxhNBw2LCUdnWElSMUxupo8nsTA9vKnZfF9VDJhUA0Cd7mH+ykJ6Jn26CNHxUrRg5kFu4YUSn5cm4ql3RWysBHJefY4bf1i31LSb0BZxLcAd7vk9e+eMLHa+ZXLuC3D5A0OG3hYeCTPQilaMSfb8sBHE2LUY8X3IzSWIf1mIy;20:gjlkBECqeT/+j56WJY75uTYMFScrP1FLINswlq+qRqkIZiDmFQEwZh43LCH+EECilQmJTDXe/GhhnWsCq6ZYC1qGxRNvbdhzKoYhChK2PA7XiPoAzqoLIiXqEzKem76JoH5YfiwEVjV/19sgJmc1PZvXjhWROnSGwlMmeEU/pMU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+X-MS-Office365-Filtering-Correlation-Id: 8ad53628-e22b-4814-32d6-08d5d15b4e4a
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4104;
+x-ms-traffictypediagnostic: BYAPR05MB4104:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-microsoft-antispam-prvs: <BYAPR05MB4104F78B8F63C45E7D4B3CD7D07E0@BYAPR05MB4104.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:BYAPR05MB4104;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4104;
+x-forefront-prvs: 07025866F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(366004)(39860400002)(376002)(396003)(346002)(189003)(199004)(97736004)(11346002)(5660300001)(8936002)(66066001)(8676002)(6436002)(6116002)(3846002)(33656002)(2616005)(3660700001)(6512007)(76176011)(82746002)(14454004)(3280700002)(81166006)(81156014)(6916009)(99286004)(2906002)(486006)(68736007)(478600001)(446003)(476003)(4326008)(5250100002)(575784001)(86362001)(83716003)(6246003)(305945005)(26005)(186003)(25786009)(53936002)(105586002)(2900100001)(316002)(102836004)(54906003)(6506007)(36756003)(6486002)(7736002)(106356001)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4104;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: u0zJSaXjAKzm9KNCxxvietsPqOBzXRrEHldC6N+ZwFIRNrxIgBCL099DNCNoJxEcNTGOnW2QueDG8+CvsXWAzl+UYQegELFiVuTg1uTGjqP0KrvxzyoJX/karfVGQT5PcuPErsTna31hlaC9+io4LuLCdh0LIh92K93p6V3sgFFb4c+JKJYdbFWEZaS7QVGt
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7869200B11530B4D99D1C320BE790A78@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8ad53628-e22b-4814-32d6-08d5d15b4e4a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 18:27:22.6476
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4104
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
-> prep_encrypted_page() also takes care about zeroing the page. We have to
-> do this after KeyID is set for the page.
-
-This is an implementation detail that has gone unmentioned until now but
-has impacted at least half a dozen locations in previous patches.  Can
-you rectify that, please?
-
-
-> +void prep_encrypted_page(struct page *page, int order, int keyid, bool zero)
-> +{
-> +	int i;
-> +
-> +	/*
-> +	 * The hardware/CPU does not enforce coherency between mappings of the
-> +	 * same physical page with different KeyIDs or encrypt ion keys.
-
-What are "encrypt ion"s? :)
-
-> +	 * We are responsible for cache management.
-> +	 *
-> +	 * We flush cache before allocating encrypted page
-> +	 */
-> +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
-> +
-> +	for (i = 0; i < (1 << order); i++) {
-> +		WARN_ON_ONCE(lookup_page_ext(page)->keyid);
-
-/* All pages coming out of the allocator should have KeyID 0 */
-
-> +		lookup_page_ext(page)->keyid = keyid;
-> +		/* Clear the page after the KeyID is set. */
-> +		if (zero)
-> +			clear_highpage(page);
-> +	}
-> +}
-
-How expensive is this?
-
-> +void arch_free_page(struct page *page, int order)
-> +{
-> +	int i;
-> 
-
-	/* KeyId-0 pages were not used for MKTME and need no work */
-
-... or something
-
-> +	if (!page_keyid(page))
-> +		return;
-
-Is page_keyid() optimized so that all this goes away automatically when
-MKTME is compiled out or unsupported?
-
-> +	for (i = 0; i < (1 << order); i++) {
-> +		WARN_ON_ONCE(lookup_page_ext(page)->keyid > mktme_nr_keyids);
-> +		lookup_page_ext(page)->keyid = 0;
-> +	}
-> +
-> +	clflush_cache_range(page_address(page), PAGE_SIZE << order);
-> +}
-
-
-
-
+YXQgMTE6MjEgQU0sIEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
+cmc+IHdyb3RlOg0KDQo+IE9uIFdlZCwgSnVuIDEzLCAyMDE4IGF0IDA0OjAzOjU1QU0gLTA3MDAs
+IE5hZGF2IEFtaXQgd3JvdGU6DQo+PiBXaGVuIGJhbGxvb24gYmF0Y2hpbmcgaXMgbm90IHN1cHBv
+cnRlZCBieSB0aGUgaHlwZXJ2aXNvciwgdGhlIGd1ZXN0DQo+PiBmcmFtZSBudW1iZXIgKEdGTikg
+bXVzdCBmaXQgaW4gMzItYml0LiBIb3dldmVyLCBkdWUgdG8gYSBidWcsIHRoaXMgY2hlY2sNCj4+
+IHdhcyBtaXN0YWtlbmx5IGlnbm9yZWQuIEluIHByYWN0aWNlLCB3aGVuIHRvdGFsIFJBTSBpcyBn
+cmVhdGVyIHRoYW4NCj4+IDE2VEIsIHRoZSBiYWxsb29uIGRvZXMgbm90IHdvcmsgY3VycmVudGx5
+LCBtYWtpbmcgdGhpcyBidWcgdW5saWtlbHkgdG8NCj4+IGhhcHBlbi4NCj4+IA0KPj4gRml4ZXM6
+IGVmMGY4ZjExMjk4NCAoIlZNd2FyZSBiYWxsb29uOiBwYXJ0aWFsbHkgaW5saW5lDQo+PiB2bWJh
+bGxvb25fcmVzZXJ2ZV9wYWdlLiIpDQo+IA0KPiBXaHkgaGF2ZSBhIGJ1Z2ZpeCBhcyB0aGUgM3Jk
+IHBhdGNoIG9mIHRoZSBzZXJpZXM/ICBQbGVhc2UgcHV0IGl0IGZpcnN0LA0KPiBzbyB0aGF0IGl0
+IGNhbiBnZXQgaW50byBMaW51cydzIHRyZWUgc29vbmVyLg0KPiANCj4gQWxzbywgbm8gbmVlZCB0
+byBsaW5lLXdyYXAgdGhpcywgYW5kIGRyb3AgdGhlIGJsYW5rIGxpbmUuDQo+IA0KPiBBbmQgZmlu
+YWxseSwgZG9lcyB0aGlzIG5lZWQgdG8gZ28gdG8gdGhlIHN0YWJsZSBrZXJuZWxzPyAgSWYgc28s
+IHBsZWFzZQ0KPiBhZGQgdGhlIGNvcnJlY3QgbGluZSBmb3IgdGhhdC4NCg0KSSB3aWxsIGZpeCB0
+aGUgbWVzc2FnZS4gUGF0Y2hlcyAzLTcgZGVhbCB3aXRoIG1pbm9yIGJ1Z3MsIHNvbWUgb2Ygd2hp
+Y2ggaGF2ZQ0KYmVlbiB0aGVyZSBzaW5jZSBkYXkgb25lLCBzbyBJIGRpZG7igJl0IHB1dCBhIOKA
+nEZpeGVz4oCdIHRhZy4NCg0KSeKAmWxsIGZvbGxvdyB5b3VyIGRpcmVjdGlvbiBhbmQgcHV0IHBh
+dGNoZXMgMS0yIGF0IHRoZSBlbmQuDQoNCg==
