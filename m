@@ -2,128 +2,92 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 43DBAC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:58:12 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 54485C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED828208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:58:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 081E3208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:59:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+LOF59M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED828208B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XCXDuafp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 081E3208B0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935749AbeFMN6K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:58:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934436AbeFMN6J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:58:09 -0400
-Received: from mail-io0-f176.google.com (mail-io0-f176.google.com [209.85.223.176])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C75DE208B3;
-        Wed, 13 Jun 2018 13:58:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528898288;
-        bh=PJ57rxERzs3hoeIPMgQytwpjJ9jXcXSvbyYYzW9j4UU=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=t+LOF59MEbCTiiluDJTW27l/XkKaaQHlnRQu8pmgnpHLzomaI5g7bRjhLxvHmiifQ
-         jDkgPzu1psCyxcSJBQDGGv5oflR6uW2ru2k68/m3TiTOoEHCPKYpfvd7dxkg6te9we
-         XF4VZMSde6cUuQ4TaceoBYbcIJDO/zRceaFSqB7s=
-Received: by mail-io0-f176.google.com with SMTP id d185-v6so3542501ioe.0;
-        Wed, 13 Jun 2018 06:58:08 -0700 (PDT)
-X-Gm-Message-State: APt69E1rIHRnkUd+2Ipn2TjdJd7/u1KpW0A0Z0+zsnDMufX36rBb9FdO
-        7oES43Z5b0fySnzYv9xwjWBZRB4bagnwoUtB/A==
-X-Google-Smtp-Source: ADUXVKKyhobKjL+TWJ9BX8+3IU3oTyGOLBn0PeY0yGILDSR57thUgdo5pdvS6bOPI5fcNWMnyYGZq3ouANaYHvwbVaE=
-X-Received: by 2002:a6b:bd47:: with SMTP id n68-v6mr5075912iof.111.1528898288170;
- Wed, 13 Jun 2018 06:58:08 -0700 (PDT)
+        id S935715AbeFMN7l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:59:41 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:52576 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934436AbeFMN7k (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 09:59:40 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5DDmYEq078662;
+        Wed, 13 Jun 2018 13:59:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=is66ZiQij79oMdufmRXYbHRaNYpIIXksX19GzVCONHo=;
+ b=XCXDuafp9tK8eJ/25FhzQE6bj8XH0hG2gD8fjUYJE7CCAqqq5Lsq9+S+vo4h5JcFTihZ
+ AdZpF/0u7oJnlQ+MGNXLtxAUqi3CP7n8346swKCIiQJCERBFEkAJzdzE5UFkLhohAATZ
+ Rmoc9d24iUIwI/1c9ORWKg9SXIs8mzuXNFuyajYOB+CiMs2IWcbC9otA5hLUq4QXjvak
+ oObxBSM1g0x7YPPzB42Alb71fPVpRhGu4Y9+b9ev4QRqeWAf9mwvNw4kb7PY2nu60RTX
+ rmaIhiuabGj0vVnuXlewhoEHCO+72PRMnEdmxzZwjSiyokfNi5FersHmJ2K9O5k0qahl zg== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2jk0xr8u6y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 13:59:04 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5DDx4sw000832
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 13 Jun 2018 13:59:04 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5DDx3l0020882;
+        Wed, 13 Jun 2018 13:59:03 GMT
+Received: from mwanda (/197.157.34.169)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 13 Jun 2018 06:59:03 -0700
+Date:   Wed, 13 Jun 2018 16:58:55 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: Re: Smatch check for Spectre stuff
+Message-ID: <20180613135855.p5mrabx3dcbltahd@mwanda>
+References: <20180419051510.GA21898@mwanda>
+ <20180608161219.q3lwvlydvs4l2gxa@treble>
+ <20180613131049.sf7abp6wwrnpy5ct@mwanda>
 MIME-Version: 1.0
-Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 06:57:47
- -0700 (PDT)
-In-Reply-To: <c0d531ec-9201-bfd8-e6c3-9140698b0697@arm.com>
-References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
- <1527858967-16047-7-git-send-email-suzuki.poulose@arm.com>
- <20180612204802.GA15817@rob-hp-laptop> <a1c0749b-9c97-b45f-716f-a62ae07af278@arm.com>
- <5448BBB7-93FE-400F-9D87-FABF5DE0539C@arm.com> <c0d531ec-9201-bfd8-e6c3-9140698b0697@arm.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 13 Jun 2018 07:57:47 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqL1xWCEYG1knOfUjmw7Y59Sx1ss5o2RyRm-fxoYXbDrJA@mail.gmail.com>
-Message-ID: <CAL_JsqL1xWCEYG1knOfUjmw7Y59Sx1ss5o2RyRm-fxoYXbDrJA@mail.gmail.com>
-Subject: Re: [RFC PATCH 6/8] dts: coresight: Clean up the device tree graph bindings
-To:     Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Cc:     Matt Sealey <Matt.Sealey@arm.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "mathieu.poirier@linaro.org" <mathieu.poirier@linaro.org>,
-        Sudeep Holla <Sudeep.Holla@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>,
-        Charles Garcia-Tobin <Charles.Garcia-Tobin@arm.com>,
-        John Horley <John.Horley@arm.com>,
-        "mike.leach@linaro.org" <mike.leach@linaro.org>,
-        "coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180613131049.sf7abp6wwrnpy5ct@mwanda>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=493
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806130149
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 7:35 AM, Suzuki K Poulose
-<Suzuki.Poulose@arm.com> wrote:
-> Hi Matt,
->
-> Thanks for your comments, responses inline.
->
-> On 13/06/18 13:49, Matt Sealey wrote:
->>
->> Suzuki,
->>
->> Why not use =E2=80=9Cunit=E2=80=9D?
->>
->> I believe we had this discussion years ago about numbering serial ports
->> and sdhci (i.e. how do you know it=E2=80=99s UART0 or UART1 from just th=
-e address?
->> Some SoC=E2=80=99s don=E2=80=99t address sequentially *or* in a forward =
-direction) - I
->> believe it=E2=80=99s not exactly codified in ePAPR, not am I sure where =
-it may be
->> otherwise, but it exists.
->
->
-> We have different situation here. We need to know *the port number* as
-> understood by the
-> hardware, so that we can enable *the specific* port for a given path.
->
->>
->> I agree with Rob on the slave-mode nonsense, this is an SPI controller
->> concept weirdly stuffed into a directed graph which implicitly tells you=
- the
->> data direction - it=E2=80=99s a rooted tree (just like DT!).
+On Wed, Jun 13, 2018 at 04:10:49PM +0300, Dan Carpenter wrote:
+> Also it turns out that mem_section[] is declared in mm/sparse.c and
+> Smatch is supposed to be able to figure out the size of it but
+> apparently there is a bug...  :(  I'll take a look at that.
 
-OF graph is not directional. All links must be bi-directional and in
-fact dtc checks that now. The parent node should know the numbering
-and direction of each port.
+Oh.  I have CONFIG_SPARSEMEM_EXTREME enabled so the size ends up
+depending on cpu_feature_enabled(X86_FEATURE_LA57) which is tricky.
+Meaning that I can detect that everything higher than 127 is masked off
+but it doesn't help me since I don't know that the array has 128
+elements.
 
-> Btw, the "slave-mode" is not a standard DT graph binding. It is not part =
-of
-> the
-> generic DT graph binding. In fact the generic bindings stay away from the
-> direction
-> aspect and explicitly mentions the same.
+regards,
+dan carpenter
 
-I really don't like slave-mode nor coresight,hwid.
-
-I would prefer to see getting rid of both and splitting ports into
-"in-ports" and "out-ports" nodes instead of a single "ports" node.
-Then you don't need any of these properties and reg can be used as the
-hwid.
-
-Rob
