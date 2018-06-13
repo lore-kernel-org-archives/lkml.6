@@ -2,202 +2,119 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 61937C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:12:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7EEBEC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:12:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11E54208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:12:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11E54208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 92B8B208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 11:12:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B8B208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935300AbeFMLME (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 07:12:04 -0400
-Received: from mail-it0-f69.google.com ([209.85.214.69]:37694 "EHLO
-        mail-it0-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754096AbeFMLMC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 07:12:02 -0400
-Received: by mail-it0-f69.google.com with SMTP id p130-v6so2198929itp.2
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 04:12:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=bOPoza3YRnJZvdAhs6F5uPfu1XIOap8R6P3S4vs8SWg=;
-        b=i9e1euDVZnKcwicHO/qHd0B4XxqgC39w0bNPkMru2BvtkEGnKipNMOWq6y4QsEx/j0
-         6Cdjil7X0ExkplM7PWeMoJn9SE2kBJS5iuxV/pL/OUwXowTHiem0VpDs5NZcKPcoOj45
-         M1UbXBsyvc5sFbQYHbdLbAVDMt6O+5GgA/dIsXf/JJEO/YHk3gPSTUs3Zlm8x0IKcjRR
-         v6kzwTfoSWDhvuNPs2unhEh99wkujG2lVjD7603gFaIVanxvmxLs2aRWKCj+jg+DAm1c
-         MksG+5jUycpnLrC3ZJtICY6cdvd/6PCsRkO4byLZIsM7WuiO9W16iheR3YWc7wR5v37h
-         k1+w==
-X-Gm-Message-State: APt69E2SrJwW3V8UFDwtSvkTe1cj35aJyesoo+i9g+eywn/vWRQbW1Op
-        2g74BAKDxn8XcuxrS4BOyxD++oa2Gxdguy6J5Z0UCx3uj9Mn
-X-Google-Smtp-Source: ADUXVKK9bdIiNQMyBtS0MUMGZh1Pcb8KIIxbdUbKams0jCM1jdqUNoICbn/Ks294QdqZ9qsrOafZGuQro9tDeqsn1W1f9S65q8Gj
+        id S935321AbeFMLMh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 07:12:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:60515 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934972AbeFMLMg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 07:12:36 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C99DAAC23;
+        Wed, 13 Jun 2018 11:12:34 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH] xen: don't use privcmd_call() from
+ xen_mc_flush()
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <20180613095806.2978-1-jgross@suse.com>
+ <5B20EC6C02000078001CACBA@prv1-mh.provo.novell.com>
+ <5B20EFE102000078001CACD4@suse.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <d1ed4fec-d02f-0f0a-f4c3-ecfb04249613@suse.com>
+Date:   Wed, 13 Jun 2018 13:12:33 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e506:: with SMTP id y6-v6mr1851924ioc.122.1528888322338;
- Wed, 13 Jun 2018 04:12:02 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 04:12:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005abb37056e840d40@google.com>
-Subject: KASAN: slab-out-of-bounds Read in crypto_morus640_decrypt_chunk
-From:   syzbot <syzbot+1fafa9c4cf42df33f716@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+In-Reply-To: <5B20EFE102000078001CACD4@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 13/06/18 12:20, Jan Beulich wrote:
+>>>> On 13.06.18 at 12:05, <JBeulich@suse.com> wrote:
+>>>>> On 13.06.18 at 11:58, <jgross@suse.com> wrote:
+>>> Using privcmd_call() for a singleton multicall seems to be wrong, as
+>>> privcmd_call() is using stac()/clac() to enable hypervisor access to
+>>> Linux user space.
+>>>
+>>> Add a new xen_single_call() function to be use for that purpose.
+>>>
+>>> Reported-by: Jan Beulich <jbeulich@suse.com>
+>>> Signed-off-by: Juergen Gross <jgross@suse.com>
+>>
+>> Reviewed-by: Jan Beulich <jbeulich@suse.com>
+> 
+> Actually I've only now realized that this isn't a real problem right now:
+> PV can't use SMAP (we don't provide a virtualized version of it), and
+> HVM/PVH can't use multicalls (which may have to change for PVH Dom0,
+> so having the change in place is helpful anyway), so the whole
+> in-kernel logic to collect and issue batches should be unreachable there.
+> 
+> But perhaps the commit message would benefit from a little bit of
+> re-wording.
 
-syzbot found the following crash on:
+Hmm, right.
 
-HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17e6fb6f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=1fafa9c4cf42df33f716
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+What about:
 
-Unfortunately, I don't have any reproducer for this crash yet.
+"Using privcmd_call() for a singleton multicall seems to be wrong, as
+ privcmd_call() is using stac()/clac() to enable hypervisor access to
+ Linux user space.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+1fafa9c4cf42df33f716@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-out-of-bounds in crypto_morus640_load_a  
-crypto/morus640.c:111 [inline]
-BUG: KASAN: slab-out-of-bounds in crypto_morus640_decrypt_chunk+0xcf8/0xd20  
-crypto/morus640.c:278
-Read of size 4 at addr ffff8801d7611b08 by task syz-executor6/15764
-
-CPU: 1 PID: 15764 Comm: syz-executor6 Not tainted 4.17.0+ #84
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load4_noabort+0x14/0x20 mm/kasan/report.c:432
-  crypto_morus640_load_a crypto/morus640.c:111 [inline]
-  crypto_morus640_decrypt_chunk+0xcf8/0xd20 crypto/morus640.c:278
-  crypto_morus640_process_crypt.isra.12+0x153/0x230 crypto/morus640.c:376
-  crypto_morus640_crypt+0x42e/0x9f0 crypto/morus640.c:442
-  crypto_morus640_decrypt+0x23e/0x3d0 crypto/morus640.c:485
-  crypto_aead_decrypt include/crypto/aead.h:370 [inline]
-  _aead_recvmsg crypto/algif_aead.c:315 [inline]
-  aead_recvmsg+0x13cc/0x1ba0 crypto/algif_aead.c:334
-  sock_recvmsg_nosec net/socket.c:818 [inline]
-  sock_recvmsg+0xd0/0x110 net/socket.c:825
-  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2323
-  __sys_recvmsg+0x112/0x260 net/socket.c:2372
-  __do_sys_recvmsg net/socket.c:2382 [inline]
-  __se_sys_recvmsg net/socket.c:2379 [inline]
-  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2379
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-IPVS: set_ctl: invalid protocol: 103 127.0.0.1:20001
-RIP: 0033:0x455b29
-Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f3f80c2cc68 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
-RAX: ffffffffffffffda RBX: 00007f3f80c2d6d4 RCX: 0000000000455b29
-RDX: 0000000000000000 RSI: 0000000020002840 RDI: 0000000000000014
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c084a R14: 00000000004cffe8 R15: 0000000000000000
-
-Allocated by task 15764:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  kzalloc include/linux/slab.h:706 [inline]
-  skcipher_next_slow crypto/skcipher.c:253 [inline]
-  skcipher_walk_next+0x750/0x1850 crypto/skcipher.c:357
-  skcipher_walk_first+0x151/0x410 crypto/skcipher.c:442
-  skcipher_walk_aead_common+0x7f8/0xbc0 crypto/skcipher.c:539
-  skcipher_walk_aead_decrypt+0xc7/0x100 crypto/skcipher.c:572
-  crypto_morus640_process_crypt.isra.12+0x9c/0x230 crypto/morus640.c:370
-  crypto_morus640_crypt+0x42e/0x9f0 crypto/morus640.c:442
-  crypto_morus640_decrypt+0x23e/0x3d0 crypto/morus640.c:485
-  crypto_aead_decrypt include/crypto/aead.h:370 [inline]
-  _aead_recvmsg crypto/algif_aead.c:315 [inline]
-  aead_recvmsg+0x13cc/0x1ba0 crypto/algif_aead.c:334
-  sock_recvmsg_nosec net/socket.c:818 [inline]
-  sock_recvmsg+0xd0/0x110 net/socket.c:825
-  ___sys_recvmsg+0x2b6/0x680 net/socket.c:2323
-  __sys_recvmsg+0x112/0x260 net/socket.c:2372
-  __do_sys_recvmsg net/socket.c:2382 [inline]
-  __se_sys_recvmsg net/socket.c:2379 [inline]
-  __x64_sys_recvmsg+0x78/0xb0 net/socket.c:2379
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 4575:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xd9/0x260 mm/slab.c:3813
-  kvfree+0x61/0x70 mm/util.c:442
-  __vunmap+0x326/0x460 mm/vmalloc.c:1529
-  vfree+0x68/0x100 mm/vmalloc.c:1593
-  copy_entries_to_user net/ipv6/netfilter/ip6_tables.c:885 [inline]
-  get_entries net/ipv6/netfilter/ip6_tables.c:1043 [inline]
-  do_ip6t_get_ctl+0xa52/0xc30 net/ipv6/netfilter/ip6_tables.c:1711
-  nf_sockopt net/netfilter/nf_sockopt.c:104 [inline]
-  nf_getsockopt+0x80/0xe0 net/netfilter/nf_sockopt.c:122
-  ipv6_getsockopt+0x1d9/0x300 net/ipv6/ipv6_sockglue.c:1370
-  tcp_getsockopt+0x93/0xe0 net/ipv4/tcp.c:3534
-  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:3012
-  __sys_getsockopt+0x1a5/0x370 net/socket.c:1984
-  __do_sys_getsockopt net/socket.c:1995 [inline]
-  __se_sys_getsockopt net/socket.c:1992 [inline]
-  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1992
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801d7611b00
-  which belongs to the cache kmalloc-32 of size 32
-The buggy address is located 8 bytes inside of
-  32-byte region [ffff8801d7611b00, ffff8801d7611b20)
-The buggy address belongs to the page:
-page:ffffea00075d8440 count:1 mapcount:0 mapping:ffff8801da8001c0  
-index:0xffff8801d7611fc1
-flags: 0x2fffc0000000100(slab)
-raw: 02fffc0000000100 ffffea00075c94c8 ffffea00075d82c8 ffff8801da8001c0
-raw: ffff8801d7611fc1 ffff8801d7611000 000000010000000b 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801d7611a00: fb fb fb fb fc fc fc fc 00 02 fc fc fc fc fc fc
-  ffff8801d7611a80: 00 02 fc fc fc fc fc fc 00 02 fc fc fc fc fc fc
-> ffff8801d7611b00: 00 fc fc fc fc fc fc fc fb fb fb fb fc fc fc fc
-                       ^
-  ffff8801d7611b80: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-  ffff8801d7611c00: fb fb fb fb fc fc fc fc fb fb fb fb fc fc fc fc
-==================================================================
+ Even if currently not a problem (pv domains can't use SMAP while HVM
+ and PVH domains can't use multicalls) things might change when
+ PVH dom0 support is added to the kernel."
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+Juergen
