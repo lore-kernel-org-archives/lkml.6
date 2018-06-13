@@ -5,96 +5,88 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C8E11C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:19:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E3952C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E9C1208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:19:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E9C1208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 9E1B1208B2
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:21:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E1B1208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i-love.sakura.ne.jp
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935582AbeFMNTG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:19:06 -0400
-Received: from gate.crashing.org ([63.228.1.57]:46296 "EHLO gate.crashing.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935375AbeFMNTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:19:05 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5DDB2CC002330;
-        Wed, 13 Jun 2018 08:11:03 -0500
-Message-ID: <10bbd7122aaa67f51de7a8328df8154212a13f23.camel@kernel.crashing.org>
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Ram Pai <linuxram@us.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>, robh@kernel.org,
-        pawel.moll@arm.com, Tom Lendacky <thomas.lendacky@amd.com>,
-        aik@ozlabs.ru, jasowang@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, joe@perches.com,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>,
-        david@gibson.dropbear.id.au, linuxppc-dev@lists.ozlabs.org,
-        elfring@users.sourceforge.net,
-        Anshuman Khandual <khandual@linux.vnet.ibm.com>
-Date:   Wed, 13 Jun 2018 23:11:01 +1000
-In-Reply-To: <5dbcafa73b065bc619fd6adc9ef47eb6367b8378.camel@kernel.crashing.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
-         <20180523213703-mutt-send-email-mst@kernel.org>
-         <20180524072104.GD6139@ram.oc3035372033.ibm.com>
-         <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
-         <20180531204320-mutt-send-email-mst@kernel.org>
-         <20180607052306.GA1532@infradead.org>
-         <20180607185234-mutt-send-email-mst@kernel.org>
-         <20180611023909.GA5726@ram.oc3035372033.ibm.com>
-         <07b804fccd7373c650be79ac9fa77ae7f2375ced.camel@kernel.crashing.org>
-         <20180613074141.GA12033@infradead.org>
-         <5dbcafa73b065bc619fd6adc9ef47eb6367b8378.camel@kernel.crashing.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
+        id S935610AbeFMNVD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:21:03 -0400
+Received: from www262.sakura.ne.jp ([202.181.97.72]:63817 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935375AbeFMNVC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 09:21:02 -0400
+Received: from fsav304.sakura.ne.jp (fsav304.sakura.ne.jp [153.120.85.135])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id w5DDKpQa065055;
+        Wed, 13 Jun 2018 22:20:51 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav304.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp);
+ Wed, 13 Jun 2018 22:20:51 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav304.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126074194044.bbtec.net [126.74.194.44])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id w5DDKkL4064988
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Wed, 13 Jun 2018 22:20:51 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [rfc patch] mm, oom: fix unnecessary killing of additional
+ processes
+To:     Michal Hocko <mhocko@kernel.org>,
+        David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <alpine.DEB.2.21.1805241422070.182300@chino.kir.corp.google.com>
+ <20180525072636.GE11881@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1805251227380.158701@chino.kir.corp.google.com>
+ <20180528081345.GD1517@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1805301357100.150424@chino.kir.corp.google.com>
+ <20180531063212.GF15278@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1805311400260.74563@chino.kir.corp.google.com>
+ <20180601074642.GW15278@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1806042100200.71129@chino.kir.corp.google.com>
+ <20180605085707.GV19202@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <56138495-fd91-62f8-464a-db9960bfeb28@i-love.sakura.ne.jp>
+Date:   Wed, 13 Jun 2018 22:20:49 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180605085707.GV19202@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-13 at 22:25 +1000, Benjamin Herrenschmidt wrote:
-> On Wed, 2018-06-13 at 00:41 -0700, Christoph Hellwig wrote:
-> > On Mon, Jun 11, 2018 at 01:29:18PM +1000, Benjamin Herrenschmidt wrote:
-> > > At the risk of repeating myself, let's just do the first pass which is
-> > > to switch virtio over to always using the DMA API in the actual data
-> > > flow code, with a hook at initialization time that replaces the DMA ops
-> > > with some home cooked "direct" ops in the case where the IOMMU flag
-> > > isn't set.
-> > > 
-> > > This will be equivalent to what we have today but avoids having 2
-> > > separate code path all over the driver.
-> > > 
-> > > Then a second stage, I think, is to replace this "hook" so that the
-> > > architecture gets a say in the matter.
-> > 
-> > I don't think we can actually use dma_direct_ops.  It still allows
-> > architectures to override parts of the dma setup, which virtio seems
-> > to blindly assume phys == dma and not cache flushing.
+On 2018/06/05 17:57, Michal Hocko wrote:
+>> For this reason, we see testing harnesses often oom killed immediately 
+>> after running a unittest that stresses reclaim or compaction by inducing a 
+>> system-wide oom condition.  The harness spawns the unittest which spawns 
+>> an antagonist memory hog that is intended to be oom killed.  When memory 
+>> is mlocked or there are a large number of threads faulting memory for the 
+>> antagonist, the unittest and the harness itself get oom killed because the 
+>> oom reaper sets MMF_OOM_SKIP; this ends up happening a lot on powerpc.  
+>> The memory hog has mm->mmap_sem readers queued ahead of a writer that is 
+>> doing mmap() so the oom reaper can't grab the sem quickly enough.
 > 
-> By direct ops I didn't mean *the* dma_direct_ops but a virtio-local
-> variants that effectively reproduces the existing expectations (ie,
-> virtio-dma-legacy-ops or something).
-
-Actually ... the stuff in lib/dma-direct.c seems to be just it, no ?
-
-There's no cache flushing and there's no architecture hooks that I can
-see other than the AMD security stuff which is probably fine.
-
-Or am I missing something ?
-
-Cheers,
-Ben.
+> How come the writer doesn't back off. mmap paths should be taking an
+> exclusive mmap sem in killable sleep so it should back off. Or is the
+> holder of the lock deep inside mmap path doing something else and not
+> backing out with the exclusive lock held?
 > 
-> > I think the right way forward is to either add a new
-> > VIRTIO_F_IS_PCI_DEVICE (or redefine the existing iommu flag if deemed
-> > possible).  And then make sure recent qemu always sets it.
-> 
-> Ben.
+ 
+Here is an example where the writer doesn't back off.
+
+  http://lkml.kernel.org/r/20180607150546.1c7db21f70221008e14b8bb8@linux-foundation.org
+
+down_write_killable(&mm->mmap_sem) is nothing but increasing the possibility of
+successfully back off. There is no guarantee that the owner of that exclusive
+mmap sem will not be blocked by other unkillable waits.
