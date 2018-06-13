@@ -2,132 +2,193 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BCD68C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:16:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0C5D6C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6855320020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:16:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7omco+A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6855320020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B5DDF20020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 12:17:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5DDF20020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935470AbeFMMQb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 08:16:31 -0400
-Received: from mail-wm0-f68.google.com ([74.125.82.68]:40928 "EHLO
-        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935273AbeFMMQ3 (ORCPT
+        id S935495AbeFMMRG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 08:17:06 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:57236 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S935273AbeFMMRF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 08:16:29 -0400
-Received: by mail-wm0-f68.google.com with SMTP id n5-v6so4940161wmc.5;
-        Wed, 13 Jun 2018 05:16:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6cGf3uzrY0XFDG4MhLmH1ixeDh3doHOCLOTGKr2kjgQ=;
-        b=g7omco+AFmdxdof9o00UPMj86O8erSNWyO4PNbcagS826HVe/GG0JuihBdVn6wxZbJ
-         8A/g3OeRof/suaQP03MLCDMYV8hMuitUOrHZbNPQfO2PwB9l78kccWPF/Z3YEF0dFaGi
-         NdH7aMrs5nUV8AuD23vmb0XqvTtk4d81bWX+sfIL8qbdb+rgpFUUv3N/xQqQQxIdv5Kj
-         hTZwG5ahojNnpWCLSYuHhT1PjD/tiBSgWWfX0j950vjFUkF73md+LpFLL7R8QXQ/9mC7
-         +DKCOVm21nUGxSCTcw9kfYZjNnCADdFX+bJUiPeOjPRpbQV0DDaCCa42k3LRzISRxCuM
-         3l7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6cGf3uzrY0XFDG4MhLmH1ixeDh3doHOCLOTGKr2kjgQ=;
-        b=QL2ZN0JzePLLewWOg8oUsm9IsAWuPFidqwi4UUOCnneENkCrnp9hwrGfYY5a+jd7/M
-         09JeWyUObf8okDgYqA515jnlumbksSAmN97M12+NKCvqnqH3sUjGqV+bZxZvlIz+K0fP
-         QWPb93NuThxMbKmMok+ACdimvtJDAOwWlSy7+QO23HemKycEKgbGGpGtU7qBKwvo1S6D
-         WSaAuP4rVqcBGv1H/8jq+3MLI4rAdSUxGVR5/hjCVcMYKyuMqdkiLJ/l7kR3xfF0Bzxv
-         AhUMkS8BM9BbKWxhbR8HYlla/V6jYBfss7cGrs4ypeVQHJYU2SGNvqcWsZxIpOzYqsRY
-         E/kQ==
-X-Gm-Message-State: APt69E1AwsC4AI8fnYkLjOd/hUJ7UKxmcZZqcdViZP0juptyeXK8ExbY
-        j0Ntoqh3QRs1Fa/uj1acZAqGmw==
-X-Google-Smtp-Source: ADUXVKKXhinHnQy57tWO7dY/7ejFQhZazgxWT0k6GsgXbg5xQyu0qGmwV/xjXB+XFEUcOCCut3e/TA==
-X-Received: by 2002:a1c:8941:: with SMTP id l62-v6mr3293024wmd.26.1528892188335;
-        Wed, 13 Jun 2018 05:16:28 -0700 (PDT)
-Received: from localhost (pD9E510DD.dip0.t-ipconnect.de. [217.229.16.221])
-        by smtp.gmail.com with ESMTPSA id z83-v6sm3515235wmb.8.2018.06.13.05.16.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 05:16:27 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] pwm: Changes for v4.18-rc1
-Date:   Wed, 13 Jun 2018 14:16:26 +0200
-Message-Id: <20180613121626.17188-1-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        Wed, 13 Jun 2018 08:17:05 -0400
+Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DCFSqV084355
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:17:05 -0400
+Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jk0b6fp47-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 08:17:04 -0400
+Received: from localhost
+        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pmorel@linux.ibm.com>;
+        Wed, 13 Jun 2018 13:17:02 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 13 Jun 2018 13:16:58 +0100
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DCGupc31916142
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 13 Jun 2018 12:16:57 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 12EBEAE053;
+        Wed, 13 Jun 2018 13:05:47 +0100 (BST)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 38E2AAE045;
+        Wed, 13 Jun 2018 13:05:46 +0100 (BST)
+Received: from [9.152.224.92] (unknown [9.152.224.92])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Wed, 13 Jun 2018 13:05:46 +0100 (BST)
+Reply-To: pmorel@linux.ibm.com
+Subject: Re: [PATCH v5 04/13] s390: vfio-ap: base implementation of VFIO AP
+ device driver
+To:     Cornelia Huck <cohuck@redhat.com>
+Cc:     Tony Krowiak <akrowiak@linux.vnet.ibm.com>,
+        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, freude@de.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, borntraeger@de.ibm.com,
+        kwankhede@nvidia.com, bjsdjshi@linux.vnet.ibm.com,
+        pbonzini@redhat.com, alex.williamson@redhat.com,
+        pmorel@linux.vnet.ibm.com, alifm@linux.vnet.ibm.com,
+        mjrosato@linux.vnet.ibm.com, jjherne@linux.vnet.ibm.com,
+        thuth@redhat.com, pasic@linux.vnet.ibm.com, berrange@redhat.com,
+        fiuczy@linux.vnet.ibm.com, buendgen@de.ibm.com
+References: <1525705912-12815-1-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <1525705912-12815-5-git-send-email-akrowiak@linux.vnet.ibm.com>
+ <889b8d41-e08c-0eb5-2de0-a1d6669a03b3@linux.ibm.com>
+ <20180613094812.1fd1846d.cohuck@redhat.com>
+ <41e7ccbd-f6f5-ba20-f236-7824c682994d@linux.ibm.com>
+ <20180613131402.0305d092.cohuck@redhat.com>
+ <7237751c-66b5-d14c-5b71-cc1cfc79db87@linux.ibm.com>
+ <20180613141221.5b924348.cohuck@redhat.com>
+From:   Pierre Morel <pmorel@linux.ibm.com>
+Date:   Wed, 13 Jun 2018 14:16:55 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180613141221.5b924348.cohuck@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18061312-0028-0000-0000-000002D066FD
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061312-0029-0000-0000-0000238788AF
+Message-Id: <65ec9340-6a25-20ac-3078-f67992d5cc15@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806130136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On 13/06/2018 14:12, Cornelia Huck wrote:
+> On Wed, 13 Jun 2018 14:01:54 +0200
+> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>
+>> On 13/06/2018 13:14, Cornelia Huck wrote:
+>>> On Wed, 13 Jun 2018 12:54:40 +0200
+>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>>   
+>>>> On 13/06/2018 09:48, Cornelia Huck wrote:
+>>>>> On Wed, 13 Jun 2018 09:41:16 +0200
+>>>>> Pierre Morel <pmorel@linux.ibm.com> wrote:
+>>>>>      
+>>>>>> On 07/05/2018 17:11, Tony Krowiak wrote:
+>>>>>>> Introduces a new AP device driver. This device driver
+>>>>>>> is built on the VFIO mediated device framework. The framework
+>>>>>>> provides sysfs interfaces that facilitate passthrough
+>>>>>>> access by guests to devices installed on the linux host.
+>>>>>> ...snip...
+>>>>>>      
+>>>>>>> +static int vfio_ap_matrix_dev_create(void)
+>>>>>>> +{
+>>>>>>> +	int ret;
+>>>>>>> +
+>>>>>>> +	vfio_ap_root_device = root_device_register(VFIO_AP_ROOT_NAME);
+>>>>>>> +
+>>>>>>> +	if (IS_ERR(vfio_ap_root_device)) {
+>>>>>>> +		ret = PTR_ERR(vfio_ap_root_device);
+>>>>>>> +		goto done;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	ap_matrix = kzalloc(sizeof(*ap_matrix), GFP_KERNEL);
+>>>>>>> +	if (!ap_matrix) {
+>>>>>>> +		ret = -ENOMEM;
+>>>>>>> +		goto matrix_alloc_err;
+>>>>>>> +	}
+>>>>>>> +
+>>>>>>> +	ap_matrix->device.type = &vfio_ap_dev_type;
+>>>>>>> +	dev_set_name(&ap_matrix->device, "%s", VFIO_AP_DEV_NAME);
+>>>>>>> +	ap_matrix->device.parent = vfio_ap_root_device;
+>>>>>>> +	ap_matrix->device.release = vfio_ap_matrix_dev_release;
+>>>>>>> +	ap_matrix->device.driver = &vfio_ap_drv.driver;
+>>>>>>> +
+>>>>>>> +	ret = device_register(&ap_matrix->device);
+>>>>>>> +	if (ret)
+>>>>>>> +		goto matrix_reg_err;
+>>>>>>> +
+>>>>>>> +	goto done;
+>>>>>>> +
+>>>>>>> +matrix_reg_err:
+>>>>>>> +	put_device(&ap_matrix->device);
+>>>>>> Did not see this before but here you certainly want to
+>>>>>> do a kfree and not a put_device.
+>>>>> No, this must not be a kfree. Once you've tried to register something
+>>>>> embedding a struct device with the driver core, you need to use
+>>>>> put_device, as another path may have acquired a reference, even if
+>>>>> registering ultimately failed. See the comment for device_register().
+>>>>> IOW, the code is correct.
+>>>> learned something again :) ,
+>>>> but still, a kfree is needed for the kzalloc.
+>>>> Does'nt it?
+>>> No, the put callback for the embedding structure needs to take care of
+>>> freeing things. Otherwise it is buggy.
+>> Seems buggy to me.
+>> How does the put_device knows if it is embedded and then in what it is
+>> embedded ?
+> It does not need to know; the code registering the structure needs to
+> set up device->release correctly.
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
+yes right, thanks.
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+>
+>>>   
+>>>>>      
+>>>>>>      
+>>>>>>> +
+>>>>>>> +matrix_alloc_err:
+>>>>>>> +	root_device_unregister(vfio_ap_root_device);
+>>>>>>> +
+>>>>>>> +done:
+>>>>>>> +	return ret;
+>>>>>>> +}
+>>>>>>> +
+>>>>>>> +static void vfio_ap_matrix_dev_destroy(struct ap_matrix *ap_matrix)
+>>>>>>> +{
+>>>>>>> +	device_unregister(&ap_matrix->device);
+>>>>>>> +	root_device_unregister(vfio_ap_root_device);
+>>>>>> Also here you need a kfree(ap_matrix) too .
+>>>>> Same here.
+>>>>>      
+>>
 
-are available in the Git repository at:
+-- 
+Pierre Morel
+Linux/KVM/QEMU in Böblingen - Germany
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/thierry.reding/linux-pwm.git tags/pwm/for-4.18-rc1
-
-for you to fetch changes up to 414c52b7899aa9097c2fa8444654a866e1df4a0c:
-
-  pwm: stm32: Fix build warning with CONFIG_DMA_ENGINE disabled (2018-06-06 10:15:55 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-pwm: Changes for v4.18-rc1
-
-This contains a couple of fixes and cleanups for the Meson and ACPI/LPSS
-drivers as well as capture support for STM32. Note that given the cross-
-subsystem changes, the STM32 patches were merged through the MFD and PWM
-trees, both sharing an immutable branch.
-
-----------------------------------------------------------------
-Arnd Bergmann (2):
-      pwm: stm32: Enforce dependency on CONFIG_MFD_STM32_TIMERS
-      pwm: stm32: Fix build warning with CONFIG_DMA_ENGINE disabled
-
-Fabrice Gasnier (5):
-      mfd: stm32-timers: Add support for DMAs
-      pwm: stm32: Add capture support
-      pwm: stm32: Improve capture by tuning counter prescaler
-      pwm: stm32: Use input prescaler to improve period capture
-      dt-bindings: mfd: stm32-timers: Add support for dmas
-
-Hans de Goede (2):
-      pwm: lpss: platform: Save/restore the ctrl register over a suspend/resume
-      ACPI / LPSS: Add missing prv_offset setting for byt/cht PWM devices
-
-Martin Blumenstingl (1):
-      pwm: meson: Fix allocation of PWM channel array
-
-Thierry Reding (1):
-      Merge tag 'ib-mfd-pwm-v4.18-1' of git://git.kernel.org/.../lee/mfd into for-next
-
-Wolfram Sang (1):
-      pwm: simplify getting .drvdata
-
- .../devicetree/bindings/mfd/stm32-timers.txt       |  20 ++
- drivers/acpi/acpi_lpss.c                           |   2 +
- drivers/mfd/stm32-timers.c                         | 201 +++++++++++++++-
- drivers/pwm/Kconfig                                |   2 +-
- drivers/pwm/pwm-atmel-tcb.c                        |   6 +-
- drivers/pwm/pwm-lpss-platform.c                    |   5 +
- drivers/pwm/pwm-lpss.c                             |  30 +++
- drivers/pwm/pwm-lpss.h                             |   2 +
- drivers/pwm/pwm-meson.c                            |   4 +-
- drivers/pwm/pwm-rcar.c                             |   3 +-
- drivers/pwm/pwm-stm32.c                            | 255 +++++++++++++++++++++
- include/linux/mfd/stm32-timers.h                   |  58 +++++
- 12 files changed, 577 insertions(+), 11 deletions(-)
