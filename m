@@ -2,134 +2,183 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6D276C433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:40:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 44A15C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:45:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25DFC2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:40:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25DFC2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id EED8C20891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:45:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EED8C20891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754555AbeFMJkU (ORCPT
+        id S1754590AbeFMJp4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:40:20 -0400
-Received: from Galois.linutronix.de ([146.0.238.70]:43930 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750922AbeFMJkS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:40:18 -0400
-Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1fT2G1-0004EI-KF; Wed, 13 Jun 2018 11:40:01 +0200
-Date:   Wed, 13 Jun 2018 11:40:00 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Don Zickus <dzickus@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Babu Moger <babu.moger@oracle.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Christoffer Dall <cdall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [RFC PATCH 17/23] watchdog/hardlockup/hpet: Convert the timer's
- interrupt to NMI
-In-Reply-To: <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
-Message-ID: <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com> <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 13 Jun 2018 05:45:56 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44998 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754462AbeFMJpy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 05:45:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6AD8680D;
+        Wed, 13 Jun 2018 02:45:53 -0700 (PDT)
+Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BB0E83F557;
+        Wed, 13 Jun 2018 02:45:50 -0700 (PDT)
+Subject: Re: [RFC PATCH 6/8] dts: coresight: Clean up the device tree graph
+ bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, mathieu.poirier@linaro.org,
+        sudeep.holla@arm.com, mark.rutland@arm.com, frowand.list@gmail.com,
+        matt.sealey@arm.com, charles.garcia-tobin@arm.com,
+        john.horley@arm.com, mike.leach@linaro.org,
+        coresight@lists.linaro.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
+ <1527858967-16047-7-git-send-email-suzuki.poulose@arm.com>
+ <20180612204802.GA15817@rob-hp-laptop>
+From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
+Message-ID: <a1c0749b-9c97-b45f-716f-a62ae07af278@arm.com>
+Date:   Wed, 13 Jun 2018 10:45:49 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180612204802.GA15817@rob-hp-laptop>
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 12 Jun 2018, Ricardo Neri wrote:
-> @@ -183,6 +184,8 @@ static irqreturn_t hardlockup_detector_irq_handler(int irq, void *data)
->  	if (!(hdata->flags & HPET_DEV_PERI_CAP))
->  		kick_timer(hdata);
->  
-> +	pr_err("This interrupt should not have happened. Ensure delivery mode is NMI.\n");
+Hi Rob,
 
-Eeew.
+On 12/06/18 21:48, Rob Herring wrote:
+> On Fri, Jun 01, 2018 at 02:16:05PM +0100, Suzuki K Poulose wrote:
+>> The coresight drivers relied on default bindings for graph
+>> in DT, while reusing the "reg" field of the "ports" to indicate
+>> the actual hardware port number for the connections. However,
+>> with the rules getting stricter w.r.t to the address mismatch
+>> with the label, it is no longer possible to use the port address
+>> field for the hardware port number. Hence, we add an explicit
+>> property to denote the hardware port number, "coresight,hwid"
+>> which must be specified for each "endpoint".
+>>
+>> Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+>> Cc: Sudeep Holla <sudeep.holla@arm.com>
+>> Cc: Rob Herring <robh@kernel.org>
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> ---
+>>   .../devicetree/bindings/arm/coresight.txt          | 26 +++++++++---
+>>   drivers/hwtracing/coresight/of_coresight.c         | 46 ++++++++++++++++------
+>>   2 files changed, 54 insertions(+), 18 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+>> index bd36e40..385581a 100644
+>> --- a/Documentation/devicetree/bindings/arm/coresight.txt
+>> +++ b/Documentation/devicetree/bindings/arm/coresight.txt
+>> @@ -104,7 +104,11 @@ properties to uniquely identify the connection details.
+>>   	"slave-mode"
+>>   
+>>    * Hardware Port number at the component:
+>> -     -  The hardware port number is assumed to be the address of the "port" component.
+>> +   - (Obsolete) The hardware port number is assumed to be the address of the "port" component.
+>> +   - Each "endpoint" must define the hardware port of the local end of the
+>> +     connection using the following property:
+>> +	"coresight,hwid" - 32bit integer, hardware port number at the local end.
+> 
+> "coresight" is not a vendor and properties are in the form
+> [<vendor>,]<prop-name>.
 
->  /**
-> + * hardlockup_detector_nmi_handler() - NMI Interrupt handler
-> + * @val:	Attribute associated with the NMI. Not used.
-> + * @regs:	Register values as seen when the NMI was asserted
-> + *
-> + * When an NMI is issued, look for hardlockups. If the timer is not periodic,
-> + * kick it. The interrupt is always handled when if delivered via the
-> + * Front-Side Bus.
-> + *
-> + * Returns:
-> + *
-> + * NMI_DONE if the HPET timer did not cause the interrupt. NMI_HANDLED
-> + * otherwise.
-> + */
-> +static int hardlockup_detector_nmi_handler(unsigned int val,
-> +					   struct pt_regs *regs)
-> +{
-> +	struct hpet_hld_data *hdata = hld_data;
-> +	unsigned int use_fsb;
-> +
-> +	/*
-> +	 * If FSB delivery mode is used, the timer interrupt is programmed as
-> +	 * edge-triggered and there is no need to check the ISR register.
-> +	 */
-> +	use_fsb = hdata->flags & HPET_DEV_FSB_CAP;
-> +
-> +	if (!use_fsb && !is_hpet_wdt_interrupt(hdata))
-> +		return NMI_DONE;
+OK. The issue here is that a coresight component could be an Arm IP or
+a custom partner IP. So, the vendor could be either arm or the partner id.
+However, this property is kind of a generic one for the Coresight family,
+which is why we opted for "coresight". What is the guideline for such
+cases ?
 
-So for 'use_fsb == True' every single NMI will fall through into the
-watchdog code below.
+Or in other words I see the following possible options :
 
-> +	inspect_for_hardlockups(regs);
-> +
-> +	if (!(hdata->flags & HPET_DEV_PERI_CAP))
-> +		kick_timer(hdata);
+1) coresight,hwid	- coresight generic
+2) arm,coresight-hwid	- arm vendor, however the device could be from any vendor.
+3) hwid			- Generic
+4) none of the above, something completely different.
 
-And in case that the HPET does not support periodic mode this reprogramms
-the timer on every NMI which means that while perf is running the watchdog
-will never ever detect anything.
+What do you recommend from the above ?
 
-Aside of that, reading TWO HPET registers for every NMI is insane. HPET
-access is horribly slow, so any high frequency perf monitoring will take a
-massive performance hit.
+>> +
+>>   
+>>   
+>>   Example:
+>> @@ -120,6 +124,7 @@ Example:
+>>   			etb_in_port: endpoint@0 {
+> 
+> There shouldn't be a unit address here because there is no reg property.
+> 
+>>   				slave-mode;
+>>   				remote-endpoint = <&replicator_out_port0>;
+>> +				coresight,hwid = <0>;
+> 
+> It doesn't make sense for these to be in the endpoint. If you had
+> multiple endpoints, then you would have to duplicate it. "ports" are
+> a single data stream. "endpoints" are connections to that stream. So if
+> you have a muxed (input) or fanout/1-to-many (output) connection, then
+> you have multiple endpoints.
 
-Thanks,
+We do have many-to-1 input (e.g, funnels) and 1-to-many outputs
+(e.g replicators). However, we have (so far) used only one endpoint per
+port.
 
-	tglx
+Also we could potentially have multiple data streams flowing through
+the ports, which gets filtered to different ports in 1-to-many components
+(read programmable-replicator).
+
+So the point is we have a shared path which carries different data
+streams with mux/demux components. I am open for suggestions based on
+the above facts.
+
+> 
+> The same applied to the slave-mode property, but that ship has sailed.
+> No reason to continue that though.
+> 
+>>   			};
+>>   		};
+>>   	};
+>> @@ -134,6 +139,7 @@ Example:
+>>   			tpiu_in_port: endpoint@0 {
+>>   				slave-mode;
+>>   				remote-endpoint = <&replicator_out_port1>;
+>> +				coresight,hwid = <0>;
+>>   			};
+>>   		};
+>>   	};
+>> @@ -154,6 +160,7 @@ Example:
+>>   				reg = <0>;
+>>   				replicator_out_port0: endpoint {
+>>   					remote-endpoint = <&etb_in_port>;
+>> +					coresight,hwid = <0>;
+>>   				};
+>>   			};
+>>   
+>> @@ -161,15 +168,17 @@ Example:
+>>   				reg = <1>;
+>>   				replicator_out_port1: endpoint {
+>>   					remote-endpoint = <&tpiu_in_port>;
+>> +					coresight,hwid = <1>;
+>>   				};
+>>   			};
+>>   
+>>   			/* replicator input port */
+>>   			port@2 {
+>> -				reg = <0>;
+>> +				reg = <1>;
+> 
+> This will still get flagged as an error. reg must be 2 here.
+
+Sorry, thats a mistake. I will fix it.
+
+Cheers
+Suzuki
