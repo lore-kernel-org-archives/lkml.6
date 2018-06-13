@@ -6,71 +6,71 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8DF66C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:39:02 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E87B8C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36860208D5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:39:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36860208D5
+	by mail.kernel.org (Postfix) with ESMTP id 9E6CF208CC
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 20:39:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E6CF208CC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935795AbeFMUi7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 16:38:59 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52346 "EHLO
+        id S935818AbeFMUjB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 16:39:01 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:52350 "EHLO
         mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S935320AbeFMUi4 (ORCPT
+        by vger.kernel.org with ESMTP id S935352AbeFMUi4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 13 Jun 2018 16:38:56 -0400
 Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DKXxvf064910
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5DKXxBl064904
         for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 16:38:56 -0400
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jk88xwh78-1
+Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jk88xwh74-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 16:38:56 -0400
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 16:38:55 -0400
 Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <alifm@linux.ibm.com>;
         Wed, 13 Jun 2018 16:38:55 -0400
-Received: from b01cxnp23033.gho.pok.ibm.com (9.57.198.28)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
+        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 13 Jun 2018 16:38:53 -0400
+        Wed, 13 Jun 2018 16:38:52 -0400
 Received: from b01ledav006.gho.pok.ibm.com (b01ledav006.gho.pok.ibm.com [9.57.199.111])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DKcq6B13763058
+        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5DKcp7w10355354
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 13 Jun 2018 20:38:52 GMT
+        Wed, 13 Jun 2018 20:38:51 GMT
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 04BE6AC064;
-        Wed, 13 Jun 2018 16:40:14 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id DD3E1AC05E;
+        Wed, 13 Jun 2018 16:40:12 -0400 (EDT)
 Received: from b01ledav006.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id DE512AC05E;
-        Wed, 13 Jun 2018 16:40:13 -0400 (EDT)
+        by IMSVA (Postfix) with ESMTP id CDBDEAC05B;
+        Wed, 13 Jun 2018 16:40:12 -0400 (EDT)
 Received: from alifm-ThinkPad-T470p.pok.ibm.com (unknown [9.56.58.93])
         by b01ledav006.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Wed, 13 Jun 2018 16:40:13 -0400 (EDT)
+        Wed, 13 Jun 2018 16:40:12 -0400 (EDT)
 From:   Farhan Ali <alifm@linux.ibm.com>
 To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
 Cc:     mst@redhat.com, qemu-devel@nongnu.org, arei.gonglei@huawei.com,
         longpeng2@huawei.com, pasic@linux.ibm.com, frankja@linux.ibm.com,
         borntraeger@de.ibm.com, alifm@linux.ibm.com
-Subject: [PATCH v2 2/2] crypto/virtio-crypto: Register an algo only if it's supported
-Date:   Wed, 13 Jun 2018 16:38:49 -0400
+Subject: [PATCH v2 1/2] crypto/virtio-crypto: Read crypto services and algorithm masks
+Date:   Wed, 13 Jun 2018 16:38:48 -0400
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1528921468.git.alifm@linux.ibm.com>
 References: <cover.1528921468.git.alifm@linux.ibm.com>
 In-Reply-To: <cover.1528921468.git.alifm@linux.ibm.com>
 References: <cover.1528921468.git.alifm@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 18061320-0040-0000-0000-0000043FE449
+x-cbid: 18061320-0064-0000-0000-0000031ACE20
 X-IBM-SpamModules-Scores: 
 X-IBM-SpamModules-Versions: BY=3.00009185; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01046515; UDB=6.00535975; IPR=6.00825489;
- MB=3.00021630; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 20:38:55
+ PH=3.00000004; SC=3.00000265; SDB=6.01046514; UDB=6.00535975; IPR=6.00825489;
+ MB=3.00021630; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-13 20:38:54
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061320-0041-0000-0000-00000845EDF8
-Message-Id: <daf2c66cb819e29aea5b830fc9f3982f63707d55.1528921468.git.alifm@linux.ibm.com>
+x-cbparentid: 18061320-0065-0000-0000-00003995C95A
+Message-Id: <3b302b1a1f1b624713d29dc6b77778ebb31a491b.1528921468.git.alifm@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-13_08:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
@@ -83,343 +83,96 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Farhan Ali <alifm@linux.vnet.ibm.com>
-
-Register a crypto algo with the Linux crypto layer only if
-the algorithm is supported by the backend virtio-crypto
-device.
-
-Also route crypto requests to a virtio-crypto
-device, only if it can support the requested service and
-algorithm.
+Read the crypto services and algorithm masks which provides
+information about the services and algorithms supported by
+virtio-crypto backend.
 
 Signed-off-by: Farhan Ali <alifm@linux.ibm.com>
 Acked-by: Gonglei <arei.gonglei@huawei.com>
 ---
- drivers/crypto/virtio/virtio_crypto_algs.c   | 112 ++++++++++++++++++---------
- drivers/crypto/virtio/virtio_crypto_common.h |  11 ++-
- drivers/crypto/virtio/virtio_crypto_mgr.c    |  81 +++++++++++++++++--
- 3 files changed, 159 insertions(+), 45 deletions(-)
+ drivers/crypto/virtio/virtio_crypto_common.h | 14 ++++++++++++++
+ drivers/crypto/virtio/virtio_crypto_core.c   | 29 ++++++++++++++++++++++++++++
+ 2 files changed, 43 insertions(+)
 
-diff --git a/drivers/crypto/virtio/virtio_crypto_algs.c b/drivers/crypto/virtio/virtio_crypto_algs.c
-index ba190cf..11db62f 100644
---- a/drivers/crypto/virtio/virtio_crypto_algs.c
-+++ b/drivers/crypto/virtio/virtio_crypto_algs.c
-@@ -49,12 +49,18 @@ struct virtio_crypto_sym_request {
- 	bool encrypt;
- };
- 
-+struct virtio_crypto_algo {
-+	uint32_t algonum;
-+	uint32_t service;
-+	unsigned int active_devs;
-+	struct crypto_alg algo;
-+};
-+
- /*
-  * The algs_lock protects the below global virtio_crypto_active_devs
-  * and crypto algorithms registion.
-  */
- static DEFINE_MUTEX(algs_lock);
--static unsigned int virtio_crypto_active_devs;
- static void virtio_crypto_ablkcipher_finalize_req(
- 	struct virtio_crypto_sym_request *vc_sym_req,
- 	struct ablkcipher_request *req,
-@@ -312,15 +318,21 @@ static int virtio_crypto_ablkcipher_setkey(struct crypto_ablkcipher *tfm,
- 					 unsigned int keylen)
- {
- 	struct virtio_crypto_ablkcipher_ctx *ctx = crypto_ablkcipher_ctx(tfm);
-+	uint32_t alg;
- 	int ret;
- 
-+	ret = virtio_crypto_alg_validate_key(keylen, &alg);
-+	if (ret)
-+		return ret;
-+
- 	if (!ctx->vcrypto) {
- 		/* New key */
- 		int node = virtio_crypto_get_current_node();
- 		struct virtio_crypto *vcrypto =
--				      virtcrypto_get_dev_node(node);
-+				      virtcrypto_get_dev_node(node,
-+				      VIRTIO_CRYPTO_SERVICE_CIPHER, alg);
- 		if (!vcrypto) {
--			pr_err("virtio_crypto: Could not find a virtio device in the system\n");
-+			pr_err("virtio_crypto: Could not find a virtio device in the system or unsupported algo\n");
- 			return -ENODEV;
- 		}
- 
-@@ -571,57 +583,85 @@ static void virtio_crypto_ablkcipher_finalize_req(
- 	virtcrypto_clear_request(&vc_sym_req->base);
- }
- 
--static struct crypto_alg virtio_crypto_algs[] = { {
--	.cra_name = "cbc(aes)",
--	.cra_driver_name = "virtio_crypto_aes_cbc",
--	.cra_priority = 150,
--	.cra_flags = CRYPTO_ALG_TYPE_ABLKCIPHER | CRYPTO_ALG_ASYNC,
--	.cra_blocksize = AES_BLOCK_SIZE,
--	.cra_ctxsize  = sizeof(struct virtio_crypto_ablkcipher_ctx),
--	.cra_alignmask = 0,
--	.cra_module = THIS_MODULE,
--	.cra_type = &crypto_ablkcipher_type,
--	.cra_init = virtio_crypto_ablkcipher_init,
--	.cra_exit = virtio_crypto_ablkcipher_exit,
--	.cra_u = {
--	   .ablkcipher = {
--			.setkey = virtio_crypto_ablkcipher_setkey,
--			.decrypt = virtio_crypto_ablkcipher_decrypt,
--			.encrypt = virtio_crypto_ablkcipher_encrypt,
--			.min_keysize = AES_MIN_KEY_SIZE,
--			.max_keysize = AES_MAX_KEY_SIZE,
--			.ivsize = AES_BLOCK_SIZE,
-+static struct virtio_crypto_algo virtio_crypto_algs[] = { {
-+	.algonum = VIRTIO_CRYPTO_CIPHER_AES_CBC,
-+	.service = VIRTIO_CRYPTO_SERVICE_CIPHER,
-+	.algo = {
-+		.cra_name = "cbc(aes)",
-+		.cra_driver_name = "virtio_crypto_aes_cbc",
-+		.cra_priority = 150,
-+		.cra_flags = CRYPTO_ALG_TYPE_ABLKCIPHER | CRYPTO_ALG_ASYNC,
-+		.cra_blocksize = AES_BLOCK_SIZE,
-+		.cra_ctxsize  = sizeof(struct virtio_crypto_ablkcipher_ctx),
-+		.cra_alignmask = 0,
-+		.cra_module = THIS_MODULE,
-+		.cra_type = &crypto_ablkcipher_type,
-+		.cra_init = virtio_crypto_ablkcipher_init,
-+		.cra_exit = virtio_crypto_ablkcipher_exit,
-+		.cra_u = {
-+			.ablkcipher = {
-+				.setkey = virtio_crypto_ablkcipher_setkey,
-+				.decrypt = virtio_crypto_ablkcipher_decrypt,
-+				.encrypt = virtio_crypto_ablkcipher_encrypt,
-+				.min_keysize = AES_MIN_KEY_SIZE,
-+				.max_keysize = AES_MAX_KEY_SIZE,
-+				.ivsize = AES_BLOCK_SIZE,
-+			},
- 		},
- 	},
- } };
- 
--int virtio_crypto_algs_register(void)
-+int virtio_crypto_algs_register(struct virtio_crypto *vcrypto)
- {
- 	int ret = 0;
-+	int i = 0;
- 
- 	mutex_lock(&algs_lock);
--	if (++virtio_crypto_active_devs != 1)
--		goto unlock;
- 
--	ret = crypto_register_algs(virtio_crypto_algs,
--			ARRAY_SIZE(virtio_crypto_algs));
--	if (ret)
--		virtio_crypto_active_devs--;
-+	for (i = 0; i < ARRAY_SIZE(virtio_crypto_algs); i++) {
-+
-+		uint32_t service = virtio_crypto_algs[i].service;
-+		uint32_t algonum = virtio_crypto_algs[i].algonum;
-+
-+		if (!virtcrypto_algo_is_supported(vcrypto, service, algonum))
-+			continue;
-+
-+		if (virtio_crypto_algs[i].active_devs == 0) {
-+			ret = crypto_register_alg(&virtio_crypto_algs[i].algo);
-+			if (ret)
-+				goto unlock;
-+		}
-+
-+		virtio_crypto_algs[i].active_devs++;
-+		dev_info(&vcrypto->vdev->dev, "Registered algo %s\n",
-+			 virtio_crypto_algs[i].algo.cra_name);
-+	}
- 
- unlock:
- 	mutex_unlock(&algs_lock);
- 	return ret;
- }
- 
--void virtio_crypto_algs_unregister(void)
-+void virtio_crypto_algs_unregister(struct virtio_crypto *vcrypto)
- {
-+	int i = 0;
-+
- 	mutex_lock(&algs_lock);
--	if (--virtio_crypto_active_devs != 0)
--		goto unlock;
- 
--	crypto_unregister_algs(virtio_crypto_algs,
--			ARRAY_SIZE(virtio_crypto_algs));
-+	for (i = 0; i < ARRAY_SIZE(virtio_crypto_algs); i++) {
-+
-+		uint32_t service = virtio_crypto_algs[i].service;
-+		uint32_t algonum = virtio_crypto_algs[i].algonum;
-+
-+		if (virtio_crypto_algs[i].active_devs == 0 ||
-+		    !virtcrypto_algo_is_supported(vcrypto, service, algonum))
-+			continue;
-+
-+		if (virtio_crypto_algs[i].active_devs == 1)
-+			crypto_unregister_alg(&virtio_crypto_algs[i].algo);
-+
-+		virtio_crypto_algs[i].active_devs--;
-+	}
- 
--unlock:
- 	mutex_unlock(&algs_lock);
- }
 diff --git a/drivers/crypto/virtio/virtio_crypto_common.h b/drivers/crypto/virtio/virtio_crypto_common.h
-index 931a3bd..63ef7f7 100644
+index 66501a5..931a3bd 100644
 --- a/drivers/crypto/virtio/virtio_crypto_common.h
 +++ b/drivers/crypto/virtio/virtio_crypto_common.h
-@@ -116,7 +116,12 @@ int virtcrypto_dev_in_use(struct virtio_crypto *vcrypto_dev);
- int virtcrypto_dev_get(struct virtio_crypto *vcrypto_dev);
- void virtcrypto_dev_put(struct virtio_crypto *vcrypto_dev);
- int virtcrypto_dev_started(struct virtio_crypto *vcrypto_dev);
--struct virtio_crypto *virtcrypto_get_dev_node(int node);
-+bool virtcrypto_algo_is_supported(struct virtio_crypto *vcrypto_dev,
-+				  uint32_t service,
-+				  uint32_t algo);
-+struct virtio_crypto *virtcrypto_get_dev_node(int node,
-+					      uint32_t service,
-+					      uint32_t algo);
- int virtcrypto_dev_start(struct virtio_crypto *vcrypto);
- void virtcrypto_dev_stop(struct virtio_crypto *vcrypto);
- int virtio_crypto_ablkcipher_crypt_req(
-@@ -136,7 +141,7 @@ static inline int virtio_crypto_get_current_node(void)
- 	return node;
- }
+@@ -55,6 +55,20 @@ struct virtio_crypto {
+ 	/* Number of queue currently used by the driver */
+ 	u32 curr_queue;
  
--int virtio_crypto_algs_register(void);
--void virtio_crypto_algs_unregister(void);
-+int virtio_crypto_algs_register(struct virtio_crypto *vcrypto);
-+void virtio_crypto_algs_unregister(struct virtio_crypto *vcrypto);
++	/*
++	 * Specifies the services mask which the device support,
++	 * see VIRTIO_CRYPTO_SERVICE_*
++	 */
++	u32 crypto_services;
++
++	/* Detailed algorithms mask */
++	u32 cipher_algo_l;
++	u32 cipher_algo_h;
++	u32 hash_algo;
++	u32 mac_algo_l;
++	u32 mac_algo_h;
++	u32 aead_algo;
++
+ 	/* Maximum length of cipher key */
+ 	u32 max_cipher_key_len;
+ 	/* Maximum length of authenticated key */
+diff --git a/drivers/crypto/virtio/virtio_crypto_core.c b/drivers/crypto/virtio/virtio_crypto_core.c
+index 8332698..8f745f2 100644
+--- a/drivers/crypto/virtio/virtio_crypto_core.c
++++ b/drivers/crypto/virtio/virtio_crypto_core.c
+@@ -303,6 +303,13 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+ 	u32 max_data_queues = 0, max_cipher_key_len = 0;
+ 	u32 max_auth_key_len = 0;
+ 	u64 max_size = 0;
++	u32 cipher_algo_l = 0;
++	u32 cipher_algo_h = 0;
++	u32 hash_algo = 0;
++	u32 mac_algo_l = 0;
++	u32 mac_algo_h = 0;
++	u32 aead_algo = 0;
++	u32 crypto_services = 0;
  
- #endif /* _VIRTIO_CRYPTO_COMMON_H */
-diff --git a/drivers/crypto/virtio/virtio_crypto_mgr.c b/drivers/crypto/virtio/virtio_crypto_mgr.c
-index a69ff71..d70de3a 100644
---- a/drivers/crypto/virtio/virtio_crypto_mgr.c
-+++ b/drivers/crypto/virtio/virtio_crypto_mgr.c
-@@ -181,14 +181,20 @@ int virtcrypto_dev_started(struct virtio_crypto *vcrypto_dev)
- /*
-  * virtcrypto_get_dev_node() - Get vcrypto_dev on the node.
-  * @node:  Node id the driver works.
-+ * @service: Crypto service that needs to be supported by the
-+ *	      dev
-+ * @algo: The algorithm number that needs to be supported by the
-+ *	  dev
-  *
-- * Function returns the virtio crypto device used fewest on the node.
-+ * Function returns the virtio crypto device used fewest on the node,
-+ * and supports the given crypto service and algorithm.
-  *
-  * To be used by virtio crypto device specific drivers.
-  *
-  * Return: pointer to vcrypto_dev or NULL if not found.
-  */
--struct virtio_crypto *virtcrypto_get_dev_node(int node)
-+struct virtio_crypto *virtcrypto_get_dev_node(int node, uint32_t service,
-+					      uint32_t algo)
- {
- 	struct virtio_crypto *vcrypto_dev = NULL, *tmp_dev;
- 	unsigned long best = ~0;
-@@ -199,7 +205,8 @@ struct virtio_crypto *virtcrypto_get_dev_node(int node)
+ 	if (!virtio_has_feature(vdev, VIRTIO_F_VERSION_1))
+ 		return -ENODEV;
+@@ -339,6 +346,20 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+ 		max_auth_key_len, &max_auth_key_len);
+ 	virtio_cread(vdev, struct virtio_crypto_config,
+ 		max_size, &max_size);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		crypto_services, &crypto_services);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		cipher_algo_l, &cipher_algo_l);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		cipher_algo_h, &cipher_algo_h);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		hash_algo, &hash_algo);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		mac_algo_l, &mac_algo_l);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		mac_algo_h, &mac_algo_h);
++	virtio_cread(vdev, struct virtio_crypto_config,
++		aead_algo, &aead_algo);
  
- 		if ((node == dev_to_node(&tmp_dev->vdev->dev) ||
- 		     dev_to_node(&tmp_dev->vdev->dev) < 0) &&
--		    virtcrypto_dev_started(tmp_dev)) {
-+		    virtcrypto_dev_started(tmp_dev) &&
-+		    virtcrypto_algo_is_supported(tmp_dev, service, algo)) {
- 			ctr = atomic_read(&tmp_dev->ref_count);
- 			if (best > ctr) {
- 				vcrypto_dev = tmp_dev;
-@@ -214,7 +221,9 @@ struct virtio_crypto *virtcrypto_get_dev_node(int node)
- 		/* Get any started device */
- 		list_for_each_entry(tmp_dev,
- 				virtcrypto_devmgr_get_head(), list) {
--			if (virtcrypto_dev_started(tmp_dev)) {
-+			if (virtcrypto_dev_started(tmp_dev) &&
-+			    virtcrypto_algo_is_supported(tmp_dev,
-+			    service, algo)) {
- 				vcrypto_dev = tmp_dev;
- 				break;
- 			}
-@@ -240,7 +249,7 @@ struct virtio_crypto *virtcrypto_get_dev_node(int node)
-  */
- int virtcrypto_dev_start(struct virtio_crypto *vcrypto)
- {
--	if (virtio_crypto_algs_register()) {
-+	if (virtio_crypto_algs_register(vcrypto)) {
- 		pr_err("virtio_crypto: Failed to register crypto algs\n");
- 		return -EFAULT;
- 	}
-@@ -260,5 +269,65 @@ int virtcrypto_dev_start(struct virtio_crypto *vcrypto)
-  */
- void virtcrypto_dev_stop(struct virtio_crypto *vcrypto)
- {
--	virtio_crypto_algs_unregister();
-+	virtio_crypto_algs_unregister(vcrypto);
-+}
+ 	/* Add virtio crypto device to global table */
+ 	err = virtcrypto_devmgr_add_dev(vcrypto);
+@@ -358,6 +379,14 @@ static int virtcrypto_probe(struct virtio_device *vdev)
+ 	vcrypto->max_cipher_key_len = max_cipher_key_len;
+ 	vcrypto->max_auth_key_len = max_auth_key_len;
+ 	vcrypto->max_size = max_size;
++	vcrypto->crypto_services = crypto_services;
++	vcrypto->cipher_algo_l = cipher_algo_l;
++	vcrypto->cipher_algo_h = cipher_algo_h;
++	vcrypto->mac_algo_l = mac_algo_l;
++	vcrypto->mac_algo_h = mac_algo_h;
++	vcrypto->hash_algo = hash_algo;
++	vcrypto->aead_algo = aead_algo;
 +
-+/*
-+ * vcrypto_algo_is_supported()
-+ * @vcrypto: Pointer to virtio crypto device.
-+ * @service: The bit number for service validate.
-+ *	      See VIRTIO_CRYPTO_SERVICE_*
-+ * @algo : The bit number for the algorithm to validate.
-+ *
-+ *
-+ * Validate if the virtio crypto device supports a service and
-+ * algo.
-+ *
-+ * Return true if device supports a service and algo.
-+ */
-+
-+bool virtcrypto_algo_is_supported(struct virtio_crypto *vcrypto,
-+				  uint32_t service,
-+				  uint32_t algo)
-+{
-+	uint32_t service_mask = 1u << service;
-+	uint32_t algo_mask = 0;
-+	bool low = true;
-+
-+	if (algo > 31) {
-+		algo -= 32;
-+		low = false;
-+	}
-+
-+	if (!(vcrypto->crypto_services & service_mask))
-+		return false;
-+
-+	switch (service) {
-+	case VIRTIO_CRYPTO_SERVICE_CIPHER:
-+		if (low)
-+			algo_mask = vcrypto->cipher_algo_l;
-+		else
-+			algo_mask = vcrypto->cipher_algo_h;
-+		break;
-+
-+	case VIRTIO_CRYPTO_SERVICE_HASH:
-+		algo_mask = vcrypto->hash_algo;
-+		break;
-+
-+	case VIRTIO_CRYPTO_SERVICE_MAC:
-+		if (low)
-+			algo_mask = vcrypto->mac_algo_l;
-+		else
-+			algo_mask = vcrypto->mac_algo_h;
-+		break;
-+
-+	case VIRTIO_CRYPTO_SERVICE_AEAD:
-+		algo_mask = vcrypto->aead_algo;
-+		break;
-+	}
-+
-+	if (!(algo_mask & (1u << algo)))
-+		return false;
-+
-+	return true;
- }
+ 
+ 	dev_info(&vdev->dev,
+ 		"max_queues: %u, max_cipher_key_len: %u, max_auth_key_len: %u, max_size 0x%llx\n",
 -- 
 2.7.4
 
