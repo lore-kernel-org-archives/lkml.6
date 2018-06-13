@@ -2,116 +2,98 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 885CFC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:39:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0EA6FC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CD16208D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:39:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB513208D6
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:42:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="reDG/uox"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CD16208D6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHJUlyT5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB513208D6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964787AbeFMRjs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:39:48 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:60114 "EHLO
-        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935352AbeFMRjq (ORCPT
+        id S935307AbeFMRl7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:41:59 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:42293 "EHLO
+        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934737AbeFMRl5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:39:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
-        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
-        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=FMwvdSdWgj9WJ/qxTnsiUl1jnZgIp2V9AAF/TZxbC/A=; b=reDG/uoxjcMcodS6YXT7iTM7MR
-        lHSDKUBqh7HRPqxkI/dLcG10TQ1Jg+ng+UIdAspzb9QQ8twf5yuvCLddqK5ZN4iCwNmQRIh/AE5cU
-        A2SPNdRUjwvu3A4cTlkjlSfClBNxcmGhuskqUdQvqHj76RFckEYFYdN2d14LlDG7TZt+qDb+uxFD3
-        XAF/ZOBG/crMp+WKeMtr2fLFOb0XxNpfvM1g0IiyxhnpoihA799fGvRXfUlid+ua+cHc+eM/OZlXL
-        9W204tcuTpjMFzHCCI3J7Bkt63DvQJgPg5RL9xtGuS/NafXt+1KGQCH28VC6BcKo+y3G1c8CzlHsE
-        B02NF1wA==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:58668 helo=localhost)
-        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
-        (envelope-from <linux@roeck-us.net>)
-        id 1fT9kH-0069bn-Mz; Wed, 13 Jun 2018 17:39:46 +0000
-Date:   Wed, 13 Jun 2018 10:39:44 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 3.18 00/21] 3.18.113-stable review
-Message-ID: <20180613173944.GA12017@roeck-us.net>
-References: <20180612164825.401145490@linuxfoundation.org>
- <bc0f332d-bb9f-35c6-18b0-8dfd282bbf1c@roeck-us.net>
- <20180613140957.GB5117@kroah.com>
- <20180613145815.GA21781@kroah.com>
+        Wed, 13 Jun 2018 13:41:57 -0400
+Received: by mail-vk0-f68.google.com with SMTP id s187-v6so2024220vke.9;
+        Wed, 13 Jun 2018 10:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Hdfke7xyHfX+4uznM6VQtOrySiq8rWl/NTKolzN4WIM=;
+        b=XHJUlyT5cMAV5qwgXQyV1PuaptE2vrhaIg1s8fzTw6Huv2h26OaXxjPLs1YUSYXVwr
+         efSuoRp4Palj4OUYPpB8l0sqNO8Ve7oqCMRC1F7F+CCj++TNubecrch/H6js3gf6LKB9
+         3Idh5/3PLiALi/9yjdojQXnaM1xMYcvkobUcNpjDfxst4cdG6Nv2CRWwpFR7v8SRk/zm
+         vM9uuJdm729Otw/LyeJrEgBXNwNR38bNGylMjnSW5IGIAriT1ESFvhbl7mKrwdMyUjlB
+         R99Qgq392fJ9rrdpNLkySEcJ6CsVDLKWyngbln4x8embYlDNB2kp2Fvt6zHDyoB6sO1F
+         Bbxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Hdfke7xyHfX+4uznM6VQtOrySiq8rWl/NTKolzN4WIM=;
+        b=tjnT3jvm5ZuKRI3HeKQ3bTF8CEuSmEKV1DpykQ1AbRhZiBEW17gA14GM8c6b5XwaKh
+         zJQyUML0xdyMUjMENF9wiOqh9kV/pNgJdQEdO0fUpg5MPXiiJtpD2kOCIg9sofSH/4My
+         lT1KNJBORHiocau18WC+SAOmsA8nHTQRxStmXaSdd1xdQUi0gPmU430T4IyHRxPUVR5S
+         YSz/76DQdq0sXSmAIamfp/yLRMJ3j43DXk7dm2F9gMa0tuhe0N12SWYYi6S1+1IRzlLj
+         IM1yCGjb88YPv5qV+7y93KHCRkAm8Jv61U8PmXuNPiGzY/AYdSxps70WCZxTKjTGIfGW
+         5BKw==
+X-Gm-Message-State: APt69E0xnYzRh3Z+JrvX5zOqM3qrjGC3N/MLDwWP5OTjqrqxSQJctnk+
+        6jIrzZVRkADaU05XA0kCuLDURmPfQysQFJC/OMM=
+X-Google-Smtp-Source: ADUXVKJktFTikfJeqzNPLqYY566tx9M/vXyokaKYNk6LNBfdSbmL4T68YuIG9OMDb99wGzwyfD8Dip29Hd1Bcb/DOEQ=
+X-Received: by 2002:a1f:ae96:: with SMTP id x144-v6mr3652647vke.52.1528911715846;
+ Wed, 13 Jun 2018 10:41:55 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613145815.GA21781@kroah.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Authenticated_sender: guenter@roeck-us.net
-X-OutGoing-Spam-Status: No, score=-1.0
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - roeck-us.net
-X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
-X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Received: by 2002:ab0:549e:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 10:41:55
+ -0700 (PDT)
+In-Reply-To: <20180612205619.28156-3-anchalag@amazon.com>
+References: <20180612205619.28156-1-anchalag@amazon.com> <20180612205619.28156-3-anchalag@amazon.com>
+From:   Balbir Singh <bsingharora@gmail.com>
+Date:   Thu, 14 Jun 2018 03:41:55 +1000
+Message-ID: <CAKTCnznqA=RcA1VWePn-Yt5AYn2-FKhXRJH8FgHjcG2Gjqc1Ow@mail.gmail.com>
+Subject: Re: [RFC PATCH 02/12] xen/manage: introduce helper function to know
+ the on-going suspend mode
+To:     Anchal Agarwal <anchalag@amazon.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
+        roger.pau@citrix.com, netdev <netdev@vger.kernel.org>,
+        jgross@suse.com, xen-devel <xen-devel@lists.xenproject.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kamatam@amazon.com, Frank van der Linden <fllinden@amazon.com>,
+        vallish@amazon.com, guruanb@amazon.com, eduval@amazon.com,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-pm@vger.kernel.org, cyberax@amazon.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 04:58:15PM +0200, Greg Kroah-Hartman wrote:
-> On Wed, Jun 13, 2018 at 04:09:57PM +0200, Greg Kroah-Hartman wrote:
-> > On Wed, Jun 13, 2018 at 06:48:05AM -0700, Guenter Roeck wrote:
-> > > On 06/12/2018 09:51 AM, Greg Kroah-Hartman wrote:
-> > > > This is the start of the stable review cycle for the 3.18.113 release.
-> > > > There are 21 patches in this series, all will be posted as a response
-> > > > to this one.  If anyone has any issues with these being applied, please
-> > > > let me know.
-> > > > 
-> > > > Responses should be made by Thu Jun 14 16:48:15 UTC 2018.
-> > > > Anything received after that time might be too late.
-> > > > 
-> > > 
-> > > Build results:
-> > > 	total: 138 pass: 136 fail: 2
-> > > Failed builds:
-> > > 	i386:tools/perf
-> > > 	x86_64:tools/perf
-> > > Qemu test results:
-> > > 	total: 127 pass: 127 fail: 0
-> > > 
-> > > The perf test only fails because I run "make tools/perf" instead of
-> > > "(cd tools/perf; make)". Fixing this requires the following two patches.
-> > > 
-> > > 379a9a28a1b4 tools build: No need to make libapi for perf explicitly
-> > > 16671c1e1cac tools build: Fix Makefile(s) to properly invoke tools build
-> > 
-> > Thanks for this, and the other 3 results.  I'll just add these commits
-> > to the next kernel as this is not a new failure.
-> 
-> I've queued these up now, but I still can't build perf for 3.18.  Given
-> that no one has reported a problem with it so far, I'm guessing that no
-> one cares, so I'll just leave it as-is for now.
-> 
-Ah, I should have waited for the test build to complete after applying the
-patches. Sorry for that. Apparently there are additional dependencies.
-(cd tools/perf; make) does work. I'll switch to use that for v3.16
-(which has the same problem) and v3.18.
+On Wed, Jun 13, 2018 at 6:56 AM, Anchal Agarwal <anchalag@amazon.com> wrote:
+> From: Munehisa Kamata <kamatam@amazon.com>
+>
+> Introduce simple functions which help to know the on-going suspend mode
+> so that other Xen-related code can behave differently according to the
+> current suspend mode.
 
-Guenter
+I'd squash this patch with the previous, the previous one just left
+too many open questions about how suspend mode is used. Looks like
+suspend mode is a state, but I am not sure if valid transitions are
+defined/checked?
+
+Balbir Singh.
