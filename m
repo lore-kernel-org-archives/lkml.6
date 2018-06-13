@@ -2,116 +2,102 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 85A55C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:17:12 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EA282C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:17:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38309208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:17:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="sOi6VEEe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38309208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id AA900208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 09:17:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA900208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935027AbeFMJRK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 05:17:10 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:45052 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934073AbeFMJRJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 05:17:09 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D9GHn7149869;
-        Wed, 13 Jun 2018 09:17:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=StjdrJxoIV5mVjXNd7KrPtGp01o53nnHPN28U4GltxY=;
- b=sOi6VEEebOQDk7do2gIrFcOgpuC+VWjTQQyrRxtboFKtDbDOcVnR6Pnw8kDzkUOBz/m7
- cFXf614RliSPIqbb1PGKKw/V0/3b0kW2A7Ay+NZ0p44fEG59gO0hnIBK3dmwbvmD3bpn
- d+wHWy3CbzUGwi9FFOHrWToKrm9KdWs7VVgbLjgAz08I+wPMAxYdbsicHwKPGhAie7jt
- IwNU5eAA3RQTtg3qGh3ItXx7QW5ZGWFZveeDKpGYRkXAk3NhdBdxVEuIM2jXGFzht2U6
- /eRrQiYHvPxgG3rqglfIqRCEDOgxtbGjWubbuKAmBAbvRWvzkWwVwtWxobsTMlWEQDvW BA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2jjp6bsjvx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 09:17:01 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5D9Gxoi023249
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 09:17:00 GMT
-Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5D9GxZA031000;
-        Wed, 13 Jun 2018 09:16:59 GMT
-Received: from mwanda (/197.157.34.169)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 13 Jun 2018 02:16:58 -0700
-Date:   Wed, 13 Jun 2018 12:16:49 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Marcus Wolf <linux@wolf-entwicklungen.de>,
-        linux-kernel@vger.kernel.org, kernelnewbies@kernelnewbies.org
-Subject: Re: [PATCH v2] staging: pi433: fix race condition in pi433_ioctl
-Message-ID: <20180613091649.r3bck3wjma6tmjet@mwanda>
-References: <20180613014741.GC2265@hle-laptop.local>
+        id S935055AbeFMJRl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 05:17:41 -0400
+Received: from foss.arm.com ([217.140.101.70]:44712 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934512AbeFMJRk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 05:17:40 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E090980D;
+        Wed, 13 Jun 2018 02:17:39 -0700 (PDT)
+Received: from [10.1.206.34] (melchizedek.cambridge.arm.com [10.1.206.34])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 894853F557;
+        Wed, 13 Jun 2018 02:17:38 -0700 (PDT)
+Subject: Re: [PATCH v3 3/3] arm64/mm: migrate swapper_pg_dir and tramp_pg_dir
+To:     Jun Yao <yaojun8558363@gmail.com>
+Cc:     linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, robin.murphy@arm.com, labbott@redhat.com,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com
+References: <20180606043921.19851-1-yaojun8558363@gmail.com>
+ <20180606043921.19851-4-yaojun8558363@gmail.com>
+From:   James Morse <james.morse@arm.com>
+Message-ID: <1ef0fd31-001d-0872-7089-70ec22bab59f@arm.com>
+Date:   Wed, 13 Jun 2018 10:17:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613014741.GC2265@hle-laptop.local>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130103
+In-Reply-To: <20180606043921.19851-4-yaojun8558363@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 09:47:41PM -0400, Hugo Lefeuvre wrote:
->  drivers/staging/pi433/pi433_if.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
-> index b061f77dda41..3ec1ed01d04b 100644
-> --- a/drivers/staging/pi433/pi433_if.c
-> +++ b/drivers/staging/pi433/pi433_if.c
-> @@ -880,6 +880,7 @@ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  	int			retval = 0;
->  	struct pi433_instance	*instance;
->  	struct pi433_device	*device;
-> +	struct pi433_tx_cfg	tx_cfg_buffer;
->  	void __user *argp = (void __user *)arg;
->  
->  	/* Check type and command number */
-> @@ -902,9 +903,15 @@ pi433_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
->  			return -EFAULT;
->  		break;
->  	case PI433_IOC_WR_TX_CFG:
-> -		if (copy_from_user(&instance->tx_cfg, argp,
-> -				   sizeof(struct pi433_tx_cfg)))
-> +		/* do not modify tx config while it is being copied to fifo */
+Hi Jun,
 
-There is no need for this comment, since it's obvious.  Also if you use
-simpler names then the copy fits on one line:
+On 06/06/18 05:39, Jun Yao wrote:
+> Migrate swapper_pg_dir and tramp_pg_dir. And their virtual addresses
+> do not correlate with kernel's address.
 
-		if (copy_from_user(&tx_cfg, argp, sizeof(tx_cfg)) {
+This is all to make 'KSMA' harder, where an single arbitrary write is used to
+add a block mapping to the page-tables, giving the attacker full access to
+physical memory.
+
+This series is pretty complicated, and would still be overcome by arbitrary-read
+of __pa_swapper_pg_dir. Any attacker already has to defeat KASLR, but I guess
+that can be done without having read-access.
 
 
-> +		mutex_lock(&device->tx_fifo_lock);
-> +		if (copy_from_user(&tx_cfg_buffer, argp,
-> +				   sizeof(struct pi433_tx_cfg))) {
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index 94056e064c6f..ba0b55158971 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -637,10 +647,29 @@ static void __init map_kernel(pgd_t *pgdp)
+>   */
+>  void __init paging_init(void)
+>  {
+> -	phys_addr_t pgd_phys = early_pgtable_alloc();
+> -	pgd_t *pgdp = pgd_set_fixmap(pgd_phys);
+> +	phys_addr_t pgd_phys;
+> +	pgd_t *pgdp;
+> +	phys_addr_t mem_size;
+>
+> -	__pa_swapper_pg_dir = __pa_symbol(swapper_pg_dir);
+> +	mem_size = __pa_symbol(swapper_pg_dir) + PAGE_SIZE
+> +			- (__pa_symbol(idmap_pg_dir) + IDMAP_DIR_SIZE);
+> +
+> +	if (mem_size == PAGE_SIZE) {
+> +		pgd_phys = early_pgtable_alloc();
 
-Sorry for the duplicate review, but it got sent to both my inboxes... :P
+This is where we migrated swapper_pg_dir to, its the first memblock_alloc()
+call, and is guaranteed to be at the top of memory. Moving this allocation later
+will still cause a predictable page to be allocated as this setup code is the
+only thing running. I don't think we are in a better position after this series.
 
-regards,
-dan carpenter
 
+Ideally we would put these pgd entries in the read-only section. We only modify
+swapper_pg_dir for vmalloc()/vmap() once its generated, which we could do
+through a fixmap entry.
+
+Like this, an attacker can find where swapper_pg_dir is, but can't write to it.
+(the tricky bit will be breaking swapper_pg_dir up, as we free parts of it)
+
+
+Thanks,
+
+James
