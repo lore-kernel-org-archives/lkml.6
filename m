@@ -5,109 +5,99 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5B05AC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:08:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 87E55C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17695208CD
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:08:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17695208CD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E560208D5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 23:21:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E560208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936070AbeFMXH5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 19:07:57 -0400
-Received: from gate.crashing.org ([63.228.1.57]:34667 "EHLO gate.crashing.org"
+        id S935839AbeFMXVq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 19:21:46 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35280 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935381AbeFMXH4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 19:07:56 -0400
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5DN7jil010846;
-        Wed, 13 Jun 2018 18:07:46 -0500
-Message-ID: <a52cd1fc35cc76ac2482a6b8f6f3f6591053235c.camel@kernel.crashing.org>
-Subject: Re: [PATCH] drivers/of: Add devm_of_iomap()
-From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Thu, 14 Jun 2018 09:07:45 +1000
-In-Reply-To: <CAL_JsqJtL0HMPxv5vMv2+LOyvyVtYusu3Ja-NikCy2RQSo7f0Q@mail.gmail.com>
-References: <23be2945b593a36d8fa1970bb579389c0f892a3e.camel@kernel.crashing.org>
-         <CAL_Jsq+dHVN+Y7xczf_Oxcn=BiJ6N9WzovRbSujgLLTYHMEh0g@mail.gmail.com>
-         <f5e71bac1bc23f96b7dae64bbdad8e2154c339aa.camel@kernel.crashing.org>
-         <CAL_JsqJtL0HMPxv5vMv2+LOyvyVtYusu3Ja-NikCy2RQSo7f0Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.1 (3.28.1-2.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S935540AbeFMXVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 19:21:45 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 171D8AC25;
+        Wed, 13 Jun 2018 23:21:44 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     James Simmons <jsimmons@infradead.org>
+Date:   Thu, 14 Jun 2018 09:21:37 +1000
+Cc:     Oleg Drokin <oleg.drokin@intel.com>,
+        Andreas Dilger <andreas.dilger@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Subject: Re: [PATCH 11/11] staging: lustre: centralize setting of subdir-ccflags-y
+In-Reply-To: <alpine.LFD.2.21.1806132237140.12664@casper.infradead.org>
+References: <152826510267.16761.14361003167157833896.stgit@noble> <152826511930.16761.12770722873423628004.stgit@noble> <alpine.LFD.2.21.1806132237140.12664@casper.infradead.org>
+Message-ID: <871sdai872.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-06-13 at 09:00 -0600, Rob Herring wrote:
-> 
-> > My thinking was to then replace most of_iomap users with this.
-> > 
-> > As for the specific case of the driver I'm cooking, it's a case where
-> > the SoC contains a little coprocessor (a ColdFire even !) alongside the
-> 
-> Wow. Must be the 1 licensee.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Haha probably :-) It was fun to play with for sure, lots of old
-memories of m68k asm coming back to the surface ;-)
+On Wed, Jun 13 2018, James Simmons wrote:
 
-> > main ARM core. I have a driver that offloads the bitbanging of some
-> > GPIOs to it (to implement the FSI bus). I use devm_of_iomap() to map
-> > the registers of the interrupt controller of the coprocessor, it's not
-> > really part of the interrupt tree, it doesn't distribute interrupts to
-> > the ARM or to Linux, it's just a device-node pointed to by a handle.
-> 
-> Accessing another processor's interrupt controller. What could go
-> wrong with that.
+>> We don't need to set subdir-ccflags-y in every Makefile.
+>> The whole point of the "subdir-" bit is that the setting
+>> can go once in the top-level Makefile.
+>>=20
+>
+> Nak: When attempting to build individual components I get:
+>
+> ~/lustre-upstream$ make SUBDIRS=3Ddrivers/staging/lustre/lustre/lmv modul=
+es=20
+> -j 16
+>
+>   WARNING: Symbol version dump ./Module.symvers
+>            is missing; modules will have no dependencies and modversions.
+>
+>   CC [M]  drivers/staging/lustre/lustre/lmv/lmv_obd.o
+>   CC [M]  drivers/staging/lustre/lustre/lmv/lmv_intent.o
+>   CC [M]  drivers/staging/lustre/lustre/lmv/lmv_fld.o
+>   CC [M]  drivers/staging/lustre/lustre/lmv/lproc_lmv.o
+> drivers/staging/lustre/lustre/lmv/lproc_lmv.c:38:28: fatal error:=20
+> lprocfs_status.h: No such file or directory
+>  #include <lprocfs_status.h>
+>                             ^
+> compilation terminated.
 
-We poke at one of the registers to trigger an IPI to the corproessor :-
-) Sadly the HW doesn't cleanly separate the registers for the
-"consumer" side (the coprocessor) from those used to poke at it by from
-ARM into different banks (though at least the "clear IPI" is a separate
-register so the coprocessor and the ARM don't race, ie, it actually
-works fine :-).
+Yes, I noticed that too.  Thanks.
+It seems to suggest that subdir-ccflags-y isn't really a useful macro.
+Maybe we should stick with cc-flags-y.  It is much more widely used.
 
-> I guess this is fine. There's another problem though. This doesn't
-> work on Sparc because address.c is not built. I'd suggest moving to
-> of/device.c or a new file.
+Thanks,
+NeilBrown
 
-Ah sure. lib/devres.c maybe, where devm_ioremap is already.
 
-> > BTW. Another thing that I find a bit annoying is "allocated" reserved-
-> > memory, there's no API to get to it other than via the DMA APIs or a
-> > CMA, which is overkill in a few circumstances (such as the one here
-> > where I just want to dedicate a bit of memory to the coprocessor).
-> > Right now I'm using a fixed reservation (with a reg property) and go to
-> > it "manually" but that somewhat sucks.
-> 
-> But that's not really a DT problem.
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Correct. At the moment I just use a fixed DT reserved entry and go
-directly for it's "reg" property (well, via of_address_to_resource) but
-that's not very nice. It would be better if I could have linux
-"allocate" the space for me but then just give me an API to find it
-without going via a CMA or some DMA ops.
+-----BEGIN PGP SIGNATURE-----
 
->  It's a kernel problem if you can't
-> reserve a contiguous range of unmapped pages. But why not just get
-> coherent allocation and ignore that it is mapped. That seems better to
-> me than working around it in DT.
-
-The kernel won't get me a 1M (or 2M on the AST2400) aligned allocation
-successfully at runtime. So a reserve entry is the way to go here
-(though being mapped or not is not a big deal, I can just flush the
-cache after loading the ucode into it).
-
-Basically, I want one of the "allocated" reserved-memory entry but I
-don't want to bother with a CMA or a shared DMA pool for it, which are
-both completely overkill for what I need. (Also the code is hard to
-follow :-)
-
-Cheers,
-Ben.
-
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlshpwEACgkQOeye3VZi
+gbmu4A/9EHPDQ9enTDzDYgcKpvfVoptN7WvI2IBTV1Yvtyxa5w244sJMrIzOIAN6
+mq1/RexZ7TCDqE5q6R7Z+ylI4++3vIbQ2aZeHzB5eAzRzgdi6Ba4g2wtRFSMaOgq
+NB+AcoCfru0KRUziocsqvVKc9EJvfmmgpgX3iWwq8VQ5ZTr7C8nnz7gLhk8KI3Eb
+1aQhc6REdkRdNzFXqt1SNUv2O0TKYhVN9C2rQI08xXPboRJm3AFJj6WUPkYnCo9w
+cqJZUPM6Z3fwewHTq8SSg9cJvVNdu37JbKP6msS9z/jzdSn+wgzG9L4wAntTd5ev
+3FRs6EkCV+fQ98kL5iLzYkhRnAOAbasOL8hEmPTml4FDteiZpSKoghBIbBA4PLGq
+1jhgQyKVdCNmlWq/QkyTCmFMkf+GmOm3yIYCdFukNorKnND46X65hlU26ikQaXEP
+TvvM7ugR9Fh1XMzl89HSlyJ0/WGOn2UzOE3zsyaxVvIlXibmVxNNkQvwN7TUnJEK
+9RAC72XUtcCE8LRzkb6UaJAweFOtQLwF4EG2a67z7c1vcS9zIv/ePTJibmopDvli
+SlrOH+UyGObdnBL4Bmig+uywBsavcCjYjCp3BfggMcF76mbEGtrWrF0wrfovO2hv
+0ScqQroz2PjP7oJHmplAdjFY9ICpBNgXrgP1JZWBR9EOzFzQsIo=
+=vgTl
+-----END PGP SIGNATURE-----
+--=-=-=--
