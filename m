@@ -2,122 +2,114 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5BD05C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:28:03 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EAEFCC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:28:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39E42208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:27:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E42208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id A0BA320020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:28:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6OA9fZS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0BA320020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935822AbeFMO1q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:27:46 -0400
-Received: from verein.lst.de ([213.95.11.211]:41275 "EHLO newverein.lst.de"
+        id S935838AbeFMO2M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:28:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935560AbeFMO1p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:27:45 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 6840168DBC; Wed, 13 Jun 2018 16:35:58 +0200 (CEST)
-Date:   Wed, 13 Jun 2018 16:35:58 +0200
-From:   "hch@lst.de" <hch@lst.de>
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>,
-        "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
-        4.17.0-x64-08428-g7d3bf613e99a
-Message-ID: <20180613143558.GA1163@lst.de>
-References: <201806091606.51078.randrianasulu@gmail.com> <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org> <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com> <5ca74fb7-af70-31c3-0e3f-bace058e5a57@oracle.com> <20180613140411.GA32701@lst.de> <09e8bd7605febd091679172d68ca1e9ca3990c91.camel@wdc.com>
+        id S935692AbeFMO2K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:28:10 -0400
+Received: from mail-yw0-f182.google.com (mail-yw0-f182.google.com [209.85.161.182])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D3980208B2;
+        Wed, 13 Jun 2018 14:28:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528900090;
+        bh=uqy+vrAkFXplNRPqoWvQLEAqiq5xO96171wdQZxpOhQ=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=s6OA9fZSnUzuI4fpbcyK1JXGvw6Rl1UvA66qemvNTu+CrtlAwQLJl5K7/P+8DjSB5
+         73Tfe377WHGtL6QorjzOZh8VJy4dW69P4Eq3v3h/r8vlAtH4D9TmXXSiPphuanQ8IM
+         lafosyusYGIkTVZ4ijijTJEhUzQd/pie4YyvzMGk=
+Received: by mail-yw0-f182.google.com with SMTP id p129-v6so940333ywg.7;
+        Wed, 13 Jun 2018 07:28:09 -0700 (PDT)
+X-Gm-Message-State: APt69E0RcjFiCNchhV6Noj7I2+ESM+aM5CJuQP2mwFM6elr4w4tK1ruC
+        Fu/x+q2GicDjIeUZ7lgyITriG1wO9Y8ObcWyc90=
+X-Google-Smtp-Source: ADUXVKL+IUPhxx8cpkFtT35Tvet3hgFHVl1KL99cvEzlRzwo5Uj3oQxbgCrCYpImuc/nhRfDV5/3Z0LWCzoMFgydEaE=
+X-Received: by 2002:a81:ed0e:: with SMTP id k14-v6mr2457183ywm.196.1528900089083;
+ Wed, 13 Jun 2018 07:28:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09e8bd7605febd091679172d68ca1e9ca3990c91.camel@wdc.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Received: by 2002:a5b:b87:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 07:27:28 -0700 (PDT)
+In-Reply-To: <CAAtXAHdF_AEcohGW=yoUgoe1OWcxLeCYgp2u3pjsmUn=-z-_bg@mail.gmail.com>
+References: <20180611172049.26630-1-christophe.jaillet@wanadoo.fr> <CAAtXAHdF_AEcohGW=yoUgoe1OWcxLeCYgp2u3pjsmUn=-z-_bg@mail.gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Wed, 13 Jun 2018 09:27:28 -0500
+X-Gmail-Original-Message-ID: <CANk1AXTWfgaJJvni3e8t9ViOs0GccV=zkc1kX-Yi4jhSwWneVQ@mail.gmail.com>
+Message-ID: <CANk1AXTWfgaJJvni3e8t9ViOs0GccV=zkc1kX-Yi4jhSwWneVQ@mail.gmail.com>
+Subject: Re: [PATCH] fpga: altera-cvp: Fix an error handling path in 'altera_cvp_probe()'
+To:     Moritz Fischer <moritz.fischer@ettus.com>
+Cc:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fpga@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 02:08:12PM +0000, Bart Van Assche wrote:
-> __blk_mq_complete_request() is already called today by blk_mq_complete_request().
-> However, it's not clear to me why that function is exported by Jianchao's patch.
+On Wed, Jun 13, 2018 at 7:42 AM, Moritz Fischer
+<moritz.fischer@ettus.com> wrote:
+> Hi Christophe,
+>
+> good catch!
 
-True.  I had missed that the patch also started calling the new
-mark_rq_complete function from the error handler.
+Yes, thanks!
 
-> The SCSI error handler already waits until all pending requests have finished
-> before it starts handling timed out commands. This e-mail thread started with a
-> report of a crash in the SCSI error handler, which is a regression introduced in
-> the v4.18 merge window.
+>
+> On Mon, Jun 11, 2018 at 12:20 PM, Christophe JAILLET
+> <christophe.jaillet@wanadoo.fr> wrote:
+>> If 'fpga_mgr_create()' fails, we should release some resources, as done
+>> in the other error handling path of the function.
+>>
+>> Fixes: 7085e2a94f7d ("fpga: manager: change api, don't use drvdata")
+>> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Moritz Fischer <mdf@kernel.org>
+Acked-by: Alan Tull <atull@kernel.org>
 
-ut-requests-again-that-are-in-the.patch
-Yeah.  I've read back a bit.  If your theory of a double invocation of
-the timeout handler is correct something like the patch below should sort
-it out, right?
-
----
-From d408928360f087c0ad24e31d1d25533c698b8b35 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Wed, 13 Jun 2018 16:25:40 +0200
-Subject: blk-mq: don't time out requests again that are in the timeout handler
-
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/blk-mq.c         | 4 ++++
- include/linux/blkdev.h | 2 ++
- 2 files changed, 6 insertions(+)
-
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index e9da5e6a8526..8a2895fed078 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -770,6 +770,7 @@ EXPORT_SYMBOL(blk_mq_tag_to_rq);
- 
- static void blk_mq_rq_timed_out(struct request *req, bool reserved)
- {
-+	req->rq_flags |= RQF_TIMED_OUT;
- 	if (req->q->mq_ops->timeout) {
- 		enum blk_eh_timer_return ret;
- 
-@@ -779,6 +780,7 @@ static void blk_mq_rq_timed_out(struct request *req, bool reserved)
- 		WARN_ON_ONCE(ret != BLK_EH_RESET_TIMER);
- 	}
- 
-+	req->rq_flags &= ~RQF_TIMED_OUT;
- 	blk_add_timer(req);
- }
- 
-@@ -788,6 +790,8 @@ static bool blk_mq_req_expired(struct request *rq, unsigned long *next)
- 
- 	if (blk_mq_rq_state(rq) != MQ_RQ_IN_FLIGHT)
- 		return false;
-+	if (rq->rq_flags & RQF_TIMED_OUT)
-+		return false;
- 
- 	deadline = blk_rq_deadline(rq);
- 	if (time_after_eq(jiffies, deadline))
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index bca3a92eb55f..fa6f11751430 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -127,6 +127,8 @@ typedef __u32 __bitwise req_flags_t;
- #define RQF_ZONE_WRITE_LOCKED	((__force req_flags_t)(1 << 19))
- /* already slept for hybrid poll */
- #define RQF_MQ_POLL_SLEPT	((__force req_flags_t)(1 << 20))
-+/* ->timeout has been called, don't expire again */
-+#define RQF_TIMED_OUT		((__force req_flags_t)(1 << 21))
- 
- /* flags that prevent us from merging requests: */
- #define RQF_NOMERGE_FLAGS \
--- 
-2.17.1
-
+>> ---
+>>  drivers/fpga/altera-cvp.c | 6 ++++--
+>>  1 file changed, 4 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+>> index dd4edd8f22ce..7fa793672a7a 100644
+>> --- a/drivers/fpga/altera-cvp.c
+>> +++ b/drivers/fpga/altera-cvp.c
+>> @@ -455,8 +455,10 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+>>
+>>         mgr = fpga_mgr_create(&pdev->dev, conf->mgr_name,
+>>                               &altera_cvp_ops, conf);
+>> -       if (!mgr)
+>> -               return -ENOMEM;
+>> +       if (!mgr) {
+>> +               ret = -ENOMEM;
+>> +               goto err_unmap;
+>> +       }
+>>
+>>         pci_set_drvdata(pdev, mgr);
+>>
+>> --
+>> 2.17.0
+>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+>> the body of a message to majordomo@vger.kernel.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+> Thanks,
+>
+> Moritz
