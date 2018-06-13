@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D5C5BC07D5C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 907A7C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 899DC2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 899DC2086D
+	by mail.kernel.org (Postfix) with ESMTP id 3C567208CD
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:01:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C567208CD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935053AbeFMBBg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:01:36 -0400
-Received: from mga14.intel.com ([192.55.52.115]:64685 "EHLO mga14.intel.com"
+        id S935082AbeFMBBl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:01:41 -0400
+Received: from mga14.intel.com ([192.55.52.115]:64691 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754416AbeFMBBe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:01:34 -0400
+        id S935046AbeFMBBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 12 Jun 2018 21:01:37 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:31 -0700
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Jun 2018 18:01:33 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,216,1526367600"; 
-   d="scan'208";a="47283461"
+   d="scan'208";a="47283489"
 Received: from voyager.sc.intel.com ([10.3.52.149])
-  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:30 -0700
+  by fmsmga008.fm.intel.com with ESMTP; 12 Jun 2018 18:01:33 -0700
 From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 To:     Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
@@ -41,19 +41,15 @@ Cc:     Andi Kleen <andi.kleen@intel.com>, Ashok Raj <ashok.raj@intel.com>,
         linux-kernel@vger.kernel.org,
         Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
         Jacob Pan <jacob.jun.pan@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Doug Berger <opendmb@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
+        Clemens Ladisch <clemens@ladisch.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         iommu@lists.linux-foundation.org
-Subject: [RFC PATCH 03/23] genirq: Introduce IRQF_DELIVER_AS_NMI
-Date:   Tue, 12 Jun 2018 17:57:23 -0700
-Message-Id: <1528851463-21140-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
+Subject: [RFC PATCH 11/23] x86/hpet: Configure the timer used by the hardlockup detector
+Date:   Tue, 12 Jun 2018 17:57:31 -0700
+Message-Id: <1528851463-21140-12-git-send-email-ricardo.neri-calderon@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
 References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
@@ -62,138 +58,213 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Certain interrupt controllers (such as APIC) are capable of delivering
-interrupts as non-maskable. Likewise, drivers or subsystems (e.g., the
-hardlockup detector) might be interested in requesting a non-maskable
-interrupt. The new flag IRQF_DELIVER_AS_NMI serves this purpose.
+Implement the initial configuration of the timer to be used by the
+hardlockup detector. The main focus of this configuration is to provide an
+interrupt for the timer.
 
-When setting up an interrupt, non-maskable delivery will be set in the
-interrupt state data only if supported by the underlying interrupt
-controller chips.
+Two types of interrupt can be assigned to the timer. First, attempt to
+assign a message-signaled interrupt. This implies creating the HPET MSI
+domain; only if it was not created when HPET timers are used for event
+timers. The data structures needed to allocate the MSI interrupt in the
+domain are also created.
 
-Interrupt controller chips can declare that they support non-maskable
-delivery by using the new flag IRQCHIP_CAN_DELIVER_AS_NMI.
+If message-signaled interrupts cannot be used, assign a legacy IO APIC
+interrupt via the ACPI Global System Interrupts.
+
+The resulting interrupt configuration, along with the timer instance, and
+frequency are then made available to the hardlockup detector in a struct
+via the new function hpet_hardlockup_detector_assign_timer().
 
 Cc: Ashok Raj <ashok.raj@intel.com>
 Cc: Andi Kleen <andi.kleen@intel.com>
 Cc: Tony Luck <tony.luck@intel.com>
 Cc: Borislav Petkov <bp@suse.de>
 Cc: Jacob Pan <jacob.jun.pan@intel.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>
-Cc: Randy Dunlap <rdunlap@infradead.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Doug Berger <opendmb@gmail.com>
-Cc: Palmer Dabbelt <palmer@sifive.com>
+Cc: Clemens Ladisch <clemens@ladisch.de>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
 Cc: "Ravi V. Shankar" <ravi.v.shankar@intel.com>
 Cc: x86@kernel.org
 Cc: iommu@lists.linux-foundation.org
 Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
 ---
- include/linux/interrupt.h |  3 +++
- include/linux/irq.h       |  3 +++
- kernel/irq/manage.c       | 22 +++++++++++++++++++++-
- 3 files changed, 27 insertions(+), 1 deletion(-)
+ arch/x86/include/asm/hpet.h |  16 +++++++
+ arch/x86/kernel/hpet.c      | 112 +++++++++++++++++++++++++++++++++++++++++++-
+ 2 files changed, 127 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 5426627..dbc5e02 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -61,6 +61,8 @@
-  *                interrupt handler after suspending interrupts. For system
-  *                wakeup devices users need to implement wakeup detection in
-  *                their interrupt handlers.
-+ * IRQF_DELIVER_AS_NMI - Configure interrupt to be delivered as non-maskable, if
-+ *                supported by the chip.
-  */
- #define IRQF_SHARED		0x00000080
- #define IRQF_PROBE_SHARED	0x00000100
-@@ -74,6 +76,7 @@
- #define IRQF_NO_THREAD		0x00010000
- #define IRQF_EARLY_RESUME	0x00020000
- #define IRQF_COND_SUSPEND	0x00040000
-+#define IRQF_DELIVER_AS_NMI	0x00080000
+diff --git a/arch/x86/include/asm/hpet.h b/arch/x86/include/asm/hpet.h
+index 9fd112a..33309b7 100644
+--- a/arch/x86/include/asm/hpet.h
++++ b/arch/x86/include/asm/hpet.h
+@@ -118,6 +118,22 @@ extern void hpet_unregister_irq_handler(rtc_irq_handler handler);
  
- #define IRQF_TIMER		(__IRQF_TIMER | IRQF_NO_SUSPEND | IRQF_NO_THREAD)
+ #endif /* CONFIG_HPET_EMULATE_RTC */
  
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 7271a2c..d2520ae 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -515,6 +515,8 @@ struct irq_chip {
-  * IRQCHIP_SKIP_SET_WAKE:	Skip chip.irq_set_wake(), for this irq chip
-  * IRQCHIP_ONESHOT_SAFE:	One shot does not require mask/unmask
-  * IRQCHIP_EOI_THREADED:	Chip requires eoi() on unmask in threaded mode
-+ * IRQCHIP_CAN_DELIVER_AS_NMI	Chip can deliver interrupts it receives as non-
-+ *				maskable.
-  */
- enum {
- 	IRQCHIP_SET_TYPE_MASKED		= (1 <<  0),
-@@ -524,6 +526,7 @@ enum {
- 	IRQCHIP_SKIP_SET_WAKE		= (1 <<  4),
- 	IRQCHIP_ONESHOT_SAFE		= (1 <<  5),
- 	IRQCHIP_EOI_THREADED		= (1 <<  6),
-+	IRQCHIP_CAN_DELIVER_AS_NMI	= (1 <<  7),
- };
++#ifdef CONFIG_HARDLOCKUP_DETECTOR_HPET
++struct hpet_hld_data {
++	u32		num;
++	u32		irq;
++	u32		flags;
++	u64		ticks_per_second;
++};
++
++extern struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void);
++#else
++static inline struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
++{
++	return NULL;
++}
++#endif /* CONFIG_HARDLOCKUP_DETECTOR_HPET */
++
+ #else /* CONFIG_HPET_TIMER */
  
- #include <linux/irqdesc.h>
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index e3336d9..d058aa8 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1137,7 +1137,7 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- {
- 	struct irqaction *old, **old_ptr;
- 	unsigned long flags, thread_mask = 0;
--	int ret, nested, shared = 0;
-+	int ret, nested, shared = 0, deliver_as_nmi = 0;
+ static inline int hpet_enable(void) { return 0; }
+diff --git a/arch/x86/kernel/hpet.c b/arch/x86/kernel/hpet.c
+index 99d4972..fda6e19 100644
+--- a/arch/x86/kernel/hpet.c
++++ b/arch/x86/kernel/hpet.c
+@@ -5,6 +5,7 @@
+ #include <linux/delay.h>
+ #include <linux/errno.h>
+ #include <linux/i8253.h>
++#include <linux/acpi.h>
+ #include <linux/slab.h>
+ #include <linux/hpet.h>
+ #include <linux/init.h>
+@@ -36,6 +37,7 @@ bool					hpet_msi_disable;
  
- 	if (!desc)
- 		return -EINVAL;
-@@ -1156,6 +1156,16 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 	if (!(new->flags & IRQF_TRIGGER_MASK))
- 		new->flags |= irqd_get_trigger_type(&desc->irq_data);
+ #ifdef CONFIG_PCI_MSI
+ static unsigned int			hpet_num_timers;
++static struct irq_domain		*hpet_domain;
+ #endif
+ static void __iomem			*hpet_virt_address;
  
-+	/* Only deliver as non-maskable interrupt if supported by chip. */
-+	if (new->flags & IRQF_DELIVER_AS_NMI) {
-+		if (desc->irq_data.chip->flags & IRQCHIP_CAN_DELIVER_AS_NMI) {
-+			irqd_set_deliver_as_nmi(&desc->irq_data);
-+			deliver_as_nmi = 1;
-+		} else {
-+			return -EINVAL;
+@@ -177,6 +179,115 @@ do {								\
+ 		_hpet_print_config(__func__, __LINE__);	\
+ } while (0)
+ 
++#ifdef CONFIG_HARDLOCKUP_DETECTOR_HPET
++static
++int hpet_hardlockup_detector_assign_legacy_irq(struct hpet_hld_data *hdata)
++{
++	unsigned long v;
++	int gsi, hwirq;
++
++	/* Obtain interrupt pins that can be used by this timer. */
++	v = hpet_readq(HPET_Tn_CFG(HPET_WD_TIMER_NR));
++	v = (v & Tn_INT_ROUTE_CAP_MASK) >> Tn_INT_ROUTE_CAP_SHIFT;
++
++	/*
++	 * In PIC mode, skip IRQ0-4, IRQ6-9, IRQ12-15 which is always used by
++	 * legacy device. In IO APIC mode, we skip all the legacy IRQS.
++	 */
++	if (acpi_irq_model == ACPI_IRQ_MODEL_PIC)
++		v &= ~0xf3df;
++	else
++		v &= ~0xffff;
++
++	for_each_set_bit(hwirq, &v, HPET_MAX_IRQ) {
++		if (hwirq >= NR_IRQS) {
++			hwirq = HPET_MAX_IRQ;
++			break;
 +		}
++
++		gsi = acpi_register_gsi(NULL, hwirq, ACPI_LEVEL_SENSITIVE,
++					ACPI_ACTIVE_LOW);
++		if (gsi > 0)
++			break;
 +	}
 +
- 	/*
- 	 * Check whether the interrupt nests into another interrupt
- 	 * thread.
-@@ -1166,6 +1176,13 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 			ret = -EINVAL;
- 			goto out_mput;
- 		}
++	if (hwirq >= HPET_MAX_IRQ)
++		return -ENODEV;
 +
-+		/* Don't allow nesting if interrupt will be delivered as NMI. */
-+		if (deliver_as_nmi) {
-+			ret = -EINVAL;
-+			goto out_mput;
-+		}
++	hdata->irq = hwirq;
++	return 0;
++}
 +
- 		/*
- 		 * Replace the primary handler which was provided from
- 		 * the driver for non nested interrupt handling by the
-@@ -1186,6 +1203,9 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 	 * thread.
- 	 */
- 	if (new->thread_fn && !nested) {
-+		if (deliver_as_nmi)
-+			goto out_mput;
++static int hpet_hardlockup_detector_assign_msi_irq(struct hpet_hld_data *hdata)
++{
++	struct hpet_dev *hdev;
++	int hwirq;
 +
- 		ret = setup_irq_thread(new, irq, false);
- 		if (ret)
- 			goto out_mput;
++	if (hpet_msi_disable)
++		return -ENODEV;
++
++	hdev = kzalloc(sizeof(*hdev), GFP_KERNEL);
++	if (!hdev)
++		return -ENOMEM;
++
++	hdev->flags |= HPET_DEV_FSB_CAP;
++	hdev->num = hdata->num;
++	sprintf(hdev->name, "hpet_hld");
++
++	/* Domain may exist if CPU does not have Always-Running APIC Timers. */
++	if (!hpet_domain) {
++		hpet_domain = hpet_create_irq_domain(hpet_blockid);
++		if (!hpet_domain)
++			return -EPERM;
++	}
++
++	hwirq = hpet_assign_irq(hpet_domain, hdev, hdev->num);
++	if (hwirq <= 0) {
++		kfree(hdev);
++		return -ENODEV;
++	}
++
++	hdata->irq = hwirq;
++	hdata->flags |= HPET_DEV_FSB_CAP;
++
++	hdev->irq = hwirq;
++
++	return 0;
++}
++
++struct hpet_hld_data *hpet_hardlockup_detector_assign_timer(void)
++{
++	struct hpet_hld_data *hdata;
++	int ret = -ENODEV;
++	unsigned int cfg;
++
++	hdata = kzalloc(sizeof(*hdata), GFP_KERNEL);
++	if (!hdata)
++		return NULL;
++
++	hdata->num = HPET_WD_TIMER_NR;
++
++	cfg = hpet_readl(HPET_Tn_CFG(HPET_WD_TIMER_NR));
++
++	hdata->ticks_per_second = hpet_get_ticks_per_sec(hpet_readq(HPET_ID));
++
++	/* Try first an MSI interrupt or fallback to IO APIC. */
++	if (cfg & HPET_TN_FSB_CAP)
++		ret = hpet_hardlockup_detector_assign_msi_irq(hdata);
++
++	if (!ret)
++		return hdata;
++
++	ret = hpet_hardlockup_detector_assign_legacy_irq(hdata);
++	if (ret) {
++		kfree(hdata);
++		return NULL;
++	}
++
++	return hdata;
++}
++#endif /* CONFIG_HARDLOCKUP_DETECTOR_HPET */
++
+ /*
+  * When the hpet driver (/dev/hpet) is enabled, we need to reserve
+  * timer 0 and timer 1 in case of RTC emulation. Timer 2 is reserved in case
+@@ -450,7 +561,6 @@ static struct clock_event_device hpet_clockevent = {
+ 
+ static DEFINE_PER_CPU(struct hpet_dev *, cpu_hpet_dev);
+ static struct hpet_dev	*hpet_devs;
+-static struct irq_domain *hpet_domain;
+ 
+ void hpet_msi_unmask(struct irq_data *data)
+ {
 -- 
 2.7.4
 
