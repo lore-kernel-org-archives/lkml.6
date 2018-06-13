@@ -5,151 +5,110 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 40147C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:35:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E5E59C433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB960208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:35:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB960208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A588C2086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:36:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A588C2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754537AbeFMQfv (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:35:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60472 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754096AbeFMQfu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:35:50 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C804440704A2;
-        Wed, 13 Jun 2018 16:35:49 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 710AE1C665;
-        Wed, 13 Jun 2018 16:35:47 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5DGZllR002093;
-        Wed, 13 Jun 2018 12:35:47 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5DGZlEv002089;
-        Wed, 13 Jun 2018 12:35:47 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Wed, 13 Jun 2018 12:35:47 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Alan Stern <stern@rowland.harvard.edu>
-cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ming Lei <ming.lei@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: don't offload isochronous urb completions to
- ksoftirq
-In-Reply-To: <Pine.LNX.4.44L0.1806131010060.1476-100000@iolanthe.rowland.org>
-Message-ID: <alpine.LRH.2.02.1806131104570.16525@file01.intranet.prod.int.rdu2.redhat.com>
-References: <Pine.LNX.4.44L0.1806131010060.1476-100000@iolanthe.rowland.org>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        id S935072AbeFMQgL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:36:11 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:1552 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934598AbeFMQgI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 12:36:08 -0400
+X-IronPort-AV: E=Sophos;i="5.51,219,1526367600"; 
+   d="scan'208";a="15910915"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Jun 2018 09:36:08 -0700
+Received: from m19893.microchip.com (10.10.76.4) by
+ chn-sv-exch07.mchp-main.com (10.10.76.108) with Microsoft SMTP Server id
+ 14.3.352.0; Wed, 13 Jun 2018 09:36:07 -0700
+From:   Radu Pirea <radu.pirea@microchip.com>
+To:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
+        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>
+CC:     <linux-spi@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>,
+        Radu Pirea <radu.pirea@microchip.com>
+Subject: [PATCH v7 0/6] Driver for at91 usart in spi mode
+Date:   Wed, 13 Jun 2018 19:36:15 +0300
+Message-ID: <20180613163621.23995-1-radu.pirea@microchip.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 13 Jun 2018 16:35:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Wed, 13 Jun 2018 16:35:49 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hello,
 
+This is the second version of driver. I added a mfd driver which by
+default probes atmel_serial driver and if in dt is specified to probe
+the spi driver, then the spi-at91-usart driver will be probed. The
+compatible for atmel_serial is now the compatible for at91-usart mfd
+driver and compatilbe for atmel_serial driver was changed in order to
+keep the bindings for serial as they are.
 
-On Wed, 13 Jun 2018, Alan Stern wrote:
+Changes in v7:
+- synced up  SPDIX license with module license
+- numbering of usart modes starts from 0 insteand of 1
 
-> On Wed, 13 Jun 2018, Mikulas Patocka wrote:
-> 
-> [Skipping lots of material...]
-> 
-> > BTW I found this piece of code in sound/usb/usx2y/usbusx2yaudio.c:
-> >                         urb->transfer_buffer_length = subs->maxpacksize * nr_of_packs();
-> >                         if ((err = usb_submit_urb(urb, GFP_ATOMIC)) < 0) {
-> >                                 snd_printk (KERN_ERR "cannot submit datapipe for urb %d, err = %d\n", i, err);
-> >                                 err = -EPIPE;
-> >                                 goto cleanup;
-> >                         } else
-> >                                 if (i == 0)
-> >                                         usX2Y->wait_iso_frame = urb->start_frame;
-> >                         urb->transfer_flags = 0;
-> > It seems like a bug to modify transfer_flags after the urb is submitted.
-> 
-> Yes, it is definitely a bug.
-> 
-> > I have a single-core machine with usb2 soundcard. When I increase mplayer
-> > priority (to real-time or high non-realtime priority), the sound is
-> > stuttering. The reason for the stuttering is that mplayer at high priority
-> > preempts the softirq thread, preventing URBs from being completed. It was
-> > caused by the patch 428aac8a81058 that offloads URB completion to softirq.
-> > --- linux-4.17.orig/drivers/usb/host/ehci-q.c	2018-06-12 22:35:21.000000000 +0200
-> > +++ linux-4.17/drivers/usb/host/ehci-q.c	2018-06-12 22:44:09.000000000 +0200
-> > @@ -238,6 +238,8 @@ static int qtd_copy_status (
-> >  
-> >  static void
-> >  ehci_urb_done(struct ehci_hcd *ehci, struct urb *urb, int status)
-> > +__releases(ehci->lock)
-> > +__acquires(ehci->lock)
-> >  {
-> >  	if (usb_pipetype(urb->pipe) == PIPE_INTERRUPT) {
-> >  		/* ... update hc-wide periodic stats */
-> > @@ -264,7 +266,17 @@ ehci_urb_done(struct ehci_hcd *ehci, str
-> >  #endif
-> >  
-> >  	usb_hcd_unlink_urb_from_ep(ehci_to_hcd(ehci), urb);
-> > -	usb_hcd_giveback_urb(ehci_to_hcd(ehci), urb, status);
-> > +	if (urb->transfer_flags & URB_FAST_COMPLETION) {
-> > +		/*
-> > +		 * USB audio experiences skipping of we offload completion
-> > +		 * to ksoftirq.
-> > +		 */
-> 
-> This comment seems unnecessary.
-> 
-> > +		spin_unlock(&ehci->lock);
-> > +		usb_hcd_giveback_urb(ehci_to_hcd(ehci), urb, status);
-> > +		spin_lock(&ehci->lock);
-> > +	} else {
-> > +		usb_hcd_giveback_urb(ehci_to_hcd(ehci), urb, status);
-> > +	}
-> >  }
-> 
-> I'm not at all sure about this.  Have you audited all of ehci-hcd to 
-> make sure the driver doesn't assume that ehci->lock remains held while 
-> an URB is given back?  It's been so long since I worked on this area 
-> that I don't remember the answer offhand.
-> 
-> Alan Stern
+Changes in v6:
+- removed unused compatible strings from serial and spi drivers
 
-I compared the current ehci code the code in the kernel 3.11 (that was the 
-last kernel that didn't offload callbacks) and it is very similar. So, we 
-can assume that if it was ok in the kernel 3.11, it is ok now.
+Changes in v5:
+- fixed usage of stdout-path property with atmel_serial driver
 
-itd_complete and sitd_complete are the same except for small formatting 
-changes.
+Changes in v4:
+- modified the spi driver to use cs gpio support form spi subsystem
+- fixed dma transfers for serial driver
+- squashed binding for spi and serial and moved them to mfd/atmel-usart.txt
 
-itd_submit and sitd_submit newly call ehci_urb_done, but it drops the 
-spinlock after the call, therefore it tolerates that ehci_urb_done drops 
-the spinlock.
+Changes in v3:
+- fixed spi slaves probing
 
-qh_completions is almost the same in the kernel 3.11 and upstream, so if 
-it tolerated dropped spinlock and resubmission in 3.11, it should tolerate 
-it now.
+Changes in v2:
+- added at91-usart mfd driver
+- modified spi-at91-usart driver to work as mfd driver child
+- modified atmel_serial driver to work as mfd driver child
 
+Changes in v1:
+- added spi-at91-usart driver
 
-BTW - if you think that dropping the spinlock could cause trouble - should 
-we add the urbs to temporary list and call the callbacks just after the 
-spinlock is dropped? But that would just add a lot of junk code to the 
-ehci driver.
+Radu Pirea (6):
+  MAINTAINERS: add at91 usart mfd driver
+  dt-bindings: add binding for atmel-usart in SPI mode
+  mfd: at91-usart: added mfd driver for usart
+  MAINTAINERS: add at91 usart spi driver
+  spi: at91-usart: add driver for at91-usart as spi
+  tty/serial: atmel: change the driver to work under at91-usart mfd
 
-Another possibility is to hack the softirq subsystem so that tasklet_hi is 
-never offloaded - but I don't know if it makes sense to make this change 
-jsut because of ehci.
+ .../bindings/{serial => mfd}/atmel-usart.txt  |  25 +-
+ MAINTAINERS                                   |  16 +
+ drivers/mfd/Kconfig                           |   9 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/at91-usart.c                      |  69 +++
+ drivers/spi/Kconfig                           |   9 +
+ drivers/spi/Makefile                          |   1 +
+ drivers/spi/spi-at91-usart.c                  | 434 ++++++++++++++++++
+ drivers/tty/serial/Kconfig                    |   1 +
+ drivers/tty/serial/atmel_serial.c             |  42 +-
+ include/dt-bindings/mfd/at91-usart.h          |  17 +
+ 11 files changed, 607 insertions(+), 17 deletions(-)
+ rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
+ create mode 100644 drivers/mfd/at91-usart.c
+ create mode 100644 drivers/spi/spi-at91-usart.c
+ create mode 100644 include/dt-bindings/mfd/at91-usart.h
 
-Mikulas
+-- 
+2.17.1
+
