@@ -1,397 +1,143 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1C5BEC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:08:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0C099C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F0A208B0
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:08:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9F0A208B0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A9CEC208B0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:08:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="dBrSfkJD";
+	dkim=pass (1024-bit key) header.d=sharedspace.onmicrosoft.com header.i=@sharedspace.onmicrosoft.com header.b="gk/LtK31"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9CEC208B0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wdc.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935873AbeFMOIT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:08:19 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:52420 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935813AbeFMOHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:07:22 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 86C0920A5C; Wed, 13 Jun 2018 16:07:20 +0200 (CEST)
-Received: from localhost (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 274DE20A44;
-        Wed, 13 Jun 2018 16:07:19 +0200 (CEST)
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     hans.verkuil@cisco.com, acourbot@chromium.org,
-        sakari.ailus@linux.intel.com,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc:     tfiga@chromium.org, posciak@chromium.org,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Subject: [PATCH 1/9] CHROMIUM: v4l: Add H264 low-level decoder API compound controls.
-Date:   Wed, 13 Jun 2018 16:07:06 +0200
-Message-Id: <20180613140714.1686-2-maxime.ripard@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
+        id S935887AbeFMOIf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:08:35 -0400
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:8181 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935667AbeFMOIR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 10:08:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1528898898; x=1560434898;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=u/u3X1OZ70mI1B1VtpRMvs4revk5DS6oVKbdNKv08Ts=;
+  b=dBrSfkJDg6Fsf5A5MRperHHu0wLNk9yI6rzsrMbXk8UcNTGfJa/hleHX
+   bpjxvG4rp+nbo/Ikh2aWMbuS8PPzYaHFDUkV+4e/2pe3kpCqmrUJz4e/L
+   hQqYI/WcJwuNJu0jfz0Gh8eRMi/o42Lrq4UztiM5tK0CWHV6mzWTubJhb
+   9TlCrTySXpYW8FuBam8tkX5wGa2uqMzBnuvtzmu3KAwViC3Tq+rwpKv7L
+   S4UrWkxOAaPreJsPfnaB1Shp4vegsATCcC9MfAtAo3nUJtns3R6BcWt0e
+   qrp+EGjNAipa0uj+9jbPAjXlCzPtCUQ+Cjll/ZekIQzD3UjZ//jxnsUQA
+   w==;
+X-IronPort-AV: E=Sophos;i="5.51,219,1526313600"; 
+   d="scan'208";a="80290028"
+Received: from mail-by2nam01lp0178.outbound.protection.outlook.com (HELO NAM01-BY2-obe.outbound.protection.outlook.com) ([216.32.181.178])
+  by ob1.hgst.iphmx.com with ESMTP; 13 Jun 2018 22:08:16 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=sharedspace.onmicrosoft.com; s=selector1-wdc-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=u/u3X1OZ70mI1B1VtpRMvs4revk5DS6oVKbdNKv08Ts=;
+ b=gk/LtK31Wt/DayzWVG8sm2D8oIl7fR4+nE1l8aNBVGbsr1SvL4NvOlnhjPECUR/v0co4WP8FWyGo7hD/0/gDQ1jQ9CQ+RyjvhaT6inWFj2FzO3DBWXDy+fLwO5oaMidAi7aNbCOzG+qOA0LnrlKEu3H3zqf7hvLRIGQxOJA13R0=
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com (10.173.48.151) by
+ MWHPR04MB0815.namprd04.prod.outlook.com (10.172.168.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.14; Wed, 13 Jun 2018 14:08:13 +0000
+Received: from MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::9de4:3c8d:39af:e4c5]) by MWHPR04MB1198.namprd04.prod.outlook.com
+ ([fe80::9de4:3c8d:39af:e4c5%8]) with mapi id 15.20.0841.019; Wed, 13 Jun 2018
+ 14:08:13 +0000
+From:   Bart Van Assche <Bart.VanAssche@wdc.com>
+To:     "hch@lst.de" <hch@lst.de>,
+        "jianchao.w.wang@oracle.com" <jianchao.w.wang@oracle.com>
+CC:     "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
+ 4.17.0-x64-08428-g7d3bf613e99a
+Thread-Topic: kernel BUG at drivers/scsi/scsi_error.c:197! - git
+ 4.17.0-x64-08428-g7d3bf613e99a
+Thread-Index: AQHUAx/3f9pXtuF1QkCCXpKTmDouxQ==
+Date:   Wed, 13 Jun 2018 14:08:12 +0000
+Message-ID: <09e8bd7605febd091679172d68ca1e9ca3990c91.camel@wdc.com>
+References: <201806091606.51078.randrianasulu@gmail.com>
+         <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org>
+         <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com>
+         <5ca74fb7-af70-31c3-0e3f-bace058e5a57@oracle.com>
+         <20180613140411.GA32701@lst.de>
+In-Reply-To: <20180613140411.GA32701@lst.de>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Bart.VanAssche@wdc.com; 
+x-originating-ip: [76.103.130.147]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR04MB0815;7:LLtMcLD4NA5rGqVoqxjcGC27lF+FTSOq3BJYe5hqLjcG8StchLEIA97wGPH9oOfxOilBch5NletpwLzwitbnCY80UCQPWPHLN085jmEGj3m0YSv0v0h3mnvXiGWH62Acn/y3qUqrJNQX9dF8A8ieX7cH+LybHkNhtgZfdMVqF36uAO6+SeRO39WEQzqn+Ld8y9WqAF52VUG9cKHIoYQ4JylVzS8jEl9TN76cOEEaQ7r5k1UbEYDHEOQdAFDjss6q;20:/QAfywEMIlNsmXGb1K6u3v+IVJMtSqgiOhgsBdkfrg8Kr3NFI/jgMaAg4rqMRlZzeA8PfawJmqvfYn6gVQA9IrevuMhIghWTtzpNGlKNHOIuNZkV3/gU4bapTOuQe1v68P4PIjn3kJOZCQ7zGJFIZl5EAhSDVeVLlKCam4h0muU=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 2fff609a-90f0-4347-83c7-08d5d13719e3
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:MWHPR04MB0815;
+x-ms-traffictypediagnostic: MWHPR04MB0815:
+wdcipoutbound: EOP-TRUE
+x-microsoft-antispam-prvs: <MWHPR04MB0815DD37B20ECF0DBC1E24AC987E0@MWHPR04MB0815.namprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:MWHPR04MB0815;BCL:0;PCL:0;RULEID:;SRVR:MWHPR04MB0815;
+x-forefront-prvs: 07025866F6
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39850400004)(39380400002)(366004)(376002)(346002)(189003)(199004)(93886005)(2906002)(5660300001)(36756003)(97736004)(118296001)(486006)(186003)(102836004)(6486002)(26005)(229853002)(76176011)(6116002)(6436002)(6506007)(3846002)(59450400001)(6246003)(2616005)(86362001)(110136005)(106356001)(68736007)(54906003)(72206003)(81166006)(476003)(81156014)(478600001)(14454004)(7736002)(305945005)(25786009)(5890100001)(446003)(8676002)(4326008)(39060400002)(316002)(105586002)(3660700001)(99286004)(2501003)(11346002)(8936002)(5250100002)(53936002)(66066001)(2900100001)(6512007)(3280700002);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR04MB0815;H:MWHPR04MB1198.namprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-microsoft-antispam-message-info: rf/E8+0do1FXevoW03l9J5WqCaGoFJ714r7/oOfDFUlxcqtuCdT9bUPjqzYh0TjNKF6SFd2few9E6US4g2Pjf289VSckxNX09YFh0acz6iZKaeJ+A4fa1p9oQxVC7yMJ67eOpRQjJOMUFqsxwTbeMED0mFIcorrniiv2Yhl0VkhFJ/9Pf1l0/GIyZWLBjh8B
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EB4F3E66E50E8E4B81BCAD42760E67F7@namprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: wdc.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2fff609a-90f0-4347-83c7-08d5d13719e3
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Jun 2018 14:08:12.7918
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0815
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pawel Osciak <posciak@chromium.org>
-
-Signed-off-by: Pawel Osciak <posciak@chromium.org>
-Reviewed-by: Wu-cheng Li <wuchengli@chromium.org>
-Tested-by: Tomasz Figa <tfiga@chromium.org>
-[rebase44(groeck): include linux/types.h in v4l2-controls.h]
-Signed-off-by: Guenter Roeck <groeck@chromium.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
----
- drivers/media/v4l2-core/v4l2-ctrls.c |  42 +++++++
- include/media/v4l2-ctrls.h           |  10 ++
- include/uapi/linux/v4l2-controls.h   | 164 +++++++++++++++++++++++++++
- include/uapi/linux/videodev2.h       |  11 ++
- 4 files changed, 227 insertions(+)
-
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index cdf860c8e3d8..1f63c725bad1 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -807,6 +807,11 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER:return "H264 Number of HC Layers";
- 	case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP:
- 								return "H264 Set QP Value for HC Layers";
-+	case V4L2_CID_MPEG_VIDEO_H264_SPS:			return "H264 SPS";
-+	case V4L2_CID_MPEG_VIDEO_H264_PPS:			return "H264 PPS";
-+	case V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX:		return "H264 Scaling Matrix";
-+	case V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM:		return "H264 Slice Parameters";
-+	case V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM:		return "H264 Decode Parameters";
- 	case V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP:		return "MPEG4 I-Frame QP Value";
- 	case V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP:		return "MPEG4 P-Frame QP Value";
- 	case V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP:		return "MPEG4 B-Frame QP Value";
-@@ -1272,6 +1277,21 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_RDS_TX_ALT_FREQS:
- 		*type = V4L2_CTRL_TYPE_U32;
- 		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_SPS:
-+		*type = V4L2_CTRL_TYPE_H264_SPS;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_PPS:
-+		*type = V4L2_CTRL_TYPE_H264_PPS;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX:
-+		*type = V4L2_CTRL_TYPE_H264_SCALING_MATRIX;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM:
-+		*type = V4L2_CTRL_TYPE_H264_SLICE_PARAM;
-+		break;
-+	case V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM:
-+		*type = V4L2_CTRL_TYPE_H264_DECODE_PARAM;
-+		break;
- 	case V4L2_CID_MPEG_VIDEO_MPEG2_FRAME_HDR:
- 		*type = V4L2_CTRL_TYPE_MPEG2_FRAME_HDR;
- 		break;
-@@ -1598,6 +1618,13 @@ static int std_validate(const struct v4l2_ctrl *ctrl, u32 idx,
- 	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
- 		return 0;
- 
-+	case V4L2_CTRL_TYPE_H264_SPS:
-+	case V4L2_CTRL_TYPE_H264_PPS:
-+	case V4L2_CTRL_TYPE_H264_SCALING_MATRIX:
-+	case V4L2_CTRL_TYPE_H264_SLICE_PARAM:
-+	case V4L2_CTRL_TYPE_H264_DECODE_PARAM:
-+		return 0;
-+
- 	default:
- 		return -EINVAL;
- 	}
-@@ -2172,6 +2199,21 @@ static struct v4l2_ctrl *v4l2_ctrl_new(struct v4l2_ctrl_handler *hdl,
- 	case V4L2_CTRL_TYPE_U32:
- 		elem_size = sizeof(u32);
- 		break;
-+	case V4L2_CTRL_TYPE_H264_SPS:
-+		elem_size = sizeof(struct v4l2_ctrl_h264_sps);
-+		break;
-+	case V4L2_CTRL_TYPE_H264_PPS:
-+		elem_size = sizeof(struct v4l2_ctrl_h264_pps);
-+		break;
-+	case V4L2_CTRL_TYPE_H264_SCALING_MATRIX:
-+		elem_size = sizeof(struct v4l2_ctrl_h264_scaling_matrix);
-+		break;
-+	case V4L2_CTRL_TYPE_H264_SLICE_PARAM:
-+		elem_size = sizeof(struct v4l2_ctrl_h264_slice_param);
-+		break;
-+	case V4L2_CTRL_TYPE_H264_DECODE_PARAM:
-+		elem_size = sizeof(struct v4l2_ctrl_h264_decode_param);
-+		break;
- 	case V4L2_CTRL_TYPE_MPEG2_FRAME_HDR:
- 		elem_size = sizeof(struct v4l2_ctrl_mpeg2_frame_hdr);
- 		break;
-diff --git a/include/media/v4l2-ctrls.h b/include/media/v4l2-ctrls.h
-index 963c37b02363..9c223793a16a 100644
---- a/include/media/v4l2-ctrls.h
-+++ b/include/media/v4l2-ctrls.h
-@@ -41,6 +41,11 @@ struct poll_table_struct;
-  * @p_u16:	Pointer to a 16-bit unsigned value.
-  * @p_u32:	Pointer to a 32-bit unsigned value.
-  * @p_char:	Pointer to a string.
-+ * @p_h264_sps:	Pointer to a struct v4l2_ctrl_h264_sps.
-+ * @p_h264_pps:	Pointer to a struct v4l2_ctrl_h264_pps.
-+ * @p_h264_scal_mtrx:	Pointer to a struct v4l2_ctrl_h264_scaling_matrix.
-+ * @p_h264_slice_param:	Pointer to a struct v4l2_ctrl_h264_slice_param.
-+ * @p_h264_decode_param: Pointer to a struct v4l2_ctrl_h264_decode_param.
-  * @p:		Pointer to a compound value.
-  */
- union v4l2_ctrl_ptr {
-@@ -50,6 +55,11 @@ union v4l2_ctrl_ptr {
- 	u16 *p_u16;
- 	u32 *p_u32;
- 	char *p_char;
-+	struct v4l2_ctrl_h264_sps *p_h264_sps;
-+	struct v4l2_ctrl_h264_pps *p_h264_pps;
-+	struct v4l2_ctrl_h264_scaling_matrix *p_h264_scal_mtrx;
-+	struct v4l2_ctrl_h264_slice_param *p_h264_slice_param;
-+	struct v4l2_ctrl_h264_decode_param *p_h264_decode_param;
- 	void *p;
- };
- 
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 23da8bfa7e6f..ac307c59683c 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -50,6 +50,8 @@
- #ifndef __LINUX_V4L2_CONTROLS_H
- #define __LINUX_V4L2_CONTROLS_H
- 
-+#include <linux/types.h>
-+
- /* Control classes */
- #define V4L2_CTRL_CLASS_USER		0x00980000	/* Old-style 'user' controls */
- #define V4L2_CTRL_CLASS_MPEG		0x00990000	/* MPEG-compression controls */
-@@ -531,6 +533,12 @@ enum v4l2_mpeg_video_h264_hierarchical_coding_type {
- };
- #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER	(V4L2_CID_MPEG_BASE+381)
- #define V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP	(V4L2_CID_MPEG_BASE+382)
-+#define V4L2_CID_MPEG_VIDEO_H264_SPS		(V4L2_CID_MPEG_BASE+383)
-+#define V4L2_CID_MPEG_VIDEO_H264_PPS		(V4L2_CID_MPEG_BASE+384)
-+#define V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX	(V4L2_CID_MPEG_BASE+385)
-+#define V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAM	(V4L2_CID_MPEG_BASE+386)
-+#define V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAM	(V4L2_CID_MPEG_BASE+387)
-+
- #define V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP	(V4L2_CID_MPEG_BASE+400)
- #define V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP	(V4L2_CID_MPEG_BASE+401)
- #define V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP	(V4L2_CID_MPEG_BASE+402)
-@@ -1078,6 +1086,162 @@ enum v4l2_detect_md_mode {
- #define V4L2_CID_DETECT_MD_THRESHOLD_GRID	(V4L2_CID_DETECT_CLASS_BASE + 3)
- #define V4L2_CID_DETECT_MD_REGION_GRID		(V4L2_CID_DETECT_CLASS_BASE + 4)
- 
-+/* Complex controls */
-+
-+#define V4L2_H264_SPS_CONSTRAINT_SET0_FLAG			0x01
-+#define V4L2_H264_SPS_CONSTRAINT_SET1_FLAG			0x02
-+#define V4L2_H264_SPS_CONSTRAINT_SET2_FLAG			0x04
-+#define V4L2_H264_SPS_CONSTRAINT_SET3_FLAG			0x08
-+#define V4L2_H264_SPS_CONSTRAINT_SET4_FLAG			0x10
-+#define V4L2_H264_SPS_CONSTRAINT_SET5_FLAG			0x20
-+
-+#define V4L2_H264_SPS_FLAG_SEPARATE_COLOUR_PLANE		0x01
-+#define V4L2_H264_SPS_FLAG_QPPRIME_Y_ZERO_TRANSFORM_BYPASS	0x02
-+#define V4L2_H264_SPS_FLAG_DELTA_PIC_ORDER_ALWAYS_ZERO		0x04
-+#define V4L2_H264_SPS_FLAG_GAPS_IN_FRAME_NUM_VALUE_ALLOWED	0x08
-+#define V4L2_H264_SPS_FLAG_FRAME_MBS_ONLY			0x10
-+#define V4L2_H264_SPS_FLAG_MB_ADAPTIVE_FRAME_FIELD		0x20
-+#define V4L2_H264_SPS_FLAG_DIRECT_8X8_INFERENCE			0x40
-+struct v4l2_ctrl_h264_sps {
-+	__u8 profile_idc;
-+	__u8 constraint_set_flags;
-+	__u8 level_idc;
-+	__u8 seq_parameter_set_id;
-+	__u8 chroma_format_idc;
-+	__u8 bit_depth_luma_minus8;
-+	__u8 bit_depth_chroma_minus8;
-+	__u8 log2_max_frame_num_minus4;
-+	__u8 pic_order_cnt_type;
-+	__u8 log2_max_pic_order_cnt_lsb_minus4;
-+	__s32 offset_for_non_ref_pic;
-+	__s32 offset_for_top_to_bottom_field;
-+	__u8 num_ref_frames_in_pic_order_cnt_cycle;
-+	__s32 offset_for_ref_frame[255];
-+	__u8 max_num_ref_frames;
-+	__u16 pic_width_in_mbs_minus1;
-+	__u16 pic_height_in_map_units_minus1;
-+	__u8 flags;
-+};
-+
-+#define V4L2_H264_PPS_FLAG_ENTROPY_CODING_MODE				0x0001
-+#define V4L2_H264_PPS_FLAG_BOTTOM_FIELD_PIC_ORDER_IN_FRAME_PRESENT	0x0002
-+#define V4L2_H264_PPS_FLAG_WEIGHTED_PRED				0x0004
-+#define V4L2_H264_PPS_FLAG_DEBLOCKING_FILTER_CONTROL_PRESENT		0x0008
-+#define V4L2_H264_PPS_FLAG_CONSTRAINED_INTRA_PRED			0x0010
-+#define V4L2_H264_PPS_FLAG_REDUNDANT_PIC_CNT_PRESENT			0x0020
-+#define V4L2_H264_PPS_FLAG_TRANSFORM_8X8_MODE				0x0040
-+#define V4L2_H264_PPS_FLAG_PIC_SCALING_MATRIX_PRESENT			0x0080
-+struct v4l2_ctrl_h264_pps {
-+	__u8 pic_parameter_set_id;
-+	__u8 seq_parameter_set_id;
-+	__u8 num_slice_groups_minus1;
-+	__u8 num_ref_idx_l0_default_active_minus1;
-+	__u8 num_ref_idx_l1_default_active_minus1;
-+	__u8 weighted_bipred_idc;
-+	__s8 pic_init_qp_minus26;
-+	__s8 pic_init_qs_minus26;
-+	__s8 chroma_qp_index_offset;
-+	__s8 second_chroma_qp_index_offset;
-+	__u8 flags;
-+};
-+
-+struct v4l2_ctrl_h264_scaling_matrix {
-+	__u8 scaling_list_4x4[6][16];
-+	__u8 scaling_list_8x8[6][64];
-+};
-+
-+struct v4l2_h264_weight_factors {
-+	__s8 luma_weight[32];
-+	__s8 luma_offset[32];
-+	__s8 chroma_weight[32][2];
-+	__s8 chroma_offset[32][2];
-+};
-+
-+struct v4l2_h264_pred_weight_table {
-+	__u8 luma_log2_weight_denom;
-+	__u8 chroma_log2_weight_denom;
-+	struct v4l2_h264_weight_factors weight_factors[2];
-+};
-+
-+enum v4l2_h264_slice_type {
-+	V4L2_H264_SLICE_TYPE_P			= 0,
-+	V4L2_H264_SLICE_TYPE_B			= 1,
-+	V4L2_H264_SLICE_TYPE_I			= 2,
-+	V4L2_H264_SLICE_TYPE_SP			= 3,
-+	V4L2_H264_SLICE_TYPE_SI			= 4,
-+};
-+
-+#define V4L2_SLICE_FLAG_FIELD_PIC		0x01
-+#define V4L2_SLICE_FLAG_BOTTOM_FIELD		0x02
-+#define V4L2_SLICE_FLAG_DIRECT_SPATIAL_MV_PRED	0x04
-+#define V4L2_SLICE_FLAG_SP_FOR_SWITCH		0x08
-+struct v4l2_ctrl_h264_slice_param {
-+	/* Size in bytes, including header */
-+	__u32 size;
-+	/* Offset in bits to slice_data() from the beginning of this slice. */
-+	__u32 header_bit_size;
-+
-+	__u16 first_mb_in_slice;
-+	enum v4l2_h264_slice_type slice_type;
-+	__u8 pic_parameter_set_id;
-+	__u8 colour_plane_id;
-+	__u16 frame_num;
-+	__u16 idr_pic_id;
-+	__u16 pic_order_cnt_lsb;
-+	__s32 delta_pic_order_cnt_bottom;
-+	__s32 delta_pic_order_cnt0;
-+	__s32 delta_pic_order_cnt1;
-+	__u8 redundant_pic_cnt;
-+
-+	struct v4l2_h264_pred_weight_table pred_weight_table;
-+	/* Size in bits of dec_ref_pic_marking() syntax element. */
-+	__u32 dec_ref_pic_marking_bit_size;
-+	/* Size in bits of pic order count syntax. */
-+	__u32 pic_order_cnt_bit_size;
-+
-+	__u8 cabac_init_idc;
-+	__s8 slice_qp_delta;
-+	__s8 slice_qs_delta;
-+	__u8 disable_deblocking_filter_idc;
-+	__s8 slice_alpha_c0_offset_div2;
-+	__s8 slice_beta_offset_div2;
-+	__u32 slice_group_change_cycle;
-+
-+	__u8 num_ref_idx_l0_active_minus1;
-+	__u8 num_ref_idx_l1_active_minus1;
-+	/*  Entries on each list are indices
-+	 *  into v4l2_ctrl_h264_decode_param.dpb[]. */
-+	__u8 ref_pic_list0[32];
-+	__u8 ref_pic_list1[32];
-+
-+	__u8 flags;
-+};
-+
-+/* If not set, this entry is unused for reference. */
-+#define V4L2_H264_DPB_ENTRY_FLAG_ACTIVE		0x01
-+#define V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM	0x02
-+struct v4l2_h264_dpb_entry {
-+	__u32 buf_index; /* v4l2_buffer index */
-+	__u16 frame_num;
-+	__u16 pic_num;
-+	/* Note that field is indicated by v4l2_buffer.field */
-+	__s32 top_field_order_cnt;
-+	__s32 bottom_field_order_cnt;
-+	__u8 flags; /* V4L2_H264_DPB_ENTRY_FLAG_* */
-+};
-+
-+struct v4l2_ctrl_h264_decode_param {
-+	__u32 num_slices;
-+	__u8 idr_pic_flag;
-+	__u8 nal_ref_idc;
-+	__s32 top_field_order_cnt;
-+	__s32 bottom_field_order_cnt;
-+	__u8 ref_pic_list_p0[32];
-+	__u8 ref_pic_list_b0[32];
-+	__u8 ref_pic_list_b1[32];
-+	struct v4l2_h264_dpb_entry dpb[16];
-+};
-+
- struct v4l2_ctrl_mpeg2_frame_hdr {
- 	__u32 slice_len;
- 	__u32 slice_pos;
-diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-index 242a6bfa1440..4b4a1b25a0db 100644
---- a/include/uapi/linux/videodev2.h
-+++ b/include/uapi/linux/videodev2.h
-@@ -626,6 +626,7 @@ struct v4l2_pix_format {
- #define V4L2_PIX_FMT_H264     v4l2_fourcc('H', '2', '6', '4') /* H264 with start codes */
- #define V4L2_PIX_FMT_H264_NO_SC v4l2_fourcc('A', 'V', 'C', '1') /* H264 without start codes */
- #define V4L2_PIX_FMT_H264_MVC v4l2_fourcc('M', '2', '6', '4') /* H264 MVC */
-+#define V4L2_PIX_FMT_H264_SLICE v4l2_fourcc('S', '2', '6', '4') /* H264 parsed slices */
- #define V4L2_PIX_FMT_H263     v4l2_fourcc('H', '2', '6', '3') /* H263          */
- #define V4L2_PIX_FMT_MPEG1    v4l2_fourcc('M', 'P', 'G', '1') /* MPEG-1 ES     */
- #define V4L2_PIX_FMT_MPEG2    v4l2_fourcc('M', 'P', 'G', '2') /* MPEG-2 ES     */
-@@ -1589,6 +1590,11 @@ struct v4l2_ext_control {
- 		__u8 __user *p_u8;
- 		__u16 __user *p_u16;
- 		__u32 __user *p_u32;
-+		struct v4l2_ctrl_h264_sps __user *p_h264_sps;
-+		struct v4l2_ctrl_h264_pps __user *p_h264_pps;
-+		struct v4l2_ctrl_h264_scaling_matrix __user *p_h264_scal_mtrx;
-+		struct v4l2_ctrl_h264_slice_param __user *p_h264_slice_param;
-+		struct v4l2_ctrl_h264_decode_param __user *p_h264_decode_param;
- 		struct v4l2_ctrl_mpeg2_frame_hdr __user *p_mpeg2_frame_hdr;
- 		void __user *ptr;
- 	};
-@@ -1635,6 +1641,11 @@ enum v4l2_ctrl_type {
- 	V4L2_CTRL_TYPE_U8	     = 0x0100,
- 	V4L2_CTRL_TYPE_U16	     = 0x0101,
- 	V4L2_CTRL_TYPE_U32	     = 0x0102,
-+	V4L2_CTRL_TYPE_H264_SPS      = 0x0103,
-+	V4L2_CTRL_TYPE_H264_PPS      = 0x0104,
-+	V4L2_CTRL_TYPE_H264_SCALING_MATRIX = 0x0105,
-+	V4L2_CTRL_TYPE_H264_SLICE_PARAM = 0x0106,
-+	V4L2_CTRL_TYPE_H264_DECODE_PARAM = 0x0107,
- 	V4L2_CTRL_TYPE_MPEG2_FRAME_HDR = 0x0109,
- };
- 
--- 
-2.17.0
-
+T24gV2VkLCAyMDE4LTA2LTEzIGF0IDE2OjA0ICswMjAwLCBoY2hAbHN0LmRlIHdyb3RlOg0KPiA+
+IEkgc3VzcGVjdCB0aGlzIGlzIGR1ZSB0byB3ZSBjb3VsZCBleHBpcmUgYSBzYW1lIHJlcXVlc3Qg
+dHdpY2Ugb3IgZXZlbiBtb3JlLg0KPiA+IEZvciBzY3NpIG1pZC1sYXllciwgaXQgcmV0dXJuIEJM
+S19FSF9ET05FIGZyb20gLnRpbWVvdXQsIGluIGZhY3QsIHRoZSByZXF1ZXN0IGlzIG5vdA0KPiA+
+IGNvbXBsZXRlZCB0aGVyZSwgYnV0IGp1c3QgcXVldWUgYSBkZWxheWVkIGFib3J0X3dvcmsgKEha
+LzEwMCkuIElmIHRoZSBibGtfbXFfdGltZW91dF93b3JrDQo+ID4gcnVucyBhZ2FpbiBiZWZvcmUg
+dGhlIGFib3J0X3dvcmssIHRoZSByZXF1ZXN0IHdpbGwgYmUgdGltZWQgb3V0IGFnYWluLCBiZWNh
+dXNlIHRoZXJlIGlzIG5vdA0KPiA+IGFueSBtYXJrIG9uIGl0IHRvIGlkZW50aWZ5IHRoaXMgcmVx
+dWVzdCBoYXMgYmVlbiB0aW1lZCBvdXQuDQo+ID4gDQo+ID4gV291bGQgcGxlYXNlIHRyeSB0aGUg
+cGF0Y2ggYXR0YWNoZWQgb24gdG8gc2VlIHdoZXRoZXIgdGhpcyBpc3N1ZSBjb3VsZCBiZSBmaXhl
+ZCA/DQo+ID4gKHRoaXMgcGF0Y2ggb25seSB3b3JrcyBmb3Igc2NzaSBkZXZpY2UgY3VycmVudGx5
+KQ0KPiANCj4gVGhlIHBhdGNoIGlzbid0IHJlYWxseSBnb2luZyB0byB3b3JrIHdpdGhvdXQgYSBj
+YWxsZXIgb2YgeW91ciBuZXcNCj4gX19ibGtfbXFfY29tcGxldGVfcmVxdWVzdCBoZWxwZXIsIGlz
+IGl0Pw0KDQpfX2Jsa19tcV9jb21wbGV0ZV9yZXF1ZXN0KCkgaXMgYWxyZWFkeSBjYWxsZWQgdG9k
+YXkgYnkgYmxrX21xX2NvbXBsZXRlX3JlcXVlc3QoKS4NCkhvd2V2ZXIsIGl0J3Mgbm90IGNsZWFy
+IHRvIG1lIHdoeSB0aGF0IGZ1bmN0aW9uIGlzIGV4cG9ydGVkIGJ5IEppYW5jaGFvJ3MgcGF0Y2gu
+DQoNCj4gRWl0aGVyIHdheSB0aGUgY29uY2VwdCBvZiBkb2luZyBlcnJvciBoYW5kbGluZyB3aXRo
+b3V0IHF1aWVzY2luZyB0aGUNCj4gcXVldWUganVzdCBsb29rcyBib2d1cyB0byBtZSBhbmQgd2ls
+bCBlbmQgdXAgd2l0aCBzb21lIHNvcnQgb2YgcmFjZQ0KPiBoZXJlIG9yIHRoZXJlLg0KDQpUaGUg
+U0NTSSBlcnJvciBoYW5kbGVyIGFscmVhZHkgd2FpdHMgdW50aWwgYWxsIHBlbmRpbmcgcmVxdWVz
+dHMgaGF2ZSBmaW5pc2hlZA0KYmVmb3JlIGl0IHN0YXJ0cyBoYW5kbGluZyB0aW1lZCBvdXQgY29t
+bWFuZHMuIFRoaXMgZS1tYWlsIHRocmVhZCBzdGFydGVkIHdpdGggYQ0KcmVwb3J0IG9mIGEgY3Jh
+c2ggaW4gdGhlIFNDU0kgZXJyb3IgaGFuZGxlciwgd2hpY2ggaXMgYSByZWdyZXNzaW9uIGludHJv
+ZHVjZWQgaW4NCnRoZSB2NC4xOCBtZXJnZSB3aW5kb3cuDQoNCkJhcnQuDQoNCg0K
