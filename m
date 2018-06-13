@@ -2,94 +2,114 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1BD3FC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:19:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 929CCC004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C468E208AF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:19:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C468E208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3DC21208AF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 14:22:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KDiePN7R";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KDiePN7R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC21208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935737AbeFMOTA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 10:19:00 -0400
-Received: from mail-oi0-f67.google.com ([209.85.218.67]:36472 "EHLO
-        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935656AbeFMOS7 (ORCPT
+        id S935747AbeFMOWK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 10:22:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55484 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935662AbeFMOWI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 10:18:59 -0400
-Received: by mail-oi0-f67.google.com with SMTP id 14-v6so2478410oie.3
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 07:18:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3TrEa03hsp4Oza3Jmc9LT0+PUB1q2isznMrPvgM3URs=;
-        b=G94CYlwfj8Yg4BXidbxH0JmgteF4k1AF+I2rZRJCBO4x9owc9Ws0+8aWca1Bxqi486
-         OwJdlrlXyvT/HKkZXvD6rp+Rfx71mVcvVQ+8zXaggcyAaO9SqWmvpdLbwUFScQC/txK8
-         igXDqd9OEIpl0kG9AiKHCtSsevciAzfKGcIfLhlQ71zTyze3iEWsEqtY7k+DW7mdGtz8
-         xbvP1dKaBzQt/wnN47DqQ5MquRDEKc416+oX83JT1UQJWb8g1F4e88clm2HHIESfoqIC
-         uGKYlgHIwx0/uCkd9BXhM4770Y0W+u7cg/KjDcSAl3aPzFgVaz6V1fn8fVvGHsqyE91m
-         ABCg==
-X-Gm-Message-State: APt69E2Myh78oVe/c24KLcu6DO9suuu/n3OhjDEiA3pIefclmwlbLqPf
-        jqDEQrVc9vUs2OyIk7BftYHJkg==
-X-Google-Smtp-Source: ADUXVKJfPkOZ5zlWy8K7zJ9dUNbRtIVm6TDjwtigphsDdKJ+w2OlcMAzdri1C3uWeS3h7RK5TmE0Pw==
-X-Received: by 2002:aca:c102:: with SMTP id r2-v6mr4298562oif.14.1528899538563;
-        Wed, 13 Jun 2018 07:18:58 -0700 (PDT)
-Received: from localhost ([130.164.62.61])
-        by smtp.gmail.com with ESMTPSA id t4-v6sm1557720otf.8.2018.06.13.07.18.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 13 Jun 2018 07:18:57 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 07:18:56 -0700
-From:   Moritz Fischer <mdf@kernel.org>
-To:     Wu Hao <hao.wu@intel.com>
-Cc:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-        luwei.kang@intel.com, yi.z.zhang@intel.com
-Subject: Re: [PATCH v6 22/29] fpga: dfl: fme-region: add support for compat_id
-Message-ID: <20180613141856.GD3866@archbook>
-References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
- <1528798243-2029-23-git-send-email-hao.wu@intel.com>
+        Wed, 13 Jun 2018 10:22:08 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id C50AC6074D; Wed, 13 Jun 2018 14:22:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528899727;
+        bh=pjCv40q3ZDtPwzyH7ejOam2wKPclgo2l8LO7NjP0EMM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KDiePN7RydHW4rM3Ch9zrAMaknh92s1uDprKHUqo+43iM4R6x+4qSI8nBJsMg0xMT
+         EKFvJFiA01RRDUtxBWNDPSrMn/E/+UfgKJGnhW4en0xMo0BfeZP6RUiztegrP3YdJl
+         oq/k+v7ld5Q7z6P2w70Ffp1jlpyqkFiVLSVyb/1M=
+Received: from [192.168.0.106] (cpe-174-109-247-98.nc.res.rr.com [174.109.247.98])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 15DC6600D0;
+        Wed, 13 Jun 2018 14:22:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528899727;
+        bh=pjCv40q3ZDtPwzyH7ejOam2wKPclgo2l8LO7NjP0EMM=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KDiePN7RydHW4rM3Ch9zrAMaknh92s1uDprKHUqo+43iM4R6x+4qSI8nBJsMg0xMT
+         EKFvJFiA01RRDUtxBWNDPSrMn/E/+UfgKJGnhW4en0xMo0BfeZP6RUiztegrP3YdJl
+         oq/k+v7ld5Q7z6P2w70Ffp1jlpyqkFiVLSVyb/1M=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 15DC6600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+Subject: Re: [PATCH V2 2/2] efi/fb: Convert PCI bus address to resource if
+ translated by the bridge
+To:     linux-fbdev@vger.kernel.org, timur@codeaurora.org,
+        ard.biesheuvel@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Peter Jones <pjones@redhat.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        "open list:FRAMEBUFFER LAYER" <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <1526653072-7153-1-git-send-email-okaya@codeaurora.org>
+ <1526653072-7153-2-git-send-email-okaya@codeaurora.org>
+From:   Sinan Kaya <okaya@codeaurora.org>
+Message-ID: <26470c5c-55db-9dff-3794-4e4a96c8bcb6@codeaurora.org>
+Date:   Wed, 13 Jun 2018 10:22:04 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528798243-2029-23-git-send-email-hao.wu@intel.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <1526653072-7153-2-git-send-email-okaya@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 06:10:36PM +0800, Wu Hao wrote:
-> This patch adds compat_id support, it reuses fme manager's
-> compat id, as the per region compat id is actually from the
-> fme manager's register.
+Hi Ard,
+
+On 5/18/2018 10:17 AM, Sinan Kaya wrote:
+> A host bridge is allowed to remap BAR addresses using _TRA attribute in
+> _CRS windows.
 > 
-> Signed-off-by: Wu Hao <hao.wu@intel.com>
-> Acked-by: Alan Tull <atull@kernel.org>
-Acked-by: Moritz Fischer <mdf@kernel.org>
+> pci_bus 0000:00: root bus resource [mem 0x80100100000-0x8011fffffff window] (bus address [0x00100000-0x1fffffff])
+> pci 0000:02:00.0: reg 0x10: [mem 0x8011e000000-0x8011effffff]
+> 
+> When a VGA device is behind such a host bridge and the resource is
+> translated efifb driver is trying to do ioremap against bus address
+> rather than the resource address and is failing to probe.
+> 
+> efifb: probing for efifb
+> efifb: cannot reserve video memory at 0x1e000000
+> efifb: framebuffer at 0x1e000000, using 1920k, total 1875k
+> efifb: mode is 800x600x32, linelength=3200, pages=1
+> efifb: scrolling: redraw
+> efifb: Truecolor: size=8:8:8:8, shift=24:16:8:0
+> 
+> Use the host bridge offset information to convert bus address to
+> resource address in the fixup.
+> 
+> Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 > ---
-> v5: reuse fme manager's compat_id as per region compat_id
-> v6: rebase, fix copyright time and add Acked-by from Alan.
-> ---
->  drivers/fpga/dfl-fme-region.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/fpga/dfl-fme-region.c b/drivers/fpga/dfl-fme-region.c
-> index a6e0bde..0b7e19c 100644
-> --- a/drivers/fpga/dfl-fme-region.c
-> +++ b/drivers/fpga/dfl-fme-region.c
-> @@ -45,6 +45,7 @@ static int fme_region_probe(struct platform_device *pdev)
->  	}
->  
->  	region->priv = pdata;
-> +	region->compat_id = mgr->compat_id;
->  	platform_set_drvdata(pdev, region);
->  
->  	ret = fpga_region_register(region);
-> -- 
-> 1.8.3.1
-> 
+
+I didn't see any messages about these getting picked up for 4.18.
+
+Are they queued on your own branch?
+
+Sinan
+
+-- 
+Sinan Kaya
+Qualcomm Datacenter Technologies, Inc. as an affiliate of Qualcomm Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the Code Aurora Forum, a Linux Foundation Collaborative Project.
