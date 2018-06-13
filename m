@@ -2,89 +2,95 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2B72DC004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:42:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1E2E5C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEEE8208B5
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:42:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEEE8208B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id B70C4208B5
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 04:48:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0XkzNzOB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B70C4208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934122AbeFMEl6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 00:41:58 -0400
-Received: from muru.com ([72.249.23.125]:46920 "EHLO muru.com"
+        id S1754468AbeFMEsB (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 00:48:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933328AbeFMEl4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 00:41:56 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 1924F80E4;
-        Wed, 13 Jun 2018 04:44:31 +0000 (UTC)
-Date:   Tue, 12 Jun 2018 21:41:52 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-omap@vger.kernel.org, Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-input@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/10] ARM: OMAP1: ams-delta: drop GPIO lookup table for
- serio device
-Message-ID: <20180613044152.GB112168@atomide.com>
-References: <20180609140224.32606-1-jmkrzyszt@gmail.com>
- <20180612222356.GD38773@dtor-ws>
- <69494657.T0PeNZxiFJ@z50>
+        id S1754399AbeFMEsA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 00:48:00 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D12320693;
+        Wed, 13 Jun 2018 04:47:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528865279;
+        bh=eG1HDAEJVOkxdzsCNQ9zZJqUqK3ooAGWnZEfzEl9xhc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=0XkzNzOBO99HlASbkgtBawt8tKw4tEG8gAns6wL9tmxj2moNgKo7cXqpfACVALBxX
+         qkn6AoB3YqiYfwydlWYL7U0aPx9tsbuK/pFIM6isIwk1URV0gpkZB17ZfRjyrfm7Sc
+         T1MgYQK6Wn0pGPBdy7m/AOvWdOkFcqKwtxv8xERU=
+Date:   Wed, 13 Jun 2018 06:47:38 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Wanpeng Li <kernellwp@gmail.com>,
+        Thomas Richter <tmricht@linux.ibm.com>,
+        Kees Cook <keescook@chromium.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        KVM list <kvm@vger.kernel.org>
+Subject: Re: [GIT PULL] KVM changes for 4.18 merge window
+Message-ID: <20180613044738.GA353@kroah.com>
+References: <1528812229-53043-1-git-send-email-pbonzini@redhat.com>
+ <CA+55aFwvE5G7MV7AV4naAXdbFoszc4JNKEj_QtYqpLFfa2RXtA@mail.gmail.com>
+ <CA+55aFza9udpsCY=_YuBoshgVoXSce-Ja-nsqRbm5eJ6MgXK1g@mail.gmail.com>
+ <CANRm+Cx194zWU0TwoiCaiTy+3tuHp4Ki1mk2VUfv5-z00j23jA@mail.gmail.com>
+ <CA+55aFywZ0aX6u-JO8=GciDm9stwXOmXU4oG-u0K8i+o3qLwvg@mail.gmail.com>
+ <CA+55aFxZNyHoytCNV89tPP0TWEiR_-nOja-HA5i4zY446VFCVA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69494657.T0PeNZxiFJ@z50>
+In-Reply-To: <CA+55aFxZNyHoytCNV89tPP0TWEiR_-nOja-HA5i4zY446VFCVA@mail.gmail.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Janusz Krzysztofik <jmkrzyszt@gmail.com> [180613 01:18]:
-> On Wednesday, June 13, 2018 12:23:56 AM CEST Dmitry Torokhov wrote:
-> > Hi Janusz,
-> > 
-> > On Sat, Jun 09, 2018 at 04:02:15PM +0200, Janusz Krzysztofik wrote:
-> > > GPIO lookup table for ams-delta-serio device was introduced by commit
-> > > 0486738928bf ("ARM: OMAP1: ams-delta: add GPIO lookup tables").
-> > > Unfortunately, a follow up patch "Input: ams_delta_serio: use GPIO
-> > > lookup table" was not accepted by subystem maintainer who requested
-> > > conversion of the driver to a platform driver, replacepemnt of IRQ GPIO
-> > > pin with IRQ resource, replacement of GPIO pin providing keyboard power
-> > > with a regulator and removal of remaining GPIO pins from the driver as
-> > > not handled by it.
-> > > 
-> > > Let's start with removal of no the longer needed GPIO lookup table from
-> > > the board init file.
-> > > 
-> > > Series created and tested on top of next-20180608 tag from linux-next
-> > > tree.
-> > 
-> > This all is really nice (modulo a couple of questions), thank you for
-> > implementing this. How do you want to merge this? Through OMAP tree or
-> > input?
+On Tue, Jun 12, 2018 at 08:26:46PM -0700, Linus Torvalds wrote:
+> On Tue, Jun 12, 2018 at 8:00 PM Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > Yeah, the biusection seems to actually be diving into Greg's device pulls.
+> >
+> > Odd. I'm not seeing why that would break kvm, but maybe there's
+> > something in the device core layer that really messed it up.
+> >
+> > I'll continue to bisect to see.
 > 
-> Hi Dmitry,
+> Ok, so commit 95cde3c59966 ("debugfs: inode: debugfs_create_dir uses
+> mode permission from parent") breaks lkvm, and I think qemu-kvm too.
 > 
-> If Tony doesn't mind, I would prefer it merged through OMAP tree as I still 
-> have a few board patches built on top of it in my queue.
+> The commit looks like the RightThing(tm) to do, but we do not break
+> existing work-flows, no matter how much we'd like to.  So it gets
+> reverted.
+> 
+> Greg, Thomas, perhaps some alternative model? I'm not sure exactly
+> what kvm needs from debugfs.
 
-Works for me once Dmitry is happy with the patches.
+I don't know either, I have a revert of that patch sitting in my queue
+waiting to send to you for 4.18-rc1.  I didn't realize it was causing
+breakage for others, or I would have sent it to you now.  You can revert
+it yourself now if you want, so we can fix this problem now and work on
+figuring out what is so "odd" about kvm's debugfs files.
 
-Regards,
+thanks,
 
-Tony
+greg k-h
