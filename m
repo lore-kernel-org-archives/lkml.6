@@ -2,100 +2,100 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E2F29C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:49:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 88840C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1BF820020
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:49:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1BF820020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3C92F20020
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 13:49:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AHuAF3dy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C92F20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935740AbeFMNtn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 09:49:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33108 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S935515AbeFMNtm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 09:49:42 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id DE24587A80;
-        Wed, 13 Jun 2018 13:49:41 +0000 (UTC)
-Received: from redhat.com (ovpn-122-133.rdu2.redhat.com [10.10.122.133])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 09AD510FD2A5;
-        Wed, 13 Jun 2018 13:49:39 +0000 (UTC)
-Date:   Wed, 13 Jun 2018 16:49:39 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Anshuman Khandual <khandual@linux.vnet.ibm.com>,
-        Ram Pai <linuxram@us.ibm.com>, robh@kernel.org, aik@ozlabs.ru,
-        jasowang@redhat.com, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, joe@perches.com,
-        linuxppc-dev@lists.ozlabs.org, elfring@users.sourceforge.net,
-        david@gibson.dropbear.id.au, cohuck@redhat.com, pawel.moll@arm.com,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        "Rustad, Mark D" <mark.d.rustad@intel.com>
-Subject: Re: [RFC V2] virtio: Add platform specific DMA API translation for
- virito devices
-Message-ID: <20180613161806-mutt-send-email-mst@kernel.org>
-References: <20180522063317.20956-1-khandual@linux.vnet.ibm.com>
- <20180523213703-mutt-send-email-mst@kernel.org>
- <20180524072104.GD6139@ram.oc3035372033.ibm.com>
- <0c508eb2-08df-3f76-c260-90cf7137af80@linux.vnet.ibm.com>
- <20180531204320-mutt-send-email-mst@kernel.org>
- <20180607052306.GA1532@infradead.org>
- <20180607185234-mutt-send-email-mst@kernel.org>
- <20180608063655.GA32080@infradead.org>
+        id S935752AbeFMNtv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 09:49:51 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:42742 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935515AbeFMNtr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 09:49:47 -0400
+Received: by mail-pf0-f193.google.com with SMTP id w7-v6so1453773pfn.9;
+        Wed, 13 Jun 2018 06:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=s6BHol3jiFjhAgLezsUz+PzeUHzeL/fhpE6r2Hoey5g=;
+        b=AHuAF3dyEsFTTLzMO7LAtXGdlobndpV3KvMN5ttCH07UejulipTHluR6jqQu26T4MN
+         naHQG0vic3iwV5rVotmqYSOyhQTZ4kPGiUsz2GvQhBqHzW+O8iPxFsgW4X4eK1eelkHc
+         nQn0TwrvAANjsBcwByl8s6NsoMnnZ94T6YEHkjj6+beJw3BAaJW3R8SiSeFjgfWj5OfL
+         np7Mgp+PV/Ik0xkaqrtaLJb7agRh6eA8kn3yDUnTgkyjl3wExqKGUyZqoVxrz3NkRT9y
+         umKddIb3bAn85LQd28J2CRbXdL1Z/qz98Go1gj53ZDUdx+RHYpCqQ/krWay87ZtmDn9s
+         593w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=s6BHol3jiFjhAgLezsUz+PzeUHzeL/fhpE6r2Hoey5g=;
+        b=SJvynOW0p2Yf2vn6Tre4A4VGW1M5jy1NlQwVr758ze/IYf1sX8m6wWJjrN5s0j0TC7
+         chIye8BRaZ8hgEixC3B91q6/QgB4MQfkUV9kgBOG0wPi8zF7e1mEz2jIKJ2u2o8yklJD
+         vqU8zlI/OENGshahQXUbOX2sBfs6iOwwoRa+EkcRtkwc+N3rKhPgYZBWHhJepqTztA60
+         reuMqnPLXZ52zPOSRobF+i1XS2b3I8vY2VmRn6GKTGPGFug+BfmeiGX7TClokJCxXvoy
+         XXIjQYEz2kIXcG0DLNjii3hsIU6kUbponZ/Zg73Q/RkK4JNWEdipaDDux7GE8KmemTQi
+         DrGQ==
+X-Gm-Message-State: APt69E3fWIu6TvaPZQzYG+U7A+zkgYNeFXBD/Io3yxqbeotlHnll513e
+        YEkgzJVZu3LQa55LZ27thpw4xg==
+X-Google-Smtp-Source: ADUXVKKfLK59aQvIoSNHia393b9IxRiSiUvvQ8Tja2uBYGmUvPmMZOlNDhiQtk3a6V3zHJWgGEnKJA==
+X-Received: by 2002:a62:8995:: with SMTP id n21-v6mr5003383pfk.83.1528897787152;
+        Wed, 13 Jun 2018 06:49:47 -0700 (PDT)
+Received: from server.roeck-us.net (108-223-40-66.lightspeed.sntcca.sbcglobal.net. [108.223.40.66])
+        by smtp.gmail.com with ESMTPSA id p3-v6sm3457222pga.72.2018.06.13.06.49.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Jun 2018 06:49:46 -0700 (PDT)
+Subject: Re: [PATCH 4.9 00/31] 4.9.108-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+References: <20180612164620.797338191@linuxfoundation.org>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <9873d4d3-c08a-4467-0584-4b1d30c9c7ab@roeck-us.net>
+Date:   Wed, 13 Jun 2018 06:49:45 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180608063655.GA32080@infradead.org>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 13 Jun 2018 13:49:42 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Wed, 13 Jun 2018 13:49:42 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+In-Reply-To: <20180612164620.797338191@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 07, 2018 at 11:36:55PM -0700, Christoph Hellwig wrote:
-> > This seems to be what was being asked for in this thread,
-> > with comments claiming IOMMU flag adds too much overhead.
+On 06/12/2018 09:46 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.108 release.
+> There are 31 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Right now it means implementing a virtual iommu, which I agree is
-> way too much overhead.
-
-Well not really. The flag in question will have a desired effect without
-a virtual iommu.
-
-> > SEV guys report that they just set the iommu flag and then it all works.
-> > I guess if there's translation we can think of this as a kind of iommu.
-> > Maybe we should rename PLATFORM_IOMMU to PLARTFORM_TRANSLATION?
+> Responses should be made by Thu Jun 14 16:46:09 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> VIRTIO_F_BEHAVES_LIKE_A_REAL_PCI_DEVICE_DONT_TRY_TO_OUTSMART_ME
-> 
-> as said it's not just translations, it is cache coherence as well.
 
-Well it's only for DMA. So maybe PLATFORM_DMA.
+Build results:
+	total: 148 pass: 148 fail: 0
+Qemu test results:
+	total: 147 pass: 147 fail: 0
 
-I suspect people will then come and complain that they
-do *not* want cache coherence tricks because virtio is
-running on a CPU, but we'll see.
+Details are available at http://kerneltests.org/builders/.
 
-> > And apparently some people complain that just setting that flag makes
-> > qemu check translation on each access with an unacceptable performance
-> > overhead.  Forcing same behaviour for everyone on general principles
-> > even without the flag is unlikely to make them happy.
-> 
-> That sounds like a qemu implementation bug.  If qemu knowns that
-> guest physiscall == guest dma space there is no need to check.
-
-Possibly. Or it's possible it's all just theoretical, no one
-posted any numbers.
-
--- 
-MST
+Guenter
