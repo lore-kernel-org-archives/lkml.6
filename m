@@ -1,193 +1,157 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 72474C07D5C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:51:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BE1BBC07D5C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:53:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2661B2086D
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:51:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2661B2086D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B6C32086D
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 02:53:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B6C32086D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933814AbeFMCvW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 22:51:22 -0400
-Received: from mail-it0-f72.google.com ([209.85.214.72]:40172 "EHLO
-        mail-it0-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933226AbeFMCvD (ORCPT
+        id S933895AbeFMCxB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 22:53:01 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:51720 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933226AbeFMCw7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 22:51:03 -0400
-Received: by mail-it0-f72.google.com with SMTP id m131-v6so1305900itm.5
-        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 19:51:02 -0700 (PDT)
+        Tue, 12 Jun 2018 22:52:59 -0400
+Received: from mail-pg0-f72.google.com ([74.125.83.72])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fSvu6-00041Z-Ra
+        for linux-kernel@vger.kernel.org; Wed, 13 Jun 2018 02:52:58 +0000
+Received: by mail-pg0-f72.google.com with SMTP id d1-v6so349204pga.15
+        for <linux-kernel@vger.kernel.org>; Tue, 12 Jun 2018 19:52:58 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
-         :from:to;
-        bh=5ub7yknKvMW3i4+lq5sHzoTOWz90v2OSVyr4mUNZv9s=;
-        b=SXba89oj/Ll12lDfcs7QwRTYsW0nEFbozkj1ku3kqltMCjBNU9+tCVToTlOhnMJ0Lc
-         KGbCRmQN8+7PpDONN2pa87HuN4/cPVrVFkR1rEWonOsGJzZLpsDtsBZgbu/PA/vJxjs/
-         2Y93inVIBGQWGcdKDazPot/EHulpDinSjKEKLtOwsnCqdOZXv3PpJPUScHz2fQMopixN
-         YG5vxaArnHcMssvwNK/CnWejUdyHwtjJmPZ/oq7hM0/J/h8ci818morqkNIOpPBBs/WA
-         072y20wzqSayvAHrz3zvuWJanV2ucomphBiBCxw8czp44jZM9exI9iAqxN4/Mi2sDNmV
-         +ZhA==
-X-Gm-Message-State: APt69E08js/7kWNVCRr9C/KXLO/GWovYZ9AZ1VuB1U7l9rYo8ifljKcN
-        WIkgB1XPFogyENH2jTD2Wnif5NxbOsjhwY4KfSfkezxSEWcj
-X-Google-Smtp-Source: ADUXVKJyXFKsXKUk21WrD+H7WQGJhzQnIivpnmnvOZcD8npYxqh5oxl9ct0x2nEusQL1a655w0/1FZf4ZeB2ZZZMPEX+ssK1EYg4
-MIME-Version: 1.0
-X-Received: by 2002:a6b:b242:: with SMTP id b63-v6mr1398204iof.47.1528858262517;
- Tue, 12 Jun 2018 19:51:02 -0700 (PDT)
-Date:   Tue, 12 Jun 2018 19:51:02 -0700
-In-Reply-To: <089e08e548431cd0f90565c9f4e5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a643e4056e7d0db4@google.com>
-Subject: Re: KASAN: use-after-free Read in rds_cong_queue_updates
-From:   syzbot <syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=Brukz1IHrrzWDQqRoNaQ6t+e0uiF+OebCMwZLblIDqM=;
+        b=Tp9UJaLXvMg6Zbm2kuTy03AmQv8aBejZnBbxGOYUDY4g+X/TTCaphSLMKhUuapg7Xz
+         T4YKYXPmESiPmBUgVbL0i6zvX7VqD2YpfdztUNr+3A7MPNvrPtGJF+MffgMFnSgg09Yy
+         eLVJEHw8rek4AtE+MGphWtFzWgDTBo3pPW8e7nz4MyL8kEvQStMolPRskUMcsnBgHZhA
+         5s9BzWMqHcVdFImtBpLEDrrvo+XvOBTQdzkwqfmtUhkPoV188BjcG0a1oCsTdx1ovhsP
+         VYZ5fLHiy7peFf+HGJN5ZKVqJv6Dg8a1Q/5lIUY3KSwbrqRrL3CMuAg9UzSL2xEkse6U
+         KmMQ==
+X-Gm-Message-State: APt69E1BI4rEV6zz/y/UzQe3Sbyx0Cozk1zoKXfJh1krro8Kda5SJIzj
+        gXmakJU2KgMJsu6T2zukYeb+NHcdO1wM2GcZef2q4GovJzV/0u8mQoKUGS9xzQGavKmNkdO3xNC
+        MeWLcddBCTPKDHg5fpShUOAM6v/a60Ofz+ety2LeiVg==
+X-Received: by 2002:a63:b742:: with SMTP id w2-v6mr2456316pgt.200.1528858377494;
+        Tue, 12 Jun 2018 19:52:57 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKITdhbYAqXgrrklB3xWLvNIWHmuKk8FqJrSYUJNZxn6Co6rkx0jx7ZECrwy2MtFQgrHpTFVzw==
+X-Received: by 2002:a63:b742:: with SMTP id w2-v6mr2456306pgt.200.1528858377222;
+        Tue, 12 Jun 2018 19:52:57 -0700 (PDT)
+Received: from [10.101.46.95] ([175.41.48.77])
+        by smtp.gmail.com with ESMTPSA id t23-v6sm2269483pfa.86.2018.06.12.19.52.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 12 Jun 2018 19:52:56 -0700 (PDT)
+Content-Type: text/plain;
+        charset=us-ascii;
+        delsp=yes;
+        format=flowed
+Mime-Version: 1.0 (Mac OS X Mail 11.4 \(3445.8.2\))
+Subject: Re: [PATCH 1/2] r8169: Don't disable ASPM in the driver
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <caa66d98-e5cc-8bcd-1052-cef4ff00c32d@gmail.com>
+Date:   Wed, 13 Jun 2018 10:52:52 +0800
+Cc:     David Miller <davem@davemloft.net>, Ryankao <ryankao@realtek.com>,
+        Hayes Wang <hayeswang@realtek.com>, Hau <hau@realtek.com>,
+        romieu@fr.zoreil.com, bhelgaas@google.com,
+        Linux Netdev List <netdev@vger.kernel.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <E67CB62D-D400-4556-B00C-18892E1E2AC4@canonical.com>
+References: <20180612095759.6828-1-kai.heng.feng@canonical.com>
+ <caa66d98-e5cc-8bcd-1052-cef4ff00c32d@gmail.com>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+X-Mailer: Apple Mail (2.3445.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-syzbot has found a reproducer for the following crash on:
+Hi Heiner,
 
-HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1461f03f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=4c20b3866171ce8441d2
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=16cbfeaf800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=165227f7800000
+> On Jun 13, 2018, at 3:30 AM, Heiner Kallweit <hkallweit1@gmail.com> wrote:
+>
+> On 12.06.2018 11:57, Kai-Heng Feng wrote:
+>> Enable or disable ASPM should be done in PCI core instead of in the
+>> device driver.
+>>
+>> Commit ba04c7c93bbc ("r8169: disable ASPM") uses
+>> pci_disable_link_state() to disable ASPM. This is incorrect, if the
+>> device really needs to disable ASPM, we should use a quirk in PCI core
+>> to prevent the PCI core from setting ASPM altogether.
+> I wouldn't call using pci_disable_link_state() in a driver incorrect
+> (as it works), there is just a better way which is more in line with
+> the PCI subsystem architecture.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4c20b3866171ce8441d2@syzkaller.appspotmail.com
+Ok, I'll amend the commit log in next version.
 
-IPv6: ADDRCONF(NETDEV_CHANGE): bond0: link becomes ready
-8021q: adding VLAN 0 to HW filter on device team0
-IPVS: ftp: loaded support on port[0] = 21
-IPVS: ftp: loaded support on port[0] = 21
-==================================================================
-BUG: KASAN: use-after-free in atomic_read  
-include/asm-generic/atomic-instrumented.h:21 [inline]
-BUG: KASAN: use-after-free in refcount_read include/linux/refcount.h:42  
-[inline]
-BUG: KASAN: use-after-free in check_net include/net/net_namespace.h:236  
-[inline]
-BUG: KASAN: use-after-free in rds_destroy_pending net/rds/rds.h:897 [inline]
-BUG: KASAN: use-after-free in rds_cong_queue_updates+0x255/0x590  
-net/rds/cong.c:226
-Read of size 4 at addr ffff8801ab180044 by task syz-executor199/4800
+>
+>> Let's remove pci_disable_link_state() for now. Use PCI core quirks if
+>> any regression happens.
+> The vendor driver disables ASPM unconditionally for chip version 25
+> (there it's METHOD_9), so I think ASPM support is broken in this chip
+> version. I'll cook a PCI quirk.
 
-CPU: 1 PID: 4800 Comm: syz-executor199 Not tainted 4.17.0+ #84
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
-  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
-  refcount_read include/linux/refcount.h:42 [inline]
-  check_net include/net/net_namespace.h:236 [inline]
-  rds_destroy_pending net/rds/rds.h:897 [inline]
-  rds_cong_queue_updates+0x255/0x590 net/rds/cong.c:226
-  rds_recv_rcvbuf_delta.part.3+0x211/0x350 net/rds/recv.c:126
-  rds_recv_rcvbuf_delta net/rds/recv.c:735 [inline]
-  rds_clear_recv_queue+0x2f0/0x4c0 net/rds/recv.c:735
-  rds_release+0x15c/0x550 net/rds/af_rds.c:72
-  __sock_release+0xd7/0x260 net/socket.c:603
-  sock_close+0x19/0x20 net/socket.c:1186
-  __fput+0x353/0x890 fs/file_table.c:209
-  ____fput+0x15/0x20 fs/file_table.c:243
-  task_work_run+0x1e4/0x290 kernel/task_work.c:113
-  exit_task_work include/linux/task_work.h:22 [inline]
-  do_exit+0x1aee/0x2730 kernel/exit.c:865
-  do_group_exit+0x16f/0x430 kernel/exit.c:968
-  get_signal+0x886/0x1960 kernel/signal.c:2468
-  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
-  exit_to_usermode_loop+0x2cf/0x360 arch/x86/entry/common.c:162
-  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
-  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
-  do_syscall_64+0x6ac/0x800 arch/x86/entry/common.c:293
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x44f439
-Code: e8 ac be 02 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 5b ff fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fc65567dcf8 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: fffffffffffffe00 RBX: 00000000006edadc RCX: 000000000044f439
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 00000000006edadc
-RBP: 00000000006edad8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff3df31b1f R14: 00007fc65567e9c0 R15: 0000000000000061
+I actually asked Ryankao about this. He said that variant is more then a  
+decades old and he can't find why it doesn't support ASPM.
 
-Allocated by task 4800:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  kmem_cache_zalloc include/linux/slab.h:696 [inline]
-  net_alloc net/core/net_namespace.c:383 [inline]
-  copy_net_ns+0x159/0x4c0 net/core/net_namespace.c:423
-  create_new_namespaces+0x69d/0x8f0 kernel/nsproxy.c:107
-  unshare_nsproxy_namespaces+0xc3/0x1f0 kernel/nsproxy.c:206
-  ksys_unshare+0x708/0xf90 kernel/fork.c:2411
-  __do_sys_unshare kernel/fork.c:2479 [inline]
-  __se_sys_unshare kernel/fork.c:2477 [inline]
-  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2477
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+Since METHOD_9 might be a platform issue instead, my intention was to  
+enable ASPM for all variants. If users hit any issue, then we can introduce  
+new PCI quirks.
 
-Freed by task 746:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  net_free net/core/net_namespace.c:399 [inline]
-  net_drop_ns.part.14+0x11a/0x130 net/core/net_namespace.c:406
-  net_drop_ns net/core/net_namespace.c:405 [inline]
-  cleanup_net+0x6a1/0xb20 net/core/net_namespace.c:541
-  process_one_work+0xc64/0x1b70 kernel/workqueue.c:2153
-  worker_thread+0x181/0x13a0 kernel/workqueue.c:2296
-  kthread+0x345/0x410 kernel/kthread.c:240
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:412
+>
+>> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+>
+> Please note that netdev is closed currently. Once 4.18-RC1 is out it
+> will be re-opened. Then please re-submit properly annotating PATCH
+> with "net-next" (I've forgotten this often enough myself).
 
-The buggy address belongs to the object at ffff8801ab180040
-  which belongs to the cache net_namespace(17:syz0) of size 8896
-The buggy address is located 4 bytes inside of
-  8896-byte region [ffff8801ab180040, ffff8801ab182300)
-The buggy address belongs to the page:
-page:ffffea0006ac6000 count:1 mapcount:0 mapping:ffff8801aeaa0080 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffff8801d3827048 ffff8801d3827048 ffff8801aeaa0080
-raw: 0000000000000000 ffff8801ab180040 0000000100000001 ffff8801ab7cae40
-page dumped because: kasan: bad access detected
-page->mem_cgroup:ffff8801ab7cae40
+Will do for next version. Thanks!
 
-Memory state around the buggy address:
-  ffff8801ab17ff00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-  ffff8801ab17ff80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
-> ffff8801ab180000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
-                                            ^
-  ffff8801ab180080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801ab180100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+Kai-Heng
 
+>
+>> ---
+>> v2:
+>> - Remove module parameter.
+>> - Remove pci_disable_link_state().
+>>
+>>  drivers/net/ethernet/realtek/r8169.c | 5 -----
+>>  1 file changed, 5 deletions(-)
+>>
+>> diff --git a/drivers/net/ethernet/realtek/r8169.c  
+>> b/drivers/net/ethernet/realtek/r8169.c
+>> index 75dfac0248f4..9b55ce513a36 100644
+>> --- a/drivers/net/ethernet/realtek/r8169.c
+>> +++ b/drivers/net/ethernet/realtek/r8169.c
+>> @@ -25,7 +25,6 @@
+>>  #include <linux/dma-mapping.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/firmware.h>
+>> -#include <linux/pci-aspm.h>
+>>  #include <linux/prefetch.h>
+>>  #include <linux/ipv6.h>
+>>  #include <net/ip6_checksum.h>
+>> @@ -7647,10 +7646,6 @@ static int rtl_init_one(struct pci_dev *pdev,  
+>> const struct pci_device_id *ent)
+>>  	mii->reg_num_mask = 0x1f;
+>>  	mii->supports_gmii = cfg->has_gmii;
+>>
+>> -	/* disable ASPM completely as that cause random device stop working
+>> -	 * problems as well as full system hangs for some PCIe devices users */
+>> -	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+>> -				     PCIE_LINK_STATE_CLKPM);
+>>
+>>  	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+>>  	rc = pcim_enable_device(pdev);
