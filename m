@@ -2,92 +2,96 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7E472C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:18:58 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2E3A5C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:21:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A1920891
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:18:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD4C920891
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 08:21:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fyxmhw3X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A1920891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gM8YtPUA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD4C920891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754554AbeFMISy (ORCPT
+        id S1754573AbeFMIVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 04:18:54 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:38459 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754511AbeFMISw (ORCPT
+        Wed, 13 Jun 2018 04:21:07 -0400
+Received: from mail-wr0-f174.google.com ([209.85.128.174]:33572 "EHLO
+        mail-wr0-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754511AbeFMIVF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 04:18:52 -0400
-Received: by mail-ua0-f196.google.com with SMTP id 59-v6so1148425uas.5;
-        Wed, 13 Jun 2018 01:18:52 -0700 (PDT)
+        Wed, 13 Jun 2018 04:21:05 -0400
+Received: by mail-wr0-f174.google.com with SMTP id k16-v6so1747049wro.0
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 01:21:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9SCszq8UJUre0w5/Za3KxITbdsVLRhw9OZ8TXXrBtCI=;
-        b=Fyxmhw3X52wq0bWg8IG9GcDIr6RRrNC59RsPF5T2y1xmXhmp2wgP5P74+nZAUYdiDx
-         YNjgS0XOz7gv7ZtU8t1ocDaCmgikqGdX9GFTBaOu/iyO5rX03njim/WRE4C+U6UrIseJ
-         4NWWLVSFmaPCBjQEJ1Tm8xgCPqF/V3kWK1wCw4R5o0Ro4fn3sEKa5j3+HDAb2FGVZcB0
-         6v0cbEQldqNuaNfqJ308pmf6sdE9ez7G8TSRazUXgICDzesOOCT0gY6xpeaNxnsk8rHL
-         fOCp/kEJcsWleeY6LxkmfIxIGRr+ckbatUtgdVhN5t4RZ4p5u/LV5RdpoXYInCNlzwRg
-         cIIA==
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=vGCrvefxUofsiBLchmj4CccRLc8nRcMnTrOtK77nqJo=;
+        b=gM8YtPUA+BGn26D8WUOytJ7I8tkXxw2GWzm52wmO0mG4cKhCj5LEVpvvN0acVKe9fo
+         Ds0vrDXL+yhfxQQGnw5jbU2cg5YU1V+3kO3BhMBPSz5y40v6XY+7l0E5I2OHVd8BFJIk
+         TRflELlzSE33Zk8kZ7IdQ35Kx8zx9wnDQbI0Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9SCszq8UJUre0w5/Za3KxITbdsVLRhw9OZ8TXXrBtCI=;
-        b=oHnLZ4+8l5Zv+r+PjLY4AUuYzES7CilXsyFKgdxoeSNVOdWygRLhO3K7LGj7rZPFno
-         YgCrFGMEQFNvHD83Gb9uEbHEQc4gLTmXNdpm9QQjNzxis3qKm5nUteMPKGf30zO/kcNg
-         fK/iQLUXr5+QtI/xzlQ8oRZfiqRjNITcSyikRLEPVNGCkGc40vf/NPh3G1trMjlv5oPF
-         5F/oy2Qn3/14H55V8a1OU/HgKM0a/CCydrlUH0SclHbjMuNcIeGNvKqBdLIEKQgPUD8T
-         33N9GEXsgE618Zqwq+lUXAi+wWe+1QgQGNtJlRGS1Uw8324iR9EX5PtZFOsNz/D7Gd+r
-         uzOA==
-X-Gm-Message-State: APt69E1uz7XABPaRi3dJhJqw46V3gj7txgNV1Y0n6i+i2Pul5R6ZPk75
-        WBjRtxL5gG6shNT8vl1xKjcjvQ1ZQG1kTS4fSbwaRCc2
-X-Google-Smtp-Source: ADUXVKJeSg36sqD38SA6dhzfBht3Uhi89YfLYzq+9raB18Mle9f1DY2NHEaLjoZ0UIUAnjUquJ5xDo0lK8zuUFJnAWk=
-X-Received: by 2002:ab0:1a23:: with SMTP id a35-v6mr2581441uai.47.1528877932090;
- Wed, 13 Jun 2018 01:18:52 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vGCrvefxUofsiBLchmj4CccRLc8nRcMnTrOtK77nqJo=;
+        b=fI3ewNEyLIikEdeGu1HXK2Ik5W6B9rMoHF9IidEVha5B3mayYcWwHE9/U8GTu7i1Fv
+         FFRTujabio6VxZn+FZeYIPwtRXl3uaBP6Aci0NuUtWN6ks7bEOeXu64WgNEy+a/hoZi6
+         /dMD2R9fCXVdfGjZtUQLn9rtdpsFqEx7K5i/8GiwN/3BB6+QR+8le1iSqFeKVUydHRgg
+         WvkFVUS9+3YlfR6/GlO/D7GLhCKI7Y2rQTutGeAgy0C5/sUkDSd9QNEAcxK5L1phcMMw
+         mJZk+Kis1gz88doz601juYnbaGv5Uvlgc9aXpuBWSZdyT24mhjlgeMoZUZ93+yIZcCio
+         JnvA==
+X-Gm-Message-State: APt69E0g7bDgyWPOVIoeb9IAYu+EVPD81l5in5QN1jzQkAIe0v5dw5gO
+        fWbYMgxUTl/Jhlph7CS8G+xsfQ==
+X-Google-Smtp-Source: ADUXVKLvaBsA5v0+L1YSivgi/E93v5UMgjtM38Z7PBW4bRneQ6cBgYRa+L0J+txb1t+9rT/zqSnIVw==
+X-Received: by 2002:adf:b1ca:: with SMTP id r10-v6mr3059393wra.221.1528878063718;
+        Wed, 13 Jun 2018 01:21:03 -0700 (PDT)
+Received: from [192.168.0.18] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.googlemail.com with ESMTPSA id b16-v6sm2984463wrm.15.2018.06.13.01.21.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 13 Jun 2018 01:21:03 -0700 (PDT)
+Subject: Re: [PATCH] irqchip/gic-v3: do not access GICR_WAKER if its secured
+ register.
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, bjorn.andersson@linaro.org, sboyd@kernel.org
+References: <20180612145516.30897-1-srinivas.kandagatla@linaro.org>
+ <86d0ww7ymc.wl-marc.zyngier@arm.com>
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Message-ID: <c4fafe97-fbf4-1037-394c-94c65fff3e21@linaro.org>
+Date:   Wed, 13 Jun 2018 09:21:02 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 01:18:51
- -0700 (PDT)
-In-Reply-To: <ddc9a616517f8c4255efe2f57d13d3b3ba81ee89.camel@kernel.crashing.org>
-References: <23be2945b593a36d8fa1970bb579389c0f892a3e.camel@kernel.crashing.org>
- <CAHp75VfJNrviiiam9p49+6_oSjW+YH8vwjcZ2hn5Ux5mHgDCQw@mail.gmail.com>
- <53ef03b26a17738dc1465ce85562c9611ad415f8.camel@kernel.crashing.org>
- <CAHp75Vcdaejn=eq740YNdscSv9zX9xj3RzYp=AFs8HFprw34_Q@mail.gmail.com>
- <5d932502d9985cdfa6540480ea5ce6b0730502a1.camel@kernel.crashing.org>
- <CAHp75VfV7actoXkMUbh9KwAXR1FKR_VZ5RAuaL-pKLSynFi-3g@mail.gmail.com> <ddc9a616517f8c4255efe2f57d13d3b3ba81ee89.camel@kernel.crashing.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 13 Jun 2018 11:18:51 +0300
-Message-ID: <CAHp75Vey4sVb=VHRXCB3WHDwuwBUM24gbnjt+hHTJuTmUoQgQA@mail.gmail.com>
-Subject: Re: [PATCH] drivers/of: Add devm_of_iomap()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <86d0ww7ymc.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 3:18 AM, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
 
-> But there are many other uses of things like of_iomap() which could
-> benefit from switching to devm_of_iomap() and thus getting the
-> automated cleanup on exit and appropriate request of the memory
-> resource.
 
-Fine, fine.
+On 12/06/18 17:34, Marc Zyngier wrote:
+> I suggest you find out how the GIC has been integrated on this
+> platform. If you take a fault on accessing this register, this very
+> much looks like an integration bug, and it should be quirked as such.
+Thanks for the suggestion, This is a bug in the firmware which is 
+restricting access to this register. We have been working around this 
+bug for more than 2 years due to this. Now this platform support is in 
+mainline and We/I have no hope that this will be fixed in near future 
+atleast for this platform.
 
--- 
-With Best Regards,
-Andy Shevchenko
+I will try to come up with a Quirk specific for this SoC.
+
+thanks,
+srini
