@@ -7,88 +7,112 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 26774C004E4
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:28:02 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 85A54C004E4
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:30:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7A2208B2
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:28:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 305F62086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 16:30:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JcyPCmYS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7A2208B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JlA9shwl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 305F62086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935191AbeFMQ17 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 12:27:59 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:39703 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934563AbeFMQ16 (ORCPT
+        id S934960AbeFMQaM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 12:30:12 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:42068 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934372AbeFMQaL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 12:27:58 -0400
-Received: by mail-wm0-f66.google.com with SMTP id p11-v6so6556747wmc.4
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 09:27:57 -0700 (PDT)
+        Wed, 13 Jun 2018 12:30:11 -0400
+Received: by mail-ua0-f195.google.com with SMTP id x18-v6so2125126uaj.9
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 09:30:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=qeRLlq+Ca0IShbxghKVyLsTxCCdGcQXzYPbwz/0kpPE=;
-        b=JcyPCmYSc07aRhBnbwTRWMquMiLGp964eiWp7laWIcp7+NNkyeKZSTpTiB42CpWkPs
-         wOE3tHU+j2QCoZ4JWABeJyLaA0tziDVD9IQicwrS//mgeD7iHf6Fs8gAi4hVh7SSmcBN
-         fhUZPbljJPeffmv2VBYE/B0KKUVy7K5NV7NGP6wRlhsMbPQBocoXiWsu4oXfFB3HuXPV
-         z+OEx8I+NZO6lpljGRYmHkHPhf5RxY8eaF5NEibK4wpAmcqsbchGolK0x1rvSSqhsQWv
-         9RKzKk4m0W5bt18XTth6A4Qfl6nbzXixpGDesgZ39T/xY9sEBk0MNYBA63Ij5wInu9a4
-         mLGQ==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=MzuxUJA/lcU8TWHfSkOpzEUCwhITPcNDYNOBMzqkdIg=;
+        b=JlA9shwl9M51thqq7C4OdPGGD4omF9QDodBgN89bbA6hvutaz3+aL7tFwLMokhgC5W
+         KlwToD15pxrY/7T5j3emyByUW35ftI0J1TLWu0hJ3rax16cTsNo8YM3FPatSMKVsnk7Q
+         PtIHtrCeZ4YOLDw3Kj+Pn3Cri7ovS0OzEIEhYrlrbP5lE7K+Bzz/EqdJbDY7mQkZhQoA
+         mkSlv7VVrvRIHl1urCOrFWM7+ArBe+FSfc4rKZoc9H+XMaZL3ec4KYq4GN8ZWok1ENeH
+         QFqBdzjmIJca86m8gto7zckM7KYEj4SJO8pycGfKjhBmGwGquUll7p074PNhlQegYr6F
+         jiUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=qeRLlq+Ca0IShbxghKVyLsTxCCdGcQXzYPbwz/0kpPE=;
-        b=cuFWP5ovWp543jZThfKVBP1nGZZulZGvQ1o9CYGEmU+MXQhRWkTzn382J0gTCqZdpL
-         kefrxx+VHXykGMYIdsinNVzkbkhZLkyoH5ZQN5LMFhLKG+c3nCNFpKGLDVro580gOB88
-         XFZ2w8oiyr4yC+ClzcPcSTq1dQZ5w7ZwHy5ZIL9wt80i+RPy2Gbf22A1PEYlv2VR+gxK
-         lAVRyszwtk7v7CyLKbT/V45wVC/ghSovAKrD8qIaqyXYMH2bq/Bph2ZsHOh+LfbK8wPC
-         YFSs7dS/1ZmePoXAl9tc2Am5FlZm/E182UA+rJEh3bOyIMSJQG4O/S0IwrJEarHCbfl/
-         Zldw==
-X-Gm-Message-State: APt69E3z3hZqsYcKbvnFwPcMlE0SxTW993/RqdVf+z0pULRKw4MGKPNH
-        lYNLKcTSZ48DqLohzlZzQdk=
-X-Google-Smtp-Source: ADUXVKLIvFRZxD8vYNTmHmrl+k/7umFxnGiyIo4PDRmEEma/Ez04yIdGTYEp6BaTScHvaWUZ0q4csA==
-X-Received: by 2002:a1c:934e:: with SMTP id v75-v6mr4415948wmd.52.1528907277302;
-        Wed, 13 Jun 2018 09:27:57 -0700 (PDT)
-Received: from localhost (8ta-151-219-142.telkomadsl.co.za. [41.151.219.142])
-        by smtp.gmail.com with ESMTPSA id y3-v6sm3357804wro.21.2018.06.13.09.27.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 09:27:56 -0700 (PDT)
-Date:   Wed, 13 Jun 2018 20:26:43 +0200
-From:   Chris Opperman <eklikeroomys@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     devel@driverdev.osuosl.org, Frank Mori Hess <fmh6jj@gmail.com>,
-        Simo Koskinen <koskisoft@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Ian Abbott <abbotti@mev.co.uk>
-Subject: Re: [PATCH v4] staging: comedi: Improved readability of function
- comedi_nsamples_left.
-Message-ID: <20180613182643.GA14100@kerdev>
-References: <1528837793-11765-1-git-send-email-eklikeroomys@gmail.com>
- <20180613092955.vc5impf46prhcur7@mwanda>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=MzuxUJA/lcU8TWHfSkOpzEUCwhITPcNDYNOBMzqkdIg=;
+        b=JS9ZJP56YJ6L5yycnQCwkT7NOw/4pePrylQhkSP0wgRblbL+74tQ/nd7q1qbxox/do
+         oSeKKoFGpv1L8TxhtZWtr7GNnr92vCPHkMvHDrSq8os4C5oIEDP9KA1T6UIOvdb3d6jh
+         kQ4/laP3Jw7sk1+19j0DTsPcoAK1LGRsfsc2jPauHTinSCancM1px+fyJrBShg6S57vj
+         jmfvCpJb7etamsFYD2UyrFk7+3KcubK8HWPIpWlIGa4EQC4g2tS/O3pTbpY5LHgT+Noc
+         HBcq4ikbXOTMApb7x6hMmjlKzbVECOOB/VMBSO7RY+xK8Pp6/TesPfY18p1WZw3SPENn
+         ZE+g==
+X-Gm-Message-State: APt69E3XDv9bmsGGHPPgQzk1bpP/Ot28Y/oc+9FDTvXisbrQQhTiJ6Vn
+        kiajN6kD52MKvpcPdnvw/b9TSFoSSTAOJ1RGLNU=
+X-Google-Smtp-Source: ADUXVKLBTDk3tbHrs6IK2WNZMVO66/LUtkK2u18eU5C+i3/3wWKUKCHsPi1GqGBLB2Orgng+8O4II873W2lpBdNzFjA=
+X-Received: by 2002:ab0:1b9b:: with SMTP id k27-v6mr3848973uai.122.1528907410723;
+ Wed, 13 Jun 2018 09:30:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613092955.vc5impf46prhcur7@mwanda>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 09:30:09
+ -0700 (PDT)
+In-Reply-To: <d663916f-ebbf-3177-cd03-8d1175912f53@linaro.org>
+References: <20180613092919.24075-1-thierry.escande@linaro.org>
+ <CAHp75VeXGT3KG9HXQstFJVyHFO8o64Dk0LSo43FzyR0SvPUONg@mail.gmail.com> <d663916f-ebbf-3177-cd03-8d1175912f53@linaro.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 13 Jun 2018 19:30:09 +0300
+Message-ID: <CAHp75VeiH+FvT7pbCpx75kxxeC5huxKRtXQvzfVjX4OyCaLLrw@mail.gmail.com>
+Subject: Re: [PATCH v2] lib/test_printf.c: call wait_for_random_bytes() before
+ plain %p tests
+To:     Thierry Escande <thierry.escande@linaro.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        David Miller <davem@davemloft.net>,
+        Petr Mladek <pmladek@suse.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        "Tobin C . Harding" <me@tobin.cc>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan/Ian,
+On Wed, Jun 13, 2018 at 5:59 PM, Thierry Escande
+<thierry.escande@linaro.org> wrote:
+> On 13/06/2018 13:22, Andy Shevchenko wrote:
+>>
+>> On Wed, Jun 13, 2018 at 12:29 PM, Thierry Escande
+>> <thierry.escande@linaro.org> wrote:
+>>>
+>>> If the test_printf module is loaded before the crng is initialized, the
+>>> plain 'p' tests will fail because the printed address will not be hashed
+>>> and the buffer will contain "(ptrval)" instead.
+>>> Since we cannot wait for the crng to be initialized for an undefined
+>>> time, both plain 'p' tests now accept the string "(ptrval)" as a valid
+>>> result and print a warning message.
+>>
+>>
+>> There are two possibilities:
+>>   1. (ptrval) for 32-bit case
+>>   2. (____ptrval____) for 64-bit case.
+>
+>
+> From lib/vsprintf.c, ptr_to_id() puts "(ptrval)" into the buffer, then it
+> gets left-padded with spaces by widen_string().
 
-Noted your comments regarding additional text, thanks! Just curious whether 
-the "scissors" format given at the link below is valid? 
+Which kernel version you are trying to fix?
 
-https://kernelnewbies.org/PatchTipsAndTricks
+What I see for a long time in linux-next:
 
-It is given as an alternative to placing additional text below the
-cut-off line.
+static char *ptr_to_id(char *buf, char *end, void *ptr, struct printf_spec spec)
+{
+        const char *str = sizeof(ptr) == 8 ? "(____ptrval____)" : "(ptrval)";
+...
 
-Kind Regards,
-Chris Opperman
+brought by the commit 91efafb1dd8f ("lib/vsprintf: Replace space with
+'_' before crng is ready").
+
+-- 
+With Best Regards,
+Andy Shevchenko
