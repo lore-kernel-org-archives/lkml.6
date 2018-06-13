@@ -1,145 +1,292 @@
 Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 626B5C07D5C
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:49:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68CB3C07D5C
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:56:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165BB20660
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:49:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bXAh24bF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 165BB20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 0E3E1208BA
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 01:56:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E3E1208BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934837AbeFMBtt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 12 Jun 2018 21:49:49 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:59380 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933693AbeFMBtr (ORCPT
+        id S934525AbeFMB4w (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Tue, 12 Jun 2018 21:56:52 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:36816 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933577AbeFMB4u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 12 Jun 2018 21:49:47 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5D1fCax118504;
-        Wed, 13 Jun 2018 01:49:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=kiTdN06vLEXfnahXrWSp98NvAA5Zyu+oRZoA8sOlxPc=;
- b=bXAh24bFzzN3ng2BUeqnlyYQahDHcvU7BAYtjqW1TW8DMu6UUS/aFP2Gvf//ljBX499M
- yafZYixFVfYA1zJsU1LCgNOqrQsnDIpvtRsnhPhki/KMeevcK/XxLHILnihPKWz+Tmkn
- pSgZlISTZlTZ6PoX4ebQtxvBXU9N89KcdwOJeL9PG/sGyvNYUIj3IaaKbk5Ff/JRkjOg
- vPgkLr7Qj+AAXoGCLqwDKFY1XqIu4JfB+S5sYdVu8EymtFfA/aGpOkZiAAEPfksIbTB7
- WB8tDZ1ny4RElg3tZVCwV2ExzRHuzydDKsfG/09NznttztN6CUz4jcLOYSnbKyamOgIi Jg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2jjp6c8dkc-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 01:49:37 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5D1nbl3008465
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 13 Jun 2018 01:49:37 GMT
-Received: from abhmp0017.oracle.com (abhmp0017.oracle.com [141.146.116.23])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5D1naWP019538;
-        Wed, 13 Jun 2018 01:49:36 GMT
-Received: from [10.154.144.7] (/10.154.144.7)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 12 Jun 2018 18:49:36 -0700
-Subject: Re: [PATCH v3 7/9] xen/gntdev: Add initial support for dma-buf UAPI
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180612134200.17456-1-andr2000@gmail.com>
- <20180612134200.17456-8-andr2000@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Message-ID: <916e91c9-0710-0afb-2f49-4a7c7b4c02b5@oracle.com>
-Date:   Tue, 12 Jun 2018 21:49:34 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180612134200.17456-8-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        Tue, 12 Jun 2018 21:56:50 -0400
+X-UUID: 676123d323f742db86d7da1f517cc904-20180613
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw02.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1704438647; Wed, 13 Jun 2018 09:56:46 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Wed, 13 Jun 2018 09:56:44 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Wed, 13 Jun 2018 09:56:38 +0800
+Message-ID: <1528854998.5296.7.camel@mtkswgap22>
+Subject: Re: [PATCH 2/2] arm64: dts: mediatek: add mt6765 support
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Rob Herring <robh+dt@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        Jades Shih <jades.shih@mediatek.com>,
+        "Yingjoe Chen" <yingjoe.chen@mediatek.com>,
+        My Chuang <my.chuang@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <wsd_upstream@mediatek.com>
+Date:   Wed, 13 Jun 2018 09:56:38 +0800
+In-Reply-To: <CAL_JsqJX3VF0YPMqcYAG53ib1SO8eFfFsFP39XMHO5YiHLWq1Q@mail.gmail.com>
+References: <1528843243-29782-1-git-send-email-mars.cheng@mediatek.com>
+         <1528843243-29782-3-git-send-email-mars.cheng@mediatek.com>
+         <CAL_JsqJX3VF0YPMqcYAG53ib1SO8eFfFsFP39XMHO5YiHLWq1Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8922 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806130018
+MIME-Version: 1.0
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Rob
 
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt6765-evb.dts
+> > @@ -0,0 +1,39 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018 MediaTek Inc.
+> > + * Author: Mars.C <mars.cheng@mediatek.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> 
+> With the SPDX tag, you can drop the license text.
 
-On 06/12/2018 09:41 AM, Oleksandr Andrushchenko wrote:
+Got it, will fix it.
+> 
+> > + */
+> > +
+> > +/dts-v1/;
+> > +#include "mt6765.dtsi"
+> > +
+> > +/ {
+> > +       model = "MediaTek MT6765 EVB";
+> > +       compatible = "mediatek,mt6765-evb", "mediatek,mt6765";
+> > +
+> > +       aliases {
+> > +               serial0 = &uart0;
+> > +       };
+> > +
+> > +       memory@40000000 {
+> > +               device_type = "memory";
+> > +               reg = <0 0x40000000 0 0x1e800000>;
+> > +       };
+> > +
+> > +       chosen {
+> > +               stdout-path = "serial0:921600n8";
+> > +       };
+> > +};
+> > +
+> > +&uart0 {
+> > +       status = "okay";
+> > +};
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt6765.dtsi b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+> > new file mode 100644
+> > index 0000000..7222a5e
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/mediatek/mt6765.dtsi
+> > @@ -0,0 +1,148 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018 MediaTek Inc.
+> > + * Author: Mars.C <mars.cheng@mediatek.com>
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + *
+> > + * This program is distributed in the hope that it will be useful,
+> > + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> > + * GNU General Public License for more details.
+> 
+> ditto
 
-> diff --git a/drivers/xen/gntdev.c b/drivers/xen/gntdev.c
-> index a09db23e9663..e82660d81d7e 100644
-> --- a/drivers/xen/gntdev.c
-> +++ b/drivers/xen/gntdev.c
-> @@ -48,6 +48,9 @@
->   #include <asm/xen/hypercall.h>
->   
->   #include "gntdev-common.h"
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +#include "gntdev-dmabuf.h"
-> +#endif
->   
->   MODULE_LICENSE("GPL");
->   MODULE_AUTHOR("Derek G. Murray <Derek.Murray@cl.cam.ac.uk>, "
-> @@ -566,6 +569,15 @@ static int gntdev_open(struct inode *inode, struct file *flip)
->   	INIT_LIST_HEAD(&priv->freeable_maps);
->   	mutex_init(&priv->lock);
->   
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +	priv->dmabuf_priv = gntdev_dmabuf_init();
-> +	if (IS_ERR(priv->dmabuf_priv)) {
-> +		ret = PTR_ERR(priv->dmabuf_priv);
-> +		kfree(priv);
-> +		return ret;
-> +	}
-> +#endif
-> +
->   	if (use_ptemod) {
->   		priv->mm = get_task_mm(current);
->   		if (!priv->mm) {
-> @@ -616,8 +628,13 @@ static int gntdev_release(struct inode *inode, struct file *flip)
->   	WARN_ON(!list_empty(&priv->freeable_maps));
->   	mutex_unlock(&priv->lock);
->   
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +	gntdev_dmabuf_fini(priv->dmabuf_priv);
-> +#endif
-> +
->   	if (use_ptemod)
->   		mmu_notifier_unregister(&priv->mn, priv->mm);
-> +
->   	kfree(priv);
->   	return 0;
->   }
-> @@ -987,6 +1004,107 @@ static long gntdev_ioctl_grant_copy(struct gntdev_priv *priv, void __user *u)
->   	return ret;
->   }
->   
-> +#ifdef CONFIG_XEN_GNTDEV_DMABUF
-> +static long
-> +gntdev_ioctl_dmabuf_exp_from_refs(struct gntdev_priv *priv,
-> +				  struct ioctl_gntdev_dmabuf_exp_from_refs __user *u)
+Got it.
 
+> 
+> > + */
+> > +
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> > +
+> > +/ {
+> > +       compatible = "mediatek,mt6765";
+> > +       interrupt-parent = <&sysirq>;
+> > +       #address-cells = <2>;
+> > +       #size-cells = <2>;
+> > +
+> > +       psci {
+> > +               compatible = "arm,psci-0.2";
+> > +               method = "smc";
+> > +       };
+> > +
+> > +       cpus {
+> > +               #address-cells = <1>;
+> > +               #size-cells = <0>;
+> > +
+> > +               cpu0: cpu@0 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x000>;
+> > +               };
+> > +
+> > +               cpu1: cpu@1 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x001>;
+> > +               };
+> > +
+> > +               cpu2: cpu@2 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x002>;
+> > +               };
+> > +
+> > +               cpu3: cpu@3 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x003>;
+> > +               };
+> > +
+> > +               cpu4: cpu@100 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x100>;
+> > +               };
+> > +
+> > +               cpu5: cpu@101 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x101>;
+> > +               };
+> > +
+> > +               cpu6: cpu@102 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x102>;
+> > +               };
+> > +
+> > +               cpu7: cpu@103 {
+> > +                       device_type = "cpu";
+> > +                       compatible = "arm,cortex-a53";
+> > +                       enable-method = "psci";
+> > +                       reg = <0x103>;
+> > +               };
+> > +       };
+> > +
+> > +       uart_clk: dummy26m {
+> > +               compatible = "fixed-clock";
+> > +               clock-frequency = <26000000>;
+> > +               #clock-cells = <0>;
+> > +       };
+> > +
+> > +       timer {
+> > +               compatible = "arm,armv8-timer";
+> > +               interrupt-parent = <&gic>;
+> > +               interrupts = <GIC_PPI 13
+> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                            <GIC_PPI 14
+> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                            <GIC_PPI 11
+> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>,
+> > +                            <GIC_PPI 10
+> > +                            (GIC_CPU_MASK_SIMPLE(8) | IRQ_TYPE_LEVEL_LOW)>;
+> > +       };
+> > +
+> > +       sysirq: intpol-controller@10200a80 {
+> 
+> This and others with an address should go under a simple-bus node.
+> 
+> Node name should be 'interrupt-controller@...'
 
-Didn't we agree that this code moves to gntdev-dmabuf.c ?
+Got it, will fix them.
 
--boris
+> 
+> > +               compatible = "mediatek,mt6765-sysirq",
+> > +                            "mediatek,mt6577-sysirq";
+> > +               interrupt-controller;
+> > +               #interrupt-cells = <3>;
+> > +               interrupt-parent = <&gic>;
+> > +               reg = <0 0x10200a80 0 0x50>;
+> > +       };
+> > +
+> > +       gic: interrupt-controller@0c000000 {
+> 
+> Drop the leading 0.
+
+Got it, will fix it.
+
+> 
+> > +               compatible = "arm,gic-v3";
+> > +               #interrupt-cells = <3>;
+> > +               #address-cells = <2>;
+> > +               #size-cells = <2>;
+> > +               #redistributor-regions = <1>;
+> > +               interrupt-parent = <&gic>;
+> > +               interrupt-controller;
+> > +               reg = <0 0x0c000000 0 0x40000>, // distributor
+> > +                     <0 0x0c100000 0 0x200000>; // redistributor
+> > +               interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> > +       };
+> > +
+> > +       uart0: serial@11002000 {
+> > +               compatible = "mediatek,mt6765-uart",
+> > +                            "mediatek,mt6577-uart";
+> > +               reg = <0 0x11002000 0 0x400>;
+> > +               interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
+> > +               clocks = <&uart_clk>;
+> > +               status = "disabled";
+> > +       };
+> > +
+> > +       uart1: serial@11003000 {
+> > +               compatible = "mediatek,mt6765-uart",
+> > +                            "mediatek,mt6577-uart";
+> > +               reg = <0 0x11003000 0 0x400>;
+> > +               interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
+> > +               clocks = <&uart_clk>;
+> > +               status = "disabled";
+> > +       };
+> > +};
+> > --
+> > 1.7.9.5
+> >
+
 
