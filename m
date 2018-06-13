@@ -2,98 +2,131 @@ Return-Path: <SRS0=lWsm=I7=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0EA6FC433EF
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:42:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7609CC433EF
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB513208D6
-	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:42:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XHJUlyT5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB513208D6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 270F9208E0
+	for <linux-kernel@archiver.kernel.org>; Wed, 13 Jun 2018 17:44:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 270F9208E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mev.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935307AbeFMRl7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 13:41:59 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:42293 "EHLO
-        mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934737AbeFMRl5 (ORCPT
+        id S935407AbeFMRoa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 13:44:30 -0400
+Received: from smtp81.ord1d.emailsrvr.com ([184.106.54.81]:50738 "EHLO
+        smtp81.ord1d.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751898AbeFMRo3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 13:41:57 -0400
-Received: by mail-vk0-f68.google.com with SMTP id s187-v6so2024220vke.9;
-        Wed, 13 Jun 2018 10:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=Hdfke7xyHfX+4uznM6VQtOrySiq8rWl/NTKolzN4WIM=;
-        b=XHJUlyT5cMAV5qwgXQyV1PuaptE2vrhaIg1s8fzTw6Huv2h26OaXxjPLs1YUSYXVwr
-         efSuoRp4Palj4OUYPpB8l0sqNO8Ve7oqCMRC1F7F+CCj++TNubecrch/H6js3gf6LKB9
-         3Idh5/3PLiALi/9yjdojQXnaM1xMYcvkobUcNpjDfxst4cdG6Nv2CRWwpFR7v8SRk/zm
-         vM9uuJdm729Otw/LyeJrEgBXNwNR38bNGylMjnSW5IGIAriT1ESFvhbl7mKrwdMyUjlB
-         R99Qgq392fJ9rrdpNLkySEcJ6CsVDLKWyngbln4x8embYlDNB2kp2Fvt6zHDyoB6sO1F
-         Bbxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=Hdfke7xyHfX+4uznM6VQtOrySiq8rWl/NTKolzN4WIM=;
-        b=tjnT3jvm5ZuKRI3HeKQ3bTF8CEuSmEKV1DpykQ1AbRhZiBEW17gA14GM8c6b5XwaKh
-         zJQyUML0xdyMUjMENF9wiOqh9kV/pNgJdQEdO0fUpg5MPXiiJtpD2kOCIg9sofSH/4My
-         lT1KNJBORHiocau18WC+SAOmsA8nHTQRxStmXaSdd1xdQUi0gPmU430T4IyHRxPUVR5S
-         YSz/76DQdq0sXSmAIamfp/yLRMJ3j43DXk7dm2F9gMa0tuhe0N12SWYYi6S1+1IRzlLj
-         IM1yCGjb88YPv5qV+7y93KHCRkAm8Jv61U8PmXuNPiGzY/AYdSxps70WCZxTKjTGIfGW
-         5BKw==
-X-Gm-Message-State: APt69E0xnYzRh3Z+JrvX5zOqM3qrjGC3N/MLDwWP5OTjqrqxSQJctnk+
-        6jIrzZVRkADaU05XA0kCuLDURmPfQysQFJC/OMM=
-X-Google-Smtp-Source: ADUXVKJktFTikfJeqzNPLqYY566tx9M/vXyokaKYNk6LNBfdSbmL4T68YuIG9OMDb99wGzwyfD8Dip29Hd1Bcb/DOEQ=
-X-Received: by 2002:a1f:ae96:: with SMTP id x144-v6mr3652647vke.52.1528911715846;
- Wed, 13 Jun 2018 10:41:55 -0700 (PDT)
+        Wed, 13 Jun 2018 13:44:29 -0400
+Received: from smtp11.relay.ord1d.emailsrvr.com (localhost [127.0.0.1])
+        by smtp11.relay.ord1d.emailsrvr.com (SMTP Server) with ESMTP id 96BF16036E;
+        Wed, 13 Jun 2018 13:44:28 -0400 (EDT)
+X-Auth-ID: siepeng@mev.co.uk
+Received: by smtp11.relay.ord1d.emailsrvr.com (Authenticated sender: siepeng-AT-mev.co.uk) with ESMTPSA id A2AB96042A;
+        Wed, 13 Jun 2018 13:44:27 -0400 (EDT)
+X-Sender-Id: siepeng@mev.co.uk
+Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
+        by 0.0.0.0:465 (trex/5.7.12);
+        Wed, 13 Jun 2018 13:44:28 -0400
+Subject: Re: [PATCH v5] staging: comedi: Improved readability of function
+ comedi_nsamples_left.
+To:     Chris Opperman <eklikeroomys@gmail.com>
+Cc:     H Hartley Sweeten <hsweeten@visionengravers.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Simo Koskinen <koskisoft@gmail.com>,
+        Frank Mori Hess <fmh6jj@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+References: <1528910104-1360-1-git-send-email-eklikeroomys@gmail.com>
+From:   Ian Abbott <abbotti@mev.co.uk>
+Organization: MEV Ltd.
+Message-ID: <4c33a400-f840-0a21-efad-2a9318dfdb09@mev.co.uk>
+Date:   Wed, 13 Jun 2018 18:44:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:ab0:549e:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 10:41:55
- -0700 (PDT)
-In-Reply-To: <20180612205619.28156-3-anchalag@amazon.com>
-References: <20180612205619.28156-1-anchalag@amazon.com> <20180612205619.28156-3-anchalag@amazon.com>
-From:   Balbir Singh <bsingharora@gmail.com>
-Date:   Thu, 14 Jun 2018 03:41:55 +1000
-Message-ID: <CAKTCnznqA=RcA1VWePn-Yt5AYn2-FKhXRJH8FgHjcG2Gjqc1Ow@mail.gmail.com>
-Subject: Re: [RFC PATCH 02/12] xen/manage: introduce helper function to know
- the on-going suspend mode
-To:     Anchal Agarwal <anchalag@amazon.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com,
-        roger.pau@citrix.com, netdev <netdev@vger.kernel.org>,
-        jgross@suse.com, xen-devel <xen-devel@lists.xenproject.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        kamatam@amazon.com, Frank van der Linden <fllinden@amazon.com>,
-        vallish@amazon.com, guruanb@amazon.com, eduval@amazon.com,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        linux-pm@vger.kernel.org, cyberax@amazon.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1528910104-1360-1-git-send-email-eklikeroomys@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 6:56 AM, Anchal Agarwal <anchalag@amazon.com> wrote:
-> From: Munehisa Kamata <kamatam@amazon.com>
->
-> Introduce simple functions which help to know the on-going suspend mode
-> so that other Xen-related code can behave differently according to the
-> current suspend mode.
+On 13/06/18 18:14, Chris Opperman wrote:
+> Improve readability of comedi_nsamples_left:
+> a) Reduce nesting by using more return statements.
+> b) Declare variables scans_left and samples_left at start of function.
+> c) Change type of scans_Left to unsigned long long to avoid cast.
+> 
+> Signed-off-by: Chris Opperman <eklikeroomys@gmail.com>
+> ---
+> 
+> Changes v5:
+> a) Moved additional text to below the cut-off line.
+> 
 
-I'd squash this patch with the previous, the previous one just left
-too many open questions about how suspend mode is used. Looks like
-suspend mode is a state, but I am not sure if valid transitions are
-defined/checked?
+The "Changes v5" text is a bit incomplete without the earlier change 
+history, but let's forget that since the previous change history was a 
+bit messed up anyway.
 
-Balbir Singh.
+>   drivers/staging/comedi/drivers.c | 26 +++++++++++++-------------
+>   1 file changed, 13 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers.c b/drivers/staging/comedi/drivers.c
+> index 9d73347..57dd63d 100644
+> --- a/drivers/staging/comedi/drivers.c
+> +++ b/drivers/staging/comedi/drivers.c
+> @@ -473,21 +473,21 @@ unsigned int comedi_nsamples_left(struct comedi_subdevice *s,
+>   {
+>   	struct comedi_async *async = s->async;
+>   	struct comedi_cmd *cmd = &async->cmd;
+> +	unsigned long long scans_left;
+> +	unsigned long long samples_left;
+> 
+> -	if (cmd->stop_src == TRIG_COUNT) {
+> -		unsigned int scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+> -		unsigned int scan_pos =
+> -		    comedi_bytes_to_samples(s, async->scan_progress);
+> -		unsigned long long samples_left = 0;
+> -
+> -		if (scans_left) {
+> -			samples_left = ((unsigned long long)scans_left *
+> -					cmd->scan_end_arg) - scan_pos;
+> -		}
+> +	if (cmd->stop_src != TRIG_COUNT)
+> +		return nsamples;
+> 
+> -		if (samples_left < nsamples)
+> -			nsamples = samples_left;
+> -	}
+> +	scans_left = __comedi_nscans_left(s, cmd->stop_arg);
+> +	if (!scans_left)
+> +		return 0;
+> +
+> +	samples_left = scans_left * cmd->scan_end_arg -
+> +		comedi_bytes_to_samples(s, async->scan_progress);
+> +
+> +	if (samples_left < nsamples)
+> +		return samples_left;
+>   	return nsamples;
+>   }
+>   EXPORT_SYMBOL_GPL(comedi_nsamples_left);
+> --
+> 2.1.4
+> 
+
+The actual patch looks fine thanks!
+
+Reviewed-by: Ian Abbott <abbotti@mev.co.uk>
+
+-- 
+-=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
+-=( MEV Ltd. is a company registered in England & Wales. )=-
+-=( Registered number: 02862268.  Registered address:    )=-
+-=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
