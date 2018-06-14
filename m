@@ -5,52 +5,58 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 65182C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:11:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3D236C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:11:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10355208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:11:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10355208D4
+	by mail.kernel.org (Postfix) with ESMTP id E79F2208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:11:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E79F2208D4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936156AbeFNQJz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:09:55 -0400
-Received: from osg.samsung.com ([64.30.133.232]:46542 "EHLO osg.samsung.com"
+        id S936131AbeFNQJx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 12:09:53 -0400
+Received: from osg.samsung.com ([64.30.133.232]:43788 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936080AbeFNQJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:09:43 -0400
+        id S936065AbeFNQJm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:09:42 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by osg.samsung.com (Postfix) with ESMTP id 0D96420F9C;
-        Thu, 14 Jun 2018 09:09:43 -0700 (PDT)
+        by osg.samsung.com (Postfix) with ESMTP id E421B20F94;
+        Thu, 14 Jun 2018 09:09:41 -0700 (PDT)
 X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 Received: from osg.samsung.com ([127.0.0.1])
         by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id roW6lT6bl0wY; Thu, 14 Jun 2018 09:09:41 -0700 (PDT)
+        with ESMTP id edmgt_oxDTbN; Thu, 14 Jun 2018 09:09:40 -0700 (PDT)
 Received: from smtp.s-opensource.com (177.41.114.220.dynamic.adsl.gvt.net.br [177.41.114.220])
-        by osg.samsung.com (Postfix) with ESMTPSA id BCD6020EBA;
+        by osg.samsung.com (Postfix) with ESMTPSA id BB0A720EB9;
         Thu, 14 Jun 2018 09:09:16 -0700 (PDT)
 Received: from mchehab by smtp.s-opensource.com with local (Exim 4.91)
         (envelope-from <mchehab@smtp.s-opensource.com>)
-        id 1fTUoE-0005Tz-Io; Thu, 14 Jun 2018 13:09:14 -0300
+        id 1fTUoE-0005UM-OO; Thu, 14 Jun 2018 13:09:14 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Brown <broonie@kernel.org>, devicetree@vger.kernel.org,
-        linux-mmc@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: [PATCH v3 23/27] devicetree: fix name of pinctrl-bindings.txt
-Date:   Thu, 14 Jun 2018 13:09:08 -0300
-Message-Id: <d04d47f9fba035cf9de8589a288964c636324d58.1528990947.git.mchehab+samsung@kernel.org>
+        Harry Wei <harryxiyou@gmail.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-kernel@zh-kernel.org, dmaengine@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, sparclinux@vger.kernel.org,
+        devel@lists.orangefs.org, linux-pm@vger.kernel.org
+Subject: [PATCH v3 27/27] fix a series of Documentation/ broken file name references
+Date:   Thu, 14 Jun 2018 13:09:12 -0300
+Message-Id: <a98dcea5ad61aad741c88be991d6446b4d6bc029.1528990947.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1528990947.git.mchehab+samsung@kernel.org>
 References: <cover.1528990947.git.mchehab+samsung@kernel.org>
@@ -61,150 +67,121 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Rename:
-	pinctrl-binding.txt -> pinctrl-bindings.txt
-
-In order to match the current name of this file.
+As files move around, their previous links break. Fix the
+references for them.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt | 2 +-
- Documentation/devicetree/bindings/mfd/as3722.txt              | 2 +-
- .../devicetree/bindings/mmc/microchip,sdhci-pic32.txt         | 2 +-
- Documentation/devicetree/bindings/mmc/sdhci-st.txt            | 2 +-
- .../devicetree/bindings/pinctrl/pinctrl-max77620.txt          | 4 ++--
- .../devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt          | 4 ++--
- Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt   | 4 ++--
- .../devicetree/bindings/serial/microchip,pic32-uart.txt       | 2 +-
- Documentation/devicetree/bindings/spi/spi-st-ssc.txt          | 2 +-
- 9 files changed, 12 insertions(+), 12 deletions(-)
+ Documentation/translations/zh_CN/io_ordering.txt | 2 +-
+ drivers/dma/dmaengine.c                          | 2 +-
+ drivers/platform/x86/Kconfig                     | 2 +-
+ drivers/sbus/char/oradax.c                       | 2 +-
+ fs/befs/ChangeLog                                | 2 +-
+ fs/orangefs/orangefs-sysfs.c                     | 2 +-
+ include/linux/platform_data/sc18is602.h          | 2 +-
+ kernel/power/main.c                              | 2 +-
+ 8 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt b/Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt
-index c7888d6f6408..880d4d70c9fd 100644
---- a/Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt
-+++ b/Documentation/devicetree/bindings/media/stih407-c8sectpfe.txt
-@@ -28,7 +28,7 @@ See: Documentation/devicetree/bindings/clock/clock-bindings.txt
- - pinctrl-names	: a pinctrl state named tsin%d-serial or tsin%d-parallel (where %d is tsin-num)
- 		   must be defined for each tsin child node.
- - pinctrl-0	: phandle referencing pin configuration for this tsin configuration
--See: Documentation/devicetree/bindings/pinctrl/pinctrl-binding.txt
-+See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+diff --git a/Documentation/translations/zh_CN/io_ordering.txt b/Documentation/translations/zh_CN/io_ordering.txt
+index e592daf4e014..1f8127bdd415 100644
+--- a/Documentation/translations/zh_CN/io_ordering.txt
++++ b/Documentation/translations/zh_CN/io_ordering.txt
+@@ -1,4 +1,4 @@
+-Chinese translated version of Documentation/io_orderings.txt
++Chinese translated version of Documentation/io_ordering.txt
  
+ If you have any comment or update to the content, please contact the
+ original document maintainer directly.  However, if you have a problem
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index b451354735d3..08ba8473a284 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -38,7 +38,7 @@
+  * Each device has a channels list, which runs unlocked but is never modified
+  * once the device is registered, it's just setup by the driver.
+  *
+- * See Documentation/dmaengine.txt for more details
++ * See Documentation/driver-api/dmaengine for more details
+  */
  
- Required properties (tsin (child) node):
-diff --git a/Documentation/devicetree/bindings/mfd/as3722.txt b/Documentation/devicetree/bindings/mfd/as3722.txt
-index 0b2a6099aa20..5297b2210704 100644
---- a/Documentation/devicetree/bindings/mfd/as3722.txt
-+++ b/Documentation/devicetree/bindings/mfd/as3722.txt
-@@ -46,7 +46,7 @@ is required:
- 	Following properties are require if pin control setting is required
- 	at boot.
- 	- pinctrl-names: A pinctrl state named "default" be defined, using the
--		bindings in pinctrl/pinctrl-binding.txt.
-+		bindings in pinctrl/pinctrl-bindings.txt.
- 	- pinctrl[0...n]: Properties to contain the phandle that refer to
- 		different nodes of pin control settings. These nodes represents
- 		the pin control setting of state 0 to state n. Each of these
-diff --git a/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.txt b/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.txt
-index 3149297b3933..f064528effed 100644
---- a/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.txt
-+++ b/Documentation/devicetree/bindings/mmc/microchip,sdhci-pic32.txt
-@@ -12,7 +12,7 @@ Required properties:
-           See: Documentation/devicetree/bindings/clock/clock-bindings.txt
- - pinctrl-names: A pinctrl state names "default" must be defined.
- - pinctrl-0: Phandle referencing pin configuration of the SDHCI controller.
--             See: Documentation/devicetree/bindings/pinctrl/pinctrl-binding.txt
-+             See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index f27cb186437d..ac4d48830415 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1052,7 +1052,7 @@ config SAMSUNG_LAPTOP
+ 	  function keys, wireless LED, LCD backlight level.
  
- Example:
+ 	  It may also provide some sysfs files described in
+-	  <file:Documentation/ABI/testing/sysfs-platform-samsung-laptop>
++	  <file:Documentation/ABI/testing/sysfs-driver-samsung-laptop>
  
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-st.txt b/Documentation/devicetree/bindings/mmc/sdhci-st.txt
-index 6b3d40ca395e..ccf82b4ee838 100644
---- a/Documentation/devicetree/bindings/mmc/sdhci-st.txt
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-st.txt
-@@ -20,7 +20,7 @@ Required properties:
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called samsung-laptop.
+diff --git a/drivers/sbus/char/oradax.c b/drivers/sbus/char/oradax.c
+index 1754f55e2fac..524f9ea62e52 100644
+--- a/drivers/sbus/char/oradax.c
++++ b/drivers/sbus/char/oradax.c
+@@ -30,7 +30,7 @@
+  * the recommended way for applications to use the coprocessor, and
+  * the driver interface is not intended for general use.
+  *
+- * See Documentation/sparc/oradax/oracle_dax.txt for more details.
++ * See Documentation/sparc/oradax/oracle-dax.txt for more details.
+  */
  
- - pinctrl-names:	A pinctrl state names "default" must be defined.
- - pinctrl-0:		Phandle referencing pin configuration of the sd/emmc controller.
--			See: Documentation/devicetree/bindings/pinctrl/pinctrl-binding.txt
-+			See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+ #include <linux/uaccess.h>
+diff --git a/fs/befs/ChangeLog b/fs/befs/ChangeLog
+index 16f2dfe8c2f7..aff7eec8f327 100644
+--- a/fs/befs/ChangeLog
++++ b/fs/befs/ChangeLog
+@@ -389,7 +389,7 @@ Version 0.4 (2001-10-28)
+ 	(fs/nls/Config.in)
  
- - reg:			This must provide the host controller base address and it can also
- 			contain the FlashSS Top register for TX/RX delay used by the driver
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
-index ad4fce3552bb..511fc234558b 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-max77620.txt
-@@ -11,9 +11,9 @@ Optional Pinmux properties:
- --------------------------
- Following properties are required if default setting of pins are required
- at boot.
--- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
-+- pinctrl-names: A pinctrl state named per <pinctrl-bindings.txt>.
- - pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
--		<pinctrl-binding.txt>.
-+		<pinctrl-bindings.txt>.
+ * Added Configure.help entries for CONFIG_BEFS_FS and CONFIG_DEBUG_BEFS
+-	(Documentation/Configure.help)
++	(currently at fs/befs/Kconfig)
  
- The pin configurations are defined as child of the pinctrl states node. Each
- sub-node have following properties:
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-index a677145ae6d1..625a22e2f211 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mcp23s08.txt
-@@ -101,9 +101,9 @@ Optional Pinmux properties:
- --------------------------
- Following properties are required if default setting of pins are required
- at boot.
--- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
-+- pinctrl-names: A pinctrl state named per <pinctrl-bindings.txt>.
- - pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
--		<pinctrl-binding.txt>.
-+		<pinctrl-bindings.txt>.
+ 2001-08-??
+ ==========
+diff --git a/fs/orangefs/orangefs-sysfs.c b/fs/orangefs/orangefs-sysfs.c
+index 079a465796f3..dd28079f518c 100644
+--- a/fs/orangefs/orangefs-sysfs.c
++++ b/fs/orangefs/orangefs-sysfs.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Documentation/ABI/stable/orangefs-sysfs:
++ * Documentation/ABI/stable/sysfs-fs-orangefs:
+  *
+  * What:		/sys/fs/orangefs/perf_counter_reset
+  * Date:		June 2015
+diff --git a/include/linux/platform_data/sc18is602.h b/include/linux/platform_data/sc18is602.h
+index 997b06634152..18602cab7799 100644
+--- a/include/linux/platform_data/sc18is602.h
++++ b/include/linux/platform_data/sc18is602.h
+@@ -7,7 +7,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  *
+- * For further information, see the Documentation/spi/sc18is602 file.
++ * For further information, see the Documentation/spi/spi-sc18is602 file.
+  */
  
- The pin configurations are defined as child of the pinctrl states node. Each
- sub-node have following properties:
-diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-index eee3dc260934..cbcbd31e3ce8 100644
---- a/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-+++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-rk805.txt
-@@ -10,9 +10,9 @@ Optional Pinmux properties:
- --------------------------
- Following properties are required if default setting of pins are required
- at boot.
--- pinctrl-names: A pinctrl state named per <pinctrl-binding.txt>.
-+- pinctrl-names: A pinctrl state named per <pinctrl-bindings.txt>.
- - pinctrl[0...n]: Properties to contain the phandle for pinctrl states per
--		<pinctrl-binding.txt>.
-+		<pinctrl-bindings.txt>.
- 
- The pin configurations are defined as child of the pinctrl states node. Each
- sub-node have following properties:
-diff --git a/Documentation/devicetree/bindings/serial/microchip,pic32-uart.txt b/Documentation/devicetree/bindings/serial/microchip,pic32-uart.txt
-index 7a34345d0ca3..c8dd440e9747 100644
---- a/Documentation/devicetree/bindings/serial/microchip,pic32-uart.txt
-+++ b/Documentation/devicetree/bindings/serial/microchip,pic32-uart.txt
-@@ -8,7 +8,7 @@ Required properties:
-           See: Documentation/devicetree/bindings/clock/clock-bindings.txt
- - pinctrl-names: A pinctrl state names "default" must be defined.
- - pinctrl-0: Phandle referencing pin configuration of the UART peripheral.
--             See: Documentation/devicetree/bindings/pinctrl/pinctrl-binding.txt
-+             See: Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
- 
- Optional properties:
- - cts-gpios: CTS pin for UART
-diff --git a/Documentation/devicetree/bindings/spi/spi-st-ssc.txt b/Documentation/devicetree/bindings/spi/spi-st-ssc.txt
-index fe54959ec957..1bdc4709e474 100644
---- a/Documentation/devicetree/bindings/spi/spi-st-ssc.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-st-ssc.txt
-@@ -9,7 +9,7 @@ Required properties:
- - clocks	: Must contain an entry for each name in clock-names
- 		    See ../clk/*
- - pinctrl-names	: Uses "default", can use "sleep" if provided
--		    See ../pinctrl/pinctrl-binding.txt
-+		    See ../pinctrl/pinctrl-bindings.txt
- 
- Optional properties:
- - cs-gpios	: List of GPIO chip selects
+ /**
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 705c2366dafe..3345ced80112 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -455,7 +455,7 @@ struct kobject *power_kobj;
+  * state - control system sleep states.
+  *
+  * show() returns available sleep state labels, which may be "mem", "standby",
+- * "freeze" and "disk" (hibernation).  See Documentation/power/states.txt for a
++ * "freeze" and "disk" (hibernation).  See Documentation/power/interface.txt for a
+  * description of what they mean.
+  *
+  * store() accepts one of those strings, translates it into the proper
 -- 
 2.17.1
 
