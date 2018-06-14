@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A617CC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8E03BC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CCF0208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B692208DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WQo2BnbV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CCF0208DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1h8K10of"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B692208DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965454AbeFNOJX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:09:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49980 "EHLO mail.kernel.org"
+        id S965464AbeFNOJ0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:09:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50230 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965387AbeFNOJJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:09:09 -0400
+        id S965451AbeFNOJX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:09:23 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9356E208DA;
-        Thu, 14 Jun 2018 14:09:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BB8D208CB;
+        Thu, 14 Jun 2018 14:09:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985349;
-        bh=eV2ZQeNHC60sYdeegv0dJ8m1TVzaG6EowNaoNIWunRY=;
+        s=default; t=1528985363;
+        bh=bSRlr4dVWpP8NQpjFzOeNM3zPwOcXBAHHUpcuGa05FI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WQo2BnbV2g+fhks2jEkmw66WKanssZ0sTJJyJ6Y4YgCroh9qexIxlsVeVOLPaoE1q
-         7XOdHWQLppesazCNSg5iRjMPllK759xw7Sa+SM1wxk81QKqC+zzoK/Lfyk9Ge7Vj/a
-         fxuGLIS7jnAG2+xwIBnwGcvl7PTXg/1JBdqW9QC0=
+        b=1h8K10ofnuYquWPNaxUHk3aU8X1SSDTMl7yFKU/8dHpHxcBJ1c6r9P9fE8guZ7v4X
+         wJggbn0/TBb4jWIXdzkyBnbQbnvIhEgJReppZ3IGMqst23GKwQT5B3KnVJUOWsX+vW
+         J52azeru3C5CQ68oxsK8wIULS7IAULwEckzLyHfA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Glauber <jglauber@cavium.com>,
-        Robert Richter <rrichter@cavium.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.16 40/43] crypto: cavium - Limit result reading attempts
-Date:   Thu, 14 Jun 2018 16:04:44 +0200
-Message-Id: <20180614132137.819110649@linuxfoundation.org>
+        stable@vger.kernel.org, Ethan Lee <flibitijibibo@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH 4.16 32/43] Input: goodix - add new ACPI id for GPD Win 2 touch screen
+Date:   Thu, 14 Jun 2018 16:04:36 +0200
+Message-Id: <20180614132137.466481058@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
 References: <20180614132135.111973468@linuxfoundation.org>
@@ -60,94 +59,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Glauber <jglauber@cavium.com>
+From: Ethan Lee <flibitijibibo@gmail.com>
 
-commit c782a8c43e94ba6c09e9de2d69b5e3a5840ce61c upstream.
+commit 5ca4d1ae9bad0f59bd6f851c39b19f5366953666 upstream.
 
-After issuing a request an endless loop was used to read the
-completion state from memory which is asynchronously updated
-by the ZIP coprocessor.
+GPD Win 2 Website: http://www.gpd.hk/gpdwin2.asp
 
-Add an upper bound to the retry attempts to prevent a CPU getting stuck
-forever in case of an error. Additionally, add a read memory barrier
-and a small delay between the reading attempts.
+Tested on a unit from the first production run sent to Indiegogo backers
 
-Signed-off-by: Jan Glauber <jglauber@cavium.com>
-Reviewed-by: Robert Richter <rrichter@cavium.com>
-Cc: stable <stable@vger.kernel.org> # 4.14
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Ethan Lee <flibitijibibo@gmail.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/cavium/zip/common.h      |   21 +++++++++++++++++++++
- drivers/crypto/cavium/zip/zip_deflate.c |    4 ++--
- drivers/crypto/cavium/zip/zip_inflate.c |    4 ++--
- 3 files changed, 25 insertions(+), 4 deletions(-)
+ drivers/input/touchscreen/goodix.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/crypto/cavium/zip/common.h
-+++ b/drivers/crypto/cavium/zip/common.h
-@@ -46,8 +46,10 @@
- #ifndef __COMMON_H__
- #define __COMMON_H__
- 
-+#include <linux/delay.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-@@ -149,6 +151,25 @@ struct zip_operation {
- 	u32   sizeofzops;
+--- a/drivers/input/touchscreen/goodix.c
++++ b/drivers/input/touchscreen/goodix.c
+@@ -933,6 +933,7 @@ MODULE_DEVICE_TABLE(i2c, goodix_ts_id);
+ #ifdef CONFIG_ACPI
+ static const struct acpi_device_id goodix_acpi_match[] = {
+ 	{ "GDIX1001", 0 },
++	{ "GDIX1002", 0 },
+ 	{ }
  };
- 
-+static inline int zip_poll_result(union zip_zres_s *result)
-+{
-+	int retries = 1000;
-+
-+	while (!result->s.compcode) {
-+		if (!--retries) {
-+			pr_err("ZIP ERR: request timed out");
-+			return -ETIMEDOUT;
-+		}
-+		udelay(10);
-+		/*
-+		 * Force re-reading of compcode which is updated
-+		 * by the ZIP coprocessor.
-+		 */
-+		rmb();
-+	}
-+	return 0;
-+}
-+
- /* error messages */
- #define zip_err(fmt, args...) pr_err("ZIP ERR:%s():%d: " \
- 			      fmt "\n", __func__, __LINE__, ## args)
---- a/drivers/crypto/cavium/zip/zip_deflate.c
-+++ b/drivers/crypto/cavium/zip/zip_deflate.c
-@@ -129,8 +129,8 @@ int zip_deflate(struct zip_operation *zi
- 	/* Stats update for compression requests submitted */
- 	atomic64_inc(&zip_dev->stats.comp_req_submit);
- 
--	while (!result_ptr->s.compcode)
--		continue;
-+	/* Wait for completion or error */
-+	zip_poll_result(result_ptr);
- 
- 	/* Stats update for compression requests completed */
- 	atomic64_inc(&zip_dev->stats.comp_req_complete);
---- a/drivers/crypto/cavium/zip/zip_inflate.c
-+++ b/drivers/crypto/cavium/zip/zip_inflate.c
-@@ -143,8 +143,8 @@ int zip_inflate(struct zip_operation *zi
- 	/* Decompression requests submitted stats update */
- 	atomic64_inc(&zip_dev->stats.decomp_req_submit);
- 
--	while (!result_ptr->s.compcode)
--		continue;
-+	/* Wait for completion or error */
-+	zip_poll_result(result_ptr);
- 
- 	/* Decompression requests completed stats update */
- 	atomic64_inc(&zip_dev->stats.decomp_req_complete);
+ MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
 
 
