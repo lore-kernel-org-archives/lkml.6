@@ -2,146 +2,105 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 59A77C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:35:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E8D6CC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 192DF208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:35:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192DF208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C981208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:37:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrzthGUd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C981208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755346AbeFNNfl (ORCPT
+        id S1755350AbeFNNhZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:35:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754957AbeFNNfj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:35:39 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B469208CB;
-        Thu, 14 Jun 2018 13:35:38 +0000 (UTC)
-Date:   Thu, 14 Jun 2018 09:35:36 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v4 2/5] sched/topology: Adding function
- partition_sched_domains_locked()
-Message-ID: <20180614093536.612712f6@gandalf.local.home>
-In-Reply-To: <20180613121711.5018-3-juri.lelli@redhat.com>
-References: <20180613121711.5018-1-juri.lelli@redhat.com>
-        <20180613121711.5018-3-juri.lelli@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Jun 2018 09:37:25 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35447 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755214AbeFNNhW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 09:37:22 -0400
+Received: by mail-pl0-f67.google.com with SMTP id k1-v6so3580152plt.2;
+        Thu, 14 Jun 2018 06:37:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=rkptTXaXwxNifXX6oxlPFocW17y+sm5YszZBhYdOqN4=;
+        b=DrzthGUdP+4k2Oy0FA0BK3t4BfViwX+f1DBK1oMVfmmViPuEh7whRwxkLStnXWxZ2r
+         iSDetForOrWeC18XTBO0AEk3OlKor7/HykcOLkRNxxu/Nx3vobTUKvoh5+MJnL7agfsr
+         VGgoXerzwQVC8FHRxeNFfZr1+J0EB9JgcaKWoY6GTXqWkTmtAOIc2t+Lr1aot9HfWcCm
+         0eA4FyORYJhHJ8p9bjPFtQW+P0SYQBRLKrB7KZ03BDfZ2zenywsZLEgzWPUQDcdaCqHv
+         JCuRG2hULjbS/5JyOL539mP5hKrr1nsQp4vfIjXMVv/80dDF1Ofpei0fd0GKI3Ejl0on
+         yUHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=rkptTXaXwxNifXX6oxlPFocW17y+sm5YszZBhYdOqN4=;
+        b=rocJe5vy4gLaHp84kgRcxQOZNJG+Pcvpde20QyjLS9bD0EyFHVfcpJ8bEjHOomWQ1/
+         Ccw7DvTl8RnKpm5lvGfb6dpnkWFAz8zeURAPxgLUr1xy+XhsRYncs0VaY+zto+llp9m2
+         288djCWzrnuxlJ5QhZi69Fz8+zOrU2t4kJ13nohSIXhcsuOCneAYdbJ32QCa7fgpjW1Z
+         h4e79IbJlzLNf4azuWgaGMhxnxeDQk6tPSsesVYX3D63spuU9tghXZciXxVQwda5qzoV
+         rCH356BX3kKUNFB+YEZD/PNw8ynjAFRJvXfGRygL8loo6cQSxMVWFNKrV/BMy/LrZY8/
+         EN7A==
+X-Gm-Message-State: APt69E2NKuDLb4x3QZxTOSgmVNNy8BuweFtw9+B+a16ew/NHQxI2aBhi
+        rrYSY+qCzoZ0DRBr2CufDMo=
+X-Google-Smtp-Source: ADUXVKLQEcwEJpPIWw/W+DMlNlProqaIg82yt3VAhR6rge+LSUc+jGAJUQXrs3JqfM9H60iwkMhzJg==
+X-Received: by 2002:a17:902:59ce:: with SMTP id d14-v6mr3104276plj.253.1528983442331;
+        Thu, 14 Jun 2018 06:37:22 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id u14-v6sm9431859pfd.103.2018.06.14.06.37.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 06:37:21 -0700 (PDT)
+From:   Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] HID: hid-ntrig: add error handling for sysfs_create_group
+Date:   Thu, 14 Jun 2018 21:37:17 +0800
+Message-Id: <1528983437-52903-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528707296-35785-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528707296-35785-1-git-send-email-jiazhouyang09@gmail.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 13 Jun 2018 14:17:08 +0200
-Juri Lelli <juri.lelli@redhat.com> wrote:
+When sysfs_create_group fails, the lack of error-handling code may
+cause unexpected results.
 
-> From: Mathieu Poirier <mathieu.poirier@linaro.org>
-> 
-> Introducing function partition_sched_domains_locked() by taking
-> the mutex locking code out of the original function.  That way
-> the work done by partition_sched_domains_locked() can be reused
-> without dropping the mutex lock.
-> 
-> No change of functionality is introduced by this patch.
-> 
-> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> ---
->  include/linux/sched/topology.h | 10 ++++++++++
->  kernel/sched/topology.c        | 18 ++++++++++++++----
->  2 files changed, 24 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index 26347741ba50..57997caf61b6 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -162,6 +162,10 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
->  	return to_cpumask(sd->span);
->  }
->  
-> +extern void partition_sched_domains_locked(int ndoms_new,
-> +					   cpumask_var_t doms_new[],
-> +					   struct sched_domain_attr *dattr_new);
-> +
->  extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->  				    struct sched_domain_attr *dattr_new);
->  
-> @@ -206,6 +210,12 @@ extern void set_sched_topology(struct sched_domain_topology_level *tl);
->  
->  struct sched_domain_attr;
->  
-> +static inline void
-> +partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-> +			       struct sched_domain_attr *dattr_new)
-> +{
-> +}
-> +
->  static inline void
->  partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->  			struct sched_domain_attr *dattr_new)
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 96eee22fafe8..25a5727d3b48 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -1850,16 +1850,16 @@ static int dattrs_equal(struct sched_domain_attr *cur, int idx_cur,
->   * ndoms_new == 0 is a special case for destroying existing domains,
->   * and it will not create the default domain.
->   *
-> - * Call with hotplug lock held
-> + * Call with hotplug lock and sched_domains_mutex held
->   */
-> -void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-> -			     struct sched_domain_attr *dattr_new)
-> +void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
-> +				    struct sched_domain_attr *dattr_new)
->  {
->  	int i, j, n;
->  	int new_topology;
->  
->  	lockdep_assert_cpus_held();
-> -	mutex_lock(&sched_domains_mutex);
-> +	lockdep_assert_held(&sched_domains_mutex);
->  
->  	/* Always unregister in case we don't destroy any domains: */
->  	unregister_sched_domain_sysctl();
-> @@ -1924,6 +1924,16 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->  	ndoms_cur = ndoms_new;
->  
->  	register_sched_domain_sysctl();
-> +}
->  
-> +/*
-> + * Call with hotplug lock held
-> + */
-> +void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-> +			     struct sched_domain_attr *dattr_new)
-> +{
-> +	lockdep_assert_cpus_held();
+This patch adds error-handling code after calling sysfs_create_group.
 
-Is the above assert really necessary? The assert will happen in
-partition_sched_domains_locked() anyway.
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+v1->v2:
+- Remove goto statement.
+---
+ drivers/hid/hid-ntrig.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
--- Steve
-
-> +	mutex_lock(&sched_domains_mutex);
-> +	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
->  	mutex_unlock(&sched_domains_mutex);
->  }
+diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
+index 43b1c72..9bc6f48 100644
+--- a/drivers/hid/hid-ntrig.c
++++ b/drivers/hid/hid-ntrig.c
+@@ -955,6 +955,8 @@ static int ntrig_probe(struct hid_device *hdev, const struct hid_device_id *id)
+ 
+ 	ret = sysfs_create_group(&hdev->dev.kobj,
+ 			&ntrig_attribute_group);
++	if (ret)
++		hid_err(hdev, "cannot create sysfs group\n");
+ 
+ 	return 0;
+ err_free:
+-- 
+2.7.4
 
