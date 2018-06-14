@@ -2,85 +2,132 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 89C94C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:39:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AF546C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:41:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 404C8208B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:39:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BF75208B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:41:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kxD6TBKl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404C8208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EkCBGHjx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BF75208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755167AbeFNLjT (ORCPT
+        id S1754995AbeFNLlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 07:39:19 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:33411 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754869AbeFNLjR (ORCPT
+        Thu, 14 Jun 2018 07:41:45 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:39143 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752100AbeFNLln (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:39:17 -0400
-Received: by mail-it0-f67.google.com with SMTP id k17-v6so2154242ita.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 04:39:17 -0700 (PDT)
+        Thu, 14 Jun 2018 07:41:43 -0400
+Received: by mail-pg0-f65.google.com with SMTP id w12-v6so2807737pgc.6
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 04:41:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oUm66GOOcjzWsziZPw9G2cZcErAXTNumM3G5C6H8Cgg=;
-        b=kxD6TBKlN2PswCEZ1AceTMZ0ftj1WIPbxyGKZLPn+ewjppYiEx7Ssv62HErKvTU0gM
-         eMOGiGnr0xeDah6+ZyB+gdjALEfrBGQ7EaBPCsJeZGSs4/K6xrq6nCDwOTOBPxpaJAgN
-         79IrTTOo1u65OyvfugSwPJlp1rzorMaKWRQDU=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=wOUU805BKAZU6r+UYJht8HZHUH1hPa5LCtmNQZIYWZY=;
+        b=EkCBGHjxMwAPv9s3Mq7INZrvPdadvjs6tc3gguWxVT8/uttpvSFFUHeOnmRbFoRRhu
+         yzCkifT6WmRa1X8qfS5rQts0GoQJHQ6zuCYR5NDL8opt9aoT+3WA5RFPn1jd/q+P9zF2
+         FQzMyt7qH4vpXPz2OD8JAYncatfraQjoZctcmUfeurTYe9gp0kBAfI2SoEEFy6GXafrY
+         cD87r/oSRDVTR4I7URO8YWWumkBz0dkPKxgoOXyay78gYQG4gOKDQzRr3aKU/NiDPmL8
+         L9QjdirHd9AprkQ78WmAohhFkimtl2m05Sf2ziVEJR0uOH7/NgW2JbM5x0aSPMsNN7U9
+         /wEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oUm66GOOcjzWsziZPw9G2cZcErAXTNumM3G5C6H8Cgg=;
-        b=eDES7XepWxICtogqOKsObsqgMueGkstQcrXYl1PU7dBJOG0f4GcROnnwQFXziF9PMs
-         QZD5essGSC4fTWOjjphAfAsvBsPzbj1pJtllmj9ws9dBBTSsJ3RnMTW2yjMmd50M+IjL
-         ncDaEmuZ4PQUVrxunpodHbkG0/EDLHt0PDand4BGeM30WikT7f257s5L+F2ex853Ugpf
-         QcfYooCL97GBU6kPKfoNss2bKmf8DSBWWtGaSGJAzBffy6aJMVaLDyTJ6JH0yyrNfqQ8
-         byDRU7NOY+IOeTaQrhCRdALtMr8yBzPNk2ardNnw8zifNWmMqTQwlKMfOwQ8tFsHj5hH
-         HDCA==
-X-Gm-Message-State: APt69E00gOvuYJTllvuRlEi+N4KDHC08dUgMPYbSR/g2rg1k+wWwSpy8
-        hJK5+MLvoc6YQe4gYEc4qagI8SOBtu5dDtgCAMTQ+A==
-X-Google-Smtp-Source: ADUXVKKZTCXS3EBV//bdLlKqms3FwPamPmLWG0zb/Gv1AowOXjHK1kz5+CEZq33j8ObYhHfgJ8RXtRA6e3E7uUVpzD4=
-X-Received: by 2002:a24:5746:: with SMTP id u67-v6mr1849662ita.38.1528976357163;
- Thu, 14 Jun 2018 04:39:17 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 04:39:15
- -0700 (PDT)
-In-Reply-To: <1528861237-24254-2-git-send-email-j-keerthy@ti.com>
-References: <1528861237-24254-1-git-send-email-j-keerthy@ti.com> <1528861237-24254-2-git-send-email-j-keerthy@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Jun 2018 13:39:15 +0200
-Message-ID: <CACRpkdbBmEWPZBdKZNiGew5oZmFBgwnEyRG2bjpWZ0FjTEMjkw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] gpio: davinci: Do not assume continuous IRQ numbering
-To:     Keerthy <j-keerthy@ti.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=wOUU805BKAZU6r+UYJht8HZHUH1hPa5LCtmNQZIYWZY=;
+        b=txs/90hOWD+869eWA76+MsdDBVodjQ1x2MxKUNyrpHOH1Km8tqzw1UD467JS/NWv6F
+         M9tNW93lXt1wT9iIXYcl1PI7h8pio3KdyFfNcFssYsO/OynBOPxnV0quoMcu9k98hUCn
+         zmRQoajqsb4qPNyfmOz/2zy+/qYYoCXlKRI9ckPR2kuDH+i37i0E7ESYJ4iJaNv13F4U
+         f77k/IxAjlpkcXvR6lHr9o/oLUdcTLv2iL9PIb2Vabd0D7E+rRtbtGlW/ud0QPQR7cUt
+         nU91ya37b7I8xMyqbys7OSTG+whGtHE2tEC51vMqhh+Nkr4yFp9M4XnfYJ4Mi3dGnSaA
+         4ipA==
+X-Gm-Message-State: APt69E3caMjsIFA414sC5gqD18FOQsMrVnSwrXMZCDO5+SGU4iQi9im8
+        bpiC7Jlr3h3t92cdwYvTXmo=
+X-Google-Smtp-Source: ADUXVKIbe4A3+eHXWbPxd4QEMTdkCCGF69TFDcLyES5lVxxcIKIw/u+opFHmvAyi3KtxPWr/aZ+6FA==
+X-Received: by 2002:a65:62ce:: with SMTP id m14-v6mr1997188pgv.407.1528976503464;
+        Thu, 14 Jun 2018 04:41:43 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id i71-v6sm6637082pgd.22.2018.06.14.04.41.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 04:41:42 -0700 (PDT)
+From:   Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] ALSA: sonicvibes: add error handling for snd_ctl_add
+Date:   Thu, 14 Jun 2018 19:41:37 +0800
+Message-Id: <1528976499-52071-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528704521-34060-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528704521-34060-1-git-send-email-jiazhouyang09@gmail.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 5:40 AM, Keerthy <j-keerthy@ti.com> wrote:
+When snd_ctl_add fails, the lack of error-handling code may
+cause unexpected results.
 
-> Currently the driver assumes that the interrupts are continuous
-> and does platform_get_irq only once and assumes the rest are continuous,
-> instead call platform_get_irq for all the interrupts and store them
-> in an array for later use.
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+This patch adds error-handling code after calling snd_ctl_add.
 
-This v4 applied with Grygorii's ACK.
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+v1->v2:
+- Check the return value of snd_sonicvibes_create_gameport.
+v2->v3:
+- Fix the code style.
+---
+ sound/pci/sonicvibes.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/sound/pci/sonicvibes.c b/sound/pci/sonicvibes.c
+index a8abb15..7fbdb70 100644
+--- a/sound/pci/sonicvibes.c
++++ b/sound/pci/sonicvibes.c
+@@ -1188,6 +1188,7 @@ SONICVIBES_SINGLE("Joystick Speed", 0, SV_IREG_GAME_PORT, 1, 15, 0);
+ static int snd_sonicvibes_create_gameport(struct sonicvibes *sonic)
+ {
+ 	struct gameport *gp;
++	int err;
+ 
+ 	sonic->gameport = gp = gameport_allocate_port();
+ 	if (!gp) {
+@@ -1203,7 +1204,10 @@ static int snd_sonicvibes_create_gameport(struct sonicvibes *sonic)
+ 
+ 	gameport_register_port(gp);
+ 
+-	snd_ctl_add(sonic->card, snd_ctl_new1(&snd_sonicvibes_game_control, sonic));
++	err = snd_ctl_add(sonic->card,
++		snd_ctl_new1(&snd_sonicvibes_game_control, sonic));
++	if (err < 0)
++		return err;
+ 
+ 	return 0;
+ }
+@@ -1515,7 +1519,11 @@ static int snd_sonic_probe(struct pci_dev *pci,
+ 		return err;
+ 	}
+ 
+-	snd_sonicvibes_create_gameport(sonic);
++	err = snd_sonicvibes_create_gameport(sonic);
++	if (err < 0) {
++		snd_card_free(card);
++		return err;
++	}
+ 
+ 	if ((err = snd_card_register(card)) < 0) {
+ 		snd_card_free(card);
+-- 
+2.7.4
+
