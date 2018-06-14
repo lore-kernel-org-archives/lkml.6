@@ -3,90 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A725CC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:44:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 31FE5C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E5FD208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:44:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCB4D208DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:45:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="clMH3JDd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E5FD208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RSD6f41x"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB4D208DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755375AbeFNOon (ORCPT
+        id S1755409AbeFNOpd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:44:43 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51225 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755355AbeFNOok (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:44:40 -0400
-Received: by mail-it0-f67.google.com with SMTP id n7-v6so8693451itn.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 07:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=KONYjKXQH1EcNk8VFXEp7jK7//1fns2XVRH27JetNqA=;
-        b=clMH3JDdyaCGsz2f3hjZT/ZAg7oN84OaOLpMJa0tHm3r/8a9O0Eg4DZ/RqsG1pHnQR
-         Fqf2/PSRFORn/TeJpMydjEJnNKUt6dJiOGAYZ3HEZTucUZ6wqydrRZtaYIrvGgxfSlL8
-         c2aryqfcEC/KYI42xczmYOuAI2sGIZ6UV4tGM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=KONYjKXQH1EcNk8VFXEp7jK7//1fns2XVRH27JetNqA=;
-        b=aRuach0fdMuZpEbHxk7d5hDkyhCU7ouwI/6O8znSO6OFkDIE9ngvYKfnMMpaAcYMEC
-         gsilMeIfYleJKmxsO4q0puymysLVo7hgN55cB6YgxG0g98hg/q4lh+bctZzVkqYh93C7
-         4/kwqVcy2OMTzvfclTJLUzwGglsxyJYO6kr6bzIUmrDWzg7R6TQx6wPNCAqQ/DrwQ47a
-         keM7oAkcDiSjX1A0DgtZccQSsBHSLDrH12JnFctxYJWA/IENLKj5D/7ztCUw48/XgDmo
-         NTrKkUtkc93EAuyh0u+by4XRrFMwo6lLlJwapSyEb/+apk7B9ITn1WLl1mH+2LGx+/U7
-         mKiw==
-X-Gm-Message-State: APt69E3+EKV7l/MlAjyLqE/dVEz9XAkzaYQr69Y87li3yG0uiXara/Kx
-        fxEDXKhhhrmYbR5PCyX8HTnprc/hg7d4QAX8pos5/g==
-X-Google-Smtp-Source: ADUXVKJirMOvGNxDlW5dZZIC7F0NLxf1BDl3cepM01u3akqFAut2xyLUC1pYfU5dJYNck5mdhfQ8SJA7JozIw5QehPk=
-X-Received: by 2002:a24:19ca:: with SMTP id b193-v6mr2490994itb.135.1528987479346;
- Thu, 14 Jun 2018 07:44:39 -0700 (PDT)
+        Thu, 14 Jun 2018 10:45:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48820 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965198AbeFNOIN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:08:13 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 02B56208DE;
+        Thu, 14 Jun 2018 14:08:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985293;
+        bh=CGEP9/vboObMlSPXRauKieq1jtWQQ+d63YMFzDWzNaE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RSD6f41xmhFVBtmC2a6Eguu62UtIxWiAeVX74QFA6CqpvCz3ic4GpLHJen11IamDr
+         5n7bapVAAXOHaIPZ7UcgPP8Pz2tljwc+Lj3YWw+rDyb97r6lYrTJs/ErTrkZffCLu+
+         5xIbzwnW/YRhoU+M92Qjo50YV44THWmH1p6amOLY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.16 20/43] usb: gadget: udc: renesas_usb3: should remove debugfs
+Date:   Thu, 14 Jun 2018 16:04:24 +0200
+Message-Id: <20180614132136.337271724@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
+References: <20180614132135.111973468@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 07:44:38
- -0700 (PDT)
-In-Reply-To: <20180530215407.1196429-1-arnd@arndb.de>
-References: <20180530215407.1196429-1-arnd@arndb.de>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Jun 2018 16:44:38 +0200
-Message-ID: <CACRpkdb-j4E8JL10i2-AQ4_ZWRu9NrMVaGJBbXwoFxufY60HUQ@mail.gmail.com>
-Subject: Re: [alsa-devel] [PATCH] ASoC: codecs: PCM1789: include gpio/consumer.h
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        =?UTF-8?Q?Myl=C3=A8ne_Josserand?= <mylene.josserand@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, May 30, 2018 at 11:53 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-> When CONFIG_GPIOLIB is disabled, this codec fails to build
-> because gpio/consumer.h is not included implicitly.
->
-> sound/soc/codecs/pcm1789.c: In function 'pcm1789_common_init':
-> sound/soc/codecs/pcm1789.c:247:19: error: implicit declaration of function 'devm_gpiod_get_optional'; did you mean 'devm_gpio_request_one'? [-Werror=implicit-function-declaration]
->   pcm1789->reset = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
->                    ^~~~~~~~~~~~~~~~~~~~~~~
->
-> Fixes: 4ae340d1be36 ("ASoC: codecs: Add support for PCM1789")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+------------------
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-Yours,
-Linus Walleij
+commit 1990cf7c21ea185cec98c6d45a82c04481261e35 upstream.
+
+This patch fixes an issue that this driver doesn't remove its debugfs.
+
+Fixes: 43ba968b00ea ("usb: gadget: udc: renesas_usb3: add debugfs to set the b-device mode")
+Cc: <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/usb/gadget/udc/renesas_usb3.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -333,6 +333,7 @@ struct renesas_usb3 {
+ 	struct extcon_dev *extcon;
+ 	struct work_struct extcon_work;
+ 	struct phy *phy;
++	struct dentry *dentry;
+ 
+ 	struct renesas_usb3_ep *usb3_ep;
+ 	int num_usb3_eps;
+@@ -2393,8 +2394,12 @@ static void renesas_usb3_debugfs_init(st
+ 
+ 	file = debugfs_create_file("b_device", 0644, root, usb3,
+ 				   &renesas_usb3_b_device_fops);
+-	if (!file)
++	if (!file) {
+ 		dev_info(dev, "%s: Can't create debugfs mode\n", __func__);
++		debugfs_remove_recursive(root);
++	} else {
++		usb3->dentry = root;
++	}
+ }
+ 
+ /*------- platform_driver ------------------------------------------------*/
+@@ -2402,6 +2407,7 @@ static int renesas_usb3_remove(struct pl
+ {
+ 	struct renesas_usb3 *usb3 = platform_get_drvdata(pdev);
+ 
++	debugfs_remove_recursive(usb3->dentry);
+ 	device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+ 	usb_del_gadget_udc(&usb3->gadget);
+
+
