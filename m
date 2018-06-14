@@ -2,181 +2,359 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 33069C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:52:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E06EEC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE78B208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:52:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MR2pHgrO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE78B208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 94AF0208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:52:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94AF0208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755076AbeFNMwW (ORCPT
+        id S1755206AbeFNMwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 08:52:22 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:55504 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754869AbeFNMwS (ORCPT
+        Thu, 14 Jun 2018 08:52:33 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:34134 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755111AbeFNMwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 08:52:18 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5ECdZls024542;
-        Thu, 14 Jun 2018 12:52:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=EWkfIW7WV4aP3WrFuBWVKeOBX+Jek986SyGkifKw9fo=;
- b=MR2pHgrOoeE5l7W9gG30bYTvZ3a+Vo9bqkqfr2H9F9ykEGJTrgCe3EsXakmPiTg3BXLz
- CqOP9016hVaQ+foT9UErdnk0MF+tUUUT62Pg9XcPVKsJuIAr1qL0nQ+TNpkTI3AvmkQN
- 1iNRDoYl3gk0JXAOdgdOnriEqx9cNWoA39ooMz/+lY3J6LH3RGecl6HvmziTt3sOlLHq
- 9bVcLsF3MSSn/aF431ca2QzTSkTVXwHzERKaPgo0jew4AyIk4TlNSuo8VAuyfkQomK+I
- O98zV9daCqz2c8SkO3TPGCaIMI87jY4JX+vraWd+1mKxSn1Q8StGSjuqzv3Upz4smzfH /g== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2jk0xrcyx9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 12:52:00 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5ECpw1R001629
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 12:51:58 GMT
-Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5ECpu23026163;
-        Thu, 14 Jun 2018 12:51:57 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Jun 2018 05:51:56 -0700
-Subject: Re: [PATCH 4.4 119/268] xen/pirq: fix error path cleanup when binding
- MSIs
-To:     =?UTF-8?Q?Roger_Pau_Monn=c3=a9?= <roger.pau@citrix.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Hooman Mirhadi <mirhadih@amazon.com>,
-        Amit Shah <aams@amazon.com>, Juergen Gross <jgross@suse.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-References: <1528914431.2289.163.camel@citrix.com>
- <1528915730.2289.166.camel@codethink.co.uk>
- <20180614082154.froqupxpmory2f4i@mac.bytemobile.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <08ab22c5-1801-0182-0641-7a1a352ae8d7@oracle.com>
-Date:   Thu, 14 Jun 2018 08:51:39 -0400
+        Thu, 14 Jun 2018 08:52:30 -0400
+X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
+   d="scan'208";a="14941671"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Jun 2018 05:52:29 -0700
+Received: from [10.159.245.112] (10.10.76.4) by chn-sv-exch07.mchp-main.com
+ (10.10.76.108) with Microsoft SMTP Server id 14.3.352.0; Thu, 14 Jun 2018
+ 05:52:28 -0700
+Subject: Re: [PATCH 1/4] arm: dts: add support for Laird WB45N cpu module and
+ DVK
+To:     Ben Whitten <ben.whitten@gmail.com>, <devicetree@vger.kernel.org>
+CC:     Ben Whitten <ben.whitten@lairdtech.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <1528966340-23216-1-git-send-email-ben.whitten@lairdtech.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <03f0f635-3fc2-085b-20e0-e1fcaa9e8062@microchip.com>
+Date:   Thu, 14 Jun 2018 14:52:25 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180614082154.froqupxpmory2f4i@mac.bytemobile.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1528966340-23216-1-git-send-email-ben.whitten@lairdtech.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8923 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806140144
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/2018 04:21 AM, Roger Pau Monné wrote:
-> On Wed, Jun 13, 2018 at 07:48:50PM +0100, Ben Hutchings wrote:
->> On Wed, 2018-02-28 at 09:19 +0000, Roger Pau Monne wrote:
->>> From: Roger Pau Monne <roger.pau@citrix.com>
->>>
->>> [ Upstream commit 910f8befdf5bccf25287d9f1743e3e546bcb7ce0 ]
->>>
->>> Current cleanup in the error path of xen_bind_pirq_msi_to_irq is
->>> wrong. First of all there's an off-by-one in the cleanup loop, which
->>> can lead to unbinding wrong IRQs.
->>>
->>> Secondly IRQs not bound won't be freed, thus leaking IRQ numbers.
->>>
->>> Note that there's no need to differentiate between bound and unbound
->>> IRQs when freeing them, __unbind_from_irq will deal with both of them
->>> correctly.
->> It appears to me that it is safe to call __unbind_from_irq() after
->> xen_irq_info_common_setup() fails, but *not* if the latter hasn't been
->> called at all.  In that case the IRQ type will still be set to
->> IRQT_UNBOUND and this will trigger the BUG_ON() in __unbind_from_irq().
->>
->> [...]
->>> --- a/drivers/xen/events/events_base.c
->>> +++ b/drivers/xen/events/events_base.c
->>> @@ -764,8 +764,8 @@ out:
->>>  	mutex_unlock(&irq_mapping_update_lock);
->>>  	return irq;
->>>  error_irq:
->>> -	for (; i >= 0; i--)
->>> -		__unbind_from_irq(irq + i);
->>> +	while (nvec--)
->>> +		__unbind_from_irq(irq + nvec);
->> If nvec > 1, and xen_irq_info_pirq_setup() fails for i != nvec - 1,
->> then we reach here without having called xen_irq_info_common_setup()
->> for all these IRQs.
->>
->> In that case, I think we will still want to call xen_free_irq() for all
->> IRQs.  So maybe the fix would be to remove the BUG_ON() in
->> __unbind_from_irq()?
-> I think your analysis is right, and I agree that removing the BUG_ON
-> from __unbind_from_irq seems like the right solution.
->
-> I can't see any issues from calling xen_free_irq with type ==
-> IRQT_UNBOUND, but I've already attempted to fix this once and failed,
-> so I would like to get second opinions. Also I'm not sure of the
-> reason behind that BUG_ON.
+On 14/06/2018 at 10:51, Ben Whitten wrote:
+> Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+> ---
+>   arch/arm/boot/dts/Makefile        |   3 +-
+>   arch/arm/boot/dts/at91-wb45n.dts  |  66 +++++++++++++++
+>   arch/arm/boot/dts/at91-wb45n.dtsi | 169 ++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 237 insertions(+), 1 deletion(-)
+>   create mode 100644 arch/arm/boot/dts/at91-wb45n.dts
+>   create mode 100644 arch/arm/boot/dts/at91-wb45n.dtsi
+> 
+> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+> index 7e24249..1ee94ee 100644
+> --- a/arch/arm/boot/dts/Makefile
+> +++ b/arch/arm/boot/dts/Makefile
+> @@ -42,7 +42,8 @@ dtb-$(CONFIG_SOC_AT91SAM9) += \
+>   	at91sam9g25ek.dtb \
+>   	at91sam9g35ek.dtb \
+>   	at91sam9x25ek.dtb \
+> -	at91sam9x35ek.dtb
+> +	at91sam9x35ek.dtb \
+> +	at91-wb45n.dtb
+>   dtb-$(CONFIG_SOC_SAM_V7) += \
+>   	at91-kizbox2.dtb \
+>   	at91-nattis-2-natte-2.dtb \
+> diff --git a/arch/arm/boot/dts/at91-wb45n.dts b/arch/arm/boot/dts/at91-wb45n.dts
+> new file mode 100644
+> index 0000000..4e88815
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/at91-wb45n.dts
+> @@ -0,0 +1,66 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * at91-wb45n.dts - Device Tree file for WB45NBT board
+> + *
+> + *  Copyright (C) 2018 Laird
+> + *
+> +*/
+> +/dts-v1/;
+> +#include "at91-wb45n.dtsi"
+> +
+> +/ {
+> +	model = "Laird Workgroup Bridge 45N - Atmel AT91SAM (dt)";
+> +	compatible = "laird,wb45n", "laird,wbxx", "atmel,at91sam9x5", "atmel,at91sam9";
 
-I don't see a reason for the BUG_ON either.
+"laird" prefix must be added to 
+Documentation/devicetree/bindings/vendor-prefixes.txt before using it: 
+you can do a little patch as a first patch of this series.
+Otherwise it will trigger a warning message while running 
+scripts/checkpatch.pl on top of your patch.
 
--boris
 
+> +
+> +	ahb {
+> +		apb {
+> +			watchdog@fffffe40 {
+> +				status = "okay";
+> +			};
+> +		};
+> +	};
+> +
+> +	gpio_keys {
+> +		compatible = "gpio-keys";
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		irqbtn@pb18 {
+
+I'm not sure that the @pb18 can be used like this. This address 
+extension must be used in a "reg" property in the node. dtc used with 
+warning switch on might trigger an error for this.
+
+> +			label = "IRQBTN";
+> +			linux,code = <99>;
+> +			gpios = <&pioB 18 GPIO_ACTIVE_LOW>;
+> +			gpio-key,wakeup = <1>;
+> +		};
+> +	};
+> +};
+> +
+> +&usb0 {
+> +	status = "okay";
+> +};
+> +
+> +&mmc0 {
+> +	status = "okay";
+> +};
+> +
+> +&spi0 {
+> +	status = "okay";
+> +};
+> +
+> +&macb0 {
+> +	status = "okay";
+> +};
+> +
+> +&dbgu {
+> +	status = "okay";
+> +};
+> +
+> +&usart0 {
+> +	status = "okay";
+> +};
+> +
+> +&usart3 {
+> +	status = "okay";
+> +};
+> +
+> +&i2c1 {
+> +	status = "okay";
+> +};
+> diff --git a/arch/arm/boot/dts/at91-wb45n.dtsi b/arch/arm/boot/dts/at91-wb45n.dtsi
+> new file mode 100644
+> index 0000000..2fa58e2
+> --- /dev/null
+> +++ b/arch/arm/boot/dts/at91-wb45n.dtsi
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * at91-wb45n.dtsi - Device Tree file for WB45NBT board
+> + *
+> + *  Copyright (C) 2018 Laird
+> + *
+> + */
+> +
+> +#include "at91sam9g25.dtsi"
+> +
+> +/ {
+> +	model = "Laird Workgroup Bridge 45N - Atmel AT91SAM (dt)";
+> +	compatible = "laird,wb45n", "laird,wbxx", "atmel,at91sam9x5", "atmel,at91sam9";
+> +
+> +	chosen {
+> +		bootargs = "ubi.mtd=6 root=ubi0:rootfs rootfstype=ubifs rw";
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +
+> +	memory {
+> +		reg = <0x20000000 0x4000000>;
+> +	};
+> +
+> +	ahb {
+> +		apb {
+> +			shdwc@fffffe10 {
+
+I would advice you to take exactly the node name:
+"shutdown-controller@fffffe10"; Anyway, it will go away after you use 
+the label notation as advised by Alexandre.
+
+> +				atmel,wakeup-mode = "low";
+> +			};
+> +
+> +			pinctrl@fffff400 {
+> +				usb2 {
+> +					pinctrl_board_usb2: usb2-board {
+> +						atmel,pins =
+> +							<AT91_PIOB 11 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;		/* PB11 gpio vbus sense, deglitch */
+> +					};
+> +				};
+> +			};
+> +
+> +			rstc@fffffe00 {
+> +				compatible = "atmel,sama5d3-rstc";
+> +			};
+
+I don't think this node is needed.
+
+> +
+> +		};
+> +	};
+> +
+> +	atheros {
+> +		compatible = "atheros,ath6kl";
+> +		atheros,board-id = "SD32";
+> +	};
+> +};
+> +
+> +&slow_xtal {
+> +	clock-frequency = <32768>;
+> +};
+> +
+> +&main_xtal {
+> +	clock-frequency = <12000000>;
+> +};
+> +
+> +&ebi {
+> +	status = "okay";
+> +	nand_controller: nand-controller {
+> +		pinctrl-0 = <&pinctrl_nand_cs &pinctrl_nand_rb &pinctrl_nand_oe_we>;
+> +		pinctrl-names = "default";
+> +		status = "okay";
+> +
+> +		nand@3 {
+> +			reg = <0x3 0x0 0x800000>;
+> +			rb-gpios = <&pioD 5 GPIO_ACTIVE_HIGH>;
+> +			cs-gpios = <&pioD 4 GPIO_ACTIVE_HIGH>;
+> +			nand-bus-width = <8>;
+> +			nand-ecc-mode = "hw";
+> +			nand-ecc-strength = <4>;
+> +			nand-ecc-step-size = <512>;
+> +			nand-on-flash-bbt;
+> +			label = "atmel_nand";
+> +
+> +			partitions {
+> +				compatible = "fixed-partitions";
+> +				#address-cells = <1>;
+> +				#size-cells = <1>;
+> +
+> +				at91bootstrap@0 {
+> +					label = "at91bs";
+> +					reg = <0x0 0x20000>;
+> +				};
+> +
+> +				uboot@20000 {
+> +					label = "u-boot";
+> +					reg = <0x20000 0x80000>;
+> +				};
+> +
+> +				ubootenv@a0000 {
+> +					label = "u-boot-env";
+> +					reg = <0xa0000 0x20000>;
+> +				};
+> +
+> +				ubootenv@c0000 {
+> +					label = "redund-env";
+> +					reg = <0xc0000 0x20000>;
+> +				};
+> +
+> +				kernel-a@e0000 {
+> +					label = "kernel-a";
+> +					reg = <0xe0000 0x280000>;
+> +				};
+> +
+> +				kernel-b@360000 {
+> +					label = "kernel-b";
+> +					reg = <0x360000 0x280000>;
+> +				};
+> +
+> +				rootfs-a@5e0000 {
+> +					label = "rootfs-a";
+> +					reg = <0x5e0000 0x2600000>;
+> +				};
+> +
+> +				rootfs-b@2be0000 {
+> +					label = "rootfs-b";
+> +					reg = <0x2be0000 0x2600000>;
+> +				};
+> +
+> +				user@51e0000 {
+> +					label = "user";
+> +					reg = <0x51e0000 0x2dc0000>;
+> +				};
+> +
+> +				logs@7fa0000 {
+> +					label = "logs";
+> +					reg = <0x7fa0000 0x60000>;
+> +				};
+> +
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&usb0 {
+
+This must be &usb1 label, isn't it?
+Because you are referring to ohci binding I suspect (found by having a 
+look at: atmel,oc-gpio property...).
+
+> +	num-ports = <2>;
+> +	atmel,vbus-gpio = <
+> +		&pioB 12 GPIO_ACTIVE_HIGH
+> +		&pioA 31 GPIO_ACTIVE_HIGH
+> +		>;
+> +	atmel,oc-gpio = <&pioB 13 GPIO_ACTIVE_LOW>;
+> +};
+> +
+> +&macb0 {
+> +	phy-mode = "rmii";
+> +};
+> +
+> +&spi0 {
+> +	cs-gpios = <&pioA 14 0>, <&pioA 7 0>, <0>, <0>;
+> +};
+> +
+> +&usb2 {
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&pinctrl_board_usb2>;
+> +	atmel,vbus-gpio = <&pioB 11 GPIO_ACTIVE_HIGH>;
+> +};
+> +
+> +&mmc0 {
+> +	pinctrl-0 = <
+> +		&pinctrl_mmc0_slot0_clk_cmd_dat0
+> +		&pinctrl_mmc0_slot0_dat1_3>;
+> +	slot@0 {
+> +		reg = <0>;
+> +		bus-width = <4>;
+> +	};
+> +};
+> 
+
+
+-- 
+Nicolas Ferre
