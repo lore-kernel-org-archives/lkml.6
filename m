@@ -5,90 +5,80 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 61F98C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:36:48 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D54E6C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22822208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:36:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22822208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techsingularity.net
+	by mail.kernel.org (Postfix) with ESMTP id 962B5208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:36:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 962B5208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754894AbeFNIgp (ORCPT
+        id S1754935AbeFNIgz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:36:45 -0400
-Received: from outbound-smtp16.blacknight.com ([46.22.139.233]:60793 "EHLO
-        outbound-smtp16.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754540AbeFNIgm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:36:42 -0400
-Received: from mail.blacknight.com (pemlinmail04.blacknight.ie [81.17.254.17])
-        by outbound-smtp16.blacknight.com (Postfix) with ESMTPS id 38A431C1E84
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 09:36:41 +0100 (IST)
-Received: (qmail 6718 invoked from network); 14 Jun 2018 08:36:41 -0000
-Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.237.171])
-  by 81.17.254.9 with ESMTPSA (DHE-RSA-AES256-SHA encrypted, authenticated); 14 Jun 2018 08:36:41 -0000
-Date:   Thu, 14 Jun 2018 09:36:40 +0100
-From:   Mel Gorman <mgorman@techsingularity.net>
-To:     Jirka Hladky <jhladky@redhat.com>
-Cc:     Jakub Racek <jracek@redhat.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
-        "kkolakow@redhat.com" <kkolakow@redhat.com>
-Subject: Re: [4.17 regression] Performance drop on kernel-4.17 visible on
- Stream, Linpack and NAS parallel benchmarks
-Message-ID: <20180614083640.dekqhsopoefnfhb4@techsingularity.net>
-References: <CAE4VaGBRFBM-uZEE=DdUzQkcNmpnUHdjK-7hgEeywmG8bvOOgw@mail.gmail.com>
- <20180611141113.pfuttg7npch3jtg6@techsingularity.net>
- <CAE4VaGCMS2pXfPVSnMbudexv_m5wRCTuBKA5ijh2x==11uQg9g@mail.gmail.com>
+        Thu, 14 Jun 2018 04:36:55 -0400
+Received: from mga06.intel.com ([134.134.136.31]:25568 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754540AbeFNIgw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:36:52 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 01:36:51 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
+   d="scan'208";a="49819201"
+Received: from shbuild888.sh.intel.com (HELO localhost) ([10.239.146.239])
+  by orsmga006.jf.intel.com with ESMTP; 14 Jun 2018 01:36:49 -0700
+Date:   Thu, 14 Jun 2018 16:38:51 +0800
+From:   Feng Tang <feng.tang@intel.com>
+To:     Petr Mladek <pmladek@suse.com>, Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Alan Cox <gnomes@lxorguk.ukuu.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Cc:     alek.du@intel.com, feng.tang@intel.com
+Subject: Re: [RFC 1/2] printk: Enable platform to provide a early boot clock
+Message-ID: <20180614083851.m6euwwl3xkdtjakd@shbuild888>
+References: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-15
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAE4VaGCMS2pXfPVSnMbudexv_m5wRCTuBKA5ijh2x==11uQg9g@mail.gmail.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <1527672059-6225-1-git-send-email-feng.tang@intel.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 06:07:58PM +0200, Jirka Hladky wrote:
-> >
-> > Fixing any part of it for STREAM will end up regressing something else.
+On Wed, May 30, 2018 at 05:20:58PM +0800, Feng Tang wrote:
+> Currently printk timestamp mostly come from the sched_clock which
+> depends on the clock setup, so there are many kernel logs started
+> with "[    0.000000]   " before the clock is calibrated.
 > 
+> This patch will provide an debug option for specific platform to
+> provide a early boot time clock, so that we can have time info in
+> kernel log much earlier, which can show the time info for the early
+> kernel boot, and make boottime tuning/optimization easier (boot time
+> is critical for phone/tablet and embedded devices).
 > 
-> I fully understand that. We run a set of benchmarks and we always look at
-> the results as the ensemble. Looking only at one benchmark would be
-> completely wrong.
+> Capable platform only need to setup the "boot_printk_clock_fn"
+> which could return time in nano seconds.
 > 
+> Together with a TSC patch on x86 system, we have easily captured
+> some early boottime killer like unwind_init() which takes about
+> 300ms in boot phase.
 
-Indeed
+Hi Petr and all,
 
-> And in fact, we do see regression on NAS benchmark going from 4.16 to 4.17
-> kernel as well. On 4 NUMA node server with Xeon Gold CPUs we see the
-> regression around 26% for ft_C,   35% for mg_C_x and 25% for sp_C_x. The
-> biggest regression is with 32 threads (the box has 96 CPUs in total). I
-> have not yet tried if it's
-> linked to 2c83362734dad8e48ccc0710b5cd2436a0323893. I will do that
-> testing tomorrow.
-> 
+As the 2/2 tsc related patch is still under review/discussion, can
+we consider taking this first? As this may benefit other archs.
+For example, Intel Curie platform has an always-on 32KHz osc clock,
+which is accurate but low frequency, and it could be used as
+early printk timestamp until the high-resolution timer is initialized
+and used as sched_clock. Don't know if ARM or other platforms
+have similar use case.
 
-It would be worthwhile. However, it's also worth noting that 32 threads
-out of 96 implies that 4 nodes would not be evenly used and it may
-account for some of the discrepency. ft and mg for C class are typically
-short-lived on modern hardware and sp is not particularly long-lived
-either. Hence, they are most likely to see problems with a patch that
-avoids spreading tasks across the machine early. Admittedly, I have not
-seen similar slowdowns but NAS has a lot of configuration options.
-
-In terms of the speed of migration, it may be worth checking how often the
-mm_numa_migrate_ratelimit tracepoint is triggered with bonus points for using
-the nr_pages to calculate how many pages get throttled from migrating. If
-it's high frequency then you could test increasing ratelimit_pages (which
-is set at compile time despite not being a macro). It still may not work
-for tasks that are too short-lived to have enough time to identify a
-misplacement and migration.
-
--- 
-Mel Gorman
-SUSE Labs
+Thanks,
+Feng
