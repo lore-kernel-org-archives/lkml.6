@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C4C3EC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:28:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0DD65C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C01420020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:28:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B917D20020
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:28:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KX6Yd6nN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C01420020
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvodX5aw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B917D20020
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755365AbeFNO2b (ORCPT
+        id S1755388AbeFNO2y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:28:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52892 "EHLO mail.kernel.org"
+        Thu, 14 Jun 2018 10:28:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965900AbeFNOLt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:49 -0400
+        id S965887AbeFNOLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B401208DB;
-        Thu, 14 Jun 2018 14:11:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 782ED208DE;
+        Thu, 14 Jun 2018 14:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985508;
-        bh=G2+C3EYlJ61Vloi6f/J7RRJqNidSd1YbH4jb962wuGY=;
+        s=default; t=1528985503;
+        bh=7NR41nu+Dzk/csn+4WzaDTGsG19kqa18OWyGXqGx8tc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KX6Yd6nNrRLT1TzmHHnrnSCZCmUDVEzUazt7O0vs4ZdVOGSMBsC1g7mPdQt7JDNFN
-         mbOT79axx4DFWFzPYCiuOFvk0UYfM3K2UpRjmq5hyvP8vdIyvAhL5dDODuq8j3BsoZ
-         n5OnwxtqUliQkM4LiRj2JFhwdQ3okocF2EfC3EBU=
+        b=rvodX5awon2ZhuJHElm/IvdEwO1/jdsGO7W1ARDzLwqMzn9edJNygeYJDpW2wmPDb
+         9RWZouz1ZDb8/s6zEyIeDOjSP5aqZsDaJFw8uMhrxjaP78MuI7HXZ0qhhlmwUnXkvY
+         9aECQOJsYe9uSKjBQWkQRW4LWFfpCTsfZdDVj3fI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Kappner <agk@godking.net>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Oliver Neukum <oneukum@suse.com>
-Subject: [PATCH 4.9 16/30] usb-storage: Add support for FL_ALWAYS_SYNC flag in the UAS driver
-Date:   Thu, 14 Jun 2018 16:04:57 +0200
-Message-Id: <20180614132600.933550083@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com,
+        syzbot <syzkaller@googlegroups.com>,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH 4.9 14/30] staging: android: ion: Switch to pr_warn_once in ion_buffer_destroy
+Date:   Thu, 14 Jun 2018 16:04:55 +0200
+Message-Id: <20180614132600.853948612@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -61,39 +62,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexander Kappner <agk@godking.net>
+From: Laura Abbott <labbott@redhat.com>
 
-commit 8c4e97ddfe73a0958bb0abf7e6a3bc4cc3e04936 upstream.
+commit 45ad559a29629cb1c64ee636563c69b71524f077 upstream.
 
-The ALWAYS_SYNC flag is currently honored by the usb-storage driver but not UAS
-and is required to work around devices that become unstable upon being
-queried for cache. This code is taken straight from:
-drivers/usb/storage/scsiglue.c:284
+Syzbot reported yet another warning with Ion:
 
-Signed-off-by: Alexander Kappner <agk@godking.net>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
+WARNING: CPU: 0 PID: 1467 at drivers/staging/android/ion/ion.c:122
+ion_buffer_destroy+0xd4/0x190 drivers/staging/android/ion/ion.c:122
+Kernel panic - not syncing: panic_on_warn set ...
+
+This is catching that a buffer was freed with an existing kernel mapping
+still present. This can be easily be triggered from userspace by calling
+DMA_BUF_SYNC_START without calling DMA_BUF_SYNC_END. Switch to a single
+pr_warn_once to indicate the error without being disruptive.
+
+Reported-by: syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
 Cc: stable <stable@vger.kernel.org>
-Acked-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/uas.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/staging/android/ion/ion.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/usb/storage/uas.c
-+++ b/drivers/usb/storage/uas.c
-@@ -836,6 +836,12 @@ static int uas_slave_configure(struct sc
- 	if (devinfo->flags & US_FL_BROKEN_FUA)
- 		sdev->broken_fua = 1;
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -192,8 +192,11 @@ err2:
  
-+	/* UAS also needs to support FL_ALWAYS_SYNC */
-+	if (devinfo->flags & US_FL_ALWAYS_SYNC) {
-+		sdev->skip_ms_page_3f = 1;
-+		sdev->skip_ms_page_8 = 1;
-+		sdev->wce_default_on = 1;
+ void ion_buffer_destroy(struct ion_buffer *buffer)
+ {
+-	if (WARN_ON(buffer->kmap_cnt > 0))
++	if (buffer->kmap_cnt > 0) {
++		pr_warn_once("%s: buffer still mapped in the kernel\n",
++			     __func__);
+ 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
 +	}
- 	scsi_change_queue_depth(sdev, devinfo->qdepth - 2);
- 	return 0;
- }
+ 	buffer->heap->ops->free(buffer);
+ 	vfree(buffer->pages);
+ 	kfree(buffer);
 
 
