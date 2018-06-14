@@ -2,106 +2,123 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AC21DC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:15:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BCC02C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:15:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63623208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:15:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FGeMK9Gv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63623208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7DFF4208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:15:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DFF4208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754786AbeFNHPE (ORCPT
+        id S1754727AbeFNHOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:15:04 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:42732 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754638AbeFNHPB (ORCPT
+        Thu, 14 Jun 2018 03:14:42 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:32504 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752833AbeFNHOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:15:01 -0400
-Received: by mail-io0-f194.google.com with SMTP id r24-v6so6122218ioh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:15:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VXHq0Cw0etQAq/IxN6VYTYbPcYpeCe/mn7hKNWDG+ow=;
-        b=FGeMK9GvzrmirgQvmAkzYYyGKvyiDoQl7nBec1Z0kqlIKQBkzc9SmCDzLU4ecOogwM
-         kCm35UI+qwSeBC5snMCwgZGw3rCoznOESCKRn5vaxzWk1B2fdSSSYeSAI3TtmCI1IC57
-         Q4RdVyvqC/NHvWrDM+J6Fv5cjkppympwQyXp0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VXHq0Cw0etQAq/IxN6VYTYbPcYpeCe/mn7hKNWDG+ow=;
-        b=exv7o5zoqwkoZuJCkbfB1OxeJ8WDUAhslo/cy45MS9Eta3J6Vf/fNhsY5rzpu1bJPK
-         2V/8wzHi8BQJd6LP/6ndX9D0UR01dUzapgfNRIH9RJzvUBbdkBllQ/y5JuRIHH+co22E
-         RwWRxz+96LMe3WFZtvfzFkFRCbqlBuWdrhWMe7o+wiv1A4OfKX4ukYMOYEtC/P5I3zAy
-         upAjzxOG+Gl/CJ1sR/IBuO8lY4HVSGtalRA4gKhK5NqxDCQaMKlAal6NNtip2BK+ffil
-         hsGHFmVtunC3O1pUjlit/55ppeSkGcUSFZexh1XB3xADPM1RZL509v1Txqk/a94h6dtX
-         Tymg==
-X-Gm-Message-State: APt69E2RPGSyQRsVZgW3Z5mxni4YvW02+T+3d3aqp4LOnUqGVrCmQstZ
-        sUvec2sYtQEkNGbLdKi4rPipCGOpRi8XmWzu0LUB0g==
-X-Google-Smtp-Source: ADUXVKIP91EvVrLDxC0ergOb4Fjzxd2w1ebY1m3/f3UrJ1Twy+hmRF6uq9VyfSB981qSetPvz+BmvgjXDabyTfmJSyw=
-X-Received: by 2002:a6b:1410:: with SMTP id 16-v6mr1219838iou.218.1528960500265;
- Thu, 14 Jun 2018 00:15:00 -0700 (PDT)
+        Thu, 14 Jun 2018 03:14:39 -0400
+X-UUID: 890d66a68ede4cb9b6a218a2142294b2-20180614
+Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        (envelope-from <sean.wang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 1208515368; Thu, 14 Jun 2018 15:14:35 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ 15.0.1210.3; Thu, 14 Jun 2018 15:14:33 +0800
+Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
+ Transport; Thu, 14 Jun 2018 15:14:33 +0800
+From:   <sean.wang@mediatek.com>
+To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <marcel@holtmann.org>, <johan.hedberg@gmail.com>
+CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>,
+        Rob Herring <robh@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>, <linux-serial@vger.kernel.org>
+Subject: [PATCH v3 2/7] serdev: add dev_pm_domain_attach|detach()
+Date:   Thu, 14 Jun 2018 15:14:24 +0800
+Message-ID: <e338118bb6b9f560560887eb974eb250a6c89984.1528960095.git.sean.wang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1528960095.git.sean.wang@mediatek.com>
+References: <cover.1528960095.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
-Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 00:14:59
- -0700 (PDT)
-In-Reply-To: <3d3687c030535189885d84c57dbffb034c4461c2.1528953706.git.viresh.kumar@linaro.org>
-References: <b90f44d35e8e0fa9c81b3a88d05449a580be5567.1528953706.git.viresh.kumar@linaro.org>
- <3d3687c030535189885d84c57dbffb034c4461c2.1528953706.git.viresh.kumar@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 14 Jun 2018 09:14:59 +0200
-Message-ID: <CAPDyKFooucRfxtk768LMjLR6scj6XdHDzOSuqznTLNrbF19qaw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PM / Domains: Fix return value of of_genpd_opp_to_performance_state()
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 June 2018 at 07:23, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> of_genpd_opp_to_performance_state() should return 0 for errors, but the
-> dummy routine isn't doing that. Fix it.
->
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+From: Sean Wang <sean.wang@mediatek.com>
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+In order to open up the required power gate before any operation can be
+effectively performed over the serial bus between CPU and serdev, it's
+clearly essential to add common attach functions for PM domains to serdev
+at the probe phase.
 
-Kind regards
-Uffe
+Similarly, the relevant dettach function for the PM domains should be
+properly and reversely added at the remove phase.
 
-> ---
->  include/linux/pm_domain.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 9206a4fef9ac..139f79c8477a 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -276,7 +276,7 @@ static inline unsigned int
->  of_genpd_opp_to_performance_state(struct device *dev,
->                                   struct device_node *opp_node)
->  {
-> -       return -ENODEV;
-> +       return 0;
->  }
->
->  static inline int genpd_dev_pm_attach(struct device *dev)
-> --
-> 2.18.0.rc1.242.g61856ae69a2c
->
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: linux-serial@vger.kernel.org
+---
+ drivers/tty/serdev/core.c | 14 +++++++++++++-
+ 1 file changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index df93b72..c93d8ee 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -13,6 +13,7 @@
+ #include <linux/module.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/pm_domain.h>
+ #include <linux/serdev.h>
+ #include <linux/slab.h>
+ 
+@@ -330,8 +331,16 @@ EXPORT_SYMBOL_GPL(serdev_device_set_tiocm);
+ static int serdev_drv_probe(struct device *dev)
+ {
+ 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
++	int ret;
++
++	ret = dev_pm_domain_attach(dev, true);
++	if (ret != -EPROBE_DEFER) {
++		ret = sdrv->probe(to_serdev_device(dev));
++		if (ret)
++			dev_pm_domain_detach(dev, true);
++	}
+ 
+-	return sdrv->probe(to_serdev_device(dev));
++	return ret;
+ }
+ 
+ static int serdev_drv_remove(struct device *dev)
+@@ -339,6 +348,9 @@ static int serdev_drv_remove(struct device *dev)
+ 	const struct serdev_device_driver *sdrv = to_serdev_device_driver(dev->driver);
+ 	if (sdrv->remove)
+ 		sdrv->remove(to_serdev_device(dev));
++
++	dev_pm_domain_detach(dev, true);
++
+ 	return 0;
+ }
+ 
+-- 
+2.7.4
+
