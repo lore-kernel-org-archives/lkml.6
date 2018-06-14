@@ -3,124 +3,144 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 87609C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:42:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6F3BCC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C741208B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:42:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C586208B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="0Uls+s+5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C741208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="d/Wp0dHy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C586208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755190AbeFNLmj (ORCPT
+        id S1755011AbeFNLrR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 07:42:39 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:40932 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755135AbeFNLmg (ORCPT
+        Thu, 14 Jun 2018 07:47:17 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:33104 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752929AbeFNLrP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:42:36 -0400
-Received: by mail-lf0-f67.google.com with SMTP id q11-v6so8913453lfc.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 04:42:35 -0700 (PDT)
+        Thu, 14 Jun 2018 07:47:15 -0400
+Received: by mail-pf0-f196.google.com with SMTP id b17-v6so3127770pfi.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 04:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZZOq51i2a6P7g5jxdUXvZ6Ci0o4lWElGXnzoXiqjRN0=;
-        b=0Uls+s+5wNb2s2bp6a8pSGS4TXDu6dBZI9lrOy8KOUNhEPDyszc9S2PLD4W+Ccpy0O
-         eYcczh3fk4kDyKSXH/R5nKIGg9fC1kVFJXM/s1Llnfsdns9fNGmjaJ+qZvxgjCkvH4NG
-         sULuJpiFatm2APbxh+1tN1NMMxDl7NZFKCWp2Q+sGUWqft94wQBWOwp4L0Z45AiIVYPx
-         kJGdGcYMuWdFLiUreRDL1TPvBfy2/f5yZ1WsS0LZy5+x3lPVWkFOQ9fTTimx+7uPKdn1
-         MPO+PGbiV7a1AbC5XWyrs5h3c2/7xK3ulJUqK83mTlQiSS7YhwR51+LUM+R8iCEipaYq
-         GW0Q==
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=p3n4EcxvrIItbAiPYlP6bZTt6yX8oje+1aaB8fJAtqc=;
+        b=d/Wp0dHyz4jYcw+DBH1DJZrMUzvWERr1hVsLGPQ/Cf3GvJv0JIlm/o1eknOvV2FGGF
+         r/bYvPAhodqdsMlPBrbi1GH5/Y5qbe0bn5HXSk0Wj44IkQcanCzzeabJYZy67a4IEs8L
+         w0qZa1VGB42j+bxa2d2DwJt/c/uljvqRneaWs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ZZOq51i2a6P7g5jxdUXvZ6Ci0o4lWElGXnzoXiqjRN0=;
-        b=Z9pwr3pZ/G35gxjhh2U3NMcTnTHvEtrddr1CttfM1tRn/dnjLPPcTOEXT5B8cgB+CZ
-         cWtLpRE+7lCbeFlEHInWyrXby3jStm++g+h8lndtOS/0pMxzzi0bkP2wJC73iEM+/y5s
-         SDH8GN+CpDorGNYb/puyYuAjqYcIyvgr5RWcxMZ4aKxUK6z8Cc55l3ohFGUBonUiL/gK
-         RQF3FuK5E19FODKCsgcx0vYzPSlBBV3RUgmH5A2sM5lkpZb7IQMZpzg9d7iOVLuzFX81
-         Eij1UNGhrmsyQ7XpVwWOZ0dy/xIx/jrURbCECLu6Li+h4p4xqq/MYYTy9tuv/l1kAH2u
-         VlHQ==
-X-Gm-Message-State: APt69E2teuQR8wfsn1gFQMMQLkCY6/7c4OCbIezol61ZmXYTSNTl7e89
-        ZxLPF7yfLuoKvx1L0uXjJ3eqikOsEoQ=
-X-Google-Smtp-Source: ADUXVKJu3GVoWvc27jIXzA4MR08bgMF5e4bMRGrhRX3FvjXmOJ3dAV3+mkJIVtbMXXNsOYHuWXTLTA==
-X-Received: by 2002:a19:f611:: with SMTP id x17-v6mr5959247lfe.116.1528976554618;
-        Thu, 14 Jun 2018 04:42:34 -0700 (PDT)
-Received: from wasted.cogentembedded.com ([31.173.84.212])
-        by smtp.gmail.com with ESMTPSA id d20-v6sm902599ljc.62.2018.06.14.04.42.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 04:42:33 -0700 (PDT)
-Subject: Re: [PATCH v1 4/5] ARM: dts: Renesas R9A06G032 pinctrl node
-To:     Michel Pollet <michel.pollet@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>
-Cc:     phil.edworthy@renesas.com,
-        Michel Pollet <buserror+upstream@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
- <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <7e9eefe0-5310-5925-3b00-b75800e6d87e@cogentembedded.com>
-Date:   Thu, 14 Jun 2018 14:42:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=p3n4EcxvrIItbAiPYlP6bZTt6yX8oje+1aaB8fJAtqc=;
+        b=DL7zpvkdFEurTxxCVRkjvnE8oU1bNJrc6qiYL50uH3KCle6umVa/jcxHLWmGtBgtN1
+         kwDWQ4m9RBRW/sZNWbAQ2hRr/BKhwYhjilXR4IFy5hF3JRlf+plmkdaquV0gcO6AyVzT
+         DEqPEX/QP2LR6LSdPWF+gwjV46OmmkyrJX1oI3FRsqrXtGR5TfSacRAnThUEp1nIjdF2
+         EJXTnaArsxyU0rNEnVdo6j+Rcu+orfdX3VjoX21pkQRnlJLrnn0wMLNaJs/ZYQ9t1Fe/
+         /VJ15yKZWevI8ryPnYjM1aMeMAJ8dflKqKwsc0E4ZMSMConkQN8Impvd/88BGV6mumSp
+         /INw==
+X-Gm-Message-State: APt69E1SAQXgl2KfmpkiudltLszOSh50XnTWaG6NeZDwKrlh/mTFYZlm
+        dc8lRk+Mu7gwZpGxMzkFjqHUbwgLiUq7nceb70k0IA==
+X-Google-Smtp-Source: ADUXVKInyqDzOnl+Yqo9gMoBoRH3BG8TUVza2PgT2n4BSj3UybQGH1pjD6wsXFY8fSXTwy+wJU42AF0TeRlNtiycziI=
+X-Received: by 2002:a62:9c9c:: with SMTP id u28-v6mr9254113pfk.90.1528976835172;
+ Thu, 14 Jun 2018 04:47:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a17:90a:178d:0:0:0:0 with HTTP; Thu, 14 Jun 2018 04:47:14
+ -0700 (PDT)
+In-Reply-To: <CALDO+SY6BGctJtZamvATrXDpy7zFCCGid5kqsZRQ7mtFUdxZ-Q@mail.gmail.com>
+References: <CA+G9fYuuiYES7ucAhgf8P-YXJPaYY2pi6kRKf6eBrfHvXJbQiw@mail.gmail.com>
+ <20180612083435.7f7k4exergraaa2u@gauss3.secunet.de> <CADYN=9LztFGUOb-RaEByN-G-E1MpnEv_HtZtObhyZUWWt0nffg@mail.gmail.com>
+ <CALDO+SY6BGctJtZamvATrXDpy7zFCCGid5kqsZRQ7mtFUdxZ-Q@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Thu, 14 Jun 2018 13:47:14 +0200
+Message-ID: <CADYN=9KM58BVk_+q8ZoUSwHDN0_L+uBXLFBT0rijFsUhdFXE3g@mail.gmail.com>
+Subject: Re: mainline: x86_64: kernel panic: RIP: 0010:__xfrm_policy_check+0xcb/0x690
+To:     William Tu <u9012063@gmail.com>
+Cc:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Networking <netdev@vger.kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On 14 June 2018 at 13:15, William Tu <u9012063@gmail.com> wrote:
+> On Tue, Jun 12, 2018 at 5:09 AM, Anders Roxell <anders.roxell@linaro.org>=
+ wrote:
+>> On 12 June 2018 at 10:34, Steffen Klassert <steffen.klassert@secunet.com=
+> wrote:
+>>> On Mon, Jun 11, 2018 at 10:11:46PM +0530, Naresh Kamboju wrote:
+>>>> Kernel panic on x86_64 machine running mainline 4.17.0 kernel while te=
+sting
+>>>> selftests bpf test_tunnel.sh test caused this kernel panic.
+>>>> I have noticed this kernel panic start happening from
+>>>> 4.17.0-rc7-next-20180529 and still happening on 4.17.0-next-20180608.
+>>>>
+>>>> [  213.638287] BUG: unable to handle kernel NULL pointer dereference
+>>>> at 0000000000000008
+>>>> ++[ ip xfrm poli  213.674036] PGD 0 P4D 0
+>>>> [  213.674118] audit: type=3D1327 audit(1528917683.623:7):
+>>>> proctitle=3D6970007866726D00706F6C69637900616464007372630031302E312E31=
+2E3130302F3332006473740031302E312E312E3230302F33320064697200696E00746D706C0=
+0737263003137322E31362E312E31303000647374003137322E31362E312E3230300070726F=
+746F006573700072657169640031006D6F64650074756E6E
+>>>> [  213.677950] Oops: 0000 [#1] SMP PTI
+>>>> cy[ add src 10.1.  213.677952] CPU: 2 PID: 0 Comm: swapper/2 Tainted:
+>>>> G        W         4.17.0-next-20180608 #1
+>>>> [  213.677953] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+>>>> 2.0b 07/27/2017
+>>>> [  213.726998] RIP: 0010:__xfrm_policy_check+0xcb/0x690
+>>>> [  213.731962] Code: 80 3d 0a d8 f1 00 00 0f 84 c1 02 00 00 4c 8b 25
+>>>> 2b af f4 00 e8 66 a6 6a ff 85 c0 74 0d 80 3d eb d7 f1 00 00 0f 84 d5
+>>>> 02 00 00 <49> 8b 44 24 08 48 85 c0 74 0c 48 8d b5 78 ff ff ff 4c 89 ff
+>>>> ff d0
+>>>
+>>> This looks like a bug that I've seen already. If it is what I think,
+>>> then commit 2c205dd3981f ("netfilter: add struct nf_nat_hook and use
+>>> it") introduced this bug.
+>>>
+>>> There was already a fix for this on the netdev list, but
+>>> I don't know the current status of that patch:
+>>>
+>>> https://patchwork.ozlabs.org/patch/921387/
+>>
+>> Hi, I applied the patch and ran bpf/test_tunnel.sh and I I couldn't
+>> see any crash.
+>> However, the script never returned (I had to Ctrl+c to get back), any id=
+eas ?
+>> See log from the test below.
+>>
+>> Cheers,
+>> Anders
+>>
+>> [0;92mPASS: xfrm tunnel[0m
+>
+> Hi Anders,
+> I think it should return 0 if you reach the above line.
 
-On 06/14/2018 02:00 PM, Michel Pollet wrote:
+Yes it should but it didn't.
+However, when I reran the test_tunnel.sh today with kernel next-20180613
+I got back from from the script and the test passed "PASS: xfrm tunnel".
+So I'm not sure what happened before. =3D/
 
-> This provides a pinctrl driver for the Renesas R9A06G032 SoC
-> 
-> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
-> ---
->  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
-> index 3e45375..fbad039 100644
-> --- a/arch/arm/boot/dts/r9a06g032.dtsi
-> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
-> @@ -88,6 +88,14 @@
->  			status = "disabled";
->  		};
->  
-> +		pinctrl: pinctrl@40067000 {
+> The console output looks pretty messy due to using 'tee'
+> I will send a patch to make the output more readable.
 
-   "pin-controller@..." please, it's looking more generic.
+Great.
 
-> +			compatible = "renesas,r9a06g032-pinctrl";
-> +			reg = <0x40067000 0x1000>, <0x51000000 0x800>;
-> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
-> +			clock-names = "bus";
-> +			status = "okay";
-> +		};
-> +
->  		gic: gic@44101000 {
->  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
->  			interrupt-controller;
-
-MBR, Sergei
+Cheers,
+Anders
