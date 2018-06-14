@@ -2,118 +2,170 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1F10AC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:51:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C7994C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9822208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:51:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6IbUw42"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9822208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 84598208B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:53:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84598208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=us.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755356AbeFNNvy (ORCPT
+        id S1755309AbeFNNxW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:51:54 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:35414 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754912AbeFNNvx (ORCPT
+        Thu, 14 Jun 2018 09:53:22 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:54594 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755214AbeFNNxV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:51:53 -0400
-Received: by mail-pf0-f196.google.com with SMTP id c22-v6so3289978pfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:51:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2ZzX8dTvjPdCp7FNvAwTTTiJERDlJcWWXgpZ/dPXD58=;
-        b=O6IbUw427ELPmDFk8MqBFBCdGGlPVUvZe1EzUJbqQD+nHyEMMlS8NM1h+4HSnDAlGF
-         x82fVpXDimR7b53gDr1HoxvTWdkDsKMYRxQDqaXUm41HkGJyvTY3IfRnxXHmPCpmVIhQ
-         04f36T9yV7LOP2iMl89K83D4JrrqlJBVbYt2N/1z0ELGtwbFdVdtd12zNcuuIIp4ijb/
-         rUexpULvlQLP5FREMx6J5VRosk43FAIhtiEIMEieIa3Y0rnrdQMr2SdxzCPKFVZyw6/8
-         4BKw03Xd6dyI/PCplzstqecpc7JIBfsvVwoZpsUUHk2+qoaVIhSZBzhYQpSD9acmDPdy
-         lrzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=2ZzX8dTvjPdCp7FNvAwTTTiJERDlJcWWXgpZ/dPXD58=;
-        b=BRNQCEpzbT/3rGS9MNi3tMr0qcgYPpx128Jta4fy3LHJ67HJfx0OedoItkWKVpfpkY
-         zzl72tqByCNAOhEWT/Zxh5s4s0PcPSIlhVDDndXa+bhsNtnOOxv+sl7W2uwU6vKB6sWH
-         Jm9RLLghUOiia4wo5yighsKuQb59DnoXk1CKookqqSLM/C8JTzM3uvrqGGwyYXlq5H4R
-         3oxFqqB/3tyCcAYi7hqOfzvQnQtoW58EPF9HxZsbyRJqWbhMlluEhkQNVDSYsNTDnY+i
-         5DjJSsKE9F4sxSn6WPr7qTzvplSWXLE+iYUwuzQIq05zZgWUl0smVBUxQSVKeqMLUCeJ
-         tcHg==
-X-Gm-Message-State: APt69E3gOSqKqGfwj5NOyfZiTqSIWB9D9gDOH0CIaHr6FovC7TzvIWzM
-        Z8mSjRZTLtb1pgQ2dBLpOMqTihVu5yE=
-X-Google-Smtp-Source: ADUXVKKgLgzyVz547mQUoq3ZewixEB3CyYzQFJeyW0RqK1c8u+63HcHZoEFP0Q5Wkx4csNybKiStkQ==
-X-Received: by 2002:a65:5348:: with SMTP id w8-v6mr2449300pgr.247.1528984313128;
-        Thu, 14 Jun 2018 06:51:53 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id n76-v6sm12746749pfg.98.2018.06.14.06.51.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 06:51:52 -0700 (PDT)
-From:   Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Bhumika Goyal <bhumirks@gmail.com>,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ALSA: lx6464es: add error handling for pci_ioremap_bar
-Date:   Thu, 14 Jun 2018 21:51:46 +0800
-Message-Id: <1528984308-53122-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 14 Jun 2018 09:53:21 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5EDopKw121002
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 09:53:20 -0400
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jkrwxb0h3-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 09:53:20 -0400
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pc@us.ibm.com>;
+        Thu, 14 Jun 2018 09:53:18 -0400
+Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Jun 2018 09:53:17 -0400
+Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5EDrF9c55246976
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Jun 2018 13:53:16 GMT
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id E1A2BAE05C;
+        Thu, 14 Jun 2018 09:53:22 -0400 (EDT)
+Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3AFB4AE05F;
+        Thu, 14 Jun 2018 09:53:22 -0400 (EDT)
+Received: from oc3272150783.ibm.com (unknown [9.80.215.247])
+        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
+        Thu, 14 Jun 2018 09:53:22 -0400 (EDT)
+Subject: Re: [PATCH 2/3] perf alias: Rebuild alias expression string to make
+ it comparable
+To:     Thomas Richter <tmricht@linux.ibm.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org, jolsa@redhat.com
+Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com
+References: <20180614114845.41221-1-tmricht@linux.ibm.com>
+ <20180614114845.41221-2-tmricht@linux.ibm.com>
+From:   Paul Clarke <pc@us.ibm.com>
+Date:   Thu, 14 Jun 2018 08:53:14 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180614114845.41221-2-tmricht@linux.ibm.com>
+Content-Language: en-US
+X-TM-AS-GCONF: 00
+x-cbid: 18061413-0040-0000-0000-000004404BCE
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00009189; HX=3.00000241; KW=3.00000007;
+ PH=3.00000004; SC=3.00000265; SDB=6.01046859; UDB=6.00536181; IPR=6.00825832;
+ MB=3.00021643; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-14 13:53:18
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061413-0041-0000-0000-00000846564D
+Message-Id: <809ff562-511d-26e9-bac3-e8f7b84666e5@us.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-14_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806140155
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When pci_ioremap_bar fails, the lack of error-handling code may
-cause unexpected results.
+On 06/14/2018 06:48 AM, Thomas Richter wrote:
+> PMU alias definitions in sysfs files may have spaces, newlines
+> and number with leading zeroes. Same alias definitions may
+> also appear in JSON files without spaces, etc.
+> 
+> Scan alias definitions and remove leading zeroes, spaces,
+> newlines, etc and rebuild string to make alias->str member
+> comparable.
+> 
+> s390 for example  has terms specified as
+> event=0x0091 (read from files ../<PMU>/events/<FILE>
+> and terms specified as event=0x91 (read from JSON files).
+> 
+> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+> ---
+>  tools/perf/util/pmu.c | 25 ++++++++++++++++++++++++-
+>  1 file changed, 24 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
+> index 26c79a9c4142..da8f243743d3 100644
+> --- a/tools/perf/util/pmu.c
+> +++ b/tools/perf/util/pmu.c
+> @@ -241,9 +241,11 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
+>  				 char *metric_expr,
+>  				 char *metric_name)
+>  {
+> +	struct parse_events_term *term;
+>  	struct perf_pmu_alias *alias;
+>  	int ret;
+>  	int num;
+> +	char newval[256];
 
-This patch adds error-handling code after calling pci_ioremap_bar.
+How was 256 chosen?
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
----
-v1->v2:
-- Add new goto label.
----
- sound/pci/lx6464es/lx6464es.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> 
+>  	alias = malloc(sizeof(*alias));
+>  	if (!alias)
+> @@ -262,6 +264,27 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
+>  		return ret;
+>  	}
+> 
+> +	/* Scan event and remove leading zeroes, spaces, newlines, some
+> +	 * platforms have terms specified as
+> +	 * event=0x0091 (read from files ../<PMU>/events/<FILE>
+> +	 * and terms specified as event=0x91 (read from JSON files).
+> +	 *
+> +	 * Rebuild string to make alias->str member comparable.
+> +	 */
+> +	memset(newval, 0, sizeof(newval));
+> +	ret = 0;
+> +	list_for_each_entry(term, &alias->terms, list) {
+> +		if (ret)
+> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
+> +					 ",");
+> +		if (term->type_val == PARSE_EVENTS__TERM_TYPE_NUM)
+> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
+> +					 "%s=%#x", term->config, term->val.num);
+> +		else if (term->type_val == PARSE_EVENTS__TERM_TYPE_STR)
+> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
+> +					 "%s=%s", term->config, term->val.str);
 
-diff --git a/sound/pci/lx6464es/lx6464es.c b/sound/pci/lx6464es/lx6464es.c
-index 9655b08..6c85f13 100644
---- a/sound/pci/lx6464es/lx6464es.c
-+++ b/sound/pci/lx6464es/lx6464es.c
-@@ -1016,6 +1016,10 @@ static int snd_lx6464es_create(struct snd_card *card,
- 
- 	/* dsp port */
- 	chip->port_dsp_bar = pci_ioremap_bar(pci, 2);
-+	if (!chip->port_dsp_bar) {
-+		dev_err(card->dev, "cannot remap PCI memory region\n");
-+		goto remap_pci_failed;
-+	}
- 
- 	err = request_threaded_irq(pci->irq, lx_interrupt, lx_threaded_irq,
- 				   IRQF_SHARED, KBUILD_MODNAME, chip);
-@@ -1055,6 +1059,9 @@ static int snd_lx6464es_create(struct snd_card *card,
- 	free_irq(pci->irq, chip);
- 
- request_irq_failed:
-+	iounmap(chip->port_dsp_bar);
-+
-+remap_pci_failed:
- 	pci_release_regions(pci);
- 
- request_regions_failed:
--- 
-2.7.4
+If we exceed 256, we just suddenly terminate the rebuilding without reporting any issues.
+
+> +	}
+> +
+>  	alias->name = strdup(name);
+>  	if (dir) {
+>  		/*
+> @@ -285,7 +308,7 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
+>  		snprintf(alias->unit, sizeof(alias->unit), "%s", unit);
+>  	}
+>  	alias->per_pkg = perpkg && sscanf(perpkg, "%d", &num) == 1 && num == 1;
+> -	alias->str = strdup(val);
+> +	alias->str = strdup(newval);
+> 
+>  	list_add_tail(&alias->list, list);
+> 
+
+PC
 
