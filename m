@@ -2,93 +2,118 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 89495C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:51:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1F10AC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49DCF208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49DCF208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C9822208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:51:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O6IbUw42"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9822208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755327AbeFNNvY (ORCPT
+        id S1755356AbeFNNvy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:51:24 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:32809 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754869AbeFNNvX (ORCPT
+        Thu, 14 Jun 2018 09:51:54 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:35414 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754912AbeFNNvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:51:23 -0400
-Received: by mail-wm0-f65.google.com with SMTP id z6-v6so3232793wma.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:51:22 -0700 (PDT)
+        Thu, 14 Jun 2018 09:51:53 -0400
+Received: by mail-pf0-f196.google.com with SMTP id c22-v6so3289978pfi.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:51:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2ZzX8dTvjPdCp7FNvAwTTTiJERDlJcWWXgpZ/dPXD58=;
+        b=O6IbUw427ELPmDFk8MqBFBCdGGlPVUvZe1EzUJbqQD+nHyEMMlS8NM1h+4HSnDAlGF
+         x82fVpXDimR7b53gDr1HoxvTWdkDsKMYRxQDqaXUm41HkGJyvTY3IfRnxXHmPCpmVIhQ
+         04f36T9yV7LOP2iMl89K83D4JrrqlJBVbYt2N/1z0ELGtwbFdVdtd12zNcuuIIp4ijb/
+         rUexpULvlQLP5FREMx6J5VRosk43FAIhtiEIMEieIa3Y0rnrdQMr2SdxzCPKFVZyw6/8
+         4BKw03Xd6dyI/PCplzstqecpc7JIBfsvVwoZpsUUHk2+qoaVIhSZBzhYQpSD9acmDPdy
+         lrzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=F2e2Xm5IuN2nvZT7HQCKcWH17xsad2eFOIOkiveL3CU=;
-        b=KGAw5hsw+pJutt5CuPCxBNKS0RPVJItaIVDmo6FT4JdyJpVLOHwu+ocwVloxc/mzKa
-         2AVEpW9VVIaPdsFnR3RJXdimxkMqje9w37b9alJeXoD6BaomjR0fib0Y8PlJaR7B0vzT
-         OvOuk5BEGm/PcjlIe3zDgdrozTFdVUrJ0z9E666UocYEdaDDNeTpAGlEW2NoVrTMIol5
-         ZS8YVb0MMmY/Jr64imghk6o1XparRvpCwE0DLqWKepGeSeJNDKpfcdw/upqkvNfsH3M5
-         slLXrHPxD6/I3tnlhO2aZ0Kx0lELVyd07tuX07Tx5zN2W1qJ5pFyY4wPs0ExToPjDoew
-         zj5w==
-X-Gm-Message-State: APt69E2ltbuMlwbgPc6ImMoBO5VYsq6m+w3X2z/jb9P0iV8K492pOTJf
-        UAhJOpOUeGPvu6HlYcJHX+j/Zg==
-X-Google-Smtp-Source: ADUXVKJCcmXl2awgnBT66W3K3h/RZ3Xmfi/4EhW2GOi2rUIJaLqKrdKQPmKn48HmOgcsEpFfkvj14A==
-X-Received: by 2002:a1c:ad4:: with SMTP id 203-v6mr1916643wmk.98.1528984282019;
-        Thu, 14 Jun 2018 06:51:22 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id e2-v6sm6491379wro.97.2018.06.14.06.51.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Jun 2018 06:51:21 -0700 (PDT)
-Date:   Thu, 14 Jun 2018 15:51:19 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] sched/core: Prevent race condition between cpuset
- and __sched_setscheduler()
-Message-ID: <20180614135119.GF12032@localhost.localdomain>
-References: <20180613121711.5018-1-juri.lelli@redhat.com>
- <20180613121711.5018-5-juri.lelli@redhat.com>
- <20180614094518.00a181cf@gandalf.local.home>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614094518.00a181cf@gandalf.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2ZzX8dTvjPdCp7FNvAwTTTiJERDlJcWWXgpZ/dPXD58=;
+        b=BRNQCEpzbT/3rGS9MNi3tMr0qcgYPpx128Jta4fy3LHJ67HJfx0OedoItkWKVpfpkY
+         zzl72tqByCNAOhEWT/Zxh5s4s0PcPSIlhVDDndXa+bhsNtnOOxv+sl7W2uwU6vKB6sWH
+         Jm9RLLghUOiia4wo5yighsKuQb59DnoXk1CKookqqSLM/C8JTzM3uvrqGGwyYXlq5H4R
+         3oxFqqB/3tyCcAYi7hqOfzvQnQtoW58EPF9HxZsbyRJqWbhMlluEhkQNVDSYsNTDnY+i
+         5DjJSsKE9F4sxSn6WPr7qTzvplSWXLE+iYUwuzQIq05zZgWUl0smVBUxQSVKeqMLUCeJ
+         tcHg==
+X-Gm-Message-State: APt69E3gOSqKqGfwj5NOyfZiTqSIWB9D9gDOH0CIaHr6FovC7TzvIWzM
+        Z8mSjRZTLtb1pgQ2dBLpOMqTihVu5yE=
+X-Google-Smtp-Source: ADUXVKKgLgzyVz547mQUoq3ZewixEB3CyYzQFJeyW0RqK1c8u+63HcHZoEFP0Q5Wkx4csNybKiStkQ==
+X-Received: by 2002:a65:5348:: with SMTP id w8-v6mr2449300pgr.247.1528984313128;
+        Thu, 14 Jun 2018 06:51:53 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id n76-v6sm12746749pfg.98.2018.06.14.06.51.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 06:51:52 -0700 (PDT)
+From:   Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Bhumika Goyal <bhumirks@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ALSA: lx6464es: add error handling for pci_ioremap_bar
+Date:   Thu, 14 Jun 2018 21:51:46 +0800
+Message-Id: <1528984308-53122-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/06/18 09:45, Steven Rostedt wrote:
-> On Wed, 13 Jun 2018 14:17:10 +0200
-> Ju
-> > diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> > index b42037e6e81d..d26fd4795aa3 100644
-> > --- a/kernel/cgroup/cpuset.c
-> > +++ b/kernel/cgroup/cpuset.c
-> > @@ -2409,6 +2409,22 @@ void __init cpuset_init_smp(void)
-> >  	BUG_ON(!cpuset_migrate_mm_wq);
-> >  }
-> >  
-> > +/**
-> > + * cpuset_lock - Grab the cpuset_mutex from another subsysytem
-> > + */
-> > +int cpuset_lock(void)
-> 
-> Shouldn't this be called "cpuset_trylock()" otherwise one may think
-> that it will always return with the cpuset_mutex locked.
+When pci_ioremap_bar fails, the lack of error-handling code may
+cause unexpected results.
 
-Sure.
+This patch adds error-handling code after calling pci_ioremap_bar.
 
-Thanks,
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+v1->v2:
+- Add new goto label.
+---
+ sound/pci/lx6464es/lx6464es.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-- Juri
+diff --git a/sound/pci/lx6464es/lx6464es.c b/sound/pci/lx6464es/lx6464es.c
+index 9655b08..6c85f13 100644
+--- a/sound/pci/lx6464es/lx6464es.c
++++ b/sound/pci/lx6464es/lx6464es.c
+@@ -1016,6 +1016,10 @@ static int snd_lx6464es_create(struct snd_card *card,
+ 
+ 	/* dsp port */
+ 	chip->port_dsp_bar = pci_ioremap_bar(pci, 2);
++	if (!chip->port_dsp_bar) {
++		dev_err(card->dev, "cannot remap PCI memory region\n");
++		goto remap_pci_failed;
++	}
+ 
+ 	err = request_threaded_irq(pci->irq, lx_interrupt, lx_threaded_irq,
+ 				   IRQF_SHARED, KBUILD_MODNAME, chip);
+@@ -1055,6 +1059,9 @@ static int snd_lx6464es_create(struct snd_card *card,
+ 	free_irq(pci->irq, chip);
+ 
+ request_irq_failed:
++	iounmap(chip->port_dsp_bar);
++
++remap_pci_failed:
+ 	pci_release_regions(pci);
+ 
+ request_regions_failed:
+-- 
+2.7.4
+
