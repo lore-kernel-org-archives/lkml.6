@@ -2,187 +2,678 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0CC69C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 18:53:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EA6CAC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1899208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 18:53:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1899208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=broadcom.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E947208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:04:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mRfjg6IJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E947208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755403AbeFNSxL (ORCPT
+        id S1755281AbeFNTEK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 14:53:11 -0400
-Received: from mail-qt0-f193.google.com ([209.85.216.193]:46659 "EHLO
-        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754862AbeFNSxJ (ORCPT
+        Thu, 14 Jun 2018 15:04:10 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:38361 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754780AbeFNTEH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 14:53:09 -0400
-Received: by mail-qt0-f193.google.com with SMTP id h5-v6so6784937qtm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 11:53:09 -0700 (PDT)
+        Thu, 14 Jun 2018 15:04:07 -0400
+Received: by mail-pg0-f67.google.com with SMTP id c9-v6so3333832pgf.5;
+        Thu, 14 Jun 2018 12:04:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=nIFPUhWTNl3emafDJ/OF6TzQqRoV6bfgVi90mPrUGbs=;
-        b=PNVBfYNMsEn5dCobQGWKfLd6Q/4puRgKVE+HRwsq1s6B5ENY+eJSFzqjT4fCSX+Xvs
-         buWkCyUjqqY8r5gP6h81R9pknsnROwqa52B0zJ6TuLmkCJLEFOw9a8LMCsMgXe/0zrPy
-         bpk+31ijGg1tIGlrt4fe9mJ2V7uJ4U+bioZpU=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=rqXlLO/FUcDZUteIoqyH4iNrijFHZjzJ7JpxqvL6Y/4=;
+        b=mRfjg6IJswTE1kOPHYYxF8JZubIBnmZj1kIs9SE+GAn+BDlewoXzcud1HzT5NX50BV
+         iwofJXG3iNBVZg5ikszt/5utdljTjzvtjvQa8LYTZ/+BeafNCRg+QFjAOXAepEglea7A
+         l6JhPlYawPD99+8GR+InkNVcvq7DZZ2g/uN7wtfObTSPurCiGpw1uj6scti9JLfqbt66
+         Alf6uR7cknv3WXcpoFlGmpQpolV6MwUpP0s/2P4+SQY4xvOHnK5/fauJU5riCuFJWXaY
+         JhxIDvaDBodccijLUBWbh/P+eA4KPdO8nhNK68DgWVNk0nGtmP78Eejp0XyAcPIOQU9H
+         /KTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=nIFPUhWTNl3emafDJ/OF6TzQqRoV6bfgVi90mPrUGbs=;
-        b=qyujOpIUHFUabVb9UpQKTBWcctwIrioGHXlQDrjEdyf2QbFN2jpbgDuRMDc7sr6Xiv
-         RxhoRz92Q6JSaX3QK7PTRpj9sIrVP86JqUKGRxjP6jkPPdqUKrwyeCt7yo+aOGzfi88D
-         FPSxYY/8/K2X+ZOK2KnLjo+49DPG2TRhknQN9HGLoAXW6YvA21ieZIR+280VujKjyZaS
-         Y91r0mRlsdP1f7I0Evwkbn5yunKNxlW4f8efvLFPBMvpZHD4oyA7v3r9jyyT5BRcNa88
-         V8ve9JogXEpeZIeIjVpC7AkQvj0nbSNIKocghYQbe5HgLrKIaI/G57ClNoxGEvKeBksD
-         Euqw==
-X-Gm-Message-State: APt69E2/0mbYpyrEkbPWX16orpKhN9JuzPSgXpgJ5vxVyE8jGL+p80RY
-        qJPcMJf6iFJJ5MhiLOk8pOU1dOuD
-X-Google-Smtp-Source: ADUXVKKBAU7W5TQNund71bz48z91hg+52nz2vMyJURuFwbMmQixXFES+e1McTRV2dryX9toUllmb8Q==
-X-Received: by 2002:aed:2311:: with SMTP id h17-v6mr3563128qtc.144.1529002388486;
-        Thu, 14 Jun 2018 11:53:08 -0700 (PDT)
-Received: from [10.136.13.65] ([192.19.228.250])
-        by smtp.gmail.com with ESMTPSA id b15-v6sm4179385qkc.90.2018.06.14.11.53.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 11:53:07 -0700 (PDT)
-Subject: Re: [PATCH] arm64: dts: stingray: use NUM_SATA to configure number of
- sata ports
-To:     Rob Herring <rob.herring@linaro.org>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, Ray Jui <rjui@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1526668446-20048-1-git-send-email-scott.branden@broadcom.com>
- <d35afa1f-e0fd-84f1-7d42-60595e22cc77@gmail.com>
- <395f1fe8-76f1-8310-d09e-63e25bca23d2@broadcom.com>
- <CAL_JsqJEFLXFf-Vq9c9XC41vBpisQwxkd06_v8Fmt6X=gp=2_g@mail.gmail.com>
- <f20222ea-47ac-ca05-a8d3-69f28932de94@gmail.com>
- <0bf3c57c-dac8-8ece-6b8a-3b4d024140fc@broadcom.com>
- <CABGGiszcTNw23e_qA7EiGb_2hc6kHfVQJq02pQjbpTnv1CNksg@mail.gmail.com>
-From:   Scott Branden <scott.branden@broadcom.com>
-Message-ID: <ad3e7225-35f6-f926-d925-42627154659b@broadcom.com>
-Date:   Thu, 14 Jun 2018 11:53:04 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=rqXlLO/FUcDZUteIoqyH4iNrijFHZjzJ7JpxqvL6Y/4=;
+        b=iLc8VIZzHDjJmymDaYio9pV7n/NG1bpPyfkCCIuABSE6Sbyav5ci1n4hUZ3yVRu3ap
+         yZ43RJWOLHj/rGNB8CzhpuFbAZvNdjCKmLNy2xRa4WO+GHTsL4irf3dD8/zHEH6clI1V
+         FJn9YL6s+kzWLu/yY2XvkL07gg8b5b8A01ot7jfCoLRMjp8qa9PZWID2KTR7xBZUITG6
+         DGBv5BSxycBpU+QwS5m7/xfXhRWlfc9+ZOAyRFYthYnXRz4wNJdDg6TEUT7mLtFTsShZ
+         fS4PpqPJg16OcdFZ2h4ob9gkTP1Vh8MeitcUyM+1l+w40Jlggrqae9dkWZNdbk8bUX5v
+         8Pqw==
+X-Gm-Message-State: APt69E1d97wfoMEd2XwLaKXjGXaJMQ+bhGLiprr0/r8Dn8+aUp/KfSZf
+        nv9tgTxxVtgAnVxlvp6zKKM=
+X-Google-Smtp-Source: ADUXVKJqXHqEJcA+lMl6OQq/QZ3mryEa6QPqrdGwl4HhXpgWJVhLhxr+nA/QGnzxoLrV31qMq621zA==
+X-Received: by 2002:a63:86c8:: with SMTP id x191-v6mr3285144pgd.2.1529003046308;
+        Thu, 14 Jun 2018 12:04:06 -0700 (PDT)
+Received: from jordon-HP-15-Notebook-PC ([49.205.217.168])
+        by smtp.gmail.com with ESMTPSA id e1-v6sm7251408pgt.71.2018.06.14.12.04.03
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 14 Jun 2018 12:04:04 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 00:36:30 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     willy@infradead.org, rth@twiddle.net, tony.luck@intel.com,
+        mattst88@gmail.com, vgupta@synopsys.com, linux@armlinux.org.uk,
+        catalin.marinas@arm.com, will.deacon@arm.com, rkuo@codeaurora.org,
+        geert@linux-m68k.org, monstr@monstr.eu, jhogan@kernel.org,
+        lftan@altera.com, jonas@southpole.se, jejb@parisc-linux.org,
+        benh@kernel.crashing.org, palmer@sifive.com,
+        ysato@users.sourceforge.jp, davem@davemloft.net, richard@nod.at,
+        gxt@pku.edu.cn, tglx@linutronix.de, hpa@zytor.com,
+        alexander.levin@verizon.com, akpm@linux-foundation.org
+Cc:     linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@linux-mips.org,
+        nios2-dev@lists.rocketboards.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        user-mode-linux-devel@lists.sourceforge.net,
+        user-mode-linux-user@lists.sourceforge.net,
+        linux-xtensa@linux-xtensa.org, iommu@lists.linux-foundation.org,
+        linux-mm@kvack.org, brajeswar.linux@gmail.com,
+        sabyasachi.linux@gmail.com
+Subject: [PATCH] mm: convert return type of handle_mm_fault() caller to
+ vm_fault_t
+Message-ID: <20180614190629.GA18576@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <CABGGiszcTNw23e_qA7EiGb_2hc6kHfVQJq02pQjbpTnv1CNksg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use new return type vm_fault_t for fault handler. For
+now, this is just documenting that the function returns
+a VM_FAULT value rather than an errno. Once all instances
+are converted, vm_fault_t will become a distinct type.
 
+Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
 
-On 18-06-13 03:06 PM, Rob Herring wrote:
-> On Wed, Jun 13, 2018 at 2:18 PM, Scott Branden
-> <scott.branden@broadcom.com> wrote:
->> Hi Rob,
->>
->> Thanks for comment - reply inline.
->>
->>
->>
->> On 18-06-13 12:31 PM, Florian Fainelli wrote:
->>> On 06/12/2018 03:54 PM, Rob Herring wrote:
->>>> On Thu, Jun 7, 2018 at 12:53 PM, Scott Branden
->>>> <scott.branden@broadcom.com> wrote:
->>>>> Hi Rob,
->>>>>
->>>>> Could you please kindly comment on change below.
->>>>>
->>>>> It allows board variants to be added easily via a simple define for
->>>>> different number of SATA ports.
->>>>>
->>>>>
->>>>>
->>>>> On 18-06-04 09:22 AM, Florian Fainelli wrote:
->>>>>> On 05/18/2018 11:34 AM, Scott Branden wrote:
->>>>>>> Move remaining sata configuration to stingray-sata.dtsi and enable
->>>>>>> ports based on NUM_SATA defined.
->>>>>>> Now, all that needs to be done is define NUM_SATA per board.
->>>>>> Rob could you review this and let us know if this approach is okay or
->>>>>> not? Thank you!
->>>>>>
->>>>>>> Signed-off-by: Scott Branden <scott.branden@broadcom.com>
->>>>>>> ---
->>>>>>> diff --git a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>>>> b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>>>> index 8c68e0c..7f6d176 100644
->>>>>>> --- a/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>>>> +++ b/arch/arm64/boot/dts/broadcom/stingray/stingray-sata.dtsi
->>>>>>> @@ -43,7 +43,11 @@
->>>>>>>                           interrupts = <GIC_SPI 321
->>>>>>> IRQ_TYPE_LEVEL_HIGH>;
->>>>>>>                           #address-cells = <1>;
->>>>>>>                           #size-cells = <0>;
->>>>>>> +#if (NUM_SATA > 0)
->>>>>>> +                       status = "okay";
->>>>>>> +#else
->>>>>>>                           status = "disabled";
->>>>>>> +#endif
->>>> This only works if ports are contiguously enabled (0-N). You might not
->>>> care, but it is not a pattern that works in general.
->> Correct - all board designs that include this dtsi file follow such
->> commonality (ie. design with SATA0 first, etc).  By having common board
->> designs it allows for commonality in dts files rather than duplicating
->> information everywhere.  If somebody designs a bizarro board they are free
->> to create their own dts file of course.
->>>>    And I'm not a fan
->>>> of C preprocessing in DT files in general beyond just defines for
->>>> single numbers.
->> The use of a define to specify the number of SATA ports in the board design
->> meets our requirements of being able to maintain many boards.  We need a
->> method to specify the number of ports in the board design rather than
->> copying and pasting the information in many dts files.  If you have an
->> alternative upstreamable mechanism to manage the configuration of many
->> boards without copy and paste that would be ideal?
-> Is this really the only problem with maintaining lots of boards? What
-> about all the other nodes that are conditionally enabled? Really, I
-> don't see the problem with 3 lines per node.
-Yes - the problem with maintaining lots of boards is having to copy and 
-paste duplicated lines per nodes in many files which can be maintained 
-with a single define.
->
-> Does having an unused port enabled cause problems? If not, you could
-> handle it all at run-time and just shutdown ports which have no link.
-> You'd want to do that anyway for boards with a port, but is not
-> connected to a drive (except for hotplug capable ports).
-SATA is not the only place we use defines.  This is one change for 
-review to see if there are any "real" problems with doing it upstream 
-and get comment.  All the board variations simply add a few defines and 
-don't need to do anything else using my approach.  No out-of-tree 
-special tools or scripts required to generate dts files, no run-time 
-bootloader or kernel changes necessary.
->
-> Maybe we could add a property in /chosen that is a list of nodes to
-> enable and either the bootloader or kernel could update their
-> 'status'. Or It could even be done in dtc perhaps with some
-> /directive/.
-Sure, if it is a single line change needed through a "chosen" or 
-"directive" instead of a "define" that sounds fine.  How would I do that 
-in the SATA example?
-I am looking for an in-tree solution to managing the boards in a simpler 
-manner than what is available by cutting and pasting nodes in many files.
-The use of the defines allows such without any special script or tool or 
-repo needing to be maintained out of tree.
->
-> Rob
+In this patch all the caller of handle_mm_fault()
+are changed to return vm_fault_t type.
+
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ arch/alpha/mm/fault.c         |  3 ++-
+ arch/arc/mm/fault.c           |  4 +++-
+ arch/arm/mm/fault.c           |  7 ++++---
+ arch/arm64/mm/fault.c         |  6 +++---
+ arch/hexagon/mm/vm_fault.c    |  2 +-
+ arch/ia64/mm/fault.c          |  2 +-
+ arch/m68k/mm/fault.c          |  4 ++--
+ arch/microblaze/mm/fault.c    |  2 +-
+ arch/mips/mm/fault.c          |  2 +-
+ arch/nds32/mm/fault.c         |  2 +-
+ arch/nios2/mm/fault.c         |  2 +-
+ arch/openrisc/mm/fault.c      |  2 +-
+ arch/parisc/mm/fault.c        |  2 +-
+ arch/powerpc/mm/copro_fault.c |  2 +-
+ arch/powerpc/mm/fault.c       |  7 ++++---
+ arch/riscv/mm/fault.c         |  3 ++-
+ arch/s390/mm/fault.c          | 13 ++++++++-----
+ arch/sh/mm/fault.c            |  4 ++--
+ arch/sparc/mm/fault_32.c      |  3 ++-
+ arch/sparc/mm/fault_64.c      |  3 ++-
+ arch/um/kernel/trap.c         |  2 +-
+ arch/unicore32/mm/fault.c     |  9 +++++----
+ arch/x86/mm/fault.c           |  5 +++--
+ arch/xtensa/mm/fault.c        |  2 +-
+ drivers/iommu/amd_iommu_v2.c  |  2 +-
+ drivers/iommu/intel-svm.c     |  4 +++-
+ mm/hmm.c                      |  8 ++++----
+ mm/ksm.c                      |  2 +-
+ 28 files changed, 62 insertions(+), 47 deletions(-)
+
+diff --git a/arch/alpha/mm/fault.c b/arch/alpha/mm/fault.c
+index cd3c572..2a979ee 100644
+--- a/arch/alpha/mm/fault.c
++++ b/arch/alpha/mm/fault.c
+@@ -87,7 +87,8 @@
+ 	struct vm_area_struct * vma;
+ 	struct mm_struct *mm = current->mm;
+ 	const struct exception_table_entry *fixup;
+-	int fault, si_code = SEGV_MAPERR;
++	int si_code = SEGV_MAPERR;
++	vm_fault_t fault;
+ 	siginfo_t info;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+diff --git a/arch/arc/mm/fault.c b/arch/arc/mm/fault.c
+index a0b7bd6..3a18d33 100644
+--- a/arch/arc/mm/fault.c
++++ b/arch/arc/mm/fault.c
+@@ -15,6 +15,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/kdebug.h>
+ #include <linux/perf_event.h>
++#include <linux/mm_types.h>
+ #include <asm/pgalloc.h>
+ #include <asm/mmu.h>
+ 
+@@ -66,7 +67,8 @@ void do_page_fault(unsigned long address, struct pt_regs *regs)
+ 	struct task_struct *tsk = current;
+ 	struct mm_struct *mm = tsk->mm;
+ 	siginfo_t info;
+-	int fault, ret;
++	int ret;
++	vm_fault_t fault;
+ 	int write = regs->ecr_cause & ECR_C_PROTV_STORE;  /* ST/EX */
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+diff --git a/arch/arm/mm/fault.c b/arch/arm/mm/fault.c
+index b75eada..758abcb 100644
+--- a/arch/arm/mm/fault.c
++++ b/arch/arm/mm/fault.c
+@@ -219,12 +219,12 @@ static inline bool access_error(unsigned int fsr, struct vm_area_struct *vma)
+ 	return vma->vm_flags & mask ? false : true;
+ }
+ 
+-static int __kprobes
++static vm_fault_t __kprobes
+ __do_page_fault(struct mm_struct *mm, unsigned long addr, unsigned int fsr,
+ 		unsigned int flags, struct task_struct *tsk)
+ {
+ 	struct vm_area_struct *vma;
+-	int fault;
++	vm_fault_t fault;
+ 
+ 	vma = find_vma(mm, addr);
+ 	fault = VM_FAULT_BADMAP;
+@@ -259,7 +259,8 @@ static inline bool access_error(unsigned int fsr, struct vm_area_struct *vma)
+ {
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+-	int fault, sig, code;
++	int sig, code;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	if (notify_page_fault(regs, fsr))
+diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+index 2af3dd8..8da263b 100644
+--- a/arch/arm64/mm/fault.c
++++ b/arch/arm64/mm/fault.c
+@@ -371,12 +371,12 @@ static void do_bad_area(unsigned long addr, unsigned int esr, struct pt_regs *re
+ #define VM_FAULT_BADMAP		0x010000
+ #define VM_FAULT_BADACCESS	0x020000
+ 
+-static int __do_page_fault(struct mm_struct *mm, unsigned long addr,
++static vm_fault_t __do_page_fault(struct mm_struct *mm, unsigned long addr,
+ 			   unsigned int mm_flags, unsigned long vm_flags,
+ 			   struct task_struct *tsk)
+ {
+ 	struct vm_area_struct *vma;
+-	int fault;
++	vm_fault_t fault;
+ 
+ 	vma = find_vma(mm, addr);
+ 	fault = VM_FAULT_BADMAP;
+@@ -419,7 +419,7 @@ static int __kprobes do_page_fault(unsigned long addr, unsigned int esr,
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+ 	struct siginfo si;
+-	int fault, major = 0;
++	vm_fault_t fault, major = 0;
+ 	unsigned long vm_flags = VM_READ | VM_WRITE;
+ 	unsigned int mm_flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+diff --git a/arch/hexagon/mm/vm_fault.c b/arch/hexagon/mm/vm_fault.c
+index 3eec33c..5d1de6c 100644
+--- a/arch/hexagon/mm/vm_fault.c
++++ b/arch/hexagon/mm/vm_fault.c
+@@ -52,7 +52,7 @@ void do_page_fault(unsigned long address, long cause, struct pt_regs *regs)
+ 	struct mm_struct *mm = current->mm;
+ 	siginfo_t info;
+ 	int si_code = SEGV_MAPERR;
+-	int fault;
++	vm_fault_t fault;
+ 	const struct exception_table_entry *fixup;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+diff --git a/arch/ia64/mm/fault.c b/arch/ia64/mm/fault.c
+index dfdc152..e085d89 100644
+--- a/arch/ia64/mm/fault.c
++++ b/arch/ia64/mm/fault.c
+@@ -87,7 +87,7 @@ static inline int notify_page_fault(struct pt_regs *regs, int trap)
+ 	struct mm_struct *mm = current->mm;
+ 	struct siginfo si;
+ 	unsigned long mask;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	mask = ((((isr >> IA64_ISR_X_BIT) & 1UL) << VM_EXEC_BIT)
+diff --git a/arch/m68k/mm/fault.c b/arch/m68k/mm/fault.c
+index 03253c4..1fc7ac0 100644
+--- a/arch/m68k/mm/fault.c
++++ b/arch/m68k/mm/fault.c
+@@ -73,7 +73,7 @@ int do_page_fault(struct pt_regs *regs, unsigned long address,
+ {
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct * vma;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	pr_debug("do page fault:\nregs->sr=%#x, regs->pc=%#lx, address=%#lx, %ld, %p\n",
+@@ -139,7 +139,7 @@ int do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	 */
+ 
+ 	fault = handle_mm_fault(vma, address, flags);
+-	pr_debug("handle_mm_fault returns %d\n", fault);
++	pr_debug("handle_mm_fault returns %x\n", fault);
+ 
+ 	if ((fault & VM_FAULT_RETRY) && fatal_signal_pending(current))
+ 		return 0;
+diff --git a/arch/microblaze/mm/fault.c b/arch/microblaze/mm/fault.c
+index f91b30f..92a8682 100644
+--- a/arch/microblaze/mm/fault.c
++++ b/arch/microblaze/mm/fault.c
+@@ -91,7 +91,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	siginfo_t info;
+ 	int code = SEGV_MAPERR;
+ 	int is_write = error_code & ESR_S;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	regs->ear = address;
+diff --git a/arch/mips/mm/fault.c b/arch/mips/mm/fault.c
+index 4f8f5bf..0bc5030 100644
+--- a/arch/mips/mm/fault.c
++++ b/arch/mips/mm/fault.c
+@@ -43,7 +43,7 @@ static void __kprobes __do_page_fault(struct pt_regs *regs, unsigned long write,
+ 	struct mm_struct *mm = tsk->mm;
+ 	const int field = sizeof(unsigned long) * 2;
+ 	siginfo_t info;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	static DEFINE_RATELIMIT_STATE(ratelimit_state, 5 * HZ, 10);
+diff --git a/arch/nds32/mm/fault.c b/arch/nds32/mm/fault.c
+index 3a246fb..96796d3 100644
+--- a/arch/nds32/mm/fault.c
++++ b/arch/nds32/mm/fault.c
+@@ -73,7 +73,7 @@ void do_page_fault(unsigned long entry, unsigned long addr,
+ 	struct mm_struct *mm;
+ 	struct vm_area_struct *vma;
+ 	siginfo_t info;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int mask = VM_READ | VM_WRITE | VM_EXEC;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+diff --git a/arch/nios2/mm/fault.c b/arch/nios2/mm/fault.c
+index b804dd0..24fd84c 100644
+--- a/arch/nios2/mm/fault.c
++++ b/arch/nios2/mm/fault.c
+@@ -47,7 +47,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long cause,
+ 	struct task_struct *tsk = current;
+ 	struct mm_struct *mm = tsk->mm;
+ 	int code = SEGV_MAPERR;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	cause >>= 2;
+diff --git a/arch/openrisc/mm/fault.c b/arch/openrisc/mm/fault.c
+index d0021df..21e8f16 100644
+--- a/arch/openrisc/mm/fault.c
++++ b/arch/openrisc/mm/fault.c
+@@ -53,7 +53,7 @@ asmlinkage void do_page_fault(struct pt_regs *regs, unsigned long address,
+ 	struct mm_struct *mm;
+ 	struct vm_area_struct *vma;
+ 	siginfo_t info;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	tsk = current;
+diff --git a/arch/parisc/mm/fault.c b/arch/parisc/mm/fault.c
+index e247edb..ff9e634 100644
+--- a/arch/parisc/mm/fault.c
++++ b/arch/parisc/mm/fault.c
+@@ -262,7 +262,7 @@ void do_page_fault(struct pt_regs *regs, unsigned long code,
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+ 	unsigned long acc_type;
+-	int fault = 0;
++	vm_fault_t fault = 0;
+ 	unsigned int flags;
+ 
+ 	if (faulthandler_disabled())
+diff --git a/arch/powerpc/mm/copro_fault.c b/arch/powerpc/mm/copro_fault.c
+index 7d0945b..c8da352 100644
+--- a/arch/powerpc/mm/copro_fault.c
++++ b/arch/powerpc/mm/copro_fault.c
+@@ -34,7 +34,7 @@
+  * to handle fortunately.
+  */
+ int copro_handle_mm_fault(struct mm_struct *mm, unsigned long ea,
+-		unsigned long dsisr, unsigned *flt)
++		unsigned long dsisr, vm_fault_t *flt)
+ {
+ 	struct vm_area_struct *vma;
+ 	unsigned long is_write;
+diff --git a/arch/powerpc/mm/fault.c b/arch/powerpc/mm/fault.c
+index c01d627..17cce1b 100644
+--- a/arch/powerpc/mm/fault.c
++++ b/arch/powerpc/mm/fault.c
+@@ -159,7 +159,7 @@ static noinline int bad_access(struct pt_regs *regs, unsigned long address)
+ }
+ 
+ static int do_sigbus(struct pt_regs *regs, unsigned long address,
+-		     unsigned int fault)
++		     vm_fault_t fault)
+ {
+ 	siginfo_t info;
+ 	unsigned int lsb = 0;
+@@ -189,7 +189,8 @@ static int do_sigbus(struct pt_regs *regs, unsigned long address,
+ 	return 0;
+ }
+ 
+-static int mm_fault_error(struct pt_regs *regs, unsigned long addr, int fault)
++static int mm_fault_error(struct pt_regs *regs, unsigned long addr,
++				vm_fault_t fault)
+ {
+ 	/*
+ 	 * Kernel page fault interrupted by SIGKILL. We have no reason to
+@@ -402,7 +403,7 @@ static int __do_page_fault(struct pt_regs *regs, unsigned long address,
+  	int is_exec = TRAP(regs) == 0x400;
+ 	int is_user = user_mode(regs);
+ 	int is_write = page_fault_is_write(error_code);
+-	int fault, major = 0;
++	vm_fault_t fault, major = 0;
+ 	bool store_update_sp = false;
+ 
+ 	if (notify_page_fault(regs))
+diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
+index 148c98c..88401d5 100644
+--- a/arch/riscv/mm/fault.c
++++ b/arch/riscv/mm/fault.c
+@@ -41,7 +41,8 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
+ 	struct mm_struct *mm;
+ 	unsigned long addr, cause;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+-	int fault, code = SEGV_MAPERR;
++	int code = SEGV_MAPERR;
++	vm_fault_t fault;
+ 
+ 	cause = regs->scause;
+ 	addr = regs->sbadaddr;
+diff --git a/arch/s390/mm/fault.c b/arch/s390/mm/fault.c
+index 93faeca..8ea0855 100644
+--- a/arch/s390/mm/fault.c
++++ b/arch/s390/mm/fault.c
+@@ -350,7 +350,8 @@ static noinline int signal_return(struct pt_regs *regs)
+ 	return -EACCES;
+ }
+ 
+-static noinline void do_fault_error(struct pt_regs *regs, int access, int fault)
++static noinline void do_fault_error(struct pt_regs *regs, int access,
++					vm_fault_t fault)
+ {
+ 	int si_code;
+ 
+@@ -410,7 +411,7 @@ static noinline void do_fault_error(struct pt_regs *regs, int access, int fault)
+  *   11       Page translation     ->  Not present       (nullification)
+  *   3b       Region third trans.  ->  Not present       (nullification)
+  */
+-static inline int do_exception(struct pt_regs *regs, int access)
++static inline vm_fault_t do_exception(struct pt_regs *regs, int access)
+ {
+ 	struct gmap *gmap;
+ 	struct task_struct *tsk;
+@@ -420,7 +421,7 @@ static inline int do_exception(struct pt_regs *regs, int access)
+ 	unsigned long trans_exc_code;
+ 	unsigned long address;
+ 	unsigned int flags;
+-	int fault;
++	vm_fault_t fault;
+ 
+ 	tsk = current;
+ 	/*
+@@ -571,7 +572,8 @@ static inline int do_exception(struct pt_regs *regs, int access)
+ void do_protection_exception(struct pt_regs *regs)
+ {
+ 	unsigned long trans_exc_code;
+-	int access, fault;
++	int access;
++	vm_fault_t fault;
+ 
+ 	trans_exc_code = regs->int_parm_long;
+ 	/*
+@@ -606,7 +608,8 @@ void do_protection_exception(struct pt_regs *regs)
+ 
+ void do_dat_exception(struct pt_regs *regs)
+ {
+-	int access, fault;
++	int access;
++	vm_fault_t fault;
+ 
+ 	access = VM_READ | VM_EXEC | VM_WRITE;
+ 	fault = do_exception(regs, access);
+diff --git a/arch/sh/mm/fault.c b/arch/sh/mm/fault.c
+index 6fd1bf7..474bf14 100644
+--- a/arch/sh/mm/fault.c
++++ b/arch/sh/mm/fault.c
+@@ -320,7 +320,7 @@ static noinline int vmalloc_fault(unsigned long address)
+ 
+ static noinline int
+ mm_fault_error(struct pt_regs *regs, unsigned long error_code,
+-	       unsigned long address, unsigned int fault)
++	       unsigned long address, vm_fault_t fault)
+ {
+ 	/*
+ 	 * Pagefault was interrupted by SIGKILL. We have no reason to
+@@ -403,7 +403,7 @@ asmlinkage void __kprobes do_page_fault(struct pt_regs *regs,
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+ 	struct vm_area_struct * vma;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	tsk = current;
+diff --git a/arch/sparc/mm/fault_32.c b/arch/sparc/mm/fault_32.c
+index a8103a8..1a44a4e 100644
+--- a/arch/sparc/mm/fault_32.c
++++ b/arch/sparc/mm/fault_32.c
+@@ -174,7 +174,8 @@ asmlinkage void do_sparc_fault(struct pt_regs *regs, int text_fault, int write,
+ 	unsigned int fixup;
+ 	unsigned long g2;
+ 	int from_user = !(regs->psr & PSR_PS);
+-	int fault, code;
++	int code;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	if (text_fault)
+diff --git a/arch/sparc/mm/fault_64.c b/arch/sparc/mm/fault_64.c
+index 41363f4..2078bfe 100644
+--- a/arch/sparc/mm/fault_64.c
++++ b/arch/sparc/mm/fault_64.c
+@@ -284,7 +284,8 @@ asmlinkage void __kprobes do_sparc64_fault(struct pt_regs *regs)
+ 	struct mm_struct *mm = current->mm;
+ 	struct vm_area_struct *vma;
+ 	unsigned int insn = 0;
+-	int si_code, fault_code, fault;
++	int si_code, fault_code;
++	vm_fault_t fault;
+ 	unsigned long address, mm_rss;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+diff --git a/arch/um/kernel/trap.c b/arch/um/kernel/trap.c
+index b2b02df..0afcd09 100644
+--- a/arch/um/kernel/trap.c
++++ b/arch/um/kernel/trap.c
+@@ -72,7 +72,7 @@ int handle_page_fault(unsigned long address, unsigned long ip,
+ 	}
+ 
+ 	do {
+-		int fault;
++		vm_fault_t fault;
+ 
+ 		fault = handle_mm_fault(vma, address, flags);
+ 
+diff --git a/arch/unicore32/mm/fault.c b/arch/unicore32/mm/fault.c
+index bbefcc4..2982140 100644
+--- a/arch/unicore32/mm/fault.c
++++ b/arch/unicore32/mm/fault.c
+@@ -167,11 +167,11 @@ static inline bool access_error(unsigned int fsr, struct vm_area_struct *vma)
+ 	return vma->vm_flags & mask ? false : true;
+ }
+ 
+-static int __do_pf(struct mm_struct *mm, unsigned long addr, unsigned int fsr,
+-		unsigned int flags, struct task_struct *tsk)
++static vm_fault_t __do_pf(struct mm_struct *mm, unsigned long addr,
++		unsigned int fsr, unsigned int flags, struct task_struct *tsk)
+ {
+ 	struct vm_area_struct *vma;
+-	int fault;
++	vm_fault_t fault;
+ 
+ 	vma = find_vma(mm, addr);
+ 	fault = VM_FAULT_BADMAP;
+@@ -208,7 +208,8 @@ static int do_pf(unsigned long addr, unsigned int fsr, struct pt_regs *regs)
+ {
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+-	int fault, sig, code;
++	int sig, code;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	tsk = current;
+diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
+index 73bd8c9..5171d60 100644
+--- a/arch/x86/mm/fault.c
++++ b/arch/x86/mm/fault.c
+@@ -16,6 +16,7 @@
+ #include <linux/prefetch.h>		/* prefetchw			*/
+ #include <linux/context_tracking.h>	/* exception_enter(), ...	*/
+ #include <linux/uaccess.h>		/* faulthandler_disabled()	*/
++#include <linux/mm_types.h>
+ 
+ #include <asm/cpufeature.h>		/* boot_cpu_has, ...		*/
+ #include <asm/traps.h>			/* dotraplinkage, ...		*/
+@@ -1004,7 +1005,7 @@ static inline bool bad_area_access_from_pkeys(unsigned long error_code,
+ 
+ static noinline void
+ mm_fault_error(struct pt_regs *regs, unsigned long error_code,
+-	       unsigned long address, u32 *pkey, unsigned int fault)
++	       unsigned long address, u32 *pkey, vm_fault_t fault)
+ {
+ 	if (fatal_signal_pending(current) && !(error_code & X86_PF_USER)) {
+ 		no_context(regs, error_code, address, 0, 0);
+@@ -1218,7 +1219,7 @@ static inline bool smap_violation(int error_code, struct pt_regs *regs)
+ 	struct vm_area_struct *vma;
+ 	struct task_struct *tsk;
+ 	struct mm_struct *mm;
+-	int fault, major = 0;
++	vm_fault_t fault, major = 0;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 	u32 pkey;
+ 
+diff --git a/arch/xtensa/mm/fault.c b/arch/xtensa/mm/fault.c
+index 8b9b6f4..203fade 100644
+--- a/arch/xtensa/mm/fault.c
++++ b/arch/xtensa/mm/fault.c
+@@ -42,7 +42,7 @@ void do_page_fault(struct pt_regs *regs)
+ 	siginfo_t info;
+ 
+ 	int is_write, is_exec;
+-	int fault;
++	vm_fault_t fault;
+ 	unsigned int flags = FAULT_FLAG_ALLOW_RETRY | FAULT_FLAG_KILLABLE;
+ 
+ 	info.si_code = SEGV_MAPERR;
+diff --git a/drivers/iommu/amd_iommu_v2.c b/drivers/iommu/amd_iommu_v2.c
+index 1d0b53a0..58da65d 100644
+--- a/drivers/iommu/amd_iommu_v2.c
++++ b/drivers/iommu/amd_iommu_v2.c
+@@ -508,7 +508,7 @@ static void do_fault(struct work_struct *work)
+ {
+ 	struct fault *fault = container_of(work, struct fault, work);
+ 	struct vm_area_struct *vma;
+-	int ret = VM_FAULT_ERROR;
++	vm_fault_t ret = VM_FAULT_ERROR;
+ 	unsigned int flags = 0;
+ 	struct mm_struct *mm;
+ 	u64 address;
+diff --git a/drivers/iommu/intel-svm.c b/drivers/iommu/intel-svm.c
+index e8cd984..75189c0 100644
+--- a/drivers/iommu/intel-svm.c
++++ b/drivers/iommu/intel-svm.c
+@@ -24,6 +24,7 @@
+ #include <linux/pci-ats.h>
+ #include <linux/dmar.h>
+ #include <linux/interrupt.h>
++#include <linux/mm_types.h>
+ #include <asm/page.h>
+ 
+ #define PASID_ENTRY_P		BIT_ULL(0)
+@@ -594,7 +595,8 @@ static irqreturn_t prq_event_thread(int irq, void *d)
+ 		struct vm_area_struct *vma;
+ 		struct page_req_dsc *req;
+ 		struct qi_desc resp;
+-		int ret, result;
++		int result;
++		vm_fault_t ret;
+ 		u64 address;
+ 
+ 		handled = 1;
+diff --git a/mm/hmm.c b/mm/hmm.c
+index 486dc39..d7919e5 100644
+--- a/mm/hmm.c
++++ b/mm/hmm.c
+@@ -308,14 +308,14 @@ static int hmm_vma_do_fault(struct mm_walk *walk, unsigned long addr,
+ 	struct hmm_vma_walk *hmm_vma_walk = walk->private;
+ 	struct hmm_range *range = hmm_vma_walk->range;
+ 	struct vm_area_struct *vma = walk->vma;
+-	int r;
++	vm_fault_t ret;
+ 
+ 	flags |= hmm_vma_walk->block ? 0 : FAULT_FLAG_ALLOW_RETRY;
+ 	flags |= write_fault ? FAULT_FLAG_WRITE : 0;
+-	r = handle_mm_fault(vma, addr, flags);
+-	if (r & VM_FAULT_RETRY)
++	ret = handle_mm_fault(vma, addr, flags);
++	if (ret & VM_FAULT_RETRY)
+ 		return -EBUSY;
+-	if (r & VM_FAULT_ERROR) {
++	if (ret & VM_FAULT_ERROR) {
+ 		*pfn = range->values[HMM_PFN_ERROR];
+ 		return -EFAULT;
+ 	}
+diff --git a/mm/ksm.c b/mm/ksm.c
+index e3cbf9a..cb4e6ed 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -451,7 +451,7 @@ static inline bool ksm_test_exit(struct mm_struct *mm)
+ static int break_ksm(struct vm_area_struct *vma, unsigned long addr)
+ {
+ 	struct page *page;
+-	int ret = 0;
++	vm_fault_t ret = 0;
+ 
+ 	do {
+ 		cond_resched();
+-- 
+1.9.1
 
