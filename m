@@ -2,107 +2,167 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DE08DC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:53:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A2296C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E3FD208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:53:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E3FD208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4DAE1208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:54:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QsmtF/nb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DAE1208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755015AbeFNIx5 (ORCPT
+        id S1754609AbeFNIyb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:53:57 -0400
-Received: from foss.arm.com ([217.140.101.70]:56836 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754992AbeFNIxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:53:51 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0771F1529;
-        Thu, 14 Jun 2018 01:53:51 -0700 (PDT)
-Received: from [10.1.206.73] (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C8AF3F318;
-        Thu, 14 Jun 2018 01:53:48 -0700 (PDT)
-Subject: Re: [RFC PATCH 6/8] dts: coresight: Clean up the device tree graph
- bindings
-To:     Matt Sealey <Matt.Sealey@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc:     Rob Herring <robh@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Sudeep Holla <Sudeep.Holla@arm.com>,
-        Mark Rutland <Mark.Rutland@arm.com>,
-        "frowand.list@gmail.com" <frowand.list@gmail.com>,
-        Charles Garcia-Tobin <Charles.Garcia-Tobin@arm.com>,
-        John Horley <John.Horley@arm.com>,
-        "mike.leach@linaro.org" <mike.leach@linaro.org>,
-        "coresight@lists.linaro.org" <coresight@lists.linaro.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-References: <1527858967-16047-1-git-send-email-suzuki.poulose@arm.com>
- <1527858967-16047-7-git-send-email-suzuki.poulose@arm.com>
- <20180612204802.GA15817@rob-hp-laptop>
- <a1c0749b-9c97-b45f-716f-a62ae07af278@arm.com>
- <5448BBB7-93FE-400F-9D87-FABF5DE0539C@arm.com>
- <c0d531ec-9201-bfd8-e6c3-9140698b0697@arm.com>
- <HE1PR0802MB24127EC935B9AF6F82AB3B6EEE7E0@HE1PR0802MB2412.eurprd08.prod.outlook.com>
- <075b99a1-2a29-f6dc-e9f2-99f895c27d35@arm.com>
- <CANLsYkx9cjV-bWg7aLg-kJT7x7DtwTHdsYzzM8A3+cFFnu_mNg@mail.gmail.com>
- <HE1PR0802MB24121F0EEF8D7D643BC391A1EE7E0@HE1PR0802MB2412.eurprd08.prod.outlook.com>
-From:   Suzuki K Poulose <Suzuki.Poulose@arm.com>
-Message-ID: <5e013d65-9931-6b8d-ce7c-4333309d4ada@arm.com>
-Date:   Thu, 14 Jun 2018 09:53:46 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 14 Jun 2018 04:54:31 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:41199 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752781AbeFNIy2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:54:28 -0400
+Received: by mail-lf0-f67.google.com with SMTP id d24-v6so8173495lfa.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:54:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=LPRnoUPEW/a4jnkOUBLsUbYcREeZ1Qh3ZcYi9Av43G8=;
+        b=QsmtF/nbuNSLrSwv841PpqQGZ7YEcMObyfhBvS0rI/H5OyX64ZoorENBgb3wq4yy5F
+         YjaVHSv8y7Y7zvAlH9SpMm6TF5PRqDBIMh1P2kJm6TGY4BYNNpjW1M3yTev4crRJ6WzA
+         pyhvY5d/+1N+LbAIdvkbMSh+dAWqRMN17jU8s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=LPRnoUPEW/a4jnkOUBLsUbYcREeZ1Qh3ZcYi9Av43G8=;
+        b=XpNuZBJ4W4iViC8AEMOGnLp9c+KpvmPl6k5AQOk29zR9YVVBtDcXYEaXSqKdvJ2jmy
+         sHNfIiZHEDumJApYOd5/tKxgXvTt838uky19mjK2YHJgsQ/GKuOaynSXXvhvdXl04ZzR
+         +0TMYdttzxLlo/d8ucxF2OJLiKimc4XRj3pXEoF7d7avj3FSuri0bUKMqm3R9qL3/FsF
+         PJgfNqMO9P9r+MhjmWtQvIjLS9+/xOaqNr+OTCkkc+qYy31Gx0WvSGDhgyYb2asvYUw5
+         aLOlmT7IZ+YyIb32xQGo0adCUCqKYUxeJBCpwVqZK2ohPgXEWUC+ppOTpmXIp3L/cbOj
+         rrng==
+X-Gm-Message-State: APt69E0GJ0IdWx5pE26503L38MBJsZFop9KUZPsOTGklMvTCV9NnBTiU
+        k7FUIWIGgB4i+9PzRcjUWRdBcJhMao+CGoKOxdDNJw==
+X-Google-Smtp-Source: ADUXVKLknfKM8YLl4yaR7o5G4FlmQ+Oq9KN7s6fEJZKgiMyTgHgj4Ta/IGDYDAXPtkHvROP1ntDBSntSX/MQR85DrfA=
+X-Received: by 2002:a19:e910:: with SMTP id g16-v6mr5177706lfh.44.1528966466934;
+ Thu, 14 Jun 2018 01:54:26 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <HE1PR0802MB24121F0EEF8D7D643BC391A1EE7E0@HE1PR0802MB2412.eurprd08.prod.outlook.com>
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 01:54:25
+ -0700 (PDT)
+In-Reply-To: <20180614063448.GB6021@kroah.com>
+References: <20180612164816.587001852@linuxfoundation.org> <CADtBP2D4a2OdLsAgZ8sRFBhkh2jArviaYNzYrS7wqdmogyc=Mg@mail.gmail.com>
+ <20180613210044.GA15146@kroah.com> <CABdQkv9uNjf7ARKBJ-sE_RVruMA5U9bTNo-EL_+7Rv8ZVJGY3w@mail.gmail.com>
+ <CADtBP2DZ0ceTtwaG7AdXV3xa16mQ6nu=gaqUYj7JSOLBdVD8cg@mail.gmail.com> <20180614063448.GB6021@kroah.com>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Thu, 14 Jun 2018 14:24:25 +0530
+Message-ID: <CA+G9fYut-A0L9iWJbzbSfmc=gjmQ17iabcPfXxqDKocwpYYTOQ@mail.gmail.com>
+Subject: Re: [PATCH 4.4 00/24] 4.4.137-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Rafael Tinoco <rafael.tinoco@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, ltp@lists.linux.it
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/06/18 22:07, Matt Sealey wrote:
-> 
-> 
->> -----Original Message-----
->> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+On 14 June 2018 at 12:04, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
+rote:
+> On Wed, Jun 13, 2018 at 10:48:50PM -0300, Rafael Tinoco wrote:
+>> On 13 June 2018 at 18:08, Rafael David Tinoco
+>> <rafaeldtinoco@kernelpath.com> wrote:
+>> > On Wed, Jun 13, 2018 at 6:00 PM, Greg Kroah-Hartman
+>> > <gregkh@linuxfoundation.org> wrote:
+>> >> On Wed, Jun 13, 2018 at 05:47:49PM -0300, Rafael Tinoco wrote:
+>> >>> Results from Linaro=E2=80=99s test farm.
+>> >>> Regressions detected.
+>> >>>
+>> >>> NOTE:
+>> >>>
+>> >>> 1) LTP vma03 test (cve-2011-2496) broken on v4.4-137-rc1 because of:
+>> >>>
+>> >>>      6ea1dc96a03a mmap: relax file size limit for regular files
+>> >>>      bd2f9ce5bacb mmap: introduce sane default mmap limits
+>> >>>
+>> >>>    discussion:
+>> >>>
+>> >>>      https://github.com/linux-test-project/ltp/issues/341
+>> >>>
+>> >>>    mainline commit (v4.13-rc7):
+>> >>>
+>> >>>      0cc3b0ec23ce Clarify (and fix) MAX_LFS_FILESIZE macros
+>> >>>
+>> >>>    should be backported to 4.4.138-rc2 and fixes the issue.
+>> >>
+>> >> Really?  That commit says it fixes c2a9737f45e2 ("vfs,mm: fix a dead
+>> >> loop in truncate_inode_pages_range()") which is not in 4.4.y at all.
+>> >>
+>> >> Did you test this out?
+>> >
+>> > Yes, the LTP contains the tests (last comment is the final test for
+>> > arm32, right before Jan tests i686).
+>> >
+>> > Fixing MAX_LFS_FILESIZE fixes the new limit for mmap() brought by
+>> > those 2 commits (file_mmap_size_max()).
+>> > offset tested by the LTP test is 0xfffffffe000.
+>> > file_mmap_size_max gives: 0xFFFFFFFF000 as max value, but only after
+>> > the mentioned patch.
+>> >
+>> > Original intent for this fix was other though.
 >>
->>> So, if the suggestion is to use an existing property "unit", I am fine
->>> with it, if people agree to it.
+>> To clarify this a bit further.
 >>
->> If we're going to have something sharply different than ACPI I prefer
->> Rob's idea.
+>> The LTP CVE test is breaking in the first call to mmap(), even before
+>> trying to remap and test the security issue. That start happening in
+>> this round because of those mmap() changes and the offset used in the
+>> LTP test. Linus changed limit checks and made them to be related to
+>> MAX_LFS_FILESIZE. Unfortunately, in 4.4 stable, we were missing the
+>> fix for MAX_LFS_FILESIZE (which before commit 0cc3b0ec23ce was less
+>> than the REAL 32 bit limit).
+>>
+>> Commit 0cc3b0ec23ce was made because an user noticed the FS limit not
+>> being what it should be. In our case, the 4.4 stable kernel, we are
+>> facing this 32 bit lower limit (than the real 32 bit real limit),
+>> because of the LTP CVE test, so we need this fix to have the real 32
+>> bit limit set for that macro (mmap limits did not use that macro
+>> before).
+>>
+>> I have tested in arm32 and Jan Stancek, who first responded to LTP
+>> issue, has tested this in i686 and both worked after that patch was
+>> included to v4.4-137-rc1 (my last test was even with 4.4.138-rc1).
+>>
+>> Hope that helps a bit.
+>
+> Ok, thanks, it didn't apply cleanly but I've fixed it up now.
 
-No, the above comment is about using "unit" ( if it is a standard property
-for specifying something specific to hardware) instead of "coresight,hwid".
-I would prefer to stick to the DT graph bindings, because :
+On the latest 4.4.138-rc1,
+LTP "cve-2011-2496" test still fails on arm32 beagleboard x15 and qemu_arm.
 
-1) The connections are bi-directional => Well, not necessarily bi-directional
-in terms of the data flow. But the connection information is critical. i.e,
-we need information about both the end-points of a connection, which the DT
-graph bindings solves.
+Summary
+------------------------------------------------------------------------
+kernel: 4.4.138-rc1
+git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
+le-rc.git
+git branch: linux-4.4.y
+git commit: 7d690c56754ef7be647fbcf7bcdceebd59926b3f
+git describe: v4.4.137-15-g7d690c56754e
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/bui=
+ld/v4.4.137-15-g7d690c56754e
 
-All we are missing is a way for specifying the "hardware port" number and the
-direction of flow. I don't see why do we need to create something new just for
-these two properties for something that exists today and works reasonably well
-for the usecase.
+On the side note,
+Kernel selftests version upgrade to 4.17.
 
-> 
-> What are you trying to say about being sharply different than ACPI?
-
-The proposed Coresight ACPI draft bindings are based on the ACPI Graph bindings
-(just like the DT graph bindings and is compatible with it, in terms of the APIs.
-i.e, fwnode_graph_* operations work for both ACPI and DT  alike).
-
-So, what Mathieu, in turn means is, if we depart from the DT Graph bindings, which
-I personally don't see any benefit in.
-
-Suzuki
+- Naresh
