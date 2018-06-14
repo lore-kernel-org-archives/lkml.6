@@ -6,42 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 82F45C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:26:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 82330C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:27:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6E020020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:26:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38EEF20020
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:27:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iOkn0p9u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6E020020
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfE9yVtq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38EEF20020
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966122AbeFNO0Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:26:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53524 "EHLO mail.kernel.org"
+        id S1755345AbeFNO07 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:26:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966012AbeFNOMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:12:18 -0400
+        id S965961AbeFNOMI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:12:08 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E6E6208DE;
-        Thu, 14 Jun 2018 14:12:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DAD3208DA;
+        Thu, 14 Jun 2018 14:12:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985537;
-        bh=3HNAPv2Lz4JAKicmaTxayXAlBZ7y9qKmZEhcDcy1g7E=;
+        s=default; t=1528985528;
+        bh=WPLph3BsMa0ACKH2Ch6am4gm6jiCOn839xquW2jx1Ts=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iOkn0p9uahxeQiIXqadRhA3xqy9eB3f9LK2f8z9tw7uuPfU0p9rQ+zNT09c8GofQB
-         ijwf/45s39YDK9mZgcsMpHRQNl/gyzN15ByaaCT803L4mLJVqmDFoAshFeHDn0Hbgv
-         7n7AInbYsLns1YdJOI+03q500Cumf5Ya9zefnT3Q=
+        b=MfE9yVtq+ixKBVd8T6starwPAG7qtTYRt9Q6mMKlfv7wmoF5cyW20Ljlb+7GRJu6l
+         2DcyBMa1L7c+HUuSNNwP97jj2b3/refDOu7nfO+bv+S8sha+PDr7RYNDyJQmt0aVIx
+         anpowHGbkjnne7e0g222k1kuy/BS7o56E61xZUwg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 25/30] kvm: x86: use correct privilege level for sgdt/sidt/fxsave/fxrstor access
-Date:   Thu, 14 Jun 2018 16:05:06 +0200
-Message-Id: <20180614132601.311460871@linuxfoundation.org>
+        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        Matthijs van Duin <matthijsvanduin@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.9 22/30] serial: 8250: omap: Fix idling of clocks for unused uarts
+Date:   Thu, 14 Jun 2018 16:05:03 +0200
+Message-Id: <20180614132601.187642454@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -58,149 +62,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 3c9fa24ca7c9c47605672916491f79e8ccacb9e6 upstream.
+commit 13dc04d0e5fdc25c8f713ad23fdce51cf2bf96ba upstream.
 
-The functions that were used in the emulation of fxrstor, fxsave, sgdt and
-sidt were originally meant for task switching, and as such they did not
-check privilege levels.  This is very bad when the same functions are used
-in the emulation of unprivileged instructions.  This is CVE-2018-10853.
+I noticed that unused UARTs won't necessarily idle properly always
+unless at least one byte tx transfer is done first.
 
-The obvious fix is to add a new argument to ops->read_std and ops->write_std,
-which decides whether the access is a "system" access or should use the
-processor's CPL.
+After some debugging I narrowed down the problem to the scr register
+dma configuration bits that need to be set before softreset for the
+clocks to idle. Unless we do this, the module clkctrl idlest bits
+may be set to 1 instead of 3 meaning the clock will never idle and
+is blocking deeper idle states for the whole domain.
 
-Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+This might be related to the configuration done by the bootloader
+or kexec booting where certain configurations cause the 8250 or
+the clkctrl clock to jam in a way where setting of the scr bits
+and reset is needed to clear it. I've tried diffing the 8250
+registers for the various modes, but did not see anything specific.
+So far I've only seen this on omap4 but I'm suspecting this might
+also happen on the other clkctrl using SoCs considering they
+already have a quirk enabled for UART_ERRATA_CLOCK_DISABLE.
+
+Let's fix the issue by configuring scr before reset for basic dma
+even if we don't use it. The scr register will be reset when we do
+softreset few lines after, and we restore scr on resume. We should
+do this for all the SoCs with UART_ERRATA_CLOCK_DISABLE quirk flag
+set since the ones with UART_ERRATA_CLOCK_DISABLE are all based
+using clkctrl similar to omap4.
+
+Looks like both OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL
+bits are needed for the clkctrl to idle after a softreset.
+
+And we need to add omap4 to also use the UART_ERRATA_CLOCK_DISABLE
+for the related workaround to be enabled. This same compatible
+value will also be used for omap5.
+
+Fixes: cdb929e4452a ("serial: 8250_omap: workaround errata around idling UART after using DMA")
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Matthijs van Duin <matthijsvanduin@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/kvm_emulate.h |    6 ++++--
- arch/x86/kvm/emulate.c             |   12 ++++++------
- arch/x86/kvm/x86.c                 |   18 ++++++++++++++----
- 3 files changed, 24 insertions(+), 12 deletions(-)
+ drivers/tty/serial/8250/8250_omap.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -105,11 +105,12 @@ struct x86_emulate_ops {
- 	 *  @addr:  [IN ] Linear address from which to read.
- 	 *  @val:   [OUT] Value read from memory, zero-extended to 'u_long'.
- 	 *  @bytes: [IN ] Number of bytes to read from memory.
-+	 *  @system:[IN ] Whether the access is forced to be at CPL0.
- 	 */
- 	int (*read_std)(struct x86_emulate_ctxt *ctxt,
- 			unsigned long addr, void *val,
- 			unsigned int bytes,
--			struct x86_exception *fault);
-+			struct x86_exception *fault, bool system);
- 
- 	/*
- 	 * read_phys: Read bytes of standard (non-emulated/special) memory.
-@@ -127,10 +128,11 @@ struct x86_emulate_ops {
- 	 *  @addr:  [IN ] Linear address to which to write.
- 	 *  @val:   [OUT] Value write to memory, zero-extended to 'u_long'.
- 	 *  @bytes: [IN ] Number of bytes to write to memory.
-+	 *  @system:[IN ] Whether the access is forced to be at CPL0.
- 	 */
- 	int (*write_std)(struct x86_emulate_ctxt *ctxt,
- 			 unsigned long addr, void *val, unsigned int bytes,
--			 struct x86_exception *fault);
-+			 struct x86_exception *fault, bool system);
- 	/*
- 	 * fetch: Read bytes of standard (non-emulated/special) memory.
- 	 *        Used for instruction fetch.
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -805,14 +805,14 @@ static inline int jmp_rel(struct x86_emu
- static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
- 			      void *data, unsigned size)
- {
--	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, true);
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1078,13 +1078,14 @@ static int omap8250_no_handle_irq(struct
+ 	return 0;
  }
  
- static int linear_write_system(struct x86_emulate_ctxt *ctxt,
- 			       ulong linear, void *data,
- 			       unsigned int size)
- {
--	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, true);
- }
++static const u8 omap4_habit = UART_ERRATA_CLOCK_DISABLE;
+ static const u8 am3352_habit = OMAP_DMA_TX_KICK | UART_ERRATA_CLOCK_DISABLE;
+ static const u8 dra742_habit = UART_ERRATA_CLOCK_DISABLE;
  
- static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
-@@ -826,7 +826,7 @@ static int segmented_read_std(struct x86
- 	rc = linearize(ctxt, addr, size, false, &linear);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
--	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, false);
- }
+ static const struct of_device_id omap8250_dt_ids[] = {
+ 	{ .compatible = "ti,omap2-uart" },
+ 	{ .compatible = "ti,omap3-uart" },
+-	{ .compatible = "ti,omap4-uart" },
++	{ .compatible = "ti,omap4-uart", .data = &omap4_habit, },
+ 	{ .compatible = "ti,am3352-uart", .data = &am3352_habit, },
+ 	{ .compatible = "ti,am4372-uart", .data = &am3352_habit, },
+ 	{ .compatible = "ti,dra742-uart", .data = &dra742_habit, },
+@@ -1326,6 +1327,19 @@ static int omap8250_soft_reset(struct de
+ 	int sysc;
+ 	int syss;
  
- static int segmented_write_std(struct x86_emulate_ctxt *ctxt,
-@@ -840,7 +840,7 @@ static int segmented_write_std(struct x8
- 	rc = linearize(ctxt, addr, size, true, &linear);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
--	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, false);
- }
- 
- /*
-@@ -2912,12 +2912,12 @@ static bool emulator_io_port_access_allo
- #ifdef CONFIG_X86_64
- 	base |= ((u64)base3) << 32;
- #endif
--	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL);
-+	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL, true);
- 	if (r != X86EMUL_CONTINUE)
- 		return false;
- 	if (io_bitmap_ptr + port/8 > desc_limit_scaled(&tr_seg))
- 		return false;
--	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL);
-+	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL, true);
- 	if (r != X86EMUL_CONTINUE)
- 		return false;
- 	if ((perm >> bit_idx) & mask)
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4408,10 +4408,15 @@ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
- 
- static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
- 			     gva_t addr, void *val, unsigned int bytes,
--			     struct x86_exception *exception)
-+			     struct x86_exception *exception, bool system)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
--	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
-+	u32 access = 0;
++	/*
++	 * At least on omap4, unused uarts may not idle after reset without
++	 * a basic scr dma configuration even with no dma in use. The
++	 * module clkctrl status bits will be 1 instead of 3 blocking idle
++	 * for the whole clockdomain. The softreset below will clear scr,
++	 * and we restore it on resume so this is safe to do on all SoCs
++	 * needing omap8250_soft_reset() quirk. Do it in two writes as
++	 * recommended in the comment for omap8250_update_scr().
++	 */
++	serial_out(up, UART_OMAP_SCR, OMAP_UART_SCR_DMAMODE_1);
++	serial_out(up, UART_OMAP_SCR,
++		   OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL);
 +
-+	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
-+		access |= PFERR_USER_MASK;
-+
-+	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access, exception);
- }
+ 	sysc = serial_in(up, UART_OMAP_SYSC);
  
- static int kvm_read_guest_phys_system(struct x86_emulate_ctxt *ctxt,
-@@ -4455,12 +4460,17 @@ out:
- }
- 
- static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
--			      unsigned int bytes, struct x86_exception *exception)
-+			      unsigned int bytes, struct x86_exception *exception,
-+			      bool system)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
-+	u32 access = PFERR_WRITE_MASK;
-+
-+	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
-+		access |= PFERR_USER_MASK;
- 
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
--					   PFERR_WRITE_MASK, exception);
-+					   access, exception);
- }
- 
- int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
+ 	/* softreset the UART */
 
 
