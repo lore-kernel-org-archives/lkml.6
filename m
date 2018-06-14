@@ -2,141 +2,606 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 67705C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:56:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6CDD6C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:56:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26C5A208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:56:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26C5A208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id B1F4D208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:56:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iolLyota"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1F4D208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965103AbeFNV4E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 17:56:04 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:46864 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965023AbeFNV4C (ORCPT
+        id S964997AbeFNVzd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 17:55:33 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53118 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964896AbeFNVz2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 17:56:02 -0400
-Received: from [148.252.241.226] (helo=xylophone)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fTaDl-00082M-L1; Thu, 14 Jun 2018 22:55:57 +0100
-Message-ID: <1529013356.2289.200.camel@codethink.co.uk>
-Subject: Re: [PATCH 4.4 173/268] sched/rt: Fix rq->clock_update_flags <
- RQCF_ACT_SKIP warning
-From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
-To:     Davidlohr Bueso <dbueso@suse.de>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>
-Cc:     stable@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Galbraith <efault@gmx.de>,
-        Thomas Gleixner <tglx@linutronix.de>, dave@stgolabs.net,
-        rostedt@goodmis.org, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Date:   Thu, 14 Jun 2018 22:55:56 +0100
-In-Reply-To: <20180528100221.993481294@linuxfoundation.org>
-References: <20180528100202.045206534@linuxfoundation.org>
-         <20180528100221.993481294@linuxfoundation.org>
-Organization: Codethink Ltd.
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Thu, 14 Jun 2018 17:55:28 -0400
+Received: by mail-wm0-f65.google.com with SMTP id p126-v6so410463wmb.2;
+        Thu, 14 Jun 2018 14:55:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=K++n1q+tk+8lLa0PHkOHpXap25updyNiwHgKuwTIMPk=;
+        b=iolLyotahzA3idl2ZY1kbm21ezfMBq5Fma9snj2M9xJfniPjEZhueE5cRJ04QBz6yV
+         Y9jPVOAG5Mgi4ppIu0eINLkMHCcxp7OaAuBWRkFyvFGgObVstpVwVMM/7H/jb0s8DZ3C
+         gEnHP61oNnzzqdRI8TyE+v/lHdKyY2tuODoCPStg9yqngC8HRISUXH9dMvHUo1ALFHQY
+         6/yzJUsQA5i+O3+ENw2GypcnOXSScOtzqcvO2JrNCgDY3YvYEtr5ZmMfcMXO/R2h0Pit
+         p1jIjwR5YiU0jqoT3hm32qNxnvWyADz1RCSO6bvvnCed9l3FHpIifXoLvIsYoVAArnFu
+         muEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=K++n1q+tk+8lLa0PHkOHpXap25updyNiwHgKuwTIMPk=;
+        b=sTAEDM5fQtja3Idt3FLlWo8zWM6djNQUQgvrv4r2xORessIkThSe+aq1aJjmLW2yPK
+         gVNIgTdbPq3sDzAY0IPOfQcE1DGzupoPpBzf5PXWRfjqv7aY4EKWfRxpBP239iCvl4QE
+         m7yDDtwgOWRL1BoLAU1J671ctdHzalruBPOfbCfmjND9J976w63NYeWRTR21y3ByWxcw
+         0iW24HxXJIc8kdJG7nrXGd/wOPoz4RhCt/pUCm7J7ryOEx6QGZr/e6IF4tnjpu2qfw+w
+         K/Ap4Nwg3XXFFnBBawc+DfAGA99HaaQdaEzwlmHJ+76UI/tv5j2eBFhTGbXcvocNncUt
+         EZQQ==
+X-Gm-Message-State: APt69E3cbTGWZWeJZO6Ks6/czYXzAA5N1AGITD3hIruy1FDOSBqxD3W6
+        xm38C4lYZi8uSyH3BcdjYag=
+X-Google-Smtp-Source: ADUXVKIBpegEVPf5pwNGlQAH+oVQ9AQn1PsxBUeEgBBMKaINOoNUlWDRjAFlIAm261J1pQx8L1mK9w==
+X-Received: by 2002:a1c:ed0d:: with SMTP id l13-v6mr3279857wmh.73.1529013325899;
+        Thu, 14 Jun 2018 14:55:25 -0700 (PDT)
+Received: from gcc67.tetaneutral.net (gcc67.tetaneutral.net. [2a03:7220:8080:c00::1])
+        by smtp.gmail.com with ESMTPSA id i76-v6sm285367wmd.20.2018.06.14.14.55.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 14:55:25 -0700 (PDT)
+From:   ilia.lin@gmail.com
+To:     ilia.lin@gmail.com
+Cc:     Ilia Lin <ilialin@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v13 4/8] clk: qcom: Add CPU clock driver for msm8996
+Date:   Thu, 14 Jun 2018 23:53:51 +0200
+Message-Id: <20180614215358.11264-5-ilia.lin@gmail.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180614215358.11264-1-ilia.lin@gmail.com>
+References: <20180614215358.11264-1-ilia.lin@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-05-28 at 12:02 +0200, Greg Kroah-Hartman wrote:
-> 4.4-stable review patch.  If anyone has any objections, please let me know.
-> 
-> ------------------
-> 
-> From: Davidlohr Bueso <dave@stgolabs.net>
-> 
-> [ Upstream commit d29a20645d5e929aa7e8616f28e5d8e1c49263ec ]
-> 
-> While running rt-tests' pi_stress program I got the following splat:
-> 
->   rq->clock_update_flags < RQCF_ACT_SKIP
->   WARNING: CPU: 27 PID: 0 at kernel/sched/sched.h:960 assert_clock_updated.isra.38.part.39+0x13/0x20
-> 
->   [...]
-> 
->   <IRQ>
->   enqueue_top_rt_rq+0xf4/0x150
->   ? cpufreq_dbs_governor_start+0x170/0x170
->   sched_rt_rq_enqueue+0x65/0x80
->   sched_rt_period_timer+0x156/0x360
->   ? sched_rt_rq_enqueue+0x80/0x80
->   __hrtimer_run_queues+0xfa/0x260
->   hrtimer_interrupt+0xcb/0x220
->   smp_apic_timer_interrupt+0x62/0x120
->   apic_timer_interrupt+0xf/0x20
->   </IRQ>
-> 
->   [...]
-> 
->   do_idle+0x183/0x1e0
->   cpu_startup_entry+0x5f/0x70
->   start_secondary+0x192/0x1d0
->   secondary_startup_64+0xa5/0xb0
-> 
-> We can get rid of it be the "traditional" means of adding an
-> update_rq_clock() call after acquiring the rq->lock in
-> do_sched_rt_period_timer().
-> 
-> The case for the RT task throttling (which this workload also hits)
-> can be ignored in that the skip_update call is actually bogus and
-> quite the contrary (the request bits are removed/reverted).
-> 
-> By setting RQCF_UPDATED we really don't care if the skip is happening
-> or not and will therefore make the assert_clock_updated() check happy.
+From: Ilia Lin <ilialin@codeaurora.org>
 
-There is no such flag or assertion in 4.4 or 4.9, so does this change
-still make sense there?
+Each of the CPU clusters (Power and Perf) on msm8996 are
+clocked via 2 PLLs, a primary and alternate. There are also
+2 Mux'es, a primary and secondary all connected together
+as shown below
 
-Ben.
+                             +-------+
+              XO             |       |
+          +------------------>0      |
+                             |       |
+                   PLL/2     | SMUX  +----+
+                     +------->1      |    |
+                     |       |       |    |
+                     |       +-------+    |    +-------+
+                     |                    +---->0      |
+                     |                         |       |
++---------------+    |             +----------->1      | CPU clk
+|Primary PLL    +----+ PLL_EARLY   |           |       +------>
+|               +------+-----------+    +------>2 PMUX |
++---------------+      |                |      |       |
+                       |   +------+     |   +-->3      |
+                       +--^+  ACD +-----+   |  +-------+
++---------------+          +------+         |
+|Alt PLL        |                           |
+|               +---------------------------+
++---------------+         PLL_EARLY
 
-> Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-> Reviewed-by: Matt Fleming <matt@codeblueprint.co.uk>
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Mike Galbraith <efault@gmx.de>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: dave@stgolabs.net
-> Cc: linux-kernel@vger.kernel.org
-> Cc: rostedt@goodmis.org
-> Link: http://lkml.kernel.org/r/20180402164954.16255-1-dave@stgolabs.net
-> Signed-off-by: Ingo Molnar <mingo@kernel.org>
-> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> ---
->  kernel/sched/rt.c |    2 ++
->  1 file changed, 2 insertions(+)
-> 
-> --- a/kernel/sched/rt.c
-> +++ b/kernel/sched/rt.c
-> @@ -822,6 +822,8 @@ static int do_sched_rt_period_timer(stru
->  		struct rq *rq = rq_of_rt_rq(rt_rq);
->  
->  		raw_spin_lock(&rq->lock);
-> +		update_rq_clock(rq);
-> +
->  		if (rt_rq->rt_time) {
->  			u64 runtime;
->  
-> 
-> 
-> 
+The primary PLL is what drives the CPU clk, except for times
+when we are reprogramming the PLL itself (for rate changes) when
+we temporarily switch to an alternate PLL. A subsequent patch adds
+support to switch between primary and alternate PLL during rate
+changes.
+
+The primary PLL operates on a single VCO range, between 600MHz
+and 3GHz. However the CPUs do support OPPs with frequencies
+between 300MHz and 600MHz. In order to support running the CPUs
+at those frequencies we end up having to lock the PLL at twice
+the rate and drive the CPU clk via the PLL/2 output and SMUX.
+
+So for frequencies above 600MHz we follow the following path
+ Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
+and for frequencies between 300MHz and 600MHz we follow
+ Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
+Support for this is added in a subsequent patch as well.
+
+ACD stands for Adaptive Clock Distribution and is used to
+detect voltage droops.
+
+Signed-off-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Ilia Lin <ilialin@codeaurora.org>
+Tested-by: Amit Kucheria <amit.kucheria@linaro.org>
+---
+ drivers/clk/qcom/Kconfig         |  10 +
+ drivers/clk/qcom/Makefile        |   1 +
+ drivers/clk/qcom/clk-alpha-pll.h |   6 +
+ drivers/clk/qcom/clk-cpu-8996.c  | 403 +++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 420 insertions(+)
+ create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index 9c3480dcc38a..fe01df59f923 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -33,6 +33,16 @@ config QCOM_CLK_APCS_MSM8916
+ 	  Say Y if you want to support CPU frequency scaling on devices
+ 	  such as msm8916.
+ 
++config QCOM_CLK_APCC_MSM8996
++	tristate "MSM8996 CPU Clock Controller"
++	depends on ARM64
++	depends on COMMON_CLK_QCOM
++	select QCOM_KRYO_L2_ACCESSORS
++	help
++	  Support for the CPU clock controller on msm8996 devices.
++	  Say Y if you want to support CPU clock scaling using CPUfreq
++	  drivers for dyanmic power management.
++
+ config QCOM_CLK_RPM
+ 	tristate "RPM based Clock Controller"
+ 	depends on COMMON_CLK_QCOM && MFD_QCOM_RPM
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index 762c01137c2f..d142778f6e92 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_MSM_MMCC_8974) += mmcc-msm8974.o
+ obj-$(CONFIG_MSM_MMCC_8996) += mmcc-msm8996.o
+ obj-$(CONFIG_QCOM_A53PLL) += a53-pll.o
+ obj-$(CONFIG_QCOM_CLK_APCS_MSM8916) += apcs-msm8916.o
++obj-$(CONFIG_QCOM_CLK_APCC_MSM8996) += clk-cpu-8996.o
+ obj-$(CONFIG_QCOM_CLK_RPM) += clk-rpm.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_SDM_GCC_845) += gcc-sdm845.o
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index f981b486c468..9ce2a32f30ab 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -50,6 +50,12 @@ struct pll_vco {
+ 	u32 val;
+ };
+ 
++#define VCO(a, b, c) { \
++	.val = a,\
++	.min_freq = b,\
++	.max_freq = c,\
++}
++
+ /**
+  * struct clk_alpha_pll - phase locked loop (PLL)
+  * @offset: base address of registers
+diff --git a/drivers/clk/qcom/clk-cpu-8996.c b/drivers/clk/qcom/clk-cpu-8996.c
+new file mode 100644
+index 000000000000..d92cad93af20
+--- /dev/null
++++ b/drivers/clk/qcom/clk-cpu-8996.c
+@@ -0,0 +1,403 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++/*
++ * Each of the CPU clusters (Power and Perf) on msm8996 are
++ * clocked via 2 PLLs, a primary and alternate. There are also
++ * 2 Mux'es, a primary and secondary all connected together
++ * as shown below
++ *
++ *                              +-------+
++ *               XO             |       |
++ *           +------------------>0      |
++ *                              |       |
++ *                    PLL/2     | SMUX  +----+
++ *                      +------->1      |    |
++ *                      |       |       |    |
++ *                      |       +-------+    |    +-------+
++ *                      |                    +---->0      |
++ *                      |                         |       |
++ * +---------------+    |             +----------->1      | CPU clk
++ * |Primary PLL    +----+ PLL_EARLY   |           |       +------>
++ * |               +------+-----------+    +------>2 PMUX |
++ * +---------------+      |                |      |       |
++ *                        |   +------+     |   +-->3      |
++ *                        +--^+  ACD +-----+   |  +-------+
++ * +---------------+          +------+         |
++ * |Alt PLL        |                           |
++ * |               +---------------------------+
++ * +---------------+         PLL_EARLY
++ *
++ * The primary PLL is what drives the CPU clk, except for times
++ * when we are reprogramming the PLL itself (for rate changes) when
++ * we temporarily switch to an alternate PLL. A subsequent patch adds
++ * support to switch between primary and alternate PLL during rate
++ * changes.
++ *
++ * The primary PLL operates on a single VCO range, between 600MHz
++ * and 3GHz. However the CPUs do support OPPs with frequencies
++ * between 300MHz and 600MHz. In order to support running the CPUs
++ * at those frequencies we end up having to lock the PLL at twice
++ * the rate and drive the CPU clk via the PLL/2 output and SMUX.
++ *
++ * So for frequencies above 600MHz we follow the following path
++ *  Primary PLL --> PLL_EARLY --> PMUX(1) --> CPU clk
++ * and for frequencies between 300MHz and 600MHz we follow
++ *  Primary PLL --> PLL/2 --> SMUX(1) --> PMUX(0) --> CPU clk
++ * Support for this is added in a subsequent patch as well.
++ *
++ * ACD stands for Adaptive Clock Distribution and is used to
++ * detect voltage droops.
++ */
++
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++#include "clk-alpha-pll.h"
++#include "clk-regmap.h"
++
++enum _pmux_input {
++	DIV_2_INDEX = 0,
++	PLL_INDEX,
++	ACD_INDEX,
++	ALT_INDEX,
++	NUM_OF_PMUX_INPUTS
++};
++
++static const u8 prim_pll_regs[PLL_OFF_MAX_REGS] = {
++       [PLL_OFF_L_VAL] = 0x04,
++       [PLL_OFF_ALPHA_VAL] = 0x08,
++       [PLL_OFF_USER_CTL] = 0x10,
++       [PLL_OFF_CONFIG_CTL] = 0x18,
++       [PLL_OFF_CONFIG_CTL_U] = 0x1c,
++       [PLL_OFF_TEST_CTL] = 0x20,
++       [PLL_OFF_TEST_CTL_U] = 0x24,
++       [PLL_OFF_STATUS] = 0x28,
++};
++
++static const u8 alt_pll_regs[PLL_OFF_MAX_REGS] = {
++       [PLL_OFF_L_VAL] = 0x04,
++       [PLL_OFF_ALPHA_VAL] = 0x08,
++       [PLL_OFF_ALPHA_VAL_U] = 0x0c,
++       [PLL_OFF_USER_CTL] = 0x10,
++       [PLL_OFF_USER_CTL_U] = 0x14,
++       [PLL_OFF_CONFIG_CTL] = 0x18,
++       [PLL_OFF_TEST_CTL] = 0x20,
++       [PLL_OFF_TEST_CTL_U] = 0x24,
++       [PLL_OFF_STATUS] = 0x28,
++};
++
++/* PLLs */
++
++static const struct alpha_pll_config hfpll_config = {
++	.l = 60,
++	.config_ctl_val = 0x200d4828,
++	.config_ctl_hi_val = 0x006,
++	.pre_div_mask = BIT(12),
++	.post_div_mask = 0x3 << 8,
++	.main_output_mask = BIT(0),
++	.early_output_mask = BIT(3),
++};
++
++static struct clk_alpha_pll perfcl_pll = {
++	.offset = 0x80000,
++	.regs = prim_pll_regs,
++	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "perfcl_pll",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_huayra_ops,
++	},
++};
++
++static struct clk_alpha_pll pwrcl_pll = {
++	.offset = 0x0,
++	.regs = prim_pll_regs,
++	.flags = SUPPORTS_DYNAMIC_UPDATE | SUPPORTS_FSM_MODE,
++	.clkr.hw.init = &(struct clk_init_data){
++		.name = "pwrcl_pll",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_huayra_ops,
++	},
++};
++
++static const struct pll_vco alt_pll_vco_modes[] = {
++	VCO(3,  250000000,  500000000),
++	VCO(2,  500000000,  750000000),
++	VCO(1,  750000000, 1000000000),
++	VCO(0, 1000000000, 2150400000),
++};
++
++static const struct alpha_pll_config altpll_config = {
++	.l = 16,
++	.vco_val = 0x3 << 20,
++	.vco_mask = 0x3 << 20,
++	.config_ctl_val = 0x4001051b,
++	.post_div_mask = 0x3 << 8,
++	.post_div_val = 0x1,
++	.main_output_mask = BIT(0),
++	.early_output_mask = BIT(3),
++};
++
++static struct clk_alpha_pll perfcl_alt_pll = {
++	.offset = 0x80100,
++	.regs = alt_pll_regs,
++	.vco_table = alt_pll_vco_modes,
++	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
++	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "perfcl_alt_pll",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_hwfsm_ops,
++	},
++};
++
++static struct clk_alpha_pll pwrcl_alt_pll = {
++	.offset = 0x100,
++	.regs = alt_pll_regs,
++	.vco_table = alt_pll_vco_modes,
++	.num_vco = ARRAY_SIZE(alt_pll_vco_modes),
++	.flags = SUPPORTS_OFFLINE_REQ | SUPPORTS_FSM_MODE,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "pwrcl_alt_pll",
++		.parent_names = (const char *[]){ "xo" },
++		.num_parents = 1,
++		.ops = &clk_alpha_pll_hwfsm_ops,
++	},
++};
++
++/* Mux'es */
++
++struct clk_cpu_8996_mux {
++	u32	reg;
++	u8	shift;
++	u8	width;
++	struct clk_hw	*pll;
++	struct clk_regmap clkr;
++};
++
++static inline
++struct clk_cpu_8996_mux *to_clk_cpu_8996_mux_hw(struct clk_hw *hw)
++{
++	return container_of(to_clk_regmap(hw), struct clk_cpu_8996_mux, clkr);
++}
++
++static u8 clk_cpu_8996_mux_get_parent(struct clk_hw *hw)
++{
++	u32 val;
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
++	u32 mask = (u32)GENMASK(cpuclk->width - 1, 0);
++
++	regmap_read(clkr->regmap, cpuclk->reg, &val);
++	val >>= (u32)(cpuclk->shift);
++
++	return (u8)(val & mask);
++}
++
++static int clk_cpu_8996_mux_set_parent(struct clk_hw *hw, u8 index)
++{
++	u32 val;
++	struct clk_regmap *clkr = to_clk_regmap(hw);
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
++	unsigned int mask = GENMASK(cpuclk->width + cpuclk->shift - 1,
++				    cpuclk->shift);
++
++	val = (u32)index;
++	val <<= (u32)(cpuclk->shift);
++
++	return regmap_update_bits(clkr->regmap, cpuclk->reg, mask, val);
++}
++
++static int
++clk_cpu_8996_mux_determine_rate(struct clk_hw *hw, struct clk_rate_request *req)
++{
++	struct clk_cpu_8996_mux *cpuclk = to_clk_cpu_8996_mux_hw(hw);
++	struct clk_hw *parent = cpuclk->pll;
++
++	req->best_parent_rate = clk_hw_round_rate(parent, req->rate);
++	req->best_parent_hw = parent;
++
++	return 0;
++}
++
++const struct clk_ops clk_cpu_8996_mux_ops = {
++	.set_parent = clk_cpu_8996_mux_set_parent,
++	.get_parent = clk_cpu_8996_mux_get_parent,
++	.determine_rate = clk_cpu_8996_mux_determine_rate,
++};
++
++static struct clk_cpu_8996_mux pwrcl_smux = {
++	.reg = 0x40,
++	.shift = 2,
++	.width = 2,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "pwrcl_smux",
++		.parent_names = (const char *[]){
++			"xo",
++			"pwrcl_pll_main",
++		},
++		.num_parents = 2,
++		.ops = &clk_cpu_8996_mux_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_cpu_8996_mux perfcl_smux = {
++	.reg = 0x80040,
++	.shift = 2,
++	.width = 2,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "perfcl_smux",
++		.parent_names = (const char *[]){
++			"xo",
++			"perfcl_pll_main",
++		},
++		.num_parents = 2,
++		.ops = &clk_cpu_8996_mux_ops,
++		.flags = CLK_SET_RATE_PARENT,
++	},
++};
++
++static struct clk_cpu_8996_mux pwrcl_pmux = {
++	.reg = 0x40,
++	.shift = 0,
++	.width = 2,
++	.pll = &pwrcl_pll.clkr.hw,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "pwrcl_pmux",
++		.parent_names = (const char *[]){
++			"pwrcl_smux",
++			"pwrcl_pll",
++			"pwrcl_pll_acd",
++			"pwrcl_alt_pll",
++		},
++		.num_parents = 4,
++		.ops = &clk_cpu_8996_mux_ops,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++	},
++};
++
++static struct clk_cpu_8996_mux perfcl_pmux = {
++	.reg = 0x80040,
++	.shift = 0,
++	.width = 2,
++	.pll = &perfcl_pll.clkr.hw,
++	.clkr.hw.init = &(struct clk_init_data) {
++		.name = "perfcl_pmux",
++		.parent_names = (const char *[]){
++			"perfcl_smux",
++			"perfcl_pll",
++			"perfcl_pll_acd",
++			"perfcl_alt_pll",
++		},
++		.num_parents = 4,
++		.ops = &clk_cpu_8996_mux_ops,
++		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
++	},
++};
++
++static const struct regmap_config cpu_msm8996_regmap_config = {
++	.reg_bits		= 32,
++	.reg_stride		= 4,
++	.val_bits		= 32,
++	.max_register		= 0x80210,
++	.fast_io		= true,
++	.val_format_endian	= REGMAP_ENDIAN_LITTLE,
++};
++
++struct clk_regmap *clks[] = {
++	&perfcl_pll.clkr,
++	&pwrcl_pll.clkr,
++	&perfcl_alt_pll.clkr,
++	&pwrcl_alt_pll.clkr,
++	&perfcl_smux.clkr,
++	&pwrcl_smux.clkr,
++	&perfcl_pmux.clkr,
++	&pwrcl_pmux.clkr,
++};
++
++static int
++qcom_cpu_clk_msm8996_register_clks(struct device *dev, struct regmap *regmap)
++{
++	int i, ret;
++
++	perfcl_smux.pll = clk_hw_register_fixed_factor(dev, "perfcl_pll_main",
++						       "perfcl_pll",
++						   CLK_SET_RATE_PARENT, 1, 2);
++
++	pwrcl_smux.pll = clk_hw_register_fixed_factor(dev, "pwrcl_pll_main",
++						      "pwrcl_pll",
++						   CLK_SET_RATE_PARENT, 1, 2);
++
++	for (i = 0; i < ARRAY_SIZE(clks); i++) {
++		ret = devm_clk_register_regmap(dev, clks[i]);
++		if (ret)
++			return ret;
++	}
++
++	clk_alpha_pll_configure(&perfcl_pll, regmap, &hfpll_config);
++	clk_alpha_pll_configure(&pwrcl_pll, regmap, &hfpll_config);
++	clk_alpha_pll_configure(&perfcl_alt_pll, regmap, &altpll_config);
++	clk_alpha_pll_configure(&pwrcl_alt_pll, regmap, &altpll_config);
++
++	return ret;
++}
++
++static int qcom_cpu_clk_msm8996_driver_probe(struct platform_device *pdev)
++{
++	int ret;
++	void __iomem *base;
++	struct resource *res;
++	struct regmap *regmap;
++	struct clk_hw_onecell_data *data;
++	struct device *dev = &pdev->dev;
++
++	data = devm_kzalloc(dev, sizeof(*data) + 2 * sizeof(struct clk_hw *),
++			    GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	base = devm_ioremap_resource(dev, res);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	regmap = devm_regmap_init_mmio(dev, base, &cpu_msm8996_regmap_config);
++	if (IS_ERR(regmap))
++		return PTR_ERR(regmap);
++
++	ret = qcom_cpu_clk_msm8996_register_clks(dev, regmap);
++	if (ret)
++		return ret;
++
++	data->hws[0] = &pwrcl_pmux.clkr.hw;
++	data->hws[1] = &perfcl_pmux.clkr.hw;
++	data->num = 2;
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, data);
++}
++
++static const struct of_device_id qcom_cpu_clk_msm8996_match_table[] = {
++	{ .compatible = "qcom,msm8996-apcc" },
++	{}
++};
++
++static struct platform_driver qcom_cpu_clk_msm8996_driver = {
++	.probe = qcom_cpu_clk_msm8996_driver_probe,
++	.driver = {
++		.name = "qcom-msm8996-apcc",
++		.of_match_table = qcom_cpu_clk_msm8996_match_table,
++	},
++};
++module_platform_driver(qcom_cpu_clk_msm8996_driver);
++
++MODULE_ALIAS("platform:msm8996-apcc");
++MODULE_DESCRIPTION("QCOM MSM8996 CPU Clock Driver");
++MODULE_LICENSE("GPL v2");
 -- 
-Ben Hutchings, Software Developer                         Codethink Ltd
-https://www.codethink.co.uk/                 Dale House, 35 Dale Street
-                                     Manchester, M1 2HF, United Kingdom
+2.11.0
+
