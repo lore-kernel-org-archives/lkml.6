@@ -1,215 +1,193 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 87B3FC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:13:12 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 153B1C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B51B208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:13:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FDoTJWRq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B51B208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id BA1D4208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:15:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA1D4208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754696AbeFNINJ (ORCPT
+        id S1754766AbeFNIPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:13:09 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45009 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752813AbeFNINE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:13:04 -0400
-Received: by mail-lf0-f67.google.com with SMTP id 36-v6so7973626lfr.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:13:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/8EIB1DfM8qbKFAopfUKPoAJD6k6g24T+qTVRUFpM8c=;
-        b=FDoTJWRq7bvg9kgq7LalDm6bLjMEnrZQQzI/R3oEYbNPajUZ7EtghgXimVB365u8ax
-         UgbyIlMo5OjzhYOeH3zTy5L/cZa5PhysFaX/0Js+LC5mZsfZqEIm7n1psFi4lhMLLV6E
-         od9GNdhOU9CrPOel097RWJKKfx1mVc5dBKoHk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/8EIB1DfM8qbKFAopfUKPoAJD6k6g24T+qTVRUFpM8c=;
-        b=Jxg81oMRp2xbIkDv9R0S1sWeEhmk6f90wJTcxUf0Vn4fuzpcN6pgJA3q5ocKqW6k5i
-         7dwaaDTg3Ns7ntuK4/Tvp4M8N/aDFL3rjPkfMRdGtmtIz57xirF6D3o1irVoy15z1ahN
-         SFdMICe8F2WkCUsbbkZnbwtk4O+FVABfHmIDcqwaoo/MH3bzav6s2EHHWpM3bFo1ZsPQ
-         WqUSODshjc0ZWOX/wdPUkaRdyA5wgnvL2wd7J47ejQEZ/WcGmpSUJrZ3zswkqTb9hZ+8
-         WBpEPe5QeSq75jNPC8JmudyzuZ2YTvc7ZsAtoBuvmyo7R4M0Ne4UHlYXZft6G0bL2KcE
-         c/vg==
-X-Gm-Message-State: APt69E1ErpHMd8EiiZywbUPeQwXeP5zYKpqx0AOw14tRenuuqTeEUU7e
-        eE+uZ++f63RLuCW+VDatSMizgdsL++QBD8q1XjiWkg==
-X-Google-Smtp-Source: ADUXVKJX/dMLul3DJIx5l9/KkYHJ5q5YWgdUlK6sn4sa2ddeYGpOXJGSgJuG+cy0JTX1LnbnG+BLXnxsTAwzwLTE4LA=
-X-Received: by 2002:a2e:5687:: with SMTP id k7-v6mr1054599lje.140.1528963982818;
- Thu, 14 Jun 2018 01:13:02 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:5f96:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 01:13:02
- -0700 (PDT)
-In-Reply-To: <2c5a4dbf-6640-052b-a873-76b4c50abe73@linaro.org>
-References: <20180614074652.162796-1-keiichiw@chromium.org>
- <20180614074652.162796-2-keiichiw@chromium.org> <2c5a4dbf-6640-052b-a873-76b4c50abe73@linaro.org>
-From:   Keiichi Watanabe <keiichiw@chromium.org>
-Date:   Thu, 14 Jun 2018 17:13:02 +0900
-Message-ID: <CAD90VcZP5ZoeTjNX9b3eTaU9DCMAPBfM9FHwEBT4uRqRH722zQ@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] media: v4l2-ctrl: Change control for VP8 profile
- to menu control
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kamil Debski <kamil@wypas.org>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Jun 2018 04:15:11 -0400
+Received: from mga06.intel.com ([134.134.136.31]:24708 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754631AbeFNIPH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:15:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 01:15:07 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
+   d="scan'208";a="49814386"
+Received: from twinkler-lnx.jer.intel.com ([10.12.91.43])
+  by orsmga006.jf.intel.com with ESMTP; 14 Jun 2018 01:15:03 -0700
+From:   Tomas Winkler <tomas.winkler@intel.com>
+To:     "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     Christoph Hellwig <hch@lst.de>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Subhash Jadavani <subhashj@codeaurora.org>,
+        Alex Lemberg <Alex.Lemberg@wdc.com>,
+        Avri Altman <Avri.Altman@wdc.com>, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Tomas Winkler <tomas.winkler@intel.com>
+Subject: [PATCH resend] scsi: ufs: ufshcd_dump_regs to use memcpy_fromio
+Date:   Thu, 14 Jun 2018 11:14:09 +0300
+Message-Id: <20180614081409.29780-1-tomas.winkler@intel.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks, Stanimir
+ufshcd_dump_regs should use memcpy_fromio to read host registers
+instead of directly accessing using memcpy.
+The same function is utilized in ufs-qcom.
 
-On Thu, Jun 14, 2018 at 5:04 PM, Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
-> Hi Keiichi,
->
-> On 06/14/2018 10:46 AM, Keiichi Watanabe wrote:
->> Add a menu control V4L2_CID_MPEG_VIDEO_VP8_PROFILE for VP8 profile and
->> make V4L2_CID_MPEG_VIDEO_VPX_PROFILE an alias of it. This new control
->> is used to select a desired profile for VP8 encoder, and query for
->> supported profiles by VP8 encoder/decoder.
->>
->> Though we have originally a control V4L2_CID_MPEG_VIDEO_VPX_PROFILE and its name
->> contains 'VPX', it works only for VP8 because supported profiles usually differ
->> between VP8 and VP9. In addition, this contorol cannot be used for querying
->> since it is not a menu control but an integer control, which cannot return an
->> arbitrary set of supported profiles.
->>
->> The new control V4L2_CID_MPEG_VIDEO_VP8_PROFILE is a menu control as with
->> controls for other codec profiles. (e.g. H264)
->>
->> In addition, this patch also fixes the use of
->> V4L2_CID_MPEG_VIDEO_VPX_PROFILE in drivers of Qualcomm's venus and
->> Samsung's s5p-mfc.
->>
->> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
->> ---
->>  .../media/uapi/v4l/extended-controls.rst      | 27 ++++++++++++++++---
->>  drivers/media/platform/qcom/venus/core.h      |  2 +-
->>  .../media/platform/qcom/venus/hfi_helper.h    | 12 ++++-----
->>  .../media/platform/qcom/venus/vdec_ctrls.c    | 10 ++++---
->>  drivers/media/platform/qcom/venus/venc.c      | 14 +++++-----
->>  .../media/platform/qcom/venus/venc_ctrls.c    | 12 +++++----
->>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c  | 15 +++++------
->>  drivers/media/v4l2-core/v4l2-ctrls.c          | 12 ++++++++-
->>  include/uapi/linux/v4l2-controls.h            | 11 +++++++-
->>  9 files changed, 79 insertions(+), 36 deletions(-)
->>
->> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
->> index 03931f9b1285..de99eafb0872 100644
->> --- a/Documentation/media/uapi/v4l/extended-controls.rst
->> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
->> @@ -1955,9 +1955,30 @@ enum v4l2_vp8_golden_frame_sel -
->>  ``V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP (integer)``
->>      Quantization parameter for a P frame for VP8.
->>
->> -``V4L2_CID_MPEG_VIDEO_VPX_PROFILE (integer)``
->> -    Select the desired profile for VPx encoder. Acceptable values are 0,
->> -    1, 2 and 3 corresponding to encoder profiles 0, 1, 2 and 3.
->> +.. _v4l2-mpeg-video-vp8-profile:
->> +
->> +``V4L2_CID_MPEG_VIDEO_VP8_PROFILE``
->> +    (enum)
->> +
->> +enum v4l2_mpeg_video_vp8_profile -
->> +    This control allows to select the profile for VP8 encoder.
->> +    This is also used to enumerate supported profiles by VP8 encoder or decoder.
->> +    Possible values are:
->> +
->> +
->> +
->> +.. flat-table::
->> +    :header-rows:  0
->> +    :stub-columns: 0
->> +
->> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_0``
->> +      - Profile 0
->> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_1``
->> +      - Profile 1
->> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_2``
->> +      - Profile 2
->> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_3``
->> +      - Profile 3
->>
->>
->>  High Efficiency Video Coding (HEVC/H.265) Control Reference
->> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
->> index 0360d295f4c8..f242e7f9f6a2 100644
->> --- a/drivers/media/platform/qcom/venus/core.h
->> +++ b/drivers/media/platform/qcom/venus/core.h
->> @@ -159,7 +159,7 @@ struct venc_controls {
->>       struct {
->>               u32 mpeg4;
->>               u32 h264;
->> -             u32 vpx;
->> +             u32 vp8;
->>       } profile;
->>       struct {
->>               u32 mpeg4;
->> diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
->> index 55d8eb21403a..07bf49dd2ec6 100644
->> --- a/drivers/media/platform/qcom/venus/hfi_helper.h
->> +++ b/drivers/media/platform/qcom/venus/hfi_helper.h
->> @@ -333,12 +333,12 @@
->>  #define HFI_VC1_LEVEL_3                              0x00000040
->>  #define HFI_VC1_LEVEL_4                              0x00000080
->>
->> -#define HFI_VPX_PROFILE_SIMPLE                       0x00000001
->> -#define HFI_VPX_PROFILE_ADVANCED             0x00000002
->> -#define HFI_VPX_PROFILE_VERSION_0            0x00000004
->> -#define HFI_VPX_PROFILE_VERSION_1            0x00000008
->> -#define HFI_VPX_PROFILE_VERSION_2            0x00000010
->> -#define HFI_VPX_PROFILE_VERSION_3            0x00000020
->> +#define HFI_VP8_PROFILE_SIMPLE                       0x00000001
->> +#define HFI_VP8_PROFILE_ADVANCED             0x00000002
->> +#define HFI_VP8_PROFILE_VERSION_0            0x00000004
->> +#define HFI_VP8_PROFILE_VERSION_1            0x00000008
->> +#define HFI_VP8_PROFILE_VERSION_2            0x00000010
->> +#define HFI_VP8_PROFILE_VERSION_3            0x00000020
+Elminite compilation warning
+drivers/scsi/ufs/ufshcd.c:356:9: warning: incorrect type in argument 6 (different address spaces)
+drivers/scsi/ufs/ufshcd.c:356:9:    expected void const *buf
+drivers/scsi/ufs/ufshcd.c:356:9:    got void [noderef] <asn:2>*mmio_base
 
->
-> Please do not rename these driver internal defines, just leave VPX as it
-> is now.
->
-I got it. I'll fix it in the next revision of the patch.
+Signed-off-by: Tomas Winkler <tomas.winkler@intel.com>
+---
+ drivers/scsi/ufs/ufs-qcom.c | 21 ++++++---------------
+ drivers/scsi/ufs/ufshcd.c   | 35 ++++++++++++++++++++++++-----------
+ drivers/scsi/ufs/ufshcd.h   |  3 +++
+ 3 files changed, 33 insertions(+), 26 deletions(-)
 
-Best regards,
-Keiichi
+diff --git a/drivers/scsi/ufs/ufs-qcom.c b/drivers/scsi/ufs/ufs-qcom.c
+index 2b38db2eeafa..77ac98ea80d4 100644
+--- a/drivers/scsi/ufs/ufs-qcom.c
++++ b/drivers/scsi/ufs/ufs-qcom.c
+@@ -50,19 +50,10 @@ static void ufs_qcom_get_default_testbus_cfg(struct ufs_qcom_host *host);
+ static int ufs_qcom_set_dme_vs_core_clk_ctrl_clear_div(struct ufs_hba *hba,
+ 						       u32 clk_cycles);
+ 
+-static void ufs_qcom_dump_regs(struct ufs_hba *hba, int offset, int len,
+-		char *prefix)
+-{
+-	print_hex_dump(KERN_ERR, prefix,
+-			len > 4 ? DUMP_PREFIX_OFFSET : DUMP_PREFIX_NONE,
+-			16, 4, (void __force *)hba->mmio_base + offset,
+-			len * 4, false);
+-}
+-
+ static void ufs_qcom_dump_regs_wrapper(struct ufs_hba *hba, int offset, int len,
+-		char *prefix, void *priv)
++				       const char *prefix, void *priv)
+ {
+-	ufs_qcom_dump_regs(hba, offset, len, prefix);
++	ufshcd_dump_regs(hba, offset, len * 4, prefix);
+ }
+ 
+ static int ufs_qcom_get_connected_tx_lanes(struct ufs_hba *hba, u32 *tx_lanes)
+@@ -1431,7 +1422,7 @@ static int ufs_qcom_clk_scale_notify(struct ufs_hba *hba,
+ 
+ static void ufs_qcom_print_hw_debug_reg_all(struct ufs_hba *hba,
+ 		void *priv, void (*print_fn)(struct ufs_hba *hba,
+-		int offset, int num_regs, char *str, void *priv))
++		int offset, int num_regs, const char *str, void *priv))
+ {
+ 	u32 reg;
+ 	struct ufs_qcom_host *host;
+@@ -1613,7 +1604,7 @@ int ufs_qcom_testbus_config(struct ufs_qcom_host *host)
+ 
+ static void ufs_qcom_testbus_read(struct ufs_hba *hba)
+ {
+-	ufs_qcom_dump_regs(hba, UFS_TEST_BUS, 1, "UFS_TEST_BUS ");
++	ufshcd_dump_regs(hba, UFS_TEST_BUS, 4, "UFS_TEST_BUS ");
+ }
+ 
+ static void ufs_qcom_print_unipro_testbus(struct ufs_hba *hba)
+@@ -1639,8 +1630,8 @@ static void ufs_qcom_print_unipro_testbus(struct ufs_hba *hba)
+ 
+ static void ufs_qcom_dump_dbg_regs(struct ufs_hba *hba)
+ {
+-	ufs_qcom_dump_regs(hba, REG_UFS_SYS1CLK_1US, 16,
+-			"HCI Vendor Specific Registers ");
++	ufshcd_dump_regs(hba, REG_UFS_SYS1CLK_1US, 16 * 4,
++			 "HCI Vendor Specific Registers ");
+ 
+ 	/* sleep a bit intermittently as we are dumping too much data */
+ 	ufs_qcom_print_hw_debug_reg_all(hba, NULL, ufs_qcom_dump_regs_wrapper);
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index d0a1674915a1..972fa85e2b24 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -99,8 +99,29 @@
+ 		_ret;                                                   \
+ 	})
+ 
+-#define ufshcd_hex_dump(prefix_str, buf, len) \
+-print_hex_dump(KERN_ERR, prefix_str, DUMP_PREFIX_OFFSET, 16, 4, buf, len, false)
++#define ufshcd_hex_dump(prefix_str, buf, len) do {                       \
++	size_t __len = (len);                                            \
++	print_hex_dump(KERN_ERR, prefix_str,                             \
++		       __len > 4 ? DUMP_PREFIX_OFFSET : DUMP_PREFIX_NONE,\
++		       16, 4, buf, __len, false);                        \
++} while (0)
++
++int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
++		     const char *prefix)
++{
++	u8 *regs;
++
++	regs = kzalloc(len, GFP_KERNEL);
++	if (!regs)
++		return -ENOMEM;
++
++	memcpy_fromio(regs, hba->mmio_base + offset, len);
++	ufshcd_hex_dump(prefix, regs, len);
++	kfree(regs);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(ufshcd_dump_regs);
+ 
+ enum {
+ 	UFSHCD_MAX_CHANNEL	= 0,
+@@ -376,15 +397,7 @@ static void ufshcd_print_uic_err_hist(struct ufs_hba *hba,
+ 
+ static void ufshcd_print_host_regs(struct ufs_hba *hba)
+ {
+-	/*
+-	 * hex_dump reads its data without the readl macro. This might
+-	 * cause inconsistency issues on some platform, as the printed
+-	 * values may be from cache and not the most recent value.
+-	 * To know whether you are looking at an un-cached version verify
+-	 * that IORESOURCE_MEM flag is on when xxx_get_resource() is invoked
+-	 * during platform/pci probe function.
+-	 */
+-	ufshcd_hex_dump("host regs: ", hba->mmio_base, UFSHCI_REG_SPACE_SIZE);
++	ufshcd_dump_regs(hba, 0, UFSHCI_REG_SPACE_SIZE, "host_regs: ");
+ 	dev_err(hba->dev, "hba->ufs_version = 0x%x, hba->capabilities = 0x%x\n",
+ 		hba->ufs_version, hba->capabilities);
+ 	dev_err(hba->dev,
+diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
+index 8110dcd04d22..aad959ba3d9b 100644
+--- a/drivers/scsi/ufs/ufshcd.h
++++ b/drivers/scsi/ufs/ufshcd.h
+@@ -1022,4 +1022,7 @@ static inline u8 ufshcd_scsi_to_upiu_lun(unsigned int scsi_lun)
+ 		return scsi_lun & UFS_UPIU_MAX_UNIT_NUM_ID;
+ }
+ 
++int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
++		     const char *prefix);
++
+ #endif /* End of Header */
+-- 
+2.14.4
 
->
-> --
-> regards,
-> Stan
