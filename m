@@ -6,48 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6CC82C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:37:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A8B81C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18AF0208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E884208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:38:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vk1GHklb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AF0208CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zav0gdl1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E884208CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965646AbeFNOhg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:37:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50742 "EHLO mail.kernel.org"
+        id S965434AbeFNOJU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:09:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50024 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965500AbeFNOJq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:09:46 -0400
+        id S965396AbeFNOJM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:09:12 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 477A8208CB;
-        Thu, 14 Jun 2018 14:09:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 595DC208DB;
+        Thu, 14 Jun 2018 14:09:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985385;
-        bh=CU+5YlXp7E0VJAsWBrOt9gRUwp3JY3ywEnmBpUBV4Dk=;
+        s=default; t=1528985351;
+        bh=K1jzZPPECTtBFr39tM7G4IH7AwwfWOJk/ddCd5LSoI8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vk1GHklbxoF0B4Z4dMpAFSfDMelkXDpNethkpC8QAPGJkxl8S0JAL8OM7hijT2Qhq
-         4xNJIWmnpoQx82W0GXFKTPA1CGQCBrsV1MCw7QKP4PRlWm9Ti97kIYte/LQdb2yygP
-         SHHiCxMjt3rf5P37BzYEEX35h6FIybiNcLPICDMM=
+        b=Zav0gdl1Souw8hlhybWrDjvrYi+2qWu+SofjnXVTOMIQjJE5IMNkiPof+FccX/+w6
+         ccCMNhjg4qGkYyT1MA7JwXzIno6SZDB9C4QAfihA+5VjtgVmsrCAV+PH2V4CVshFrG
+         hgeiNv/081ytE5wmD5l3LbobW3PjJisIEy5k1pyw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.14 01/36] netfilter: nf_tables: fix NULL pointer dereference on nft_ct_helper_obj_dump()
-Date:   Thu, 14 Jun 2018 16:04:24 +0200
-Message-Id: <20180614132157.388966192@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.16 41/43] crypto: vmx - Remove overly verbose printk from AES init routines
+Date:   Thu, 14 Jun 2018 16:04:45 +0200
+Message-Id: <20180614132137.871982474@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
-References: <20180614132157.333004166@linuxfoundation.org>
+In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
+References: <20180614132135.111973468@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -55,165 +55,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit b71534583f22d08c3e3563bf5100aeb5f5c9fbe5 upstream.
+commit 1411b5218adbcf1d45ddb260db5553c52e8d917c upstream.
 
-In the nft_ct_helper_obj_dump(), always priv->helper4 is dereferenced.
-But if family is ipv6, priv->helper6 should be dereferenced.
+In the vmx AES init routines we do a printk(KERN_INFO ...) to report
+the fallback implementation we're using.
 
-Steps to reproduces:
+However with a slow console this can significantly affect the speed of
+crypto operations. Using 'cryptsetup benchmark' the removal of the
+printk() leads to a ~5x speedup for aes-cbc decryption.
 
-   #test.nft
-   table ip6 filter {
-	   ct helper ftp {
-		   type "ftp" protocol tcp
-	   }
-	   chain input {
-		   type filter hook input priority 4;
-		   ct helper set "ftp"
-	   }
-   }
+So remove them.
 
-   %nft -f test.nft
-   %nft list ruleset
-
-we can see the below messages:
-
-[  916.286233] kasan: GPF could be caused by NULL-ptr deref or user memory access
-[  916.294777] general protection fault: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[  916.302613] Modules linked in: nft_objref nf_conntrack_sip nf_conntrack_snmp nf_conntrack_broadcast nf_conntrack_ftp nft_ct nf_conntrack nf_tables nfnetlink [last unloaded: nfnetlink]
-[  916.318758] CPU: 1 PID: 2093 Comm: nft Not tainted 4.17.0-rc4+ #181
-[  916.326772] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[  916.338773] RIP: 0010:strlen+0x1a/0x90
-[  916.342781] RSP: 0018:ffff88010ff0f2f8 EFLAGS: 00010292
-[  916.346773] RAX: dffffc0000000000 RBX: ffff880119b26ee8 RCX: ffff88010c150038
-[  916.354777] RDX: 0000000000000002 RSI: ffff880119b26ee8 RDI: 0000000000000010
-[  916.362773] RBP: 0000000000000010 R08: 0000000000007e88 R09: ffff88010c15003c
-[  916.370773] R10: ffff88010c150037 R11: ffffed002182a007 R12: ffff88010ff04040
-[  916.378779] R13: 0000000000000010 R14: ffff880119b26f30 R15: ffff88010ff04110
-[  916.387265] FS:  00007f57a1997700(0000) GS:ffff88011b800000(0000) knlGS:0000000000000000
-[  916.394785] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  916.402778] CR2: 00007f57a0ac80f0 CR3: 000000010ff02000 CR4: 00000000001006e0
-[  916.410772] Call Trace:
-[  916.414787]  nft_ct_helper_obj_dump+0x94/0x200 [nft_ct]
-[  916.418779]  ? nft_ct_set_eval+0x560/0x560 [nft_ct]
-[  916.426771]  ? memset+0x1f/0x40
-[  916.426771]  ? __nla_reserve+0x92/0xb0
-[  916.434774]  ? memcpy+0x34/0x50
-[  916.434774]  nf_tables_fill_obj_info+0x484/0x860 [nf_tables]
-[  916.442773]  ? __nft_release_basechain+0x600/0x600 [nf_tables]
-[  916.450779]  ? lock_acquire+0x193/0x380
-[  916.454771]  ? lock_acquire+0x193/0x380
-[  916.458789]  ? nf_tables_dump_obj+0x148/0xcb0 [nf_tables]
-[  916.462777]  nf_tables_dump_obj+0x5f0/0xcb0 [nf_tables]
-[  916.470769]  ? __alloc_skb+0x30b/0x500
-[  916.474779]  netlink_dump+0x752/0xb50
-[  916.478775]  __netlink_dump_start+0x4d3/0x750
-[  916.482784]  nf_tables_getobj+0x27a/0x930 [nf_tables]
-[  916.490774]  ? nft_obj_notify+0x100/0x100 [nf_tables]
-[  916.494772]  ? nf_tables_getobj+0x930/0x930 [nf_tables]
-[  916.502579]  ? nf_tables_dump_flowtable_done+0x70/0x70 [nf_tables]
-[  916.506774]  ? nft_obj_notify+0x100/0x100 [nf_tables]
-[  916.514808]  nfnetlink_rcv_msg+0x8ab/0xa86 [nfnetlink]
-[  916.518771]  ? nfnetlink_rcv_msg+0x550/0xa86 [nfnetlink]
-[  916.526782]  netlink_rcv_skb+0x23e/0x360
-[  916.530773]  ? nfnetlink_bind+0x200/0x200 [nfnetlink]
-[  916.534778]  ? debug_check_no_locks_freed+0x280/0x280
-[  916.542770]  ? netlink_ack+0x870/0x870
-[  916.546786]  ? ns_capable_common+0xf4/0x130
-[  916.550765]  nfnetlink_rcv+0x172/0x16c0 [nfnetlink]
-[  916.554771]  ? sched_clock_local+0xe2/0x150
-[  916.558774]  ? sched_clock_cpu+0x144/0x180
-[  916.566575]  ? lock_acquire+0x380/0x380
-[  916.570775]  ? sched_clock_local+0xe2/0x150
-[  916.574765]  ? nfnetlink_net_init+0x130/0x130 [nfnetlink]
-[  916.578763]  ? sched_clock_cpu+0x144/0x180
-[  916.582770]  ? lock_acquire+0x193/0x380
-[  916.590771]  ? lock_acquire+0x193/0x380
-[  916.594766]  ? lock_acquire+0x380/0x380
-[  916.598760]  ? netlink_deliver_tap+0x262/0xa60
-[  916.602766]  ? lock_acquire+0x193/0x380
-[  916.606766]  netlink_unicast+0x3ef/0x5a0
-[  916.610771]  ? netlink_attachskb+0x630/0x630
-[  916.614763]  netlink_sendmsg+0x72a/0xb00
-[  916.618769]  ? netlink_unicast+0x5a0/0x5a0
-[  916.626766]  ? _copy_from_user+0x92/0xc0
-[  916.630773]  __sys_sendto+0x202/0x300
-[  916.634772]  ? __ia32_sys_getpeername+0xb0/0xb0
-[  916.638759]  ? lock_acquire+0x380/0x380
-[  916.642769]  ? lock_acquire+0x193/0x380
-[  916.646761]  ? finish_task_switch+0xf4/0x560
-[  916.650763]  ? __schedule+0x582/0x19a0
-[  916.655301]  ? __sched_text_start+0x8/0x8
-[  916.655301]  ? up_read+0x1c/0x110
-[  916.655301]  ? __do_page_fault+0x48b/0xaa0
-[  916.655301]  ? entry_SYSCALL_64_after_hwframe+0x59/0xbe
-[  916.655301]  __x64_sys_sendto+0xdd/0x1b0
-[  916.655301]  do_syscall_64+0x96/0x3d0
-[  916.655301]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  916.655301] RIP: 0033:0x7f57a0ff5e03
-[  916.655301] RSP: 002b:00007fff6367e0a8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-[  916.655301] RAX: ffffffffffffffda RBX: 00007fff6367f1e0 RCX: 00007f57a0ff5e03
-[  916.655301] RDX: 0000000000000020 RSI: 00007fff6367e110 RDI: 0000000000000003
-[  916.655301] RBP: 00007fff6367e100 R08: 00007f57a0ce9160 R09: 000000000000000c
-[  916.655301] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff6367e110
-[  916.655301] R13: 0000000000000020 R14: 00007f57a153c610 R15: 0000562417258de0
-[  916.655301] Code: ff ff ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 fa 53 48 c1 ea 03 48 b8 00 00 00 00 00 fc ff df 48 89 fd 48 83 ec 08 <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f
-[  916.655301] RIP: strlen+0x1a/0x90 RSP: ffff88010ff0f2f8
-[  916.771929] ---[ end trace 1065e048e72479fe ]---
-[  916.777204] Kernel panic - not syncing: Fatal exception
-[  916.778158] Kernel Offset: 0x14000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
+Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
+Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
+Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/netfilter/nft_ct.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ drivers/crypto/vmx/aes.c     |    2 --
+ drivers/crypto/vmx/aes_cbc.c |    3 ---
+ drivers/crypto/vmx/aes_ctr.c |    2 --
+ drivers/crypto/vmx/ghash.c   |    2 --
+ 4 files changed, 9 deletions(-)
 
---- a/net/netfilter/nft_ct.c
-+++ b/net/netfilter/nft_ct.c
-@@ -875,22 +875,26 @@ static int nft_ct_helper_obj_dump(struct
- 				  struct nft_object *obj, bool reset)
- {
- 	const struct nft_ct_helper_obj *priv = nft_obj_data(obj);
--	const struct nf_conntrack_helper *helper = priv->helper4;
-+	const struct nf_conntrack_helper *helper;
- 	u16 family;
+--- a/drivers/crypto/vmx/aes.c
++++ b/drivers/crypto/vmx/aes.c
+@@ -48,8 +48,6 @@ static int p8_aes_init(struct crypto_tfm
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
  
-+	if (priv->helper4 && priv->helper6) {
-+		family = NFPROTO_INET;
-+		helper = priv->helper4;
-+	} else if (priv->helper6) {
-+		family = NFPROTO_IPV6;
-+		helper = priv->helper6;
-+	} else {
-+		family = NFPROTO_IPV4;
-+		helper = priv->helper4;
-+	}
-+
- 	if (nla_put_string(skb, NFTA_CT_HELPER_NAME, helper->name))
- 		return -1;
- 
- 	if (nla_put_u8(skb, NFTA_CT_HELPER_L4PROTO, priv->l4proto))
- 		return -1;
- 
--	if (priv->helper4 && priv->helper6)
--		family = NFPROTO_INET;
--	else if (priv->helper6)
--		family = NFPROTO_IPV6;
--	else
--		family = NFPROTO_IPV4;
+ 	crypto_cipher_set_flags(fallback,
+ 				crypto_cipher_get_flags((struct
+--- a/drivers/crypto/vmx/aes_cbc.c
++++ b/drivers/crypto/vmx/aes_cbc.c
+@@ -52,9 +52,6 @@ static int p8_aes_cbc_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-		crypto_skcipher_driver_name(fallback));
 -
- 	if (nla_put_be16(skb, NFTA_CT_HELPER_L3PROTO, htons(family)))
- 		return -1;
  
+ 	crypto_skcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/aes_ctr.c
++++ b/drivers/crypto/vmx/aes_ctr.c
+@@ -50,8 +50,6 @@ static int p8_aes_ctr_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-		crypto_skcipher_driver_name(fallback));
+ 
+ 	crypto_skcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/ghash.c
++++ b/drivers/crypto/vmx/ghash.c
+@@ -64,8 +64,6 @@ static int p8_ghash_init_tfm(struct cryp
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name(crypto_shash_tfm(fallback)));
+ 
+ 	crypto_shash_set_flags(fallback,
+ 			       crypto_shash_get_flags((struct crypto_shash
 
 
