@@ -2,105 +2,85 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 862D4C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:49:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E8B59C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:52:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ED4B208DF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:49:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96335208E1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:52:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rCkm2iS0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2ED4B208DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QMRfpDT0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96335208E1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964860AbeFNQtd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:49:33 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:35416 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936054AbeFNQtb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:49:31 -0400
-Received: by mail-wr0-f193.google.com with SMTP id l10-v6so7179130wrn.2;
-        Thu, 14 Jun 2018 09:49:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JO1h1Ave1vC08Sk2Yb4+9TS8w5WJO2xCrmWr505QqfQ=;
-        b=rCkm2iS0Wx2RThbZEZtBxwicvMiZAWDndGCoNwJVBktaKpRqNOAUfvAg6TDddg/s45
-         ramszufmuvohRpjDpW44Bm44zE2ofSU/3SZmqJc0RwwDm8Low9PHduDb5cN+PaNBAZRU
-         lWJZ7j5lg4SVoxPJhAPL7zKiVJu+pzwQBxxMi8+TgpBeDw1HAateaAVSCXp3/g0mVJ/p
-         Xivrb0YBT6gkSq+rB0muF9hSTYpB6XqlCVO1RP+GcXCPcTKDanXF+J7oKZ4xF3CRxPUi
-         Nr4rv0Njs1dTZwUFHzdDbo1UL9wXajnRZA2ewplFwMOt1VGUmg9F2D2AGTQi0L+e/tCX
-         TZyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JO1h1Ave1vC08Sk2Yb4+9TS8w5WJO2xCrmWr505QqfQ=;
-        b=LeVkQJhoGGx1v5Ti2y+fYukNH6HcPsrIWRnRQsKlv5yK0qinzQ8EzRmQtTRnVeXZqg
-         ypCbz1P8N0V5od9z+bDDyF5U4Z2EbmGQIMz7ULWOIPIpP3f9RsLIgP/nRIGhUSeZZvB7
-         60N5O+CxuS1t6dDpKlxU3/JRVIG9l63JDacbxE1iLs4GRy/qloaMn+pdIxvTjfEg0Bry
-         vu5Tz2tWgZt4j6L1dBavOGUzCg98pTxrxBIKxSwW3+BSWh9aeHD//iScva36YVeHh5bV
-         ToJggVJCddmcCt9Dfn617QzA1Y/gJrxiVKtrSGb/a00t80zudTKdy2ZEb6hvPzsKTH9R
-         MJuA==
-X-Gm-Message-State: APt69E0KpfBJ9rKm++Wfq2+u9t2fP9S0dUNRF5u8dMbf7FKrFI+B9yHG
-        0gx2KdHmAKJDV87CmM7/IFY=
-X-Google-Smtp-Source: ADUXVKJ0wsNlzVAzoQfruYtHrzd07OpptEVuiD+Ed+pBznSIvBClgQeoMPa3XJc7rVMR4PkaFC27QQ==
-X-Received: by 2002:adf:c70e:: with SMTP id k14-v6mr2815937wrg.16.1528994970056;
-        Thu, 14 Jun 2018 09:49:30 -0700 (PDT)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id p196-v6sm7443742wmb.20.2018.06.14.09.49.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Jun 2018 09:49:29 -0700 (PDT)
-Date:   Thu, 14 Jun 2018 09:49:27 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S964867AbeFNQwJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 12:52:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755166AbeFNQwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:52:08 -0400
+Received: from localhost (unknown [37.171.154.205])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9F722086A;
+        Thu, 14 Jun 2018 16:52:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528995127;
+        bh=zST1so8AhMXUmwhNYa55SdkkwIEPPTYi/gQbCczVR/Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=QMRfpDT0jvlGNdE1dkMRXNDD1GSuwRd2pUqyWGpEuTjVqIyAXPFT10cl8fwLUq2Xl
+         fi+HaWB247J7umAyla56KaAdEIHKLCiZjxoQ5DK4QC/Lq0ePR40MjpsV5UjGFCzpXq
+         nbj3+r64pYZng4joCypTqqM1Ua6HEiM5Tk4BbIvw=
+Date:   Thu, 14 Jun 2018 18:51:44 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Nathan Chancellor <natechancellor@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
         patches@kernelci.org, ben.hutchings@codethink.co.uk,
         lkft-triage@lists.linaro.org, stable@vger.kernel.org
 Subject: Re: [PATCH 4.9 00/30] 4.9.109-stable review
-Message-ID: <20180614164927.GA19754@flashbox>
+Message-ID: <20180614165144.GB30224@kroah.com>
 References: <20180614132600.255515394@linuxfoundation.org>
+ <20180614164927.GA19754@flashbox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
+In-Reply-To: <20180614164927.GA19754@flashbox>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 04:04:41PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.9.109 release.
-> There are 30 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Thu, Jun 14, 2018 at 09:49:27AM -0700, Nathan Chancellor wrote:
+> On Thu, Jun 14, 2018 at 04:04:41PM +0200, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 4.9.109 release.
+> > There are 30 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> > 
+> > Responses should be made by Sat Jun 16 13:25:48 UTC 2018.
+> > Anything received after that time might be too late.
+> > 
+> > The whole patch series can be found in one patch at:
+> > 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.109-rc1.gz
+> > or in the git tree and branch at:
+> > 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> > and the diffstat can be found below.
+> > 
+> > thanks,
+> > 
+> > greg k-h
+> > 
 > 
-> Responses should be made by Sat Jun 16 13:25:48 UTC 2018.
-> Anything received after that time might be too late.
+> Merged, compiled with -Werror, and installed onto my OnePlus 6.
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.109-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+> No initial issues noticed in dmesg or general usage.
 
-Merged, compiled with -Werror, and installed onto my OnePlus 6.
+Wonderful, thanks for the quick testing and letting me know.
 
-No initial issues noticed in dmesg or general usage.
-
-Thanks!
-Nathan
+greg k-h
