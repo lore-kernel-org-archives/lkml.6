@@ -2,148 +2,102 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4FB58C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:40:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CFFC1C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:41:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05E24208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:40:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="qSbj5Lyh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05E24208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id 90AB8208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:41:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90AB8208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965754AbeFNOkp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:40:45 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:29581 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965517AbeFNOkk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:40:40 -0400
-Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id w5EEdw8p010795;
-        Thu, 14 Jun 2018 23:40:01 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w5EEdw8p010795
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528987202;
-        bh=3wPVYxP/Exm0IGHbViIYakieZPwAPwX6dlVC33a42To=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qSbj5LyhPVrLZB9sYyDjeSrrmyaD/f4i+BGGP1rye8Vo0LBAzqqwoAc1cAOrCO6Mf
-         3P9WQKGZh32xL35Q7FJacVcxfMoz0b6Ywe1ynSAirvoBp+WZhkar6jBA/ZRIUDZQwx
-         W41s5eUM4HD0bmNqkkPVasLt2GUf5zv4MUnE6HULOlPesQMDEEyiUX5PNG9WBqu6x7
-         FEcKKtPECqKfiWVYJiWz6J+oCOvLf7Cj3oArQ8gpW/lCPiqDsU7m8evTV/x4ydc2Lk
-         /09QepPIfro9LlwSHbpw+uw4IWuPahnKiuPDz2w6J8c8IVeSHJz0oUqVS8W4Yhgxcp
-         Eco5ztRUluf9g==
-X-Nifty-SrcIP: [125.199.20.195]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-        "David S . Miller" <davem@davemloft.net>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: [PATCH v2 3/3] bpfilter: check compiler capability in Kconfig
-Date:   Thu, 14 Jun 2018 23:39:32 +0900
-Message-Id: <1528987172-19810-4-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
+        id S965329AbeFNOlv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:41:51 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964868AbeFNOlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:41:49 -0400
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B90424070484;
+        Thu, 14 Jun 2018 14:41:48 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-117-97.ams2.redhat.com [10.36.117.97])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 815F92166BB2;
+        Thu, 14 Jun 2018 14:41:47 +0000 (UTC)
+Subject: Re: Restartable Sequences system call merged into Linux
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, carlos <carlos@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>
+References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
+ <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
+ <20180614122759.GB8798@amd>
+ <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com>
+ <20180614132557.GA15201@amd>
+ <956816108.13001.1528983496098.JavaMail.zimbra@efficios.com>
+ <20180614134959.GA4084@amd> <48a0d905-2568-51b8-80c9-a20ecaa25f9b@redhat.com>
+ <263666353.13077.1528986978282.JavaMail.zimbra@efficios.com>
+From:   Florian Weimer <fweimer@redhat.com>
+Message-ID: <21eae301-50ff-e95a-f3c7-dedcf2f66842@redhat.com>
+Date:   Thu, 14 Jun 2018 16:41:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <263666353.13077.1528986978282.JavaMail.zimbra@efficios.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 14 Jun 2018 14:41:48 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 14 Jun 2018 14:41:48 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-With the brand-new syntax extension of Kconfig, we can directly
-check the compiler capability in the configuration phase.
+On 06/14/2018 04:36 PM, Mathieu Desnoyers wrote:
+> ----- On Jun 14, 2018, at 10:00 AM, Florian Weimer fweimer@redhat.com wrote:
+> 
+>> On 06/14/2018 03:49 PM, Pavel Machek wrote:
+>>> Hi!
+>>>
+>>>>>> - rseq_preempt(): on preemption, the scheduler sets the TIF_NOTIFY_RESUME thread
+>>>>>>     flag, so rseq_handle_notify_resume() can check whether it's in a rseq critical
+>>>>>>     section when returning to user-space,
+>>>>>> - rseq_signal_deliver(): on signal delivery, rseq_handle_notify_resume() checks
+>>>>>>     whether it's in a rseq critical section,
+>>>>>> - rseq_migrate: on migration, the scheduler sets TIF_NOTIFY_RESUME as well,
+>>>>>
+>>>>> Yes, this is not likely to be noticeable.
+>>>>>
+>>>>> But the proposal wanted to add a syscall to thread creation, right?
+>>>>> And I believe that may be noticeable.
+>>>>
+>>>> Fair point! Do we have a standard benchmark that would stress this ?
+>>>
+>>> Web server performance benchmarks basically test clone() performance
+>>> in many cases.
+>>
+>> Isn't that fork?  I expect that the rseq arena is inherited on fork and
+>> fork-type clone, otherwise it's going to be painful.
+> 
+> On fork or clone creating a new process, the rseq tls area is inherited
+> from the thread that does the fork syscall.
+> 
+> On creation of a new thread with clone, there is no such inheritance.
 
-If the cc-can-link.sh fails, the BPFILTER_UMH is automatically
-hidden by the dependency.
+Makes sense.  So fork-based (web) servers will not be impacted by the 
+additional system call, and thread-based servers likely use a thread 
+pool anyway.  I'm not really concerned about the additional system call 
+here.
 
-I deleted 'default n', which is no-op.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
-Changes in v2:
-  - newly added
-
- Makefile               | 5 -----
- net/Makefile           | 4 ----
- net/bpfilter/Kconfig   | 2 +-
- scripts/cc-can-link.sh | 2 +-
- 4 files changed, 2 insertions(+), 11 deletions(-)
-
-diff --git a/Makefile b/Makefile
-index 8a26b59..9ada673 100644
---- a/Makefile
-+++ b/Makefile
-@@ -507,11 +507,6 @@ ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/gcc-goto.sh $(CC) $(KBUILD_CFLA
-   KBUILD_AFLAGS += -DCC_HAVE_ASM_GOTO
- endif
- 
--ifeq ($(shell $(CONFIG_SHELL) $(srctree)/scripts/cc-can-link.sh $(CC)), y)
--  CC_CAN_LINK := y
--  export CC_CAN_LINK
--endif
--
- # The expansion should be delayed until arch/$(SRCARCH)/Makefile is included.
- # Some architectures define CROSS_COMPILE in arch/$(SRCARCH)/Makefile.
- # CC_VERSION_TEXT is referenced from Kconfig (so it needs export),
-diff --git a/net/Makefile b/net/Makefile
-index 13ec0d5..bdaf539 100644
---- a/net/Makefile
-+++ b/net/Makefile
-@@ -20,11 +20,7 @@ obj-$(CONFIG_TLS)		+= tls/
- obj-$(CONFIG_XFRM)		+= xfrm/
- obj-$(CONFIG_UNIX)		+= unix/
- obj-$(CONFIG_NET)		+= ipv6/
--ifneq ($(CC_CAN_LINK),y)
--$(warning CC cannot link executables. Skipping bpfilter.)
--else
- obj-$(CONFIG_BPFILTER)		+= bpfilter/
--endif
- obj-$(CONFIG_PACKET)		+= packet/
- obj-$(CONFIG_NET_KEY)		+= key/
- obj-$(CONFIG_BRIDGE)		+= bridge/
-diff --git a/net/bpfilter/Kconfig b/net/bpfilter/Kconfig
-index a948b07..76deb66 100644
---- a/net/bpfilter/Kconfig
-+++ b/net/bpfilter/Kconfig
-@@ -1,6 +1,5 @@
- menuconfig BPFILTER
- 	bool "BPF based packet filtering framework (BPFILTER)"
--	default n
- 	depends on NET && BPF && INET
- 	help
- 	  This builds experimental bpfilter framework that is aiming to
-@@ -9,6 +8,7 @@ menuconfig BPFILTER
- if BPFILTER
- config BPFILTER_UMH
- 	tristate "bpfilter kernel module with user mode helper"
-+	depends on $(success,$(srctree)/scripts/cc-can-link.sh $(CC))
- 	default m
- 	help
- 	  This builds bpfilter kernel module with embedded user mode helper
-diff --git a/scripts/cc-can-link.sh b/scripts/cc-can-link.sh
-index 208eb28..6efcead 100755
---- a/scripts/cc-can-link.sh
-+++ b/scripts/cc-can-link.sh
-@@ -1,7 +1,7 @@
- #!/bin/sh
- # SPDX-License-Identifier: GPL-2.0
- 
--cat << "END" | $@ -x c - -o /dev/null >/dev/null 2>&1 && echo "y"
-+cat << "END" | $@ -x c - -o /dev/null >/dev/null 2>&1
- #include <stdio.h>
- int main(void)
- {
--- 
-2.7.4
-
+Thanks,
+Florian
