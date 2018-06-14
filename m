@@ -3,129 +3,302 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1C72BC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 04:19:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A4E92C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:04:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C541920864
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 04:19:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C541920864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=the-dreams.de
+	by mail.kernel.org (Postfix) with ESMTP id 46657208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:04:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46657208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751893AbeFNETu (ORCPT
+        id S1752651AbeFNFBT convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 00:19:50 -0400
-Received: from sauhun.de ([88.99.104.3]:48956 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751287AbeFNETs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 00:19:48 -0400
-Received: from localhost (softbank126012118084.bbtec.net [126.12.118.84])
-        by pokefinder.org (Postfix) with ESMTPSA id 4591954006A;
-        Thu, 14 Jun 2018 06:19:45 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 13:19:42 +0900
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180614041941.4i2cadzoevujmzha@ninjato>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
- <20180330074751.25987-2-boris.brezillon@bootlin.com>
+        Thu, 14 Jun 2018 01:01:19 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:58981 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751872AbeFNFBR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 01:01:17 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w5E50dhQ024883
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Thu, 14 Jun 2018 14:00:39 +0900
+Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w5E50dZ0022582;
+        Thu, 14 Jun 2018 14:00:39 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w5E4xr7U023109;
+        Thu, 14 Jun 2018 14:00:39 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-1161287; Thu, 14 Jun 2018 13:56:32 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0319.002; Thu,
+ 14 Jun 2018 13:56:31 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     Oscar Salvador <osalvador@techadventures.net>
+CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Bob Picco <bob.picco@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH v1] mm: zero remaining unavailable struct pages (Re:
+ kernel panic in reading /proc/kpageflags when enabling RAM-simulated PMEM)
+Thread-Topic: [PATCH v1] mm: zero remaining unavailable struct pages (Re:
+ kernel panic in reading /proc/kpageflags when enabling RAM-simulated PMEM)
+Thread-Index: AQHUAtkgPBcB1vgLY0uIXLgyPjVYAKRdR84AgAFTvQA=
+Date:   Thu, 14 Jun 2018 04:56:30 +0000
+Message-ID: <20180614045630.GA17860@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180606080408.GA31794@techadventures.net>
+ <20180606085319.GA32052@techadventures.net>
+ <20180606090630.GA27065@hori1.linux.bs1.fc.nec.co.jp>
+ <20180606092405.GA6562@hori1.linux.bs1.fc.nec.co.jp>
+ <20180607062218.GB22554@hori1.linux.bs1.fc.nec.co.jp>
+ <20180607065940.GA7334@techadventures.net>
+ <20180607094921.GA8545@techadventures.net>
+ <20180607100256.GA9129@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613084032.GA32428@techadventures.net>
+In-Reply-To: <20180613084032.GA32428@techadventures.net>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.81]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <198CEC3F902121409996458ABC1987F2@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="st33g2u2nspyzp4d"
-Content-Disposition: inline
-In-Reply-To: <20180330074751.25987-2-boris.brezillon@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Jun 13, 2018 at 10:40:32AM +0200, Oscar Salvador wrote:
+> On Wed, Jun 13, 2018 at 05:41:08AM +0000, Naoya Horiguchi wrote:
+> > Hi everyone, 
+> > 
+> > I wrote a patch for this issue.
+> > There was a discussion about prechecking approach, but I finally found
+> > out it's hard to make change on memblock after numa_init, so I take
+> > another apporach (see patch description).
+> > 
+> > I'm glad if you check that it works for you.
+> > 
+> > Thanks,
+> > Naoya Horiguchi
+> > ---
+> > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > Date: Wed, 13 Jun 2018 12:43:27 +0900
+> > Subject: [PATCH] mm: zero remaining unavailable struct pages
+> > 
+> > There is a kernel panic that is triggered when reading /proc/kpageflags
+> > on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
+> > 
+> >   BUG: unable to handle kernel paging request at fffffffffffffffe
+> >   PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
+> >   Oops: 0000 [#1] SMP PTI
+> >   CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
+> >   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+> >   RIP: 0010:stable_page_flags+0x27/0x3c0
+> >   Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
+> >   RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
+> >   RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
+> >   RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
+> >   RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
+> >   R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
+> >   R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
+> >   FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
+> >   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> >   CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
+> >   Call Trace:
+> >    kpageflags_read+0xc7/0x120
+> >    proc_reg_read+0x3c/0x60
+> >    __vfs_read+0x36/0x170
+> >    vfs_read+0x89/0x130
+> >    ksys_pread64+0x71/0x90
+> >    do_syscall_64+0x5b/0x160
+> >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> >   RIP: 0033:0x7efc42e75e23
+> >   Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+> > 
+> > According to kernel bisection, this problem became visible due to commit
+> > f7f99100d8d9 which changes how struct pages are initialized.
+> > 
+> > Memblock layout affects the pfn ranges covered by node/zone. Consider
+> > that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
+> > the default (no memmap= given) memblock layout is like below:
+> > 
+> >   MEMBLOCK configuration:
+> >    memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
+> >    memory.cnt  = 0x4
+> >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+> >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+> >    memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
+> >    memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+> >    ...
+> > 
+> > If you give memmap=1G!4G (so it just covers memory[0x2]),
+> > the range [0x100000000-0x13fffffff] is gone:
+> > 
+> >   MEMBLOCK configuration:
+> >    memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
+> >    memory.cnt  = 0x3
+> >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+> >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+> >    memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+> >    ...
+> > 
+> > This causes shrinking node 0's pfn range because it is calculated by
+> > the address range of memblock.memory. So some of struct pages in the
+> > gap range are left uninitialized.
+> > 
+> > We have a function zero_resv_unavail() which does zeroing the struct
+> > pages outside memblock.memory, but currently it covers only the reserved
+> > unavailable range (i.e. memblock.memory && !memblock.reserved).
+> > This patch extends it to cover all unavailable range, which fixes
+> > the reported issue.
+> > 
+> > Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+> > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > ---
+> >  include/linux/memblock.h | 16 ----------------
+> >  mm/page_alloc.c          | 33 ++++++++++++++++++++++++---------
+> >  2 files changed, 24 insertions(+), 25 deletions(-)
+> > 
+> > diff --git a/include/linux/memblock.h b/include/linux/memblock.h
+> > index ca59883c8364..f191e51c5d2a 100644
+> > --- a/include/linux/memblock.h
+> > +++ b/include/linux/memblock.h
+> > @@ -236,22 +236,6 @@ void __next_mem_pfn_range(int *idx, int nid, unsigned long *out_start_pfn,
+> >  	for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,	\
+> >  			       nid, flags, p_start, p_end, p_nid)
+> >  
+> > -/**
+> > - * for_each_resv_unavail_range - iterate through reserved and unavailable memory
+> > - * @i: u64 used as loop variable
+> > - * @flags: pick from blocks based on memory attributes
+> > - * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
+> > - * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
+> > - *
+> > - * Walks over unavailable but reserved (reserved && !memory) areas of memblock.
+> > - * Available as soon as memblock is initialized.
+> > - * Note: because this memory does not belong to any physical node, flags and
+> > - * nid arguments do not make sense and thus not exported as arguments.
+> > - */
+> > -#define for_each_resv_unavail_range(i, p_start, p_end)			\
+> > -	for_each_mem_range(i, &memblock.reserved, &memblock.memory,	\
+> > -			   NUMA_NO_NODE, MEMBLOCK_NONE, p_start, p_end, NULL)
+> > -
+> >  static inline void memblock_set_region_flags(struct memblock_region *r,
+> >  					     unsigned long flags)
+> >  {
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 1772513358e9..098f7c2c127b 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -6487,25 +6487,40 @@ void __paginginit free_area_init_node(int nid, unsigned long *zones_size,
+> >   * struct pages which are reserved in memblock allocator and their fields
+> >   * may be accessed (for example page_to_pfn() on some configuration accesses
+> >   * flags). We must explicitly zero those struct pages.
+> > + *
+> > + * This function also addresses a similar issue where struct pages are left
+> > + * uninitialized because the physical address range is not covered by
+> > + * memblock.memory or memblock.reserved. That could happen when memblock
+> > + * layout is manually configured via memmap=.
+> >   */
+> >  void __paginginit zero_resv_unavail(void)
+> >  {
+> >  	phys_addr_t start, end;
+> >  	unsigned long pfn;
+> >  	u64 i, pgcnt;
+> > +	phys_addr_t next = 0;
+> >  
+> >  	/*
+> > -	 * Loop through ranges that are reserved, but do not have reported
+> > -	 * physical memory backing.
+> > +	 * Loop through unavailable ranges not covered by memblock.memory.
+> >  	 */
+> >  	pgcnt = 0;
+> > -	for_each_resv_unavail_range(i, &start, &end) {
+> > -		for (pfn = PFN_DOWN(start); pfn < PFN_UP(end); pfn++) {
+> > -			if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
+> > -				continue;
+> > -			mm_zero_struct_page(pfn_to_page(pfn));
+> > -			pgcnt++;
+> > +	for_each_mem_range(i, &memblock.memory, NULL,
+> > +			NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end, NULL) {
+> > +		if (next < start) {
+> > +			for (pfn = PFN_DOWN(next); pfn < PFN_UP(start); pfn++) {
+> > +				if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
+> > +					continue;
+> > +				mm_zero_struct_page(pfn_to_page(pfn));
+> > +				pgcnt++;
+> > +			}
+> >  		}
+> > +		next = end;
+> > +	}
+> > +	for (pfn = PFN_DOWN(next); pfn < max_pfn; pfn++) {
+> > +		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
+> > +			continue;
+> > +		mm_zero_struct_page(pfn_to_page(pfn));
+> > +		pgcnt++;
+> >  	}
+> 
+> Hi Naoya,
+> 
+> Is the second loop really needed?
+> 
+> AFAIK, max_pfn is set to the latest pfn of E820_TYPE_RAM type, and since
+> you are going through all memory ranges within memblock.memory, and then assigning next = end,
+> I think that at the time we are done with the first loop, next will always point
+> to max_pfn (I only checked it for x86).
+> Am I right o did I overlooked something?
 
---st33g2u2nspyzp4d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Oscar,
 
-Hi Boris,
+Thank you for the comment.
+Some archs do set max_pfn to end pfn of E820_TYPE_RAM, but some archs
+(s390, arm, mips, ...) seem to determine max_pfn in their own way.
+I'm not sure this problem is visible in such archs.
 
-> +/**
-> + * struct i3c_priv_xfer - I3C SDR private transfer
-> + * @rnw: encodes the transfer direction. true for a read, false for a write
-> + * @len: transfer length in bytes of the transfer
-> + * @data: input/output buffer
-> + */
-> +struct i3c_priv_xfer {
-> +	bool rnw;
-> +	u16 len;
-> +	union {
-> +		void *in;
-> +		const void *out;
-> +	} data;
+> 
+> Besides that, I did some tests and I can no longer reproduce the error.
+> So feel free to add: 
+> 
+> Tested-by: Oscar Salvador <osalvador@suse.de>
 
-So, this is probably where most payloads end up?
+Thank you!
+- Naoya
 
-I didn't notice any sign of DMA in these patches, but given my
-experiences, DMA will come sooner or later. And in I2C, this was
-problematic because then a lot of drivers were in the wild getting their
-buffers from everywhere (stack!). We now have an opt-in approach to mark
-buffers as DMA-safe.
-
-I don't know if typical I3C transfers will be similar to I2C with
-usually small payloads where DMA usually makes not much sense. Yet, I
-think, that it might be a good idea to think about how this shall be
-handled with I3C right away. Maybe simply enforcing buffers to be
-DMA-safe. Or whatever.
-
-A clear rule on that might save you hazzle later.
-
-Regards,
-
-   Wolfram
-
-
---st33g2u2nspyzp4d
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAlsh7NkACgkQFA3kzBSg
-KbYaJQ//WvuZkJrJ/IluxoHlKtN048uYvkfLNZCpddYE5p7JfxrreeOyn/EMQYUX
-ftikOAIWzo93LpPAgeKqHTD6FCMgfUDfB7RWZFJeRuMLZ/cOdDbsTA0Y/1S76SEl
-LEXebvQYhHd3YJsqDDGmyhCoXGtf/1n7tEJ4ax4NdJVMx0QGXUWuAlQAs2QAzNYk
-BzDfHEIbKc9469T5naQrQIVoaJLUqLCXs2RBzRnMDr8hl7wRtMckq64U28CiTNuz
-Hu/yh7axdg0EIqy/famCHzsbfg8Z5GXig8PNEBG5fCf0vL4aMap+56siQHsP4UgV
-bQgcIPSxqWcYBy2YVU4aiaLUdSYsAs/qympVnrWwRa6Lfy1z/JxPIs+7bI6TSER4
-OlMhrTNEiyiZbP5uj4LF+JlmFwYthzxwM9/j8ae6ZMsry6nQ5VFTYyUjOSUis4bQ
-05xrq8eZ1LDI6Kex4S9kY9OaN0bDo2u8xZv5yVqvbJaJ8dsD7uul94oGJPlO2jGm
-rUErZxjH8Q3u3QeQIyyZWRZlX1dIv+feeLbjRXlPqcdQfPcjbrv98T6FsuYqttzs
-FpA6wa1kbUZCchsuaxCvZu+5ja3OkYieYJ4keQlvO3EVzGnl3b0rcrOoSktr4ONs
-yBoV6WvF7+a/c+2ldQvi3/qaVu350CbdLowLWvX5yIFWtCOSkGM=
-=ojn/
------END PGP SIGNATURE-----
-
---st33g2u2nspyzp4d--
+> 
+> >  
+> >  	/*
+> > @@ -6516,7 +6531,7 @@ void __paginginit zero_resv_unavail(void)
+> >  	 * this code can be removed.
+> >  	 */
+> >  	if (pgcnt)
+> > -		pr_info("Reserved but unavailable: %lld pages", pgcnt);
+> > +		pr_info("Zeroed struct page in unavailable ranges: %lld pages", pgcnt);
+> >  }
+> >  #endif /* CONFIG_HAVE_MEMBLOCK */
+> >  
+> > -- 
+> > 2.7.4
+> > 
+> 
+> Thanks
+> 
+> Best Regards
+> Oscar Salvador
+> 
