@@ -1,49 +1,65 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3B6F0C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:44:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A0981C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:44:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E21E4208DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:44:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57750208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:44:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PIVilJSE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E21E4208DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cR0x6+iK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57750208CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965348AbeFNOoG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:44:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49202 "EHLO mail.kernel.org"
+        id S1755328AbeFNOof (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:44:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965263AbeFNOIc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:08:32 -0400
+        id S965230AbeFNOI3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:08:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 10FBC208DA;
-        Thu, 14 Jun 2018 14:08:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48252208E8;
+        Thu, 14 Jun 2018 14:08:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985311;
-        bh=u99f7FQX4RLWv0vVU4c1bouo9y2GOYssgvULhRCge5E=;
+        s=default; t=1528985308;
+        bh=02oxDD70yEBFpppCBsOLZ3kMVlUycg+0nmr/OmHG+5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PIVilJSEBqfb4mMcDurC4rnjATDpNPw4fsTZI7pHmoBOVBxXic/rH4axYWkURCeFj
-         rrpYC/vpq55cAYlCLFKHdBrtCwsETlDye5azGmnU9gVGuC5aiu9xZcipz5F7TdEVBO
-         5IEByj3uVmfy2FeE5XDnnaz4gim2PmJSty9GRSNE=
+        b=cR0x6+iKeY6IGvmt2WqZF4v6jqBw/LGJ3bLpg4yGoQbUm1U5LpadpHyJxVxMxNSaI
+         6WgxQ3YeKZ0gaLznrJlp28ncnX2x2vCP79Vd1iKCeYmTcS2xZ5wng/oHm9Z1IJ0lFP
+         fm7/M7le6ZrcxGhGKBK2ySPF4TfzHVLeG/qZ533Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Genoud <richard.genoud@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 4.16 26/43] tty/serial: atmel: use port->name as name in request_irq()
-Date:   Thu, 14 Jun 2018 16:04:30 +0200
-Message-Id: <20180614132137.001943081@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.16 25/43] serial: sh-sci: Stop using printk format %pCr
+Date:   Thu, 14 Jun 2018 16:04:29 +0200
+Message-Id: <20180614132136.880991791@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
 References: <20180614132135.111973468@linuxfoundation.org>
@@ -60,63 +76,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 9594b5be7ec110ed11acec58fa94f3f293668c85 upstream.
+commit d63c16f8e1ab761775275adcf54f4bef7c330295 upstream.
 
-I was puzzled while looking at /proc/interrupts and random things showed
-up between reboots. This occurred more often but I realised it later. The
-"correct" output should be:
-|38:      11861  atmel-aic5   2 Level     ttyS0
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
 
-but I saw sometimes
-|38:       6426  atmel-aic5   2 Level     tty1
+Replace it by open-coding the operation.  This is safe here, as the code
+runs in task context.
 
-and accounted it wrongly as correct. This is use after free and the
-former example randomly got the "old" pointer which pointed to the same
-content. With SLAB_FREELIST_RANDOM and HARDENED I even got
-|38:       7067  atmel-aic5   2 Level     E=Started User Manager for UID 0
-
-or other nonsense.
-As it turns out the tty, pointer that is accessed in atmel_startup(), is
-freed() before atmel_shutdown(). It seems to happen quite often that the
-tty for ttyS0 is allocated and freed while ->shutdown is not invoked. I
-don't do anything special - just a systemd boot :)
-
-Use dev_name(&pdev->dev) as the IRQ name for request_irq(). This exists
-as long as the driver is loaded so no use-after-free here.
-
-Cc: stable@vger.kernel.org
-Fixes: 761ed4a94582 ("tty: serial_core: convert uart_close to use tty_port_close")
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Link: http://lkml.kernel.org/r/1527845302-12159-4-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.5+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/atmel_serial.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/tty/serial/sh-sci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1757,7 +1757,6 @@ static int atmel_startup(struct uart_por
- {
- 	struct platform_device *pdev = to_platform_device(port->dev);
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
--	struct tty_struct *tty = port->state->port.tty;
- 	int retval;
- 
- 	/*
-@@ -1772,8 +1771,8 @@ static int atmel_startup(struct uart_por
- 	 * Allocate the IRQ
- 	 */
- 	retval = request_irq(port->irq, atmel_interrupt,
--			IRQF_SHARED | IRQF_COND_SUSPEND,
--			tty ? tty->name : "atmel_serial", port);
-+			     IRQF_SHARED | IRQF_COND_SUSPEND,
-+			     dev_name(&pdev->dev), port);
- 	if (retval) {
- 		dev_err(port->dev, "atmel_startup - Can't get irq\n");
- 		return retval;
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2691,8 +2691,8 @@ found:
+ 			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
+ 				PTR_ERR(clk));
+ 		else
+-			dev_dbg(dev, "clk %s is %pC rate %pCr\n", clk_names[i],
+-				clk, clk);
++			dev_dbg(dev, "clk %s is %pC rate %lu\n", clk_names[i],
++				clk, clk_get_rate(clk));
+ 		sci_port->clks[i] = IS_ERR(clk) ? NULL : clk;
+ 	}
+ 	return 0;
 
 
