@@ -2,184 +2,233 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E232BC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:10:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 188C2C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97664208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:10:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97664208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AA833208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:12:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FOFxImtG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA833208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755368AbeFNTK2 (ORCPT
+        id S1755339AbeFNTMO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 15:10:28 -0400
-Received: from mga14.intel.com ([192.55.52.115]:43197 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754660AbeFNTK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 15:10:27 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 12:10:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,224,1526367600"; 
-   d="scan'208";a="47170317"
-Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
-  by fmsmga007.fm.intel.com with ESMTP; 14 Jun 2018 12:10:25 -0700
-Received: from kbuild by bee with local (Exim 4.84_2)
-        (envelope-from <lkp@intel.com>)
-        id 1fTXdY-000QzQ-U7; Fri, 15 Jun 2018 03:10:24 +0800
-Date:   Fri, 15 Jun 2018 03:24:19 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Lianbo Jiang <lijiang@redhat.com>
-Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org, thomas.lendacky@amd.com,
-        dyoung@redhat.com
-Subject: Re: [PATCH 2/2 V2] Support kdump when AMD secure memory encryption
- is active
-Message-ID: <201806150155.KM1fUaJB%fengguang.wu@intel.com>
-References: <20180614084748.9617-3-lijiang@redhat.com>
+        Thu, 14 Jun 2018 15:12:14 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:35022 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754660AbeFNTMM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 15:12:12 -0400
+Received: by mail-lf0-f66.google.com with SMTP id i15-v6so11095946lfc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=HJbSyhUji9dGbrWW26NRJkHbkfTMZoBDZ84z57bU3Z0=;
+        b=FOFxImtGe1Rla+4TJMOvlMu1oB/3LHJvOfD43NS0rBVuQlEeUTgzrnQH3dhdaMTk2l
+         B1ptNe0MOc2pPW2Wae4rV66ZvBHZouWH5LhNIKAabwIhp4IKIiNY3iiom+mFYiXwuHj7
+         U6c2Ug4HazoCvAbMpuZl54l6FlKzD6u19b0fN/eFc2SBsIkPDBa5dpiXSJzmVWgJhXEx
+         oVWveS/zF3PN/SVN7O1fs2uuw4r+02qxiERfGIpOtHdrwhN3zafItOn6rbEfGUrVZXVT
+         vMHQxLBHOnhlhDFRgyyfLv4bc79ATHFKQUBo/4HNnZ/VJAyu2Kx0MD/n9P+9/2U5nxJk
+         B4sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=HJbSyhUji9dGbrWW26NRJkHbkfTMZoBDZ84z57bU3Z0=;
+        b=SGhsYX91fp381OaSYu20bykA2wYn0Xa4hIXQ3CKxQlVO8EVyTOhqc72Vo7BuIjvZ06
+         bowH/0v5yMc51uXZ+8RBIlg8qVpId5oA5EkWhBa0uWnD6PBq4OQS3lNnpJ9I3k6mPGz/
+         odMQ6caqkFK83zgzxvvg2S/ByetOYbWeuyhk+NneIYNI5Q/C8dp8BO/SCTEatsw0ymfw
+         ELF10HRm6bMW2XPMT+ubuHG4oAtbbqB4YuxPhP4RTPu3VwHIku3M43pRMCdghZiA0evY
+         5oR3SFO6b3mw+kEC0XL9sPl9KgxBYrbFSgxz+k0/c4rjY6QEicnAsT0sfoaJLZswNee3
+         pVsw==
+X-Gm-Message-State: APt69E3XN9lwt2qv/9V/aqBm5xvsPdQ+40IQOkwLy2xX6GPbBgFDSPyF
+        fQ5MOCUuncs1NVmOTlMbG8IYP4CLhiP1ORKTqTM=
+X-Google-Smtp-Source: ADUXVKIniOQyJvzgD+VmdSnfsRuUQzusqIvNUQN8vUjnUMPZYpaOVCUUFfceAyCLuVidmvjOuvEKTL59Z/PhEGMsFCA=
+X-Received: by 2002:a19:e117:: with SMTP id y23-v6mr6741794lfg.9.1529003531229;
+ Thu, 14 Jun 2018 12:12:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614084748.9617-3-lijiang@redhat.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: lkp@intel.com
-X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
+Received: by 2002:a19:2b43:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 12:12:10
+ -0700 (PDT)
+In-Reply-To: <CAFqt6za_3o-tQbYvH9ZetJtUcyM_ksHJasuUA=Z=RDtrYvwM9A@mail.gmail.com>
+References: <20180527004550.GA2263@jordon-HP-15-Notebook-PC> <CAFqt6za_3o-tQbYvH9ZetJtUcyM_ksHJasuUA=Z=RDtrYvwM9A@mail.gmail.com>
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+Date:   Fri, 15 Jun 2018 00:42:10 +0530
+Message-ID: <CAFqt6zaqxRShzb+87ySiwpiChGCEY+Q2uEyOK9MaW6Z15N73eQ@mail.gmail.com>
+Subject: Re: [PATCH v3] gpu: drm: gma500: Change return type to vm_fault_t
+To:     Matthew Wilcox <willy@infradead.org>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        airlied@linux.ie
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lianbo,
+On Mon, Jun 4, 2018 at 10:47 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Sun, May 27, 2018 at 6:15 AM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>> Use new return type vm_fault_t for fault handler. For
+>> now, this is just documenting that the function returns
+>> a VM_FAULT value rather than an errno. Once all instances
+>> are converted, vm_fault_t will become a distinct type.
+>>
+>> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+>>
+>> Previously vm_insert_{pfn,mixed} returns err which driver
+>> mapped into VM_FAULT_* type. The new function
+>> vmf_insert_{pfn,mixed} will replace this inefficiency by
+>> returning VM_FAULT_* type.
+>>
+>> vmf_error() is the newly introduce inline function
+>> in 4.17-rc6.
+>>
+>> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>> Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>> ---
+>> v2: updated the change log
+>>
+>> v3: Fixed kbuild error
+>>
+>>  drivers/gpu/drm/gma500/framebuffer.c | 14 +++++---------
+>>  drivers/gpu/drm/gma500/gem.c         | 27 ++++++++++-----------------
+>>  drivers/gpu/drm/gma500/psb_drv.h     |  3 ++-
+>>  3 files changed, 17 insertions(+), 27 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/gma500/framebuffer.c b/drivers/gpu/drm/gma500/framebuffer.c
+>> index cb0a2ae..632aadb 100644
+>> --- a/drivers/gpu/drm/gma500/framebuffer.c
+>> +++ b/drivers/gpu/drm/gma500/framebuffer.c
+>> @@ -111,7 +111,7 @@ static int psbfb_pan(struct fb_var_screeninfo *var, struct fb_info *info)
+>>          return 0;
+>>  }
+>>
+>> -static int psbfb_vm_fault(struct vm_fault *vmf)
+>> +static vm_fault_t psbfb_vm_fault(struct vm_fault *vmf)
+>>  {
+>>         struct vm_area_struct *vma = vmf->vma;
+>>         struct psb_framebuffer *psbfb = vma->vm_private_data;
+>> @@ -120,7 +120,7 @@ static int psbfb_vm_fault(struct vm_fault *vmf)
+>>         int page_num;
+>>         int i;
+>>         unsigned long address;
+>> -       int ret;
+>> +       vm_fault_t ret = VM_FAULT_SIGBUS;
+>>         unsigned long pfn;
+>>         unsigned long phys_addr = (unsigned long)dev_priv->stolen_base +
+>>                                   psbfb->gtt->offset;
+>> @@ -133,18 +133,14 @@ static int psbfb_vm_fault(struct vm_fault *vmf)
+>>         for (i = 0; i < page_num; i++) {
+>>                 pfn = (phys_addr >> PAGE_SHIFT);
+>>
+>> -               ret = vm_insert_mixed(vma, address,
+>> +               ret = vmf_insert_mixed(vma, address,
+>>                                 __pfn_to_pfn_t(pfn, PFN_DEV));
+>> -               if (unlikely((ret == -EBUSY) || (ret != 0 && i > 0)))
+>> +               if (unlikely(ret & VM_FAULT_ERROR))
+>>                         break;
+>> -               else if (unlikely(ret != 0)) {
+>> -                       ret = (ret == -ENOMEM) ? VM_FAULT_OOM : VM_FAULT_SIGBUS;
+>> -                       return ret;
+>> -               }
+>>                 address += PAGE_SIZE;
+>>                 phys_addr += PAGE_SIZE;
+>>         }
+>> -       return VM_FAULT_NOPAGE;
+>> +       return ret;
+>>  }
+>>
+>>  static void psbfb_vm_open(struct vm_area_struct *vma)
+>> diff --git a/drivers/gpu/drm/gma500/gem.c b/drivers/gpu/drm/gma500/gem.c
+>> index 1312397..e7be5c9 100644
+>> --- a/drivers/gpu/drm/gma500/gem.c
+>> +++ b/drivers/gpu/drm/gma500/gem.c
+>> @@ -134,12 +134,13 @@ int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>>   *     vma->vm_private_data points to the GEM object that is backing this
+>>   *     mapping.
+>>   */
+>> -int psb_gem_fault(struct vm_fault *vmf)
+>> +vm_fault_t psb_gem_fault(struct vm_fault *vmf)
+>>  {
+>>         struct vm_area_struct *vma = vmf->vma;
+>>         struct drm_gem_object *obj;
+>>         struct gtt_range *r;
+>> -       int ret;
+>> +       int err;
+>> +       vm_fault_t ret;
+>>         unsigned long pfn;
+>>         pgoff_t page_offset;
+>>         struct drm_device *dev;
+>> @@ -158,9 +159,10 @@ int psb_gem_fault(struct vm_fault *vmf)
+>>         /* For now the mmap pins the object and it stays pinned. As things
+>>            stand that will do us no harm */
+>>         if (r->mmapping == 0) {
+>> -               ret = psb_gtt_pin(r);
+>> -               if (ret < 0) {
+>> -                       dev_err(dev->dev, "gma500: pin failed: %d\n", ret);
+>> +               err = psb_gtt_pin(r);
+>> +               if (err < 0) {
+>> +                       dev_err(dev->dev, "gma500: pin failed: %d\n", err);
+>> +                       ret = vmf_error(err);
+>>                         goto fail;
+>>                 }
+>>                 r->mmapping = 1;
+>> @@ -175,18 +177,9 @@ int psb_gem_fault(struct vm_fault *vmf)
+>>                 pfn = (dev_priv->stolen_base + r->offset) >> PAGE_SHIFT;
+>>         else
+>>                 pfn = page_to_pfn(r->pages[page_offset]);
+>> -       ret = vm_insert_pfn(vma, vmf->address, pfn);
+>> -
+>> +       ret = vmf_insert_pfn(vma, vmf->address, pfn);
+>>  fail:
+>>         mutex_unlock(&dev_priv->mmap_mutex);
+>> -       switch (ret) {
+>> -       case 0:
+>> -       case -ERESTARTSYS:
+>> -       case -EINTR:
+>> -               return VM_FAULT_NOPAGE;
+>> -       case -ENOMEM:
+>> -               return VM_FAULT_OOM;
+>> -       default:
+>> -               return VM_FAULT_SIGBUS;
+>> -       }
+>> +
+>> +       return ret;
+>>  }
+>> diff --git a/drivers/gpu/drm/gma500/psb_drv.h b/drivers/gpu/drm/gma500/psb_drv.h
+>> index e8300f5..93d2f40 100644
+>> --- a/drivers/gpu/drm/gma500/psb_drv.h
+>> +++ b/drivers/gpu/drm/gma500/psb_drv.h
+>> @@ -21,6 +21,7 @@
+>>  #define _PSB_DRV_H_
+>>
+>>  #include <linux/kref.h>
+>> +#include <linux/mm_types.h>
+>>
+>>  #include <drm/drmP.h>
+>>  #include <drm/drm_global.h>
+>> @@ -749,7 +750,7 @@ extern int psb_gem_get_aperture(struct drm_device *dev, void *data,
+>>                         struct drm_file *file);
+>>  extern int psb_gem_dumb_create(struct drm_file *file, struct drm_device *dev,
+>>                         struct drm_mode_create_dumb *args);
+>> -extern int psb_gem_fault(struct vm_fault *vmf);
+>> +extern vm_fault_t psb_gem_fault(struct vm_fault *vmf);
+>>
+>>  /* psb_device.c */
+>>  extern const struct psb_ops psb_chip_ops;
+>> --
+>> 1.9.1
+>>
+>
+> If no comment, we would like to get this patch
+> in 4.18.
 
-Thank you for the patch! Perhaps something to improve:
-
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.17 next-20180614]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-
-url:    https://github.com/0day-ci/linux/commits/Lianbo-Jiang/Support-kdump-for-AMD-secure-memory-encryption-sme/20180614-164938
-reproduce:
-        # apt-get install sparse
-        make ARCH=x86_64 allmodconfig
-        make C=1 CF=-D__CHECK_ENDIAN__
-
-
-vim +904 drivers/iommu/amd_iommu_init.c
-
-   854	
-   855	
-   856	static bool copy_device_table(void)
-   857	{
-   858		u64 int_ctl, int_tab_len, entry = 0, last_entry = 0;
-   859		struct dev_table_entry *old_devtb = NULL;
-   860		u32 lo, hi, devid, old_devtb_size;
-   861		phys_addr_t old_devtb_phys;
-   862		struct amd_iommu *iommu;
-   863		u16 dom_id, dte_v, irq_v;
-   864		gfp_t gfp_flag;
-   865		u64 tmp;
-   866	
-   867		if (!amd_iommu_pre_enabled)
-   868			return false;
-   869	
-   870		pr_warn("Translation is already enabled - trying to copy translation structures\n");
-   871		for_each_iommu(iommu) {
-   872			/* All IOMMUs should use the same device table with the same size */
-   873			lo = readl(iommu->mmio_base + MMIO_DEV_TABLE_OFFSET);
-   874			hi = readl(iommu->mmio_base + MMIO_DEV_TABLE_OFFSET + 4);
-   875			entry = (((u64) hi) << 32) + lo;
-   876			if (last_entry && last_entry != entry) {
-   877				pr_err("IOMMU:%d should use the same dev table as others!\n",
-   878					iommu->index);
-   879				return false;
-   880			}
-   881			last_entry = entry;
-   882	
-   883			old_devtb_size = ((entry & ~PAGE_MASK) + 1) << 12;
-   884			if (old_devtb_size != dev_table_size) {
-   885				pr_err("The device table size of IOMMU:%d is not expected!\n",
-   886					iommu->index);
-   887				return false;
-   888			}
-   889		}
-   890	
-   891		old_devtb_phys = entry & PAGE_MASK;
-   892		/*
-   893		 *  When sme enable in the first kernel, old_devtb_phys includes the
-   894		 *  memory encryption mask(sme_me_mask), we must remove the memory
-   895		 *  encryption mask to obtain the true physical address in kdump mode.
-   896		 */
-   897		if (mem_encrypt_active() && is_kdump_kernel())
-   898			old_devtb_phys = __sme_clr(old_devtb_phys);
-   899		if (old_devtb_phys >= 0x100000000ULL) {
-   900			pr_err("The address of old device table is above 4G, not trustworthy!\n");
-   901			return false;
-   902		}
-   903		if (mem_encrypt_active() && is_kdump_kernel())
- > 904			old_devtb = (void *)ioremap_encrypted(old_devtb_phys,
-   905							     dev_table_size);
-   906		else
-   907			old_devtb = memremap(old_devtb_phys,
-   908					    dev_table_size, MEMREMAP_WB);
-   909		if (!old_devtb)
-   910			return false;
-   911	
-   912		gfp_flag = GFP_KERNEL | __GFP_ZERO | GFP_DMA32;
-   913		old_dev_tbl_cpy = (void *)__get_free_pages(gfp_flag,
-   914					get_order(dev_table_size));
-   915		if (old_dev_tbl_cpy == NULL) {
-   916			pr_err("Failed to allocate memory for copying old device table!\n");
-   917			return false;
-   918		}
-   919	
-   920		for (devid = 0; devid <= amd_iommu_last_bdf; ++devid) {
-   921			old_dev_tbl_cpy[devid] = old_devtb[devid];
-   922			dom_id = old_devtb[devid].data[1] & DEV_DOMID_MASK;
-   923			dte_v = old_devtb[devid].data[0] & DTE_FLAG_V;
-   924	
-   925			if (dte_v && dom_id) {
-   926				old_dev_tbl_cpy[devid].data[0] = old_devtb[devid].data[0];
-   927				old_dev_tbl_cpy[devid].data[1] = old_devtb[devid].data[1];
-   928				__set_bit(dom_id, amd_iommu_pd_alloc_bitmap);
-   929				/* If gcr3 table existed, mask it out */
-   930				if (old_devtb[devid].data[0] & DTE_FLAG_GV) {
-   931					tmp = DTE_GCR3_VAL_B(~0ULL) << DTE_GCR3_SHIFT_B;
-   932					tmp |= DTE_GCR3_VAL_C(~0ULL) << DTE_GCR3_SHIFT_C;
-   933					old_dev_tbl_cpy[devid].data[1] &= ~tmp;
-   934					tmp = DTE_GCR3_VAL_A(~0ULL) << DTE_GCR3_SHIFT_A;
-   935					tmp |= DTE_FLAG_GV;
-   936					old_dev_tbl_cpy[devid].data[0] &= ~tmp;
-   937				}
-   938			}
-   939	
-   940			irq_v = old_devtb[devid].data[2] & DTE_IRQ_REMAP_ENABLE;
-   941			int_ctl = old_devtb[devid].data[2] & DTE_IRQ_REMAP_INTCTL_MASK;
-   942			int_tab_len = old_devtb[devid].data[2] & DTE_IRQ_TABLE_LEN_MASK;
-   943			if (irq_v && (int_ctl || int_tab_len)) {
-   944				if ((int_ctl != DTE_IRQ_REMAP_INTCTL) ||
-   945				    (int_tab_len != DTE_IRQ_TABLE_LEN)) {
-   946					pr_err("Wrong old irq remapping flag: %#x\n", devid);
-   947					return false;
-   948				}
-   949	
-   950			        old_dev_tbl_cpy[devid].data[2] = old_devtb[devid].data[2];
-   951			}
-   952		}
-   953		memunmap(old_devtb);
-   954	
-   955		return true;
-   956	}
-   957	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Patrik, Is it possible to get this patch in 4.18 ?
