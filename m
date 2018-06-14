@@ -2,137 +2,110 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 80DD2C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:37:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A621CC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:37:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37776208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:37:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37776208D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D449208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:37:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V0utCaxZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D449208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754598AbeFNHhF (ORCPT
+        id S1754743AbeFNHhP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:37:05 -0400
-Received: from mail-io0-f199.google.com ([209.85.223.199]:48331 "EHLO
-        mail-io0-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752748AbeFNHhD (ORCPT
+        Thu, 14 Jun 2018 03:37:15 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:37331 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754603AbeFNHhJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:37:03 -0400
-Received: by mail-io0-f199.google.com with SMTP id t11-v6so4131444iog.15
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:37:03 -0700 (PDT)
+        Thu, 14 Jun 2018 03:37:09 -0400
+Received: by mail-lf0-f68.google.com with SMTP id g21-v6so7861641lfb.4
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:37:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7kehnpMGy3E3ogmw+u7+0RyfzSfKms7KfjmEy0y3zZU=;
+        b=V0utCaxZ+9A5m/beAwl8mN4CZEBGLhjsqKzVdZbBtwJipWRLtnlEzEmQSsm9g/VijI
+         cwceVUlOnnB1FTyG0c+EgnrJTwHU0zlsH+GCSiGA6NAJU8AeQQ9h8m/hyaXf32DHPlDj
+         TVoSp87f/hmLnv3Ot8tevo9vGNHe8/hgwpzy8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=XzloYqkpH4EhwVcbD6tly0xlf+CsNKf9BT9Bn0LVRWc=;
-        b=c29sMJYh+6VVrLq66Jf93aD2kI12EB0sr7W7yFEePFUDD2nGFcMfNHTdJIVR+lTYA0
-         B/G240jCKOE2QHTg9DFXaTceyiklGCcva9nEIe6sCldWSuBiorWeC+EuhyBNXKz44qv6
-         Y/ywt6hNpic+92WxPBgfAtF9R4JGOsajBN1cUSIho/r4MHZeYmDP/0FtURlRoUw8Ovof
-         M8srTIU3JwHmxTj1s+GdWgd4aRr90dvWgxJVb15YjqcIKnurtb4ZHmpTJ0nRmPK59WaD
-         ien/30942svgpFfBQ6/ebqLWqblJBT5PQ4hip3mQadlsNWM55/UnZqEB69RCTKMeWmjK
-         5mAw==
-X-Gm-Message-State: APt69E2ucThGLchOYVehlc6KrVPzSDQUNEgObz80XJWPS9I1X2hIK7Ha
-        is+lAE5jBp1XEZlbiPZoFK3L3CwcyZG1wXOQrEyobt9CjUWC
-X-Google-Smtp-Source: ADUXVKLKv+IFPaO6AK/dYg5+VeULRNRR+bdL3Hl1whl4sRdKAUmG9duYTMe9JmNw7sUdTR3yWlRhVuVlB5bEhvovVEzepNbLzNyY
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7kehnpMGy3E3ogmw+u7+0RyfzSfKms7KfjmEy0y3zZU=;
+        b=M6LphsWJiJaR+Mgr3g0fUaFTmnYjaFLus5SPaCEI85n9vwliO9RzrpQ3rhmpIjNkPG
+         amJvO+I2xpJzOU5dIpeKxmsKN6cU+lVfVyrGZ5QmUhfozpMMEQeJ59eY8YhEFu9kuVgn
+         kUpmvAHukn53BpsUAvhJw6wghgq6uX3WdOXJEhrfRu9kwn49dPX97Jxbn2XHqGRKdovJ
+         +x5Akt0PIrAUduaigWP9ckkYbcLSvsCPyQ1BdeYdGQfqda/oo/tXKbX8dfolXv4yePK8
+         l8fC4aiFlh1wOkKpYTzBOrS1dcBdTzH8HctOjNUm9pcc8/E0Hae/joKt7ROwUbEu5m3s
+         VUjg==
+X-Gm-Message-State: APt69E0IauFZlv7KURMLDWx+DohXhDHQBGjFT07S/OhzVL+4jFqdDQVh
+        9fk0NyLveaL+y+RDv/GeH6asog==
+X-Google-Smtp-Source: ADUXVKLNBUUGjRH7gDb1xCTNGqxI3ecLU39X1CkXMSI9VTITFHpQ3Ke4IkqsEJRDO/OiqdS0su2MfA==
+X-Received: by 2002:a2e:980f:: with SMTP id a15-v6mr886661ljj.143.1528961828407;
+        Thu, 14 Jun 2018 00:37:08 -0700 (PDT)
+Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
+        by smtp.gmail.com with ESMTPSA id a195-v6sm957597lfe.44.2018.06.14.00.37.06
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 00:37:07 -0700 (PDT)
+From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+To:     grygorii.strashko@ti.com, davem@davemloft.net
+Cc:     corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-omap@vger.kernel.org, vinicius.gomes@intel.com,
+        henrik@austad.us, jesus.sanchez-palencia@intel.com,
+        ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
+        francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
+        andrew@lunn.ch, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
+Subject: [PATCH v2 net-next 0/6] net: ethernet: ti: cpsw: add MQPRIO and CBS Qdisc offload
+Date:   Thu, 14 Jun 2018 10:36:44 +0300
+Message-Id: <20180614073650.29659-1-ivan.khoronzhuk@linaro.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-X-Received: by 2002:a24:35c1:: with SMTP id k184-v6mr628337ita.43.1528961822973;
- Thu, 14 Jun 2018 00:37:02 -0700 (PDT)
-Date:   Thu, 14 Jun 2018 00:37:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000556929056e952ae0@google.com>
-Subject: WARNING in bpf_prog_select_runtime
-From:   syzbot <syzbot+3b889862e65a98317058@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This series adds MQPRIO and CBS Qdisc offload for TI cpsw driver.
+It potentially can be used in audio video bridging (AVB) and time
+sensitive networking (TSN).
 
-syzbot found the following crash on:
+Patchset was tested on AM572x EVM and BBB boards. Last patch from this
+series adds detailed description of configuration with examples. For
+consistency reasons, in role of talker and listener, tools from
+patchset "TSN: Add qdisc based config interface for CBS" were used and
+can be seen here: https://www.spinics.net/lists/netdev/msg460869.html
 
-HEAD commit:    ee946c36be21 Merge tag 'platform-drivers-x86-v4.17-2' of g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11ca275b800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=889265cebaf9bda1
-dashboard link: https://syzkaller.appspot.com/bug?extid=3b889862e65a98317058
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=17530b5b800000
+Based on net-next/master
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+3b889862e65a98317058@syzkaller.appspotmail.com
+v2..v1:
+ - changed name cpsw.txt on ti-cpsw.txt
+ - changed name cpsw_set_tc() on cpsw_set_mqprio()
 
-RAX: ffffffffffffffda RBX: 00000000014b0914 RCX: 0000000000455979
-RDX: 0000000000000033 RSI: 0000000000000001 RDI: 0000000000000004
-RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
-R10: 0000000020000500 R11: 0000000000000246 R12: 0000000000000005
-R13: 0000000000000578 R14: 00000000006fc3e0 R15: 000000000000000a
-WARNING: CPU: 0 PID: 4502 at include/linux/filter.h:651 bpf_prog_lock_ro  
-include/linux/filter.h:651 [inline]
-WARNING: CPU: 0 PID: 4502 at include/linux/filter.h:651  
-bpf_prog_select_runtime+0x53c/0x640 kernel/bpf/core.c:1503
-Kernel panic - not syncing: panic_on_warn set ...
+Ivan Khoronzhuk (6):
+  net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
+  net: ethernet: ti: cpdma: fit rated channels in backward order
+  net: ethernet: ti: cpsw: add MQPRIO Qdisc offload
+  net: ethernet: ti: cpsw: add CBS Qdisc offload
+  net: ethernet: ti: cpsw: restore shaper configuration while down/up
+  Documentation: networking: cpsw: add MQPRIO & CBS offload examples
 
-CPU: 0 PID: 4502 Comm: syz-executor0 Not tainted 4.17.0-rc3+ #35
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  panic+0x22f/0x4de kernel/panic.c:184
-  __warn.cold.8+0x163/0x1b3 kernel/panic.c:536
-  report_bug+0x252/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x1de/0x490 arch/x86/kernel/traps.c:296
-  do_invalid_op+0x1b/0x20 arch/x86/kernel/traps.c:315
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
-RIP: 0010:bpf_prog_lock_ro include/linux/filter.h:651 [inline]
-RIP: 0010:bpf_prog_select_runtime+0x53c/0x640 kernel/bpf/core.c:1503
-RSP: 0018:ffff8801b094f8a8 EFLAGS: 00010293
-RAX: ffff8801b194e040 RBX: ffffc90001944000 RCX: ffffffff81857b67
-RDX: 0000000000000000 RSI: ffffffff81857efc RDI: 0000000000000005
-RBP: ffff8801b094f908 R08: ffff8801b194e040 R09: 0000000000000006
-R10: ffff8801b194e040 R11: 0000000000000000 R12: 00000000fffffff4
-R13: ffffffff81862050 R14: 0000000000000000 R15: ffff8801d7186480
-  bpf_migrate_filter net/core/filter.c:1069 [inline]
-  bpf_prepare_filter+0xb65/0x1060 net/core/filter.c:1117
-  __get_filter+0x1e0/0x280 net/core/filter.c:1310
-  sk_reuseport_attach_filter+0x1d/0x90 net/core/filter.c:1343
-  sock_setsockopt+0x1ad3/0x1f40 net/core/sock.c:954
-  __sys_setsockopt+0x2df/0x390 net/socket.c:1899
-  __do_sys_setsockopt net/socket.c:1914 [inline]
-  __se_sys_setsockopt net/socket.c:1911 [inline]
-  __x64_sys_setsockopt+0xbe/0x150 net/socket.c:1911
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455979
-RSP: 002b:00007ffd0a44c648 EFLAGS: 00000246 ORIG_RAX: 0000000000000036
-RAX: ffffffffffffffda RBX: 00000000014b0914 RCX: 0000000000455979
-RDX: 0000000000000033 RSI: 0000000000000001 RDI: 0000000000000004
-RBP: 000000000072bea0 R08: 0000000000000010 R09: 0000000000000000
-R10: 0000000020000500 R11: 0000000000000246 R12: 0000000000000005
-R13: 0000000000000578 R14: 00000000006fc3e0 R15: 000000000000000a
-Dumping ftrace buffer:
-    (ftrace buffer empty)
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+ Documentation/networking/ti-cpsw.txt    | 540 ++++++++++++++++++++++++
+ drivers/net/ethernet/ti/cpsw.c          | 364 +++++++++++++++-
+ drivers/net/ethernet/ti/davinci_cpdma.c |  31 +-
+ 3 files changed, 913 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/networking/ti-cpsw.txt
 
+-- 
+2.17.1
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
