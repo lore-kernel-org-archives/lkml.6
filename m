@@ -3,140 +3,391 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D4F7AC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:17:56 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 46F2AC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B03A208B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:17:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B03A208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=us.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id CC1CC208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:18:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1CC208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755107AbeFNNRy (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:17:54 -0400
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47352 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1754885AbeFNNRx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:17:53 -0400
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5EDFJlc015441
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 09:17:52 -0400
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2jkpfwqgmn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 09:17:52 -0400
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pc@us.ibm.com>;
-        Thu, 14 Jun 2018 09:17:52 -0400
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 14 Jun 2018 09:17:50 -0400
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5EDHmxW9109996
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 14 Jun 2018 13:17:48 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E649EAE060;
-        Thu, 14 Jun 2018 09:17:55 -0400 (EDT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 2B9F0AE05C;
-        Thu, 14 Jun 2018 09:17:55 -0400 (EDT)
-Received: from oc3272150783.ibm.com (unknown [9.80.215.247])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTPS;
-        Thu, 14 Jun 2018 09:17:55 -0400 (EDT)
-Subject: Re: [PATCH 1/3] perf alias: Remove trailing newline when reading
- sysfs files
-To:     Thomas Richter <tmricht@linux.ibm.com>,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org, jolsa@redhat.com
-Cc:     brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-References: <20180614114845.41221-1-tmricht@linux.ibm.com>
-From:   Paul Clarke <pc@us.ibm.com>
-Date:   Thu, 14 Jun 2018 08:17:47 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S936049AbeFNNSG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 09:18:06 -0400
+Received: from mx2.suse.de ([195.135.220.15]:50752 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933214AbeFNNSD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 09:18:03 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 36B86ACBF;
+        Thu, 14 Jun 2018 13:18:02 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id 99C00A09E2; Thu, 14 Jun 2018 15:18:01 +0200 (CEST)
+Date:   Thu, 14 Jun 2018 15:18:01 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@helsinki.fi>
+Cc:     Yuchung Cheng <ycheng@google.com>, netdev <netdev@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH RESEND] tcp: avoid F-RTO if SACK and timestamps are
+ disabled
+Message-ID: <20180614131801.hd474jgrhmtqzhag@unicorn.suse.cz>
+References: <20180613164802.99B89A09E2@unicorn.suse.cz>
+ <20180613165543.0F92DA09E2@unicorn.suse.cz>
+ <CAK6E8=eCOLU9AX0+bSrOg_UYBm1mFxrGT=ybksba9B0OUfp7jg@mail.gmail.com>
+ <alpine.DEB.2.20.1806141045430.29120@whs-18.cs.helsinki.fi>
+ <20180614093408.5e34ijwhome4t5yn@unicorn.suse.cz>
+ <alpine.DEB.2.20.1806141409150.29120@whs-18.cs.helsinki.fi>
 MIME-Version: 1.0
-In-Reply-To: <20180614114845.41221-1-tmricht@linux.ibm.com>
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18061413-0064-0000-0000-0000031B3212
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00009189; HX=3.00000241; KW=3.00000007;
- PH=3.00000004; SC=3.00000265; SDB=6.01046847; UDB=6.00536174; IPR=6.00825821;
- MB=3.00021643; MTD=3.00000008; XFM=3.00000015; UTC=2018-06-14 13:17:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18061413-0065-0000-0000-00003997C631
-Message-Id: <c29a4b36-a2db-b1d9-a5c7-a0c0806970ab@us.ibm.com>
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-14_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1805220000 definitions=main-1806140149
+In-Reply-To: <alpine.DEB.2.20.1806141409150.29120@whs-18.cs.helsinki.fi>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/2018 06:48 AM, Thomas Richter wrote:
-> Remove a trailing newline when reading sysfs file contents
-> such as /sys/devices/cpum_cf/events/TX_NC_TEND.
-> This show when verbose option -v is used.
+On Thu, Jun 14, 2018 at 02:51:18PM +0300, Ilpo Järvinen wrote:
+> On Thu, 14 Jun 2018, Michal Kubecek wrote:
+> > On Thu, Jun 14, 2018 at 11:42:43AM +0300, Ilpo Järvinen wrote:
+> > > On Wed, 13 Jun 2018, Yuchung Cheng wrote:
+> > > > On Wed, Jun 13, 2018 at 9:55 AM, Michal Kubecek <mkubecek@suse.cz> wrote:
+> > 
+> > AFAICS RFC 5682 is not explicit about this and offers multiple options.
+> > Anyway, this is not essential and in most of the customer provided
+> > captures, it wasn't the case.
 > 
-> Output before:
-> tx_nc_tend -> 'cpum_cf'/'event=0x008d
-> '/
-> 
-> Output after:
-> tx_nc_tend -> 'cpum_cf'/'event=0x8d'/
-> 
-> Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
-> ---
->  tools/perf/util/pmu.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index 7878934ebb23..26c79a9c4142 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -294,7 +294,7 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
-> 
->  static int perf_pmu__new_alias(struct list_head *list, char *dir, char *name, FILE *file)
->  {
-> -	char buf[256];
-> +	char *cp, buf[256];
->  	int ret;
-> 
->  	ret = fread(buf, 1, sizeof(buf), file);
-> @@ -303,6 +303,11 @@ static int perf_pmu__new_alias(struct list_head *list, char *dir, char *name, FI
-> 
->  	buf[ret] = 0;
-> 
-> +	/* Remove trailing newline from sysfs file */
-> +	cp = strrchr(buf, '\n');
-> +	if (cp)
-> +		*cp = '\0';
+> Lacking the new segments is essential for hiding the actual bug as the 
+> trace would look weird otherwise with a burst of new data segments (due 
+> to the other bug).
 
-A nit, perhaps, but this will search backwards through the entire string if a newline is not found, which is the most common case, I presume.  Would it be more efficient to just look at the last character?  Something like:
-i = strlen(buf);
-if (i > 0 && buf[i-1] == '\n')
-  buf[i-1] = '\0';
+The trace wouldn't look so nice but it can be reproduced even with more
+data to send. I've copied an example below. I couldn't find a really
+nice one quickly so that first few retransmits (17:22:13.865105 through
+17:23:05.841105) are without new data but starting at 17:23:58.189150,
+you can see that sending new (previously unsent) data may not suffice to
+break the loop.
 
-> +
->  	return __perf_pmu__new_alias(list, dir, name, NULL, buf, NULL, NULL, NULL,
->  				     NULL, NULL, NULL);
->  }
+> > Normally, we would have timestamps (and even SACK). Without them, you
+> > cannot reliably recognize a dupack with changed window size from
+> > a spontaneous window update.
 > 
+> No! The window should not update window on ACKs the receiver intends to 
+> designate as "duplicate ACKs". That is not without some potential cost 
+> though as it requires delaying window updates up to the next cumulative 
+> ACK. In the non-SACK series one of the changes is fixing this for
+> non-SACK Linux TCP flows.
 
-PC
+That sounds like a reasonable change (at least at the first glance,
+I didn't think about it too deeply) but even if we fix Linux stack to
+behave like this, we cannot force everyone else to do the same.
 
+Michal Kubecek
+
+
+17:22:13.660030 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1101588007:1101650727, ack 1871152053, win 28, length 62720
+17:22:13.660039 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294151936, win 12146, length 0
+17:22:13.660047 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 62720:125440, ack 1, win 28, length 62720
+17:22:13.660050 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294178816, win 12146, length 0
+17:22:13.660052 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294196736, win 12146, length 0
+17:22:13.660131 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 125440:188160, ack 1, win 28, length 62720
+17:22:13.660142 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294223616, win 12146, length 0
+17:22:13.660164 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 188160:250880, ack 1, win 28, length 62720
+17:22:13.660171 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294250496, win 12146, length 0
+17:22:13.660177 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294277376, win 12146, length 0
+17:22:13.660181 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294304256, win 12146, length 0
+17:22:13.660185 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294331136, win 12146, length 0
+17:22:13.660196 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294349056, win 12146, length 0
+17:22:13.660212 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 250880:313600, ack 1, win 28, length 62720
+17:22:13.660224 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 313600:376320, ack 1, win 28, length 62720
+17:22:13.660266 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294384896, win 12146, length 0
+17:22:13.660292 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294411776, win 12146, length 0
+17:22:13.660294 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294438656, win 12146, length 0
+17:22:13.660295 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294465536, win 12146, length 0
+17:22:13.660353 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 376320:439040, ack 1, win 28, length 62720
+17:22:13.660377 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 439040:501760, ack 1, win 28, length 62720
+17:22:13.660391 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294501376, win 12146, length 0
+17:22:13.660396 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294519296, win 12146, length 0
+17:22:13.660400 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 501760:564480, ack 1, win 28, length 62720
+17:22:13.660409 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294555136, win 12146, length 0
+17:22:13.660420 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294582016, win 12146, length 0
+17:22:13.660434 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294608896, win 12146, length 0
+17:22:13.660458 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 564480:627200, ack 1, win 28, length 62720
+17:22:13.660515 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294644736, win 12146, length 0
+17:22:13.660527 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294671616, win 12146, length 0
+17:22:13.660540 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294698496, win 12146, length 0
+17:22:13.660541 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294725376, win 12146, length 0
+17:22:13.660542 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294743296, win 12146, length 0
+17:22:13.660580 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 627200:689920, ack 1, win 28, length 62720
+17:22:13.660597 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 689920:752640, ack 1, win 28, length 62720     <--- first loss
+17:22:13.660642 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294770176, win 12146, length 0
+17:22:13.660648 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 752640:815360, ack 1, win 28, length 62720
+17:22:13.660655 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294797056, win 12146, length 0
+17:22:13.660662 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294823936, win 12146, length 0
+17:22:13.660666 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 815360:878080, ack 1, win 28, length 62720
+17:22:13.660672 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294850816, win 12146, length 0
+17:22:13.660696 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294877696, win 12146, length 0
+17:22:13.660704 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 878080:940800, ack 1, win 28, length 62720
+17:22:13.660765 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294913536, win 12146, length 0
+17:22:13.660779 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 4294940416, win 12146, length 0
+17:22:13.660791 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 0, win 12146, length 0
+17:22:13.660793 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 26880, win 12146, length 0
+17:22:13.660795 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 53760, win 12146, length 0
+17:22:13.660821 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 940800:1003520, ack 1, win 28, length 62720
+17:22:13.660837 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1003520:1066240, ack 1, win 28, length 62720
+17:22:13.660890 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 80640, win 12146, length 0
+17:22:13.660897 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1066240:1128960, ack 1, win 28, length 62720
+17:22:13.660923 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 107520, win 12146, length 0
+17:22:13.660928 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 134400, win 12146, length 0
+17:22:13.660932 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 161280, win 12146, length 0
+17:22:13.660936 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1128960:1191680, ack 1, win 28, length 62720
+17:22:13.660944 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 188160, win 12146, length 0
+17:22:13.661015 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 215040, win 12146, length 0
+17:22:13.661044 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 241920, win 12146, length 0
+17:22:13.661045 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 268800, win 12146, length 0
+17:22:13.661047 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 295680, win 12146, length 0
+17:22:13.661048 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 322560, win 12135, length 0
+17:22:13.661106 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1191680:1254400, ack 1, win 28, length 62720
+17:22:13.661139 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1254400:1317120, ack 1, win 28, length 62720
+17:22:13.661145 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 349440, win 12146, length 0
+17:22:13.661148 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 358400, win 12146, length 0
+17:22:13.661149 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 358400, win 12146, length 0
+17:22:13.661150 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 358400, win 12146, length 0
+17:22:13.661151 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 358400, win 12146, length 0
+17:22:13.661153 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 456960, win 12130, length 0
+17:22:13.661155 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1317120:1379840, ack 1, win 28, length 62720
+17:22:13.661178 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1379840:1442560, ack 1, win 28, length 62720
+17:22:13.661192 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1442560:1505280, ack 1, win 28, length 62720
+17:22:13.661264 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 483840, win 12146, length 0
+17:22:13.661286 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 510720, win 12146, length 0
+17:22:13.661292 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1505280:1568000, ack 1, win 28, length 62720
+17:22:13.661299 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 537600, win 12146, length 0
+17:22:13.661303 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 564480, win 12146, length 0
+17:22:13.661308 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1568000:1630720, ack 1, win 28, length 62720
+17:22:13.661317 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 582400, win 12140, length 0
+17:22:13.661390 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 609280, win 12146, length 0
+17:22:13.661411 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 636160, win 12146, length 0
+17:22:13.661412 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 663040, win 12146, length 0
+17:22:13.661429 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 689920, win 12146, length 0
+17:22:13.661430 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 716800, win 12146, length 0
+17:22:13.661437 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1630720:1693440, ack 1, win 28, length 62720
+17:22:13.661445 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 725760, win 12146, length 0
+17:22:13.661447 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661454 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1693440:1756160, ack 1, win 28, length 62720
+17:22:13.661508 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0                    <--- first dupack
+17:22:13.661513 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1756160:1818880, ack 1, win 28, length 62720
+17:22:13.661520 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661524 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661527 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661530 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661532 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661635 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661637 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661638 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661640 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661641 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661642 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661653 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1818880:1881600, ack 1, win 28, length 62720
+17:22:13.661757 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661761 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661764 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661768 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1881600:1944320, ack 1, win 28, length 62720
+17:22:13.661778 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661782 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661886 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661891 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661894 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661897 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661900 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661902 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1944320:2007040, ack 1, win 28, length 62720
+17:22:13.661928 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.661931 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662016 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662020 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662023 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662026 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662029 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662032 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2007040:2069760, ack 1, win 28, length 62720
+17:22:13.662039 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662042 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662132 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662136 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662139 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662142 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662145 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662148 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2069760:2132480, ack 1, win 28, length 62720
+17:22:13.662154 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662263 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662267 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662269 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662272 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662275 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662385 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662390 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2132480:2195200, ack 1, win 28, length 62720
+17:22:13.662397 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662400 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662402 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662405 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662408 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662508 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662512 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662515 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2195200:2257920, ack 1, win 28, length 62720
+17:22:13.662522 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662525 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662527 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662530 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662633 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662637 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662640 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662643 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2257920:2320640, ack 1, win 28, length 62720
+17:22:13.662649 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662652 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662759 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662763 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662766 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.662881 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 734720, win 12146, length 0
+17:22:13.865105 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 734720:743680, ack 1, win 28, length 8960      <--- first retransmit
+17:22:13.865227 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 851200, win 12033, length 0
+17:22:14.273092 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 851200:860160, ack 1, win 28, length 8960
+17:22:14.273207 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 869120, win 12016, length 0
+17:22:15.089125 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 869120:878080, ack 1, win 28, length 8960
+17:22:15.089244 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 887040, win 11999, length 0
+17:22:16.725135 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 887040:896000, ack 1, win 28, length 8960
+17:22:16.725269 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 976640, win 11912, length 0
+17:22:19.997144 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 976640:985600, ack 1, win 28, length 8960
+17:22:19.997257 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1039360, win 11851, length 0
+17:22:26.545096 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1039360:1048320, ack 1, win 28, length 8960
+17:22:26.545212 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1057280, win 11834, length 0
+17:22:39.629137 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1057280:1066240, ack 1, win 28, length 8960
+17:22:39.629268 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1173760, win 11721, length 0
+17:23:05.841105 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1173760:1182720, ack 1, win 28, length 8960
+17:23:05.841229 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1290240, win 11613, length 0
+17:23:58.189150 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1290240:1299200, ack 1, win 28, length 8960
+17:23:58.189268 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11670, length 0
+17:23:58.189310 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2320640:2383360, ack 1, win 28, length 62720   <--- new data
+17:23:58.189416 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11689, length 0                   <--- ack but window update
+17:23:58.189424 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11689, length 0
+17:23:58.189458 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11689, length 0
+17:23:58.189466 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11689, length 0
+17:23:58.189475 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2383360:2446080, ack 1, win 28, length 62720   <--- more new data
+17:23:58.189575 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11689, length 0
+17:23:58.189620 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11689, length 0
+17:23:58.189623 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1344000, win 11689, length 0
+17:25:42.769136 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1344000:1352960, ack 1, win 28, length 8960    <--- retransmit only after RTO
+17:25:42.769243 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1361920, win 11672, length 0
+17:27:43.085128 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1361920:1370880, ack 1, win 28, length 8960
+17:27:43.085240 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11631, length 0
+17:27:43.085261 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2446080:2508800, ack 1, win 28, length 62720
+17:27:43.085363 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085425 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085430 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085433 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085437 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2508800:2571520, ack 1, win 28, length 62720
+17:27:43.085458 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085461 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085531 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085578 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:27:43.085581 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1469440, win 11678, length 0
+17:29:43.405123 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1469440:1478400, ack 1, win 28, length 8960
+17:29:43.405249 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11614, length 0
+17:29:43.405288 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2571520:2634240, ack 1, win 28, length 62720
+17:29:43.405400 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:29:43.405408 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:29:43.405446 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:29:43.405454 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:29:43.405462 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2634240:2696960, ack 1, win 28, length 62720
+17:29:43.405502 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:29:43.405579 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:29:43.405626 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:29:43.405629 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1594880, win 11671, length 0
+17:31:43.725113 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1594880:1603840, ack 1, win 28, length 8960
+17:31:43.725273 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1657600, win 11610, length 0
+17:33:44.045093 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1657600:1666560, ack 1, win 28, length 8960
+17:33:44.045248 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1675520, win 11636, length 0
+17:35:44.365137 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1675520:1684480, ack 1, win 28, length 8960
+17:35:44.365319 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11642, length 0
+17:35:44.365345 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2696960:2759680, ack 1, win 28, length 62720
+17:35:44.365370 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2759680:2822400, ack 1, win 28, length 62720
+17:35:44.365463 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365467 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365509 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365513 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365517 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2822400:2885120, ack 1, win 28, length 62720
+17:35:44.365541 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365563 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365567 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365623 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365670 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365674 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365678 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365682 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2885120:2947840, ack 1, win 28, length 62720
+17:35:44.365801 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365850 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365854 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:35:44.365894 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1783040, win 11689, length 0
+17:37:44.685086 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1783040:1792000, ack 1, win 28, length 8960
+17:37:44.685204 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 1899520, win 11576, length 0
+17:39:45.005099 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 1899520:1908480, ack 1, win 28, length 8960
+17:39:45.005228 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 2947840, win 11616, length 0
+17:39:45.005304 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 2947840:3010560, ack 1, win 28, length 62720
+17:39:45.005339 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3010560:3073280, ack 1, win 28, length 62720
+17:39:45.005385 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3073280:3136000, ack 1, win 28, length 62720
+17:39:45.005408 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3136000:3198720, ack 1, win 28, length 62720
+17:39:45.005430 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3198720:3261440, ack 1, win 28, length 62720
+17:39:45.005458 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3261440:3324160, ack 1, win 28, length 62720
+17:39:45.005516 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3324160:3386880, ack 1, win 28, length 62720
+17:39:45.005572 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3386880:3449600, ack 1, win 28, length 62720
+17:39:45.005595 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3449600:3512320, ack 1, win 28, length 62720
+17:39:45.005616 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3512320:3575040, ack 1, win 28, length 62720
+17:39:45.005654 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3575040:3637760, ack 1, win 28, length 62720
+17:39:45.005675 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3637760:3700480, ack 1, win 28, length 62720
+17:39:45.005710 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3700480:3763200, ack 1, win 28, length 62720
+17:39:45.005739 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 2956800, win 11851, length 0
+17:39:45.005765 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3763200:3825920, ack 1, win 28, length 62720
+17:39:45.005798 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3825920:3888640, ack 1, win 28, length 62720
+17:39:45.005824 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 2974720, win 11841, length 0
+17:39:45.005826 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3001600, win 11827, length 0
+17:39:45.005827 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3019520, win 11961, length 0
+17:39:45.005829 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3046400, win 11947, length 0
+17:39:45.005831 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3073280, win 11932, length 0
+17:39:45.005832 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3100160, win 11918, length 0
+17:39:45.005834 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3127040, win 11904, length 0
+17:39:45.005835 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3136000, win 11898, length 0
+17:39:45.005837 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3162880, win 12029, length 0
+17:39:45.005838 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3171840, win 12023, length 0
+17:39:45.005840 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3198720, win 12009, length 0
+17:39:45.005841 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3207680, win 12004, length 0
+17:39:45.005842 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3234560, win 11990, length 0
+17:39:45.005844 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3252480, win 11980, length 0
+17:39:45.005845 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3297280, win 12092, length 0
+17:39:45.005859 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3888640:3951360, ack 1, win 28, length 62720
+17:39:45.005892 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 3951360:4014080, ack 1, win 28, length 62720
+17:39:45.005899 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3395840, win 12146, length 0
+17:39:45.005903 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3422720, win 12146, length 0
+17:39:45.005904 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3449600, win 12146, length 0
+17:39:45.005906 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3512320, win 12115, length 0
+17:39:45.005923 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 4014080:4076800, ack 1, win 28, length 62720
+17:39:45.005946 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3539200, win 12146, length 0
+17:39:45.005948 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3566080, win 12146, length 0
+17:39:45.005996 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3601920, win 12146, length 0
+17:39:45.005998 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3628800, win 12146, length 0
+17:39:45.005999 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3646720, win 12146, length 0
+17:39:45.006002 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 4076800:4139520, ack 1, win 28, length 62720
+17:39:45.006040 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3673600, win 12146, length 0
+17:39:45.006043 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3700480, win 12146, length 0
+17:39:45.006045 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 4139520:4202240, ack 1, win 28, length 62720
+17:39:45.006085 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 4202240:4264960, ack 1, win 28, length 62720
+17:39:45.006087 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3718400, win 12146, length 0
+17:39:45.006111 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 4264960:4327680, ack 1, win 28, length 62720
+17:39:45.006135 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3745280, win 12146, length 0
+17:39:45.006137 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3772160, win 12146, length 0
+17:39:45.006139 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3790080, win 12146, length 0
+17:39:45.006168 IP 10.30.59.58.1556 > 10.31.112.14.30284: Flags [.], seq 4327680:4390400, ack 1, win 28, length 62720
+17:39:45.006197 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3816960, win 12146, length 0
+17:39:45.006200 IP 10.31.112.14.30284 > 10.30.59.58.1556: Flags [.], ack 3843840, win 12146, length 0
