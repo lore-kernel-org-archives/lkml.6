@@ -1,197 +1,122 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9F2AEC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:54:29 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9CDA9C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:57:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC23205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:54:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5AC23205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	by mail.kernel.org (Postfix) with ESMTP id 54F42205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:57:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lKa7TRl9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F42205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965228AbeFNXyO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 19:54:14 -0400
-Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:54734 "EHLO
-        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965127AbeFNXyN (ORCPT
+        id S965173AbeFNX5D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 19:57:03 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:47720 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965096AbeFNX5C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 19:54:13 -0400
-Received: from mipsdag01.mipstec.com (mail1.mips.com [12.201.5.31]) by mx1401.ess.rzc.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Thu, 14 Jun 2018 23:53:52 +0000
-Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag01.mipstec.com
- (10.20.40.46) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Thu, 14
- Jun 2018 16:53:09 -0700
-Received: from pburton-laptop.mipstec.com (10.20.2.29) by
- mipsdag02.mipstec.com (10.20.40.47) with Microsoft SMTP Server id 15.1.1415.2
- via Frontend Transport; Thu, 14 Jun 2018 16:53:09 -0700
-From:   Paul Burton <paul.burton@mips.com>
-To:     <linux-mips@linux-mips.org>
-CC:     Peter Zijlstra <peterz@infradead.org>,
-        James Hogan <jhogan@kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>
-Subject: [PATCH 3/4] MIPS: Wire up the restartable sequences (rseq) syscall
-Date:   Thu, 14 Jun 2018 16:52:09 -0700
-Message-ID: <20180614235211.31357-4-paul.burton@mips.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614235211.31357-1-paul.burton@mips.com>
-References: <20180614235211.31357-1-paul.burton@mips.com>
+        Thu, 14 Jun 2018 19:57:02 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=epiBw9gycriQOso7ozHvBnXwCsVqI4zK2fKSuC+lyck=; b=lKa7TRl95GKwurtb3Omtq7Kpw+
+        MsKQhYNhAGkWFKLZhpUiHGP/0dAkwQNXnp27ADCjGNQS/eAbIRG81XUymzqRVlG0Bkg4UwFtdQlj8
+        g/2e5JtNxJx1qoYp30ShfbscuGrnrcmG0wgVCLTFvazKdpE/U8iJPLmqzcZHA2Q+SqkwWck8cp/cj
+        qRpk078pJDS/54dZbjJjIAh+t+PuTEPkDTOMU26zVdqePmcFilU+eR+XMbLRvMNpkiX9rcy/WX9Ph
+        ilDc2NQwSCvPDiSqj6Ig24rNz4k94zV7HH0w6K+gWRHHv/A89OhYqPwZMmcyiXQaErCRnhJ54ov7K
+        CthLEkYw==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTc6t-00013d-C5; Thu, 14 Jun 2018 23:56:59 +0000
+Subject: Re: [PATCH v9 2/2] iommu/amd: Add basic debugfs infrastructure for
+ AMD IOMMU
+To:     Gary R Hook <gary.hook@amd.com>, iommu@lists.linux-foundation.org
+Cc:     joro@8bytes.org, linux-kernel@vger.kernel.org
+References: <152883965482.1936.13657625103232933481.stgit@taos>
+ <152883969032.1936.15155267369758178246.stgit@taos>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <ae7f8610-de9a-1c0f-478f-3f7f1c6956c4@infradead.org>
+Date:   Thu, 14 Jun 2018 16:56:53 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-BESS-ID: 1529020375-321457-11388-11694-4
-X-BESS-VER: 2018.7-r1806112253
-X-BESS-Apparent-Source-IP: 12.201.5.31
-X-BESS-Envelope-From: Paul.Burton@mips.com
-X-BESS-Outbound-Spam-Score: 0.50
-X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194071
-        Rule breakdown below
-         pts rule name              description
-        ---- ---------------------- --------------------------------
-        0.50 BSF_RULE7568M          META: Custom Rule 7568M 
-        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
-X-BESS-Outbound-Spam-Status: SCORE=0.50 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_RULE7568M, BSF_BESS_OUTBOUND
-X-BESS-Orig-Rcpt: linux-mips@linux-mips.org,peterz@infradead.org,jhogan@kernel.org,linux-kernel@vger.kernel.org,mathieu.desnoyers@efficios.com,boqun.feng@gmail.com,paulmck@linux.vnet.ibm.com,ralf@linux-mips.org
-X-BESS-BRTS-Status: 1
+In-Reply-To: <152883969032.1936.15155267369758178246.stgit@taos>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Wire up the restartable sequences (rseq) syscall for MIPS. This was
-introduced by commit d7822b1e24f2 ("rseq: Introduce restartable
-sequences system call") & MIPS now supports the prerequisites.
+On 06/12/2018 02:41 PM, Gary R Hook wrote:
+> Implement a skeleton framework for debugfs support in the AMD
+> IOMMU.  Add an AMD-specific Kconfig boolean that depends upon
+> general enablement of DebugFS in the IOMMU.
+> 
+> Signed-off-by: Gary R Hook <gary.hook@amd.com>
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: James Hogan <jhogan@kernel.org>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
----
+Gary,
 
- arch/mips/include/uapi/asm/unistd.h | 15 +++++++++------
- arch/mips/kernel/scall32-o32.S      |  1 +
- arch/mips/kernel/scall64-64.S       |  1 +
- arch/mips/kernel/scall64-n32.S      |  1 +
- arch/mips/kernel/scall64-o32.S      |  1 +
- 5 files changed, 13 insertions(+), 6 deletions(-)
+Looks good to me.  Thanks.
 
-diff --git a/arch/mips/include/uapi/asm/unistd.h b/arch/mips/include/uapi/asm/unistd.h
-index bb05e9916a5f..170bf0b5b250 100644
---- a/arch/mips/include/uapi/asm/unistd.h
-+++ b/arch/mips/include/uapi/asm/unistd.h
-@@ -388,17 +388,18 @@
- #define __NR_pkey_alloc			(__NR_Linux + 364)
- #define __NR_pkey_free			(__NR_Linux + 365)
- #define __NR_statx			(__NR_Linux + 366)
-+#define __NR_rseq			(__NR_Linux + 367)
- 
- 
- /*
-  * Offset of the last Linux o32 flavoured syscall
-  */
--#define __NR_Linux_syscalls		366
-+#define __NR_Linux_syscalls		367
- 
- #endif /* _MIPS_SIM == _MIPS_SIM_ABI32 */
- 
- #define __NR_O32_Linux			4000
--#define __NR_O32_Linux_syscalls		366
-+#define __NR_O32_Linux_syscalls		367
- 
- #if _MIPS_SIM == _MIPS_SIM_ABI64
- 
-@@ -733,16 +734,17 @@
- #define __NR_pkey_alloc			(__NR_Linux + 324)
- #define __NR_pkey_free			(__NR_Linux + 325)
- #define __NR_statx			(__NR_Linux + 326)
-+#define __NR_rseq			(__NR_Linux + 327)
- 
- /*
-  * Offset of the last Linux 64-bit flavoured syscall
-  */
--#define __NR_Linux_syscalls		326
-+#define __NR_Linux_syscalls		327
- 
- #endif /* _MIPS_SIM == _MIPS_SIM_ABI64 */
- 
- #define __NR_64_Linux			5000
--#define __NR_64_Linux_syscalls		326
-+#define __NR_64_Linux_syscalls		327
- 
- #if _MIPS_SIM == _MIPS_SIM_NABI32
- 
-@@ -1081,15 +1083,16 @@
- #define __NR_pkey_alloc			(__NR_Linux + 328)
- #define __NR_pkey_free			(__NR_Linux + 329)
- #define __NR_statx			(__NR_Linux + 330)
-+#define __NR_rseq			(__NR_Linux + 331)
- 
- /*
-  * Offset of the last N32 flavoured syscall
-  */
--#define __NR_Linux_syscalls		330
-+#define __NR_Linux_syscalls		331
- 
- #endif /* _MIPS_SIM == _MIPS_SIM_NABI32 */
- 
- #define __NR_N32_Linux			6000
--#define __NR_N32_Linux_syscalls		330
-+#define __NR_N32_Linux_syscalls		331
- 
- #endif /* _UAPI_ASM_UNISTD_H */
-diff --git a/arch/mips/kernel/scall32-o32.S b/arch/mips/kernel/scall32-o32.S
-index a9a7d78803cd..842ff1612893 100644
---- a/arch/mips/kernel/scall32-o32.S
-+++ b/arch/mips/kernel/scall32-o32.S
-@@ -590,3 +590,4 @@ EXPORT(sys_call_table)
- 	PTR	sys_pkey_alloc
- 	PTR	sys_pkey_free			/* 4365 */
- 	PTR	sys_statx
-+	PTR	sys_rseq
-diff --git a/arch/mips/kernel/scall64-64.S b/arch/mips/kernel/scall64-64.S
-index 65d5aeeb9bdb..558830d1e5ba 100644
---- a/arch/mips/kernel/scall64-64.S
-+++ b/arch/mips/kernel/scall64-64.S
-@@ -439,4 +439,5 @@ EXPORT(sys_call_table)
- 	PTR	sys_pkey_alloc
- 	PTR	sys_pkey_free			/* 5325 */
- 	PTR	sys_statx
-+	PTR	sys_rseq
- 	.size	sys_call_table,.-sys_call_table
-diff --git a/arch/mips/kernel/scall64-n32.S b/arch/mips/kernel/scall64-n32.S
-index cbf190ef9e8a..293f0b0119f3 100644
---- a/arch/mips/kernel/scall64-n32.S
-+++ b/arch/mips/kernel/scall64-n32.S
-@@ -434,4 +434,5 @@ EXPORT(sysn32_call_table)
- 	PTR	sys_pkey_alloc
- 	PTR	sys_pkey_free
- 	PTR	sys_statx			/* 6330 */
-+	PTR	sys_rseq
- 	.size	sysn32_call_table,.-sysn32_call_table
-diff --git a/arch/mips/kernel/scall64-o32.S b/arch/mips/kernel/scall64-o32.S
-index 9ebe3e2403b1..f13a08de8078 100644
---- a/arch/mips/kernel/scall64-o32.S
-+++ b/arch/mips/kernel/scall64-o32.S
-@@ -583,4 +583,5 @@ EXPORT(sys32_call_table)
- 	PTR	sys_pkey_alloc
- 	PTR	sys_pkey_free			/* 4365 */
- 	PTR	sys_statx
-+	PTR	sys_rseq
- 	.size	sys32_call_table,.-sys32_call_table
+> ---
+>  drivers/iommu/Kconfig             |   12 ++++++++++++
+>  drivers/iommu/Makefile            |    1 +
+>  drivers/iommu/amd_iommu_debugfs.c |   33 +++++++++++++++++++++++++++++++++
+>  drivers/iommu/amd_iommu_init.c    |    6 ++++--
+>  drivers/iommu/amd_iommu_proto.h   |    6 ++++++
+>  drivers/iommu/amd_iommu_types.h   |    5 +++++
+>  6 files changed, 61 insertions(+), 2 deletions(-)
+>  create mode 100644 drivers/iommu/amd_iommu_debugfs.c
+> 
+> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
+> index f9af25ac409f..5a9cef113763 100644
+> --- a/drivers/iommu/Kconfig
+> +++ b/drivers/iommu/Kconfig
+> @@ -146,6 +146,18 @@ config AMD_IOMMU_V2
+>  	  hardware. Select this option if you want to use devices that support
+>  	  the PCI PRI and PASID interface.
+>  
+> +config AMD_IOMMU_DEBUGFS
+> +	bool "Enable AMD IOMMU internals in DebugFS"
+> +	depends on AMD_IOMMU && IOMMU_DEBUGFS
+> +	---help---
+> +	  !!!WARNING!!!  !!!WARNING!!!  !!!WARNING!!!  !!!WARNING!!!
+> +
+> +	  DO NOT ENABLE THIS OPTION UNLESS YOU REALLY, -REALLY- KNOW WHAT YOU ARE DOING!!!
+> +	  Exposes AMD IOMMU device internals in DebugFS.
+> +
+> +	  This option is -NOT- intended for production environments, and should
+> +	  not generally be enabled.
+> +
+>  # Intel IOMMU support
+>  config DMAR_TABLE
+>  	bool
+> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
+> index 74cfbc392862..47fd6ea9de2d 100644
+> --- a/drivers/iommu/Makefile
+> +++ b/drivers/iommu/Makefile
+> @@ -11,6 +11,7 @@ obj-$(CONFIG_IOMMU_IOVA) += iova.o
+>  obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
+>  obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
+>  obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o
+> +obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += amd_iommu_debugfs.o
+>  obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
+>  obj-$(CONFIG_ARM_SMMU) += arm-smmu.o
+>  obj-$(CONFIG_ARM_SMMU_V3) += arm-smmu-v3.o
+
+
 -- 
-2.17.1
-
+~Randy
