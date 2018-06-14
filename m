@@ -2,84 +2,216 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6C62BC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:55:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0489DC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B58F208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:55:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B58F208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id A58F1208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:55:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mDlCgkHF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58F1208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936240AbeFNOGN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:06:13 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:36948 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936205AbeFNOGF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:06:05 -0400
-Received: from [148.252.241.226] (helo=ct-lt-1121.office.codethink.co.uk)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1fTSt0-0005OK-RP; Thu, 14 Jun 2018 15:06:02 +0100
-From:   Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
-To:     tiwai@suse.de
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        ruslan.bilovol@gmail.com
-Subject: [PATCH v2 3/4] ALSA: usb-audio: UAC3. Add insertion control for BADD.
-Date:   Thu, 14 Jun 2018 15:05:57 +0100
-Message-Id: <20180614140558.28277-4-jorge.sanjuan@codethink.co.uk>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180614140558.28277-1-jorge.sanjuan@codethink.co.uk>
-References: <20180612143201.29988-1-jorge.sanjuan@codethink.co.uk>
- <20180614140558.28277-1-jorge.sanjuan@codethink.co.uk>
+        id S936261AbeFNOzI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:55:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46478 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936203AbeFNOGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:06:11 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4F54208DA;
+        Thu, 14 Jun 2018 14:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985171;
+        bh=9yQA6Oq7eZK+Fse5ItYdw9+26UOaMuxp/WhM9Nx9Pt0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mDlCgkHFeknU5gNDmnznV3qIxGLuaFtGbRKBHa6bC+fQIKSv/bOPBF6cAB4umaufx
+         gBIrhw7HBt05UUmOxLKA5hWNFcFD7Vy9GpRsgVO1ezk1G8m3iOj2up2IUdnQAOsRwm
+         hCaLC1Xmzdl0kYCes1Y3xg68KZ13cmeD88cKLha4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.17 08/45] kvm: x86: use correct privilege level for sgdt/sidt/fxsave/fxrstor access
+Date:   Thu, 14 Jun 2018 16:03:59 +0200
+Message-Id: <20180614132127.206409903@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
+References: <20180614132126.797006529@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The HEADSET ADAPTER profile for BADD devices is meant to support
-Insertion Control for the Input and Output Terminals of the headset.
+4.17-stable review patch.  If anyone has any objections, please let me know.
 
-This patch defines the BADD inferred input and output terminals and
-builds the connector controls.
+------------------
 
-Signed-off-by: Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+From: Paolo Bonzini <pbonzini@redhat.com>
+
+commit 3c9fa24ca7c9c47605672916491f79e8ccacb9e6 upstream.
+
+The functions that were used in the emulation of fxrstor, fxsave, sgdt and
+sidt were originally meant for task switching, and as such they did not
+check privilege levels.  This is very bad when the same functions are used
+in the emulation of unprivileged instructions.  This is CVE-2018-10853.
+
+The obvious fix is to add a new argument to ops->read_std and ops->write_std,
+which decides whether the access is a "system" access or should use the
+processor's CPL.
+
+Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- sound/usb/mixer.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+ arch/x86/include/asm/kvm_emulate.h |    6 ++++--
+ arch/x86/kvm/emulate.c             |   12 ++++++------
+ arch/x86/kvm/x86.c                 |   22 ++++++++++++++++------
+ 3 files changed, 26 insertions(+), 14 deletions(-)
 
-diff --git a/sound/usb/mixer.c b/sound/usb/mixer.c
-index 34fef71e0330..03b8a2ac93c8 100644
---- a/sound/usb/mixer.c
-+++ b/sound/usb/mixer.c
-@@ -2918,6 +2918,23 @@ static int snd_usb_mixer_controls_badd(struct usb_mixer_interface *mixer,
- 				       UAC3_BADD_FU_ID7, map->map);
- 	}
+--- a/arch/x86/include/asm/kvm_emulate.h
++++ b/arch/x86/include/asm/kvm_emulate.h
+@@ -107,11 +107,12 @@ struct x86_emulate_ops {
+ 	 *  @addr:  [IN ] Linear address from which to read.
+ 	 *  @val:   [OUT] Value read from memory, zero-extended to 'u_long'.
+ 	 *  @bytes: [IN ] Number of bytes to read from memory.
++	 *  @system:[IN ] Whether the access is forced to be at CPL0.
+ 	 */
+ 	int (*read_std)(struct x86_emulate_ctxt *ctxt,
+ 			unsigned long addr, void *val,
+ 			unsigned int bytes,
+-			struct x86_exception *fault);
++			struct x86_exception *fault, bool system);
  
-+	/* Insertion Control */
-+	if (f->subclass == UAC3_FUNCTION_SUBCLASS_HEADSET_ADAPTER) {
-+		struct usb_audio_term iterm, oterm;
-+
-+		/* Input Term - Insertion control */
-+		memset(&iterm, 0, sizeof(iterm));
-+		iterm.id = UAC3_BADD_IT_ID4;
-+		iterm.type = UAC_BIDIR_TERMINAL_HEADSET;
-+		build_connector_control(mixer, &iterm, true);
-+
-+		/* Output Term - Insertion control */
-+		memset(&oterm, 0, sizeof(oterm));
-+		oterm.id = UAC3_BADD_OT_ID3;
-+		oterm.type = UAC_BIDIR_TERMINAL_HEADSET;
-+		build_connector_control(mixer, &oterm, false);
-+	}
-+
- 	return 0;
+ 	/*
+ 	 * read_phys: Read bytes of standard (non-emulated/special) memory.
+@@ -129,10 +130,11 @@ struct x86_emulate_ops {
+ 	 *  @addr:  [IN ] Linear address to which to write.
+ 	 *  @val:   [OUT] Value write to memory, zero-extended to 'u_long'.
+ 	 *  @bytes: [IN ] Number of bytes to write to memory.
++	 *  @system:[IN ] Whether the access is forced to be at CPL0.
+ 	 */
+ 	int (*write_std)(struct x86_emulate_ctxt *ctxt,
+ 			 unsigned long addr, void *val, unsigned int bytes,
+-			 struct x86_exception *fault);
++			 struct x86_exception *fault, bool system);
+ 	/*
+ 	 * fetch: Read bytes of standard (non-emulated/special) memory.
+ 	 *        Used for instruction fetch.
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -815,14 +815,14 @@ static inline int jmp_rel(struct x86_emu
+ static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
+ 			      void *data, unsigned size)
+ {
+-	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, true);
  }
  
--- 
-2.11.0
+ static int linear_write_system(struct x86_emulate_ctxt *ctxt,
+ 			       ulong linear, void *data,
+ 			       unsigned int size)
+ {
+-	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, true);
+ }
+ 
+ static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
+@@ -836,7 +836,7 @@ static int segmented_read_std(struct x86
+ 	rc = linearize(ctxt, addr, size, false, &linear);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+-	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, false);
+ }
+ 
+ static int segmented_write_std(struct x86_emulate_ctxt *ctxt,
+@@ -850,7 +850,7 @@ static int segmented_write_std(struct x8
+ 	rc = linearize(ctxt, addr, size, true, &linear);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+-	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, false);
+ }
+ 
+ /*
+@@ -2928,12 +2928,12 @@ static bool emulator_io_port_access_allo
+ #ifdef CONFIG_X86_64
+ 	base |= ((u64)base3) << 32;
+ #endif
+-	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL);
++	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL, true);
+ 	if (r != X86EMUL_CONTINUE)
+ 		return false;
+ 	if (io_bitmap_ptr + port/8 > desc_limit_scaled(&tr_seg))
+ 		return false;
+-	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL);
++	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL, true);
+ 	if (r != X86EMUL_CONTINUE)
+ 		return false;
+ 	if ((perm >> bit_idx) & mask)
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4800,10 +4800,15 @@ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
+ 
+ static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
+ 			     gva_t addr, void *val, unsigned int bytes,
+-			     struct x86_exception *exception)
++			     struct x86_exception *exception, bool system)
+ {
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+-	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
++	u32 access = 0;
++
++	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
++		access |= PFERR_USER_MASK;
++
++	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access, exception);
+ }
+ 
+ static int kvm_read_guest_phys_system(struct x86_emulate_ctxt *ctxt,
+@@ -4847,12 +4852,17 @@ out:
+ }
+ 
+ static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
+-			      unsigned int bytes, struct x86_exception *exception)
++			      unsigned int bytes, struct x86_exception *exception,
++			      bool system)
+ {
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
++	u32 access = PFERR_WRITE_MASK;
++
++	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
++		access |= PFERR_USER_MASK;
+ 
+ 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
+-					   PFERR_WRITE_MASK, exception);
++					   access, exception);
+ }
+ 
+ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
+@@ -4871,8 +4881,8 @@ int handle_ud(struct kvm_vcpu *vcpu)
+ 	struct x86_exception e;
+ 
+ 	if (force_emulation_prefix &&
+-	    kvm_read_guest_virt(&vcpu->arch.emulate_ctxt,
+-				kvm_get_linear_rip(vcpu), sig, sizeof(sig), &e) == 0 &&
++	    kvm_read_guest_virt(vcpu, kvm_get_linear_rip(vcpu),
++				sig, sizeof(sig), &e) == 0 &&
+ 	    memcmp(sig, "\xf\xbkvm", sizeof(sig)) == 0) {
+ 		kvm_rip_write(vcpu, kvm_rip_read(vcpu) + sizeof(sig));
+ 		emul_type = 0;
+
 
