@@ -2,131 +2,134 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E6697C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8B756C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ADF5208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41843208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="U6NqA+uw";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FVfOmjXp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ADF5208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RCqwRMLW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41843208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965111AbeFNOHq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:07:46 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:57560 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965068AbeFNOHj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:07:39 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A50BD607BB; Thu, 14 Jun 2018 14:07:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528985258;
-        bh=C5BlthjhyXFfxq62wvzajVzmg1OYwlwje68GEQzJYoc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=U6NqA+uwR2rBzPdjezZDDH2G8gCO/YU8op1gfrtxyAG/zt+u1jMpr3ST0mpuOuDR8
-         Ahyn/mgtRTZ2XRJs6nS1cDw0R/UOWWNLIHgvdkRBD2zwAIIN/vSz9MYQbt4MprgEhX
-         hfpoIPs2J2EOsLTNP+xZ5hnQxD+nt6HtCKz/j9Mw=
-Received: from [10.204.79.100] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S965128AbeFNOHx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:07:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48302 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965113AbeFNOHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:51 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: mojha@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8B88860795;
-        Thu, 14 Jun 2018 14:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528985257;
-        bh=C5BlthjhyXFfxq62wvzajVzmg1OYwlwje68GEQzJYoc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FVfOmjXpdGN1iChBHXfUzCwCIRi9mdpdRCDSEMBqtkoAXBvgG4GlNt3Lljq43AcV5
-         7ekywnJtB6H8UCce1BQpmuV/y3Dev07femkjjxHqrCQeYcvHOnOV2y6Hd7dzsdsnly
-         s2yAfWzBcdFNuNUba9h3sUT7+HUkI1e4NYQYIfok=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B88860795
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
-Subject: Re: [PATCH v2] time: Fix sleeptime injection for non-stop clocksource
- & persistent clock
-To:     john.stultz@linaro.org, tglx@linutronix.de,
-        linux-kernel@vger.kernel.org
-Cc:     neeraju@codeaurora.org, gkohli@codeaurora.org,
-        cpandya@codeaurora.org
-References: <1527680699-16068-1-git-send-email-mojha@codeaurora.org>
-From:   Mukesh Ojha <mojha@codeaurora.org>
-Message-ID: <19644aab-d5dc-aace-48da-5df1587da873@codeaurora.org>
-Date:   Thu, 14 Jun 2018 19:37:28 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id E90E3208CB;
+        Thu, 14 Jun 2018 14:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985270;
+        bh=qDLi58N6iKwofc9rLJkmz2Ok4ieSdvnuvdf+Px699vY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RCqwRMLW3X6feRfwhuYxAGf/FuPOp8p2QJp0J35+qJ7xc9kf+iKhJ3VyzAITz3rV7
+         8Uii8gWaFg4BCLeds1KmASaPZiIXmNzjv3Ap7iWPPN4clz5ngYP//ShX/13R2oYgjB
+         ay78ZQWF0gEt1qT/9Byfis2cKKFy/WiSZBLOxM+4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexander Kappner <agk@godking.net>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.16 13/43] usb-storage: Add compatibility quirk flags for G-Technologies G-Drive
+Date:   Thu, 14 Jun 2018 16:04:17 +0200
+Message-Id: <20180614132135.669854883@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
+References: <20180614132135.111973468@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <1527680699-16068-1-git-send-email-mojha@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Any input on this ?
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Thanks,
-Mukesh
-On 5/30/2018 5:14 PM, Mukesh Ojha wrote:
-> Currently, for both non-stop clocksource and persistent clock
-> there is a corner case, when a driver failed to go suspend mode.
-> rtc_resume() injects the sleeptime as timekeeping_rtc_skipresume()
-> returned 'false'(sleeptime_injected=false) due to which we can
-> see mismatch in timestamps between system clock and other timers.
->
-> Fix this by updating sleeptime_injected=true for both non-stop
-> clocksource and persistent clock.
->
-> Success case:
-> ------------
->                                           {sleeptime_injected=true}
-> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() =>
->    rtc_resume()
->
-> Failure case:
-> ------------
->               {failure in sleep path} {sleeptime_injected=false}
-> rtc_suspend()          =>            rtc_resume()
->
-> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
-> ---
-> Changes in v2:
->   * Updated the commit text.
->   * Removed extra variable and used the earlier static
->     variable 'sleeptime_injected'.
->
->   kernel/time/timekeeping.c | 11 +++++++++++
->   1 file changed, 11 insertions(+)
->
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 49cbcee..2754c1b 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -1610,6 +1610,17 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
->    */
->   bool timekeeping_rtc_skipresume(void)
->   {
-> +	struct timekeeper *tk = &tk_core.timekeeper;
-> +	/*
-> +	 * This is to ensure that we don't end up injecting
-> +	 * the sleeptime via rtc_resume() for non-stop clocksource
-> +	 * when we fail to sleep.
-> +	 */
-> +	if (!sleeptime_injected)
-> +		sleeptime_injected = ((tk->tkr_mono.clock->flags &
-> +			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
-> +			(persistent_clock_exists)) ? true : false;
-> +
->   	return sleeptime_injected;
->   }
->   
+------------------
+
+From: Alexander Kappner <agk@godking.net>
+
+commit ca7d9515d0e6825351ce106066cea1f60e40b1c8 upstream.
+
+The "G-Drive" (sold by G-Technology) external USB 3.0 drive
+ hangs on write access under UAS and usb-storage:
+
+[  136.079121] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[  136.079144] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
+[  136.079152] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
+[  136.079176] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 00 00 00 00 00 00 00 08 00 00
+[  136.079180] print_req_error: critical target error, dev sdi, sector 0
+[  136.079183] Buffer I/O error on dev sdi, logical block 0, lost sync page write
+[  136.173148] EXT4-fs (sdi): mounted filesystem with ordered data mode. Opts: (null)
+[  140.583998] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[  140.584010] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
+[  140.584016] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
+[  140.584022] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 e8 c4 00 18 00 00 00 08 00 00
+[  140.584025] print_req_error: critical target error, dev sdi, sector 3905159192
+[  140.584044] print_req_error: critical target error, dev sdi, sector 3905159192
+[  140.584052] Aborting journal on device sdi-8.
+
+The proposed patch adds compatibility quirks. Because the drive requires two
+quirks (one to work with UAS, and another to work with usb-storage), adding this
+under unusual_devs.h and not just unusual_uas.h so kernels compiled without UAS
+receive the quirk. With the patch, the drive works reliably on UAS and usb-
+storage.
+(tested on NEC Corporation uPD720200 USB 3.0 host controller).
+
+Signed-off-by: Alexander Kappner <agk@godking.net>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/usb/storage/unusual_devs.h |    9 +++++++++
+ drivers/usb/storage/unusual_uas.h  |    9 +++++++++
+ 2 files changed, 18 insertions(+)
+
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2321,6 +2321,15 @@ UNUSUAL_DEV(  0x4146, 0xba01, 0x0100, 0x
+ 		"Micro Mini 1GB",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL, US_FL_NOT_LOCKABLE ),
+ 
++/* "G-DRIVE" external HDD hangs on write without these.
++ * Patch submitted by Alexander Kappner <agk@godking.net>
++ */
++UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
++		"SimpleTech",
++		"External HDD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_ALWAYS_SYNC),
++
+ /*
+  * Nick Bowler <nbowler@elliptictech.com>
+  * SCSI stack spams (otherwise harmless) error messages.
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -107,3 +107,12 @@ UNUSUAL_DEV(0x4971, 0x8017, 0x0000, 0x99
+ 		"External HDD",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_NO_REPORT_OPCODES),
++
++/* "G-DRIVE" external HDD hangs on write without these.
++ * Patch submitted by Alexander Kappner <agk@godking.net>
++ */
++UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
++		"SimpleTech",
++		"External HDD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_ALWAYS_SYNC),
+
 
