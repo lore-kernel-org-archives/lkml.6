@@ -6,42 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7B240C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:29:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B10FDC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 279EC20020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:29:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6860920020
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:29:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgqu4uix"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 279EC20020
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNv2Ys7T"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6860920020
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965859AbeFNO3S (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:29:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52726 "EHLO mail.kernel.org"
+        id S965864AbeFNOLh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:37 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52640 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965846AbeFNOLi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:38 -0400
+        id S965846AbeFNOLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:32 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFB45208DE;
-        Thu, 14 Jun 2018 14:11:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 36518208DD;
+        Thu, 14 Jun 2018 14:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985497;
-        bh=Uvgg0x/24YHoLKnvcoOvAuKkCQWDrabO+c5vcAPkWX0=;
+        s=default; t=1528985491;
+        bh=k4p2TT9GiQ0jbMwWTGQ2RCtNr3bg4h1Od/zDCupqx/A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lgqu4uixNri1coqOLGXScQbrt3TF9nFnNXNnk3IIyOn33VSNM0m1/m/LjhexpP6fG
-         PMVEJfUbZCBHYLaHC6IpnqKX5Krpt4Fr9nYfyWsGH78idx/khupqzZCcETTtZO6eer
-         /I6AYNWc5pxlT7tWHM2LxWl1nESRb4D8HxtHMDic=
+        b=XNv2Ys7TfUtW4BcvrEvouAuHzwIk58OKGPGQ5Em3+WT5qmHpAtr4K+UBI4nZdbCot
+         fidPah4f8tNiUMz9J4uGEKbXh4iYBZ7dM1t/0OHtU6J80BL6101I2NeM1qSNqgmBHV
+         0TIMcp1S6cKyq7yeKEdlNw8smTbpJKvmNpqkho0I=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 12/30] KVM: x86: introduce linear_{read,write}_system
-Date:   Thu, 14 Jun 2018 16:04:53 +0200
-Message-Id: <20180614132600.773970280@linuxfoundation.org>
+        stable@vger.kernel.org, Martin Wilck <mwilck@suse.com>,
+        Sagi Grimberg <sagi@grimbeg.me>, Christoph Hellwig <hch@lst.de>
+Subject: [PATCH 4.9 10/30] nvmet: dont overwrite identify sn/fr with 0-bytes
+Date:   Thu, 14 Jun 2018 16:04:51 +0200
+Message-Id: <20180614132600.685059845@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -58,185 +59,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Martin Wilck <mwilck@suse.com>
 
-commit 79367a65743975e5cac8d24d08eccc7fdae832b0 upstream.
+commit 42819eb7a0957cc340ad4ed8bba736bab5ebc464 upstream.
 
-Wrap the common invocation of ctxt->ops->read_std and ctxt->ops->write_std, so
-as to have a smaller patch when the functions grow another argument.
+The merged version of my patch "nvmet: don't report 0-bytes in serial
+number" fails to remove two lines which should have been replaced,
+so that the space-padded strings are overwritten again with 0-bytes.
+Fix it.
 
-Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
-Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Fixes: 42de82a8b544 nvmet: don't report 0-bytes in serial number
+Signed-off-by: Martin Wilck <mwilck@suse.com>
+Reviewed-by: Sagi Grimberg <sagi@grimbeg.me>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/emulate.c |   64 ++++++++++++++++++++++++-------------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ drivers/nvme/target/admin-cmd.c |    6 ------
+ 1 file changed, 6 deletions(-)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -802,6 +802,19 @@ static inline int jmp_rel(struct x86_emu
- 	return assign_eip_near(ctxt, ctxt->_eip + rel);
- }
+--- a/drivers/nvme/target/admin-cmd.c
++++ b/drivers/nvme/target/admin-cmd.c
+@@ -197,12 +197,6 @@ static void nvmet_execute_identify_ctrl(
+ 	copy_and_pad(id->mn, sizeof(id->mn), model, sizeof(model) - 1);
+ 	copy_and_pad(id->fr, sizeof(id->fr), UTS_RELEASE, strlen(UTS_RELEASE));
  
-+static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
-+			      void *data, unsigned size)
-+{
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+}
-+
-+static int linear_write_system(struct x86_emulate_ctxt *ctxt,
-+			       ulong linear, void *data,
-+			       unsigned int size)
-+{
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+}
-+
- static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
- 			      struct segmented_address addr,
- 			      void *data,
-@@ -1500,8 +1513,7 @@ static int read_interrupt_descriptor(str
- 		return emulate_gp(ctxt, index << 3 | 0x2);
+-	memset(id->mn, ' ', sizeof(id->mn));
+-	strncpy((char *)id->mn, "Linux", sizeof(id->mn));
+-
+-	memset(id->fr, ' ', sizeof(id->fr));
+-	strncpy((char *)id->fr, UTS_RELEASE, sizeof(id->fr));
+-
+ 	id->rab = 6;
  
- 	addr = dt.address + index * 8;
--	return ctxt->ops->read_std(ctxt, addr, desc, sizeof *desc,
--				   &ctxt->exception);
-+	return linear_read_system(ctxt, addr, desc, sizeof *desc);
- }
- 
- static void get_descriptor_table_ptr(struct x86_emulate_ctxt *ctxt,
-@@ -1564,8 +1576,7 @@ static int read_segment_descriptor(struc
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
--	return ctxt->ops->read_std(ctxt, *desc_addr_p, desc, sizeof(*desc),
--				   &ctxt->exception);
-+	return linear_read_system(ctxt, *desc_addr_p, desc, sizeof(*desc));
- }
- 
- /* allowed just for 8 bytes segments */
-@@ -1579,8 +1590,7 @@ static int write_segment_descriptor(stru
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
--	return ctxt->ops->write_std(ctxt, addr, desc, sizeof *desc,
--				    &ctxt->exception);
-+	return linear_write_system(ctxt, addr, desc, sizeof *desc);
- }
- 
- static int __load_segment_descriptor(struct x86_emulate_ctxt *ctxt,
-@@ -1741,8 +1751,7 @@ static int __load_segment_descriptor(str
- 				return ret;
- 		}
- 	} else if (ctxt->mode == X86EMUL_MODE_PROT64) {
--		ret = ctxt->ops->read_std(ctxt, desc_addr+8, &base3,
--				sizeof(base3), &ctxt->exception);
-+		ret = linear_read_system(ctxt, desc_addr+8, &base3, sizeof(base3));
- 		if (ret != X86EMUL_CONTINUE)
- 			return ret;
- 		if (is_noncanonical_address(get_desc_base(&seg_desc) |
-@@ -2055,11 +2064,11 @@ static int __emulate_int_real(struct x86
- 	eip_addr = dt.address + (irq << 2);
- 	cs_addr = dt.address + (irq << 2) + 2;
- 
--	rc = ops->read_std(ctxt, cs_addr, &cs, 2, &ctxt->exception);
-+	rc = linear_read_system(ctxt, cs_addr, &cs, 2);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
--	rc = ops->read_std(ctxt, eip_addr, &eip, 2, &ctxt->exception);
-+	rc = linear_read_system(ctxt, eip_addr, &eip, 2);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
-@@ -3037,35 +3046,30 @@ static int task_switch_16(struct x86_emu
- 			  u16 tss_selector, u16 old_tss_sel,
- 			  ulong old_tss_base, struct desc_struct *new_desc)
- {
--	const struct x86_emulate_ops *ops = ctxt->ops;
- 	struct tss_segment_16 tss_seg;
- 	int ret;
- 	u32 new_tss_base = get_desc_base(new_desc);
- 
--	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	save_state_to_tss16(ctxt, &tss_seg);
- 
--	ret = ops->write_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
--			     &ctxt->exception);
-+	ret = linear_write_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
--	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	if (old_tss_sel != 0xffff) {
- 		tss_seg.prev_task_link = old_tss_sel;
- 
--		ret = ops->write_std(ctxt, new_tss_base,
--				     &tss_seg.prev_task_link,
--				     sizeof tss_seg.prev_task_link,
--				     &ctxt->exception);
-+		ret = linear_write_system(ctxt, new_tss_base,
-+					  &tss_seg.prev_task_link,
-+					  sizeof tss_seg.prev_task_link);
- 		if (ret != X86EMUL_CONTINUE)
- 			return ret;
- 	}
-@@ -3181,38 +3185,34 @@ static int task_switch_32(struct x86_emu
- 			  u16 tss_selector, u16 old_tss_sel,
- 			  ulong old_tss_base, struct desc_struct *new_desc)
- {
--	const struct x86_emulate_ops *ops = ctxt->ops;
- 	struct tss_segment_32 tss_seg;
- 	int ret;
- 	u32 new_tss_base = get_desc_base(new_desc);
- 	u32 eip_offset = offsetof(struct tss_segment_32, eip);
- 	u32 ldt_sel_offset = offsetof(struct tss_segment_32, ldt_selector);
- 
--	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	save_state_to_tss32(ctxt, &tss_seg);
- 
- 	/* Only GP registers and segment selectors are saved */
--	ret = ops->write_std(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
--			     ldt_sel_offset - eip_offset, &ctxt->exception);
-+	ret = linear_write_system(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
-+				  ldt_sel_offset - eip_offset);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
--	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	if (old_tss_sel != 0xffff) {
- 		tss_seg.prev_task_link = old_tss_sel;
- 
--		ret = ops->write_std(ctxt, new_tss_base,
--				     &tss_seg.prev_task_link,
--				     sizeof tss_seg.prev_task_link,
--				     &ctxt->exception);
-+		ret = linear_write_system(ctxt, new_tss_base,
-+					  &tss_seg.prev_task_link,
-+					  sizeof tss_seg.prev_task_link);
- 		if (ret != X86EMUL_CONTINUE)
- 			return ret;
- 	}
+ 	/*
 
 
