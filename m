@@ -1,88 +1,191 @@
-Return-Path: <SRS0=bmN+=JH=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
-Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1541C43142
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:55:54 +0000 (UTC)
+X-Spam-Level: *
+X-Spam-Status: No, score=1.5 required=3.0 tests=DKIM_SIGNED,FSL_HELO_FAKE,
+	MAILING_LIST_MULTI,T_DKIM_INVALID,USER_AGENT_MUTT autolearn=no
+	autolearn_force=no version=3.4.0
+Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 00CB9C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8519E21CCF
-	for <linux-kernel@archiver.kernel.org>; Thu, 21 Jun 2018 19:55:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A202F208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:13:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YULie6aw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8519E21CCF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bSWaa3Ry"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A202F208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933293AbeFUTzw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 21 Jun 2018 15:55:52 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:33222 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932899AbeFUTzv (ORCPT
+        id S1752803AbeFNGNW (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 02:13:22 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:45068 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752671AbeFNGNU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 21 Jun 2018 15:55:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Z84Xm/UqbzujvAjIs+QD/VTeO6yPNzfp+L8JEZkP/ds=; b=YULie6awFV/YM+JoRNhxMJdmI
-        UuQ6C9Qo0Qm+bXod3mvUOtr7/ndC5mE7+N1qX841/5R66m3e8xc73rNjWSXUYW7kUwQutF7B8W0yt
-        TCD9ZRdRAH1Pb85J9SGzN2lDoGbTna3ASf6gb4Mu8x82n7ITzsaASuQtWqcTrLG949PviPz3IqMQ/
-        SWhpTfZfLAxXRdyvosM9lhorrOV+17AzTFuUHjxIFY+SIZ251Qes493QGzuOcVdHBAcDKXPQADMsv
-        ZI2hvQoDoT+VwEMEZWPkL56Z+WSChE36O2rKHrCPv9GxHnIU4h2/g0VV8FfgIw752p/bfVNAkdDZd
-        CM1/P9S3A==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=worktop)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fW5gE-0001GU-PZ; Thu, 21 Jun 2018 19:55:44 +0000
-Received: by worktop (Postfix, from userid 1000)
-        id EF9BE6E093E; Thu, 21 Jun 2018 21:55:40 +0200 (CEST)
-Date:   Thu, 21 Jun 2018 21:55:40 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Fenghua Yu <fenghua.yu@intel.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@elte.hu>,
-        "H. Peter Anvin" <hpa@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Rafael Wysocki <rafael.j.wysocki@intel.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Alan Cox <alan@linux.intel.com>,
-        Ravi V Shankar <ravi.v.shankar@intel.com>,
-        Arjan van de Ven <arjan@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>, x86 <x86@kernel.org>
-Subject: Re: [RFC PATCH 04/16] x86/split_lock: Use non locked bit set
- instruction in set_cpu_cap
-Message-ID: <20180621195540.GC13636@worktop.programming.kicks-ass.net>
-References: <1527435965-202085-1-git-send-email-fenghua.yu@intel.com>
- <1527435965-202085-5-git-send-email-fenghua.yu@intel.com>
+        Thu, 14 Jun 2018 02:13:20 -0400
+Received: by mail-wr0-f193.google.com with SMTP id o12-v6so5007688wrm.12;
+        Wed, 13 Jun 2018 23:13:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eBvb007vbF4Ex48y25zdErs+Nf8nPK5faUmYjeCRDG0=;
+        b=bSWaa3Ryy/04ULXJK91pzqolh2L7uuZYdXL5QiziqhudVBZyIfQMFhJPDI8NxY4s5E
+         rCzA9ftHCFGKmYUoOmhYLV3PVSd015VIfx/pA9YUyTFvVFlovpiOpvZocXVipQ/upMii
+         WpWacwUo9x5+jAAyEGoIX+Gy3R0KXT4i7nlCWcAczKJW4pzQjCOwPBVqPH+1nxOlRUDC
+         UO/NvLRpeYKuv4S5uSByp21iYTIKVXvwL15ZzF+IA5HJmC1TjWgb+DuR+DODsCBTEI+5
+         TjKnfPivYJdmuhCYAOcS9ePGs7DgRXmUHjIsXgQ5dUjT5JLsGOMNgh+Thh8cr/vKda2J
+         hwfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eBvb007vbF4Ex48y25zdErs+Nf8nPK5faUmYjeCRDG0=;
+        b=NACPORLs9i76Y5h6LEp+F9mYfefvfzRzru+xQo2VDHOicvBP0Lc8tTMk7Lf/lTkkKv
+         JoGZaa7e/4D5eZG9ZdttLlxdnIR10JPT/kb4XwpYnhGgjS1OXjkjmiM4XYx05P+N58lb
+         qFXF/EQ4S/AzbnpujW5R3h7dP0qUev3AIn3TplA+99mGHrN9Ti+VsfCM8HKMbPV5ZsXe
+         nNn4cqJUfvM/bae178b64nE3OwACJJCo7NdGbtqz6lonw9+fnzQdvzYOn0kga9ql+SnC
+         sjBuzJW+QHnZ6Ma8B6Wy8sIg6tvv54uEgVbaFsOrz+WccNdtD90rkniqbPMFw3WU97A+
+         HfzA==
+X-Gm-Message-State: APt69E22Lh0YZDtYhNKxADD+sGmuK9IAYBVIeNAmwvAXEuBDt9TEootD
+        aB0DdW3WALEH+aUFtOK+oEI=
+X-Google-Smtp-Source: ADUXVKIemRFeZebva4kfPPmElzMhWqyKAskHn39aTvuNbrbB3UYHF0RcKgaI6zZVUxgSuso4L3rPYg==
+X-Received: by 2002:adf:e4cd:: with SMTP id v13-v6mr861903wrm.238.1528956798630;
+        Wed, 13 Jun 2018 23:13:18 -0700 (PDT)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id t13-v6sm5722431wro.62.2018.06.13.23.13.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Jun 2018 23:13:17 -0700 (PDT)
+Date:   Thu, 14 Jun 2018 08:13:15 +0200
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
+        linux-perf-users@vger.kernel.org,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>,
+        David Ahern <dsahern@gmail.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Jin Yao <yao.jin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Milian Wolff <milian.wolff@kdab.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Wang Nan <wangnan0@huawei.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: Re: [GIT PULL 00/12] perf/urgent fixes and improvements
+Message-ID: <20180614061315.GA28715@gmail.com>
+References: <20180611174810.14815-1-acme@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1527435965-202085-5-git-send-email-fenghua.yu@intel.com>
-User-Agent: Mutt/1.5.22.1 (2013-10-16)
+In-Reply-To: <20180611174810.14815-1-acme@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, May 27, 2018 at 08:45:53AM -0700, Fenghua Yu wrote:
-> set_bit() called by set_cpu_cap() is a locked bit set instruction for
-> atomic operation.
+
+* Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
+
+> Hi Ingo,
 > 
-> Since the c->x86_capability can span two cache lines depending on kernel
-> configuration and building evnironment, the locked bit set instruction may
-> cause #AC exception when #AC exception for split lock is enabled.
+> 	Please consider pulling,
+> 
+> - Arnaldo
+> 
+> Test results at the end of this message, as usual.
+> 
+> The following changes since commit 2696ec4566f598ab483a6bebc4ec841b2efb88ec:
+> 
+>   Merge tag 'perf-core-for-mingo-4.18-20180606' of git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux into perf/urgent (2018-06-07 07:18:51 +0200)
+> 
+> are available in the Git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/acme/linux.git tags/perf-urgent-for-mingo-4.18-20180611
+> 
+> for you to fetch changes up to fad76d4333fe73cf3f73704aa34d4ce523b1c458:
+> 
+>   perf script: Show hw-cache events (2018-06-08 13:41:30 -0300)
+> 
+> ----------------------------------------------------------------
+> perf/urgent fixes and improvements:
+> 
+> perf stat:
+> 
+> . Add --interval-clear option, to provide a 'watch' like printing (Jiri Olsa)
+> 
+> . Fix metric column header display alignment (Jiri Olsa)
+> 
+> . Improve error messages for default attributes, providing better output
+>   for error in command lines such as:
+> 
+>   $ perf stat -T
+>   Cannot set up transaction events
+>   event syntax error: '..cycles,cpu/cycles-t/,cpu/tx-start/,cpu/el-start/,cpu/cycles-ct/}'
+>                                     \___ unknown term
+> 
+>   Where the "event syntax error" line now appears (Jiri Olsa)
+> 
+> perf script:
+> 
+> . Show hw-cache events too (Seeteena Thoufeek)
+> 
+> perf c2c:
+> 
+> . Fix data dependency problem in layout of 'struct c2c_hist_entry', where
+>   its member 'struct hist_entry' must be at the end because it has a ZLA
+>   as its last member, that gets space when handling callchains (Jiri Olsa)
+> 
+> Core:
+> 
+> - We cannot assume that a 'struct perf_evsel'  is to be obtained from a
+>   container_of operation on a 'struct hists' as there are tools, such as
+>   'perf c2c' that uses 'struct hist' instances without having them in
+>   container structs that also have 'struct perf_evsel' in a particular
+>   layout, so provide a different way of figuring out if a 'struct hists'
+>   and 'struct hist_entry' have callchains (Arnaldo Carvalho de Melo)
+> 
+> - Fix error index in the PMU event parser, so that error messages can
+>   point to the problematic token (Jiri Olsa)
+> 
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> ----------------------------------------------------------------
+> Arnaldo Carvalho de Melo (4):
+>       perf hists: Save the callchain_size in struct hist_entry
+>       perf hists: Make hist_entry__has_callchains() work with 'perf c2c'
+>       perf hists browser gtk: Use hist_entry__has_callchains()
+>       perf hists: Reimplement hists__has_callchains()
+> 
+> Jiri Olsa (7):
+>       perf tools: Fix error index for pmu event parser
+>       perf stat: Add --interval-clear option
+>       perf stat: Use only color_fprintf call in print_metric_only
+>       perf stat: Fix metric column header display alignment
+>       perf stat: Allow to specify specific metric column len
+>       perf stat: Add event parsing error handling to add_default_attributes
+>       perf c2c: Keep struct hist_entry at the end of struct c2c_hist_entry
+> 
+> Seeteena Thoufeek (1):
+>       perf script: Show hw-cache events
+> 
+>  tools/perf/Documentation/perf-stat.txt |  3 +++
+>  tools/perf/builtin-c2c.c               | 10 +++----
+>  tools/perf/builtin-script.c            | 12 +++++++++
+>  tools/perf/builtin-stat.c              | 48 ++++++++++++++++++++--------------
+>  tools/perf/ui/gtk/hists.c              |  2 +-
+>  tools/perf/util/hist.c                 | 12 ++++++---
+>  tools/perf/util/hist.h                 |  4 +--
+>  tools/perf/util/parse-events.y         |  5 ++++
+>  tools/perf/util/sort.h                 |  4 ++-
+>  9 files changed, 67 insertions(+), 33 deletions(-)
 
-That doesn't make sense. Sure the bitmap may be longer, but depending on
-if the argument is an immediate or not we either use a byte instruction
-(which can never cross a cacheline boundary) or a 'word' aligned BTS.
-And the bitmap really _should_ be 'unsigned long' aligned.
+Pulled, thanks a lot Arnaldo!
 
-If it is not aligned, fix that too.
-
-/me looks at cpuinfo_x86 and finds x86_capability is in fact a __u32
-array.. see that's broken and needs fixing first.
+	Ingo
