@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9CAB2C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:04:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D8BD5C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EB42208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:04:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A801208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:05:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="O4AX0M2R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EB42208D9
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="FSCTioLP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A801208CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754670AbeFNGEp (ORCPT
+        id S1754682AbeFNGFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:04:45 -0400
-Received: from mail-ve1eur01on0049.outbound.protection.outlook.com ([104.47.1.49]:11685
+        Thu, 14 Jun 2018 02:05:10 -0400
+Received: from mail-ve1eur01on0084.outbound.protection.outlook.com ([104.47.1.84]:51328
         "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754618AbeFNGEj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:04:39 -0400
+        id S1754629AbeFNGEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 02:04:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jOjMt2i7sVvqqMD3dlnxcHUfBZt/L/3tFos3iUUovyc=;
- b=O4AX0M2RmLqzHUOUU36qxhhu4wunIBLbJAcS2uxioUnuXCeJdImcHl6bw3/NMIw11VSY4k+EKpYjBI9MTIP4+1yiOkwphI27SppjVQyqmHZRnBfja4SzbsUr4+DyzVh4kmrfxjz/CoeHQiidMN1S6g8JB/tYMClpIEwbTNQmCCQ=
+ bh=LGaw3XOBxk5cW2PAnV2R51VUhiuMBXL3OI+oxBseZ2k=;
+ b=FSCTioLPBDbvW57KO8zf/bKO0qne8CHVdA5Id+GFv0qAa4sA38hwNhZ2SP15Uy/o0cVoze9UE9UjokigPK2ITqlBHxHmmB5ps21UuZTkrZ/35yOU8GesfwovpH3L/C8EjJ1WYe6yr7sQ8k1hdVkjTmmhbcjZopWAc1YWf98oe3E=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=yibin.gong@nxp.com; 
 Received: from robin-OptiPlex-790.ap.freescale.net (119.31.174.66) by
  AM5PR04MB3219.eurprd04.prod.outlook.com (2603:10a6:206:7::16) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.16; Thu, 14 Jun 2018 06:04:32 +0000
+ 15.20.863.16; Thu, 14 Jun 2018 06:04:28 +0000
 From:   Robin Gong <yibin.gong@nxp.com>
 To:     vkoul@kernel.org, s.hauer@pengutronix.de, l.stach@pengutronix.de,
         dan.j.williams@intel.com, gregkh@linuxfoundation.org,
@@ -43,9 +43,9 @@ To:     vkoul@kernel.org, s.hauer@pengutronix.de, l.stach@pengutronix.de,
 Cc:     linux-serial@vger.kernel.org, dmaengine@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-imx@nxp.com
-Subject: [PATCH v4 7/7] tty: serial: imx: split all dma setup operations out of 'port.lock' protector
-Date:   Thu, 14 Jun 2018 22:03:02 +0800
-Message-Id: <1528984982-5074-8-git-send-email-yibin.gong@nxp.com>
+Subject: [PATCH v4 6/7] dmaengine: imx-sdma: add sdma_transfer_init to decrease code overlap
+Date:   Thu, 14 Jun 2018 22:03:01 +0800
+Message-Id: <1528984982-5074-7-git-send-email-yibin.gong@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1528984982-5074-1-git-send-email-yibin.gong@nxp.com>
 References: <1528984982-5074-1-git-send-email-yibin.gong@nxp.com>
@@ -57,49 +57,50 @@ X-ClientProxiedBy: HK0PR03CA0014.apcprd03.prod.outlook.com
  (2603:10a6:206:7::16)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: c42b5ad4-a36c-4ada-9e0c-08d5d1bcb4aa
+X-MS-Office365-Filtering-Correlation-Id: 61f26088-02df-4743-b3bb-08d5d1bcb23a
 X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR04MB3219;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;3:YPLNQrurlATJ8CdgVV7GSyd9S60T+C/hO1oPuygiMoMJJIJfD+q+ihvP7vzD2m6TAYj/FnnWWUZff7hM/5ywMCB01U8UYjHUotxsgBxUsHf78lFVMLbQk4/L/4GfZ5IIeBpz5O9IT3rvbfqqp84GKfhVBnAhbRQ2VrweE109ynL3mJqpaNP8RZYTtB6nXGlQhhXflKnLO+FvFhWgTrDkwOzGxbm4GKOa9iOoyj+TD+cS/93R8gbLL61zca9ni/1f;25:GW7Yt9qeQfrIeTlWGR4uHIHcREjy3LXAVXS2rHgw7e2ENK/KlXDnydt+PmqSdysz+odvWnjXrYN+tTrOVm5l2dk7s/1JNJgTWkq/b2YamugjkPoabT3xKTV7E0XpnsrVQPP3l3OXgV9KVA33rZeOQpzUjRBlMysPndo6b8og97YAVduK3TmEL6QG62fJDHuCwMcs3pCo+r/TldZe4vJu/ng3QPWQ5bskoD68Jk39YMC2pDyqmHYfWJ+icxDVhTZjeQdCJWnhuogywQiak9LYAXZKeAKRLn0wgbJ8T+JMDx4aYXO5d0pIRmhtdHNUcUOCQHbxuFawMbTQzAZwwOLXvA==;31:y1EH1Umj0KzwGNTdHFVNE1c1UxleEevLrQ2rs30Dj0WUCgI83xNLROURElhI3EJqqFoNPoRKzd+Rya0q2TX6/8dU3KyOnxZYaz0obHNeS01zSwmQIQo1fiFW+WTobSifuH0aK7dZF65GiK7uoHObmyUG1ZWLePVcb8LEunCwD1K0wzXnhJlq0Q2yntWZXidsjy4QKkzqDqE8Rdyc63GS3bHHRegy9pOvsc1sJE7Q42Y=
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;3:k8nm1ZPAGWox8+VUIjU1XuNM4/pQUIUqxQMzDwjN/p7vyNACoHcpYujrBHSsmyqDvJ45NrMU+Pwe9VeOGLavIzr+N3OroduH1i1fwU8db1+uLdVATyX0Un4IxqxwBS7jQaTs58vKsXsDJ5bA2lyMHK/ZH70VT0Sybf77XL0Be4Y/gjkEpO7Q03apu22lV0pnYuTTDwtdBSCUh2vb5V6IrOuFqxRhB8wkg1YlS2aJvrsnglI4vqyrap1XDx0Pzioo;25:fmWPmm5ObtvSd+ZQ/6oLSeADW6aBNcd0fbRkOCPCEdEla1t6KDAG3T0NmIq1b89Xemtr468RZyGFY5Yw8f0F6n2rx5StIkNA5sGMUurU/eK2cOc9NPCKNuU8C5HA9S85M4K9f9RPSwPYqGvy49Hz267/DciyAEgM0JDgho30LuhTB46taZhFlv62Lkbv2B5ZiQQPdz4JKHCnvnfdUobFkS1tzB8FTpJTJ8tWxssTEcNaeem6eSFQDovWAqTGmuzHWQt4Sfh90NDUD5XVyXCgAWeCHKevmnqSyCKMqU38lG8KxINOtXMztrFkbE8+uFXK2vvloR6c07Sm+dYxG1wveQ==;31:I+qBLQeoFjpHtoryc8Urc/AECNBIHBdLmNtwS4xcxqwQSn0bps/pnxAcD0Z1l7WAFVKc2FeHYHpqzUHI6q+UicbleGk6Bn/pz1h0vy4yixn8a9AcAg2/B3pT7Dq5JttK+CMjeGYWrI5z2omcoDqiMcu3DXtq4PsrsGcPjszYfzPPEfc/o15XO4v3csUQYw2RNyvoQPm64Su5botdvYcfvzNYtWJY4XZ9l+JYBmhc3jM=
 X-MS-TrafficTypeDiagnostic: AM5PR04MB3219:
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;20:HToVsaLscYGVwQ2PuUgH86ha4MvZxc3a/yEbEc8zd9P938U/hNVLcDmd0BC9j5b9VP7uOBT54k0oU9fU/L/RbYFWZtu+kt2TradcJmet950twoVc8OKa8hKyc+3NrIyYIlCu0YBfif7aViQHt/myp8+mzVT8vxU6zaWjaIDpm9EvvHtFUHLwasqcGxkjXdJkbPyw2RHe2wmVKztTwqqpNm1opgjzoll6heNqezc9zl7Ej2qVcttLtnn5+vV26Jc1PSDruUjS2lMkPthKsjIFiWyYGvpsMR9MPe9DFACFFdDiQtdJ6kWh3MrnnmH3x2DjeiHipEfb0ITi3w/YQI8nVLJ1LQ8aLgDgYdQxT2AsYC/ydfF1lQ2/GNRTGuSrWPYDWHOiEvrzDNlKZZnXsNLojPTvmdWC/fhakKcj1+4gfSiWp/vRwxElvy/KiD4FaWuVFN98SMSyoSaPy5pQ+ef04QRNbsG31xjnPGec+KqNMsMMScsE300FOuiAPlB/LtGv;4:2eOnxm/vxwvqRVSUmPNp1GUFZhvzcZul6rLMKj7fk1nFCHF/24RtzdQ1RrREQpfbhqjt9mGKIp7f+O87ZKSRlELm9FhoL3dRFlPWMOzRdCZsRr+6Ei6O0F31+cjjjWgYUjyiPgatwhyxLMd4rkMK+KmgCQo0Ddd9r8DwxYU/GoXqKsIiSoBb8KNdNNtJmy0I9s4nlJV67O8G9UEPhjSv2pyd7L7mFbQ39K1CmqAYfnQ8nTDsTJjpNN8M8uqiMl21FeNhW1+i/4sETCU7IaIzhsYocPsTLnHXDKsZl8cuAmkV+d3DrA2PMmKmqYJ7qUej
-X-Microsoft-Antispam-PRVS: <AM5PR04MB3219E9C63924FC76D58591EA897D0@AM5PR04MB3219.eurprd04.prod.outlook.com>
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;20:/4mmO6e5InVVTnTJOUPqS/DxfXSxl/ISK31Y4/E1j4jpnfIkS/hnE0S+yGBA3JKPuS5qUGvKlHdJ8DDGrh5ufsWkZ1viWmcnYfeNjnVTTtbeAJeduGZp216vrjEK+3zxMuy7kfWsc6QsxSXLeTGpY5W2aZ2FgT5z9Js7avCD1HO0a9nxuE7XAxWPQGngmZ9s9Ob8y8jA+7LFFpzPa1Ef/8kUUAnenwk9xhpaWDI260wKPQYaK/FPK1/znZj/iz5t9rmR9FRDA7qRu70ZrQtRVN8Tvj+VHNIDbaW8HKFaAKto9fNGn8K4JvQR3TUNv5ywtxpHhfDE6cHB9rZBql/MQ+ndZ5rKCFykr6Ba+ZEnqTZ4hjA31+Kh3TjD0uWYy5HOF6wzN5FeJ1aITmbShl2Tp7wdwsjOv0Pi6jdBYDxNoUGLZlrIJDnpgWWyI++De3V165Meg+HoKa5ywfKbQzPsA5mntMjvZ9qjzcAE/EyrmvZfdDADAg3OJVBh5eaIefk1;4:VtgZzmPveIlsHBy2memwsOtde1Wew9yZsh8lV3bovV6/GEUVRLAHzn3CTN1t5q7Ksf5l+ahJdbZWCDJjkAjsxryRHek4n7bcmsfwwGA3dwu4mi3hKpvim3slFSS/WwxEPcIOXlPads8XBa37EkCYywtdqUtvnuOin1QdsFGjiHzaTy14MF2bm5G2mTnK1GsUw4T1E2IYlO5usqwwL7ZI8JEsczXxDtGiKRruY2U3GDzQKb2OSdamghEYOR22e9qzsW0nmS0NhcCN970sT0TcfDB4MA9P89PiTn2XH5cZ04P07TXSKJPiMp9X5ynaL6sf
+X-Microsoft-Antispam-PRVS: <AM5PR04MB3219D85F713305F440362813897D0@AM5PR04MB3219.eurprd04.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(185117386973197);
 X-MS-Exchange-SenderADCheck: 1
 X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM5PR04MB3219;BCL:0;PCL:0;RULEID:;SRVR:AM5PR04MB3219;
 X-Forefront-PRVS: 0703B549E4
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(346002)(39380400002)(39860400002)(199004)(189003)(68736007)(59450400001)(478600001)(7736002)(8936002)(305945005)(66066001)(50226002)(7416002)(86362001)(6512007)(3846002)(6116002)(47776003)(316002)(16586007)(8676002)(81166006)(16526019)(26005)(186003)(81156014)(386003)(6506007)(2906002)(52116002)(76176011)(51416003)(36756003)(6486002)(5660300001)(4326008)(50466002)(106356001)(25786009)(48376002)(105586002)(97736004)(6666003)(446003)(486006)(476003)(53936002)(2616005)(11346002)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3219;H:robin-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(979002)(376002)(396003)(366004)(346002)(39380400002)(39860400002)(199004)(189003)(68736007)(478600001)(7736002)(8936002)(305945005)(66066001)(50226002)(7416002)(86362001)(6512007)(3846002)(6116002)(47776003)(316002)(16586007)(8676002)(81166006)(16526019)(26005)(186003)(81156014)(386003)(6506007)(2906002)(52116002)(76176011)(51416003)(36756003)(6486002)(5660300001)(4326008)(50466002)(106356001)(25786009)(48376002)(105586002)(97736004)(6666003)(446003)(486006)(476003)(53936002)(2616005)(11346002)(956004)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3219;H:robin-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR04MB3219;23:Ar8cDL4v7zkZkML38FXopdLlglbwXKjVjPUoozFFK?=
- =?us-ascii?Q?FrROnSleeh3r2XK+uaorXnLfwswgtq0j8taMmF/6o2en+Bi2W9RKALaEHNes?=
- =?us-ascii?Q?gZKLumkbA+zLjfbjV/ZKlnX/qRrZSxg2zB0Qag0pg0EgnQsPDfGxqleK2K4g?=
- =?us-ascii?Q?gMpWv1TBLYTlQlH3kBM0CVKBvC5PkxZrJIOri2vUciOjkinzEBZ2rjwa2FIv?=
- =?us-ascii?Q?shxty7Lv5hojM4oe/d1RnNuN+vwGe7xtuS9UNz/JCodjRGpvFpIJ48qwhM29?=
- =?us-ascii?Q?IldBLVWfKIMA+LXnC+UTuOWzR2zL8nIzUmKXwh850L/anjA6Lbgg6Om86OeT?=
- =?us-ascii?Q?e8QkAgnU6icM47f7hpPrBPNBioBKqLZDgfsEOe+NXvaxElweoPHAutc0vQja?=
- =?us-ascii?Q?AU0f6CdQFuzcTXmMUCFCNusz1e1c9aqqBriuCElPSVh5oyWjMlGJzyEyB7+E?=
- =?us-ascii?Q?gtn12ddiweqW8IAfO3/SoLdKasHhBtTT/TSZr2UgOWl7isbesPoSglQut5hn?=
- =?us-ascii?Q?s2VbM41+6pUtb+DCpmdMF/p8A2dBmNZcLj8oFHM5x6gOJZyxingn5RlC2P5I?=
- =?us-ascii?Q?JdDky4pCJ4mLo15en7rIu1dmIob4AjFKrtVD1y/3Lai8Ac4+0U7x3f9aDgvg?=
- =?us-ascii?Q?zcMTXy8RGMjr5Q/r9SOVpI1AiJgDtWWlXimHPCVPnupEQEThG6PNS0V/Nh+G?=
- =?us-ascii?Q?T4jF9cawRo8ilgP6KrPAfXigOS0fypIrN9R6SC5zzxtaOVf9QKFNFEVo8jsw?=
- =?us-ascii?Q?EQEebxnLH60KJ3ClB4M4OK0tbzvVosLDO3NBHeUUfuMV2M3jjDIndW0ocuJH?=
- =?us-ascii?Q?5U/3xZmizftbM7L8La5RtR38ofA8Bwb+dGUWJBHdYJKnqJz5gPsOUPHQyyNt?=
- =?us-ascii?Q?B+IUoHYVPWrU3bz7aRS2nWWkCt5R/imQdv6H4E+KKm3CtLpZ2+DtUCQl8W7l?=
- =?us-ascii?Q?f9xIeaK1VHFvnRffSygCHA3qfzr0xiEg3JIDxKG2e0yPZ9NmBaXtWifyD5S/?=
- =?us-ascii?Q?ux9LECGXY2vBS1x+xVrcMrzE5nCAl6xCte3E/OLFOYmVBDPb7axXJzZLC9fw?=
- =?us-ascii?Q?XH+jBwfUikn7h0QONWZmmTASQAPSBGfY4+9VssT/zxb3nCh4u4eUq/Dec4q+?=
- =?us-ascii?Q?Cy3PLdAzNprAkuJhKO5o4HExDf1Og48iFXZc/lZk4LRIYlHLpngjEaXodAGv?=
- =?us-ascii?Q?xhZ3oyAwgR2cWZbBoX0ksR+1KJBAtok13AR?=
-X-Microsoft-Antispam-Message-Info: s5+ReeeGxD8cBFjRqPWkrCU61gM6otLvuYlF5fwYLdniEJl67M0CnubO4n2dt6TeKRCUAUSAjNpW4J49lZm0dJDkiczsVFIt98Gp0/r3WqExXhaJ7WNmBZ7uYvJ3+ubQQAS8VXzUBqS/azqPXj9reqyWGw3qzNm1no42eUPCq2A1sgxwUbSUbl/F2OwavNVe
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;6:QOVxT96DP7GgfAUORWqRPpYG46SxHprujy5v8P6j/6CxUeeR0EbpmO4SYzRMxklvPrnnC03GCdFWi3tFsoEkuZ0RdRNGXpsyg47FcXuy6w6lOYLW39H0RdE8YNNllWeQgcxsgdbBhh13KyOXZHrzbVczzvzHG6NmsZ1ulEbSqGXO6YeChLJEVbR7m7TNqUHAIg3GoRzDj03n/tVuAZQBmPyPst2t0y/1VAA/jZYkAlkWYDRwypjBYQ1WCXwQR6vfyxZzwkgJ4RlGpMBTPClDhfvrHOdNPvqZCv/IG95GhNa0TVCUIWCZ6INgUzTTsoW2p25AYPP1EIGT7PRhFLcwV5R5hd0xTHfAqOuzUAwz0IYkcjsONsveF70A2d1ivQ1L4TXYd/VQBaw1TLpfj7bdST5cUo029Y5uva9Oonu0TX0JB4qinW/OE4yHcXn+L+nydGuT/p9TH75HhGspvG+rIg==;5:vPo6FLfOk+WszVvfag6czcmA2m3Ytpf+VbW2U0A+dLlM0smWQ366OdHVPrK80J800USpkWHVSbP37gtwr58W3c8usyuC/u5SAc9WbdCGGBmuJ2zHr33UfrDr8+25bUmLsovjS3EoDwbcnLe1hlsFewixOwy2FSQKIOxsY23SNG8=;24:5VaDliWX3FWagHw3Xm6mUyAiddXTyuYu1QjTne5r7yfgX7ikz2uM9dbOD54LDjjyTBAwAp4C/lxItZgdqHOs2Iu6+Sd+1SPrNen5cpWazpM=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR04MB3219;23:K+TdftZOKh4EO6ON7cmjxWjLcnp9Gvsk2NDnFuw43?=
+ =?us-ascii?Q?yUhmnokJogfPNIy09Up30vC29vf1m4Lq2xwh+50xzCI6MYGNtx/VokhVHDXy?=
+ =?us-ascii?Q?voALYn3mxKs7XOlL4CjHuk7KiKUClxyj+4GycMmNOGqzim7b6QE/BgzL7gxA?=
+ =?us-ascii?Q?sf8Td5SznttEQiOOwTMudfr7eyqPgTfVL+sEmiXJxO6yclTp+gTECm4ACa5R?=
+ =?us-ascii?Q?OK8AhL2+dhmre2srEAxfaeSgrg5uKCF3hqvH4qY/d0zAboDVwMW2KEQWRYO+?=
+ =?us-ascii?Q?fecsJky10BsakJrXeCAjveRIXZjLbx4tN8VIyiMqMDXBIG9W38hJxC6ybmtp?=
+ =?us-ascii?Q?0gfh43Hp2mdjg7NjIrggAtlRL3QluGXs0VwDkC5SoiM3al/8lRgVIOdZeXP2?=
+ =?us-ascii?Q?Ro9BY1Bl9eCtJqIiyFPE/zDX7YIJS5ppnKqLSITm6RoZy7QqFj2vCXXTIbTu?=
+ =?us-ascii?Q?ju7EgkDEhCULKXbqdsNODUV7I+Wjl3UuaJ3FLcte9OtjLOK7rHIzXPYv+blS?=
+ =?us-ascii?Q?OfzwyB5dqeWPqT3Zb20oteAEKkyTMyKF69sIA6ZV/SqHGy2ROuEz3lpSbQoE?=
+ =?us-ascii?Q?nSemUNwN/PZzuNPioRH4MEbVNEUfEF1kf0vZ2eytd6tYy0uI15yxEiKl6yZu?=
+ =?us-ascii?Q?ixfZHGaUXLX2w/sHy6nDxUuFNVKKMgOgXexDhjpjw9aw/kp6VvWgbLWokatc?=
+ =?us-ascii?Q?aebK6BjSyslt13Rj7O5XaAa2Naw5Iczb8TUho329JZaQ2b1URq/fjacc6DRq?=
+ =?us-ascii?Q?APzMDcCS9UPR/nBE47L6vk57GLQQHufHgsRewENkxyGuI5eApudS4vCt3VYU?=
+ =?us-ascii?Q?jXs3yca6fvhd7S7Y7GQrVxx9uI+PJv5xYM2blvN5Q7LmQBxChgFdL8sEf5AE?=
+ =?us-ascii?Q?8ngrAgb+MptxaB2EKkaOBx05+r2APKUbJrAnQROVVQ/Xqwp7hYJvHiBJP6lr?=
+ =?us-ascii?Q?EIDd94NtTv9+vWe8KtYAn3hCnBqvGRQzuqrX3CTgPqmCgtx6BHnwka0mXDYB?=
+ =?us-ascii?Q?fMsn1BIIncnnqz+TVba/IGp05blF32F+W6bHkTu/JmE5+TSgNSPM0Z54NRxs?=
+ =?us-ascii?Q?QYTce0jCspn7+EKhngE3UlmIgCJSI3/leLleNUVB2JnaM2RBGQmN8QB9Ve46?=
+ =?us-ascii?Q?8/QM0ygq8ps3UIUw/myaRiRGJZ9Jwahxo1JlQCBvqNirQxDMUN2eqYhcerFA?=
+ =?us-ascii?Q?q8BNjQDMAIhDAVwoor2Sz629SZvyjYuKqhWON/0W8GiLRP1phiIlSWftrLOA?=
+ =?us-ascii?Q?wWoOusRB7pDmMeATYZxAbTGPXms0z0m1ArLy5+C?=
+X-Microsoft-Antispam-Message-Info: XOXO4ItzYcKX90zNGen1kpkm7if2ItZgQqRC055sxjnASM4CONXTNWogBIZKHCU0lXegk9qtrg0cVw4fEdfggai2C4Iy8ik9EOKVOuhWiMwxnAXlILPGGz+kynmwkvITIDfgD9/U2J4qPLC2m8y5NzEg97tFXBtZSTzPCpN+AOJv124hLik4dNLZK7QLGvrH
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;6:3n9NkLLrjgtPrBYSUOip/roRuPQSp5nIxPOmRUSpc7sRzjDppBXp6aCnrjpNA4xAYJYI9sFrbtXhAUPQ0PD2CIWF5dun3fykT16U0c/+NzmhcLe1CwE3UE0MgCbTaMvX5eLju/pl8l+6jRSCxUOfQGvFhKPtWz0pw/bXyRGKcJB5EFwjtTSfnxNRHaYxhJwjPD8K4DXdoVwhuLYq8uo+QqP06adt438K1jO1hkJE4ht8I/5c1whhV485AE+FgPwVNJUYWYJOzphIYAmgzBFiB6JPxxowPvF7Bp6KT96CuuNIBGp+/xEVXuPk10JTbnxS/4js0uj1sq6uapGC9E5sbY9xFr6bQPK9EATSOVXYPM2FZGmXPwmP47IMPLk0M4CDQrC5q2Gf9muAa/nU5BqFf3scimYy0LuZxOX8QmdCYpI//OroYnoqT7kV1U3JoUkinpUjGDX/GKxkn6mR4+vPlg==;5:hV+gUbq4FAUqSnbCRBKtJOf0WRI0B3cj3yDRl/ResBafDin093M1X1eB3poU9sSTc3lrSianO+i8qt6BEhZ8tNZiMCE63tUxpTMeMsorHoQlEu8dSJK7649wmJZPDzuO0ZjOpAyDmIwbKxOisoTrCT52Dd0ZJoBeQt2BH6pfWA0=;24:kTXRmW8vinsYn0EMEs0ndlRh1gp6l57J/QMlQmFH9nFEEy9kBzZKMcIJrmOqKKpjCBcGePfMk17Sgw/dTLoiOZmKstHFHGQ/FaqN8qKtg+U=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;7:ZO0XaOoudu2498Gb3xM4uj/ylu1Tg9yTTG8NfDAOIewCaD1vbfwUXwXFt1PBNl2q3b4NSAWmW/VBHXUNaQbvmaqC8tZQddmKnMZw8lbkZo7cgh40aDci9zZKfik4TkYDJZ9OdhQVJ8ZmT0K2royNk96NnRn7yL30EZVToObs2KAaJmE5qNka32sRf3GqKe+DZ8x8Zxlelw7jIA2eBOp2uEtrUyxCLhjBcghSdVGcD//USDR5A9jTANtZHmMgkXK9
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;7:C66ZSUDe/lxGnUc3HV1VQNIRr+j0DGrKhmeDwBU+L3Ls3QDatP3P+n+DPu7QLD1lKn3gfzdxxX7HKMKqW9zL+iPxGHvdgN/v8vfEqlHNGB3fnx+I0R2vhvUWyOWJuTcRAMH9ev++8ffDFFctN/ccI8MaXwEWaAStqIQc49TvK9ZNK74xVU6WuyNqAP/4ZLP78ndmOv/NwfLD4QT9ZhYAci0RZdyWrtDBHgMBoB6jNt3/jl/RHYhI5HP8pcim2rWX
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2018 06:04:32.5097
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2018 06:04:28.4348
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c42b5ad4-a36c-4ada-9e0c-08d5d1bcb4aa
+X-MS-Exchange-CrossTenant-Network-Message-Id: 61f26088-02df-4743-b3bb-08d5d1bcb23a
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR04MB3219
@@ -108,285 +109,138 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After sdma driver change to virt-dma, all bds will be allocated
-dynamically with 'port.lock' acquired instead of statically allocated
-before. That means the lock sequence is 'port.lock' -> 'fs_reclaim_acquire'
-.But in case uart rx/tx dma callback coming after other kernel code which
-have already acquired 'fs_reclaim_acquire' lock, which means the above lock
-sequence reverted as 'fs_reclaim_acquire' -> 'port.lock'(acquired in uart
-dma callback), thus, lockdep warning comes as beow. Actually don't need to
-spinlock all DMA operations in UART driver with 'port.lock', because dma
-driver can wipe off race condition by commone virt-dma lock . Split all dma
-operations out of the code areas which protected by 'port.lock'.
-
-[   46.155406] =====================================================
-[   46.161503] WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
-[   46.168122] 4.17.0-rc6-00008-g7caafa3-dirty #48 Not tainted
-[   46.173696] -----------------------------------------------------
-[   46.179795] mxc_uart_stress/419 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-[   46.186934] fa7c1440 (fs_reclaim){+.+.}, at: fs_reclaim_acquire.part.3+0x0/0x48
-[   46.194270]
-[   46.194270] and this task is already holding:
-[   46.200106] 09a17fda (&port_lock_key){-.-.}, at: uart_write+0x84/0x190
-[   46.206658] which would create a new lock dependency:
-[   46.211710]  (&port_lock_key){-.-.} -> (fs_reclaim){+.+.}
-[   46.217132]
-[   46.217132] but this new dependency connects a HARDIRQ-irq-safe lock:
-[   46.225051]  (&port_lock_key){-.-.}
-[   46.225062]
-[   46.225062] ... which became HARDIRQ-irq-safe at:
-[   46.234740]   lock_acquire+0x70/0x90
-[   46.238326]   _raw_spin_lock_irqsave+0x40/0x54
-[   46.242777]   imx_uart_console_write+0x1bc/0x1e0
-[   46.247402]   console_unlock+0x320/0x5f0
-[   46.251329]   vprintk_emit+0x22c/0x3fc
-[   46.255082]   vprintk_default+0x28/0x30
-[   46.258923]   vprintk_func+0x78/0xcc
-[   46.262503]   printk+0x34/0x54
-[   46.265566]   crng_fast_load+0xf8/0x138
-[   46.269407]   add_interrupt_randomness+0x21c/0x24c
-[   46.274204]   handle_irq_event_percpu+0x40/0x84
-[   46.278739]   handle_irq_event+0x40/0x64
-[   46.282667]   handle_fasteoi_irq+0xbc/0x178
-[   46.286854]   generic_handle_irq+0x28/0x3c
-[   46.290954]   __handle_domain_irq+0x6c/0xe8
-[   46.295148]   gic_handle_irq+0x64/0xc4
-[   46.298904]   __irq_svc+0x70/0x98
-[   46.302225]   _raw_spin_unlock_irq+0x30/0x34
-[   46.306505]   finish_task_switch+0xc0/0x27c
-[   46.310693]   __schedule+0x2c0/0x79c
-[   46.314272]   schedule_idle+0x40/0x84
-[   46.317941]   do_idle+0x178/0x2b4
-[   46.321259]   cpu_startup_entry+0x20/0x24
-[   46.325278]   rest_init+0x214/0x264
-[   46.328775]   start_kernel+0x39c/0x424
-[   46.332527]     (null)
-[   46.334891]
-[   46.334891] to a HARDIRQ-irq-unsafe lock:
-[   46.340379]  (fs_reclaim){+.+.}
-[   46.340391]
-[   46.340391] ... which became HARDIRQ-irq-unsafe at:
-[   46.349885] ...
-[   46.349895]   lock_acquire+0x70/0x90
-[   46.355225]   fs_reclaim_acquire.part.3+0x38/0x48
-[   46.359933]   fs_reclaim_acquire+0x1c/0x20
-[   46.364036]   kmem_cache_alloc+0x2c/0x174
-[   46.368051]   alloc_worker.constprop.10+0x1c/0x58
-[   46.372759]   init_rescuer.part.4+0x18/0xa4
-[   46.376952]   workqueue_init+0xc0/0x210
-[   46.380793]   kernel_init_freeable+0x58/0x1d8
-[   46.385156]   kernel_init+0x10/0x11c
-[   46.388736]   ret_from_fork+0x14/0x20
-[   46.392399]     (null)
-[   46.394762]
-[   46.394762] other info that might help us debug this:
-[   46.394762]
-[   46.402769]  Possible interrupt unsafe locking scenario:
-[   46.402769]
-[   46.409560]        CPU0                    CPU1
-[   46.414092]        ----                    ----
-[   46.418622]   lock(fs_reclaim);
-[   46.421772]                                local_irq_disable();
-[   46.427693]                                lock(&port_lock_key);
-[   46.433707]                                lock(fs_reclaim);
-[   46.439372]   <Interrupt>
-[   46.441993]     lock(&port_lock_key);
-[   46.445661]
-[   46.445661]  *** DEADLOCK ***
-[   46.445661]
+There are lot of codes overlap between prep_sg and prep_cyclic function.
+Add sdma_transfer_init() function to elimated the code overlap.
 
 Signed-off-by: Robin Gong <yibin.gong@nxp.com>
 ---
- drivers/tty/serial/imx.c | 97 ++++++++++++++++++++++++++----------------------
- 1 file changed, 53 insertions(+), 44 deletions(-)
+ drivers/dma/imx-sdma.c | 83 ++++++++++++++++++++++----------------------------
+ 1 file changed, 37 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index b83bc2c..f2a2966 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -223,6 +223,7 @@ struct imx_port {
- 	dma_cookie_t		rx_cookie;
- 	unsigned int		tx_bytes;
- 	unsigned int		dma_tx_nents;
-+	struct work_struct	tsk_dma_tx;
- 	unsigned int            saved_reg[10];
- 	bool			context_saved;
- };
-@@ -491,8 +492,6 @@ static void imx_uart_enable_ms(struct uart_port *port)
- 	mctrl_gpio_enable_ms(sport->gpios);
+diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+index f56226f..e0783a2 100644
+--- a/drivers/dma/imx-sdma.c
++++ b/drivers/dma/imx-sdma.c
+@@ -1255,6 +1255,40 @@ static void sdma_free_chan_resources(struct dma_chan *chan)
+ 	clk_disable(sdma->clk_ahb);
  }
  
--static void imx_uart_dma_tx(struct imx_port *sport);
--
- /* called with port.lock taken and irqs off */
- static inline void imx_uart_transmit_buffer(struct imx_port *sport)
- {
-@@ -524,7 +523,7 @@ static inline void imx_uart_transmit_buffer(struct imx_port *sport)
- 			imx_uart_writel(sport, ucr1, UCR1);
- 		} else {
- 			imx_uart_writel(sport, ucr1, UCR1);
--			imx_uart_dma_tx(sport);
-+			schedule_work(&sport->tsk_dma_tx);
- 		}
- 
- 		return;
-@@ -574,7 +573,7 @@ static void imx_uart_dma_tx_callback(void *data)
- 		uart_write_wakeup(&sport->port);
- 
- 	if (!uart_circ_empty(xmit) && !uart_tx_stopped(&sport->port))
--		imx_uart_dma_tx(sport);
-+		schedule_work(&sport->tsk_dma_tx);
- 	else if (sport->port.rs485.flags & SER_RS485_ENABLED) {
- 		u32 ucr4 = imx_uart_readl(sport, UCR4);
- 		ucr4 |= UCR4_TCEN;
-@@ -584,19 +583,21 @@ static void imx_uart_dma_tx_callback(void *data)
- 	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
--/* called with port.lock taken and irqs off */
--static void imx_uart_dma_tx(struct imx_port *sport)
-+static void dma_tx_work(struct work_struct *w)
- {
-+	struct imx_port *sport = container_of(w, struct imx_port, tsk_dma_tx);
- 	struct circ_buf *xmit = &sport->port.state->xmit;
- 	struct scatterlist *sgl = sport->tx_sgl;
- 	struct dma_async_tx_descriptor *desc;
- 	struct dma_chan	*chan = sport->dma_chan_tx;
- 	struct device *dev = sport->port.dev;
-+	unsigned long flags;
- 	u32 ucr1, ucr4;
- 	int ret;
- 
-+	spin_lock_irqsave(&sport->port.lock, flags);
- 	if (sport->dma_is_txing)
--		return;
-+		goto work_out;
- 
- 	ucr4 = imx_uart_readl(sport, UCR4);
- 	ucr4 &= ~UCR4_TCEN;
-@@ -604,45 +605,51 @@ static void imx_uart_dma_tx(struct imx_port *sport)
- 
- 	sport->tx_bytes = uart_circ_chars_pending(xmit);
- 
--	if (xmit->tail < xmit->head) {
--		sport->dma_tx_nents = 1;
--		sg_init_one(sgl, xmit->buf + xmit->tail, sport->tx_bytes);
--	} else {
--		sport->dma_tx_nents = 2;
--		sg_init_table(sgl, 2);
--		sg_set_buf(sgl, xmit->buf + xmit->tail,
--				UART_XMIT_SIZE - xmit->tail);
--		sg_set_buf(sgl + 1, xmit->buf, xmit->head);
--	}
-+	if (sport->tx_bytes > 0) {
-+		if (xmit->tail < xmit->head) {
-+			sport->dma_tx_nents = 1;
-+			sg_init_one(sgl, xmit->buf + xmit->tail,
-+					sport->tx_bytes);
-+		} else {
-+			sport->dma_tx_nents = 2;
-+			sg_init_table(sgl, 2);
-+			sg_set_buf(sgl, xmit->buf + xmit->tail,
-+					UART_XMIT_SIZE - xmit->tail);
-+			sg_set_buf(sgl + 1, xmit->buf, xmit->head);
-+		}
-+		spin_unlock_irqrestore(&sport->port.lock, flags);
- 
--	ret = dma_map_sg(dev, sgl, sport->dma_tx_nents, DMA_TO_DEVICE);
--	if (ret == 0) {
--		dev_err(dev, "DMA mapping error for TX.\n");
--		return;
--	}
--	desc = dmaengine_prep_slave_sg(chan, sgl, sport->dma_tx_nents,
-+		ret = dma_map_sg(dev, sgl, sport->dma_tx_nents, DMA_TO_DEVICE);
-+		if (ret == 0) {
-+			dev_err(dev, "DMA mapping error for TX.\n");
-+			return;
-+		}
-+		desc = dmaengine_prep_slave_sg(chan, sgl, sport->dma_tx_nents,
- 					DMA_MEM_TO_DEV, DMA_PREP_INTERRUPT);
--	if (!desc) {
--		dma_unmap_sg(dev, sgl, sport->dma_tx_nents,
--			     DMA_TO_DEVICE);
--		dev_err(dev, "We cannot prepare for the TX slave dma!\n");
--		return;
--	}
--	desc->callback = imx_uart_dma_tx_callback;
--	desc->callback_param = sport;
-+		if (!desc) {
-+			dma_unmap_sg(dev, sgl, sport->dma_tx_nents,
-+				     DMA_TO_DEVICE);
-+			dev_err(dev, "We cannot prepare for the TX slave dma!\n");
-+			return;
-+		}
-+		desc->callback = imx_uart_dma_tx_callback;
-+		desc->callback_param = sport;
- 
--	dev_dbg(dev, "TX: prepare to send %lu bytes by DMA.\n",
--			uart_circ_chars_pending(xmit));
-+		dev_dbg(dev, "TX: prepare to send %lu bytes by DMA.\n",
-+				uart_circ_chars_pending(xmit));
- 
--	ucr1 = imx_uart_readl(sport, UCR1);
--	ucr1 |= UCR1_TXDMAEN;
--	imx_uart_writel(sport, ucr1, UCR1);
-+		ucr1 = imx_uart_readl(sport, UCR1);
-+		ucr1 |= UCR1_TXDMAEN;
-+		imx_uart_writel(sport, ucr1, UCR1);
- 
--	/* fire it */
--	sport->dma_is_txing = 1;
--	dmaengine_submit(desc);
--	dma_async_issue_pending(chan);
--	return;
-+		/* fire it */
-+		sport->dma_is_txing = 1;
-+		dmaengine_submit(desc);
-+		dma_async_issue_pending(chan);
-+		return;
-+	}
-+work_out:
-+	spin_unlock_irqrestore(&sport->port.lock, flags);
- }
- 
- /* called with port.lock taken and irqs off */
-@@ -696,7 +703,7 @@ static void imx_uart_start_tx(struct uart_port *port)
- 
- 		if (!uart_circ_empty(&port->state->xmit) &&
- 		    !uart_tx_stopped(port))
--			imx_uart_dma_tx(sport);
-+			schedule_work(&sport->tsk_dma_tx);
- 		return;
- 	}
- }
-@@ -1405,7 +1412,9 @@ static int imx_uart_startup(struct uart_port *port)
- 	 */
- 	imx_uart_enable_ms(&sport->port);
- 
-+	spin_unlock_irqrestore(&sport->port.lock, flags);
- 	if (dma_is_inited) {
-+		INIT_WORK(&sport->tsk_dma_tx, dma_tx_work);
- 		imx_uart_enable_dma(sport);
- 		imx_uart_start_rx_dma(sport);
- 	} else {
-@@ -1418,8 +1427,6 @@ static int imx_uart_startup(struct uart_port *port)
- 		imx_uart_writel(sport, ucr2, UCR2);
- 	}
- 
--	spin_unlock_irqrestore(&sport->port.lock, flags);
--
- 	return 0;
- }
- 
-@@ -1435,6 +1442,8 @@ static void imx_uart_shutdown(struct uart_port *port)
- 		dmaengine_terminate_sync(sport->dma_chan_tx);
- 		dmaengine_terminate_sync(sport->dma_chan_rx);
- 
-+		cancel_work_sync(&sport->tsk_dma_tx);
++static struct sdma_desc *sdma_transfer_init(struct sdma_channel *sdmac,
++				enum dma_transfer_direction direction, u32 bds)
++{
++	struct sdma_desc *desc;
 +
- 		spin_lock_irqsave(&sport->port.lock, flags);
- 		imx_uart_stop_tx(port);
- 		imx_uart_stop_rx(port);
++	desc = kzalloc((sizeof(*desc)), GFP_KERNEL);
++	if (!desc)
++		goto err_out;
++
++	sdmac->status = DMA_IN_PROGRESS;
++	sdmac->direction = direction;
++	sdmac->flags = 0;
++
++	desc->chn_count = 0;
++	desc->chn_real_count = 0;
++	desc->buf_tail = 0;
++	desc->buf_ptail = 0;
++	desc->sdmac = sdmac;
++	desc->num_bd = bds;
++
++	if (sdma_alloc_bd(desc))
++		goto err_desc_out;
++
++	if (sdma_load_context(sdmac))
++		goto err_desc_out;
++
++	return desc;
++
++err_desc_out:
++	kfree(desc);
++err_out:
++	return NULL;
++}
++
+ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 		struct dma_chan *chan, struct scatterlist *sgl,
+ 		unsigned int sg_len, enum dma_transfer_direction direction,
+@@ -1267,36 +1301,13 @@ static struct dma_async_tx_descriptor *sdma_prep_slave_sg(
+ 	struct scatterlist *sg;
+ 	struct sdma_desc *desc;
+ 
+-	if (sdmac->status == DMA_IN_PROGRESS)
+-		return NULL;
+-	sdmac->status = DMA_IN_PROGRESS;
+-
+-	sdmac->flags = 0;
+-
+-	desc = kzalloc((sizeof(*desc)), GFP_KERNEL);
++	desc = sdma_transfer_init(sdmac, direction, sg_len);
+ 	if (!desc)
+ 		goto err_out;
+ 
+-	desc->buf_tail = 0;
+-	desc->buf_ptail = 0;
+-	desc->sdmac = sdmac;
+-	desc->num_bd = sg_len;
+-	desc->chn_real_count = 0;
+-
+-	if (sdma_alloc_bd(desc)) {
+-		kfree(desc);
+-		goto err_out;
+-	}
+-
+ 	dev_dbg(sdma->dev, "setting up %d entries for channel %d.\n",
+ 			sg_len, channel);
+ 
+-	sdmac->direction = direction;
+-	ret = sdma_load_context(sdmac);
+-	if (ret)
+-		goto err_bd_out;
+-
+-	desc->chn_count = 0;
+ 	for_each_sg(sgl, sg, sg_len, i) {
+ 		struct sdma_buffer_descriptor *bd = &desc->bd[i];
+ 		int param;
+@@ -1372,38 +1383,18 @@ static struct dma_async_tx_descriptor *sdma_prep_dma_cyclic(
+ 	struct sdma_engine *sdma = sdmac->sdma;
+ 	int num_periods = buf_len / period_len;
+ 	int channel = sdmac->channel;
+-	int ret, i = 0, buf = 0;
++	int i = 0, buf = 0;
+ 	struct sdma_desc *desc;
+ 
+ 	dev_dbg(sdma->dev, "%s channel: %d\n", __func__, channel);
+ 
+-	if (sdmac->status == DMA_IN_PROGRESS)
+-		return NULL;
+-
+-	sdmac->status = DMA_IN_PROGRESS;
+-
+-	desc = kzalloc((sizeof(*desc)), GFP_KERNEL);
++	desc = sdma_transfer_init(sdmac, direction, num_periods);
+ 	if (!desc)
+ 		goto err_out;
+ 
+-	desc->buf_tail = 0;
+-	desc->buf_ptail = 0;
+-	desc->sdmac = sdmac;
+-	desc->num_bd = num_periods;
+-	desc->chn_real_count = 0;
+ 	desc->period_len = period_len;
+ 
+ 	sdmac->flags |= IMX_DMA_SG_LOOP;
+-	sdmac->direction = direction;
+-
+-	if (sdma_alloc_bd(desc)) {
+-		kfree(desc);
+-		goto err_bd_out;
+-	}
+-
+-	ret = sdma_load_context(sdmac);
+-	if (ret)
+-		goto err_bd_out;
+ 
+ 	if (period_len > 0xffff) {
+ 		dev_err(sdma->dev, "SDMA channel %d: maximum period size exceeded: %zu > %d\n",
 -- 
 2.7.4
 
