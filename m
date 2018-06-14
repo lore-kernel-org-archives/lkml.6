@@ -2,224 +2,148 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E73A6C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 04:06:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 47836C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 04:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87000208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 04:06:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC2FA20864
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 04:15:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="udA2l3D7";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hbOtpqE4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87000208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="sZXwdrTQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC2FA20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1751587AbeFNEGp (ORCPT
+        id S1751868AbeFNEO7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 00:06:45 -0400
-Received: from mail-yw0-f196.google.com ([209.85.161.196]:44798 "EHLO
-        mail-yw0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751340AbeFNEGn (ORCPT
+        Thu, 14 Jun 2018 00:14:59 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:38475 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750924AbeFNEO4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 00:06:43 -0400
-Received: by mail-yw0-f196.google.com with SMTP id k18-v6so1120758ywm.11
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 21:06:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Be8oAeVKEIfe1f38u7Kaj2gS5fvTDRqiJ9Rbm+9i+aA=;
-        b=udA2l3D7GWhy65HrTnK8zNyBKuMFv1FRZ8zU4WpsrPh/HlAfJR6u1krmKcYY70uvQO
-         SvRy4EVPi0GolN7NVtxR8bbQm5ok6ooJwCo1Os8zjceFU39hdK4hAkDvryOn6FUInv2C
-         GHZ/E/X/pAafXwdUb8voNGfWKSs7BpuhAViEzf6rCTdi7l0S5D+Gj8qTiWfBt7V6sBSO
-         DbFN2t+c9Q/tJyMUFgtuAVtekZuU2KQA9GBEwJE+/YxoyvGcbsVvOZwUnIWbzmbB177a
-         QUh8rw/h34UOhapdemjFGu/Y00Sl1lRQHUKCJVzMcMwdvVcZBRhxssGbdAew6ns/mjch
-         34Dg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Be8oAeVKEIfe1f38u7Kaj2gS5fvTDRqiJ9Rbm+9i+aA=;
-        b=hbOtpqE49W0B/wfY89vRFRP6TQQWyuAPhjrxb68aJvfIiz+Z3yy9QKRfuIcW3MpdGi
-         AeFusONaVZouBMQXFQ6ZpzjzD/6gbASnAaa0Cqulak/uwhoRQaAlxYyZVGMfnHVIg/Ey
-         NxsTxaaOpFE+nus+h8lYYI3B6A1zb8e0C9Owk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=Be8oAeVKEIfe1f38u7Kaj2gS5fvTDRqiJ9Rbm+9i+aA=;
-        b=aUaTnaLya4LzOQDgVy63asUXT+yY+1G+MhrvwXOoZOwn8+6E4AJGYDAkgNTd5bYf/D
-         KH8INCcRTtfyZDMTgOrRP75wCNLpne21RbtKGuXm21+WQnwDoqQkCsYLGDgnPi9l/KTH
-         LBTpR7ubqzcyn73SJQpL+BSW7+a7FaRsmgZWQZRXUcLXw5NfoktV17s8VBWVR50nXdgX
-         jMrvfwpg19/ozX9JeDGFj0hir59EC+cL1LXhUZ1j/ZiKp7FlsXhYdjAF5aQFrJwOzDjj
-         aMRnVQhDbJITlXivx+kLbALINJJGsGOgL7J7DhqsiopeOObiye4PP+Hsfo4eZrK16x6t
-         dI+g==
-X-Gm-Message-State: APt69E1TuAN2gl4Kuzd1/OjpA2YhwJLBBnfT+9W8KNzpXCw5Mvb/G2Eo
-        fu2th5v2BgfF2XcWRKkM+uOOzIe8QFphi7wvY/x4aw==
-X-Google-Smtp-Source: ADUXVKJ7ZFYT3X8NnRM/xkx/c++x0ON22Cqjob/O+JKIGWljFspzKIsUmyytsnOXW/RSrU23hZtvLPmK/DA8XuXuUrw=
-X-Received: by 2002:a81:8743:: with SMTP id x64-v6mr464300ywf.129.1528949202559;
- Wed, 13 Jun 2018 21:06:42 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 21:06:41
- -0700 (PDT)
-In-Reply-To: <20180614013445.6120-1-shuah@kernel.org>
-References: <20180614013445.6120-1-shuah@kernel.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 13 Jun 2018 21:06:41 -0700
-X-Google-Sender-Auth: U_GNwtBKaISMPF9CsAxlbBnCkmQ
-Message-ID: <CAGXu5jLXAQxo7mUJThXCOMPEC3yvGU5_wLqjU_YKGtd6sFfuUw@mail.gmail.com>
-Subject: Re: [PATCH] selftests: kselftest_harness: return Kselftest Skip code
- for skipped tests
-To:     "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Jun 2018 00:14:56 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180614041454epoutp04b1a9f98667754325951ce803de339c1a~366WSfGGk2587325873epoutp04Z;
+        Thu, 14 Jun 2018 04:14:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180614041454epoutp04b1a9f98667754325951ce803de339c1a~366WSfGGk2587325873epoutp04Z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1528949694;
+        bh=qODHG7THtt8VsCkKr3lpRZq4IXGEyDMn+LeWJfuXLiQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=sZXwdrTQ+uUSlbDF2y196gKbxcsftm93scZ2N3/V19mEz166w3nUHt8nL5ZlRSP1t
+         ZaXfspaxiO+qvwq2t0odMsaulhAW/HQ1ovD2+B7UnrwTFxwnxVMRpIvxoE0BoS+E04
+         aNe7a+7j2+NNAe/GqmRcA8AcnYAKrAQUzN6XUBxg=
+Received: from epsmges2p1.samsung.com (unknown [182.195.40.155]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180614041449epcas1p4d2dab007e7f7f56dff9c6cfd7640e30f~366RC69zk0892908929epcas1p4d;
+        Thu, 14 Jun 2018 04:14:49 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+        epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        F4.7D.04217.9BBE12B5; Thu, 14 Jun 2018 13:14:49 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d~366QyaRnJ1887218872epcas2p4G;
+        Thu, 14 Jun 2018 04:14:48 +0000 (GMT)
+X-AuditID: b6c32a45-429ff70000001079-a4-5b21ebb9db36
+Received: from epmmp1.local.host ( [203.254.227.16]) by
+        epsmgms2p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5D.69.04192.8BBE12B5; Thu, 14 Jun 2018 13:14:48 +0900 (KST)
+Received: from localhost.localdomain ([10.113.63.77]) by mmp1.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PAA004YVP4O9Y80@mmp1.samsung.com>; Thu, 14 Jun 2018
+        13:14:48 +0900 (KST)
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     cw00.choi@samsung.com, chanwoo@kernel.org,
+        myungjoo.ham@samsung.com, stable@vger.kernel.org,
+        Roger Quadros <rogerq@ti.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH] extcon: Release locking when sending the notification of
+ connector state
+Date:   Thu, 14 Jun 2018 13:14:47 +0900
+Message-id: <1528949687-32002-1-git-send-email-cw00.choi@samsung.com>
+X-Mailer: git-send-email 1.8.0
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkleLIzCtJLcpLzFFi42LZdljTVHfna8Vog8cTuSwm3rjCYnH9y3NW
+        iwtPe9gsLu+aw2Zxu3EFm0XPIy2LBRsfMTqwe2xa1cnm0bdlFaPH8RvbmTw+b5ILYIlKtclI
+        TUxJLVJIzUvOT8nMS7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBOkBJoSwxpxQo
+        FJBYXKykb2dTlF9akqqQkV9cYqsUbWhopGdoYK5nZASkjWOtjEyBShJSMy6/n81c8IKnYsvc
+        HywNjBe4uhg5OSQETCR2PTvI3sXIxSEksINRYvPdwywQzndGif5JJ4EyHGBVbRsDQBqEBHYz
+        Siw/ywpX07f4PxNIgk1AS2L/ixtsILaIgILE5t5nYEXMAqsYJXY3TmcESQgLREu8+zWFGcRm
+        EVCVuPmynQlkAa+Aq8ShlxEQF8lJfNjzCOwiCYG3rBIXJ7QzQiRcJL6tecgKYQtLvDq+hR3C
+        lpZ4tmojI0RDO6PElxfNrBDOBEaJD6c2M0FUGUs8W9gFZjML8El0HP4L9RqvREebEESJh8TH
+        GTdZQMJCArESHzttgQYsYGRYxSiWWlCcm55abFRgqFecmFtcmpeul5yfu4kRnAy0XHcwzjjn
+        c4hRgINRiYd3g5xitBBrYllxZe4hRgkOZiURXr8XCtFCvCmJlVWpRfnxRaU5qcWHGE2BQTCR
+        WUo0OR+YqPJK4g1NjYyNjS1MzS2NDSyVxHkZbwpECwmkJ5akZqemFqQWwfQxcXBKNTA63Iz1
+        l5+1OOUQi++awB2P2afPv76M8chL6br5j467e6+3bLxxaZL9oYI1b/7p62gmf9my6pev1DsD
+        wzb3ezemJamHi+pdeLT1Zvoen9J2vwzt5upw/7kH+V9WJ+n+0Zh3T9Jk7/7lJwvm3gn4u8vg
+        TEilyp+0b/MvWevcO3zEZb609r5JFRZ+SizFGYmGWsxFxYkAsIDdJBwDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrLJMWRmVeSWpSXmKPExsVy+t9jAd0drxWjDe7usbSYeOMKi8X1L89Z
+        LS487WGzuLxrDpvF7cYVbBY9j7QsFmx8xOjA7rFpVSebR9+WVYwex29sZ/L4vEkugCWKyyYl
+        NSezLLVI3y6BK+Py+9nMBS94KrbM/cHSwHiBq4uRg0NCwESibWNAFyMXh5DATkaJG9OWsUA4
+        3xkl7sybxtzFyMnBJqAlsf/FDTYQW0RAQWJz7zNWkCJmgVWMEvPffAZLCAtES7z7NQWsgUVA
+        VeLmy3YmkA28Aq4Sh15GgIQlBOQkPux5xD6BkWsBI8MqRsnUguLc9NxiowKjvNRyveLE3OLS
+        vHS95PzcTYzAQNh2WKt/B+PjJfGHGAU4GJV4eBOUFaOFWBPLiitzDzFKcDArifD6vVCIFuJN
+        SaysSi3Kjy8qzUktPsQozcGiJM7Ln38sUkggPbEkNTs1tSC1CCbLxMEp1cB4kie9zuybC9PX
+        KSccVJ4cnLVyfXtLLJuSqsnzPVFlGlaPYubJLj569LJdI4O4pOiOzXMlw/tPHFK+I9n3VfDm
+        tnPSl5b+/MVQdpnVYcq0vb0su+bZLJ+2jEt2pd33fc/ub3N3MVZtmOvabyH0hP+kXFOswyz9
+        vMN7q45rXL39/tn2x992nlUQVmIpzkg01GIuKk4EAKq9WT0AAgAA
+X-CMS-MailID: 20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d
+References: <CGME20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d@epcas2p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 6:34 PM, Shuah Khan (Samsung OSG)
-<shuah@kernel.org> wrote:
-> When a test is skipped because of unmet dependencies and/or unsupported
-> configuration, kselftest_harness exits with error which is treated as a
-> fail by the Kselftest framework. This leads to false negative result even
-> when the test could not be run.
->
-> Change it to return kselftest skip code when a test gets skipped to
-> clearly report that the test could not be run. This change add skip
-> handling to kselftest_harness with minimal changes adding a new skipped
-> field to struct __test_metadata and using it to recognize KSFT_SKIP exit
-> from the test function (t->fn) to __run_test() to the test_harness_run()
-> to return the right skip code to Kselftest framework.
->
-> Kselftest framework SKIP code is 4 and the framework prints appropriate
-> messages to indicate that the test is skipped.
+Previously, extcon used the spinlock before calling the notifier_call_chain
+to prevent the scheduled out of task and to prevent the notification delay.
+When spinlock is locked for sending the notification, deadlock issue
+occured on the side of extcon consumer device. To fix this issue,
+extcon consumer device should always use the work. it is always not
+reasonable to use work.
 
-Unfortunately this will not work: test step # is used as the failure
-code to let test runners know where a child failed. KSFT_SKIP is 4, so
-every test failing in step 4 would be seen as a skip instead of a
-fail.
+To fix this issue on extcon consumer device, release locking when sending
+the notification of connector state.
 
-Tests must not exit on their own with this harness: only the existing
-ASSERT/EXPECT macros can be used. uevent test should never be doing
-this:
+Fixes: ab11af049f88 ("extcon: Add the synchronization extcon APIs to support the notification")
+Cc: stable@vger.kernel.org
+Cc: Roger Quadros <rogerq@ti.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+---
+ drivers/extcon/extcon.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-        if (geteuid()) {
-                TH_LOG("Uevent filtering tests require root
-privileges. Skipping test");
-                _exit(KSFT_SKIP);
-        }
-
-Nor the _exit(EXIT_FAILURE) calls. Those must all be ASSERT() instead.
-
-Perhaps a new signal could be used, but the return codes are already being used.
-
--Kees
-
->
-> This change is tested on uevent test and the results are as follows:
->
-> Before:
->
-> TAP version 13
-> selftests: uevent: uevent_filtering
-> ========================================
-> [==========] Running 1 tests from 1 test cases.
-> [ RUN      ] global.uevent_filtering
-> uevent_filtering.c:355:global.uevent_filtering:Uevent filtering tests require root privileges. Skipping test
-> global.uevent_filtering: Test skipped at step #4
-> [     FAIL ] global.uevent_filtering
-> [==========] 0 / 1 tests passed.
-> [  FAILED  ]
-> not ok 1..1 selftests: uevent: uevent_filtering [FAIL]
->
-> After:
->
-> TAP version 13
-> selftests: uevent: uevent_filtering
-> ========================================
-> [==========] Running 1 tests from 1 test cases.
-> [ RUN      ] global.uevent_filtering
-> uevent_filtering.c:355:global.uevent_filtering:Uevent filtering tests require root privileges. Skipping test
-> global.uevent_filtering: Test skipped at step #4
-> [     SKIP ] global.uevent_filtering
-> not ok 1..1 selftests: uevent: uevent_filtering [SKIP]
->
-> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-> ---
->  tools/testing/selftests/kselftest_harness.h | 15 +++++++++++++--
->  1 file changed, 13 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-> index 6ae3730c4ee3..7af9ab97b367 100644
-> --- a/tools/testing/selftests/kselftest_harness.h
-> +++ b/tools/testing/selftests/kselftest_harness.h
-> @@ -631,6 +631,7 @@ struct __test_metadata {
->         void (*fn)(struct __test_metadata *);
->         int termsig;
->         int passed;
-> +       int skipped;
->         int trigger; /* extra handler after the evaluation */
->         __u8 step;
->         bool no_print; /* manual trigger when TH_LOG_STREAM is not available */
-> @@ -694,6 +695,7 @@ void __run_test(struct __test_metadata *t)
->         int status;
->
->         t->passed = 1;
-> +       t->skipped = 0;
->         t->trigger = 0;
->         printf("[ RUN      ] %s\n", t->name);
->         child_pid = fork();
-> @@ -716,9 +718,12 @@ void __run_test(struct __test_metadata *t)
->                                         t->name,
->                                         WEXITSTATUS(status));
->                         } else if (!t->passed) {
-> +                               if (WEXITSTATUS(status) == KSFT_SKIP)
-> +                                       t->skipped = 1;
->                                 fprintf(TH_LOG_STREAM,
-> -                                       "%s: Test failed at step #%d\n",
-> +                                       "%s: Test %s at step #%d\n",
->                                         t->name,
-> +                                       (t->skipped ? "skipped" : "failed"),
->                                         WEXITSTATUS(status));
->                         }
->                 } else if (WIFSIGNALED(status)) {
-> @@ -743,7 +748,11 @@ void __run_test(struct __test_metadata *t)
->                                 status);
->                 }
->         }
-> -       printf("[     %4s ] %s\n", (t->passed ? "OK" : "FAIL"), t->name);
-> +       if (t->skipped)
-> +               printf("[     %4s ] %s\n", "SKIP", t->name);
-> +       else
-> +               printf("[     %4s ] %s\n", (t->passed ? "OK" : "FAIL"),
-> +                       t->name);
->  }
->
->  static int test_harness_run(int __attribute__((unused)) argc,
-> @@ -762,6 +771,8 @@ static int test_harness_run(int __attribute__((unused)) argc,
->                 __run_test(t);
->                 if (t->passed)
->                         pass_count++;
-> +               else if (t->skipped)
-> +                       return KSFT_SKIP;
->                 else
->                         ret = 1;
->         }
-> --
-> 2.17.0
->
-
-
-
+diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+index 8bff5fd18185..f75b08a45d4e 100644
+--- a/drivers/extcon/extcon.c
++++ b/drivers/extcon/extcon.c
+@@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
+ 		return index;
+ 
+ 	spin_lock_irqsave(&edev->lock, flags);
+-
+ 	state = !!(edev->state & BIT(index));
++	spin_unlock_irqrestore(&edev->lock, flags);
+ 
+ 	/*
+ 	 * Call functions in a raw notifier chain for the specific one
+@@ -448,6 +448,7 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
+ 	 */
+ 	raw_notifier_call_chain(&edev->nh_all, state, edev);
+ 
++	spin_lock_irqsave(&edev->lock, flags);
+ 	/* This could be in interrupt handler */
+ 	prop_buf = (char *)get_zeroed_page(GFP_ATOMIC);
+ 	if (!prop_buf) {
 -- 
-Kees Cook
-Pixel Security
+1.9.1
+
