@@ -2,89 +2,112 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E7383C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 13713C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93387208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDED4208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lZoNnrvK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93387208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRYzIZF9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDED4208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965482AbeFNOJb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:09:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50294 "EHLO mail.kernel.org"
+        id S965498AbeFNOJl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:09:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50572 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965465AbeFNOJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:09:26 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S965480AbeFNOJg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:09:36 -0400
+Received: from mail-it0-f49.google.com (mail-it0-f49.google.com [209.85.214.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 310AF208CB;
-        Thu, 14 Jun 2018 14:09:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F881208DE;
+        Thu, 14 Jun 2018 14:09:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985365;
-        bh=hMBqMspxWJLyVbaoyGWKKEq68bacY0cNnXL4895yK2o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lZoNnrvK7FZ4Pya7jt7vpJ/XxumHlr6VhUCAi9g+Wz5HadwPkS47CS/5fOhXC14nN
-         t4I/CgfzCIQxrQ4ZlyL5fepYDG4ZO8oNC7IrTuVMxZAv0mhicQe1F/mQVYI+CChh+m
-         pvD0UqoK3Bwzg36GbFMlkoiD9a2+whDAhShD+erE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Wienke <languitar@semipol.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.16 33/43] Input: elan_i2c - add ELAN0612 (Lenovo v330 14IKB) ACPI ID
-Date:   Thu, 14 Jun 2018 16:04:37 +0200
-Message-Id: <20180614132137.508790547@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
-References: <20180614132135.111973468@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        s=default; t=1528985375;
+        bh=FO48a2zJQFE3s5ew5+6pO930bfZJRPJk+gTs/h5A5tI=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=NRYzIZF9oErkXIq1D4HJPZJfl+qwZKCVwKKhILM5Hlh9oUVYjyyLEWcqL9PHlwlDi
+         nNFQ2IDBDLdjOQJwdqLQcEbrN6iUkfVB/qRoKsnV+3Lgz6kWMJ10Iv7fOo1PTeTEU5
+         3GwNCo3txoRVNO+VYk3nSmzYLwSXxBlzheU2LKQs=
+Received: by mail-it0-f49.google.com with SMTP id m194-v6so8507558itg.2;
+        Thu, 14 Jun 2018 07:09:35 -0700 (PDT)
+X-Gm-Message-State: APt69E1Dldvd1zpyZxt+wecz/lbNcs25FS+QMuf01UDiaHZdrDHiWxjH
+        /ilUAMmpZajJY42tbeLruIPtIL0wtbKOrNWvRQ==
+X-Google-Smtp-Source: ADUXVKLj6YUS3cdZa9WfyRpgtMeXDgikRwomzuRyYj8Ue/UXGVE5KjYG6CPGRj0n53s0lv/zN2AM0u+RwTu3aqL7Whs=
+X-Received: by 2002:a24:ec44:: with SMTP id g65-v6mr2515174ith.18.1528985374889;
+ Thu, 14 Jun 2018 07:09:34 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 07:09:14
+ -0700 (PDT)
+In-Reply-To: <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-3-songjun.wu@linux.intel.com> <20180612223725.GC2197@rob-hp-laptop>
+ <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Thu, 14 Jun 2018 08:09:14 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
+Message-ID: <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
+Subject: Re: [PATCH 2/7] clk: intel: Add clock driver for GRX500 SoC
+To:     yixin zhu <yixin.zhu@linux.intel.com>
+Cc:     Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
+        chuanhua.lei@linux.intel.com,
+        Linux-MIPS <linux-mips@linux-mips.org>, qi-ming.wu@intel.com,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 14, 2018 at 2:40 AM, yixin zhu <yixin.zhu@linux.intel.com> wrote:
+>
+>
+> On 6/13/2018 6:37 AM, Rob Herring wrote:
+>>
+>> On Tue, Jun 12, 2018 at 01:40:29PM +0800, Songjun Wu wrote:
+>>>
+>>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>>
+>>> PLL of GRX500 provide clock to DDR, CPU, and peripherals as show below
 
-------------------
+[...]
 
-From: Johannes Wienke <languitar@semipol.de>
+>>> +Example:
+>>> +       clkgate0: clkgate0 {
+>>> +               #clock-cells = <1>;
+>>> +               compatible = "intel,grx500-gate0-clk";
+>>> +               reg = <0x114>;
+>>> +               clock-output-names = "gate_xbar0", "gate_xbar1",
+>>> "gate_xbar2",
+>>> +               "gate_xbar3", "gate_xbar6", "gate_xbar7";
+>>> +       };
+>>
+>>
+>> We generally don't do a clock node per clock or few clocks but rather 1
+>> clock node per clock controller block. See any recent clock bindings.
+>>
+>> Rob
+>
+> Do you mean only one example is needed per clock controller block?
+> cpuclk is not needed in the document?
 
-commit e6e7e9cd8eed0e18217c899843bffbe8c7dae564 upstream.
+No, I mean generally we have 1 DT node for the h/w block with all the
+clock control registers rather than nodes with a single register and 1
+or a couple of clocks. Sometimes the clock registers are mixed with
+other functions which complicates things a bit. But I can't tell that
+here because you haven't documented what's in the rest of the register
+space.
 
-Add ELAN0612 to the list of supported touchpads; this ID is used in Lenovo
-v330 14IKB devices.
-
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199253
-Signed-off-by: Johannes Wienke <languitar@semipol.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/input/mouse/elan_i2c_core.c |    1 +
- 1 file changed, 1 insertion(+)
-
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1262,6 +1262,7 @@ static const struct acpi_device_id elan_
- 	{ "ELAN060B", 0 },
- 	{ "ELAN060C", 0 },
- 	{ "ELAN0611", 0 },
-+	{ "ELAN0612", 0 },
- 	{ "ELAN1000", 0 },
- 	{ }
- };
-
-
+Rob
