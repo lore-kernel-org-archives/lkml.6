@@ -2,275 +2,109 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A4D11C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:34:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0F767C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:38:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 473D8208B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:34:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FZcC+Pil"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 473D8208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id B5DE5208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:38:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5DE5208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755217AbeFNMef (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 08:34:35 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:44688 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754927AbeFNMed (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 08:34:33 -0400
-Received: by mail-wr0-f193.google.com with SMTP id x4-v6so6246323wro.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 05:34:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lRZKEBj/b3UzaHiW4SwtHDCZmimCS2t4/Iwzkuftkjs=;
-        b=FZcC+PilopOnZlLh49TCoavyMqyQU6Ph28ZNO0GLF/xelct4CBwQSBG03/4F2BjbcA
-         hkDUfp6/GyvhdLVhBSS9P3PctPaxxMmNZa/YqJJloRP5U9Avr0RlR9emh13eIs50jeX6
-         L9iZoUFEpdTU61cq5Ye/94rPPGZt6yxX3lxvI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lRZKEBj/b3UzaHiW4SwtHDCZmimCS2t4/Iwzkuftkjs=;
-        b=cMQqkiUNufkyEU/6hrMZy23y4EQDwt2wJCAmt7hd8BK2CXmqTqd2eq11V00PAbXHtd
-         Dux4U6jbvPa4xCXpv3nrd0BGFrgNKLFn+8Ite7kjFWNp9jOTz2aVXsJu95xNAQAteaIF
-         cliCePVqYwOwGpsNslRgxDjomO+3ysAreaUC7iQm63RFomNHvf7QnzjUWK0/lG2FdwYO
-         KiuHQUaWYYNj7IfqgWwoDBB6BAbFmgsSJwlQHKzp0Xhp0HM5Na44q096BO2n3X2htLTf
-         9gEWEHylWhNmFA+07t9BCk8QQjgLQijk9HoDy8relg4gTmvA26JzgwInDa185zhALQs1
-         Yiqw==
-X-Gm-Message-State: APt69E2Cw+a70eMbzhN2Cs3OU677OUUKk73+kxDraCpb0z5mRo3d5YRo
-        zQHsL0uK1wazeY2qvYg+3wB0ag==
-X-Google-Smtp-Source: ADUXVKKVpnJJmW3p4rkeUkw425JafqIZ2lJ3j+Vk/T+Tj7nCQB+a59AKRPKq4Ol3s0NFOy5zXmORbA==
-X-Received: by 2002:adf:982d:: with SMTP id v42-v6mr2194736wrb.93.1528979671975;
-        Thu, 14 Jun 2018 05:34:31 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id k16-v6sm6317803wrh.25.2018.06.14.05.34.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 05:34:31 -0700 (PDT)
-Subject: Re: [RFC PATCH 1/2] media: docs-rst: Add decoder UAPI specification
- to Codec Interfaces
-To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        =?UTF-8?B?UGF3ZcWCIE/Fm2NpYWs=?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20180605103328.176255-1-tfiga@chromium.org>
- <20180605103328.176255-2-tfiga@chromium.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <89dca3ae-cbbc-4b5b-1c8a-207951997839@linaro.org>
-Date:   Thu, 14 Jun 2018 15:34:27 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        id S936046AbeFNMiT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 08:38:19 -0400
+Received: from muru.com ([72.249.23.125]:47162 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964796AbeFNMiL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 08:38:11 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id C26A180AE;
+        Thu, 14 Jun 2018 12:40:45 +0000 (UTC)
+Date:   Thu, 14 Jun 2018 05:38:05 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Nishanth Menon <nm@ti.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Santosh Shilimkar <ssantosh@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Vignesh R <vigneshr@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Sudeep Holla <sudeep.holla@arm.com>
+Subject: Re: [RFC PATCH 5/6] arm64: dts: ti: Add Support for AM654 SoC
+Message-ID: <20180614123805.GF112168@atomide.com>
+References: <20180605060510.32473-1-nm@ti.com>
+ <CAL_JsqJusWTvr4A_-Bk81meYddMHBMJ4=Fch6L0MFoF7HfBW2w@mail.gmail.com>
+ <20180607233853.p7iw7nlxxuyi66og@kahuna>
 MIME-Version: 1.0
-In-Reply-To: <20180605103328.176255-2-tfiga@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180607233853.p7iw7nlxxuyi66og@kahuna>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+Hi,
 
+Some comments on the ranges below.
 
-On 06/05/2018 01:33 PM, Tomasz Figa wrote:
-> Due to complexity of the video decoding process, the V4L2 drivers of
-> stateful decoder hardware require specific sequencies of V4L2 API calls
-> to be followed. These include capability enumeration, initialization,
-> decoding, seek, pause, dynamic resolution change, flush and end of
-> stream.
-> 
-> Specifics of the above have been discussed during Media Workshops at
-> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
-> originated at those events was later implemented by the drivers we already
-> have merged in mainline, such as s5p-mfc or mtk-vcodec.
-> 
-> The only thing missing was the real specification included as a part of
-> Linux Media documentation. Fix it now and document the decoder part of
-> the Codec API.
-> 
-> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> ---
->  Documentation/media/uapi/v4l/dev-codec.rst | 771 +++++++++++++++++++++
->  Documentation/media/uapi/v4l/v4l2.rst      |  14 +-
->  2 files changed, 784 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentation/media/uapi/v4l/dev-codec.rst
-> index c61e938bd8dc..0483b10c205e 100644
-> --- a/Documentation/media/uapi/v4l/dev-codec.rst
-> +++ b/Documentation/media/uapi/v4l/dev-codec.rst
+* Nishanth Menon <nm@ti.com> [180607 16:41]:
+> +	soc0: soc0 {
+> +		compatible = "simple-bus";
+> +		#address-cells = <2>;
+> +		#size-cells = <2>;
+> +		ranges;
 
-<snip>
+I suggest you leave out the soc0, that's not real. Just make
+the cbass@0 the top level interconnect. It can then provide
+ranges to mcu interconnect which can provide ranges to the wkup
+interconnect. So just model it after what's in the hardware :)
 
-> +Initialization sequence
-> +-----------------------
-> +
-> +1. (optional) Enumerate supported OUTPUT formats and resolutions. See
-> +   capability enumeration.
-> +
-> +2. Set a coded format on the source queue via :c:func:`VIDIOC_S_FMT`
-> +
-> +   a. Required fields:
-> +
-> +      i.   type = OUTPUT
-> +
-> +      ii.  fmt.pix_mp.pixelformat set to a coded format
-> +
-> +      iii. fmt.pix_mp.width, fmt.pix_mp.height only if cannot be
-> +           parsed from the stream for the given coded format;
-> +           ignored otherwise;
+I found the following ranges based on a quick look at the TRM,
+they could be split further if needed for power domains for
+genpd for example.
 
-Can we say that if width != 0 and height != 0 then the user knows the
-real coded resolution? And vise versa if width/height are both zero the
-driver should parse the stream metadata?
+main covers
+0x0000000000 - 0x5402000000
 
-Also what about fmt.pix_mp.plane_fmt.sizeimage, as per spec (S_FMT) this
-field should be filled with correct image size? If the coded
-width/height is zero sizeimage will be unknown. I think we have two
-options, the user fill sizeimage with bigger enough size or the driver
-has to have some default size.
+main provides at least the following ranges for mcu
+0x0028380000 - 0x002bc00000
+0x0040080000 - 0x0041c80000
+0x0045100000 - 0x0045180000
+0x0045600000 - 0x0045640000
+0x0045810000 - 0x0045860000
+0x0045950000 - 0x0045950400
+0x0045a50000 - 0x0045a50400
+0x0045b04000 - 0x0045b06400
+0x0045d10000 - 0x0045d24000
+0x0046000000 - 0x0060000000
+0x0400000000 - 0x0800000000
+0x4c3c020000 - 0x4c3c030000
+0x4c3e000000 - 0x4c3e040000
+0x5400000000 - 0x5402000000
 
-> +
-> +   b. Return values:
-> +
-> +      i.  EINVAL: unsupported format.
-> +
-> +      ii. Others: per spec
-> +
-> +   .. note::
-> +
-> +      The driver must not adjust pixelformat, so if
-> +      ``V4L2_PIX_FMT_H264`` is passed but only
-> +      ``V4L2_PIX_FMT_H264_SLICE`` is supported, S_FMT will return
-> +      -EINVAL. If both are acceptable by client, calling S_FMT for
-> +      the other after one gets rejected may be required (or use
-> +      :c:func:`VIDIOC_ENUM_FMT` to discover beforehand, see Capability
-> +      enumeration).
-> +
-> +3.  (optional) Get minimum number of buffers required for OUTPUT queue
-> +    via :c:func:`VIDIOC_G_CTRL`. This is useful if client intends to use
-> +    more buffers than minimum required by hardware/format (see
-> +    allocation).
-> +
-> +    a. Required fields:
-> +
-> +       i. id = ``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``
-> +
-> +    b. Return values: per spec.
-> +
-> +    c. Return fields:
-> +
-> +       i. value: required number of OUTPUT buffers for the currently set
-> +          format;
-> +
-> +4.  Allocate source (bitstream) buffers via :c:func:`VIDIOC_REQBUFS` on OUTPUT
-> +    queue.
-> +
-> +    a. Required fields:
-> +
-> +       i.   count = n, where n > 0.
-> +
-> +       ii.  type = OUTPUT
-> +
-> +       iii. memory = as per spec
-> +
-> +    b. Return values: Per spec.
-> +
-> +    c. Return fields:
-> +
-> +       i. count: adjusted to allocated number of buffers
-> +
-> +    d. The driver must adjust count to minimum of required number of
-> +       source buffers for given format and count passed. The client
-> +       must check this value after the ioctl returns to get the
-> +       number of buffers allocated.
-> +
-> +    .. note::
-> +
-> +       Passing count = 1 is useful for letting the driver choose
-> +       the minimum according to the selected format/hardware
-> +       requirements.
-> +
-> +    .. note::
-> +
-> +       To allocate more than minimum number of buffers (for pipeline
-> +       depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT)`` to
-> +       get minimum number of buffers required by the driver/format,
-> +       and pass the obtained value plus the number of additional
-> +       buffers needed in count to :c:func:`VIDIOC_REQBUFS`.
-> +
-> +5.  Begin parsing the stream for stream metadata via :c:func:`VIDIOC_STREAMON` on
-> +    OUTPUT queue. This step allows the driver to parse/decode
-> +    initial stream metadata until enough information to allocate
-> +    CAPTURE buffers is found. This is indicated by the driver by
-> +    sending a ``V4L2_EVENT_SOURCE_CHANGE`` event, which the client
-> +    must handle.
-> +
-> +    a. Required fields: as per spec.
-> +
-> +    b. Return values: as per spec.
-> +
-> +    .. note::
-> +
-> +       Calling :c:func:`VIDIOC_REQBUFS`, :c:func:`VIDIOC_STREAMON`
-> +       or :c:func:`VIDIOC_G_FMT` on the CAPTURE queue at this time is not
-> +       allowed and must return EINVAL.
-> +
-> +6.  This step only applies for coded formats that contain resolution
-> +    information in the stream.
+then mcu provides the following ranges for wkup
+0x0042000000 - 0x0044410020
+0x0045000000 - 0x0045030000
+0x0045080000 - 0x00450a0000
+0x0045808000 - 0x0045808800
+0x0045b00000 - 0x0045b02400
 
-maybe an example of such coded formats will be good to have.
+This based on looking at "figure 1-1. device top-level
+block diagram" and the memory map in TRM.
 
-> +    Continue queuing/dequeuing bitstream buffers to/from the
-> +    OUTPUT queue via :c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`. The driver
-> +    must keep processing and returning each buffer to the client
-> +    until required metadata to send a ``V4L2_EVENT_SOURCE_CHANGE``
-> +    for source change type ``V4L2_EVENT_SRC_CH_RESOLUTION`` is
-> +    found. There is no requirement to pass enough data for this to
-> +    occur in the first buffer and the driver must be able to
-> +    process any number
-> +
-> +    a. Required fields: as per spec.
-> +
-> +    b. Return values: as per spec.
-> +
-> +    c. If data in a buffer that triggers the event is required to decode
-> +       the first frame, the driver must not return it to the client,
-> +       but must retain it for further decoding.
-> +
-> +    d. Until the resolution source event is sent to the client, calling
-> +       :c:func:`VIDIOC_G_FMT` on the CAPTURE queue must return -EINVAL.
-> +
-> +    .. note::
-> +
-> +       No decoded frames are produced during this phase.
-> +
+Regards,
 
-<snip>
-
--- 
-regards,
-Stan
+Tony
