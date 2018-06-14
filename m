@@ -2,346 +2,249 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 913E9C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:52:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2D0D4C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DD48208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7F73208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:55:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sFMOebMI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DD48208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LwX5xEHh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7F73208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755031AbeFNKwK (ORCPT
+        id S1755056AbeFNKza (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 06:52:10 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41874 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754810AbeFNKwH (ORCPT
+        Thu, 14 Jun 2018 06:55:30 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:50183 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754900AbeFNKz1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:52:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Tw1pmoJ/nnPGw3VXUuz7iI9GCem1zf7EwBGL9Y/W92w=; b=sFMOebMIvbDCGgPrND07fuZ1a
-        n1xxHOqFTQLxasp32YyZk3689b24ovKGBdwpa9mxJwd9OgBig0Y17vCjg2a/TExi3/6xxhC5kzAfI
-        tqHquLlNWlY628HQM3bAwgiA+9YUxd+uyL2e2RP9T39PPCmZBHrvJPkpR2XR9oKb4sb5DVNdNpPoA
-        6YxXpe5EiZI1GLx0mN4GCDGhAZKFUtfPQSe1OHMQke902wXIwWZIdmH3pvAue/oUrcIoKdalNAa/i
-        s1NVxFb8lQTMgwjVJmSjS2CL5NSL46zN5xtLMepbofqh9yhHUVEsFO6yWX5YZ1oRqPIewLM3tWoM0
-        9I9K4+rKQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fTPr7-0005R9-KU; Thu, 14 Jun 2018 10:51:53 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 2E87A202989CD; Thu, 14 Jun 2018 12:51:51 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 12:51:51 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH 1/2] locking: Implement an algorithm choice for
- Wound-Wait mutexes
-Message-ID: <20180614105151.GY12198@hirez.programming.kicks-ass.net>
-References: <20180613074745.14750-1-thellstrom@vmware.com>
- <20180613074745.14750-2-thellstrom@vmware.com>
- <20180613095012.GW12198@hirez.programming.kicks-ass.net>
- <69f3dee9-4782-bc90-3ee2-813ac6835c4a@vmware.com>
- <20180613131000.GX12198@hirez.programming.kicks-ass.net>
- <9afd482d-7082-fa17-5e34-179a652376e5@vmware.com>
+        Thu, 14 Jun 2018 06:55:27 -0400
+Received: by mail-wm0-f65.google.com with SMTP id e16-v6so9789785wmd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 03:55:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DSxk86fXVKdT0c3aFVQjNfj6qQg+GlPNkzKCXgAck8s=;
+        b=LwX5xEHhDHDGR3avKXEvWKNzbXQ5VoQg/bR/Q9ScD78b+5EYjj7z6VfAuo+QDA9rHx
+         qESeFYQnw9E/WqabYwaLX3mASHh5kayuykAirlCrnblFaXwLTYK5rmx+rl2lkgDB+iqT
+         ydot4T0yeO5RYbvpKfO1/lpNZeQgQsN5qF31I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DSxk86fXVKdT0c3aFVQjNfj6qQg+GlPNkzKCXgAck8s=;
+        b=G+gW4b5ucAQskep58ybRka0+iXusOb0MQuzzAhKlOR0Xya/oPk2wyn4H2A0QtBHb/V
+         SiRfirH3GxodJRznOigCTmphIAKV7F5EJ3op0AOGVzwRVznh2wYpz+QmddW4EfcT+Yx+
+         ZX8TnrSMxx58qrOsmDadb3bsJ5h8ZtGcQbRj9nQLlG+R6KmeUUXht2tJjaA9UoOTyPdj
+         v7eVU8ybz34h2cPMkzUbHRk2iHzAWi2QzzlKdbAUyJIgoXfAeh8luFJ6hKyaInr9arsk
+         FC1kTNuDb84G3DCLqMuMnU6Lr14T6+nAMZkm/rUrFKvqRCri+HkWuWMg8Gw3FJz41RrZ
+         kQKg==
+X-Gm-Message-State: APt69E31cLmIaOioj+6ccv5PA6tQKIXCFlyKdPFBWmKjKOWqUAHPQiWq
+        xElAsSRpWGK9rg+bK2WV2kMwPzoXkO5L3hERqxLfp/RUVZM=
+X-Google-Smtp-Source: ADUXVKLs7n5GgEzWGVri1yQY/p6E6OTw9ITpg6aigwOoZun+kjucYJkLXg+9KMj531qGrcZiqLWQT9MSQofy0p35prc=
+X-Received: by 2002:a1c:3504:: with SMTP id c4-v6mr1353889wma.59.1528973726545;
+ Thu, 14 Jun 2018 03:55:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9afd482d-7082-fa17-5e34-179a652376e5@vmware.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Received: by 2002:a1c:c389:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 03:54:45
+ -0700 (PDT)
+In-Reply-To: <602443463.26544751.1528972563608.JavaMail.zimbra@redhat.com>
+References: <20180612164816.587001852@linuxfoundation.org> <CABdQkv9uNjf7ARKBJ-sE_RVruMA5U9bTNo-EL_+7Rv8ZVJGY3w@mail.gmail.com>
+ <CADtBP2DZ0ceTtwaG7AdXV3xa16mQ6nu=gaqUYj7JSOLBdVD8cg@mail.gmail.com>
+ <20180614063448.GB6021@kroah.com> <CA+G9fYut-A0L9iWJbzbSfmc=gjmQ17iabcPfXxqDKocwpYYTOQ@mail.gmail.com>
+ <20180614090151.GA24997@kroah.com> <2072095076.26539556.1528969792388.JavaMail.zimbra@redhat.com>
+ <20180614102119.GA19094@kroah.com> <602443463.26544751.1528972563608.JavaMail.zimbra@redhat.com>
+From:   Rafael Tinoco <rafael.tinoco@linaro.org>
+Date:   Thu, 14 Jun 2018 07:54:45 -0300
+Message-ID: <CADtBP2AeL8PtsnBOQdaC=JJbTStdQH+XLrjyKg3L8gYRRrc8zQ@mail.gmail.com>
+Subject: Re: [LTP] [PATCH 4.4 00/24] 4.4.137-stable review
+To:     Jan Stancek <jstancek@redhat.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Naresh Kamboju <naresh.kamboju@linaro.org>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        ltp@lists.linux.it, open list <linux-kernel@vger.kernel.org>,
+        lkft-triage@lists.linaro.org, patches@kernelci.org,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 04:05:43PM +0200, Thomas Hellstrom wrote:
-> In short, with Wait-Die (before the patch) it's the process _taking_ the
-> contended lock that backs off if necessary. No preemption required. With
-> Wound-Wait, it's the process _holding_ the contended lock that gets wounded
-> (preempted), and it needs to back off at its own discretion but no later
-> than when it's going to sleep on another ww mutex. That point is where we
-> intercept the preemption request. We're preempting the transaction rather
-> than the process.
+Jan, Naresh,
 
-This:
+Patch has been queued to 4.4 (for the next review round, yet to be
+merged to stable-rc branch):
 
-  Wait-die:
-    The newer transactions are killed when:
-      It (= the newer transaction) makes a reqeust for a lock being held
-      by an older transactions
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/tre=
+e/queue-4.4
 
-  Wound-wait:
-    The newer transactions are killed when:
-      An older transaction makes a request for a lock being held by the
-      newer transactions
+as "clarify-and-fix-max_lfs_filesize-macros.patch"
 
-Would make for an excellent comment somewhere. No talking about
-preemption, although I think I know what you mean with it, that is not
-how preemption is normally used.
+Thank you!
 
-In scheduling speak preemption is when we pick a runnable (but !running)
-task to run instead of the current running task.  In this case however,
-our T2 is blocked on a lock acquisition (one owned by our T1) and T1 is
-the only runnable task. Only when T1's progress is inhibited by T2 (T1
-wants a lock held by T2) do we wound/wake T2.
-
-In any case, I had a little look at the current ww_mutex code and ended
-up with the below patch that hopefully clarifies things a little.
-
----
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index f44f658ae629..a20c04619b2a 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -244,6 +244,10 @@ void __sched mutex_lock(struct mutex *lock)
- EXPORT_SYMBOL(mutex_lock);
- #endif
- 
-+/*
-+ * Associate the ww_mutex @ww with the context @ww_ctx under which we acquired
-+ * it.
-+ */
- static __always_inline void
- ww_mutex_lock_acquired(struct ww_mutex *ww, struct ww_acquire_ctx *ww_ctx)
- {
-@@ -282,26 +286,36 @@ ww_mutex_lock_acquired(struct ww_mutex *ww, struct ww_acquire_ctx *ww_ctx)
- 	DEBUG_LOCKS_WARN_ON(ww_ctx->ww_class != ww->ww_class);
- #endif
- 	ww_ctx->acquired++;
-+	lock->ctx = ctx;
- }
- 
-+/*
-+ * Determine if context @a is 'after' context @b. IOW, @a should be wounded in
-+ * favour of @b.
-+ */
- static inline bool __sched
- __ww_ctx_stamp_after(struct ww_acquire_ctx *a, struct ww_acquire_ctx *b)
- {
--	return a->stamp - b->stamp <= LONG_MAX &&
--	       (a->stamp != b->stamp || a > b);
-+
-+	return (signed long)(a->stamp - b->stamp) > 0;
- }
- 
- /*
-- * Wake up any waiters that may have to back off when the lock is held by the
-- * given context.
-+ * We just acquired @lock under @ww_ctx, if there are later contexts waiting
-+ * behind us on the wait-list, wake them up so they can wound themselves.
-  *
-- * Due to the invariants on the wait list, this can only affect the first
-- * waiter with a context.
-+ * See __ww_mutex_add_waiter() for the list-order construction; basically the
-+ * list is ordered by stamp smallest (oldest) first, so if there is a later
-+ * (younger) stamp on the list behind us, wake it so it can wound itself.
-+ *
-+ * Because __ww_mutex_add_waiter() and __ww_mutex_check_stamp() wake any
-+ * but the earliest context, this can only affect the first waiter (with a
-+ * context).
-  *
-  * The current task must not be on the wait list.
-  */
- static void __sched
--__ww_mutex_wakeup_for_backoff(struct mutex *lock, struct ww_acquire_ctx *ww_ctx)
-+__ww_mutex_wakeup_for_wound(struct mutex *lock, struct ww_acquire_ctx *ww_ctx)
- {
- 	struct mutex_waiter *cur;
- 
-@@ -322,16 +336,14 @@ __ww_mutex_wakeup_for_backoff(struct mutex *lock, struct ww_acquire_ctx *ww_ctx)
- }
- 
- /*
-- * After acquiring lock with fastpath or when we lost out in contested
-- * slowpath, set ctx and wake up any waiters so they can recheck.
-+ * After acquiring lock with fastpath, where we do not hold wait_lock, set ctx
-+ * and wake up any waiters so they can recheck.
-  */
- static __always_inline void
- ww_mutex_set_context_fastpath(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
- {
- 	ww_mutex_lock_acquired(lock, ctx);
- 
--	lock->ctx = ctx;
--
- 	/*
- 	 * The lock->ctx update should be visible on all cores before
- 	 * the atomic read is done, otherwise contended waiters might be
-@@ -352,25 +364,10 @@ ww_mutex_set_context_fastpath(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
- 	 * so they can see the new lock->ctx.
- 	 */
- 	spin_lock(&lock->base.wait_lock);
--	__ww_mutex_wakeup_for_backoff(&lock->base, ctx);
-+	__ww_mutex_wakeup_for_wound(&lock->base, ctx);
- 	spin_unlock(&lock->base.wait_lock);
- }
- 
--/*
-- * After acquiring lock in the slowpath set ctx.
-- *
-- * Unlike for the fast path, the caller ensures that waiters are woken up where
-- * necessary.
-- *
-- * Callers must hold the mutex wait_lock.
-- */
--static __always_inline void
--ww_mutex_set_context_slowpath(struct ww_mutex *lock, struct ww_acquire_ctx *ctx)
--{
--	ww_mutex_lock_acquired(lock, ctx);
--	lock->ctx = ctx;
--}
--
- #ifdef CONFIG_MUTEX_SPIN_ON_OWNER
- 
- static inline
-@@ -646,20 +643,30 @@ void __sched ww_mutex_unlock(struct ww_mutex *lock)
- }
- EXPORT_SYMBOL(ww_mutex_unlock);
- 
-+/*
-+ * Check the wound condition for the current lock acquire.  If we're trying to
-+ * acquire a lock already held by an older context, wound ourselves.
-+ *
-+ * Since __ww_mutex_add_waiter() orders the wait-list on stamp, we only have to
-+ * look at waiters before us in the wait-list.
-+ */
- static inline int __sched
--__ww_mutex_lock_check_stamp(struct mutex *lock, struct mutex_waiter *waiter,
-+__ww_mutex_check_stamp(struct mutex *lock, struct mutex_waiter *waiter,
- 			    struct ww_acquire_ctx *ctx)
- {
- 	struct ww_mutex *ww = container_of(lock, struct ww_mutex, base);
- 	struct ww_acquire_ctx *hold_ctx = READ_ONCE(ww->ctx);
- 	struct mutex_waiter *cur;
- 
-+	if (ctx->acquired == 0)
-+		return 0;
-+
- 	if (hold_ctx && __ww_ctx_stamp_after(ctx, hold_ctx))
- 		goto deadlock;
- 
- 	/*
- 	 * If there is a waiter in front of us that has a context, then its
--	 * stamp is earlier than ours and we must back off.
-+	 * stamp is earlier than ours and we must wound ourself.
- 	 */
- 	cur = waiter;
- 	list_for_each_entry_continue_reverse(cur, &lock->wait_list, list) {
-@@ -677,6 +684,14 @@ __ww_mutex_lock_check_stamp(struct mutex *lock, struct mutex_waiter *waiter,
- 	return -EDEADLK;
- }
- 
-+/*
-+ * Add @waiter to the wait-list, keep the wait-list ordered by stamp, smallest
-+ * first. Such that older contexts are preferred to acquire the lock over
-+ * younger contexts.
-+ *
-+ * Furthermore, wound ourself immediately when possible (there are older
-+ * contexts already waiting) to avoid unnecessary waiting.
-+ */
- static inline int __sched
- __ww_mutex_add_waiter(struct mutex_waiter *waiter,
- 		      struct mutex *lock,
-@@ -700,8 +715,12 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
- 		if (!cur->ww_ctx)
- 			continue;
- 
-+		/*
-+		 * If we find an older context waiting, there is no point in
-+		 * queueing behind it, as we'd have to wound ourselves the
-+		 * moment it would acquire the lock.
-+		 */
- 		if (__ww_ctx_stamp_after(ww_ctx, cur->ww_ctx)) {
--			/* Back off immediately if necessary. */
- 			if (ww_ctx->acquired > 0) {
- #ifdef CONFIG_DEBUG_MUTEXES
- 				struct ww_mutex *ww;
-@@ -719,8 +738,9 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
- 		pos = &cur->list;
- 
- 		/*
--		 * Wake up the waiter so that it gets a chance to back
--		 * off.
-+		 * When we enqueued an older context, wake all younger
-+		 * contexts such that they can wound themselves, see
-+		 * __ww_mutex_check_stamp().
- 		 */
- 		if (cur->ww_ctx->acquired > 0) {
- 			debug_mutex_wake_waiter(lock, cur);
-@@ -772,7 +792,7 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- 	 */
- 	if (__mutex_trylock(lock)) {
- 		if (use_ww_ctx && ww_ctx)
--			__ww_mutex_wakeup_for_backoff(lock, ww_ctx);
-+			__ww_mutex_wakeup_for_wound(lock, ww_ctx);
- 
- 		goto skip_wait;
- 	}
-@@ -790,10 +810,10 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- 		waiter.ww_ctx = MUTEX_POISON_WW_CTX;
- #endif
- 	} else {
--		/* Add in stamp order, waking up waiters that must back off. */
-+		/* Add in stamp order, waking up waiters that must wound themselves. */
- 		ret = __ww_mutex_add_waiter(&waiter, lock, ww_ctx);
- 		if (ret)
--			goto err_early_backoff;
-+			goto err_early_wound;
- 
- 		waiter.ww_ctx = ww_ctx;
- 	}
-@@ -824,8 +844,8 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- 			goto err;
- 		}
- 
--		if (use_ww_ctx && ww_ctx && ww_ctx->acquired > 0) {
--			ret = __ww_mutex_lock_check_stamp(lock, &waiter, ww_ctx);
-+		if (use_ww_ctx && ww_ctx) {
-+			ret = __ww_mutex_check_stamp(lock, &waiter, ww_ctx);
- 			if (ret)
- 				goto err;
- 		}
-@@ -870,7 +890,7 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- 	lock_acquired(&lock->dep_map, ip);
- 
- 	if (use_ww_ctx && ww_ctx)
--		ww_mutex_set_context_slowpath(ww, ww_ctx);
-+		ww_mutex_lock_acquired(ww, ww_ctx);
- 
- 	spin_unlock(&lock->wait_lock);
- 	preempt_enable();
-@@ -879,7 +899,7 @@ __mutex_lock_common(struct mutex *lock, long state, unsigned int subclass,
- err:
- 	__set_current_state(TASK_RUNNING);
- 	mutex_remove_waiter(lock, &waiter, current);
--err_early_backoff:
-+err_early_wound:
- 	spin_unlock(&lock->wait_lock);
- 	debug_mutex_free_waiter(&waiter);
- 	mutex_release(&lock->dep_map, 1, ip);
+On 14 June 2018 at 07:36, Jan Stancek <jstancek@redhat.com> wrote:
+>
+> ----- Original Message -----
+>> On Thu, Jun 14, 2018 at 05:49:52AM -0400, Jan Stancek wrote:
+>> >
+>> > ----- Original Message -----
+>> > > On Thu, Jun 14, 2018 at 02:24:25PM +0530, Naresh Kamboju wrote:
+>> > > > On 14 June 2018 at 12:04, Greg Kroah-Hartman
+>> > > > <gregkh@linuxfoundation.org>
+>> > > > wrote:
+>> > > > > On Wed, Jun 13, 2018 at 10:48:50PM -0300, Rafael Tinoco wrote:
+>> > > > >> On 13 June 2018 at 18:08, Rafael David Tinoco
+>> > > > >> <rafaeldtinoco@kernelpath.com> wrote:
+>> > > > >> > On Wed, Jun 13, 2018 at 6:00 PM, Greg Kroah-Hartman
+>> > > > >> > <gregkh@linuxfoundation.org> wrote:
+>> > > > >> >> On Wed, Jun 13, 2018 at 05:47:49PM -0300, Rafael Tinoco wrot=
+e:
+>> > > > >> >>> Results from Linaro=E2=80=99s test farm.
+>> > > > >> >>> Regressions detected.
+>> > > > >> >>>
+>> > > > >> >>> NOTE:
+>> > > > >> >>>
+>> > > > >> >>> 1) LTP vma03 test (cve-2011-2496) broken on v4.4-137-rc1 be=
+cause
+>> > > > >> >>> of:
+>> > > > >> >>>
+>> > > > >> >>>      6ea1dc96a03a mmap: relax file size limit for regular f=
+iles
+>> > > > >> >>>      bd2f9ce5bacb mmap: introduce sane default mmap limits
+>> > > > >> >>>
+>> > > > >> >>>    discussion:
+>> > > > >> >>>
+>> > > > >> >>>      https://github.com/linux-test-project/ltp/issues/341
+>> > > > >> >>>
+>> > > > >> >>>    mainline commit (v4.13-rc7):
+>> > > > >> >>>
+>> > > > >> >>>      0cc3b0ec23ce Clarify (and fix) MAX_LFS_FILESIZE macros
+>> > > > >> >>>
+>> > > > >> >>>    should be backported to 4.4.138-rc2 and fixes the issue.
+>> > > > >> >>
+>> > > > >> >> Really?  That commit says it fixes c2a9737f45e2 ("vfs,mm: fi=
+x a
+>> > > > >> >> dead
+>> > > > >> >> loop in truncate_inode_pages_range()") which is not in 4.4.y=
+ at
+>> > > > >> >> all.
+>> > > > >> >>
+>> > > > >> >> Did you test this out?
+>> > > > >> >
+>> > > > >> > Yes, the LTP contains the tests (last comment is the final te=
+st
+>> > > > >> > for
+>> > > > >> > arm32, right before Jan tests i686).
+>> > > > >> >
+>> > > > >> > Fixing MAX_LFS_FILESIZE fixes the new limit for mmap() brough=
+t by
+>> > > > >> > those 2 commits (file_mmap_size_max()).
+>> > > > >> > offset tested by the LTP test is 0xfffffffe000.
+>> > > > >> > file_mmap_size_max gives: 0xFFFFFFFF000 as max value, but onl=
+y
+>> > > > >> > after
+>> > > > >> > the mentioned patch.
+>> > > > >> >
+>> > > > >> > Original intent for this fix was other though.
+>> > > > >>
+>> > > > >> To clarify this a bit further.
+>> > > > >>
+>> > > > >> The LTP CVE test is breaking in the first call to mmap(), even
+>> > > > >> before
+>> > > > >> trying to remap and test the security issue. That start happeni=
+ng in
+>> > > > >> this round because of those mmap() changes and the offset used =
+in
+>> > > > >> the
+>> > > > >> LTP test. Linus changed limit checks and made them to be relate=
+d to
+>> > > > >> MAX_LFS_FILESIZE. Unfortunately, in 4.4 stable, we were missing=
+ the
+>> > > > >> fix for MAX_LFS_FILESIZE (which before commit 0cc3b0ec23ce was =
+less
+>> > > > >> than the REAL 32 bit limit).
+>> > > > >>
+>> > > > >> Commit 0cc3b0ec23ce was made because an user noticed the FS lim=
+it
+>> > > > >> not
+>> > > > >> being what it should be. In our case, the 4.4 stable kernel, we=
+ are
+>> > > > >> facing this 32 bit lower limit (than the real 32 bit real limit=
+),
+>> > > > >> because of the LTP CVE test, so we need this fix to have the re=
+al 32
+>> > > > >> bit limit set for that macro (mmap limits did not use that macr=
+o
+>> > > > >> before).
+>> > > > >>
+>> > > > >> I have tested in arm32 and Jan Stancek, who first responded to =
+LTP
+>> > > > >> issue, has tested this in i686 and both worked after that patch=
+ was
+>> > > > >> included to v4.4-137-rc1 (my last test was even with 4.4.138-rc=
+1).
+>> > > > >>
+>> > > > >> Hope that helps a bit.
+>> > > > >
+>> > > > > Ok, thanks, it didn't apply cleanly but I've fixed it up now.
+>> > > >
+>> > > > On the latest 4.4.138-rc1,
+>> > > > LTP "cve-2011-2496" test still fails on arm32 beagleboard x15 and
+>> > > > qemu_arm.
+>> > > >
+>> > > > Summary
+>> > > > ------------------------------------------------------------------=
+------
+>> > > > kernel: 4.4.138-rc1
+>> > > > git repo:
+>> > > > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stabl=
+e-rc.git
+>> > > > git branch: linux-4.4.y
+>> > > > git commit: 7d690c56754ef7be647fbcf7bcdceebd59926b3f
+>> > > > git describe: v4.4.137-15-g7d690c56754e
+>> > > > Test details:
+>> > > > https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4=
+.4.137-15-g7d690c56754e
+>> > >
+>> > > Ok, but what does this mean?  Is there a commit somewhere that I nee=
+d to
+>> > > pick up for 4.4.y that is already in newer kernels?
+>> >
+>> > Hi Greg,
+>> >
+>> > I think the expectations was that:
+>> >   0cc3b0ec23ce Clarify (and fix) MAX_LFS_FILESIZE macros
+>> > has been included to linux-4.4.y HEAD, so they re-ran the tests.
+>> >
+>> > Report from Naresh above looks like original report: LTP vma03 is
+>> > cve-2011-2496 test.
+>>
+>> And the test fails now?
+>>
+>> Still confused.
+>
+> I don't see the patch (0cc3b0ec23ce) applied to linux-stable-rc.git,
+> branch linux-4.4.y:
+>   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.=
+git/log/?h=3Dlinux-4.4.y
+>   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.=
+git/tree/include/linux/fs.h?h=3Dlinux-4.4.y&id=3D7d690c56754ef7be647fbcf7bc=
+dceebd59926b3f#n929
+>
+> That is what has been tested above - is that the correct place
+> to get your backport of 0cc3b0ec23ce?
+>
+> Regards,
+> Jan
