@@ -6,158 +6,109 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6E96DC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:25:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BDE36C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3036F208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:25:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3036F208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ECC4208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:26:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ECC4208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755288AbeFNRZk (ORCPT
+        id S1755340AbeFNR0n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 13:25:40 -0400
-Received: from mga11.intel.com ([192.55.52.93]:26479 "EHLO mga11.intel.com"
+        Thu, 14 Jun 2018 13:26:43 -0400
+Received: from mx2.suse.de ([195.135.220.15]:48598 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754526AbeFNRZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 13:25:39 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 10:25:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
-   d="scan'208";a="63215466"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.143]) ([10.7.153.143])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Jun 2018 10:25:38 -0700
-Subject: Re: [PATCH linux-next v5 07/13] dt-bindings: mfd: Add a document for
- PECI client mfd
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, openbmc@lists.ozlabs.org,
-        Andrew Jeffery <andrew@aj.id.au>,
-        James Feist <james.feist@linux.intel.com>,
-        Jason M Biils <jason.m.bills@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Vernon Mauery <vernon.mauery@linux.intel.com>
-References: <20180601182216.23894-1-jae.hyun.yoo@linux.intel.com>
- <20180613061637.GI5278@dell>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <2b5bbf01-8c9c-bb06-4559-00dae61d95de@linux.intel.com>
-Date:   Thu, 14 Jun 2018 10:25:37 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        id S1754526AbeFNR0l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 13:26:41 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C8031AE89;
+        Thu, 14 Jun 2018 17:26:39 +0000 (UTC)
+Date:   Fri, 15 Jun 2018 03:26:34 +1000
+From:   Aleksa Sarai <asarai@suse.de>
+To:     Ivan Zahariev <famzah@icdsoft.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Cgroups "pids" controller does not update "pids.current" count
+ immediately
+Message-ID: <20180614172634.ymoik5uov3vzftmp@gordon>
+References: <77af3805-e912-2664-f347-e30c0919d0c4@icdsoft.com>
 MIME-Version: 1.0
-In-Reply-To: <20180613061637.GI5278@dell>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="n2z34pfmzym6bcpm"
+Content-Disposition: inline
+In-Reply-To: <77af3805-e912-2664-f347-e30c0919d0c4@icdsoft.com>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for the review. Please check my answers inline.
 
-On 6/12/2018 11:16 PM, Lee Jones wrote:
-> All s/mfd/MFD/
-> 
+--n2z34pfmzym6bcpm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Got it. Will fix it.
+On 2018-06-14, Ivan Zahariev <famzah@icdsoft.com> wrote:
+> I posted a kernel bug about this a month ago but it did not receive any
+> attention: https://bugzilla.kernel.org/show_bug.cgi?id=3D199713
 
->> This commit adds a dt-bindings document for PECI client multi-function
->> device.
-> 
-> Multi-Function Device
-> 
+I believe that very few people watch the kernel bugzilla -- it's almost
+always better to send a mail to LKML (speaking of which, you should
+always include <linux-kernel@vger.kernel.org> in Cc).
 
-Will fix it.
+> I've tested this on 4.14.27 and 4.4.0-124-generic Ubuntu.
+>=20
+> If I start a couple of processes which exit very quickly (like a simple B=
+ash
+> script with many commands in it), the reported value in "pids.current" is
+> not updated immediately when processes exit. This leads to too many
+> processes incorrectly accounted in "pids.current" which hits the "pids.ma=
+x"
+> prematurely.
 
->> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> Cc: Andrew Jeffery <andrew@aj.id.au>
->> Cc: James Feist <james.feist@linux.intel.com>
->> Cc: Jason M Biils <jason.m.bills@linux.intel.com>
->> Cc: Joel Stanley <joel@jms.id.au>
->> Cc: Vernon Mauery <vernon.mauery@linux.intel.com>
->> ---
->>   .../devicetree/bindings/mfd/peci-client.txt   | 23 +++++++++++++++++++
->>   1 file changed, 23 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/mfd/peci-client.txt
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/peci-client.txt b/Documentation/devicetree/bindings/mfd/peci-client.txt
->> new file mode 100644
->> index 000000000000..4eb8f6bb6ca4
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/peci-client.txt
->> @@ -0,0 +1,23 @@
->> +* Intel PECI client bindings
-> 
-> Now it the time to expand on what a "PECI client" is.
-> 
+One possible reason for this might be related to zombie processes.
+cgroup.procs doesn't include any zombie processes (tasks are removed
+when they exit(2)), but the pids controller does track zombies (tasks
+are removed when the 'struct task' is put'd). This could explain why
+there's a discrepancy which clears itself up after a short period of
+time -- though I am not sure that your reproducer will actually produce
+zombies (I only took a quick look at it).
 
-Okay, I'll add more description about the "PECI client".
+> The "memory" controller, for example, works as expected and does not suff=
+er
+> from this asynchronous lag.
 
->> +Required properties:
->> +- compatible : Should be "intel,peci-client", "simple-mfd".
->> +- reg        : Should contain address of a client CPU. Address range of CPU
->> +	       clients is starting from 0x30 based on PECI specification.
-> 
-> s/is starting/start/
-> 
+I'm not sure what makes the memory controller and the pids controller
+comparable in this aspect -- there is no "pids.current" for the memory
+controller.
 
-Will change it to "Address range of CPU clients starts from ...".
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
 
->> +Example:
->> +	peci-bus@0 {
-> 
-> 0?
-> 
+--n2z34pfmzym6bcpm
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Because the actual reg value of the peci bus is reg = <0x0 0x60> but
-anyway it's an example.
+-----BEGIN PGP SIGNATURE-----
 
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
-> 
-> No 'reg' property?
-> 
+iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlsipUYACgkQnhiqJn3b
+jbQOrhAAgG6rzxPTPP0i7Y2oMqlWigk48dx8cXdvRRa2jRYMZGURPi5F0zFm+9lT
+man19bmp5vFWAHsjfVh6ufh6A76jUEkgRdnb8EGy/U0ABf5dgkQylXshPUFNmNW2
+sxvadMadWBlR/BIGFO48h0CDJd59DoWegnkwdTMN9oOCdCc+g2N18IssCUT7DHL3
+fYcyB4Qbgygg12ZDze/znp8DoMnuDKGbZLZHeQctn7lbAkpCvvKxJo/V1hvewgtf
+dr7C4YghzsUt2LWkgNSPwX/WuU23b3nvz51w9yaEhCrOWkPKp353CHHnck5JsDFC
+asAryTvko05AKDrXv3KvlPMB6poye8o0gZkIlXKsmdoYwrjNhjccIHEaUrcdawgD
+II5NKZmkNFcvce2pjXVd090SaeZX2rxigu0f21Ez9+liWmBwaQKJWCmFMUURS7Gy
+3HHFwRNtEpYxT3PNqONYdq1tmqnnlZekDBHr+DBvDLAVHwhG4fIlnTZmQYfjb8l+
+RdAqFMQzde7/3xn5MkKWloUI2D/Bd24OYUH3Q2QcgwxKq4XmGr/EE3Qd6nX2Zome
+iF4FBJ20V9XhBWFCpei6Cx1NYx2NZjdpg/W7BGLtgnpNtViMxgmSy25427Z3onrw
++84zAFh3lWCcNqUtc3Ptek4tprqkPJnFqk235pLXZ2ekFLO62Zs=
+=CcXs
+-----END PGP SIGNATURE-----
 
-This is the actual peci bus node which is a parent of this MFD node:
-	peci0: peci-bus@0 {
-		compatible = "aspeed,ast2500-peci";
-		reg = <0x0 0x60>;
-		#address-cells = <1>;
-		#size-cells = <0>;
-		interrupts = <15>;
-		clocks = <&syscon ASPEED_CLK_GATE_REFCLK>;
-		resets = <&syscon ASPEED_RESET_PECI>;
-		clock-frequency = <24000000>;
-		msg-timing = <1>;
-		addr-timing = <1>;
-		rd-sampling-point = <8>;
-		cmd-timeout-ms = <1000>;
-	};
-
->> +		< more properties >
-> 
-> Remove this.
-> 
-
-I dropped all other properties into < more properties > because I want
-to show the #address-cells and #size-cells to state its sub-nodes
-should have a single unique reg value. Should I remove this line or the
-whole parent node?
-
->> +		peci-client@30 {
->> +			compatible = "intel,peci-client", "simple-mfd";
->> +			reg = <0x30>;
->> +		};
->> +
->> +		peci-client@31 {
->> +			compatible = "intel,peci-client", "simple-mfd";
->> +			reg = <0x31>;
->> +		};
->> +	};
-> 
+--n2z34pfmzym6bcpm--
