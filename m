@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BA8F5C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 13CE6C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7144E20020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD131208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dwy7xqhr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7144E20020
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="g6vFCrY6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD131208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965810AbeFNOLV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:11:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52398 "EHLO mail.kernel.org"
+        id S965868AbeFNObg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:31:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965780AbeFNOLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:18 -0400
+        id S965803AbeFNOLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CC17208DA;
-        Thu, 14 Jun 2018 14:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBFA9208DB;
+        Thu, 14 Jun 2018 14:11:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985477;
-        bh=aGrQJOzXj3fKK3Osr4Eoo/zZn8vNrG0wBrxxslw4oJg=;
+        s=default; t=1528985480;
+        bh=nd2iEWxpV55DnRJfF/7z2jivUSDpP+ve+nmpl9ysj9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dwy7xqhr4f8//9AuNMZX/STvWVznoBcojRRflF6DDURw5XK8AYA/2rx8VG8W4LoQy
-         RmFQaXPuyGnqrbJvoz4ThcZh4ruCBc0DEMs02ZbUyzX7vy/gvEquGdpMf3HTPJvfGJ
-         FNSAEFcEvkO5uyn2/2V9qQQZEFlBssdFHmt9bIyY=
+        b=g6vFCrY6W7U+b+WHZhJV7vLoPS2+ykZSuH25znA8bZ15NA+n+J+e/HvoPN8CUAZty
+         U67v1KEljFwKk8FfzelUAiecd6GFui6GtyXPvMV1aKA4usdknZ6zkiXwj933YbbxV4
+         MCY0G77nmxWW2Lx8l1EPugkHcaPwFneyybVS8vXM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 4.14 11/36] usbip: vhci_sysfs: fix potential Spectre v1
-Date:   Thu, 14 Jun 2018 16:04:34 +0200
-Message-Id: <20180614132157.783724873@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Kappner <agk@godking.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.14 12/36] usb-storage: Add support for FL_ALWAYS_SYNC flag in the UAS driver
+Date:   Thu, 14 Jun 2018 16:04:35 +0200
+Message-Id: <20180614132157.825499483@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -60,102 +60,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Alexander Kappner <agk@godking.net>
 
-commit a0d6ec88090d7b1b008429c44532a388e29bb1bd upstream.
+commit 8c4e97ddfe73a0958bb0abf7e6a3bc4cc3e04936 upstream.
 
-pdev_nr and rhport can be controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+The ALWAYS_SYNC flag is currently honored by the usb-storage driver but not UAS
+and is required to work around devices that become unstable upon being
+queried for cache. This code is taken straight from:
+drivers/usb/storage/scsiglue.c:284
 
-This issue was detected with the help of Smatch:
-drivers/usb/usbip/vhci_sysfs.c:238 detach_store() warn: potential spectre issue 'vhcis'
-drivers/usb/usbip/vhci_sysfs.c:328 attach_store() warn: potential spectre issue 'vhcis'
-drivers/usb/usbip/vhci_sysfs.c:338 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_ss->vdev'
-drivers/usb/usbip/vhci_sysfs.c:340 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_hs->vdev'
-
-Fix this by sanitizing pdev_nr and rhport before using them to index
-vhcis and vhci->vhci_hcd_ss->vdev respectively.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Alexander Kappner <agk@godking.net>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Oliver Neukum <oneukum@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/vhci_sysfs.c |   24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/usb/storage/uas.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/usb/usbip/vhci_sysfs.c
-+++ b/drivers/usb/usbip/vhci_sysfs.c
-@@ -24,6 +24,9 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -836,6 +836,12 @@ static int uas_slave_configure(struct sc
+ 	if (devinfo->flags & US_FL_BROKEN_FUA)
+ 		sdev->broken_fua = 1;
  
-+/* Hardening for Spectre-v1 */
-+#include <linux/nospec.h>
-+
- #include "usbip_common.h"
- #include "vhci.h"
- 
-@@ -219,16 +222,20 @@ static int vhci_port_disconnect(struct v
++	/* UAS also needs to support FL_ALWAYS_SYNC */
++	if (devinfo->flags & US_FL_ALWAYS_SYNC) {
++		sdev->skip_ms_page_3f = 1;
++		sdev->skip_ms_page_8 = 1;
++		sdev->wce_default_on = 1;
++	}
+ 	scsi_change_queue_depth(sdev, devinfo->qdepth - 2);
  	return 0;
  }
- 
--static int valid_port(__u32 pdev_nr, __u32 rhport)
-+static int valid_port(__u32 *pdev_nr, __u32 *rhport)
- {
--	if (pdev_nr >= vhci_num_controllers) {
--		pr_err("pdev %u\n", pdev_nr);
-+	if (*pdev_nr >= vhci_num_controllers) {
-+		pr_err("pdev %u\n", *pdev_nr);
- 		return 0;
- 	}
--	if (rhport >= VHCI_HC_PORTS) {
--		pr_err("rhport %u\n", rhport);
-+	*pdev_nr = array_index_nospec(*pdev_nr, vhci_num_controllers);
-+
-+	if (*rhport >= VHCI_HC_PORTS) {
-+		pr_err("rhport %u\n", *rhport);
- 		return 0;
- 	}
-+	*rhport = array_index_nospec(*rhport, VHCI_HC_PORTS);
-+
- 	return 1;
- }
- 
-@@ -246,7 +253,7 @@ static ssize_t store_detach(struct devic
- 	pdev_nr = port_to_pdev_nr(port);
- 	rhport = port_to_rhport(port);
- 
--	if (!valid_port(pdev_nr, rhport))
-+	if (!valid_port(&pdev_nr, &rhport))
- 		return -EINVAL;
- 
- 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
-@@ -272,7 +279,8 @@ static ssize_t store_detach(struct devic
- }
- static DEVICE_ATTR(detach, S_IWUSR, NULL, store_detach);
- 
--static int valid_args(__u32 pdev_nr, __u32 rhport, enum usb_device_speed speed)
-+static int valid_args(__u32 *pdev_nr, __u32 *rhport,
-+		      enum usb_device_speed speed)
- {
- 	if (!valid_port(pdev_nr, rhport)) {
- 		return 0;
-@@ -336,7 +344,7 @@ static ssize_t store_attach(struct devic
- 			     sockfd, devid, speed);
- 
- 	/* check received parameters */
--	if (!valid_args(pdev_nr, rhport, speed))
-+	if (!valid_args(&pdev_nr, &rhport, speed))
- 		return -EINVAL;
- 
- 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
 
 
