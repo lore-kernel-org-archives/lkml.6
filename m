@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 239F5C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:49:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ADDD9C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:50:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD39A2075E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:49:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6352F2075E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:50:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2GhyAab"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD39A2075E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJglyI8W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6352F2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936189AbeFNOt3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:49:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47820 "EHLO mail.kernel.org"
+        id S1755395AbeFNOt6 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:49:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965049AbeFNOHe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:07:34 -0400
+        id S965023AbeFNOH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E7A54208DD;
-        Thu, 14 Jun 2018 14:07:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FB4D208DA;
+        Thu, 14 Jun 2018 14:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985253;
-        bh=uFifpgfoCy8z+CLmwie07RpLnEOO94zxrt90Uc/I6n0=;
+        s=default; t=1528985247;
+        bh=EApukR12ary99Xr12LQ4qJsCBmBZvaS51KrHNdyrmz8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q2GhyAabPVja1o6Ol8pkK++LgRi7AlaLO1Md+H9dVJE4i7jY1Ed6x2VUFlTZah/fC
-         kAZt/BbYpXXD7vZsncwSCmK+97ujqLUfWndzXqbJgnmbdJ+RfxNxUc6R5hdZeXtYph
-         t+0T4ZjV13mXOJdKLml8seYcCna9j/ivhRAXSpNo=
+        b=FJglyI8W7fGXu4QPww+b8/ELvs6P7yZhe2A42Z+DQRt+r6lt5PEsmIycDkqSrU5mV
+         nkr586AmqpbpuRDrWud+tKZOQocp181+SmS+5Et2ZaTKsaSA0IMHpTnMOeB0XccjQw
+         h+rdGLA2IZf6OD9q0ijGkZUothZpUCfpRhIyvTwY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Matthijs van Duin <matthijsvanduin@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.17 28/45] serial: 8250: omap: Fix idling of clocks for unused uarts
-Date:   Thu, 14 Jun 2018 16:04:19 +0200
-Message-Id: <20180614132128.317590006@linuxfoundation.org>
+        stable@vger.kernel.org, Richard Genoud <richard.genoud@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: [PATCH 4.17 26/45] tty/serial: atmel: use port->name as name in request_irq()
+Date:   Thu, 14 Jun 2018 16:04:17 +0200
+Message-Id: <20180614132128.205026604@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -61,92 +61,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-commit 13dc04d0e5fdc25c8f713ad23fdce51cf2bf96ba upstream.
+commit 9594b5be7ec110ed11acec58fa94f3f293668c85 upstream.
 
-I noticed that unused UARTs won't necessarily idle properly always
-unless at least one byte tx transfer is done first.
+I was puzzled while looking at /proc/interrupts and random things showed
+up between reboots. This occurred more often but I realised it later. The
+"correct" output should be:
+|38:      11861  atmel-aic5   2 Level     ttyS0
 
-After some debugging I narrowed down the problem to the scr register
-dma configuration bits that need to be set before softreset for the
-clocks to idle. Unless we do this, the module clkctrl idlest bits
-may be set to 1 instead of 3 meaning the clock will never idle and
-is blocking deeper idle states for the whole domain.
+but I saw sometimes
+|38:       6426  atmel-aic5   2 Level     tty1
 
-This might be related to the configuration done by the bootloader
-or kexec booting where certain configurations cause the 8250 or
-the clkctrl clock to jam in a way where setting of the scr bits
-and reset is needed to clear it. I've tried diffing the 8250
-registers for the various modes, but did not see anything specific.
-So far I've only seen this on omap4 but I'm suspecting this might
-also happen on the other clkctrl using SoCs considering they
-already have a quirk enabled for UART_ERRATA_CLOCK_DISABLE.
+and accounted it wrongly as correct. This is use after free and the
+former example randomly got the "old" pointer which pointed to the same
+content. With SLAB_FREELIST_RANDOM and HARDENED I even got
+|38:       7067  atmel-aic5   2 Level     E=Started User Manager for UID 0
 
-Let's fix the issue by configuring scr before reset for basic dma
-even if we don't use it. The scr register will be reset when we do
-softreset few lines after, and we restore scr on resume. We should
-do this for all the SoCs with UART_ERRATA_CLOCK_DISABLE quirk flag
-set since the ones with UART_ERRATA_CLOCK_DISABLE are all based
-using clkctrl similar to omap4.
+or other nonsense.
+As it turns out the tty, pointer that is accessed in atmel_startup(), is
+freed() before atmel_shutdown(). It seems to happen quite often that the
+tty for ttyS0 is allocated and freed while ->shutdown is not invoked. I
+don't do anything special - just a systemd boot :)
 
-Looks like both OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL
-bits are needed for the clkctrl to idle after a softreset.
+Use dev_name(&pdev->dev) as the IRQ name for request_irq(). This exists
+as long as the driver is loaded so no use-after-free here.
 
-And we need to add omap4 to also use the UART_ERRATA_CLOCK_DISABLE
-for the related workaround to be enabled. This same compatible
-value will also be used for omap5.
-
-Fixes: cdb929e4452a ("serial: 8250_omap: workaround errata around idling UART after using DMA")
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Matthijs van Duin <matthijsvanduin@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Cc: stable <stable@vger.kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: 761ed4a94582 ("tty: serial_core: convert uart_close to use tty_port_close")
+Acked-by: Richard Genoud <richard.genoud@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_omap.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/tty/serial/atmel_serial.c |    5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1110,13 +1110,14 @@ static int omap8250_no_handle_irq(struct
- 	return 0;
- }
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1757,7 +1757,6 @@ static int atmel_startup(struct uart_por
+ {
+ 	struct platform_device *pdev = to_platform_device(port->dev);
+ 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
+-	struct tty_struct *tty = port->state->port.tty;
+ 	int retval;
  
-+static const u8 omap4_habit = UART_ERRATA_CLOCK_DISABLE;
- static const u8 am3352_habit = OMAP_DMA_TX_KICK | UART_ERRATA_CLOCK_DISABLE;
- static const u8 dra742_habit = UART_ERRATA_CLOCK_DISABLE;
- 
- static const struct of_device_id omap8250_dt_ids[] = {
- 	{ .compatible = "ti,omap2-uart" },
- 	{ .compatible = "ti,omap3-uart" },
--	{ .compatible = "ti,omap4-uart" },
-+	{ .compatible = "ti,omap4-uart", .data = &omap4_habit, },
- 	{ .compatible = "ti,am3352-uart", .data = &am3352_habit, },
- 	{ .compatible = "ti,am4372-uart", .data = &am3352_habit, },
- 	{ .compatible = "ti,dra742-uart", .data = &dra742_habit, },
-@@ -1353,6 +1354,19 @@ static int omap8250_soft_reset(struct de
- 	int sysc;
- 	int syss;
- 
-+	/*
-+	 * At least on omap4, unused uarts may not idle after reset without
-+	 * a basic scr dma configuration even with no dma in use. The
-+	 * module clkctrl status bits will be 1 instead of 3 blocking idle
-+	 * for the whole clockdomain. The softreset below will clear scr,
-+	 * and we restore it on resume so this is safe to do on all SoCs
-+	 * needing omap8250_soft_reset() quirk. Do it in two writes as
-+	 * recommended in the comment for omap8250_update_scr().
-+	 */
-+	serial_out(up, UART_OMAP_SCR, OMAP_UART_SCR_DMAMODE_1);
-+	serial_out(up, UART_OMAP_SCR,
-+		   OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL);
-+
- 	sysc = serial_in(up, UART_OMAP_SYSC);
- 
- 	/* softreset the UART */
+ 	/*
+@@ -1772,8 +1771,8 @@ static int atmel_startup(struct uart_por
+ 	 * Allocate the IRQ
+ 	 */
+ 	retval = request_irq(port->irq, atmel_interrupt,
+-			IRQF_SHARED | IRQF_COND_SUSPEND,
+-			tty ? tty->name : "atmel_serial", port);
++			     IRQF_SHARED | IRQF_COND_SUSPEND,
++			     dev_name(&pdev->dev), port);
+ 	if (retval) {
+ 		dev_err(port->dev, "atmel_startup - Can't get irq\n");
+ 		return retval;
 
 
