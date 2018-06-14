@@ -1,49 +1,50 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 75A09C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:19 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 15ED0C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BBC6208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0EDC208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pe9id9E7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BBC6208CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBcSQFpV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0EDC208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965214AbeFNOIP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:08:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48734 "EHLO mail.kernel.org"
+        id S965229AbeFNOIU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:08:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965177AbeFNOIL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:08:11 -0400
+        id S965215AbeFNOIR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:08:17 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39374208CB;
-        Thu, 14 Jun 2018 14:08:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BF13C208CB;
+        Thu, 14 Jun 2018 14:08:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985290;
-        bh=/bYdIcQ7kV3vC3Pb27EmBJwrEfFapBb5RBWXuzwfrdY=;
+        s=default; t=1528985296;
+        bh=7jLH8yphK2JBv3vo+mDegT0gYjq4B3vXMrs7hVbk/iw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pe9id9E7eB3wNwJSgtFacqa07R0DMDXWTkpRCu5xLXcphg9Lr/xxD1gaZ7SKh3JbE
-         aj6G+wsszD51VbPfqJdD9CXnw94g/LYmHIwoUc6LnLOApzxsi+idcpijEBwyNoto0F
-         cWR5+iy27Hm9+aEsWw1KMDsRvQAY20OGkICLUEoU=
+        b=iBcSQFpVHxlDYgPrIn8oYF3DDxnAm0kBn/4Q2i+erAQudyYCJM3yMDfVatPU+aF6o
+         i8nko8t8tnW/+Gux6/gbsfhxUOKe+c+uc6fxOtNq+g4dH/ZVxdsj4K0XUitThNhxqj
+         dA54Ide/fL03a+Q15tnYMxE9KcgSdGS2TGnMNpOo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Atul Gupta <atul.gupta@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.16 02/43] crypto: chelsio - request to HW should wrap
-Date:   Thu, 14 Jun 2018 16:04:06 +0200
-Message-Id: <20180614132135.230434920@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.16 21/43] usb: gadget: udc: renesas_usb3: should call pm_runtime_enable() before add udc
+Date:   Thu, 14 Jun 2018 16:04:25 +0200
+Message-Id: <20180614132136.425082912@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
 References: <20180614132135.111973468@linuxfoundation.org>
@@ -60,100 +61,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Atul Gupta <atul.gupta@chelsio.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 4c826fed675dfffd8485c5477b616d61d1ec9e9a upstream.
+commit d998844016b24a8d71b9aa5eae7e51d70f2de438 upstream.
 
--Tx request and data is copied to HW Q in 64B desc, check for
-end of queue and adjust the current position to start from
-beginning before passing the additional request info.
--key context copy should check key length only
--Few reverse christmas tree correction
+This patch fixes an issue that this driver causes panic if a gadget
+driver is already loaded because usb_add_gadget_udc() might call
+renesas_usb3_start() via .udc_start, and then pm_runtime_get_sync()
+in renesas_usb3_start() doesn't work correctly.
+Note that the usb3_to_dev() macro should not be called at this timing
+because the macro uses the gadget structure.
 
-Signed-off-by: Atul Gupta <atul.gupta@chelsio.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: cf06df3fae28 ("usb: gadget: udc: renesas_usb3: move pm_runtime_{en,dis}able()")
+Cc: <stable@vger.kernel.org> # v4.15+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/chelsio/chcr_ipsec.c |   35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ drivers/usb/gadget/udc/renesas_usb3.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/chelsio/chcr_ipsec.c
-+++ b/drivers/crypto/chelsio/chcr_ipsec.c
-@@ -346,18 +346,23 @@ inline void *copy_cpltx_pktxt(struct sk_
- 				struct net_device *dev,
- 				void *pos)
- {
-+	struct cpl_tx_pkt_core *cpl;
-+	struct sge_eth_txq *q;
- 	struct adapter *adap;
- 	struct port_info *pi;
--	struct sge_eth_txq *q;
--	struct cpl_tx_pkt_core *cpl;
--	u64 cntrl = 0;
- 	u32 ctrl0, qidx;
-+	u64 cntrl = 0;
-+	int left;
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2632,6 +2632,7 @@ static int renesas_usb3_probe(struct pla
+ 	if (ret < 0)
+ 		goto err_alloc_prd;
  
- 	pi = netdev_priv(dev);
- 	adap = pi->adapter;
- 	qidx = skb->queue_mapping;
- 	q = &adap->sge.ethtxq[qidx + pi->first_qset];
++	pm_runtime_enable(&pdev->dev);
+ 	ret = usb_add_gadget_udc(&pdev->dev, &usb3->gadget);
+ 	if (ret < 0)
+ 		goto err_add_udc;
+@@ -2653,7 +2654,6 @@ static int renesas_usb3_probe(struct pla
+ 	renesas_usb3_debugfs_init(usb3, &pdev->dev);
  
-+	left = (void *)q->q.stat - pos;
-+	if (!left)
-+		pos = q->q.desc;
-+
- 	cpl = (struct cpl_tx_pkt_core *)pos;
+ 	dev_info(&pdev->dev, "probed%s\n", usb3->phy ? " with phy" : "");
+-	pm_runtime_enable(usb3_to_dev(usb3));
  
- 	if (skb->ip_summed == CHECKSUM_PARTIAL)
-@@ -383,18 +388,17 @@ inline void *copy_key_cpltx_pktxt(struct
- 				void *pos,
- 				struct ipsec_sa_entry *sa_entry)
- {
--	struct adapter *adap;
--	struct port_info *pi;
--	struct sge_eth_txq *q;
--	unsigned int len, qidx;
- 	struct _key_ctx *key_ctx;
- 	int left, eoq, key_len;
-+	struct sge_eth_txq *q;
-+	struct adapter *adap;
-+	struct port_info *pi;
-+	unsigned int qidx;
+ 	return 0;
  
- 	pi = netdev_priv(dev);
- 	adap = pi->adapter;
- 	qidx = skb->queue_mapping;
- 	q = &adap->sge.ethtxq[qidx + pi->first_qset];
--	len = sa_entry->enckey_len + sizeof(struct cpl_tx_pkt_core);
- 	key_len = sa_entry->kctx_len;
- 
- 	/* end of queue, reset pos to start of queue */
-@@ -412,19 +416,14 @@ inline void *copy_key_cpltx_pktxt(struct
- 	pos += sizeof(struct _key_ctx);
- 	left -= sizeof(struct _key_ctx);
- 
--	if (likely(len <= left)) {
-+	if (likely(key_len <= left)) {
- 		memcpy(key_ctx->key, sa_entry->key, key_len);
- 		pos += key_len;
- 	} else {
--		if (key_len <= left) {
--			memcpy(pos, sa_entry->key, key_len);
--			pos += key_len;
--		} else {
--			memcpy(pos, sa_entry->key, left);
--			memcpy(q->q.desc, sa_entry->key + left,
--			       key_len - left);
--			pos = (u8 *)q->q.desc + (key_len - left);
--		}
-+		memcpy(pos, sa_entry->key, left);
-+		memcpy(q->q.desc, sa_entry->key + left,
-+		       key_len - left);
-+		pos = (u8 *)q->q.desc + (key_len - left);
- 	}
- 	/* Copy CPL TX PKT XT */
- 	pos = copy_cpltx_pktxt(skb, dev, pos);
 
 
