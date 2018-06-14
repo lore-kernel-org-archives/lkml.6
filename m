@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 17FD0C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9F096C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1744208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5559D208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xOdwRAJp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1744208DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPR08gv9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5559D208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965004AbeFNOHR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:07:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47488 "EHLO mail.kernel.org"
+        id S965021AbeFNOHX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:07:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47566 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964969AbeFNOHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:07:13 -0400
+        id S965005AbeFNOHT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55291208DA;
-        Thu, 14 Jun 2018 14:07:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8D6BF208CB;
+        Thu, 14 Jun 2018 14:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985232;
-        bh=s1w6n8GrxbNyuiNmKSNBn87+uq9S4qpbBZNt3trYmSI=;
+        s=default; t=1528985239;
+        bh=tb9UEx826B5Q1go3G42pzvLcCope3v8OPJz+2QYAEo0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xOdwRAJpjbIQ4eXX9y1w3SfX5h/4BOKU3zOi85yDW7aqfefJS8Bez03PYzYI0Fkin
-         ksDA5sAtUoeusNhRmDzgrcz1+xdAS2Y9AH/HnLaGtOpoJH/bDyyIElQx4ywfvhCrr2
-         FhHGlmeeKA0appwLgZzv+IK43qd720GOjrn1m2pY=
+        b=FPR08gv93AFg86YKq7c6BVlNeSYH0+qZKJFXRQ7zbgKQpD5RwJJCdsSvkncN6BKHe
+         q5r5OK9ZfzAbc41AX43j3cSeAmAApsNVwnWeG8q4kkxo7K2kW002Bw4nx/ht6m0zZr
+         MoW9okIN8oj7sykADVeebGfEy3IfdSrxBvWNUO2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.17 45/45] crypto: omap-sham - fix memleak
-Date:   Thu, 14 Jun 2018 16:04:36 +0200
-Message-Id: <20180614132129.492739275@linuxfoundation.org>
+        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.17 23/45] usb: gadget: udc: renesas_usb3: should fail if devm_phy_get() returns error
+Date:   Thu, 14 Jun 2018 16:04:14 +0200
+Message-Id: <20180614132128.020041952@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -60,35 +60,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 9dbc8a0328efa485a6f5b68b867f9f523a3fbeff upstream.
+commit 0259068f63f23a665ded28647f2f9cdb6b20dc72 upstream.
 
-Fixes: 8043bb1ae03cb ("crypto: omap-sham - convert driver logic to use sgs for data xmit")
+This patch fixes an issue that this driver ignores errors other than
+the non-existence of the device, f.e. a memory allocation failure
+in devm_phy_get(). So, this patch replaces devm_phy_get() with
+devm_phy_optional_get().
 
-The memory pages freed in omap_sham_finish_req() were less than those
-allocated in omap_sham_copy_sgs().
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Acked-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Reported-by: Simon Horman <horms+renesas@verge.net.au>
+Fixes: 279d4bc64060 ("usb: gadget: udc: renesas_usb3: add support for generic phy")
+Cc: <stable@vger.kernel.org> # v4.15+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/omap-sham.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/usb/gadget/udc/renesas_usb3.c |    8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -1087,7 +1087,7 @@ static void omap_sham_finish_req(struct
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -2636,9 +2636,11 @@ static int renesas_usb3_probe(struct pla
+ 	 * This is optional. So, if this driver cannot get a phy,
+ 	 * this driver will not handle a phy anymore.
+ 	 */
+-	usb3->phy = devm_phy_get(&pdev->dev, "usb");
+-	if (IS_ERR(usb3->phy))
+-		usb3->phy = NULL;
++	usb3->phy = devm_phy_optional_get(&pdev->dev, "usb");
++	if (IS_ERR(usb3->phy)) {
++		ret = PTR_ERR(usb3->phy);
++		goto err_add_udc;
++	}
  
- 	if (test_bit(FLAGS_SGS_COPIED, &dd->flags))
- 		free_pages((unsigned long)sg_virt(ctx->sg),
--			   get_order(ctx->sg->length));
-+			   get_order(ctx->sg->length + ctx->bufcnt));
- 
- 	if (test_bit(FLAGS_SGS_ALLOCED, &dd->flags))
- 		kfree(ctx->sg);
+ 	pm_runtime_enable(&pdev->dev);
+ 	ret = usb_add_gadget_udc(&pdev->dev, &usb3->gadget);
 
 
