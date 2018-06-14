@@ -2,110 +2,160 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E173FC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BA8F5C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A0520020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1A0520020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7144E20020
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:31:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dwy7xqhr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7144E20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965933AbeFNOao (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:30:44 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:54595 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965832AbeFNOal (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:30:41 -0400
-Received: by mail-wm0-f66.google.com with SMTP id o13-v6so10896235wmf.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 07:30:41 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wp3n7+7cMHWutuP/kthpG4Y5vwAM5L4xT4StFODTPIY=;
-        b=t+8HWNhZEGw0XX/HA6Ba27026/tmXCf6uxssj8+pLFFgLeBdaaybwD0OmrMPGBuRF7
-         /1zEb76Z+hob15Xtj/mWEkWs9Nnc4SVfCFGpfP1RD40kUoNuNZSMQCjpVaTnqjL6aGMt
-         6ELWae5BFneygN4Rbu/xyl2cTiUc117Otig9cHtAh1Eu6ZmvBPAFmtLM0Y3Nxn38dG3A
-         T11dprYtPPaADV0z0SB0tY3biX2YJnWKQUaAGJqlEYOoSYa1/yHHDVoatbzKDLHhRUV1
-         d6k1t+d2BBnUzwfDkCrWwaiQAnIlHtMTbwmBNMM/G8zSFfadVU+fa1lWzX4HdCwLO+d3
-         vfiA==
-X-Gm-Message-State: APt69E01xWQw+ifbwdP97lXMStdsqKrK5JeIeuzkywpHoLaXfsET6PE/
-        6IpID4dC5kIkRN5dV/m8m9hBqQ==
-X-Google-Smtp-Source: ADUXVKJO9XaDFOSWg/we7fFDpChI7Cq7Ywn75bO11Re3bb3+b7iHwmoeY8NNRrY0v9HEQ4IUOl4q6w==
-X-Received: by 2002:a1c:3693:: with SMTP id y19-v6mr1996966wmh.71.1528986640379;
-        Thu, 14 Jun 2018 07:30:40 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id e63-v6sm8174131wma.46.2018.06.14.07.30.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Jun 2018 07:30:39 -0700 (PDT)
-Date:   Thu, 14 Jun 2018 16:30:37 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Quentin Perret <quentin.perret@arm.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, peterz@infradead.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
-        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
-        mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] sched/topology: Add check to backup comment about
- hotplug lock
-Message-ID: <20180614143037.GH12032@localhost.localdomain>
-References: <20180613121711.5018-1-juri.lelli@redhat.com>
- <20180613121711.5018-2-juri.lelli@redhat.com>
- <20180614093324.7ea45448@gandalf.local.home>
- <20180614134234.GC12032@localhost.localdomain>
- <20180614094747.390357ec@gandalf.local.home>
- <20180614135040.GE12032@localhost.localdomain>
- <20180614135800.GM17720@e108498-lin.cambridge.arm.com>
- <20180614141118.GG12032@localhost.localdomain>
- <20180614141818.GN17720@e108498-lin.cambridge.arm.com>
+        id S965810AbeFNOLV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52398 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965780AbeFNOLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:18 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CC17208DA;
+        Thu, 14 Jun 2018 14:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985477;
+        bh=aGrQJOzXj3fKK3Osr4Eoo/zZn8vNrG0wBrxxslw4oJg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Dwy7xqhr4f8//9AuNMZX/STvWVznoBcojRRflF6DDURw5XK8AYA/2rx8VG8W4LoQy
+         RmFQaXPuyGnqrbJvoz4ThcZh4ruCBc0DEMs02ZbUyzX7vy/gvEquGdpMf3HTPJvfGJ
+         FNSAEFcEvkO5uyn2/2V9qQQZEFlBssdFHmt9bIyY=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 4.14 11/36] usbip: vhci_sysfs: fix potential Spectre v1
+Date:   Thu, 14 Jun 2018 16:04:34 +0200
+Message-Id: <20180614132157.783724873@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
+References: <20180614132157.333004166@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614141818.GN17720@e108498-lin.cambridge.arm.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/06/18 15:18, Quentin Perret wrote:
-> On Thursday 14 Jun 2018 at 16:11:18 (+0200), Juri Lelli wrote:
-> > On 14/06/18 14:58, Quentin Perret wrote:
-> > 
-> > [...]
-> > 
-> > > Hmm not sure if this can help but I think that rebuild_sched_domains()
-> > > does _not_ take the hotplug lock before calling partition_sched_domains()
-> > > when CONFIG_CPUSETS=n. But it does take it for CONFIG_CPUSETS=y.
-> > 
-> > Did you mean cpuset_mutex?
-> 
-> Nope, I really meant the cpu_hotplug_lock !
-> 
-> With CONFIG_CPUSETS=n, rebuild_sched_domains() calls
-> partition_sched_domains() directly:
-> 
-> https://elixir.bootlin.com/linux/latest/source/include/linux/cpuset.h#L255
-> 
-> But with CONFIG_CPUSETS=y, rebuild_sched_domains() calls,
-> rebuild_sched_domains_locked(), which calls get_online_cpus() which
-> calls cpus_read_lock(), which does percpu_down_read(&cpu_hotplug_lock).
-> And all that happens before calling partition_sched_domains().
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Ah, right!
+------------------
+
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+
+commit a0d6ec88090d7b1b008429c44532a388e29bb1bd upstream.
+
+pdev_nr and rhport can be controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
+
+This issue was detected with the help of Smatch:
+drivers/usb/usbip/vhci_sysfs.c:238 detach_store() warn: potential spectre issue 'vhcis'
+drivers/usb/usbip/vhci_sysfs.c:328 attach_store() warn: potential spectre issue 'vhcis'
+drivers/usb/usbip/vhci_sysfs.c:338 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_ss->vdev'
+drivers/usb/usbip/vhci_sysfs.c:340 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_hs->vdev'
+
+Fix this by sanitizing pdev_nr and rhport before using them to index
+vhcis and vhci->vhci_hcd_ss->vdev respectively.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Cc: stable@vger.kernel.org
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/usb/usbip/vhci_sysfs.c |   24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
+
+--- a/drivers/usb/usbip/vhci_sysfs.c
++++ b/drivers/usb/usbip/vhci_sysfs.c
+@@ -24,6 +24,9 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
  
-> So yeah, the point I was trying to make is that there is an inconsistency
-> here, maybe for a good reason ? Maybe related to the issue you're seeing ?
++/* Hardening for Spectre-v1 */
++#include <linux/nospec.h>
++
+ #include "usbip_common.h"
+ #include "vhci.h"
+ 
+@@ -219,16 +222,20 @@ static int vhci_port_disconnect(struct v
+ 	return 0;
+ }
+ 
+-static int valid_port(__u32 pdev_nr, __u32 rhport)
++static int valid_port(__u32 *pdev_nr, __u32 *rhport)
+ {
+-	if (pdev_nr >= vhci_num_controllers) {
+-		pr_err("pdev %u\n", pdev_nr);
++	if (*pdev_nr >= vhci_num_controllers) {
++		pr_err("pdev %u\n", *pdev_nr);
+ 		return 0;
+ 	}
+-	if (rhport >= VHCI_HC_PORTS) {
+-		pr_err("rhport %u\n", rhport);
++	*pdev_nr = array_index_nospec(*pdev_nr, vhci_num_controllers);
++
++	if (*rhport >= VHCI_HC_PORTS) {
++		pr_err("rhport %u\n", *rhport);
+ 		return 0;
+ 	}
++	*rhport = array_index_nospec(*rhport, VHCI_HC_PORTS);
++
+ 	return 1;
+ }
+ 
+@@ -246,7 +253,7 @@ static ssize_t store_detach(struct devic
+ 	pdev_nr = port_to_pdev_nr(port);
+ 	rhport = port_to_rhport(port);
+ 
+-	if (!valid_port(pdev_nr, rhport))
++	if (!valid_port(&pdev_nr, &rhport))
+ 		return -EINVAL;
+ 
+ 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
+@@ -272,7 +279,8 @@ static ssize_t store_detach(struct devic
+ }
+ static DEVICE_ATTR(detach, S_IWUSR, NULL, store_detach);
+ 
+-static int valid_args(__u32 pdev_nr, __u32 rhport, enum usb_device_speed speed)
++static int valid_args(__u32 *pdev_nr, __u32 *rhport,
++		      enum usb_device_speed speed)
+ {
+ 	if (!valid_port(pdev_nr, rhport)) {
+ 		return 0;
+@@ -336,7 +344,7 @@ static ssize_t store_attach(struct devic
+ 			     sockfd, devid, speed);
+ 
+ 	/* check received parameters */
+-	if (!valid_args(pdev_nr, rhport, speed))
++	if (!valid_args(&pdev_nr, &rhport, speed))
+ 		return -EINVAL;
+ 
+ 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
 
-The config that came with the 0day splat was indeed CONFIG_CPUSETS=n.
 
-So, in this case IIUC we hit the !doms_new branch of partition_sched_
-domains, which uses cpu_active_mask (and cpu_possible_mask indirectly).
-Should this be still protected by the hotplug lock then?
