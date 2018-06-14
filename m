@@ -2,150 +2,103 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 576B5C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:37:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3C4C2C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:40:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D77A208B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:37:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D77A208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id DC857208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:40:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cb5stogI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC857208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755330AbeFNQhV convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:37:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:56728 "EHLO mail.bootlin.com"
+        id S936004AbeFNQkE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 12:40:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755227AbeFNQhU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:37:20 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C15FD206A6; Thu, 14 Jun 2018 18:37:18 +0200 (CEST)
-Received: from localhost (LFbn-TOU-1-32-230.w86-201.abo.wanadoo.fr [86.201.126.230])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 89AA4203D9;
-        Thu, 14 Jun 2018 18:37:18 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 18:37:17 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com, thomas.petazzoni@bootlin.com
-Subject: Re: [PATCH 0/9] media: cedrus: Add H264 decoding support
-Message-ID: <20180614163717.hqxeiwn63vvnk5xg@flea>
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
- <CAAFQd5A-GMBnNnRCfm0-51R9rn_pWw+UC3r-JX-_BE3cdznqig@mail.gmail.com>
+        id S1755208AbeFNQkB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:40:01 -0400
+Received: from mail-yw0-f170.google.com (mail-yw0-f170.google.com [209.85.161.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3C591208D4;
+        Thu, 14 Jun 2018 16:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528994401;
+        bh=jQv6zqoGKC3VZkF50Yp2HCNY47eSzNgvnbxTB5q5GT0=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=cb5stogIberEwIkcUGfJ+1gpuku5ZsVbmMfHiO8+CqDQ2/HlTyg2ZMAzYmJln8Mw8
+         Dy02TugiFJY30LkPsg3jMGbmizfLyS4Iz0bnpQRH9DJmuOze+Z3x64tUevT5EhXGqn
+         yJ42EJMR2QJDy5RNUXQ9piZ/EgtPfOR4tx4CKoqA=
+Received: by mail-yw0-f170.google.com with SMTP id v131-v6so2360282ywg.2;
+        Thu, 14 Jun 2018 09:40:01 -0700 (PDT)
+X-Gm-Message-State: APt69E2ZNx1w77zImMj+m3FnTpdW4M3dhkBAUfQm4d7IRFGf64dVN7Rj
+        1NOnwQ1hGhpbctUBeEyzFXX27/UnaGTG1cMOf58=
+X-Google-Smtp-Source: ADUXVKJxKtLi1R97ibuOul2HuiVjpHXIvEYCljjtLSdezO07aF4JCILrFIlbCJuj77RqYnQcm8e+8ru6ONL4yeYtN9w=
+X-Received: by 2002:a81:94c5:: with SMTP id l188-v6mr1738871ywg.463.1528994400484;
+ Thu, 14 Jun 2018 09:40:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <CAAFQd5A-GMBnNnRCfm0-51R9rn_pWw+UC3r-JX-_BE3cdznqig@mail.gmail.com>
-User-Agent: NeoMutt/20180512
+Received: by 2002:a5b:b87:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 09:39:20 -0700 (PDT)
+In-Reply-To: <948d6c0304eecaf916d21af5cfb0be21df80ed42.1528990947.git.mchehab+samsung@kernel.org>
+References: <cover.1528990947.git.mchehab+samsung@kernel.org> <948d6c0304eecaf916d21af5cfb0be21df80ed42.1528990947.git.mchehab+samsung@kernel.org>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 14 Jun 2018 11:39:20 -0500
+X-Gmail-Original-Message-ID: <CANk1AXRnnYketpdvrsvN11hL6G9=WinzWHVM4k9VrGJZJ99pLQ@mail.gmail.com>
+Message-ID: <CANk1AXRnnYketpdvrsvN11hL6G9=WinzWHVM4k9VrGJZJ99pLQ@mail.gmail.com>
+Subject: Re: [PATCH v3 21/27] MAINTAINERS: get rid of non-existing Documentation/fpga
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tomasz,
+On Thu, Jun 14, 2018 at 11:09 AM, Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+> This directory seems to have moved to a new place
+> (Documentation/driver-api/fpga/), with is already at MAINTAINERS.
+>
+> So, get rid of the old location.
 
-On Thu, Jun 14, 2018 at 10:00:43PM +0900, Tomasz Figa wrote:
-> Hi Maxime,
-> 
-> On Wed, Jun 13, 2018 at 11:07 PM Maxime Ripard
-> <maxime.ripard@bootlin.com> wrote:
-> >
-> > Hi,
-> >
-> > Here is a preliminary version of the H264 decoding support in the
-> > cedrus driver.
-> 
-> Thanks for the series! Let me reply inline to some of the points raised here.
-> 
-> > As you might already know, the cedrus driver relies on the Request
-> > API, and is a reverse engineered driver for the video decoding engine
-> > found on the Allwinner SoCs.
-> >
-> > This work has been possible thanks to the work done by the people
-> > behind libvdpau-sunxi found here:
-> > https://github.com/linux-sunxi/libvdpau-sunxi/
-> >
-> > This driver is based on the last version of the cedrus driver sent by
-> > Paul, based on Request API v13 sent by Hans:
-> > https://lkml.org/lkml/2018/5/7/316
-> 
-> Just FYI, there is v15 already. :)
+Wow, you caught that fast!  There's other documentation coming to this
+directory soon.  IMO we might as well leave it.  We don't need to keep
+adding and deleting this line from MAINTAINERS.
 
-Yeah, we know, Paul is currently working on rebasing to that version :)
+Also, why didn't you cc linux-fpga mailing list on this?  I guess you
+ran get_maintainer.pl after adding this patch? :)
 
-> > This driver has been tested only with baseline profile videos, and is
-> > missing a few key features to decode videos with higher profiles.
-> > This has been tested using our cedrus-frame-test tool, which should be
-> > a quite generic v4l2-to-drm decoder using the request API to
-> > demonstrate the video decoding:
-> > https://github.com/free-electrons/cedrus-frame-test/, branch h264
-> >
-> > However, sending this preliminary version, I'd really like to start a
-> > discussion and get some feedback on the user-space API for the H264
-> > controls exposed through the request API.
-> >
-> > I've been using the controls currently integrated into ChromeOS that
-> > have a working version of this particular setup. However, these
-> > controls have a number of shortcomings and inconsistencies with other
-> > decoding API. I've worked with libva so far, but I've noticed already
-> > that:
-> 
-> Note that these controls are supposed to be defined exactly like the
-> bitstream headers deserialized into C structs in memory. I believe
-> Pawel (on CC) defined them based on the actual H264 specification.
-> 
-> >   - The kernel UAPI expects to have the nal_ref_idc variable, while
-> >     libva only exposes whether that frame is a reference frame or
-> >     not. I've looked at the rockchip driver in the ChromeOS tree, and
-> >     our own driver, and they both need only the information about
-> >     whether the frame is a reference one or not, so maybe we should
-> >     change this?
-> 
-> The fact that 2 drivers only need partial information doesn't mean
-> that we should ignore the data being already in the bitstream. IMHO
-> this API should to provide all the metadata available in the stream to
-> the kernel driver, as a replacement for bitstream parsing in firmware
-> (or in kernel... yuck).
+Alan
 
-The point is more that libva will only pass the result of (nal_ref_idc
-!= 0). So in the libva plugin, you won't be able to fill the proper
-value to the kernel, since you don't have access to it.
-
-> >   - The H264 bitstream exposes the picture default reference list (for
-> >     both list 0 and list 1), the slice reference list and an override
-> >     flag. The libva will only pass the reference list to be used (so
-> >     either the picture default's or the slice's) depending on the
-> >     override flag. The kernel UAPI wants the picture default reference
-> >     list and the slice reference list, but doesn't expose the override
-> >     flag, which prevents us from configuring properly the
-> >     hardware. Our video decoding engine needs the three information,
-> >     but we can easily adapt to having only one. However, having two
-> >     doesn't really work for us.
-> 
-> Where does the override flag come from? If it's in the bitstream, then
-> I guess it was just missed when creating the structures.
-
-It's in the bitstream yeah. I'll add it then.
-
-Maxime
-
--- 
-Maxime Ripard, Bootlin (formerly Free Electrons)
-Embedded Linux and Kernel engineering
-https://bootlin.com
+>
+> Cc: Alan Tull <atull@kernel.org>
+> Cc: Moritz Fischer <mdf@kernel.org>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  MAINTAINERS | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 783ce44b3e7a..67641f5bb373 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5632,7 +5632,6 @@ L:        linux-fpga@vger.kernel.org
+>  S:     Maintained
+>  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/atull/linux-fpga.git
+>  Q:     http://patchwork.kernel.org/project/linux-fpga/list/
+> -F:     Documentation/fpga/
+>  F:     Documentation/driver-api/fpga/
+>  F:     Documentation/devicetree/bindings/fpga/
+>  F:     drivers/fpga/
+> --
+> 2.17.1
+>
