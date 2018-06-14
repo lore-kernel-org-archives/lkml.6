@@ -3,90 +3,345 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 87F32C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:00:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B5B11C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4649A208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:00:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4649A208DB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 61393208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:02:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61393208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964848AbeFNOAi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:00:38 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54996 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754885AbeFNOAh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:00:37 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7CD00402382A;
-        Thu, 14 Jun 2018 14:00:36 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-117-97.ams2.redhat.com [10.36.117.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F10091117624;
-        Thu, 14 Jun 2018 14:00:32 +0000 (UTC)
-Subject: Re: Restartable Sequences system call merged into Linux
-To:     Pavel Machek <pavel@ucw.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     carlos <carlos@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
- <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com>
- <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com>
- <091061df-3482-8762-30e4-feaf3417be11@redhat.com>
- <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
- <20180614122759.GB8798@amd>
- <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com>
- <20180614132557.GA15201@amd>
- <956816108.13001.1528983496098.JavaMail.zimbra@efficios.com>
- <20180614134959.GA4084@amd>
-From:   Florian Weimer <fweimer@redhat.com>
-Message-ID: <48a0d905-2568-51b8-80c9-a20ecaa25f9b@redhat.com>
-Date:   Thu, 14 Jun 2018 16:00:32 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1755289AbeFNOCF (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:02:05 -0400
+Received: from mga02.intel.com ([134.134.136.20]:54581 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754907AbeFNOCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:02:04 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 07:02:01 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
+   d="scan'208";a="64550121"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.61])
+  by orsmga001.jf.intel.com with ESMTP; 14 Jun 2018 07:01:58 -0700
+Date:   Thu, 14 Jun 2018 21:50:47 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Moritz Fischer <mdf@kernel.org>
+Cc:     atull@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luwei.kang@intel.com, yi.z.zhang@intel.com,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: Re: [PATCH v6 18/29] fpga: dfl: add fpga manager platform driver for
+ FME
+Message-ID: <20180614135047.GA17266@hao-dev>
+References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
+ <1528798243-2029-19-git-send-email-hao.wu@intel.com>
+ <20180614011642.scearqx5glmffuwc@derp-derp.local>
 MIME-Version: 1.0
-In-Reply-To: <20180614134959.GA4084@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 14:00:36 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 14:00:36 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614011642.scearqx5glmffuwc@derp-derp.local>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/2018 03:49 PM, Pavel Machek wrote:
-> Hi!
+On Wed, Jun 13, 2018 at 08:16:42PM -0500, Moritz Fischer wrote:
+> Hi Hao,
 > 
->>>> - rseq_preempt(): on preemption, the scheduler sets the TIF_NOTIFY_RESUME thread
->>>>    flag, so rseq_handle_notify_resume() can check whether it's in a rseq critical
->>>>    section when returning to user-space,
->>>> - rseq_signal_deliver(): on signal delivery, rseq_handle_notify_resume() checks
->>>>    whether it's in a rseq critical section,
->>>> - rseq_migrate: on migration, the scheduler sets TIF_NOTIFY_RESUME as well,
->>>
->>> Yes, this is not likely to be noticeable.
->>>
->>> But the proposal wanted to add a syscall to thread creation, right?
->>> And I believe that may be noticeable.
->>
->> Fair point! Do we have a standard benchmark that would stress this ?
+> small nit below, looks good otherwise.
 > 
-> Web server performance benchmarks basically test clone() performance
-> in many cases.
+> On Tue, Jun 12, 2018 at 06:10:32PM +0800, Wu Hao wrote:
+> > This patch adds fpga manager driver for FPGA Management Engine (FME). It
+> > implements fpga_manager_ops for FPGA Partial Reconfiguration function.
+> > 
+> > Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+> > Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+> > Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+> > Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+> > Signed-off-by: Kang Luwei <luwei.kang@intel.com>
+> > Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> > Signed-off-by: Wu Hao <hao.wu@intel.com>
+> > Acked-by: Alan Tull <atull@kernel.org>
+> > ---
+> > v3: rename driver to dfl-fpga-fme-mgr
+> >     implemented status callback for fpga manager
+> >     rebased due to fpga api changes
+> > v4: rename to dfl-fme-mgr, and fix SPDX license issue
+> >     add pr_credit comments and improve dev_err message
+> >     remove interface_id sysfs interface
+> >     include dfl-fme-pr.h instead of dfl.h
+> > v5: move related register definition from dfl-fme-pr.h to dfl-fme-mgr.c
+> >     use mapped ioaddr passed via pdata for register access.
+> >     rebase due to fpga manager API changes.
+> >     include header file for readq/writeq.
+> > v6: rebase, fix copyright time and add Acked-by from Alan.
+> > ---
+> >  drivers/fpga/Kconfig       |   6 +
+> >  drivers/fpga/Makefile      |   1 +
+> >  drivers/fpga/dfl-fme-mgr.c | 334 +++++++++++++++++++++++++++++++++++++++++++++
+> >  3 files changed, 341 insertions(+)
+> >  create mode 100644 drivers/fpga/dfl-fme-mgr.c
+> > 
+> > diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> > index 45e9220..ca97f3c 100644
+> > --- a/drivers/fpga/Kconfig
+> > +++ b/drivers/fpga/Kconfig
+> > @@ -156,6 +156,12 @@ config FPGA_DFL_FME
+> >  	  FPGA platform level management features. There shall be 1 FME
+> >  	  per DFL based FPGA device.
+> >  
+> > +config FPGA_DFL_FME_MGR
+> > +	tristate "FPGA DFL FME Manager Driver"
+> > +	depends on FPGA_DFL_FME
+> > +	help
+> > +	  Say Y to enable FPGA Manager driver for FPGA Management Engine.
+> > +
+> >  config FPGA_DFL_PCI
+> >  	tristate "FPGA DFL PCIe Device Driver"
+> >  	depends on PCI && FPGA_DFL
+> > diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> > index fd334d40..23f41b0 100644
+> > --- a/drivers/fpga/Makefile
+> > +++ b/drivers/fpga/Makefile
+> > @@ -32,6 +32,7 @@ obj-$(CONFIG_OF_FPGA_REGION)		+= of-fpga-region.o
+> >  # FPGA Device Feature List Support
+> >  obj-$(CONFIG_FPGA_DFL)			+= dfl.o
+> >  obj-$(CONFIG_FPGA_DFL_FME)		+= dfl-fme.o
+> > +obj-$(CONFIG_FPGA_DFL_FME_MGR)		+= dfl-fme-mgr.o
+> >  
+> >  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
+> >  
+> > diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+> > new file mode 100644
+> > index 0000000..be0060a
+> > --- /dev/null
+> > +++ b/drivers/fpga/dfl-fme-mgr.c
+> > @@ -0,0 +1,334 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * FPGA Manager Driver for FPGA Management Engine (FME)
+> > + *
+> > + * Copyright (C) 2017-2018 Intel Corporation, Inc.
+> > + *
+> > + * Authors:
+> > + *   Kang Luwei <luwei.kang@intel.com>
+> > + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> > + *   Wu Hao <hao.wu@intel.com>
+> > + *   Joseph Grecco <joe.grecco@intel.com>
+> > + *   Enno Luebbers <enno.luebbers@intel.com>
+> > + *   Tim Whisonant <tim.whisonant@intel.com>
+> > + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> > + *   Christopher Rauer <christopher.rauer@intel.com>
+> > + *   Henry Mitchel <henry.mitchel@intel.com>
+> > + */
+> > +
+> > +#include <linux/bitfield.h>
+> > +#include <linux/module.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/io-64-nonatomic-lo-hi.h>
+> > +#include <linux/fpga/fpga-mgr.h>
+> > +
+> > +#include "dfl-fme-pr.h"
+> > +
+> > +/* FME Partial Reconfiguration Sub Feature Register Set */
+> > +#define FME_PR_DFH		0x0
+> > +#define FME_PR_CTRL		0x8
+> > +#define FME_PR_STS		0x10
+> > +#define FME_PR_DATA		0x18
+> > +#define FME_PR_ERR		0x20
+> > +#define FME_PR_INTFC_ID_H	0xA8
+> > +#define FME_PR_INTFC_ID_L	0xB0
+> > +
+> > +/* FME PR Control Register Bitfield */
+> > +#define FME_PR_CTRL_PR_RST	BIT_ULL(0)  /* Reset PR engine */
+> > +#define FME_PR_CTRL_PR_RSTACK	BIT_ULL(4)  /* Ack for PR engine reset */
+> > +#define FME_PR_CTRL_PR_RGN_ID	GENMASK_ULL(9, 7)       /* PR Region ID */
+> > +#define FME_PR_CTRL_PR_START	BIT_ULL(12) /* Start to request PR service */
+> > +#define FME_PR_CTRL_PR_COMPLETE	BIT_ULL(13) /* PR data push completion */
+> > +
+> > +/* FME PR Status Register Bitfield */
+> > +/* Number of available entries in HW queue inside the PR engine. */
+> > +#define FME_PR_STS_PR_CREDIT	GENMASK_ULL(8, 0)
+> > +#define FME_PR_STS_PR_STS	BIT_ULL(16) /* PR operation status */
+> > +#define FME_PR_STS_PR_STS_IDLE	0
+> > +#define FME_PR_STS_PR_CTRLR_STS	GENMASK_ULL(22, 20)     /* Controller status */
+> > +#define FME_PR_STS_PR_HOST_STS	GENMASK_ULL(27, 24)     /* PR host status */
+> > +
+> > +/* FME PR Data Register Bitfield */
+> > +/* PR data from the raw-binary file. */
+> > +#define FME_PR_DATA_PR_DATA_RAW	GENMASK_ULL(32, 0)
+> > +
+> > +/* FME PR Error Register */
+> > +/* PR Operation errors detected. */
+> > +#define FME_PR_ERR_OPERATION_ERR	BIT_ULL(0)
+> > +/* CRC error detected. */
+> > +#define FME_PR_ERR_CRC_ERR		BIT_ULL(1)
+> > +/* Incompatible PR bitstream detected. */
+> > +#define FME_PR_ERR_INCOMPATIBLE_BS	BIT_ULL(2)
+> > +/* PR data push protocol violated. */
+> > +#define FME_PR_ERR_PROTOCOL_ERR		BIT_ULL(3)
+> > +/* PR data fifo overflow error detected */
+> > +#define FME_PR_ERR_FIFO_OVERFLOW	BIT_ULL(4)
+> > +
+> > +#define PR_WAIT_TIMEOUT   8000000
+> > +#define PR_HOST_STATUS_IDLE	0
+> > +
+> > +struct fme_mgr_priv {
+> > +	void __iomem *ioaddr;
+> > +	u64 pr_error;
+> > +};
+> > +
+> > +static u64 pr_error_to_mgr_status(u64 err)
+> > +{
+> > +	u64 status = 0;
+> > +
+> > +	if (err & FME_PR_ERR_OPERATION_ERR)
+> > +		status |= FPGA_MGR_STATUS_OPERATION_ERR;
+> > +	if (err & FME_PR_ERR_CRC_ERR)
+> > +		status |= FPGA_MGR_STATUS_CRC_ERR;
+> > +	if (err & FME_PR_ERR_INCOMPATIBLE_BS)
+> > +		status |= FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR;
+> > +	if (err & FME_PR_ERR_PROTOCOL_ERR)
+> > +		status |= FPGA_MGR_STATUS_IP_PROTOCOL_ERR;
+> > +	if (err & FME_PR_ERR_FIFO_OVERFLOW)
+> > +		status |= FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR;
+> > +
+> > +	return status;
+> > +}
+> > +
+> > +static u64 fme_mgr_pr_error_handle(void __iomem *fme_pr)
+> > +{
+> > +	u64 pr_status, pr_error;
+> > +
+> > +	pr_status = readq(fme_pr + FME_PR_STS);
+> > +	if (!(pr_status & FME_PR_STS_PR_STS))
+> > +		return 0;
+> > +
+> > +	pr_error = readq(fme_pr + FME_PR_ERR);
+> > +	writeq(pr_error, fme_pr + FME_PR_ERR);
+> > +
+> > +	return pr_error;
+> > +}
+> > +
+> > +static int fme_mgr_write_init(struct fpga_manager *mgr,
+> > +			      struct fpga_image_info *info,
+> > +			      const char *buf, size_t count)
+> > +{
+> > +	struct device *dev = &mgr->dev;
+> > +	struct fme_mgr_priv *priv = mgr->priv;
+> > +	void __iomem *fme_pr = priv->ioaddr;
+> > +	u64 pr_ctrl, pr_status;
+> > +
+> > +	if (!(info->flags & FPGA_MGR_PARTIAL_RECONFIG)) {
+> > +		dev_err(dev, "only supports partial reconfiguration.\n");
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	dev_dbg(dev, "resetting PR before initiated PR\n");
+> > +
+> > +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> > +	pr_ctrl |= FME_PR_CTRL_PR_RST;
+> > +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > +
+> > +	if (readq_poll_timeout(fme_pr + FME_PR_CTRL, pr_ctrl,
+> > +			       pr_ctrl & FME_PR_CTRL_PR_RSTACK, 1,
+> > +			       PR_WAIT_TIMEOUT)) {
+> > +		dev_err(dev, "PR Reset ACK timeout\n");
+> > +		return -ETIMEDOUT;
+> > +	}
+> > +
+> > +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> > +	pr_ctrl &= ~FME_PR_CTRL_PR_RST;
+> > +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > +
+> > +	dev_dbg(dev,
+> > +		"waiting for PR resource in HW to be initialized and ready\n");
+> > +
+> > +	if (readq_poll_timeout(fme_pr + FME_PR_STS, pr_status,
+> > +			       (pr_status & FME_PR_STS_PR_STS) ==
+> > +			       FME_PR_STS_PR_STS_IDLE, 1, PR_WAIT_TIMEOUT)) {
+> > +		dev_err(dev, "PR Status timeout\n");
+> > +		priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
+> > +		return -ETIMEDOUT;
+> > +	}
+> > +
+> > +	dev_dbg(dev, "check and clear previous PR error\n");
+> > +	priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
+> > +	if (priv->pr_error)
+> > +		dev_dbg(dev, "previous PR error detected %llx\n",
+> > +			(unsigned long long)priv->pr_error);
+> > +
+> > +	dev_dbg(dev, "set PR port ID\n");
+> > +
+> > +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> > +	pr_ctrl &= ~FME_PR_CTRL_PR_RGN_ID;
+> > +	pr_ctrl |= FIELD_PREP(FME_PR_CTRL_PR_RGN_ID, info->region_id);
+> > +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static int fme_mgr_write(struct fpga_manager *mgr,
+> > +			 const char *buf, size_t count)
+> > +{
+> > +	struct device *dev = &mgr->dev;
+> > +	struct fme_mgr_priv *priv = mgr->priv;
+> > +	void __iomem *fme_pr = priv->ioaddr;
+> > +	u64 pr_ctrl, pr_status, pr_data;
+> > +	int delay = 0, pr_credit, i = 0;
+> > +
+> > +	dev_dbg(dev, "start request\n");
+> > +
+> > +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> > +	pr_ctrl |= FME_PR_CTRL_PR_START;
+> > +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> > +
+> > +	dev_dbg(dev, "pushing data from bitstream to HW\n");
+> > +
+> > +	/*
+> > +	 * driver can push data to PR hardware using PR_DATA register once HW
+> > +	 * has enough pr_credit (> 1), pr_credit reduces one for every 32bit
+> > +	 * pr data write to PR_DATA register. If pr_credit <= 1, driver needs
+> > +	 * to wait for enough pr_credit from hardware by polling.
+> > +	 */
+> > +	pr_status = readq(fme_pr + FME_PR_STS);
+> > +	pr_credit = FIELD_GET(FME_PR_STS_PR_CREDIT, pr_status);
+> > +
+> > +	while (count > 0) {
+> > +		while (pr_credit <= 1) {
+> > +			if (delay++ > PR_WAIT_TIMEOUT) {
+> > +				dev_err(dev, "PR_CREDIT timeout\n");
+> > +				return -ETIMEDOUT;
+> > +			}
+> > +			udelay(1);
+> > +
+> > +			pr_status = readq(fme_pr + FME_PR_STS);
+> > +			pr_credit = FIELD_GET(FME_PR_STS_PR_CREDIT, pr_status);
+> > +		}
+> > +
+> > +		if (count < 4) {
+> > +			WARN_ON(1);
+> Maybe an error message instead of WARN_ON()? How about "Invalid PR
+> bitstream size" ?
 
-Isn't that fork?  I expect that the rseq arena is inherited on fork and 
-fork-type clone, otherwise it's going to be painful.
+Sure, will change this in the next version.
 
-Thanks,
-Florian
+Hao
+
+
+> Thanks,
+> 
+> Moritz
