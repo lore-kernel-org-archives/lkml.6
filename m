@@ -1,54 +1,56 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3C464C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:47:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 97140C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:47:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8C3F208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:47:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8C3F208D8
+	by mail.kernel.org (Postfix) with ESMTP id 57F50208BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:47:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57F50208BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934160AbeFNMrF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 08:47:05 -0400
-Received: from mail-it0-f71.google.com ([209.85.214.71]:52689 "EHLO
-        mail-it0-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754809AbeFNMrD (ORCPT
+        id S1755239AbeFNMrW (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 08:47:22 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:53926 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754913AbeFNMrE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 08:47:03 -0400
-Received: by mail-it0-f71.google.com with SMTP id q5-v6so5124703itq.2
+        Thu, 14 Jun 2018 08:47:04 -0400
+Received: by mail-it0-f70.google.com with SMTP id 189-v6so5118690ito.3
         for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 05:47:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=TNjKdcoZMPIEzIZOrQm11hMTZh5xulhzjGhTdWW5iVQ=;
-        b=fASHvS2krXbQSVMgJtgswtElGXOaTXJv4zCYj1JJTOvGx4LGVxSiOoxaTfHxAK2rMh
-         KWuZ889svuFAe2Q5TCv+8ckBikNuIna3V4mV2O6BQeJQ9Vqd9eWCts/OCQLZvUgPymEm
-         wIb7QNk+MTyadvXNRJ1VWyoAT9Wl4qi/N1d7kPNQ+S9bViBoF2+Rx1fvxyzbgyWkeNR4
-         ZMf68Nq+Hybk+7ki6u+xG8hTHpjZWvyD2CZaDjthz8Ee8nYYKENKi4gtE5ofvW21ChWe
-         h2ivm37DEzMPohv7sj1uZRC4o8UQloTe5AND4C7WF6fMugmWSGngjD2pd0e7q6jQPhol
-         l95Q==
-X-Gm-Message-State: APt69E36UfiHBBCZa/FtU+z7JOym2GT6zKI0voQQivG8bsmkmzs57iuL
-        v9RIMqdstnb1s23pDZgG/ElJZOtZMXyms+9CgDzWMgH+BfV1
-X-Google-Smtp-Source: ADUXVKLeAB1ucpB8goYium9+lD+0F1uJnIHe7gNHkEnOd83998LgRk/4BMFOz7kaRufXb1EWTNHcWvHsm5iYvAcroCaFgPuKzLHZ
+        bh=6NuyjwBaQfElw9BhtFoecKwyP8OBUslE2xdtwGYDqbA=;
+        b=dqTxKfJAlSDGgOgSMv6l2+XgleY0nKbWpPyEfwv/VDjVswGUEF5nxrC8gwlH9H2hQs
+         Ls9/nRoEhefiQllkiMaPy4pichs8+G9DRneqC8/d4zmVi6x8Y07/bELizn+Xz0Ix06pn
+         7Rp3m1t98P/ky21YRCACE+1PblfxL5XlFjWJsSo9AEx8YtBaSMcLSc+N6UZ8c+QDHVf7
+         yETCviw56gVNepPrV/r0z3wBPPHCpZyiGREcmXw9nBGFYBXnKYwmR7GCRAFUAnYzAaHz
+         YjwzAVR+8Opm/bGcIFVXCJGOhfXQxVeDF9ydXJAhu4HMLHT9UEYg4SuiWlpyaCQgZa5r
+         jnOA==
+X-Gm-Message-State: APt69E3YA6F1wAAXWEOwWAsmNLYm/1fGP4l5lW4VhMtURa2ab2xHTUyr
+        3CKp6G2727cCH6iqyMwxEqCuwr16o6eC2B37hGPtk00+O+Ql
+X-Google-Smtp-Source: ADUXVKLgr1AeAJ3NOd5sMgHgEXPt86bN1NajFwzr5dPSQs68B/Dzq5GT7hYOx+pFg0xdrbYg1etjMcLMpD5P0Qt6DeK8v5Mt+wgq
 MIME-Version: 1.0
-X-Received: by 2002:a02:b059:: with SMTP id q25-v6mr450154jah.58.1528980423185;
+X-Received: by 2002:a02:948d:: with SMTP id x13-v6mr432861jah.45.1528980423389;
  Thu, 14 Jun 2018 05:47:03 -0700 (PDT)
 Date:   Thu, 14 Jun 2018 05:47:03 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fe1d2b056e997e1f@google.com>
-Subject: WARNING in input_alloc_absinfo
-From:   syzbot <syzbot+c382812c78d98ecd9fb8@syzkaller.appspotmail.com>
-To:     dmitry.torokhov@gmail.com, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, rydberg@bitmath.org,
-        syzkaller-bugs@googlegroups.com
+Message-ID: <000000000000013b0d056e997fec@google.com>
+Subject: WARNING in sk_stream_kill_queues (3)
+From:   syzbot <syzbot+13e1ee9caeab5a9abc62@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, gregkh@linuxfoundation.org,
+        kstewart@linuxfoundation.org, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, pombredanne@nexb.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -59,63 +61,69 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    d2d741e5d189 kmsan: add initialization for shmem pages
+HEAD commit:    81c310582f0e kmsan: unpoison virtio input buffers when add..
 git tree:       https://github.com/google/kmsan.git/master
-console output: https://syzkaller.appspot.com/x/log.txt?x=1775bae7800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=48f9de3384bcd0f
-dashboard link: https://syzkaller.appspot.com/bug?extid=c382812c78d98ecd9fb8
-compiler:       clang version 7.0.0 (trunk 329391)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=13b31ae7800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1733255b800000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1747c21f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=848e40757852af3e
+dashboard link: https://syzkaller.appspot.com/bug?extid=13e1ee9caeab5a9abc62
+compiler:       clang version 7.0.0 (trunk 334104)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=105f5eaf800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13b15b6f800000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+c382812c78d98ecd9fb8@syzkaller.appspotmail.com
+Reported-by: syzbot+13e1ee9caeab5a9abc62@syzkaller.appspotmail.com
 
-RBP: 00000000006cb018 R08: 0000000000000001 R09: 00007ffe93080031
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
-------------[ cut here ]------------
-input_alloc_absinfo(): kcalloc() failed?
-WARNING: CPU: 1 PID: 4498 at drivers/input/input.c:487  
-input_alloc_absinfo+0x183/0x190 drivers/input/input.c:487
+WARNING: CPU: 0 PID: 4964 at net/core/stream.c:206  
+sk_stream_kill_queues+0x944/0x970 net/core/stream.c:206
 Kernel panic - not syncing: panic_on_warn set ...
 
-CPU: 1 PID: 4498 Comm: syz-executor465 Not tainted 4.16.0+ #87
+CPU: 0 PID: 4964 Comm: syz-executor457 Not tainted 4.17.0+ #6
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
 Call Trace:
-  __dump_stack lib/dump_stack.c:17 [inline]
-  dump_stack+0x185/0x1d0 lib/dump_stack.c:53
-  panic+0x39d/0x940 kernel/panic.c:183
-  __warn+0x40f/0x580 kernel/panic.c:547
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  panic+0x3d0/0x990 kernel/panic.c:184
+  __warn+0x40f/0x580 kernel/panic.c:536
   report_bug+0x72a/0x880 lib/bug.c:186
   fixup_bug arch/x86/kernel/traps.c:179 [inline]
-  do_error_trap+0x1aa/0x600 arch/x86/kernel/traps.c:297
-  do_invalid_op+0x46/0x50 arch/x86/kernel/traps.c:316
-  invalid_op+0x1b/0x40 arch/x86/entry/entry_64.S:986
-RIP: 0010:input_alloc_absinfo+0x183/0x190 drivers/input/input.c:487
-RSP: 0018:ffff88019651faa8 EFLAGS: 00010282
-RAX: 0000000000000028 RBX: 0000000000000000 RCX: 0000000000000000
+  do_error_trap+0x1c1/0x620 arch/x86/kernel/traps.c:298
+  do_invalid_op+0x46/0x50 arch/x86/kernel/traps.c:317
+  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:992
+RIP: 0010:sk_stream_kill_queues+0x944/0x970 net/core/stream.c:206
+RSP: 0018:ffff8801a867f368 EFLAGS: 00010293
+RAX: ffffffff87dbf654 RBX: 0000000000000813 RCX: ffff8801ab7bd7c0
 RDX: 0000000000000000 RSI: aaaaaaaaaaaab000 RDI: ffffea0000000000
-RBP: ffff88019651fae0 R08: 0000000001080020 R09: 0000000000000002
-R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-R13: ffff8801a19ec140 R14: ffff88019796e198 R15: 0000000000000000
-  uinput_abs_setup drivers/input/misc/uinput.c:507 [inline]
-  uinput_ioctl_handler+0x38a2/0x39f0 drivers/input/misc/uinput.c:1035
-  uinput_ioctl+0x9a/0xb0 drivers/input/misc/uinput.c:1047
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  do_vfs_ioctl+0xaf0/0x2440 fs/ioctl.c:686
-  SYSC_ioctl+0x1d2/0x260 fs/ioctl.c:701
-  SyS_ioctl+0x54/0x80 fs/ioctl.c:692
-  do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-RIP: 0033:0x440429
-RSP: 002b:00007ffe9308d2b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000440429
-RDX: 0000000000000000 RSI: 0000000040005504 RDI: 0000000000000003
-RBP: 00000000006cb018 R08: 0000000000000001 R09: 00007ffe93080031
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000004
-R13: ffffffffffffffff R14: 0000000000000000 R15: 0000000000000000
+RBP: ffff8801a867f3e8 R08: 0000000000000000 R09: 0000000000000002
+R10: ffff8801a66d3a00 R11: ffffffff88c44c40 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000813
+  inet_csk_destroy_sock+0x2a4/0x5d0 net/ipv4/inet_connection_sock.c:833
+  tcp_close+0xe37/0x18f0 net/ipv4/tcp.c:2323
+  tls_sk_proto_close+0xc2f/0xcd0 net/tls/tls_main.c:291
+  inet_release+0x249/0x2b0 net/ipv4/af_inet.c:427
+  inet6_release+0xaf/0x100 net/ipv6/af_inet6.c:460
+  sock_release net/socket.c:594 [inline]
+  sock_close+0xeb/0x310 net/socket.c:1149
+  __fput+0x458/0xa30 fs/file_table.c:209
+  ____fput+0x37/0x40 fs/file_table.c:243
+  task_work_run+0x22e/0x2b0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x110e/0x3930 kernel/exit.c:867
+  do_group_exit+0x1a0/0x360 kernel/exit.c:970
+  get_signal+0x1405/0x1ec0 kernel/signal.c:2482
+  do_signal+0xb8/0x1d20 arch/x86/kernel/signal.c:810
+  exit_to_usermode_loop arch/x86/entry/common.c:162 [inline]
+  prepare_exit_to_usermode+0x271/0x3a0 arch/x86/entry/common.c:196
+  syscall_return_slowpath+0xe9/0x710 arch/x86/entry/common.c:265
+  do_syscall_64+0x1ad/0x230 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x447ce9
+RSP: 002b:00007feb54132d98 EFLAGS: 00000212 ORIG_RAX: 000000000000002c
+RAX: 0000000000008000 RBX: 00000000006dec5c RCX: 0000000000447ce9
+RDX: 00000000fffffdef RSI: 00000000200005c0 RDI: 0000000000000007
+RBP: 0000000000000000 R08: 0000000020000000 R09: 000000000000001c
+R10: 0000000000000000 R11: 0000000000000212 R12: 00000000006dec58
+R13: 0100000000000000 R14: 00007feb541339c0 R15: 000000000000000c
 Dumping ftrace buffer:
     (ftrace buffer empty)
 Kernel Offset: disabled
