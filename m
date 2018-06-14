@@ -2,222 +2,147 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EFB65C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:47:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 59266C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:49:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD15208B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:47:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05AF5208B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:49:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hw2f7yKk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD15208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="QKTKwRFl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05AF5208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964777AbeFNRri (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 13:47:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45768 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755163AbeFNRqF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 13:46:05 -0400
-Received: from localhost.localdomain (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F10FF208DB;
-        Thu, 14 Jun 2018 17:46:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528998365;
-        bh=6jjjX9HpmRGs3oPkv10BQAd0icGg/6jsu1sm1o6LmQQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=hw2f7yKknxAiyIFO71kFw9JNSvHhp7rsufHppXwMvcrn2NnUZwbmDGeH6FZWEbz7H
-         T6V3f2QfprST3UDWYFr293gNjjIXLfsg1BruKttFGsNxIDbLKcHq8NP3VuiwpFFLsU
-         //pYLnDVxR8raueGlLCf3+WgZAnJ5GEc9nuKtx2E=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel.opensrc@gmail.com, joelaf@google.com,
-        mathieu.desnoyers@efficios.com, julia@ni.com,
-        linux-kernel@vger.kernel.org, linux-rt-users@vger.kernel.org,
-        Tom Zanussi <tom.zanussi@linux.intel.com>
-Subject: [PATCH 2/7] tracing: Split up onmatch action data
-Date:   Thu, 14 Jun 2018 12:45:11 -0500
-Message-Id: <e91d2a84759a037eec8253f5234d90cbb3fe220a.1528986926.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1528986925.git.tom.zanussi@linux.intel.com>
-References: <cover.1528986925.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1528986925.git.tom.zanussi@linux.intel.com>
-References: <cover.1528986925.git.tom.zanussi@linux.intel.com>
+        id S1755401AbeFNRtU (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 13:49:20 -0400
+Received: from userp2130.oracle.com ([156.151.31.86]:58494 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754718AbeFNRtS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 13:49:18 -0400
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5EHn6Mq055371;
+        Thu, 14 Jun 2018 17:49:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=nhBibKiZyE5VveFVC8kS/pDdHlQg6mu79EBkws3f4tE=;
+ b=QKTKwRFld2OR68KjzSPIug19xw5BZn+fhcJ35DWeaXPh7x/EfvXqGbIQu8vBqRl31fCf
+ AWxOxtNd/9KRduSk/kWK4t6W6A5GtBo1fmTzeg5CmT3v3Atj14LvnXJq7P/pvitpshMz
+ IzKhqVEi9ajglAaIAZqMO7rX4q0ETkhQ9luTK9IDnXfoyAglGKWfwL1IsYsNLPVRXtcw
+ QhOPC/ThVN+tNHijrwZGaBSuI2ZzV3ai+LBz8OC7Q0+sDJGN01ahNBmAM/1EQxsIEd9o
+ jzTGrCJbrlIer605PuH92l81haNY/UTDp6YP7qLOXzaBCvd1GYRKGfR94x+yAJZqiCbT 0g== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2jk0xre4nr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 17:49:06 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5EHn3KO009324
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 17:49:03 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5EHn2kE031750;
+        Thu, 14 Jun 2018 17:49:02 GMT
+Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jun 2018 10:49:02 -0700
+Subject: Re: [PATCH v3 0/9] xen: dma-buf support for grant device
+To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
+        jgross@suse.com
+Cc:     Oleksandr Andrushchenko <andr2000@gmail.com>,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
+        konrad.wilk@oracle.com, daniel.vetter@intel.com,
+        dongwon.kim@intel.com, matthew.d.roper@intel.com
+References: <20180612134200.17456-1-andr2000@gmail.com>
+ <1088db4b-cf75-817f-2112-41b96006cd3d@epam.com>
+From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
+ 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
+ Jg6OxFYd01z+a+oL
+Message-ID: <d93c0ad8-75a2-3426-e5e3-0b13725ca19f@oracle.com>
+Date:   Thu, 14 Jun 2018 13:48:47 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1088db4b-cf75-817f-2112-41b96006cd3d@epam.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8924 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=826
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806140195
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On 06/14/2018 02:47 AM, Oleksandr Andrushchenko wrote:
+> Hi, Boris!
+>
+> It seems that I have resolved all the issues now which
+> were mainly cleanup and code movement and 5 of 9 patches
+> already have r-b's. Do you, as the primary reviewer of the
+> series, think I can push (hopefully) the final version
+> of the patches? Just in case you want to look at v4 it is at [1].
+>
+> Thank you,
+> Oleksandr
+>
+> [1]
+> https://github.com/andr2000/linux/commits/xen_tip_linux_next_xen_dma_buf_v4
 
-Currently, the onmatch action data binds the onmatch action to data
-related to synthetic event generation.  Since we want to allow the
-onmatch handler to potentially invoke a different action, and because
-we expect other handlers to generate synthetic events, we need to
-separate the data related to these two functions.
 
-Also rename the onmatch data to something more descriptive.
+Looks good to me.
 
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- kernel/trace/trace_events_hist.c | 59 ++++++++++++++++++++--------------------
- 1 file changed, 30 insertions(+), 29 deletions(-)
 
-diff --git a/kernel/trace/trace_events_hist.c b/kernel/trace/trace_events_hist.c
-index ede7a27fa52b..61a3a8ca2f76 100644
---- a/kernel/trace/trace_events_hist.c
-+++ b/kernel/trace/trace_events_hist.c
-@@ -347,13 +347,14 @@ struct action_data {
- 	unsigned int		n_params;
- 	char			*params[SYNTH_FIELDS_MAX];
- 
-+	unsigned int		var_ref_idx;
-+	struct synth_event	*synth_event;
-+
- 	union {
- 		struct {
--			unsigned int		var_ref_idx;
--			char			*match_event;
--			char			*match_event_system;
--			struct synth_event	*synth_event;
--		} onmatch;
-+			char			*event;
-+			char			*event_system;
-+		} match_data;
- 
- 		struct {
- 			char			*var_str;
-@@ -1001,9 +1002,9 @@ static void action_trace(struct hist_trigger_data *hist_data,
- 			 struct ring_buffer_event *rbe,
- 			 struct action_data *data, u64 *var_ref_vals)
- {
--	struct synth_event *event = data->onmatch.synth_event;
-+	struct synth_event *event = data->synth_event;
- 
--	trace_synth(event, var_ref_vals, data->onmatch.var_ref_idx);
-+	trace_synth(event, var_ref_vals, data->var_ref_idx);
- }
- 
- struct hist_var_data {
-@@ -1573,8 +1574,8 @@ find_match_var(struct hist_trigger_data *hist_data, char *var_name)
- 		struct action_data *data = hist_data->actions[i];
- 
- 		if (data->handler == HANDLER_ONMATCH) {
--			char *system = data->onmatch.match_event_system;
--			char *event_name = data->onmatch.match_event;
-+			char *system = data->match_data.event_system;
-+			char *event_name = data->match_data.event;
- 
- 			file = find_var_file(tr, system, event_name, var_name);
- 			if (!file)
-@@ -3521,15 +3522,15 @@ static void onmatch_destroy(struct action_data *data)
- 
- 	mutex_lock(&synth_event_mutex);
- 
--	kfree(data->onmatch.match_event);
--	kfree(data->onmatch.match_event_system);
-+	kfree(data->match_data.event);
-+	kfree(data->match_data.event_system);
- 	kfree(data->action_name);
- 
- 	for (i = 0; i < data->n_params; i++)
- 		kfree(data->params[i]);
- 
--	if (data->onmatch.synth_event)
--		data->onmatch.synth_event->ref--;
-+	if (data->synth_event)
-+		data->synth_event->ref--;
- 
- 	kfree(data);
- 
-@@ -3611,8 +3612,8 @@ trace_action_find_var(struct hist_trigger_data *hist_data,
- 	hist_field = find_target_event_var(hist_data, system, event, var);
- 	if (!hist_field) {
- 		if (!system && data->handler == HANDLER_ONMATCH) {
--			system = data->onmatch.match_event_system;
--			event = data->onmatch.match_event;
-+			system = data->match_data.event_system;
-+			event = data->match_data.event;
- 		}
- 
- 		hist_field = find_event_var(hist_data, system, event, var);
-@@ -3651,8 +3652,8 @@ trace_action_create_field_var(struct hist_trigger_data *hist_data,
- 		 * event.
- 		 */
- 		if (!system && data->handler == HANDLER_ONMATCH) {
--			system = data->onmatch.match_event_system;
--			event = data->onmatch.match_event;
-+			system = data->match_data.event_system;
-+			event = data->match_data.event;
- 		}
- 
- 		/*
-@@ -3764,8 +3765,8 @@ static int trace_action_create(struct hist_trigger_data *hist_data,
- 		goto err;
- 	}
- 
--	data->onmatch.synth_event = event;
--	data->onmatch.var_ref_idx = var_ref_idx;
-+	data->synth_event = event;
-+	data->var_ref_idx = var_ref_idx;
-  out:
- 	return ret;
-  err:
-@@ -3855,14 +3856,14 @@ static struct action_data *onmatch_parse(struct trace_array *tr, char *str)
- 		goto free;
- 	}
- 
--	data->onmatch.match_event = kstrdup(match_event, GFP_KERNEL);
--	if (!data->onmatch.match_event) {
-+	data->match_data.event = kstrdup(match_event, GFP_KERNEL);
-+	if (!data->match_data.event) {
- 		ret = -ENOMEM;
- 		goto free;
- 	}
- 
--	data->onmatch.match_event_system = kstrdup(match_event_system, GFP_KERNEL);
--	if (!data->onmatch.match_event_system) {
-+	data->match_data.event_system = kstrdup(match_event_system, GFP_KERNEL);
-+	if (!data->match_data.event_system) {
- 		ret = -ENOMEM;
- 		goto free;
- 	}
-@@ -4424,8 +4425,8 @@ static void print_onmatch_spec(struct seq_file *m,
- {
- 	unsigned int i;
- 
--	seq_printf(m, ":onmatch(%s.%s).", data->onmatch.match_event_system,
--		   data->onmatch.match_event);
-+	seq_printf(m, ":onmatch(%s.%s).", data->match_data.event_system,
-+		   data->match_data.event);
- 
- 	seq_printf(m, "%s(", data->action_name);
- 
-@@ -4469,11 +4470,11 @@ static bool actions_match(struct hist_trigger_data *hist_data,
- 			return false;
- 
- 		if (data->handler == HANDLER_ONMATCH) {
--			if (strcmp(data->onmatch.match_event_system,
--				   data_test->onmatch.match_event_system) != 0)
-+			if (strcmp(data->match_data.event_system,
-+				   data_test->match_data.event_system) != 0)
- 				return false;
--			if (strcmp(data->onmatch.match_event,
--				   data_test->onmatch.match_event) != 0)
-+			if (strcmp(data->match_data.event,
-+				   data_test->match_data.event) != 0)
- 				return false;
- 		} else if (data->handler == HANDLER_ONMAX) {
- 			if (strcmp(data->onmax.var_str,
--- 
-2.14.1
-
+-boris
