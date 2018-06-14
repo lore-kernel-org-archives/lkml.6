@@ -2,120 +2,82 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3DD23C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:02:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A3280C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:07:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F2DF1208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:02:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F2DF1208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 4A465208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:07:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A465208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755379AbeFNQCg (ORCPT
+        id S1755285AbeFNQH1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:02:36 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:51210 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755069AbeFNQCe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:02:34 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id B444AC0B0C;
-        Thu, 14 Jun 2018 16:02:33 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo01-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id H7ler5TaCIXZ; Thu, 14 Jun 2018 16:02:33 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 68E9CC0683;
-        Thu, 14 Jun 2018 16:02:24 +0000 (UTC)
-Subject: Re: [PATCH] selftests: kselftest_harness: return Kselftest Skip code
- for skipped tests
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>
-References: <20180614013445.6120-1-shuah@kernel.org>
- <CAGXu5jLXAQxo7mUJThXCOMPEC3yvGU5_wLqjU_YKGtd6sFfuUw@mail.gmail.com>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <dd086a7d-36fe-b6f5-3257-c30898cc8a34@kernel.org>
-Date:   Thu, 14 Jun 2018 10:02:15 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLXAQxo7mUJThXCOMPEC3yvGU5_wLqjU_YKGtd6sFfuUw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Jun 2018 12:07:27 -0400
+Received: from mx2.suse.de ([195.135.220.15]:41290 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755010AbeFNQH0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:07:26 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id C358FAD03;
+        Thu, 14 Jun 2018 16:07:25 +0000 (UTC)
+Date:   Thu, 14 Jun 2018 18:07:25 +0200
+Message-ID: <s5ha7rx2vya.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        ruslan.bilovol@gmail.com
+Subject: Re: [PATCH v2 0/4] ALSA: usb-audio: Insertion Control for BADD Adaptors.
+In-Reply-To: <20180614140558.28277-1-jorge.sanjuan@codethink.co.uk>
+References: <20180612143201.29988-1-jorge.sanjuan@codethink.co.uk>
+        <20180614140558.28277-1-jorge.sanjuan@codethink.co.uk>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/13/2018 10:06 PM, Kees Cook wrote:
-> On Wed, Jun 13, 2018 at 6:34 PM, Shuah Khan (Samsung OSG)
-> <shuah@kernel.org> wrote:
->> When a test is skipped because of unmet dependencies and/or unsupported
->> configuration, kselftest_harness exits with error which is treated as a
->> fail by the Kselftest framework. This leads to false negative result even
->> when the test could not be run.
->>
->> Change it to return kselftest skip code when a test gets skipped to
->> clearly report that the test could not be run. This change add skip
->> handling to kselftest_harness with minimal changes adding a new skipped
->> field to struct __test_metadata and using it to recognize KSFT_SKIP exit
->> from the test function (t->fn) to __run_test() to the test_harness_run()
->> to return the right skip code to Kselftest framework.
->>
->> Kselftest framework SKIP code is 4 and the framework prints appropriate
->> messages to indicate that the test is skipped.
+On Thu, 14 Jun 2018 16:05:54 +0200,
+Jorge Sanjuan wrote:
 > 
-> Unfortunately this will not work: test step # is used as the failure
-> code to let test runners know where a child failed. KSFT_SKIP is 4, so
-> every test failing in step 4 would be seen as a skip instead of a
-> fail.
+> Thanks for review!
 > 
-
-Yeah. That is correct. __bail() does exit with step which could be step #4
-
-> Tests must not exit on their own with this harness: only the existing
-> ASSERT/EXPECT macros can be used. uevent test should never be doing
-> this:
+> Here is what's new in this V2:
+>  - Split the patchset into a more sensible series.
 > 
->         if (geteuid()) {
->                 TH_LOG("Uevent filtering tests require root
-> privileges. Skipping test");
->                 _exit(KSFT_SKIP);
->         }
+> This patchset adds support for the Insertion Control for BADD devices
+> (subset of UAC3).
 > 
-> Nor the _exit(EXIT_FAILURE) calls. Those must all be ASSERT() instead.
-
-It did look like an improper use of the harness by this test. Okay that
-makes sense.
-
+> This control is only pressent in the HEADSET ADAPTER BADD profile. The USB
+> interrupt pipe shall be present for this profile so the status pipe
+> creation should also happen for BADD devices.
 > 
-> Perhaps a new signal could be used, but the return codes are already being used.
+> Also, the bi-directional type codes have been defined so they can be used
+> as inferred values for the Input and Output terminals for this adapter
+> profile.
 > 
+> Based on tag: next-20180612
+> 
+> Jorge Sanjuan (4):
+>   ALSA: usb-audio: Add bi-directional terminal types.
+>   ALSA: usb-audio: Change in connectors control creation interface
+>   ALSA: usb-audio: UAC3. Add insertion control for BADD.
+>   ALSA: usb-audio: Always create the interrupt pipe for the mixer
 
-A a new harness hook for KSFT_SKIP case so tests can call that explicitly would
-solve the problem once the problem of conflict with step #4.
+Thanks, this looks nicer, each of changes is smaller and clearer.
+Although it's a bit too late for the merge window, this is a change
+that is fairly safe for the existing UAC1/UAC2, I merged it now.
 
-Since he harness step metadata doesn't have special meaning than keeping track of
-how far test ran, harness could be changed to treat step #4 as a special value and
-not use it for step to solve the conflict between ksft and kselftest_harness.
-
-thanks,
--- Shuah
+Oh, and the subjects were slightly fixed; no need of period at the
+tail in a subject line.
 
 
-
-
-
-
+Takashi
