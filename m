@@ -2,250 +2,353 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BB334C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:39:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 838BDC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:39:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67BAD208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:39:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67BAD208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
+	by mail.kernel.org (Postfix) with ESMTP id 20DDA208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:39:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="KDw5Bsqg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20DDA208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752914AbeFNFjE (ORCPT
+        id S1754577AbeFNFjO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 01:39:04 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33746 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751493AbeFNFjC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 01:39:02 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z6-v6so1725190wma.0
-        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 22:39:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3YAKhEni5WxwZL8YJRBCDZLAdxih0F6BxUs2CTOL3tM=;
-        b=QnFn9GV5cwgOyBVZlcYR5IFYbulxjGrnGrdje/HhydQanHUQmpzTbax8CAr0hm1ykA
-         NCXNhxkYxTt/cfo/OW0zMZBlHJ4il6mlKNtyVkt423kY1yD+E1hJcii08rNmg8GOcTlH
-         kw/fNHBXqrWqvx0yNpppl9QQ/qJLPgmdT89qIfKop1VR0+yukmRPiIuIqKYVNasD6knW
-         bejOVl7sH5KYIoy++fo2WDlXfKpvwvyfFIDSiHuZIEdVn/4VSFtUbOZ/IfvlKf6VvOjX
-         buBwdTQVt5xvhCzWOXJJWkKYkassF2bGpF2A3NIsugT1lx3qqdLj7JGiho+gd9Xsi/U6
-         MVhw==
-X-Gm-Message-State: APt69E2lset5F5FiRgGBOJN/0JMWgLWk/Us63l04Qx3S6JgvH3I0D6hQ
-        qb4dnpsgbY1tB2GoeCJZUWA=
-X-Google-Smtp-Source: ADUXVKIl3gm1P9i39TaapEFLRmGyIszSbBwD5VsQO2iVJaKc54XkSOjGzmInHYZCqR2E2zhV/A3yig==
-X-Received: by 2002:a1c:3bc4:: with SMTP id i187-v6mr671800wma.57.1528954741588;
-        Wed, 13 Jun 2018 22:39:01 -0700 (PDT)
-Received: from techadventures.net (techadventures.net. [62.201.165.239])
-        by smtp.gmail.com with ESMTPSA id p196-v6sm5276019wmb.20.2018.06.13.22.39.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 13 Jun 2018 22:39:00 -0700 (PDT)
-Received: by techadventures.net (Postfix, from userid 1000)
-        id 9B1531234B8; Thu, 14 Jun 2018 07:38:59 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 07:38:59 +0200
-From:   Oscar Salvador <osalvador@techadventures.net>
-To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
+        Thu, 14 Jun 2018 01:39:14 -0400
+Received: from mail-by2nam03on0075.outbound.protection.outlook.com ([104.47.42.75]:10784
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752100AbeFNFjI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 01:39:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pQxq+rJYZKptnR0pLatKJaLWBfgK4BaGFi1OZ+owFHE=;
+ b=KDw5BsqgxH9V7hd0YfwKp1UaIMKra+iGqc7F7wICALWdBOLcuSyO6RWdtMihybzQSQLUnYvScN/DOox9SpvdJt+gZrqNBX65ZK9Acjv6aHg8+yVeajtS1aY4h7wGKdMorT4Sst7Hs7eUPnCuBGYEjBGz2rhgcYcibaLB7CTClKc=
+Received: from SN6PR02MB4959.namprd02.prod.outlook.com (52.135.116.89) by
+ SN6PR02MB4509.namprd02.prod.outlook.com (52.135.121.219) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.20; Thu, 14 Jun 2018 05:39:03 +0000
+Received: from SN6PR02MB4959.namprd02.prod.outlook.com
+ ([fe80::5ce3:b22c:d455:b4b3]) by SN6PR02MB4959.namprd02.prod.outlook.com
+ ([fe80::5ce3:b22c:d455:b4b3%3]) with mapi id 15.20.0841.021; Thu, 14 Jun 2018
+ 05:38:58 +0000
+From:   Manish Narani <MNARANI@xilinx.com>
+To:     Manish Narani <MNARANI@xilinx.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "mdf@kernel.org" <mdf@kernel.org>,
+        "stefan.krsmanovic@aggios.com" <stefan.krsmanovic@aggios.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH v1] mm: zero remaining unavailable struct pages (Re:
- kernel panic in reading /proc/kpageflags when enabling RAM-simulated PMEM)
-Message-ID: <20180614053859.GA9863@techadventures.net>
-References: <20180606085319.GA32052@techadventures.net>
- <20180606090630.GA27065@hori1.linux.bs1.fc.nec.co.jp>
- <20180606092405.GA6562@hori1.linux.bs1.fc.nec.co.jp>
- <20180607062218.GB22554@hori1.linux.bs1.fc.nec.co.jp>
- <20180607065940.GA7334@techadventures.net>
- <20180607094921.GA8545@techadventures.net>
- <20180607100256.GA9129@hori1.linux.bs1.fc.nec.co.jp>
- <20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp>
- <20180613090700.GG13364@dhcp22.suse.cz>
- <20180614051618.GB17860@hori1.linux.bs1.fc.nec.co.jp>
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+        "michal.simek@xilinx.com" <michal.simek@xilinx.com>,
+        "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+CC:     Srinivas Goud <sgoud@xilinx.com>,
+        Anirudha Sarangi <anirudh@xilinx.com>
+Subject: RE: [RFC PATCH 3/3] sdhci: arasan: Add support to read Tap Delay
+ values from DT
+Thread-Topic: [RFC PATCH 3/3] sdhci: arasan: Add support to read Tap Delay
+ values from DT
+Thread-Index: AQHT/ljITFQme7ObgE2kg4lbhDXBJ6RfRu0g
+Date:   Thu, 14 Jun 2018 05:38:58 +0000
+Message-ID: <SN6PR02MB49595D9202DDF98DA16C495CC17D0@SN6PR02MB4959.namprd02.prod.outlook.com>
+References: <1528373500-24663-1-git-send-email-manish.narani@xilinx.com>
+ <1528373500-24663-3-git-send-email-manish.narani@xilinx.com>
+In-Reply-To: <1528373500-24663-3-git-send-email-manish.narani@xilinx.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+x-originating-ip: [182.72.145.30]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR02MB4509;7:o/7l+h8eYBIY0gVvVgnIpRJtM3k+UumLGwVX3aWWzRujmR1Sch7ogeOwA/18+/G1UsTfq77a5AVWzQQHmZjnawLi6Q/7iTfk8+2+7CPZgcReJDxQfpKcO0gGPXJeBbKKpGsHE2Wd1PYtSB01O7n4NxIiB+gcJ0XwSowrvFtBzjXy2pvICKLQgSbecCh0XiYnkHEK6Mu7yT7hciDaO2YHdjdslVTX0LtLVCMIEJCL0/SOw15K0hMa1WSkfguNZl6E
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 89cc6f91-932a-469f-b1a0-08d5d1b92069
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR02MB4509;
+x-ms-traffictypediagnostic: SN6PR02MB4509:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=MNARANI@xilinx.com; 
+x-microsoft-antispam-prvs: <SN6PR02MB45091D68C9FC1E5A56ECAC7FC17D0@SN6PR02MB4509.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(180628864354917)(9452136761055)(258649278758335)(192813158149592)(228905959029699);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:SN6PR02MB4509;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB4509;
+x-forefront-prvs: 0703B549E4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(39380400002)(396003)(346002)(376002)(13464003)(189003)(199004)(6116002)(2906002)(7736002)(97736004)(107886003)(6506007)(53546011)(99286004)(102836004)(54906003)(81166006)(11346002)(446003)(81156014)(8676002)(110136005)(476003)(478600001)(72206003)(4326008)(53936002)(2501003)(3280700002)(305945005)(74316002)(6246003)(5250100002)(5660300001)(9686003)(7416002)(2201001)(3660700001)(3846002)(106356001)(229853002)(105586002)(33656002)(8936002)(55016002)(6436002)(14454004)(2900100001)(316002)(86362001)(76176011)(26005)(486006)(575784001)(25786009)(68736007)(7696005)(66066001)(921003)(1121003)(217873001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4509;H:SN6PR02MB4959.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: SM1pDecIrnY+rFjJtLyng217NHT1uZpx2bzuhEQdO8/tcCquDW4qCMUACFgoIkxFJNav184Muwr3xwkWjFh8+8QC7jeDX6JZLgjj1BjeT5+uyCWCSb/ZxiojLoYhbdXTYea70G9/eXT8Hq/J/I4NulFYZUS+4kh2Ri/JbF+aO3i/4k4eON324g/R1Ut5mnfx
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614051618.GB17860@hori1.linux.bs1.fc.nec.co.jp>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89cc6f91-932a-469f-b1a0-08d5d1b92069
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2018 05:38:58.4183
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4509
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 05:16:18AM +0000, Naoya Horiguchi wrote:
-> On Wed, Jun 13, 2018 at 11:07:00AM +0200, Michal Hocko wrote:
-> > On Wed 13-06-18 05:41:08, Naoya Horiguchi wrote:
-> > [...]
-> > > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > > Date: Wed, 13 Jun 2018 12:43:27 +0900
-> > > Subject: [PATCH] mm: zero remaining unavailable struct pages
-> > >
-> > > There is a kernel panic that is triggered when reading /proc/kpageflags
-> > > on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
-> > >
-> > >   BUG: unable to handle kernel paging request at fffffffffffffffe
-> > >   PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
-> > >   Oops: 0000 [#1] SMP PTI
-> > >   CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
-> > >   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
-> > >   RIP: 0010:stable_page_flags+0x27/0x3c0
-> > >   Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
-> > >   RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
-> > >   RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
-> > >   RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
-> > >   RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
-> > >   R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
-> > >   R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
-> > >   FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
-> > >   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > >   CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
-> > >   Call Trace:
-> > >    kpageflags_read+0xc7/0x120
-> > >    proc_reg_read+0x3c/0x60
-> > >    __vfs_read+0x36/0x170
-> > >    vfs_read+0x89/0x130
-> > >    ksys_pread64+0x71/0x90
-> > >    do_syscall_64+0x5b/0x160
-> > >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> > >   RIP: 0033:0x7efc42e75e23
-> > >   Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
-> > >
-> > > According to kernel bisection, this problem became visible due to commit
-> > > f7f99100d8d9 which changes how struct pages are initialized.
-> > >
-> > > Memblock layout affects the pfn ranges covered by node/zone. Consider
-> > > that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
-> > > the default (no memmap= given) memblock layout is like below:
-> > >
-> > >   MEMBLOCK configuration:
-> > >    memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
-> > >    memory.cnt  = 0x4
-> > >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
-> > >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
-> > >    memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
-> > >    memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
-> > >    ...
-> > >
-> > > If you give memmap=1G!4G (so it just covers memory[0x2]),
-> > > the range [0x100000000-0x13fffffff] is gone:
-> > >
-> > >   MEMBLOCK configuration:
-> > >    memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
-> > >    memory.cnt  = 0x3
-> > >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
-> > >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
-> > >    memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
-> > >    ...
-> > >
-> > > This causes shrinking node 0's pfn range because it is calculated by
-> > > the address range of memblock.memory. So some of struct pages in the
-> > > gap range are left uninitialized.
-> > >
-> > > We have a function zero_resv_unavail() which does zeroing the struct
-> > > pages outside memblock.memory, but currently it covers only the reserved
-> > > unavailable range (i.e. memblock.memory && !memblock.reserved).
-> > > This patch extends it to cover all unavailable range, which fixes
-> > > the reported issue.
-> >
-> > Thanks for pin pointing this down Naoya! I am wondering why we cannot
-> > simply mark the excluded ranges to be reserved instead.
-> 
-> I tried your idea with the change below, and it also fixes the kernel panic.
-> 
+Ping for RFC
+
+> -----Original Message-----
+> From: Manish Narani [mailto:manish.narani@xilinx.com]
+> Sent: Thursday, June 7, 2018 5:42 PM
+> To: robh+dt@kernel.org; mark.rutland@arm.com; catalin.marinas@arm.com;
+> will.deacon@arm.com; mdf@kernel.org; stefan.krsmanovic@aggios.com;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux=
+-
+> mmc@vger.kernel.org; devicetree@vger.kernel.org;
+> adrian.hunter@intel.com; michal.simek@xilinx.com; ulf.hansson@linaro.org
+> Cc: Manish Narani <MNARANI@xilinx.com>
+> Subject: [RFC PATCH 3/3] sdhci: arasan: Add support to read Tap Delay val=
+ues
+> from DT
+>=20
+> This patch adds support for reading Tap Delay values from Device Tree and
+> write them via eemi calls. The macros containing these tap delay values a=
+re
+> removed from the driver.
+>=20
+> Signed-off-by: Manish Narani <manish.narani@xilinx.com>
 > ---
-> diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> index d1f25c831447..2cef120535d4 100644
-> --- a/arch/x86/kernel/e820.c
-> +++ b/arch/x86/kernel/e820.c
-> @@ -1248,6 +1248,7 @@ void __init e820__memblock_setup(void)
->  {
->  	int i;
->  	u64 end;
-> +	u64 addr = 0;
->  
->  	/*
->  	 * The bootstrap memblock region count maximum is 128 entries
-> @@ -1264,13 +1265,16 @@ void __init e820__memblock_setup(void)
->  		struct e820_entry *entry = &e820_table->entries[i];
->  
->  		end = entry->addr + entry->size;
-> +		if (addr < entry->addr)
-> +			memblock_reserve(addr, entry->addr - addr);
-> +		addr = end;
->  		if (end != (resource_size_t)end)
->  			continue;
->  
->  		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-> -			continue;
-> -
-> -		memblock_add(entry->addr, entry->size);
-> +			memblock_reserve(entry->addr, entry->size);
-> +		else
-> +			memblock_add(entry->addr, entry->size);
+>  drivers/mmc/host/sdhci-of-arasan.c | 131
+> +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 131 insertions(+)
+>=20
+> diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-
+> of-arasan.c
+> index e3332a5..fc0fd01 100644
+> --- a/drivers/mmc/host/sdhci-of-arasan.c
+> +++ b/drivers/mmc/host/sdhci-of-arasan.c
+> @@ -36,6 +36,8 @@
+>=20
+>  #define PHY_CLK_TOO_SLOW_HZ		400000
+>=20
+> +#define MMC_BANK2		0x2
+> +
+>  /*
+>   * On some SoCs the syscon area has a feature where the upper 16-bits of
+>   * each 32-bit register act as a write mask for the lower 16-bits.  This=
+ allows
+> @@ -90,6 +92,10 @@ struct sdhci_arasan_data {
+>  	struct sdhci_host *host;
+>  	struct clk	*clk_ahb;
+>  	struct phy	*phy;
+> +	u32 mio_bank;
+> +	u32 device_id;
+> +	u32 itapdly[MMC_TIMING_MMC_HS400 + 1];
+> +	u32 otapdly[MMC_TIMING_MMC_HS400 + 1];
+>  	bool		is_phy_on;
+>=20
+>  	bool		has_cqe;
+> @@ -160,11 +166,36 @@ static int sdhci_arasan_syscon_write(struct
+> sdhci_host *host,
+>  	return ret;
+>  }
+>=20
+> +/**
+> + * arasan_zynqmp_set_tap_delay - Program the tap delays.
+> + * @deviceid:		Unique Id of device
+> + * @itap_delay:		Input Tap Delay
+> + * @oitap_delay:	Output Tap Delay
+> + */
+> +static void arasan_zynqmp_set_tap_delay(u8 deviceid, u8 itap_delay, u8
+> +otap_delay) {
+> +	const struct zynqmp_eemi_ops *eemi_ops =3D
+> zynqmp_pm_get_eemi_ops();
+> +	u32 node_id =3D (deviceid =3D=3D 0) ? NODE_SD_0 : NODE_SD_1;
+> +
+> +	if (!eemi_ops || !eemi_ops->ioctl)
+> +		return;
+> +
+> +	if (itap_delay)
+> +		eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
+> +				PM_TAPDELAY_INPUT, itap_delay, NULL);
+> +
+> +	if (otap_delay)
+> +		eemi_ops->ioctl(node_id, IOCTL_SET_SD_TAPDELAY,
+> +				PM_TAPDELAY_OUTPUT, otap_delay, NULL);
+> }
+> +
+>  static void sdhci_arasan_set_clock(struct sdhci_host *host, unsigned int
+> clock)  {
+>  	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+>  	struct sdhci_arasan_data *sdhci_arasan =3D
+> sdhci_pltfm_priv(pltfm_host);
+>  	bool ctrl_phy =3D false;
+> +	u8 itap_delay;
+> +	u8 otap_delay;
+>=20
+>  	if (!IS_ERR(sdhci_arasan->phy)) {
+>  		if (!sdhci_arasan->is_phy_on && clock <=3D
+> PHY_CLK_TOO_SLOW_HZ) { @@ -200,6 +231,16 @@ static void
+> sdhci_arasan_set_clock(struct sdhci_host *host, unsigned int clock)
+>  		}
 >  	}
->  
->  	/* Throw away partial pages: */
-> 
-> 
-> My concern is that there are a few E820 memory types rather than
-> E820_TYPE_RAM and E820_TYPE_RESERVED, and I'm not sure that putting them
-> all into memblock.reserved is really acceptable.
+>=20
+> +	if (host->version >=3D SDHCI_SPEC_300) {
+> +		if ((host->timing !=3D MMC_TIMING_LEGACY) &&
+> +			(host->timing !=3D MMC_TIMING_UHS_SDR12)) {
+> +			itap_delay =3D sdhci_arasan->itapdly[host->timing];
+> +			otap_delay =3D sdhci_arasan->otapdly[host->timing];
+> +			arasan_zynqmp_set_tap_delay(sdhci_arasan-
+> >device_id,
+> +						    itap_delay, otap_delay);
+> +		}
+> +	}
+> +
+>  	if (ctrl_phy && sdhci_arasan->is_phy_on) {
+>  		phy_power_off(sdhci_arasan->phy);
+>  		sdhci_arasan->is_phy_on =3D false;
+> @@ -456,6 +497,7 @@ static const struct of_device_id
+> sdhci_arasan_of_match[] =3D {
+>  	{ .compatible =3D "arasan,sdhci-8.9a" },
+>  	{ .compatible =3D "arasan,sdhci-5.1" },
+>  	{ .compatible =3D "arasan,sdhci-4.9a" },
+> +	{ .compatible =3D "xlnx,zynqmp-8.9a" },
+>=20
+>  	{ /* sentinel */ }
+>  };
+> @@ -641,6 +683,74 @@ static void sdhci_arasan_unregister_sdclk(struct
+> device *dev)
+>  	of_clk_del_provider(dev->of_node);
+>  }
+>=20
+> +/**
+> + * arasan_zynqmp_dt_parse_tap_delays - Read Tap Delay values from DT
+> + *
+> + * Called at initialization to parse the values of Tap Delays.
+> + *
+> + * @dev:		Pointer to our struct device.
+> + */
+> +static void arasan_zynqmp_dt_parse_tap_delays(struct device *dev) {
+> +	struct platform_device *pdev =3D to_platform_device(dev);
+> +	struct sdhci_host *host =3D platform_get_drvdata(pdev);
+> +	struct sdhci_pltfm_host *pltfm_host =3D sdhci_priv(host);
+> +	struct sdhci_arasan_data *sdhci_arasan =3D
+> sdhci_pltfm_priv(pltfm_host);
+> +	struct device_node *np =3D dev->of_node;
+> +
+> +	of_property_read_u32(np, "xlnx,itap_delay_sd_hsd",
+> +			     &sdhci_arasan->itapdly[MMC_TIMING_SD_HS]);
+> +	of_property_read_u32(np, "xlnx,otap_delay_sd_hsd",
+> +			     &sdhci_arasan->otapdly[MMC_TIMING_SD_HS]);
+> +	of_property_read_u32(np, "xlnx,itap_delay_sdr25",
+> +			     &sdhci_arasan-
+> >itapdly[MMC_TIMING_UHS_SDR25]);
+> +	of_property_read_u32(np, "xlnx,otap_delay_sdr25",
+> +			     &sdhci_arasan-
+> >otapdly[MMC_TIMING_UHS_SDR25]);
+> +	of_property_read_u32(np, "xlnx,itap_delay_sdr50",
+> +			     &sdhci_arasan-
+> >itapdly[MMC_TIMING_UHS_SDR50]);
+> +	of_property_read_u32(np, "xlnx,otap_delay_sdr50",
+> +			     &sdhci_arasan-
+> >otapdly[MMC_TIMING_UHS_SDR50]);
+> +	of_property_read_u32(np, "xlnx,itap_delay_sd_ddr50",
+> +			     &sdhci_arasan-
+> >itapdly[MMC_TIMING_UHS_DDR50]);
+> +	of_property_read_u32(np, "xlnx,otap_delay_sd_ddr50",
+> +			     &sdhci_arasan-
+> >otapdly[MMC_TIMING_UHS_DDR50]);
+> +	of_property_read_u32(np, "xlnx,itap_delay_mmc_hsd",
+> +			     &sdhci_arasan-
+> >itapdly[MMC_TIMING_MMC_HS]);
+> +	of_property_read_u32(np, "xlnx,otap_delay_mmc_hsd",
+> +			     &sdhci_arasan-
+> >otapdly[MMC_TIMING_MMC_HS]);
+> +	of_property_read_u32(np, "xlnx,itap_delay_mmc_ddr50",
+> +			     &sdhci_arasan-
+> >itapdly[MMC_TIMING_MMC_DDR52]);
+> +	of_property_read_u32(np, "xlnx,otap_delay_mmc_ddr50",
+> +			     &sdhci_arasan-
+> >otapdly[MMC_TIMING_MMC_DDR52]);
+> +	if (sdhci_arasan->mio_bank =3D=3D MMC_BANK2) {
+> +		of_property_read_u32(np,
+> +				     "xlnx,itap_delay_sdr104_b2",
+> +				&sdhci_arasan-
+> >itapdly[MMC_TIMING_UHS_SDR104]);
+> +		of_property_read_u32(np,
+> +				     "xlnx,otap_delay_sdr104_b2",
+> +				&sdhci_arasan-
+> >otapdly[MMC_TIMING_UHS_SDR104]);
+> +		of_property_read_u32(np,
+> +				     "xlnx,itap_delay_mmc_hs200_b2",
+> +				&sdhci_arasan-
+> >itapdly[MMC_TIMING_MMC_HS200]);
+> +		of_property_read_u32(np,
+> +				     "xlnx,otap_delay_mmc_hs200_b2",
+> +				&sdhci_arasan-
+> >otapdly[MMC_TIMING_MMC_HS200]);
+> +	} else {
+> +		of_property_read_u32(np,
+> +				     "xlnx,itap_delay_sdr104_b0",
+> +				&sdhci_arasan-
+> >itapdly[MMC_TIMING_UHS_SDR104]);
+> +		of_property_read_u32(np,
+> +				     "xlnx,otap_delay_sdr104_b0",
+> +				&sdhci_arasan-
+> >otapdly[MMC_TIMING_UHS_SDR104]);
+> +		of_property_read_u32(np,
+> +				     "xlnx,itap_delay_mmc_hs200_b0",
+> +				&sdhci_arasan-
+> >itapdly[MMC_TIMING_MMC_HS200]);
+> +		of_property_read_u32(np,
+> +				     "xlnx,otap_delay_mmc_hs200_b0",
+> +				&sdhci_arasan-
+> >otapdly[MMC_TIMING_MMC_HS200]);
+> +	}
+> +}
+> +
+>  static int sdhci_arasan_add_host(struct sdhci_arasan_data *sdhci_arasan)=
+  {
+>  	struct sdhci_host *host =3D sdhci_arasan->host; @@ -776,6 +886,27
+> @@ static int sdhci_arasan_probe(struct platform_device *pdev)
+>  		goto unreg_clk;
+>  	}
+>=20
+> +	if (of_device_is_compatible(pdev->dev.of_node,
+> +				    "xlnx,zynqmp-8.9a")) {
+> +		ret =3D of_property_read_u32(pdev->dev.of_node,
+> +					   "xlnx,mio_bank",
+> +					   &sdhci_arasan->mio_bank);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev,
+> +				"\"xlnx,mio_bank \" property is missing.\n");
+> +			goto clk_disable_all;
+> +		}
+> +		ret =3D of_property_read_u32(pdev->dev.of_node,
+> +					   "xlnx,device_id",
+> +					   &sdhci_arasan->device_id);
+> +		if (ret < 0) {
+> +			dev_err(&pdev->dev,
+> +				"\"xlnx,device_id \" property is missing.\n");
+> +			goto clk_disable_all;
+> +		}
+> +		arasan_zynqmp_dt_parse_tap_delays(&pdev->dev);
+> +	}
+> +
+>  	sdhci_arasan->phy =3D ERR_PTR(-ENODEV);
+>  	if (of_device_is_compatible(pdev->dev.of_node,
+>  				    "arasan,sdhci-5.1")) {
+> --
+> 2.7.4
 
-Hi Naoya,
-
-Maybe you could just add to memblock.reserved, all unavailable ranges within
-E820_TYPE_RAM.
-Actually, in your original patch, you are walking memblock.memory, which should
-only contain E820_TYPE_RAM ranges (talking about x86).
-
-So I think the below would to the trick as well?
-
-@@ -1248,6 +1276,7 @@ void __init e820__memblock_setup(void)
- {
-        int i;
-        u64 end;
-+       u64 next = 0;
- 
-        /*
-         * The bootstrap memblock region count maximum is 128 entries
- 
-@@ -1269,6 +1299,14 @@ void __init e820__memblock_setup(void)
- 
-                if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-                        continue;
-+       
-+               if (entry->type == E820_TYPE_RAM)
-+                       if (next < entry->addr) {
-+                       	memblock_reserve (next, next + (entry->addr - next));
-+                        	next = end;
-+                	}
-
-With the above patch, I can no longer see the issues either.
-
-Although, there is a difference between this and your original patch.
-In your original patch, you are just zeroing the pages, while with this one (or with your second patch),
-we will zero the page in reserve_bootmem_region(), but that function also init
-some other fields of the struct page:
-
-mm_zero_struct_page(page);
-set_page_links(page, zone, nid, pfn);
-init_page_count(page);
-page_mapcount_reset(page);
-page_cpupid_reset_last(page);
-
-So I am not sure we want to bother doing that for pages that are really unreachable.
-
-Oscar Salvador
-Best Regards
