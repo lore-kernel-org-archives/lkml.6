@@ -2,128 +2,239 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AF338C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 09:58:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CD8F0C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:03:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C7E72087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 09:58:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C7E72087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mev.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 5F47D208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:03:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KtT27ABz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F47D208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754918AbeFNJ6p (ORCPT
+        id S1754905AbeFNKDV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 05:58:45 -0400
-Received: from smtp65.iad3a.emailsrvr.com ([173.203.187.65]:48920 "EHLO
-        smtp65.iad3a.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754633AbeFNJ6o (ORCPT
+        Thu, 14 Jun 2018 06:03:21 -0400
+Received: from mailout4.samsung.com ([203.254.224.34]:17380 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754719AbeFNKDS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 05:58:44 -0400
-Received: from smtp17.relay.iad3a.emailsrvr.com (localhost [127.0.0.1])
-        by smtp17.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTP id 8B60A25FB1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 05:58:43 -0400 (EDT)
-Received: from smtp105.iad3b.emailsrvr.com (relay.iad3a.rsapps.net [172.27.255.110])
-        by smtp17.relay.iad3a.emailsrvr.com (SMTP Server) with ESMTPS id 8533125F14
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 05:58:43 -0400 (EDT)
-Received: from smtp22.relay.iad3b.emailsrvr.com (localhost [127.0.0.1])
-        by smtp22.relay.iad3b.emailsrvr.com (SMTP Server) with ESMTP id D095F60075;
-        Thu, 14 Jun 2018 05:58:42 -0400 (EDT)
-X-Auth-ID: siepeng@mev.co.uk
-Received: by smtp22.relay.iad3b.emailsrvr.com (Authenticated sender: siepeng-AT-mev.co.uk) with ESMTPSA id 37E886006D;
-        Thu, 14 Jun 2018 05:58:42 -0400 (EDT)
-X-Sender-Id: siepeng@mev.co.uk
-Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Thu, 14 Jun 2018 05:58:42 -0400
-Subject: Re: [PATCH] staging: comedi: add error handling for vmap
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <1528773937-38106-1-git-send-email-jiazhouyang09@gmail.com>
- <20180612115039.sz4zjgf7vrudpvyx@mwanda>
- <CABb2TxKVnC3KkCAs501ffzomOF8GLfLqDvWW=z7mHRf8UKc9YQ@mail.gmail.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <d1d5708b-23a8-f8d1-5f4a-799cd27a4304@mev.co.uk>
-Date:   Thu, 14 Jun 2018 10:58:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CABb2TxKVnC3KkCAs501ffzomOF8GLfLqDvWW=z7mHRf8UKc9YQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+        Thu, 14 Jun 2018 06:03:18 -0400
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20180614100316epoutp0474baa7cb6057a51b4d3f288810b6ed7a~3-qgCTJ7R2490724907epoutp04A;
+        Thu, 14 Jun 2018 10:03:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20180614100316epoutp0474baa7cb6057a51b4d3f288810b6ed7a~3-qgCTJ7R2490724907epoutp04A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1528970596;
+        bh=c4kSHnYBqOEcy0bR9B0ETfcMvzucjO8Rj+BSbwAhQ0A=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=KtT27ABzShiNST0LfsNkmQZZwHfAX1iS0gvRFgqydL9YuSMQ5gbgF0yCzngEbTNfv
+         tTU7Q7GXW0gXSx94pAgzwdYWf2KoqlLxj/H1svPBcDcN5IbfVJ0ISXWRbi+IJ6vzxX
+         eOW+FrcIe9SSTREHEA/0p5PzjtWvAyezue/N53NU=
+Received: from epsmges2p3.samsung.com (unknown [182.195.40.152]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20180614100313epcas1p4595abf1ecd8b22581d7c876a0e4c9018~3-qeE-8uK2854528545epcas1p4E;
+        Thu, 14 Jun 2018 10:03:13 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
+        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B7.B8.04186.16D322B5; Thu, 14 Jun 2018 19:03:13 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+        20180614100313epcas2p35bb417763b93407bc60b3956d510e2e3~3-qd21kxS2484324843epcas2p31;
+        Thu, 14 Jun 2018 10:03:13 +0000 (GMT)
+X-AuditID: b6c32a47-9afff7000000105a-f3-5b223d61c944
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 0A.C4.04192.16D322B5; Thu, 14 Jun
+        2018 19:03:13 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="utf-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PAB00BRT59D2U50@mmp2.samsung.com>; Thu, 14 Jun 2018 19:03:13 +0900 (KST)
+Message-id: <5B223D61.3030303@samsung.com>
+Date:   Thu, 14 Jun 2018 19:03:13 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Roger Quadros <rogerq@ti.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com,
+        linux-omap <linux-omap@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: Bug with dwc3 id detect and regulators
+In-reply-to: <6A5F47F7-FDB8-4181-BE88-0D82A3053D9D@goldelico.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrGKsWRmVeSWpSXmKPExsWy7bCmmW6irVK0weH9FhY/tn1lsrj0tcbi
+        wtMeNoutfy6xWVzeNYfNYvaSfhaLnkdaFvuveDlweHz7OonFY837U8weLZN2sXt8aWlm9jh+
+        YzuTx+dNcgFsUak2GamJKalFCql5yfkpmXnptkrewfHO8aZmBoa6hpYW5koKeYm5qbZKLj4B
+        um6ZOUDXKCmUJeaUAoUCEouLlfTtbIryS0tSFTLyi0uAbjM0NNIzNDDXMzIC0saxVkamQCUJ
+        qRmPzn5jL/hhWfH0yDWmBsathl2MnBwSAiYSz3cvZQexhQR2MEo8/2zZxcgFZH8HsptPsMEU
+        fTl0jAUisYFR4n3/BLAEr4CgxI/J94ASHBzMAvISRy5lg4SZBTQlXnyZBFV/l1Fi3pMPrBD1
+        WhLbjjWwgtSzCKhKtH5UAAmzAYX3v7gBNpJfQFHi6o/HjCC2qECExM7539hBykUE/CUaHhSD
+        jGQWmMkksffoXLCRwgLGEituv2cBsTkFHCXefV/BCFIkIXCdTWLm3otQD7hItN24wwhhC0u8
+        Or6FHcKWlni2aiNUQzujxJcXzawQzgRGiQ+nNjNBVBlLPFvYxQTxGp9Ex+G/YCdJCPBKdLQJ
+        QZR4SHw/0c4I8fEpJomPL2cxTWCUnYUUSLMQgTQLKZAWMDKvYhRLLSjOTU8tNiow1itOzC0u
+        zUvXS87P3cQITnNa7jsYt53zOcQowMGoxMO7QU4xWog1say4MvcQowQHs5II7+SfQCHelMTK
+        qtSi/Pii0pzU4kOMpsAwnsgsJZqcD0zBeSXxhqZGxsbGFqbmlsYGlkrivIw3BaKFBNITS1Kz
+        U1MLUotg+pg4OKUaGNkNLRqtfas/X47asfrLFt/s52/1Tvl8POMlv7lwuVejypSPkp19CWy3
+        Ys2ML8/av/15e/yh9JwzzOI50WdiP1T3/tdQa6+0vHfskdbNI2LXWUQ3/XisdlT2n7CQcO25
+        7GV/SgSaE2SlIz9IiAfMm73ZRVvu0K+j6xfN0LmcJxvo2huh9fRsmRJLcUaioRZzUXEiAPjz
+        4dCJAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsVy+t9jQd1EW6Vog9XtGhY/tn1lsrj0tcbi
+        wtMeNoutfy6xWVzeNYfNYvaSfhaLnkdaFvuveDlweHz7OonFY837U8weLZN2sXt8aWlm9jh+
+        YzuTx+dNcgFsUVw2Kak5mWWpRfp2CVwZj85+Yy/4YVnx9Mg1pgbGrYZdjJwcEgImEl8OHWPp
+        YuTiEBJYxyhxfXcDK0iCV0BQ4sfke0AJDg5mAXmJI5eyIUx1iSlTciHK7zNKvH/YxA5RriWx
+        7RhIKwcHi4CqROtHBZAwG1B4/4sbbCA2v4CixNUfjxlBSkQFIiS6T1SChEUEfCV+vtrFDDKS
+        WWA6k8T6yf1MIAlhAWOJFbffQ512ikli8uaZYLs4BRwl3n1fwTiBUWAWkktnIVw6C+HSBYzM
+        qxglUwuKc9Nzi40KjPJSy/WKE3OLS/PS9ZLzczcxAoN+22Gt/h2Mj5fEH2IU4GBU4uFNUFaM
+        FmJNLCuuzD3EKMHBrCTCO/knUIg3JbGyKrUoP76oNCe1+BCjNAeLkjgvf/6xSCGB9MSS1OzU
+        1ILUIpgsEwenVAPj2kmTeZsST3pM2HBxj0WkwTtjnp47e+a848+9kH10EbdbOocAR5Je4pHK
+        vdLbvhQb3GFPOtZgL1azZeUZA8/bbRnukwIFTv27E+W/Ymucj6nHqTnP7li97H+lPzH3UIe+
+        3avJDXWfmFLZ8reu6d22vihl6YMGnqd9oT35/xad3qt32s/dzlpMiaU4I9FQi7moOBEAlZMH
+        K3YCAAA=
+X-CMS-MailID: 20180614100313epcas2p35bb417763b93407bc60b3956d510e2e3
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20180611085358epcas2p31227dd481046041532c7fc7a00c8e088
+References: <FE91CFE8-B9E6-4A14-8F5A-4D6AB0955290@goldelico.com>
+        <CGME20180611085358epcas2p31227dd481046041532c7fc7a00c8e088@epcas2p3.samsung.com>
+        <941bfd38-e975-e460-81aa-ce8d90c7a3f5@ti.com> <5B21C2E5.2090004@samsung.com>
+        <e5e0aeaa-727f-7ae9-6ef0-e423dadb64e7@ti.com>
+        <6A5F47F7-FDB8-4181-BE88-0D82A3053D9D@goldelico.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/06/18 08:57, Zhouyang Jia wrote:
-> Hi,
-> 
-> I reported this bug since more than 90% callsites of vmap are
-> well handled in kernel. The caller function __comedi_buf_alloc
-> has no return value, so I don't know how the error is handled in
-> its caller.
-> 
-> I believe there would be a better error handling method, but I
-> have limited domain knowledge, so I'm sorry I can't help here.
-> 
-> Thanks for your kind reply.
-> 
-> Best,
-> Zhouyang
+Hi Nikolaus,
 
-__comedi_buf_alloc is just a helper function factored out of, and called 
-by comedi_buf_alloc.  __comedi_buf_alloc does not clean up after itself 
-on error because it expects comedi_buf_alloc to detect the error and 
-call __comedi_buf_free to clean up any partially allocated mess:
+On 2018년 06월 14일 18:58, H. Nikolaus Schaller wrote:
+> Hi Roger and Chanwoo,
+> 
+>> Am 14.06.2018 um 10:34 schrieb Roger Quadros <rogerq@ti.com>:
+>>
+>> On 14/06/18 04:20, Chanwoo Choi wrote:
+>>> Hi Roger,
+>>>
+>>> On 2018년 06월 11일 17:53, Roger Quadros wrote:
+>>>> Chanwoo,
+>>>>
+>>>> On 11/06/18 11:33, H. Nikolaus Schaller wrote:
+>>>>> Hi Tony,
+>>>>> another bug...
+>>>>>
+>>>>> [  174.540313] BUG: scheduling while atomic: kworker/0:4/1327/0x00000002
+>>>>> [  174.547353] Modules linked in: omapdrm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops drm drm_panel_orientation_quirks bnep bluetooth ecdh_generic usb_f_ecm g_ether usb_f_rndis u_ether libcomposite configfs ipv6 arc4 wl18xx wlcore mac80211 panel_boe_w677l snd_soc_omap_hdmi_audio snd_soc_dmic cfg80211 dwc3 snd_soc_omap_abe_twl6040 snd_soc_twl6040 leds_gpio wwan_on_off connector_hdmi omapdss encoder_tpd12s015 cec pwm_omap_dmtimer omapdss_base pwm_bl generic_adc_battery ehci_omap wlcore_sdio dwc3_omap bmp280_spi snd_soc_ts3a227e crtouch_mt leds_is31fl319x tsc2007 bq2429x_charger bq27xxx_battery_i2c bq27xxx_battery ina2xx as5013 tca8418_keypad twl6040_vibra palmas_pwrbutton gpio_twl6040 palmas_gpadc usb3503 bmp280_i2c bmc150_accel_i2c w2cbw003_bluetooth bmc150_magn_i2c bmp280 bmc150_accel_core
+>>>>> [  174.624601]  bmc150_magn bno055 industrialio_triggered_buffer kfifo_buf industrialio snd_soc_omap_mcbsp snd_soc_omap_mcpdm snd_soc_omap snd_pcm_dmaengine [last unloaded: syscopyarea]
+>>>>> [  174.642327] CPU: 0 PID: 1327 Comm: kworker/0:4 Tainted: G        W         4.17.0-letux+ #2408
+>>>>> [  174.651541] Hardware name: Generic OMAP5 (Flattened Device Tree)
+>>>>> [  174.658004] Workqueue: events_power_efficient palmas_gpio_id_detect
+>>>>> [  174.664780] [<c01106ec>] (unwind_backtrace) from [<c010c058>] (show_stack+0x10/0x14)
+>>>>> [  174.673109] [<c010c058>] (show_stack) from [<c074ba68>] (dump_stack+0x7c/0x9c)
+>>>>> [  174.680881] [<c074ba68>] (dump_stack) from [<c0154050>] (__schedule_bug+0x60/0x84)
+>>>>> [  174.689006] [<c0154050>] (__schedule_bug) from [<c075e3c0>] (__schedule+0x50/0x694)
+>>>>> [  174.697217] [<c075e3c0>] (__schedule) from [<c075eab4>] (schedule+0xb0/0xcc)
+>>>>> [  174.704790] [<c075eab4>] (schedule) from [<c0761e58>] (schedule_timeout+0x354/0x3d4)
+>>>>> [  174.713100] [<c0761e58>] (schedule_timeout) from [<c075f544>] (wait_for_common+0x118/0x158)
+>>>>> [  174.722064] [<c075f544>] (wait_for_common) from [<c05de908>] (omap_i2c_xfer+0x354/0x48c)
+>>>>> [  174.730749] [<c05de908>] (omap_i2c_xfer) from [<c05d8410>] (__i2c_transfer+0x238/0x550)
+>>>>> [  174.739350] [<c05d8410>] (__i2c_transfer) from [<c05d87ac>] (i2c_transfer+0x84/0xb4)
+>>>>> [  174.747685] [<c05d87ac>] (i2c_transfer) from [<bf15b1f0>] (bq24296_i2c_reg8_read.constprop.8+0x54/0x64 [bq2429x_charger])
+>>>>> [  174.759465] [<bf15b1f0>] (bq24296_i2c_reg8_read.constprop.8 [bq2429x_charger]) from [<bf15b8f4>] (bq24296_update_reg+0x28/0xf8 [bq2429x_charger])
+>>>>> [  174.773437] [<bf15b8f4>] (bq24296_update_reg [bq2429x_charger]) from [<c0493b2c>] (_regulator_do_disable+0x100/0x238)
+>>>>> [  174.784804] [<c0493b2c>] (_regulator_do_disable) from [<c0493cec>] (_regulator_disable+0x88/0x120)
+>>>>> [  174.794404] [<c0493cec>] (_regulator_disable) from [<c0493db4>] (regulator_disable+0x30/0x60)
+>>>>> [  174.803556] [<c0493db4>] (regulator_disable) from [<bf1950c8>] (dwc3_omap_set_mailbox+0x84/0xf8 [dwc3_omap])
+>>>>> [  174.814124] [<bf1950c8>] (dwc3_omap_set_mailbox [dwc3_omap]) from [<bf195198>] (dwc3_omap_id_notifier+0x14/0x1c [dwc3_omap])
+>>>>> [  174.826149] [<bf195198>] (dwc3_omap_id_notifier [dwc3_omap]) from [<c014e458>] (notifier_call_chain+0x40/0x68)
+>>>>> [  174.836867] [<c014e458>] (notifier_call_chain) from [<c014e4a0>] (raw_notifier_call_chain+0x14/0x1c)
+>>>>> [  174.846661] [<c014e4a0>] (raw_notifier_call_chain) from [<c063bda4>] (extcon_sync+0x54/0x19c)
+>>>>> [  174.855804] [<c063bda4>] (extcon_sync) from [<c014874c>] (process_one_work+0x244/0x464)
+>>>>> [  174.864386] [<c014874c>] (process_one_work) from [<c0148f20>] (worker_thread+0x2c0/0x3ec)
+>>>>> [  174.873156] [<c0148f20>] (worker_thread) from [<c014cef4>] (kthread+0x134/0x150)
+>>>>> [  174.881087] [<c014cef4>] (kthread) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
+>>>>>
+>>>>> It turns out that extcon_sync() holds a spinlock while sending its notifiers and this
+>>>>> is ending up in our regulator.en/disable() which wants to use blocking i2c.
+>>>>>
+>>>>> Do you see similar things on the OMAP5EVM when using OTG mode?
+>>>>> The Palmas SMPS10 is also handled through i2c. Or is this magically hidden by regmap?
+>>>>>
+>>>>> Well, as a workaround, I can make the regulator.en/disable() in the bq2429x driver
+>>>>> just trigger a worker, but IMHO it is not expected for regulator ops to be spinlock safe.
+>>>>>
+>>>>> So I think extcon should not spinlock (which might be against the extcon design) or
+>>>>
+>>>> I think this something that should be addressed in the Extcon layer.
+>>>> Do you really need to call the raw_notifier_call_chain() function with spinlock held in extcon_sync()?
+>>>> if yes why?
+>>>
+>>> To reduce the latency of notification is important of extcon.
+>>>
+>>> So, extcon used the spinlock before calling the notifier_call_chain
+>>> to prevent the scheduled out for a moment. Also, the notifier_call
+>>> calls the registered notifier function sequentially. It means that
+>>> if some registered notifier function spends a lot of time,
+>>> the next registered notifier might receive the notification
+>>> with a delay. So, extcon used the spinlock. Unitl now, 
+>>>
+>>> But, as you commented and previously, sometimes it caused the similar issues.
+>>> (To fix similar issues, the consumer device used the workqueue)
+>>>
+>>> I will call notifier function without spinlock as following
+>>> and I'll consider the other way to notify the changed state to consumer device
+>>> with broadcasting way.
+>>>
+>>> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+>>> index 8bff5fd18185..1e35b8ca3951 100644
+>>> --- a/drivers/extcon/extcon.c
+>>> +++ b/drivers/extcon/extcon.c
+>>> @@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
+>>>                return index;
+>>>
+>>>        spin_lock_irqsave(&edev->lock, flags);
+>>> -
+>>>        state = !!(edev->state & BIT(index));
+>>> +       spin_unlock_irqrestore(&edev->lock, flags);
+>>>
+>>>        /*
+>>>         * Call functions in a raw notifier chain for the specific one
+>>> @@ -448,6 +448,8 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
+>>>         */
+>>>        raw_notifier_call_chain(&edev->nh_all, state, edev);
+>>>
+>>> +       spin_lock_irqsave(&edev->lock, flags);
+>>> +
+>>>
+>>
+>> Thanks Chanwoo.
+>>
+>> Nikolaus, could you please test this patch and give your Reported-by/Tested-by sign off? Thanks.
+>>
+>> https://lkml.org/lkml/2018/6/14/2
+> 
+> I have tested on the Pyra handheld prototype and now it works. Plugging in an OTG cable
+> enables/disables OTG power as expected and there are no kernel oops any more.
+> 
+> So you can add my Reported-by/Tested-by.
 
-     __comedi_buf_alloc(dev, s, n_pages);
-     if (!async->prealloc_buf) {
-         /*
-          * [This is not the actual comment in the code!]
-          *
-          * Error occured in __comedi_buf_alloc().
-          * Buffer may be partially allocated.
-          * Call __comedi_buf_free() to clean it up.
-          */
-         __comedi_buf_free(dev, s);
-         return -ENOMEM;
-     }
-
-> 
-> 
-> 
-> 2018-06-12 19:50 GMT+08:00 Dan Carpenter <dan.carpenter@oracle.com 
-> <mailto:dan.carpenter@oracle.com>>:
-> 
->     On Tue, Jun 12, 2018 at 11:25:35AM +0800, Zhouyang Jia wrote:
->     > When vmap fails, the lack of error-handling code may
->     > cause unexpected results.
->     > 
->     > This patch adds error-handling code after calling vmap.
->     > 
-> 
->     Again, this is not error handling, this is just an error message.  This
->     error condition is handled in the caller.
-> 
->     regards,
->     dan carpenter
-> 
-> 
-> 
-
+Thanks for the test. But, you have to reply your reported/tested-by tag 
+to patch[1] because all tags should be remained on lkml.
+[1] https://lkml.org/lkml/2018/6/14/2
 
 -- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
