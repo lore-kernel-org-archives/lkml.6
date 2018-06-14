@@ -3,80 +3,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A488CC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:32:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 26847C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:33:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 606F2208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:32:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 606F2208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D8A16208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:33:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8A16208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755301AbeFNNcX (ORCPT
+        id S1755306AbeFNNd2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:32:23 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51708 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754972AbeFNNcW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:32:22 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 14 Jun 2018 09:33:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38494 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755084AbeFNNd1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 09:33:27 -0400
+Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C6CC6818BAFD;
-        Thu, 14 Jun 2018 13:32:21 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-117-97.ams2.redhat.com [10.36.117.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2A8657C49;
-        Thu, 14 Jun 2018 13:32:18 +0000 (UTC)
-Subject: Re: Restartable Sequences system call merged into Linux
-To:     Pavel Machek <pavel@ucw.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     carlos <carlos@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
- <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com>
- <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com>
- <091061df-3482-8762-30e4-feaf3417be11@redhat.com>
- <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
- <20180614122759.GB8798@amd>
- <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com>
- <20180614132557.GA15201@amd>
-From:   Florian Weimer <fweimer@redhat.com>
-Message-ID: <1110f198-88c2-544d-6836-f901b8e90f98@redhat.com>
-Date:   Thu, 14 Jun 2018 15:32:17 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id D11EB208CB;
+        Thu, 14 Jun 2018 13:33:25 +0000 (UTC)
+Date:   Thu, 14 Jun 2018 09:33:24 -0400
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] sched/topology: Add check to backup comment
+ about hotplug lock
+Message-ID: <20180614093324.7ea45448@gandalf.local.home>
+In-Reply-To: <20180613121711.5018-2-juri.lelli@redhat.com>
+References: <20180613121711.5018-1-juri.lelli@redhat.com>
+        <20180613121711.5018-2-juri.lelli@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20180614132557.GA15201@amd>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 14 Jun 2018 13:32:21 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 14 Jun 2018 13:32:21 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/2018 03:25 PM, Pavel Machek wrote:
+On Wed, 13 Jun 2018 14:17:07 +0200
+Juri Lelli <juri.lelli@redhat.com> wrote:
 
-> But the proposal wanted to add a syscall to thread creation, right?
-> And I believe that may be noticeable.
+> From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> 
+> The comment above function partition_sched_domains() clearly state that
+> the cpu_hotplug_lock should be held but doesn't mandate one to abide to
+> it.
+> 
+> Add an explicit check backing that comment, so to make it impossible
+> for anyone to miss the requirement.
+> 
+> Suggested-by: Juri Lelli <juri.lelli@redhat.com>
+> Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> [modified changelog]
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 
-We already call set_robust_list, so we could just pass a larger area to 
-that and the kernel could use it.  Then no additional system call would 
-be needed in the common case (new kernel which recognizes the new area 
-size).
+Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-But then we cannot use an initial-exec thread local variable for it 
-(although the offset from the thread pointer will still be constant, of 
-course).
+-- Steve
 
-Thanks,
-Florian
+> ---
+>  kernel/sched/topology.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 61a1125c1ae4..96eee22fafe8 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -1858,6 +1858,7 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+>  	int i, j, n;
+>  	int new_topology;
+>  
+> +	lockdep_assert_cpus_held();
+>  	mutex_lock(&sched_domains_mutex);
+>  
+>  	/* Always unregister in case we don't destroy any domains: */
+
