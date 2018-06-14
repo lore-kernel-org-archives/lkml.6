@@ -6,163 +6,172 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3DDAAC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:01:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4111AC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:02:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9AA208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:01:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E50AA208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:01:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="i0ooEsvr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9AA208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="O12wSs4h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50AA208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755236AbeFNNBB (ORCPT
+        id S1755247AbeFNNB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:01:01 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:36691 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755191AbeFNNA6 (ORCPT
+        Thu, 14 Jun 2018 09:01:57 -0400
+Received: from mail.efficios.com ([167.114.142.138]:40570 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755027AbeFNNB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:00:58 -0400
-Received: by mail-yb0-f194.google.com with SMTP id x128-v6so2192123ybg.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=deWsDcOsyAZRzmecUq1PgGESWYMgLoKvgP7bPoc1vAQ=;
-        b=i0ooEsvrVasqdiMqCCaNJrwhJ5HlQrhTEAvO7pVOetmxFPGvY17JS38lNagj7Qw2dg
-         n8GYy5vPMay5SipHE9Liqa50tcY189LUlEqwWWyDNHqT1oX6xHjqqPygu5bBTqS1ZECf
-         9yHn/wbnd8RdGm/RHJzjFjN7Dz4aMt+ebMbIY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=deWsDcOsyAZRzmecUq1PgGESWYMgLoKvgP7bPoc1vAQ=;
-        b=EyDYsDirMuRdZ4xwoAhGoyqsNo6dG9PiV16os1fSxvexn21jFmzUHzLOKwtTQWjELC
-         kpXvcxfOOEITGTYexnMDJlbPSr9qsRjQrR2KBbIvqry9+XQvTwLauIj9tt1+s3dSx3Vx
-         vAr1THBi/eY69ro0EPo1y0FFGXTDymDgSSXT31WrZKYAD1bE/3ro0riXfvU6/fRL19Om
-         i1ujFTbKmYnEBCM3PG3T8cjipKlcei4iqk3BLBnxLF4FfkLg6/t1BSv10XvPUV/lQ5JF
-         yGxDyuRocd+LsHiLxTNgprWZi4bp7KDeR6UPCo+peS40fK6Q7MyvXk/JuoqZMEdXn+rl
-         7h5w==
-X-Gm-Message-State: APt69E3x2XNYKhHSMhHpC0LMdcPDPOCdRT9AxSdnqtOWaz9LoP0GZyWK
-        bXgrgy6FEjv3Ig/hhOzBMct21Sq9ZNA=
-X-Google-Smtp-Source: ADUXVKK2ttfoybpeXWL0wPvcfXrOub/kUQ8ISLWpy4yVBE1hESS7XU40QjBIe3tvdPRiyafMSbg3GQ==
-X-Received: by 2002:a25:d647:: with SMTP id n68-v6mr1275225ybg.113.1528981258050;
-        Thu, 14 Jun 2018 06:00:58 -0700 (PDT)
-Received: from mail-yw0-f174.google.com (mail-yw0-f174.google.com. [209.85.161.174])
-        by smtp.gmail.com with ESMTPSA id s4-v6sm2200159ywa.9.2018.06.14.06.00.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 06:00:56 -0700 (PDT)
-Received: by mail-yw0-f174.google.com with SMTP id p129-v6so2093328ywg.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:00:55 -0700 (PDT)
-X-Received: by 2002:a0d:e7c5:: with SMTP id q188-v6mr1232321ywe.435.1528981255345;
- Thu, 14 Jun 2018 06:00:55 -0700 (PDT)
+        Thu, 14 Jun 2018 09:01:56 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 3542822A5C1;
+        Thu, 14 Jun 2018 09:01:55 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id hGawpuIfXYM2; Thu, 14 Jun 2018 09:01:54 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 35A5622A5B6;
+        Thu, 14 Jun 2018 09:01:54 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 35A5622A5B6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1528981314;
+        bh=zxotOBHu5J5jtSqWd/71oQTMfiBO+7CEFlP49hVjOU0=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=O12wSs4hJloHYybtZI3XW1G+jXphfnWrTPaFyIhW2b/uNDQLm1i9Zz2WrZjTCpd4a
+         vn3MNLEwViMDfuQTPsBwQuRo+SegxhIEBReyNEulmSrNsA7v/a2nU2N5GDXRA88c4Y
+         75MPUycRQzGgVB+UbP7iSkjY+ccTcyG65LOVZ+VFYZmCFUM5egyDV3WTanBnzp9WR1
+         LtIaXHr/YG3MQZfRxJsHWoNk23+AjdDwMrrNeQ9dHD2i5Jaic/2+fhPLPVDwk3GXS6
+         m7nmyfGxaMKK0UZgmpPRVABG6sgm7qgHcTeaQpwbR5BqptJeKIM81ke+6oPAgj5R1K
+         lsl5xFg99m5Uw==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id QfxzugbcLw33; Thu, 14 Jun 2018 09:01:54 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 1EC4C22A5AC;
+        Thu, 14 Jun 2018 09:01:54 -0400 (EDT)
+Date:   Thu, 14 Jun 2018 09:01:54 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>
+Message-ID: <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20180614122759.GB8798@amd>
+References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com> <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com> <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com> <091061df-3482-8762-30e4-feaf3417be11@redhat.com> <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com> <20180614122759.GB8798@amd>
+Subject: Re: Restartable Sequences system call merged into Linux
 MIME-Version: 1.0
-References: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-In-Reply-To: <20180613140714.1686-1-maxime.ripard@bootlin.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 14 Jun 2018 22:00:43 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5A-GMBnNnRCfm0-51R9rn_pWw+UC3r-JX-_BE3cdznqig@mail.gmail.com>
-Message-ID: <CAAFQd5A-GMBnNnRCfm0-51R9rn_pWw+UC3r-JX-_BE3cdznqig@mail.gmail.com>
-Subject: Re: [PATCH 0/9] media: cedrus: Add H264 decoding support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Pawel Osciak <posciak@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        nicolas.dufresne@collabora.com, jenskuske@gmail.com,
-        linux-sunxi@googlegroups.com, thomas.petazzoni@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: Restartable Sequences system call merged into Linux
+Thread-Index: OpJ2reEB6eAcL/fMfb8+gVNJRFXzdA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+----- On Jun 14, 2018, at 8:27 AM, Pavel Machek pavel@ucw.cz wrote:
 
-On Wed, Jun 13, 2018 at 11:07 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> Hi,
->
-> Here is a preliminary version of the H264 decoding support in the
-> cedrus driver.
+> On Tue 2018-06-12 12:31:24, Mathieu Desnoyers wrote:
+>> ----- On Jun 12, 2018, at 9:11 AM, Florian Weimer fweimer@redhat.com wrote:
+>> 
+>> > On 06/11/2018 10:04 PM, Mathieu Desnoyers wrote:
+>> >> ----- On Jun 11, 2018, at 3:55 PM, Florian Weimer fweimer@redhat.com wrote:
+>> >> 
+>> >>> On 06/11/2018 09:49 PM, Mathieu Desnoyers wrote:
+>> >>>> It should be noted that there can be only one rseq TLS area registered per
+>> >>>> thread,
+>> >>>> which can then be used by many libraries and by the executable, so this is a
+>> >>>> process-wide (per-thread) resource that we need to manage carefully.
+>> >>>
+>> >>> Is it possible to resize the area after thread creation, perhaps even
+>> >>> from other threads?
+>> >> 
+>> >> I'm not sure why we would want to resize it. The per-thread area is fixed-size.
+>> >> Its layout is here: include/uapi/linux/rseq.h: struct rseq
+>> > 
+>> > Looks I was mistaken and this is very similar to the robust mutex list.
+>> > 
+>> > Should we treat it the same way?  Always allocate it for each new thread
+>> > and register it with the kernel?
+>> 
+>> That would be an efficient way to do it, indeed. There is very little
+>> performance overhead to have rseq registered for all threads, whether or
+>> not they intend to run rseq critical sections.
+> 
+> People with slow / low memory machines would prefer not to see
+> overhead they don't need...
 
-Thanks for the series! Let me reply inline to some of the points raised here.
+In terms of memory usage, if people don't want the extra few bytes of memory
+used by rseq in the kernel, they should use CONFIG_RSEQ=n.
 
->
-> As you might already know, the cedrus driver relies on the Request
-> API, and is a reverse engineered driver for the video decoding engine
-> found on the Allwinner SoCs.
->
-> This work has been possible thanks to the work done by the people
-> behind libvdpau-sunxi found here:
-> https://github.com/linux-sunxi/libvdpau-sunxi/
->
-> This driver is based on the last version of the cedrus driver sent by
-> Paul, based on Request API v13 sent by Hans:
-> https://lkml.org/lkml/2018/5/7/316
+In terms of overhead, let's have a closer look at what it means: when a thread
+is registered to rseq, but does not enter rseq critical sections, only this
+extra work is done by the kernel:
 
-Just FYI, there is v15 already. :)
+- rseq_preempt(): on preemption, the scheduler sets the TIF_NOTIFY_RESUME thread
+  flag, so rseq_handle_notify_resume() can check whether it's in a rseq critical
+  section when returning to user-space,
+- rseq_signal_deliver(): on signal delivery, rseq_handle_notify_resume() checks
+  whether it's in a rseq critical section,
+- rseq_migrate: on migration, the scheduler sets TIF_NOTIFY_RESUME as well,
 
->
-> This driver has been tested only with baseline profile videos, and is
-> missing a few key features to decode videos with higher profiles.
-> This has been tested using our cedrus-frame-test tool, which should be
-> a quite generic v4l2-to-drm decoder using the request API to
-> demonstrate the video decoding:
-> https://github.com/free-electrons/cedrus-frame-test/, branch h264
->
-> However, sending this preliminary version, I'd really like to start a
-> discussion and get some feedback on the user-space API for the H264
-> controls exposed through the request API.
->
-> I've been using the controls currently integrated into ChromeOS that
-> have a working version of this particular setup. However, these
-> controls have a number of shortcomings and inconsistencies with other
-> decoding API. I've worked with libva so far, but I've noticed already
-> that:
+> 
+>> I have a few possible approaches in mind (feel free to suggest other
+>> options):
+>> 
+>> A) glibc exposes a strong __rseq_abi TLS symbol:
+>> 
+>>    - should ideally *not* be global-dynamic for performance reasons,
+>>    - registration to kernel can either be handled explicitly by requiring
+>>      application or libraries to call an API, or implicitly at thread
+>>      creation,
+> 
+> ...so I'd prefer explicit API call.
 
-Note that these controls are supposed to be defined exactly like the
-bitstream headers deserialized into C structs in memory. I believe
-Pawel (on CC) defined them based on the actual H264 specification.
+I have use-cases where a library wants to link against librseq and have rseq
+critical sections, without requiring the application to explicitly add rseq
+registration calls on thread creation/destruction. Is there a way to register
+callbacks to glibc which could be invoked on thread creation/destruction ?
 
->   - The kernel UAPI expects to have the nal_ref_idc variable, while
->     libva only exposes whether that frame is a reference frame or
->     not. I've looked at the rockchip driver in the ChromeOS tree, and
->     our own driver, and they both need only the information about
->     whether the frame is a reference one or not, so maybe we should
->     change this?
+Then if we include dynamic loading of libraries (dlopen/dlclose) in the
+picture, this gets even worse, as we'd need to be able to iterate on all
+existing threads to invoke registration/unregistration callbacks.
 
-The fact that 2 drivers only need partial information doesn't mean
-that we should ignore the data being already in the bitstream. IMHO
-this API should to provide all the metadata available in the stream to
-the kernel driver, as a replacement for bitstream parsing in firmware
-(or in kernel... yuck).
+One alternative approach would be to let the user library lazily register rseq
+when needed, and use a pthread_key for unregistration. However, this does not
+allow dlclose of the user library without figuring a way to iterate on all
+threads.
 
->   - The H264 bitstream exposes the picture default reference list (for
->     both list 0 and list 1), the slice reference list and an override
->     flag. The libva will only pass the reference list to be used (so
->     either the picture default's or the slice's) depending on the
->     override flag. The kernel UAPI wants the picture default reference
->     list and the slice reference list, but doesn't expose the override
->     flag, which prevents us from configuring properly the
->     hardware. Our video decoding engine needs the three information,
->     but we can easily adapt to having only one. However, having two
->     doesn't really work for us.
+Another alternative would be to somehow let glibc handle the registration,
+perhaps only doing it for applications expressing their interest for rseq.
 
-Where does the override flag come from? If it's in the bitstream, then
-I guess it was just missed when creating the structures.
+Thoughts ?
 
-Best regards,
-Tomasz
+Thanks,
+
+Mathieu
+
+> 
+>> B) librseq.so exposes a strong __rseq_abi symbol:
+> 
+> Works for me.
+>									Pavel
+> 
+> --
+> (english) http://www.livejournal.com/~pavelmachek
+> (cesky, pictures)
+> http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blog.html
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
