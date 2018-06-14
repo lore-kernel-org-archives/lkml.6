@@ -2,125 +2,153 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6B960C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:34:59 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C92A8C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:35:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 197A3208E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:34:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 197A3208E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 84C372087E
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:35:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C372087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935850AbeFNBe4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 21:34:56 -0400
-Received: from mga14.intel.com ([192.55.52.115]:43361 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935695AbeFNBey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 21:34:54 -0400
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Jun 2018 18:34:54 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,220,1526367600"; 
-   d="scan'208";a="49737936"
-Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
-  by orsmga006.jf.intel.com with ESMTP; 13 Jun 2018 18:34:52 -0700
-Date:   Wed, 13 Jun 2018 18:31:17 -0700
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Nicholas Piggin <npiggin@gmail.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        Don Zickus <dzickus@redhat.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Babu Moger <babu.moger@oracle.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [RFC PATCH 12/23] kernel/watchdog: Introduce a struct for NMI
- watchdog operations
-Message-ID: <20180614013117.GC22652@voyager>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-13-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <20180613174141.539fc6c1@roar.ozlabs.ibm.com>
- <20180613084219.GT12258@hirez.programming.kicks-ass.net>
- <alpine.DEB.2.21.1806131121180.2280@nanos.tec.linutronix.de>
- <20180613215225.2a938abc@roar.ozlabs.ibm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180613215225.2a938abc@roar.ozlabs.ibm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S935907AbeFNBfK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 21:35:10 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:53344 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935725AbeFNBez (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 13 Jun 2018 21:34:55 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id DE5FC21580;
+        Thu, 14 Jun 2018 01:34:54 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YpxSunuMmjWO; Thu, 14 Jun 2018 01:34:54 +0000 (UTC)
+Received: from localhost.localdomain (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 8AD5021351;
+        Thu, 14 Jun 2018 01:34:47 +0000 (UTC)
+From:   "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+To:     keescook@chromium.org, luto@amacapital.net, wad@chromium.org,
+        shuah@kernel.org
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: kselftest_harness: return Kselftest Skip code for skipped tests
+Date:   Wed, 13 Jun 2018 19:34:45 -0600
+Message-Id: <20180614013445.6120-1-shuah@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 09:52:25PM +1000, Nicholas Piggin wrote:
-> On Wed, 13 Jun 2018 11:26:49 +0200 (CEST)
-> Thomas Gleixner <tglx@linutronix.de> wrote:
-> 
-> > On Wed, 13 Jun 2018, Peter Zijlstra wrote:
-> > > On Wed, Jun 13, 2018 at 05:41:41PM +1000, Nicholas Piggin wrote:  
-> > > > On Tue, 12 Jun 2018 17:57:32 -0700
-> > > > Ricardo Neri <ricardo.neri-calderon@linux.intel.com> wrote:
-> > > >   
-> > > > > Instead of exposing individual functions for the operations of the NMI
-> > > > > watchdog, define a common interface that can be used across multiple
-> > > > > implementations.
-> > > > > 
-> > > > > The struct nmi_watchdog_ops is defined for such operations. These initial
-> > > > > definitions include the enable, disable, start, stop, and cleanup
-> > > > > operations.
-> > > > > 
-> > > > > Only a single NMI watchdog can be used in the system. The operations of
-> > > > > this NMI watchdog are accessed via the new variable nmi_wd_ops. This
-> > > > > variable is set to point the operations of the first NMI watchdog that
-> > > > > initializes successfully. Even though at this moment, the only available
-> > > > > NMI watchdog is the perf-based hardlockup detector. More implementations
-> > > > > can be added in the future.  
-> > > > 
-> > > > Cool, this looks pretty nice at a quick glance. sparc and powerpc at
-> > > > least have their own NMI watchdogs, it would be good to have those
-> > > > converted as well.  
-> > > 
-> > > Yeah, agreed, this looks like half a patch.  
-> > 
-> > Though I'm not seeing the advantage of it. That kind of NMI watchdogs are
-> > low level architecture details so having yet another 'ops' data structure
-> > with a gazillion of callbacks, checks and indirections does not provide
-> > value over the currently available weak stubs.
-> 
-> The other way to go of course is librify the perf watchdog and make an
-> x86 watchdog that selects between perf and hpet... I also probably
-> prefer that for code such as this, but I wouldn't strongly object to
-> ops struct if I'm not writing the code. It's not that bad is it?
+When a test is skipped because of unmet dependencies and/or unsupported
+configuration, kselftest_harness exits with error which is treated as a
+fail by the Kselftest framework. This leads to false negative result even
+when the test could not be run.
 
-My motivation to add the ops was that the hpet and perf watchdog share
-significant portions of code. I could look into creating the library for
-common code and relocate the hpet watchdog into arch/x86 for the hpet-
-specific parts.
+Change it to return kselftest skip code when a test gets skipped to
+clearly report that the test could not be run. This change add skip
+handling to kselftest_harness with minimal changes adding a new skipped
+field to struct __test_metadata and using it to recognize KSFT_SKIP exit
+from the test function (t->fn) to __run_test() to the test_harness_run()
+to return the right skip code to Kselftest framework.
 
-Thanks and BR,
-Ricardo
+Kselftest framework SKIP code is 4 and the framework prints appropriate
+messages to indicate that the test is skipped.
+
+This change is tested on uevent test and the results are as follows:
+
+Before:
+
+TAP version 13
+selftests: uevent: uevent_filtering
+========================================
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.uevent_filtering
+uevent_filtering.c:355:global.uevent_filtering:Uevent filtering tests require root privileges. Skipping test
+global.uevent_filtering: Test skipped at step #4
+[     FAIL ] global.uevent_filtering
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
+not ok 1..1 selftests: uevent: uevent_filtering [FAIL]
+
+After:
+
+TAP version 13
+selftests: uevent: uevent_filtering
+========================================
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.uevent_filtering
+uevent_filtering.c:355:global.uevent_filtering:Uevent filtering tests require root privileges. Skipping test
+global.uevent_filtering: Test skipped at step #4
+[     SKIP ] global.uevent_filtering
+not ok 1..1 selftests: uevent: uevent_filtering [SKIP]
+
+Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+---
+ tools/testing/selftests/kselftest_harness.h | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
+
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index 6ae3730c4ee3..7af9ab97b367 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -631,6 +631,7 @@ struct __test_metadata {
+ 	void (*fn)(struct __test_metadata *);
+ 	int termsig;
+ 	int passed;
++	int skipped;
+ 	int trigger; /* extra handler after the evaluation */
+ 	__u8 step;
+ 	bool no_print; /* manual trigger when TH_LOG_STREAM is not available */
+@@ -694,6 +695,7 @@ void __run_test(struct __test_metadata *t)
+ 	int status;
+ 
+ 	t->passed = 1;
++	t->skipped = 0;
+ 	t->trigger = 0;
+ 	printf("[ RUN      ] %s\n", t->name);
+ 	child_pid = fork();
+@@ -716,9 +718,12 @@ void __run_test(struct __test_metadata *t)
+ 					t->name,
+ 					WEXITSTATUS(status));
+ 			} else if (!t->passed) {
++				if (WEXITSTATUS(status) == KSFT_SKIP)
++					t->skipped = 1;
+ 				fprintf(TH_LOG_STREAM,
+-					"%s: Test failed at step #%d\n",
++					"%s: Test %s at step #%d\n",
+ 					t->name,
++					(t->skipped ? "skipped" : "failed"),
+ 					WEXITSTATUS(status));
+ 			}
+ 		} else if (WIFSIGNALED(status)) {
+@@ -743,7 +748,11 @@ void __run_test(struct __test_metadata *t)
+ 				status);
+ 		}
+ 	}
+-	printf("[     %4s ] %s\n", (t->passed ? "OK" : "FAIL"), t->name);
++	if (t->skipped)
++		printf("[     %4s ] %s\n", "SKIP", t->name);
++	else
++		printf("[     %4s ] %s\n", (t->passed ? "OK" : "FAIL"),
++			t->name);
+ }
+ 
+ static int test_harness_run(int __attribute__((unused)) argc,
+@@ -762,6 +771,8 @@ static int test_harness_run(int __attribute__((unused)) argc,
+ 		__run_test(t);
+ 		if (t->passed)
+ 			pass_count++;
++		else if (t->skipped)
++			return KSFT_SKIP;
+ 		else
+ 			ret = 1;
+ 	}
+-- 
+2.17.0
+
