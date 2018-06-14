@@ -5,37 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6E431C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:00:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C3840C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25864208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:00:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25864208C3
+	by mail.kernel.org (Postfix) with ESMTP id 84C26208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:01:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84C26208C3
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755278AbeFNQAo (ORCPT
+        id S1755335AbeFNQBh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:00:44 -0400
-Received: from mx2.suse.de ([195.135.220.15]:40662 "EHLO mx2.suse.de"
+        Thu, 14 Jun 2018 12:01:37 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40767 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754965AbeFNQAn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:00:43 -0400
+        id S1754950AbeFNQBg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:01:36 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DEFA2AF75;
-        Thu, 14 Jun 2018 16:00:41 +0000 (UTC)
-Date:   Thu, 14 Jun 2018 18:00:41 +0200
-Message-ID: <s5hd0wt2w9i.wl-tiwai@suse.de>
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 77799AF75;
+        Thu, 14 Jun 2018 16:01:35 +0000 (UTC)
+Date:   Thu, 14 Jun 2018 18:01:35 +0200
+Message-ID: <s5hbmcd2w80.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Zhouyang Jia" <jiazhouyang09@gmail.com>
 Cc:     <alsa-devel@alsa-project.org>,
         "Bhumika Goyal" <bhumirks@gmail.com>,
         "Jaroslav Kysela" <perex@perex.cz>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3] ALSA: sonicvibes: add error handling for snd_ctl_add
-In-Reply-To: <1528976499-52071-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528704521-34060-1-git-send-email-jiazhouyang09@gmail.com>
-        <1528976499-52071-1-git-send-email-jiazhouyang09@gmail.com>
+Subject: Re: [PATCH v2] ALSA: lx6464es: add error handling for pci_ioremap_bar
+In-Reply-To: <1528984308-53122-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528773796-37922-1-git-send-email-jiazhouyang09@gmail.com>
+        <1528984308-53122-1-git-send-email-jiazhouyang09@gmail.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -46,20 +46,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Jun 2018 13:41:37 +0200,
+On Thu, 14 Jun 2018 15:51:46 +0200,
 Zhouyang Jia wrote:
 > 
-> When snd_ctl_add fails, the lack of error-handling code may
+> When pci_ioremap_bar fails, the lack of error-handling code may
 > cause unexpected results.
 > 
-> This patch adds error-handling code after calling snd_ctl_add.
+> This patch adds error-handling code after calling pci_ioremap_bar.
 > 
 > Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 > ---
 > v1->v2:
-> - Check the return value of snd_sonicvibes_create_gameport.
-> v2->v3:
-> - Fix the code style.
+> - Add new goto label.
 
 Applied, thanks.
 
