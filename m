@@ -2,115 +2,170 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C5908C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A0714C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:49:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78111208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 460EF208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:49:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OuJEOuzt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78111208D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="cyxzJhqF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 460EF208D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754836AbeFNHrp (ORCPT
+        id S1754653AbeFNHtl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:47:45 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:38303 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754810AbeFNHrl (ORCPT
+        Thu, 14 Jun 2018 03:49:41 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37354 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752759AbeFNHtj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:47:41 -0400
-Received: by mail-pf0-f193.google.com with SMTP id b74-v6so2799125pfl.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:47:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=mHz5AKgDUD0rTL77iNLGvl6AY6qKgjnmhQn6Klvek3I=;
-        b=OuJEOuzt8lDtj0E9xEkgKSY5UZkP4XD54wZe4Y5QL4t/Og+bc5g7tEar5SeCYLufun
-         JLPVybAvoew7qwuQhsBW5vH3RY6xhzFtt9x2/zIgMGh+UkmUHYqyKAL8ZKDFIc8rb7Ab
-         lVOBmmGNizz7/zctHOKP87F+vlGiyyoX6wAsg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=mHz5AKgDUD0rTL77iNLGvl6AY6qKgjnmhQn6Klvek3I=;
-        b=nYUm0ij48OpV+r2idAZDOTjWfYjAQ7rzWBkLobLDHMYr3gWxooH39yWZux1GLXvaF5
-         pV0HRYAGIjjAgYzt/cZWuzV1Nx18WsjW4p4l6vMK5Q+AHsvTJJpVE5xjsZvlP5HmwIJc
-         GS9jJw91D4XFjsaC0T17onE7C6AGxFXp1Xg4C5SqYYQEtWR6kxE1ViNQU0M4uW8YTZrH
-         WdKXxqNvsiozLYZeLgq7QK4X6Qf6IhJ3G8GIDb6Er84hxvZ7DDfhGFSokWs5XgPgyhAy
-         GaLyvA+oA71UZacKxbH1I732W10zJC/+XbsSV3fto/wQyjZ5jfeO2iE7/zqA5GPGjSkt
-         VQ6Q==
-X-Gm-Message-State: APt69E26DL3tCmXocVUPJNUQ3SR/PaAC5FKSxfZTgouZxqqyA4BCQRm+
-        DS3qtcJtlaYEy0Z/fD7YhA56XsRoKUs=
-X-Google-Smtp-Source: ADUXVKJFw40Sz6xHc/SJcXOQ4PGZQj47xp7ojQxee7OZbCk9N+6XY4fo0SrycVCRUadAx9NfwczUJw==
-X-Received: by 2002:a65:6303:: with SMTP id g3-v6mr1370545pgv.424.1528962460873;
-        Thu, 14 Jun 2018 00:47:40 -0700 (PDT)
-Received: from keiichiw1.tok.corp.google.com ([2401:fa00:4:4:968c:de0d:27a3:4bef])
-        by smtp.gmail.com with ESMTPSA id y11-v6sm6522788pfn.92.2018.06.14.00.47.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 00:47:39 -0700 (PDT)
-From:   Keiichi Watanabe <keiichiw@chromium.org>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Kamil Debski <kamil@wypas.org>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
-        s.nawrocki@samsung.com
-Subject: [PATCH v3 3/3] media: mtk-vcodec: Support VP9 profile in decoder
-Date:   Thu, 14 Jun 2018 16:46:52 +0900
-Message-Id: <20180614074652.162796-4-keiichiw@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
-In-Reply-To: <20180614074652.162796-1-keiichiw@chromium.org>
-References: <20180614074652.162796-1-keiichiw@chromium.org>
+        Thu, 14 Jun 2018 03:49:39 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5E7mlX6039406;
+        Thu, 14 Jun 2018 07:49:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=7+J8vEpLZxbjSUk8Vu+Dk5iP0UDFZxVHFRoFHoNmJsI=;
+ b=cyxzJhqFfvFWRicjaYkRKTAEJA0j1DiMEviUBf8kpIr52NP669o5LG2aflE5PSWNM+aq
+ qpsmga9+B+0iOlMQM6mKm2DoOpMkkXzRYZM3jYETN2f/zhAfPw4QDQKZkq0VXE14n7Wd
+ WiHCAXOrMdrE7x3fG5aiG5WUAyo03GvwWVXEXNa6DF847vZzFn6jdiKjaplPB1nGFvUx
+ BTWWo8m/UQI3O1P+Ze+Py25pvUQTSdnsf2IX2kfCgaGjfyfr7frOm6Jaxg6HnzwWqiOQ
+ Tk2I8DgL9L1BzzdkFJWcaW7I2LQC38rKhHP6MikWsMY5NFxGI6LWAvxuYJLTqopmFTOE zw== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2jk0xrbv5y-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 07:49:20 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5E7nJqb009028
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 07:49:19 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5E7nHkp027704;
+        Thu, 14 Jun 2018 07:49:17 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jun 2018 00:49:17 -0700
+Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
+ 4.17.0-x64-08428-g7d3bf613e99a
+To:     "hch@lst.de" <hch@lst.de>, Bart Van Assche <Bart.VanAssche@wdc.com>
+Cc:     "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
+        "rdunlap@infradead.org" <rdunlap@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
+References: <201806091606.51078.randrianasulu@gmail.com>
+ <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org>
+ <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com>
+ <5ca74fb7-af70-31c3-0e3f-bace058e5a57@oracle.com>
+ <20180613140411.GA32701@lst.de>
+ <09e8bd7605febd091679172d68ca1e9ca3990c91.camel@wdc.com>
+ <20180613143558.GA1163@lst.de>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <77932f7b-08ba-7ece-3778-d7da82772057@oracle.com>
+Date:   Thu, 14 Jun 2018 15:49:28 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
+MIME-Version: 1.0
+In-Reply-To: <20180613143558.GA1163@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8923 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806140092
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add V4L2_CID_MPEG_VIDEO_VP9_PROFILE control in MediaTek decoder's
-driver.
-MediaTek decoder only supports profile 0 for now.
+Hi Christoph
 
-Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
----
- drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On 06/13/2018 10:35 PM, hch@lst.de wrote:
+> On Wed, Jun 13, 2018 at 02:08:12PM +0000, Bart Van Assche wrote:
+>> __blk_mq_complete_request() is already called today by blk_mq_complete_request().
+>> However, it's not clear to me why that function is exported by Jianchao's patch.
+> 
+> True.  I had missed that the patch also started calling the new
+> mark_rq_complete function from the error handler.
+> 
+>> The SCSI error handler already waits until all pending requests have finished
+>> before it starts handling timed out commands. This e-mail thread started with a
+>> report of a crash in the SCSI error handler, which is a regression introduced in
+>> the v4.18 merge window.
+> 
+> ut-requests-again-that-are-in-the.patch
+> Yeah.  I've read back a bit.  If your theory of a double invocation of
+> the timeout handler is correct something like the patch below should sort
+> it out, right?
 
-diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
-index 86f0a7134365..ba986232b953 100644
---- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
-+++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
-@@ -1400,6 +1400,11 @@ int mtk_vcodec_dec_ctrls_setup(struct mtk_vcodec_ctx *ctx)
- 				V4L2_CID_MIN_BUFFERS_FOR_CAPTURE,
- 				0, 32, 1, 1);
- 	ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
-+	v4l2_ctrl_new_std_menu(&ctx->ctrl_hdl,
-+				&mtk_vcodec_dec_ctrl_ops,
-+				V4L2_CID_MPEG_VIDEO_VP9_PROFILE,
-+				V4L2_MPEG_VIDEO_VP9_PROFILE_0,
-+				0, V4L2_MPEG_VIDEO_VP9_PROFILE_0);
+Yes, it will work for this issue.
+But we should also clear the RQF_TIMED_OUT in __blk_mq_requeue_request and blk_mq_rq_ctx_init.
 
- 	if (ctx->ctrl_hdl.error) {
- 		mtk_v4l2_err("Adding control failed %d",
---
-2.18.0.rc1.242.g61856ae69a-goog
+Thanks
+Jianchao
+
+> 
+> ---
+>>From d408928360f087c0ad24e31d1d25533c698b8b35 Mon Sep 17 00:00:00 2001
+> From: Christoph Hellwig <hch@lst.de>
+> Date: Wed, 13 Jun 2018 16:25:40 +0200
+> Subject: blk-mq: don't time out requests again that are in the timeout handler
+> 
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  block/blk-mq.c         | 4 ++++
+>  include/linux/blkdev.h | 2 ++
+>  2 files changed, 6 insertions(+)
+> 
+> diff --git a/block/blk-mq.c b/block/blk-mq.c
+> index e9da5e6a8526..8a2895fed078 100644
+> --- a/block/blk-mq.c
+> +++ b/block/blk-mq.c
+> @@ -770,6 +770,7 @@ EXPORT_SYMBOL(blk_mq_tag_to_rq);
+>  
+>  static void blk_mq_rq_timed_out(struct request *req, bool reserved)
+>  {
+> +	req->rq_flags |= RQF_TIMED_OUT;
+>  	if (req->q->mq_ops->timeout) {
+>  		enum blk_eh_timer_return ret;
+>  
+> @@ -779,6 +780,7 @@ static void blk_mq_rq_timed_out(struct request *req, bool reserved)
+>  		WARN_ON_ONCE(ret != BLK_EH_RESET_TIMER);
+>  	}
+>  
+> +	req->rq_flags &= ~RQF_TIMED_OUT;
+>  	blk_add_timer(req);
+>  }
+>  
+> @@ -788,6 +790,8 @@ static bool blk_mq_req_expired(struct request *rq, unsigned long *next)
+>  
+>  	if (blk_mq_rq_state(rq) != MQ_RQ_IN_FLIGHT)
+>  		return false;
+> +	if (rq->rq_flags & RQF_TIMED_OUT)
+> +		return false;
+>  
+>  	deadline = blk_rq_deadline(rq);
+>  	if (time_after_eq(jiffies, deadline))
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index bca3a92eb55f..fa6f11751430 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -127,6 +127,8 @@ typedef __u32 __bitwise req_flags_t;
+>  #define RQF_ZONE_WRITE_LOCKED	((__force req_flags_t)(1 << 19))
+>  /* already slept for hybrid poll */
+>  #define RQF_MQ_POLL_SLEPT	((__force req_flags_t)(1 << 20))
+> +/* ->timeout has been called, don't expire again */
+> +#define RQF_TIMED_OUT		((__force req_flags_t)(1 << 21))
+>  
+>  /* flags that prevent us from merging requests: */
+>  #define RQF_NOMERGE_FLAGS \
+> 
