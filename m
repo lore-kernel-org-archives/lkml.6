@@ -2,84 +2,91 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B9C9EC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:47:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 95166C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DD38208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:47:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZNhO2yKM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DD38208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 562A520020
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:47:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 562A520020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755358AbeFNNrQ (ORCPT
+        id S1755371AbeFNNrh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:47:16 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:48548 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754990AbeFNNrN (ORCPT
+        Thu, 14 Jun 2018 09:47:37 -0400
+Received: from mail-wr0-f193.google.com ([209.85.128.193]:32872 "EHLO
+        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754990AbeFNNrg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:47:13 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5EDhsOB134149;
-        Thu, 14 Jun 2018 13:47:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=n8h6ux5wgY3m6jRCqO/JXfM5g8WImUbSk7x4OxI5dU4=;
- b=ZNhO2yKMTB3RU25Trsz+Afiyw//Dv1yg3TTpVkdXc6pmmTd+eJtMZM9inbYRsZ0C2TTT
- xonFWO7b5dLA+ZAsvYLcX3GHPYlVOTbIIZSe+4YunVhjbjgqG4y2blIFxiU0AJ5RLXTv
- fmWducCRan2Cdmk1NK+YbfUrLxpgtjK6CB0lCUyZlUyqvaZ6b1h+vYQRTTa31yAUbpi8
- QlpB62Y4TbXh2w7dotDvhmSGqhZfdb+TYuxNYePm8OTrZ8C2kPpOGGHevaxmf9rzwFui
- xHljtQuOkjrQzBAK36ocMBXanHqXxOqbioMlessCcoIORnQraekLdqtWCQ9oV9bZOTPg 8Q== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2jk0xrn5e0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 13:47:02 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5EDl1Id031204
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 13:47:01 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5EDl0k4023043;
-        Thu, 14 Jun 2018 13:47:00 GMT
-Received: from mwanda (/41.202.241.23)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Jun 2018 06:46:59 -0700
-Date:   Thu, 14 Jun 2018 16:46:52 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Hugo Lefeuvre <hle@owl.eu.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org,
-        Marcus Wolf <linux@wolf-entwicklungen.de>,
-        linux-kernel@vger.kernel.org, kernelnewbies@kernelnewbies.org
-Subject: Re: [PATCH v4] staging: pi433: fix race condition in pi433_ioctl
-Message-ID: <20180614091033.xf3ycr5yvyxd6svi@mwanda>
-References: <20180614010438.GB1974@hle-laptop.local>
+        Thu, 14 Jun 2018 09:47:36 -0400
+Received: by mail-wr0-f193.google.com with SMTP id k16-v6so6528505wro.0
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:47:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Ar2RMqw31uY6lyyAZk3x/8IfH55xsA7op4sGcJVmiUM=;
+        b=P1WFehNhh5M1CRNa+riPA/r7RgH4dVUknKXSEBpttp1eajAkHmT8M6ijOFrP8+mjvw
+         4yV1zhcrO1pkggKdsEPeBudgcDDqSLB/9uA4L+nOa1ImY9FEFHOV9Uhst62kh665Z54s
+         JbcC6LoRElxEqxXEkAxEhBYEA2IfCl3MfSK8R965zNe0M98ebk28waFBEus+iE2hMQhc
+         I9HTTDird1R8OPoPKWCtQ9A/Yn2kNQpVwK3XYtOIEWeUeJwbv+d3MZdxBD+eeNXYeoZw
+         rjZGjJKWNVL50IjX9KMSKD2FUykZQb3c3NyJEJ4CWql6b4+bCfMriRVFN90+bsxdBtYd
+         xO6g==
+X-Gm-Message-State: APt69E3HUJace7TDobbI3w6voLFIMAepHTSaHvZPHzPgPXoU+Nz4gwZs
+        x2KknAIB2J9Jcn5JWwWdCz7kkQ==
+X-Google-Smtp-Source: ADUXVKLl6H58VnC+J7p2uVDuIZvflSvZofl6gVNaZV9wL4TaLwpnHtNXdiYzFnOFnzd5LU8m6dyTGQ==
+X-Received: by 2002:adf:9a31:: with SMTP id z46-v6mr2297144wrb.47.1528984054819;
+        Thu, 14 Jun 2018 06:47:34 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.207.242])
+        by smtp.gmail.com with ESMTPSA id u108-v6sm11181267wrc.40.2018.06.14.06.47.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 14 Jun 2018 06:47:34 -0700 (PDT)
+Date:   Thu, 14 Jun 2018 15:47:31 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 2/5] sched/topology: Adding function
+ partition_sched_domains_locked()
+Message-ID: <20180614134731.GD12032@localhost.localdomain>
+References: <20180613121711.5018-1-juri.lelli@redhat.com>
+ <20180613121711.5018-3-juri.lelli@redhat.com>
+ <20180614093536.612712f6@gandalf.local.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180614010438.GB1974@hle-laptop.local>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8923 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=443
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806140154
+In-Reply-To: <20180614093536.612712f6@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Perfect.  Thanks!
+On 14/06/18 09:35, Steven Rostedt wrote:
+> On Wed, 13 Jun 2018 14:17:08 +0200
+> Juri Lelli <juri.lelli@redhat.com> wrote:
 
-regards,
-dan carpenter
+[...]
 
+> > +/*
+> > + * Call with hotplug lock held
+> > + */
+> > +void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+> > +			     struct sched_domain_attr *dattr_new)
+> > +{
+> > +	lockdep_assert_cpus_held();
+> 
+> Is the above assert really necessary? The assert will happen in
+> partition_sched_domains_locked() anyway.
 
+Indeed, it seems of little use.
+
+Thanks,
+
+- Juri
