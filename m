@@ -2,152 +2,93 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F2AB1C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 72159C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A903120864
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E3B1208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQRmusuH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A903120864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AiBXSVV6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E3B1208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966381AbeFNOOp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:14:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55502 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966319AbeFNONy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:13:54 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C927C208E3;
-        Thu, 14 Jun 2018 14:13:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985633;
-        bh=zMq2fWR9ck3YK4+2WAQsT/RoNy238x7r/nrU+BR6kzk=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vQRmusuHrLDOGsXt01P9LrlOkEnoFPVr3LQgMIOyfGJEg8ju5aY+00tUK1dHliP5a
-         NZa+klqDnAbiXvk8P4DyL6HVtlg6LFSGKnbCXeNWBfC9Kv+ORSvP6u2Ikd79eP/VK4
-         jxHfsPBXxM0xCIh+6akDts1H9KdYCVBiJVzKPU2k=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Rik van Riel <riel@redhat.com>,
-        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        yu-cheng yu <yu-cheng.yu@intel.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 11/24] x86/fpu: Fix FNSAVE usage in eagerfpu mode
-Date:   Thu, 14 Jun 2018 16:05:06 +0200
-Message-Id: <20180614132724.940491785@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
-References: <20180614132724.483802160@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S965674AbeFNOOv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:14:51 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:45948 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966319AbeFNOOs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:14:48 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5EEEJ8r157960;
+        Thu, 14 Jun 2018 14:14:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=lye1J4jozos0QQZoaJ7weTA5eEnuRiGN4GsIoagCjJY=;
+ b=AiBXSVV69gySpH87i7zl8/NZ1ltxL1G/Yn7MTmM9SRZzXR8ncnJdRaVMaK70enxl2IEg
+ zP5Id5EPUYX1zG6+EyY25Ph5Aiaj4ObmX5EKKX580Mmg6A7p3oqk7xnX42f8cmWjwDFa
+ hgKbX6SPlf3tTWHXlVKgLf6fIZ0+FOAkW6tWGzeaUiAlCV7cc/XXBWMYhTGcok5KISw/
+ t/+CfZL1YVE9GrN2uAp57kgCgOZxg/EedhZkGev283yZDaTFvNaUwSxkH4xLFWYu+rP/
+ exkMPql+XHvhg8W2G4sG04YY5zLFMPUIP1bOlDvucWkiPgQI/6MDAkUw8ApjdZe3Puy6 Lw== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jk0xrn9hk-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 14:14:45 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5EEEihq005693
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 14:14:44 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5EEEiMF002877;
+        Thu, 14 Jun 2018 14:14:44 GMT
+Received: from mwanda (/41.202.241.23)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jun 2018 07:14:43 -0700
+Date:   Thu, 14 Jun 2018 17:14:32 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: gdm724x: add error handling for nlmsg_put
+Message-ID: <20180614141432.he6h3aphtxfsw2ef@mwanda>
+References: <1528693766-31570-1-git-send-email-jiazhouyang09@gmail.com>
+ <20180612115525.yg2mnhlcz6ok3dyo@mwanda>
+ <CABb2Tx+7E9dxV0=D0t80CPnxfLJpEo0+eNG-c_2XH2tZD-C8BA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CABb2Tx+7E9dxV0=D0t80CPnxfLJpEo0+eNG-c_2XH2tZD-C8BA@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8923 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=726
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806140158
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 14, 2018 at 11:27:26AM +0800, Zhouyang Jia wrote:
+> Hi,
+> 
+> I reported this bug since more than 95% callsites of nlmsg_put are
+> well handled in kernel, and many of them also allocated skb before.
+> 
 
-------------------
+That's probably true, but the NULL check is not required *here*.
 
-From: Andy Lutomirski <luto@kernel.org>
+Just mark it as a false positive in your tool and move on...  It's not
+like we are close to running out of real bugs to deal with.
 
-commit 5ed73f40735c68d8a656b46d09b1885d3b8740ae upstream.
-
-In eager fpu mode, having deactivated FPU without immediately
-reloading some other context is illegal.  Therefore, to recover from
-FNSAVE, we can't just deactivate the state -- we need to reload it
-if we're not actively context switching.
-
-We had this wrong in fpu__save() and fpu__copy().  Fix both.
-__kernel_fpu_begin() was fine -- add a comment.
-
-This fixes a warning triggerable with nofxsr eagerfpu=on.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc: Rik van Riel <riel@redhat.com>
-Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: yu-cheng yu <yu-cheng.yu@intel.com>
-Link: http://lkml.kernel.org/r/60662444e13c76f06e23c15c5dcdba31b4ac3d67.1453675014.git.luto@kernel.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/kernel/fpu/core.c |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
---- a/arch/x86/kernel/fpu/core.c
-+++ b/arch/x86/kernel/fpu/core.c
-@@ -114,6 +114,10 @@ void __kernel_fpu_begin(void)
- 	kernel_fpu_disable();
- 
- 	if (fpu->fpregs_active) {
-+		/*
-+		 * Ignore return value -- we don't care if reg state
-+		 * is clobbered.
-+		 */
- 		copy_fpregs_to_fpstate(fpu);
- 	} else {
- 		this_cpu_write(fpu_fpregs_owner_ctx, NULL);
-@@ -189,8 +193,12 @@ void fpu__save(struct fpu *fpu)
- 
- 	preempt_disable();
- 	if (fpu->fpregs_active) {
--		if (!copy_fpregs_to_fpstate(fpu))
--			fpregs_deactivate(fpu);
-+		if (!copy_fpregs_to_fpstate(fpu)) {
-+			if (use_eager_fpu())
-+				copy_kernel_to_fpregs(&fpu->state);
-+			else
-+				fpregs_deactivate(fpu);
-+		}
- 	}
- 	preempt_enable();
- }
-@@ -259,7 +267,11 @@ static void fpu_copy(struct fpu *dst_fpu
- 	preempt_disable();
- 	if (!copy_fpregs_to_fpstate(dst_fpu)) {
- 		memcpy(&src_fpu->state, &dst_fpu->state, xstate_size);
--		fpregs_deactivate(src_fpu);
-+
-+		if (use_eager_fpu())
-+			copy_kernel_to_fpregs(&src_fpu->state);
-+		else
-+			fpregs_deactivate(src_fpu);
- 	}
- 	preempt_enable();
- }
-
+regards,
+dan carpenter
 
