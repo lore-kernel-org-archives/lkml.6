@@ -2,164 +2,204 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E8BF7C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:08:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 67150C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:09:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E410208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:08:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sYBT8j2m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E410208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E292208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:09:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E292208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755372AbeFNQIy (ORCPT
+        id S1755413AbeFNQJF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:08:54 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:42774 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754986AbeFNQIx (ORCPT
+        Thu, 14 Jun 2018 12:09:05 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:21353 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1755069AbeFNQJB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:08:53 -0400
-Received: by mail-pg0-f67.google.com with SMTP id c10-v6so3133377pgu.9;
-        Thu, 14 Jun 2018 09:08:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=BMg/sWOBML7dQr6i7+v7JGPkXb12jQDhPcfOY6adsJc=;
-        b=sYBT8j2miwA6VaMnbZh9WrODVnYraG+uT+6PbktR/MLMYGNv4XZaz49lU52Y7Vd7XJ
-         6NE53IHRECXNeHcttL7J9eO6znlDrd058cJNc4Rj2nD0/Ep5bPTjko4Zlk3/V2mqEH2L
-         VnE45Y4cmWmMGiMb433rqGMwEOjO68Mb+xLi5DHfhqcgFbspZEnO2p8rdSse40zdsuTn
-         R3BlkPzHvQrf1k686k5qoK2zlDDaDsgFyQZ/mCK0bR1DlRbJVnkXRyPj7qJ9GVrlElsu
-         HUTKE+vKngrit2Fzu8UQlt/R3PveFXFx9DOqHqTyBm+RG+T0yXDhmNcDZh9WcGxddkaP
-         lMTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=BMg/sWOBML7dQr6i7+v7JGPkXb12jQDhPcfOY6adsJc=;
-        b=d1h4ZS+RY7fl6GkYNCjoANfS90N0aDUBLU/bISHdxrezxSzwJszk6Q3/jQFWgdq8Ce
-         PENHKZEHpW4GBxXq4yeDNMbJ7LYcx/XnMrMKKTjVsKbZn+GGCmc2ShFRw7+fmV33RFrU
-         mDSXx+FNkekwMEJLl0g8Lc6tzRXM3y+k77AReAUOrPPCuxxMIhudBZAtlUVo0JflfcA1
-         LjaGy2PVwgJi7AxFNTgEuN/e8mWw1L3X/LKN1AjkyGL2reips9OlHxtvpazYJCuMFdsB
-         ol8yXU61WbTGXAkql4ymxvG+pOiHV+fQ9vjAH87aAyAKDeV0qbV46TNRzzhzECF4fB55
-         CjJQ==
-X-Gm-Message-State: APt69E1Rn/CCIJ/WsLgVYZny65Pyv2zmHnStEGk1UskCV1Z3Eu8Iefob
-        1b70KWprMkB7e9XUgViZ5HM=
-X-Google-Smtp-Source: ADUXVKKXDLW6R/mCJaRwZzPM9pzp6lGLcRq5oAB0VdTz2xLhjZpJDThm+crmrytBXeZkz0Eht5lTPA==
-X-Received: by 2002:a65:4783:: with SMTP id e3-v6mr2848852pgs.235.1528992532758;
-        Thu, 14 Jun 2018 09:08:52 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id b84-v6sm9267058pfm.123.2018.06.14.09.08.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 09:08:52 -0700 (PDT)
-From:   Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] scsi: xen-scsifront: add error handling for xenbus_printf
-Date:   Fri, 15 Jun 2018 00:08:34 +0800
-Message-Id: <1528992514-53963-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528774962-39173-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528774962-39173-1-git-send-email-jiazhouyang09@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 14 Jun 2018 12:09:01 -0400
+Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5EG8v24079429
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:09:01 -0400
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jkrxy9327-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:08:58 -0400
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
+        Thu, 14 Jun 2018 17:07:02 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 14 Jun 2018 17:06:59 +0100
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5EG6xjX27656418
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 14 Jun 2018 16:06:59 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 110B911C054;
+        Thu, 14 Jun 2018 16:57:32 +0100 (BST)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 82D8411C050;
+        Thu, 14 Jun 2018 16:57:30 +0100 (BST)
+Received: from [9.164.160.4] (unknown [9.164.160.4])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Thu, 14 Jun 2018 16:57:30 +0100 (BST)
+Subject: Re: [PATCH] misc: ocxl: Change return type for fault handler
+To:     Souptick Joarder <jrdr.linux@gmail.com>, willy@infradead.org,
+        fbarrat@linux.vnet.ibm.com, andrew.donnellan@au1.ibm.com,
+        arnd@arndb.de, gregkh@linuxfoundation.org
+Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        sabyasachi.linux@gmail.com, brajeswar.linux@gmail.com
+References: <20180611202904.GA25538@jordon-HP-15-Notebook-PC>
+From:   Frederic Barrat <fbarrat@linux.ibm.com>
+Date:   Thu, 14 Jun 2018 18:06:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180611202904.GA25538@jordon-HP-15-Notebook-PC>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061416-4275-0000-0000-0000028DC763
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061416-4276-0000-0000-00003794F772
+Message-Id: <5c6942da-c847-c53a-a571-4ec96f2a993d@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-14_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806140176
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When xenbus_printf fails, the lack of error-handling code may
-cause unexpected results.
 
-This patch adds error-handling code after calling xenbus_printf.
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
----
-v1->v2:
-- Fix dereferencing before checking
----
- drivers/scsi/xen-scsifront.c | 29 ++++++++++++++++++++++-------
- 1 file changed, 22 insertions(+), 7 deletions(-)
+Le 11/06/2018 à 22:29, Souptick Joarder a écrit :
+> Use new return type vm_fault_t for fault handler. For
+> now, this is just documenting that the function returns
+> a VM_FAULT value rather than an errno. Once all instances
+> are converted, vm_fault_t will become a distinct type.
+> 
+> Ref-> commit 1c8f422059ae ("mm: change return type to vm_fault_t")
+> 
+> There is an existing bug when vm_insert_pfn() can return
+> ENOMEM which was ignored and VM_FAULT_NOPAGE returned as
+> default. The new inline vmf_insert_pfn() has removed
+> this inefficiency by returning correct vm_fault_ type.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> ---
 
-diff --git a/drivers/scsi/xen-scsifront.c b/drivers/scsi/xen-scsifront.c
-index 36f59a1..a7f6111 100644
---- a/drivers/scsi/xen-scsifront.c
-+++ b/drivers/scsi/xen-scsifront.c
-@@ -654,10 +654,16 @@ static int scsifront_dev_reset_handler(struct scsi_cmnd *sc)
- static int scsifront_sdev_configure(struct scsi_device *sdev)
- {
- 	struct vscsifrnt_info *info = shost_priv(sdev->host);
-+	int err;
- 
--	if (info && current == info->curr)
--		xenbus_printf(XBT_NIL, info->dev->nodename,
-+	if (info && current == info->curr) {
-+		err = xenbus_printf(XBT_NIL, info->dev->nodename,
- 			      info->dev_state_path, "%d", XenbusStateConnected);
-+		if (err) {
-+			dev_err(&info->dev->dev, "writing dev_state_path\n");
-+			return err;
-+		}
-+	}
- 
- 	return 0;
- }
-@@ -665,10 +671,14 @@ static int scsifront_sdev_configure(struct scsi_device *sdev)
- static void scsifront_sdev_destroy(struct scsi_device *sdev)
- {
- 	struct vscsifrnt_info *info = shost_priv(sdev->host);
-+	int err;
- 
--	if (info && current == info->curr)
--		xenbus_printf(XBT_NIL, info->dev->nodename,
-+	if (info && current == info->curr) {
-+		err = xenbus_printf(XBT_NIL, info->dev->nodename,
- 			      info->dev_state_path, "%d", XenbusStateClosed);
-+		if (err)
-+			dev_err(&info->dev->dev, "writing dev_state_path\n");
-+	}
- }
- 
- static struct scsi_host_template scsifront_sht = {
-@@ -1003,9 +1013,11 @@ static void scsifront_do_lun_hotplug(struct vscsifrnt_info *info, int op)
- 
- 			if (scsi_add_device(info->host, chn, tgt, lun)) {
- 				dev_err(&dev->dev, "scsi_add_device\n");
--				xenbus_printf(XBT_NIL, dev->nodename,
-+				err = xenbus_printf(XBT_NIL, dev->nodename,
- 					      info->dev_state_path,
- 					      "%d", XenbusStateClosed);
-+				if (err)
-+					dev_err(&dev->dev, "writing dev_state_path\n");
- 			}
- 			break;
- 		case VSCSIFRONT_OP_DEL_LUN:
-@@ -1019,10 +1031,13 @@ static void scsifront_do_lun_hotplug(struct vscsifrnt_info *info, int op)
- 			}
- 			break;
- 		case VSCSIFRONT_OP_READD_LUN:
--			if (device_state == XenbusStateConnected)
--				xenbus_printf(XBT_NIL, dev->nodename,
-+			if (device_state == XenbusStateConnected) {
-+				err = xenbus_printf(XBT_NIL, dev->nodename,
- 					      info->dev_state_path,
- 					      "%d", XenbusStateConnected);
-+				if (err)
-+					dev_err(&dev->dev, "writing dev_state_path\n");
-+			}
- 			break;
- 		default:
- 			break;
--- 
-2.7.4
+Thanks!
+
+Tested and
+Acked-by: Frederic Barrat <fbarrat@linux.vnet.ibm.com>
+
+
+>   drivers/misc/ocxl/context.c | 22 +++++++++++-----------
+>   drivers/misc/ocxl/sysfs.c   |  5 ++---
+>   2 files changed, 13 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/misc/ocxl/context.c b/drivers/misc/ocxl/context.c
+> index 909e880..98daf91 100644
+> --- a/drivers/misc/ocxl/context.c
+> +++ b/drivers/misc/ocxl/context.c
+> @@ -83,7 +83,7 @@ int ocxl_context_attach(struct ocxl_context *ctx, u64 amr)
+>   	return rc;
+>   }
+> 
+> -static int map_afu_irq(struct vm_area_struct *vma, unsigned long address,
+> +static vm_fault_t map_afu_irq(struct vm_area_struct *vma, unsigned long address,
+>   		u64 offset, struct ocxl_context *ctx)
+>   {
+>   	u64 trigger_addr;
+> @@ -92,15 +92,15 @@ static int map_afu_irq(struct vm_area_struct *vma, unsigned long address,
+>   	if (!trigger_addr)
+>   		return VM_FAULT_SIGBUS;
+> 
+> -	vm_insert_pfn(vma, address, trigger_addr >> PAGE_SHIFT);
+> -	return VM_FAULT_NOPAGE;
+> +	return vmf_insert_pfn(vma, address, trigger_addr >> PAGE_SHIFT);
+>   }
+> 
+> -static int map_pp_mmio(struct vm_area_struct *vma, unsigned long address,
+> +static vm_fault_t map_pp_mmio(struct vm_area_struct *vma, unsigned long address,
+>   		u64 offset, struct ocxl_context *ctx)
+>   {
+>   	u64 pp_mmio_addr;
+>   	int pasid_off;
+> +	vm_fault_t ret;
+> 
+>   	if (offset >= ctx->afu->config.pp_mmio_stride)
+>   		return VM_FAULT_SIGBUS;
+> @@ -118,27 +118,27 @@ static int map_pp_mmio(struct vm_area_struct *vma, unsigned long address,
+>   		pasid_off * ctx->afu->config.pp_mmio_stride +
+>   		offset;
+> 
+> -	vm_insert_pfn(vma, address, pp_mmio_addr >> PAGE_SHIFT);
+> +	ret = vmf_insert_pfn(vma, address, pp_mmio_addr >> PAGE_SHIFT);
+>   	mutex_unlock(&ctx->status_mutex);
+> -	return VM_FAULT_NOPAGE;
+> +	return ret;
+>   }
+> 
+> -static int ocxl_mmap_fault(struct vm_fault *vmf)
+> +static vm_fault_t ocxl_mmap_fault(struct vm_fault *vmf)
+>   {
+>   	struct vm_area_struct *vma = vmf->vma;
+>   	struct ocxl_context *ctx = vma->vm_file->private_data;
+>   	u64 offset;
+> -	int rc;
+> +	vm_fault_t ret;
+> 
+>   	offset = vmf->pgoff << PAGE_SHIFT;
+>   	pr_debug("%s: pasid %d address 0x%lx offset 0x%llx\n", __func__,
+>   		ctx->pasid, vmf->address, offset);
+> 
+>   	if (offset < ctx->afu->irq_base_offset)
+> -		rc = map_pp_mmio(vma, vmf->address, offset, ctx);
+> +		ret = map_pp_mmio(vma, vmf->address, offset, ctx);
+>   	else
+> -		rc = map_afu_irq(vma, vmf->address, offset, ctx);
+> -	return rc;
+> +		ret = map_afu_irq(vma, vmf->address, offset, ctx);
+> +	return ret;
+>   }
+> 
+>   static const struct vm_operations_struct ocxl_vmops = {
+> diff --git a/drivers/misc/ocxl/sysfs.c b/drivers/misc/ocxl/sysfs.c
+> index d9753a1..0ab1fd1 100644
+> --- a/drivers/misc/ocxl/sysfs.c
+> +++ b/drivers/misc/ocxl/sysfs.c
+> @@ -64,7 +64,7 @@ static ssize_t global_mmio_read(struct file *filp, struct kobject *kobj,
+>   	return count;
+>   }
+> 
+> -static int global_mmio_fault(struct vm_fault *vmf)
+> +static vm_fault_t global_mmio_fault(struct vm_fault *vmf)
+>   {
+>   	struct vm_area_struct *vma = vmf->vma;
+>   	struct ocxl_afu *afu = vma->vm_private_data;
+> @@ -75,8 +75,7 @@ static int global_mmio_fault(struct vm_fault *vmf)
+> 
+>   	offset = vmf->pgoff;
+>   	offset += (afu->global_mmio_start >> PAGE_SHIFT);
+> -	vm_insert_pfn(vma, vmf->address, offset);
+> -	return VM_FAULT_NOPAGE;
+> +	return vmf_insert_pfn(vma, vmf->address, offset);
+>   }
+> 
+>   static const struct vm_operations_struct global_mmio_vmops = {
+> 
 
