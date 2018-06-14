@@ -2,131 +2,98 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8DCD9C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:21:56 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 95CD2C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:22:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA2E208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:21:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA2E208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4CB25208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:22:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KhDxfsll"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CB25208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752951AbeFNGVx (ORCPT
+        id S1754655AbeFNGWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:21:53 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:38785 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752721AbeFNGVw (ORCPT
+        Thu, 14 Jun 2018 02:22:17 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41524 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754589AbeFNGWP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:21:52 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5E6KgPl763474
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 13 Jun 2018 23:20:42 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5E6Kgv8763471;
-        Wed, 13 Jun 2018 23:20:42 -0700
-Date:   Wed, 13 Jun 2018 23:20:42 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-hg5g7yddjio3ljwyqnnaj5dt@git.kernel.org>
-Cc:     namhyung@kernel.org, dsahern@gmail.com, jolsa@kernel.org,
-        tglx@linutronix.de, hpa@zytor.com, wangnan0@huawei.com,
-        linux-kernel@vger.kernel.org, acme@redhat.com,
-        yao.jin@linux.intel.com, mingo@kernel.org, adrian.hunter@intel.com
-Reply-To: namhyung@kernel.org, dsahern@gmail.com, tglx@linutronix.de,
-          wangnan0@huawei.com, hpa@zytor.com, jolsa@kernel.org,
-          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
-          acme@redhat.com, mingo@kernel.org, yao.jin@linux.intel.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf hists: Reimplement hists__has_callchains()
-Git-Commit-ID: c9d366287042489090da0391318df528bdce9941
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 14 Jun 2018 02:22:15 -0400
+Received: by mail-pg0-f65.google.com with SMTP id l65-v6so2422946pgl.8;
+        Wed, 13 Jun 2018 23:22:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=tYt0hLy8aODO6/YIZjmAbP6vPxlCD8U9B2KnHOIHIYM=;
+        b=KhDxfsllJvcwIO6Hjuf3xSw3m3QEfowhM55lpz+9VntWHSShfCSpXZiiXfEubqOHHI
+         CgQSYrw8DFm+pUmI6NVYeuGFRTeWUzHDrNbH3bfsdEGevHqmY9HENJKcr4VHNa+Ch78d
+         SVq9qq4MCj6Yk1A1kG25Ap+ww3NwkUuu+VCItjKe3EiixxwPGqCo61BuwxF+PKOyZjk4
+         3+hg3BLttQvp9ZehzYjsWddaUETtLoRfQR/KHINyHoGNCWW5e0Njmi6VprGAVe0B+7vo
+         YAAb00LtfphDqhwn5T7IlX9KAsUCP1fNjn96EW26KU3jzEUjHAY3sejtFdj4QPv1Xggt
+         f+Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=tYt0hLy8aODO6/YIZjmAbP6vPxlCD8U9B2KnHOIHIYM=;
+        b=sc613UM2TItc/Br53+DHgYJ4scnJNdFom5LoXmFmYXdq3uCIvAFnJMMrGY/LrAfAUg
+         roWFPmzoaWVFrqIHHvlYR4QAoITUobEVfJImCx5WYzSCLXn+FdKnmxUHQ4DtvMEwHKUw
+         b5S2G4rIPpGS6DSlNmb01m9NV0KSikXZrmIIdvT/V08nNeQo5bYv2ab2tDK/B/fPjaPB
+         YZYRXs7uwLQCoz1o5PUE+TCFVW+30XCjBBC9PZUUFEIGnJe/tYiwHddoFMsMXw9V4WNZ
+         /HkV1HA0ebbR7ruEBrsOo878yZZJqPlp6+2PxetmYLRyX6/nWfcD9xySOl3dHqtF16wp
+         fWaQ==
+X-Gm-Message-State: APt69E2XeN+ZKGTm7MalzIqlR/02Ct+tORZy7AxXh31vFtVOIjjHcPji
+        9Re3Lt+9H0U3lfO25CphEoJnuGNr2lemVepq+xs=
+X-Google-Smtp-Source: ADUXVKIs78E44GHa24Yr7cysMxq2ntC+Ao7gpSG9HfcteW4WlqlUc5LZe4+TiP8wv3TVkKk/eKl+E7taD7gpXbkbvIk=
+X-Received: by 2002:a65:42c2:: with SMTP id l2-v6mr1113416pgp.237.1528957335038;
+ Wed, 13 Jun 2018 23:22:15 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+Received: by 2002:a17:90a:284f:0:0:0:0 with HTTP; Wed, 13 Jun 2018 23:21:54
+ -0700 (PDT)
+In-Reply-To: <20180614053446.GB18426@mtr-leonro.mtl.com>
+References: <20180613234947.15767-1-xiyou.wangcong@gmail.com> <20180614053446.GB18426@mtr-leonro.mtl.com>
+From:   Cong Wang <xiyou.wangcong@gmail.com>
+Date:   Wed, 13 Jun 2018 23:21:54 -0700
+Message-ID: <CAM_iQpXxHk+yFqqK-Hezsc83_mKfbUXr4=jjNnik5DwGscRKUA@mail.gmail.com>
+Subject: Re: [PATCH] infiniband: fix a subtle race condition
+To:     Leon Romanovsky <leon@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@mellanox.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  c9d366287042489090da0391318df528bdce9941
-Gitweb:     https://git.kernel.org/tip/c9d366287042489090da0391318df528bdce9941
-Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 7 Jun 2018 14:42:27 -0300
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Thu, 7 Jun 2018 14:42:27 -0300
+On Wed, Jun 13, 2018 at 10:34 PM, Leon Romanovsky <leon@kernel.org> wrote:
+>
+> Hi Cong,
+>
+> If the compiler optimizes the first line (mutex_lock) as you wrote,
+> it will reuse "f" for the second line (mutex_unlock) too.
 
-perf hists: Reimplement hists__has_callchains()
+Nope, check the assembly if you don't trust me, at least
+my compiler always fetches ctx->file without this patch.
 
-There are places where we have only access to struct hists and need to
-know if any of its hist_entries has callchains, like when drawing
-headers for the various output modes (stdio, TUI, etc), so, when adding
-a new hist_entry, check if it has callchains, storing this info for
-later use by hists__has_callchains().
+I can show you the assembly code tomorrow (too late to
+access my dev machine now).
 
-This reimplementation is necessary because not always a 'struct hists'
-is allocated together with a 'struct perf evsel', so we can't go from
-'hists' to 'perf_event_attr.sample_type & PERF_SAMPLE_CALLCHAIN'.
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: David Ahern <dsahern@gmail.com>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-hg5g7yddjio3ljwyqnnaj5dt@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/hist.c | 6 ++++--
- tools/perf/util/hist.h | 4 ++--
- 2 files changed, 6 insertions(+), 4 deletions(-)
+>
+> You need to ensure that ucma_modify_id() doesn't run in parallel to
+> anything that uses "ctx->file" directly and indirectly.
+>
 
-diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
-index 0441a92b855f..828cb9794c76 100644
---- a/tools/perf/util/hist.c
-+++ b/tools/perf/util/hist.c
-@@ -621,9 +621,11 @@ __hists__add_entry(struct hists *hists,
- 		.raw_data = sample->raw_data,
- 		.raw_size = sample->raw_size,
- 		.ops = ops,
--	};
-+	}, *he = hists__findnew_entry(hists, &entry, al, sample_self);
- 
--	return hists__findnew_entry(hists, &entry, al, sample_self);
-+	if (!hists->has_callchains && he && he->callchain_size != 0)
-+		hists->has_callchains = true;
-+	return he;
- }
- 
- struct hist_entry *hists__add_entry(struct hists *hists,
-diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
-index 06607c434949..73049f7f0f60 100644
---- a/tools/perf/util/hist.h
-+++ b/tools/perf/util/hist.h
-@@ -85,6 +85,7 @@ struct hists {
- 	struct events_stats	stats;
- 	u64			event_stream;
- 	u16			col_len[HISTC_NR_COLS];
-+	bool			has_callchains;
- 	int			socket_filter;
- 	struct perf_hpp_list	*hpp_list;
- 	struct list_head	hpp_formats;
-@@ -222,8 +223,7 @@ static inline struct hists *evsel__hists(struct perf_evsel *evsel)
- 
- static __pure inline bool hists__has_callchains(struct hists *hists)
- {
--	const struct perf_evsel *evsel = hists_to_evsel(hists);
--	return evsel__has_callchain(evsel);
-+	return hists->has_callchains;
- }
- 
- int hists__init(void);
+Talk is easy, show me the code. :) I knew there is probably
+some other race with this code even after my patch, possibly with
+->close() for example, but for this specific unlock warning, this patch
+is sufficient. I can't solve all the races in one patch.
