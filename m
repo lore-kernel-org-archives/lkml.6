@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AC8B1C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:37:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A7CD5C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:40:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 493FB20864
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:37:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 506B8208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:40:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="fY0sAN3d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 493FB20864
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="anGatiq1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 506B8208CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965157AbeFNXhq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 19:37:46 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:53362 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965031AbeFNXho (ORCPT
+        id S965149AbeFNXkc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 19:40:32 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:48780 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965031AbeFNXka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 19:37:44 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5ENTs4K081485;
-        Thu, 14 Jun 2018 23:37:26 GMT
+        Thu, 14 Jun 2018 19:40:30 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5ENdpO4150106;
+        Thu, 14 Jun 2018 23:40:14 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
  message-id : date : from : to : cc : subject : content-type :
  content-transfer-encoding; s=corp-2017-10-26;
- bh=36raE4yUXyeK2YKmcfV+p4RYCaYE8Y8r9lm7hk8EEsc=;
- b=fY0sAN3dxtwP2aYeeLW0T36dV/KR1YdY/qgDW3/vh20wsoeTDOhz9tLf+M5q70FU3M1R
- wWUmJBbl3+T6HctUM1iLEv2oONTIJqmy+UaYT2ndTDfHbUyRMcemMrb8m7D2SjoLJ4gT
- Xrxkov+Q8yNAK+NljmpiqQYJSpuVoZRaqX+fDo+GcPU2hEWseaKJJT4RmViB2pzsZov8
- vr78XWRiL7OUFqpF3lAEls68fvVleX4Cez/S8JoO8JqpEgoSvkYZCGU9IrycRvHSbzHp
- xZGK8RjFV4jfvDEuV0B0Jwcz3a40ZEX/57uG35UUn8f/kK1k0I23sL1+Yifv/HpmXKTr SQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2130.oracle.com with ESMTP id 2jk0xrf0y5-1
+ bh=BF9BPGgLgmM4WWI7UP4UCodlcGl+hvZLZIT/8jdv5nM=;
+ b=anGatiq1YFojKlXL70mc0OzRcfOHACy2thDaE/UMiZ/fj+VUEPL2oEySKok7Uvdi2WW4
+ iT8bnQxyolPheARbele0HpJAlI4L/8o9yDpks89fvRWiFC12N3b3FGLxjSmZnjtd+cnk
+ o+x/pCCYmeASkpC+fqhA41hVWj15+YGqQgk4ntLpXKD/0pPM4ojzN+y2gwVfzq84bWPh
+ DhxebOm532yWQYII9U/l3ZPBaoRVEinxuYA6IrUJTgOhhBoQRIHVFLiOJ0QOTgYqclWN
+ rqCAyUrSeh7gTqgRhoCpqSl49UE68Z+92HsDiclF/laRxchF0H/kmtOu4X9D2ZZpQTGh mA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2120.oracle.com with ESMTP id 2jk0xrq05j-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 23:37:26 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5ENbOBO012723
+        Thu, 14 Jun 2018 23:40:14 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5ENeCbA023884
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 23:37:25 GMT
+        Thu, 14 Jun 2018 23:40:13 GMT
 Received: from abhmp0011.oracle.com (abhmp0011.oracle.com [141.146.116.17])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5ENbNKj031927;
-        Thu, 14 Jun 2018 23:37:24 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5ENeCLe015926;
+        Thu, 14 Jun 2018 23:40:12 GMT
 MIME-Version: 1.0
-Message-ID: <55506b65-0b32-45cf-8fd5-5c2d1b0ac30c@default>
-Date:   Thu, 14 Jun 2018 16:37:23 -0700 (PDT)
+Message-ID: <efe3a337-efe0-4d40-a50b-216406fdadc7@default>
+Date:   Thu, 14 Jun 2018 16:40:12 -0700 (PDT)
 From:   Liran Alon <liran.alon@oracle.com>
 To:     <vkuznets@redhat.com>
 Cc:     <mmorsy@redhat.com>, <rkagan@virtuozzo.com>, <jmattson@google.com>,
@@ -57,8 +57,7 @@ Cc:     <mmorsy@redhat.com>, <rkagan@virtuozzo.com>, <jmattson@google.com>,
         <rkrcmar@redhat.com>, <cavery@redhat.com>, <pbonzini@redhat.com>,
         <linux-kernel@vger.kernel.org>, <sthemmin@microsoft.com>,
         <haiyangz@microsoft.com>, <kvm@vger.kernel.org>
-Subject: Re: [PATCH 5/5] KVM: nVMX: optimize prepare_vmcs02{,_full} for
- Enlightened VMCS case
+Subject: Re: [PATCH 1/5] KVM: hyperv: define VP assist page helpers
 X-Mailer: Zimbra on Oracle Beehive
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
@@ -67,7 +66,7 @@ X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8924 signatures=6
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
  phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806140259
+ engine=8.0.1-1805220000 definitions=main-1806140260
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -76,241 +75,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ----- vkuznets@redhat.com wrote:
 
-> When Enlightened VMCS is in use by L1 hypervisor we can avoid
-> vmwriting
-> VMCS fields which did not change.
+> From: Ladi Prosek <lprosek@redhat.com>
 >=20
-> Our first goal is to achieve minimal impact on traditional VMCS case
-> so
-> we're not wrapping each vmwrite() with an if-changed checker. We also
-> can't
-> utilize static keys as Enlightened VMCS usage is per-guest.
+> The state related to the VP assist page is still managed by the LAPIC
+> code in the pv_eoi field.
 >=20
-> This patch implements the simpliest solution: checking fields in
-> groups.
-> We skip single vmwrite() statements as doing the check will cost us
-> something even in non-evmcs case and the win is tiny. Unfortunately,
-> this
-> makes prepare_vmcs02_full{,_full}() code Enlightened VMCS-dependent
-> (and
-> a bit ugly).
->=20
+> Signed-off-by: Ladi Prosek <lprosek@redhat.com>
 > Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 > ---
->  arch/x86/kvm/vmx.c | 143
-> ++++++++++++++++++++++++++++++-----------------------
->  1 file changed, 82 insertions(+), 61 deletions(-)
+>  arch/x86/kvm/hyperv.c | 23 +++++++++++++++++++++--
+>  arch/x86/kvm/hyperv.h |  4 ++++
+>  arch/x86/kvm/lapic.c  |  4 ++--
+>  arch/x86/kvm/lapic.h  |  2 +-
+>  arch/x86/kvm/x86.c    |  2 +-
+>  5 files changed, 29 insertions(+), 6 deletions(-)
 >=20
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 6802ba91468c..9a7d76c5c92b 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -11619,50 +11619,79 @@ static int nested_vmx_load_cr3(struct
-> kvm_vcpu *vcpu, unsigned long cr3, bool ne
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> index 14e0d0ae4e0a..fdf659ca6167 100644
+> --- a/arch/x86/kvm/hyperv.c
+> +++ b/arch/x86/kvm/hyperv.c
+> @@ -688,6 +688,24 @@ void kvm_hv_vcpu_uninit(struct kvm_vcpu *vcpu)
+>  =09=09stimer_cleanup(&hv_vcpu->stimer[i]);
+>  }
+> =20
+> +bool kvm_hv_assist_page_enabled(struct kvm_vcpu *vcpu)
+> +{
+> +=09if (!(vcpu->arch.hyperv.hv_vapic &
+> HV_X64_MSR_VP_ASSIST_PAGE_ENABLE))
+> +=09=09return false;
+> +=09return vcpu->arch.pv_eoi.msr_val & KVM_MSR_ENABLED;
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_hv_assist_page_enabled);
+> +
+> +bool kvm_hv_get_assist_page(struct kvm_vcpu *vcpu,
+> +=09=09=09    struct hv_vp_assist_page *assist_page)
+> +{
+> +=09if (!kvm_hv_assist_page_enabled(vcpu))
+> +=09=09return false;
+> +=09return !kvm_read_guest_cached(vcpu->kvm, &vcpu->arch.pv_eoi.data,
+> +=09=09=09=09      assist_page, sizeof(*assist_page));
+> +}
+> +EXPORT_SYMBOL_GPL(kvm_hv_get_assist_page);
+> +
+>  static void stimer_prepare_msg(struct kvm_vcpu_hv_stimer *stimer)
+>  {
+>  =09struct hv_message *msg =3D &stimer->msg;
+> @@ -1048,7 +1066,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu,
+> u32 msr, u64 data, bool host)
+> =20
+>  =09=09if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
+>  =09=09=09hv->hv_vapic =3D data;
+> -=09=09=09if (kvm_lapic_enable_pv_eoi(vcpu, 0))
+> +=09=09=09if (kvm_lapic_enable_pv_eoi(vcpu, 0, 0))
+>  =09=09=09=09return 1;
+>  =09=09=09break;
+>  =09=09}
+> @@ -1061,7 +1079,8 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu,
+> u32 msr, u64 data, bool host)
+>  =09=09hv->hv_vapic =3D data;
+>  =09=09kvm_vcpu_mark_page_dirty(vcpu, gfn);
+>  =09=09if (kvm_lapic_enable_pv_eoi(vcpu,
+> -=09=09=09=09=09    gfn_to_gpa(gfn) | KVM_MSR_ENABLED))
+> +=09=09=09=09=09    gfn_to_gpa(gfn) | KVM_MSR_ENABLED,
+> +=09=09=09=09=09    sizeof(struct hv_vp_assist_page)))
+>  =09=09=09return 1;
+>  =09=09break;
+>  =09}
+> diff --git a/arch/x86/kvm/hyperv.h b/arch/x86/kvm/hyperv.h
+> index 837465d69c6d..db825bb7efc7 100644
+> --- a/arch/x86/kvm/hyperv.h
+> +++ b/arch/x86/kvm/hyperv.h
+> @@ -62,6 +62,10 @@ void kvm_hv_vcpu_init(struct kvm_vcpu *vcpu);
+>  void kvm_hv_vcpu_postcreate(struct kvm_vcpu *vcpu);
+>  void kvm_hv_vcpu_uninit(struct kvm_vcpu *vcpu);
+> =20
+> +bool kvm_hv_assist_page_enabled(struct kvm_vcpu *vcpu);
+> +bool kvm_hv_get_assist_page(struct kvm_vcpu *vcpu,
+> +=09=09=09    struct hv_vp_assist_page *assist_page);
+> +
+>  static inline struct kvm_vcpu_hv_stimer *vcpu_to_stimer(struct
+> kvm_vcpu *vcpu,
+>  =09=09=09=09=09=09=09int timer_index)
+>  {
+> diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> index 776391cf69a5..b6d6a36f1a33 100644
+> --- a/arch/x86/kvm/lapic.c
+> +++ b/arch/x86/kvm/lapic.c
+> @@ -2540,7 +2540,7 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu,
+> u32 reg, u64 *data)
 >  =09return 0;
 >  }
 > =20
-> +/*
-> + * Check if L1 hypervisor changed the particular field in
-> Enlightened
-> + * VMCS and avoid redundant vmwrite if it didn't. Can only be used
-> when
-> + * the value we're about to write is unchanged vmcs12->field.
-> + */
-> +#define evmcs_needs_write(vmx, clean_field)
-> ((vmx)->nested.dirty_vmcs12 ||\
-> +=09!(vmx->nested.hv_evmcs->hv_clean_fields &\
-> +=09  HV_VMX_ENLIGHTENED_CLEAN_FIELD_##clean_field))
-
-Why declare this is a macro instead of an static inline small function?
-Just to shorten the name of the clean-field constant?
-
-> +
->  static void prepare_vmcs02_full(struct kvm_vcpu *vcpu, struct vmcs12
-> *vmcs12)
+> -int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data)
+> +int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned
+> long len)
 >  {
->  =09struct vcpu_vmx *vmx =3D to_vmx(vcpu);
-> +=09struct hv_enlightened_vmcs *hv_evmcs =3D vmx->nested.hv_evmcs;
-> +
-> +=09if (!hv_evmcs || evmcs_needs_write(vmx, GUEST_GRP2)) {
-> +=09=09vmcs_write16(GUEST_ES_SELECTOR, vmcs12->guest_es_selector);
-> +=09=09vmcs_write16(GUEST_SS_SELECTOR, vmcs12->guest_ss_selector);
-> +=09=09vmcs_write16(GUEST_DS_SELECTOR, vmcs12->guest_ds_selector);
-> +=09=09vmcs_write16(GUEST_FS_SELECTOR, vmcs12->guest_fs_selector);
-> +=09=09vmcs_write16(GUEST_GS_SELECTOR, vmcs12->guest_gs_selector);
-> +=09=09vmcs_write16(GUEST_LDTR_SELECTOR, vmcs12->guest_ldtr_selector);
-> +=09=09vmcs_write16(GUEST_TR_SELECTOR, vmcs12->guest_tr_selector);
-> +=09=09vmcs_write32(GUEST_ES_LIMIT, vmcs12->guest_es_limit);
-> +=09=09vmcs_write32(GUEST_SS_LIMIT, vmcs12->guest_ss_limit);
-> +=09=09vmcs_write32(GUEST_DS_LIMIT, vmcs12->guest_ds_limit);
-> +=09=09vmcs_write32(GUEST_FS_LIMIT, vmcs12->guest_fs_limit);
-> +=09=09vmcs_write32(GUEST_GS_LIMIT, vmcs12->guest_gs_limit);
-> +=09=09vmcs_write32(GUEST_LDTR_LIMIT, vmcs12->guest_ldtr_limit);
-> +=09=09vmcs_write32(GUEST_TR_LIMIT, vmcs12->guest_tr_limit);
-> +=09=09vmcs_write32(GUEST_GDTR_LIMIT, vmcs12->guest_gdtr_limit);
-> +=09=09vmcs_write32(GUEST_IDTR_LIMIT, vmcs12->guest_idtr_limit);
-> +=09=09vmcs_write32(GUEST_ES_AR_BYTES, vmcs12->guest_es_ar_bytes);
-> +=09=09vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
-> +=09=09vmcs_write32(GUEST_DS_AR_BYTES, vmcs12->guest_ds_ar_bytes);
-> +=09=09vmcs_write32(GUEST_FS_AR_BYTES, vmcs12->guest_fs_ar_bytes);
-> +=09=09vmcs_write32(GUEST_GS_AR_BYTES, vmcs12->guest_gs_ar_bytes);
-> +=09=09vmcs_write32(GUEST_LDTR_AR_BYTES, vmcs12->guest_ldtr_ar_bytes);
-> +=09=09vmcs_write32(GUEST_TR_AR_BYTES, vmcs12->guest_tr_ar_bytes);
-> +=09=09vmcs_writel(GUEST_SS_BASE, vmcs12->guest_ss_base);
-> +=09=09vmcs_writel(GUEST_DS_BASE, vmcs12->guest_ds_base);
-> +=09=09vmcs_writel(GUEST_FS_BASE, vmcs12->guest_fs_base);
-> +=09=09vmcs_writel(GUEST_GS_BASE, vmcs12->guest_gs_base);
-> +=09=09vmcs_writel(GUEST_LDTR_BASE, vmcs12->guest_ldtr_base);
-> +=09=09vmcs_writel(GUEST_TR_BASE, vmcs12->guest_tr_base);
-> +=09=09vmcs_writel(GUEST_GDTR_BASE, vmcs12->guest_gdtr_base);
-> +=09=09vmcs_writel(GUEST_IDTR_BASE, vmcs12->guest_idtr_base);
-> +=09}
-> +
-> +=09if (!hv_evmcs || evmcs_needs_write(vmx, GUEST_GRP1)) {
-> +=09=09vmcs_write32(GUEST_SYSENTER_CS, vmcs12->guest_sysenter_cs);
-> +=09=09vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS,
-> +=09=09=09    vmcs12->guest_pending_dbg_exceptions);
-> +=09=09vmcs_writel(GUEST_SYSENTER_ESP, vmcs12->guest_sysenter_esp);
-> +=09=09vmcs_writel(GUEST_SYSENTER_EIP, vmcs12->guest_sysenter_eip);
-> +
-> +=09=09if (vmx_mpx_supported())
-> +=09=09=09vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
-> =20
-> -=09vmcs_write16(GUEST_ES_SELECTOR, vmcs12->guest_es_selector);
-> -=09vmcs_write16(GUEST_SS_SELECTOR, vmcs12->guest_ss_selector);
-> -=09vmcs_write16(GUEST_DS_SELECTOR, vmcs12->guest_ds_selector);
-> -=09vmcs_write16(GUEST_FS_SELECTOR, vmcs12->guest_fs_selector);
-> -=09vmcs_write16(GUEST_GS_SELECTOR, vmcs12->guest_gs_selector);
-> -=09vmcs_write16(GUEST_LDTR_SELECTOR, vmcs12->guest_ldtr_selector);
-> -=09vmcs_write16(GUEST_TR_SELECTOR, vmcs12->guest_tr_selector);
-> -=09vmcs_write32(GUEST_ES_LIMIT, vmcs12->guest_es_limit);
-> -=09vmcs_write32(GUEST_SS_LIMIT, vmcs12->guest_ss_limit);
-> -=09vmcs_write32(GUEST_DS_LIMIT, vmcs12->guest_ds_limit);
-> -=09vmcs_write32(GUEST_FS_LIMIT, vmcs12->guest_fs_limit);
-> -=09vmcs_write32(GUEST_GS_LIMIT, vmcs12->guest_gs_limit);
-> -=09vmcs_write32(GUEST_LDTR_LIMIT, vmcs12->guest_ldtr_limit);
-> -=09vmcs_write32(GUEST_TR_LIMIT, vmcs12->guest_tr_limit);
-> -=09vmcs_write32(GUEST_GDTR_LIMIT, vmcs12->guest_gdtr_limit);
-> -=09vmcs_write32(GUEST_IDTR_LIMIT, vmcs12->guest_idtr_limit);
-> -=09vmcs_write32(GUEST_ES_AR_BYTES, vmcs12->guest_es_ar_bytes);
-> -=09vmcs_write32(GUEST_SS_AR_BYTES, vmcs12->guest_ss_ar_bytes);
-> -=09vmcs_write32(GUEST_DS_AR_BYTES, vmcs12->guest_ds_ar_bytes);
-> -=09vmcs_write32(GUEST_FS_AR_BYTES, vmcs12->guest_fs_ar_bytes);
-> -=09vmcs_write32(GUEST_GS_AR_BYTES, vmcs12->guest_gs_ar_bytes);
-> -=09vmcs_write32(GUEST_LDTR_AR_BYTES, vmcs12->guest_ldtr_ar_bytes);
-> -=09vmcs_write32(GUEST_TR_AR_BYTES, vmcs12->guest_tr_ar_bytes);
-> -=09vmcs_writel(GUEST_SS_BASE, vmcs12->guest_ss_base);
-> -=09vmcs_writel(GUEST_DS_BASE, vmcs12->guest_ds_base);
-> -=09vmcs_writel(GUEST_FS_BASE, vmcs12->guest_fs_base);
-> -=09vmcs_writel(GUEST_GS_BASE, vmcs12->guest_gs_base);
-> -=09vmcs_writel(GUEST_LDTR_BASE, vmcs12->guest_ldtr_base);
-> -=09vmcs_writel(GUEST_TR_BASE, vmcs12->guest_tr_base);
-> -=09vmcs_writel(GUEST_GDTR_BASE, vmcs12->guest_gdtr_base);
-> -=09vmcs_writel(GUEST_IDTR_BASE, vmcs12->guest_idtr_base);
-> -
-> -=09vmcs_write32(GUEST_SYSENTER_CS, vmcs12->guest_sysenter_cs);
-> -=09vmcs_writel(GUEST_PENDING_DBG_EXCEPTIONS,
-> -=09=09vmcs12->guest_pending_dbg_exceptions);
-> -=09vmcs_writel(GUEST_SYSENTER_ESP, vmcs12->guest_sysenter_esp);
-> -=09vmcs_writel(GUEST_SYSENTER_EIP, vmcs12->guest_sysenter_eip);
-> +=09=09/*
-> +=09=09 * L1 may access the L2's PDPTR, so save them to construct
-> +=09=09 * vmcs12
-> +=09=09 */
-> +=09=09if (enable_ept) {
-> +=09=09=09vmcs_write64(GUEST_PDPTR0, vmcs12->guest_pdptr0);
-> +=09=09=09vmcs_write64(GUEST_PDPTR1, vmcs12->guest_pdptr1);
-> +=09=09=09vmcs_write64(GUEST_PDPTR2, vmcs12->guest_pdptr2);
-> +=09=09=09vmcs_write64(GUEST_PDPTR3, vmcs12->guest_pdptr3);
-> +=09=09}
-> +=09}
-> =20
->  =09if (nested_cpu_has_xsaves(vmcs12))
->  =09=09vmcs_write64(XSS_EXIT_BITMAP, vmcs12->xss_exit_bitmap);
-> +
->  =09vmcs_write64(VMCS_LINK_POINTER, -1ull);
-> =20
->  =09if (cpu_has_vmx_posted_intr())
-> @@ -11717,9 +11746,6 @@ static void prepare_vmcs02_full(struct
-> kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
-> =20
->  =09set_cr4_guest_host_mask(vmx);
-> =20
-> -=09if (vmx_mpx_supported())
-> -=09=09vmcs_write64(GUEST_BNDCFGS, vmcs12->guest_bndcfgs);
-> -
->  =09if (enable_vpid) {
->  =09=09if (nested_cpu_has_vpid(vmcs12) && vmx->nested.vpid02)
->  =09=09=09vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->nested.vpid02);
-> @@ -11727,16 +11753,6 @@ static void prepare_vmcs02_full(struct
-> kvm_vcpu *vcpu, struct vmcs12 *vmcs12)
->  =09=09=09vmcs_write16(VIRTUAL_PROCESSOR_ID, vmx->vpid);
->  =09}
-> =20
-> -=09/*
-> -=09 * L1 may access the L2's PDPTR, so save them to construct vmcs12
-> -=09 */
-> -=09if (enable_ept) {
-> -=09=09vmcs_write64(GUEST_PDPTR0, vmcs12->guest_pdptr0);
-> -=09=09vmcs_write64(GUEST_PDPTR1, vmcs12->guest_pdptr1);
-> -=09=09vmcs_write64(GUEST_PDPTR2, vmcs12->guest_pdptr2);
-> -=09=09vmcs_write64(GUEST_PDPTR3, vmcs12->guest_pdptr3);
-> -=09}
-> -
->  =09if (cpu_has_vmx_msr_bitmap())
->  =09=09vmcs_write64(MSR_BITMAP, __pa(vmx->nested.vmcs02.msr_bitmap));
+>  =09u64 addr =3D data & ~KVM_MSR_ENABLED;
+>  =09if (!IS_ALIGNED(addr, 4))
+> @@ -2550,7 +2550,7 @@ int kvm_lapic_enable_pv_eoi(struct kvm_vcpu
+> *vcpu, u64 data)
+>  =09if (!pv_eoi_enabled(vcpu))
+>  =09=09return 0;
+>  =09return kvm_gfn_to_hva_cache_init(vcpu->kvm,
+> &vcpu->arch.pv_eoi.data,
+> -=09=09=09=09=09 addr, sizeof(u8));
+> +=09=09=09=09=09 addr, len);
 >  }
-> @@ -11757,6 +11773,7 @@ static int prepare_vmcs02(struct kvm_vcpu
-> *vcpu, struct vmcs12 *vmcs12,
->  {
->  =09struct vcpu_vmx *vmx =3D to_vmx(vcpu);
->  =09u32 exec_control, vmcs12_exec_ctrl;
-> +=09struct hv_enlightened_vmcs *hv_evmcs =3D vmx->nested.hv_evmcs;
 > =20
->  =09if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs) {
->  =09=09prepare_vmcs02_full(vcpu, vmcs12);
-> @@ -11768,11 +11785,13 @@ static int prepare_vmcs02(struct kvm_vcpu
-> *vcpu, struct vmcs12 *vmcs12,
->  =09 * with vmx_shadow_fields.h.
->  =09 */
+>  void kvm_apic_accept_events(struct kvm_vcpu *vcpu)
+> diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
+> index ed0ed39abd36..ff6ef9c3d760 100644
+> --- a/arch/x86/kvm/lapic.h
+> +++ b/arch/x86/kvm/lapic.h
+> @@ -120,7 +120,7 @@ static inline bool
+> kvm_hv_vapic_assist_page_enabled(struct kvm_vcpu *vcpu)
+>  =09return vcpu->arch.hyperv.hv_vapic &
+> HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
+>  }
 > =20
-> -=09vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
-> -=09vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
-> -=09vmcs_write32(GUEST_CS_AR_BYTES, vmcs12->guest_cs_ar_bytes);
-> -=09vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
-> -=09vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
-> +=09if (!hv_evmcs || evmcs_needs_write(vmx, GUEST_GRP2)) {
-> +=09=09vmcs_write16(GUEST_CS_SELECTOR, vmcs12->guest_cs_selector);
-> +=09=09vmcs_write32(GUEST_CS_LIMIT, vmcs12->guest_cs_limit);
-> +=09=09vmcs_write32(GUEST_CS_AR_BYTES, vmcs12->guest_cs_ar_bytes);
-> +=09=09vmcs_writel(GUEST_ES_BASE, vmcs12->guest_es_base);
-> +=09=09vmcs_writel(GUEST_CS_BASE, vmcs12->guest_cs_base);
-> +=09}
+> -int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data);
+> +int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned
+> long len);
+>  void kvm_lapic_init(void);
+>  void kvm_lapic_exit(void);
 > =20
->  =09/*
->  =09 * Not in vmcs02: GUEST_PML_INDEX, HOST_FS_SELECTOR,
-> HOST_GS_SELECTOR,
-> @@ -11788,12 +11807,14 @@ static int prepare_vmcs02(struct kvm_vcpu
-> *vcpu, struct vmcs12 *vmcs12,
->  =09=09vmcs_write64(GUEST_IA32_DEBUGCTL, vmx->nested.vmcs01_debugctl);
->  =09}
->  =09if (vmx->nested.nested_run_pending) {
-> -=09=09vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
-> -=09=09=09     vmcs12->vm_entry_intr_info_field);
-> -=09=09vmcs_write32(VM_ENTRY_EXCEPTION_ERROR_CODE,
-> -=09=09=09     vmcs12->vm_entry_exception_error_code);
-> -=09=09vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
-> -=09=09=09     vmcs12->vm_entry_instruction_len);
-> +=09=09if (!hv_evmcs || evmcs_needs_write(vmx, CONTROL_EVENT)) {
-> +=09=09=09vmcs_write32(VM_ENTRY_INTR_INFO_FIELD,
-> +=09=09=09=09     vmcs12->vm_entry_intr_info_field);
-> +=09=09=09vmcs_write32(VM_ENTRY_EXCEPTION_ERROR_CODE,
-> +=09=09=09=09     vmcs12->vm_entry_exception_error_code);
-> +=09=09=09vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
-> +=09=09=09=09     vmcs12->vm_entry_instruction_len);
-> +=09=09}
->  =09=09vmcs_write32(GUEST_INTERRUPTIBILITY_INFO,
->  =09=09=09     vmcs12->guest_interruptibility_info);
->  =09=09vmx->loaded_vmcs->nmi_known_unmasked =3D
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 06dd4cdb2ca8..a57766b940a5 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2442,7 +2442,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu,
+> struct msr_data *msr_info)
+> =20
+>  =09=09break;
+>  =09case MSR_KVM_PV_EOI_EN:
+> -=09=09if (kvm_lapic_enable_pv_eoi(vcpu, data))
+> +=09=09if (kvm_lapic_enable_pv_eoi(vcpu, data, sizeof(u8)))
+>  =09=09=09return 1;
+>  =09=09break;
+> =20
 > --=20
 > 2.14.4
+
+Reviewed-By: Liran Alon <liran.alon@oracle.com>
