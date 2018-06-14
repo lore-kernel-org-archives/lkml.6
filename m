@@ -6,78 +6,73 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B5A67C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:03:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0E1E1C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69E24208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:03:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2AD7208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:07:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uFYl72z0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69E24208CB
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h7hu8+G2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2AD7208D4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754953AbeFNKDo (ORCPT
+        id S1754896AbeFNKHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 06:03:44 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39234 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754910AbeFNKDl (ORCPT
+        Thu, 14 Jun 2018 06:07:24 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:38820 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754709AbeFNKHW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:03:41 -0400
-Received: by mail-lf0-f68.google.com with SMTP id t2-v6so2088244lfd.6;
-        Thu, 14 Jun 2018 03:03:40 -0700 (PDT)
+        Thu, 14 Jun 2018 06:07:22 -0400
+Received: by mail-lf0-f66.google.com with SMTP id i83-v6so8512880lfh.5;
+        Thu, 14 Jun 2018 03:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=vodbzBKpJhhpe4g90mTwqzCE5CjR0xvzILkSUKy7L0Q=;
-        b=uFYl72z06Tow+SFEHzvDIeMKpYgz8lEHFq3Tjw5GKdQLWGancG0Rtb0M4joS/yNI78
-         GOfW5vUt7Ckz8MA1tkY7k9h5n1fiETCIuyLl/lyB8jkTKiPJNXLaeMLL9Ntl6gg5ZLUp
-         zgV5PZOqwyrwvBYkh4Yxrwxuu81dA+HWLj2RzSfAkgfF/jsW2FYZYsJFb6BhzSgq2K2Q
-         n/xazhuAgXdoplk//9rAri8q1fKc3KuLqJetKcpliQKlQ+aPKk5Ak2Ej7oy5jHjSNzcG
-         zdIjnHLedItQkD9NSbDGYrwUNb0LmCJ2dxewOAcVH8HbavZo6zt1sAOlJyoVC3doi9QH
-         cZDg==
+        bh=lah5Gb3LjbyT/v0bjCif2j1q5nF8aHLOdsVULUBXikA=;
+        b=h7hu8+G2AWLVDBEteXIZx8fFPuIkgnKUTWbTmbOs+H+QTmIWK/qqzkG6w+kGzi4Ams
+         ebPCyFF/GXV6uLDu+d2L7sVJ6qfEef6Tyfdoa78idXYwxrf4NU6X8wDTIteAJhUOCIfD
+         oZQlzfCw1RFMe2+lo+T+kSeEM9DLe0gfBd6/AxeHPhaCWyZUoEoA2YSll5s+QTzLgVgp
+         LIe4E7l88/H2+uqQdpo26I8WleNACbQQrsHZRB8YAGaAKl9QhUsYluneFbZnmGWgYNzH
+         cbkdmodQBumlVfWFlU4TW1lTVDlk+SONfQuZNxJVqzBxx6idfiesELh1z6Efh9MThhi1
+         Yk+g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=vodbzBKpJhhpe4g90mTwqzCE5CjR0xvzILkSUKy7L0Q=;
-        b=HW3FVjPCke0f/AsJI1kKapTxg9DITWyYQgfvPXjQ0YxEcqXKusSq6zaq+/hYSruIoC
-         BxwsolWrljF+lo9Ma8sLZf8I0WUVo2CvMwO99ZGXtWx1oMNGOcBn3pQIoHL6/XYdNVEc
-         uX6pR/B/KYitEc9acCQp7mUA1rmlLFd8OsJzVBMIyLbukocrC0lqIOpmrTw/3Swkwz1/
-         6Z4WbZyTW511f5iHipatd++yFGu9UhghlhzEj6TrZpvKqJzadS6mt76l9r45GwI4fWCr
-         WcXVJ6Bbt1+9Iw5JZVUgW21uYKbH7T3gikGYpOfOuJQWMzaCl+sjQWmWqG3mU6eRlMxX
-         EViA==
-X-Gm-Message-State: APt69E3+Ek+hb7/2qHBWUcWgGsO1qn7yjF/PavFezR25WyBitK520lsL
-        NA8TXTxA+LGfb7Dv5xzkyej99QzvqAblvikr3TU=
-X-Google-Smtp-Source: ADUXVKJ5alK9gLVnKhDZ3G4yT8tXhTpULBE3a/iooRSe4DKa88kKA3l9knJL2uEHm+Q/cJC2HQt7aYLcEPFRXbKiJ7g=
-X-Received: by 2002:a2e:5453:: with SMTP id y19-v6mr1234608ljd.11.1528970619879;
- Thu, 14 Jun 2018 03:03:39 -0700 (PDT)
+        bh=lah5Gb3LjbyT/v0bjCif2j1q5nF8aHLOdsVULUBXikA=;
+        b=dKHp8JD1H6EpeeBWRjS9mSBmsZG5qjcXovQKITjTAHSoVO5HYB27+kyarE7dKUzcml
+         qaf8CR3DRA/XvuCaFXtIadal5HDL4+vIL8dObluYSNyX/xEhww4e8YkEeFSyA7lFlZCe
+         4mRvnmhn9Y6wjYWvbjVsJqpahs/2LV+7iqcA79UbOB5Pc6MEBQ03qlULNHja6Io7XYSI
+         11Em5g+ye3Ri9MaIYeYcD+gR3PDOJuLc6J/KebKJd4EBoDGnf8AC374+GG0xtbX/vpep
+         1Yyc2XXUqDqiYUXK81k40MxHpA3ag9L7fskEu4VuSlWasZrsusv+CA2nuOaYsV0h5jlK
+         NoVg==
+X-Gm-Message-State: APt69E3gxDVxhGi+RSmfNfRh2zIaGPww9Dp3ddnJiHVXiUtV2B1/rrnN
+        sjqpnsPjFwukVZO6+gC3g7OYazd5HiC9XBBAoBOR0tO4
+X-Google-Smtp-Source: ADUXVKIJ8qWAVRB5bQ5MRhz+OZpP9pxupJT/g9aAwOUMkkHaWkTEC9dplmKc7KfSHYQk1OUPdHHUi2v3P+isLS/nnOc=
+X-Received: by 2002:a19:c203:: with SMTP id l3-v6mr5828419lfc.55.1528970840104;
+ Thu, 14 Jun 2018 03:07:20 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 03:03:38
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 03:07:19
  -0700 (PDT)
-In-Reply-To: <20180612054034.4969-2-songjun.wu@linux.intel.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com> <20180612054034.4969-2-songjun.wu@linux.intel.com>
+In-Reply-To: <20180612054034.4969-5-songjun.wu@linux.intel.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com> <20180612054034.4969-5-songjun.wu@linux.intel.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 14 Jun 2018 12:03:38 +0200
-X-Google-Sender-Auth: e6NBsyed01hqbvTPE9y-orQf8xk
-Message-ID: <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
-Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
+Date:   Thu, 14 Jun 2018 12:07:19 +0200
+X-Google-Sender-Auth: _wKB8UeZIwZ5de5NPaloC9YPF9U
+Message-ID: <CAK8P3a0K6qezHLcjkeq0zd+iQJQc_qbT2JhtZGrCNRT495sUvQ@mail.gmail.com>
+Subject: Re: [PATCH 4/7] tty: serial: lantiq: Always use readl()/writel()
 To:     Songjun Wu <songjun.wu@linux.intel.com>
 Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
         chuanhua.lei@intel.com,
         "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
         qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
         linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>,
+        James Hogan <jhogan@kernel.org>, Jiri Slaby <jslaby@suse.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         Ralf Baechle <ralf@linux-mips.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -86,32 +81,21 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Jun 12, 2018 at 7:40 AM, Songjun Wu <songjun.wu@linux.intel.com> wrote:
-> Previous implementation uses a hard-coded register value to check if
-> the current serial entity is the console entity.
-> Now the lantiq serial driver uses the aliases for the index of the
-> serial port.
-> The lantiq danube serial dts are updated with aliases to support this.
+> Previous implementation uses platform-dependent functions
+> ltq_w32()/ltq_r32() to access registers. Those functions are not
+> available for other SoC which uses the same IP.
+> Change to OS provided readl()/writel() and readb()/writeb(), so
+> that different SoCs can use the same driver.
 >
 > Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
-> ---
->
->  arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi b/arch/mips/boot/dts/lantiq/danube.dtsi
-> index 2dd950181f8a..7a9e15da6bd0 100644
-> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
-> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
-> @@ -4,6 +4,10 @@
->         #size-cells = <1>;
->         compatible = "lantiq,xway", "lantiq,danube";
->
-> +       aliases {
-> +               serial0 = &asc1;
-> +       };
-> +
 
-You generally want the aliases to be part of the board specific file,
-not every board numbers their serial ports in the same way.
+Are there any big-endian machines using this driver? The original definition
+of ltq_r32() uses non-byteswapping __raw_readl() etc, which suggests
+that the registers might be wired up in a way that matches the CPU
+endianess (this is usally a bad idea in hardware design, but nothing
+we can influence in the OS).
 
-       Arnd
+When you change it to readl(), that will breaks all machines that rely
+on the old behavior on big-endian kernels.
+
+      Arnd
