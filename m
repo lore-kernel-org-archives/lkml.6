@@ -2,173 +2,139 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4D693C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:46:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5D1D0C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5E42208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:46:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12BE6208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rhOQ9hc2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5E42208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oO65Xoba"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12BE6208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754561AbeFNHqk (ORCPT
+        id S1754714AbeFNHrS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:46:40 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:39054 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752781AbeFNHqj (ORCPT
+        Thu, 14 Jun 2018 03:47:18 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:37893 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754631AbeFNHrQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:46:39 -0400
-Received: by mail-lf0-f68.google.com with SMTP id t2-v6so1485163lfd.6
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:46:38 -0700 (PDT)
+        Thu, 14 Jun 2018 03:47:16 -0400
+Received: by mail-pl0-f66.google.com with SMTP id b14-v6so3059755pls.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:47:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=dr6KVSW/cBm6y3jl9rWCZk9xfKiRkS6RsW+p7SinGAQ=;
-        b=rhOQ9hc2yayYMEw7lm3CSmbJZh7CGDt7HWJrT+XSFQZHWYHWlNtNKcqL8WlU1XnH+L
-         5T3opGPCBtt4jfaQ+K5svJs6LlvFGFTWP0ylv66b8iSj/+x8NrxrMEBg9fpxfGrmGXRG
-         bE35VKR97EV0EbqmBYrCqTXUw4kYyMNf9kz2D8rGaO7STL5IORaFIe7pDdARJgqMFVsm
-         Jz9XEATn16o1ql/QmbjrIRwdDW917GPtBo4ZD4erPQoT2Ucs7NJW1zaHLx7PZt5L9hvO
-         faQZyndzDmS0vMlU6/dOPAOEsXrfFapKG0CmfsSJTd/trW37T2QvBmhAJbE6j6z0CAF4
-         9dSg==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=hB8N7caivf5dNhcJxRLEqcbX9WI+8+J/asiSED2KGQA=;
+        b=oO65Xoba0bM9QR2PpELD0f5gIhUTEtWYIoxSAiF19cFZpwTnIqRMTNe6LuXO6uL4Oj
+         rcYMd3VAijIrgrEea3pDG4rnzvY6XJsmmzGLhPdtXIj8JoRN+uKbS7VGj7+4h/wkgQAR
+         H9ElPikYN58vlmtKxeWCuaUh8ffmQeW8lgj+E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=dr6KVSW/cBm6y3jl9rWCZk9xfKiRkS6RsW+p7SinGAQ=;
-        b=QU6yf6E6m/gNToaXh+4Qn2Ah+0zAXz2wMcfmiXr4DTu1Q35PsKkqoJOJxausRAsHpI
-         RWyoXJ8zAU0rkqma77F+aO+/IV+Q6Xlgqhk7+ICJ2pDhhmBsDJxIqZTzETTfqh8vew4t
-         oPN32Lg6rZ3IkjwiRKXNpVj7o5JFuHcmGmvuzyIDmOcHHXSZT2/IzQr3CJ3wZH8XAcuF
-         2FUaJffDu6qWskH6ekR8l/rfc/qA7ihJiKX5oLrB0EU/vkQQwK5ITTqhC1cv8DFRT3jE
-         OIlGirMUqYDQdCmcj54YsUmjj9vPeKT/KuPY6RKjWZFBqFJH5Hg1B4gQ32+IUPHPb8BB
-         +stg==
-X-Gm-Message-State: APt69E1R7v/tyHCAl6+GNyfL93Q+ztE6Tg+Yzd62N5hOvWlDiMLUgURu
-        3P8Z8/J7GwED0C/rqXLskAVUrWgh4SUa0cqu+mP/aQ==
-X-Google-Smtp-Source: ADUXVKJbroERQ7rtkGYYI3dTLqBY7ZqgiRk0t7mDVQLOs9+Ak+Z9a6w1twmDDs82gQ6E49EBdgidE2q5PUb7pHZKbUQ=
-X-Received: by 2002:a19:c203:: with SMTP id l3-v6mr5460613lfc.55.1528962397443;
- Thu, 14 Jun 2018 00:46:37 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 00:46:36
- -0700 (PDT)
-In-Reply-To: <20180614004044.jjz3ws3zyns7x4x6@thebollingers.org>
-References: <20180611042515.ml6zbcmz6dlvjmrp@thebollingers.org>
- <CAK8P3a2aPshgrAp6=e62mvEpmmLYCAwRa_HxG_A1YKJ5we5XVQ@mail.gmail.com> <20180614004044.jjz3ws3zyns7x4x6@thebollingers.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 14 Jun 2018 09:46:36 +0200
-X-Google-Sender-Auth: dsGBmNAZHnWazRzwhyk27kL7xEc
-Message-ID: <CAK8P3a1Ke5OER=UFQfoTLppM-4MNWfCmkdWDz_TyWTzbX3WWvw@mail.gmail.com>
-Subject: Re: [PATCH] optoe: driver to read/write SFP/QSFP EEPROMs
-To:     Don Bollinger <don@thebollingers.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=hB8N7caivf5dNhcJxRLEqcbX9WI+8+J/asiSED2KGQA=;
+        b=kh+qv+ibrciZs9kWdCCqoB9yYXNxhG1NCi+RjoB8qDCwmZj9rMC34CBFdJOGAOtIwG
+         fxjd5nBanmmoH0FnmUz8TcPAEis07vG7k+J5helVcBVqXpE5BSAbeA+D4gTseq+B9haK
+         561UKMNAMaVSsIzDuZpbEotvP8ABdJroEiTjNsIKe6iWfq2TcPHtfwprSBxFcsmiVr6t
+         CQh40bWNqz7jjJ9O9Zy4JisT/N7++diz6YcN4YAU6Q92PLAwlNDSuuQv+X2oQqPs2ZGI
+         aIpFEzKh7IGQII39njT/LDW/4N6g1I1JrLnna68+A/cleK5EwI8q7ysIxAW+zGHJrx6c
+         zUnA==
+X-Gm-Message-State: APt69E01My9cJEfecEYjzX/lMMtB90h3Cu3ER8o74c2ZAFplKPo2AJtn
+        TJomJjPDr9OvND8CtRw4DELWffNFajU=
+X-Google-Smtp-Source: ADUXVKJoT3L0y2E0LRIb295uRFcq1bvH2PIcJmMMv/zuDq9JejVBz/e5ILtLKFKiL+bt3P0ZwuAjQA==
+X-Received: by 2002:a17:902:b604:: with SMTP id b4-v6mr1809946pls.18.1528962435550;
+        Thu, 14 Jun 2018 00:47:15 -0700 (PDT)
+Received: from keiichiw1.tok.corp.google.com ([2401:fa00:4:4:968c:de0d:27a3:4bef])
+        by smtp.gmail.com with ESMTPSA id y11-v6sm6522788pfn.92.2018.06.14.00.47.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 00:47:14 -0700 (PDT)
+From:   Keiichi Watanabe <keiichiw@chromium.org>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kamil Debski <kamil@wypas.org>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        s.nawrocki@samsung.com
+Subject: [PATCH v3 0/3] Add controls for VP8/VP9 profile
+Date:   Thu, 14 Jun 2018 16:46:49 +0900
+Message-Id: <20180614074652.162796-1-keiichiw@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 2:40 AM, Don Bollinger <don@thebollingers.org> wrote:
-> On Mon, Jun 11, 2018 at 03:43:02PM +0200, Arnd Bergmann wrote:
->> On Mon, Jun 11, 2018 at 6:25 AM, Don Bollinger <don@thebollingers.org> wrote:
+This patch series add new menu controls V4L2_CID_MPEG_VIDEO_VP8_PROFILE and
+V4L2_CID_MPEG_VIDEO_VP9_PROFILE for VP8/VP9 profiles. These controls can be used
+to select a desired profile for VP8/VP9 encoders. In addition, they are also
+used to query for supported profiles by an encoder or a decoder.
 
->>
->> I don't understand this part: I see some older patches introducing an
->> EEPROM_CLASS, but nothing ever seems to have made it into the
->> mainline kernel.
->>
->> If that class isn't there, this code shouldn't be either. You can always
->> add it back in case we decide to introduce that class later, but then
->> I wouldn't make it a compile-time option but just a hard dependency
->> instead.
->
-> Thanks for the feedback.
->
-> Some background will explain how optoe got here...  My goal is to make
-> the EEPROM data and controls in {Q}SFP devices more accessible.  (I'm
-> working for Finisar, an optics vendor.)
->
-> The ecosystem where optoe operates includes switch vendors, NOS vendors,
-> optics vendors and switch ASIC vendors, competing and collaborating to
-> build a bunch of different complete white box switch solutions.
->
-> The NOS (Network Operating System) vendors start with a Linux distro,
-> then add a bunch of their own patches and 'value add'.  Then they
-> include platform drivers from the switch vendors.  And they integrate
-> the chosen switch ASIC SDK.
->
-> Here's the key:  I don't have access to all of those pieces.  I can
-> build an environment to build my driver for many of those systems, but I
-> can't change other elements of that NOS.
->
-> The first NOS I targeted (Cumulus Linux) happens to be the author of the
-> EEPROM_CLASS patches you cited.  I began with their driver (the best
-> available), and morphed it into optoe.  To fit their environment, I kept
-> the EEPROM_CLASS code.  They use their own platform driver (one for each
-> switch model) to instantiate their predecessor to the optoe driver.  So,
-> since I don't have access to their platform driver, I kept the data
-> structure they pass to the probe function, where I get initialization
-> data.  That is now struct optoe_platform_data.  The *dummy items in that
-> struct maintain compatibility, while making it clear that they aren't
-> really needed.
->
-> When I targeted the next NOS, it did not have the EEPROM_CLASS code.  I
-> figured out I could #ifdef that code, enabling me to create a driver that
-> works in both environments.
+Patch 1 adds a control V4L2_CID_MPEG_VIDEO_VP8_PROFILE for VP8 profile. Though
+V4L2_CID_MPEG_VIDEO_VPX_PROFILE is originally used for VP8 profile, this control
+is not good by the following reasons:
+(i) Despite the name contains 'VPX', it cannot be used for VP9 because supported
+profiles differ between VP8 and VP9.
+(ii) Unlike other controls for profiles (e.g. H264), this is not a menu control
+but an integer control, which cannot be used to query for supported profiles.
 
-Ok, I see. For the upstream submission of course, none of the forked
-kernel code bases matter at all, what we want is a driver that makes
-sense by itself, and none of it should depend on any third party code.
+Thus, V4L2_CID_MPEG_VIDEO_VPX_PROFILE is deprecated and become an alias of
+V4L2_CID_MPEG_VIDEO_VP8_PROFILE. In addition, Patch 1 fixes the use of
+V4L2_CID_MPEG_VIDEO_VPX_PROFILE in existing venus/s5p_mfc drivers.
 
->> > +struct optoe_platform_data {
->> > +       u32             byte_len;               /* size (sum of all addr) */
->> > +       u16             page_size;              /* for writes */
->> > +       u8              flags;
->> > +       void            *dummy1;                /* backward compatibility */
->> > +       void            *dummy2;                /* backward compatibility */
->> > +
->> > +#ifdef EEPROM_CLASS
->> > +       struct eeprom_platform_data *eeprom_data;
->> > +#endif
->> > +       char port_name[MAX_PORT_NAME_LEN];
->> > +};
->>
->> What is the backward-compatibility for? Normally we don't do it
->> like that, we only keep compatibility with things that have already
->> been part of the kernel, especially when you also have an #ifdef
->> that makes it incompatible again ;-)
->
-> So it is actually compatible with two different kernel compilations.  If
-> EEPROM_CLASS is configured, optoe supports that model.  If not, optoe
-> implements a sysfs file to identify which port this device is on.  It
-> works.
+Patch 2 adds a control V4L2_CID_MPEG_VIDEO_VP9_PROFILE for VP9 profile.
 
-I mean the 'dummy1' and 'dummy2' variables. They don't seem to make
-any sense, and neither does the comment here.
+By patch 3, this control is supported in MediaTek decoder's driver, which
+supports VP9 profile 0.
 
->> > +struct optoe_data {
->> > +       struct optoe_platform_data chip;
->>
->> Maybe merge the two structures into one?
->
-> optoe_platform_data is passed in when optoe gets a probe.  It is only
-> part of the data I need to maintain internally.  I inherited this
-> pattern from at24.c (the predecessor ^2 to optoe).
+Version 3 changes:
+- Add V4L2_CID_MPEG_VIDEO_VP8_PROFILE in v4l2-controls.
+- Make V4L2_CID_MPEG_VIDEO_VPX_PROFILE to be an alias of
+  V4L2_CID_MPEG_VIDEO_VP8_PROFILE.
+- Fix the use of V4L2_CID_MPEG_VIDEO_VPX_PROFILE in venus/s5p_mfc drivers.
+- Small fix in mtk_vcodec_dec.
 
-Passed in from where? The structure is declared locally in this
-file, so no other driver has access to the definition.
+Version 2 changes:
+- Support V4L2_CID_MPEG_VIDEO_VP9_PROFILE in MediaTek decoder's driver.
 
-For traditional devices, we would use a header in
-include/linux/platform_data/, but a more modern way of doing this
-would be to use named device properties that are either put
-in the devicetree file (on embedded machines) or added through
-the .properties field when statically declaring an i2c device from
-a PCI device parent.
+Version 1 changes:
+- Add V4L2_CID_MPEG_VIDEO_VP9_PROFILE in v4l2-controls.
 
-      Arnd
+Keiichi Watanabe (3):
+  media: v4l2-ctrl: Change control for VP8 profile to menu control
+  media: v4l2-ctrl: Add control for VP9 profile
+  media: mtk-vcodec: Support VP9 profile in decoder
+
+ .../media/uapi/v4l/extended-controls.rst      | 52 +++++++++++++++++--
+ .../platform/mtk-vcodec/mtk_vcodec_dec.c      |  5 ++
+ drivers/media/platform/qcom/venus/core.h      |  2 +-
+ .../media/platform/qcom/venus/hfi_helper.h    | 12 ++---
+ .../media/platform/qcom/venus/vdec_ctrls.c    | 10 ++--
+ drivers/media/platform/qcom/venus/venc.c      | 14 ++---
+ .../media/platform/qcom/venus/venc_ctrls.c    | 12 +++--
+ drivers/media/platform/s5p-mfc/s5p_mfc_enc.c  | 15 +++---
+ drivers/media/v4l2-core/v4l2-ctrls.c          | 23 +++++++-
+ include/uapi/linux/v4l2-controls.h            | 18 ++++++-
+ 10 files changed, 127 insertions(+), 36 deletions(-)
+
+--
+2.18.0.rc1.242.g61856ae69a-goog
