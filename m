@@ -1,53 +1,57 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C9ED6C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E1EFEC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771AB208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D122208E1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LSPR7S/4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771AB208DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ecWXlK1v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D122208E1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935807AbeFNOF2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:05:28 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45726 "EHLO mail.kernel.org"
+        id S1755273AbeFNOFc (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:05:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754907AbeFNOF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:05:26 -0400
+        id S1755128AbeFNOF3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:05:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4D072208DA;
-        Thu, 14 Jun 2018 14:05:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A7A6208DB;
+        Thu, 14 Jun 2018 14:05:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985125;
-        bh=FCPukCJMTP0LdhZ3IQYUrI+A0quck14wQPQPEShWi54=;
+        s=default; t=1528985129;
+        bh=Kx9t9T50KJALWraEUZOhPjjM7+WaK877yQzSZwlSrn0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LSPR7S/4fPnyzEIKEWKzYicgMCrDnnWwAwjFNgxsKFf6rs8yy1hevxZxkgLndcnPf
-         Yq3cPWmjTbKb58fa0ywP7L98kbPaazF5j6wHKL8CB3hWPPv3druV1I3mQL8DS8fBN2
-         I5Z0iDo8Ml3K0Ye1saMEne4gbq6u8R5fdBiUliqk=
+        b=ecWXlK1vuJ473BZhvgrc8HOcPbrvCdu3i78YmfUeSxk7KRcfZBlQHRF3dTrFDoS4l
+         pMt87PBqgTYedV/wBQwA9UKnAKixqhzO+m3Dgn4xsr4Pm99Jg6yf3PUt+tYQTM8OP9
+         ZLjSmWu2+48os2Halo3u8PNts21VqIH9wxDPVTMo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Atul Gupta <atul.gupta@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.17 01/45] crypto: chelsio - request to HW should wrap
-Date:   Thu, 14 Jun 2018 16:03:52 +0200
-Message-Id: <20180614132126.866339903@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Carlos Manuel Santos <cmmpsantos@gmail.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.17 10/45] NFC: pn533: dont send USB data off of the stack
+Date:   Thu, 14 Jun 2018 16:04:01 +0200
+Message-Id: <20180614132127.302062707@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,100 +63,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Atul Gupta <atul.gupta@chelsio.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit 4c826fed675dfffd8485c5477b616d61d1ec9e9a upstream.
+commit dbafc28955fa6779dc23d1607a0fee5e509a278b upstream.
 
--Tx request and data is copied to HW Q in 64B desc, check for
-end of queue and adjust the current position to start from
-beginning before passing the additional request info.
--key context copy should check key length only
--Few reverse christmas tree correction
+It's amazing that this driver ever worked, but now that x86 doesn't
+allow USB data to be sent off of the stack, it really does not work at
+all.  Fix this up by properly allocating the data for the small
+"commands" that get sent to the device off of the stack.
 
-Signed-off-by: Atul Gupta <atul.gupta@chelsio.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+We do this for one command by having a whole urb just for ack messages,
+as they can be submitted in interrupt context, so we can not use
+usb_bulk_msg().  But the poweron command can sleep (and does), so use
+usb_bulk_msg() for that transfer.
+
+Reported-by: Carlos Manuel Santos <cmmpsantos@gmail.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/chelsio/chcr_ipsec.c |   35 +++++++++++++++++------------------
- 1 file changed, 17 insertions(+), 18 deletions(-)
+ drivers/nfc/pn533/usb.c |   42 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
 
---- a/drivers/crypto/chelsio/chcr_ipsec.c
-+++ b/drivers/crypto/chelsio/chcr_ipsec.c
-@@ -346,18 +346,23 @@ inline void *copy_cpltx_pktxt(struct sk_
- 				struct net_device *dev,
- 				void *pos)
- {
-+	struct cpl_tx_pkt_core *cpl;
-+	struct sge_eth_txq *q;
- 	struct adapter *adap;
- 	struct port_info *pi;
--	struct sge_eth_txq *q;
--	struct cpl_tx_pkt_core *cpl;
--	u64 cntrl = 0;
- 	u32 ctrl0, qidx;
-+	u64 cntrl = 0;
-+	int left;
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -62,6 +62,9 @@ struct pn533_usb_phy {
+ 	struct urb *out_urb;
+ 	struct urb *in_urb;
  
- 	pi = netdev_priv(dev);
- 	adap = pi->adapter;
- 	qidx = skb->queue_mapping;
- 	q = &adap->sge.ethtxq[qidx + pi->first_qset];
- 
-+	left = (void *)q->q.stat - pos;
-+	if (!left)
-+		pos = q->q.desc;
++	struct urb *ack_urb;
++	u8 *ack_buffer;
 +
- 	cpl = (struct cpl_tx_pkt_core *)pos;
+ 	struct pn533 *priv;
+ };
  
- 	cntrl = TXPKT_L4CSUM_DIS_F | TXPKT_IPCSUM_DIS_F;
-@@ -382,18 +387,17 @@ inline void *copy_key_cpltx_pktxt(struct
- 				void *pos,
- 				struct ipsec_sa_entry *sa_entry)
- {
--	struct adapter *adap;
--	struct port_info *pi;
--	struct sge_eth_txq *q;
--	unsigned int len, qidx;
- 	struct _key_ctx *key_ctx;
- 	int left, eoq, key_len;
-+	struct sge_eth_txq *q;
-+	struct adapter *adap;
-+	struct port_info *pi;
-+	unsigned int qidx;
+@@ -150,13 +153,16 @@ static int pn533_usb_send_ack(struct pn5
+ 	struct pn533_usb_phy *phy = dev->phy;
+ 	static const u8 ack[6] = {0x00, 0x00, 0xff, 0x00, 0xff, 0x00};
+ 	/* spec 7.1.1.3:  Preamble, SoPC (2), ACK Code (2), Postamble */
+-	int rc;
  
- 	pi = netdev_priv(dev);
- 	adap = pi->adapter;
- 	qidx = skb->queue_mapping;
- 	q = &adap->sge.ethtxq[qidx + pi->first_qset];
--	len = sa_entry->enckey_len + sizeof(struct cpl_tx_pkt_core);
- 	key_len = sa_entry->kctx_len;
+-	phy->out_urb->transfer_buffer = (u8 *)ack;
+-	phy->out_urb->transfer_buffer_length = sizeof(ack);
+-	rc = usb_submit_urb(phy->out_urb, flags);
++	if (!phy->ack_buffer) {
++		phy->ack_buffer = kmemdup(ack, sizeof(ack), flags);
++		if (!phy->ack_buffer)
++			return -ENOMEM;
++	}
  
- 	/* end of queue, reset pos to start of queue */
-@@ -411,19 +415,14 @@ inline void *copy_key_cpltx_pktxt(struct
- 	pos += sizeof(struct _key_ctx);
- 	left -= sizeof(struct _key_ctx);
+-	return rc;
++	phy->ack_urb->transfer_buffer = phy->ack_buffer;
++	phy->ack_urb->transfer_buffer_length = sizeof(ack);
++	return usb_submit_urb(phy->ack_urb, flags);
+ }
  
--	if (likely(len <= left)) {
-+	if (likely(key_len <= left)) {
- 		memcpy(key_ctx->key, sa_entry->key, key_len);
- 		pos += key_len;
- 	} else {
--		if (key_len <= left) {
--			memcpy(pos, sa_entry->key, key_len);
--			pos += key_len;
--		} else {
--			memcpy(pos, sa_entry->key, left);
--			memcpy(q->q.desc, sa_entry->key + left,
--			       key_len - left);
--			pos = (u8 *)q->q.desc + (key_len - left);
--		}
-+		memcpy(pos, sa_entry->key, left);
-+		memcpy(q->q.desc, sa_entry->key + left,
-+		       key_len - left);
-+		pos = (u8 *)q->q.desc + (key_len - left);
- 	}
- 	/* Copy CPL TX PKT XT */
- 	pos = copy_cpltx_pktxt(skb, dev, pos);
+ static int pn533_usb_send_frame(struct pn533 *dev,
+@@ -375,26 +381,31 @@ static int pn533_acr122_poweron_rdr(stru
+ 	/* Power on th reader (CCID cmd) */
+ 	u8 cmd[10] = {PN533_ACR122_PC_TO_RDR_ICCPOWERON,
+ 		      0, 0, 0, 0, 0, 0, 3, 0, 0};
++	char *buffer;
++	int transferred;
+ 	int rc;
+ 	void *cntx;
+ 	struct pn533_acr122_poweron_rdr_arg arg;
+ 
+ 	dev_dbg(&phy->udev->dev, "%s\n", __func__);
+ 
++	buffer = kmemdup(cmd, sizeof(cmd), GFP_KERNEL);
++	if (!buffer)
++		return -ENOMEM;
++
+ 	init_completion(&arg.done);
+ 	cntx = phy->in_urb->context;  /* backup context */
+ 
+ 	phy->in_urb->complete = pn533_acr122_poweron_rdr_resp;
+ 	phy->in_urb->context = &arg;
+ 
+-	phy->out_urb->transfer_buffer = cmd;
+-	phy->out_urb->transfer_buffer_length = sizeof(cmd);
+-
+ 	print_hex_dump_debug("ACR122 TX: ", DUMP_PREFIX_NONE, 16, 1,
+ 		       cmd, sizeof(cmd), false);
+ 
+-	rc = usb_submit_urb(phy->out_urb, GFP_KERNEL);
+-	if (rc) {
++	rc = usb_bulk_msg(phy->udev, phy->out_urb->pipe, buffer, sizeof(cmd),
++			  &transferred, 0);
++	kfree(buffer);
++	if (rc || (transferred != sizeof(cmd))) {
+ 		nfc_err(&phy->udev->dev,
+ 			"Reader power on cmd error %d\n", rc);
+ 		return rc;
+@@ -490,8 +501,9 @@ static int pn533_usb_probe(struct usb_in
+ 
+ 	phy->in_urb = usb_alloc_urb(0, GFP_KERNEL);
+ 	phy->out_urb = usb_alloc_urb(0, GFP_KERNEL);
++	phy->ack_urb = usb_alloc_urb(0, GFP_KERNEL);
+ 
+-	if (!phy->in_urb || !phy->out_urb)
++	if (!phy->in_urb || !phy->out_urb || !phy->ack_urb)
+ 		goto error;
+ 
+ 	usb_fill_bulk_urb(phy->in_urb, phy->udev,
+@@ -501,7 +513,9 @@ static int pn533_usb_probe(struct usb_in
+ 	usb_fill_bulk_urb(phy->out_urb, phy->udev,
+ 			  usb_sndbulkpipe(phy->udev, out_endpoint),
+ 			  NULL, 0, pn533_send_complete, phy);
+-
++	usb_fill_bulk_urb(phy->ack_urb, phy->udev,
++			  usb_sndbulkpipe(phy->udev, out_endpoint),
++			  NULL, 0, pn533_send_complete, phy);
+ 
+ 	switch (id->driver_info) {
+ 	case PN533_DEVICE_STD:
+@@ -554,6 +568,7 @@ static int pn533_usb_probe(struct usb_in
+ error:
+ 	usb_free_urb(phy->in_urb);
+ 	usb_free_urb(phy->out_urb);
++	usb_free_urb(phy->ack_urb);
+ 	usb_put_dev(phy->udev);
+ 	kfree(in_buf);
+ 
+@@ -573,10 +588,13 @@ static void pn533_usb_disconnect(struct
+ 
+ 	usb_kill_urb(phy->in_urb);
+ 	usb_kill_urb(phy->out_urb);
++	usb_kill_urb(phy->ack_urb);
+ 
+ 	kfree(phy->in_urb->transfer_buffer);
+ 	usb_free_urb(phy->in_urb);
+ 	usb_free_urb(phy->out_urb);
++	usb_free_urb(phy->ack_urb);
++	kfree(phy->ack_buffer);
+ 
+ 	nfc_info(&interface->dev, "NXP PN533 NFC device disconnected\n");
+ }
 
 
