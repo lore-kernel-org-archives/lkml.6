@@ -6,43 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 260C2C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:47 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8CF04C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1CA1208DF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42DFF208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:05:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kWl2sx7t"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1CA1208DF
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1ZFgIAi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42DFF208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936133AbeFNOFn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:05:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45936 "EHLO mail.kernel.org"
+        id S936154AbeFNOFr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:05:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755276AbeFNOFk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:05:40 -0400
+        id S936131AbeFNOFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:05:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87546208DF;
-        Thu, 14 Jun 2018 14:05:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51401208DE;
+        Thu, 14 Jun 2018 14:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985140;
-        bh=tLZUAdHoOwD1ddJiXvis3J/rxkpVEc+xwjmX6Cpk0ic=;
+        s=default; t=1528985142;
+        bh=iBYtOU1lmQDrfp5hFCvlJ+HggJsY10aj3uf5D559kns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kWl2sx7tx0UOJsdfYVFqT7GVwpZ6qhR2Mf1BgebIr+tH8f//b4esmltZ5ZuCCYIpS
-         gefzlJY0jfaqWPcm2/fAP+uPP7VZJHsrfgdg28Lw57+LKgOKb5iKI41eMA4+0icadg
-         gI05HAFmTEwkojhZlhho3jbuNb796yotWJV/49ac=
+        b=n1ZFgIAiR66difko2IoxlZY585cYZKjAR8iCN3iGVYGeB52roWRq+5edj6tTM/hDC
+         KYQ40h9F66p2GHTLM4RTHHwGU88n+EJFgaknDo7HkryTV4xKOYCtKyqAeq0w2RDJlm
+         r50gTPbndrrBK1bXF1AxeCxKdOGMfEs2DRzn0v7Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ethan Lee <flibitijibibo@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.17 14/45] Input: xpad - add GPD Win 2 Controller USB IDs
-Date:   Thu, 14 Jun 2018 16:04:05 +0200
-Message-Id: <20180614132127.509330315@linuxfoundation.org>
+        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Evan Green <evgreen@chromium.org>,
+        Manu Gautam <mgautam@codeaurora.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Subject: [PATCH 4.17 15/45] phy: qcom-qusb2: Fix crash if nvmem cell not specified
+Date:   Thu, 14 Jun 2018 16:04:06 +0200
+Message-Id: <20180614132127.564772062@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -59,40 +61,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ethan Lee <flibitijibibo@gmail.com>
+From: Manu Gautam <mgautam@codeaurora.org>
 
-commit c1ba08390a8bb13c927e699330896adc15b78205 upstream.
+commit 0b4555e776ba0712c6fafb98b226b21fd05d2427 upstream.
 
-GPD Win 2 Website: http://www.gpd.hk/gpdwin2.asp
+Driver currently crashes due to NULL pointer deference
+while updating PHY tune register if nvmem cell is NULL.
+Since, fused value for Tune1/2 register is optional,
+we'd rather bail out.
 
-Tested on a unit from the first production run sent to Indiegogo backers
-
-Signed-off-by: Ethan Lee <flibitijibibo@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom chips")
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Evan Green <evgreen@chromium.org>
+Cc: stable <stable@vger.kernel.org> # 4.14+
+Signed-off-by: Manu Gautam <mgautam@codeaurora.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/joystick/xpad.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/qualcomm/phy-qcom-qusb2.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
---- a/drivers/input/joystick/xpad.c
-+++ b/drivers/input/joystick/xpad.c
-@@ -123,6 +123,7 @@ static const struct xpad_device {
- 	u8 mapping;
- 	u8 xtype;
- } xpad_device[] = {
-+	{ 0x0079, 0x18d4, "GPD Win 2 Controller", 0, XTYPE_XBOX360 },
- 	{ 0x044f, 0x0f00, "Thrustmaster Wheel", 0, XTYPE_XBOX },
- 	{ 0x044f, 0x0f03, "Thrustmaster Wheel", 0, XTYPE_XBOX },
- 	{ 0x044f, 0x0f07, "Thrustmaster, Inc. Controller", 0, XTYPE_XBOX },
-@@ -409,6 +410,7 @@ static const signed short xpad_abs_trigg
+--- a/drivers/phy/qualcomm/phy-qcom-qusb2.c
++++ b/drivers/phy/qualcomm/phy-qcom-qusb2.c
+@@ -315,6 +315,10 @@ static void qusb2_phy_set_tune2_param(st
+ 	const struct qusb2_phy_cfg *cfg = qphy->cfg;
+ 	u8 *val;
  
- static const struct usb_device_id xpad_table[] = {
- 	{ USB_INTERFACE_INFO('X', 'B', 0) },	/* X-Box USB-IF not approved class */
-+	XPAD_XBOX360_VENDOR(0x0079),		/* GPD Win 2 Controller */
- 	XPAD_XBOX360_VENDOR(0x044f),		/* Thrustmaster X-Box 360 controllers */
- 	XPAD_XBOX360_VENDOR(0x045e),		/* Microsoft X-Box 360 controllers */
- 	XPAD_XBOXONE_VENDOR(0x045e),		/* Microsoft X-Box One controllers */
++	/* efuse register is optional */
++	if (!qphy->cell)
++		return;
++
+ 	/*
+ 	 * Read efuse register having TUNE2/1 parameter's high nibble.
+ 	 * If efuse register shows value as 0x0, or if we fail to find
 
 
