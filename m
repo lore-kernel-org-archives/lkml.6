@@ -7,84 +7,86 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4566EC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:19:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2B06CC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:19:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFDB9208B2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D65CD2086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:19:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RjL9abGd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFDB9208B2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L6T/Padn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D65CD2086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964829AbeFNQTI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:19:08 -0400
-Received: from mail-wm0-f45.google.com ([74.125.82.45]:50953 "EHLO
-        mail-wm0-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755214AbeFNQTG (ORCPT
+        id S964882AbeFNQT4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 12:19:56 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:51648 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755194AbeFNQTz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:19:06 -0400
-Received: by mail-wm0-f45.google.com with SMTP id e16-v6so11545624wmd.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 09:19:06 -0700 (PDT)
+        Thu, 14 Jun 2018 12:19:55 -0400
+Received: by mail-wm0-f67.google.com with SMTP id r15-v6so11546623wmc.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 09:19:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=z7Idotg3ND735rVDl+d/Xu5Y8syjqRB7YMDQLdDGy98=;
-        b=RjL9abGdLr56qVb8EW3UMhQ3HXdUOR2JljjsVH8IZcmrZH7j1d1cfCOCMaLjG0j1ik
-         IXKN8DJDgdBZmozYfTOaaR74N/fIPZH6Zlvzs8NhRvSRmDAMmuLuNAEbf8PuAXgtDajL
-         nqxuapaWS3oR4Ugs7dPWtV7Xcm7b46iW9hoerXNHAWsNHL1qO0l8om9wNLLucb3Xsdum
-         fH2KuSE5i/GqUdv080EdsDCmMv5VxnZXr/x3juAptOLbfzS/L9NF6pz2H6zskjlYTB0R
-         zCUNwq09/oLEd2gWfyJZMAYYjl0n5HnUC4eYf4zVZiganUDIN0IKsn9RmokC6pZmiXqa
-         ur+g==
+        bh=d3mwBd8p5KzZ0NQkxn93pWd+SLOjHimaE98WDaVEtzg=;
+        b=L6T/PadnDtkMVDxPUwtbJCHgN/kLPohYCvp+Ut1cASpi+PrQvIUPEL6zSeeq4XvFUg
+         zJ/MtKUX1/HewvcT4qBfwgl5kD6R/GNn8z4d+q+JRY6mXmURgrQW0dd2wLPKVSBW9NYh
+         IlQKkxd525daBAk8q6F8oUtFwU00aOulIMeh/mDbLSIy0hMpKGStrwc9iIrJUpNHzXxv
+         RZ60zneMA4UpwsPkc1vrwn597Er8wlpwfraNQcFh4BWcVk2gntCCQp7fk3xSe/NkP+zr
+         5yK4qUv8UPJynY+zFEMup6LzotzU3Zm5h/TkgjAqFiHqca8Gzkwp3bTskdn6QaGsJOSx
+         YFaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=z7Idotg3ND735rVDl+d/Xu5Y8syjqRB7YMDQLdDGy98=;
-        b=DVJZdU29tZFhdnft4suyA5RhbYIwPd7zM2FljL1whSUHMnAveuk8z5SQJCSyO6huUj
-         qQnR4AUqcOs6r3G9FBPymBeF8YjyERqyhzRnBzpAti60jxQL6LV6BN+/ahDtwva9gRno
-         U1yUGrEQTDgDj/7LIxWOwI4x7MJ7A11LV9mx6M/GS7/s49b0X8YjSA+ELCF9RJkd1htA
-         y6oyQJiZJyTYQnlVRwmhBJ1LqpVD5hJJelTtcnCsUPcF8NP5EMvgrUb7kpjPj8V6HpKh
-         cHVcBekeFcabmUNyxdwoDsN7NnbsKxEMqZ2eitCFrLDqgBFxPt4K+YVtMkY7iX2nB752
-         93bA==
-X-Gm-Message-State: APt69E0Zma29Zm1JhPtOTixfLiw51u35KD2NlVKZ1ERLvd7DQy9ZbzV4
-        6lkWv+FsmS2Ot/o0xOViegY=
-X-Google-Smtp-Source: ADUXVKLeBErtGE4SZ0hDQ4wCNJS5ur8tExbt8oprt4y0xnyy1djzboWkKCQlHJVuVG1qCfmk+G5hIA==
-X-Received: by 2002:a1c:8c55:: with SMTP id o82-v6mr2310429wmd.60.1528993145529;
-        Thu, 14 Jun 2018 09:19:05 -0700 (PDT)
+        bh=d3mwBd8p5KzZ0NQkxn93pWd+SLOjHimaE98WDaVEtzg=;
+        b=XzrRP6QMLCfLfEppNXVPhAPbTxvwy0wbcW8Uy6f4Q3j0A7VX/7TCsGaMf/LCwsiT96
+         jPkJvnEGLYa7ZIoA/Vte+tR7UGRJH+hdN39gvXV30GUA+WAiYRZt9PMSy5KXWcq8fptl
+         uwlFQ7k4Jr966PyJ5jwfqq3vq/g7gxLBMwkEgvGrcFzRJIz0NH33ho1ePWigAaqWgmo1
+         H4pBEVWMIAZj/ZB32TdU8UtfGqllc2FIUZOhYL7q6UFRwbVMBxIIyp4fRZKqEEhaPx1W
+         LJ+e/9QmW0gNo0kbuEpEWbU+x9qGiAQaoLqPbQ3ByIl6rniHFCpLj0vrSN2UJqt9QkmZ
+         1+LQ==
+X-Gm-Message-State: APt69E0zTy8cQRc8CinSOHftLiV37QOi0MeA5rxnxl/yUZ9nfnJXrOkq
+        /J6rYgUUZCjGsLXp1tQQLqA=
+X-Google-Smtp-Source: ADUXVKIISn7b2NUIxwPvipa+7IerLxE5C+bkeg2Bs136f9A9jCnaplUvpMV3aJE8/qma0uNUKVlFQQ==
+X-Received: by 2002:a1c:99cf:: with SMTP id b198-v6mr2243454wme.15.1528993194330;
+        Thu, 14 Jun 2018 09:19:54 -0700 (PDT)
 Received: from localhost (8ta-151-219-142.telkomadsl.co.za. [41.151.219.142])
-        by smtp.gmail.com with ESMTPSA id a9-v6sm5393267wmh.38.2018.06.14.09.19.04
+        by smtp.gmail.com with ESMTPSA id v13-v6sm5672094wrq.43.2018.06.14.09.19.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 09:19:04 -0700 (PDT)
-Date:   Thu, 14 Jun 2018 18:17:18 +0200
+        Thu, 14 Jun 2018 09:19:53 -0700 (PDT)
+Date:   Thu, 14 Jun 2018 18:18:07 +0200
 From:   Chris Opperman <eklikeroomys@gmail.com>
 To:     Ian Abbott <abbotti@mev.co.uk>
-Cc:     H Hartley Sweeten <hsweeten@visionengravers.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        devel@driverdev.osuosl.org, Frank Mori Hess <fmh6jj@gmail.com>,
         Simo Koskinen <koskisoft@gmail.com>,
-        Frank Mori Hess <fmh6jj@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] staging: comedi: Improved readability of function
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] staging: comedi: Improved readability of function
  comedi_nsamples_left.
-Message-ID: <20180614161718.GA3846@kerdev>
-References: <1528910104-1360-1-git-send-email-eklikeroomys@gmail.com>
- <4c33a400-f840-0a21-efad-2a9318dfdb09@mev.co.uk>
+Message-ID: <20180614161807.GB3846@kerdev>
+References: <1528837793-11765-1-git-send-email-eklikeroomys@gmail.com>
+ <20180613092955.vc5impf46prhcur7@mwanda>
+ <20180613182643.GA14100@kerdev>
+ <20180613190549.ugl43yee4f3thk4t@mwanda>
+ <48e9826d-3f60-a79a-779a-2296a89afad0@mev.co.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4c33a400-f840-0a21-efad-2a9318dfdb09@mev.co.uk>
+In-Reply-To: <48e9826d-3f60-a79a-779a-2296a89afad0@mev.co.uk>
 User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ian,
+Hi Ian/Dan,
 
-Thank you! Are there any more steps for me to take to complete this
-patch process?
+In that case I'll stick to the cut-off line format in future. Thanks!
 
 Kind Regards,
 Chris Opperman
