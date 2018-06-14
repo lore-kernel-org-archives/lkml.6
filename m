@@ -6,46 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CA072C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BC038C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F37B208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72EE4208E1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KtizjVyJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F37B208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdOCNApe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72EE4208E1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965829AbeFNOLX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:11:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52358 "EHLO mail.kernel.org"
+        id S965843AbeFNOL3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965788AbeFNOLP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:15 -0400
+        id S965830AbeFNOLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:23 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 455FD208DA;
-        Thu, 14 Jun 2018 14:11:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9078E208DB;
+        Thu, 14 Jun 2018 14:11:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985474;
-        bh=QhDJ8qZpgbeotQiCHBcvVR1cknlrEWz7iV5KbZNP54A=;
+        s=default; t=1528985483;
+        bh=Sad+DmJC5mIVABVQUfNqZEPxFG+2faBOtH2vhX26VCI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KtizjVyJ6qf1fmdD3bAq8nLCZk0D3qBWIEXW7Td/unUP5zM0skgnY56Z7Mt4NokfX
-         Lg2/7OsXYKBhhafsGifWs0oE1QKjBbXD/yb11fJuOgA2/PYeWgD7IATp9IgsFsgh+N
-         ABwJX6giY71GE4u4M7v2vI9m+GGlC0QSGIID3QOU=
+        b=ZdOCNApePyBaAi34s0qb/gmuofIN6OROgkaxY0yPErA+3kmpgsRObaAs1h6Ma2ysH
+         rSfrE0nCa5yKsNDd0A1ntcsAQ6zzwSjfM0RKS5CWJa4KmONXIv5zaTekUpRhVlBl1a
+         pz1iEWVIDKiIYQVjPIx41waEJ4WaWSDidbwX0TGE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Carlos Manuel Santos <cmmpsantos@gmail.com>,
-        Samuel Ortiz <sameo@linux.intel.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Johan Hovold <johan@kernel.org>
-Subject: [PATCH 4.14 10/36] NFC: pn533: dont send USB data off of the stack
-Date:   Thu, 14 Jun 2018 16:04:33 +0200
-Message-Id: <20180614132157.746575492@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Kappner <agk@godking.net>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 4.14 13/36] usb-storage: Add compatibility quirk flags for G-Technologies G-Drive
+Date:   Thu, 14 Jun 2018 16:04:36 +0200
+Message-Id: <20180614132157.867167308@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -62,145 +59,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Alexander Kappner <agk@godking.net>
 
-commit dbafc28955fa6779dc23d1607a0fee5e509a278b upstream.
+commit ca7d9515d0e6825351ce106066cea1f60e40b1c8 upstream.
 
-It's amazing that this driver ever worked, but now that x86 doesn't
-allow USB data to be sent off of the stack, it really does not work at
-all.  Fix this up by properly allocating the data for the small
-"commands" that get sent to the device off of the stack.
+The "G-Drive" (sold by G-Technology) external USB 3.0 drive
+ hangs on write access under UAS and usb-storage:
 
-We do this for one command by having a whole urb just for ack messages,
-as they can be submitted in interrupt context, so we can not use
-usb_bulk_msg().  But the poweron command can sleep (and does), so use
-usb_bulk_msg() for that transfer.
+[  136.079121] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[  136.079144] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
+[  136.079152] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
+[  136.079176] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 00 00 00 00 00 00 00 08 00 00
+[  136.079180] print_req_error: critical target error, dev sdi, sector 0
+[  136.079183] Buffer I/O error on dev sdi, logical block 0, lost sync page write
+[  136.173148] EXT4-fs (sdi): mounted filesystem with ordered data mode. Opts: (null)
+[  140.583998] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
+[  140.584010] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
+[  140.584016] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
+[  140.584022] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 e8 c4 00 18 00 00 00 08 00 00
+[  140.584025] print_req_error: critical target error, dev sdi, sector 3905159192
+[  140.584044] print_req_error: critical target error, dev sdi, sector 3905159192
+[  140.584052] Aborting journal on device sdi-8.
 
-Reported-by: Carlos Manuel Santos <cmmpsantos@gmail.com>
-Cc: Samuel Ortiz <sameo@linux.intel.com>
-Cc: Stephen Hemminger <stephen@networkplumber.org>
+The proposed patch adds compatibility quirks. Because the drive requires two
+quirks (one to work with UAS, and another to work with usb-storage), adding this
+under unusual_devs.h and not just unusual_uas.h so kernels compiled without UAS
+receive the quirk. With the patch, the drive works reliably on UAS and usb-
+storage.
+(tested on NEC Corporation uPD720200 USB 3.0 host controller).
+
+Signed-off-by: Alexander Kappner <agk@godking.net>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Cc: stable <stable@vger.kernel.org>
-Reviewed-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/nfc/pn533/usb.c |   42 ++++++++++++++++++++++++++++++------------
- 1 file changed, 30 insertions(+), 12 deletions(-)
+ drivers/usb/storage/unusual_devs.h |    9 +++++++++
+ drivers/usb/storage/unusual_uas.h  |    9 +++++++++
+ 2 files changed, 18 insertions(+)
 
---- a/drivers/nfc/pn533/usb.c
-+++ b/drivers/nfc/pn533/usb.c
-@@ -62,6 +62,9 @@ struct pn533_usb_phy {
- 	struct urb *out_urb;
- 	struct urb *in_urb;
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -2340,6 +2340,15 @@ UNUSUAL_DEV(  0x4146, 0xba01, 0x0100, 0x
+ 		"Micro Mini 1GB",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL, US_FL_NOT_LOCKABLE ),
  
-+	struct urb *ack_urb;
-+	u8 *ack_buffer;
++/* "G-DRIVE" external HDD hangs on write without these.
++ * Patch submitted by Alexander Kappner <agk@godking.net>
++ */
++UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
++		"SimpleTech",
++		"External HDD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_ALWAYS_SYNC),
 +
- 	struct pn533 *priv;
- };
- 
-@@ -150,13 +153,16 @@ static int pn533_usb_send_ack(struct pn5
- 	struct pn533_usb_phy *phy = dev->phy;
- 	static const u8 ack[6] = {0x00, 0x00, 0xff, 0x00, 0xff, 0x00};
- 	/* spec 7.1.1.3:  Preamble, SoPC (2), ACK Code (2), Postamble */
--	int rc;
- 
--	phy->out_urb->transfer_buffer = (u8 *)ack;
--	phy->out_urb->transfer_buffer_length = sizeof(ack);
--	rc = usb_submit_urb(phy->out_urb, flags);
-+	if (!phy->ack_buffer) {
-+		phy->ack_buffer = kmemdup(ack, sizeof(ack), flags);
-+		if (!phy->ack_buffer)
-+			return -ENOMEM;
-+	}
- 
--	return rc;
-+	phy->ack_urb->transfer_buffer = phy->ack_buffer;
-+	phy->ack_urb->transfer_buffer_length = sizeof(ack);
-+	return usb_submit_urb(phy->ack_urb, flags);
- }
- 
- static int pn533_usb_send_frame(struct pn533 *dev,
-@@ -375,26 +381,31 @@ static int pn533_acr122_poweron_rdr(stru
- 	/* Power on th reader (CCID cmd) */
- 	u8 cmd[10] = {PN533_ACR122_PC_TO_RDR_ICCPOWERON,
- 		      0, 0, 0, 0, 0, 0, 3, 0, 0};
-+	char *buffer;
-+	int transferred;
- 	int rc;
- 	void *cntx;
- 	struct pn533_acr122_poweron_rdr_arg arg;
- 
- 	dev_dbg(&phy->udev->dev, "%s\n", __func__);
- 
-+	buffer = kmemdup(cmd, sizeof(cmd), GFP_KERNEL);
-+	if (!buffer)
-+		return -ENOMEM;
+ /*
+  * Nick Bowler <nbowler@elliptictech.com>
+  * SCSI stack spams (otherwise harmless) error messages.
+--- a/drivers/usb/storage/unusual_uas.h
++++ b/drivers/usb/storage/unusual_uas.h
+@@ -183,3 +183,12 @@ UNUSUAL_DEV(0x4971, 0x8017, 0x0000, 0x99
+ 		"External HDD",
+ 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
+ 		US_FL_NO_REPORT_OPCODES),
 +
- 	init_completion(&arg.done);
- 	cntx = phy->in_urb->context;  /* backup context */
- 
- 	phy->in_urb->complete = pn533_acr122_poweron_rdr_resp;
- 	phy->in_urb->context = &arg;
- 
--	phy->out_urb->transfer_buffer = cmd;
--	phy->out_urb->transfer_buffer_length = sizeof(cmd);
--
- 	print_hex_dump_debug("ACR122 TX: ", DUMP_PREFIX_NONE, 16, 1,
- 		       cmd, sizeof(cmd), false);
- 
--	rc = usb_submit_urb(phy->out_urb, GFP_KERNEL);
--	if (rc) {
-+	rc = usb_bulk_msg(phy->udev, phy->out_urb->pipe, buffer, sizeof(cmd),
-+			  &transferred, 0);
-+	kfree(buffer);
-+	if (rc || (transferred != sizeof(cmd))) {
- 		nfc_err(&phy->udev->dev,
- 			"Reader power on cmd error %d\n", rc);
- 		return rc;
-@@ -490,8 +501,9 @@ static int pn533_usb_probe(struct usb_in
- 
- 	phy->in_urb = usb_alloc_urb(0, GFP_KERNEL);
- 	phy->out_urb = usb_alloc_urb(0, GFP_KERNEL);
-+	phy->ack_urb = usb_alloc_urb(0, GFP_KERNEL);
- 
--	if (!phy->in_urb || !phy->out_urb)
-+	if (!phy->in_urb || !phy->out_urb || !phy->ack_urb)
- 		goto error;
- 
- 	usb_fill_bulk_urb(phy->in_urb, phy->udev,
-@@ -501,7 +513,9 @@ static int pn533_usb_probe(struct usb_in
- 	usb_fill_bulk_urb(phy->out_urb, phy->udev,
- 			  usb_sndbulkpipe(phy->udev, out_endpoint),
- 			  NULL, 0, pn533_send_complete, phy);
--
-+	usb_fill_bulk_urb(phy->ack_urb, phy->udev,
-+			  usb_sndbulkpipe(phy->udev, out_endpoint),
-+			  NULL, 0, pn533_send_complete, phy);
- 
- 	switch (id->driver_info) {
- 	case PN533_DEVICE_STD:
-@@ -554,6 +568,7 @@ static int pn533_usb_probe(struct usb_in
- error:
- 	usb_free_urb(phy->in_urb);
- 	usb_free_urb(phy->out_urb);
-+	usb_free_urb(phy->ack_urb);
- 	usb_put_dev(phy->udev);
- 	kfree(in_buf);
- 
-@@ -573,10 +588,13 @@ static void pn533_usb_disconnect(struct
- 
- 	usb_kill_urb(phy->in_urb);
- 	usb_kill_urb(phy->out_urb);
-+	usb_kill_urb(phy->ack_urb);
- 
- 	kfree(phy->in_urb->transfer_buffer);
- 	usb_free_urb(phy->in_urb);
- 	usb_free_urb(phy->out_urb);
-+	usb_free_urb(phy->ack_urb);
-+	kfree(phy->ack_buffer);
- 
- 	nfc_info(&interface->dev, "NXP PN533 NFC device disconnected\n");
- }
++/* "G-DRIVE" external HDD hangs on write without these.
++ * Patch submitted by Alexander Kappner <agk@godking.net>
++ */
++UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
++		"SimpleTech",
++		"External HDD",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_ALWAYS_SYNC),
 
 
