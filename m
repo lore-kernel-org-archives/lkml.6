@@ -6,117 +6,254 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9CDA9C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:57:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B681EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:58:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54F42205C9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6208F205C9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:58:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lKa7TRl9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54F42205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="EuFajCPq";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="YY1Pcp3z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6208F205C9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965173AbeFNX5D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 19:57:03 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:47720 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965096AbeFNX5C (ORCPT
+        id S965194AbeFNX6K (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 19:58:10 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:41004 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965096AbeFNX6I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 19:57:02 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=epiBw9gycriQOso7ozHvBnXwCsVqI4zK2fKSuC+lyck=; b=lKa7TRl95GKwurtb3Omtq7Kpw+
-        MsKQhYNhAGkWFKLZhpUiHGP/0dAkwQNXnp27ADCjGNQS/eAbIRG81XUymzqRVlG0Bkg4UwFtdQlj8
-        g/2e5JtNxJx1qoYp30ShfbscuGrnrcmG0wgVCLTFvazKdpE/U8iJPLmqzcZHA2Q+SqkwWck8cp/cj
-        qRpk078pJDS/54dZbjJjIAh+t+PuTEPkDTOMU26zVdqePmcFilU+eR+XMbLRvMNpkiX9rcy/WX9Ph
-        ilDc2NQwSCvPDiSqj6Ig24rNz4k94zV7HH0w6K+gWRHHv/A89OhYqPwZMmcyiXQaErCRnhJ54ov7K
-        CthLEkYw==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=dragon.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fTc6t-00013d-C5; Thu, 14 Jun 2018 23:56:59 +0000
-Subject: Re: [PATCH v9 2/2] iommu/amd: Add basic debugfs infrastructure for
- AMD IOMMU
-To:     Gary R Hook <gary.hook@amd.com>, iommu@lists.linux-foundation.org
-Cc:     joro@8bytes.org, linux-kernel@vger.kernel.org
-References: <152883965482.1936.13657625103232933481.stgit@taos>
- <152883969032.1936.15155267369758178246.stgit@taos>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <ae7f8610-de9a-1c0f-478f-3f7f1c6956c4@infradead.org>
-Date:   Thu, 14 Jun 2018 16:56:53 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Thu, 14 Jun 2018 19:58:08 -0400
+Received: by mail-yb0-f193.google.com with SMTP id u11-v6so2894852ybi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 16:58:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=b9Y57Zcw0NoW8SSCQPbfjQuVqgilhOQhSYXtSwp/X1s=;
+        b=EuFajCPqsh/77tWQn1RL4/Qjh5fsKcsKdhyd1kPqyCA9DHSud0qClhENFidPdGzs6L
+         G+9O0WNAxBvGC3LcGWYDoNe3zpzCzMEvCujSXjdfPYe2shsQpFTs19SI6qy2RnWgmaYk
+         jZ/Iv7Gde3l455rZ0m46UZkIJZC2LVhMMFv6TNhih/6gTap4ClSIXTFnY8pogdXvC4sE
+         NcDdoqMGYE14X8CEeeNoWEiniaw2zvtT5r3SnWljhQqvydiuT9ZQa0IJCB/Qvh+7qClD
+         ao3fovZ8sD8Keo/9Ig6vNi4/wfC6AZx7qCJMQTwM0pY+CVuercMSkt2YqAl6ayazb3Ls
+         WA+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=b9Y57Zcw0NoW8SSCQPbfjQuVqgilhOQhSYXtSwp/X1s=;
+        b=YY1Pcp3zuL3j91MIMPKlDVxn1bzJ3DuO3dnHCzaZT4zz6hpW8SBYlCCMsYJ6n14X8e
+         hT/a1fvM/4lSWcg2Lxsmi0CoKGPHxi4CxQxEJuQNFpTLi5r6N+2T9bsjaYxBZoGq0uN+
+         ez6eqQm9b3ggWEM9wo+nyRySZhKJIZkc6PZ7s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=b9Y57Zcw0NoW8SSCQPbfjQuVqgilhOQhSYXtSwp/X1s=;
+        b=V/fxdU1FJi1eT/TAFwSMQVtEvCRkD/ph1as0Yaj4+t0hQXQ23fyEB7guEKGrwkhCAW
+         JXjX7E6UQbMj0T1oPRgE5g27PB1NMbkCvHMN2eD5Iw/jGJjND29HVb7Kuf7ovVdBaC++
+         iKlgNbJygz9g3sn1701v5A47xDzXJHABtTOQdd41A35nUlBl50Z3ce8NAteYrAYRA/57
+         76OpE8QCf0AJM7qtUGFxjfK68myD74TCvr6lGKqcrGWNKzqn+QfL1rA87UDVx+Wg3Pki
+         MktgCIMeUfNDt+qcO+2ArRBGtp5olL2JX/zbtYDqnz/FxxMHRxTZKHonv46OTjywebkm
+         MRfQ==
+X-Gm-Message-State: APt69E211PNlLDTFSXEGivsWtVgvHAnDYq9o5pekT57vTSPURs3xio6D
+        +ZYS3aGCys+6zumJVJ2OazwgJ04R0MCJdU4qzeMilQ==
+X-Google-Smtp-Source: ADUXVKJrkowFR+xQQW3uKZZTWIrTrfvmdLWnjiEGIicaULGtrz2JSO/nmurTXapX9YY8IMV/UUl+FxVFMyxpaGTuy14=
+X-Received: by 2002:a25:a301:: with SMTP id d1-v6mr2712981ybi.193.1529020687876;
+ Thu, 14 Jun 2018 16:58:07 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <152883969032.1936.15155267369758178246.stgit@taos>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 16:58:07
+ -0700 (PDT)
+In-Reply-To: <1504258820-2122-1-git-send-email-elena.reshetova@intel.com>
+References: <1504258820-2122-1-git-send-email-elena.reshetova@intel.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Thu, 14 Jun 2018 16:58:07 -0700
+X-Google-Sender-Auth: Q_qwhs3sQtZ3P5COMDUu0WbKk_U
+Message-ID: <CAGXu5jK-6fNvaEiX1Wvp98BKv+uF17KdFyPQKi5hgE-Jz3-+Tg@mail.gmail.com>
+Subject: Re: [PATCH] Coccinelle: add atomic_as_refcounter script
+To:     Elena Reshetova <elena.reshetova@intel.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        LKML <linux-kernel@vger.kernel.org>, cocci@systeme.lip6.fr,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <mmarek@suse.com>,
+        Hans Liljestrand <ishkamiel@gmail.co>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 02:41 PM, Gary R Hook wrote:
-> Implement a skeleton framework for debugfs support in the AMD
-> IOMMU.  Add an AMD-specific Kconfig boolean that depends upon
-> general enablement of DebugFS in the IOMMU.
-> 
-> Signed-off-by: Gary R Hook <gary.hook@amd.com>
+On Fri, Sep 1, 2017 at 2:40 AM, Elena Reshetova
+<elena.reshetova@intel.com> wrote:
+> atomic_as_refcounter.cocci script allows detecting
+> cases when refcount_t type and API should be used
+> instead of atomic_t.
+>
+> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
+> Acked-by: Julia Lawall <julia.lawall@lip6.fr>
 
-Gary,
+Reviewed-by: Kees Cook <keescook@chromium.org>
 
-Looks good to me.  Thanks.
+Oops, I think this got lost. Who can take this patch? I thought Julia
+ran the scripts/coccinelle/ tree, but looking at git log, it looks
+more like it's Masahiro? Either way, let's get this in the tree. Who
+can take it?
+
+Thanks!
+
+-Kees
 
 > ---
->  drivers/iommu/Kconfig             |   12 ++++++++++++
->  drivers/iommu/Makefile            |    1 +
->  drivers/iommu/amd_iommu_debugfs.c |   33 +++++++++++++++++++++++++++++++++
->  drivers/iommu/amd_iommu_init.c    |    6 ++++--
->  drivers/iommu/amd_iommu_proto.h   |    6 ++++++
->  drivers/iommu/amd_iommu_types.h   |    5 +++++
->  6 files changed, 61 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/iommu/amd_iommu_debugfs.c
-> 
-> diff --git a/drivers/iommu/Kconfig b/drivers/iommu/Kconfig
-> index f9af25ac409f..5a9cef113763 100644
-> --- a/drivers/iommu/Kconfig
-> +++ b/drivers/iommu/Kconfig
-> @@ -146,6 +146,18 @@ config AMD_IOMMU_V2
->  	  hardware. Select this option if you want to use devices that support
->  	  the PCI PRI and PASID interface.
->  
-> +config AMD_IOMMU_DEBUGFS
-> +	bool "Enable AMD IOMMU internals in DebugFS"
-> +	depends on AMD_IOMMU && IOMMU_DEBUGFS
-> +	---help---
-> +	  !!!WARNING!!!  !!!WARNING!!!  !!!WARNING!!!  !!!WARNING!!!
+>  scripts/coccinelle/api/atomic_as_refcounter.cocci | 131 ++++++++++++++++++++++
+>  1 file changed, 131 insertions(+)
+>  create mode 100644 scripts/coccinelle/api/atomic_as_refcounter.cocci
+>
+> diff --git a/scripts/coccinelle/api/atomic_as_refcounter.cocci b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+> new file mode 100644
+> index 0000000..bfa880d
+> --- /dev/null
+> +++ b/scripts/coccinelle/api/atomic_as_refcounter.cocci
+> @@ -0,0 +1,131 @@
+> +// Check if refcount_t type and API should be used
+> +// instead of atomic_t type when dealing with refcounters
+> +//
+> +// Copyright (c) 2016-2017, Elena Reshetova, Intel Corporation
+> +//
+> +// Confidence: Moderate
+> +// URL: http://coccinelle.lip6.fr/
+> +// Options: --include-headers --very-quiet
 > +
-> +	  DO NOT ENABLE THIS OPTION UNLESS YOU REALLY, -REALLY- KNOW WHAT YOU ARE DOING!!!
-> +	  Exposes AMD IOMMU device internals in DebugFS.
+> +virtual report
 > +
-> +	  This option is -NOT- intended for production environments, and should
-> +	  not generally be enabled.
+> +@r1 exists@
+> +identifier a, x;
+> +position p1, p2;
+> +identifier fname =~ ".*free.*";
+> +identifier fname2 =~ ".*destroy.*";
+> +identifier fname3 =~ ".*del.*";
+> +identifier fname4 =~ ".*queue_work.*";
+> +identifier fname5 =~ ".*schedule_work.*";
+> +identifier fname6 =~ ".*call_rcu.*";
 > +
->  # Intel IOMMU support
->  config DMAR_TABLE
->  	bool
-> diff --git a/drivers/iommu/Makefile b/drivers/iommu/Makefile
-> index 74cfbc392862..47fd6ea9de2d 100644
-> --- a/drivers/iommu/Makefile
-> +++ b/drivers/iommu/Makefile
-> @@ -11,6 +11,7 @@ obj-$(CONFIG_IOMMU_IOVA) += iova.o
->  obj-$(CONFIG_OF_IOMMU)	+= of_iommu.o
->  obj-$(CONFIG_MSM_IOMMU) += msm_iommu.o
->  obj-$(CONFIG_AMD_IOMMU) += amd_iommu.o amd_iommu_init.o
-> +obj-$(CONFIG_AMD_IOMMU_DEBUGFS) += amd_iommu_debugfs.o
->  obj-$(CONFIG_AMD_IOMMU_V2) += amd_iommu_v2.o
->  obj-$(CONFIG_ARM_SMMU) += arm-smmu.o
->  obj-$(CONFIG_ARM_SMMU_V3) += arm-smmu-v3.o
+> +@@
+> +
+> +(
+> + atomic_dec_and_test@p1(&(a)->x)
+> +|
+> + atomic_dec_and_lock@p1(&(a)->x, ...)
+> +|
+> + atomic_long_dec_and_lock@p1(&(a)->x, ...)
+> +|
+> + atomic_long_dec_and_test@p1(&(a)->x)
+> +|
+> + atomic64_dec_and_test@p1(&(a)->x)
+> +|
+> + local_dec_and_test@p1(&(a)->x)
+> +)
+> +...
+> +(
+> + fname@p2(a, ...);
+> +|
+> + fname2@p2(...);
+> +|
+> + fname3@p2(...);
+> +|
+> + fname4@p2(...);
+> +|
+> + fname5@p2(...);
+> +|
+> + fname6@p2(...);
+> +)
+> +
+> +
+> +@script:python depends on report@
+> +p1 << r1.p1;
+> +p2 << r1.p2;
+> +@@
+> +msg = "atomic_dec_and_test variation before object free at line %s."
+> +coccilib.report.print_report(p1[0], msg % (p2[0].line))
+> +
+> +@r4 exists@
+> +identifier a, x, y;
+> +position p1, p2;
+> +identifier fname =~ ".*free.*";
+> +
+> +@@
+> +
+> +(
+> + atomic_dec_and_test@p1(&(a)->x)
+> +|
+> + atomic_dec_and_lock@p1(&(a)->x, ...)
+> +|
+> + atomic_long_dec_and_lock@p1(&(a)->x, ...)
+> +|
+> + atomic_long_dec_and_test@p1(&(a)->x)
+> +|
+> + atomic64_dec_and_test@p1(&(a)->x)
+> +|
+> + local_dec_and_test@p1(&(a)->x)
+> +)
+> +...
+> +y=a
+> +...
+> +fname@p2(y, ...);
+> +
+> +
+> +@script:python depends on report@
+> +p1 << r4.p1;
+> +p2 << r4.p2;
+> +@@
+> +msg = "atomic_dec_and_test variation before object free at line %s."
+> +coccilib.report.print_report(p1[0], msg % (p2[0].line))
+> +
+> +@r2 exists@
+> +identifier a, x;
+> +position p1;
+> +@@
+> +
+> +(
+> +atomic_add_unless(&(a)->x,-1,1)@p1
+> +|
+> +atomic_long_add_unless(&(a)->x,-1,1)@p1
+> +|
+> +atomic64_add_unless(&(a)->x,-1,1)@p1
+> +)
+> +
+> +@script:python depends on report@
+> +p1 << r2.p1;
+> +@@
+> +msg = "atomic_add_unless"
+> +coccilib.report.print_report(p1[0], msg)
+> +
+> +@r3 exists@
+> +identifier x;
+> +position p1;
+> +@@
+> +
+> +(
+> +x = atomic_add_return@p1(-1, ...);
+> +|
+> +x = atomic_long_add_return@p1(-1, ...);
+> +|
+> +x = atomic64_add_return@p1(-1, ...);
+> +)
+> +
+> +@script:python depends on report@
+> +p1 << r3.p1;
+> +@@
+> +msg = "x = atomic_add_return(-1, ...)"
+> +coccilib.report.print_report(p1[0], msg)
+> +
+> +
+> --
+> 2.7.4
+>
+
 
 
 -- 
-~Randy
+Kees Cook
+Pixel Security
