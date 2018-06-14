@@ -2,99 +2,59 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 28298C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:00:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 52E24C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:00:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8981208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:00:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 074EF208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:00:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GK7Skdw9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8981208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ATx6MNx0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 074EF208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755121AbeFNMAd (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 08:00:33 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:37438 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754885AbeFNMAb (ORCPT
+        id S935929AbeFNMAf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 08:00:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60412 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754912AbeFNMAc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 08:00:31 -0400
-Received: by mail-ua0-f195.google.com with SMTP id l14-v6so505571uao.4;
-        Thu, 14 Jun 2018 05:00:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=fLhSW3KG0kQmZti18DpUdNS6AbKNzGJOXSzJmL0TeO8=;
-        b=GK7Skdw963p84Og2aIGelNHuAKfVJYFy9eyhRwG0trgomImTPELVFMHFZapdzezaSM
-         9eQvde4T1FQt3EK/5laatCW5MnVFE4AFryk7a2lQI2qgkwXgCdUpI72DC4TUwyEZTn7U
-         pIavWEUBtgdSDrqFGl4OjVO4Eb30fA1PYTaKEOGUgMOYfRm83Af470E+kx8oqyzWAi3j
-         aJvXgAbDr+1SlqCpIyqluSjE5HCVs4fPsafWGyBPPdNkyDPHopeUbMF08ISzZq4fG8pX
-         DQO8gtI3HzaQX2jssWeYVbxFhejQhGEb4cVMOOuoP1vZDLVTTA9/raQGAty94Z2k4STE
-         kYhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=fLhSW3KG0kQmZti18DpUdNS6AbKNzGJOXSzJmL0TeO8=;
-        b=KfvZlfJgr4CuHzs4I5f46k59ExAcrpuxkMIOPnj85lbNt7bJVhA89yp9kSqhkFtSr0
-         //x4h8h1KHUbeVmYj0SUESVE/sq2LOT9LT5uGjNGENQm2Txmc1mE9EOznryW0vy0lqMF
-         K2RxAZdqGrLYtn9tcUV1Kk3ZC1Hz94cnA2TvWdVv7OYptN1AONpHIt5yFIxYvPOvZ9fW
-         nOp2jHjyO2t4WNf/0Xby3VTEdfAXRiJAt49xAPpMTvh/KVp5NkqOfFyVik+PfYGRbob6
-         HfkMjAaxd0pkHyDF+NL6b1KghbPRGRN+90izZSMtD/2Pod6NCfL4BP6dXVTTUUt9Xl1Q
-         yRqA==
-X-Gm-Message-State: APt69E2UtU76gv7MtF75Se7EnLw7IhX0EbiMUjGP4msP6wGByQBDBAUl
-        7JqINC2R9H2ldbkML5GoxJsnzxNHmP/Uu+LhYHQ=
-X-Google-Smtp-Source: ADUXVKJD0T+83b/KlKOKaSx5g50vzwS/rMtpf5UqinlxStmjEFiB5FsdP3F4xnqAQDlb2yX0BxEahIimqIbtopKpq7M=
-X-Received: by 2002:ab0:1446:: with SMTP id c6-v6mr1485315uae.12.1528977630761;
- Thu, 14 Jun 2018 05:00:30 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 05:00:30
- -0700 (PDT)
-In-Reply-To: <1528977459-52285-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528705581-34646-1-git-send-email-jiazhouyang09@gmail.com> <1528977459-52285-1-git-send-email-jiazhouyang09@gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 14 Jun 2018 15:00:30 +0300
-Message-ID: <CAHp75VfuHASHEigiy+3-J3+7N2q=1nTyHr1KShkjRO+7COjMrw@mail.gmail.com>
-Subject: Re: [PATCH v2] scsi: bfa: add error handling for pci_iomap
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Anil Gurumurthy <anil.gurumurthy@qlogic.com>,
-        Sudarsana Kalluru <sudarsana.kalluru@qlogic.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-scsi <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Jun 2018 08:00:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NRdc1yCyreCJvxMM+mZb0ScwiKpT3ergAQ6nrrMxO3I=; b=ATx6MNx0dXkEZrvPyJjsTlSZC
+        HHbF8YZyxLENquYCvsrYI+LvAUl9Bl90MzdfVjoOhRotGS7RnSbqPhm5x5b9ynTkXMABi/K7ExDzL
+        WAHDXmt18qIVyiofUJ1cCX+Yz58rCRN2S8eDhX6oJmi4IRGj8e6+rHQHEx5mnZBulRFwOyHrx11Ym
+        du2+J9x8wY/xZ/RD/I+k0iDifcQcgGPu2G8fmYxDAGTuQo+OjM79PD0pex6jTL+086ivQKs3GO4yH
+        PtAp/IciuHApN50hM/mn9QcfD8GMym1pgWriKW+8Fh6DqjLVfJrSgRmSn4sl137ve3oQ7qv0DYouM
+        XYMy2Tgbw==;
+Received: from 80-109-164-210.cable.dynamic.surfer.at ([80.109.164.210] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTQvX-0002sW-ES; Thu, 14 Jun 2018 12:00:31 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     iommu@lists.linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [RFC] move dma mapping code to kernel/dma
+Date:   Thu, 14 Jun 2018 14:00:27 +0200
+Message-Id: <20180614120029.27315-1-hch@lst.de>
+X-Mailer: git-send-email 2.17.1
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 2:57 PM, Zhouyang Jia <jiazhouyang09@gmail.com> wrote:
-> When pci_iomap fails, the lack of error-handling code may
-> cause unexpected results.
+Hi all,
 
-What results?
-How had you tested it?
+I'm tempted to send this little file move series to Linus around -rc1
+where it would cause the least harm.
 
-> This patch adds error-handling code after calling pci_iomap.
-
-> +       if (bfad->pci_bar2_kva == NULL) {
-
-> +               printk(KERN_ERR "Fail to map bar2\n");
-
-pr_err() ?
-
-> +               goto out_unmap_bar0;
-> +       }
-
--- 
-With Best Regards,
-Andy Shevchenko
+Opinions?
