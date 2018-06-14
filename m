@@ -2,123 +2,162 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 38D88C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:00:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 44C1AC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB193208D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TNtqjj2y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB193208D9
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id EC6E4208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:02:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC6E4208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bp.renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755110AbeFNLAL (ORCPT
+        id S1755117AbeFNLCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 07:00:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754906AbeFNLAK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:00:10 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE371208D4;
-        Thu, 14 Jun 2018 11:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528974010;
-        bh=txTqgVC2CboIHthV54PHG96RQBQFm2lzl/gGKPScroo=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=TNtqjj2y5Lh6t2TDRyF5GZ5cZ2Dla1h5XfudCiSZn4FNxt3EcsLFaSrKHF9sedO8V
-         pZUjmSvi6Yuszn/2biWFOXLcDSkZHTAMR2kPjJHEzQl+9AWuRItLWI+T725q6UAzAV
-         oJrvzZy93MV7mTULF1OzWz7DDOECnTHBgR6JFagk=
-Message-ID: <ca07bbc1a20d1429ce47561d9d235f12ef51dcd4.camel@kernel.org>
-Subject: Re: [PATCH 2/2] fs/lock: show locks taken by processes from another
- pidns
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Konstantin Khorenko <khorenko@virtuozzo.com>,
-        Kirill Gorkunov <kgorkunov@virtuozzo.com>,
-        Andrey Vagin <avagin@virtuozzo.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Vasily Averin <vvs@virtuozzo.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Nikolay Borisov <kernel@kyup.com>
-Date:   Thu, 14 Jun 2018 07:00:07 -0400
-In-Reply-To: <20180608142712.32460-3-khorenko@virtuozzo.com>
-References: <20180608142712.32460-1-khorenko@virtuozzo.com>
-         <20180608142712.32460-3-khorenko@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Jun 2018 07:02:03 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:60123 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754945AbeFNLCB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 07:02:01 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 14 Jun 2018 20:01:59 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 896F37A6C1;
+        Thu, 14 Jun 2018 20:01:59 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,222,1526310000"; 
+   d="scan'208";a="282525568"
+Received: from unknown (HELO be1yocto.ree.adwin.renesas.com) ([172.29.43.62])
+  by relmlii1.idc.renesas.com with ESMTP; 14 Jun 2018 20:01:55 +0900
+From:   Michel Pollet <michel.pollet@bp.renesas.com>
+To:     linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc:     phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Michel Pollet <michel.pollet@bp.renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v9 0/5] arm: Base support for Renesas RZN1D-DB Board
+Date:   Thu, 14 Jun 2018 11:56:29 +0100
+Message-Id: <1528973829-25493-1-git-send-email-michel.pollet@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-08 at 17:27 +0300, Konstantin Khorenko wrote:
-> Currently if we face a lock taken by a process invisible in the current
-> pidns we skip the lock completely, but this
-> 
-> 1) makes the output not that nice
->     (root@vz7)/: cat /proc/${PID_A2}/fdinfo/3
->     pos:    4
->     flags:  02100002
->     mnt_id: 257
->     lock:   (root@vz7)/:
-> 
-> 2) makes it more difficult to debug issues with leaked flocks
->    if you get error on lock, but don't see any locks in /proc/$id/fdinfo/$file
-> 
-> Let's show information about such locks again as previously, but
-> show zero in the owner pid field.
-> 
-> After the patch:
-> ===============
-> (root@vz7)/:cat /proc/${PID_A2}/fdinfo/3
-> pos:    4
-> flags:  02100002
-> mnt_id: 295
-> lock:   1: FLOCK  ADVISORY  WRITE 0 b6:f8a61:529946 0 EOF
-> 
-> Fixes: 9d5b86ac13c5 ("fs/locks: Remove fl_nspid and use fs-specific l_pid for remote locks")
-> Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
-> ---
->  fs/locks.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/fs/locks.c b/fs/locks.c
-> index bfee5b7f2862..e533623e2e99 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -2633,12 +2633,10 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
->  
->  	fl_pid = locks_translate_pid(fl, proc_pidns);
->  	/*
-> -	 * If there isn't a fl_pid don't display who is waiting on
-> -	 * the lock if we are called from locks_show, or if we are
-> -	 * called from __show_fd_info - skip lock entirely
-> +	 * If lock owner is dead (and pid is freed) or not visible in current
-> +	 * pidns, zero is shown as a pid value. Check lock info from
-> +	 * init_pid_ns to get saved lock pid value.
->  	 */
-> -	if (fl_pid == 0)
-> -		return;
->  
->  	if (fl->fl_file != NULL)
->  		inode = locks_inode(fl->fl_file);
+This series adds the plain basic support for booting a bare
+kernel on the RZ/N1D-DB Board. It's been trimmed to the strict
+minimum as a 'base', further patches that could add the
+rest of the support.
 
-(cc'ing Nickolay)
+Note on the clock driver: Current usage of the clocks on Linux
+involves Linux 'claiming' all of them, disabling the one it doesn't
+need and so on.
+On *this* architecture it can't be done, there is at least one other
+OS running on the CM3 core that claims it's own clock; Linux can claim
+some others but definitely not start disabling stuff it isn't supposed to.
 
-As Andrey points out, this behavior was originally added in commit
-d67fd44f697d to address performance issues when there are a lot of locks
-held by tasks in other namespaces.
+Thanks for the comments on the previous versions!
 
-Will allowing this code to show these again cause a problem there?
+v9:
+ + Added Reviewed mentions as appropriate.
+ + Tweaked the detection code for clocks that are already in use.
+   (Now check the reset bits, as some clocks gates are marked as 'enabled'
+    when still in reset (!)).
+ + Added external clocks to the sysctrl node.
+ + Reworked the clock driver to be a platform one, not an OF one.
+v8:
+ + Added Reviewed mentions as appropriate.
+ + Moved some of the clocks #defines into the driver
+ + Tweaked the pointer arithmetics in the clock driver.
+ + Removed clk_readl/writel
+ + Use CLK_IS_CRITICAL instead of my own flag
+ + Also added that critical section to the dualgate object.
+ + Few other nitpick fixed.
+ + Rebased on next-20180604
+v7:
+ + Removed mention of 'rz[/]n1' from everywhere.
+ + Removed unwanted documentation.
+ + Renamed clock node back to sysctrl.
+ + Renamed rzn1-clocks.h to r9a06g032-sysctrl.h to match
+ + Made the clock driver claim the sysctrl node.
+ + Fixed a couple of 'sparse' warning in the clock driver.
+v6:
+ + Fix for suggestion by Geert Uytterhoeven
+ + Removed "renesas,rzn1" from the board bindings
+ + Removed patches already merged.
+ + Removed reboot driver
+ + Added a whole clock infrastructure.
+ + Rebased on next-20180517
+v5:
+ + Given the problems I have with getting in some structure around the
+   sysctrl block, I've removed the MFD, I've now attached the reboot
+   driver on it's  own pair of registers.
+ + Rebased on next-20180417
+v4:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Jacopo Mondi
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Renamed the r9a06g0xx.dtsi file, given up on trying to get a family
+   common file in, so dropped potential RZ/N1S support and now only
+   focus on RZ/N1D for this patchset.
+ + Added 'always-on' to the architected timer node, because it is.
+ + Added ARCH_R9A06G032, to match others patterns like RCAR
+ + Sorted the .dts files, added empty lines as required.
+ + Fixed patch prefixes to match git-log for bindings&dts
+ + Merged board .dts & Makefile changes together
+ + Rebased on next-20180410
+v3:
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed SoC Specific renesas,r9a06g032-xxx, as it's not needed for now.
+ + Kept renesas,rzn1 as a family/generic for this family.
+ + Fixed a couple of the commit messages.
+ + Added Geert's Reviewed-By where appropriate.
+v2:
+ + Fixes for suggestions by Simon Horman
+ + Fixes for suggestions by Rob Herring
+ + Fixes for suggestions by Geert Uytterhoeven
+ + Removed the mach file
+ + Added a MFD base for the sysctrl block
+ + Added a regmap based sub driver for the reboot handler
+ + Renamed the files to match shmobile conventions
+ + Adapted the compatible= strings to reflect 'family' vs 'part'
+   distinction.
+ + Removed the sysctrl.h file entirelly.
+ + Fixed every warnings from the DTC compiler on W=12 mode.
+ + Split the device-tree patches from the code.
+
+
+Michel Pollet (5):
+  dt-bindings: Add the r9a06g032-sysctrl.h file
+  dt-bindings: clock: renesas,r9a06g032-sysctrl: documentation
+  ARM: dts: Renesas R9A06G032 base device tree file
+  ARM: dts: Renesas RZN1D-DB Board base file
+  clk: renesas: Renesas R9A06G032 clock driver
+
+ .../bindings/clock/renesas,r9a06g032-sysctrl.txt   |  44 +
+ arch/arm/boot/dts/Makefile                         |   1 +
+ arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts        |  28 +
+ arch/arm/boot/dts/r9a06g032.dtsi                   | 114 +++
+ drivers/clk/renesas/Kconfig                        |   6 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r9a06g032-clocks.c             | 895 +++++++++++++++++++++
+ include/dt-bindings/clock/r9a06g032-sysctrl.h      | 148 ++++
+ 8 files changed, 1237 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,r9a06g032-sysctrl.txt
+ create mode 100644 arch/arm/boot/dts/r9a06g032-rzn1d400-db.dts
+ create mode 100644 arch/arm/boot/dts/r9a06g032.dtsi
+ create mode 100644 drivers/clk/renesas/r9a06g032-clocks.c
+ create mode 100644 include/dt-bindings/clock/r9a06g032-sysctrl.h
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.7.4
+
