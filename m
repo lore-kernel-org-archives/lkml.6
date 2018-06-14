@@ -6,126 +6,125 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8A294C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:28:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B04DDC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38939208B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:28:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38939208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 60E5F208B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 12:33:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60E5F208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755155AbeFNM2D (ORCPT
+        id S1755172AbeFNMdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 08:28:03 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:60461 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754869AbeFNM2C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 08:28:02 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 48C1E803F4; Thu, 14 Jun 2018 14:28:00 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 14:27:59 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-Subject: Re: Restartable Sequences system call merged into Linux
-Message-ID: <20180614122759.GB8798@amd>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
- <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com>
- <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com>
- <091061df-3482-8762-30e4-feaf3417be11@redhat.com>
- <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
+        Thu, 14 Jun 2018 08:33:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43199 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752767AbeFNMdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 08:33:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9F32EAF5F;
+        Thu, 14 Jun 2018 12:33:00 +0000 (UTC)
+Subject: Re: [PATCH] mm, page_alloc: actually ignore mempolicies for high
+ priority allocations
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Michal Hocko <mhocko@kernel.org>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>
+References: <20180612122624.8045-1-vbabka@suse.cz>
+ <alpine.DEB.2.21.1806131241300.32038@chino.kir.corp.google.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+Message-ID: <5b3946ee-7723-a6b8-0347-3b08eb6ca1ea@suse.cz>
+Date:   Thu, 14 Jun 2018 14:32:57 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
-Content-Disposition: inline
-In-Reply-To: <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <alpine.DEB.2.21.1806131241300.32038@chino.kir.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/13/2018 09:42 PM, David Rientjes wrote:
+> On Tue, 12 Jun 2018, Vlastimil Babka wrote:
+> 
+>> The __alloc_pages_slowpath() function has for a long time contained code to
+>> ignore node restrictions from memory policies for high priority allocations.
+>> The current code that resets the zonelist iterator however does effectively
+>> nothing after commit 7810e6781e0f ("mm, page_alloc: do not break __GFP_THISNODE
+>> by zonelist reset") removed a buggy zonelist reset. Even before that commit,
+>> mempolicy restrictions were still not ignored, as they are passed in
+>> ac->nodemask which is untouched by the code.
+>>
+>> We can either remove the code, or make it work as intended. Since
+>> ac->nodemask can be set from task's mempolicy via alloc_pages_current() and
+>> thus also alloc_pages(), it may indeed affect kernel allocations, and it makes
+>> sense to ignore it to allow progress for high priority allocations.
+>>
+>> Thus, this patch resets ac->nodemask to NULL in such cases. This assumes all
+>> callers can handle it (i.e. there are no guarantees as in the case of
+>> __GFP_THISNODE) which seems to be the case. The same assumption is already
+>> present in check_retry_cpuset() for some time.
+>>
+>> The expected effect is that high priority kernel allocations in the context of
+>> userspace tasks (e.g. OOM victims) restricted by mempolicies will have higher
+>> chance to succeed if they are restricted to nodes with depleted memory, while
+>> there are other nodes with free memory left.
+>>
+> 
+> Hi Vlastimil,
+> 
+> Is this expected as a change back to previous behavior that we have lost 
+> or is this new development for high priority allocations?  I don't think 
+> we have ignored mempolicies for things like GFP_ATOMIC allocations in the 
+> past.
 
---E39vaYmALEf/7YXx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well, it's not a new intention, but for the first time the code will
+match the intention, AFAICS. It was intended by commit 183f6371aac2
+("mm: ignore mempolicies when using ALLOC_NO_WATERMARK") in v3.6 but I
+think it never really worked, as mempolicy restriction was already
+encoded in nodemask, not zonelist, at that time.
 
-On Tue 2018-06-12 12:31:24, Mathieu Desnoyers wrote:
-> ----- On Jun 12, 2018, at 9:11 AM, Florian Weimer fweimer@redhat.com wrot=
-e:
->=20
-> > On 06/11/2018 10:04 PM, Mathieu Desnoyers wrote:
-> >> ----- On Jun 11, 2018, at 3:55 PM, Florian Weimer fweimer@redhat.com w=
-rote:
-> >>=20
-> >>> On 06/11/2018 09:49 PM, Mathieu Desnoyers wrote:
-> >>>> It should be noted that there can be only one rseq TLS area register=
-ed per
-> >>>> thread,
-> >>>> which can then be used by many libraries and by the executable, so t=
-his is a
-> >>>> process-wide (per-thread) resource that we need to manage carefully.
-> >>>
-> >>> Is it possible to resize the area after thread creation, perhaps even
-> >>> from other threads?
-> >>=20
-> >> I'm not sure why we would want to resize it. The per-thread area is fi=
-xed-size.
-> >> Its layout is here: include/uapi/linux/rseq.h: struct rseq
-> >=20
-> > Looks I was mistaken and this is very similar to the robust mutex list.
-> >=20
-> > Should we treat it the same way?  Always allocate it for each new thread
-> > and register it with the kernel?
->=20
-> That would be an efficient way to do it, indeed. There is very little
-> performance overhead to have rseq registered for all threads, whether or
-> not they intend to run rseq critical sections.
+So originally that was for ALLOC_NO_WATERMARK only. Then it was adjusted
+by e46e7b77c909 ("mm, page_alloc: recalculate the preferred zoneref if
+the context can ignore memory policies") and cd04ae1e2dc8 ("mm, oom: do
+not rely on TIF_MEMDIE for memory reserves access") to the current
+state. So yeah even GFP_ATOMIC would now ignore mempolicies after the
+initial attempts fail... if the code worked as people thought it does.
 
-People with slow / low memory machines would prefer not to see
-overhead they don't need...
+>> Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Mel Gorman <mgorman@techsingularity.net>
+>> Cc: Michal Hocko <mhocko@kernel.org>
+>> Cc: David Rientjes <rientjes@google.com>
+>> Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+>> ---
+>>  mm/page_alloc.c | 7 ++++---
+>>  1 file changed, 4 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+>> index 07b3c23762ad..ec8c92ff8b3c 100644
+>> --- a/mm/page_alloc.c
+>> +++ b/mm/page_alloc.c
+>> @@ -4164,11 +4164,12 @@ __alloc_pages_slowpath(gfp_t gfp_mask, unsigned int order,
+>>  		alloc_flags = reserve_flags;
+>>  
+>>  	/*
+>> -	 * Reset the zonelist iterators if memory policies can be ignored.
+>> -	 * These allocations are high priority and system rather than user
+>> -	 * orientated.
+>> +	 * Reset the nodemask and zonelist iterators if memory policies can be
+>> +	 * ignored. These allocations are high priority and system rather than
+>> +	 * user oriented.
+>>  	 */
+>>  	if (!(alloc_flags & ALLOC_CPUSET) || reserve_flags) {
+>> +		ac->nodemask = NULL;
+>>  		ac->preferred_zoneref = first_zones_zonelist(ac->zonelist,
+>>  					ac->high_zoneidx, ac->nodemask);
+>>  	}
 
-> I have a few possible approaches in mind (feel free to suggest other
-> options):
->=20
-> A) glibc exposes a strong __rseq_abi TLS symbol:
->=20
->    - should ideally *not* be global-dynamic for performance reasons,
->    - registration to kernel can either be handled explicitly by requiring
->      application or libraries to call an API, or implicitly at thread
->      creation,
-
-=2E..so I'd prefer explicit API call.
-
-> B) librseq.so exposes a strong __rseq_abi symbol:
-
-Works for me.
-									Pavel
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---E39vaYmALEf/7YXx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsiX08ACgkQMOfwapXb+vIGNACeNy91T8kQ+NKZCXIfadQOsy0x
-rt0AoKfCKvP0Nt149SG3III4J3k1d81V
-=7Bff
------END PGP SIGNATURE-----
-
---E39vaYmALEf/7YXx--
