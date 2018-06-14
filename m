@@ -3,46 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 122BFC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:47:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 38F68C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD3D8208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:47:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD3D8208DA
+	by mail.kernel.org (Postfix) with ESMTP id EC3D7208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:47:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC3D7208C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755421AbeFNTrV (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 15:47:21 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:36529 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754877AbeFNTrT (ORCPT
+        id S935560AbeFNTrZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 15:47:25 -0400
+Received: from mail-pf0-f182.google.com ([209.85.192.182]:44649 "EHLO
+        mail-pf0-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755319AbeFNTrV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 15:47:19 -0400
-Received: by mail-pg0-f68.google.com with SMTP id m5-v6so3382767pgd.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:47:19 -0700 (PDT)
+        Thu, 14 Jun 2018 15:47:21 -0400
+Received: by mail-pf0-f182.google.com with SMTP id h12-v6so3725652pfk.11
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:47:20 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=I0H/P4V3SAAFbFSXJN3E7GywKzIsxOJ5nhgPh8XBka0=;
-        b=KOD3qZfqvFR+a6HyommHZFobOftbFLEwXq//eY4+AQdl4qKdvB9KcSsy0OBlNLUgo+
-         IwaJQ2wZqcsGHn28q9twy0n6UpQazD9lD6zdnM4fzJtjxGGW27+Xj+gbJuIb6AgYMxRV
-         b1d4Y3qjVZKbVrEloKJCEZe49ysN1VjcMUWI5ytJqQpkFwJoX7WJexpInSzWf475QoRk
-         J3rGUW3MxxJEl4C5bwQBmC4pn16jTCshqKf6Rm1fZyUJx0SWp8nCvPxIIdML5BJDXl8Y
-         cYNd0AyfJMj2dtb0qXRYFG1kww9uUt0EDyyI4X4LzdlvarNMcKaC3nyNaVpwTW9mZUx3
-         O1YQ==
-X-Gm-Message-State: APt69E2xW56izhN16jJ8aCy6TfnQFF4yB+NaZHxhtxjSrK1NKAUPIvFQ
-        lU02yEkLGI0pWV5wntSEIDAZWQ==
-X-Google-Smtp-Source: ADUXVKKMsC9AMnewHAHkyXpAUP7kvZo/CjpSI2QbD+t8NdkiGyOt/AJ1YGJwZwsgmWX9Qd1qguf3fg==
-X-Received: by 2002:a63:be0a:: with SMTP id l10-v6mr3361959pgf.87.1529005638509;
-        Thu, 14 Jun 2018 12:47:18 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=02SeX4YfVOjCQ6yNg1z5x0uefnBEbh4S/qgy/FkI1x4=;
+        b=iG03tfl1gsmxdNukPBwgaacZMSu0JvLi3S1lRUeLIRHZXl2QYFzajZ0mLvOb+yRcwx
+         lfE/giUEo1GwVwvw8FUSv+XJUhGTJK/IKZJvkhvdmDjw/ZFmPavopugiKscXbMmLp9/M
+         Rp9PxhbEyISJIxd2TU5VoQik9HJt8wJ0HF/8sqqau4jmIkUuzoP7JcTc7NiAC42SeOYd
+         dA6I4lKk78uFqRLhdUwW9URTNJu2satzRR624iHBQU2MPgFbl9aejnbYO+ZcxI9npfmE
+         fJQ2LIDlxtKAY0hTg7iSqeWD30A6RiUdpPbsvxExIpGszx0TKV2q7utd5VSUjly7deeU
+         AZMQ==
+X-Gm-Message-State: APt69E2uu8tcyakE9Rmn8dW5dLR7xkRaACDbKLnmqQJ+YPd4s1xutta7
+        hMHAzw+7kaIF+kWlAVYFeZ8sKg==
+X-Google-Smtp-Source: ADUXVKIpZxHRhOI557p+zKDY0AVnvZJheFrEJjjwsBnz+ZMRH+RipDYO3iOWy+VFmjKyLGq8q4PAxw==
+X-Received: by 2002:a65:65d6:: with SMTP id y22-v6mr3481716pgv.270.1529005640214;
+        Thu, 14 Jun 2018 12:47:20 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id s28-v6sm9955506pfg.89.2018.06.14.12.47.17
+        by smtp.gmail.com with ESMTPSA id s28-v6sm9955506pfg.89.2018.06.14.12.47.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 12:47:17 -0700 (PDT)
+        Thu, 14 Jun 2018 12:47:19 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
@@ -59,66 +60,77 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Lee Jones <lee.jones@linaro.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 00/12] Add throttler driver for non-thermal throttling
-Date:   Thu, 14 Jun 2018 12:47:00 -0700
-Message-Id: <20180614194712.102134-1-mka@chromium.org>
+Subject: [PATCH v3 01/12] PM / devfreq: Init user limits from OPP limits, not viceversa
+Date:   Thu, 14 Jun 2018 12:47:01 -0700
+Message-Id: <20180614194712.102134-2-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
+In-Reply-To: <20180614194712.102134-1-mka@chromium.org>
+References: <20180614194712.102134-1-mka@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds the throttler driver, for non-thermal throttling of
-CPUs and devfreq devices. A use case for non-thermal throttling could
-be the detection of a high battery discharge voltage, close to the
-over-current protection (OCP) limit of the battery.
+Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding
+the devfreq device") introduced the initialization of the user
+limits min/max_freq from the lowest/highest available OPPs. Later
+commit f1d981eaecf8 ("PM / devfreq: Use the available min/max
+frequency") added scaling_min/max_freq, which actually represent
+the frequencies of the lowest/highest available OPP. scaling_min/
+max_freq are initialized with the values from min/max_freq, which
+is totally correct in the context, but a bit awkward to read.
 
-To support throttling of devfreq devices the series introduces the
-concept of a devfreq policy and the DEVFREQ_ADJUST notifier (similar
-to CPUFREQ_ADJUST). Further it includes some related devfreq bugfixes
-and improvements that change some of the code that is also touched
-by the policy changes.
+Swap the initialization and assign scaling_min/max_freq with the
+OPP freqs and then the user limts min/max_freq with scaling_min/
+max_freq.
 
-Matthias Kaehlcke (12):
-  PM / devfreq: Init user limits from OPP limits, not viceversa
-  PM / devfreq: Fix handling of min/max_freq == 0
-  PM / devfreq: Don't adjust to user limits in governors
-  PM / devfreq: Add struct devfreq_policy
-  PM / devfreg: Add support for policy notifiers
-  PM / devfreq: Make update_devfreq() public
-  PM / devfreq: export devfreq_class
-  cpufreq: Add stub for cpufreq_update_policy()
-  dt-bindings: PM / OPP: add opp-throttlers property
-  misc: throttler: Add core support for non-thermal throttling
-  misc: throttler: Add Chrome OS EC throttler
-  mfd: cros_ec: Add throttler sub-device
+Needless to say that this change is a NOP, intended to improve
+readability.
+---
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
- Documentation/devicetree/bindings/opp/opp.txt |   3 +
- MAINTAINERS                                   |   7 +
- drivers/devfreq/devfreq.c                     | 222 +++---
- drivers/devfreq/governor.h                    |   6 +-
- drivers/devfreq/governor_passive.c            |   4 +-
- drivers/devfreq/governor_performance.c        |   5 +-
- drivers/devfreq/governor_powersave.c          |   2 +-
- drivers/devfreq/governor_simpleondemand.c     |  12 +-
- drivers/devfreq/governor_userspace.c          |  16 +-
- drivers/mfd/cros_ec.c                         |  16 +
- drivers/misc/Kconfig                          |   1 +
- drivers/misc/Makefile                         |   1 +
- drivers/misc/throttler/Kconfig                |  33 +
- drivers/misc/throttler/Makefile               |   2 +
- drivers/misc/throttler/core.c                 | 687 ++++++++++++++++++
- drivers/misc/throttler/cros_ec_throttler.c    | 109 +++
- include/linux/cpufreq.h                       |   1 +
- include/linux/devfreq.h                       | 113 ++-
- include/linux/throttler.h                     |  21 +
- 19 files changed, 1136 insertions(+), 125 deletions(-)
- create mode 100644 drivers/misc/throttler/Kconfig
- create mode 100644 drivers/misc/throttler/Makefile
- create mode 100644 drivers/misc/throttler/core.c
- create mode 100644 drivers/misc/throttler/cros_ec_throttler.c
- create mode 100644 include/linux/throttler.h
+Changes in v3:
+- none
 
+Changes in v2:
+- added 'Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>' tag
+
+ drivers/devfreq/devfreq.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index fe2af6aa88fc..0057ef5b0a98 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -604,21 +604,21 @@ struct devfreq *devfreq_add_device(struct device *dev,
+ 		mutex_lock(&devfreq->lock);
+ 	}
+ 
+-	devfreq->min_freq = find_available_min_freq(devfreq);
+-	if (!devfreq->min_freq) {
++	devfreq->scaling_min_freq = find_available_min_freq(devfreq);
++	if (!devfreq->scaling_min_freq) {
+ 		mutex_unlock(&devfreq->lock);
+ 		err = -EINVAL;
+ 		goto err_dev;
+ 	}
+-	devfreq->scaling_min_freq = devfreq->min_freq;
++	devfreq->min_freq = devfreq->scaling_min_freq;
+ 
+-	devfreq->max_freq = find_available_max_freq(devfreq);
+-	if (!devfreq->max_freq) {
++	devfreq->scaling_max_freq = find_available_max_freq(devfreq);
++	if (!devfreq->scaling_max_freq) {
+ 		mutex_unlock(&devfreq->lock);
+ 		err = -EINVAL;
+ 		goto err_dev;
+ 	}
+-	devfreq->scaling_max_freq = devfreq->max_freq;
++	devfreq->max_freq = devfreq->scaling_max_freq;
+ 
+ 	dev_set_name(&devfreq->dev, "devfreq%d",
+ 				atomic_inc_return(&devfreq_no));
 -- 
 2.18.0.rc1.242.g61856ae69a-goog
 
