@@ -5,46 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 857E8C07D5D
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:14:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4C80CC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 458982086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:14:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 458982086A
+	by mail.kernel.org (Postfix) with ESMTP id 0DCB12086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:14:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DCB12086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964993AbeFNQOU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:14:20 -0400
-Received: from osg.samsung.com ([64.30.133.232]:46337 "EHLO osg.samsung.com"
+        id S965010AbeFNQOt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 12:14:49 -0400
+Received: from osg.samsung.com ([64.30.133.232]:40823 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755523AbeFNQJd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:09:33 -0400
+        id S1755517AbeFNQJc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:09:32 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by osg.samsung.com (Postfix) with ESMTP id 078FA20F3C;
-        Thu, 14 Jun 2018 09:09:33 -0700 (PDT)
+        by osg.samsung.com (Postfix) with ESMTP id 3C5DA20F34;
+        Thu, 14 Jun 2018 09:09:32 -0700 (PDT)
 X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 Received: from osg.samsung.com ([127.0.0.1])
         by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id zJ_WCHcuRv9A; Thu, 14 Jun 2018 09:09:32 -0700 (PDT)
+        with ESMTP id imWhvkh0p1lS; Thu, 14 Jun 2018 09:09:31 -0700 (PDT)
 Received: from smtp.s-opensource.com (177.41.114.220.dynamic.adsl.gvt.net.br [177.41.114.220])
-        by osg.samsung.com (Postfix) with ESMTPSA id 9F73720EB1;
+        by osg.samsung.com (Postfix) with ESMTPSA id 9D88020EB0;
         Thu, 14 Jun 2018 09:09:16 -0700 (PDT)
 Received: from mchehab by smtp.s-opensource.com with local (Exim 4.91)
         (envelope-from <mchehab@smtp.s-opensource.com>)
-        id 1fTUoE-0005TR-Bk; Thu, 14 Jun 2018 13:09:14 -0300
+        id 1fTUoE-0005Tp-HO; Thu, 14 Jun 2018 13:09:14 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
         linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v3 17/27] bindings: nvmem/zii: Fix location of nvmem.txt
-Date:   Thu, 14 Jun 2018 13:09:02 -0300
-Message-Id: <fcfc83951a2997c527126af1fdd6fb1e0acbe27d.1528990947.git.mchehab+samsung@kernel.org>
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v3 22/27] devicetree: fix some bindings file names
+Date:   Thu, 14 Jun 2018 13:09:07 -0300
+Message-Id: <e45cdc9550ce822dcbde805a12a2e1e444e926ba.1528990947.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1528990947.git.mchehab+samsung@kernel.org>
 References: <cover.1528990947.git.mchehab+samsung@kernel.org>
@@ -55,26 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The location pointed there is missing "bindings/" on its path.
+There were some file movements that changed the location for
+some DT bindings. Fix them with:
+	scripts/documentation-file-ref-check --fix
+
+After manually checking if the new file makes sense.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/power/supply/ab8500/btemp.txt | 2 +-
+ .../devicetree/bindings/power/supply/ab8500/chargalg.txt        | 2 +-
+ .../devicetree/bindings/power/supply/ab8500/charger.txt         | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
-index d5e22fc67d66..0df79d9e07ec 100644
---- a/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
-+++ b/Documentation/devicetree/bindings/nvmem/zii,rave-sp-eeprom.txt
-@@ -18,7 +18,7 @@ Optional properties:
- Data cells:
+diff --git a/Documentation/devicetree/bindings/power/supply/ab8500/btemp.txt b/Documentation/devicetree/bindings/power/supply/ab8500/btemp.txt
+index 0ba1bcc7f33a..f181e46d8e07 100644
+--- a/Documentation/devicetree/bindings/power/supply/ab8500/btemp.txt
++++ b/Documentation/devicetree/bindings/power/supply/ab8500/btemp.txt
+@@ -13,4 +13,4 @@ Required Properties:
+ 	};
  
- Data cells are child nodes of eerpom node, bindings for which are
--documented in Documentation/bindings/nvmem/nvmem.txt
-+documented in Documentation/devicetree/bindings/nvmem/nvmem.txt
+ For information on battery specific node, Ref:
+-Documentation/devicetree/bindings/power_supply/ab8500/fg.txt
++Documentation/devicetree/bindings/power/supply/ab8500/fg.txt
+diff --git a/Documentation/devicetree/bindings/power/supply/ab8500/chargalg.txt b/Documentation/devicetree/bindings/power/supply/ab8500/chargalg.txt
+index ef5328371122..56636f927203 100644
+--- a/Documentation/devicetree/bindings/power/supply/ab8500/chargalg.txt
++++ b/Documentation/devicetree/bindings/power/supply/ab8500/chargalg.txt
+@@ -13,4 +13,4 @@ ab8500_chargalg {
+ };
  
- Example:
+ For information on battery specific node, Ref:
+-Documentation/devicetree/bindings/power_supply/ab8500/fg.txt
++Documentation/devicetree/bindings/power/supply/ab8500/fg.txt
+diff --git a/Documentation/devicetree/bindings/power/supply/ab8500/charger.txt b/Documentation/devicetree/bindings/power/supply/ab8500/charger.txt
+index 6bdbb08ea9e0..24ada03e07b4 100644
+--- a/Documentation/devicetree/bindings/power/supply/ab8500/charger.txt
++++ b/Documentation/devicetree/bindings/power/supply/ab8500/charger.txt
+@@ -22,4 +22,4 @@ Required Properties:
+ 	};
  
+ For information on battery specific node, Ref:
+-Documentation/devicetree/bindings/power_supply/ab8500/fg.txt
++Documentation/devicetree/bindings/power/supply/ab8500/fg.txt
 -- 
 2.17.1
 
