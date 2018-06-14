@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0E9BAC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 97689C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEB97208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B1DE208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xsglwRtt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEB97208CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hVKUOaPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B1DE208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964837AbeFNOGi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:06:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46744 "EHLO mail.kernel.org"
+        id S936317AbeFNOGe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:06:34 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936289AbeFNOG2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:06:28 -0400
+        id S936302AbeFNOGa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:06:30 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CCEB208DD;
-        Thu, 14 Jun 2018 14:06:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF765208DA;
+        Thu, 14 Jun 2018 14:06:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985187;
-        bh=6gjjveWXJtC3eNR46/8lps/qRMsIcIxGh8JmtI0nvvY=;
+        s=default; t=1528985190;
+        bh=Nw2tuiA6KRgDasDqvwqs+N1td9ZTE0oaQxadLlt5qBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xsglwRttUyUs0zxSKRZ4XuBXAwXeY/7wXBXmb+Lo357Qn8Ul+g3UM2jySp6/HnG16
-         7LVvozQt7vjljk17Fh9F1eDv7nEs5Hf10ePNLOjzo0PZ0Vmn//OeFdinBLIBuwngi1
-         LylKrwLQpQjdY8dZ7+e8d29ufOH9yu9S3ODRnvwo=
+        b=hVKUOaPjd1D8lMqe8MUr8PVwl2wlDwf/EFen2obiMLLG2P5VElcDIKKcD21+sHFzs
+         vJqoKnGJPjMw0XqjeKly9FDHi3R1xOfMy55RCF9b5EnB2TXdG0Qv7EOQkRAM2g81XG
+         itc5hstTq8RoFcn83BpBuq8kmo9/KX9tWatMs1dg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Kelley <mikelley@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        "K. Y. Srinivasan" <kys@microsoft.com>
-Subject: [PATCH 4.17 30/45] doc: fix sysfs ABI documentation
-Date:   Thu, 14 Jun 2018 16:04:21 +0200
-Message-Id: <20180614132128.438866343@linuxfoundation.org>
+        stable@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>
+Subject: [PATCH 4.17 31/45] arm64: defconfig: Enable CONFIG_PINCTRL_MT7622 by default
+Date:   Thu, 14 Jun 2018 16:04:22 +0200
+Message-Id: <20180614132128.503893478@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -60,188 +60,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stephen Hemminger <stephen@networkplumber.org>
+From: Sean Wang <sean.wang@mediatek.com>
 
-commit f59acbc5e0f7f90452efd4c3318d5e5ec042c3e0 upstream.
+commit 1e31927aa64545ee97a2a41db9984c9931afc50a upstream.
 
-In 4.9 kernel, the sysfs files for Hyper-V VMBus changed name but
-the documentation files were not updated. The current sysfs file
-names are /sys/bus/vmbus/devices/<UUID>/...
+Recently kernelCI reported the board mt7622-rfb1 has a fail test with
+kernel: ERROR: did not start booting whose details could be seen at [1].
 
-See commit 9a56e5d6a0ba ("Drivers: hv: make VMBus bus ids persistent")
-and commit f6b2db084b65 ("vmbus: make sysfs names consistent with PCI")
+The cause is that UART0 can't output anything when it's missing a proper
+pin setup with current DTS, so the essential driver is always getting
+enabled to fix up the issue.
 
-Reported-by: Michael Kelley <mikelley@microsoft.com>
-Signed-off-by: Stephen Hemminger <sthemmin@microsoft.com>
+[1] https://kernelci.org/boot/id/5ad7d62759b51461bfb1f829/
+
+Cc: Kevin Hilman <khilman@baylibre.com>
 Cc: stable@vger.kernel.org
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: ae457b7679c4 ("arm64: dts: mt7622: add SoC and peripheral related device nodes")
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+Signed-off-by: Matthias Brugger <matthias.bgg@gmail.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- Documentation/ABI/stable/sysfs-bus-vmbus |   40 +++++++++++++++----------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+ arch/arm64/configs/defconfig |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/Documentation/ABI/stable/sysfs-bus-vmbus
-+++ b/Documentation/ABI/stable/sysfs-bus-vmbus
-@@ -1,25 +1,25 @@
--What:		/sys/bus/vmbus/devices/vmbus_*/id
-+What:		/sys/bus/vmbus/devices/<UUID>/id
- Date:		Jul 2009
- KernelVersion:	2.6.31
- Contact:	K. Y. Srinivasan <kys@microsoft.com>
- Description:	The VMBus child_relid of the device's primary channel
- Users:		tools/hv/lsvmbus
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/class_id
-+What:		/sys/bus/vmbus/devices/<UUID>/class_id
- Date:		Jul 2009
- KernelVersion:	2.6.31
- Contact:	K. Y. Srinivasan <kys@microsoft.com>
- Description:	The VMBus interface type GUID of the device
- Users:		tools/hv/lsvmbus
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/device_id
-+What:		/sys/bus/vmbus/devices/<UUID>/device_id
- Date:		Jul 2009
- KernelVersion:	2.6.31
- Contact:	K. Y. Srinivasan <kys@microsoft.com>
- Description:	The VMBus interface instance GUID of the device
- Users:		tools/hv/lsvmbus
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channel_vp_mapping
-+What:		/sys/bus/vmbus/devices/<UUID>/channel_vp_mapping
- Date:		Jul 2015
- KernelVersion:	4.2.0
- Contact:	K. Y. Srinivasan <kys@microsoft.com>
-@@ -28,112 +28,112 @@ Description:	The mapping of which primar
- 		Format: <channel's child_relid:the bound cpu's number>
- Users:		tools/hv/lsvmbus
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/device
-+What:		/sys/bus/vmbus/devices/<UUID>/device
- Date:		Dec. 2015
- KernelVersion:	4.5
- Contact:	K. Y. Srinivasan <kys@microsoft.com>
- Description:	The 16 bit device ID of the device
- Users:		tools/hv/lsvmbus and user level RDMA libraries
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/vendor
-+What:		/sys/bus/vmbus/devices/<UUID>/vendor
- Date:		Dec. 2015
- KernelVersion:	4.5
- Contact:	K. Y. Srinivasan <kys@microsoft.com>
- Description:	The 16 bit vendor ID of the device
- Users:		tools/hv/lsvmbus and user level RDMA libraries
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Directory for per-channel information
- 		NN is the VMBUS relid associtated with the channel.
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/cpu
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/cpu
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	VCPU (sub)channel is affinitized to
- Users:		tools/hv/lsvmbus and other debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/cpu
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/cpu
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	VCPU (sub)channel is affinitized to
- Users:		tools/hv/lsvmbus and other debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/in_mask
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/in_mask
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Host to guest channel interrupt mask
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/latency
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/latency
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Channel signaling latency
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/out_mask
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/out_mask
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Guest to host channel interrupt mask
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/pending
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/pending
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Channel interrupt pending state
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/read_avail
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/read_avail
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Bytes available to read
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/write_avail
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/write_avail
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Bytes available to write
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/events
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/events
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Number of times we have signaled the host
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/interrupts
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/interrupts
- Date:		September. 2017
- KernelVersion:	4.14
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Number of times we have taken an interrupt (incoming)
- Users:		Debugging tools
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/subchannel_id
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/subchannel_id
- Date:		January. 2018
- KernelVersion:	4.16
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Subchannel ID associated with VMBUS channel
- Users:		Debugging tools and userspace drivers
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/monitor_id
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/monitor_id
- Date:		January. 2018
- KernelVersion:	4.16
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
- Description:	Monitor bit associated with channel
- Users:		Debugging tools and userspace drivers
- 
--What:		/sys/bus/vmbus/devices/vmbus_*/channels/NN/ring
-+What:		/sys/bus/vmbus/devices/<UUID>/channels/<N>/ring
- Date:		January. 2018
- KernelVersion:	4.16
- Contact:	Stephen Hemminger <sthemmin@microsoft.com>
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -320,6 +320,7 @@ CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_MSM8916=y
+ CONFIG_PINCTRL_MSM8994=y
+ CONFIG_PINCTRL_MSM8996=y
++CONFIG_PINCTRL_MT7622=y
+ CONFIG_PINCTRL_QDF2XXX=y
+ CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
+ CONFIG_GPIO_DWAPB=y
 
 
