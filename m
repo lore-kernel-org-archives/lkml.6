@@ -3,85 +3,102 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2FAE2C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:25:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B04F9C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:26:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E294B208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:25:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E294B208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sigma-star.at
+	by mail.kernel.org (Postfix) with ESMTP id 7152F208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:26:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7152F208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752930AbeFNHZX (ORCPT
+        id S1754639AbeFNH0h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:25:23 -0400
-Received: from lilium.sigma-star.at ([109.75.188.150]:54602 "EHLO
-        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752760AbeFNHZW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:25:22 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lilium.sigma-star.at (Postfix) with ESMTP id 2759418186341;
-        Thu, 14 Jun 2018 09:25:21 +0200 (CEST)
-From:   Richard Weinberger <richard@sigma-star.at>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-mtd@lists.infradead.org,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Philipp Rosenberger <p.rosenberger@linutronix.de>,
-        Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 0/3] mtd: rawnand: denali: add new clocks and improve setup_data_interface
-Date:   Thu, 14 Jun 2018 09:25:19 +0200
-Message-ID: <6557713.S7AzxIg9TS@blindfold>
-In-Reply-To: <1528953067-24324-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1528953067-24324-1-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Thu, 14 Jun 2018 03:26:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41258 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752781AbeFNH0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 03:26:36 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7BB9620719; Thu, 14 Jun 2018 09:26:34 +0200 (CEST)
+Received: from aptenodytes (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 3063B203B0;
+        Thu, 14 Jun 2018 09:26:24 +0200 (CEST)
+Message-ID: <99b2583187fe9925251029e876b061aac9172597.camel@bootlin.com>
+Subject: Re: [PATCH] Revert "drm/sun4i: Handle DRM_BUS_FLAG_PIXDATA_*EDGE"
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     Giulio Benetti <giulio.benetti@micronovasrl.com>,
+        dri-devel@lists.freedesktop.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
+        linux-sunxi@googlegroups.com, stable@vger.kernel.org
+Date:   Thu, 14 Jun 2018 09:26:24 +0200
+In-Reply-To: <d5357ae3-9dc1-b0ac-47bf-8742d55c4f3b@micronovasrl.com>
+References: <20180613081647.31183-1-paul.kocialkowski@bootlin.com>
+         <d5357ae3-9dc1-b0ac-47bf-8742d55c4f3b@micronovasrl.com>
+Organization: Bootlin
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-fAJmF27SYGowJCOLH8Cy"
+X-Mailer: Evolution 3.28.2 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Masahiro,
 
-Am Donnerstag, 14. Juni 2018, 07:11:04 CEST schrieb Masahiro Yamada:
-> 
-> The ->setup_data_interface() hook needs to know the clock frequency.
-> In fact, this IP needs three clocks, bus "which clock?" is really
-> confusing.  (It is not described in the DT-binding at all.)
-> 
-> This series adds more clocks.  In the new binding, three clocks
-> are required: core clock, bus interface clock, ECC engine clock.
-> 
-> This series also takes care of the backward compatibility by
-> providing hardcoded values in case the new clocks are missing.
-> So, existing DT should work.
-> 
-> 
-> Changes in v2:
->   - Split patches into sensible chunks
-> 
-> Masahiro Yamada (3):
->   mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
->   mtd: rawnand: denali_dt: add more clocks based on IP datasheet
->   mtd: rawnand: denali: optimize timing parameters for data interface
+--=-fAJmF27SYGowJCOLH8Cy
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This still means that we need to feed at least 2/3 and 3/3 into -stable to
-unbreak the driver.
-I'd really prefer a single self-hosting fix that can go into -stable and then
-patches on top of the fix can prettify the driver.
+Hi,
 
-Thanks,
-//richard
+On Wed, 2018-06-13 at 23:52 +0200, Giulio Benetti wrote:
+> Hello,
+>=20
+> sorry for my ignorance.
+> I don't know the right patch workflow in the case of "revert commit".
+> When I fix this bug, should I have to re-submit the previous patch=20
+> entire plus bug-fix?
+>
+> Or do I have to submit patch with bug-fix only?
 
--- 
-sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
-ATU66964118 - FN 374287y
+Yes, that is usually how it works! The revert patch will be picked up by
+the maintainer (Maxime), integrated in his tree and eventually merged
+into Linus' tree (along with stable trees).
+
+Fixup patches for this will need to take into account the revert patch,
+so it becomes equivalent to submitting the same patch with that issue
+resolved.
+
+> Thanks in advance to everybody
+
+Cheers !
+
+--=20
+Paul Kocialkowski, Bootlin (formerly Free Electrons)
+Embedded Linux and kernel engineering
+https://bootlin.com
+--=-fAJmF27SYGowJCOLH8Cy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEJZpWjZeIetVBefti3cLmz3+fv9EFAlsiGKAACgkQ3cLmz3+f
+v9G0mQf/ULb339blSIkYnLow0k88c8mID4981TPKLS5xBO76sff54JRC8LS2akuh
++e1WQcwb9BI0N3quUuUyyMwrlyH1aNzQOdo0VkGo5XdotNR62ZZBR3X6W2OTdeTs
+DipI6jB0rtAq4EbL6ZE0BnbZVZl58Hf+0OtmiAF4RsXqDHrgkEQ688Ixcn219dn5
+738fJdggyTxO2SdXisQOELnKDEZ7zRvVEpzxUDEryW4IisfGszt8VlPMxgfAy5l5
+5AI5jAS/BFFccDGlUfk18KsqXvfS3k4mZeV/+2PB7Lhv2jA7CdxzhsOo0dybgoRj
+29DHuPCcECI+XrcVEbxk10ROcUx7aQ==
+=Vo1P
+-----END PGP SIGNATURE-----
+
+--=-fAJmF27SYGowJCOLH8Cy--
+
