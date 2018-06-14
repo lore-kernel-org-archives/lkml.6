@@ -2,111 +2,137 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 96572C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:59:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D0302C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AF45208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:59:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="PFaCYWZ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF45208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 8CEDB208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:59:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CEDB208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936035AbeFNN7A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:59:00 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:40104 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755084AbeFNN66 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:58:58 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5EDwLku102812;
-        Thu, 14 Jun 2018 13:58:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=XVx2lTVg5HIZrCNiaIAHj9ozZlcBsf6s6saQfFSaxfQ=;
- b=PFaCYWZ49rCXOu2wYKy0OluOCysiVMvTt/TqzpwJLPUsWVVanMa5U1jLvJJrP/lyicwr
- UAehfxeaclH+zKP4kbhJfvYIhcWlZl+5nLfk2u5aBUqUYIVVdMRZVpiOyvnZz8OpoquQ
- ph0a9uUrxgwsa/2ovNxOuscr0knUz/LVZ3dpmgtkw1tXpedHGIxn4fBTHTrMV9Q009Bt
- 23eYLwUPzCWk+uLJ9Ptbyzf+oVfKJLvr/L4iQyf0wLzvb+ubUEpdC+Fww5JJ9xOXnKU7
- YdakGnG29/jC5BjrnWUcxhV6+fiqXM4Zj786xw1nR9JiNL/y86c/tHWTjK2zD7h+0h/5 LQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2jk0xrd7bf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 13:58:54 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5EDwr3V023615
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 13:58:54 GMT
-Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5EDwrwi026540;
-        Thu, 14 Jun 2018 13:58:53 GMT
-Received: from mwanda (/41.202.241.23)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Jun 2018 06:58:52 -0700
-Date:   Thu, 14 Jun 2018 16:58:45 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] staging: gdm724x: add error handling for nlmsg_put
-Message-ID: <20180614135845.xzej3zrnhc2bf726@mwanda>
-References: <1528693766-31570-1-git-send-email-jiazhouyang09@gmail.com>
- <1528975913-51879-1-git-send-email-jiazhouyang09@gmail.com>
+        id S964826AbeFNN7R (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 09:59:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60490 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755127AbeFNN7Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 09:59:16 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CE3B3401EF14;
+        Thu, 14 Jun 2018 13:59:15 +0000 (UTC)
+Received: from 192.168.1.112 (ovpn-12-48.pek2.redhat.com [10.72.12.48])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A8AB41C702;
+        Thu, 14 Jun 2018 13:59:10 +0000 (UTC)
+Subject: Re: [PATCH 2/2 V2] Support kdump when AMD secure memory encryption is
+ active
+To:     kbuild test robot <lkp@intel.com>
+Cc:     kbuild-all@01.org, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, thomas.lendacky@amd.com,
+        dyoung@redhat.com
+References: <20180614084748.9617-3-lijiang@redhat.com>
+ <201806142024.WDGkcZ5I%fengguang.wu@intel.com>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <21035093-9194-e02d-2596-e158aa6dc3fd@redhat.com>
+Date:   Thu, 14 Jun 2018 21:59:06 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1528975913-51879-1-git-send-email-jiazhouyang09@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8923 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=869
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806140156
+In-Reply-To: <201806142024.WDGkcZ5I%fengguang.wu@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 14 Jun 2018 13:59:15 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Thu, 14 Jun 2018 13:59:15 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 07:31:51PM +0800, Zhouyang Jia wrote:
-> When nlmsg_put fails, the lack of error-handling code may
-> cause unexpected results.
+在 2018年06月14日 20:55, kbuild test robot 写道:
+> Hi Lianbo,
 > 
-> This patch adds error-handling code after calling nlmsg_put.
+> Thank you for the patch! Yet something to improve:
 > 
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> [auto build test ERROR on linus/master]
+> [also build test ERROR on v4.17 next-20180614]
+> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Lianbo-Jiang/Support-kdump-for-AMD-secure-memory-encryption-sme/20180614-164938
+> config: i386-randconfig-c0-06141337 (attached as .config)
+> compiler: gcc-7 (Debian 7.3.0-16) 7.3.0
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=i386 
+> 
+> All errors (new ones prefixed by >>):
+> 
+>    fs/proc/vmcore.o: In function `read_from_oldmem':
+>>> fs/proc/vmcore.c:127: undefined reference to `copy_oldmem_page_encrypted'
+> 
+It is strange, it doesn't have this error in my test. I will look for another environment to test
+and see whether it can be reproduced.
+Maybe the compile error will be fixed in the patch V3.
+
+Thanks.
+Lianbo 
+> vim +127 fs/proc/vmcore.c
+> 
+>    100	
+>    101	/* Reads a page from the oldmem device from given offset. */
+>    102	static ssize_t read_from_oldmem(char *buf, size_t count,
+>    103					u64 *ppos, int userbuf,
+>    104					bool encrypted)
+>    105	{
+>    106		unsigned long pfn, offset;
+>    107		size_t nr_bytes;
+>    108		ssize_t read = 0, tmp;
+>    109	
+>    110		if (!count)
+>    111			return 0;
+>    112	
+>    113		offset = (unsigned long)(*ppos % PAGE_SIZE);
+>    114		pfn = (unsigned long)(*ppos / PAGE_SIZE);
+>    115	
+>    116		do {
+>    117			if (count > (PAGE_SIZE - offset))
+>    118				nr_bytes = PAGE_SIZE - offset;
+>    119			else
+>    120				nr_bytes = count;
+>    121	
+>    122			/* If pfn is not ram, return zeros for sparse dump files */
+>    123			if (pfn_is_ram(pfn) == 0)
+>    124				memset(buf, 0, nr_bytes);
+>    125			else {
+>    126				if (encrypted)
+>  > 127					tmp = copy_oldmem_page_encrypted(pfn, buf,
+>    128						       nr_bytes, offset, userbuf);
+>    129				else
+>    130					tmp = copy_oldmem_page(pfn, buf, nr_bytes,
+>    131							offset, userbuf);
+>    132	
+>    133				if (tmp < 0)
+>    134					return tmp;
+>    135			}
+>    136			*ppos += nr_bytes;
+>    137			count -= nr_bytes;
+>    138			buf += nr_bytes;
+>    139			read += nr_bytes;
+>    140			++pfn;
+>    141			offset = 0;
+>    142		} while (count);
+>    143	
+>    144		return read;
+>    145	}
+>    146	
+> 
 > ---
-> v1->v2:
-> - Add some cleanup
-> ---
->  drivers/staging/gdm724x/netlink_k.c | 5 +++++
->  1 file changed, 5 insertions(+)
+> 0-DAY kernel test infrastructure                Open Source Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
 > 
-> diff --git a/drivers/staging/gdm724x/netlink_k.c b/drivers/staging/gdm724x/netlink_k.c
-> index abe2425..16da03b 100644
-> --- a/drivers/staging/gdm724x/netlink_k.c
-> +++ b/drivers/staging/gdm724x/netlink_k.c
-> @@ -119,6 +119,11 @@ int netlink_send(struct sock *sock, int group, u16 type, void *msg, int len)
->  	seq++;
->  
->  	nlh = nlmsg_put(skb, 0, seq, type, len, 0);
-> +	if (!nlh) {
-> +		kfree_skb(skb);
-> +		return -EMSGSIZE;
-> +	}
-
-As I mentioned earlier, this patch is not required because the we just
-allocated the skb and we know that it is large enough.
-
-regards,
-dan carpenter
-
-
