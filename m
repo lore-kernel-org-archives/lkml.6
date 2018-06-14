@@ -2,220 +2,176 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E9C19C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:54:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 22D06C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:55:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DFCE208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:54:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DFCE208C3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
+	by mail.kernel.org (Postfix) with ESMTP id CBAC2208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:55:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DhbgrvMp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBAC2208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755552AbeFNVyI (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 17:54:08 -0400
-Received: from out02.mta.xmission.com ([166.70.13.232]:59889 "EHLO
-        out02.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755410AbeFNVyH (ORCPT
+        id S964895AbeFNVzP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 17:55:15 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:54571 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755513AbeFNVzH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 17:54:07 -0400
-Received: from in02.mta.xmission.com ([166.70.13.52])
-        by out02.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fTaBu-0005Mu-7v; Thu, 14 Jun 2018 15:54:03 -0600
-Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
-        by in02.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.87)
-        (envelope-from <ebiederm@xmission.com>)
-        id 1fTaBt-0002vn-D2; Thu, 14 Jun 2018 15:54:02 -0600
-From:   ebiederm@xmission.com (Eric W. Biederman)
-To:     Tycho Andersen <tycho@tycho.ws>
-Cc:     Matthew Helsley <matt.helsley@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        containers@lists.linux-foundation.org,
-        Oleg Nesterov <oleg@redhat.com>,
-        Akihiro Suda <suda.akihiro@lab.ntt.co.jp>,
-        Tyler Hicks <tyhicks@canonical.com>,
-        Christian Brauner <christian.brauner@ubuntu.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        "Tobin C . Harding" <me@tobin.cc>
-References: <20180531144949.24995-1-tycho@tycho.ws>
-        <20180531144949.24995-2-tycho@tycho.ws>
-        <CA+RrjuW98m2coL+TOKq5cL0QhAb=HYxo2DpNoqMzdiwjqhc2BA@mail.gmail.com>
-        <20180612231610.GA3837@cisco>
-        <CA+RrjuUtYoXfbH3cTbSY=QzXcxJsJOa0BL628ADy9N3bTO4=Mw@mail.gmail.com>
-        <20180614210325.GA5673@cisco>
-Date:   Thu, 14 Jun 2018 16:53:51 -0500
-In-Reply-To: <20180614210325.GA5673@cisco> (Tycho Andersen's message of "Thu,
-        14 Jun 2018 14:03:25 -0700")
-Message-ID: <87in6lt4pc.fsf@xmission.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-XM-SPF: eid=1fTaBt-0002vn-D2;;;mid=<87in6lt4pc.fsf@xmission.com>;;;hst=in02.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
-X-XM-AID: U2FsdGVkX1+yeewEhpFj7IEJOuCmfmepZdvwdZnssv8=
-X-SA-Exim-Connect-IP: 97.119.124.205
-X-SA-Exim-Mail-From: ebiederm@xmission.com
-Subject: Re: [PATCH v3 1/4] seccomp: add a return code to trap to userspace
-X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
-X-SA-Exim-Scanned: Yes (on in02.mta.xmission.com)
+        Thu, 14 Jun 2018 17:55:07 -0400
+Received: by mail-wm0-f68.google.com with SMTP id o13-v6so391822wmf.4;
+        Thu, 14 Jun 2018 14:55:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Kc8qla+tTdf6nd1HGdNbFuVptOgJFtXfSV7Ss0PQcj0=;
+        b=DhbgrvMpPLhC6yypfBVQQBjpa9RA8qzIyIwTGp/s4Nkot2lbqoBKS90qFmvesHZWAH
+         M4kYFM+4wpWnoJfavEZhvWVTwB/dChhBKNTsxt/S41bUegEsazykjQpQ6HzaG3VaFnJZ
+         rLia//OKfiqFhPSfpkxGouIavKToSbMsqe7TLq85lHturvLKD4F2V7246agb12czwFZP
+         L1QdrbQhqqo2ojVNNERGgzKhrGCNEi/cOQCg+7onptjbB9dE/Cv3ljZeyUI1FsnxJfGW
+         7VOrBxeZ+TZOx0NedU1trKi3wU2O6Atz3hXE4LqJT2FCEU8SnzDbIpueSCmPJ5UabeZc
+         DEGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Kc8qla+tTdf6nd1HGdNbFuVptOgJFtXfSV7Ss0PQcj0=;
+        b=JT/GW1xfexDLEWUcAjvCIYopSn1I18VwqwuEfakqAR7sKZUvfb8a3A/7bR0nQhRQLg
+         slZJYiwmv5SZaKx+gHJZCR9s9YH/ZQ+Atzv1kSKPrq3BzmdxMXadNiAG+ENob0Fup7/M
+         md5P79Jl8MDHr9PoRxsV//f4VnhZ0H0o71GX28+Gxz+BcDE1d2rrF4MND5BXQX9RBOrC
+         aIb39ieEAxSVe8oo+a2vmQJQ7gCKiVgHk9PmXXbfHS/Cmv+Wdx05IgXbsTRKlY9UDgHE
+         jxZu47GVXlmNd02xZRymp23X8+vQdxOdB1+bvtRXsXozA+jhL8xJF45SWU+eWvc4ZVd8
+         ScdA==
+X-Gm-Message-State: APt69E0jR2OzjhO7eUPWnMpLksLEchUa0oK/CAtY8oCb6zL6n8KyYNSP
+        VUa/QGpAOvmAypjgWte8PnE=
+X-Google-Smtp-Source: ADUXVKI+0F/N/IPwiNj0NoIC0LNqIG/uk1pg97uvFt4g4hO9g1KClN/cMy5ns1AWIhfBQdI9kj1CVg==
+X-Received: by 2002:a1c:3bc4:: with SMTP id i187-v6mr3340901wma.57.1529013305181;
+        Thu, 14 Jun 2018 14:55:05 -0700 (PDT)
+Received: from gcc67.tetaneutral.net (gcc67.tetaneutral.net. [2a03:7220:8080:c00::1])
+        by smtp.gmail.com with ESMTPSA id i76-v6sm285367wmd.20.2018.06.14.14.55.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 14:55:03 -0700 (PDT)
+From:   ilia.lin@gmail.com
+To:     ilia.lin@gmail.com
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Ilia Lin <ilialin@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v13 0/8] Clock for CPU scaling support for msm8996
+Date:   Thu, 14 Jun 2018 23:53:47 +0200
+Message-Id: <20180614215358.11264-1-ilia.lin@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Tycho Andersen <tycho@tycho.ws> writes:
+From: Ilia Lin <ilia.lin@gmail.com>
 
-> On Thu, Jun 14, 2018 at 12:44:21PM -0700, Matthew Helsley wrote:
->> On Tue, Jun 12, 2018 at 4:16 PM, Tycho Andersen <tycho@tycho.ws> wrote:
->> 
->> > Hi Matthew,
->> >
->> > On Tue, Jun 12, 2018 at 02:39:03PM -0700, Matthew Helsley wrote:
->> > > On Thu, May 31, 2018 at 7:49 AM, Tycho Andersen <tycho@tycho.ws> wrote:
->> > >
->> > > <snip>
->> > >
->> > >
->> > > > +struct seccomp_notif {
->> > > > +       __u64 id;
->> > > > +       pid_t pid;
->> > > > +       struct seccomp_data data;
->> > > > +};
->> > > >
->> > >
->> > > Since it's part of the UAPI I think it would be good to add documentation
->> > > to this patch series. Part of that documentation should talk about which
->> > > pid namespaces this pid value is relevant in. This is especially
->> > important
->> > > since the feature is designed for use by things like container/sandbox
->> > > managers.
->> >
->> > Yes, at least Documentation/userspace-api/seccomp_filter.txt should be
->> > updated. I'll add that for the next series.
->> >
->> 
->> Are there some relevant man pages too that should be updated too?
->
-> Yes, but since those are in a separate tree, I usually send the sets
-> separately.
->
->> > > > +static void seccomp_do_user_notification(int this_syscall,
->> > > > +                                        struct seccomp_filter *match,
->> > > > +                                        const struct seccomp_data *sd)
->> > > > +{
->> > > > +       int err;
->> > > > +       long ret = 0;
->> > > > +       struct seccomp_knotif n = {};
->> > > > +
->> > > > +       mutex_lock(&match->notify_lock);
->> > > > +       err = -ENOSYS;
->> > > > +       if (!match->has_listener)
->> > > > +               goto out;
->> > > > +
->> > > > +       n.pid = current->pid;
->> > > >
->> > >
->> > > How have you tested this code for correctness? I don't see many
->> > > combinations being tested below nor here:
->> > > https://github.com/tych0/kernel-utils/blob/master/
->> > seccomp/notify_stress.c
->> > >
->> > > What about processes in different pid namespaces? Make tests that vary
->> > key
->> > > parameters like these between the task generating the notifications and
->> > the
->> > > task interested in processing the notifications. Make tests that try to
->> > > kill them at interesting times too. etc. Make tests that pass the
->> > > notification fd around and see how they work (or not).
->> > >
->> > > I ask about testing because you're effectively returning a pid value to
->> > > userspace here but not using the proper macros to access the task's
->> > struct
->> > > pid for that purpose. That will work so long as both processes are in the
->> > > same pid namespace but breaks otherwise.
->> > >
->> > > Furthermore, a pid value is not the best solution for the queueing of
->> > these
->> > > notifications because a single pid value is not meaningful/correct
->> > outside
->> > > current's pid namespace and the seccomp notification file descriptor
->> > could
->> > > be passed on to processes in another pid namespaces; this pid value will
->> > > almost always not be relevant or correct there hence taking a reference
->> > to
->> >
->> > Well, it *has* to be relevant in some cases: if you want to access
->> > some of the task's memory to e.g. read the args to the syscall, you
->> > need to ptrace or map_files to access the memory. So we do need to
->> > pass it, but,
->> >
->> > > the struct pid is useful. Then, during read(), the code would use the
->> > > proper macro to turn the struct pid reference into a pid value relevant
->> > in
->> > > the *reader's* pid namespace *or* return something obviously bogus if the
->> > > reader is in a pid namespace that can't see that pid. This could prevent
->> > > management processes from being tricked into clobbering the wrong
->> > process,
->> > > feeding the wrong process sensitive information via syscall results, etc.
->> >
->> > Yes, this makes sense. Seems like we need to do some magic about
->> > passing the tracee's task struct to the listener, so it can do
->> > task_pid_vnr(). We could perhaps require the listener to be in the
->> > init_pid_ns case, but I think things like socket() might still be
->> > useful even if you can't read the tracee's memory.
->> 
->> 
->> You could take a reference to the pid rather than the task
->> then use pid_vnr(). In that case the changes should result in something
->> like:
->> 
->> 
->> struct seccomp_knotif {
->>        /* The pid whose filter triggered the notification */
->>        struct pid *pid;
->> ...
->> 
->> static void seccomp_do_user_notification(...)
->> {
->>     ...
->>     n.pid = get_task_pid(current, PIDTYPE_PID);
->>     ...
->> remove_list:
->>     list_del(&n.list);
->>     put_pid(n.pid);
->>     ...
->> }
->> ...
->> static ssize_t seccomp_notify_read(...)
->> {
->>     ...
->>     unotif.pid = pid_vnr(knotif->pid);
->>     ...
->> }
->> 
->> I like holding the pid reference because it's what we do elsewhere when pid
->> namespaces
->> are a concern and it more precisely specifies what the knotif content needs
->> to convey.
->> Otherwise I don't think it makes a difference.
->
-> Great, thanks, I'll do this. I guess we need a put_pid() here too.
+[v13]
+ * Rebased
 
-A)  We know that the task is stopped.  Unless there is something
-    like SIGKILL that can make the task move you don't need to
-    take a reference to anything.
+[v12]
+ * Addressed the kbuild fail on arm architecture
 
-B)  pid_vnr is the wrong answer.  When you create the struct file
-    and intialize the filter you need to capture the calling processes
-    pid namespace.  The you can use "pid_nr_ns(knotif->pid, filter->pid_ns);".
-    That will work consistently even if the file descriptor is passed
-    between processes.
+[v11]
+ * Split the series into domains
 
-Eric
+[v9]
+ * Addressed comments from Viresh and Russel about the error handling
+
+[v8]
+ * Reordered the patch series into 4 groups
+ * Addressed comments from Amit about the comments and commit messages
+ * Addressed comments from Amit and Viresh about the resourses deallocation
+
+[v7]
+ * Addressed comments from Viresh about resourses deallocation and DT compatible
+
+[v6]
+ * Addressed comments from Viresh about:
+  ** Comments style
+  ** Kconfig bool instead of tristate
+  ** DT and documentation style
+  ** Resourses deallocation on an error
+  ** Typos
+
+[v5]
+ * Rebased
+ * Addressed comments from Bjorn about SPDX style, functions and parameters naming
+ * Addressed comments from Viresh DT properties and style, comments style, resourses deallocation, documentation placement
+ * Addressed comments from Sricharan about unnessesary include
+ * Addressed comments from Nicolas
+ * Addressed comments from Rob about the commit messages and acks
+ * Addressed comments from Mark
+
+[v4]
+ * Adressed all comments from Stephen
+ * Added CPU regulator support
+ * Added qcom-cpufreq-kryo driver
+
+[v3]
+ * Rebased on top of the latest PLL driver changes
+ * Addressed comment from Rob Herring for bindings
+
+[v2]
+ * Addressed comments from Rob Herring for bindings
+ * Addressed comments from Mark Rutland for memory barrier
+ * Addressed comments from Julien Thierry for clock reenabling condition
+ * Tuned the HW configuration for clock frequencies below 600MHz
+
+SOC (1/15):
+Extracts the kryo l2 accessors driver from the QCOM PMU driver
+
+Clocks (2/15-9/15):
+This series adds support for the CPU clocks on msm8996 devices.
+The driver uses the existing PLL drivers and is required to control
+the CPU frequency scaling on the MSM8996.
+
+Ilia Lin (5):
+soc: qcom: Separate kryo l2 accessors from PMU driver
+clk: Use devm_ in the register fixed factor clock
+clk: qcom: Add CPU clock driver for msm8996
+dt-bindings: clk: qcom: Add bindings for CPU clock for msm8996
+clk: qcom: Add ACD path to CPU clock driver for msm8996
+
+Rajendra Nayak (3):
+clk: qcom: Make clk_alpha_pll_configure available to modules
+clk: qcom: cpu-8996: Add support to switch to alternate PLL
+clk: qcom: cpu-8996: Add support to switch below 600Mhz
+
+.../devicetree/bindings/clock/qcom,kryocc.txt      |  17 +
+drivers/clk/clk-fixed-factor.c                     |   2 +-
+drivers/clk/qcom/Kconfig                           |  10 +
+drivers/clk/qcom/Makefile                          |   1 +
+drivers/clk/qcom/clk-alpha-pll.c                   |   1 +
+drivers/clk/qcom/clk-alpha-pll.h                   |   6 +
+drivers/clk/qcom/clk-cpu-8996.c                    | 510 +++++++++++++++++++++
+drivers/perf/Kconfig                               |   1 +
+drivers/perf/qcom_l2_pmu.c                         |  90 +---
+drivers/soc/qcom/Kconfig                           |   3 +
+drivers/soc/qcom/Makefile                          |   1 +
+drivers/soc/qcom/kryo-l2-accessors.c               |  56 +++
+include/soc/qcom/kryo-l2-accessors.h               |  12 +
+13 files changed, 643 insertions(+), 67 deletions(-)
+create mode 100644 Documentation/devicetree/bindings/clock/qcom,kryocc.txt
+create mode 100644 drivers/clk/qcom/clk-cpu-8996.c
+create mode 100644 drivers/soc/qcom/kryo-l2-accessors.c
+create mode 100644 include/soc/qcom/kryo-l2-accessors.h
+
+-- 
+2.11.0
+
