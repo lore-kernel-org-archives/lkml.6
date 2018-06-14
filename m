@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7AB13C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3FFEBC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28920208E1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6BCB208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gQRS1EyJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28920208E1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="blVLKVhz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6BCB208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965619AbeFNOKU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:10:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51152 "EHLO mail.kernel.org"
+        id S965636AbeFNOK0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:10:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965570AbeFNOKI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:10:08 -0400
+        id S965620AbeFNOKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:10:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 93C25208DE;
-        Thu, 14 Jun 2018 14:10:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 421FD208DD;
+        Thu, 14 Jun 2018 14:10:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985408;
-        bh=+IkxfNZi4Cw6Xjl0dPrwL/ya5m4bGQBAkVGT1mfMaO8=;
+        s=default; t=1528985421;
+        bh=eGfblDiZDLmyBYpXzIQC4Ju9cJOm6MmZIqTpGxkdhBo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gQRS1EyJ3C/8ppSsa1gQ2Ir2JyLtbyE1VHKHsjqu6v9KlI0W9cXI7K1xZ03BwX5tm
-         sV4186GuMoGbsT19OxtEO/sZwucOWFokSdxZ+qYJoysvkBjpzAg60JL8/nuAw2oDG4
-         F0ZWlx718KOQR01MqLaKcSQ3vqVYdn1WNr564kwk=
+        b=blVLKVhzObnZ1Da799UEwpTK4andG2qp9/sn2Aiw2x1wZWFkhywduZI1uHl06zhMH
+         wkpVTRAn+ToDZ7ZgTygRYAvyFHsXEc6zRwreCdRLAfmavU7ereBq8CQZ1FPKw+HeQP
+         llaMu5U2X1KsWSDKpoMX1ztnvQBLUjjRVN60Hnoc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>
-Subject: [PATCH 4.14 17/36] usb: gadget: udc: renesas_usb3: disable the controllers irqs for reconnecting
-Date:   Thu, 14 Jun 2018 16:04:40 +0200
-Message-Id: <20180614132158.030161340@linuxfoundation.org>
+        stable@vger.kernel.org, Oleksandr Natalenko <onatalen@redhat.com>,
+        Gil Kupfer <gilkup@gmail.com>, Nadav Amit <namit@vmware.com>,
+        Xavier Deguillard <xdeguillard@vmware.com>,
+        Oleksandr Natalenko <oleksandr@redhat.com>
+Subject: [PATCH 4.14 22/36] vmw_balloon: fixing double free when batching mode is off
+Date:   Thu, 14 Jun 2018 16:04:45 +0200
+Message-Id: <20180614132158.270375635@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -60,40 +61,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+From: Gil Kupfer <gilkup@gmail.com>
 
-commit bd6bce004d78b867ba0c6d3712f1c5b50398af9a upstream.
+commit b23220fe054e92f616b82450fae8cd3ab176cc60 upstream.
 
-This patch fixes an issue that reconnection is possible to fail
-because unexpected state handling happens by the irqs. To fix the issue,
-the driver disables the controller's irqs when disconnected.
+The balloon.page field is used for two different purposes if batching is
+on or off. If batching is on, the field point to the page which is used
+to communicate with with the hypervisor. If it is off, balloon.page
+points to the page that is about to be (un)locked.
 
-Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
-Cc: <stable@vger.kernel.org> # v4.5+
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Unfortunately, this dual-purpose of the field introduced a bug: when the
+balloon is popped (e.g., when the machine is reset or the balloon driver
+is explicitly removed), the balloon driver frees, unconditionally, the
+page that is held in balloon.page.  As a result, if batching is
+disabled, this leads to double freeing the last page that is sent to the
+hypervisor.
+
+The following error occurs during rmmod when kernel checkers are on, and
+the balloon is not empty:
+
+[   42.307653] ------------[ cut here ]------------
+[   42.307657] Kernel BUG at ffffffffba1e4b28 [verbose debug info unavailable]
+[   42.307720] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC
+[   42.312512] Modules linked in: vmw_vsock_vmci_transport vsock ppdev joydev vmw_balloon(-) input_leds serio_raw vmw_vmci parport_pc shpchp parport i2c_piix4 nfit mac_hid autofs4 vmwgfx drm_kms_helper hid_generic syscopyarea sysfillrect usbhid sysimgblt fb_sys_fops hid ttm mptspi scsi_transport_spi ahci mptscsih drm psmouse vmxnet3 libahci mptbase pata_acpi
+[   42.312766] CPU: 10 PID: 1527 Comm: rmmod Not tainted 4.12.0+ #5
+[   42.312803] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 09/30/2016
+[   42.313042] task: ffff9bf9680f8000 task.stack: ffffbfefc1638000
+[   42.313290] RIP: 0010:__free_pages+0x38/0x40
+[   42.313510] RSP: 0018:ffffbfefc163be98 EFLAGS: 00010246
+[   42.313731] RAX: 000000000000003e RBX: ffffffffc02b9720 RCX: 0000000000000006
+[   42.313972] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9bf97e08e0a0
+[   42.314201] RBP: ffffbfefc163be98 R08: 0000000000000000 R09: 0000000000000000
+[   42.314435] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffc02b97e4
+[   42.314505] R13: ffffffffc02b9748 R14: ffffffffc02b9728 R15: 0000000000000200
+[   42.314550] FS:  00007f3af5fec700(0000) GS:ffff9bf97e080000(0000) knlGS:0000000000000000
+[   42.314599] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   42.314635] CR2: 00007f44f6f4ab24 CR3: 00000003a7d12000 CR4: 00000000000006e0
+[   42.314864] Call Trace:
+[   42.315774]  vmballoon_pop+0x102/0x130 [vmw_balloon]
+[   42.315816]  vmballoon_exit+0x42/0xd64 [vmw_balloon]
+[   42.315853]  SyS_delete_module+0x1e2/0x250
+[   42.315891]  entry_SYSCALL_64_fastpath+0x23/0xc2
+[   42.315924] RIP: 0033:0x7f3af5b0e8e7
+[   42.315949] RSP: 002b:00007fffe6ce0148 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
+[   42.315996] RAX: ffffffffffffffda RBX: 000055be676401e0 RCX: 00007f3af5b0e8e7
+[   42.316951] RDX: 000000000000000a RSI: 0000000000000800 RDI: 000055be67640248
+[   42.317887] RBP: 0000000000000003 R08: 0000000000000000 R09: 1999999999999999
+[   42.318845] R10: 0000000000000883 R11: 0000000000000206 R12: 00007fffe6cdf130
+[   42.319755] R13: 0000000000000000 R14: 0000000000000000 R15: 000055be676401e0
+[   42.320606] Code: c0 74 1c f0 ff 4f 1c 74 02 5d c3 85 f6 74 07 e8 0f d8 ff ff 5d c3 31 f6 e8 c6 fb ff ff 5d c3 48 c7 c6 c8 0f c5 ba e8 58 be 02 00 <0f> 0b 66 0f 1f 44 00 00 66 66 66 66 90 48 85 ff 75 01 c3 55 48
+[   42.323462] RIP: __free_pages+0x38/0x40 RSP: ffffbfefc163be98
+[   42.325735] ---[ end trace 872e008e33f81508 ]---
+
+To solve the bug, we eliminate the dual purpose of balloon.page.
+
+Fixes: f220a80f0c2e ("VMware balloon: add batching to the vmw_balloon.")
+Cc: stable@vger.kernel.org
+Reported-by: Oleksandr Natalenko <onatalen@redhat.com>
+Signed-off-by: Gil Kupfer <gilkup@gmail.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/gadget/udc/renesas_usb3.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/misc/vmw_balloon.c |   23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
 
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -623,6 +623,13 @@ static void usb3_disconnect(struct renes
- 	usb3_usb2_pullup(usb3, 0);
- 	usb3_clear_bit(usb3, USB30_CON_B3_CONNECT, USB3_USB30_CON);
- 	usb3_reset_epc(usb3);
-+	usb3_disable_irq_1(usb3, USB_INT_1_B2_RSUM | USB_INT_1_B3_PLLWKUP |
-+			   USB_INT_1_B3_LUPSUCS | USB_INT_1_B3_DISABLE |
-+			   USB_INT_1_SPEED | USB_INT_1_B3_WRMRST |
-+			   USB_INT_1_B3_HOTRST | USB_INT_1_B2_SPND |
-+			   USB_INT_1_B2_L1SPND | USB_INT_1_B2_USBRST);
-+	usb3_clear_bit(usb3, USB_COM_CON_SPD_MODE, USB3_USB_COM_CON);
-+	usb3_init_epc_registers(usb3);
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -576,15 +576,9 @@ static void vmballoon_pop(struct vmballo
+ 		}
+ 	}
  
- 	if (usb3->driver)
- 		usb3->driver->disconnect(&usb3->gadget);
+-	if (b->batch_page) {
+-		vunmap(b->batch_page);
+-		b->batch_page = NULL;
+-	}
+-
+-	if (b->page) {
+-		__free_page(b->page);
+-		b->page = NULL;
+-	}
++	/* Clearing the batch_page unconditionally has no adverse effect */
++	free_page((unsigned long)b->batch_page);
++	b->batch_page = NULL;
+ }
+ 
+ /*
+@@ -991,16 +985,13 @@ static const struct vmballoon_ops vmball
+ 
+ static bool vmballoon_init_batching(struct vmballoon *b)
+ {
+-	b->page = alloc_page(VMW_PAGE_ALLOC_NOSLEEP);
+-	if (!b->page)
+-		return false;
++	struct page *page;
+ 
+-	b->batch_page = vmap(&b->page, 1, VM_MAP, PAGE_KERNEL);
+-	if (!b->batch_page) {
+-		__free_page(b->page);
++	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
++	if (!page)
+ 		return false;
+-	}
+ 
++	b->batch_page = page_address(page);
+ 	return true;
+ }
+ 
 
 
