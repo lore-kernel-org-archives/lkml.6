@@ -1,106 +1,100 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E8D6CC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:37:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D9B7DC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C981208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:37:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D1BE208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:38:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DrzthGUd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C981208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="jReTthJQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="g0M8tkgg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1BE208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755350AbeFNNhZ (ORCPT
+        id S1755297AbeFNNiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:37:25 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:35447 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755214AbeFNNhW (ORCPT
+        Thu, 14 Jun 2018 09:38:18 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42810 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754966AbeFNNiP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:37:22 -0400
-Received: by mail-pl0-f67.google.com with SMTP id k1-v6so3580152plt.2;
-        Thu, 14 Jun 2018 06:37:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=rkptTXaXwxNifXX6oxlPFocW17y+sm5YszZBhYdOqN4=;
-        b=DrzthGUdP+4k2Oy0FA0BK3t4BfViwX+f1DBK1oMVfmmViPuEh7whRwxkLStnXWxZ2r
-         iSDetForOrWeC18XTBO0AEk3OlKor7/HykcOLkRNxxu/Nx3vobTUKvoh5+MJnL7agfsr
-         VGgoXerzwQVC8FHRxeNFfZr1+J0EB9JgcaKWoY6GTXqWkTmtAOIc2t+Lr1aot9HfWcCm
-         0eA4FyORYJhHJ8p9bjPFtQW+P0SYQBRLKrB7KZ03BDfZ2zenywsZLEgzWPUQDcdaCqHv
-         JCuRG2hULjbS/5JyOL539mP5hKrr1nsQp4vfIjXMVv/80dDF1Ofpei0fd0GKI3Ejl0on
-         yUHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=rkptTXaXwxNifXX6oxlPFocW17y+sm5YszZBhYdOqN4=;
-        b=rocJe5vy4gLaHp84kgRcxQOZNJG+Pcvpde20QyjLS9bD0EyFHVfcpJ8bEjHOomWQ1/
-         Ccw7DvTl8RnKpm5lvGfb6dpnkWFAz8zeURAPxgLUr1xy+XhsRYncs0VaY+zto+llp9m2
-         288djCWzrnuxlJ5QhZi69Fz8+zOrU2t4kJ13nohSIXhcsuOCneAYdbJ32QCa7fgpjW1Z
-         h4e79IbJlzLNf4azuWgaGMhxnxeDQk6tPSsesVYX3D63spuU9tghXZciXxVQwda5qzoV
-         rCH356BX3kKUNFB+YEZD/PNw8ynjAFRJvXfGRygL8loo6cQSxMVWFNKrV/BMy/LrZY8/
-         EN7A==
-X-Gm-Message-State: APt69E2NKuDLb4x3QZxTOSgmVNNy8BuweFtw9+B+a16ew/NHQxI2aBhi
-        rrYSY+qCzoZ0DRBr2CufDMo=
-X-Google-Smtp-Source: ADUXVKLQEcwEJpPIWw/W+DMlNlProqaIg82yt3VAhR6rge+LSUc+jGAJUQXrs3JqfM9H60iwkMhzJg==
-X-Received: by 2002:a17:902:59ce:: with SMTP id d14-v6mr3104276plj.253.1528983442331;
-        Thu, 14 Jun 2018 06:37:22 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id u14-v6sm9431859pfd.103.2018.06.14.06.37.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 06:37:21 -0700 (PDT)
-From:   Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] HID: hid-ntrig: add error handling for sysfs_create_group
-Date:   Thu, 14 Jun 2018 21:37:17 +0800
-Message-Id: <1528983437-52903-1-git-send-email-jiazhouyang09@gmail.com>
+        Thu, 14 Jun 2018 09:38:15 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 637FE602FC; Thu, 14 Jun 2018 13:38:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528983495;
+        bh=kv7A8EUY0ISbGmD6JDv1NIJgJK4TLybrOgM+jWbVN3g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jReTthJQhmq/rNyQE3eEbrk7IDPBsSm2ksEzXtECzE2MDu+M1lkoUxumPO4QrKxaj
+         TVCFc0E5Jr5PzOg/ijFgzwtKKmNofTGsnhindYez/xcpSbmyoWWK4kPFZleBjo5Wiq
+         KmAipR1lYv5+esLtyNjG0/5UwVcgmtTHL/ZuYxac=
+Received: from drakthul.qualcomm.com (global_nat1_iad_fw.qualcomm.com [129.46.232.65])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: okaya@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5701A601D2;
+        Thu, 14 Jun 2018 13:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528983494;
+        bh=kv7A8EUY0ISbGmD6JDv1NIJgJK4TLybrOgM+jWbVN3g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=g0M8tkggbkRZGR8tVmKrMgAEjN9LteXrgge5PGlbVLRg1mt+0sfKfVqkwdB+ej5+p
+         FpXxZ2yYVhGaf+xiC+qVCFXZyir19rkCi2dqM5iJR5+1/kccKrRScG6K07v6oCoMt6
+         c8VcphIplt/fAogFFuzkNW5PhzrRYEgi+vENTL4s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5701A601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=okaya@codeaurora.org
+From:   Sinan Kaya <okaya@codeaurora.org>
+To:     dmaengine@vger.kernel.org, timur@codeaurora.org
+Cc:     linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Sinan Kaya <okaya@codeaurora.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] MAINTAINERS: Update email-id of Sinan Kaya
+Date:   Thu, 14 Jun 2018 09:37:46 -0400
+Message-Id: <1528983482-31028-1-git-send-email-okaya@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528707296-35785-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528707296-35785-1-git-send-email-jiazhouyang09@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When sysfs_create_group fails, the lack of error-handling code may
-cause unexpected results.
+I'm no longer with QCOM. I am still interested in maintaining or reviewing
+PCI/DMA engine patches. Update email-id to an active one.
 
-This patch adds error-handling code after calling sysfs_create_group.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+Signed-off-by: Sinan Kaya <okaya@codeaurora.org>
 ---
-v1->v2:
-- Remove goto statement.
----
- drivers/hid/hid-ntrig.c | 2 ++
- 1 file changed, 2 insertions(+)
+ MAINTAINERS | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-ntrig.c b/drivers/hid/hid-ntrig.c
-index 43b1c72..9bc6f48 100644
---- a/drivers/hid/hid-ntrig.c
-+++ b/drivers/hid/hid-ntrig.c
-@@ -955,6 +955,8 @@ static int ntrig_probe(struct hid_device *hdev, const struct hid_device_id *id)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 44fb3a1..dd9bd2d 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11803,7 +11803,7 @@ S:	Supported
+ F:	arch/hexagon/
  
- 	ret = sysfs_create_group(&hdev->dev.kobj,
- 			&ntrig_attribute_group);
-+	if (ret)
-+		hid_err(hdev, "cannot create sysfs group\n");
- 
- 	return 0;
- err_free:
+ QUALCOMM HIDMA DRIVER
+-M:	Sinan Kaya <okaya@codeaurora.org>
++M:	Sinan Kaya <okaya@kernel.org>
+ L:	linux-arm-kernel@lists.infradead.org
+ L:	linux-arm-msm@vger.kernel.org
+ L:	dmaengine@vger.kernel.org
 -- 
 2.7.4
 
