@@ -5,46 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 13EA1C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:13:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7C5ABC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:13:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9C0F208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:13:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9C0F208DB
+	by mail.kernel.org (Postfix) with ESMTP id 3D63A208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:13:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D63A208D4
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964967AbeFNQNL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:13:11 -0400
-Received: from osg.samsung.com ([64.30.133.232]:46860 "EHLO osg.samsung.com"
+        id S936217AbeFNQNa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 12:13:30 -0400
+Received: from osg.samsung.com ([64.30.133.232]:46337 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755208AbeFNQJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:09:40 -0400
+        id S1755538AbeFNQJf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:09:35 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by osg.samsung.com (Postfix) with ESMTP id 902FF20F66;
-        Thu, 14 Jun 2018 09:09:39 -0700 (PDT)
+        by osg.samsung.com (Postfix) with ESMTP id 212D920F54;
+        Thu, 14 Jun 2018 09:09:35 -0700 (PDT)
 X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 Received: from osg.samsung.com ([127.0.0.1])
         by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id V7G2lMJimQf4; Thu, 14 Jun 2018 09:09:36 -0700 (PDT)
+        with ESMTP id d013t-tGlGZ6; Thu, 14 Jun 2018 09:09:34 -0700 (PDT)
 Received: from smtp.s-opensource.com (177.41.114.220.dynamic.adsl.gvt.net.br [177.41.114.220])
-        by osg.samsung.com (Postfix) with ESMTPSA id 7B67E20EA0;
+        by osg.samsung.com (Postfix) with ESMTPSA id A487720EB3;
         Thu, 14 Jun 2018 09:09:16 -0700 (PDT)
 Received: from mchehab by smtp.s-opensource.com with local (Exim 4.91)
         (envelope-from <mchehab@smtp.s-opensource.com>)
-        id 1fTUoD-0005SX-Vb; Thu, 14 Jun 2018 13:09:13 -0300
+        id 1fTUoE-0005UB-Lh; Thu, 14 Jun 2018 13:09:14 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        Antti Palosaari <crope@iki.fi>,
-        Malcolm Priestley <tvboxspy@gmail.com>,
-        Michael Krufky <mkrufky@linuxtv.org>
-Subject: [PATCH v3 07/27] media: dvb: point to the location of the old README.dvb-usb file
-Date:   Thu, 14 Jun 2018 13:08:52 -0300
-Message-Id: <e7039d56acb0a4d4b1ecc66ae571778dcc647b67.1528990947.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH v3 25/27] ABI: sysfs-devices-system-cpu: remove a broken reference
+Date:   Thu, 14 Jun 2018 13:09:10 -0300
+Message-Id: <1f73822cfe2d33cefe4f16b67b9d1080e43c5de7.1528990947.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1528990947.git.mchehab+samsung@kernel.org>
 References: <cover.1528990947.git.mchehab+samsung@kernel.org>
@@ -55,643 +52,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This file got renamed, but the references still point to the
-old place.
+This file doesn't exist anymore:
+	Documentation/cpu-freq/user-guide.txt
+
+As the ABI already points to Documentation/cpu-freq, just
+remove the broken link and the associated text.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- drivers/media/dvb-frontends/dib3000.h        | 2 +-
- drivers/media/dvb-frontends/dib3000mb.c      | 2 +-
- drivers/media/dvb-frontends/eds1547.h        | 2 +-
- drivers/media/dvb-frontends/z0194a.h         | 2 +-
- drivers/media/usb/dvb-usb-v2/Kconfig         | 2 +-
- drivers/media/usb/dvb-usb-v2/gl861.c         | 2 +-
- drivers/media/usb/dvb-usb-v2/lmedm04.c       | 2 +-
- drivers/media/usb/dvb-usb-v2/lmedm04.h       | 2 +-
- drivers/media/usb/dvb-usb-v2/mxl111sf.c      | 2 +-
- drivers/media/usb/dvb-usb-v2/mxl111sf.h      | 2 +-
- drivers/media/usb/dvb-usb/Kconfig            | 2 +-
- drivers/media/usb/dvb-usb/a800.c             | 2 +-
- drivers/media/usb/dvb-usb/af9005-fe.c        | 2 +-
- drivers/media/usb/dvb-usb/af9005-remote.c    | 2 +-
- drivers/media/usb/dvb-usb/af9005.c           | 2 +-
- drivers/media/usb/dvb-usb/af9005.h           | 2 +-
- drivers/media/usb/dvb-usb/az6027.c           | 2 +-
- drivers/media/usb/dvb-usb/cxusb.c            | 2 +-
- drivers/media/usb/dvb-usb/dibusb-common.c    | 2 +-
- drivers/media/usb/dvb-usb/dibusb-mb.c        | 2 +-
- drivers/media/usb/dvb-usb/dibusb-mc-common.c | 2 +-
- drivers/media/usb/dvb-usb/dibusb-mc.c        | 2 +-
- drivers/media/usb/dvb-usb/dibusb.h           | 2 +-
- drivers/media/usb/dvb-usb/digitv.c           | 2 +-
- drivers/media/usb/dvb-usb/dtt200u-fe.c       | 2 +-
- drivers/media/usb/dvb-usb/dtt200u.c          | 2 +-
- drivers/media/usb/dvb-usb/dtt200u.h          | 2 +-
- drivers/media/usb/dvb-usb/dvb-usb-init.c     | 2 +-
- drivers/media/usb/dvb-usb/dw2102.c           | 2 +-
- drivers/media/usb/dvb-usb/friio-fe.c         | 2 +-
- drivers/media/usb/dvb-usb/friio.c            | 2 +-
- drivers/media/usb/dvb-usb/friio.h            | 2 +-
- drivers/media/usb/dvb-usb/gp8psk.c           | 2 +-
- drivers/media/usb/dvb-usb/gp8psk.h           | 2 +-
- drivers/media/usb/dvb-usb/m920x.c            | 2 +-
- drivers/media/usb/dvb-usb/nova-t-usb2.c      | 2 +-
- drivers/media/usb/dvb-usb/opera1.c           | 2 +-
- drivers/media/usb/dvb-usb/ttusb2.c           | 2 +-
- drivers/media/usb/dvb-usb/ttusb2.h           | 2 +-
- drivers/media/usb/dvb-usb/umt-010.c          | 2 +-
- drivers/media/usb/dvb-usb/vp702x-fe.c        | 2 +-
- drivers/media/usb/dvb-usb/vp702x.c           | 2 +-
- drivers/media/usb/dvb-usb/vp7045-fe.c        | 2 +-
- drivers/media/usb/dvb-usb/vp7045.c           | 2 +-
- drivers/media/usb/dvb-usb/vp7045.h           | 2 +-
- 45 files changed, 45 insertions(+), 45 deletions(-)
+ Documentation/ABI/testing/sysfs-devices-system-cpu | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/media/dvb-frontends/dib3000.h b/drivers/media/dvb-frontends/dib3000.h
-index d5dfafb4ef13..d2b7523a22b5 100644
---- a/drivers/media/dvb-frontends/dib3000.h
-+++ b/drivers/media/dvb-frontends/dib3000.h
-@@ -17,7 +17,7 @@
-  *  Amaury Demol from DiBcom for providing specs and driver
-  *  sources, on which this driver (and the dvb-dibusb) are based.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  *
-  */
+diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+index bd4975e132d3..9c5e7732d249 100644
+--- a/Documentation/ABI/testing/sysfs-devices-system-cpu
++++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+@@ -238,9 +238,6 @@ Description:	Discover and change clock speed of CPUs
  
-diff --git a/drivers/media/dvb-frontends/dib3000mb.c b/drivers/media/dvb-frontends/dib3000mb.c
-index de3ce2786c72..5861f346db49 100644
---- a/drivers/media/dvb-frontends/dib3000mb.c
-+++ b/drivers/media/dvb-frontends/dib3000mb.c
-@@ -17,7 +17,7 @@
-  *  Amaury Demol from DiBcom for providing specs and driver
-  *  sources, on which this driver (and the dvb-dibusb) are based.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  *
-  */
+ 		See files in Documentation/cpu-freq/ for more information.
  
-diff --git a/drivers/media/dvb-frontends/eds1547.h b/drivers/media/dvb-frontends/eds1547.h
-index c983f2f85802..30f067fc1f56 100644
---- a/drivers/media/dvb-frontends/eds1547.h
-+++ b/drivers/media/dvb-frontends/eds1547.h
-@@ -6,7 +6,7 @@
- *	under the terms of the GNU General Public License as published by the
- *	Free Software Foundation, version 2.
- *
--* see Documentation/dvb/README.dvb-usb for more information
-+* see Documentation/media/dvb-drivers/dvb-usb.rst for more information
- */
+-		In particular, read Documentation/cpu-freq/user-guide.txt
+-		to learn how to control the knobs.
+-
  
- #ifndef EDS1547
-diff --git a/drivers/media/dvb-frontends/z0194a.h b/drivers/media/dvb-frontends/z0194a.h
-index 96d86d6eb473..0871c1ade94c 100644
---- a/drivers/media/dvb-frontends/z0194a.h
-+++ b/drivers/media/dvb-frontends/z0194a.h
-@@ -6,7 +6,7 @@
- *	under the terms of the GNU General Public License as published by the
- *	Free Software Foundation, version 2.
- *
--* see Documentation/dvb/README.dvb-usb for more information
-+* see Documentation/media/dvb-drivers/dvb-usb.rst for more information
- */
- 
- #ifndef Z0194A
-diff --git a/drivers/media/usb/dvb-usb-v2/Kconfig b/drivers/media/usb/dvb-usb-v2/Kconfig
-index 37053477b84d..082b8d67244b 100644
---- a/drivers/media/usb/dvb-usb-v2/Kconfig
-+++ b/drivers/media/usb/dvb-usb-v2/Kconfig
-@@ -6,7 +6,7 @@ config DVB_USB_V2
- 	  USB1.1 and USB2.0 DVB devices.
- 
- 	  Almost every USB device needs a firmware, please look into
--	  <file:Documentation/dvb/README.dvb-usb>.
-+	  <file:Documentation/media/dvb-drivers/dvb-usb.rst>.
- 
- 	  For a complete list of supported USB devices see the LinuxTV DVB Wiki:
- 	  <https://linuxtv.org/wiki/index.php/DVB_USB>
-diff --git a/drivers/media/usb/dvb-usb-v2/gl861.c b/drivers/media/usb/dvb-usb-v2/gl861.c
-index 4817dfd3e659..9d154fdae45b 100644
---- a/drivers/media/usb/dvb-usb-v2/gl861.c
-+++ b/drivers/media/usb/dvb-usb-v2/gl861.c
-@@ -4,7 +4,7 @@
-  *	under the terms of the GNU General Public License as published by the
-  *	Free Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "gl861.h"
- 
-diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.c b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-index 39db6dc4b5cd..0750a975bcb8 100644
---- a/drivers/media/usb/dvb-usb-v2/lmedm04.c
-+++ b/drivers/media/usb/dvb-usb-v2/lmedm04.c
-@@ -49,7 +49,7 @@
-  * GNU General Public License for more details.
-  *
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  *
-  * Known Issues :
-  *	LME2510: Non Intel USB chipsets fail to maintain High Speed on
-diff --git a/drivers/media/usb/dvb-usb-v2/lmedm04.h b/drivers/media/usb/dvb-usb-v2/lmedm04.h
-index e9c207205c2f..c4ae37c19512 100644
---- a/drivers/media/usb/dvb-usb-v2/lmedm04.h
-+++ b/drivers/media/usb/dvb-usb-v2/lmedm04.h
-@@ -16,7 +16,7 @@
-  * under the terms of the GNU General Public License as published by the Free
-  * Software Foundation,  version 2.
-  * *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_LME2510_H_
- #define _DVB_USB_LME2510_H_
-diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.c b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-index 67953360fda5..4713ba65e1c2 100644
---- a/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-+++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.c
-@@ -5,7 +5,7 @@
-  *   under the terms of the GNU General Public License as published by the Free
-  *   Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- 
- #include <linux/vmalloc.h>
-diff --git a/drivers/media/usb/dvb-usb-v2/mxl111sf.h b/drivers/media/usb/dvb-usb-v2/mxl111sf.h
-index 3e6f5880bd1e..22253d4908eb 100644
---- a/drivers/media/usb/dvb-usb-v2/mxl111sf.h
-+++ b/drivers/media/usb/dvb-usb-v2/mxl111sf.h
-@@ -5,7 +5,7 @@
-  *   under the terms of the GNU General Public License as published by the Free
-  *   Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- 
- #ifndef _DVB_USB_MXL111SF_H_
-diff --git a/drivers/media/usb/dvb-usb/Kconfig b/drivers/media/usb/dvb-usb/Kconfig
-index 2651ae277347..b8a1c62a0682 100644
---- a/drivers/media/usb/dvb-usb/Kconfig
-+++ b/drivers/media/usb/dvb-usb/Kconfig
-@@ -6,7 +6,7 @@ config DVB_USB
- 	  USB1.1 and USB2.0 DVB devices.
- 
- 	  Almost every USB device needs a firmware, please look into
--	  <file:Documentation/dvb/README.dvb-usb>.
-+	  <file:Documentation/media/dvb-drivers/dvb-usb.rst>.
- 
- 	  For a complete list of supported USB devices see the LinuxTV DVB Wiki:
- 	  <https://linuxtv.org/wiki/index.php/DVB_USB>
-diff --git a/drivers/media/usb/dvb-usb/a800.c b/drivers/media/usb/dvb-usb/a800.c
-index 540886b3bb29..198bd5eadb3f 100644
---- a/drivers/media/usb/dvb-usb/a800.c
-+++ b/drivers/media/usb/dvb-usb/a800.c
-@@ -11,7 +11,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dibusb.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/af9005-fe.c b/drivers/media/usb/dvb-usb/af9005-fe.c
-index 544bdf18fb2f..7fbbc954da16 100644
---- a/drivers/media/usb/dvb-usb/af9005-fe.c
-+++ b/drivers/media/usb/dvb-usb/af9005-fe.c
-@@ -15,7 +15,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "af9005.h"
- #include "af9005-script.h"
-diff --git a/drivers/media/usb/dvb-usb/af9005-remote.c b/drivers/media/usb/dvb-usb/af9005-remote.c
-index 9b29ffa93075..f7cdcc8424a8 100644
---- a/drivers/media/usb/dvb-usb/af9005-remote.c
-+++ b/drivers/media/usb/dvb-usb/af9005-remote.c
-@@ -17,7 +17,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "af9005.h"
- /* debug */
-diff --git a/drivers/media/usb/dvb-usb/af9005.c b/drivers/media/usb/dvb-usb/af9005.c
-index 986763b1b2b3..16e946e01d2c 100644
---- a/drivers/media/usb/dvb-usb/af9005.c
-+++ b/drivers/media/usb/dvb-usb/af9005.c
-@@ -15,7 +15,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "af9005.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/af9005.h b/drivers/media/usb/dvb-usb/af9005.h
-index a1eae0fa02ed..7ae4dc3a968b 100644
---- a/drivers/media/usb/dvb-usb/af9005.h
-+++ b/drivers/media/usb/dvb-usb/af9005.h
-@@ -15,7 +15,7 @@
-  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  * GNU General Public License for more details.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_AF9005_H_
- #define _DVB_USB_AF9005_H_
-diff --git a/drivers/media/usb/dvb-usb/az6027.c b/drivers/media/usb/dvb-usb/az6027.c
-index f0d10ac03a37..6321b8e30261 100644
---- a/drivers/media/usb/dvb-usb/az6027.c
-+++ b/drivers/media/usb/dvb-usb/az6027.c
-@@ -7,7 +7,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "az6027.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/cxusb.c b/drivers/media/usb/dvb-usb/cxusb.c
-index b70d289dc738..5b51ed7d6243 100644
---- a/drivers/media/usb/dvb-usb/cxusb.c
-+++ b/drivers/media/usb/dvb-usb/cxusb.c
-@@ -21,7 +21,7 @@
-  *   under the terms of the GNU General Public License as published by the Free
-  *   Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include <media/tuner.h>
- #include <linux/vmalloc.h>
-diff --git a/drivers/media/usb/dvb-usb/dibusb-common.c b/drivers/media/usb/dvb-usb/dibusb-common.c
-index bcacb0f22028..fb1b4f2d5f9d 100644
---- a/drivers/media/usb/dvb-usb/dibusb-common.c
-+++ b/drivers/media/usb/dvb-usb/dibusb-common.c
-@@ -6,7 +6,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- 
- #include "dibusb.h"
-diff --git a/drivers/media/usb/dvb-usb/dibusb-mb.c b/drivers/media/usb/dvb-usb/dibusb-mb.c
-index a0057641cc86..408920577716 100644
---- a/drivers/media/usb/dvb-usb/dibusb-mb.c
-+++ b/drivers/media/usb/dvb-usb/dibusb-mb.c
-@@ -10,7 +10,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dibusb.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/dibusb-mc-common.c b/drivers/media/usb/dvb-usb/dibusb-mc-common.c
-index 0c2bc97436d5..ec3a20a95b04 100644
---- a/drivers/media/usb/dvb-usb/dibusb-mc-common.c
-+++ b/drivers/media/usb/dvb-usb/dibusb-mc-common.c
-@@ -6,7 +6,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- 
- #include "dibusb.h"
-diff --git a/drivers/media/usb/dvb-usb/dibusb-mc.c b/drivers/media/usb/dvb-usb/dibusb-mc.c
-index 08fb8a3f6e0c..bce8ffe640ca 100644
---- a/drivers/media/usb/dvb-usb/dibusb-mc.c
-+++ b/drivers/media/usb/dvb-usb/dibusb-mc.c
-@@ -10,7 +10,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dibusb.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/dibusb.h b/drivers/media/usb/dvb-usb/dibusb.h
-index 697be2a17ade..943df579b98b 100644
---- a/drivers/media/usb/dvb-usb/dibusb.h
-+++ b/drivers/media/usb/dvb-usb/dibusb.h
-@@ -6,7 +6,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_DIBUSB_H_
- #define _DVB_USB_DIBUSB_H_
-diff --git a/drivers/media/usb/dvb-usb/digitv.c b/drivers/media/usb/dvb-usb/digitv.c
-index 475a3c0cdee7..49b9d63e5885 100644
---- a/drivers/media/usb/dvb-usb/digitv.c
-+++ b/drivers/media/usb/dvb-usb/digitv.c
-@@ -9,7 +9,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "digitv.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/dtt200u-fe.c b/drivers/media/usb/dvb-usb/dtt200u-fe.c
-index 00f565fe7cc2..7e75aae34fb8 100644
---- a/drivers/media/usb/dvb-usb/dtt200u-fe.c
-+++ b/drivers/media/usb/dvb-usb/dtt200u-fe.c
-@@ -7,7 +7,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dtt200u.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/dtt200u.c b/drivers/media/usb/dvb-usb/dtt200u.c
-index 512370786696..f03d26954517 100644
---- a/drivers/media/usb/dvb-usb/dtt200u.c
-+++ b/drivers/media/usb/dvb-usb/dtt200u.c
-@@ -9,7 +9,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dtt200u.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/dtt200u.h b/drivers/media/usb/dvb-usb/dtt200u.h
-index efccc399b1cb..ea2a096c1650 100644
---- a/drivers/media/usb/dvb-usb/dtt200u.h
-+++ b/drivers/media/usb/dvb-usb/dtt200u.h
-@@ -7,7 +7,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_DTT200U_H_
- #define _DVB_USB_DTT200U_H_
-diff --git a/drivers/media/usb/dvb-usb/dvb-usb-init.c b/drivers/media/usb/dvb-usb/dvb-usb-init.c
-index 84308569e7dc..40ca4eafb137 100644
---- a/drivers/media/usb/dvb-usb/dvb-usb-init.c
-+++ b/drivers/media/usb/dvb-usb/dvb-usb-init.c
-@@ -9,7 +9,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dvb-usb-common.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/dw2102.c b/drivers/media/usb/dvb-usb/dw2102.c
-index 716711ecce32..0d4fdd34a710 100644
---- a/drivers/media/usb/dvb-usb/dw2102.c
-+++ b/drivers/media/usb/dvb-usb/dw2102.c
-@@ -11,7 +11,7 @@
-  *	under the terms of the GNU General Public License as published by the
-  *	Free Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include <media/dvb-usb-ids.h>
- #include "dw2102.h"
-diff --git a/drivers/media/usb/dvb-usb/friio-fe.c b/drivers/media/usb/dvb-usb/friio-fe.c
-index b2830c157548..932f262452eb 100644
---- a/drivers/media/usb/dvb-usb/friio-fe.c
-+++ b/drivers/media/usb/dvb-usb/friio-fe.c
-@@ -8,7 +8,7 @@
-  * under the terms of the GNU General Public License as published by the Free
-  * Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include <linux/init.h>
- #include <linux/string.h>
-diff --git a/drivers/media/usb/dvb-usb/friio.c b/drivers/media/usb/dvb-usb/friio.c
-index 16875945e662..fe799a7ad44b 100644
---- a/drivers/media/usb/dvb-usb/friio.c
-+++ b/drivers/media/usb/dvb-usb/friio.c
-@@ -8,7 +8,7 @@
-  * under the terms of the GNU General Public License as published by the Free
-  * Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "friio.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/friio.h b/drivers/media/usb/dvb-usb/friio.h
-index 0f461ca10cb9..a53af56d035c 100644
---- a/drivers/media/usb/dvb-usb/friio.h
-+++ b/drivers/media/usb/dvb-usb/friio.h
-@@ -8,7 +8,7 @@
-  * under the terms of the GNU General Public License as published by the Free
-  * Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_FRIIO_H_
- #define _DVB_USB_FRIIO_H_
-diff --git a/drivers/media/usb/dvb-usb/gp8psk.c b/drivers/media/usb/dvb-usb/gp8psk.c
-index 1ad8dfb10aa4..13e96b0aeb0f 100644
---- a/drivers/media/usb/dvb-usb/gp8psk.c
-+++ b/drivers/media/usb/dvb-usb/gp8psk.c
-@@ -12,7 +12,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "gp8psk.h"
- #include "gp8psk-fe.h"
-diff --git a/drivers/media/usb/dvb-usb/gp8psk.h b/drivers/media/usb/dvb-usb/gp8psk.h
-index d8975b866dee..fd063e385eaf 100644
---- a/drivers/media/usb/dvb-usb/gp8psk.h
-+++ b/drivers/media/usb/dvb-usb/gp8psk.h
-@@ -12,7 +12,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_GP8PSK_H_
- #define _DVB_USB_GP8PSK_H_
-diff --git a/drivers/media/usb/dvb-usb/m920x.c b/drivers/media/usb/dvb-usb/m920x.c
-index 32081c2ce0da..51b026fa6bfb 100644
---- a/drivers/media/usb/dvb-usb/m920x.c
-+++ b/drivers/media/usb/dvb-usb/m920x.c
-@@ -6,7 +6,7 @@
-  *	under the terms of the GNU General Public License as published by the
-  *	Free Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- 
- #include "m920x.h"
-diff --git a/drivers/media/usb/dvb-usb/nova-t-usb2.c b/drivers/media/usb/dvb-usb/nova-t-usb2.c
-index 1babd3341910..43e0e0fd715b 100644
---- a/drivers/media/usb/dvb-usb/nova-t-usb2.c
-+++ b/drivers/media/usb/dvb-usb/nova-t-usb2.c
-@@ -7,7 +7,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dibusb.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/opera1.c b/drivers/media/usb/dvb-usb/opera1.c
-index eeafa3cdbbdc..61a377e2373d 100644
---- a/drivers/media/usb/dvb-usb/opera1.c
-+++ b/drivers/media/usb/dvb-usb/opera1.c
-@@ -7,7 +7,7 @@
- *	under the terms of the GNU General Public License as published by the Free
- *	Software Foundation, version 2.
- *
--* see Documentation/dvb/README.dvb-usb for more information
-+* see Documentation/media/dvb-drivers/dvb-usb.rst for more information
- */
- 
- #define DVB_USB_LOG_PREFIX "opera"
-diff --git a/drivers/media/usb/dvb-usb/ttusb2.c b/drivers/media/usb/dvb-usb/ttusb2.c
-index 12de89665d60..b4d681151599 100644
---- a/drivers/media/usb/dvb-usb/ttusb2.c
-+++ b/drivers/media/usb/dvb-usb/ttusb2.c
-@@ -20,7 +20,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #define DVB_USB_LOG_PREFIX "ttusb2"
- #include "dvb-usb.h"
-diff --git a/drivers/media/usb/dvb-usb/ttusb2.h b/drivers/media/usb/dvb-usb/ttusb2.h
-index 52a63af40896..8b6525e5fb24 100644
---- a/drivers/media/usb/dvb-usb/ttusb2.h
-+++ b/drivers/media/usb/dvb-usb/ttusb2.h
-@@ -9,7 +9,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_TTUSB2_H_
- #define _DVB_USB_TTUSB2_H_
-diff --git a/drivers/media/usb/dvb-usb/umt-010.c b/drivers/media/usb/dvb-usb/umt-010.c
-index 58ad5b4f856c..920bc67c3bcb 100644
---- a/drivers/media/usb/dvb-usb/umt-010.c
-+++ b/drivers/media/usb/dvb-usb/umt-010.c
-@@ -7,7 +7,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "dibusb.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/vp702x-fe.c b/drivers/media/usb/dvb-usb/vp702x-fe.c
-index 7ff31baa3682..ae48146e005c 100644
---- a/drivers/media/usb/dvb-usb/vp702x-fe.c
-+++ b/drivers/media/usb/dvb-usb/vp702x-fe.c
-@@ -15,7 +15,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  *
-  */
- #include "vp702x.h"
-diff --git a/drivers/media/usb/dvb-usb/vp702x.c b/drivers/media/usb/dvb-usb/vp702x.c
-index 40de33de90a7..c3529ea59da9 100644
---- a/drivers/media/usb/dvb-usb/vp702x.c
-+++ b/drivers/media/usb/dvb-usb/vp702x.c
-@@ -12,7 +12,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "vp702x.h"
- #include <linux/mutex.h>
-diff --git a/drivers/media/usb/dvb-usb/vp7045-fe.c b/drivers/media/usb/dvb-usb/vp7045-fe.c
-index 4520ad9c2014..f86040173b8d 100644
---- a/drivers/media/usb/dvb-usb/vp7045-fe.c
-+++ b/drivers/media/usb/dvb-usb/vp7045-fe.c
-@@ -9,7 +9,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  *
-  */
- #include "vp7045.h"
-diff --git a/drivers/media/usb/dvb-usb/vp7045.c b/drivers/media/usb/dvb-usb/vp7045.c
-index 2527b88beb87..e2c8a8530554 100644
---- a/drivers/media/usb/dvb-usb/vp7045.c
-+++ b/drivers/media/usb/dvb-usb/vp7045.c
-@@ -10,7 +10,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #include "vp7045.h"
- 
-diff --git a/drivers/media/usb/dvb-usb/vp7045.h b/drivers/media/usb/dvb-usb/vp7045.h
-index 66499932ca76..2fdafd8f8cd6 100644
---- a/drivers/media/usb/dvb-usb/vp7045.h
-+++ b/drivers/media/usb/dvb-usb/vp7045.h
-@@ -9,7 +9,7 @@
-  *	under the terms of the GNU General Public License as published by the Free
-  *	Software Foundation, version 2.
-  *
-- * see Documentation/dvb/README.dvb-usb for more information
-+ * see Documentation/media/dvb-drivers/dvb-usb.rst for more information
-  */
- #ifndef _DVB_USB_VP7045_H_
- #define _DVB_USB_VP7045_H_
+ What:		/sys/devices/system/cpu/cpu#/cpufreq/freqdomain_cpus
+ Date:		June 2013
 -- 
 2.17.1
 
