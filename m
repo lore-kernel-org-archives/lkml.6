@@ -2,104 +2,94 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 989DBC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:38:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AD56DC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59BC6208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:38:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59BC6208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 63342208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:39:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XbkS7id4";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HN9S7UR8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63342208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754876AbeFNHiu (ORCPT
+        id S1754884AbeFNHjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:38:50 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41687 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752759AbeFNHir (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:38:47 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id CC080207FF; Thu, 14 Jun 2018 09:38:45 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7276020719;
-        Thu, 14 Jun 2018 09:38:35 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 09:38:35 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Richard Weinberger <richard@sigma-star.at>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Philipp Rosenberger <p.rosenberger@linutronix.de>,
-        Rob Herring <robh@kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH v2 0/3] mtd: rawnand: denali: add new clocks and improve
- setup_data_interface
-Message-ID: <20180614093835.5c3bf426@bbrezillon>
-In-Reply-To: <CAK7LNASoV9nHTFax1nD_8pvkEjTzXkFpDFRf_xuoOnPPf9K23A@mail.gmail.com>
-References: <1528953067-24324-1-git-send-email-yamada.masahiro@socionext.com>
-        <6557713.S7AzxIg9TS@blindfold>
-        <CAK7LNASoV9nHTFax1nD_8pvkEjTzXkFpDFRf_xuoOnPPf9K23A@mail.gmail.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Jun 2018 03:39:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44020 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752759AbeFNHjQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 03:39:16 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 63CA1606DB; Thu, 14 Jun 2018 07:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528961955;
+        bh=8BcSmYbkSco81pH7h6/WX5E6pVBgjJ9nC4YbPNpCDdk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=XbkS7id4zFJUOF1rjBrPPSfWtupmHkzVL1H0tEuGaFo06Oew80RdpeRMrEP1qiO6D
+         3WuXm0hgRJdLGQo+1MvaEeXlrUtPGdmFIiGSc+nOBFzSxwLHkj8i8NhS9WK78iW7cL
+         vL1E398d9MUewrdVtId16bUJF1YEKIBCE6RBFfnk=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 63B48601D2;
+        Thu, 14 Jun 2018 07:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528961954;
+        bh=8BcSmYbkSco81pH7h6/WX5E6pVBgjJ9nC4YbPNpCDdk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=HN9S7UR87xe0UjSWDPWycvzYzI4J1rgF6rnZQLZ7LVe7JWUNx7LAMT69pYA5g3TyS
+         43+Z5q/7BOfO71AL15RBC7aU5rJhKTfSxVP0YJe3uQLKqHGmJuKruDiSq40PKgmqfc
+         EZ/8+hY7U3XLDbVfLPRjn79SmG0cLOyFCeAdgCrU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 63B48601D2
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, robh@kernel.org
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Amit Nischal <anischal@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Rohit Kumar <rohitkr@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH 0/2] Add support for LPASS clock controller for SDM845
+Date:   Thu, 14 Jun 2018 13:09:01 +0530
+Message-Id: <1528961943-12506-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Jun 2018 16:29:59 +0900
-Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+Add support for the lpass clock controller found on SDM845 based devices.
+This would allow lpass peripheral loader drivers to control the clocks to
+bring the subsystem out of reset.
 
-> Hi Richard,
-> 
-> 2018-06-14 16:25 GMT+09:00 Richard Weinberger <richard@sigma-star.at>:
-> > Masahiro,
-> >
-> > Am Donnerstag, 14. Juni 2018, 07:11:04 CEST schrieb Masahiro Yamada:  
-> >>
-> >> The ->setup_data_interface() hook needs to know the clock frequency.
-> >> In fact, this IP needs three clocks, bus "which clock?" is really
-> >> confusing.  (It is not described in the DT-binding at all.)
-> >>
-> >> This series adds more clocks.  In the new binding, three clocks
-> >> are required: core clock, bus interface clock, ECC engine clock.
-> >>
-> >> This series also takes care of the backward compatibility by
-> >> providing hardcoded values in case the new clocks are missing.
-> >> So, existing DT should work.
-> >>
-> >>
-> >> Changes in v2:
-> >>   - Split patches into sensible chunks
-> >>
-> >> Masahiro Yamada (3):
-> >>   mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
-> >>   mtd: rawnand: denali_dt: add more clocks based on IP datasheet
-> >>   mtd: rawnand: denali: optimize timing parameters for data interface  
-> >
-> > This still means that we need to feed at least 2/3 and 3/3 into -stable to
-> > unbreak the driver.  
-> 
-> 
-> 3/3 is not mandatory.
-> 
-> You can only back-port 1/3 and 2/3.
+Taniya Das (2):
+  dt-bindings: clock: Introduce QCOM LPASS clock bindings
+  clk: qcom: Add lpass clock controller driver for SDM845
 
-Well, patch 1 is not a fix, can we move it after patch 2 so that only
-patch 2 is flagged with the Fixes+Cc-stable tags?
+ .../devicetree/bindings/clock/qcom,lpasscc.txt     |  46 ++++
+ drivers/clk/qcom/Kconfig                           |   9 +
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/lpasscc-sdm845.c                  | 248 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,lpass-sdm845.h      |  18 ++
+ 5 files changed, 322 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,lpasscc.txt
+ create mode 100644 drivers/clk/qcom/lpasscc-sdm845.c
+ create mode 100644 include/dt-bindings/clock/qcom,lpass-sdm845.h
 
-Thanks,
-
-Boris
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
