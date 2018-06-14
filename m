@@ -2,205 +2,144 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 532EBC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:36:58 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4A808C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB285208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:36:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E54208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:36:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJqQTOl5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB285208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="qVYmXa/z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3E54208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755152AbeFNLgx (ORCPT
+        id S1755201AbeFNLg6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 07:36:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44096 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754810AbeFNLgv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:36:51 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6A55D208D8;
-        Thu, 14 Jun 2018 11:36:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528976210;
-        bh=g8ZuQD1jniaM5oLHw/o7babjKCzAlML5JprbbgFLRQ4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TJqQTOl5WXhgPxRG4XwIsERuoQEWhRXRoSMvyya1nr/PjJ+9E8e5kWy7LxB9UzZwW
-         3kZQ1RpD7doDvUCfvoK1DqdLgRUIFjVAbhyGdVrsWJcAXuZ78s1d5JMqdNSJOcOHdz
-         pfjU5oc2LYWA/D3JsYZpyd1a3OORnDRDvhpjcVuI=
-Date:   Thu, 14 Jun 2018 13:36:29 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Jan Stancek <jstancek@redhat.com>
-Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        Rafael Tinoco <rafael.tinoco@linaro.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        ltp@lists.linux.it, open list <linux-kernel@vger.kernel.org>,
-        lkft-triage@lists.linaro.org, patches@kernelci.org,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [LTP] [PATCH 4.4 00/24] 4.4.137-stable review
-Message-ID: <20180614113628.GA24372@kroah.com>
-References: <20180612164816.587001852@linuxfoundation.org>
- <CABdQkv9uNjf7ARKBJ-sE_RVruMA5U9bTNo-EL_+7Rv8ZVJGY3w@mail.gmail.com>
- <CADtBP2DZ0ceTtwaG7AdXV3xa16mQ6nu=gaqUYj7JSOLBdVD8cg@mail.gmail.com>
- <20180614063448.GB6021@kroah.com>
- <CA+G9fYut-A0L9iWJbzbSfmc=gjmQ17iabcPfXxqDKocwpYYTOQ@mail.gmail.com>
- <20180614090151.GA24997@kroah.com>
- <2072095076.26539556.1528969792388.JavaMail.zimbra@redhat.com>
- <20180614102119.GA19094@kroah.com>
- <602443463.26544751.1528972563608.JavaMail.zimbra@redhat.com>
+        Thu, 14 Jun 2018 07:36:58 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:37136 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754810AbeFNLgy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 07:36:54 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=THAvWMxb2gTaCGhNNuNl20C9R+516lmeKZsXysZsCxs=; b=qVYmXa/zRS4eKDy7vCipDGRJG
+        qiVy+/2h1Zznr91McZrgDTHv9I/X/LrujJAp3tvrU7afqeKy+a6Ac02CFMJYjx1U1WELxAyV+T+Xx
+        nl3OAk0CdbtniowkgOp7D4Qg6t8ezZSe0HB39jXPayhMcOSpZzURqykdPhI3m1dMlKMa6zdbacOj+
+        rC5iVyvqcU+3wSUHXJzmQCoVHV3QetwQ16NN/vRGInG9pMMjphSCN6xWKMXeGR+pqr4yM0ijI7jtF
+        E9QJsZeD6r0Q1FufDqutFN4JGLQcznGw1dTWUgytGfFmNycsVdBBbo8rXPLHSW+G/EtNwATnSOeg/
+        uS5ZOxBag==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTQXw-0003zH-4r; Thu, 14 Jun 2018 11:36:09 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 3BC04201EA7CA; Thu, 14 Jun 2018 13:36:04 +0200 (CEST)
+Date:   Thu, 14 Jun 2018 13:36:04 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org
+Subject: Re: [PATCH v2 1/2] locking: Implement an algorithm choice for
+ Wound-Wait mutexes
+Message-ID: <20180614113604.GZ12198@hirez.programming.kicks-ass.net>
+References: <20180614072922.8114-1-thellstrom@vmware.com>
+ <20180614072922.8114-2-thellstrom@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <602443463.26544751.1528972563608.JavaMail.zimbra@redhat.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180614072922.8114-2-thellstrom@vmware.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 06:36:03AM -0400, Jan Stancek wrote:
-> 
-> ----- Original Message -----
-> > On Thu, Jun 14, 2018 at 05:49:52AM -0400, Jan Stancek wrote:
-> > > 
-> > > ----- Original Message -----
-> > > > On Thu, Jun 14, 2018 at 02:24:25PM +0530, Naresh Kamboju wrote:
-> > > > > On 14 June 2018 at 12:04, Greg Kroah-Hartman
-> > > > > <gregkh@linuxfoundation.org>
-> > > > > wrote:
-> > > > > > On Wed, Jun 13, 2018 at 10:48:50PM -0300, Rafael Tinoco wrote:
-> > > > > >> On 13 June 2018 at 18:08, Rafael David Tinoco
-> > > > > >> <rafaeldtinoco@kernelpath.com> wrote:
-> > > > > >> > On Wed, Jun 13, 2018 at 6:00 PM, Greg Kroah-Hartman
-> > > > > >> > <gregkh@linuxfoundation.org> wrote:
-> > > > > >> >> On Wed, Jun 13, 2018 at 05:47:49PM -0300, Rafael Tinoco wrote:
-> > > > > >> >>> Results from Linaro’s test farm.
-> > > > > >> >>> Regressions detected.
-> > > > > >> >>>
-> > > > > >> >>> NOTE:
-> > > > > >> >>>
-> > > > > >> >>> 1) LTP vma03 test (cve-2011-2496) broken on v4.4-137-rc1 because
-> > > > > >> >>> of:
-> > > > > >> >>>
-> > > > > >> >>>      6ea1dc96a03a mmap: relax file size limit for regular files
-> > > > > >> >>>      bd2f9ce5bacb mmap: introduce sane default mmap limits
-> > > > > >> >>>
-> > > > > >> >>>    discussion:
-> > > > > >> >>>
-> > > > > >> >>>      https://github.com/linux-test-project/ltp/issues/341
-> > > > > >> >>>
-> > > > > >> >>>    mainline commit (v4.13-rc7):
-> > > > > >> >>>
-> > > > > >> >>>      0cc3b0ec23ce Clarify (and fix) MAX_LFS_FILESIZE macros
-> > > > > >> >>>
-> > > > > >> >>>    should be backported to 4.4.138-rc2 and fixes the issue.
-> > > > > >> >>
-> > > > > >> >> Really?  That commit says it fixes c2a9737f45e2 ("vfs,mm: fix a
-> > > > > >> >> dead
-> > > > > >> >> loop in truncate_inode_pages_range()") which is not in 4.4.y at
-> > > > > >> >> all.
-> > > > > >> >>
-> > > > > >> >> Did you test this out?
-> > > > > >> >
-> > > > > >> > Yes, the LTP contains the tests (last comment is the final test
-> > > > > >> > for
-> > > > > >> > arm32, right before Jan tests i686).
-> > > > > >> >
-> > > > > >> > Fixing MAX_LFS_FILESIZE fixes the new limit for mmap() brought by
-> > > > > >> > those 2 commits (file_mmap_size_max()).
-> > > > > >> > offset tested by the LTP test is 0xfffffffe000.
-> > > > > >> > file_mmap_size_max gives: 0xFFFFFFFF000 as max value, but only
-> > > > > >> > after
-> > > > > >> > the mentioned patch.
-> > > > > >> >
-> > > > > >> > Original intent for this fix was other though.
-> > > > > >>
-> > > > > >> To clarify this a bit further.
-> > > > > >>
-> > > > > >> The LTP CVE test is breaking in the first call to mmap(), even
-> > > > > >> before
-> > > > > >> trying to remap and test the security issue. That start happening in
-> > > > > >> this round because of those mmap() changes and the offset used in
-> > > > > >> the
-> > > > > >> LTP test. Linus changed limit checks and made them to be related to
-> > > > > >> MAX_LFS_FILESIZE. Unfortunately, in 4.4 stable, we were missing the
-> > > > > >> fix for MAX_LFS_FILESIZE (which before commit 0cc3b0ec23ce was less
-> > > > > >> than the REAL 32 bit limit).
-> > > > > >>
-> > > > > >> Commit 0cc3b0ec23ce was made because an user noticed the FS limit
-> > > > > >> not
-> > > > > >> being what it should be. In our case, the 4.4 stable kernel, we are
-> > > > > >> facing this 32 bit lower limit (than the real 32 bit real limit),
-> > > > > >> because of the LTP CVE test, so we need this fix to have the real 32
-> > > > > >> bit limit set for that macro (mmap limits did not use that macro
-> > > > > >> before).
-> > > > > >>
-> > > > > >> I have tested in arm32 and Jan Stancek, who first responded to LTP
-> > > > > >> issue, has tested this in i686 and both worked after that patch was
-> > > > > >> included to v4.4-137-rc1 (my last test was even with 4.4.138-rc1).
-> > > > > >>
-> > > > > >> Hope that helps a bit.
-> > > > > >
-> > > > > > Ok, thanks, it didn't apply cleanly but I've fixed it up now.
-> > > > > 
-> > > > > On the latest 4.4.138-rc1,
-> > > > > LTP "cve-2011-2496" test still fails on arm32 beagleboard x15 and
-> > > > > qemu_arm.
-> > > > > 
-> > > > > Summary
-> > > > > ------------------------------------------------------------------------
-> > > > > kernel: 4.4.138-rc1
-> > > > > git repo:
-> > > > > https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> > > > > git branch: linux-4.4.y
-> > > > > git commit: 7d690c56754ef7be647fbcf7bcdceebd59926b3f
-> > > > > git describe: v4.4.137-15-g7d690c56754e
-> > > > > Test details:
-> > > > > https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.137-15-g7d690c56754e
-> > > > 
-> > > > Ok, but what does this mean?  Is there a commit somewhere that I need to
-> > > > pick up for 4.4.y that is already in newer kernels?
-> > > 
-> > > Hi Greg,
-> > > 
-> > > I think the expectations was that:
-> > >   0cc3b0ec23ce Clarify (and fix) MAX_LFS_FILESIZE macros
-> > > has been included to linux-4.4.y HEAD, so they re-ran the tests.
-> > > 
-> > > Report from Naresh above looks like original report: LTP vma03 is
-> > > cve-2011-2496 test.
-> > 
-> > And the test fails now?
-> > 
-> > Still confused.
-> 
-> I don't see the patch (0cc3b0ec23ce) applied to linux-stable-rc.git,
-> branch linux-4.4.y:
->   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/log/?h=linux-4.4.y
->   https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git/tree/include/linux/fs.h?h=linux-4.4.y&id=7d690c56754ef7be647fbcf7bcdceebd59926b3f#n929
-> 
-> That is what has been tested above - is that the correct place
-> to get your backport of 0cc3b0ec23ce?
+On Thu, Jun 14, 2018 at 09:29:21AM +0200, Thomas Hellstrom wrote:
 
-I only push out the -rc git tree when I am at a "stopping point" in work
-on the stable tree.  If I added this patch earlier today, I have not
-pushed out a new -rc.  Please work off of the stable-queue.git tree
-instead if you want to always see the latest version of what I have
-applied to the queue.
+>  __ww_mutex_wakeup_for_backoff(struct mutex *lock, struct ww_acquire_ctx *ww_ctx)
+>  {
+>  	struct mutex_waiter *cur;
+> +	unsigned int is_wait_die = ww_ctx->ww_class->is_wait_die;
+>  
+>  	lockdep_assert_held(&lock->wait_lock);
+>  
+> @@ -310,13 +348,14 @@ __ww_mutex_wakeup_for_backoff(struct mutex *lock, struct ww_acquire_ctx *ww_ctx)
+>  		if (!cur->ww_ctx)
+>  			continue;
+>  
+> -		if (cur->ww_ctx->acquired > 0 &&
+> +		if (is_wait_die && cur->ww_ctx->acquired > 0 &&
+>  		    __ww_ctx_stamp_after(cur->ww_ctx, ww_ctx)) {
+>  			debug_mutex_wake_waiter(lock, cur);
+>  			wake_up_process(cur->task);
+>  		}
+>  
+> -		break;
+> +		if (is_wait_die || __ww_mutex_wound(lock, cur->ww_ctx, ww_ctx))
+> +			break;
+>  	}
+>  }
 
-thanks,
+I ended up with:
 
-greg k-h
+
+static void __sched
+__ww_mutex_check_waiters(struct mutex *lock, struct ww_acquire_ctx *ww_ctx)
+{
+	bool is_wait_die = ww_ctx->ww_class->is_wait_die;
+	struct mutex_waiter *cur;
+
+	lockdep_assert_held(&lock->wait_lock);
+
+	list_for_each_entry(cur, &lock->wait_list, list) {
+		if (!cur->ww_ctx)
+			continue;
+
+		if (is_wait_die) {
+			/*
+			 * Because __ww_mutex_add_waiter() and
+			 * __ww_mutex_check_stamp() wake any but the earliest
+			 * context, this can only affect the first waiter (with
+			 * a context).
+			 */
+			if (cur->ww_ctx->acquired > 0 &&
+			    __ww_ctx_stamp_after(cur->ww_ctx, ww_ctx)) {
+				debug_mutex_wake_waiter(lock, cur);
+				wake_up_process(cur->task);
+			}
+
+			break;
+		}
+
+		if (__ww_mutex_wound(lock, cur->ww_ctx, ww_ctx))
+			break;
+	}
+}
+
+
+Currently you don't allow mixing WD and WW contexts (which is not
+immediately obvious from the above code), and the above hard relies on
+that. Are there sensible use cases for mixing them? IOW will your
+current restriction stand without hassle?
