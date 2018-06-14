@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 63308C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:02 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0B444C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B8F208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B8F208C3
+	by mail.kernel.org (Postfix) with ESMTP id B416D208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B416D208C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755506AbeFNTrq (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 15:47:46 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:45764 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936115AbeFNTrj (ORCPT
+        id S936162AbeFNTro (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 15:47:44 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:43846 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936147AbeFNTrj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Jun 2018 15:47:39 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a22-v6so3726906pfo.12
+Received: by mail-pl0-f65.google.com with SMTP id c41-v6so4084447plj.10
         for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:47:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Xx8gnEF+Sn/oJVCBqeNi1h/xvI4j1MijD7Qi4tQzKg4=;
-        b=TH4nr3fhU0E4pbhwZX1PJpA7AaBo4o1w4kD3Zqt09EpslvIyra9Ga9tCbgEBzaROEK
-         ZfRyATld5jV7Bp6qGCnZCLKaGNY1CxmcuBGjXbjTjtLt13VGD+eVpzhzCQSU4CEpfBf/
-         WYN5lNn7jfSi9E+ww2nK64iyFhbEaa7C3p6XsqsWKaTGl2RiNY4a5plbKzQznRgpwHBS
-         FiZPgYPeJYAn7iktjIsUZKT5PrsbwQ8xytIMjlvAyn5QmjzhGeVGtWrhmRjpniXlpS7h
-         k+UMpRn7sAOQLWiqnl0qk87iemtbp3HXuR96LT4M1VntefbGcYEliEsu/Bs00chutXBf
-         iUTw==
-X-Gm-Message-State: APt69E12VHEC5PYmKgyIAnYVZTzdT67wUIYS8UfYXdollnGyfyp8hNZ1
-        xkKRmWQsXoZsExUDrDsaNU3qxg==
-X-Google-Smtp-Source: ADUXVKJ19Jx/UVA32Fa5Z6pNHKVJMA7zMuJGLlrJkMw+Lltq9YwogIVQjOjMzOUdUs8uNfw3PCVHoQ==
-X-Received: by 2002:a63:6882:: with SMTP id d124-v6mr3395686pgc.83.1529005656937;
-        Thu, 14 Jun 2018 12:47:36 -0700 (PDT)
+        bh=X1OIoL8+RBseX3I3RWe2SSOe31JPqRDDW6w4P3mS2jU=;
+        b=UpiQaI1MHuidBgjtfzjtknarqpNMq+mRYYgxxp6MlLCHfg+eCkjzyv6j0yxf8UJcCL
+         SLL3Y2UMHPOc6DwB+EXB2210Lr1YWY0QHKtq6OIhvHJ30qIAoW2wZz+4Yh7mcXKiXuST
+         R6iT6s7IYgiwGMIEAPgXxuOzUPfHfzZyvkOezJ+F5/oQjh9GGFIqrLjdQttF4PXq/5PE
+         /Kkq6ns61TmH7Rr0fr+dECebljYfk1v0HbyzqJBM97gCaOWSmuh2Nyzd+yFkB/Z5cfFl
+         qLwPK+TjNBvMAFT+4KRe30IcHhNyKB1QVcy3lz2wwMsXDR2WnWvzAHBYk6y1pkjDhvwh
+         W80Q==
+X-Gm-Message-State: APt69E3LvEQMmGN6HDQI/baum/BeH5t2QCI1nFhZyIyCmwAU6jJCQsOt
+        tnczq9HPNx5MO9GR0nBHNhOemw==
+X-Google-Smtp-Source: ADUXVKLaTtNkikC3E9NzHq6nJhRAAONvBbbVph/BrrFFDT9zKvnjGtWKo/lmePzVTrn5wtw5A/RzIQ==
+X-Received: by 2002:a17:902:581:: with SMTP id f1-v6mr4484201plf.48.1529005658765;
+        Thu, 14 Jun 2018 12:47:38 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id s28-v6sm9955506pfg.89.2018.06.14.12.47.35
+        by smtp.gmail.com with ESMTPSA id s28-v6sm9955506pfg.89.2018.06.14.12.47.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 12:47:36 -0700 (PDT)
+        Thu, 14 Jun 2018 12:47:37 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
@@ -61,9 +60,9 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Lee Jones <lee.jones@linaro.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 10/12] misc: throttler: Add core support for non-thermal throttling
-Date:   Thu, 14 Jun 2018 12:47:10 -0700
-Message-Id: <20180614194712.102134-11-mka@chromium.org>
+Subject: [PATCH v3 11/12] misc: throttler: Add Chrome OS EC throttler
+Date:   Thu, 14 Jun 2018 12:47:11 -0700
+Message-Id: <20180614194712.102134-12-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
 In-Reply-To: <20180614194712.102134-1-mka@chromium.org>
 References: <20180614194712.102134-1-mka@chromium.org>
@@ -72,839 +71,173 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The purpose of the throttler is to provide support for non-thermal
-throttling. Throttling is triggered by external event, e.g. the
-detection of a high battery discharge current, close to the OCP limit
-of the battery. The throttler is only in charge of the throttling, not
-the monitoring, which is done by another (possibly platform specific)
-driver.
+The driver subscribes to throttling events from the Chrome OS
+embedded controller and enables/disables system throttling based
+on these events.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 Changes in v3:
-- Kconfig: don't select CPU_FREQ and PM_DEVFREQ
-- added CONFIG_THROTTLER_DEBUG option
-- changed 'level' sysfs attribute to debugfs
-- introduced thr_<level> macros for logging
-- added debug logs
-- added field clamp_freq to struct cpufreq_thrdev and devfreq_thrdev
-  to keep track of the current frequency limits and avoid spammy logs
+- change module license to GPL v2 as in the SPDX identifier
+- don't instantiate the throttler through the DT (instantiation
+  by CrOS EC MFD in a separate patch)
 
 Changes in v2:
-- completely reworked the driver to support configuration through OPPs, which
-  requires a more dynamic handling
-- added sysfs attribute to set the level for debugging and testing
-- Makefile: depend on Kconfig option to traverse throttler directory
-- Kconfig: removed 'default n'
 - added SPDX line instead of license boiler-plate
-- added entry to MAINTAINERS file
+- use macro to avoid splitting line
+- changed variable name for throttler from 'cte' to 'ce_thr'
+- formatting fixes
+- Kconfig: removed odd dashes around 'help'
+- added 'Reviewed-by' tag
 
- MAINTAINERS                     |   7 +
- drivers/misc/Kconfig            |   1 +
- drivers/misc/Makefile           |   1 +
- drivers/misc/throttler/Kconfig  |  23 ++
- drivers/misc/throttler/Makefile |   1 +
- drivers/misc/throttler/core.c   | 687 ++++++++++++++++++++++++++++++++
- include/linux/throttler.h       |  21 +
- 7 files changed, 741 insertions(+)
- create mode 100644 drivers/misc/throttler/Kconfig
- create mode 100644 drivers/misc/throttler/Makefile
- create mode 100644 drivers/misc/throttler/core.c
- create mode 100644 include/linux/throttler.h
+ drivers/misc/throttler/Kconfig             |  10 ++
+ drivers/misc/throttler/Makefile            |   1 +
+ drivers/misc/throttler/cros_ec_throttler.c | 109 +++++++++++++++++++++
+ 3 files changed, 120 insertions(+)
+ create mode 100644 drivers/misc/throttler/cros_ec_throttler.c
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index dc241b04d1bd..db359af7cb1c 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -14090,6 +14090,13 @@ T:	git git://linuxtv.org/mhadli/v4l-dvb-davinci_devices.git
- S:	Maintained
- F:	drivers/media/platform/am437x/
- 
-+THROTTLER DRIVERS
-+M:	Matthias Kaehlcke <mka@chromium.org>
-+L:	linux-pm@vger.kernel.org
-+S:	Maintained
-+F:	drivers/misc/throttler/
-+F:	include/linux/throttler.h
-+
- TI BANDGAP AND THERMAL DRIVER
- M:	Eduardo Valentin <edubezval@gmail.com>
- M:	Keerthy <j-keerthy@ti.com>
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 3726eacdf65d..717fa3bd0e09 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -527,4 +527,5 @@ source "drivers/misc/echo/Kconfig"
- source "drivers/misc/cxl/Kconfig"
- source "drivers/misc/ocxl/Kconfig"
- source "drivers/misc/cardreader/Kconfig"
-+source "drivers/misc/throttler/Kconfig"
- endmenu
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index af22bbc3d00c..0f4ecc6a7532 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,3 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+= aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+= pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+= ocxl/
- obj-$(CONFIG_MISC_RTSX)		+= cardreader/
-+obj-$(CONFIG_THROTTLER)		+= throttler/
 diff --git a/drivers/misc/throttler/Kconfig b/drivers/misc/throttler/Kconfig
-new file mode 100644
-index 000000000000..8b2e63b2ef48
---- /dev/null
+index 8b2e63b2ef48..ef984c96f67b 100644
+--- a/drivers/misc/throttler/Kconfig
 +++ b/drivers/misc/throttler/Kconfig
-@@ -0,0 +1,23 @@
-+# SPDX-License-Identifier: GPL-2.0
-+
-+menuconfig THROTTLER
-+	bool "Throttler support"
-+	depends on OF
+@@ -20,4 +20,14 @@ menuconfig THROTTLER_DEBUG
+ 
+ 	  Choose N unless you want to debug throttler drivers.
+ 
++config CROS_EC_THROTTLER
++	tristate "Throttler event monitor for the Chrome OS Embedded Controller"
++	depends on MFD_CROS_EC
 +	help
-+	  This option enables core support for non-thermal throttling of CPUs
-+	  and devfreq devices.
++	  This driver adds support to throttle the system in reaction to
++	  Chrome OS EC events.
 +
-+	  Note that you also need a event monitor module usually called
-+	  *_throttler.
++	  To compile this driver as a module, choose M here: the
++	  module will be called cros_ec_throttler.
 +
-+if THROTTLER
-+
-+menuconfig THROTTLER_DEBUG
-+	bool "Enable throttler debugging"
-+	help
-+	  This option enables throttler debugging features like additional
-+	  logging and a debugfs attribute for setting the logging level.
-+
-+	  Choose N unless you want to debug throttler drivers.
-+
-+endif # THROTTLER
+ endif # THROTTLER
 diff --git a/drivers/misc/throttler/Makefile b/drivers/misc/throttler/Makefile
-new file mode 100644
-index 000000000000..c8d920cee315
---- /dev/null
+index c8d920cee315..d9b2a77dabc9 100644
+--- a/drivers/misc/throttler/Makefile
 +++ b/drivers/misc/throttler/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_THROTTLER)		+= core.o
-diff --git a/drivers/misc/throttler/core.c b/drivers/misc/throttler/core.c
+@@ -1 +1,2 @@
+ obj-$(CONFIG_THROTTLER)		+= core.o
++obj-$(CONFIG_CROS_EC_THROTTLER)	+= cros_ec_throttler.o
+diff --git a/drivers/misc/throttler/cros_ec_throttler.c b/drivers/misc/throttler/cros_ec_throttler.c
 new file mode 100644
-index 000000000000..52350d846654
+index 000000000000..f1e9fc0a6284
 --- /dev/null
-+++ b/drivers/misc/throttler/core.c
-@@ -0,0 +1,687 @@
++++ b/drivers/misc/throttler/cros_ec_throttler.c
+@@ -0,0 +1,109 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Core code for non-thermal throttling
++ * Driver for throttling triggered by events from the Chrome OS Embedded
++ * Controller.
 + *
 + * Copyright (C) 2018 Google, Inc.
 + */
 +
-+#include <linux/cpu.h>
-+#include <linux/cpufreq.h>
-+#include <linux/cpumask.h>
-+#include <linux/debugfs.h>
-+#include <linux/devfreq.h>
 +#include <linux/kernel.h>
-+#include <linux/list.h>
-+#include <linux/mutex.h>
++#include <linux/mfd/cros_ec.h>
++#include <linux/module.h>
 +#include <linux/notifier.h>
 +#include <linux/of.h>
++#include <linux/of_platform.h>
 +#include <linux/platform_device.h>
-+#include <linux/pm_opp.h>
-+#include <linux/slab.h>
-+#include <linux/sort.h>
 +#include <linux/throttler.h>
 +
-+/*
-+ * Non-thermal throttling: throttling of system components in response to
-+ * external events (e.g. high battery discharge current).
-+ *
-+ * The throttler supports throttling through cpufreq and devfreq. Multiple
-+ * levels of throttling can be configured. At level 0 no throttling is
-+ * active on behalf of the throttler, for values > 0 throttling is typically
-+ * configured to be increasingly aggressive with each level.
-+ * The number of throttling levels is not limited by the throttler (though
-+ * it is likely limited by the throttling devices). It is not necessary to
-+ * configure the same number of levels for all throttling devices. If the
-+ * requested throttling level for a device is higher than the maximum level
-+ * of the device the throttler will select the maximum throttling level of
-+ * the device.
-+ *
-+ * Non-thermal throttling is split in two parts:
-+ *
-+ * - throttler core
-+ *   - parses the thermal policy
-+ *   - applies throttling settings for a requested level of throttling
-+ *
-+ * - event monitor driver
-+ *   - monitors events that trigger throttling
-+ *   - determines the throttling level (often limited to on/off)
-+ *   - asks throttler core to apply throttling settings
-+ *
-+ * It is possible for a system to have more than one throttler and the
-+ * throttlers may make use of the same throttling devices, in case of
-+ * conflicting settings for a device the more aggressive values will be
-+ * applied.
-+ *
-+ */
++#define nb_to_ce_thr(nb) container_of(nb, struct cros_ec_throttler, nb)
 +
-+#define ci_to_throttler(ci) \
-+	container_of(ci, struct throttler, devfreq.class_iface)
-+
-+struct thr_freq_table {
-+	uint32_t *freqs;
-+	int n_entries;
-+};
-+
-+struct cpufreq_thrdev {
-+	uint32_t cpu;
-+	struct thr_freq_table freq_table;
-+	uint32_t clamp_freq;
-+	struct list_head node;
-+};
-+
-+struct devfreq_thrdev {
-+	struct devfreq *devfreq;
-+	struct thr_freq_table freq_table;
-+	uint32_t clamp_freq;
-+	struct throttler *thr;
-+	struct notifier_block nb;
-+	struct list_head node;
-+};
-+
-+struct __thr_cpufreq {
-+	struct list_head list;
-+	cpumask_t cm_initialized;
-+	cpumask_t cm_ignore;
++struct cros_ec_throttler {
++	struct cros_ec_device *ec;
++	struct throttler *throttler;
 +	struct notifier_block nb;
 +};
 +
-+struct __thr_devfreq {
-+	struct list_head list;
-+	struct class_interface class_iface;
-+};
-+
-+struct __thr_debugfs {
-+	struct dentry *dir;
-+	struct dentry *attr_level;
-+};
-+
-+struct throttler {
-+	struct device *dev;
-+	int level;
-+	struct __thr_cpufreq cpufreq;
-+	struct __thr_devfreq devfreq;
-+	struct mutex lock;
-+#ifdef CONFIG_THROTTLER_DEBUG
-+	struct __thr_debugfs debugfs;
-+#endif
-+};
-+
-+static inline int cmp_freqs(const void *a, const void *b)
++static int cros_ec_throttler_event(struct notifier_block *nb,
++	unsigned long queued_during_suspend, void *_notify)
 +{
-+	const uint32_t *pa = a, *pb = b;
++	struct cros_ec_throttler *ce_thr = nb_to_ce_thr(nb);
++	u32 host_event;
 +
-+	if (*pa < *pb)
-+		return 1;
-+	else if (*pa > *pb)
-+		return -1;
++	host_event = cros_ec_get_host_event(ce_thr->ec);
++	if (host_event & EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_START)) {
++		throttler_set_level(ce_thr->throttler, 1);
 +
-+	return 0;
-+}
++		return NOTIFY_OK;
++	} else if (host_event &
++		   EC_HOST_EVENT_MASK(EC_HOST_EVENT_THROTTLE_STOP)) {
++		throttler_set_level(ce_thr->throttler, 0);
 +
-+static int thr_handle_devfreq_event(struct notifier_block *nb,
-+				    unsigned long event, void *data);
-+
-+static unsigned long thr_get_throttling_freq(struct thr_freq_table *ft,
-+					     int level)
-+{
-+	if (level == 0) {
-+		WARN(true, "level == 0");
-+		return ULONG_MAX;
++		return NOTIFY_OK;
 +	}
-+
-+	if (level <= ft->n_entries)
-+		return ft->freqs[level - 1];
-+	else
-+		return ft->freqs[ft->n_entries - 1];
-+}
-+
-+static int thr_init_freq_table(struct throttler *thr, struct device *opp_dev,
-+			       struct thr_freq_table *ft)
-+{
-+	struct device_node *np_opp_desc, *np_opp;
-+	int nchilds;
-+	uint32_t *freqs;
-+	int nfreqs = 0;
-+	int err = 0;
-+
-+	np_opp_desc = dev_pm_opp_of_get_opp_desc_node(opp_dev);
-+	if (!np_opp_desc)
-+		return -EINVAL;
-+
-+	nchilds = of_get_child_count(np_opp_desc);
-+	if (!nchilds) {
-+		err = -EINVAL;
-+		goto out_node_put;
-+	}
-+
-+	freqs = kzalloc(nchilds * sizeof(uint32_t), GFP_KERNEL);
-+	if (!freqs) {
-+		err = -ENOMEM;
-+		goto out_node_put;
-+	}
-+
-+	/* determine which OPPs are used by this throttler (if any) */
-+	for_each_child_of_node(np_opp_desc, np_opp) {
-+		int num_thr;
-+		int i;
-+
-+		num_thr = of_property_count_u32_elems(np_opp, "opp-throttlers");
-+		if (num_thr < 0)
-+			continue;
-+
-+		for (i = 0; i < num_thr; i++) {
-+			struct device_node *np_thr;
-+
-+			np_thr = of_parse_phandle(np_opp, "opp-throttlers", i);
-+			if (!np_thr) {
-+				thr_err(thr,
-+					"failed to parse phandle %d: %s\n", i,
-+					np_opp->full_name);
-+				continue;
-+			}
-+
-+			if (thr->dev->of_node == np_thr) {
-+				u64 rate;
-+
-+				err = of_property_read_u64(np_opp, "opp-hz",
-+							   &rate);
-+				if (!err) {
-+					freqs[nfreqs] = rate;
-+					nfreqs++;
-+
-+					thr_dbg(thr,
-+						"OPP %s (%llu MHz) is used for throttling\n",
-+						np_opp->full_name,
-+						rate / 1000000);
-+
-+				} else {
-+					thr_err(thr, "opp-hz not found: %s\n",
-+						np_opp->full_name);
-+				}
-+			}
-+
-+			of_node_put(np_thr);
-+		}
-+	}
-+
-+	if (nfreqs > 0) {
-+		/* sort frequencies in descending order */
-+		sort(freqs, nfreqs, sizeof(*freqs), cmp_freqs, NULL);
-+
-+		ft->n_entries = nfreqs;
-+		ft->freqs = devm_kzalloc(thr->dev,
-+				  nfreqs * sizeof(*freqs), GFP_KERNEL);
-+		if (!ft->freqs) {
-+			err = -ENOMEM;
-+			goto out_free;
-+		}
-+
-+		memcpy(ft->freqs, freqs, nfreqs * sizeof(*freqs));
-+	} else {
-+		err = -ENODEV;
-+	}
-+
-+out_free:
-+	kfree(freqs);
-+
-+out_node_put:
-+	of_node_put(np_opp_desc);
-+
-+	return err;
-+}
-+
-+static void thr_cpufreq_init(struct throttler *thr, int cpu)
-+{
-+	struct device *cpu_dev;
-+	struct thr_freq_table ft;
-+	struct cpufreq_thrdev *cpufreq_dev;
-+	int err;
-+
-+	WARN_ON(!mutex_is_locked(&thr->lock));
-+
-+	cpu_dev = get_cpu_device(cpu);
-+	if (!cpu_dev) {
-+		dev_err_ratelimited(thr->dev, "failed to get CPU %d\n", cpu);
-+		return;
-+	}
-+
-+	err = thr_init_freq_table(thr, cpu_dev, &ft);
-+	if (err) {
-+		/* CPU is not throttled or initialization failed */
-+		if (err != -ENODEV)
-+			thr_err(thr, "failed to initialize CPU %d: %d", cpu,
-+				err);
-+
-+		cpumask_set_cpu(cpu, &thr->cpufreq.cm_ignore);
-+		return;
-+	}
-+
-+	cpufreq_dev = devm_kzalloc(thr->dev, sizeof(*cpufreq_dev), GFP_KERNEL);
-+	if (!cpufreq_dev) {
-+		thr_err(thr, "%s: out of memory\n", __func__);
-+		return;
-+	}
-+
-+	cpufreq_dev->cpu = cpu;
-+	memcpy(&cpufreq_dev->freq_table, &ft, sizeof(ft));
-+	list_add_tail(&cpufreq_dev->node, &thr->cpufreq.list);
-+
-+	cpumask_set_cpu(cpu, &thr->cpufreq.cm_initialized);
-+}
-+
-+static void thr_devfreq_init(struct device *dev, void *data)
-+{
-+	struct throttler *thr = data;
-+	struct thr_freq_table ft;
-+	struct devfreq_thrdev *dftd;
-+	int err;
-+
-+	WARN_ON(!mutex_is_locked(&thr->lock));
-+
-+	err = thr_init_freq_table(thr, dev->parent, &ft);
-+	if (err) {
-+		if (err == -ENODEV)
-+			return;
-+
-+		thr_err(thr, "failed to init frequency table of device %s: %d",
-+			dev_name(dev), err);
-+		return;
-+	}
-+
-+	dftd = devm_kzalloc(thr->dev, sizeof(*dftd), GFP_KERNEL);
-+	if (!dftd) {
-+		thr_err(thr, "%s: out of memory\n", __func__);
-+		return;
-+	}
-+
-+	dftd->thr = thr;
-+	dftd->devfreq = container_of(dev, struct devfreq, dev);
-+	memcpy(&dftd->freq_table, &ft, sizeof(ft));
-+
-+	dftd->nb.notifier_call = thr_handle_devfreq_event;
-+	err = devm_devfreq_register_notifier(thr->dev, dftd->devfreq,
-+				     &dftd->nb, DEVFREQ_POLICY_NOTIFIER);
-+	if (err < 0) {
-+		thr_err(thr, "failed to register devfreq notifier\n");
-+		devm_kfree(thr->dev, dftd);
-+		return;
-+	}
-+
-+	list_add_tail(&dftd->node, &thr->devfreq.list);
-+
-+	thr_dbg(thr, "device '%s' is used for throttling\n",
-+		dev_name(dev));
-+}
-+
-+static int thr_handle_cpufreq_event(struct notifier_block *nb,
-+				unsigned long event, void *data)
-+{
-+	struct throttler *thr =
-+		container_of(nb, struct throttler, cpufreq.nb);
-+	struct cpufreq_policy *policy = data;
-+	struct cpufreq_thrdev *cftd;
-+
-+	if (event != CPUFREQ_ADJUST)
-+		return 0;
-+
-+	mutex_lock(&thr->lock);
-+
-+	if (cpumask_test_cpu(policy->cpu, &thr->cpufreq.cm_ignore))
-+		goto out;
-+
-+	if (!cpumask_test_cpu(policy->cpu, &thr->cpufreq.cm_initialized)) {
-+		thr_cpufreq_init(thr, policy->cpu);
-+
-+		if (cpumask_test_cpu(policy->cpu, &thr->cpufreq.cm_ignore))
-+			goto out;
-+
-+		thr_dbg(thr, "CPU%d is used for throttling\n", policy->cpu);
-+	}
-+
-+	/*
-+	 * Can't do this check earlier, otherwise we might miss CPU policies
-+	 * that are added after setup().
-+	 */
-+	if (thr->level == 0) {
-+		list_for_each_entry(cftd, &thr->cpufreq.list, node) {
-+			if (cftd->cpu != policy->cpu)
-+				continue;
-+
-+			if (cftd->clamp_freq != 0) {
-+				thr_dbg(thr, "unthrottling CPU%d\n", cftd->cpu);
-+				cftd->clamp_freq = 0;
-+			}
-+		}
-+
-+		goto out;
-+	}
-+
-+	list_for_each_entry(cftd, &thr->cpufreq.list, node) {
-+		unsigned long clamp_freq;
-+
-+		if (cftd->cpu != policy->cpu)
-+			continue;
-+
-+		clamp_freq = thr_get_throttling_freq(&cftd->freq_table,
-+						     thr->level) / 1000;
-+		if (cftd->clamp_freq != clamp_freq) {
-+			thr_dbg(thr, "throttling CPU%d to %lu MHz\n", cftd->cpu,
-+				clamp_freq / 1000);
-+			cftd->clamp_freq = clamp_freq;
-+		}
-+
-+		if (clamp_freq < policy->max)
-+			cpufreq_verify_within_limits(policy, 0, clamp_freq);
-+	}
-+
-+out:
-+	mutex_unlock(&thr->lock);
 +
 +	return NOTIFY_DONE;
 +}
 +
-+/*
-+ * Notifier called by devfreq. Can't acquire thr->lock since it might
-+ * already be held by throttler_set_level(). It isn't necessary to
-+ * acquire the lock for the following reasons:
-+ *
-+ * Only the devfreq_thrdev and thr->level are accessed in this function.
-+ * The devfreq device won't go away (or change) during the execution of
-+ * this function, since we are called from the devfreq core. Theoretically
-+ * thr->level could change and we'd apply an outdated setting, however in
-+ * this case the function would run again shortly after and apply the
-+ * correct value.
-+ */
-+static int thr_handle_devfreq_event(struct notifier_block *nb,
-+				    unsigned long event, void *data)
++static int cros_ec_throttler_probe(struct platform_device *pdev)
 +{
-+	struct devfreq_thrdev *dftd =
-+		container_of(nb, struct devfreq_thrdev, nb);
-+	struct throttler *thr = dftd->thr;
-+	struct devfreq_policy *policy = data;
-+	unsigned long clamp_freq;
++	struct cros_ec_throttler *ce_thr;
++	struct device *dev = &pdev->dev;
++	int ret;
 +
-+	if (event != DEVFREQ_ADJUST)
-+		return NOTIFY_DONE;
++	ce_thr = devm_kzalloc(dev, sizeof(*ce_thr), GFP_KERNEL);
++	if (!ce_thr)
++		return -ENOMEM;
 +
-+	if (thr->level == 0) {
-+		if (dftd->clamp_freq != 0) {
-+			thr_dbg(thr, "unthrottling '%s'\n",
-+				dev_name(&dftd->devfreq->dev));
-+			dftd->clamp_freq = 0;
-+		}
++	ce_thr->ec = dev_get_drvdata(pdev->dev.parent);
 +
-+		return NOTIFY_DONE;
++	/*
++	 * The core code uses the DT node of the throttler to identify its
++	 * throttling devices and rates. The CrOS EC throttler is a sub-device
++	 * of the CrOS EC MFD device and doesn't have its own device node. Use
++	 * the node of the MFD device instead.
++	 */
++	dev->of_node = dev->parent->of_node;
++
++	ce_thr->throttler = throttler_setup(dev);
++	if (IS_ERR(ce_thr->throttler))
++		return PTR_ERR(ce_thr->throttler);
++
++	dev_set_drvdata(dev, ce_thr);
++
++	ce_thr->nb.notifier_call = cros_ec_throttler_event;
++	ret = blocking_notifier_chain_register(&ce_thr->ec->event_notifier,
++					       &ce_thr->nb);
++	if (ret < 0) {
++		dev_err(dev, "failed to register notifier\n");
++		throttler_teardown(ce_thr->throttler);
++		return ret;
 +	}
-+
-+	clamp_freq = thr_get_throttling_freq(&dftd->freq_table, thr->level);
-+	if (clamp_freq != dftd->clamp_freq) {
-+		thr_dbg(thr, "throttling '%s' to %lu MHz\n",
-+			dev_name(&dftd->devfreq->dev), clamp_freq / 1000000);
-+		dftd->clamp_freq = clamp_freq;
-+	}
-+
-+	if (clamp_freq < policy->max)
-+		devfreq_verify_within_limits(policy, 0, clamp_freq);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static void thr_cpufreq_update_policy(struct throttler *thr)
-+{
-+	struct cpufreq_thrdev *cftd;
-+
-+	WARN_ON(!mutex_is_locked(&thr->lock));
-+
-+	list_for_each_entry(cftd, &thr->cpufreq.list, node) {
-+		struct cpufreq_policy *policy = cpufreq_cpu_get(cftd->cpu);
-+
-+		if (!policy) {
-+			thr_warn(thr, "CPU%d does have no cpufreq policy!\n",
-+				 cftd->cpu);
-+			continue;
-+		}
-+
-+		/*
-+		 * The lock isn't really needed in this function, the list
-+		 * of cpufreq devices can be extended, but no items are
-+		 * deleted during the lifetime of the throttler. Releasing
-+		 * the lock is necessary since cpufreq_update_policy() ends
-+		 * up calling thr_handle_cpufreq_event(), which needs to
-+		 * acquire the lock.
-+		 */
-+		mutex_unlock(&thr->lock);
-+		cpufreq_update_policy(cftd->cpu);
-+		mutex_lock(&thr->lock);
-+
-+		cpufreq_cpu_put(policy);
-+	}
-+}
-+
-+static int thr_handle_devfreq_added(struct device *dev,
-+				    struct class_interface *ci)
-+{
-+	struct throttler *thr = ci_to_throttler(ci);
-+
-+	mutex_lock(&thr->lock);
-+	thr_devfreq_init(dev, thr);
-+	mutex_unlock(&thr->lock);
 +
 +	return 0;
 +}
 +
-+static void thr_handle_devfreq_removed(struct device *dev,
-+				       struct class_interface *ci)
++static int cros_ec_throttler_remove(struct platform_device *pdev)
 +{
-+	struct devfreq_thrdev *dftd;
-+	struct throttler *thr = ci_to_throttler(ci);
++	struct cros_ec_throttler *ce_thr = platform_get_drvdata(pdev);
 +
-+	mutex_lock(&thr->lock);
++	blocking_notifier_chain_unregister(&ce_thr->ec->event_notifier,
++					   &ce_thr->nb);
 +
-+	list_for_each_entry(dftd, &thr->devfreq.list, node) {
-+		if (dev == &dftd->devfreq->dev) {
-+			list_del(&dftd->node);
-+			devm_kfree(thr->dev, dftd->freq_table.freqs);
-+			devm_kfree(thr->dev, dftd);
-+			break;
-+		}
-+	}
++	throttler_teardown(ce_thr->throttler);
 +
-+	mutex_unlock(&thr->lock);
++	return 0;
 +}
 +
-+void throttler_set_level(struct throttler *thr, int level)
-+{
-+	struct devfreq_thrdev *dftd;
-+
-+	if (level == thr->level)
-+		return;
-+
-+	mutex_lock(&thr->lock);
-+
-+	thr_dbg(thr, "throttling level: %d\n", level);
-+	thr->level = level;
-+
-+	if (!list_empty(&thr->cpufreq.list))
-+		thr_cpufreq_update_policy(thr);
-+
-+	list_for_each_entry(dftd, &thr->devfreq.list, node) {
-+		mutex_lock(&dftd->devfreq->lock);
-+		update_devfreq(dftd->devfreq);
-+		mutex_unlock(&dftd->devfreq->lock);
-+	}
-+
-+	mutex_unlock(&thr->lock);
-+}
-+EXPORT_SYMBOL_GPL(throttler_set_level);
-+
-+#ifdef CONFIG_THROTTLER_DEBUG
-+
-+static ssize_t thr_level_read(struct file *file, char __user *user_buf,
-+			      size_t count, loff_t *ppos)
-+{
-+	struct throttler *thr = file->f_inode->i_private;
-+	char buf[5];
-+	int len;
-+
-+	len = scnprintf(buf, sizeof(buf), "%d\n", thr->level);
-+
-+	return simple_read_from_buffer(user_buf, count, ppos, buf, len);
-+}
-+
-+static ssize_t thr_level_write(struct file *file,
-+				 const char __user *user_buf,
-+				 size_t count, loff_t *ppos)
-+{
-+	int rc;
-+	int level;
-+	struct throttler *thr = file->f_inode->i_private;
-+
-+	rc = kstrtoint_from_user(user_buf, count, 10, &level);
-+	if (rc)
-+		return rc;
-+
-+	throttler_set_level(thr, level);
-+
-+	return count;
-+}
-+
-+static const struct file_operations level_debugfs_ops = {
-+	.owner = THIS_MODULE,
-+	.read = thr_level_read,
-+	.write = thr_level_write,
++static struct platform_driver cros_ec_throttler_driver = {
++	.driver = {
++		.name = "cros-ec-throttler",
++	},
++	.probe		= cros_ec_throttler_probe,
++	.remove		= cros_ec_throttler_remove,
 +};
-+#endif
 +
-+struct throttler *throttler_setup(struct device *dev)
-+{
-+	struct throttler *thr;
-+	struct device_node *np = dev->of_node;
-+	struct class_interface *ci;
-+	int cpu;
-+	int err;
++module_platform_driver(cros_ec_throttler_driver);
 +
-+	if (!np)
-+		/* should never happen */
-+		return ERR_PTR(-EINVAL);
-+
-+	thr = devm_kzalloc(dev, sizeof(*thr), GFP_KERNEL);
-+	if (!thr)
-+		return ERR_PTR(-ENOMEM);
-+
-+	mutex_init(&thr->lock);
-+	thr->dev = dev;
-+
-+	cpumask_clear(&thr->cpufreq.cm_ignore);
-+	cpumask_clear(&thr->cpufreq.cm_initialized);
-+
-+	INIT_LIST_HEAD(&thr->cpufreq.list);
-+	INIT_LIST_HEAD(&thr->devfreq.list);
-+
-+	thr->cpufreq.nb.notifier_call = thr_handle_cpufreq_event;
-+	err = cpufreq_register_notifier(&thr->cpufreq.nb,
-+					CPUFREQ_POLICY_NOTIFIER);
-+	if (err < 0) {
-+		thr_err(thr, "failed to register cpufreq notifier\n");
-+		return ERR_PTR(err);
-+	}
-+
-+	/*
-+	 * The CPU throttling configuration is parsed at runtime, when the
-+	 * cpufreq policy notifier is called for a CPU that hasn't been
-+	 * initialized yet.
-+	 *
-+	 * This is done for two reasons:
-+	 * -  when the throttler is probed the CPU might not yet have a policy
-+	 * -  CPUs that were offline at probe time might be hotplugged
-+	 *
-+	 * The notifier is called then the policy is added/set
-+	 */
-+	for_each_online_cpu(cpu) {
-+		struct cpufreq_policy *policy = cpufreq_cpu_get(cpu);
-+
-+		if (!policy)
-+			continue;
-+
-+		cpufreq_update_policy(cpu);
-+		cpufreq_cpu_put(policy);
-+	}
-+
-+	/*
-+	 * devfreq devices can be added and removed at runtime, hence they
-+	 * must also be handled dynamically. The class_interface notifies us
-+	 * whenever a device is added or removed. When the interface is
-+	 * registered ci->add_dev() is called for all existing devfreq
-+	 * devices.
-+	 */
-+	ci = &thr->devfreq.class_iface;
-+	ci->class = devfreq_class;
-+	ci->add_dev = thr_handle_devfreq_added;
-+	ci->remove_dev = thr_handle_devfreq_removed;
-+
-+	err = class_interface_register(ci);
-+	if (err) {
-+		thr_err(thr, "failed to register devfreq class interface: %d\n",
-+			err);
-+		cpufreq_unregister_notifier(&thr->cpufreq.nb,
-+					    CPUFREQ_POLICY_NOTIFIER);
-+		return ERR_PTR(err);
-+	}
-+
-+#ifdef CONFIG_THROTTLER_DEBUG
-+	thr->debugfs.dir = debugfs_create_dir(dev_name(thr->dev), NULL);
-+	if (IS_ERR(thr->debugfs.dir)) {
-+		thr_warn(thr, "failed to create debugfs directory: %ld\n",
-+			 PTR_ERR(thr->debugfs.dir));
-+		thr->debugfs.dir = NULL;
-+		goto skip_debugfs;
-+	}
-+
-+	thr->debugfs.attr_level = debugfs_create_file("level", 0644,
-+						      thr->debugfs.dir, thr,
-+						      &level_debugfs_ops);
-+	if (IS_ERR(thr->debugfs.dir)) {
-+		thr_warn(thr, "failed to create debugfs attribute: %ld\n",
-+			 PTR_ERR(thr->debugfs.attr_level));
-+		debugfs_remove(thr->debugfs.dir);
-+		thr->debugfs.dir = NULL;
-+	}
-+
-+skip_debugfs:
-+#endif
-+
-+	return thr;
-+}
-+EXPORT_SYMBOL_GPL(throttler_setup);
-+
-+void throttler_teardown(struct throttler *thr)
-+{
-+	struct devfreq_thrdev *dftd;
-+	int level;
-+
-+	mutex_lock(&thr->lock);
-+
-+	level = thr->level;
-+	thr->level = 0;
-+
-+	class_interface_unregister(&thr->devfreq.class_iface);
-+
-+	if (level) {
-+		/* unthrottle CPUs */
-+		if (!list_empty(&thr->cpufreq.list))
-+			thr_cpufreq_update_policy(thr);
-+
-+		/* unthrottle devfreq devices */
-+		list_for_each_entry(dftd, &thr->devfreq.list, node) {
-+			mutex_lock(&dftd->devfreq->lock);
-+			update_devfreq(dftd->devfreq);
-+			mutex_unlock(&dftd->devfreq->lock);
-+		}
-+	}
-+
-+	cpufreq_unregister_notifier(&thr->cpufreq.nb,
-+				    CPUFREQ_POLICY_NOTIFIER);
-+
-+	mutex_unlock(&thr->lock);
-+}
-+EXPORT_SYMBOL_GPL(throttler_teardown);
-diff --git a/include/linux/throttler.h b/include/linux/throttler.h
-new file mode 100644
-index 000000000000..a29d99f581da
---- /dev/null
-+++ b/include/linux/throttler.h
-@@ -0,0 +1,21 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef __LINUX_THROTTLER_H__
-+#define __LINUX_THROTTLER_H__
-+
-+struct throttler;
-+
-+extern struct throttler *throttler_setup(struct device *dev);
-+extern void throttler_teardown(struct throttler *thr);
-+extern void throttler_set_level(struct throttler *thr, int level);
-+
-+#ifdef CONFIG_THROTTLER_DEBUG
-+#define thr_dbg(thr, fmt, ...) dev_info(thr->dev, fmt, ##__VA_ARGS__)
-+#else
-+#define thr_dbg(thr, fmt, ...) dev_dbg(thr->dev, fmt, ##__VA_ARGS__)
-+#endif
-+
-+#define thr_info(thr, fmt, ...) dev_info(thr->dev, fmt, ##__VA_ARGS__)
-+#define thr_warn(thr, fmt, ...) dev_warn(thr->dev, fmt, ##__VA_ARGS__)
-+#define thr_err(thr, fmt, ...) dev_warn(thr->dev, fmt, ##__VA_ARGS__)
-+
-+#endif /* __LINUX_THROTTLER_H__ */
++MODULE_LICENSE("GPL v2");
++MODULE_AUTHOR("Matthias Kaehlcke <mka@chromium.org>");
++MODULE_DESCRIPTION("Chrome OS EC Throttler");
 -- 
 2.18.0.rc1.242.g61856ae69a-goog
 
