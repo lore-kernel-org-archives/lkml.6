@@ -2,70 +2,91 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D814EC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:39:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68BEDC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:39:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98A20208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:39:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98A20208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1EEE0208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:39:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iEIOVj9X"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EEE0208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965124AbeFNOjI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:39:08 -0400
-Received: from mga02.intel.com ([134.134.136.20]:57124 "EHLO mga02.intel.com"
+        id S965652AbeFNOjd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:39:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965423AbeFNOjF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:39:05 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 07:39:04 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
-   d="scan'208";a="59225631"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.44])
-  by orsmga003.jf.intel.com with ESMTP; 14 Jun 2018 07:39:03 -0700
-Date:   Thu, 14 Jun 2018 08:42:03 -0600
-From:   Keith Busch <keith.busch@linux.intel.com>
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Sinan Kaya <okaya@codeaurora.org>, linux-pci-owner@vger.kernel.org,
-        Abhishek Shah <abhishek.shah@broadcom.com>,
-        kvm@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-nvme@lists.infradead.org,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: Requirement to get BAR pci_bus_address in user space
-Message-ID: <20180614144203.GA8129@localhost.localdomain>
-References: <CABe79T41Cr0mjH_k2drzccHvObFwRcW3n+WKCj0JvFUBy0wz-A@mail.gmail.com>
- <20180614102001.GA20836@lst.de>
- <CABe79T6k387EnDrpydTbQYQ+sZoWXKUee23EDzDJqnkroOmodA@mail.gmail.com>
- <92a9eeced36f863458ca2fd029f17a20@codeaurora.org>
- <CABe79T5ZRBToOgCY0Myo47mkeOQ5FWrxgF-Bbdx-Pa3fmYPDGw@mail.gmail.com>
+        id S965400AbeFNOJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:09:16 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24815208DA;
+        Thu, 14 Jun 2018 14:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985354;
+        bh=DAuP2hKLAxeGcwUoBJZTscisSPzyZ0qWsfe3dlk0Cvo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iEIOVj9XEedpk3EXVLqPnZLyaMfo8fgf5djeOACn42qGGnGXXZhhe6DszGUx05XXz
+         hswbxwOcU1A7PB8+eJ1dyKsLWM6ZoOwgRBv2X9vGFLZC1o1lSqDajLx3I3Jq7ychhB
+         lggwJvp36sulhXchJfhD03WDg45bewdrzvAGZ5S4=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.16 42/43] crypto: vmx - Remove overly verbose printk from AES XTS init
+Date:   Thu, 14 Jun 2018 16:04:46 +0200
+Message-Id: <20180614132137.922162801@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
+References: <20180614132135.111973468@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABe79T5ZRBToOgCY0Myo47mkeOQ5FWrxgF-Bbdx-Pa3fmYPDGw@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 04:18:15PM +0530, Srinath Mannam wrote:
-> The issue is, For CMB cards SQs are allocated inside device BAR memory
-> which is different from normal cards.
-> In Normal cards SQ memory allocated at host side.
-> In both the cases physical address of CQ memory is programmed in NVMe
-> controller register.
-> This method works for normal cards because CQ memory is at host side.
-> But in CMB cards pci bus address equivalent to CQ memory needs to program.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-How do you know if the address that you can see is even the real bus
-address? You could be running against a direct assigned device in a
-guest where you don't get to see the actual bus address.
+------------------
+
+From: Michael Ellerman <mpe@ellerman.id.au>
+
+commit 730f23b66095a700e2f0786abda6bca011b31558 upstream.
+
+In p8_aes_xts_init() we do a printk(KERN_INFO ...) to report the
+fallback implementation we're using. However with a slow console this
+can significantly affect the speed of crypto operations. So remove it.
+
+Fixes: c07f5d3da643 ("crypto: vmx - Adding support for XTS")
+Cc: stable@vger.kernel.org # v4.8+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/crypto/vmx/aes_xts.c |    2 --
+ 1 file changed, 2 deletions(-)
+
+--- a/drivers/crypto/vmx/aes_xts.c
++++ b/drivers/crypto/vmx/aes_xts.c
+@@ -53,8 +53,6 @@ static int p8_aes_xts_init(struct crypto
+ 			alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-		crypto_skcipher_driver_name(fallback));
+ 
+ 	crypto_skcipher_set_flags(
+ 		fallback,
+
+
