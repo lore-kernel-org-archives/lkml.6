@@ -2,102 +2,104 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CFFC1C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:41:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D44DDC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90AB8208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:41:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90AB8208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 84E0D208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:42:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PfhYxOig"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84E0D208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965329AbeFNOlv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:41:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:37868 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S964868AbeFNOlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:41:49 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S965389AbeFNOmJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:42:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49782 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965344AbeFNOI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:08:58 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B90424070484;
-        Thu, 14 Jun 2018 14:41:48 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-117-97.ams2.redhat.com [10.36.117.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 815F92166BB2;
-        Thu, 14 Jun 2018 14:41:47 +0000 (UTC)
-Subject: Re: Restartable Sequences system call merged into Linux
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, carlos <carlos@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
- <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
- <20180614122759.GB8798@amd>
- <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com>
- <20180614132557.GA15201@amd>
- <956816108.13001.1528983496098.JavaMail.zimbra@efficios.com>
- <20180614134959.GA4084@amd> <48a0d905-2568-51b8-80c9-a20ecaa25f9b@redhat.com>
- <263666353.13077.1528986978282.JavaMail.zimbra@efficios.com>
-From:   Florian Weimer <fweimer@redhat.com>
-Message-ID: <21eae301-50ff-e95a-f3c7-dedcf2f66842@redhat.com>
-Date:   Thu, 14 Jun 2018 16:41:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 78B13208CB;
+        Thu, 14 Jun 2018 14:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985338;
+        bh=jBrtzLzT2aOkvKiV43kyDn7RP2gKBw6mRdPA8idWZT0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PfhYxOigFlqGvc6LGCdywTGk4ASdd/WdzvApwC5S3YIypGRM+ZHctouUcvpPqkexO
+         lDeAnXuiSC3cQI90GpdNl8HGS/apk6ujzv9CiboVvvfDVLcZys6oO4JxkjaRAyBtBJ
+         xbzvC8WL9MR44kg2vM1teTKw5rnsmsmU/yw2xkiM=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com,
+        syzbot <syzkaller@googlegroups.com>,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH 4.16 09/43] staging: android: ion: Switch to pr_warn_once in ion_buffer_destroy
+Date:   Thu, 14 Jun 2018 16:04:13 +0200
+Message-Id: <20180614132135.513984513@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
+References: <20180614132135.111973468@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <263666353.13077.1528986978282.JavaMail.zimbra@efficios.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 14 Jun 2018 14:41:48 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Thu, 14 Jun 2018 14:41:48 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/2018 04:36 PM, Mathieu Desnoyers wrote:
-> ----- On Jun 14, 2018, at 10:00 AM, Florian Weimer fweimer@redhat.com wrote:
-> 
->> On 06/14/2018 03:49 PM, Pavel Machek wrote:
->>> Hi!
->>>
->>>>>> - rseq_preempt(): on preemption, the scheduler sets the TIF_NOTIFY_RESUME thread
->>>>>>     flag, so rseq_handle_notify_resume() can check whether it's in a rseq critical
->>>>>>     section when returning to user-space,
->>>>>> - rseq_signal_deliver(): on signal delivery, rseq_handle_notify_resume() checks
->>>>>>     whether it's in a rseq critical section,
->>>>>> - rseq_migrate: on migration, the scheduler sets TIF_NOTIFY_RESUME as well,
->>>>>
->>>>> Yes, this is not likely to be noticeable.
->>>>>
->>>>> But the proposal wanted to add a syscall to thread creation, right?
->>>>> And I believe that may be noticeable.
->>>>
->>>> Fair point! Do we have a standard benchmark that would stress this ?
->>>
->>> Web server performance benchmarks basically test clone() performance
->>> in many cases.
->>
->> Isn't that fork?  I expect that the rseq arena is inherited on fork and
->> fork-type clone, otherwise it's going to be painful.
-> 
-> On fork or clone creating a new process, the rseq tls area is inherited
-> from the thread that does the fork syscall.
-> 
-> On creation of a new thread with clone, there is no such inheritance.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Makes sense.  So fork-based (web) servers will not be impacted by the 
-additional system call, and thread-based servers likely use a thread 
-pool anyway.  I'm not really concerned about the additional system call 
-here.
+------------------
 
-Thanks,
-Florian
+From: Laura Abbott <labbott@redhat.com>
+
+commit 45ad559a29629cb1c64ee636563c69b71524f077 upstream.
+
+Syzbot reported yet another warning with Ion:
+
+WARNING: CPU: 0 PID: 1467 at drivers/staging/android/ion/ion.c:122
+ion_buffer_destroy+0xd4/0x190 drivers/staging/android/ion/ion.c:122
+Kernel panic - not syncing: panic_on_warn set ...
+
+This is catching that a buffer was freed with an existing kernel mapping
+still present. This can be easily be triggered from userspace by calling
+DMA_BUF_SYNC_START without calling DMA_BUF_SYNC_END. Switch to a single
+pr_warn_once to indicate the error without being disruptive.
+
+Reported-by: syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Cc: stable <stable@vger.kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/staging/android/ion/ion.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -119,8 +119,11 @@ err2:
+ 
+ void ion_buffer_destroy(struct ion_buffer *buffer)
+ {
+-	if (WARN_ON(buffer->kmap_cnt > 0))
++	if (buffer->kmap_cnt > 0) {
++		pr_warn_once("%s: buffer still mapped in the kernel\n",
++			     __func__);
+ 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
++	}
+ 	buffer->heap->ops->free(buffer);
+ 	kfree(buffer);
+ }
+
+
