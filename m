@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 30441C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:15 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DDBABC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C4B208DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 894AC208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RYDoloGn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0C4B208DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kZy4irpu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 894AC208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965323AbeFNOLM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:11:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52204 "EHLO mail.kernel.org"
+        id S965795AbeFNOLP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965764AbeFNOLG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:06 -0400
+        id S965780AbeFNOLM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:12 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 00C75208DE;
-        Thu, 14 Jun 2018 14:11:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7F485208DA;
+        Thu, 14 Jun 2018 14:11:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985466;
-        bh=YOA4t4Apyy8cMjxSetWyRGYZg3Bt2LLLhjMDfbrsimY=;
+        s=default; t=1528985472;
+        bh=oE1sm/E1E3kmY+czwhb6kz3+sXenrw5lW1reKMJLABw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RYDoloGngWQscRPiQZaZ0O3VpWt1WY1bMS1qQ/ZS22IhjLMc7mEZxhZ3u4N6bHZ+s
-         1/Ud9thlOelkzzVcM6WqdjTJIaexc2m5Yd9pLQPo+ZemXGV/DHNeL7iUxg3kUEfOvK
-         J2D/jNRKcA3WWKQisTEWbU4qvtlbmKrXnvwPayko=
+        b=kZy4irpujMnA4xQpY08yV2po6XeXTrsfp2ShjHjonDciv7o1R0/Rilib+aso2/FnL
+         EO1/TroFWII3hsLUOqYn7zcfSnwoT+/f9O4YdrKDRMGY99buFYjBtylIp26z6Dm/ev
+         NXWOeMky4TI+6T02AvaOJUmnctOEG0e1bIDb+DCg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 36/36] crypto: omap-sham - fix memleak
-Date:   Thu, 14 Jun 2018 16:04:59 +0200
-Message-Id: <20180614132158.942353511@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com,
+        syzbot <syzkaller@googlegroups.com>,
+        Laura Abbott <labbott@redhat.com>
+Subject: [PATCH 4.14 09/36] staging: android: ion: Switch to pr_warn_once in ion_buffer_destroy
+Date:   Thu, 14 Jun 2018 16:04:32 +0200
+Message-Id: <20180614132157.704299904@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -60,35 +61,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bin Liu <b-liu@ti.com>
+From: Laura Abbott <labbott@redhat.com>
 
-commit 9dbc8a0328efa485a6f5b68b867f9f523a3fbeff upstream.
+commit 45ad559a29629cb1c64ee636563c69b71524f077 upstream.
 
-Fixes: 8043bb1ae03cb ("crypto: omap-sham - convert driver logic to use sgs for data xmit")
+Syzbot reported yet another warning with Ion:
 
-The memory pages freed in omap_sham_finish_req() were less than those
-allocated in omap_sham_copy_sgs().
+WARNING: CPU: 0 PID: 1467 at drivers/staging/android/ion/ion.c:122
+ion_buffer_destroy+0xd4/0x190 drivers/staging/android/ion/ion.c:122
+Kernel panic - not syncing: panic_on_warn set ...
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Acked-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+This is catching that a buffer was freed with an existing kernel mapping
+still present. This can be easily be triggered from userspace by calling
+DMA_BUF_SYNC_START without calling DMA_BUF_SYNC_END. Switch to a single
+pr_warn_once to indicate the error without being disruptive.
+
+Reported-by: syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Cc: stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/omap-sham.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/android/ion/ion.c |    5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
---- a/drivers/crypto/omap-sham.c
-+++ b/drivers/crypto/omap-sham.c
-@@ -1082,7 +1082,7 @@ static void omap_sham_finish_req(struct
+--- a/drivers/staging/android/ion/ion.c
++++ b/drivers/staging/android/ion/ion.c
+@@ -131,8 +131,11 @@ err2:
  
- 	if (test_bit(FLAGS_SGS_COPIED, &dd->flags))
- 		free_pages((unsigned long)sg_virt(ctx->sg),
--			   get_order(ctx->sg->length));
-+			   get_order(ctx->sg->length + ctx->bufcnt));
- 
- 	if (test_bit(FLAGS_SGS_ALLOCED, &dd->flags))
- 		kfree(ctx->sg);
+ void ion_buffer_destroy(struct ion_buffer *buffer)
+ {
+-	if (WARN_ON(buffer->kmap_cnt > 0))
++	if (buffer->kmap_cnt > 0) {
++		pr_warn_once("%s: buffer still mapped in the kernel\n",
++			     __func__);
+ 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
++	}
+ 	buffer->heap->ops->free(buffer);
+ 	kfree(buffer);
+ }
 
 
