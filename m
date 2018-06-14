@@ -2,144 +2,484 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DE0E4C004E4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:14:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4F3B9C004E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85BA6208CC
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:14:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="nR8qjG4z";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HYt/BnUv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85BA6208CC
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DC8D8208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 01:16:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8D8208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935843AbeFNBOd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 13 Jun 2018 21:14:33 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43150 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935532AbeFNBOc (ORCPT
+        id S935848AbeFNBQs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Wed, 13 Jun 2018 21:16:48 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:37525 "EHLO
+        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754535AbeFNBQp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 13 Jun 2018 21:14:32 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8CE6760717; Thu, 14 Jun 2018 01:14:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528938871;
-        bh=zGCzNGGu5eiX2EdHSOgxpmNvjxoaz5UH8fP5UMNuMUk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=nR8qjG4zVeCSltx/jus5b7BHLE0OCoJbXHpZ7qTheU9Lhn5jS7ZpawM7ThnhSiWNM
-         2uYjM7jK+5/R1ESJ2NEZKjT/kYF6jvQi0L8+AoilLAkLaM2J34WacosGmYyxIUjHB6
-         DVLwhtDkf8yDddBI0tddUtLPqNE859xveo7NYePI=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id D42B46055D;
-        Thu, 14 Jun 2018 01:14:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528938870;
-        bh=zGCzNGGu5eiX2EdHSOgxpmNvjxoaz5UH8fP5UMNuMUk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HYt/BnUvtNEkD/0Sz5ora6hlAHvbxpTU+7vJXPDCKAMVLkTyg1bp8nL17mfEGLges
-         +Wzpfz8eouyh7YxA3/AbeWJ9q3hxMu2AAT35gaUYwfAiSukfy7w6vIF/HWIk1ojRzZ
-         plXNYuMK/mhu1UD52aYz8P5JJK/eJYHwLjIISLAc=
+        Wed, 13 Jun 2018 21:16:45 -0400
+Received: by mail-ot0-f195.google.com with SMTP id 101-v6so5195660oth.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 18:16:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sQPIqMnzGFGaAD97YZWFP4G0GS3JfRZlA3NpWQYj77Y=;
+        b=ao6UUOYQ28/qQYeCJWqCUK3C4S7yraYSLQl0T6dYemmkxLwCxh7DAMe5SrPCRljb0c
+         t0M/WgAljqnePl5s1D9hGZs4Rlr2W2ndIfK7e8XKOm+a6GlP1q/yDoheKoewRlKR9TWb
+         thxGKpioUYBXoW7ONI0lD3478jOZtH4Be1sLpPUr9J2z1BBpiEIsHA7np/59y1DK7ucf
+         Tzd0Vs0D0VK3Ajt7K9pyFKR+AhCKpIEgljXpy5MyGdhpiro+L/pKlIN0b/p8FJRsXhQ4
+         sFxWGTYwSOSYm3h1SajumQ+iWWu3xDetkSllV9XpJ/EK1iYv90RhpbIQl1joBjuOehhx
+         bYQw==
+X-Gm-Message-State: APt69E3xS+ljCu9T/NA1A2xdGZYr02hlzM/Nbum2sVyzqwoZSHspPNYo
+        iGMKiUUHmSWkHXEo22QfhdBB4A==
+X-Google-Smtp-Source: ADUXVKLL1xJWVMZVlHQAw34zqtSSx2puKlEhw0K5uN1sodIjPbvHq7W9D3kWk3PybQJA/SANal/etQ==
+X-Received: by 2002:a9d:3351:: with SMTP id u17-v6mr291409otd.221.1528939005002;
+        Wed, 13 Jun 2018 18:16:45 -0700 (PDT)
+Received: from localhost (BOINGO-WIRE.ear1.Dallas1.Level3.net. [4.14.17.198])
+        by smtp.gmail.com with ESMTPSA id k189-v6sm1966090oif.32.2018.06.13.18.16.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 13 Jun 2018 18:16:43 -0700 (PDT)
+Date:   Wed, 13 Jun 2018 20:16:42 -0500
+From:   Moritz Fischer <mdf@kernel.org>
+To:     Wu Hao <hao.wu@intel.com>
+Cc:     atull@kernel.org, mdf@kernel.org, linux-fpga@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+        luwei.kang@intel.com, yi.z.zhang@intel.com,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: Re: [PATCH v6 18/29] fpga: dfl: add fpga manager platform driver for
+ FME
+Message-ID: <20180614011642.scearqx5glmffuwc@derp-derp.local>
+References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
+ <1528798243-2029-19-git-send-email-hao.wu@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Thu, 14 Jun 2018 09:14:30 +0800
-From:   cang@codeaurora.org
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     subhashj@codeaurora.org, asutoshd@codeaurora.org,
-        mgautam@codeaurora.org, kishon@ti.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v6 1/3] phy: Update PHY power control sequence
-In-Reply-To: <261d2697-ed21-1562-0e6b-f9858108f2b4@codeaurora.org>
-References: <20180529043751.10580-1-cang@codeaurora.org>
- <20180529043751.10580-2-cang@codeaurora.org>
- <261d2697-ed21-1562-0e6b-f9858108f2b4@codeaurora.org>
-Message-ID: <c891f513544f26eec480ebe91f257617@codeaurora.org>
-X-Sender: cang@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528798243-2029-19-git-send-email-hao.wu@intel.com>
+User-Agent: NeoMutt/20171215
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-12 19:34, Vivek Gautam wrote:
-> Hi Can,
-> 
-> 
-> On 5/29/2018 10:07 AM, Can Guo wrote:
->> All PHYs should be powered on before register configuration starts. 
->> And
->> only PCIe PHYs need an extra power control before deasserts reset 
->> state.
->> 
->> Signed-off-by: Can Guo <cang@codeaurora.org>
->> ---
->>   drivers/phy/qualcomm/phy-qcom-qmp.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->> 
->> diff --git a/drivers/phy/qualcomm/phy-qcom-qmp.c 
->> b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> index 97ef942..f779b0f 100644
->> --- a/drivers/phy/qualcomm/phy-qcom-qmp.c
->> +++ b/drivers/phy/qualcomm/phy-qcom-qmp.c
->> @@ -982,6 +982,8 @@ static int qcom_qmp_phy_com_init(struct qcom_qmp 
->> *qmp)
->>   	if (cfg->has_phy_com_ctrl)
->>   		qphy_setbits(serdes, cfg->regs[QPHY_COM_POWER_DOWN_CONTROL],
->>   			     SW_PWRDN);
->> +	else
->> +		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
-> 
-> No definition of 'pcs' in this function. You are doing that in the 
-> second patch.
-> But, we should add this definition here.
-> 
-> Also instead of having the change like this:
-> 
-> +	struct qmp_phy *qphy = qmp->phys[0];
->  	void __iomem *serdes = qmp->serdes;
-> +	void __iomem *pcs = qphy->pcs;
-> 
-> Let's pass 'struct qmp_phy' to qcom_qmp_phy_com_init(), and then get
-> 'struct qcom_qmp' and 'void __iomem *pcs' from that.
-> 
-> So,
-> 
-> -static int qcom_qmp_phy_com_init(struct qcom_qmp *qmp)
-> +static int qcom_qmp_phy_com_init(struct qmp_phy *qphy)
->  {
-> +       struct qcom_qmp *qmp = qphy->qmp;
->         const struct qmp_phy_cfg *cfg = qmp->cfg;
->         void __iomem *serdes = qmp->serdes;
->         void __iomem *dp_com = qmp->dp_com;
-> +       void __iomem *pcs = qphy->pcs;
-> 
-> and
-> 
-> -       ret = qcom_qmp_phy_com_init(qmp);
-> +       ret = qcom_qmp_phy_com_init(qphy);
-> 
-> That looks cleaner than extracting from the 0th phys.
-> 
-> BRs
-> Vivek
+Hi Hao,
 
-Sure Vivek
+small nit below, looks good otherwise.
 
->>     	if (cfg->has_phy_dp_com_ctrl) {
->>   		qphy_setbits(dp_com, QPHY_V3_DP_COM_POWER_DOWN_CTRL,
->> @@ -1127,7 +1129,8 @@ static int qcom_qmp_phy_init(struct phy *phy)
->>   	 * Pull out PHY from POWER DOWN state.
->>   	 * This is active low enable signal to power-down PHY.
->>   	 */
->> -	qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
->> +	if (cfg->type == PHY_TYPE_PCIE)
->> +		qphy_setbits(pcs, QPHY_POWER_DOWN_CONTROL, cfg->pwrdn_ctrl);
->>     	if (cfg->has_pwrdn_delay)
->>   		usleep_range(cfg->pwrdn_delay_min, cfg->pwrdn_delay_max);
+On Tue, Jun 12, 2018 at 06:10:32PM +0800, Wu Hao wrote:
+> This patch adds fpga manager driver for FPGA Management Engine (FME). It
+> implements fpga_manager_ops for FPGA Partial Reconfiguration function.
+> 
+> Signed-off-by: Tim Whisonant <tim.whisonant@intel.com>
+> Signed-off-by: Enno Luebbers <enno.luebbers@intel.com>
+> Signed-off-by: Shiva Rao <shiva.rao@intel.com>
+> Signed-off-by: Christopher Rauer <christopher.rauer@intel.com>
+> Signed-off-by: Kang Luwei <luwei.kang@intel.com>
+> Signed-off-by: Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> Signed-off-by: Wu Hao <hao.wu@intel.com>
+> Acked-by: Alan Tull <atull@kernel.org>
+> ---
+> v3: rename driver to dfl-fpga-fme-mgr
+>     implemented status callback for fpga manager
+>     rebased due to fpga api changes
+> v4: rename to dfl-fme-mgr, and fix SPDX license issue
+>     add pr_credit comments and improve dev_err message
+>     remove interface_id sysfs interface
+>     include dfl-fme-pr.h instead of dfl.h
+> v5: move related register definition from dfl-fme-pr.h to dfl-fme-mgr.c
+>     use mapped ioaddr passed via pdata for register access.
+>     rebase due to fpga manager API changes.
+>     include header file for readq/writeq.
+> v6: rebase, fix copyright time and add Acked-by from Alan.
+> ---
+>  drivers/fpga/Kconfig       |   6 +
+>  drivers/fpga/Makefile      |   1 +
+>  drivers/fpga/dfl-fme-mgr.c | 334 +++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 341 insertions(+)
+>  create mode 100644 drivers/fpga/dfl-fme-mgr.c
+> 
+> diff --git a/drivers/fpga/Kconfig b/drivers/fpga/Kconfig
+> index 45e9220..ca97f3c 100644
+> --- a/drivers/fpga/Kconfig
+> +++ b/drivers/fpga/Kconfig
+> @@ -156,6 +156,12 @@ config FPGA_DFL_FME
+>  	  FPGA platform level management features. There shall be 1 FME
+>  	  per DFL based FPGA device.
+>  
+> +config FPGA_DFL_FME_MGR
+> +	tristate "FPGA DFL FME Manager Driver"
+> +	depends on FPGA_DFL_FME
+> +	help
+> +	  Say Y to enable FPGA Manager driver for FPGA Management Engine.
+> +
+>  config FPGA_DFL_PCI
+>  	tristate "FPGA DFL PCIe Device Driver"
+>  	depends on PCI && FPGA_DFL
+> diff --git a/drivers/fpga/Makefile b/drivers/fpga/Makefile
+> index fd334d40..23f41b0 100644
+> --- a/drivers/fpga/Makefile
+> +++ b/drivers/fpga/Makefile
+> @@ -32,6 +32,7 @@ obj-$(CONFIG_OF_FPGA_REGION)		+= of-fpga-region.o
+>  # FPGA Device Feature List Support
+>  obj-$(CONFIG_FPGA_DFL)			+= dfl.o
+>  obj-$(CONFIG_FPGA_DFL_FME)		+= dfl-fme.o
+> +obj-$(CONFIG_FPGA_DFL_FME_MGR)		+= dfl-fme-mgr.o
+>  
+>  dfl-fme-objs := dfl-fme-main.o dfl-fme-pr.o
+>  
+> diff --git a/drivers/fpga/dfl-fme-mgr.c b/drivers/fpga/dfl-fme-mgr.c
+> new file mode 100644
+> index 0000000..be0060a
+> --- /dev/null
+> +++ b/drivers/fpga/dfl-fme-mgr.c
+> @@ -0,0 +1,334 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * FPGA Manager Driver for FPGA Management Engine (FME)
+> + *
+> + * Copyright (C) 2017-2018 Intel Corporation, Inc.
+> + *
+> + * Authors:
+> + *   Kang Luwei <luwei.kang@intel.com>
+> + *   Xiao Guangrong <guangrong.xiao@linux.intel.com>
+> + *   Wu Hao <hao.wu@intel.com>
+> + *   Joseph Grecco <joe.grecco@intel.com>
+> + *   Enno Luebbers <enno.luebbers@intel.com>
+> + *   Tim Whisonant <tim.whisonant@intel.com>
+> + *   Ananda Ravuri <ananda.ravuri@intel.com>
+> + *   Christopher Rauer <christopher.rauer@intel.com>
+> + *   Henry Mitchel <henry.mitchel@intel.com>
+> + */
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/module.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/io-64-nonatomic-lo-hi.h>
+> +#include <linux/fpga/fpga-mgr.h>
+> +
+> +#include "dfl-fme-pr.h"
+> +
+> +/* FME Partial Reconfiguration Sub Feature Register Set */
+> +#define FME_PR_DFH		0x0
+> +#define FME_PR_CTRL		0x8
+> +#define FME_PR_STS		0x10
+> +#define FME_PR_DATA		0x18
+> +#define FME_PR_ERR		0x20
+> +#define FME_PR_INTFC_ID_H	0xA8
+> +#define FME_PR_INTFC_ID_L	0xB0
+> +
+> +/* FME PR Control Register Bitfield */
+> +#define FME_PR_CTRL_PR_RST	BIT_ULL(0)  /* Reset PR engine */
+> +#define FME_PR_CTRL_PR_RSTACK	BIT_ULL(4)  /* Ack for PR engine reset */
+> +#define FME_PR_CTRL_PR_RGN_ID	GENMASK_ULL(9, 7)       /* PR Region ID */
+> +#define FME_PR_CTRL_PR_START	BIT_ULL(12) /* Start to request PR service */
+> +#define FME_PR_CTRL_PR_COMPLETE	BIT_ULL(13) /* PR data push completion */
+> +
+> +/* FME PR Status Register Bitfield */
+> +/* Number of available entries in HW queue inside the PR engine. */
+> +#define FME_PR_STS_PR_CREDIT	GENMASK_ULL(8, 0)
+> +#define FME_PR_STS_PR_STS	BIT_ULL(16) /* PR operation status */
+> +#define FME_PR_STS_PR_STS_IDLE	0
+> +#define FME_PR_STS_PR_CTRLR_STS	GENMASK_ULL(22, 20)     /* Controller status */
+> +#define FME_PR_STS_PR_HOST_STS	GENMASK_ULL(27, 24)     /* PR host status */
+> +
+> +/* FME PR Data Register Bitfield */
+> +/* PR data from the raw-binary file. */
+> +#define FME_PR_DATA_PR_DATA_RAW	GENMASK_ULL(32, 0)
+> +
+> +/* FME PR Error Register */
+> +/* PR Operation errors detected. */
+> +#define FME_PR_ERR_OPERATION_ERR	BIT_ULL(0)
+> +/* CRC error detected. */
+> +#define FME_PR_ERR_CRC_ERR		BIT_ULL(1)
+> +/* Incompatible PR bitstream detected. */
+> +#define FME_PR_ERR_INCOMPATIBLE_BS	BIT_ULL(2)
+> +/* PR data push protocol violated. */
+> +#define FME_PR_ERR_PROTOCOL_ERR		BIT_ULL(3)
+> +/* PR data fifo overflow error detected */
+> +#define FME_PR_ERR_FIFO_OVERFLOW	BIT_ULL(4)
+> +
+> +#define PR_WAIT_TIMEOUT   8000000
+> +#define PR_HOST_STATUS_IDLE	0
+> +
+> +struct fme_mgr_priv {
+> +	void __iomem *ioaddr;
+> +	u64 pr_error;
+> +};
+> +
+> +static u64 pr_error_to_mgr_status(u64 err)
+> +{
+> +	u64 status = 0;
+> +
+> +	if (err & FME_PR_ERR_OPERATION_ERR)
+> +		status |= FPGA_MGR_STATUS_OPERATION_ERR;
+> +	if (err & FME_PR_ERR_CRC_ERR)
+> +		status |= FPGA_MGR_STATUS_CRC_ERR;
+> +	if (err & FME_PR_ERR_INCOMPATIBLE_BS)
+> +		status |= FPGA_MGR_STATUS_INCOMPATIBLE_IMAGE_ERR;
+> +	if (err & FME_PR_ERR_PROTOCOL_ERR)
+> +		status |= FPGA_MGR_STATUS_IP_PROTOCOL_ERR;
+> +	if (err & FME_PR_ERR_FIFO_OVERFLOW)
+> +		status |= FPGA_MGR_STATUS_FIFO_OVERFLOW_ERR;
+> +
+> +	return status;
+> +}
+> +
+> +static u64 fme_mgr_pr_error_handle(void __iomem *fme_pr)
+> +{
+> +	u64 pr_status, pr_error;
+> +
+> +	pr_status = readq(fme_pr + FME_PR_STS);
+> +	if (!(pr_status & FME_PR_STS_PR_STS))
+> +		return 0;
+> +
+> +	pr_error = readq(fme_pr + FME_PR_ERR);
+> +	writeq(pr_error, fme_pr + FME_PR_ERR);
+> +
+> +	return pr_error;
+> +}
+> +
+> +static int fme_mgr_write_init(struct fpga_manager *mgr,
+> +			      struct fpga_image_info *info,
+> +			      const char *buf, size_t count)
+> +{
+> +	struct device *dev = &mgr->dev;
+> +	struct fme_mgr_priv *priv = mgr->priv;
+> +	void __iomem *fme_pr = priv->ioaddr;
+> +	u64 pr_ctrl, pr_status;
+> +
+> +	if (!(info->flags & FPGA_MGR_PARTIAL_RECONFIG)) {
+> +		dev_err(dev, "only supports partial reconfiguration.\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	dev_dbg(dev, "resetting PR before initiated PR\n");
+> +
+> +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> +	pr_ctrl |= FME_PR_CTRL_PR_RST;
+> +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> +
+> +	if (readq_poll_timeout(fme_pr + FME_PR_CTRL, pr_ctrl,
+> +			       pr_ctrl & FME_PR_CTRL_PR_RSTACK, 1,
+> +			       PR_WAIT_TIMEOUT)) {
+> +		dev_err(dev, "PR Reset ACK timeout\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> +	pr_ctrl &= ~FME_PR_CTRL_PR_RST;
+> +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> +
+> +	dev_dbg(dev,
+> +		"waiting for PR resource in HW to be initialized and ready\n");
+> +
+> +	if (readq_poll_timeout(fme_pr + FME_PR_STS, pr_status,
+> +			       (pr_status & FME_PR_STS_PR_STS) ==
+> +			       FME_PR_STS_PR_STS_IDLE, 1, PR_WAIT_TIMEOUT)) {
+> +		dev_err(dev, "PR Status timeout\n");
+> +		priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	dev_dbg(dev, "check and clear previous PR error\n");
+> +	priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
+> +	if (priv->pr_error)
+> +		dev_dbg(dev, "previous PR error detected %llx\n",
+> +			(unsigned long long)priv->pr_error);
+> +
+> +	dev_dbg(dev, "set PR port ID\n");
+> +
+> +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> +	pr_ctrl &= ~FME_PR_CTRL_PR_RGN_ID;
+> +	pr_ctrl |= FIELD_PREP(FME_PR_CTRL_PR_RGN_ID, info->region_id);
+> +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> +
+> +	return 0;
+> +}
+> +
+> +static int fme_mgr_write(struct fpga_manager *mgr,
+> +			 const char *buf, size_t count)
+> +{
+> +	struct device *dev = &mgr->dev;
+> +	struct fme_mgr_priv *priv = mgr->priv;
+> +	void __iomem *fme_pr = priv->ioaddr;
+> +	u64 pr_ctrl, pr_status, pr_data;
+> +	int delay = 0, pr_credit, i = 0;
+> +
+> +	dev_dbg(dev, "start request\n");
+> +
+> +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> +	pr_ctrl |= FME_PR_CTRL_PR_START;
+> +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> +
+> +	dev_dbg(dev, "pushing data from bitstream to HW\n");
+> +
+> +	/*
+> +	 * driver can push data to PR hardware using PR_DATA register once HW
+> +	 * has enough pr_credit (> 1), pr_credit reduces one for every 32bit
+> +	 * pr data write to PR_DATA register. If pr_credit <= 1, driver needs
+> +	 * to wait for enough pr_credit from hardware by polling.
+> +	 */
+> +	pr_status = readq(fme_pr + FME_PR_STS);
+> +	pr_credit = FIELD_GET(FME_PR_STS_PR_CREDIT, pr_status);
+> +
+> +	while (count > 0) {
+> +		while (pr_credit <= 1) {
+> +			if (delay++ > PR_WAIT_TIMEOUT) {
+> +				dev_err(dev, "PR_CREDIT timeout\n");
+> +				return -ETIMEDOUT;
+> +			}
+> +			udelay(1);
+> +
+> +			pr_status = readq(fme_pr + FME_PR_STS);
+> +			pr_credit = FIELD_GET(FME_PR_STS_PR_CREDIT, pr_status);
+> +		}
+> +
+> +		if (count < 4) {
+> +			WARN_ON(1);
+Maybe an error message instead of WARN_ON()? How about "Invalid PR
+bitstream size" ?
+> +			return -EINVAL;
+> +		}
+> +
+> +		pr_data = 0;
+> +		pr_data |= FIELD_PREP(FME_PR_DATA_PR_DATA_RAW,
+> +				      *(((u32 *)buf) + i));
+> +		writeq(pr_data, fme_pr + FME_PR_DATA);
+> +		count -= 4;
+> +		pr_credit--;
+> +		i++;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static int fme_mgr_write_complete(struct fpga_manager *mgr,
+> +				  struct fpga_image_info *info)
+> +{
+> +	struct device *dev = &mgr->dev;
+> +	struct fme_mgr_priv *priv = mgr->priv;
+> +	void __iomem *fme_pr = priv->ioaddr;
+> +	u64 pr_ctrl;
+> +
+> +	pr_ctrl = readq(fme_pr + FME_PR_CTRL);
+> +	pr_ctrl |= FME_PR_CTRL_PR_COMPLETE;
+> +	writeq(pr_ctrl, fme_pr + FME_PR_CTRL);
+> +
+> +	dev_dbg(dev, "green bitstream push complete\n");
+> +	dev_dbg(dev, "waiting for HW to release PR resource\n");
+> +
+> +	if (readq_poll_timeout(fme_pr + FME_PR_CTRL, pr_ctrl,
+> +			       !(pr_ctrl & FME_PR_CTRL_PR_START), 1,
+> +			       PR_WAIT_TIMEOUT)) {
+> +		dev_err(dev, "PR Completion ACK timeout.\n");
+> +		return -ETIMEDOUT;
+> +	}
+> +
+> +	dev_dbg(dev, "PR operation complete, checking status\n");
+> +	priv->pr_error = fme_mgr_pr_error_handle(fme_pr);
+> +	if (priv->pr_error) {
+> +		dev_dbg(dev, "PR error detected %llx\n",
+> +			(unsigned long long)priv->pr_error);
+> +		return -EIO;
+> +	}
+> +
+> +	dev_dbg(dev, "PR done successfully\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static enum fpga_mgr_states fme_mgr_state(struct fpga_manager *mgr)
+> +{
+> +	return FPGA_MGR_STATE_UNKNOWN;
+> +}
+> +
+> +static u64 fme_mgr_status(struct fpga_manager *mgr)
+> +{
+> +	struct fme_mgr_priv *priv = mgr->priv;
+> +
+> +	return pr_error_to_mgr_status(priv->pr_error);
+> +}
+> +
+> +static const struct fpga_manager_ops fme_mgr_ops = {
+> +	.write_init = fme_mgr_write_init,
+> +	.write = fme_mgr_write,
+> +	.write_complete = fme_mgr_write_complete,
+> +	.state = fme_mgr_state,
+> +	.status = fme_mgr_status,
+> +};
+> +
+> +static int fme_mgr_probe(struct platform_device *pdev)
+> +{
+> +	struct dfl_fme_mgr_pdata *pdata = dev_get_platdata(&pdev->dev);
+> +	struct device *dev = &pdev->dev;
+> +	struct fme_mgr_priv *priv;
+> +	struct fpga_manager *mgr;
+> +	struct resource *res;
+> +	int ret;
+> +
+> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> +	if (!priv)
+> +		return -ENOMEM;
+> +
+> +	if (pdata->ioaddr)
+> +		priv->ioaddr = pdata->ioaddr;
+> +
+> +	if (!priv->ioaddr) {
+> +		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +		priv->ioaddr = devm_ioremap_resource(dev, res);
+> +		if (IS_ERR(priv->ioaddr))
+> +			return PTR_ERR(priv->ioaddr);
+> +	}
+> +
+> +	mgr = fpga_mgr_create(dev, "DFL FME FPGA Manager",
+> +			      &fme_mgr_ops, priv);
+> +	if (!mgr)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, mgr);
+> +
+> +	ret = fpga_mgr_register(mgr);
+> +	if (ret)
+> +		fpga_mgr_free(mgr);
+> +
+> +	return ret;
+> +}
+> +
+> +static int fme_mgr_remove(struct platform_device *pdev)
+> +{
+> +	struct fpga_manager *mgr = platform_get_drvdata(pdev);
+> +
+> +	fpga_mgr_unregister(mgr);
+> +
+> +	return 0;
+> +}
+> +
+> +static struct platform_driver fme_mgr_driver = {
+> +	.driver	= {
+> +		.name    = DFL_FPGA_FME_MGR,
+> +	},
+> +	.probe   = fme_mgr_probe,
+> +	.remove  = fme_mgr_remove,
+> +};
+> +
+> +module_platform_driver(fme_mgr_driver);
+> +
+> +MODULE_DESCRIPTION("FPGA Manager for DFL FPGA Management Engine");
+> +MODULE_AUTHOR("Intel Corporation");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:dfl-fme-mgr");
+> -- 
+> 1.8.3.1
+> 
+
+Thanks,
+
+Moritz
