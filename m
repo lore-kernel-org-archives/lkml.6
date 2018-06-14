@@ -2,130 +2,104 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 31F2BC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:39:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 58687C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC41B208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:39:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04F70208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:41:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="s6dl6BF3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC41B208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="JPckNE5a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04F70208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755387AbeFNTje (ORCPT
+        id S1755316AbeFNTl4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 15:39:34 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:51005 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755234AbeFNTjc (ORCPT
+        Thu, 14 Jun 2018 15:41:56 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:43158 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754783AbeFNTly (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 15:39:32 -0400
-Received: by mail-wm0-f66.google.com with SMTP id e16-v6so12417418wmd.0;
-        Thu, 14 Jun 2018 12:39:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=7/VwfvDOIgbM1idBc27xHY6hWSKZkVGC47yrwOMenOQ=;
-        b=s6dl6BF3vZL3wmnGb588DsRoR6Zwn4/3Xa5X4vrwGnKFsSGcPdJ2Vs3uSMvUbOUwsO
-         xRRxIe0fszMctlVWxRb5qSWECsj5Nm8bgtZJwb47shcwrYE0fuMOI6oRdLol4hXYxWo/
-         1XsxB1HYrm4vyXKq6SRcxBmx3jV36q4iv3o7Nx+ZXgtDIyBngiXzqG+IRKKUqLPzx2EG
-         66aUJbiw9+SsKFqf/kcVF/rBje40/mLtrTSGuIV9pr287pjLQ8kNb9EPEW/6mZlzJyrG
-         LYIjXcm2DlyaFfwiCoUiw3eSx5B5zqqcRKuiy7D2wVV5q3CpAFIdPHURbOGMFqjDpLHA
-         dAbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=7/VwfvDOIgbM1idBc27xHY6hWSKZkVGC47yrwOMenOQ=;
-        b=D+RThd6FoKDWLJ57G+nSD67OkE0QBKi22gZ6YNZRDiVhGqYJ426C6JvN45ty0Rrusl
-         mBhfT8cgM/UNztMKoVNutoBb36D/wEBUktCXJ9FnGq6xozQo//mXi1udwsvFfUl3av8S
-         YTZzBQZRDjBTId0WRojCgRjZd30gy9nCJNtRT5JzB9buMoUaMxfz8LUhrIpLuKBnPr53
-         qRLNq2mlUXG/E9RE69EiImqHPf+d1ndPP8E/T1wghTmGta+nQP63/tSUP3geadRdocvW
-         glnyMFMqDxIFhES24GMi170ZdDGf8Jf2EQi5w1AJV8+QP8epK5rWpYK7R/pE0FQkEQVd
-         4Xqw==
-X-Gm-Message-State: APt69E1dbuLl7ByD/Drvx7VTtWhuxmyE+TSuXRq/6MiMwWaucjVCTk+9
-        0ElbbFIZajBJ/RXIYaIq+2U=
-X-Google-Smtp-Source: ADUXVKIn79+SeVB6/BhmEgZB06JeR38h08UmDnqtiLnk3m+0zyZ2bghHCRuh9GrLpY+S7NPRLs5cPw==
-X-Received: by 2002:a1c:ed07:: with SMTP id l7-v6mr3095203wmh.139.1529005170994;
-        Thu, 14 Jun 2018 12:39:30 -0700 (PDT)
-Received: from Red.localdomain (LFbn-NIC-1-240-64.w2-15.abo.wanadoo.fr. [2.15.84.64])
-        by smtp.googlemail.com with ESMTPSA id p196-v6sm7974367wmb.20.2018.06.14.12.39.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 12:39:30 -0700 (PDT)
-From:   Corentin Labbe <clabbe.montjoie@gmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        maxime.ripard@bootlin.com, wens@csie.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Corentin Labbe <clabbe.montjoie@gmail.com>
-Subject: [PATCH] crypto: sun4i-ss: prevent deadlock on emulated hardware
-Date:   Thu, 14 Jun 2018 21:36:59 +0200
-Message-Id: <20180614193659.29261-1-clabbe.montjoie@gmail.com>
-X-Mailer: git-send-email 2.16.4
+        Thu, 14 Jun 2018 15:41:54 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5EJd7BN152840;
+        Thu, 14 Jun 2018 19:41:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=WvY3Q8+loLGioZ4ir2o44KKapF8Wh5U0mVrNRbg0gpM=;
+ b=JPckNE5ah69iOf6c0h+Ad+Y/HNiRP+GcY2sUr34FEAy4CY2xL7yg9D8MRTGFSno2QJIz
+ +Yc8fFYY4ldBE6g0HJ8lqwvioDyr/2uKmfhnfQBRpLQVWfifW6UpHH4X0ceqRysPhlg9
+ OomgWfnLfx1705Wy4A3fjIx2F4PR1OsAbDuAMEt6pBGqiMyj/Ljq1JCFbhbsMJ/3mGCT
+ K/9SZvggDDJBsB1QN4P2eoEJWCP4bnIeOL6jTJz8T/aybVKQrHs1csJxlRN+XXXFWfXL
+ 9lsOneNTv0SdfEerjhrsnG0Zbvl7vqQ34ykivJpQtVmi1NFJS14hASqBp5hk+7LR5z5E Rw== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2jk0xrefnh-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 19:41:50 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5EJfmJ6008900
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 14 Jun 2018 19:41:49 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5EJfmut007344;
+        Thu, 14 Jun 2018 19:41:48 GMT
+Received: from mwanda (/41.202.241.23)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jun 2018 12:41:47 -0700
+Date:   Thu, 14 Jun 2018 22:41:39 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Javier Martinez <javiermlinux@gmail.com>
+Cc:     abbotti@mev.co.uk, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, gregkh@linuxfoundation.org
+Subject: Re: [PATCH] Staging: comedi: ssv_dnp: Remove unnecessary comment
+Message-ID: <20180614194139.ou3cha5pgtvbbm2u@mwanda>
+References: <20180614171911.GA1945@javier-Z97X>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614171911.GA1945@javier-Z97X>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8924 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=690
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806140216
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running a qemu emulated cubieboard with sun4i-ss driver enabled led to a never
-ending boot.
-This is due to sun4i-ss deadlocked and taking all cpu in an infinite loop.
-Since the crypto hardware is not implemented, all registers are read as 0.
-So sun4i-ss will never progress in any operations. (TX_CNT being always 0)
+On Thu, Jun 14, 2018 at 01:19:12PM -0400, Javier Martinez wrote:
+> Removal of a comment that was not needed at all.
+> We can clearly see that they are include/header files.
+> 
+> Signed-off-by: Javier Martinez <javiermlinux@gmail.com>
+> ---
+>  drivers/staging/comedi/drivers/ssv_dnp.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/staging/comedi/drivers/ssv_dnp.c b/drivers/staging/comedi/drivers/ssv_dnp.c
+> index 0628060e42ca..50de018ab9bb 100644
+> --- a/drivers/staging/comedi/drivers/ssv_dnp.c
+> +++ b/drivers/staging/comedi/drivers/ssv_dnp.c
+> @@ -16,7 +16,6 @@
+>   * Status: unknown
+>   */
+>  
+> -/* include files ----------------------------------------------------------- */
+>  
 
-The first idea is to add a "TX_CNT always zero timeout" but this made cipher/hash loops
-more complex and prevent a case that never happen on real hardware.
+You need to remove a blank line or I think checkpatch.pl will complain
+if you re-run it over the whole file.  (You aren't allowed to have
+multiple blank lines in a row).
 
-The best way to fix is to check at probe time if we run on a virtual
-machine with hardware emulated but non-implemented and prevent
-sun4i-ss to be loaded in that case.
-Letting sun4i-ss to load is useless anyway since all crypto algorithm will be
-disabled since they will fail crypto selftests.
+regards,
+dan carpenter
 
-Tested-on: qemu-cubieboard
-Tested-on: cubieboard2
-
-Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
----
- drivers/crypto/sunxi-ss/sun4i-ss-core.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-core.c b/drivers/crypto/sunxi-ss/sun4i-ss-core.c
-index a81d89b3b7d8..a178e80adcf3 100644
---- a/drivers/crypto/sunxi-ss/sun4i-ss-core.c
-+++ b/drivers/crypto/sunxi-ss/sun4i-ss-core.c
-@@ -341,9 +341,18 @@ static int sun4i_ss_probe(struct platform_device *pdev)
- 	 * I expect to be a sort of Security System Revision number.
- 	 * Since the A80 seems to have an other version of SS
- 	 * this info could be useful
-+	 * Detect virtual machine with non-implemented hardware
-+	 * (qemu-cubieboard) by checking the register value after a write to it.
-+	 * On non-implemented hardware, all registers are read as 0.
-+	 * On real hardware we should have a value > 0.
- 	 */
- 	writel(SS_ENABLED, ss->base + SS_CTL);
- 	v = readl(ss->base + SS_CTL);
-+	if (!v) {
-+		dev_err(&pdev->dev, "Qemu with non-implemented SS detected.\n");
-+		err = -ENODEV;
-+		goto error_rst;
-+	}
- 	v >>= 16;
- 	v &= 0x07;
- 	dev_info(&pdev->dev, "Die ID %d\n", v);
-@@ -398,6 +407,7 @@ static int sun4i_ss_probe(struct platform_device *pdev)
- 			break;
- 		}
- 	}
-+error_rst:
- 	if (ss->reset)
- 		reset_control_assert(ss->reset);
- error_clk:
--- 
-2.16.4
 
