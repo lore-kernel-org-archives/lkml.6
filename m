@@ -2,159 +2,355 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5E6FDC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:56:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 056DBC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:56:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ADDF208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:56:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ADDF208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id A56B8208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:56:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A56B8208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754872AbeFNI4G (ORCPT
+        id S1754898AbeFNI4R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:56:06 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:49178 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1754607AbeFNI4C (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:56:02 -0400
-X-UUID: d94c3662b54649cea555875d62548632-20180614
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
-        (envelope-from <sean.wang@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 2027145481; Thu, 14 Jun 2018 16:55:59 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1210.3; Thu, 14 Jun 2018 16:55:57 +0800
-Received: from mtkswgap22.mediatek.inc (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
- Transport; Thu, 14 Jun 2018 16:55:50 +0800
-From:   <sean.wang@mediatek.com>
-To:     <linus.walleij@linaro.org>, <devicetree@vger.kernel.org>,
-        <linux-mediatek@lists.infradead.org>
-CC:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Kevin Hilman <khilman@baylibre.com>, <stable@vger.kernel.org>
-Subject: [PATCH] pinctrl: mt7622: fix a kernel panic when pio don't work as EINT controller
-Date:   Thu, 14 Jun 2018 16:55:49 +0800
-Message-ID: <6615b85997509d659358d33eab2d280e235b8659.1528966092.git.sean.wang@mediatek.com>
-X-Mailer: git-send-email 1.7.9.5
+        Thu, 14 Jun 2018 04:56:17 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44910 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752833AbeFNI4O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:56:14 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0C7DC4023334;
+        Thu, 14 Jun 2018 08:56:14 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-99.pek2.redhat.com [10.72.12.99])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 67CA911166E1;
+        Thu, 14 Jun 2018 08:56:11 +0000 (UTC)
+Date:   Thu, 14 Jun 2018 16:56:07 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     Lianbo Jiang <lijiang@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        thomas.lendacky@amd.com
+Subject: Re: [PATCH 2/2 V2] Support kdump when AMD secure memory encryption
+ is active
+Message-ID: <20180614085607.GA12816@dhcp-128-65.nay.redhat.com>
+References: <20180614084748.9617-1-lijiang@redhat.com>
+ <20180614084748.9617-3-lijiang@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614084748.9617-3-lijiang@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 08:56:14 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 08:56:14 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Wang <sean.wang@mediatek.com>
+On 06/14/18 at 04:47pm, Lianbo Jiang wrote:
+> When sme enabled on AMD server, we also need to support kdump. Because
+> the memory is encrypted in the first kernel, we will remap the old memory
+> encrypted to the second kernel(crash kernel), and sme is also enabled in
+> the second kernel, otherwise the old memory encrypted can not be decrypted.
+> Because simply changing the value of a C-bit on a page will not
+> automatically encrypt the existing contents of a page, and any data in the
+> page prior to the C-bit modification will become unintelligible. A page of
+> memory that is marked encrypted will be automatically decrypted when read
+> from DRAM and will be automatically encrypted when written to DRAM.
+> 
+> For the kdump, it is necessary to distinguish whether the memory is
+> encrypted. Furthermore, we should also know which part of the memory is
+> encrypted or decrypted. We will appropriately remap the memory according
+> to the specific situation in order to tell cpu how to deal with the data(
+> encrypted or unencrypted). For example, when sme enabled, if the old memory
+> is encrypted, we will remap the old memory in encrypted way, which will
+> automatically decrypt the old memory encrypted when we read those data from
+> the remapping address.
+> 
+>  ----------------------------------------------
+> | first-kernel | second-kernel | kdump support |
+> |      (mem_encrypt=on|off)    |   (yes|no)    |
+> |--------------+---------------+---------------|
+> |     on       |     on        |     yes       |
+> |     off      |     off       |     yes       |
+> |     on       |     off       |     no        |
+> |     off      |     on        |     no        |
+> |______________|_______________|_______________|
+> 
+> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
+> ---
+> Some changes based on V1:
+> 1. remove the '#ifdef' stuff throughout this patch.
+> 2. put some logic into the early_memremap_pgprot_adjust() and clean the
+> previous unnecessary changes, for example: arch/x86/include/asm/dmi.h,
+> arch/x86/kernel/acpi/boot.c, drivers/acpi/tables.c.
+> 3. rewrite two functions, copy_oldmem_page() and
+> copy_oldmem_page_encrypted().
+> 4. distingish sme_active() and sev_active(), when a distinction doesn't
+> need, mem_encrypt_active() will be used.
+> 5. clean compile warning in copy_device_table().
+> 
+>  arch/x86/kernel/crash_dump_64.c | 42 +++++++++++++++++++++++++++++++----------
+>  arch/x86/mm/ioremap.c           |  4 ++++
+>  drivers/iommu/amd_iommu_init.c  | 14 +++++++++++++-
+>  fs/proc/vmcore.c                | 20 +++++++++++++++-----
+>  include/linux/crash_dump.h      |  5 +++++
+>  kernel/kexec_core.c             | 12 ++++++++++++
+>  6 files changed, 81 insertions(+), 16 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
+> index 4f2e077..a2c7b13 100644
+> --- a/arch/x86/kernel/crash_dump_64.c
+> +++ b/arch/x86/kernel/crash_dump_64.c
+> @@ -11,6 +11,23 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/io.h>
+>  
+> +static ssize_t copy_to(void *to, void *vaddr, unsigned long offset,
+> +		       size_t size, int userbuf)
+> +{
+> +	if (userbuf) {
+> +		if (copy_to_user(to, vaddr + offset, size)) {
+> +			iounmap(vaddr);
+> +			return -ENOMEM;
+> +		}
+> +	} else
+> +		memcpy(to, vaddr + offset, size);
+> +
+> +	set_iounmap_nonlazy();
+> +	iounmap(vaddr);
+> +
+> +	return size;
+> +}
 
-The function, external interrupt controller, is made as an optional to
-mt7622 pinctrl. But if we don't want pio behaves as an external interrupt
-controller, it would lead to hw->eint not be created properly and then
-will cause 'kernel NULL pointer' issue when gpiochip try to call .to_irq
-or .set_config. To fix it, check hw->eint before accessing the member.
+Hmm, the function name copy_to is strange
 
-[    1.339494] Unable to handle kernel NULL pointer dereference at virtual
-	       address 00000010
-[    1.347857] Mem abort info:
-[    1.350742]   ESR = 0x96000005
-[    1.353905]   Exception class = DABT (current EL), IL = 32 bits
-[    1.360024]   SET = 0, FnV = 0
-[    1.363185]   EA = 0, S1PTW = 0
-[    1.366431] Data abort info:
-[    1.369405]   ISV = 0, ISS = 0x00000005
-[    1.373363]   CM = 0, WnR = 0
-[    1.376437] [0000000000000010] user address but active_mm is swapper
-[    1.383005] Internal error: Oops: 96000005 [#1] PREEMPT SMP
-[    1.388748] Modules linked in:
-[    1.391897] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.16.0-rc1+ #344
-[    1.398625] Hardware name: MediaTek MT7622 RFB1 board (DT)
-[    1.404279] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    1.409221] pc : mtk_eint_find_irq+0x8/0x24
-[    1.413532] lr : mtk_gpio_to_irq+0x20/0x28
-[    1.417749] sp : ffffff800801baf0
-[    1.421161] x29: ffffff800801baf0 x28: ffffff8008792f40
-[    1.426637] x27: ffffff800886b000 x26: ffffff8008615620
-[    1.432113] x25: ffffffc00e4dbdc8 x24: ffffff80087b8000
-[    1.437589] x23: ffffffc00325a000 x22: ffffffc00325a010
-[    1.443066] x21: ffffffc0033dec18 x20: 00000000ffffffea
-[    1.448542] x19: ffffffc00e4db800 x18: 0000000000000130
-[    1.454018] x17: 000000000000000e x16: 0000000000000007
-[    1.459494] x15: ffffff80085ee000 x14: 0000000000000001
-[    1.464970] x13: 0000000000000001 x12: 0000000000000010
-[    1.470446] x11: 0101010101010101 x10: 0000000000000880
-[    1.475922] x9 : ffffff800801b990 x8 : ffffffc0030688e0
-[    1.481399] x7 : ffffff80080c0660 x6 : ffffffc00e4dbbb0
-[    1.486875] x5 : 0000000000000000 x4 : 0000000000000000
-[    1.492351] x3 : ffffff80082a92f4 x2 : 00000000fffffffa
-[    1.497826] x1 : 0000000000000051 x0 : 0000000000000000
-[    1.503305] Process swapper/0 (pid: 1, stack limit = 0x0000000054e053bd)
-[    1.510210] Call trace:
-[    1.512727]  mtk_eint_find_irq+0x8/0x24
-[    1.516677]  mtk_gpio_to_irq+0x20/0x28
-[    1.520539]  gpiod_to_irq+0x48/0x60
-[    1.524135]  mmc_gpiod_request_cd_irq+0x3c/0xc4
-[    1.528804]  mmc_start_host+0x6c/0x8c
-[    1.532575]  mmc_add_host+0x58/0x7c
-[    1.536168]  msdc_drv_probe+0x4fc/0x67c
-[    1.540121]  platform_drv_probe+0x58/0xa4
-[    1.544251]  driver_probe_device+0x204/0x44c
-[    1.548649]  __driver_attach+0x84/0xf8
-[    1.552512]  bus_for_each_dev+0x68/0xa0
-[    1.556461]  driver_attach+0x20/0x28
-[    1.560142]  bus_add_driver+0xec/0x240
-[    1.564002]  driver_register+0x98/0xe4
-[    1.567863]  __platform_driver_register+0x48/0x50
-[    1.572711]  mt_msdc_driver_init+0x18/0x20
-[    1.576932]  do_one_initcall+0x98/0x130
-[    1.580886]  kernel_init_freeable+0x13c/0x1d4
-[    1.585375]  kernel_init+0x10/0xf8
-[    1.588879]  ret_from_fork+0x10/0x18
-[    1.592564] Code: a8c67bfd d65f03c0 a9bf7bfd 910003fd (f9400800)
-[    1.598849] ---[ end trace 4bbcb7bc30e98492 ]---
-[    1.603677] Kernel panic - not syncing: Attempted to kill init!
-	       exitcode=0x0000000b
-[    1.603677]
+Also since iounmap is needed in the code path but not paired with
+ioremap, it is bad.  If you really want this function then need moving
+the iounmap related code to caller function.  And better to rename this
+function as eg. copy_oldmem()
 
-cc: Kevin Hilman <khilman@baylibre.com>
-Cc: stable@vger.kernel.org
-Fixes: e6dabd38d8e7 ("pinctrl: mediatek: add EINT support to MT7622 SoC")
-Signed-off-by: Sean Wang <sean.wang@mediatek.com>
----
- drivers/pinctrl/mediatek/pinctrl-mt7622.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+> +
+>  /**
+>   * copy_oldmem_page - copy one page from "oldmem"
+>   * @pfn: page frame number to be copied
+> @@ -36,15 +53,20 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
+>  	if (!vaddr)
+>  		return -ENOMEM;
+>  
+> -	if (userbuf) {
+> -		if (copy_to_user(buf, vaddr + offset, csize)) {
+> -			iounmap(vaddr);
+> -			return -EFAULT;
+> -		}
+> -	} else
+> -		memcpy(buf, vaddr + offset, csize);
+> +	return copy_to(buf, vaddr, offset, csize, userbuf);
+> +}
+>  
+> -	set_iounmap_nonlazy();
+> -	iounmap(vaddr);
+> -	return csize;
+> +ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
+> +		size_t csize, unsigned long offset, int userbuf)
+> +{
+> +	void  *vaddr;
+> +
+> +	if (!csize)
+> +		return 0;
+> +
+> +	vaddr = ioremap_encrypted(pfn << PAGE_SHIFT, PAGE_SIZE);
+> +	if (!vaddr)
+> +		return -ENOMEM;
+> +
+> +	return copy_to(buf, vaddr, offset, csize, userbuf);
+>  }
+> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+> index 24e0920..e365fc4 100644
+> --- a/arch/x86/mm/ioremap.c
+> +++ b/arch/x86/mm/ioremap.c
+> @@ -24,6 +24,7 @@
+>  #include <asm/pgalloc.h>
+>  #include <asm/pat.h>
+>  #include <asm/setup.h>
+> +#include <linux/crash_dump.h>
+>  
+>  #include "physaddr.h"
+>  
+> @@ -696,6 +697,9 @@ pgprot_t __init early_memremap_pgprot_adjust(resource_size_t phys_addr,
+>  	if (encrypted_prot && memremap_should_map_decrypted(phys_addr, size))
+>  		encrypted_prot = false;
+>  
+> +	if (sme_active() && is_kdump_kernel())
+> +		encrypted_prot = false;
+> +
+>  	return encrypted_prot ? pgprot_encrypted(prot)
+>  			      : pgprot_decrypted(prot);
+>  }
+> diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
+> index 904c575..5e535a6 100644
+> --- a/drivers/iommu/amd_iommu_init.c
+> +++ b/drivers/iommu/amd_iommu_init.c
+> @@ -889,11 +889,23 @@ static bool copy_device_table(void)
+>  	}
+>  
+>  	old_devtb_phys = entry & PAGE_MASK;
+> +	/*
+> +	 *  When sme enable in the first kernel, old_devtb_phys includes the
+> +	 *  memory encryption mask(sme_me_mask), we must remove the memory
+> +	 *  encryption mask to obtain the true physical address in kdump mode.
+> +	 */
+> +	if (mem_encrypt_active() && is_kdump_kernel())
+> +		old_devtb_phys = __sme_clr(old_devtb_phys);
+>  	if (old_devtb_phys >= 0x100000000ULL) {
+>  		pr_err("The address of old device table is above 4G, not trustworthy!\n");
+>  		return false;
+>  	}
+> -	old_devtb = memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
+> +	if (mem_encrypt_active() && is_kdump_kernel())
+> +		old_devtb = (void *)ioremap_encrypted(old_devtb_phys,
+> +						     dev_table_size);
+> +	else
+> +		old_devtb = memremap(old_devtb_phys,
+> +				    dev_table_size, MEMREMAP_WB);
+>  	if (!old_devtb)
+>  		return false;
+>  
+> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+> index a45f0af..4d0c884 100644
+> --- a/fs/proc/vmcore.c
+> +++ b/fs/proc/vmcore.c
+> @@ -25,6 +25,8 @@
+>  #include <linux/uaccess.h>
+>  #include <asm/io.h>
+>  #include "internal.h"
+> +#include <linux/mem_encrypt.h>
+> +#include <asm/pgtable.h>
+>  
+>  /* List representing chunks of contiguous memory areas and their offsets in
+>   * vmcore file.
+> @@ -86,7 +88,8 @@ static int pfn_is_ram(unsigned long pfn)
+>  
+>  /* Reads a page from the oldmem device from given offset. */
+>  static ssize_t read_from_oldmem(char *buf, size_t count,
+> -				u64 *ppos, int userbuf)
+> +				u64 *ppos, int userbuf,
+> +				bool encrypted)
+>  {
+>  	unsigned long pfn, offset;
+>  	size_t nr_bytes;
+> @@ -108,8 +111,13 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
+>  		if (pfn_is_ram(pfn) == 0)
+>  			memset(buf, 0, nr_bytes);
+>  		else {
+> -			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
+> +			if (encrypted)
+> +				tmp = copy_oldmem_page_encrypted(pfn, buf,
+> +					       nr_bytes, offset, userbuf);
+> +			else
+> +				tmp = copy_oldmem_page(pfn, buf, nr_bytes,
+>  						offset, userbuf);
+> +
+>  			if (tmp < 0)
+>  				return tmp;
+>  		}
+> @@ -143,7 +151,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
+>   */
+>  ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+>  {
+> -	return read_from_oldmem(buf, count, ppos, 0);
+> +	return read_from_oldmem(buf, count, ppos, 0, sev_active());
+>  }
+>  
+>  /*
+> @@ -151,7 +159,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
+>   */
+>  ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
+>  {
+> -	return read_from_oldmem(buf, count, ppos, 0);
+> +	return read_from_oldmem(buf, count, ppos, 0, sme_active());
+>  }
+>  
+>  /*
+> @@ -161,6 +169,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
+>  				  unsigned long from, unsigned long pfn,
+>  				  unsigned long size, pgprot_t prot)
+>  {
+> +	prot = pgprot_encrypted(prot);
+>  	return remap_pfn_range(vma, from, pfn, size, prot);
+>  }
+>  
+> @@ -235,7 +244,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
+>  					    m->offset + m->size - *fpos,
+>  					    buflen);
+>  			start = m->paddr + *fpos - m->offset;
+> -			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
+> +			tmp = read_from_oldmem(buffer, tsz, &start, userbuf,
+> +						mem_encrypt_active());
+>  			if (tmp < 0)
+>  				return tmp;
+>  			buflen -= tsz;
+> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
+> index f7ac2aa..28b0a7c 100644
+> --- a/include/linux/crash_dump.h
+> +++ b/include/linux/crash_dump.h
+> @@ -25,6 +25,11 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
+>  
+>  extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
+>  						unsigned long, int);
+> +extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
+> +					  size_t csize, unsigned long offset,
+> +					  int userbuf);
+> +#define copy_oldmem_page_encrypted copy_oldmem_page_encrypted
+> +
+>  void vmcore_cleanup(void);
+>  
+>  /* Architecture code defines this if there are other possible ELF
+> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+> index 20fef1a..3c22a9b 100644
+> --- a/kernel/kexec_core.c
+> +++ b/kernel/kexec_core.c
+> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
+>  		}
+>  	}
+>  
+> +	if (pages) {
+> +		unsigned int count, i;
+> +
+> +		pages->mapping = NULL;
+> +		set_page_private(pages, order);
+> +		count = 1 << order;
+> +		for (i = 0; i < count; i++)
+> +			SetPageReserved(pages + i);
+> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
+> +	}
+>  	return pages;
+>  }
+>  
+> @@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>  			result  = -ENOMEM;
+>  			goto out;
+>  		}
+> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
+>  		ptr = kmap(page);
+>  		ptr += maddr & ~PAGE_MASK;
+>  		mchunk = min_t(size_t, mbytes,
+> @@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
+>  			result = copy_from_user(ptr, buf, uchunk);
+>  		kexec_flush_icache_page(page);
+>  		kunmap(page);
+> +		arch_kexec_pre_free_pages(page_address(page), 1);
+>  		if (result) {
+>  			result = -EFAULT;
+>  			goto out;
+> -- 
+> 2.9.5
+> 
 
-diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7622.c b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-index ad6da11..e3f1ab2 100644
---- a/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-+++ b/drivers/pinctrl/mediatek/pinctrl-mt7622.c
-@@ -1459,6 +1459,9 @@ static int mtk_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
- 	struct mtk_pinctrl *hw = gpiochip_get_data(chip);
- 	unsigned long eint_n;
- 
-+	if (!hw->eint)
-+		return -ENOTSUPP;
-+
- 	eint_n = offset;
- 
- 	return mtk_eint_find_irq(hw->eint, eint_n);
-@@ -1471,7 +1474,8 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
- 	unsigned long eint_n;
- 	u32 debounce;
- 
--	if (pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE)
-+	if (!hw->eint ||
-+	    pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE)
- 		return -ENOTSUPP;
- 
- 	debounce = pinconf_to_config_argument(config);
--- 
-2.7.4
-
+Thanks
+Dave
