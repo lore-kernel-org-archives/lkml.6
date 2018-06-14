@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 05457C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:14:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B0ACDC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFA81208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:14:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFA81208D8
+	by mail.kernel.org (Postfix) with ESMTP id 71E5A208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71E5A208D4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754747AbeFNHOo (ORCPT
+        id S1754773AbeFNHOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:14:44 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:46168 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1753009AbeFNHOj (ORCPT
+        Thu, 14 Jun 2018 03:14:46 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:42791 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1754605AbeFNHOk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:14:39 -0400
-X-UUID: 23e7db0be7c648f3baaefdb17d0cbe2c-20180614
-Received: from mtkexhb02.mediatek.inc [(172.21.101.103)] by mailgw02.mediatek.com
+        Thu, 14 Jun 2018 03:14:40 -0400
+X-UUID: b517384dfd664930ac6ff0973f9fada8-20180614
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
         (envelope-from <sean.wang@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 730357532; Thu, 14 Jun 2018 15:14:35 +0800
+        with ESMTP id 1895804412; Thu, 14 Jun 2018 15:14:35 +0800
 Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
  15.0.1210.3; Thu, 14 Jun 2018 15:14:33 +0800
 Received: from mtkswgap22.mediatek.inc (172.21.77.33) by mtkcas07.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1210.3 via Frontend
@@ -41,10 +41,12 @@ CC:     <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-mediatek@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH v3 0/7] add support for Bluetooth on MT7622 SoC
-Date:   Thu, 14 Jun 2018 15:14:22 +0800
-Message-ID: <cover.1528960095.git.sean.wang@mediatek.com>
+Subject: [PATCH v3 4/7] Bluetooth: Add new quirk for non-persistent setup settings
+Date:   Thu, 14 Jun 2018 15:14:26 +0800
+Message-ID: <e9296a6ac92692154ed6fdedbbbfed8648776212.1528960095.git.sean.wang@mediatek.com>
 X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <cover.1528960095.git.sean.wang@mediatek.com>
+References: <cover.1528960095.git.sean.wang@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MTK:  N
@@ -55,77 +57,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Sean Wang <sean.wang@mediatek.com>
 
-v3 and changes since v2
-* all changes happen on patch 6
- - fix up SPDX license style for btmtkuart.h.
- - change firmware download from in ACL data to in HCI commands
-   and then remove unused mtk_acl_wmt_sync and related code.
- - add a workaround replacing bad vendor event id 0xe4 with 0xff every
-   vendor should use.
- - add a sanity check for mtk_hci_wmt_sync to verifying if
-   input parameters are valid.
- - add an atomic_inc(&bdev->hdev->cmd_cnt) for __hci_cmd_sync_ev.
- - be changed to use firmware with a header called mt7622pr2h.bin.
+Add a new quirk HCI_QUIRK_NON_PERSISTENT_SETUP allowing that a quirk that
+runs setup() after every open() and not just after the first open().
 
-v2 and changes since v1
- - Dropped patches already being applied
- - Rewirte the whole driver using btuart [1], and add slight extension
-   of btuart to fit into btmtkuart driver. Beware that [1] is also pulled
-   into one part of the series for avoiding any breakage when the patchset
-   is being compiled.
+Signed-off-by: Sean Wang <sean.wang@mediatek.com>
+---
+ include/net/bluetooth/hci.h | 9 +++++++++
+ net/bluetooth/hci_core.c    | 3 ++-
+ 2 files changed, 11 insertions(+), 1 deletion(-)
 
-[1] btuart 
-	https://www.spinics.net/lists/linux-bluetooth/msg74918.html
-
-v1:
-
-Hi,
-
-This patchset introduces built-in Bluetooth support on MT7622 SoC.
-And, it should be simple to make an extension to support other
-MediaTek SoCs with adjusting a few of changes on the initialization
-sequence of the device.
-
-Before the main driver is being introduced, a few of things about
-power-domain management should be re-worked for serdev core and MediaTek
-SCPSYS to allow the Bluetooth to properly power up.
-
-Patch 2: add a generic way attaching power domain to serdev
-Patch 3 and 4: add cleanups with reuse APIs from Linux core
-Patch 5: fix a limitation about power enablement Bluetooth depends on
-Patch 1, 6 and 7: the major part of adding Bluetooth support to MT7622
-	
-	Sean
-
-Marcel Holtmann (1):
-  Bluetooth: Add new serdev based driver for UART attached controllers
-
-Sean Wang (6):
-  dt-bindings: net: bluetooth: Add mediatek-bluetooth
-  serdev: add dev_pm_domain_attach|detach()
-  Bluetooth: Add new quirk for non-persistent setup settings
-  Bluetooth: Extend btuart driver for join more vendor devices
-  Bluetooth: mediatek: Add protocol support for MediaTek serial devices
-  MAINTAINERS: add an entry for MediaTek Bluetooth driver
-
- .../devicetree/bindings/net/mediatek-bluetooth.txt |  35 ++
- MAINTAINERS                                        |   8 +
- drivers/bluetooth/Kconfig                          |  23 +
- drivers/bluetooth/Makefile                         |   3 +
- drivers/bluetooth/btmtkuart.c                      | 355 ++++++++++++++
- drivers/bluetooth/btmtkuart.h                      | 119 +++++
- drivers/bluetooth/btuart.c                         | 527 +++++++++++++++++++++
- drivers/bluetooth/btuart.h                         |  30 ++
- drivers/tty/serdev/core.c                          |  14 +-
- include/net/bluetooth/hci.h                        |   9 +
- net/bluetooth/hci_core.c                           |   3 +-
- 11 files changed, 1124 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/net/mediatek-bluetooth.txt
- create mode 100644 drivers/bluetooth/btmtkuart.c
- create mode 100644 drivers/bluetooth/btmtkuart.h
- create mode 100644 drivers/bluetooth/btuart.c
- create mode 100644 drivers/bluetooth/btuart.h
-
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index 1668211..b37d973 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -183,6 +183,15 @@ enum {
+ 	 * during the hdev->setup vendor callback.
+ 	 */
+ 	HCI_QUIRK_NON_PERSISTENT_DIAG,
++
++	/* When this quirk is set, setup() would be run after every
++	 * open() and not just after the first open().
++	 *
++	 * This quirk can be set before hci_register_dev is called or
++	 * during the hdev->setup vendor callback.
++	 *
++	 */
++	HCI_QUIRK_NON_PERSISTENT_SETUP,
+ };
+ 
+ /* HCI device flags */
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 1dec337..b917fa31 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -1368,7 +1368,8 @@ static int hci_dev_do_open(struct hci_dev *hdev)
+ 	atomic_set(&hdev->cmd_cnt, 1);
+ 	set_bit(HCI_INIT, &hdev->flags);
+ 
+-	if (hci_dev_test_flag(hdev, HCI_SETUP)) {
++	if (hci_dev_test_flag(hdev, HCI_SETUP) ||
++	    test_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks)) {
+ 		hci_sock_dev_event(hdev, HCI_DEV_SETUP);
+ 
+ 		if (hdev->setup)
 -- 
 2.7.4
 
