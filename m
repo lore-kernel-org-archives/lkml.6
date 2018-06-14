@@ -3,45 +3,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8EAC0C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 58CBDC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B353208DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F9B1208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbEz+Y/U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B353208DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="dfbr9f+n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9B1208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965897AbeFNOLq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:11:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52756 "EHLO mail.kernel.org"
+        id S965911AbeFNOLu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:50 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965880AbeFNOLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:40 -0400
+        id S965894AbeFNOLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:46 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B235A208E1;
-        Thu, 14 Jun 2018 14:11:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45CB4208DA;
+        Thu, 14 Jun 2018 14:11:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985500;
-        bh=+rKWRwT4IWpGE7gbPt743hfjuXfcOM7FbDbrV1GIyH8=;
+        s=default; t=1528985505;
+        bh=gf53LLIzhURS8kVEQK/ItsSF3xbuBivEt+yzSr+1J6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SbEz+Y/UeoyVTmnOVbsd+2nRYwpd7f7bM4DG5ez5vtx4Fgkz7YU4TuTdRE9b4TkOB
-         RDsqazqDu8YWWWRA6ycXyQTva05JF/8rRV3NKRICnuqF9/zHQfa4AQZooRoYG0HAJp
-         JcTxhJLbKmWAA6Cl3ci35Mzg1spRRaVtHbXBAF+M=
+        b=dfbr9f+nZyxVmP4/Qfh9g5bjk717PPmvGG7ofn6EMSz9HiWfWq0i8GNMfYLR1cgS8
+         75WqVXtvhFYSRD5Re5dXmKSX7qMdrHGL/FkXmRr4XVouhHUw3I0mTPZ5gyfwe9IH8T
+         9/hOzgCojWgBQuBtOrhjTavyPbEMI92wWzRcqN/M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.9 13/30] KVM: x86: pass kvm_vcpu to kvm_read_guest_virt and kvm_write_guest_virt_system
-Date:   Thu, 14 Jun 2018 16:04:54 +0200
-Message-Id: <20180614132600.817092376@linuxfoundation.org>
+        stable@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
+Subject: [PATCH 4.9 15/30] usbip: vhci_sysfs: fix potential Spectre v1
+Date:   Thu, 14 Jun 2018 16:04:56 +0200
+Message-Id: <20180614132600.896201769@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -58,193 +60,102 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-commit ce14e868a54edeb2e30cb7a7b104a2fc4b9d76ca upstream.
+commit a0d6ec88090d7b1b008429c44532a388e29bb1bd upstream.
 
-Int the next patch the emulator's .read_std and .write_std callbacks will
-grow another argument, which is not needed in kvm_read_guest_virt and
-kvm_write_guest_virt_system's callers.  Since we have to make separate
-functions, let's give the currently existing names a nicer interface, too.
+pdev_nr and rhport can be controlled by user-space, hence leading to
+a potential exploitation of the Spectre variant 1 vulnerability.
 
-Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
+This issue was detected with the help of Smatch:
+drivers/usb/usbip/vhci_sysfs.c:238 detach_store() warn: potential spectre issue 'vhcis'
+drivers/usb/usbip/vhci_sysfs.c:328 attach_store() warn: potential spectre issue 'vhcis'
+drivers/usb/usbip/vhci_sysfs.c:338 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_ss->vdev'
+drivers/usb/usbip/vhci_sysfs.c:340 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_hs->vdev'
+
+Fix this by sanitizing pdev_nr and rhport before using them to index
+vhcis and vhci->vhci_hcd_ss->vdev respectively.
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
 Cc: stable@vger.kernel.org
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Acked-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/vmx.c |   23 ++++++++++-------------
- arch/x86/kvm/x86.c |   39 ++++++++++++++++++++++++++-------------
- arch/x86/kvm/x86.h |    4 ++--
- 3 files changed, 38 insertions(+), 28 deletions(-)
+ drivers/usb/usbip/vhci_sysfs.c |   24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -6928,8 +6928,7 @@ static int nested_vmx_check_vmptr(struct
- 			vmcs_read32(VMX_INSTRUCTION_INFO), false, &gva))
- 		return 1;
+--- a/drivers/usb/usbip/vhci_sysfs.c
++++ b/drivers/usb/usbip/vhci_sysfs.c
+@@ -24,6 +24,9 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
  
--	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &vmptr,
--				sizeof(vmptr), &e)) {
-+	if (kvm_read_guest_virt(vcpu, gva, &vmptr, sizeof(vmptr), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
-@@ -7469,8 +7468,8 @@ static int handle_vmread(struct kvm_vcpu
- 				vmx_instruction_info, true, &gva))
- 			return 1;
- 		/* _system ok, as nested_vmx_check_permission verified cpl=0 */
--		kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, gva,
--			     &field_value, (is_long_mode(vcpu) ? 8 : 4), NULL);
-+		kvm_write_guest_virt_system(vcpu, gva, &field_value,
-+					    (is_long_mode(vcpu) ? 8 : 4), NULL);
- 	}
- 
- 	nested_vmx_succeed(vcpu);
-@@ -7505,8 +7504,8 @@ static int handle_vmwrite(struct kvm_vcp
- 		if (get_vmx_mem_address(vcpu, exit_qualification,
- 				vmx_instruction_info, false, &gva))
- 			return 1;
--		if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva,
--			   &field_value, (is_64_bit_mode(vcpu) ? 8 : 4), &e)) {
-+		if (kvm_read_guest_virt(vcpu, gva, &field_value,
-+					(is_64_bit_mode(vcpu) ? 8 : 4), &e)) {
- 			kvm_inject_page_fault(vcpu, &e);
- 			return 1;
- 		}
-@@ -7603,9 +7602,9 @@ static int handle_vmptrst(struct kvm_vcp
- 			vmx_instruction_info, true, &vmcs_gva))
- 		return 1;
- 	/* ok to use *_system, as nested_vmx_check_permission verified cpl=0 */
--	if (kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, vmcs_gva,
--				 (void *)&to_vmx(vcpu)->nested.current_vmptr,
--				 sizeof(u64), &e)) {
-+	if (kvm_write_guest_virt_system(vcpu, vmcs_gva,
-+					(void *)&to_vmx(vcpu)->nested.current_vmptr,
-+					sizeof(u64), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
-@@ -7659,8 +7658,7 @@ static int handle_invept(struct kvm_vcpu
- 	if (get_vmx_mem_address(vcpu, vmcs_readl(EXIT_QUALIFICATION),
- 			vmx_instruction_info, false, &gva))
- 		return 1;
--	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &operand,
--				sizeof(operand), &e)) {
-+	if (kvm_read_guest_virt(vcpu, gva, &operand, sizeof(operand), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
-@@ -7723,8 +7721,7 @@ static int handle_invvpid(struct kvm_vcp
- 	if (get_vmx_mem_address(vcpu, vmcs_readl(EXIT_QUALIFICATION),
- 			vmx_instruction_info, false, &gva))
- 		return 1;
--	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &vpid,
--				sizeof(u32), &e)) {
-+	if (kvm_read_guest_virt(vcpu, gva, &vpid, sizeof(u32), &e)) {
- 		kvm_inject_page_fault(vcpu, &e);
- 		return 1;
- 	}
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4395,11 +4395,10 @@ static int kvm_fetch_guest_virt(struct x
- 	return X86EMUL_CONTINUE;
- }
- 
--int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
-+int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
- 			       gva_t addr, void *val, unsigned int bytes,
- 			       struct x86_exception *exception)
- {
--	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
- 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
- 
- 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
-@@ -4407,9 +4406,9 @@ int kvm_read_guest_virt(struct x86_emula
- }
- EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
- 
--static int kvm_read_guest_virt_system(struct x86_emulate_ctxt *ctxt,
--				      gva_t addr, void *val, unsigned int bytes,
--				      struct x86_exception *exception)
-+static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
-+			     gva_t addr, void *val, unsigned int bytes,
-+			     struct x86_exception *exception)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
- 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
-@@ -4424,18 +4423,16 @@ static int kvm_read_guest_phys_system(st
- 	return r < 0 ? X86EMUL_IO_NEEDED : X86EMUL_CONTINUE;
- }
- 
--int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
--				       gva_t addr, void *val,
--				       unsigned int bytes,
--				       struct x86_exception *exception)
-+static int kvm_write_guest_virt_helper(gva_t addr, void *val, unsigned int bytes,
-+				      struct kvm_vcpu *vcpu, u32 access,
-+				      struct x86_exception *exception)
- {
--	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
- 	void *data = val;
- 	int r = X86EMUL_CONTINUE;
- 
- 	while (bytes) {
- 		gpa_t gpa =  vcpu->arch.walk_mmu->gva_to_gpa(vcpu, addr,
--							     PFERR_WRITE_MASK,
-+							     access,
- 							     exception);
- 		unsigned offset = addr & (PAGE_SIZE-1);
- 		unsigned towrite = min(bytes, (unsigned)PAGE_SIZE - offset);
-@@ -4456,6 +4453,22 @@ int kvm_write_guest_virt_system(struct x
- out:
- 	return r;
- }
++/* Hardening for Spectre-v1 */
++#include <linux/nospec.h>
 +
-+static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
-+			      unsigned int bytes, struct x86_exception *exception)
-+{
-+	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ #include "usbip_common.h"
+ #include "vhci.h"
+ 
+@@ -181,16 +184,20 @@ static int vhci_port_disconnect(struct v
+ 	return 0;
+ }
+ 
+-static int valid_port(__u32 pdev_nr, __u32 rhport)
++static int valid_port(__u32 *pdev_nr, __u32 *rhport)
+ {
+-	if (pdev_nr >= vhci_num_controllers) {
+-		pr_err("pdev %u\n", pdev_nr);
++	if (*pdev_nr >= vhci_num_controllers) {
++		pr_err("pdev %u\n", *pdev_nr);
+ 		return 0;
+ 	}
+-	if (rhport >= VHCI_HC_PORTS) {
+-		pr_err("rhport %u\n", rhport);
++	*pdev_nr = array_index_nospec(*pdev_nr, vhci_num_controllers);
 +
-+	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
-+					   PFERR_WRITE_MASK, exception);
-+}
++	if (*rhport >= VHCI_HC_PORTS) {
++		pr_err("rhport %u\n", *rhport);
+ 		return 0;
+ 	}
++	*rhport = array_index_nospec(*rhport, VHCI_HC_PORTS);
 +
-+int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
-+				unsigned int bytes, struct x86_exception *exception)
-+{
-+	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
-+					   PFERR_WRITE_MASK, exception);
-+}
- EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
+ 	return 1;
+ }
  
- static int vcpu_mmio_gva_to_gpa(struct kvm_vcpu *vcpu, unsigned long gva,
-@@ -5180,8 +5193,8 @@ static void emulator_set_hflags(struct x
- static const struct x86_emulate_ops emulate_ops = {
- 	.read_gpr            = emulator_read_gpr,
- 	.write_gpr           = emulator_write_gpr,
--	.read_std            = kvm_read_guest_virt_system,
--	.write_std           = kvm_write_guest_virt_system,
-+	.read_std            = emulator_read_std,
-+	.write_std           = emulator_write_std,
- 	.read_phys           = kvm_read_guest_phys_system,
- 	.fetch               = kvm_fetch_guest_virt,
- 	.read_emulated       = emulator_read_emulated,
---- a/arch/x86/kvm/x86.h
-+++ b/arch/x86/kvm/x86.h
-@@ -161,11 +161,11 @@ int kvm_inject_realmode_interrupt(struct
- void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr);
- u64 get_kvmclock_ns(struct kvm *kvm);
+@@ -207,7 +214,7 @@ static ssize_t store_detach(struct devic
+ 	pdev_nr = port_to_pdev_nr(port);
+ 	rhport = port_to_rhport(port);
  
--int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
-+int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
- 	gva_t addr, void *val, unsigned int bytes,
- 	struct x86_exception *exception);
+-	if (!valid_port(pdev_nr, rhport))
++	if (!valid_port(&pdev_nr, &rhport))
+ 		return -EINVAL;
  
--int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
-+int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu,
- 	gva_t addr, void *val, unsigned int bytes,
- 	struct x86_exception *exception);
+ 	hcd = platform_get_drvdata(*(vhci_pdevs + pdev_nr));
+@@ -226,7 +233,8 @@ static ssize_t store_detach(struct devic
+ }
+ static DEVICE_ATTR(detach, S_IWUSR, NULL, store_detach);
  
+-static int valid_args(__u32 pdev_nr, __u32 rhport, enum usb_device_speed speed)
++static int valid_args(__u32 *pdev_nr, __u32 *rhport,
++		      enum usb_device_speed speed)
+ {
+ 	if (!valid_port(pdev_nr, rhport)) {
+ 		return 0;
+@@ -288,7 +296,7 @@ static ssize_t store_attach(struct devic
+ 			     sockfd, devid, speed);
+ 
+ 	/* check received parameters */
+-	if (!valid_args(pdev_nr, rhport, speed))
++	if (!valid_args(&pdev_nr, &rhport, speed))
+ 		return -EINVAL;
+ 
+ 	hcd = platform_get_drvdata(*(vhci_pdevs + pdev_nr));
 
 
