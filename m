@@ -6,46 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8C3ADC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1A215C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4294B20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2C5920693
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAHFg93i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4294B20693
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyczR5fy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2C5920693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965823AbeFNOeU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:34:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51434 "EHLO mail.kernel.org"
+        id S965830AbeFNOek (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:34:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51324 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965622AbeFNOKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:10:25 -0400
+        id S965515AbeFNOKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:10:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 659ED208DD;
-        Thu, 14 Jun 2018 14:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7CDCA208E1;
+        Thu, 14 Jun 2018 14:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985424;
-        bh=AdLFf4lLET+Rr2jdp3rraUsob7Ai+gEU0hBGqnylZoI=;
+        s=default; t=1528985419;
+        bh=KC7yMuQNZXajmCDNFI2M7Bju7LqVHdUmgywG1pkZgRo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aAHFg93iewK8oh9YvpD/TmWIUYZlmDhJEoU2vAsudAtCsX+HoE5quD1ir0oOpI+xY
-         uXRdiRFvK081o5Skzp56XPRl0rgMC0vVeEg6rZz0ZH1ho6yWMdl0QzIKlSyTnPqyMd
-         pFr2AlqHwNROmShgZBQ5xraN/PyFejCKrq7yCdI4=
+        b=TyczR5fyp1b+IQWC/kqd9By09PzOzO9y82qDrgNrhzKs9Iu22jF76npgZTlyXw6Pc
+         hr10V4vIDMHVuV0p7B6/z0wsnDW9yT1roIS0/yymHAx7eLqXLgdKKRzE2nDDQxLfEm
+         SNeeu8wCAfKWZTe5GzhoSuktF0AogHD9fc8m9wMg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: [PATCH 4.14 23/36] tty: pl011: Avoid spuriously stuck-off interrupts
-Date:   Thu, 14 Jun 2018 16:04:46 +0200
-Message-Id: <20180614132158.316776432@linuxfoundation.org>
+        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
+        Matthijs van Duin <matthijsvanduin@gmail.com>,
+        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH 4.14 21/36] serial: 8250: omap: Fix idling of clocks for unused uarts
+Date:   Thu, 14 Jun 2018 16:04:44 +0200
+Message-Id: <20180614132158.228145445@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -62,103 +61,92 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Martin <Dave.Martin@arm.com>
+From: Tony Lindgren <tony@atomide.com>
 
-commit 4a7e625ce50412a7711efa0f2ef0b96ce3826759 upstream.
+commit 13dc04d0e5fdc25c8f713ad23fdce51cf2bf96ba upstream.
 
-Commit 9b96fbacda34 ("serial: PL011: clear pending interrupts")
-clears the RX and receive timeout interrupts on pl011 startup, to
-avoid a screaming-interrupt scenario that can occur when the
-firmware or bootloader leaves these interrupts asserted.
+I noticed that unused UARTs won't necessarily idle properly always
+unless at least one byte tx transfer is done first.
 
-This has been noted as an issue when running Linux on qemu [1].
+After some debugging I narrowed down the problem to the scr register
+dma configuration bits that need to be set before softreset for the
+clocks to idle. Unless we do this, the module clkctrl idlest bits
+may be set to 1 instead of 3 meaning the clock will never idle and
+is blocking deeper idle states for the whole domain.
 
-Unfortunately, the above fix seems to lead to potential
-misbehaviour if the RX FIFO interrupt is asserted _non_ spuriously
-on driver startup, if the RX FIFO is also already full to the
-trigger level.
+This might be related to the configuration done by the bootloader
+or kexec booting where certain configurations cause the 8250 or
+the clkctrl clock to jam in a way where setting of the scr bits
+and reset is needed to clear it. I've tried diffing the 8250
+registers for the various modes, but did not see anything specific.
+So far I've only seen this on omap4 but I'm suspecting this might
+also happen on the other clkctrl using SoCs considering they
+already have a quirk enabled for UART_ERRATA_CLOCK_DISABLE.
 
-Clearing the RX FIFO interrupt does not change the FIFO fill level.
-In this scenario, because the interrupt is now clear and because
-the FIFO is already full to the trigger level, no new assertion of
-the RX FIFO interrupt can occur unless the FIFO is drained back
-below the trigger level.  This never occurs because the pl011
-driver is waiting for an RX FIFO interrupt to tell it that there is
-something to read, and does not read the FIFO at all until that
-interrupt occurs.
+Let's fix the issue by configuring scr before reset for basic dma
+even if we don't use it. The scr register will be reset when we do
+softreset few lines after, and we restore scr on resume. We should
+do this for all the SoCs with UART_ERRATA_CLOCK_DISABLE quirk flag
+set since the ones with UART_ERRATA_CLOCK_DISABLE are all based
+using clkctrl similar to omap4.
 
-Thus, simply clearing "spurious" interrupts on startup may be
-misguided, since there is no way to be sure that the interrupts are
-truly spurious, and things can go wrong if they are not.
+Looks like both OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL
+bits are needed for the clkctrl to idle after a softreset.
 
-This patch instead clears the interrupt condition by draining the
-RX FIFO during UART startup, after clearing any potentially
-spurious interrupt.  This should ensure that an interrupt will
-definitely be asserted if the RX FIFO subsequently becomes
-sufficiently full.
+And we need to add omap4 to also use the UART_ERRATA_CLOCK_DISABLE
+for the related workaround to be enabled. This same compatible
+value will also be used for omap5.
 
-The drain is done at the point of enabling interrupts only.  This
-means that it will occur any time the UART is newly opened through
-the tty layer.  It will not apply to polled-mode use of the UART by
-kgdboc: since that scenario cannot use interrupts by design, this
-should not matter.  kgdboc will interact badly with "normal" use of
-the UART in any case: this patch makes no attempt to paper over
-such issues.
-
-This patch does not attempt to address the case where the RX FIFO
-fills faster than it can be drained: that is a pathological
-hardware design problem that is beyond the scope of the driver to
-work around.  As a failsafe, the number of poll iterations for
-draining the FIFO is limited to twice the FIFO size.  This will
-ensure that the kernel at least boots even if it is impossible to
-drain the FIFO for some reason.
-
-[1] [Qemu-devel] [Qemu-arm] [PATCH] pl011: do not put into fifo
-before enabled the interruption
-https://lists.gnu.org/archive/html/qemu-devel/2018-01/msg06446.html
-
-Reported-by: Wei Xu <xuwei5@hisilicon.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Peter Maydell <peter.maydell@linaro.org>
-Fixes: 9b96fbacda34 ("serial: PL011: clear pending interrupts")
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Fixes: cdb929e4452a ("serial: 8250_omap: workaround errata around idling UART after using DMA")
+Cc: Keerthy <j-keerthy@ti.com>
+Cc: Matthijs van Duin <matthijsvanduin@gmail.com>
+Cc: Sekhar Nori <nsekhar@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Cc: stable <stable@vger.kernel.org>
-Tested-by: Wei Xu <xuwei5@hisilicon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/amba-pl011.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/tty/serial/8250/8250_omap.c |   16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -1747,10 +1747,26 @@ static int pl011_allocate_irq(struct uar
-  */
- static void pl011_enable_interrupts(struct uart_amba_port *uap)
- {
-+	unsigned int i;
-+
- 	spin_lock_irq(&uap->port.lock);
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -1100,13 +1100,14 @@ static int omap8250_no_handle_irq(struct
+ 	return 0;
+ }
  
- 	/* Clear out any spuriously appearing RX interrupts */
- 	pl011_write(UART011_RTIS | UART011_RXIS, uap, REG_ICR);
-+
++static const u8 omap4_habit = UART_ERRATA_CLOCK_DISABLE;
+ static const u8 am3352_habit = OMAP_DMA_TX_KICK | UART_ERRATA_CLOCK_DISABLE;
+ static const u8 dra742_habit = UART_ERRATA_CLOCK_DISABLE;
+ 
+ static const struct of_device_id omap8250_dt_ids[] = {
+ 	{ .compatible = "ti,omap2-uart" },
+ 	{ .compatible = "ti,omap3-uart" },
+-	{ .compatible = "ti,omap4-uart" },
++	{ .compatible = "ti,omap4-uart", .data = &omap4_habit, },
+ 	{ .compatible = "ti,am3352-uart", .data = &am3352_habit, },
+ 	{ .compatible = "ti,am4372-uart", .data = &am3352_habit, },
+ 	{ .compatible = "ti,dra742-uart", .data = &dra742_habit, },
+@@ -1343,6 +1344,19 @@ static int omap8250_soft_reset(struct de
+ 	int sysc;
+ 	int syss;
+ 
 +	/*
-+	 * RXIS is asserted only when the RX FIFO transitions from below
-+	 * to above the trigger threshold.  If the RX FIFO is already
-+	 * full to the threshold this can't happen and RXIS will now be
-+	 * stuck off.  Drain the RX FIFO explicitly to fix this:
++	 * At least on omap4, unused uarts may not idle after reset without
++	 * a basic scr dma configuration even with no dma in use. The
++	 * module clkctrl status bits will be 1 instead of 3 blocking idle
++	 * for the whole clockdomain. The softreset below will clear scr,
++	 * and we restore it on resume so this is safe to do on all SoCs
++	 * needing omap8250_soft_reset() quirk. Do it in two writes as
++	 * recommended in the comment for omap8250_update_scr().
 +	 */
-+	for (i = 0; i < uap->fifosize * 2; ++i) {
-+		if (pl011_read(uap, REG_FR) & UART01x_FR_RXFE)
-+			break;
++	serial_out(up, UART_OMAP_SCR, OMAP_UART_SCR_DMAMODE_1);
++	serial_out(up, UART_OMAP_SCR,
++		   OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL);
 +
-+		pl011_read(uap, REG_DR);
-+	}
-+
- 	uap->im = UART011_RTIM;
- 	if (!pl011_dma_rx_running(uap))
- 		uap->im |= UART011_RXIM;
+ 	sysc = serial_in(up, UART_OMAP_SYSC);
+ 
+ 	/* softreset the UART */
 
 
