@@ -2,308 +2,160 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BB015C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:56:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 678CEC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:58:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B275208E6
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="zhV7kECI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B275208E6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ndufresne.ca
+	by mail.kernel.org (Postfix) with ESMTP id 27268208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:58:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27268208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936093AbeFNN4v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:56:51 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:37405 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936065AbeFNN4s (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:56:48 -0400
-Received: by mail-qk0-f193.google.com with SMTP id j12-v6so3639959qkk.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :mime-version;
-        bh=c305mIHOlTKC7OXUQVy44MlvnEEZn+WdxBYh0dMrcsA=;
-        b=zhV7kECImi/pJfF9eHtu39/gyoxjCFmAzRm8hDaFU2iaMuIFT60vbHAER0vHqV1DSX
-         qQsqocX5figLLgcRhL17XTgyRwhiVtoKuw9sYs7LYkhvMoBp3DTFClBW3GsUxHnbTZCt
-         AgDbBMsR+lj4X71+gdHuIJzrOxZvmKwGMUJ1wiA9Lr0ZZMS2noYSaHBGtivoUSU3idDP
-         wSUIwITe3+hTyVN4BgETtKMPjhssHHJUs3yKHg63hTEI5viIRAkp2uSKSv7CELLkOy2Q
-         65y6Ih2F6nauZCqdbEk/OdFX7EoLo8urk9C/MCk9rcsCfwk49DtlfBBmlq6fTS2dq1NN
-         y+uQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version;
-        bh=c305mIHOlTKC7OXUQVy44MlvnEEZn+WdxBYh0dMrcsA=;
-        b=c6qkcodIJENqgpU9bEPNRpB+gr4nesJ3TFt0sici+Bw4KL9SmaQnPAiLAsfRhhRq/0
-         2wf2ZFh2eaK5O1I+7TF3O5JDEYHiSoAgjRTvO8I5JRtFl5cG8hX1nAVBokCMLSwnfPWe
-         p0GFN1H9VtqRMaAf2Fa71DBiUZ10PX3uG41QubDFMiv4Xdlv6F+UxxAG9AKkvwVWxn1T
-         mCfXJ6G3w1HdrqTEOfzP0BTdK4JjDby8BaPbBj/xGEsoIqRvwAlD1hrEYDYJLbXA4xqq
-         9sWVISwXdwf4OTT37jGdYqM6hNsGs4fTsOvKSGTeJLkOCYlqEJiXo85Oqpg1ra56/lKp
-         qYMw==
-X-Gm-Message-State: APt69E1F02YpLl4s46c3GVEeSQWp4VoFyauGqur5VTUGjBKQIsSkD+IK
-        NE55MqZcU3nK619vixg0Sq27bg==
-X-Google-Smtp-Source: ADUXVKJOTX24IkLDWH+HYZlIJ7knNF+YC2HZSj2YzSioZco+YpVu7OCug3+VSrNQJ6h38eZ/nSSMFQ==
-X-Received: by 2002:a37:cc10:: with SMTP id r16-v6mr2126100qki.95.1528984607798;
-        Thu, 14 Jun 2018 06:56:47 -0700 (PDT)
-Received: from tpx230-nicolas (modemcable154.55-37-24.static.videotron.ca. [24.37.55.154])
-        by smtp.gmail.com with ESMTPSA id c19-v6sm3246319qtp.22.2018.06.14.06.56.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Jun 2018 06:56:46 -0700 (PDT)
-Message-ID: <94d0e438bf8d59932e165814e6a2c0a99f217fee.camel@ndufresne.ca>
-Subject: Re: [RFC PATCH 1/2] media: docs-rst: Add decoder UAPI specification
- to Codec Interfaces
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        =?UTF-8?Q?Pawe=C5=82_O=C5=9Bciak?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Date:   Thu, 14 Jun 2018 09:56:44 -0400
-In-Reply-To: <89dca3ae-cbbc-4b5b-1c8a-207951997839@linaro.org>
-References: <20180605103328.176255-1-tfiga@chromium.org>
-         <20180605103328.176255-2-tfiga@chromium.org>
-         <89dca3ae-cbbc-4b5b-1c8a-207951997839@linaro.org>
-Content-Type: multipart/signed; micalg="pgp-sha1"; protocol="application/pgp-signature";
-        boundary="=-83vJTnL9a4aJ1xI8xWNy"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
+        id S1755256AbeFNN6G (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 09:58:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60162 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754885AbeFNN6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 09:58:04 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CCE61435;
+        Thu, 14 Jun 2018 06:58:04 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 13EFA3F557;
+        Thu, 14 Jun 2018 06:58:01 -0700 (PDT)
+Date:   Thu, 14 Jun 2018 14:58:00 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, peterz@infradead.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] sched/topology: Add check to backup comment about
+ hotplug lock
+Message-ID: <20180614135800.GM17720@e108498-lin.cambridge.arm.com>
+References: <20180613121711.5018-1-juri.lelli@redhat.com>
+ <20180613121711.5018-2-juri.lelli@redhat.com>
+ <20180614093324.7ea45448@gandalf.local.home>
+ <20180614134234.GC12032@localhost.localdomain>
+ <20180614094747.390357ec@gandalf.local.home>
+ <20180614135040.GE12032@localhost.localdomain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614135040.GE12032@localhost.localdomain>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thursday 14 Jun 2018 at 15:50:40 (+0200), Juri Lelli wrote:
+> On 14/06/18 09:47, Steven Rostedt wrote:
+> > On Thu, 14 Jun 2018 15:42:34 +0200
+> > Juri Lelli <juri.lelli@redhat.com> wrote:
+> > 
+> > > On 14/06/18 09:33, Steven Rostedt wrote:
+> > > > On Wed, 13 Jun 2018 14:17:07 +0200
+> > > > Juri Lelli <juri.lelli@redhat.com> wrote:
+> > > >   
+> > > > > From: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > > > 
+> > > > > The comment above function partition_sched_domains() clearly state that
+> > > > > the cpu_hotplug_lock should be held but doesn't mandate one to abide to
+> > > > > it.
+> > > > > 
+> > > > > Add an explicit check backing that comment, so to make it impossible
+> > > > > for anyone to miss the requirement.
+> > > > > 
+> > > > > Suggested-by: Juri Lelli <juri.lelli@redhat.com>
+> > > > > Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+> > > > > [modified changelog]
+> > > > > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>  
+> > > > 
+> > > > Reviewed-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+> > > > 
+> > > > -- Steve
+> > > >   
+> > > > > ---
+> > > > >  kernel/sched/topology.c | 1 +
+> > > > >  1 file changed, 1 insertion(+)
+> > > > > 
+> > > > > diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> > > > > index 61a1125c1ae4..96eee22fafe8 100644
+> > > > > --- a/kernel/sched/topology.c
+> > > > > +++ b/kernel/sched/topology.c
+> > > > > @@ -1858,6 +1858,7 @@ void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+> > > > >  	int i, j, n;
+> > > > >  	int new_topology;
+> > > > >  
+> > > > > +	lockdep_assert_cpus_held();
+> > > > >  	mutex_lock(&sched_domains_mutex);
+> > > > >  
+> > > > >  	/* Always unregister in case we don't destroy any domains: */  
+> > > 
+> > > Thanks for reviewing Steve. I thought this should be fine (also looking
+> > > at the comment before the function), but then got this from 0day
+> > > 
+> > > [    2.206129] .................................... done.
+> > > [    2.206662] Using IPI No-Shortcut mode
+> > > [    2.207084] sched_clock: Marking stable (2200014216, 0)->(2435550722, -235536506)
+> > > [    2.208792] registered taskstats version 1
+> > > [    2.209251] page_owner is disabled
+> > > [    2.290164] WARNING: CPU: 0 PID: 13 at kernel/cpu.c:311 lockdep_assert_cpus_held+0x22/0x26
+> > > [    2.291253] Modules linked in:
+> > > [    2.291589] CPU: 0 PID: 13 Comm: cpuhp/0 Not tainted 4.17.0-rc6-00217-gebf44b4 #2
+> > > [    2.292367] EIP: lockdep_assert_cpus_held+0x22/0x26
+> > > [    2.292882] EFLAGS: 00210246 CPU: 0
+> > > [    2.293255] EAX: 00000000 EBX: 00000000 ECX: c1b1fd98 EDX: 00200286
+> > > [    2.293915] ESI: 00000000 EDI: c1b1fcb4 EBP: dd8a3e60 ESP: dd8a3e60
+> > > [    2.294578]  DS: 007b ES: 007b FS: 00d8 GS: 00e0 SS: 0068
+> > > [    2.295128] CR0: 80050033 CR2: 00000000 CR3: 01c9d000 CR4: 000006d0
+> > > [    2.295770] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 00000000
+> > > [    2.296409] DR6: fffe0ff0 DR7: 00000400
+> > > [    2.296802] Call Trace:
+> > > [    2.297066]  partition_sched_domains+0x1b/0x29f
+> > > [    2.297557]  ? dl_cpu_busy+0x1b5/0x1c6
+> > > [    2.297955]  sched_cpu_deactivate+0x8b/0xb6
+> > > [    2.298403]  ? call_rcu_bh+0x17/0x17
+> > > [    2.298786]  ? call_rcu_bh+0x17/0x17
+> > > [    2.299170]  ? rcu_read_lock_bh_held+0x55/0x55
+> > > [    2.299648]  ? sched_cpu_activate+0xcc/0xcc
+> > > [    2.300076]  cpuhp_invoke_callback+0x19d/0x978
+> > > [    2.300537]  cpuhp_thread_fun+0x125/0x16b
+> > > [    2.300949]  smpboot_thread_fn+0x192/0x1a6
+> > > [    2.301377]  kthread+0xfc/0x101
+> > > [    2.301703]  ? sort_range+0x1d/0x1d
+> > > [    2.302062]  ? kthread_flush_work_fn+0x12/0x12
+> > > [    2.302524]  ret_from_fork+0x2e/0x40
+> > > [    2.302891] Code: ff 83 c4 10 5b 5e 5f 5d c3 55 89 e5 e8 ca dc fe ff 83 3d 20 bc b4 c1 00 74 13 83 ca ff b8 98 fd b1 c1 e8 e2 4b 04 00 85 c0 75 02 <0f> 0b 5d c3 55 89 e5 56 53 e8 a2 dc fe ff 89 c6 3b 05 8c 40 bd 
+> > > [    2.304975] irq event stamp: 308
+> > > [    2.305335] hardirqs last  enabled at (307): [<c179d83c>] _raw_spin_unlock_irqrestore+0x4a/0x68
+> > > [    2.306195] hardirqs last disabled at (308): [<c179ed38>] common_exception+0x46/0x6e
+> > > [    2.306969] softirqs last  enabled at (0): [<c10448e6>] copy_process+0x582/0x16c5
+> > > [    2.307720] softirqs last disabled at (0): [<00000000>]   (null)
+> > > [    2.308328] ---[ end trace 7197acb79221f1b9 ]---
+> > > 
+> > > Guess early boot is "special"? :-/
+> > 
+> > I'm guessing the comment is wrong. I just added the first three patches
+> > and was going to try to trigger the first "bug" I had before. Let me
+> > check if I have lockdep enabled and see if I see the same thing.
+> 
+> Mmm, I had it enabled while testing and didn't get the splat.
 
---=-83vJTnL9a4aJ1xI8xWNy
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Hmm not sure if this can help but I think that rebuild_sched_domains()
+does _not_ take the hotplug lock before calling partition_sched_domains()
+when CONFIG_CPUSETS=n. But it does take it for CONFIG_CPUSETS=y.
 
-Le jeudi 14 juin 2018 =C3=A0 15:34 +0300, Stanimir Varbanov a =C3=A9crit :
-> Hi Tomasz,
->=20
->=20
-> On 06/05/2018 01:33 PM, Tomasz Figa wrote:
-> > Due to complexity of the video decoding process, the V4L2 drivers of
-> > stateful decoder hardware require specific sequencies of V4L2 API calls
-> > to be followed. These include capability enumeration, initialization,
-> > decoding, seek, pause, dynamic resolution change, flush and end of
-> > stream.
-> >=20
-> > Specifics of the above have been discussed during Media Workshops at
-> > LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
-> > Conference Europe 2014 in D=C3=BCsseldorf. The de facto Codec API that
-> > originated at those events was later implemented by the drivers we alre=
-ady
-> > have merged in mainline, such as s5p-mfc or mtk-vcodec.
-> >=20
-> > The only thing missing was the real specification included as a part of
-> > Linux Media documentation. Fix it now and document the decoder part of
-> > the Codec API.
-> >=20
-> > Signed-off-by: Tomasz Figa <tfiga@chromium.org>
-> > ---
-> >  Documentation/media/uapi/v4l/dev-codec.rst | 771 +++++++++++++++++++++
-> >  Documentation/media/uapi/v4l/v4l2.rst      |  14 +-
-> >  2 files changed, 784 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/Documentation/media/uapi/v4l/dev-codec.rst b/Documentation=
-/media/uapi/v4l/dev-codec.rst
-> > index c61e938bd8dc..0483b10c205e 100644
-> > --- a/Documentation/media/uapi/v4l/dev-codec.rst
-> > +++ b/Documentation/media/uapi/v4l/dev-codec.rst
->=20
-> <snip>
->=20
-> > +Initialization sequence
-> > +-----------------------
-> > +
-> > +1. (optional) Enumerate supported OUTPUT formats and resolutions. See
-> > +   capability enumeration.
-> > +
-> > +2. Set a coded format on the source queue via :c:func:`VIDIOC_S_FMT`
-> > +
-> > +   a. Required fields:
-> > +
-> > +      i.   type =3D OUTPUT
-> > +
-> > +      ii.  fmt.pix_mp.pixelformat set to a coded format
-> > +
-> > +      iii. fmt.pix_mp.width, fmt.pix_mp.height only if cannot be
-> > +           parsed from the stream for the given coded format;
-> > +           ignored otherwise;
->=20
-> Can we say that if width !=3D 0 and height !=3D 0 then the user knows the
-> real coded resolution? And vise versa if width/height are both zero the
-> driver should parse the stream metadata?
+Not sure if this is actually the right thing to do, but maybe worth
+investigating ?
 
-The driver always need to parse the stream metadata, since there could
-be an x,y offset too, it's not just right/bottom cropping. And then
-G_SELECTION is required.
-
->=20
-> Also what about fmt.pix_mp.plane_fmt.sizeimage, as per spec (S_FMT) this
-> field should be filled with correct image size? If the coded
-> width/height is zero sizeimage will be unknown. I think we have two
-> options, the user fill sizeimage with bigger enough size or the driver
-> has to have some default size.
->=20
-> > +
-> > +   b. Return values:
-> > +
-> > +      i.  EINVAL: unsupported format.
-> > +
-> > +      ii. Others: per spec
-> > +
-> > +   .. note::
-> > +
-> > +      The driver must not adjust pixelformat, so if
-> > +      ``V4L2_PIX_FMT_H264`` is passed but only
-> > +      ``V4L2_PIX_FMT_H264_SLICE`` is supported, S_FMT will return
-> > +      -EINVAL. If both are acceptable by client, calling S_FMT for
-> > +      the other after one gets rejected may be required (or use
-> > +      :c:func:`VIDIOC_ENUM_FMT` to discover beforehand, see Capability
-> > +      enumeration).
-> > +
-> > +3.  (optional) Get minimum number of buffers required for OUTPUT queue
-> > +    via :c:func:`VIDIOC_G_CTRL`. This is useful if client intends to u=
-se
-> > +    more buffers than minimum required by hardware/format (see
-> > +    allocation).
-> > +
-> > +    a. Required fields:
-> > +
-> > +       i. id =3D ``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``
-> > +
-> > +    b. Return values: per spec.
-> > +
-> > +    c. Return fields:
-> > +
-> > +       i. value: required number of OUTPUT buffers for the currently s=
-et
-> > +          format;
-> > +
-> > +4.  Allocate source (bitstream) buffers via :c:func:`VIDIOC_REQBUFS` o=
-n OUTPUT
-> > +    queue.
-> > +
-> > +    a. Required fields:
-> > +
-> > +       i.   count =3D n, where n > 0.
-> > +
-> > +       ii.  type =3D OUTPUT
-> > +
-> > +       iii. memory =3D as per spec
-> > +
-> > +    b. Return values: Per spec.
-> > +
-> > +    c. Return fields:
-> > +
-> > +       i. count: adjusted to allocated number of buffers
-> > +
-> > +    d. The driver must adjust count to minimum of required number of
-> > +       source buffers for given format and count passed. The client
-> > +       must check this value after the ioctl returns to get the
-> > +       number of buffers allocated.
-> > +
-> > +    .. note::
-> > +
-> > +       Passing count =3D 1 is useful for letting the driver choose
-> > +       the minimum according to the selected format/hardware
-> > +       requirements.
-> > +
-> > +    .. note::
-> > +
-> > +       To allocate more than minimum number of buffers (for pipeline
-> > +       depth), use G_CTRL(``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT)`` to
-> > +       get minimum number of buffers required by the driver/format,
-> > +       and pass the obtained value plus the number of additional
-> > +       buffers needed in count to :c:func:`VIDIOC_REQBUFS`.
-> > +
-> > +5.  Begin parsing the stream for stream metadata via :c:func:`VIDIOC_S=
-TREAMON` on
-> > +    OUTPUT queue. This step allows the driver to parse/decode
-> > +    initial stream metadata until enough information to allocate
-> > +    CAPTURE buffers is found. This is indicated by the driver by
-> > +    sending a ``V4L2_EVENT_SOURCE_CHANGE`` event, which the client
-> > +    must handle.
-> > +
-> > +    a. Required fields: as per spec.
-> > +
-> > +    b. Return values: as per spec.
-> > +
-> > +    .. note::
-> > +
-> > +       Calling :c:func:`VIDIOC_REQBUFS`, :c:func:`VIDIOC_STREAMON`
-> > +       or :c:func:`VIDIOC_G_FMT` on the CAPTURE queue at this time is =
-not
-> > +       allowed and must return EINVAL.
-> > +
-> > +6.  This step only applies for coded formats that contain resolution
-> > +    information in the stream.
->=20
-> maybe an example of such coded formats will be good to have.
->=20
-> > +    Continue queuing/dequeuing bitstream buffers to/from the
-> > +    OUTPUT queue via :c:func:`VIDIOC_QBUF` and :c:func:`VIDIOC_DQBUF`.=
- The driver
-> > +    must keep processing and returning each buffer to the client
-> > +    until required metadata to send a ``V4L2_EVENT_SOURCE_CHANGE``
-> > +    for source change type ``V4L2_EVENT_SRC_CH_RESOLUTION`` is
-> > +    found. There is no requirement to pass enough data for this to
-> > +    occur in the first buffer and the driver must be able to
-> > +    process any number
-> > +
-> > +    a. Required fields: as per spec.
-> > +
-> > +    b. Return values: as per spec.
-> > +
-> > +    c. If data in a buffer that triggers the event is required to deco=
-de
-> > +       the first frame, the driver must not return it to the client,
-> > +       but must retain it for further decoding.
-> > +
-> > +    d. Until the resolution source event is sent to the client, callin=
-g
-> > +       :c:func:`VIDIOC_G_FMT` on the CAPTURE queue must return -EINVAL=
-.
-> > +
-> > +    .. note::
-> > +
-> > +       No decoded frames are produced during this phase.
-> > +
->=20
-> <snip>
->=20
---=-83vJTnL9a4aJ1xI8xWNy
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQSScpfJiL+hb5vvd45xUwItrAaoHAUCWyJ0HQAKCRBxUwItrAao
-HH1IAJ0UYGVAcC+FhCtuGouvddilyv8ZjACePJ/5Lf0xPGBMr+17M3x8GxYEE/g=
-=gfJ/
------END PGP SIGNATURE-----
-
---=-83vJTnL9a4aJ1xI8xWNy--
-
+Thanks,
+Quentin
