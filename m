@@ -6,54 +6,54 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 32FB5C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C5908C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2B3A208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78111208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:47:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HNFKjt8u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2B3A208D7
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OuJEOuzt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78111208D7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754804AbeFNHrh (ORCPT
+        id S1754836AbeFNHrp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:47:37 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:44220 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754722AbeFNHre (ORCPT
+        Thu, 14 Jun 2018 03:47:45 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:38303 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754810AbeFNHrl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:47:34 -0400
-Received: by mail-pg0-f67.google.com with SMTP id p21-v6so2522232pgd.11
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:47:33 -0700 (PDT)
+        Thu, 14 Jun 2018 03:47:41 -0400
+Received: by mail-pf0-f193.google.com with SMTP id b74-v6so2799125pfl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:47:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=nPRBfI/XWH7ibSYUPmiSHijVsGiqr9j1QAKzfO+HRx4=;
-        b=HNFKjt8uBQjAo4AQIJPCf+7ujp36Rv7pjqMnBgYBWjmm664alNj07k4tCdSoi0n+N6
-         hNU4kL/xWRZ/wzmv7IB6O+wthdxj++7q40e/5xGkneJo0irCe/UvKf4/8a3G0b0Xhxat
-         DzOTok0TmMnhgrB05RMAXibNEt4O2RztWPebo=
+        bh=mHz5AKgDUD0rTL77iNLGvl6AY6qKgjnmhQn6Klvek3I=;
+        b=OuJEOuzt8lDtj0E9xEkgKSY5UZkP4XD54wZe4Y5QL4t/Og+bc5g7tEar5SeCYLufun
+         JLPVybAvoew7qwuQhsBW5vH3RY6xhzFtt9x2/zIgMGh+UkmUHYqyKAL8ZKDFIc8rb7Ab
+         lVOBmmGNizz7/zctHOKP87F+vlGiyyoX6wAsg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=nPRBfI/XWH7ibSYUPmiSHijVsGiqr9j1QAKzfO+HRx4=;
-        b=EI3dQveRPzwjfLNdaz5eJbPYEluP5LGwAXGPrcbCU3zVzs8M/Koo3AtWDL7wvcnXIJ
-         OKKbhPa5PI8f5r9B+YwHwAGWr7vOO0lf1oKr0lRoPhRJEioceTbQbYSgCFdy/X40yRI9
-         Pj+aGBiRB1CQtNI3Ue8c3AbKzv0G287HPN78rzgGJax0go2fVcOsafXNaJaMG2sih6fg
-         ngrh/vyjbXKYDu8IieaaGjAifSekPqUmoXmjcl683Gf7IJ9tF4i0yWK5SA3BYDjRIm68
-         c23U5NODLnIbHuCeS4MUhDlYL23vPeblHrCF/gjP93U+DBVts0u8DZicxFByvagn4jwJ
-         dM7Q==
-X-Gm-Message-State: APt69E0izO3/EchxP5MGZwsddeww2O5J/WvcjJqUzDMSfWnfvQ4PiI8e
-        VspmJqLLAuqcZ9ObqRoaThhDOw==
-X-Google-Smtp-Source: ADUXVKLAXUkln01bid9aXWHDo4uK7pSZ0KFexxkAdo31iIzLMUg91vMb5ztGRkdHWnztD+sXz9e/JA==
-X-Received: by 2002:a62:ae06:: with SMTP id q6-v6mr8300493pff.17.1528962453495;
-        Thu, 14 Jun 2018 00:47:33 -0700 (PDT)
+        bh=mHz5AKgDUD0rTL77iNLGvl6AY6qKgjnmhQn6Klvek3I=;
+        b=nYUm0ij48OpV+r2idAZDOTjWfYjAQ7rzWBkLobLDHMYr3gWxooH39yWZux1GLXvaF5
+         pV0HRYAGIjjAgYzt/cZWuzV1Nx18WsjW4p4l6vMK5Q+AHsvTJJpVE5xjsZvlP5HmwIJc
+         GS9jJw91D4XFjsaC0T17onE7C6AGxFXp1Xg4C5SqYYQEtWR6kxE1ViNQU0M4uW8YTZrH
+         WdKXxqNvsiozLYZeLgq7QK4X6Qf6IhJ3G8GIDb6Er84hxvZ7DDfhGFSokWs5XgPgyhAy
+         GaLyvA+oA71UZacKxbH1I732W10zJC/+XbsSV3fto/wQyjZ5jfeO2iE7/zqA5GPGjSkt
+         VQ6Q==
+X-Gm-Message-State: APt69E26DL3tCmXocVUPJNUQ3SR/PaAC5FKSxfZTgouZxqqyA4BCQRm+
+        DS3qtcJtlaYEy0Z/fD7YhA56XsRoKUs=
+X-Google-Smtp-Source: ADUXVKJFw40Sz6xHc/SJcXOQ4PGZQj47xp7ojQxee7OZbCk9N+6XY4fo0SrycVCRUadAx9NfwczUJw==
+X-Received: by 2002:a65:6303:: with SMTP id g3-v6mr1370545pgv.424.1528962460873;
+        Thu, 14 Jun 2018 00:47:40 -0700 (PDT)
 Received: from keiichiw1.tok.corp.google.com ([2401:fa00:4:4:968c:de0d:27a3:4bef])
-        by smtp.gmail.com with ESMTPSA id y11-v6sm6522788pfn.92.2018.06.14.00.47.28
+        by smtp.gmail.com with ESMTPSA id y11-v6sm6522788pfn.92.2018.06.14.00.47.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 00:47:32 -0700 (PDT)
+        Thu, 14 Jun 2018 00:47:39 -0700 (PDT)
 From:   Keiichi Watanabe <keiichiw@chromium.org>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -76,9 +76,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
         s.nawrocki@samsung.com
-Subject: [PATCH v3 2/3] media: v4l2-ctrl: Add control for VP9 profile
-Date:   Thu, 14 Jun 2018 16:46:51 +0900
-Message-Id: <20180614074652.162796-3-keiichiw@chromium.org>
+Subject: [PATCH v3 3/3] media: mtk-vcodec: Support VP9 profile in decoder
+Date:   Thu, 14 Jun 2018 16:46:52 +0900
+Message-Id: <20180614074652.162796-4-keiichiw@chromium.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
 In-Reply-To: <20180614074652.162796-1-keiichiw@chromium.org>
 References: <20180614074652.162796-1-keiichiw@chromium.org>
@@ -87,117 +87,30 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new control V4L2_CID_MPEG_VIDEO_VP9_PROFILE for VP9
-profiles. This control allows to select a desired profile for VP9
-encoder and query for supported profiles by VP9 encoder/decoder.
-
-Though this control is similar to V4L2_CID_MPEG_VIDEO_VP8_PROFILE, we need to
-separate this control from it because supported profiles usually differ between
-VP8 and VP9.
+Add V4L2_CID_MPEG_VIDEO_VP9_PROFILE control in MediaTek decoder's
+driver.
+MediaTek decoder only supports profile 0 for now.
 
 Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
 ---
- .../media/uapi/v4l/extended-controls.rst      | 25 +++++++++++++++++++
- drivers/media/v4l2-core/v4l2-ctrls.c          | 11 ++++++++
- include/uapi/linux/v4l2-controls.h            |  7 ++++++
- 3 files changed, 43 insertions(+)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
-index de99eafb0872..095b42e9d6fe 100644
---- a/Documentation/media/uapi/v4l/extended-controls.rst
-+++ b/Documentation/media/uapi/v4l/extended-controls.rst
-@@ -1980,6 +1980,31 @@ enum v4l2_mpeg_video_vp8_profile -
-     * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_3``
-       - Profile 3
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
+index 86f0a7134365..ba986232b953 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_dec.c
+@@ -1400,6 +1400,11 @@ int mtk_vcodec_dec_ctrls_setup(struct mtk_vcodec_ctx *ctx)
+ 				V4L2_CID_MIN_BUFFERS_FOR_CAPTURE,
+ 				0, 32, 1, 1);
+ 	ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
++	v4l2_ctrl_new_std_menu(&ctx->ctrl_hdl,
++				&mtk_vcodec_dec_ctrl_ops,
++				V4L2_CID_MPEG_VIDEO_VP9_PROFILE,
++				V4L2_MPEG_VIDEO_VP9_PROFILE_0,
++				0, V4L2_MPEG_VIDEO_VP9_PROFILE_0);
 
-+.. _v4l2-mpeg-video-vp9-profile:
-+
-+``V4L2_CID_MPEG_VIDEO_VP9_PROFILE``
-+    (enum)
-+
-+enum v4l2_mpeg_video_vp9_profile -
-+    This control allows to select the profile for VP9 encoder.
-+    This is also used to enumerate supported profiles by VP9 encoder or decoder.
-+    Possible values are:
-+
-+
-+
-+.. flat-table::
-+    :header-rows:  0
-+    :stub-columns: 0
-+
-+    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_0``
-+      - Profile 0
-+    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_1``
-+      - Profile 1
-+    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_2``
-+      - Profile 2
-+    * - ``V4L2_MPEG_VIDEO_VP9_PROFILE_3``
-+      - Profile 3
-+
-
- High Efficiency Video Coding (HEVC/H.265) Control Reference
- -----------------------------------------------------------
-diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-index e7e6340b395e..eacfab7574dc 100644
---- a/drivers/media/v4l2-core/v4l2-ctrls.c
-+++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-@@ -438,6 +438,13 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
- 		"3",
- 		NULL,
- 	};
-+	static const char * const vp9_profile[] = {
-+		"0",
-+		"1",
-+		"2",
-+		"3",
-+		NULL,
-+	};
-
- 	static const char * const flash_led_mode[] = {
- 		"Off",
-@@ -623,6 +630,8 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
- 		return vpx_golden_frame_sel;
- 	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
- 		return vp8_profile;
-+	case V4L2_CID_MPEG_VIDEO_VP9_PROFILE:
-+		return vp9_profile;
- 	case V4L2_CID_JPEG_CHROMA_SUBSAMPLING:
- 		return jpeg_chroma_subsampling;
- 	case V4L2_CID_DV_TX_MODE:
-@@ -849,6 +858,7 @@ const char *v4l2_ctrl_get_name(u32 id)
- 	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:		return "VPX I-Frame QP Value";
- 	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
- 	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:			return "VP8 Profile";
-+	case V4L2_CID_MPEG_VIDEO_VP9_PROFILE:			return "VP9 Profile";
-
- 	/* HEVC controls */
- 	case V4L2_CID_MPEG_VIDEO_HEVC_I_FRAME_QP:		return "HEVC I-Frame QP Value";
-@@ -1190,6 +1200,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
- 	case V4L2_CID_TUNE_DEEMPHASIS:
- 	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
- 	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
-+	case V4L2_CID_MPEG_VIDEO_VP9_PROFILE:
- 	case V4L2_CID_DETECT_MD_MODE:
- 	case V4L2_CID_MPEG_VIDEO_HEVC_PROFILE:
- 	case V4L2_CID_MPEG_VIDEO_HEVC_LEVEL:
-diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
-index 2001823c3072..f03d3214eec2 100644
---- a/include/uapi/linux/v4l2-controls.h
-+++ b/include/uapi/linux/v4l2-controls.h
-@@ -597,6 +597,13 @@ enum v4l2_mpeg_video_vp8_profile {
- };
- /* Deprecated alias for compatibility reasons. */
- #define V4L2_CID_MPEG_VIDEO_VPX_PROFILE	V4L2_CID_MPEG_VIDEO_VP8_PROFILE
-+#define V4L2_CID_MPEG_VIDEO_VP9_PROFILE			(V4L2_CID_MPEG_BASE+512)
-+enum v4l2_mpeg_video_vp9_profile {
-+	V4L2_MPEG_VIDEO_VP9_PROFILE_0				= 0,
-+	V4L2_MPEG_VIDEO_VP9_PROFILE_1				= 1,
-+	V4L2_MPEG_VIDEO_VP9_PROFILE_2				= 2,
-+	V4L2_MPEG_VIDEO_VP9_PROFILE_3				= 3,
-+};
-
- /* CIDs for HEVC encoding. */
-
+ 	if (ctx->ctrl_hdl.error) {
+ 		mtk_v4l2_err("Adding control failed %d",
 --
 2.18.0.rc1.242.g61856ae69a-goog
