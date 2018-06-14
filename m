@@ -2,106 +2,131 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A41CEC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:21:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8DCD9C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:21:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 593A4208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:21:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fg4qGBAS";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hBaf01Pa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 593A4208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DA2E208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:21:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DA2E208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754645AbeFNGVF (ORCPT
+        id S1752951AbeFNGVx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:21:05 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:47676 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752831AbeFNGU0 (ORCPT
+        Thu, 14 Jun 2018 02:21:53 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38785 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752721AbeFNGVw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:20:26 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0CEB56055D; Thu, 14 Jun 2018 06:20:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528957226;
-        bh=9Q7Ofx0OLqr2GZt8WobQLmAYVHTjQRhBL9DIpzNbDes=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=fg4qGBASjqG+QuuazvVnx9Lu1L0kVeu0w0uyf49eCgnYtddGuvmGE/OvY3vQfEP6M
-         9wKOPzHaDHfbO8jFAytJOO6ZItAY+h1OvcgQcbZrO/40EKq9cPk4deSAeejCGnCDS0
-         nfo8keuU40rwIOuapR0xyJWUPtUDwf/0i1zidh8U=
-Received: from purkki.adurom.net (purkki.adurom.net [80.68.90.206])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 996EB60116;
-        Thu, 14 Jun 2018 06:20:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528957224;
-        bh=9Q7Ofx0OLqr2GZt8WobQLmAYVHTjQRhBL9DIpzNbDes=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=hBaf01PasweG/mjStVHeur3zdGJDJFp30lL8S/PT+aa0A/UhiJjWq5WTqIZIKyA2T
-         nuLyH/lis1DdWDIVhWcUXPc5nZFjjzFEpIipvFz/xqoyJwqhFjHXGydV3i5oxA1jRb
-         aEKUQeJj3keHP5P8MKIeJD03OGSUVOpkGv/2MNyg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 996EB60116
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     John Stultz <john.stultz@linaro.org>
-Cc:     Ryan Grachek <ryan@edited.us>, Wei Xu <xuwei5@hisilicon.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list\:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        linux-arm-kernel@lists.infradead.org, Eyal Reizer <eyalr@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        linux-wireless@vger.kernel.org, linux-wireless@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: hikey960: Define wl1837 power capabilities
-References: <20180613180321.16745-1-ryan@edited.us>
-        <CALAqxLWuUJYfXszaO01KODbom8WykKQKm0X3fzPTwSRK+G3zqw@mail.gmail.com>
-Date:   Thu, 14 Jun 2018 09:20:18 +0300
-In-Reply-To: <CALAqxLWuUJYfXszaO01KODbom8WykKQKm0X3fzPTwSRK+G3zqw@mail.gmail.com>
-        (John Stultz's message of "Wed, 13 Jun 2018 12:36:40 -0700")
-Message-ID: <874li5c2jh.fsf@purkki.adurom.net>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/23.4 (gnu/linux)
+        Thu, 14 Jun 2018 02:21:52 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5E6KgPl763474
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 13 Jun 2018 23:20:42 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5E6Kgv8763471;
+        Wed, 13 Jun 2018 23:20:42 -0700
+Date:   Wed, 13 Jun 2018 23:20:42 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-hg5g7yddjio3ljwyqnnaj5dt@git.kernel.org>
+Cc:     namhyung@kernel.org, dsahern@gmail.com, jolsa@kernel.org,
+        tglx@linutronix.de, hpa@zytor.com, wangnan0@huawei.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com,
+        yao.jin@linux.intel.com, mingo@kernel.org, adrian.hunter@intel.com
+Reply-To: namhyung@kernel.org, dsahern@gmail.com, tglx@linutronix.de,
+          wangnan0@huawei.com, hpa@zytor.com, jolsa@kernel.org,
+          adrian.hunter@intel.com, linux-kernel@vger.kernel.org,
+          acme@redhat.com, mingo@kernel.org, yao.jin@linux.intel.com
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf hists: Reimplement hists__has_callchains()
+Git-Commit-ID: c9d366287042489090da0391318df528bdce9941
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-John Stultz <john.stultz@linaro.org> writes:
+Commit-ID:  c9d366287042489090da0391318df528bdce9941
+Gitweb:     https://git.kernel.org/tip/c9d366287042489090da0391318df528bdce9941
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 7 Jun 2018 14:42:27 -0300
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 7 Jun 2018 14:42:27 -0300
 
-> On Wed, Jun 13, 2018 at 11:03 AM, Ryan Grachek <ryan@edited.us> wrote:
->> These properties are required for compatibility with runtime PM.
->> Without these properties, MMC host controller will not be aware
->> of power capabilities. When the wlcore driver attempts to power
->> on the device, it will erroneously fail with -EACCES. This fixes
->> a regression found here: https://lkml.org/lkml/2018/6/12/930
->>
->> Signed-off-by: Ryan Grachek <ryan@edited.us>
->
-> Fixes: 60f36637bbbd ("wlcore: sdio: allow pm to handle sdio power")
-> Tested-by: John Stultz <john.stultz@linaro.org>
-> Acked-by: John Stultz <john.stultz@linaro.org>
->
-> Wei Xu: This also fixes a functional regression with wifi on the
-> HiKey960 board that was introduced in 4.18-rc with commit 60f36637bbbd
-> ("wlcore: sdio: allow pm to handle sdio power").
->
-> Could you please be sure to queue this for the 4.18-rc too?
+perf hists: Reimplement hists__has_callchains()
 
-CCing wireless folks as well.
+There are places where we have only access to struct hists and need to
+know if any of its hist_entries has callchains, like when drawing
+headers for the various output modes (stdio, TUI, etc), so, when adding
+a new hist_entry, check if it has callchains, storing this info for
+later use by hists__has_callchains().
 
--- 
-Kalle Valo
+This reimplementation is necessary because not always a 'struct hists'
+is allocated together with a 'struct perf evsel', so we can't go from
+'hists' to 'perf_event_attr.sample_type & PERF_SAMPLE_CALLCHAIN'.
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Jin Yao <yao.jin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Link: https://lkml.kernel.org/n/tip-hg5g7yddjio3ljwyqnnaj5dt@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/hist.c | 6 ++++--
+ tools/perf/util/hist.h | 4 ++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+index 0441a92b855f..828cb9794c76 100644
+--- a/tools/perf/util/hist.c
++++ b/tools/perf/util/hist.c
+@@ -621,9 +621,11 @@ __hists__add_entry(struct hists *hists,
+ 		.raw_data = sample->raw_data,
+ 		.raw_size = sample->raw_size,
+ 		.ops = ops,
+-	};
++	}, *he = hists__findnew_entry(hists, &entry, al, sample_self);
+ 
+-	return hists__findnew_entry(hists, &entry, al, sample_self);
++	if (!hists->has_callchains && he && he->callchain_size != 0)
++		hists->has_callchains = true;
++	return he;
+ }
+ 
+ struct hist_entry *hists__add_entry(struct hists *hists,
+diff --git a/tools/perf/util/hist.h b/tools/perf/util/hist.h
+index 06607c434949..73049f7f0f60 100644
+--- a/tools/perf/util/hist.h
++++ b/tools/perf/util/hist.h
+@@ -85,6 +85,7 @@ struct hists {
+ 	struct events_stats	stats;
+ 	u64			event_stream;
+ 	u16			col_len[HISTC_NR_COLS];
++	bool			has_callchains;
+ 	int			socket_filter;
+ 	struct perf_hpp_list	*hpp_list;
+ 	struct list_head	hpp_formats;
+@@ -222,8 +223,7 @@ static inline struct hists *evsel__hists(struct perf_evsel *evsel)
+ 
+ static __pure inline bool hists__has_callchains(struct hists *hists)
+ {
+-	const struct perf_evsel *evsel = hists_to_evsel(hists);
+-	return evsel__has_callchain(evsel);
++	return hists->has_callchains;
+ }
+ 
+ int hists__init(void);
