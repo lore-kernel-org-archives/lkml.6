@@ -2,173 +2,159 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4481BC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 09:00:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CDF40C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 09:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEADC208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7892A208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 09:02:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdldeZBb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEADC208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kf+6hMod"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7892A208D9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754779AbeFNI75 (ORCPT
+        id S1754754AbeFNJCP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:59:57 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:46124 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754581AbeFNI7z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:59:55 -0400
-Received: by mail-vk0-f66.google.com with SMTP id b134-v6so3190916vke.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:59:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=F8qEJPDDDWpumXfNh8L/chH9OAKqoNRjsTxbrjqq4M4=;
-        b=VdldeZBbyKWiaLHEUXzx7uA3189lEECo/kUbFEAQHHdyx4XbnkKVDe0ZKev7rckga+
-         72oZ5+jClU99IrEK38i49JzMBqGtLrjt0OyATOQ5GFUAiOBjnU6KMglEYpfVbyRNsWV/
-         fnRtHE4AIQjmeviU1YpzFHaBZn6/3p28wW2UQKuIJEEDtR1wVUTpSrO7reU2RuwOsMzE
-         +gDU1MQN98nTyMyP+ZoZ58sDEjy/nsGOnEMSxsN0+0Zf4OJmJ8KNZpxBv2Klq4fT9gZp
-         MkgFQ0oab98k+jxv695d5fPVR8JR2oA+Njpnn1KCna8RPPA8LKwDI/97FZo4r58OwdqX
-         Mo3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=F8qEJPDDDWpumXfNh8L/chH9OAKqoNRjsTxbrjqq4M4=;
-        b=fBlrRo3TyHFj1nUXpdUKyh/pyo2UUB+FD407MXqIh/1Oex3gv4of+JVCNdxa+leroX
-         mPpWN+7rcEC1G6QMXQ1Na68XCgKagl1L91H3Uh39RTz1dX+vfLH25KVxKWmAZN9Q3oJw
-         hzZxWmpCi7wZwUpWSGusFTNukkBXffyhrYU1vjaw7YsvrAnMnydcZk3SqCjJQxz8w+Hb
-         hahgO0F+N+oIt5T4Emdu3CgtTl3h/umCZwZtiH8fhHkYZnu5HftbZAFj1ON3Gi+zRLr+
-         GIMFO9+gPF8KTpvEQeNv8HrpKCKV8V/nZf6G8Ht6q8j0MdZpRcepCCNYJka5pP1qUqKw
-         YrgQ==
-X-Gm-Message-State: APt69E3ESlsBEVfaDs8bGgSjtPfP0miMGm/HUmeRWb21MR8h4D42RiCw
-        yDR7d9y0YOMrGUXjG5Jy6Q2A3O519RvY7IHRbX6oSQ==
-X-Google-Smtp-Source: ADUXVKK1/p0IfkREhL8ernZSIH41YnF/snc3GfAweB1tr7TbcErzmXqy4gvOOl2HQWh2iZI5d6PsMQ2l+8hdnlai8pw=
-X-Received: by 2002:a1f:7283:: with SMTP id n125-v6mr999781vkc.26.1528966794706;
- Thu, 14 Jun 2018 01:59:54 -0700 (PDT)
+        Thu, 14 Jun 2018 05:02:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48330 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754581AbeFNJCO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 05:02:14 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7ACB208CB;
+        Thu, 14 Jun 2018 09:02:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528966933;
+        bh=EwnaIqAYjB/KBBv+vt70x0gshg7NKVwtBx58h6+UhZM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kf+6hModNN9erYg+nqVh06ZVWxtnEdSL06EtIf5cLQ0J7uJNKH3/XwxE8BESSRMUB
+         BczM0mrgoqT2+lIJWlQkWS2U6QVmmASdu5Yw2kvHTtV2UZ9vgwdJUcyHPx0Clbjgsg
+         Vso9n6ouxcasLWXMRCohfSFW5rt82nNjQTX8/kEQ=
+Date:   Thu, 14 Jun 2018 11:01:51 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc:     Rafael Tinoco <rafael.tinoco@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        lkft-triage@lists.linaro.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        linux- stable <stable@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>, ltp@lists.linux.it
+Subject: Re: [PATCH 4.4 00/24] 4.4.137-stable review
+Message-ID: <20180614090151.GA24997@kroah.com>
+References: <20180612164816.587001852@linuxfoundation.org>
+ <CADtBP2D4a2OdLsAgZ8sRFBhkh2jArviaYNzYrS7wqdmogyc=Mg@mail.gmail.com>
+ <20180613210044.GA15146@kroah.com>
+ <CABdQkv9uNjf7ARKBJ-sE_RVruMA5U9bTNo-EL_+7Rv8ZVJGY3w@mail.gmail.com>
+ <CADtBP2DZ0ceTtwaG7AdXV3xa16mQ6nu=gaqUYj7JSOLBdVD8cg@mail.gmail.com>
+ <20180614063448.GB6021@kroah.com>
+ <CA+G9fYut-A0L9iWJbzbSfmc=gjmQ17iabcPfXxqDKocwpYYTOQ@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 01:59:54
- -0700 (PDT)
-In-Reply-To: <20180613171840.29827-1-thierry.escande@linaro.org>
-References: <20180613171840.29827-1-thierry.escande@linaro.org>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Thu, 14 Jun 2018 11:59:54 +0300
-Message-ID: <CAHp75VcjiTFuUPHQJzVdL6Q-_UQUyZvs5La2tbrNW_ycg+YPbg@mail.gmail.com>
-Subject: Re: [PATCH v3] lib/test_printf.c: accept "ptrval" as valid result for
- plain 'p' tests
-To:     Thierry Escande <thierry.escande@linaro.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        David Miller <davem@davemloft.net>,
-        Petr Mladek <pmladek@suse.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        "Tobin C . Harding" <me@tobin.cc>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+G9fYut-A0L9iWJbzbSfmc=gjmQ17iabcPfXxqDKocwpYYTOQ@mail.gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 8:18 PM, Thierry Escande
-<thierry.escande@linaro.org> wrote:
-> If the test_printf module is loaded before the crng is initialized, the
-> plain 'p' tests will fail because the printed address will not be hashed
-> and the buffer will contain "(____ptrval____)" or "(ptrval)" instead
-> (64-bit vs 32-bit).
-> Since we cannot wait for the crng to be initialized for an undefined
-> time, both plain 'p' tests now accept the strings "(____ptrval____)" or
-> "(ptrval)" as a valid result and print a warning message.
->
+On Thu, Jun 14, 2018 at 02:24:25PM +0530, Naresh Kamboju wrote:
+> On 14 June 2018 at 12:04, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > On Wed, Jun 13, 2018 at 10:48:50PM -0300, Rafael Tinoco wrote:
+> >> On 13 June 2018 at 18:08, Rafael David Tinoco
+> >> <rafaeldtinoco@kernelpath.com> wrote:
+> >> > On Wed, Jun 13, 2018 at 6:00 PM, Greg Kroah-Hartman
+> >> > <gregkh@linuxfoundation.org> wrote:
+> >> >> On Wed, Jun 13, 2018 at 05:47:49PM -0300, Rafael Tinoco wrote:
+> >> >>> Results from Linaro’s test farm.
+> >> >>> Regressions detected.
+> >> >>>
+> >> >>> NOTE:
+> >> >>>
+> >> >>> 1) LTP vma03 test (cve-2011-2496) broken on v4.4-137-rc1 because of:
+> >> >>>
+> >> >>>      6ea1dc96a03a mmap: relax file size limit for regular files
+> >> >>>      bd2f9ce5bacb mmap: introduce sane default mmap limits
+> >> >>>
+> >> >>>    discussion:
+> >> >>>
+> >> >>>      https://github.com/linux-test-project/ltp/issues/341
+> >> >>>
+> >> >>>    mainline commit (v4.13-rc7):
+> >> >>>
+> >> >>>      0cc3b0ec23ce Clarify (and fix) MAX_LFS_FILESIZE macros
+> >> >>>
+> >> >>>    should be backported to 4.4.138-rc2 and fixes the issue.
+> >> >>
+> >> >> Really?  That commit says it fixes c2a9737f45e2 ("vfs,mm: fix a dead
+> >> >> loop in truncate_inode_pages_range()") which is not in 4.4.y at all.
+> >> >>
+> >> >> Did you test this out?
+> >> >
+> >> > Yes, the LTP contains the tests (last comment is the final test for
+> >> > arm32, right before Jan tests i686).
+> >> >
+> >> > Fixing MAX_LFS_FILESIZE fixes the new limit for mmap() brought by
+> >> > those 2 commits (file_mmap_size_max()).
+> >> > offset tested by the LTP test is 0xfffffffe000.
+> >> > file_mmap_size_max gives: 0xFFFFFFFF000 as max value, but only after
+> >> > the mentioned patch.
+> >> >
+> >> > Original intent for this fix was other though.
+> >>
+> >> To clarify this a bit further.
+> >>
+> >> The LTP CVE test is breaking in the first call to mmap(), even before
+> >> trying to remap and test the security issue. That start happening in
+> >> this round because of those mmap() changes and the offset used in the
+> >> LTP test. Linus changed limit checks and made them to be related to
+> >> MAX_LFS_FILESIZE. Unfortunately, in 4.4 stable, we were missing the
+> >> fix for MAX_LFS_FILESIZE (which before commit 0cc3b0ec23ce was less
+> >> than the REAL 32 bit limit).
+> >>
+> >> Commit 0cc3b0ec23ce was made because an user noticed the FS limit not
+> >> being what it should be. In our case, the 4.4 stable kernel, we are
+> >> facing this 32 bit lower limit (than the real 32 bit real limit),
+> >> because of the LTP CVE test, so we need this fix to have the real 32
+> >> bit limit set for that macro (mmap limits did not use that macro
+> >> before).
+> >>
+> >> I have tested in arm32 and Jan Stancek, who first responded to LTP
+> >> issue, has tested this in i686 and both worked after that patch was
+> >> included to v4.4-137-rc1 (my last test was even with 4.4.138-rc1).
+> >>
+> >> Hope that helps a bit.
+> >
+> > Ok, thanks, it didn't apply cleanly but I've fixed it up now.
+> 
+> On the latest 4.4.138-rc1,
+> LTP "cve-2011-2496" test still fails on arm32 beagleboard x15 and qemu_arm.
+> 
+> Summary
+> ------------------------------------------------------------------------
+> kernel: 4.4.138-rc1
+> git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+> git branch: linux-4.4.y
+> git commit: 7d690c56754ef7be647fbcf7bcdceebd59926b3f
+> git describe: v4.4.137-15-g7d690c56754e
+> Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.4-oe/build/v4.4.137-15-g7d690c56754e
 
-LGTM.
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Ok, but what does this mean?  Is there a commit somewhere that I need to
+pick up for 4.4.y that is already in newer kernels?
 
-> Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-> ---
->
-> Changes in v3:
-> - Use "(____ptrval____)" for 64-bit
-> - Update commit message headline
->
-> Changes in v2:
-> - Remove wait_for_random_bytes() usage
-> - Remove Acked-by from Tobin as the proposed solution is not the same
->   anymore.
->
->  lib/test_printf.c | 24 ++++++++++++++++++++++--
->  1 file changed, 22 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/test_printf.c b/lib/test_printf.c
-> index 71ebfa43ad05..31f00b8ca657 100644
-> --- a/lib/test_printf.c
-> +++ b/lib/test_printf.c
-> @@ -206,6 +206,7 @@ test_string(void)
->  #define PTR_WIDTH 16
->  #define PTR ((void *)0xffff0123456789ab)
->  #define PTR_STR "ffff0123456789ab"
-> +#define PTR_VAL_NO_CRNG "(____ptrval____)"
->  #define ZEROS "00000000"       /* hex 32 zero bits */
->
->  static int __init
-> @@ -216,7 +217,16 @@ plain_format(void)
->
->         nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", PTR);
->
-> -       if (nchars != PTR_WIDTH || strncmp(buf, ZEROS, strlen(ZEROS)) != 0)
-> +       if (nchars != PTR_WIDTH)
-> +               return -1;
-> +
-> +       if (strncmp(buf, PTR_VAL_NO_CRNG, PTR_WIDTH) == 0) {
-> +               pr_warn("crng possibly not yet initialized. plain 'p' buffer contains \"%s\"",
-> +                       PTR_VAL_NO_CRNG);
-> +               return 0;
-> +       }
-> +
-> +       if (strncmp(buf, ZEROS, strlen(ZEROS)) != 0)
->                 return -1;
->
->         return 0;
-> @@ -227,6 +237,7 @@ plain_format(void)
->  #define PTR_WIDTH 8
->  #define PTR ((void *)0x456789ab)
->  #define PTR_STR "456789ab"
-> +#define PTR_VAL_NO_CRNG "(ptrval)"
->
->  static int __init
->  plain_format(void)
-> @@ -245,7 +256,16 @@ plain_hash(void)
->
->         nchars = snprintf(buf, PLAIN_BUF_SIZE, "%p", PTR);
->
-> -       if (nchars != PTR_WIDTH || strncmp(buf, PTR_STR, PTR_WIDTH) == 0)
-> +       if (nchars != PTR_WIDTH)
-> +               return -1;
-> +
-> +       if (strncmp(buf, PTR_VAL_NO_CRNG, PTR_WIDTH) == 0) {
-> +               pr_warn("crng possibly not yet initialized. plain 'p' buffer contains \"%s\"",
-> +                       PTR_VAL_NO_CRNG);
-> +               return 0;
-> +       }
-> +
-> +       if (strncmp(buf, PTR_STR, PTR_WIDTH) == 0)
->                 return -1;
->
->         return 0;
-> --
-> 2.14.1
->
+I have no idea what that cve is, as I never track them, and it's
+something that was reported to predate the 4.4 kernel release :)
 
+thanks,
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+greg k-h
