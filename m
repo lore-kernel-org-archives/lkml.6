@@ -2,145 +2,167 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F0A5EC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:36:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CDA3CC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:37:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5460208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:36:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 826D0208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:37:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="eAHbALGX";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VnB6OBjQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5460208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UI01u8LR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 826D0208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965806AbeFNOgf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:36:35 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:56264 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965617AbeFNOga (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:36:30 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id ABB366090E; Thu, 14 Jun 2018 14:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528986989;
-        bh=jJ+VAuK3s8uNaDEsQDQ6nnQc/PZyJ19wOlUZHP2Fxlw=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=eAHbALGXzdWTeR50RODrypKTqhN6UKLRXVtkIWcDLCTDlN062LgGkw6LuYoFVXUfQ
-         7YTzZzsh0fpcbU3FU07zl7KnVyEbMBqgWbzlqXM0i8ZbZRLjKktqI+UhMPivs4HqDq
-         0nYoIvvI24nzg4DSWeF+wl7JieUr12VBMo3m8zzo=
-Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S965617AbeFNOhP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:37:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965520AbeFNOJw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:09:52 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A26C7607A4;
-        Thu, 14 Jun 2018 14:36:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528986988;
-        bh=jJ+VAuK3s8uNaDEsQDQ6nnQc/PZyJ19wOlUZHP2Fxlw=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=VnB6OBjQkwCmjNSDZSxXcvN+YRv6w4hdaRpwD/eRQdc2vY4XlYXdF3m6lCsW8+lRe
-         R6V/T9q798cq0+YY3GlFN1hC/Ii63fapv8aCRJAagnEx6lgVFSC+YS5vQOBNM0OZ9e
-         1MWF14hVpyORE1bs3CP3tT7z59/4eDYoXyGEBWBs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A26C7607A4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Joe Perches <joe@perches.com>,
-        Colin King <colin.king@canonical.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iwlwifi: pcie: make array prop static, shrinks object size
-References: <20180611171537.14597-1-colin.king@canonical.com>
-        <7f508dccf95cff7fb8e083666b8939c58f65f894.camel@perches.com>
-        <20180611204506.GA21542@kroah.com>
-Date:   Thu, 14 Jun 2018 17:36:23 +0300
-In-Reply-To: <20180611204506.GA21542@kroah.com> (Greg Kroah-Hartman's message
-        of "Mon, 11 Jun 2018 22:45:06 +0200")
-Message-ID: <878t7h8mfs.fsf@kamboji.qca.qualcomm.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F5CB208DA;
+        Thu, 14 Jun 2018 14:09:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985391;
+        bh=YLR/JAoMmLXWIWLDCIvprCN4LFojRNP8+RkhCZRA/gw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=UI01u8LRtY4bvVNYNui7AMGDt7UuO2hlFw3bsns27eV9LpXNUzr90W7V3LqOdQuf3
+         M3SicJWGhfuWBKbDbdHWcKtKnyJFC7r6QaCylyVw+V4pM+VGQZmWZbTJnXykXVuK6o
+         vXhNinUtAuEYTUYH20pCTpLnjE5V6jaCywf32F4k=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Kevin Easton <kevin@guarana.org>,
+        syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Zubin Mithra <zsm@chromium.org>
+Subject: [PATCH 4.14 03/36] af_key: Always verify length of provided sadb_key
+Date:   Thu, 14 Jun 2018 16:04:26 +0200
+Message-Id: <20180614132157.463203892@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
+References: <20180614132157.333004166@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> writes:
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-> On Mon, Jun 11, 2018 at 12:40:55PM -0700, Joe Perches wrote:
->> (adding Greg KH)
->> 
->> Now what is happening is that prop is being reloaded
->> each invocation with the constant addresses of the strings.
->> 
->> It seems the prototype and function for kobject_uevent_env
->> should change as well to avoid this.
->> 
->> Perhaps this should become:
->> ---
->>  drivers/net/wireless/intel/iwlwifi/pcie/trans.c | 2 +-
->>  include/linux/kobject.h                         | 2 +-
->>  lib/kobject_uevent.c                            | 2 +-
->>  3 files changed, 3 insertions(+), 3 deletions(-)
->> 
->> diff --git a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
->> index 7229991ae70d..6668a8aad22e 100644
->> --- a/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
->> +++ b/drivers/net/wireless/intel/iwlwifi/pcie/trans.c
->> @@ -1946,7 +1946,7 @@ static void iwl_trans_pcie_removal_wk(struct work_struct *wk)
->>  	struct iwl_trans_pcie_removal *removal =
->>  		container_of(wk, struct iwl_trans_pcie_removal, work);
->>  	struct pci_dev *pdev = removal->pdev;
->> -	char *prop[] = {"EVENT=INACCESSIBLE", NULL};
->> +	static const char * const prop[] = {"EVENT=INACCESSIBLE", NULL};
->>  
->>  	dev_err(&pdev->dev, "Device gone - attempting removal\n");
->>  	kobject_uevent_env(&pdev->dev.kobj, KOBJ_CHANGE, prop);
->> diff --git a/include/linux/kobject.h b/include/linux/kobject.h
->> index 7f6f93c3df9c..9f5cf553dd1e 100644
->> --- a/include/linux/kobject.h
->> +++ b/include/linux/kobject.h
->> @@ -217,7 +217,7 @@ extern struct kobject *firmware_kobj;
->>  
->>  int kobject_uevent(struct kobject *kobj, enum kobject_action action);
->>  int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
->> -			char *envp[]);
->> +			const char * const envp[]);
->>  int kobject_synth_uevent(struct kobject *kobj, const char *buf, size_t count);
->>  
->>  __printf(2, 3)
->> diff --git a/lib/kobject_uevent.c b/lib/kobject_uevent.c
->> index 63d0816ab23b..9107989a0cc8 100644
->> --- a/lib/kobject_uevent.c
->> +++ b/lib/kobject_uevent.c
->> @@ -452,7 +452,7 @@ static void zap_modalias_env(struct kobj_uevent_env *env)
->>   * corresponding error when it fails.
->>   */
->>  int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
->> -		       char *envp_ext[])
->> +		       const char * const envp_ext[])
->>  {
->>  	struct kobj_uevent_env *env;
->>  	const char *action_string = kobject_actions[action];
->
-> No objection from me, care to make it a real patch so that I can apply
-> it after 4.18-rc1 is out?
+------------------
 
-For the wireless part:
+From: Kevin Easton <kevin@guarana.org>
 
-Acked-by: Kalle Valo <kvalo@codeaurora.org>
+commit 4b66af2d6356a00e94bcdea3e7fea324e8b5c6f4 upstream.
 
--- 
-Kalle Valo
+Key extensions (struct sadb_key) include a user-specified number of key
+bits.  The kernel uses that number to determine how much key data to copy
+out of the message in pfkey_msg2xfrm_state().
+
+The length of the sadb_key message must be verified to be long enough,
+even in the case of SADB_X_AALG_NULL.  Furthermore, the sadb_key_len value
+must be long enough to include both the key data and the struct sadb_key
+itself.
+
+Introduce a helper function verify_key_len(), and call it from
+parse_exthdrs() where other exthdr types are similarly checked for
+correctness.
+
+Signed-off-by: Kevin Easton <kevin@guarana.org>
+Reported-by: syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Zubin Mithra <zsm@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ net/key/af_key.c |   45 +++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 35 insertions(+), 10 deletions(-)
+
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -437,6 +437,24 @@ static int verify_address_len(const void
+ 	return 0;
+ }
+ 
++static inline int sadb_key_len(const struct sadb_key *key)
++{
++	int key_bytes = DIV_ROUND_UP(key->sadb_key_bits, 8);
++
++	return DIV_ROUND_UP(sizeof(struct sadb_key) + key_bytes,
++			    sizeof(uint64_t));
++}
++
++static int verify_key_len(const void *p)
++{
++	const struct sadb_key *key = p;
++
++	if (sadb_key_len(key) > key->sadb_key_len)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static inline int pfkey_sec_ctx_len(const struct sadb_x_sec_ctx *sec_ctx)
+ {
+ 	return DIV_ROUND_UP(sizeof(struct sadb_x_sec_ctx) +
+@@ -533,16 +551,25 @@ static int parse_exthdrs(struct sk_buff
+ 				return -EINVAL;
+ 			if (ext_hdrs[ext_type-1] != NULL)
+ 				return -EINVAL;
+-			if (ext_type == SADB_EXT_ADDRESS_SRC ||
+-			    ext_type == SADB_EXT_ADDRESS_DST ||
+-			    ext_type == SADB_EXT_ADDRESS_PROXY ||
+-			    ext_type == SADB_X_EXT_NAT_T_OA) {
++			switch (ext_type) {
++			case SADB_EXT_ADDRESS_SRC:
++			case SADB_EXT_ADDRESS_DST:
++			case SADB_EXT_ADDRESS_PROXY:
++			case SADB_X_EXT_NAT_T_OA:
+ 				if (verify_address_len(p))
+ 					return -EINVAL;
+-			}
+-			if (ext_type == SADB_X_EXT_SEC_CTX) {
++				break;
++			case SADB_X_EXT_SEC_CTX:
+ 				if (verify_sec_ctx_len(p))
+ 					return -EINVAL;
++				break;
++			case SADB_EXT_KEY_AUTH:
++			case SADB_EXT_KEY_ENCRYPT:
++				if (verify_key_len(p))
++					return -EINVAL;
++				break;
++			default:
++				break;
+ 			}
+ 			ext_hdrs[ext_type-1] = (void *) p;
+ 		}
+@@ -1104,14 +1131,12 @@ static struct xfrm_state * pfkey_msg2xfr
+ 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
+ 	if (key != NULL &&
+ 	    sa->sadb_sa_auth != SADB_X_AALG_NULL &&
+-	    ((key->sadb_key_bits+7) / 8 == 0 ||
+-	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
++	    key->sadb_key_bits == 0)
+ 		return ERR_PTR(-EINVAL);
+ 	key = ext_hdrs[SADB_EXT_KEY_ENCRYPT-1];
+ 	if (key != NULL &&
+ 	    sa->sadb_sa_encrypt != SADB_EALG_NULL &&
+-	    ((key->sadb_key_bits+7) / 8 == 0 ||
+-	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
++	    key->sadb_key_bits == 0)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	x = xfrm_state_alloc(net);
+
+
