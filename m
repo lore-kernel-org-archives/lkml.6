@@ -2,65 +2,72 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6A1C5C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:02:38 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D8EA2C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:03:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE0AB208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:02:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0AB208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 8D4FA208B5
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:03:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IQmyaO/D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D4FA208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755390AbeFNUCg (ORCPT
+        id S1755450AbeFNUDo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 16:02:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38738 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754806AbeFNUCf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 16:02:35 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CE28208CB;
-        Thu, 14 Jun 2018 20:02:33 +0000 (UTC)
-Date:   Thu, 14 Jun 2018 16:02:31 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Daniel Wagner <wagi@monom.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        linux-rt-users <linux-rt-users@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Carsten Emde <C.Emde@osadl.org>,
-        John Kacur <jkacur@redhat.com>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Daniel Wagner <daniel.wagner@siemens.com>,
-        Tom Zanussi <tom.zanussi@linux.intel.com>,
-        Julia Cartwright <julia@ni.com>
-Subject: Re: [ANNOUNCE] 4.4.137-rt154
-Message-ID: <20180614160231.6310d752@gandalf.local.home>
-In-Reply-To: <20180614191001.6882950047A@mail.monom.org>
-References: <20180614191001.6882950047A@mail.monom.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 14 Jun 2018 16:03:44 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:45528 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755392AbeFNUDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 16:03:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=oig3U8tPfOJUkkGI3MQeH3SS37M7wVP482x9oGTfrjc=; b=IQmyaO/DqCjfX0/2C9XY3TLPY
+        a3pfNUiBd6w7wgN59bEaj5soYMFsr7GMkfbOz5tFcYRImGv7LsmFQy0rymZAg2GDp8NcF29eV05BR
+        87QBEqG9EW67afaUWRn36KgVdiq24lbLctAKsN0IVSX5vOiV+LyXF8lTtXGwu78d/YCQkzeCzld1o
+        kULjB8/n1ctvHxWRCvIPZQzYqLYtEwVbGTXDDGU8JS+jkV7+YUAKokSpT3FuatyjGiyg0bjtQsTgg
+        IRQrMrRCBbzOBtAVB5+FiYwoVw2SImD5XmTGqcbGcsDNo/WwIn246KtIrL8GfRmFLVo7gaedD7jYF
+        NTfhkJUiw==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTYT5-0007jY-SB; Thu, 14 Jun 2018 20:03:40 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 28A81201EA7C9; Thu, 14 Jun 2018 22:03:38 +0200 (CEST)
+Date:   Thu, 14 Jun 2018 22:03:38 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        linux-kernel@vger.kernel.org, jolsa@redhat.com
+Subject: Re: [PATCH v1 4/6] perf: Allow using AUX data in perf samples
+Message-ID: <20180614200338.GB12217@hirez.programming.kicks-ass.net>
+References: <20180612075117.65420-1-alexander.shishkin@linux.intel.com>
+ <20180612075117.65420-5-alexander.shishkin@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180612075117.65420-5-alexander.shishkin@linux.intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Jun 2018 21:02:51 +0200
-Daniel Wagner <wagi@monom.org> wrote:
+On Tue, Jun 12, 2018 at 10:51:15AM +0300, Alexander Shishkin wrote:
+> +	ret = rb_output_aux(rb, data->aux.from, data->aux.to,
+> +			    (aux_copyfn)perf_output_copy, handle);
 
-> I am not sure if I am hunting a ghost. During testing on the CI
-> testfarm, a spike of around 400us popped up on a x86_64 box
-> (*). Fortunately, I have the same CPU for testing at home and I
-> tried very hard to reproduce it. Even Steven was helping out for
-> setting up the test correctly. But so far I haven't seen it again.
+If you look closely, you'll find that perf_output_copy() as 'unsigned
+int' return type and your aux_copyfn has 'unsigned long'.
 
-I believe it was a ghost. I just scared it away when I came over ;-)
-
--- Steve
+I'm thinking that the compiler is entirely in its right to make that
+explode at random points in time.
