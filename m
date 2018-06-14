@@ -3,96 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A6FBAC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:42:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 87609C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:42:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A80F208B8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:42:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C741208B8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:42:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="V5b4Aau/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A80F208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="0Uls+s+5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C741208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755098AbeFNLmU (ORCPT
+        id S1755190AbeFNLmj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 07:42:20 -0400
-Received: from mail-pg0-f68.google.com ([74.125.83.68]:41202 "EHLO
-        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754912AbeFNLmS (ORCPT
+        Thu, 14 Jun 2018 07:42:39 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:40932 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755135AbeFNLmg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:42:18 -0400
-Received: by mail-pg0-f68.google.com with SMTP id l65-v6so2803941pgl.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 04:42:18 -0700 (PDT)
+        Thu, 14 Jun 2018 07:42:36 -0400
+Received: by mail-lf0-f67.google.com with SMTP id q11-v6so8913453lfc.7
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 04:42:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=dzBLKrWSoS3atBjEk7O/H3sfpLhAL9vaJhj7FVUsuxU=;
-        b=V5b4Aau/hPrQU27slbVAB5kxJhco2ZKp+ORzx2G2pR5L2/u3nQ04+1E9J2WkIqdkNy
-         ZBhgSJlYmTFFdqO286O4MX+lHHQ42nD/V7uiQyAcvFYBHAKycTIJuQdzbKSzfcNP7G8w
-         KASAc3U1fkM3y+doo387ISGwI3PmWY8i1MVhU=
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ZZOq51i2a6P7g5jxdUXvZ6Ci0o4lWElGXnzoXiqjRN0=;
+        b=0Uls+s+5wNb2s2bp6a8pSGS4TXDu6dBZI9lrOy8KOUNhEPDyszc9S2PLD4W+Ccpy0O
+         eYcczh3fk4kDyKSXH/R5nKIGg9fC1kVFJXM/s1Llnfsdns9fNGmjaJ+qZvxgjCkvH4NG
+         sULuJpiFatm2APbxh+1tN1NMMxDl7NZFKCWp2Q+sGUWqft94wQBWOwp4L0Z45AiIVYPx
+         kJGdGcYMuWdFLiUreRDL1TPvBfy2/f5yZ1WsS0LZy5+x3lPVWkFOQ9fTTimx+7uPKdn1
+         MPO+PGbiV7a1AbC5XWyrs5h3c2/7xK3ulJUqK83mTlQiSS7YhwR51+LUM+R8iCEipaYq
+         GW0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=dzBLKrWSoS3atBjEk7O/H3sfpLhAL9vaJhj7FVUsuxU=;
-        b=hRNume3L9Iz3j/RiAdfZ3OUdj/WTGXd7izVAQMZA+stE28L28f3TA0N/Oa6gdjKmWF
-         lV6A3UVWb3lvDEIdwMiScqK6rQ7tQLbs0gqYue2roqk1DE9G7lhHwgNX1ylNHsznmWxj
-         TUyMKB57DUIRquYJmbZOgx+awLoXGIrGBciWAi+EfzJswUR2X9ayuz+uAydxbKAcRkwV
-         4HC6tVjoShz/qHXcYsFa5vSFVjI+Z0Y6sYMpvlpbHgXfRjB24pJEHA40ARacqjdNops6
-         Wrgcpc+5UdwJNucCI/Va3OQ5tT70/tlR01I6W/KiahDqa/Gb7FM+ag8Vht1yVrcW7PSp
-         ldfw==
-X-Gm-Message-State: APt69E0LbNvhnQ1ILfeP5rVpVxCdyenC5MgznYG9LDmMqaPcKel8f5M3
-        1OAM2hu0cImXg00Y0aA7CDK+MuOv2gOLVRCjAmFPmw==
-X-Google-Smtp-Source: ADUXVKJISlRAY9TnQ66H7KIK86gf5uE+9wXmAQweyzugnGphhp6opBV6VpDLi80f5vigsJJ+i9Reqa789VRN93tw4Sk=
-X-Received: by 2002:a63:ba56:: with SMTP id l22-v6mr2009793pgu.161.1528976538132;
- Thu, 14 Jun 2018 04:42:18 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ZZOq51i2a6P7g5jxdUXvZ6Ci0o4lWElGXnzoXiqjRN0=;
+        b=Z9pwr3pZ/G35gxjhh2U3NMcTnTHvEtrddr1CttfM1tRn/dnjLPPcTOEXT5B8cgB+CZ
+         cWtLpRE+7lCbeFlEHInWyrXby3jStm++g+h8lndtOS/0pMxzzi0bkP2wJC73iEM+/y5s
+         SDH8GN+CpDorGNYb/puyYuAjqYcIyvgr5RWcxMZ4aKxUK6z8Cc55l3ohFGUBonUiL/gK
+         RQF3FuK5E19FODKCsgcx0vYzPSlBBV3RUgmH5A2sM5lkpZb7IQMZpzg9d7iOVLuzFX81
+         Eij1UNGhrmsyQ7XpVwWOZ0dy/xIx/jrURbCECLu6Li+h4p4xqq/MYYTy9tuv/l1kAH2u
+         VlHQ==
+X-Gm-Message-State: APt69E2teuQR8wfsn1gFQMMQLkCY6/7c4OCbIezol61ZmXYTSNTl7e89
+        ZxLPF7yfLuoKvx1L0uXjJ3eqikOsEoQ=
+X-Google-Smtp-Source: ADUXVKJu3GVoWvc27jIXzA4MR08bgMF5e4bMRGrhRX3FvjXmOJ3dAV3+mkJIVtbMXXNsOYHuWXTLTA==
+X-Received: by 2002:a19:f611:: with SMTP id x17-v6mr5959247lfe.116.1528976554618;
+        Thu, 14 Jun 2018 04:42:34 -0700 (PDT)
+Received: from wasted.cogentembedded.com ([31.173.84.212])
+        by smtp.gmail.com with ESMTPSA id d20-v6sm902599ljc.62.2018.06.14.04.42.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 04:42:33 -0700 (PDT)
+Subject: Re: [PATCH v1 4/5] ARM: dts: Renesas R9A06G032 pinctrl node
+To:     Michel Pollet <michel.pollet@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>
+Cc:     phil.edworthy@renesas.com,
+        Michel Pollet <buserror+upstream@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1528974029-29617-1-git-send-email-michel.pollet@bp.renesas.com>
+ <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <7e9eefe0-5310-5925-3b00-b75800e6d87e@cogentembedded.com>
+Date:   Thu, 14 Jun 2018 14:42:32 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Received: by 2002:a17:90a:178d:0:0:0:0 with HTTP; Thu, 14 Jun 2018 04:42:17
- -0700 (PDT)
-In-Reply-To: <CALDO+SY3qNYAOSiYC3645C7YY9LSx7ggg0GjY76m4TbBfF_t3A@mail.gmail.com>
-References: <20180612110510.11731-1-anders.roxell@linaro.org>
- <d6851756-ae3b-09ec-f487-1eeece6bd4c6@iogearbox.net> <CALDO+SY3qNYAOSiYC3645C7YY9LSx7ggg0GjY76m4TbBfF_t3A@mail.gmail.com>
-From:   Anders Roxell <anders.roxell@linaro.org>
-Date:   Thu, 14 Jun 2018 13:42:17 +0200
-Message-ID: <CADYN=9+3V4fpqbjh-X4VUVWd_X38XSYhEbZoRBffcx=-nMtF8g@mail.gmail.com>
-Subject: Re: [PATCH] selftests: bpf: config: add config fragments
-To:     William Tu <u9012063@gmail.com>
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1528974029-29617-5-git-send-email-michel.pollet@bp.renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 June 2018 at 13:06, William Tu <u9012063@gmail.com> wrote:
-> On Tue, Jun 12, 2018 at 5:08 PM, Daniel Borkmann <daniel@iogearbox.net> wrote:
->> On 06/12/2018 01:05 PM, Anders Roxell wrote:
->>> Tests test_tunnel.sh fails due to config fragments ins't enabled.
->>>
->>> Fixes: 933a741e3b82 ("selftests/bpf: bpf tunnel test.")
->>> Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
->>> ---
->>>
->>> All tests passes except ip6gretap that still fails. I'm unsure why.
->>> Ideas?
->
-> Hi Anders,
->
-> ip6erspan is based on ip6gretap, does ip6erspan pass?
+Hello!
 
-it did pass  when I was sending the email.
-However, I retested this on next-20180613 and now it fails.
+On 06/14/2018 02:00 PM, Michel Pollet wrote:
 
-Cheers,
-Anders
+> This provides a pinctrl driver for the Renesas R9A06G032 SoC
+> 
+> Signed-off-by: Michel Pollet <michel.pollet@bp.renesas.com>
+> ---
+>  arch/arm/boot/dts/r9a06g032.dtsi | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/r9a06g032.dtsi b/arch/arm/boot/dts/r9a06g032.dtsi
+> index 3e45375..fbad039 100644
+> --- a/arch/arm/boot/dts/r9a06g032.dtsi
+> +++ b/arch/arm/boot/dts/r9a06g032.dtsi
+> @@ -88,6 +88,14 @@
+>  			status = "disabled";
+>  		};
+>  
+> +		pinctrl: pinctrl@40067000 {
+
+   "pin-controller@..." please, it's looking more generic.
+
+> +			compatible = "renesas,r9a06g032-pinctrl";
+> +			reg = <0x40067000 0x1000>, <0x51000000 0x800>;
+> +			clocks = <&sysctrl R9A06G032_HCLK_PINCONFIG>;
+> +			clock-names = "bus";
+> +			status = "okay";
+> +		};
+> +
+>  		gic: gic@44101000 {
+>  			compatible = "arm,cortex-a7-gic", "arm,gic-400";
+>  			interrupt-controller;
+
+MBR, Sergei
