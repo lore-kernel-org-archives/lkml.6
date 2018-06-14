@@ -6,126 +6,143 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CA907C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:12:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 626F3C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 776EB208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:12:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 192B4208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:12:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SU8Y5aoh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776EB208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="pR4lKoIU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 192B4208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754667AbeFNHMX (ORCPT
+        id S1754706AbeFNHMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:12:23 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:51581 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754589AbeFNHMV (ORCPT
+        Thu, 14 Jun 2018 03:12:45 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:40243 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754674AbeFNHMm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:12:21 -0400
-Received: by mail-it0-f67.google.com with SMTP id n7-v6so7012467itn.1
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:12:20 -0700 (PDT)
+        Thu, 14 Jun 2018 03:12:42 -0400
+Received: by mail-io0-f195.google.com with SMTP id g22-v6so6132489iob.7
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:12:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
+        d=amarulasolutions.com; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=BOohwfeFGPANxXRV52HzxKMlKYLjJMJxES/9S9IAN6c=;
-        b=SU8Y5aohGKY7OU2lCYEnaNgsSkxSoH4bocm3oy6f7Nw+zn3WJ8Z5+PuOkybuFC9fQ8
-         h/mocG161oIKLyUKk+Z/q9I8OEau++uGFJEyENKFI+sL7t8T3whzXuIX5Qj98YOId9lR
-         hHkKCPT1Rx3xDZJ4csrwuHkVkSHmc5fn9LU+U=
+        bh=GpF4fYi88ZP3aXRc6rjr85Ee9bH67mLxvIRPPlX3D98=;
+        b=pR4lKoIUMKqAEYHkqTmY9hMis1jHNtxbQ79tGD0tZo3n+WrvEZd319JmOngwwHTgKG
+         HRLLT3xUejZ1FplVFLxyP207sE2tI+dOft7MZpe57yrsVRF/Lm/PbwU8FAMoEOfUIT/w
+         5Fa/k7vMRGDkTWCr8Lurz/Id9lpzKAOvFMLSk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=BOohwfeFGPANxXRV52HzxKMlKYLjJMJxES/9S9IAN6c=;
-        b=E6CpY44kXL2H/YwCvQ2MaSix+MzwhncO3BBrS3eEwdR5AiowsOBpJZu/w0RjoLxzIP
-         z1ePCbD0DA23Vdxsf5bCxh0sFwsC3ljjqHJP2m7wvqS4mva3l9dHybrESFu6ATjMo3s8
-         WAOM+fjRs1ziUg7/lYRS1jnIiLxh9QM1Gu981iKBJCqvJqX8I7qOJNnDbpXq0xEwjjD/
-         iZxaIB1E61UFRnoAnFvK3VcPmjQNRvfcIflJGBJHCYTotd+X6As9UIoV9371ULyVHyrQ
-         vFdL1Mhh9EAeEZ6P32CbgOYAO7oa52rCnJ+LSA9tBsDZv36PdzWLDsAI0xRfSLq6UUgc
-         aTXg==
-X-Gm-Message-State: APt69E1OiOBTdorh8KnQ1zl1dUIJDJj3VSLTlDLeWonXzsW3ETQ93yYZ
-        SXjCwgEcgeHpnbLejIJy9/PGAXOQtnhIYuHn44+f6Q==
-X-Google-Smtp-Source: ADUXVKK3P+izr4Aemts8MtEV5v+x6uGhs0XxPfNTK3YlNLp1iGAidiJHPX3L/fmAlnyYOlJE0+3l6Wlnt849OanjE0Y=
-X-Received: by 2002:a24:91d3:: with SMTP id i202-v6mr1190560ite.97.1528960340592;
- Thu, 14 Jun 2018 00:12:20 -0700 (PDT)
+        bh=GpF4fYi88ZP3aXRc6rjr85Ee9bH67mLxvIRPPlX3D98=;
+        b=MIkS06XydhQ7TLpI+jcAsrWKoev4n+CVd/z50vstbxZONft9alOd/HCJ4FuLWfunRw
+         exGnODH/yk0MujtrGuQjJx/EaM1rjpI+IazVpKmrgtJ79usyhMVeBz4TS0iDCZkNRFhu
+         kOvDDMJdh1Q/LJ27b+jnfA5P8PT14OrNnzovjgjn7fh73Nfyt/5IWUUoirW+5Y4/G9mD
+         juL1IssPzSeNXmpbsriIIMzC+zU1DOuyuHzWl8WnUM+HKsxbw5L3dA47TWVxHJBukvc4
+         XpCTW0zSMuoFhd0JGvNzjx/iapjoZpzthbmme9iwoa8fQVicSopSo1FxaGXYzUc7AIp4
+         ZfOg==
+X-Gm-Message-State: APt69E24ssPNezBGSUP7/RSMIns9I87sRF2JxNWbOA9/P9oldhPcGQTQ
+        IDQF4cvwdmZqIOxygcDKmGactcUzuFA+dc6LKAydVA==
+X-Google-Smtp-Source: ADUXVKLk19HQP3WYTCW+jIBl4UAS+AuR+a+Ijm2Xah1UAVVFgrx5AZc8J17UAwPhjZ6JTc/JlrblnZaM/rAzC41v+T0=
+X-Received: by 2002:a6b:91c5:: with SMTP id t188-v6mr1246201iod.114.1528960361643;
+ Thu, 14 Jun 2018 00:12:41 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 00:12:20
+Received: by 2002:a02:89ca:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 00:12:41
  -0700 (PDT)
-In-Reply-To: <b90f44d35e8e0fa9c81b3a88d05449a580be5567.1528953706.git.viresh.kumar@linaro.org>
-References: <b90f44d35e8e0fa9c81b3a88d05449a580be5567.1528953706.git.viresh.kumar@linaro.org>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Thu, 14 Jun 2018 09:12:20 +0200
-Message-ID: <CAPDyKFpN+wLHGE4a14Me7F=dLLGZDnN23BUBd7yBifNuApQYxQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM / Domains: Rename opp_node to np
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+In-Reply-To: <20180612200036.21483-1-jernej.skrabec@siol.net>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 14 Jun 2018 12:42:41 +0530
+Message-ID: <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 00/27] Add support for R40 HDMI pipeline
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 June 2018 at 07:23, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> The DT node passed here isn't necessarily an OPP node, as this routine
-> can also be used for cases where the "required-opps" property is present
-> directly in the device's node. Rename it.
+On Wed, Jun 13, 2018 at 1:30 AM, Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+> This series adds support for R40 HDMI pipeline. It is a bit special
+> than other already supported pipelines because it has additional unit
+> called TCON TOP responsible for relationship configuration between
+> mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+> and TV TCONs, TV encoder clock settings and pin muxing between LCD
+> and TV encoders.
 >
-> This also removes a stale comment.
+> However, it seems that TCON TOP will become a norm, since newer
+> Allwinner SoCs like H6 also have this unit.
 >
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> I tested different possible configurations:
+> - mixer0 <> TCON-TV0 <> HDMI
+> - mixer0 <> TCON-TV1 <> HDMI
+> - mixer1 <> TCON-TV0 <> HDMI
+> - mixer1 <> TCON-TV1 <> HDMI
+>
+> Please review.
+>
+> Best regards,
+> Jernej
+>
+> Changes from v1:
+> - Split DT bindings patch and updated description
+> - Split HDMI PHY patch
+> - Move header file from TCON TOP patch to dt bindings patch
+> - Added Rob reviewed-by tag
+> - Used clk_hw_register_gate() instead of custom gate registration code
+> - Reworked TCON TOP to be part of of-graph. Because of that, a lot of
+>   new patches were added.
+> - Droped mixer index quirk patch
+> - Reworked TCON support for TCON TOP
+> - Updated commit messages
+>
+> Jernej Skrabec (27):
+>   clk: sunxi-ng: r40: Add minimal rate for video PLLs
+>   clk: sunxi-ng: r40: Allow setting parent rate to display related
+>     clocks
+>   clk: sunxi-ng: r40: Export video PLLs
+>   dt-bindings: display: sunxi-drm: Add TCON TOP description
+>   drm/sun4i: Add TCON TOP driver
+>   drm/sun4i: Fix releasing node when enumerating enpoints
+>   drm/sun4i: Split out code for enumerating endpoints in output port
+>   drm/sun4i: Add support for traversing graph with TCON TOP
+>   drm/sun4i: Don't skip TCONs if they don't have channel 0
+>   dt-bindings: display: sun4i-drm: Add R40 TV TCON description
+>   drm/sun4i: tcon: Add support for tcon-top gate
+>   drm/sun4i: tcon: Generalize engine search algorithm
+>   drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
+>   drm/sun4i: Don't check for panel or bridge on TV TCONs
+>   drm/sun4i: Add support for R40 TV TCON
+>   dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
+>   drm/sun4i: Add support for R40 mixers
+>   dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
+>   drm/sun4i: Enable DW HDMI PHY clock
+>   drm/sun4i: Don't change clock bits in DW HDMI PHY driver
+>   drm/sun4i: DW HDMI PHY: Add support for second PLL
+>   drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
+>     driver
+>   drm/sun4i: Add support for A64 HDMI PHY
+>   drm: of: Export drm_crtc_port_mask()
+>   drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
+>   ARM: dts: sun8i: r40: Add HDMI pipeline
+>   ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
 
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Tested whole series on top of linux-next.
 
-Kind regards
-Uffe
-
-> ---
->  drivers/base/power/domain.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 4925af5c4cf0..c298de8a8308 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -2487,10 +2487,9 @@ EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
->   * power domain corresponding to a DT node's "required-opps" property.
->   *
->   * @dev: Device for which the performance-state needs to be found.
-> - * @opp_node: DT node where the "required-opps" property is present. This can be
-> + * @np: DT node where the "required-opps" property is present. This can be
->   *     the device node itself (if it doesn't have an OPP table) or a node
->   *     within the OPP table of a device (if device has an OPP table).
-> - * @state: Pointer to return performance state.
->   *
->   * Returns performance state corresponding to the "required-opps" property of
->   * a DT node. This calls platform specific genpd->opp_to_performance_state()
-> @@ -2499,7 +2498,7 @@ EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
->   * Returns performance state on success and 0 on failure.
->   */
->  unsigned int of_genpd_opp_to_performance_state(struct device *dev,
-> -                                              struct device_node *opp_node)
-> +                                              struct device_node *np)
->  {
->         struct generic_pm_domain *genpd;
->         struct dev_pm_opp *opp;
-> @@ -2514,7 +2513,7 @@ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
->
->         genpd_lock(genpd);
->
-> -       opp = of_dev_pm_opp_find_required_opp(&genpd->dev, opp_node);
-> +       opp = of_dev_pm_opp_find_required_opp(&genpd->dev, np);
->         if (IS_ERR(opp)) {
->                 dev_err(dev, "Failed to find required OPP: %ld\n",
->                         PTR_ERR(opp));
-> --
-> 2.18.0.rc1.242.g61856ae69a2c
->
+Tested-by: Jagan Teki <jagan@amarulasolutions.com>
