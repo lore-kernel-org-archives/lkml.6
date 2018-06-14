@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 10B72C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 146C8C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16C5208E5
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE7DF208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MeHBT2iR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16C5208E5
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cXkTBkRf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE7DF208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966331AbeFNONy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:13:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55422 "EHLO mail.kernel.org"
+        id S966356AbeFNOOF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:14:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966300AbeFNONv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:13:51 -0400
+        id S966333AbeFNON4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:13:56 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B378208E2;
-        Thu, 14 Jun 2018 14:13:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8E651208E4;
+        Thu, 14 Jun 2018 14:13:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985630;
-        bh=8PeLm5yj4wCLBOzgl/udZ8YDkA0uD5trPgV8aIOEd54=;
+        s=default; t=1528985636;
+        bh=XAEhnOi/sA0Jxd4sGQHPDLafIXTueMaE2dqRCIGnpDc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MeHBT2iR74POlgppU2ibciLKkj6BdmvZJ5cT3YylZo+7hpOHWGz0jlvGbZWJVZL2h
-         MGIDt5ijxVpKZYaRvo7kVpZzHhm4QJOlUhgcmVbRKfw+E7pMkKPTlfhFK7IjX/tHBB
-         0CY9sd9cs5GHRqRLcq6UhuV5JTGpiZE5vyfs7MgA=
+        b=cXkTBkRf50wE7bATZdkn/S4K81de0TnnpPfUaMc8+k/4fyzFTh48bS5/c2cRqq9iH
+         g2Brl87jlN5qB7zdQm8ZHOiPQv0M1z67QpZ4iMVnFT2YeUXE47mHLgWdmz9qymcC8J
+         koTMsLfM4s+2U9Mc9BPV16KP3TX0pUiPzWEAHb4c=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
+        Andy Lutomirski <luto@amacapital.net>,
         Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
         Fenghua Yu <fenghua.yu@intel.com>,
         "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Oleg Nesterov <oleg@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
         Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
+        Rik van Riel <riel@redhat.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        yu-cheng yu <yu-cheng.yu@intel.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.4 10/24] x86/fpu: Hard-disable lazy FPU mode
-Date:   Thu, 14 Jun 2018 16:05:05 +0200
-Message-Id: <20180614132724.905032027@linuxfoundation.org>
+Subject: [PATCH 4.4 12/24] x86/fpu: Fix math emulation in eager fpu mode
+Date:   Thu, 14 Jun 2018 16:05:07 +0200
+Message-Id: <20180614132724.979415214@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
 References: <20180614132724.483802160@linuxfoundation.org>
@@ -74,194 +74,72 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Andy Lutomirski <luto@kernel.org>
 
-commit ca6938a1cd8a1c5e861a99b67f84ac166fc2b9e7 upstream.
+commit 4ecd16ec7059390b430af34bd8bc3ca2b5dcef9a upstream.
 
-Since commit:
+Systems without an FPU are generally old and therefore use lazy FPU
+switching. Unsurprisingly, math emulation in eager FPU mode is a
+bit buggy. Fix it.
 
-  58122bf1d856 ("x86/fpu: Default eagerfpu=on on all CPUs")
-
-... in Linux 4.6, eager FPU mode has been the default on all x86
-systems, and no one has reported any regressions.
-
-This patch removes the ability to enable lazy mode: use_eager_fpu()
-becomes "return true" and all of the FPU mode selection machinery is
-removed.
+There were two bugs involving kernel code trying to use the FPU
+registers in eager mode even if they didn't exist and one BUG_ON()
+that was incorrect.
 
 Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Rik van Riel <riel@redhat.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
 Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
 Cc: Fenghua Yu <fenghua.yu@intel.com>
 Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Oleg Nesterov <oleg@redhat.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1475627678-20788-3-git-send-email-riel@redhat.com
+Cc: yu-cheng yu <yu-cheng.yu@intel.com>
+Link: http://lkml.kernel.org/r/b4b8d112436bd6fab866e1b4011131507e8d7fbe.1453675014.git.luto@kernel.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/cpufeature.h   |    2 
- arch/x86/include/asm/fpu/internal.h |    2 
- arch/x86/kernel/fpu/init.c          |   91 +-----------------------------------
- 3 files changed, 5 insertions(+), 90 deletions(-)
+ arch/x86/include/asm/fpu/internal.h |    3 ++-
+ arch/x86/kernel/fpu/core.c          |    2 +-
+ arch/x86/kernel/traps.c             |    1 -
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -104,7 +104,7 @@
- #define X86_FEATURE_EXTD_APICID	( 3*32+26) /* has extended APICID (8 bits) */
- #define X86_FEATURE_AMD_DCM     ( 3*32+27) /* multi-node processor */
- #define X86_FEATURE_APERFMPERF	( 3*32+28) /* APERFMPERF */
--#define X86_FEATURE_EAGER_FPU	( 3*32+29) /* "eagerfpu" Non lazy FPU restore */
-+/* free, was #define X86_FEATURE_EAGER_FPU	( 3*32+29) * "eagerfpu" Non lazy FPU restore */
- #define X86_FEATURE_NONSTOP_TSC_S3 ( 3*32+30) /* TSC doesn't stop in S3 state */
- 
- /* Intel-defined CPU features, CPUID level 0x00000001 (ecx), word 4 */
 --- a/arch/x86/include/asm/fpu/internal.h
 +++ b/arch/x86/include/asm/fpu/internal.h
-@@ -58,7 +58,7 @@ extern u64 fpu__get_supported_xfeatures_
-  */
- static __always_inline __pure bool use_eager_fpu(void)
+@@ -596,7 +596,8 @@ switch_fpu_prepare(struct fpu *old_fpu,
+ 	 * If the task has used the math, pre-load the FPU on xsave processors
+ 	 * or if the past 5 consecutive context-switches used math.
+ 	 */
+-	fpu.preload = new_fpu->fpstate_active &&
++	fpu.preload = static_cpu_has(X86_FEATURE_FPU) &&
++		      new_fpu->fpstate_active &&
+ 		      (use_eager_fpu() || new_fpu->counter > 5);
+ 
+ 	if (old_fpu->fpregs_active) {
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -437,7 +437,7 @@ void fpu__clear(struct fpu *fpu)
  {
--	return static_cpu_has_safe(X86_FEATURE_EAGER_FPU);
-+	return true;
- }
+ 	WARN_ON_FPU(fpu != &current->thread.fpu); /* Almost certainly an anomaly */
  
- static __always_inline __pure bool use_xsaveopt(void)
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -15,10 +15,7 @@
-  */
- static void fpu__init_cpu_ctx_switch(void)
+-	if (!use_eager_fpu()) {
++	if (!use_eager_fpu() || !static_cpu_has(X86_FEATURE_FPU)) {
+ 		/* FPU state will be reallocated lazily at the first use. */
+ 		fpu__drop(fpu);
+ 	} else {
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -751,7 +751,6 @@ dotraplinkage void
+ do_device_not_available(struct pt_regs *regs, long error_code)
  {
--	if (!boot_cpu_has(X86_FEATURE_EAGER_FPU))
--		stts();
--	else
--		clts();
-+	clts();
- }
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "entry code didn't wake RCU");
+-	BUG_ON(use_eager_fpu());
  
- /*
-@@ -235,82 +232,16 @@ static void __init fpu__init_system_xsta
- }
- 
- /*
-- * FPU context switching strategies:
-- *
-- * Against popular belief, we don't do lazy FPU saves, due to the
-- * task migration complications it brings on SMP - we only do
-- * lazy FPU restores.
-- *
-- * 'lazy' is the traditional strategy, which is based on setting
-- * CR0::TS to 1 during context-switch (instead of doing a full
-- * restore of the FPU state), which causes the first FPU instruction
-- * after the context switch (whenever it is executed) to fault - at
-- * which point we lazily restore the FPU state into FPU registers.
-- *
-- * Tasks are of course under no obligation to execute FPU instructions,
-- * so it can easily happen that another context-switch occurs without
-- * a single FPU instruction being executed. If we eventually switch
-- * back to the original task (that still owns the FPU) then we have
-- * not only saved the restores along the way, but we also have the
-- * FPU ready to be used for the original task.
-- *
-- * 'lazy' is deprecated because it's almost never a performance win
-- * and it's much more complicated than 'eager'.
-- *
-- * 'eager' switching is by default on all CPUs, there we switch the FPU
-- * state during every context switch, regardless of whether the task
-- * has used FPU instructions in that time slice or not. This is done
-- * because modern FPU context saving instructions are able to optimize
-- * state saving and restoration in hardware: they can detect both
-- * unused and untouched FPU state and optimize accordingly.
-- *
-- * [ Note that even in 'lazy' mode we might optimize context switches
-- *   to use 'eager' restores, if we detect that a task is using the FPU
-- *   frequently. See the fpu->counter logic in fpu/internal.h for that. ]
-- */
--static enum { ENABLE, DISABLE } eagerfpu = ENABLE;
--
--/*
-  * Find supported xfeatures based on cpu features and command-line input.
-  * This must be called after fpu__init_parse_early_param() is called and
-  * xfeatures_mask is enumerated.
-  */
- u64 __init fpu__get_supported_xfeatures_mask(void)
- {
--	/* Support all xfeatures known to us */
--	if (eagerfpu != DISABLE)
--		return XCNTXT_MASK;
--
--	/* Warning of xfeatures being disabled for no eagerfpu mode */
--	if (xfeatures_mask & XFEATURE_MASK_EAGER) {
--		pr_err("x86/fpu: eagerfpu switching disabled, disabling the following xstate features: 0x%llx.\n",
--			xfeatures_mask & XFEATURE_MASK_EAGER);
--	}
--
--	/* Return a mask that masks out all features requiring eagerfpu mode */
--	return ~XFEATURE_MASK_EAGER;
-+	return XCNTXT_MASK;
- }
- 
--/*
-- * Disable features dependent on eagerfpu.
-- */
--static void __init fpu__clear_eager_fpu_features(void)
--{
--	setup_clear_cpu_cap(X86_FEATURE_MPX);
--}
--
--/*
-- * Pick the FPU context switching strategy:
-- *
-- * When eagerfpu is AUTO or ENABLE, we ensure it is ENABLE if either of
-- * the following is true:
-- *
-- * (1) the cpu has xsaveopt, as it has the optimization and doing eager
-- *     FPU switching has a relatively low cost compared to a plain xsave;
-- * (2) the cpu has xsave features (e.g. MPX) that depend on eager FPU
-- *     switching. Should the kernel boot with noxsaveopt, we support MPX
-- *     with eager FPU switching at a higher cost.
-- */
-+/* Legacy code to initialize eager fpu mode. */
- static void __init fpu__init_system_ctx_switch(void)
- {
- 	static bool on_boot_cpu = 1;
-@@ -320,17 +251,6 @@ static void __init fpu__init_system_ctx_
- 
- 	WARN_ON_FPU(current->thread.fpu.fpstate_active);
- 	current_thread_info()->status = 0;
--
--	if (boot_cpu_has(X86_FEATURE_XSAVEOPT) && eagerfpu != DISABLE)
--		eagerfpu = ENABLE;
--
--	if (xfeatures_mask & XFEATURE_MASK_EAGER)
--		eagerfpu = ENABLE;
--
--	if (eagerfpu == ENABLE)
--		setup_force_cpu_cap(X86_FEATURE_EAGER_FPU);
--
--	printk(KERN_INFO "x86/fpu: Using '%s' FPU context switches.\n", eagerfpu == ENABLE ? "eager" : "lazy");
- }
- 
- /*
-@@ -339,11 +259,6 @@ static void __init fpu__init_system_ctx_
-  */
- static void __init fpu__init_parse_early_param(void)
- {
--	if (cmdline_find_option_bool(boot_command_line, "eagerfpu=off")) {
--		eagerfpu = DISABLE;
--		fpu__clear_eager_fpu_features();
--	}
--
- 	if (cmdline_find_option_bool(boot_command_line, "no387"))
- 		setup_clear_cpu_cap(X86_FEATURE_FPU);
- 
+ #ifdef CONFIG_MATH_EMULATION
+ 	if (read_cr0() & X86_CR0_EM) {
 
 
