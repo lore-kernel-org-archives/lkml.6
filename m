@@ -3,162 +3,78 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D91B2C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:40:19 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8D945C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EA5F208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:40:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F9B208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:40:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="zmD95o9w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EA5F208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="t/FYBFqL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43F9B208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965473AbeFNOkR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:40:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49882 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965362AbeFNOJE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:09:04 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13F6E208DD;
-        Thu, 14 Jun 2018 14:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985343;
-        bh=Gx7KlWm7cSPazL0jAf0FrluuznmO6ncLstHfSXWYlHQ=;
+        id S965740AbeFNOk1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:40:27 -0400
+Received: from conuserg-09.nifty.com ([210.131.2.76]:29199 "EHLO
+        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965543AbeFNOkX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:40:23 -0400
+Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
+        by conuserg-09.nifty.com with ESMTP id w5EEdw8n010795;
+        Thu, 14 Jun 2018 23:39:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w5EEdw8n010795
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1528987200;
+        bh=D1feyA0aAgxTbyIZhn4z5vUaXyZWPFRT9A14nU4K6N8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zmD95o9w/gDi+tpnSVzoor7SUt3//aD8EysoAPa0MrpcECGYMFbnkn3deMU1hdAej
-         WI3MUwykJkTEVnztZo/smupo2514yP6uySifePITPe8KndYwzpx73Hj7fmLkk7yBso
-         WAU+6Kwqro8SMpK5cZNpUjxQKPCVROXsolWlyMfQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Dave Martin <Dave.Martin@arm.com>
-Subject: [PATCH 4.16 30/43] tty: pl011: Avoid spuriously stuck-off interrupts
-Date:   Thu, 14 Jun 2018 16:04:34 +0200
-Message-Id: <20180614132137.382248089@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
-References: <20180614132135.111973468@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        b=t/FYBFqL4wb7e7xtsxvpOXpXfmRWZpAnNS7F+6DsvMVyT3v9iaOlbNdrlAzACVAbx
+         YVYHB9JtZt4m78eAymLkL5nwPa1iEVvdrobWWddxwobTpikrY3dQ12OKLp85jlXBxP
+         FyK2XSr2IL9/Q17ipFHEj1/uJfCFyTIwKspBX4i1TGBZjqNS/ZvvPqY2VwQP67w9WQ
+         lav8Z331PUnjfSnT77l+4TfJZ33vQQz7A+peTWWab/cFuv1IPyB3k+FcQ7I3RzDAHq
+         l8OXcih7geE/QkFsF2yPOC3VZS5nFnl+sHP9dpZ0it59xvl6Nnqo5w7qd2velvKrvw
+         XqXircJX8ab6g==
+X-Nifty-SrcIP: [125.199.20.195]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH v2 1/3] bpfilter: add bpfilter_umh to .gitignore
+Date:   Thu, 14 Jun 2018 23:39:30 +0900
+Message-Id: <1528987172-19810-2-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+bpfilter_umh is a generated file.  It should be ignored by git.
 
-------------------
-
-From: Dave Martin <Dave.Martin@arm.com>
-
-commit 4a7e625ce50412a7711efa0f2ef0b96ce3826759 upstream.
-
-Commit 9b96fbacda34 ("serial: PL011: clear pending interrupts")
-clears the RX and receive timeout interrupts on pl011 startup, to
-avoid a screaming-interrupt scenario that can occur when the
-firmware or bootloader leaves these interrupts asserted.
-
-This has been noted as an issue when running Linux on qemu [1].
-
-Unfortunately, the above fix seems to lead to potential
-misbehaviour if the RX FIFO interrupt is asserted _non_ spuriously
-on driver startup, if the RX FIFO is also already full to the
-trigger level.
-
-Clearing the RX FIFO interrupt does not change the FIFO fill level.
-In this scenario, because the interrupt is now clear and because
-the FIFO is already full to the trigger level, no new assertion of
-the RX FIFO interrupt can occur unless the FIFO is drained back
-below the trigger level.  This never occurs because the pl011
-driver is waiting for an RX FIFO interrupt to tell it that there is
-something to read, and does not read the FIFO at all until that
-interrupt occurs.
-
-Thus, simply clearing "spurious" interrupts on startup may be
-misguided, since there is no way to be sure that the interrupts are
-truly spurious, and things can go wrong if they are not.
-
-This patch instead clears the interrupt condition by draining the
-RX FIFO during UART startup, after clearing any potentially
-spurious interrupt.  This should ensure that an interrupt will
-definitely be asserted if the RX FIFO subsequently becomes
-sufficiently full.
-
-The drain is done at the point of enabling interrupts only.  This
-means that it will occur any time the UART is newly opened through
-the tty layer.  It will not apply to polled-mode use of the UART by
-kgdboc: since that scenario cannot use interrupts by design, this
-should not matter.  kgdboc will interact badly with "normal" use of
-the UART in any case: this patch makes no attempt to paper over
-such issues.
-
-This patch does not attempt to address the case where the RX FIFO
-fills faster than it can be drained: that is a pathological
-hardware design problem that is beyond the scope of the driver to
-work around.  As a failsafe, the number of poll iterations for
-draining the FIFO is limited to twice the FIFO size.  This will
-ensure that the kernel at least boots even if it is impossible to
-drain the FIFO for some reason.
-
-[1] [Qemu-devel] [Qemu-arm] [PATCH] pl011: do not put into fifo
-before enabled the interruption
-https://lists.gnu.org/archive/html/qemu-devel/2018-01/msg06446.html
-
-Reported-by: Wei Xu <xuwei5@hisilicon.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Peter Maydell <peter.maydell@linaro.org>
-Fixes: 9b96fbacda34 ("serial: PL011: clear pending interrupts")
-Signed-off-by: Dave Martin <Dave.Martin@arm.com>
-Cc: stable <stable@vger.kernel.org>
-Tested-by: Wei Xu <xuwei5@hisilicon.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
- drivers/tty/serial/amba-pl011.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
 
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -1727,10 +1727,26 @@ static int pl011_allocate_irq(struct uar
-  */
- static void pl011_enable_interrupts(struct uart_amba_port *uap)
- {
-+	unsigned int i;
-+
- 	spin_lock_irq(&uap->port.lock);
- 
- 	/* Clear out any spuriously appearing RX interrupts */
- 	pl011_write(UART011_RTIS | UART011_RXIS, uap, REG_ICR);
-+
-+	/*
-+	 * RXIS is asserted only when the RX FIFO transitions from below
-+	 * to above the trigger threshold.  If the RX FIFO is already
-+	 * full to the threshold this can't happen and RXIS will now be
-+	 * stuck off.  Drain the RX FIFO explicitly to fix this:
-+	 */
-+	for (i = 0; i < uap->fifosize * 2; ++i) {
-+		if (pl011_read(uap, REG_FR) & UART01x_FR_RXFE)
-+			break;
-+
-+		pl011_read(uap, REG_DR);
-+	}
-+
- 	uap->im = UART011_RTIM;
- 	if (!pl011_dma_rx_running(uap))
- 		uap->im |= UART011_RXIM;
+Changes in v2: None
 
+ net/bpfilter/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 net/bpfilter/.gitignore
+
+diff --git a/net/bpfilter/.gitignore b/net/bpfilter/.gitignore
+new file mode 100644
+index 0000000..e97084e
+--- /dev/null
++++ b/net/bpfilter/.gitignore
+@@ -0,0 +1 @@
++bpfilter_umh
+-- 
+2.7.4
 
