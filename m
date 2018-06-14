@@ -2,131 +2,184 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AD98DC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:35:15 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DF978C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59C47208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94432208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:35:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oHjkPRri"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59C47208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CPJSkf8s";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fTKdQpjz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94432208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752900AbeFNGfM (ORCPT
+        id S1754604AbeFNGfm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:35:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47204 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752684AbeFNGfL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:35:11 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Thu, 14 Jun 2018 02:35:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55592 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753011AbeFNGfk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 02:35:40 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4E03A607BB; Thu, 14 Jun 2018 06:35:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528958140;
+        bh=D8Htjk9Y6ajh7AQSVx04+GL2bsLe/rG8h9SPDZHjM9g=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=CPJSkf8sTspQPzKmtaCaa84Hy+rT08hCegZRbFUKxyjnpDzo/vAL/3jQhzpYgRqN+
+         BqZKSqU+FaXU6bzn8E7/FpHd9gng+NmZeJIzazE4QY/WCA5ZwNpSWuug6dMHXJGTON
+         cV9buaS1mT+ynnoavKW7hqnS9uMGEroEZ6qubI40=
+Received: from mail-qk0-f176.google.com (mail-qk0-f176.google.com [209.85.220.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 188AD208D4;
-        Thu, 14 Jun 2018 06:35:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528958110;
-        bh=+OlYiy6Z5UVFTxPfsiBRBQl9AnyAfoarhZm9NI3EmAY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=oHjkPRriTyPwBgGZvXyb0XN/ALVV4yaGA6SFrF+HbgWBXQLIB0u31GZxsqCMDrr3X
-         CIZ+696PUxokIbl0EjV/qlKVznHXqTBWcyb40Ge43EVeUtb3z0Fg2iC1wQg13xX0Po
-         dHy3qswWC2CdFncMFYrwbGAIot6x5pYFKpvNyBxY=
-Date:   Thu, 14 Jun 2018 08:34:48 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rafael Tinoco <rafael.tinoco@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, shuah@kernel.org,
-        patches@kernelci.org, lkft-triage@lists.linaro.org,
-        ben.hutchings@codethink.co.uk, stable@vger.kernel.org,
-        akpm@linux-foundation.org, torvalds@linux-foundation.org,
-        linux@roeck-us.net, ltp@lists.linux.it
-Subject: Re: [PATCH 4.4 00/24] 4.4.137-stable review
-Message-ID: <20180614063448.GB6021@kroah.com>
-References: <20180612164816.587001852@linuxfoundation.org>
- <CADtBP2D4a2OdLsAgZ8sRFBhkh2jArviaYNzYrS7wqdmogyc=Mg@mail.gmail.com>
- <20180613210044.GA15146@kroah.com>
- <CABdQkv9uNjf7ARKBJ-sE_RVruMA5U9bTNo-EL_+7Rv8ZVJGY3w@mail.gmail.com>
- <CADtBP2DZ0ceTtwaG7AdXV3xa16mQ6nu=gaqUYj7JSOLBdVD8cg@mail.gmail.com>
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BB3E8602FC;
+        Thu, 14 Jun 2018 06:35:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528958139;
+        bh=D8Htjk9Y6ajh7AQSVx04+GL2bsLe/rG8h9SPDZHjM9g=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=fTKdQpjzA2rXe5c8/qBBnIERbltz0Au4t4eyjGUJoOIOFwWQgBAb8eS5sZQZBoeV9
+         8AbC8dptxKOVaWzti44IJFTJUIFzUlxBG+ssSMRQ3K6Jw9UqdNacodybnaeXFSoFT5
+         xvrl8+rvv6256kx0jq5bnTaeAsQBW9TEM06IhlJI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BB3E8602FC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-qk0-f176.google.com with SMTP id r66-v6so3030325qkr.7;
+        Wed, 13 Jun 2018 23:35:39 -0700 (PDT)
+X-Gm-Message-State: APt69E1FxM0fhuMAHn3d7ObKpu5A8cVAxEU6fyLXa714aH3vhIPVovrw
+        0UqBlLXzvRVBBTM8+A/gX184D74YceaeZwYuQho=
+X-Google-Smtp-Source: ADUXVKJk4m6rn2xwl4zOQvZDopKRrBqFvkLofVQFoKc23d36X9eZIHlALbH/+09fmyWB3euiUlBf+y6dxybA1AM6z+8=
+X-Received: by 2002:a37:5ec1:: with SMTP id s184-v6mr999848qkb.284.1528958139025;
+ Wed, 13 Jun 2018 23:35:39 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADtBP2DZ0ceTtwaG7AdXV3xa16mQ6nu=gaqUYj7JSOLBdVD8cg@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:ac8:1082:0:0:0:0:0 with HTTP; Wed, 13 Jun 2018 23:35:38
+ -0700 (PDT)
+In-Reply-To: <20180613125401.11734-6-niklas.cassel@linaro.org>
+References: <20180613125401.11734-1-niklas.cassel@linaro.org> <20180613125401.11734-6-niklas.cassel@linaro.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Thu, 14 Jun 2018 12:05:38 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iFsLfKoLy+mzLP7-RGwSrkdA5sSt0UwNT7O6ehmn=VckQ@mail.gmail.com>
+Message-ID: <CAFp+6iFsLfKoLy+mzLP7-RGwSrkdA5sSt0UwNT7O6ehmn=VckQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] soc: qcom: Remove depends on ARCH_QCOM
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-soc@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 10:48:50PM -0300, Rafael Tinoco wrote:
-> On 13 June 2018 at 18:08, Rafael David Tinoco
-> <rafaeldtinoco@kernelpath.com> wrote:
-> > On Wed, Jun 13, 2018 at 6:00 PM, Greg Kroah-Hartman
-> > <gregkh@linuxfoundation.org> wrote:
-> >> On Wed, Jun 13, 2018 at 05:47:49PM -0300, Rafael Tinoco wrote:
-> >>> Results from Linaro’s test farm.
-> >>> Regressions detected.
-> >>>
-> >>> NOTE:
-> >>>
-> >>> 1) LTP vma03 test (cve-2011-2496) broken on v4.4-137-rc1 because of:
-> >>>
-> >>>      6ea1dc96a03a mmap: relax file size limit for regular files
-> >>>      bd2f9ce5bacb mmap: introduce sane default mmap limits
-> >>>
-> >>>    discussion:
-> >>>
-> >>>      https://github.com/linux-test-project/ltp/issues/341
-> >>>
-> >>>    mainline commit (v4.13-rc7):
-> >>>
-> >>>      0cc3b0ec23ce Clarify (and fix) MAX_LFS_FILESIZE macros
-> >>>
-> >>>    should be backported to 4.4.138-rc2 and fixes the issue.
-> >>
-> >> Really?  That commit says it fixes c2a9737f45e2 ("vfs,mm: fix a dead
-> >> loop in truncate_inode_pages_range()") which is not in 4.4.y at all.
-> >>
-> >> Did you test this out?
-> >
-> > Yes, the LTP contains the tests (last comment is the final test for
-> > arm32, right before Jan tests i686).
-> >
-> > Fixing MAX_LFS_FILESIZE fixes the new limit for mmap() brought by
-> > those 2 commits (file_mmap_size_max()).
-> > offset tested by the LTP test is 0xfffffffe000.
-> > file_mmap_size_max gives: 0xFFFFFFFF000 as max value, but only after
-> > the mentioned patch.
-> >
-> > Original intent for this fix was other though.
-> 
-> To clarify this a bit further.
-> 
-> The LTP CVE test is breaking in the first call to mmap(), even before
-> trying to remap and test the security issue. That start happening in
-> this round because of those mmap() changes and the offset used in the
-> LTP test. Linus changed limit checks and made them to be related to
-> MAX_LFS_FILESIZE. Unfortunately, in 4.4 stable, we were missing the
-> fix for MAX_LFS_FILESIZE (which before commit 0cc3b0ec23ce was less
-> than the REAL 32 bit limit).
-> 
-> Commit 0cc3b0ec23ce was made because an user noticed the FS limit not
-> being what it should be. In our case, the 4.4 stable kernel, we are
-> facing this 32 bit lower limit (than the real 32 bit real limit),
-> because of the LTP CVE test, so we need this fix to have the real 32
-> bit limit set for that macro (mmap limits did not use that macro
-> before).
-> 
-> I have tested in arm32 and Jan Stancek, who first responded to LTP
-> issue, has tested this in i686 and both worked after that patch was
-> included to v4.4-137-rc1 (my last test was even with 4.4.138-rc1).
-> 
-> Hope that helps a bit.
+On Wed, Jun 13, 2018 at 6:24 PM, Niklas Cassel <niklas.cassel@linaro.org> wrote:
+> Since commit cab673583d96 ("soc: Unconditionally include qcom Makefile"),
+> we unconditionally include the soc/qcom/Makefile.
+>
+> This opens up the possibility to compile test the code even when
+> building for other architectures.
 
-Ok, thanks, it didn't apply cleanly but I've fixed it up now.
+Why do we want to do this when all of it is qcom specific?
+Besides wouldn't this increase the binary size for other platforms
 
-greg k-h
+>
+> Remove the depends on ARCH_QCOM for all Kconfigs, except for
+> two Kconfigs that depend on QCOM_SCM, since that triggers lots of build
+> errors in qcom_scm. However, that shouldn't stop us from removing
+> it from those where it is possible.
+>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> ---
+>  drivers/soc/qcom/Kconfig | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+> index 1d4a9f3ada8c..8c83025c466e 100644
+> --- a/drivers/soc/qcom/Kconfig
+> +++ b/drivers/soc/qcom/Kconfig
+> @@ -5,7 +5,7 @@ menu "Qualcomm SoC drivers"
+>
+>  config QCOM_COMMAND_DB
+>         bool "Qualcomm Command DB"
+> -       depends on (ARCH_QCOM && OF) || COMPILE_TEST
+> +       depends on OF || COMPILE_TEST
+>         help
+>           Command DB queries shared memory by key string for shared system
+>           resources. Platform drivers that require to set state of a shared
+> @@ -14,7 +14,6 @@ config QCOM_COMMAND_DB
+>
+>  config QCOM_GENI_SE
+>         tristate "QCOM GENI Serial Engine Driver"
+> -       depends on ARCH_QCOM || COMPILE_TEST
+>         help
+>           This driver is used to manage Generic Interface (GENI) firmware based
+>           Qualcomm Technologies, Inc. Universal Peripheral (QUP) Wrapper. This
+> @@ -32,7 +31,6 @@ config QCOM_GLINK_SSR
+>
+>  config QCOM_GSBI
+>          tristate "QCOM General Serial Bus Interface"
+> -        depends on ARCH_QCOM
+>          select MFD_SYSCON
+>          help
+>            Say y here to enable GSBI support.  The GSBI provides control
+> @@ -55,7 +53,7 @@ config QCOM_PM
+>
+>  config QCOM_QMI_HELPERS
+>         tristate
+> -       depends on ARCH_QCOM && NET
+> +       depends on NET
+>         help
+>           Helper library for handling QMI encoded messages.  QMI encoded
+>           messages are used in communication between the majority of QRTR
+> @@ -76,7 +74,6 @@ config QCOM_RMTFS_MEM
+>
+>  config QCOM_SMEM
+>         tristate "Qualcomm Shared Memory Manager (SMEM)"
+> -       depends on ARCH_QCOM
+>         depends on HWSPINLOCK
+>         help
+>           Say y here to enable support for the Qualcomm Shared Memory Manager.
+> @@ -85,7 +82,6 @@ config QCOM_SMEM
+>
+>  config QCOM_SMD_RPM
+>         tristate "Qualcomm Resource Power Manager (RPM) over SMD"
+> -       depends on ARCH_QCOM
+>         depends on RPMSG && OF
+>         help
+>           If you say yes to this option, support will be included for the
+> @@ -122,7 +118,6 @@ config QCOM_SMSM
+>
+>  config QCOM_WCNSS_CTRL
+>         tristate "Qualcomm WCNSS control driver"
+> -       depends on ARCH_QCOM
+>         depends on RPMSG
+>         help
+>           Client driver for the WCNSS_CTRL SMD channel, used to download nv
+> @@ -130,7 +125,6 @@ config QCOM_WCNSS_CTRL
+>
+>  config QCOM_APR
+>         tristate "Qualcomm APR Bus (Asynchronous Packet Router)"
+> -       depends on ARCH_QCOM
+>         depends on RPMSG
+>         help
+>            Enable APR IPC protocol support between
+> --
+> 2.17.1
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-arm-msm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
