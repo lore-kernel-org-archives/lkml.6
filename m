@@ -1,120 +1,142 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 38169C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:23:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 92447C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECCE9208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:23:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECCE9208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 51478208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:23:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51478208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754700AbeFNGXl (ORCPT
+        id S1754712AbeFNGXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:23:41 -0400
-Received: from lithops.sigma-star.at ([195.201.40.130]:46112 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752791AbeFNGXi (ORCPT
+        Thu, 14 Jun 2018 02:23:50 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:38987 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752892AbeFNGXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:23:38 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id EC7FB609B29C;
-        Thu, 14 Jun 2018 08:23:35 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id V1k59KVeyyTQ; Thu, 14 Jun 2018 08:23:35 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 8B13F6098140;
-        Thu, 14 Jun 2018 08:23:35 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id YjVxjO7Gczmb; Thu, 14 Jun 2018 08:23:35 +0200 (CEST)
-Received: from blindfold.localnet (089144203253.atnat0012.highway.a1.net [89.144.203.253])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 593066094C4A;
-        Thu, 14 Jun 2018 08:23:35 +0200 (CEST)
-From:   Richard Weinberger <richard@nod.at>
-To:     kbuild test robot <lkp@intel.com>
-Cc:     kbuild-all@01.org, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 01/14] ubi: fastmap: Read PEB numbers more carefully
-Date:   Thu, 14 Jun 2018 08:23:27 +0200
-Message-ID: <191143367.e1U5rnYpgk@blindfold>
-In-Reply-To: <201806140802.6mK4vHdX%fengguang.wu@intel.com>
-References: <20180613212344.11608-2-richard@nod.at> <201806140802.6mK4vHdX%fengguang.wu@intel.com>
+        Thu, 14 Jun 2018 02:23:47 -0400
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5E6NJOZ763861
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Wed, 13 Jun 2018 23:23:19 -0700
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5E6NJVK763858;
+        Wed, 13 Jun 2018 23:23:19 -0700
+Date:   Wed, 13 Jun 2018 23:23:19 -0700
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
+Message-ID: <tip-c1a1f5d9da800dc715d8c1d8a9692c63c70c2955@git.kernel.org>
+Cc:     tglx@linutronix.de, peterz@infradead.org, hpa@zytor.com,
+        alexander.shishkin@linux.intel.com, milian.wolff@kdab.com,
+        andi@firstfloor.org, acme@redhat.com, linux-kernel@vger.kernel.org,
+        eranian@google.com, jolsa@kernel.org, frederic@kernel.org,
+        namhyung@kernel.org, mingo@kernel.org, dsahern@gmail.com
+Reply-To: linux-kernel@vger.kernel.org, frederic@kernel.org,
+          jolsa@kernel.org, eranian@google.com, acme@redhat.com,
+          dsahern@gmail.com, namhyung@kernel.org, mingo@kernel.org,
+          milian.wolff@kdab.com, andi@firstfloor.org, hpa@zytor.com,
+          alexander.shishkin@linux.intel.com, tglx@linutronix.de,
+          peterz@infradead.org
+In-Reply-To: <20180606221513.11302-7-jolsa@kernel.org>
+References: <20180606221513.11302-7-jolsa@kernel.org>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/urgent] perf stat: Allow to specify specific metric
+ column len
+Git-Commit-ID: c1a1f5d9da800dc715d8c1d8a9692c63c70c2955
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Donnerstag, 14. Juni 2018, 03:04:40 CEST schrieb kbuild test robot:
-> Hi Richard,
-> 
-> I love your patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on mtd/master]
-> [also build test WARNING on v4.17 next-20180613]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Richard-Weinberger/ubi-Fastmap-updates/20180614-052830
-> base:   git://git.infradead.org/linux-mtd.git master
-> reproduce:
->         # apt-get install sparse
->         make ARCH=x86_64 allmodconfig
->         make C=1 CF=-D__CHECK_ENDIAN__
-> 
-> 
-> sparse warnings: (new ones prefixed by >>)
-> 
-> >> drivers/mtd/ubi/fastmap.c:110:14: sparse: incorrect type in assignment (different base types) @@    expected restricted __be32 [usertype] pnum @@    got  [usertype] pnum @@
->    drivers/mtd/ubi/fastmap.c:110:14:    expected restricted __be32 [usertype] pnum
->    drivers/mtd/ubi/fastmap.c:110:14:    got unsigned int
-> >> drivers/mtd/ubi/fastmap.c:111:13: sparse: restricted __be32 degrades to integer
-> >> drivers/mtd/ubi/fastmap.c:112:27: sparse: incorrect type in assignment (different base types) @@    expected int [signed] <noident> @@    got restricted __be3int [signed] <noident> @@
->    drivers/mtd/ubi/fastmap.c:112:27:    expected int [signed] <noident>
->    drivers/mtd/ubi/fastmap.c:112:27:    got restricted __be32 [usertype] pnum
->    drivers/mtd/ubi/fastmap.c:116:13: sparse: restricted __be32 degrades to integer
->    drivers/mtd/ubi/fastmap.c:116:25: sparse: restricted __be32 degrades to integer
->    drivers/mtd/ubi/fastmap.c:121:27: sparse: incorrect type in assignment (different base types) @@    expected int [signed] <noident> @@    got restricted __be3int [signed] <noident> @@
->    drivers/mtd/ubi/fastmap.c:121:27:    expected int [signed] <noident>
->    drivers/mtd/ubi/fastmap.c:121:27:    got restricted __be32 [usertype] pnum
->    drivers/mtd/ubi/fastmap.c:604:23: sparse: incorrect type in assignment (different base types) @@    expected unsigned long long [unsigned] max_sqnum @@    got nsigned long long [unsigned] max_sqnum @@
->    drivers/mtd/ubi/fastmap.c:604:23:    expected unsigned long long [unsigned] max_sqnum
->    drivers/mtd/ubi/fastmap.c:604:23:    got restricted __be64 [usertype] sqnum
->    drivers/mtd/ubi/fastmap.c:1075:17: sparse: incorrect type in assignment (different base types) @@    expected restricted __be32 [usertype] tmp_crc @@    got  [usertype] tmp_crc @@
->    drivers/mtd/ubi/fastmap.c:1075:17:    expected restricted __be32 [usertype] tmp_crc
->    drivers/mtd/ubi/fastmap.c:1075:17:    got unsigned int
->    drivers/mtd/ubi/fastmap.c:1077:13: sparse: incorrect type in assignment (different base types) @@    expected restricted __be32 [usertype] crc @@    got  [usertype] crc @@
->    drivers/mtd/ubi/fastmap.c:1077:13:    expected restricted __be32 [usertype] crc
->    drivers/mtd/ubi/fastmap.c:1077:13:    got unsigned int
->    drivers/mtd/ubi/fastmap.c:1086:22: sparse: incorrect type in assignment (different base types) @@    expected restricted __be64 [usertype] sqnum @@    got unsigned lonrestricted __be64 [usertype] sqnum @@
->    drivers/mtd/ubi/fastmap.c:1086:22:    expected restricted __be64 [usertype] sqnum
->    drivers/mtd/ubi/fastmap.c:1086:22:    got unsigned long long [unsigned] [assigned] sqnum
-> 
-> vim +110 drivers/mtd/ubi/fastmap.c
-> 
->    103	
->    104	static bool read_pnum(struct ubi_device *ubi, struct ubi_attach_info *ai,
->    105			     __be32 pnum, int *out_pnum)
->    106	{
->    107		int ret = true;
->    108		int max_pnum = ubi->peb_count;
->    109	
->  > 110		pnum = be32_to_cpu(pnum);
->  > 111		if (pnum == UBI_UNKNOWN) {
->  > 112			*out_pnum = pnum;
->    113			goto out;
->    114		}
+Commit-ID:  c1a1f5d9da800dc715d8c1d8a9692c63c70c2955
+Gitweb:     https://git.kernel.org/tip/c1a1f5d9da800dc715d8c1d8a9692c63c70c2955
+Author:     Jiri Olsa <jolsa@kernel.org>
+AuthorDate: Thu, 7 Jun 2018 00:15:09 +0200
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Thu, 7 Jun 2018 16:01:44 -0300
 
-Okay, let's use a new variable of type int instead of reusing pnum.
+perf stat: Allow to specify specific metric column len
 
-Thanks,
-//richard
+The following change will introduce new metrics, that doesn't need such
+wide hard coded spacing. Switch METRIC_ONLY_LEN macro usage with
+metric_only_len variable.
+
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: David Ahern <dsahern@gmail.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Milian Wolff <milian.wolff@kdab.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Stephane Eranian <eranian@google.com>
+Link: http://lkml.kernel.org/r/20180606221513.11302-7-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/builtin-stat.c | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
+index 8f3fdc052728..3fc1f5286d50 100644
+--- a/tools/perf/builtin-stat.c
++++ b/tools/perf/builtin-stat.c
+@@ -145,6 +145,8 @@ static struct target target = {
+ 
+ typedef int (*aggr_get_id_t)(struct cpu_map *m, int cpu);
+ 
++#define METRIC_ONLY_LEN 20
++
+ static int			run_count			=  1;
+ static bool			no_inherit			= false;
+ static volatile pid_t		child_pid			= -1;
+@@ -182,6 +184,7 @@ static int			print_mixed_hw_group_error;
+ static u64			*walltime_run;
+ static bool			ru_display			= false;
+ static struct rusage		ru_data;
++static unsigned int		metric_only_len			= METRIC_ONLY_LEN;
+ 
+ struct perf_stat {
+ 	bool			 record;
+@@ -969,8 +972,6 @@ static void print_metric_csv(void *ctx,
+ 	fprintf(out, "%s%s%s%s", csv_sep, vals, csv_sep, unit);
+ }
+ 
+-#define METRIC_ONLY_LEN 20
+-
+ /* Filter out some columns that don't work well in metrics only mode */
+ 
+ static bool valid_only_metric(const char *unit)
+@@ -1002,7 +1003,7 @@ static void print_metric_only(void *ctx, const char *color, const char *fmt,
+ 	struct outstate *os = ctx;
+ 	FILE *out = os->fh;
+ 	char buf[1024], str[1024];
+-	unsigned mlen = METRIC_ONLY_LEN;
++	unsigned mlen = metric_only_len;
+ 
+ 	if (!valid_only_metric(unit))
+ 		return;
+@@ -1054,7 +1055,7 @@ static void print_metric_header(void *ctx, const char *color __maybe_unused,
+ 	if (csv_output)
+ 		fprintf(os->fh, "%s%s", unit, csv_sep);
+ 	else
+-		fprintf(os->fh, "%*s ", METRIC_ONLY_LEN, unit);
++		fprintf(os->fh, "%*s ", metric_only_len, unit);
+ }
+ 
+ static void nsec_printout(int id, int nr, struct perf_evsel *evsel, double avg)
