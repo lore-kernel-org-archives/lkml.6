@@ -2,100 +2,87 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 61315C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:33:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 03E8DC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0364A208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:33:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YcjGQtar";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YcjGQtar"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0364A208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id AD9F2208D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:34:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD9F2208D9
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754941AbeFNKdo (ORCPT
+        id S1755008AbeFNKeA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 06:33:44 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48382 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754724AbeFNKdm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:33:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E6366607BB; Thu, 14 Jun 2018 10:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528972421;
-        bh=MxqVIYAujRh28rJuzkxmsU4O/t4KYy8iYOn2MTFFOi0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YcjGQtarcIUEZgfcERaHA0O7w8aJW2vVGDWjMUg1b1WqNpmGnwIvJS8BpY4+CvPZT
-         gM4S3PavqGwYFJC3oRRCwFA29QqcuFZ9F2F3kvub4a0e05r8uPkkz3b2jHuV1+Ahb6
-         Z7U/T9qcqxKagPJFtMh3wo9u3R6sHMQM6yjJN33M=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 3ED156022C;
-        Thu, 14 Jun 2018 10:33:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528972421;
-        bh=MxqVIYAujRh28rJuzkxmsU4O/t4KYy8iYOn2MTFFOi0=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YcjGQtarcIUEZgfcERaHA0O7w8aJW2vVGDWjMUg1b1WqNpmGnwIvJS8BpY4+CvPZT
-         gM4S3PavqGwYFJC3oRRCwFA29QqcuFZ9F2F3kvub4a0e05r8uPkkz3b2jHuV1+Ahb6
-         Z7U/T9qcqxKagPJFtMh3wo9u3R6sHMQM6yjJN33M=
+        Thu, 14 Jun 2018 06:34:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45716 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754990AbeFNKd6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 06:33:58 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CFB8E818F703;
+        Thu, 14 Jun 2018 10:33:57 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (ovpn-204-185.brq.redhat.com [10.40.204.185])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2C6061C5B8;
+        Thu, 14 Jun 2018 10:33:54 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Tianyu Lan <Tianyu.Lan@microsoft.com>
+Cc:     "pbonzini\@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar\@redhat.com" <rkrcmar@redhat.com>,
+        "tglx\@linutronix.de" <tglx@linutronix.de>,
+        "mingo\@redhat.com" <mingo@redhat.com>,
+        "hpa\@zytor.com" <hpa@zytor.com>,
+        "x86\@kernel.org" <x86@kernel.org>,
+        "kvm\@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        KY Srinivasan <kys@microsoft.com>
+Subject: Re: [RFC Patch 3/3] KVM/x86: Add tlb_remote_flush callback support for vmcs
+References: <20180604090749.489-1-Tianyu.Lan@microsoft.com>
+        <20180604090749.489-4-Tianyu.Lan@microsoft.com>
+        <87h8m8qbso.fsf@vitty.brq.redhat.com>
+        <f868a339-03fc-4ba6-4882-4bb6232f599d@microsoft.com>
+Date:   Thu, 14 Jun 2018 12:33:53 +0200
+In-Reply-To: <f868a339-03fc-4ba6-4882-4bb6232f599d@microsoft.com> (Tianyu
+        Lan's message of "Thu, 14 Jun 2018 10:13:46 +0000")
+Message-ID: <87d0wtpsha.fsf@vitty.brq.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Thu, 14 Jun 2018 06:33:41 -0400
-From:   okaya@codeaurora.org
-To:     Srinath Mannam <srinath.mannam@broadcom.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Abhishek Shah <abhishek.shah@broadcom.com>,
-        Vikram Prakash <vikram.prakash@broadcom.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org, linux-pci-owner@vger.kernel.org
-Subject: Re: Requirement to get BAR pci_bus_address in user space
-In-Reply-To: <CABe79T6k387EnDrpydTbQYQ+sZoWXKUee23EDzDJqnkroOmodA@mail.gmail.com>
-References: <CABe79T41Cr0mjH_k2drzccHvObFwRcW3n+WKCj0JvFUBy0wz-A@mail.gmail.com>
- <20180614102001.GA20836@lst.de>
- <CABe79T6k387EnDrpydTbQYQ+sZoWXKUee23EDzDJqnkroOmodA@mail.gmail.com>
-Message-ID: <92a9eeced36f863458ca2fd029f17a20@codeaurora.org>
-X-Sender: okaya@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 14 Jun 2018 10:33:57 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 14 Jun 2018 10:33:57 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-14 06:29, Srinath Mannam wrote:
-> ++ Alex Williamson, kvm,
-> 
-> Hi Christoph,
-> 
-> Thank you for quick reply.
-> 
-> If we want to add this in vfio then I think we need to do the same in
-> uio case also.
-> 
-> As I mentioned in previous mail, in the current implementation
-> resource information (address and size) is gathering from resource
-> named file created in /sys directory.
-> So I expect it would be better to have similar method as existing in 
-> sysfs.
-> 
+Tianyu Lan <Tianyu.Lan@microsoft.com> writes:
 
-Can you give some info on why you need the actual bar address value?
+> On 6/12/2018 11:12 PM, Vitaly Kuznetsov wrote:
+>> Tianyu Lan <Tianyu.Lan@microsoft.com> writes:
+>> 
+>>>
+>>> +static int vmx_remote_flush_tlb(struct kvm *kvm)
+>>> +{
+>>> +	struct kvm_vcpu *vcpu = kvm_get_vcpu(kvm, 0);
+>>> +
+>>> +	if (!VALID_PAGE(vcpu->arch.mmu.root_hpa))
+>>> +		return -1;
+>> 
+>> Why vcpu0? Can arch.mmu.root_hpa-s differ across vCPUs? What happens if
+>> they do?
+>
+> Yes, it may take place that arch.mmu.root_hpa is differ across vCPUs.
+> We may check all vcpu root_hpa and use the hypercall when there is only 
+> one validated ept table. If not, go back to current way.
+>
 
-> 
-> Regards,
-> Srinath.
-> 
-> On Thu, Jun 14, 2018 at 3:50 PM, Christoph Hellwig <hch@lst.de> wrote:
->> The only safe way to use PCI(e) devices in userspace is through vfio.
->> I think that is where you need to take your inquiries.
+I'd suggest an optimization: keep track of wether root_hpas are equal
+across all vcpus (check this on change).
+
+-- 
+  Vitaly
