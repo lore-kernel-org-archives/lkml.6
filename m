@@ -6,42 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 61FF5C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8C3ADC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C25D20693
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4294B20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xx+VMRQi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C25D20693
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aAHFg93i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4294B20693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965808AbeFNOd6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:33:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51556 "EHLO mail.kernel.org"
+        id S965823AbeFNOeU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:34:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51434 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965638AbeFNOKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:10:31 -0400
+        id S965622AbeFNOKZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:10:25 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3B68208DB;
-        Thu, 14 Jun 2018 14:10:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 659ED208DD;
+        Thu, 14 Jun 2018 14:10:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985430;
-        bh=PzFaR4oziZfJbYYpqiuLqvEuH/gODxRSArBnYylxIPY=;
+        s=default; t=1528985424;
+        bh=AdLFf4lLET+Rr2jdp3rraUsob7Ai+gEU0hBGqnylZoI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xx+VMRQiD3pqWQpAZJ1PkzKQ1VEU9IgJGkx4YlbxQ2JhNFfVshFBaE+oGhFJ5HD32
-         /+lkOJS47AtJCls/knNY5DJD5VmgMj0WaKqf+8ej+O24GzcfW5fRuAvoo9Jn+zHmA+
-         iN33/YotKzAKvk5YcbgKOtRpg/inffuFZ1GP9mYA=
+        b=aAHFg93iewK8oh9YvpD/TmWIUYZlmDhJEoU2vAsudAtCsX+HoE5quD1ir0oOpI+xY
+         uXRdiRFvK081o5Skzp56XPRl0rgMC0vVeEg6rZz0ZH1ho6yWMdl0QzIKlSyTnPqyMd
+         pFr2AlqHwNROmShgZBQ5xraN/PyFejCKrq7yCdI4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.14 24/36] kvm: x86: use correct privilege level for sgdt/sidt/fxsave/fxrstor access
-Date:   Thu, 14 Jun 2018 16:04:47 +0200
-Message-Id: <20180614132158.360316725@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: [PATCH 4.14 23/36] tty: pl011: Avoid spuriously stuck-off interrupts
+Date:   Thu, 14 Jun 2018 16:04:46 +0200
+Message-Id: <20180614132158.316776432@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -58,149 +62,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+From: Dave Martin <Dave.Martin@arm.com>
 
-commit 3c9fa24ca7c9c47605672916491f79e8ccacb9e6 upstream.
+commit 4a7e625ce50412a7711efa0f2ef0b96ce3826759 upstream.
 
-The functions that were used in the emulation of fxrstor, fxsave, sgdt and
-sidt were originally meant for task switching, and as such they did not
-check privilege levels.  This is very bad when the same functions are used
-in the emulation of unprivileged instructions.  This is CVE-2018-10853.
+Commit 9b96fbacda34 ("serial: PL011: clear pending interrupts")
+clears the RX and receive timeout interrupts on pl011 startup, to
+avoid a screaming-interrupt scenario that can occur when the
+firmware or bootloader leaves these interrupts asserted.
 
-The obvious fix is to add a new argument to ops->read_std and ops->write_std,
-which decides whether the access is a "system" access or should use the
-processor's CPL.
+This has been noted as an issue when running Linux on qemu [1].
 
-Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+Unfortunately, the above fix seems to lead to potential
+misbehaviour if the RX FIFO interrupt is asserted _non_ spuriously
+on driver startup, if the RX FIFO is also already full to the
+trigger level.
+
+Clearing the RX FIFO interrupt does not change the FIFO fill level.
+In this scenario, because the interrupt is now clear and because
+the FIFO is already full to the trigger level, no new assertion of
+the RX FIFO interrupt can occur unless the FIFO is drained back
+below the trigger level.  This never occurs because the pl011
+driver is waiting for an RX FIFO interrupt to tell it that there is
+something to read, and does not read the FIFO at all until that
+interrupt occurs.
+
+Thus, simply clearing "spurious" interrupts on startup may be
+misguided, since there is no way to be sure that the interrupts are
+truly spurious, and things can go wrong if they are not.
+
+This patch instead clears the interrupt condition by draining the
+RX FIFO during UART startup, after clearing any potentially
+spurious interrupt.  This should ensure that an interrupt will
+definitely be asserted if the RX FIFO subsequently becomes
+sufficiently full.
+
+The drain is done at the point of enabling interrupts only.  This
+means that it will occur any time the UART is newly opened through
+the tty layer.  It will not apply to polled-mode use of the UART by
+kgdboc: since that scenario cannot use interrupts by design, this
+should not matter.  kgdboc will interact badly with "normal" use of
+the UART in any case: this patch makes no attempt to paper over
+such issues.
+
+This patch does not attempt to address the case where the RX FIFO
+fills faster than it can be drained: that is a pathological
+hardware design problem that is beyond the scope of the driver to
+work around.  As a failsafe, the number of poll iterations for
+draining the FIFO is limited to twice the FIFO size.  This will
+ensure that the kernel at least boots even if it is impossible to
+drain the FIFO for some reason.
+
+[1] [Qemu-devel] [Qemu-arm] [PATCH] pl011: do not put into fifo
+before enabled the interruption
+https://lists.gnu.org/archive/html/qemu-devel/2018-01/msg06446.html
+
+Reported-by: Wei Xu <xuwei5@hisilicon.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Fixes: 9b96fbacda34 ("serial: PL011: clear pending interrupts")
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Wei Xu <xuwei5@hisilicon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/kvm_emulate.h |    6 ++++--
- arch/x86/kvm/emulate.c             |   12 ++++++------
- arch/x86/kvm/x86.c                 |   18 ++++++++++++++----
- 3 files changed, 24 insertions(+), 12 deletions(-)
+ drivers/tty/serial/amba-pl011.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -107,11 +107,12 @@ struct x86_emulate_ops {
- 	 *  @addr:  [IN ] Linear address from which to read.
- 	 *  @val:   [OUT] Value read from memory, zero-extended to 'u_long'.
- 	 *  @bytes: [IN ] Number of bytes to read from memory.
-+	 *  @system:[IN ] Whether the access is forced to be at CPL0.
- 	 */
- 	int (*read_std)(struct x86_emulate_ctxt *ctxt,
- 			unsigned long addr, void *val,
- 			unsigned int bytes,
--			struct x86_exception *fault);
-+			struct x86_exception *fault, bool system);
- 
- 	/*
- 	 * read_phys: Read bytes of standard (non-emulated/special) memory.
-@@ -129,10 +130,11 @@ struct x86_emulate_ops {
- 	 *  @addr:  [IN ] Linear address to which to write.
- 	 *  @val:   [OUT] Value write to memory, zero-extended to 'u_long'.
- 	 *  @bytes: [IN ] Number of bytes to write to memory.
-+	 *  @system:[IN ] Whether the access is forced to be at CPL0.
- 	 */
- 	int (*write_std)(struct x86_emulate_ctxt *ctxt,
- 			 unsigned long addr, void *val, unsigned int bytes,
--			 struct x86_exception *fault);
-+			 struct x86_exception *fault, bool system);
- 	/*
- 	 * fetch: Read bytes of standard (non-emulated/special) memory.
- 	 *        Used for instruction fetch.
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -814,14 +814,14 @@ static inline int jmp_rel(struct x86_emu
- static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
- 			      void *data, unsigned size)
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1747,10 +1747,26 @@ static int pl011_allocate_irq(struct uar
+  */
+ static void pl011_enable_interrupts(struct uart_amba_port *uap)
  {
--	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, true);
- }
- 
- static int linear_write_system(struct x86_emulate_ctxt *ctxt,
- 			       ulong linear, void *data,
- 			       unsigned int size)
- {
--	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, true);
- }
- 
- static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
-@@ -835,7 +835,7 @@ static int segmented_read_std(struct x86
- 	rc = linearize(ctxt, addr, size, false, &linear);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
--	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, false);
- }
- 
- static int segmented_write_std(struct x86_emulate_ctxt *ctxt,
-@@ -849,7 +849,7 @@ static int segmented_write_std(struct x8
- 	rc = linearize(ctxt, addr, size, true, &linear);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
--	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, false);
- }
- 
- /*
-@@ -2921,12 +2921,12 @@ static bool emulator_io_port_access_allo
- #ifdef CONFIG_X86_64
- 	base |= ((u64)base3) << 32;
- #endif
--	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL);
-+	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL, true);
- 	if (r != X86EMUL_CONTINUE)
- 		return false;
- 	if (io_bitmap_ptr + port/8 > desc_limit_scaled(&tr_seg))
- 		return false;
--	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL);
-+	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL, true);
- 	if (r != X86EMUL_CONTINUE)
- 		return false;
- 	if ((perm >> bit_idx) & mask)
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4505,10 +4505,15 @@ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
- 
- static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
- 			     gva_t addr, void *val, unsigned int bytes,
--			     struct x86_exception *exception)
-+			     struct x86_exception *exception, bool system)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
--	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
-+	u32 access = 0;
++	unsigned int i;
 +
-+	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
-+		access |= PFERR_USER_MASK;
+ 	spin_lock_irq(&uap->port.lock);
+ 
+ 	/* Clear out any spuriously appearing RX interrupts */
+ 	pl011_write(UART011_RTIS | UART011_RXIS, uap, REG_ICR);
 +
-+	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access, exception);
- }
- 
- static int kvm_read_guest_phys_system(struct x86_emulate_ctxt *ctxt,
-@@ -4552,12 +4557,17 @@ out:
- }
- 
- static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
--			      unsigned int bytes, struct x86_exception *exception)
-+			      unsigned int bytes, struct x86_exception *exception,
-+			      bool system)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
-+	u32 access = PFERR_WRITE_MASK;
++	/*
++	 * RXIS is asserted only when the RX FIFO transitions from below
++	 * to above the trigger threshold.  If the RX FIFO is already
++	 * full to the threshold this can't happen and RXIS will now be
++	 * stuck off.  Drain the RX FIFO explicitly to fix this:
++	 */
++	for (i = 0; i < uap->fifosize * 2; ++i) {
++		if (pl011_read(uap, REG_FR) & UART01x_FR_RXFE)
++			break;
 +
-+	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
-+		access |= PFERR_USER_MASK;
- 
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
--					   PFERR_WRITE_MASK, exception);
-+					   access, exception);
- }
- 
- int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
++		pl011_read(uap, REG_DR);
++	}
++
+ 	uap->im = UART011_RTIM;
+ 	if (!pl011_dma_rx_running(uap))
+ 		uap->im |= UART011_RXIM;
 
 
