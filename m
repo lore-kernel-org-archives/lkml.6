@@ -2,108 +2,97 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7622BC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:16:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8D426C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C174208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:16:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40538208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:16:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mSqgwSBf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C174208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="f3mU8ARY";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="R46kswUD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40538208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964954AbeFNPQW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 11:16:22 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45401 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964777AbeFNPQU (ORCPT
+        id S964970AbeFNPQt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 11:16:49 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:49674 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755158AbeFNPQr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 11:16:20 -0400
-Received: by mail-pl0-f66.google.com with SMTP id c23-v6so3711288plz.12;
-        Thu, 14 Jun 2018 08:16:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZLF05pfFqEy0KBvOMrLNMdcV6wQeNNbKUA6cbfKEhVQ=;
-        b=mSqgwSBfgBjO1wF5/qftZxBS0rV4R470lnhyLF4Qarry7Dyl3IwcUgjm+Ec7flkhUd
-         mXPnu4WRTXqzg23m0bRfByuc5NSUT9TMFj5xhdnjFpWuwifEdlIPcZjZzrzEbB0W0kO2
-         tZRoUsnzFf23pJnxoVW/W2SAlTKnp5DAoToW1CBrAlQlftFLmgIeKpr+p6j5mNpsEhMS
-         kdijmkMT0ri7TSvqu5Ssi1dySvDBuiHyxX/OZU3fpxeAbCxo5IlMIcGVajvFf6nm4h63
-         OcQKdjNnlcKilrHEUUOUFFwMZ2FCfqdVbBMHGr5Wvuy519RiovS9aIF1fKzaHlQQiRLe
-         bsHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=ZLF05pfFqEy0KBvOMrLNMdcV6wQeNNbKUA6cbfKEhVQ=;
-        b=CFBTcXEmcQFHYKg/NpqUwJKTY8BMFaHHA+fHK5osEALxKqNi2yzXOEsy8tc0t+PaBh
-         pSo0QvU/ibADV4kptp98Gs8JXGmPiV8+54RaoRLNaW0AahXA3QMUi3HZ7iGcJ5Tr2jeW
-         0w8KnzUEgbkeF53MLgVn4iaeP51IrjUiXW0omGbCQc+eNWbtZw+xuPcEATqfXhAkhxGq
-         UrS/XYhLjw4WXSmphZB1fsbebybC4JExFiH/q7hInM5u8WPmcdUTVHQfxtMjcE3MEq2Z
-         Boxy3otpU27R1fcUABXjbHwvmo2N09SgmX/bFhZkPlSq0Qgac0r7b4ECCiF56YIzKMtD
-         4Yig==
-X-Gm-Message-State: APt69E3jHlYmDlwxkz+1YhGkxqyMKjxcr/iKxMNTntE7bQDAIDOT4Q+J
-        +Q310x5HZGFQUD/A7lKGJg==
-X-Google-Smtp-Source: ADUXVKIFzL47t1WBV+UKndcJqUDDPtHjE9qGBNFWk0OpLChHTmAiP/226nNAFhcEylX3dz/oubG1Nw==
-X-Received: by 2002:a17:902:bccc:: with SMTP id o12-v6mr3472677pls.169.1528989380174;
-        Thu, 14 Jun 2018 08:16:20 -0700 (PDT)
-Received: from localhost.localdomain (host81-131-105-100.range81-131.btcentralplus.com. [81.131.105.100])
-        by smtp.googlemail.com with ESMTPSA id u63-v6sm8337276pgd.65.2018.06.14.08.16.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 08:16:19 -0700 (PDT)
-From:   Craig Tatlor <ctatlor97@gmail.com>
-Cc:     ctatlor97@gmail.com, linux-arm-msm@vger.kernel.org,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v7 4/4] MAINTAINERS: Add entry for the Qualcomm BMS
-Date:   Thu, 14 Jun 2018 16:14:17 +0100
-Message-Id: <20180614151435.6471-4-ctatlor97@gmail.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180614151435.6471-1-ctatlor97@gmail.com>
-References: <20180407135934.26122-1-ctatlor97@gmail.com>
- <20180614151435.6471-1-ctatlor97@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+        Thu, 14 Jun 2018 11:16:47 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 26CB36022C; Thu, 14 Jun 2018 15:16:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528989407;
+        bh=os/qBnD4tlo3RYFj0UOSzTAwvPbJZtrzIRumPWIhzHI=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=f3mU8ARYvgu0SCR4gQcDH+/6uC+LdHjQd6TGLpSnw2cAo0M9/0lBpBQs+XsUsE/qN
+         +lpuQ0/TaO6x5+bKfreP/KnDDZp+BN60PkwA0sfLj8Znf/WgcnylsqI+HN/K28UL02
+         PXYzGywaubf2T3DGgXsuprI+UAQPWj8OhtBdDQv0=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E35576022C;
+        Thu, 14 Jun 2018 15:16:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528989406;
+        bh=os/qBnD4tlo3RYFj0UOSzTAwvPbJZtrzIRumPWIhzHI=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=R46kswUDMawINXBI7+5mItxV8ezXANqwR6c4dSo/TMdge3sCnB5JOSbNXnVvYFeFe
+         SFbG2Hi2tdglUIvauajwlfWIpcrcAorxbSpttAZN74chJuTEtVQCN3Xl0VTD98VCTL
+         mF0PCHUAoGxdncYsxW9oI/d89dBwVSxCdKJajXIM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E35576022C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: Re: [1/4] ath10k: snoc: use correct bus-specific pointer in RX retry
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180611210946.241341-1-briannorris@chromium.org>
+References: <20180611210946.241341-1-briannorris@chromium.org>
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     Kalle Valo <kvalo@qca.qualcomm.com>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>,
+        <linux-kernel@vger.kernel.org>,
+        Brian Norris <briannorris@chromium.org>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180614151647.26CB36022C@smtp.codeaurora.org>
+Date:   Thu, 14 Jun 2018 15:16:47 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
----
- MAINTAINERS | 6 ++++++
- 1 file changed, 6 insertions(+)
+Brian Norris <briannorris@chromium.org> wrote:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9c125f705f78..be485caf9313 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -11646,6 +11646,12 @@ W:	http://wireless.kernel.org/en/users/Drivers/ath9k
- S:	Supported
- F:	drivers/net/wireless/ath/ath9k/
- 
-+QUALCOMM BATTERY MONITORING SYSTEM
-+M:	Craig Tatlor <ctatlor97@gmail.com>
-+L:	linux-pm@vger.kernel.org
-+S:	Maintained
-+F:	drivers/power/supply/qcom_bms.c
-+
- QUALCOMM CAMERA SUBSYSTEM DRIVER
- M:	Todor Tomov <todor.tomov@linaro.org>
- L:	linux-media@vger.kernel.org
+> We're 'ath10k_snoc', not 'ath10k_pci'. This probably means we're
+> accessing junk data in ath10k_snoc_rx_replenish_retry(), unless
+> 'ath10k_snoc' and 'ath10k_pci' happen to have very similar struct
+> layouts.
+> 
+> Noticed by inspection.
+> 
+> Fixes: d915105231ca ("ath10k: add hif rx methods for wcn3990")
+> Signed-off-by: Brian Norris <briannorris@chromium.org>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+
+4 patches applied to ath-next branch of ath.git, thanks.
+
+426a0f0b5a2f ath10k: snoc: use correct bus-specific pointer in RX retry
+8ac5fe8e3d11 ath10k: snoc: stop including pci.h
+13e6cc0bd4ef ath10k: snoc: drop unused WCN3990_CE_ATTR_FLAGS
+c9f3e7fa8bcb ath10k: snoc: sort include files
+
 -- 
-2.17.0
+https://patchwork.kernel.org/patch/10458863/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
