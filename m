@@ -6,60 +6,47 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4729EC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8EAC0C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7DCB208E1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B353208DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbeCSYQU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7DCB208E1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbEz+Y/U"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B353208DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965878AbeFNOLj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:11:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52588 "EHLO mail.kernel.org"
+        id S965897AbeFNOLq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965836AbeFNOL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:28 -0400
+        id S965880AbeFNOLk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:40 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA687208DB;
-        Thu, 14 Jun 2018 14:11:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B235A208E1;
+        Thu, 14 Jun 2018 14:11:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985488;
-        bh=ROrd+YMU7Zd06qoL8zq6wBzGxYTVhaubZfUIMe6PJHA=;
+        s=default; t=1528985500;
+        bh=+rKWRwT4IWpGE7gbPt743hfjuXfcOM7FbDbrV1GIyH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RbeCSYQUEcZxhgZIQ4ducYCDGIouSX9uiriwQvDw1Qq+4Vslr645ZzhlnLrskHiww
-         a8DvFEa6dQUigHXVM/GT8lVRnB6k571HHHYpGuMuIXIU+qFUEHqkqTdiU7csNEw3Wm
-         34LVz6tzuBe1jngN22IgAFpwLUPgLI1iLW0/kGOs=
+        b=SbEz+Y/UeoyVTmnOVbsd+2nRYwpd7f7bM4DG5ez5vtx4Fgkz7YU4TuTdRE9b4TkOB
+         RDsqazqDu8YWWWRA6ycXyQTva05JF/8rRV3NKRICnuqF9/zHQfa4AQZooRoYG0HAJp
+         JcTxhJLbKmWAA6Cl3ci35Mzg1spRRaVtHbXBAF+M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
-        Rik van Riel <riel@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Brian Gerst <brgerst@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Denys Vlasenko <dvlasenk@redhat.com>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
-        Ingo Molnar <mingo@kernel.org>
-Subject: [PATCH 4.9 01/30] x86/fpu: Hard-disable lazy FPU mode
-Date:   Thu, 14 Jun 2018 16:04:42 +0200
-Message-Id: <20180614132600.313670849@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.9 13/30] KVM: x86: pass kvm_vcpu to kvm_read_guest_virt and kvm_write_guest_virt_system
+Date:   Thu, 14 Jun 2018 16:04:54 +0200
+Message-Id: <20180614132600.817092376@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
 User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -71,196 +58,193 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andy Lutomirski <luto@kernel.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit ca6938a1cd8a1c5e861a99b67f84ac166fc2b9e7 upstream.
+commit ce14e868a54edeb2e30cb7a7b104a2fc4b9d76ca upstream.
 
-Since commit:
+Int the next patch the emulator's .read_std and .write_std callbacks will
+grow another argument, which is not needed in kvm_read_guest_virt and
+kvm_write_guest_virt_system's callers.  Since we have to make separate
+functions, let's give the currently existing names a nicer interface, too.
 
-  58122bf1d856 ("x86/fpu: Default eagerfpu=on on all CPUs")
-
-... in Linux 4.6, eager FPU mode has been the default on all x86
-systems, and no one has reported any regressions.
-
-This patch removes the ability to enable lazy mode: use_eager_fpu()
-becomes "return true" and all of the FPU mode selection machinery is
-removed.
-
-Signed-off-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Rik van Riel <riel@redhat.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Denys Vlasenko <dvlasenk@redhat.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: pbonzini@redhat.com
-Link: http://lkml.kernel.org/r/1475627678-20788-3-git-send-email-riel@redhat.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/include/asm/cpufeatures.h  |    2 
- arch/x86/include/asm/fpu/internal.h |    2 
- arch/x86/kernel/fpu/init.c          |   91 +-----------------------------------
- 3 files changed, 5 insertions(+), 90 deletions(-)
+ arch/x86/kvm/vmx.c |   23 ++++++++++-------------
+ arch/x86/kvm/x86.c |   39 ++++++++++++++++++++++++++-------------
+ arch/x86/kvm/x86.h |    4 ++--
+ 3 files changed, 38 insertions(+), 28 deletions(-)
 
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -104,7 +104,7 @@
- #define X86_FEATURE_EXTD_APICID	( 3*32+26) /* has extended APICID (8 bits) */
- #define X86_FEATURE_AMD_DCM     ( 3*32+27) /* multi-node processor */
- #define X86_FEATURE_APERFMPERF	( 3*32+28) /* APERFMPERF */
--#define X86_FEATURE_EAGER_FPU	( 3*32+29) /* "eagerfpu" Non lazy FPU restore */
-+/* free, was #define X86_FEATURE_EAGER_FPU	( 3*32+29) * "eagerfpu" Non lazy FPU restore */
- #define X86_FEATURE_NONSTOP_TSC_S3 ( 3*32+30) /* TSC doesn't stop in S3 state */
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6928,8 +6928,7 @@ static int nested_vmx_check_vmptr(struct
+ 			vmcs_read32(VMX_INSTRUCTION_INFO), false, &gva))
+ 		return 1;
  
- /* Intel-defined CPU features, CPUID level 0x00000001 (ecx), word 4 */
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -62,7 +62,7 @@ extern u64 fpu__get_supported_xfeatures_
-  */
- static __always_inline __pure bool use_eager_fpu(void)
- {
--	return static_cpu_has(X86_FEATURE_EAGER_FPU);
-+	return true;
+-	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &vmptr,
+-				sizeof(vmptr), &e)) {
++	if (kvm_read_guest_virt(vcpu, gva, &vmptr, sizeof(vmptr), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
+ 	}
+@@ -7469,8 +7468,8 @@ static int handle_vmread(struct kvm_vcpu
+ 				vmx_instruction_info, true, &gva))
+ 			return 1;
+ 		/* _system ok, as nested_vmx_check_permission verified cpl=0 */
+-		kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, gva,
+-			     &field_value, (is_long_mode(vcpu) ? 8 : 4), NULL);
++		kvm_write_guest_virt_system(vcpu, gva, &field_value,
++					    (is_long_mode(vcpu) ? 8 : 4), NULL);
+ 	}
+ 
+ 	nested_vmx_succeed(vcpu);
+@@ -7505,8 +7504,8 @@ static int handle_vmwrite(struct kvm_vcp
+ 		if (get_vmx_mem_address(vcpu, exit_qualification,
+ 				vmx_instruction_info, false, &gva))
+ 			return 1;
+-		if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva,
+-			   &field_value, (is_64_bit_mode(vcpu) ? 8 : 4), &e)) {
++		if (kvm_read_guest_virt(vcpu, gva, &field_value,
++					(is_64_bit_mode(vcpu) ? 8 : 4), &e)) {
+ 			kvm_inject_page_fault(vcpu, &e);
+ 			return 1;
+ 		}
+@@ -7603,9 +7602,9 @@ static int handle_vmptrst(struct kvm_vcp
+ 			vmx_instruction_info, true, &vmcs_gva))
+ 		return 1;
+ 	/* ok to use *_system, as nested_vmx_check_permission verified cpl=0 */
+-	if (kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, vmcs_gva,
+-				 (void *)&to_vmx(vcpu)->nested.current_vmptr,
+-				 sizeof(u64), &e)) {
++	if (kvm_write_guest_virt_system(vcpu, vmcs_gva,
++					(void *)&to_vmx(vcpu)->nested.current_vmptr,
++					sizeof(u64), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
+ 	}
+@@ -7659,8 +7658,7 @@ static int handle_invept(struct kvm_vcpu
+ 	if (get_vmx_mem_address(vcpu, vmcs_readl(EXIT_QUALIFICATION),
+ 			vmx_instruction_info, false, &gva))
+ 		return 1;
+-	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &operand,
+-				sizeof(operand), &e)) {
++	if (kvm_read_guest_virt(vcpu, gva, &operand, sizeof(operand), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
+ 	}
+@@ -7723,8 +7721,7 @@ static int handle_invvpid(struct kvm_vcp
+ 	if (get_vmx_mem_address(vcpu, vmcs_readl(EXIT_QUALIFICATION),
+ 			vmx_instruction_info, false, &gva))
+ 		return 1;
+-	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &vpid,
+-				sizeof(u32), &e)) {
++	if (kvm_read_guest_virt(vcpu, gva, &vpid, sizeof(u32), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
+ 	}
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4395,11 +4395,10 @@ static int kvm_fetch_guest_virt(struct x
+ 	return X86EMUL_CONTINUE;
  }
  
- static __always_inline __pure bool use_xsaveopt(void)
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -15,10 +15,7 @@
-  */
- static void fpu__init_cpu_ctx_switch(void)
+-int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
++int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
+ 			       gva_t addr, void *val, unsigned int bytes,
+ 			       struct x86_exception *exception)
  {
--	if (!boot_cpu_has(X86_FEATURE_EAGER_FPU))
--		stts();
--	else
--		clts();
-+	clts();
+-	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
+ 
+ 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
+@@ -4407,9 +4406,9 @@ int kvm_read_guest_virt(struct x86_emula
+ }
+ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
+ 
+-static int kvm_read_guest_virt_system(struct x86_emulate_ctxt *ctxt,
+-				      gva_t addr, void *val, unsigned int bytes,
+-				      struct x86_exception *exception)
++static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
++			     gva_t addr, void *val, unsigned int bytes,
++			     struct x86_exception *exception)
+ {
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
+@@ -4424,18 +4423,16 @@ static int kvm_read_guest_phys_system(st
+ 	return r < 0 ? X86EMUL_IO_NEEDED : X86EMUL_CONTINUE;
  }
  
- /*
-@@ -234,82 +231,16 @@ static void __init fpu__init_system_xsta
- }
- 
- /*
-- * FPU context switching strategies:
-- *
-- * Against popular belief, we don't do lazy FPU saves, due to the
-- * task migration complications it brings on SMP - we only do
-- * lazy FPU restores.
-- *
-- * 'lazy' is the traditional strategy, which is based on setting
-- * CR0::TS to 1 during context-switch (instead of doing a full
-- * restore of the FPU state), which causes the first FPU instruction
-- * after the context switch (whenever it is executed) to fault - at
-- * which point we lazily restore the FPU state into FPU registers.
-- *
-- * Tasks are of course under no obligation to execute FPU instructions,
-- * so it can easily happen that another context-switch occurs without
-- * a single FPU instruction being executed. If we eventually switch
-- * back to the original task (that still owns the FPU) then we have
-- * not only saved the restores along the way, but we also have the
-- * FPU ready to be used for the original task.
-- *
-- * 'lazy' is deprecated because it's almost never a performance win
-- * and it's much more complicated than 'eager'.
-- *
-- * 'eager' switching is by default on all CPUs, there we switch the FPU
-- * state during every context switch, regardless of whether the task
-- * has used FPU instructions in that time slice or not. This is done
-- * because modern FPU context saving instructions are able to optimize
-- * state saving and restoration in hardware: they can detect both
-- * unused and untouched FPU state and optimize accordingly.
-- *
-- * [ Note that even in 'lazy' mode we might optimize context switches
-- *   to use 'eager' restores, if we detect that a task is using the FPU
-- *   frequently. See the fpu->counter logic in fpu/internal.h for that. ]
-- */
--static enum { ENABLE, DISABLE } eagerfpu = ENABLE;
--
--/*
-  * Find supported xfeatures based on cpu features and command-line input.
-  * This must be called after fpu__init_parse_early_param() is called and
-  * xfeatures_mask is enumerated.
-  */
- u64 __init fpu__get_supported_xfeatures_mask(void)
+-int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
+-				       gva_t addr, void *val,
+-				       unsigned int bytes,
+-				       struct x86_exception *exception)
++static int kvm_write_guest_virt_helper(gva_t addr, void *val, unsigned int bytes,
++				      struct kvm_vcpu *vcpu, u32 access,
++				      struct x86_exception *exception)
  {
--	/* Support all xfeatures known to us */
--	if (eagerfpu != DISABLE)
--		return XCNTXT_MASK;
--
--	/* Warning of xfeatures being disabled for no eagerfpu mode */
--	if (xfeatures_mask & XFEATURE_MASK_EAGER) {
--		pr_err("x86/fpu: eagerfpu switching disabled, disabling the following xstate features: 0x%llx.\n",
--			xfeatures_mask & XFEATURE_MASK_EAGER);
--	}
--
--	/* Return a mask that masks out all features requiring eagerfpu mode */
--	return ~XFEATURE_MASK_EAGER;
-+	return XCNTXT_MASK;
+-	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ 	void *data = val;
+ 	int r = X86EMUL_CONTINUE;
+ 
+ 	while (bytes) {
+ 		gpa_t gpa =  vcpu->arch.walk_mmu->gva_to_gpa(vcpu, addr,
+-							     PFERR_WRITE_MASK,
++							     access,
+ 							     exception);
+ 		unsigned offset = addr & (PAGE_SIZE-1);
+ 		unsigned towrite = min(bytes, (unsigned)PAGE_SIZE - offset);
+@@ -4456,6 +4453,22 @@ int kvm_write_guest_virt_system(struct x
+ out:
+ 	return r;
  }
++
++static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
++			      unsigned int bytes, struct x86_exception *exception)
++{
++	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
++
++	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
++					   PFERR_WRITE_MASK, exception);
++}
++
++int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
++				unsigned int bytes, struct x86_exception *exception)
++{
++	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
++					   PFERR_WRITE_MASK, exception);
++}
+ EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
  
--/*
-- * Disable features dependent on eagerfpu.
-- */
--static void __init fpu__clear_eager_fpu_features(void)
--{
--	setup_clear_cpu_cap(X86_FEATURE_MPX);
--}
--
--/*
-- * Pick the FPU context switching strategy:
-- *
-- * When eagerfpu is AUTO or ENABLE, we ensure it is ENABLE if either of
-- * the following is true:
-- *
-- * (1) the cpu has xsaveopt, as it has the optimization and doing eager
-- *     FPU switching has a relatively low cost compared to a plain xsave;
-- * (2) the cpu has xsave features (e.g. MPX) that depend on eager FPU
-- *     switching. Should the kernel boot with noxsaveopt, we support MPX
-- *     with eager FPU switching at a higher cost.
-- */
-+/* Legacy code to initialize eager fpu mode. */
- static void __init fpu__init_system_ctx_switch(void)
- {
- 	static bool on_boot_cpu __initdata = 1;
-@@ -318,17 +249,6 @@ static void __init fpu__init_system_ctx_
- 	on_boot_cpu = 0;
+ static int vcpu_mmio_gva_to_gpa(struct kvm_vcpu *vcpu, unsigned long gva,
+@@ -5180,8 +5193,8 @@ static void emulator_set_hflags(struct x
+ static const struct x86_emulate_ops emulate_ops = {
+ 	.read_gpr            = emulator_read_gpr,
+ 	.write_gpr           = emulator_write_gpr,
+-	.read_std            = kvm_read_guest_virt_system,
+-	.write_std           = kvm_write_guest_virt_system,
++	.read_std            = emulator_read_std,
++	.write_std           = emulator_write_std,
+ 	.read_phys           = kvm_read_guest_phys_system,
+ 	.fetch               = kvm_fetch_guest_virt,
+ 	.read_emulated       = emulator_read_emulated,
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -161,11 +161,11 @@ int kvm_inject_realmode_interrupt(struct
+ void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr);
+ u64 get_kvmclock_ns(struct kvm *kvm);
  
- 	WARN_ON_FPU(current->thread.fpu.fpstate_active);
--
--	if (boot_cpu_has(X86_FEATURE_XSAVEOPT) && eagerfpu != DISABLE)
--		eagerfpu = ENABLE;
--
--	if (xfeatures_mask & XFEATURE_MASK_EAGER)
--		eagerfpu = ENABLE;
--
--	if (eagerfpu == ENABLE)
--		setup_force_cpu_cap(X86_FEATURE_EAGER_FPU);
--
--	printk(KERN_INFO "x86/fpu: Using '%s' FPU context switches.\n", eagerfpu == ENABLE ? "eager" : "lazy");
- }
+-int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
++int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
+ 	gva_t addr, void *val, unsigned int bytes,
+ 	struct x86_exception *exception);
  
- /*
-@@ -337,11 +257,6 @@ static void __init fpu__init_system_ctx_
-  */
- static void __init fpu__init_parse_early_param(void)
- {
--	if (cmdline_find_option_bool(boot_command_line, "eagerfpu=off")) {
--		eagerfpu = DISABLE;
--		fpu__clear_eager_fpu_features();
--	}
--
- 	if (cmdline_find_option_bool(boot_command_line, "no387"))
- 		setup_clear_cpu_cap(X86_FEATURE_FPU);
+-int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
++int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu,
+ 	gva_t addr, void *val, unsigned int bytes,
+ 	struct x86_exception *exception);
  
 
 
