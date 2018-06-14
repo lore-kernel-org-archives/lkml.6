@@ -6,43 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 90506C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0BCADC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F69208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B60CF208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va7/8UmD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F69208DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FxgE/1Iy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B60CF208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966058AbeFNOMa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:12:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53662 "EHLO mail.kernel.org"
+        id S966072AbeFNOMf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:12:35 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966026AbeFNOM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:12:26 -0400
+        id S966052AbeFNOM3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:12:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8251F208DA;
-        Thu, 14 Jun 2018 14:12:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 50DE5208DB;
+        Thu, 14 Jun 2018 14:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985546;
-        bh=OAE1VG70yNawfSFWJ7791J0d5MM6SlRnmK3UXdplxAY=;
+        s=default; t=1528985548;
+        bh=7ja21815WS/0I8JoxcQBNtvpOI5YLN3zrZDRc0AtHbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Va7/8UmDzvF1hRxSxTz9HxN3GWu4wqA3jbkkBjEMdvvpdDoAO+hqNn3AqHzlo8RYv
-         dcwDmuf1xBk2QebVVeC5Qnn8UuC1EHXtkTb5I0TFPaac1UPLMssykHleFVHcsqGTnY
-         IydHHVDSpXO8FLgZhj8TTh1u+78Pthw2WxvEnvPc=
+        b=FxgE/1IyR1ImKRwkS3j7o0hvkpSRaBKO+7TYjGF2StwVRoUhVDwCreMJrD8LSAj4n
+         9TwQiYdsPHQsY+x2e3EowwJzdKIema3/v/4FP8+sBe32OY23sMwyp0xRJ5aAL3OKub
+         9PxhgOQMtmJux690U4PRL5Idrzixcdr9VzdczZkY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.9 28/30] crypto: vmx - Remove overly verbose printk from AES init routines
-Date:   Thu, 14 Jun 2018 16:05:09 +0200
-Message-Id: <20180614132601.435627265@linuxfoundation.org>
+        stable@vger.kernel.org, Mahesh Bandewar <maheshb@google.com>,
+        Andy Gospodarek <andy@greyhouse.net>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nate Clark <nate@neworld.us>
+Subject: [PATCH 4.9 03/30] bonding: fix active-backup transition
+Date:   Thu, 14 Jun 2018 16:04:44 +0200
+Message-Id: <20180614132600.393644176@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -59,78 +61,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Mahesh Bandewar <maheshb@google.com>
 
-commit 1411b5218adbcf1d45ddb260db5553c52e8d917c upstream.
+commit 3f3c278c94dd994fe0d9f21679ae19b9c0a55292 upstream.
 
-In the vmx AES init routines we do a printk(KERN_INFO ...) to report
-the fallback implementation we're using.
+Earlier patch c4adfc822bf5 ("bonding: make speed, duplex setting
+consistent with link state") made an attempt to keep slave state
+consistent with speed and duplex settings. Unfortunately link-state
+transition is used to change the active link especially when used
+in conjunction with mii-mon. The above mentioned patch broke that
+logic. Also when speed and duplex settings for a link are updated
+during a link-event, the link-status should not be changed to
+invoke correct transition logic.
 
-However with a slow console this can significantly affect the speed of
-crypto operations. Using 'cryptsetup benchmark' the removal of the
-printk() leads to a ~5x speedup for aes-cbc decryption.
+This patch fixes this issue by moving the link-state update outside
+of the bond_update_speed_duplex() fn and to the places where this fn
+is called and update link-state selectively.
 
-So remove them.
-
-Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
-Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
-Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
-Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
-Cc: stable@vger.kernel.org # v4.1+
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Fixes: c4adfc822bf5 ("bonding: make speed, duplex setting consistent
+with link state")
+Signed-off-by: Mahesh Bandewar <maheshb@google.com>
+Reviewed-by: Andy Gospodarek <andy@greyhouse.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Nate Clark <nate@neworld.us>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/vmx/aes.c     |    2 --
- drivers/crypto/vmx/aes_cbc.c |    2 --
- drivers/crypto/vmx/aes_ctr.c |    2 --
- drivers/crypto/vmx/ghash.c   |    2 --
- 4 files changed, 8 deletions(-)
+ drivers/net/bonding/bond_main.c |   13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
---- a/drivers/crypto/vmx/aes.c
-+++ b/drivers/crypto/vmx/aes.c
-@@ -53,8 +53,6 @@ static int p8_aes_init(struct crypto_tfm
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+--- a/drivers/net/bonding/bond_main.c
++++ b/drivers/net/bonding/bond_main.c
+@@ -384,20 +384,15 @@ static int bond_update_speed_duplex(stru
+ 	slave->duplex = DUPLEX_UNKNOWN;
  
- 	crypto_cipher_set_flags(fallback,
- 				crypto_cipher_get_flags((struct
---- a/drivers/crypto/vmx/aes_cbc.c
-+++ b/drivers/crypto/vmx/aes_cbc.c
-@@ -55,8 +55,6 @@ static int p8_aes_cbc_init(struct crypto
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
+ 	res = __ethtool_get_link_ksettings(slave_dev, &ecmd);
+-	if (res < 0) {
+-		slave->link = BOND_LINK_DOWN;
++	if (res < 0)
+ 		return 1;
+-	}
+-	if (ecmd.base.speed == 0 || ecmd.base.speed == ((__u32)-1)) {
+-		slave->link = BOND_LINK_DOWN;
++	if (ecmd.base.speed == 0 || ecmd.base.speed == ((__u32)-1))
+ 		return 1;
+-	}
+ 	switch (ecmd.base.duplex) {
+ 	case DUPLEX_FULL:
+ 	case DUPLEX_HALF:
+ 		break;
+ 	default:
+-		slave->link = BOND_LINK_DOWN;
+ 		return 1;
  	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
  
- 	crypto_blkcipher_set_flags(
- 		fallback,
---- a/drivers/crypto/vmx/aes_ctr.c
-+++ b/drivers/crypto/vmx/aes_ctr.c
-@@ -53,8 +53,6 @@ static int p8_aes_ctr_init(struct crypto
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+@@ -1536,7 +1531,8 @@ int bond_enslave(struct net_device *bond
+ 	new_slave->delay = 0;
+ 	new_slave->link_failure_count = 0;
  
- 	crypto_blkcipher_set_flags(
- 		fallback,
---- a/drivers/crypto/vmx/ghash.c
-+++ b/drivers/crypto/vmx/ghash.c
-@@ -64,8 +64,6 @@ static int p8_ghash_init_tfm(struct cryp
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name(crypto_shash_tfm(fallback)));
+-	bond_update_speed_duplex(new_slave);
++	if (bond_update_speed_duplex(new_slave))
++		new_slave->link = BOND_LINK_DOWN;
  
- 	crypto_shash_set_flags(fallback,
- 			       crypto_shash_get_flags((struct crypto_shash
+ 	new_slave->last_rx = jiffies -
+ 		(msecs_to_jiffies(bond->params.arp_interval) + 1);
+@@ -2141,6 +2137,7 @@ static void bond_miimon_commit(struct bo
+ 
+ 		case BOND_LINK_UP:
+ 			if (bond_update_speed_duplex(slave)) {
++				slave->link = BOND_LINK_DOWN;
+ 				netdev_warn(bond->dev,
+ 					    "failed to get link speed/duplex for %s\n",
+ 					    slave->dev->name);
 
 
