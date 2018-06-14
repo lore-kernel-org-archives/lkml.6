@@ -2,134 +2,78 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CDFB8C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F0F82C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83FDE208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="suxsosMH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83FDE208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id AD1B6208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD1B6208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936210AbeFNO6k (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:58:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45888 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936088AbeFNOFh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:05:37 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C42EB208DF;
-        Thu, 14 Jun 2018 14:05:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985137;
-        bh=B8jrf6G3ArwwcI1veHtAs/mK8++KA72qnZwcM1vGVD0=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=suxsosMHwGlcBhFfiRqnoG4P2hmj/gJBqdA+qMMgteWSavDbbY403fMKzpqqAO87r
-         NPWpYghfdeThIobozxDywZqSKNhR03DPxJOtvpA33Tf18ZkkNtc8IWxFRzM7koTlXG
-         glYL+m6UDUN9rjV44buuOYBcBMKu6Z+S9DED1byA=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Kappner <agk@godking.net>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.17 13/45] usb-storage: Add compatibility quirk flags for G-Technologies G-Drive
-Date:   Thu, 14 Jun 2018 16:04:04 +0200
-Message-Id: <20180614132127.467372225@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
-References: <20180614132126.797006529@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S1755381AbeFNO6u (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:58:50 -0400
+Received: from iolanthe.rowland.org ([192.131.102.54]:42916 "HELO
+        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with SMTP id S1755305AbeFNO6t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:58:49 -0400
+Received: (qmail 2501 invoked by uid 2102); 14 Jun 2018 10:58:48 -0400
+Received: from localhost (sendmail-bs@127.0.0.1)
+  by localhost with SMTP; 14 Jun 2018 10:58:48 -0400
+Date:   Thu, 14 Jun 2018 10:58:48 -0400 (EDT)
+From:   Alan Stern <stern@rowland.harvard.edu>
+X-X-Sender: stern@iolanthe.rowland.org
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-usb@vger.kernel.org>,
+        <usb-storage@lists.one-eyed-alien.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] usb: storage: add error handling for kcalloc
+In-Reply-To: <1528982951-52753-1-git-send-email-jiazhouyang09@gmail.com>
+Message-ID: <Pine.LNX.4.44L0.1806141057560.1303-100000@iolanthe.rowland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+On Thu, 14 Jun 2018, Zhouyang Jia wrote:
 
-------------------
+> When kcalloc fails, the lack of error-handling code may
+> cause unexpected results.
+> 
+> This patch adds error-handling code after calling kcalloc.
+> 
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+> ---
+> v1->v2:
+> - Remove pr_warn statement.
+> ---
+>  drivers/usb/storage/alauda.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+> index 900591d..4e17609 100644
+> --- a/drivers/usb/storage/alauda.c
+> +++ b/drivers/usb/storage/alauda.c
+> @@ -437,6 +437,9 @@ static int alauda_init_media(struct us_data *us)
+>  		+ MEDIA_INFO(us).blockshift + MEDIA_INFO(us).pageshift);
+>  	MEDIA_INFO(us).pba_to_lba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
+>  	MEDIA_INFO(us).lba_to_pba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
+> +	if ((MEDIA_INFO(us).pba_to_lba == NULL)
+> +		|| (MEDIA_INFO(us).lba_to_pba == NULL))
+> +		return USB_STOR_TRANSPORT_ERROR;
+>  
+>  	if (alauda_reset_media(us) != USB_STOR_XFER_GOOD)
+>  		return USB_STOR_TRANSPORT_ERROR;
+> 
 
-From: Alexander Kappner <agk@godking.net>
-
-commit ca7d9515d0e6825351ce106066cea1f60e40b1c8 upstream.
-
-The "G-Drive" (sold by G-Technology) external USB 3.0 drive
- hangs on write access under UAS and usb-storage:
-
-[  136.079121] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[  136.079144] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
-[  136.079152] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
-[  136.079176] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 00 00 00 00 00 00 00 08 00 00
-[  136.079180] print_req_error: critical target error, dev sdi, sector 0
-[  136.079183] Buffer I/O error on dev sdi, logical block 0, lost sync page write
-[  136.173148] EXT4-fs (sdi): mounted filesystem with ordered data mode. Opts: (null)
-[  140.583998] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[  140.584010] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
-[  140.584016] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
-[  140.584022] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 e8 c4 00 18 00 00 00 08 00 00
-[  140.584025] print_req_error: critical target error, dev sdi, sector 3905159192
-[  140.584044] print_req_error: critical target error, dev sdi, sector 3905159192
-[  140.584052] Aborting journal on device sdi-8.
-
-The proposed patch adds compatibility quirks. Because the drive requires two
-quirks (one to work with UAS, and another to work with usb-storage), adding this
-under unusual_devs.h and not just unusual_uas.h so kernels compiled without UAS
-receive the quirk. With the patch, the drive works reliably on UAS and usb-
-storage.
-(tested on NEC Corporation uPD720200 USB 3.0 host controller).
-
-Signed-off-by: Alexander Kappner <agk@godking.net>
 Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/usb/storage/unusual_devs.h |    9 +++++++++
- drivers/usb/storage/unusual_uas.h  |    9 +++++++++
- 2 files changed, 18 insertions(+)
-
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2321,6 +2321,15 @@ UNUSUAL_DEV(  0x4146, 0xba01, 0x0100, 0x
- 		"Micro Mini 1GB",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL, US_FL_NOT_LOCKABLE ),
- 
-+/* "G-DRIVE" external HDD hangs on write without these.
-+ * Patch submitted by Alexander Kappner <agk@godking.net>
-+ */
-+UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
-+		"SimpleTech",
-+		"External HDD",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_ALWAYS_SYNC),
-+
- /*
-  * Nick Bowler <nbowler@elliptictech.com>
-  * SCSI stack spams (otherwise harmless) error messages.
---- a/drivers/usb/storage/unusual_uas.h
-+++ b/drivers/usb/storage/unusual_uas.h
-@@ -107,3 +107,12 @@ UNUSUAL_DEV(0x4971, 0x8017, 0x0000, 0x99
- 		"External HDD",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_NO_REPORT_OPCODES),
-+
-+/* "G-DRIVE" external HDD hangs on write without these.
-+ * Patch submitted by Alexander Kappner <agk@godking.net>
-+ */
-+UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
-+		"SimpleTech",
-+		"External HDD",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_ALWAYS_SYNC),
-
 
