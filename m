@@ -2,149 +2,151 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 270ECC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:32:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BCAC9C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:33:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D134C208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65E2E208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:33:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="slD8wVaa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D134C208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yr9HF717";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OcYuMJqC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E2E208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755179AbeFNLcw (ORCPT
+        id S1755192AbeFNLdh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 07:32:52 -0400
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:22926 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754810AbeFNLct (ORCPT
+        Thu, 14 Jun 2018 07:33:37 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:55104 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754790AbeFNLdf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:32:49 -0400
-Received: from mail-vk0-f51.google.com (mail-vk0-f51.google.com [209.85.213.51]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id w5EBWeLx009367;
-        Thu, 14 Jun 2018 20:32:41 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com w5EBWeLx009367
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528975961;
-        bh=HB2/qwaOs6XsjCIezhblRK9JLkDNWcBThovqLttfd18=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=slD8wVaam3aT+wLB96aoen0rtxdaS+4Q3qiiWaug8TT5ZpgjmiVFQTsL8Zjz4eSAN
-         0UMZFgmzhWhz8xtu6bsQTcTCXH2S6muEjbA3O3cLLFQZB4cgHoipfCOo3RF18+gVb5
-         L7aGFXyjuOAG9FIpi5Av5CmrQ9S/OfUAMgkMDtm6PHS05BM42EabkRToAiEyWMxXGu
-         9epMi8fb2KUOBMxEZXxnFBWFfz2KUOEq5WDrVGJGdvPVb//f/OqOEQPmXW1QOZh0vy
-         d6/D9Le0OCqz9zG7teY//74zykZ+o1IUiVmaBWRFm0+w7rfKYAffCMiAFuF9RHL2tX
-         KlSEtM4qq7/ig==
-X-Nifty-SrcIP: [209.85.213.51]
-Received: by mail-vk0-f51.google.com with SMTP id b77-v6so3443490vkb.5;
-        Thu, 14 Jun 2018 04:32:41 -0700 (PDT)
-X-Gm-Message-State: APt69E3FLiuvtkEDMq6uxyJ/sjIxb5B3rIryNUXA6mAr49T3EXntc2u4
-        KYoH5zseGtHou/vpE9oN0t9FJEqmmzjrSl5P2nY=
-X-Google-Smtp-Source: ADUXVKKfm8rEc7G7XicAk69bUq+EbblOQVCLcAmCSe56KW2i9238y/wTvDeIZmjQoAbF/BziT2A9p+FNGpryNiJVcNM=
-X-Received: by 2002:a1f:b143:: with SMTP id a64-v6mr1264033vkf.65.1528975960083;
- Thu, 14 Jun 2018 04:32:40 -0700 (PDT)
+        Thu, 14 Jun 2018 07:33:35 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id ED2AB602FC; Thu, 14 Jun 2018 11:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528976015;
+        bh=JjHKFaiD/4rKBd5bdAvZaZ2JxRWWnwsY6ur6dZVjIoA=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=Yr9HF717t8kGIPxCHobuK+rrNHDKC4gmVYvAOWDsh2WfbW6Zc/0BNVdRG64c/0pJd
+         EJ+LTfYNpl3nvnDRmUGukE5mPUGHDoPKii4g37FVdUonuOsiE2OW676nvr8jVbvtNE
+         Vg35YQLWU40kUYwIgFvOjRTaR4onmAtld42ERIlo=
+Received: from SAYALIL (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: sayalil@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6CBD1602B8;
+        Thu, 14 Jun 2018 11:33:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528976014;
+        bh=JjHKFaiD/4rKBd5bdAvZaZ2JxRWWnwsY6ur6dZVjIoA=;
+        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+        b=OcYuMJqCF2En+9V/oQnyd+0JFNEBacaE5o++sqPSYDwDfpUGisrV1IAuvkATwfYMu
+         BnXN8drhxI39fphfzXPzllsQ+9WsPQBLLkJ69U7Qo5Q3GPZGm36IoL4JCXGZEyu9oB
+         fbAWYb0l2zUlZ18QQJtobSjellH6RoAvbpRzw48k=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CBD1602B8
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
+From:   "sayali" <sayalil@codeaurora.org>
+To:     "'Rob Herring'" <robh@kernel.org>
+Cc:     <subhashj@codeaurora.org>, <cang@codeaurora.org>,
+        <vivek.gautam@codeaurora.org>, <rnayak@codeaurora.org>,
+        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>, <asutoshd@codeaurora.org>,
+        <evgreen@chromium.org>, <linux-scsi@vger.kernel.org>,
+        "'Mark Rutland'" <mark.rutland@arm.com>,
+        "'Mathieu Malaterre'" <malat@debian.org>,
+        "'open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS'" 
+        <devicetree@vger.kernel.org>,
+        "'open list'" <linux-kernel@vger.kernel.org>
+References: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org> <1528455990-24572-2-git-send-email-sayalil@codeaurora.org> <20180612192636.GA31725@rob-hp-laptop>
+In-Reply-To: <20180612192636.GA31725@rob-hp-laptop>
+Subject: RE: [PATCH V2 1/3] scsi: ufs: set the device reference clock setting
+Date:   Thu, 14 Jun 2018 17:03:27 +0530
+Message-ID: <000101d403d3$87210d20$95632760$@codeaurora.org>
 MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 04:31:59
- -0700 (PDT)
-In-Reply-To: <20180614093835.5c3bf426@bbrezillon>
-References: <1528953067-24324-1-git-send-email-yamada.masahiro@socionext.com>
- <6557713.S7AzxIg9TS@blindfold> <CAK7LNASoV9nHTFax1nD_8pvkEjTzXkFpDFRf_xuoOnPPf9K23A@mail.gmail.com>
- <20180614093835.5c3bf426@bbrezillon>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 14 Jun 2018 20:31:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARfnTtESsVdUtvreLh50+awtL42nCLY9tHzbp2UN2kpBw@mail.gmail.com>
-Message-ID: <CAK7LNARfnTtESsVdUtvreLh50+awtL42nCLY9tHzbp2UN2kpBw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] mtd: rawnand: denali: add new clocks and improve setup_data_interface
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Philipp Rosenberger <p.rosenberger@linutronix.de>,
-        Richard Weinberger <richard@sigma-star.at>,
-        David Woodhouse <dwmw2@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQH7CPwp+aWAYn25mLDVi5cVOXIbUwKfFWNnAa5me4Wj7yVwAA==
+Content-Language: en-us
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Comment inline.
 
-2018-06-14 16:38 GMT+09:00 Boris Brezillon <boris.brezillon@bootlin.com>:
-> On Thu, 14 Jun 2018 16:29:59 +0900
-> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
->
->> Hi Richard,
->>
->> 2018-06-14 16:25 GMT+09:00 Richard Weinberger <richard@sigma-star.at>:
->> > Masahiro,
->> >
->> > Am Donnerstag, 14. Juni 2018, 07:11:04 CEST schrieb Masahiro Yamada:
->> >>
->> >> The ->setup_data_interface() hook needs to know the clock frequency.
->> >> In fact, this IP needs three clocks, bus "which clock?" is really
->> >> confusing.  (It is not described in the DT-binding at all.)
->> >>
->> >> This series adds more clocks.  In the new binding, three clocks
->> >> are required: core clock, bus interface clock, ECC engine clock.
->> >>
->> >> This series also takes care of the backward compatibility by
->> >> providing hardcoded values in case the new clocks are missing.
->> >> So, existing DT should work.
->> >>
->> >>
->> >> Changes in v2:
->> >>   - Split patches into sensible chunks
->> >>
->> >> Masahiro Yamada (3):
->> >>   mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
->> >>   mtd: rawnand: denali_dt: add more clocks based on IP datasheet
->> >>   mtd: rawnand: denali: optimize timing parameters for data interface
->> >
->> > This still means that we need to feed at least 2/3 and 3/3 into -stable to
->> > unbreak the driver.
->>
->>
->> 3/3 is not mandatory.
->>
->> You can only back-port 1/3 and 2/3.
->
-> Well, patch 1 is not a fix, can we move it after patch 2 so that only
-> patch 2 is flagged with the Fixes+Cc-stable tags?
+Thanks,
+Sayali
+-----Original Message-----
+From: Rob Herring [mailto:robh@kernel.org] 
+Sent: Wednesday, June 13, 2018 12:57 AM
+To: Sayali Lokhande <sayalil@codeaurora.org>
+Cc: subhashj@codeaurora.org; cang@codeaurora.org;
+vivek.gautam@codeaurora.org; rnayak@codeaurora.org; vinholikatti@gmail.com;
+jejb@linux.vnet.ibm.com; martin.petersen@oracle.com;
+asutoshd@codeaurora.org; evgreen@chromium.org; linux-scsi@vger.kernel.org;
+Mark Rutland <mark.rutland@arm.com>; Mathieu Malaterre <malat@debian.org>;
+open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
+<devicetree@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V2 1/3] scsi: ufs: set the device reference clock
+setting
 
+On Fri, Jun 08, 2018 at 04:36:28PM +0530, Sayali Lokhande wrote:
+> From: Subhash Jadavani <subhashj@codeaurora.org>
+> 
+> UFS host supplies the reference clock to UFS device and UFS device 
+> specification allows host to provide one of the 4 frequencies (19.2 
+> MHz,
+> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the 
+> device reference clock frequency setting in the device based on what 
+> frequency it is supplying to UFS device.
+> 
+> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
+> Signed-off-by: Can Guo <cang@codeaurora.org>
+> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+> ---
+>  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  7 +++
+>  drivers/scsi/ufs/ufs.h                             |  9 ++++
+>  drivers/scsi/ufs/ufshcd-pltfrm.c                   | 24 ++++++++++
+>  drivers/scsi/ufs/ufshcd.c                          | 52
+++++++++++++++++++++++
+>  drivers/scsi/ufs/ufshcd.h                          |  1 +
+>  5 files changed, 93 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt 
+> b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> index c39dfef..4522434 100644
+> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> @@ -41,6 +41,12 @@ Optional properties:
+>  -lanes-per-direction	: number of lanes available per direction - either 1
+or 2.
+>  			  Note that it is assume same number of lanes is
+used both
+>  			  directions at once. If not specified, default is 2
+lanes per direction.
+> +- dev-ref-clk-freq	: Specify the device reference clock frequency, must
+be one of the following:
+> +			  0: 19.2 MHz
+> +			  1: 26 MHz
+> +			  2: 38.4 MHz
+> +			  3: 52 MHz
+> +			  Defaults to 26 MHz if not specified.
 
-OK, will do that.
+I must have misunderstood your last response. I thought you could handle
+things without DT. If not, my question remains.
+[Sayali]: Ref clk frequency setting could vary from
+platfrom-to-platform(vendor specific). Hence we need to pass it via DT.
+	Currently in DT we do not set/mention any ref clk frequency
+parameter. Hence I have added one new DT entry to configure
+	required ref clk freq.
 
-If you try to port this back to v4.14.*
-you need to fix-up the file path
-since the driver did not reside in the raw/ sub-directory at that time.
+Rob
 
-
-Except that, I do not see backport issue.
-
-
-
-
-> Thanks,
->
-> Boris
->
->
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
-
-
-
--- 
-Best Regards
-Masahiro Yamada
