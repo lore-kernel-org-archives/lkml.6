@@ -6,44 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 67E45C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 23DE8C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14894208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE004208DE
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oNuh1fds"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14894208DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYjmdk7+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE004208DE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965994AbeFNOMK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:12:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53262 "EHLO mail.kernel.org"
+        id S966010AbeFNOMP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:12:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965975AbeFNOMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:12:05 -0400
+        id S965975AbeFNOML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:12:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D99DE208DA;
-        Thu, 14 Jun 2018 14:12:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69D26208DE;
+        Thu, 14 Jun 2018 14:12:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985525;
-        bh=k0lAtaqSz2l/ADBQ3Jd9c0nn3Fn1QQmF92GP8pGRAPY=;
+        s=default; t=1528985531;
+        bh=vL9dVDoji9x17fPT7AzJfd5WRDcDw144VHx1qk9Yatw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oNuh1fds5mo1ToGuBxuk+tm+DVloU8n9G8Q5tfB8TvKN5eMrVck+zbzm3Up9AwIOC
-         +wnpzvXVi4qLscceT7Hx+MuAZ8zENadbetU5bDxDfAxzCu+3etlMHoEXusT3tLlFyw
-         Q+iQsYfQfQcWaCppGyFBBY5dcEjtGYHszngMKPiM=
+        b=NYjmdk7+9w5joAcYOilljbT6YhmELMtnI0XTzgzEPp0v98MByo/bFILpc1TYhLJ7G
+         3a1Mb1FV1ZE07H0Rdpq0rAGJpZiMse/sYkN0auphi42fGxo+HWNGcq9VkO2fvULlxo
+         /vtcl5UCkWe9BiviKzL+eXeH7xGyOLj3yr77HtrE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH 4.9 21/30] serial: samsung: fix maxburst parameter for DMA transactions
-Date:   Thu, 14 Jun 2018 16:05:02 +0200
-Message-Id: <20180614132601.147845092@linuxfoundation.org>
+        stable@vger.kernel.org, Oleksandr Natalenko <onatalen@redhat.com>,
+        Gil Kupfer <gilkup@gmail.com>, Nadav Amit <namit@vmware.com>,
+        Xavier Deguillard <xdeguillard@vmware.com>,
+        Oleksandr Natalenko <oleksandr@redhat.com>
+Subject: [PATCH 4.9 23/30] vmw_balloon: fixing double free when batching mode is off
+Date:   Thu, 14 Jun 2018 16:05:04 +0200
+Message-Id: <20180614132601.229185575@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -60,43 +61,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Gil Kupfer <gilkup@gmail.com>
 
-commit aa2f80e752c75e593b3820f42c416ed9458fa73e upstream.
+commit b23220fe054e92f616b82450fae8cd3ab176cc60 upstream.
 
-The best granularity of residue that DMA engine can report is in the BURST
-units, so the serial driver must use MAXBURST = 1 and DMA_SLAVE_BUSWIDTH_1_BYTE
-if it relies on exact number of bytes transferred by DMA engine.
+The balloon.page field is used for two different purposes if batching is
+on or off. If batching is on, the field point to the page which is used
+to communicate with with the hypervisor. If it is off, balloon.page
+points to the page that is about to be (un)locked.
 
-Fixes: 62c37eedb74c ("serial: samsung: add dma reqest/release functions")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: stable <stable@vger.kernel.org>
+Unfortunately, this dual-purpose of the field introduced a bug: when the
+balloon is popped (e.g., when the machine is reset or the balloon driver
+is explicitly removed), the balloon driver frees, unconditionally, the
+page that is held in balloon.page.  As a result, if batching is
+disabled, this leads to double freeing the last page that is sent to the
+hypervisor.
+
+The following error occurs during rmmod when kernel checkers are on, and
+the balloon is not empty:
+
+[   42.307653] ------------[ cut here ]------------
+[   42.307657] Kernel BUG at ffffffffba1e4b28 [verbose debug info unavailable]
+[   42.307720] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC
+[   42.312512] Modules linked in: vmw_vsock_vmci_transport vsock ppdev joydev vmw_balloon(-) input_leds serio_raw vmw_vmci parport_pc shpchp parport i2c_piix4 nfit mac_hid autofs4 vmwgfx drm_kms_helper hid_generic syscopyarea sysfillrect usbhid sysimgblt fb_sys_fops hid ttm mptspi scsi_transport_spi ahci mptscsih drm psmouse vmxnet3 libahci mptbase pata_acpi
+[   42.312766] CPU: 10 PID: 1527 Comm: rmmod Not tainted 4.12.0+ #5
+[   42.312803] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 09/30/2016
+[   42.313042] task: ffff9bf9680f8000 task.stack: ffffbfefc1638000
+[   42.313290] RIP: 0010:__free_pages+0x38/0x40
+[   42.313510] RSP: 0018:ffffbfefc163be98 EFLAGS: 00010246
+[   42.313731] RAX: 000000000000003e RBX: ffffffffc02b9720 RCX: 0000000000000006
+[   42.313972] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9bf97e08e0a0
+[   42.314201] RBP: ffffbfefc163be98 R08: 0000000000000000 R09: 0000000000000000
+[   42.314435] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffc02b97e4
+[   42.314505] R13: ffffffffc02b9748 R14: ffffffffc02b9728 R15: 0000000000000200
+[   42.314550] FS:  00007f3af5fec700(0000) GS:ffff9bf97e080000(0000) knlGS:0000000000000000
+[   42.314599] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   42.314635] CR2: 00007f44f6f4ab24 CR3: 00000003a7d12000 CR4: 00000000000006e0
+[   42.314864] Call Trace:
+[   42.315774]  vmballoon_pop+0x102/0x130 [vmw_balloon]
+[   42.315816]  vmballoon_exit+0x42/0xd64 [vmw_balloon]
+[   42.315853]  SyS_delete_module+0x1e2/0x250
+[   42.315891]  entry_SYSCALL_64_fastpath+0x23/0xc2
+[   42.315924] RIP: 0033:0x7f3af5b0e8e7
+[   42.315949] RSP: 002b:00007fffe6ce0148 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
+[   42.315996] RAX: ffffffffffffffda RBX: 000055be676401e0 RCX: 00007f3af5b0e8e7
+[   42.316951] RDX: 000000000000000a RSI: 0000000000000800 RDI: 000055be67640248
+[   42.317887] RBP: 0000000000000003 R08: 0000000000000000 R09: 1999999999999999
+[   42.318845] R10: 0000000000000883 R11: 0000000000000206 R12: 00007fffe6cdf130
+[   42.319755] R13: 0000000000000000 R14: 0000000000000000 R15: 000055be676401e0
+[   42.320606] Code: c0 74 1c f0 ff 4f 1c 74 02 5d c3 85 f6 74 07 e8 0f d8 ff ff 5d c3 31 f6 e8 c6 fb ff ff 5d c3 48 c7 c6 c8 0f c5 ba e8 58 be 02 00 <0f> 0b 66 0f 1f 44 00 00 66 66 66 66 90 48 85 ff 75 01 c3 55 48
+[   42.323462] RIP: __free_pages+0x38/0x40 RSP: ffffbfefc163be98
+[   42.325735] ---[ end trace 872e008e33f81508 ]---
+
+To solve the bug, we eliminate the dual purpose of balloon.page.
+
+Fixes: f220a80f0c2e ("VMware balloon: add batching to the vmw_balloon.")
+Cc: stable@vger.kernel.org
+Reported-by: Oleksandr Natalenko <onatalen@redhat.com>
+Signed-off-by: Gil Kupfer <gilkup@gmail.com>
+Signed-off-by: Nadav Amit <namit@vmware.com>
+Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
+Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/samsung.c |    7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/misc/vmw_balloon.c |   23 +++++++----------------
+ 1 file changed, 7 insertions(+), 16 deletions(-)
 
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -866,15 +866,12 @@ static int s3c24xx_serial_request_dma(st
- 	dma->rx_conf.direction		= DMA_DEV_TO_MEM;
- 	dma->rx_conf.src_addr_width	= DMA_SLAVE_BUSWIDTH_1_BYTE;
- 	dma->rx_conf.src_addr		= p->port.mapbase + S3C2410_URXH;
--	dma->rx_conf.src_maxburst	= 16;
-+	dma->rx_conf.src_maxburst	= 1;
+--- a/drivers/misc/vmw_balloon.c
++++ b/drivers/misc/vmw_balloon.c
+@@ -576,15 +576,9 @@ static void vmballoon_pop(struct vmballo
+ 		}
+ 	}
  
- 	dma->tx_conf.direction		= DMA_MEM_TO_DEV;
- 	dma->tx_conf.dst_addr_width	= DMA_SLAVE_BUSWIDTH_1_BYTE;
- 	dma->tx_conf.dst_addr		= p->port.mapbase + S3C2410_UTXH;
--	if (dma_get_cache_alignment() >= 16)
--		dma->tx_conf.dst_maxburst = 16;
--	else
--		dma->tx_conf.dst_maxburst = 1;
-+	dma->tx_conf.dst_maxburst	= 1;
+-	if (b->batch_page) {
+-		vunmap(b->batch_page);
+-		b->batch_page = NULL;
+-	}
+-
+-	if (b->page) {
+-		__free_page(b->page);
+-		b->page = NULL;
+-	}
++	/* Clearing the batch_page unconditionally has no adverse effect */
++	free_page((unsigned long)b->batch_page);
++	b->batch_page = NULL;
+ }
  
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
+ /*
+@@ -991,16 +985,13 @@ static const struct vmballoon_ops vmball
+ 
+ static bool vmballoon_init_batching(struct vmballoon *b)
+ {
+-	b->page = alloc_page(VMW_PAGE_ALLOC_NOSLEEP);
+-	if (!b->page)
+-		return false;
++	struct page *page;
+ 
+-	b->batch_page = vmap(&b->page, 1, VM_MAP, PAGE_KERNEL);
+-	if (!b->batch_page) {
+-		__free_page(b->page);
++	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
++	if (!page)
+ 		return false;
+-	}
+ 
++	b->batch_page = page_address(page);
+ 	return true;
+ }
+ 
 
 
