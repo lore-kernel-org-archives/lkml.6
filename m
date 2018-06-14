@@ -3,45 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B32FAC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DEBE7C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E7D4208E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8AA3E208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVtNxs6U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E7D4208E2
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MebMuj/d"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AA3E208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966219AbeFNONU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:13:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54750 "EHLO mail.kernel.org"
+        id S966234AbeFNONZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:13:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966150AbeFNONS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:13:18 -0400
+        id S966218AbeFNONV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:13:21 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38582208DB;
-        Thu, 14 Jun 2018 14:13:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 049F6208DB;
+        Thu, 14 Jun 2018 14:13:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985597;
-        bh=SPkbFSGFuWq45mFOol61IWSZX1jlK+wIOAAuRb/oPo0=;
+        s=default; t=1528985600;
+        bh=urnuxNbqspiVkLriMwQzej71OgE66+oWzOsFjTSIc0U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jVtNxs6UscqTCZ9AkipAn9gdE0ZvKz1dSy80ThyDnNBO+YG6QQ9y3D0XJLDeh9Dm6
-         HpwEZlkHZ5Jx65i2818DBk4Rk4F7WYGgfHf8VU/zGklrMk4YDjn0a61AQPZ3jdvZv1
-         c4tfnn0w7OC04b4krNoAkcYG56o8KQxlvh8FH+hc=
+        b=MebMuj/dUnrIJMhd3q6J2xwVHLSifZori2RTxEFe9LYkoTPfcvTfyIr5pQwk2mr4a
+         p0itOiFyL9prxd1zzj0KjHDrD+XiZilfmZDiNa9H2cKehfWY80AnDZKoI3PmeZsb9I
+         o5d1u8uqT4FU6/lJc5bOrpXVOpiNOs2p8Q+jhBvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 17/24] KVM: x86: introduce linear_{read,write}_system
-Date:   Thu, 14 Jun 2018 16:05:12 +0200
-Message-Id: <20180614132725.171656552@linuxfoundation.org>
+Subject: [PATCH 4.4 18/24] KVM: x86: pass kvm_vcpu to kvm_read_guest_virt and kvm_write_guest_virt_system
+Date:   Thu, 14 Jun 2018 16:05:13 +0200
+Message-Id: <20180614132725.214247845@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
 References: <20180614132724.483802160@linuxfoundation.org>
@@ -60,10 +60,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 79367a65743975e5cac8d24d08eccc7fdae832b0 upstream.
+commit ce14e868a54edeb2e30cb7a7b104a2fc4b9d76ca upstream.
 
-Wrap the common invocation of ctxt->ops->read_std and ctxt->ops->write_std, so
-as to have a smaller patch when the functions grow another argument.
+Int the next patch the emulator's .read_std and .write_std callbacks will
+grow another argument, which is not needed in kvm_read_guest_virt and
+kvm_write_guest_virt_system's callers.  Since we have to make separate
+functions, let's give the currently existing names a nicer interface, too.
 
 Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
 Cc: stable@vger.kernel.org
@@ -71,172 +73,178 @@ Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/x86/kvm/emulate.c |   64 ++++++++++++++++++++++++-------------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ arch/x86/kvm/vmx.c |   23 ++++++++++-------------
+ arch/x86/kvm/x86.c |   39 ++++++++++++++++++++++++++-------------
+ arch/x86/kvm/x86.h |    4 ++--
+ 3 files changed, 38 insertions(+), 28 deletions(-)
 
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -790,6 +790,19 @@ static inline int jmp_rel(struct x86_emu
- 	return assign_eip_near(ctxt, ctxt->_eip + rel);
- }
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -6692,8 +6692,7 @@ static int nested_vmx_check_vmptr(struct
+ 			vmcs_read32(VMX_INSTRUCTION_INFO), false, &gva))
+ 		return 1;
  
-+static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
-+			      void *data, unsigned size)
-+{
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+}
-+
-+static int linear_write_system(struct x86_emulate_ctxt *ctxt,
-+			       ulong linear, void *data,
-+			       unsigned int size)
-+{
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+}
-+
- static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
- 			      struct segmented_address addr,
- 			      void *data,
-@@ -1488,8 +1501,7 @@ static int read_interrupt_descriptor(str
- 		return emulate_gp(ctxt, index << 3 | 0x2);
+-	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &vmptr,
+-				sizeof(vmptr), &e)) {
++	if (kvm_read_guest_virt(vcpu, gva, &vmptr, sizeof(vmptr), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
+ 	}
+@@ -7211,8 +7210,8 @@ static int handle_vmread(struct kvm_vcpu
+ 				vmx_instruction_info, true, &gva))
+ 			return 1;
+ 		/* _system ok, as nested_vmx_check_permission verified cpl=0 */
+-		kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, gva,
+-			     &field_value, (is_long_mode(vcpu) ? 8 : 4), NULL);
++		kvm_write_guest_virt_system(vcpu, gva, &field_value,
++					    (is_long_mode(vcpu) ? 8 : 4), NULL);
+ 	}
  
- 	addr = dt.address + index * 8;
--	return ctxt->ops->read_std(ctxt, addr, desc, sizeof *desc,
--				   &ctxt->exception);
-+	return linear_read_system(ctxt, addr, desc, sizeof *desc);
- }
- 
- static void get_descriptor_table_ptr(struct x86_emulate_ctxt *ctxt,
-@@ -1552,8 +1564,7 @@ static int read_segment_descriptor(struc
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
--	return ctxt->ops->read_std(ctxt, *desc_addr_p, desc, sizeof(*desc),
--				   &ctxt->exception);
-+	return linear_read_system(ctxt, *desc_addr_p, desc, sizeof(*desc));
- }
- 
- /* allowed just for 8 bytes segments */
-@@ -1567,8 +1578,7 @@ static int write_segment_descriptor(stru
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
--	return ctxt->ops->write_std(ctxt, addr, desc, sizeof *desc,
--				    &ctxt->exception);
-+	return linear_write_system(ctxt, addr, desc, sizeof *desc);
- }
- 
- static int __load_segment_descriptor(struct x86_emulate_ctxt *ctxt,
-@@ -1729,8 +1739,7 @@ static int __load_segment_descriptor(str
- 				return ret;
+ 	nested_vmx_succeed(vcpu);
+@@ -7247,8 +7246,8 @@ static int handle_vmwrite(struct kvm_vcp
+ 		if (get_vmx_mem_address(vcpu, exit_qualification,
+ 				vmx_instruction_info, false, &gva))
+ 			return 1;
+-		if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva,
+-			   &field_value, (is_64_bit_mode(vcpu) ? 8 : 4), &e)) {
++		if (kvm_read_guest_virt(vcpu, gva, &field_value,
++					(is_64_bit_mode(vcpu) ? 8 : 4), &e)) {
+ 			kvm_inject_page_fault(vcpu, &e);
+ 			return 1;
  		}
- 	} else if (ctxt->mode == X86EMUL_MODE_PROT64) {
--		ret = ctxt->ops->read_std(ctxt, desc_addr+8, &base3,
--				sizeof(base3), &ctxt->exception);
-+		ret = linear_read_system(ctxt, desc_addr+8, &base3, sizeof(base3));
- 		if (ret != X86EMUL_CONTINUE)
- 			return ret;
- 		if (is_noncanonical_address(get_desc_base(&seg_desc) |
-@@ -2043,11 +2052,11 @@ static int __emulate_int_real(struct x86
- 	eip_addr = dt.address + (irq << 2);
- 	cs_addr = dt.address + (irq << 2) + 2;
- 
--	rc = ops->read_std(ctxt, cs_addr, &cs, 2, &ctxt->exception);
-+	rc = linear_read_system(ctxt, cs_addr, &cs, 2);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
--	rc = ops->read_std(ctxt, eip_addr, &eip, 2, &ctxt->exception);
-+	rc = linear_read_system(ctxt, eip_addr, &eip, 2);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
- 
-@@ -3025,35 +3034,30 @@ static int task_switch_16(struct x86_emu
- 			  u16 tss_selector, u16 old_tss_sel,
- 			  ulong old_tss_base, struct desc_struct *new_desc)
- {
--	const struct x86_emulate_ops *ops = ctxt->ops;
- 	struct tss_segment_16 tss_seg;
- 	int ret;
- 	u32 new_tss_base = get_desc_base(new_desc);
- 
--	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	save_state_to_tss16(ctxt, &tss_seg);
- 
--	ret = ops->write_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
--			     &ctxt->exception);
-+	ret = linear_write_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
--	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	if (old_tss_sel != 0xffff) {
- 		tss_seg.prev_task_link = old_tss_sel;
- 
--		ret = ops->write_std(ctxt, new_tss_base,
--				     &tss_seg.prev_task_link,
--				     sizeof tss_seg.prev_task_link,
--				     &ctxt->exception);
-+		ret = linear_write_system(ctxt, new_tss_base,
-+					  &tss_seg.prev_task_link,
-+					  sizeof tss_seg.prev_task_link);
- 		if (ret != X86EMUL_CONTINUE)
- 			return ret;
+@@ -7338,9 +7337,9 @@ static int handle_vmptrst(struct kvm_vcp
+ 			vmx_instruction_info, true, &vmcs_gva))
+ 		return 1;
+ 	/* ok to use *_system, as nested_vmx_check_permission verified cpl=0 */
+-	if (kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, vmcs_gva,
+-				 (void *)&to_vmx(vcpu)->nested.current_vmptr,
+-				 sizeof(u64), &e)) {
++	if (kvm_write_guest_virt_system(vcpu, vmcs_gva,
++					(void *)&to_vmx(vcpu)->nested.current_vmptr,
++					sizeof(u64), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
  	}
-@@ -3169,38 +3173,34 @@ static int task_switch_32(struct x86_emu
- 			  u16 tss_selector, u16 old_tss_sel,
- 			  ulong old_tss_base, struct desc_struct *new_desc)
- {
--	const struct x86_emulate_ops *ops = ctxt->ops;
- 	struct tss_segment_32 tss_seg;
- 	int ret;
- 	u32 new_tss_base = get_desc_base(new_desc);
- 	u32 eip_offset = offsetof(struct tss_segment_32, eip);
- 	u32 ldt_sel_offset = offsetof(struct tss_segment_32, ldt_selector);
- 
--	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	save_state_to_tss32(ctxt, &tss_seg);
- 
- 	/* Only GP registers and segment selectors are saved */
--	ret = ops->write_std(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
--			     ldt_sel_offset - eip_offset, &ctxt->exception);
-+	ret = linear_write_system(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
-+				  ldt_sel_offset - eip_offset);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
--	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
--			    &ctxt->exception);
-+	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
- 	if (ret != X86EMUL_CONTINUE)
- 		return ret;
- 
- 	if (old_tss_sel != 0xffff) {
- 		tss_seg.prev_task_link = old_tss_sel;
- 
--		ret = ops->write_std(ctxt, new_tss_base,
--				     &tss_seg.prev_task_link,
--				     sizeof tss_seg.prev_task_link,
--				     &ctxt->exception);
-+		ret = linear_write_system(ctxt, new_tss_base,
-+					  &tss_seg.prev_task_link,
-+					  sizeof tss_seg.prev_task_link);
- 		if (ret != X86EMUL_CONTINUE)
- 			return ret;
+@@ -7394,8 +7393,7 @@ static int handle_invept(struct kvm_vcpu
+ 	if (get_vmx_mem_address(vcpu, vmcs_readl(EXIT_QUALIFICATION),
+ 			vmx_instruction_info, false, &gva))
+ 		return 1;
+-	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &operand,
+-				sizeof(operand), &e)) {
++	if (kvm_read_guest_virt(vcpu, gva, &operand, sizeof(operand), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
  	}
+@@ -7454,8 +7452,7 @@ static int handle_invvpid(struct kvm_vcp
+ 	if (get_vmx_mem_address(vcpu, vmcs_readl(EXIT_QUALIFICATION),
+ 			vmx_instruction_info, false, &gva))
+ 		return 1;
+-	if (kvm_read_guest_virt(&vcpu->arch.emulate_ctxt, gva, &vpid,
+-				sizeof(u32), &e)) {
++	if (kvm_read_guest_virt(vcpu, gva, &vpid, sizeof(u32), &e)) {
+ 		kvm_inject_page_fault(vcpu, &e);
+ 		return 1;
+ 	}
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4245,11 +4245,10 @@ static int kvm_fetch_guest_virt(struct x
+ 	return X86EMUL_CONTINUE;
+ }
+ 
+-int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
++int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
+ 			       gva_t addr, void *val, unsigned int bytes,
+ 			       struct x86_exception *exception)
+ {
+-	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ 	u32 access = (kvm_x86_ops->get_cpl(vcpu) == 3) ? PFERR_USER_MASK : 0;
+ 
+ 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access,
+@@ -4257,9 +4256,9 @@ int kvm_read_guest_virt(struct x86_emula
+ }
+ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
+ 
+-static int kvm_read_guest_virt_system(struct x86_emulate_ctxt *ctxt,
+-				      gva_t addr, void *val, unsigned int bytes,
+-				      struct x86_exception *exception)
++static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
++			     gva_t addr, void *val, unsigned int bytes,
++			     struct x86_exception *exception)
+ {
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ 	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
+@@ -4274,18 +4273,16 @@ static int kvm_read_guest_phys_system(st
+ 	return r < 0 ? X86EMUL_IO_NEEDED : X86EMUL_CONTINUE;
+ }
+ 
+-int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
+-				       gva_t addr, void *val,
+-				       unsigned int bytes,
+-				       struct x86_exception *exception)
++static int kvm_write_guest_virt_helper(gva_t addr, void *val, unsigned int bytes,
++				      struct kvm_vcpu *vcpu, u32 access,
++				      struct x86_exception *exception)
+ {
+-	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+ 	void *data = val;
+ 	int r = X86EMUL_CONTINUE;
+ 
+ 	while (bytes) {
+ 		gpa_t gpa =  vcpu->arch.walk_mmu->gva_to_gpa(vcpu, addr,
+-							     PFERR_WRITE_MASK,
++							     access,
+ 							     exception);
+ 		unsigned offset = addr & (PAGE_SIZE-1);
+ 		unsigned towrite = min(bytes, (unsigned)PAGE_SIZE - offset);
+@@ -4306,6 +4303,22 @@ int kvm_write_guest_virt_system(struct x
+ out:
+ 	return r;
+ }
++
++static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
++			      unsigned int bytes, struct x86_exception *exception)
++{
++	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
++
++	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
++					   PFERR_WRITE_MASK, exception);
++}
++
++int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
++				unsigned int bytes, struct x86_exception *exception)
++{
++	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
++					   PFERR_WRITE_MASK, exception);
++}
+ EXPORT_SYMBOL_GPL(kvm_write_guest_virt_system);
+ 
+ static int vcpu_mmio_gva_to_gpa(struct kvm_vcpu *vcpu, unsigned long gva,
+@@ -5025,8 +5038,8 @@ static void emulator_set_hflags(struct x
+ static const struct x86_emulate_ops emulate_ops = {
+ 	.read_gpr            = emulator_read_gpr,
+ 	.write_gpr           = emulator_write_gpr,
+-	.read_std            = kvm_read_guest_virt_system,
+-	.write_std           = kvm_write_guest_virt_system,
++	.read_std            = emulator_read_std,
++	.write_std           = emulator_write_std,
+ 	.read_phys           = kvm_read_guest_phys_system,
+ 	.fetch               = kvm_fetch_guest_virt,
+ 	.read_emulated       = emulator_read_emulated,
+--- a/arch/x86/kvm/x86.h
++++ b/arch/x86/kvm/x86.h
+@@ -164,11 +164,11 @@ int kvm_inject_realmode_interrupt(struct
+ 
+ void kvm_write_tsc(struct kvm_vcpu *vcpu, struct msr_data *msr);
+ 
+-int kvm_read_guest_virt(struct x86_emulate_ctxt *ctxt,
++int kvm_read_guest_virt(struct kvm_vcpu *vcpu,
+ 	gva_t addr, void *val, unsigned int bytes,
+ 	struct x86_exception *exception);
+ 
+-int kvm_write_guest_virt_system(struct x86_emulate_ctxt *ctxt,
++int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu,
+ 	gva_t addr, void *val, unsigned int bytes,
+ 	struct x86_exception *exception);
+ 
 
 
