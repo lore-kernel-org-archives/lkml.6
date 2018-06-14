@@ -2,107 +2,106 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6144CC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:48:19 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 86098C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17CD420020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:48:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="M9gzMJer"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17CD420020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 39E2E208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:50:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39E2E208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755353AbeFNNsR (ORCPT
+        id S1755275AbeFNNuC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:48:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46860 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754885AbeFNNsP (ORCPT
+        Thu, 14 Jun 2018 09:50:02 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33940 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755102AbeFNNuB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:48:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UAY15v6mgKiHpP69S0KCEqlFd2iOICrqGBLVbRzMcX0=; b=M9gzMJerKXiSOozbS7Jwsg5NN
-        cJwlQiNHLmHGw2g8Vqn1MbFwUgcLh1FF7nrvKXgv8qM7gcNhYbs37yVap6/IJkgqbuoUlWRUdfgVB
-        6Uh/NIphjT563KU/bKRSqS9TWotAF5amBYhC2dNV3mW8u1EWDRxPPbzXfDtm+cOy4qumA=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fTSbZ-0003Wo-Tf; Thu, 14 Jun 2018 13:48:01 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fTSbZ-0007tl-Cp; Thu, 14 Jun 2018 14:48:01 +0100
-Date:   Thu, 14 Jun 2018 14:48:01 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Rob Herring <robh@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 1/2] ASoC: pxa: add binding for pxa2xx-ac97 audio complex
-Message-ID: <20180614134801.GB9660@sirena.org.uk>
-References: <20180611202211.15501-1-robert.jarzmik@free.fr>
- <20180612221359.GA26741@rob-hp-laptop>
- <87y3fiqzp8.fsf@belgarion.home>
+        Thu, 14 Jun 2018 09:50:01 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id DBD91803A9; Thu, 14 Jun 2018 15:49:59 +0200 (CEST)
+Date:   Thu, 14 Jun 2018 15:49:59 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc:     Florian Weimer <fweimer@redhat.com>, carlos <carlos@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>
+Subject: Re: Restartable Sequences system call merged into Linux
+Message-ID: <20180614134959.GA4084@amd>
+References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
+ <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com>
+ <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com>
+ <091061df-3482-8762-30e4-feaf3417be11@redhat.com>
+ <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
+ <20180614122759.GB8798@amd>
+ <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com>
+ <20180614132557.GA15201@amd>
+ <956816108.13001.1528983496098.JavaMail.zimbra@efficios.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZfOjI3PrQbgiZnxM"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="0OAP2g/MAC+5xKAE"
 Content-Disposition: inline
-In-Reply-To: <87y3fiqzp8.fsf@belgarion.home>
-X-Cookie: 15% gratuity added for parties over 8.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <956816108.13001.1528983496098.JavaMail.zimbra@efficios.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---ZfOjI3PrQbgiZnxM
+--0OAP2g/MAC+5xKAE
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 13, 2018 at 09:00:19PM +0200, Robert Jarzmik wrote:
-> Rob Herring <robh@kernel.org> writes:
-> > On Mon, Jun 11, 2018 at 10:22:10PM +0200, Robert Jarzmik wrote:
+Hi!
 
-> >> +Required properties:
-> >> +  - compatible: "marvell,pxa2xx-ac97"
+> >> - rseq_preempt(): on preemption, the scheduler sets the TIF_NOTIFY_RES=
+UME thread
+> >>   flag, so rseq_handle_notify_resume() can check whether it's in a rse=
+q critical
+> >>   section when returning to user-space,
+> >> - rseq_signal_deliver(): on signal delivery, rseq_handle_notify_resume=
+() checks
+> >>   whether it's in a rseq critical section,
+> >> - rseq_migrate: on migration, the scheduler sets TIF_NOTIFY_RESUME as =
+well,
+> >=20
+> > Yes, this is not likely to be noticeable.
+> >=20
+> > But the proposal wanted to add a syscall to thread creation, right?
+> > And I believe that may be noticeable.
+>=20
+> Fair point! Do we have a standard benchmark that would stress this ?
 
-> > Don't use wildcards in compatible strings. Though this is so old...
+Web server performance benchmarks basically test clone() performance
+in many cases.
+									Pavel
 
-> Yes, I could use pxa270-ac97.
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
-If you're going to do that then probably best to put in a compatible
-string for each SoC since they are actually meaningfully different, they
-seemed to manage to break something with each new revision.
-
---ZfOjI3PrQbgiZnxM
+--0OAP2g/MAC+5xKAE
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEyBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsichAACgkQJNaLcl1U
-h9CZ2wf2P8RJc94KqSk0E9cc7WOEzkM/bBC3w1dEkqBlm9nNNSmsUj81RlRFHpR2
-BQztdPntC3jxepVMpyTIOGOJEhoYiIcT9yAbgoujIkaSSERjxKFyoDb00tTStjtg
-6SQhPUnFDga+eXUiUhmfv8oFr4dP4PlEup43xoVnHhwLY6oo31MOVhQPrzHPb1uA
-OgbYVEG8RqatEsuk649UQ8KBEHKkWE3QCmb6vL0yGcZ8GVuaUrRh19gDEpX1ea3P
-ydTB/0L4gd7kMsk7LH1iwzcaD/mv1ztkw8m3NcQq9+i6hd0CGOp1G+T7YINvtism
-GESrxQk8QMvL13owbaCShtGsg15A
-=gAJc
+iEYEARECAAYFAlsicocACgkQMOfwapXb+vIPEACgs1vuWmzWdUvcvy34IY9uH7Rv
+aykAniy6xAOHIGIG+3DTiZI+Z+spFshk
+=CzEe
 -----END PGP SIGNATURE-----
 
---ZfOjI3PrQbgiZnxM--
+--0OAP2g/MAC+5xKAE--
