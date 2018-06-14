@@ -6,198 +6,126 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1E26BC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:00:03 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5DFC1C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B92208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:00:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1B92208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id 1C57C208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:01:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C57C208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754746AbeFNIAA (ORCPT
+        id S1754705AbeFNIBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:00:00 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:34060 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752867AbeFNH75 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:59:57 -0400
+        Thu, 14 Jun 2018 04:01:39 -0400
+Received: from mga05.intel.com ([192.55.52.43]:41583 "EHLO mga05.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752759AbeFNIBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:01:37 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 01:01:36 -0700
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
-   d="scan'208";a="15245352"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 14 Jun 2018 00:59:56 -0700
-Received: from localhost (10.10.76.4) by chn-sv-exch06.mchp-main.com
- (10.10.76.107) with Microsoft SMTP Server id 14.3.352.0; Thu, 14 Jun 2018
- 00:59:55 -0700
-Date:   Thu, 14 Jun 2018 09:58:49 +0200
-From:   Ludovic Desroches <ludovic.desroches@microchip.com>
-To:     Radu Pirea <radu.pirea@microchip.com>
-CC:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
-        <richard.genoud@gmail.com>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v7 3/6] mfd: at91-usart: added mfd driver for usart
-Message-ID: <20180614075849.dfiqwcu6rtzgpzq7@rfolt0960.corp.atmel.com>
-Mail-Followup-To: Radu Pirea <radu.pirea@microchip.com>, broonie@kernel.org,
-        nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
-        lee.jones@linaro.org, richard.genoud@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, gregkh@linuxfoundation.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-References: <20180613163621.23995-1-radu.pirea@microchip.com>
- <20180613163621.23995-4-radu.pirea@microchip.com>
+   d="scan'208";a="66903627"
+Received: from huama-mobl.gar.corp.intel.com (HELO [10.226.38.37]) ([10.226.38.37])
+  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2018 01:01:33 -0700
+Subject: Re: [PATCH 3/7] MIPS: intel: Add initial support for Intel MIPS SoCs
+To:     Rob Herring <robh@kernel.org>,
+        Songjun Wu <songjun.wu@linux.intel.com>
+Cc:     yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
+        linux-mips@linux-mips.org, qi-ming.wu@intel.com,
+        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
+        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
+        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-4-songjun.wu@linux.intel.com>
+ <20180612223153.GB2197@rob-hp-laptop>
+From:   Hua Ma <hua.ma@linux.intel.com>
+Message-ID: <821a2d72-da13-4dbe-4413-edc25f01e9fb@linux.intel.com>
+Date:   Thu, 14 Jun 2018 16:01:31 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180613163621.23995-4-radu.pirea@microchip.com>
-User-Agent: NeoMutt/20180512
+In-Reply-To: <20180612223153.GB2197@rob-hp-laptop>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 07:36:18PM +0300, Radu Pirea wrote:
-> This mfd driver is just a wrapper over atmel_serial driver and
-> spi-at91-usart driver. Selection of one of the drivers is based on a
-> property from device tree. If the property is not specified, the default
-> driver is atmel_serial.
-> 
-> Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-> Acked-by: Rob Herring <robh@kernel.org>
-> Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-> Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> ---
->  drivers/mfd/Kconfig      |  9 ++++++
->  drivers/mfd/Makefile     |  1 +
->  drivers/mfd/at91-usart.c | 69 ++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 79 insertions(+)
->  create mode 100644 drivers/mfd/at91-usart.c
-> 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index b860eb5aa194..a886672b960d 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -99,6 +99,15 @@ config MFD_AAT2870_CORE
->  	  additional drivers must be enabled in order to use the
->  	  functionality of the device.
->  
-> +config MFD_AT91_USART
-> +	tristate "AT91 USART Driver"
-> +	select MFD_CORE
-> +	help
-> +	  Select this to get support for AT91 USART IP. This is a wrapper
-> +	  over at91-usart-serial driver and usart-spi-driver. Only one function
-> +	  can be used at a time. The choice is done at boot time by the probe
-> +	  function of this MFD driver according to a device tree property.
-> +
->  config MFD_ATMEL_FLEXCOM
->  	tristate "Atmel Flexcom (Flexible Serial Communication Unit)"
->  	select MFD_CORE
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index d9d2cf0d32ef..db1332aa96db 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -185,6 +185,7 @@ obj-$(CONFIG_MFD_SPMI_PMIC)	+= qcom-spmi-pmic.o
->  obj-$(CONFIG_TPS65911_COMPARATOR)	+= tps65911-comparator.o
->  obj-$(CONFIG_MFD_TPS65090)	+= tps65090.o
->  obj-$(CONFIG_MFD_AAT2870_CORE)	+= aat2870-core.o
-> +obj-$(CONFIG_MFD_AT91_USART)	+= at91-usart.o
->  obj-$(CONFIG_MFD_ATMEL_FLEXCOM)	+= atmel-flexcom.o
->  obj-$(CONFIG_MFD_ATMEL_HLCDC)	+= atmel-hlcdc.o
->  obj-$(CONFIG_MFD_ATMEL_SMC)	+= atmel-smc.o
-> diff --git a/drivers/mfd/at91-usart.c b/drivers/mfd/at91-usart.c
-> new file mode 100644
-> index 000000000000..3014ce532644
-> --- /dev/null
-> +++ b/drivers/mfd/at91-usart.c
-> @@ -0,0 +1,69 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Driver for AT91 USART
-> + *
-> + * Copyright (C) 2018 Microchip Technology
-> + *
-> + * Author: Radu Pirea <radu.pirea@microchip.com>
-> + *
-> + */
-> +
-> +#include <dt-bindings/mfd/at91-usart.h>
-> +
-> +#include <linux/module.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/property.h>
-> +
-> +static struct mfd_cell at91_usart_spi_subdev = {
-> +		.name = "at91_usart_spi",
-> +		.of_compatible = "microchip,at91sam9g45-usart-spi",
-> +	};
-> +
-> +static struct mfd_cell at91_usart_serial_subdev = {
-> +		.name = "atmel_usart_serial",
-> +		.of_compatible = "atmel,at91rm9200-usart-serial",
-> +	};
-> +
-> +static int at91_usart_mode_probe(struct platform_device *pdev)
-> +{
-> +	struct mfd_cell cell;
-> +	u32 opmode = AT91_USART_MODE_SERIAL;
-> +
-> +	device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
-> +
-> +	switch (opmode) {
-> +	case AT91_USART_MODE_SPI:
-> +		cell = at91_usart_spi_subdev;
-> +		break;
-> +	case AT91_USART_MODE_SERIAL:
-> +		cell = at91_usart_serial_subdev;
-> +		break;
-> +	default:
-> +		break;
 
-If there is an invalid opmode from the DT, you will pass a non initialized cell
-to mfd_add_device().
+On 6/13/2018 6:31 AM, Rob Herring wrote:
+> On Tue, Jun 12, 2018 at 01:40:30PM +0800, Songjun Wu wrote:
+>> From: Hua Ma <hua.ma@linux.intel.com>
+>>
+>> Add initial support for Intel MIPS interAptiv SoCs made by Intel.
+>> This series will add support for the GRX500 family.
+>>
+>> The series allows booting a minimal system using a initramfs.
+>>
+>> Signed-off-by: Hua ma <hua.ma@linux.intel.com>
+>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>> ---
+>>
+>>   arch/mips/Kbuild.platforms                         |   1 +
+>>   arch/mips/Kconfig                                  |  36 ++++
+>>   arch/mips/boot/dts/Makefile                        |   1 +
+>>   arch/mips/boot/dts/intel-mips/Makefile             |   3 +
+>>   arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  20 +++
+>>   arch/mips/boot/dts/intel-mips/xrx500.dtsi          | 196 +++++++++++++++++++++
+> Please split dts files to separate patch.
+Thanks,
+it will be split into separate patches: one for dts, one for mips codes 
+and one for the document.
+>> diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+>> new file mode 100644
+>> index 000000000000..40177f6cee1e
+>> --- /dev/null
+>> +++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
+>> @@ -0,0 +1,20 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/dts-v1/;
+>> +
+>> +#include <dt-bindings/interrupt-controller/mips-gic.h>
+>> +#include <dt-bindings/clock/intel,grx500-clk.h>
+>> +
+>> +#include "xrx500.dtsi"
+>> +
+>> +/ {
+>> +	model = "EASY350 ANYWAN (GRX350) Main model";
+> A board should have a board specific compatible, too.
+The board compatible will be added.
+>
+>> +	chosen {
+>> +		bootargs = "earlycon=lantiq,0x16600000 clk_ignore_unused";
+>> +		stdout-path = "serial0";
+>> +	};
+>> +
+>> +	memory@0 {
+> memory@20000000
+The memory address will be changed to @20000000.
+>
+>> +		device_type = "memory";
+>> +		reg = <0x20000000 0x0e000000>;
+>> +	};
+>> +};
+>> diff --git a/arch/mips/boot/dts/intel-mips/xrx500.dtsi b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
+>> new file mode 100644
+>> index 000000000000..04a068d6d96b
+>> --- /dev/null
+>> +++ b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
+>> @@ -0,0 +1,196 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +/ {
+>> +	#address-cells = <1>;
+>> +	#size-cells = <1>;
+>> +	compatible = "intel,xrx500";
+> This needs to be documented.
+The compatible will be updated in the document.
 
-Regards
-
-Ludovic
-
-> +	}
-> +
-> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO, &cell, 1,
-> +			      NULL, 0, NULL);
-> +}
-> +
-> +static const struct of_device_id at91_usart_mode_of_match[] = {
-> +	{ .compatible = "atmel,at91rm9200-usart" },
-> +	{ .compatible = "atmel,at91sam9260-usart" },
-> +	{ /* sentinel */ }
-> +};
-> +
-> +MODULE_DEVICE_TABLE(of, at91_flexcom_of_match);
-> +
-> +static struct platform_driver at91_usart_mfd = {
-> +	.probe	= at91_usart_mode_probe,
-> +	.driver	= {
-> +		.name		= "at91_usart_mode",
-> +		.of_match_table	= at91_usart_mode_of_match,
-> +	},
-> +};
-> +
-> +module_platform_driver(at91_usart_mfd);
-> +
-> +MODULE_AUTHOR("Radu Pirea <radu.pirea@microchip.com>");
-> +MODULE_DESCRIPTION("AT91 USART MFD driver");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.17.1
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
