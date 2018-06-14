@@ -2,117 +2,130 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4D85FC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:08:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CA907C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF5F208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:08:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF5F208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 776EB208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:12:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SU8Y5aoh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 776EB208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754699AbeFNHIE (ORCPT
+        id S1754667AbeFNHMX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:08:04 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:40367 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754589AbeFNHIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:08:02 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 13FE720734; Thu, 14 Jun 2018 09:08:00 +0200 (CEST)
-Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6A6A420650;
-        Thu, 14 Jun 2018 09:07:59 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 09:07:58 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-i2c@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH v4 01/10] i3c: Add core I3C infrastructure
-Message-ID: <20180614090758.17180594@bbrezillon>
-In-Reply-To: <20180614041941.4i2cadzoevujmzha@ninjato>
-References: <20180330074751.25987-1-boris.brezillon@bootlin.com>
-        <20180330074751.25987-2-boris.brezillon@bootlin.com>
-        <20180614041941.4i2cadzoevujmzha@ninjato>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Thu, 14 Jun 2018 03:12:23 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:51581 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754589AbeFNHMV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 03:12:21 -0400
+Received: by mail-it0-f67.google.com with SMTP id n7-v6so7012467itn.1
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 00:12:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=BOohwfeFGPANxXRV52HzxKMlKYLjJMJxES/9S9IAN6c=;
+        b=SU8Y5aohGKY7OU2lCYEnaNgsSkxSoH4bocm3oy6f7Nw+zn3WJ8Z5+PuOkybuFC9fQ8
+         h/mocG161oIKLyUKk+Z/q9I8OEau++uGFJEyENKFI+sL7t8T3whzXuIX5Qj98YOId9lR
+         hHkKCPT1Rx3xDZJ4csrwuHkVkSHmc5fn9LU+U=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=BOohwfeFGPANxXRV52HzxKMlKYLjJMJxES/9S9IAN6c=;
+        b=E6CpY44kXL2H/YwCvQ2MaSix+MzwhncO3BBrS3eEwdR5AiowsOBpJZu/w0RjoLxzIP
+         z1ePCbD0DA23Vdxsf5bCxh0sFwsC3ljjqHJP2m7wvqS4mva3l9dHybrESFu6ATjMo3s8
+         WAOM+fjRs1ziUg7/lYRS1jnIiLxh9QM1Gu981iKBJCqvJqX8I7qOJNnDbpXq0xEwjjD/
+         iZxaIB1E61UFRnoAnFvK3VcPmjQNRvfcIflJGBJHCYTotd+X6As9UIoV9371ULyVHyrQ
+         vFdL1Mhh9EAeEZ6P32CbgOYAO7oa52rCnJ+LSA9tBsDZv36PdzWLDsAI0xRfSLq6UUgc
+         aTXg==
+X-Gm-Message-State: APt69E1OiOBTdorh8KnQ1zl1dUIJDJj3VSLTlDLeWonXzsW3ETQ93yYZ
+        SXjCwgEcgeHpnbLejIJy9/PGAXOQtnhIYuHn44+f6Q==
+X-Google-Smtp-Source: ADUXVKK3P+izr4Aemts8MtEV5v+x6uGhs0XxPfNTK3YlNLp1iGAidiJHPX3L/fmAlnyYOlJE0+3l6Wlnt849OanjE0Y=
+X-Received: by 2002:a24:91d3:: with SMTP id i202-v6mr1190560ite.97.1528960340592;
+ Thu, 14 Jun 2018 00:12:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 00:12:20
+ -0700 (PDT)
+In-Reply-To: <b90f44d35e8e0fa9c81b3a88d05449a580be5567.1528953706.git.viresh.kumar@linaro.org>
+References: <b90f44d35e8e0fa9c81b3a88d05449a580be5567.1528953706.git.viresh.kumar@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 14 Jun 2018 09:12:20 +0200
+Message-ID: <CAPDyKFpN+wLHGE4a14Me7F=dLLGZDnN23BUBd7yBifNuApQYxQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] PM / Domains: Rename opp_node to np
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Rafael Wysocki <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Jun 2018 13:19:42 +0900
-Wolfram Sang <wsa@the-dreams.de> wrote:
+On 14 June 2018 at 07:23, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> The DT node passed here isn't necessarily an OPP node, as this routine
+> can also be used for cases where the "required-opps" property is present
+> directly in the device's node. Rename it.
+>
+> This also removes a stale comment.
+>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-> Hi Boris,
-> 
-> > +/**
-> > + * struct i3c_priv_xfer - I3C SDR private transfer
-> > + * @rnw: encodes the transfer direction. true for a read, false for a write
-> > + * @len: transfer length in bytes of the transfer
-> > + * @data: input/output buffer
-> > + */
-> > +struct i3c_priv_xfer {
-> > +	bool rnw;
-> > +	u16 len;
-> > +	union {
-> > +		void *in;
-> > +		const void *out;
-> > +	} data;  
-> 
-> So, this is probably where most payloads end up?
-> 
-> I didn't notice any sign of DMA in these patches, but given my
-> experiences, DMA will come sooner or later. And in I2C, this was
-> problematic because then a lot of drivers were in the wild getting their
-> buffers from everywhere (stack!). We now have an opt-in approach to mark
-> buffers as DMA-safe.
-> 
-> I don't know if typical I3C transfers will be similar to I2C with
-> usually small payloads where DMA usually makes not much sense. Yet, I
-> think, that it might be a good idea to think about how this shall be
-> handled with I3C right away. Maybe simply enforcing buffers to be
-> DMA-safe. Or whatever.
-> 
-> A clear rule on that might save you hazzle later.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-I completely agree. I'll clarify that and for people to pass DMA-able
-buffers to this struct (just as the SPI framework does). Note that we
-don't really have a way to ensure that the buffer is actually
-DMA-safe from the core, because this notion is architecture/SoC
-dependent.
+Kind regards
+Uffe
 
-> 
-> Regards,
-> 
->    Wolfram
-> 
-
+> ---
+>  drivers/base/power/domain.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 4925af5c4cf0..c298de8a8308 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -2487,10 +2487,9 @@ EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
+>   * power domain corresponding to a DT node's "required-opps" property.
+>   *
+>   * @dev: Device for which the performance-state needs to be found.
+> - * @opp_node: DT node where the "required-opps" property is present. This can be
+> + * @np: DT node where the "required-opps" property is present. This can be
+>   *     the device node itself (if it doesn't have an OPP table) or a node
+>   *     within the OPP table of a device (if device has an OPP table).
+> - * @state: Pointer to return performance state.
+>   *
+>   * Returns performance state corresponding to the "required-opps" property of
+>   * a DT node. This calls platform specific genpd->opp_to_performance_state()
+> @@ -2499,7 +2498,7 @@ EXPORT_SYMBOL_GPL(of_genpd_parse_idle_states);
+>   * Returns performance state on success and 0 on failure.
+>   */
+>  unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+> -                                              struct device_node *opp_node)
+> +                                              struct device_node *np)
+>  {
+>         struct generic_pm_domain *genpd;
+>         struct dev_pm_opp *opp;
+> @@ -2514,7 +2513,7 @@ unsigned int of_genpd_opp_to_performance_state(struct device *dev,
+>
+>         genpd_lock(genpd);
+>
+> -       opp = of_dev_pm_opp_find_required_opp(&genpd->dev, opp_node);
+> +       opp = of_dev_pm_opp_find_required_opp(&genpd->dev, np);
+>         if (IS_ERR(opp)) {
+>                 dev_err(dev, "Failed to find required OPP: %ld\n",
+>                         PTR_ERR(opp));
+> --
+> 2.18.0.rc1.242.g61856ae69a2c
+>
