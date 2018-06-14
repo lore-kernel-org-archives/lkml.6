@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 74D4DC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 90506C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A6C0208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45F69208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xfjp9ZiG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A6C0208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va7/8UmD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45F69208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966043AbeFNOMZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:12:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53554 "EHLO mail.kernel.org"
+        id S966058AbeFNOMa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:12:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966026AbeFNOMV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:12:21 -0400
+        id S966026AbeFNOM0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:12:26 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CBE24208DD;
-        Thu, 14 Jun 2018 14:12:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8251F208DA;
+        Thu, 14 Jun 2018 14:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985540;
-        bh=w0XGEgZ5KLbpEkGFIgzqwZbdjxE0azI5rmJzZHR48x4=;
+        s=default; t=1528985546;
+        bh=OAE1VG70yNawfSFWJ7791J0d5MM6SlRnmK3UXdplxAY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xfjp9ZiGI63XJ/HOxfoVIdOv/OWKf2cDPFPxKN7o0QqjE1RIk2FAQwLIT5e4UU1Fj
-         J/HFquJwdfQU3U22w3BjJr1hys12eaTB0mUs5AvNo/wElIJPINXCWGTZO06mn6wNBM
-         W+PuZzrmugu/YcFlcTec8+4zwmeypQlZhZW1trLE=
+        b=Va7/8UmDzvF1hRxSxTz9HxN3GWu4wqA3jbkkBjEMdvvpdDoAO+hqNn3AqHzlo8RYv
+         dcwDmuf1xBk2QebVVeC5Qnn8UuC1EHXtkTb5I0TFPaac1UPLMssykHleFVHcsqGTnY
+         IydHHVDSpXO8FLgZhj8TTh1u+78Pthw2WxvEnvPc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ethan Lee <flibitijibibo@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.9 26/30] Input: goodix - add new ACPI id for GPD Win 2 touch screen
-Date:   Thu, 14 Jun 2018 16:05:07 +0200
-Message-Id: <20180614132601.354214533@linuxfoundation.org>
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.9 28/30] crypto: vmx - Remove overly verbose printk from AES init routines
+Date:   Thu, 14 Jun 2018 16:05:09 +0200
+Message-Id: <20180614132601.435627265@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -59,32 +59,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ethan Lee <flibitijibibo@gmail.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 5ca4d1ae9bad0f59bd6f851c39b19f5366953666 upstream.
+commit 1411b5218adbcf1d45ddb260db5553c52e8d917c upstream.
 
-GPD Win 2 Website: http://www.gpd.hk/gpdwin2.asp
+In the vmx AES init routines we do a printk(KERN_INFO ...) to report
+the fallback implementation we're using.
 
-Tested on a unit from the first production run sent to Indiegogo backers
+However with a slow console this can significantly affect the speed of
+crypto operations. Using 'cryptsetup benchmark' the removal of the
+printk() leads to a ~5x speedup for aes-cbc decryption.
 
-Signed-off-by: Ethan Lee <flibitijibibo@gmail.com>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+So remove them.
+
+Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
+Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
+Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
+Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/touchscreen/goodix.c |    1 +
- 1 file changed, 1 insertion(+)
+ drivers/crypto/vmx/aes.c     |    2 --
+ drivers/crypto/vmx/aes_cbc.c |    2 --
+ drivers/crypto/vmx/aes_ctr.c |    2 --
+ drivers/crypto/vmx/ghash.c   |    2 --
+ 4 files changed, 8 deletions(-)
 
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -858,6 +858,7 @@ MODULE_DEVICE_TABLE(i2c, goodix_ts_id);
- #ifdef CONFIG_ACPI
- static const struct acpi_device_id goodix_acpi_match[] = {
- 	{ "GDIX1001", 0 },
-+	{ "GDIX1002", 0 },
- 	{ }
- };
- MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
+--- a/drivers/crypto/vmx/aes.c
++++ b/drivers/crypto/vmx/aes.c
+@@ -53,8 +53,6 @@ static int p8_aes_init(struct crypto_tfm
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+ 
+ 	crypto_cipher_set_flags(fallback,
+ 				crypto_cipher_get_flags((struct
+--- a/drivers/crypto/vmx/aes_cbc.c
++++ b/drivers/crypto/vmx/aes_cbc.c
+@@ -55,8 +55,6 @@ static int p8_aes_cbc_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+ 
+ 	crypto_blkcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/aes_ctr.c
++++ b/drivers/crypto/vmx/aes_ctr.c
+@@ -53,8 +53,6 @@ static int p8_aes_ctr_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+ 
+ 	crypto_blkcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/ghash.c
++++ b/drivers/crypto/vmx/ghash.c
+@@ -64,8 +64,6 @@ static int p8_ghash_init_tfm(struct cryp
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name(crypto_shash_tfm(fallback)));
+ 
+ 	crypto_shash_set_flags(fallback,
+ 			       crypto_shash_get_flags((struct crypto_shash
 
 
