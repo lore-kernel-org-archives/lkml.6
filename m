@@ -2,218 +2,131 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9334FC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E6697C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F266208DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9ADF5208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaeEvlMc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F266208DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="U6NqA+uw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FVfOmjXp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ADF5208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965097AbeFNOHn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:07:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47972 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965073AbeFNOHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S965111AbeFNOHq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:07:46 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57560 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965068AbeFNOHj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Jun 2018 10:07:39 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A50BD607BB; Thu, 14 Jun 2018 14:07:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528985258;
+        bh=C5BlthjhyXFfxq62wvzajVzmg1OYwlwje68GEQzJYoc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=U6NqA+uwR2rBzPdjezZDDH2G8gCO/YU8op1gfrtxyAG/zt+u1jMpr3ST0mpuOuDR8
+         Ahyn/mgtRTZ2XRJs6nS1cDw0R/UOWWNLIHgvdkRBD2zwAIIN/vSz9MYQbt4MprgEhX
+         hfpoIPs2J2EOsLTNP+xZ5hnQxD+nt6HtCKz/j9Mw=
+Received: from [10.204.79.100] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71ACB208CB;
-        Thu, 14 Jun 2018 14:07:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985259;
-        bh=zlUye1M0kXXLuRJfpBLRfwHZEPUzrJAJSfRSK6fDCyc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZaeEvlMcO8LdYipsx1CGO2VU18H5FDsQUy/AlWE1aF+u2BANHWNsLcgvG0bitRtD+
-         dH2qNF//j4EPl1+cqb4wNFpLuLg6Hwh+DMKrX6Souk1u6jQ0GNw3ZxA7EtLVo01MFI
-         IiA94fqm3IYUwMLS392qZKowwRb4qOL7xm6f3SFw=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>
-Subject: [PATCH 4.16 01/43] netfilter: nf_tables: fix NULL pointer dereference on nft_ct_helper_obj_dump()
-Date:   Thu, 14 Jun 2018 16:04:05 +0200
-Message-Id: <20180614132135.182729524@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
-References: <20180614132135.111973468@linuxfoundation.org>
-User-Agent: quilt/0.65
+        (Authenticated sender: mojha@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8B88860795;
+        Thu, 14 Jun 2018 14:07:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528985257;
+        bh=C5BlthjhyXFfxq62wvzajVzmg1OYwlwje68GEQzJYoc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FVfOmjXpdGN1iChBHXfUzCwCIRi9mdpdRCDSEMBqtkoAXBvgG4GlNt3Lljq43AcV5
+         7ekywnJtB6H8UCce1BQpmuV/y3Dev07femkjjxHqrCQeYcvHOnOV2y6Hd7dzsdsnly
+         s2yAfWzBcdFNuNUba9h3sUT7+HUkI1e4NYQYIfok=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8B88860795
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mojha@codeaurora.org
+Subject: Re: [PATCH v2] time: Fix sleeptime injection for non-stop clocksource
+ & persistent clock
+To:     john.stultz@linaro.org, tglx@linutronix.de,
+        linux-kernel@vger.kernel.org
+Cc:     neeraju@codeaurora.org, gkohli@codeaurora.org,
+        cpandya@codeaurora.org
+References: <1527680699-16068-1-git-send-email-mojha@codeaurora.org>
+From:   Mukesh Ojha <mojha@codeaurora.org>
+Message-ID: <19644aab-d5dc-aace-48da-5df1587da873@codeaurora.org>
+Date:   Thu, 14 Jun 2018 19:37:28 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <1527680699-16068-1-git-send-email-mojha@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+Any input on this ?
 
-------------------
-
-From: Taehee Yoo <ap420073@gmail.com>
-
-commit b71534583f22d08c3e3563bf5100aeb5f5c9fbe5 upstream.
-
-In the nft_ct_helper_obj_dump(), always priv->helper4 is dereferenced.
-But if family is ipv6, priv->helper6 should be dereferenced.
-
-Steps to reproduces:
-
-   #test.nft
-   table ip6 filter {
-	   ct helper ftp {
-		   type "ftp" protocol tcp
-	   }
-	   chain input {
-		   type filter hook input priority 4;
-		   ct helper set "ftp"
-	   }
-   }
-
-   %nft -f test.nft
-   %nft list ruleset
-
-we can see the below messages:
-
-[  916.286233] kasan: GPF could be caused by NULL-ptr deref or user memory access
-[  916.294777] general protection fault: 0000 [#1] SMP DEBUG_PAGEALLOC KASAN PTI
-[  916.302613] Modules linked in: nft_objref nf_conntrack_sip nf_conntrack_snmp nf_conntrack_broadcast nf_conntrack_ftp nft_ct nf_conntrack nf_tables nfnetlink [last unloaded: nfnetlink]
-[  916.318758] CPU: 1 PID: 2093 Comm: nft Not tainted 4.17.0-rc4+ #181
-[  916.326772] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[  916.338773] RIP: 0010:strlen+0x1a/0x90
-[  916.342781] RSP: 0018:ffff88010ff0f2f8 EFLAGS: 00010292
-[  916.346773] RAX: dffffc0000000000 RBX: ffff880119b26ee8 RCX: ffff88010c150038
-[  916.354777] RDX: 0000000000000002 RSI: ffff880119b26ee8 RDI: 0000000000000010
-[  916.362773] RBP: 0000000000000010 R08: 0000000000007e88 R09: ffff88010c15003c
-[  916.370773] R10: ffff88010c150037 R11: ffffed002182a007 R12: ffff88010ff04040
-[  916.378779] R13: 0000000000000010 R14: ffff880119b26f30 R15: ffff88010ff04110
-[  916.387265] FS:  00007f57a1997700(0000) GS:ffff88011b800000(0000) knlGS:0000000000000000
-[  916.394785] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  916.402778] CR2: 00007f57a0ac80f0 CR3: 000000010ff02000 CR4: 00000000001006e0
-[  916.410772] Call Trace:
-[  916.414787]  nft_ct_helper_obj_dump+0x94/0x200 [nft_ct]
-[  916.418779]  ? nft_ct_set_eval+0x560/0x560 [nft_ct]
-[  916.426771]  ? memset+0x1f/0x40
-[  916.426771]  ? __nla_reserve+0x92/0xb0
-[  916.434774]  ? memcpy+0x34/0x50
-[  916.434774]  nf_tables_fill_obj_info+0x484/0x860 [nf_tables]
-[  916.442773]  ? __nft_release_basechain+0x600/0x600 [nf_tables]
-[  916.450779]  ? lock_acquire+0x193/0x380
-[  916.454771]  ? lock_acquire+0x193/0x380
-[  916.458789]  ? nf_tables_dump_obj+0x148/0xcb0 [nf_tables]
-[  916.462777]  nf_tables_dump_obj+0x5f0/0xcb0 [nf_tables]
-[  916.470769]  ? __alloc_skb+0x30b/0x500
-[  916.474779]  netlink_dump+0x752/0xb50
-[  916.478775]  __netlink_dump_start+0x4d3/0x750
-[  916.482784]  nf_tables_getobj+0x27a/0x930 [nf_tables]
-[  916.490774]  ? nft_obj_notify+0x100/0x100 [nf_tables]
-[  916.494772]  ? nf_tables_getobj+0x930/0x930 [nf_tables]
-[  916.502579]  ? nf_tables_dump_flowtable_done+0x70/0x70 [nf_tables]
-[  916.506774]  ? nft_obj_notify+0x100/0x100 [nf_tables]
-[  916.514808]  nfnetlink_rcv_msg+0x8ab/0xa86 [nfnetlink]
-[  916.518771]  ? nfnetlink_rcv_msg+0x550/0xa86 [nfnetlink]
-[  916.526782]  netlink_rcv_skb+0x23e/0x360
-[  916.530773]  ? nfnetlink_bind+0x200/0x200 [nfnetlink]
-[  916.534778]  ? debug_check_no_locks_freed+0x280/0x280
-[  916.542770]  ? netlink_ack+0x870/0x870
-[  916.546786]  ? ns_capable_common+0xf4/0x130
-[  916.550765]  nfnetlink_rcv+0x172/0x16c0 [nfnetlink]
-[  916.554771]  ? sched_clock_local+0xe2/0x150
-[  916.558774]  ? sched_clock_cpu+0x144/0x180
-[  916.566575]  ? lock_acquire+0x380/0x380
-[  916.570775]  ? sched_clock_local+0xe2/0x150
-[  916.574765]  ? nfnetlink_net_init+0x130/0x130 [nfnetlink]
-[  916.578763]  ? sched_clock_cpu+0x144/0x180
-[  916.582770]  ? lock_acquire+0x193/0x380
-[  916.590771]  ? lock_acquire+0x193/0x380
-[  916.594766]  ? lock_acquire+0x380/0x380
-[  916.598760]  ? netlink_deliver_tap+0x262/0xa60
-[  916.602766]  ? lock_acquire+0x193/0x380
-[  916.606766]  netlink_unicast+0x3ef/0x5a0
-[  916.610771]  ? netlink_attachskb+0x630/0x630
-[  916.614763]  netlink_sendmsg+0x72a/0xb00
-[  916.618769]  ? netlink_unicast+0x5a0/0x5a0
-[  916.626766]  ? _copy_from_user+0x92/0xc0
-[  916.630773]  __sys_sendto+0x202/0x300
-[  916.634772]  ? __ia32_sys_getpeername+0xb0/0xb0
-[  916.638759]  ? lock_acquire+0x380/0x380
-[  916.642769]  ? lock_acquire+0x193/0x380
-[  916.646761]  ? finish_task_switch+0xf4/0x560
-[  916.650763]  ? __schedule+0x582/0x19a0
-[  916.655301]  ? __sched_text_start+0x8/0x8
-[  916.655301]  ? up_read+0x1c/0x110
-[  916.655301]  ? __do_page_fault+0x48b/0xaa0
-[  916.655301]  ? entry_SYSCALL_64_after_hwframe+0x59/0xbe
-[  916.655301]  __x64_sys_sendto+0xdd/0x1b0
-[  916.655301]  do_syscall_64+0x96/0x3d0
-[  916.655301]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[  916.655301] RIP: 0033:0x7f57a0ff5e03
-[  916.655301] RSP: 002b:00007fff6367e0a8 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-[  916.655301] RAX: ffffffffffffffda RBX: 00007fff6367f1e0 RCX: 00007f57a0ff5e03
-[  916.655301] RDX: 0000000000000020 RSI: 00007fff6367e110 RDI: 0000000000000003
-[  916.655301] RBP: 00007fff6367e100 R08: 00007f57a0ce9160 R09: 000000000000000c
-[  916.655301] R10: 0000000000000000 R11: 0000000000000246 R12: 00007fff6367e110
-[  916.655301] R13: 0000000000000020 R14: 00007f57a153c610 R15: 0000562417258de0
-[  916.655301] Code: ff ff ff 0f 1f 40 00 66 2e 0f 1f 84 00 00 00 00 00 55 48 89 fa 53 48 c1 ea 03 48 b8 00 00 00 00 00 fc ff df 48 89 fd 48 83 ec 08 <0f> b6 04 02 48 89 fa 83 e2 07 38 d0 7f
-[  916.655301] RIP: strlen+0x1a/0x90 RSP: ffff88010ff0f2f8
-[  916.771929] ---[ end trace 1065e048e72479fe ]---
-[  916.777204] Kernel panic - not syncing: Fatal exception
-[  916.778158] Kernel Offset: 0x14000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Acked-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/netfilter/nft_ct.c |   20 ++++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
-
---- a/net/netfilter/nft_ct.c
-+++ b/net/netfilter/nft_ct.c
-@@ -842,22 +842,26 @@ static int nft_ct_helper_obj_dump(struct
- 				  struct nft_object *obj, bool reset)
- {
- 	const struct nft_ct_helper_obj *priv = nft_obj_data(obj);
--	const struct nf_conntrack_helper *helper = priv->helper4;
-+	const struct nf_conntrack_helper *helper;
- 	u16 family;
- 
-+	if (priv->helper4 && priv->helper6) {
-+		family = NFPROTO_INET;
-+		helper = priv->helper4;
-+	} else if (priv->helper6) {
-+		family = NFPROTO_IPV6;
-+		helper = priv->helper6;
-+	} else {
-+		family = NFPROTO_IPV4;
-+		helper = priv->helper4;
-+	}
-+
- 	if (nla_put_string(skb, NFTA_CT_HELPER_NAME, helper->name))
- 		return -1;
- 
- 	if (nla_put_u8(skb, NFTA_CT_HELPER_L4PROTO, priv->l4proto))
- 		return -1;
- 
--	if (priv->helper4 && priv->helper6)
--		family = NFPROTO_INET;
--	else if (priv->helper6)
--		family = NFPROTO_IPV6;
--	else
--		family = NFPROTO_IPV4;
--
- 	if (nla_put_be16(skb, NFTA_CT_HELPER_L3PROTO, htons(family)))
- 		return -1;
- 
-
+Thanks,
+Mukesh
+On 5/30/2018 5:14 PM, Mukesh Ojha wrote:
+> Currently, for both non-stop clocksource and persistent clock
+> there is a corner case, when a driver failed to go suspend mode.
+> rtc_resume() injects the sleeptime as timekeeping_rtc_skipresume()
+> returned 'false'(sleeptime_injected=false) due to which we can
+> see mismatch in timestamps between system clock and other timers.
+>
+> Fix this by updating sleeptime_injected=true for both non-stop
+> clocksource and persistent clock.
+>
+> Success case:
+> ------------
+>                                           {sleeptime_injected=true}
+> rtc_suspend() => timekeeping_suspend() => timekeeping_resume() =>
+>    rtc_resume()
+>
+> Failure case:
+> ------------
+>               {failure in sleep path} {sleeptime_injected=false}
+> rtc_suspend()          =>            rtc_resume()
+>
+> Signed-off-by: Mukesh Ojha <mojha@codeaurora.org>
+> ---
+> Changes in v2:
+>   * Updated the commit text.
+>   * Removed extra variable and used the earlier static
+>     variable 'sleeptime_injected'.
+>
+>   kernel/time/timekeeping.c | 11 +++++++++++
+>   1 file changed, 11 insertions(+)
+>
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 49cbcee..2754c1b 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -1610,6 +1610,17 @@ static void __timekeeping_inject_sleeptime(struct timekeeper *tk,
+>    */
+>   bool timekeeping_rtc_skipresume(void)
+>   {
+> +	struct timekeeper *tk = &tk_core.timekeeper;
+> +	/*
+> +	 * This is to ensure that we don't end up injecting
+> +	 * the sleeptime via rtc_resume() for non-stop clocksource
+> +	 * when we fail to sleep.
+> +	 */
+> +	if (!sleeptime_injected)
+> +		sleeptime_injected = ((tk->tkr_mono.clock->flags &
+> +			CLOCK_SOURCE_SUSPEND_NONSTOP) ||
+> +			(persistent_clock_exists)) ? true : false;
+> +
+>   	return sleeptime_injected;
+>   }
+>   
 
