@@ -5,84 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 37BB3C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:28:53 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 12F9AC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC78D208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:28:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC78D208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C7D50208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 07:29:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7D50208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754694AbeFNH2v (ORCPT
+        id S1754680AbeFNH3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 03:28:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40040 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752781AbeFNH2t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 03:28:49 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 76A2B87AC7;
-        Thu, 14 Jun 2018 07:28:48 +0000 (UTC)
-Received: from ming.t460p (ovpn-12-72.pek2.redhat.com [10.72.12.72])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDFAD111D3CB;
-        Thu, 14 Jun 2018 07:28:33 +0000 (UTC)
-Date:   Thu, 14 Jun 2018 15:28:29 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Jens Axboe <axboe@fb.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        David Sterba <dsterba@suse.cz>,
-        Huang Ying <ying.huang@intel.com>,
-        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
-        Randy Dunlap <rdunlap@infradead.org>
-Subject: Re: [PATCH V6 15/30] block: introduce bio_clone_chunk_bioset()
-Message-ID: <20180614072828.GA26621@ming.t460p>
-References: <20180609123014.8861-1-ming.lei@redhat.com>
- <20180609123014.8861-16-ming.lei@redhat.com>
- <20180613145654.GE4693@infradead.org>
- <20180614020137.GF19828@ming.t460p>
- <20180614063920.GA10284@infradead.org>
+        Thu, 14 Jun 2018 03:29:51 -0400
+Received: from lithops.sigma-star.at ([195.201.40.130]:47522 "EHLO
+        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752748AbeFNH3u (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 03:29:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 748F4609197B;
+        Thu, 14 Jun 2018 09:29:49 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 28wWeCNIsRbS; Thu, 14 Jun 2018 09:29:49 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by lithops.sigma-star.at (Postfix) with ESMTP id 2733F6094C2F;
+        Thu, 14 Jun 2018 09:29:49 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id ghJnpb2jyAa0; Thu, 14 Jun 2018 09:29:49 +0200 (CEST)
+Received: from blindfold.localnet (unknown [82.150.214.1])
+        by lithops.sigma-star.at (Postfix) with ESMTPSA id 0819C609197B;
+        Thu, 14 Jun 2018 09:29:49 +0200 (CEST)
+From:   Richard Weinberger <richard@nod.at>
+To:     Quentin Schulz <quentin.schulz@bootlin.com>
+Cc:     dedekind1@gmail.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
+        marek.vasut@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com
+Subject: Re: [PATCH 2/2] ubi: introduce ubi.nocheck parameter to skip CRC check when attaching ubi vol
+Date:   Thu, 14 Jun 2018 09:29:42 +0200
+Message-ID: <1588647.N1yrutfcI7@blindfold>
+In-Reply-To: <20180611102037.n5kkdq4mcoixmvti@qschulz>
+References: <95e04a201ac4ef82e68ce8e0c4f548b193e51b55.1524214122.git-series.quentin.schulz@bootlin.com> <2085970.qGmQXvoWho@blindfold> <20180611102037.n5kkdq4mcoixmvti@qschulz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614063920.GA10284@infradead.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 14 Jun 2018 07:28:48 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Thu, 14 Jun 2018 07:28:48 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'ming.lei@redhat.com' RCPT:''
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 11:39:20PM -0700, Christoph Hellwig wrote:
-> On Thu, Jun 14, 2018 at 10:01:38AM +0800, Ming Lei wrote:
-> > Bounce limits the max pages as 256 will do bio splitting, so won't need
-> > this change.
-> 
-> Behavior for the bounce code does not change with my patch.
-> 
-> The important points are:
-> 
->  - the default interface (bio_clone_bioset in this case) should always
->    operate on full biosets
->  - if the bounce code needs bioves limited to single pages it should
->    be treated as the special case
->  - given that the bounce code is inside the block layer using the
->    __-prefixed internal interface is perfectly fine
->  - last but not least I think the parameter switching the behavior
->    needs a much more descriptive name as suggested in my patch
+Quentin,
 
-Fair enough, will switch to this way and avoid DM's change, even though
-it is a dying interface.
+Am Montag, 11. Juni 2018, 12:20:37 CEST schrieb Quentin Schulz:
+> If we go for a per-image flag, adding nocheck to the ioctl makes sense,
+> otherwise we have to find a way to select only one or more volumes for
+> which the nocheck flag should be set. That being said, I'm not sure a
+> per-image flag is the way we want to go.
+> 
+> What are your thoughts on this?
+
+I like that approach a lot more, please send a patch. :-)
+Having a volume flag will reduce complexity a lot.
 
 Thanks,
-Ming
+//richard
+
