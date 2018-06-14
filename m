@@ -2,129 +2,97 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6AA75C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:24:36 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 39744C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:30:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20337208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6CDF208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:30:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="BakT3tsU";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jVOgkht3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20337208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Pwb5e1ic"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CDF208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755038AbeFNKYf (ORCPT
+        id S1754793AbeFNK37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 06:24:35 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:43309 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754937AbeFNKYa (ORCPT
+        Thu, 14 Jun 2018 06:29:59 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:41419 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754724AbeFNK35 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:24:30 -0400
-Received: by mail-oi0-f66.google.com with SMTP id t133-v6so5154750oif.10
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 03:24:30 -0700 (PDT)
+        Thu, 14 Jun 2018 06:29:57 -0400
+Received: by mail-oi0-f65.google.com with SMTP id a141-v6so5165595oii.8
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 03:29:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=wnflG2aBnyI8GjFoUmfOpIre9X1X/Xm32vc4nkC5Mos=;
-        b=BakT3tsUx43+taYp42f8FVxjI0JAN5FF7L2NdzjYIE+E94+AkZ5iZD7PEhpel5emps
-         8dO7Ylo8O1Fn80VRlX4d2RNf44GlwAAM/UFXd7cBmGWMkT1J+hCVpHJ9pHF3khQRaCAW
-         v6+dW4NfZtSZUoP3RyntpvetwTnqZrpMlzcTbjLQTvKzGhMujQbcn8aEN7cbiN6ZrhYP
-         dmjX/HCQQL2b+sCEWd+gHttDyFQ1CLqNkgIMgL7nKocLrhlv4hLVjxzL8o1hyXeG9rAC
-         pToOf0sDFxkTq6jmmReEWODeFrS4SpECIBkDE5qYcZTP/kaUcsU+Nir5l//quaKaqyi+
-         oIOQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=wnflG2aBnyI8GjFoUmfOpIre9X1X/Xm32vc4nkC5Mos=;
-        b=jVOgkht30VfKVqnYeU9MJoVXx+GJq3VjFwlSp27fIcnBzA+Iwda/xneXrCbojr/TzS
-         Q8Em3nNaCByDKnn5lUIG2rueMxjyW/RkjmAm34c8yjF2vKniDrsq0XbqYw71lh+03q+U
-         /Sa411feLo7nocZ7AHyVDieJk/bdqOqLA1T0Q=
+        d=broadcom.com; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Ywy2IJsZRT5bi1kwKueHiGZQTaeC/c5j1VLM+U1rz34=;
+        b=Pwb5e1icw87F31nSK2lSYBYQMPGJTQS9Gps0gMy+Wx8wAvvalOFZ5o/jeHOsNtV72w
+         sWGyhpjh4jIqeJv4DM1A/aFExU+N2qj/KEKGIcKjkyfcmSJytN5PcH85TB+NQ0NDDdMC
+         4OVILcaLLXefp6HRASGLy6WE/muHQ/3UvFx7g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=wnflG2aBnyI8GjFoUmfOpIre9X1X/Xm32vc4nkC5Mos=;
-        b=bpxgs0+R5eVvosdMNbDkuB3rQ0x3fxadqFDVbib5XN6bQuM595A+lu0wGUdDFajJKc
-         Zv4j47YcunKjaOcl/EdC4tlJQrd+wCjHH1YsZTVDo+CUtcUv3a3ohfPxfJ+B/SBSgi7x
-         PvtTnf4QARWZDysWS1zTiUwlTJtjHsCVPR+Asm8LwvwkdxRALvNFBa6qyqiq9lTxd0EX
-         se/oilK3ah0QLejCUiXD8EO/8tJN7t86EvLcGX7w2hk39pXJFri5QudapOV2g/kjdyCE
-         YJZXTGk/PTHf91UnldxGWXVHdGnJXg9nbi+ZrsQTXVxHxNsgWyBOtRO2ImGgHEBROyyI
-         X14Q==
-X-Gm-Message-State: APt69E3yVg6YGaZYuAIELBRaIiPpzEoxrrfAm5xjKJ267beZnnz5w+VT
-        4B8ULxSW0YiMala5Ju/N0Mm7YmxXAKra83DcGGDoRA==
-X-Google-Smtp-Source: ADUXVKIzX+2h+IDpKsSxro1Gj+p+isUTQSjCxWImXanML+hiFNiDGhBFNyYptCdMviaasb5fTWvImp3YvXLOk4gX+l0=
-X-Received: by 2002:aca:d655:: with SMTP id n82-v6mr793593oig.287.1528971869417;
- Thu, 14 Jun 2018 03:24:29 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Ywy2IJsZRT5bi1kwKueHiGZQTaeC/c5j1VLM+U1rz34=;
+        b=VfNJfaDCAQCk3do0yHhrCCaFfc4WuMORPuiatRlgc0qTQbglwgq8dZpCDN3rcIjxfu
+         ALaeXRADlUYDGIbNAkUZe6j1jw4HltxULTYnA/6Xzm9XlSlyxVXH0dd2j2h963W5c/Sx
+         rQltdJvXI4iFGlDWVVKsCoJ3z1ebO8i4eWC8IIkHRF6TuaTSXOYbiVYGxNR9Pi2iQKp4
+         8N0gMu5T9RXxu+BBcNoQDiZ12eQ48Pzqu2qooD3pox2c2NNWWT6ZcCvMpH2eYhUhyt9a
+         rdHAsnWB5NBpEcz/jqh4v6ZcRq9z1lRR/GXCf0A7DCoQrI46QCSgb0LmHd05vQEvYtE1
+         7CRQ==
+X-Gm-Message-State: APt69E0+RQjxxs6oUpybyLXYTzRMugQ4fxkoSFYRBKbtz5viASmO6Lcv
+        +fAoNiZcwpZSpfDkbrRUnoiLRx1BCnpP+BA8OgdIyg==
+X-Google-Smtp-Source: ADUXVKLyE2RpvMC2ALAr4m1C1X6K4xn4mhCBI4Y5v5kogeTNchLrd/+BnZW3PkhSB3ggcef8vkOg6e0p1VxMQ6XrjBs=
+X-Received: by 2002:aca:e143:: with SMTP id y64-v6mr846329oig.282.1528972196401;
+ Thu, 14 Jun 2018 03:29:56 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a4a:99ab:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 03:24:28
+Received: by 2002:a9d:4044:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 03:29:55
  -0700 (PDT)
-In-Reply-To: <CAFp+6iEnep3ogEkdfmaSOn_2w+09huae2NOwBF1o7-vn3iQMCA@mail.gmail.com>
-References: <cover.1528799892.git.amit.kucheria@linaro.org>
- <f048a97d1599a54aef3d00126a379f4e5c937057.1528799892.git.amit.kucheria@linaro.org>
- <CAFp+6iEnep3ogEkdfmaSOn_2w+09huae2NOwBF1o7-vn3iQMCA@mail.gmail.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Thu, 14 Jun 2018 13:24:28 +0300
-X-Google-Sender-Auth: DiFYi7riYBRLC2uoVjA-w5gA0dI
-Message-ID: <CAHLCerOn=_29CAx0sdmyxt62duWOb5LfUvrAcWf7bBsE8OR_1g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/5] thermal: tsens: Add support for SDM845
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:THERMAL" <linux-pm@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+In-Reply-To: <20180614102001.GA20836@lst.de>
+References: <CABe79T41Cr0mjH_k2drzccHvObFwRcW3n+WKCj0JvFUBy0wz-A@mail.gmail.com>
+ <20180614102001.GA20836@lst.de>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Thu, 14 Jun 2018 15:59:55 +0530
+Message-ID: <CABe79T6k387EnDrpydTbQYQ+sZoWXKUee23EDzDJqnkroOmodA@mail.gmail.com>
+Subject: Re: Requirement to get BAR pci_bus_address in user space
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Abhishek Shah <abhishek.shah@broadcom.com>,
+        Vikram Prakash <vikram.prakash@broadcom.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvme@lists.infradead.org,
+        Alex Williamson <alex.williamson@redhat.com>,
+        kvm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 9:48 AM, Vivek Gautam
-<vivek.gautam@codeaurora.org> wrote:
-> Hi Amit,
->
-> On Tue, Jun 12, 2018 at 4:24 PM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
->> SDM845 uses the TSENS v2 IP block
->>
->> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
->> ---
+++ Alex Williamson, kvm,
 
-<snip>
+Hi Christoph,
 
->> +
->> +static const struct tsens_ops ops_sdm845 = {
->> +       .init           = init_common,
->> +       .get_temp       = get_temp_tsens_v2,
->> +};
->> +
->> +const struct tsens_data data_sdm845 = {
->
-> Just a minor nit. 'static' here?
+Thank you for quick reply.
 
-Thanks for the review.
+If we want to add this in vfio then I think we need to do the same in
+uio case also.
 
-This file just went away in favour of a common tsens-v2.c that will
-support all v2 SoCs. I'll be sending out an updated patchset soon.
+As I mentioned in previous mail, in the current implementation
+resource information (address and size) is gathering from resource
+named file created in /sys directory.
+So I expect it would be better to have similar method as existing in sysfs.
 
->
->> +       .ops            = &ops_sdm845,
->> +};
->
-> [snip]
->
-> Thanks & Regards
-> Vivek
+
+Regards,
+Srinath.
+
+On Thu, Jun 14, 2018 at 3:50 PM, Christoph Hellwig <hch@lst.de> wrote:
+> The only safe way to use PCI(e) devices in userspace is through vfio.
+> I think that is where you need to take your inquiries.
