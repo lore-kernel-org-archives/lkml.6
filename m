@@ -2,81 +2,136 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 89713C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:27:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4BEB6C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:31:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40AD9208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:27:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DEFAC208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:31:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="J46V+CFN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40AD9208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dNNQGzr9";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dNNQGzr9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEFAC208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754698AbeFNG06 (ORCPT
+        id S1752891AbeFNGbG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:26:58 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:44213 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752719AbeFNG04 (ORCPT
+        Thu, 14 Jun 2018 02:31:06 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:52824 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752551AbeFNGbE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:26:56 -0400
-Received: by mail-io0-f193.google.com with SMTP id g7-v6so6007731ioh.11;
-        Wed, 13 Jun 2018 23:26:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5qWc182unNEGXdW9oL4AVBDgm7+snm8VpBsohLpWa6M=;
-        b=J46V+CFNihIVZZ4wwSxUlfD++4L9FBtBcqIBt+Up/OQHF3iK43OUf6Mh7dFinwI9lL
-         RSuXDnwfTUDhzTPKPsGEQoL5BpNrZcwtwxSuKmfOCbk1s3pvN4057CDELx1pr043sE8r
-         gAr1mFpAtNDWUQ3tSNemmpePX+2gU8ISwP6F0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5qWc182unNEGXdW9oL4AVBDgm7+snm8VpBsohLpWa6M=;
-        b=lMyR3Es7HWwuFF0zC1iwBVNT35PLCBZhr6zOHa+TMSfcjy2pAKNaI06FRvfIBALPBS
-         /f5Uqy2DK3Zz47RlhUsR6/KoClEVPubw0cNGjVqQ9AeK0apnVfpOOT4fI12ddlG0wASf
-         e67sLtuIec26tSC1M1kgF36wa/ZNqQMcaU9s3e/WOv8t12QZl67kc0Qnu8gXYzFzQhR0
-         Hqq9iORU4UzYj0x0t8xl/YQBSqTHKleTnDQRofNXm+wOHvS/dgjlISpHdKDUfwhKypKL
-         qv23bz5zk7Nh+rwslVP0FCSExB6ZW91zXErwKu50Cc7IVATLSoUGnGHiKtkP5cm8D5VY
-         rPRw==
-X-Gm-Message-State: APt69E05vkhz8Yxyd7oGhj8PS81kIzBTpAwVEIMqmWTCzt2+0X3923xI
-        SypnUejwoywiPahPcvjTqGc8qC/F093E+KGcZYA=
-X-Google-Smtp-Source: ADUXVKImmcekn0meENlQ+mbl2OAJIEkoC+RxFngT0IfUY47dD/0ZqicOP6Z54c5+xyYCSvwwq8OsYlZa7hsqnrjzF3c=
-X-Received: by 2002:a6b:1502:: with SMTP id 2-v6mr1179283iov.203.1528957616109;
- Wed, 13 Jun 2018 23:26:56 -0700 (PDT)
+        Thu, 14 Jun 2018 02:31:04 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id A927E600D0; Thu, 14 Jun 2018 06:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528957863;
+        bh=yXjlUNIZlS9XYIjxWFQdWZCmLsuQFWY8IWnd625YlzA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dNNQGzr91LXU8Iig4AUvNoeFvlia/ktCUqSQEt1dN5varXBHuScOhL/6RK7OjP9F/
+         EjBt2MLk+k7DN1Jj7V+5UtyS0FkykxDjHky9bDc690lPZTKXQBjVJC/MA22BXhgyyz
+         AdgAqJV1eYJMXERBI2ypaC9I9ziDbr1MDyB9w/8Q=
+Received: from [10.79.40.126] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EE23B600D0;
+        Thu, 14 Jun 2018 06:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528957863;
+        bh=yXjlUNIZlS9XYIjxWFQdWZCmLsuQFWY8IWnd625YlzA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=dNNQGzr91LXU8Iig4AUvNoeFvlia/ktCUqSQEt1dN5varXBHuScOhL/6RK7OjP9F/
+         EjBt2MLk+k7DN1Jj7V+5UtyS0FkykxDjHky9bDc690lPZTKXQBjVJC/MA22BXhgyyz
+         AdgAqJV1eYJMXERBI2ypaC9I9ziDbr1MDyB9w/8Q=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE23B600D0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to
+ binding
+To:     Stephen Boyd <swboyd@chromium.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        devicetree@vger.kernel.org
+References: <20180612230604.137880-1-swboyd@chromium.org>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Message-ID: <ba1d45e9-dd10-ead0-6743-74b32260d760@codeaurora.org>
+Date:   Thu, 14 Jun 2018 12:00:58 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <CAK7LNARDLbEhbJGrKY6HGwfxL8ebAMBDa_2A+s2QkzQGEKyFHQ@mail.gmail.com>
- <CA+55aFyxY9f9_eGv3CvA0zwzo8K5WeNbNPDFuyhtCrzRyic85A@mail.gmail.com>
- <CA+55aFy2KEzTiF=0nG8_RFoPpycaqc=n-hf-mQSbKotMzYJG-w@mail.gmail.com>
- <CAK7LNASd7Mc8eU76L24ZC0OFdUf566adNGVvX9Ou987cT3CCWw@mail.gmail.com>
- <CA+55aFz7KGMcvABxJfYs719ySyt2JouDX9t0SAV4Qu9yY9tfPA@mail.gmail.com> <CAK7LNAT4m8JgOttC5D16ALKqvMtt-6Vi4nFUdVaTMQSQPwYN-w@mail.gmail.com>
-In-Reply-To: <CAK7LNAT4m8JgOttC5D16ALKqvMtt-6Vi4nFUdVaTMQSQPwYN-w@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu, 14 Jun 2018 15:26:45 +0900
-Message-ID: <CA+55aFyHcEojRqf+pvGuZF1nExY_SFWX7QZ7ifBZPtJfB_BWDg@mail.gmail.com>
-Subject: Re: [GIT PULL] Kbuild updates for 4.18 (2nd round)
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180612230604.137880-1-swboyd@chromium.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 3:16 AM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+
+
+On 6/13/2018 4:36 AM, Stephen Boyd wrote:
+> Update the binding for two more PMICs supported by the same driver.
+> While we're here, remove the duplicate pmi8994 lines because that
+> support got merged twice.
 >
-> Could you run sed directly in your tree?
+> Cc: Rajendra Nayak <rnayak@codeaurora.org>
+> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+> Cc: <devicetree@vger.kernel.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
+>   .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt          | 6 ++++--
+>   1 file changed, 4 insertions(+), 2 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> index 5c25fcb29fb5..ffd4345415f3 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
+> @@ -7,6 +7,7 @@ PMIC's from Qualcomm.
+>   	Usage: required
+>   	Value type: <string>
+>   	Definition: must be one of:
+> +		    "qcom,pm8005-gpio"
+>   		    "qcom,pm8018-gpio"
+>   		    "qcom,pm8038-gpio"
+>   		    "qcom,pm8058-gpio"
+> @@ -15,7 +16,7 @@ PMIC's from Qualcomm.
+>   		    "qcom,pm8921-gpio"
+>   		    "qcom,pm8941-gpio"
+>   		    "qcom,pm8994-gpio"
+> -		    "qcom,pmi8994-gpio"
 
-Sure, I did that on the  plane. Now on the ground, pushed out.
-Somebody should double- and triple-check it.
+Thanks.
+Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-            Linus
+BRs
+Vivek
+> +		    "qcom,pm8998-gpio"
+>   		    "qcom,pma8084-gpio"
+>   		    "qcom,pmi8994-gpio"
+>   
+> @@ -78,6 +79,7 @@ to specify in a pin configuration subnode:
+>   	Value type: <string-array>
+>   	Definition: List of gpio pins affected by the properties specified in
+>   		    this subnode.  Valid pins are:
+> +		    gpio1-gpio4 for pm8005
+>   		    gpio1-gpio6 for pm8018
+>   		    gpio1-gpio12 for pm8038
+>   		    gpio1-gpio40 for pm8058
+> @@ -86,7 +88,7 @@ to specify in a pin configuration subnode:
+>   		    gpio1-gpio44 for pm8921
+>   		    gpio1-gpio36 for pm8941
+>   		    gpio1-gpio22 for pm8994
+> -		    gpio1-gpio10 for pmi8994
+> +		    gpio1-gpio26 for pm8998
+>   		    gpio1-gpio22 for pma8084
+>   		    gpio1-gpio10 for pmi8994
+>   
+
