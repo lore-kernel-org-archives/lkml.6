@@ -6,126 +6,241 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7F548C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A909FC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35960208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 557AC208DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWM9/slG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35960208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KbEF5wnP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 557AC208DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965531AbeFNOJw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:09:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
+        id S965547AbeFNOJ7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:09:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965515AbeFNOJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:09:49 -0400
+        id S965515AbeFNOJy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:09:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1104C208DA;
-        Thu, 14 Jun 2018 14:09:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8321208CB;
+        Thu, 14 Jun 2018 14:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985388;
-        bh=4huRIEEuC1sIh5kaVeOxKAYydvtB9Yjxtoaya1iZ9gs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JWM9/slG2xadPrGYs5kVFtHHqno4BYpzrSXSjrAXsPmEnFIwzyPsHzt1B1F9yDWcJ
-         pBtX0z8Tp7pLYjO/CO/YyKQ6A7MRm6o43hgL6vQN+qX4LmivqoipVbIouwpRLVrt03
-         zzaB1xpYj/IHrHjlBDMZgZvd6Kywxg0DoiZF5vR0=
+        s=default; t=1528985394;
+        bh=6LFlfVIki4/4zjY60BtjMH3R4F8bkAEHqblMNBnUbvY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=KbEF5wnP1i1Hlsjg8kEwoGBHrRKz3Yn2TamPMztx4Ig250JdDNMqMx7J1M8Sxmf//
+         tQ29H7Z4xIcoakG/lqi6TzR3hJxz3ycXIYjkn+VFqmSOkr062tgSSBut4ijDI5Z0bE
+         U4rKzTPyJZn4owbw92+ozsi/rvL3SKqk/wxYFfQI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Shaun Tancheff <shaun.tancheff@seagate.com>,
-        Damien Le Moal <damien.lemoal@hgst.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.14 02/36] blkdev_report_zones_ioctl(): Use vmalloc() to allocate large buffers
-Date:   Thu, 14 Jun 2018 16:04:25 +0200
-Message-Id: <20180614132157.425547897@linuxfoundation.org>
+        torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: [PATCH 4.14 00/36] 4.14.50-stable review
+Date:   Thu, 14 Jun 2018 16:04:23 +0200
+Message-Id: <20180614132157.333004166@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
-References: <20180614132157.333004166@linuxfoundation.org>
+MIME-Version: 1.0
 User-Agent: quilt/0.65
 X-stable: review
-MIME-Version: 1.0
+X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.50-rc1.gz
+X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+X-KernelTest-Branch: linux-4.14.y
+X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
+X-KernelTest-Version: 4.14.50-rc1
+X-KernelTest-Deadline: 2018-06-16T13:21+00:00
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+This is the start of the stable review cycle for the 4.14.50 release.
+There are 36 patches in this series, all will be posted as a response
+to this one.  If anyone has any issues with these being applied, please
+let me know.
 
-------------------
+Responses should be made by Sat Jun 16 13:21:44 UTC 2018.
+Anything received after that time might be too late.
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+The whole patch series can be found in one patch at:
+	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.14.50-rc1.gz
+or in the git tree and branch at:
+	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.14.y
+and the diffstat can be found below.
 
-commit 327ea4adcfa37194739f1ec7c70568944d292281 upstream.
+thanks,
 
-Avoid that complaints similar to the following appear in the kernel log
-if the number of zones is sufficiently large:
+greg k-h
 
-  fio: page allocation failure: order:9, mode:0x140c0c0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null)
-  Call Trace:
-  dump_stack+0x63/0x88
-  warn_alloc+0xf5/0x190
-  __alloc_pages_slowpath+0x8f0/0xb0d
-  __alloc_pages_nodemask+0x242/0x260
-  alloc_pages_current+0x6a/0xb0
-  kmalloc_order+0x18/0x50
-  kmalloc_order_trace+0x26/0xb0
-  __kmalloc+0x20e/0x220
-  blkdev_report_zones_ioctl+0xa5/0x1a0
-  blkdev_ioctl+0x1ba/0x930
-  block_ioctl+0x41/0x50
-  do_vfs_ioctl+0xaa/0x610
-  SyS_ioctl+0x79/0x90
-  do_syscall_64+0x79/0x1b0
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+-------------
+Pseudo-Shortlog of commits:
 
-Fixes: 3ed05a987e0f ("blk-zoned: implement ioctls")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Shaun Tancheff <shaun.tancheff@seagate.com>
-Cc: Damien Le Moal <damien.lemoal@hgst.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    Linux 4.14.50-rc1
 
----
- block/blk-zoned.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Bin Liu <b-liu@ti.com>
+    crypto: omap-sham - fix memleak
 
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -286,7 +286,11 @@ int blkdev_report_zones_ioctl(struct blo
- 	if (!rep.nr_zones)
- 		return -EINVAL;
- 
--	zones = kcalloc(rep.nr_zones, sizeof(struct blk_zone), GFP_KERNEL);
-+	if (rep.nr_zones > INT_MAX / sizeof(struct blk_zone))
-+		return -ERANGE;
-+
-+	zones = kvmalloc(rep.nr_zones * sizeof(struct blk_zone),
-+			GFP_KERNEL | __GFP_ZERO);
- 	if (!zones)
- 		return -ENOMEM;
- 
-@@ -308,7 +312,7 @@ int blkdev_report_zones_ioctl(struct blo
- 	}
- 
-  out:
--	kfree(zones);
-+	kvfree(zones);
- 
- 	return ret;
- }
+Michael Ellerman <mpe@ellerman.id.au>
+    crypto: vmx - Remove overly verbose printk from AES XTS init
+
+Michael Ellerman <mpe@ellerman.id.au>
+    crypto: vmx - Remove overly verbose printk from AES init routines
+
+Jan Glauber <jglauber@cavium.com>
+    crypto: cavium - Limit result reading attempts
+
+Jan Glauber <jglauber@cavium.com>
+    crypto: cavium - Fix fallout from CONFIG_VMAP_STACK
+
+Horia Geantă <horia.geanta@nxp.com>
+    crypto: caam - fix size of RSA prime factor q
+
+Horia Geantă <horia.geanta@nxp.com>
+    crypto: caam/qi - fix IV DMA mapping and updating
+
+Horia Geantă <horia.geanta@nxp.com>
+    crypto: caam - fix IV DMA mapping and updating
+
+Horia Geantă <horia.geanta@nxp.com>
+    crypto: caam - fix DMA mapping dir for generated IV
+
+Horia Geantă <horia.geanta@nxp.com>
+    crypto: caam - strip input zeros from RSA input buffer
+
+Johannes Wienke <languitar@semipol.de>
+    Input: elan_i2c - add ELAN0612 (Lenovo v330 14IKB) ACPI ID
+
+Ethan Lee <flibitijibibo@gmail.com>
+    Input: goodix - add new ACPI id for GPD Win 2 touch screen
+
+Paolo Bonzini <pbonzini@redhat.com>
+    kvm: x86: use correct privilege level for sgdt/sidt/fxsave/fxrstor access
+
+Dave Martin <Dave.Martin@arm.com>
+    tty: pl011: Avoid spuriously stuck-off interrupts
+
+Gil Kupfer <gilkup@gmail.com>
+    vmw_balloon: fixing double free when batching mode is off
+
+Tony Lindgren <tony@atomide.com>
+    serial: 8250: omap: Fix idling of clocks for unused uarts
+
+Marek Szyprowski <m.szyprowski@samsung.com>
+    serial: samsung: fix maxburst parameter for DMA transactions
+
+Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+    tty/serial: atmel: use port->name as name in request_irq()
+
+Geert Uytterhoeven <geert+renesas@glider.be>
+    serial: sh-sci: Stop using printk format %pCr
+
+Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+    usb: gadget: udc: renesas_usb3: disable the controller's irqs for reconnecting
+
+Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+    usb: gadget: function: printer: avoid wrong list handling in printer_write()
+
+Manu Gautam <mgautam@codeaurora.org>
+    phy: qcom-qusb2: Fix crash if nvmem cell not specified
+
+Ethan Lee <flibitijibibo@gmail.com>
+    Input: xpad - add GPD Win 2 Controller USB IDs
+
+Alexander Kappner <agk@godking.net>
+    usb-storage: Add compatibility quirk flags for G-Technologies G-Drive
+
+Alexander Kappner <agk@godking.net>
+    usb-storage: Add support for FL_ALWAYS_SYNC flag in the UAS driver
+
+Gustavo A. R. Silva <gustavo@embeddedor.com>
+    usbip: vhci_sysfs: fix potential Spectre v1
+
+Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+    NFC: pn533: don't send USB data off of the stack
+
+Laura Abbott <labbott@redhat.com>
+    staging: android: ion: Switch to pr_warn_once in ion_buffer_destroy
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: x86: pass kvm_vcpu to kvm_read_guest_virt and kvm_write_guest_virt_system
+
+Felix Wilhelm <fwilhelm@google.com>
+    kvm: nVMX: Enforce cpl=0 for VMX instructions
+
+Paolo Bonzini <pbonzini@redhat.com>
+    KVM: x86: introduce linear_{read,write}_system
+
+Wanpeng Li <wanpengli@tencent.com>
+    KVM: X86: Fix reserved bits check for MOV to CR3
+
+Linus Walleij <linus.walleij@linaro.org>
+    gpio: No NULL owner
+
+Kevin Easton <kevin@guarana.org>
+    af_key: Always verify length of provided sadb_key
+
+Bart Van Assche <bart.vanassche@wdc.com>
+    blkdev_report_zones_ioctl(): Use vmalloc() to allocate large buffers
+
+Taehee Yoo <ap420073@gmail.com>
+    netfilter: nf_tables: fix NULL pointer dereference on nft_ct_helper_obj_dump()
+
+
+-------------
+
+Diffstat:
+
+ Makefile                                |   4 +-
+ arch/x86/include/asm/kvm_emulate.h      |   6 +-
+ arch/x86/kvm/emulate.c                  |  76 ++++++-----
+ arch/x86/kvm/vmx.c                      |  38 +++---
+ arch/x86/kvm/x86.c                      |  53 +++++---
+ arch/x86/kvm/x86.h                      |   4 +-
+ block/blk-zoned.c                       |   8 +-
+ drivers/crypto/caam/caamalg.c           | 231 ++++++++++++++------------------
+ drivers/crypto/caam/caamalg_qi.c        | 227 ++++++++++++++++---------------
+ drivers/crypto/caam/caampkc.c           |  62 ++++++++-
+ drivers/crypto/caam/caampkc.h           |   8 ++
+ drivers/crypto/cavium/zip/common.h      |  21 +++
+ drivers/crypto/cavium/zip/zip_crypto.c  |  22 +--
+ drivers/crypto/cavium/zip/zip_deflate.c |   4 +-
+ drivers/crypto/cavium/zip/zip_inflate.c |   4 +-
+ drivers/crypto/omap-sham.c              |   2 +-
+ drivers/crypto/vmx/aes.c                |   2 -
+ drivers/crypto/vmx/aes_cbc.c            |   3 -
+ drivers/crypto/vmx/aes_ctr.c            |   2 -
+ drivers/crypto/vmx/aes_xts.c            |   2 -
+ drivers/crypto/vmx/ghash.c              |   2 -
+ drivers/gpio/gpiolib.c                  |   9 +-
+ drivers/input/joystick/xpad.c           |   2 +
+ drivers/input/mouse/elan_i2c_core.c     |   1 +
+ drivers/input/touchscreen/goodix.c      |   1 +
+ drivers/misc/vmw_balloon.c              |  23 +---
+ drivers/nfc/pn533/usb.c                 |  42 ++++--
+ drivers/phy/qualcomm/phy-qcom-qusb2.c   |   4 +
+ drivers/staging/android/ion/ion.c       |   5 +-
+ drivers/tty/serial/8250/8250_omap.c     |  16 ++-
+ drivers/tty/serial/amba-pl011.c         |  16 +++
+ drivers/tty/serial/atmel_serial.c       |   5 +-
+ drivers/tty/serial/samsung.c            |   7 +-
+ drivers/tty/serial/sh-sci.c             |   4 +-
+ drivers/usb/gadget/function/f_printer.c |   6 +-
+ drivers/usb/gadget/udc/renesas_usb3.c   |   7 +
+ drivers/usb/storage/uas.c               |   6 +
+ drivers/usb/storage/unusual_devs.h      |   9 ++
+ drivers/usb/storage/unusual_uas.h       |   9 ++
+ drivers/usb/usbip/vhci_sysfs.c          |  24 ++--
+ net/key/af_key.c                        |  45 +++++--
+ net/netfilter/nft_ct.c                  |  20 +--
+ 42 files changed, 629 insertions(+), 413 deletions(-)
 
 
