@@ -2,103 +2,162 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7F167C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:13:48 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D2025C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34025208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:13:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dxBQ3F8r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34025208D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 901BA208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:13:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901BA208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964846AbeFNLNq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S964869AbeFNLNu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 07:13:50 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:56868 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S964838AbeFNLNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Jun 2018 07:13:46 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:45221 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754948AbeFNLMq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:12:46 -0400
-Received: by mail-lf0-f67.google.com with SMTP id n3-v6so8763833lfe.12
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 04:12:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=M6zw4wLJZVQHCaGthfXT2V4RF0fCTGlqbZ+/633hWcY=;
-        b=dxBQ3F8rGOgvJmtostTUxuBrLckfbm50oyKGmxVqwIxdb296TBd6MAFRuf0unOTzyA
-         vQxXtiocYqqIiciH/LHkF4TahsTciJvrCc5+z2tQdysecHYzGSUTCtzV5GSLIUp6OozW
-         SBgfoNhyhjpDyJoFWpniCbbqUmhQltd1gO1B8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=M6zw4wLJZVQHCaGthfXT2V4RF0fCTGlqbZ+/633hWcY=;
-        b=Qkwf2UNj4SSADZZKEHVLNDW+F7JlQpcr3MPTTGcM2WqPzazbm6g3t/PuyO1DL68i3p
-         vlozw8HUcpad/f9MI7pcPEDN2IsGy91aMP+/ffrDV3JTXMryYZ0Ngt9fLudeKzIr3uoi
-         REPoWkG5Diq+WyFXQEpJ89LEaFk96tyKyBUZa4OK5Khi/uMVxN1KGqG5vNf9IdL8fed4
-         UI7YeCunbBkC0xpe/r37Q/1/Xi2bhgOTPfLvOqgc/o8ij7lQQARu1Vhs+VGNRFxEHA0J
-         9gjZ8sUcUf0j7shrqQxM4vfquX+EY8AMYtwKi9QRu79wjBvCu+RqgscKSpnDw+1xgStY
-         HdkA==
-X-Gm-Message-State: APt69E3huycU7M49FkDFTBgpuWV0+kMkXJJzNc7YA5sbvM515cPF4hfv
-        Zqzv1NA7u4o/GA6PzeQWR0dlFw==
-X-Google-Smtp-Source: ADUXVKL3bQuHpR/wRk3KQ2rjPrVBW9dW8QBmSa8aAIKe8P5d/W7r35dT248uHGrqnHtGPp4IDLstUA==
-X-Received: by 2002:a19:de0a:: with SMTP id v10-v6mr5456124lfg.94.1528974765425;
-        Thu, 14 Jun 2018 04:12:45 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id y13-v6sm1030434lfk.37.2018.06.14.04.12.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Jun 2018 04:12:44 -0700 (PDT)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     andy.gross@linaro.org, David Brown <david.brown@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/7] soc: qcom: smsm: Add select IRQ_DOMAIN
-Date:   Thu, 14 Jun 2018 13:11:35 +0200
-Message-Id: <20180614111138.8923-5-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614111138.8923-1-niklas.cassel@linaro.org>
-References: <20180614111138.8923-1-niklas.cassel@linaro.org>
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0CA7A859A8;
+        Thu, 14 Jun 2018 11:13:46 +0000 (UTC)
+Received: from [10.10.66.2] (ovpn-66-2.rdu2.redhat.com [10.10.66.2])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2FCAD111D3CB;
+        Thu, 14 Jun 2018 11:13:45 +0000 (UTC)
+From:   "Benjamin Coddington" <bcodding@redhat.com>
+To:     "Konstantin Khorenko" <khorenko@virtuozzo.com>,
+        "Jeff Layton" <jlayton@kernel.org>
+Cc:     "Kirill Gorkunov" <kgorkunov@virtuozzo.com>,
+        "Andrey Vagin" <avagin@virtuozzo.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Vasily Averin" <vvs@virtuozzo.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/2] fs/lock: show locks info owned by dead/invisible
+ processes
+Date:   Thu, 14 Jun 2018 07:13:22 -0400
+Message-ID: <98D5E5F1-65D6-44C1-9E7C-C5A9043BC29F@redhat.com>
+In-Reply-To: <20180608142712.32460-1-khorenko@virtuozzo.com>
+References: <20180608142712.32460-1-khorenko@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; format=flowed
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 14 Jun 2018 11:13:46 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 14 Jun 2018 11:13:46 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'bcodding@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since we are using irq_domain_add_linear(), add a select on IRQ_DOMAIN.
-This is needed in order to be able to remove the depends on ARCH_QCOM.
 
-drivers/soc/qcom/smsm.c: In function ‘smsm_inbound_entry’:
-drivers/soc/qcom/smsm.c:411:18: error: implicit declaration of function
-  ‘irq_domain_add_linear’
-  entry->domain = irq_domain_add_linear(node, 32, &smsm_irq_ops, entry);
-                  ^~~~~~~~~~~~~~~~~~~~~
 
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
----
- drivers/soc/qcom/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+On 8 Jun 2018, at 10:27, Konstantin Khorenko wrote:
 
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index 2f59d0a835fd..1d4a9f3ada8c 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -115,6 +115,7 @@ config QCOM_SMSM
- 	tristate "Qualcomm Shared Memory State Machine"
- 	depends on QCOM_SMEM
- 	select QCOM_SMEM_STATE
-+	select IRQ_DOMAIN
- 	help
- 	  Say yes here to support the Qualcomm Shared Memory State Machine.
- 	  The state machine is represented by bits in shared memory.
--- 
-2.17.1
+> The behavior has been changed after 9d5b86ac13c5 ("fs/locks: Remove 
+> fl_nspid
+> and use fs-specific l_pid for remote locks")
+> and now /proc/$PID/fdinfo/$FD does not show the info about the lock
+> * if the flock owner process is dead and its pid has been already 
+> freed
+> or
+> * if the lock owner is not visible in current pidns.
+>
+> CRIU uses this interface to store locks info during dump and thus can 
+> break
+> on v4.13 and newer.
+>
+> So let's show info about locks anyway in described cases (like it was 
+> before
+> 9d5b86ac13c5), but show pid number saved in file_lock struct if we are 
+> in
+> init_pid_ns (patch 1) or just zero otherwise (patch 2) like we do with 
+> SID.
+>
+> Reproducer:
+> process A       process A1      process A2
+> fork()--------->
+> exit()          open()
+>                 flock()
+>                 fork()--------->
+>                 exit()          sleep()
+>
+> Before the patch:
+> ================
+> (root@vz7)/: cat /proc/${PID_A2}/fdinfo/3
+> pos:    4
+> flags:  02100002
+> mnt_id: 257
+> lock:   (root@vz7)/:
+>
+> After the patch:
+> ===============
+> (root@vz7)/:cat /proc/${PID_A2}/fdinfo/3
+> pos:    4
+> flags:  02100002
+> mnt_id: 295
+> lock:   1: FLOCK  ADVISORY  WRITE ${PID_A1} b6:f8a61:529946 0 EOF
+>
+> ===============
+> # cat flock1.c
+>
+> #include <stdio.h>
+> #include <stdlib.h>
+> #include <unistd.h>
+> #include <sys/types.h>
+> #include <sys/stat.h>
+> #include <sys/file.h>
+> #include <fcntl.h>
+>
+> int main(void)
+> {
+>         int fd;
+>         int err;
+>         pid_t child_pid;
+>
+>         child_pid = fork();
+>         if (child_pid == -1)
+>                 perror("fork failed");
+>         if (child_pid) {
+>                 exit(0);
+>         }
+>
+>         fd = open("/tmp/a", O_CREAT | O_RDWR);
+>         if (fd == -1)
+>                 perror("Failed to open the file");
+>
+>         err = flock(fd, LOCK_EX);
+>         if (err == -1)
+>                 perror("flock failed");
+>
+>         child_pid = fork();
+>         if (child_pid == -1)
+>                 perror("fork failed");
+>         if (child_pid)
+>                 exit(0);
+>
+>         sleep(10000);
+>
+>         return 0;
+> }
+>
+> Konstantin Khorenko (2):
+>   fs/lock: skip lock owner pid translation in case we are in 
+> init_pid_ns
+>   fs/lock: show locks taken by processes from another pidns
 
+
+These look good to me too.  It makes sense that we treat pid numbers out 
+of
+our namespace in the same way we'd treat remote pids, by returning 0 
+instead
+of skipping their display altogether.  You can add my
+
+Reviewed-by: Benjamin Coddington <bcodding@redhat.com>
+
+to these two.
+
+Ben
