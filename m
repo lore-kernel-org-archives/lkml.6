@@ -2,89 +2,143 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0429FC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:23:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 01A35C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A150620020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA29320020
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:23:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PLLYSoYC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A150620020
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pawi1ed8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA29320020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966206AbeFNOXF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:23:05 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:38266 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965679AbeFNOXC (ORCPT
+        id S965809AbeFNOXx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:23:53 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:44332 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755246AbeFNOXu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:23:02 -0400
-Received: by mail-io0-f193.google.com with SMTP id l19-v6so7317640ioj.5
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 07:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UgTUDngR2Nqr7FoWfP0KsVLiZQmcN3HnU8A8odqFSD4=;
-        b=PLLYSoYCgnB24QhFiKyNo1QwHeojMbU6n0wixVLRCfuPjKi+uqOROQXNPqCWRiE4n1
-         HPpB5dOb7OlnP3zZsiGNaWGLocrGskZZ/uc85xvAD/28jNFZo0XFXwmv/CKSPLgn/neo
-         H3WOBUailWsv8EMWsOyylSed3CvA/j9/MFN6s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UgTUDngR2Nqr7FoWfP0KsVLiZQmcN3HnU8A8odqFSD4=;
-        b=Y1wwuYYuozYbXqZto+oUeMGJ+TysgGscKLGJntmDoFBe8jZuwzqtF4rxqnOmPWyBeW
-         KZuOpWAqqGVFUdlADfYzyyY3QwEw6KaHH4otXDvvj0WXa5DQ2WsH7ujT6ZuOUW6T8L0y
-         7rj/H/Co1zQmDeSwFVukha/TZBFF/27FIPq/U21uhFxZMpP1O4X3Y5gptRmjvjuwzRZt
-         bPD6eMhe2Yscr7XSFcGW3kj7E4dwJxTpSgOPEyu0lUhVImkKEY01nHV7D7n9+Ej+DXDX
-         YGzxPfN2ouKdtQZUdjoubQy8QDQ7qRlBkiske8F1pvENN0V0TjCvYtDBerZjlexOkSk+
-         8qCw==
-X-Gm-Message-State: APt69E3TiNSPp/OSJx6h1Ie140iIo3fStrKzB0pBtooHOG0Dn7o0qXfv
-        lEPMq2C1LcevuEfKSOlXXsD000qYrQV2yTy8llXVyA==
-X-Google-Smtp-Source: ADUXVKJsFPX6xao/ZkRQV5pBzRuHLB7ym5j6fCeuXm7kjnD13vV/x21BQFw3hwRepkL0pLxVy/s8r3C8UFh54dxwwDU=
-X-Received: by 2002:a6b:4a15:: with SMTP id w21-v6mr2318236iob.277.1528986181727;
- Thu, 14 Jun 2018 07:23:01 -0700 (PDT)
+        Thu, 14 Jun 2018 10:23:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=d+s7IYeTqsyU5dsNkJ7X3WfQBu/Gj+oeikES7r7tPMM=; b=Pawi1ed8LBXWw6cNe7uTDYf2c
+        GbrlAX7MYds8mpjBKvx/cZrKrgvIwUhqoSGEbg/2CEajgdf7lvlIU31DVre7WT7ahIm1oCGM60eu0
+        pmEuOh8ACX2JbAavVC15kCtjyUOPc/bMiwns0ZO47izywptXAW5KJ4eM0Ri8O6xNeVQef6a2qubiB
+        N+xmfpM4S5A1x1PniW3Wl30a5Cfgklo9GuJrouNqyWeWvfkkF30pyIVUHBHMwSJlhwYY71vei++Gs
+        N5fBp65FtE5OOZoV1XQskQApoig7F610Jfs7ywuDgsaCuWgUavkq48u0NefyjyU4gnB1T/3cW6EP0
+        +haOGcopw==;
+Received: from 177.41.114.220.dynamic.adsl.gvt.net.br ([177.41.114.220] helo=coco.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTTAC-0003Hs-Kf; Thu, 14 Jun 2018 14:23:49 +0000
+Date:   Thu, 14 Jun 2018 11:23:43 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Andrea Parri <parri.andrea@gmail.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH v2 09/11] docs: Fix some broken references
+Message-ID: <20180614112343.61bb84d7@coco.lan>
+In-Reply-To: <Pine.LNX.4.44L0.1805091509100.1391-100000@iolanthe.rowland.org>
+References: <20180509152045.722f0c51@vento.lan>
+        <Pine.LNX.4.44L0.1805091509100.1391-100000@iolanthe.rowland.org>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 07:23:00
- -0700 (PDT)
-In-Reply-To: <20180612230604.137880-1-swboyd@chromium.org>
-References: <20180612230604.137880-1-swboyd@chromium.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Jun 2018 16:23:00 +0200
-Message-ID: <CACRpkdYS1LQ-gfOAsG21=E_hJ1eMW54oK6bZ-rJ48J7M6FGB7g@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to binding
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 1:06 AM, Stephen Boyd <swboyd@chromium.org> wrote:
+Em Wed, 9 May 2018 15:11:07 -0400 (EDT)
+Alan Stern <stern@rowland.harvard.edu> escreveu:
 
-> Update the binding for two more PMICs supported by the same driver.
-> While we're here, remove the duplicate pmi8994 lines because that
-> support got merged twice.
->
-> Cc: Rajendra Nayak <rnayak@codeaurora.org>
-> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: <devicetree@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> On Wed, 9 May 2018, Mauro Carvalho Chehab wrote:
+> 
+> > Em Wed, 9 May 2018 19:15:01 +0200
+> > Andrea Parri <parri.andrea@gmail.com> escreveu:  
+> 
+> > > >  tools/memory-model/README                     | 10 +++++-----    
+> > > 
+> > > As mentioned in the previous thread, I am for keeping the current
+> > > references: the REAMDE is listing the doc files, as well as other
+> > > files in tools/memory-model/, relatively to that directory.  
+> > 
+> > Yeah, at least this hunk deserves some rework, as now some
+> > references are Documentation/.../foo, while others are just
+> > bar.
+> > 
+> > As on (almost) all other places (except for tools/memory-model/README),
+> > the references are always from the main directory, I would make all
+> > patches there also relative to main dir. If you're afraid of
+> > not being too clearer, we could prefix all of them with something
+> > like:
+> > 
+> > 	${LINUX}/tools/memory-model/...
+> > 
+> > just like some DT binding files do:
+> > 
+> > 	Documentation/devicetree/bindings/sound/audio-graph-card.txt:see ${LINUX}/Documentation/devicetree/bindings/graph.txt
+> > 
+> > A bonus of doing that is that the broken reference detect script can
+> > keep parsing it without changes (well, it wouldn't be hard to make
+> > it also accept a relative file, but doing that just due to 
+> > tools/memory-model/README seems overkill).
+> > 
+> > Another advantage is that it would allow to easily add references
+> > there from the main kernel Documentation, if needed in the future,
+> > without messing with local x non-local relative namespace.  
+> 
+> How about changing the relative references so that something like
+> Documentation/recipes.txt becomes ./Documentation/recipes.txt?
 
-Patch applied with the tags.
+Thanks,
+Mauro
 
-Yours,
-Linus Walleij
+After thinking a little bit about that, it should be easy to fix the
+tool to consider references relative to tools/.*/Documentation.
+
+I intend to send a new patch series with the changes to 
+tools/memory-model/README removed from this patch and with the enclosed
+patch on it.
+
+Regards,
+Mauro
+
+[PATCH] scripts/documentation-file-ref-check: check
+ tools/*/Documentation
+
+Some files, like tools/memory-model/README has references to
+a Documentation file that is locale to it. Handle references
+that are relative to them too.
+
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+
+diff --git a/scripts/documentation-file-ref-check b/scripts/documentation-file-ref-check
+index 047f463cdf4b..078999a3fdff 100755
+--- a/scripts/documentation-file-ref-check
++++ b/scripts/documentation-file-ref-check
+@@ -78,6 +78,13 @@ while (<IN>) {
+ 		# Check if exists, evaluating wildcards
+ 		next if (grep -e, glob("$ref $fulref"));
+ 
++		# Accept relative Documentation patches for tools/
++		if ($f =~ m/tools/) {
++			my $path = $f;
++			$path =~ s,(.*)/.*,$1,;
++			next if (grep -e, glob("$path/$ref $path/$fulref"));
++		}
++
+ 		if ($fix) {
+ 			if (!($ref =~ m/(scripts|Kconfig|Kbuild)/)) {
+ 				$broken_ref{$ref}++;
