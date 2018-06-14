@@ -5,30 +5,30 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 926B0C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:25:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 589B8C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 483FC208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:25:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 483FC208D8
+	by mail.kernel.org (Postfix) with ESMTP id EAF09208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:25:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAF09208D7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754852AbeFNIZS (ORCPT
+        id S1754878AbeFNIZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:25:18 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:42418 "EHLO mx1.redhat.com"
+        Thu, 14 Jun 2018 04:25:26 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51010 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754677AbeFNIZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:25:13 -0400
+        id S1754867AbeFNIZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:25:22 -0400
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 967EB81AF6E2;
-        Thu, 14 Jun 2018 08:25:12 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7A6F7DF38F;
+        Thu, 14 Jun 2018 08:25:21 +0000 (UTC)
 Received: from vitty.brq.redhat.com (ovpn-204-228.brq.redhat.com [10.40.204.228])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 38A9F10FFE4D;
-        Thu, 14 Jun 2018 08:25:07 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 654B610FFE4D;
+        Thu, 14 Jun 2018 08:25:17 +0000 (UTC)
 From:   Vitaly Kuznetsov <vkuznets@redhat.com>
 To:     kvm@vger.kernel.org
 Cc:     Paolo Bonzini <pbonzini@redhat.com>,
@@ -41,145 +41,542 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Mohammed Gamal <mmorsy@redhat.com>,
         Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
         Jim Mattson <jmattson@google.com>
-Subject: [PATCH 1/5] KVM: hyperv: define VP assist page helpers
-Date:   Thu, 14 Jun 2018 10:24:56 +0200
-Message-Id: <20180614082500.18548-2-vkuznets@redhat.com>
+Subject: [PATCH 3/5] KVM: nVMX: add enlightened VMCS state
+Date:   Thu, 14 Jun 2018 10:24:58 +0200
+Message-Id: <20180614082500.18548-4-vkuznets@redhat.com>
 In-Reply-To: <20180614082500.18548-1-vkuznets@redhat.com>
 References: <20180614082500.18548-1-vkuznets@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 14 Jun 2018 08:25:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.8]); Thu, 14 Jun 2018 08:25:12 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 14 Jun 2018 08:25:21 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 14 Jun 2018 08:25:21 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ladi Prosek <lprosek@redhat.com>
+Adds hv_evmcs pointer and implement copy_enlightened_to_vmcs12() and
+copy_enlightened_to_vmcs12().
 
-The state related to the VP assist page is still managed by the LAPIC
-code in the pv_eoi field.
+prepare_vmcs02()/prepare_vmcs02_full() separation is not valid for
+Enlightened VMCS, do full sync for now.
 
-Signed-off-by: Ladi Prosek <lprosek@redhat.com>
+Suggested-by: Ladi Prosek <lprosek@redhat.com>
 Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
- arch/x86/kvm/hyperv.c | 23 +++++++++++++++++++++--
- arch/x86/kvm/hyperv.h |  4 ++++
- arch/x86/kvm/lapic.c  |  4 ++--
- arch/x86/kvm/lapic.h  |  2 +-
- arch/x86/kvm/x86.c    |  2 +-
- 5 files changed, 29 insertions(+), 6 deletions(-)
+ arch/x86/kvm/vmx.c | 431 +++++++++++++++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 417 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index 14e0d0ae4e0a..fdf659ca6167 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -688,6 +688,24 @@ void kvm_hv_vcpu_uninit(struct kvm_vcpu *vcpu)
- 		stimer_cleanup(&hv_vcpu->stimer[i]);
- }
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 51749207cef1..e7fa9f9c6e36 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -640,10 +640,10 @@ struct nested_vmx {
+ 	 */
+ 	struct vmcs12 *cached_vmcs12;
+ 	/*
+-	 * Indicates if the shadow vmcs must be updated with the
+-	 * data hold by vmcs12
++	 * Indicates if the shadow vmcs or enlightened vmcs must be updated
++	 * with the data held by struct vmcs12.
+ 	 */
+-	bool sync_shadow_vmcs;
++	bool need_vmcs12_sync;
+ 	bool dirty_vmcs12;
  
-+bool kvm_hv_assist_page_enabled(struct kvm_vcpu *vcpu)
-+{
-+	if (!(vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE))
-+		return false;
-+	return vcpu->arch.pv_eoi.msr_val & KVM_MSR_ENABLED;
-+}
-+EXPORT_SYMBOL_GPL(kvm_hv_assist_page_enabled);
+ 	bool change_vmcs01_virtual_apic_mode;
+@@ -689,6 +689,8 @@ struct nested_vmx {
+ 		/* in guest mode on SMM entry? */
+ 		bool guest_mode;
+ 	} smm;
 +
-+bool kvm_hv_get_assist_page(struct kvm_vcpu *vcpu,
-+			    struct hv_vp_assist_page *assist_page)
-+{
-+	if (!kvm_hv_assist_page_enabled(vcpu))
-+		return false;
-+	return !kvm_read_guest_cached(vcpu->kvm, &vcpu->arch.pv_eoi.data,
-+				      assist_page, sizeof(*assist_page));
-+}
-+EXPORT_SYMBOL_GPL(kvm_hv_get_assist_page);
-+
- static void stimer_prepare_msg(struct kvm_vcpu_hv_stimer *stimer)
- {
- 	struct hv_message *msg = &stimer->msg;
-@@ -1048,7 +1066,7 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
++	struct hv_enlightened_vmcs *hv_evmcs;
+ };
  
- 		if (!(data & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE)) {
- 			hv->hv_vapic = data;
--			if (kvm_lapic_enable_pv_eoi(vcpu, 0))
-+			if (kvm_lapic_enable_pv_eoi(vcpu, 0, 0))
- 				return 1;
- 			break;
- 		}
-@@ -1061,7 +1079,8 @@ static int kvm_hv_set_msr(struct kvm_vcpu *vcpu, u32 msr, u64 data, bool host)
- 		hv->hv_vapic = data;
- 		kvm_vcpu_mark_page_dirty(vcpu, gfn);
- 		if (kvm_lapic_enable_pv_eoi(vcpu,
--					    gfn_to_gpa(gfn) | KVM_MSR_ENABLED))
-+					    gfn_to_gpa(gfn) | KVM_MSR_ENABLED,
-+					    sizeof(struct hv_vp_assist_page)))
- 			return 1;
- 		break;
+ #define POSTED_INTR_ON  0
+@@ -8010,7 +8012,7 @@ static inline void nested_release_vmcs12(struct vcpu_vmx *vmx)
+ 		/* copy to memory all shadowed fields in case
+ 		   they were modified */
+ 		copy_shadow_to_vmcs12(vmx);
+-		vmx->nested.sync_shadow_vmcs = false;
++		vmx->nested.need_vmcs12_sync = false;
+ 		vmx_disable_shadow_vmcs(vmx);
  	}
-diff --git a/arch/x86/kvm/hyperv.h b/arch/x86/kvm/hyperv.h
-index 837465d69c6d..db825bb7efc7 100644
---- a/arch/x86/kvm/hyperv.h
-+++ b/arch/x86/kvm/hyperv.h
-@@ -62,6 +62,10 @@ void kvm_hv_vcpu_init(struct kvm_vcpu *vcpu);
- void kvm_hv_vcpu_postcreate(struct kvm_vcpu *vcpu);
- void kvm_hv_vcpu_uninit(struct kvm_vcpu *vcpu);
+ 	vmx->nested.posted_intr_nv = -1;
+@@ -8187,6 +8189,393 @@ static inline int vmcs12_write_any(struct kvm_vcpu *vcpu,
  
-+bool kvm_hv_assist_page_enabled(struct kvm_vcpu *vcpu);
-+bool kvm_hv_get_assist_page(struct kvm_vcpu *vcpu,
-+			    struct hv_vp_assist_page *assist_page);
+ }
+ 
++static int copy_enlightened_to_vmcs12(struct vcpu_vmx *vmx, bool full)
++{
++	struct vmcs12 *vmcs12 = vmx->nested.cached_vmcs12;
++	struct hv_enlightened_vmcs *evmcs = vmx->nested.hv_evmcs;
 +
- static inline struct kvm_vcpu_hv_stimer *vcpu_to_stimer(struct kvm_vcpu *vcpu,
- 							int timer_index)
++	/* HV_VMX_ENLIGHTENED_CLEAN_FIELD_NONE */
++	vmcs12->tpr_threshold = evmcs->tpr_threshold;
++	vmcs12->guest_rip = evmcs->guest_rip;
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_BASIC))) {
++		vmcs12->guest_rsp = evmcs->guest_rsp;
++		vmcs12->guest_rflags = evmcs->guest_rflags;
++		vmcs12->guest_interruptibility_info =
++			evmcs->guest_interruptibility_info;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_PROC))) {
++		vmcs12->cpu_based_vm_exec_control =
++			evmcs->cpu_based_vm_exec_control;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_PROC))) {
++		vmcs12->exception_bitmap = evmcs->exception_bitmap;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_ENTRY))) {
++		vmcs12->vm_entry_controls = evmcs->vm_entry_controls;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_EVENT))) {
++		vmcs12->vm_entry_intr_info_field =
++			evmcs->vm_entry_intr_info_field;
++		vmcs12->vm_entry_exception_error_code =
++			evmcs->vm_entry_exception_error_code;
++		vmcs12->vm_entry_instruction_len =
++			evmcs->vm_entry_instruction_len;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++		      HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1))) {
++		vmcs12->host_ia32_pat = evmcs->host_ia32_pat;
++		vmcs12->host_ia32_efer = evmcs->host_ia32_efer;
++		vmcs12->host_cr0 = evmcs->host_cr0;
++		vmcs12->host_cr3 = evmcs->host_cr3;
++		vmcs12->host_cr4 = evmcs->host_cr4;
++		vmcs12->host_ia32_sysenter_esp = evmcs->host_ia32_sysenter_esp;
++		vmcs12->host_ia32_sysenter_eip = evmcs->host_ia32_sysenter_eip;
++		vmcs12->host_rip = evmcs->host_rip;
++		vmcs12->host_ia32_sysenter_cs = evmcs->host_ia32_sysenter_cs;
++		vmcs12->host_es_selector = evmcs->host_es_selector;
++		vmcs12->host_cs_selector = evmcs->host_cs_selector;
++		vmcs12->host_ss_selector = evmcs->host_ss_selector;
++		vmcs12->host_ds_selector = evmcs->host_ds_selector;
++		vmcs12->host_fs_selector = evmcs->host_fs_selector;
++		vmcs12->host_gs_selector = evmcs->host_gs_selector;
++		vmcs12->host_tr_selector = evmcs->host_tr_selector;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_GRP1))) {
++		vmcs12->pin_based_vm_exec_control =
++			evmcs->pin_based_vm_exec_control;
++		vmcs12->vm_exit_controls = evmcs->vm_exit_controls;
++		vmcs12->secondary_vm_exec_control =
++			evmcs->secondary_vm_exec_control;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_IO_BITMAP))) {
++		vmcs12->io_bitmap_a = evmcs->io_bitmap_a;
++		vmcs12->io_bitmap_b = evmcs->io_bitmap_b;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_MSR_BITMAP))) {
++		vmcs12->msr_bitmap = evmcs->msr_bitmap;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP2))) {
++		vmcs12->guest_es_base = evmcs->guest_es_base;
++		vmcs12->guest_cs_base = evmcs->guest_cs_base;
++		vmcs12->guest_ss_base = evmcs->guest_ss_base;
++		vmcs12->guest_ds_base = evmcs->guest_ds_base;
++		vmcs12->guest_fs_base = evmcs->guest_fs_base;
++		vmcs12->guest_gs_base = evmcs->guest_gs_base;
++		vmcs12->guest_ldtr_base = evmcs->guest_ldtr_base;
++		vmcs12->guest_tr_base = evmcs->guest_tr_base;
++		vmcs12->guest_gdtr_base = evmcs->guest_gdtr_base;
++		vmcs12->guest_idtr_base = evmcs->guest_idtr_base;
++		vmcs12->guest_es_limit = evmcs->guest_es_limit;
++		vmcs12->guest_cs_limit = evmcs->guest_cs_limit;
++		vmcs12->guest_ss_limit = evmcs->guest_ss_limit;
++		vmcs12->guest_ds_limit = evmcs->guest_ds_limit;
++		vmcs12->guest_fs_limit = evmcs->guest_fs_limit;
++		vmcs12->guest_gs_limit = evmcs->guest_gs_limit;
++		vmcs12->guest_ldtr_limit = evmcs->guest_ldtr_limit;
++		vmcs12->guest_tr_limit = evmcs->guest_tr_limit;
++		vmcs12->guest_gdtr_limit = evmcs->guest_gdtr_limit;
++		vmcs12->guest_idtr_limit = evmcs->guest_idtr_limit;
++		vmcs12->guest_es_ar_bytes = evmcs->guest_es_ar_bytes;
++		vmcs12->guest_cs_ar_bytes = evmcs->guest_cs_ar_bytes;
++		vmcs12->guest_ss_ar_bytes = evmcs->guest_ss_ar_bytes;
++		vmcs12->guest_ds_ar_bytes = evmcs->guest_ds_ar_bytes;
++		vmcs12->guest_fs_ar_bytes = evmcs->guest_fs_ar_bytes;
++		vmcs12->guest_gs_ar_bytes = evmcs->guest_gs_ar_bytes;
++		vmcs12->guest_ldtr_ar_bytes = evmcs->guest_ldtr_ar_bytes;
++		vmcs12->guest_tr_ar_bytes = evmcs->guest_tr_ar_bytes;
++		vmcs12->guest_es_selector = evmcs->guest_es_selector;
++		vmcs12->guest_cs_selector = evmcs->guest_cs_selector;
++		vmcs12->guest_ss_selector = evmcs->guest_ss_selector;
++		vmcs12->guest_ds_selector = evmcs->guest_ds_selector;
++		vmcs12->guest_fs_selector = evmcs->guest_fs_selector;
++		vmcs12->guest_gs_selector = evmcs->guest_gs_selector;
++		vmcs12->guest_ldtr_selector = evmcs->guest_ldtr_selector;
++		vmcs12->guest_tr_selector = evmcs->guest_tr_selector;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_GRP2))) {
++		vmcs12->tsc_offset = evmcs->tsc_offset;
++		vmcs12->virtual_apic_page_addr = evmcs->virtual_apic_page_addr;
++		vmcs12->xss_exit_bitmap = evmcs->xss_exit_bitmap;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CRDR))) {
++		vmcs12->cr0_guest_host_mask = evmcs->cr0_guest_host_mask;
++		vmcs12->cr4_guest_host_mask = evmcs->cr4_guest_host_mask;
++		vmcs12->cr0_read_shadow = evmcs->cr0_read_shadow;
++		vmcs12->cr4_read_shadow = evmcs->cr4_read_shadow;
++		vmcs12->guest_cr0 = evmcs->guest_cr0;
++		vmcs12->guest_cr3 = evmcs->guest_cr3;
++		vmcs12->guest_cr4 = evmcs->guest_cr4;
++		vmcs12->guest_dr7 = evmcs->guest_dr7;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_HOST_POINTER))) {
++		vmcs12->host_fs_base = evmcs->host_fs_base;
++		vmcs12->host_gs_base = evmcs->host_gs_base;
++		vmcs12->host_tr_base = evmcs->host_tr_base;
++		vmcs12->host_gdtr_base = evmcs->host_gdtr_base;
++		vmcs12->host_idtr_base = evmcs->host_idtr_base;
++		vmcs12->host_rsp = evmcs->host_rsp;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_CONTROL_XLAT))) {
++		vmcs12->ept_pointer = evmcs->ept_pointer;
++		vmcs12->virtual_processor_id = evmcs->virtual_processor_id;
++	}
++
++	if (unlikely(full || !(evmcs->hv_clean_fields &
++			       HV_VMX_ENLIGHTENED_CLEAN_FIELD_GUEST_GRP1))) {
++		vmcs12->vmcs_link_pointer = evmcs->vmcs_link_pointer;
++		vmcs12->guest_ia32_debugctl = evmcs->guest_ia32_debugctl;
++		vmcs12->guest_ia32_pat = evmcs->guest_ia32_pat;
++		vmcs12->guest_ia32_efer = evmcs->guest_ia32_efer;
++		vmcs12->guest_pdptr0 = evmcs->guest_pdptr0;
++		vmcs12->guest_pdptr1 = evmcs->guest_pdptr1;
++		vmcs12->guest_pdptr2 = evmcs->guest_pdptr2;
++		vmcs12->guest_pdptr3 = evmcs->guest_pdptr3;
++		vmcs12->guest_pending_dbg_exceptions =
++			evmcs->guest_pending_dbg_exceptions;
++		vmcs12->guest_sysenter_esp = evmcs->guest_sysenter_esp;
++		vmcs12->guest_sysenter_eip = evmcs->guest_sysenter_eip;
++		vmcs12->guest_bndcfgs = evmcs->guest_bndcfgs;
++		vmcs12->guest_activity_state = evmcs->guest_activity_state;
++		vmcs12->guest_sysenter_cs = evmcs->guest_sysenter_cs;
++	}
++
++	/*
++	 * Not used?
++	 * vmcs12->vm_exit_msr_store_addr = evmcs->vm_exit_msr_store_addr;
++	 * vmcs12->vm_exit_msr_load_addr = evmcs->vm_exit_msr_load_addr;
++	 * vmcs12->vm_entry_msr_load_addr = evmcs->vm_entry_msr_load_addr;
++	 * vmcs12->cr3_target_value0 = evmcs->cr3_target_value0;
++	 * vmcs12->cr3_target_value1 = evmcs->cr3_target_value1;
++	 * vmcs12->cr3_target_value2 = evmcs->cr3_target_value2;
++	 * vmcs12->cr3_target_value3 = evmcs->cr3_target_value3;
++	 * vmcs12->page_fault_error_code_mask =
++	 *		evmcs->page_fault_error_code_mask;
++	 * vmcs12->page_fault_error_code_match =
++	 *		evmcs->page_fault_error_code_match;
++	 * vmcs12->cr3_target_count = evmcs->cr3_target_count;
++	 * vmcs12->vm_exit_msr_store_count = evmcs->vm_exit_msr_store_count;
++	 * vmcs12->vm_exit_msr_load_count = evmcs->vm_exit_msr_load_count;
++	 * vmcs12->vm_entry_msr_load_count = evmcs->vm_entry_msr_load_count;
++	 */
++
++	/*
++	 * Read only fields:
++	 * vmcs12->guest_physical_address = evmcs->guest_physical_address;
++	 * vmcs12->vm_instruction_error = evmcs->vm_instruction_error;
++	 * vmcs12->vm_exit_reason = evmcs->vm_exit_reason;
++	 * vmcs12->vm_exit_intr_info = evmcs->vm_exit_intr_info;
++	 * vmcs12->vm_exit_intr_error_code = evmcs->vm_exit_intr_error_code;
++	 * vmcs12->idt_vectoring_info_field = evmcs->idt_vectoring_info_field;
++	 * vmcs12->idt_vectoring_error_code = evmcs->idt_vectoring_error_code;
++	 * vmcs12->vm_exit_instruction_len = evmcs->vm_exit_instruction_len;
++	 * vmcs12->vmx_instruction_info = evmcs->vmx_instruction_info;
++	 * vmcs12->exit_qualification = evmcs->exit_qualification;
++	 * vmcs12->guest_linear_address = evmcs->guest_linear_address;
++	 *
++	 * Not present in struct vmcs12:
++	 * vmcs12->exit_io_instruction_ecx = evmcs->exit_io_instruction_ecx;
++	 * vmcs12->exit_io_instruction_esi = evmcs->exit_io_instruction_esi;
++	 * vmcs12->exit_io_instruction_edi = evmcs->exit_io_instruction_edi;
++	 * vmcs12->exit_io_instruction_eip = evmcs->exit_io_instruction_eip;
++	 */
++
++	return 0;
++}
++
++static int copy_vmcs12_to_enlightened(struct vcpu_vmx *vmx)
++{
++	struct vmcs12 *vmcs12 = vmx->nested.cached_vmcs12;
++	struct hv_enlightened_vmcs *evmcs = vmx->nested.hv_evmcs;
++
++	/*
++	 * Should not be changed by KVM:
++	 *
++	 * evmcs->host_es_selector = vmcs12->host_es_selector;
++	 * evmcs->host_cs_selector = vmcs12->host_cs_selector;
++	 * evmcs->host_ss_selector = vmcs12->host_ss_selector;
++	 * evmcs->host_ds_selector = vmcs12->host_ds_selector;
++	 * evmcs->host_fs_selector = vmcs12->host_fs_selector;
++	 * evmcs->host_gs_selector = vmcs12->host_gs_selector;
++	 * evmcs->host_tr_selector = vmcs12->host_tr_selector;
++	 * evmcs->host_ia32_pat = vmcs12->host_ia32_pat;
++	 * evmcs->host_ia32_efer = vmcs12->host_ia32_efer;
++	 * evmcs->host_cr0 = vmcs12->host_cr0;
++	 * evmcs->host_cr3 = vmcs12->host_cr3;
++	 * evmcs->host_cr4 = vmcs12->host_cr4;
++	 * evmcs->host_ia32_sysenter_esp = vmcs12->host_ia32_sysenter_esp;
++	 * evmcs->host_ia32_sysenter_eip = vmcs12->host_ia32_sysenter_eip;
++	 * evmcs->host_rip = vmcs12->host_rip;
++	 * evmcs->host_ia32_sysenter_cs = vmcs12->host_ia32_sysenter_cs;
++	 * evmcs->host_fs_base = vmcs12->host_fs_base;
++	 * evmcs->host_gs_base = vmcs12->host_gs_base;
++	 * evmcs->host_tr_base = vmcs12->host_tr_base;
++	 * evmcs->host_gdtr_base = vmcs12->host_gdtr_base;
++	 * evmcs->host_idtr_base = vmcs12->host_idtr_base;
++	 * evmcs->host_rsp = vmcs12->host_rsp;
++	 * sync_vmcs12() doesn't read these:
++	 * evmcs->io_bitmap_a = vmcs12->io_bitmap_a;
++	 * evmcs->io_bitmap_b = vmcs12->io_bitmap_b;
++	 * evmcs->msr_bitmap = vmcs12->msr_bitmap;
++	 * evmcs->ept_pointer = vmcs12->ept_pointer;
++	 * evmcs->xss_exit_bitmap = vmcs12->xss_exit_bitmap;
++	 * evmcs->vm_exit_msr_store_addr = vmcs12->vm_exit_msr_store_addr;
++	 * evmcs->vm_exit_msr_load_addr = vmcs12->vm_exit_msr_load_addr;
++	 * evmcs->vm_entry_msr_load_addr = vmcs12->vm_entry_msr_load_addr;
++	 * evmcs->cr3_target_value0 = vmcs12->cr3_target_value0;
++	 * evmcs->cr3_target_value1 = vmcs12->cr3_target_value1;
++	 * evmcs->cr3_target_value2 = vmcs12->cr3_target_value2;
++	 * evmcs->cr3_target_value3 = vmcs12->cr3_target_value3;
++	 * evmcs->tpr_threshold = vmcs12->tpr_threshold;
++	 * evmcs->virtual_processor_id = vmcs12->virtual_processor_id;
++	 * evmcs->exception_bitmap = vmcs12->exception_bitmap;
++	 * evmcs->vmcs_link_pointer = vmcs12->vmcs_link_pointer;
++	 * evmcs->pin_based_vm_exec_control = vmcs12->pin_based_vm_exec_control;
++	 * evmcs->vm_exit_controls = vmcs12->vm_exit_controls;
++	 * evmcs->secondary_vm_exec_control = vmcs12->secondary_vm_exec_control;
++	 * evmcs->page_fault_error_code_mask =
++	 *		vmcs12->page_fault_error_code_mask;
++	 * evmcs->page_fault_error_code_match =
++	 *		vmcs12->page_fault_error_code_match;
++	 * evmcs->cr3_target_count = vmcs12->cr3_target_count;
++	 * evmcs->virtual_apic_page_addr = vmcs12->virtual_apic_page_addr;
++	 * evmcs->tsc_offset = vmcs12->tsc_offset;
++	 * evmcs->guest_ia32_debugctl = vmcs12->guest_ia32_debugctl;
++	 * evmcs->cr0_guest_host_mask = vmcs12->cr0_guest_host_mask;
++	 * evmcs->cr4_guest_host_mask = vmcs12->cr4_guest_host_mask;
++	 * evmcs->cr0_read_shadow = vmcs12->cr0_read_shadow;
++	 * evmcs->cr4_read_shadow = vmcs12->cr4_read_shadow;
++	 * evmcs->vm_exit_msr_store_count = vmcs12->vm_exit_msr_store_count;
++	 * evmcs->vm_exit_msr_load_count = vmcs12->vm_exit_msr_load_count;
++	 * evmcs->vm_entry_msr_load_count = vmcs12->vm_entry_msr_load_count;
++	 *
++	 * Not present in struct vmcs12:
++	 * evmcs->exit_io_instruction_ecx = vmcs12->exit_io_instruction_ecx;
++	 * evmcs->exit_io_instruction_esi = vmcs12->exit_io_instruction_esi;
++	 * evmcs->exit_io_instruction_edi = vmcs12->exit_io_instruction_edi;
++	 * evmcs->exit_io_instruction_eip = vmcs12->exit_io_instruction_eip;
++	 */
++
++	evmcs->guest_es_selector = vmcs12->guest_es_selector;
++	evmcs->guest_cs_selector = vmcs12->guest_cs_selector;
++	evmcs->guest_ss_selector = vmcs12->guest_ss_selector;
++	evmcs->guest_ds_selector = vmcs12->guest_ds_selector;
++	evmcs->guest_fs_selector = vmcs12->guest_fs_selector;
++	evmcs->guest_gs_selector = vmcs12->guest_gs_selector;
++	evmcs->guest_ldtr_selector = vmcs12->guest_ldtr_selector;
++	evmcs->guest_tr_selector = vmcs12->guest_tr_selector;
++
++	evmcs->guest_es_limit = vmcs12->guest_es_limit;
++	evmcs->guest_cs_limit = vmcs12->guest_cs_limit;
++	evmcs->guest_ss_limit = vmcs12->guest_ss_limit;
++	evmcs->guest_ds_limit = vmcs12->guest_ds_limit;
++	evmcs->guest_fs_limit = vmcs12->guest_fs_limit;
++	evmcs->guest_gs_limit = vmcs12->guest_gs_limit;
++	evmcs->guest_ldtr_limit = vmcs12->guest_ldtr_limit;
++	evmcs->guest_tr_limit = vmcs12->guest_tr_limit;
++	evmcs->guest_gdtr_limit = vmcs12->guest_gdtr_limit;
++	evmcs->guest_idtr_limit = vmcs12->guest_idtr_limit;
++
++	evmcs->guest_es_ar_bytes = vmcs12->guest_es_ar_bytes;
++	evmcs->guest_cs_ar_bytes = vmcs12->guest_cs_ar_bytes;
++	evmcs->guest_ss_ar_bytes = vmcs12->guest_ss_ar_bytes;
++	evmcs->guest_ds_ar_bytes = vmcs12->guest_ds_ar_bytes;
++	evmcs->guest_fs_ar_bytes = vmcs12->guest_fs_ar_bytes;
++	evmcs->guest_gs_ar_bytes = vmcs12->guest_gs_ar_bytes;
++	evmcs->guest_ldtr_ar_bytes = vmcs12->guest_ldtr_ar_bytes;
++	evmcs->guest_tr_ar_bytes = vmcs12->guest_tr_ar_bytes;
++
++	evmcs->guest_es_base = vmcs12->guest_es_base;
++	evmcs->guest_cs_base = vmcs12->guest_cs_base;
++	evmcs->guest_ss_base = vmcs12->guest_ss_base;
++	evmcs->guest_ds_base = vmcs12->guest_ds_base;
++	evmcs->guest_fs_base = vmcs12->guest_fs_base;
++	evmcs->guest_gs_base = vmcs12->guest_gs_base;
++	evmcs->guest_ldtr_base = vmcs12->guest_ldtr_base;
++	evmcs->guest_tr_base = vmcs12->guest_tr_base;
++	evmcs->guest_gdtr_base = vmcs12->guest_gdtr_base;
++	evmcs->guest_idtr_base = vmcs12->guest_idtr_base;
++
++	evmcs->guest_ia32_pat = vmcs12->guest_ia32_pat;
++	evmcs->guest_ia32_efer = vmcs12->guest_ia32_efer;
++
++	evmcs->guest_pdptr0 = vmcs12->guest_pdptr0;
++	evmcs->guest_pdptr1 = vmcs12->guest_pdptr1;
++	evmcs->guest_pdptr2 = vmcs12->guest_pdptr2;
++	evmcs->guest_pdptr3 = vmcs12->guest_pdptr3;
++
++	evmcs->guest_pending_dbg_exceptions =
++		vmcs12->guest_pending_dbg_exceptions;
++	evmcs->guest_sysenter_esp = vmcs12->guest_sysenter_esp;
++	evmcs->guest_sysenter_eip = vmcs12->guest_sysenter_eip;
++
++	evmcs->guest_activity_state = vmcs12->guest_activity_state;
++	evmcs->guest_sysenter_cs = vmcs12->guest_sysenter_cs;
++
++	evmcs->guest_cr0 = vmcs12->guest_cr0;
++	evmcs->guest_cr3 = vmcs12->guest_cr3;
++	evmcs->guest_cr4 = vmcs12->guest_cr4;
++	evmcs->guest_dr7 = vmcs12->guest_dr7;
++
++	evmcs->guest_physical_address = vmcs12->guest_physical_address;
++
++	evmcs->vm_instruction_error = vmcs12->vm_instruction_error;
++	evmcs->vm_exit_reason = vmcs12->vm_exit_reason;
++	evmcs->vm_exit_intr_info = vmcs12->vm_exit_intr_info;
++	evmcs->vm_exit_intr_error_code = vmcs12->vm_exit_intr_error_code;
++	evmcs->idt_vectoring_info_field = vmcs12->idt_vectoring_info_field;
++	evmcs->idt_vectoring_error_code = vmcs12->idt_vectoring_error_code;
++	evmcs->vm_exit_instruction_len = vmcs12->vm_exit_instruction_len;
++	evmcs->vmx_instruction_info = vmcs12->vmx_instruction_info;
++
++	evmcs->exit_qualification = vmcs12->exit_qualification;
++
++	evmcs->guest_linear_address = vmcs12->guest_linear_address;
++	evmcs->guest_rsp = vmcs12->guest_rsp;
++	evmcs->guest_rflags = vmcs12->guest_rflags;
++
++	evmcs->guest_interruptibility_info =
++		vmcs12->guest_interruptibility_info;
++	evmcs->cpu_based_vm_exec_control = vmcs12->cpu_based_vm_exec_control;
++	evmcs->vm_entry_controls = vmcs12->vm_entry_controls;
++	evmcs->vm_entry_intr_info_field = vmcs12->vm_entry_intr_info_field;
++	evmcs->vm_entry_exception_error_code =
++		vmcs12->vm_entry_exception_error_code;
++	evmcs->vm_entry_instruction_len = vmcs12->vm_entry_instruction_len;
++
++	evmcs->guest_rip = vmcs12->guest_rip;
++
++	evmcs->guest_bndcfgs = vmcs12->guest_bndcfgs;
++
++	return 0;
++}
++
+ /*
+  * Copy the writable VMCS shadow fields back to the VMCS12, in case
+  * they have been modified by the L1 guest. Note that the "read-only"
+@@ -8398,7 +8787,7 @@ static void set_current_vmptr(struct vcpu_vmx *vmx, gpa_t vmptr)
+ 			      SECONDARY_EXEC_SHADOW_VMCS);
+ 		vmcs_write64(VMCS_LINK_POINTER,
+ 			     __pa(vmx->vmcs01.shadow_vmcs));
+-		vmx->nested.sync_shadow_vmcs = true;
++		vmx->nested.need_vmcs12_sync = true;
+ 	}
+ 	vmx->nested.dirty_vmcs12 = true;
+ }
+@@ -9960,9 +10349,16 @@ static void __noclone vmx_vcpu_run(struct kvm_vcpu *vcpu)
+ 		vmcs_write32(PLE_WINDOW, vmx->ple_window);
+ 	}
+ 
+-	if (vmx->nested.sync_shadow_vmcs) {
+-		copy_vmcs12_to_shadow(vmx);
+-		vmx->nested.sync_shadow_vmcs = false;
++	if (vmx->nested.need_vmcs12_sync) {
++		if (unlikely(vmx->nested.hv_evmcs)) {
++			copy_vmcs12_to_enlightened(vmx);
++			/* All fields are clean */
++			vmx->nested.hv_evmcs->hv_clean_fields |=
++				HV_VMX_ENLIGHTENED_CLEAN_FIELD_ALL;
++		} else {
++			copy_vmcs12_to_shadow(vmx);
++		}
++		vmx->nested.need_vmcs12_sync = false;
+ 	}
+ 
+ 	if (test_bit(VCPU_REGS_RSP, (unsigned long *)&vcpu->arch.regs_dirty))
+@@ -11281,7 +11677,7 @@ static int prepare_vmcs02(struct kvm_vcpu *vcpu, struct vmcs12 *vmcs12,
+ 	struct vcpu_vmx *vmx = to_vmx(vcpu);
+ 	u32 exec_control, vmcs12_exec_ctrl;
+ 
+-	if (vmx->nested.dirty_vmcs12) {
++	if (vmx->nested.dirty_vmcs12 || vmx->nested.hv_evmcs) {
+ 		prepare_vmcs02_full(vcpu, vmcs12);
+ 		vmx->nested.dirty_vmcs12 = false;
+ 	}
+@@ -11757,8 +12153,13 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 
+ 	vmcs12 = get_vmcs12(vcpu);
+ 
+-	if (enable_shadow_vmcs)
++	if (vmx->nested.hv_evmcs) {
++		copy_enlightened_to_vmcs12(vmx, vmx->nested.dirty_vmcs12);
++		/* Enlightened VMCS doesn't have launch state */
++		vmcs12->launch_state = !launch;
++	} else if (enable_shadow_vmcs) {
+ 		copy_shadow_to_vmcs12(vmx);
++	}
+ 
+ 	/*
+ 	 * The nested entry process starts with enforcing various prerequisites
+@@ -12383,8 +12784,8 @@ static void nested_vmx_vmexit(struct kvm_vcpu *vcpu, u32 exit_reason,
+ 	 */
+ 	kvm_make_request(KVM_REQ_APIC_PAGE_RELOAD, vcpu);
+ 
+-	if (enable_shadow_vmcs && exit_reason != -1)
+-		vmx->nested.sync_shadow_vmcs = true;
++	if ((exit_reason != -1) && (enable_shadow_vmcs || vmx->nested.hv_evmcs))
++		vmx->nested.need_vmcs12_sync = true;
+ 
+ 	/* in case we halted in L2 */
+ 	vcpu->arch.mp_state = KVM_MP_STATE_RUNNABLE;
+@@ -12463,12 +12864,14 @@ static void nested_vmx_entry_failure(struct kvm_vcpu *vcpu,
+ 			struct vmcs12 *vmcs12,
+ 			u32 reason, unsigned long qualification)
  {
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 776391cf69a5..b6d6a36f1a33 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -2540,7 +2540,7 @@ int kvm_hv_vapic_msr_read(struct kvm_vcpu *vcpu, u32 reg, u64 *data)
- 	return 0;
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
+ 	load_vmcs12_host_state(vcpu, vmcs12);
+ 	vmcs12->vm_exit_reason = reason | VMX_EXIT_REASONS_FAILED_VMENTRY;
+ 	vmcs12->exit_qualification = qualification;
+ 	nested_vmx_succeed(vcpu);
+-	if (enable_shadow_vmcs)
+-		to_vmx(vcpu)->nested.sync_shadow_vmcs = true;
++	if (enable_shadow_vmcs || vmx->nested.hv_evmcs)
++		vmx->nested.need_vmcs12_sync = true;
  }
  
--int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data)
-+int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len)
- {
- 	u64 addr = data & ~KVM_MSR_ENABLED;
- 	if (!IS_ALIGNED(addr, 4))
-@@ -2550,7 +2550,7 @@ int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data)
- 	if (!pv_eoi_enabled(vcpu))
- 		return 0;
- 	return kvm_gfn_to_hva_cache_init(vcpu->kvm, &vcpu->arch.pv_eoi.data,
--					 addr, sizeof(u8));
-+					 addr, len);
- }
- 
- void kvm_apic_accept_events(struct kvm_vcpu *vcpu)
-diff --git a/arch/x86/kvm/lapic.h b/arch/x86/kvm/lapic.h
-index ed0ed39abd36..ff6ef9c3d760 100644
---- a/arch/x86/kvm/lapic.h
-+++ b/arch/x86/kvm/lapic.h
-@@ -120,7 +120,7 @@ static inline bool kvm_hv_vapic_assist_page_enabled(struct kvm_vcpu *vcpu)
- 	return vcpu->arch.hyperv.hv_vapic & HV_X64_MSR_VP_ASSIST_PAGE_ENABLE;
- }
- 
--int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data);
-+int kvm_lapic_enable_pv_eoi(struct kvm_vcpu *vcpu, u64 data, unsigned long len);
- void kvm_lapic_init(void);
- void kvm_lapic_exit(void);
- 
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 06dd4cdb2ca8..a57766b940a5 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2442,7 +2442,7 @@ int kvm_set_msr_common(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 
- 		break;
- 	case MSR_KVM_PV_EOI_EN:
--		if (kvm_lapic_enable_pv_eoi(vcpu, data))
-+		if (kvm_lapic_enable_pv_eoi(vcpu, data, sizeof(u8)))
- 			return 1;
- 		break;
- 
+ static int vmx_check_intercept(struct kvm_vcpu *vcpu,
 -- 
 2.14.4
 
