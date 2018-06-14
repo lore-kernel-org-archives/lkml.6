@@ -2,94 +2,186 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B262BC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:03:35 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7B095C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BFF02087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CC11208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 17:16:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ArZtR2tc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BFF02087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="SXX7hLXp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC11208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755373AbeFNRDc (ORCPT
+        id S1754895AbeFNRQu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 13:03:32 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:34756 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755214AbeFNRDa (ORCPT
+        Thu, 14 Jun 2018 13:16:50 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:54450 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754723AbeFNRQs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 13:03:30 -0400
-Received: by mail-pf0-f195.google.com with SMTP id a63-v6so3549884pfl.1;
-        Thu, 14 Jun 2018 10:03:30 -0700 (PDT)
+        Thu, 14 Jun 2018 13:16:48 -0400
+Received: by mail-it0-f67.google.com with SMTP id 76-v6so9308265itx.4
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 10:16:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=amarulasolutions.com; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=3BkHA9xFqUX1zuLR9IfQ62Zrt8h+Os6UTsy1x+HZSMo=;
-        b=ArZtR2tcclRjA0/Xh1lV9Q7QhozaZi1h/UV9aSM8Su9w00XOHa8sE6cSvq/hzVDcb1
-         BlGGe7SzpgQYfb6FCWYIrNtB/vn5DQ9Jeq5aWWR6GcpObxh1TxNv9BOF9W5kWKNAYvBk
-         ehJmnjfNvldVIKiw1QXXglVDSPvmZd4rxXsV5buoyy2PfzCDS9vUQcrp0NN1PtMyRSbj
-         DvbXe+082rxlNEiVuyS8A2mw1i4qOLiJZUvvtZYWJ1xO4LJefkbHsLa3uqFmS5cwdfjL
-         i80vHNcJ+Wv5tL/BJ19rB5FIXBIY/Y/tcTwzEncPXBMsvrKk9GlokqDuyNc0Buh8y3Kf
-         bZYA==
+         :cc:content-transfer-encoding;
+        bh=tHYcn8MLCbOCqTk2bjec8Wc+1dglvW7iSOu7N87yvRY=;
+        b=SXX7hLXp61C76QnSUVp/FC6xIpanlWi7PZuItL+0sT9HG5RPssaWVT5JJDTgBP8G5w
+         gKByKL+4iemyVJ+IiHHst4gZI3y2GWIqu7SUny2xdn78DivVqupUiN4dAA8s6nEozqeA
+         dDGrj5hI45H0MrSWmc73ZGJo2hZIitNIg5eK0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=3BkHA9xFqUX1zuLR9IfQ62Zrt8h+Os6UTsy1x+HZSMo=;
-        b=XwjccEdnRxIlYL/YCs/P9GqAVe0MvhXvMOYPFBjBo47sXwUv+21TOYGXTUwhQBz1TC
-         m4mfs+n/VviuLEHAjBTMzY6FHuSpcZzsWFmy9zOVx69iNIIqY8BeU5tUMbIYqKzyEfgc
-         85sGizLrsz5AuLljd5KSNwIYgeyMN0tzn1VdMk6Rbq9X06UoiwrsaMFoFdbgrQX/oRJp
-         FS0xFZGrMwozHbsyfgp5AOOahuWSkBxJdDZrZRb3gGZVz17Li6C3sTlqcaXHOnrLnj7g
-         CViSblBU2a93Bbd22kJSXlqTIwX8CQCj4k0Fg0suZ6uvgrjfQePVgIB/VAlpWRn1z689
-         58pw==
-X-Gm-Message-State: APt69E3+xZ10SDf5FUAX4kHppCJyA8Gbv/Bm5eLj6EJstZ3u5VJjxPwl
-        UK2KZB6Y5wpZR4PbG52yEiANhhlNLCqghY4yac4=
-X-Google-Smtp-Source: ADUXVKL8KQYvoW7No9iQRvxglCi+b8RrDPPgCVTlx53pehR1vm4etATVQM8l2KZNHjwvP2oZroDziN2KBpio4KowAdk=
-X-Received: by 2002:a65:42c2:: with SMTP id l2-v6mr2981384pgp.237.1528995810339;
- Thu, 14 Jun 2018 10:03:30 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tHYcn8MLCbOCqTk2bjec8Wc+1dglvW7iSOu7N87yvRY=;
+        b=juG3zbLTF7gR7rxF/VqOzBGtwVsKWU4KEPKOtYq9+MJBd0Zj8g84NSjdiBMr54bJLo
+         i5Y2R+ZyYvP/LmWYKDyMAwmMzon5dcvOqb47Et236hIH51q5KBo3ugKcFTB6QSSfQ3mz
+         LE8A1abLvLgHsOAo9wOp33cRr/NouN34ud1Qv2k+cTZ0xLyfC0Y2xcwbWLPOgS8nNYKW
+         yHBfsY8rCxR/3lu0ZYSK/Eojox6eCtVP5iP4K3NhDDBQF9FfiCCqnjEHMWejz4N27Won
+         eucS6FknhNUBvBfnA+RBw0QxcTd/Htc0ysCqzmFrX3A2KXkoFT3TQGiIyRiXmBnRcEzM
+         Kylw==
+X-Gm-Message-State: APt69E1FTRTUvPrQp7Fh0QSwUfFWO47KggBttSfGT0XzbEjY5uUe9Cbk
+        g96aj0Hcw70WbGicctoiDTSHXuVsgPNph1EWGOmA+Q==
+X-Google-Smtp-Source: ADUXVKIhZ2VZn5P4nGOBrZDC+qi7FkTKNYI6MgX15b+tc991GsKKWRMjVT+Qq4C/2+X1bqQZINqeOglw0hbcUktUwBg=
+X-Received: by 2002:a24:d80a:: with SMTP id b10-v6mr2958927itg.141.1528996607435;
+ Thu, 14 Jun 2018 10:16:47 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a17:90a:284f:0:0:0:0 with HTTP; Thu, 14 Jun 2018 10:03:09
+Received: by 2002:a02:89ca:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 10:16:46
  -0700 (PDT)
-In-Reply-To: <20180614142448.GC24762@mellanox.com>
-References: <20180613234947.15767-1-xiyou.wangcong@gmail.com>
- <20180614053446.GB18426@mtr-leonro.mtl.com> <CAM_iQpXxHk+yFqqK-Hezsc83_mKfbUXr4=jjNnik5DwGscRKUA@mail.gmail.com>
- <20180614070108.GD18426@mtr-leonro.mtl.com> <20180614142448.GC24762@mellanox.com>
-From:   Cong Wang <xiyou.wangcong@gmail.com>
-Date:   Thu, 14 Jun 2018 10:03:09 -0700
-Message-ID: <CAM_iQpWz9b01ksW_OUHgr1=pf-bNsq_TxoNCQxuDdhUXfvoyOQ@mail.gmail.com>
-Subject: Re: [PATCH] infiniband: fix a subtle race condition
-To:     Jason Gunthorpe <jgg@mellanox.com>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-rdma@vger.kernel.org,
-        Doug Ledford <dledford@redhat.com>
+In-Reply-To: <2742773.k39D243pH3@jernej-laptop>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com> <2742773.k39D243pH3@jernej-laptop>
+From:   Jagan Teki <jagan@amarulasolutions.com>
+Date:   Thu, 14 Jun 2018 22:46:46 +0530
+Message-ID: <CAMty3ZBt33q9HWm7n3SrON_Y51g+bsQNfoHajCCVzuKZLGHkjw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v2 00/27] Add support for R40 HDMI pipeline
+To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>, gustavo@padovan.org,
+        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 7:24 AM, Jason Gunthorpe <jgg@mellanox.com> wrote:
+On Thu, Jun 14, 2018 at 8:04 PM, Jernej =C5=A0krabec <jernej.skrabec@siol.n=
+et> wrote:
+> Dne =C4=8Detrtek, 14. junij 2018 ob 09:12:41 CEST je Jagan Teki napisal(a=
+):
+>> On Wed, Jun 13, 2018 at 1:30 AM, Jernej Skrabec <jernej.skrabec@siol.net=
 >
-> This was my brief reaction too, this code path almost certainly has a
-> use-after-free, and we should fix the concurrency between the two
-> places in some correct way..
+> wrote:
+>> > This series adds support for R40 HDMI pipeline. It is a bit special
+>> > than other already supported pipelines because it has additional unit
+>> > called TCON TOP responsible for relationship configuration between
+>> > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
+>> > and TV TCONs, TV encoder clock settings and pin muxing between LCD
+>> > and TV encoders.
+>> >
+>> > However, it seems that TCON TOP will become a norm, since newer
+>> > Allwinner SoCs like H6 also have this unit.
+>> >
+>> > I tested different possible configurations:
+>> > - mixer0 <> TCON-TV0 <> HDMI
+>> > - mixer0 <> TCON-TV1 <> HDMI
+>> > - mixer1 <> TCON-TV0 <> HDMI
+>> > - mixer1 <> TCON-TV1 <> HDMI
+>> >
+>> > Please review.
+>> >
+>> > Best regards,
+>> > Jernej
+>> >
+>> > Changes from v1:
+>> > - Split DT bindings patch and updated description
+>> > - Split HDMI PHY patch
+>> > - Move header file from TCON TOP patch to dt bindings patch
+>> > - Added Rob reviewed-by tag
+>> > - Used clk_hw_register_gate() instead of custom gate registration code
+>> > - Reworked TCON TOP to be part of of-graph. Because of that, a lot of
+>> >
+>> >   new patches were added.
+>> >
+>> > - Droped mixer index quirk patch
+>> > - Reworked TCON support for TCON TOP
+>> > - Updated commit messages
+>> >
+>> > Jernej Skrabec (27):
+>> >   clk: sunxi-ng: r40: Add minimal rate for video PLLs
+>> >   clk: sunxi-ng: r40: Allow setting parent rate to display related
+>> >
+>> >     clocks
+>> >
+>> >   clk: sunxi-ng: r40: Export video PLLs
+>> >   dt-bindings: display: sunxi-drm: Add TCON TOP description
+>> >   drm/sun4i: Add TCON TOP driver
+>> >   drm/sun4i: Fix releasing node when enumerating enpoints
+>> >   drm/sun4i: Split out code for enumerating endpoints in output port
+>> >   drm/sun4i: Add support for traversing graph with TCON TOP
+>> >   drm/sun4i: Don't skip TCONs if they don't have channel 0
+>> >   dt-bindings: display: sun4i-drm: Add R40 TV TCON description
+>> >   drm/sun4i: tcon: Add support for tcon-top gate
+>> >   drm/sun4i: tcon: Generalize engine search algorithm
+>> >   drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
+>> >   drm/sun4i: Don't check for panel or bridge on TV TCONs
+>> >   drm/sun4i: Add support for R40 TV TCON
+>> >   dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
+>> >   drm/sun4i: Add support for R40 mixers
+>> >   dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
+>> >   drm/sun4i: Enable DW HDMI PHY clock
+>> >   drm/sun4i: Don't change clock bits in DW HDMI PHY driver
+>> >   drm/sun4i: DW HDMI PHY: Add support for second PLL
+>> >   drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
+>> >
+>> >     driver
+>> >
+>> >   drm/sun4i: Add support for A64 HDMI PHY
+>> >   drm: of: Export drm_crtc_port_mask()
+>> >   drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
+>> >   ARM: dts: sun8i: r40: Add HDMI pipeline
+>> >   ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
+>>
+>> Tested whole series on top of linux-next.
+>>
+>> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
+>
+> Thanks!
 
-First of all, why use-after-free could trigger an imbalance unlock?
-IOW, why do we have to solve use-after-free to fix this imbalance
-unlock?
+I've V40 board, which is same as R40. I'm able to detect the HDMI but
+seems edid not detecting properly.
 
-Second of all, my patch is _not_ intended to solve any use-after-free,
-it only solves the imbalance unlock. I never claim it solves more
-anywhere.
-
-Third of all, the use-after-free I can see (race with ->close) exists
-before my patch, this patch doesn't make it better or worse, nor
-I have any intend to fix it.
+[    0.983007] sun4i-drm display-engine: bound 1100000.mixer (ops 0xc074a80=
+c)
+[    0.999043] sun4i-drm display-engine: bound 1200000.mixer (ops 0xc074a80=
+c)
+[    1.006229] sun4i-drm display-engine: bound 1c70000.tcon-top (ops 0xc074=
+e2ac)
+[    1.013609] sun4i-drm display-engine: bound 1c73000.lcd-controller
+(ops 0xc0747a28)
+[    1.053988] sun8i-dw-hdmi 1ee0000.hdmi: Detected HDMI TX controller
+v1.32a with HDCP (sun8i_dw_hdmi_phy)
+[    1.063913] sun8i-dw-hdmi 1ee0000.hdmi: registered DesignWare HDMI
+I2C bus driver
+[    1.071683] sun4i-drm display-engine: bound 1ee0000.hdmi (ops 0xc074a298=
+)
+[    1.078484] [drm] Supports vblank timestamp caching Rev 2 (21.10.2013).
+[    1.085098] [drm] No driver support for vblank timestamp query.
+[    1.091055] [drm] Cannot find any crtc or sizes
+[    1.095995] [drm] Initialized sun4i-drm 1.0.0 20150629 for
+display-engine on minor 0
