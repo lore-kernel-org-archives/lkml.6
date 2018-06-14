@@ -6,45 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5A861C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5EC64C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E759208E9
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09560208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:06:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z6H6uVx7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E759208E9
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="daNx8mWV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09560208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936265AbeFNOGT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:06:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46536 "EHLO mail.kernel.org"
+        id S936282AbeFNOGZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:06:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936257AbeFNOGR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:06:17 -0400
+        id S936266AbeFNOGW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:06:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C42D6208CB;
-        Thu, 14 Jun 2018 14:06:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89C55208DA;
+        Thu, 14 Jun 2018 14:06:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985176;
-        bh=Cdfd6AaaxDIYsoJV78Bqe1EhoWYU3taRH1BGz54IF1Y=;
+        s=default; t=1528985182;
+        bh=vEAKO/YvHO9KMQZBwi3+GAZZFY6v5dlf+Sjot+mku6U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z6H6uVx7psqYAZ5PeQV+KGILcG7FJ2ySnfNwvLeTTc1S4p7hxfR1ShAzCxatWdyo6
-         tjQP4llYdYcQhAkczaWjy+dG8S6cfK9LBcwe9HH6zvj7xKus2ay3gL0W7JcFwoeSLt
-         /OIiIx28WhvOQDQAqmVfAUFT9YKaOCfF1Lg/ItHs=
+        b=daNx8mWV6qWb3QFximKQYIdJa1QUkGsob/2GMOoNfFidhn3ZGYGgdVOuBEgGzjDDy
+         GUIxcZ5UcjYYj/n2NDYSh5cP71VrvNCCHWOGlex3qFfmxTxmJy3PYMLG/DJj7ACaGr
+         P1f5Yu4dYqLe0xM6GqNNZYfeSmCecyVeNTspT2hg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com,
-        syzbot <syzkaller@googlegroups.com>,
-        Laura Abbott <labbott@redhat.com>
-Subject: [PATCH 4.17 09/45] staging: android: ion: Switch to pr_warn_once in ion_buffer_destroy
-Date:   Thu, 14 Jun 2018 16:04:00 +0200
-Message-Id: <20180614132127.249261777@linuxfoundation.org>
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.17 20/45] usb: gadget: udc: renesas_usb3: should remove debugfs
+Date:   Thu, 14 Jun 2018 16:04:11 +0200
+Message-Id: <20180614132127.857851073@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -61,45 +61,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 45ad559a29629cb1c64ee636563c69b71524f077 upstream.
+commit 1990cf7c21ea185cec98c6d45a82c04481261e35 upstream.
 
-Syzbot reported yet another warning with Ion:
+This patch fixes an issue that this driver doesn't remove its debugfs.
 
-WARNING: CPU: 0 PID: 1467 at drivers/staging/android/ion/ion.c:122
-ion_buffer_destroy+0xd4/0x190 drivers/staging/android/ion/ion.c:122
-Kernel panic - not syncing: panic_on_warn set ...
-
-This is catching that a buffer was freed with an existing kernel mapping
-still present. This can be easily be triggered from userspace by calling
-DMA_BUF_SYNC_START without calling DMA_BUF_SYNC_END. Switch to a single
-pr_warn_once to indicate the error without being disruptive.
-
-Reported-by: syzbot+cd8bcd40cb049efa2770@syzkaller.appspotmail.com
-Reported-by: syzbot <syzkaller@googlegroups.com>
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Cc: stable <stable@vger.kernel.org>
+Fixes: 43ba968b00ea ("usb: gadget: udc: renesas_usb3: add debugfs to set the b-device mode")
+Cc: <stable@vger.kernel.org> # v4.14+
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/staging/android/ion/ion.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/udc/renesas_usb3.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -114,8 +114,11 @@ err2:
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -333,6 +333,7 @@ struct renesas_usb3 {
+ 	struct extcon_dev *extcon;
+ 	struct work_struct extcon_work;
+ 	struct phy *phy;
++	struct dentry *dentry;
  
- void ion_buffer_destroy(struct ion_buffer *buffer)
- {
--	if (WARN_ON(buffer->kmap_cnt > 0))
-+	if (buffer->kmap_cnt > 0) {
-+		pr_warn_once("%s: buffer still mapped in the kernel\n",
-+			     __func__);
- 		buffer->heap->ops->unmap_kernel(buffer->heap, buffer);
+ 	struct renesas_usb3_ep *usb3_ep;
+ 	int num_usb3_eps;
+@@ -2393,8 +2394,12 @@ static void renesas_usb3_debugfs_init(st
+ 
+ 	file = debugfs_create_file("b_device", 0644, root, usb3,
+ 				   &renesas_usb3_b_device_fops);
+-	if (!file)
++	if (!file) {
+ 		dev_info(dev, "%s: Can't create debugfs mode\n", __func__);
++		debugfs_remove_recursive(root);
++	} else {
++		usb3->dentry = root;
 +	}
- 	buffer->heap->ops->free(buffer);
- 	kfree(buffer);
  }
+ 
+ /*------- platform_driver ------------------------------------------------*/
+@@ -2402,6 +2407,7 @@ static int renesas_usb3_remove(struct pl
+ {
+ 	struct renesas_usb3 *usb3 = platform_get_drvdata(pdev);
+ 
++	debugfs_remove_recursive(usb3->dentry);
+ 	device_remove_file(&pdev->dev, &dev_attr_role);
+ 
+ 	usb_del_gadget_udc(&usb3->gadget);
 
 
