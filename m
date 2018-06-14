@@ -2,98 +2,115 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 594B3C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:26:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 74217C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:28:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A60D208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:26:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A60D208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=h-hofmeier.de
+	by mail.kernel.org (Postfix) with ESMTP id 16807208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:28:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="gwC+1U+1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16807208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755389AbeFNP0F (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 11:26:05 -0400
-Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:60891 "EHLO
-        faui40.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1755092AbeFNP0E (ORCPT
+        id S964852AbeFNP2f (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 11:28:35 -0400
+Received: from mail.efficios.com ([167.114.142.138]:49202 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936025AbeFNP2d (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 11:26:04 -0400
-X-Greylist: delayed 314 seconds by postgrey-1.27 at vger.kernel.org; Thu, 14 Jun 2018 11:26:03 EDT
-Received: from faui49man9 (faui49man9.informatik.uni-erlangen.de [131.188.42.54])
-        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 17C0458C5BC;
-        Thu, 14 Jun 2018 17:20:49 +0200 (CEST)
-Received: by faui49man9 (sSMTP sendmail emulation); Thu, 14 Jun 2018 17:20:49 +0200
-From:   Henriette Hofmeier <passt@h-hofmeier.de>
-To:     devel@linuxdriverproject.org
-Cc:     zbr@ioremap.net, arvind.yadav.cs@gmail.com,
-        gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-        Henriette Hofmeier <passt@h-hofmeier.de>,
-        Florian Harbecke <florian.harbecke@fau.de>
-Subject: [PATCH 1/3] ds2490.c: Add required spaces
-Date:   Thu, 14 Jun 2018 17:20:39 +0200
-Message-Id: <1528989641-20284-2-git-send-email-passt@h-hofmeier.de>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528989641-20284-1-git-send-email-passt@h-hofmeier.de>
-References: <1528989641-20284-1-git-send-email-passt@h-hofmeier.de>
+        Thu, 14 Jun 2018 11:28:33 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 0EA9522A6AC;
+        Thu, 14 Jun 2018 11:28:32 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id N_3xWb_x2L6c; Thu, 14 Jun 2018 11:28:31 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 9EA0E22A6A8;
+        Thu, 14 Jun 2018 11:28:31 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 9EA0E22A6A8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1528990111;
+        bh=BisWm1fQID4Ru64d20mSYq/lL2qy3S/S7gIbdg1Z0rM=;
+        h=From:To:Date:Message-Id;
+        b=gwC+1U+1/y0z0lhAv1rhrNOZP+E66jA3VaIvU79gm6v6bwX2m2kFjKMqeDTFhqE8g
+         9ZS4qQdWKHy7xj5cnMTzdibzYXGrmAYp19M+zOLkNN7pG66wqrcwcuHrh53VxqKp2A
+         FlGSA1PDQCkJLrJOoxk91kUR9hj3pR4emvkyQlCPEqMQ43g9wjlqQ999g6ioAwjHiU
+         fqXKkKGiH4g+w3gMhVOUloHkPwNUF0V8YoTiJ4+9ZQ54f3LxWslnFD/NAu6dXwFOFq
+         NEOpEfv3+zANLscWd3R5raoDegn11hPEQ9vyHSDtCrwELd1biCWEsE69H/CqNX/Y44
+         jP+ODN28xu/Og==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 18yAey9-EJYF; Thu, 14 Jun 2018 11:28:31 -0400 (EDT)
+Received: from laptop-mjeanson.internal.efficios.com (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id 6126022A6A3;
+        Thu, 14 Jun 2018 11:28:31 -0400 (EDT)
+From:   Michael Jeanson <mjeanson@efficios.com>
+Cc:     Michael Jeanson <mjeanson@efficios.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Vakul Garg <vakul.garg@nxp.com>, Scott Wood <swood@redhat.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [PATCH] powerpc/e500mc: Set assembler machine type to e500mc
+Date:   Thu, 14 Jun 2018 11:27:42 -0400
+Message-Id: <20180614152742.21075-1-mjeanson@efficios.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add missing spaces in for- and while-loops
-reported missing by checkpatch.
+In binutils 2.26 a new opcode for the "wait" instruction was added for the
+POWER9 and has precedence over the one specific to the e500mc. Commit
+ebf714ff3756 ("powerpc/e500mc: Add support for the wait instruction in
+e500_idle") uses this instruction specifically on the e500mc to work around
+an erratum.
 
-Signed-off-by: Henriette Hofmeier <passt@h-hofmeier.de>
-Signed-off-by: Florian Harbecke <florian.harbecke@fau.de>
+This results in an invalid instruction in idle_e500 when we build for the
+e500mc on bintutils >= 2.26 with the default assembler machine type.
+
+Since multiplatform between e500 and non-e500 is not supported, set the
+assembler machine type globaly when CONFIG_PPC_E500MC=y.
+
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+CC: Paul Mackerras <paulus@samba.org>
+CC: Michael Ellerman <mpe@ellerman.id.au>
+CC: Kumar Gala <galak@kernel.crashing.org>
+CC: Vakul Garg <vakul.garg@nxp.com>
+CC: Scott Wood <swood@redhat.com>
+CC: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+CC: linuxppc-dev@lists.ozlabs.org
+CC: linux-kernel@vger.kernel.org
+CC: stable@vger.kernel.org
 ---
- drivers/w1/masters/ds2490.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/powerpc/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/w1/masters/ds2490.c b/drivers/w1/masters/ds2490.c
-index c423bdb..917a5f1 100644
---- a/drivers/w1/masters/ds2490.c
-+++ b/drivers/w1/masters/ds2490.c
-@@ -236,7 +236,7 @@ static void ds_dump_status(struct ds_device *dev, unsigned char *buf, int count)
- 	int i;
+diff --git a/arch/powerpc/Makefile b/arch/powerpc/Makefile
+index 95813df90801..bb2523b4bd8f 100644
+--- a/arch/powerpc/Makefile
++++ b/arch/powerpc/Makefile
+@@ -251,6 +251,7 @@ cpu-as-$(CONFIG_4xx)		+= -Wa,-m405
+ cpu-as-$(CONFIG_ALTIVEC)	+= $(call as-option,-Wa$(comma)-maltivec)
+ cpu-as-$(CONFIG_E200)		+= -Wa,-me200
+ cpu-as-$(CONFIG_PPC_BOOK3S_64)	+= -Wa,-mpower4
++cpu-as-$(CONFIG_PPC_E500MC)	+= $(call as-option,-Wa$(comma)-me500mc)
  
- 	pr_info("0x%x: count=%d, status: ", dev->ep[EP_STATUS], count);
--	for (i=0; i<count; ++i)
-+	for (i = 0; i < count; ++i)
- 		pr_info("%02x ", buf[i]);
- 	pr_info("\n");
- 
-@@ -358,7 +358,7 @@ static int ds_recv_data(struct ds_device *dev, unsigned char *buf, int size)
- 		int i;
- 
- 		printk("%s: count=%d: ", __func__, count);
--		for (i=0; i<count; ++i)
-+		for (i = 0; i < count; ++i)
- 			printk("%02x ", buf[i]);
- 		printk("\n");
- 	}
-@@ -404,7 +404,7 @@ int ds_stop_pulse(struct ds_device *dev, int limit)
- 			if (err)
- 				break;
- 		}
--	} while(++count < limit);
-+	} while (++count < limit);
- 
- 	return err;
- }
-@@ -447,7 +447,7 @@ static int ds_wait_status(struct ds_device *dev, struct ds_status *st)
- 		if (err >= 0) {
- 			int i;
- 			printk("0x%x: count=%d, status: ", dev->ep[EP_STATUS], err);
--			for (i=0; i<err; ++i)
-+			for (i = 0; i < err; ++i)
- 				printk("%02x ", dev->st_buf[i]);
- 			printk("\n");
- 		}
+ KBUILD_AFLAGS += $(cpu-as-y)
+ KBUILD_CFLAGS += $(cpu-as-y)
 -- 
-2.7.4
+2.17.1
 
