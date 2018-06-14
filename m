@@ -5,54 +5,81 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 27C5EC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:24:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A993FC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3ABE208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:24:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3ABE208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 69DC8208E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:25:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69DC8208E2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754816AbeFNIYg (ORCPT
+        id S1754818AbeFNIZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:24:36 -0400
-Received: from verein.lst.de ([213.95.11.211]:45107 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752876AbeFNIYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:24:34 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id C750568C4E; Thu, 14 Jun 2018 10:32:52 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 10:32:52 +0200
-From:   "hch@lst.de" <hch@lst.de>
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     "hch@lst.de" <hch@lst.de>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "randrianasulu@gmail.com" <randrianasulu@gmail.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>
-Subject: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
-        4.17.0-x64-08428-g7d3bf613e99a
-Message-ID: <20180614083252.GA18536@lst.de>
-References: <201806091606.51078.randrianasulu@gmail.com> <025bf705-15b0-65e5-4b16-6c91d41c1730@infradead.org> <40617b19667b3c1302f8a903c19f2fa2f409b12a.camel@wdc.com> <5ca74fb7-af70-31c3-0e3f-bace058e5a57@oracle.com> <20180613140411.GA32701@lst.de> <09e8bd7605febd091679172d68ca1e9ca3990c91.camel@wdc.com> <20180613143558.GA1163@lst.de> <77932f7b-08ba-7ece-3778-d7da82772057@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77932f7b-08ba-7ece-3778-d7da82772057@oracle.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Thu, 14 Jun 2018 04:25:09 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43962 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752876AbeFNIZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:25:08 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8E077402345E;
+        Thu, 14 Jun 2018 08:25:07 +0000 (UTC)
+Received: from vitty.brq.redhat.com (ovpn-204-228.brq.redhat.com [10.40.204.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B369310FFE4D;
+        Thu, 14 Jun 2018 08:25:03 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>
+Subject: [PATCH 0/5] KVM: nVMX: Enlightened VMCS for Hyper-V on KVM
+Date:   Thu, 14 Jun 2018 10:24:55 +0200
+Message-Id: <20180614082500.18548-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 08:25:07 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 08:25:07 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 03:49:28PM +0800, jianchao.wang wrote:
-> Yes, it will work for this issue.
-> But we should also clear the RQF_TIMED_OUT in __blk_mq_requeue_request and blk_mq_rq_ctx_init.
+This is an initial implementation of Enlightened VMCS for nested Hyper-V on
+KVM. Using it helps to spare 1500 cpu cycles for nested vmexit (tight cpuid
+loop in WS2016 with Hyper-V role on KVM: 15200 cycles -> 13700 cycles).
 
-blk_mq_rq_ctx_init always clears rq_flags, so we don't need to explcitly
-clear it.
+Changes since RFCv2:
+- Rename sync_shadow_vmcs to need_vmcs12_sync and reuse for eVMCS case
+  [Paolo Bonzini]
 
-__blk_mq_requeue_request probablys needs it so that we handle the
-case of requeuing from the error handling indeed.
+Ladi Prosek (1):
+  KVM: hyperv: define VP assist page helpers
+
+Vitaly Kuznetsov (4):
+  KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
+  KVM: nVMX: add enlightened VMCS state
+  KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+  KVM: nVMX: optimize prepare_vmcs02{,_full} for Enlightened VMCS case
+
+ arch/x86/include/asm/kvm_host.h |   3 +
+ arch/x86/kvm/hyperv.c           |  23 +-
+ arch/x86/kvm/hyperv.h           |   4 +
+ arch/x86/kvm/lapic.c            |   4 +-
+ arch/x86/kvm/lapic.h            |   2 +-
+ arch/x86/kvm/svm.c              |   9 +
+ arch/x86/kvm/vmx.c              | 810 +++++++++++++++++++++++++++++++++-------
+ arch/x86/kvm/x86.c              |  17 +-
+ include/uapi/linux/kvm.h        |   1 +
+ 9 files changed, 724 insertions(+), 149 deletions(-)
+
+-- 
+2.14.4
+
