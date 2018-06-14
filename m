@@ -6,43 +6,54 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 580F2C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5922CC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9BE208DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F58F208E4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:13:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBoyoueS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9BE208DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7tHMUFr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F58F208E4
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966299AbeFNONo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:13:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55174 "EHLO mail.kernel.org"
+        id S966315AbeFNONt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:13:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965675AbeFNONk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:13:40 -0400
+        id S966300AbeFNONp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:13:45 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D1B5208DA;
-        Thu, 14 Jun 2018 14:13:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEC68208DA;
+        Thu, 14 Jun 2018 14:13:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985620;
-        bh=t2D4EyYGc6V5ADSbrQDDkhFvkoV0GtQmBwZHyXF5Pm0=;
+        s=default; t=1528985625;
+        bh=3lTcSw9S5+HadAzaN7KDhOr9ETr3TIUQHdg/wSlyQYU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iBoyoueSqdXerJUGAbUacJBQHBgeow7OeiulEzwkJea/uI8xoJ6yd3Een+llNXnaz
-         ieoNubVTP58f6BXj2rH+0CKfBhrIzcCsKyaB5vdrl6S+WH0ar1a8XWIwtcBKERdIrA
-         ppwTpOD/8shxJ7dEGBXFsg0obG7nqEuqRQ2+blMc=
+        b=Y7tHMUFrAHUi6hfb+1TLd+VGgY/9uZ1XuTDe6MRwlpJtosfCqwMiy/UieDmLdmaVE
+         jcAQ8UKFiyd0dK467tsT0Kpdv0tWfU/tK939weEdHgCrObvUHfBounWowPcnFNayH8
+         DNz10Xr6njTmlYgIzFTtZRkHEIyQEDqdOt7YUc/4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.4 24/24] crypto: vmx - Remove overly verbose printk from AES init routines
-Date:   Thu, 14 Jun 2018 16:05:19 +0200
-Message-Id: <20180614132725.495896268@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Leonid Shatz <leonid.shatz@ravellosystems.com>,
+        Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Borislav Petkov <bp@suse.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 08/24] x86/fpu: Revert ("x86/fpu: Disable AVX when eagerfpu is off")
+Date:   Thu, 14 Jun 2018 16:05:03 +0200
+Message-Id: <20180614132724.824634808@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
 References: <20180614132724.483802160@linuxfoundation.org>
@@ -59,78 +70,93 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Yu-cheng Yu <yu-cheng.yu@intel.com>
 
-commit 1411b5218adbcf1d45ddb260db5553c52e8d917c upstream.
+commit a65050c6f17e52442716138d48d0a47301a8344b upstream.
 
-In the vmx AES init routines we do a printk(KERN_INFO ...) to report
-the fallback implementation we're using.
+Leonid Shatz noticed that the SDM interpretation of the following
+recent commit:
 
-However with a slow console this can significantly affect the speed of
-crypto operations. Using 'cryptsetup benchmark' the removal of the
-printk() leads to a ~5x speedup for aes-cbc decryption.
+  394db20ca240741 ("x86/fpu: Disable AVX when eagerfpu is off")
 
-So remove them.
+... is incorrect and that the original behavior of the FPU code was correct.
 
-Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
-Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
-Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
-Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
-Cc: stable@vger.kernel.org # v4.1+
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Because AVX is not stated in CR0 TS bit description, it was mistakenly
+believed to be not supported for lazy context switch. This turns out
+to be false:
+
+  Intel Software Developer's Manual Vol. 3A, Sec. 2.5 Control Registers:
+
+   'TS Task Switched bit (bit 3 of CR0) -- Allows the saving of the x87 FPU/
+    MMX/SSE/SSE2/SSE3/SSSE3/SSE4 context on a task switch to be delayed until
+    an x87 FPU/MMX/SSE/SSE2/SSE3/SSSE3/SSE4 instruction is actually executed
+    by the new task.'
+
+  Intel Software Developer's Manual Vol. 2A, Sec. 2.4 Instruction Exception
+  Specification:
+
+   'AVX instructions refer to exceptions by classes that include #NM
+    "Device Not Available" exception for lazy context switch.'
+
+So revert the commit.
+
+Reported-by: Leonid Shatz <leonid.shatz@ravellosystems.com>
+Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ravi V. Shankar <ravi.v.shankar@intel.com>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1457569734-3785-1-git-send-email-yu-cheng.yu@intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/vmx/aes.c     |    2 --
- drivers/crypto/vmx/aes_cbc.c |    2 --
- drivers/crypto/vmx/aes_ctr.c |    2 --
- drivers/crypto/vmx/ghash.c   |    2 --
- 4 files changed, 8 deletions(-)
+ arch/x86/include/asm/fpu/xstate.h |    9 ++++-----
+ arch/x86/kernel/fpu/init.c        |    6 ------
+ 2 files changed, 4 insertions(+), 11 deletions(-)
 
---- a/drivers/crypto/vmx/aes.c
-+++ b/drivers/crypto/vmx/aes.c
-@@ -53,8 +53,6 @@ static int p8_aes_init(struct crypto_tfm
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+--- a/arch/x86/include/asm/fpu/xstate.h
++++ b/arch/x86/include/asm/fpu/xstate.h
+@@ -20,16 +20,15 @@
  
- 	crypto_cipher_set_flags(fallback,
- 				crypto_cipher_get_flags((struct
---- a/drivers/crypto/vmx/aes_cbc.c
-+++ b/drivers/crypto/vmx/aes_cbc.c
-@@ -55,8 +55,6 @@ static int p8_aes_cbc_init(struct crypto
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+ /* Supported features which support lazy state saving */
+ #define XFEATURE_MASK_LAZY	(XFEATURE_MASK_FP | \
+-				 XFEATURE_MASK_SSE)
+-
+-/* Supported features which require eager state saving */
+-#define XFEATURE_MASK_EAGER	(XFEATURE_MASK_BNDREGS | \
+-				 XFEATURE_MASK_BNDCSR | \
++				 XFEATURE_MASK_SSE | \
+ 				 XFEATURE_MASK_YMM | \
+ 				 XFEATURE_MASK_OPMASK | \
+ 				 XFEATURE_MASK_ZMM_Hi256 | \
+ 				 XFEATURE_MASK_Hi16_ZMM)
  
- 	crypto_blkcipher_set_flags(
- 		fallback,
---- a/drivers/crypto/vmx/aes_ctr.c
-+++ b/drivers/crypto/vmx/aes_ctr.c
-@@ -53,8 +53,6 @@ static int p8_aes_ctr_init(struct crypto
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
++/* Supported features which require eager state saving */
++#define XFEATURE_MASK_EAGER	(XFEATURE_MASK_BNDREGS | XFEATURE_MASK_BNDCSR)
++
+ /* All currently supported features */
+ #define XCNTXT_MASK	(XFEATURE_MASK_LAZY | XFEATURE_MASK_EAGER)
  
- 	crypto_blkcipher_set_flags(
- 		fallback,
---- a/drivers/crypto/vmx/ghash.c
-+++ b/drivers/crypto/vmx/ghash.c
-@@ -64,8 +64,6 @@ static int p8_ghash_init_tfm(struct cryp
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name(crypto_shash_tfm(fallback)));
+--- a/arch/x86/kernel/fpu/init.c
++++ b/arch/x86/kernel/fpu/init.c
+@@ -297,12 +297,6 @@ u64 __init fpu__get_supported_xfeatures_
+ static void __init fpu__clear_eager_fpu_features(void)
+ {
+ 	setup_clear_cpu_cap(X86_FEATURE_MPX);
+-	setup_clear_cpu_cap(X86_FEATURE_AVX);
+-	setup_clear_cpu_cap(X86_FEATURE_AVX2);
+-	setup_clear_cpu_cap(X86_FEATURE_AVX512F);
+-	setup_clear_cpu_cap(X86_FEATURE_AVX512PF);
+-	setup_clear_cpu_cap(X86_FEATURE_AVX512ER);
+-	setup_clear_cpu_cap(X86_FEATURE_AVX512CD);
+ }
  
- 	crypto_shash_set_flags(fallback,
- 			       crypto_shash_get_flags((struct crypto_shash
+ /*
 
 
