@@ -6,43 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 96F32C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:33:37 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 61FF5C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B74320693
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C25D20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NS5Qsdmr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B74320693
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xx+VMRQi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C25D20693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965818AbeFNOdf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:33:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51632 "EHLO mail.kernel.org"
+        id S965808AbeFNOd6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:33:58 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965660AbeFNOKg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:10:36 -0400
+        id S965638AbeFNOKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:10:31 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7130B208DA;
-        Thu, 14 Jun 2018 14:10:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3B68208DB;
+        Thu, 14 Jun 2018 14:10:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985436;
-        bh=jbgq8A29x6bbSqyyKYWROHVTHpYtMj9ISrc/AOc8elA=;
+        s=default; t=1528985430;
+        bh=PzFaR4oziZfJbYYpqiuLqvEuH/gODxRSArBnYylxIPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NS5QsdmrTE5iYfBN+aZC6FTPYBv2TkS6AqX1fW8qKMifWt1NURzaiwTPp8gcUWVEk
-         ZtaSb3n+kLitOs1EufQ8dzMRIW/REfUWe1pIIEwf/5av0DnJgfP+EVIVB2jXDpeE3Z
-         9SA99oozk/tE8ukReoSBGCv4WR8Rbe+g/eC2hPnM=
+        b=Xx+VMRQiD3pqWQpAZJ1PkzKQ1VEU9IgJGkx4YlbxQ2JhNFfVshFBaE+oGhFJ5HD32
+         /+lkOJS47AtJCls/knNY5DJD5VmgMj0WaKqf+8ej+O24GzcfW5fRuAvoo9Jn+zHmA+
+         iN33/YotKzAKvk5YcbgKOtRpg/inffuFZ1GP9mYA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Wienke <languitar@semipol.de>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: [PATCH 4.14 26/36] Input: elan_i2c - add ELAN0612 (Lenovo v330 14IKB) ACPI ID
-Date:   Thu, 14 Jun 2018 16:04:49 +0200
-Message-Id: <20180614132158.447518705@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 24/36] kvm: x86: use correct privilege level for sgdt/sidt/fxsave/fxrstor access
+Date:   Thu, 14 Jun 2018 16:04:47 +0200
+Message-Id: <20180614132158.360316725@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -59,32 +58,149 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Johannes Wienke <languitar@semipol.de>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit e6e7e9cd8eed0e18217c899843bffbe8c7dae564 upstream.
+commit 3c9fa24ca7c9c47605672916491f79e8ccacb9e6 upstream.
 
-Add ELAN0612 to the list of supported touchpads; this ID is used in Lenovo
-v330 14IKB devices.
+The functions that were used in the emulation of fxrstor, fxsave, sgdt and
+sidt were originally meant for task switching, and as such they did not
+check privilege levels.  This is very bad when the same functions are used
+in the emulation of unprivileged instructions.  This is CVE-2018-10853.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=199253
-Signed-off-by: Johannes Wienke <languitar@semipol.de>
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+The obvious fix is to add a new argument to ops->read_std and ops->write_std,
+which decides whether the access is a "system" access or should use the
+processor's CPL.
+
+Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/input/mouse/elan_i2c_core.c |    1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/kvm_emulate.h |    6 ++++--
+ arch/x86/kvm/emulate.c             |   12 ++++++------
+ arch/x86/kvm/x86.c                 |   18 ++++++++++++++----
+ 3 files changed, 24 insertions(+), 12 deletions(-)
 
---- a/drivers/input/mouse/elan_i2c_core.c
-+++ b/drivers/input/mouse/elan_i2c_core.c
-@@ -1260,6 +1260,7 @@ static const struct acpi_device_id elan_
- 	{ "ELAN060B", 0 },
- 	{ "ELAN060C", 0 },
- 	{ "ELAN0611", 0 },
-+	{ "ELAN0612", 0 },
- 	{ "ELAN1000", 0 },
- 	{ }
- };
+--- a/arch/x86/include/asm/kvm_emulate.h
++++ b/arch/x86/include/asm/kvm_emulate.h
+@@ -107,11 +107,12 @@ struct x86_emulate_ops {
+ 	 *  @addr:  [IN ] Linear address from which to read.
+ 	 *  @val:   [OUT] Value read from memory, zero-extended to 'u_long'.
+ 	 *  @bytes: [IN ] Number of bytes to read from memory.
++	 *  @system:[IN ] Whether the access is forced to be at CPL0.
+ 	 */
+ 	int (*read_std)(struct x86_emulate_ctxt *ctxt,
+ 			unsigned long addr, void *val,
+ 			unsigned int bytes,
+-			struct x86_exception *fault);
++			struct x86_exception *fault, bool system);
+ 
+ 	/*
+ 	 * read_phys: Read bytes of standard (non-emulated/special) memory.
+@@ -129,10 +130,11 @@ struct x86_emulate_ops {
+ 	 *  @addr:  [IN ] Linear address to which to write.
+ 	 *  @val:   [OUT] Value write to memory, zero-extended to 'u_long'.
+ 	 *  @bytes: [IN ] Number of bytes to write to memory.
++	 *  @system:[IN ] Whether the access is forced to be at CPL0.
+ 	 */
+ 	int (*write_std)(struct x86_emulate_ctxt *ctxt,
+ 			 unsigned long addr, void *val, unsigned int bytes,
+-			 struct x86_exception *fault);
++			 struct x86_exception *fault, bool system);
+ 	/*
+ 	 * fetch: Read bytes of standard (non-emulated/special) memory.
+ 	 *        Used for instruction fetch.
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -814,14 +814,14 @@ static inline int jmp_rel(struct x86_emu
+ static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
+ 			      void *data, unsigned size)
+ {
+-	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, true);
+ }
+ 
+ static int linear_write_system(struct x86_emulate_ctxt *ctxt,
+ 			       ulong linear, void *data,
+ 			       unsigned int size)
+ {
+-	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, true);
+ }
+ 
+ static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
+@@ -835,7 +835,7 @@ static int segmented_read_std(struct x86
+ 	rc = linearize(ctxt, addr, size, false, &linear);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+-	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, false);
+ }
+ 
+ static int segmented_write_std(struct x86_emulate_ctxt *ctxt,
+@@ -849,7 +849,7 @@ static int segmented_write_std(struct x8
+ 	rc = linearize(ctxt, addr, size, true, &linear);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+-	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, false);
+ }
+ 
+ /*
+@@ -2921,12 +2921,12 @@ static bool emulator_io_port_access_allo
+ #ifdef CONFIG_X86_64
+ 	base |= ((u64)base3) << 32;
+ #endif
+-	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL);
++	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL, true);
+ 	if (r != X86EMUL_CONTINUE)
+ 		return false;
+ 	if (io_bitmap_ptr + port/8 > desc_limit_scaled(&tr_seg))
+ 		return false;
+-	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL);
++	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL, true);
+ 	if (r != X86EMUL_CONTINUE)
+ 		return false;
+ 	if ((perm >> bit_idx) & mask)
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -4505,10 +4505,15 @@ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
+ 
+ static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
+ 			     gva_t addr, void *val, unsigned int bytes,
+-			     struct x86_exception *exception)
++			     struct x86_exception *exception, bool system)
+ {
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
+-	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
++	u32 access = 0;
++
++	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
++		access |= PFERR_USER_MASK;
++
++	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access, exception);
+ }
+ 
+ static int kvm_read_guest_phys_system(struct x86_emulate_ctxt *ctxt,
+@@ -4552,12 +4557,17 @@ out:
+ }
+ 
+ static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
+-			      unsigned int bytes, struct x86_exception *exception)
++			      unsigned int bytes, struct x86_exception *exception,
++			      bool system)
+ {
+ 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
++	u32 access = PFERR_WRITE_MASK;
++
++	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
++		access |= PFERR_USER_MASK;
+ 
+ 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
+-					   PFERR_WRITE_MASK, exception);
++					   access, exception);
+ }
+ 
+ int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
 
 
