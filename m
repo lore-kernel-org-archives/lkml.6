@@ -6,48 +6,60 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BC038C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4729EC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72EE4208E1
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7DCB208E1
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZdOCNApe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72EE4208E1
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RbeCSYQU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7DCB208E1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965843AbeFNOL3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:11:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52480 "EHLO mail.kernel.org"
+        id S965878AbeFNOLj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965830AbeFNOLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:11:23 -0400
+        id S965836AbeFNOL2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9078E208DB;
-        Thu, 14 Jun 2018 14:11:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA687208DB;
+        Thu, 14 Jun 2018 14:11:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985483;
-        bh=Sad+DmJC5mIVABVQUfNqZEPxFG+2faBOtH2vhX26VCI=;
+        s=default; t=1528985488;
+        bh=ROrd+YMU7Zd06qoL8zq6wBzGxYTVhaubZfUIMe6PJHA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZdOCNApePyBaAi34s0qb/gmuofIN6OROgkaxY0yPErA+3kmpgsRObaAs1h6Ma2ysH
-         rSfrE0nCa5yKsNDd0A1ntcsAQ6zzwSjfM0RKS5CWJa4KmONXIv5zaTekUpRhVlBl1a
-         pz1iEWVIDKiIYQVjPIx41waEJ4WaWSDidbwX0TGE=
+        b=RbeCSYQUEcZxhgZIQ4ducYCDGIouSX9uiriwQvDw1Qq+4Vslr645ZzhlnLrskHiww
+         a8DvFEa6dQUigHXVM/GT8lVRnB6k571HHHYpGuMuIXIU+qFUEHqkqTdiU7csNEw3Wm
+         34LVz6tzuBe1jngN22IgAFpwLUPgLI1iLW0/kGOs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Kappner <agk@godking.net>,
-        Alan Stern <stern@rowland.harvard.edu>
-Subject: [PATCH 4.14 13/36] usb-storage: Add compatibility quirk flags for G-Technologies G-Drive
-Date:   Thu, 14 Jun 2018 16:04:36 +0200
-Message-Id: <20180614132157.867167308@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Rik van Riel <riel@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Brian Gerst <brgerst@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Denys Vlasenko <dvlasenk@redhat.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>, pbonzini@redhat.com,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.9 01/30] x86/fpu: Hard-disable lazy FPU mode
+Date:   Thu, 14 Jun 2018 16:04:42 +0200
+Message-Id: <20180614132600.313670849@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
-References: <20180614132157.333004166@linuxfoundation.org>
+In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
+References: <20180614132600.255515394@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -55,81 +67,200 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Alexander Kappner <agk@godking.net>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit ca7d9515d0e6825351ce106066cea1f60e40b1c8 upstream.
+commit ca6938a1cd8a1c5e861a99b67f84ac166fc2b9e7 upstream.
 
-The "G-Drive" (sold by G-Technology) external USB 3.0 drive
- hangs on write access under UAS and usb-storage:
+Since commit:
 
-[  136.079121] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[  136.079144] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
-[  136.079152] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
-[  136.079176] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 00 00 00 00 00 00 00 08 00 00
-[  136.079180] print_req_error: critical target error, dev sdi, sector 0
-[  136.079183] Buffer I/O error on dev sdi, logical block 0, lost sync page write
-[  136.173148] EXT4-fs (sdi): mounted filesystem with ordered data mode. Opts: (null)
-[  140.583998] sd 15:0:0:0: [sdi] tag#0 FAILED Result: hostbyte=DID_OK driverbyte=DRIVER_SENSE
-[  140.584010] sd 15:0:0:0: [sdi] tag#0 Sense Key : Illegal Request [current]
-[  140.584016] sd 15:0:0:0: [sdi] tag#0 Add. Sense: Invalid field in cdb
-[  140.584022] sd 15:0:0:0: [sdi] tag#0 CDB: Write(16) 8a 08 00 00 00 00 e8 c4 00 18 00 00 00 08 00 00
-[  140.584025] print_req_error: critical target error, dev sdi, sector 3905159192
-[  140.584044] print_req_error: critical target error, dev sdi, sector 3905159192
-[  140.584052] Aborting journal on device sdi-8.
+  58122bf1d856 ("x86/fpu: Default eagerfpu=on on all CPUs")
 
-The proposed patch adds compatibility quirks. Because the drive requires two
-quirks (one to work with UAS, and another to work with usb-storage), adding this
-under unusual_devs.h and not just unusual_uas.h so kernels compiled without UAS
-receive the quirk. With the patch, the drive works reliably on UAS and usb-
-storage.
-(tested on NEC Corporation uPD720200 USB 3.0 host controller).
+... in Linux 4.6, eager FPU mode has been the default on all x86
+systems, and no one has reported any regressions.
 
-Signed-off-by: Alexander Kappner <agk@godking.net>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Cc: stable <stable@vger.kernel.org>
+This patch removes the ability to enable lazy mode: use_eager_fpu()
+becomes "return true" and all of the FPU mode selection machinery is
+removed.
+
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Rik van Riel <riel@redhat.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Denys Vlasenko <dvlasenk@redhat.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: pbonzini@redhat.com
+Link: http://lkml.kernel.org/r/1475627678-20788-3-git-send-email-riel@redhat.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/storage/unusual_devs.h |    9 +++++++++
- drivers/usb/storage/unusual_uas.h  |    9 +++++++++
- 2 files changed, 18 insertions(+)
+ arch/x86/include/asm/cpufeatures.h  |    2 
+ arch/x86/include/asm/fpu/internal.h |    2 
+ arch/x86/kernel/fpu/init.c          |   91 +-----------------------------------
+ 3 files changed, 5 insertions(+), 90 deletions(-)
 
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -2340,6 +2340,15 @@ UNUSUAL_DEV(  0x4146, 0xba01, 0x0100, 0x
- 		"Micro Mini 1GB",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL, US_FL_NOT_LOCKABLE ),
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -104,7 +104,7 @@
+ #define X86_FEATURE_EXTD_APICID	( 3*32+26) /* has extended APICID (8 bits) */
+ #define X86_FEATURE_AMD_DCM     ( 3*32+27) /* multi-node processor */
+ #define X86_FEATURE_APERFMPERF	( 3*32+28) /* APERFMPERF */
+-#define X86_FEATURE_EAGER_FPU	( 3*32+29) /* "eagerfpu" Non lazy FPU restore */
++/* free, was #define X86_FEATURE_EAGER_FPU	( 3*32+29) * "eagerfpu" Non lazy FPU restore */
+ #define X86_FEATURE_NONSTOP_TSC_S3 ( 3*32+30) /* TSC doesn't stop in S3 state */
  
-+/* "G-DRIVE" external HDD hangs on write without these.
-+ * Patch submitted by Alexander Kappner <agk@godking.net>
-+ */
-+UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
-+		"SimpleTech",
-+		"External HDD",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_ALWAYS_SYNC),
-+
+ /* Intel-defined CPU features, CPUID level 0x00000001 (ecx), word 4 */
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -62,7 +62,7 @@ extern u64 fpu__get_supported_xfeatures_
+  */
+ static __always_inline __pure bool use_eager_fpu(void)
+ {
+-	return static_cpu_has(X86_FEATURE_EAGER_FPU);
++	return true;
+ }
+ 
+ static __always_inline __pure bool use_xsaveopt(void)
+--- a/arch/x86/kernel/fpu/init.c
++++ b/arch/x86/kernel/fpu/init.c
+@@ -15,10 +15,7 @@
+  */
+ static void fpu__init_cpu_ctx_switch(void)
+ {
+-	if (!boot_cpu_has(X86_FEATURE_EAGER_FPU))
+-		stts();
+-	else
+-		clts();
++	clts();
+ }
+ 
  /*
-  * Nick Bowler <nbowler@elliptictech.com>
-  * SCSI stack spams (otherwise harmless) error messages.
---- a/drivers/usb/storage/unusual_uas.h
-+++ b/drivers/usb/storage/unusual_uas.h
-@@ -183,3 +183,12 @@ UNUSUAL_DEV(0x4971, 0x8017, 0x0000, 0x99
- 		"External HDD",
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_NO_REPORT_OPCODES),
-+
-+/* "G-DRIVE" external HDD hangs on write without these.
-+ * Patch submitted by Alexander Kappner <agk@godking.net>
-+ */
-+UNUSUAL_DEV(0x4971, 0x8024, 0x0000, 0x9999,
-+		"SimpleTech",
-+		"External HDD",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_ALWAYS_SYNC),
+@@ -234,82 +231,16 @@ static void __init fpu__init_system_xsta
+ }
+ 
+ /*
+- * FPU context switching strategies:
+- *
+- * Against popular belief, we don't do lazy FPU saves, due to the
+- * task migration complications it brings on SMP - we only do
+- * lazy FPU restores.
+- *
+- * 'lazy' is the traditional strategy, which is based on setting
+- * CR0::TS to 1 during context-switch (instead of doing a full
+- * restore of the FPU state), which causes the first FPU instruction
+- * after the context switch (whenever it is executed) to fault - at
+- * which point we lazily restore the FPU state into FPU registers.
+- *
+- * Tasks are of course under no obligation to execute FPU instructions,
+- * so it can easily happen that another context-switch occurs without
+- * a single FPU instruction being executed. If we eventually switch
+- * back to the original task (that still owns the FPU) then we have
+- * not only saved the restores along the way, but we also have the
+- * FPU ready to be used for the original task.
+- *
+- * 'lazy' is deprecated because it's almost never a performance win
+- * and it's much more complicated than 'eager'.
+- *
+- * 'eager' switching is by default on all CPUs, there we switch the FPU
+- * state during every context switch, regardless of whether the task
+- * has used FPU instructions in that time slice or not. This is done
+- * because modern FPU context saving instructions are able to optimize
+- * state saving and restoration in hardware: they can detect both
+- * unused and untouched FPU state and optimize accordingly.
+- *
+- * [ Note that even in 'lazy' mode we might optimize context switches
+- *   to use 'eager' restores, if we detect that a task is using the FPU
+- *   frequently. See the fpu->counter logic in fpu/internal.h for that. ]
+- */
+-static enum { ENABLE, DISABLE } eagerfpu = ENABLE;
+-
+-/*
+  * Find supported xfeatures based on cpu features and command-line input.
+  * This must be called after fpu__init_parse_early_param() is called and
+  * xfeatures_mask is enumerated.
+  */
+ u64 __init fpu__get_supported_xfeatures_mask(void)
+ {
+-	/* Support all xfeatures known to us */
+-	if (eagerfpu != DISABLE)
+-		return XCNTXT_MASK;
+-
+-	/* Warning of xfeatures being disabled for no eagerfpu mode */
+-	if (xfeatures_mask & XFEATURE_MASK_EAGER) {
+-		pr_err("x86/fpu: eagerfpu switching disabled, disabling the following xstate features: 0x%llx.\n",
+-			xfeatures_mask & XFEATURE_MASK_EAGER);
+-	}
+-
+-	/* Return a mask that masks out all features requiring eagerfpu mode */
+-	return ~XFEATURE_MASK_EAGER;
++	return XCNTXT_MASK;
+ }
+ 
+-/*
+- * Disable features dependent on eagerfpu.
+- */
+-static void __init fpu__clear_eager_fpu_features(void)
+-{
+-	setup_clear_cpu_cap(X86_FEATURE_MPX);
+-}
+-
+-/*
+- * Pick the FPU context switching strategy:
+- *
+- * When eagerfpu is AUTO or ENABLE, we ensure it is ENABLE if either of
+- * the following is true:
+- *
+- * (1) the cpu has xsaveopt, as it has the optimization and doing eager
+- *     FPU switching has a relatively low cost compared to a plain xsave;
+- * (2) the cpu has xsave features (e.g. MPX) that depend on eager FPU
+- *     switching. Should the kernel boot with noxsaveopt, we support MPX
+- *     with eager FPU switching at a higher cost.
+- */
++/* Legacy code to initialize eager fpu mode. */
+ static void __init fpu__init_system_ctx_switch(void)
+ {
+ 	static bool on_boot_cpu __initdata = 1;
+@@ -318,17 +249,6 @@ static void __init fpu__init_system_ctx_
+ 	on_boot_cpu = 0;
+ 
+ 	WARN_ON_FPU(current->thread.fpu.fpstate_active);
+-
+-	if (boot_cpu_has(X86_FEATURE_XSAVEOPT) && eagerfpu != DISABLE)
+-		eagerfpu = ENABLE;
+-
+-	if (xfeatures_mask & XFEATURE_MASK_EAGER)
+-		eagerfpu = ENABLE;
+-
+-	if (eagerfpu == ENABLE)
+-		setup_force_cpu_cap(X86_FEATURE_EAGER_FPU);
+-
+-	printk(KERN_INFO "x86/fpu: Using '%s' FPU context switches.\n", eagerfpu == ENABLE ? "eager" : "lazy");
+ }
+ 
+ /*
+@@ -337,11 +257,6 @@ static void __init fpu__init_system_ctx_
+  */
+ static void __init fpu__init_parse_early_param(void)
+ {
+-	if (cmdline_find_option_bool(boot_command_line, "eagerfpu=off")) {
+-		eagerfpu = DISABLE;
+-		fpu__clear_eager_fpu_features();
+-	}
+-
+ 	if (cmdline_find_option_bool(boot_command_line, "no387"))
+ 		setup_clear_cpu_cap(X86_FEATURE_FPU);
+ 
 
 
