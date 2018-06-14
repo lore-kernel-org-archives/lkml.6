@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 23DE8C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 88222C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE004208DE
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DC83208DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NYjmdk7+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE004208DE
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCkF24+j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DC83208DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966010AbeFNOMP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:12:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53390 "EHLO mail.kernel.org"
+        id S965339AbeFNOMV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:12:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965975AbeFNOML (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:12:11 -0400
+        id S965975AbeFNOMP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:12:15 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 69D26208DE;
-        Thu, 14 Jun 2018 14:12:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A555208DA;
+        Thu, 14 Jun 2018 14:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985531;
-        bh=vL9dVDoji9x17fPT7AzJfd5WRDcDw144VHx1qk9Yatw=;
+        s=default; t=1528985534;
+        bh=bfQo1GkKm+w21mXv/MYbvv3+C5znfI9cq9GuZjvuglM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NYjmdk7+9w5joAcYOilljbT6YhmELMtnI0XTzgzEPp0v98MByo/bFILpc1TYhLJ7G
-         3a1Mb1FV1ZE07H0Rdpq0rAGJpZiMse/sYkN0auphi42fGxo+HWNGcq9VkO2fvULlxo
-         /vtcl5UCkWe9BiviKzL+eXeH7xGyOLj3yr77HtrE=
+        b=uCkF24+jdqXEd7gjVafAEfph+2zmmJYLOxFk9lp4UCU6DSxOQYk4khJLHmKCeHkG6
+         WvYmwzH/SlQwaRFO0Esv7JzLqlaaUTLSeTMDXR5dWgz94NaVGB9TZciUK6bUQOwK2j
+         AXictORFA9hP+LSJBN6S6z+xVIgNeRxjrXXPjjg4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksandr Natalenko <onatalen@redhat.com>,
-        Gil Kupfer <gilkup@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Xavier Deguillard <xdeguillard@vmware.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>
-Subject: [PATCH 4.9 23/30] vmw_balloon: fixing double free when batching mode is off
-Date:   Thu, 14 Jun 2018 16:05:04 +0200
-Message-Id: <20180614132601.229185575@linuxfoundation.org>
+        stable@vger.kernel.org, Wei Xu <xuwei5@hisilicon.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: [PATCH 4.9 24/30] tty: pl011: Avoid spuriously stuck-off interrupts
+Date:   Thu, 14 Jun 2018 16:05:05 +0200
+Message-Id: <20180614132601.272374869@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -61,114 +62,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gil Kupfer <gilkup@gmail.com>
+From: Dave Martin <Dave.Martin@arm.com>
 
-commit b23220fe054e92f616b82450fae8cd3ab176cc60 upstream.
+commit 4a7e625ce50412a7711efa0f2ef0b96ce3826759 upstream.
 
-The balloon.page field is used for two different purposes if batching is
-on or off. If batching is on, the field point to the page which is used
-to communicate with with the hypervisor. If it is off, balloon.page
-points to the page that is about to be (un)locked.
+Commit 9b96fbacda34 ("serial: PL011: clear pending interrupts")
+clears the RX and receive timeout interrupts on pl011 startup, to
+avoid a screaming-interrupt scenario that can occur when the
+firmware or bootloader leaves these interrupts asserted.
 
-Unfortunately, this dual-purpose of the field introduced a bug: when the
-balloon is popped (e.g., when the machine is reset or the balloon driver
-is explicitly removed), the balloon driver frees, unconditionally, the
-page that is held in balloon.page.  As a result, if batching is
-disabled, this leads to double freeing the last page that is sent to the
-hypervisor.
+This has been noted as an issue when running Linux on qemu [1].
 
-The following error occurs during rmmod when kernel checkers are on, and
-the balloon is not empty:
+Unfortunately, the above fix seems to lead to potential
+misbehaviour if the RX FIFO interrupt is asserted _non_ spuriously
+on driver startup, if the RX FIFO is also already full to the
+trigger level.
 
-[   42.307653] ------------[ cut here ]------------
-[   42.307657] Kernel BUG at ffffffffba1e4b28 [verbose debug info unavailable]
-[   42.307720] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC
-[   42.312512] Modules linked in: vmw_vsock_vmci_transport vsock ppdev joydev vmw_balloon(-) input_leds serio_raw vmw_vmci parport_pc shpchp parport i2c_piix4 nfit mac_hid autofs4 vmwgfx drm_kms_helper hid_generic syscopyarea sysfillrect usbhid sysimgblt fb_sys_fops hid ttm mptspi scsi_transport_spi ahci mptscsih drm psmouse vmxnet3 libahci mptbase pata_acpi
-[   42.312766] CPU: 10 PID: 1527 Comm: rmmod Not tainted 4.12.0+ #5
-[   42.312803] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 09/30/2016
-[   42.313042] task: ffff9bf9680f8000 task.stack: ffffbfefc1638000
-[   42.313290] RIP: 0010:__free_pages+0x38/0x40
-[   42.313510] RSP: 0018:ffffbfefc163be98 EFLAGS: 00010246
-[   42.313731] RAX: 000000000000003e RBX: ffffffffc02b9720 RCX: 0000000000000006
-[   42.313972] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9bf97e08e0a0
-[   42.314201] RBP: ffffbfefc163be98 R08: 0000000000000000 R09: 0000000000000000
-[   42.314435] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffc02b97e4
-[   42.314505] R13: ffffffffc02b9748 R14: ffffffffc02b9728 R15: 0000000000000200
-[   42.314550] FS:  00007f3af5fec700(0000) GS:ffff9bf97e080000(0000) knlGS:0000000000000000
-[   42.314599] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   42.314635] CR2: 00007f44f6f4ab24 CR3: 00000003a7d12000 CR4: 00000000000006e0
-[   42.314864] Call Trace:
-[   42.315774]  vmballoon_pop+0x102/0x130 [vmw_balloon]
-[   42.315816]  vmballoon_exit+0x42/0xd64 [vmw_balloon]
-[   42.315853]  SyS_delete_module+0x1e2/0x250
-[   42.315891]  entry_SYSCALL_64_fastpath+0x23/0xc2
-[   42.315924] RIP: 0033:0x7f3af5b0e8e7
-[   42.315949] RSP: 002b:00007fffe6ce0148 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-[   42.315996] RAX: ffffffffffffffda RBX: 000055be676401e0 RCX: 00007f3af5b0e8e7
-[   42.316951] RDX: 000000000000000a RSI: 0000000000000800 RDI: 000055be67640248
-[   42.317887] RBP: 0000000000000003 R08: 0000000000000000 R09: 1999999999999999
-[   42.318845] R10: 0000000000000883 R11: 0000000000000206 R12: 00007fffe6cdf130
-[   42.319755] R13: 0000000000000000 R14: 0000000000000000 R15: 000055be676401e0
-[   42.320606] Code: c0 74 1c f0 ff 4f 1c 74 02 5d c3 85 f6 74 07 e8 0f d8 ff ff 5d c3 31 f6 e8 c6 fb ff ff 5d c3 48 c7 c6 c8 0f c5 ba e8 58 be 02 00 <0f> 0b 66 0f 1f 44 00 00 66 66 66 66 90 48 85 ff 75 01 c3 55 48
-[   42.323462] RIP: __free_pages+0x38/0x40 RSP: ffffbfefc163be98
-[   42.325735] ---[ end trace 872e008e33f81508 ]---
+Clearing the RX FIFO interrupt does not change the FIFO fill level.
+In this scenario, because the interrupt is now clear and because
+the FIFO is already full to the trigger level, no new assertion of
+the RX FIFO interrupt can occur unless the FIFO is drained back
+below the trigger level.  This never occurs because the pl011
+driver is waiting for an RX FIFO interrupt to tell it that there is
+something to read, and does not read the FIFO at all until that
+interrupt occurs.
 
-To solve the bug, we eliminate the dual purpose of balloon.page.
+Thus, simply clearing "spurious" interrupts on startup may be
+misguided, since there is no way to be sure that the interrupts are
+truly spurious, and things can go wrong if they are not.
 
-Fixes: f220a80f0c2e ("VMware balloon: add batching to the vmw_balloon.")
-Cc: stable@vger.kernel.org
-Reported-by: Oleksandr Natalenko <onatalen@redhat.com>
-Signed-off-by: Gil Kupfer <gilkup@gmail.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
+This patch instead clears the interrupt condition by draining the
+RX FIFO during UART startup, after clearing any potentially
+spurious interrupt.  This should ensure that an interrupt will
+definitely be asserted if the RX FIFO subsequently becomes
+sufficiently full.
+
+The drain is done at the point of enabling interrupts only.  This
+means that it will occur any time the UART is newly opened through
+the tty layer.  It will not apply to polled-mode use of the UART by
+kgdboc: since that scenario cannot use interrupts by design, this
+should not matter.  kgdboc will interact badly with "normal" use of
+the UART in any case: this patch makes no attempt to paper over
+such issues.
+
+This patch does not attempt to address the case where the RX FIFO
+fills faster than it can be drained: that is a pathological
+hardware design problem that is beyond the scope of the driver to
+work around.  As a failsafe, the number of poll iterations for
+draining the FIFO is limited to twice the FIFO size.  This will
+ensure that the kernel at least boots even if it is impossible to
+drain the FIFO for some reason.
+
+[1] [Qemu-devel] [Qemu-arm] [PATCH] pl011: do not put into fifo
+before enabled the interruption
+https://lists.gnu.org/archive/html/qemu-devel/2018-01/msg06446.html
+
+Reported-by: Wei Xu <xuwei5@hisilicon.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Fixes: 9b96fbacda34 ("serial: PL011: clear pending interrupts")
+Signed-off-by: Dave Martin <Dave.Martin@arm.com>
+Cc: stable <stable@vger.kernel.org>
+Tested-by: Wei Xu <xuwei5@hisilicon.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |   23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+ drivers/tty/serial/amba-pl011.c |   16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -576,15 +576,9 @@ static void vmballoon_pop(struct vmballo
- 		}
- 	}
- 
--	if (b->batch_page) {
--		vunmap(b->batch_page);
--		b->batch_page = NULL;
--	}
--
--	if (b->page) {
--		__free_page(b->page);
--		b->page = NULL;
--	}
-+	/* Clearing the batch_page unconditionally has no adverse effect */
-+	free_page((unsigned long)b->batch_page);
-+	b->batch_page = NULL;
- }
- 
- /*
-@@ -991,16 +985,13 @@ static const struct vmballoon_ops vmball
- 
- static bool vmballoon_init_batching(struct vmballoon *b)
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -1726,10 +1726,26 @@ static int pl011_allocate_irq(struct uar
+  */
+ static void pl011_enable_interrupts(struct uart_amba_port *uap)
  {
--	b->page = alloc_page(VMW_PAGE_ALLOC_NOSLEEP);
--	if (!b->page)
--		return false;
-+	struct page *page;
++	unsigned int i;
++
+ 	spin_lock_irq(&uap->port.lock);
  
--	b->batch_page = vmap(&b->page, 1, VM_MAP, PAGE_KERNEL);
--	if (!b->batch_page) {
--		__free_page(b->page);
-+	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
-+	if (!page)
- 		return false;
--	}
- 
-+	b->batch_page = page_address(page);
- 	return true;
- }
- 
+ 	/* Clear out any spuriously appearing RX interrupts */
+ 	pl011_write(UART011_RTIS | UART011_RXIS, uap, REG_ICR);
++
++	/*
++	 * RXIS is asserted only when the RX FIFO transitions from below
++	 * to above the trigger threshold.  If the RX FIFO is already
++	 * full to the threshold this can't happen and RXIS will now be
++	 * stuck off.  Drain the RX FIFO explicitly to fix this:
++	 */
++	for (i = 0; i < uap->fifosize * 2; ++i) {
++		if (pl011_read(uap, REG_FR) & UART01x_FR_RXFE)
++			break;
++
++		pl011_read(uap, REG_DR);
++	}
++
+ 	uap->im = UART011_RTIM;
+ 	if (!pl011_dma_rx_running(uap))
+ 		uap->im |= UART011_RXIM;
 
 
