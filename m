@@ -2,93 +2,98 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AB3D5C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:47:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ED651C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:47:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 602A4208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3434208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:47:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="x6uEGeiW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 602A4208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6AiNL0J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3434208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755461AbeFNOrc (ORCPT
+        id S1755464AbeFNOr4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:47:32 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:40494 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755390AbeFNOr2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:47:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=bzsp9R/0/TnIKNRQwr3DEN7SceKsbqc5Ixm+pnWo0j8=; b=x6uEGeiWXHW+jBzjcMWRLT4ON
-        OZPE2wxzoANWTR+a0lT1QGPvFczh/uuAvUBsJJRdZ5DW2wCBhvx/TF4Dr7XSiVDUFuzhiFlIYwrvx
-        hC7sgtngA7REYdmF95ycXplBM4qn457vqjooHb+lEuHdcXphNBX6ezislsxYAbbRa8S9AVhYk9O8S
-        6CSp5+9XrKKYVR/dTSkHqs0xxB/GSKt23wsodJf2plhAD7NrTmq4imGfvhkyz0+zbMdjgyK0cyc5X
-        moptAka5BKeXifA8IGsU8OGYCDaBUejYkGUyP6KR0lxbzmIRtikUL2B+U4gCS63pweTGxaNISxRWq
-        rbJc3Dxbw==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fTTWh-0005GI-08; Thu, 14 Jun 2018 14:47:03 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id A1D79201EA7C8; Thu, 14 Jun 2018 16:46:59 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 16:46:59 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v2 1/2] locking: Implement an algorithm choice for
- Wound-Wait mutexes
-Message-ID: <20180614144659.GC12198@hirez.programming.kicks-ass.net>
-References: <20180614072922.8114-1-thellstrom@vmware.com>
- <20180614072922.8114-2-thellstrom@vmware.com>
- <20180614113604.GZ12198@hirez.programming.kicks-ass.net>
- <7eb10c22-57b3-1472-0a77-7f787f612217@vmware.com>
- <20180614132905.GA7841@bombadil.infradead.org>
- <425f4d5b-d414-de46-f388-55f1e6821ba6@vmware.com>
+        Thu, 14 Jun 2018 10:47:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48222 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965068AbeFNOHs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:48 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B5D4208CB;
+        Thu, 14 Jun 2018 14:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1528985267;
+        bh=qTmw6hbTbNCj0B9s+TAXDBfImAF+CbrpVso89iqQmwQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=k6AiNL0JvexnGdjB3KhPTSSI7a5ToLwEckdALF2C2JJylgiGJEXc7rdPlXm93iAuQ
+         YqhkpQcmqSRZa9a/emHum7fYLboQCYGMabL8VYYnTZiArkXiPVSPVqSGoBljHHhAVA
+         az1HKJ1WzBl7rXKMXenPyIUv4vamBCOiWJ2cF/n8=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Alexander Kappner <agk@godking.net>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Oliver Neukum <oneukum@suse.com>
+Subject: [PATCH 4.16 12/43] usb-storage: Add support for FL_ALWAYS_SYNC flag in the UAS driver
+Date:   Thu, 14 Jun 2018 16:04:16 +0200
+Message-Id: <20180614132135.627978491@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
+References: <20180614132135.111973468@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <425f4d5b-d414-de46-f388-55f1e6821ba6@vmware.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 03:43:04PM +0200, Thomas Hellstrom wrote:
-> It's intended to be enforced by storing the algorithm choice in the
-> WW_MUTEX_CLASS which must be common for an acquire context and the
-> ww_mutexes it acquires. However, I don't think there is a check that that
-> holds. I guess we could add it as a DEBUG_MUTEX test in ww_mutex_lock().
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-There is ww_mutex_lock_acquired():
+------------------
 
-	DEBUG_LOCKS_WARN_ON(ww_ctx->ww_class != ww->ww_class)
+From: Alexander Kappner <agk@godking.net>
 
-which should trigger if you try and be clever.
+commit 8c4e97ddfe73a0958bb0abf7e6a3bc4cc3e04936 upstream.
+
+The ALWAYS_SYNC flag is currently honored by the usb-storage driver but not UAS
+and is required to work around devices that become unstable upon being
+queried for cache. This code is taken straight from:
+drivers/usb/storage/scsiglue.c:284
+
+Signed-off-by: Alexander Kappner <agk@godking.net>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Cc: stable <stable@vger.kernel.org>
+Acked-by: Oliver Neukum <oneukum@suse.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ drivers/usb/storage/uas.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
+
+--- a/drivers/usb/storage/uas.c
++++ b/drivers/usb/storage/uas.c
+@@ -836,6 +836,12 @@ static int uas_slave_configure(struct sc
+ 	if (devinfo->flags & US_FL_BROKEN_FUA)
+ 		sdev->broken_fua = 1;
+ 
++	/* UAS also needs to support FL_ALWAYS_SYNC */
++	if (devinfo->flags & US_FL_ALWAYS_SYNC) {
++		sdev->skip_ms_page_3f = 1;
++		sdev->skip_ms_page_8 = 1;
++		sdev->wce_default_on = 1;
++	}
+ 	scsi_change_queue_depth(sdev, devinfo->qdepth - 2);
+ 	return 0;
+ }
+
+
