@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3F309C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:48:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C039DC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E677B208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:48:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B4D5208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:48:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wUk+vsEd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E677B208CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gDHwXovy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B4D5208CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755471AbeFNOsL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:48:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48120 "EHLO mail.kernel.org"
+        id S965169AbeFNOsk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:48:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965099AbeFNOHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:07:45 -0400
+        id S965081AbeFNOHm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16FBF208DA;
-        Thu, 14 Jun 2018 14:07:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 350E1208DA;
+        Thu, 14 Jun 2018 14:07:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985264;
-        bh=5eK0SNaaqbJogctCI/B2QUYxh9aQHwPIGZzNZ2b89g8=;
+        s=default; t=1528985261;
+        bh=TpWZsyeMYc3ntb3vzAJViuO1EHm7ni5uPY/bcNrkVuM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wUk+vsEduAY3zMoNwwZNIz08q14Y4oMCFOQ/hHfnGd6caDttCcw8u6f2M1Vn28flv
-         kw3RVcEw+ZudiFJRAEIR+hF9frfTubGmnz45xWvMI2aQ+dyGf4JINxrw9vJGzJScBf
-         eqEYZwUYrDaEpvRCKwLF7Zc2XzgoiVwQv1jO40BM=
+        b=gDHwXovyoioXfHOuBVLLla4oJ4zH8KKH1/Z50MWIq009yDPuTAcaqcuVZc6M77Ktb
+         urjxjSWy6aJwoNnH0SkuzRxiJMkCISzoTie/RNeqzBpJoYgmk4pZGVTUEjfnDVbJvm
+         KOg0nXUBtJaNXBY9M6qTy1413Eq5/QtXME6zNCWA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>
-Subject: [PATCH 4.16 11/43] usbip: vhci_sysfs: fix potential Spectre v1
-Date:   Thu, 14 Jun 2018 16:04:15 +0200
-Message-Id: <20180614132135.586620724@linuxfoundation.org>
+        Carlos Manuel Santos <cmmpsantos@gmail.com>,
+        Samuel Ortiz <sameo@linux.intel.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Johan Hovold <johan@kernel.org>
+Subject: [PATCH 4.16 10/43] NFC: pn533: dont send USB data off of the stack
+Date:   Thu, 14 Jun 2018 16:04:14 +0200
+Message-Id: <20180614132135.548596304@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
 References: <20180614132135.111973468@linuxfoundation.org>
@@ -61,102 +62,145 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-commit a0d6ec88090d7b1b008429c44532a388e29bb1bd upstream.
+commit dbafc28955fa6779dc23d1607a0fee5e509a278b upstream.
 
-pdev_nr and rhport can be controlled by user-space, hence leading to
-a potential exploitation of the Spectre variant 1 vulnerability.
+It's amazing that this driver ever worked, but now that x86 doesn't
+allow USB data to be sent off of the stack, it really does not work at
+all.  Fix this up by properly allocating the data for the small
+"commands" that get sent to the device off of the stack.
 
-This issue was detected with the help of Smatch:
-drivers/usb/usbip/vhci_sysfs.c:238 detach_store() warn: potential spectre issue 'vhcis'
-drivers/usb/usbip/vhci_sysfs.c:328 attach_store() warn: potential spectre issue 'vhcis'
-drivers/usb/usbip/vhci_sysfs.c:338 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_ss->vdev'
-drivers/usb/usbip/vhci_sysfs.c:340 attach_store() warn: potential spectre issue 'vhci->vhci_hcd_hs->vdev'
+We do this for one command by having a whole urb just for ack messages,
+as they can be submitted in interrupt context, so we can not use
+usb_bulk_msg().  But the poweron command can sleep (and does), so use
+usb_bulk_msg() for that transfer.
 
-Fix this by sanitizing pdev_nr and rhport before using them to index
-vhcis and vhci->vhci_hcd_ss->vdev respectively.
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Acked-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+Reported-by: Carlos Manuel Santos <cmmpsantos@gmail.com>
+Cc: Samuel Ortiz <sameo@linux.intel.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>
+Cc: stable <stable@vger.kernel.org>
+Reviewed-by: Johan Hovold <johan@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/usbip/vhci_sysfs.c |   24 ++++++++++++++++--------
- 1 file changed, 16 insertions(+), 8 deletions(-)
+ drivers/nfc/pn533/usb.c |   42 ++++++++++++++++++++++++++++++------------
+ 1 file changed, 30 insertions(+), 12 deletions(-)
 
---- a/drivers/usb/usbip/vhci_sysfs.c
-+++ b/drivers/usb/usbip/vhci_sysfs.c
-@@ -10,6 +10,9 @@
- #include <linux/platform_device.h>
- #include <linux/slab.h>
+--- a/drivers/nfc/pn533/usb.c
++++ b/drivers/nfc/pn533/usb.c
+@@ -62,6 +62,9 @@ struct pn533_usb_phy {
+ 	struct urb *out_urb;
+ 	struct urb *in_urb;
  
-+/* Hardening for Spectre-v1 */
-+#include <linux/nospec.h>
++	struct urb *ack_urb;
++	u8 *ack_buffer;
 +
- #include "usbip_common.h"
- #include "vhci.h"
+ 	struct pn533 *priv;
+ };
  
-@@ -205,16 +208,20 @@ static int vhci_port_disconnect(struct v
- 	return 0;
+@@ -150,13 +153,16 @@ static int pn533_usb_send_ack(struct pn5
+ 	struct pn533_usb_phy *phy = dev->phy;
+ 	static const u8 ack[6] = {0x00, 0x00, 0xff, 0x00, 0xff, 0x00};
+ 	/* spec 7.1.1.3:  Preamble, SoPC (2), ACK Code (2), Postamble */
+-	int rc;
+ 
+-	phy->out_urb->transfer_buffer = (u8 *)ack;
+-	phy->out_urb->transfer_buffer_length = sizeof(ack);
+-	rc = usb_submit_urb(phy->out_urb, flags);
++	if (!phy->ack_buffer) {
++		phy->ack_buffer = kmemdup(ack, sizeof(ack), flags);
++		if (!phy->ack_buffer)
++			return -ENOMEM;
++	}
+ 
+-	return rc;
++	phy->ack_urb->transfer_buffer = phy->ack_buffer;
++	phy->ack_urb->transfer_buffer_length = sizeof(ack);
++	return usb_submit_urb(phy->ack_urb, flags);
  }
  
--static int valid_port(__u32 pdev_nr, __u32 rhport)
-+static int valid_port(__u32 *pdev_nr, __u32 *rhport)
- {
--	if (pdev_nr >= vhci_num_controllers) {
--		pr_err("pdev %u\n", pdev_nr);
-+	if (*pdev_nr >= vhci_num_controllers) {
-+		pr_err("pdev %u\n", *pdev_nr);
- 		return 0;
- 	}
--	if (rhport >= VHCI_HC_PORTS) {
--		pr_err("rhport %u\n", rhport);
-+	*pdev_nr = array_index_nospec(*pdev_nr, vhci_num_controllers);
+ static int pn533_usb_send_frame(struct pn533 *dev,
+@@ -375,26 +381,31 @@ static int pn533_acr122_poweron_rdr(stru
+ 	/* Power on th reader (CCID cmd) */
+ 	u8 cmd[10] = {PN533_ACR122_PC_TO_RDR_ICCPOWERON,
+ 		      0, 0, 0, 0, 0, 0, 3, 0, 0};
++	char *buffer;
++	int transferred;
+ 	int rc;
+ 	void *cntx;
+ 	struct pn533_acr122_poweron_rdr_arg arg;
+ 
+ 	dev_dbg(&phy->udev->dev, "%s\n", __func__);
+ 
++	buffer = kmemdup(cmd, sizeof(cmd), GFP_KERNEL);
++	if (!buffer)
++		return -ENOMEM;
 +
-+	if (*rhport >= VHCI_HC_PORTS) {
-+		pr_err("rhport %u\n", *rhport);
- 		return 0;
- 	}
-+	*rhport = array_index_nospec(*rhport, VHCI_HC_PORTS);
-+
- 	return 1;
+ 	init_completion(&arg.done);
+ 	cntx = phy->in_urb->context;  /* backup context */
+ 
+ 	phy->in_urb->complete = pn533_acr122_poweron_rdr_resp;
+ 	phy->in_urb->context = &arg;
+ 
+-	phy->out_urb->transfer_buffer = cmd;
+-	phy->out_urb->transfer_buffer_length = sizeof(cmd);
+-
+ 	print_hex_dump_debug("ACR122 TX: ", DUMP_PREFIX_NONE, 16, 1,
+ 		       cmd, sizeof(cmd), false);
+ 
+-	rc = usb_submit_urb(phy->out_urb, GFP_KERNEL);
+-	if (rc) {
++	rc = usb_bulk_msg(phy->udev, phy->out_urb->pipe, buffer, sizeof(cmd),
++			  &transferred, 0);
++	kfree(buffer);
++	if (rc || (transferred != sizeof(cmd))) {
+ 		nfc_err(&phy->udev->dev,
+ 			"Reader power on cmd error %d\n", rc);
+ 		return rc;
+@@ -490,8 +501,9 @@ static int pn533_usb_probe(struct usb_in
+ 
+ 	phy->in_urb = usb_alloc_urb(0, GFP_KERNEL);
+ 	phy->out_urb = usb_alloc_urb(0, GFP_KERNEL);
++	phy->ack_urb = usb_alloc_urb(0, GFP_KERNEL);
+ 
+-	if (!phy->in_urb || !phy->out_urb)
++	if (!phy->in_urb || !phy->out_urb || !phy->ack_urb)
+ 		goto error;
+ 
+ 	usb_fill_bulk_urb(phy->in_urb, phy->udev,
+@@ -501,7 +513,9 @@ static int pn533_usb_probe(struct usb_in
+ 	usb_fill_bulk_urb(phy->out_urb, phy->udev,
+ 			  usb_sndbulkpipe(phy->udev, out_endpoint),
+ 			  NULL, 0, pn533_send_complete, phy);
+-
++	usb_fill_bulk_urb(phy->ack_urb, phy->udev,
++			  usb_sndbulkpipe(phy->udev, out_endpoint),
++			  NULL, 0, pn533_send_complete, phy);
+ 
+ 	switch (id->driver_info) {
+ 	case PN533_DEVICE_STD:
+@@ -554,6 +568,7 @@ static int pn533_usb_probe(struct usb_in
+ error:
+ 	usb_free_urb(phy->in_urb);
+ 	usb_free_urb(phy->out_urb);
++	usb_free_urb(phy->ack_urb);
+ 	usb_put_dev(phy->udev);
+ 	kfree(in_buf);
+ 
+@@ -573,10 +588,13 @@ static void pn533_usb_disconnect(struct
+ 
+ 	usb_kill_urb(phy->in_urb);
+ 	usb_kill_urb(phy->out_urb);
++	usb_kill_urb(phy->ack_urb);
+ 
+ 	kfree(phy->in_urb->transfer_buffer);
+ 	usb_free_urb(phy->in_urb);
+ 	usb_free_urb(phy->out_urb);
++	usb_free_urb(phy->ack_urb);
++	kfree(phy->ack_buffer);
+ 
+ 	nfc_info(&interface->dev, "NXP PN533 NFC device disconnected\n");
  }
- 
-@@ -232,7 +239,7 @@ static ssize_t detach_store(struct devic
- 	pdev_nr = port_to_pdev_nr(port);
- 	rhport = port_to_rhport(port);
- 
--	if (!valid_port(pdev_nr, rhport))
-+	if (!valid_port(&pdev_nr, &rhport))
- 		return -EINVAL;
- 
- 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
-@@ -258,7 +265,8 @@ static ssize_t detach_store(struct devic
- }
- static DEVICE_ATTR_WO(detach);
- 
--static int valid_args(__u32 pdev_nr, __u32 rhport, enum usb_device_speed speed)
-+static int valid_args(__u32 *pdev_nr, __u32 *rhport,
-+		      enum usb_device_speed speed)
- {
- 	if (!valid_port(pdev_nr, rhport)) {
- 		return 0;
-@@ -322,7 +330,7 @@ static ssize_t attach_store(struct devic
- 			     sockfd, devid, speed);
- 
- 	/* check received parameters */
--	if (!valid_args(pdev_nr, rhport, speed))
-+	if (!valid_args(&pdev_nr, &rhport, speed))
- 		return -EINVAL;
- 
- 	hcd = platform_get_drvdata(vhcis[pdev_nr].pdev);
 
 
