@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 99283C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2937CC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F5EB208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3ACF208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:11:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hk82AmSW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F5EB208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bNxqapyR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3ACF208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965699AbeFNOK4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:10:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51956 "EHLO mail.kernel.org"
+        id S965745AbeFNOLD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:11:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965656AbeFNOKx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:10:53 -0400
+        id S965656AbeFNOLB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:11:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25D32208DD;
-        Thu, 14 Jun 2018 14:10:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6970C208DA;
+        Thu, 14 Jun 2018 14:11:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985452;
-        bh=ozNL30cG2ItOnnBub2SbcDzwUa1y+uqG6jOrv7x0WHg=;
+        s=default; t=1528985460;
+        bh=dDUqxj9D7vyao0tvK20IKlWdxwTXJPjUG5rO5+jF/WE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hk82AmSWs6K/RfrOenJoeZhOXh849ljJ+loHYhuFnVx2DVasanUKREWyzD2aaGqzl
-         B7dCS9a+js1FetCBslc1KuZe4eh+RbsCq24oIm1vrT0ZAAn3kEMesS89f9Ne6UvmHg
-         Po7yv7aqKIdDPC2rPRgVQ1LiP8BOJcGA61effEoM=
+        b=bNxqapyRZTEKyawpbPTfBXkxtpF8cOGHQWBaxRbeqbSoimsK4Mp1LjpwnEGNbR82y
+         Nggu4CzKGYidpKp4iTiqST4FCrR6KFuBcWTGkqx+N1q5Rd18d140PQym7J5yI+ecRk
+         tqGdH6OrxwdT1RD12JNT4H8KKVRrMEZmYR0AXQJA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Glauber <jglauber@cavium.com>,
-        Robert Richter <rrichter@cavium.com>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.14 32/36] crypto: cavium - Fix fallout from CONFIG_VMAP_STACK
-Date:   Thu, 14 Jun 2018 16:04:55 +0200
-Message-Id: <20180614132158.714204464@linuxfoundation.org>
+Subject: [PATCH 4.14 34/36] crypto: vmx - Remove overly verbose printk from AES init routines
+Date:   Thu, 14 Jun 2018 16:04:57 +0200
+Message-Id: <20180614132158.821679324@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -60,111 +59,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Glauber <jglauber@cavium.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit 37ff02acaa3d7be87ecb89f198a549ffd3ae2403 upstream.
+commit 1411b5218adbcf1d45ddb260db5553c52e8d917c upstream.
 
-Enabling virtual mapped kernel stacks breaks the thunderx_zip
-driver. On compression or decompression the executing CPU hangs
-in an endless loop. The reason for this is the usage of __pa
-by the driver which does no longer work for an address that is
-not part of the 1:1 mapping.
+In the vmx AES init routines we do a printk(KERN_INFO ...) to report
+the fallback implementation we're using.
 
-The zip driver allocates a result struct on the stack and needs
-to tell the hardware the physical address within this struct
-that is used to signal the completion of the request.
+However with a slow console this can significantly affect the speed of
+crypto operations. Using 'cryptsetup benchmark' the removal of the
+printk() leads to a ~5x speedup for aes-cbc decryption.
 
-As the hardware gets the wrong address after the broken __pa
-conversion it writes to an arbitrary address. The zip driver then
-waits forever for the completion byte to contain a non-zero value.
+So remove them.
 
-Allocating the result struct from 1:1 mapped memory resolves this
-bug.
-
-Signed-off-by: Jan Glauber <jglauber@cavium.com>
-Reviewed-by: Robert Richter <rrichter@cavium.com>
-Cc: stable <stable@vger.kernel.org> # 4.14
+Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
+Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
+Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
+Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/cavium/zip/zip_crypto.c |   22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ drivers/crypto/vmx/aes.c     |    2 --
+ drivers/crypto/vmx/aes_cbc.c |    3 ---
+ drivers/crypto/vmx/aes_ctr.c |    2 --
+ drivers/crypto/vmx/ghash.c   |    2 --
+ 4 files changed, 9 deletions(-)
 
---- a/drivers/crypto/cavium/zip/zip_crypto.c
-+++ b/drivers/crypto/cavium/zip/zip_crypto.c
-@@ -124,7 +124,7 @@ int zip_compress(const u8 *src, unsigned
- 		 struct zip_kernel_ctx *zip_ctx)
- {
- 	struct zip_operation  *zip_ops   = NULL;
--	struct zip_state      zip_state;
-+	struct zip_state      *zip_state;
- 	struct zip_device     *zip = NULL;
- 	int ret;
- 
-@@ -135,20 +135,23 @@ int zip_compress(const u8 *src, unsigned
- 	if (!zip)
- 		return -ENODEV;
- 
--	memset(&zip_state, 0, sizeof(struct zip_state));
-+	zip_state = kzalloc(sizeof(*zip_state), GFP_ATOMIC);
-+	if (!zip_state)
-+		return -ENOMEM;
-+
- 	zip_ops = &zip_ctx->zip_comp;
- 
- 	zip_ops->input_len  = slen;
- 	zip_ops->output_len = *dlen;
- 	memcpy(zip_ops->input, src, slen);
- 
--	ret = zip_deflate(zip_ops, &zip_state, zip);
-+	ret = zip_deflate(zip_ops, zip_state, zip);
- 
- 	if (!ret) {
- 		*dlen = zip_ops->output_len;
- 		memcpy(dst, zip_ops->output, *dlen);
+--- a/drivers/crypto/vmx/aes.c
++++ b/drivers/crypto/vmx/aes.c
+@@ -48,8 +48,6 @@ static int p8_aes_init(struct crypto_tfm
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
  	}
--
-+	kfree(zip_state);
- 	return ret;
- }
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
  
-@@ -157,7 +160,7 @@ int zip_decompress(const u8 *src, unsign
- 		   struct zip_kernel_ctx *zip_ctx)
- {
- 	struct zip_operation  *zip_ops   = NULL;
--	struct zip_state      zip_state;
-+	struct zip_state      *zip_state;
- 	struct zip_device     *zip = NULL;
- 	int ret;
- 
-@@ -168,7 +171,10 @@ int zip_decompress(const u8 *src, unsign
- 	if (!zip)
- 		return -ENODEV;
- 
--	memset(&zip_state, 0, sizeof(struct zip_state));
-+	zip_state = kzalloc(sizeof(*zip_state), GFP_ATOMIC);
-+	if (!zip_state)
-+		return -ENOMEM;
-+
- 	zip_ops = &zip_ctx->zip_decomp;
- 	memcpy(zip_ops->input, src, slen);
- 
-@@ -179,13 +185,13 @@ int zip_decompress(const u8 *src, unsign
- 	zip_ops->input_len  = slen;
- 	zip_ops->output_len = *dlen;
- 
--	ret = zip_inflate(zip_ops, &zip_state, zip);
-+	ret = zip_inflate(zip_ops, zip_state, zip);
- 
- 	if (!ret) {
- 		*dlen = zip_ops->output_len;
- 		memcpy(dst, zip_ops->output, *dlen);
+ 	crypto_cipher_set_flags(fallback,
+ 				crypto_cipher_get_flags((struct
+--- a/drivers/crypto/vmx/aes_cbc.c
++++ b/drivers/crypto/vmx/aes_cbc.c
+@@ -52,9 +52,6 @@ static int p8_aes_cbc_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
  	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-		crypto_skcipher_driver_name(fallback));
 -
-+	kfree(zip_state);
- 	return ret;
- }
  
+ 	crypto_skcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/aes_ctr.c
++++ b/drivers/crypto/vmx/aes_ctr.c
+@@ -48,8 +48,6 @@ static int p8_aes_ctr_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+ 
+ 	crypto_blkcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/ghash.c
++++ b/drivers/crypto/vmx/ghash.c
+@@ -64,8 +64,6 @@ static int p8_ghash_init_tfm(struct cryp
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name(crypto_shash_tfm(fallback)));
+ 
+ 	crypto_shash_set_flags(fallback,
+ 			       crypto_shash_get_flags((struct crypto_shash
 
 
