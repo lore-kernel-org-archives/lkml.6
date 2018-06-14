@@ -6,126 +6,100 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5DFC1C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:01:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AD73DC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:02:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C57C208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:01:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C57C208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DBC1208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:02:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DBC1208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sigma-star.at
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754705AbeFNIBj (ORCPT
+        id S1754753AbeFNICR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:01:39 -0400
-Received: from mga05.intel.com ([192.55.52.43]:41583 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752759AbeFNIBh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:01:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 01:01:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,222,1526367600"; 
-   d="scan'208";a="66903627"
-Received: from huama-mobl.gar.corp.intel.com (HELO [10.226.38.37]) ([10.226.38.37])
-  by orsmga002.jf.intel.com with ESMTP; 14 Jun 2018 01:01:33 -0700
-Subject: Re: [PATCH 3/7] MIPS: intel: Add initial support for Intel MIPS SoCs
-To:     Rob Herring <robh@kernel.org>,
-        Songjun Wu <songjun.wu@linux.intel.com>
-Cc:     yixin.zhu@linux.intel.com, chuanhua.lei@linux.intel.com,
-        linux-mips@linux-mips.org, qi-ming.wu@intel.com,
-        linux-clk@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, James Hogan <jhogan@kernel.org>,
-        linux-kernel@vger.kernel.org, Ralf Baechle <ralf@linux-mips.org>,
+        Thu, 14 Jun 2018 04:02:17 -0400
+Received: from lilium.sigma-star.at ([109.75.188.150]:55638 "EHLO
+        lilium.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752837AbeFNICP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:02:15 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by lilium.sigma-star.at (Postfix) with ESMTP id 1094A18188FAF;
+        Thu, 14 Jun 2018 10:02:14 +0200 (CEST)
+From:   Richard Weinberger <richard@sigma-star.at>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Philipp Rosenberger <p.rosenberger@linutronix.de>,
+        Rob Herring <robh@kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-4-songjun.wu@linux.intel.com>
- <20180612223153.GB2197@rob-hp-laptop>
-From:   Hua Ma <hua.ma@linux.intel.com>
-Message-ID: <821a2d72-da13-4dbe-4413-edc25f01e9fb@linux.intel.com>
-Date:   Thu, 14 Jun 2018 16:01:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+Subject: Re: [PATCH v2 0/3] mtd: rawnand: denali: add new clocks and improve setup_data_interface
+Date:   Thu, 14 Jun 2018 10:02:12 +0200
+Message-ID: <2214183.rYP2OkZajM@blindfold>
+In-Reply-To: <20180614093835.5c3bf426@bbrezillon>
+References: <1528953067-24324-1-git-send-email-yamada.masahiro@socionext.com> <CAK7LNASoV9nHTFax1nD_8pvkEjTzXkFpDFRf_xuoOnPPf9K23A@mail.gmail.com> <20180614093835.5c3bf426@bbrezillon>
 MIME-Version: 1.0
-In-Reply-To: <20180612223153.GB2197@rob-hp-laptop>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Donnerstag, 14. Juni 2018, 09:38:35 CEST schrieb Boris Brezillon:
+> On Thu, 14 Jun 2018 16:29:59 +0900
+> Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
+> 
+> > Hi Richard,
+> > 
+> > 2018-06-14 16:25 GMT+09:00 Richard Weinberger <richard@sigma-star.at>:
+> > > Masahiro,
+> > >
+> > > Am Donnerstag, 14. Juni 2018, 07:11:04 CEST schrieb Masahiro Yamada:  
+> > >>
+> > >> The ->setup_data_interface() hook needs to know the clock frequency.
+> > >> In fact, this IP needs three clocks, bus "which clock?" is really
+> > >> confusing.  (It is not described in the DT-binding at all.)
+> > >>
+> > >> This series adds more clocks.  In the new binding, three clocks
+> > >> are required: core clock, bus interface clock, ECC engine clock.
+> > >>
+> > >> This series also takes care of the backward compatibility by
+> > >> providing hardcoded values in case the new clocks are missing.
+> > >> So, existing DT should work.
+> > >>
+> > >>
+> > >> Changes in v2:
+> > >>   - Split patches into sensible chunks
+> > >>
+> > >> Masahiro Yamada (3):
+> > >>   mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
+> > >>   mtd: rawnand: denali_dt: add more clocks based on IP datasheet
+> > >>   mtd: rawnand: denali: optimize timing parameters for data interface  
+> > >
+> > > This still means that we need to feed at least 2/3 and 3/3 into -stable to
+> > > unbreak the driver.  
+> > 
+> > 
+> > 3/3 is not mandatory.
+> > 
+> > You can only back-port 1/3 and 2/3.
+> 
+> Well, patch 1 is not a fix, can we move it after patch 2 so that only
+> patch 2 is flagged with the Fixes+Cc-stable tags?
 
-On 6/13/2018 6:31 AM, Rob Herring wrote:
-> On Tue, Jun 12, 2018 at 01:40:30PM +0800, Songjun Wu wrote:
->> From: Hua Ma <hua.ma@linux.intel.com>
->>
->> Add initial support for Intel MIPS interAptiv SoCs made by Intel.
->> This series will add support for the GRX500 family.
->>
->> The series allows booting a minimal system using a initramfs.
->>
->> Signed-off-by: Hua ma <hua.ma@linux.intel.com>
->> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->> ---
->>
->>   arch/mips/Kbuild.platforms                         |   1 +
->>   arch/mips/Kconfig                                  |  36 ++++
->>   arch/mips/boot/dts/Makefile                        |   1 +
->>   arch/mips/boot/dts/intel-mips/Makefile             |   3 +
->>   arch/mips/boot/dts/intel-mips/easy350_anywan.dts   |  20 +++
->>   arch/mips/boot/dts/intel-mips/xrx500.dtsi          | 196 +++++++++++++++++++++
-> Please split dts files to separate patch.
+Another question, shall we fix arch/arm/boot/dts/socfpga.dtsi too?
+
 Thanks,
-it will be split into separate patches: one for dts, one for mips codes 
-and one for the document.
->> diff --git a/arch/mips/boot/dts/intel-mips/easy350_anywan.dts b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
->> new file mode 100644
->> index 000000000000..40177f6cee1e
->> --- /dev/null
->> +++ b/arch/mips/boot/dts/intel-mips/easy350_anywan.dts
->> @@ -0,0 +1,20 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +/dts-v1/;
->> +
->> +#include <dt-bindings/interrupt-controller/mips-gic.h>
->> +#include <dt-bindings/clock/intel,grx500-clk.h>
->> +
->> +#include "xrx500.dtsi"
->> +
->> +/ {
->> +	model = "EASY350 ANYWAN (GRX350) Main model";
-> A board should have a board specific compatible, too.
-The board compatible will be added.
->
->> +	chosen {
->> +		bootargs = "earlycon=lantiq,0x16600000 clk_ignore_unused";
->> +		stdout-path = "serial0";
->> +	};
->> +
->> +	memory@0 {
-> memory@20000000
-The memory address will be changed to @20000000.
->
->> +		device_type = "memory";
->> +		reg = <0x20000000 0x0e000000>;
->> +	};
->> +};
->> diff --git a/arch/mips/boot/dts/intel-mips/xrx500.dtsi b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
->> new file mode 100644
->> index 000000000000..04a068d6d96b
->> --- /dev/null
->> +++ b/arch/mips/boot/dts/intel-mips/xrx500.dtsi
->> @@ -0,0 +1,196 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +/ {
->> +	#address-cells = <1>;
->> +	#size-cells = <1>;
->> +	compatible = "intel,xrx500";
-> This needs to be documented.
-The compatible will be updated in the document.
+//richard
 
+-- 
+sigma star gmbh - Eduard-Bodem-Gasse 6 - 6020 Innsbruck - Austria
+ATU66964118 - FN 374287y
