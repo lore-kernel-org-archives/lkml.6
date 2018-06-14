@@ -2,148 +2,198 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B1086C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:46:06 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4EC9BC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C76E208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:46:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XhrRyjZG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C76E208D4
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id EE51B208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:48:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE51B208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754734AbeFNIqE (ORCPT
+        id S1754750AbeFNIsA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:46:04 -0400
-Received: from mail-it0-f66.google.com ([209.85.214.66]:39192 "EHLO
-        mail-it0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752928AbeFNIp7 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:45:59 -0400
-Received: by mail-it0-f66.google.com with SMTP id p185-v6so7606126itp.4
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:45:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=ICIgJhCgp6638ARAjh/M+gfA32sf5yYiUytOtitAcck=;
-        b=XhrRyjZGiPWcFQAO7ZSUm1r0mUk3nxjTXjHlqHemsoMDEjn8deRDwtFcOA64sQ/nWg
-         cqL/MqZf0TGS6lNMkEJcput9ttZe/SXHagAsYaKoW1oLO7Wow9ozuV2SCA1ddoKNB5z1
-         p6qvqbifG5kLY85y8KeJCzu9+Wq3sgtSqFFKg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=ICIgJhCgp6638ARAjh/M+gfA32sf5yYiUytOtitAcck=;
-        b=HFddmBWSqCzFWOEVwx/yfHIUBQ7TVh0Byi4ekOI1GM6QkVsru4zU/fC5kx0fpcLm8Q
-         ZHKiaNtWjAx2Ya6y2tzUS4f5pIo7i/YO/ycCt7VpG+ZBBvvLtC/FRpEx24zogkewSL5r
-         GItoOPtYSn0m1pate0DdtVZtYBCclETc/AyiWDJ7k48l9uHNlM2vYeIKpYTVnY9qfJ2t
-         NaC/MrCwF29M4f6qR53FwgG8SO3/o1wPXKStTuB+9YgdMHedSGG+pRIt+Y1ia7/1d8pm
-         yREdr2QSMXFXYVB8VyRxxV5MCk0uAI9UFY+hIeWqEbpkpxiyIjCpvJSajGErkQ19zQI9
-         oO4A==
-X-Gm-Message-State: APt69E1260n5x4Clju76M27j/BZ0sVwg21FBE05H3ctyiodI920wwuhn
-        YATwYOAQL0ZQV2I50xJxueb1jJ63d8J8tE41dM0WEDNC
-X-Google-Smtp-Source: ADUXVKKQUid4aQRnr60qr/iiRa1L718sML3emgWyQ3R1k4EylSN6CkwpHGoIObCwZI0XSEUfmR1LogQ5udafuK0MvEA=
-X-Received: by 2002:a24:690f:: with SMTP id e15-v6mr1405061itc.70.1528965958760;
- Thu, 14 Jun 2018 01:45:58 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 01:45:57
- -0700 (PDT)
-In-Reply-To: <20180609140224.32606-6-jmkrzyszt@gmail.com>
-References: <20180609140224.32606-1-jmkrzyszt@gmail.com> <20180609140224.32606-6-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Jun 2018 10:45:57 +0200
-Message-ID: <CACRpkdZj0c+pY7u63SDcUK_i7pPQDkgCgsm2cc37H2uHjZjDFw@mail.gmail.com>
-Subject: Re: [PATCH 06/10] ARM: OMAP1: ams-delta FIQ: don't use static GPIO numbers
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        "David S . Miller" <davem@davemloft.net>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Input <linux-input@vger.kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Jun 2018 04:48:00 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:51906 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752928AbeFNIr5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:47:57 -0400
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C91787D858;
+        Thu, 14 Jun 2018 08:47:56 +0000 (UTC)
+Received: from localhost.localdomain.com (ovpn-12-137.pek2.redhat.com [10.72.12.137])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 6478B1C66C;
+        Thu, 14 Jun 2018 08:47:52 +0000 (UTC)
+From:   Lianbo Jiang <lijiang@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     kexec@lists.infradead.org, thomas.lendacky@amd.com,
+        dyoung@redhat.com
+Subject: [PATCH 0/2 V2] Support kdump for AMD secure memory encryption(sme)
+Date:   Thu, 14 Jun 2018 16:47:46 +0800
+Message-Id: <20180614084748.9617-1-lijiang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 14 Jun 2018 08:47:56 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Thu, 14 Jun 2018 08:47:56 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 9, 2018 at 4:02 PM, Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+It is convenient to remap the old memory encrypted to the second kernel by
+calling ioremap_encrypted().
 
-> With introduction of GPIO lookup tables to Amstrad Delta board init
-> file, semantics of symbols representing OMAP GPIO pins defined in
-> <mach/board-ams-delta.h> changed from statically assigned global GPIO
-> numbers to hardware pin numbers local to OMAP "gpio-0-15" chip.
->
-> This patch modifies deferred FIQ interrupt handler so it no longer uses
-> static GPIO numbers in favour of IRQ data descriptors obtained at FIQ
-> initialization time from descriptor of the GPIO chip with use of its
-> hardware pin numbers.  The chip descriptor is passed from the board
-> init file.
->
-> As a benefit, the deferred FIQ handler should work faster.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+When sme enabled on AMD server, we also need to support kdump. Because
+the memory is encrypted in the first kernel, we will remap the old memory
+encrypted to the second kernel(crash kernel), and sme is also enabled in
+the second kernel, otherwise the old memory encrypted can not be decrypted.
+Because simply changing the value of a C-bit on a page will not
+automatically encrypt the existing contents of a page, and any data in the
+page prior to the C-bit modification will become unintelligible. A page of
+memory that is marked encrypted will be automatically decrypted when read
+from DRAM and will be automatically encrypted when written to DRAM.
 
-Making the kernel a better place, so:
-Acked-by: Linus Walleij <linus.walleij@linaro.org>
+For the kdump, it is necessary to distinguish whether the memory is
+encrypted. Furthermore, we should also know which part of the memory is
+encrypted or decrypted. We will appropriately remap the memory according
+to the specific situation in order to tell cpu how to deal with the
+data(encrypted or decrypted). For example, when sme enabled, if the old
+memory is encrypted, we will remap the old memory in encrypted way, which
+will automatically decrypt the old memory encrypted when we read those data
+from the remapping address.
 
-> +/*
-> + * Some drivers may not use GPIO lookup tables but need to be provided
-> + * with GPIO numbers.  The same applies to GPIO based IRQ lines - some
-> + * drivers may even not use GPIO layer but expect just IRQ numbers.
-> + * We could either define GPIO lookup tables then use them on behalf
-> + * of those devices, or we can use GPIO driver level methods for
-> + * identification of GPIO and IRQ numbers. For the purpose of the latter,
-> + * defina a helper function which identifies GPIO chips by their labels.
-> + */
-> +static int gpiochip_match_by_label(struct gpio_chip *chip, void *data)
-> +{
-> +       char *label = data;
-> +
-> +       return !strcmp(label, chip->label);
-> +}
-> +
-> +/*
-> + * The purpose of this function is to take care of proper initialization of
-> + * devices and data structures which depend on GPIO lines provided by OMAP GPIO
-> + * banks but their drivers don't use GPIO lookup tables or GPIO layer at all.
-> + * The function may be called as soon as OMAP GPIO devices are probed.
-> + * Since that happens at postcore_initcall, it can be called successfully
-> + * from init_machine or later.
-> + * Dependent devices may be registered from within this function or later.
-> + */
-> +static void __init omap_gpio_deps_init(void)
-> +{
-> +       struct gpio_chip *chip;
-> +
-> +       chip = gpiochip_find(OMAP_GPIO_LABEL, gpiochip_match_by_label);
-> +       if (!chip) {
-> +               pr_err("%s: OMAP GPIO chip not found\n", __func__);
-> +               return;
-> +       }
-> +
-> +       ams_delta_init_fiq(chip);
-> +}
+ ----------------------------------------------
+| first-kernel | second-kernel | kdump support |
+|      (mem_encrypt=on|off)    |   (yes|no)    | 
+|--------------+---------------+---------------|
+|     on       |     on        |     yes       |
+|     off      |     off       |     yes       |
+|     on       |     off       |     no        |
+|     off      |     on        |     no        |
+|______________|_______________|_______________|
 
-This is some real stunt work isn't it.
+Test tools:
+makedumpfile[v1.6.3]: https://github.com/LianboJ/makedumpfile
+commit e1de103eca8f (A draft for kdump vmcore about AMD SME)
+Author: Lianbo Jiang <lijiang@redhat.com>
+Date:   Mon May 14 17:02:40 2018 +0800
+Note: This patch can only dump vmcore in the case of SME enabled.
 
-We should really think about ways to get gpiolib more helpful for board
-setups like this, but it seems complex.
+crash-7.2.1: https://github.com/crash-utility/crash.git
+commit 1e1bd9c4c1be (Fix for the "bpf" command display on Linux 4.17-rc1)
+Author: Dave Anderson <anderson@redhat.com>
+Date:   Fri May 11 15:54:32 2018 -0400
 
-Yours,
-Linus Walleij
+Test environment:
+HP ProLiant DL385Gen10 AMD EPYC 7251
+8-Core Processor
+32768 MB memory
+600 GB disk space
+
+Linux 4.17-rc7:
+git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+commit b04e217704b7 ("Linux 4.17-rc7")
+Author: Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun May 27 13:01:47 2018 -0700
+
+Reference:
+AMD64 Architecture Programmer's Manual
+https://support.amd.com/TechDocs/24593.pdf
+
+Some changes based on V1:
+1. remove the sme_active() check in __ioremap_caller().
+2. remove the '#ifdef' stuff throughout this patch.
+3. put some logic into the early_memremap_pgprot_adjust() and clean the
+previous unnecessary changes, for example: arch/x86/include/asm/dmi.h,
+arch/x86/kernel/acpi/boot.c, drivers/acpi/tables.c.
+4. rewrite two functions, copy_oldmem_page() and
+copy_oldmem_page_encrypted().
+5. distingish sme_active() and sev_active(), when a distinction doesn't
+need, mem_encrypt_active() will be used.
+6. clean compile warning in copy_device_table().
+
+Some known issues:
+1. about SME
+Upstream kernel doesn't work when we use kexec in the follow command. The
+system will hang.
+(This issue doesn't matter with the kdump patch.)
+
+Reproduce steps:
+ # kexec -l /boot/vmlinuz-4.17.0-rc7+ --initrd=/boot/initramfs-4.17.0-rc7+.img --command-line="root=/dev/mapper/rhel_hp--dl385g10--03-root ro mem_encrypt=on rd.lvm.lv=rhel_hp-dl385g10-03/root rd.lvm.lv=rhel_hp-dl385g10-03/swap console=ttyS0,115200n81 LANG=en_US.UTF-8 earlyprintk=serial debug nokaslr"
+ # kexec -e (or reboot)
+
+The system will hang:
+[ 1248.932239] kexec_core: Starting new kernel
+early console in extract_kernel
+input_data: 0x000000087e91c3b4
+input_len: 0x000000000067fcbd
+output: 0x000000087d400000
+output_len: 0x0000000001b6fa90
+kernel_total_size: 0x0000000001a9d000
+trampoline_32bit: 0x0000000000099000
+
+Decompressing Linux... 
+Parsing ELF...        [-here the system will hang]
+
+2. about SEV
+Upstream kernel doesn't work about SEV on our machine, some drivers always
+go wrong. We don't have the suitable machine to test SEV for kdump patch.
+Maybe it is resonable to improve SEV in another patch. When SEV works
+fine, we will test the kdump patch for SEV. 
+
+[  369.426131] INFO: task systemd-udevd:865 blocked for more than 120 seconds.
+[  369.433177]       Not tainted 4.17.0-rc5+ #60
+[  369.437585] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+[  369.445783] systemd-udevd   D    0   865    813 0x80000004
+[  369.451323] Call Trace:
+[  369.453815]  ? __schedule+0x290/0x870
+[  369.457523]  schedule+0x32/0x80
+[  369.460714]  __sev_do_cmd_locked+0x1f6/0x2a0 [ccp]
+[  369.465556]  ? cleanup_uevent_env+0x10/0x10
+[  369.470084]  ? remove_wait_queue+0x60/0x60
+[  369.474219]  ? 0xffffffffc0247000
+[  369.477572]  __sev_platform_init_locked+0x2b/0x70 [ccp]
+[  369.482843]  sev_platform_init+0x1d/0x30 [ccp]
+[  369.487333]  psp_pci_init+0x40/0xe0 [ccp]
+[  369.491380]  ? 0xffffffffc0247000
+[  369.494936]  sp_mod_init+0x18/0x1000 [ccp]
+[  369.499071]  do_one_initcall+0x4e/0x1d4
+[  369.502944]  ? _cond_resched+0x15/0x30
+[  369.506728]  ? kmem_cache_alloc_trace+0xae/0x1d0
+[  369.511386]  ? do_init_module+0x22/0x220
+[  369.515345]  do_init_module+0x5a/0x220
+[  369.519444]  load_module+0x21cb/0x2a50
+[  369.523227]  ? m_show+0x1c0/0x1c0
+[  369.526571]  ? security_capable+0x3f/0x60
+[  369.530611]  __do_sys_finit_module+0x94/0xe0
+[  369.534915]  do_syscall_64+0x5b/0x180
+[  369.538607]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[  369.543698] RIP: 0033:0x7f708e6311b9
+[  369.547536] RSP: 002b:00007ffff9d32aa8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+[  369.555162] RAX: ffffffffffffffda RBX: 000055602a04c2d0 RCX: 00007f708e6311b9
+[  369.562346] RDX: 0000000000000000 RSI: 00007f708ef52039 RDI: 0000000000000008
+[  369.569801] RBP: 00007f708ef52039 R08: 0000000000000000 R09: 000055602a048b20
+[  369.576988] R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000000000
+[  369.584177] R13: 000055602a075260 R14: 0000000000020000 R15: 0000000000000000
+
+Lianbo Jiang (2):
+  Add a function(ioremap_encrypted) for kdump when AMD sme enabled.
+  Support kdump when AMD secure memory encryption is active
+
+ arch/x86/include/asm/io.h       |  3 +++
+ arch/x86/kernel/crash_dump_64.c | 42 +++++++++++++++++++++++++++++++----------
+ arch/x86/mm/ioremap.c           | 28 +++++++++++++++++++--------
+ drivers/iommu/amd_iommu_init.c  | 14 +++++++++++++-
+ fs/proc/vmcore.c                | 20 +++++++++++++++-----
+ include/linux/crash_dump.h      |  5 +++++
+ kernel/kexec_core.c             | 12 ++++++++++++
+ 7 files changed, 100 insertions(+), 24 deletions(-)
+
+-- 
+2.9.5
+
