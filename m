@@ -2,398 +2,166 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: **
-X-Spam-Status: No, score=2.2 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=2.1 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SORTED_RECIPS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C21B2C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:04:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 36650C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 661DF208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:04:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kehe09E1";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fV4IJ9m7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 661DF208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E06DA208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:05:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E06DA208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755311AbeFNNEv (ORCPT
+        id S1755326AbeFNNFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:04:51 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55818 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755225AbeFNNEr (ORCPT
+        Thu, 14 Jun 2018 09:05:08 -0400
+Received: from mail-io0-f200.google.com ([209.85.223.200]:44251 "EHLO
+        mail-io0-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755280AbeFNNFD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:04:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 5BFE8602FC; Thu, 14 Jun 2018 13:04:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528981487;
-        bh=W/+jE4ymyTlGslI275VqEsWyr8EWzzwylFHdMzwr3rI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kehe09E1FeMSEdxPTTLhA0xl44pprqQeXdjecqqPAr//hr9FD5k7h/JMZbPG0lVGW
-         69obKMMm4nUrZzsR3wjyCOpnkIlBlcA5+Q75+sttWn3bQgnbA+lxXrvz5hrCqJxnJ2
-         b5RH8sjiQBgFWQGrH9vNegEloaJyYU8IBUtoRBz0=
-Received: from sayalil-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 504F96055D;
-        Thu, 14 Jun 2018 13:04:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528981485;
-        bh=W/+jE4ymyTlGslI275VqEsWyr8EWzzwylFHdMzwr3rI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fV4IJ9m7a7Ou8jMp0C+1OmyoqfFlwE5/O+5jMJJHWqRo1yZIerWLPDRBzGfRwH3eP
-         4p6WMu7lHlQHi+qses8ynlBKHI24iJ8zsq4HYLsj+JTL/lybhY4sZcWG0JE6oaQWip
-         BK1dv94MPdTl38H/G0eRSShmMSOiet37w2xaB1Sw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 504F96055D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   Sayali Lokhande <sayalil@codeaurora.org>
-To:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org
-Cc:     linux-scsi@vger.kernel.org,
-        Sayali Lokhande <sayalil@codeaurora.org>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH V3 3/3] scsi: ufs: Add configfs support for ufs provisioning
-Date:   Thu, 14 Jun 2018 18:33:52 +0530
-Message-Id: <1528981432-23065-4-git-send-email-sayalil@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1528981432-23065-1-git-send-email-sayalil@codeaurora.org>
-References: <1528981432-23065-1-git-send-email-sayalil@codeaurora.org>
+        Thu, 14 Jun 2018 09:05:03 -0400
+Received: by mail-io0-f200.google.com with SMTP id f12-v6so4726713iob.11
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 06:05:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=gtP5/BC+CN26wZothmNH/ewIOFALtufUsW/y8b5JZe8=;
+        b=TYFkwkB8Kaj25JFP+UX+WnqBAZD5ZruSfaxzKA6QORIZIEM4bQ0r3d94+cJQtLCIK7
+         mjRucMQnTDGVuvFbhVRcmHfznkHvFjKDjCYys9sZsKZoVCHwpsvQ4ILaWgxCMhcyhS1y
+         ymy9IzsomLIS23libMf1VVGfS+VyAMRIpDMHCGgkGxuTA8PhGxs2eUV6uYVqLYpUx/FA
+         H1oju6+R25YDELFMPBqiy44edLE1VO8Hh/PK6TOrIxnPA9UoVpT7X0uJoKDtrk0mZ/Lr
+         YKze4k6x+e6gGcHHIKCN2tHpBCrTjOj4Xrpf5+dcXJ9sVW4q2cwwqTPAVac6QzAYFXqs
+         0+BQ==
+X-Gm-Message-State: APt69E3/XukebAZvscfx+ukYplsZpT3nuXqbAYo1ceNz18901bY655CE
+        4u0+i85Y6y1+WWU5/uDjn6HE/4OxDDRiR4QehoVNINdGeH4Y
+X-Google-Smtp-Source: ADUXVKIje6sj+TtJswLoc9nAgXSk8WNx+9/Rjp9fGG2tLvniEvpAUhZ7tKmnDEzlqh3bYX4LeG9su2pqEi2Z/6b7eqWjrJwHhI0E
+MIME-Version: 1.0
+X-Received: by 2002:a24:d354:: with SMTP id n81-v6mr1021551itg.2.1528981502569;
+ Thu, 14 Jun 2018 06:05:02 -0700 (PDT)
+Date:   Thu, 14 Jun 2018 06:05:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000544690056e99bfee@google.com>
+Subject: BUG: unable to handle kernel NULL pointer dereference in vmx_set_msr
+From:   syzbot <syzbot+405a50b23dd790f609b1@syzkaller.appspotmail.com>
+To:     hpa@zytor.com, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, pbonzini@redhat.com, rkrcmar@redhat.com,
+        syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add configfs support to provision ufs device at runtime.
-Usage:
-echo <desc_buf> > /config/ufshcd/ufs_provision
-To check provisioning status:
-cat /config/ufshcd/ufs_provision
-1 -> Success (Reboot device to check updated provisioning)
+Hello,
 
-Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
+syzbot found the following crash on:
+
+HEAD commit:    be779f03d563 Merge tag 'kbuild-v4.18-2' of git://git.kerne..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f9185f800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=855fb54e1e019da2
+dashboard link: https://syzkaller.appspot.com/bug?extid=405a50b23dd790f609b1
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+405a50b23dd790f609b1@syzkaller.appspotmail.com
+
+BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
+PGD 1890f1067 P4D 1890f1067 PUD 1890f2067 PMD 0
+netlink: 8 bytes leftover after parsing attributes in process  
+`syz-executor0'.
+Oops: 0010 [#1] SMP KASAN
+CPU: 0 PID: 12381 Comm: syz-executor7 Not tainted 4.17.0+ #101
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:          (null)
+Code:
+unchecked MSR access error: WRMSR to 0x49 (tried to write  
+0x0000000000000001) at rIP: 0xffffffff81347e18 (native_write_msr+0x8/0x30)
+Bad RIP value.
+RSP: 0018:ffff88019151f4c0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8801d2dca800 RCX: 1ffffffff10eac7d
+RDX: ffff88019151f9e0 RSI: ffff8801c922da40 RDI: ffff8801c4a5a540
+RBP: ffff88019151f630 R08: 0000000000000001 R09: 0000000000000000
+Call Trace:
+R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff100322a3e9d
+R13: ffff88019151f9e0 R14: ffff8801d2dca812 R15: ffff8801d2dcac58
+FS:  00007f5039c16700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  paravirt_write_msr arch/x86/include/asm/paravirt.h:117 [inline]
+  wrmsrl arch/x86/include/asm/paravirt.h:150 [inline]
+  vmx_set_msr+0x19b/0x2010 arch/x86/kvm/vmx.c:3901
+CR2: ffffffffffffffd6 CR3: 00000001890f0000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  kvm_set_msr+0x18a/0x370 arch/x86/kvm/x86.c:1208
+  do_set_msr+0x106/0x190 arch/x86/kvm/x86.c:1237
+  sock_poll+0x1d1/0x710 net/socket.c:1168
+  vfs_poll+0x77/0x2a0 fs/select.c:40
+  do_pollfd fs/select.c:848 [inline]
+  do_poll fs/select.c:896 [inline]
+  do_sys_poll+0x6fd/0x1100 fs/select.c:990
+  __msr_io arch/x86/kvm/x86.c:2784 [inline]
+  msr_io+0x21a/0x360 arch/x86/kvm/x86.c:2820
+  kvm_arch_vcpu_ioctl+0x14cb/0x36f0 arch/x86/kvm/x86.c:3782
+  __do_sys_ppoll fs/select.c:1098 [inline]
+  __se_sys_ppoll fs/select.c:1070 [inline]
+  __x64_sys_ppoll+0x2fa/0x5f0 fs/select.c:1070
+  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455b29
+Code: 1d
+ba fb ff c3 66 2e
+0f 1f 84 00 00
+00 00 00 66 90
+48 89 f8 48 89 f7
+48 89 d6 48 89 ca
+4d 89 c2 4d 89 c8
+4c 8b 4c 24 08
+0f 05 <48> 3d 01
+f0 ff ff 0f 83 eb
+b9 fb ff c3 66 2e
+0f 1f 84 00 00 00
+00
+RSP: 002b:00007f5039c15c68 EFLAGS: 00000246 ORIG_RAX: 000000000000010f
+RAX: ffffffffffffffda RBX: 00007f5039c166d4 RCX: 0000000000455b29
+RDX: 0000000020000140 RSI: 0000000000000001 RDI: 00000000200000c0
+RBP: 000000000072bea0 R08: 0000000000000008 R09: 0000000000000000
+R10: 0000000020000180 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004c05f3 R14: 00000000004cfb20 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+CR2: 0000000000000000
+---[ end trace 2f889d9e79d87fbd ]---
+RIP: 0010:          (null)
+Code:
+Bad RIP value.
+RSP: 0018:ffff88019151f4c0 EFLAGS: 00010246
+RAX: 0000000000000000 RBX: ffff8801d2dca800 RCX: 1ffffffff10eac7d
+RDX: ffff88019151f9e0 RSI: ffff8801c922da40 RDI: ffff8801c4a5a540
+RBP: ffff88019151f630 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff100322a3e9d
+R13: ffff88019151f9e0 R14: ffff8801d2dca812 R15: ffff8801d2dcac58
+FS:  00007f5039c16700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffffffffffd6 CR3: 00000001890f0000 CR4: 00000000001426f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
- Documentation/ABI/testing/configfs-driver-ufs |  14 ++
- drivers/scsi/ufs/Makefile                     |   1 +
- drivers/scsi/ufs/ufs-configfs.c               | 191 ++++++++++++++++++++++++++
- drivers/scsi/ufs/ufs.h                        |   2 +
- drivers/scsi/ufs/ufshcd.c                     |   2 +
- drivers/scsi/ufs/ufshcd.h                     |   7 +
- 6 files changed, 217 insertions(+)
- create mode 100644 Documentation/ABI/testing/configfs-driver-ufs
- create mode 100644 drivers/scsi/ufs/ufs-configfs.c
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/ABI/testing/configfs-driver-ufs b/Documentation/ABI/testing/configfs-driver-ufs
-new file mode 100644
-index 0000000..a17fe15
---- /dev/null
-+++ b/Documentation/ABI/testing/configfs-driver-ufs
-@@ -0,0 +1,14 @@
-+What:		/config/ufshcd/ufs_provision
-+Date:		Jun 2018
-+KernelVersion:	4.14
-+Description:
-+		This file shows the status of runtime ufs provisioning.
-+		This can be used to provision ufs device if bConfigDescrLock is 0.
-+		Configuration buffer needs to be written in space separated format
-+		specificied as:
-+		echo <bNumberLU> <bBootEnable> <bDescrAccessEn> <bInitPowerMode>
-+		<bHighPriorityLUN> <bSecureRemovalType> <bInitActiveICCLevel>
-+		<wPeriodicRTCUpdate> <bConfigDescrLock> <LUNum> <bLUEnable>
-+		<bBootLunID> <size_in_kb> <bDataReliability> <bLUWriteProtect>
-+		<bMemoryType> <bLogicalBlockSize> <bProvisioningType>
-+		<wContextCapabilities> > /config/ufshcd/ufs_provision
-diff --git a/drivers/scsi/ufs/Makefile b/drivers/scsi/ufs/Makefile
-index 918f579..d438e74 100644
---- a/drivers/scsi/ufs/Makefile
-+++ b/drivers/scsi/ufs/Makefile
-@@ -5,5 +5,6 @@ obj-$(CONFIG_SCSI_UFS_DWC_TC_PLATFORM) += tc-dwc-g210-pltfrm.o ufshcd-dwc.o tc-d
- obj-$(CONFIG_SCSI_UFS_QCOM) += ufs-qcom.o
- obj-$(CONFIG_SCSI_UFSHCD) += ufshcd-core.o
- ufshcd-core-objs := ufshcd.o ufs-sysfs.o
-+obj-$(CONFIG_CONFIGFS_FS) += ufs-configfs.o
- obj-$(CONFIG_SCSI_UFSHCD_PCI) += ufshcd-pci.o
- obj-$(CONFIG_SCSI_UFSHCD_PLATFORM) += ufshcd-pltfrm.o
-diff --git a/drivers/scsi/ufs/ufs-configfs.c b/drivers/scsi/ufs/ufs-configfs.c
-new file mode 100644
-index 0000000..7655e6b
---- /dev/null
-+++ b/drivers/scsi/ufs/ufs-configfs.c
-@@ -0,0 +1,191 @@
-+/*
-+ * drivers/scsi/ufs/ufs-configfs.c
-+ *
-+ * Copyright (c) 2018, Qualcomm Technologies, Inc.
-+ *
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/string.h>
-+#include <asm/unaligned.h>
-+#include <linux/configfs.h>
-+
-+#include "ufs.h"
-+#include "ufshcd.h"
-+
-+struct ufs_hba *hba;
-+
-+static ssize_t ufs_provision_show(struct config_item *item, char *buf)
-+{
-+	return snprintf(buf, PAGE_SIZE, "provision_enabled = %x\n",
-+		hba->provision_enabled);
-+}
-+
-+ssize_t ufshcd_desc_configfs_store(const char *buf, size_t count)
-+{
-+	struct ufs_config_descr *cfg = &hba->cfgs;
-+	char *strbuf;
-+	char *strbuf_copy;
-+	int desc_buf[count];
-+	int *pt;
-+	char *token;
-+	int i, ret;
-+	int value, commit = 0;
-+	int num_luns = 0;
-+	int KB_per_block = 4;
-+
-+	/* reserve one byte for null termination */
-+	strbuf = kmalloc(count + 1, GFP_KERNEL);
-+	if (!strbuf)
-+		return -ENOMEM;
-+
-+	strbuf_copy = strbuf;
-+	strlcpy(strbuf, buf, count + 1);
-+	memset(desc_buf, 0, count);
-+
-+	/* Just return if bConfigDescrLock is already set */
-+	ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_READ_ATTR,
-+		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
-+	if (ret) {
-+		dev_err(hba->dev, "%s: Failed reading bConfigDescrLock %d, cannot re-provision device!\n",
-+			__func__, ret);
-+		hba->provision_enabled = 0;
-+		goto out;
-+	}
-+	if (cfg->bConfigDescrLock == 1) {
-+		dev_err(hba->dev, "%s: bConfigDescrLock already set to %u, cannot re-provision device!\n",
-+		__func__, cfg->bConfigDescrLock);
-+		hba->provision_enabled = 0;
-+		goto out;
-+	}
-+
-+	for (i = 0; i < count; i++) {
-+		token = strsep(&strbuf, " ");
-+		if (!token && i) {
-+			num_luns = desc_buf[i-1];
-+			dev_dbg(hba->dev, "%s: token %s, num_luns %d\n",
-+				__func__, token, num_luns);
-+			if (num_luns > 8) {
-+				dev_err(hba->dev, "%s: Invalid num_luns %d\n",
-+				__func__, num_luns);
-+				hba->provision_enabled = 0;
-+				goto out;
-+			}
-+			break;
-+		}
-+
-+		ret = kstrtoint(token, 0, &value);
-+		if (ret) {
-+			dev_err(hba->dev, "%s: kstrtoint failed %d %s\n",
-+				__func__, ret, token);
-+			break;
-+		}
-+		desc_buf[i] = value;
-+		dev_dbg(hba->dev, " desc_buf[%d] 0x%x", i, desc_buf[i]);
-+	}
-+
-+	/* Fill in the descriptors with parsed configuration data */
-+	pt = desc_buf;
-+	cfg->bNumberLU = *pt++;
-+	cfg->bBootEnable = *pt++;
-+	cfg->bDescrAccessEn = *pt++;
-+	cfg->bInitPowerMode = *pt++;
-+	cfg->bHighPriorityLUN = *pt++;
-+	cfg->bSecureRemovalType = *pt++;
-+	cfg->bInitActiveICCLevel = *pt++;
-+	cfg->wPeriodicRTCUpdate = *pt++;
-+	cfg->bConfigDescrLock = *pt++;
-+	dev_dbg(hba->dev, "%s: %u %u %u %u %u %u %u %u %u\n", __func__,
-+	cfg->bNumberLU, cfg->bBootEnable, cfg->bDescrAccessEn,
-+	cfg->bInitPowerMode, cfg->bHighPriorityLUN, cfg->bSecureRemovalType,
-+	cfg->bInitActiveICCLevel, cfg->wPeriodicRTCUpdate,
-+	cfg->bConfigDescrLock);
-+
-+	for (i = 0; i < num_luns; i++) {
-+		cfg->unit[i].LUNum = *pt++;
-+		cfg->unit[i].bLUEnable = *pt++;
-+		cfg->unit[i].bBootLunID = *pt++;
-+		/* dNumAllocUnits = size_in_kb/KB_per_block */
-+		cfg->unit[i].dNumAllocUnits = (u32)(*pt++ / KB_per_block);
-+		cfg->unit[i].bDataReliability = *pt++;
-+		cfg->unit[i].bLUWriteProtect = *pt++;
-+		cfg->unit[i].bMemoryType = *pt++;
-+		cfg->unit[i].bLogicalBlockSize = *pt++;
-+		cfg->unit[i].bProvisioningType = *pt++;
-+		cfg->unit[i].wContextCapabilities = *pt++;
-+	}
-+
-+	cfg->lun_to_grow = *pt++;
-+	commit = *pt++;
-+	cfg->num_luns = *pt;
-+	dev_dbg(hba->dev, "%s: lun_to_grow %u, commit %u num_luns %u\n",
-+		__func__, cfg->lun_to_grow, commit, cfg->num_luns);
-+	if (commit == 1) {
-+		ret = ufshcd_do_config_device(hba);
-+		if (!ret) {
-+			hba->provision_enabled = 1;
-+			dev_err(hba->dev,
-+			"%s: UFS Provisioning completed,num_luns %u, reboot now !\n",
-+			__func__, cfg->num_luns);
-+		}
-+	} else
-+		dev_err(hba->dev, "%s: Invalid commit %u\n", __func__, commit);
-+out:
-+	kfree(strbuf_copy);
-+	return count;
-+}
-+
-+static ssize_t ufs_provision_store(struct config_item *item,
-+		const char *buf, size_t count)
-+{
-+	return ufshcd_desc_configfs_store(buf, count);
-+}
-+
-+static struct configfs_attribute ufshcd_attr_provision = {
-+	.ca_name	= "ufs_provision",
-+	.ca_mode	= S_IRUGO | S_IWUGO,
-+	.ca_owner	= THIS_MODULE,
-+	.show		= ufs_provision_show,
-+	.store		= ufs_provision_store,
-+};
-+
-+static struct configfs_attribute *ufshcd_attrs[] = {
-+	&ufshcd_attr_provision,
-+	NULL,
-+};
-+
-+static struct config_item_type ufscfg_type = {
-+	.ct_attrs	= ufshcd_attrs,
-+	.ct_owner	= THIS_MODULE,
-+};
-+
-+static struct configfs_subsystem ufscfg_subsys = {
-+	.su_group = {
-+		.cg_item = {
-+			.ci_namebuf = "ufshcd",
-+			.ci_type = &ufscfg_type,
-+		},
-+	},
-+};
-+
-+int ufshcd_configfs_init(struct ufs_hba *hba_ufs)
-+{
-+	int ret;
-+	struct configfs_subsystem *subsys = &ufscfg_subsys;
-+	hba = hba_ufs;
-+
-+	config_group_init(&subsys->su_group);
-+	mutex_init(&subsys->su_mutex);
-+	ret = configfs_register_subsystem(subsys);
-+	if (ret) {
-+		pr_err("Error %d while registering subsystem %s\n",
-+		       ret,
-+		       subsys->su_group.cg_item.ci_namebuf);
-+	}
-+	return ret;
-+}
-+
-+void ufshcd_configfs_exit(void)
-+{
-+	configfs_unregister_subsystem(&ufscfg_subsys);
-+}
-\ No newline at end of file
-diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-index 1f99904..0b497fc 100644
---- a/drivers/scsi/ufs/ufs.h
-+++ b/drivers/scsi/ufs/ufs.h
-@@ -427,6 +427,7 @@ enum {
- };
- 
- struct ufs_unit_desc {
-+	u8	   LUNum;
- 	u8     bLUEnable;              /* 1 for enabled LU */
- 	u8     bBootLunID;             /* 0 for using this LU for boot */
- 	u8     bLUWriteProtect;        /* 1 = power on WP, 2 = permanent WP */
-@@ -451,6 +452,7 @@ struct ufs_config_descr {
- 	u32    qVendorConfigCode;      /* Vendor specific configuration code */
- 	struct ufs_unit_desc unit[8];
- 	u8	lun_to_grow;
-+	u8 num_luns;
- };
- 
- /* Task management service response */
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index c0235a4..63d6532 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -7854,6 +7854,7 @@ int ufshcd_shutdown(struct ufs_hba *hba)
- void ufshcd_remove(struct ufs_hba *hba)
- {
- 	ufs_sysfs_remove_nodes(hba->dev);
-+	ufshcd_configfs_exit();
- 	scsi_remove_host(hba->host);
- 	/* disable interrupts */
- 	ufshcd_disable_intr(hba, hba->intr_mask);
-@@ -8107,6 +8108,7 @@ int ufshcd_init(struct ufs_hba *hba, void __iomem *mmio_base, unsigned int irq)
- 
- 	async_schedule(ufshcd_async_scan, hba);
- 	ufs_sysfs_add_nodes(hba->dev);
-+	ufshcd_configfs_init(hba);
- 
- 	return 0;
- 
-diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-index 816b674..fb254c8 100644
---- a/drivers/scsi/ufs/ufshcd.h
-+++ b/drivers/scsi/ufs/ufshcd.h
-@@ -41,6 +41,7 @@
- #include <linux/kernel.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/configfs.h>
- #include <linux/io.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
-@@ -550,6 +551,7 @@ struct ufs_hba {
- 	bool is_irq_enabled;
- 	u32 dev_ref_clk_freq;
- 	struct ufs_config_descr cfgs;
-+	bool provision_enabled;
- 
- 	/* Interrupt aggregation support is broken */
- 	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
-@@ -867,7 +869,12 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int desc_index,
- 
- int ufshcd_hold(struct ufs_hba *hba, bool async);
- void ufshcd_release(struct ufs_hba *hba);
-+
-+/* Expose UFS configfs API's */
- int ufshcd_do_config_device(struct ufs_hba *hba);
-+ssize_t ufshcd_desc_configfs_store(const char *buf, size_t count);
-+int ufshcd_configfs_init(struct ufs_hba *hba_ufs);
-+void ufshcd_configfs_exit(void);
- 
- int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn desc_id,
- 	int *desc_length);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
