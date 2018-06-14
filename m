@@ -6,45 +6,56 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68780C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F2AB1C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EE8C20864
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A903120864
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:14:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MYoIjXJM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1EE8C20864
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQRmusuH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A903120864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966373AbeFNOOb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:14:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55634 "EHLO mail.kernel.org"
+        id S966381AbeFNOOp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:14:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966338AbeFNON7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:13:59 -0400
+        id S966319AbeFNONy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:13:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82589208DB;
-        Thu, 14 Jun 2018 14:13:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C927C208E3;
+        Thu, 14 Jun 2018 14:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985639;
-        bh=kRMCiw9WOG4RZKSyhWnXKvt+bi+lfYF7d3hENE3JjlI=;
+        s=default; t=1528985633;
+        bh=zMq2fWR9ck3YK4+2WAQsT/RoNy238x7r/nrU+BR6kzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MYoIjXJMyAzR/vqgK3SNkt11eetsF7dyjCoDBPqHIkDV85iEhwW7TFJh7i4ktcJ0U
-         ksLlwYcDUa8xjDi+yqTQz6abfpT7CFZSn9FrTbZU6iH3QRFqMwXgKErf4VQHlwk5IW
-         q0KxudvN7JgXe9vJX4d/jhjjHtypoulGH4xMIEz4=
+        b=vQRmusuHrLDOGsXt01P9LrlOkEnoFPVr3LQgMIOyfGJEg8ju5aY+00tUK1dHliP5a
+         NZa+klqDnAbiXvk8P4DyL6HVtlg6LFSGKnbCXeNWBfC9Kv+ORSvP6u2Ikd79eP/VK4
+         jxHfsPBXxM0xCIh+6akDts1H9KdYCVBiJVzKPU2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Easton <kevin@guarana.org>,
-        syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Zubin Mithra <zsm@chromium.org>
-Subject: [PATCH 4.4 13/24] af_key: Always verify length of provided sadb_key
-Date:   Thu, 14 Jun 2018 16:05:08 +0200
-Message-Id: <20180614132725.021261351@linuxfoundation.org>
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Quentin Casasnovas <quentin.casasnovas@oracle.com>,
+        Rik van Riel <riel@redhat.com>,
+        Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        yu-cheng yu <yu-cheng.yu@intel.com>,
+        Ingo Molnar <mingo@kernel.org>
+Subject: [PATCH 4.4 11/24] x86/fpu: Fix FNSAVE usage in eagerfpu mode
+Date:   Thu, 14 Jun 2018 16:05:06 +0200
+Message-Id: <20180614132724.940491785@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
 References: <20180614132724.483802160@linuxfoundation.org>
@@ -61,108 +72,82 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kevin Easton <kevin@guarana.org>
+From: Andy Lutomirski <luto@kernel.org>
 
-commit 4b66af2d6356a00e94bcdea3e7fea324e8b5c6f4 upstream.
+commit 5ed73f40735c68d8a656b46d09b1885d3b8740ae upstream.
 
-Key extensions (struct sadb_key) include a user-specified number of key
-bits.  The kernel uses that number to determine how much key data to copy
-out of the message in pfkey_msg2xfrm_state().
+In eager fpu mode, having deactivated FPU without immediately
+reloading some other context is illegal.  Therefore, to recover from
+FNSAVE, we can't just deactivate the state -- we need to reload it
+if we're not actively context switching.
 
-The length of the sadb_key message must be verified to be long enough,
-even in the case of SADB_X_AALG_NULL.  Furthermore, the sadb_key_len value
-must be long enough to include both the key data and the struct sadb_key
-itself.
+We had this wrong in fpu__save() and fpu__copy().  Fix both.
+__kernel_fpu_begin() was fine -- add a comment.
 
-Introduce a helper function verify_key_len(), and call it from
-parse_exthdrs() where other exthdr types are similarly checked for
-correctness.
+This fixes a warning triggerable with nofxsr eagerfpu=on.
 
-Signed-off-by: Kevin Easton <kevin@guarana.org>
-Reported-by: syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Zubin Mithra <zsm@chromium.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Fenghua Yu <fenghua.yu@intel.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Quentin Casasnovas <quentin.casasnovas@oracle.com>
+Cc: Rik van Riel <riel@redhat.com>
+Cc: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: yu-cheng yu <yu-cheng.yu@intel.com>
+Link: http://lkml.kernel.org/r/60662444e13c76f06e23c15c5dcdba31b4ac3d67.1453675014.git.luto@kernel.org
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/key/af_key.c |   45 +++++++++++++++++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 10 deletions(-)
+ arch/x86/kernel/fpu/core.c |   18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -437,6 +437,24 @@ static int verify_address_len(const void
- 	return 0;
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -114,6 +114,10 @@ void __kernel_fpu_begin(void)
+ 	kernel_fpu_disable();
+ 
+ 	if (fpu->fpregs_active) {
++		/*
++		 * Ignore return value -- we don't care if reg state
++		 * is clobbered.
++		 */
+ 		copy_fpregs_to_fpstate(fpu);
+ 	} else {
+ 		this_cpu_write(fpu_fpregs_owner_ctx, NULL);
+@@ -189,8 +193,12 @@ void fpu__save(struct fpu *fpu)
+ 
+ 	preempt_disable();
+ 	if (fpu->fpregs_active) {
+-		if (!copy_fpregs_to_fpstate(fpu))
+-			fpregs_deactivate(fpu);
++		if (!copy_fpregs_to_fpstate(fpu)) {
++			if (use_eager_fpu())
++				copy_kernel_to_fpregs(&fpu->state);
++			else
++				fpregs_deactivate(fpu);
++		}
+ 	}
+ 	preempt_enable();
  }
- 
-+static inline int sadb_key_len(const struct sadb_key *key)
-+{
-+	int key_bytes = DIV_ROUND_UP(key->sadb_key_bits, 8);
+@@ -259,7 +267,11 @@ static void fpu_copy(struct fpu *dst_fpu
+ 	preempt_disable();
+ 	if (!copy_fpregs_to_fpstate(dst_fpu)) {
+ 		memcpy(&src_fpu->state, &dst_fpu->state, xstate_size);
+-		fpregs_deactivate(src_fpu);
 +
-+	return DIV_ROUND_UP(sizeof(struct sadb_key) + key_bytes,
-+			    sizeof(uint64_t));
-+}
-+
-+static int verify_key_len(const void *p)
-+{
-+	const struct sadb_key *key = p;
-+
-+	if (sadb_key_len(key) > key->sadb_key_len)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static inline int pfkey_sec_ctx_len(const struct sadb_x_sec_ctx *sec_ctx)
- {
- 	return DIV_ROUND_UP(sizeof(struct sadb_x_sec_ctx) +
-@@ -533,16 +551,25 @@ static int parse_exthdrs(struct sk_buff
- 				return -EINVAL;
- 			if (ext_hdrs[ext_type-1] != NULL)
- 				return -EINVAL;
--			if (ext_type == SADB_EXT_ADDRESS_SRC ||
--			    ext_type == SADB_EXT_ADDRESS_DST ||
--			    ext_type == SADB_EXT_ADDRESS_PROXY ||
--			    ext_type == SADB_X_EXT_NAT_T_OA) {
-+			switch (ext_type) {
-+			case SADB_EXT_ADDRESS_SRC:
-+			case SADB_EXT_ADDRESS_DST:
-+			case SADB_EXT_ADDRESS_PROXY:
-+			case SADB_X_EXT_NAT_T_OA:
- 				if (verify_address_len(p))
- 					return -EINVAL;
--			}
--			if (ext_type == SADB_X_EXT_SEC_CTX) {
-+				break;
-+			case SADB_X_EXT_SEC_CTX:
- 				if (verify_sec_ctx_len(p))
- 					return -EINVAL;
-+				break;
-+			case SADB_EXT_KEY_AUTH:
-+			case SADB_EXT_KEY_ENCRYPT:
-+				if (verify_key_len(p))
-+					return -EINVAL;
-+				break;
-+			default:
-+				break;
- 			}
- 			ext_hdrs[ext_type-1] = (void *) p;
- 		}
-@@ -1111,14 +1138,12 @@ static struct xfrm_state * pfkey_msg2xfr
- 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_auth != SADB_X_AALG_NULL &&
--	    ((key->sadb_key_bits+7) / 8 == 0 ||
--	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
- 	key = ext_hdrs[SADB_EXT_KEY_ENCRYPT-1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_encrypt != SADB_EALG_NULL &&
--	    ((key->sadb_key_bits+7) / 8 == 0 ||
--	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
- 
- 	x = xfrm_state_alloc(net);
++		if (use_eager_fpu())
++			copy_kernel_to_fpregs(&src_fpu->state);
++		else
++			fpregs_deactivate(src_fpu);
+ 	}
+ 	preempt_enable();
+ }
 
 
