@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ADDD9C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:50:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 33AD2C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6352F2075E
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:50:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD2FF208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:50:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJglyI8W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6352F2075E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LG91fQ20"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD2FF208CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755395AbeFNOt6 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:49:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47712 "EHLO mail.kernel.org"
+        id S936322AbeFNOuN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:50:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47614 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965023AbeFNOH2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:07:28 -0400
+        id S965014AbeFNOHW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FB4D208DA;
-        Thu, 14 Jun 2018 14:07:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2793208CB;
+        Thu, 14 Jun 2018 14:07:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985247;
-        bh=EApukR12ary99Xr12LQ4qJsCBmBZvaS51KrHNdyrmz8=;
+        s=default; t=1528985242;
+        bh=oslO/DLg+mMdxF6mifeqXYwQ+1RNvA77PT753tRlGvw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FJglyI8W7fGXu4QPww+b8/ELvs6P7yZhe2A42Z+DQRt+r6lt5PEsmIycDkqSrU5mV
-         nkr586AmqpbpuRDrWud+tKZOQocp181+SmS+5Et2ZaTKsaSA0IMHpTnMOeB0XccjQw
-         h+rdGLA2IZf6OD9q0ijGkZUothZpUCfpRhIyvTwY=
+        b=LG91fQ20hjRvbgxs0GOLSAichmU+tEFPySeTcXwqVpwS9HS+GAUoTxL59ZsWkGF1v
+         4l5Hs5CaqrTzHvR85F7srb1qzLoCqZuqXuOE2yDoSzrlzlvtM3t3unsDsN/qrg1ePS
+         W/INDestzMhJ6INDVy1dgBrVEwLmYQmj3aM+pw8M=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Richard Genoud <richard.genoud@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH 4.17 26/45] tty/serial: atmel: use port->name as name in request_irq()
-Date:   Thu, 14 Jun 2018 16:04:17 +0200
-Message-Id: <20180614132128.205026604@linuxfoundation.org>
+        stable@vger.kernel.org, Simon Horman <horms+renesas@verge.net.au>,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>
+Subject: [PATCH 4.17 24/45] usb: gadget: udc: renesas_usb3: disable the controllers irqs for reconnecting
+Date:   Thu, 14 Jun 2018 16:04:15 +0200
+Message-Id: <20180614132128.075282047@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -61,63 +60,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-commit 9594b5be7ec110ed11acec58fa94f3f293668c85 upstream.
+commit bd6bce004d78b867ba0c6d3712f1c5b50398af9a upstream.
 
-I was puzzled while looking at /proc/interrupts and random things showed
-up between reboots. This occurred more often but I realised it later. The
-"correct" output should be:
-|38:      11861  atmel-aic5   2 Level     ttyS0
+This patch fixes an issue that reconnection is possible to fail
+because unexpected state handling happens by the irqs. To fix the issue,
+the driver disables the controller's irqs when disconnected.
 
-but I saw sometimes
-|38:       6426  atmel-aic5   2 Level     tty1
-
-and accounted it wrongly as correct. This is use after free and the
-former example randomly got the "old" pointer which pointed to the same
-content. With SLAB_FREELIST_RANDOM and HARDENED I even got
-|38:       7067  atmel-aic5   2 Level     E=Started User Manager for UID 0
-
-or other nonsense.
-As it turns out the tty, pointer that is accessed in atmel_startup(), is
-freed() before atmel_shutdown(). It seems to happen quite often that the
-tty for ttyS0 is allocated and freed while ->shutdown is not invoked. I
-don't do anything special - just a systemd boot :)
-
-Use dev_name(&pdev->dev) as the IRQ name for request_irq(). This exists
-as long as the driver is loaded so no use-after-free here.
-
-Cc: stable@vger.kernel.org
-Fixes: 761ed4a94582 ("tty: serial_core: convert uart_close to use tty_port_close")
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Fixes: 746bfe63bba3 ("usb: gadget: renesas_usb3: add support for Renesas USB3.0 peripheral controller")
+Cc: <stable@vger.kernel.org> # v4.5+
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/atmel_serial.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/usb/gadget/udc/renesas_usb3.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -1757,7 +1757,6 @@ static int atmel_startup(struct uart_por
- {
- 	struct platform_device *pdev = to_platform_device(port->dev);
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
--	struct tty_struct *tty = port->state->port.tty;
- 	int retval;
+--- a/drivers/usb/gadget/udc/renesas_usb3.c
++++ b/drivers/usb/gadget/udc/renesas_usb3.c
+@@ -623,6 +623,13 @@ static void usb3_disconnect(struct renes
+ 	usb3_usb2_pullup(usb3, 0);
+ 	usb3_clear_bit(usb3, USB30_CON_B3_CONNECT, USB3_USB30_CON);
+ 	usb3_reset_epc(usb3);
++	usb3_disable_irq_1(usb3, USB_INT_1_B2_RSUM | USB_INT_1_B3_PLLWKUP |
++			   USB_INT_1_B3_LUPSUCS | USB_INT_1_B3_DISABLE |
++			   USB_INT_1_SPEED | USB_INT_1_B3_WRMRST |
++			   USB_INT_1_B3_HOTRST | USB_INT_1_B2_SPND |
++			   USB_INT_1_B2_L1SPND | USB_INT_1_B2_USBRST);
++	usb3_clear_bit(usb3, USB_COM_CON_SPD_MODE, USB3_USB_COM_CON);
++	usb3_init_epc_registers(usb3);
  
- 	/*
-@@ -1772,8 +1771,8 @@ static int atmel_startup(struct uart_por
- 	 * Allocate the IRQ
- 	 */
- 	retval = request_irq(port->irq, atmel_interrupt,
--			IRQF_SHARED | IRQF_COND_SUSPEND,
--			tty ? tty->name : "atmel_serial", port);
-+			     IRQF_SHARED | IRQF_COND_SUSPEND,
-+			     dev_name(&pdev->dev), port);
- 	if (retval) {
- 		dev_err(port->dev, "atmel_startup - Can't get irq\n");
- 		return retval;
+ 	if (usb3->driver)
+ 		usb3->driver->disconnect(&usb3->gadget);
 
 
