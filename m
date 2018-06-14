@@ -3,124 +3,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 26CBAC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:42:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CCC3DC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D13BF208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:42:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 832B7208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:42:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ska18klf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D13BF208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HEW1+8sl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 832B7208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965414AbeFNOmY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S965462AbeFNOm2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:42:28 -0400
+Received: from mail-io0-f196.google.com ([209.85.223.196]:36594 "EHLO
+        mail-io0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965416AbeFNOmY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Jun 2018 10:42:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49664 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965333AbeFNOIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:08:52 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA48F208DD;
-        Thu, 14 Jun 2018 14:08:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985332;
-        bh=5NsNiGGmyUHwgnTp2sX0XcSQ3WOe2/4C5ZrDMmiGeaI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ska18klfq8V9Wpet9Z/uQMwT9fOCJbZECubXcWlcR5qsFjIAhnbqpunO6aQ+Rq33T
-         W8hyI6EptKvtNOMs9x+ILSDvUrrdnpgZsZm/lP9SsivjLOqBjzVfeavTZ2FRoNkwwU
-         h03Gnxj+HeiIOzpJ2xXuMQqPiNRZTigLYgpquokQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.16 07/43] kvm: nVMX: Enforce cpl=0 for VMX instructions
-Date:   Thu, 14 Jun 2018 16:04:11 +0200
-Message-Id: <20180614132135.424847630@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
-References: <20180614132135.111973468@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+Received: by mail-io0-f196.google.com with SMTP id k3-v6so7379506iog.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 07:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=V9FtkrQCk6DsqxRpmYpZXOTvYr/ZRCKRIlyz4VVO7ro=;
+        b=HEW1+8slA1r898RY3g+KLOyka5LcmpNVR3L+8+azsI+ohL71Ui6fjO8ZI2h458l+qn
+         J7ItPatiavQh65NqPBa4spRX/cTdMMxq6wjadLnSxhz9mR780wU7i3gC+QhagMP5EUrs
+         zur9evIzhII2XXWnsFCA56rbu2f+tWljFrfII=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=V9FtkrQCk6DsqxRpmYpZXOTvYr/ZRCKRIlyz4VVO7ro=;
+        b=rW2C/rq8UTkyRFwH1YUiSyXQKOLGGmWg3uFJQlyNnWqy0BdkCqZ8WVppTql0XVI7vD
+         ITGVdEPUrqZ1XAEml6IgNkziRinL+BP04XyiEO6DNsiafMK7VgjLkE1StGJxrYttkcVm
+         jt+53gFiDlq69NeAKvTZRmDLGcL0Fg7UycVpJPZ8IVLMq9SQvjQx1QbJRck7sE+PDTPL
+         hTKG2RRMHjxC4/9O30NuaqlMbNNWRECOxOScat4Rqv5pOt/qRXdf3lCb9sEoY6UtBZpu
+         dhYBQ8XnCfuoTYczBXLxvbgJnAXt/2zXdY3D7/U7vAq92cMt4Ol9xMKDsBUGVFD7ePN5
+         wPOw==
+X-Gm-Message-State: APt69E1pYx7BDsgchnjRnh4CPxYazrrq8KbUdOQFlZkpg9zyZwmVSMoI
+        UHlom/OU4sBA5pgamVI3vZdZqePbBbyNS0bLazRrrg==
+X-Google-Smtp-Source: ADUXVKJD7QA/rmpOhcHhmtayKmrotmLRiV1TzoAhBRAHqZLpfgKopKBg+5Dn73GKz3itJJ5+q4+8epaR7ect+dpdFbk=
+X-Received: by 2002:a6b:1902:: with SMTP id 2-v6mr2522312ioz.304.1528987344109;
+ Thu, 14 Jun 2018 07:42:24 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 07:42:23
+ -0700 (PDT)
+In-Reply-To: <20180606174424.9630-1-rafael.tinoco@linaro.org>
+References: <20180606174424.9630-1-rafael.tinoco@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 14 Jun 2018 16:42:23 +0200
+Message-ID: <CACRpkdZ82RNta7LGp4OB=6TY_q3mdqGGDedayz-C4hB9m7WG9Q@mail.gmail.com>
+Subject: Re: [PATCH] selftests: gpio: gpio-mockup-chardev GPIOHANDLE_REQUEST_OUTPUT
+ fix
+To:     Rafael David Tinoco <rafael.tinoco@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>, shuah@kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Wed, Jun 6, 2018 at 7:44 PM, Rafael David Tinoco
+<rafael.tinoco@linaro.org> wrote:
 
-------------------
+> Following logic from commit: 22f6592b23, GPIOHANDLE_REQUEST_OUTPUT
+> should handle errors same way as GPIOHANDLE_REQUEST_INPUT does, or else
+> the following error occurs:
+>
+> gpio-mockup-chardev: gpio<gpiochip1> line<0> test flag<0x2> value<0>: No
+> such file or directory
+>
+> despite the real result of gpio_pin_test(), gpio_debugfs_get() and
+> gpiotools_request_linehandle() functions.
+>
+> Signed-off-by: Rafael David Tinoco <rafael.tinoco@linaro.org>
 
-From: Felix Wilhelm <fwilhelm@google.com>
+Bartosz, does this look OK to you?
 
-commit 727ba748e110b4de50d142edca9d6a9b7e6111d8 upstream.
-
-VMX instructions executed inside a L1 VM will always trigger a VM exit
-even when executed with cpl 3. This means we must perform the
-privilege check in software.
-
-Fixes: 70f3aac964ae("kvm: nVMX: Remove superfluous VMX instruction fault checks")
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Wilhelm <fwilhelm@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/kvm/vmx.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -7426,6 +7426,12 @@ static int handle_vmon(struct kvm_vcpu *
- 		return 1;
- 	}
- 
-+	/* CPL=0 must be checked manually. */
-+	if (vmx_get_cpl(vcpu)) {
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+		return 1;
-+	}
-+
- 	if (vmx->nested.vmxon) {
- 		nested_vmx_failValid(vcpu, VMXERR_VMXON_IN_VMX_ROOT_OPERATION);
- 		return kvm_skip_emulated_instruction(vcpu);
-@@ -7485,6 +7491,11 @@ static int handle_vmon(struct kvm_vcpu *
-  */
- static int nested_vmx_check_permission(struct kvm_vcpu *vcpu)
- {
-+	if (vmx_get_cpl(vcpu)) {
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+		return 0;
-+	}
-+
- 	if (!to_vmx(vcpu)->nested.vmxon) {
- 		kvm_queue_exception(vcpu, UD_VECTOR);
- 		return 0;
-@@ -7785,7 +7796,7 @@ static int handle_vmread(struct kvm_vcpu
- 		if (get_vmx_mem_address(vcpu, exit_qualification,
- 				vmx_instruction_info, true, &gva))
- 			return 1;
--		/* _system ok, as hardware has verified cpl=0 */
-+		/* _system ok, nested_vmx_check_permission has verified cpl=0 */
- 		kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, gva,
- 			     &field_value, (is_long_mode(vcpu) ? 8 : 4), NULL);
- 	}
-@@ -7945,7 +7956,7 @@ static int handle_vmptrst(struct kvm_vcp
- 	if (get_vmx_mem_address(vcpu, exit_qualification,
- 			vmx_instruction_info, true, &vmcs_gva))
- 		return 1;
--	/* ok to use *_system, as hardware has verified cpl=0 */
-+	/* *_system ok, nested_vmx_check_permission has verified cpl=0 */
- 	if (kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, vmcs_gva,
- 				 (void *)&to_vmx(vcpu)->nested.current_vmptr,
- 				 sizeof(u64), &e)) {
-
-
+Yours,
+Linus Walleij
