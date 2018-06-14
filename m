@@ -2,136 +2,119 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9BFC7C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:25:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B1C23C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51582208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:25:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51582208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 66755208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:26:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=monstr-eu.20150623.gappssmtp.com header.i=@monstr-eu.20150623.gappssmtp.com header.b="OPJ8sgWa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66755208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754675AbeFNGZW (ORCPT
+        id S1754630AbeFNG0Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:25:22 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:48907 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752671AbeFNGZV (ORCPT
+        Thu, 14 Jun 2018 02:26:16 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:39090 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752681AbeFNG0O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:25:21 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5E6OswF765488
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 13 Jun 2018 23:24:54 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5E6OsN6765485;
-        Wed, 13 Jun 2018 23:24:54 -0700
-Date:   Wed, 13 Jun 2018 23:24:54 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Seeteena Thoufeek <tipbot@zytor.com>
-Message-ID: <tip-fad76d4333fe73cf3f73704aa34d4ce523b1c458@git.kernel.org>
-Cc:     hpa@zytor.com, peterz@infradead.org, namhyung@kernel.org,
-        tglx@linutronix.de, mingo@kernel.org, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, s1seetee@linux.vnet.ibm.com,
-        alexander.shishkin@linux.intel.com, acme@redhat.com
-Reply-To: linux-kernel@vger.kernel.org, s1seetee@linux.vnet.ibm.com,
-          alexander.shishkin@linux.intel.com, jolsa@redhat.com,
-          acme@redhat.com, hpa@zytor.com, tglx@linutronix.de,
-          mingo@kernel.org, peterz@infradead.org, namhyung@kernel.org
-In-Reply-To: <1528455748-20087-1-git-send-email-s1seetee@linux.vnet.ibm.com>
-References: <1528455748-20087-1-git-send-email-s1seetee@linux.vnet.ibm.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf script: Show hw-cache events
-Git-Commit-ID: fad76d4333fe73cf3f73704aa34d4ce523b1c458
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+        Thu, 14 Jun 2018 02:26:14 -0400
+Received: by mail-wm0-f65.google.com with SMTP id p11-v6so9578955wmc.4
+        for <linux-kernel@vger.kernel.org>; Wed, 13 Jun 2018 23:26:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20150623.gappssmtp.com; s=20150623;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=nWMIDKt80mXBHzI7s8JdB2ZI+XKFuN43FHMLLhT8LRM=;
+        b=OPJ8sgWaoi69GKVE76A/HwSmA6WsU36Pl4K4oqLTs5RdAmcYY2jUvUYrBtpnx2n/CM
+         a7LsrmBhHF4hNPmYS8YBEtIFmBMv/+DVFRvZeU76SFXE2bd2hXQp/dGihCOV1FWiRlwB
+         BEz14mUIT60LmCPhwDAtVwK3G1LrBj1Vqo+kp/VkRhwejUqI93VutVlkwcChd5TBurHz
+         LLP9IeawgqCHJb1PbM2LiJb6bit6+oe8eLG2XQOr2evz1L3FMePh7+aZBEYLCGL9XPkd
+         KU9hFte+KoSXWuLp01vchT/FsqubYMKFr57KkhGgXAm4NQXxBnuBlfezM/p+zHExlR/b
+         fFPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=nWMIDKt80mXBHzI7s8JdB2ZI+XKFuN43FHMLLhT8LRM=;
+        b=piD06uvH0v9bbonznR5xS+EIhLH4QMXLI88pZY61Km+DPgUbxyLA5KQuZ8hR4aX58H
+         8zgYlQUxtvaZyp5GIES4E5Ot6zsJwa0h80rTejXOmujwkjyyL1F57dC9dzPe56Cavchd
+         HckVuNg7EtW4cSKQIHnyM389j+wFoDWGSy8UN2CnTvNBROyfYjZmab38LukuMXdWYufn
+         z+DiPEIKsRy513QruQkxKOhrqP6c0/AQe0+r7GAAfId2B6+VPuK/6q9ztcjETNiWRBfz
+         RWVji1RPBRwAQ3rCFYNuUuj06AO1Jd0fWLL5MlUrkGaqpn45cXxKylmDAR4UqoSlnk1j
+         Ok4A==
+X-Gm-Message-State: APt69E3VqWJEPYKz60uJlqgNwodbbqefrf88GcFQvBPi1tuYJ5dv0/ap
+        TXmgQTqFWrInU7VKupB/w2jmRIvw
+X-Google-Smtp-Source: ADUXVKKr3DrZPU6CieFIpzO2cPF/lEhkf5Sxj41KKMvzXlOvUtTChPf4EjRWJWxOSfzO8EYm3WmFdA==
+X-Received: by 2002:a1c:c342:: with SMTP id t63-v6mr781271wmf.123.1528957573281;
+        Wed, 13 Jun 2018 23:26:13 -0700 (PDT)
+Received: from localhost (nat-35.starnet.cz. [178.255.168.35])
+        by smtp.gmail.com with ESMTPSA id d102-v6sm2024428wma.10.2018.06.13.23.26.12
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Wed, 13 Jun 2018 23:26:12 -0700 (PDT)
+From:   Michal Simek <michal.simek@xilinx.com>
+To:     linux-kernel@vger.kernel.org, monstr@monstr.eu
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        u-boot@lists.denx.de, Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH] microblaze: Add new syscalls io_pgetevents and rseq
+Date:   Thu, 14 Jun 2018 08:26:09 +0200
+Message-Id: <b08f5d64603a7aca3f9dd0a9fb57c6d7bc3b433e.1528957563.git.michal.simek@xilinx.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  fad76d4333fe73cf3f73704aa34d4ce523b1c458
-Gitweb:     https://git.kernel.org/tip/fad76d4333fe73cf3f73704aa34d4ce523b1c458
-Author:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-AuthorDate: Fri, 8 Jun 2018 16:32:28 +0530
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 8 Jun 2018 13:41:30 -0300
+Wire up new syscalls io_pgetevents and rseq.
 
-perf script: Show hw-cache events
-
-'perf script' fails to report hardware cache events (PERF_TYPE_HW_CACHE)
-where as 'perf report' shows the samples. Fix it. Ex,
-
-  # perf record -e L1-dcache-loads ./a.out
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.008 MB perf.data (11 samples)]
-
-Before patch:
-
-  # perf script | wc -l
-  0
-
-After patch:
-
-  # perf script | wc -l
-  11
-
-Committer testing:
-
-  [root@jouet ~]# perf script | head -30 | tail
-        Timer 9803 [2] 8.963330:  1554 L1-dcache-loads: 7ffef89baae4 __vdso_clock_gettime+0xf4 ([vdso])
-      swapper    0 [2] 8.963343:  5626 L1-dcache-loads: ffffffffa66f4f6b cpuidle_not_av+0xb (/lib/modules/4.17.0-rc5/build/vmlinux)
-      firefox 4853 [2] 8.964070: 18935 L1-dcache-loads: 7f0b9a00dc30 xcb_poll_for_event+0x0 (/usr/lib64/libxcb.so.1.1.0)
-  Softwar~cTh 4928 [2] 8.964548: 15928 L1-dcache-loads: ffffffffa60d795c update_curr+0x10c (/lib/modules/4.17.0-rc5/build/vmlinux)
-      firefox 4853 [2] 8.964675: 14978 L1-dcache-loads: ffffffffa6897018 mutex_unlock+0x18 (/lib/modules/4.17.0-rc5/build/vmlinux)
-  gnome-shell 2026 [3] 8.964693: 50670 L1-dcache-loads: 7fa08854de6d g_source_iter_next+0x6d (/usr/lib64/libglib-2.0.so.0.5400.3)
-   Compositor 4929 [1] 8.964784: 71772 L1-dcache-loads: 7f0b936bf078 [unknown] (/usr/lib64/firefox/libxul.so)
-     Xwayland 2096 [2] 8.964919: 16799 L1-dcache-loads: 7f68ce2fcb8a glXGetCurrentContext+0x1a (/usr/lib64/libGLX.so.0.0.0)
-  gnome-shell 2026 [3] 8.964997: 50670 L1-dcache-loads: 7fa08854de6d g_source_iter_next+0x6d (/usr/lib64/libglib-2.0.so.0.5400.3)
-  [root@jouet ~]#
-
-Signed-off-by: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1528455748-20087-1-git-send-email-s1seetee@linux.vnet.ibm.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 ---
- tools/perf/builtin-script.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
 
-diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-index b3bf35512d21..a31d7082188e 100644
---- a/tools/perf/builtin-script.c
-+++ b/tools/perf/builtin-script.c
-@@ -180,6 +180,18 @@ static struct {
- 				  PERF_OUTPUT_EVNAME | PERF_OUTPUT_TRACE
- 	},
+ arch/microblaze/include/asm/unistd.h      | 2 +-
+ arch/microblaze/include/uapi/asm/unistd.h | 2 ++
+ arch/microblaze/kernel/syscall_table.S    | 2 ++
+ 3 files changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/arch/microblaze/include/asm/unistd.h b/arch/microblaze/include/asm/unistd.h
+index 9774e1d9507b..a62d09420a47 100644
+--- a/arch/microblaze/include/asm/unistd.h
++++ b/arch/microblaze/include/asm/unistd.h
+@@ -38,6 +38,6 @@
  
-+	[PERF_TYPE_HW_CACHE] = {
-+		.user_set = false,
-+
-+		.fields = PERF_OUTPUT_COMM | PERF_OUTPUT_TID |
-+			      PERF_OUTPUT_CPU | PERF_OUTPUT_TIME |
-+			      PERF_OUTPUT_EVNAME | PERF_OUTPUT_IP |
-+			      PERF_OUTPUT_SYM | PERF_OUTPUT_SYMOFFSET |
-+			      PERF_OUTPUT_DSO | PERF_OUTPUT_PERIOD,
-+
-+		.invalid_fields = PERF_OUTPUT_TRACE | PERF_OUTPUT_BPF_OUTPUT,
-+	},
-+
- 	[PERF_TYPE_RAW] = {
- 		.user_set = false,
+ #endif /* __ASSEMBLY__ */
  
+-#define __NR_syscalls         399
++#define __NR_syscalls         401
+ 
+ #endif /* _ASM_MICROBLAZE_UNISTD_H */
+diff --git a/arch/microblaze/include/uapi/asm/unistd.h b/arch/microblaze/include/uapi/asm/unistd.h
+index eb156f914793..7a9f16a76413 100644
+--- a/arch/microblaze/include/uapi/asm/unistd.h
++++ b/arch/microblaze/include/uapi/asm/unistd.h
+@@ -415,5 +415,7 @@
+ #define __NR_pkey_alloc		396
+ #define __NR_pkey_free		397
+ #define __NR_statx		398
++#define __NR_io_pgetevents	399
++#define __NR_rseq		400
+ 
+ #endif /* _UAPI_ASM_MICROBLAZE_UNISTD_H */
+diff --git a/arch/microblaze/kernel/syscall_table.S b/arch/microblaze/kernel/syscall_table.S
+index 56bcf313121f..6ab650593792 100644
+--- a/arch/microblaze/kernel/syscall_table.S
++++ b/arch/microblaze/kernel/syscall_table.S
+@@ -400,3 +400,5 @@ ENTRY(sys_call_table)
+ 	.long sys_pkey_alloc
+ 	.long sys_pkey_free
+ 	.long sys_statx
++	.long sys_io_pgetevents
++	.long sys_rseq
+-- 
+1.9.1
+
