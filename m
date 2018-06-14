@@ -2,540 +2,187 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C1F1AC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:22:02 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9BD7EC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:22:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5995520020
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4770C20020
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:22:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvm8kICK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5995520020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4UabTgp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4770C20020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966293AbeFNOTw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:19:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54420 "EHLO mail.kernel.org"
+        id S966289AbeFNOWG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:22:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965643AbeFNONC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:13:02 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S965632AbeFNOWA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:22:00 -0400
+Received: from mail-it0-f51.google.com (mail-it0-f51.google.com [209.85.214.51])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4A31F208DE;
-        Thu, 14 Jun 2018 14:13:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A2A3208DA;
+        Thu, 14 Jun 2018 14:21:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985581;
-        bh=6Vy+ftUeeH1I63vzIgyhb55Hvxg0hH2EUTx21GJH0h8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uvm8kICKq2egbbrApGwFsRjbdp56IpJ03UdCHAq5LnOxUp5E2dul0z+1is8GGrv8o
-         eP9VKPEQZm6zheRrh8pxMFDLDrSHWj+TzNLBziQZV3851nUu00osYvq9LOOCrVVXTu
-         ik60si5ORl4Q7swdw/AB1GvDGEejo1nyIPMj4Kmk=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Borislav Petkov <bp@suse.de>,
-        David Sterba <dsterba@suse.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Matt Mackall <mpm@selenic.com>, Chris Mason <clm@fb.com>,
-        Josef Bacik <jbacik@fb.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH 4.4 03/24] x86/cpufeature: Remove unused and seldomly used cpu_has_xx macros
-Date:   Thu, 14 Jun 2018 16:04:58 +0200
-Message-Id: <20180614132724.621662338@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
-References: <20180614132724.483802160@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        s=default; t=1528986119;
+        bh=VFvMhJhhhAoj9fgrj43h9MQzdv3G4jbw04Fj0CopWqA=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=B4UabTgpKaP9q13FD5Rkwn7ppTJtMm5yQnwXa4k7C58HVRV+l9OQrsu1AA9a5GtR+
+         HGsZ8JFwn1X7pfaVBDxATDtgqeeHpc9e5d4v7RYxd/cvxofWv7XTmNogFaHfisLQR3
+         eQ8fPM/tiHaQlD5vDzpN4ZJqfbtqs8/46EB7oagw=
+Received: by mail-it0-f51.google.com with SMTP id p185-v6so8930200itp.4;
+        Thu, 14 Jun 2018 07:21:59 -0700 (PDT)
+X-Gm-Message-State: APt69E2xMqyutwOTIRAcar2bOSyZ2AeeXi+UFNlNETpfOuK+M3k4J3WY
+        GXu7hWEm7nvdDB+ODJruVDdeL85Qz5oja92JvQ==
+X-Google-Smtp-Source: ADUXVKLrqKew9aRvjPBnal7Q6yslP+gQ2hsH+JXt/FAGOOB4Q/wJ0SFD613i99nxJk0fzgLOfShJZx/ef5ioguRnL6Y=
+X-Received: by 2002:a02:6902:: with SMTP id e2-v6mr1382274jac.46.1528986118573;
+ Thu, 14 Jun 2018 07:21:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Received: by 2002:a4f:6403:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 07:21:38
+ -0700 (PDT)
+In-Reply-To: <0cdd0957cf80c2f9921928755722a427c7309964.1528972165.git.amit.kucheria@linaro.org>
+References: <cover.1528972165.git.amit.kucheria@linaro.org> <0cdd0957cf80c2f9921928755722a427c7309964.1528972165.git.amit.kucheria@linaro.org>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 14 Jun 2018 08:21:38 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLPKktGFH4X9gDgCFq70Uo6NvFx9-a0sR7fQU35NwZe1g@mail.gmail.com>
+Message-ID: <CAL_JsqLPKktGFH4X9gDgCFq70Uo6NvFx9-a0sR7fQU35NwZe1g@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] thermal: tsens: Add support for SDM845
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Siddartha Mohanadoss <smohanad@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        David Brown <david.brown@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Kees Cook <keescook@chromium.org>,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Thu, Jun 14, 2018 at 4:43 AM, Amit Kucheria <amit.kucheria@linaro.org> wrote:
+> SDM845 uses the TSENS v2 IP block
+>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> ---
+>  Documentation/devicetree/bindings/thermal/qcom-tsens.txt | 1 +
+>  arch/arm64/boot/dts/qcom/msm8996.dtsi                    | 2 +-
+>  drivers/thermal/qcom/tsens-v2.c                          | 9 ++++++++-
+>  drivers/thermal/qcom/tsens.c                             | 3 +++
+>  drivers/thermal/qcom/tsens.h                             | 5 ++++-
+>  5 files changed, 17 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> index 06195e8..84da3db 100644
+> --- a/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> +++ b/Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> @@ -5,6 +5,7 @@ Required properties:
+>   - "qcom,msm8916-tsens" : For 8916 Family of SoCs
+>   - "qcom,msm8974-tsens" : For 8974 Family of SoCs
+>   - "qcom,msm8996-tsens" : For 8996 Family of SoCs
+> + - "qcom,tsens-v2"      : For any SoC with v2 version of the tsens IP
 
-------------------
+Stick with "qcom,sdm845-tsens". Though perhaps it should be
+'"qcom,sdm845-tsens", "qcom,msm8996-tsens"' if there is compatibility.
 
-From: Borislav Petkov <bp@suse.de>
+>
+>  - reg: Address range of the thermal registers
+>  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description.
+> diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> index 6c8a857..28d4c08 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
+> @@ -460,7 +460,7 @@
+>                 };
+>
+>                 tsens0: thermal-sensor@4a8000 {
+> -                       compatible = "qcom,msm8996-tsens";
+> +                       compatible = "qcom,msm8996-tsens", "qcom,tsens-v2";
 
-commit 362f924b64ba0f4be2ee0cb697690c33d40be721 upstream.
+There's no point to adding this now because you already have to
+support "qcom,msm8996-tsens".
 
-Those are stupid and code should use static_cpu_has_safe() or
-boot_cpu_has() instead. Kill the least used and unused ones.
+>                         reg = <0x4a9000 0x1000>, /* TM */
+>                               <0x4a8000 0x1000>; /* SROT */
+>                         #qcom,sensors = <13>;
+> diff --git a/drivers/thermal/qcom/tsens-v2.c b/drivers/thermal/qcom/tsens-v2.c
+> index c981a40..abc8f13 100644
+> --- a/drivers/thermal/qcom/tsens-v2.c
+> +++ b/drivers/thermal/qcom/tsens-v2.c
+> @@ -69,8 +69,15 @@ static const struct tsens_ops ops_v2 = {
+>         .get_temp       = get_temp_tsens_v2,
+>  };
+>
+> +const struct tsens_data data_tsens_v2 = {
+> +       .ops            = &ops_v2,
+> +};
+> +
+> +/* Kept around for backward compatibility with old msm8996.dtsi.
+> + * New platforms should use data_tsens_v2 if possible and define
+> + * the #qcom,sensors property in DT.
 
-The remaining ones need more careful inspection before a conversion can
-happen. On the TODO.
+Hum, I think this should just be implied by the compatible as it was.
+If this was the *only* difference, then a property would be okay, but
+as soon as you find some other difference you need yet another
+property and have to do a DT update on all platforms.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Link: http://lkml.kernel.org/r/1449481182-27541-4-git-send-email-bp@alien8.de
-Cc: David Sterba <dsterba@suse.com>
-Cc: Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Peter Zijlstra <a.p.zijlstra@chello.nl>
-Cc: Matt Mackall <mpm@selenic.com>
-Cc: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <jbacik@fb.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> + */
+>  const struct tsens_data data_8996 = {
+>         .num_sensors    = 13,
+>         .ops            = &ops_v2,
+>  };
+> -
+> diff --git a/drivers/thermal/qcom/tsens.c b/drivers/thermal/qcom/tsens.c
+> index 3440166c..a2c9bfa 100644
+> --- a/drivers/thermal/qcom/tsens.c
+> +++ b/drivers/thermal/qcom/tsens.c
+> @@ -72,6 +72,9 @@ static const struct of_device_id tsens_table[] = {
+>         }, {
+>                 .compatible = "qcom,msm8996-tsens",
+>                 .data = &data_8996,
+> +       }, {
+> +               .compatible = "qcom,tsens-v2",
+> +               .data = &data_tsens_v2,
 
----
- arch/x86/crypto/chacha20_glue.c             |    2 -
- arch/x86/crypto/crc32c-intel_glue.c         |    2 -
- arch/x86/include/asm/cmpxchg_32.h           |    2 -
- arch/x86/include/asm/cmpxchg_64.h           |    2 -
- arch/x86/include/asm/cpufeature.h           |   37 +++-------------------------
- arch/x86/include/asm/xor_32.h               |    2 -
- arch/x86/kernel/cpu/amd.c                   |    4 +--
- arch/x86/kernel/cpu/common.c                |    4 ++-
- arch/x86/kernel/cpu/intel.c                 |    3 +-
- arch/x86/kernel/cpu/intel_cacheinfo.c       |    6 ++--
- arch/x86/kernel/cpu/mtrr/generic.c          |    2 -
- arch/x86/kernel/cpu/mtrr/main.c             |    2 -
- arch/x86/kernel/cpu/perf_event_amd.c        |    4 +--
- arch/x86/kernel/cpu/perf_event_amd_uncore.c |   11 ++++----
- arch/x86/kernel/fpu/init.c                  |    4 +--
- arch/x86/kernel/hw_breakpoint.c             |    6 +++-
- arch/x86/kernel/smpboot.c                   |    2 -
- arch/x86/kernel/vm86_32.c                   |    4 ++-
- arch/x86/mm/setup_nx.c                      |    4 +--
- drivers/char/hw_random/via-rng.c            |    5 ++-
- drivers/crypto/padlock-aes.c                |    2 -
- drivers/crypto/padlock-sha.c                |    2 -
- drivers/iommu/intel_irq_remapping.c         |    2 -
- fs/btrfs/disk-io.c                          |    2 -
- 24 files changed, 48 insertions(+), 68 deletions(-)
+Why different data if 8996 is compatible with v2?
 
---- a/arch/x86/crypto/chacha20_glue.c
-+++ b/arch/x86/crypto/chacha20_glue.c
-@@ -125,7 +125,7 @@ static struct crypto_alg alg = {
- 
- static int __init chacha20_simd_mod_init(void)
- {
--	if (!cpu_has_ssse3)
-+	if (!boot_cpu_has(X86_FEATURE_SSSE3))
- 		return -ENODEV;
- 
- #ifdef CONFIG_AS_AVX2
---- a/arch/x86/crypto/crc32c-intel_glue.c
-+++ b/arch/x86/crypto/crc32c-intel_glue.c
-@@ -257,7 +257,7 @@ static int __init crc32c_intel_mod_init(
- 	if (!x86_match_cpu(crc32c_cpu_id))
- 		return -ENODEV;
- #ifdef CONFIG_X86_64
--	if (cpu_has_pclmulqdq) {
-+	if (boot_cpu_has(X86_FEATURE_PCLMULQDQ)) {
- 		alg.update = crc32c_pcl_intel_update;
- 		alg.finup = crc32c_pcl_intel_finup;
- 		alg.digest = crc32c_pcl_intel_digest;
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -109,6 +109,6 @@ static inline u64 __cmpxchg64_local(vola
- 
- #endif
- 
--#define system_has_cmpxchg_double() cpu_has_cx8
-+#define system_has_cmpxchg_double() boot_cpu_has(X86_FEATURE_CX8)
- 
- #endif /* _ASM_X86_CMPXCHG_32_H */
---- a/arch/x86/include/asm/cmpxchg_64.h
-+++ b/arch/x86/include/asm/cmpxchg_64.h
-@@ -18,6 +18,6 @@ static inline void set_64bit(volatile u6
- 	cmpxchg_local((ptr), (o), (n));					\
- })
- 
--#define system_has_cmpxchg_double() cpu_has_cx16
-+#define system_has_cmpxchg_double() boot_cpu_has(X86_FEATURE_CX16)
- 
- #endif /* _ASM_X86_CMPXCHG_64_H */
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -368,58 +368,29 @@ extern const char * const x86_bug_flags[
- #define setup_force_cpu_bug(bit) setup_force_cpu_cap(bit)
- 
- #define cpu_has_fpu		boot_cpu_has(X86_FEATURE_FPU)
--#define cpu_has_de		boot_cpu_has(X86_FEATURE_DE)
- #define cpu_has_pse		boot_cpu_has(X86_FEATURE_PSE)
- #define cpu_has_tsc		boot_cpu_has(X86_FEATURE_TSC)
- #define cpu_has_pge		boot_cpu_has(X86_FEATURE_PGE)
- #define cpu_has_apic		boot_cpu_has(X86_FEATURE_APIC)
--#define cpu_has_sep		boot_cpu_has(X86_FEATURE_SEP)
--#define cpu_has_mtrr		boot_cpu_has(X86_FEATURE_MTRR)
--#define cpu_has_mmx		boot_cpu_has(X86_FEATURE_MMX)
- #define cpu_has_fxsr		boot_cpu_has(X86_FEATURE_FXSR)
- #define cpu_has_xmm		boot_cpu_has(X86_FEATURE_XMM)
- #define cpu_has_xmm2		boot_cpu_has(X86_FEATURE_XMM2)
--#define cpu_has_xmm3		boot_cpu_has(X86_FEATURE_XMM3)
--#define cpu_has_ssse3		boot_cpu_has(X86_FEATURE_SSSE3)
- #define cpu_has_aes		boot_cpu_has(X86_FEATURE_AES)
- #define cpu_has_avx		boot_cpu_has(X86_FEATURE_AVX)
- #define cpu_has_avx2		boot_cpu_has(X86_FEATURE_AVX2)
--#define cpu_has_ht		boot_cpu_has(X86_FEATURE_HT)
--#define cpu_has_nx		boot_cpu_has(X86_FEATURE_NX)
--#define cpu_has_xstore		boot_cpu_has(X86_FEATURE_XSTORE)
--#define cpu_has_xstore_enabled	boot_cpu_has(X86_FEATURE_XSTORE_EN)
--#define cpu_has_xcrypt		boot_cpu_has(X86_FEATURE_XCRYPT)
--#define cpu_has_xcrypt_enabled	boot_cpu_has(X86_FEATURE_XCRYPT_EN)
--#define cpu_has_ace2		boot_cpu_has(X86_FEATURE_ACE2)
--#define cpu_has_ace2_enabled	boot_cpu_has(X86_FEATURE_ACE2_EN)
--#define cpu_has_phe		boot_cpu_has(X86_FEATURE_PHE)
--#define cpu_has_phe_enabled	boot_cpu_has(X86_FEATURE_PHE_EN)
--#define cpu_has_pmm		boot_cpu_has(X86_FEATURE_PMM)
--#define cpu_has_pmm_enabled	boot_cpu_has(X86_FEATURE_PMM_EN)
--#define cpu_has_ds		boot_cpu_has(X86_FEATURE_DS)
--#define cpu_has_pebs		boot_cpu_has(X86_FEATURE_PEBS)
- #define cpu_has_clflush		boot_cpu_has(X86_FEATURE_CLFLUSH)
--#define cpu_has_bts		boot_cpu_has(X86_FEATURE_BTS)
- #define cpu_has_gbpages		boot_cpu_has(X86_FEATURE_GBPAGES)
- #define cpu_has_arch_perfmon	boot_cpu_has(X86_FEATURE_ARCH_PERFMON)
- #define cpu_has_pat		boot_cpu_has(X86_FEATURE_PAT)
--#define cpu_has_xmm4_1		boot_cpu_has(X86_FEATURE_XMM4_1)
--#define cpu_has_xmm4_2		boot_cpu_has(X86_FEATURE_XMM4_2)
- #define cpu_has_x2apic		boot_cpu_has(X86_FEATURE_X2APIC)
- #define cpu_has_xsave		boot_cpu_has(X86_FEATURE_XSAVE)
--#define cpu_has_xsaveopt	boot_cpu_has(X86_FEATURE_XSAVEOPT)
- #define cpu_has_xsaves		boot_cpu_has(X86_FEATURE_XSAVES)
- #define cpu_has_osxsave		boot_cpu_has(X86_FEATURE_OSXSAVE)
- #define cpu_has_hypervisor	boot_cpu_has(X86_FEATURE_HYPERVISOR)
--#define cpu_has_pclmulqdq	boot_cpu_has(X86_FEATURE_PCLMULQDQ)
--#define cpu_has_perfctr_core	boot_cpu_has(X86_FEATURE_PERFCTR_CORE)
--#define cpu_has_perfctr_nb	boot_cpu_has(X86_FEATURE_PERFCTR_NB)
--#define cpu_has_perfctr_l2	boot_cpu_has(X86_FEATURE_PERFCTR_L2)
--#define cpu_has_cx8		boot_cpu_has(X86_FEATURE_CX8)
--#define cpu_has_cx16		boot_cpu_has(X86_FEATURE_CX16)
--#define cpu_has_eager_fpu	boot_cpu_has(X86_FEATURE_EAGER_FPU)
--#define cpu_has_topoext		boot_cpu_has(X86_FEATURE_TOPOEXT)
--#define cpu_has_bpext		boot_cpu_has(X86_FEATURE_BPEXT)
-+/*
-+ * Do not add any more of those clumsy macros - use static_cpu_has_safe() for
-+ * fast paths and boot_cpu_has() otherwise!
-+ */
- 
- #if __GNUC__ >= 4
- extern void warn_pre_alternatives(void);
---- a/arch/x86/include/asm/xor_32.h
-+++ b/arch/x86/include/asm/xor_32.h
-@@ -553,7 +553,7 @@ do {							\
- 	if (cpu_has_xmm) {				\
- 		xor_speed(&xor_block_pIII_sse);		\
- 		xor_speed(&xor_block_sse_pf64);		\
--	} else if (cpu_has_mmx) {			\
-+	} else if (boot_cpu_has(X86_FEATURE_MMX)) {	\
- 		xor_speed(&xor_block_pII_mmx);		\
- 		xor_speed(&xor_block_p5_mmx);		\
- 	} else {					\
---- a/arch/x86/kernel/cpu/amd.c
-+++ b/arch/x86/kernel/cpu/amd.c
-@@ -304,7 +304,7 @@ static void amd_get_topology(struct cpui
- 	int cpu = smp_processor_id();
- 
- 	/* get information required for multi-node processors */
--	if (cpu_has_topoext) {
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
- 		u32 eax, ebx, ecx, edx;
- 
- 		cpuid(0x8000001e, &eax, &ebx, &ecx, &edx);
-@@ -954,7 +954,7 @@ static bool cpu_has_amd_erratum(struct c
- 
- void set_dr_addr_mask(unsigned long mask, int dr)
- {
--	if (!cpu_has_bpext)
-+	if (!boot_cpu_has(X86_FEATURE_BPEXT))
- 		return;
- 
- 	switch (dr) {
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1539,7 +1539,9 @@ void cpu_init(void)
- 
- 	printk(KERN_INFO "Initializing CPU#%d\n", cpu);
- 
--	if (cpu_feature_enabled(X86_FEATURE_VME) || cpu_has_tsc || cpu_has_de)
-+	if (cpu_feature_enabled(X86_FEATURE_VME) ||
-+	    cpu_has_tsc ||
-+	    boot_cpu_has(X86_FEATURE_DE))
- 		cr4_clear_bits(X86_CR4_VME|X86_CR4_PVI|X86_CR4_TSD|X86_CR4_DE);
- 
- 	load_current_idt();
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -445,7 +445,8 @@ static void init_intel(struct cpuinfo_x8
- 
- 	if (cpu_has_xmm2)
- 		set_cpu_cap(c, X86_FEATURE_LFENCE_RDTSC);
--	if (cpu_has_ds) {
-+
-+	if (boot_cpu_has(X86_FEATURE_DS)) {
- 		unsigned int l1;
- 		rdmsr(MSR_IA32_MISC_ENABLE, l1, l2);
- 		if (!(l1 & (1<<11)))
---- a/arch/x86/kernel/cpu/intel_cacheinfo.c
-+++ b/arch/x86/kernel/cpu/intel_cacheinfo.c
-@@ -591,7 +591,7 @@ cpuid4_cache_lookup_regs(int index, stru
- 	unsigned		edx;
- 
- 	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD) {
--		if (cpu_has_topoext)
-+		if (boot_cpu_has(X86_FEATURE_TOPOEXT))
- 			cpuid_count(0x8000001d, index, &eax.full,
- 				    &ebx.full, &ecx.full, &edx);
- 		else
-@@ -637,7 +637,7 @@ static int find_num_cache_leaves(struct
- void init_amd_cacheinfo(struct cpuinfo_x86 *c)
- {
- 
--	if (cpu_has_topoext) {
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
- 		num_cache_leaves = find_num_cache_leaves(c);
- 	} else if (c->extended_cpuid_level >= 0x80000006) {
- 		if (cpuid_edx(0x80000006) & 0xf000)
-@@ -809,7 +809,7 @@ static int __cache_amd_cpumap_setup(unsi
- 	struct cacheinfo *this_leaf;
- 	int i, sibling;
- 
--	if (cpu_has_topoext) {
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
- 		unsigned int apicid, nshared, first, last;
- 
- 		this_leaf = this_cpu_ci->info_list + index;
---- a/arch/x86/kernel/cpu/mtrr/generic.c
-+++ b/arch/x86/kernel/cpu/mtrr/generic.c
-@@ -349,7 +349,7 @@ static void get_fixed_ranges(mtrr_type *
- 
- void mtrr_save_fixed_ranges(void *info)
- {
--	if (cpu_has_mtrr)
-+	if (boot_cpu_has(X86_FEATURE_MTRR))
- 		get_fixed_ranges(mtrr_state.fixed_ranges);
- }
- 
---- a/arch/x86/kernel/cpu/mtrr/main.c
-+++ b/arch/x86/kernel/cpu/mtrr/main.c
-@@ -682,7 +682,7 @@ void __init mtrr_bp_init(void)
- 
- 	phys_addr = 32;
- 
--	if (cpu_has_mtrr) {
-+	if (boot_cpu_has(X86_FEATURE_MTRR)) {
- 		mtrr_if = &generic_mtrr_ops;
- 		size_or_mask = SIZE_OR_MASK_BITS(36);
- 		size_and_mask = 0x00f00000;
---- a/arch/x86/kernel/cpu/perf_event_amd.c
-+++ b/arch/x86/kernel/cpu/perf_event_amd.c
-@@ -160,7 +160,7 @@ static inline int amd_pmu_addr_offset(in
- 	if (offset)
- 		return offset;
- 
--	if (!cpu_has_perfctr_core)
-+	if (!boot_cpu_has(X86_FEATURE_PERFCTR_CORE))
- 		offset = index;
- 	else
- 		offset = index << 1;
-@@ -652,7 +652,7 @@ static __initconst const struct x86_pmu
- 
- static int __init amd_core_pmu_init(void)
- {
--	if (!cpu_has_perfctr_core)
-+	if (!boot_cpu_has(X86_FEATURE_PERFCTR_CORE))
- 		return 0;
- 
- 	switch (boot_cpu_data.x86) {
---- a/arch/x86/kernel/cpu/perf_event_amd_uncore.c
-+++ b/arch/x86/kernel/cpu/perf_event_amd_uncore.c
-@@ -523,10 +523,10 @@ static int __init amd_uncore_init(void)
- 	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD)
- 		goto fail_nodev;
- 
--	if (!cpu_has_topoext)
-+	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
- 		goto fail_nodev;
- 
--	if (cpu_has_perfctr_nb) {
-+	if (boot_cpu_has(X86_FEATURE_PERFCTR_NB)) {
- 		amd_uncore_nb = alloc_percpu(struct amd_uncore *);
- 		if (!amd_uncore_nb) {
- 			ret = -ENOMEM;
-@@ -540,7 +540,7 @@ static int __init amd_uncore_init(void)
- 		ret = 0;
- 	}
- 
--	if (cpu_has_perfctr_l2) {
-+	if (boot_cpu_has(X86_FEATURE_PERFCTR_L2)) {
- 		amd_uncore_l2 = alloc_percpu(struct amd_uncore *);
- 		if (!amd_uncore_l2) {
- 			ret = -ENOMEM;
-@@ -583,10 +583,11 @@ fail_online:
- 
- 	/* amd_uncore_nb/l2 should have been freed by cleanup_cpu_online */
- 	amd_uncore_nb = amd_uncore_l2 = NULL;
--	if (cpu_has_perfctr_l2)
-+
-+	if (boot_cpu_has(X86_FEATURE_PERFCTR_L2))
- 		perf_pmu_unregister(&amd_l2_pmu);
- fail_l2:
--	if (cpu_has_perfctr_nb)
-+	if (boot_cpu_has(X86_FEATURE_PERFCTR_NB))
- 		perf_pmu_unregister(&amd_nb_pmu);
- 	if (amd_uncore_l2)
- 		free_percpu(amd_uncore_l2);
---- a/arch/x86/kernel/fpu/init.c
-+++ b/arch/x86/kernel/fpu/init.c
-@@ -15,7 +15,7 @@
-  */
- static void fpu__init_cpu_ctx_switch(void)
- {
--	if (!cpu_has_eager_fpu)
-+	if (!boot_cpu_has(X86_FEATURE_EAGER_FPU))
- 		stts();
- 	else
- 		clts();
-@@ -279,7 +279,7 @@ static void __init fpu__init_system_ctx_
- 	current_thread_info()->status = 0;
- 
- 	/* Auto enable eagerfpu for xsaveopt */
--	if (cpu_has_xsaveopt && eagerfpu != DISABLE)
-+	if (boot_cpu_has(X86_FEATURE_XSAVEOPT) && eagerfpu != DISABLE)
- 		eagerfpu = ENABLE;
- 
- 	if (xfeatures_mask & XFEATURE_MASK_EAGER) {
---- a/arch/x86/kernel/hw_breakpoint.c
-+++ b/arch/x86/kernel/hw_breakpoint.c
-@@ -300,6 +300,10 @@ static int arch_build_bp_info(struct per
- 			return -EINVAL;
- 		if (bp->attr.bp_addr & (bp->attr.bp_len - 1))
- 			return -EINVAL;
-+
-+		if (!boot_cpu_has(X86_FEATURE_BPEXT))
-+			return -EOPNOTSUPP;
-+
- 		/*
- 		 * It's impossible to use a range breakpoint to fake out
- 		 * user vs kernel detection because bp_len - 1 can't
-@@ -307,8 +311,6 @@ static int arch_build_bp_info(struct per
- 		 * breakpoints, then we'll have to check for kprobe-blacklisted
- 		 * addresses anywhere in the range.
- 		 */
--		if (!cpu_has_bpext)
--			return -EOPNOTSUPP;
- 		info->mask = bp->attr.bp_len - 1;
- 		info->len = X86_BREAKPOINT_LEN_1;
- 	}
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -295,7 +295,7 @@ do {									\
- 
- static bool match_smt(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- {
--	if (cpu_has_topoext) {
-+	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
- 		int cpu1 = c->cpu_index, cpu2 = o->cpu_index;
- 
- 		if (c->phys_proc_id == o->phys_proc_id &&
---- a/arch/x86/kernel/vm86_32.c
-+++ b/arch/x86/kernel/vm86_32.c
-@@ -357,8 +357,10 @@ static long do_sys_vm86(struct vm86plus_
- 	tss = &per_cpu(cpu_tss, get_cpu());
- 	/* make room for real-mode segments */
- 	tsk->thread.sp0 += 16;
--	if (cpu_has_sep)
-+
-+	if (static_cpu_has_safe(X86_FEATURE_SEP))
- 		tsk->thread.sysenter_cs = 0;
-+
- 	load_sp0(tss, &tsk->thread);
- 	put_cpu();
- 
---- a/arch/x86/mm/setup_nx.c
-+++ b/arch/x86/mm/setup_nx.c
-@@ -31,7 +31,7 @@ early_param("noexec", noexec_setup);
- 
- void x86_configure_nx(void)
- {
--	if (cpu_has_nx && !disable_nx)
-+	if (boot_cpu_has(X86_FEATURE_NX) && !disable_nx)
- 		__supported_pte_mask |= _PAGE_NX;
- 	else
- 		__supported_pte_mask &= ~_PAGE_NX;
-@@ -39,7 +39,7 @@ void x86_configure_nx(void)
- 
- void __init x86_report_nx(void)
- {
--	if (!cpu_has_nx) {
-+	if (!boot_cpu_has(X86_FEATURE_NX)) {
- 		printk(KERN_NOTICE "Notice: NX (Execute Disable) protection "
- 		       "missing in CPU!\n");
- 	} else {
---- a/drivers/char/hw_random/via-rng.c
-+++ b/drivers/char/hw_random/via-rng.c
-@@ -140,7 +140,7 @@ static int via_rng_init(struct hwrng *rn
- 	 * RNG configuration like it used to be the case in this
- 	 * register */
- 	if ((c->x86 == 6) && (c->x86_model >= 0x0f)) {
--		if (!cpu_has_xstore_enabled) {
-+		if (!boot_cpu_has(X86_FEATURE_XSTORE_EN)) {
- 			pr_err(PFX "can't enable hardware RNG "
- 				"if XSTORE is not enabled\n");
- 			return -ENODEV;
-@@ -200,8 +200,9 @@ static int __init mod_init(void)
- {
- 	int err;
- 
--	if (!cpu_has_xstore)
-+	if (!boot_cpu_has(X86_FEATURE_XSTORE))
- 		return -ENODEV;
-+
- 	pr_info("VIA RNG detected\n");
- 	err = hwrng_register(&via_rng);
- 	if (err) {
---- a/drivers/crypto/padlock-aes.c
-+++ b/drivers/crypto/padlock-aes.c
-@@ -515,7 +515,7 @@ static int __init padlock_init(void)
- 	if (!x86_match_cpu(padlock_cpu_id))
- 		return -ENODEV;
- 
--	if (!cpu_has_xcrypt_enabled) {
-+	if (!boot_cpu_has(X86_FEATURE_XCRYPT_EN)) {
- 		printk(KERN_NOTICE PFX "VIA PadLock detected, but not enabled. Hmm, strange...\n");
- 		return -ENODEV;
- 	}
---- a/drivers/crypto/padlock-sha.c
-+++ b/drivers/crypto/padlock-sha.c
-@@ -540,7 +540,7 @@ static int __init padlock_init(void)
- 	struct shash_alg *sha1;
- 	struct shash_alg *sha256;
- 
--	if (!x86_match_cpu(padlock_sha_ids) || !cpu_has_phe_enabled)
-+	if (!x86_match_cpu(padlock_sha_ids) || !boot_cpu_has(X86_FEATURE_PHE_EN))
- 		return -ENODEV;
- 
- 	/* Register the newly added algorithm module if on *
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -753,7 +753,7 @@ static inline void set_irq_posting_cap(v
- 		 * should have X86_FEATURE_CX16 support, this has been confirmed
- 		 * with Intel hardware guys.
- 		 */
--		if ( cpu_has_cx16 )
-+		if (boot_cpu_has(X86_FEATURE_CX16))
- 			intel_irq_remap_ops.capability |= 1 << IRQ_POSTING_CAP;
- 
- 		for_each_iommu(iommu, drhd)
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -923,7 +923,7 @@ static int check_async_write(struct inod
- 	if (bio_flags & EXTENT_BIO_TREE_LOG)
- 		return 0;
- #ifdef CONFIG_X86
--	if (cpu_has_xmm4_2)
-+	if (static_cpu_has_safe(X86_FEATURE_XMM4_2))
- 		return 0;
- #endif
- 	return 1;
-
-
+>         },
+>         {}
+>  };
+> diff --git a/drivers/thermal/qcom/tsens.h b/drivers/thermal/qcom/tsens.h
+> index dc56e1e..69212cb 100644
+> --- a/drivers/thermal/qcom/tsens.h
+> +++ b/drivers/thermal/qcom/tsens.h
+> @@ -87,6 +87,9 @@ void compute_intercept_slope(struct tsens_device *, u32 *, u32 *, u32);
+>  int init_common(struct tsens_device *);
+>  int get_temp_common(struct tsens_device *, int, int *);
+>
+> -extern const struct tsens_data data_8916, data_8974, data_8960, data_8996;
+> +/* TSENS v1 targets */
+> +extern const struct tsens_data data_8916, data_8974, data_8960;
+> +/* TSENS v2 targets */
+> +extern const struct tsens_data data_8996, data_tsens_v2;
+>
+>  #endif /* __QCOM_TSENS_H__ */
+> --
+> 2.7.4
+>
