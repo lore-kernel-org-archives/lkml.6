@@ -6,45 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3FFEBC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:28 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 119B3C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6BCB208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B235F208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:10:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="blVLKVhz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6BCB208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKBo2vbQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B235F208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965636AbeFNOK0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:10:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51364 "EHLO mail.kernel.org"
+        id S965657AbeFNOKd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:10:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965620AbeFNOKW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:10:22 -0400
+        id S965620AbeFNOK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:10:28 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 421FD208DD;
-        Thu, 14 Jun 2018 14:10:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B949208DA;
+        Thu, 14 Jun 2018 14:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985421;
-        bh=eGfblDiZDLmyBYpXzIQC4Ju9cJOm6MmZIqTpGxkdhBo=;
+        s=default; t=1528985427;
+        bh=eBNvN51yg+MBLJxZ+GzdJq/+w85CG1DlE8eD/nQpoW0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=blVLKVhzObnZ1Da799UEwpTK4andG2qp9/sn2Aiw2x1wZWFkhywduZI1uHl06zhMH
-         wkpVTRAn+ToDZ7ZgTygRYAvyFHsXEc6zRwreCdRLAfmavU7ereBq8CQZ1FPKw+HeQP
-         llaMu5U2X1KsWSDKpoMX1ztnvQBLUjjRVN60Hnoc=
+        b=UKBo2vbQnnICN1WU+ZCByQ2hRwbjSuduuS5WqAcrzChTZ7q2+0oAUb8cuIEQHj5Fy
+         7EQvpCcCY35vwLtlHWMjpeSZQN4JxraVmSuYMyje6Q8EGvhQ6ciaKo/uDXSdQwWK5i
+         skLkiux2XOAYhr152fwQeQL80eAm/RVOewGZZ+/g=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksandr Natalenko <onatalen@redhat.com>,
-        Gil Kupfer <gilkup@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Xavier Deguillard <xdeguillard@vmware.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>
-Subject: [PATCH 4.14 22/36] vmw_balloon: fixing double free when batching mode is off
-Date:   Thu, 14 Jun 2018 16:04:45 +0200
-Message-Id: <20180614132158.270375635@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.14 06/36] KVM: x86: introduce linear_{read,write}_system
+Date:   Thu, 14 Jun 2018 16:04:29 +0200
+Message-Id: <20180614132157.585665245@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -61,114 +58,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Gil Kupfer <gilkup@gmail.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit b23220fe054e92f616b82450fae8cd3ab176cc60 upstream.
+commit 79367a65743975e5cac8d24d08eccc7fdae832b0 upstream.
 
-The balloon.page field is used for two different purposes if batching is
-on or off. If batching is on, the field point to the page which is used
-to communicate with with the hypervisor. If it is off, balloon.page
-points to the page that is about to be (un)locked.
+Wrap the common invocation of ctxt->ops->read_std and ctxt->ops->write_std, so
+as to have a smaller patch when the functions grow another argument.
 
-Unfortunately, this dual-purpose of the field introduced a bug: when the
-balloon is popped (e.g., when the machine is reset or the balloon driver
-is explicitly removed), the balloon driver frees, unconditionally, the
-page that is held in balloon.page.  As a result, if batching is
-disabled, this leads to double freeing the last page that is sent to the
-hypervisor.
-
-The following error occurs during rmmod when kernel checkers are on, and
-the balloon is not empty:
-
-[   42.307653] ------------[ cut here ]------------
-[   42.307657] Kernel BUG at ffffffffba1e4b28 [verbose debug info unavailable]
-[   42.307720] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC
-[   42.312512] Modules linked in: vmw_vsock_vmci_transport vsock ppdev joydev vmw_balloon(-) input_leds serio_raw vmw_vmci parport_pc shpchp parport i2c_piix4 nfit mac_hid autofs4 vmwgfx drm_kms_helper hid_generic syscopyarea sysfillrect usbhid sysimgblt fb_sys_fops hid ttm mptspi scsi_transport_spi ahci mptscsih drm psmouse vmxnet3 libahci mptbase pata_acpi
-[   42.312766] CPU: 10 PID: 1527 Comm: rmmod Not tainted 4.12.0+ #5
-[   42.312803] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 09/30/2016
-[   42.313042] task: ffff9bf9680f8000 task.stack: ffffbfefc1638000
-[   42.313290] RIP: 0010:__free_pages+0x38/0x40
-[   42.313510] RSP: 0018:ffffbfefc163be98 EFLAGS: 00010246
-[   42.313731] RAX: 000000000000003e RBX: ffffffffc02b9720 RCX: 0000000000000006
-[   42.313972] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9bf97e08e0a0
-[   42.314201] RBP: ffffbfefc163be98 R08: 0000000000000000 R09: 0000000000000000
-[   42.314435] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffc02b97e4
-[   42.314505] R13: ffffffffc02b9748 R14: ffffffffc02b9728 R15: 0000000000000200
-[   42.314550] FS:  00007f3af5fec700(0000) GS:ffff9bf97e080000(0000) knlGS:0000000000000000
-[   42.314599] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   42.314635] CR2: 00007f44f6f4ab24 CR3: 00000003a7d12000 CR4: 00000000000006e0
-[   42.314864] Call Trace:
-[   42.315774]  vmballoon_pop+0x102/0x130 [vmw_balloon]
-[   42.315816]  vmballoon_exit+0x42/0xd64 [vmw_balloon]
-[   42.315853]  SyS_delete_module+0x1e2/0x250
-[   42.315891]  entry_SYSCALL_64_fastpath+0x23/0xc2
-[   42.315924] RIP: 0033:0x7f3af5b0e8e7
-[   42.315949] RSP: 002b:00007fffe6ce0148 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-[   42.315996] RAX: ffffffffffffffda RBX: 000055be676401e0 RCX: 00007f3af5b0e8e7
-[   42.316951] RDX: 000000000000000a RSI: 0000000000000800 RDI: 000055be67640248
-[   42.317887] RBP: 0000000000000003 R08: 0000000000000000 R09: 1999999999999999
-[   42.318845] R10: 0000000000000883 R11: 0000000000000206 R12: 00007fffe6cdf130
-[   42.319755] R13: 0000000000000000 R14: 0000000000000000 R15: 000055be676401e0
-[   42.320606] Code: c0 74 1c f0 ff 4f 1c 74 02 5d c3 85 f6 74 07 e8 0f d8 ff ff 5d c3 31 f6 e8 c6 fb ff ff 5d c3 48 c7 c6 c8 0f c5 ba e8 58 be 02 00 <0f> 0b 66 0f 1f 44 00 00 66 66 66 66 90 48 85 ff 75 01 c3 55 48
-[   42.323462] RIP: __free_pages+0x38/0x40 RSP: ffffbfefc163be98
-[   42.325735] ---[ end trace 872e008e33f81508 ]---
-
-To solve the bug, we eliminate the dual purpose of balloon.page.
-
-Fixes: f220a80f0c2e ("VMware balloon: add batching to the vmw_balloon.")
+Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
 Cc: stable@vger.kernel.org
-Reported-by: Oleksandr Natalenko <onatalen@redhat.com>
-Signed-off-by: Gil Kupfer <gilkup@gmail.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |   23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+ arch/x86/kvm/emulate.c |   64 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -576,15 +576,9 @@ static void vmballoon_pop(struct vmballo
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -811,6 +811,19 @@ static inline int jmp_rel(struct x86_emu
+ 	return assign_eip_near(ctxt, ctxt->_eip + rel);
+ }
+ 
++static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
++			      void *data, unsigned size)
++{
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
++}
++
++static int linear_write_system(struct x86_emulate_ctxt *ctxt,
++			       ulong linear, void *data,
++			       unsigned int size)
++{
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
++}
++
+ static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
+ 			      struct segmented_address addr,
+ 			      void *data,
+@@ -1509,8 +1522,7 @@ static int read_interrupt_descriptor(str
+ 		return emulate_gp(ctxt, index << 3 | 0x2);
+ 
+ 	addr = dt.address + index * 8;
+-	return ctxt->ops->read_std(ctxt, addr, desc, sizeof *desc,
+-				   &ctxt->exception);
++	return linear_read_system(ctxt, addr, desc, sizeof *desc);
+ }
+ 
+ static void get_descriptor_table_ptr(struct x86_emulate_ctxt *ctxt,
+@@ -1573,8 +1585,7 @@ static int read_segment_descriptor(struc
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
+-	return ctxt->ops->read_std(ctxt, *desc_addr_p, desc, sizeof(*desc),
+-				   &ctxt->exception);
++	return linear_read_system(ctxt, *desc_addr_p, desc, sizeof(*desc));
+ }
+ 
+ /* allowed just for 8 bytes segments */
+@@ -1588,8 +1599,7 @@ static int write_segment_descriptor(stru
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
+-	return ctxt->ops->write_std(ctxt, addr, desc, sizeof *desc,
+-				    &ctxt->exception);
++	return linear_write_system(ctxt, addr, desc, sizeof *desc);
+ }
+ 
+ static int __load_segment_descriptor(struct x86_emulate_ctxt *ctxt,
+@@ -1750,8 +1760,7 @@ static int __load_segment_descriptor(str
+ 				return ret;
  		}
- 	}
+ 	} else if (ctxt->mode == X86EMUL_MODE_PROT64) {
+-		ret = ctxt->ops->read_std(ctxt, desc_addr+8, &base3,
+-				sizeof(base3), &ctxt->exception);
++		ret = linear_read_system(ctxt, desc_addr+8, &base3, sizeof(base3));
+ 		if (ret != X86EMUL_CONTINUE)
+ 			return ret;
+ 		if (emul_is_noncanonical_address(get_desc_base(&seg_desc) |
+@@ -2064,11 +2073,11 @@ static int __emulate_int_real(struct x86
+ 	eip_addr = dt.address + (irq << 2);
+ 	cs_addr = dt.address + (irq << 2) + 2;
  
--	if (b->batch_page) {
--		vunmap(b->batch_page);
--		b->batch_page = NULL;
--	}
--
--	if (b->page) {
--		__free_page(b->page);
--		b->page = NULL;
--	}
-+	/* Clearing the batch_page unconditionally has no adverse effect */
-+	free_page((unsigned long)b->batch_page);
-+	b->batch_page = NULL;
- }
+-	rc = ops->read_std(ctxt, cs_addr, &cs, 2, &ctxt->exception);
++	rc = linear_read_system(ctxt, cs_addr, &cs, 2);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
  
- /*
-@@ -991,16 +985,13 @@ static const struct vmballoon_ops vmball
+-	rc = ops->read_std(ctxt, eip_addr, &eip, 2, &ctxt->exception);
++	rc = linear_read_system(ctxt, eip_addr, &eip, 2);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
  
- static bool vmballoon_init_batching(struct vmballoon *b)
+@@ -3046,35 +3055,30 @@ static int task_switch_16(struct x86_emu
+ 			  u16 tss_selector, u16 old_tss_sel,
+ 			  ulong old_tss_base, struct desc_struct *new_desc)
  {
--	b->page = alloc_page(VMW_PAGE_ALLOC_NOSLEEP);
--	if (!b->page)
--		return false;
-+	struct page *page;
+-	const struct x86_emulate_ops *ops = ctxt->ops;
+ 	struct tss_segment_16 tss_seg;
+ 	int ret;
+ 	u32 new_tss_base = get_desc_base(new_desc);
  
--	b->batch_page = vmap(&b->page, 1, VM_MAP, PAGE_KERNEL);
--	if (!b->batch_page) {
--		__free_page(b->page);
-+	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
-+	if (!page)
- 		return false;
--	}
+-	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
  
-+	b->batch_page = page_address(page);
- 	return true;
- }
+ 	save_state_to_tss16(ctxt, &tss_seg);
  
+-	ret = ops->write_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
+-			     &ctxt->exception);
++	ret = linear_write_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+-	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+ 	if (old_tss_sel != 0xffff) {
+ 		tss_seg.prev_task_link = old_tss_sel;
+ 
+-		ret = ops->write_std(ctxt, new_tss_base,
+-				     &tss_seg.prev_task_link,
+-				     sizeof tss_seg.prev_task_link,
+-				     &ctxt->exception);
++		ret = linear_write_system(ctxt, new_tss_base,
++					  &tss_seg.prev_task_link,
++					  sizeof tss_seg.prev_task_link);
+ 		if (ret != X86EMUL_CONTINUE)
+ 			return ret;
+ 	}
+@@ -3190,38 +3194,34 @@ static int task_switch_32(struct x86_emu
+ 			  u16 tss_selector, u16 old_tss_sel,
+ 			  ulong old_tss_base, struct desc_struct *new_desc)
+ {
+-	const struct x86_emulate_ops *ops = ctxt->ops;
+ 	struct tss_segment_32 tss_seg;
+ 	int ret;
+ 	u32 new_tss_base = get_desc_base(new_desc);
+ 	u32 eip_offset = offsetof(struct tss_segment_32, eip);
+ 	u32 ldt_sel_offset = offsetof(struct tss_segment_32, ldt_selector);
+ 
+-	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+ 	save_state_to_tss32(ctxt, &tss_seg);
+ 
+ 	/* Only GP registers and segment selectors are saved */
+-	ret = ops->write_std(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
+-			     ldt_sel_offset - eip_offset, &ctxt->exception);
++	ret = linear_write_system(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
++				  ldt_sel_offset - eip_offset);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+-	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+ 	if (old_tss_sel != 0xffff) {
+ 		tss_seg.prev_task_link = old_tss_sel;
+ 
+-		ret = ops->write_std(ctxt, new_tss_base,
+-				     &tss_seg.prev_task_link,
+-				     sizeof tss_seg.prev_task_link,
+-				     &ctxt->exception);
++		ret = linear_write_system(ctxt, new_tss_base,
++					  &tss_seg.prev_task_link,
++					  sizeof tss_seg.prev_task_link);
+ 		if (ret != X86EMUL_CONTINUE)
+ 			return ret;
+ 	}
 
 
