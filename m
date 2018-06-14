@@ -2,129 +2,91 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2BD91C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:09:48 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 30DC4C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDDE208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:09:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE41208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 15:12:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Uss1zP9q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FDDE208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gp2lndNw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SnyqSkps"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEE41208C3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755333AbeFNPJp (ORCPT
+        id S1755370AbeFNPL7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 11:09:45 -0400
-Received: from mail.efficios.com ([167.114.142.138]:47546 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754914AbeFNPJo (ORCPT
+        Thu, 14 Jun 2018 11:11:59 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:46990 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754927AbeFNPL5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 11:09:44 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 6E2C322A16D;
-        Thu, 14 Jun 2018 11:09:43 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id IVj6pLreATBP; Thu, 14 Jun 2018 11:09:43 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id EB9E722A162;
-        Thu, 14 Jun 2018 11:09:42 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com EB9E722A162
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1528988983;
-        bh=Qr000X5fF09c5gGkjPUH3kyUl/xYPqvnb48JjkTHZwk=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Uss1zP9qUdOdFqiBRi6S03ZP5/RMWiTMpwkM5syNt3k9jDIWa8t9N0FXoD5qK+RSX
-         xh+G1TugXPUKzSorYlGHfwUCQz+wLiFvBd+tPGjnOOM83G9KSrdNQaa/Qp5QwMVaUH
-         +gf6O4ErJ57srTneOn7KNAibBkipWoflmzgU4Os7EupXia22j3KPf4IMZezwIkO6Av
-         BmaeWU++Vpchr9ntxaZm6LqCRCGw4ATDS9n5yh+jLUUoX/pY/mPvYcN8qx/y4CVJbv
-         oT8SdM/PP3Ct0VwfUPP/wHvJ6Ouq3k28HwA29xgJAblB1QaZsVIFYqs42+nIZuc5cd
-         6veNxBzjyIxag==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 4F2ydC12DOuI; Thu, 14 Jun 2018 11:09:42 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id D496622A158;
-        Thu, 14 Jun 2018 11:09:42 -0400 (EDT)
-Date:   Thu, 14 Jun 2018 11:09:42 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, carlos <carlos@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-Message-ID: <1898936021.13117.1528988982788.JavaMail.zimbra@efficios.com>
-In-Reply-To: <21eae301-50ff-e95a-f3c7-dedcf2f66842@redhat.com>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com> <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com> <20180614132557.GA15201@amd> <956816108.13001.1528983496098.JavaMail.zimbra@efficios.com> <20180614134959.GA4084@amd> <48a0d905-2568-51b8-80c9-a20ecaa25f9b@redhat.com> <263666353.13077.1528986978282.JavaMail.zimbra@efficios.com> <21eae301-50ff-e95a-f3c7-dedcf2f66842@redhat.com>
-Subject: Re: Restartable Sequences system call merged into Linux
+        Thu, 14 Jun 2018 11:11:57 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 32C1D60116; Thu, 14 Jun 2018 15:11:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528989117;
+        bh=f1pmI9RyI/CYx3qgNGPCKj1nIUBNYO3HHU5jUeHIRmA=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=Gp2lndNw4DhtVb9p9Ht1Uldef2Ca2hAtI337WqrdqjF8NKOtHKv2JLGifaD92q6hF
+         Vi7qHnk7BxFpol4cUDevUML/GelrWRV4F22X8zwHo2sSM5Kkv1v0akzZXmsEH7Dmdc
+         BvcE5XZjdUk67ZaBkThhdKks7w4G7KQYFsS3BQ+E=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2FB5C60116;
+        Thu, 14 Jun 2018 15:11:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1528989116;
+        bh=f1pmI9RyI/CYx3qgNGPCKj1nIUBNYO3HHU5jUeHIRmA=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=SnyqSkpsvpuFDW/O+1Drb/JYztlYTzB6aZqUjS9upf6enjV/FXNaqEAayW3y31NdW
+         d/0lghrUdAR3hyq7f5GB/ggLfXeZvcCk3w+zPhf5CIE4tz8E3THMh1J+zmmhnXpN3a
+         NC0MdwtfJ6cEBptKJX6e8S2Up+jgDZAq6g7mcfgY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2FB5C60116
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: Restartable Sequences system call merged into Linux
-Thread-Index: DgCPD0mMBSqpQL39QHF+/AHtQ6/3dw==
+Subject: Re: [v2] ath10k: fix incorrect size of dma_free_coherent in
+ ath10k_ce_alloc_src_ring_64
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180601112548.22592-1-yuehaibing@huawei.com>
+References: <20180601112548.22592-1-yuehaibing@huawei.com>
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     <davem@davemloft.net>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        <linux-wireless@vger.kernel.org>,
+        YueHaibing <yuehaibing@huawei.com>
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180614151157.32C1D60116@smtp.codeaurora.org>
+Date:   Thu, 14 Jun 2018 15:11:57 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 14, 2018, at 10:41 AM, Florian Weimer fweimer@redhat.com wrote:
+YueHaibing <yuehaibing@huawei.com> wrote:
 
-> On 06/14/2018 04:36 PM, Mathieu Desnoyers wrote:
->> ----- On Jun 14, 2018, at 10:00 AM, Florian Weimer fweimer@redhat.com wrote:
->> 
->>> On 06/14/2018 03:49 PM, Pavel Machek wrote:
->>>> Hi!
->>>>
->>>>>>> - rseq_preempt(): on preemption, the scheduler sets the TIF_NOTIFY_RESUME thread
->>>>>>>     flag, so rseq_handle_notify_resume() can check whether it's in a rseq critical
->>>>>>>     section when returning to user-space,
->>>>>>> - rseq_signal_deliver(): on signal delivery, rseq_handle_notify_resume() checks
->>>>>>>     whether it's in a rseq critical section,
->>>>>>> - rseq_migrate: on migration, the scheduler sets TIF_NOTIFY_RESUME as well,
->>>>>>
->>>>>> Yes, this is not likely to be noticeable.
->>>>>>
->>>>>> But the proposal wanted to add a syscall to thread creation, right?
->>>>>> And I believe that may be noticeable.
->>>>>
->>>>> Fair point! Do we have a standard benchmark that would stress this ?
->>>>
->>>> Web server performance benchmarks basically test clone() performance
->>>> in many cases.
->>>
->>> Isn't that fork?  I expect that the rseq arena is inherited on fork and
->>> fork-type clone, otherwise it's going to be painful.
->> 
->> On fork or clone creating a new process, the rseq tls area is inherited
->> from the thread that does the fork syscall.
->> 
->> On creation of a new thread with clone, there is no such inheritance.
+> sizeof(struct ce_desc) should be a copy-paste mistake
+> just use sizeof(struct ce_desc_64) to avoid mem leak
 > 
-> Makes sense.  So fork-based (web) servers will not be impacted by the
-> additional system call, and thread-based servers likely use a thread
-> pool anyway.  I'm not really concerned about the additional system call
-> here.
+> Fixes: b7ba83f7c414 ("ath10k: add support for shadow register for WNC3990")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 
-Just for the sake of completeness, there is (of course) no inheritance
-on exec(). So glibc would also have to register the rseq TLS in its
-constructors.
+Patch applied to ath-next branch of ath.git, thanks.
 
-Thanks,
-
-Mathieu
+5a211627004e ath10k: fix incorrect size of dma_free_coherent in ath10k_ce_alloc_src_ring_64
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+https://patchwork.kernel.org/patch/10443063/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
