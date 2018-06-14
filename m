@@ -6,48 +6,50 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D5904C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7F548C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B71F208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35960208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rAL3R/7u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B71F208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWM9/slG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35960208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965514AbeFNOJr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:09:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50708 "EHLO mail.kernel.org"
+        id S965531AbeFNOJw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:09:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965480AbeFNOJn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:09:43 -0400
+        id S965515AbeFNOJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:09:49 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83C03208CB;
-        Thu, 14 Jun 2018 14:09:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1104C208DA;
+        Thu, 14 Jun 2018 14:09:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985383;
-        bh=hSiM9+B+JAsKoq7Vja1JKOp0EnMBg212rugW6By6Qis=;
+        s=default; t=1528985388;
+        bh=4huRIEEuC1sIh5kaVeOxKAYydvtB9Yjxtoaya1iZ9gs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rAL3R/7udxIdPGpuiFvqarge2EYQXhcMz/1zl3IrLnR6yvG0lSMlHecnP0koUk5yw
-         yphlQF+/yej42llGPRcj9SJ0gW67f9LnIg87PPpTN0Ko/TOrWmAkQfG6PbY0L2rsH7
-         AAgPPstaYcD47VWVX9bR0iil+zZINSqp6ECBijxU=
+        b=JWM9/slG2xadPrGYs5kVFtHHqno4BYpzrSXSjrAXsPmEnFIwzyPsHzt1B1F9yDWcJ
+         pBtX0z8Tp7pLYjO/CO/YyKQ6A7MRm6o43hgL6vQN+qX4LmivqoipVbIouwpRLVrt03
+         zzaB1xpYj/IHrHjlBDMZgZvd6Kywxg0DoiZF5vR0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Oleksandr Natalenko <onatalen@redhat.com>,
-        Gil Kupfer <gilkup@gmail.com>, Nadav Amit <namit@vmware.com>,
-        Xavier Deguillard <xdeguillard@vmware.com>,
-        Oleksandr Natalenko <oleksandr@redhat.com>
-Subject: [PATCH 4.16 29/43] vmw_balloon: fixing double free when batching mode is off
-Date:   Thu, 14 Jun 2018 16:04:33 +0200
-Message-Id: <20180614132137.320737365@linuxfoundation.org>
+        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
+        Shaun Tancheff <shaun.tancheff@seagate.com>,
+        Damien Le Moal <damien.lemoal@hgst.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.14 02/36] blkdev_report_zones_ioctl(): Use vmalloc() to allocate large buffers
+Date:   Thu, 14 Jun 2018 16:04:25 +0200
+Message-Id: <20180614132157.425547897@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
-References: <20180614132135.111973468@linuxfoundation.org>
+In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
+References: <20180614132157.333004166@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 MIME-Version: 1.0
@@ -57,118 +59,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Gil Kupfer <gilkup@gmail.com>
+From: Bart Van Assche <bart.vanassche@wdc.com>
 
-commit b23220fe054e92f616b82450fae8cd3ab176cc60 upstream.
+commit 327ea4adcfa37194739f1ec7c70568944d292281 upstream.
 
-The balloon.page field is used for two different purposes if batching is
-on or off. If batching is on, the field point to the page which is used
-to communicate with with the hypervisor. If it is off, balloon.page
-points to the page that is about to be (un)locked.
+Avoid that complaints similar to the following appear in the kernel log
+if the number of zones is sufficiently large:
 
-Unfortunately, this dual-purpose of the field introduced a bug: when the
-balloon is popped (e.g., when the machine is reset or the balloon driver
-is explicitly removed), the balloon driver frees, unconditionally, the
-page that is held in balloon.page.  As a result, if batching is
-disabled, this leads to double freeing the last page that is sent to the
-hypervisor.
+  fio: page allocation failure: order:9, mode:0x140c0c0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null)
+  Call Trace:
+  dump_stack+0x63/0x88
+  warn_alloc+0xf5/0x190
+  __alloc_pages_slowpath+0x8f0/0xb0d
+  __alloc_pages_nodemask+0x242/0x260
+  alloc_pages_current+0x6a/0xb0
+  kmalloc_order+0x18/0x50
+  kmalloc_order_trace+0x26/0xb0
+  __kmalloc+0x20e/0x220
+  blkdev_report_zones_ioctl+0xa5/0x1a0
+  blkdev_ioctl+0x1ba/0x930
+  block_ioctl+0x41/0x50
+  do_vfs_ioctl+0xaa/0x610
+  SyS_ioctl+0x79/0x90
+  do_syscall_64+0x79/0x1b0
+  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-The following error occurs during rmmod when kernel checkers are on, and
-the balloon is not empty:
-
-[   42.307653] ------------[ cut here ]------------
-[   42.307657] Kernel BUG at ffffffffba1e4b28 [verbose debug info unavailable]
-[   42.307720] invalid opcode: 0000 [#1] SMP DEBUG_PAGEALLOC
-[   42.312512] Modules linked in: vmw_vsock_vmci_transport vsock ppdev joydev vmw_balloon(-) input_leds serio_raw vmw_vmci parport_pc shpchp parport i2c_piix4 nfit mac_hid autofs4 vmwgfx drm_kms_helper hid_generic syscopyarea sysfillrect usbhid sysimgblt fb_sys_fops hid ttm mptspi scsi_transport_spi ahci mptscsih drm psmouse vmxnet3 libahci mptbase pata_acpi
-[   42.312766] CPU: 10 PID: 1527 Comm: rmmod Not tainted 4.12.0+ #5
-[   42.312803] Hardware name: VMware, Inc. VMware Virtual Platform/440BX Desktop Reference Platform, BIOS 6.00 09/30/2016
-[   42.313042] task: ffff9bf9680f8000 task.stack: ffffbfefc1638000
-[   42.313290] RIP: 0010:__free_pages+0x38/0x40
-[   42.313510] RSP: 0018:ffffbfefc163be98 EFLAGS: 00010246
-[   42.313731] RAX: 000000000000003e RBX: ffffffffc02b9720 RCX: 0000000000000006
-[   42.313972] RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff9bf97e08e0a0
-[   42.314201] RBP: ffffbfefc163be98 R08: 0000000000000000 R09: 0000000000000000
-[   42.314435] R10: 0000000000000000 R11: 0000000000000000 R12: ffffffffc02b97e4
-[   42.314505] R13: ffffffffc02b9748 R14: ffffffffc02b9728 R15: 0000000000000200
-[   42.314550] FS:  00007f3af5fec700(0000) GS:ffff9bf97e080000(0000) knlGS:0000000000000000
-[   42.314599] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[   42.314635] CR2: 00007f44f6f4ab24 CR3: 00000003a7d12000 CR4: 00000000000006e0
-[   42.314864] Call Trace:
-[   42.315774]  vmballoon_pop+0x102/0x130 [vmw_balloon]
-[   42.315816]  vmballoon_exit+0x42/0xd64 [vmw_balloon]
-[   42.315853]  SyS_delete_module+0x1e2/0x250
-[   42.315891]  entry_SYSCALL_64_fastpath+0x23/0xc2
-[   42.315924] RIP: 0033:0x7f3af5b0e8e7
-[   42.315949] RSP: 002b:00007fffe6ce0148 EFLAGS: 00000206 ORIG_RAX: 00000000000000b0
-[   42.315996] RAX: ffffffffffffffda RBX: 000055be676401e0 RCX: 00007f3af5b0e8e7
-[   42.316951] RDX: 000000000000000a RSI: 0000000000000800 RDI: 000055be67640248
-[   42.317887] RBP: 0000000000000003 R08: 0000000000000000 R09: 1999999999999999
-[   42.318845] R10: 0000000000000883 R11: 0000000000000206 R12: 00007fffe6cdf130
-[   42.319755] R13: 0000000000000000 R14: 0000000000000000 R15: 000055be676401e0
-[   42.320606] Code: c0 74 1c f0 ff 4f 1c 74 02 5d c3 85 f6 74 07 e8 0f d8 ff ff 5d c3 31 f6 e8 c6 fb ff ff 5d c3 48 c7 c6 c8 0f c5 ba e8 58 be 02 00 <0f> 0b 66 0f 1f 44 00 00 66 66 66 66 90 48 85 ff 75 01 c3 55 48
-[   42.323462] RIP: __free_pages+0x38/0x40 RSP: ffffbfefc163be98
-[   42.325735] ---[ end trace 872e008e33f81508 ]---
-
-To solve the bug, we eliminate the dual purpose of balloon.page.
-
-Fixes: f220a80f0c2e ("VMware balloon: add batching to the vmw_balloon.")
-Cc: stable@vger.kernel.org
-Reported-by: Oleksandr Natalenko <onatalen@redhat.com>
-Signed-off-by: Gil Kupfer <gilkup@gmail.com>
-Signed-off-by: Nadav Amit <namit@vmware.com>
-Reviewed-by: Xavier Deguillard <xdeguillard@vmware.com>
-Tested-by: Oleksandr Natalenko <oleksandr@redhat.com>
+Fixes: 3ed05a987e0f ("blk-zoned: implement ioctls")
+Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
+Cc: Shaun Tancheff <shaun.tancheff@seagate.com>
+Cc: Damien Le Moal <damien.lemoal@hgst.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Hannes Reinecke <hare@suse.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/misc/vmw_balloon.c |   23 +++++++----------------
- 1 file changed, 7 insertions(+), 16 deletions(-)
+ block/blk-zoned.c |    8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
---- a/drivers/misc/vmw_balloon.c
-+++ b/drivers/misc/vmw_balloon.c
-@@ -576,15 +576,9 @@ static void vmballoon_pop(struct vmballo
- 		}
+--- a/block/blk-zoned.c
++++ b/block/blk-zoned.c
+@@ -286,7 +286,11 @@ int blkdev_report_zones_ioctl(struct blo
+ 	if (!rep.nr_zones)
+ 		return -EINVAL;
+ 
+-	zones = kcalloc(rep.nr_zones, sizeof(struct blk_zone), GFP_KERNEL);
++	if (rep.nr_zones > INT_MAX / sizeof(struct blk_zone))
++		return -ERANGE;
++
++	zones = kvmalloc(rep.nr_zones * sizeof(struct blk_zone),
++			GFP_KERNEL | __GFP_ZERO);
+ 	if (!zones)
+ 		return -ENOMEM;
+ 
+@@ -308,7 +312,7 @@ int blkdev_report_zones_ioctl(struct blo
  	}
  
--	if (b->batch_page) {
--		vunmap(b->batch_page);
--		b->batch_page = NULL;
--	}
--
--	if (b->page) {
--		__free_page(b->page);
--		b->page = NULL;
--	}
-+	/* Clearing the batch_page unconditionally has no adverse effect */
-+	free_page((unsigned long)b->batch_page);
-+	b->batch_page = NULL;
+  out:
+-	kfree(zones);
++	kvfree(zones);
+ 
+ 	return ret;
  }
- 
- /*
-@@ -991,16 +985,13 @@ static const struct vmballoon_ops vmball
- 
- static bool vmballoon_init_batching(struct vmballoon *b)
- {
--	b->page = alloc_page(VMW_PAGE_ALLOC_NOSLEEP);
--	if (!b->page)
--		return false;
-+	struct page *page;
- 
--	b->batch_page = vmap(&b->page, 1, VM_MAP, PAGE_KERNEL);
--	if (!b->batch_page) {
--		__free_page(b->page);
-+	page = alloc_page(GFP_KERNEL | __GFP_ZERO);
-+	if (!page)
- 		return false;
--	}
- 
-+	b->batch_page = page_address(page);
- 	return true;
- }
- 
 
 
