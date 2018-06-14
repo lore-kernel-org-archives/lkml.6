@@ -6,121 +6,90 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A0FF8C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:31:29 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6FBA6C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55668208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:31:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2522A208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:31:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ixGk8OQZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55668208D7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gbjZMxRZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2522A208D7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754861AbeFNIb0 (ORCPT
+        id S1754904AbeFNIbl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:31:26 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:40566 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752824AbeFNIbU (ORCPT
+        Thu, 14 Jun 2018 04:31:41 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:35931 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754866AbeFNIbg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:31:20 -0400
-Received: by mail-lf0-f66.google.com with SMTP id q11-v6so8078707lfc.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:31:19 -0700 (PDT)
+        Thu, 14 Jun 2018 04:31:36 -0400
+Received: by mail-io0-f193.google.com with SMTP id k3-v6so6335016iog.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:31:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/pkQYusjVpGAy+K+HJh/6A8FTJTW+3NJp75tnMGTCt0=;
-        b=ixGk8OQZg2ntCFTwV/QCXReukp+PBM6uJomgSncGTh9alYV0SokxIJOUqortn/qKvN
-         4pc0Yqv85b2bR+ncWMo3njhEEQXtFSUGNmVep+FOR6LPK9uQ/qclEeu+ETBBnVecQSs3
-         dLLQaCNCih5SJIeMx/g4sx0i2Uy5diXo3+I18=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=+YStBBN95UlUwr3EzcW5s+pzK7bzvJHPiNoWbUXyXHQ=;
+        b=gbjZMxRZbP1vCMkcQHBhiVyDTl35iqwb45Xjogb4J4D5MzivuLQYrBVirpIrDhDc92
+         edpHSGBUrLwg/WiUbrNS9dWxnw/M8ks7qr7VxUPD7vdFo9yGJPEz7QN7BDNuIbVBGLM7
+         INBpNrIWiowja2mDI8PoEMcsBxMJLNkbehv64=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/pkQYusjVpGAy+K+HJh/6A8FTJTW+3NJp75tnMGTCt0=;
-        b=mjI8Xb0giSKHb1PgaG83N/VvXiU6Wh74hTo20Kx4y5wvg6vzDWLNwncWNbExsgQjFv
-         W9kfe4dk+KOspQ2+o4OtrdBNmsD3XuZBom0GNozb6puUaXI07tsyYo6vV/Uhv9qcr92K
-         +B/Ob0w8gF2+c1Gt4hfotbWuJ98L9GOHbvbF46TiyxGvYdlSemlAk1DvOEKZQNZG4Ejl
-         bpFOp94WGFdINnCkI4PyuABnAWH+aQSgy6wFmF5L2qx+B/Zfw5pkROPtiABnPAlGKQo0
-         v/LC+ZJ9i05EdQ/JAvecAPq1qXysZjRzxbZetIoP8I7RXHWjDmH3uliYU8mIGnSBtqyS
-         eKzA==
-X-Gm-Message-State: APt69E1fWaNutq+MkwD8KvqyFMHJsGZlgc6wqVzFfr1tNeIjNnBFJTmR
-        WiQZv3N42exGZgtn2FJhni1YZQ==
-X-Google-Smtp-Source: ADUXVKKbmflijsmWSTMG8FL47fw2j4qpv5TRAxtcM9nYCep6zikwKAiLayDxegy7K2EJZzf7w7NbDw==
-X-Received: by 2002:a19:e218:: with SMTP id z24-v6mr5126970lfg.132.1528965078593;
-        Thu, 14 Jun 2018 01:31:18 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id f4-v6sm849507ljc.22.2018.06.14.01.31.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 14 Jun 2018 01:31:18 -0700 (PDT)
-Date:   Thu, 14 Jun 2018 10:31:16 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-soc@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/5] soc: qcom: Remove depends on ARCH_QCOM
-Message-ID: <20180614083116.GA18093@centauri.lan>
-References: <20180613125401.11734-1-niklas.cassel@linaro.org>
- <20180613125401.11734-6-niklas.cassel@linaro.org>
- <CAFp+6iFsLfKoLy+mzLP7-RGwSrkdA5sSt0UwNT7O6ehmn=VckQ@mail.gmail.com>
- <CAFp+6iEfd_iBCUtuYbe+vsc31BSC2UVee6YNNSGX5XxMMjJ=aA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=+YStBBN95UlUwr3EzcW5s+pzK7bzvJHPiNoWbUXyXHQ=;
+        b=t9La3EvhXf235ApVcw6ppgVbeBrUSSzO2IYoVENO2N02Ay/9DYUZycouTG0XWnChIM
+         +wqYDFwhgGZIsV8BtnzCKv/RzTtBLaOx2mXY/FmVzM+wyA/tEMrt3zD7xdZo1+Y3IEmL
+         CalW9Wy6YOMev4+ItjbeQXaKVOnBM2i5ud/VMKlYJhGUjS2s2TT1qqvV0xOhLGV7GwbO
+         vtmsONAmwK8uggYSrWoOyBi7XpMV0VrxH2xM+5NEFnEBYlTLoR62b25ND+Ppr58oAjAW
+         3Cg+Z0rm9DJU+UD8ueObViiQuXdfAQnAOfkzGLmUR/vAWp8VYJ/8OBNhdRfyVTKiJeAU
+         uEJQ==
+X-Gm-Message-State: APt69E2vR77FznsvcP3UnRLKGgUMQqvTn0FnjafTbKZwk5ICO/Zk6IAo
+        E0x/zYILOqPRGrXgMOYz5p1vczm0RNwHMu2w3iQxdw==
+X-Google-Smtp-Source: ADUXVKJG9HaYZkY5y72OST0l5e5KtmSINV4zhfV9QStRxne+uPGPfRSEdsbcDAyj7Ve3dfCRR3R9jX4xd6QVvAhaLqc=
+X-Received: by 2002:a6b:1902:: with SMTP id 2-v6mr1425621ioz.304.1528965096319;
+ Thu, 14 Jun 2018 01:31:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFp+6iEfd_iBCUtuYbe+vsc31BSC2UVee6YNNSGX5XxMMjJ=aA@mail.gmail.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 01:31:35
+ -0700 (PDT)
+In-Reply-To: <20180606134338.4645-1-colin.king@canonical.com>
+References: <20180606134338.4645-1-colin.king@canonical.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 14 Jun 2018 10:31:35 +0200
+Message-ID: <CACRpkdZEawUiEU=qP+x7gTH5Sox9gH920ef7Cw-Y5-amxr9M2A@mail.gmail.com>
+Subject: Re: [PATCH][next] pinctrl: pinctrl-single: add allocation failure
+ checking of saved_vals
+To:     Colin King <colin.king@canonical.com>
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Haojian Zhuang <haojian.zhuang@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 12:08:10PM +0530, Vivek Gautam wrote:
-> On Thu, Jun 14, 2018 at 12:05 PM, Vivek Gautam
-> <vivek.gautam@codeaurora.org> wrote:
-> > On Wed, Jun 13, 2018 at 6:24 PM, Niklas Cassel <niklas.cassel@linaro.org> wrote:
-> >> Since commit cab673583d96 ("soc: Unconditionally include qcom Makefile"),
-> >> we unconditionally include the soc/qcom/Makefile.
-> >>
-> >> This opens up the possibility to compile test the code even when
-> >> building for other architectures.
-> >
-> > Why do we want to do this when all of it is qcom specific?
-> > Besides, wouldn't this increase the binary size for other platforms.
+On Wed, Jun 6, 2018 at 3:43 PM, Colin King <colin.king@canonical.com> wrote:
 
-To be able to compile test drivers that select some of these Kconfigs,
-even when building for other architectures.
+> From: Colin Ian King <colin.king@canonical.com>
+>
+> Currently saved_vals is being allocated and there is no check for
+> failed allocation (which is more likely than normal when using
+> GFP_ATOMIC).  Fix this by checking for a failed allocation and
+> propagating this error return down the the caller chain.
+>
+> Detected by CoverityScan, CID#1469841 ("Dereference null return value")
+>
+> Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-The binary size shouldn't increase if they don't enable these Kconfigs.
+Patch applied with Johan's and Tony's ACKs.
 
-> 
-> Sorry, my bad. Send the message without completing.
-> 
-> Besides above points, the COMPILE_TEST flag should allow you
-> to compile test all of these drivers. If COMPILE_TEST is missing
-> in some of the configs, we should try adding that.
-> Or, is there anything that I am missing here for the intention of this patch?
-
-That is another alternative.
-So either make sure that all these Kconfigs
-have "depends on ARCH_QCOM || COMPILE_TEST",
-or
-remove ARCH_QCOM from these Kconfigs.
-
-A third, and perhaps best alternative is to do like
-drivers/soc/mediatek/Kconfig
-
-menu "MediaTek SoC drivers"
-    depends on ARCH_MEDIATEK || COMPILE_TEST
-
-Make sure that our root menu entry depends on ARCH_QCOM || COMPILE_TEST,
-that way we could remove ARCH_QCOM for all Kconfigs.
-
-Thoughts?
-
-
-Regards,
-Niklas
+Yours,
+Linus Walleij
