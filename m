@@ -1,50 +1,64 @@
 Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Level: **
+X-Spam-Status: No, score=2.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1A215C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 55825C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2C5920693
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BCBF20693
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:34:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TyczR5fy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2C5920693
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wKhyrwbK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BCBF20693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965830AbeFNOek (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:34:40 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51324 "EHLO mail.kernel.org"
+        id S964915AbeFNOKS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:10:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965515AbeFNOKT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:10:19 -0400
+        id S965515AbeFNOKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:10:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CDCA208E1;
-        Thu, 14 Jun 2018 14:10:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2E256208CB;
+        Thu, 14 Jun 2018 14:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985419;
-        bh=KC7yMuQNZXajmCDNFI2M7Bju7LqVHdUmgywG1pkZgRo=;
+        s=default; t=1528985410;
+        bh=wKdccIh7iBlESvveQ5j54QxNTxPtU/er3TII84UPeCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TyczR5fyp1b+IQWC/kqd9By09PzOzO9y82qDrgNrhzKs9Iu22jF76npgZTlyXw6Pc
-         hr10V4vIDMHVuV0p7B6/z0wsnDW9yT1roIS0/yymHAx7eLqXLgdKKRzE2nDDQxLfEm
-         SNeeu8wCAfKWZTe5GzhoSuktF0AogHD9fc8m9wMg=
+        b=wKhyrwbKMKRlACgHtpRdfj+mwVUMO2CXrU3lKHZHplgWJv8uLMjp6NKLtj3RVhGnA
+         L6cmsgQ/e1ljCthlS91YfMaJMD73zSeH4rBrEPlOrIynZaV4YvrgHeJO18+rsptCZR
+         tZD7Qn89nWD+0iOexqJZbsKcp2lG2dj5RXkKpbmg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
+To:     linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Zhang Rui <rui.zhang@intel.com>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Keerthy <j-keerthy@ti.com>,
-        Matthijs van Duin <matthijsvanduin@gmail.com>,
-        Sekhar Nori <nsekhar@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH 4.14 21/36] serial: 8250: omap: Fix idling of clocks for unused uarts
-Date:   Thu, 14 Jun 2018 16:04:44 +0200
-Message-Id: <20180614132158.228145445@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
+        Petr Mladek <pmladek@suse.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 4.14 18/36] serial: sh-sci: Stop using printk format %pCr
+Date:   Thu, 14 Jun 2018 16:04:41 +0200
+Message-Id: <20180614132158.085822615@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
 References: <20180614132157.333004166@linuxfoundation.org>
@@ -61,92 +75,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tony Lindgren <tony@atomide.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-commit 13dc04d0e5fdc25c8f713ad23fdce51cf2bf96ba upstream.
+commit d63c16f8e1ab761775275adcf54f4bef7c330295 upstream.
 
-I noticed that unused UARTs won't necessarily idle properly always
-unless at least one byte tx transfer is done first.
+Printk format "%pCr" will be removed soon, as clk_get_rate() must not be
+called in atomic context.
 
-After some debugging I narrowed down the problem to the scr register
-dma configuration bits that need to be set before softreset for the
-clocks to idle. Unless we do this, the module clkctrl idlest bits
-may be set to 1 instead of 3 meaning the clock will never idle and
-is blocking deeper idle states for the whole domain.
+Replace it by open-coding the operation.  This is safe here, as the code
+runs in task context.
 
-This might be related to the configuration done by the bootloader
-or kexec booting where certain configurations cause the 8250 or
-the clkctrl clock to jam in a way where setting of the scr bits
-and reset is needed to clear it. I've tried diffing the 8250
-registers for the various modes, but did not see anything specific.
-So far I've only seen this on omap4 but I'm suspecting this might
-also happen on the other clkctrl using SoCs considering they
-already have a quirk enabled for UART_ERRATA_CLOCK_DISABLE.
-
-Let's fix the issue by configuring scr before reset for basic dma
-even if we don't use it. The scr register will be reset when we do
-softreset few lines after, and we restore scr on resume. We should
-do this for all the SoCs with UART_ERRATA_CLOCK_DISABLE quirk flag
-set since the ones with UART_ERRATA_CLOCK_DISABLE are all based
-using clkctrl similar to omap4.
-
-Looks like both OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL
-bits are needed for the clkctrl to idle after a softreset.
-
-And we need to add omap4 to also use the UART_ERRATA_CLOCK_DISABLE
-for the related workaround to be enabled. This same compatible
-value will also be used for omap5.
-
-Fixes: cdb929e4452a ("serial: 8250_omap: workaround errata around idling UART after using DMA")
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Matthijs van Duin <matthijsvanduin@gmail.com>
-Cc: Sekhar Nori <nsekhar@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Cc: stable <stable@vger.kernel.org>
+Link: http://lkml.kernel.org/r/1527845302-12159-4-git-send-email-geert+renesas@glider.be
+To: Jia-Ju Bai <baijiaju1990@gmail.com>
+To: Jonathan Corbet <corbet@lwn.net>
+To: Michael Turquette <mturquette@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+To: Zhang Rui <rui.zhang@intel.com>
+To: Eduardo Valentin <edubezval@gmail.com>
+To: Eric Anholt <eric@anholt.net>
+To: Stefan Wahren <stefan.wahren@i2se.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-doc@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-pm@vger.kernel.org
+Cc: linux-serial@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-renesas-soc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: stable@vger.kernel.org # 4.5+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Petr Mladek <pmladek@suse.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/serial/8250/8250_omap.c |   16 +++++++++++++++-
- 1 file changed, 15 insertions(+), 1 deletion(-)
+ drivers/tty/serial/sh-sci.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -1100,13 +1100,14 @@ static int omap8250_no_handle_irq(struct
+--- a/drivers/tty/serial/sh-sci.c
++++ b/drivers/tty/serial/sh-sci.c
+@@ -2669,8 +2669,8 @@ found:
+ 			dev_dbg(dev, "failed to get %s (%ld)\n", clk_names[i],
+ 				PTR_ERR(clk));
+ 		else
+-			dev_dbg(dev, "clk %s is %pC rate %pCr\n", clk_names[i],
+-				clk, clk);
++			dev_dbg(dev, "clk %s is %pC rate %lu\n", clk_names[i],
++				clk, clk_get_rate(clk));
+ 		sci_port->clks[i] = IS_ERR(clk) ? NULL : clk;
+ 	}
  	return 0;
- }
- 
-+static const u8 omap4_habit = UART_ERRATA_CLOCK_DISABLE;
- static const u8 am3352_habit = OMAP_DMA_TX_KICK | UART_ERRATA_CLOCK_DISABLE;
- static const u8 dra742_habit = UART_ERRATA_CLOCK_DISABLE;
- 
- static const struct of_device_id omap8250_dt_ids[] = {
- 	{ .compatible = "ti,omap2-uart" },
- 	{ .compatible = "ti,omap3-uart" },
--	{ .compatible = "ti,omap4-uart" },
-+	{ .compatible = "ti,omap4-uart", .data = &omap4_habit, },
- 	{ .compatible = "ti,am3352-uart", .data = &am3352_habit, },
- 	{ .compatible = "ti,am4372-uart", .data = &am3352_habit, },
- 	{ .compatible = "ti,dra742-uart", .data = &dra742_habit, },
-@@ -1343,6 +1344,19 @@ static int omap8250_soft_reset(struct de
- 	int sysc;
- 	int syss;
- 
-+	/*
-+	 * At least on omap4, unused uarts may not idle after reset without
-+	 * a basic scr dma configuration even with no dma in use. The
-+	 * module clkctrl status bits will be 1 instead of 3 blocking idle
-+	 * for the whole clockdomain. The softreset below will clear scr,
-+	 * and we restore it on resume so this is safe to do on all SoCs
-+	 * needing omap8250_soft_reset() quirk. Do it in two writes as
-+	 * recommended in the comment for omap8250_update_scr().
-+	 */
-+	serial_out(up, UART_OMAP_SCR, OMAP_UART_SCR_DMAMODE_1);
-+	serial_out(up, UART_OMAP_SCR,
-+		   OMAP_UART_SCR_DMAMODE_1 | OMAP_UART_SCR_DMAMODE_CTL);
-+
- 	sysc = serial_in(up, UART_OMAP_SYSC);
- 
- 	/* softreset the UART */
 
 
