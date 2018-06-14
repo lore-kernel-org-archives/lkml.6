@@ -2,188 +2,85 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BEE77C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:16:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C3FDFC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:19:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F46208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:16:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74F46208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
+	by mail.kernel.org (Postfix) with ESMTP id 71FC3208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:19:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cxU4Z8Ag"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71FC3208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752849AbeFNGQH (ORCPT
+        id S1752836AbeFNGTK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:16:07 -0400
-Received: from regular1.263xmail.com ([211.150.99.135]:39315 "EHLO
-        regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752420AbeFNGQF (ORCPT
+        Thu, 14 Jun 2018 02:19:10 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:54476 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752420AbeFNGTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:16:05 -0400
-Received: from david.wu?rock-chips.com (unknown [192.168.167.87])
-        by regular1.263xmail.com (Postfix) with ESMTP id 72E221E020;
-        Thu, 14 Jun 2018 14:15:52 +0800 (CST)
-X-263anti-spam: KSV:0;
-X-MAIL-GRAY: 0
-X-MAIL-DELIVERY: 1
-X-KSVirus-check: 0
-X-ABS-CHECKED: 4
-Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 43B5D382;
-        Thu, 14 Jun 2018 14:15:46 +0800 (CST)
-X-IP-DOMAINF: 1
-X-RL-SENDER: david.wu@rock-chips.com
-X-FST-TO: davem@davemloft.net
-X-SENDER-IP: 58.22.7.114
-X-LOGIN-NAME: david.wu@rock-chips.com
-X-UNIQUE-TAG: <6a09b529cda04d9abaff4483c0af72f2>
-X-ATTACHMENT-NUM: 0
-X-SENDER: wdc@rock-chips.com
-X-DNS-TYPE: 0
-Received: from localhost.localdomain (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith ESMTP id 12107GQK1H6;
-        Thu, 14 Jun 2018 14:15:49 +0800 (CST)
-From:   David Wu <david.wu@rock-chips.com>
-To:     davem@davemloft.net, heiko@sntech.de, robh+dt@kernel.org
-Cc:     mark.rutland@arm.com, huangtao@rock-chips.com,
-        netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        David Wu <david.wu@rock-chips.com>
-Subject: [PATCH v2] net: ethernet: stmmac: dwmac-rk: Add GMAC support for PX30
-Date:   Thu, 14 Jun 2018 14:15:27 +0800
-Message-Id: <1528956927-32440-1-git-send-email-david.wu@rock-chips.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 14 Jun 2018 02:19:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=9K7FV9X0MPjgmD5lb0FsyWDZbryU4QhsFMyLvlYYWT0=; b=cxU4Z8Agm2J0JpLGIt/hj4REo
+        rHnK8Ny9BLGoZJbpwFYB55gpjPHTGkechC/rdm1YspZMzb1AAUqch310ZqUuaxD17aw3vo5No4A9+
+        s67TX/TRdMRiSPZtjuSuEUi7mDCUQ7e9yW7VRHrhw6v5dkODdIwJsXcRgI481hM+uMVWp8it8Q2xD
+        AcEDCKUmlS2BEyDpja0p9yCBgVvpwmLyaqnsNb1b8hZo7Xkeq/qgqNkWYqddETkr8IJHm5R2ieNA8
+        0Q91dD5pikWolRL9SFVbzT84GSD/QH2Yqpsxpg13MnsEKIMh/yL0JWHMM7dMerxF+Uclk7B5UD9HQ
+        hFC5ndegg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTLb1-0001ZR-CZ; Thu, 14 Jun 2018 06:18:59 +0000
+Date:   Wed, 13 Jun 2018 23:18:59 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>, Jens Axboe <axboe@fb.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        David Sterba <dsterba@suse.cz>,
+        Huang Ying <ying.huang@intel.com>,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Theodore Ts'o <tytso@mit.edu>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        Coly Li <colyli@suse.de>, Filipe Manana <fdmanana@gmail.com>,
+        Randy Dunlap <rdunlap@infradead.org>
+Subject: Re: [PATCH V6 00/30] block: support multipage bvec
+Message-ID: <20180614061858.GA3336@infradead.org>
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+ <20180611164806.GA7452@infradead.org>
+ <20180612034242.GC26412@ming.t460p>
+ <20180613144253.GA4693@infradead.org>
+ <20180614011852.GA19828@ming.t460p>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614011852.GA19828@ming.t460p>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add constants and callback functions for the dwmac on PX30 Soc.
-The base structure is the same, but registers and the bits in
-them are moved slightly, and add the clk_mac_speed for selecting
-mac speed.
+On Thu, Jun 14, 2018 at 09:18:58AM +0800, Ming Lei wrote:
+> This one may cause confusing, since we iterate over pages via
+> bio_for_each_segment(), but the _all version takes another name
+> of page, still iterate over pages.
+> 
+> So could we change it in the following way?
+> 
+>  OLD:	    bio_for_each_segment_all
+>  NEW(page): bio_for_each_segment_all (update prototype in one tree-wide &
+>  			big patch, to be renamed bio_for_each_page_all)
+>  NEW(bvec):  (no bvec version needed once bcache is fixed up)	
 
-Signed-off-by: David Wu <david.wu@rock-chips.com>
----
-Change in v2:
-- Fix some error in commit title and message
-
- .../devicetree/bindings/net/rockchip-dwmac.txt     |  1 +
- drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c     | 64 ++++++++++++++++++++++
- 2 files changed, 65 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/net/rockchip-dwmac.txt b/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
-index 9c16ee2..3b71da7 100644
---- a/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
-+++ b/Documentation/devicetree/bindings/net/rockchip-dwmac.txt
-@@ -4,6 +4,7 @@ The device node has following properties.
- 
- Required properties:
-  - compatible: should be "rockchip,<name>-gamc"
-+   "rockchip,px30-gmac":   found on PX30 SoCs
-    "rockchip,rk3128-gmac": found on RK312x SoCs
-    "rockchip,rk3228-gmac": found on RK322x SoCs
-    "rockchip,rk3288-gmac": found on RK3288 SoCs
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-index 13133b3..5e69dd0 100644
---- a/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
-@@ -61,6 +61,7 @@ struct rk_priv_data {
- 	struct clk *mac_clk_tx;
- 	struct clk *clk_mac_ref;
- 	struct clk *clk_mac_refout;
-+	struct clk *clk_mac_speed;
- 	struct clk *aclk_mac;
- 	struct clk *pclk_mac;
- 	struct clk *clk_phy;
-@@ -83,6 +84,64 @@ struct rk_priv_data {
- 	(((tx) ? soc##_GMAC_TXCLK_DLY_ENABLE : soc##_GMAC_TXCLK_DLY_DISABLE) | \
- 	 ((rx) ? soc##_GMAC_RXCLK_DLY_ENABLE : soc##_GMAC_RXCLK_DLY_DISABLE))
- 
-+#define PX30_GRF_GMAC_CON1		0x0904
-+
-+/* PX30_GRF_GMAC_CON1 */
-+#define PX30_GMAC_PHY_INTF_SEL_RMII	(GRF_CLR_BIT(4) | GRF_CLR_BIT(5) | \
-+					 GRF_BIT(6))
-+#define PX30_GMAC_SPEED_10M		GRF_CLR_BIT(2)
-+#define PX30_GMAC_SPEED_100M		GRF_BIT(2)
-+
-+static void px30_set_to_rmii(struct rk_priv_data *bsp_priv)
-+{
-+	struct device *dev = &bsp_priv->pdev->dev;
-+
-+	if (IS_ERR(bsp_priv->grf)) {
-+		dev_err(dev, "%s: Missing rockchip,grf property\n", __func__);
-+		return;
-+	}
-+
-+	regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
-+		     PX30_GMAC_PHY_INTF_SEL_RMII);
-+}
-+
-+static void px30_set_rmii_speed(struct rk_priv_data *bsp_priv, int speed)
-+{
-+	struct device *dev = &bsp_priv->pdev->dev;
-+	int ret;
-+
-+	if (IS_ERR(bsp_priv->clk_mac_speed)) {
-+		dev_err(dev, "%s: Missing clk_mac_speed clock\n", __func__);
-+		return;
-+	}
-+
-+	if (speed == 10) {
-+		regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
-+			     PX30_GMAC_SPEED_10M);
-+
-+		ret = clk_set_rate(bsp_priv->clk_mac_speed, 2500000);
-+		if (ret)
-+			dev_err(dev, "%s: set clk_mac_speed rate 2500000 failed: %d\n",
-+				__func__, ret);
-+	} else if (speed == 100) {
-+		regmap_write(bsp_priv->grf, PX30_GRF_GMAC_CON1,
-+			     PX30_GMAC_SPEED_100M);
-+
-+		ret = clk_set_rate(bsp_priv->clk_mac_speed, 25000000);
-+		if (ret)
-+			dev_err(dev, "%s: set clk_mac_speed rate 25000000 failed: %d\n",
-+				__func__, ret);
-+
-+	} else {
-+		dev_err(dev, "unknown speed value for RMII! speed=%d", speed);
-+	}
-+}
-+
-+static const struct rk_gmac_ops px30_ops = {
-+	.set_to_rmii = px30_set_to_rmii,
-+	.set_rmii_speed = px30_set_rmii_speed,
-+};
-+
- #define RK3128_GRF_MAC_CON0	0x0168
- #define RK3128_GRF_MAC_CON1	0x016c
- 
-@@ -1042,6 +1101,10 @@ static int rk_gmac_clk_init(struct plat_stmmacenet_data *plat)
- 		}
- 	}
- 
-+	bsp_priv->clk_mac_speed = devm_clk_get(dev, "clk_mac_speed");
-+	if (IS_ERR(bsp_priv->clk_mac_speed))
-+		dev_err(dev, "cannot get clock %s\n", "clk_mac_speed");
-+
- 	if (bsp_priv->clock_input) {
- 		dev_info(dev, "clock input from PHY\n");
- 	} else {
-@@ -1424,6 +1487,7 @@ static int rk_gmac_resume(struct device *dev)
- static SIMPLE_DEV_PM_OPS(rk_gmac_pm_ops, rk_gmac_suspend, rk_gmac_resume);
- 
- static const struct of_device_id rk_gmac_dwmac_match[] = {
-+	{ .compatible = "rockchip,px30-gmac",	.data = &px30_ops   },
- 	{ .compatible = "rockchip,rk3128-gmac", .data = &rk3128_ops },
- 	{ .compatible = "rockchip,rk3228-gmac", .data = &rk3228_ops },
- 	{ .compatible = "rockchip,rk3288-gmac", .data = &rk3288_ops },
--- 
-2.7.4
-
-
+Fine with me, but I thought Jens didn't like that sweeping change?
