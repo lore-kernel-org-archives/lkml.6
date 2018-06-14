@@ -2,169 +2,120 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0CA08C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:59:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 69736C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBC6D208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BC3120864
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 23:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/kuTaYX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC6D208CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="QSdIwWeO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BC3120864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=microsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965135AbeFNW71 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 18:59:27 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:35138 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965006AbeFNW7Z (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 18:59:25 -0400
-Received: by mail-pl0-f66.google.com with SMTP id k1-v6so4336370plt.2;
-        Thu, 14 Jun 2018 15:59:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8fAUVQ4DeolZcnrng4lwqlH6/zv84TJiAWY8EFRywiw=;
-        b=m/kuTaYXhgRoiUihJGFnw/lzPkOZqpiO5ynJ9mxE0HgdBkW1a/9soKzgLjsa7/igBG
-         7fm/1sh3OKZAGVUZqBf71TxfpiRY+2HrCwAPhlnLKzaGbxe8BChQnXfa8gddZAlBegp4
-         xuOvuMafO8A8CiwnptL99+/pwx3hGXroKooeGS6egeD7faSojE70xnHzVyzNJ02qZegO
-         ut6whoDnw0wiW/RhFfJJ+5tL0aXiqhzzaN4wh7izgH5plJCtuPOGil/9slP+IsVIGTut
-         uHHc718wADBvklt4VXXdzGFYDD5XVHhPX5Qu55ehsWTmX5QwwYKELGQ59RBzKOxOro4i
-         ea1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=8fAUVQ4DeolZcnrng4lwqlH6/zv84TJiAWY8EFRywiw=;
-        b=eN5y0QuTgk6rYcjvNCcIhR1crQJkREUDOu6iOHfimCz/R/gJ6qYOPaCwTUKHm9smh4
-         2w22vtCjOR/EQVAuuUuWlS/arY8fPbssjnfZQOWnga2N10mjOw1W/c9ZCPhChvJPMnGk
-         b3szcn4lD7pbxEqkJltW1YJH1Wh8qbBh/7tf/1/ncqcHQN8quNUbi4ApdOoOr/34/CT5
-         bdPioxD/kQqFoGCLAPCLmxgvKTAcKvgE0Uknujf/+eS9VXSPSOYp8QFfmjHzIjiZa8J7
-         6qOZSvXg9jcYVRKIUQynoovsYR2istg91bbxEsyex8TLFtwT05KSEoT+BkCXakpfeNhb
-         dAfw==
-X-Gm-Message-State: APt69E02ODRTdXB117gz2TXSlHt9AWXchFxwfWz1xjDMp/4s2nTN+h1w
-        M0bHv9W2BT/WsMGdVs2KBhRkqRQ/h/4=
-X-Google-Smtp-Source: ADUXVKLcQrbZ8GCYWqmeMmSy6pV5+P15yE3QDpD6zLXGVF4kV7c9gvx5mjhj/iaLokPLeLsH2qyosA==
-X-Received: by 2002:a17:902:321:: with SMTP id 30-v6mr5206747pld.122.1529017165139;
-        Thu, 14 Jun 2018 15:59:25 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id b72-v6sm12671743pfj.56.2018.06.14.15.59.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 15:59:24 -0700 (PDT)
-From:   Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3] scsi: xen-scsifront: add error handling for xenbus_printf
-Date:   Fri, 15 Jun 2018 06:59:14 +0800
-Message-Id: <1529017154-54719-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528774962-39173-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528774962-39173-1-git-send-email-jiazhouyang09@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+        id S965139AbeFNXBM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 19:01:12 -0400
+Received: from mail-bl2nam02on0121.outbound.protection.outlook.com ([104.47.38.121]:10848
+        "EHLO NAM02-BL2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S965039AbeFNXBK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 19:01:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pbVZpHq7RpyRRLX8BZAPCZ8xHM8aeAfxq2IzLiJlt5U=;
+ b=QSdIwWeO965DNhNRUC/4mt+UaeRu+owMPbgKKC8U7bqxKlMqrLDhN/Zu5JZVv0sxkMX39LyKbmrlt2sc8/WG2j8yxwa/5jFYjApccjJiJAA21Jap3HwhsILGXfU4LvSptdgSMC0mS4SX2hZI0Ql+I2FbSLXbuz0X51WF1zf3vbI=
+Received: from BL0PR2101MB0913.namprd21.prod.outlook.com (52.132.23.150) by
+ BL0PR2101MB1107.namprd21.prod.outlook.com (52.132.24.30) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.884.12; Thu, 14 Jun 2018 23:01:08 +0000
+Received: from BL0PR2101MB0913.namprd21.prod.outlook.com
+ ([fe80::e964:9479:a8:5802]) by BL0PR2101MB0913.namprd21.prod.outlook.com
+ ([fe80::e964:9479:a8:5802%5]) with mapi id 15.20.0884.010; Thu, 14 Jun 2018
+ 23:01:08 +0000
+From:   Sasha Levin <Alexander.Levin@microsoft.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Liu Bo <bo.li.liu@oracle.com>,
+        "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        David Sterba <dsterba@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4.4 038/268] Btrfs: fix scrub to repair raid6 corruption
+Thread-Topic: [PATCH 4.4 038/268] Btrfs: fix scrub to repair raid6 corruption
+Thread-Index: AQHT9mzXN5kiloguQkSDK0myTLF/jKRWxCOAgAi/sgCAAPZ4gA==
+Date:   Thu, 14 Jun 2018 23:01:08 +0000
+Message-ID: <20180614230107.GA72173@sasha-vm>
+References: <20180528100202.045206534@linuxfoundation.org>
+ <20180528100206.374694208@linuxfoundation.org>
+ <1528483367.2289.105.camel@codethink.co.uk>
+ <20180614081858.GA20773@kroah.com>
+In-Reply-To: <20180614081858.GA20773@kroah.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [52.168.54.252]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL0PR2101MB1107;7:yKzTb502Zvm3FIMqtJz66HIMFSGXJjfcLlsRO6Ie6U9+U+n1x8iHh6Wf6kmjo9u0EXCyEwJc+5bBc/2LsG9J2Y8CYLEaV5x2inyz9NiWHvOcIh/m46ysLsRYctOPhJjPGUlwZy47P6nicatwhvkcPhZAgoBtPTv/N99Atc5Pe2Y4YdXqQpNuPyUdgY9EnZriXHhCiCStCYOHc7J46g9/PTzB/oCSaNBjsCFsrZWVXadAKQSoEj3Xf9/ZO9fTunD0
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2d846c14-49c3-46c3-a319-08d5d24ab753
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(711020)(2017052603328)(7193020);SRVR:BL0PR2101MB1107;
+x-ms-traffictypediagnostic: BL0PR2101MB1107:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Alexander.Levin@microsoft.com; 
+x-microsoft-antispam-prvs: <BL0PR2101MB11078DB21D80FE06490ED854FB7D0@BL0PR2101MB1107.namprd21.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(146099531331640);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(2018427008)(944501410)(52105095)(93006095)(93001095)(10201501046)(3002001)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BL0PR2101MB1107;BCL:0;PCL:0;RULEID:;SRVR:BL0PR2101MB1107;
+x-forefront-prvs: 0703B549E4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(396003)(366004)(376002)(346002)(39380400002)(39860400002)(189003)(199004)(81156014)(81166006)(476003)(11346002)(486006)(446003)(97736004)(7736002)(93886005)(305945005)(6486002)(33896004)(6512007)(9686003)(22452003)(6436002)(229853002)(6506007)(26005)(10090500001)(8676002)(8936002)(186003)(102836004)(6916009)(76176011)(33716001)(2906002)(72206003)(478600001)(3846002)(33656002)(99286004)(5660300001)(54906003)(14454004)(3660700001)(86362001)(3280700002)(6116002)(66066001)(316002)(106356001)(5250100002)(25786009)(86612001)(53936002)(105586002)(4326008)(2900100001)(10290500003)(6246003)(68736007)(1076002);DIR:OUT;SFP:1102;SCL:1;SRVR:BL0PR2101MB1107;H:BL0PR2101MB0913.namprd21.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: OHE6XfCBZasTswLFjBs8DLenF5NO9f6KIUteM6bdxssKqBRGGfiZcHrCmmtWe714mKPDDRlSbTDixkLI3WcXi/6exX8ypnkK5aVAhId31SBvhH95XTCEM/8ehuGzRP7Vc9pR17Ni0aFY1NvRuMXa1Qhxueul9yhsNxw/YOUSa9aTjSSLylCVJz6s6hGicepv
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-ID: <760F67C5557CA64AB1D65AD708FA42A6@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2d846c14-49c3-46c3-a319-08d5d24ab753
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2018 23:01:08.5476
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR2101MB1107
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When xenbus_printf fails, the lack of error-handling code may
-cause unexpected results.
+On Thu, Jun 14, 2018 at 10:18:58AM +0200, Greg Kroah-Hartman wrote:
+>On Fri, Jun 08, 2018 at 07:42:47PM +0100, Ben Hutchings wrote:
+>> On Mon, 2018-05-28 at 12:00 +0200, Greg Kroah-Hartman wrote:
+>> > 4.4-stable review patch.=A0=A0If anyone has any objections, please let=
+ me know.
+>> >
+>> > ------------------
+>> >
+>> > From: Liu Bo <bo.li.liu@oracle.com>
+>> >
+>> > [ Upstream commit 762221f095e3932669093466aaf4b85ed9ad2ac1 ]
+>>
+>> The diff here is actually from commit 8810f7517a3b ("Btrfs: make raid6
+>> rebuild retry more", mentioned in this commit message).  (Sasha, please
+>> try to work out why commit messages and descriptions are getting mixed
+>> up in your auto-selections.)
+>>
+>> Maybe stable branches should get the real commit 762221f095e3 as well?
+>
+>Ugh, not good.  Sasha, can you fix this up and send me patches for it,
+>separate from your pull requests?
 
-This patch adds error-handling code after calling xenbus_printf.
-
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
----
-v1->v2:
-- Fix dereferencing before checking
-v2->v3:
-- Use xenbus_dev_error to report errors.
----
- drivers/scsi/xen-scsifront.c | 33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/scsi/xen-scsifront.c b/drivers/scsi/xen-scsifront.c
-index 36f59a1..644d1ce 100644
---- a/drivers/scsi/xen-scsifront.c
-+++ b/drivers/scsi/xen-scsifront.c
-@@ -654,10 +654,17 @@ static int scsifront_dev_reset_handler(struct scsi_cmnd *sc)
- static int scsifront_sdev_configure(struct scsi_device *sdev)
- {
- 	struct vscsifrnt_info *info = shost_priv(sdev->host);
-+	int err;
- 
--	if (info && current == info->curr)
--		xenbus_printf(XBT_NIL, info->dev->nodename,
-+	if (info && current == info->curr) {
-+		err = xenbus_printf(XBT_NIL, info->dev->nodename,
- 			      info->dev_state_path, "%d", XenbusStateConnected);
-+		if (err) {
-+			xenbus_dev_error(&info->dev->dev, err,
-+				"%s: writing dev_state_path", __func__);
-+			return err;
-+		}
-+	}
- 
- 	return 0;
- }
-@@ -665,10 +672,15 @@ static int scsifront_sdev_configure(struct scsi_device *sdev)
- static void scsifront_sdev_destroy(struct scsi_device *sdev)
- {
- 	struct vscsifrnt_info *info = shost_priv(sdev->host);
-+	int err;
- 
--	if (info && current == info->curr)
--		xenbus_printf(XBT_NIL, info->dev->nodename,
-+	if (info && current == info->curr) {
-+		err = xenbus_printf(XBT_NIL, info->dev->nodename,
- 			      info->dev_state_path, "%d", XenbusStateClosed);
-+		if (err)
-+			xenbus_dev_error(&info->dev->dev, err,
-+				"%s: writing dev_state_path", __func__);
-+	}
- }
- 
- static struct scsi_host_template scsifront_sht = {
-@@ -1003,9 +1015,12 @@ static void scsifront_do_lun_hotplug(struct vscsifrnt_info *info, int op)
- 
- 			if (scsi_add_device(info->host, chn, tgt, lun)) {
- 				dev_err(&dev->dev, "scsi_add_device\n");
--				xenbus_printf(XBT_NIL, dev->nodename,
-+				err = xenbus_printf(XBT_NIL, dev->nodename,
- 					      info->dev_state_path,
- 					      "%d", XenbusStateClosed);
-+				if (err)
-+					xenbus_dev_error(&dev->dev, err,
-+						"%s: writing dev_state_path", __func__);
- 			}
- 			break;
- 		case VSCSIFRONT_OP_DEL_LUN:
-@@ -1019,10 +1034,14 @@ static void scsifront_do_lun_hotplug(struct vscsifrnt_info *info, int op)
- 			}
- 			break;
- 		case VSCSIFRONT_OP_READD_LUN:
--			if (device_state == XenbusStateConnected)
--				xenbus_printf(XBT_NIL, dev->nodename,
-+			if (device_state == XenbusStateConnected) {
-+				err = xenbus_printf(XBT_NIL, dev->nodename,
- 					      info->dev_state_path,
- 					      "%d", XenbusStateConnected);
-+				if (err)
-+					xenbus_dev_error(&dev->dev, err,
-+						"%s: writing dev_state_path", __func__);
-+			}
- 			break;
- 		default:
- 			break;
--- 
-2.7.4
-
+Crap, I see what's wrong. I'll send fixes later tonight.=
