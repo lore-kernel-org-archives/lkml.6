@@ -2,95 +2,71 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0511EC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A62A9C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFE9F208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B5C7208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:58:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2izg/HzU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFE9F208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1mYhPRco"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B5C7208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755344AbeFNO57 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:57:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46010 "EHLO mail.kernel.org"
+        id S936105AbeFNOFi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:05:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45828 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936053AbeFNOFq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:05:46 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        id S1755252AbeFNOFc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:05:32 -0400
+Received: from jouet.infradead.org (unknown [190.15.121.82])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 14333208DA;
-        Thu, 14 Jun 2018 14:05:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C50F208DD;
+        Thu, 14 Jun 2018 14:05:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985145;
-        bh=WTYG2ItIgRT+9t6MEu0PhKO3yQXWJHbj8Y95JXGiMHA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2izg/HzUWTaRlXkbbSQXHlRuueh238/IYa/p3xd3hVTi4Mk5Mmh1zI9NIDtw3EvRl
-         sWHf1+oIt9cLWD51ITY7HZM5y7fPR9v3jkwjQdB1kB53UWwKzoI///AQv1RsoQjVG6
-         YOvmTlQAq2/KTf+sws09TadMfwhQ0tDxCFxboo1E=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dmytro Panchenko <dmytro.panchenko@globallogic.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Subject: [PATCH 4.17 16/45] usb: core: message: remove extra endianness conversion in usb_set_isoch_delay
-Date:   Thu, 14 Jun 2018 16:04:07 +0200
-Message-Id: <20180614132127.620474085@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
-References: <20180614132126.797006529@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        s=default; t=1528985131;
+        bh=5jmlrCFWgZFQP/eqFmgI2vEiOT/M79F0AbREkluK2Ow=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=1mYhPRcomXqQ5LqhkLhY9iv6lOb+7BDtg13AoJOmX6/AAXyGZDEfdYPx0UMAvwOpl
+         m55GjIgjp1gMbVhtOPhrtoSg0sY9mca9MbHcLaWHl0Qz8wsOU28DqVbMpQlbR0mUVT
+         whFhUJxUzlH9m165JMj8Ewnc25qskUYLXYIcW9Z0=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 1150B146963; Thu, 14 Jun 2018 11:05:29 -0300 (-03)
+Date:   Thu, 14 Jun 2018 11:05:29 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Thomas Richter <tmricht@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        jolsa@redhat.com, brueckner@linux.vnet.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+Subject: Re: [PATCH 1/3] perf alias: Remove trailing newline when reading
+ sysfs files
+Message-ID: <20180614140528.GE30043@kernel.org>
+References: <20180614114845.41221-1-tmricht@linux.ibm.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614114845.41221-1-tmricht@linux.ibm.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Em Thu, Jun 14, 2018 at 01:48:43PM +0200, Thomas Richter escreveu:
+> Remove a trailing newline when reading sysfs file contents
+<SNIP>
+> +	/* Remove trailing newline from sysfs file */
+> +	cp = strrchr(buf, '\n');
+> +	if (cp)
+> +		*cp = '\0';
+> +
 
-------------------
+We have rtrim()
 
-From: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-
-commit 48b73d0fa11aa8613d51f7be61d2fa7f0ab05fd3 upstream.
-
-No need to do extra endianness conversion in
-usb_set_isoch_delay because it is already done
-in usb_control_msg()
-
-Fixes: 886ee36e7205 ("usb: core: add support for USB_REQ_SET_ISOCH_DELAY")
-Cc: Dmytro Panchenko <dmytro.panchenko@globallogic.com>
-Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
-Cc: stable <stable@vger.kernel.org> # v4.16+
-Signed-off-by: Ruslan Bilovol <ruslan.bilovol@gmail.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- drivers/usb/core/message.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/drivers/usb/core/message.c
-+++ b/drivers/usb/core/message.c
-@@ -940,7 +940,7 @@ int usb_set_isoch_delay(struct usb_devic
- 	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0),
- 			USB_REQ_SET_ISOCH_DELAY,
- 			USB_DIR_OUT | USB_TYPE_STANDARD | USB_RECIP_DEVICE,
--			cpu_to_le16(dev->hub_delay), 0, NULL, 0,
-+			dev->hub_delay, 0, NULL, 0,
- 			USB_CTRL_SET_TIMEOUT);
- }
- 
-
-
+- Arnaldo
