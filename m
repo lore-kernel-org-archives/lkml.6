@@ -2,90 +2,107 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E215BC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:29:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F00BFC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90103208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:29:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C3F7208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 13:29:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HWg55sEP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90103208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tVQghfqs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C3F7208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755284AbeFNN3M (ORCPT
+        id S1755312AbeFNN3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 09:29:12 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:41892 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755092AbeFNN3K (ORCPT
+        Thu, 14 Jun 2018 09:29:20 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:36787 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755252AbeFNN3R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 09:29:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=D3M0+L7De5Rde1cWkG3InPvn6WoDJpf7xOqvxEmkc2g=; b=HWg55sEP9sVRlKsKAiAlcfGTE
-        a1GdHyCnfPcMqPyHyPQb0lsCP7X6k1IYTZ2Y2HxzNnw2nJjWX34B+ecPwJooQHdQyYy5v420Wx4Q/
-        U4w145BWbwQhk1sqzmn32TLQRsvW4t0gGHd4oiiWp+na0ImN8nXt3R8Yf1Uv43CRbd52cC2pAa3fz
-        mpMyQSiRPRo499UOi3PpCgadKBGWUG/88GdpBRz1/UThuwpZUUCqgtYbwrpiNbY0YUTE17hAJFVS4
-        3v5pY8vu44u0c/p8d0PLSkdmXX/eSXEgUn2P0TFw7fW35JMVVyMIwn2+iwrzMhunuSyd5zLolmU4o
-        F5LaQo1rA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fTSJF-00047h-Vg; Thu, 14 Jun 2018 13:29:05 +0000
-Date:   Thu, 14 Jun 2018 06:29:05 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thu, 14 Jun 2018 09:29:17 -0400
+Received: by mail-pl0-f67.google.com with SMTP id a7-v6so3563945plp.3;
+        Thu, 14 Jun 2018 06:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=Gk9vpMA1JXKxTPhEHh5XR6BLUoW/9jt7Va47frd5DNI=;
+        b=tVQghfqs/6FWjU4ecjCFSmWb2yLRB44UAm6RsIcCG1fkNSoSwyRbxxtVTJhrC4VMUk
+         gqjIgltWtiE20BXlaRVdRaqGwmG0E0dv2RY1ZqXSMA1wUfpTWLlM2GvrvaZmhpM5/sKp
+         8qDqRw+Gi7iTx3JHSi/3QhT3x5Ojf+oq3m+gHASRH27Xwp+jMWdTo2byyt3+MqqBsF8b
+         LmeueVrwkooXLvEAPbuXtmmrTadK8NppT2elMpygDMi3zPXG5128NrXD7KNeCCyKYTNA
+         NEVkyWxBi7qW7J42P086E2HG0SH5guJ3yAz1wc6IltAlycCsXwznZomCseFby9MPjC2t
+         4qnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=Gk9vpMA1JXKxTPhEHh5XR6BLUoW/9jt7Va47frd5DNI=;
+        b=h4ySJUrHEtk0Tuitr/KfARJCkIA3Uha5rUpV4giF69bIl0OmNZsbxaUOJv7U0mxiLs
+         cu7JvXggwM7V2+Xk5f9pi0SQkkBQ82Rv84DMZYuJvPnnseYGuQXCh5MlSYJosqvY8/85
+         O6YaWtzEIH7Ol7Wt6pSh6TEjine/9bE7Bqwp2l1v2gzujUCnUgqAdoZS6acTMvtqEP9A
+         MUPkX+0Hdj18lTqVIkF15m/EFplkDl/+oLcxZVMQD9VvuDui56GzJ6k0KVvN0ZwMVBhv
+         7LijDkTAJ3EzgOrzzeT3xAbXnUuh8KxFUuuMhGPEEC1FO39FhU4HC7ytphl8fd6KsycW
+         lsSw==
+X-Gm-Message-State: APt69E3DrZXuqucTMQ2GKh7gfN+sRZtOEhBRHao01oe8uq8rAGW0umIh
+        oMN0MJgKjltzgxVSbEtbNkE=
+X-Google-Smtp-Source: ADUXVKLjYpOz/gvBEWGlZajh68cGJaCDhmFZ02Is8eVCXK4AgjNesQbNzrP6fP+yQIkadA7i9sQ30g==
+X-Received: by 2002:a17:902:784d:: with SMTP id e13-v6mr3005731pln.197.1528982956606;
+        Thu, 14 Jun 2018 06:29:16 -0700 (PDT)
+Received: from localhost ([103.88.46.82])
+        by smtp.gmail.com with ESMTPSA id t23-v6sm11041342pfa.86.2018.06.14.06.29.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 06:29:15 -0700 (PDT)
+From:   Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Alan Stern <stern@rowland.harvard.edu>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org
-Subject: Re: [PATCH v2 1/2] locking: Implement an algorithm choice for
- Wound-Wait mutexes
-Message-ID: <20180614132905.GA7841@bombadil.infradead.org>
-References: <20180614072922.8114-1-thellstrom@vmware.com>
- <20180614072922.8114-2-thellstrom@vmware.com>
- <20180614113604.GZ12198@hirez.programming.kicks-ass.net>
- <7eb10c22-57b3-1472-0a77-7f787f612217@vmware.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7eb10c22-57b3-1472-0a77-7f787f612217@vmware.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        linux-usb@vger.kernel.org, usb-storage@lists.one-eyed-alien.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] usb: storage: add error handling for kcalloc
+Date:   Thu, 14 Jun 2018 21:29:11 +0800
+Message-Id: <1528982951-52753-1-git-send-email-jiazhouyang09@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1528707147-35623-1-git-send-email-jiazhouyang09@gmail.com>
+References: <1528707147-35623-1-git-send-email-jiazhouyang09@gmail.com>
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 01:54:15PM +0200, Thomas Hellstrom wrote:
-> On 06/14/2018 01:36 PM, Peter Zijlstra wrote:
-> > Currently you don't allow mixing WD and WW contexts (which is not
-> > immediately obvious from the above code), and the above hard relies on
-> > that. Are there sensible use cases for mixing them? IOW will your
-> > current restriction stand without hassle?
-> 
-> Contexts _must_ agree on the algorithm used to resolve deadlocks. With
-> Wait-Die, for example, older transactions will wait if a lock is held by a
-> younger transaction and with Wound-Wait, younger transactions will wait if a
-> lock is held by an older transaction so there is no way of mixing them.
+When kcalloc fails, the lack of error-handling code may
+cause unexpected results.
 
-Maybe the compiler should be enforcing that; ie make it a different type?
+This patch adds error-handling code after calling kcalloc.
+
+Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+---
+v1->v2:
+- Remove pr_warn statement.
+---
+ drivers/usb/storage/alauda.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/usb/storage/alauda.c b/drivers/usb/storage/alauda.c
+index 900591d..4e17609 100644
+--- a/drivers/usb/storage/alauda.c
++++ b/drivers/usb/storage/alauda.c
+@@ -437,6 +437,9 @@ static int alauda_init_media(struct us_data *us)
+ 		+ MEDIA_INFO(us).blockshift + MEDIA_INFO(us).pageshift);
+ 	MEDIA_INFO(us).pba_to_lba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
+ 	MEDIA_INFO(us).lba_to_pba = kcalloc(num_zones, sizeof(u16*), GFP_NOIO);
++	if ((MEDIA_INFO(us).pba_to_lba == NULL)
++		|| (MEDIA_INFO(us).lba_to_pba == NULL))
++		return USB_STOR_TRANSPORT_ERROR;
+ 
+ 	if (alauda_reset_media(us) != USB_STOR_XFER_GOOD)
+ 		return USB_STOR_TRANSPORT_ERROR;
+-- 
+2.7.4
+
