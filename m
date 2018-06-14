@@ -3,114 +3,256 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 934DFC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:26:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2C711C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49950208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:26:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49950208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id D78A4208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:26:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78A4208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754925AbeFNI0B (ORCPT
+        id S1754951AbeFNI0W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:26:01 -0400
-Received: from verein.lst.de ([213.95.11.211]:45119 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754687AbeFNIZ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:25:58 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 6221D68C4E; Thu, 14 Jun 2018 10:34:17 +0200 (CEST)
-Date:   Thu, 14 Jun 2018 10:34:17 +0200
-From:   "hch@lst.de" <hch@lst.de>
-To:     Andrew Randrianasulu <randrianasulu@gmail.com>
-Cc:     Bart Van Assche <Bart.VanAssche@wdc.com>,
-        "rdunlap@infradead.org" <rdunlap@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "hch@lst.de" <hch@lst.de>
-Subject: Re: Fwd: Re: kernel BUG at drivers/scsi/scsi_error.c:197! - git
-        4.17.0-x64-08428-g7d3bf613e99a
-Message-ID: <20180614083417.GB18536@lst.de>
-References: <201806130602.59441.randrianasulu@gmail.com> <3ab38d8d65c34d4109195f29bae61429f30b13aa.camel@wdc.com> <201806140133.52354.randrianasulu@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201806140133.52354.randrianasulu@gmail.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+        Thu, 14 Jun 2018 04:26:22 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:43992 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1754855AbeFNIZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:25:25 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0F81C4023132;
+        Thu, 14 Jun 2018 08:25:25 +0000 (UTC)
+Received: from vitty.brq.redhat.com (ovpn-204-228.brq.redhat.com [10.40.204.228])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CBEE010FFE4D;
+        Thu, 14 Jun 2018 08:25:21 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     kvm@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        "K. Y. Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        "Michael Kelley (EOSG)" <Michael.H.Kelley@microsoft.com>,
+        Mohammed Gamal <mmorsy@redhat.com>,
+        Cathy Avery <cavery@redhat.com>, linux-kernel@vger.kernel.org,
+        Jim Mattson <jmattson@google.com>
+Subject: [PATCH 4/5] KVM: nVMX: implement enlightened VMPTRLD and VMCLEAR
+Date:   Thu, 14 Jun 2018 10:24:59 +0200
+Message-Id: <20180614082500.18548-5-vkuznets@redhat.com>
+In-Reply-To: <20180614082500.18548-1-vkuznets@redhat.com>
+References: <20180614082500.18548-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 08:25:25 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Thu, 14 Jun 2018 08:25:25 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andrew, can you test the patch below, please?
+Per Hyper-V TLFS 5.0b:
 
+"The L1 hypervisor may choose to use enlightened VMCSs by writing 1 to
+the corresponding field in the VP assist page (see section 7.8.7).
+Another field in the VP assist page controls the currently active
+enlightened VMCS. Each enlightened VMCS is exactly one page (4 KB) in
+size and must be initially zeroed. No VMPTRLD instruction must be
+executed to make an enlightened VMCS active or current.
+
+After the L1 hypervisor performs a VM entry with an enlightened VMCS,
+the VMCS is considered active on the processor. An enlightened VMCS
+can only be active on a single processor at the same time. The L1
+hypervisor can execute a VMCLEAR instruction to transition an
+enlightened VMCS from the active to the non-active state. Any VMREAD
+or VMWRITE instructions while an enlightened VMCS is active is
+unsupported and can result in unexpected behavior."
+
+Keep Enlightened VMCS structure for the current L2 guest permanently mapped
+from struct nested_vmx instead of mapping it every time.
+
+Suggested-by: Ladi Prosek <lprosek@redhat.com>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
 ---
-From ccf385c63e30e8633b771604bed0e09c895e9175 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Thu, 14 Jun 2018 10:25:36 +0200
-Subject: blk-mq: don't time out requests again that are in the timeout handler
+ arch/x86/kvm/vmx.c | 98 ++++++++++++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 91 insertions(+), 7 deletions(-)
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- block/blk-mq.c         | 5 +++++
- include/linux/blkdev.h | 2 ++
- 2 files changed, 7 insertions(+)
-
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index e9da5e6a8526..54332db09e5d 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -671,6 +671,7 @@ static void __blk_mq_requeue_request(struct request *rq)
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index e7fa9f9c6e36..6802ba91468c 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -20,6 +20,7 @@
+ #include "mmu.h"
+ #include "cpuid.h"
+ #include "lapic.h"
++#include "hyperv.h"
  
- 	if (blk_mq_request_started(rq)) {
- 		WRITE_ONCE(rq->state, MQ_RQ_IDLE);
-+		rq->rq_flags &= ~RQF_TIMED_OUT;
- 		if (q->dma_drain_size && blk_rq_bytes(rq))
- 			rq->nr_phys_segments--;
- 	}
-@@ -770,6 +771,7 @@ EXPORT_SYMBOL(blk_mq_tag_to_rq);
+ #include <linux/kvm_host.h>
+ #include <linux/module.h>
+@@ -690,6 +691,8 @@ struct nested_vmx {
+ 		bool guest_mode;
+ 	} smm;
  
- static void blk_mq_rq_timed_out(struct request *req, bool reserved)
++	gpa_t hv_evmcs_vmptr;
++	struct page *hv_evmcs_page;
+ 	struct hv_enlightened_vmcs *hv_evmcs;
+ };
+ 
+@@ -7695,7 +7698,9 @@ static void nested_vmx_failInvalid(struct kvm_vcpu *vcpu)
+ static void nested_vmx_failValid(struct kvm_vcpu *vcpu,
+ 					u32 vm_instruction_error)
  {
-+	req->rq_flags |= RQF_TIMED_OUT;
- 	if (req->q->mq_ops->timeout) {
- 		enum blk_eh_timer_return ret;
- 
-@@ -779,6 +781,7 @@ static void blk_mq_rq_timed_out(struct request *req, bool reserved)
- 		WARN_ON_ONCE(ret != BLK_EH_RESET_TIMER);
- 	}
- 
-+	req->rq_flags &= ~RQF_TIMED_OUT;
- 	blk_add_timer(req);
+-	if (to_vmx(vcpu)->nested.current_vmptr == -1ull) {
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++
++	if (vmx->nested.current_vmptr == -1ull && !vmx->nested.hv_evmcs) {
+ 		/*
+ 		 * failValid writes the error number to the current VMCS, which
+ 		 * can't be done there isn't a current VMCS.
+@@ -8003,6 +8008,18 @@ static void vmx_disable_shadow_vmcs(struct vcpu_vmx *vmx)
+ 	vmcs_write64(VMCS_LINK_POINTER, -1ull);
  }
  
-@@ -788,6 +791,8 @@ static bool blk_mq_req_expired(struct request *rq, unsigned long *next)
++static inline void nested_release_evmcs(struct vcpu_vmx *vmx)
++{
++	if (!vmx->nested.hv_evmcs)
++		return;
++
++	kunmap(vmx->nested.hv_evmcs_page);
++	kvm_release_page_dirty(vmx->nested.hv_evmcs_page);
++	vmx->nested.hv_evmcs_vmptr = -1ull;
++	vmx->nested.hv_evmcs_page = NULL;
++	vmx->nested.hv_evmcs = NULL;
++}
++
+ static inline void nested_release_vmcs12(struct vcpu_vmx *vmx)
+ {
+ 	if (vmx->nested.current_vmptr == -1ull)
+@@ -8062,6 +8079,8 @@ static void free_nested(struct vcpu_vmx *vmx)
+ 		vmx->nested.pi_desc = NULL;
+ 	}
  
- 	if (blk_mq_rq_state(rq) != MQ_RQ_IN_FLIGHT)
- 		return false;
-+	if (rq->rq_flags & RQF_TIMED_OUT)
-+		return false;
++	nested_release_evmcs(vmx);
++
+ 	free_loaded_vmcs(&vmx->nested.vmcs02);
+ }
  
- 	deadline = blk_rq_deadline(rq);
- 	if (time_after_eq(jiffies, deadline))
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index bca3a92eb55f..fa6f11751430 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -127,6 +127,8 @@ typedef __u32 __bitwise req_flags_t;
- #define RQF_ZONE_WRITE_LOCKED	((__force req_flags_t)(1 << 19))
- /* already slept for hybrid poll */
- #define RQF_MQ_POLL_SLEPT	((__force req_flags_t)(1 << 20))
-+/* ->timeout has been called, don't expire again */
-+#define RQF_TIMED_OUT		((__force req_flags_t)(1 << 21))
+@@ -8098,12 +8117,18 @@ static int handle_vmclear(struct kvm_vcpu *vcpu)
+ 		return kvm_skip_emulated_instruction(vcpu);
+ 	}
  
- /* flags that prevent us from merging requests: */
- #define RQF_NOMERGE_FLAGS \
+-	if (vmptr == vmx->nested.current_vmptr)
+-		nested_release_vmcs12(vmx);
++	if (vmx->nested.hv_evmcs_page) {
++		if (vmptr == vmx->nested.hv_evmcs_vmptr)
++			nested_release_evmcs(vmx);
++	} else {
++		if (vmptr == vmx->nested.current_vmptr)
++			nested_release_vmcs12(vmx);
+ 
+-	kvm_vcpu_write_guest(vcpu,
+-			vmptr + offsetof(struct vmcs12, launch_state),
+-			&zero, sizeof(zero));
++		kvm_vcpu_write_guest(vcpu,
++				     vmptr + offsetof(struct vmcs12,
++						      launch_state),
++				     &zero, sizeof(zero));
++	}
+ 
+ 	nested_vmx_succeed(vcpu);
+ 	return kvm_skip_emulated_instruction(vcpu);
+@@ -8814,6 +8839,10 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 		return kvm_skip_emulated_instruction(vcpu);
+ 	}
+ 
++	/* Forbid normal VMPTRLD if Enlightened version was used */
++	if (vmx->nested.hv_evmcs)
++		return 1;
++
+ 	if (vmx->nested.current_vmptr != vmptr) {
+ 		struct vmcs12 *new_vmcs12;
+ 		struct page *page;
+@@ -8847,6 +8876,55 @@ static int handle_vmptrld(struct kvm_vcpu *vcpu)
+ 	return kvm_skip_emulated_instruction(vcpu);
+ }
+ 
++/*
++ * This is an equivalent of the nested hypervisor executing the vmptrld
++ * instruction.
++ */
++static int nested_vmx_handle_enlightened_vmptrld(struct kvm_vcpu *vcpu)
++{
++	struct vcpu_vmx *vmx = to_vmx(vcpu);
++	struct hv_vp_assist_page assist_page;
++
++	if (likely(!vmx->nested.enlightened_vmcs_enabled))
++		return 1;
++
++	if (unlikely(!kvm_hv_get_assist_page(vcpu, &assist_page)))
++		return 1;
++
++	if (unlikely(!assist_page.enlighten_vmentry))
++		return 1;
++
++	if (unlikely(assist_page.current_nested_vmcs !=
++		     vmx->nested.hv_evmcs_vmptr)) {
++
++		if (!vmx->nested.hv_evmcs)
++			vmx->nested.current_vmptr = -1ull;
++
++		nested_release_evmcs(vmx);
++
++		vmx->nested.hv_evmcs_page = kvm_vcpu_gpa_to_page(
++			vcpu, assist_page.current_nested_vmcs);
++
++		if (unlikely(is_error_page(vmx->nested.hv_evmcs_page)))
++			return 0;
++
++		vmx->nested.hv_evmcs = kmap(vmx->nested.hv_evmcs_page);
++		vmx->nested.dirty_vmcs12 = true;
++		vmx->nested.hv_evmcs_vmptr = assist_page.current_nested_vmcs;
++
++		/*
++		 * Unlike normal vmcs12, enlightened vmcs12 is not fully
++		 * reloaded from guest's memory (read only fields, fields not
++		 * present in struct hv_enlightened_vmcs, ...). Make sure there
++		 * are no leftovers.
++		 */
++		memset(vmx->nested.cached_vmcs12, 0,
++		       sizeof(*vmx->nested.cached_vmcs12));
++
++	}
++	return 1;
++}
++
+ /* Emulate the VMPTRST instruction */
+ static int handle_vmptrst(struct kvm_vcpu *vcpu)
+ {
+@@ -8858,6 +8936,9 @@ static int handle_vmptrst(struct kvm_vcpu *vcpu)
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+ 
++	if (unlikely(to_vmx(vcpu)->nested.hv_evmcs))
++		return 1;
++
+ 	if (get_vmx_mem_address(vcpu, exit_qualification,
+ 			vmx_instruction_info, true, &vmcs_gva))
+ 		return 1;
+@@ -12148,7 +12229,10 @@ static int nested_vmx_run(struct kvm_vcpu *vcpu, bool launch)
+ 	if (!nested_vmx_check_permission(vcpu))
+ 		return 1;
+ 
+-	if (!nested_vmx_check_vmcs12(vcpu))
++	if (!nested_vmx_handle_enlightened_vmptrld(vcpu))
++		return 1;
++
++	if (!vmx->nested.hv_evmcs && !nested_vmx_check_vmcs12(vcpu))
+ 		goto out;
+ 
+ 	vmcs12 = get_vmcs12(vcpu);
 -- 
-2.17.1
+2.14.4
 
