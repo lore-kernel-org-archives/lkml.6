@@ -2,125 +2,169 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D62C8C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:00:04 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 63736C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:00:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8241E208BA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:00:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F31B208BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:00:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Zp2JFh3Q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8241E208BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nW/vi0Sp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F31B208BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755524AbeFNVAB (ORCPT
+        id S1755542AbeFNVAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 17:00:01 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:40783 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755383AbeFNU76 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 17:00:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34050 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755406AbeFNU76 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 14 Jun 2018 16:59:58 -0400
-Received: by mail-pf0-f196.google.com with SMTP id z24-v6so3810282pfe.7
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 13:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=UHnk7GM0F2eCaEEv0KDJ1WkQoiGj31adxlnxbM/mkEk=;
-        b=Zp2JFh3Q8f/TKygk5IiiPlApIWM0k3vcwhnNN4g4dBnLaWj17Qp/P2KsrOzh9CrSgE
-         4PxzlzxPim6+cTxX42F8eXBsQ+URMTR2725lA6+pmnj2gXXhp0ebBhL4vAnFvu4ftZUQ
-         hmu8nUSN6/jiwXGYNAgi1RebUH4sx2CcJaFi7YSMS/7GDmKUxRl63qnt6Y0yDt1vIkDD
-         wJPmXYkk+/GIz8PzMU8JTaqa+BF884b9vnVXXYgnjaslfA1VkIGadQ4g2Oyd6Q0fMrb4
-         /jYwZT414jXTSrJLpgsxxDf/WE5d+DgJ6/e44knbKl1FELoC9QFpSv/3RqR+kpemBeIQ
-         e1MA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=UHnk7GM0F2eCaEEv0KDJ1WkQoiGj31adxlnxbM/mkEk=;
-        b=PrPKL5y/8580wrOHWapuoGp/C0Pab1ievQnGGG78ZGT2U76Q3D2oUOSSJSmsfFcnZl
-         iTjD8fQ1w6eOdUGJ8qkQ1VPUFuU5xfRAo1/mD8HmZ8rv2aZjQIAu0NbbPdta+rmqQYg+
-         FROgnPQxPw/mxWrL5Xmt75Ijoh38gpPuLwVpa5HdqvVuzO5qcd1r08Cmvf7RFMS81IFU
-         Vai9PuXzBDRR39yw0/6mX50e0SSy6zLmxxdOyxEPmQRQGSM25ZjmokBERkDnZnHFL9T5
-         IpC0u6L4ZybDSEpssVwXzoU5A9CiRo7Y2/Wysv0VHe7Cr6Czn5cnLn2Rd3K+pYxf0HqJ
-         sF3A==
-X-Gm-Message-State: APt69E2aEcbN1IsqNOBizNF5t4cx03V775Vds0o9dcQ/Jp4kA1S5bWHw
-        35xk0tRrpd16TRsHOOaKA1pIkngsaemlJllWMJEsPA==
-X-Google-Smtp-Source: ADUXVKLEFVx1jl7wNNW6SpbMOTrxSEAs5oBejCzZRZ8nCilenk1RA7ia3cmG0P4oUT401Q3zVHb6qo/rsCElNtRWBzI=
-X-Received: by 2002:a63:ad46:: with SMTP id y6-v6mr3668405pgo.10.1529009997004;
+Received: from mail-yb0-f175.google.com (mail-yb0-f175.google.com [209.85.213.175])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDC90208D7;
+        Thu, 14 Jun 2018 20:59:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529009998;
+        bh=cIFdctODhYXkgIdyNBMuOXwZLpKnia7PgsfKJp6GXW8=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=nW/vi0Spj/LuYxgsRtdsSaRqurqWaovc0MY7zdMfEX2HbAuFQaYidjkgzO3Jhztlu
+         YSA4SCDkoUaMQNAkzJPSmcepnstpKrjkACXJogpg2jDeGRz63HiS+4yeQMcJdzsb9G
+         csSGZGCz+BMt7hfN2ln0OZ1j3+L/f+DAS1TBynAM=
+Received: by mail-yb0-f175.google.com with SMTP id n23-v6so2760554ybg.1;
+        Thu, 14 Jun 2018 13:59:57 -0700 (PDT)
+X-Gm-Message-State: APt69E29GPVHKIWKvzR2y11S2AuogD/WmsVT3PWNQM8+YyPWgiHVfVeH
+        NeplxwhkKf3jfYiQAYf6AJx4nbNf8ZQ7Mtv7SV4=
+X-Google-Smtp-Source: ADUXVKIiqpvTxZoKhYcLcHQGnQibARMxiGYJIrE6Tf6Uh2B8hxI2oZkU3z618WtnGeAj+nuOIk62t83io81sEyHbswM=
+X-Received: by 2002:a25:40c2:: with SMTP id n185-v6mr2412882yba.122.1529009997060;
  Thu, 14 Jun 2018 13:59:57 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180613210518.113983-1-ndesaulniers@google.com>
- <20180613210518.113983-3-ndesaulniers@google.com> <b027a324-ffae-fd5e-d8a3-03934be91a2d@zytor.com>
-In-Reply-To: <b027a324-ffae-fd5e-d8a3-03934be91a2d@zytor.com>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Thu, 14 Jun 2018 13:59:45 -0700
-Message-ID: <CAKwvOdngs8k_T=nDKh8JYdAwwFoJRcCU0bZu0tJHQ+keZ5+RFQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] x86/asm: add _ASM_ARG* constants for argument
- registers to <asm/asm.h>
-To:     hpa@zytor.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>, mingo@redhat.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-efi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        x86@kernel.org, virtualization@lists.linux-foundation.org,
-        Alistair Strachan <astrachan@google.com>,
-        Manoj Gupta <manojgupta@google.com>,
-        Greg Hackmann <ghackmann@google.com>, sedat.dilek@gmail.com,
-        tstellar@redhat.com, Kees Cook <keescook@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
-        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
-        David Rientjes <rientjes@google.com>, acme@redhat.com,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        boris.ostrovsky@oracle.com, "J. Kiszka" <jan.kiszka@siemens.com>,
-        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        akataria@vmware.com, brijesh.singh@amd.com,
-        Cao jin <caoj.fnst@cn.fujitsu.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        jarkko.sakkinen@linux.intel.com, jgross@suse.com,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Matthias Kaehlcke <mka@chromium.org>, thomas.lendacky@amd.com,
-        Thiebaud Weksteen <tweek@google.com>, mjg59@google.com,
-        joe@perches.com, andrea.parri@amarulasolutions.com,
-        "H. Peter Anvin" <hpa@linux.intel.com>
+Received: by 2002:a5b:b87:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 13:59:16 -0700 (PDT)
+In-Reply-To: <b8c7cd9e-a841-a4b7-2366-6f08328b2b8f@gmail.com>
+References: <1520208889-3908-1-git-send-email-frowand.list@gmail.com>
+ <1520208889-3908-2-git-send-email-frowand.list@gmail.com> <CANk1AXQZ6ax5j9QOrLZA9qT2xGpiU0BQLxAmKQFEqSb6NrbeRQ@mail.gmail.com>
+ <CANk1AXSvVD5x7TKQV_HZm=9Lzeymm5H3p7DZPiAc-RRRxdAOZg@mail.gmail.com> <b8c7cd9e-a841-a4b7-2366-6f08328b2b8f@gmail.com>
+From:   Alan Tull <atull@kernel.org>
+Date:   Thu, 14 Jun 2018 15:59:16 -0500
+X-Gmail-Original-Message-ID: <CANk1AXSvgHMWidmb+6k6paTdpj9HfSoyKoiMgLxH=8SoC-4qnw@mail.gmail.com>
+Message-ID: <CANk1AXSvgHMWidmb+6k6paTdpj9HfSoyKoiMgLxH=8SoC-4qnw@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] of: cache phandle nodes to reduce cost of of_find_node_by_phandle()
+To:     Frank Rowand <frowand.list@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, cpandya@codeaurora.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fpga@vger.kernel.org, Moritz Fischer <mdf@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 1:48 PM H. Peter Anvin <hpa@zytor.com> wrote:
+On Wed, Jun 13, 2018 at 4:47 PM, Frank Rowand <frowand.list@gmail.com> wrot=
+e:
+> On 06/13/18 07:42, Alan Tull wrote:
+>> On Tue, Jun 12, 2018 at 1:16 PM, Alan Tull <atull@kernel.org> wrote:
+>>> On Sun, Mar 4, 2018 at 6:14 PM,  <frowand.list@gmail.com> wrote:
+>>>
+>>> Hi Frank,
+>>>
+>>> I'm investigating a refcount use-after-free warning that happens after
+>>> overlays are applied, removed, reapplied a few (typically three) times
+>>> (see below).  This is new in v4.17, didn't happen in v4.16.  As I was
+>>> investigating I found that rebuilding the phandle_cache after overlays
+>>> are applied or removed seems to help.
+>>
+>> I was probably wrong about this.  The more I look at the phandle_cache c=
+ode,
+>> the more it looks looks good and straightforward.  Probably disabling
+>> phandle_cache is 'fixing' things through some weird side effect.  I'll
+>> keep investigating.  Sorry for the noise.
 >
-> On 06/13/18 14:05, Nick Desaulniers wrote:
-> > From: "H. Peter Anvin" <hpa@linux.intel.com>
-> >
-> > i386 and x86-64 uses different registers for arguments; make them
-> > available so we don't have to #ifdef in the actual code.
-> >
-> > Native size and specified size (q, l, w, b) versions are provided.
-> >
-> > Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
-> > Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
-> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> I suspect that you have found an issue, even if it is not the cause of
+> the refcount issue.  I noted in a reply to v4 of the patch:
 >
-> I still object to Suggested-by: here.  Sedat did a correction, which is
-> a Reviewed-by:, but unless I'm completely out to sea, there was no
-> suggestion on Sedat's part of this; and I had certainly not seen it when
-> I wrote the code.
+>   >> +static void of_populate_phandle_cache(void)
+>   >> +{
+>   >> +=C3=82 =C3=82 =C3=82  unsigned long flags;
+>   >> +=C3=82 =C3=82 =C3=82  u32 cache_entries;
+>   >> +=C3=82 =C3=82 =C3=82  struct device_node *np;
+>   >> +=C3=82 =C3=82 =C3=82  u32 phandles =3D 0;
+>   >> +
+>   >> +=C3=82 =C3=82 =C3=82  raw_spin_lock_irqsave(&devtree_lock, flags);
+>   >> +
+>   >> +=C3=82 =C3=82 =C3=82  kfree(phandle_cache);
+>   >
+>   > I couldn't understood this. Everything else looks good to me.
+>
+>   I will be adding a call to of_populate_phandle_cache() from the
+>   devicetree overlay code.  I put the kfree here so that the previous
+>   cache memory is freed when a new cache is created.
+>
+>   Adding the call from the overlay code is not done in this
+>   series because I have a patch series modifying overlays and
+>   I do not want to create a conflict or ordering between that
+>   series and that patch.  The lack of the call from overlay
+>   code means that overlay code will gain some of the overhead
+>   reduction from this patch, but possibly not the entire reduction.
+>
+> Sorry I'm not giving a link to the archive of this message - I have
+> a class I have to go to so I don't have enough time to find it.
 
-I'm fine with changing it from a Suggested-by to a Reviewed-by.  Can
-you do that when you apply the set, or should I send a v6?
--- 
-Thanks,
-~Nick Desaulniers
+I understand, that's cool.  I've found the email chain, thanks for
+pointing me to it!
+
+>  The
+> email was
+>
+>   Subject: Re: [PATCH v3] of: cache phandle nodes to reduce cost of
+>   of_find_node_by_phandle()
+>   Date: Fri, 16 Feb 2018 14:20:22 -0800
+>   Message-ID: <46d5fc76-33e3-d54a-26b8-e9bb8332924d@gmail.com>
+>
+> Quickly looking at the current code, I don't see the overlay patch
+> that I mentioned.  I have to dig into what happened to that.
+>
+> Leaving a phandle from an overlay in the phandle cache after the
+> overlay is removed would clearly be a bug.
+
+Yes that's totally it, when I get a match of a phandle and the np
+address is stale, then comes the kernel warning.
+
+I added more debug code to print out the results of looking up dynamic
+nodes only (nodes > the highest node added when the cache was
+originally built).  Also I added debug code to also force the lookup
+code to go back and look up dynamic nodes the slow, uncached way so I
+could see if it got the correct np address.  I'm unloading and
+reloading an overlay, so sometimes the new np (after the overlay was
+removed and reapplied) is at the same address, but sometimes it isn't
+and then I get the kernel warning.  Just for entertainment value, here
+is my prints of the np from the cache and the correct np that' at a
+different address.  The '88' is the phandle, after that is the np
+address, then the np=3D<full_name>.  Note also the corruption in the
+cached node's full_name
+
+OF: of_find_node_by_phandle line 1108 found dynamic node in cache 88
+ee518680 np=3D/soc/base_fpga_region/\300\252~\356ze_controller@0x100000450
+
+OF: of_find_node_by_phandle line 1119 found the slow way: 88 eeaf2d00
+np=3D/soc/base_fpga_region/freeze_controller@0x100000450
+
+I'm just scratching my head and wondering: should we be zeroing out
+some things in memory after an overlay is removed?  Then this bug
+would led to a pointer that would have thrown an oops.
+
+If it's useful for you, next week I can send a cleaned up version of
+my patch that rebuilds the cache after overlays are applied or
+removed.
+
+Alan
+
+>
+> -Frank
