@@ -2,144 +2,116 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 699F0C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:36:01 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 13B65C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2784320693
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:36:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2784320693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 9D4B8208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:36:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="uSeA7nyU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D4B8208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965791AbeFNOf7 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:35:59 -0400
-Received: from mailoutvs9.siol.net ([185.57.226.200]:32995 "EHLO mail.siol.net"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965735AbeFNOfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:35:55 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id 657265226FF;
-        Thu, 14 Jun 2018 16:35:51 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 5p-B6SnWQDI0; Thu, 14 Jun 2018 16:35:50 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id A32235225B1;
-        Thu, 14 Jun 2018 16:35:50 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id EBCD8522A78;
-        Thu, 14 Jun 2018 16:35:47 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        David Airlie <airlied@linux.ie>, gustavo@padovan.org,
-        maarten.lankhorst@linux.intel.com, seanpaul@chromium.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        id S965706AbeFNOgX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:36:23 -0400
+Received: from mail.efficios.com ([167.114.142.138]:45824 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965108AbeFNOgT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:36:19 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id BFEF91AC96F;
+        Thu, 14 Jun 2018 10:36:18 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id h-5uerIsT4if; Thu, 14 Jun 2018 10:36:18 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 757861AC96C;
+        Thu, 14 Jun 2018 10:36:18 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 757861AC96C
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1528986978;
+        bh=2So+3ljRdLSAwb69BSmH3Z+I95gnknoSzzwM8z7wSkU=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=uSeA7nyUVNcT7vH5wjYWgE3fnZa+hPb6qZ5zPvc4VdGdcBM8Wynx4HL5gNxRJNUYB
+         lIGe/5TepIkUwugfMbptsb97yNLbv0EjBFo9xM2MTlsT4vcS1WwZmb8o2uVhiHRXIN
+         iA4OzSgkC9AY5p2KrtXTZAT7szG11fxCFmBCgak354Bh1DzgUGemIQdCYZPV1C1+Ze
+         JklNdaGvnYREbiKI+DTAdQKJkpymQcexAuVEikrHiBBpzCG3WKOyK81q7XOReBaRh8
+         SJ+gLxQE94T5oVPql1w5P+GZF2DfrUxixfabKu0JiVtUY/OJbwqjSQjmXpAHixCA0v
+         ebKICZjOQVZeA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id s2h6evubCwkS; Thu, 14 Jun 2018 10:36:18 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id 5F2111AC962;
+        Thu, 14 Jun 2018 10:36:18 -0400 (EDT)
+Date:   Thu, 14 Jun 2018 10:36:18 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, carlos <carlos@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Subject: Re: [linux-sunxi] [PATCH v2 00/27] Add support for R40 HDMI pipeline
-Date:   Thu, 14 Jun 2018 16:34:45 +0200
-Message-ID: <2742773.k39D243pH3@jernej-laptop>
-In-Reply-To: <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net> <CAMty3ZC-Edg5XJQpqEuwLbSFzmam3zP3zUPak4K7ypyT2+arAg@mail.gmail.com>
+        libc-alpha <libc-alpha@sourceware.org>
+Message-ID: <263666353.13077.1528986978282.JavaMail.zimbra@efficios.com>
+In-Reply-To: <48a0d905-2568-51b8-80c9-a20ecaa25f9b@redhat.com>
+References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com> <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com> <20180614122759.GB8798@amd> <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com> <20180614132557.GA15201@amd> <956816108.13001.1528983496098.JavaMail.zimbra@efficios.com> <20180614134959.GA4084@amd> <48a0d905-2568-51b8-80c9-a20ecaa25f9b@redhat.com>
+Subject: Re: Restartable Sequences system call merged into Linux
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8BIT
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: Restartable Sequences system call merged into Linux
+Thread-Index: MjPvCH86nvU2YiJ9sNEdiK56YHV4+Q==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne četrtek, 14. junij 2018 ob 09:12:41 CEST je Jagan Teki napisal(a):
-> On Wed, Jun 13, 2018 at 1:30 AM, Jernej Skrabec <jernej.skrabec@siol.net> 
-wrote:
-> > This series adds support for R40 HDMI pipeline. It is a bit special
-> > than other already supported pipelines because it has additional unit
-> > called TCON TOP responsible for relationship configuration between
-> > mixers, TCONs and HDMI. Additionally, it has additional gates for DSI
-> > and TV TCONs, TV encoder clock settings and pin muxing between LCD
-> > and TV encoders.
-> > 
-> > However, it seems that TCON TOP will become a norm, since newer
-> > Allwinner SoCs like H6 also have this unit.
-> > 
-> > I tested different possible configurations:
-> > - mixer0 <> TCON-TV0 <> HDMI
-> > - mixer0 <> TCON-TV1 <> HDMI
-> > - mixer1 <> TCON-TV0 <> HDMI
-> > - mixer1 <> TCON-TV1 <> HDMI
-> > 
-> > Please review.
-> > 
-> > Best regards,
-> > Jernej
-> > 
-> > Changes from v1:
-> > - Split DT bindings patch and updated description
-> > - Split HDMI PHY patch
-> > - Move header file from TCON TOP patch to dt bindings patch
-> > - Added Rob reviewed-by tag
-> > - Used clk_hw_register_gate() instead of custom gate registration code
-> > - Reworked TCON TOP to be part of of-graph. Because of that, a lot of
-> > 
-> >   new patches were added.
-> > 
-> > - Droped mixer index quirk patch
-> > - Reworked TCON support for TCON TOP
-> > - Updated commit messages
-> > 
-> > Jernej Skrabec (27):
-> >   clk: sunxi-ng: r40: Add minimal rate for video PLLs
-> >   clk: sunxi-ng: r40: Allow setting parent rate to display related
-> >   
-> >     clocks
-> >   
-> >   clk: sunxi-ng: r40: Export video PLLs
-> >   dt-bindings: display: sunxi-drm: Add TCON TOP description
-> >   drm/sun4i: Add TCON TOP driver
-> >   drm/sun4i: Fix releasing node when enumerating enpoints
-> >   drm/sun4i: Split out code for enumerating endpoints in output port
-> >   drm/sun4i: Add support for traversing graph with TCON TOP
-> >   drm/sun4i: Don't skip TCONs if they don't have channel 0
-> >   dt-bindings: display: sun4i-drm: Add R40 TV TCON description
-> >   drm/sun4i: tcon: Add support for tcon-top gate
-> >   drm/sun4i: tcon: Generalize engine search algorithm
-> >   drm/sun4i: Don't check for LVDS and RGB when TCON has only ch1
-> >   drm/sun4i: Don't check for panel or bridge on TV TCONs
-> >   drm/sun4i: Add support for R40 TV TCON
-> >   dt-bindings: display: sun4i-drm: Add R40 mixer compatibles
-> >   drm/sun4i: Add support for R40 mixers
-> >   dt-bindings: display: sun4i-drm: Add description of A64 HDMI PHY
-> >   drm/sun4i: Enable DW HDMI PHY clock
-> >   drm/sun4i: Don't change clock bits in DW HDMI PHY driver
-> >   drm/sun4i: DW HDMI PHY: Add support for second PLL
-> >   drm/sun4i: Add support for second clock parent to DW HDMI PHY clk
-> >   
-> >     driver
-> >   
-> >   drm/sun4i: Add support for A64 HDMI PHY
-> >   drm: of: Export drm_crtc_port_mask()
-> >   drm/sun4i: DW HDMI: Expand algorithm for possible crtcs
-> >   ARM: dts: sun8i: r40: Add HDMI pipeline
-> >   ARM: dts: sun8i: r40: Enable HDMI output on BananaPi M2 Ultra
+----- On Jun 14, 2018, at 10:00 AM, Florian Weimer fweimer@redhat.com wrote:
+
+> On 06/14/2018 03:49 PM, Pavel Machek wrote:
+>> Hi!
+>> 
+>>>>> - rseq_preempt(): on preemption, the scheduler sets the TIF_NOTIFY_RESUME thread
+>>>>>    flag, so rseq_handle_notify_resume() can check whether it's in a rseq critical
+>>>>>    section when returning to user-space,
+>>>>> - rseq_signal_deliver(): on signal delivery, rseq_handle_notify_resume() checks
+>>>>>    whether it's in a rseq critical section,
+>>>>> - rseq_migrate: on migration, the scheduler sets TIF_NOTIFY_RESUME as well,
+>>>>
+>>>> Yes, this is not likely to be noticeable.
+>>>>
+>>>> But the proposal wanted to add a syscall to thread creation, right?
+>>>> And I believe that may be noticeable.
+>>>
+>>> Fair point! Do we have a standard benchmark that would stress this ?
+>> 
+>> Web server performance benchmarks basically test clone() performance
+>> in many cases.
 > 
-> Tested whole series on top of linux-next.
-> 
-> Tested-by: Jagan Teki <jagan@amarulasolutions.com>
+> Isn't that fork?  I expect that the rseq arena is inherited on fork and
+> fork-type clone, otherwise it's going to be painful.
 
-Thanks!
+On fork or clone creating a new process, the rseq tls area is inherited
+from the thread that does the fork syscall.
 
+On creation of a new thread with clone, there is no such inheritance.
 
+Thanks,
 
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
