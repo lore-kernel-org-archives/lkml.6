@@ -6,69 +6,78 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A777CC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:52:13 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 699ACC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:52:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 481F9208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:52:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 21EA620864
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:52:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHy5ohzQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 481F9208D4
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VbOxeVFg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21EA620864
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965078AbeFNWwK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 18:52:10 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:34840 "EHLO
+        id S965099AbeFNWwb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 18:52:31 -0400
+Received: from mail-ot0-f195.google.com ([74.125.82.195]:45624 "EHLO
         mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964995AbeFNWwJ (ORCPT
+        with ESMTP id S965037AbeFNWwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 18:52:09 -0400
-Received: by mail-ot0-f195.google.com with SMTP id q17-v6so8999400otg.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 15:52:09 -0700 (PDT)
+        Thu, 14 Jun 2018 18:52:30 -0400
+Received: by mail-ot0-f195.google.com with SMTP id a5-v6so8978263otf.12
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 15:52:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hWtsj9ozwRRuUjeEPl7/TBe9eDUFRixECnKeRkHSD3U=;
-        b=MHy5ohzQYXR6tDlatYNjVtLu+k4SiSxhm3szHYX5W22GT5EXX71ct4Vt+KRBjAYbY7
-         cOSg0na0hW/GFvWEGt/akR0hCB8O6RMvQCnUJwVwkYZ8GGA/et+COxRutruBVLUn4Le7
-         8UTiJKbOrfe9adrb2cZDcwS3ND/1mSxsoLaGk=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Ztr1SvESHr1XzY+6q41GxTJGHsuiBzX3nQVyt/cQyEo=;
+        b=VbOxeVFgTDWuOn9ZR7YasQxgNovqW1nwFc1mwnmuKhXhjnqB0P6x8HNSUqziJ2AVlS
+         jzq2IGdAHKUtTFFfA4ydEdkt8WXDrhl1SFDJN6g8aBpD0ZknCRNrY2DmtNYldU2TPquV
+         BrbKI1C5W2CgIF+tBUM2KMYMPS/KHiOvOneh0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=hWtsj9ozwRRuUjeEPl7/TBe9eDUFRixECnKeRkHSD3U=;
-        b=ADihheeQaU4/LEjztiB14h/4BR6Sy2orfc0oeltNV1NhqxaVkKtxoAy/2VeW9nvzXm
-         ZBmvOUSKgZ1yuvGE8UjX0MHrGE3/AYBDc7fso7podXTLwcKFrSDoALZJ7KuQl0ACG/JC
-         SJTWv4xQlphW7Gw95FxDdDnnMNv8kmw3k9xVKxNZ3DeB9ZG7jmqsHW/bKyvXrEdyfvF0
-         UPaIh/Cpa9bzaXfHSBZNm/BjxED9bId/QZMUEQFGMyPC3dwSmDR+DAXH0ey8GPUg2LVB
-         Q1YQO47v8cBhxpdFAAdEDt+jM5zkqrwjkchVRLrhgzCk7sPHyZTMc78HwhXhCDrHlbNc
-         jodQ==
-X-Gm-Message-State: APt69E2eXlQ3z7LqxsJ2Us3v7odiFKB6cYAXSuP9VYwZhGlHp4bYOFE5
-        VhuHE7/KWzMUZH8qkXJQHmANEg==
-X-Google-Smtp-Source: ADUXVKJ8T0MCVpcJmZH4eXsyDNpGZKPBCT8XgsaM4LaWjEvXBl5+xwHvrRSM/szHfO8P4BXnB1SwpQ==
-X-Received: by 2002:a9d:725e:: with SMTP id a30-v6mr2679692otk.303.1529016729177;
-        Thu, 14 Jun 2018 15:52:09 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Ztr1SvESHr1XzY+6q41GxTJGHsuiBzX3nQVyt/cQyEo=;
+        b=iwowZk00jRLz5ddoSgjOATf1dX0E0Ppuy1/U+NI+NQn504bA8XRnZYj3DiuVW6gSNs
+         HLL9fFOu4CaHFplmfN3YqHw9ceKgBRznOinHZFOR59ixYwdu7keaRaKNAa/XUKTVgu0U
+         cqCgPw0sTVdVR41SuSXM5GvyqpkWesEbKmttPEu3IFqjrjuycMu+AjIRh1+BE6LIrhgB
+         05WruRfWxo37jKmoZ/tY3Z0nMvRNRuN7FBsDX6tjo4l+J7JlgAQWcxVDfSq50RPAlGsU
+         IA4dI72JTpeZww5onnfKo9gzCOB5I9CjY94r0X2Djj0jqxFMejiZs4dVsSfihm3JUnrH
+         bbRA==
+X-Gm-Message-State: APt69E1q5etSSwLTVTTPzi7p2oOHj21kfq4/LsvSQfRB22swYEMO5/4W
+        VcvUW6UCgjveHdDIW/uXKjA3g3aUdzq7aA==
+X-Google-Smtp-Source: ADUXVKI8cM3D1nJARYY1ng5LS/0Ylf91AR0tUyplRU4zdNzTbCUqTfpQ1i+IxcVG666wut+Yu96MWg==
+X-Received: by 2002:a9d:5c84:: with SMTP id a4-v6mr369878oti.301.1529016749590;
+        Thu, 14 Jun 2018 15:52:29 -0700 (PDT)
 Received: from aura.cortijodelrio.net (CableLink-187-161-191-185.PCs.InterCable.net. [187.161.191.185])
-        by smtp.googlemail.com with ESMTPSA id w5-v6sm2778982otg.5.2018.06.14.15.52.06
+        by smtp.googlemail.com with ESMTPSA id w5-v6sm2778982otg.5.2018.06.14.15.52.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 14 Jun 2018 15:52:07 -0700 (PDT)
+        Thu, 14 Jun 2018 15:52:28 -0700 (PDT)
 From:   =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>
-To:     x86@kernel.org
+To:     linux-arm-kernel@lists.infradead.org
 Cc:     anders.roxell@linaro.org,
         =?UTF-8?q?Daniel=20D=C3=ADaz?= <daniel.diaz@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Stefan Agner <stefan@agner.ch>,
+        Tony Lindgren <tony@atomide.com>,
+        Eric Anholt <eric@anholt.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-kernel@vger.kernel.org (open list:X86 ARCHITECTURE (32-BIT AND
-        64-BIT))
-Subject: [PATCH 1/2] x86: x86_64_defconfig: Enable KSM.
-Date:   Thu, 14 Jun 2018 17:50:26 -0500
-Message-Id: <1529016629-2948-1-git-send-email-daniel.diaz@linaro.org>
+        Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 2/2] arm: multi_v7_defconfig: Enable KSM.
+Date:   Thu, 14 Jun 2018 17:50:27 -0500
+Message-Id: <1529016629-2948-2-git-send-email-daniel.diaz@linaro.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529016629-2948-1-git-send-email-daniel.diaz@linaro.org>
+References: <1529016629-2948-1-git-send-email-daniel.diaz@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -89,21 +98,21 @@ at all, until it is activated at run-time with:
 
 Signed-off-by: Daniel Díaz <daniel.diaz@linaro.org>
 ---
- arch/x86/configs/x86_64_defconfig | 1 +
+ arch/arm/configs/multi_v7_defconfig | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/configs/x86_64_defconfig b/arch/x86/configs/x86_64_defconfig
-index e32fc1f..8fd7396 100644
---- a/arch/x86/configs/x86_64_defconfig
-+++ b/arch/x86/configs/x86_64_defconfig
-@@ -48,6 +48,7 @@ CONFIG_MICROCODE_AMD=y
- CONFIG_X86_MSR=y
- CONFIG_X86_CPUID=y
- CONFIG_NUMA=y
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 7e1c543..79eedf4d 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -133,6 +133,7 @@ CONFIG_SMP=y
+ CONFIG_NR_CPUS=16
+ CONFIG_HIGHPTE=y
+ CONFIG_CMA=y
 +CONFIG_KSM=y
- CONFIG_X86_CHECK_BIOS_CORRUPTION=y
- # CONFIG_MTRR_SANITIZER is not set
- CONFIG_EFI=y
+ CONFIG_SECCOMP=y
+ CONFIG_ARM_APPENDED_DTB=y
+ CONFIG_ARM_ATAG_DTB_COMPAT=y
 -- 
 2.7.4
 
