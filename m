@@ -6,47 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 10049C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 101DEC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA028208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9B58208E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NaV6Wplu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA028208DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXHhV2n/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B58208E0
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965311AbeFNOIn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:08:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49398 "EHLO mail.kernel.org"
+        id S965326AbeFNOIr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:08:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49458 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964910AbeFNOIk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:08:40 -0400
+        id S965305AbeFNOIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:08:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C086208DA;
-        Thu, 14 Jun 2018 14:08:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75F34208DA;
+        Thu, 14 Jun 2018 14:08:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985320;
-        bh=JvjW+vPvEvdewk3qA1IrK2ano7E+lK0WzE7x7oC50VM=;
+        s=default; t=1528985323;
+        bh=L5GDxlsPspuh7+aKkEmmVhkQeCrwKFCfiiX3NiVzjwA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NaV6WpluhUQKmAIuzU6UVaJ781zmMciddJexQkUz6a/00H1vhqT3E4GPfGSo85l4Q
-         TEDuVdF6vv1sHvwuJ7C6OIhmtPqzdak3iz2hhg7MYILx+Y0rB+WUUuX5MYR1Sbj8ng
-         HCuzW4CJ5LofwpHzbLUeo07GNTTVU2Q2LbGuYPIs=
+        b=FXHhV2n/AP2fDp0x3Jyollz3t5+6LgiBjKW8nJmrZ96FbzSnFBkltHfylA3Mh5lQa
+         FwlB+9RVpbhqKDg0PUZoiRuHc1JV5IVk4XeRhJW32JcOmc4UI+rKn2U1KPB9kM2SCQ
+         k0srRkbk8oqJYLAt3VVJwJshuKFbBTASwGQfUCO0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Bart Van Assche <bart.vanassche@wdc.com>,
-        Shaun Tancheff <shaun.tancheff@seagate.com>,
-        Damien Le Moal <damien.lemoal@hgst.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Hannes Reinecke <hare@suse.com>, Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.16 03/43] blkdev_report_zones_ioctl(): Use vmalloc() to allocate large buffers
-Date:   Thu, 14 Jun 2018 16:04:07 +0200
-Message-Id: <20180614132135.271532596@linuxfoundation.org>
+        stable@vger.kernel.org, Kevin Easton <kevin@guarana.org>,
+        syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Zubin Mithra <zsm@chromium.org>
+Subject: [PATCH 4.16 04/43] af_key: Always verify length of provided sadb_key
+Date:   Thu, 14 Jun 2018 16:04:08 +0200
+Message-Id: <20180614132135.308652916@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
 References: <20180614132135.111973468@linuxfoundation.org>
@@ -63,69 +61,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Bart Van Assche <bart.vanassche@wdc.com>
+From: Kevin Easton <kevin@guarana.org>
 
-commit 327ea4adcfa37194739f1ec7c70568944d292281 upstream.
+commit 4b66af2d6356a00e94bcdea3e7fea324e8b5c6f4 upstream.
 
-Avoid that complaints similar to the following appear in the kernel log
-if the number of zones is sufficiently large:
+Key extensions (struct sadb_key) include a user-specified number of key
+bits.  The kernel uses that number to determine how much key data to copy
+out of the message in pfkey_msg2xfrm_state().
 
-  fio: page allocation failure: order:9, mode:0x140c0c0(GFP_KERNEL|__GFP_COMP|__GFP_ZERO), nodemask=(null)
-  Call Trace:
-  dump_stack+0x63/0x88
-  warn_alloc+0xf5/0x190
-  __alloc_pages_slowpath+0x8f0/0xb0d
-  __alloc_pages_nodemask+0x242/0x260
-  alloc_pages_current+0x6a/0xb0
-  kmalloc_order+0x18/0x50
-  kmalloc_order_trace+0x26/0xb0
-  __kmalloc+0x20e/0x220
-  blkdev_report_zones_ioctl+0xa5/0x1a0
-  blkdev_ioctl+0x1ba/0x930
-  block_ioctl+0x41/0x50
-  do_vfs_ioctl+0xaa/0x610
-  SyS_ioctl+0x79/0x90
-  do_syscall_64+0x79/0x1b0
-  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+The length of the sadb_key message must be verified to be long enough,
+even in the case of SADB_X_AALG_NULL.  Furthermore, the sadb_key_len value
+must be long enough to include both the key data and the struct sadb_key
+itself.
 
-Fixes: 3ed05a987e0f ("blk-zoned: implement ioctls")
-Signed-off-by: Bart Van Assche <bart.vanassche@wdc.com>
-Cc: Shaun Tancheff <shaun.tancheff@seagate.com>
-Cc: Damien Le Moal <damien.lemoal@hgst.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Hannes Reinecke <hare@suse.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Introduce a helper function verify_key_len(), and call it from
+parse_exthdrs() where other exthdr types are similarly checked for
+correctness.
+
+Signed-off-by: Kevin Easton <kevin@guarana.org>
+Reported-by: syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
+Cc: Zubin Mithra <zsm@chromium.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- block/blk-zoned.c |    8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ net/key/af_key.c |   45 +++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 35 insertions(+), 10 deletions(-)
 
---- a/block/blk-zoned.c
-+++ b/block/blk-zoned.c
-@@ -328,7 +328,11 @@ int blkdev_report_zones_ioctl(struct blo
- 	if (!rep.nr_zones)
- 		return -EINVAL;
- 
--	zones = kcalloc(rep.nr_zones, sizeof(struct blk_zone), GFP_KERNEL);
-+	if (rep.nr_zones > INT_MAX / sizeof(struct blk_zone))
-+		return -ERANGE;
-+
-+	zones = kvmalloc(rep.nr_zones * sizeof(struct blk_zone),
-+			GFP_KERNEL | __GFP_ZERO);
- 	if (!zones)
- 		return -ENOMEM;
- 
-@@ -350,7 +354,7 @@ int blkdev_report_zones_ioctl(struct blo
- 	}
- 
-  out:
--	kfree(zones);
-+	kvfree(zones);
- 
- 	return ret;
+--- a/net/key/af_key.c
++++ b/net/key/af_key.c
+@@ -437,6 +437,24 @@ static int verify_address_len(const void
+ 	return 0;
  }
+ 
++static inline int sadb_key_len(const struct sadb_key *key)
++{
++	int key_bytes = DIV_ROUND_UP(key->sadb_key_bits, 8);
++
++	return DIV_ROUND_UP(sizeof(struct sadb_key) + key_bytes,
++			    sizeof(uint64_t));
++}
++
++static int verify_key_len(const void *p)
++{
++	const struct sadb_key *key = p;
++
++	if (sadb_key_len(key) > key->sadb_key_len)
++		return -EINVAL;
++
++	return 0;
++}
++
+ static inline int pfkey_sec_ctx_len(const struct sadb_x_sec_ctx *sec_ctx)
+ {
+ 	return DIV_ROUND_UP(sizeof(struct sadb_x_sec_ctx) +
+@@ -533,16 +551,25 @@ static int parse_exthdrs(struct sk_buff
+ 				return -EINVAL;
+ 			if (ext_hdrs[ext_type-1] != NULL)
+ 				return -EINVAL;
+-			if (ext_type == SADB_EXT_ADDRESS_SRC ||
+-			    ext_type == SADB_EXT_ADDRESS_DST ||
+-			    ext_type == SADB_EXT_ADDRESS_PROXY ||
+-			    ext_type == SADB_X_EXT_NAT_T_OA) {
++			switch (ext_type) {
++			case SADB_EXT_ADDRESS_SRC:
++			case SADB_EXT_ADDRESS_DST:
++			case SADB_EXT_ADDRESS_PROXY:
++			case SADB_X_EXT_NAT_T_OA:
+ 				if (verify_address_len(p))
+ 					return -EINVAL;
+-			}
+-			if (ext_type == SADB_X_EXT_SEC_CTX) {
++				break;
++			case SADB_X_EXT_SEC_CTX:
+ 				if (verify_sec_ctx_len(p))
+ 					return -EINVAL;
++				break;
++			case SADB_EXT_KEY_AUTH:
++			case SADB_EXT_KEY_ENCRYPT:
++				if (verify_key_len(p))
++					return -EINVAL;
++				break;
++			default:
++				break;
+ 			}
+ 			ext_hdrs[ext_type-1] = (void *) p;
+ 		}
+@@ -1104,14 +1131,12 @@ static struct xfrm_state * pfkey_msg2xfr
+ 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
+ 	if (key != NULL &&
+ 	    sa->sadb_sa_auth != SADB_X_AALG_NULL &&
+-	    ((key->sadb_key_bits+7) / 8 == 0 ||
+-	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
++	    key->sadb_key_bits == 0)
+ 		return ERR_PTR(-EINVAL);
+ 	key = ext_hdrs[SADB_EXT_KEY_ENCRYPT-1];
+ 	if (key != NULL &&
+ 	    sa->sadb_sa_encrypt != SADB_EALG_NULL &&
+-	    ((key->sadb_key_bits+7) / 8 == 0 ||
+-	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
++	    key->sadb_key_bits == 0)
+ 		return ERR_PTR(-EINVAL);
+ 
+ 	x = xfrm_state_alloc(net);
 
 
