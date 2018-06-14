@@ -6,106 +6,136 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5D9F5C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:24:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6B3FAC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CE67208D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:24:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CE67208D4
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B087208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:25:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B087208D4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754721AbeFNGY3 (ORCPT
+        id S1754710AbeFNGY7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:24:29 -0400
-Received: from terminus.zytor.com ([198.137.202.136]:33445 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752744AbeFNGY2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:24:28 -0400
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id w5E6OMrn765454
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 13 Jun 2018 23:24:22 -0700
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id w5E6OLrQ765449;
-        Wed, 13 Jun 2018 23:24:21 -0700
-Date:   Wed, 13 Jun 2018 23:24:21 -0700
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Jiri Olsa <tipbot@zytor.com>
-Message-ID: <tip-bh0ke4fh2ygpj3yowna7o1di@git.kernel.org>
-Cc:     jolsa@redhat.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        tglx@linutronix.de, acme@redhat.com, hpa@zytor.com,
-        yao.jin@linux.intel.com, acme@kernel.org, mingo@kernel.org
-Reply-To: acme@kernel.org, mingo@kernel.org, yao.jin@linux.intel.com,
-          hpa@zytor.com, acme@redhat.com, tglx@linutronix.de,
-          jolsa@kernel.org, linux-kernel@vger.kernel.org, jolsa@redhat.com
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/urgent] perf c2c: Keep struct hist_entry at the end of
- struct c2c_hist_entry
-Git-Commit-ID: 4c8205273626f27b9e5a64bdc194ab483a8cce66
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 14 Jun 2018 02:24:59 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:51050 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1752795AbeFNGY5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 02:24:57 -0400
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 577E8DAEFAA8C;
+        Thu, 14 Jun 2018 14:24:53 +0800 (CST)
+Received: from [127.0.0.1] (10.177.223.23) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.382.0; Thu, 14 Jun 2018
+ 14:24:45 +0800
+Subject: Re: [PATCH 1/2] arm64: avoid alloc memory on offline node
+To:     Punit Agrawal <punit.agrawal@arm.com>,
+        Xie XiuQi <xiexiuqi@huawei.com>
+CC:     Bjorn Helgaas <helgaas@kernel.org>, <tnowicki@caviumnetworks.com>,
+        <linux-pci@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        <linux-mm@kvack.org>, <wanghuiqiang@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        zhongjiang <zhongjiang@huawei.com>,
+        linux-arm <linux-arm-kernel@lists.infradead.org>,
+        Michal Hocko <mhocko@kernel.org>
+References: <1527768879-88161-2-git-send-email-xiexiuqi@huawei.com>
+ <20180606154516.GL6631@arm.com>
+ <CAErSpo6S0qtR42tjGZrFu4aMFFyThx1hkHTSowTt6t3XerpHnA@mail.gmail.com>
+ <20180607105514.GA13139@dhcp22.suse.cz>
+ <5ed798a0-6c9c-086e-e5e8-906f593ca33e@huawei.com>
+ <20180607122152.GP32433@dhcp22.suse.cz>
+ <a880df29-b656-d98d-3037-b04761c7ed78@huawei.com>
+ <20180611085237.GI13364@dhcp22.suse.cz>
+ <16c4db2f-bc70-d0f2-fb38-341d9117ff66@huawei.com>
+ <20180611134303.GC75679@bhelgaas-glaptop.roam.corp.google.com>
+ <20180611145330.GO13364@dhcp22.suse.cz>
+ <87lgbk59gs.fsf@e105922-lin.cambridge.arm.com>
+ <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
+From:   Hanjun Guo <guohanjun@huawei.com>
+Message-ID: <28ab6a17-dfb6-13d5-764c-d8255569c6bc@huawei.com>
+Date:   Thu, 14 Jun 2018 14:23:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <87bmce60y3.fsf@e105922-lin.cambridge.arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.223.23]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  4c8205273626f27b9e5a64bdc194ab483a8cce66
-Gitweb:     https://git.kernel.org/tip/4c8205273626f27b9e5a64bdc194ab483a8cce66
-Author:     Jiri Olsa <jolsa@redhat.com>
-AuthorDate: Fri, 8 Jun 2018 02:22:11 +0200
-Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 8 Jun 2018 13:35:53 -0300
+Hi Punit,
 
-perf c2c: Keep struct hist_entry at the end of struct c2c_hist_entry
+On 2018/6/14 1:39, Punit Agrawal wrote:
+> Punit Agrawal <punit.agrawal@arm.com> writes:
+> 
+> 
+> [...]
+> 
+>>
+>> CONFIG_HAVE_MEMORYLESS node is not enabled on arm64 which means we end
+>> up returning the original node in the fallback path.
+>>
+>> Xie, does the below patch help? I can submit a proper patch if this
+>> fixes the issue for you.
+>>
+>> -- >8 --
+>> Subject: [PATCH] arm64/numa: Enable memoryless numa nodes
+>>
+>> Signed-off-by: Punit Agrawal <punit.agrawal@arm.com>
+>> ---
+>>  arch/arm64/Kconfig   | 4 ++++
+>>  arch/arm64/mm/numa.c | 2 ++
+>>  2 files changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+>> index eb2cf4938f6d..5317e9aa93ab 100644
+>> --- a/arch/arm64/Kconfig
+>> +++ b/arch/arm64/Kconfig
+>> @@ -756,6 +756,10 @@ config USE_PERCPU_NUMA_NODE_ID
+>>  	def_bool y
+>>  	depends on NUMA
+>>  
+>> +config HAVE_MEMORYLESS_NODES
+>> +       def_bool y
+>> +       depends on NUMA
+>> +
+>>  config HAVE_SETUP_PER_CPU_AREA
+>>  	def_bool y
+>>  	depends on NUMA
+>> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+>> index dad128ba98bf..c699dcfe93de 100644
+>> --- a/arch/arm64/mm/numa.c
+>> +++ b/arch/arm64/mm/numa.c
+>> @@ -73,6 +73,8 @@ EXPORT_SYMBOL(cpumask_of_node);
+>>  static void map_cpu_to_node(unsigned int cpu, int nid)
+>>  {
+>>  	set_cpu_numa_node(cpu, nid);
+>> +	set_numa_mem(local_memory_node(nid));
+> 
+> Argh, this should be
+> 
+>         set_cpu_numa_mem(cpu, local_memory_node(nid));
+> 
+> There is not guarantee that map_cpu_to_node() will be called on the
+> local cpu.
+> 
+> Hanjun, Xie - can you try with the update please?
 
-Exactly as the comment just before 'struct c2c_hist_entry" says, i.e.
-the last entry in struct hist_entry is a zero length array, that when
-allocating space for hist_entry gets extra space if callchains are in
-use, which, if hist_entry is not at the end of c2c_hist_entry, the
-members after it gets corrupted when callchains get added to the rb
-trees collecting them, etc.
+Thanks for looking into this, we will try this tomorrow
+(the hardware is occupied now) and update here.
 
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Reported-by: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jin Yao <yao.jin@linux.intel.com>
-Fixes: 7f834c2e84bb ("perf c2c report: Display node for cacheline address")
-Link: http://lkml.kernel.org/n/tip-bh0ke4fh2ygpj3yowna7o1di@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/builtin-c2c.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+Thanks
+Hanjun
 
-diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
-index 307b3594525f..6a8738f7ead3 100644
---- a/tools/perf/builtin-c2c.c
-+++ b/tools/perf/builtin-c2c.c
-@@ -56,16 +56,16 @@ struct c2c_hist_entry {
- 
- 	struct compute_stats	 cstats;
- 
-+	unsigned long		 paddr;
-+	unsigned long		 paddr_cnt;
-+	bool			 paddr_zero;
-+	char			*nodestr;
-+
- 	/*
- 	 * must be at the end,
- 	 * because of its callchain dynamic entry
- 	 */
- 	struct hist_entry	he;
--
--	unsigned long		 paddr;
--	unsigned long		 paddr_cnt;
--	bool			 paddr_zero;
--	char			*nodestr;
- };
- 
- static char const *coalesce_default = "pid,iaddr";
