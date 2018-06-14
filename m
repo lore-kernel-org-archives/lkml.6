@@ -2,129 +2,161 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 84AF9C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:56:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 599EEC07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:04:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 264CB208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 05:56:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4052208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:04:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="aOXSIEjt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 264CB208D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bX1XM65i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F4052208CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752823AbeFNF4k (ORCPT
+        id S1752877AbeFNGEQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 01:56:40 -0400
-Received: from mail-sn1nam01on0053.outbound.protection.outlook.com ([104.47.32.53]:26240
-        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        Thu, 14 Jun 2018 02:04:16 -0400
+Received: from mail-ve1eur01on0066.outbound.protection.outlook.com ([104.47.1.66]:26731
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1752707AbeFNF4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 01:56:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
+        id S1752707AbeFNGEM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 02:04:12 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Pwx59dGq+8HXEeogBsfpph18QJHVTlzXATm6OIjno9w=;
- b=aOXSIEjtZyXSbzImSrAWVXksHn/NwbgWfxv1Js0ue4vQbAv2GEfLWsMYQtOzDZ5jLmz8qcqeTkQwzaYXcJYb8nCUhGvFDmAha+KAz1143y89UxBemHKEFJYgzlxVk4dolizHCeRRJeUxOgF+Sv7mbGgMUt5GfN0lERXlA00DGB4=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4262.namprd05.prod.outlook.com (20.176.252.31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.6; Thu, 14 Jun 2018 05:56:36 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::1010:9926:76ba:c7b7]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::1010:9926:76ba:c7b7%3]) with mapi id 15.20.0884.010; Thu, 14 Jun 2018
- 05:56:36 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-CC:     Xavier Deguillard <xdeguillard@vmware.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2 1/7] vmw_balloon: fix inflation of 64-bit GFNs
-Thread-Topic: [PATCH v2 1/7] vmw_balloon: fix inflation of 64-bit GFNs
-Thread-Index: AQHUA1rKRrCKY1+zA0yfk4OBeCrKzqRfOPoAgAAE24CAAAK3AIAAAaQA
-Date:   Thu, 14 Jun 2018 05:56:35 +0000
-Message-ID: <0CFD7072-48DD-4A56-BFCA-83152664C315@vmware.com>
-References: <20180613135412.81660-1-namit@vmware.com>
- <20180613135412.81660-2-namit@vmware.com> <20180614052336.GA29739@kroah.com>
- <485C5DF2-52FB-487C-AF65-096D74E9416B@vmware.com>
- <20180614055042.GA31687@kroah.com>
-In-Reply-To: <20180614055042.GA31687@kroah.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [208.91.2.2]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4262;7:3fdDHqEnWkWTTVLJEEkbHSko6iCK10u2Ow2tErcwIA5/3qLsh0RGHJLlcd9/CRbK2gB+MTC8Pc3w2A7OJRDOBbUlcbHu2Pakb2RVXfmyG/MVxmxDwO2jrHp8xffHCEbUoN/FEvvbeAtpSrzfJ/ZOZ8/9NCG66iNCcR1Pcm0Ovc1h0X+XO0xWGAise6vlG1UvlJ8fp0doWzINYsPQK4cokNVkJc+lpX4TVWZldRj2UhtbYo7Ugw/jEwxLGqxvaPDv;20:W4sPljq6j1nvi9FY9GVJnMGClerh7PPisHIVNpQXA+/z+PpuTGSgyCsPImOFJRZNdXg6egVZNmwU3XzvhnxmvHbVB0vUytRLmonxGJFuvg3oeRCijI0VkKWJwSI8eOlc7upZBhaC3Nem3lM0wdc3QGCvSQNqdic7XPy191xJJfI=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: d4e2071d-f629-41fb-3da1-08d5d1bb96bc
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4262;
-x-ms-traffictypediagnostic: BYAPR05MB4262:
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-microsoft-antispam-prvs: <BYAPR05MB4262C080BEE914DBA5C932E4D07D0@BYAPR05MB4262.namprd05.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231254)(944501410)(52105095)(10201501046)(3002001)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:BYAPR05MB4262;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4262;
-x-forefront-prvs: 0703B549E4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39380400002)(376002)(366004)(39860400002)(346002)(199004)(189003)(14454004)(316002)(54906003)(97736004)(25786009)(6246003)(33656002)(4326008)(53936002)(102836004)(36756003)(68736007)(478600001)(6506007)(81166006)(8676002)(186003)(106356001)(81156014)(8936002)(105586002)(229853002)(6486002)(86362001)(26005)(76176011)(11346002)(3846002)(486006)(99286004)(5250100002)(93886005)(2616005)(66066001)(82746002)(446003)(476003)(6436002)(3280700002)(7736002)(305945005)(59450400001)(6512007)(2906002)(6116002)(5660300001)(83716003)(2900100001)(575784001)(6916009)(3660700001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4262;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: NTijWhiT/pZV6Dh0RpvYgI4tKA+rKdCnHKts5lCvoabTGPx6b7lIcI8mtlxyxNLKob3nbhj48SagEkEwccPeZ2j/Q2pUcUP9Y+459GELBiY203If2rc9jnU1YVK1OVA8ZWTyyWnlpmc5+WHLxKn+p5yFPb28EEkdBxqD6I1NdhlQV3iUUNUTuizL6124Qhjn
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <726BB1D49E60F4458DBE4B7FA93E04EB@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ bh=KuOr+/lAF+pp7lYOi3KFSvyQ6VBjf0al83Kp++cy0Q8=;
+ b=bX1XM65iKVPsRWPloKrGoEpGuOXBJMxXf80V1vgAuyWWpqqVsxbBQtH56BeeJ3unjQoWrp9kYZJOzB1icSDGypAqO/sl7VI+en4Pl/9hu1bZwP7qEdMHUzD007wqCbS9g9QAufmJLLVbz6usAyjfRIQV8CwiW2WbuCS9p40Dyi8=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=yibin.gong@nxp.com; 
+Received: from robin-OptiPlex-790.ap.freescale.net (119.31.174.66) by
+ AM5PR04MB3219.eurprd04.prod.outlook.com (2603:10a6:206:7::16) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.16; Thu, 14 Jun 2018 06:04:05 +0000
+From:   Robin Gong <yibin.gong@nxp.com>
+To:     vkoul@kernel.org, s.hauer@pengutronix.de, l.stach@pengutronix.de,
+        dan.j.williams@intel.com, gregkh@linuxfoundation.org,
+        jslaby@suse.com
+Cc:     linux-serial@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-imx@nxp.com
+Subject: [PATCH v4 0/7] add virt-dma support for imx-sdma
+Date:   Thu, 14 Jun 2018 22:02:55 +0800
+Message-Id: <1528984982-5074-1-git-send-email-yibin.gong@nxp.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4e2071d-f629-41fb-3da1-08d5d1bb96bc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2018 05:56:35.6618
+Content-Type: text/plain
+X-Originating-IP: [119.31.174.66]
+X-ClientProxiedBy: HK0PR03CA0014.apcprd03.prod.outlook.com
+ (2603:1096:203:2e::26) To AM5PR04MB3219.eurprd04.prod.outlook.com
+ (2603:10a6:206:7::16)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 68cb294e-2bdf-4008-e35d-08d5d1bca465
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR04MB3219;
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;3:d8oWjN5DBaRqC+Ivq5dmDmdKFrCCRaHzysTHo3JgMjl5M2VWe8T1SEa3H5jjyfErZgUsYNgezS598xOVNdHJRD3StuMYj2RGYoc4P9YK3Tx8nZNmQftcY47u3cIHrcF6KT1OPY/P25WlYcJR0ONmkTgSsjyhnlBZfn+uT7cDwyGZJE4wkc1ZnjFsS0Hioph9Wl6tKWCK5Ub3KO1Ck5TibAZ/5A5fcTthk55X33ziSN/tEBdFncymWweGS5Hr5aE3;25:XiJhKC9RdAQlEFivhmrK8hsxtjkD74Ayefz7x/fEz89MSg57UO/MeG3Yyt+sK7XwyghCt8LROd68/6l0/TvK3iv+s98nga0DE8nGcgWk9+vrdlJZKx7q7T97S3FWGD2hvNPZvBGohdn2UnKT3aue9UHJBPoaR0tYfcpR4SI+6TDwPg/INVGUgj//6v8Q6PjlYVbnktRznpoVwwcEfbJVw66dCyVJVKbam+musdmZniIKTtEY15PBwhCQhdgxsOeJ8zgPdJ684NS149tQ+4VHrFITyMscHTY2CLKFfrP75kvijwWO2Sr0iHqmMZ8yX5O+1KcannAB9Ppm3Mel62BRBw==;31:YjUKjDad7FnX5Q+Mm4wNCZJEQuDad8p0wJOPXX+9DUSkUtCcD6vOsa2WQ3p5A0oQYyjdemJfP5VoPXymT5FCE5BzfrT4QGP8gRF3kwSl5XbDElc0jRAMaU28Xib9aKuClP3LVNObsHMJqCLnjjCq45p3Aak3dEoo3OJNNB4zcb4lTxFD+dcHKQBWNcHnZtsbLpfutugH6JtBt5BW/qDFiAi8GBmU740xO185L8GKTXU=
+X-MS-TrafficTypeDiagnostic: AM5PR04MB3219:
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;20:hlxRbDem/y2YGk/spU84mCeJjITec21HwUNAqnFNmHfJvFJW8vs/P63NHt9JTWbygPtGVSfuvvWOrbedrXdgwQ0mws89hkdwbqEjZ/MLZpBXxqVu2cuIx9q01BTVoESlK7/7Inb/2ld2mHzD1uxRBB8Ww8HX45KPxTHc8S16PXiljbhBf4pT1S1VMipT7SBGrrkv59fx8YJf2K9SDweepy1mbte6FM8PIh0nDdXJ6p5n0/ibhTgotTlPQzMQMeew4r93fHpUHNr5tTZKZZwJoMmPvNgrKg8BNdXfFarQy/Rqu66y0V2oAyOLEzYbGcMYMmgOF8qX/PPVMmU/0k7ZssT5fl+aeDwdQM1IM+GZxNhOH9sNgjD9Mx8cBhg1FNMqooNaEj7EBvutXo0gFcY6BxIr99FYu9a9+kyNk9eXxANOnbsMhIA7Z/csjXyY1jR+KRq24cMKR19vPi5+GYmvWtFaI808I1/IYgUiU8hC8CW06b/TDvHqAemnoao69tWA;4:su2xwUmGE1NdlievZD0qdP0vxP+uD1+lHQElHlLp6DCTu3wsTwEWh8Zqa3dnIYFH1UTGQmHwI17eIc/+mjO03hcIJsZQh3RBkuVPbngKuRlDs9RW5Wo/+J9hyVNmzi+f2zhqGK2eHCK1rU5udVbULSrzWRGKnYENraU/atwISQHElkEWeG0H+LLn/jat52b0nHZp7bjH78HZzpjGWlKgtXNmtWX5+RpmbDfh4FNIzOBiQjCL+ufNbEob5OFHgHWlfZ79bv2MFuhiYnZPqbE0sw==
+X-Microsoft-Antispam-PRVS: <AM5PR04MB3219062FFFCD69B41C48E8A7897D0@AM5PR04MB3219.eurprd04.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(10201501046)(6055026)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:AM5PR04MB3219;BCL:0;PCL:0;RULEID:;SRVR:AM5PR04MB3219;
+X-Forefront-PRVS: 0703B549E4
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(376002)(396003)(366004)(346002)(39380400002)(39860400002)(199004)(189003)(68736007)(59450400001)(478600001)(7736002)(8936002)(305945005)(66066001)(50226002)(7416002)(86362001)(6512007)(3846002)(6116002)(47776003)(316002)(16586007)(8676002)(81166006)(16526019)(26005)(186003)(81156014)(386003)(6506007)(2906002)(52116002)(51416003)(36756003)(6486002)(5660300001)(4326008)(50466002)(106356001)(25786009)(48376002)(105586002)(97736004)(6666003)(486006)(476003)(53936002)(2616005)(956004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM5PR04MB3219;H:robin-OptiPlex-790.ap.freescale.net;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;AM5PR04MB3219;23:D0n8giORmxCuxXD3HKaR6H8T+gntHMbI8Uf32RmdR?=
+ =?us-ascii?Q?lxcCV+cXPYtFgkA2RjUsJ2Lq0EwemgOhJjlzQBXZpRZYwEzAfLZgBq9y7ktB?=
+ =?us-ascii?Q?9uKwq3eB5VqXwt8wcM1IX8+W4ATKJrN9SQDpDpGvIMf4UXDsKbWZ6wPXvvQ7?=
+ =?us-ascii?Q?YzZjvlOAVGOzsUy9kIwOLlkkVruX2VsaabzdBcmipPJDCGZ3gw1ardST2pAc?=
+ =?us-ascii?Q?VbJCvbwESiF1MvsFUmimGdW4JiBVsKvhexMYoQmUbDWuSSlRfv88G8dA4/qa?=
+ =?us-ascii?Q?Zi1DNNn2kjGihJS7u6TfaO20IfdYh8KYLMPq4cpR0lxYQH8x3OzZoM/zHQXN?=
+ =?us-ascii?Q?YKBVfh7dOuEPv1M26qnJZiaMMNnaH8xzBGmFH0F1miCEmMIlSFtfKwciwVt6?=
+ =?us-ascii?Q?hqtzROBTU/OfIN4pw9xZJWK2NEWKdGfYmvPSlNkHd69U0llVMjgQoxCgZ/iO?=
+ =?us-ascii?Q?bEZcOdPOV9KMiPsUxKA7r15V0Dw4tbYvElfQ1zSvminvjZNBOHzjElg1etbp?=
+ =?us-ascii?Q?GJbkcWrUo61Zzb/Hc9lJIaNwVbKxJzm/EFi03g+8Eu4JDQXqYhbv29gqf50m?=
+ =?us-ascii?Q?Rhbk2tzBWg6K2qfOGSL1Ea+1hkbB4HsWAJV83BZ4B1S48VuaPUpC/uI8SmBy?=
+ =?us-ascii?Q?AXVqrHH8bZzxs+Rjj7bxBb826mG65QKkkrg9D1vk7tqC9VmcCPOyB+JYdSnO?=
+ =?us-ascii?Q?FprowtuToj/4yCiLZarV0inYcNopU4gyGDspZZjrMJ88m76Qts+OzeoWWc8H?=
+ =?us-ascii?Q?S+VxybJJWTJN2PXbMq+bigHf7dfZoYGe8mOgbKh8SuldRR4IlwReabNArqI6?=
+ =?us-ascii?Q?0K+7AIGVSltjwFrIwbjUbfPn6ZFLEfUlWkQ5jsz+otX07GbIHeUlhlBhQSis?=
+ =?us-ascii?Q?jgr/PeecEiVb+22YaVJei6JgrlZ/CUUAcFOj/F1KHgJ6Qwb4dmdOV0EpEc+w?=
+ =?us-ascii?Q?1t43eQSBucPo2BkmYS+XutDnGg76ytmwQanRn/tOmBOoRqe4ioLwnzFIwKSV?=
+ =?us-ascii?Q?w3xehB9I9mywxVI1g0YGFBJMHe0ZmNdN/LnFrQuRNa4k0/UXpouvYxSmG1QQ?=
+ =?us-ascii?Q?5Tg5HqGimFUMcIRqVHnzT9f/8Ma1RfJcrj3DCiIYH3pBFWB6A7bYdq5BdS5P?=
+ =?us-ascii?Q?Fu9spG/+b8i2qlzZaOzMroJA7b25JbR?=
+X-Microsoft-Antispam-Message-Info: 8aDcdO/CldP+IQlcJRBbfOWbJ+n1Pw+L1gwVSROWSYG4HGydI7Iv3bY2M+Ni/ZGEN+6lbbLW/OrS+8WUtc7f5OwnllWgmICEPROwqJmc/8Es+zHxF3tLtxoEwNrLA9c93/ftiD6PMEcSgjaj5qqdknk1NAIMzWYi4ScUloSXSP48QKnCbFwbH5jmIG7AZX0V
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;6:jNnEIr5nKcrSC8S2975GF4vgVjG9p6foemBqt1Loa0/II+vFdv6EdCWndQbjXHYQy6mHES4GStZ/pTrFjWruTX4z8haPZifZHOJ2mJrVxqh1arhqfJOYxpE+Ern9EBLBrrdzTYgZMv7UfJdvY7YnAVhQAyNgtoC7o19pSgdHyBLmUa83qO4NGbuF+sd+T33EUbfxriP7VwsSGTvQoJ+ce5MRJLl7MobLx2UsMhCB5q4ZsG02s90fZuvHR8TrUpx93O4AmjzNSqIsyTQLMg0gSigS2mhGFMsC9mUnSSVJCa1GgnkPaqU1ougqGp2jB3wSSG8yy4GoQx6NP/OUK95GroY2F2LV+juUk7+N5fTGdYmM3Sf0hGyQ8NWNp1Wv9IxYHPH5zgtLV8o8D15GIPKJM8kbTSrSrjG+MNW8gaXJuj3UP7MbxHppkzhutYSnqNSVFczPeSJSpnZ8Ltx3ymp+/Q==;5:juZ8HozBFYBWZRgKgxy3x5hx6SG9bgnNqHLJsXtd6TGbuhwschLiD7a7BfWBiu4+qYsbKd2Q9+H6CjloAo8P8Fz2IhIWCogKrFGkZcl2VriNgIeRfv4q12fOneRyHAZ5p4lw5eY38QPLOfDL9QGCY06jrciy0Fj91eCesw7G5CY=;24:/Kx/Fo+paSrPqL4DJIBsFn7lIddGETHeyyB3mCvnWr+O/6VCYz1YwHE4If8Mf0TZuYJ9FvtrZ5HbMYKlonc3DrpVnBlhQX7Kbgpt0Uors4I=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;AM5PR04MB3219;7:S+lWHDzLE+u+eBeLvmaGGj1GLSzrAKSs4LvcGK6ksJowZGn6j3gtu97XBT/3CU8RiXO8sy1eO4V8bDsiOV8fM57b7PGvzEaNdb88dTFRQcrnL69dzHQhP7A24ESjYkutDmV6vmrat8h0wBBb4qIGNsaRM4TZCYOaP/PcT8JznKiewp+H0SOxzOV4mLutycoxf2ThfoWJq2pZXpO5ebpjEEK5UY6Qcq+CVr/K0G7522HgmqUtxkpw76bng6RbMFQg
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Jun 2018 06:04:05.2137
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4262
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68cb294e-2bdf-4008-e35d-08d5d1bca465
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR04MB3219
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-YXQgMTA6NTAgUE0sIEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5v
-cmc+IHdyb3RlOg0KDQo+IE9uIFRodSwgSnVuIDE0LCAyMDE4IGF0IDA1OjQxOjAxQU0gKzAwMDAs
-IE5hZGF2IEFtaXQgd3JvdGU6DQo+PiBhdCAxMDoyMyBQTSwgR3JlZyBLcm9haC1IYXJ0bWFuIDxn
-cmVna2hAbGludXhmb3VuZGF0aW9uLm9yZz4gd3JvdGU6DQo+PiANCj4+PiBPbiBXZWQsIEp1biAx
-MywgMjAxOCBhdCAwNjo1NDowNkFNIC0wNzAwLCBOYWRhdiBBbWl0IHdyb3RlOg0KPj4+PiBXaGVu
-IGJhbGxvb24gYmF0Y2hpbmcgaXMgbm90IHN1cHBvcnRlZCBieSB0aGUgaHlwZXJ2aXNvciwgdGhl
-IGd1ZXN0DQo+Pj4+IGZyYW1lIG51bWJlciAoR0ZOKSBtdXN0IGZpdCBpbiAzMi1iaXQuIEhvd2V2
-ZXIsIGR1ZSB0byBhIGJ1ZywgdGhpcyBjaGVjaw0KPj4+PiB3YXMgbWlzdGFrZW5seSBpZ25vcmVk
-LiBJbiBwcmFjdGljZSwgd2hlbiB0b3RhbCBSQU0gaXMgZ3JlYXRlciB0aGFuDQo+Pj4+IDE2VEIs
-IHRoZSBiYWxsb29uIGRvZXMgbm90IHdvcmsgY3VycmVudGx5LCBtYWtpbmcgdGhpcyBidWcgdW5s
-aWtlbHkgdG8NCj4+Pj4gaGFwcGVuLg0KPj4+PiANCj4+Pj4gRml4ZXM6IGVmMGY4ZjExMjk4NCAo
-IlZNd2FyZSBiYWxsb29uOiBwYXJ0aWFsbHkgaW5saW5lIHZtYmFsbG9vbl9yZXNlcnZlX3BhZ2Uu
-IikNCj4+Pj4gDQo+Pj4+IENjOiBzdGFibGVAdmdlci5rZXJuZWwub3JnDQo+Pj4gDQo+Pj4gQWdh
-aW4sIG5vIGJsYW5rIGxpbmUgYmV0d2VlbiB0aGVzZSB0aGluZ3MuDQo+Pj4gDQo+Pj4gQWxzbywg
-cGxlYXNlIGJyZWFrIHRoaXMgdXAgaW50byB0d28gZGlmZmVyZW50IHBhdGNoIHNlcmllcy4gIE9u
-ZSBmb3INCj4+PiA0LjE4LWZpbmFsIGFuZCBvbmUgZm9yIDQuMTktcmMxLiAgWW91IHNob3VsZCBh
-bHdheXMgc3BsaXQgdXAgYnVnZml4ZXMNCj4+PiBmcm9tIG5ldyBmZWF0dXJlcy9jbGVhbnVwcyBh
-cyB0aGF0IGlzIHdoYXQgSSBoYXZlIHRvIGRvIHdoZW4gc2VuZGluZw0KPj4+IHRoZW0gdG8gTGlu
-dXMuDQo+PiANCj4+IEkgaGF2ZSBvbmx5IHNlbnQgd2hhdCBJIHRob3VnaHQgaXMgYXBwcm9wcmlh
-dGUgZm9yIDQuMTggKGNsZWFudXAvZmVhdHVyZXMgDQo+PiB3aWxsIGJlIHNlbnQgc2VwYXJhdGVs
-eSk6DQo+PiANCj4+ICogNSBidWcgZml4ZXMgKDEtNS83KQ0KPj4gKiAxIHVwZGF0ZSB0aGUgbWFp
-bnRhaW5lciBsaXN0ICg3LzcpDQo+PiAqIDEgdXBkYXRlIHRvIHRoZSBjb21tZW50IHRvIHByZXZl
-bnQgY2hlY2twYXRjaCBmcm9tIGNvbXBsYWluaW5nICg2LzcpDQo+PiANCj4+IElmIHlvdSB0aGlu
-ayBhbnkgcGF0Y2ggaXMgdW5zdWl0YWJsZSB0byA0LjE4IC0gcGxlYXNlIHNheSB3aGljaC4NCj4g
-DQo+IEhvdyBkbyBJIGtub3cgd2hpY2ggcGF0Y2ggZ29lcyB0byB3aGljaCBicmFuY2g/ICBQbGVh
-c2UgbWFrZSBpdCBzbw0KPiBvYnZpb3VzIEkgY2FuIG5vdCBnZXQgaXQgd3JvbmcuICBSZW1lbWJl
-ciwgSSBnZXQgMTAwMCBlbWFpbHMgYSBkYXksIHlvdQ0KPiBkb24ndCB3YW50IG1lIHRvIGhhdmUg
-dG8gbWFrZSBhIGp1ZGdlbWVudCBjYWxsIGFib3V0IGFueXRoaW5nLCBhcyBJIHdpbGwNCj4gbWVz
-cyBpdCB1cCAgOikNCg0KSSBhcHByZWNpYXRlIHlvdXIgdGltZSwgYW5kIHVuZGVyc3RhbmQgeW91
-IGV2ZW4gbmVlZCB0byByZWFkIHN0dWRlbnRz4oCZDQpkaXNzZXJ0YXRpb25zLiA7LSkNCg0KSSB3
-aWxsIHdyaXRlIGl0IGNsZWFybHkgaW4gdGhlIGNvdmVyLWxldHRlciBpbiB0aGUgbmV4dCB2ZXJz
-aW9uLCBhbmQgbW92ZQ0KdGhlIGxpY2Vuc2UgY2hhbmdlcyB0byA0LjE5Lg0KDQpUaGFua3MsDQpO
-YWRhdg==
+The legacy sdma driver has below limitations or drawbacks:
+  1. Hardcode the max BDs number as "PAGE_SIZE / sizeof(*)", and alloc
+     one page size for one channel regardless of only few BDs needed
+     most time. But in few cases, the max PAGE_SIZE maybe not enough.
+  2. One SDMA channel can't stop immediatley once channel disabled which
+     means SDMA interrupt may come in after this channel terminated.There
+     are some patches for this corner case such as commit "2746e2c389f9",
+     but not cover non-cyclic.
+
+The common virt-dma overcomes the above limitations. It can alloc bd
+dynamically and free bd once this tx transfer done. No memory wasted or
+maximum limititation here, only depends on how many memory can be requested
+from kernel. For No.2, such issue can be workaround by checking if there
+is available descript("sdmac->desc") now once the unwanted interrupt
+coming. At last the common virt-dma is easier for sdma driver maintain.
+
+Change from v3:
+  1. add two uart patches which impacted by this patchset.
+  2. unlock 'vc.lock' before cyclic dma callback and lock again after
+     it because some driver such as uart will call dmaengine_tx_status
+     which will acquire 'vc.lock' again and dead lock comes out.
+  3. remove 'Revert commit' stuff since that patch is not wrong and
+     combine two patch into one patch as Sascha's comment.
+
+Change from v2:
+  1. include Sascha's patch to make the main patch easier to review.
+     Thanks Sacha.
+  2. remove useless 'desc'/'chan' in struct sdma_channe.
+
+Change from v1:
+  1. split v1 patch into 5 patches.
+  2. remove some unnecessary condition check.
+  3. remove unnecessary 'pending' list.
+
+Robin Gong (6):
+  tty: serial: imx: correct dma cookie status
+  dmaengine: imx-sdma: add virt-dma support
+  dmaengine: imx-sdma: remove useless 'lock' and 'enabled' in 'struct
+    sdma_channel'
+  dmaengine: imx-sdma: remove the maximum limitation for bd numbers
+  dmaengine: imx-sdma: add sdma_transfer_init to decrease code overlap
+  tty: serial: imx: split all dma setup operations out of 'port.lock'
+    protector
+
+Sascha Hauer (1):
+  dmaengine: imx-sdma: factor out a struct sdma_desc from struct
+    sdma_channel
+
+ drivers/dma/Kconfig      |   1 +
+ drivers/dma/imx-sdma.c   | 394 +++++++++++++++++++++++++++--------------------
+ drivers/tty/serial/imx.c |  99 ++++++------
+ 3 files changed, 282 insertions(+), 212 deletions(-)
+
+-- 
+2.7.4
+
