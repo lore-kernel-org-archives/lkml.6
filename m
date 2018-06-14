@@ -2,94 +2,93 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6FBA6C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:31:45 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 07AD8C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2522A208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:31:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gbjZMxRZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2522A208D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id BBCAF208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:32:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBCAF208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754904AbeFNIbl (ORCPT
+        id S1754911AbeFNIc0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:31:41 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:35931 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754866AbeFNIbg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:31:36 -0400
-Received: by mail-io0-f193.google.com with SMTP id k3-v6so6335016iog.3
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:31:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=+YStBBN95UlUwr3EzcW5s+pzK7bzvJHPiNoWbUXyXHQ=;
-        b=gbjZMxRZbP1vCMkcQHBhiVyDTl35iqwb45Xjogb4J4D5MzivuLQYrBVirpIrDhDc92
-         edpHSGBUrLwg/WiUbrNS9dWxnw/M8ks7qr7VxUPD7vdFo9yGJPEz7QN7BDNuIbVBGLM7
-         INBpNrIWiowja2mDI8PoEMcsBxMJLNkbehv64=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=+YStBBN95UlUwr3EzcW5s+pzK7bzvJHPiNoWbUXyXHQ=;
-        b=t9La3EvhXf235ApVcw6ppgVbeBrUSSzO2IYoVENO2N02Ay/9DYUZycouTG0XWnChIM
-         +wqYDFwhgGZIsV8BtnzCKv/RzTtBLaOx2mXY/FmVzM+wyA/tEMrt3zD7xdZo1+Y3IEmL
-         CalW9Wy6YOMev4+ItjbeQXaKVOnBM2i5ud/VMKlYJhGUjS2s2TT1qqvV0xOhLGV7GwbO
-         vtmsONAmwK8uggYSrWoOyBi7XpMV0VrxH2xM+5NEFnEBYlTLoR62b25ND+Ppr58oAjAW
-         3Cg+Z0rm9DJU+UD8ueObViiQuXdfAQnAOfkzGLmUR/vAWp8VYJ/8OBNhdRfyVTKiJeAU
-         uEJQ==
-X-Gm-Message-State: APt69E2vR77FznsvcP3UnRLKGgUMQqvTn0FnjafTbKZwk5ICO/Zk6IAo
-        E0x/zYILOqPRGrXgMOYz5p1vczm0RNwHMu2w3iQxdw==
-X-Google-Smtp-Source: ADUXVKJG9HaYZkY5y72OST0l5e5KtmSINV4zhfV9QStRxne+uPGPfRSEdsbcDAyj7Ve3dfCRR3R9jX4xd6QVvAhaLqc=
-X-Received: by 2002:a6b:1902:: with SMTP id 2-v6mr1425621ioz.304.1528965096319;
- Thu, 14 Jun 2018 01:31:36 -0700 (PDT)
+        Thu, 14 Jun 2018 04:32:26 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:43152 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752906AbeFNIcX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:32:23 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 7BB5520719; Thu, 14 Jun 2018 10:32:21 +0200 (CEST)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 52D1C203EB;
+        Thu, 14 Jun 2018 10:32:21 +0200 (CEST)
+Date:   Thu, 14 Jun 2018 10:32:20 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Radu Pirea <radu.pirea@microchip.com>
+Cc:     broonie@kernel.org, nicolas.ferre@microchip.com,
+        lee.jones@linaro.org, richard.genoud@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, gregkh@linuxfoundation.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-spi@vger.kernel.org, linux-serial@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v7 3/6] mfd: at91-usart: added mfd driver for usart
+Message-ID: <20180614083220.GU10521@piout.net>
+References: <20180613163621.23995-1-radu.pirea@microchip.com>
+ <20180613163621.23995-4-radu.pirea@microchip.com>
+ <20180614075849.dfiqwcu6rtzgpzq7@rfolt0960.corp.atmel.com>
+ <1086330e-40e4-8d9b-50aa-1ae9bf48aa22@microchip.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 01:31:35
- -0700 (PDT)
-In-Reply-To: <20180606134338.4645-1-colin.king@canonical.com>
-References: <20180606134338.4645-1-colin.king@canonical.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Jun 2018 10:31:35 +0200
-Message-ID: <CACRpkdZEawUiEU=qP+x7gTH5Sox9gH920ef7Cw-Y5-amxr9M2A@mail.gmail.com>
-Subject: Re: [PATCH][next] pinctrl: pinctrl-single: add allocation failure
- checking of saved_vals
-To:     Colin King <colin.king@canonical.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1086330e-40e4-8d9b-50aa-1ae9bf48aa22@microchip.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 3:43 PM, Colin King <colin.king@canonical.com> wrote:
+On 14/06/2018 11:22:25+0300, Radu Pirea wrote:
+> On 06/14/2018 10:58 AM, Ludovic Desroches wrote:
+> > > +static int at91_usart_mode_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct mfd_cell cell;
+> > > +	u32 opmode = AT91_USART_MODE_SERIAL;
+> > > +
+> > > +	device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
+> > > +
+> > > +	switch (opmode) {
+> > > +	case AT91_USART_MODE_SPI:
+> > > +		cell = at91_usart_spi_subdev;
+> > > +		break;
+> > > +	case AT91_USART_MODE_SERIAL:
+> > > +		cell = at91_usart_serial_subdev;
+> > > +		break;
+> > > +	default:
+> > > +		break;
+> > 
+> > If there is an invalid opmode from the DT, you will pass a non initialized cell
+> > to mfd_add_device().
+> > 
+> > Regards
+> > 
+> > Ludovic
+> 
+> Hi Ludovic,
+> 
+> Tnx. That's true. How is better to do if atmel,usart-mode has an invalid
+> value? To initialize cell with at91_usart_serial_subdev or to print an error
+> message and return -EINVAL?
+> 
 
-> From: Colin Ian King <colin.king@canonical.com>
->
-> Currently saved_vals is being allocated and there is no check for
-> failed allocation (which is more likely than normal when using
-> GFP_ATOMIC).  Fix this by checking for a failed allocation and
-> propagating this error return down the the caller chain.
->
-> Detected by CoverityScan, CID#1469841 ("Dereference null return value")
->
-> Fixes: 88a1dbdec682 ("pinctrl: pinctrl-single: Add functions to save and restore pinctrl context")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Returning an error is probably the correct choice because it means the
+DT has an invalid value (something was done and is wrong).
 
-Patch applied with Johan's and Tony's ACKs.
-
-Yours,
-Linus Walleij
+-- 
+Alexandre Belloni, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
