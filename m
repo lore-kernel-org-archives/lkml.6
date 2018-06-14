@@ -3,47 +3,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 96566C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 472C2C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55CD8208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55CD8208C3
+	by mail.kernel.org (Postfix) with ESMTP id 06E2C208C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 19:48:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06E2C208C3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755518AbeFNTsa (ORCPT
+        id S1755532AbeFNTss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 15:48:30 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:35182 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936120AbeFNTrg (ORCPT
+        Thu, 14 Jun 2018 15:48:48 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:36551 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755470AbeFNTre (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 15:47:36 -0400
-Received: by mail-pf0-f194.google.com with SMTP id c22-v6so3741162pfi.2
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:47:35 -0700 (PDT)
+        Thu, 14 Jun 2018 15:47:34 -0400
+Received: by mail-pg0-f68.google.com with SMTP id m5-v6so3383036pgd.3
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 12:47:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=W7gMkBZ+YLQx2v3DMkvip+RobYFjRgj5Td2HVhtIWJs=;
-        b=IHQBIeabsyRs4gvJDiWQINGEnd/H59bXcDB46JOtFicvpgqEGu0LBKVh2vHxvscav1
-         qvJXfsTWBtolU+od+i0fYhj+I92LJjCsSd75TRO/JFXZrvfj+Gj/tRdwrO6xvyevEj0r
-         cQlM/OXZOfcThYNBaw6encQDSziX0zBJ9icvxAic+VP0/PtMucEyHuP/+Qf2VQko/QcO
-         vIIeSZaTQV/bt9HbzepPd1zxEbCMWvqa9q7tO0fSIRANgZoxNElFnNOQ0In8L6TKU2uu
-         xa9fNjYne4PDUNzQFF8urnAf3nOcPAW+0wZC8BUiTlMD7ZRTjSfQzYqdgMfy2WRv4Eec
-         afnw==
-X-Gm-Message-State: APt69E1jlh+VAgsKBB7RqtBKTXX6esUbelLmztUA1T+KiTcLAzlI7sk8
-        46/ZZ8Ib5+7VUjrBBwrySwGppw==
-X-Google-Smtp-Source: ADUXVKLz7NYYe6x8dRdxto+UQtufnDAG1pe33SpjESfSSneRtKkNvC/g8MwZmWbr4f0EONW9lXHuRA==
-X-Received: by 2002:a62:f5da:: with SMTP id b87-v6mr10916245pfm.113.1529005655316;
-        Thu, 14 Jun 2018 12:47:35 -0700 (PDT)
+        bh=Am8u4T8YEJ192VlnC7mxIIJ+wIqtTkEuSaMw62gHrDQ=;
+        b=Tt9lEMzD7tZD71ONtzsOiSFzDv04MA2zJT8sLHo8styZwOs5jtGn5FbIpm3H8MX2yV
+         7kxejtTnPd9n1Xjr4KnO9rVZXt9tQzWyQKoUwohzxxO8IZogkfBTiMlahD2WFZi1gcqr
+         Ai5SoVs/PnlJd5aQPRkeTP41F92FzGUvzyITuBgo8wuFh3Ld81ZCRPI9qygNwEqZW1jX
+         iNkdU1zZ+E14VvhdGpNXfZL4t3u0fCLJkXoKHsF0hM8B0dcMudzsto2npcKxDakrCufW
+         bqW7gpfCOrPqExz8BkLsLGji8XEmiG7ZKkxvhFZMhqnbwHT2egYamxzgLOJ2PNyWaHkg
+         yF2A==
+X-Gm-Message-State: APt69E1OMzb7UOWiasMpaSyv+gWftk0Y5iyMax7tuMl1NYTERNgCsXC2
+        ycssfLF87hK0SjUNhikfhq9nLQ==
+X-Google-Smtp-Source: ADUXVKJe7oMJW85vYx0DH93lfaE/O/5lqhXb1ziL5fBa7YBVZS0JnPSh3TamO591vAGEA48Hb94MsQ==
+X-Received: by 2002:aa7:8148:: with SMTP id d8-v6mr10870894pfn.78.1529005653643;
+        Thu, 14 Jun 2018 12:47:33 -0700 (PDT)
 Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id s28-v6sm9955506pfg.89.2018.06.14.12.47.33
+        by smtp.gmail.com with ESMTPSA id s28-v6sm9955506pfg.89.2018.06.14.12.47.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 14 Jun 2018 12:47:34 -0700 (PDT)
+        Thu, 14 Jun 2018 12:47:32 -0700 (PDT)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     MyungJoo Ham <myungjoo.ham@samsung.com>
 Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
@@ -60,9 +61,9 @@ Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
         Viresh Kumar <viresh.kumar@linaro.org>,
         Lee Jones <lee.jones@linaro.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v3 09/12] dt-bindings: PM / OPP: add opp-throttlers property
-Date:   Thu, 14 Jun 2018 12:47:09 -0700
-Message-Id: <20180614194712.102134-10-mka@chromium.org>
+Subject: [PATCH v3 08/12] cpufreq: Add stub for cpufreq_update_policy()
+Date:   Thu, 14 Jun 2018 12:47:08 -0700
+Message-Id: <20180614194712.102134-9-mka@chromium.org>
 X-Mailer: git-send-email 2.18.0.rc1.242.g61856ae69a-goog
 In-Reply-To: <20180614194712.102134-1-mka@chromium.org>
 References: <20180614194712.102134-1-mka@chromium.org>
@@ -71,35 +72,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The optional opp-throttlers property is used to configure the throttlers
-(see drivers/misc/throttler/*) that use a given OPP to throttle the
-corresponding device(s).
+cpufreq stubs out some functions when CONFIG_CPU_FREQ=n , but
+cpufreq_update_policy() is not among them. The throttler driver
+(https://patchwork.kernel.org/patch/10453351/) uses cpufreq as one
+possible throttling mechanism, but it can still be useful without
+cpufreq. Stubbing out cpufreq_update_policy() allows the throttler
+driver to be built without ugly #ifdef'ery when cpufreq is disabled.
 
 Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 ---
 Changes in v3:
-- none
-
-Changes in v2:
 - patch added to series
 
- Documentation/devicetree/bindings/opp/opp.txt | 3 +++
- 1 file changed, 3 insertions(+)
+ include/linux/cpufreq.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/opp/opp.txt b/Documentation/devicetree/bindings/opp/opp.txt
-index c396c4c0af92..747e79740c75 100644
---- a/Documentation/devicetree/bindings/opp/opp.txt
-+++ b/Documentation/devicetree/bindings/opp/opp.txt
-@@ -170,6 +170,9 @@ Optional properties:
-   functioning of the current device at the current OPP (where this property is
-   present).
+diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+index 882a9b9e34bc..dba8c4951e2e 100644
+--- a/include/linux/cpufreq.h
++++ b/include/linux/cpufreq.h
+@@ -210,6 +210,7 @@ static inline unsigned int cpufreq_quick_get_max(unsigned int cpu)
+ 	return 0;
+ }
+ static inline void disable_cpufreq(void) { }
++static inline void cpufreq_update_policy(unsigned int cpu) { }
+ #endif
  
-+- opp-throttlers: Array with phandles of throttlers that use this OPP to
-+  throttle the corresponding device(s).
-+
- Example 1: Single cluster Dual-core ARM cortex A9, switch DVFS states together.
- 
- / {
+ #ifdef CONFIG_CPU_FREQ_STAT
 -- 
 2.18.0.rc1.242.g61856ae69a-goog
 
