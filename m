@@ -5,44 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B61DAC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:09:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1C0A7C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:09:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 757BD208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:09:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 757BD208DA
+	by mail.kernel.org (Postfix) with ESMTP id D19EB208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 16:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D19EB208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755494AbeFNQJZ (ORCPT
+        id S1755511AbeFNQJ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 12:09:25 -0400
-Received: from osg.samsung.com ([64.30.133.232]:59293 "EHLO osg.samsung.com"
+        Thu, 14 Jun 2018 12:09:28 -0400
+Received: from osg.samsung.com ([64.30.133.232]:62311 "EHLO osg.samsung.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755243AbeFNQJT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 12:09:19 -0400
+        id S1755243AbeFNQJZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 12:09:25 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by osg.samsung.com (Postfix) with ESMTP id 167CA20EE1;
-        Thu, 14 Jun 2018 09:09:19 -0700 (PDT)
+        by osg.samsung.com (Postfix) with ESMTP id 1E33620F03;
+        Thu, 14 Jun 2018 09:09:25 -0700 (PDT)
 X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
 X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
 Received: from osg.samsung.com ([127.0.0.1])
         by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id yFSeQnb92vVH; Thu, 14 Jun 2018 09:09:17 -0700 (PDT)
+        with ESMTP id vSYJRVf0XmIB; Thu, 14 Jun 2018 09:09:24 -0700 (PDT)
 Received: from smtp.s-opensource.com (177.41.114.220.dynamic.adsl.gvt.net.br [177.41.114.220])
-        by osg.samsung.com (Postfix) with ESMTPSA id 72F1B20E9D;
+        by osg.samsung.com (Postfix) with ESMTPSA id 90B8D20EA6;
         Thu, 14 Jun 2018 09:09:16 -0700 (PDT)
 Received: from mchehab by smtp.s-opensource.com with local (Exim 4.91)
         (envelope-from <mchehab@smtp.s-opensource.com>)
-        id 1fTUoE-0005Sj-3q; Thu, 14 Jun 2018 13:09:14 -0300
+        id 1fTUoD-0005SD-OQ; Thu, 14 Jun 2018 13:09:13 -0300
 From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>
 Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: [PATCH v3 10/27] scripts/documentation-file-ref-check: fix help message
-Date:   Thu, 14 Jun 2018 13:08:55 -0300
-Message-Id: <0f5d4e4192c08bfd2028f77138575584641e6565.1528990947.git.mchehab+samsung@kernel.org>
+        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org
+Subject: [PATCH v3 02/27] docs: crypto_engine.rst: Fix two parse warnings
+Date:   Thu, 14 Jun 2018 13:08:47 -0300
+Message-Id: <0e11caf5c0ebe261c7e6c134a5a6be83bcfaf8b8.1528990947.git.mchehab+samsung@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1528990947.git.mchehab+samsung@kernel.org>
 References: <cover.1528990947.git.mchehab+samsung@kernel.org>
@@ -53,27 +56,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The name of the --fix option was renamed, but it was not
-changed at the quick help message.
+./Documentation/crypto/crypto_engine.rst:13: WARNING: Unexpected indentation.
+./Documentation/crypto/crypto_engine.rst:15: WARNING: Block quote ends without a blank line; unexpected unindent.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- scripts/documentation-file-ref-check | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/crypto/crypto_engine.rst | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/scripts/documentation-file-ref-check b/scripts/documentation-file-ref-check
-index 2520bc14ffac..9e7ae14080aa 100755
---- a/scripts/documentation-file-ref-check
-+++ b/scripts/documentation-file-ref-check
-@@ -21,7 +21,7 @@ GetOptions(
- );
+diff --git a/Documentation/crypto/crypto_engine.rst b/Documentation/crypto/crypto_engine.rst
+index 8272ac92a14f..1d56221dfe35 100644
+--- a/Documentation/crypto/crypto_engine.rst
++++ b/Documentation/crypto/crypto_engine.rst
+@@ -8,11 +8,13 @@ The crypto engine API (CE), is a crypto queue manager.
  
- if ($help != 0) {
--    print "$scriptname [--help] [--fix-rst]\n";
-+    print "$scriptname [--help] [--fix]\n";
-     exit -1;
- }
- 
+ Requirement
+ -----------
+-You have to put at start of your tfm_ctx the struct crypto_engine_ctx
+-struct your_tfm_ctx {
++You have to put at start of your tfm_ctx the struct crypto_engine_ctx::
++
++  struct your_tfm_ctx {
+         struct crypto_engine_ctx enginectx;
+         ...
+-};
++  };
++
+ Why: Since CE manage only crypto_async_request, it cannot know the underlying
+ request_type and so have access only on the TFM.
+ So using container_of for accessing __ctx is impossible.
 -- 
 2.17.1
 
