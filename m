@@ -2,136 +2,106 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4BEB6C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:31:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AB0FEC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:33:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEFAC208D8
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CD9B208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 06:33:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dNNQGzr9";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="dNNQGzr9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEFAC208D8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iWcHP+Xr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CD9B208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752891AbeFNGbG (ORCPT
+        id S1752894AbeFNGdD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 02:31:06 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:52824 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752551AbeFNGbE (ORCPT
+        Thu, 14 Jun 2018 02:33:03 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:33922 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752681AbeFNGdC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 02:31:04 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A927E600D0; Thu, 14 Jun 2018 06:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528957863;
-        bh=yXjlUNIZlS9XYIjxWFQdWZCmLsuQFWY8IWnd625YlzA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dNNQGzr91LXU8Iig4AUvNoeFvlia/ktCUqSQEt1dN5varXBHuScOhL/6RK7OjP9F/
-         EjBt2MLk+k7DN1Jj7V+5UtyS0FkykxDjHky9bDc690lPZTKXQBjVJC/MA22BXhgyyz
-         AdgAqJV1eYJMXERBI2ypaC9I9ziDbr1MDyB9w/8Q=
-Received: from [10.79.40.126] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id EE23B600D0;
-        Thu, 14 Jun 2018 06:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528957863;
-        bh=yXjlUNIZlS9XYIjxWFQdWZCmLsuQFWY8IWnd625YlzA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=dNNQGzr91LXU8Iig4AUvNoeFvlia/ktCUqSQEt1dN5varXBHuScOhL/6RK7OjP9F/
-         EjBt2MLk+k7DN1Jj7V+5UtyS0FkykxDjHky9bDc690lPZTKXQBjVJC/MA22BXhgyyz
-         AdgAqJV1eYJMXERBI2ypaC9I9ziDbr1MDyB9w/8Q=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EE23B600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
-Subject: Re: [PATCH] pinctrl: qcom: spmi-gpio: Add pm8998 and pm8005 to
- binding
-To:     Stephen Boyd <swboyd@chromium.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        devicetree@vger.kernel.org
-References: <20180612230604.137880-1-swboyd@chromium.org>
-From:   Vivek Gautam <vivek.gautam@codeaurora.org>
-Message-ID: <ba1d45e9-dd10-ead0-6743-74b32260d760@codeaurora.org>
-Date:   Thu, 14 Jun 2018 12:00:58 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180612230604.137880-1-swboyd@chromium.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+        Thu, 14 Jun 2018 02:33:02 -0400
+Received: by mail-pf0-f194.google.com with SMTP id a63-v6so2711633pfl.1;
+        Wed, 13 Jun 2018 23:33:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=WdOdOAf1Z5MZCOEOfueIGfT2YxxrSi5nr1Gi0A31QOU=;
+        b=iWcHP+Xr8lsMBOkjhbL7Xkvqe0pbNTY9Ki0uktilAh1yyHK9nBSufxBQF2qDa8QTwU
+         pkef22haRKjJvSk/a+qGCVDqqgCPgW/XWNjZE36LIT8z7nnnF+5VDlFzsBysBA3my4Qb
+         yXE3ITtCHC5yzd1qVBEe/VLCm0EYBJSV9wIeVGON7mjfPZZLYfWB+ZgikAT16SBYNW/L
+         GycDJHpCEKVbgpy2f02BznG7uTx0znAvjHoISxFIZbj4sPJw/1WZ0cq/PqCNh8SmoYoY
+         pMfapc1uvcHKtirhVXfu4ClNaXTRcMjTuJ+fImRny0eb/AsnoN2875QUXskKVEWOsrcW
+         RZxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=WdOdOAf1Z5MZCOEOfueIGfT2YxxrSi5nr1Gi0A31QOU=;
+        b=RUjWAFlv+V5iO4Nr8eXZ/QFPMqb8N8NAZiK8s4h7BA01pWa68BTyfbuUODjIUun6TI
+         3w3bvXUKUmkggrGfZLYcyLkew/d9ZBQgPx0DSTScElg4fxq/sjZKdFHdKr9PfmJq+oib
+         OZN6AhAssIm7/56YOy3A6mZWz05SLnmS/FG2B8RNgpGClzCwRVnu2l34UvbJo5BNLR6h
+         ZiqvlZhhqFqTuUAr7LM0HIsDH1K6kf2aMl7kgWxoLsfR1tLaGX2xGLkWB5OkaxaHBJo+
+         CeTL6eYNGpbrLGtx6AdepCTvwOzHcs1R9ZidFLAzZms3GsQER+tbX06pu3Z05c4ygOrL
+         7XWw==
+X-Gm-Message-State: APt69E1NM1KswuAwkm6qYxu+5LiqM1HILsxtGd6ThOauno46OiCrZxSF
+        tuS3H5aG078bgHUp08LhkV2TXfJm
+X-Google-Smtp-Source: ADUXVKIz85cUEvTVIb525SsPRoQwDo5zKo2nKSswtj4SL0XVP56+z/mdk+TRus23LHDFqGWNCQ17bQ==
+X-Received: by 2002:a65:5003:: with SMTP id f3-v6mr1127655pgo.425.1528957981655;
+        Wed, 13 Jun 2018 23:33:01 -0700 (PDT)
+Received: from parths1.sibshivalik.com ([219.65.63.222])
+        by smtp.gmail.com with ESMTPSA id m83-v6sm11341838pfi.188.2018.06.13.23.32.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Wed, 13 Jun 2018 23:33:01 -0700 (PDT)
+From:   Parth Y Shah <sparth1292@gmail.com>
+To:     balbi@kernel.org, gregkh@linuxfoundation.org,
+        linux-usb@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, Parth Y Shah <sparth1292@gmail.com>
+Subject: [PATCH v2] Fixed a checkpatch error
+Date:   Thu, 14 Jun 2018 12:02:46 +0530
+Message-Id: <1528957966-24707-1-git-send-email-sparth1292@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <b34abe879f77c55d29ef8a2b1cd9aa0e09ee2a3b.camel@perches.com>
+References: <b34abe879f77c55d29ef8a2b1cd9aa0e09ee2a3b.camel@perches.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+ERROR: code indent should use tabs where possible
 
+Here, spaces are replaced by a tab in 2 lines.
 
-On 6/13/2018 4:36 AM, Stephen Boyd wrote:
-> Update the binding for two more PMICs supported by the same driver.
-> While we're here, remove the duplicate pmi8994 lines because that
-> support got merged twice.
->
-> Cc: Rajendra Nayak <rnayak@codeaurora.org>
-> Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
-> Cc: <devicetree@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-> ---
->   .../devicetree/bindings/pinctrl/qcom,pmic-gpio.txt          | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> index 5c25fcb29fb5..ffd4345415f3 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,pmic-gpio.txt
-> @@ -7,6 +7,7 @@ PMIC's from Qualcomm.
->   	Usage: required
->   	Value type: <string>
->   	Definition: must be one of:
-> +		    "qcom,pm8005-gpio"
->   		    "qcom,pm8018-gpio"
->   		    "qcom,pm8038-gpio"
->   		    "qcom,pm8058-gpio"
-> @@ -15,7 +16,7 @@ PMIC's from Qualcomm.
->   		    "qcom,pm8921-gpio"
->   		    "qcom,pm8941-gpio"
->   		    "qcom,pm8994-gpio"
-> -		    "qcom,pmi8994-gpio"
+Signed-off-by: Parth Y Shah <sparth1292@gmail.com>
+---
+Changes since v1:
+ * Updated commit description
+ * Removed one extra tab and replaced spaces with tab to resolve
+   checkpatch error
 
-Thanks.
-Reviewed-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+ drivers/usb/gadget/configfs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-BRs
-Vivek
-> +		    "qcom,pm8998-gpio"
->   		    "qcom,pma8084-gpio"
->   		    "qcom,pmi8994-gpio"
->   
-> @@ -78,6 +79,7 @@ to specify in a pin configuration subnode:
->   	Value type: <string-array>
->   	Definition: List of gpio pins affected by the properties specified in
->   		    this subnode.  Valid pins are:
-> +		    gpio1-gpio4 for pm8005
->   		    gpio1-gpio6 for pm8018
->   		    gpio1-gpio12 for pm8038
->   		    gpio1-gpio40 for pm8058
-> @@ -86,7 +88,7 @@ to specify in a pin configuration subnode:
->   		    gpio1-gpio44 for pm8921
->   		    gpio1-gpio36 for pm8941
->   		    gpio1-gpio22 for pm8994
-> -		    gpio1-gpio10 for pmi8994
-> +		    gpio1-gpio26 for pm8998
->   		    gpio1-gpio22 for pma8084
->   		    gpio1-gpio10 for pmi8994
->   
+diff --git a/drivers/usb/gadget/configfs.c b/drivers/usb/gadget/configfs.c
+index efba66c..0251299 100644
+--- a/drivers/usb/gadget/configfs.c
++++ b/drivers/usb/gadget/configfs.c
+@@ -1217,8 +1217,8 @@ static void purge_configs_funcs(struct gadget_info *gi)
+ 			list_move_tail(&f->list, &cfg->func_list);
+ 			if (f->unbind) {
+ 				dev_dbg(&gi->cdev.gadget->dev,
+-				         "unbind function '%s'/%p\n",
+-				         f->name, f);
++					"unbind function '%s'/%p\n",
++					f->name, f);
+ 				f->unbind(c, f);
+ 			}
+ 		}
+-- 
+2.7.4
 
