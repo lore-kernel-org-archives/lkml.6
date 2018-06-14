@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 258F8C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 17FD0C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFDF3208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1744208DA
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4flNWsu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFDF3208DB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xOdwRAJp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1744208DA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964990AbeFNOHM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:07:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47410 "EHLO mail.kernel.org"
+        id S965004AbeFNOHR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:07:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47488 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964969AbeFNOHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:07:07 -0400
+        id S964969AbeFNOHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C41A6208DA;
-        Thu, 14 Jun 2018 14:07:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55291208DA;
+        Thu, 14 Jun 2018 14:07:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985227;
-        bh=UvGQ+Kf3r7YS57Nu+zoOmzLvieIr4gElXArDSLXjWA0=;
+        s=default; t=1528985232;
+        bh=s1w6n8GrxbNyuiNmKSNBn87+uq9S4qpbBZNt3trYmSI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c4flNWsuxLKtwuEsq8THGsVrxC3pLSdTtpyPc5kOWPTvq3TvkSvLU3dqAmIqnIxAI
-         dXDsmqYJNrXYj15f9W7FCL/IqKkkH06NC3GFQ0wRk4Dr1VIxFaK+uzpbHKWpcjD+Co
-         y7aVeFLCf2DI9KIq4Sv92EaAflN9JrU2iWhnkba0=
+        b=xOdwRAJpjbIQ4eXX9y1w3SfX5h/4BOKU3zOi85yDW7aqfefJS8Bez03PYzYI0Fkin
+         ksDA5sAtUoeusNhRmDzgrcz1+xdAS2Y9AH/HnLaGtOpoJH/bDyyIElQx4ywfvhCrr2
+         FhHGlmeeKA0appwLgZzv+IK43qd720GOjrn1m2pY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Bin Liu <b-liu@ti.com>,
+        Tero Kristo <t-kristo@ti.com>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.17 43/45] crypto: vmx - Remove overly verbose printk from AES init routines
-Date:   Thu, 14 Jun 2018 16:04:34 +0200
-Message-Id: <20180614132129.329378810@linuxfoundation.org>
+Subject: [PATCH 4.17 45/45] crypto: omap-sham - fix memleak
+Date:   Thu, 14 Jun 2018 16:04:36 +0200
+Message-Id: <20180614132129.492739275@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -59,79 +60,35 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Bin Liu <b-liu@ti.com>
 
-commit 1411b5218adbcf1d45ddb260db5553c52e8d917c upstream.
+commit 9dbc8a0328efa485a6f5b68b867f9f523a3fbeff upstream.
 
-In the vmx AES init routines we do a printk(KERN_INFO ...) to report
-the fallback implementation we're using.
+Fixes: 8043bb1ae03cb ("crypto: omap-sham - convert driver logic to use sgs for data xmit")
 
-However with a slow console this can significantly affect the speed of
-crypto operations. Using 'cryptsetup benchmark' the removal of the
-printk() leads to a ~5x speedup for aes-cbc decryption.
+The memory pages freed in omap_sham_finish_req() were less than those
+allocated in omap_sham_copy_sgs().
 
-So remove them.
-
-Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
-Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
-Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
-Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
-Cc: stable@vger.kernel.org # v4.1+
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Cc: stable@vger.kernel.org
+Signed-off-by: Bin Liu <b-liu@ti.com>
+Acked-by: Tero Kristo <t-kristo@ti.com>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/vmx/aes.c     |    2 --
- drivers/crypto/vmx/aes_cbc.c |    3 ---
- drivers/crypto/vmx/aes_ctr.c |    2 --
- drivers/crypto/vmx/ghash.c   |    2 --
- 4 files changed, 9 deletions(-)
+ drivers/crypto/omap-sham.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/crypto/vmx/aes.c
-+++ b/drivers/crypto/vmx/aes.c
-@@ -48,8 +48,6 @@ static int p8_aes_init(struct crypto_tfm
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
+--- a/drivers/crypto/omap-sham.c
++++ b/drivers/crypto/omap-sham.c
+@@ -1087,7 +1087,7 @@ static void omap_sham_finish_req(struct
  
- 	crypto_cipher_set_flags(fallback,
- 				crypto_cipher_get_flags((struct
---- a/drivers/crypto/vmx/aes_cbc.c
-+++ b/drivers/crypto/vmx/aes_cbc.c
-@@ -52,9 +52,6 @@ static int p8_aes_cbc_init(struct crypto
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--		crypto_skcipher_driver_name(fallback));
--
+ 	if (test_bit(FLAGS_SGS_COPIED, &dd->flags))
+ 		free_pages((unsigned long)sg_virt(ctx->sg),
+-			   get_order(ctx->sg->length));
++			   get_order(ctx->sg->length + ctx->bufcnt));
  
- 	crypto_skcipher_set_flags(
- 		fallback,
---- a/drivers/crypto/vmx/aes_ctr.c
-+++ b/drivers/crypto/vmx/aes_ctr.c
-@@ -50,8 +50,6 @@ static int p8_aes_ctr_init(struct crypto
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--		crypto_skcipher_driver_name(fallback));
- 
- 	crypto_skcipher_set_flags(
- 		fallback,
---- a/drivers/crypto/vmx/ghash.c
-+++ b/drivers/crypto/vmx/ghash.c
-@@ -64,8 +64,6 @@ static int p8_ghash_init_tfm(struct cryp
- 		       alg, PTR_ERR(fallback));
- 		return PTR_ERR(fallback);
- 	}
--	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
--	       crypto_tfm_alg_driver_name(crypto_shash_tfm(fallback)));
- 
- 	crypto_shash_set_flags(fallback,
- 			       crypto_shash_get_flags((struct crypto_shash
+ 	if (test_bit(FLAGS_SGS_ALLOCED, &dd->flags))
+ 		kfree(ctx->sg);
 
 
