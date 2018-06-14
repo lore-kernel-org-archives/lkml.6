@@ -2,96 +2,93 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 13A8FC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:29:18 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AE321C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE3F5208D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:29:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hbwUQ1XJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE3F5208D7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E4A1208D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 08:29:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E4A1208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754814AbeFNI3N (ORCPT
+        id S1754858AbeFNI3t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 04:29:13 -0400
-Received: from mail-io0-f195.google.com ([209.85.223.195]:46854 "EHLO
-        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752882AbeFNI3L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 04:29:11 -0400
-Received: by mail-io0-f195.google.com with SMTP id d22-v6so6286283iof.13
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 01:29:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cX5hvQEFl75EGRnDmWxetM3r9T1D2CwJU9Hie/gwRkc=;
-        b=hbwUQ1XJ6a3kZXLv3qDyZxjAhWPMDIaJncVKgiM4eZcA0ZACpIPBXuV1KndMGAlmjH
-         ImlPCJQxWceI0MC7AW4onT1MpfYxUjxqa3pshRARzS+qMjFzGy9qLcqilkCVRH9ULSue
-         59XSVOIPMbN1LOG2zvXzeRDXrYmqAt5V1rPLo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cX5hvQEFl75EGRnDmWxetM3r9T1D2CwJU9Hie/gwRkc=;
-        b=Uf6nCqcahgdRNl8ZBRjmpvsunKiveEuz5PvRm9bsCzt/BkDfdYRZnwZuz3I4qq8L6h
-         zk+zEGfl0Y1nXC6apn99w1nwclDZBfiH/8Jtr196zkm0or6SR1u8ePU7mqCLGOp6fWih
-         SV1Wlo0difsQIsrDwgJ0aik5rKZ1xPegKTAR/oN2BU+L6YWr1XrSGucNtEkAxxlyS559
-         KESAb+HwVCSMVaJEzun3SqGY/pbEml+o7MlTKZmr4jgxQb/VPK70V8VYuGqACjV6yh8T
-         MZ2GeO1nIxa31il6SI2TqhDhiV/PwvdXV/mc2At45OdKHWefzCuHl6gaHFs0+CjliK0p
-         L2JQ==
-X-Gm-Message-State: APt69E1IfOSpGZ3eyiFXNEG/fdVA/HorZlghPgIj9wlOxwJJ4WYT2KBG
-        2Ec6Ch2b2+5zOM5YzF1L8grXTPty3a23QDE5XwbKkw==
-X-Google-Smtp-Source: ADUXVKLr+MBXmZzHd/oR2ctwbOOaup2eLrCcLpJXoU1YAi4Jgm41veUpfZPkohj/3T4edovpWzXt/9N+dEbGBFqyXvo=
-X-Received: by 2002:a6b:106:: with SMTP id 6-v6mr1418246iob.175.1528964950831;
- Thu, 14 Jun 2018 01:29:10 -0700 (PDT)
+        Thu, 14 Jun 2018 04:29:49 -0400
+Received: from verein.lst.de ([213.95.11.211]:45136 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752882AbeFNI3r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 04:29:47 -0400
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id EB74668C4E; Thu, 14 Jun 2018 10:38:06 +0200 (CEST)
+Date:   Thu, 14 Jun 2018 10:38:06 +0200
+From:   Christoph Hellwig <hch@lst.de>
+To:     Anatoliy Glagolev <glagolig@gmail.com>
+Cc:     linux-block@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        Jens Axboe <axboe@kernel.dk>, linux-scsi@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: fix bsg_unregister and bsg_open race
+Message-ID: <20180614083806.GA18966@lst.de>
+References: <20180613221417.GA22778@xldev-tmpl.dev.purestorage.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:78c9:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 01:29:09
- -0700 (PDT)
-In-Reply-To: <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
-References: <1528276734-1483-1-git-send-email-j-keerthy@ti.com> <1528276734-1483-2-git-send-email-j-keerthy@ti.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 14 Jun 2018 10:29:09 +0200
-Message-ID: <CACRpkdbFyZwG4S9t3ts3wmVWioadd7NjpdMUkq-wujH=g68zvw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: davinci: Do not assume continuous IRQ numbering
-To:     Keerthy <j-keerthy@ti.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Tero Kristo <t-kristo@ti.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180613221417.GA22778@xldev-tmpl.dev.purestorage.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 6, 2018 at 11:18 AM, Keerthy <j-keerthy@ti.com> wrote:
+On Wed, Jun 13, 2018 at 04:14:18PM -0600, Anatoliy Glagolev wrote:
+> The existing implementation allows races between bsg_unregister and
+> bsg_open paths. bsg_ungegister and request_queue cleanup and
+> deletion may start and complete right after bsg_get_device (in bsg_open path)
+> retrieves bsg_class_device and releases the mutex. Then bsg_open path
+> touches freed memory of bsg_class_device and request_queue.
+> 
+> One possible fix is to hold the mutex all the way through bsg_get_device
+> instead of releasing it after bsg_class_device retrieval.
 
-> Currently the driver assumes that the interrupts are continuous
-> and does platform_get_irq only once and assumes the rest are continuous,
-> instead call platform_get_irq for all the interrupts and store them
-> in an array for later use.
->
-> Signed-off-by: Keerthy <j-keerthy@ti.com>
+This looks generally fine to me.  Nitpicks below:
 
-Hm! Thierry has recently submitted patches to make it easier for chips with
-banked IRQs to use the GPIOLIB_IRQCHIP.
+> @@ -746,16 +745,18 @@ static struct bsg_device *bsg_get_device(struct inode *inode, struct file *file)
+>  	 */
+>  	mutex_lock(&bsg_mutex);
+>  	bcd = idr_find(&bsg_minor_idr, iminor(inode));
+> -	mutex_unlock(&bsg_mutex);
+>  
+>  	if (!bcd)
+>  		return ERR_PTR(-ENODEV);
 
-Please look at the code in gpio/gpio-tegra186.c and see if you can use
-his approach.
+This needs to unlock the mutex. E.g.
 
-As you can see this chip is using gpiochip_irq_map/unmap in its
-domain, and manipulates struct gpio_irq_chip directly.
+	if (!bcd) {
+		bd = ERR_PTR(-ENODEV);
+		goto out_unlock;
+	}
 
-I think the idea is to make it possible to use GPIOLIB_IRQCHIP
-for banked IRQs but the infrastructure is not yet inside the gpiolib
-so it is a bit taped on the side right now.
 
-Yours,
-Linus Walleij
+>  	bd = __bsg_get_device(iminor(inode), bcd->queue);
+> +	if (bd) {
+> +		mutex_unlock(&bsg_mutex);
+>  		return bd;
+> +	}
+>  
+>  	bd = bsg_add_device(inode, bcd->queue, file);
+> +	mutex_unlock(&bsg_mutex);
+>  
+>  	return bd;
+
+I'd simply do:
+
+	bd = __bsg_get_device(iminor(inode), bcd->queue);
+	if (!bd)
+		bd = bsg_add_device(inode, bcd->queue, file);
+out_unlock:
+	mutex_unlock(&bsg_mutex);
+	return bd;
