@@ -2,157 +2,123 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E6ACBC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:41:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 15847C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C8EA208E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:41:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5EC8208B5
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:43:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0Z7kH68u"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C8EA208E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gHYqID92"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5EC8208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754997AbeFNKlX (ORCPT
+        id S1754993AbeFNKnq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 06:41:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37870 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754857AbeFNKlV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:41:21 -0400
-Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29BDA208CB;
-        Thu, 14 Jun 2018 10:41:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528972881;
-        bh=GSLLYrtGeb9CojeSy2RWtQ5ZoBNxTgwm6fujxy4HvNk=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=0Z7kH68uFNcYFy9d8T7MzyvQfbGYv4iCuYexiXq7gDd88jkajt9poDW9l3wxzOrtv
-         uk2bFR0nDZKM5Bl8h8xgtAsPmI7/KX+gYVFWyrCXYq/LIA/t1nkhGmwcAAotDP9hcl
-         Z6oJUQQ6olRsukPH7rFxUXbACNhJsjsMymJ8MrV4=
-Message-ID: <8f1ff99c80db2df5947bd7880028818e2e878fdd.camel@kernel.org>
-Subject: Re: [PATCH 0/2] fs/lock: show locks info owned by dead/invisible
- processes
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Konstantin Khorenko <khorenko@virtuozzo.com>,
-        Kirill Gorkunov <kgorkunov@virtuozzo.com>,
-        Andrey Vagin <avagin@virtuozzo.com>,
-        Benjamin Coddington <bcodding@redhat.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Vasily Averin <vvs@virtuozzo.com>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Thu, 14 Jun 2018 06:41:18 -0400
-In-Reply-To: <20180608142712.32460-1-khorenko@virtuozzo.com>
-References: <20180608142712.32460-1-khorenko@virtuozzo.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 14 Jun 2018 06:43:46 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34938 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754900AbeFNKno (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 06:43:44 -0400
+Received: by mail-lf0-f65.google.com with SMTP id i15-v6so8666055lfc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 03:43:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=BLsx5nLPISpUVoW0qG4Sr8m/gmithxdi0bWcJAO5x1Y=;
+        b=gHYqID92npBbu9mu2pLVuXcXjchXxgLtIkabA1+Eu3KAvR0c2kg6o1y/vcCki5e/TG
+         v+xmwd+Mxk9CByCBvaMH4Fhw1QGO7yJPBvjIkxWylq0njB48Z+A149DM+C3JtD7tG9/2
+         NkOjpz9y61l8sDerDZJBfwJPPvXhXVZKPA5ks=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=BLsx5nLPISpUVoW0qG4Sr8m/gmithxdi0bWcJAO5x1Y=;
+        b=S5WMqoqGZF0g9t5kz/RwjEAlSaxvPpz6i1nq/gnqSHkZpqC9uteh2aMkz85MaQ9J7/
+         DlU963TwIbNXUbALxZkBPb08ec7wLuzyRRqJOYDnZaGiIjOpCctCVMVmFfCcdXQMXam+
+         /tx8pXkidt50s1DlqhmAjJWvpBF6cHQoqA9oqhjsDwGBAEtF89yheLb/KeTCQPCldArT
+         lN9mJs1+DwAfcIpFN0/pObHzfLSyK2kw4+7XmjyGY+4mZqq08qhxibrRHuh4V1nBeDRB
+         aiFUw6BEVDtlYAeRBhD6YgWtCvmqreOfzYT8SfaioK/tqQX4vb5MQzl880oCcSPyqiXN
+         Dd3g==
+X-Gm-Message-State: APt69E0//LtnWYHUpD0TAd9q2t0H25MTfzbxLydB6F5gMjpXsBGtzZSE
+        sAygw1bitfp3Q0WZDi+NH9BSzr47Vuk=
+X-Google-Smtp-Source: ADUXVKKDxW56qfgqva23QIV1QDR1vB0qexWcMXosBcnjSpFbSCuz/fHn1kYQqFVj5UxCMMhysnDzpQ==
+X-Received: by 2002:a2e:575c:: with SMTP id r28-v6mr1341708ljd.51.1528973022657;
+        Thu, 14 Jun 2018 03:43:42 -0700 (PDT)
+Received: from localhost (85-76-96-172-nat.elisa-mobile.fi. [85.76.96.172])
+        by smtp.gmail.com with ESMTPSA id r84-v6sm894711ljb.24.2018.06.14.03.43.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 03:43:41 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     rnayak@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com,
+        smohanad@codeaurora.org, vivek.gautam@codeaurora.org,
+        andy.gross@linaro.org, Kees Cook <keescook@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
+        DEVICE TREE BINDINGS),
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM64 PORT
+        (AARCH64 ARCHITECTURE)),
+        linux-pm@vger.kernel.org (open list:THERMAL),
+        linux-soc@vger.kernel.org (open list:ARM/QUALCOMM SUPPORT)
+Subject: [PATCH v3 0/6] thermal: tsens: Refactoring for TSENSv2 IP
+Date:   Thu, 14 Jun 2018 13:43:10 +0300
+Message-Id: <cover.1528972165.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-06-08 at 17:27 +0300, Konstantin Khorenko wrote:
-> The behavior has been changed after 9d5b86ac13c5 ("fs/locks: Remove fl_nspid
-> and use fs-specific l_pid for remote locks")
-> and now /proc/$PID/fdinfo/$FD does not show the info about the lock
-> * if the flock owner process is dead and its pid has been already freed
-> or
-> * if the lock owner is not visible in current pidns.
-> 
-> CRIU uses this interface to store locks info during dump and thus can break
-> on v4.13 and newer.
-> 
-> So let's show info about locks anyway in described cases (like it was before
-> 9d5b86ac13c5), but show pid number saved in file_lock struct if we are in
-> init_pid_ns (patch 1) or just zero otherwise (patch 2) like we do with SID.
-> 
-> Reproducer:
-> process A       process A1      process A2
-> fork()--------->
-> exit()          open()
->                 flock()
->                 fork()--------->
->                 exit()          sleep()
-> 
-> Before the patch:
-> ================
-> (root@vz7)/: cat /proc/${PID_A2}/fdinfo/3
-> pos:    4
-> flags:  02100002
-> mnt_id: 257
-> lock:   (root@vz7)/:
-> 
-> After the patch:
-> ===============
-> (root@vz7)/:cat /proc/${PID_A2}/fdinfo/3
-> pos:    4
-> flags:  02100002
-> mnt_id: 295
-> lock:   1: FLOCK  ADVISORY  WRITE ${PID_A1} b6:f8a61:529946 0 EOF
-> 
-> ===============
-> # cat flock1.c
-> 
-> #include <stdio.h>
-> #include <stdlib.h>
-> #include <unistd.h>
-> #include <sys/types.h>
-> #include <sys/stat.h>
-> #include <sys/file.h>
-> #include <fcntl.h>
-> 
-> int main(void)
-> {
->         int fd;
->         int err;
->         pid_t child_pid;
-> 
->         child_pid = fork();
->         if (child_pid == -1)
->                 perror("fork failed");
->         if (child_pid) {
->                 exit(0);
->         }
-> 
->         fd = open("/tmp/a", O_CREAT | O_RDWR);
->         if (fd == -1)
->                 perror("Failed to open the file");
-> 
->         err = flock(fd, LOCK_EX);
->         if (err == -1)
->                 perror("flock failed");
-> 
->         child_pid = fork();
->         if (child_pid == -1)
->                 perror("fork failed");
->         if (child_pid)
->                 exit(0);
-> 
->         sleep(10000);
-> 
->         return 0;
-> }
-> 
-> Konstantin Khorenko (2):
->   fs/lock: skip lock owner pid translation in case we are in init_pid_ns
->   fs/lock: show locks taken by processes from another pidns
-> 
->  fs/locks.c | 15 ++++++++++-----
->  1 file changed, 10 insertions(+), 5 deletions(-)
-> 
+This series is a mixed bag: Some code moves to deal with v2 of the
+TSENS IP into common functions, a new qcom,tsens-v2 DT property to cover
+all v2 platforms, new platform support (sdm845), a cleanup
+patch and a DT change to have a common way to deal with the SROT and TM
+registers despite slightly different features across the IP family and
+different register offsets.
 
-These look fine to me. I'll plan to pick them up for v4.19 unless anyone
-has objections.
+Rob, I haven't added your Ack to patch 4 because it changed a bit.
 
-Thanks!
+Regards,
+Amit
+
+Changes since v2:
+- Based on review, moved tsens-8996.c to tsens-v2.c and changed
+  corresponding function names, struct names to allow for generic tsensv2
+  platforms
+- All v2 platforms will now only need to use the qcom,tsen-v2 property
+- Added a DT patch to initialize tsens driver on sdm845, now that 4.18-rc1
+  will contain an sdm845.dtsi
+
+Changes since v1:
+- Move get_temp() from tsens-8996 to tsens-common and rename
+- Change 8996 DT entry to allow init_common() to work across sdm845 and
+  8996 due to different offsets
+
+
+Amit Kucheria (6):
+  thermal: tsens: Get rid of unused fields in structure
+  dt: qcom: 8996: thermal: Move to DT initialisation
+  thermal: tsens: Rename tsens-8996 to tsens-v2 for reuse
+  thermal: tsens: Add support for SDM845
+  thermal: tsens: Check if we have valid data before reading
+  arm64: dts: sdm845: Add tsens nodes
+
+ .../devicetree/bindings/thermal/qcom-tsens.txt     |  1 +
+ arch/arm64/boot/dts/qcom/msm8996.dtsi              | 12 ++++++-
+ arch/arm64/boot/dts/qcom/sdm845.dtsi               | 16 +++++++++
+ drivers/thermal/qcom/Makefile                      |  2 +-
+ drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c}  | 42 +++++++++++++---------
+ drivers/thermal/qcom/tsens.c                       |  3 ++
+ drivers/thermal/qcom/tsens.h                       |  7 ++--
+ 7 files changed, 61 insertions(+), 22 deletions(-)
+ rename drivers/thermal/qcom/{tsens-8996.c => tsens-v2.c} (65%)
+
 -- 
-Jeff Layton <jlayton@kernel.org>
+2.7.4
+
