@@ -2,125 +2,71 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3A21FC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:56:24 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ACB11C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:56:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2B0A208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:56:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="arKzyG8B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2B0A208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 6E542208D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:56:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E542208D4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936356AbeFNO4W (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:56:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46388 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936208AbeFNOGG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:06:06 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EAE89208DA;
-        Thu, 14 Jun 2018 14:06:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985165;
-        bh=geFRn+fHy6RGSuemupb9GTwcPisDzWSfSJ4rOXeoe+4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=arKzyG8BaCcRJetjMR4289yVzLISx5DsRVBW0EA8RbCTxrizk/Cjyh3sdBWceg82H
-         skKtYfSE1vEDbmW27j+PfU6tOyA1APJIDgizFZ4I/vvy+frsHd0zcEnbm7sryj0Mkm
-         TQ9q2xVoi4Htysk5OZsO4iKTXpizKWslgGs0Xwt8=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Felix Wilhelm <fwilhelm@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.17 06/45] kvm: nVMX: Enforce cpl=0 for VMX instructions
-Date:   Thu, 14 Jun 2018 16:03:57 +0200
-Message-Id: <20180614132127.115323659@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
-References: <20180614132126.797006529@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        id S936401AbeFNO4g (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:56:36 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:36951 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936187AbeFNOGF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:06:05 -0400
+Received: from [148.252.241.226] (helo=ct-lt-1121.office.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fTSt0-0005OK-0U; Thu, 14 Jun 2018 15:06:02 +0100
+From:   Jorge Sanjuan <jorge.sanjuan@codethink.co.uk>
+To:     tiwai@suse.de
+Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
+        ruslan.bilovol@gmail.com
+Subject: [PATCH v2 0/4] ALSA: usb-audio: Insertion Control for BADD Adaptors.
+Date:   Thu, 14 Jun 2018 15:05:54 +0100
+Message-Id: <20180614140558.28277-1-jorge.sanjuan@codethink.co.uk>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180612143201.29988-1-jorge.sanjuan@codethink.co.uk>
+References: <20180612143201.29988-1-jorge.sanjuan@codethink.co.uk>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.17-stable review patch.  If anyone has any objections, please let me know.
+Thanks for review!
 
-------------------
+Here is what's new in this V2:
+ - Split the patchset into a more sensible series.
 
-From: Felix Wilhelm <fwilhelm@google.com>
+This patchset adds support for the Insertion Control for BADD devices
+(subset of UAC3).
 
-commit 727ba748e110b4de50d142edca9d6a9b7e6111d8 upstream.
+This control is only pressent in the HEADSET ADAPTER BADD profile. The USB
+interrupt pipe shall be present for this profile so the status pipe
+creation should also happen for BADD devices.
 
-VMX instructions executed inside a L1 VM will always trigger a VM exit
-even when executed with cpl 3. This means we must perform the
-privilege check in software.
+Also, the bi-directional type codes have been defined so they can be used
+as inferred values for the Input and Output terminals for this adapter
+profile.
 
-Fixes: 70f3aac964ae("kvm: nVMX: Remove superfluous VMX instruction fault checks")
-Cc: stable@vger.kernel.org
-Signed-off-by: Felix Wilhelm <fwilhelm@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Based on tag: next-20180612
 
----
- arch/x86/kvm/vmx.c |   15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+Jorge Sanjuan (4):
+  ALSA: usb-audio: Add bi-directional terminal types.
+  ALSA: usb-audio: Change in connectors control creation interface
+  ALSA: usb-audio: UAC3. Add insertion control for BADD.
+  ALSA: usb-audio: Always create the interrupt pipe for the mixer
 
---- a/arch/x86/kvm/vmx.c
-+++ b/arch/x86/kvm/vmx.c
-@@ -7670,6 +7670,12 @@ static int handle_vmon(struct kvm_vcpu *
- 		return 1;
- 	}
- 
-+	/* CPL=0 must be checked manually. */
-+	if (vmx_get_cpl(vcpu)) {
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+		return 1;
-+	}
-+
- 	if (vmx->nested.vmxon) {
- 		nested_vmx_failValid(vcpu, VMXERR_VMXON_IN_VMX_ROOT_OPERATION);
- 		return kvm_skip_emulated_instruction(vcpu);
-@@ -7729,6 +7735,11 @@ static int handle_vmon(struct kvm_vcpu *
-  */
- static int nested_vmx_check_permission(struct kvm_vcpu *vcpu)
- {
-+	if (vmx_get_cpl(vcpu)) {
-+		kvm_queue_exception(vcpu, UD_VECTOR);
-+		return 0;
-+	}
-+
- 	if (!to_vmx(vcpu)->nested.vmxon) {
- 		kvm_queue_exception(vcpu, UD_VECTOR);
- 		return 0;
-@@ -8029,7 +8040,7 @@ static int handle_vmread(struct kvm_vcpu
- 		if (get_vmx_mem_address(vcpu, exit_qualification,
- 				vmx_instruction_info, true, &gva))
- 			return 1;
--		/* _system ok, as hardware has verified cpl=0 */
-+		/* _system ok, nested_vmx_check_permission has verified cpl=0 */
- 		kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, gva,
- 			     &field_value, (is_long_mode(vcpu) ? 8 : 4), NULL);
- 	}
-@@ -8189,7 +8200,7 @@ static int handle_vmptrst(struct kvm_vcp
- 	if (get_vmx_mem_address(vcpu, exit_qualification,
- 			vmx_instruction_info, true, &vmcs_gva))
- 		return 1;
--	/* ok to use *_system, as hardware has verified cpl=0 */
-+	/* *_system ok, nested_vmx_check_permission has verified cpl=0 */
- 	if (kvm_write_guest_virt_system(&vcpu->arch.emulate_ctxt, vmcs_gva,
- 				 (void *)&to_vmx(vcpu)->nested.current_vmptr,
- 				 sizeof(u64), &e)) {
+ include/uapi/linux/usb/audio.h |  8 ++++++++
+ sound/usb/mixer.c              | 45 ++++++++++++++++++++++++++++++------------
+ 2 files changed, 40 insertions(+), 13 deletions(-)
 
+-- 
+2.11.0
 
