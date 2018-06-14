@@ -6,44 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4A9ADC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 258F8C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0138F208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFDF3208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:07:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TT9t7LRj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0138F208DA
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4flNWsu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFDF3208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964974AbeFNOHH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:07:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47352 "EHLO mail.kernel.org"
+        id S964990AbeFNOHM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:07:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47410 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964946AbeFNOHF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:07:05 -0400
+        id S964969AbeFNOHH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:07:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09AB7208CB;
-        Thu, 14 Jun 2018 14:07:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C41A6208DA;
+        Thu, 14 Jun 2018 14:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985224;
-        bh=CR18mDJE8pD9CN7c/1LmJog3x14OsJw57oLsaOxgsmA=;
+        s=default; t=1528985227;
+        bh=UvGQ+Kf3r7YS57Nu+zoOmzLvieIr4gElXArDSLXjWA0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TT9t7LRjsRIgMxYorQHfo1RM+wrX6FTecdPFI3M6x/K5Mtu5rKydobxZorqPq1bft
-         Q0vTg8HCjsOi21dYKhXDf6huH4mQa1Tv9763hP7OgSkUmLeS6htxnWWZaC9LA92VEr
-         Bm7/6ZzMHqh595uYTug+xuojwRbDxucoBUhZw2/o=
+        b=c4flNWsuxLKtwuEsq8THGsVrxC3pLSdTtpyPc5kOWPTvq3TvkSvLU3dqAmIqnIxAI
+         dXDsmqYJNrXYj15f9W7FCL/IqKkkH06NC3GFQ0wRk4Dr1VIxFaK+uzpbHKWpcjD+Co
+         y7aVeFLCf2DI9KIq4Sv92EaAflN9JrU2iWhnkba0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Glauber <jglauber@cavium.com>,
-        Robert Richter <rrichter@cavium.com>,
+        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
         Herbert Xu <herbert@gondor.apana.org.au>
-Subject: [PATCH 4.17 42/45] crypto: cavium - Limit result reading attempts
-Date:   Thu, 14 Jun 2018 16:04:33 +0200
-Message-Id: <20180614132129.275307809@linuxfoundation.org>
+Subject: [PATCH 4.17 43/45] crypto: vmx - Remove overly verbose printk from AES init routines
+Date:   Thu, 14 Jun 2018 16:04:34 +0200
+Message-Id: <20180614132129.329378810@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
 References: <20180614132126.797006529@linuxfoundation.org>
@@ -60,94 +59,79 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jan Glauber <jglauber@cavium.com>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-commit c782a8c43e94ba6c09e9de2d69b5e3a5840ce61c upstream.
+commit 1411b5218adbcf1d45ddb260db5553c52e8d917c upstream.
 
-After issuing a request an endless loop was used to read the
-completion state from memory which is asynchronously updated
-by the ZIP coprocessor.
+In the vmx AES init routines we do a printk(KERN_INFO ...) to report
+the fallback implementation we're using.
 
-Add an upper bound to the retry attempts to prevent a CPU getting stuck
-forever in case of an error. Additionally, add a read memory barrier
-and a small delay between the reading attempts.
+However with a slow console this can significantly affect the speed of
+crypto operations. Using 'cryptsetup benchmark' the removal of the
+printk() leads to a ~5x speedup for aes-cbc decryption.
 
-Signed-off-by: Jan Glauber <jglauber@cavium.com>
-Reviewed-by: Robert Richter <rrichter@cavium.com>
-Cc: stable <stable@vger.kernel.org> # 4.14
+So remove them.
+
+Fixes: 8676590a1593 ("crypto: vmx - Adding AES routines for VMX module")
+Fixes: 8c755ace357c ("crypto: vmx - Adding CBC routines for VMX module")
+Fixes: 4f7f60d312b3 ("crypto: vmx - Adding CTR routines for VMX module")
+Fixes: cc333cd68dfa ("crypto: vmx - Adding GHASH routines for VMX module")
+Cc: stable@vger.kernel.org # v4.1+
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/crypto/cavium/zip/common.h      |   21 +++++++++++++++++++++
- drivers/crypto/cavium/zip/zip_deflate.c |    4 ++--
- drivers/crypto/cavium/zip/zip_inflate.c |    4 ++--
- 3 files changed, 25 insertions(+), 4 deletions(-)
+ drivers/crypto/vmx/aes.c     |    2 --
+ drivers/crypto/vmx/aes_cbc.c |    3 ---
+ drivers/crypto/vmx/aes_ctr.c |    2 --
+ drivers/crypto/vmx/ghash.c   |    2 --
+ 4 files changed, 9 deletions(-)
 
---- a/drivers/crypto/cavium/zip/common.h
-+++ b/drivers/crypto/cavium/zip/common.h
-@@ -46,8 +46,10 @@
- #ifndef __COMMON_H__
- #define __COMMON_H__
+--- a/drivers/crypto/vmx/aes.c
++++ b/drivers/crypto/vmx/aes.c
+@@ -48,8 +48,6 @@ static int p8_aes_init(struct crypto_tfm
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name((struct crypto_tfm *) fallback));
  
-+#include <linux/delay.h>
- #include <linux/init.h>
- #include <linux/interrupt.h>
-+#include <linux/io.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-@@ -149,6 +151,25 @@ struct zip_operation {
- 	u32   sizeofzops;
- };
+ 	crypto_cipher_set_flags(fallback,
+ 				crypto_cipher_get_flags((struct
+--- a/drivers/crypto/vmx/aes_cbc.c
++++ b/drivers/crypto/vmx/aes_cbc.c
+@@ -52,9 +52,6 @@ static int p8_aes_cbc_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-		crypto_skcipher_driver_name(fallback));
+-
  
-+static inline int zip_poll_result(union zip_zres_s *result)
-+{
-+	int retries = 1000;
-+
-+	while (!result->s.compcode) {
-+		if (!--retries) {
-+			pr_err("ZIP ERR: request timed out");
-+			return -ETIMEDOUT;
-+		}
-+		udelay(10);
-+		/*
-+		 * Force re-reading of compcode which is updated
-+		 * by the ZIP coprocessor.
-+		 */
-+		rmb();
-+	}
-+	return 0;
-+}
-+
- /* error messages */
- #define zip_err(fmt, args...) pr_err("ZIP ERR:%s():%d: " \
- 			      fmt "\n", __func__, __LINE__, ## args)
---- a/drivers/crypto/cavium/zip/zip_deflate.c
-+++ b/drivers/crypto/cavium/zip/zip_deflate.c
-@@ -129,8 +129,8 @@ int zip_deflate(struct zip_operation *zi
- 	/* Stats update for compression requests submitted */
- 	atomic64_inc(&zip_dev->stats.comp_req_submit);
+ 	crypto_skcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/aes_ctr.c
++++ b/drivers/crypto/vmx/aes_ctr.c
+@@ -50,8 +50,6 @@ static int p8_aes_ctr_init(struct crypto
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-		crypto_skcipher_driver_name(fallback));
  
--	while (!result_ptr->s.compcode)
--		continue;
-+	/* Wait for completion or error */
-+	zip_poll_result(result_ptr);
+ 	crypto_skcipher_set_flags(
+ 		fallback,
+--- a/drivers/crypto/vmx/ghash.c
++++ b/drivers/crypto/vmx/ghash.c
+@@ -64,8 +64,6 @@ static int p8_ghash_init_tfm(struct cryp
+ 		       alg, PTR_ERR(fallback));
+ 		return PTR_ERR(fallback);
+ 	}
+-	printk(KERN_INFO "Using '%s' as fallback implementation.\n",
+-	       crypto_tfm_alg_driver_name(crypto_shash_tfm(fallback)));
  
- 	/* Stats update for compression requests completed */
- 	atomic64_inc(&zip_dev->stats.comp_req_complete);
---- a/drivers/crypto/cavium/zip/zip_inflate.c
-+++ b/drivers/crypto/cavium/zip/zip_inflate.c
-@@ -143,8 +143,8 @@ int zip_inflate(struct zip_operation *zi
- 	/* Decompression requests submitted stats update */
- 	atomic64_inc(&zip_dev->stats.decomp_req_submit);
- 
--	while (!result_ptr->s.compcode)
--		continue;
-+	/* Wait for completion or error */
-+	zip_poll_result(result_ptr);
- 
- 	/* Decompression requests completed stats update */
- 	atomic64_inc(&zip_dev->stats.decomp_req_complete);
+ 	crypto_shash_set_flags(fallback,
+ 			       crypto_shash_get_flags((struct crypto_shash
 
 
