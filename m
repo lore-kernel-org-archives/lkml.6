@@ -2,65 +2,62 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A5C65C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:45:33 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 90E13C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0C9208DB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:45:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NUcQVkW6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C0C9208DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 4631A208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 20:50:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4631A208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755509AbeFNUpb (ORCPT
+        id S1755498AbeFNUuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 16:45:31 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:45756 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755272AbeFNUp3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 16:45:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=Q3puFswNuKO6yoOLdzhuH1D3gmQYXmQIzCavO9MS8Hc=; b=NUcQVkW6HLHdOBXEhe025JyP1F
-        v0SCkbg8MTvLRvhppTctL9gfj1oMGQ6botSMw641tQkEbBvoXNbid+6igLmcMyt0YuouGVh7DVwui
-        0lzj2ut5M4PgyhRB96WIP6meRTzeCLRU/ia6cj1oerYajDrGJo8b1CyhYruTg/N9PdLz/GL+OXy2M
-        cp+cxIm/dclaMaRXUqOgqPLDBJlT3UNRDwdiz7/NAv0JQWj951WYohpiPykFelil+AwfDeZOm/5Y/
-        5HvVxceKKsftM/pn6dYUmJhTRcsr6x6BcFWkPw6r5kK97Pc6dARjqKDvN622pkI408O5Q8eZDz2QW
-        DMrlCsWQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fTZ7V-0007q4-78; Thu, 14 Jun 2018 20:45:25 +0000
-Subject: Re: [PATCH v8 03/10] firmware: xilinx: Add zynqmp IOCTL API for
- device control
-To:     Jolly Shah <jolly.shah@xilinx.com>, ard.biesheuvel@linaro.org,
-        mingo@kernel.org, gregkh@linuxfoundation.org,
-        matt@codeblueprint.co.uk, sudeep.holla@arm.com,
-        hkallweit1@gmail.com, keescook@chromium.org,
-        dmitry.torokhov@gmail.com, mturquette@baylibre.com,
-        sboyd@codeaurora.org, michal.simek@xilinx.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-clk@vger.kernel.org
-Cc:     rajanv@xilinx.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jolly Shah <jollys@xilinx.com>
-References: <1529000862-11510-1-git-send-email-jollys@xilinx.com>
- <1529000862-11510-4-git-send-email-jollys@xilinx.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3044c2b9-2268-dfcb-2d45-0117c6f91a8d@infradead.org>
-Date:   Thu, 14 Jun 2018 13:45:20 -0700
+        Thu, 14 Jun 2018 16:50:16 -0400
+Received: from terminus.zytor.com ([198.137.202.136]:60711 "EHLO
+        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755325AbeFNUuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 16:50:14 -0400
+Received: from hanvin-mobl2.amr.corp.intel.com (jfdmzpr04-ext.jf.intel.com [134.134.139.73])
+        (authenticated bits=0)
+        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id w5EKlVA2991278
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Thu, 14 Jun 2018 13:47:32 -0700
+Subject: Re: [PATCH v5 2/3] x86/asm: add _ASM_ARG* constants for argument
+ registers to <asm/asm.h>
+To:     Nick Desaulniers <ndesaulniers@google.com>,
+        akpm@linux-foundation.org, mingo@redhat.com, tglx@linutronix.de
+Cc:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        astrachan@google.com, manojgupta@google.com, ghackmann@google.com,
+        sedat.dilek@gmail.com, tstellar@redhat.com, keescook@google.com,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        linux-kbuild@vger.kernel.org, geert@linux-m68k.org,
+        will.deacon@arm.com, mawilcox@microsoft.com, arnd@arndb.de,
+        rientjes@google.com, acme@redhat.com, pombredanne@nexb.com,
+        aryabinin@virtuozzo.com, kstewart@linuxfoundation.org,
+        boris.ostrovsky@oracle.com, jan.kiszka@siemens.com,
+        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
+        ard.biesheuvel@linaro.org, akataria@vmware.com,
+        brijesh.singh@amd.com, caoj.fnst@cn.fujitsu.com,
+        gregkh@linuxfoundation.org, jarkko.sakkinen@linux.intel.com,
+        jgross@suse.com, jpoimboe@redhat.com, mka@chromium.org,
+        thomas.lendacky@amd.com, tweek@google.com, mjg59@google.com,
+        joe@perches.com, andrea.parri@amarulasolutions.com,
+        "H. Peter Anvin" <hpa@linux.intel.com>
+References: <20180613210518.113983-1-ndesaulniers@google.com>
+ <20180613210518.113983-3-ndesaulniers@google.com>
+From:   "H. Peter Anvin" <hpa@zytor.com>
+Message-ID: <b027a324-ffae-fd5e-d8a3-03934be91a2d@zytor.com>
+Date:   Thu, 14 Jun 2018 13:47:27 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1529000862-11510-4-git-send-email-jollys@xilinx.com>
+In-Reply-To: <20180613210518.113983-3-ndesaulniers@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -69,25 +66,22 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/2018 11:27 AM, Jolly Shah wrote:
-> From: Rajan Vaja <rajanv@xilinx.com>
+On 06/13/18 14:05, Nick Desaulniers wrote:
+> From: "H. Peter Anvin" <hpa@linux.intel.com>
 > 
-> Add ZynqMP firmware IOCTL API to control and configure
-> devices like PLLs, SD, Gem, etc.
+> i386 and x86-64 uses different registers for arguments; make them
+> available so we don't have to #ifdef in the actual code.
 > 
-> Signed-off-by: Rajan Vaja <rajanv@xilinx.com>
-> Signed-off-by: Jolly Shah <jollys@xilinx.com>
-> ---
->  drivers/firmware/xilinx/zynqmp.c     | 20 ++++++++++++++++++++
->  include/linux/firmware/xlnx-zynqmp.h |  2 ++
->  2 files changed, 22 insertions(+)
+> Native size and specified size (q, l, w, b) versions are provided.
+> 
+> Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
+> Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Hi,
+I still object to Suggested-by: here.  Sedat did a correction, which is
+a Reviewed-by:, but unless I'm completely out to sea, there was no
+suggestion on Sedat's part of this; and I had certainly not seen it when
+I wrote the code.
 
-Does this driver claim (implement) some specific ioctl code or ID?
+	-hpa
 
-If so, its ioctl numbers should be documented in Documentation/ioctl/ioctl-number.txt.
-
-thanks,
--- 
-~Randy
