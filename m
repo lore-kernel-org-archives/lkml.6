@@ -2,97 +2,133 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 52DF2C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:39:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 95173C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:39:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF8AB208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D14E9208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 10:39:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="diCVvGrp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF8AB208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="FcV9rO35"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D14E9208CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936005AbeFNKji (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 06:39:38 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:45304 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755002AbeFNKjd (ORCPT
+        id S1755148AbeFNKja (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 06:39:30 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([81.169.146.170]:25442 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755002AbeFNKj1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 06:39:33 -0400
-Received: from mail-vk0-f50.google.com (mail-vk0-f50.google.com [209.85.213.50]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w5EAdHKN026845;
-        Thu, 14 Jun 2018 19:39:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w5EAdHKN026845
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1528972758;
-        bh=6lxQGs4/Zp94XsfVWUsHxNXUU+anTV9EOM3BNR8Wzzo=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=diCVvGrpIku+ta58Zy5VeKUBtFWK8Bv5PnT+wXdof0GpJBSoQbVJU3Ph6kMlcMvin
-         mKgiSZsRKDDWOJiO4lOleW/vw2Y535ehNzLL6zEmkmYFHQNumKVj1Sh0fggnRfDmd+
-         YcOfzgollGDBFw3TokVIDoi0AfNZXeGTZTmrpM+y3a061KH4nyDB3T/Vw9I+By5Mck
-         y7mKQUgq/vghgZF74g76D9ES0p0aEqSNset+G63fljsIbVMsBzIXs0dSDxOVTtQe2G
-         aRwQAt5BGhnUR7Kse3/9BMBPMNajUfHueLdPnzmFJNPfOBxi7L6i4rvODy6SsJWXne
-         Wbf50G8n+E3nA==
-X-Nifty-SrcIP: [209.85.213.50]
-Received: by mail-vk0-f50.google.com with SMTP id x4-v6so3349359vkx.11;
-        Thu, 14 Jun 2018 03:39:18 -0700 (PDT)
-X-Gm-Message-State: APt69E0oo7UkNAkBAX+M/D9RuMu1ovYjkk0EgwIxmQkqGqBeNGaWDInS
-        2byrfwTUT0dhPt3l8gWFz2Eafd/pn0Ymsz4ymCc=
-X-Google-Smtp-Source: ADUXVKJZiKfTsKyrqSdBF+zyLz89E6FEs9z+pgWg4wJHyJgmz4nbU0wGCtdyGy2VKf4AsQI+uPdhYQMOX7abNo+G3cM=
-X-Received: by 2002:a1f:cc85:: with SMTP id c127-v6mr1185065vkg.166.1528972757047;
- Thu, 14 Jun 2018 03:39:17 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 03:38:36
- -0700 (PDT)
-In-Reply-To: <CA+55aFyHcEojRqf+pvGuZF1nExY_SFWX7QZ7ifBZPtJfB_BWDg@mail.gmail.com>
-References: <CAK7LNARDLbEhbJGrKY6HGwfxL8ebAMBDa_2A+s2QkzQGEKyFHQ@mail.gmail.com>
- <CA+55aFyxY9f9_eGv3CvA0zwzo8K5WeNbNPDFuyhtCrzRyic85A@mail.gmail.com>
- <CA+55aFy2KEzTiF=0nG8_RFoPpycaqc=n-hf-mQSbKotMzYJG-w@mail.gmail.com>
- <CAK7LNASd7Mc8eU76L24ZC0OFdUf566adNGVvX9Ou987cT3CCWw@mail.gmail.com>
- <CA+55aFz7KGMcvABxJfYs719ySyt2JouDX9t0SAV4Qu9yY9tfPA@mail.gmail.com>
- <CAK7LNAT4m8JgOttC5D16ALKqvMtt-6Vi4nFUdVaTMQSQPwYN-w@mail.gmail.com> <CA+55aFyHcEojRqf+pvGuZF1nExY_SFWX7QZ7ifBZPtJfB_BWDg@mail.gmail.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Thu, 14 Jun 2018 19:38:36 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQtVZujrViSRa=8BZHXo184qK7uLhBXxfacwcgXJoZOqQ@mail.gmail.com>
-Message-ID: <CAK7LNAQtVZujrViSRa=8BZHXo184qK7uLhBXxfacwcgXJoZOqQ@mail.gmail.com>
-Subject: Re: [GIT PULL] Kbuild updates for 4.18 (2nd round)
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 14 Jun 2018 06:39:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1528972763;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=LfeOQLz6fY1TqV9WsXjdhtXuY+KchPWOcJgcgryiYpM=;
+        b=FcV9rO35Y8muUznojdglm+gMvIPZfN8cKzVaDpyVTlpumsOoF/YDCOfibJrb7SNEM+
+        ZEl7jPxPZANxF0oee7Xkqqa4pAfhxqTG5939hjpxqcvoW1UhntnToQOWVGXpzUQdkDK6
+        X/sfoMfTEIwTcyES4dym84ZQwdTPG1M7E5BUiy0VFM/9cda6/e4OSsoc0rd/lWjeeddy
+        2AooUmfQEC7vAakRlLl38o8Yh5kNsFVXQ80xYhUT+3re3ll5QfEUTzGB4whWhbV+Tb3z
+        azQD+3qghRqsO1GvusCz+ZvYv1pq89s8xKZW0891Qfd06Il4Z/f/m3bEL6vIIOcuzzE3
+        UvSA==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisdN2EjaY"
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
+        with ESMTPSA id 407f97u5EAdKR3j
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 14 Jun 2018 12:39:20 +0200 (CEST)
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH] extcon: Release locking when sending the notification of connector state
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <5B22410C.9080002@samsung.com>
+Date:   Thu, 14 Jun 2018 12:39:19 +0200
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        chanwoo@kernel.org, myungjoo.ham@samsung.com,
+        stable <stable@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9AEF5153-4234-4C30-984A-8A3D51D04623@goldelico.com>
+References: <CGME20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d@epcas2p4.samsung.com> <1528949687-32002-1-git-send-email-cw00.choi@samsung.com> <5B22410C.9080002@samsung.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>, Roger Quadros <rogerq@ti.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+Hi Roger and Chanwoo,
 
+> Am 14.06.2018 um 12:18 schrieb Chanwoo Choi <cw00.choi@samsung.com>:
+>=20
+> + H. Nikolaus Schaller <hns@goldelico.com>
+>=20
+> On 2018=EB=85=84 06=EC=9B=94 14=EC=9D=BC 13:14, Chanwoo Choi wrote:
+>> Previously, extcon used the spinlock before calling the =
+notifier_call_chain
+>> to prevent the scheduled out of task and to prevent the notification =
+delay.
+>> When spinlock is locked for sending the notification, deadlock issue
+>> occured on the side of extcon consumer device. To fix this issue,
+>> extcon consumer device should always use the work. it is always not
+>> reasonable to use work.
+>>=20
+>> To fix this issue on extcon consumer device, release locking when =
+sending
+>> the notification of connector state.
+>>=20
+>> Fixes: ab11af049f88 ("extcon: Add the synchronization extcon APIs to =
+support the notification")
+>> Cc: stable@vger.kernel.org
+>> Cc: Roger Quadros <rogerq@ti.com>
+>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>> ---
+>> drivers/extcon/extcon.c | 3 ++-
+>> 1 file changed, 2 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+>> index 8bff5fd18185..f75b08a45d4e 100644
+>> --- a/drivers/extcon/extcon.c
+>> +++ b/drivers/extcon/extcon.c
+>> @@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev, unsigned =
+int id)
+>> 		return index;
+>>=20
+>> 	spin_lock_irqsave(&edev->lock, flags);
+>> -
+>> 	state =3D !!(edev->state & BIT(index));
+>> +	spin_unlock_irqrestore(&edev->lock, flags);
+>>=20
+>> 	/*
+>> 	 * Call functions in a raw notifier chain for the specific one
+>> @@ -448,6 +448,7 @@ int extcon_sync(struct extcon_dev *edev, unsigned =
+int id)
+>> 	 */
+>> 	raw_notifier_call_chain(&edev->nh_all, state, edev);
+>>=20
+>> +	spin_lock_irqsave(&edev->lock, flags);
+>> 	/* This could be in interrupt handler */
+>> 	prop_buf =3D (char *)get_zeroed_page(GFP_ATOMIC);
+>> 	if (!prop_buf) {
+>>=20
 
-2018-06-14 15:26 GMT+09:00 Linus Torvalds <torvalds@linux-foundation.org>:
-> On Thu, Jun 14, 2018 at 3:16 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->>
->> Could you run sed directly in your tree?
->
-> Sure, I did that on the  plane. Now on the ground, pushed out.
-> Somebody should double- and triple-check it.
->
+I have tested on the Pyra handheld prototype and now it works. Plugging =
+in an OTG cable
+enables/disables OTG power as expected and there are no kernel oops any =
+more.
 
-I double-checked it.
-Yes, renaming is perfect.  Thank you!
+So you can add my
 
+Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
+Tested-by: H. Nikolaus Schaller <hns@goldelico.com>
 
-However, while I was checking it, I noticed some other issues.
-
-I have sent three patches.
-If they look good, could you apply them please?
-
-
--- 
-Best Regards
-Masahiro Yamada
+BR and thank you for the quick fix,
+Nikolaus=
