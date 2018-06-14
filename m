@@ -6,45 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 101DEC433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:50 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F40D7C433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B58208E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0260208CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:08:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="FXHhV2n/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B58208E0
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DfHWieiU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0260208CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965326AbeFNOIr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:08:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49458 "EHLO mail.kernel.org"
+        id S965343AbeFNOIx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:08:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965305AbeFNOIn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:08:43 -0400
+        id S965329AbeFNOIt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:08:49 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75F34208DA;
-        Thu, 14 Jun 2018 14:08:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62790208DD;
+        Thu, 14 Jun 2018 14:08:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985323;
-        bh=L5GDxlsPspuh7+aKkEmmVhkQeCrwKFCfiiX3NiVzjwA=;
+        s=default; t=1528985329;
+        bh=m+uJn66+3J0QLNEKB0B0VWYZeY7TnrcM0h5IikoSya0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FXHhV2n/AP2fDp0x3Jyollz3t5+6LgiBjKW8nJmrZ96FbzSnFBkltHfylA3Mh5lQa
-         FwlB+9RVpbhqKDg0PUZoiRuHc1JV5IVk4XeRhJW32JcOmc4UI+rKn2U1KPB9kM2SCQ
-         k0srRkbk8oqJYLAt3VVJwJshuKFbBTASwGQfUCO0=
+        b=DfHWieiU9fe6liHGN6wVJ2x7HIIsWG8k6uNcAVkEBuTBImsU064SAvZo4ZwQ0jO81
+         sfKXWUpAHxZ8iUtsHaKhZKwLT40qx8rYIrAS4ZS8/z5LoM+gY/oAOmYwL0d7s7PdOH
+         htwBwe7BN8n9zv4vFfm7AVIGsfioHl7gPff6myRg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Easton <kevin@guarana.org>,
-        syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Zubin Mithra <zsm@chromium.org>
-Subject: [PATCH 4.16 04/43] af_key: Always verify length of provided sadb_key
-Date:   Thu, 14 Jun 2018 16:04:08 +0200
-Message-Id: <20180614132135.308652916@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: [PATCH 4.16 06/43] KVM: x86: introduce linear_{read,write}_system
+Date:   Thu, 14 Jun 2018 16:04:10 +0200
+Message-Id: <20180614132135.389536526@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132135.111973468@linuxfoundation.org>
 References: <20180614132135.111973468@linuxfoundation.org>
@@ -61,108 +58,185 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kevin Easton <kevin@guarana.org>
+From: Paolo Bonzini <pbonzini@redhat.com>
 
-commit 4b66af2d6356a00e94bcdea3e7fea324e8b5c6f4 upstream.
+commit 79367a65743975e5cac8d24d08eccc7fdae832b0 upstream.
 
-Key extensions (struct sadb_key) include a user-specified number of key
-bits.  The kernel uses that number to determine how much key data to copy
-out of the message in pfkey_msg2xfrm_state().
+Wrap the common invocation of ctxt->ops->read_std and ctxt->ops->write_std, so
+as to have a smaller patch when the functions grow another argument.
 
-The length of the sadb_key message must be verified to be long enough,
-even in the case of SADB_X_AALG_NULL.  Furthermore, the sadb_key_len value
-must be long enough to include both the key data and the struct sadb_key
-itself.
-
-Introduce a helper function verify_key_len(), and call it from
-parse_exthdrs() where other exthdr types are similarly checked for
-correctness.
-
-Signed-off-by: Kevin Easton <kevin@guarana.org>
-Reported-by: syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Zubin Mithra <zsm@chromium.org>
+Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
+Cc: stable@vger.kernel.org
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/key/af_key.c |   45 +++++++++++++++++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 10 deletions(-)
+ arch/x86/kvm/emulate.c |   64 ++++++++++++++++++++++++-------------------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -437,6 +437,24 @@ static int verify_address_len(const void
- 	return 0;
+--- a/arch/x86/kvm/emulate.c
++++ b/arch/x86/kvm/emulate.c
+@@ -811,6 +811,19 @@ static inline int jmp_rel(struct x86_emu
+ 	return assign_eip_near(ctxt, ctxt->_eip + rel);
  }
  
-+static inline int sadb_key_len(const struct sadb_key *key)
++static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
++			      void *data, unsigned size)
 +{
-+	int key_bytes = DIV_ROUND_UP(key->sadb_key_bits, 8);
-+
-+	return DIV_ROUND_UP(sizeof(struct sadb_key) + key_bytes,
-+			    sizeof(uint64_t));
++	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
 +}
 +
-+static int verify_key_len(const void *p)
++static int linear_write_system(struct x86_emulate_ctxt *ctxt,
++			       ulong linear, void *data,
++			       unsigned int size)
 +{
-+	const struct sadb_key *key = p;
-+
-+	if (sadb_key_len(key) > key->sadb_key_len)
-+		return -EINVAL;
-+
-+	return 0;
++	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
 +}
 +
- static inline int pfkey_sec_ctx_len(const struct sadb_x_sec_ctx *sec_ctx)
- {
- 	return DIV_ROUND_UP(sizeof(struct sadb_x_sec_ctx) +
-@@ -533,16 +551,25 @@ static int parse_exthdrs(struct sk_buff
- 				return -EINVAL;
- 			if (ext_hdrs[ext_type-1] != NULL)
- 				return -EINVAL;
--			if (ext_type == SADB_EXT_ADDRESS_SRC ||
--			    ext_type == SADB_EXT_ADDRESS_DST ||
--			    ext_type == SADB_EXT_ADDRESS_PROXY ||
--			    ext_type == SADB_X_EXT_NAT_T_OA) {
-+			switch (ext_type) {
-+			case SADB_EXT_ADDRESS_SRC:
-+			case SADB_EXT_ADDRESS_DST:
-+			case SADB_EXT_ADDRESS_PROXY:
-+			case SADB_X_EXT_NAT_T_OA:
- 				if (verify_address_len(p))
- 					return -EINVAL;
--			}
--			if (ext_type == SADB_X_EXT_SEC_CTX) {
-+				break;
-+			case SADB_X_EXT_SEC_CTX:
- 				if (verify_sec_ctx_len(p))
- 					return -EINVAL;
-+				break;
-+			case SADB_EXT_KEY_AUTH:
-+			case SADB_EXT_KEY_ENCRYPT:
-+				if (verify_key_len(p))
-+					return -EINVAL;
-+				break;
-+			default:
-+				break;
- 			}
- 			ext_hdrs[ext_type-1] = (void *) p;
- 		}
-@@ -1104,14 +1131,12 @@ static struct xfrm_state * pfkey_msg2xfr
- 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_auth != SADB_X_AALG_NULL &&
--	    ((key->sadb_key_bits+7) / 8 == 0 ||
--	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
- 	key = ext_hdrs[SADB_EXT_KEY_ENCRYPT-1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_encrypt != SADB_EALG_NULL &&
--	    ((key->sadb_key_bits+7) / 8 == 0 ||
--	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
+ static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
+ 			      struct segmented_address addr,
+ 			      void *data,
+@@ -1495,8 +1508,7 @@ static int read_interrupt_descriptor(str
+ 		return emulate_gp(ctxt, index << 3 | 0x2);
  
- 	x = xfrm_state_alloc(net);
+ 	addr = dt.address + index * 8;
+-	return ctxt->ops->read_std(ctxt, addr, desc, sizeof *desc,
+-				   &ctxt->exception);
++	return linear_read_system(ctxt, addr, desc, sizeof *desc);
+ }
+ 
+ static void get_descriptor_table_ptr(struct x86_emulate_ctxt *ctxt,
+@@ -1559,8 +1571,7 @@ static int read_segment_descriptor(struc
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
+-	return ctxt->ops->read_std(ctxt, *desc_addr_p, desc, sizeof(*desc),
+-				   &ctxt->exception);
++	return linear_read_system(ctxt, *desc_addr_p, desc, sizeof(*desc));
+ }
+ 
+ /* allowed just for 8 bytes segments */
+@@ -1574,8 +1585,7 @@ static int write_segment_descriptor(stru
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
+-	return ctxt->ops->write_std(ctxt, addr, desc, sizeof *desc,
+-				    &ctxt->exception);
++	return linear_write_system(ctxt, addr, desc, sizeof *desc);
+ }
+ 
+ static int __load_segment_descriptor(struct x86_emulate_ctxt *ctxt,
+@@ -1736,8 +1746,7 @@ static int __load_segment_descriptor(str
+ 				return ret;
+ 		}
+ 	} else if (ctxt->mode == X86EMUL_MODE_PROT64) {
+-		ret = ctxt->ops->read_std(ctxt, desc_addr+8, &base3,
+-				sizeof(base3), &ctxt->exception);
++		ret = linear_read_system(ctxt, desc_addr+8, &base3, sizeof(base3));
+ 		if (ret != X86EMUL_CONTINUE)
+ 			return ret;
+ 		if (emul_is_noncanonical_address(get_desc_base(&seg_desc) |
+@@ -2050,11 +2059,11 @@ static int __emulate_int_real(struct x86
+ 	eip_addr = dt.address + (irq << 2);
+ 	cs_addr = dt.address + (irq << 2) + 2;
+ 
+-	rc = ops->read_std(ctxt, cs_addr, &cs, 2, &ctxt->exception);
++	rc = linear_read_system(ctxt, cs_addr, &cs, 2);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
+-	rc = ops->read_std(ctxt, eip_addr, &eip, 2, &ctxt->exception);
++	rc = linear_read_system(ctxt, eip_addr, &eip, 2);
+ 	if (rc != X86EMUL_CONTINUE)
+ 		return rc;
+ 
+@@ -3041,35 +3050,30 @@ static int task_switch_16(struct x86_emu
+ 			  u16 tss_selector, u16 old_tss_sel,
+ 			  ulong old_tss_base, struct desc_struct *new_desc)
+ {
+-	const struct x86_emulate_ops *ops = ctxt->ops;
+ 	struct tss_segment_16 tss_seg;
+ 	int ret;
+ 	u32 new_tss_base = get_desc_base(new_desc);
+ 
+-	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+ 	save_state_to_tss16(ctxt, &tss_seg);
+ 
+-	ret = ops->write_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
+-			     &ctxt->exception);
++	ret = linear_write_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+-	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+ 	if (old_tss_sel != 0xffff) {
+ 		tss_seg.prev_task_link = old_tss_sel;
+ 
+-		ret = ops->write_std(ctxt, new_tss_base,
+-				     &tss_seg.prev_task_link,
+-				     sizeof tss_seg.prev_task_link,
+-				     &ctxt->exception);
++		ret = linear_write_system(ctxt, new_tss_base,
++					  &tss_seg.prev_task_link,
++					  sizeof tss_seg.prev_task_link);
+ 		if (ret != X86EMUL_CONTINUE)
+ 			return ret;
+ 	}
+@@ -3185,38 +3189,34 @@ static int task_switch_32(struct x86_emu
+ 			  u16 tss_selector, u16 old_tss_sel,
+ 			  ulong old_tss_base, struct desc_struct *new_desc)
+ {
+-	const struct x86_emulate_ops *ops = ctxt->ops;
+ 	struct tss_segment_32 tss_seg;
+ 	int ret;
+ 	u32 new_tss_base = get_desc_base(new_desc);
+ 	u32 eip_offset = offsetof(struct tss_segment_32, eip);
+ 	u32 ldt_sel_offset = offsetof(struct tss_segment_32, ldt_selector);
+ 
+-	ret = ops->read_std(ctxt, old_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, old_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+ 	save_state_to_tss32(ctxt, &tss_seg);
+ 
+ 	/* Only GP registers and segment selectors are saved */
+-	ret = ops->write_std(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
+-			     ldt_sel_offset - eip_offset, &ctxt->exception);
++	ret = linear_write_system(ctxt, old_tss_base + eip_offset, &tss_seg.eip,
++				  ldt_sel_offset - eip_offset);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+-	ret = ops->read_std(ctxt, new_tss_base, &tss_seg, sizeof tss_seg,
+-			    &ctxt->exception);
++	ret = linear_read_system(ctxt, new_tss_base, &tss_seg, sizeof tss_seg);
+ 	if (ret != X86EMUL_CONTINUE)
+ 		return ret;
+ 
+ 	if (old_tss_sel != 0xffff) {
+ 		tss_seg.prev_task_link = old_tss_sel;
+ 
+-		ret = ops->write_std(ctxt, new_tss_base,
+-				     &tss_seg.prev_task_link,
+-				     sizeof tss_seg.prev_task_link,
+-				     &ctxt->exception);
++		ret = linear_write_system(ctxt, new_tss_base,
++					  &tss_seg.prev_task_link,
++					  sizeof tss_seg.prev_task_link);
+ 		if (ret != X86EMUL_CONTINUE)
+ 			return ret;
+ 	}
 
 
