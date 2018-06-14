@@ -6,45 +6,43 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D017DC07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8A8FCC433EF
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86822208DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40E4F208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:12:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6gcyj6s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86822208DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIMB2DHN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40E4F208DB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966089AbeFNOMl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:12:41 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53920 "EHLO mail.kernel.org"
+        id S966111AbeFNOMq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:12:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966052AbeFNOMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:12:37 -0400
+        id S966091AbeFNOMm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:12:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FBD6208DA;
-        Thu, 14 Jun 2018 14:12:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2C5B208DB;
+        Thu, 14 Jun 2018 14:12:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985557;
-        bh=5Q3S3HiozyMXqrWnQcq6QWNw14Gs1ZraHnTK9s6/e44=;
+        s=default; t=1528985562;
+        bh=yGiT5RGR+XpaHz5rwo/aXvx6jz3+MtDo+i6gNpDyVMM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A6gcyj6sJf3ijm8upJXxRWE+8gmsfQ6UX1RjwIyGmWPBxgFf4fWS8pfYiqyx5E8Ao
-         h418P7pHy2OizH/bj5AiRxvvaWH42et3ijsPPt/omZsCzUlTuUhyhHXoAU43KREvAg
-         66O/8La+RJ9/pWFR+v0nGFG8SFBpi0fT5SyG6Zug=
+        b=OIMB2DHNAkjid3xUiiFYyXh41ZvXngh2HLzSsecrRrmq1t4N9X+FtviNhzgRMwIz4
+         bXE3sHUUjIYQ/GVQEMNwXLCM3LUe+yYxiUAB0PMuNfxUTtUDtHdxhYVgYAfXKzV/3X
+         Ew2WKIjmPmMDzk5+EKxyyKhakYeCs+jICq/eH1O0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kevin Easton <kevin@guarana.org>,
-        syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        Zubin Mithra <zsm@chromium.org>
-Subject: [PATCH 4.9 06/30] af_key: Always verify length of provided sadb_key
-Date:   Thu, 14 Jun 2018 16:04:47 +0200
-Message-Id: <20180614132600.516455376@linuxfoundation.org>
+        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.9 08/30] nvmet: Move serial number from controller to subsystem
+Date:   Thu, 14 Jun 2018 16:04:49 +0200
+Message-Id: <20180614132600.603640328@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 References: <20180614132600.255515394@linuxfoundation.org>
@@ -61,108 +59,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kevin Easton <kevin@guarana.org>
+From: Johannes Thumshirn <jthumshirn@suse.de>
 
-commit 4b66af2d6356a00e94bcdea3e7fea324e8b5c6f4 upstream.
+commit 2e7f5d2af2155084c6f7c86328d36e698cd84954 upstream.
 
-Key extensions (struct sadb_key) include a user-specified number of key
-bits.  The kernel uses that number to determine how much key data to copy
-out of the message in pfkey_msg2xfrm_state().
+The NVMe specification defines the serial number as:
 
-The length of the sadb_key message must be verified to be long enough,
-even in the case of SADB_X_AALG_NULL.  Furthermore, the sadb_key_len value
-must be long enough to include both the key data and the struct sadb_key
-itself.
+"Serial Number (SN): Contains the serial number for the NVM subsystem
+that is assigned by the vendor as an ASCII string. Refer to section
+7.10 for unique identifier requirements. Refer to section 1.5 for ASCII
+string requirements"
 
-Introduce a helper function verify_key_len(), and call it from
-parse_exthdrs() where other exthdr types are similarly checked for
-correctness.
+So move it from the controller to the subsystem, where it belongs.
 
-Signed-off-by: Kevin Easton <kevin@guarana.org>
-Reported-by: syzbot+5022a34ca5a3d49b84223653fab632dfb7b4cf37@syzkaller.appspotmail.com
-Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
-Cc: Zubin Mithra <zsm@chromium.org>
+Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/key/af_key.c |   45 +++++++++++++++++++++++++++++++++++----------
- 1 file changed, 35 insertions(+), 10 deletions(-)
+ drivers/nvme/target/admin-cmd.c |    2 +-
+ drivers/nvme/target/core.c      |    5 ++---
+ drivers/nvme/target/nvmet.h     |    2 +-
+ 3 files changed, 4 insertions(+), 5 deletions(-)
 
---- a/net/key/af_key.c
-+++ b/net/key/af_key.c
-@@ -437,6 +437,24 @@ static int verify_address_len(const void
- 	return 0;
- }
+--- a/drivers/nvme/target/admin-cmd.c
++++ b/drivers/nvme/target/admin-cmd.c
+@@ -183,7 +183,7 @@ static void nvmet_execute_identify_ctrl(
+ 	id->ssvid = 0;
  
-+static inline int sadb_key_len(const struct sadb_key *key)
-+{
-+	int key_bytes = DIV_ROUND_UP(key->sadb_key_bits, 8);
-+
-+	return DIV_ROUND_UP(sizeof(struct sadb_key) + key_bytes,
-+			    sizeof(uint64_t));
-+}
-+
-+static int verify_key_len(const void *p)
-+{
-+	const struct sadb_key *key = p;
-+
-+	if (sadb_key_len(key) > key->sadb_key_len)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static inline int pfkey_sec_ctx_len(const struct sadb_x_sec_ctx *sec_ctx)
- {
- 	return DIV_ROUND_UP(sizeof(struct sadb_x_sec_ctx) +
-@@ -533,16 +551,25 @@ static int parse_exthdrs(struct sk_buff
- 				return -EINVAL;
- 			if (ext_hdrs[ext_type-1] != NULL)
- 				return -EINVAL;
--			if (ext_type == SADB_EXT_ADDRESS_SRC ||
--			    ext_type == SADB_EXT_ADDRESS_DST ||
--			    ext_type == SADB_EXT_ADDRESS_PROXY ||
--			    ext_type == SADB_X_EXT_NAT_T_OA) {
-+			switch (ext_type) {
-+			case SADB_EXT_ADDRESS_SRC:
-+			case SADB_EXT_ADDRESS_DST:
-+			case SADB_EXT_ADDRESS_PROXY:
-+			case SADB_X_EXT_NAT_T_OA:
- 				if (verify_address_len(p))
- 					return -EINVAL;
--			}
--			if (ext_type == SADB_X_EXT_SEC_CTX) {
-+				break;
-+			case SADB_X_EXT_SEC_CTX:
- 				if (verify_sec_ctx_len(p))
- 					return -EINVAL;
-+				break;
-+			case SADB_EXT_KEY_AUTH:
-+			case SADB_EXT_KEY_ENCRYPT:
-+				if (verify_key_len(p))
-+					return -EINVAL;
-+				break;
-+			default:
-+				break;
- 			}
- 			ext_hdrs[ext_type-1] = (void *) p;
- 		}
-@@ -1111,14 +1138,12 @@ static struct xfrm_state * pfkey_msg2xfr
- 	key = ext_hdrs[SADB_EXT_KEY_AUTH - 1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_auth != SADB_X_AALG_NULL &&
--	    ((key->sadb_key_bits+7) / 8 == 0 ||
--	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
- 	key = ext_hdrs[SADB_EXT_KEY_ENCRYPT-1];
- 	if (key != NULL &&
- 	    sa->sadb_sa_encrypt != SADB_EALG_NULL &&
--	    ((key->sadb_key_bits+7) / 8 == 0 ||
--	     (key->sadb_key_bits+7) / 8 > key->sadb_key_len * sizeof(uint64_t)))
-+	    key->sadb_key_bits == 0)
- 		return ERR_PTR(-EINVAL);
+ 	memset(id->sn, ' ', sizeof(id->sn));
+-	snprintf(id->sn, sizeof(id->sn), "%llx", ctrl->serial);
++	snprintf(id->sn, sizeof(id->sn), "%llx", ctrl->subsys->serial);
  
- 	x = xfrm_state_alloc(net);
+ 	memset(id->mn, ' ', sizeof(id->mn));
+ 	strncpy((char *)id->mn, "Linux", sizeof(id->mn));
+--- a/drivers/nvme/target/core.c
++++ b/drivers/nvme/target/core.c
+@@ -743,9 +743,6 @@ u16 nvmet_alloc_ctrl(const char *subsysn
+ 	memcpy(ctrl->subsysnqn, subsysnqn, NVMF_NQN_SIZE);
+ 	memcpy(ctrl->hostnqn, hostnqn, NVMF_NQN_SIZE);
+ 
+-	/* generate a random serial number as our controllers are ephemeral: */
+-	get_random_bytes(&ctrl->serial, sizeof(ctrl->serial));
+-
+ 	kref_init(&ctrl->ref);
+ 	ctrl->subsys = subsys;
+ 
+@@ -904,6 +901,8 @@ struct nvmet_subsys *nvmet_subsys_alloc(
+ 		return NULL;
+ 
+ 	subsys->ver = NVME_VS(1, 2, 1); /* NVMe 1.2.1 */
++	/* generate a random serial number as our controllers are ephemeral: */
++	get_random_bytes(&subsys->serial, sizeof(subsys->serial));
+ 
+ 	switch (type) {
+ 	case NVME_NQN_NVME:
+--- a/drivers/nvme/target/nvmet.h
++++ b/drivers/nvme/target/nvmet.h
+@@ -110,7 +110,6 @@ struct nvmet_ctrl {
+ 
+ 	struct mutex		lock;
+ 	u64			cap;
+-	u64			serial;
+ 	u32			cc;
+ 	u32			csts;
+ 
+@@ -151,6 +150,7 @@ struct nvmet_subsys {
+ 	u16			max_qid;
+ 
+ 	u64			ver;
++	u64			serial;
+ 	char			*subsysnqn;
+ 
+ 	struct config_group	group;
 
 
