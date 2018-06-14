@@ -2,171 +2,287 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5B321C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:58:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CFC43C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:13:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06F77208C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 21:58:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="e1Yw4cHr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F77208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 7AA9520864
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 22:13:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AA9520864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965117AbeFNV6E (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 17:58:04 -0400
-Received: from aserp2120.oracle.com ([141.146.126.78]:33254 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964883AbeFNV56 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 17:57:58 -0400
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5ELnEO9084349;
-        Thu, 14 Jun 2018 21:57:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=85QE2GfVuOutvn0RdpPQGODizwuluiqw+vO4QXgakA0=;
- b=e1Yw4cHr3JpPL2gWBR4YQ6+uWFzGcBS4K3r+V60nOTrx7e9x/nSmlFbQALiIa1V4mo/+
- 3R7BJVhg8zWnOI3D+ekbzLioC4n0Qt2+Zbw6KFdEkB3oj6AicvycH8F5xyBlcOLfiuZr
- AvmVIha/mDOs/DJPCisAgqMzlTwzn9WqJ+RQUQ9xxryRrZI3JlVU16nwRhhZR2vS8i5S
- J1/QfDtjIMwNj3ttAZ58DsCq29/AqPSWG3nfQ+rG96X2Nlny3SOo1DgMIsQc8rNRrk/t
- DxropTaTk1GF0v6ytQxvF3OskC+CZpxp1qyXpQhHe540PqBSW+y0ZlYDy45skipF87Wv zQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2jk0xrptf4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 21:57:54 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5ELvrUS008023
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 14 Jun 2018 21:57:53 GMT
-Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5ELvr1x013171;
-        Thu, 14 Jun 2018 21:57:53 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 14 Jun 2018 14:57:53 -0700
-Subject: Re: [PATCH] xen: add error handling for xenbus_printf
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Juergen Gross <jgross@suse.com>, xen-devel@lists.xenproject.org,
-        linux-kernel@vger.kernel.org
-References: <1528775073-39322-1-git-send-email-jiazhouyang09@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <8c85b8d8-0f29-d384-f3a4-c8257e67128b@oracle.com>
-Date:   Thu, 14 Jun 2018 17:57:39 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1528775073-39322-1-git-send-email-jiazhouyang09@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8924 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806140240
+        id S1755517AbeFNWNU (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 18:13:20 -0400
+Received: from mga02.intel.com ([134.134.136.20]:30421 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755400AbeFNWNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 18:13:18 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 15:13:17 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,224,1526367600"; 
+   d="scan'208";a="237558852"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Jun 2018 15:13:02 -0700
+Received: from debox1-dev.jf.intel.com (debox1-dev.jf.intel.com [10.54.75.156])
+        by linux.intel.com (Postfix) with ESMTP id 78C8358014A;
+        Thu, 14 Jun 2018 15:13:02 -0700 (PDT)
+From:   "David E. Box" <david.e.box@linux.intel.com>
+To:     rajneesh.bhardwaj@intel.com, vishwanath.somayaji@intel.com,
+        dvhart@infradead.org, andy@infradead.org,
+        kyle.d.pelton@linux.intel.com
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH V4] platform/x86: intel_pmc_core: Add CNP SLPS0 debug registers
+Date:   Thu, 14 Jun 2018 15:13:02 -0700
+Message-Id: <20180614221302.25663-1-david.e.box@linux.intel.com>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <CAHp75Vdxz2h1N_bLQ4wxrYoo-kRAHQK=+36Db0BfK1QR4iwVPw@mail.gmail.com>
+References: <CAHp75Vdxz2h1N_bLQ4wxrYoo-kRAHQK=+36Db0BfK1QR4iwVPw@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 11:44 PM, Zhouyang Jia wrote:
-> When xenbus_printf fails, the lack of error-handling code may
-> cause unexpected results.
->
-> This patch adds error-handling code after calling xenbus_printf.
->
-> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
-> ---
->  drivers/xen/manage.c | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/xen/manage.c b/drivers/xen/manage.c
-> index 8835065..159694d 100644
-> --- a/drivers/xen/manage.c
-> +++ b/drivers/xen/manage.c
-> @@ -289,8 +289,15 @@ static void sysrq_handler(struct xenbus_watch *watch, const char *path,
->  		return;
->  	}
->  
-> -	if (sysrq_key != '\0')
-> -		xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
-> +	if (sysrq_key != '\0') {
-> +		err = xenbus_printf(xbt, "control", "sysrq", "%c", '\0');
-> +		if (err) {
-> +			pr_err("Error %d writing sysrq code in control/sysrq\n",
-> +			       err);
-> +			xenbus_transaction_end(xbt, 1);
-> +			return;
-> +		}
-> +	}
->  
->  	err = xenbus_transaction_end(xbt, 0);
->  	if (err == -EAGAIN)
-> @@ -342,7 +349,11 @@ static int setup_shutdown_watcher(void)
->  			continue;
->  		snprintf(node, FEATURE_PATH_SIZE, "feature-%s",
->  			 shutdown_handlers[idx].command);
-> -		xenbus_printf(XBT_NIL, "control", node, "%u", 1);
-> +		err = xenbus_printf(XBT_NIL, "control", node, "%u", 1);
-> +		if (err) {
-> +			pr_err("Error %d writing %s\n", err, node);
+From: <david.e.box@intel.com>
 
+Adds debugfs access to registers in the Cannonlake PCH PMC that are
+useful for debugging #SLP_S0 signal assertion and other low power
+related activities. Device pm states are latched in these registers
+whenever the package enters C10 and can be read from slp_s0_debug_status.
+The pm states may also be latched by writing 1 to slp_s0_debug_latch
+which will immediately capture the current state on the next read of
+slp_s0_debug_status.
 
-Adding __func__ will make it it easier trying to understand where the
-error is coming from. And for consistency, I'd add it to the one above
-as well.
+Signed-off-by: Box, David E <david.e.box@intel.com>
+---
+V4:
+	- rename slp_s0_dbg string to slp_s0_debug for consistency
+	- ADD ISCLK prefix to MAIN_PLL and OC_PLL
+V3:
+	- use null terminator in bit_map array
+	- replaced ternary operator with if/else
+	- Removed space fixes on old code
+V2:
+	- Clear latch bit after use
+	- Pass pmc_dev as parameter
+	- Use DEFINE_SHOW_ATTRIBUTE macro
+ drivers/platform/x86/intel_pmc_core.c | 120 ++++++++++++++++++++++++++++++++++
+ drivers/platform/x86/intel_pmc_core.h |   6 ++
+ 2 files changed, 126 insertions(+)
 
-
--boris
+diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+index 43bbe74..d00fee2 100644
+--- a/drivers/platform/x86/intel_pmc_core.c
++++ b/drivers/platform/x86/intel_pmc_core.c
+@@ -196,9 +196,67 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
+ 	{}
+ };
+ 
++static const struct pmc_bit_map cnp_slps0_dbg0_map[] = {
++	{"AUDIO_D3",		BIT(0)},
++	{"OTG_D3",		BIT(1)},
++	{"XHCI_D3",		BIT(2)},
++	{"LPIO_D3",		BIT(3)},
++	{"SDX_D3",		BIT(4)},
++	{"SATA_D3",		BIT(5)},
++	{"UFS0_D3",		BIT(6)},
++	{"UFS1_D3",		BIT(7)},
++	{"EMMC_D3",		BIT(8)},
++	{}
++};
++
++static const struct pmc_bit_map cnp_slps0_dbg1_map[] = {
++	{"SDIO_PLL_OFF",	BIT(0)},
++	{"USB2_PLL_OFF",	BIT(1)},
++	{"AUDIO_PLL_OFF",	BIT(2)},
++	{"ISCLK_OC_PLL_OFF",	BIT(3)},
++	{"ISCLK_MAIN_PLL_OFF",	BIT(4)},
++	{"XOSC_OFF",		BIT(5)},
++	{"LPC_CLKS_GATED",	BIT(6)},
++	{"PCIE_CLKREQS_IDLE",	BIT(7)},
++	{"AUDIO_ROSC_OFF",	BIT(8)},
++	{"HPET_XOSC_CLK_REQ",	BIT(9)},
++	{"PMC_ROSC_SLOW_CLK",	BIT(10)},
++	{"AON2_ROSC_GATED",	BIT(11)},
++	{"CLKACKS_DEASSERTED",	BIT(12)},
++	{}
++};
++
++static const struct pmc_bit_map cnp_slps0_dbg2_map[] = {
++	{"MPHY_CORE_GATED",	BIT(0)},
++	{"CSME_GATED",		BIT(1)},
++	{"USB2_SUS_GATED",	BIT(2)},
++	{"DYN_FLEX_IO_IDLE",	BIT(3)},
++	{"GBE_NO_LINK",		BIT(4)},
++	{"THERM_SEN_DISABLED",	BIT(5)},
++	{"PCIE_LOW_POWER",	BIT(6)},
++	{"ISH_VNNAON_REQ_ACT",	BIT(7)},
++	{"ISH_VNN_REQ_ACT",	BIT(8)},
++	{"CNV_VNNAON_REQ_ACT",	BIT(9)},
++	{"CNV_VNN_REQ_ACT",	BIT(10)},
++	{"NPK_VNNON_REQ_ACT",	BIT(11)},
++	{"PMSYNC_STATE_IDLE",	BIT(12)},
++	{"ALST_GT_THRES",	BIT(13)},
++	{"PMC_ARC_PG_READY",	BIT(14)},
++	{}
++};
++
++static const struct pmc_bit_map *cnp_slps0_dbg_maps[] = {
++	cnp_slps0_dbg0_map,
++	cnp_slps0_dbg1_map,
++	cnp_slps0_dbg2_map,
++	NULL,
++};
++
+ static const struct pmc_reg_map cnp_reg_map = {
+ 	.pfear_sts = cnp_pfear_map,
+ 	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
++	.slps0_dbg_maps = cnp_slps0_dbg_maps,
++	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+ 	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+ 	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+ 	.ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
+@@ -252,6 +310,8 @@ static int pmc_core_check_read_lock_bit(void)
+ }
+ 
+ #if IS_ENABLED(CONFIG_DEBUG_FS)
++static bool slps0_dbg_latch;
++
+ static void pmc_core_display_map(struct seq_file *s, int index,
+ 				 u8 pf_reg, const struct pmc_bit_map *pf_map)
+ {
+@@ -481,6 +541,57 @@ static const struct file_operations pmc_core_ltr_ignore_ops = {
+ 	.release        = single_release,
+ };
+ 
++static void pmc_core_slps0_dbg_latch(struct pmc_dev *pmcdev, bool reset)
++{
++	const struct pmc_reg_map *map = pmcdev->map;
++	u32 fd;
++
++	mutex_lock(&pmcdev->lock);
++
++	if (!reset && !slps0_dbg_latch)
++		goto out_unlock;
++
++	fd = pmc_core_reg_read(pmcdev, map->slps0_dbg_offset);
++	if (reset)
++		fd &= ~CNP_PMC_LATCH_SLPS0_EVENTS;
++	else
++		fd |= CNP_PMC_LATCH_SLPS0_EVENTS;
++	pmc_core_reg_write(pmcdev, map->slps0_dbg_offset, fd);
++
++	slps0_dbg_latch = 0;
++
++out_unlock:
++	mutex_unlock(&pmcdev->lock);
++}
++
++static int pmc_core_slps0_dbg_show(struct seq_file *s, void *unused)
++{
++	struct pmc_dev *pmcdev = s->private;
++	const struct pmc_bit_map **maps = pmcdev->map->slps0_dbg_maps;
++	const struct pmc_bit_map *map;
++	int offset;
++	u32 data;
++
++	pmc_core_slps0_dbg_latch(pmcdev, false);
++	offset = pmcdev->map->slps0_dbg_offset;
++	while (*maps) {
++		map = *maps;
++		data = pmc_core_reg_read(pmcdev, offset);
++		offset += 4;
++		while (map->name) {
++			seq_printf(s, "SLP_S0_DBG: %-32s\tState: %s\n",
++				   map->name,
++				   data & map->bit_mask ?
++				   "Yes" : "No");
++			++map;
++		}
++		++maps;
++	}
++	pmc_core_slps0_dbg_latch(pmcdev, true);
++	return 0;
++}
++DEFINE_SHOW_ATTRIBUTE(pmc_core_slps0_dbg);
++
+ static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
+ {
+ 	debugfs_remove_recursive(pmcdev->dbgfs_dir);
+@@ -514,6 +625,15 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+ 				    0444, dir, pmcdev,
+ 				    &pmc_core_mphy_pg_ops);
+ 
++	if (pmcdev->map->slps0_dbg_maps) {
++		debugfs_create_file("slp_s0_debug_status", 0444,
++				    dir, pmcdev,
++				    &pmc_core_slps0_dbg_fops);
++
++		debugfs_create_bool("slp_s0_debug_latch", 0644,
++				    dir, &slps0_dbg_latch);
++	}
++
+ 	return 0;
+ }
+ #else
+diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
+index 5fa5f97..93a7e99 100644
+--- a/drivers/platform/x86/intel_pmc_core.h
++++ b/drivers/platform/x86/intel_pmc_core.h
+@@ -127,12 +127,14 @@ enum ppfear_regs {
+ #define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+ #define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+ #define CNP_PMC_PM_CFG_OFFSET                  0x1818
++#define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
+ /* Cannonlake: PGD PFET Enable Ack Status Register(s) start */
+ #define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+ 
+ #define CNP_PMC_MMIO_REG_LEN                   0x2000
+ #define CNP_PPFEAR_NUM_ENTRIES                 8
+ #define CNP_PMC_READ_DISABLE_BIT               22
++#define CNP_PMC_LATCH_SLPS0_EVENTS		BIT(31)
+ 
+ struct pmc_bit_map {
+ 	const char *name;
+@@ -145,6 +147,7 @@ struct pmc_bit_map {
+  * @pfear_sts:		Maps name of IP block to PPFEAR* bit
+  * @mphy_sts:		Maps name of MPHY lane to MPHY status lane status bit
+  * @pll_sts:		Maps name of PLL to corresponding bit status
++ * @slps0_dbg_maps:	Array of SLP_S0_DBG* registers containing debug info
+  * @slp_s0_offset:	PWRMBASE offset to read SLP_S0 residency
+  * @ltr_ignore_offset:	PWRMBASE offset to read/write LTR ignore bit
+  * @regmap_length:	Length of memory to map from PWRMBASE address to access
+@@ -153,6 +156,7 @@ struct pmc_bit_map {
+  *			PPFEAR
+  * @pm_cfg_offset:	PWRMBASE offset to PM_CFG register
+  * @pm_read_disable_bit: Bit index to read PMC_READ_DISABLE
++ * @slps0_dbg_offset:	PWRMBASE offset to SLP_S0_DEBUG_REG*
+  *
+  * Each PCH has unique set of register offsets and bit indexes. This structure
+  * captures them to have a common implementation.
+@@ -161,6 +165,7 @@ struct pmc_reg_map {
+ 	const struct pmc_bit_map *pfear_sts;
+ 	const struct pmc_bit_map *mphy_sts;
+ 	const struct pmc_bit_map *pll_sts;
++	const struct pmc_bit_map **slps0_dbg_maps;
+ 	const u32 slp_s0_offset;
+ 	const u32 ltr_ignore_offset;
+ 	const int regmap_length;
+@@ -168,6 +173,7 @@ struct pmc_reg_map {
+ 	const int ppfear_buckets;
+ 	const u32 pm_cfg_offset;
+ 	const int pm_read_disable_bit;
++	const u32 slps0_dbg_offset;
+ };
+ 
+ /**
+-- 
+2.7.4
 
