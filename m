@@ -6,147 +6,132 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BCAC9C433EF
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:33:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DEB88C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65E2E208CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:33:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B7EA208D8
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 11:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yr9HF717";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OcYuMJqC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65E2E208CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="rXBUrhON"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B7EA208D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755192AbeFNLdh (ORCPT
+        id S1755212AbeFNLdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 07:33:37 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55104 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754790AbeFNLdf (ORCPT
+        Thu, 14 Jun 2018 07:33:39 -0400
+Received: from mo4-p02-ob.smtp.rzone.de ([85.215.255.83]:31207 "EHLO
+        mo4-p02-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754992AbeFNLdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 07:33:35 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id ED2AB602FC; Thu, 14 Jun 2018 11:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528976015;
-        bh=JjHKFaiD/4rKBd5bdAvZaZ2JxRWWnwsY6ur6dZVjIoA=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=Yr9HF717t8kGIPxCHobuK+rrNHDKC4gmVYvAOWDsh2WfbW6Zc/0BNVdRG64c/0pJd
-         EJ+LTfYNpl3nvnDRmUGukE5mPUGHDoPKii4g37FVdUonuOsiE2OW676nvr8jVbvtNE
-         Vg35YQLWU40kUYwIgFvOjRTaR4onmAtld42ERIlo=
-Received: from SAYALIL (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: sayalil@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6CBD1602B8;
-        Thu, 14 Jun 2018 11:33:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1528976014;
-        bh=JjHKFaiD/4rKBd5bdAvZaZ2JxRWWnwsY6ur6dZVjIoA=;
-        h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
-        b=OcYuMJqCF2En+9V/oQnyd+0JFNEBacaE5o++sqPSYDwDfpUGisrV1IAuvkATwfYMu
-         BnXN8drhxI39fphfzXPzllsQ+9WsPQBLLkJ69U7Qo5Q3GPZGm36IoL4JCXGZEyu9oB
-         fbAWYb0l2zUlZ18QQJtobSjellH6RoAvbpRzw48k=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6CBD1602B8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=sayalil@codeaurora.org
-From:   "sayali" <sayalil@codeaurora.org>
-To:     "'Rob Herring'" <robh@kernel.org>
-Cc:     <subhashj@codeaurora.org>, <cang@codeaurora.org>,
-        <vivek.gautam@codeaurora.org>, <rnayak@codeaurora.org>,
-        <vinholikatti@gmail.com>, <jejb@linux.vnet.ibm.com>,
-        <martin.petersen@oracle.com>, <asutoshd@codeaurora.org>,
-        <evgreen@chromium.org>, <linux-scsi@vger.kernel.org>,
-        "'Mark Rutland'" <mark.rutland@arm.com>,
-        "'Mathieu Malaterre'" <malat@debian.org>,
-        "'open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS'" 
-        <devicetree@vger.kernel.org>,
-        "'open list'" <linux-kernel@vger.kernel.org>
-References: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org> <1528455990-24572-2-git-send-email-sayalil@codeaurora.org> <20180612192636.GA31725@rob-hp-laptop>
-In-Reply-To: <20180612192636.GA31725@rob-hp-laptop>
-Subject: RE: [PATCH V2 1/3] scsi: ufs: set the device reference clock setting
-Date:   Thu, 14 Jun 2018 17:03:27 +0530
-Message-ID: <000101d403d3$87210d20$95632760$@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQH7CPwp+aWAYn25mLDVi5cVOXIbUwKfFWNnAa5me4Wj7yVwAA==
-Content-Language: en-us
+        Thu, 14 Jun 2018 07:33:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1528976014;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=yQjqtCgQUJvh7Jr4sSLtXDQxyVrYNl28jWwBPm9MF2Q=;
+        b=rXBUrhON3tn/lzdvbm2j7jizAKncKPtfEn1rqsVBqNG2xXRpDANZciNDlq3U0+7eVO
+        OUtFLInJqmwcDkhWGOlEyIWji4JeZY/PkLPJ+ZHfOEyn1L0znn8R3+/jPtLZjDsPuhDX
+        CmeXLmg+v+NHAzs1jSnzTDVQugGVMLZdcpGL13dyi1fGJgKLlQLbiIeVImirRImIPgar
+        RLuuu/8SabiDCGv+NSNeXggTafvuqTI92nv3t9yFAmppOrIdubqZf5kKMhicyE2CsIM7
+        SDGA+ecexIzAzO7+95Lkj7UExi1D/rXl2iUqvW4lt7SYG7NZzwIU4dBWa0DVkcIgA7rN
+        1Eyw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87WisdN2EjaY"
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
+        with ESMTPSA id 407f97u5EBXVRWX
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 14 Jun 2018 13:33:31 +0200 (CEST)
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH] extcon: Release locking when sending the notification of connector state
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <9AEF5153-4234-4C30-984A-8A3D51D04623@goldelico.com>
+Date:   Thu, 14 Jun 2018 13:33:30 +0200
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        chanwoo@kernel.org, myungjoo.ham@samsung.com,
+        stable <stable@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Tony Giaccone <tony@giaccone.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <764C1A35-7D06-48AD-8809-0F6BB3526A23@goldelico.com>
+References: <CGME20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d@epcas2p4.samsung.com> <1528949687-32002-1-git-send-email-cw00.choi@samsung.com> <5B22410C.9080002@samsung.com> <9AEF5153-4234-4C30-984A-8A3D51D04623@goldelico.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>, Roger Quadros <rogerq@ti.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Comment inline.
 
-Thanks,
-Sayali
------Original Message-----
-From: Rob Herring [mailto:robh@kernel.org] 
-Sent: Wednesday, June 13, 2018 12:57 AM
-To: Sayali Lokhande <sayalil@codeaurora.org>
-Cc: subhashj@codeaurora.org; cang@codeaurora.org;
-vivek.gautam@codeaurora.org; rnayak@codeaurora.org; vinholikatti@gmail.com;
-jejb@linux.vnet.ibm.com; martin.petersen@oracle.com;
-asutoshd@codeaurora.org; evgreen@chromium.org; linux-scsi@vger.kernel.org;
-Mark Rutland <mark.rutland@arm.com>; Mathieu Malaterre <malat@debian.org>;
-open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS
-<devicetree@vger.kernel.org>; open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V2 1/3] scsi: ufs: set the device reference clock
-setting
+> Am 14.06.2018 um 12:39 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+> Hi Roger and Chanwoo,
+>=20
+>> Am 14.06.2018 um 12:18 schrieb Chanwoo Choi <cw00.choi@samsung.com>:
+>>=20
+>> + H. Nikolaus Schaller <hns@goldelico.com>
+>>=20
+>> On 2018=EB=85=84 06=EC=9B=94 14=EC=9D=BC 13:14, Chanwoo Choi wrote:
+>>> Previously, extcon used the spinlock before calling the =
+notifier_call_chain
+>>> to prevent the scheduled out of task and to prevent the notification =
+delay.
+>>> When spinlock is locked for sending the notification, deadlock issue
+>>> occured on the side of extcon consumer device. To fix this issue,
+>>> extcon consumer device should always use the work. it is always not
+>>> reasonable to use work.
+>>>=20
+>>> To fix this issue on extcon consumer device, release locking when =
+sending
+>>> the notification of connector state.
+>>>=20
+>>> Fixes: ab11af049f88 ("extcon: Add the synchronization extcon APIs to =
+support the notification")
+>>> Cc: stable@vger.kernel.org
+>>> Cc: Roger Quadros <rogerq@ti.com>
+>>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+>>> ---
+>>> drivers/extcon/extcon.c | 3 ++-
+>>> 1 file changed, 2 insertions(+), 1 deletion(-)
+>>>=20
+>>> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+>>> index 8bff5fd18185..f75b08a45d4e 100644
+>>> --- a/drivers/extcon/extcon.c
+>>> +++ b/drivers/extcon/extcon.c
+>>> @@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev, =
+unsigned int id)
+>>> 		return index;
+>>>=20
+>>> 	spin_lock_irqsave(&edev->lock, flags);
+>>> -
+>>> 	state =3D !!(edev->state & BIT(index));
+>>> +	spin_unlock_irqrestore(&edev->lock, flags);
+>>>=20
+>>> 	/*
+>>> 	 * Call functions in a raw notifier chain for the specific one
+>>> @@ -448,6 +448,7 @@ int extcon_sync(struct extcon_dev *edev, =
+unsigned int id)
+>>> 	 */
+>>> 	raw_notifier_call_chain(&edev->nh_all, state, edev);
+>>>=20
+>>> +	spin_lock_irqsave(&edev->lock, flags);
+>>> 	/* This could be in interrupt handler */
+>>> 	prop_buf =3D (char *)get_zeroed_page(GFP_ATOMIC);
+>>> 	if (!prop_buf) {
+>>>=20
+>=20
+> I have tested on the Pyra handheld prototype and now it works. =
+Plugging in an OTG cable
+> enables/disables OTG power as expected and there are no kernel oops =
+any more.
 
-On Fri, Jun 08, 2018 at 04:36:28PM +0530, Sayali Lokhande wrote:
-> From: Subhash Jadavani <subhashj@codeaurora.org>
-> 
-> UFS host supplies the reference clock to UFS device and UFS device 
-> specification allows host to provide one of the 4 frequencies (19.2 
-> MHz,
-> 26 MHz, 38.4 MHz, 52 MHz) for reference clock. Host should set the 
-> device reference clock frequency setting in the device based on what 
-> frequency it is supplying to UFS device.
-> 
-> Signed-off-by: Subhash Jadavani <subhashj@codeaurora.org>
-> Signed-off-by: Can Guo <cang@codeaurora.org>
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  7 +++
->  drivers/scsi/ufs/ufs.h                             |  9 ++++
->  drivers/scsi/ufs/ufshcd-pltfrm.c                   | 24 ++++++++++
->  drivers/scsi/ufs/ufshcd.c                          | 52
-++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h                          |  1 +
->  5 files changed, 93 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt 
-> b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> index c39dfef..4522434 100644
-> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
-> @@ -41,6 +41,12 @@ Optional properties:
->  -lanes-per-direction	: number of lanes available per direction - either 1
-or 2.
->  			  Note that it is assume same number of lanes is
-used both
->  			  directions at once. If not specified, default is 2
-lanes per direction.
-> +- dev-ref-clk-freq	: Specify the device reference clock frequency, must
-be one of the following:
-> +			  0: 19.2 MHz
-> +			  1: 26 MHz
-> +			  2: 38.4 MHz
-> +			  3: 52 MHz
-> +			  Defaults to 26 MHz if not specified.
+I did take some minutes to check and it now also works again on the =
+OMAP5EVM.
 
-I must have misunderstood your last response. I thought you could handle
-things without DT. If not, my question remains.
-[Sayali]: Ref clk frequency setting could vary from
-platfrom-to-platform(vendor specific). Hence we need to pass it via DT.
-	Currently in DT we do not set/mention any ref clk frequency
-parameter. Hence I have added one new DT entry to configure
-	required ref clk freq.
-
-Rob
-
+BR,
+Nikolaus=
