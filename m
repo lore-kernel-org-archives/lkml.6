@@ -2,205 +2,85 @@ Return-Path: <SRS0=BQBr=JA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 08573C07D5C
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:17:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 56BC0C07D5C
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1874208DA
-	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:17:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="P4D/L4cI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1874208DA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 0C1EC208DB
+	for <linux-kernel@archiver.kernel.org>; Thu, 14 Jun 2018 14:18:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C1EC208DB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966270AbeFNORb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 10:17:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54966 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966238AbeFNON3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 10:13:29 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 521EB208DB;
-        Thu, 14 Jun 2018 14:13:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1528985608;
-        bh=lVAUPcp2bZ6YWBjy+Hm2Lb/bAr+0NMrvOMdYTzQfgTo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P4D/L4cIe6g+rjopQ8x6HyLXZuOMeA9AThVoPe5WJubtazEbz4dM9FN+YDRKDqtfz
-         2yLP+kJDEhgmtZ2Y94Wz48pfOAG/G8szl2JCpl+hxwyV3kxr5B6b6yltznpUkck1i3
-         0AfzGJub6Hj/BRKFr3pIFS08UQ3mds15LNPTE1/A=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
-Subject: [PATCH 4.4 21/24] kvm: x86: use correct privilege level for sgdt/sidt/fxsave/fxrstor access
-Date:   Thu, 14 Jun 2018 16:05:16 +0200
-Message-Id: <20180614132725.335970183@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
-References: <20180614132724.483802160@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S966221AbeFNOSY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 10:18:24 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60520 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965440AbeFNOSX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 10:18:23 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BCAEC1435;
+        Thu, 14 Jun 2018 07:18:22 -0700 (PDT)
+Received: from e108498-lin.cambridge.arm.com (e108498-lin.cambridge.arm.com [10.1.211.46])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 95B803F557;
+        Thu, 14 Jun 2018 07:18:20 -0700 (PDT)
+Date:   Thu, 14 Jun 2018 15:18:19 +0100
+From:   Quentin Perret <quentin.perret@arm.com>
+To:     Juri Lelli <juri.lelli@redhat.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, peterz@infradead.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        luca.abeni@santannapisa.it, claudio@evidence.eu.com,
+        tommaso.cucinotta@santannapisa.it, bristot@redhat.com,
+        mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] sched/topology: Add check to backup comment about
+ hotplug lock
+Message-ID: <20180614141818.GN17720@e108498-lin.cambridge.arm.com>
+References: <20180613121711.5018-1-juri.lelli@redhat.com>
+ <20180613121711.5018-2-juri.lelli@redhat.com>
+ <20180614093324.7ea45448@gandalf.local.home>
+ <20180614134234.GC12032@localhost.localdomain>
+ <20180614094747.390357ec@gandalf.local.home>
+ <20180614135040.GE12032@localhost.localdomain>
+ <20180614135800.GM17720@e108498-lin.cambridge.arm.com>
+ <20180614141118.GG12032@localhost.localdomain>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614141118.GG12032@localhost.localdomain>
+User-Agent: Mutt/1.8.3 (2017-05-23)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+On Thursday 14 Jun 2018 at 16:11:18 (+0200), Juri Lelli wrote:
+> On 14/06/18 14:58, Quentin Perret wrote:
+> 
+> [...]
+> 
+> > Hmm not sure if this can help but I think that rebuild_sched_domains()
+> > does _not_ take the hotplug lock before calling partition_sched_domains()
+> > when CONFIG_CPUSETS=n. But it does take it for CONFIG_CPUSETS=y.
+> 
+> Did you mean cpuset_mutex?
 
-------------------
+Nope, I really meant the cpu_hotplug_lock !
 
-From: Paolo Bonzini <pbonzini@redhat.com>
+With CONFIG_CPUSETS=n, rebuild_sched_domains() calls
+partition_sched_domains() directly:
 
-commit 3c9fa24ca7c9c47605672916491f79e8ccacb9e6 upstream.
+https://elixir.bootlin.com/linux/latest/source/include/linux/cpuset.h#L255
 
-The functions that were used in the emulation of fxrstor, fxsave, sgdt and
-sidt were originally meant for task switching, and as such they did not
-check privilege levels.  This is very bad when the same functions are used
-in the emulation of unprivileged instructions.  This is CVE-2018-10853.
+But with CONFIG_CPUSETS=y, rebuild_sched_domains() calls,
+rebuild_sched_domains_locked(), which calls get_online_cpus() which
+calls cpus_read_lock(), which does percpu_down_read(&cpu_hotplug_lock).
+And all that happens before calling partition_sched_domains().
 
-The obvious fix is to add a new argument to ops->read_std and ops->write_std,
-which decides whether the access is a "system" access or should use the
-processor's CPL.
+So yeah, the point I was trying to make is that there is an inconsistency
+here, maybe for a good reason ? Maybe related to the issue you're seeing ?
 
-Fixes: 129a72a0d3c8 ("KVM: x86: Introduce segmented_write_std", 2017-01-12)
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- arch/x86/include/asm/kvm_emulate.h |    6 ++++--
- arch/x86/kvm/emulate.c             |   12 ++++++------
- arch/x86/kvm/x86.c                 |   18 ++++++++++++++----
- 3 files changed, 24 insertions(+), 12 deletions(-)
-
---- a/arch/x86/include/asm/kvm_emulate.h
-+++ b/arch/x86/include/asm/kvm_emulate.h
-@@ -105,11 +105,12 @@ struct x86_emulate_ops {
- 	 *  @addr:  [IN ] Linear address from which to read.
- 	 *  @val:   [OUT] Value read from memory, zero-extended to 'u_long'.
- 	 *  @bytes: [IN ] Number of bytes to read from memory.
-+	 *  @system:[IN ] Whether the access is forced to be at CPL0.
- 	 */
- 	int (*read_std)(struct x86_emulate_ctxt *ctxt,
- 			unsigned long addr, void *val,
- 			unsigned int bytes,
--			struct x86_exception *fault);
-+			struct x86_exception *fault, bool system);
- 
- 	/*
- 	 * read_phys: Read bytes of standard (non-emulated/special) memory.
-@@ -127,10 +128,11 @@ struct x86_emulate_ops {
- 	 *  @addr:  [IN ] Linear address to which to write.
- 	 *  @val:   [OUT] Value write to memory, zero-extended to 'u_long'.
- 	 *  @bytes: [IN ] Number of bytes to write to memory.
-+	 *  @system:[IN ] Whether the access is forced to be at CPL0.
- 	 */
- 	int (*write_std)(struct x86_emulate_ctxt *ctxt,
- 			 unsigned long addr, void *val, unsigned int bytes,
--			 struct x86_exception *fault);
-+			 struct x86_exception *fault, bool system);
- 	/*
- 	 * fetch: Read bytes of standard (non-emulated/special) memory.
- 	 *        Used for instruction fetch.
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -793,14 +793,14 @@ static inline int jmp_rel(struct x86_emu
- static int linear_read_system(struct x86_emulate_ctxt *ctxt, ulong linear,
- 			      void *data, unsigned size)
- {
--	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, true);
- }
- 
- static int linear_write_system(struct x86_emulate_ctxt *ctxt,
- 			       ulong linear, void *data,
- 			       unsigned int size)
- {
--	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, true);
- }
- 
- static int segmented_read_std(struct x86_emulate_ctxt *ctxt,
-@@ -814,7 +814,7 @@ static int segmented_read_std(struct x86
- 	rc = linearize(ctxt, addr, size, false, &linear);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
--	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->read_std(ctxt, linear, data, size, &ctxt->exception, false);
- }
- 
- static int segmented_write_std(struct x86_emulate_ctxt *ctxt,
-@@ -828,7 +828,7 @@ static int segmented_write_std(struct x8
- 	rc = linearize(ctxt, addr, size, true, &linear);
- 	if (rc != X86EMUL_CONTINUE)
- 		return rc;
--	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception);
-+	return ctxt->ops->write_std(ctxt, linear, data, size, &ctxt->exception, false);
- }
- 
- /*
-@@ -2900,12 +2900,12 @@ static bool emulator_io_port_access_allo
- #ifdef CONFIG_X86_64
- 	base |= ((u64)base3) << 32;
- #endif
--	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL);
-+	r = ops->read_std(ctxt, base + 102, &io_bitmap_ptr, 2, NULL, true);
- 	if (r != X86EMUL_CONTINUE)
- 		return false;
- 	if (io_bitmap_ptr + port/8 > desc_limit_scaled(&tr_seg))
- 		return false;
--	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL);
-+	r = ops->read_std(ctxt, base + io_bitmap_ptr + port/8, &perm, 2, NULL, true);
- 	if (r != X86EMUL_CONTINUE)
- 		return false;
- 	if ((perm >> bit_idx) & mask)
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -4258,10 +4258,15 @@ EXPORT_SYMBOL_GPL(kvm_read_guest_virt);
- 
- static int emulator_read_std(struct x86_emulate_ctxt *ctxt,
- 			     gva_t addr, void *val, unsigned int bytes,
--			     struct x86_exception *exception)
-+			     struct x86_exception *exception, bool system)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
--	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, 0, exception);
-+	u32 access = 0;
-+
-+	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
-+		access |= PFERR_USER_MASK;
-+
-+	return kvm_read_guest_virt_helper(addr, val, bytes, vcpu, access, exception);
- }
- 
- static int kvm_read_guest_phys_system(struct x86_emulate_ctxt *ctxt,
-@@ -4305,12 +4310,17 @@ out:
- }
- 
- static int emulator_write_std(struct x86_emulate_ctxt *ctxt, gva_t addr, void *val,
--			      unsigned int bytes, struct x86_exception *exception)
-+			      unsigned int bytes, struct x86_exception *exception,
-+			      bool system)
- {
- 	struct kvm_vcpu *vcpu = emul_to_vcpu(ctxt);
-+	u32 access = PFERR_WRITE_MASK;
-+
-+	if (!system && kvm_x86_ops->get_cpl(vcpu) == 3)
-+		access |= PFERR_USER_MASK;
- 
- 	return kvm_write_guest_virt_helper(addr, val, bytes, vcpu,
--					   PFERR_WRITE_MASK, exception);
-+					   access, exception);
- }
- 
- int kvm_write_guest_virt_system(struct kvm_vcpu *vcpu, gva_t addr, void *val,
-
-
+Thanks,
+Quentin
