@@ -3,102 +3,145 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BA13C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD2BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:44:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B93A208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA674208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:44:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="IQMHkiHg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B93A208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ljMbKcHX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA674208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966460AbeFORoP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:44:15 -0400
-Received: from mail.efficios.com ([167.114.142.138]:50084 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965774AbeFORoM (ORCPT
+        id S966094AbeFORnk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:43:40 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:59012 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966075AbeFORnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:44:12 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 13F8722B57F;
-        Fri, 15 Jun 2018 13:44:12 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id LUvfjFM0lhIE; Fri, 15 Jun 2018 13:44:11 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id ACD7F22B57C;
-        Fri, 15 Jun 2018 13:44:11 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com ACD7F22B57C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1529084651;
-        bh=8LIXkrcNnNvC/ci3aa+clX2Eh+q62XhHuyvhklum/UY=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=IQMHkiHgC6Yqnp6lEL//T3rYXVHIiRFZk6y6dWYzuaGkFLd772SalhmX+BN1+o1OJ
-         I9wawQdxcFO28go9WRYzTX0+Ot4JWGjJEdDrcTpuI1YwbRxNjHF0b9QHYkfWNielBy
-         TB1jGwwNVSdJ/ZnOutnIvS+luwihN4YV8JmWT2oCb9rPa+O1W9giYwCUSDmX4Cx5qx
-         ASu7cZwIzxZ5N9DxN6zs6X6DFv1nJOfLfYaQEud880eVxHGu6sh6DqgILS/UYVAceb
-         UJlz3/ihT5bx6ZOu7tIEIYno3bK4JOCxmU7vmFnP0AToWW6N+K5VUOQMtQCoxUW11P
-         M9O2vCzfO8M6g==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id 9M4QhlGDStib; Fri, 15 Jun 2018 13:44:11 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 97BBB22B575;
-        Fri, 15 Jun 2018 13:44:11 -0400 (EDT)
-Date:   Fri, 15 Jun 2018 13:44:11 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Florian Weimer <fweimer@redhat.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, carlos <carlos@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-Message-ID: <1069078546.14418.1529084651587.JavaMail.zimbra@efficios.com>
-In-Reply-To: <fffe36dd-a7f1-36fb-561b-b6a30ba9e11d@redhat.com>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com> <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com> <20180614122759.GB8798@amd> <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com> <20180614132557.GA15201@amd> <1110f198-88c2-544d-6836-f901b8e90f98@redhat.com> <1399480624.13011.1528984006717.JavaMail.zimbra@efficios.com> <fffe36dd-a7f1-36fb-561b-b6a30ba9e11d@redhat.com>
-Subject: Re: Restartable Sequences system call merged into Linux
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: Restartable Sequences system call merged into Linux
-Thread-Index: vpZQClJITZWB/94iLaieeeaI9quhzw==
+        Fri, 15 Jun 2018 13:43:15 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHcmiI139454;
+        Fri, 15 Jun 2018 17:42:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
+ date : message-id : in-reply-to : references; s=corp-2017-10-26;
+ bh=QZZNDBMtLradJ4r2PazNNQLYAzjOsg9w4tRyYGQqI7A=;
+ b=ljMbKcHXPH/jVAAeCclJ2HY4ZOgNdVFVBphGsPiSPAriAqGiMOUXs5evu7TAcWtXYKDJ
+ oBq+0AMQX7xBe7/kV2SEZQuLSV14gw5f0LtuHqF7nUE0fy7TN732DCJfxgxzerOcjUBM
+ NJj6T6JZfOqWSxGho0KX1d+cZStXyhupFb8Fs7J1LSuO0wJP914bY/wR0n1bHF6f085w
+ 9IIq7bB/c3ibJg4Zx0yN/5TEg0PIB88VZU/lG6O9iMI+eyH2EgAG3rt7T4kkgYFyMAqI
+ v9LqZ5/M54QcprmYqHKzrO/h3gzuMqJsUs67pXi0hzbRcmuq0RyAk6TjUSNKLxBw2qWd LQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jk0xr1vy7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jun 2018 17:42:15 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgE43002155
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jun 2018 17:42:14 GMT
+Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5FHgCAt004391;
+        Fri, 15 Jun 2018 17:42:12 GMT
+Received: from localhost.localdomain (/73.69.118.222)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Jun 2018 10:42:12 -0700
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
+        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
+        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
+        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
+        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
+Subject: [PATCH v10 1/7] x86/tsc: remove tsc_disabled flag
+Date:   Fri, 15 Jun 2018 13:41:58 -0400
+Message-Id: <20180615174204.30581-2-pasha.tatashin@oracle.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180615174204.30581-1-pasha.tatashin@oracle.com>
+References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806150189
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 15, 2018, at 1:10 AM, Florian Weimer fweimer@redhat.com wrote:
+tsc_disabled is set when notsc is passed as kernel parameter. The reason we
+have notsc is to avoid timing problems on multi-socket systems.  We already
+have a mechanism, however, to detect and resolve these issues by invoking
+tsc unstable path. Thus, make notsc to behave the same as tsc=unstable.
 
-> On 06/14/2018 03:46 PM, Mathieu Desnoyers wrote:
->> This would allow registering various TLS data structures with a single
->> system call without hindering flexibility on the user-space side. For
->> instance, we could still use initial-exec and the __rseq_abi symbol for
->> rseq with this approach.
->> 
->> Thoughts ?
-> 
-> Isn't this just a very narrow case of the usual batched syscalls
-> proposal? 8-)
+Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+Reviewed-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
+---
+ arch/x86/kernel/tsc.c | 18 +++---------------
+ 1 file changed, 3 insertions(+), 15 deletions(-)
 
-Pretty much. But let's not go there unless this is really needed.
-It looks like the added syscall on thread creation is not an issue
-so far.
-
-Thanks,
-
-Mathieu
-
+diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
+index 74392d9d51e0..186395041725 100644
+--- a/arch/x86/kernel/tsc.c
++++ b/arch/x86/kernel/tsc.c
+@@ -38,11 +38,6 @@ EXPORT_SYMBOL(tsc_khz);
+  */
+ static int __read_mostly tsc_unstable;
+ 
+-/* native_sched_clock() is called before tsc_init(), so
+-   we must start with the TSC soft disabled to prevent
+-   erroneous rdtsc usage on !boot_cpu_has(X86_FEATURE_TSC) processors */
+-static int __read_mostly tsc_disabled = -1;
+-
+ static DEFINE_STATIC_KEY_FALSE(__use_tsc);
+ 
+ int tsc_clocksource_reliable;
+@@ -248,8 +243,7 @@ EXPORT_SYMBOL_GPL(check_tsc_unstable);
+ #ifdef CONFIG_X86_TSC
+ int __init notsc_setup(char *str)
+ {
+-	pr_warn("Kernel compiled with CONFIG_X86_TSC, cannot disable TSC completely\n");
+-	tsc_disabled = 1;
++	mark_tsc_unstable("boot parameter notsc");
+ 	return 1;
+ }
+ #else
+@@ -1307,7 +1301,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
+ 
+ static int __init init_tsc_clocksource(void)
+ {
+-	if (!boot_cpu_has(X86_FEATURE_TSC) || tsc_disabled > 0 || !tsc_khz)
++	if (!boot_cpu_has(X86_FEATURE_TSC) || !tsc_khz)
+ 		return 0;
+ 
+ 	if (tsc_unstable)
+@@ -1414,12 +1408,6 @@ void __init tsc_init(void)
+ 		set_cyc2ns_scale(tsc_khz, cpu, cyc);
+ 	}
+ 
+-	if (tsc_disabled > 0)
+-		return;
+-
+-	/* now allow native_sched_clock() to use rdtsc */
+-
+-	tsc_disabled = 0;
+ 	static_branch_enable(&__use_tsc);
+ 
+ 	if (!no_sched_irq_time)
+@@ -1455,7 +1443,7 @@ unsigned long calibrate_delay_is_known(void)
+ 	int constant_tsc = cpu_has(&cpu_data(cpu), X86_FEATURE_CONSTANT_TSC);
+ 	const struct cpumask *mask = topology_core_cpumask(cpu);
+ 
+-	if (tsc_disabled || !constant_tsc || !mask)
++	if (!constant_tsc || !mask)
+ 		return 0;
+ 
+ 	sibling = cpumask_any_but(mask, cpu);
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+2.17.1
+
