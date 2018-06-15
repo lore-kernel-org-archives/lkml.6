@@ -2,215 +2,104 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 50C30C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:16:07 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2D146C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:16:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04D9D208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:16:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D9D208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=citrix.com
+	by mail.kernel.org (Postfix) with ESMTP id D59A5208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:16:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="I6267hHT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D59A5208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756208AbeFOOQE (ORCPT
+        id S1756229AbeFOOQk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 10:16:04 -0400
-Received: from smtp.ctxuk.citrix.com ([185.25.65.24]:51234 "EHLO
-        SMTP.EU.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755645AbeFOOQC (ORCPT
+        Fri, 15 Jun 2018 10:16:40 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:45849 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756209AbeFOOQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 10:16:02 -0400
-X-IronPort-AV: E=Sophos;i="5.51,227,1526342400"; 
-   d="scan'208";a="74724178"
-Subject: Re: [Xen-devel] [PATCH] xen: add new hypercall buffer mapping device
-To:     Juergen Gross <jgross@suse.com>, <linux-kernel@vger.kernel.org>,
-        <xen-devel@lists.xenproject.org>
-CC:     <boris.ostrovsky@oracle.com>
-References: <20180615131740.5037-1-jgross@suse.com>
-From:   Andrew Cooper <andrew.cooper3@citrix.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=andrew.cooper3@citrix.com; prefer-encrypt=mutual; keydata=
- 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
- 6+ahAA==
-Message-ID: <530a680a-4df2-e021-14ca-c8e2d5a551eb@citrix.com>
-Date:   Fri, 15 Jun 2018 15:15:55 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 10:16:38 -0400
+Received: by mail-io0-f194.google.com with SMTP id l25-v6so10801355ioh.12
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 07:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nXOrzapn5WG3GDHtSsZjnOKx92CxVBjGyuQ6jaMF2ac=;
+        b=I6267hHTJfZ0+QiQ11EOQKb2wnd0hOFByal2U9UbvarftIvoGAHMLtleCPW2TxFeUG
+         bCoF7Ggku7vA7Q0sfkpPMq/noPpVUi/SXO+nd14Nn69Wt6N5v9yvQ8AjxoOdKqnWMeIZ
+         rZsWMsiAiyu8dfnI3q62TLfYck7znPqh4cR3bd/LMU20QCCr3duWg8BpX4tux3m3Y/q+
+         W+tS0DN9ITPcG07wounzSdoRzAJY2mlwslLbbSxTH+O1pnkgNpfoRRsccZJuskO5sdPt
+         PovzUr6ijWXEtbufVuEBFadu+X9S2X6g1eUYpLyn3FxP9k5GT+19SwCBcfGKZX4a7qor
+         M76w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nXOrzapn5WG3GDHtSsZjnOKx92CxVBjGyuQ6jaMF2ac=;
+        b=Tw2PWSCs7J7eHMjoNdwc30L0E8qSBkcpCTKHvhd07xyFYsByyu7CGg1WcO1cRve9oP
+         xbYkDYyhu6LLKOZhYjDJDcMhlyRJHG+7oO1fQk+g/ay3v8aVP0j1/cvtn8owvLHMCqUM
+         jgVX8uqAzg6mER79WNi4FbsOTd9K6awOH58tx4qdjQxglwTbiWAALSiFxsvK1zqNxp3Y
+         HIGJNdhImOYDvuN46EbDt6QL/wYJmg7X1od62Z8vKI64JpcU7peoDqkpNvJ3mIZ3G+m7
+         9AswYj0N0pnMNr4amzzlp+ZR/JKKmQ1PTOcO4XFHXWAT8GzN6hbSbFq85R/HkJH+PoKP
+         EtyA==
+X-Gm-Message-State: APt69E3P2kMnf0aaXF/esdrz5Vjcm53tS7CyBg3c1o5oYjziAH9JA594
+        lYm9XtBWVWyFaBABr+Fmw4rysySHZ0w=
+X-Google-Smtp-Source: ADUXVKL8fOkZDbrxr3DYRwZ69tJObsNjvoLglAvHJv3IpPwuiI20C6rHdaPlI2MQj8y/VmZp+se46Q==
+X-Received: by 2002:a6b:3bcb:: with SMTP id i194-v6mr1621928ioa.86.1529072197412;
+        Fri, 15 Jun 2018 07:16:37 -0700 (PDT)
+Received: from [192.168.1.167] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id u8-v6sm2918084iol.6.2018.06.15.07.16.35
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Jun 2018 07:16:36 -0700 (PDT)
+Subject: Re: [PATCHv2] block: fix bsg_unregister and bsg_open race
+To:     Christoph Hellwig <hch@lst.de>,
+        Anatoliy Glagolev <glagolig@gmail.com>
+Cc:     linux-block@vger.kernel.org,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180613221417.GA22778@xldev-tmpl.dev.purestorage.com>
+ <20180614083806.GA18966@lst.de>
+ <20180614234733.GA38460@xldev-tmpl.dev.purestorage.com>
+ <20180615092741.GA21138@lst.de>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <da65970e-cda6-6170-eaa2-1fe2a1b59322@kernel.dk>
+Date:   Fri, 15 Jun 2018 08:16:33 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20180615131740.5037-1-jgross@suse.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
-X-ClientProxiedBy: AMSPEX02CAS01.citrite.net (10.69.22.112) To
- AMSPEX02CL02.citrite.net (10.69.22.126)
+In-Reply-To: <20180615092741.GA21138@lst.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/06/18 14:17, Juergen Gross wrote:
-> +MODULE_LICENSE("GPL");
-> +
-> +static int limit = 64;
-> +module_param(limit, int, 0644);
-> +MODULE_PARM_DESC(limit, "Maximum number of pages that may be allocated by "
-> +			"the privcmd-buf device per open file");
+On 6/15/18 3:27 AM, Christoph Hellwig wrote:
+> On Thu, Jun 14, 2018 at 05:47:34PM -0600, Anatoliy Glagolev wrote:
+>> Thanks, Christoph. Good catch releasing the mutex on failure path.
+>> V2 patch with your suggestions applied.
+> 
+> Looks good:
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> 
+> Now just re-add the changelog and resend it in a new thread.
 
-I have a feeling that, once we try and remove some of the bounce
-buffering, 64 pages will be somewhat restricting.  In particular,
-migration performance will benefit by keeping the logdirty bitmap buffer
-persistently mapped, rather than allocated/bounced/deallocated on each
-iteration.
+The original one was mixed up, too. Anatoliy, I fixed it up for
+you. But for future patches, please follow the usual patch
+format where the commit message is actually in the patch.
 
-However, perhaps 64 is fine for now.
+-- 
+Jens Axboe
 
-> +static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
-> +{
-> +	struct privcmd_buf_private *file_priv = file->private_data;
-> +	struct privcmd_buf_vma_private *vma_priv;
-> +	unsigned int count = vma_pages(vma);
-
-This will truncate to 0 if anyone tried mmap()ing 8T (if I've done my
-calculations correctly) of virtual address space.
-
-> +	unsigned int i;
-> +	int ret = 0;
-> +
-> +	if (!(vma->vm_flags & VM_SHARED)) {
-> +		pr_err("Mapping must be shared\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (file_priv->allocated + count > limit) {
-
-cout > limit || (allocated + count) > limit to avoid overflows.
-
-> +		pr_err("Mapping limit reached!\n");
-> +		return -ENOSPC;
-> +	}
-> +
-> +	vma_priv = kzalloc(sizeof(*vma_priv) + count * sizeof(void *),
-> +			   GFP_KERNEL);
-> +	if (!vma_priv)
-> +		return -ENOMEM;
-> +
-> +	vma_priv->n_pages = count;
-> +	count = 0;
-> +	for (i = 0; i < vma_priv->n_pages; i++) {
-> +		vma_priv->pages[i] = alloc_page(GFP_KERNEL | __GFP_ZERO);
-> +		if (!vma_priv->pages[i])
-> +			break;
-> +		count++;
-> +	}
-> +
-> +	mutex_lock(&file_priv->lock);
-> +
-> +	file_priv->allocated += count;
-> +
-> +	vma_priv->file_priv = file_priv;
-> +	vma_priv->users = 1;
-> +
-> +	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
-
-Why DONTDUMP? Its just data, and stands a reasonable chance of being
-related to the cause of a crash.
-
-> +	vma->vm_ops = &privcmd_buf_vm_ops;
-> +	vma->vm_private_data = vma_priv;
-> +
-> +	list_add(&vma_priv->list, &file_priv->list);
-> +
-> +	if (vma_priv->n_pages != count)
-> +		ret = -ENOMEM;
-> +	else
-> +		for (i = 0; i < vma_priv->n_pages; i++) {
-> +			ret = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
-> +					     vma_priv->pages[i]);
-> +			if (ret)
-> +				break;
-> +		}
-> +
-> +	if (ret)
-> +		privcmd_buf_vmapriv_free(vma_priv);
-> +
-> +	mutex_unlock(&file_priv->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +const struct file_operations xen_privcmdbuf_fops = {
-> +	.owner = THIS_MODULE,
-> +	.open = privcmd_buf_open,
-> +	.release = privcmd_buf_release,
-> +	.mmap = privcmd_buf_mmap,
-> +};
-> +EXPORT_SYMBOL_GPL(xen_privcmdbuf_fops);
-> +
-> +struct miscdevice xen_privcmdbuf_dev = {
-> +	.minor = MISC_DYNAMIC_MINOR,
-> +	.name = "xen/privcmd-buf",
-
-Sorry to nitpick, but how about naming this just "xen/hypercall" ?
-
-privcmd is currently a rather large security hole because it allows
-userspace to have access to all the hypercalls, including the ones which
-should be restricted to just the kernel.  In the past, a plan has been
-floated to slowly replace the use of the raw ioctl() with proper ioctls
-for the hypercalls which userspace might reasonably use.
-> diff --git a/drivers/xen/xenfs/super.c b/drivers/xen/xenfs/super.c
-> index 71ddfb4cf61c..d752d0dd3d1d 100644
-> --- a/drivers/xen/xenfs/super.c
-> +++ b/drivers/xen/xenfs/super.c
-> @@ -48,6 +48,7 @@ static int xenfs_fill_super(struct super_block *sb, void *data, int silent)
->  		[2] = { "xenbus", &xen_xenbus_fops, S_IRUSR|S_IWUSR },
->  		{ "capabilities", &capabilities_file_ops, S_IRUGO },
->  		{ "privcmd", &xen_privcmd_fops, S_IRUSR|S_IWUSR },
-> +		{ "privcmd-buf", &xen_privcmdbuf_fops, S_IRUSR|S_IWUSR },
-
-Do we really need to provide the fallback here?  /dev/xen has been
-around for ages, and it would really be a good thing if we can
-eventually retire xenfs.
-
-~Andrew
