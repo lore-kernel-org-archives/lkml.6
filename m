@@ -5,387 +5,174 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9AE4CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:34:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9260EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E4E20896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:34:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45E4E20896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1984520896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:35:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1984520896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=helsinki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965677AbeFOKez (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 06:34:55 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:35294 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965577AbeFOKey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 06:34:54 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7976A40122A1;
-        Fri, 15 Jun 2018 10:34:53 +0000 (UTC)
-Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7E2856353A;
-        Fri, 15 Jun 2018 10:34:51 +0000 (UTC)
-From:   Vitaly Kuznetsov <vkuznets@redhat.com>
-To:     Liran Alon <liran.alon@oracle.com>
-Cc:     <mmorsy@redhat.com>, <rkagan@virtuozzo.com>, <jmattson@google.com>,
-        <Michael.H.Kelley@microsoft.com>, <kys@microsoft.com>,
-        <rkrcmar@redhat.com>, <cavery@redhat.com>, <pbonzini@redhat.com>,
-        <linux-kernel@vger.kernel.org>, <sthemmin@microsoft.com>,
-        <haiyangz@microsoft.com>, <kvm@vger.kernel.org>
-Subject: Re: [PATCH 2/5] KVM: nVMX: add KVM_CAP_HYPERV_ENLIGHTENED_VMCS capability
-References: <b569a42b-605e-45e0-b292-5aeddfee80ad@default>
-Date:   Fri, 15 Jun 2018 12:34:50 +0200
-In-Reply-To: <b569a42b-605e-45e0-b292-5aeddfee80ad@default> (Liran Alon's
-        message of "Thu, 14 Jun 2018 15:58:40 -0700 (PDT)")
-Message-ID: <87d0wsnxrp.fsf@vitty.brq.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
+        id S965694AbeFOKfy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 06:35:54 -0400
+Received: from smtp-rs2-vallila1.fe.helsinki.fi ([128.214.173.73]:60906 "EHLO
+        smtp-rs2-vallila1.fe.helsinki.fi" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S965577AbeFOKfw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 06:35:52 -0400
+Received: from whs-18.cs.helsinki.fi (whs-18.cs.helsinki.fi [128.214.166.46])
+        by smtp-rs2.it.helsinki.fi (8.14.7/8.14.7) with ESMTP id w5FAZjWT023352;
+        Fri, 15 Jun 2018 13:35:45 +0300
+Received: by whs-18.cs.helsinki.fi (Postfix, from userid 1070048)
+        id 37D903601A6; Fri, 15 Jun 2018 13:35:45 +0300 (EEST)
+Received: from localhost (localhost [127.0.0.1])
+        by whs-18.cs.helsinki.fi (Postfix) with ESMTP id 363E0360045;
+        Fri, 15 Jun 2018 13:35:45 +0300 (EEST)
+Date:   Fri, 15 Jun 2018 13:35:45 +0300 (EEST)
+From:   =?ISO-8859-15?Q?Ilpo_J=E4rvinen?= <ilpo.jarvinen@helsinki.fi>
+X-X-Sender: ijjarvin@whs-18.cs.helsinki.fi
+To:     Michal Kubecek <mkubecek@suse.cz>
+cc:     Yuchung Cheng <ycheng@google.com>, netdev <netdev@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH RESEND] tcp: avoid F-RTO if SACK and timestamps are
+ disabled
+In-Reply-To: <20180615092753.lmxqh65moc33rzbq@unicorn.suse.cz>
+Message-ID: <alpine.DEB.2.20.1806151230340.29120@whs-18.cs.helsinki.fi>
+References: <20180613164802.99B89A09E2@unicorn.suse.cz> <20180613165543.0F92DA09E2@unicorn.suse.cz> <CAK6E8=eCOLU9AX0+bSrOg_UYBm1mFxrGT=ybksba9B0OUfp7jg@mail.gmail.com> <alpine.DEB.2.20.1806141045430.29120@whs-18.cs.helsinki.fi> <20180614093408.5e34ijwhome4t5yn@unicorn.suse.cz>
+ <alpine.DEB.2.20.1806141409150.29120@whs-18.cs.helsinki.fi> <20180614131801.hd474jgrhmtqzhag@unicorn.suse.cz> <alpine.DEB.2.20.1806151048000.29120@whs-18.cs.helsinki.fi> <20180615092753.lmxqh65moc33rzbq@unicorn.suse.cz>
+User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 15 Jun 2018 10:34:53 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 15 Jun 2018 10:34:53 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'vkuznets@redhat.com' RCPT:''
+Content-Type: multipart/mixed; boundary="8323329-4507525-1529057656=:29120"
+Content-ID: <alpine.DEB.2.20.1806151315540.29120@whs-18.cs.helsinki.fi>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Liran Alon <liran.alon@oracle.com> writes:
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-> ----- vkuznets@redhat.com wrote:
->
->> Enlightened VMCS is opt-in. The current version does not contain all
->> fields supported by nested VMX so we must not advertise the
->> corresponding VMX features if enlightened VMCS is enabled.
->> 
->> Userspace is given the enlightened VMCS version supported by KVM as
->> part of enabling KVM_CAP_HYPERV_ENLIGHTENED_VMCS. The version is to
->> be advertised to the nested hypervisor, currently done via a cpuid
->> leaf for Hyper-V.
->> 
->> Suggested-by: Ladi Prosek <lprosek@redhat.com>
->> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->> ---
->>  arch/x86/include/asm/kvm_host.h |   3 +
->>  arch/x86/kvm/svm.c              |   9 +++
->>  arch/x86/kvm/vmx.c              | 138
->> ++++++++++++++++++++++------------------
->>  arch/x86/kvm/x86.c              |  15 +++++
->>  include/uapi/linux/kvm.h        |   1 +
->>  5 files changed, 105 insertions(+), 61 deletions(-)
->> 
->> diff --git a/arch/x86/include/asm/kvm_host.h
->> b/arch/x86/include/asm/kvm_host.h
->> index 0ebe659f2802..d7e8f7155d79 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -1095,6 +1095,9 @@ struct kvm_x86_ops {
->>  	int (*mem_enc_unreg_region)(struct kvm *kvm, struct kvm_enc_region
->> *argp);
->>  
->>  	int (*get_msr_feature)(struct kvm_msr_entry *entry);
->> +
->> +	int (*nested_enable_evmcs)(struct kvm_vcpu *vcpu,
->> +				   uint16_t *vmcs_version);
->>  };
->>  
->>  struct kvm_arch_async_pf {
->> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
->> index d9305f1723f5..6dc42c870565 100644
->> --- a/arch/x86/kvm/svm.c
->> +++ b/arch/x86/kvm/svm.c
->> @@ -7009,6 +7009,13 @@ static int svm_unregister_enc_region(struct kvm
->> *kvm,
->>  	return ret;
->>  }
->>  
->> +static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
->> +				   uint16_t *vmcs_version)
->> +{
->> +	/* Intel-only feature */
->> +	return -ENODEV;
->> +}
->> +
->>  static struct kvm_x86_ops svm_x86_ops __ro_after_init = {
->>  	.cpu_has_kvm_support = has_svm,
->>  	.disabled_by_bios = is_disabled,
->> @@ -7135,6 +7142,8 @@ static struct kvm_x86_ops svm_x86_ops
->> __ro_after_init = {
->>  	.mem_enc_op = svm_mem_enc_op,
->>  	.mem_enc_reg_region = svm_register_enc_region,
->>  	.mem_enc_unreg_region = svm_unregister_enc_region,
->> +
->> +	.nested_enable_evmcs = nested_enable_evmcs,
->>  };
->>  
->>  static int __init svm_init(void)
->> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
->> index 48989f78be60..51749207cef1 100644
->> --- a/arch/x86/kvm/vmx.c
->> +++ b/arch/x86/kvm/vmx.c
->> @@ -648,6 +648,13 @@ struct nested_vmx {
->>  
->>  	bool change_vmcs01_virtual_apic_mode;
->>  
->> +	/*
->> +	 * Enlightened VMCS has been enabled. It does not mean that L1 has
->> to
->> +	 * use it. However, VMX features available to L1 will be limited
->> based
->> +	 * on what the enlightened VMCS supports.
->> +	 */
->> +	bool enlightened_vmcs_enabled;
->> +
->>  	/* L2 must run next, and mustn't decide to exit to L1. */
->>  	bool nested_run_pending;
->>  
->> @@ -1186,6 +1193,49 @@ DEFINE_STATIC_KEY_FALSE(enable_evmcs);
->>  
->>  #define KVM_EVMCS_VERSION 1
->>  
->> +/*
->> + * Enlightened VMCSv1 doesn't support these:
->> + *
->> + *	POSTED_INTR_NV                  = 0x00000002,
->> + *	GUEST_INTR_STATUS               = 0x00000810,
->> + *	APIC_ACCESS_ADDR		= 0x00002014,
->> + *	POSTED_INTR_DESC_ADDR           = 0x00002016,
->> + *	EOI_EXIT_BITMAP0                = 0x0000201c,
->> + *	EOI_EXIT_BITMAP1                = 0x0000201e,
->> + *	EOI_EXIT_BITMAP2                = 0x00002020,
->> + *	EOI_EXIT_BITMAP3                = 0x00002022,
->> + *	GUEST_PML_INDEX			= 0x00000812,
->> + *	PML_ADDRESS			= 0x0000200e,
->> + *	VM_FUNCTION_CONTROL             = 0x00002018,
->> + *	EPTP_LIST_ADDRESS               = 0x00002024,
->> + *	VMREAD_BITMAP                   = 0x00002026,
->> + *	VMWRITE_BITMAP                  = 0x00002028,
->> + *
->> + *	TSC_MULTIPLIER                  = 0x00002032,
->> + *	PLE_GAP                         = 0x00004020,
->> + *	PLE_WINDOW                      = 0x00004022,
->> + *	VMX_PREEMPTION_TIMER_VALUE      = 0x0000482E,
->> + *      GUEST_IA32_PERF_GLOBAL_CTRL     = 0x00002808,
->> + *      HOST_IA32_PERF_GLOBAL_CTRL      = 0x00002c04,
->> + *
->> + * Currently unsupported in KVM:
->> + *	GUEST_IA32_RTIT_CTL		= 0x00002814,
->> + */
->> +#define EVMCS1_UNSUPPORTED_PINCTRL (PIN_BASED_POSTED_INTR | \
->> +				    PIN_BASED_VMX_PREEMPTION_TIMER)
->> +#define EVMCS1_UNSUPPORTED_2NDEXEC					\
->> +	(SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY |				\
->> +	 SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES |			\
->> +	 SECONDARY_EXEC_APIC_REGISTER_VIRT |				\
->> +	 SECONDARY_EXEC_ENABLE_PML |					\
->> +	 SECONDARY_EXEC_ENABLE_VMFUNC |					\
->> +	 SECONDARY_EXEC_SHADOW_VMCS |					\
->> +	 SECONDARY_EXEC_TSC_SCALING |					\
->> +	 SECONDARY_EXEC_PAUSE_LOOP_EXITING)
->> +#define EVMCS1_UNSUPPORTED_VMEXIT_CTRL
->> (VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL)
->> +#define EVMCS1_UNSUPPORTED_VMENTRY_CTRL
->> (VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL)
->> +#define EVMCS1_UNSUPPORTED_VMFUNC (VMX_VMFUNC_EPTP_SWITCHING)
->> +
->>  #if IS_ENABLED(CONFIG_HYPERV)
->>  static bool __read_mostly enlightened_vmcs = true;
->>  module_param(enlightened_vmcs, bool, 0444);
->> @@ -1278,69 +1328,12 @@ static void evmcs_load(u64 phys_addr)
->>  
->>  static void evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf)
->>  {
->> -	/*
->> -	 * Enlightened VMCSv1 doesn't support these:
->> -	 *
->> -	 *	POSTED_INTR_NV                  = 0x00000002,
->> -	 *	GUEST_INTR_STATUS               = 0x00000810,
->> -	 *	APIC_ACCESS_ADDR		= 0x00002014,
->> -	 *	POSTED_INTR_DESC_ADDR           = 0x00002016,
->> -	 *	EOI_EXIT_BITMAP0                = 0x0000201c,
->> -	 *	EOI_EXIT_BITMAP1                = 0x0000201e,
->> -	 *	EOI_EXIT_BITMAP2                = 0x00002020,
->> -	 *	EOI_EXIT_BITMAP3                = 0x00002022,
->> -	 */
->> -	vmcs_conf->pin_based_exec_ctrl &= ~PIN_BASED_POSTED_INTR;
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &=
->> -		~SECONDARY_EXEC_VIRTUAL_INTR_DELIVERY;
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &=
->> -		~SECONDARY_EXEC_VIRTUALIZE_APIC_ACCESSES;
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &=
->> -		~SECONDARY_EXEC_APIC_REGISTER_VIRT;
->> -
->> -	/*
->> -	 *	GUEST_PML_INDEX			= 0x00000812,
->> -	 *	PML_ADDRESS			= 0x0000200e,
->> -	 */
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_ENABLE_PML;
->> +	vmcs_conf->pin_based_exec_ctrl &= ~EVMCS1_UNSUPPORTED_PINCTRL;
->> +	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~EVMCS1_UNSUPPORTED_2NDEXEC;
->>  
->> -	/*	VM_FUNCTION_CONTROL             = 0x00002018, */
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &=
->> ~SECONDARY_EXEC_ENABLE_VMFUNC;
->> +	vmcs_conf->vmexit_ctrl &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
->> +	vmcs_conf->vmentry_ctrl &= ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
->>  
->> -	/*
->> -	 *	EPTP_LIST_ADDRESS               = 0x00002024,
->> -	 *	VMREAD_BITMAP                   = 0x00002026,
->> -	 *	VMWRITE_BITMAP                  = 0x00002028,
->> -	 */
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_SHADOW_VMCS;
->> -
->> -	/*
->> -	 *	TSC_MULTIPLIER                  = 0x00002032,
->> -	 */
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &= ~SECONDARY_EXEC_TSC_SCALING;
->> -
->> -	/*
->> -	 *	PLE_GAP                         = 0x00004020,
->> -	 *	PLE_WINDOW                      = 0x00004022,
->> -	 */
->> -	vmcs_conf->cpu_based_2nd_exec_ctrl &=
->> ~SECONDARY_EXEC_PAUSE_LOOP_EXITING;
->> -
->> -	/*
->> -	 *	VMX_PREEMPTION_TIMER_VALUE      = 0x0000482E,
->> -	 */
->> -	vmcs_conf->pin_based_exec_ctrl &= ~PIN_BASED_VMX_PREEMPTION_TIMER;
->> -
->> -	/*
->> -	 *      GUEST_IA32_PERF_GLOBAL_CTRL     = 0x00002808,
->> -	 *      HOST_IA32_PERF_GLOBAL_CTRL      = 0x00002c04,
->> -	 */
->> -	vmcs_conf->vmexit_ctrl &= ~VM_EXIT_LOAD_IA32_PERF_GLOBAL_CTRL;
->> -	vmcs_conf->vmentry_ctrl &= ~VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL;
->> -
->> -	/*
->> -	 * Currently unsupported in KVM:
->> -	 *	GUEST_IA32_RTIT_CTL		= 0x00002814,
->> -	 */
->
-> The creation of the EVMCS1_UNSUPPORTED_* macros and the refactor to evmcs_sanitize_exec_ctrls()
-> should be done in a separate patch in this series before this one.
->
+--8323329-4507525-1529057656=:29120
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: 8BIT
+Content-ID: <alpine.DEB.2.20.1806151315541.29120@whs-18.cs.helsinki.fi>
 
-Sure, will do!
+On Fri, 15 Jun 2018, Michal Kubecek wrote:
 
->>  }
->>  #else /* !IS_ENABLED(CONFIG_HYPERV) */
->>  static inline void evmcs_write64(unsigned long field, u64 value) {}
->> @@ -1354,6 +1347,27 @@ static inline void
->> evmcs_sanitize_exec_ctrls(struct vmcs_config *vmcs_conf) {}
->>  static inline void evmcs_touch_msr_bitmap(void) {}
->>  #endif /* IS_ENABLED(CONFIG_HYPERV) */
->>  
->> +static int nested_enable_evmcs(struct kvm_vcpu *vcpu,
->> +			       uint16_t *vmcs_version)
->> +{
->> +	struct vcpu_vmx *vmx = to_vmx(vcpu);
->> +
->> +	/* We don't support disabling the feature for simplicity. */
->> +	if (vmx->nested.enlightened_vmcs_enabled)
->> +		return 0;
->> +
->> +	vmx->nested.enlightened_vmcs_enabled = true;
->> +	*vmcs_version = (KVM_EVMCS_VERSION << 8) | 1;
->
-> Please add a comment here explaining the "<< 8) | 1" part.
->
+> On Fri, Jun 15, 2018 at 11:05:03AM +0300, Ilpo Järvinen wrote:
+> > On Thu, 14 Jun 2018, Michal Kubecek wrote:
+> > 
+> > My point was that the new data segment bursts that occur if the sender 
+> > isn't application limited indicate that there's something going wrong
+> > with FRTO. And that wrong is also what is causing that RTO loop because
+> > the sender doesn't see the previous FRTO recovery on second RTO. With 
+> > my FRTO undo fix, (new_recovery || icsk->icsk_retransmits) will be false
+> > and that will prevent the RTO loop.
+> 
+> Yes, it would prevent the loop in this case (except it would be a bit
+> later, after second RTO rather than after first).
 
-Got it.
+Hmm, I'm actually wrong about the new data missing bit I think. After
+reading more code I'm quite sure conventional RTO recovery is triggered 
+right away (as long as that bogus undo that ends the recovery wouldn't
+occur first like it does without my fix). So no second RTO would be 
+needed.
 
->> +
->> +	vmx->nested.msrs.pinbased_ctls_high &= ~EVMCS1_UNSUPPORTED_PINCTRL;
->> +	vmx->nested.msrs.entry_ctls_high &=
->> ~EVMCS1_UNSUPPORTED_VMENTRY_CTRL;
->> +	vmx->nested.msrs.exit_ctls_high &= ~EVMCS1_UNSUPPORTED_VMEXIT_CTRL;
->> +	vmx->nested.msrs.secondary_ctls_high &=
->> ~EVMCS1_UNSUPPORTED_2NDEXEC;
->> +	vmx->nested.msrs.vmfunc_controls &= ~EVMCS1_UNSUPPORTED_VMFUNC;
->> +
->> +	return 0;
->> +}
->> +
->>  static inline bool is_exception_n(u32 intr_info, u8 vector)
->>  {
->>  	return (intr_info & (INTR_INFO_INTR_TYPE_MASK |
->> INTR_INFO_VECTOR_MASK |
->> @@ -13039,6 +13053,8 @@ static struct kvm_x86_ops vmx_x86_ops
->> __ro_after_init = {
->>  	.pre_enter_smm = vmx_pre_enter_smm,
->>  	.pre_leave_smm = vmx_pre_leave_smm,
->>  	.enable_smi_window = enable_smi_window,
->> +
->> +	.nested_enable_evmcs = nested_enable_evmcs,
->>  };
->>  
->>  static int __init vmx_init(void)
->> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->> index a57766b940a5..51488019dec2 100644
->> --- a/arch/x86/kvm/x86.c
->> +++ b/arch/x86/kvm/x86.c
->> @@ -2873,6 +2873,7 @@ int kvm_vm_ioctl_check_extension(struct kvm
->> *kvm, long ext)
->>  	case KVM_CAP_HYPERV_VP_INDEX:
->>  	case KVM_CAP_HYPERV_EVENTFD:
->>  	case KVM_CAP_HYPERV_TLBFLUSH:
->> +	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
->>  	case KVM_CAP_PCI_SEGMENT:
->>  	case KVM_CAP_DEBUGREGS:
->>  	case KVM_CAP_X86_ROBUST_SINGLESTEP:
->> @@ -3650,6 +3651,10 @@ static int kvm_set_guest_paused(struct kvm_vcpu
->> *vcpu)
->>  static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
->>  				     struct kvm_enable_cap *cap)
->>  {
->> +	int r;
->> +	uint16_t vmcs_version;
->> +	void __user *user_ptr;
->> +
->>  	if (cap->flags)
->>  		return -EINVAL;
->>  
->> @@ -3662,6 +3667,16 @@ static int kvm_vcpu_ioctl_enable_cap(struct
->> kvm_vcpu *vcpu,
->>  			return -EINVAL;
->>  		return kvm_hv_activate_synic(vcpu, cap->cap ==
->>  					     KVM_CAP_HYPERV_SYNIC2);
->> +	case KVM_CAP_HYPERV_ENLIGHTENED_VMCS:
->> +		r = kvm_x86_ops->nested_enable_evmcs(vcpu, &vmcs_version);
->> +		if (!r) {
->> +			user_ptr = (void __user *)(uintptr_t)cap->args[0];
->> +			if (copy_to_user(user_ptr, &vmcs_version,
->> +					 sizeof(vmcs_version)))
->> +				r = -EFAULT;
->> +		}
->> +		return r;
->> +
->>  	default:
->>  		return -EINVAL;
->>  	}
->> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
->> index b6270a3b38e9..5c4b79c1af19 100644
->> --- a/include/uapi/linux/kvm.h
->> +++ b/include/uapi/linux/kvm.h
->> @@ -949,6 +949,7 @@ struct kvm_ppc_resize_hpt {
->>  #define KVM_CAP_GET_MSR_FEATURES 153
->>  #define KVM_CAP_HYPERV_EVENTFD 154
->>  #define KVM_CAP_HYPERV_TLBFLUSH 155
->> +#define KVM_CAP_HYPERV_ENLIGHTENED_VMCS 156
->>  
->>  #ifdef KVM_CAP_IRQ_ROUTING
->>  
->> -- 
->> 2.14.4
->
-> Besides above comments,
-> Reviewed-By: Liran Alon <liran.alon@oracle.com>
+> But I'm not convinced
+> the logic of the patch is correct. If I understand it correctly, it
+> essentially changes "presumption of innocence" (if we get an ack past
+> what we retransmitted, we assume it was received earlier - i.e. would
+> have been sacked before if SACK was in use) to "presumption of guilt"
+> (whenever a retransmitted segment is acked, we assume nothing else acked
+> with it was received earlier). Or that you trade false negatives for
+> false positives.
 
-Thank you for reviewing the series!
+FRTO depends on knowing for sure what packet (original pre-RTO one or 
+something that was transmitted post-RTO) triggered the ACK. If FRTO
+isn't sure that the ACK was generated by a post-RTO packet, it must
+not assume innocence! This change in practice affects just the time while 
+the segment rexmitted by RTO is still there, that is, processing in step 2 
+(if we get a cumulative ACK beyond it because the next loss is not for the 
+subsequent segment but for some later segment, FLAG_ORIG_SACK_ACKED is set 
+and we'll incorrectly do step 3b while still in FRTO has only reached step 
+2 for real; this is fixed by my patch). ...The decision about 
+positive/negative only occurs _after_ that in step 3.
+
+> Maybe I understand it wrong but it seems that you de facto prevent
+> Step (3b) from ever happening in non-SACK case.
+
+Only if any of skb that was ACKed had been retransmitted. There shouldn't 
+be any in step 3 because the RTO rexmit was ACKed (and also because 
+of how new_recovery variable works wrt. earlier recoveries). Thus, in
+step 3 the fix won't clear FLAG_ORIG_SACK_ACKED flag allowing FRTO to 
+detect spurious RTOs using step 3b.
+
+> > > > No! The window should not update window on ACKs the receiver intends to 
+> > > > designate as "duplicate ACKs". That is not without some potential cost 
+> > > > though as it requires delaying window updates up to the next cumulative 
+> > > > ACK. In the non-SACK series one of the changes is fixing this for
+> > > > non-SACK Linux TCP flows.
+> > > 
+> > > That sounds like a reasonable change (at least at the first glance,
+> > > I didn't think about it too deeply) but even if we fix Linux stack to
+> > > behave like this, we cannot force everyone else to do the same.
+> > 
+> > Unfortunately I don't know what the other stacks besides Linux do. But 
+> > for Linux, the cause for the changing receiver window is the receiver 
+> > window auto-tuning and I'm not sure if other stacks have a similar 
+> > feature (or if that affects (almost) all ACKs like in Linux).
+> 
+> The capture from my previous e-mail and some others I have seen indicate
+> that at least some implementations do not take care to never change
+> window size when responding to an out-of-order segment.  That means that
+> even if we change linux TCP this way (we might still need to send
+> a separate window update in some cases), we still cannot rely on others
+> doing the same.
+
+Those implementations ignore what is a duplicate ACK (RFC5681, which
+is also pointed into by RFC5682 for its defination):
+  DUPLICATE ACKNOWLEDGMENT: An acknowledgment is considered a
+      "duplicate" ... (e)
+      the advertised window in the incoming acknowledgment equals the
+      advertised window in the last incoming acknowledgment.
+
+Not sending duplicate ACKs also means that fast recovery will not work
+for those flows but that may not show up performance wise as long as you 
+have enough capacity for any unnecessary rexmits the forced RTO recovery 
+is going to do. RTO recovery may actually improve completion times for 
+non-SACK flows as NewReno recovers only one lost pkt/RTT where as RTO 
+recovery needs log(outstanding packets) RTTs at worst. For a large number 
+of losses in a window, the log is going to win.
+
+> I checked the capture attached to my previous e-mail again and there is
+> one thing where our F-RTO implementation (in 4.4, at least) is wrong,
+> IMHO. While the first ACK after "new data" (sent in (2b)) was a window
+> update (and therefore not dupack by definition) so that we could take
+> neither (3a) nor (3b), in some iterations there were further acks which
+> did not change window size. The text just before Step 1 says
+> 
+>   The F-RTO algorithm does not specify actions for receiving
+>   a segment that neither acknowledges new data nor is a duplicate
+>   acknowledgment.  The TCP sender SHOULD ignore such segments and
+>   wait for a segment that either acknowledges new data or is
+>   a duplicate acknowledgment.
+> 
+> My understanding is that this means that while the first ack after new
+> data is correctly ignored, the following ack which preserves window size
+> should be recognized as a dupack and (3a) should be taken.
+
+Linux FRTO never gets that far (without my fix) if the ACK in step 2
+covers beyond the RTO rexmit because 3b is prematurely invoked, that's 
+why you never see what would occur if 3a is taken. TCP thinks it's not 
+recovering anymore and therefore can send only new data (if there's some 
+available).
+
+This is what I tried to tell earlier, with new data there you see there's 
+something else wrong too with FRTO besides the RTO loop.
+
 
 -- 
-  Vitaly
+ i.
+--8323329-4507525-1529057656=:29120--
