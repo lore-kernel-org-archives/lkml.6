@@ -2,94 +2,122 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E32C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:38:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E59F3C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1FCD208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1FCD208B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
+	by mail.kernel.org (Postfix) with ESMTP id 83E0A208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:49:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="tuxmKUel";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="A+T6wSqi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83E0A208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756824AbeFOXi2 (ORCPT
+        id S1756819AbeFOXtp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 19:38:28 -0400
-Received: from anholt.net ([50.246.234.109]:41972 "EHLO anholt.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753761AbeFOXi1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 19:38:27 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 7CFFF10A1793;
-        Fri, 15 Jun 2018 16:38:26 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at anholt.net
-Received: from anholt.net ([127.0.0.1])
-        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id EIxB4uYq_I3X; Fri, 15 Jun 2018 16:38:25 -0700 (PDT)
-Received: from eliezer.anholt.net (localhost [127.0.0.1])
-        by anholt.net (Postfix) with ESMTP id 0FC7510A01FA;
-        Fri, 15 Jun 2018 16:38:25 -0700 (PDT)
-Received: by eliezer.anholt.net (Postfix, from userid 1000)
-        id 77E7D2FE462E; Fri, 15 Jun 2018 16:38:24 -0700 (PDT)
-From:   Eric Anholt <eric@anholt.net>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, David Airlie <airlied@linux.ie>,
-        David Lechner <david@lechnology.com>,
-        Martin Donnelly <martin.donnelly@ge.com>,
-        Martyn Welch <martyn.welch@collabora.co.uk>,
-        Stefan Agner <stefan@agner.ch>,
-        Alison Wang <alison.wang@nxp.com>,
-        Peter Senna Tschudin <peter.senna@collabora.com>
-Subject: Re: [PATCH v4 19/26] MAINTAINERS: fix location of some display DT bindings
-In-Reply-To: <5fd5928906086e37cdf8740296ee9766c85ee78f.1529079120.git.mchehab+samsung@kernel.org>
-References: <cover.1529079119.git.mchehab+samsung@kernel.org> <5fd5928906086e37cdf8740296ee9766c85ee78f.1529079120.git.mchehab+samsung@kernel.org>
-User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
-Date:   Fri, 15 Jun 2018 16:38:24 -0700
-Message-ID: <87vaajk4cv.fsf@anholt.net>
+        Fri, 15 Jun 2018 19:49:45 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:39126 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753761AbeFOXtn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 19:49:43 -0400
+Received: by mail-vk0-f67.google.com with SMTP id r83-v6so6615005vkf.6
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 16:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Fo4v7TggsPV/fV5ZHPQDflfQnjv16VOZD5MhSukJpGw=;
+        b=tuxmKUelY5L6Ec/RBg62zop937VbfjRfbIrgufpSxQtf+3yY01TM8NVvQRzp5aWWCU
+         VQdqUHhbuG4FM7CU8kp+HERmu/8yQS+0u9ssSX47lU9g88Y45BRUDB68xjcU1orNy8hb
+         gMYMlXSVDwZiSULmdSjLKbZkf6Qt5kUUa4IPI+W02fNRS5qw7QrYNo2UUC5MfUR/gZZA
+         zgaey2JFD0aXVFnlYB5jNL5A1C5KH6IbLjQssTmQceiOQvHCwoEwVyPFTVD1McGFyQWq
+         cm9cLynu0gvTua19ghKehy8NIWXQTRgrM5rqvsNKAaCDvOz0lVmGAC/aO4U/Q4qkBp1N
+         fNOQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=Fo4v7TggsPV/fV5ZHPQDflfQnjv16VOZD5MhSukJpGw=;
+        b=A+T6wSqiRnF/l2cTg0Jg6nzjhGKNF9A5TaO1Fe+kYT8yqgRD0j3wea48qk/4u6nlNG
+         lsHwTTE2DQ3BuwXnYYBWaNgJ2VGNVKGJKPx7rUrxgbED0mHSvhqWS9rsT78LcbgVK9Q2
+         RJ656QD6GKrZ556LJxUU2mIiHsteky4wpnOSM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=Fo4v7TggsPV/fV5ZHPQDflfQnjv16VOZD5MhSukJpGw=;
+        b=j/wbxM6e2NbTEXbJ0V5ZRPZJGZwtfwG5gmr1jfOs9rYRytA7xQdmP7X0tJBs3C+bnm
+         qFP8Ju7Hl307zpNAuVQ4B6s+XCPcl+/vdp6/UNDd69FcTD3nRURr+/YatS0Xx/BgNcKw
+         oi/2pShDz2jnOMgRTF3G3TvaFF2WhbYa5Z1ii2QnXHh3UIKDedA2RTzt13idhhEfRi+W
+         pg44LBTwkAKKqa67KdHtO/9TVb/ljHIDV+IeF+WfgqhR6Sh8oRsllKu7uiz+VSkh/XYw
+         z3zxXLo0Twc45xxWaDlJ7/HgBUkICNZkfhkT0Cw1bzcNOPKHG/5P1q62+IvUaXnWQGMD
+         4Q2g==
+X-Gm-Message-State: APt69E0Uu2OyZklcW6b5Gqwix7pqviEe1/TM7E8VRlU4AdttT54kZY6H
+        mxXBiM4nlasFhLbI8GAaUeyDVjkbIecdHhqW23IA9A==
+X-Google-Smtp-Source: ADUXVKK16hiixOcX+/DejRxvkGuWGtq/ciBKEQXYQXwCVB1OJB03QMpjdDouxi9LkHZfuA/BOsulhlauZT2okiDlUTY=
+X-Received: by 2002:a1f:e92:: with SMTP id 140-v6mr2269355vko.90.1529106582390;
+ Fri, 15 Jun 2018 16:49:42 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha512; protocol="application/pgp-signature"
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 16:49:41
+ -0700 (PDT)
+In-Reply-To: <20180615220131.65402-1-dmitry.torokhov@gmail.com>
+References: <20180615220131.65402-1-dmitry.torokhov@gmail.com>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Fri, 15 Jun 2018 16:49:41 -0700
+X-Google-Sender-Auth: uOQev7kajysKFuKfaEBj-0wIYhg
+Message-ID: <CAD=FV=UHyc+VAc+d8ODXLQWXfB0grH140+ZFJU3hoJScYLMJ9g@mail.gmail.com>
+Subject: Re: [PATCH 1/3] usb: dwc2: host: do not delay retries for CONTROL IN transfers
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Hi,
 
-Mauro Carvalho Chehab <mchehab+samsung@kernel.org> writes:
-
-> Those files got a manufacturer's name prepended and were moved around.
-> Adjust their references accordingly.
+On Fri, Jun 15, 2018 at 3:01 PM, Dmitry Torokhov
+<dmitry.torokhov@gmail.com> wrote:
+> When handling split transactions we will try to delay retry after
+> getting a NAK from the device. This works well for BULK transfers that
+> can be polled for essentially forever. Unfortunately, on slower systems
+> at boot time, when the kernel is busy enumerating all the devices (USB
+> or not), we issue a bunch of control requests (reading device
+> descriptors, etc). If we get a NAK for the IN part of the control
+> request and delay retry for too long (because the system is busy), we
+> may confuse the device when we finally get to reissue SSPLIT/CSPLIT IN
+> and the device will respond with STALL. As a result we end up with
+> failure to get device descriptor and will fail to enumerate the device:
 >
-> Also, due those movements, Documentation/devicetree/bindings/video
-> doesn't exist anymore.
+> [    3.428801] usb 2-1.2.1: new full-speed USB device number 9 using dwc2
+> [    3.508576] usb 2-1.2.1: device descriptor read/8, error -32
+> [    3.699150] usb 2-1.2.1: device descriptor read/8, error -32
+> [    3.891653] usb 2-1.2.1: new full-speed USB device number 10 using dwc2
+> [    3.968859] usb 2-1.2.1: device descriptor read/8, error -32
+> ...
+>
+> Let's not delay retries of split CONTROL IN transfers, as this allows us
+> to reliably enumerate devices at boot time.
+>
+> Fixes 38d2b5fb75c1 ("usb: dwc2: host: Don't retry NAKed transactions right away")
 
-Reviewed-by: Eric Anholt <eric@anholt.net>
+nit: I think there's supposed to be a ":" after "Fixes"
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> ---
+>  drivers/usb/dwc2/hcd_intr.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+This seems like a sane fix to me.
 
-iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlskTfAACgkQtdYpNtH8
-nuhjoBAAqfjOg9SWl8EaVyho9Ektv+qc3imIyD5GVUyfMaXF9BTe7DEDj+g0QwVS
-EppokorBJ2sAKatBuKmJ2kJtk6YjsOPI2BZwCNi7n1mfYAuZml9z1oSc5ByhkBBb
-pcP9eb1VWfNYx00E4zSmeyOF/2TSxDMVGgKlNZb1QG2tapkx14u+DS0XRZ2hmZoc
-SPYPDKup/wR6qEvyFJnjmJ+dXCty20/LvKjceV8dQtI9Uywrfd5rV8YYo3AuYDjL
-C2pmL7nbHzZkQ22t4Tzg0HLPtGxKtCEoPYwyBhWxWRNgaK+zJCNxcamgI/AkEARm
-p310FeTE6JEJ0Bd0uqngXS218UVDTDKVFcXRcBmAnUWlQE2ha4zX36MFCF2jelAQ
-qJ0ELS11Wl/dbg8VQUkTsicFdjB6t/+Huuq8b+aOxrQ+GJClBllFAQCcnp+FJf0q
-3zwSosP94OSaIQD2X1Ertwg07MGVj/NIvcJtlcil9y+xdQXGkXwd1B/htBEwekf2
-q1DtvNFsS6vCSBM4ZlyAjOAULaVNiRE4XEzxTi1s9pLwpm33bepczPPi22T3E+vu
-rEJjqXiE3yQNxslR0hnod7h95ug8I8sWY9m2hBblIV+gi+TfV6PQd5t7Ft/4hOOC
-JLKUyH+jRhj1wFCgfHKQk5N16zEVGIG0j9U6A3kRydrQy29SMS8=
-=q69g
------END PGP SIGNATURE-----
---=-=-=--
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
