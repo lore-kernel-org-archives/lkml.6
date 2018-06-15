@@ -2,98 +2,262 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B4B55C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:47:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D2CCDC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7FE2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:47:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7FE2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 703C720864
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:59:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="MwD609o0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 703C720864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755778AbeFOFrY (ORCPT
+        id S1755630AbeFOF7k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 01:47:24 -0400
-Received: from zeniv.linux.org.uk ([195.92.253.2]:52552 "EHLO
-        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755598AbeFOFrW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 01:47:22 -0400
-Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
-        id 1fThZt-0008AR-I2; Fri, 15 Jun 2018 05:47:17 +0000
-Date:   Fri, 15 Jun 2018 06:47:17 +0100
-From:   Al Viro <viro@ZenIV.linux.org.uk>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        overlayfs <linux-unionfs@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH 14/39] ovl: stack file ops
-Message-ID: <20180615054717.GC30522@ZenIV.linux.org.uk>
-References: <20180529144339.16538-1-mszeredi@redhat.com>
- <20180529144339.16538-15-mszeredi@redhat.com>
- <20180610041243.GJ30522@ZenIV.linux.org.uk>
- <CAJfpegtEGuBqmJ+6Kzd0456o0xyebe3LBk66xWQcuzsenqKVeg@mail.gmail.com>
- <20180612022926.GY30522@ZenIV.linux.org.uk>
- <20180612024029.GZ30522@ZenIV.linux.org.uk>
- <CAJfpegvUkcUw0GXxFesT6V2f27EXW7jkvBpvnG4XB49BPdvjjA@mail.gmail.com>
- <20180612182423.GA30522@ZenIV.linux.org.uk>
- <20180612183123.GB30522@ZenIV.linux.org.uk>
- <CAJfpegsnvxUNCaE4c1_UDKq169i8WBTMuWzyvyo8UvenqZCUXg@mail.gmail.com>
+        Fri, 15 Jun 2018 01:59:40 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:52487 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755563AbeFOF7i (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 01:59:38 -0400
+Received: by mail-wm0-f68.google.com with SMTP id p126-v6so1583647wmb.2
+        for <Linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 22:59:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qveowpidl3QHWDIZ6ZywXJnRGXD6Um/wxntfELIz6Y8=;
+        b=MwD609o0DMK8Zbua1tISpvAwsu2jgG6Z391bHyVRJIm/gbL0rZhgKa6908XpiEzwbw
+         RMCzsKWQH02eTP4TGm9E4L3jUMBpMGlfnSLJwtbiOhaAbLCCY7wjEvyTcKbi/Wdlr0H+
+         ksZDPOX/4Gm1opJOlqL7ENGurgIHDLCvozWuTa5ujKSceS4LHVUjW8go7Z0Ipq1eDmZS
+         XPLooc8tZ0a8aPI2JkbaQ8wd4CaR32erX/D2TK6oEs5fDVPnVTu4kuLqqORwicMADpMj
+         c1XY/U/bicarRrLqUbTw/SB7YuypH14olsA3HgaiyOauZpjcsbU0H5gLX1VolRIcxRhV
+         R+9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qveowpidl3QHWDIZ6ZywXJnRGXD6Um/wxntfELIz6Y8=;
+        b=DvYU9zOnDBdkY7P65hWIwZuX2dqgzq+DsY8ZNzjdXkK9V4cKCExVgHu1PE52nUESfY
+         OM6yGjlW0yhQf5It7xtC3gHxjCvihb88/99LxV3m9OOCkIBxJrTRPzdSLmlv3ZrbHes1
+         sEYxs82h+wN9mA/+fVvDABChjov0KeaXpkLxKXnTHQ1XwFck4Mre1ovJ/ThM9MlWbbet
+         C3MQ+SQakXCYOioXxSyz0juPF90cUqkxFUqvH6IBF2pRM22CQr+bY4gGWrkI0TR/pEfR
+         n/QRjaVxg3JSZ7E1CmgeufRqsN0sYy0RGB1HLisbKyEpNBY2mQ5Km8AQIOa8gqNVi5py
+         KSRQ==
+X-Gm-Message-State: APt69E3CTiFHmBQG64bylmHmRTGJt1ZLhMqY9j2oHhFPDTXOo5BLClcK
+        k1jXSaIOtpbezql2jRG5a5eHw8Ydw5YNV35Wnc7cfg==
+X-Google-Smtp-Source: ADUXVKJmHB1BrgVpuGiPCoRkbP24+8fxQE6UoxkxxlIyYhK2CSRZAHXFNOejGCH2VBZ/M8aYylHxy62yM9nAznmMx2A=
+X-Received: by 2002:a1c:dcd4:: with SMTP id t203-v6mr60848wmg.156.1529042377286;
+ Thu, 14 Jun 2018 22:59:37 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsnvxUNCaE4c1_UDKq169i8WBTMuWzyvyo8UvenqZCUXg@mail.gmail.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com> <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
+In-Reply-To: <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
+From:   Stephane Eranian <eranian@google.com>
+Date:   Thu, 14 Jun 2018 22:59:24 -0700
+Message-ID: <CABPqkBRoecNKQEuJaEw1E+1a5KF-aTucAWK+St8A15FU9dsZsw@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] perf/core: Use sysctl to turn on/off dropping
+ leaked kernel samples
+To:     yao.jin@linux.intel.com
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        me@kylehuey.com, LKML <Linux-kernel@vger.kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        "Liang, Kan" <kan.liang@intel.com>, "Jin, Yao" <yao.jin@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 11:21:30AM +0200, Miklos Szeredi wrote:
-> On Tue, Jun 12, 2018 at 8:31 PM, Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > On Tue, Jun 12, 2018 at 07:24:23PM +0100, Al Viro wrote:
-> 
-> >> I hate it, but... consider path_open() objections withdrawn for now.
-> 
-> Is that an ACK for the pull if I follow up with fixes for mmap botch, etc?
+On Thu, Jun 14, 2018 at 7:10 PM Jin Yao <yao.jin@linux.intel.com> wrote:
+>
+> When doing sampling, for example:
+>
+> perf record -e cycles:u ...
+>
+> On workloads that do a lot of kernel entry/exits we see kernel
+> samples, even though :u is specified. This is due to skid existing.
+>
+> This might be a security issue because it can leak kernel addresses even
+> though kernel sampling support is disabled.
+>
+> One patch "perf/core: Drop kernel samples even though :u is specified"
+> was posted in last year but it was reverted because it introduced a
+> regression issue that broke the rr-project, which used sampling
+> events to receive a signal on overflow. These signals were critical
+> to the correct operation of rr.
+>
+> See '6a8a75f32357 ("Revert "perf/core: Drop kernel samples even
+> though :u is specified"")' for detail.
+>
+> Now the idea is to use sysctl to control the dropping of leaked
+> kernel samples.
+>
+> /sys/devices/cpu/perf_allow_sample_leakage:
+>
+> 0 - default, drop the leaked kernel samples.
+> 1 - don't drop the leaked kernel samples.
+>
+> For rr it can write 1 to /sys/devices/cpu/perf_allow_sample_leakage.
+>
+> For example,
+>
+> root@skl:/tmp# cat /sys/devices/cpu/perf_allow_sample_leakage
+> 0
+> root@skl:/tmp# perf record -e cycles:u ./div
+> root@skl:/tmp# perf report --stdio
+>
+> ........  .......  .............  ................
+>
+>     47.01%  div      div            [.] main
+>     20.74%  div      libc-2.23.so   [.] __random_r
+>     15.59%  div      libc-2.23.so   [.] __random
+>      8.68%  div      div            [.] compute_flag
+>      4.48%  div      libc-2.23.so   [.] rand
+>      3.50%  div      div            [.] rand@plt
+>      0.00%  div      ld-2.23.so     [.] do_lookup_x
+>      0.00%  div      ld-2.23.so     [.] memcmp
+>      0.00%  div      ld-2.23.so     [.] _dl_start
+>      0.00%  div      ld-2.23.so     [.] _start
+>
+> There is no kernel symbol reported.
+>
+> root@skl:/tmp# echo 1 > /sys/devices/cpu/perf_allow_sample_leakage
+> root@skl:/tmp# cat /sys/devices/cpu/perf_allow_sample_leakage
+> 1
+> root@skl:/tmp# perf record -e cycles:u ./div
+> root@skl:/tmp# perf report --stdio
+>
+> ........  .......  ................  .............
+>
+>     47.53%  div      div               [.] main
+>     20.62%  div      libc-2.23.so      [.] __random_r
+>     15.32%  div      libc-2.23.so      [.] __random
+>      8.66%  div      div               [.] compute_flag
+>      4.53%  div      libc-2.23.so      [.] rand
+>      3.34%  div      div               [.] rand@plt
+>      0.00%  div      [kernel.vmlinux]  [k] apic_timer_interrupt
+>      0.00%  div      libc-2.23.so      [.] intel_check_word
+>      0.00%  div      ld-2.23.so        [.] brk
+>      0.00%  div      [kernel.vmlinux]  [k] page_fault
+>      0.00%  div      ld-2.23.so        [.] _start
+>
+> We can see the kernel symbols apic_timer_interrupt and page_fault.
+>
+These kernel symbols do not match your description here. How much skid
+do you think you have here?
+You're saying you are at the user level, you get a counter overflow,
+and the interrupted IP lands in the kernel
+because you where there by the time the interrupt is delivered. How
+many instructions does it take to get
+from user land to apic_timer_interrupt() or page_fault()? These
+functions are not right at the kernel entry,
+I believe. So how did you get there, the skid must have been VERY big
+or symbolization has a problem.
 
-Yes.
-
-> >> Uses of ->vm_file (and rules for those) are too convoluted to untangle
-> >> at the moment.  I still would love to get that straightened out, but
-> >> it's not this cycle fodder, more's the pity...
-> 
-> Looked at some other options...  What coda mmap does looks very
-> dubious.  It only sets f_mapping, not vm_file.  That's going to get
-> into all sorts of trouble when underlying fs tries to look at
-> file_inode() or worse, ->private_data.  Looks like that should be
-> converted to what overlayfs does, to have a remote chance of actually
-> not crashing on most filesystems.  Does anybody actually use coda
-> still?
-
-Keep in mind that coda is using the local fs only as cache; IOW, its needs
-are much more limited than those of overlayfs - local r/w filesystem,
-disk-backed or tmpfs, used pretty much as a scratch space.
-
-> > PS: conversion of ->f_path.dentry is easy and that can probably go this
-> > cycle - it's a fairly trivial change, with no functional changes unless
-> > overlayfs is used with <filesystem>, fixing really bad shit if it ever
-> > gets used thus.  I'm not asking to put that into overlayfs pull *and*
-> > it's independent from the "want to kill that fucking kludge" stuff.
-> > The latter is too hard for this cycle, unfortunately.
-> 
-> So this is about adding a file_dentry_check() (or whatever we want to
-> call it) helper to be used by all filesystems when dereferecing
-> f_path.dentry, right?
-
-file_dentry(), and some of the users should be converted to file_inode().
-There's also a missing helper for debugfs uses - more or less a combination
-of file_dentry() and debugfs_file_get() (if not a conversion of
-debugfs_file_get() to taking struct file - almost all users are of that
-form, if not entirely all of them).  I've some of that done in local
-branch...
+> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
+> ---
+>  kernel/events/core.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 58 insertions(+)
+>
+> diff --git a/kernel/events/core.c b/kernel/events/core.c
+> index 80cca2b..7867541 100644
+> --- a/kernel/events/core.c
+> +++ b/kernel/events/core.c
+> @@ -7721,6 +7721,28 @@ int perf_event_account_interrupt(struct perf_event *event)
+>         return __perf_event_account_interrupt(event, 1);
+>  }
+>
+> +static int perf_allow_sample_leakage __read_mostly;
+> +
+> +static bool sample_is_allowed(struct perf_event *event, struct pt_regs *regs)
+> +{
+> +       int allow_leakage = READ_ONCE(perf_allow_sample_leakage);
+> +
+> +       if (allow_leakage)
+> +               return true;
+> +
+> +       /*
+> +        * Due to interrupt latency (AKA "skid"), we may enter the
+> +        * kernel before taking an overflow, even if the PMU is only
+> +        * counting user events.
+> +        * To avoid leaking information to userspace, we must always
+> +        * reject kernel samples when exclude_kernel is set.
+> +        */
+> +       if (event->attr.exclude_kernel && !user_mode(regs))
+> +               return false;
+> +
+> +       return true;
+> +}
+> +
+>  /*
+>   * Generic event overflow handling, sampling.
+>   */
+> @@ -7742,6 +7764,12 @@ static int __perf_event_overflow(struct perf_event *event,
+>         ret = __perf_event_account_interrupt(event, throttle);
+>
+>         /*
+> +        * For security, drop the skid kernel samples if necessary.
+> +        */
+> +       if (!sample_is_allowed(event, regs))
+> +               return ret;
+> +
+> +       /*
+>          * XXX event_limit might not quite work as expected on inherited
+>          * events
+>          */
+> @@ -9500,9 +9528,39 @@ perf_event_mux_interval_ms_store(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RW(perf_event_mux_interval_ms);
+>
+> +static ssize_t
+> +perf_allow_sample_leakage_show(struct device *dev,
+> +                              struct device_attribute *attr, char *page)
+> +{
+> +       int allow_leakage = READ_ONCE(perf_allow_sample_leakage);
+> +
+> +       return snprintf(page, PAGE_SIZE-1, "%d\n", allow_leakage);
+> +}
+> +
+> +static ssize_t
+> +perf_allow_sample_leakage_store(struct device *dev,
+> +                               struct device_attribute *attr,
+> +                               const char *buf, size_t count)
+> +{
+> +       int allow_leakage, ret;
+> +
+> +       ret = kstrtoint(buf, 0, &allow_leakage);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (allow_leakage != 0 && allow_leakage != 1)
+> +               return -EINVAL;
+> +
+> +       WRITE_ONCE(perf_allow_sample_leakage, allow_leakage);
+> +
+> +       return count;
+> +}
+> +static DEVICE_ATTR_RW(perf_allow_sample_leakage);
+> +
+>  static struct attribute *pmu_dev_attrs[] = {
+>         &dev_attr_type.attr,
+>         &dev_attr_perf_event_mux_interval_ms.attr,
+> +       &dev_attr_perf_allow_sample_leakage.attr,
+>         NULL,
+>  };
+>  ATTRIBUTE_GROUPS(pmu_dev);
+> --
+> 2.7.4
+>
