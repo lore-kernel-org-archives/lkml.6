@@ -2,92 +2,109 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAD9C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:05:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B4AAC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:05:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E003C208DA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:05:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E003C208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 03E8C208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:05:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d/I//tbW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03E8C208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756572AbeFOVFG (ORCPT
+        id S1756621AbeFOVFy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 17:05:06 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754429AbeFOVFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 17:05:04 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 263704070481;
-        Fri, 15 Jun 2018 21:05:04 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6B5BB5032D;
-        Fri, 15 Jun 2018 21:05:01 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5FL513d026715;
-        Fri, 15 Jun 2018 17:05:01 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5FL51P9026711;
-        Fri, 15 Jun 2018 17:05:01 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 15 Jun 2018 17:05:01 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Thomas Gleixner <tglx@linutronix.de>
-cc:     Alan Stern <stern@rowland.harvard.edu>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ming Lei <ming.lei@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        USB list <linux-usb@vger.kernel.org>,
-        Kernel development list <linux-kernel@vger.kernel.org>,
-        Sebastian Sewior <bigeasy@linutronix.de>
-Subject: Re: High-priority softirqs [was: [PATCH] usb: don't offload isochronous
- urb completions to ksoftirq]
-In-Reply-To: <alpine.DEB.2.21.1806151919130.1582@nanos.tec.linutronix.de>
-Message-ID: <alpine.LRH.2.02.1806151658000.24974@file01.intranet.prod.int.rdu2.redhat.com>
-References: <Pine.LNX.4.44L0.1806151308310.1387-100000@iolanthe.rowland.org> <alpine.DEB.2.21.1806151919130.1582@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Fri, 15 Jun 2018 17:05:54 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:40340 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756517AbeFOVFv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 17:05:51 -0400
+Received: by mail-oi0-f66.google.com with SMTP id f79-v6so9978661oib.7;
+        Fri, 15 Jun 2018 14:05:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=XBj8E/SJTvSPju6Yn/wOW5dsq996saXrYCIOyeSK2N8=;
+        b=d/I//tbWMOQpSLs0KaYeq07joNapM9jNoIIuLkPnI0uzPkYU7zksYrqgc0S6DFQIl1
+         /qhVWh4IdhP3dchh6JAF5IitYqWq7dfoHQN1QBJoh+OO51yd72yV+G6CVvGTKi4OGJEx
+         6Uh4HxXl4mUHuOkNJIvgKkpTS/Lc70JQG4o+74oy49mEfhW5MYZM7MoIQrzPDPFv38Hf
+         scWqyA/RW0ulXiNysLqWLXXHUB/smDX9z3DVuJYIFwSvVQddQtm0LwRGrNmcXbbaMyOF
+         tZOj+x4SCBi4myXJvich3FgT+vzGj9r2sYUO0agU3EQginhKwCzNRBCDM89cj3/reRdt
+         AwJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=XBj8E/SJTvSPju6Yn/wOW5dsq996saXrYCIOyeSK2N8=;
+        b=qlmXjZid8vuWA7q2BKmVyBYG1H9PAREWSNLkrHUDPtUuSWdHiLJ60g5Hua9pM9dsbC
+         i5XmO6SCcI/rlTLP4O+BGuwQP/+nGxSEbdZ6L3p0zJO3Al2iSacVM2eLewsWel5DaoVx
+         f5x8Wh2VX9V3wuxU3mGsD4GS4NHfLZaGafme6p1usFiW7wsa0yS+PjrFVev8g7Tfb5Le
+         lZFH0bb4JrsYs1zcs2g9fLDERCCsaDIsVTUm5tRYoPQ0L/vVXLc4sv9p8EKfLmETmLKI
+         LjO6CAPaglv70MVYKFI9RueczjyKQQ+zkkTXvEbTkIiZYoYRTiXGGvN8VBvgU7lOiqRf
+         TjQA==
+X-Gm-Message-State: APt69E0z+Bftg21c5lgPiT0X3qJJrwGdZDPtef77Aky7e7cXuV7FrVbo
+        8htN/HrheySjXqYNoRYTLyvZwCk1EInGu1S7YIA=
+X-Google-Smtp-Source: ADUXVKIVjEy1bf+t5VYqz5WJ0gWIJLqOWMarW6lB1DPiDcRUnkmYWLNR2XPYhGvDvmfWqhoQGJFO/vN+YAItTgV3i1A=
+X-Received: by 2002:aca:3a45:: with SMTP id h66-v6mr1947474oia.336.1529096750973;
+ Fri, 15 Jun 2018 14:05:50 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 15 Jun 2018 21:05:04 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Fri, 15 Jun 2018 21:05:04 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 14:05:50
+ -0700 (PDT)
+In-Reply-To: <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
+References: <cover.1529091248.git.leonard.crestez@nxp.com> <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
+ <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com> <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 15 Jun 2018 18:05:50 -0300
+Message-ID: <CAOMZO5BnOpaCzK1Sq=CUPaO6Yh8bE6v=8dmN5pxTKpwqjM1Qfw@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     "stefan@agner.ch" <stefan@agner.ch>,
+        "marex@denx.de" <marex@denx.de>, dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "marcofrk@gmail.com" <marcofrk@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 15, 2018 at 5:58 PM, Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
 
+> In that thread there is a proposal for removing the old fbdev/mxsfb
+> driver entirely.
+>
+> That would break old DTBs, isn't this generally considered bad? Also,
+> are we sure the removal of fbdev/mxsfb wouldn't lose any features?
 
-On Fri, 15 Jun 2018, Thomas Gleixner wrote:
+Yes, I also think we should not break old dtb's.
 
-> One solution to that is to avoid both tasklets and kworkers and change the
-> USB code to make use of threaded interrupt handlers. I.e. handle the fast
-> stuff in the primary (hardirq) handler and delegate the rest to the irq
-> thread. That thread still can offload disk type stuff to a kworker if
-> needed. But the irq thread allows to bring the stuff under scheduler
-> control and experiments which I did a few years ago worked out pretty good.
-> 
-> Thanks,
-> 
-> 	tglx
+> What my series does is make both drivers work with the same kernel
+> image and turns the choice into a board-level dtb decision. Supporting
+> everything at once seems desirable to me and it allows for a very
+> smooth upgrade path.
+>
+> The old driver could be removed later, after all users are converted.
 
-I don't think that threaded interrupt handlers are a good idea.
+Agreed.
 
-There are existing tools such as rtkit in Linux distributions that 
-increase the priority of audio applications to real time. And if rtkit 
-increases the priority of audio player or audio server above the priority 
-of the interrupt thread that handles the soundcard - sound playback is 
-screwed.
-
-You would have to set the priority of the interrupt thread to the highest 
-real-time priority - and in such a case, the interrupt thread is no 
-different than a hard-irq handler.
-
-Mikulas
+Maybe the mxs fbdev driver needs to warn users saying that that the
+driver is deprecated and the bindings need to be updated to the DRM
+bindings style.
