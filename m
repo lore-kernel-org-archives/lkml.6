@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BD2BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:44:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E839C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:45:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA674208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:44:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44E25208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:45:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ljMbKcHX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA674208AF
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tBp22Ku4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E25208B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966094AbeFORnk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:43:40 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:59012 "EHLO
+        id S966296AbeFORpJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:45:09 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:59006 "EHLO
         aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966075AbeFORnP (ORCPT
+        with ESMTP id S965850AbeFORnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Jun 2018 13:43:15 -0400
 Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHcmiI139454;
-        Fri, 15 Jun 2018 17:42:15 GMT
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHck4b139416;
+        Fri, 15 Jun 2018 17:42:17 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=QZZNDBMtLradJ4r2PazNNQLYAzjOsg9w4tRyYGQqI7A=;
- b=ljMbKcHXPH/jVAAeCclJ2HY4ZOgNdVFVBphGsPiSPAriAqGiMOUXs5evu7TAcWtXYKDJ
- oBq+0AMQX7xBe7/kV2SEZQuLSV14gw5f0LtuHqF7nUE0fy7TN732DCJfxgxzerOcjUBM
- NJj6T6JZfOqWSxGho0KX1d+cZStXyhupFb8Fs7J1LSuO0wJP914bY/wR0n1bHF6f085w
- 9IIq7bB/c3ibJg4Zx0yN/5TEg0PIB88VZU/lG6O9iMI+eyH2EgAG3rt7T4kkgYFyMAqI
- v9LqZ5/M54QcprmYqHKzrO/h3gzuMqJsUs67pXi0hzbRcmuq0RyAk6TjUSNKLxBw2qWd LQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2jk0xr1vy7-1
+ bh=T0h2r0sSc7tWjXGwr4r6W2STLW/66D3vCHN8FMxxB04=;
+ b=tBp22Ku4eGJqQDkcYdr50jReMmmxjuy++YlqEfR/P4qtWpMRrh7c9d3sDS4B4yLHVrl5
+ fdEj/YgBJ9J8VwgQhiEXRo34P2hz/d9YPzRQQISvRNyzi6G6X+GYRniYcuiMf2+f8/uE
+ O+5FTDXzzYLwo/8V6PJA6EU1+LNAGZ+MCNHtCYADJ4iHLsLrpvvVub6YLxx0/wW/z4Ri
+ NyVAabh43kZh39AgyYLexdBM7dfzGmhiVd6NZ4HyGFQ/ro0ksj4gtI8MnqbwKmZFOQ5R
+ 2PdW0jnl/YOpFqU3lLafa9GUY3mvc2o4S3vkbr/ij/8e0M9it6UAlekPMV5TiPg/RxxM Og== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2130.oracle.com with ESMTP id 2jk0xr1vy8-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:15 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgE43002155
+        Fri, 15 Jun 2018 17:42:16 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgGCL031232
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:14 GMT
+        Fri, 15 Jun 2018 17:42:16 GMT
 Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5FHgCAt004391;
-        Fri, 15 Jun 2018 17:42:12 GMT
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5FHgG34017029;
+        Fri, 15 Jun 2018 17:42:16 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jun 2018 10:42:12 -0700
+        with ESMTP ; Fri, 15 Jun 2018 10:42:16 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -58,9 +58,9 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
         douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: [PATCH v10 1/7] x86/tsc: remove tsc_disabled flag
-Date:   Fri, 15 Jun 2018 13:41:58 -0400
-Message-Id: <20180615174204.30581-2-pasha.tatashin@oracle.com>
+Subject: [PATCH v10 3/7] x86/time: read_boot_clock64() implementation
+Date:   Fri, 15 Jun 2018 13:42:00 -0400
+Message-Id: <20180615174204.30581-4-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180615174204.30581-1-pasha.tatashin@oracle.com>
 References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
@@ -74,74 +74,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-tsc_disabled is set when notsc is passed as kernel parameter. The reason we
-have notsc is to avoid timing problems on multi-socket systems.  We already
-have a mechanism, however, to detect and resolve these issues by invoking
-tsc unstable path. Thus, make notsc to behave the same as tsc=unstable.
+read_boot_clock64() returns time of when system was started. Now, that
+early boot clock is going to be available on x86 it is possible to
+implement x86 specific version of read_boot_clock64() that takes advantage
+of this new feature.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
-Reviewed-by: Dou Liyang <douly.fnst@cn.fujitsu.com>
 ---
- arch/x86/kernel/tsc.c | 18 +++---------------
- 1 file changed, 3 insertions(+), 15 deletions(-)
+ arch/x86/kernel/time.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-diff --git a/arch/x86/kernel/tsc.c b/arch/x86/kernel/tsc.c
-index 74392d9d51e0..186395041725 100644
---- a/arch/x86/kernel/tsc.c
-+++ b/arch/x86/kernel/tsc.c
-@@ -38,11 +38,6 @@ EXPORT_SYMBOL(tsc_khz);
-  */
- static int __read_mostly tsc_unstable;
+diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
+index 774ebafa97c4..32dff35719d9 100644
+--- a/arch/x86/kernel/time.c
++++ b/arch/x86/kernel/time.c
+@@ -15,6 +15,7 @@
+ #include <linux/i8253.h>
+ #include <linux/time.h>
+ #include <linux/export.h>
++#include <linux/sched/clock.h>
  
--/* native_sched_clock() is called before tsc_init(), so
--   we must start with the TSC soft disabled to prevent
--   erroneous rdtsc usage on !boot_cpu_has(X86_FEATURE_TSC) processors */
--static int __read_mostly tsc_disabled = -1;
--
- static DEFINE_STATIC_KEY_FALSE(__use_tsc);
- 
- int tsc_clocksource_reliable;
-@@ -248,8 +243,7 @@ EXPORT_SYMBOL_GPL(check_tsc_unstable);
- #ifdef CONFIG_X86_TSC
- int __init notsc_setup(char *str)
+ #include <asm/vsyscall.h>
+ #include <asm/x86_init.h>
+@@ -104,3 +105,32 @@ void __init time_init(void)
  {
--	pr_warn("Kernel compiled with CONFIG_X86_TSC, cannot disable TSC completely\n");
--	tsc_disabled = 1;
-+	mark_tsc_unstable("boot parameter notsc");
- 	return 1;
+ 	late_time_init = x86_late_time_init;
  }
- #else
-@@ -1307,7 +1301,7 @@ static void tsc_refine_calibration_work(struct work_struct *work)
- 
- static int __init init_tsc_clocksource(void)
- {
--	if (!boot_cpu_has(X86_FEATURE_TSC) || tsc_disabled > 0 || !tsc_khz)
-+	if (!boot_cpu_has(X86_FEATURE_TSC) || !tsc_khz)
- 		return 0;
- 
- 	if (tsc_unstable)
-@@ -1414,12 +1408,6 @@ void __init tsc_init(void)
- 		set_cyc2ns_scale(tsc_khz, cpu, cyc);
- 	}
- 
--	if (tsc_disabled > 0)
--		return;
--
--	/* now allow native_sched_clock() to use rdtsc */
--
--	tsc_disabled = 0;
- 	static_branch_enable(&__use_tsc);
- 
- 	if (!no_sched_irq_time)
-@@ -1455,7 +1443,7 @@ unsigned long calibrate_delay_is_known(void)
- 	int constant_tsc = cpu_has(&cpu_data(cpu), X86_FEATURE_CONSTANT_TSC);
- 	const struct cpumask *mask = topology_core_cpumask(cpu);
- 
--	if (tsc_disabled || !constant_tsc || !mask)
-+	if (!constant_tsc || !mask)
- 		return 0;
- 
- 	sibling = cpumask_any_but(mask, cpu);
++
++/*
++ * Called once during to boot to initialize boot time.
++ * This function returns timestamp in timespec format which is sec/nsec from
++ * epoch of when boot started.
++ * We use sched_clock_cpu() that gives us nanoseconds from when this clock has
++ * been started and it happens quiet early during boot process. To calculate
++ * offset from epoch we use information provided in 'now' by the caller
++ *
++ * If sched_clock_cpu() is not available or if there is any kind of error
++ * i.e. time from epoch is smaller than boot time, we must return zeros in ts,
++ * and the caller will take care of the error: by assuming that the time when
++ * this function was called is the beginning of boot time.
++ */
++void __init read_boot_clock64(struct timespec64 *now, struct timespec64 *ts)
++{
++	u64 ns_boot = sched_clock_cpu(smp_processor_id());
++	bool valid_clock;
++	u64 ns_now;
++
++	ns_now = timespec64_to_ns(now);
++	valid_clock = ns_boot && timespec64_valid_strict(now) &&
++			(ns_now > ns_boot);
++
++	if (!valid_clock)
++		*ts = (struct timespec64){0, 0};
++	else
++		*ts = ns_to_timespec64(ns_now - ns_boot);
++}
 -- 
 2.17.1
 
