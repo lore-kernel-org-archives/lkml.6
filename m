@@ -2,302 +2,160 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8EDBAC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 01:12:25 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 814BCC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 01:20:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37E8C20693
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 01:12:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37E8C20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F85D20693
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 01:20:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ztJHRBJV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F85D20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965035AbeFOBMW convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 21:12:22 -0400
-Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:50781 "EHLO
-        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936073AbeFOBMV (ORCPT
+        id S965144AbeFOBUb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 21:20:31 -0400
+Received: from conuserg-08.nifty.com ([210.131.2.75]:27010 "EHLO
+        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965001AbeFOBU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 21:12:21 -0400
-Received: from mailgate02.nec.co.jp ([114.179.233.122])
-        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w5F1BlCT003188
-        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 15 Jun 2018 10:11:47 +0900
-Received: from mailsv01.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
-        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w5F1Bl45024657;
-        Fri, 15 Jun 2018 10:11:47 +0900
-Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
-        by mailsv01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w5F1ABRQ021755;
-        Fri, 15 Jun 2018 10:11:47 +0900
-Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.149] [10.38.151.149]) by mail02.kamome.nec.co.jp with ESMTP id BT-MMP-1217817; Fri, 15 Jun 2018 10:09:29 +0900
-Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
- BPXC21GP.gisp.nec.co.jp ([10.38.151.149]) with mapi id 14.03.0319.002; Fri,
- 15 Jun 2018 10:09:28 +0900
-From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-To:     Oscar Salvador <osalvador@techadventures.net>
-CC:     Michal Hocko <mhocko@kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        "Steven Sistare" <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "mingo@kernel.org" <mingo@kernel.org>,
-        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Huang Ying <ying.huang@intel.com>
-Subject: Re: [PATCH v2] x86/e820: put !E820_TYPE_RAM regions into
- memblock.reserved
-Thread-Topic: [PATCH v2] x86/e820: put !E820_TYPE_RAM regions into
- memblock.reserved
-Thread-Index: AQHUA6nOlVxDLZeEvEaTwA6nZLvyTqRfr6cAgAA9KIA=
-Date:   Fri, 15 Jun 2018 01:09:28 +0000
-Message-ID: <20180615010927.GC1196@hori1.linux.bs1.fc.nec.co.jp>
-References: <20180607062218.GB22554@hori1.linux.bs1.fc.nec.co.jp>
- <20180607065940.GA7334@techadventures.net>
- <20180607094921.GA8545@techadventures.net>
- <20180607100256.GA9129@hori1.linux.bs1.fc.nec.co.jp>
- <20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp>
- <20180613090700.GG13364@dhcp22.suse.cz>
- <20180614051618.GB17860@hori1.linux.bs1.fc.nec.co.jp>
- <20180614053859.GA9863@techadventures.net>
- <20180614063454.GA32419@hori1.linux.bs1.fc.nec.co.jp>
- <20180614213033.GA19374@techadventures.net>
-In-Reply-To: <20180614213033.GA19374@techadventures.net>
-Accept-Language: en-US, ja-JP
-Content-Language: ja-JP
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.51.8.81]
-Content-Type: text/plain; charset="iso-2022-jp"
-Content-ID: <E2CEC65DDBD7834FA2FCDBF7BA89348A@gisp.nec.co.jp>
-Content-Transfer-Encoding: 8BIT
-MIME-Version: 1.0
-X-TM-AS-MML: disable
+        Thu, 14 Jun 2018 21:20:29 -0400
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-08.nifty.com with ESMTP id w5F1IuMM005465;
+        Fri, 15 Jun 2018 10:18:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com w5F1IuMM005465
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1529025539;
+        bh=6+iHk+x2dWO+Qd/UgvvhTtWHsBi6GstNKr7N04OKinM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ztJHRBJVke2gvzj1MsmyWVKd+UrVxKqNiM39Rswfgf9pcjPlK4S9ydSRL5Qjexw17
+         2ydgotSl/s7GmD8beOmhsRg/GKoCrp9VCW30pkRmxCH5MheciXlCFJHD6FfxJMO9Hn
+         Cb42ZOt//52QeBQ6uo26O5zvDRif5E/1hmqAyytTRjZFRWQtIFIQ0TwySbIZeSc2fZ
+         xCcs31UEeVhMkkUH8GdEwcwmbU6BbzLwJOMDPlQBY8XkSlKXZOkFbWdydcHoQAxvER
+         TLJBWZrbeL9UBNbh6j6/qelNAtO5RfGpZHGd4931DB7ZucOi4AXPYygwl2PgGNEElE
+         W99ygDZV3Q8GA==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     linux-mtd@lists.infradead.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Rob Herring <robh+dt@kernel.org>, linux-kbuild@vger.kernel.org,
+        Richard Weinberger <richard@nod.at>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
+Subject: [PATCH v3 2/3] mtd: rawnand: denali_dt: use dev as a shorthand of &pdev->dev
+Date:   Fri, 15 Jun 2018 10:18:51 +0900
+Message-Id: <1529025532-22087-3-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 11:30:34PM +0200, Oscar Salvador wrote:
-> On Thu, Jun 14, 2018 at 06:34:55AM +0000, Naoya Horiguchi wrote:
-> > On Thu, Jun 14, 2018 at 07:38:59AM +0200, Oscar Salvador wrote:
-> > > On Thu, Jun 14, 2018 at 05:16:18AM +0000, Naoya Horiguchi wrote:
-> > ...
-> > > > 
-> > > > My concern is that there are a few E820 memory types rather than
-> > > > E820_TYPE_RAM and E820_TYPE_RESERVED, and I'm not sure that putting them
-> > > > all into memblock.reserved is really acceptable.
-> > > 
-> > > Hi Naoya,
-> > > 
-> > > Maybe you could just add to memblock.reserved, all unavailable ranges within
-> > > E820_TYPE_RAM.
-> > > Actually, in your original patch, you are walking memblock.memory, which should
-> > > only contain E820_TYPE_RAM ranges (talking about x86).
-> > > 
-> > > So I think the below would to the trick as well?
-> > > 
-> > > @@ -1248,6 +1276,7 @@ void __init e820__memblock_setup(void)
-> > >  {
-> > >         int i;
-> > >         u64 end;
-> > > +       u64 next = 0;
-> > >  
-> > >         /*
-> > >          * The bootstrap memblock region count maximum is 128 entries
-> > >  
-> > > @@ -1269,6 +1299,14 @@ void __init e820__memblock_setup(void)
-> > >  
-> > >                 if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-> > >                         continue;
-> > >
-> > > +       
-> > > +               if (entry->type == E820_TYPE_RAM)
-> > > +                       if (next < entry->addr) {
-> > > +                       	memblock_reserve (next, next + (entry->addr - next));
-> > > +                        	next = end;
-> > > +                	}
-> > > 
-> > > With the above patch, I can no longer see the issues either.
-> > 
-> > I double-checked and this change looks good to me.
-> > 
-> > > 
-> > > Although, there is a difference between this and your original patch.
-> > > In your original patch, you are just zeroing the pages, while with this one (or with your second patch),
-> > > we will zero the page in reserve_bootmem_region(), but that function also init
-> > > some other fields of the struct page:
-> > > 
-> > > mm_zero_struct_page(page);
-> > > set_page_links(page, zone, nid, pfn);
-> > > init_page_count(page);
-> > > page_mapcount_reset(page);
-> > > page_cpupid_reset_last(page);
-> > > 
-> > > So I am not sure we want to bother doing that for pages that are really unreachable.
-> > 
-> > I think that considering that /proc/kpageflags can check them, some data
-> > (even if it's trivial) might be better than just zeros.
-> > 
-> > Here's the updated patch.
-> > Thanks for the suggestion and testing!
-> > 
-> > ---
-> > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Date: Thu, 14 Jun 2018 14:44:36 +0900
-> > Subject: [PATCH] x86/e820: put !E820_TYPE_RAM regions into memblock.reserved
-> > 
-> > There is a kernel panic that is triggered when reading /proc/kpageflags
-> > on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
-> > 
-> >   BUG: unable to handle kernel paging request at fffffffffffffffe
-> >   PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
-> >   Oops: 0000 [#1] SMP PTI
-> >   CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
-> >   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
-> >   RIP: 0010:stable_page_flags+0x27/0x3c0
-> >   Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
-> >   RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
-> >   RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
-> >   RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
-> >   RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
-> >   R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
-> >   R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
-> >   FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
-> >   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> >   CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
-> >   Call Trace:
-> >    kpageflags_read+0xc7/0x120
-> >    proc_reg_read+0x3c/0x60
-> >    __vfs_read+0x36/0x170
-> >    vfs_read+0x89/0x130
-> >    ksys_pread64+0x71/0x90
-> >    do_syscall_64+0x5b/0x160
-> >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> >   RIP: 0033:0x7efc42e75e23
-> >   Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
-> > 
-> > According to kernel bisection, this problem became visible due to commit
-> > f7f99100d8d9 which changes how struct pages are initialized.
-> > 
-> > Memblock layout affects the pfn ranges covered by node/zone. Consider
-> > that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
-> > the default (no memmap= given) memblock layout is like below:
-> > 
-> >   MEMBLOCK configuration:
-> >    memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
-> >    memory.cnt  = 0x4
-> >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
-> >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
-> >    memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
-> >    memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
-> >    ...
-> > 
-> > If you give memmap=1G!4G (so it just covers memory[0x2]),
-> > the range [0x100000000-0x13fffffff] is gone:
-> > 
-> >   MEMBLOCK configuration:
-> >    memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
-> >    memory.cnt  = 0x3
-> >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
-> >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
-> >    memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
-> >    ...
-> > 
-> > This causes shrinking node 0's pfn range because it is calculated by
-> > the address range of memblock.memory. So some of struct pages in the
-> > gap range are left uninitialized.
-> > 
-> > We have a function zero_resv_unavail() which does zeroing the struct
-> > pages within the reserved unavailable range (i.e. memblock.memory &&
-> > !memblock.reserved). This patch utilizes it to cover all unavailable
-> > ranges by putting them into memblock.reserved.
-> > 
-> > Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
-> > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-> > Suggested-by: Oscar Salvador <osalvador@techadventures.net>
-> > Tested-by: Oscar Salvador <osalvador@techadventures.net>
-> > ---
-> >  arch/x86/kernel/e820.c | 12 ++++++++++++
-> >  1 file changed, 12 insertions(+)
-> > 
-> > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
-> > index d1f25c831447..d15ef47ea354 100644
-> > --- a/arch/x86/kernel/e820.c
-> > +++ b/arch/x86/kernel/e820.c
-> > @@ -1248,6 +1248,7 @@ void __init e820__memblock_setup(void)
-> >  {
-> >  	int i;
-> >  	u64 end;
-> > +	u64 next = 0;
-> >  
-> >  	/*
-> >  	 * The bootstrap memblock region count maximum is 128 entries
-> > @@ -1270,6 +1271,17 @@ void __init e820__memblock_setup(void)
-> >  		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-> >  			continue;
-> >  
-> > +		/*
-> > +		 * Ranges unavailable in E820_TYPE_RAM are put into
-> > +		 * memblock.reserved, to make sure that struct pages in such
-> > +		 * regions are not left uninitialized after bootup.
-> > +		 */
-> > +		if (entry->type == E820_TYPE_RAM)
-> > +			if (next < entry->addr) {
-> > +				memblock_reserve (next, next + (entry->addr - next));
-> > +				next = end;
-> > +			}
-> > +
-> >  		memblock_add(entry->addr, entry->size);
-> >  	}
-> 
-> Sorry, but this patch is broken.
-> While I do not get the failure, it somehow cuts the memory down.
-> I did not have time to check why.
-> 
-> So I think that for now we should stick to your patch that touches the same code:
-> 
-> =======
-> @@ -1248,6 +1276,8 @@ void __init e820__memblock_setup(void)
->  {
->         int i;
->         u64 end;
-> +       u64 next;
-> +       u64 addr = 0;
->  
->         /*
->          * The bootstrap memblock region count maximum is 128 entries
-> @@ -1260,17 +1290,21 @@ void __init e820__memblock_setup(void)
->          */
->         memblock_allow_resize();
->  
->         for (i = 0; i < e820_table->nr_entries; i++) {
->                 struct e820_entry *entry = &e820_table->entries[i];
->  
->                 end = entry->addr + entry->size;
-> +               if (addr < entry->addr)
-> +                       memblock_reserve(addr, entry->addr - addr);
-> +               addr = end;
->                 if (end != (resource_size_t)end)
->                         continue;
->  
->                 if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
-> -                       continue;
-> -
-> -               memblock_add(entry->addr, entry->size);
-> +                       memblock_reserve(entry->addr, entry->size);
-> +               else
-> +                       memblock_add(entry->addr, entry->size);
-> =======
-> 
-> I checked it, and with that version everything looks fine.
+The probe function references &pdev->dev many times.  Add 'dev' as
+a shorthand.
 
-OK, I'll go back to this version.
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
 
-Thanks,
-Naoya Horiguchi
+Changes in v3: None
+Changes in v2: None
+
+ drivers/mtd/nand/raw/denali_dt.c | 25 +++++++++++++------------
+ 1 file changed, 13 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/mtd/nand/raw/denali_dt.c b/drivers/mtd/nand/raw/denali_dt.c
+index ce6239d..afaae37 100644
+--- a/drivers/mtd/nand/raw/denali_dt.c
++++ b/drivers/mtd/nand/raw/denali_dt.c
+@@ -81,38 +81,39 @@ MODULE_DEVICE_TABLE(of, denali_nand_dt_ids);
+ 
+ static int denali_dt_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct resource *res;
+ 	struct denali_dt *dt;
+ 	const struct denali_dt_data *data;
+ 	struct denali_nand_info *denali;
+ 	int ret;
+ 
+-	dt = devm_kzalloc(&pdev->dev, sizeof(*dt), GFP_KERNEL);
++	dt = devm_kzalloc(dev, sizeof(*dt), GFP_KERNEL);
+ 	if (!dt)
+ 		return -ENOMEM;
+ 	denali = &dt->denali;
+ 
+-	data = of_device_get_match_data(&pdev->dev);
++	data = of_device_get_match_data(dev);
+ 	if (data) {
+ 		denali->revision = data->revision;
+ 		denali->caps = data->caps;
+ 		denali->ecc_caps = data->ecc_caps;
+ 	}
+ 
+-	denali->dev = &pdev->dev;
++	denali->dev = dev;
+ 	denali->irq = platform_get_irq(pdev, 0);
+ 	if (denali->irq < 0) {
+-		dev_err(&pdev->dev, "no irq defined\n");
++		dev_err(dev, "no irq defined\n");
+ 		return denali->irq;
+ 	}
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "denali_reg");
+-	denali->reg = devm_ioremap_resource(&pdev->dev, res);
++	denali->reg = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(denali->reg))
+ 		return PTR_ERR(denali->reg);
+ 
+ 	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "nand_data");
+-	denali->host = devm_ioremap_resource(&pdev->dev, res);
++	denali->host = devm_ioremap_resource(dev, res);
+ 	if (IS_ERR(denali->host))
+ 		return PTR_ERR(denali->host);
+ 
+@@ -120,19 +121,19 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 	 * A single anonymous clock is supported for the backward compatibility.
+ 	 * New platforms should support all the named clocks.
+ 	 */
+-	dt->clk = devm_clk_get(&pdev->dev, "nand");
++	dt->clk = devm_clk_get(dev, "nand");
+ 	if (IS_ERR(dt->clk))
+-		dt->clk = devm_clk_get(&pdev->dev, NULL);
++		dt->clk = devm_clk_get(dev, NULL);
+ 	if (IS_ERR(dt->clk)) {
+-		dev_err(&pdev->dev, "no clk available\n");
++		dev_err(dev, "no clk available\n");
+ 		return PTR_ERR(dt->clk);
+ 	}
+ 
+-	dt->clk_x = devm_clk_get(&pdev->dev, "nand_x");
++	dt->clk_x = devm_clk_get(dev, "nand_x");
+ 	if (IS_ERR(dt->clk_x))
+ 		dt->clk_x = NULL;
+ 
+-	dt->clk_ecc = devm_clk_get(&pdev->dev, "ecc");
++	dt->clk_ecc = devm_clk_get(dev, "ecc");
+ 	if (IS_ERR(dt->clk_ecc))
+ 		dt->clk_ecc = NULL;
+ 
+@@ -155,7 +156,7 @@ static int denali_dt_probe(struct platform_device *pdev)
+ 		 * Hardcode the clock rates for the backward compatibility.
+ 		 * This works for both SOCFPGA and UniPhier.
+ 		 */
+-		dev_notice(&pdev->dev,
++		dev_notice(dev,
+ 			   "necessary clock is missing. default clock rates are used.\n");
+ 		denali->clk_x_rate = 200000000;
+ 	}
+-- 
+2.7.4
+
