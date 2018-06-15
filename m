@@ -6,212 +6,184 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F2BFFC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:07:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2A19AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55B6208D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A55B6208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id CC1D1208DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:08:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1D1208DA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755703AbeFOFH1 (ORCPT
+        id S1755748AbeFOFIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 01:07:27 -0400
-Received: from muru.com ([72.249.23.125]:47262 "EHLO muru.com"
+        Fri, 15 Jun 2018 01:08:39 -0400
+Received: from mga12.intel.com ([192.55.52.136]:33113 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755676AbeFOFHR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 01:07:17 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 33F9480AE;
-        Fri, 15 Jun 2018 05:03:49 +0000 (UTC)
-Date:   Thu, 14 Jun 2018 22:01:08 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Nishanth Menon <nm@ti.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Vignesh R <vigneshr@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [RFC PATCH 5/6] arm64: dts: ti: Add Support for AM654 SoC
-Message-ID: <20180615050108.GG112168@atomide.com>
-References: <20180605060510.32473-1-nm@ti.com>
- <CAL_JsqJusWTvr4A_-Bk81meYddMHBMJ4=Fch6L0MFoF7HfBW2w@mail.gmail.com>
- <20180607233853.p7iw7nlxxuyi66og@kahuna>
- <20180614123805.GF112168@atomide.com>
- <20180614130435.j2bmzam6corrjylx@kahuna>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614130435.j2bmzam6corrjylx@kahuna>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1755636AbeFOFIg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 01:08:36 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 22:08:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,225,1526367600"; 
+   d="scan'208";a="47272173"
+Received: from devel-ww.sh.intel.com ([10.239.48.110])
+  by fmsmga007.fm.intel.com with ESMTP; 14 Jun 2018 22:08:32 -0700
+From:   Wei Wang <wei.w.wang@intel.com>
+To:     virtio-dev@lists.oasis-open.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-mm@kvack.org, mst@redhat.com, mhocko@kernel.org,
+        akpm@linux-foundation.org
+Cc:     torvalds@linux-foundation.org, pbonzini@redhat.com,
+        wei.w.wang@intel.com, liliang.opensource@gmail.com,
+        yang.zhang.wz@gmail.com, quan.xu0@gmail.com, nilal@redhat.com,
+        riel@redhat.com, peterx@redhat.com
+Subject: [PATCH v33 0/4] Virtio-balloon: support free page reporting
+Date:   Fri, 15 Jun 2018 12:43:09 +0800
+Message-Id: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Nishanth Menon <nm@ti.com> [180614 13:07]:
-> On 12:38-20180614, Tony Lindgren wrote:
-> > Some comments on the ranges below.
-> 
-> Thanks for reviewing in detail (I understand we are in the middle of
-> merge window, so thanks for the extra effort).
-> 
-> > 
-> > * Nishanth Menon <nm@ti.com> [180607 16:41]:
-> > > +	soc0: soc0 {
-> > > +		compatible = "simple-bus";
-> > > +		#address-cells = <2>;
-> > > +		#size-cells = <2>;
-> > > +		ranges;
-> > 
-> > I suggest you leave out the soc0, that's not real. Just make
-> 
-> Why is that so, on a more complex board representation with multiple
-> SoCs, this is a clear node indicating what the main SoC is in the final
-> dtb representation.
+This patch series is separated from the previous "Virtio-balloon
+Enhancement" series. The new feature, VIRTIO_BALLOON_F_FREE_PAGE_HINT,  
+implemented by this series enables the virtio-balloon driver to report
+hints of guest free pages to the host. It can be used to accelerate live
+migration of VMs. Here is an introduction of this usage:
 
-It does not have a real reg or range.
+Live migration needs to transfer the VM's memory from the source machine
+to the destination round by round. For the 1st round, all the VM's memory
+is transferred. From the 2nd round, only the pieces of memory that were
+written by the guest (after the 1st round) are transferred. One method
+that is popularly used by the hypervisor to track which part of memory is
+written is to write-protect all the guest memory.
 
-> > the cbass@0 the top level interconnect. It can then provide
-> > ranges to mcu interconnect which can provide ranges to the wkup
-> > interconnect. So just model it after what's in the hardware :)
-> 
-> That might blow up things quite a bit - it is like the comment in:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm/boot/dts/dra7.dtsi#n141
+This feature enables the optimization by skipping the transfer of guest
+free pages during VM live migration. It is not concerned that the memory
+pages are used after they are given to the hypervisor as a hint of the
+free pages, because they will be tracked by the hypervisor and transferred
+in the subsequent round if they are used and written.
 
-That comment at the link above not true I've found. What we have
-there as "ocp" should be just "l3" and then the "l4" instances are
-children of "l3". The direct ports from some "l4" devices are just
-ranges at the parent "l3". And this will get changed slowly over
-next few merge cycles.
+* Tests
+- Test Environment
+    Host: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+    Guest: 8G RAM, 4 vCPU
+    Migration setup: migrate_set_speed 100G, migrate_set_downtime 2 second
 
-> The trees are pretty deep with many interconnections (example main does
-> have direct connections to wkup as well, which is simplified off in
-> top level diagram) - basically it is not a direct one dimensional
-> relationship. But then, the same is the case for other SoCs..
+- Test Results
+    - Idle Guest Live Migration Time (results are averaged over 10 runs):
+        - Optimization v.s. Legacy = 278ms vs 1757ms --> ~84% reduction
+    - Guest with Linux Compilation Workload (make bzImage -j4):
+        - Live Migration Time (average)
+          Optimization v.s. Legacy = 1408ms v.s. 2528ms --> ~44% reduction
+        - Linux Compilation Time
+          Optimization v.s. Legacy = 5min3s v.s. 5min12s
+          --> no obvious difference
 
-In the above example the connection from main to wkup is just a
-range provided by main so not a problem.
+ChangeLog:
+v32->v33:
+    - mm/get_from_free_page_list: The new implementation to get free page
+      hints based on the suggestions from Linus:
+      https://lkml.org/lkml/2018/6/11/764
+      This avoids the complex call chain, and looks more prudent.
+    - virtio-balloon: 
+      - use a fix-sized buffer to get free page hints;
+      - remove the cmd id related interface. Now host can just send a free
+        page hint command to the guest (via the host_cmd config register)
+        to start the reporting. Currentlty the guest reports only the max
+        order free page hints to host, which has generated similar good
+        results as before. But the interface used by virtio-balloon to
+        report can support reporting more orders in the future when there
+        is a need.
+v31->v32:
+    - virtio-balloon:
+        - rename cmd_id_use to cmd_id_active;
+        - report_free_page_func: detach used buffers after host sends a vq
+          interrupt, instead of busy waiting for used buffers.
+v30->v31:
+    - virtio-balloon:
+        - virtio_balloon_send_free_pages: return -EINTR rather than 1 to
+          indicate an active stop requested by host; and add more
+          comments to explain about access to cmd_id_received without
+          locks;
+        -  add_one_sg: add TODO to comments about possible improvement.
+v29->v30:
+    - mm/walk_free_mem_block: add cond_sched() for each order
+v28->v29:
+    - mm/page_poison: only expose page_poison_enabled(), rather than more
+      changes did in v28, as we are not 100% confident about that for now.
+    - virtio-balloon: use a separate buffer for the stop cmd, instead of
+      having the start and stop cmd use the same buffer. This avoids the
+      corner case that the start cmd is overridden by the stop cmd when
+      the host has a delay in reading the start cmd.
+v27->v28:
+    - mm/page_poison: Move PAGE_POISON to page_poison.c and add a function
+      to expose page poison val to kernel modules.
+v26->v27:
+    - add a new patch to expose page_poisoning_enabled to kernel modules
+    - virtio-balloon: set poison_val to 0xaaaaaaaa, instead of 0xaa
+v25->v26: virtio-balloon changes only
+    - remove kicking free page vq since the host now polls the vq after
+      initiating the reporting
+    - report_free_page_func: detach all the used buffers after sending
+      the stop cmd id. This avoids leaving the detaching burden (i.e.
+      overhead) to the next cmd id. Detaching here isn't considered
+      overhead since the stop cmd id has been sent, and host has already
+      moved formard.
+v24->v25:
+    - mm: change walk_free_mem_block to return 0 (instead of true) on
+          completing the report, and return a non-zero value from the
+          callabck, which stops the reporting.
+    - virtio-balloon:
+        - use enum instead of define for VIRTIO_BALLOON_VQ_INFLATE etc.
+        - avoid __virtio_clear_bit when bailing out;
+        - a new method to avoid reporting the some cmd id to host twice
+        - destroy_workqueue can cancel free page work when the feature is
+          negotiated;
+        - fail probe when the free page vq size is less than 2.
+v23->v24:
+    - change feature name VIRTIO_BALLOON_F_FREE_PAGE_VQ to
+      VIRTIO_BALLOON_F_FREE_PAGE_HINT
+    - kick when vq->num_free < half full, instead of "= half full"
+    - replace BUG_ON with bailing out
+    - check vb->balloon_wq in probe(), if null, bail out
+    - add a new feature bit for page poisoning
+    - solve the corner case that one cmd id being sent to host twice
+v22->v23:
+    - change to kick the device when the vq is half-way full;
+    - open-code batch_free_page_sg into add_one_sg;
+    - change cmd_id from "uint32_t" to "__virtio32";
+    - reserver one entry in the vq for the driver to send cmd_id, instead
+      of busywaiting for an available entry;
+    - add "stop_update" check before queue_work for prudence purpose for
+      now, will have a separate patch to discuss this flag check later;
+    - init_vqs: change to put some variables on stack to have simpler
+      implementation;
+    - add destroy_workqueue(vb->balloon_wq);
+v21->v22:
+    - add_one_sg: some code and comment re-arrangement
+    - send_cmd_id: handle a cornercase
 
-> we can represent NAVSS as a bus segment as well.
+For previous ChangeLog, please reference
+https://lwn.net/Articles/743660/
 
-Well ideally each module on the interconnects would be set up
-separately to prevent drivers trying to ioremap ranges from
-multiple modules. This is important as flushing posted write to
-one module will not flush it for the other module.
+Wei Wang (4):
+  mm: add a function to get free page blocks
+  virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+  mm/page_poison: expose page_poisoning_enabled to kernel modules
+  virtio-balloon: VIRTIO_BALLOON_F_PAGE_POISON
 
-> > I found the following ranges based on a quick look at the TRM,
-> > they could be split further if needed for power domains for
-> > genpd for example.
-> 
-> genpd is not really an issue, since it is handled in system firmware and
-> OSes dont have a visibility into the permitted ranges that the OS is
-> allowed to use.
+ drivers/virtio/virtio_balloon.c     | 197 +++++++++++++++++++++++++++++-------
+ include/linux/mm.h                  |   1 +
+ include/uapi/linux/virtio_balloon.h |  16 +++
+ mm/page_alloc.c                     |  52 ++++++++++
+ mm/page_poison.c                    |   6 ++
+ 5 files changed, 235 insertions(+), 37 deletions(-)
 
-There are other reasons beyond genpd too. Flushing posted writes
-to modules is one. Getting rid of pointless deferred probe is
-another one. Preventing device drivers trying to ioremap multiple
-module is yet another one..
+-- 
+2.7.4
 
-> I think it is just how accurate a representation is it worth.
-
-The dts really is intended to describe the hardware :) So
-let's not repeat the same mistake again with imaginary ranges.
-
-> > 
-> > main covers
-> > 0x0000000000 - 0x5402000000
-> > 
-> > main provides at least the following ranges for mcu
-> > 0x0028380000 - 0x002bc00000
-> > 0x0040080000 - 0x0041c80000
-> > 0x0045100000 - 0x0045180000
-> > 0x0045600000 - 0x0045640000
-> > 0x0045810000 - 0x0045860000
-> > 0x0045950000 - 0x0045950400
-> > 0x0045a50000 - 0x0045a50400
-> > 0x0045b04000 - 0x0045b06400
-> > 0x0045d10000 - 0x0045d24000
-> > 0x0046000000 - 0x0060000000
-> > 0x0400000000 - 0x0800000000
-> > 0x4c3c020000 - 0x4c3c030000
-> > 0x4c3e000000 - 0x4c3e040000
-> > 0x5400000000 - 0x5402000000
-> > 
-> > then mcu provides the following ranges for wkup
-> > 0x0042000000 - 0x0044410020
-> > 0x0045000000 - 0x0045030000
-> > 0x0045080000 - 0x00450a0000
-> > 0x0045808000 - 0x0045808800
-> > 0x0045b00000 - 0x0045b02400
-> > 
-> > This based on looking at "figure 1-1. device top-level
-> > block diagram" and the memory map in TRM.
-> 
-> Thanks for researching. I did debate something like:
-> 
-> From A53 view, a more accurate view might be  - from an interconnect
-> view of the world (still simplified - i have ignored the sub bus
-> segments in the representations below):
-> 
-> msmc {
-> 	navss_main {
-> 		cbass_main{
-> 			cbass_mcu {
-> 				navss_mcu {
-> 				};
-> 				cbass_wkup{
-> 				};
-> 			};
-> 		};
-> 	};
-> };
-> 
-> From R5 view, the view will be very different ofcourse:
-> view of the world (still simplified):
-> 
-> cbass_mcu {
-> 	navss_mcu {
-> 	};
-> 	cbass_wkup{
-> 	};
-> 	cbass_main{
-> 		navss_main {
-> 			msmc {
-> 			};
-> 		};
-> 	};
-> };
-
-Well if we follow the hardware representation of the interconnects,
-it should not matter from which processor view you're looking at things.
-There are just different ranges provided.
-
-> Do we really need this level of representation, I am not sure I had seen
-> this detailed a representation in other aarch64 SoCs (I am sure they are
-> as complex as TI SoCs as well).
-
-Based on my experience yes. See also the reasons I listed above.
-
-> I am trying to understand the direction and logic why we'd want to have
-> such a detailed representation.
-> 
-> A more flatter representation of just the main segments allow for dts
-> reuse between r5 and a53 as well (but that is minor).
-
-Just model it based on the hardware, then there's no need to
-debate it or rework it later on :)
-
-Regards,
-
-Tony
