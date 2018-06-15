@@ -4,129 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC366C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6334EC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 834A520891
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B239F20C0B
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:33:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="OjNhgUfY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 834A520891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iCAT/bky"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B239F20C0B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966093AbeFOT3P (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 15:29:15 -0400
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:50272 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964930AbeFOT3N (ORCPT
+        id S966100AbeFOTdD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 15:33:03 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:56416 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965768AbeFOTdC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 15:29:13 -0400
-Received: from pps.filterd (m0122332.ppops.net [127.0.0.1])
-        by mx0a-00190b01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5FJQhoU022997;
-        Fri, 15 Jun 2018 20:28:58 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=jan2016.eng;
- bh=1B/B0H0Na3LOpLlj8j9enTCTqpHsWwr6gwAtXAGNg9k=;
- b=OjNhgUfY4W3fxoIm8xHaFJ52vkd0EOf6pj9GfgDApUUhZX6dWBnltEMiYycBeOnagrea
- dZkamAMcYyDzYZSRh5XBc3W4LpgBlzgrUz1CGc7Z1T3/P1OoDw1C3whcFm/NZ1ByrVnH
- /s5MhgXJw3YJ1PmX/i4ybfJPaV0ZpE9yOnq+FWqMr7GTtM7zNKJR3Ax8UKu09g3rF+xI
- 39419N/8gPDwjPPGfMNKBdwcyPB+rNgdVcH6fDwC9d1szQDMddHsAB0VA4PillKr1PTn
- bFZo0iQQV/wiMp2GcXXXmK5iMFnK8Oy//Q0EzPbr3dR+J5ez67bFnGTAtqdwCG1SLj8x Ag== 
-Received: from prod-mail-ppoint2 (prod-mail-ppoint2.akamai.com [184.51.33.19])
-        by mx0a-00190b01.pphosted.com with ESMTP id 2jknw3caqu-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 15 Jun 2018 20:28:58 +0100
-Received: from pps.filterd (prod-mail-ppoint2.akamai.com [127.0.0.1])
-        by prod-mail-ppoint2.akamai.com (8.16.0.21/8.16.0.21) with SMTP id w5FJPVQH012648;
-        Fri, 15 Jun 2018 15:28:57 -0400
-Received: from prod-mail-relay11.akamai.com ([172.27.118.250])
-        by prod-mail-ppoint2.akamai.com with ESMTP id 2jmdfm1n4e-1;
-        Fri, 15 Jun 2018 15:28:57 -0400
-Received: from [172.28.13.175] (bos-lpjec.kendall.corp.akamai.com [172.28.13.175])
-        by prod-mail-relay11.akamai.com (Postfix) with ESMTP id 2C6311FC76;
-        Fri, 15 Jun 2018 19:28:57 +0000 (GMT)
-Subject: Re: [PATCH] mm/madvise: allow MADV_DONTNEED to free memory that is
- MLOCK_ONFAULT
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Vlastimil Babka <vbabka@suse.cz>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-api@vger.kernel.org, emunson@mgebm.net
-References: <1528484212-7199-1-git-send-email-jbaron@akamai.com>
- <20180611072005.GC13364@dhcp22.suse.cz>
- <4c4de46d-c55a-99a8-469f-e1e634fb8525@akamai.com>
- <20180611150330.GQ13364@dhcp22.suse.cz>
- <775adf2d-140c-1460-857f-2de7b24bafe7@akamai.com>
- <20180612074646.GS13364@dhcp22.suse.cz>
- <5a9398f4-453c-5cb5-6bbc-f20c3affc96a@akamai.com>
- <20180613091355.GI13364@dhcp22.suse.cz>
-From:   Jason Baron <jbaron@akamai.com>
-Message-ID: <44e46470-ba0f-8270-ae69-dfb87fbd5a0a@akamai.com>
-Date:   Fri, 15 Jun 2018 15:28:57 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 15 Jun 2018 15:33:02 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FJTI0M015457
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:33:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
+ references : in-reply-to : from : date : message-id : subject : to : cc :
+ content-type; s=corp-2017-10-26;
+ bh=RpERRARaJ0TtYWNqnw6ne/1Ffw/lPL62gPnHjxn2jrc=;
+ b=iCAT/bkyeL/cnVfQroxvb6cIrLq/bYcYjZPBk19N7p9D/UVYY+nrVgUviwYfMIarr438
+ D3SDFiMpU6uCjVJGjhSl9TjnJ51dnT+Lt2+0adYKuK7JNCa6DgvynixXADRS0GQ8aT/G
+ oMuWtS3IBaaB5Xefg/qULes+k/s26dXhzjWi2JhXADKTDaYCpiMfCqF9tNWMc/icfcgE
+ ePNDgZHwf3bFSXgdDquPH+3W6rqQWKq1knJBega0eJTzccg2SCkgOAlklf2oaP+5paNy
+ M5e2qp4WCukpQaytM4ypxGzJnDpr24fsFn7q2TJLC/zMuub30b2fbOZy0F1lxh9BZTvP UA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2jk0xr2693-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:33:01 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5FJWxm1027430
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:32:59 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5FJWxXU007060
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:32:59 GMT
+Received: from mail-ot0-f177.google.com (/74.125.82.177)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 15 Jun 2018 12:32:59 -0700
+Received: by mail-ot0-f177.google.com with SMTP id p95-v6so12199661ota.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 12:32:59 -0700 (PDT)
+X-Gm-Message-State: APt69E0iSdqYn/HD0dgbTiMNvB9IbcZToSR7aTAf+Olaw/iEdfOfLgW4
+        maWQcwwT4iUAEqCk96WCd3mqYfQ0cx59UrfbIQs=
+X-Google-Smtp-Source: ADUXVKJmn7TDOE5vRoCbAF78+bRH4TJ0sv9EmAzI9yNUMEiZKlvXwMUrN5EFmZaR9ESOrCzx+Fd0eMXHbN4kAq9IkdI=
+X-Received: by 2002:a9d:4e12:: with SMTP id p18-v6mr1941026otf.260.1529091179117;
+ Fri, 15 Jun 2018 12:32:59 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180613091355.GI13364@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-15_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=651
+References: <20180615155733.1175-1-pasha.tatashin@oracle.com> <20180615181113.GA27558@techadventures.net>
+In-Reply-To: <20180615181113.GA27558@techadventures.net>
+From:   Pavel Tatashin <pasha.tatashin@oracle.com>
+Date:   Fri, 15 Jun 2018 15:32:23 -0400
+X-Gmail-Original-Message-ID: <CAGM2rea+sUcewR+Ur58gNFC-fkdnK5_UHh6qgOvARpZ7un2n_A@mail.gmail.com>
+Message-ID: <CAGM2rea+sUcewR+Ur58gNFC-fkdnK5_UHh6qgOvARpZ7un2n_A@mail.gmail.com>
+Subject: Re: [PATCH] mm: skip invalid pages block at a time in zero_resv_unresv
+To:     osalvador@techadventures.net
+Cc:     Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>, n-horiguchi@ah.jp.nec.com,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        osalvador@suse.de, willy@infradead.org, mingo@kernel.org,
+        dan.j.williams@intel.com, ying.huang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=550
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806150207
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-15_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=2 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=633 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
- definitions=main-1806150207
+ engine=8.0.1-1805220000 definitions=main-1806150208
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+> Hi Pavel,
+>
+> Thanks for the patch.
+> This looks good to me.
+>
+> Reviewed-by: Oscar Salvador <osalvador@suse.de>
 
+Thank you Oscar!
 
-On 06/13/2018 05:13 AM, Michal Hocko wrote:
-> On Tue 12-06-18 10:11:33, Jason Baron wrote:
-> [...]
->> Ok, I share the concern that there is a chance that userspace is relying
->> on MADV_DONTNEED not free'ing locked memory. In that case, what if we
->> introduce a MADV_DONTNEED_FORCE, which does everything that
->> MADV_DONTNEED currently does but in addition will also free mlock areas.
-> 
-> What about other types of vmas that are not allowed to MADV_DONTNEED?
-> _FORCE suggests that the user of the API know what he is doing so why
-> shouldn't we allow unmapping hugetlb pages or special PFNMAPS? Or do we
-> want to add MADV_DONTNEED_FORCE_FOR_REAL when somebody comes with
-> another usecase?
-> 
-> I agree with Vlastimil that adding new madvise mode for niche case
-> sounds like a bad idea so we should better be sure that a new flag has
-> a reasonable semantic. Just allow mlocked pages is more of a tweak than
-> a proper semantic. So making it force for real requires to analyze what
-> that would mean for other vmas which are excluded now.
-> 
-
-If its a new flag, I agree it makes sense to look at hugetlb and
-pfnmaps. pfnmaps might be more work, since it may require callbacks to
-do driver specific actions...
-
-I was able to do something very close to the original requirement of
-free'ing mlock'd pages, via using a tmpfs mmap that is mlock'd. And then
-using fallocate(FALLOC_FL_PUNCH_HOLE) to free the locked pages. I think
-the tmpfs is sufficient for my needs, I wonder if there is any other
-interest in this feature?
-
-Thanks,
-
--Jason
+Pavel
