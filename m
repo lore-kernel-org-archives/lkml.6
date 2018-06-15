@@ -2,104 +2,78 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 99DB8C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:11:54 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5B99BC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:12:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E3A2208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B929208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gDXfP9Lp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3A2208B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RVEx1zbh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B929208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756011AbeFOILw (ORCPT
+        id S1756018AbeFOIMd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:11:52 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33507 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755926AbeFOILv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:11:51 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z6-v6so5869995wma.0
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 01:11:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=eFYvz2j7D4PoU424XpAGE2JQ9+cjNZn6Zw+9Avx2ZlU=;
-        b=gDXfP9LpjO3Mbop72XFD9fd+YduBIWTaR+QnpiRDQe0Dg6i6qID4QlKvgtYeL+Yd2l
-         nFmcTq8rL0CU/w0hfrqZlvG5yBCK8HVSFnC2xpoA3lxOdy/0xnf3rXJQ059l2lKbitMD
-         tCxj2Q73I5eIifcxUALBj2p2/Oft3OPkgL0Ek=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=eFYvz2j7D4PoU424XpAGE2JQ9+cjNZn6Zw+9Avx2ZlU=;
-        b=A6Ffbw/Cf1jYmCaMyGIXovuHE/MbH6roXLYToRcpy5RZmWKi60UGUM3fBixb2qjpy6
-         tk5vnaXWOrH/T4rK+QdoJ7pSfzN9DexpDtbs4Qe1sYg0Bpwt9kIydQWSmbbC0sVEGtpx
-         hTnOYqb1Gr0ryW/NFGAXl0NnX21Dz6LHton9SezA9zuryFH1YtQw4+mlayuhaIF9shbS
-         1BrtVS4TvtkoH/qgCs5BtRQkpOHEkA5cigOEQOPFnAaq2UYoNPxehY9qE/lwIAWi7fpf
-         L6aw7cqzI0t4XAz7ptourkHiFQwAALzjUh8+eH2ekMBXtjY8i7cGaBJqgHJjbP7ABbj/
-         PPzg==
-X-Gm-Message-State: APt69E0sTwE+p9+duimBbx4kFUZFC2l8ZrZUToztq//fVa4bbfibgbCG
-        ypC90GVcWCpYb7UK70o+MglkyuMahF8=
-X-Google-Smtp-Source: ADUXVKIoCxhBVeATCd7DR7cZGZILgBXMxgSSr2yXb8sFN5kZad4eKa9JdrvcTZVMRnCasjFU5oUjsQ==
-X-Received: by 2002:a1c:d106:: with SMTP id i6-v6mr392985wmg.1.1529050309909;
-        Fri, 15 Jun 2018 01:11:49 -0700 (PDT)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id j13-v6sm9303841wre.38.2018.06.15.01.11.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 01:11:49 -0700 (PDT)
-Subject: Re: [PATCH] media: venus: keep resolution when adjusting format
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20180605045046.200011-1-acourbot@chromium.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <b8ccddbe-7ff8-8098-2406-db8447c998f9@linaro.org>
-Date:   Fri, 15 Jun 2018 11:11:48 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.7.0
+        Fri, 15 Jun 2018 04:12:33 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58682 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755847AbeFOIMc (ORCPT
+        <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 04:12:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MWe+AXNnb/K85IU5quTuJ4mdg1eJtIwrkHg1jZwS5/Y=; b=RVEx1zbhrWlrSY2qiIzf03mRc
+        FjmhO2XxqViZZ/34maHWIitu/YOP8ZKaVXbTGgnk4LXCPfSh6BUaFzTP538m2AJM3i+Zaid7pgKEr
+        trXVgteUpS2HH5IrwIfIQL/TPEIDS7MYc3TGfNxTJEE4krE1JwSbOYI/ntre8JOEaNufoDZAkjJis
+        r6eds0Eae1e0eUH45RUMNx4FA54NnDoXWsjiE45bobNVtvs5DKt9vpUE+d9x6XBJ2q2lfraWm5Zzf
+        jfDJPjzf8CWhKKfTlAuH8RaKZrupd34XkUVdYVpGpjCB9kGdH1oZX6V9V4Iv8Hp73DeCyl9a4nASr
+        1XrzIucmg==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTjqL-0005nb-IQ; Fri, 15 Jun 2018 08:12:25 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 020962029FA0D; Fri, 15 Jun 2018 10:12:23 +0200 (CEST)
+Date:   Fri, 15 Jun 2018 10:12:23 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Jin, Yao" <yao.jin@linux.intel.com>
+Cc:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, me@kylehuey.com,
+        Linux-kernel@vger.kernel.org, vincent.weaver@maine.edu,
+        will.deacon@arm.com, eranian@google.com, namhyung@kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+Subject: Re: [PATCH v1 0/2] perf: Drop leaked kernel samples
+Message-ID: <20180615081223.GB2458@hirez.programming.kicks-ass.net>
+References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
+ <20180615074504.GA2458@hirez.programming.kicks-ass.net>
+ <11958be5-dc05-611b-6839-f1f6903c7ca8@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20180605045046.200011-1-acourbot@chromium.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <11958be5-dc05-611b-6839-f1f6903c7ca8@linux.intel.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On Fri, Jun 15, 2018 at 04:01:45PM +0800, Jin, Yao wrote:
 
-Thanks for the patch!
+> Bring more overhead to kernel if we zero the bits considering the number of
+> leaked samples may be not too small?
 
-On 06/05/2018 07:50 AM, Alexandre Courbot wrote:
-> When checking a format for validity, the resolution is reset to 1280x720
-> whenever the pixel format is not supported. This behavior can mislead
-> user-space into believing that this is the only resolution supported,
-> and looks strange considering that if we try/set the same format with
-> just the pixel format changed to a valid one, the call will this time
-> succeed without altering the resolution.
-> 
-> Resolution is managed independently of the pixel format, so remove this
-> reset.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
-> ---
->  drivers/media/platform/qcom/venus/vdec.c | 2 --
->  drivers/media/platform/qcom/venus/venc.c | 2 --
->  2 files changed, 4 deletions(-)
+Keeping the samples at least allows you to know how many samples
+happened and such things.
 
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> And the skid information may be interesting (see example of hitting on
+> page_fault in previous mail). If we zero it, we will not know.
 
--- 
-regards,
-Stan
+If you throw them out the window you also don't know, do you?
