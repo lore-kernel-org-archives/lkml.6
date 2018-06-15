@@ -6,84 +6,72 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5202C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0055DC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90F852088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:31:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A043420896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:34:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="uD6Jcl5v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90F852088E
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YcaMk5gw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A043420896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966432AbeFOUbd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:31:33 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:44475 "EHLO frisell.zx2c4.com"
+        id S966442AbeFOUeD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 16:34:03 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:52143 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966118AbeFOUbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:31:32 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id a3f163a9
+        id S966118AbeFOUeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:34:02 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 41eb9e91
         for <linux-kernel@vger.kernel.org>;
-        Fri, 15 Jun 2018 20:26:07 +0000 (UTC)
+        Fri, 15 Jun 2018 20:28:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
         :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=HoGTEwbpksKQ9h0pJZ+rOAhPRbo=; b=uD6Jcl
-        5vNug1MvsgmafPyjhafHqI83++nxpojWdWPP725oMBEGgEOhQOzX6upVAwI24gW6
-        UKn84BIr7+3XlECur3SMSySB5ZHyZYwDvsw6nujpJITgUy7pX21ajcuc6LWCsqHr
-        THUAj3Srxjlq2+NYvMuHzYbQD9baPayUPYBvwJnyPjv8Rec0DvRght4gTQVNnfKI
-        p1jHffyROwvzSbtRbGyXpzmCMtPgJzrTpJvaF0LBrHZJdBtyP4K/EnFI6fe7D2XJ
-        Y81YWZHQxGSfMktGGOcxxjyJdj17lCDv3S11dqJW3IQ7fMbgop2DTeduGs1tQl2z
-        7lds8rylvOt4IKsA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 2bb6e365 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
+        :content-type; s=mail; bh=dhzbR9Rzbz95OZkTVQ4Hb9LZ7k4=; b=YcaMk5
+        gwbajH67+sLPbqxivjlWE7/bek+M4i3Bdk2osEz7V/n/9fPUvFZWoyr3gWkeT3co
+        hLi2d69WKd229WxyrOGb2xhEGp6oUn4rNfGI1kZvE3iGQzOl1fOVoMgDHP2ttLf9
+        QbQRwilpDvNhk3vngti29jtfHa1J80+2lCrFa82U0LASJUGKV8E+gysLlccoOeMv
+        jskaOGsOlZKvvHu8eB+FKIB5LN0nccG5HYatqXeLsIb/WqobdKdDja8aKbL66ogB
+        gpXJNKcOCVE5zmjdaSwjT/3OqwGMf4oQghSdF5ZrwNDAaCWonAklPC1dCkFXa31f
+        /oVvA2orJ2wYqK4g==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ca293eb6 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
         for <linux-kernel@vger.kernel.org>;
-        Fri, 15 Jun 2018 20:26:07 +0000 (UTC)
-Received: by mail-ot0-f169.google.com with SMTP id 92-v6so12350894otw.9
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 13:31:31 -0700 (PDT)
-X-Gm-Message-State: APt69E21nZeixgUaodKui6kuEYmTsyTReWar6oS/JZ2EZOqBAlWLhrTz
-        G5i591KSEZh6my4POUUxgdsThiIHyVty1L+NNMg=
-X-Google-Smtp-Source: ADUXVKLxsUCE5/d75m7Pjf0WzMziR4cXfmzgSJF4o8gh+Q0i4PWTlNqmgbm1s3iIhKC6pYAB9/k/kjgf+kzuHUSyGJs=
-X-Received: by 2002:a9d:350a:: with SMTP id o10-v6mr1875799otc.247.1529094689666;
- Fri, 15 Jun 2018 13:31:29 -0700 (PDT)
+        Fri, 15 Jun 2018 20:28:36 +0000 (UTC)
+Received: by mail-ot0-f182.google.com with SMTP id a5-v6so12359503otf.12
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 13:34:00 -0700 (PDT)
+X-Gm-Message-State: APt69E3QNvS/5tGtdFuXvzChIZYQEGA7d3Aiw2GQ80XDhWmVxeZ+1CB9
+        65k5i5lvf4ZgcObFRjORmiRXwK1zUHGpSHrJ9C0=
+X-Google-Smtp-Source: ADUXVKKxogGt94V6ovIIm/LGo7YWKxGpL4WLWp7ahkSNFrXqXFZBIRiIfOcRn5ggkiJSbDyPxLDTyr9VzRri9fHEuRo=
+X-Received: by 2002:a9d:59ed:: with SMTP id u45-v6mr2086541otg.320.1529094839684;
+ Fri, 15 Jun 2018 13:33:59 -0700 (PDT)
 MIME-Version: 1.0
 References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
- <alpine.DEB.2.21.1806151815080.1582@nanos.tec.linutronix.de> <20180615193438.GE2458@hirez.programming.kicks-ass.net>
-In-Reply-To: <20180615193438.GE2458@hirez.programming.kicks-ass.net>
+ <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
+In-Reply-To: <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
 From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 15 Jun 2018 22:30:46 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qr4PzsGKK2r2sGoCty_Yum_3UqUdL76CPOAOq18K+a4A@mail.gmail.com>
-Message-ID: <CAHmME9qr4PzsGKK2r2sGoCty_Yum_3UqUdL76CPOAOq18K+a4A@mail.gmail.com>
+Date:   Fri, 15 Jun 2018 22:33:47 +0200
+X-Gmail-Original-Message-ID: <CAHmME9qhmSVNBq_GnkYrGU-PPEX9Fk0yiGktsCeEXo+LTB9KPg@mail.gmail.com>
+Message-ID: <CAHmME9qhmSVNBq_GnkYrGU-PPEX9Fk0yiGktsCeEXo+LTB9KPg@mail.gmail.com>
 Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     riel@surriel.com, dave.hansen@linux.intel.com,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 9:34 PM Peter Zijlstra <peterz@infradead.org> wrote:
-> Didn't we recently do a bunch of crypto patches to help with this?
->
-> I think they had the pattern:
->
->         kernel_fpu_begin();
->         for (units-of-work) {
->                 do_unit_of_work();
->                 if (need_resched()) {
->                         kernel_fpu_end();
->                         cond_resched();
->                         kernel_fpu_begin();
->                 }
->         }
->         kernel_fpu_end();
+On Fri, Jun 15, 2018 at 8:32 PM Andy Lutomirski <luto@kernel.org> wrote:
+> quite in the form you imagined.  The idea that we've tossed around is
+> to restore FPU state on return to user mode.  Roughly, we'd introduce
+> a new thread flag TIF_FPU_UNLOADED (name TBD).
+> prepare_exit_to_usermode() would notice this flag, copy the fpstate to
+> fpregs, and clear the flag.  (Or maybe exit_to_usermode_loop() -- No
+> one has quite thought it through, but I think it should be outside the
+> loop.)  We'd update all the FPU accessors to understand the flag.
 
-Right, so that's the thing -- this is an optimization easily available
-to individual crypto primitives. But I'm interested in applying this
-kind of optimization to an entire queue of, say, tiny packets, where
-each packet is processed individually. Or, to a cryptographic
-construction, where several different primitives are used, such that
-it'd be meaningful not to have to get the performance hit of
-end()begin() in between each and everyone of them.
+Yes! This is exactly what I was thinking. Then those calls to begin()
+and end() could be placed as close to the actual FPU usage as
+possible.
