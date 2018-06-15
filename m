@@ -5,75 +5,114 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 370CBC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:10:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C72F4C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E55208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:10:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8E55208B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8342320864
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:11:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8342320864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755901AbeFOFKt (ORCPT
+        id S1755600AbeFOFLv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 01:10:49 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:55500 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755639AbeFOFKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 01:10:48 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 75B1C4075852;
-        Fri, 15 Jun 2018 05:10:47 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-116-61.ams2.redhat.com [10.36.116.61])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 157572144B26;
-        Fri, 15 Jun 2018 05:10:45 +0000 (UTC)
-Subject: Re: Restartable Sequences system call merged into Linux
-To:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc:     Pavel Machek <pavel@ucw.cz>, carlos <carlos@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        libc-alpha <libc-alpha@sourceware.org>
-References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com>
- <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com>
- <091061df-3482-8762-30e4-feaf3417be11@redhat.com>
- <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com>
- <20180614122759.GB8798@amd>
- <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com>
- <20180614132557.GA15201@amd>
- <1110f198-88c2-544d-6836-f901b8e90f98@redhat.com>
- <1399480624.13011.1528984006717.JavaMail.zimbra@efficios.com>
-From:   Florian Weimer <fweimer@redhat.com>
-Message-ID: <fffe36dd-a7f1-36fb-561b-b6a30ba9e11d@redhat.com>
-Date:   Fri, 15 Jun 2018 07:10:45 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 15 Jun 2018 01:11:51 -0400
+Received: from mga03.intel.com ([134.134.136.65]:13287 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755294AbeFOFLu (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 01:11:50 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 22:11:49 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,225,1526367600"; 
+   d="scan'208";a="237346632"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.30]) ([10.239.161.30])
+  by fmsmga005.fm.intel.com with ESMTP; 14 Jun 2018 22:11:46 -0700
+Subject: Re: [PATCH v1 0/2] perf: Drop leaked kernel samples
+To:     Kyle Huey <me@kylehuey.com>
+Cc:     acme@kernel.org, jolsa@kernel.org,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        open list <Linux-kernel@vger.kernel.org>,
+        Vince Weaver <vincent.weaver@maine.edu>,
+        Will Deacon <will.deacon@arm.com>,
+        Stephane Eranian <eranian@google.com>,
+        Namhyung Kim <namhyung@kernel.org>, ak@linux.intel.com,
+        kan.liang@intel.com, yao.jin@intel.com,
+        Robert O'Callahan <robert@ocallahan.org>
+References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
+ <CAP045Aq_FEc_pEeRL86uXbOLBeW7aPvTqtnaq+Mbi-2=vp2BNA@mail.gmail.com>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <1a442b37-7a97-86f0-11e3-58d940ecfbc9@linux.intel.com>
+Date:   Fri, 15 Jun 2018 13:11:46 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1399480624.13011.1528984006717.JavaMail.zimbra@efficios.com>
+In-Reply-To: <CAP045Aq_FEc_pEeRL86uXbOLBeW7aPvTqtnaq+Mbi-2=vp2BNA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 15 Jun 2018 05:10:47 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 15 Jun 2018 05:10:47 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'fweimer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/2018 03:46 PM, Mathieu Desnoyers wrote:
-> This would allow registering various TLS data structures with a single
-> system call without hindering flexibility on the user-space side. For
-> instance, we could still use initial-exec and the __rseq_abi symbol for
-> rseq with this approach.
+
+
+On 6/15/2018 11:35 AM, Kyle Huey wrote:
+> I strongly object to this patch as written. As I said when I
+> originally reported[0] the regression introduced by the previous
+> version of this patch a year ago.
 > 
-> Thoughts ?
+> "It seems like this change should, at a bare minimum, be limited to
+> counters that actually perform sampling of register state when the
+> interrupt fires.  In our case, with the retired conditional branches
+> counter restricted to counting userspace events only, it makes no
+> difference that the PMU interrupt happened to be delivered in the
+> kernel."
+> 
+> This means identifying which values of `perf_event_attr::sample_type`
+> are security concerns (presumably PERF_SAMPLE_IP is, and
+> PERF_SAMPLE_TIME is not, and someone needs to go through and decide on
+> all of them) and filtering on those values for this new behavior.
+> 
+> And because rr sets its sample_type to 0, once you do that, the sysctl
+> will not be necessary.
+> 
+> - Kyle
+> 
 
-Isn't this just a very narrow case of the usual batched syscalls 
-proposal? 8-)
+Since rr sets sample_type to 0, the easiest way is to add checking like:
 
-Florian
+if (event->attr.sample_type) {
+	if (event->attr.exclude_kernel && !user_mode(regs))
+		return false;
+}
+
+So the rr doesn't need to be changed and for other use cases the leaked 
+kernel samples will be dropped.
+
+But I don't like this is because:
+
+1. It's too specific for rr case.
+
+2. If we create a new sample_type, e.g. PERF_SAMPLE_ALLOW_LEAKAGE, the 
+code will be:
+
+if !(event->attr.sample_type & PERF_SAMPLE_ALLOW_LEAKAGE) {
+	if (event->attr.exclude_kernel && !user_mode(regs))
+		return false;
+}
+
+But rr needs to add PERF_SAMPLE_ALLOW_LEAKAGE to sample_type since by 
+default the bit is not set.
+
+3. Sysctl is a more flexible way. It provides us with an option when we 
+want to see if skid is existing, we can use sysctl to turn on that.
+
+Thanks
+Jin Yao
+
