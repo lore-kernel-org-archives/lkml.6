@@ -1,50 +1,51 @@
 Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.1 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 764D4C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:29:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D4A76C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165BA208D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:29:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 165BA208D7
+	by mail.kernel.org (Postfix) with ESMTP id 936CF208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:30:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 936CF208B5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965727AbeFON3G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 09:29:06 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:35930 "EHLO
+        id S965786AbeFONaP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 09:30:15 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:34679 "EHLO
         mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933771AbeFON3E (ORCPT
+        with ESMTP id S936211AbeFONaN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 09:29:04 -0400
-Received: by mail-lf0-f66.google.com with SMTP id u4-v6so14661938lff.3;
-        Fri, 15 Jun 2018 06:29:02 -0700 (PDT)
+        Fri, 15 Jun 2018 09:30:13 -0400
+Received: by mail-lf0-f66.google.com with SMTP id o9-v6so14674391lfk.1;
+        Fri, 15 Jun 2018 06:30:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=S+lRmaKr0bPAc1NoILPVka6KnfxmeghXefm9B7i7pn8=;
-        b=axIVnGKElPIVbgkW4fM8WA/4k/1VlaMXL3EXTqoBUOPbx8w65U67GlzQeauSJcIM3T
-         pU2A7Hn+hQwxZqQmQK6o1f0KxcMoscxJdNrwEopRCH8i55xOPQd1FQpwTTOj6kXUmazF
-         qicAuxWkdqY1ujirOedwtZzS3YQsb1VF47jEZ+FsG/B6IaDedFVIBgmtkjvn4MC74jb+
-         rx7EgphUykxdzfI5ZtEoVnNtbuf9LcbGrQ5+Tc/jp/iBhPcZ11J89kQaqUgM6xQQT6a5
-         ypUOS5Ps4kynhvV3XdCXrwH6pjEuwRwf4gGCdGj/qmIKWoFvon+EVmvUcMPvX7uJndSD
-         Zw8w==
-X-Gm-Message-State: APt69E2UKCIYqylqWQS7yD6ncBYp5Zt0Otx5T5jARDIFe3W0r7PYjmIy
-        64ntITXarq4czyezzjBYjbE=
-X-Google-Smtp-Source: ADUXVKIIgjYGlXx/PHGVYf+Nq6jVPelb/ezpogKXv7SfDalXSCwOd4PrHA1hXixe4FI5ZAaD8qmf1Q==
-X-Received: by 2002:a19:9f95:: with SMTP id i143-v6mr1288459lfe.125.1529069341623;
-        Fri, 15 Jun 2018 06:29:01 -0700 (PDT)
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=5mhg61cNBcKZnP5tMkiYLZdnaNctdRceKsnfgk25WsY=;
+        b=ouGq2IpVb93mvVcA80fqHVrKq+/zhS5wuilR5nZsQE7NQHwpG7nOn5zYRZ8157zm+a
+         FflPifTUqgkSq0EOS1l3El841sOH+PfJlk6N62vsvVRrCDXp5Q3sBbiuhCE6JAxxX7hu
+         yN0xKjY7uk0ZUdT4Fsw5RFfr6++dVAdSISqsd0Ob68iOrFLbWcKOrOvWiD4gF2S32KWe
+         ayn8qTvWK8yS0K3wB4FZKSLz37XJ0przb5OKvbrs1zedTpqguX8pq4mMZtgUhe4Z5mia
+         qyzsxQJQS8gEwH/kUTmBoI0y/bVhdfgHi5OEsdWSNEr8VzLrNietvjh5IepC3MDMLTdR
+         HIdA==
+X-Gm-Message-State: APt69E3Ur/s2YvtwUehKZsgqFaAqelDAsC80Dr4grpJbn29aEOd2NEac
+        Lh2IRe9WF4oWbHd/K4BrCmE=
+X-Google-Smtp-Source: ADUXVKK5Xty33EH80EkT0kn+sdNPFf9McWKXU9Y2ycLm+z8iuTQHGJ5boWcycp6Vc7gdBB9dgXCrug==
+X-Received: by 2002:a2e:1710:: with SMTP id l16-v6mr1451489lje.74.1529069411337;
+        Fri, 15 Jun 2018 06:30:11 -0700 (PDT)
 Received: from localhost.localdomain ([213.255.186.34])
-        by smtp.gmail.com with ESMTPSA id h28-v6sm1508206lfb.43.2018.06.15.06.29.00
+        by smtp.gmail.com with ESMTPSA id x8-v6sm1444187ljj.54.2018.06.15.06.30.09
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Jun 2018 06:29:00 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 16:28:53 +0300
+        Fri, 15 Jun 2018 06:30:10 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 16:30:03 +0300
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         mark.rutland@arm.com, lee.jones@linaro.org, lgirdwood@gmail.com,
@@ -56,12 +57,14 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
         mikko.mutanen@fi.rohmeurope.com, heikki.haikola@fi.rohmeurope.com
-Subject: [PATCH v6 1/4] mfd: bd71837: mfd driver for ROHM BD71837 PMIC
-Message-ID: <e6b215db77c8203704c9d1216a9e8747de1b5779.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
+Subject: [PATCH v6 2/4] mfd: bd71837: Devicetree bindings for ROHM BD71837
+ PMIC
+Message-ID: <baedcf46084db730e4db94e714632399a568b255.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
 References: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 In-Reply-To: <cover.1529067662.git.matti.vaittinen@fi.rohmeurope.com>
 User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -69,604 +72,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ROHM BD71837 PMIC MFD driver providing interrupts and support
-for two subsystems:
-- clk
-- Regulators
+Document devicetree bindings for ROHM BD71837 PMIC MFD.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/mfd/Kconfig         |  13 ++
- drivers/mfd/Makefile        |   1 +
- drivers/mfd/bd71837.c       | 249 ++++++++++++++++++++++++++++++++++++++
- include/linux/mfd/bd71837.h | 288 ++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 551 insertions(+)
- create mode 100644 drivers/mfd/bd71837.c
- create mode 100644 include/linux/mfd/bd71837.h
+ .../devicetree/bindings/mfd/rohm,bd71837-pmic.txt  | 67 ++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 
-diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-index b860eb5aa194..7aa05fc9ed8e 100644
---- a/drivers/mfd/Kconfig
-+++ b/drivers/mfd/Kconfig
-@@ -1787,6 +1787,19 @@ config MFD_STW481X
- 	  in various ST Microelectronics and ST-Ericsson embedded
- 	  Nomadik series.
- 
-+config MFD_BD71837
-+	bool "BD71837 Power Management chip"
-+	depends on I2C=y
-+	depends on OF
-+	select REGMAP_I2C
-+	select REGMAP_IRQ
-+	select MFD_CORE
-+	help
-+	  Select this option to get support for the ROHM BD71837
-+	  Power Management chips. BD71837 is designed to power processors like
-+	  NXP i.MX8. It contains 8 BUCK outputs and 7 LDOs, voltage monitoring
-+	  and emergency shut down as well as 32,768KHz clock output.
-+
- config MFD_STM32_LPTIMER
- 	tristate "Support for STM32 Low-Power Timer"
- 	depends on (ARCH_STM32 && OF) || COMPILE_TEST
-diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-index e9fd20dba18d..09dc9eb3782c 100644
---- a/drivers/mfd/Makefile
-+++ b/drivers/mfd/Makefile
-@@ -227,4 +227,5 @@ obj-$(CONFIG_MFD_STM32_TIMERS) 	+= stm32-timers.o
- obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
- obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
- obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
-+obj-$(CONFIG_MFD_BD71837)	+= bd71837.o
- 
-diff --git a/drivers/mfd/bd71837.c b/drivers/mfd/bd71837.c
+diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
 new file mode 100644
-index 000000000000..114be66f0a25
+index 000000000000..67f2616288d9
 --- /dev/null
-+++ b/drivers/mfd/bd71837.c
-@@ -0,0 +1,249 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (C) 2018 ROHM Semiconductors
-+// bd71837.c -- ROHM BD71837MWV mfd driver
-+//
-+// Datasheet available from
-+// https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
-+
-+#include <linux/module.h>
-+#include <linux/moduleparam.h>
-+#include <linux/init.h>
-+#include <linux/slab.h>
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/gpio.h>
-+#include <linux/regmap.h>
-+#include <linux/of_device.h>
-+#include <linux/of_gpio.h>
-+#include <linux/mfd/core.h>
-+#include <linux/mfd/bd71837.h>
-+
-+static const struct resource irqs[] = {
-+	{
-+		.start = BD71837_INT_PWRBTN,
-+		.end = BD71837_INT_PWRBTN,
-+		.flags = IORESOURCE_IRQ,
-+		.name = "pwr-btn",
-+	}, {
-+		.start = BD71837_INT_PWRBTN_L,
-+		.end = BD71837_INT_PWRBTN_L,
-+		.flags = IORESOURCE_IRQ,
-+		.name = "pwr-btn-l",
-+	}, {
-+		.start = BD71837_INT_PWRBTN_S,
-+		.end = BD71837_INT_PWRBTN_S,
-+		.flags = IORESOURCE_IRQ,
-+		.name = "pwr-btn-s",
-+	},
-+};
-+
-+/* bd71837 multi function cells */
-+static struct mfd_cell bd71837_mfd_cells[] = {
-+	{
-+		.name = "bd71837-clk",
-+	}, {
-+		.name = "bd718xx-pwrkey",
-+		.resources = &irqs[0],
-+		.num_resources = ARRAY_SIZE(irqs),
-+	}, {
-+		.name = "bd71837-pmic",
-+	},
-+};
-+
-+static const struct regmap_irq bd71837_irqs[] = {
-+	REGMAP_IRQ_REG(BD71837_INT_SWRST, 0, BD71837_INT_SWRST_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_S, 0, BD71837_INT_PWRBTN_S_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_PWRBTN_L, 0, BD71837_INT_PWRBTN_L_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_PWRBTN, 0, BD71837_INT_PWRBTN_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_WDOG, 0, BD71837_INT_WDOG_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_ON_REQ, 0, BD71837_INT_ON_REQ_MASK),
-+	REGMAP_IRQ_REG(BD71837_INT_STBY_REQ, 0, BD71837_INT_STBY_REQ_MASK),
-+};
-+
-+static struct regmap_irq_chip bd71837_irq_chip = {
-+	.name = "bd71837-irq",
-+	.irqs = bd71837_irqs,
-+	.num_irqs = ARRAY_SIZE(bd71837_irqs),
-+	.num_regs = 1,
-+	.irq_reg_stride = 1,
-+	.status_base = BD71837_REG_IRQ,
-+	.mask_base = BD71837_REG_MIRQ,
-+	.ack_base = BD71837_REG_IRQ,
-+	.init_ack_masked = true,
-+	.mask_invert = false,
-+};
-+
-+static int bd71837_irq_exit(struct bd71837 *bd71837)
-+{
-+	if (bd71837->chip_irq > 0)
-+		regmap_del_irq_chip(bd71837->chip_irq, bd71837->irq_data);
-+	return 0;
-+}
-+
-+static const struct regmap_range pmic_status_range = {
-+	.range_min = BD71837_REG_IRQ,
-+	.range_max = BD71837_REG_POW_STATE,
-+};
-+
-+static const struct regmap_access_table volatile_regs = {
-+	.yes_ranges = &pmic_status_range,
-+	.n_yes_ranges = 1,
-+};
-+
-+static const struct regmap_config bd71837_regmap_config = {
-+	.reg_bits = 8,
-+	.val_bits = 8,
-+	.volatile_table = &volatile_regs,
-+	.max_register = BD71837_MAX_REGISTER - 1,
-+	.cache_type = REGCACHE_RBTREE,
-+};
-+
-+#ifdef CONFIG_OF
-+static const struct of_device_id bd71837_of_match[] = {
-+	{ .compatible = "rohm,bd71837", .data = (void *)0},
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, bd71837_of_match);
-+
-+static int bd71837_parse_dt(struct i2c_client *client, struct bd71837_board **b)
-+{
-+	struct device_node *np = client->dev.of_node;
-+	struct bd71837_board *board_info;
-+	unsigned int prop;
-+	int r;
-+	int rv = -ENOMEM;
-+
-+	board_info = devm_kzalloc(&client->dev, sizeof(*board_info),
-+			GFP_KERNEL);
-+	if (!board_info)
-+		goto err_out;
-+
-+	if (client->irq) {
-+		dev_dbg(&client->dev, "Got irq %d\n", client->irq);
-+		board_info->gpio_intr = client->irq;
-+	} else {
-+		dev_err(&client->dev, "no pmic intr pin available\n");
-+		rv = -ENOENT;
-+		goto err_intr;
-+	}
-+	r = of_property_read_u32(np, "irq_base", &prop);
-+	if (!r)
-+		board_info->irq_base = prop;
-+	else
-+		board_info->irq_base = 0;
-+
-+	rv = 0;
-+	*b = board_info;
-+	if (0) {
-+err_intr:
-+		devm_kfree(&client->dev, board_info);
-+err_out:
-+		dev_err(&client->dev, "failed to parse device-tree (%d)\n", rv);
-+	}
-+	return rv;
-+}
-+#endif //CONFIG_OF
-+
-+static int bd71837_i2c_probe(struct i2c_client *i2c,
-+			    const struct i2c_device_id *id)
-+{
-+	struct bd71837 *bd71837;
-+	struct bd71837_board *pmic_plat_data;
-+	int ret = -EINVAL;
-+
-+	pmic_plat_data = dev_get_platdata(&i2c->dev);
-+
-+	if (!pmic_plat_data && i2c->dev.of_node)
-+		ret = bd71837_parse_dt(i2c, &pmic_plat_data);
-+
-+	if (!pmic_plat_data)
-+		return ret;
-+
-+	bd71837 = devm_kzalloc(&i2c->dev, sizeof(struct bd71837), GFP_KERNEL);
-+	if (bd71837 == NULL)
-+		return -ENOMEM;
-+
-+	bd71837->of_plat_data = pmic_plat_data;
-+	i2c_set_clientdata(i2c, bd71837);
-+	bd71837->dev = &i2c->dev;
-+	bd71837->i2c_client = i2c;
-+	bd71837->chip_irq = pmic_plat_data->gpio_intr;
-+
-+	bd71837->regmap = devm_regmap_init_i2c(i2c, &bd71837_regmap_config);
-+	if (IS_ERR(bd71837->regmap)) {
-+		ret = PTR_ERR(bd71837->regmap);
-+		dev_err(&i2c->dev, "regmap initialization failed: %d\n", ret);
-+		goto err_out;
-+	}
-+
-+	ret = bd71837_reg_read(bd71837, BD71837_REG_REV);
-+	if (ret < 0) {
-+		dev_err(bd71837->dev,
-+			"%s(): Read BD71837_REG_DEVICE failed!\n", __func__);
-+		goto err_out;
-+	}
-+
-+	ret = regmap_add_irq_chip(bd71837->regmap, bd71837->chip_irq,
-+		IRQF_ONESHOT, 0,
-+		&bd71837_irq_chip, &bd71837->irq_data);
-+	if (ret < 0) {
-+		dev_err(bd71837->dev, "Failed to add irq_chip %d\n", ret);
-+		goto err_out;
-+	}
-+
-+	ret = mfd_add_devices(bd71837->dev, PLATFORM_DEVID_AUTO,
-+			      bd71837_mfd_cells, ARRAY_SIZE(bd71837_mfd_cells),
-+			      NULL, 0,
-+			      regmap_irq_get_domain(bd71837->irq_data));
-+	if (ret)
-+		regmap_del_irq_chip(bd71837->chip_irq, bd71837->irq_data);
-+err_out:
-+
-+	return ret;
-+}
-+
-+static int bd71837_i2c_remove(struct i2c_client *i2c)
-+{
-+	struct bd71837 *bd71837 = i2c_get_clientdata(i2c);
-+
-+	bd71837_irq_exit(bd71837);
-+	mfd_remove_devices(bd71837->dev);
-+
-+	return 0;
-+}
-+
-+static const struct i2c_device_id bd71837_i2c_id[] = {
-+	{ .name = "bd71837", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, bd71837_i2c_id);
-+
-+static struct i2c_driver bd71837_i2c_driver = {
-+	.driver = {
-+		.name = "bd71837-mfd",
-+		.owner = THIS_MODULE,
-+		.of_match_table = of_match_ptr(bd71837_of_match),
-+	},
-+	.probe = bd71837_i2c_probe,
-+	.remove = bd71837_i2c_remove,
-+	.id_table = bd71837_i2c_id,
-+};
-+
-+static int __init bd71837_i2c_init(void)
-+{
-+	return i2c_add_driver(&bd71837_i2c_driver);
-+}
-+/* init early so consumer devices can complete system boot */
-+subsys_initcall(bd71837_i2c_init);
-+
-+static void __exit bd71837_i2c_exit(void)
-+{
-+	i2c_del_driver(&bd71837_i2c_driver);
-+}
-+module_exit(bd71837_i2c_exit);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD71837 chip multi-function driver");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/mfd/bd71837.h b/include/linux/mfd/bd71837.h
-new file mode 100644
-index 000000000000..641b7dba3076
---- /dev/null
-+++ b/include/linux/mfd/bd71837.h
-@@ -0,0 +1,288 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (C) 2018 ROHM Semiconductors */
-+
-+/*
-+ * ROHM BD71837MWV header file
-+ */
-+
-+#ifndef __LINUX_MFD_BD71837_H__
-+#define __LINUX_MFD_BD71837_H__
-+
-+#include <linux/regmap.h>
-+
-+enum {
-+	BD71837_BUCK1	=	0,
-+	BD71837_BUCK2,
-+	BD71837_BUCK3,
-+	BD71837_BUCK4,
-+	BD71837_BUCK5,
-+	BD71837_BUCK6,
-+	BD71837_BUCK7,
-+	BD71837_BUCK8,
-+	BD71837_LDO1,
-+	BD71837_LDO2,
-+	BD71837_LDO3,
-+	BD71837_LDO4,
-+	BD71837_LDO5,
-+	BD71837_LDO6,
-+	BD71837_LDO7,
-+	BD71837_REGULATOR_CNT,
-+};
-+
-+#define BD71837_BUCK1_VOLTAGE_NUM	0x40
-+#define BD71837_BUCK2_VOLTAGE_NUM	0x40
-+#define BD71837_BUCK3_VOLTAGE_NUM	0x40
-+#define BD71837_BUCK4_VOLTAGE_NUM	0x40
-+
-+#define BD71837_BUCK5_VOLTAGE_NUM	0x08
-+#define BD71837_BUCK6_VOLTAGE_NUM	0x04
-+#define BD71837_BUCK7_VOLTAGE_NUM	0x08
-+#define BD71837_BUCK8_VOLTAGE_NUM	0x40
-+
-+#define BD71837_LDO1_VOLTAGE_NUM	0x04
-+#define BD71837_LDO2_VOLTAGE_NUM	0x02
-+#define BD71837_LDO3_VOLTAGE_NUM	0x10
-+#define BD71837_LDO4_VOLTAGE_NUM	0x10
-+#define BD71837_LDO5_VOLTAGE_NUM	0x10
-+#define BD71837_LDO6_VOLTAGE_NUM	0x10
-+#define BD71837_LDO7_VOLTAGE_NUM	0x10
-+
-+enum {
-+	BD71837_REG_REV                = 0x00,
-+	BD71837_REG_SWRESET            = 0x01,
-+	BD71837_REG_I2C_DEV            = 0x02,
-+	BD71837_REG_PWRCTRL0           = 0x03,
-+	BD71837_REG_PWRCTRL1           = 0x04,
-+	BD71837_REG_BUCK1_CTRL         = 0x05,
-+	BD71837_REG_BUCK2_CTRL         = 0x06,
-+	BD71837_REG_BUCK3_CTRL         = 0x07,
-+	BD71837_REG_BUCK4_CTRL         = 0x08,
-+	BD71837_REG_BUCK5_CTRL         = 0x09,
-+	BD71837_REG_BUCK6_CTRL         = 0x0A,
-+	BD71837_REG_BUCK7_CTRL         = 0x0B,
-+	BD71837_REG_BUCK8_CTRL         = 0x0C,
-+	BD71837_REG_BUCK1_VOLT_RUN     = 0x0D,
-+	BD71837_REG_BUCK1_VOLT_IDLE    = 0x0E,
-+	BD71837_REG_BUCK1_VOLT_SUSP    = 0x0F,
-+	BD71837_REG_BUCK2_VOLT_RUN     = 0x10,
-+	BD71837_REG_BUCK2_VOLT_IDLE    = 0x11,
-+	BD71837_REG_BUCK3_VOLT_RUN     = 0x12,
-+	BD71837_REG_BUCK4_VOLT_RUN     = 0x13,
-+	BD71837_REG_BUCK5_VOLT         = 0x14,
-+	BD71837_REG_BUCK6_VOLT         = 0x15,
-+	BD71837_REG_BUCK7_VOLT         = 0x16,
-+	BD71837_REG_BUCK8_VOLT         = 0x17,
-+	BD71837_REG_LDO1_VOLT          = 0x18,
-+	BD71837_REG_LDO2_VOLT          = 0x19,
-+	BD71837_REG_LDO3_VOLT          = 0x1A,
-+	BD71837_REG_LDO4_VOLT          = 0x1B,
-+	BD71837_REG_LDO5_VOLT          = 0x1C,
-+	BD71837_REG_LDO6_VOLT          = 0x1D,
-+	BD71837_REG_LDO7_VOLT          = 0x1E,
-+	BD71837_REG_TRANS_COND0        = 0x1F,
-+	BD71837_REG_TRANS_COND1        = 0x20,
-+	BD71837_REG_VRFAULTEN          = 0x21,
-+	BD71837_REG_MVRFLTMASK0        = 0x22,
-+	BD71837_REG_MVRFLTMASK1        = 0x23,
-+	BD71837_REG_MVRFLTMASK2        = 0x24,
-+	BD71837_REG_RCVCFG             = 0x25,
-+	BD71837_REG_RCVNUM             = 0x26,
-+	BD71837_REG_PWRONCONFIG0       = 0x27,
-+	BD71837_REG_PWRONCONFIG1       = 0x28,
-+	BD71837_REG_RESETSRC           = 0x29,
-+	BD71837_REG_MIRQ               = 0x2A,
-+	BD71837_REG_IRQ                = 0x2B,
-+	BD71837_REG_IN_MON             = 0x2C,
-+	BD71837_REG_POW_STATE          = 0x2D,
-+	BD71837_REG_OUT32K             = 0x2E,
-+	BD71837_REG_REGLOCK            = 0x2F,
-+	BD71837_REG_OTPVER             = 0xFF,
-+	BD71837_MAX_REGISTER           = 0x100,
-+};
-+
-+#define REGLOCK_PWRSEQ	0x1
-+#define REGLOCK_VREG	0x10
-+
-+/* Generic BUCK control masks */
-+#define BD71837_BUCK_SEL	0x02
-+#define BD71837_BUCK_EN		0x01
-+#define BD71837_BUCK_RUN_ON	0x04
-+
-+/* Generic LDO masks */
-+#define BD71837_LDO_SEL		0x80
-+#define BD71837_LDO_EN		0x40
-+
-+/* BD71837 BUCK ramp rate CTRL reg bits */
-+#define BUCK_RAMPRATE_MASK	0xC0
-+#define BUCK_RAMPRATE_10P00MV	0x0
-+#define BUCK_RAMPRATE_5P00MV	0x1
-+#define BUCK_RAMPRATE_2P50MV	0x2
-+#define BUCK_RAMPRATE_1P25MV	0x3
-+
-+/* BD71837_REG_BUCK1_VOLT_RUN bits */
-+#define BUCK1_RUN_MASK		0x3F
-+#define BUCK1_RUN_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK1_VOLT_SUSP bits */
-+#define BUCK1_SUSP_MASK		0x3F
-+#define BUCK1_SUSP_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK1_VOLT_IDLE bits */
-+#define BUCK1_IDLE_MASK		0x3F
-+#define BUCK1_IDLE_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK2_VOLT_RUN bits */
-+#define BUCK2_RUN_MASK		0x3F
-+#define BUCK2_RUN_DEFAULT	0x1E
-+
-+/* BD71837_REG_BUCK2_VOLT_IDLE bits */
-+#define BUCK2_IDLE_MASK		0x3F
-+#define BUCK2_IDLE_DEFAULT	0x14
-+
-+/* BD71837_REG_BUCK3_VOLT_RUN bits */
-+#define BUCK3_RUN_MASK		0x3F
-+#define BUCK3_RUN_DEFAULT	0x1E
-+
-+/* BD71837_REG_BUCK4_VOLT_RUN bits */
-+#define BUCK4_RUN_MASK		0x3F
-+#define BUCK4_RUN_DEFAULT	0x1E
-+
-+/* BD71837_REG_BUCK5_VOLT bits */
-+#define BUCK5_MASK		0x07
-+#define BUCK5_DEFAULT		0x02
-+
-+/* BD71837_REG_BUCK6_VOLT bits */
-+#define BUCK6_MASK		0x03
-+#define BUCK6_DEFAULT		0x03
-+
-+/* BD71837_REG_BUCK7_VOLT bits */
-+#define BUCK7_MASK		0x07
-+#define BUCK7_DEFAULT		0x03
-+
-+/* BD71837_REG_BUCK8_VOLT bits */
-+#define BUCK8_MASK		0x3F
-+#define BUCK8_DEFAULT		0x1E
-+
-+/* BD71837_REG_IRQ bits */
-+#define IRQ_SWRST		0x40
-+#define IRQ_PWRON_S		0x20
-+#define IRQ_PWRON_L		0x10
-+#define IRQ_PWRON		0x08
-+#define IRQ_WDOG		0x04
-+#define IRQ_ON_REQ		0x02
-+#define IRQ_STBY_REQ		0x01
-+
-+/* BD71837_REG_OUT32K bits */
-+#define BD71837_OUT32K_EN	0x01
-+
-+/* BD71837 gated clock rate */
-+#define BD71837_CLK_RATE 32768
-+
-+/* BD71837 irqs */
-+enum {
-+	BD71837_INT_STBY_REQ,
-+	BD71837_INT_ON_REQ,
-+	BD71837_INT_WDOG,
-+	BD71837_INT_PWRBTN,
-+	BD71837_INT_PWRBTN_L,
-+	BD71837_INT_PWRBTN_S,
-+	BD71837_INT_SWRST
-+};
-+
-+/* BD71837 interrupt masks */
-+#define BD71837_INT_SWRST_MASK		0x40
-+#define BD71837_INT_PWRBTN_S_MASK	0x20
-+#define BD71837_INT_PWRBTN_L_MASK	0x10
-+#define BD71837_INT_PWRBTN_MASK		0x8
-+#define BD71837_INT_WDOG_MASK		0x4
-+#define BD71837_INT_ON_REQ_MASK		0x2
-+#define BD71837_INT_STBY_REQ_MASK	0x1
-+
-+/* BD71837_REG_LDO1_VOLT bits */
-+#define LDO1_MASK		0x03
-+
-+/* BD71837_REG_LDO1_VOLT bits */
-+#define LDO2_MASK		0x20
-+
-+/* BD71837_REG_LDO3_VOLT bits */
-+#define LDO3_MASK		0x0F
-+
-+/* BD71837_REG_LDO4_VOLT bits */
-+#define LDO4_MASK		0x0F
-+
-+/* BD71837_REG_LDO5_VOLT bits */
-+#define LDO5_MASK		0x0F
-+
-+/* BD71837_REG_LDO6_VOLT bits */
-+#define LDO6_MASK		0x0F
-+
-+/* BD71837_REG_LDO7_VOLT bits */
-+#define LDO7_MASK		0x0F
-+
-+struct bd71837;
-+struct bd71837_pmic;
-+struct bd71837_clk;
-+
-+/*
-+ * Board platform data may be used to initialize regulators.
-+ */
-+
-+struct bd71837_board {
-+	struct regulator_init_data *init_data[BD71837_REGULATOR_CNT];
-+	int	gpio_intr;
-+	int	irq_base;
-+};
-+
-+struct bd71837 {
-+	struct device *dev;
-+	struct i2c_client *i2c_client;
-+	struct regmap *regmap;
-+	unsigned long int id;
-+
-+	int chip_irq;
-+	struct regmap_irq_chip_data *irq_data;
-+
-+	struct bd71837_pmic *pmic;
-+	struct bd71837_clk *clk;
-+
-+	struct bd71837_board *of_plat_data;
-+};
-+
-+/*
-+ * bd71837 sub-driver chip access routines
-+ */
-+
-+static inline int bd71837_reg_read(struct bd71837 *bd71837, u8 reg)
-+{
-+	int r, val;
-+
-+	r = regmap_read(bd71837->regmap, reg, &val);
-+	if (r < 0)
-+		return r;
-+	return val;
-+}
-+
-+static inline int bd71837_reg_write(struct bd71837 *bd71837, u8 reg,
-+				    unsigned int val)
-+{
-+	return regmap_write(bd71837->regmap, reg, val);
-+}
-+
-+static inline int bd71837_set_bits(struct bd71837 *bd71837, u8 reg, u8 mask)
-+{
-+	return regmap_update_bits(bd71837->regmap, reg, mask, mask);
-+}
-+
-+static inline int bd71837_clear_bits(struct bd71837 *bd71837, u8 reg,
-+				     u8 mask)
-+{
-+	return regmap_update_bits(bd71837->regmap, reg, mask, 0);
-+}
-+
-+static inline int bd71837_update_bits(struct bd71837 *bd71837, u8 reg,
-+				      u8 mask, u8 val)
-+{
-+	return regmap_update_bits(bd71837->regmap, reg, mask, val);
-+}
-+
-+#endif /* __LINUX_MFD_BD71837_H__ */
++++ b/Documentation/devicetree/bindings/mfd/rohm,bd71837-pmic.txt
+@@ -0,0 +1,67 @@
++* ROHM BD71837 Power Management Integrated Circuit bindings
++
++BD71837MWV is a programmable Power Management IC for powering single-core,
++dual-core, and quad-core SoC’s such as NXP-i.MX 8M. It is optimized for
++low BOM cost and compact solution footprint. It integrates 8 Buck
++egulators and 7 LDO’s to provide all the power rails required by the SoC and
++the commonly used peripherals.
++
++Datasheet for PMIC is available at:
++https://www.rohm.com/datasheet/BD71837MWV/bd71837mwv-e
++
++Required properties:
++ - compatible		: Should be "rohm,bd71837".
++ - reg			: I2C slave address.
++ - interrupt-parent	: Phandle to the parent interrupt controller.
++ - interrupts		: The interrupt line the device is connected to.
++ - clocks		: The parent clock connected to PMIC. If this is missng
++			  32768 KHz clock is assumed.
++ - #clock-cells		: Should be 0
++ - regulators:		: List of child nodes that specify the regulators
++			  Please see ../regulator/rohm,bd71837-regulator.txt
++
++Optional properties:
++- clock-output-names	: Should contain name for output clock.
++
++Example:
++
++	/* external oscillator node */
++	osc: oscillator {
++		compatible = "fixed-clock";
++		#clock-cells = <1>;
++		clock-frequency  = <32768>;
++		clock-output-names = "osc";
++	};
++
++	/* PMIC node */
++
++	pmic: pmic@4b {
++		compatible = "rohm,bd71837";
++		reg = <0x4b>;
++		interrupt-parent = <&gpio1>;
++		interrupts = <29 GPIO_ACTIVE_LOW>;
++		interrupt-names = "irq";
++		#clock-cells = <0>;
++		clocks = <&osc 0>;
++		clock-output-names = "bd71837-32k-out";
++
++		regulators {
++			buck1: BUCK1 {
++				regulator-name = "buck1";
++				regulator-min-microvolt = <700000>;
++				regulator-max-microvolt = <1300000>;
++				regulator-boot-on;
++				regulator-ramp-delay = <1250>;
++			};
++			/* ... */
++		};
++	};
++
++	/* Clock consumer node */
++
++	foo@0 {
++		compatible = "bar,foo";
++		/* ... */
++		clock-names = "my-clock";
++		clocks = <&pmic>;
++	};
 -- 
 2.14.3
 
