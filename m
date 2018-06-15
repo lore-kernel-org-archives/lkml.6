@@ -2,126 +2,145 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1C174C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:36:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7DABAC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:37:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D04C020896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:36:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D04C020896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3526C208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:37:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFSOA/PW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3526C208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965857AbeFOLgP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 07:36:15 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41534 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965701AbeFOLgO (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 07:36:14 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A7CEA1529;
-        Fri, 15 Jun 2018 04:36:13 -0700 (PDT)
-Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D1B33F557;
-        Fri, 15 Jun 2018 04:36:11 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 12:36:08 +0100
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Jin Yao <yao.jin@linux.intel.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        me@kylehuey.com, Linux-kernel@vger.kernel.org,
-        vincent.weaver@maine.edu, will.deacon@arm.com, eranian@google.com,
-        namhyung@kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-Subject: Re: [PATCH v1 1/2] perf/core: Use sysctl to turn on/off dropping
- leaked kernel samples
-Message-ID: <20180615113608.6m74sm7gpl5p6oqe@lakrids.cambridge.arm.com>
-References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
- <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
+        id S965863AbeFOLhd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 07:37:33 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:40644 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965701AbeFOLhb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 07:37:31 -0400
+Received: by mail-wm0-f68.google.com with SMTP id n5-v6so3286437wmc.5;
+        Fri, 15 Jun 2018 04:37:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=L2SUcCfd3jQHd1PtiVd6J+1UNXWZYXb+ve0+z/6ZUJg=;
+        b=EFSOA/PWIYfZ8nxQQgX78gbajSafTuXtgEhs3J5EN8DZcRCyavmJzedjjkmbH6xmch
+         mIrcbbhICBzSIX0TDCKagJ+5cpMzpqDJ4Ffv3iR4IXS/NFjIYza0Mp4fg7u1rBF8HKka
+         tIt49Lm3LeMlR1LI01m8I8Aw6OxGFtdPoNzCRiIqAleDz5VMsJNSr/gzsaEb/Y24qUiT
+         aMKBe7wNKKaXqqvlkxf3rurw0Q73IIDcYJxFvwVIVD1WFZH4Dj+pBO/Q0VbCm03lfuNX
+         W60eqgksYVGWe8NiTp2vdonqnwaiig9GAfY4EDP0kjsIWj3gxbOzGOgS1FnAdEIIwzXr
+         mk4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=L2SUcCfd3jQHd1PtiVd6J+1UNXWZYXb+ve0+z/6ZUJg=;
+        b=SoM1zbRSGRiXYV7t0uK6Htds/eGIXxCQNJ98e4VG5IeN0h7X8p3BorP+xSHD4e9bAz
+         C2QsR/iseFtFjXrDzeZjaFNnMBBcSwk4TMl4D6Cck0+P2o856euQYRQDyI6N6MyALvMU
+         9FM2jBJOM+Zkc7ie4qrnm8IrNtfmaFEspRB40cDo76o/1i0wxn0GobF/nmM88F+SHhb5
+         n4Zy8OBImko8MzsM572MIkd+1KynfCTjZtFAdakOvRrklU5qJ3cj+kdp28Sk6somQb20
+         eYfdEWzfntikQ9M6pbheo6uXAeq/eKRnFwrOqVxPLNRDLpUBBwzzL2Jm0qqAA+YUk1dR
+         CLew==
+X-Gm-Message-State: APt69E0pNH15JRdRhjEj2ivPTYgQDu+S/eCVBCwYoUK5sTwQKhi/mipb
+        GNtKpFn5slowi2otHHlBuLs=
+X-Google-Smtp-Source: ADUXVKLYafKc1ywbQ5Ye5dk0UCDMPi+4V84twb6GYn7Sbq70lg0g9BERyM6hj+bB8Dzv0kt9JDm/uQ==
+X-Received: by 2002:a1c:eecd:: with SMTP id j74-v6mr1067208wmi.137.1529062650209;
+        Fri, 15 Jun 2018 04:37:30 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id c53-v6sm18006950wrg.12.2018.06.15.04.37.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Jun 2018 04:37:29 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 13:37:28 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+Message-ID: <20180615113728.h7snxhe2juaqvjyx@pali>
+References: <20180608111057.4wxpg7m7nm7suf6n@pali>
+ <20180615112606.GA3986@amd>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180615112606.GA3986@amd>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 06:03:22PM +0800, Jin Yao wrote:
-> When doing sampling, for example:
+On Friday 15 June 2018 13:26:06 Pavel Machek wrote:
+> Hi!
 > 
-> perf record -e cycles:u ...
+> > Hi! With up-to-date thinkpad_acpi.ko driver on ThinkPad T480s I'm seeing
+> > a strange behavior of LEDs which are integrated into mic mute (Fn+F4)
+> > and mute (Fn+F1) keys.
+> > 
+> > When thinkpad_acpi.ko is not loaded, then mute key is working fine. When
+> > pressed, it correctly generates KEY_MUTE on AT Translated Set 2 keyboard
+> > input device and also turn on/of mute led. But when micmute key is
+> > pressed then, nothing happen. No key event is reported and also led is
+> > not turned on/off.
+> > 
+> > On the other hand, when thinkpad_acpi.ko is loaded, then both buttons
+> > mute and micmute correctly generates input events; mute via AT keyboard
+> > and micmute via ThinkPad Extra Buttons. But led is not changed. When
+> > thinkpad_acpi.ko is loaded it turn off both leds (mute and micmute) and
+> > leds after pressing any of those buttons, leds are not turned on again.
 > 
-> On workloads that do a lot of kernel entry/exits we see kernel
-> samples, even though :u is specified. This is due to skid existing.
-> 
-> This might be a security issue because it can leak kernel addresses even
-> though kernel sampling support is disabled.
-> 
-> One patch "perf/core: Drop kernel samples even though :u is specified"
-> was posted in last year but it was reverted because it introduced a
-> regression issue that broke the rr-project, which used sampling
-> events to receive a signal on overflow. These signals were critical
-> to the correct operation of rr.
-> 
-> See '6a8a75f32357 ("Revert "perf/core: Drop kernel samples even
-> though :u is specified"")' for detail.
-> 
-> Now the idea is to use sysctl to control the dropping of leaked
-> kernel samples.
-> 
-> /sys/devices/cpu/perf_allow_sample_leakage:
-> 
-> 0 - default, drop the leaked kernel samples.
-> 1 - don't drop the leaked kernel samples.
+> With thinkpad_acpi.ko loaded, kernel should handle the LEDs, right?
 
-Does this need to be conditional at all?
+I suppose. But I would be happy even with working "hardware" controlling
+(which is working fine when thinkpad_acpi.ko is unloaded).
 
-At least for sampling the GPRs, we could do something like below
-unconditionally, which seems sufficient for my test cases.
+> Do we have a support for that?
 
-Mark.
+In thinkpad_acpi.c there are some TPACPI_LED_MUTE and TPACPI_LED_MICMUTE
+keywords. And also function static int mute_led_on_off(). So some kind
+of support there is.
 
----->8----
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 67612ce359ad..79a21531d57c 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -6359,6 +6359,24 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
-        return callchain ?: &__empty_callchain;
- }
- 
-+static struct pt_regs *perf_get_sample_regs(struct perf_event *event, struct pt_regs *regs)
-+{
-+       /*
-+        * Due to interrupt latency (AKA "skid"), we may enter the kernel
-+        * before taking an overflow, even if the PMU is only counting user
-+        * events.
-+        *
-+        * If we're not counting kernel events, always use the user regs when
-+        * sampling.
-+        *
-+        * TODO: how does this interact with guest sampling?
-+        */
-+       if (event->attr.exclude_kernel && !user_mode(regs))
-+               return task_pt_regs(current);
-+
-+       return regs;
-+}
-+
- void perf_prepare_sample(struct perf_event_header *header,
-                         struct perf_sample_data *data,
-                         struct perf_event *event,
-@@ -6366,6 +6384,8 @@ void perf_prepare_sample(struct perf_event_header *header,
- {
-        u64 sample_type = event->attr.sample_type;
- 
-+       regs = perf_get_sample_regs(event, regs);
-+
-        header->type = PERF_RECORD_SAMPLE;
-        header->size = sizeof(*header) + event->header_size;
- 
+> Do they have directories in /sys/class/leds? What are the triggers there?
 
+No.
+
+$ ll /sys/class/leds
+total 0
+drwxr-xr-x  2 root root 0 Jun 15 13:27 ./
+drwxr-xr-x 51 root root 0 Jun 15 13:27 ../
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 input0::capslock -> ../../devices/platform/i8042/serio0/input/input0/input0::capslock/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 input0::numlock -> ../../devices/platform/i8042/serio0/input/input0/input0::numlock/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 input0::scrolllock -> ../../devices/platform/i8042/serio0/input/input0/input0::scrolllock/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 phy0-led -> ../../devices/pci0000:00/0000:00:1c.6/0000:3d:00.0/leds/phy0-led/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 tpacpi::kbd_backlight -> ../../devices/platform/thinkpad_acpi/leds/tpacpi::kbd_backlight/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 tpacpi::power -> ../../devices/platform/thinkpad_acpi/leds/tpacpi::power/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 tpacpi::standby -> ../../devices/platform/thinkpad_acpi/leds/tpacpi::standby/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 tpacpi::thinklight -> ../../devices/platform/thinkpad_acpi/leds/tpacpi::thinklight/
+lrwxrwxrwx  1 root root 0 Jun 15 13:27 tpacpi::thinkvantage -> ../../devices/platform/thinkpad_acpi/leds/tpacpi::thinkvantage/
+
+But looks like that thinkpad_acpi.c does not define any struct
+led_classdev nor struct tpacpi_led_classdev for MUTE or MICMUTE.
+
+Henrique, any idea why there are no exported led classes for mute and
+micmute? And how are suppose to be controlled?
+
+> With thinkpad_acpi.ko unloaded, hardware drives the LEDs, so nothing
+> for us to do...
+
+So somehow tell thinkpad_acpi.ko to let hardware control those LEDs when
+thinkpad_acpi.ko is loaded?
+
+-- 
+Pali Rohár
+pali.rohar@gmail.com
