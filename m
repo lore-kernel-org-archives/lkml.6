@@ -3,151 +3,165 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 71CEEC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:35:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7EAACC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:38:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17DD820693
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:35:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35E65208BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:38:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="E//F70Pz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17DD820693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VaRp47og"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35E65208BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965356AbeFOAf2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 20:35:28 -0400
-Received: from relmlor4.renesas.com ([210.160.252.174]:31880 "EHLO
-        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965192AbeFOAfZ (ORCPT
+        id S965361AbeFOAiM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 20:38:12 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38899 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965207AbeFOAiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 20:35:25 -0400
-Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
-  by relmlie3.idc.renesas.com with ESMTP; 15 Jun 2018 09:35:23 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 8F5236ED3D;
-        Fri, 15 Jun 2018 09:35:23 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.51,224,1526310000"; 
-   d="scan'208";a="284052276"
-Received: from mail-os2jpn01lp0147.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.147])
-  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2018 09:35:23 +0900
+        Thu, 14 Jun 2018 20:38:10 -0400
+Received: by mail-lf0-f67.google.com with SMTP id i83-v6so12136405lfh.5
+        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 17:38:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9jSIvgkFRGBqpcSlADE8sKkROc5uvfphKvp9BOS4lv0=;
- b=E//F70PzvQ1pmyeSoglNdDGsYIx+zMq/0agYF61X5bZ0DlOBMTpkXmrJQNjciYBg+KHDDm6ThPA1neaKo7lKP9/98RPZRh0a9osnemWQuUPYACIFLJ7wo3Kxe7M1ntJmVykp4Hg6jP1T/MqkyE+D0rpSBtpZqFlFzTVkXlYouvw=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
-Received: from morimoto-PC.renesas.com (211.11.155.138) by
- OSBPR01MB2071.jpnprd01.prod.outlook.com (2603:1096:603:22::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.841.18; Fri, 15 Jun 2018 00:35:20 +0000
-Message-ID: <87muvwsxfj.wl%kuninori.morimoto.gx@renesas.com>
-From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>, <vkoul@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran@ksquared.org.uk>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        <dmaengine@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v2] dmaengine: rcar-dmac: don't use DMAC error interrupt
-In-Reply-To: <87o9gcsxj3.wl%kuninori.morimoto.gx@renesas.com>
-References: <8736xrkrci.wl%kuninori.morimoto.gx@renesas.com>
-        <CAMuHMdV-MoVnfJarHc9xZX_ZN7sHmKjGKxnhHyYUBof_P6R9ew@mail.gmail.com>
-        <87o9gcsxj3.wl%kuninori.morimoto.gx@renesas.com>
-User-Agent: Wanderlust/2.15.9 Emacs/24.3 Mule/6.0
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-Date:   Fri, 15 Jun 2018 00:35:20 +0000
-X-Originating-IP: [211.11.155.138]
-X-ClientProxiedBy: TYAPR01CA0075.jpnprd01.prod.outlook.com
- (2603:1096:404:2c::15) To OSBPR01MB2071.jpnprd01.prod.outlook.com
- (2603:1096:603:22::14)
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: 50d8a849-6704-4bc8-abc7-08d5d257e016
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2071;
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;3:SmF5tiC2CGma12R2qQFIFE5tUYf97LW0FRXqbGOlmUR2dXjSoKk3TLfCMYgNh28WyfByqjQE7SSz6B1Z+ICrTOt5tPp3/1dzxOjf5LaVvKfL7aMuYMlHwpEZibrYvNuqhvjfF+EzZWnj3pIeil97CLeZth2hP60AF6fNeqyIjhOVWjqyhJpaN04FbJ2BeynVCBCUXPJcWDRfNmpu68025ba/vBdpahSrY1upGgX90xheUEE+KA2k4l/BNAjIYo0g;25:5MAMty9koqzfXh3d+KEfNHdm+9fFKPdjhoDyZ/3BEtVcnQybo+RkOfgpeHdhqzmj/gkejZCKifavNI31MQzwg7+JPSrvZL7Ba5rP6tRM0pBEKpiE0ehj9jJHGqLqNYUbjgaQHfLS1F3wIF3yUTW1f+jLyxBcShvgZZhV/tWj6Fo9vZ1zERJtj+Dps+IZoJZeN1yF2SChEGHiEs0CpS8fKBg8CoHdbOcSNAnqc2mVHsGWUmJz38uDRelE2pW8hjRgMQlKsajxP/GpVxEbhqYNPp0usLLnyyfHBKJoN8GgdTSHG94fXvH08MwWvBvbkwz3A/JqYXOXSpUlMApYUmsL2w==;31:q1cvpmWvWiMDevWF+J/FWM9JheY01npWxT9JWQt08STTozDzv4mSjzA1JOsvQlgjAt29JVWjb2S3SRYef59fmdmpkuAgSBS6ojrqzCOpJnairHFBx8hNdJ4ORrfERLMUriXs/gPsutrZBXQHiGoyNhzgSWUp9MAR1KKmnwTmxHJf9AOIMomQ1zrS3crgqHocODCx6zFQO7KamPELX86LD7v6e2KrpyPp3kiY6Td5VKE=
-X-MS-TrafficTypeDiagnostic: OSBPR01MB2071:
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;20:ntPufGZqE+78cP09bUPkY+41/xCARMHSQ+xtGcLWKcNE3EObAlz37N00LkIAKJAjuqQHFUJvtg0RTYed50lnzLQS9Lc3pjZpigA6VJBXsMIdCnO9Onhc7Lmx6lLpaduui4VM8L6Cqy2K/pwYX8oKLSzVZXX30XH44Ske6niOvKjGngAgc6jE2KnXLIJKeorP9V0Er4gvJTu4W/aU+Vw6tM5RJQERjmPhzfCeUHkz3IO1ZTTqwEcDpxjeOX1tqGoI68WivwU7FRC02fiNAJRbo20i/9Uwk6Nyk5/vOkESPRmGCp446FtKzFSYt4C2NWWsrMra5/5KzN0a4pXT13VV7gxcwheuSHJvCzjvaqQ7TTBw6OFPMw/3ALp09bgbCWaPIoz6XVLvFRoz1cgziS7hyvTyo4o9YspHI3AgIXqBrCFzXm+Z+FLgrKBNRxlb/AFpnMONA4EjIaE21kWIpy5A/+NBRS/3VFiH0YOAHdcpiPPMKcusEDbzt+gK/gW2lcmn;4:8TBvvu3bmWdKmj9AY5n9AZG2l4Uv4MXRqu2xOPB/j7SeUaDre1QUrZhZRGp+hg4s4dpRnoLeN4adeJpj8WXR1aTAOXAhIw8xe43RQmGjvrG16Xq1TGEFXJsl30CQoU8c5h28Si4J8LQSFyaPjhZzP3U4P7GMjAXznFkAYKKaMOHRrP9WjTATF7IeLxtzYq4FrzFAmdGNazpDeLg5z0K1jihUd8TxwEjR39YbMttS5FOmPZ0gbvr10jfFgJEwUeVa183gPGU+6ap3v/Qa3BT6Qg==
-X-Microsoft-Antispam-PRVS: <OSBPR01MB2071AD02E700B6395F1098B3D47C0@OSBPR01MB2071.jpnprd01.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:;
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB2071;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2071;
-X-Forefront-PRVS: 0704670F76
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(346002)(366004)(39860400002)(189003)(199004)(8676002)(50466002)(6200100001)(81156014)(81166006)(7736002)(26005)(6116002)(7049001)(229853002)(23726003)(86362001)(97736004)(4326008)(316002)(58126008)(105586002)(16526019)(2906002)(305945005)(16586007)(3846002)(106356001)(37006003)(54906003)(47776003)(486006)(69596002)(8936002)(66066001)(53416004)(446003)(2616005)(956004)(11346002)(476003)(25786009)(5660300001)(39060400002)(36756003)(6486002)(386003)(68736007)(6862004)(478600001)(7416002)(6246003)(76176011)(53936002)(7696005)(52116002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2071;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-Received-SPF: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB2071;23:AafzTyIwA2tFmnLUTCBHkvZ7ukQLEA+SFJf4PAWSN?=
- =?us-ascii?Q?NISZu5Je5pQOEEuAyznNpuu4erLVIhWioQ9lRggmCUR29IbnOxjW+fVa/Qdi?=
- =?us-ascii?Q?Htc/sNKivQMXyNqSkX9Jhc7OQvEzaAXdAJUrNTHYNJFWrMFqfw6wnNhuqbll?=
- =?us-ascii?Q?03aiui3SBkb7i1qXmceUy6JTgCl+wGCb5UKfLQFm6TBaD0dYfprnY36BX2fP?=
- =?us-ascii?Q?1PiJSEUW5hVqbpCTpW/l+1LcJUep3TgVf4D0ndaXJYw8QzjZVwhxZYmE1dJZ?=
- =?us-ascii?Q?c9dxYlUbBbyX5ZmNigUwcYVNGwmH7XNNbBuGOTg6nu1fJ5KOrARoYzbF+HV+?=
- =?us-ascii?Q?KPJkV2jjSQtKnPZ0ko4vFf9Of4S5hGEKhhk2Z911q95vyXNbhzpQli6AObHx?=
- =?us-ascii?Q?vgmK90hSOwuWnj2AM20/jJiCSwJM+YfqVc3h0qz2KVxTnExfDiFIsq7bralj?=
- =?us-ascii?Q?/es+kQ3+odhPxsw1VbetipLKRsCbkbisRDvmmCzXF8nUxT6EPMC0tKXbF6do?=
- =?us-ascii?Q?NZi8/Tjw6JKVnVtgmC+Pa+qr60YqSRQkpk7I/u+MwQIn/Vx9hFdxWWRDpPM4?=
- =?us-ascii?Q?oALl0RzvKzhkilLPUXkL3XeWmOLgcOn1xd/VkBNlb2UcJcs3NvhbKH0SV6BS?=
- =?us-ascii?Q?blVEKNFR+qRHcb6qLSK18TPFTHi0UNvtiY/r9RvA59RyUxkJ5KZUbvkWWABX?=
- =?us-ascii?Q?083yD8rsbePtTk1USNQKmsFYDue8Yg06MQhMgAR1ktJ1ODW0/g4Mwd36ctKF?=
- =?us-ascii?Q?VexmbogWnigx6uQxG0LSphcqiNp0MdYmiMYE0udrfju0XENhzJHIxhVxv/YJ?=
- =?us-ascii?Q?G1xUpVxsmpkGRp9DagXnaBKFnml+NbfIAGObUrluG/PfEjfEhYF3MBK8KT4v?=
- =?us-ascii?Q?q57Ly222TsGtcIvJ1FIufsMDqEfJF4xfsjjTg3s7s807Cz8HtptB6Yy3Rjda?=
- =?us-ascii?Q?Gz0jxrVowPlSO681OmI+Gqtz9am5KsPOYa0hPdvgXKcW3H4cUdkoSgBvb7lp?=
- =?us-ascii?Q?TSmKniL2CBhIkTYM3U/+mxGX9Q6ByZEkNHbpO2+N+dAvL2sh04xqvumd7rPL?=
- =?us-ascii?Q?GGzpNwfPSwMtgyWwK1i7rdSUzvrWXf1fna3+Q8yfmWusYU7TT7rcCRgXYubr?=
- =?us-ascii?Q?B6JU2Pfg09kKWu5HTfuapJHTDou1PPoC/1V5cQ7wafl5RHRnhWQkg+QEUcxm?=
- =?us-ascii?Q?E7jGPUD1DR/bAk8JM43C0BpOfSpK04+hdIHOHlWqiokCUZdLixOo3OJUB05S?=
- =?us-ascii?Q?LixrLhGr8VebfMLFRw1KaCOD1HbL8CSPHY3PcYavY6S5dQdHq8VP1xOcKr0x?=
- =?us-ascii?Q?o+q3pauxlBZZ6Rmyv5ECArzJ/K8Wf7nlbh1V1KNeTTqPnxHWloQkJRGfqe1b?=
- =?us-ascii?Q?LlbGg=3D=3D?=
-X-Microsoft-Antispam-Message-Info: PSy41cepZMwq/U1V/pcMqXeXmkCcvhFDVqazONouzgaf6ftD53faCY3owH5iqoedX70q3mZWP1wTKRkgcKTMZmTVLBPjdOYFa474EY1GrhKvs/c5HP4EdSHwQUY0TVD0sUpZzPQ9gJwHoNdcX2zbBzTt8ZbMFtxJto+br2o3D3jA0+BgCI99IFbwYiaYP/+z
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;6:ifNiAZjKO3RazW+X5QYuGxAwCjkrx64nJn8IOTt9TC8DZWQr9HE49UBWnb7Jqe0vm2W0/3KLycBWRzwLfMJPJyGd4HFT1JmwxVbUukwxgN5d8IQMB7wgAD3UMahv3Lf77ec13uZCom1MLRrI2cXoBavXMXfGUJ/1XX7FdMRlAeUdlyd8JX8fi+EaWvm0pVCvbj7P+5QPN2ZeSICu/bk/ZxEAYdWsgphVRn0eHvwYsdKoap0GMorQDKwG8JeRIQL7mBINPNJk8vHx8oFOoYy8Mslt3sDs/9raJzxWMUg9zKe7gu4WoGn9RhoPDAx9Lg0pmv1RAD5tVvD6nrce0Gu4auLckq1zkNb7xOvc2HaIEqiEulNsz/RzdrFG1bAnr05A48tgE9QIfREHyB6WMW2TqRY6Zv7okUurd8/2a4qnGlqSzhH6FVKBQ/Vg9LiGrv2H8uJyc/7LZooD/2rjc+hk5g==;5:JAIc22kQevr1lyDer8xZykJDw+kLSMz1IXbthIpoClR5BajcP9EqceVOawQZHMRGPoCZKdJmoWw8IJAYXZrKcDHJjNiYWct1mrwOu34KG9eAVcCZ82apFQjmUY7Lp27rgDbY3IZca0oB0NlnVfzuzS+AACjPItfY+v8TBVPYDKY=;24:av0kO59djVbvajln58ZyYNpgVAcocTwQqFBnm1fO6aOscrJRBqTvkwl+uM2/5L9ur+cY9tR1hrWCCfcQO3FbaDgLpBTtwG1Bo6OoW0M8NRw=
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;7:k199y7Nf8fUfRudrLpu0I1a67fVN30L1zrDtwOzC39bQ9WrHIFVXyJN7yyBHqWXF447jwdyTNMiGkTInl48mgduq7Ub75OdzTusK772k78b7cbWJSZa8GBAxa2eveXyBDdJml9IQY1Iz0ToGmkuEpU4/MoC0eVC/KLmCD1XWLsYb7t+DL7kaHvHX33oDNs8fr2IqhAj2OIj/iqcnAEv8Sauj2gpphuBOhZAXda9JVP4tPk3LyDUrtHSM+PoNFKZW;20:RIJLSTp5hvb1Fswrzj3cmUYZUgj/Evzl4PQ+xVzV2CMuEP3ew/GOVNMxZyO9nA5yItxf3+JtaKBjGm2Fcy/vwtCDPaWeyQSNCIGJN34MvtaWyUAI6pJYkFyoaL7IfCiiRzM8SMAHY4NpLasaqDUYjifdUn3FTAcDNK3VQeTTFYc=
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2018 00:35:20.3706 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50d8a849-6704-4bc8-abc7-08d5d257e016
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2071
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=iZfMqTESiax2wuO6Z74m/y27sBYZWvMofe+WeeH4ykk=;
+        b=VaRp47ogZA4tcnXH9OwqPGkoFCkiHuNoWOoSYiUgYrpIKCQkUtob+1EKM2upsuB+uQ
+         c8Hm1KphTib54LIrSYWExWqorv6aCx/f/lWM2xRzBc5noOXiSPGOeDarZhHc2aGSCOdv
+         0pafcRzNUHJi4YRs2mzAU7Grkj15bV3v3UsXk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=iZfMqTESiax2wuO6Z74m/y27sBYZWvMofe+WeeH4ykk=;
+        b=XmEK/REbg59hEPr9V6bwcQ7WIttwpIs5H56ivgpIY8TQN6vTPvqkseMUU1BgYw+r6Q
+         BxM8qIIocVZGjc3lmYLMD4Am54w+Ar4DZfCJAtzK6C6qJFfpxq3Zho0dAqfJTOttER1U
+         x+jMgnhjXDxNygGJ4oNn0YAQidDfKRj/iA/0sPYxCZyByjR0Vs0i4BEiYWL9NNbPSiSU
+         4YZa29yxgRL6AQrgmOIIwtYzAzc1ezVojoQSpRssvdDMnkoD9Qfo5is4kgzOArJ4EBtx
+         O3wsQyxas5GNxtkJUMNG+lC2hUsT46jBVc6ClBWXQ92Rq8XjJKl/EV5gdHfNFIxgTuNg
+         NX+g==
+X-Gm-Message-State: APt69E3lC1bXJCaUw48Hx1P/hSaQT8vv3mDkwi1TiLEkv8THZT1NUDjp
+        mpTWLBIHV/chLi7xNcmoKFAuaHGp08ZGD3yzBZBcbQ==
+X-Google-Smtp-Source: ADUXVKIIE7A4bEN7ghhSJgCOy3AanBc7qVqzr5/Hb0kb/bGx986dNOTCOfGMtp8CHz/TnYmdMg38pp/rBIXvt2rDIrg=
+X-Received: by 2002:a2e:60:: with SMTP id 93-v6mr3297835lja.96.1529023089036;
+ Thu, 14 Jun 2018 17:38:09 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 17:38:08
+ -0700 (PDT)
+In-Reply-To: <20180614132157.333004166@linuxfoundation.org>
+References: <20180614132157.333004166@linuxfoundation.org>
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Fri, 15 Jun 2018 06:08:08 +0530
+Message-ID: <CA+G9fYu0b4gRUkBksHnjXJECM6dteiWX-74VmC4iWkujAzU8iw@mail.gmail.com>
+Subject: Re: [PATCH 4.14 00/36] 4.14.50-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        lkft-triage@lists.linaro.org,
+        linux- stable <stable@vger.kernel.org>, ltp@lists.linux.it
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 14 June 2018 at 19:34, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
+rote:
+> This is the start of the stable review cycle for the 4.14.50 release.
+> There are 36 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Sat Jun 16 13:21:44 UTC 2018.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
+4.14.50-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-4.14.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Hi, again
+Results from Linaro=E2=80=99s test farm.
+No regressions on arm64, arm and x86_64.
 
-> > > Current rcar-dmac is using DMAC error interrupt which will handle all
-> > > channel's error. But in this design, error handling itself will be
-> > > issue if user want to use virtualization, multi OS, etc.
-> > > This patch removes current DMAC error interrupt handling, and handle it
-> > > on each channel interrupt handler.
-> > 
-> > Just wondering, what's the usage pattern where this causes a problem?
-> > Do you plan to export part of a SYS-DMAC instance to a guest?
-> 
-> "virtualization, multi OS" part is maybe misleading.
-> It will be problem on non virtualization, too.
-> 
-> > How to maintain host/guest isolation?
-> 
-> This is another topic/issue, I think
+NOTE:
+fcntl36 is an intermittent failure on qemu arm32 for all stable branches.
+fcntl36.c:205: FAIL: Unexpected data offset 12304 value 9
+Old open bug to investigate, https://bugs.linaro.org/show_bug.cgi?id=3D3339
 
-I will post v3 patch, soon
+Summary
+------------------------------------------------------------------------
 
+kernel: 4.14.50-rc1
+git repo:
+https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+git branch: linux-4.14.y
+git commit: 3fb86a556ae52204eac4b69373ce236510a9a91b
+git describe: v4.14.49-37-g3fb86a556ae5
+Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.14-oe/bu=
+ild \
+/v4.14.49-37-g3fb86a556ae5
+^ Please join URL
 
-Best regards
----
-Kuninori Morimoto
+No regressions (compared to build v4.14.49)
+------------------------------------------------------------------------
+
+Ran 11475 total tests in the following environments and test suites.
+
+Environments
+--------------
+- dragonboard-410c - arm64
+- hi6220-hikey - arm64
+- juno-r2 - arm64
+- qemu_arm
+- qemu_arm64
+- qemu_x86_64
+- x15 - arm
+- x86_64
+
+Test Suites
+-----------
+* boot
+* kselftest
+* libhugetlbfs
+* ltp-cap_bounds-tests
+* ltp-containers-tests
+* ltp-cve-tests
+* ltp-fcntl-locktests-tests
+* ltp-filecaps-tests
+* ltp-fs-tests
+* ltp-fs_bind-tests
+* ltp-fs_perms_simple-tests
+* ltp-fsx-tests
+* ltp-hugetlb-tests
+* ltp-io-tests
+* ltp-ipc-tests
+* ltp-math-tests
+* ltp-nptl-tests
+* ltp-pty-tests
+* ltp-securebits-tests
+* ltp-syscalls-tests
+* ltp-timers-tests
+* ltp-sched-tests
+* kselftest-vsyscall-mode-native
+* kselftest-vsyscall-mode-none
+
+--=20
+Linaro LKFT
+https://lkft.linaro.org
