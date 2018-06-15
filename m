@@ -4,131 +4,95 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7680C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:47:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9C9C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:47:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A18C6208E1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:47:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ACA2208E1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:47:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="leG7DScR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18C6208E1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DyGvcMUn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1ACA2208E1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966333AbeFOTrm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 15:47:42 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:41226 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966149AbeFOTrl (ORCPT
+        id S966386AbeFOTrw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 15:47:52 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:44894 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966149AbeFOTru (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 15:47:41 -0400
-Received: by mail-lf0-f66.google.com with SMTP id d24-v6so16232260lfa.8
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 12:47:40 -0700 (PDT)
+        Fri, 15 Jun 2018 15:47:50 -0400
+Received: by mail-oi0-f67.google.com with SMTP id c128-v6so9795802oig.11;
+        Fri, 15 Jun 2018 12:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BMxlPA9uynTUmNtBWq8jEEjRdz3X01UilQjmvla4N1s=;
-        b=leG7DScRnKzckV9j1zye2cI/Rl4B0eOZ9kE6DgrO/JtmzSnB7m0/jQa0GHLZ25/U6e
-         mqW+RWIDQuXNMIKpGsIHhp8pEkVuDIIpWEeocpOk9hnIR+D7uukw5uyzhiB1S2fYF0xN
-         ZBaLoJMpj1oBybyjPzZpUdiJXRLbR4zdhFVkDi20D22vtHa87A/E4C1CWCrXQM3yN4Bt
-         Mjx0zg4fo9MOUvLIjlnJELS+WDta1U8oIJaRJ5077c9b8QWOqOhAIjHu51Wdp5xT4X7L
-         6ux2folNPG4oOdPknIdupUfN8Q2k6CN22ZTl+sweccVbygMgYsQ1qOnV3XrMhJOIomDD
-         +5Ig==
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=e2N/hLeFw62BVvvsJ0aZkaKs9JwSVeEsDqWGXeK79jI=;
+        b=DyGvcMUnLjzxPDZf60BIbfTWs8KXvar5hvdrb6sxbr0SNX/LnCTml/YCy6T+ahOqnI
+         nrNvCSQNNZFIMprDkv5tqBa4kCuuB9+YvQRXJdf478cU/cmH55S/vLWxxLH3HBGjTsrx
+         oJE45h2VuMbBR+wr3jcWxGIP+wnvVvIFx1OXrswrrmEGUbyF9W/hYA+QSabFLRPvh6ZB
+         0sHZlr/mA0y0QRX8esRdD5svT4/j4VM4CaSpvcAVCtr9l5hIQGImGImvxASBUntuAbmr
+         8ZZ6Mp7c20HCmMnRiFRUnnRA6fyuFQcAtw8u2Yy7CGe2N7iRceC7tShY0vjPnfxaWeku
+         YNZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BMxlPA9uynTUmNtBWq8jEEjRdz3X01UilQjmvla4N1s=;
-        b=p7Od3m000KARh/JxeR3/G29dkB6uptzdzRnyyPp41KUAH8pMlbIjX/asYmEZbe8adi
-         YqZyG6Jp9EmbkXhUrU2OTVUfzlcLBdKreWXUtaOBceu1NgsDr/KdfLZojKqZ9zoDnUPQ
-         5o24I75HHqQybEgeaI+3SlcDmiLiUD73nB+SskGYkUVI4j+GaOg2+K9GrINkztWz7/Ez
-         lQciWqw5SGCy9NcAXuc8Rbvu+EIhGNTV3XRaMwkHy2pjjAevo0Z8NHU0cj/6dqljAL6B
-         koaSKGKudXwCxJpz6Ibipctf1CzZO3UDAaidgHotAobnoWyuIMwCJfpeHqW3wfEzZm/t
-         OjzA==
-X-Gm-Message-State: APt69E0ULxuLpp1eJ4F9r0Kg96LMaY0PrJ+depy3kJFW7sdUS/iy6bIf
-        42ob5keGSXndkKS4OJXQxA8=
-X-Google-Smtp-Source: ADUXVKIcdZRL7djpFCGtxg2taas/CwvHHIHu0XsGxCuQ384mf2EMSFzpnyvuA5dEAWa5RDIsykc7aQ==
-X-Received: by 2002:a2e:60:: with SMTP id 93-v6mr2249597lja.96.1529092060182;
-        Fri, 15 Jun 2018 12:47:40 -0700 (PDT)
-Received: from mobilestation ([5.166.218.73])
-        by smtp.gmail.com with ESMTPSA id d62-v6sm36687lfd.50.2018.06.15.12.47.39
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 12:47:39 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 22:47:48 +0300
-From:   Serge Semin <fancer.lancer@gmail.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
-        Jon Mason <jdmason@kudzu.us>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Allen Hubbe <allenbh@gmail.com>,
-        Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-        Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH 1/8] NTB: ntb_tool: reading the link file should not end
- in a NULL byte
-Message-ID: <20180615194748.GA15481@mobilestation>
-References: <20180609000819.13883-1-logang@deltatee.com>
- <20180609000819.13883-2-logang@deltatee.com>
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=e2N/hLeFw62BVvvsJ0aZkaKs9JwSVeEsDqWGXeK79jI=;
+        b=n8j1bK3wM3aIWP2gzE1TqzxaHwN4p7oDKWfEENQG2fRlPVyYl1pMU3UYKH/ZDXngp8
+         6v65e15tEpnGZUH56Jwmu9eUhFDfOcHNj8dWp2yxDAVfDRTPIRdPSzK16l9H3CP6jAvV
+         sH/VvJJls6CbvVA12OmoExMIBOLnuFeJjtqLEV4nrL227ohMcIhqRG7ZlE+CfJsCnBWg
+         vrRWvdWqUlOPqSKzsIQkb7A7uu50jCXhkOCOZ4XvcPKDIB3mmt1YGv4LGHuy37aVD2MC
+         bDg0FPw60V8aiTnI++t/0PDVmf14bKvtsRJgLiqfq4OdrDr4Q3wARbWnOugl01cr6lmf
+         RVsQ==
+X-Gm-Message-State: APt69E1yLyNYskP44Fr6kUMTPJOcLfp6s2dE0eBkfbgnqUrB+QDJyRhS
+        byelMrM8oerxsKzSCS5gc/FfTc7+oIg0R1Gyboo=
+X-Google-Smtp-Source: ADUXVKJBc/vuKQQQDm1FuI89ThVJdaV89nfX0PHm9fztl/BPtipLKlAvtJvhMCYFzkqU9mb93/Oc9m0vtHs2yzn/dXw=
+X-Received: by 2002:aca:400b:: with SMTP id n11-v6mr1814620oia.44.1529092069377;
+ Fri, 15 Jun 2018 12:47:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180609000819.13883-2-logang@deltatee.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 12:47:48
+ -0700 (PDT)
+In-Reply-To: <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
+References: <cover.1529091248.git.leonard.crestez@nxp.com> <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 15 Jun 2018 16:47:48 -0300
+Message-ID: <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Stefan Agner <stefan@agner.ch>
+Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Marco Franchi <marcofrk@gmail.com>,
+        DRI mailing list <dri-devel@lists.freedesktop.org>,
+        linux-fbdev@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marex@denx.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 06:08:11PM -0600, Logan Gunthorpe <logang@deltatee.com> wrote:
-> When running ntb_test this warning is issued:
-> 
-> ./ntb_test.sh: line 200: warning: command substitution: ignored null
-> byte in input
-> 
+Hi Leonard,
 
-This is weird. Neither me nor the folks' who tested the script saw this warning.
-I tried it on my laptop with bash and on a target device with busybox-shell. The
-warning never occurred. I even tried a simple command like:
-[[ $(echo -ne "\x4e\x0a\00") == "N" ]] && echo "True"
+On Fri, Jun 15, 2018 at 4:43 PM, Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
+> The FBDEV driver uses the same name and both can't be registered at the
+> same time. Fix this by renaming the drm driver to mxsfb-drm
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-It might be that your bash is more modern than mine. Anyway if this patch solves the
-problem you see, that's great. Thanks for it.
-
--Sergey
-
-> This is caused by the kernel returning one more byte than is necessary
-> when reading the link file.
-> 
-> Reduce the number of bytes read back to 2 as it was before the
-> commit that regressed this.
-> 
-> Fixes: 7f46c8b3a552 ("NTB: ntb_tool: Add full multi-port NTB API support")
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> ---
->  drivers/ntb/test/ntb_tool.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/ntb/test/ntb_tool.c b/drivers/ntb/test/ntb_tool.c
-> index d592c0ffbd19..ec5cf095cdb9 100644
-> --- a/drivers/ntb/test/ntb_tool.c
-> +++ b/drivers/ntb/test/ntb_tool.c
-> @@ -504,7 +504,7 @@ static ssize_t tool_peer_link_read(struct file *filep, char __user *ubuf,
->  	buf[1] = '\n';
->  	buf[2] = '\0';
->  
-> -	return simple_read_from_buffer(ubuf, size, offp, buf, 3);
-> +	return simple_read_from_buffer(ubuf, size, offp, buf, 2);
->  }
->  
->  static TOOL_FOPS_RDWR(tool_peer_link_fops,
-> @@ -1690,4 +1690,3 @@ static void __exit tool_exit(void)
->  	debugfs_remove_recursive(tool_dbgfs_topdir);
->  }
->  module_exit(tool_exit);
-> -
-> -- 
-> 2.11.0
-> 
+Stefan sent the same patch a few days ago:
+https://www.spinics.net/lists/dri-devel/msg179489.html
