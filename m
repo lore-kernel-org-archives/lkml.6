@@ -2,84 +2,129 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 69EF9C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:43:35 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 90B09C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 133E62086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:43:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 438552086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:44:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PLMugr4X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 133E62086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S6HVgI6B";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IK50Zl0L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438552086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755614AbeFOFnd (ORCPT
+        id S1755686AbeFOFox (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 01:43:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46028 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755577AbeFOFnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 01:43:32 -0400
-Received: from redbean (ip5f5ade9d.dynamic.kabel-deutschland.de [95.90.222.157])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 15 Jun 2018 01:44:53 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:34644 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755563AbeFOFov (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 01:44:51 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 65E7260116; Fri, 15 Jun 2018 05:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529041490;
+        bh=MTDFZ54X4aS0x461rDWnSOFSNFq+PxsezZCM+v2ORxQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=S6HVgI6BZoFlGarg6gSD9UuKBKh7qA2rVZtKP0f1BWazGKZ6iXe+Nq0sHsDnFYW+G
+         lBYGq2KnyCXQ+9+LZ/SJ/YHG7EaEy1CtBDE5PUodNTzqqSMDMFBNj+s7gn+k3bN+Se
+         5nN3tGUFIdi8UGvctctMEBZF5mOvkhSZtzuiBNXQ=
+Received: from [10.206.25.30] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E3272086A;
-        Fri, 15 Jun 2018 05:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529041411;
-        bh=XF4ZXOP+93mMhIvYKvEueOtWCIo2MQazYQ1vE9U9ib0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=PLMugr4XIEx0q/LFUbJ4C0YTYW0yWyPbn9tpSDh8UmSv4zc1kcdsaJFk48Hryp3Ds
-         56iq1UDlrF5Y0dS6t8ik1QMJ3cKhqqIxaYWL+pCY2vDZrKkGlnEDqBbIqgUmjZIPqw
-         ePfC24wJKkTaUiyaIkZ6ubetBxg9EqmkP4BJEnik=
-Date:   Fri, 15 Jun 2018 07:43:27 +0200
-From:   Jessica Yu <jeyu@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] modules for v4.18
-Message-ID: <20180615054327.uhxk7e3plmo6hmm7@redbean>
+        (Authenticated sender: vviswana@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C942160116;
+        Fri, 15 Jun 2018 05:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529041489;
+        bh=MTDFZ54X4aS0x461rDWnSOFSNFq+PxsezZCM+v2ORxQ=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IK50Zl0L478qB61dz9VEjMkHICtYApcDNgpMAvYHp3BjNP6W4vDIW3P7Zo+hPF/yG
+         zjvMqmQrQaqVmfI3WGnZYBUsvdQKDJZLIx7icFi7zBhlB1q6nMPnh2CVCb+mq+2UbN
+         7hTlmK1Gik1QXcuR69Y9Mws2Guxzoh1bO1YHhAz4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C942160116
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
+Subject: Re: [PATCH V2 4/4] mmc: host: Register changes for sdcc V5
+To:     Stephen Boyd <swboyd@chromium.org>, adrian.hunter@intel.com,
+        mark.rutland@arm.com, robh+dt@kernel.org, ulf.hansson@linaro.org
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
+        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
+        asutoshd@codeaurora.org, stummala@codeaurora.org,
+        venkatg@codeaurora.org, jeremymc@redhat.com,
+        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
+        vbadigan@codeaurora.org, dianders@google.com,
+        sayalil@codeaurora.org
+References: <1527587561-27448-1-git-send-email-vviswana@codeaurora.org>
+ <1527587561-27448-5-git-send-email-vviswana@codeaurora.org>
+ <152884592336.16708.2751337614926643627@swboyd.mtv.corp.google.com>
+From:   Vijay Viswanath <vviswana@codeaurora.org>
+Message-ID: <4a215e3a-16af-4574-efca-0ebe5960705a@codeaurora.org>
+Date:   Fri, 15 Jun 2018 11:14:41 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-X-OS:   Linux redbean 4.15.3-200.fc26.x86_64 x86_64
-User-Agent: NeoMutt/20180323
+In-Reply-To: <152884592336.16708.2751337614926643627@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus, 
 
-The following changes since commit 60cc43fc888428bb2f18f08997432d426a243338:
 
-  Linux 4.17-rc1 (2018-04-15 18:24:20 -0700)
+On 6/13/2018 4:55 AM, Stephen Boyd wrote:
+> Quoting Vijay Viswanath (2018-05-29 02:52:41)
+>> @@ -137,6 +125,12 @@
+>>   /* Timeout value to avoid infinite waiting for pwr_irq */
+>>   #define MSM_PWR_IRQ_TIMEOUT_MS 5000
+>>   
+>> +#define MSM_HOST_READL(msm_host, host, offset) \
+>> +       msm_host->var_ops->msm_readl_relaxed(host, offset)
+>> +
+>> +#define MSM_HOST_WRITEL(msm_host, val, host, offset) \
+>> +       msm_host->var_ops->msm_writel_relaxed(val, host, offset)
+> 
+> Is there a reason these macros are capitalized? We don't have READL and
+> WRITEL macros in the kernel because function-like macros are typically
+> lowercase.
+> 
 
-are available in the git repository at:
+will change them to lower case. Didn't notice that...
 
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/jeyu/linux.git tags/modules-for-v4.18
+>> +
+>>   struct sdhci_msm_offset {
+>>          u32 core_hc_mode;
+>>          u32 core_mci_data_cnt;
+>> @@ -268,6 +262,14 @@ struct sdhci_msm_host {
+>>          const struct sdhci_msm_offset *offset;
+>>   };
+>>   
+>> +const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+> 
+> static?
+> 
 
-for you to fetch changes up to c554b89868015d86cd330d9cc10656c3756352a5:
+will do
 
-  module: Allow to always show the status of modsign (2018-04-16 23:49:33 +0200)
-
-----------------------------------------------------------------
-Modules updates for v4.18
-
-Summary of modules changes for the 4.18 merge window:
-
-- Minor code cleanup and also allow sig_enforce param to be shown in
-  sysfs with CONFIG_MODULE_SIG_FORCE
-
-Signed-off-by: Jessica Yu <jeyu@kernel.org>
-
-----------------------------------------------------------------
-Jia Zhang (2):
-      module: Do not access sig_enforce directly
-      module: Allow to always show the status of modsign
-
- kernel/module.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+>> +{
+>> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+>> +       struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+>> +
+>> +       return msm_host->offset;
+>> +}
+>> +
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
