@@ -2,109 +2,118 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85724C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CC3C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44DBA208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:52:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44DBA208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A8E1120896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:52:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E1120896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966235AbeFOQwA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:52:00 -0400
-Received: from foss.arm.com ([217.140.101.70]:44762 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965985AbeFOQv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:51:58 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 75CD315B2;
-        Fri, 15 Jun 2018 09:51:58 -0700 (PDT)
-Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 47BBD3F25D;
-        Fri, 15 Jun 2018 09:51:58 -0700 (PDT)
-Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
-        id D05571AE2F86; Fri, 15 Jun 2018 17:52:32 +0100 (BST)
-Date:   Fri, 15 Jun 2018 17:52:32 +0100
-From:   Will Deacon <will.deacon@arm.com>
-To:     Vivek Gautam <vivek.gautam@codeaurora.org>
-Cc:     robin.murphy@arm.com, joro@8bytes.org,
-        linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, pdaly@codeaurora.org
-Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support to use Last level cache
-Message-ID: <20180615165232.GE2202@arm.com>
-References: <20180615105329.26800-1-vivek.gautam@codeaurora.org>
+        id S966305AbeFOQwK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:52:10 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:44963 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965985AbeFOQwI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 12:52:08 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mailout.easymail.ca (Postfix) with ESMTP id 469B841753;
+        Fri, 15 Jun 2018 16:52:07 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id vSeDTxfccGLJ; Fri, 15 Jun 2018 16:52:07 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id 8738E40D17;
+        Fri, 15 Jun 2018 16:51:59 +0000 (UTC)
+Subject: Re: [PATCH] selftests: sparc64: Fix to do nothing on non-sparc64
+To:     David Miller <davem@redhat.com>
+Cc:     tom.hromatka@oracle.com, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org, f.fainelli@gmail.com,
+        Shuah Khan <shuah@kernel.org>
+References: <20180612232348.27979-1-shuah@kernel.org>
+ <d6a1ce6d-4903-ec7a-10aa-d40118fce45c@oracle.com>
+ <d8ec82b2-a27a-7a7a-9d8a-b3b937e8e959@kernel.org>
+ <20180615.094145.334438195653112696.davem@redhat.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <fa06cf9a-e38b-df0d-3e15-a8ecff1e923f@kernel.org>
+Date:   Fri, 15 Jun 2018 10:51:58 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180615105329.26800-1-vivek.gautam@codeaurora.org>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180615.094145.334438195653112696.davem@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
-
-On Fri, Jun 15, 2018 at 04:23:29PM +0530, Vivek Gautam wrote:
-> Qualcomm SoCs have an additional level of cache called as
-> System cache or Last level cache[1]. This cache sits right
-> before the DDR, and is tightly coupled with the memory
-> controller.
-> The cache is available to all the clients present in the
-> SoC system. The clients request their slices from this system
-> cache, make it active, and can then start using it. For these
-> clients with smmu, to start using the system cache for
-> dma buffers and related page tables [2], few of the memory
-> attributes need to be set accordingly.
-> This change makes the related memory Outer-Shareable, and
-> updates the MAIR with necessary protection.
+On 06/15/2018 10:41 AM, David Miller wrote:
+> From: Shuah Khan <shuah@kernel.org>
+> Date: Fri, 15 Jun 2018 10:33:21 -0600
 > 
-> The MAIR attribute requirements are:
->     Inner Cacheablity = 0
->     Outer Cacheablity = 1, Write-Back Write Allocate
->     Outer Shareablity = 1
+>> On 06/13/2018 11:20 AM, Tom Hromatka wrote:
+>>> Thanks, Shuah!
+>>>
+>>> Tom
+>>>
+>>>
+>>> On 06/12/2018 05:23 PM, Shuah Khan (Samsung OSG) wrote:
+>>>> sparc64 test fails with the following errors on non-sparc64 systems. Fix
+>>>> the Makefile to do nothing on non-sparc64 systems to suppress the errors:
+>>>>
+>>>> make run_tests
+>>>> adi-test.c: Assembler messages:
+>>>> adi-test.c:302: Error: no such instruction: `rd %tick,%r13'
+>>>> adi-test.c:304: Error: no such instruction: `rd %tick,%rbp'
+>>>> adi-test.c:190: Error: no such instruction: `rd %tick,%rbp'
+>>>> adi-test.c:192: Error: no such instruction: `rd %tick,%rdx'
+>>>> adi-test.c:273: Error: no such instruction: `rd %tick,%rbx'
+>>>> adi-test.c:276: Error: no such instruction: `rd %tick,%rdx'
+>>>> adi-test.c:217: Error: no such instruction: `rd %tick,%rbp'
+>>>> adi-test.c:220: Error: no such instruction: `rd %tick,%rdx'
+>>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
+>>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
+>>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
+>>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
+>>>> adi-test.c:246: Error: no such instruction: `rd %tick,%rbp'
+>>>> adi-test.c:248: Error: no such instruction: `rd %tick,%rdx'
+>>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
+>>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
+>>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
+>>>> <builtin>: recipe for target 'adi-test' failed
+>>>> make[1]: *** [adi-test] Error 1
+>>>> adi: [FAIL]
+>>>> ./drivers_test.sh: 24: ./drivers_test.sh: ./adi-test: not found
+>>>> ../lib.mk:73: recipe for target 'run_tests' failed
+>>>> make: *** [run_tests] Error 1
+>>>>
+>>>> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+>>>
+>>> Reviewed-by: Tom Hromatka <tom.hromatka@oracle.com>
+>>>
+>>
+>> get_maintainers didn't include your name for this patch. Would you like to
+>> take this fix through sparc tree? It would be good to get this in for
+>> 4.18-rc2
+>>
+>> If so, please let me know if you would like me to resend the patch
+>> with Tom's Reviewed-by tag.
+> 
+> I'm very busy, so this time could you merge this for me?  Thanks!
+> 
+> Acked-by: David S. Miller <davem@davemloft.net>
+> 
 
-Hmm, so is this cache coherent with the CPU or not? Why don't normal
-non-cacheable mappings allocated in the LLC by default?
+Okay. I will take care of this.
 
-> diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> index f7a96bcf94a6..8058e7205034 100644
-> --- a/drivers/iommu/arm-smmu.c
-> +++ b/drivers/iommu/arm-smmu.c
-> @@ -249,6 +249,7 @@ struct arm_smmu_domain {
->  	struct mutex			init_mutex; /* Protects smmu pointer */
->  	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
->  	struct iommu_domain		domain;
-> +	bool				has_sys_cache;
->  };
->  
->  struct arm_smmu_option_prop {
-> @@ -862,6 +863,8 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
->  
->  	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
->  		pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
-> +	if (smmu_domain->has_sys_cache)
-> +		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_SYS_CACHE;
->  
->  	smmu_domain->smmu = smmu;
->  	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
-> @@ -1477,6 +1480,9 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
->  	case DOMAIN_ATTR_NESTING:
->  		*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
->  		return 0;
-> +	case DOMAIN_ATTR_USE_SYS_CACHE:
-> +		*((int *)data) = smmu_domain->has_sys_cache;
-> +		return 0;
-
-I really don't like exposing this to clients directly like this,
-particularly as there aren't any in-tree users. I would prefer that we
-provide a way for the io-pgtable code to have its MAIR values overridden
-so that all non-coherent DMA ends up using the system cache.
-
-Will
+thanks,
+-- Shuah
