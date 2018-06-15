@@ -2,357 +2,144 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5B1C9C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:19:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8DF4DC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:30:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0135A208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:19:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0135A208B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 43A46208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:30:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43A46208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755731AbeFOHTU (ORCPT
+        id S1755825AbeFOHaF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 03:19:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:44046 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755573AbeFOHTT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 03:19:19 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C88988424E;
-        Fri, 15 Jun 2018 07:19:18 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-148.pek2.redhat.com [10.72.12.148])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D679763A7C;
-        Fri, 15 Jun 2018 07:19:15 +0000 (UTC)
-Date:   Fri, 15 Jun 2018 15:19:11 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Lianbo Jiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        thomas.lendacky@amd.com
-Subject: Re: [PATCH 2/2 V2] Support kdump when AMD secure memory encryption
- is active
-Message-ID: <20180615071911.GA5621@dhcp-128-65.nay.redhat.com>
-References: <20180614084748.9617-1-lijiang@redhat.com>
- <20180614084748.9617-3-lijiang@redhat.com>
+        Fri, 15 Jun 2018 03:30:05 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:38717 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755573AbeFOHaD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 03:30:03 -0400
+Received: by mail-it0-f70.google.com with SMTP id l6-v6so1159746itb.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 00:30:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=fVDfq3wQ3KJ2beUUzk7G9KPDGcp3z0O7IKNkT+bWGHo=;
+        b=oDeFylrArJZauZSUde+SSsfzlhfKFAuVPKCYHVzDiVb4B0Et7ZYypRmtYgMzSr5BqH
+         z00xV5yCluEq1exw5Wo32URXQ/9SsyKcwGVOpW5RkFxRXuIdZkxAFdfkgdfjxM7J6DuU
+         aweOQy7ZB7CMSdXb0Dp6VAwr/7ocb1qbA4T0hN4ine3aa4XvKGH0o6Oqb8+8iQbulFhE
+         VcBZq2z72q8WEAPn1K+fzXnMlrvdfo2UMVEj1MDKJKjwePBJ3lW6tsyccKAnr8qIL0SL
+         ULxHgd9yXOLJrvQXdeVqMF5N3w87XcIYPmT/Mk7pOS3EClDEukXGrkpa1sgvylwz2/EO
+         T1nQ==
+X-Gm-Message-State: APt69E1U7DMTUbWDwnU3PlNIvHCNbHHqT7Dh7WhvfF9pO4h/0HF63Ns+
+        7RYbBGQA8xIHSwHpQgkT8gjTXBt4Q9eSmQ5EVOYONAh9ziiN
+X-Google-Smtp-Source: ADUXVKJgbAWSyIvMqyqGTez7QwKpD7JkzzB+nnt5CGF0XUD1TsH8lHX2BgXspHeWULamh+oCADYtQTQ1JVpM2P4L7bBcmWajBMV/
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614084748.9617-3-lijiang@redhat.com>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 15 Jun 2018 07:19:18 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Fri, 15 Jun 2018 07:19:18 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'dyoung@redhat.com' RCPT:''
+X-Received: by 2002:a24:5dd4:: with SMTP id w203-v6mr90404ita.27.1529047802643;
+ Fri, 15 Jun 2018 00:30:02 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 00:30:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001f31eb056ea92fcb@google.com>
+Subject: KMSAN: uninit-value in xfrm_state_find
+From:   syzbot <syzbot+131cd4c6d21724b99a26@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, herbert@gondor.apana.org.au,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        steffen.klassert@secunet.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/14/18 at 04:47pm, Lianbo Jiang wrote:
-> When sme enabled on AMD server, we also need to support kdump. Because
-> the memory is encrypted in the first kernel, we will remap the old memory
-> encrypted to the second kernel(crash kernel), and sme is also enabled in
-> the second kernel, otherwise the old memory encrypted can not be decrypted.
-> Because simply changing the value of a C-bit on a page will not
-> automatically encrypt the existing contents of a page, and any data in the
-> page prior to the C-bit modification will become unintelligible. A page of
-> memory that is marked encrypted will be automatically decrypted when read
-> from DRAM and will be automatically encrypted when written to DRAM.
-> 
-> For the kdump, it is necessary to distinguish whether the memory is
-> encrypted. Furthermore, we should also know which part of the memory is
-> encrypted or decrypted. We will appropriately remap the memory according
-> to the specific situation in order to tell cpu how to deal with the data(
-> encrypted or unencrypted). For example, when sme enabled, if the old memory
-> is encrypted, we will remap the old memory in encrypted way, which will
-> automatically decrypt the old memory encrypted when we read those data from
-> the remapping address.
-> 
->  ----------------------------------------------
-> | first-kernel | second-kernel | kdump support |
-> |      (mem_encrypt=on|off)    |   (yes|no)    |
-> |--------------+---------------+---------------|
-> |     on       |     on        |     yes       |
-> |     off      |     off       |     yes       |
-> |     on       |     off       |     no        |
-> |     off      |     on        |     no        |
-> |______________|_______________|_______________|
-> 
-> Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
-> ---
-> Some changes based on V1:
-> 1. remove the '#ifdef' stuff throughout this patch.
-> 2. put some logic into the early_memremap_pgprot_adjust() and clean the
-> previous unnecessary changes, for example: arch/x86/include/asm/dmi.h,
-> arch/x86/kernel/acpi/boot.c, drivers/acpi/tables.c.
-> 3. rewrite two functions, copy_oldmem_page() and
-> copy_oldmem_page_encrypted().
-> 4. distingish sme_active() and sev_active(), when a distinction doesn't
-> need, mem_encrypt_active() will be used.
+Hello,
 
-Lianbo, I think you modified this based on Tom's comment.
-But it would be good to add this only when you tested sev and it worked
-for you.
+syzbot found the following crash on:
 
-> 5. clean compile warning in copy_device_table().
-> 
->  arch/x86/kernel/crash_dump_64.c | 42 +++++++++++++++++++++++++++++++----------
->  arch/x86/mm/ioremap.c           |  4 ++++
->  drivers/iommu/amd_iommu_init.c  | 14 +++++++++++++-
+HEAD commit:    1df165c8d2d6 kmsan: introduce kmsan_clear_user_page()
+git tree:       https://github.com/google/kmsan.git/master
+console output: https://syzkaller.appspot.com/x/log.txt?x=15336e97800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4ca1e57bafa8ab1f
+dashboard link: https://syzkaller.appspot.com/bug?extid=131cd4c6d21724b99a26
+compiler:       clang version 7.0.0 (trunk 329391)
+syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12c7a417800000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13710197800000
 
-Assume it will not break bisection it is better to split the iommu
-changes as one standalone patch and cc iommu list.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+131cd4c6d21724b99a26@syzkaller.appspotmail.com
 
->  fs/proc/vmcore.c                | 20 +++++++++++++++-----
->  include/linux/crash_dump.h      |  5 +++++
->  kernel/kexec_core.c             | 12 ++++++++++++
+IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
+IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
+8021q: adding VLAN 0 to HW filter on device team0
+==================================================================
+BUG: KMSAN: uninit-value in __arch_swab32  
+arch/x86/include/uapi/asm/swab.h:10 [inline]
+BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
+BUG: KMSAN: uninit-value in __xfrm6_daddr_saddr_hash  
+net/xfrm/xfrm_hash.h:29 [inline]
+BUG: KMSAN: uninit-value in __xfrm_dst_hash net/xfrm/xfrm_hash.h:96 [inline]
+BUG: KMSAN: uninit-value in xfrm_dst_hash net/xfrm/xfrm_state.c:60 [inline]
+BUG: KMSAN: uninit-value in xfrm_state_find+0x2b15/0x4f40  
+net/xfrm/xfrm_state.c:952
+CPU: 0 PID: 4464 Comm: syz-executor988 Not tainted 4.17.0-rc3+ #93
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
+  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1084
+  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+  __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
+  __fswab32 include/uapi/linux/swab.h:59 [inline]
+  __xfrm6_daddr_saddr_hash net/xfrm/xfrm_hash.h:29 [inline]
+  __xfrm_dst_hash net/xfrm/xfrm_hash.h:96 [inline]
+  xfrm_dst_hash net/xfrm/xfrm_state.c:60 [inline]
+  xfrm_state_find+0x2b15/0x4f40 net/xfrm/xfrm_state.c:952
+  xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:1393 [inline]
+  xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:1437 [inline]
+  xfrm_resolve_and_create_bundle+0xc31/0x5270 net/xfrm/xfrm_policy.c:1833
+  xfrm_lookup+0x606/0x39d0 net/xfrm/xfrm_policy.c:2163
+  xfrm_lookup_route+0xfa/0x360 net/xfrm/xfrm_policy.c:2283
+  ip_route_output_flow+0x35b/0x3b0 net/ipv4/route.c:2574
+  udp_sendmsg+0x2289/0x33f0 net/ipv4/udp.c:1006
+  udpv6_sendmsg+0x1291/0x3f40 net/ipv6/udp.c:1175
+  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:629 [inline]
+  sock_sendmsg net/socket.c:639 [inline]
+  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
+  __sys_sendmmsg+0x490/0x850 net/socket.c:2212
+  __do_sys_sendmmsg net/socket.c:2241 [inline]
+  __se_sys_sendmmsg net/socket.c:2238 [inline]
+  __x64_sys_sendmmsg+0x11c/0x170 net/socket.c:2238
+  do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+RIP: 0033:0x4419c9
+RSP: 002b:00007ffdb3fa4608 EFLAGS: 00000217 ORIG_RAX: 0000000000000133
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004419c9
+RDX: 0000000000000001 RSI: 0000000020002000 RDI: 0000000000000003
+RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004026c0
+R13: 0000000000402750 R14: 0000000000000000 R15: 0000000000000000
 
-Another two patches, one for kexec_core, another for vmcore.c will be
-better for review.
+Local variable description: ----fl4_stack@udp_sendmsg
+Variable was created at:
+  udp_sendmsg+0xe5/0x33f0 net/ipv4/udp.c:841
+  udpv6_sendmsg+0x1291/0x3f40 net/ipv6/udp.c:1175
+==================================================================
 
->  6 files changed, 81 insertions(+), 16 deletions(-)
-> 
-> diff --git a/arch/x86/kernel/crash_dump_64.c b/arch/x86/kernel/crash_dump_64.c
-> index 4f2e077..a2c7b13 100644
-> --- a/arch/x86/kernel/crash_dump_64.c
-> +++ b/arch/x86/kernel/crash_dump_64.c
-> @@ -11,6 +11,23 @@
->  #include <linux/uaccess.h>
->  #include <linux/io.h>
->  
-> +static ssize_t copy_to(void *to, void *vaddr, unsigned long offset,
-> +		       size_t size, int userbuf)
-> +{
-> +	if (userbuf) {
-> +		if (copy_to_user(to, vaddr + offset, size)) {
-> +			iounmap(vaddr);
-> +			return -ENOMEM;
-> +		}
-> +	} else
-> +		memcpy(to, vaddr + offset, size);
-> +
-> +	set_iounmap_nonlazy();
-> +	iounmap(vaddr);
-> +
-> +	return size;
-> +}
-> +
->  /**
->   * copy_oldmem_page - copy one page from "oldmem"
->   * @pfn: page frame number to be copied
-> @@ -36,15 +53,20 @@ ssize_t copy_oldmem_page(unsigned long pfn, char *buf,
->  	if (!vaddr)
->  		return -ENOMEM;
->  
-> -	if (userbuf) {
-> -		if (copy_to_user(buf, vaddr + offset, csize)) {
-> -			iounmap(vaddr);
-> -			return -EFAULT;
-> -		}
-> -	} else
-> -		memcpy(buf, vaddr + offset, csize);
-> +	return copy_to(buf, vaddr, offset, csize, userbuf);
-> +}
->  
-> -	set_iounmap_nonlazy();
-> -	iounmap(vaddr);
-> -	return csize;
-> +ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-> +		size_t csize, unsigned long offset, int userbuf)
-> +{
-> +	void  *vaddr;
-> +
-> +	if (!csize)
-> +		return 0;
-> +
-> +	vaddr = ioremap_encrypted(pfn << PAGE_SHIFT, PAGE_SIZE);
-> +	if (!vaddr)
-> +		return -ENOMEM;
-> +
-> +	return copy_to(buf, vaddr, offset, csize, userbuf);
->  }
-> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> index 24e0920..e365fc4 100644
-> --- a/arch/x86/mm/ioremap.c
-> +++ b/arch/x86/mm/ioremap.c
-> @@ -24,6 +24,7 @@
->  #include <asm/pgalloc.h>
->  #include <asm/pat.h>
->  #include <asm/setup.h>
-> +#include <linux/crash_dump.h>
->  
->  #include "physaddr.h"
->  
-> @@ -696,6 +697,9 @@ pgprot_t __init early_memremap_pgprot_adjust(resource_size_t phys_addr,
->  	if (encrypted_prot && memremap_should_map_decrypted(phys_addr, size))
->  		encrypted_prot = false;
->  
-> +	if (sme_active() && is_kdump_kernel())
-> +		encrypted_prot = false;
-> +
->  	return encrypted_prot ? pgprot_encrypted(prot)
->  			      : pgprot_decrypted(prot);
->  }
-> diff --git a/drivers/iommu/amd_iommu_init.c b/drivers/iommu/amd_iommu_init.c
-> index 904c575..5e535a6 100644
-> --- a/drivers/iommu/amd_iommu_init.c
-> +++ b/drivers/iommu/amd_iommu_init.c
-> @@ -889,11 +889,23 @@ static bool copy_device_table(void)
->  	}
->  
->  	old_devtb_phys = entry & PAGE_MASK;
-> +	/*
-> +	 *  When sme enable in the first kernel, old_devtb_phys includes the
-> +	 *  memory encryption mask(sme_me_mask), we must remove the memory
-> +	 *  encryption mask to obtain the true physical address in kdump mode.
-> +	 */
-> +	if (mem_encrypt_active() && is_kdump_kernel())
-> +		old_devtb_phys = __sme_clr(old_devtb_phys);
->  	if (old_devtb_phys >= 0x100000000ULL) {
->  		pr_err("The address of old device table is above 4G, not trustworthy!\n");
->  		return false;
->  	}
-> -	old_devtb = memremap(old_devtb_phys, dev_table_size, MEMREMAP_WB);
-> +	if (mem_encrypt_active() && is_kdump_kernel())
-> +		old_devtb = (void *)ioremap_encrypted(old_devtb_phys,
-> +						     dev_table_size);
-> +	else
-> +		old_devtb = memremap(old_devtb_phys,
-> +				    dev_table_size, MEMREMAP_WB);
->  	if (!old_devtb)
->  		return false;
->  
-> diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
-> index a45f0af..4d0c884 100644
-> --- a/fs/proc/vmcore.c
-> +++ b/fs/proc/vmcore.c
-> @@ -25,6 +25,8 @@
->  #include <linux/uaccess.h>
->  #include <asm/io.h>
->  #include "internal.h"
-> +#include <linux/mem_encrypt.h>
-> +#include <asm/pgtable.h>
->  
->  /* List representing chunks of contiguous memory areas and their offsets in
->   * vmcore file.
-> @@ -86,7 +88,8 @@ static int pfn_is_ram(unsigned long pfn)
->  
->  /* Reads a page from the oldmem device from given offset. */
->  static ssize_t read_from_oldmem(char *buf, size_t count,
-> -				u64 *ppos, int userbuf)
-> +				u64 *ppos, int userbuf,
-> +				bool encrypted)
->  {
->  	unsigned long pfn, offset;
->  	size_t nr_bytes;
-> @@ -108,8 +111,13 @@ static ssize_t read_from_oldmem(char *buf, size_t count,
->  		if (pfn_is_ram(pfn) == 0)
->  			memset(buf, 0, nr_bytes);
->  		else {
-> -			tmp = copy_oldmem_page(pfn, buf, nr_bytes,
-> +			if (encrypted)
-> +				tmp = copy_oldmem_page_encrypted(pfn, buf,
-> +					       nr_bytes, offset, userbuf);
-> +			else
-> +				tmp = copy_oldmem_page(pfn, buf, nr_bytes,
->  						offset, userbuf);
-> +
->  			if (tmp < 0)
->  				return tmp;
->  		}
-> @@ -143,7 +151,7 @@ void __weak elfcorehdr_free(unsigned long long addr)
->   */
->  ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
->  {
-> -	return read_from_oldmem(buf, count, ppos, 0);
-> +	return read_from_oldmem(buf, count, ppos, 0, sev_active());
->  }
->  
->  /*
-> @@ -151,7 +159,7 @@ ssize_t __weak elfcorehdr_read(char *buf, size_t count, u64 *ppos)
->   */
->  ssize_t __weak elfcorehdr_read_notes(char *buf, size_t count, u64 *ppos)
->  {
-> -	return read_from_oldmem(buf, count, ppos, 0);
-> +	return read_from_oldmem(buf, count, ppos, 0, sme_active());
->  }
->  
->  /*
-> @@ -161,6 +169,7 @@ int __weak remap_oldmem_pfn_range(struct vm_area_struct *vma,
->  				  unsigned long from, unsigned long pfn,
->  				  unsigned long size, pgprot_t prot)
->  {
-> +	prot = pgprot_encrypted(prot);
->  	return remap_pfn_range(vma, from, pfn, size, prot);
->  }
->  
-> @@ -235,7 +244,8 @@ static ssize_t __read_vmcore(char *buffer, size_t buflen, loff_t *fpos,
->  					    m->offset + m->size - *fpos,
->  					    buflen);
->  			start = m->paddr + *fpos - m->offset;
-> -			tmp = read_from_oldmem(buffer, tsz, &start, userbuf);
-> +			tmp = read_from_oldmem(buffer, tsz, &start, userbuf,
-> +						mem_encrypt_active());
->  			if (tmp < 0)
->  				return tmp;
->  			buflen -= tsz;
-> diff --git a/include/linux/crash_dump.h b/include/linux/crash_dump.h
-> index f7ac2aa..28b0a7c 100644
-> --- a/include/linux/crash_dump.h
-> +++ b/include/linux/crash_dump.h
-> @@ -25,6 +25,11 @@ extern int remap_oldmem_pfn_range(struct vm_area_struct *vma,
->  
->  extern ssize_t copy_oldmem_page(unsigned long, char *, size_t,
->  						unsigned long, int);
-> +extern ssize_t copy_oldmem_page_encrypted(unsigned long pfn, char *buf,
-> +					  size_t csize, unsigned long offset,
-> +					  int userbuf);
-> +#define copy_oldmem_page_encrypted copy_oldmem_page_encrypted
-> +
->  void vmcore_cleanup(void);
->  
->  /* Architecture code defines this if there are other possible ELF
-> diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-> index 20fef1a..3c22a9b 100644
-> --- a/kernel/kexec_core.c
-> +++ b/kernel/kexec_core.c
-> @@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
->  		}
->  	}
->  
-> +	if (pages) {
-> +		unsigned int count, i;
-> +
-> +		pages->mapping = NULL;
-> +		set_page_private(pages, order);
-> +		count = 1 << order;
-> +		for (i = 0; i < count; i++)
-> +			SetPageReserved(pages + i);
-> +		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
-> +	}
->  	return pages;
->  }
->  
-> @@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
->  			result  = -ENOMEM;
->  			goto out;
->  		}
-> +		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
->  		ptr = kmap(page);
->  		ptr += maddr & ~PAGE_MASK;
->  		mchunk = min_t(size_t, mbytes,
-> @@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
->  			result = copy_from_user(ptr, buf, uchunk);
->  		kexec_flush_icache_page(page);
->  		kunmap(page);
-> +		arch_kexec_pre_free_pages(page_address(page), 1);
->  		if (result) {
->  			result = -EFAULT;
->  			goto out;
-> -- 
-> 2.9.5
-> 
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
