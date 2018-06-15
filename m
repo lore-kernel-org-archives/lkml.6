@@ -2,137 +2,405 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9BDBDC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:51:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7344EC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52146208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:51:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqvXwqaS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52146208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 17E75208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:51:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17E75208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965549AbeFOIvU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:51:20 -0400
-Received: from mail-vk0-f66.google.com ([209.85.213.66]:36909 "EHLO
-        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936185AbeFOIvS (ORCPT
+        id S965566AbeFOIvz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 04:51:55 -0400
+Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:57732 "EHLO
+        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S936181AbeFOIvx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:51:18 -0400
-Received: by mail-vk0-f66.google.com with SMTP id w8-v6so5272896vkh.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 01:51:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QXNj93zNUmn86i366sRjWAoWBHlfeiG5u+n+lrREuFg=;
-        b=cqvXwqaS8Q5HLtQtDWDmJPbCmn+84RGnE4cDo55xYMZpekcAi+tgYH3jFkGgvOPW+X
-         wQ5bKydMAktHJZgDPvNM9u2c0O7oqWOImNzuMAh3STmgNGMnkjsjujN0q03ONXtwvyP8
-         Wmy4ONiwy9oWSMOlR49Ix90NC2PPq+oV9q6Xw3Vus1LhHwWNcC8d4Zt/LXiD+pIDihHc
-         rnUKFsxUSLq7rVKVvyPseGN1yxJ1cGHjZAMReBxtZGya2KOYz1z3NlmLrGWVX8FMjpR1
-         DaYhLF3Yq41JqRyJfanyUunJL51T1e7akvWZATDV48nZpqtLiemCTyYC+rPrLIKBuIVC
-         RzWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QXNj93zNUmn86i366sRjWAoWBHlfeiG5u+n+lrREuFg=;
-        b=buKrrpIeb3+o/9NalsQByDk3RgBq3itcuDPocIXBktQtQpLw0u2R0tQRVq342Qp55J
-         7WTeCZyJchvPUNso3KS3IWF1CtGVVsv8VDopFWfpQdSxkFSoPSn5f0Vi0Ma0Y/NeXdrC
-         HdHz4erKYDOO/PEwaNJc2EE1xv5ZIbZxKmpfm6O3bl5RNmIFfWvRtSMzvp7gV+ZPzahN
-         sKmAVf4MpVfsfKWqivYiUu2OK0qIgH2aCHxUVNLU9QgrjQtqRVzi3rVw12ggdsL72qIA
-         XKJaLPmswKASmW2H5+wrma8BJJ5hIL6U90vAlBnjcaQPdhfAXwafjPVrJ7meKC48UCCN
-         y2HA==
-X-Gm-Message-State: APt69E3+NncKU8A9XKzgIj84ZTwYBzlWuYPHQaVXaVO3sO2ACDJ/O+zX
-        4upEqtU9OZBwsOWngYRgz5wbdvq/ZolPHnAgQe+BrA==
-X-Google-Smtp-Source: ADUXVKKZ0TNyIop+SbCb4Ew8Brt7YuQ0NLNfpMmqIDw/tlJoISIIB8iAfjz4xKp7ktVasainj5FXJan9/nzrB8O5rTc=
-X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr410436vkd.15.1529052678222;
- Fri, 15 Jun 2018 01:51:18 -0700 (PDT)
+        Fri, 15 Jun 2018 04:51:53 -0400
+Received: from [IPv6:2001:983:e9a7:1:14b8:b232:de25:1225] ([IPv6:2001:983:e9a7:1:14b8:b232:de25:1225])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id TkSOfChRg6brUTkSPfumOO; Fri, 15 Jun 2018 10:51:51 +0200
+Subject: Re: [PATCH v3 1/3] media: v4l2-ctrl: Change control for VP8 profile
+ to menu control
+To:     Keiichi Watanabe <keiichiw@chromium.org>,
+        linux-arm-kernel@lists.infradead.org
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Kamil Debski <kamil@wypas.org>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org, linux-arm-msm@vger.kernel.org,
+        s.nawrocki@samsung.com
+References: <20180614074652.162796-1-keiichiw@chromium.org>
+ <20180614074652.162796-2-keiichiw@chromium.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <c165d7d1-4d3b-0f19-40e4-c4022b4f5706@xs4all.nl>
+Date:   Fri, 15 Jun 2018 10:51:44 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 01:51:17
- -0700 (PDT)
-In-Reply-To: <20180614212643.29563-1-johannes@sipsolutions.net>
-References: <20180614212643.29563-1-johannes@sipsolutions.net>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Fri, 15 Jun 2018 11:51:17 +0300
-Message-ID: <CAHp75Vf372rACqseUNYEba3Gw1Hg+PmdFdn+a2ex=2JzWZ2nWQ@mail.gmail.com>
-Subject: Re: [PATCH v2] bitfield: fix *_encode_bits()
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20180614074652.162796-2-keiichiw@chromium.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfIcwagrhXkvpJd5sN0EY6dcc5ttjy7hZCDPzuML+o3Cw9GCG8JrbFe02QpxX0D2gxbGajh1PPHjl6bXtAuzckT0EdL1DQeo22yYRByGMJ0nXr9g3dMtX
+ JrL3Q2F+mqvQj3AeMWWKklyyiiuWwIFQdgUr31wp7BJFuXWS1qeMXVH+6LbnzXrlUHQS2Pp7PT3eRNhRHtkbMRspLHv6JmLTOwXmfJd5R4GQEtUH8AuS3DHm
+ /uER6xXQruqaHW+F9/hvxALg4yZdr9Akip/4OwMETq1+gjxikArGc8EYqwUIqtN+im7V8iumOZXsRn7mnrYgt5SIKViafbiMWsT0EhS4VEjuDEl/VBYawD1I
+ ZlE3EczthVZNBXFpctFpVTAmIT0VlaTTTkQMUnex1v0kY8ArtVjiftXowc6l+4/5ccgzY8EttmWkvHuCfMWAH/SqrUb70ka3RKfW9KmFgWHu4GDUmSLVwXSG
+ lfKQOz5GkiIEo0kpvIS0k+ErQAEERnAxfPGGvkYYlHB2LOWoh7oMPGAGHw8Ye+D4Uklog1kNQBtF/JVpBB99iBA29c+7G0hVobmdlfpOufIJVOCKUMxUqYTz
+ QmcYB9myOPm5RxeYz/8h6wArHAGw/iZKkBsfYybF92ZOmDqC8nsNhYTaiDTwfUTbbJ29SCkHIVPSqg9D9ac5nLI7VGWFdNKRQOdZfCOQhTZN8xr4oSpwRTC5
+ 89ZTXNTjUrCVaZlHTxAotjEowSrJDoW/s3p7rGmchV4J14nde6Vy+fUBeURoHOTct2/6VrGpS2lXaKfW5q9rgo8r6amXAcUC/a6Rt2jYFyzszr9L1N++JUS3
+ mdpgIn59KCfkcJkxcvAZc5c4a/ia9pnEHWQgNttCsTzDOrP8sEVlggWWy0L2eK/M695GMrLzvs8Bsn1uGbgWKf4dV/iW90fIXwP+o+LEg1t/Qk4uuiYjlaUk
+ oMC7LKIIZ71n+fzsLoZtmlc/jCc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 12:26 AM, Johannes Berg
-<johannes@sipsolutions.net> wrote:
-> There's a bug in *_encode_bits() in using ~field_multiplier() for
-> the check whether or not the constant value fits into the field,
-> this is wrong and clearly ~field_mask() was intended. This was
-> triggering for me for both constant and non-constant values.
->
-> Additionally, make this case actually into an compile error.
-> Declaring the extern function that will never exist with just a
-> warning is pointless as then later we'll just get a link error.
->
-> While at it, also fix the indentation in those lines I'm touching.
+On 14/06/18 09:46, Keiichi Watanabe wrote:
+> Add a menu control V4L2_CID_MPEG_VIDEO_VP8_PROFILE for VP8 profile and
+> make V4L2_CID_MPEG_VIDEO_VPX_PROFILE an alias of it. This new control
+> is used to select a desired profile for VP8 encoder, and query for
+> supported profiles by VP8 encoder/decoder.
+> 
+> Though we have originally a control V4L2_CID_MPEG_VIDEO_VPX_PROFILE and its name
+> contains 'VPX', it works only for VP8 because supported profiles usually differ
+> between VP8 and VP9. In addition, this contorol cannot be used for querying
 
-I'm just wondering if we have test cases for that API.
-If not, perhaps it's a good time to start (perhaps extend test_bitmap.c)?
+typo: contorol -> control
 
-Otherwise, the fix looks good!
-
->
-> Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
-> Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+> since it is not a menu control but an integer control, which cannot return an
+> arbitrary set of supported profiles.
+> 
+> The new control V4L2_CID_MPEG_VIDEO_VP8_PROFILE is a menu control as with
+> controls for other codec profiles. (e.g. H264)
+> 
+> In addition, this patch also fixes the use of
+> V4L2_CID_MPEG_VIDEO_VPX_PROFILE in drivers of Qualcomm's venus and
+> Samsung's s5p-mfc.
+> 
+> Signed-off-by: Keiichi Watanabe <keiichiw@chromium.org>
 > ---
-> v2: replace stray tab by space
->
-> If you don't mind, I'd like to take this through the networking
-> tree(s) as a fix since I have some pending code that depends on
-> it.
-> ---
->  include/linux/bitfield.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-> index cf2588d81148..147a7bb341dd 100644
-> --- a/include/linux/bitfield.h
-> +++ b/include/linux/bitfield.h
-> @@ -104,7 +104,7 @@
->                 (typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask)); \
->         })
->
-> -extern void __compiletime_warning("value doesn't fit into mask")
-> +extern void __compiletime_error("value doesn't fit into mask")
->  __field_overflow(void);
->  extern void __compiletime_error("bad bitfield mask")
->  __bad_mask(void);
-> @@ -121,8 +121,8 @@ static __always_inline u64 field_mask(u64 field)
->  #define ____MAKE_OP(type,base,to,from)                                 \
->  static __always_inline __##type type##_encode_bits(base v, base field) \
->  {                                                                      \
-> -        if (__builtin_constant_p(v) && (v & ~field_multiplier(field))) \
-> -                           __field_overflow();                         \
-> +       if (__builtin_constant_p(v) && (v & ~field_mask(field)))        \
-> +               __field_overflow();                                     \
->         return to((v & field_mask(field)) * field_multiplier(field));   \
->  }                                                                      \
->  static __always_inline __##type type##_replace_bits(__##type old,      \
+>  .../media/uapi/v4l/extended-controls.rst      | 27 ++++++++++++++++---
+>  drivers/media/platform/qcom/venus/core.h      |  2 +-
+>  .../media/platform/qcom/venus/hfi_helper.h    | 12 ++++-----
+>  .../media/platform/qcom/venus/vdec_ctrls.c    | 10 ++++---
+>  drivers/media/platform/qcom/venus/venc.c      | 14 +++++-----
+>  .../media/platform/qcom/venus/venc_ctrls.c    | 12 +++++----
+>  drivers/media/platform/s5p-mfc/s5p_mfc_enc.c  | 15 +++++------
+>  drivers/media/v4l2-core/v4l2-ctrls.c          | 12 ++++++++-
+>  include/uapi/linux/v4l2-controls.h            | 11 +++++++-
+>  9 files changed, 79 insertions(+), 36 deletions(-)
+> 
+> diff --git a/Documentation/media/uapi/v4l/extended-controls.rst b/Documentation/media/uapi/v4l/extended-controls.rst
+> index 03931f9b1285..de99eafb0872 100644
+> --- a/Documentation/media/uapi/v4l/extended-controls.rst
+> +++ b/Documentation/media/uapi/v4l/extended-controls.rst
+> @@ -1955,9 +1955,30 @@ enum v4l2_vp8_golden_frame_sel -
+>  ``V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP (integer)``
+>      Quantization parameter for a P frame for VP8.
+> 
+> -``V4L2_CID_MPEG_VIDEO_VPX_PROFILE (integer)``
+> -    Select the desired profile for VPx encoder. Acceptable values are 0,
+> -    1, 2 and 3 corresponding to encoder profiles 0, 1, 2 and 3.
+> +.. _v4l2-mpeg-video-vp8-profile:
+> +
+> +``V4L2_CID_MPEG_VIDEO_VP8_PROFILE``
+> +    (enum)
+> +
+> +enum v4l2_mpeg_video_vp8_profile -
+> +    This control allows to select the profile for VP8 encoder.
+> +    This is also used to enumerate supported profiles by VP8 encoder or decoder.
+> +    Possible values are:
+> +
+> +
+> +
+
+One empty line is enough.
+
+> +.. flat-table::
+> +    :header-rows:  0
+> +    :stub-columns: 0
+> +
+> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_0``
+> +      - Profile 0
+> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_1``
+> +      - Profile 1
+> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_2``
+> +      - Profile 2
+> +    * - ``V4L2_MPEG_VIDEO_VP8_PROFILE_3``
+> +      - Profile 3
+> 
+> 
+>  High Efficiency Video Coding (HEVC/H.265) Control Reference
+> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> index 0360d295f4c8..f242e7f9f6a2 100644
+> --- a/drivers/media/platform/qcom/venus/core.h
+> +++ b/drivers/media/platform/qcom/venus/core.h
+> @@ -159,7 +159,7 @@ struct venc_controls {
+>  	struct {
+>  		u32 mpeg4;
+>  		u32 h264;
+> -		u32 vpx;
+> +		u32 vp8;
+>  	} profile;
+>  	struct {
+>  		u32 mpeg4;
+> diff --git a/drivers/media/platform/qcom/venus/hfi_helper.h b/drivers/media/platform/qcom/venus/hfi_helper.h
+> index 55d8eb21403a..07bf49dd2ec6 100644
+> --- a/drivers/media/platform/qcom/venus/hfi_helper.h
+> +++ b/drivers/media/platform/qcom/venus/hfi_helper.h
+> @@ -333,12 +333,12 @@
+>  #define HFI_VC1_LEVEL_3				0x00000040
+>  #define HFI_VC1_LEVEL_4				0x00000080
+> 
+> -#define HFI_VPX_PROFILE_SIMPLE			0x00000001
+> -#define HFI_VPX_PROFILE_ADVANCED		0x00000002
+> -#define HFI_VPX_PROFILE_VERSION_0		0x00000004
+> -#define HFI_VPX_PROFILE_VERSION_1		0x00000008
+> -#define HFI_VPX_PROFILE_VERSION_2		0x00000010
+> -#define HFI_VPX_PROFILE_VERSION_3		0x00000020
+> +#define HFI_VP8_PROFILE_SIMPLE			0x00000001
+> +#define HFI_VP8_PROFILE_ADVANCED		0x00000002
+> +#define HFI_VP8_PROFILE_VERSION_0		0x00000004
+> +#define HFI_VP8_PROFILE_VERSION_1		0x00000008
+> +#define HFI_VP8_PROFILE_VERSION_2		0x00000010
+> +#define HFI_VP8_PROFILE_VERSION_3		0x00000020
+> 
+>  #define HFI_DIVX_FORMAT_4			0x1
+>  #define HFI_DIVX_FORMAT_5			0x2
+> diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+> index 032839bbc967..f4604b0cd57e 100644
+> --- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
+> +++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+> @@ -29,7 +29,7 @@ static int vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
+>  		break;
+>  	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
+>  	case V4L2_CID_MPEG_VIDEO_MPEG4_PROFILE:
+> -	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
+>  		ctr->profile = ctrl->val;
+>  		break;
+>  	case V4L2_CID_MPEG_VIDEO_H264_LEVEL:
+> @@ -54,7 +54,7 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+>  	switch (ctrl->id) {
+>  	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
+>  	case V4L2_CID_MPEG_VIDEO_MPEG4_PROFILE:
+> -	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
+>  		ret = hfi_session_get_property(inst, ptype, &hprop);
+>  		if (!ret)
+>  			ctr->profile = hprop.profile_level.profile;
+> @@ -130,8 +130,10 @@ int vdec_ctrl_init(struct venus_inst *inst)
+>  	if (ctrl)
+>  		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
+> 
+> -	ctrl = v4l2_ctrl_new_std(&inst->ctrl_handler, &vdec_ctrl_ops,
+> -				 V4L2_CID_MPEG_VIDEO_VPX_PROFILE, 0, 3, 1, 0);
+> +	ctrl = v4l2_ctrl_new_std_menu(&inst->ctrl_handler, &vdec_ctrl_ops,
+> +				      V4L2_CID_MPEG_VIDEO_VP8_PROFILE,
+> +				      V4L2_MPEG_VIDEO_VP8_PROFILE_3,
+> +				      0, V4L2_MPEG_VIDEO_VP8_PROFILE_0);
+>  	if (ctrl)
+>  		ctrl->flags |= V4L2_CTRL_FLAG_VOLATILE;
+> 
+> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
+> index 6b2ce479584e..aa54dd005c3e 100644
+> --- a/drivers/media/platform/qcom/venus/venc.c
+> +++ b/drivers/media/platform/qcom/venus/venc.c
+> @@ -223,17 +223,17 @@ static int venc_v4l2_to_hfi(int id, int value)
+>  		case V4L2_MPEG_VIDEO_H264_ENTROPY_MODE_CABAC:
+>  			return HFI_H264_ENTROPY_CABAC;
+>  		}
+> -	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
+>  		switch (value) {
+>  		case 0:
+>  		default:
+> -			return HFI_VPX_PROFILE_VERSION_0;
+> +			return HFI_VP8_PROFILE_VERSION_0;
+>  		case 1:
+> -			return HFI_VPX_PROFILE_VERSION_1;
+> +			return HFI_VP8_PROFILE_VERSION_1;
+>  		case 2:
+> -			return HFI_VPX_PROFILE_VERSION_2;
+> +			return HFI_VP8_PROFILE_VERSION_2;
+>  		case 3:
+> -			return HFI_VPX_PROFILE_VERSION_3;
+> +			return HFI_VP8_PROFILE_VERSION_3;
+>  		}
+>  	case V4L2_CID_MPEG_VIDEO_H264_LOOP_FILTER_MODE:
+>  		switch (value) {
+> @@ -756,8 +756,8 @@ static int venc_set_properties(struct venus_inst *inst)
+>  		level = venc_v4l2_to_hfi(V4L2_CID_MPEG_VIDEO_H264_LEVEL,
+>  					 ctr->level.h264);
+>  	} else if (inst->fmt_cap->pixfmt == V4L2_PIX_FMT_VP8) {
+> -		profile = venc_v4l2_to_hfi(V4L2_CID_MPEG_VIDEO_VPX_PROFILE,
+> -					   ctr->profile.vpx);
+> +		profile = venc_v4l2_to_hfi(V4L2_CID_MPEG_VIDEO_VP8_PROFILE,
+> +					   ctr->profile.vp8);
+>  		level = 0;
+>  	} else if (inst->fmt_cap->pixfmt == V4L2_PIX_FMT_MPEG4) {
+>  		profile = venc_v4l2_to_hfi(V4L2_CID_MPEG_VIDEO_MPEG4_PROFILE,
+> diff --git a/drivers/media/platform/qcom/venus/venc_ctrls.c b/drivers/media/platform/qcom/venus/venc_ctrls.c
+> index 21e938a28662..e5162b78609d 100644
+> --- a/drivers/media/platform/qcom/venus/venc_ctrls.c
+> +++ b/drivers/media/platform/qcom/venus/venc_ctrls.c
+> @@ -101,8 +101,8 @@ static int venc_op_s_ctrl(struct v4l2_ctrl *ctrl)
+>  	case V4L2_CID_MPEG_VIDEO_H264_PROFILE:
+>  		ctr->profile.h264 = ctrl->val;
+>  		break;
+> -	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
+> -		ctr->profile.vpx = ctrl->val;
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
+> +		ctr->profile.vp8 = ctrl->val;
+>  		break;
+>  	case V4L2_CID_MPEG_VIDEO_MPEG4_LEVEL:
+>  		ctr->level.mpeg4 = ctrl->val;
+> @@ -248,6 +248,11 @@ int venc_ctrl_init(struct venus_inst *inst)
+>  		V4L2_MPEG_VIDEO_MULTI_SICE_MODE_MAX_BYTES,
+>  		0, V4L2_MPEG_VIDEO_MULTI_SLICE_MODE_SINGLE);
+> 
+> +	v4l2_ctrl_new_std_menu(&inst->ctrl_handler, &venc_ctrl_ops,
+> +		V4L2_CID_MPEG_VIDEO_VP8_PROFILE,
+> +		V4L2_MPEG_VIDEO_VP8_PROFILE_3,
+> +		0, V4L2_MPEG_VIDEO_VP8_PROFILE_0);
+> +
+>  	v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
+>  		V4L2_CID_MPEG_VIDEO_BITRATE, BITRATE_MIN, BITRATE_MAX,
+>  		BITRATE_STEP, BITRATE_DEFAULT);
+> @@ -256,9 +261,6 @@ int venc_ctrl_init(struct venus_inst *inst)
+>  		V4L2_CID_MPEG_VIDEO_BITRATE_PEAK, BITRATE_MIN, BITRATE_MAX,
+>  		BITRATE_STEP, BITRATE_DEFAULT_PEAK);
+> 
+> -	v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
+> -		V4L2_CID_MPEG_VIDEO_VPX_PROFILE, 0, 3, 1, 0);
+> -
+>  	v4l2_ctrl_new_std(&inst->ctrl_handler, &venc_ctrl_ops,
+>  		V4L2_CID_MPEG_VIDEO_H264_I_FRAME_QP, 1, 51, 1, 26);
+> 
+> diff --git a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> index 570f391f2cfd..3ad4f5073002 100644
+> --- a/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> +++ b/drivers/media/platform/s5p-mfc/s5p_mfc_enc.c
+> @@ -692,12 +692,12 @@ static struct mfc_control controls[] = {
+>  		.default_value = 10,
+>  	},
+>  	{
+> -		.id = V4L2_CID_MPEG_VIDEO_VPX_PROFILE,
+> -		.type = V4L2_CTRL_TYPE_INTEGER,
+> -		.minimum = 0,
+> -		.maximum = 3,
+> -		.step = 1,
+> -		.default_value = 0,
+> +		.id = V4L2_CID_MPEG_VIDEO_VP8_PROFILE,
+> +		.type = V4L2_CTRL_TYPE_MENU,
+> +		.minimum = V4L2_MPEG_VIDEO_VP8_PROFILE_0,
+> +		.maximum = V4L2_MPEG_VIDEO_VP8_PROFILE_3,
+> +		.default_value = V4L2_MPEG_VIDEO_VP8_PROFILE_0,
+> +		.menu_skip_mask = 0,
+>  	},
+>  	{
+>  		.id = V4L2_CID_MPEG_VIDEO_HEVC_I_FRAME_QP,
+> @@ -2057,7 +2057,7 @@ static int s5p_mfc_enc_s_ctrl(struct v4l2_ctrl *ctrl)
+>  	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:
+>  		p->codec.vp8.rc_p_frame_qp = ctrl->val;
+>  		break;
+> -	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
+>  		p->codec.vp8.profile = ctrl->val;
+>  		break;
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_I_FRAME_QP:
+> @@ -2711,4 +2711,3 @@ void s5p_mfc_enc_init(struct s5p_mfc_ctx *ctx)
+>  	f.fmt.pix_mp.pixelformat = DEF_DST_FMT_ENC;
+>  	ctx->dst_fmt = find_format(&f, MFC_FMT_ENC);
+>  }
+> -
+> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
+> index d29e45516eb7..e7e6340b395e 100644
+> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
+> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
+> @@ -431,6 +431,13 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
+>  		"Use Previous Specific Frame",
+>  		NULL,
+>  	};
+> +	static const char * const vp8_profile[] = {
+> +		"0",
+> +		"1",
+> +		"2",
+> +		"3",
+> +		NULL,
+> +	};
+> 
+>  	static const char * const flash_led_mode[] = {
+>  		"Off",
+> @@ -614,6 +621,8 @@ const char * const *v4l2_ctrl_get_menu(u32 id)
+>  		return mpeg4_profile;
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+>  		return vpx_golden_frame_sel;
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
+> +		return vp8_profile;
+>  	case V4L2_CID_JPEG_CHROMA_SUBSAMPLING:
+>  		return jpeg_chroma_subsampling;
+>  	case V4L2_CID_DV_TX_MODE:
+> @@ -839,7 +848,7 @@ const char *v4l2_ctrl_get_name(u32 id)
+>  	case V4L2_CID_MPEG_VIDEO_VPX_MAX_QP:			return "VPX Maximum QP Value";
+>  	case V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP:		return "VPX I-Frame QP Value";
+>  	case V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP:		return "VPX P-Frame QP Value";
+> -	case V4L2_CID_MPEG_VIDEO_VPX_PROFILE:			return "VPX Profile";
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:			return "VP8 Profile";
+> 
+>  	/* HEVC controls */
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_I_FRAME_QP:		return "HEVC I-Frame QP Value";
+> @@ -1180,6 +1189,7 @@ void v4l2_ctrl_fill(u32 id, const char **name, enum v4l2_ctrl_type *type,
+>  	case V4L2_CID_DEINTERLACING_MODE:
+>  	case V4L2_CID_TUNE_DEEMPHASIS:
+>  	case V4L2_CID_MPEG_VIDEO_VPX_GOLDEN_FRAME_SEL:
+> +	case V4L2_CID_MPEG_VIDEO_VP8_PROFILE:
+>  	case V4L2_CID_DETECT_MD_MODE:
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_PROFILE:
+>  	case V4L2_CID_MPEG_VIDEO_HEVC_LEVEL:
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 8d473c979b61..2001823c3072 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -587,7 +587,16 @@ enum v4l2_vp8_golden_frame_sel {
+>  #define V4L2_CID_MPEG_VIDEO_VPX_MAX_QP			(V4L2_CID_MPEG_BASE+508)
+>  #define V4L2_CID_MPEG_VIDEO_VPX_I_FRAME_QP		(V4L2_CID_MPEG_BASE+509)
+>  #define V4L2_CID_MPEG_VIDEO_VPX_P_FRAME_QP		(V4L2_CID_MPEG_BASE+510)
+> -#define V4L2_CID_MPEG_VIDEO_VPX_PROFILE			(V4L2_CID_MPEG_BASE+511)
+> +
+> +#define V4L2_CID_MPEG_VIDEO_VP8_PROFILE			(V4L2_CID_MPEG_BASE+511)
+> +enum v4l2_mpeg_video_vp8_profile {
+> +	V4L2_MPEG_VIDEO_VP8_PROFILE_0				= 0,
+> +	V4L2_MPEG_VIDEO_VP8_PROFILE_1				= 1,
+> +	V4L2_MPEG_VIDEO_VP8_PROFILE_2				= 2,
+> +	V4L2_MPEG_VIDEO_VP8_PROFILE_3				= 3,
+> +};
+> +/* Deprecated alias for compatibility reasons. */
+> +#define V4L2_CID_MPEG_VIDEO_VPX_PROFILE	V4L2_CID_MPEG_VIDEO_VP8_PROFILE
+> 
+>  /* CIDs for HEVC encoding. */
+> 
 > --
-> 2.14.4
->
+> 2.18.0.rc1.242.g61856ae69a-goog
+> 
 
+Regards,
 
-
--- 
-With Best Regards,
-Andy Shevchenko
+	Hans
