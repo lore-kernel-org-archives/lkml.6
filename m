@@ -2,110 +2,136 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD67C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDD9C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A3EC208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:44:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A3EC208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F726208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:46:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fTtQNFKF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F726208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966040AbeFOSoh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 14:44:37 -0400
-Received: from mga17.intel.com ([192.55.52.151]:63914 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756392AbeFOSne (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 14:43:34 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 11:43:34 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
-   d="scan'208";a="64928222"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga001.jf.intel.com with ESMTP; 15 Jun 2018 11:43:33 -0700
-Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
-To:     Andy Lutomirski <luto@kernel.org>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>
-References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
- <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-From:   Dave Hansen <dave.hansen@linux.intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <368b8069-0463-6161-d603-10769fd2ec57@linux.intel.com>
-Date:   Fri, 15 Jun 2018 11:41:44 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S965790AbeFOSp7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 14:45:59 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:45664 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756311AbeFOSp6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 14:45:58 -0400
+Received: by mail-pg0-f67.google.com with SMTP id z1-v6so4782799pgv.12
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 11:45:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=isbARfPpBv8CH5+aOoOF+o3Yv39Hev0fpZ2QnTzNHtY=;
+        b=fTtQNFKFF3xIrDpOyxhnswZdiFbPpZHyYeJEyWxMDV2KeIx9TbFHwTTRF91t1AeWgB
+         x2/UEQuuF3quSH6RZ9JADqWOA2PFAytABJgb/zLtXjTxhDg6U+ZPTA7AhqTwec06uLfN
+         lllkL8m+GdUDpub+/KoscsgnZZElJJ2TuOs4gA0g81PMABqfCsaM5VRjZtOlweU1FzCW
+         e+7s4bA/IYyn+HY1gVPD5CUg3rklWA1K3a/9HbbEBStB5QVC2p5g23hZktEmQNd9cG/+
+         FRbtm9UOIiUVSyHQpFR1UfuLVcbEhp00HxNwKTAs0l8npQ2q8Gm4Llb6Bic770I8ZPrB
+         pW9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=isbARfPpBv8CH5+aOoOF+o3Yv39Hev0fpZ2QnTzNHtY=;
+        b=ZSLJJQQ7IFr2zsfTHTh6tslwzj/y3laXs8sG6RjmFVjLX8BZ0cTpugbaJpUwqPcbND
+         sOwDG0Jo4FzTV1FMWEED8v6fHHr5+rvc9O9i+8RMdO1CUVpzxdor6n36vXBkqgLhM+J6
+         PaIJDv8djTasP5eQ/zjJfRZH+M9MXcXI2a2yW2dL0tEIHcOq5n0v7j7fAu7a+JCNOxgO
+         xNW1OFMDv2Ajpb3HAifBH13NvWEBkUFKeNdJ0ODesRML1z6RgQq3hJnSjTFFddl8rZYJ
+         e49vrcPAHlX8frB7+vD4QB9iPvG6FqkMW/smHqdosell/2RwTRvtnVEFJh37rny6TPOQ
+         o1WA==
+X-Gm-Message-State: APt69E2Om/FB7U7V2KVzT7A7pTyYe9gqvJuwXvZv0XMR9WcymKCThhC7
+        uPfOHuJcpXI6i93rnD3wWLPQXaDkmu5QC1nBmiGqOQ==
+X-Google-Smtp-Source: ADUXVKLiu8uYfVp9gdCF0nsSqpBkgWpwF1Rci4ijtKAtmq4GWH3iZ+/X5BsVJpB05A6kO+nmVBGO5h7d4U8HDXcYxcY=
+X-Received: by 2002:a63:af50:: with SMTP id s16-v6mr2666565pgo.263.1529088357011;
+ Fri, 15 Jun 2018 11:45:57 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180615174731.47588-1-mka@chromium.org> <CAKwvOd=n3CdFhL-cFueOEO7ahOoTY6zfvJApXimQ1tBF6XzSOA@mail.gmail.com>
+ <d4f32707a89030733217b23b557b38504f0d83ca.camel@perches.com>
+ <20180615182945.GN88063@google.com> <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
+In-Reply-To: <c852072704e82ac5342f344c5862d20ce5559c21.camel@perches.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Fri, 15 Jun 2018 11:45:45 -0700
+Message-ID: <CAKwvOdkv7D8b+apFXUdv_hwJDoWZtUJUTSF2BEzxbMzLVreG6g@mail.gmail.com>
+Subject: Re: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in update_permission_bitmask()
+To:     joe@perches.com
+Cc:     Matthias Kaehlcke <mka@chromium.org>, pbonzini@redhat.com,
+        rkrcmar@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
+        hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 11:31 AM, Andy Lutomirski wrote:
-> Using WRPKRU is easy, but,
-> unless we do something very clever, actually finding PKRU in the
-> in-memory fpstate image may be slightly nontrivial.
+On Fri, Jun 15, 2018 at 11:40 AM Joe Perches <joe@perches.com> wrote:
+>
+> On Fri, 2018-06-15 at 11:29 -0700, Matthias Kaehlcke wrote:
+> > On Fri, Jun 15, 2018 at 11:18:12AM -0700, Joe Perches wrote:
+> > > On Fri, 2018-06-15 at 11:04 -0700, Nick Desaulniers wrote:
+> > > > On Fri, Jun 15, 2018 at 10:47 AM Matthias Kaehlcke <mka@chromium.org> wrote:
+> > > > >
+> > > > > update_permission_bitmask() negates u8 bitmask values and assigns them
+> > > > > to variables of type u8. Since the MSB is set in the bitmask values the
+> > > > > compiler expands the negated values to int, which then are assigned to
+> > > > > u8 variables. Cast the negated values back to u8.
+> > > > >
+> > > > > This fixes several warnings like this when building with clang:
+> > > > >
+> > > > > arch/x86/kvm/mmu.c:4266:39: error: implicit conversion from 'int' to 'u8'
+> > > > >   (aka 'unsigned char') changes value from -205 to 51 [-Werror,
+> > > > >   -Wconstant-conversion]
+> > > > >     u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
+> > > > >        ~~                               ^~
+> > > > >
+> > > > > (gcc also raises a warning (see https://godbolt.org/g/6JWfWk), however it
+> > > > > doesn't seem to be universally enabled)
+> > >
+> > > Perhaps it's better to turn off the warning.
+> > > There are more of these in the kernel too.
+> > >
+> > > At least:
+> > > drivers/regulator/max8660.c:        u8 mask = (rdev_get_id(rdev) == MAX8660_V3) ? ~1 : ~4;
+> > > drivers/regulator/max8660.c:        u8 mask = (rdev_get_id(rdev) == MAX8660_V6) ? ~2 : ~4;
+> > > fs/ext4/resize.c:   __u16 uninit_mask = (flexbg_size > 1) ? ~EXT4_BG_BLOCK_UNINIT : ~0;
+> >
+> > In my experience neither clang nor gcc should promote these values to
+> > int, since the MSB/sign bit is not set.
+>
+> Well, that is what the c90 standard requires.
+>
+> 6.5.3.3 Unary arithmetic operators
+> Constraints
+> 4 The result of the ~ operator is the bitwise complement of its (promoted) operand (that is,
+> each bit in the result is set if and only if the corresponding bit in the converted operand is
+> not set). The integer promotions are performed on the operand, and the result has the
+> promoted type. If the promoted type is an unsigned type, the expression ~E is equivalent
+> to the maximum value representable in that type minus E.
+>
+> > In any case I think it it preferable to fix the code over disabling
+> > the warning, unless the warning is bogus or there are just too many
+> > occurrences.
+>
+> Maybe.
 
-Why?
-
-It's at a constant offset during any one boot, for sure.  XSAVEC/XSAVES
-can move it around, but only if you change the Requested Feature BitMap
-(RFBM) that we pass to XSAVES or change the control register that
-enables XSAVE states (XCR0).
-
-We don't change XCR0 after boot, and RFBM is hard-coded to -1 as far as
-I remember.
+Spurious warning today, actual bug tomorrow?  I prefer to not to
+disable warnings wholesale.  They don't need to find actual bugs to be
+useful.  Flagging code that can be further specified does not hurt.
+Part of the effort to compile the kernel with different compilers is
+to add warning coverage, not remove it.  That said, there may be
+warnings that are never useful (or at least due to some invariant that
+only affects the kernel).  I cant think of any off the top of my head,
+but I'm also not sure this is one.
+-- 
+Thanks,
+~Nick Desaulniers
