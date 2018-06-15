@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1E565C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:42:51 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2040DC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9ACF20896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:42:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3EA520896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HIfp13v1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9ACF20896
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r5seO7GO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3EA520896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965893AbeFONmh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 09:42:37 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:40582 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936144AbeFONmb (ORCPT
+        id S965928AbeFONnC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 09:43:02 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:33512 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936251AbeFONmf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 09:42:31 -0400
-Received: by mail-wr0-f194.google.com with SMTP id l41-v6so9982903wre.7;
-        Fri, 15 Jun 2018 06:42:30 -0700 (PDT)
+        Fri, 15 Jun 2018 09:42:35 -0400
+Received: by mail-wm0-f67.google.com with SMTP id z6-v6so6835198wma.0;
+        Fri, 15 Jun 2018 06:42:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=9In5Dz1Cu5/hVW3EFEOS1cabOKfwsp1ILN5+DAlZqrs=;
-        b=HIfp13v1qnQUBwq+G/14SsZsNguuf7B6Ac5dT+pNTNA3SR94LCrMp7F+gL+lqPZqhF
-         nChRIRwHcnDg/81OZAw0GitFWcShcGRXdtHUq5cIwlB/0OX0M4P3q6Uhe/Da5vyN4XyK
-         Q1eHrmmlc0PPr0a5Kdb6SBpfMJNIgI1gAakZUCsrfrmJXlQULuypXBTGZYhBszR9FOtQ
-         fFulJLRfoBbgCmJoLig2o0Mvv4b/mqq7otETQjwCc3ia1vp/qnBX/0fMQu/usvui/nkn
-         rSQ2CoLs3rM9U/w/YP/xK7XjwsW0ccc9GZdzXF7fmfiBrlWkS3u/I8qsPiI6ci90qrwP
-         P3og==
+        bh=7GvGQKBreF7rJ/CMPHkwnrgJqHTBjImaoIQiZjstySo=;
+        b=r5seO7GOy/GEY8E9rkqeVRvlyG9XCk0Fpz200Urt67JY82tJ2xIokZLAzZL01hzbY6
+         i+XI3WaaVaMRvAq6jWpZ1liIUjfwTmKFZpr3BrXCppMEFUCyRrnBPEg7+KfQpez4aWOS
+         TzsP++aHynp6+yTZhDxbpg29wuRAi/OMdOp9DZasD3ocn+fGJG+2dP8aWAchbmzpY0IE
+         b8UirAIap89024PRmkWBKC3q8NvxnjAbqmR08DHEHL4PYKKoVkGS4yhSu3j/ITyuwgbA
+         MXR55K51rQYqjHbl/ddO0snulBKh4StMe9gtOkg4VDaOgPZ91nWfdZPCrLxrECAyDyIM
+         emVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references;
-        bh=9In5Dz1Cu5/hVW3EFEOS1cabOKfwsp1ILN5+DAlZqrs=;
-        b=nUzUgva2u+qsKcLV8SXl5NkDHhaPA3BCt8OKLug0AMF1upAKhITgqjtIJxo5zcA8Qo
-         YXiueGBYPRy5nsCv8iZMynRMGyoiHwq9GWkKOvdfGRbejuoi8X8P5+PyknJuyK0FL3XE
-         MMDp3LqHM6kIIAdkxAjR8VlxdyN6pwOmaz4/3gyBQ3SOT4K7aF8iC20KQwjJ2J/eh+ah
-         YTkLmCwcx6HgyPaiAZJwPmeTd6s/lF69nLVGSeK/vCDs4Q9GVrC0VayM2BMPePU6uUHf
-         n50BwCjCaqbIxKUQbxxgoT/WRkff4i+Lkb+TKBwM4aTJLNISgSuQeDz9gnK2X/cn9Jiu
-         27Ww==
-X-Gm-Message-State: APt69E1aLtDEWFemlHvuXKAnQ4OuE15kwEQw0TcZ0iK4d6Uz7J6fIofT
-        r5M5usIDJgscXM1qL4frhtmVP3ktLwY=
-X-Google-Smtp-Source: ADUXVKLjG43YFwQVkHgoSxofJANDhbOKRR9oUVFMw4cEO6usKiH00Ava4hQm3bH6AK3VA6Hcx3F2yw==
-X-Received: by 2002:adf:fc8c:: with SMTP id g12-v6mr1724837wrr.216.1529070149837;
-        Fri, 15 Jun 2018 06:42:29 -0700 (PDT)
+        bh=7GvGQKBreF7rJ/CMPHkwnrgJqHTBjImaoIQiZjstySo=;
+        b=J25R1UJyZDgjr1fK5ahapD8MWaPPO2LASVMK2xHRrSjAARW9LR/2qOfZHjepy00SuN
+         KLImIJWdIPei07nlylU5+uJZ/aZhGXUtSueC/8Us9nQmLrYze4UXY3ZyVe9QG+AD1jIi
+         MqDgRby68RRGRXJvvl27qWawqH0QhGQWkGSc0XWd8c4CSX7ZRo/oLgD+a0+1rtglTqDe
+         aIMX//upyqkHSK/yGQ8PXYAVnAl7CjGETXw8LpF3FRE3LrH6aSKFmxw+1hpZNwDFWMHg
+         pkyOuDKNTWrhHWiwN2wHOuhZBjqmATszrTKK8mZ1Hh09+Gq9voT9wvqtY4fQt80cZ6r4
+         8kqQ==
+X-Gm-Message-State: APt69E0Ze9UddgHZ8KV+DwyS3dro+b5CRWIOhWwx8Ldk7QF8PmVarswQ
+        nvWUzBr8jq0wHMCbxgTXuXDg5pqB3ww=
+X-Google-Smtp-Source: ADUXVKIelPXXwnCbcX9ajJaVcJBVmTVKFl0wDomXU9xEdAW369jUYqNEURPbHAeU3lE+vWtpBkLOsQ==
+X-Received: by 2002:a1c:5c93:: with SMTP id q141-v6mr1303519wmb.77.1529070153038;
+        Fri, 15 Jun 2018 06:42:33 -0700 (PDT)
 Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
-        by smtp.gmail.com with ESMTPSA id d5-v6sm9816346wrp.64.2018.06.15.06.42.28
+        by smtp.gmail.com with ESMTPSA id d5-v6sm9816346wrp.64.2018.06.15.06.42.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 15 Jun 2018 06:42:28 -0700 (PDT)
+        Fri, 15 Jun 2018 06:42:32 -0700 (PDT)
 From:   Ben Whitten <ben.whitten@gmail.com>
 X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
 To:     devicetree@vger.kernel.org
@@ -64,9 +64,9 @@ Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, nicolas.ferre@microchip.com,
         Ben Whitten <ben.whitten@lairdtech.com>
-Subject: [PATCH v2 4/6] arm: dts: add support for Laird WB50N cpu module and DVK
-Date:   Fri, 15 Jun 2018 14:40:53 +0100
-Message-Id: <1529070055-18701-4-git-send-email-ben.whitten@lairdtech.com>
+Subject: [PATCH v2 6/6] arm: dts: add support for Laird SOM60 module and DVK boards
+Date:   Fri, 15 Jun 2018 14:40:55 +0100
+Message-Id: <1529070055-18701-6-git-send-email-ben.whitten@lairdtech.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
 References: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
@@ -75,120 +75,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for Lairds CPU module, featuring Atheros wifi, CSR
-Bluetooth and, Atmel SAMA5D3 CPU.
-https://www.lairdtech.com/products/wb50nbt-wi-fi-bluetooth-module
+This adds support for Lairds upcoming SOM module, featuring Marvell WiFi
+and Bluetooth, 2Gb NAND / 1Gb LPDDR SDRAM, and an Atmel SAMA5D3 CPU.
 
 Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
 ---
- arch/arm/boot/dts/Makefile        |   1 +
- arch/arm/boot/dts/at91-wb50n.dts  | 112 +++++++++++++++++++++
- arch/arm/boot/dts/at91-wb50n.dtsi | 198 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 311 insertions(+)
- create mode 100644 arch/arm/boot/dts/at91-wb50n.dts
- create mode 100644 arch/arm/boot/dts/at91-wb50n.dtsi
+ arch/arm/boot/dts/Makefile                    |   1 +
+ arch/arm/boot/dts/at91-dvk_som60.dts          |  95 +++++++++++
+ arch/arm/boot/dts/at91-dvk_su60_somc.dtsi     | 159 ++++++++++++++++++
+ arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi |  90 ++++++++++
+ arch/arm/boot/dts/at91-som60.dtsi             | 231 ++++++++++++++++++++++++++
+ 5 files changed, 576 insertions(+)
+ create mode 100644 arch/arm/boot/dts/at91-dvk_som60.dts
+ create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
+ create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
+ create mode 100644 arch/arm/boot/dts/at91-som60.dtsi
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 04604d2..07823be 100644
+index 214d5d9..b0e164a 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -52,6 +52,7 @@ dtb-$(CONFIG_SOC_SAM_V7) += \
+@@ -51,6 +51,7 @@ dtb-$(CONFIG_SOC_SAM_V7) += \
+ 	at91-sama5d2_ptc_ek.dtb \
  	at91-sama5d2_xplained.dtb \
  	at91-sama5d3_xplained.dtb \
++	at91-dvk_som60.dtb \
+ 	at91-gatwick.dtb \
  	at91-tse850-3.dtb \
-+	at91-wb50n.dtb \
- 	sama5d31ek.dtb \
- 	sama5d33ek.dtb \
- 	sama5d34ek.dtb \
-diff --git a/arch/arm/boot/dts/at91-wb50n.dts b/arch/arm/boot/dts/at91-wb50n.dts
+ 	at91-wb50n.dtb \
+diff --git a/arch/arm/boot/dts/at91-dvk_som60.dts b/arch/arm/boot/dts/at91-dvk_som60.dts
 new file mode 100644
-index 0000000..8cecc70
+index 0000000..ededd5b
 --- /dev/null
-+++ b/arch/arm/boot/dts/at91-wb50n.dts
-@@ -0,0 +1,112 @@
++++ b/arch/arm/boot/dts/at91-dvk_som60.dts
+@@ -0,0 +1,95 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * at91-wb50n.dts - Device Tree file for wb50n evaluation board
++ * at91-dvk_som60.dts - Device Tree file for the DVK SOM60 board
 + *
-+ *  Copyright (C) 2018 Laird
++ *  Copyright (C) 2018 Laird,
++ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
 + *
 + */
-+
 +/dts-v1/;
-+#include "at91-wb50n.dtsi"
++#include "at91-som60.dtsi"
++#include "at91-dvk_su60_somc.dtsi"
++#include "at91-dvk_su60_somc_lcm.dtsi"
 +
 +/ {
-+	model = "Laird Workgroup Bridge 50N - Atmel SAMA5D";
-+	compatible = "laird,wb50n", "atmel,sama5d31", "atmel,sama5d3", "atmel,sama5";
++	model = "Laird DVK SOM60";
++	compatible = "laird,dvk-som60", "laird,som60", "atmel,sama5d36", "atmel,sama5d3", "atmel,sama5";
 +
-+	gpio_keys {
-+		compatible = "gpio-keys";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		btn0@10 {
-+			reg = <10>;
-+			label = "BTNESC";
-+			linux,code = <1>; /* ESC button */
-+			gpios = <&pioA 10 GPIO_ACTIVE_LOW>;
-+			gpio-key,wakeup = <1>;
-+		};
-+
-+		irqbtn@31 {
-+			reg = <31>;
-+			label = "IRQBTN";
-+			linux,code = <99>; /* SysReq button */
-+			gpios = <&pioE 31 GPIO_ACTIVE_LOW>;
-+			gpio-key,wakeup = <1>;
-+		};
++	chosen {
++		stdout-path = &dbgu;
++		tick-timer = &pit;
 +	};
-+
-+	leds {
-+		compatible = "gpio-leds";
-+
-+		led0 {
-+			label = "wb50n:blue:led0";
-+			gpios = <&pioA 12 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led1 {
-+			label = "wb50n:green:led1";
-+			gpios = <&pioA 24 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+
-+		led2 {
-+			label = "wb50n:red:led2";
-+			gpios = <&pioA 26 GPIO_ACTIVE_LOW>;
-+			default-state = "off";
-+		};
-+	};
-+};
-+
-+&watchdog {
-+	status = "okay";
 +};
 +
 +&mmc0 {
 +	status = "okay";
 +};
 +
-+&macb1 {
++&spi0 {
 +	status = "okay";
 +};
 +
-+&dbgu {
-+	status = "okay";
-+};
-+
-+/* On BB40 this port is labeled UART1 */
-+&usart0 {
-+	status = "okay";
-+};
-+
-+/* On BB40 this port is labeled UART0 */
-+&usart1 {
++&ssc0 {
 +	status = "okay";
 +};
 +
@@ -196,13 +148,212 @@ index 0000000..8cecc70
 +	status = "okay";
 +};
 +
-+&spi1 {
++&i2c1 {
++	status = "okay";
++};
++
++&usart1 {
++	status = "okay";
++};
++
++&usart2 {
++	status = "okay";
++};
++
++&usart3 {
++	status = "okay";
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&dbgu {
++	status = "okay";
++};
++
++&pit {
++	status = "okay";
++};
++
++&adc0 {
++	status = "okay";
++};
++
++&can1 {
++	status = "okay";
++};
++
++&macb0 {
++	status = "okay";
++};
++
++&macb1 {
++	status = "okay";
++};
++
++&usb0 {
++	status = "okay";
++};
++
++&usb1 {
++	status = "okay";
++};
++
++&usb2 {
++	status = "okay";
++};
++
+diff --git a/arch/arm/boot/dts/at91-dvk_su60_somc.dtsi b/arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
+new file mode 100644
+index 0000000..bb86f17
+--- /dev/null
++++ b/arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
+@@ -0,0 +1,159 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * at91-dvk_su60_somc.dtsi - Device Tree file for the DVK SOM60 base board
++ *
++ *  Copyright (C) 2018 Laird,
++ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
++ *
++ */
++
++/ {
++	sound {
++		compatible = "atmel,asoc-wm8904";
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_pck2_as_audio_mck>;
++
++		atmel,model = "wm8904 @ DVK-SOM60";
++		atmel,audio-routing =
++			"Headphone Jack", "HPOUTL",
++			"Headphone Jack", "HPOUTR",
++			"IN2L", "Line In Jack",
++			"IN2R", "Line In Jack",
++			"Mic", "MICBIAS",
++			"IN1L", "Mic";
++
++		atmel,ssc-controller = <&ssc0>;
++		atmel,audio-codec = <&wm8904>;
++
++		status = "okay";
++	};
++};
++
++&mmc0 {
 +	status = "okay";
 +
-+	spidev@0 {
-+		compatible = "spidev";
++	pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_mmc0_cd>;
++	slot@0 {
++		bus-width = <4>;
++		cd-gpios = <&pioE 31 GPIO_ACTIVE_HIGH>;
++		cd-inverted;
++	};
++};
++
++&spi0 {
++	status = "okay";
++
++	/* spi0.0: 4M Flash Macronix MX25R4035FM1IL0 */
++	spi-flash@0 {
++		compatible = "mxicy,mx25u4035", "jedec,spi-nor";
++		spi-max-frequency = <33000000>;
 +		reg = <0>;
-+		spi-max-frequency = <8000000>;
++	};
++};
++
++&ssc0 {
++	atmel,clk-from-rk-pin;
++	status = "okay";
++};
++
++&i2c0 {
++	status = "okay";
++
++	wm8904: wm8904@1a {
++		compatible = "wlf,wm8904";
++		reg = <0x1a>;
++		clocks = <&pck2>;
++		clock-names = "mclk";
++	};
++};
++
++&i2c1 {
++	status = "okay";
++
++	eeprom@87 {
++		compatible = "giantec,gt24c32a", "atmel,24c32";
++		reg = <87>;
++		pagesize = <32>;
++	};
++};
++
++&usart1 {
++	status = "okay";
++};
++
++&usart2 {
++	status = "okay";
++};
++
++&usart3 {
++	status = "okay";
++};
++
++&uart0 {
++	status = "okay";
++};
++
++&dbgu {
++	status = "okay";
++};
++
++&pit {
++	status = "okay";
++};
++
++&adc0 {
++	status = "okay";
++};
++
++&can1 {
++	status = "okay";
++};
++
++&macb0 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	ethernet-phy@7 {
++		reg = <7>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_geth_int>;
++		interrupt-parent = <&pioB>;
++		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
++		txen-skew-ps = <800>;
++		txc-skew-ps = <3000>;
++		rxdv-skew-ps = <400>;
++		rxc-skew-ps = <3000>;
++		rxd0-skew-ps = <400>;
++		rxd1-skew-ps = <400>;
++		rxd2-skew-ps = <400>;
++		rxd3-skew-ps = <400>;
++	};
++};
++
++&macb1 {
++	#address-cells = <1>;
++	#size-cells = <0>;
++	status = "okay";
++
++	ethernet-phy@1 {
++		reg = <1>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_eth_int>;
++		interrupt-parent = <&pioC>;
++		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
 +	};
 +};
 +
@@ -218,126 +369,269 @@ index 0000000..8cecc70
 +	status = "okay";
 +};
 +
-diff --git a/arch/arm/boot/dts/at91-wb50n.dtsi b/arch/arm/boot/dts/at91-wb50n.dtsi
+diff --git a/arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi b/arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
 new file mode 100644
-index 0000000..85692c8
+index 0000000..4b9176d
 --- /dev/null
-+++ b/arch/arm/boot/dts/at91-wb50n.dtsi
-@@ -0,0 +1,198 @@
++++ b/arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
+@@ -0,0 +1,90 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * at91-wb50n.dtsi - Device Tree include file for wb50n cpu module
++ * at91-dvk_su60_somc_lcm.dtsi - Device Tree file for the DVK SOM60 LCD board
 + *
-+ *  Copyright (C) 2018 Laird
++ *  Copyright (C) 2018 Laird,
++ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
 + *
 + */
 +
-+#include "sama5d31.dtsi"
++/ {
++	backlight: backlight {
++		compatible = "pwm-backlight";
++		pwms = <&hlcdc_pwm 0 50000 0>;
++		brightness-levels = <0 4 8 16 32 64 128 255>;
++		default-brightness-level = <6>;
++		status = "okay";
++	};
++
++	panel: panel {
++		compatible = "winstar,wf70gtiagdng0", "innolux,at070tn92", "simple-panel";
++		backlight = <&backlight>;
++		power-supply = <&vcc_lcd_reg>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		status = "okay";
++
++		port@0 {
++			#address-cells = <1>;
++			#size-cells = <0>;
++			reg = <0>;
++
++			panel_input: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&hlcdc_panel_output>;
++			};
++		};
++	};
++
++	vcc_lcd_reg: fixedregulator_lcd {
++		compatible = "regulator-fixed";
++		regulator-name = "VCC LCM";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-boot-on;
++		regulator-always-on;
++		status = "okay";
++	};
++};
++
++&pinctrl {
++	board {
++		pinctrl_lcd_ctp_int: lcd_ctp_int {
++			 atmel,pins =
++				 <AT91_PIOC 28 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
++		};
++	};
++};
++
++&i2c1 {
++	status = "okay";
++
++	ft5426@56 {
++		compatible = "focaltech,ft5426", "edt,edt-ft5406";
++		reg = <56>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_lcd_ctp_int>;
++
++		interrupt-parent = <&pioC>;
++		interrupts = <28 IRQ_TYPE_EDGE_FALLING>;
++
++		touchscreen-size-x = <800>;
++		touchscreen-size-y = <480>;
++	};
++};
++
++&hlcdc {
++	status = "okay";
++
++	hlcdc-display-controller {
++		pinctrl-names = "default";
++		pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb888>;
++
++		port@0 {
++			hlcdc_panel_output: endpoint@0 {
++				reg = <0>;
++				remote-endpoint = <&panel_input>;
++			};
++		};
++	};
++};
+diff --git a/arch/arm/boot/dts/at91-som60.dtsi b/arch/arm/boot/dts/at91-som60.dtsi
+new file mode 100644
+index 0000000..6472fce
+--- /dev/null
++++ b/arch/arm/boot/dts/at91-som60.dtsi
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * at91-som60.dtsi - Device Tree file for the SOM60 module
++ *
++ *  Copyright (C) 2018 Laird,
++ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
++ *
++ */
++#include "sama5d36.dtsi"
 +
 +/ {
-+	model = "Laird Workgroup Bridge 50N - Atmel SAMA5D";
-+	compatible = "laird,wb50n", "atmel,sama5d31", "atmel,sama5d3", "atmel,sama5";
++	model = "Laird SOM60";
++	compatible = "laird,som60", "atmel,sama5d36", "atmel,sama5d3", "atmel,sama5";
 +
 +	chosen {
-+		bootargs = "ubi.mtd=6 root=ubi0:rootfs rootfstype=ubifs rw";
-+		stdout-path = "serial0:115200n8";
++		stdout-path = &dbgu;
 +	};
 +
 +	memory {
-+		reg = <0x20000000 0x4000000>;
++		reg = <0x20000000 0x8000000>;
++	};
++
++	clocks {
++		slow_xtal {
++			clock-frequency = <32768>;
++		};
++
++		main_xtal {
++			clock-frequency = <12000000>;
++		};
 +	};
 +};
 +
 +&pinctrl {
 +	board {
 +		pinctrl_mmc0_cd: mmc0_cd {
-+			atmel,pins = <AT91_PIOC 26 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>; /* PC26 GPIO with pullup deglitch */
++			atmel,pins =
++				<AT91_PIOE 31 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
++		};
++
++		pinctrl_mmc0_en: mmc0_en {
++			atmel,pins =
++				<AT91_PIOE 30 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
++		};
++
++		pinctrl_nand0_wp: nand0_wp {
++			atmel,pins =
++				<AT91_PIOE 14 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
++		};
++
++		pinctrl_usb_vbus: usb_vbus {
++			atmel,pins =
++				<AT91_PIOE 20 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
++				/* Conflicts with USART2_SCK */
++		};
++
++		pinctrl_usart2_sck: usart2_sck {
++			atmel,pins =
++				<AT91_PIOE 20 AT91_PERIPH_B AT91_PINCTRL_NONE>;
++				/* Conflicts with USB_VBUS */
++		};
++
++		pinctrl_usb_oc: usb_oc {
++			atmel,pins =
++				<AT91_PIOE 15 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
++				/* Conflicts with USART3_SCK */
++		};
++
++		pinctrl_usart3_sck: usart3_sck {
++			atmel,pins =
++				<AT91_PIOE 15 AT91_PERIPH_B AT91_PINCTRL_NONE>;
++				/* Conflicts with USB_OC */
 +		};
 +
 +		pinctrl_usba_vbus: usba_vbus {
-+			atmel,pins = <AT91_PIOB 13 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>; /* PB13 GPIO with deglitch */
++		   atmel,pins =
++				<AT91_PIOC 14 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
++		};
++
++		pinctrl_geth_int: geth_int {
++			atmel,pins =
++				<AT91_PIOB 25 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
++				/* Conflicts with USART1_SCK */
++		};
++
++		pinctrl_usart1_sck: usart1_sck {
++			atmel,pins =
++				<AT91_PIOB 25 AT91_PERIPH_A AT91_PINCTRL_NONE>;
++				/* Conflicts with GETH_INT */
++		};
++
++		pinctrl_eth_int: eth_int {
++			atmel,pins =
++				<AT91_PIOC 10 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
++		};
++
++		pinctrl_pck2_as_audio_mck: pck2_as_audio_mck {
++			atmel,pins =
++				<AT91_PIOC 15 AT91_PERIPH_B AT91_PINCTRL_NONE>;
 +		};
 +	};
 +};
 +
-+&slow_xtal {
-+	clock-frequency = <32768>;
-+};
-+
-+&main_xtal {
-+	clock-frequency = <12000000>;
-+};
-+
-+&slow_osc {
-+	atmel,osc-bypass;
-+};
-+
-+&usart1_clk {
-+	atmel,clk-output-range = <0 132000000>;
-+};
-+
 +&mmc0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_mmc0_cd>;
-+	cd-gpios = <&pioC 26 GPIO_ACTIVE_LOW>;
++	slot@0 {
++		reg = <0>;
++		bus-width = <8>;
++	};
++};
++
++&mmc1 {
++	status = "okay";
 +	slot@0 {
 +		reg = <0>;
 +		bus-width = <4>;
 +	};
 +};
 +
-+&mmc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_mmc1_clk_cmd_dat0 &pinctrl_mmc1_dat1_3>;
++&spi0 {
++	cs-gpios = <&pioD 13 0>, <0>, <0>, <0>;
++};
++
++&usart0 {
++	atmel,use-dma-rx;
++	atmel,use-dma-tx;
 +	status = "okay";
-+	atheros@0 {
-+		compatible = "atheros,ath6kl";
-+		atheros,board-id = "SD32";
-+		reg = <0>;
-+		bus-width = <4>;
-+	};
++	pinctrl-0 = <&pinctrl_usart0 &pinctrl_usart0_rts_cts>;
++};
++
++&usart1 {
++	pinctrl-0 = <&pinctrl_usart1 &pinctrl_usart1_rts_cts>;
++};
++
++&usart2 {
++	pinctrl-0 = <&pinctrl_usart2 &pinctrl_usart2_rts_cts>;
++};
++
++&usart3 {
++	pinctrl-0 = <&pinctrl_usart3 &pinctrl_usart3_rts_cts>;
++};
++
++&adc0 {
++	pinctrl-0 = <
++		&pinctrl_adc0_adtrg
++		&pinctrl_adc0_ad0
++		&pinctrl_adc0_ad1
++		&pinctrl_adc0_ad2
++		&pinctrl_adc0_ad3
++		&pinctrl_adc0_ad4
++		&pinctrl_adc0_ad5
++		>;
++};
++
++&macb0 {
++	phy-mode = "rgmii";
 +};
 +
 +&macb1 {
 +	phy-mode = "rmii";
 +};
 +
-+&dbgu {
-+	dmas = <0>, <0>;	/*  Do not use DMA for dbgu */
-+};
-+
-+/* On BB40 this port is labeled UART1 */
-+&usart0 {
-+	atmel,use-dma-rx;
-+	atmel,use-dma-tx;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usart0 &pinctrl_usart0_rts_cts>;
-+};
-+
-+/* On BB40 this port is labeled UART0 */
-+&usart1 {
-+	atmel,use-dma-rx;
-+	atmel,use-dma-tx;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usart1 &pinctrl_usart1_rts_cts>;
-+	dtr-gpios = <&pioD 13 GPIO_ACTIVE_LOW>;
-+	dsr-gpios = <&pioD 11 GPIO_ACTIVE_LOW>;
-+	dcd-gpios = <&pioD 7 GPIO_ACTIVE_LOW>;
-+	rng-gpios = <&pioD 8 GPIO_ACTIVE_LOW>;
-+};
-+
-+/* USART3 is direct-connect to the Bluetooth UART on the radio SIP */
-+&usart3 {
-+	atmel,use-dma-rx;
-+	atmel,use-dma-tx;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usart3 &pinctrl_usart3_rts_cts>;
-+	status = "okay";
-+};
-+
-+&spi1 {
-+	cs-gpios = <&pioC 25 0>, <0>, <0>, <0>;
-+};
 +
 +&ebi {
 +	pinctrl-0 = <&pinctrl_ebi_nand_addr>;
@@ -363,8 +657,8 @@ index 0000000..85692c8
 +			#address-cells = <1>;
 +			#size-cells = <1>;
 +
-+			at91bootstrap@0 {
-+				label = "at91bs";
++			ubootspl@0 {
++				label = "u-boot-spl";
 +				reg = <0x0 0x20000>;
 +			};
 +
@@ -383,44 +677,30 @@ index 0000000..85692c8
 +				reg = <0xc0000 0x20000>;
 +			};
 +
-+			kernel-a@e0000 {
-+				label = "kernel-a";
-+				reg = <0xe0000 0x500000>;
-+			};
-+
-+			kernel-b@5e0000 {
-+				label = "kernel-b";
-+				reg = <0x5e0000 0x500000>;
-+			};
-+
-+			rootfs-a@ae0000 {
-+				label = "rootfs-a";
-+				reg = <0xae0000 0x3000000>;
-+			};
-+
-+			rootfs-b@3ae0000 {
-+				label = "rootfs-b";
-+				reg = <0x3ae0000 0x3000000>;
-+			};
-+
-+			user@6ae0000 {
-+				label = "user";
-+				reg = <0x6ae0000 0x14e0000>;
++			ubi@e0000 {
++				label = "ubi";
++				reg = <0xe0000 0xfe00000>;
 +			};
 +		};
 +	};
 +};
 +
 +&usb0 {
-+	atmel,vbus-gpio = <&pioB 13 GPIO_ACTIVE_LOW>;
 +	pinctrl-names = "default";
 +	pinctrl-0 = <&pinctrl_usba_vbus>;
++	atmel,vbus-gpio = <&pioC 14 GPIO_ACTIVE_HIGH>;
 +};
 +
 +&usb1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_usb_vbus &pinctrl_usb_oc>;
 +	num-ports = <3>;
-+	atmel,vbus-gpio = <&pioA 2 GPIO_ACTIVE_LOW>;
-+	atmel,oc-gpio = <&pioA 4 GPIO_ACTIVE_LOW>;
++	atmel,vbus-gpio = <0
++		&pioE 20 GPIO_ACTIVE_HIGH
++		0>;
++	atmel,oc-gpio = <0
++		&pioE 15 GPIO_ACTIVE_LOW
++		0>;
 +};
 -- 
 2.7.4
