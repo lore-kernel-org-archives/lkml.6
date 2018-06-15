@@ -2,245 +2,171 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 420B6C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:01:42 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9B836C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E15AF208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:01:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15AF208B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 469FC208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:01:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YP+Z4pE+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469FC208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755777AbeFOHBj (ORCPT
+        id S1755875AbeFOHBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 03:01:39 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:53134 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755565AbeFOHBh (ORCPT
+        Fri, 15 Jun 2018 03:01:53 -0400
+Received: from fllnx210.ext.ti.com ([198.47.19.17]:56813 "EHLO
+        fllnx210.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755735AbeFOHBi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 03:01:37 -0400
-Received: by mail-wm0-f65.google.com with SMTP id p126-v6so1808720wmb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 00:01:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zNuZfBdgmokBKtHnqQK9GqJbA+rffFkRvb9YyqBims8=;
-        b=elawvXd/trPjLUQgoIVdUydjrL1rIMyVL9uqBkABuxsazuNZwtq4ANqIhvIJdvC17q
-         Bde0tKv0Waqfi1Nt1qH0ApsS9bbf5cFd95Q+nZ4HNI6Zanfc3u/byFIr/B0MJu9eK0Iu
-         58WBaIfSJMPHHQGD+4v5fCGnuhPwy2wHrKr7I49Hu3hcVGBfudOXVwWGZklXIeZz9Iqx
-         CSfsiBCJ1arQODt6y/u1rLtidhC5Hz3xjtXkk6jlatHki1hubEMmgaEjhITfT5hLeXSH
-         dn/dsCAMGFQH1LZqOkK6zyFH4FVpNoEGrGCuNpb+X9aHbtJmTL5xB4I3Du/eded0dPOj
-         q5pw==
-X-Gm-Message-State: APt69E0kQIqjrT2N6lvNwsRN3tsTJ/O5563e6R7gKbI8e5EQwO5h3nL9
-        WSZJ32SsULkErDakFsPIgIedHg==
-X-Google-Smtp-Source: ADUXVKLuoIeJ8+7EpnPa5VzSC0qukwDX5mZoGO0BvlD+3UwQFfvRTAW+E+radWfQkI6H6RYi7Tt4Tw==
-X-Received: by 2002:a1c:78b:: with SMTP id 133-v6mr230767wmh.59.1529046095344;
-        Fri, 15 Jun 2018 00:01:35 -0700 (PDT)
-Received: from localhost.localdomain ([151.15.207.242])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm5773644wrp.76.2018.06.15.00.01.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Jun 2018 00:01:34 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 09:01:32 +0200
-From:   Juri Lelli <juri.lelli@redhat.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
-        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
-        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
-        cgroups@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] sched/core: Prevent race condition between cpuset
- and __sched_setscheduler()
-Message-ID: <20180615070132.GA30871@localhost.localdomain>
-References: <20180613121711.5018-1-juri.lelli@redhat.com>
- <20180613121711.5018-5-juri.lelli@redhat.com>
- <20180614161142.69f186a6@gandalf.local.home>
+        Fri, 15 Jun 2018 03:01:38 -0400
+Received: from dflxv15.itg.ti.com ([128.247.5.124])
+        by fllnx210.ext.ti.com (8.15.1/8.15.1) with ESMTP id w5F71Ypv017789;
+        Fri, 15 Jun 2018 02:01:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1529046094;
+        bh=5ESuTuyA97rBMkxyjdMmXYbqbpgrG8MWsyQfyIajmuo=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YP+Z4pE+2mll5T44MlTOHoncwXt/MMOvul1kw1NBS8QAPKAXLRkgOD6jildZON0zH
+         tK6ZuUvIedduFf5XZGl2Ycw3kLl2TqtWWbkHaq2aPzGzpOkprtaAtM0rGKF4jJPdfK
+         MMRIsk1MOgb8ir1u4Mm9qeCic+4YjbpLbNAMjMt0=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by dflxv15.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5F71YeT030299;
+        Fri, 15 Jun 2018 02:01:34 -0500
+Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Fri, 15
+ Jun 2018 02:01:33 -0500
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE107.ent.ti.com
+ (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Fri, 15 Jun 2018 02:01:34 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id w5F71Wer019163;
+        Fri, 15 Jun 2018 02:01:32 -0500
+Subject: Re: [PATCH] extcon: Release locking when sending the notification of
+ connector state
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <chanwoo@kernel.org>, <myungjoo.ham@samsung.com>,
+        <stable@vger.kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>
+References: <CGME20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d@epcas2p4.samsung.com>
+ <1528949687-32002-1-git-send-email-cw00.choi@samsung.com>
+From:   Roger Quadros <rogerq@ti.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=rogerq@ti.com; prefer-encrypt=mutual; keydata=
+ xsFNBFT1lPYBEADZlKgOS2lxNkDRlcROza/QPsYrS+V2YAXOd4rO/sshQDt1OgU4E8DD37t0
+ F4zipBkMVU1nQ6ZSomg2o9w17wD7sL0wNO+QZ0j5V2yy2SJIlK70lgmz90GlL93V3T/BFJNr
+ YdtC6FBWvczrXXz6qIKq+3s9j+gMx4CFsZX8vq35xcsaNdyWzX2J7hqMKQ+vYuLvy3u2UMIc
+ pgkwfx5CHXHmWVr4/qWPB+O9YtN9m1ezfPLwbZ73Ea5LpnvCGO6s4IHFLl2hPpDGUCHHV/1N
+ qg3N5ztm4bhN9C0+1qdmhuFGhkfC3O4h/ncywTUNuxqk2Tux19GX3BeWiJF7QVVJb2iXttdo
+ Zi44vp32I7LbcMcXYifHHGYwS5GeAudx6O19RTS+D7XQ1BkSmw8weaTleLhJwApVBon2KziB
+ NscqXsj6CdKFwLFsDPkkvYCsEpWz3C9UUn8veOna2STk8oyk1GM+iVarBad6gs0n8NFNrR2n
+ nLjIFuZ6GIwec3HNaX5Zk3ap1z7qsZ/BVou8r95FJw7cAQU3H5vgHZkGHy9xl6LmPvAf0tWT
+ sO1a9mbf7gcC2u4ccHJ+hTvGk62/E/+AxbtzUDQI0D2ouS9DnwO92UZDJrJhj6m3u1c8mR45
+ W2CFvZSVPmDSxbyWm3ADzsjfRQlhLkzsV9BoDq8uRMzWUPd8IQARAQABzTRSb2dlciBRdWFk
+ cm9zIChLZXkgZm9yIExpbnV4IGtlcm5lbCkgPHJvZ2VycUB0aS5jb20+wsF4BBMBAgAiBQJU
+ 9ZT2AhsDBgsJCAcDAgYVCAIJCgsEFgIDAQIeAQIXgAAKCRDSWmvTvnYwkwP2EACuDMmuKaYm
+ rcMhjVcvrrWF7n1LGI4nrmVH93fAI8wZsLSpUwyHeLGNTwSOvJC6U4qLvJAejttdW/DCvU+8
+ cETqkeh36IQhvxNdp6HGXPD+hywZiDHZi54mfpLU7DTExGyuyKKbh7leH/5QvhZF/NkEXHIC
+ g9caDvnmg0CI5VI6QsleiQPNFL7VYZ3neGKJRHjUGTbKPc/9InqzTCWH7ZI3W0aZoAFrOOYv
+ 4bWSohSruEEYKwE6ebvflwESOj5ikVJY5cPmscYfR6LIBzXtTL4fg296sqkeNtvU99DMjKGX
+ LTKmxPY5lnPkDY1YJbAJKoQ+8DYB5GnXA3CNscgXDQGIwbq2eKlGgLhMjyDVmjGHB0FOuuFQ
+ 6W+PLP0FfYqQdQwJWbPfvXoku3IlljwxAN+gvzi0xD3Yqpl3VDjbn2n/2aRuqa8pVVCrsUnG
+ 4LeoDJeMIHyddK61HXDhN0SoA4RNLm6ZW8E+2DH8ZbFbw8IkSyh9Op01LMzD9tr47JRcrGgv
+ K4o1QOwSe1NIK7yQ/SrENiMvICTeAq4gqvc/maDWbylNsYZc3VO9VAhCCghbdk7kRfYWhzBg
+ C/2RgkMGBBTAOVgMbPcDpFzD5Dukg+Jy4xn97bA/MSH8CyYcLZos0SaSzrjNVIvm+TN71k9+
+ Q2EhsrlhWj64+IjYmzVIFHyTmc7BTQRU9ZT2ARAA16PDhYuCNxXwcXAPlgpVIXC5ZxvB3xWK
+ QifhimnqxvJsCNkNWt8I3jfY+GwjsjTldzA4jIbHTuaHhXgMMu9YoUVK/YBp5IZ/NiQ3yVL5
+ K5XU0q/BtG30yox9CPjWCA7OmT3mF+1vT9UrEEPCs8KpWER5ajk+rQpTc1WuwJqBB5WeIlZJ
+ odjxuL3r1Zpgk7LxPwwaw15WutKPFY8ClvXqlmmkU4zlCC5s4oR39f6E6B31yun621fvgu8X
+ LFY4i7aUkVYUleKd7L/GAV98Dnbrop48bQM+gDtyPODPh8fJylsPvZAYEqiapSsYiHvts3r/
+ nEw0RASNyjp5pNBWb5/JbBjboKhGCoBJzkDHcr5VbeOXuemymJHqgysbmDZY415olIOrYQGT
+ b9p/zg5U/eGFsxKnAe4LquX9oAoEu6K/zkUbA/1LEjSTxu3xGCczxe2ZsKthdYztDkntsw+t
+ U9bt2DCXhmabMCcYS1YP72ZVITpLk4qRfxcrtzgx/uGfuMZDuN7JVYqCz7AI+xEQBLlQWXhL
+ cJ8dH0d+H/3Zs9LVaJAqoc9CiYo1yz8NUH+yHGxz437ccUic8HPB2lIiL/W6C4wVhUbm2w9F
+ 4VdByWgWCCY5Ynhe188sqNL+mFqLAaIssqyYwTBJM+Go6tOuRnP6jrkf2Va/pIwIltzf9QOW
+ cgEAEQEAAcLBXwQYAQIACQUCVPWU9gIbDAAKCRDSWmvTvnYwk8niEACcwBAfe1tTSqCCHkRj
+ zgIrt+NPBBfxilf9JXPGTYqfUkrcVfiNqLGFgIDZKjkLfArxiSmpmtKf1O1VYO9XDgADUKJO
+ RvmUQM/l3Q99QC5b8yUyZOsgfSBOsV6DeqiULO30cXH/uEpR2fUcbtyYXHouiF2UNdq/BV5h
+ HBQkGYtTf7K26NPp4wXMS+YsBm2Gbms/wywJh4KgRPP6LuA+UE/7l0xqMD3pBQ/L1KLTqOQY
+ CItcZ0YbEvlrJc25PRkCssHf1J2c2MXV+CRqsibW8UamBmOyzKHVK/CwvIndwBmcciJrOf+4
+ uxegvXEnwvYPuQ3wvBSkgbJRFNJemnp5KSczANr4R/aA5cEbxhbg7peLv0FdFyTFJXCsKeuO
+ 1gKoKtOLyxRhDocprSuEamaDWDCy3TmX+6nWaBIPYXDFT7IcHT6l6TyZ6IMjkXiHSLhynTIj
+ f2xjSrvKPljIUxcqjhyqWe+coe/Xwbqz69DsK150xoAaoS3rbNlhmalbg15HNTipNDI/k81A
+ fwt7ncjxvjXVJnA2nqPBDIW3mZO/ED0blLrVdaMZjf5LvS+vvsMdH7dHtrAXA50egr74sX0A
+ NO7iW+gkmFYwap531ipMXthHPWbo5x9xfb+a48xA80ePBJLBDyw9X+cOe40+N4Ybiwy5Q2La
+ IwrfNkJOLj3CvocMIw==
+Message-ID: <37b55226-afad-e0e3-785a-2be559b1b9a2@ti.com>
+Date:   Fri, 15 Jun 2018 10:01:31 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614161142.69f186a6@gandalf.local.home>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <1528949687-32002-1-git-send-email-cw00.choi@samsung.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/06/18 16:11, Steven Rostedt wrote:
-> On Wed, 13 Jun 2018 14:17:10 +0200
-> Juri Lelli <juri.lelli@redhat.com> wrote:
+On 14/06/18 07:14, Chanwoo Choi wrote:
+> Previously, extcon used the spinlock before calling the notifier_call_chain
+> to prevent the scheduled out of task and to prevent the notification delay.
+> When spinlock is locked for sending the notification, deadlock issue
+> occured on the side of extcon consumer device. To fix this issue,
+> extcon consumer device should always use the work. it is always not
+> reasonable to use work.
 > 
-> > +/**
-> > + * cpuset_lock - Grab the cpuset_mutex from another subsysytem
-> > + */
-> > +int cpuset_lock(void)
-> > +{
-> > +	return mutex_trylock(&cpuset_mutex);
-> > +}
-> > +
-> > +/**
-> > + * cpuset_unlock - Release the cpuset_mutex from another subsysytem
-> > + */
-> > +void cpuset_unlock(void)
-> > +{
-> > +	mutex_unlock(&cpuset_mutex);
-> > +}
-> > +
-> >  /**
-> >   * cpuset_cpus_allowed - return cpus_allowed mask from a tasks cpuset.
-> >   * @tsk: pointer to task_struct from which to obtain cpuset->cpus_allowed.
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index ca788f74259d..a5b0c6c25b44 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -4218,6 +4218,14 @@ static int __sched_setscheduler(struct task_struct *p,
-> >  		if (attr->sched_flags & SCHED_FLAG_SUGOV)
-> >  			return -EINVAL;
-> >  
-> > +		/*
-> > +		 * Make sure we don't race with the cpuset subsystem where root
-> > +		 * domains can be rebuilt or modified while operations like DL
-> > +		 * admission checks are carried out.
-> > +		 */
-> > +		if (!cpuset_lock())
-> > +			return -EBUSY;
-> > +
+> To fix this issue on extcon consumer device, release locking when sending
+> the notification of connector state.
 > 
-> How important is this for being a trylock? Reason I am asking is that
-> it is making my deadline test fail to get the resources. What my test
-> does is to create a bunch of threads, and they try to get the deadline
-> resources as they are created. This happens in parallel. Thus, when one
-> gets the cpuset_lock, the others are hitting this and returning -EBUSY.
-> At first I thought I was over committing somehow but after adding a
-> trace_printk() in cpuset_lock(), and this fail case it became obvious
-> to what was happening:
+> Fixes: ab11af049f88 ("extcon: Add the synchronization extcon APIs to support the notification")
+> Cc: stable@vger.kernel.org
+> Cc: Roger Quadros <rogerq@ti.com>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+Reviewed-by: Roger Quadros <rogerq@ti.com>
+
+> ---
+>  drivers/extcon/extcon.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
->    deadline_test-1376  [004]   107.179693: sys_enter_sched_setattr: pid: 0x00000000, uattr: 0x7f017fceeed0, flags: 0x00000000
->    deadline_test-1376  [004]   107.179697: bputs:                cpuset_lock: cpuset_mutex trylock
->    deadline_test-1377  [003]   107.179763: sys_exit_futex:       0x0
->    deadline_test-1377  [003]   107.179767: sys_enter_sched_setattr: pid: 0x00000000, uattr: 0x7f017f4eded0, flags: 0x00000000
->    deadline_test-1377  [003]   107.179771: bputs:                cpuset_lock: cpuset_mutex trylock
->    deadline_test-1377  [003]   107.179771: bputs:                __sched_setscheduler: cpuset_lock
->    deadline_test-1377  [003]   107.179773: sys_exit_sched_setattr: 0xfffffffffffffff0
+> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+> index 8bff5fd18185..f75b08a45d4e 100644
+> --- a/drivers/extcon/extcon.c
+> +++ b/drivers/extcon/extcon.c
+> @@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
+>  		return index;
+>  
+>  	spin_lock_irqsave(&edev->lock, flags);
+> -
+>  	state = !!(edev->state & BIT(index));
+> +	spin_unlock_irqrestore(&edev->lock, flags);
+>  
+>  	/*
+>  	 * Call functions in a raw notifier chain for the specific one
+> @@ -448,6 +448,7 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
+>  	 */
+>  	raw_notifier_call_chain(&edev->nh_all, state, edev);
+>  
+> +	spin_lock_irqsave(&edev->lock, flags);
+>  	/* This could be in interrupt handler */
+>  	prop_buf = (char *)get_zeroed_page(GFP_ATOMIC);
+>  	if (!prop_buf) {
+> 
 
-Right, not nice.
+-- 
+cheers,
+-roger
 
-So, even if we can rework sched_setattr and do_sched_setscheduler to
-endup calling __sched_setscheduler outside of RCU read_lock sections (as
-Peter suggested) it seems that we might still get into troubles, e.g.
-
-[   39.890366] ======================================================
-[   39.892741] WARNING: possible circular locking dependency detected
-[   39.894723] 4.17.0-rc6-before+ #169 Not tainted
-[   39.896380] ------------------------------------------------------
-[   39.898369] bash/2206 is trying to acquire lock:
-[   39.899862] 0000000083b596bc (cpu_hotplug_lock.rw_sem){++++}, at: rebuild_sched_domains_locked+0x29/0x660
-[   39.902931]
-[   39.902931] but task is already holding lock:
-[   39.904790] 000000004fc7a567 (cpuset_mutex){+.+.}, at: cpuset_write_u64+0x23/0x140
-[   39.907263]
-[   39.907263] which lock already depends on the new lock.
-[   39.907263]
-[   39.909936]
-[   39.909936] the existing dependency chain (in reverse order) is:
-[   39.912479]
-[   39.912479] -> #2 (cpuset_mutex){+.+.}:
-[   39.914249]        __sched_setscheduler+0xc6/0x880
-[   39.915779]        _sched_setscheduler+0x77/0xa0
-[   39.917270]        __kthread_create_on_node+0x122/0x1a0
-[   39.918948]        kthread_create_on_node+0x46/0x70
-[   39.920512]        init_rescuer.part.8+0x49/0xa0
-[   39.921688]        workqueue_init+0x1ec/0x2d5
-[   39.922659]        kernel_init_freeable+0x23b/0x5b9
-[   39.923756]        kernel_init+0xa/0x110
-[   39.924656]        ret_from_fork+0x3a/0x50
-[   39.925570]
-[   39.925570] -> #1 (wq_pool_mutex){+.+.}:
-[   39.926591]        apply_workqueue_attrs+0x20/0x50
-[   39.927554]        __alloc_workqueue_key+0x1c7/0x490
-[   39.928700]        workqueue_init_early+0x257/0x33f
-[   39.929685]        start_kernel+0x2fe/0x531
-[   39.930530]        secondary_startup_64+0xa5/0xb0
-[   39.931336]
-[   39.931336] -> #0 (cpu_hotplug_lock.rw_sem){++++}:
-[   39.932195]        cpus_read_lock+0x39/0xa0
-[   39.932772]        rebuild_sched_domains_locked+0x29/0x660
-[   39.933513]        update_flag+0x1fd/0x210
-[   39.934075]        cpuset_write_u64+0xe7/0x140
-[   39.934708]        cgroup_file_write+0x174/0x230
-[   39.935350]        kernfs_fop_write+0x113/0x1a0
-[   39.935991]        __vfs_write+0x36/0x180
-[   39.936473]        vfs_write+0xc5/0x1b0
-[   39.936991]        ksys_write+0x55/0xc0
-[   39.937504]        do_syscall_64+0x73/0x4d0
-[   39.938061]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   39.938803]
-[   39.938803] other info that might help us debug this:
-[   39.938803]
-[   39.939708] Chain exists of:
-[   39.939708]   cpu_hotplug_lock.rw_sem --> wq_pool_mutex --> cpuset_mutex
-[   39.939708]
-[   39.940960]  Possible unsafe locking scenario:
-[   39.940960]
-[   39.941607]        CPU0                    CPU1
-[   39.942056]        ----                    ----
-[   39.942523]   lock(cpuset_mutex);
-[   39.942858]                                lock(wq_pool_mutex);
-[   39.943436]                                lock(cpuset_mutex);
-[   39.944028]   lock(cpu_hotplug_lock.rw_sem);
-[   39.944449]
-[   39.944449]  *** DEADLOCK ***
-[   39.944449]
-[   39.945113] 4 locks held by bash/2206:
-[   39.945485]  #0: 000000003cc231db (sb_writers#10){.+.+}, at: vfs_write+0x193/0x1b0
-[   39.946246]  #1: 00000000fdc2c059 (&of->mutex){+.+.}, at: kernfs_fop_write+0xe2/0x1a0
-[   39.946980]  #2: 00000000e12e3a5d (kn->count#11){.+.+}, at: kernfs_fop_write+0xeb/0x1a0
-[   39.947736]  #3: 000000004fc7a567 (cpuset_mutex){+.+.}, at: cpuset_write_u64+0x23/0x140
-[   39.948463]
-[   39.948463] stack backtrace:
-[   39.948871] CPU: 0 PID: 2206 Comm: bash Not tainted 4.17.0-rc6-before+ #169
-[   39.949489] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-2.fc27 04/01/2014
-[   39.950271] Call Trace:
-[   39.950502]  dump_stack+0x67/0x9b
-[   39.950810]  print_circular_bug.isra.24+0x1c8/0x2b0
-[   39.951252]  __lock_acquire+0x1813/0x18e0
-[   39.951618]  ? __lock_acquire+0x1219/0x18e0
-[   39.952016]  ? lock_acquire+0x8e/0x240
-[   39.952357]  lock_acquire+0x8e/0x240
-[   39.952683]  ? rebuild_sched_domains_locked+0x29/0x660
-[   39.953179]  cpus_read_lock+0x39/0xa0
-[   39.953516]  ? rebuild_sched_domains_locked+0x29/0x660
-[   39.953981]  rebuild_sched_domains_locked+0x29/0x660
-[   39.954431]  ? mark_held_locks+0x56/0x80
-[   39.954790]  ? _raw_spin_unlock_irq+0x29/0x50
-[   39.955186]  update_flag+0x1fd/0x210
-[   39.955541]  cpuset_write_u64+0xe7/0x140
-[   39.955900]  cgroup_file_write+0x174/0x230
-[   39.956274]  kernfs_fop_write+0x113/0x1a0
-[   39.956640]  __vfs_write+0x36/0x180
-[   39.956963]  ? rcu_read_lock_sched_held+0x74/0x80
-[   39.957482]  ? rcu_sync_lockdep_assert+0x2e/0x60
-[   39.957969]  ? __sb_start_write+0x154/0x1f0
-[   39.958415]  ? __sb_start_write+0x16a/0x1f0
-[   39.958877]  vfs_write+0xc5/0x1b0
-[   39.959310]  ksys_write+0x55/0xc0
-[   39.959696]  do_syscall_64+0x73/0x4d0
-[   39.960054]  ? trace_hardirqs_off_thunk+0x1a/0x1c
-[   39.960533]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-[   39.961071] RIP: 0033:0x7f534866d780
-[   39.961477] RSP: 002b:00007fff54dfa398 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[   39.962380] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f534866d780
-[   39.963166] RDX: 0000000000000002 RSI: 0000000000d97408 RDI: 0000000000000001
-[   39.964008] RBP: 0000000000d97408 R08: 000000000000000a R09: 00007f5348f6d700
-[   39.964780] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f53489237a0
-[   39.965588] R13: 0000000000000002 R14: 0000000000000001 R15: 0000000000000000
-
-Happening the moment one disables sched_load_balance at root level.
-
-I'll try harder to find alternatives, but suggestions are welcome! :-)
-
-Best,
-
-- Juri
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
