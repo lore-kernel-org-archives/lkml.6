@@ -2,386 +2,108 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 39604C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:58:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5B70DC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 03:04:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA06F20891
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:58:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05C9620891
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 03:04:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSBz+Vit"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA06F20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="njQQORiA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05C9620891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965543AbeFOC6F (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 22:58:05 -0400
-Received: from mail-ua0-f194.google.com ([209.85.217.194]:39534 "EHLO
-        mail-ua0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965416AbeFOC6C (ORCPT
+        id S936155AbeFODEI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 23:04:08 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:53270 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936083AbeFODEG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 22:58:02 -0400
-Received: by mail-ua0-f194.google.com with SMTP id n4-v6so5502997uad.6;
-        Thu, 14 Jun 2018 19:58:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=UYxh3UNM+d9KhwAtHpLqBlnsB9X9X9l1TeDKzvXsZi4=;
-        b=fSBz+VitSERa8kMlgaZVsIKmgEEESXbkkS2LF2cL8tgxEsl9uuXQ5bxnIwFExkozzG
-         eHKyHcS7RzqQB98Os7jATJ/EQ6Fmm0eKebkgWNQIB1kV0EJhgbbD9URUjaZL/hI4/uFx
-         HciPYo3JMucu1qL2yXXuMSXKrDV3caCqfmHPO+WSKNkyfE97vYA1jPrMC0iUHawq1Mwg
-         Pn53ENrSh3hn3EbeOX0oN50k42TezEn/6vCAgv5V5FxOfSpIGICWR+8dZ9C8HBBWm1lK
-         cPOQwPJC3+Z6tdGYZKSNssWuRxlqnnr5shQ/8MlORiYyWkQSeqe6ey2kRrSb6p8gzoAy
-         0dzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=UYxh3UNM+d9KhwAtHpLqBlnsB9X9X9l1TeDKzvXsZi4=;
-        b=FFurGBHAergh2CVKuc/zM2ObUsO3/YFiMU+UoJk6fXcYNiH5QaM9fqk5BD3crBRigf
-         2gpMOCMho3driObx2MISZ1x5B/znZcGsl+w9k1Pa0wPTpMWeyaAGTjXJxuKT4I7/IIi8
-         bStD88HEagYFuN954cqy/QBbW5iEbiOAVwCfXrjLcfv7JtG1jDKfTf2NlXcFhFfR710k
-         Rm2JzT0ws7V7yg3aXGxBeKC9lyrkpRQi0dipgyxFU7cDIRPsBbHFVITt3rn/oiCPO8TC
-         gpf2FZMRIkyOL0mp3CetX13G7n6q+tzVzbC9/XeJeYAMpa7ay1QjA9asVFnUitTJSbh5
-         +u2g==
-X-Gm-Message-State: APt69E3nynELXM1wiGBZGYHzrIQALywMFdDXC9c9eLUUH6wqpr6hK1ae
-        ete+Fom9akPNJZVv+4YNylTJgwkBsirrCjSaRA==
-X-Google-Smtp-Source: ADUXVKIwT+TTk11zhqKeweQ7nVSXnkMA3jL+C+d9ZhHTl+cXnW9gaN9OC4aPqaZ5P4qGXh5NhUGyJQap2a+0AHSmN+k=
-X-Received: by 2002:ab0:a81:: with SMTP id d1-v6mr3766066uak.130.1529031481841;
- Thu, 14 Jun 2018 19:58:01 -0700 (PDT)
+        Thu, 14 Jun 2018 23:04:06 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5F33mOs139440;
+        Fri, 15 Jun 2018 03:03:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2017-10-26;
+ bh=MOV+1T8hoI0m7JvgQKj/ZsFm1/PmeNDMJRHjvQ1Fiqk=;
+ b=njQQORiAY8Jm8pmCtrdBga86boQfOYdIYxZmpNiTyXUBd3QFiifOjI4PydueRj1zld4L
+ 4APqYDkNeg3UgKjf2YWkPL1Jr8d41+WmiDkj1wArn39VVtP4QZvOWfhu34M7wzXx+zfB
+ +ZLIFgdKW839/0Dk5SvQcbY+S8ALZQPzwF7GasDQ2G96g6g9m0toUmU7RKSRx6ymyldZ
+ WZkK+kzadddpkNrwqEuHmxL1B18XrRYZAkqilRk36ODPUpbaG3lvdG8Mqkyz8xc9bMdO
+ 6aztsoV0jAkjJNuNwNucAyAcz+PDkNfwffuVMbpvmUR3ZkesGARej444g3YpoNwrfxGh wQ== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by aserp2130.oracle.com with ESMTP id 2jk0xqyatb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jun 2018 03:03:54 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5F33rPu007590
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jun 2018 03:03:53 GMT
+Received: from abhmp0005.oracle.com (abhmp0005.oracle.com [141.146.116.11])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5F33qHb019221;
+        Fri, 15 Jun 2018 03:03:52 GMT
+Received: from [10.182.69.179] (/10.182.69.179)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jun 2018 20:03:52 -0700
+Subject: Re: [PATCH 1/2] block: export __blk_complete_request
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        James Bottomley <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux SCSI List <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1529027847-29085-1-git-send-email-jianchao.w.wang@oracle.com>
+ <CACVXFVMe4zSvfXfuSn0NFayeQqbmDwBBy1kcso=5iznT6EfpSA@mail.gmail.com>
+ <3dd3f82a-5b68-f039-3a8a-7c5fe4e24c3e@oracle.com>
+ <e5344293-b0b7-d2e0-f2e7-c0700efdfbe4@oracle.com>
+ <CACVXFVMRCM6AvNJjAESbwOeJ_P5AZ+1C-7RfhE9L4u0T=_5h4Q@mail.gmail.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <3970fdc7-52d9-d05b-4118-059d48bf4f2d@oracle.com>
+Date:   Fri, 15 Jun 2018 11:04:02 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Received: by 2002:ab0:200c:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 19:58:01
- -0700 (PDT)
-In-Reply-To: <1528981432-23065-3-git-send-email-sayalil@codeaurora.org>
-References: <1528981432-23065-1-git-send-email-sayalil@codeaurora.org> <1528981432-23065-3-git-send-email-sayalil@codeaurora.org>
-From:   Kyuho Choi <chlrbgh0@gmail.com>
-Date:   Fri, 15 Jun 2018 11:58:01 +0900
-Message-ID: <CAP2JTQKHsJrX4BewyfRPL0LpxTYFhW2RMpOkJCRgS1Uns2Qw+A@mail.gmail.com>
-Subject: Re: [PATCH V3 2/3] scsi: ufs: Add ufs provisioning support
-To:     Sayali Lokhande <sayalil@codeaurora.org>
-Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
-        vivek.gautam@codeaurora.org, rnayak@codeaurora.org,
-        vinholikatti@gmail.com, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com, asutoshd@codeaurora.org,
-        evgreen@chromium.org, riteshh@codeaurora.org,
-        linux-scsi@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACVXFVMRCM6AvNJjAESbwOeJ_P5AZ+1C-7RfhE9L4u0T=_5h4Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8924 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=772
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806150030
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Ming
 
-On 6/14/18, Sayali Lokhande <sayalil@codeaurora.org> wrote:
-> A new api ufshcd_do_config_device() is added in driver
-> to support UFS provisioning at runtime. Configfs support
-> is added to trigger provisioning.
-> Device and Unit configurable parameters are parsed from
-> vendor specific provisioning data or file and
-> passed via configfs node at runtime to provision ufs device.
->
-> Signed-off-by: Sayali Lokhande <sayalil@codeaurora.org>
-> ---
->  drivers/scsi/ufs/ufs.h    |  28 ++++++++
->  drivers/scsi/ufs/ufshcd.c | 180
-> ++++++++++++++++++++++++++++++++++++++++++++++
->  drivers/scsi/ufs/ufshcd.h |   2 +
->  3 files changed, 210 insertions(+)
->
-> diff --git a/drivers/scsi/ufs/ufs.h b/drivers/scsi/ufs/ufs.h
-> index e15deb0..1f99904 100644
-> --- a/drivers/scsi/ufs/ufs.h
-> +++ b/drivers/scsi/ufs/ufs.h
-> @@ -333,6 +333,7 @@ enum {
->  	UFSHCD_AMP		= 3,
->  };
->
-> +#define UFS_BLOCK_SIZE	4096
->  #define POWER_DESC_MAX_SIZE			0x62
->  #define POWER_DESC_MAX_ACTV_ICC_LVLS		16
->
-> @@ -425,6 +426,33 @@ enum {
->  	MASK_TM_SERVICE_RESP		= 0xFF,
->  };
->
-> +struct ufs_unit_desc {
-> +	u8     bLUEnable;              /* 1 for enabled LU */
-> +	u8     bBootLunID;             /* 0 for using this LU for boot */
-> +	u8     bLUWriteProtect;        /* 1 = power on WP, 2 = permanent WP */
-> +	u8     bMemoryType;            /* 0 for enhanced memory type */
-> +	u32    dNumAllocUnits;         /* Number of alloc unit for this LU */
-> +	u8     bDataReliability;       /* 0 for reliable write support */
-> +	u8     bLogicalBlockSize;      /* See section 13.2.3 of UFS standard */
-> +	u8     bProvisioningType;      /* 0 for thin provisioning */
-> +	u16    wContextCapabilities;   /* refer Unit Descriptor Description */
-> +};
-> +
-> +struct ufs_config_descr {
-> +	u8     bNumberLU;              /* Total number of active LUs */
-> +	u8     bBootEnable;            /* enabling device for partial init */
-> +	u8     bDescrAccessEn;         /* desc access during partial init */
-> +	u8     bInitPowerMode;         /* Initial device power mode */
-> +	u8     bHighPriorityLUN;       /* LUN of the high priority LU */
-> +	u8     bSecureRemovalType;     /* Erase config for data removal */
-> +	u8     bInitActiveICCLevel;    /* ICC level after reset */
-> +	u16    wPeriodicRTCUpdate;     /* 0 to set a priodic RTC update rate */
-> +	u32     bConfigDescrLock;      /* 1 to lock Configation Descriptor */
-> +	u32    qVendorConfigCode;      /* Vendor specific configuration code */
-> +	struct ufs_unit_desc unit[8];
-> +	u8	lun_to_grow;
-> +};
-> +
->  /* Task management service response */
->  enum {
->  	UPIU_TASK_MANAGEMENT_FUNC_COMPL		= 0x00,
-> diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-> index 4abc7ae..c0235a4 100644
-> --- a/drivers/scsi/ufs/ufshcd.c
-> +++ b/drivers/scsi/ufs/ufshcd.c
-> @@ -42,6 +42,7 @@
->  #include <linux/nls.h>
->  #include <linux/of.h>
->  #include <linux/bitfield.h>
-> +#include <asm/unaligned.h>
->  #include "ufshcd.h"
->  #include "ufs_quirks.h"
->  #include "unipro.h"
-> @@ -3063,6 +3064,14 @@ static inline int ufshcd_read_power_desc(struct
-> ufs_hba *hba,
->  	return ufshcd_read_desc(hba, QUERY_DESC_IDN_POWER, 0, buf, size);
->  }
->
-> +static inline int ufshcd_read_geometry_desc(struct ufs_hba *hba,
-> +					 u8 *buf,
-> +					 u32 size)
-> +{
-> +	return ufshcd_read_desc(hba, QUERY_DESC_IDN_GEOMETRY, 0, buf, size);
-> +}
-> +
-> +
->  static int ufshcd_read_device_desc(struct ufs_hba *hba, u8 *buf, u32 size)
->  {
->  	return ufshcd_read_desc(hba, QUERY_DESC_IDN_DEVICE, 0, buf, size);
-> @@ -6344,6 +6353,177 @@ static int ufshcd_set_dev_ref_clk(struct ufs_hba
-> *hba)
->  }
->
->  /**
-> + * ufshcd_do_config_device - API function for UFS provisioning
-> + * hba: per-adapter instance
-> + * Returns 0 for success, non-zero in case of failure.
-> + */
-> +int ufshcd_do_config_device(struct ufs_hba *hba)
-> +{
-> +	struct ufs_config_descr *cfg = &hba->cfgs;
-> +	int buff_len = QUERY_DESC_CONFIGURATION_DEF_SIZE;
-> +	u8 desc_buf[QUERY_DESC_CONFIGURATION_DEF_SIZE] = {0};
-> +	int i, ret = 0;
-> +	int lun_to_grow = -1;
-> +	u64 qTotalRawDeviceCapacity;
-> +	u16 wEnhanced1CapAdjFac, wEnhanced2CapAdjFac;
-> +	u32 dEnhanced1MaxNAllocU, dEnhanced2MaxNAllocU;
-> +	size_t alloc_units, units_to_create = 0;
-> +	size_t capacity_to_alloc_factor;
-> +	size_t enhanced1_units = 0, enhanced2_units = 0;
-> +	size_t conversion_ratio = 1;
-> +	u8 *pt;
-> +	u32 blocks_per_alloc_unit = 1024;
-> +	int geo_len = hba->desc_size.geom_desc;
-> +	u8 geo_buf[hba->desc_size.geom_desc];
-> +	unsigned int max_partitions = 8;
-> +
-> +	WARN_ON(!hba || !cfg);
-> +
-> +	ret = ufshcd_read_geometry_desc(hba, geo_buf, geo_len);
-> +	if (ret) {
-> +		dev_err(hba->dev, "%s: Failed getting geometry_desc %d\n",
-> +			__func__, ret);
-> +		return ret;
-> +	}
-> +
-> +	/*
-> +	 * Get Geomtric parameters like total configurable memory
-> +	 * quantity (Offset 0x04 to 0x0b), Capacity Adjustment
-> +	 * Factors (Offset 0x30, 0x31, 0x36, 0x37), Max allocation
-> +	 * units (Offset 0x2c to 0x2f, 0x32 to 0x35) used to configure
-> +	 * the device logical units.
-> +	 */
-> +	qTotalRawDeviceCapacity = get_unaligned_be64(&geo_buf[0x04]);
-> +	wEnhanced1CapAdjFac = get_unaligned_be16(&geo_buf[0x30]);
-> +	wEnhanced2CapAdjFac = get_unaligned_be16(&geo_buf[0x36]);
-> +	dEnhanced1MaxNAllocU = get_unaligned_be32(&geo_buf[0x2c]);
-> +	dEnhanced2MaxNAllocU = get_unaligned_be32(&geo_buf[0x32]);
-> +
-> +	capacity_to_alloc_factor =
-> +		(blocks_per_alloc_unit * UFS_BLOCK_SIZE) / 512;
-> +
-> +	if (qTotalRawDeviceCapacity % capacity_to_alloc_factor != 0) {
-> +		dev_err(hba->dev,
-> +			"%s: Raw capacity(%llu) not multiple of alloc factor(%zu)\n",
-> +			__func__, qTotalRawDeviceCapacity,
-> +			capacity_to_alloc_factor);
-> +		return -EINVAL;
-> +	}
-> +	alloc_units = (qTotalRawDeviceCapacity / capacity_to_alloc_factor);
-> +	units_to_create = 0;
-> +	enhanced1_units = enhanced2_units = 0;
-> +
-> +	/*
-> +	 * Calculate number of allocation units to be assigned to a logical unit
-> +	 * considering the capacity adjustment factor of respective memory type.
-> +	 */
-> +	for (i = 0; i < (max_partitions - 1) &&
-> +		units_to_create <= alloc_units; i++) {
-> +		if ((cfg->unit[i].dNumAllocUnits % blocks_per_alloc_unit) == 0)
-> +			cfg->unit[i].dNumAllocUnits /= blocks_per_alloc_unit;
-> +		else
-> +			cfg->unit[i].dNumAllocUnits =
-> +			cfg->unit[i].dNumAllocUnits / blocks_per_alloc_unit + 1;
-> +
-> +		if (cfg->unit[i].bMemoryType == 0)
-> +			units_to_create += cfg->unit[i].dNumAllocUnits;
-> +		else if (cfg->unit[i].bMemoryType == 3) {
-> +			enhanced1_units += cfg->unit[i].dNumAllocUnits;
-> +			cfg->unit[i].dNumAllocUnits *=
-> +				(wEnhanced1CapAdjFac / 0x100);
-> +			units_to_create += cfg->unit[i].dNumAllocUnits;
-> +		} else if (cfg->unit[i].bMemoryType == 4) {
-> +			enhanced2_units += cfg->unit[i].dNumAllocUnits;
-> +			cfg->unit[i].dNumAllocUnits *=
-> +				(wEnhanced1CapAdjFac / 0x100);
-> +			units_to_create += cfg->unit[i].dNumAllocUnits;
-> +		} else {
-> +			dev_err(hba->dev, "%s: Unsupported memory type %d\n",
-> +				__func__, cfg->unit[i].bMemoryType);
-> +			return -EINVAL;
-> +		}
-> +	}
-> +	if (enhanced1_units > dEnhanced1MaxNAllocU) {
-> +		dev_err(hba->dev, "%s: size %zu exceeds max enhanced1 area size %u\n",
-> +			__func__, enhanced1_units, dEnhanced1MaxNAllocU);
-> +		return -ERANGE;
-> +	}
-> +	if (enhanced2_units > dEnhanced2MaxNAllocU) {
-> +		dev_err(hba->dev, "%s: size %zu exceeds max enhanced2 area size %u\n",
-> +			__func__, enhanced2_units, dEnhanced2MaxNAllocU);
-> +		return -ERANGE;
-> +	}
-> +	if (units_to_create > alloc_units) {
-> +		dev_err(hba->dev, "%s: Specified size %zu exceeds device size %zu\n",
-> +			__func__, units_to_create, alloc_units);
-> +		return -ERANGE;
-> +	}
-> +	lun_to_grow = cfg->lun_to_grow;
-> +	if (lun_to_grow != -1) {
-> +		if (cfg->unit[i].bMemoryType == 0)
-> +			conversion_ratio = 1;
-> +		else if (cfg->unit[i].bMemoryType == 3)
-> +			conversion_ratio = (wEnhanced1CapAdjFac / 0x100);
-> +		else if (cfg->unit[i].bMemoryType == 4)
-> +			conversion_ratio = (wEnhanced2CapAdjFac / 0x100);
-> +
-> +		cfg->unit[lun_to_grow].dNumAllocUnits +=
-> +		((alloc_units - units_to_create) / conversion_ratio);
-> +		dev_dbg(hba->dev, "%s: conversion_ratio %zu for lun %d\n",
-> +			__func__, conversion_ratio, i);
-> +	}
-> +
-> +	/* Fill in the buffer with configuration data */
-> +	pt = desc_buf;
-> +	*pt++ = 0x90;        // bLength
-> +	*pt++ = 0x01;        // bDescriptorType
-> +	*pt++ = 0;           // Reserved in UFS2.0 and onward
-> +	*pt++ = cfg->bBootEnable;
-> +	*pt++ = cfg->bDescrAccessEn;
-> +	*pt++ = cfg->bInitPowerMode;
-> +	*pt++ = cfg->bHighPriorityLUN;
-> +	*pt++ = cfg->bSecureRemovalType;
-> +	*pt++ = cfg->bInitActiveICCLevel;
-> +	put_unaligned_be16(cfg->wPeriodicRTCUpdate, pt);
-> +	pt = pt + 7; // Reserved fields set to 0
-> +
-> +	/* Fill in the buffer with per logical unit data */
-> +	for (i = 0; i < UFS_UPIU_MAX_GENERAL_LUN; i++) {
-> +		*pt++ = cfg->unit[i].bLUEnable;
-> +		*pt++ = cfg->unit[i].bBootLunID;
-> +		*pt++ = cfg->unit[i].bLUWriteProtect;
-> +		*pt++ = cfg->unit[i].bMemoryType;
-> +		put_unaligned_be32(cfg->unit[i].dNumAllocUnits, pt);
-> +		pt = pt + 4;
-> +		*pt++ = cfg->unit[i].bDataReliability;
-> +		*pt++ = cfg->unit[i].bLogicalBlockSize;
-> +		*pt++ = cfg->unit[i].bProvisioningType;
-> +		put_unaligned_be16(cfg->unit[i].wContextCapabilities, pt);
-> +		pt = pt + 5; // Reserved fields set to 0
-> +	}
-> +
-> +	ret = ufshcd_query_descriptor_retry(hba, UPIU_QUERY_OPCODE_WRITE_DESC,
-> +		QUERY_DESC_IDN_CONFIGURATION, 0, 0, desc_buf, &buff_len);
-> +
-> +	if (ret) {
-> +		dev_err(hba->dev, "%s: Failed writing descriptor. desc_idn %d, opcode %x
-> ret %d\n",
-> +		__func__, QUERY_DESC_IDN_CONFIGURATION,
-> +		UPIU_QUERY_OPCODE_WRITE_DESC, ret);
-> +		return ret;
-> +	}
+Thanks for your kindly response.
 
-To support stable operation and prevent race condition, how about
-adding some functions during in runtime provisioning?.
-pm_runtime_get/put_sync and scsi_block/unblock_requests.
-How you thought?.
+On 06/15/2018 10:56 AM, Ming Lei wrote:
+>>> IMO, ref-counter is just to fix the blk-mq req life recycle issue.
+>>> It cannot replace the blk_mark_rq_complete which could avoid the race between
+>>> timeout and io completion path.
+>> The .timeout return BLK_EH_DONE doesn't always mean the request has been completed.
+>> Such as scsi-mid layer, its .timeout callback return BLK_EH_DONE but the timed out
+>> request is still in abort or eh process. What if a completion irq come during that ?
+> For blk-mq, it is avoided by the atomic state change in
+> __blk_mq_complete_request(),
+> that is why I mentioned the question in my last reply.
+> 
 
-> +
-> +	if (cfg->bConfigDescrLock == 1) {
-> +		ret = ufshcd_query_attr(hba, UPIU_QUERY_OPCODE_WRITE_ATTR,
-> +		QUERY_ATTR_IDN_CONF_DESC_LOCK, 0, 0, &cfg->bConfigDescrLock);
-> +		if (ret)
-> +			dev_err(hba->dev, "%s: Failed writing bConfigDescrLock %d\n",
-> +				__func__, ret);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/**
->   * ufshcd_probe_hba - probe hba to detect device and initialize
->   * @hba: per-adapter instance
->   *
-> diff --git a/drivers/scsi/ufs/ufshcd.h b/drivers/scsi/ufs/ufshcd.h
-> index b026ad8..816b674 100644
-> --- a/drivers/scsi/ufs/ufshcd.h
-> +++ b/drivers/scsi/ufs/ufshcd.h
-> @@ -549,6 +549,7 @@ struct ufs_hba {
->  	unsigned int irq;
->  	bool is_irq_enabled;
->  	u32 dev_ref_clk_freq;
-> +	struct ufs_config_descr cfgs;
->
->  	/* Interrupt aggregation support is broken */
->  	#define UFSHCD_QUIRK_BROKEN_INTR_AGGR			0x1
-> @@ -866,6 +867,7 @@ int ufshcd_read_string_desc(struct ufs_hba *hba, int
-> desc_index,
->
->  int ufshcd_hold(struct ufs_hba *hba, bool async);
->  void ufshcd_release(struct ufs_hba *hba);
-> +int ufshcd_do_config_device(struct ufs_hba *hba);
->
->  int ufshcd_map_desc_id_to_length(struct ufs_hba *hba, enum desc_idn
-> desc_id,
->  	int *desc_length);
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
->
+but blk_mq_check_expired doesn't do that.
+do I miss anything ?
 
-BR,
-Kyuho Choi
+> But what if the timed-out request has been freed by EH? Then seems
+> req's ref_counter
+
+Thanks
+Jianchao
