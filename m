@@ -2,106 +2,129 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CEA7C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:41:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1251C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120EB208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:41:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 120EB208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 97F66208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:42:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F66208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966300AbeFOQlv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:41:51 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:46682 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S966035AbeFOQlt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:41:49 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E82D40122B6;
-        Fri, 15 Jun 2018 16:41:48 +0000 (UTC)
-Received: from localhost (ovpn-112-7.rdu2.redhat.com [10.10.112.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id B0D1A2026DEF;
-        Fri, 15 Jun 2018 16:41:46 +0000 (UTC)
-Date:   Fri, 15 Jun 2018 09:41:45 -0700 (PDT)
-Message-Id: <20180615.094145.334438195653112696.davem@redhat.com>
-To:     shuah@kernel.org
-Cc:     tom.hromatka@oracle.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, f.fainelli@gmail.com
-Subject: Re: [PATCH] selftests: sparc64: Fix to do nothing on non-sparc64
-From:   David Miller <davem@redhat.com>
-In-Reply-To: <d8ec82b2-a27a-7a7a-9d8a-b3b937e8e959@kernel.org>
-References: <20180612232348.27979-1-shuah@kernel.org>
-        <d6a1ce6d-4903-ec7a-10aa-d40118fce45c@oracle.com>
-        <d8ec82b2-a27a-7a7a-9d8a-b3b937e8e959@kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 15 Jun 2018 16:41:48 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Fri, 15 Jun 2018 16:41:48 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'davem@redhat.com' RCPT:''
+        id S966113AbeFOQm2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:42:28 -0400
+Received: from mailoutvs40.siol.net ([185.57.226.231]:45580 "EHLO
+        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S965985AbeFOQm0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 12:42:26 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTP id E4C02520679;
+        Fri, 15 Jun 2018 18:42:22 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
+Received: from mail.siol.net ([127.0.0.1])
+        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 8FtG1iOslO-Z; Fri, 15 Jun 2018 18:42:22 +0200 (CEST)
+Received: from mail.siol.net (localhost [127.0.0.1])
+        by mail.siol.net (Postfix) with ESMTPS id 46CC75202D0;
+        Fri, 15 Jun 2018 18:42:22 +0200 (CEST)
+Received: from jernej-laptop.localnet (unknown [194.152.15.144])
+        (Authenticated sender: 031275009)
+        by mail.siol.net (Postfix) with ESMTPA id 4A562520679;
+        Fri, 15 Jun 2018 18:42:20 +0200 (CEST)
+From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
+        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
+        seanpaul@chromium.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
+Date:   Fri, 15 Jun 2018 18:41:16 +0200
+Message-ID: <2948115.KggauuSURZ@jernej-laptop>
+In-Reply-To: <20180615083110.laruycabvyjmesmo@flea>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180612200036.21483-12-jernej.skrabec@siol.net> <20180615083110.laruycabvyjmesmo@flea>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Shuah Khan <shuah@kernel.org>
-Date: Fri, 15 Jun 2018 10:33:21 -0600
+Hi,
 
-> On 06/13/2018 11:20 AM, Tom Hromatka wrote:
->> Thanks, Shuah!
->> 
->> Tom
->> 
->> 
->> On 06/12/2018 05:23 PM, Shuah Khan (Samsung OSG) wrote:
->>> sparc64 test fails with the following errors on non-sparc64 systems. Fix
->>> the Makefile to do nothing on non-sparc64 systems to suppress the errors:
->>>
->>> make run_tests
->>> adi-test.c: Assembler messages:
->>> adi-test.c:302: Error: no such instruction: `rd %tick,%r13'
->>> adi-test.c:304: Error: no such instruction: `rd %tick,%rbp'
->>> adi-test.c:190: Error: no such instruction: `rd %tick,%rbp'
->>> adi-test.c:192: Error: no such instruction: `rd %tick,%rdx'
->>> adi-test.c:273: Error: no such instruction: `rd %tick,%rbx'
->>> adi-test.c:276: Error: no such instruction: `rd %tick,%rdx'
->>> adi-test.c:217: Error: no such instruction: `rd %tick,%rbp'
->>> adi-test.c:220: Error: no such instruction: `rd %tick,%rdx'
->>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>> adi-test.c:246: Error: no such instruction: `rd %tick,%rbp'
->>> adi-test.c:248: Error: no such instruction: `rd %tick,%rdx'
->>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>> <builtin>: recipe for target 'adi-test' failed
->>> make[1]: *** [adi-test] Error 1
->>> adi: [FAIL]
->>> ./drivers_test.sh: 24: ./drivers_test.sh: ./adi-test: not found
->>> ../lib.mk:73: recipe for target 'run_tests' failed
->>> make: *** [run_tests] Error 1
->>>
->>> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
->> 
->> Reviewed-by: Tom Hromatka <tom.hromatka@oracle.com>
->> 
+Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
+> Hi,
 > 
-> get_maintainers didn't include your name for this patch. Would you like to
-> take this fix through sparc tree? It would be good to get this in for
-> 4.18-rc2
+> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
+> > TV TCONs connected to TCON TOP have to enable additional gate in order
+> > to work.
+> > 
+> > Add support for such TCONs.
+> > 
+> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > ---
+> > 
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
+> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
+> >  2 files changed, 15 insertions(+)
+> > 
+> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
+> > 100644
+> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+> > 
+> >  		dev_err(dev, "Couldn't get the TCON bus clock\n");
+> >  		return PTR_ERR(tcon->clk);
+> >  	
+> >  	}
+> > 
+> > +
+> > +	if (tcon->quirks->has_tcon_top_gate) {
+> > +		tcon->top_clk = devm_clk_get(dev, "tcon-top");
+> > +		if (IS_ERR(tcon->top_clk)) {
+> > +			dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
+> > +			return PTR_ERR(tcon->top_clk);
+> > +		}
+> > +		clk_prepare_enable(tcon->top_clk);
+> > +	}
+> > +
 > 
-> If so, please let me know if you would like me to resend the patch
-> with Tom's Reviewed-by tag.
+> Is it required for the TCON itself to operate, or does the TCON
+> requires the TCON TOP, which in turn requires that clock to be
+> functional?
+> 
+> I find it quite odd to have a clock that isn't meant for a particular
+> device to actually be wired to another device. I'm not saying this
+> isn't the case, but it would be a first.
 
-I'm very busy, so this time could you merge this for me?  Thanks!
+Documentation doesn't say much about that gate. I did few tests and TCON 
+registers can be read and written even if TCON TOP TV TCON gate is disabled. 
+However, there is no image, as expected.
 
-Acked-by: David S. Miller <davem@davemloft.net>
+More interestingly, I enabled test pattern directly in TCON to eliminate 
+influence of the mixer. As soon as I disabled that gate, test pattern on HDMI 
+screen was gone, which suggest that this gate influences something inside 
+TCON.
+
+Another test I did was that I moved enable/disable gate code to 
+sun4i_tcon_channel_set_status() and it worked just as well.
+
+I'll ask AW engineer what that gate actually does, but from what I saw, I 
+would say that most appropriate location to enable/disable TCON TOP TV TCON 
+gate is TCON driver. Alternatively, TCON TOP driver could check if any TV TCON 
+is in use and enable appropriate gate. However, that doesn't sound right to me 
+for some reason.
+
+Best regards,
+Jernej
+
+
