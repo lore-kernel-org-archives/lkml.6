@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4022CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B707C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8D6208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C6B0208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MyOksR3j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8D6208B8
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MTky1X/a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C6B0208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966350AbeFORni (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:43:38 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:59014 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966080AbeFORnP (ORCPT
+        id S966396AbeFORnl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:43:41 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:58862 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966063AbeFORnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Jun 2018 13:43:15 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHcWHE139317;
-        Fri, 15 Jun 2018 17:42:24 GMT
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHcbXT071391;
+        Fri, 15 Jun 2018 17:42:15 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=I4yGbMnHhIDblV6Yzh4pVP0FQYFl7ETeY1WLl0f6RTw=;
- b=MyOksR3jrU2Ny+6NHlVxOPYYEzAsdUNnZac3wDzlV9aC3I/JAEsc2J2SFpbh5jdZIzHk
- dpFmNOW3FmHHcJErekrO6LOKV4r9TWmLzKmofSADDyLDkNWX+Am9ZlcTCDVAfSXFp4GS
- zODVLKKuy9Y4sSRq0OchBU3jX3pSLaoj4wIjwmYm5T8oJ/hoSOZq5J58hzge8m1s+85P
- d5fhl8EPdFhcVtsj0hslwULTcGL8bPzaCFfQYrbMjnvDG19XY3KcOA34uUeHyKmjg9wv
- rAQDwHa0yhbti0v7dQfKY3e0QxJjFXb8jw+J5bsR4Z3V0tKbds4XUQH/f2NmOeU7izGc jg== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2jk0xr1vys-1
+ date : message-id; s=corp-2017-10-26;
+ bh=ULErE7lfYhdPi3ybTPdIrf2lbzVUufBLpRlGwByu97A=;
+ b=MTky1X/a1oOTzjHNLmDXOX9ENcuWGpyC8xIz8gCmhd0GSIa23rGAS2y7/PoPw6jGwFpm
+ ZbHM2hLOKFOGUD1KfySoyVNCUusRJPlGnK/kZvM15NTyW31NQTYBGf7zMm74hx4wWBsa
+ /7OpBTe1MjBEYoshChyTmX4RJUghdGSF7O5qPgTaHOQ3Ga6wcCGmBgq0qxu1WG4RolAC
+ Ydu/GxW5gQWmvFOcwLAIwOAZ202PnVMINBvWFnz89xLNDJVbklIGXsxuNWaoh/Hk2Xm0
+ ojAYyTkT7p6ZM9M2orbnP/yvwQnnL82/VoV7Pp/h0vnU+P/YnTMJeze1bp9QvPNxloHR lg== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2jk0xrsvpf-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:24 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgNnS002516
+        Fri, 15 Jun 2018 17:42:15 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgDmb009652
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:24 GMT
+        Fri, 15 Jun 2018 17:42:14 GMT
 Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5FHgMWR004421;
-        Fri, 15 Jun 2018 17:42:22 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgAnL022440;
+        Fri, 15 Jun 2018 17:42:10 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jun 2018 10:42:22 -0700
+        with ESMTP ; Fri, 15 Jun 2018 10:42:10 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -58,15 +58,13 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
         douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: [PATCH v10 6/7] x86/paravirt: add active_sched_clock to pv_time_ops
-Date:   Fri, 15 Jun 2018 13:42:03 -0400
-Message-Id: <20180615174204.30581-7-pasha.tatashin@oracle.com>
+Subject: [PATCH v10 0/7] Early boot time stamps for x86
+Date:   Fri, 15 Jun 2018 13:41:57 -0400
+Message-Id: <20180615174204.30581-1-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180615174204.30581-1-pasha.tatashin@oracle.com>
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
 X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=915
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1805220000 definitions=main-1806150189
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,68 +72,125 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Early boot clock might differ from the clock that is used later on,
-therefore add a new field to pv_time_ops, that shows currently active
-clock. If platform supports early boot clock, this field will be changed
-to use that clock early in boot, and later will be replaced with the
-permanent clock.
+changelog
+---------
+v10 - v9
+	- Added another patch to this series that removes dependency
+	  between KVM clock, and memblock allocator. The benefit is that
+	  all clocks can now be initialized even earlier.
+v9 - v8
+	- Addressed more comments from Dou Liyang
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- arch/x86/include/asm/paravirt_types.h | 1 +
- arch/x86/kernel/paravirt.c            | 1 +
- arch/x86/xen/time.c                   | 7 ++++---
- 3 files changed, 6 insertions(+), 3 deletions(-)
+v8 - v7
+	- Addressed comments from Dou Liyang:
+	- Moved tsc_early_init() and tsc_early_fini() to be all inside
+	  tsc.c, and changed them to be static.
+	- Removed warning when notsc parameter is used.
+	- Merged with:
+	  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
 
-diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
-index 180bc0bff0fb..d555b66c5bbb 100644
---- a/arch/x86/include/asm/paravirt_types.h
-+++ b/arch/x86/include/asm/paravirt_types.h
-@@ -99,6 +99,7 @@ struct pv_lazy_ops {
- struct pv_time_ops {
- 	unsigned long long (*sched_clock)(void);
- 	unsigned long long (*steal_clock)(int cpu);
-+	unsigned long long (*active_sched_clock)(void);
- } __no_randomize_layout;
- 
- struct pv_cpu_ops {
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 99dc79e76bdc..5bfdb72f152f 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -320,6 +320,7 @@ struct pv_init_ops pv_init_ops = {
- struct pv_time_ops pv_time_ops = {
- 	.sched_clock = native_sched_clock,
- 	.steal_clock = native_steal_clock,
-+	.active_sched_clock = native_sched_clock,
- };
- 
- __visible struct pv_irq_ops pv_irq_ops = {
-diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
-index e0f1bcf01d63..29b07020c827 100644
---- a/arch/x86/xen/time.c
-+++ b/arch/x86/xen/time.c
-@@ -505,8 +505,8 @@ static void __init xen_time_init(void)
- 
- void __ref xen_init_time_ops(void)
- {
--	pv_time_ops = xen_time_ops;
--
-+	pv_time_ops.sched_clock = xen_time_ops.sched_clock;
-+	pv_time_ops.steal_clock = xen_time_ops.steal_clock;
- 	x86_init.timers.timer_init = xen_time_init;
- 	x86_init.timers.setup_percpu_clockev = x86_init_noop;
- 	x86_cpuinit.setup_percpu_clockev = x86_init_noop;
-@@ -547,7 +547,8 @@ void __init xen_hvm_init_time_ops(void)
- 		return;
- 	}
- 
--	pv_time_ops = xen_time_ops;
-+	pv_time_ops.sched_clock = xen_time_ops.sched_clock;
-+	pv_time_ops.steal_clock = xen_time_ops.steal_clock;
- 	x86_init.timers.setup_percpu_clockev = xen_time_init;
- 	x86_cpuinit.setup_percpu_clockev = xen_hvm_setup_cpu_clockevents;
- 
+v7 - v6
+	- Removed tsc_disabled flag, now notsc is equivalent of
+	  tsc=unstable
+	- Simplified changes to sched/clock.c, by removing the
+	  sched_clock_early() and friends as requested by Peter Zijlstra.
+	  We know always use sched_clock()
+	- Modified x86 sched_clock() to return either early boot time or
+	  regular.
+	- Added another example why ealry boot time is important
+
+v5 - v6
+	- Added a new patch:
+		time: sync read_boot_clock64() with persistent clock
+	  Which fixes missing __init macro, and enabled time discrepancy
+	  fix that was noted by Thomas Gleixner
+	- Split "x86/time: read_boot_clock64() implementation" into a
+	  separate patch
+
+v4 - v5
+	- Fix compiler warnings on systems with stable clocks.
+
+v3 - v4
+	- Fixed tsc_early_fini() call to be in the 2nd patch as reported
+	  by Dou Liyang
+	- Improved comment before __use_sched_clock_early to explain why
+	  we need both booleans.
+	- Simplified valid_clock logic in read_boot_clock64().
+
+v2 - v3
+	- Addressed comment from Thomas Gleixner
+	- Timestamps are available a little later in boot but still much
+	  earlier than in mainline. This significantly simplified this
+	  work.
+
+v1 - v2
+	In patch "x86/tsc: tsc early":
+	- added tsc_adjusted_early()
+	- fixed 32-bit compile error use do_div()
+
+The early boot time stamps were discussed recently in these threads:
+http://lkml.kernel.org/r/1527672059-6225-1-git-send-email-feng.tang@intel.com
+http://lkml.kernel.org/r/1527672059-6225-2-git-send-email-feng.tang@intel.com
+
+I updated my series to the latest mainline and sending it again.
+
+Peter mentioned he did not like patch 6,7, and we can discuss for a better
+way to do that, but I think patches 1-5 can be accepted separetly, since
+they already enable early timestamps on platforms where sched_clock() is
+available early. Such as KVM.
+
+Adding early boot time stamps support for x86 machines.
+SPARC patches for early boot time stamps are already integrated into
+mainline linux.
+
+Sample output
+-------------
+Before:
+https://paste.ubuntu.com/26133428/
+
+After:
+https://paste.ubuntu.com/26133523/
+
+For exaples how early time stamps are used, see this work:
+Example 1:
+https://lwn.net/Articles/734374/
+- Without early boot time stamps we would not know about the extra time
+  that is spent zeroing struct pages early in boot even when deferred
+  page initialization.
+
+Example 2:
+https://patchwork.kernel.org/patch/10021247/
+- If early boot timestamps were available, the engineer who introduced
+  this bug would have noticed the extra time that is spent early in boot.
+Pavel Tatashin (7):
+  x86/tsc: remove tsc_disabled flag
+  time: sync read_boot_clock64() with persistent clock
+  x86/time: read_boot_clock64() implementation
+  sched: early boot clock
+  kvm/x86: remove kvm memblock dependency
+  x86/paravirt: add active_sched_clock to pv_time_ops
+  x86/tsc: use tsc early
+
+Example 3:
+http://lkml.kernel.org/r/20180615155733.1175-1-pasha.tatashin@oracle.com
+- Needed early time stamps to show improvement
+
+ arch/arm/kernel/time.c                |   2 +-
+ arch/s390/kernel/time.c               |   2 +-
+ arch/x86/include/asm/paravirt.h       |   2 +-
+ arch/x86/include/asm/paravirt_types.h |   1 +
+ arch/x86/kernel/kvm.c                 |   1 +
+ arch/x86/kernel/kvmclock.c            |  64 ++------------
+ arch/x86/kernel/paravirt.c            |   1 +
+ arch/x86/kernel/setup.c               |   7 +-
+ arch/x86/kernel/time.c                |  30 +++++++
+ arch/x86/kernel/tsc.c                 | 116 ++++++++++++++++++++++----
+ arch/x86/xen/time.c                   |   7 +-
+ include/linux/timekeeping.h           |   2 +-
+ kernel/sched/clock.c                  |  10 ++-
+ kernel/time/timekeeping.c             |   8 +-
+ 14 files changed, 165 insertions(+), 88 deletions(-)
+
 -- 
 2.17.1
 
