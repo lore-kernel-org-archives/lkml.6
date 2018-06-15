@@ -2,111 +2,118 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,T_DKIM_INVALID autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id BEC68C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:33:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1D806C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70582208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:33:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C491720896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:41:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="kQM+MO7e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70582208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QPSw42+0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C491720896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965941AbeFOPdZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 11:33:25 -0400
-Received: from imap.thunk.org ([74.207.234.97]:45090 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965916AbeFOPdY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 11:33:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=6+NPZoCS+Cop4Lk1tFy401a86GS0pL8QGfGEixMZdVo=; b=kQM+MO7eR8A+bhBdSck+6dxFcL
-        kOG2ID+V0+EowVaXqHMfTKtws7iEt4teIPLxdaQopRyGcYsu9CLSQlYbENK+MuPsfgxMfPk1sU3f0
-        XN0y+nnVLFv+sp22+5heZ+39yfQ2T9+0WLfa0jwnQQQH7eC+WGmMKFZWW1Naox3FOTP8=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1fTqix-0000Jo-F7; Fri, 15 Jun 2018 15:33:15 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id A07EA7A4477; Fri, 15 Jun 2018 11:33:14 -0400 (EDT)
-Date:   Fri, 15 Jun 2018 11:33:14 -0400
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Sig Shen <sigshen@synology.com>
-Cc:     Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Support FALLOC_FL_NO_HIDE_STALE flag with fallocate
-Message-ID: <20180615153314.GA19476@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Sig Shen <sigshen@synology.com>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-References: <1529059871-11971-1-git-send-email-sigshen@synology.com>
+        id S965883AbeFOPlq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 11:41:46 -0400
+Received: from mail-yb0-f193.google.com ([209.85.213.193]:40856 "EHLO
+        mail-yb0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964778AbeFOPlo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 11:41:44 -0400
+Received: by mail-yb0-f193.google.com with SMTP id v17-v6so3656098ybe.7;
+        Fri, 15 Jun 2018 08:41:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RQqufL1AJ0hin8mmegtZrm7Q1uCOPJvPz79HadixPSo=;
+        b=QPSw42+0cLnRhrTWTvfC1TbIJ9h7g3F45g68aPrYdZ8RkIsSqS2CM9Nuq387yimndr
+         Gl+FzDlU22WS28nlmhhViopvwfAsignuoxKC+fXaxye6nR38SIgRmf5+jED9uIQAzp1i
+         HJ3VKXx4hEBAhFbx0AEpegYt8Z7tJ9GW9hiFpG2o/1l4+KYmFMCRXk5TOso5XPyC9EIh
+         Zm7gBzeYcgn55W5NvmUu9P2gPvLt9v8fsBqOUX1kzgTuQctrqQGfj+Y2L4Wv+U5rY3cK
+         DQ0CZ56guBQUrQ8UYDXSu1X8k5JfmciXBkJA0lcywZRCxEY4e14xlHsjgFgtHg5N/9QQ
+         15AQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RQqufL1AJ0hin8mmegtZrm7Q1uCOPJvPz79HadixPSo=;
+        b=kCaItS+vLzGmJSLq3MU7wcmSyJwDKsC0v9bPJomOugOkIfrApt98GoJzbw9QBKiDd0
+         i2GbHLt2klMy3K9ER0IMhBgNT+RYjmJ7X/xhjd5iSV47JJwmivYKvWtaShPTC5bvtgFh
+         bPrwdiVbO6kjKTvk3sVjE5wB+hA4PaY29GjBLfFaqvjuDKvg3nJiQwJnU3SuTI5uJw81
+         K4AqNgJGIplcz/vH9nQEGq9njtaRdnMX/BPisWI9ITnHrMvSQPFUSBDcK6qmAvpLSySJ
+         CM1oJBUXHtSw4fKw0ugJWhbHWRLvpOFOT3ZZVOkaPDIKX3m5KcHW1crCK/Gj+4RDrtJO
+         FKbg==
+X-Gm-Message-State: APt69E3jXNbDoG/2bSVFos168pTMgsL5FFZ6nUWCnPdJxYBjF/4j/h+1
+        7sChUiTP8vn+X21PRcgmcMc=
+X-Google-Smtp-Source: ADUXVKJ71/Cq4iseAo4FH4lODW/dYwYfVPXdkE9PAqDUN2Nul9orW0gUdIVpG8xca2GyHeE4QmdJbQ==
+X-Received: by 2002:a25:90b:: with SMTP id 11-v6mr1149745ybj.10.1529077303747;
+        Fri, 15 Jun 2018 08:41:43 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:f114])
+        by smtp.gmail.com with ESMTPSA id d4-v6sm3109102ywa.82.2018.06.15.08.41.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Jun 2018 08:41:42 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 08:41:40 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Ivan Zahariev <famzah@icdsoft.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Cgroups "pids" controller does not update "pids.current" count
+ immediately
+Message-ID: <20180615154140.GV1351649@devbig577.frc2.facebook.com>
+References: <77af3805-e912-2664-f347-e30c0919d0c4@icdsoft.com>
+ <20180614150650.GU1351649@devbig577.frc2.facebook.com>
+ <7860105c-553a-534b-57fc-222d931cb972@icdsoft.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529059871-11971-1-git-send-email-sigshen@synology.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <7860105c-553a-534b-57fc-222d931cb972@icdsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 06:51:08PM +0800, Sig Shen wrote:
-> FALLOC_FL_NO_HIDE_STALE flag must be set if user want to issue
-> a discard request for block devices. But vfs_fallocate() will
-> return with an error -EOPNOTSUPP indicating lack of support
-> if this flag is set.
-> 
-> fix it by allowing FALLOC_FL_NO_HIDE_STALE flag in vfs_fallocate
-> 
-> Fixes: 25f4c41415e5 ("block: implement (some of) fallocate for block devices")
-> Signed-off-by: Sig Shen <sigshen@synology.com>
+Hello,
 
-The commit description is not quite correct.  What the NO_HIDE_STALE
-flag does is allow a discard request for those block devices which do
-not have the DISCARD_ZEROES_DATA flag.
+On Fri, Jun 15, 2018 at 05:26:04PM +0300, Ivan Zahariev wrote:
+> The standard RLIMIT_NPROC does not suffer from such accounting
+> discrepancies at any time.
 
-I will note that the FALLOC_FL_NO_HIDE_STALE flag is a bit
-controversial in linux-fsdevel.  I have a similar patch in the VFS in
-Google's internal data center kernel, as well as an internal patch
-which implements support for this flag in ext4.  However, the patches
-are out of tree, because pretty much all of the file system developers
-who work for enterpise distributions were against this functionality.
+RLIMIT_NPROC uses a dedicated atomic counter which is updated when the
+process is getting reaped; however, that doesn't actually coincide
+with the pid being freed.  The base pid ref is put then but there can
+be other refs and even after that it has to go through RCU grace
+period to be actually freed.
 
-I know of one other major cloud provider (in China) using the
-functionality as an out-of-tree patch, but with no one else speaking
-in favor of it, and everyone else NAK'ing the patch and enterprise
-distro's saying they would revert the patch in their distro kernels,
-the compromise we came to was that the code point for NO_HIDE_STALE_FL
-would be reserved so that users of the out-of-tree patches wouldn't
-collide with future fallocate flags; and I would stop trying to push
-the patches upstream.
+They seem equivalent but serve a bit different purposes.  RLIMIT_NPROC
+is primarily about limiting what the user can do and doesn't guarantee
+that that actually matches resource (pid here) consumption.  pid
+controller's primary role is limiting pid consumption - ie. no matter
+what happens the cgroup must not be able to take away more than the
+specified number from the available pool, which has to account for the
+lazy release and draining refs and stuff.
 
-I have no idea how Darrick was able to get commit 25f4c41415e5
-upstream, but I guess it was less controversial for block devices than
-for file systems.
+> The "memory" cgroups controller also does
+> not suffer from any discrepancies -- it accounts memory usage in
+> real time without any lag on process start or exit. The "tasks" file
+> list is also always up-to-date.
 
-So I'm certainly in favor of this patch landing in mainline, but you
-should be aware that there may be some opposition to it.
+The memory controller does the same thing, actually way more
+extensively.  It's just less noticeable because people generally don't
+try to control at individual page level.
 
-Cheers,
+> Is it really technically not possible to make "pids.current" do
+> accounting properly like RLIMIT_NPROC does? We were hoping to
+> replace RLIMIT_NPROC with the "pids" controller.
 
-					- Ted
+It is of course possible but at a cost.  The cost (getting rid of lazy
+release optimizations) is just not justifiable for most cases.
+
+Thanks.
+
+-- 
+tejun
