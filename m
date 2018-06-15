@@ -5,64 +5,47 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CEC38C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:01:11 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7ED01C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83CCA208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:01:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83CCA208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E3A7208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:01:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E3A7208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755977AbeFOIBK (ORCPT
+        id S1755993AbeFOIBu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:01:10 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:39406 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755792AbeFOIBJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:01:09 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A72780D;
-        Fri, 15 Jun 2018 01:01:08 -0700 (PDT)
-Received: from [10.1.207.86] (e112298-lin.cambridge.arm.com [10.1.207.86])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9876B3F318;
-        Fri, 15 Jun 2018 01:01:04 -0700 (PDT)
-From:   Julien Thierry <julien.thierry@arm.com>
-Subject: Re: [RFC PATCH 03/23] genirq: Introduce IRQF_DELIVER_AS_NMI
-To:     Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Doug Berger <opendmb@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        iommu@lists.linux-foundation.org
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <20180613083419.GS12258@hirez.programming.kicks-ass.net>
- <26687332-ab8f-7f6d-909a-f0918dbfea86@arm.com>
- <alpine.DEB.2.21.1806131104570.2280@nanos.tec.linutronix.de>
- <c000699c-7859-74ec-7944-ec484e887f60@arm.com>
- <20180615021213.GC11625@voyager>
-Message-ID: <4eb34b18-11f8-7d70-46a5-f206d127b768@arm.com>
-Date:   Fri, 15 Jun 2018 09:01:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+        Fri, 15 Jun 2018 04:01:50 -0400
+Received: from mga06.intel.com ([134.134.136.31]:39290 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755792AbeFOIBt (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 04:01:49 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 01:01:48 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,226,1526367600"; 
+   d="scan'208";a="237378104"
+Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.30]) ([10.239.161.30])
+  by fmsmga005.fm.intel.com with ESMTP; 15 Jun 2018 01:01:46 -0700
+Subject: Re: [PATCH v1 0/2] perf: Drop leaked kernel samples
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
+        alexander.shishkin@linux.intel.com, me@kylehuey.com,
+        Linux-kernel@vger.kernel.org, vincent.weaver@maine.edu,
+        will.deacon@arm.com, eranian@google.com, namhyung@kernel.org,
+        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
+References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
+ <20180615074504.GA2458@hirez.programming.kicks-ass.net>
+From:   "Jin, Yao" <yao.jin@linux.intel.com>
+Message-ID: <11958be5-dc05-611b-6839-f1f6903c7ca8@linux.intel.com>
+Date:   Fri, 15 Jun 2018 16:01:45 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180615021213.GC11625@voyager>
+In-Reply-To: <20180615074504.GA2458@hirez.programming.kicks-ass.net>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -71,88 +54,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Ricardo,
 
-On 15/06/18 03:12, Ricardo Neri wrote:
-> On Wed, Jun 13, 2018 at 11:06:25AM +0100, Marc Zyngier wrote:
->> On 13/06/18 10:20, Thomas Gleixner wrote:
->>> On Wed, 13 Jun 2018, Julien Thierry wrote:
->>>> On 13/06/18 09:34, Peter Zijlstra wrote:
->>>>> On Tue, Jun 12, 2018 at 05:57:23PM -0700, Ricardo Neri wrote:
->>>>>> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
->>>>>> index 5426627..dbc5e02 100644
->>>>>> --- a/include/linux/interrupt.h
->>>>>> +++ b/include/linux/interrupt.h
->>>>>> @@ -61,6 +61,8 @@
->>>>>>     *                interrupt handler after suspending interrupts. For
->>>>>> system
->>>>>>     *                wakeup devices users need to implement wakeup
->>>>>> detection in
->>>>>>     *                their interrupt handlers.
->>>>>> + * IRQF_DELIVER_AS_NMI - Configure interrupt to be delivered as
->>>>>> non-maskable, if
->>>>>> + *                supported by the chip.
->>>>>>     */
->>>>>
->>>>> NAK on the first 6 patches. You really _REALLY_ don't want to expose
->>>>> NMIs to this level.
->>>>>
->>>>
->>>> I've been working on something similar on arm64 side, and effectively the one
->>>> thing that might be common to arm64 and intel is the interface to set an
->>>> interrupt as NMI. So I guess it would be nice to agree on the right approach
->>>> for this.
->>>>
->>>> The way I did it was by introducing a new irq_state and let the irqchip driver
->>>> handle most of the work (if it supports that state):
->>>>
->>>> https://lkml.org/lkml/2018/5/25/181
->>>>
->>>> This has not been ACKed nor NAKed. So I am just asking whether this is a more
->>>> suitable approach, and if not, is there any suggestions on how to do this?
->>>
->>> I really didn't pay attention to that as it's burried in the GIC/ARM series
->>> which is usually Marc's playground.
+
+On 6/15/2018 3:45 PM, Peter Zijlstra wrote:
+> On Fri, Jun 15, 2018 at 06:03:21PM +0800, Jin Yao wrote:
+>> On workloads that do a lot of kernel entry/exits we see kernel
+>> samples, even though :u is specified. This is due to skid existing.
 >>
->> I'm working my way through it ATM now that I have some brain cycles back.
+>> This might be a security issue because it can leak kernel addresses even
+>> though kernel sampling support is disabled.
 >>
->>> Adding NMI delivery support at low level architecture irq chip level is
->>> perfectly fine, but the exposure of that needs to be restricted very
->>> much. Adding it to the generic interrupt control interfaces is not going to
->>> happen. That's doomed to begin with and a complete abuse of the interface
->>> as the handler can not ever be used for that.
+>> One patch "perf/core: Drop kernel samples even though :u is specified"
+>> was posted in last year but it was reverted because it introduced a
+>> regression issue that broke the rr-project.
 >>
->> I can only agree with that. Allowing random driver to use request_irq()
->> to make anything an NMI ultimately turns it into a complete mess ("hey,
->> NMI is *faster*, let's use that"), and a potential source of horrible
->> deadlocks.
->>
->> What I'd find more palatable is a way for an irqchip to be able to
->> prioritize some interrupts based on a set of architecturally-defined
->> requirements, and a separate NMI requesting/handling framework that is
->> separate from the IRQ API, as the overall requirements are likely to
->> completely different.
->>
->> It shouldn't have to be nearly as complex as the IRQ API, and require
->> much stricter requirements in terms of what you can do there (flow
->> handling should definitely be different).
+>> Now this patch set uses sysctl to control the dropping of leaked
+>> kernel samples.
 > 
-> Marc, Julien, do you plan to actively work on this? Would you mind keeping
-> me in the loop? I also need this work for this watchdog. In the meantime,
-> I will go through Julien's patches and try to adapt it to my work.
+> So what happened to the suggestion of keeping the samples but 0-stuffing
+> all the tricky bits?
+> 
 
-We are going to work on this and of course your input is most welcome to 
-make sure we have an interface usable across different architectures.
+Bring more overhead to kernel if we zero the bits considering the number 
+of leaked samples may be not too small?
 
-In my patches, I'm not sure there is much to adapt to your work as most 
-of it is arch specific (although I wont say no to another pair of eyes 
-looking at them). From what I've seen of your patches, the point where 
-we converge is that need for some code to be able to tell the irqchip "I 
-want that particular interrupt line to be treated/setup as an NMI".
+And the skid information may be interesting (see example of hitting on 
+page_fault in previous mail). If we zero it, we will not know.
 
-We'll make sure to keep you in the loop for discussions/suggestions on this.
-
-Thanks,
-
--- 
-Julien Thierry
+Thanks
+Jin Yao
