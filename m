@@ -3,102 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8AFC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:40:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2443EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:40:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797C720896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:40:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797C720896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=icdsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id D83BB208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:40:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D83BB208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966124AbeFORkI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:40:08 -0400
-Received: from us.icdsoft.com ([192.252.146.184]:39836 "EHLO us.icdsoft.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966054AbeFORkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:40:06 -0400
-Received: (qmail 26978 invoked by uid 1001); 15 Jun 2018 17:40:04 -0000
-Received: from unknown (HELO ?94.155.37.249?) (famzah@94.155.37.249)
-  by 192.252.159.165 with ESMTPA; 15 Jun 2018 17:40:04 -0000
-Subject: Re: Cgroups "pids" controller does not update "pids.current" count
- immediately
-To:     Tejun Heo <tj@kernel.org>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <77af3805-e912-2664-f347-e30c0919d0c4@icdsoft.com>
- <20180614150650.GU1351649@devbig577.frc2.facebook.com>
- <7860105c-553a-534b-57fc-222d931cb972@icdsoft.com>
- <20180615154140.GV1351649@devbig577.frc2.facebook.com>
- <1d635d1d-6152-ecfc-d235-147ff1fe7c95@icdsoft.com>
- <20180615161647.GW1351649@devbig577.frc2.facebook.com>
-From:   Ivan Zahariev <famzah@icdsoft.com>
-Message-ID: <6c2c9bfb-3175-b9ec-cf39-c9d4ebf654b2@icdsoft.com>
-Date:   Fri, 15 Jun 2018 20:40:02 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S966193AbeFORkT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:40:19 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:51309 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966130AbeFORkS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 13:40:18 -0400
+Received: from bigeasy by Galois.linutronix.de with local (Exim 4.80)
+        (envelope-from <bigeasy@linutronix.de>)
+        id 1fTshp-0004pT-4q; Fri, 15 Jun 2018 19:40:13 +0200
+Date:   Fri, 15 Jun 2018 19:40:13 +0200
+From:   Sebastian Sewior <bigeasy@linutronix.de>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Mikulas Patocka <mpatocka@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        USB list <linux-usb@vger.kernel.org>,
+        Kernel development list <linux-kernel@vger.kernel.org>
+Subject: Re: High-priority softirqs [was: [PATCH] usb: don't offload
+ isochronous urb completions to ksoftirq]
+Message-ID: <20180615174012.m6rqow2sytwgxxrx@linutronix.de>
+References: <Pine.LNX.4.44L0.1806151308310.1387-100000@iolanthe.rowland.org>
+ <alpine.DEB.2.21.1806151919130.1582@nanos.tec.linutronix.de>
+ <20180615133428.20205bae@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <20180615161647.GW1351649@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-bg
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180615133428.20205bae@gandalf.local.home>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 2018-06-15 13:34:28 [-0400], Steven Rostedt wrote:
+> On Fri, 15 Jun 2018 19:28:34 +0200 (CEST)
+> Thomas Gleixner <tglx@linutronix.de> wrote:
+> 
+> > One solution to that is to avoid both tasklets and kworkers and change the
+> > USB code to make use of threaded interrupt handlers. I.e. handle the fast
+> > stuff in the primary (hardirq) handler and delegate the rest to the irq
+> > thread. That thread still can offload disk type stuff to a kworker if
+> > needed. But the irq thread allows to bring the stuff under scheduler
+> > control and experiments which I did a few years ago worked out pretty good.
+> 
+> If there's any question about this, drivers can request to have their
+> interrupt handlers run as threads. This has been added to mainline
+> years ago. And it really should be the default solution before pushing
+> off to tasklets or kworkers.
 
-On 15.6.2018 г. 19:16 ч., Tejun Heo wrote:
-> On Fri, Jun 15, 2018 at 07:07:27PM +0300, Ivan Zahariev wrote:
->> I understand all concerns and design decisions. However, having
->> RLIMIT_NPROC support combined with "cgroups" hierarchy would be very
->> handy.
->>
->> Does it make sense that you introduce "nproc.current" and
->> "nproc.max" metrics which work in the same atomic, real-time way
->> like RLIMIT_NPROC? Or make this in a new "nproc" controller?
-> I'm skeptical for two reasons.
->
-> 1. That doesn't sound much like a resource control problem but more of
->     a policy enforcement problem.
->
-> 2. and it's difficult to see why such policies would need to be that
->     strict.  Where is the requirement coming from?
->
+ https://lkml.kernel.org/r/20180216170450.yl5owfphuvltstnt@breakpoint.cc
 
-The lazy pids accounting + modern fast CPUs makes the "pids.current" 
-metric practically unusable for resource limiting in our case. For a 
-test, when we started and ended one single process very quickly, we saw 
-"pids.current" equal up to 185 (while the correct value at all time is 
-either 0 or 1). If we want that a "cgroup" can spawn maximum 50 
-processes, we should use some high value like 300 for "pids.max", in 
-order to compensate the pids uncharge lag (and this depends on the speed 
-of the CPU and how busy the system is).
+> -- Steve
 
-Our use-case is for a shared web hosting service. Our customers start a 
-CGI process for each PHP web request and therefore process start/end 
-happens at a very high rate. We don't want customers to be able to 
-launch too many CGI processes (NPROC limit) because this exhausts the 
-web & database servers, and probably obsesses Linux kernel resources 
-(like total "opened files" per user). Furthermore, some users are 
-malicious and launch fork-bombs and other resource-exhaustion attacks.
-
-You may be right that we enforce a policy rather than resource control. 
-This has worked for us for 15+ years now. The motivation is that a 
-global RLIMIT_NPROC easily let's us limit all system and Linux kernel 
-resources "per customer" ("cgroups" allows us to limit only certain 
-system resources). Additionally, not all user-space daemons allow for a 
-granular "per user" limit or proper grouping (for example, MySQL has 
-only users, and no "per customer" groups support). Now we want to have 
-different "cgroups" hierarchies for a customer (SSH, CGI, Crond), each 
-with their own RLIMIT_NPROC, and a total RLIMIT_NPROC for the parent 
-"per customer" cgroup.
-
-Excuse me for the lengthy post :-)
-
---
-Ivan
-
-
+Sebastian
