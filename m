@@ -2,74 +2,257 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8D963C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:32:52 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 3E851C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:33:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4979C20896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:32:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4979C20896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=icdsoft.com
+	by mail.kernel.org (Postfix) with ESMTP id DAB5A208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:33:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAB5A208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=techadventures.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756232AbeFOOcu (ORCPT
+        id S1756253AbeFOOdN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 10:32:50 -0400
-Received: from us.icdsoft.com ([192.252.146.184]:44820 "EHLO us.icdsoft.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755816AbeFOOct (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 10:32:49 -0400
-X-Greylist: delayed 400 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Jun 2018 10:32:48 EDT
-Received: (qmail 29044 invoked by uid 1001); 15 Jun 2018 14:26:07 -0000
-Received: from unknown (HELO ?94.155.37.249?) (famzah@94.155.37.249)
-  by 192.252.159.165 with ESMTPA; 15 Jun 2018 14:26:07 -0000
-Subject: Re: Cgroups "pids" controller does not update "pids.current" count
- immediately
-To:     Tejun Heo <tj@kernel.org>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <77af3805-e912-2664-f347-e30c0919d0c4@icdsoft.com>
- <20180614150650.GU1351649@devbig577.frc2.facebook.com>
-From:   Ivan Zahariev <famzah@icdsoft.com>
-Message-ID: <7860105c-553a-534b-57fc-222d931cb972@icdsoft.com>
-Date:   Fri, 15 Jun 2018 17:26:04 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 10:33:13 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:32888 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755816AbeFOOdL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 10:33:11 -0400
+Received: by mail-wm0-f65.google.com with SMTP id z6-v6so6992047wma.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 07:33:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=055udI7qFoOJ3wMO5GlogjjaGzc+TKrRAaskuRL9e0I=;
+        b=aioy2l4E94XlHihpS/kxm+52bEqCdHUjIobgqTStF26twkQJTlsYh9y+Gs+35d3pSx
+         FybCnFmIbQB8y9ji7qgxVCGVgN9qdxfwDUnADc72E6xnkJjFdulOdMXlZw2qVtBXjBm9
+         kONtbEUtk3x8ByvADIXlWD4/0EGofwp9JOOofh+36GyZHWY95MxZSWGgjUSB5O/VhBwo
+         xVAhvOOOUa5T5zQeaRn4jainbeDaiciwzEPiKCjjxW99x1v5g7klmB6JKW19bT0J/mVB
+         DTP8e/ccE+CO780/VMmwwezy5iFqDnooVTlnAC8Rw3Ok4X15B16j0ik0GZgYCdJGganR
+         pfKg==
+X-Gm-Message-State: APt69E3IZYUAXUzpdUWAuvDLWnHxtIelUUMBCtV0qwr82genTYDZIIlM
+        eg4awzLHqT2xxmboZwf9LdE=
+X-Google-Smtp-Source: ADUXVKLbraWUhvmxuatIvaz5iyIUDL1RZze56gQbRjCp3Reai6VvmoW8uwIZZCqq/+CBA4OhlQrhfA==
+X-Received: by 2002:a1c:d388:: with SMTP id k130-v6mr1429911wmg.66.1529073190383;
+        Fri, 15 Jun 2018 07:33:10 -0700 (PDT)
+Received: from techadventures.net (techadventures.net. [62.201.165.239])
+        by smtp.gmail.com with ESMTPSA id z83-v6sm1981593wmb.8.2018.06.15.07.33.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Jun 2018 07:33:09 -0700 (PDT)
+Received: by techadventures.net (Postfix, from userid 1000)
+        id AB087123503; Fri, 15 Jun 2018 16:33:08 +0200 (CEST)
+Date:   Fri, 15 Jun 2018 16:33:08 +0200
+From:   Oscar Salvador <osalvador@techadventures.net>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Oscar Salvador <osalvador@suse.de>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH v3] x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved
+Message-ID: <20180615143308.GA26321@techadventures.net>
+References: <20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613090700.GG13364@dhcp22.suse.cz>
+ <20180614051618.GB17860@hori1.linux.bs1.fc.nec.co.jp>
+ <20180614053859.GA9863@techadventures.net>
+ <20180614063454.GA32419@hori1.linux.bs1.fc.nec.co.jp>
+ <20180614213033.GA19374@techadventures.net>
+ <20180615010927.GC1196@hori1.linux.bs1.fc.nec.co.jp>
+ <20180615072947.GB23273@hori1.linux.bs1.fc.nec.co.jp>
+ <20180615084142.GE24039@dhcp22.suse.cz>
+ <20180615140000.44tht4f3ek3lh2u2@xakep.localdomain>
 MIME-Version: 1.0
-In-Reply-To: <20180614150650.GU1351649@devbig577.frc2.facebook.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-bg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180615140000.44tht4f3ek3lh2u2@xakep.localdomain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.6.2018 г. 18:06 ч., Tejun Heo wrote:
-> On Thu, Jun 14, 2018 at 02:56:00PM +0300, Ivan Zahariev wrote:
->> I posted a kernel bug about this a month ago but it did not receive
->> any attention: https://bugzilla.kernel.org/show_bug.cgi?id=199713
->>
->> Here is a copy of the bug report and I hope that this is the correct
->> place to discuss this:
-> Well, for now at least, that's the expected behavior.  It's not
-> supposed to be able to account all changes immediately (the kernel
-> doesn't free a lot of things immediately for performance and other
-> reasons).  The intended use is setting up a reasonable upperbound with
-> some buffer space.
+On Fri, Jun 15, 2018 at 10:00:00AM -0400, Pavel Tatashin wrote:
+> On 18-06-15 10:41:42, Michal Hocko wrote:
+> > On Fri 15-06-18 07:29:48, Naoya Horiguchi wrote:
+> > [...]
+> > > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Date: Thu, 14 Jun 2018 16:04:36 +0900
+> > > Subject: [PATCH] x86/e820: put !E820_TYPE_RAM regions into memblock.reserved
+> > > 
+> > > There is a kernel panic that is triggered when reading /proc/kpageflags
+> > > on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
+> > > 
+> > >   BUG: unable to handle kernel paging request at fffffffffffffffe
+> > >   PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
+> > >   Oops: 0000 [#1] SMP PTI
+> > >   CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
+> > >   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+> > >   RIP: 0010:stable_page_flags+0x27/0x3c0
+> > >   Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
+> > >   RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
+> > >   RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
+> > >   RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
+> > >   RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
+> > >   R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
+> > >   R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
+> > >   FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
+> > >   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > >   CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
+> > >   Call Trace:
+> > >    kpageflags_read+0xc7/0x120
+> > >    proc_reg_read+0x3c/0x60
+> > >    __vfs_read+0x36/0x170
+> > >    vfs_read+0x89/0x130
+> > >    ksys_pread64+0x71/0x90
+> > >    do_syscall_64+0x5b/0x160
+> > >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > >   RIP: 0033:0x7efc42e75e23
+> > >   Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+> > > 
+> > > According to kernel bisection, this problem became visible due to commit
+> > > f7f99100d8d9 which changes how struct pages are initialized.
+> > > 
+> > > Memblock layout affects the pfn ranges covered by node/zone. Consider
+> > > that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
+> > > the default (no memmap= given) memblock layout is like below:
+> > > 
+> > >   MEMBLOCK configuration:
+> > >    memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
+> > >    memory.cnt  = 0x4
+> > >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+> > >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+> > >    memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
+> > >    memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+> > >    ...
+> > > 
+> > > If you give memmap=1G!4G (so it just covers memory[0x2]),
+> > > the range [0x100000000-0x13fffffff] is gone:
+> > > 
+> > >   MEMBLOCK configuration:
+> > >    memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
+> > >    memory.cnt  = 0x3
+> > >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+> > >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+> > >    memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+> > >    ...
+> > > 
+> > > This causes shrinking node 0's pfn range because it is calculated by
+> > > the address range of memblock.memory. So some of struct pages in the
+> > > gap range are left uninitialized.
+> > > 
+> > > We have a function zero_resv_unavail() which does zeroing the struct
+> > > pages within the reserved unavailable range (i.e. memblock.memory &&
+> > > !memblock.reserved). This patch utilizes it to cover all unavailable
+> > > ranges by putting them into memblock.reserved.
+> > > 
+> > > Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+> > > Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > Tested-by: Oscar Salvador <osalvador@suse.de>
+> > 
+> > OK, this makes sense to me. It is definitely much better than the
+> > original attempt.
+> > 
+> > Unless I am missing something this should be correct
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> 
+> First of all thank you Naoya for finding and root causing this issue.
+> 
+> So, with this fix we reserve any hole and !E820_TYPE_RAM or
+> !E820_TYPE_RESERVED_KERN in e820.  I think, this will work because we
+> do pfn_valid() check in zero_resv_unavail(), so the ranges that do not have
+> backing struct pages will be skipped. But, I am worried on the performance
+> implications of when the holes of invalid memory are rather large. We would
+> have to loop through it in zero_resv_unavail() one pfn at a time.
+> 
+> Therefore, we might also need to optimize zero_resv_unavail() a little like
+> this:
+> 
+> 6407			if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
+> 6408				continue;
+> 
+> Add before "continue":
+> 	pfn = ALIGN_DOWN(pfn, pageblock_nr_pages) + pageblock_nr_pageas - 1.
+> At least, this way, we would skip a section of invalid memory at a time.
+> 
+> For the patch above:
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@oracle.com>
+> 
+> But, I think the 2nd patch with the optimization above should go along this
+> this fix.
 
-If that's by design, it's a bit disappointing and at least the docs 
-should mention it.
+Hi Pavel,
 
-The standard RLIMIT_NPROC does not suffer from such accounting 
-discrepancies at any time. The "memory" cgroups controller also does not 
-suffer from any discrepancies -- it accounts memory usage in real time 
-without any lag on process start or exit. The "tasks" file list is also 
-always up-to-date.
+I think this makes a lot of sense.
+Since Naoya is out until Wednesday, maybe I give it a shot next week and see if I can gather some numbers.
 
-Is it really technically not possible to make "pids.current" do 
-accounting properly like RLIMIT_NPROC does? We were hoping to replace 
-RLIMIT_NPROC with the "pids" controller.
+> 
+> Thank you,
+> Pasha
+> 
+> > 
+> > > ---
+> > >  arch/x86/kernel/e820.c | 15 ++++++++++++---
+> > >  1 file changed, 12 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> > > index d1f25c831447..c88c23c658c1 100644
+> > > --- a/arch/x86/kernel/e820.c
+> > > +++ b/arch/x86/kernel/e820.c
+> > > @@ -1248,6 +1248,7 @@ void __init e820__memblock_setup(void)
+> > >  {
+> > >  	int i;
+> > >  	u64 end;
+> > > +	u64 addr = 0;
+> > >  
+> > >  	/*
+> > >  	 * The bootstrap memblock region count maximum is 128 entries
+> > > @@ -1264,13 +1265,21 @@ void __init e820__memblock_setup(void)
+> > >  		struct e820_entry *entry = &e820_table->entries[i];
+> > >  
+> > >  		end = entry->addr + entry->size;
+> > > +		if (addr < entry->addr)
+> > > +			memblock_reserve(addr, entry->addr - addr);
+> > > +		addr = end;
+> > >  		if (end != (resource_size_t)end)
+> > >  			continue;
+> > >  
+> > > +		/*
+> > > +		 * all !E820_TYPE_RAM ranges (including gap ranges) are put
+> > > +		 * into memblock.reserved to make sure that struct pages in
+> > > +		 * such regions are not left uninitialized after bootup.
+> > > +		 */
+> > >  		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+> > > -			continue;
+> > > -
+> > > -		memblock_add(entry->addr, entry->size);
+> > > +			memblock_reserve(entry->addr, entry->size);
+> > > +		else
+> > > +			memblock_add(entry->addr, entry->size);
+> > >  	}
+> > >  
+> > >  	/* Throw away partial pages: */
+> > > -- 
+> > > 2.7.4
+> > 
+> > -- 
+> > Michal Hocko
+> > SUSE Labs
+> > 
+> 
 
---Ivan
+Best Regards
+Oscar Salvador
