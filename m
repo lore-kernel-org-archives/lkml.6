@@ -6,115 +6,136 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6897DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B59C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21C77208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A71D208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P1ae/JU4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C77208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="jozJvKz5";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EH4I3Vq6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A71D208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966385AbeFOQrQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:47:16 -0400
-Received: from merlin.infradead.org ([205.233.59.134]:58162 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964992AbeFOQqm (ORCPT
+        id S966412AbeFOQrc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:47:32 -0400
+Received: from mail-yw0-f194.google.com ([209.85.161.194]:36600 "EHLO
+        mail-yw0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966388AbeFOQrR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:46:42 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FPSy7COcdrgPAfZ+GqYL8a9DLfasAs7wcZsItPaiPc8=; b=P1ae/JU4VIJZOQy4gOIQNKLdq
-        eR0rNLCBxjNiIfZte3e1aoMf4SFBEUaCAF6psy/u85gunsTjtiIaG0Ygms3pxJBXcZuxolJqlc0dC
-        RdujZZLqMMdTC3tSzYj81wjmMXjSJYpAAfSqAKqChDT+0IfhxJImPxtPfg/nqqQjgHoNC6yZlqBW+
-        lc5LZQ1e/LcnOSgbEjlFwaz7rxGBSaTWXxqbLx/WzMafQIQ13N2yecazVIwE2lWXO5/o3aY7TSPEl
-        qbYlrdcCJd1jj95IRqFzppAECV0pU+cuegZl5VWwg7oAFXSDuA0VufizewPuZZwSpECjJ6dfdjoV+
-        FtToVXrZQ==;
-Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fTrrT-0006W3-QD; Fri, 15 Jun 2018 16:46:08 +0000
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D5A352029FA0D; Fri, 15 Jun 2018 18:46:04 +0200 (CEST)
-Date:   Fri, 15 Jun 2018 18:46:04 +0200
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Thomas Hellstrom <thellstrom@vmware.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Gustavo Padovan <gustavo@padovan.org>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        David Airlie <airlied@linux.ie>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, stern@rowland.harvard.edu
-Subject: Re: [PATCH v3 2/2] locking: Implement an algorithm choice for
- Wound-Wait mutexes
-Message-ID: <20180615164604.GD2458@hirez.programming.kicks-ass.net>
-References: <20180615120827.3989-1-thellstrom@vmware.com>
- <20180615120827.3989-2-thellstrom@vmware.com>
+        Fri, 15 Jun 2018 12:47:17 -0400
+Received: by mail-yw0-f194.google.com with SMTP id t198-v6so3556752ywc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 09:47:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=C4yWl+FjQqS3jy6FxhKxiQw2Scy2HS26EiEKafxZJ8w=;
+        b=jozJvKz5qEmci67/cy7X+AC1pZBj4LpASI6hXZCBwMriYgFoertH9cWFzfa6GhjdYR
+         XR9zHWImI1sWPXfkU2BO4495mzq/8h9T2He9s+d0SBL8VtCPf8xTdxxZpBT/1cj/yZyb
+         WcO4NWGq8qOhjhUDu7zBoklGrwiyoulmWj0UFcoYzGdMyYet/c8DCaYbhWACWmwxBOgn
+         +x5rbed+XtJ+33ZVf8CMU6WLbs1MUMWyyoGAX2HRErv8hCqd5UCUCRg67L3vluXQuv7V
+         4sbNZ12V1Rsn+9+E5pjd07TcMscN3acpxVdnxFUdGd1G9z/HTquSF6g9m9NKWxz0S9fD
+         JjxQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=C4yWl+FjQqS3jy6FxhKxiQw2Scy2HS26EiEKafxZJ8w=;
+        b=EH4I3Vq66cLrtxPk0vUSrP5IVEXifoR/fxVcwvaZ7Xs2v4Kzi0zHznVQWwlklGlgkw
+         uWDztmFic6UtXySNH4qxVx7Bi6elbAcViIrIy+ZRonyoNZo5joeCwrtKPLyCtpVHjshc
+         7SNqj9QQ4xStKvaiAfRIXuGAXyWqb9d9PmeqY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=C4yWl+FjQqS3jy6FxhKxiQw2Scy2HS26EiEKafxZJ8w=;
+        b=Ynb8erLZ9iuyHfTzGl+iCImPAwJQHRVCB+jsq5Fn7L/cCzX+rplvoC+83UD0PkqS4k
+         vBoT6DjiKktEGprAc2HeAj+lga4kt/FLQy7TensSr5OVvtWDQWoa6380W96cIe7j7R/P
+         t4MUwdYRCmaFbzJwb8CTg/Wdzewm/zCDilLik8OGIMheNPbAsO8Xil87hLp+RMqfDwT5
+         RwqPf0tZ+P43+lYsbKqh2Ph1MN1tdM2Obo0ISpovcHNfRvH0BFinttig2xkIdIGdpwwu
+         EUkVofyyPi4a/HWpyk+rAsoGbCkLdlsOB6BWxnR/wGwQ0Wluvj1oVAn1tgFDU+xuosvO
+         vPAA==
+X-Gm-Message-State: APt69E2cpFzYo7eiH/VdbLbZM1SnB9YYI9YmIuWFSoynRoWFfLO5gJMT
+        4ADZh4KTrI7hfUEUJySCTeQB4tWRwCa/ctVhUuegVQ==
+X-Google-Smtp-Source: ADUXVKIHDw+nvfEH0Fk8xTJObwISbuIKgX6jX/djm8yAiUzrgNQQO5RJ2kl5EEsFVWp/i3O2SXvDOQ0FCyIolG4+Pz4=
+X-Received: by 2002:a81:8743:: with SMTP id x64-v6mr1242496ywf.129.1529081236855;
+ Fri, 15 Jun 2018 09:47:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180615120827.3989-2-thellstrom@vmware.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 09:47:16
+ -0700 (PDT)
+In-Reply-To: <20180615163322.GB11493@kroah.com>
+References: <1528705874-34845-1-git-send-email-jiazhouyang09@gmail.com>
+ <1529079930-58587-1-git-send-email-jiazhouyang09@gmail.com> <20180615163322.GB11493@kroah.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Fri, 15 Jun 2018 09:47:16 -0700
+X-Google-Sender-Auth: ZDp2blY8A-Wc4FpJ7clbWu5zKTE
+Message-ID: <CAGXu5jJbwAZxCYMF=j2XQAhgKU90XaL2oRCG_sny_KBVcTJhOg@mail.gmail.com>
+Subject: Re: [PATCH v2] staging: rtl8192u: add error handling for usb_alloc_urb
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>, devel@driverdev.osuosl.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 02:08:27PM +0200, Thomas Hellstrom wrote:
+On Fri, Jun 15, 2018 at 9:33 AM, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+> On Sat, Jun 16, 2018 at 12:25:23AM +0800, Zhouyang Jia wrote:
+>> When usb_alloc_urb fails, the lack of error-handling code may
+>> cause unexpected results.
+>>
+>> This patch adds error-handling code after calling usb_alloc_urb.
+>>
+>> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
+>> ---
+>> v1->v2:
+>> - Fix memory leak.
+>> ---
+>>  drivers/staging/rtl8192u/r8192U_core.c | 18 +++++++++++++++---
+>>  1 file changed, 15 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+>> index 7a0dbc0..6afab4e 100644
+>> --- a/drivers/staging/rtl8192u/r8192U_core.c
+>> +++ b/drivers/staging/rtl8192u/r8192U_core.c
+>> @@ -1648,13 +1648,17 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
+>>  #ifndef JACKSON_NEW_RX
+>>       for (i = 0; i < (MAX_RX_URB + 1); i++) {
+>>               priv->rx_urb[i] = usb_alloc_urb(0, GFP_KERNEL);
+>> -             if (!priv->rx_urb[i])
+>> +             if (!priv->rx_urb[i]) {
+>> +                     kfree(priv->rx_urb);
 
-> @@ -772,6 +856,25 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
->  	}
->  
->  	list_add_tail(&waiter->list, pos);
-> +	if (__mutex_waiter_is_first(lock, waiter))
-> +		__mutex_set_flag(lock, MUTEX_FLAG_WAITERS);
-> +
-> +	/*
-> +	 * Wound-Wait: if we're blocking on a mutex owned by a younger context,
-> +	 * wound that such that we might proceed.
-> +	 */
-> +	if (!is_wait_die) {
-> +		struct ww_mutex *ww = container_of(lock, struct ww_mutex, base);
-> +
-> +		/*
-> +		 * See ww_mutex_set_context_fastpath(). Orders setting
-> +		 * MUTEX_FLAG_WAITERS (atomic operation) vs the ww->ctx load,
-> +		 * such that either we or the fastpath will wound @ww->ctx.
-> +		 */
-> +		smp_mb__after_atomic();
-> +
-> +		__ww_mutex_wound(lock, ww_ctx, ww->ctx);
-> +	}
+You're freeing rx_urb, which holds all the pointers to allocated
+memory. You'll need to free each item of the array before freeing the
+array itself:
 
-I think we want the smp_mb__after_atomic() in the same branch as
-__mutex_set_flag(). So something like:
+for (i = 0; i < (MAX_RX_URB + 1); i++)
+    kfree(priv->rx_urb[i]);
+kfree(priv->rx_urb);
 
-	if (__mutex_waiter_is_first()) {
-		__mutex_set_flag();
-		if (!is_wait_die)
-			smp_mb__after_atomic();
-	}
+I think you need some kind of helper to do this, and you can call into
+it from your error paths...
 
-Or possibly even without the !is_wait_die. The rules for
-smp_mb__*_atomic() are such that we want it unconditional after an
-atomic, otherwise the semantics get too fuzzy.
+-Kees
 
-Alan (rightfully) complained about that a while ago when he was auditing
-users.
+> {sigh}
+>
+> No, you are still leaking memory on all of these changes that you just
+> made :(
+>
+> greg k-h
 
 
+
+-- 
+Kees Cook
+Pixel Security
