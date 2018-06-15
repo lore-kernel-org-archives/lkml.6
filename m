@@ -2,109 +2,91 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324ADC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:00:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66659C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:09:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCF4220864
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18751208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:09:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wk2XA7fc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCF4220864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Wwxz6uOV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18751208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756731AbeFOXAw (ORCPT
+        id S1756721AbeFOXJH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 19:00:52 -0400
-Received: from mail-pf0-f169.google.com ([209.85.192.169]:34012 "EHLO
-        mail-pf0-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753624AbeFOXAu (ORCPT
+        Fri, 15 Jun 2018 19:09:07 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:51771 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753761AbeFOXJF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 19:00:50 -0400
-Received: by mail-pf0-f169.google.com with SMTP id a63-v6so5518730pfl.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 16:00:50 -0700 (PDT)
+        Fri, 15 Jun 2018 19:09:05 -0400
+Received: by mail-it0-f68.google.com with SMTP id n7-v6so4872548itn.1;
+        Fri, 15 Jun 2018 16:09:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=MHSvdkQ+pBrjMUbzMKgy6ofdZ36HXkxOpzdNnz5cjtk=;
-        b=Wk2XA7fc3KLEVG+81jiGDe7ZdTL4j6bdlUHgB37z95GZS/6DiVAk/UwYcA8ktGtXRE
-         LryGMYy3sQOzh7OV5iAnJkBd7TkgWzxDxV/9QCFaj4G0NAL4kcBIuSlcv40kOht1Kylz
-         9QimkQdfTlxNJoS0458HxfcUQPfSXahTdpSe58rr12GcNb3YVTWwe9Wtt6IHMGa75i2I
-         kBdSQKpyROnKwXg4krGAGd9Drfg9bfmHwVYDd7xJSuGLR7l/jvvIMznLIX5ayH7PH3PA
-         w0jfOFeqVU5OulWoQt7PQ3vXDPrQHQUPqIGjTre71SjXfeqesDLauXPDsgae4szGzWSI
-         Q8yA==
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TjHm1RDGvK+d81PIAOpBXuy1jNwfkFS3Esx0ryO77+M=;
+        b=Wwxz6uOVbMvYXRTXUsk4HxKBc7KkCRz3z1Nx7pz7/UFronEgjajIxMxt8kGln42WZv
+         3vefJAkogPcHqJVp73+MigLTC0RIIonBfj8g4lrzfEpNILVbMD8NxJ8tkjuhva6WNPsW
+         N03AFsPPCmDrEjctuNgCL++rhbx/70St0pzt0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=MHSvdkQ+pBrjMUbzMKgy6ofdZ36HXkxOpzdNnz5cjtk=;
-        b=E4vIuNH2eR6oTW7lS1VBGd7UUw1wZrYsq0AXqy6voesZT/hBsoYO7ZaJbjR29J1t5N
-         Q1VEbKbeCiS3y04NWBjOyzAF+vjxL/DLaymh2J8GI++qVOtsXQ7iGPXGFvpDwMGt9kfl
-         +tUq05cZJsLiSczDfIMb6x6pF/1roMGwifF/oVw6tDajBIde1OHJUU8cNxUvpL/PS6O7
-         Ve9hCGKWCQMD3nEBCmmDtParNdfBr+zfDeQ+1SbjPSB7NkcHUzWqahbiGN7/SUcDMvwX
-         +hTyED/4bPNsZUf9EcFzUb9G/z2le4VcoJXRtI9ft6fc6i00zJQQaulvFohLi0EGDNyZ
-         cTBQ==
-X-Gm-Message-State: APt69E2Agq3R3dcJNKuMbCRhX2wwsFGnJoewpMWKqtJpDj6CzRUeCw7P
-        YP3UsYGpnjTUBTpoCV5WnT5PWQ==
-X-Google-Smtp-Source: ADUXVKI/fmYNWnWe29CzGCyG7H0VzsTOuB9AEbOqvWXqCJzOvmDSWZeTVh2H0L1B8f4z12jt/cJE/w==
-X-Received: by 2002:a62:2414:: with SMTP id r20-v6mr3961514pfj.108.1529103649758;
-        Fri, 15 Jun 2018 16:00:49 -0700 (PDT)
-Received: from ndesaulniers0.svl.corp.google.com ([2620:15c:2a3:1:d33:166f:5b79:14b3])
-        by smtp.gmail.com with ESMTPSA id t21-v6sm22570148pfi.22.2018.06.15.16.00.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 16:00:49 -0700 (PDT)
-From:   Nick Desaulniers <ndesaulniers@google.com>
-To:     bskeggs@redhat.com, airlied@linux.ie
-Cc:     mka@chromium.org, jeyu@kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/nouveau/nvif: remove const attribute from nvif_mclass
-Date:   Fri, 15 Jun 2018 16:00:42 -0700
-Message-Id: <20180615230044.189899-1-ndesaulniers@google.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-In-Reply-To: <CAKwvOd=ntzV5x+rDSH6VEoS2ONZacnqeemewNgv3Aotm3Hd-hA@mail.gmail.com>
-References: <CAKwvOd=ntzV5x+rDSH6VEoS2ONZacnqeemewNgv3Aotm3Hd-hA@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TjHm1RDGvK+d81PIAOpBXuy1jNwfkFS3Esx0ryO77+M=;
+        b=NqIYatW7wO6Ow739Xzd/AyTT1Pf9p94jo+qbWYLw0xjeVYdfR3FuRRIdMXC0PLCyvU
+         keASl6E6W26j1L3zvqaKMhcGrTlgjNvhYPzBRhptvXa0pcWoB20Qpu0oPDxRlqXiIu+0
+         daJTysCvvijMzIGkQhlkTX06XWYSVX+fHZxvpK6hT10iL6pzIpt8N7kcacOZIm0uaLdd
+         Ldr9iEb6tEA0v5i2Ts61G7zWJ85TrlJzCKKvCf1mTbWOO+n5TFi28QQqNhDPBCFxbkun
+         eot5cwJ0yhxUdWC3I9u9oljlX2E4K6i3AK0uFfiXnViMRpnuWd1k6X0xXTGxQAVrBO2Q
+         6tyA==
+X-Gm-Message-State: APt69E0vlgsOfjdQI8zYKiojXDVtS1DthBOf6HW7DwAHctgaDuRcAU2n
+        ulsEJRchWA1dYbFJtuEZYCYDaPKdz+W00uaIYG4=
+X-Google-Smtp-Source: ADUXVKK4p+ql7SiHiBMSkxPc1p6ARKjNVNymsD7gVHUYjO/8IfiJRj+1P5ywdDN7vGtjGCi7+JUOVAua+dhNvNkPSNg=
+X-Received: by 2002:a24:8046:: with SMTP id g67-v6mr2897923itd.16.1529104144426;
+ Fri, 15 Jun 2018 16:09:04 -0700 (PDT)
+MIME-Version: 1.0
+References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com> <1529037793-35521-2-git-send-email-wei.w.wang@intel.com>
+In-Reply-To: <1529037793-35521-2-git-send-email-wei.w.wang@intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 16 Jun 2018 08:08:53 +0900
+Message-ID: <CA+55aFzhuGKinEq5udPsk_uYHShkQxJYqcPO=tLCkT-oxpsgPg@mail.gmail.com>
+Subject: Re: [PATCH v33 1/4] mm: add a function to get free page blocks
+To:     wei.w.wang@intel.com
+Cc:     virtio-dev@lists.oasis-open.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        virtualization <virtualization@lists.linux-foundation.org>,
+        KVM list <kvm@vger.kernel.org>, linux-mm <linux-mm@kvack.org>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        liliang.opensource@gmail.com, yang.zhang.wz@gmail.com,
+        quan.xu0@gmail.com, nilal@redhat.com,
+        Rik van Riel <riel@redhat.com>, peterx@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Similar to commit 0bf8bf50eddc ("module: Remove
-const attribute from alias for MODULE_DEVICE_TABLE")
+On Fri, Jun 15, 2018 at 2:08 PM Wei Wang <wei.w.wang@intel.com> wrote:
+>
+> This patch adds a function to get free pages blocks from a free page
+> list. The obtained free page blocks are hints about free pages, because
+> there is no guarantee that they are still on the free page list after
+> the function returns.
 
-Fixes many -Wduplicate-decl-specifier warnings due to the combination of
-const typeof() of already const variables.
+Ack. This is the kind of simple interface where I don't need to worry
+about the MM code calling out to random drivers or subsystems.
 
-Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
----
-Changes since v1: added additional space after statements.
+I think that "order" should be checked for validity, but from a MM
+standpoint I think this is fine.
 
- drivers/gpu/drm/nouveau/include/nvif/object.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/nouveau/include/nvif/object.h b/drivers/gpu/drm/nouveau/include/nvif/object.h
-index a2d5244ff2b7..3d7e485a9043 100644
---- a/drivers/gpu/drm/nouveau/include/nvif/object.h
-+++ b/drivers/gpu/drm/nouveau/include/nvif/object.h
-@@ -78,7 +78,7 @@ struct nvif_mclass {
- #define nvif_mclass(o,m) ({                                                    \
- 	struct nvif_object *object = (o);                                      \
- 	struct nvif_sclass *sclass;                                            \
--	const typeof(m[0]) *mclass = (m);                                      \
-+	typeof(m[0]) *mclass = (m);                                            \
- 	int ret = -ENODEV;                                                     \
- 	int cnt, i, j;                                                         \
-                                                                                \
--- 
-2.18.0.rc1.244.gcf134e6275-goog
-
+                Linus
