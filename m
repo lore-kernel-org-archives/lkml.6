@@ -2,157 +2,576 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0F3F7C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:32:40 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B7A17C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1610208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:32:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C145208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L0UmO/sf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1610208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="INlAJMG1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C145208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755940AbeFOJch (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 05:32:37 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:46270 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755645AbeFOJce (ORCPT
+        id S965558AbeFOJge (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 05:36:34 -0400
+Received: from mail-pg0-f68.google.com ([74.125.83.68]:42981 "EHLO
+        mail-pg0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755735AbeFOJgc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 05:32:34 -0400
-Received: by mail-pf0-f196.google.com with SMTP id q1-v6so4607142pff.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 02:32:34 -0700 (PDT)
+        Fri, 15 Jun 2018 05:36:32 -0400
+Received: by mail-pg0-f68.google.com with SMTP id c10-v6so4191711pgu.9
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 02:36:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to;
-        bh=791lWx9WuligOApTeSk8sUZpQR6eN7a4aZ/8qmtuzxk=;
-        b=L0UmO/sfoakJvp4GsBRV3W7sdcGYDgc0BvVaYmOFnavz1tJ8DugJ6/b9peWpMdYnZh
-         tceE4TeHgKLREBkCmvYwtC72ukm7SqJwh979Bi1eNhnDu4N5sLFftfaqMvqxr4ipJ4MU
-         BzqAgIHHJNR84j3spbfbMbScE9eTgb0hAHNe4jk+lMlkzktNBGLYHIr1z3COYmizVrGD
-         TqXU9bCzX5nDrY1JuJku8rL8u3X5ENTNOD88BqhDP0TwB2udfqqEPdhoH80Y+pkzrs3K
-         hWr7ht3P9EZi97I+2NWbYGEtyEI8DJhxNB6LCg81JyVWv5KDhu3LAQpYUMhWNX1IyEFg
-         caMg==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=SVfnvxrwI20vYeJ+yJYYGD9M1b8W4/jm8ne1vZzzRqI=;
+        b=INlAJMG1IE8wGhfeeP9JxNUxO01WfA6GzVJWjBzCfaFSvOk8NeQcOw9fZb9NjE6+Zb
+         18h4SykxfhiUZ3XXhe89LIM8+ZvtdQcC6sYPHmyanzOGP+6ekmOlSCRMgPJXgf1qcQZw
+         x0/oWldmMnm3pKp+MfOnKwk9V+1Nayfv7Qmuo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to;
-        bh=791lWx9WuligOApTeSk8sUZpQR6eN7a4aZ/8qmtuzxk=;
-        b=SCy/XWBA3RoquuzR5X9KXavqSMhzt936ufYi9o86Gko4fB2g1pArJ3ekYI4PIFKao7
-         HWE5bhUcorrGaYYWUuQzFQqrApQ+T+piyxd6gbq73tz9jbbzSnygm5NC9Apc3PiWtvWI
-         SFRfK5J/Ok8DYmDMpPi3xjponGwDmYcUbhqyXObTHb47S6S+P9ehEQEzgAqo1TIodI2i
-         q9Wdess08zQpRRHosjy9lRwS1t5pilNc7wCRzd+SypfpBL+ipvfJBTD5QNZkuHABzVAr
-         Z1jeQvdllRV4TdaclbGWKb3lMbmeutvmc3263l9ODE20/9UFbr06SMJgdKFGCssJh+RY
-         WCPw==
-X-Gm-Message-State: APt69E2Hc+dmHRagRP14Re7Lbg8B0dMk+he6gbMK+LpLJEZDWnwnQXk4
-        lbWbjrI7ElD1/rt5EKGixIgLwEy2RuUZIRDOr/bH6Q==
-X-Google-Smtp-Source: ADUXVKIgtAuk+NVfzeLuE3wzEUfrxjltUCU6szQ8Q+LhntZRmo1e3WoHKBF1sWgIhLaStGC2t7VU0/hnvMyHIUD0k5c=
-X-Received: by 2002:a63:721c:: with SMTP id n28-v6mr882273pgc.96.1529055153932;
- Fri, 15 Jun 2018 02:32:33 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Fri, 15 Jun 2018 02:32:13
- -0700 (PDT)
-In-Reply-To: <20180611133345.GE5020@thunk.org>
-References: <20180522123107.GC3751@bfoster.bfoster> <20180522222620.GW23861@dastard>
- <20180522225208.GB658@sol.localdomain> <20180523074425.GM14384@magnolia>
- <20180523162015.GA3684@sol.localdomain> <a52266f9-0096-b28c-c01c-046ababcfe3a@sandeen.net>
- <20180523234114.GA3434@thunk.org> <CACT4Y+YEpThQj=63F8CSHeWSZxbWJ1cTDB7ZvM8OYR921uXT2g@mail.gmail.com>
- <20180526202436.GC4613@thunk.org> <CACT4Y+YK9LzYuVSruimbgxSAoCt_UYbHwzhvDGCqZ7FuQLcUUA@mail.gmail.com>
- <20180611133345.GE5020@thunk.org>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 15 Jun 2018 11:32:13 +0200
-Message-ID: <CACT4Y+bxcHSCsYR5uGFbvaJvRAkoA3-z3=B_1DQ+rvks4Q5KpQ@mail.gmail.com>
-Subject: Re: Bugs involving maliciously crafted file system
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Eric Biggers <ebiggers3@gmail.com>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Brian Foster <bfoster@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=SVfnvxrwI20vYeJ+yJYYGD9M1b8W4/jm8ne1vZzzRqI=;
+        b=S6Z8YkLx0HcKqN599Y3NAah+rlt2JCMNIGg1L6UBzMAhuKM39xS5Ngy9WdR9G3xz7X
+         8D5YY7frgpj3J3Huh8USjnQWtqzEbnskYsSOC7pKj0VWHbhAokO8ODbwRwitu/kIEKL+
+         NZIAcRDseEZP6uCfi2TsywaSzsEhKu41Hg3GEZZwRZEsBpn35E1mTRbQRyagb18xxPtS
+         cm62ndxTVOHCplU+1q0/G3+vphHHdXZrJbeQF/YlXZfa+yPbJYjqLYyWTwzPXv9VdET2
+         bzoLYp3mmtpd79E0adHsL714RqktMlB7Zy9pjTZXKP7KKsE7xYdVzlIen/l2wO2BBHlt
+         8foA==
+X-Gm-Message-State: APt69E0CwMJh/IR4/r+/aGqEwxPOF9KMZyOK8HJRlCts5vcFTRnO8gV8
+        WgRiXNqcKYOIczNZfY3cbC1tYg==
+X-Google-Smtp-Source: ADUXVKLGvKIooOySRqD4BD1VDAGTlsoimGk9z+6Vvc8aW2lycdpfEzn0+0NVbo1Dgy1eG9I4MheCDg==
+X-Received: by 2002:a65:4dc3:: with SMTP id q3-v6mr867593pgt.331.1529055392031;
+        Fri, 15 Jun 2018 02:36:32 -0700 (PDT)
+Received: from ubt.spreadtrum.com ([117.18.48.102])
+        by smtp.gmail.com with ESMTPSA id c19-v6sm11186914pfn.182.2018.06.15.02.36.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 15 Jun 2018 02:36:30 -0700 (PDT)
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>,
+        Adrian Hunter <adrian.hunter@intel.com>
+Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
+Subject: [PATCH V3 6/7] mmc: sdhci-sprd: added Spreadtrum's initial host controller
+Date:   Fri, 15 Jun 2018 17:36:20 +0800
+Message-Id: <1529055380-20207-1-git-send-email-zhang.chunyan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1529028255-6022-7-git-send-email-zhang.chunyan@linaro.org>
+References: <1529028255-6022-7-git-send-email-zhang.chunyan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 11, 2018 at 3:33 PM, Theodore Y. Ts'o <tytso@mit.edu> wrote:
-> On Mon, Jun 11, 2018 at 03:07:24PM +0200, Dmitry Vyukov wrote:
->>
->> These can't be weaponized to execute code, but if a BUG_ON is
->> triggerable over a network, or from VM guest, then it's likely more
->> critical than a local code execution. That's why I am saying that
->> automated evaluation is infeasible.
->
-> I can't imagine situations where a BUG_ON would be more critical than
-> local code execution.  You can leverage local code execution to ah
-> remote privilege escalation attack; and local code execution can (with
-> less effort) be translated to a system crash.  Hence, local code
-> execution is always more critical than a BUG_ON.
+From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
 
+This patch adds the initial support of Secure Digital Host Controller
+Interface compliant controller found in some latest Spreadtrum chipsets.
+This patch has been tested on the version of SPRD-R11 controller.
 
-Well, if one could bring all of Google servers remotely, lots of
-people would consider this as more critical as _anything_ local.
+R11 is a variant based on SD v4.0 specification.
 
+With this driver, R11 mmc can be initialized, can be mounted, read and
+written.
 
->> Anyway, bug type (UAF, BUG, task hung) is available in the bug title
->> on dashboard and on mailing lists, so you can just search/sort bugs on
->> the dashboard. What other interface you want on top of this?
->
-> I also want to be able to search and filter based on subsystem, and
-> whether or not there is a reproducer.  Sometimes you can't even figure
-> out the subsytem from the limited string shown on the dashboard,
-> because the original string didn't include the subsystem to begin
-> with, or the the subsytem name was truncated and not included on the
-> dashboard.
+Original-by: Billows Wu <billows.wu@spreadtrum.com>
+Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+---
 
-How is this problem solved in kernel development for all other bug reports?
+Changes from V2:
+- Save return value of mmc_of_parse();
+- Add checking for clk_prepare_enable();
+- Use BIT() macro instead.
 
->> On a related note, perhaps kernel community needs to finally start
->> using bugzilla for real, like with priorities, assignees, up-to-date
->> statuses, no stale bugs, etc. All of this is available in bug tracking
->> systems for decades...
->
-> I do use bugzilla and in fact if syzbot would automatically file a
-> bugzilla.kernel.org report for things that are in the ext4 subsystem,
-> that would be really helpful.
->
-> As far as no stale bugs, etc., many companies (including Google)
-> aren't capable of doing that with their own internal bug tracking
-> systems, because management doesn't give them enough time to track and
-> fix all stale bugs.  You seem to be assuming/demanding things of the
-> kernel community that are at least partially constrained by resource
-> availability --- and since you've used constrained resources as a
-> reason why Syzbot can't be extended as we've requested to reduce
-> developer toil and leverage our available resources, it would perhaps
-> be respectful if you also accepted that resource constraints also
-> exist in other areas, such as how much we can keep a fully groomed bug
-> tracking system.
+---
+ drivers/mmc/host/Kconfig      |  13 ++
+ drivers/mmc/host/Makefile     |   1 +
+ drivers/mmc/host/sdhci-sprd.c | 432 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 446 insertions(+)
+ create mode 100644 drivers/mmc/host/sdhci-sprd.c
 
-I mentioned this only because you asked for this.
-Whatever tracking system and style we go with, bug states need to
-maintained and bugs need to be nursed. If we extend syzbot dashboard
-with more traditional bug tracking system capabilities, but then
-nobody cares to maintain order, it also won't be useful and nobody
-will be able to easily select the current tasks to work on.
-So that's a prerequisite for what you are asking for.
+diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+index 9589f9c..1b0ee11 100644
+--- a/drivers/mmc/host/Kconfig
++++ b/drivers/mmc/host/Kconfig
+@@ -584,6 +584,19 @@ config MMC_SDRICOH_CS
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called sdricoh_cs.
+ 
++config MMC_SDHCI_SPRD
++	tristate "Spreadtrum SDIO host Controller"
++	depends on ARCH_SPRD
++	depends on MMC_SDHCI_PLTFM
++	select MMC_SDHCI_IO_ACCESSORS
++	help
++	  This selects the SDIO Host Controller in Spreadtrum
++	  SoCs, this driver supports R11(IP version: R11P0).
++
++	  If you have a controller with this interface, say Y or M here.
++
++	  If unsure, say N.
++
+ config MMC_TMIO_CORE
+ 	tristate
+ 
+diff --git a/drivers/mmc/host/Makefile b/drivers/mmc/host/Makefile
+index 6aead24..5835bc4 100644
+--- a/drivers/mmc/host/Makefile
++++ b/drivers/mmc/host/Makefile
+@@ -88,6 +88,7 @@ obj-$(CONFIG_MMC_SDHCI_ST)		+= sdhci-st.o
+ obj-$(CONFIG_MMC_SDHCI_MICROCHIP_PIC32)	+= sdhci-pic32.o
+ obj-$(CONFIG_MMC_SDHCI_BRCMSTB)		+= sdhci-brcmstb.o
+ obj-$(CONFIG_MMC_SDHCI_OMAP)		+= sdhci-omap.o
++obj-$(CONFIG_MMC_SDHCI_SPRD)		+= sdhci-sprd.o
+ obj-$(CONFIG_MMC_CQHCI)			+= cqhci.o
+ 
+ ifeq ($(CONFIG_CB710_DEBUG),y)
+diff --git a/drivers/mmc/host/sdhci-sprd.c b/drivers/mmc/host/sdhci-sprd.c
+new file mode 100644
+index 0000000..2b551c2
+--- /dev/null
++++ b/drivers/mmc/host/sdhci-sprd.c
+@@ -0,0 +1,432 @@
++// SPDX-License-Identifier: GPL-2.0
++//
++// Secure Digital Host Controller
++//
++// Copyright (C) 2018 Spreadtrum, Inc.
++// Author: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
++
++#include <linux/delay.h>
++#include <linux/dma-mapping.h>
++#include <linux/highmem.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_gpio.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/regulator/consumer.h>
++#include <linux/slab.h>
++
++#include "sdhci-pltfm.h"
++
++#define SDHCI_SPRD_REG_32_DLL_DLY_OFFSET	0x208
++#define  SDHCIBSPRD_IT_WR_DLY_INV		BIT(5)
++#define  SDHCI_SPRD_BIT_CMD_DLY_INV		BIT(13)
++#define  SDHCI_SPRD_BIT_POSRD_DLY_INV		BIT(21)
++#define  SDHCI_SPRD_BIT_NEGRD_DLY_INV		BIT(29)
++
++#define SDHCI_SPRD_REG_32_BUSY_POSI		0x250
++#define  SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN	BIT(25)
++#define  SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN	BIT(24)
++
++#define SDHCI_SPRD_REG_DEBOUNCE		0x28C
++#define  SDHCI_SPRD_BIT_DLL_BAK		BIT(0)
++#define  SDHCI_SPRD_BIT_DLL_VAL		BIT(1)
++
++#define  SDHCI_SPRD_INT_SIGNAL_MASK	0x1B7F410B
++
++/* SDHCI_HOST_CONTROL2 */
++#define  SDHCI_SPRD_CTRL_HS200		0x0005
++#define  SDHCI_SPRD_CTRL_HS400		0x0006
++
++/* SDHCI_SOFTWARE_RESET */
++#define  SDHCI_HW_RESET_CARD		0x8 /* For Spreadtrum's design */
++
++#define SDHCI_SPRD_MAX_CUR		0xFFFFFF
++#define SDHCI_SPRD_CLK_MAX_DIV		1023
++
++#define SDHCI_SPRD_CLK_DEF_RATE		26000000
++
++struct sdhci_sprd_host {
++	u32 version;
++	struct clk *clk_sdio;
++	struct clk *clk_enable;
++	u32 base_rate;
++};
++
++#define TO_SPRD_HOST(host) sdhci_pltfm_priv(sdhci_priv(host))
++
++static void sdhci_sprd_init_config(struct sdhci_host *host)
++{
++	u16 val;
++
++	/* set 64-bit addressing modes */
++	val = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++	val |= SDHCI_CTRL_64BIT_ADDR;
++	sdhci_writew(host, val, SDHCI_HOST_CONTROL2);
++
++	/* set dll backup mode */
++	val = sdhci_readl(host, SDHCI_SPRD_REG_DEBOUNCE);
++	val |= SDHCI_SPRD_BIT_DLL_BAK | SDHCI_SPRD_BIT_DLL_VAL;
++	sdhci_writel(host, val, SDHCI_SPRD_REG_DEBOUNCE);
++}
++
++static inline u32 sdhci_sprd_readl(struct sdhci_host *host, int reg)
++{
++	if (unlikely(reg == SDHCI_MAX_CURRENT))
++		return SDHCI_SPRD_MAX_CUR;
++
++	return readl_relaxed(host->ioaddr + reg);
++}
++
++static inline void sdhci_sprd_writel(struct sdhci_host *host, u32 val, int reg)
++{
++	/* SDHCI_MAX_CURRENT is reserved on Spreadtrum's platform */
++	if (unlikely(reg == SDHCI_MAX_CURRENT))
++		return;
++
++	if (unlikely(reg == SDHCI_SIGNAL_ENABLE || reg == SDHCI_INT_ENABLE))
++		val = val & SDHCI_SPRD_INT_SIGNAL_MASK;
++
++	writel_relaxed(val, host->ioaddr + reg);
++}
++
++static inline void sdhci_sprd_writeb(struct sdhci_host *host, u8 val, int reg)
++{
++	if (unlikely(reg == SDHCI_SOFTWARE_RESET)) {
++		if (readb_relaxed(host->ioaddr + reg) & SDHCI_HW_RESET_CARD)
++			val |= SDHCI_HW_RESET_CARD;
++	}
++
++	writeb_relaxed(val, host->ioaddr + reg);
++}
++
++static inline void sdhci_sprd_sd_clk_off(struct sdhci_host *host)
++{
++	u16 ctrl = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++
++	ctrl &= ~SDHCI_CLOCK_CARD_EN;
++	sdhci_writew(host, ctrl, SDHCI_CLOCK_CONTROL);
++}
++
++static inline void
++sdhci_sprd_set_dll_invert(struct sdhci_host *host, u32 mask, bool en)
++{
++	u32 dll_dly_offset;
++
++	dll_dly_offset = sdhci_readl(host, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
++	if (en)
++		dll_dly_offset |= mask;
++	else
++		dll_dly_offset &= ~mask;
++	sdhci_writel(host, dll_dly_offset, SDHCI_SPRD_REG_32_DLL_DLY_OFFSET);
++}
++
++static inline u32 sdhci_sprd_calc_div(u32 base_clk, u32 clk)
++{
++	u32 div;
++
++	/* select 2x clock source */
++	if (base_clk <= clk * 2)
++		return 0;
++
++	div = (u32) (base_clk / (clk * 2));
++
++	if ((base_clk / div) > (clk * 2))
++		div++;
++
++	if (div > SDHCI_SPRD_CLK_MAX_DIV)
++		div = SDHCI_SPRD_CLK_MAX_DIV;
++
++	if (div % 2)
++		div = (div + 1) / 2;
++	else
++		div = div / 2;
++
++	return div;
++}
++
++static inline void _sdhci_sprd_set_clock(struct sdhci_host *host,
++					unsigned int clk)
++{
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++	u32 div, val, mask;
++
++	div = sdhci_sprd_calc_div(sprd_host->base_rate, clk);
++
++	clk |= ((div & 0x300) >> 2) | ((div & 0xFF) << 8);
++	sdhci_enable_clk(host, clk);
++
++	/* enable auto gate sdhc_enable_auto_gate */
++	val = sdhci_readl(host, SDHCI_SPRD_REG_32_BUSY_POSI);
++	mask = SDHCI_SPRD_BIT_OUTR_CLK_AUTO_EN |
++	       SDHCI_SPRD_BIT_INNR_CLK_AUTO_EN;
++	if (mask != (val & mask)) {
++		val |= mask;
++		sdhci_writel(host, val, SDHCI_SPRD_REG_32_BUSY_POSI);
++	}
++}
++
++static void sdhci_sprd_set_clock(struct sdhci_host *host, unsigned int clock)
++{
++	bool en = false;
++
++	if (clock == 0) {
++		sdhci_writew(host, 0, SDHCI_CLOCK_CONTROL);
++	} else if (clock != host->clock) {
++		sdhci_sprd_sd_clk_off(host);
++		_sdhci_sprd_set_clock(host, clock);
++
++		if (clock <= 400000)
++			en = true;
++		sdhci_sprd_set_dll_invert(host, SDHCI_SPRD_BIT_CMD_DLY_INV |
++					  SDHCI_SPRD_BIT_POSRD_DLY_INV, en);
++	} else {
++		_sdhci_sprd_set_clock(host, clock);
++	}
++}
++
++static unsigned int sdhci_sprd_get_max_clock(struct sdhci_host *host)
++{
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++
++	return clk_round_rate(sprd_host->clk_sdio, ULONG_MAX);
++}
++
++static unsigned int sdhci_sprd_get_min_clock(struct sdhci_host *host)
++{
++	return 400000;
++}
++
++static void sdhci_sprd_set_uhs_signaling(struct sdhci_host *host,
++					 unsigned int timing)
++{
++	u16 ctrl_2;
++
++	if (timing == host->timing)
++		return;
++
++	ctrl_2 = sdhci_readw(host, SDHCI_HOST_CONTROL2);
++	/* Select Bus Speed Mode for host */
++	ctrl_2 &= ~SDHCI_CTRL_UHS_MASK;
++	switch (timing) {
++	case MMC_TIMING_UHS_SDR12:
++		ctrl_2 = SDHCI_CTRL_UHS_SDR12;
++		break;
++	case MMC_TIMING_MMC_HS:
++	case MMC_TIMING_SD_HS:
++	case MMC_TIMING_UHS_SDR25:
++		ctrl_2 = SDHCI_CTRL_UHS_SDR25;
++		break;
++	case MMC_TIMING_UHS_SDR50:
++		ctrl_2 = SDHCI_CTRL_UHS_SDR50;
++		break;
++	case MMC_TIMING_UHS_SDR104:
++		ctrl_2 = SDHCI_CTRL_UHS_SDR104;
++		break;
++	case MMC_TIMING_UHS_DDR50:
++	case MMC_TIMING_MMC_DDR52:
++		ctrl_2 = SDHCI_CTRL_UHS_DDR50;
++		break;
++	case MMC_TIMING_MMC_HS200:
++		ctrl_2 = SDHCI_SPRD_CTRL_HS200;
++		break;
++	case MMC_TIMING_MMC_HS400:
++		ctrl_2 = SDHCI_SPRD_CTRL_HS400;
++		break;
++	default:
++		break;
++	}
++
++	sdhci_writew(host, ctrl_2, SDHCI_HOST_CONTROL2);
++}
++
++static void sdhci_sprd_hw_reset(struct sdhci_host *host)
++{
++	int val;
++
++	/* Note: don't use sdhci_readb/writeb() API here */
++	val = readb_relaxed(host->ioaddr + SDHCI_SOFTWARE_RESET);
++	val &= ~SDHCI_HW_RESET_CARD;
++	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
++	udelay(10);
++
++	val |= SDHCI_HW_RESET_CARD;
++	writeb_relaxed(val, host->ioaddr + SDHCI_SOFTWARE_RESET);
++	udelay(300);
++}
++
++static struct sdhci_ops sdhci_sprd_ops = {
++	.read_l = sdhci_sprd_readl,
++	.write_l = sdhci_sprd_writel,
++	.write_b = sdhci_sprd_writeb,
++	.set_clock = sdhci_sprd_set_clock,
++	.get_max_clock = sdhci_sprd_get_max_clock,
++	.get_min_clock = sdhci_sprd_get_min_clock,
++	.set_bus_width = sdhci_set_bus_width,
++	.reset = sdhci_reset,
++	.set_uhs_signaling = sdhci_sprd_set_uhs_signaling,
++	.hw_reset = sdhci_sprd_hw_reset,
++};
++
++static const struct sdhci_pltfm_data sdhci_sprd_pdata = {
++	.quirks = SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK,
++	.quirks2 = SDHCI_QUIRK2_BROKEN_HS200,
++	.ops = &sdhci_sprd_ops,
++};
++
++static int sdhci_sprd_probe(struct platform_device *pdev)
++{
++	struct sdhci_host *host;
++	struct sdhci_sprd_host *sprd_host;
++	struct clk *clk;
++	int ret = 0;
++
++	host = sdhci_pltfm_init(pdev, &sdhci_sprd_pdata, sizeof(*sprd_host));
++	if (IS_ERR(host))
++		return PTR_ERR(host);
++
++	host->dma_mask = DMA_BIT_MASK(64);
++	pdev->dev.dma_mask = &host->dma_mask;
++
++	host->mmc->caps = MMC_CAP_SD_HIGHSPEED | MMC_CAP_MMC_HIGHSPEED |
++		MMC_CAP_ERASE | MMC_CAP_CMD23;
++	ret = mmc_of_parse(host->mmc);
++	if (ret)
++		goto pltfm_free;
++
++	sprd_host = TO_SPRD_HOST(host);
++
++	clk = devm_clk_get(&pdev->dev, "sdio");
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto pltfm_free;
++	}
++	sprd_host->clk_sdio = clk;
++	sprd_host->base_rate = clk_get_rate(sprd_host->clk_sdio);
++	if (!sprd_host->base_rate)
++		sprd_host->base_rate = SDHCI_SPRD_CLK_DEF_RATE;
++
++	clk = devm_clk_get(&pdev->dev, "enable");
++	if (IS_ERR(clk)) {
++		ret = PTR_ERR(clk);
++		goto pltfm_free;
++	}
++	sprd_host->clk_enable = clk;
++
++	ret = clk_prepare_enable(sprd_host->clk_sdio);
++	if (ret)
++		goto pltfm_free;
++
++	clk_prepare_enable(sprd_host->clk_enable);
++	if (ret)
++		goto clk_disable;
++
++	sdhci_sprd_init_config(host);
++
++	host->version = sdhci_readw(host, SDHCI_HOST_VERSION);
++	sprd_host->version = ((host->version & SDHCI_VENDOR_VER_MASK) >>
++			       SDHCI_VENDOR_VER_SHIFT);
++
++	pm_runtime_get_noresume(&pdev->dev);
++	pm_runtime_set_active(&pdev->dev);
++	pm_runtime_enable(&pdev->dev);
++	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
++	pm_runtime_use_autosuspend(&pdev->dev);
++	pm_suspend_ignore_children(&pdev->dev, 1);
++
++	ret = sdhci_add_host(host);
++	if (ret) {
++		dev_err(&pdev->dev, "failed to add mmc host: %d\n", ret);
++		goto pm_runtime_disable;
++	}
++
++	pm_runtime_mark_last_busy(&pdev->dev);
++	pm_runtime_put_autosuspend(&pdev->dev);
++
++	return 0;
++
++pm_runtime_disable:
++	pm_runtime_disable(&pdev->dev);
++	pm_runtime_set_suspended(&pdev->dev);
++
++	clk_disable_unprepare(sprd_host->clk_enable);
++
++clk_disable:
++	clk_disable_unprepare(sprd_host->clk_sdio);
++
++pltfm_free:
++	sdhci_pltfm_free(pdev);
++	return ret;
++}
++
++static int sdhci_sprd_remove(struct platform_device *pdev)
++{
++	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++	struct mmc_host *mmc = host->mmc;
++
++	mmc_remove_host(mmc);
++	clk_disable_unprepare(sprd_host->clk_sdio);
++	clk_disable_unprepare(sprd_host->clk_enable);
++
++	mmc_free_host(mmc);
++
++	return 0;
++}
++
++static const struct of_device_id sdhci_sprd_of_match[] = {
++	{ .compatible = "sprd,sdhci-r11", },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, sdhci_sprd_of_match);
++
++#ifdef CONFIG_PM
++static int sdhci_sprd_runtime_suspend(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++
++	sdhci_runtime_suspend_host(host);
++
++	clk_disable_unprepare(sprd_host->clk_sdio);
++	clk_disable_unprepare(sprd_host->clk_enable);
++
++	return 0;
++}
++
++static int sdhci_sprd_runtime_resume(struct device *dev)
++{
++	struct sdhci_host *host = dev_get_drvdata(dev);
++	struct sdhci_sprd_host *sprd_host = TO_SPRD_HOST(host);
++
++	clk_prepare_enable(sprd_host->clk_enable);
++	clk_prepare_enable(sprd_host->clk_sdio);
++
++	sdhci_runtime_resume_host(host);
++
++	return 0;
++}
++#endif
++
++static const struct dev_pm_ops sdhci_sprd_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++				pm_runtime_force_resume)
++	SET_RUNTIME_PM_OPS(sdhci_sprd_runtime_suspend,
++			   sdhci_sprd_runtime_resume, NULL)
++};
++
++static struct platform_driver sdhci_sprd_driver = {
++	.probe = sdhci_sprd_probe,
++	.remove = sdhci_sprd_remove,
++	.driver = {
++		.name = "sdhci_sprd_r11",
++		.of_match_table = of_match_ptr(sdhci_sprd_of_match),
++		.pm = &sdhci_sprd_pm_ops,
++	},
++};
++module_platform_driver(sdhci_sprd_driver);
++
++MODULE_DESCRIPTION("Spreadtrum sdio host controller r11 driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:sdhci-sprd-r11");
+-- 
+2.7.4
 
-Well, you use bugzilla, but somebody else uses something else. This
-fragmentation is kernel development practices does not allow to build
-further automation on top. We can't do a personal solution for each
-developer. For now the greatest common divisor seems to be freeform
-emails on mailing lists...
-
-A good example is "I submitted 7 kernel bugs to bugzilla, but nobody
-answered me" email thread from today:
-https://groups.google.com/forum/#!topic/syzkaller/OnbMQbbE4gQ
