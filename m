@@ -2,118 +2,103 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 071E8C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:37:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8AFC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B264720896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:37:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Q75W1KEY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B264720896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 797C720896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:40:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797C720896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=icdsoft.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936378AbeFORhV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:37:21 -0400
-Received: from mail.efficios.com ([167.114.142.138]:49784 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936136AbeFORhU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:37:20 -0400
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B828622B412;
-        Fri, 15 Jun 2018 13:37:19 -0400 (EDT)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id qtk03QvMmmau; Fri, 15 Jun 2018 13:37:19 -0400 (EDT)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 451D522B40F;
-        Fri, 15 Jun 2018 13:37:19 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 451D522B40F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1529084239;
-        bh=EaDSR6aNKInsrOpzhKzh57NIKqnBCH6lcbQa6v9j4wE=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=Q75W1KEYx6wmlA9EWvFQAwg5NtevO8zTVCOuOYW58NOXzYY7YgpM9zj2vuBKxMfwc
-         +lLh7x/bKq5E90uZ124cSpzcKU2Hmsu3XUdf3Cre/wP+SBGI5ZRqiYF2GKhCLYzKin
-         zpOG3AepNgHpQ1nAwklV8Mupl+tWPqpLSQRgvFx/GITYMvBE3r1wirgoQUCTSB5tDN
-         AkIKGi7iWPLhrx81ubm9YiRW6dj8kzgFH8ZhNYD53aWTyM4Sxj5YQdix5bXrVYGSxJ
-         KgI1SXsOvm/IytpqK64u4g9rB2rn9yVSRIyRmPnv+AiU5wKoyBKUXu6/RMIoD4wLXB
-         83XUA5hdhcl/Q==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id OmnmOT05UXnl; Fri, 15 Jun 2018 13:37:19 -0400 (EDT)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 3036622B408;
-        Fri, 15 Jun 2018 13:37:19 -0400 (EDT)
-Date:   Fri, 15 Jun 2018 13:37:19 -0400 (EDT)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     James Hogan <jhogan@kernel.org>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        linux-mips <linux-mips@linux-mips.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Message-ID: <1373980460.14412.1529084239034.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20180615105809.GB7603@jamesdev>
-References: <20180614235211.31357-1-paul.burton@mips.com> <20180614235211.31357-5-paul.burton@mips.com> <20180615105809.GB7603@jamesdev>
-Subject: Re: [PATCH 4/4] rseq/selftests: Implement MIPS support
+        id S966124AbeFORkI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:40:08 -0400
+Received: from us.icdsoft.com ([192.252.146.184]:39836 "EHLO us.icdsoft.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966054AbeFORkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 13:40:06 -0400
+Received: (qmail 26978 invoked by uid 1001); 15 Jun 2018 17:40:04 -0000
+Received: from unknown (HELO ?94.155.37.249?) (famzah@94.155.37.249)
+  by 192.252.159.165 with ESMTPA; 15 Jun 2018 17:40:04 -0000
+Subject: Re: Cgroups "pids" controller does not update "pids.current" count
+ immediately
+To:     Tejun Heo <tj@kernel.org>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <77af3805-e912-2664-f347-e30c0919d0c4@icdsoft.com>
+ <20180614150650.GU1351649@devbig577.frc2.facebook.com>
+ <7860105c-553a-534b-57fc-222d931cb972@icdsoft.com>
+ <20180615154140.GV1351649@devbig577.frc2.facebook.com>
+ <1d635d1d-6152-ecfc-d235-147ff1fe7c95@icdsoft.com>
+ <20180615161647.GW1351649@devbig577.frc2.facebook.com>
+From:   Ivan Zahariev <famzah@icdsoft.com>
+Message-ID: <6c2c9bfb-3175-b9ec-cf39-c9d4ebf654b2@icdsoft.com>
+Date:   Fri, 15 Jun 2018 20:40:02 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
-Thread-Topic: rseq/selftests: Implement MIPS support
-Thread-Index: sJDkoLXztL0rd01o4PFqQYpfV3YGlA==
+In-Reply-To: <20180615161647.GW1351649@devbig577.frc2.facebook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-bg
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Jun 15, 2018, at 6:58 AM, James Hogan jhogan@kernel.org wrote:
+Hello,
 
-> On Thu, Jun 14, 2018 at 04:52:10PM -0700, Paul Burton wrote:
->> +#define __RSEQ_ASM_DEFINE_TABLE(version, flags,	start_ip,			\
-> 
-> Nit: technically all these \'s are on 81st column...
-> 
->> +#define __RSEQ_ASM_DEFINE_ABORT(table_label, label, teardown,			\
->> +				abort_label, version, flags,			\
->> +				start_ip, post_commit_offset, abort_ip)		\
->> +		".balign 32\n\t"						\
-> 
-> ARM doesn't do this for DEFINE_ABORT. Is it intentional that we do for
-> MIPS?
+On 15.6.2018 г. 19:16 ч., Tejun Heo wrote:
+> On Fri, Jun 15, 2018 at 07:07:27PM +0300, Ivan Zahariev wrote:
+>> I understand all concerns and design decisions. However, having
+>> RLIMIT_NPROC support combined with "cgroups" hierarchy would be very
+>> handy.
+>>
+>> Does it make sense that you introduce "nproc.current" and
+>> "nproc.max" metrics which work in the same atomic, real-time way
+>> like RLIMIT_NPROC? Or make this in a new "nproc" controller?
+> I'm skeptical for two reasons.
+>
+> 1. That doesn't sound much like a resource control problem but more of
+>     a policy enforcement problem.
+>
+> 2. and it's difficult to see why such policies would need to be that
+>     strict.  Where is the requirement coming from?
+>
 
-Given that include/uapi/linux/rseq.h declares struct rseq_cs as
-__attribute__((aligned(4 * sizeof(__u64)))), and considering this
-comment:
+The lazy pids accounting + modern fast CPUs makes the "pids.current" 
+metric practically unusable for resource limiting in our case. For a 
+test, when we started and ended one single process very quickly, we saw 
+"pids.current" equal up to 185 (while the correct value at all time is 
+either 0 or 1). If we want that a "cgroup" can spawn maximum 50 
+processes, we should use some high value like 300 for "pids.max", in 
+order to compensate the pids uncharge lag (and this depends on the speed 
+of the CPU and how busy the system is).
 
-/*
- * struct rseq_cs is aligned on 4 * 8 bytes to ensure it is always
- * contained within a single cache-line. It is usually declared as
- * link-time constant data.
- */
+Our use-case is for a shared web hosting service. Our customers start a 
+CGI process for each PHP web request and therefore process start/end 
+happens at a very high rate. We don't want customers to be able to 
+launch too many CGI processes (NPROC limit) because this exhausts the 
+web & database servers, and probably obsesses Linux kernel resources 
+(like total "opened files" per user). Furthermore, some users are 
+malicious and launch fork-bombs and other resource-exhaustion attacks.
 
-The .balign 32 is the right thing to do here. I will add a .balign 32
-to ARM selftests code as well.
+You may be right that we enforce a policy rather than resource control. 
+This has worked for us for 15+ years now. The motivation is that a 
+global RLIMIT_NPROC easily let's us limit all system and Linux kernel 
+resources "per customer" ("cgroups" allows us to limit only certain 
+system resources). Additionally, not all user-space daemons allow for a 
+granular "per user" limit or proper grouping (for example, MySQL has 
+only users, and no "per customer" groups support). Now we want to have 
+different "cgroups" hierarchies for a customer (SSH, CGI, Crond), each 
+with their own RLIMIT_NPROC, and a total RLIMIT_NPROC for the parent 
+"per customer" cgroup.
 
-Thanks,
+Excuse me for the lengthy post :-)
 
-Mathieu
+--
+Ivan
 
-> 
-> Thanks
-> James
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
