@@ -2,103 +2,104 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A219C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:47:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9053BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24B25208DF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:47:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24B25208DF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id F1BF9208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:50:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="QHx/biTE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1BF9208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966255AbeFORrz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:47:55 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:41926 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966093AbeFORry (ORCPT
+        id S936365AbeFORuU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:50:20 -0400
+Received: from mail.efficios.com ([167.114.142.138]:50294 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932194AbeFORuS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:47:54 -0400
-Received: by mail-pl0-f67.google.com with SMTP id w8-v6so4203856ply.8
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 10:47:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=vBWqmGCnEdW8q+xVN4WPLsyDC4Nb9xk+5V5d4+S151A=;
-        b=eBVGz+oyStkHUNa0E+B4rzFKgiy7XLtm/1blGIAGPPTOGXU07gdzCipx4H2T3JDflP
-         xPdJGutf3XUSpzQV8aHyr7foZMu+whp6oPtIxHaMlEvNa0ER2saLExVzytOBV/xogccY
-         yt+2sZ8u9UYndSBMe8JqVrHo2J68zDhcdIhv6Y0AG9BGeCEZUIl2jOsp8siHgF5xIn7M
-         cDyXOAW5eXY5gn/9cN0CC/vZC2OpvFWo6cEIaLXRcxNExUBXTrBzw0h/vXJEPumScPOH
-         nSZMptp5atCCQT/N7RXDd1dHfcddYdVBDAJzbATElHbdRpE6r1A2swZiyUnkTXEp/VIa
-         JKog==
-X-Gm-Message-State: APt69E3+uCMWb8AaVzyl8nqy9wAoW4GF3la3OzEikfcc+2BIi2BdYTu+
-        Teak3oKCl1qDTX/M3fwy5w0gCQ==
-X-Google-Smtp-Source: ADUXVKI+oAfyILZb8tLuT5dG3ijamZZYb+XTCdGDMCXilIZZqyOruwYvbkoeRCqneCuzNN2FvCI6iQ==
-X-Received: by 2002:a17:902:a610:: with SMTP id u16-v6mr3091081plq.195.1529084873292;
-        Fri, 15 Jun 2018 10:47:53 -0700 (PDT)
-Received: from mka.mtv.corp.google.com ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id v15-v6sm5492174pff.120.2018.06.15.10.47.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 10:47:52 -0700 (PDT)
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Fri, 15 Jun 2018 13:50:18 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 46AED22B6BD;
+        Fri, 15 Jun 2018 13:50:18 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id IlI_9IyM5Puz; Fri, 15 Jun 2018 13:50:17 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id D91ED22B6BA;
+        Fri, 15 Jun 2018 13:50:17 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D91ED22B6BA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1529085017;
+        bh=ugdPHqB4NyO3WnoOGIXshz4+Q97pPFWbQNxYdkNKtao=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=QHx/biTEhrn4xilx6asQ3jJvfGiak5RsmmLpYTS2XaawS4AfraqsvB1dNjYMuquUs
+         hVNFfw2DfyWyXBRy7lClHPnEzrTD7atA+xB5GU66enCwKTRBZnsLD7K8HWiyxh7Il0
+         MT0qnPlbP6atjPO4LFYUo/WVfrdbAnvU1Wz4da1xtpcE9kO778eg8OxL2R83PstdXY
+         pVYZC2WLc+3KH9f9T4TWN5ZF06D2AK50VsyBDU8Pa08054dbWN4VFcS+rmMCjt81et
+         8lRckuQEX5Lm6U3u6LeChHNlPI+Vp0SxhmaO97eecSs1vEUPtjw1QeUH0YY0VtVBbn
+         0aIifCLRv62Tg==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id TZlTSmDtuOgA; Fri, 15 Jun 2018 13:50:17 -0400 (EDT)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id C441D22B6B3;
+        Fri, 15 Jun 2018 13:50:17 -0400 (EDT)
+Date:   Fri, 15 Jun 2018 13:50:17 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Florian Weimer <fweimer@redhat.com>
+Cc:     Pavel Machek <pavel@ucw.cz>, carlos <carlos@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>
-Cc:     x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH] kvm: x86: mmu: Add cast to negated bitmasks in update_permission_bitmask()
-Date:   Fri, 15 Jun 2018 10:47:31 -0700
-Message-Id: <20180615174731.47588-1-mka@chromium.org>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        libc-alpha <libc-alpha@sourceware.org>
+Message-ID: <422468177.14427.1529085017684.JavaMail.zimbra@efficios.com>
+In-Reply-To: <b5c0a91b-b428-7807-0f16-97f15e632bdb@redhat.com>
+References: <1084280721.10859.1528746558696.JavaMail.zimbra@efficios.com> <31fc101a-295b-067b-1a82-7e9e509fc92f@redhat.com> <305409897.10888.1528747473727.JavaMail.zimbra@efficios.com> <091061df-3482-8762-30e4-feaf3417be11@redhat.com> <417742741.11550.1528821084084.JavaMail.zimbra@efficios.com> <20180614122759.GB8798@amd> <894222691.12973.1528981314012.JavaMail.zimbra@efficios.com> <b5c0a91b-b428-7807-0f16-97f15e632bdb@redhat.com>
+Subject: Re: Restartable Sequences system call merged into Linux
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.8_GA_2096 (ZimbraWebClient - FF52 (Linux)/8.8.8_GA_1703)
+Thread-Topic: Restartable Sequences system call merged into Linux
+Thread-Index: FxHJxO2X/PkHE33fjREx7yFbJyZx8w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-update_permission_bitmask() negates u8 bitmask values and assigns them
-to variables of type u8. Since the MSB is set in the bitmask values the
-compiler expands the negated values to int, which then are assigned to
-u8 variables. Cast the negated values back to u8.
+----- On Jun 15, 2018, at 1:09 AM, Florian Weimer fweimer@redhat.com wrote:
 
-This fixes several warnings like this when building with clang:
+> On 06/14/2018 03:01 PM, Mathieu Desnoyers wrote:
+>> Another alternative would be to somehow let glibc handle the registration,
+>> perhaps only doing it for applications expressing their interest for rseq.
+> 
+> That's not really possible.  We can't rely on the visibility of symbol
+> bindings due to lazy binding and hidden visibility.  Registration of
+> intent by other means will not work because if it is done from user
+> code, some other library may have already launched a thread at this point.
+> 
+> (It's also a moot point if we want to use restartable sequences in glibc
+> itself.)
 
-arch/x86/kvm/mmu.c:4266:39: error: implicit conversion from 'int' to 'u8'
-  (aka 'unsigned char') changes value from -205 to 51 [-Werror,
-  -Wconstant-conversion]
-    u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-       ~~                               ^~
+Considering that we can expect the glibc memory allocator to benefit from
+rseq to speed up its memory allocator, this means pretty much any application
+linked against glibc *will* end up using rseq indirectly.
 
-(gcc also raises a warning (see https://godbolt.org/g/6JWfWk), however it
-doesn't seem to be universally enabled)
+Thanks,
 
-Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
----
- arch/x86/kvm/mmu.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Mathieu
 
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index d634f0332c0f..a83817fdbd87 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4275,11 +4275,11 @@ static void update_permission_bitmask(struct kvm_vcpu *vcpu,
- 		 */
- 
- 		/* Faults from writes to non-writable pages */
--		u8 wf = (pfec & PFERR_WRITE_MASK) ? ~w : 0;
-+		u8 wf = (pfec & PFERR_WRITE_MASK) ? (u8)~w : 0;
- 		/* Faults from user mode accesses to supervisor pages */
--		u8 uf = (pfec & PFERR_USER_MASK) ? ~u : 0;
-+		u8 uf = (pfec & PFERR_USER_MASK) ? (u8)~u : 0;
- 		/* Faults from fetches of non-executable pages*/
--		u8 ff = (pfec & PFERR_FETCH_MASK) ? ~x : 0;
-+		u8 ff = (pfec & PFERR_FETCH_MASK) ? (u8)~x : 0;
- 		/* Faults from kernel mode fetches of user pages */
- 		u8 smepf = 0;
- 		/* Faults from kernel mode accesses of user pages */
 -- 
-2.18.0.rc1.244.gcf134e6275-goog
-
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
