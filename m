@@ -2,241 +2,150 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4A659C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:06:20 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 07F3EC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E129C208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:06:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E129C208B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id B9768208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:09:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9768208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936232AbeFOJGS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 05:06:18 -0400
-Received: from mx2.suse.de ([195.135.220.15]:44154 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755675AbeFOJGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 05:06:08 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 9C970AC89;
-        Fri, 15 Jun 2018 09:06:04 +0000 (UTC)
-Subject: Re: [PATCH v3 05/27] docs: Fix some broken references
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>
-Cc:     Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        x86@kernel.org, linux-input@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@zh-kernel.org,
-        user-mode-linux-devel@lists.sourceforge.net,
-        user-mode-linux-user@lists.sourceforge.net,
-        linux-xtensa@linux-xtensa.org, linux-block@vger.kernel.org,
-        keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        patches@opensource.cirrus.com, linux-bcache@vger.kernel.org,
-        linux-usb@vger.kernel.org, devel@driverdev.osuosl.org,
-        xen-devel@lists.xenproject.org, cgroups@vger.kernel.org,
-        selinux@tycho.nsa.gov, linux-security-module@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <cover.1528990947.git.mchehab+samsung@kernel.org>
- <29adfe49571ad1395871a4f72154f45ef361297f.1528990947.git.mchehab+samsung@kernel.org>
-From:   Coly Li <colyli@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colyli@suse.de; prefer-encrypt=mutual; keydata=
- xsFNBFYX6S8BEAC9VSamb2aiMTQREFXK4K/W7nGnAinca7MRuFUD4JqWMJ9FakNRd/E0v30F
- qvZ2YWpidPjaIxHwu3u9tmLKqS+2vnP0k7PRHXBYbtZEMpy3kCzseNfdrNqwJ54A430BHf2S
- GMVRVENiScsnh4SnaYjFVvB8SrlhTsgVEXEBBma5Ktgq9YSoy5miatWmZvHLFTQgFMabCz/P
- j5/xzykrF6yHo0rHZtwzQzF8rriOplAFCECp/t05+OeHHxjSqSI0P/G79Ll+AJYLRRm9til/
- K6yz/1hX5xMToIkYrshDJDrUc8DjEpISQQPhG19PzaUf3vFpmnSVYprcWfJWsa2wZyyjRFkf
- J51S82WfclafNC6N7eRXedpRpG6udUAYOA1YdtlyQRZa84EJvMzW96iSL1Gf+ZGtRuM3k49H
- 1wiWOjlANiJYSIWyzJjxAd/7Xtiy/s3PRKL9u9y25ftMLFa1IljiDG+mdY7LyAGfvdtIkanr
- iBpX4gWXd7lNQFLDJMfShfu+CTMCdRzCAQ9hIHPmBeZDJxKq721CyBiGAhRxDN+TYiaG/UWT
- 7IB7LL4zJrIe/xQ8HhRO+2NvT89o0LxEFKBGg39yjTMIrjbl2ZxY488+56UV4FclubrG+t16
- r2KrandM7P5RjR+cuHhkKseim50Qsw0B+Eu33Hjry7YCihmGswARAQABzRhDb2x5IExpIDxj
- b2x5bGlAc3VzZS5kZT7CwX8EEwEIACkFAlYX6ZACGyMFCQlmAYAHCwkIBwMCAQYVCAIJCgsE
- FgIDAQIeAQIXgAAKCRDHOQeTa334/CncD/9B97EIjcDOm0TS164bpMlsbZWEm8GQnV6nVzm8
- QsywPRM8S8nqkqX1atTYl/fTdJsasH8mgryUqL0eHBPs5RmJhDk3YgYsTrzbOjMdsdRwv24W
- J5RXdulRag2XDPIhSP7rWsOSh66gljdAp8XQQZD0zFXi4IytoAuLtx8RMjzzKk1iP6uz8MIv
- em7iFu6NYcHd3cmvSPo7CnBVaG0dZ6P2p2gS7ydSWOGsWkNh/XM4ojJaX1ZdCeFR0XLS76Gi
- 6e01DoN2UsqZE/TQu1czYMMA1uM/Es6ZTYgobTrrnNB79ctqgtbBrjME5sOHLX40ccbBI3QB
- Ta4opSp8VqUMXw/yd5ckLPocnkJBTVxuaOfRhpxr6gWeudrkMetMj+39yeklskP7up0JvAUG
- 7/HjjqwWR7xAaZHmZORYsIxJ9ploBb8eSqHHx+7489ZDNLP+WCsAonpKTdJNAzGJClnLFxKS
- DY4cOPs7o4IFBk6dVXJWMqyLGwmMQ51Pq6BID4epaAuuBAL6x7n7NrFPuS68Fn/VaxqMEld9
- L2eCi4cv++1AJyMF3iQKT56I8BjHEuf0wo1tmZ3BgBT19xRsEl7YItixxtYQm66Pb4lSQQmE
- Ep+uQNwaqPpeAU+vkDg/0Q+dhPTsvwx0OAI30HwhuzNA8OIfHBx7dJNm0b0fg5x0pg3LDM7B
- TQRWF+kvARAA2T/tnJeA0RWkmgZrNPFvP7JnOU9gjmIQKMoGZ+9awew45pdmXb6y0Y0fEG59
- EP9i9oBlFXOt6SZ2645V0sdi3wBRNEpX2CCddWhXRfcO0b6lgckIwyaK92dH1rzxMaZTYDL8
- aQ9FNEK1U+XSBk8fYWnXowpf7oNPS6+jD0J/muPqrGkVsIAkh2iLg5B98yNTCV4ql1xSlMyf
- xcseke9q6ojDxx9p38JjLusDlwF2+/rF42c+T6PRiYNjnBHPq6VLSlCRsnkLJwg8VHKiV2Qw
- Yvxp4TwnK2kLqokOxBlriX45Odb2iP61uG2ZAPchDwfawWJ4G8+3EMplLH8bk0/DkpYcYz95
- eGSGRSiIQ2kHmTI/KbpgXxFVMoheilUn4HzUP+T6TEeP6Zhm0aqwABJYa0T2ykJwpBlg6/Mx
- vgIzdSheqx2hYACDu07WfhdvI6uK3i5Lq9DebUBcMMBcMc0TnXix7mYy+3hLXJzZ80pFx3My
- 5FeJEN/r6/+xpuuZkH51aYOiacKVa2w2EHjhZcWfPhhEWOQ2oOCoCmv+HEmV9sf+fipEMfcB
- 8GnJMOYAwrwHWfkPNZ5urUcRGAQYlQ0GWKju97LYE2cq5McpFG0CMvDyPoO1zAwjJz4g53EK
- oH/eikd3L8OMDfEK4AOsUaPMTnNgt1+40zEFMrQs/dDMldUAEQEAAcLBZQQYAQgADwUCVhfp
- LwIbDAUJCWYBgAAKCRDHOQeTa334/PtREACDN8W/pHeHyPW/mTt6MEe/GICG5YdlBW5ft7HY
- Cf6rTz+uLZolGc5SYKuJJ0JC/L2Ifh3BWmwLIOxV868KB3oEfmGszBY+4n/icLyIEAkkthBb
- 2V5sP5KgB3bOg7mSFBxfHi2pyO9K9d+Lr+UkORjCGyV33QFrcN+OQdPDactontnQglB7xm2K
- phGWqxoqepHCqFIulZ3yKGhQhmdpyz0J19Ry6GkxPE85MG/NC98D5+4Yn/V3G+yZpbGsuFhE
- CP26JvdXh1jNCUdU46pEjZwu0GXBIo6r1cb1v+swfYB86NeFUHWtvxamh8i6RBl1FLDhN6xb
- r9f7M++xoADyzPQYQPQUxWK+iG6lz3qVVq5312z/is3fcdyESPNs09DMT43xCCBr9UOMq6dZ
- IC9EsSeMYv4librfuSRqH4R0MuVbVWLJFg/Q7s+nbPb2YjhqIYr51hBDyXpzUDoIz43maIPk
- UmCNKa43mNFktMrwU21J5lVXEwBuTY6JlHOAl0Fgo28X+eTa8fx2Uiz9OVgWe03ebJGIGowe
- XTgqVWJMsKM1tmW+QFmgtczDGRYCZ6OQYpqt0SoTg1yx5MN4RzUtlLka2qLfPiOGUUN3qNJ5
- nP+spvF+s+dHtLjjhy7AL86N01a6S0rwaClVVv0XTucvIntwccIx0CZfUKlfn5BWnB64Ig==
-Message-ID: <4448f906-39d8-ac44-c116-cd702c4a9096@suse.de>
-Date:   Fri, 15 Jun 2018 17:05:40 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.8.0
+        id S936199AbeFOJJO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 05:09:14 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60686 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S936163AbeFOJJM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 05:09:12 -0400
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5F94lLB099890
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 05:09:12 -0400
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jm88pdh7c-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 05:09:11 -0400
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Fri, 15 Jun 2018 10:09:09 +0100
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Jun 2018 10:09:07 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5F996n129098006
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 15 Jun 2018 09:09:06 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B8FBA4053;
+        Fri, 15 Jun 2018 09:59:54 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id EC141A405E;
+        Fri, 15 Jun 2018 09:59:53 +0100 (BST)
+Received: from oc3784624756.ibm.com (unknown [9.152.212.222])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 15 Jun 2018 09:59:53 +0100 (BST)
+Subject: Re: [PATCH 2/3] perf alias: Rebuild alias expression string to make
+ it comparable
+To:     Jiri Olsa <jolsa@redhat.com>, Paul Clarke <pc@us.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org, brueckner@linux.vnet.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+References: <20180614114845.41221-1-tmricht@linux.ibm.com>
+ <20180614114845.41221-2-tmricht@linux.ibm.com>
+ <809ff562-511d-26e9-bac3-e8f7b84666e5@us.ibm.com>
+ <20180615081242.GF5082@krava>
+From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM LTC
+Date:   Fri, 15 Jun 2018 11:09:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <29adfe49571ad1395871a4f72154f45ef361297f.1528990947.git.mchehab+samsung@kernel.org>
+In-Reply-To: <20180615081242.GF5082@krava>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061509-0020-0000-0000-0000029B2111
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061509-0021-0000-0000-000020E756B2
+Message-Id: <f78bbadb-047d-afad-eac6-b1236bd56c81@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806150097
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/6/15 12:08 AM, Mauro Carvalho Chehab wrote:
-> As we move stuff around, some doc references are broken. Fix some of
-> them via this script:
-> 	./scripts/documentation-file-ref-check --fix
+On 06/15/2018 10:12 AM, Jiri Olsa wrote:
+> On Thu, Jun 14, 2018 at 08:53:14AM -0500, Paul Clarke wrote:
 > 
-> Manually checked if the produced result is valid, removing a few
-> false-positives.
+> SNIP
 > 
-> Acked-by: Takashi Iwai <tiwai@suse.de>
-> Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Charles Keepax <ckeepax@opensource.wolfsonmicro.com>
-> Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-> ---
->  .../admin-guide/kernel-parameters.txt         |  4 ++--
->  .../bindings/input/rotary-encoder.txt         |  2 +-
->  Documentation/driver-api/gpio/consumer.rst    |  2 +-
->  Documentation/kprobes.txt                     |  4 ++--
->  Documentation/trace/coresight.txt             |  2 +-
->  Documentation/trace/ftrace-uses.rst           |  2 +-
->  Documentation/trace/histogram.txt             |  2 +-
->  Documentation/trace/intel_th.rst              |  2 +-
->  Documentation/trace/tracepoint-analysis.rst   |  6 +++---
->  Documentation/translations/ja_JP/howto.rst    |  4 ++--
->  .../translations/zh_CN/magic-number.txt       |  4 ++--
->  .../zh_CN/video4linux/omap3isp.txt            |  4 ++--
->  MAINTAINERS                                   | 20 +++++++++----------
->  arch/Kconfig                                  |  2 +-
->  arch/arm/include/asm/cacheflush.h             |  2 +-
->  arch/arm64/include/asm/cacheflush.h           |  2 +-
->  arch/microblaze/include/asm/cacheflush.h      |  2 +-
->  arch/um/Kconfig.um                            |  2 +-
->  arch/unicore32/include/asm/cacheflush.h       |  2 +-
->  arch/x86/entry/vsyscall/vsyscall_64.c         |  2 +-
->  arch/xtensa/include/asm/cacheflush.h          |  4 ++--
->  block/Kconfig                                 |  2 +-
->  certs/Kconfig                                 |  2 +-
->  crypto/asymmetric_keys/asymmetric_type.c      |  2 +-
->  crypto/asymmetric_keys/signature.c            |  2 +-
->  drivers/char/Kconfig                          |  2 +-
->  drivers/clk/clk.c                             |  4 ++--
->  drivers/clk/ingenic/cgu.h                     |  2 +-
->  drivers/gpu/vga/Kconfig                       |  2 +-
->  drivers/gpu/vga/vgaarb.c                      |  2 +-
->  drivers/input/joystick/Kconfig                | 10 +++++-----
->  drivers/input/joystick/walkera0701.c          |  2 +-
->  drivers/input/misc/Kconfig                    |  4 ++--
->  drivers/input/misc/rotary_encoder.c           |  2 +-
->  drivers/input/mouse/Kconfig                   |  6 +++---
->  drivers/input/mouse/alps.c                    |  2 +-
->  drivers/input/touchscreen/wm97xx-core.c       |  2 +-
->  drivers/lightnvm/pblk-rb.c                    |  2 +-
->  drivers/md/bcache/Kconfig                     |  2 +-
->  drivers/md/bcache/btree.c                     |  2 +-
->  drivers/md/bcache/extents.c                   |  2 +-
->  drivers/media/dvb-core/dvb_ringbuffer.c       |  2 +-
->  drivers/media/pci/meye/Kconfig                |  2 +-
->  drivers/media/platform/pxa_camera.c           |  4 ++--
->  .../soc_camera/sh_mobile_ceu_camera.c         |  2 +-
->  drivers/media/radio/Kconfig                   |  2 +-
->  drivers/media/radio/si470x/Kconfig            |  2 +-
->  drivers/media/usb/dvb-usb-v2/lmedm04.c        |  2 +-
->  drivers/media/usb/zr364xx/Kconfig             |  2 +-
->  drivers/parport/Kconfig                       |  6 +++---
->  drivers/staging/media/bcm2048/TODO            |  2 +-
->  include/keys/asymmetric-subtype.h             |  2 +-
->  include/keys/asymmetric-type.h                |  2 +-
->  include/linux/assoc_array.h                   |  2 +-
->  include/linux/assoc_array_priv.h              |  2 +-
->  include/linux/circ_buf.h                      |  2 +-
->  include/linux/ftrace.h                        |  2 +-
->  include/linux/rculist_nulls.h                 |  2 +-
->  include/uapi/linux/prctl.h                    |  2 +-
->  include/xen/interface/io/kbdif.h              |  2 +-
->  kernel/cgroup/cpuset.c                        |  2 +-
->  kernel/trace/Kconfig                          | 16 +++++++--------
->  lib/Kconfig                                   |  2 +-
->  security/selinux/hooks.c                      |  2 +-
->  sound/core/Kconfig                            |  4 ++--
->  sound/drivers/Kconfig                         |  4 ++--
->  sound/pci/Kconfig                             | 10 +++++-----
->  tools/include/uapi/linux/prctl.h              |  2 +-
->  tools/lib/api/fs/fs.c                         |  2 +-
->  tools/perf/util/bpf-prologue.c                |  2 +-
->  .../config/custom-timeline-functions.cfg      |  4 ++--
->  71 files changed, 113 insertions(+), 113 deletions(-)
+>>> +		if (ret)
+>>> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
+>>> +					 ",");
+>>> +		if (term->type_val == PARSE_EVENTS__TERM_TYPE_NUM)
+>>> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
+>>> +					 "%s=%#x", term->config, term->val.num);
+>>> +		else if (term->type_val == PARSE_EVENTS__TERM_TYPE_STR)
+>>> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
+>>> +					 "%s=%s", term->config, term->val.str);
+>>
+>> If we exceed 256, we just suddenly terminate the rebuilding without reporting any issues.
+>>
+>>> +	}
+>>> +
+>>>  	alias->name = strdup(name);
+>>>  	if (dir) {
+>>>  		/*
+>>> @@ -285,7 +308,7 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
+>>>  		snprintf(alias->unit, sizeof(alias->unit), "%s", unit);
+>>>  	}
+>>>  	alias->per_pkg = perpkg && sscanf(perpkg, "%d", &num) == 1 && num == 1;
+>>> -	alias->str = strdup(val);
+>>> +	alias->str = strdup(newval);
+> 
+> hum, how is newval different from val? AFAICS it's the same
+> 
 
-[snip]
-> diff --git a/drivers/md/bcache/Kconfig b/drivers/md/bcache/Kconfig
-> index 4d200883c505..17bf109c58e9 100644
-> --- a/drivers/md/bcache/Kconfig
-> +++ b/drivers/md/bcache/Kconfig
-> @@ -5,7 +5,7 @@ config BCACHE
->  	Allows a block device to be used as cache for other devices; uses
->  	a btree for indexing and the layout is optimized for SSDs.
->  
-> -	See Documentation/bcache.txt for details.
-> +	See Documentation/admin-guide/bcache.rst for details.
->  
->  config BCACHE_DEBUG
->  	bool "Bcache debugging"
-> diff --git a/drivers/md/bcache/btree.c b/drivers/md/bcache/btree.c
-> index 2a0968c04e21..547c9eedc2f4 100644
-> --- a/drivers/md/bcache/btree.c
-> +++ b/drivers/md/bcache/btree.c
-> @@ -18,7 +18,7 @@
->   * as keys are inserted we only sort the pages that have not yet been written.
->   * When garbage collection is run, we resort the entire node.
->   *
-> - * All configuration is done via sysfs; see Documentation/bcache.txt.
-> + * All configuration is done via sysfs; see Documentation/admin-guide/bcache.rst.
->   */
->  
->  #include "bcache.h"
-> diff --git a/drivers/md/bcache/extents.c b/drivers/md/bcache/extents.c
-> index c334e6666461..1d096742eb41 100644
-> --- a/drivers/md/bcache/extents.c
-> +++ b/drivers/md/bcache/extents.c
-> @@ -18,7 +18,7 @@
->   * as keys are inserted we only sort the pages that have not yet been written.
->   * When garbage collection is run, we resort the entire node.
->   *
-> - * All configuration is done via sysfs; see Documentation/bcache.txt.
-> + * All configuration is done via sysfs; see Documentation/admin-guide/bcache.rst.
->   */
->  
->  #include "bcache.h"
+Not really, depends on the platform, here is some debug output from s390:
+root@s35lp76 perf]# ./perf stat -e tx_nc_tend -- ~/mytesttx 1 >/tmp/111
 
-For the bcache part, it is good to me.
+ Performance counter stats for '/root/mytesttx 1':
 
-Reviewed-by: Coly Li <colyli@suse.de>
+                 1      tx_nc_tend                                                  
 
-Thanks for the fix.
+       0.001050150 seconds time elapsed
 
-Coly Li
+[root@s35lp76 perf]# fgrep -i tx_nc_tend /tmp/111
+__perf_pmu__new_alias TX_NC_TEND val:event=0x008d newval:event=0x8d
+__perf_pmu__new_alias tx_nc_tend val:event=0x8d newval:event=0x8d
+TX_NC_TEND	1 rc 8
+[root@s35lp76 perf]# 
+
+On s390 the events in the PMU sysfs file are printed with leading zeroes.
+This means the strcmp() of alias->str differs, but the contents is logically
+identical. (Same of some files contains spaces).
+
+Thats why I do the rewrite of val into newval.
+
+The alias name does not match too, but we use strcasecmp() to ignore case.
+
+Hope this helps.
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
