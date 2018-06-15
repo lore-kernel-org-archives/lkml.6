@@ -2,97 +2,91 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 828DCC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:14:41 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 03098C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:18:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 379DC2088E
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:14:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 379DC2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
+	by mail.kernel.org (Postfix) with ESMTP id A1DA9208DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:18:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="5D1tpgTS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DA9208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965908AbeFOPOj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 11:14:39 -0400
-Received: from orcrist.hmeau.com ([104.223.48.154]:57872 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935695AbeFOPOh (ORCPT
+        id S936315AbeFOPSR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 11:18:17 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:41796 "EHLO
+        bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935695AbeFOPSQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 11:14:37 -0400
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1fTqQT-0001GW-U7; Fri, 15 Jun 2018 23:14:09 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1fTqQN-0003Eb-DO; Fri, 15 Jun 2018 23:14:03 +0800
-Date:   Fri, 15 Jun 2018 23:14:03 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Jia He <hejianet@gmail.com>
-Cc:     davem@davemloft.net, catalin.marinas@arm.com, will.deacon@arm.com,
-        ard.biesheuvel@linaro.org, linux-crypto@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        hejianet@gmail.com, jia.he@hxt-semitech.com, stable@vger.kernel.org
-Subject: Re: [PATCH v2] crypto: arm64/aes-blk - fix and move
- skcipher_walk_done out of kernel_neon_begin,_end
-Message-ID: <20180615151403.cdvalbmdrt7gnodk@gondor.apana.org.au>
+        Fri, 15 Jun 2018 11:18:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
+        :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
+        :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=nCzNNugP2zccx8dMQsKqiVPB6LZ/Jn6jim6/R5TcTog=; b=5D1tpgTSWKvqIqemWCaYZh3Iwl
+        MlrUKvw5HUPVKZDINwCtIDw6mzl+idGCIkqYdLAdu5sBfyUQV3zvelccGV/yeXbgS9ScK2RezjBhK
+        3DbJtsmaOK8WgeQ8d4oCc+3jTHZliJAq/zIFxuoNUfXkhubIKf2O8FBWJRySUwJVdryrMPjaSaVhn
+        a9zHUUZiyTx4v+HPmoTBw3DeKjJ5dJaXGmN1KnkTOYc0hYBazX0DefEsaK2/Z1/Wv6/DyTf34MLi7
+        f07WjjL490yfrOOfUyKb5eYE/tAvwcbhrWOC/htKNGotBllk0hkOngFsxStuf8NVj6xuguUjYcBir
+        2yiHE4og==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:47890 helo=localhost)
+        by bh-25.webhostbox.net with esmtpa (Exim 4.89)
+        (envelope-from <linux@roeck-us.net>)
+        id 1fTqUQ-00HSjx-PP; Fri, 15 Jun 2018 15:18:15 +0000
+Date:   Fri, 15 Jun 2018 08:18:13 -0700
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.4 00/24] 4.4.138-stable review
+Message-ID: <20180615151813.GA28450@roeck-us.net>
+References: <20180614132724.483802160@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528443704-26850-1-git-send-email-hejianet@gmail.com>
-X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
-Organization: Core
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Authenticated_sender: guenter@roeck-us.net
+X-OutGoing-Spam-Status: No, score=-1.0
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - bh-25.webhostbox.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - roeck-us.net
+X-Get-Message-Sender-Via: bh-25.webhostbox.net: authenticated_id: guenter@roeck-us.net
+X-Authenticated-Sender: bh-25.webhostbox.net: guenter@roeck-us.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jia He <hejianet@gmail.com> wrote:
-> In a arm64 server(QDF2400),I met a similar might-sleep warning as [1]:
-> [    7.019116] BUG: sleeping function called from invalid context at
-> ./include/crypto/algapi.h:416
-> [    7.027863] in_atomic(): 1, irqs_disabled(): 0, pid: 410, name:
-> cryptomgr_test
-> [    7.035106] 1 lock held by cryptomgr_test/410:
-> [    7.039549]  #0:         (ptrval) (&drbg->drbg_mutex){+.+.}, at:
-> drbg_instantiate+0x34/0x398
-> [    7.048038] CPU: 9 PID: 410 Comm: cryptomgr_test Not tainted
-> 4.17.0-rc6+ #27
-> [    7.068228]  dump_backtrace+0x0/0x1c0
-> [    7.071890]  show_stack+0x24/0x30
-> [    7.075208]  dump_stack+0xb0/0xec
-> [    7.078523]  ___might_sleep+0x160/0x238
-> [    7.082360]  skcipher_walk_done+0x118/0x2c8
-> [    7.086545]  ctr_encrypt+0x98/0x130
-> [    7.090035]  simd_skcipher_encrypt+0x68/0xc0
-> [    7.094304]  drbg_kcapi_sym_ctr+0xd4/0x1f8
-> [    7.098400]  drbg_ctr_update+0x98/0x330
-> [    7.102236]  drbg_seed+0x1b8/0x2f0
-> [    7.105637]  drbg_instantiate+0x2ac/0x398
-> [    7.109646]  drbg_kcapi_seed+0xbc/0x188
-> [    7.113482]  crypto_rng_reset+0x4c/0xb0
-> [    7.117319]  alg_test_drbg+0xec/0x330
-> [    7.120981]  alg_test.part.6+0x1c8/0x3c8
-> [    7.124903]  alg_test+0x58/0xa0
-> [    7.128044]  cryptomgr_test+0x50/0x58
-> [    7.131708]  kthread+0x134/0x138
-> [    7.134936]  ret_from_fork+0x10/0x1c
+On Thu, Jun 14, 2018 at 04:04:55PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.4.138 release.
+> There are 24 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Seems there is a bug in Ard Biesheuvel's commit.
-> Fixes: 683381747270 ("crypto: arm64/aes-blk - move kernel mode neon
-> en/disable into loop")
+> Responses should be made by Sat Jun 16 13:27:15 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> [1] https://www.spinics.net/lists/linux-crypto/msg33103.html
-> 
-> Signed-off-by: jia.he@hxt-semitech.com
-> Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> Cc: <stable@vger.kernel.org> # 4.17
 
-Patch applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+Build results:
+	total: 148 pass: 148 fail: 0
+Qemu test results:
+	total: 135 pass: 135 fail: 0
+
+Details are available at http://kerneltests.org/builders.
+
+Guenter
