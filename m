@@ -5,105 +5,187 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E8B7C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:33:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BCFC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C760D208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:33:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C760D208B2
+	by mail.kernel.org (Postfix) with ESMTP id 2555A208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:33:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2555A208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966196AbeFOQdd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:33:33 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:38322 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966002AbeFOQda (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:33:30 -0400
+        id S966310AbeFOQdu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:33:50 -0400
+Received: from osg.samsung.com ([64.30.133.232]:35377 "EHLO osg.samsung.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966153AbeFOQbW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 12:31:22 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id F17052169A;
-        Fri, 15 Jun 2018 16:33:29 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Tk8ji6LtKRay; Fri, 15 Jun 2018 16:33:29 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 4EE74215A8;
-        Fri, 15 Jun 2018 16:33:21 +0000 (UTC)
-Subject: Re: [PATCH] selftests: sparc64: Fix to do nothing on non-sparc64
-To:     Tom Hromatka <tom.hromatka@oracle.com>,
-        "davem@davemloft.net" <davem@davemloft.net>
-Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Shuah Khan <shuah@kernel.org>
-References: <20180612232348.27979-1-shuah@kernel.org>
- <d6a1ce6d-4903-ec7a-10aa-d40118fce45c@oracle.com>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <d8ec82b2-a27a-7a7a-9d8a-b3b937e8e959@kernel.org>
-Date:   Fri, 15 Jun 2018 10:33:21 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <d6a1ce6d-4903-ec7a-10aa-d40118fce45c@oracle.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        by osg.samsung.com (Postfix) with ESMTP id 38D8822C27;
+        Fri, 15 Jun 2018 09:31:22 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
+X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
+Received: from osg.samsung.com ([127.0.0.1])
+        by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Lt8FQHCH02SK; Fri, 15 Jun 2018 09:31:21 -0700 (PDT)
+Received: from smtp.s-opensource.com (177.41.114.220.dynamic.adsl.gvt.net.br [177.41.114.220])
+        by osg.samsung.com (Postfix) with ESMTPSA id C39B722B62;
+        Fri, 15 Jun 2018 09:30:58 -0700 (PDT)
+Received: from mchehab by smtp.s-opensource.com with local (Exim 4.91)
+        (envelope-from <mchehab@smtp.s-opensource.com>)
+        id 1fTrcm-000854-PB; Fri, 15 Jun 2018 13:30:56 -0300
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
+        linux-kernel@vger.kernel.org, Harry Wei <harryxiyou@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-kernel@zh-kernel.org, dmaengine@vger.kernel.org,
+        platform-driver-x86@vger.kernel.org, sparclinux@vger.kernel.org,
+        devel@lists.orangefs.org, linux-pm@vger.kernel.org
+Subject: [PATCH v4 26/26] fix a series of Documentation/ broken file name references
+Date:   Fri, 15 Jun 2018 13:30:54 -0300
+Message-Id: <041e7a803fc0e5c5dfc1fb8b2f761074ca0baa2c.1529079120.git.mchehab+samsung@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <cover.1529079119.git.mchehab+samsung@kernel.org>
+References: <cover.1529079119.git.mchehab+samsung@kernel.org>
+In-Reply-To: <cover.1529079119.git.mchehab+samsung@kernel.org>
+References: <cover.1529079119.git.mchehab+samsung@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/13/2018 11:20 AM, Tom Hromatka wrote:
-> Thanks, Shuah!
-> 
-> Tom
-> 
-> 
-> On 06/12/2018 05:23 PM, Shuah Khan (Samsung OSG) wrote:
->> sparc64 test fails with the following errors on non-sparc64 systems. Fix
->> the Makefile to do nothing on non-sparc64 systems to suppress the errors:
->>
->> make run_tests
->> adi-test.c: Assembler messages:
->> adi-test.c:302: Error: no such instruction: `rd %tick,%r13'
->> adi-test.c:304: Error: no such instruction: `rd %tick,%rbp'
->> adi-test.c:190: Error: no such instruction: `rd %tick,%rbp'
->> adi-test.c:192: Error: no such instruction: `rd %tick,%rdx'
->> adi-test.c:273: Error: no such instruction: `rd %tick,%rbx'
->> adi-test.c:276: Error: no such instruction: `rd %tick,%rdx'
->> adi-test.c:217: Error: no such instruction: `rd %tick,%rbp'
->> adi-test.c:220: Error: no such instruction: `rd %tick,%rdx'
->> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->> adi-test.c:246: Error: no such instruction: `rd %tick,%rbp'
->> adi-test.c:248: Error: no such instruction: `rd %tick,%rdx'
->> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->> <builtin>: recipe for target 'adi-test' failed
->> make[1]: *** [adi-test] Error 1
->> adi: [FAIL]
->> ./drivers_test.sh: 24: ./drivers_test.sh: ./adi-test: not found
->> ../lib.mk:73: recipe for target 'run_tests' failed
->> make: *** [run_tests] Error 1
->>
->> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-> 
-> Reviewed-by: Tom Hromatka <tom.hromatka@oracle.com>
-> 
+As files move around, their previous links break. Fix the
+references for them.
 
-Hi Dave,
+Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+---
+ Documentation/translations/zh_CN/io_ordering.txt | 2 +-
+ drivers/dma/dmaengine.c                          | 2 +-
+ drivers/platform/x86/Kconfig                     | 2 +-
+ drivers/sbus/char/oradax.c                       | 2 +-
+ fs/befs/ChangeLog                                | 2 +-
+ fs/orangefs/orangefs-sysfs.c                     | 2 +-
+ include/linux/platform_data/sc18is602.h          | 2 +-
+ kernel/power/main.c                              | 5 +++--
+ 8 files changed, 10 insertions(+), 9 deletions(-)
 
-get_maintainers didn't include your name for this patch. Would you like to
-take this fix through sparc tree? It would be good to get this in for
-4.18-rc2
+diff --git a/Documentation/translations/zh_CN/io_ordering.txt b/Documentation/translations/zh_CN/io_ordering.txt
+index e592daf4e014..1f8127bdd415 100644
+--- a/Documentation/translations/zh_CN/io_ordering.txt
++++ b/Documentation/translations/zh_CN/io_ordering.txt
+@@ -1,4 +1,4 @@
+-Chinese translated version of Documentation/io_orderings.txt
++Chinese translated version of Documentation/io_ordering.txt
+ 
+ If you have any comment or update to the content, please contact the
+ original document maintainer directly.  However, if you have a problem
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index b451354735d3..08ba8473a284 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -38,7 +38,7 @@
+  * Each device has a channels list, which runs unlocked but is never modified
+  * once the device is registered, it's just setup by the driver.
+  *
+- * See Documentation/dmaengine.txt for more details
++ * See Documentation/driver-api/dmaengine for more details
+  */
+ 
+ #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index f27cb186437d..ac4d48830415 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -1052,7 +1052,7 @@ config SAMSUNG_LAPTOP
+ 	  function keys, wireless LED, LCD backlight level.
+ 
+ 	  It may also provide some sysfs files described in
+-	  <file:Documentation/ABI/testing/sysfs-platform-samsung-laptop>
++	  <file:Documentation/ABI/testing/sysfs-driver-samsung-laptop>
+ 
+ 	  To compile this driver as a module, choose M here: the module
+ 	  will be called samsung-laptop.
+diff --git a/drivers/sbus/char/oradax.c b/drivers/sbus/char/oradax.c
+index 1754f55e2fac..524f9ea62e52 100644
+--- a/drivers/sbus/char/oradax.c
++++ b/drivers/sbus/char/oradax.c
+@@ -30,7 +30,7 @@
+  * the recommended way for applications to use the coprocessor, and
+  * the driver interface is not intended for general use.
+  *
+- * See Documentation/sparc/oradax/oracle_dax.txt for more details.
++ * See Documentation/sparc/oradax/oracle-dax.txt for more details.
+  */
+ 
+ #include <linux/uaccess.h>
+diff --git a/fs/befs/ChangeLog b/fs/befs/ChangeLog
+index 16f2dfe8c2f7..aff7eec8f327 100644
+--- a/fs/befs/ChangeLog
++++ b/fs/befs/ChangeLog
+@@ -389,7 +389,7 @@ Version 0.4 (2001-10-28)
+ 	(fs/nls/Config.in)
+ 
+ * Added Configure.help entries for CONFIG_BEFS_FS and CONFIG_DEBUG_BEFS
+-	(Documentation/Configure.help)
++	(currently at fs/befs/Kconfig)
+ 
+ 2001-08-??
+ ==========
+diff --git a/fs/orangefs/orangefs-sysfs.c b/fs/orangefs/orangefs-sysfs.c
+index 079a465796f3..dd28079f518c 100644
+--- a/fs/orangefs/orangefs-sysfs.c
++++ b/fs/orangefs/orangefs-sysfs.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Documentation/ABI/stable/orangefs-sysfs:
++ * Documentation/ABI/stable/sysfs-fs-orangefs:
+  *
+  * What:		/sys/fs/orangefs/perf_counter_reset
+  * Date:		June 2015
+diff --git a/include/linux/platform_data/sc18is602.h b/include/linux/platform_data/sc18is602.h
+index 997b06634152..18602cab7799 100644
+--- a/include/linux/platform_data/sc18is602.h
++++ b/include/linux/platform_data/sc18is602.h
+@@ -7,7 +7,7 @@
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  *
+- * For further information, see the Documentation/spi/sc18is602 file.
++ * For further information, see the Documentation/spi/spi-sc18is602 file.
+  */
+ 
+ /**
+diff --git a/kernel/power/main.c b/kernel/power/main.c
+index 705c2366dafe..d9706da10930 100644
+--- a/kernel/power/main.c
++++ b/kernel/power/main.c
+@@ -455,8 +455,9 @@ struct kobject *power_kobj;
+  * state - control system sleep states.
+  *
+  * show() returns available sleep state labels, which may be "mem", "standby",
+- * "freeze" and "disk" (hibernation).  See Documentation/power/states.txt for a
+- * description of what they mean.
++ * "freeze" and "disk" (hibernation).
++ * See Documentation/admin-guide/pm/sleep-states.rst for a description of
++ * what they mean.
+  *
+  * store() accepts one of those strings, translates it into the proper
+  * enumerated value, and initiates a suspend transition.
+-- 
+2.17.1
 
-If so, please let me know if you would like me to resend the patch
-with Tom's Reviewed-by tag.
-
-thanks,
--- Shuah
