@@ -2,160 +2,118 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DDC9CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:18:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2FA16C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:23:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB2220896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:18:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEAB520863
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:23:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="eyhe+ECF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AB2220896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z5TAJjgX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEAB520863
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755998AbeFOMSa (ORCPT
+        id S1756109AbeFOMXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 08:18:30 -0400
-Received: from mail-io0-f193.google.com ([209.85.223.193]:34259 "EHLO
-        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755749AbeFOMS3 (ORCPT
+        Fri, 15 Jun 2018 08:23:43 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:38486 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755749AbeFOMXm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 08:18:29 -0400
-Received: by mail-io0-f193.google.com with SMTP id e15-v6so10546448iog.1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 05:18:28 -0700 (PDT)
+        Fri, 15 Jun 2018 08:23:42 -0400
+Received: by mail-io0-f194.google.com with SMTP id l19-v6so10544091ioj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 05:23:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=QI23K3MQIWIkBpRtZgEElxW3HPLq3P5GD5fVYLDiHME=;
-        b=eyhe+ECFSeMR3NU8x2abTxpEbw4A4FPr1B+24NM3VMdRy1B8u3CA+cdtFr7Tx0Zu7u
-         D7nWj43HIIBZeg1wyw2jLvgwZBdG/a3XhAqenVb+qLM3lzw5pD1wtCyTTY2TpVAGw6J1
-         ve1WIzdljbgilaJVp2jLYI1ey+QHJS2cIkDWY=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UXxx1FczAPdUqatoh53nERhVr5wb6NSsUiCtqgbJ2ao=;
+        b=Z5TAJjgXUGZuS4tksn1YI0S31u4BdihJjOXTdnI6jZSkhvm+wCyCiuJ4iXzuZu/Vsh
+         lxc+VP8/iAnLt98frt00egXzs2vAl1iZ24vOH2iLokpCLgtJEgbNsbafpCbTaFWGzp6n
+         CnvZh6+mu8JIkO1yxVtvPcxH6gmzrlyO3S6orB4RqKi9byl3AWZB3NRKEUWcu9bpAjkS
+         Qj4tMEL7UNRIlRhw5BTQVqA457X7pXED6WIESpTD7bTVpiRzbeLHqJGALuhmxpWclOzn
+         DMBcARJZH/ng3fFhB3oAqmhAQP6ZSYnUL45PLX6/mfVmac6JBGV9m0pQIfMKwyHBjgiB
+         wG3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=QI23K3MQIWIkBpRtZgEElxW3HPLq3P5GD5fVYLDiHME=;
-        b=FxnENPraDqXGGcHEQbLWzHdSV/A3p++NAO9IrPfEQecItA5Tq2u1aPgPUewRwe8yaX
-         b6zudlhBg86PzLC/kYiiglyudTsuHY1USpSnuAMxbKHVzZIT2grli1DqgNwmzswD1Zkk
-         jldtKKlM/T3494IdxZDjM15rfMmRHrdSmA0I61pl2hU5t7EB8Can3F5t0ugZcmuZYDnJ
-         3PJSmYXsikRYwqfZ3IwvRtTRkPEglOS5CC4UiSDl8jurPQz+YAxy6yttlTmIIuT5set8
-         hBLJcRS818uOTVrVAGKbjG4wE+CgLpvmMh6B03436vtgAGOcH3/D3mYQtsIuoaCyfybg
-         3z8w==
-X-Gm-Message-State: APt69E1z09mgcu1KVlRi7Rj4KR771nt62/wg/q3V9xuEvWTexOCeZiJY
-        IiGdG0+ImBfyz3WCq571dLG1sBg9geZz3RhMP9P7yA==
-X-Google-Smtp-Source: ADUXVKKeSo03hjaPV4bY2taGpt7SIZVsi/i839NncbcjafIE+MpUZ+I+I3EalAmbyKoJJ3ccjofz653/okmygmeAAkY=
-X-Received: by 2002:a6b:1884:: with SMTP id 126-v6mr1179510ioy.183.1529065108277;
- Fri, 15 Jun 2018 05:18:28 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UXxx1FczAPdUqatoh53nERhVr5wb6NSsUiCtqgbJ2ao=;
+        b=PSig6XGEANogO18EZNy1vBOlcSiXGK3A9tu7ogGRQm9ogyqukQRt5Q5XCls8t2DU4k
+         W7iuxZ7wVj7xzHrVwikrIBFUDo4uR1u7qeQ+pML5hu2vxfR2abxSifHirA4rOmJOyAU/
+         SvTHT7hGKDgx2oNMQPyT/bPEMa1SzG8ulEF6Pv3GwtQ/17sSMm8/kc3BJyRWhzk8/mAQ
+         SIBTmLWRxhdNLjmpOS1akw0O8n2E8/hEvHhxDT6AyWNBzr694Yjhb+eZjrC6wPvJBoGi
+         +HYoErBz0g8gyc0fhXYdLMPjDKUF7qMJPEabZVhfAR1Im3t6o7bf2U2vIWOcyIdgSpCp
+         nyHg==
+X-Gm-Message-State: APt69E1w/AHR1irApOzEhJalmzD0i/2pVwNWGVZklaQEfJB0pOX2GaiE
+        P5Dt3817BbDjNsPqDTVl+Md378AG
+X-Google-Smtp-Source: ADUXVKK9vIQjfGcK7Yn1RnJJycrjNtp3IyzdZJMFamGRUMJv2NxK/3ebxi9NA0rAtR9vPUtkzPX4Mg==
+X-Received: by 2002:a6b:bf01:: with SMTP id p1-v6mr1266167iof.67.1529065420876;
+        Fri, 15 Jun 2018 05:23:40 -0700 (PDT)
+Received: from [191.9.206.254] (rrcs-70-62-41-24.central.biz.rr.com. [70.62.41.24])
+        by smtp.gmail.com with ESMTPSA id y13-v6sm2736686iob.53.2018.06.15.05.23.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Jun 2018 05:23:39 -0700 (PDT)
+Subject: Re: [PATCH 1/2] x86: x86_64_defconfig: Enable KSM.
+To:     =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
+        x86@kernel.org
+Cc:     anders.roxell@linaro.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <1529016629-2948-1-git-send-email-daniel.diaz@linaro.org>
+From:   "Austin S. Hemmelgarn" <ahferroin7@gmail.com>
+Message-ID: <bc4cf4cb-e2b5-47c3-e29f-8ddf27a6a307@gmail.com>
+Date:   Fri, 15 Jun 2018 08:23:39 -0400
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a6b:304a:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 05:18:07
- -0700 (PDT)
-In-Reply-To: <00f701a4-8ea6-82cb-6c76-5597ffcc9f11@arm.com>
-References: <1528459794-13066-1-git-send-email-vincent.guittot@linaro.org>
- <1528459794-13066-4-git-send-email-vincent.guittot@linaro.org> <00f701a4-8ea6-82cb-6c76-5597ffcc9f11@arm.com>
-From:   Vincent Guittot <vincent.guittot@linaro.org>
-Date:   Fri, 15 Jun 2018 14:18:07 +0200
-Message-ID: <CAKfTPtBHL0PEhqvpjH2wQmi7SasHyB0UfJsTQFx6e-3rAiDoVA@mail.gmail.com>
-Subject: Re: [PATCH v6 03/11] sched/rt: add rt_rq utilization tracking
-To:     Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Morten Rasmussen <Morten.Rasmussen@arm.com>,
-        viresh kumar <viresh.kumar@linaro.org>,
-        Valentin Schneider <valentin.schneider@arm.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Ingo Molnar <mingo@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1529016629-2948-1-git-send-email-daniel.diaz@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dietmar,
+On 2018-06-14 18:50, Daniel Díaz wrote:
+> As per the documentation, Kernel Samepage Merging (available
+> since 2.6.32) is a memory-saving de-duplication feature,
+> enabled by CONFIG_KSM=y and activated via sysfs. More
+> information can be found here:
+>    https://www.kernel.org/doc/Documentation/vm/ksm.txt
+> 
+> When enabled in the kernel, the default is to not do anything
+> at all, until it is activated at run-time with:
+>    echo 1 > /sys/kernel/mm/ksm/run
+> 
+As pointed out by a couple of others, this doesn't explain why this is a 
+good idea.  All you're doing here is giving a reason that it won't have 
+a negative impact on most users.
 
-On 15 June 2018 at 13:52, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
-> On 06/08/2018 02:09 PM, Vincent Guittot wrote:
->> schedutil governor relies on cfs_rq's util_avg to choose the OPP when cfs
->> tasks are running. When the CPU is overloaded by cfs and rt tasks, cfs tasks
->> are preempted by rt tasks and in this case util_avg reflects the remaining
->> capacity but not what cfs want to use. In such case, schedutil can select a
->> lower OPP whereas the CPU is overloaded. In order to have a more accurate
->> view of the utilization of the CPU, we track the utilization of rt tasks.
->>
->> rt_rq uses rq_clock_task and cfs_rq uses cfs_rq_clock_task but they are
->> the same at the root group level, so the PELT windows of the util_sum are
->> aligned.
->>
->> Cc: Ingo Molnar <mingo@redhat.com>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->
-> [...]
->
-> ;
->> diff --git a/kernel/sched/pelt.c b/kernel/sched/pelt.c
->> index 4174582..81c0d7e 100644
->> --- a/kernel/sched/pelt.c
->> +++ b/kernel/sched/pelt.c
->> @@ -307,3 +307,25 @@ int __update_load_avg_cfs_rq(u64 now, int cpu, struct cfs_rq *cfs_rq)
->>
->>       return 0;
->>   }
->> +
->> +/*
->> + * rt_rq:
->> + *
->> + *   util_sum = \Sum se->avg.util_sum but se->avg.util_sum is not tracked
->> + *   util_sum = cpu_scale * load_sum
->> + *   runnable_load_sum = load_sum
->> + *
->> + */
->> +
->> +int update_rt_rq_load_avg(u64 now, struct rq *rq, int running)
->> +{
->> +     if (___update_load_sum(now, rq->cpu, &rq->avg_rt,
->> +                             running,
->> +                             running,
->> +                             running)) {
->
-> The patch clearly says that this is about utilization but what happens
-> to load and runnable load for the rt rq part when you call
-> ___update_load_sum() with load=[0,1] and runnable=[0,1]?
+Two points that may be worth adding, but also don't really argue for it 
+being a significant improvement:
 
-I would say the same than what happens for se which has
-___update_load_sum(now, cpu, &se->avg, !!se->on_rq, !!se->on_rq,
-cfs_rq->curr == se))
+* Pretty much all of the major distributions that use pre-built kernels 
+have it enabled in their kernels (At minimum, Debian, Ubuntu, Fedora 
+(and by extension RHEL and CentOS), openSUSE (and by extension SLES), 
+Arch, and Alpine have it enabled), so enabling this in defconfig would 
+bring it a bit closer to parity with distribution kernels in terms of 
+core features.
 
->
-> It looks like that the math would require 1024 instead of 1 for load and
-> runnable so that we would see a load_avg or runnable_load_avg != 0.
+* Software other than QEMU is starting to take advantage of it if 
+available (for example, Netdata [1] can mark it's in-memory TSDB's for 
+deduplication, which usually cuts it's memory usage roughly in half).
 
-why does it require 1024 ? the min  weight of a task is 15 and the min
-share of a sched group is 2. AFAICT, there is no requirement mainly
-because we are not using them as they will not give any additional
-information compare to util_avg
 
->
-> 1594.075128: bprint: update_rt_rq_load_avg: now=1593937228087 cpu=4 running=1
-> 1594.075129: bprint: update_rt_rq_load_avg: delta=3068 cpu=4 load=1 runnable=1 running=1 scale_freq=1024 scale_cpu=1024 periods=2
-> 1594.075130: bprint: update_rt_rq_load_avg: load_sum=23927 +2879 runnable_load_sum=23927 +2879 util_sum=24506165 +2948096
-> 1594.075130: bprint: update_rt_rq_load_avg: load_avg=0 runnable_load_avg=0 util_avg=513
->
-> IMHO, the patch should say whether load and runnable load are supported as well or not.
-
-Although it is stated that we track only utilization , i can probably
-mentioned clearly that load_avg and runnable_load_avg are useless
-
-Vincent
->
-> [...]
+[1] https://my-netdata.io/
