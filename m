@@ -3,109 +3,133 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id A12FBC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:06:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0C785C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56223208D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:06:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56223208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id B30782086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:19:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B30782086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755513AbeFOEGc (ORCPT
+        id S1755440AbeFOETJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 00:06:32 -0400
-Received: from mx2.suse.de ([195.135.220.15]:46089 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1750890AbeFOEGb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 00:06:31 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 161ADAB9D;
-        Fri, 15 Jun 2018 04:06:30 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Date:   Fri, 15 Jun 2018 14:06:20 +1000
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] vfs: discard ATTR_ATTR_FLAG
-Message-ID: <877en0hewz.fsf@notabene.neil.brown.name>
+        Fri, 15 Jun 2018 00:19:09 -0400
+Received: from out03.mta.xmission.com ([166.70.13.233]:60455 "EHLO
+        out03.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750890AbeFOETH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 00:19:07 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out03.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fTgCS-0008GM-Cn; Thu, 14 Jun 2018 22:19:00 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fTgCR-0002Bg-J1; Thu, 14 Jun 2018 22:19:00 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+Date:   Thu, 14 Jun 2018 23:18:50 -0500
+In-Reply-To: <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+        (David Howells's message of "Fri, 25 May 2018 01:05:23 +0100")
+Message-ID: <87in6kptqt.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Type: text/plain
+X-XM-SPF: eid=1fTgCR-0002Bg-J1;;;mid=<87in6kptqt.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/tEwAtKhk/Ea2JRa3ATONR1uVuVu3AQkY=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 00/32] VFS: Introduce filesystem context [ver #8]
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+David Howells <dhowells@redhat.com> writes:
+
+> Here are a set of patches to create a filesystem context prior to setting
+> up a new mount, populating it with the parsed options/binary data, creating
+> the superblock and then effecting the mount.  This is also used for remount
+> since much of the parsing stuff is common in many filesystems.
+
+Dave,
+I have read through these patches and I noticed a significant issue.
+
+Today in mount_bdev we do something that looks like:
+
+mount_bdev(...)
+{
+	s = sget(..., bdev);
+	if (s->s_root) {
+        	/* Noop */
+        } else {
+        	err = fill_super(s, ...);
+                if (err) {
+                	deactivate_locked_super(s);
+                        return ERR_PTR(err);
+                }
+                s->s_flags |= SB_ATTIVE;
+                bdev->bd_super = s;
+        }
+        return dget(s->s_root);
+}
+
+The key point is that we don't process the mount options at all if
+a super block already exists in the kernel.  Similar to what
+your fscontext changes are doing (after parsing the options).
+
+Your fscontext changes do not improve upon this area of the mount api at
+all and that concerns me.  This is an area where people can and already
+do shoot themselves in their feet.
+
+The real world security issue we had in with this involved devpts.  The
+devpts filesystem requires the mode and gid parameters for new ttys to
+be specified to be posix compliant.  People were setting up chroot
+environments and mounting devpts with the wrong arguments.  As these two
+devpts mounts shared a super block a change of arguments on one was a
+change of arguments on the other.  Which mean the chroots were
+periodically breaking the primary devpts and causing new terminals to be
+opened with essentially unusable permissions.  Fun when you are trying
+to ssh in to a box.
+
+Creating a new mount and finding an old mount are the same operation in
+the kernel today.  This is fundamentally confusing.  In the new api
+could we please separate these two operations?
+
+Perhaps someting like:
+x create
+x find
+
+With the "x create" case failing if the filesystem already exists,
+still allowing "x find"?  And with the "x find" case failing if
+the superblock is not already created in the kernel.
+
+That should make it clear to a userspace program what is going on
+and give it a chance to mount a filesystem anyway.
 
 
-This flag was introduce in 2.1.37pre1 and the only place it was tested
-was removed in 2.1.43pre1.  The flag was never set.
 
-Let's discard it properly.
+In a similar vein could we please clarify the rules for changing mount
+options for an existing superblock are in the new api?
 
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- fs/hostfs/hostfs.h | 3 +--
- include/linux/fs.h | 1 -
- 2 files changed, 1 insertion(+), 3 deletions(-)
+Today mount assumes that it has to provide all of the existing options
+to reconfigure a mount.  What people want to do and what most
+filesystems support is just specifying the options that need to be
+changed.  Can we please make this the rule of how this are expected
+to work for fscontext?  That only changing mount options need to
+be specified before: "x reconfigure"
 
-diff --git a/fs/hostfs/hostfs.h b/fs/hostfs/hostfs.h
-index cb8374af08a6..b16619b8e298 100644
-=2D-- a/fs/hostfs/hostfs.h
-+++ b/fs/hostfs/hostfs.h
-@@ -19,9 +19,8 @@
- #define HOSTFS_ATTR_ATIME_SET	128
- #define HOSTFS_ATTR_MTIME_SET	256
-=20
-=2D/* These two are unused by hostfs. */
-+/* This one is unused by hostfs. */
- #define HOSTFS_ATTR_FORCE	512	/* Not a change, but a change it */
-=2D#define HOSTFS_ATTR_ATTR_FLAG	1024
-=20
- /*
-  * If you are very careful, you'll notice that these two are missing:
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index bacd33e3a4af..c1ad4346fab9 100644
-=2D-- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -176,7 +176,6 @@ typedef int (dio_iodone_t)(struct kiocb *iocb, loff_t o=
-ffset,
- #define ATTR_ATIME_SET	(1 << 7)
- #define ATTR_MTIME_SET	(1 << 8)
- #define ATTR_FORCE	(1 << 9) /* Not a change, but a change it */
-=2D#define ATTR_ATTR_FLAG	(1 << 10)
- #define ATTR_KILL_SUID	(1 << 11)
- #define ATTR_KILL_SGID	(1 << 12)
- #define ATTR_FILE	(1 << 13)
-=2D-=20
-2.14.0.rc0.dirty
+Eric
 
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsjOz0ACgkQOeye3VZi
-gblKrw/+PkYQU83zIYzPKHavkmSZoJ6WjFdrXv0Z0Et6VibRlfZsWlRvf/EVPHK2
-k7puF1t7W/kkaHYjd3H+I5y9TyAt5wRa9MQLh8aCndtNan3Q4/itlmf9qxN0Gtq9
-iBT1rXg+3H0y1mjWB0tmxUe1QEmXF+yMoax9pcGLA8vCFKfrCtyCwpI1GcRj1TcD
-jT+1vvEd5Vm2XvCJvDCGNkC96MX7uUeoGxcc086qGv7I1aL1B7jc/G+89nSgD158
-Qy/le6SYOpViEHoZ4+IzGdtge30dJPLT+W5ifsfuuoNgX463lZ1fWWtnuhKT2s9G
-GchDj35+ZCbBSGiRSnYwDWvfF4xmi6q/qGo9BkheEFJ7hBxMSYlVmiR+IHxtxefQ
-mfdbls5+kEwZuSHiqhPGU7MbvkTDeBRGVhtF2l3S/eHBpCfWqmPSZeK7ggNFPC6C
-1SySg9gBseO9vjwLiyJZ6rMMJoxEv+PlXDqoYI9W6iRJpxsQLcPTIg54jeP+bIAU
-s2vR4y6VlGGAMz3YpeVm5NzdBwZh7hJFN8CluLcWRVr9d/sixpkZjM+UsTnDZkYS
-Fv1cPpMBTA5Ye7kzOnsquLQ7HObd/gpmb+8XGuD0W+R+TvOTQnuQ9sQsBuWlyMuP
-057T1qdt7l4dj8OYQbQcG/FpI0M13ULnzuaGXP88YeF14rsV6qE=
-=n8gT
------END PGP SIGNATURE-----
---=-=-=--
