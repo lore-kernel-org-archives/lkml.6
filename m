@@ -3,142 +3,111 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAFE4C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:01:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22D27C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:01:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F17F208C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:01:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2D43208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:01:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m9VPiLai"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F17F208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RExculNh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2D43208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756467AbeFOVA6 (ORCPT
+        id S1756578AbeFOVBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 17:00:58 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:60162 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752884AbeFOVA5 (ORCPT
+        Fri, 15 Jun 2018 17:01:55 -0400
+Received: from mail-pf0-f195.google.com ([209.85.192.195]:37367 "EHLO
+        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756127AbeFOVBx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 17:00:57 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FKwwQg071024;
-        Fri, 15 Jun 2018 21:00:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=MgR/U/msQUnPj2JBf8QF3yBjPmJPBAmbZh2ylVUn4bA=;
- b=m9VPiLaiBexjkRqnAyqAtbkLlvf59VNa9w9IryMxDCMkW3sfDJ0v3GK2DNcMqVdO0nlW
- t2xgvun7bVwd41xHYI9u5nOhD8OGewDSVjIjL2pZjp1U4IhDHZjNl8Aj2RR5UMHESr7E
- ROJ6OY5bAHzOns6lJb8roRrtJUNpupVIZlPqyB5jaT1yYtNkfq0yHsgBIKK0YwYbOHxM
- wJC/jmrJk5ubVa7dL+lYx2WjYnt7KfaoSaVds1tzYV6wWktRJxXyA8dMbrwhQMw/EEHV
- iaN3niMxlHWwyT7QXVU3Hh1u+/1fLe8COjVNU/RNX38XlAfkecC9F1fiHYTGeZoimyVT MQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jk0xr2cg9-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 21:00:46 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5FL0k59014460
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 21:00:46 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5FL0jR2010049;
-        Fri, 15 Jun 2018 21:00:45 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jun 2018 14:00:44 -0700
-Subject: Re: [PATCH v4 7/9] xen/gntdev: Add initial support for dma-buf UAPI
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180615062753.9229-1-andr2000@gmail.com>
- <20180615062753.9229-8-andr2000@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <48b11773-8d69-9386-b60c-c34a6b2803af@oracle.com>
-Date:   Fri, 15 Jun 2018 17:00:25 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180615062753.9229-8-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=729
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806150225
+        Fri, 15 Jun 2018 17:01:53 -0400
+Received: by mail-pf0-f195.google.com with SMTP id y5-v6so5402967pfn.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 14:01:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=FI0VbjORdTz9NgaMNmg3AlyT0fJOQ8zZmKHz2BmAW4A=;
+        b=RExculNhMzJAxwwC1YRCIoDpvBkzfRLigOI9OfCPzRZVLkg2TcZ5p8gy6Bp//6f35f
+         K36X18U+ealOrwORZ41n31RyqzulDrxEdlATCVEZ6G06sy6VbgldOEA4kP0K8YrBG2qF
+         Z8DSHF7LeQGOKmz6s7s0m9UOxK5/a3Y8Wvy3A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=FI0VbjORdTz9NgaMNmg3AlyT0fJOQ8zZmKHz2BmAW4A=;
+        b=D2ueHKuf1T/yTxxO6Iwv9WlOgWMvLyPnsfbOxKdcx8rFnS+y1Pic09LALXw1rE2myQ
+         k5a7e9DqqckF+BX1EM++tzUyjw/98GvUGsjXRvNq7G9MgGFpHoRkO3EwrVDtjnxVXMcU
+         p768p+tqoMIZlW9bIGBq2dqCVm/+InGlPTDxWFZrx42ZLnvYNeSqMTCW18M2y7bUt5S+
+         P33V/alt5JOaBqmcJZXFScOrcmqZXEideVhhv6DmeiVdjNe9NEcXqcQrsYFQKOrKAmsN
+         JRTnx+iWHGmGiIz7x5txybAWGb+WPwP7Khw08HqG9kpRpM/QgYASztibdXH7D4f+OOhB
+         u0VA==
+X-Gm-Message-State: APt69E2fHbsDg9PRwGYNW6JcjDqdI2qpUr/cWbVCXU0XqFgoV6WFyme0
+        puhi/kMm0hWgDyDWBoFpKg40zQ==
+X-Google-Smtp-Source: ADUXVKIIxxld8jEIWVz4Qeld5MFu5YaYRNEAhZk7GpEd7QsbcgMQ9Ul4Geojs21uciDvfmwqpjgdlQ==
+X-Received: by 2002:a63:7847:: with SMTP id t68-v6mr2967563pgc.329.1529096512965;
+        Fri, 15 Jun 2018 14:01:52 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:0:1000:1511:116f:8bf3:133b:f7fd])
+        by smtp.gmail.com with ESMTPSA id v13-v6sm17664346pfa.131.2018.06.15.14.01.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 15 Jun 2018 14:01:51 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc:     Evan Green <evgreen@chromium.org>
+Subject: [PATCH v2 0/4] Enable UFS provisioning via Linux
+Date:   Fri, 15 Jun 2018 14:00:45 -0700
+Message-Id: <20180615210049.126123-1-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 02:27 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> Add UAPI and IOCTLs for dma-buf grant device driver extension:
-> the extension allows userspace processes and kernel modules to
-> use Xen backed dma-buf implementation. With this extension grant
-> references to the pages of an imported dma-buf can be exported
-> for other domain use and grant references coming from a foreign
-> domain can be converted into a local dma-buf for local export.
-> Implement basic initialization and stubs for Xen DMA buffers'
-> support.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+This series enables provisioning UFS devices using the existing sysfs
+interface. This functionality is primarily useful along the assembly
+line, but might also be useful for end users that receive devices that
+aren't locked down.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Changes since v1:
+	- Reworked the interface to show each unit of the config
+descriptor as a separate directory, rather than the previous method I
+had of a file for selecting the unit, and then a common set of files
+that interacted with whichever unit was selected. I did some kobject
+magic to accomplish this. I noticed from Greg KH's reply to Sayali's
+patches [1] that configfs might be the preferred method. Let me know
+if I should abandon this series in favor of Sayali's, with the
+possible exception of "Make sysfs attributes writable".
+	- Squashed documentation changes into their respective code
+changes.
+	- I decided to keep the config descriptor attributes as their
+own files, rather than hiding writes behind device descriptor and unit
+descriptor, as I think that's more future proof and true to the UFS spec.
+
+[1] https://lkml.org/lkml/2018/6/8/210
+
+Evan Green (4):
+  scsi: ufs: Add Configuration Descriptor to sysfs
+  scsi: ufs: Make sysfs attributes writable
+  scsi: ufs: Refactor descriptor read for write
+  scsi: ufs: Enable writing config descriptor
+
+ Documentation/ABI/testing/sysfs-driver-ufs | 156 ++++++++++--
+ drivers/scsi/ufs/ufs-sysfs.c               | 367 +++++++++++++++++++++++++++--
+ drivers/scsi/ufs/ufs-sysfs.h               |   1 +
+ drivers/scsi/ufs/ufs.h                     |  29 +++
+ drivers/scsi/ufs/ufshcd.c                  | 110 ++++++---
+ drivers/scsi/ufs/ufshcd.h                  |  30 ++-
+ 6 files changed, 620 insertions(+), 73 deletions(-)
+
+-- 
+2.13.5
 
