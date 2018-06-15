@@ -7,58 +7,57 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9022AC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:28:08 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 34444C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24306208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75F62086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:28:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4blqBTZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24306208B8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z9QhS8yU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D75F62086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755812AbeFOG2G (ORCPT
+        id S1755852AbeFOG2L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 02:28:06 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:43025 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755617AbeFOG2D (ORCPT
+        Fri, 15 Jun 2018 02:28:11 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:35278 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755801AbeFOG2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 02:28:03 -0400
-Received: by mail-lf0-f67.google.com with SMTP id n15-v6so12965127lfn.10;
-        Thu, 14 Jun 2018 23:28:02 -0700 (PDT)
+        Fri, 15 Jun 2018 02:28:06 -0400
+Received: by mail-lf0-f65.google.com with SMTP id i15-v6so13003411lfc.2;
+        Thu, 14 Jun 2018 23:28:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ANmJSC5ObL9vvsIpT/SOaSBf64ENe+lxtmBJwMer4yc=;
-        b=b4blqBTZUhjgHTOQkZpWWtM+GeV/WTqdDMI+xzEbrDo6MTRZl9x8SUPD6wAlG7K6mb
-         KYZDogtFGk+orD9Hu3NtSk+q0U19xzN5ezk5hhB1OkRVq0nKzIaIpMbOs72pYTybi4Oa
-         KnZgqDvwGF2sSLbHzsN4HVeAO7w3uHK8JbOehB6omrNqxv1aY1HcaXPYCN8xpp3Tolhn
-         GzBdFthSOcTvcGkSwcZyXFs9VnG0H7tq4VMO2TLKbe1HpnuPqxl1+HAVyAF+Ag4F9yLe
-         Nop4nnpmF5vdkftZVifikkoKiR9WAofebDZuvG+mW7F2D7kjvGkCTL/hvWebCBIdRgYG
-         jaYQ==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=qn9DhGEWTMaawUxaGfYqOvXnzJRBZPC7KzIu0SJDlM8=;
+        b=Z9QhS8yUzmL2rmqSoVyentDiVpfpnMpzTkSNLxgOdOZ02SwqqtGcu8amFA5KM0qhu9
+         mS2LN4eSXjvGZgbIOwKbi3i5V8mtPjf5ZTrw1qMZRFRy7xqYlXGhhQurvanWwsZSJLuu
+         mY5hpjO7Yb5iVsKQIWUtTfXAl++yFa1lqcnOStHlLXORXjLY2eKZKQmYLyrZ9YKNxax5
+         heFJho0TvXytcozch1T9DMdzGSzWjtGqm8X0qGGSTGyOEbQx+fbuVIdCUNXawytfKyPe
+         xtnN+UxxjI6S0b+ZIwwHnPzTIlAFFFzErsdEoIESj+3Y4CO81+JUJAD59HIlIrsFi7db
+         wFtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ANmJSC5ObL9vvsIpT/SOaSBf64ENe+lxtmBJwMer4yc=;
-        b=bdp35s6NFP+ssmcZ4I2V7Ap0atg3PvbtRg7BZMxQPFWgs1w6NB7KoXiV940Sr5PwMc
-         nt2lKAYd/RfPiGPwJxnyvGh76QXxVcvrifP5mgoJUFHp/FSwIBKnP9jfS1oBnBeCnjih
-         ct+xZe6r0tL//ta9nGeuW3Nn8Df6myHVCoDB7F3KJsWWNTLFeUeOY+r233rPx3t69eMf
-         xJ1ooZHM0Hf1j4toVDVjjoa+E6ExoGwJedINnrINLvJ6WpUwomJGjmgYzXKI5k7yAgAc
-         /+UjuZZIIT27Kvha1diOQOvhxmq4WWnzAOdkO4U7QN0xTvf3kUSz+pg1HsACYNPSMAFK
-         oUBw==
-X-Gm-Message-State: APt69E06SqtK4kP6XTtL/ZgNO6WDi8dBeUCGVCIfT7tQ3Vi5yMR+7G1I
-        8fEFhQme8/5AZlVaXQuqkFg=
-X-Google-Smtp-Source: ADUXVKLnpSm6TPecpHfyExCKOY1AOMccuLnZRNCiR633XHjzXn9uvLiqbny9aL7xPEF0iFSAA6N/pQ==
-X-Received: by 2002:a19:1b11:: with SMTP id b17-v6mr284255lfb.50.1529044081704;
-        Thu, 14 Jun 2018 23:28:01 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=qn9DhGEWTMaawUxaGfYqOvXnzJRBZPC7KzIu0SJDlM8=;
+        b=UJhsTyEw0ZLvfcY/npzdxoeLQtJJW7oQynut4E80BPrQR08qRFOaJQV3ioK17vvBnw
+         d0jzZr+YfCgyAmW1Mzc+PAoOz7Bj7g2Pq5p8h+akT4ycb0euNiY3DcUqS2fqyKHT+/q7
+         Ujoq3Cme7dV/n0ZRnSzDHJ7gaJL8olKdbeZ9sIhcS8ynzv9+cNlcUjGrZGw1byvkIwKo
+         Axn3N4e78kVkpvHwzCUEA01BFYfGrg5Z2CqXLRUqXeYmEpQJsoEH4Y8FXYrdNwk9AzWj
+         q5S7/Q0Zh1flwLCzOG7plXfDfMGeaNeXXlAhhunJmlnjjA9luhhG8MwxYWZsiMi3zQTv
+         fqQg==
+X-Gm-Message-State: APt69E0LSjzyUAJ9R3s4/S+pjtksvBClnpaJ9UfHueEqmaXh6vEWTmJh
+        2EJf5n/hmKjqjWrdBsJpdkk=
+X-Google-Smtp-Source: ADUXVKLZFzCl58q6Ph/9d9uLGpP8FusblobSVXIrNUU3zcWmd4KDIxd89v2vyh6Pad3JN9iCbeYYyg==
+X-Received: by 2002:a2e:5f8f:: with SMTP id x15-v6mr314292lje.70.1529044085057;
+        Thu, 14 Jun 2018 23:28:05 -0700 (PDT)
 Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
-        by smtp.gmail.com with ESMTPSA id t126-v6sm1355040lff.7.2018.06.14.23.27.59
+        by smtp.gmail.com with ESMTPSA id t126-v6sm1355040lff.7.2018.06.14.23.28.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 14 Jun 2018 23:28:00 -0700 (PDT)
+        Thu, 14 Jun 2018 23:28:03 -0700 (PDT)
 From:   Oleksandr Andrushchenko <andr2000@gmail.com>
 To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
         dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
@@ -66,13 +65,12 @@ To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
 Cc:     daniel.vetter@intel.com, andr2000@gmail.com, dongwon.kim@intel.com,
         matthew.d.roper@intel.com,
         Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-Subject: [PATCH v4 0/9] xen: dma-buf support for grant device
-Date:   Fri, 15 Jun 2018 09:27:44 +0300
-Message-Id: <20180615062753.9229-1-andr2000@gmail.com>
+Subject: [PATCH v4 2/9] xen/grant-table: Make set/clear page private code shared
+Date:   Fri, 15 Jun 2018 09:27:46 +0300
+Message-Id: <20180615062753.9229-3-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180615062753.9229-1-andr2000@gmail.com>
+References: <20180615062753.9229-1-andr2000@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -80,166 +78,121 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
-This work is in response to my previous attempt to introduce Xen/DRM
-zero-copy driver [1] to enable Linux dma-buf API [2] for Xen based
-frontends/backends. There is also an existing hyper_dmabuf approach
-available [3] which, if reworked to utilize the proposed solution,
-can greatly benefit as well.
+Make set/clear page private code shared and accessible to
+other kernel modules which can re-use these instead of open-coding.
 
-RFC for this series was published and discussed [9], comments addressed.
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+---
+ drivers/xen/grant-table.c | 54 +++++++++++++++++++++++++--------------
+ include/xen/grant_table.h |  3 +++
+ 2 files changed, 38 insertions(+), 19 deletions(-)
 
-The original rationale behind this work was to enable zero-copying
-use-cases while working with Xen para-virtual display driver [4]:
-when using Xen PV DRM frontend driver then on backend side one will
-need to do copying of display buffers' contents (filled by the
-frontend's user-space) into buffers allocated at the backend side.
-Taking into account the size of display buffers and frames per
-second it may result in unneeded huge data bus occupation and
-performance loss.
-
-The helper driver [4] allows implementing zero-copying use-cases
-when using Xen para-virtualized frontend display driver by implementing
-a DRM/KMS helper driver running on backend's side.
-It utilizes PRIME buffers API (implemented on top of Linux dma-buf)
-to share frontend's buffers with physical device drivers on
-backend's side:
-
- - a dumb buffer created on backend's side can be shared
-   with the Xen PV frontend driver, so it directly writes
-   into backend's domain memory (into the buffer exported from
-   DRM/KMS driver of a physical display device)
- - a dumb buffer allocated by the frontend can be imported
-   into physical device DRM/KMS driver, thus allowing to
-   achieve no copying as well
-
-Finally, it was discussed and decided ([1], [5]) that it is worth
-implementing such use-cases via extension of the existing Xen gntdev
-driver instead of introducing new DRM specific driver.
-Please note, that the support of dma-buf is Linux only,
-as dma-buf is a Linux only thing.
-
-Now to the proposed solution. The changes  to the existing Xen drivers
-in the Linux kernel fall into 2 categories:
-1. DMA-able memory buffer allocation and increasing/decreasing memory
-   reservation of the pages of such a buffer.
-   This is required if we are about to share dma-buf with the hardware
-   that does require those to be allocated with dma_alloc_xxx API.
-   (It is still possible to allocate a dma-buf from any system memory,
-   e.g. system pages).
-2. Extension of the gntdev driver to enable it to import/export dma-buf’s.
-
-The first six patches are in preparation for Xen dma-buf support,
-but I consider those usable regardless of the dma-buf use-case,
-e.g. other frontend/backend kernel modules may also benefit from these
-for better code reuse:
-    0001-xen-grant-table-Export-gnttab_-alloc-free-_pages-as-.patch
-    0002-xen-grant-table-Make-set-clear-page-private-code-sha.patch
-    0003-xen-balloon-Share-common-memory-reservation-routines.patch
-    0004-xen-grant-table-Allow-allocating-buffers-suitable-fo.patch
-    0005-xen-gntdev-Allow-mappings-for-DMA-buffers.patch
-    0006-xen-gntdev-Make-private-routines-structures-accessib.patch
-
-The next three patches are Xen implementation of dma-buf as part of
-the grant device:
-    0007-xen-gntdev-Add-initial-support-for-dma-buf-UAPI.patch
-    0008-xen-gntdev-Implement-dma-buf-export-functionality.patch
-    0009-xen-gntdev-Implement-dma-buf-import-functionality.patch
-
-The corresponding libxengnttab changes are available at [6].
-
-All the above was tested with display backend [7] and its accompanying
-helper library [8] on Renesas ARM64 based board.
-Basic balloon tests on x86.
-
-*To all the communities*: I would like to ask you to review the proposed
-solution and give feedback on it, so I can improve and send final
-patches for review (this is still work in progress, but enough to start
-discussing the implementation).
-
-Thank you in advance,
-Oleksandr Andrushchenko
-
-[1] https://lists.freedesktop.org/archives/dri-devel/2018-April/173163.html
-[2] https://elixir.bootlin.com/linux/v4.17-rc5/source/Documentation/driver-api/dma-buf.rst
-[3] https://lists.xenproject.org/archives/html/xen-devel/2018-02/msg01202.html
-[4] https://cgit.freedesktop.org/drm/drm-misc/tree/drivers/gpu/drm/xen
-[5] https://patchwork.kernel.org/patch/10279681/
-[6] https://github.com/andr2000/xen/tree/xen_dma_buf_v1
-[7] https://github.com/andr2000/displ_be/tree/xen_dma_buf_v1
-[8] https://github.com/andr2000/libxenbe/tree/xen_dma_buf_v1
-[9] https://lkml.org/lkml/2018/5/17/215
-
-Changes since v3:
-*****************
-- added r-b tags
-- minor fixes
-- removed gntdev_remove_map as it can be coded directly now
-- moved IOCTL code to gntdev-dmabuf.c
-- removed usless wait list walks and changed some walks to use
-  normal version of list iterators instead of safe ones as
-  we run under a lock anyways
-- cleaned up comments, descriptions, pr_debug messages
-
-Changes since v2:
-*****************
-- fixed missed break in dmabuf_exp_wait_obj_signal
-- re-worked debug and error messages, be less verbose
-- removed patch for making gntdev functions available to other drivers
-- removed WARN_ON's in dma-buf code
-- moved all dma-buf related code into gntdev-dmabuf
-- introduced gntdev-common.h with common structures and function prototypes
-- added additional checks for number of grants in IOCTLs
-- gnttab patch cleanup
-- made xenmem_reservation_scrub_page defined in the header as inline
-- fixed __pfn_to_mfn use to pfn_to_bfn
-- no changes to patches 1-2
-
-Changes since v1:
-*****************
-- Define GNTDEV_DMA_FLAG_XXX starting from bit 0
-- Rename mem_reservation.h to mem-reservation.h
-- Remove usless comments
-- Change licenses from GPLv2 OR MIT to GPLv2 only
-- Make xenmem_reservation_va_mapping_{update|clear} inline
-- Change EXPORT_SYMBOL to EXPORT_SYMBOL_GPL for new functions
-- Make gnttab_dma_{alloc|free}_pages to request frames array
-  be allocated outside
-- Fixe gnttab_dma_alloc_pages fail path (added xenmem_reservation_increase)
-- Move most of dma-buf from gntdev.c to gntdev-dmabuf.c
-- Add required dependencies to Kconfig
-- Rework "#ifdef CONFIG_XEN_XXX" for if/else
-- Export gnttab_{alloc|free}_pages as GPL symbols (patch 1)
-
-Oleksandr Andrushchenko (9):
-  xen/grant-table: Export gnttab_{alloc|free}_pages as GPL
-  xen/grant-table: Make set/clear page private code shared
-  xen/balloon: Share common memory reservation routines
-  xen/grant-table: Allow allocating buffers suitable for DMA
-  xen/gntdev: Allow mappings for DMA buffers
-  xen/gntdev: Make private routines/structures accessible
-  xen/gntdev: Add initial support for dma-buf UAPI
-  xen/gntdev: Implement dma-buf export functionality
-  xen/gntdev: Implement dma-buf import functionality
-
- drivers/xen/Kconfig           |  24 +
- drivers/xen/Makefile          |   2 +
- drivers/xen/balloon.c         |  75 +--
- drivers/xen/gntdev-common.h   |  94 ++++
- drivers/xen/gntdev-dmabuf.c   | 870 ++++++++++++++++++++++++++++++++++
- drivers/xen/gntdev-dmabuf.h   |  33 ++
- drivers/xen/gntdev.c          | 220 ++++++---
- drivers/xen/grant-table.c     | 153 +++++-
- drivers/xen/mem-reservation.c | 118 +++++
- include/uapi/xen/gntdev.h     | 106 +++++
- include/xen/grant_table.h     |  21 +
- include/xen/mem-reservation.h |  59 +++
- 12 files changed, 1615 insertions(+), 160 deletions(-)
- create mode 100644 drivers/xen/gntdev-common.h
- create mode 100644 drivers/xen/gntdev-dmabuf.c
- create mode 100644 drivers/xen/gntdev-dmabuf.h
- create mode 100644 drivers/xen/mem-reservation.c
- create mode 100644 include/xen/mem-reservation.h
-
+diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
+index ba36ff3e4903..dbb48a89e987 100644
+--- a/drivers/xen/grant-table.c
++++ b/drivers/xen/grant-table.c
+@@ -769,29 +769,18 @@ void gnttab_free_auto_xlat_frames(void)
+ }
+ EXPORT_SYMBOL_GPL(gnttab_free_auto_xlat_frames);
+ 
+-/**
+- * gnttab_alloc_pages - alloc pages suitable for grant mapping into
+- * @nr_pages: number of pages to alloc
+- * @pages: returns the pages
+- */
+-int gnttab_alloc_pages(int nr_pages, struct page **pages)
++int gnttab_pages_set_private(int nr_pages, struct page **pages)
+ {
+ 	int i;
+-	int ret;
+-
+-	ret = alloc_xenballooned_pages(nr_pages, pages);
+-	if (ret < 0)
+-		return ret;
+ 
+ 	for (i = 0; i < nr_pages; i++) {
+ #if BITS_PER_LONG < 64
+ 		struct xen_page_foreign *foreign;
+ 
+ 		foreign = kzalloc(sizeof(*foreign), GFP_KERNEL);
+-		if (!foreign) {
+-			gnttab_free_pages(nr_pages, pages);
++		if (!foreign)
+ 			return -ENOMEM;
+-		}
++
+ 		set_page_private(pages[i], (unsigned long)foreign);
+ #endif
+ 		SetPagePrivate(pages[i]);
+@@ -799,14 +788,30 @@ int gnttab_alloc_pages(int nr_pages, struct page **pages)
+ 
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(gnttab_alloc_pages);
++EXPORT_SYMBOL_GPL(gnttab_pages_set_private);
+ 
+ /**
+- * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
+- * @nr_pages; number of pages to free
+- * @pages: the pages
++ * gnttab_alloc_pages - alloc pages suitable for grant mapping into
++ * @nr_pages: number of pages to alloc
++ * @pages: returns the pages
+  */
+-void gnttab_free_pages(int nr_pages, struct page **pages)
++int gnttab_alloc_pages(int nr_pages, struct page **pages)
++{
++	int ret;
++
++	ret = alloc_xenballooned_pages(nr_pages, pages);
++	if (ret < 0)
++		return ret;
++
++	ret = gnttab_pages_set_private(nr_pages, pages);
++	if (ret < 0)
++		gnttab_free_pages(nr_pages, pages);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(gnttab_alloc_pages);
++
++void gnttab_pages_clear_private(int nr_pages, struct page **pages)
+ {
+ 	int i;
+ 
+@@ -818,6 +823,17 @@ void gnttab_free_pages(int nr_pages, struct page **pages)
+ 			ClearPagePrivate(pages[i]);
+ 		}
+ 	}
++}
++EXPORT_SYMBOL_GPL(gnttab_pages_clear_private);
++
++/**
++ * gnttab_free_pages - free pages allocated by gnttab_alloc_pages()
++ * @nr_pages; number of pages to free
++ * @pages: the pages
++ */
++void gnttab_free_pages(int nr_pages, struct page **pages)
++{
++	gnttab_pages_clear_private(nr_pages, pages);
+ 	free_xenballooned_pages(nr_pages, pages);
+ }
+ EXPORT_SYMBOL_GPL(gnttab_free_pages);
+diff --git a/include/xen/grant_table.h b/include/xen/grant_table.h
+index 2e37741f6b8d..de03f2542bb7 100644
+--- a/include/xen/grant_table.h
++++ b/include/xen/grant_table.h
+@@ -198,6 +198,9 @@ void gnttab_free_auto_xlat_frames(void);
+ int gnttab_alloc_pages(int nr_pages, struct page **pages);
+ void gnttab_free_pages(int nr_pages, struct page **pages);
+ 
++int gnttab_pages_set_private(int nr_pages, struct page **pages);
++void gnttab_pages_clear_private(int nr_pages, struct page **pages);
++
+ int gnttab_map_refs(struct gnttab_map_grant_ref *map_ops,
+ 		    struct gnttab_map_grant_ref *kmap_ops,
+ 		    struct page **pages, unsigned int count);
 -- 
 2.17.1
 
