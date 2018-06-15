@@ -2,126 +2,122 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C11E4C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:57:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 120FCC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:58:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81DC6208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:57:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DC6208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
+	by mail.kernel.org (Postfix) with ESMTP id 93F2F208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:58:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="QoRO2SW+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F2F208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756496AbeFOU5B (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:57:01 -0400
-Received: from shelob.surriel.com ([96.67.55.147]:34402 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753541AbeFOU5A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:57:00 -0400
-Received: from imladris.surriel.com ([96.67.55.152])
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.90_1)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1fTvmF-0005gk-1i; Fri, 15 Jun 2018 16:56:59 -0400
-Message-ID: <1529096218.7898.158.camel@surriel.com>
-Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
-From:   Rik van Riel <riel@surriel.com>
-To:     Dave Hansen <dave.hansen@linux.intel.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Andrew Lutomirski <luto@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-Date:   Fri, 15 Jun 2018 16:56:58 -0400
-In-Reply-To: <7e415c4d-415b-0ff6-5488-1681e522d2dc@linux.intel.com>
-References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
-         <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
-         <CAHmME9qhmSVNBq_GnkYrGU-PPEX9Fk0yiGktsCeEXo+LTB9KPg@mail.gmail.com>
-         <7e415c4d-415b-0ff6-5488-1681e522d2dc@linux.intel.com>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-YBC3ZSL+colrEHF43o3A"
-X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
-Mime-Version: 1.0
+        id S966032AbeFOU6M (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 16:58:12 -0400
+Received: from mail-db5eur01on0047.outbound.protection.outlook.com ([104.47.2.47]:22992
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1753735AbeFOU6K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:58:10 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+lW5RmukXOD8jW8Cz4x6u8Is0h2KDl4OWNhl3hxdDow=;
+ b=QoRO2SW+bO+tcjzX2y8wUMFoRRdwPz40GCO3ik5Pg1wPBmsBg3GkIFjp1c5jHOJ73Auhhdp+xgv2oAXTEgc+I3mHywNgMpRknyOsSeDXf8VcdsK2mB1+l1qOripvjtAAHXRg4DonMPfQA/GQckxG97fWunTlYiR9Wai3Jaamfys=
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com (52.134.126.145) by
+ AM0PR04MB4370.eurprd04.prod.outlook.com (52.135.148.12) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.17; Fri, 15 Jun 2018 20:58:07 +0000
+Received: from AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::1cd1:a089:87a0:25ec]) by AM0PR04MB4290.eurprd04.prod.outlook.com
+ ([fe80::1cd1:a089:87a0:25ec%2]) with mapi id 15.20.0863.016; Fri, 15 Jun 2018
+ 20:58:07 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     "festevam@gmail.com" <festevam@gmail.com>,
+        "stefan@agner.ch" <stefan@agner.ch>,
+        "marex@denx.de" <marex@denx.de>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "marcofrk@gmail.com" <marcofrk@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
+Thread-Topic: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
+Thread-Index: AQHUBOE6dIO4bv5XOkuQXfh+MS7cPKRhubYAgAATpQA=
+Date:   Fri, 15 Jun 2018 20:58:06 +0000
+Message-ID: <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
+References: <cover.1529091248.git.leonard.crestez@nxp.com>
+         <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
+         <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
+In-Reply-To: <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.2-1 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [85.204.4.237]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB4370;7:934wPVP4CexRiGbtuqiNzOWx97KPsZ0H9ijSKppQsW6/wU8uFhjU5l/I2TSQwyBCWaV5oTVectvMC6KKv6z76wC7bWXedhjXKFjPEvb8lBGM5V0WEbsOSRlZLsy/i2y5OxDUkFtsZP05yU2zckAneY3qbB3/aK3eIaOKH+veASqRU0YVitJ6DpbFJEQYGntl7n+PHfdeXCtsVzyWiuEUvZ9XTzRdOrIJ7RQbYf29vtQCv5EfMJVRnGWGLbLNdk41
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: cdf519d1-4a09-48b1-4e24-08d5d302b1e5
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4370;
+x-ms-traffictypediagnostic: AM0PR04MB4370:
+x-microsoft-antispam-prvs: <AM0PR04MB437035B3ADD68E168CF66BF6EE7C0@AM0PR04MB4370.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231254)(944501410)(52105095)(3002001)(10201501046)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123560045)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(6072148)(201708071742011)(7699016);SRVR:AM0PR04MB4370;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4370;
+x-forefront-prvs: 0704670F76
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(39380400002)(366004)(39860400002)(199004)(189003)(76176011)(59450400001)(14454004)(81156014)(26005)(6506007)(118296001)(561944003)(81166006)(102836004)(53546011)(97736004)(478600001)(8676002)(966005)(106356001)(105586002)(6512007)(6306002)(2906002)(36756003)(3660700001)(50226002)(6246003)(6486002)(2900100001)(53936002)(3280700002)(68736007)(229853002)(6436002)(2501003)(5250100002)(5660300001)(66066001)(446003)(2616005)(7416002)(476003)(11346002)(25786009)(39060400002)(4326008)(486006)(305945005)(7736002)(54906003)(110136005)(316002)(44832011)(2201001)(8936002)(3846002)(6116002)(86362001)(186003)(99286004)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4370;H:AM0PR04MB4290.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: r4qoIPaMwrFsod+9pex2zCT5wreKKv3d6KCRYRYyyZsUGf9GL7QZawWeMhuqOquZ7y8yCCO+gi6Q+FmRG9Otp38SsNrxWMUM1q6jTrSpnyRcxqhmx/uh7Y1xrm09F4Wk5YugW4EtsxhB8iKpwN4CvZOhxJJDIhipWR9WWkVxnGlkMbZunFmGfRs3zgLDuIRf
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4F6F90A1F6B40E47B9E906E5E6560708@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdf519d1-4a09-48b1-4e24-08d5d302b1e5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jun 2018 20:58:06.9845
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4370
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---=-YBC3ZSL+colrEHF43o3A
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, 2018-06-15 at 13:42 -0700, Dave Hansen wrote:
-> On 06/15/2018 01:33 PM, Jason A. Donenfeld wrote:
-> > On Fri, Jun 15, 2018 at 8:32 PM Andy Lutomirski <luto@kernel.org>
-> > wrote:
-> > > quite in the form you imagined.  The idea that we've tossed
-> > > around is
-> > > to restore FPU state on return to user mode.  Roughly, we'd
-> > > introduce
-> > > a new thread flag TIF_FPU_UNLOADED (name TBD).
-> > > prepare_exit_to_usermode() would notice this flag, copy the
-> > > fpstate to
-> > > fpregs, and clear the flag.  (Or maybe exit_to_usermode_loop() --
-> > > No
-> > > one has quite thought it through, but I think it should be
-> > > outside the
-> > > loop.)  We'd update all the FPU accessors to understand the flag.
-> >=20
-> > Yes! This is exactly what I was thinking. Then those calls to
-> > begin()
-> > and end() could be placed as close to the actual FPU usage as
-> > possible.
->=20
-> Andy, what was the specific concern about PKRU?  That we might do:
->=20
-> 	kernel_fpu_begin(); <- Saves the first time
-> 	something()
-> 	kernel_fpu_end(); <- Does not XRSTOR
->=20
-> 	copy_from_user(); <- Sees old PKRU, does the wrong thing
->=20
-> 	prepare_exit_to_usermode(); <- Does the XRSTOR
-> 	// only now does PKRU have the right value
-> 	SYSRET/IRET
->=20
-> ?
->=20
-> Does that *matter* unless something() modified PKRU?  We could just
-> make
-> the rule that nobody is supposed to mess with it and that it's not
-> covered by kernel_fpu_begin/end() semantics.  We could even
-> theoretically enforce that in a debug environment if we watch its
-> value.
-
-KVM needs to change out guest and host PKRU values
-when switching between guest and host mode, but
-since f775b13eedee ("x86,kvm: move qemu/guest FPU=20
-switching out to vcpu_run") that no longer happens
-under kernel_fpu_begin/end so we don't need to care
-about that :)
-
---=20
-All Rights Reversed.
---=-YBC3ZSL+colrEHF43o3A
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlskKBoACgkQznnekoTE
-3oOx9QgAka+/LeW7LyIzrZh6JE+0ctj35QONbWRvOMWdsAge1+J7MM65isl3ihPD
-6KHJQ93GxvF3YI/md+PfmOyWv/teVtW0sVq7j8rIczGGMS+G5jdzofR3sN+U+Idy
-/Aba9lfG0U+kPP+XqS/aOQmCBCCQbwukUUJurED5glfMyxbncEqgG/IjQxCW3MYJ
-7ltMzl2gilo6rleJlMgDObj4eMAnNcCjP3WawiABcRpWP3SORCAZsVyQT3D+2i0/
-fObkqGvEjRn6eUPt3UinoP7wpiPrOcC8NgipxvgdpwErSzdhrLv0QYkYQVrxpapB
-du11W8DdxPm92O5DXIepCdM1REs83g==
-=Ai7+
------END PGP SIGNATURE-----
-
---=-YBC3ZSL+colrEHF43o3A--
-
+T24gRnJpLCAyMDE4LTA2LTE1IGF0IDE2OjQ3IC0wMzAwLCBGYWJpbyBFc3RldmFtIHdyb3RlOg0K
+DQo+IE9uIEZyaSwgSnVuIDE1LCAyMDE4IGF0IDQ6NDMgUE0sIExlb25hcmQgQ3Jlc3Rleg0KPiA8
+bGVvbmFyZC5jcmVzdGV6QG54cC5jb20+IHdyb3RlOg0KPiA+IFRoZSBGQkRFViBkcml2ZXIgdXNl
+cyB0aGUgc2FtZSBuYW1lIGFuZCBib3RoIGNhbid0IGJlIHJlZ2lzdGVyZWQgYXQgdGhlDQo+ID4g
+c2FtZSB0aW1lLiBGaXggdGhpcyBieSByZW5hbWluZyB0aGUgZHJtIGRyaXZlciB0byBteHNmYi1k
+cm0NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBMZW9uYXJkIENyZXN0ZXogPGxlb25hcmQuY3Jl
+c3RlekBueHAuY29tPg0KPiANCj4gU3RlZmFuIHNlbnQgdGhlIHNhbWUgcGF0Y2ggYSBmZXcgZGF5
+cyBhZ286DQo+IGh0dHA6Ly93d3cuc3Bpbmljcy5uZXQvbGlzdHMvZHJpLWRldmVsL21zZzE3OTQ4
+OS5odG1sDQoNCkluIHRoYXQgdGhyZWFkIHRoZXJlIGlzIGEgcHJvcG9zYWwgZm9yIHJlbW92aW5n
+IHRoZSBvbGQgZmJkZXYvbXhzZmINCmRyaXZlciBlbnRpcmVseS4NCg0KVGhhdCB3b3VsZCBicmVh
+ayBvbGQgRFRCcywgaXNuJ3QgdGhpcyBnZW5lcmFsbHkgY29uc2lkZXJlZCBiYWQ/IEFsc28sDQph
+cmUgd2Ugc3VyZSB0aGUgcmVtb3ZhbCBvZiBmYmRldi9teHNmYiB3b3VsZG4ndCBsb3NlIGFueSBm
+ZWF0dXJlcz8NCg0KV2hhdCBteSBzZXJpZXMgZG9lcyBpcyBtYWtlIGJvdGggZHJpdmVycyB3b3Jr
+IHdpdGggdGhlIHNhbWUga2VybmVsDQppbWFnZSBhbmQgdHVybnMgdGhlIGNob2ljZSBpbnRvIGEg
+Ym9hcmQtbGV2ZWwgZHRiIGRlY2lzaW9uLiBTdXBwb3J0aW5nDQpldmVyeXRoaW5nIGF0IG9uY2Ug
+c2VlbXMgZGVzaXJhYmxlIHRvIG1lIGFuZCBpdCBhbGxvd3MgZm9yIGEgdmVyeQ0Kc21vb3RoIHVw
+Z3JhZGUgcGF0aC4NCg0KVGhlIG9sZCBkcml2ZXIgY291bGQgYmUgcmVtb3ZlZCBsYXRlciwgYWZ0
+ZXIgYWxsIHVzZXJzIGFyZSBjb252ZXJ0ZWQuDQoNCi0tDQpSZWdhcmRzLA0KTGVvbmFyZA==
