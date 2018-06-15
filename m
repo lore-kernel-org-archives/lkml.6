@@ -2,133 +2,157 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 18BAAC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:05:35 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EBB29C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:06:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D8420891
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:05:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZFwLRIYf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D8420891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id A7A0C20891
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:06:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A0C20891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965537AbeFOCFc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 22:05:32 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:33543 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965475AbeFOCF0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 22:05:26 -0400
-Received: by mail-pf0-f193.google.com with SMTP id b17-v6so4134071pfi.0
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 19:05:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=iMrql5pChvk0l0OVuaoPU9zdtIybInbwoq7vsafDp1A=;
-        b=ZFwLRIYf1YMykqsQUjRHRqpN6ibWMmukmz+3u1v2oql47QrPLYYZMaXn8EblWJ6SAy
-         6E0gBwWqnlRh9auRrDR2Y4FhwuTaI+7V1XmoFOpoCqg3Bq4G7IzdMrj8BJZetfMpbSlj
-         n3glKy+FwSivSAjshgGEAnlJhXx/xHq7vsAq0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=iMrql5pChvk0l0OVuaoPU9zdtIybInbwoq7vsafDp1A=;
-        b=AqYCKxIpd7c6rH2QDj3csfNjuR8I6OqKMDuIZ8mAw969e+p7LH1zABPd/wQf/4GVnp
-         juJELckiiXPy+dPnzM4Y8cv1PIGrmchghfmte91UlU7jPSt1z5t+m6nA/sJZiemBYcKk
-         hogojFaluamUbsrDAya5CULL/dpenMax9W7XLvCCyTlZMQ0jkmDQehFVjmwcPuVih1J1
-         t8A7hZREgvFbUR9Qe2AoPCOK6EvH/oKa1OggqpJR38pIWWJlpBqjj40G3UhIhpheMwSN
-         bPB6NLaAPxZnB7OCV2QIGGcbTCpOh45GZPtJSWNOt0rqxNBC6CUoaCbksp99QE4MBGnN
-         pkDg==
-X-Gm-Message-State: APt69E2ZDqBaQrOKubH+FACppoJiMukilFz+u71HzyaBf629I/pQOuA0
-        D6dukTBxh9pIPkEKGuVcvx395wYyV40=
-X-Google-Smtp-Source: ADUXVKKwO6gUr45e/gQlv0AchmVW5iyLsMD8EhZmPV/pP6kzko3yj6im7cPSYGCIY0SWaR0wGvf7BQ==
-X-Received: by 2002:a62:4556:: with SMTP id s83-v6mr12043599pfa.73.1529028326182;
-        Thu, 14 Jun 2018 19:05:26 -0700 (PDT)
-Received: from ubt.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id k69-v6sm9504953pgc.39.2018.06.14.19.05.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 14 Jun 2018 19:05:25 -0700 (PDT)
-From:   Chunyan Zhang <zhang.chunyan@linaro.org>
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Billows Wu <billows.wu@spreadtrum.com>, zhang.lyra@gmail.com
-Subject: [PATCH V2 7/7] dt-bindings: sdhci-sprd: Add bindings for the sdhci-sprd controller
-Date:   Fri, 15 Jun 2018 10:04:15 +0800
-Message-Id: <1529028255-6022-8-git-send-email-zhang.chunyan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529028255-6022-1-git-send-email-zhang.chunyan@linaro.org>
-References: <1529028255-6022-1-git-send-email-zhang.chunyan@linaro.org>
+        id S965425AbeFOCGz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 22:06:55 -0400
+Received: from mga02.intel.com ([134.134.136.20]:44523 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965159AbeFOCGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 22:06:53 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 19:06:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,225,1526367600"; 
+   d="scan'208";a="237603997"
+Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Jun 2018 19:06:51 -0700
+Date:   Thu, 14 Jun 2018 19:03:14 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        iommu@lists.linux-foundation.org
+Subject: Re: [RFC PATCH 17/23] watchdog/hardlockup/hpet: Convert the timer's
+ interrupt to NMI
+Message-ID: <20180615020314.GA11625@voyager>
+References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
+On Wed, Jun 13, 2018 at 11:40:00AM +0200, Thomas Gleixner wrote:
+> On Tue, 12 Jun 2018, Ricardo Neri wrote:
+> > @@ -183,6 +184,8 @@ static irqreturn_t hardlockup_detector_irq_handler(int irq, void *data)
+> >  	if (!(hdata->flags & HPET_DEV_PERI_CAP))
+> >  		kick_timer(hdata);
+> >  
+> > +	pr_err("This interrupt should not have happened. Ensure delivery mode is NMI.\n");
+> 
+> Eeew.
 
-This patch adds the device-tree binding documentation for Spreadtrum
-SDHCI driver.
+If you don't mind me asking. What is the problem with this error message?
+> 
+> >  /**
+> > + * hardlockup_detector_nmi_handler() - NMI Interrupt handler
+> > + * @val:	Attribute associated with the NMI. Not used.
+> > + * @regs:	Register values as seen when the NMI was asserted
+> > + *
+> > + * When an NMI is issued, look for hardlockups. If the timer is not periodic,
+> > + * kick it. The interrupt is always handled when if delivered via the
+> > + * Front-Side Bus.
+> > + *
+> > + * Returns:
+> > + *
+> > + * NMI_DONE if the HPET timer did not cause the interrupt. NMI_HANDLED
+> > + * otherwise.
+> > + */
+> > +static int hardlockup_detector_nmi_handler(unsigned int val,
+> > +					   struct pt_regs *regs)
+> > +{
+> > +	struct hpet_hld_data *hdata = hld_data;
+> > +	unsigned int use_fsb;
+> > +
+> > +	/*
+> > +	 * If FSB delivery mode is used, the timer interrupt is programmed as
+> > +	 * edge-triggered and there is no need to check the ISR register.
+> > +	 */
+> > +	use_fsb = hdata->flags & HPET_DEV_FSB_CAP;
+> > +
+> > +	if (!use_fsb && !is_hpet_wdt_interrupt(hdata))
+> > +		return NMI_DONE;
+> 
+> So for 'use_fsb == True' every single NMI will fall through into the
+> watchdog code below.
+> 
+> > +	inspect_for_hardlockups(regs);
+> > +
+> > +	if (!(hdata->flags & HPET_DEV_PERI_CAP))
+> > +		kick_timer(hdata);
+> 
+> And in case that the HPET does not support periodic mode this reprogramms
+> the timer on every NMI which means that while perf is running the watchdog
+> will never ever detect anything.
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@spreadtrum.com>
----
- .../devicetree/bindings/mmc/sdhci-sprd.txt         | 41 ++++++++++++++++++++++
- 1 file changed, 41 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
+Yes. I see that this is wrong. With MSI interrupts, as far as I can
+see, there is not a way to make sure that the HPET timer caused the NMI
+perhaps the only option is to use an IO APIC interrupt and read the
+interrupt status register.
 
-diff --git a/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-new file mode 100644
-index 0000000..45c9978
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/sdhci-sprd.txt
-@@ -0,0 +1,41 @@
-+* Spreadtrum SDHCI controller (sdhci-sprd)
-+
-+The Secure Digital (SD) Host controller on Spreadtrum SoCs provides an interface
-+for MMC, SD and SDIO types of cards.
-+
-+This file documents differences between the core properties in mmc.txt
-+and the properties used by the sdhci-sprd driver.
-+
-+Required properties:
-+- compatible: Should contain "sprd,sdhci-r11".
-+- reg: physical base address of the controller and length.
-+- interrupts: Interrupts used by the SDHCI controller.
-+- clocks: Should contain phandle for the clock feeding the SDHCI controller
-+- clock-names: Should contain the following:
-+	"sdio" - SDIO source clock (required)
-+	"enable" - gate clock which used for enabling/disabling the device (required)
-+
-+Optional properties:
-+- assigned-clocks: the same with "sdio" clock
-+- assigned-clock-parents: the default parent of "sdio" clock
-+
-+Examples:
-+
-+sdio0: sdio@20600000 {
-+	compatible  = "sprd,sdhci-r11";
-+	reg = <0 0x20600000 0 0x1000>;
-+	interrupts = <GIC_SPI 60 IRQ_TYPE_LEVEL_HIGH>;
-+
-+	clock-names = "sdio", "enable";
-+	clocks = <&ap_clk CLK_EMMC_2X>,
-+		 <&apahb_gate CLK_EMMC_EB>;
-+	assigned-clocks = <&ap_clk CLK_EMMC_2X>;
-+	assigned-clock-parents = <&rpll CLK_RPLL_390M>;
-+
-+	bus-width = <8>;
-+	non-removable;
-+	no-sdio;
-+	no-sd;
-+	cap-mmc-hw-reset;
-+	status = "okay";
-+};
--- 
-2.7.4
+> 
+> Aside of that, reading TWO HPET registers for every NMI is insane. HPET
+> access is horribly slow, so any high frequency perf monitoring will take a
+> massive performance hit.
 
+If an IO APIC interrupt is used, only HPET register (the status register)
+would need to be read for every NMI. Would that be more acceptable? Otherwise,
+there is no way to determine if the HPET cause the NMI.
+
+Alternatively, there could be a counter that skips reading the HPET status
+register (and the detection of hardlockups) for every X NMIs. This would
+reduce the overall frequency of HPET register reads.
+
+Is that more acceptable?
+
+Thanks and BR,
+Ricardo
