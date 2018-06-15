@@ -2,94 +2,158 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D3E4BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:11:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E0AA3C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2877B208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:11:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNJpW1j3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2877B208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A0B28208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:11:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0B28208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936313AbeFOOLC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 10:11:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55032 "EHLO mail.kernel.org"
+        id S936330AbeFOOL3 convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 10:11:29 -0400
+Received: from mga06.intel.com ([134.134.136.31]:51487 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932360AbeFOOLA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 10:11:00 -0400
-Received: from mail-wm0-f51.google.com (mail-wm0-f51.google.com [74.125.82.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 207E1208DD;
-        Fri, 15 Jun 2018 14:11:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529071860;
-        bh=Di0+uXJ3VKlH4BGK9M4ZEjcvdWkEW4t69fhXOLtJjjM=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=rNJpW1j3asmtWrhPBJQ/lXLVve2SR6AOUyawCZuuVQwY46/qzAgwmA1kRSj1gn4o2
-         Sg/SeAvyMFDmxuSrV8HiPu+ksI9+dKZWgVHLc5mAidCM5T+KZ6y/diLxM0eW3Aw+Jr
-         3FXqlTIyOYYYIavqgxis0FLAFLseOcLS7rLviywk=
-Received: by mail-wm0-f51.google.com with SMTP id r15-v6so3790294wmc.1;
-        Fri, 15 Jun 2018 07:11:00 -0700 (PDT)
-X-Gm-Message-State: APt69E037N6YJbjdgZ3M8vGGodp2NzV3lnmbIIrozOBphcAGipFiZQsj
-        UlpbtLaGJvqjr8JsfLKilpNamZlPzHYZSk7zLQM=
-X-Google-Smtp-Source: ADUXVKLHUzKpWsVb8CexDulg1+DsWa/NvKph8RwjNb0Wb5DCAg9tpKRDIQ/9oHzg+k22GG3e9Y/0LEJ+cUWiEAgeQhk=
-X-Received: by 2002:a1c:c05:: with SMTP id 5-v6mr1489592wmm.117.1529071858632;
- Fri, 15 Jun 2018 07:10:58 -0700 (PDT)
+        id S932360AbeFOOL1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 10:11:27 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 07:11:26 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,227,1526367600"; 
+   d="scan'208";a="237753276"
+Received: from fmsmsx104.amr.corp.intel.com ([10.18.124.202])
+  by fmsmga006.fm.intel.com with ESMTP; 15 Jun 2018 07:11:26 -0700
+Received: from fmsmsx119.amr.corp.intel.com (10.18.124.207) by
+ fmsmsx104.amr.corp.intel.com (10.18.124.202) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 15 Jun 2018 07:11:26 -0700
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ FMSMSX119.amr.corp.intel.com (10.18.124.207) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 15 Jun 2018 07:11:25 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.223]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.116]) with mapi id 14.03.0319.002;
+ Fri, 15 Jun 2018 22:11:24 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     "Michael S. Tsirkin" <mst@redhat.com>
+CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "peterx@redhat.com" <peterx@redhat.com>
+Subject: RE: [PATCH v33 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Topic: [PATCH v33 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Index: AQHUBGb1uIuE7GdLXUGMzLE4+zixk6RgrO+AgACbr0A=
+Date:   Fri, 15 Jun 2018 14:11:23 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7396A3D04@shsmsx102.ccr.corp.intel.com>
+References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
+ <1529037793-35521-3-git-send-email-wei.w.wang@intel.com>
+ <20180615144000-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180615144000-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWZjN2JlMTQtYWZlYy00MTZjLWJiNDItZjc4YzliZTA5MjY5IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoieURsMUJOZElOamhUdGh5MWgzMEI3M0VZb3o3U09FUmQxNU1tZGJFaFFHQzNIeUY4XC9cL3plb0NjOGhcL254dmkycyJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 07:10:58
- -0700 (PDT)
-In-Reply-To: <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
-References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
- <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com> <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 15 Jun 2018 16:10:58 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPcmV7qvSuNwcQNDrwQSg3=674Gw_kNfkPHac_Vh9JcWVw@mail.gmail.com>
-Message-ID: <CAJKOXPcmV7qvSuNwcQNDrwQSg3=674Gw_kNfkPHac_Vh9JcWVw@mail.gmail.com>
-Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Trond Myklebust <trond.myklebust@primarydata.com>,
-        linux-nfs@vger.kernel.org,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        netdev <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 4:07 PM, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> I test it on systemd versions 236 and 238... and it fails on both.
-> However one board passes always - it is Odroid HC1 with same core
-> configuration as described before. Probably there is some different SW
-> package on it.
->
->>> Let me know if you need any more information.
->>>
->>
->> Also I was observing this issue with Linus master branch from
->> the time the above patch was merged until today. The issue
->> is no longer seen since this morning however I just enabled lockdep
->> and got these messages.
+On Friday, June 15, 2018 7:42 PM, Michael S. Tsirkin wrote:
+> On Fri, Jun 15, 2018 at 12:43:11PM +0800, Wei Wang wrote:
+> > Negotiation of the VIRTIO_BALLOON_F_FREE_PAGE_HINT feature indicates
+> > the support of reporting hints of guest free pages to host via virtio-balloon.
+> >
+> > Host requests the guest to report free page hints by sending a command
+> > to the guest via setting the
+> VIRTIO_BALLOON_HOST_CMD_FREE_PAGE_HINT
+> > bit of the host_cmd config register.
+> >
+> > As the first step here, virtio-balloon only reports free page hints
+> > from the max order (10) free page list to host. This has generated
+> > similar good results as reporting all free page hints during our tests.
+> >
+> > TODO:
+> > - support reporting free page hints from smaller order free page lists
+> >   when there is a need/request from users.
+> >
+> > Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> > Signed-off-by: Liang Li <liang.z.li@intel.com>
+> > Cc: Michael S. Tsirkin <mst@redhat.com>
+> > Cc: Michal Hocko <mhocko@kernel.org>
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > ---
+> >  drivers/virtio/virtio_balloon.c     | 187 +++++++++++++++++++++++++++++--
+> -----
+> >  include/uapi/linux/virtio_balloon.h |  13 +++
+> >  2 files changed, 163 insertions(+), 37 deletions(-)
+> >
+> > diff --git a/drivers/virtio/virtio_balloon.c
+> > b/drivers/virtio/virtio_balloon.c index 6b237e3..582a03b 100644
+> > --- a/drivers/virtio/virtio_balloon.c
+> > +++ b/drivers/virtio/virtio_balloon.c
+> > @@ -43,6 +43,9 @@
+> >  #define OOM_VBALLOON_DEFAULT_PAGES 256  #define
+> > VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
+> >
+> > +/* The size of memory in bytes allocated for reporting free page
+> > +hints */ #define FREE_PAGE_HINT_MEM_SIZE (PAGE_SIZE * 16)
+> > +
+> >  static int oom_pages = OOM_VBALLOON_DEFAULT_PAGES;
+> > module_param(oom_pages, int, S_IRUSR | S_IWUSR);
+> > MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
+> 
+> Doesn't this limit memory size of the guest we can report?
+> Apparently to several gigabytes ...
+> OTOH huge guests with lots of free memory is exactly where we would gain
+> the most ...
 
-About this lockdep error - I see it for very long time and it appears
-always (see end of serial log here:
-https://krzk.eu/#/builders/21/builds/707/steps/10/logs/serial0). It
-started much before this issue came so I am not sure whether it is
-related.
+Yes, the 16-page array can report up to 32GB (each page can hold 512 addresses of 4MB free page blocks, i.e. 2GB free memory per page) free memory to host. It is not flexible.
 
-Best regards,
-Krzysztof
+How about allocating the buffer according to the guest memory size (proportional)? That is,
+
+/* Calculates the maximum number of 4MB (equals to 1024 pages) free pages blocks that the system can have */
+4m_page_blocks = totalram_pages / 1024;
+
+/* Allocating one page can hold 512 free page blocks, so calculates the number of pages that can hold those 4MB blocks. And this allocation should not exceed 1024 pages */
+pages_to_allocate = min(4m_page_blocks / 512, 1024);
+
+For a 2TB guests, which has 2^19 page blocks (4MB each), we will allocate 1024 pages as the buffer.
+
+When the guest has large memory, it should be easier to succeed in allocation of large buffer. If that allocation fails, that implies that nothing would be got from the 4MB free page list.
+
+I think the proportional allocation is simpler compared to other approaches like 
+- scattered buffer, which will complicate the get_from_free_page_list implementation;
+- one buffer to call get_from_free_page_list multiple times, which needs get_from_free_page_list to maintain states.. also too complicated.
+
+Best,
+Wei
+
+
+
