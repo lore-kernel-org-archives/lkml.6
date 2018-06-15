@@ -2,173 +2,211 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B0839C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:32:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CA288C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5860720896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:32:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YDf9PwCl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5860720896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 7EB79208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:32:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB79208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755946AbeFOHcG (ORCPT
+        id S1755956AbeFOHcr convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 03:32:06 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:45167 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755926AbeFOHcE (ORCPT
+        Fri, 15 Jun 2018 03:32:47 -0400
+Received: from tyo162.gate.nec.co.jp ([114.179.232.162]:37810 "EHLO
+        tyo162.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755759AbeFOHcq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 03:32:04 -0400
-Received: by mail-pg0-f67.google.com with SMTP id z1-v6so4048301pgv.12
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 00:32:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=5h1iG4VMr/oPe/3JS4hs0NRVQy0RxyptKmSJXzYCzm8=;
-        b=YDf9PwCli0MGwxYXdyqjdyf4x6W7Meg0Pyb5IwDJfLatB/bUf+JWHE7M1VgpKghDAt
-         vXgIiQyv0bKNVz2AyUfkGxRIAG9zArVvLnV1Rk1JuurEspRERvigD9marmbihkGWs1BQ
-         cqAC/oWtPZnjr2Kf+I2nofeVVjzdGzJagjHrda47yt5r2YuuotrI4DEfpl9ltgKpL0b1
-         0Sd5KhPq/JM7xi3K4jb5NzUC2nvbs8+Z8SDZVrcEaBaF/ucu3Eut8/a7vRyUrKnvdrce
-         kdAdFZO7o3/90N6HoIHuwPKIvMbJqsOfsBo3ju63ykkn7xg9OCeqDPXzSiMMkvFWBlGC
-         q3ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=5h1iG4VMr/oPe/3JS4hs0NRVQy0RxyptKmSJXzYCzm8=;
-        b=DBIQc6n+XdfnqBjlS916aVbMk/RhoJO6o5jRH1G8oawNIcm8jOsRwUk+/ZM+NH1Rng
-         vwx7SGty3MVVij+FemWOysyLHwznAM6vqu7C2X+xZAVr9Uzaj9+j6OPvhh8cOPPNclLH
-         9g52S231HouEIZ71LpRLXPsJcxr2dRFfgI7tPCEgtccj+wJOdSpeJ5UQA/p7J1Vo64FR
-         uJzejT3kazXkSmaZ1gpszL0n+qN0eT+x7zegYr5ITLMaajnhbBq5l2u8NVb6qEPaIQP8
-         N8JNAloDyDRsi8IC00Dneli/sGIzFS+CSf7JVVp6txhgPV69dqhqmY+kCHVBH6ydk6xr
-         /0bA==
-X-Gm-Message-State: APt69E0JTcotzHfukgINDkv3s2zU5dDtb4rU7CnUTSlDq/G6X5zmcMCK
-        N6D6tCLvYBI9eO71/nYAiWIVu2drhPqR0deDw+A68Q==
-X-Google-Smtp-Source: ADUXVKKI3nXGXeCs/izz9L5mZv/PrtJ8IpHM6FVq0wBJvUtp8bfbvd05MuOIgYWAYpYTpe4PlbBVeb71HzRhnTLSyLM=
-X-Received: by 2002:a63:721c:: with SMTP id n28-v6mr539135pgc.96.1529047924046;
- Fri, 15 Jun 2018 00:32:04 -0700 (PDT)
+        Fri, 15 Jun 2018 03:32:46 -0400
+Received: from mailgate01.nec.co.jp ([114.179.233.122])
+        by tyo162.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id w5F7W0OU011451
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 15 Jun 2018 16:32:00 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate01.nec.co.jp (8.15.1/8.15.1) with ESMTP id w5F7W0wm030499;
+        Fri, 15 Jun 2018 16:32:00 +0900
+Received: from mail03.kamome.nec.co.jp (mail03.kamome.nec.co.jp [10.25.43.7])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id w5F7W05u003979;
+        Fri, 15 Jun 2018 16:32:00 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.151] [10.38.151.151]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-1200420; Fri, 15 Jun 2018 16:29:49 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC23GP.gisp.nec.co.jp ([10.38.151.151]) with mapi id 14.03.0319.002; Fri,
+ 15 Jun 2018 16:29:49 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     "linux-mm@kvack.org" <linux-mm@kvack.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Oscar Salvador <osalvador@suse.de>,
+        "Pavel Tatashin" <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Huang Ying <ying.huang@intel.com>
+Subject: [PATCH v3] x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved
+Thread-Topic: [PATCH v3] x86/e820: put !E820_TYPE_RAM regions into
+ memblock.reserved
+Thread-Index: AQHUBHqk2ayFHAouJUSDPhJEYCKcCw==
+Date:   Fri, 15 Jun 2018 07:29:48 +0000
+Message-ID: <20180615072947.GB23273@hori1.linux.bs1.fc.nec.co.jp>
+References: <20180607065940.GA7334@techadventures.net>
+ <20180607094921.GA8545@techadventures.net>
+ <20180607100256.GA9129@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613090700.GG13364@dhcp22.suse.cz>
+ <20180614051618.GB17860@hori1.linux.bs1.fc.nec.co.jp>
+ <20180614053859.GA9863@techadventures.net>
+ <20180614063454.GA32419@hori1.linux.bs1.fc.nec.co.jp>
+ <20180614213033.GA19374@techadventures.net>
+ <20180615010927.GC1196@hori1.linux.bs1.fc.nec.co.jp>
+In-Reply-To: <20180615010927.GC1196@hori1.linux.bs1.fc.nec.co.jp>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.81]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <438DE963F8C23244B9AADE194DC1EADF@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Received: by 2002:a17:90a:de2:0:0:0:0 with HTTP; Fri, 15 Jun 2018 00:31:43
- -0700 (PDT)
-In-Reply-To: <0000000000001f31eb056ea92fcb@google.com>
-References: <0000000000001f31eb056ea92fcb@google.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 15 Jun 2018 09:31:43 +0200
-Message-ID: <CACT4Y+aq3pDM4=fXwpAMNLiZWRC6H_050t4dgoK94kWxvV3pjg@mail.gmail.com>
-Subject: Re: KMSAN: uninit-value in xfrm_state_find
-To:     syzbot <syzbot+131cd4c6d21724b99a26@syzkaller.appspotmail.com>
-Cc:     David Miller <davem@davemloft.net>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        LKML <linux-kernel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Steffen Klassert <steffen.klassert@secunet.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        icytxw@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 9:30 AM, syzbot
-<syzbot+131cd4c6d21724b99a26@syzkaller.appspotmail.com> wrote:
-> Hello,
->
-> syzbot found the following crash on:
->
-> HEAD commit:    1df165c8d2d6 kmsan: introduce kmsan_clear_user_page()
-> git tree:       https://github.com/google/kmsan.git/master
-> console output: https://syzkaller.appspot.com/x/log.txt?x=15336e97800000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4ca1e57bafa8ab1f
-> dashboard link: https://syzkaller.appspot.com/bug?extid=131cd4c6d21724b99a26
-> compiler:       clang version 7.0.0 (trunk 329391)
-> syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=12c7a417800000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13710197800000
->
-> IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+131cd4c6d21724b99a26@syzkaller.appspotmail.com
+Hi,
+I updated the patch, so let me share it.
 
-This may be related to "BUG: KASAN: stack-out-of-bounds in
-ipv6_addr_equal include/net/ipv6.h":
-https://groups.google.com/d/msg/syzkaller/va_9cjZsHQE/Htc7sYY2BwAJ
+# I'll be offline early in the next week, maybe come back on Wednesday.
+# Have a nice weekend.
 
+Thanks,
+Naoya Horiguchi
+---
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Date: Thu, 14 Jun 2018 16:04:36 +0900
+Subject: [PATCH] x86/e820: put !E820_TYPE_RAM regions into memblock.reserved
 
-> IPv6: ADDRCONF(NETDEV_UP): veth1: link is not ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth1: link becomes ready
-> IPv6: ADDRCONF(NETDEV_CHANGE): veth0: link becomes ready
-> 8021q: adding VLAN 0 to HW filter on device team0
-> ==================================================================
-> BUG: KMSAN: uninit-value in __arch_swab32
-> arch/x86/include/uapi/asm/swab.h:10 [inline]
-> BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-> BUG: KMSAN: uninit-value in __xfrm6_daddr_saddr_hash net/xfrm/xfrm_hash.h:29
-> [inline]
-> BUG: KMSAN: uninit-value in __xfrm_dst_hash net/xfrm/xfrm_hash.h:96 [inline]
-> BUG: KMSAN: uninit-value in xfrm_dst_hash net/xfrm/xfrm_state.c:60 [inline]
-> BUG: KMSAN: uninit-value in xfrm_state_find+0x2b15/0x4f40
-> net/xfrm/xfrm_state.c:952
-> CPU: 0 PID: 4464 Comm: syz-executor988 Not tainted 4.17.0-rc3+ #93
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-> Google 01/01/2011
-> Call Trace:
->  __dump_stack lib/dump_stack.c:77 [inline]
->  dump_stack+0x185/0x1d0 lib/dump_stack.c:113
->  kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1084
->  __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
->  __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
->  __fswab32 include/uapi/linux/swab.h:59 [inline]
->  __xfrm6_daddr_saddr_hash net/xfrm/xfrm_hash.h:29 [inline]
->  __xfrm_dst_hash net/xfrm/xfrm_hash.h:96 [inline]
->  xfrm_dst_hash net/xfrm/xfrm_state.c:60 [inline]
->  xfrm_state_find+0x2b15/0x4f40 net/xfrm/xfrm_state.c:952
->  xfrm_tmpl_resolve_one net/xfrm/xfrm_policy.c:1393 [inline]
->  xfrm_tmpl_resolve net/xfrm/xfrm_policy.c:1437 [inline]
->  xfrm_resolve_and_create_bundle+0xc31/0x5270 net/xfrm/xfrm_policy.c:1833
->  xfrm_lookup+0x606/0x39d0 net/xfrm/xfrm_policy.c:2163
->  xfrm_lookup_route+0xfa/0x360 net/xfrm/xfrm_policy.c:2283
->  ip_route_output_flow+0x35b/0x3b0 net/ipv4/route.c:2574
->  udp_sendmsg+0x2289/0x33f0 net/ipv4/udp.c:1006
->  udpv6_sendmsg+0x1291/0x3f40 net/ipv6/udp.c:1175
->  inet_sendmsg+0x48d/0x740 net/ipv4/af_inet.c:798
->  sock_sendmsg_nosec net/socket.c:629 [inline]
->  sock_sendmsg net/socket.c:639 [inline]
->  ___sys_sendmsg+0xec0/0x1310 net/socket.c:2117
->  __sys_sendmmsg+0x490/0x850 net/socket.c:2212
->  __do_sys_sendmmsg net/socket.c:2241 [inline]
->  __se_sys_sendmmsg net/socket.c:2238 [inline]
->  __x64_sys_sendmmsg+0x11c/0x170 net/socket.c:2238
->  do_syscall_64+0x154/0x220 arch/x86/entry/common.c:287
->  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-> RIP: 0033:0x4419c9
-> RSP: 002b:00007ffdb3fa4608 EFLAGS: 00000217 ORIG_RAX: 0000000000000133
-> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004419c9
-> RDX: 0000000000000001 RSI: 0000000020002000 RDI: 0000000000000003
-> RBP: 00000000006cd018 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000217 R12: 00000000004026c0
-> R13: 0000000000402750 R14: 0000000000000000 R15: 0000000000000000
->
-> Local variable description: ----fl4_stack@udp_sendmsg
-> Variable was created at:
->  udp_sendmsg+0xe5/0x33f0 net/ipv4/udp.c:841
->  udpv6_sendmsg+0x1291/0x3f40 net/ipv6/udp.c:1175
-> ==================================================================
->
->
-> ---
-> This bug is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this bug report. See:
-> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with
-> syzbot.
-> syzbot can test patches for this bug, for details see:
-> https://goo.gl/tpsmEJ#testing-patches
+There is a kernel panic that is triggered when reading /proc/kpageflags
+on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
+
+  BUG: unable to handle kernel paging request at fffffffffffffffe
+  PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+  RIP: 0010:stable_page_flags+0x27/0x3c0
+  Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
+  RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
+  RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
+  RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
+  RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
+  R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
+  R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
+  FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
+  Call Trace:
+   kpageflags_read+0xc7/0x120
+   proc_reg_read+0x3c/0x60
+   __vfs_read+0x36/0x170
+   vfs_read+0x89/0x130
+   ksys_pread64+0x71/0x90
+   do_syscall_64+0x5b/0x160
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  RIP: 0033:0x7efc42e75e23
+  Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+
+According to kernel bisection, this problem became visible due to commit
+f7f99100d8d9 which changes how struct pages are initialized.
+
+Memblock layout affects the pfn ranges covered by node/zone. Consider
+that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
+the default (no memmap= given) memblock layout is like below:
+
+  MEMBLOCK configuration:
+   memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
+   memory.cnt  = 0x4
+   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+   memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
+   memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+   ...
+
+If you give memmap=1G!4G (so it just covers memory[0x2]),
+the range [0x100000000-0x13fffffff] is gone:
+
+  MEMBLOCK configuration:
+   memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
+   memory.cnt  = 0x3
+   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+   memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+   ...
+
+This causes shrinking node 0's pfn range because it is calculated by
+the address range of memblock.memory. So some of struct pages in the
+gap range are left uninitialized.
+
+We have a function zero_resv_unavail() which does zeroing the struct
+pages within the reserved unavailable range (i.e. memblock.memory &&
+!memblock.reserved). This patch utilizes it to cover all unavailable
+ranges by putting them into memblock.reserved.
+
+Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Tested-by: Oscar Salvador <osalvador@suse.de>
+---
+ arch/x86/kernel/e820.c | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+index d1f25c831447..c88c23c658c1 100644
+--- a/arch/x86/kernel/e820.c
++++ b/arch/x86/kernel/e820.c
+@@ -1248,6 +1248,7 @@ void __init e820__memblock_setup(void)
+ {
+ 	int i;
+ 	u64 end;
++	u64 addr = 0;
+ 
+ 	/*
+ 	 * The bootstrap memblock region count maximum is 128 entries
+@@ -1264,13 +1265,21 @@ void __init e820__memblock_setup(void)
+ 		struct e820_entry *entry = &e820_table->entries[i];
+ 
+ 		end = entry->addr + entry->size;
++		if (addr < entry->addr)
++			memblock_reserve(addr, entry->addr - addr);
++		addr = end;
+ 		if (end != (resource_size_t)end)
+ 			continue;
+ 
++		/*
++		 * all !E820_TYPE_RAM ranges (including gap ranges) are put
++		 * into memblock.reserved to make sure that struct pages in
++		 * such regions are not left uninitialized after bootup.
++		 */
+ 		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+-			continue;
+-
+-		memblock_add(entry->addr, entry->size);
++			memblock_reserve(entry->addr, entry->size);
++		else
++			memblock_add(entry->addr, entry->size);
+ 	}
+ 
+ 	/* Throw away partial pages: */
+-- 
+2.7.4
+
