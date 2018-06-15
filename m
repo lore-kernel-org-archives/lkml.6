@@ -2,133 +2,122 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8FCC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B15E3C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C0B4208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:33:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56F30208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 23:36:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B3zbrGQS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C0B4208B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=hmh.eng.br header.i=@hmh.eng.br header.b="dV6g02Cb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="s1abkV2Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 56F30208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hmh.eng.br
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756821AbeFOXdA (ORCPT
+        id S1756814AbeFOXgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 19:33:00 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:42530 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756807AbeFOXc6 (ORCPT
+        Fri, 15 Jun 2018 19:36:35 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:45405 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1753761AbeFOXgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 19:32:58 -0400
-Received: by mail-pf0-f195.google.com with SMTP id w7-v6so5534948pfn.9;
-        Fri, 15 Jun 2018 16:32:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=771TQKyx3HFxkbPiP1OXTSSOKZ4/agX8BAJiOMdFzWg=;
-        b=B3zbrGQSc0pfJk8XmCTxOZKN92z0v7qKm2cyfqWab5hgUfXzPz2yYww4Tq9D1BiUF6
-         MEjMi8W6JsQ8J/odrST74JUSHgmfM5fo5FOVvQEM1n9NsKogCk3tFKMlFBMWTE8AgraY
-         7Z8xIoIPjfrCIZnYjhR3FkSme9nMbYMO5K0Wj9tw10xzJI8OnFRRMQpf13QyjZk+54m/
-         xK/fe4LGZWZTbR8mUf2pGEd6n2Bz3ZMtObvoV3qbTO+D7C0JubKtkgNu8qvEmyy9zQVh
-         jLzGOjkK4DOHnGPxuXZnQwJSlaJ/nSO1lFBy3s6crItQXnvPuiJuFPFkWBfH/+sbNTh0
-         J3lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=771TQKyx3HFxkbPiP1OXTSSOKZ4/agX8BAJiOMdFzWg=;
-        b=B4DsQ/SpGYT+w5sY1Atm7Hik7XA3KW2Gv8Vz8u2GpTbb3mGzB0MdN/s6kUcyhJ6d18
-         u3ZepCS+z1IQ5SW6TESGVhHd1wSFn4JCJKvDniAwGBg3WquBimQD4QyEojCmgsEwkNmM
-         sMf3XrhcxZ/yIf+lX1MBIlFzeI73Aop8HVytsP92KRhenadrt09vWX3t9j+ch60tz3/F
-         bfAlu59I8BwVXgYoTkZumHET/7GH5wgwoVzovhOojME0tYjBMDlU3bIkjTTuL6OCY7vX
-         ZxfBvm98FBTLelcL01CbWkwgW899//iNnAyN1gGWHgU1ubgVMvvtStegeytbW3KokyrQ
-         C0jQ==
-X-Gm-Message-State: APt69E3wwuzPNJDzViHqfO71omljO4DSM5pGgYPSb6gUC5t2PUC3T8g2
-        nC7AIAHjESFIHztxi86MzHc=
-X-Google-Smtp-Source: ADUXVKIl4msd6hiLCf5ero03RqM6mCKQu0OTMrWAizXq/H6UD7CuI/+C7v2FVG3U5PkdGwn9uzMymA==
-X-Received: by 2002:a65:5143:: with SMTP id g3-v6mr3342121pgq.190.1529105577398;
-        Fri, 15 Jun 2018 16:32:57 -0700 (PDT)
-Received: from [192.168.43.97] ([1.1.125.127])
-        by smtp.gmail.com with ESMTPSA id r2-v6sm16780476pfa.49.2018.06.15.16.32.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 16:32:56 -0700 (PDT)
-Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
-To:     Fabio Estevam <festevam@gmail.com>, Marek Vasut <marex@denx.de>
-Cc:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "marcofrk@gmail.com" <marcofrk@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
-References: <cover.1529091248.git.leonard.crestez@nxp.com>
- <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
- <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
- <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
- <638457fd-85da-8fec-d146-517c43f71813@denx.de>
- <CAOMZO5DJju6oBRLakkTx4np7w9nMwPm6TMkGGYjbMLUPDUugYw@mail.gmail.com>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Message-ID: <22e2aecc-3735-8ad6-3f36-75ae2b8f2498@gmail.com>
-Date:   Sat, 16 Jun 2018 01:29:31 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 19:36:33 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailout.nyi.internal (Postfix) with ESMTP id BE12921ADD;
+        Fri, 15 Jun 2018 19:36:32 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Fri, 15 Jun 2018 19:36:32 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hmh.eng.br; h=cc
+        :content-transfer-encoding:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-sender
+        :x-me-sender:x-sasl-enc; s=fm2; bh=3D8IXBVKGho4LrCfyWOM9rIj0BpUy
+        voEi9d61zauNJs=; b=dV6g02CbZ3/JfbGFKxV+uZu5kS9ZCewppUapmOBfcffod
+        +IB/JvXW9Vf2s/4HwaK9+V8xgYdCBMdSf6haa3Mz9+Igz1uscHjaH79U5DqjbjyI
+        jD7nz2whhpV3k63iknZZ7eCJi2FBkneOrV0dKFZDpk+p7f/8xxTDmYMjkUydNFV7
+        LREzWxdpBui/5k1ELSf3LcDLfEm7L6dIBEVREtzKRhsEyjAzK0jYUnNyk/F+VLk2
+        W6Y88OLc7rXEns2FXl9N9AGLF4I0vMQdTJpOv+3qg9kglTxt1WNwNpr0ipVTtbvP
+        7IJJq/gWjdM1wXnSOJ4NP26jvvFck/AZUsRBSKjrg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=3D8IXB
+        VKGho4LrCfyWOM9rIj0BpUyvoEi9d61zauNJs=; b=s1abkV2YB13oD/qUDhNRk6
+        IztrGuhSTGkoJC9yssDmH1VcTTugP4GJbdqsNVO+7AjAsZGY28fYej3mz2AlpErI
+        JbFAjAWjPtnVAetBtMCXucCDoZl8ykmCyKR4xrErRDleH3JByrjURTQv/yvAuFCk
+        sRPLWBv/OXNtLq/2REunPB8rXIF++xJOMJWcbj/8jvTA9WHTmflmOj2Q0kETT+1H
+        LKEqcgIKh397GVLFmoRVnG/p2BLQNDcQykYLwM75kJlPaKyjoENy1GoTLrlMcz6E
+        I+XtPeWM1oeYK7Vzet4APz28Ly+OnBIKD/ooEb3gr04TqBNsIdcXSFJjm3GwGAug
+        ==
+X-ME-Proxy: <xmx:gE0kW9zbbf0AeInCN-24ajDrOBnf-QInp2CUyc_YJjagh2BnQgEvXg>
+    <xmx:gE0kW9d3R5aCAapA4UuHD82oPRRTboi_ad2PjwqCFcHZ0mndeIrhOg>
+    <xmx:gE0kW1o_vLsAyBAD5G_PUL0s5qMeHebAnYy2363G7LJj2GAgDeMKFA>
+    <xmx:gE0kW9Qk5KLY-WlGEkJYen5G1uDbgVDijYm2MzjxJsS-FUgt0h9kzw>
+    <xmx:gE0kWxYZPIATqJfgyz561ToJL9k7yDw6QsvL_SESxIoA0-Uiz1nzcQ>
+    <xmx:gE0kW1RG3uKpq5Ep5rFsgkEHqrVXPQneq8b5twfxhdsF4VYCgRmuMw>
+X-ME-Sender: <xms:gE0kWy0_3Bkgh5Gf2U5dlKZ6K86Cf4Y1hqvz3gQpYZMTem9tWsud-g>
+Received: from khazad-dum.debian.net (unknown [201.53.245.99])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 4279BE43A3;
+        Fri, 15 Jun 2018 19:36:32 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+        by localhost.khazad-dum.debian.net (Postfix) with ESMTP id 0AEF03401327;
+        Fri, 15 Jun 2018 20:36:30 -0300 (-03)
+X-Virus-Scanned: Debian amavisd-new at khazad-dum.debian.net
+Received: from khazad-dum.debian.net ([127.0.0.1])
+        by localhost (khazad-dum2.khazad-dum.debian.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id SbaA053qn5n1; Fri, 15 Jun 2018 20:36:28 -0300 (-03)
+Received: by khazad-dum.debian.net (Postfix, from userid 1000)
+        id BEE933400BEA; Fri, 15 Jun 2018 20:36:28 -0300 (-03)
+Date:   Fri, 15 Jun 2018 20:36:28 -0300
+From:   Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+To:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>
+Cc:     Pavel Machek <pavel@ucw.cz>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+Message-ID: <20180615233628.gy2ffgupctheyqof@khazad-dum.debian.net>
+References: <20180608111057.4wxpg7m7nm7suf6n@pali>
+ <20180615112606.GA3986@amd>
+ <20180615113728.h7snxhe2juaqvjyx@pali>
+ <20180615123007.nxsymdvr3nj3it5i@khazad-dum.debian.net>
+ <20180615190915.cdntdeesc52ei35u@pali>
 MIME-Version: 1.0
-In-Reply-To: <CAOMZO5DJju6oBRLakkTx4np7w9nMwPm6TMkGGYjbMLUPDUugYw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20180615190915.cdntdeesc52ei35u@pali>
+X-GPG-Fingerprint1: 4096R/0x0BD9E81139CB4807: C467 A717 507B BAFE D3C1  6092
+ 0BD9 E811 39CB 4807
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/16/2018 12:22 AM, Fabio Estevam wrote:
-> On Fri, Jun 15, 2018 at 6:36 PM, Marek Vasut <marex@denx.de> wrote:
-> 
->> Having two drivers in the kernel with different set of bugs is always bad.
-> 
-> Sure, but breaking dtb's is also bad.
+On Fri, 15 Jun 2018, Pali Rohár wrote:
+> This means that kernel should not export any led class device. Or when
+> exported, then "set" operation should always fail.
 
-You picked only the first part of my argument, the less important one ;-)
+"not export" is right.
 
-> Can the mxsfb driver be modified to handle the old style bindings?
+> > 2. Otherwise implement it in-kernel, so that userspace cannot unmute
+> >    when the human has activated the "mute" switch, and the LED cannot be
+> >    controlled by userspace to lie (report mute when it is not mute).
+> 
+> This looks like a good candidate to use led "trigger" interface. Create
+> a mute trigger and attach it to that led device.
 
-Maybe, but do we care ? Cfr my comment about the amount of users who
-will be affected by this.
+Maybe, as long as done in-kernel and not possible to mess with from
+userspace.
 
-> The IPU drm driver is capable of handling both the old style where the
-> display timing is passed in dts and the new drm style.
-> 
-> For example:
-> 
-> arch/arm/boot/dts/imx6qdl-sabresd.dtsi uses the drm style binding
-> arch/arm/boot/dts/imx6qdl-sabreauto.dtsi uses the old style of passing
-> the display timings in dts
-> 
-> Both formats are accepted by the ipu drm driver.
-> 
-> Can't mxsfb drm driver support both? Then we don't need to worry about
-> breaking dtb's and could safely remove the mxs fbdev driver.
+> means set. What is SHDA doing, I have not figured out. It does not
 
-This might be a way forward, but again, does it justify the effort ?
-We will be adding compatibility code which we will have to maintain for
-maybe a handful of users I think.
+Look at the HDA mixer state, SHDA is likely to be directly messing with
+it.
 
 -- 
-Best regards,
-Marek Vasut
+  Henrique Holschuh
