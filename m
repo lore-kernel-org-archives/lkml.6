@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79292C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4022CC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A000208D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE8D6208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:43:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="I0NC476v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A000208D7
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="MyOksR3j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE8D6208B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966244AbeFORnY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:43:24 -0400
-Received: from userp2130.oracle.com ([156.151.31.86]:46954 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966054AbeFORnT (ORCPT
+        id S966350AbeFORni (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:43:38 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:59014 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966080AbeFORnP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:43:19 -0400
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHcYie008277;
-        Fri, 15 Jun 2018 17:42:22 GMT
+        Fri, 15 Jun 2018 13:43:15 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHcWHE139317;
+        Fri, 15 Jun 2018 17:42:24 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
  date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=OwfLVWqwTE1EYqDmhwE3GlnPV3t182DvBls5wjVWqas=;
- b=I0NC476v6aIkMMGvKmnZORyiwBhiHPooX0w9HA0ETxWrfY08yegxQol6wizmttwG+Gpd
- UzBKns2qlemEpVcVC31skXvnTaVwUVtii0Zoh2+9WfOHsLKW40svjbGMmtuP+9TewkCs
- paH51hSxH0i1vFkfbjRuCagEvr4BWxayY3oOk6DmLKXcJJmaKIU5Z6nFChBhWn/R6yRD
- fw4AEKiO/rYTPhURIsHEY41WHsUVHpSHLkiKRqRnx9NLh6WQRJBVwYb4ReHcHAX97GfN
- 7qi5UF2tikLPNof0xYTMafSN/yTvCHnoMmoFswjtrDAngguUPZeTO/31e+R5tL1TSkI9 Bw== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by userp2130.oracle.com with ESMTP id 2jk0xrhwaf-1
+ bh=I4yGbMnHhIDblV6Yzh4pVP0FQYFl7ETeY1WLl0f6RTw=;
+ b=MyOksR3jrU2Ny+6NHlVxOPYYEzAsdUNnZac3wDzlV9aC3I/JAEsc2J2SFpbh5jdZIzHk
+ dpFmNOW3FmHHcJErekrO6LOKV4r9TWmLzKmofSADDyLDkNWX+Am9ZlcTCDVAfSXFp4GS
+ zODVLKKuy9Y4sSRq0OchBU3jX3pSLaoj4wIjwmYm5T8oJ/hoSOZq5J58hzge8m1s+85P
+ d5fhl8EPdFhcVtsj0hslwULTcGL8bPzaCFfQYrbMjnvDG19XY3KcOA34uUeHyKmjg9wv
+ rAQDwHa0yhbti0v7dQfKY3e0QxJjFXb8jw+J5bsR4Z3V0tKbds4XUQH/f2NmOeU7izGc jg== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by aserp2130.oracle.com with ESMTP id 2jk0xr1vys-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:22 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgLhi031112
+        Fri, 15 Jun 2018 17:42:24 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgNnS002516
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:21 GMT
+        Fri, 15 Jun 2018 17:42:24 GMT
 Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgKmt025178;
-        Fri, 15 Jun 2018 17:42:20 GMT
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5FHgMWR004421;
+        Fri, 15 Jun 2018 17:42:22 GMT
 Received: from localhost.localdomain (/73.69.118.222)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jun 2018 10:42:20 -0700
+        with ESMTP ; Fri, 15 Jun 2018 10:42:22 -0700
 From:   Pavel Tatashin <pasha.tatashin@oracle.com>
 To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         linux@armlinux.org.uk, schwidefsky@de.ibm.com,
@@ -58,15 +58,15 @@ To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
         mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
         douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
         feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: [PATCH v10 5/7] kvm/x86: remove kvm memblock dependency
-Date:   Fri, 15 Jun 2018 13:42:02 -0400
-Message-Id: <20180615174204.30581-6-pasha.tatashin@oracle.com>
+Subject: [PATCH v10 6/7] x86/paravirt: add active_sched_clock to pv_time_ops
+Date:   Fri, 15 Jun 2018 13:42:03 -0400
+Message-Id: <20180615174204.30581-7-pasha.tatashin@oracle.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180615174204.30581-1-pasha.tatashin@oracle.com>
 References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
 X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=915
  adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.0.1-1805220000 definitions=main-1806150189
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,177 +74,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-KVM clock is initialized later compared to other hypervisor because it has
-dependency on memblock allocator.
-
-This patch removes this dependency by using memory from BSS instead of
-allocating it.
-
-The benefits:
-- remove ifdef from common code
-- earlier availability of TSC.
-- remove dependency on memblock, and reduce code
+Early boot clock might differ from the clock that is used later on,
+therefore add a new field to pv_time_ops, that shows currently active
+clock. If platform supports early boot clock, this field will be changed
+to use that clock early in boot, and later will be replaced with the
+permanent clock.
 
 Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
 ---
- arch/x86/kernel/kvm.c      |  1 +
- arch/x86/kernel/kvmclock.c | 64 ++++++--------------------------------
- arch/x86/kernel/setup.c    |  7 ++---
- 3 files changed, 12 insertions(+), 60 deletions(-)
+ arch/x86/include/asm/paravirt_types.h | 1 +
+ arch/x86/kernel/paravirt.c            | 1 +
+ arch/x86/xen/time.c                   | 7 ++++---
+ 3 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/kernel/kvm.c b/arch/x86/kernel/kvm.c
-index 5b2300b818af..c65c232d3ddd 100644
---- a/arch/x86/kernel/kvm.c
-+++ b/arch/x86/kernel/kvm.c
-@@ -628,6 +628,7 @@ const __initconst struct hypervisor_x86 x86_hyper_kvm = {
- 	.name			= "KVM",
- 	.detect			= kvm_detect,
- 	.type			= X86_HYPER_KVM,
-+	.init.init_platform	= kvmclock_init,
- 	.init.guest_late_init	= kvm_guest_init,
- 	.init.x2apic_available	= kvm_para_available,
+diff --git a/arch/x86/include/asm/paravirt_types.h b/arch/x86/include/asm/paravirt_types.h
+index 180bc0bff0fb..d555b66c5bbb 100644
+--- a/arch/x86/include/asm/paravirt_types.h
++++ b/arch/x86/include/asm/paravirt_types.h
+@@ -99,6 +99,7 @@ struct pv_lazy_ops {
+ struct pv_time_ops {
+ 	unsigned long long (*sched_clock)(void);
+ 	unsigned long long (*steal_clock)(int cpu);
++	unsigned long long (*active_sched_clock)(void);
+ } __no_randomize_layout;
+ 
+ struct pv_cpu_ops {
+diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+index 99dc79e76bdc..5bfdb72f152f 100644
+--- a/arch/x86/kernel/paravirt.c
++++ b/arch/x86/kernel/paravirt.c
+@@ -320,6 +320,7 @@ struct pv_init_ops pv_init_ops = {
+ struct pv_time_ops pv_time_ops = {
+ 	.sched_clock = native_sched_clock,
+ 	.steal_clock = native_steal_clock,
++	.active_sched_clock = native_sched_clock,
  };
-diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
-index bf8d1eb7fca3..01558d41ec2c 100644
---- a/arch/x86/kernel/kvmclock.c
-+++ b/arch/x86/kernel/kvmclock.c
-@@ -23,9 +23,9 @@
- #include <asm/apic.h>
- #include <linux/percpu.h>
- #include <linux/hardirq.h>
--#include <linux/memblock.h>
- #include <linux/sched.h>
- #include <linux/sched/clock.h>
-+#include <linux/mm.h>
  
- #include <asm/mem_encrypt.h>
- #include <asm/x86_init.h>
-@@ -44,6 +44,11 @@ static int parse_no_kvmclock(char *arg)
- }
- early_param("no-kvmclock", parse_no_kvmclock);
+ __visible struct pv_irq_ops pv_irq_ops = {
+diff --git a/arch/x86/xen/time.c b/arch/x86/xen/time.c
+index e0f1bcf01d63..29b07020c827 100644
+--- a/arch/x86/xen/time.c
++++ b/arch/x86/xen/time.c
+@@ -505,8 +505,8 @@ static void __init xen_time_init(void)
  
-+/* Aligned to page sizes to match whats mapped via vsyscalls to userspace */
-+#define HV_CLOCK_SIZE	(sizeof(struct pvclock_vsyscall_time_info) * NR_CPUS)
-+#define WALL_CLOCK_SIZE	(sizeof(struct pvclock_wall_clock))
-+static u8 hv_clock_mem[PAGE_ALIGN(HV_CLOCK_SIZE)] __aligned(PAGE_SIZE);
-+static u8 wall_clock_mem[PAGE_ALIGN(WALL_CLOCK_SIZE)] __aligned(PAGE_SIZE);
- /* The hypervisor will put information about time periodically here */
- static struct pvclock_vsyscall_time_info *hv_clock;
- static struct pvclock_wall_clock *wall_clock;
-@@ -244,43 +249,12 @@ static void kvm_shutdown(void)
- 	native_machine_shutdown();
- }
- 
--static phys_addr_t __init kvm_memblock_alloc(phys_addr_t size,
--					     phys_addr_t align)
--{
--	phys_addr_t mem;
--
--	mem = memblock_alloc(size, align);
--	if (!mem)
--		return 0;
--
--	if (sev_active()) {
--		if (early_set_memory_decrypted((unsigned long)__va(mem), size))
--			goto e_free;
--	}
--
--	return mem;
--e_free:
--	memblock_free(mem, size);
--	return 0;
--}
--
--static void __init kvm_memblock_free(phys_addr_t addr, phys_addr_t size)
--{
--	if (sev_active())
--		early_set_memory_encrypted((unsigned long)__va(addr), size);
--
--	memblock_free(addr, size);
--}
--
- void __init kvmclock_init(void)
+ void __ref xen_init_time_ops(void)
  {
- 	struct pvclock_vcpu_time_info *vcpu_time;
--	unsigned long mem, mem_wall_clock;
--	int size, cpu, wall_clock_size;
-+	int cpu;
- 	u8 flags;
- 
--	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
+-	pv_time_ops = xen_time_ops;
 -
- 	if (!kvm_para_available())
- 		return;
- 
-@@ -290,28 +264,11 @@ void __init kvmclock_init(void)
- 	} else if (!(kvmclock && kvm_para_has_feature(KVM_FEATURE_CLOCKSOURCE)))
- 		return;
- 
--	wall_clock_size = PAGE_ALIGN(sizeof(struct pvclock_wall_clock));
--	mem_wall_clock = kvm_memblock_alloc(wall_clock_size, PAGE_SIZE);
--	if (!mem_wall_clock)
--		return;
--
--	wall_clock = __va(mem_wall_clock);
--	memset(wall_clock, 0, wall_clock_size);
--
--	mem = kvm_memblock_alloc(size, PAGE_SIZE);
--	if (!mem) {
--		kvm_memblock_free(mem_wall_clock, wall_clock_size);
--		wall_clock = NULL;
--		return;
--	}
--
--	hv_clock = __va(mem);
--	memset(hv_clock, 0, size);
-+	wall_clock = (struct pvclock_wall_clock *)wall_clock_mem;
-+	hv_clock = (struct pvclock_vsyscall_time_info *)hv_clock_mem;
- 
- 	if (kvm_register_clock("primary cpu clock")) {
- 		hv_clock = NULL;
--		kvm_memblock_free(mem, size);
--		kvm_memblock_free(mem_wall_clock, wall_clock_size);
- 		wall_clock = NULL;
++	pv_time_ops.sched_clock = xen_time_ops.sched_clock;
++	pv_time_ops.steal_clock = xen_time_ops.steal_clock;
+ 	x86_init.timers.timer_init = xen_time_init;
+ 	x86_init.timers.setup_percpu_clockev = x86_init_noop;
+ 	x86_cpuinit.setup_percpu_clockev = x86_init_noop;
+@@ -547,7 +547,8 @@ void __init xen_hvm_init_time_ops(void)
  		return;
  	}
-@@ -354,13 +311,10 @@ int __init kvm_setup_vsyscall_timeinfo(void)
- 	int cpu;
- 	u8 flags;
- 	struct pvclock_vcpu_time_info *vcpu_time;
--	unsigned int size;
  
- 	if (!hv_clock)
- 		return 0;
- 
--	size = PAGE_ALIGN(sizeof(struct pvclock_vsyscall_time_info)*NR_CPUS);
--
- 	cpu = get_cpu();
- 
- 	vcpu_time = &hv_clock[cpu].pvti;
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 2f86d883dd95..5194d9c38a43 100644
---- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1012,6 +1012,8 @@ void __init setup_arch(char **cmdline_p)
- 	 */
- 	init_hypervisor_platform();
- 
-+	tsc_early_delay_calibrate();
-+
- 	x86_init.resources.probe_roms();
- 
- 	/* after parse_early_param, so could debug it */
-@@ -1197,11 +1199,6 @@ void __init setup_arch(char **cmdline_p)
- 
- 	memblock_find_dma_reserve();
- 
--#ifdef CONFIG_KVM_GUEST
--	kvmclock_init();
--#endif
--
--	tsc_early_delay_calibrate();
- 	if (!early_xdbc_setup_hardware())
- 		early_xdbc_register_console();
+-	pv_time_ops = xen_time_ops;
++	pv_time_ops.sched_clock = xen_time_ops.sched_clock;
++	pv_time_ops.steal_clock = xen_time_ops.steal_clock;
+ 	x86_init.timers.setup_percpu_clockev = xen_time_init;
+ 	x86_cpuinit.setup_percpu_clockev = xen_hvm_setup_cpu_clockevents;
  
 -- 
 2.17.1
