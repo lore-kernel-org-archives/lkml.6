@@ -2,127 +2,184 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5C018C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:28:39 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ADEBFC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 093E920896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:28:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 55BE9208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:28:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="byqOgaO/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 093E920896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.bosch.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1NTdp56O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 55BE9208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756227AbeFOO2h (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 10:28:37 -0400
-Received: from de-out1.bosch-org.com ([139.15.230.186]:52864 "EHLO
-        de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756005AbeFOO2e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 10:28:34 -0400
-Received: from fe0vm1650.rbesz01.com (unknown [139.15.230.188])
-        by fe0vms0186.rbdmz01.com (Postfix) with ESMTPS id 416jXK2dyDz1XLFjK;
-        Fri, 15 Jun 2018 16:28:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
-        s=2015-01-21; t=1529072913;
-        bh=i9jJeFoYPhV6nkBu4CxI188Ht54+ZxBWJ0nMMevJtzs=; l=10;
-        h=From:From:Reply-To:Sender;
-        b=byqOgaO/3WxcZZhkVwmGBrvD9SHEaBBXh7nTix1tzOGhlAk4Nop2jz5oax9CJIu1I
-         gi0OKKEYi6J1BO7jPyGrHw6VG5IytScQEtCGmFiW2vrd4l29Tq6xAzvk/WtsjaxK7O
-         NOf56MRdx355t3zVckE4JxYPaX1Z5u/vSPvZNxB4=
-Received: from fe0vm1740.rbesz01.com (unknown [10.58.172.176])
-        by fe0vm1650.rbesz01.com (Postfix) with ESMTPS id 416jXK2G68z1W4;
-        Fri, 15 Jun 2018 16:28:33 +0200 (CEST)
-X-AuditID: 0a3aad14-93dff70000003a2f-8d-5b23cd1d1309
-Received: from si0vm1950.rbesz01.com ( [10.58.173.29])
-        (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client did not present a certificate)
-        by fe0vm1740.rbesz01.com (SMG Outbound) with SMTP id 80.4D.14895.D1DC32B5; Fri, 15 Jun 2018 16:28:45 +0200 (CEST)
-Received: from FE-MBX2036.de.bosch.com (fe-mbx2036.de.bosch.com [10.3.231.46])
-        by si0vm1950.rbesz01.com (Postfix) with ESMTPS id 416jXK0JLKzCpP8;
-        Fri, 15 Jun 2018 16:28:33 +0200 (CEST)
-Received: from SGPMBX2031.APAC.bosch.com (10.187.56.92) by
- FE-MBX2036.de.bosch.com (10.3.231.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.1466.3; Fri, 15 Jun 2018 16:28:32 +0200
-Received: from FE-MBX2051.de.bosch.com (10.3.231.61) by
- SGPMBX2031.APAC.bosch.com (10.187.56.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.1466.3; Fri, 15 Jun 2018 22:28:29 +0800
-Received: from FE-MBX2051.de.bosch.com ([fe80::d5b5:44fa:ef15:153e]) by
- FE-MBX2051.de.bosch.com ([fe80::d5b5:44fa:ef15:153e%6]) with mapi id
- 15.01.1466.008; Fri, 15 Jun 2018 16:28:27 +0200
-From:   "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "hs@denx.de" <hs@denx.de>,
-        "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
-        "D_ZHU Yi (BT-FIR/ENG1-Zhu)" <D_Yi.Zhu5@cn.bosch.com>,
-        "ZHANG Kevin (BT-FIR/ENG1-Zhu)" <Kevin.Zhang3@cn.bosch.com>,
-        Zhu Yi <zhuyi882004@126.com>,
-        "RUAN Tingquan (BT-FIR/ENG1-Zhu)" <Tingquan.Ruan@cn.bosch.com>
-Subject: AW: [PATCH v5] Input: add bu21029 touch driver
-Thread-Topic: [PATCH v5] Input: add bu21029 touch driver
-Thread-Index: AdQEtL7RQCg/6r2vTbqVlvssv9t8UwAADJCw
-Date:   Fri, 15 Jun 2018 14:28:27 +0000
-Message-ID: <2a68611474694fb2b68146d8d167bf26@de.bosch.com>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.19.142.147]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S965666AbeFOO2s (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 10:28:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58346 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756005AbeFOO2q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 10:28:46 -0400
+Received: from mail-wr0-f176.google.com (mail-wr0-f176.google.com [209.85.128.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 378E1208DA;
+        Fri, 15 Jun 2018 14:28:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529072925;
+        bh=7B0pEF5B3fwrJOlsFPDiF9jJ+Spdjv+DKBF+LHO3oMU=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=1NTdp56O2yO6PAf1qPN/PihZzXT5dEUMJ3IAEJ1QKy5JN1gqVEG+QBBFK0D5bRAWj
+         EiVhbLwbfYk0fbRIuSUGsQp0JxeU+nGqh9J+uJVh5LIbdi1FQ2uvnvlmtjtglPalbk
+         HEjeLlwtpw1+UD7NQBbJ1Lj7NIZH6r2ysMubs6DQ=
+Received: by mail-wr0-f176.google.com with SMTP id l10-v6so10162744wrn.2;
+        Fri, 15 Jun 2018 07:28:45 -0700 (PDT)
+X-Gm-Message-State: APt69E1qpdAdLcICp9b2kUpRVjjxPKzGKt5woYIgoWTCfp6LKvIoOs8x
+        /T4LyjuIRFEduypOSQczNV5E0U9PUeV0jS4NMKU=
+X-Google-Smtp-Source: ADUXVKJufao5yTzysIIBXXKNco7SpdoUpP9SQuAtLV9nSpiKKzcMTzv/cNzNwNmEcLFZRDLXLF/YAXPF/FUaNegqVVg=
+X-Received: by 2002:a5d:4407:: with SMTP id z7-v6mr1978157wrq.227.1529072923665;
+ Fri, 15 Jun 2018 07:28:43 -0700 (PDT)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA21TfUwbZRjv2zvKgRweLYxnVcbsookzfM2ZnUPnMuNSxQkSY7I1isc4aJW2
-        pFcQiH8wJ4xNnKwOx0phG/NYJMCgEukErSuQ0SIy5GOQAHMZQzr2IbKPBBPmlYO1f/jPm+f5
-        fTy/930uR2DyfkJJ6Axm1mRgclWyUDx0e3NMXMzAJk3i2FQE7a3sRvSpnt+D6O76OUQ7Jq9i
-        9MQ/D4Lo4Z9sMpq/MiSlS3/uCab5wbNoZ4ian7iMq5vqmpC6ztqHqy9Yp4LV9sbDMvWifUOa
-        bF/oK1lsrq6ANSXs+ChU6yy/Js3rxwu/KavESpAXO4IIAqit8KBv8xEUSsipaim4xy0yselC
-        MDd7ARebvxGc/rHV31R/cWy1+RXBvaEaoQkhZNR2ONTQH+yrI6kE6KhZQj4RRrXjMFZRKfMR
-        CmobTP41JhNFNDQMtknFegssXbFivhqnngV+YGFFQ1LJcMw9sxKAqBhobR1c0WBUNNhnHwb5
-        aqAo+K5LxIGKAu/15SDxcc+ArXqXKI+H8arjMrF+ARrOzGPi+Ahwn5zBK9E6a8BUa4DFGmCx
-        BlhOI7wRRWWziQX6pG1bE+NNmSxXnJgUv9+otyPxw0Y6kOValgtRBFKFkXGuTRp5EFPAFeld
-        6CVCqooi604IUHimMatIy3DaDFN+LsuplCSSSCRyxWOYy8/U6zhOZzS4EBCYKpL8yqzSyMks
-        pqiYNRlFmws9ReCqaLK8ybtPTuUwZvYTls1jTWtsMkGogBzvFwIjTGwOW5ityzWv0aoYMXNd
-        IBMYKyVCXOhFIkzInvaNILk8Rs/pclbt60W7fA31Wz3odeJWWUUFJscNRgOrjCa9Pj/lU2rz
-        DY9voHya1LRv1MijAgj/lJtoGgk7VJCLPnOY8P/4s4F0KGx75RGroN+0pVHwUMdxcE4MIzi/
-        fBuD+9ZHwdDG//IEOGss4bB0supJGLnTooD24aUNMONeiAVnx4nn4d79S3FwdPoGDd6mqzuh
-        88+JN8Dptr0JdUctb0NLmX0POL69uAcO95xJhXIXnw6Tt/i9UL588ENwnnJlwB3PDwws3m3U
-        wh9LD3Uw92+tHrq+vnQAwWLfgc8RjHQeEk7LYKNwPiobLUU3he1Khe329m70bdfMmP9nu6uo
-        /4nKEiTZz/Pd52amNBL+yw8GMLcnfIw72zuQ8mrtdd3FXSUjL7+T4agqnkhPnb/7aW1/tW32
-        YEr0c5ezjUTza4wkrcVz+7fRhti2ud2y9annPW91fDZf646l04Y8o9KPbTE74h2Fnab67vc7
-        Ukbtyeml794wnpv7fqE5oVKJ7X6vnurjp1Q4p2WSNmMmjvkP28fO794EAAA=
+Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 07:28:43
+ -0700 (PDT)
+In-Reply-To: <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com>
+References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+ <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
+ <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com> <BCD39D7E-EEEC-4EB9-824E-63323C333C88@oracle.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 15 Jun 2018 16:28:43 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
+Message-ID: <CAJKOXPcw-i99_U-Ltuuf6w-WRK7V4gNqVSYkCMGFEXQG2DL2XQ@mail.gmail.com>
+Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
+To:     Chuck Lever <chuck.lever@oracle.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Trond Myklebust <trond.myklebust@primarydata.com>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        Bruce Fields <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Jun 15, 2018 at 4:23 PM, Chuck Lever <chuck.lever@oracle.com> wrote=
+:
+>
+>
+>> On Jun 15, 2018, at 10:07 AM, Krzysztof Kozlowski <krzk@kernel.org> wrot=
+e:
+>>
+>> On Fri, Jun 15, 2018 at 2:53 PM, Sudeep Holla <sudeep.holla@arm.com> wro=
+te:
+>>> Hi,
+>>>
+>>> On Thu, Jun 7, 2018 at 12:19 PM, Krzysztof Kozlowski <krzk@kernel.org> =
+wrote:
+>>>> Hi,
+>>>>
+>>>> When booting my boards under recent linux-next, I see failures of syst=
+emd:
+>>>>
+>>>> [FAILED] Failed to start Flush Journal to Persistent Storage.
+>>>> See 'systemctl status systemd-journal-flush.service' for details.
+>>>>         Starting Create Volatile Files and Directories...
+>>>> [**    ] A start job is running for Create V=E2=80=A6 [  223.209289] n=
+fs:
+>>>> server 192.168.1.10 not responding, still trying
+>>>> [  223.209377] nfs: server 192.168.1.10 not responding, still trying
+>>>>
+>>>> Effectively the boards fails to boot. Example is here:
+>>>> https://krzk.eu/#/builders/1/builds/2157
+>>>>
+>>>
+>>> I too encountered the same issue.
+>>>
+>>>> This was bisected to:
+>>>> commit 37ac86c3a76c113619b7d9afe0251bbfc04cb80a
+>>>> Author: Chuck Lever <chuck.lever@oracle.com>
+>>>> Date:   Fri May 4 15:34:53 2018 -0400
+>>>>
+>>>>    SUNRPC: Initialize rpc_rqst outside of xprt->reserve_lock
+>>>>
+>>>>    alloc_slot is a transport-specific op, but initializing an rpc_rqst
+>>>>    is common to all transports. In addition, the only part of initial-
+>>>>    izing an rpc_rqst that needs serialization is getting a fresh XID.
+>>>>
+>>>>    Move rpc_rqst initialization to common code in preparation for
+>>>>    adding a transport-specific alloc_slot to xprtrdma.
+>>>>
+>>>>    Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>>>    Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+>>>>
+>>>
+>>> Unfortunately, spent time to bisect independently without seeing this
+>>> report and got the same culprit.
+>>>
+>>>>
+>>>> Bisect log attached. Full configuration:
+>>>> 1. exynos_defconfig
+>>>> 2. ARMv7, octa-core, Exynos5422 and Exynos4412 (Odroid XU3, U3 and oth=
+ers)
+>>>> 3. NFSv4 client (from Raspberry Pi)
+>>>>
+>>>
+>>> Yes the issue is seen only with NFSv4 client and with latest systemd I =
+think.
+>>> My Ubuntu 16.04(32bit FS) is  boots fine while 18.04 has the above issu=
+e.
+>>> Passing nfsv3 in kernel command line makes it work again.
+>>
+>> Thanks for reply!
+>>
+>> I test it on systemd versions 236 and 238... and it fails on both.
+>> However one board passes always - it is Odroid HC1 with same core
+>> configuration as described before. Probably there is some different SW
+>> package on it.
+>>
+>>>> Let me know if you need any more information.
+>>>>
+>>>
+>>> Also I was observing this issue with Linus master branch from
+>>> the time the above patch was merged until today. The issue
+>>> is no longer seen since this morning however I just enabled lockdep
+>>> and got these messages.
+>>
+>> All recent linux-next fail. Today's Linus' tree (4c5e8fc62d6a ("Merge
+>> tag 'linux-kselftest-4.18-rc1-2' of
+>> git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest"))
+>> managed to get up on one board but stuck on different board with the
+>> same issue.
+>>
+>> I am quite surprised that there is no response from the author of the
+>> commit and this was just moved from next (while failing) to Linus'
+>> tree... bringing the issue to mainline now.
+>
+> Sorry. This morning is the first time I've seen this report, which was
+> not To: or Cc'd to me.
 
-Correction:
+D'oh! That's mine mistake. Apparently I missed to put you on CC list.
+Sorry for that.
 
-> Only for 4.14 an #include <linux/regulator/consumer.h> was missing. I
-> Guess the API changed here a little in the meantime.
 
-The missing include is #include <linux/irq.h>.
+> Since I don't have access to this kind of hardware, I will have to ask
+> for your help to perform basic troubleshooting.
+>
+> Can we start by capturing the network traffic that occurs while you
+> reproduce the problem? Use tshark or tcpdump on your NFS server, filter
+> on the IP of the client, and send me (or the list) the raw pcap file.
 
-Greetings,
-Mark
+Sure, I'll send you tcpdump without Cc-ing list.
 
-Building Technologies, Panel Software Fire (BT-FIR/ENG1)
-Bosch Sicherheitssysteme GmbH | Postfach 11 11 | 85626 Grasbrunn | GERMANY =
-| www.boschsecurity.com
-
-Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118
-Aufsichtsratsvorsitzender: Stefan Hartung; Gesch=E4ftsf=FChrung: Gert van I=
-peren, Andreas Bartz, Thomas Quante, Bernhard Schuster
+Best regards,
+Krzysztof
