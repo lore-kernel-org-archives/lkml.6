@@ -2,141 +2,296 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CD580C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:35:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4CC9AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8301920896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:35:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8301920896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 01DEE20896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:35:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01DEE20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965814AbeFOLfO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 07:35:14 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58552 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S965736AbeFOLfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S965840AbeFOLf1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 07:35:27 -0400
+Received: from mga14.intel.com ([192.55.52.115]:36335 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965737AbeFOLfN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Jun 2018 07:35:13 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 70E204023841;
-        Fri, 15 Jun 2018 11:35:12 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id F12E7111AF20;
-        Fri, 15 Jun 2018 11:35:07 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5FBZ7m2016739;
-        Fri, 15 Jun 2018 07:35:07 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5FBZ7Bg016735;
-        Fri, 15 Jun 2018 07:35:07 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 15 Jun 2018 07:35:07 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Michal Hocko <mhocko@kernel.org>
-cc:     jing xia <jing.xia.mail@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
-        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: dm bufio: Reduce dm_bufio_lock contention
-In-Reply-To: <20180615073201.GB24039@dhcp22.suse.cz>
-Message-ID: <alpine.LRH.2.02.1806150724260.15022@file01.intranet.prod.int.rdu2.redhat.com>
-References: <1528790608-19557-1-git-send-email-jing.xia@unisoc.com> <20180612212007.GA22717@redhat.com> <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com> <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
- <20180614073153.GB9371@dhcp22.suse.cz> <alpine.LRH.2.02.1806141424510.30404@file01.intranet.prod.int.rdu2.redhat.com> <20180615073201.GB24039@dhcp22.suse.cz>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 04:35:12 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,226,1526367600"; 
+   d="scan'208";a="49238758"
+Received: from raj-desk2.iind.intel.com ([10.223.107.30])
+  by orsmga007.jf.intel.com with ESMTP; 15 Jun 2018 04:34:53 -0700
+Date:   Fri, 15 Jun 2018 16:57:01 +0530
+From:   Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+To:     "David E. Box" <david.e.box@linux.intel.com>
+Cc:     vishwanath.somayaji@intel.com, dvhart@infradead.org,
+        andy@infradead.org, kyle.d.pelton@linux.intel.com,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4] platform/x86: intel_pmc_core: Add CNP SLPS0 debug
+ registers
+Message-ID: <20180615112700.GA20210@raj-desk2.iind.intel.com>
+References: <CAHp75Vdxz2h1N_bLQ4wxrYoo-kRAHQK=+36Db0BfK1QR4iwVPw@mail.gmail.com>
+ <20180614221302.25663-1-david.e.box@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 15 Jun 2018 11:35:12 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Fri, 15 Jun 2018 11:35:12 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614221302.25663-1-david.e.box@linux.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On Fri, 15 Jun 2018, Michal Hocko wrote:
-
-> On Thu 14-06-18 14:34:06, Mikulas Patocka wrote:
-> > 
-> > 
-> > On Thu, 14 Jun 2018, Michal Hocko wrote:
-> > 
-> > > On Thu 14-06-18 15:18:58, jing xia wrote:
-> > > [...]
-> > > > PID: 22920  TASK: ffffffc0120f1a00  CPU: 1   COMMAND: "kworker/u8:2"
-> > > >  #0 [ffffffc0282af3d0] __switch_to at ffffff8008085e48
-> > > >  #1 [ffffffc0282af3f0] __schedule at ffffff8008850cc8
-> > > >  #2 [ffffffc0282af450] schedule at ffffff8008850f4c
-> > > >  #3 [ffffffc0282af470] schedule_timeout at ffffff8008853a0c
-> > > >  #4 [ffffffc0282af520] schedule_timeout_uninterruptible at ffffff8008853aa8
-> > > >  #5 [ffffffc0282af530] wait_iff_congested at ffffff8008181b40
-> > > 
-> > > This trace doesn't provide the full picture unfortunately. Waiting in
-> > > the direct reclaim means that the underlying bdi is congested. The real
-> > > question is why it doesn't flush IO in time.
-> > 
-> > I pointed this out two years ago and you just refused to fix it:
-> > http://lkml.iu.edu/hypermail/linux/kernel/1608.1/04507.html
+On Thu, Jun 14, 2018 at 03:13:02PM -0700, David E. Box wrote:
+> From: <david.e.box@intel.com>
 > 
-> Let me be evil again and let me quote the old discussion:
-> : > I agree that mempool_alloc should _primarily_ sleep on their own
-> : > throttling mechanism. I am not questioning that. I am just saying that
-> : > the page allocator has its own throttling which it relies on and that
-> : > cannot be just ignored because that might have other undesirable side
-> : > effects. So if the right approach is really to never throttle certain
-> : > requests then we have to bail out from a congested nodes/zones as soon
-> : > as the congestion is detected.
-> : >
-> : > Now, I would like to see that something like that is _really_ necessary.
-> :
-> : Currently, it is not a problem - device mapper reports the device as
-> : congested only if the underlying physical disks are congested.
-> :
-> : But once we change it so that device mapper reports congested state on its
-> : own (when it has too many bios in progress), this starts being a problem.
+> Adds debugfs access to registers in the Cannonlake PCH PMC that are
+> useful for debugging #SLP_S0 signal assertion and other low power
+> related activities. Device pm states are latched in these registers
+> whenever the package enters C10 and can be read from slp_s0_debug_status.
+> The pm states may also be latched by writing 1 to slp_s0_debug_latch
+> which will immediately capture the current state on the next read of
+> slp_s0_debug_status.
+
+Reviewed-and-tested-by: Rajneesh Bhardwaj <rajneesh.bhardwaj@intel.com>
+
 > 
-> So has this changed since then? If yes then we can think of a proper
-> solution but that would require to actually describe why we see the
-> congestion, why it does help to wait on the caller rather than the
-> allocator etc...
-
-Device mapper doesn't report congested state - but something else does 
-(perhaps the user inserted a cheap slow usb stick or sdcard?). And device 
-mapper is just a victim of that.
-
-Why should device mapper sleep because some other random block device is 
-congested?
-
-> Throwing statements like ...
+> Signed-off-by: Box, David E <david.e.box@intel.com>
+> ---
+> V4:
+> 	- rename slp_s0_dbg string to slp_s0_debug for consistency
+> 	- ADD ISCLK prefix to MAIN_PLL and OC_PLL
+> V3:
+> 	- use null terminator in bit_map array
+> 	- replaced ternary operator with if/else
+> 	- Removed space fixes on old code
+> V2:
+> 	- Clear latch bit after use
+> 	- Pass pmc_dev as parameter
+> 	- Use DEFINE_SHOW_ATTRIBUTE macro
+>  drivers/platform/x86/intel_pmc_core.c | 120 ++++++++++++++++++++++++++++++++++
+>  drivers/platform/x86/intel_pmc_core.h |   6 ++
+>  2 files changed, 126 insertions(+)
 > 
-> > I'm sure you'll come up with another creative excuse why GFP_NORETRY 
-> > allocations need incur deliberate 100ms delays in block device drivers.
+> diff --git a/drivers/platform/x86/intel_pmc_core.c b/drivers/platform/x86/intel_pmc_core.c
+> index 43bbe74..d00fee2 100644
+> --- a/drivers/platform/x86/intel_pmc_core.c
+> +++ b/drivers/platform/x86/intel_pmc_core.c
+> @@ -196,9 +196,67 @@ static const struct pmc_bit_map cnp_pfear_map[] = {
+>  	{}
+>  };
+>  
+> +static const struct pmc_bit_map cnp_slps0_dbg0_map[] = {
+> +	{"AUDIO_D3",		BIT(0)},
+> +	{"OTG_D3",		BIT(1)},
+> +	{"XHCI_D3",		BIT(2)},
+> +	{"LPIO_D3",		BIT(3)},
+> +	{"SDX_D3",		BIT(4)},
+> +	{"SATA_D3",		BIT(5)},
+> +	{"UFS0_D3",		BIT(6)},
+> +	{"UFS1_D3",		BIT(7)},
+> +	{"EMMC_D3",		BIT(8)},
+> +	{}
+> +};
+> +
+> +static const struct pmc_bit_map cnp_slps0_dbg1_map[] = {
+> +	{"SDIO_PLL_OFF",	BIT(0)},
+> +	{"USB2_PLL_OFF",	BIT(1)},
+> +	{"AUDIO_PLL_OFF",	BIT(2)},
+> +	{"ISCLK_OC_PLL_OFF",	BIT(3)},
+> +	{"ISCLK_MAIN_PLL_OFF",	BIT(4)},
+> +	{"XOSC_OFF",		BIT(5)},
+> +	{"LPC_CLKS_GATED",	BIT(6)},
+> +	{"PCIE_CLKREQS_IDLE",	BIT(7)},
+> +	{"AUDIO_ROSC_OFF",	BIT(8)},
+> +	{"HPET_XOSC_CLK_REQ",	BIT(9)},
+> +	{"PMC_ROSC_SLOW_CLK",	BIT(10)},
+> +	{"AON2_ROSC_GATED",	BIT(11)},
+> +	{"CLKACKS_DEASSERTED",	BIT(12)},
+> +	{}
+> +};
+> +
+> +static const struct pmc_bit_map cnp_slps0_dbg2_map[] = {
+> +	{"MPHY_CORE_GATED",	BIT(0)},
+> +	{"CSME_GATED",		BIT(1)},
+> +	{"USB2_SUS_GATED",	BIT(2)},
+> +	{"DYN_FLEX_IO_IDLE",	BIT(3)},
+> +	{"GBE_NO_LINK",		BIT(4)},
+> +	{"THERM_SEN_DISABLED",	BIT(5)},
+> +	{"PCIE_LOW_POWER",	BIT(6)},
+> +	{"ISH_VNNAON_REQ_ACT",	BIT(7)},
+> +	{"ISH_VNN_REQ_ACT",	BIT(8)},
+> +	{"CNV_VNNAON_REQ_ACT",	BIT(9)},
+> +	{"CNV_VNN_REQ_ACT",	BIT(10)},
+> +	{"NPK_VNNON_REQ_ACT",	BIT(11)},
+> +	{"PMSYNC_STATE_IDLE",	BIT(12)},
+> +	{"ALST_GT_THRES",	BIT(13)},
+> +	{"PMC_ARC_PG_READY",	BIT(14)},
+> +	{}
+> +};
+> +
+> +static const struct pmc_bit_map *cnp_slps0_dbg_maps[] = {
+> +	cnp_slps0_dbg0_map,
+> +	cnp_slps0_dbg1_map,
+> +	cnp_slps0_dbg2_map,
+> +	NULL,
+> +};
+> +
+>  static const struct pmc_reg_map cnp_reg_map = {
+>  	.pfear_sts = cnp_pfear_map,
+>  	.slp_s0_offset = CNP_PMC_SLP_S0_RES_COUNTER_OFFSET,
+> +	.slps0_dbg_maps = cnp_slps0_dbg_maps,
+> +	.slps0_dbg_offset = CNP_PMC_SLPS0_DBG_OFFSET,
+>  	.ltr_ignore_offset = CNP_PMC_LTR_IGNORE_OFFSET,
+>  	.regmap_length = CNP_PMC_MMIO_REG_LEN,
+>  	.ppfear0_offset = CNP_PMC_HOST_PPFEAR0A,
+> @@ -252,6 +310,8 @@ static int pmc_core_check_read_lock_bit(void)
+>  }
+>  
+>  #if IS_ENABLED(CONFIG_DEBUG_FS)
+> +static bool slps0_dbg_latch;
+> +
+>  static void pmc_core_display_map(struct seq_file *s, int index,
+>  				 u8 pf_reg, const struct pmc_bit_map *pf_map)
+>  {
+> @@ -481,6 +541,57 @@ static const struct file_operations pmc_core_ltr_ignore_ops = {
+>  	.release        = single_release,
+>  };
+>  
+> +static void pmc_core_slps0_dbg_latch(struct pmc_dev *pmcdev, bool reset)
+> +{
+> +	const struct pmc_reg_map *map = pmcdev->map;
+> +	u32 fd;
+> +
+> +	mutex_lock(&pmcdev->lock);
+> +
+> +	if (!reset && !slps0_dbg_latch)
+> +		goto out_unlock;
+> +
+> +	fd = pmc_core_reg_read(pmcdev, map->slps0_dbg_offset);
+> +	if (reset)
+> +		fd &= ~CNP_PMC_LATCH_SLPS0_EVENTS;
+> +	else
+> +		fd |= CNP_PMC_LATCH_SLPS0_EVENTS;
+> +	pmc_core_reg_write(pmcdev, map->slps0_dbg_offset, fd);
+> +
+> +	slps0_dbg_latch = 0;
+> +
+> +out_unlock:
+> +	mutex_unlock(&pmcdev->lock);
+> +}
+> +
+> +static int pmc_core_slps0_dbg_show(struct seq_file *s, void *unused)
+> +{
+> +	struct pmc_dev *pmcdev = s->private;
+> +	const struct pmc_bit_map **maps = pmcdev->map->slps0_dbg_maps;
+> +	const struct pmc_bit_map *map;
+> +	int offset;
+> +	u32 data;
+> +
+> +	pmc_core_slps0_dbg_latch(pmcdev, false);
+> +	offset = pmcdev->map->slps0_dbg_offset;
+> +	while (*maps) {
+> +		map = *maps;
+> +		data = pmc_core_reg_read(pmcdev, offset);
+> +		offset += 4;
+> +		while (map->name) {
+> +			seq_printf(s, "SLP_S0_DBG: %-32s\tState: %s\n",
+> +				   map->name,
+> +				   data & map->bit_mask ?
+> +				   "Yes" : "No");
+> +			++map;
+> +		}
+> +		++maps;
+> +	}
+> +	pmc_core_slps0_dbg_latch(pmcdev, true);
+> +	return 0;
+> +}
+> +DEFINE_SHOW_ATTRIBUTE(pmc_core_slps0_dbg);
+> +
+>  static void pmc_core_dbgfs_unregister(struct pmc_dev *pmcdev)
+>  {
+>  	debugfs_remove_recursive(pmcdev->dbgfs_dir);
+> @@ -514,6 +625,15 @@ static int pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+>  				    0444, dir, pmcdev,
+>  				    &pmc_core_mphy_pg_ops);
+>  
+> +	if (pmcdev->map->slps0_dbg_maps) {
+> +		debugfs_create_file("slp_s0_debug_status", 0444,
+> +				    dir, pmcdev,
+> +				    &pmc_core_slps0_dbg_fops);
+> +
+> +		debugfs_create_bool("slp_s0_debug_latch", 0644,
+> +				    dir, &slps0_dbg_latch);
+> +	}
+> +
+>  	return 0;
+>  }
+>  #else
+> diff --git a/drivers/platform/x86/intel_pmc_core.h b/drivers/platform/x86/intel_pmc_core.h
+> index 5fa5f97..93a7e99 100644
+> --- a/drivers/platform/x86/intel_pmc_core.h
+> +++ b/drivers/platform/x86/intel_pmc_core.h
+> @@ -127,12 +127,14 @@ enum ppfear_regs {
+>  #define CNP_PMC_SLP_S0_RES_COUNTER_OFFSET      0x193C
+>  #define CNP_PMC_LTR_IGNORE_OFFSET              0x1B0C
+>  #define CNP_PMC_PM_CFG_OFFSET                  0x1818
+> +#define CNP_PMC_SLPS0_DBG_OFFSET		0x10B4
+>  /* Cannonlake: PGD PFET Enable Ack Status Register(s) start */
+>  #define CNP_PMC_HOST_PPFEAR0A                  0x1D90
+>  
+>  #define CNP_PMC_MMIO_REG_LEN                   0x2000
+>  #define CNP_PPFEAR_NUM_ENTRIES                 8
+>  #define CNP_PMC_READ_DISABLE_BIT               22
+> +#define CNP_PMC_LATCH_SLPS0_EVENTS		BIT(31)
+>  
+>  struct pmc_bit_map {
+>  	const char *name;
+> @@ -145,6 +147,7 @@ struct pmc_bit_map {
+>   * @pfear_sts:		Maps name of IP block to PPFEAR* bit
+>   * @mphy_sts:		Maps name of MPHY lane to MPHY status lane status bit
+>   * @pll_sts:		Maps name of PLL to corresponding bit status
+> + * @slps0_dbg_maps:	Array of SLP_S0_DBG* registers containing debug info
+>   * @slp_s0_offset:	PWRMBASE offset to read SLP_S0 residency
+>   * @ltr_ignore_offset:	PWRMBASE offset to read/write LTR ignore bit
+>   * @regmap_length:	Length of memory to map from PWRMBASE address to access
+> @@ -153,6 +156,7 @@ struct pmc_bit_map {
+>   *			PPFEAR
+>   * @pm_cfg_offset:	PWRMBASE offset to PM_CFG register
+>   * @pm_read_disable_bit: Bit index to read PMC_READ_DISABLE
+> + * @slps0_dbg_offset:	PWRMBASE offset to SLP_S0_DEBUG_REG*
+>   *
+>   * Each PCH has unique set of register offsets and bit indexes. This structure
+>   * captures them to have a common implementation.
+> @@ -161,6 +165,7 @@ struct pmc_reg_map {
+>  	const struct pmc_bit_map *pfear_sts;
+>  	const struct pmc_bit_map *mphy_sts;
+>  	const struct pmc_bit_map *pll_sts;
+> +	const struct pmc_bit_map **slps0_dbg_maps;
+>  	const u32 slp_s0_offset;
+>  	const u32 ltr_ignore_offset;
+>  	const int regmap_length;
+> @@ -168,6 +173,7 @@ struct pmc_reg_map {
+>  	const int ppfear_buckets;
+>  	const u32 pm_cfg_offset;
+>  	const int pm_read_disable_bit;
+> +	const u32 slps0_dbg_offset;
+>  };
+>  
+>  /**
+> -- 
+> 2.7.4
 > 
-> ... is not really productive. I've tried to explain why I am not _sure_ what
-> possible side effects such a change might have and your hand waving
-> didn't really convince me. MD is not the only user of the page
-> allocator...
-> 
-> E.g. why has 41c73a49df31 ("dm bufio: drop the lock when doing GFP_NOIO
-> allocation") even added GFP_NOIO request in the first place when you
-> keep retrying and sleep yourself?
 
-Because mempool uses it. Mempool uses allocations with "GFP_NOIO | 
-__GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN". An so dm-bufio uses 
-these flags too. dm-bufio is just a big mempool.
-
-If you argue that these flags are incorrect - then fix mempool_alloc.
-
-> The changelog only describes what but
-> doesn't explain why. Or did I misread the code and this is not the
-> allocation which is stalling due to congestion?
-
-Mikulas
+-- 
+Best Regards,
+Rajneesh
