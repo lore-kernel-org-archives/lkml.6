@@ -2,133 +2,161 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E839C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1C1AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44E25208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:45:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="tBp22Ku4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44E25208B8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id A6B08208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:45:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6B08208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966296AbeFORpJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:45:09 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:59006 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965850AbeFORnP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:43:15 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FHck4b139416;
-        Fri, 15 Jun 2018 17:42:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : subject :
- date : message-id : in-reply-to : references; s=corp-2017-10-26;
- bh=T0h2r0sSc7tWjXGwr4r6W2STLW/66D3vCHN8FMxxB04=;
- b=tBp22Ku4eGJqQDkcYdr50jReMmmxjuy++YlqEfR/P4qtWpMRrh7c9d3sDS4B4yLHVrl5
- fdEj/YgBJ9J8VwgQhiEXRo34P2hz/d9YPzRQQISvRNyzi6G6X+GYRniYcuiMf2+f8/uE
- O+5FTDXzzYLwo/8V6PJA6EU1+LNAGZ+MCNHtCYADJ4iHLsLrpvvVub6YLxx0/wW/z4Ri
- NyVAabh43kZh39AgyYLexdBM7dfzGmhiVd6NZ4HyGFQ/ro0ksj4gtI8MnqbwKmZFOQ5R
- 2PdW0jnl/YOpFqU3lLafa9GUY3mvc2o4S3vkbr/ij/8e0M9it6UAlekPMV5TiPg/RxxM Og== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2jk0xr1vy8-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:16 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5FHgGCL031232
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 17:42:16 GMT
-Received: from abhmp0008.oracle.com (abhmp0008.oracle.com [141.146.116.14])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5FHgG34017029;
-        Fri, 15 Jun 2018 17:42:16 GMT
-Received: from localhost.localdomain (/73.69.118.222)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jun 2018 10:42:16 -0700
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-To:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux@armlinux.org.uk, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, john.stultz@linaro.org,
-        sboyd@codeaurora.org, x86@kernel.org, linux-kernel@vger.kernel.org,
-        mingo@redhat.com, tglx@linutronix.de, hpa@zytor.com,
-        douly.fnst@cn.fujitsu.com, peterz@infradead.org, prarit@redhat.com,
-        feng.tang@intel.com, pmladek@suse.com, gnomes@lxorguk.ukuu.org.uk
-Subject: [PATCH v10 3/7] x86/time: read_boot_clock64() implementation
-Date:   Fri, 15 Jun 2018 13:42:00 -0400
-Message-Id: <20180615174204.30581-4-pasha.tatashin@oracle.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180615174204.30581-1-pasha.tatashin@oracle.com>
-References: <20180615174204.30581-1-pasha.tatashin@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806150189
+        id S966471AbeFORpU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:45:20 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:45426 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966215AbeFORpT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 13:45:19 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A30251529;
+        Fri, 15 Jun 2018 10:45:18 -0700 (PDT)
+Received: from [10.1.210.28] (unknown [10.1.210.28])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 76A403F25D;
+        Fri, 15 Jun 2018 10:45:16 -0700 (PDT)
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Saravana Kannan <skannan@codeaurora.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: cpufreq: Introduce QCOM CPUFREQ FW
+ bindings
+To:     Taniya Das <tdas@codeaurora.org>,
+        Amit Kucheria <amit.kucheria@verdurent.com>
+References: <1528801355-18719-1-git-send-email-tdas@codeaurora.org>
+ <1528801355-18719-2-git-send-email-tdas@codeaurora.org>
+ <0f3f0223-3539-dc66-5300-8f30d827445d@arm.com>
+ <7abb2da6-c130-117a-5404-d07bb132d915@codeaurora.org>
+ <f57f2708-28bb-dcdd-8b93-d41ade10fa18@arm.com>
+ <bc6dc152-7def-fc1d-4535-11a44fd64310@codeaurora.org>
+ <CAHLCerMCM1qf1MJ3bz+ZwBQMjshKSCWKXjHCiuqxJTDBdauamQ@mail.gmail.com>
+ <32e8f874-a58b-8ba3-7a53-dc89cb34f7d9@codeaurora.org>
+From:   Sudeep Holla <sudeep.holla@arm.com>
+Organization: ARM
+Message-ID: <a5a2f9d3-204c-7f21-d5f8-1042af24ecce@arm.com>
+Date:   Fri, 15 Jun 2018 18:45:15 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <32e8f874-a58b-8ba3-7a53-dc89cb34f7d9@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-read_boot_clock64() returns time of when system was started. Now, that
-early boot clock is going to be available on x86 it is possible to
-implement x86 specific version of read_boot_clock64() that takes advantage
-of this new feature.
 
-Signed-off-by: Pavel Tatashin <pasha.tatashin@oracle.com>
----
- arch/x86/kernel/time.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
 
-diff --git a/arch/x86/kernel/time.c b/arch/x86/kernel/time.c
-index 774ebafa97c4..32dff35719d9 100644
---- a/arch/x86/kernel/time.c
-+++ b/arch/x86/kernel/time.c
-@@ -15,6 +15,7 @@
- #include <linux/i8253.h>
- #include <linux/time.h>
- #include <linux/export.h>
-+#include <linux/sched/clock.h>
- 
- #include <asm/vsyscall.h>
- #include <asm/x86_init.h>
-@@ -104,3 +105,32 @@ void __init time_init(void)
- {
- 	late_time_init = x86_late_time_init;
- }
-+
-+/*
-+ * Called once during to boot to initialize boot time.
-+ * This function returns timestamp in timespec format which is sec/nsec from
-+ * epoch of when boot started.
-+ * We use sched_clock_cpu() that gives us nanoseconds from when this clock has
-+ * been started and it happens quiet early during boot process. To calculate
-+ * offset from epoch we use information provided in 'now' by the caller
-+ *
-+ * If sched_clock_cpu() is not available or if there is any kind of error
-+ * i.e. time from epoch is smaller than boot time, we must return zeros in ts,
-+ * and the caller will take care of the error: by assuming that the time when
-+ * this function was called is the beginning of boot time.
-+ */
-+void __init read_boot_clock64(struct timespec64 *now, struct timespec64 *ts)
-+{
-+	u64 ns_boot = sched_clock_cpu(smp_processor_id());
-+	bool valid_clock;
-+	u64 ns_now;
-+
-+	ns_now = timespec64_to_ns(now);
-+	valid_clock = ns_boot && timespec64_valid_strict(now) &&
-+			(ns_now > ns_boot);
-+
-+	if (!valid_clock)
-+		*ts = (struct timespec64){0, 0};
-+	else
-+		*ts = ns_to_timespec64(ns_now - ns_boot);
-+}
+On 15/06/18 18:40, Taniya Das wrote:
+> 
+> 
+> On 6/15/2018 5:29 PM, Amit Kucheria wrote:
+>> On Thu, Jun 14, 2018 at 9:24 PM, Taniya Das <tdas@codeaurora.org> wrote:
+>>
+>>>>> Sorry Sudeep I missed replying to your earlier query.
+>>>>> The High level OS(HLOS) would require to access only these specific
+>>>>> registers from this IP block and just mapping the whole block(huge
+>>>>> region) is unnecessary from the OS point of View. As of now it is a
+>>>>> generic binding for all using this IP block to manage frequency
+>>>>> requests. The OS would only have to know the frequencies supported i.e
+>>>>> to read the lookup table registers and put across the OS request using
+>>>>> the performance state register.
+>>>>>
+>>>>
+>>>> I am not sure if you need to defining bindings to save OSPM IO mapping.
+>>>> In-fact you may be adding more mapping unnecessarily. The mappings are
+>>>> page aligned and spiting the registers and mapping them individually
+>>>> may
+>>>> result in more mappings.
+>>>>
+>>>> I just need to know the rational for such specific choice of registers.
+>>>> I assume it's aligned to some other standard specifications like CPPC
+>>>> though not identical.
+>>>>
+>>>
+>>> I am not sure of the query but there is no other register that the OS is
+>>> required to use other than the ones defined here.
+>>>
+>>>>>> Eg. Suppose you need some information on power curve for EAS energy
+>>>>>> model, I really hate to update DT for that or even do a mix with
+>>>>>> DT just
+>>>>>> because f/w is no longer modifiable.
+>>>>>>
+>>>>>
+>>>>> For now we are safe.
+>>>>>
+>>>>
+>>>> What do you mean by that ?
+>>>
+>>>
+>>> I meant here was currently there is no such known case where the f/w
+>>> is no
+>>> longer modifiable and we need to extend device tree bindings.
+>>>
+>>>> It should be easily extensible is what I am
+>>>> trying to say. You can add more info and alter the information in the
+>>>> driver with compatibles if you keep the register info as minimum as
+>>>> possible. For now, you have enable, set and lut registers. What if you
+>>>> want to provide power numbers ?
+>>>>
+>>>
+>>> Yes I do understand the intent of mapping the whole register space,
+>>> but as
+>>> per the HW specs these 3 registers would be the only ones required
+>>> for now.
+>>> I do not think this hardware engine has any information on the power
+>>> numbers.
+>>
+>> "For now" - I think this is exactly the point that Sudeep is trying to
+>> make.
+>>
+>> A future version of the HW engine, or more likely, a firmware
+>> revision, will make more functionality available. Say, this needs
+>> access to another register or two. This will require changing the DT
+>> bindings. Instead, if you map the entire address space, you can just
+>> add offsets to the new registers.
+>>
+>> So in this case, I think you should define the following addresses
+>> (size 0x1400) for the two frequency domains
+>>
+>> 0x17d43000, 0x1400 (power cluster)
+>> 0x17d45800, 0x1400 (perf cluster)
+>>
+>> And in the driver simply add offsets as follows:
+>>
+>> #define ENABLE_OFFSET               0x0
+>> #define LUT_OFFSET                      0x110
+>> #define PERF_DESIRED_OFFSET 0x920
+>>
+> 
+> The offsets could vary across versions of this IP and that is the reason
+> to provide them through the DT and not define any such offsets.
+> 
+
+How many versions do you have and how much has it varied already ?
+I am now getting a sense that it's mostly decided and fixed my the
+firmware rather than at the time of hardware design.
+
 -- 
-2.17.1
-
+Regards,
+Sudeep
