@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF76DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:00:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD209C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:01:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8114F205C9
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:00:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8114F205C9
+	by mail.kernel.org (Postfix) with ESMTP id 817B5205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:01:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 817B5205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966292AbeFOUAq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:00:46 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:52786 "EHLO ale.deltatee.com"
+        id S966388AbeFOUB3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 16:01:29 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:52810 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966117AbeFOUAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:00:45 -0400
+        id S966117AbeFOUB2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:01:28 -0400
 Received: from guinness.priv.deltatee.com ([172.16.1.162])
         by ale.deltatee.com with esmtp (Exim 4.89)
         (envelope-from <logang@deltatee.com>)
-        id 1fTutl-00072j-Cy; Fri, 15 Jun 2018 14:00:42 -0600
+        id 1fTuuS-00073F-Jp; Fri, 15 Jun 2018 14:01:25 -0600
 To:     Serge Semin <fancer.lancer@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
         Jon Mason <jdmason@kudzu.us>,
@@ -33,22 +33,23 @@ Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
         Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
         Shuah Khan <shuah@kernel.org>
 References: <20180609000819.13883-1-logang@deltatee.com>
- <20180609000819.13883-9-logang@deltatee.com>
- <20180615195122.GA25387@mobilestation>
+ <20180609000819.13883-8-logang@deltatee.com>
+ <20180615195030.GA25303@mobilestation>
 From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <505f2281-adcf-d1dc-ddca-8090cb34b1e6@deltatee.com>
-Date:   Fri, 15 Jun 2018 14:00:40 -0600
+Message-ID: <627b30c0-fb98-08a7-9a09-a5f45368740c@deltatee.com>
+Date:   Fri, 15 Jun 2018 14:01:24 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180615195122.GA25387@mobilestation>
+In-Reply-To: <20180615195030.GA25303@mobilestation>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-SA-Exim-Connect-IP: 172.16.1.162
 X-SA-Exim-Rcpt-To: shuah@kernel.org, Shyam-sundar.S-k@amd.com, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, fancer.lancer@gmail.com
 X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 7/8] NTB: perf: Fix race condition when run with ntb_test
+Subject: Re: [PATCH 6/8] NTB: perf: Fix support for hardware that doesn't have
+ port numbers
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,34 +59,19 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 15/06/18 01:51 PM, Serge Semin wrote:
-> On Fri, Jun 08, 2018 at 06:08:18PM -0600, Logan Gunthorpe <logang@deltatee.com> wrote:
->> When running ntb_test, the script tries to run the ntb_perf test
->> immediately after probing the modules. Since adding multi-port support,
->> this fails seeing the new initialization procedure in ntb_perf
->> can not complete instantly.
->>
->> To fix this we add a completion which is waited on when a test is
->> started. In this way, run can be written any time after the module is
->> loaded and it will wait for the initialization to complete instead of
->> sending an error.
+On 15/06/18 01:50 PM, Serge Semin wrote:
+> On Fri, Jun 08, 2018 at 06:08:17PM -0600, Logan Gunthorpe <logang@deltatee.com> wrote:
+>> Legacy drivers do not have port numbers (but is reliably only two ports)
+>> and was broken by the recent commit that added mult-port support to
+>> ntb_perf. This is especially important to support the cross link
+>> topology which is perfectly symmetric and cannot assign unique port
+>> numbers easily.
 >>
 > 
-> Hmm, this behavior is the feature of the driver and isn't a bug or race to be
-> fixed. ntb_perf driver returns -ENOLINK until the link is actually established,
-> when the memory windows are properly initialized so the test can be performed.
-> What do you think of leaving the algorithm as is, but instead to develop
-> the polling scheme in the ntb_test.sh script and break the script execution if
-> the link isn't established after sometime? At least we won't need to wait forever
-> in case if the peer hanged up or crashed while the NTB link negotiation algorithm
-> was in-progress.
+> Please, see the comment to the patch 3/8. I explained everything there
+> including the fact, that the Intel/AMD drivers do have unique port numbers
+> assigned.
 
-I think polling is really ugly and doesn't really address solve the
-issue of waiting forever. It's pretty easy to interrupt out of the wait
-and provides a much better clue to whats going on than an error.
-
-If we want to be more explicit, it would be pretty easy to start a timer
-in the bash script and use SIGALRM to exit if the link doesn't come up
-after 30 seconds or something.
+See my comments as to why this is impossible.
 
 Logan
