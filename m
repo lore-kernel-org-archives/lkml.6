@@ -2,253 +2,210 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id ACC61C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:03:10 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 531DAC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:04:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5188B20864
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:03:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X4Bpmf1O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5188B20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 018DF208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:04:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 018DF208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755717AbeFOGDI (ORCPT
+        id S1755787AbeFOGED (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 02:03:08 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39451 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755607AbeFOGDG (ORCPT
-        <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 02:03:06 -0400
-Received: by mail-wr0-f194.google.com with SMTP id w7-v6so8675771wrn.6
-        for <Linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 23:03:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oykycXql9hS3J2tKYmAyP4wcJsVb+iJQ4H6LRbXGV34=;
-        b=X4Bpmf1O88+yomKC+lrJijX6hPqwVIOb+OYOChSs9Y7m1OTWpyTaWPBFpUUl3+onNv
-         n21QnYxmX2w9PlZz08NMDGfSuRot5oOMFSeSPGFpw0NZacHtHjEv054Z/HawAlF64rl2
-         bFWcAqb9gkPvPbrMXOrg5EWwcvRcZL/LptLJSfgMKyu0eEHa1fFjKVycT7BRJDpX7lTG
-         LEhL+3eOLGPhjg2t9AkooyHi5FaozHtoJu4GGV44Txlrrr2bn3Qtbh50tFIEKQtPssHz
-         sjgyz89f3w2nJ6kj+hAwQiatQZjcLlhiBZOq1f5C3UD38Vues6MCw+HMjJSACChgWqJA
-         2VqQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oykycXql9hS3J2tKYmAyP4wcJsVb+iJQ4H6LRbXGV34=;
-        b=quXk8RGaBYMTb8GO2o0PNp3M8pQw66q1NctqhOTo+n++/pw1oZoLu+BqWr2yJbPDhz
-         BBXXknOiAnX9bkSUIDDZzMzix3LuXVkEStKTpbUW277qPVTDW1h5sCQA892tEqOh6ZRj
-         LKkp0l0bB6ylsqDzLkVydotJkies8mgJLuHHy8xlb8upE3Q5co/NRJPpVmNs737atKQE
-         RHpbjhIMF2pkR6xWREChcrr/lDvChKcLbqPyFKjFh7elKsxoSmrnAJQujq/hDWR06n1j
-         5JeBndehpnLPhpNx/z4eWTxVgSenm8Bj2oNmwkd8oClGMBj/wnZvX+y8xN1U8GjYk2dF
-         A9UQ==
-X-Gm-Message-State: APt69E1u1m4FT053lTqrKAx1DKozs9NPmZs/rVDyv7Z08k0FI3SZgjcg
-        njKbNZE21oMUj6I/fGOSmweK1KBhzcDynG5u4h17dw==
-X-Google-Smtp-Source: ADUXVKJtqFy/LU/vQcF2NMKVDf92OUnbSZrxj8p7EBm/Npk26bTXn2VYpYp7Fd5EwYKtVpumrp0VMiBig2GF8L0ymTY=
-X-Received: by 2002:adf:a0ee:: with SMTP id n43-v6mr315226wrn.23.1529042585375;
- Thu, 14 Jun 2018 23:03:05 -0700 (PDT)
+        Fri, 15 Jun 2018 02:04:03 -0400
+Received: from mga04.intel.com ([192.55.52.120]:52949 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755589AbeFOGEB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 02:04:01 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 23:04:00 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,225,1526367600"; 
+   d="scan'208";a="237639901"
+Received: from hao-dev.bj.intel.com (HELO localhost) ([10.238.157.61])
+  by fmsmga006.fm.intel.com with ESMTP; 14 Jun 2018 23:03:58 -0700
+Date:   Fri, 15 Jun 2018 13:52:46 +0800
+From:   Wu Hao <hao.wu@intel.com>
+To:     Alan Tull <atull@kernel.org>
+Cc:     Moritz Fischer <mdf@kernel.org>, linux-fpga@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api@vger.kernel.org, "Kang, Luwei" <luwei.kang@intel.com>,
+        "Zhang, Yi Z" <yi.z.zhang@intel.com>,
+        Tim Whisonant <tim.whisonant@intel.com>,
+        Enno Luebbers <enno.luebbers@intel.com>,
+        Shiva Rao <shiva.rao@intel.com>,
+        Christopher Rauer <christopher.rauer@intel.com>,
+        Xiao Guangrong <guangrong.xiao@linux.intel.com>
+Subject: Re: [PATCH v6 17/29] fpga: dfl: fme: add partial reconfiguration sub
+ feature support
+Message-ID: <20180615055246.GA27304@hao-dev>
+References: <1528798243-2029-1-git-send-email-hao.wu@intel.com>
+ <1528798243-2029-18-git-send-email-hao.wu@intel.com>
+ <20180614010713.fivl64pirawrnrhc@derp-derp.local>
+ <CANk1AXRU9yXhgWu9_CZLLRQfNKedR22ghoPLGeTRUeTX24XtWw@mail.gmail.com>
 MIME-Version: 1.0
-References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com> <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
-In-Reply-To: <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
-From:   Stephane Eranian <eranian@google.com>
-Date:   Thu, 14 Jun 2018 23:02:53 -0700
-Message-ID: <CABPqkBTyEZX7DebLR-nbzXs0ZYGT1xWNmOmvKgRsvr4mxWJg=w@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] perf/core: Use sysctl to turn on/off dropping
- leaked kernel samples
-To:     yao.jin@linux.intel.com
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        me@kylehuey.com, LKML <Linux-kernel@vger.kernel.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Liang, Kan" <kan.liang@intel.com>, "Jin, Yao" <yao.jin@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANk1AXRU9yXhgWu9_CZLLRQfNKedR22ghoPLGeTRUeTX24XtWw@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 7:10 PM Jin Yao <yao.jin@linux.intel.com> wrote:
->
-> When doing sampling, for example:
->
-> perf record -e cycles:u ...
->
-> On workloads that do a lot of kernel entry/exits we see kernel
-> samples, even though :u is specified. This is due to skid existing.
->
-> This might be a security issue because it can leak kernel addresses even
-> though kernel sampling support is disabled.
->
-> One patch "perf/core: Drop kernel samples even though :u is specified"
-> was posted in last year but it was reverted because it introduced a
-> regression issue that broke the rr-project, which used sampling
-> events to receive a signal on overflow. These signals were critical
-> to the correct operation of rr.
->
-> See '6a8a75f32357 ("Revert "perf/core: Drop kernel samples even
-> though :u is specified"")' for detail.
->
-> Now the idea is to use sysctl to control the dropping of leaked
-> kernel samples.
->
-> /sys/devices/cpu/perf_allow_sample_leakage:
->
-> 0 - default, drop the leaked kernel samples.
-> 1 - don't drop the leaked kernel samples.
->
-> For rr it can write 1 to /sys/devices/cpu/perf_allow_sample_leakage.
->
-> For example,
->
-> root@skl:/tmp# cat /sys/devices/cpu/perf_allow_sample_leakage
-> 0
-> root@skl:/tmp# perf record -e cycles:u ./div
-> root@skl:/tmp# perf report --stdio
->
-> ........  .......  .............  ................
->
->     47.01%  div      div            [.] main
->     20.74%  div      libc-2.23.so   [.] __random_r
->     15.59%  div      libc-2.23.so   [.] __random
->      8.68%  div      div            [.] compute_flag
->      4.48%  div      libc-2.23.so   [.] rand
->      3.50%  div      div            [.] rand@plt
->      0.00%  div      ld-2.23.so     [.] do_lookup_x
->      0.00%  div      ld-2.23.so     [.] memcmp
->      0.00%  div      ld-2.23.so     [.] _dl_start
->      0.00%  div      ld-2.23.so     [.] _start
->
-> There is no kernel symbol reported.
->
-> root@skl:/tmp# echo 1 > /sys/devices/cpu/perf_allow_sample_leakage
-> root@skl:/tmp# cat /sys/devices/cpu/perf_allow_sample_leakage
-> 1
-> root@skl:/tmp# perf record -e cycles:u ./div
-> root@skl:/tmp# perf report --stdio
->
-> ........  .......  ................  .............
->
->     47.53%  div      div               [.] main
->     20.62%  div      libc-2.23.so      [.] __random_r
->     15.32%  div      libc-2.23.so      [.] __random
->      8.66%  div      div               [.] compute_flag
->      4.53%  div      libc-2.23.so      [.] rand
->      3.34%  div      div               [.] rand@plt
->      0.00%  div      [kernel.vmlinux]  [k] apic_timer_interrupt
->      0.00%  div      libc-2.23.so      [.] intel_check_word
->      0.00%  div      ld-2.23.so        [.] brk
->      0.00%  div      [kernel.vmlinux]  [k] page_fault
->      0.00%  div      ld-2.23.so        [.] _start
->
-> We can see the kernel symbols apic_timer_interrupt and page_fault.
->
-> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
-> ---
->  kernel/events/core.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 58 insertions(+)
->
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 80cca2b..7867541 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -7721,6 +7721,28 @@ int perf_event_account_interrupt(struct perf_event *event)
->         return __perf_event_account_interrupt(event, 1);
->  }
->
-> +static int perf_allow_sample_leakage __read_mostly;
-> +
-> +static bool sample_is_allowed(struct perf_event *event, struct pt_regs *regs)
-> +{
-> +       int allow_leakage = READ_ONCE(perf_allow_sample_leakage);
-> +
-> +       if (allow_leakage)
-> +               return true;
-> +
-> +       /*
-> +        * Due to interrupt latency (AKA "skid"), we may enter the
-> +        * kernel before taking an overflow, even if the PMU is only
-> +        * counting user events.
-> +        * To avoid leaking information to userspace, we must always
-> +        * reject kernel samples when exclude_kernel is set.
-> +        */
-> +       if (event->attr.exclude_kernel && !user_mode(regs))
-> +               return false;
-> +
-And how does that filter PEBS or LBR records?
+On Thu, Jun 14, 2018 at 11:33:00AM -0500, Alan Tull wrote:
+> On Wed, Jun 13, 2018 at 8:07 PM, Moritz Fischer <mdf@kernel.org> wrote:
+> 
+> Hellooo,
+> 
+> This probably could use a comment, please see below.
+> 
+> > Hi,
+> >
+> > quick question for Alan inline below.
+> >
+> 
+> >> +static int fme_pr(struct platform_device *pdev, unsigned long arg)
+> >> +{
+> >> +     struct dfl_feature_platform_data *pdata = dev_get_platdata(&pdev->dev);
+> >> +     void __user *argp = (void __user *)arg;
+> >> +     struct dfl_fpga_fme_port_pr port_pr;
+> >> +     struct fpga_image_info *info;
+> >> +     struct fpga_region *region;
+> >> +     void __iomem *fme_hdr;
+> >> +     struct dfl_fme *fme;
+> >> +     unsigned long minsz;
+> >> +     void *buf = NULL;
+> >> +     int ret = 0;
+> >> +     u64 v;
+> >> +
+> >> +     minsz = offsetofend(struct dfl_fpga_fme_port_pr, buffer_address);
+> >> +
+> >> +     if (copy_from_user(&port_pr, argp, minsz))
+> >> +             return -EFAULT;
+> >> +
+> >> +     if (port_pr.argsz < minsz || port_pr.flags)
+> >> +             return -EINVAL;
+> >> +
+> >> +     if (!IS_ALIGNED(port_pr.buffer_size, 4))
+> >> +             return -EINVAL;
+> >> +
+> >> +     /* get fme header region */
+> >> +     fme_hdr = dfl_get_feature_ioaddr_by_id(&pdev->dev,
+> >> +                                            FME_FEATURE_ID_HEADER);
+> >> +
+> >> +     /* check port id */
+> >> +     v = readq(fme_hdr + FME_HDR_CAP);
+> >> +     if (port_pr.port_id >= FIELD_GET(FME_CAP_NUM_PORTS, v)) {
+> >> +             dev_dbg(&pdev->dev, "port number more than maximum\n");
+> >> +             return -EINVAL;
+> >> +     }
+> >> +
+> >> +     if (!access_ok(VERIFY_READ,
+> >> +                    (void __user *)(unsigned long)port_pr.buffer_address,
+> >> +                    port_pr.buffer_size))
+> >> +             return -EFAULT;
+> >> +
+> >> +     buf = vmalloc(port_pr.buffer_size);
+> >> +     if (!buf)
+> >> +             return -ENOMEM;
+> >> +
+> >> +     if (copy_from_user(buf,
+> >> +                        (void __user *)(unsigned long)port_pr.buffer_address,
+> >> +                        port_pr.buffer_size)) {
+> >> +             ret = -EFAULT;
+> >> +             goto free_exit;
+> >> +     }
+> >> +
+> >> +     /* prepare fpga_image_info for PR */
+> >> +     info = fpga_image_info_alloc(&pdev->dev);
+> >> +     if (!info) {
+> >> +             ret = -ENOMEM;
+> >> +             goto free_exit;
+> >> +     }
+> >> +
+> >> +     info->flags |= FPGA_MGR_PARTIAL_RECONFIG;
+> >> +
+> >> +     mutex_lock(&pdata->lock);
+> >> +     fme = dfl_fpga_pdata_get_private(pdata);
+> >> +     /* fme device has been unregistered. */
+> >> +     if (!fme) {
+> >> +             ret = -EINVAL;
+> >> +             goto unlock_exit;
+> >> +     }
+> >> +
+> >> +     region = dfl_fme_region_find(fme, port_pr.port_id);
+> >> +     if (!region) {
+> >> +             ret = -EINVAL;
+> >> +             goto unlock_exit;
+> >> +     }
+> >> +
+> >> +     fpga_image_info_free(region->info);
+> >> +
+> >> +     info->buf = buf;
+> >> +     info->count = port_pr.buffer_size;
+> >> +     info->region_id = port_pr.port_id;
+> >> +     region->info = info;
+> >> +
+> >> +     ret = fpga_region_program_fpga(region);
+> >> +
+> >> +     if (region->get_bridges)
+> >> +             fpga_bridges_put(&region->bridge_list);
+> >
+> > I'm wondering if this should not be done as part of
+> > fpga_region_program_fpga() (It's not at the moment).
+> >
+> > Alan, am I missing something obvious? :)
+> 
+> It is up to the caller of  fpga_region_program_fpga to put the bridges
+> before programming again.  That prevents something other than the
+> caller from reprogramming a partial region or messing with the bridges
+> until the caller puts the bridges.
+> 
+> For example, for DT support, applying an overlay calls
+> fpga_region_program_fpga() which gets the bridges, disables them, does
+> the programming, and reenables the bridges.  Then the bridges are
+> held, preventing anything else from disabling the bridges until the
+> overlay is removed.  This was important in the DT case since the
+> overlay could include child nodes for hardware in the FPGA.   Allowing
+> anyone else to play with the bridges while those drivers were
+> expecting hardware access could be bad.
+> 
+> I can't remember for certain, but I think this code has to put the
+> bridges here because this patch set allows userspace to reset the PR
+> region's logic by disabling/reenabling the bridge to clear things out
+> between acceleration runs (which Hao promises is OK to do, it's
+> documented elsewhere in the pachset).  It probably could use a comment
+> right here to explain why the bridges are put here so future
+> generations know not to break this.
 
-> +       return true;
-> +}
-> +
->  /*
->   * Generic event overflow handling, sampling.
->   */
-> @@ -7742,6 +7764,12 @@ static int __perf_event_overflow(struct perf_event *event,
->         ret = __perf_event_account_interrupt(event, throttle);
->
->         /*
-> +        * For security, drop the skid kernel samples if necessary.
-> +        */
-> +       if (!sample_is_allowed(event, regs))
-> +               return ret;
-> +
-> +       /*
->          * XXX event_limit might not quite work as expected on inherited
->          * events
->          */
-> @@ -9500,9 +9528,39 @@ perf_event_mux_interval_ms_store(struct device *dev,
->  }
->  static DEVICE_ATTR_RW(perf_event_mux_interval_ms);
->
-> +static ssize_t
-> +perf_allow_sample_leakage_show(struct device *dev,
-> +                              struct device_attribute *attr, char *page)
-> +{
-> +       int allow_leakage = READ_ONCE(perf_allow_sample_leakage);
-> +
-> +       return snprintf(page, PAGE_SIZE-1, "%d\n", allow_leakage);
-> +}
-> +
-> +static ssize_t
-> +perf_allow_sample_leakage_store(struct device *dev,
-> +                               struct device_attribute *attr,
-> +                               const char *buf, size_t count)
-> +{
-> +       int allow_leakage, ret;
-> +
-> +       ret = kstrtoint(buf, 0, &allow_leakage);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (allow_leakage != 0 && allow_leakage != 1)
-> +               return -EINVAL;
-> +
-> +       WRITE_ONCE(perf_allow_sample_leakage, allow_leakage);
-> +
-> +       return count;
-> +}
-> +static DEVICE_ATTR_RW(perf_allow_sample_leakage);
-> +
->  static struct attribute *pmu_dev_attrs[] = {
->         &dev_attr_type.attr,
->         &dev_attr_perf_event_mux_interval_ms.attr,
-> +       &dev_attr_perf_allow_sample_leakage.attr,
->         NULL,
->  };
->  ATTRIBUTE_GROUPS(pmu_dev);
+Yes, it's correct. I can add some comments here in the next version.
+
+Thanks
+Hao
+
+> 
+> Alan
+> 
+> >> +
+> >> +     put_device(&region->dev);
+> >> +unlock_exit:
+> >> +     mutex_unlock(&pdata->lock);
+> >> +free_exit:
+> >> +     vfree(buf);
+> >> +     if (copy_to_user((void __user *)arg, &port_pr, minsz))
+> >> +             return -EFAULT;
+> >> +
+> >> +     return ret;
+> >> +}
 > --
-> 2.7.4
->
+> To unsubscribe from this list: send the line "unsubscribe linux-fpga" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
