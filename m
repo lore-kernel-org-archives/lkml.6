@@ -2,128 +2,80 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C52C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:48:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E432C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C299208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:48:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C299208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
+	by mail.kernel.org (Postfix) with ESMTP id 04C92208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:48:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Dq83irAH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C92208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756484AbeFOUsK (ORCPT
+        id S1756513AbeFOUsy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:48:10 -0400
-Received: from smtp.infotech.no ([82.134.31.41]:52151 "EHLO smtp.infotech.no"
+        Fri, 15 Jun 2018 16:48:54 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:43213 "EHLO frisell.zx2c4.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756404AbeFOUsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:48:06 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by smtp.infotech.no (Postfix) with ESMTP id 36FFC20423F;
-        Fri, 15 Jun 2018 22:48:03 +0200 (CEST)
-X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
-Received: from smtp.infotech.no ([127.0.0.1])
-        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 93xPPDv8MqHN; Fri, 15 Jun 2018 22:47:57 +0200 (CEST)
-Received: from [192.168.0.151] (CPEa84e3fcc6793-CMa84e3fcc6790.cpe.net.cable.rogers.com [99.242.181.9])
-        by smtp.infotech.no (Postfix) with ESMTPA id 77F91204154;
-        Fri, 15 Jun 2018 22:47:50 +0200 (CEST)
-Reply-To: dgilbert@interlog.com
-Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in
- release
-To:     Al Viro <viro@ZenIV.linux.org.uk>, Jann Horn <jannh@google.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
-        security@kernel.org
-References: <20180615152335.208202-1-jannh@google.com>
- <20180615164009.GD30522@ZenIV.linux.org.uk>
-From:   Douglas Gilbert <dgilbert@interlog.com>
-Message-ID: <90063ef3-68fa-e983-9b47-838e6076b0f4@interlog.com>
-Date:   Fri, 15 Jun 2018 16:47:47 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S1756133AbeFOUsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:48:53 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id c62d9c9e
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 15 Jun 2018 20:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
+        :references:in-reply-to:from:date:message-id:subject:to:cc
+        :content-type; s=mail; bh=g+S3hVlDdyC9j6lQphHSH+UUJjk=; b=Dq83ir
+        AHbsIWPVHvx/b72Bd42fYfb/4w181tLBneAa5nDDHnv/PnoQdCCjM3lpf5PeZWFY
+        fpK9NYYoNn1y00/rruASNfwRaW8+Zm/zPGVYL3lfMCwnfpC5fkxzsy/8NWK5zk+2
+        fFjmKldcORF6rRAkHLl54UWT5T8v5G3ppRK1sIrYYHv+ho+YrQZ9fxq2wdVYoRhg
+        +B7dEYZU9cdXBWz6uFYZaQLHlgL2KSQDH7PqBa11/hjfgl0/93cby8+Isoz93Q0Z
+        0daXwovJSCLXChpF33lyab29ZDNfR4uO5FbVNo55A2Xj3t4VZwyBtTElbplhm1Wl
+        nN+UTwHRoteqzKUQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id dc4863b2 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
+        for <linux-kernel@vger.kernel.org>;
+        Fri, 15 Jun 2018 20:43:28 +0000 (UTC)
+Received: by mail-ot0-f181.google.com with SMTP id p95-v6so12410243ota.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 13:48:52 -0700 (PDT)
+X-Gm-Message-State: APt69E2e5loc5lmkr1djerfkRFrXtyWPgXnDzwBJHNZb8XOl1vi4SCnp
+        blxgERlscgaabStOVHXTBMKpyqT9aH6uVNRmDZs=
+X-Google-Smtp-Source: ADUXVKI6mzyDYfMJOW//D5FNhI8AV12V3xumaoVUJZzEhsWqjrM0GzrsCqBsmXUeSaieszKGGmB+GswMVTpTYGDvBCk=
+X-Received: by 2002:a9d:542e:: with SMTP id j46-v6mr2189579oth.41.1529095732114;
+ Fri, 15 Jun 2018 13:48:52 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180615164009.GD30522@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-CA
-Content-Transfer-Encoding: 8bit
+References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
+ <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
+ <6eecf873-9d87-5345-70ba-5c064a31714b@linux.intel.com> <CALCETrWoDEXzH=y9sqoGWtzLPoeWgpRyUQw5AiCubX4O+UOa3w@mail.gmail.com>
+ <CAHmME9qBrmD3HJtXHiLYjxhrX=ZL2jNr9TRQayB6SyJcZLmgHg@mail.gmail.com>
+In-Reply-To: <CAHmME9qBrmD3HJtXHiLYjxhrX=ZL2jNr9TRQayB6SyJcZLmgHg@mail.gmail.com>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Fri, 15 Jun 2018 22:48:39 +0200
+X-Gmail-Original-Message-ID: <CAHmME9pqANOxpKMujWoP_rydcZ-cDGaypLOs=kdXuB4pkdLw2A@mail.gmail.com>
+Message-ID: <CAHmME9pqANOxpKMujWoP_rydcZ-cDGaypLOs=kdXuB4pkdLw2A@mail.gmail.com>
+Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
+To:     Andrew Lutomirski <luto@kernel.org>
+Cc:     dave.hansen@linux.intel.com, riel@surriel.com,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-06-15 12:40 PM, Al Viro wrote:
-> On Fri, Jun 15, 2018 at 05:23:35PM +0200, Jann Horn wrote:
-> 
->> I've mostly copypasted ib_safe_file_access() over as
->> scsi_safe_file_access() because I couldn't find a good common header -
->> please tell me if you know a better way.
->> The duplicate pr_err_once() calls are so that each of them fires once;
->> otherwise, this would probably have to be a macro.
->>
->> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
->> Cc: <stable@vger.kernel.org>
->> Signed-off-by: Jann Horn <jannh@google.com>
->> ---
-> 
-> WTF do you mean, in ->release()?  That makes no sense whatsoever -
-> what kind of copy_{to,from}_user() would be possible in there?
+On Fri, Jun 15, 2018 at 10:27 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
+> AVX512 - Intel(R) Xeon(R) Gold 5120 CPU @ 2.20GHz
+> Inside: 634415672
+> Outside: 286698960
+> Percent speedup: 121
 
-The folks responsible are no longer active in kernel development ***
-but as far as I know the async write(command), read(response) were
-added to bsg over 10 years ago as proof-of-concept and never properly
-worked in this async mode. The biggest design problem with it that I'm
-aware of is that two tasks which issue write(commands) at about the
-same time to the same device can receive one another's read(response).
-The tracking of which response belongs to which task is in part the
-reason why the sg driver's data structures are more complex than the
-bsg driver's are. Hence the code work to fix that problem in the bsg
-driver is not trivial and probably a reason why no-one has attempted it.
+More realistic results, with turbo turned off:
 
-Once real world users (needing an async SCSI (or general storage)
-pass-through) find out about that bsg "feature", they don't use it.
-They use the sg driver or something else. So the fact that bsg has
-other glaring errors in it in async mode is no surprise to me.
+Inside: 616851298
+Outside: 339606790
+Percent speedup: 81
 
-When I took over the maintenance of the sg driver in 1998, it only
-had an async (i.e. write(command), read(response)) interface.
-The SG_IO ioctl was added at the suggestion of Jørg Schilling (of
-cdrecord "fame"). The sg driver implementation was essentially to
-put a write(command) and read(response) back-to-back. The bsg driver
-came along later and started with the synchronous SG_IO ioctl
-interface only. The async write(command)/read(response) functionality
-was added later to bsg. Perhaps that part of the bsg driver should be
-deprecated/withdrawn if a maintainer/rewriter cannot be found.
-[BTW the bsg sync SG_IO ioctl implementation can probably get the
-wrong response, it's just that the window is a lot narrower.]
-
-That said, the bsg driver has lots of other users. For example it is
-the only generic pass-through in Linux for the SAS Management Protocol
-(SMP) used to control SAS based storage enclosures. I have a user space
-package based on it (in Linux) called smp_utils which works well IMO.
-However disk enclosures won't typically have contention between users
-trying to control them and I'm not aware of any disk enclosures that
-support Persistent Reservations. So the bsg driver's "async" problems
-are not a practical issue in this case. Also I believe some high end
-storage hardware uses bsg to communicate with their hardware from their
-user space tools.
-
-
-Just some observations from an interested observer ...
-
-Doug Gilbert
-
-
-*** Well Jens Axbø's Copyright notice is on the bsg driver, together with
-     and Peter M. Jones. Since I have been watching the bsg driver I'm
-     not aware of any substantial patches or reworks for them. As far as
-     I know FUJITA Tomonori did a ground up rewrite of it and he no longer
-     works in this area. Makes you wonder what exactly Copyright banners
-     mean on some code; 10, 15, 20 years on.
+Still a pretty outstanding speedup.
