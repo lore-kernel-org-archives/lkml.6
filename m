@@ -2,318 +2,119 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86866C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6897DC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402F1208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 402F1208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
+	by mail.kernel.org (Postfix) with ESMTP id 21C77208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:47:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P1ae/JU4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21C77208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966404AbeFOQrT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:47:19 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:57310 "EHLO
-        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S966096AbeFOQp3 (ORCPT
+        id S966385AbeFOQrQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:47:16 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:58162 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964992AbeFOQqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:45:29 -0400
-Received: from Internal Mail-Server by MTLPINE1 (envelope-from oleksandrs@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 15 Jun 2018 19:47:50 +0300
-Received: from r-vnc16.mtr.labs.mlnx (r-vnc16.mtr.labs.mlnx [10.208.0.16])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w5FGjNR9025558;
-        Fri, 15 Jun 2018 19:45:24 +0300
-From:   Oleksandr Shamray <oleksandrs@mellanox.com>
-To:     gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, openbmc@lists.ozlabs.org,
-        joel@jms.id.au, jiri@resnulli.us, tklauser@distanz.ch,
-        linux-serial@vger.kernel.org, vadimp@mellanox.com,
-        system-sw-low-level@mellanox.com, robh+dt@kernel.org,
-        openocd-devel-owner@lists.sourceforge.net,
-        linux-api@vger.kernel.org, davem@davemloft.net, mchehab@kernel.org,
-        Oleksandr Shamray <oleksandrs@mellanox.com>
-Subject: [patch v26 4/4] Documentation: jtag: Add ABI documentation
-Date:   Fri, 15 Jun 2018 19:45:23 +0300
-Message-Id: <1529081123-30873-5-git-send-email-oleksandrs@mellanox.com>
-X-Mailer: git-send-email 1.7.1
-In-Reply-To: <1529081123-30873-1-git-send-email-oleksandrs@mellanox.com>
-References: <1529081123-30873-1-git-send-email-oleksandrs@mellanox.com>
+        Fri, 15 Jun 2018 12:46:42 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FPSy7COcdrgPAfZ+GqYL8a9DLfasAs7wcZsItPaiPc8=; b=P1ae/JU4VIJZOQy4gOIQNKLdq
+        eR0rNLCBxjNiIfZte3e1aoMf4SFBEUaCAF6psy/u85gunsTjtiIaG0Ygms3pxJBXcZuxolJqlc0dC
+        RdujZZLqMMdTC3tSzYj81wjmMXjSJYpAAfSqAKqChDT+0IfhxJImPxtPfg/nqqQjgHoNC6yZlqBW+
+        lc5LZQ1e/LcnOSgbEjlFwaz7rxGBSaTWXxqbLx/WzMafQIQ13N2yecazVIwE2lWXO5/o3aY7TSPEl
+        qbYlrdcCJd1jj95IRqFzppAECV0pU+cuegZl5VWwg7oAFXSDuA0VufizewPuZZwSpECjJ6dfdjoV+
+        FtToVXrZQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTrrT-0006W3-QD; Fri, 15 Jun 2018 16:46:08 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id D5A352029FA0D; Fri, 15 Jun 2018 18:46:04 +0200 (CEST)
+Date:   Fri, 15 Jun 2018 18:46:04 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Hellstrom <thellstrom@vmware.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        David Airlie <airlied@linux.ie>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-doc@vger.kernel.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, stern@rowland.harvard.edu
+Subject: Re: [PATCH v3 2/2] locking: Implement an algorithm choice for
+ Wound-Wait mutexes
+Message-ID: <20180615164604.GD2458@hirez.programming.kicks-ass.net>
+References: <20180615120827.3989-1-thellstrom@vmware.com>
+ <20180615120827.3989-2-thellstrom@vmware.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180615120827.3989-2-thellstrom@vmware.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added document that describe the ABI for JTAG class drivrer
+On Fri, Jun 15, 2018 at 02:08:27PM +0200, Thomas Hellstrom wrote:
 
-Signed-off-by: Oleksandr Shamray <oleksandrs@mellanox.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
-v25->v26
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- fix spell in ABI doccumentation
+> @@ -772,6 +856,25 @@ __ww_mutex_add_waiter(struct mutex_waiter *waiter,
+>  	}
+>  
+>  	list_add_tail(&waiter->list, pos);
+> +	if (__mutex_waiter_is_first(lock, waiter))
+> +		__mutex_set_flag(lock, MUTEX_FLAG_WAITERS);
+> +
+> +	/*
+> +	 * Wound-Wait: if we're blocking on a mutex owned by a younger context,
+> +	 * wound that such that we might proceed.
+> +	 */
+> +	if (!is_wait_die) {
+> +		struct ww_mutex *ww = container_of(lock, struct ww_mutex, base);
+> +
+> +		/*
+> +		 * See ww_mutex_set_context_fastpath(). Orders setting
+> +		 * MUTEX_FLAG_WAITERS (atomic operation) vs the ww->ctx load,
+> +		 * such that either we or the fastpath will wound @ww->ctx.
+> +		 */
+> +		smp_mb__after_atomic();
+> +
+> +		__ww_mutex_wound(lock, ww_ctx, ww->ctx);
+> +	}
 
-v24->v25
-Comments pointed by Greg KH <gregkh@linuxfoundation.org>
-- Fixed documentation according to new open() behavior
+I think we want the smp_mb__after_atomic() in the same branch as
+__mutex_set_flag(). So something like:
 
-v23->v24
-v22->v23
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- fix spell in ABI doccumentation
+	if (__mutex_waiter_is_first()) {
+		__mutex_set_flag();
+		if (!is_wait_die)
+			smp_mb__after_atomic();
+	}
 
-v21->v22
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- fix spell in ABI doccumentation
+Or possibly even without the !is_wait_die. The rules for
+smp_mb__*_atomic() are such that we want it unconditional after an
+atomic, otherwise the semantics get too fuzzy.
 
-v20->v21
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- Fix JTAG dirver help in Kconfig
+Alan (rightfully) complained about that a while ago when he was auditing
+users.
 
-v19->v20
-Comments pointed by Randy Dunlap <rdunlap@infradead.org>
-- Fix JTAG doccumentation
-
-v18->v19
-Pavel Machek <pavel@ucw.cz>
-- Added JTAG doccumentation to Documentation/jtag
-
-v17->v18
-v16->v17
-v15->v16
-v14->v15
-v13->v14
-v12->v13
-v11->v12 Tobias Klauser <tklauser@distanz.ch>
-Comments pointed by
-- rename /Documentation/ABI/testing/jatg-dev -> jtag-dev
-- Typo: s/interfase/interface
-v10->v11
-v9->v10
-Fixes added by Oleksandr:
-- change jtag-cdev to jtag-dev in documentation
-- update KernelVersion and Date in jtag-dev documentation;
-v8->v9
-v7->v8
-v6->v7
-Comments pointed by Pavel Machek <pavel@ucw.cz>
-- Added jtag-cdev documentation to Documentation/ABI/testing folder
----
- Documentation/ABI/testing/gpio-cdev |    1 -
- Documentation/ABI/testing/jtag-dev  |   23 +++++++
- Documentation/jtag/overview         |   27 +++++++++
- Documentation/jtag/transactions     |  109 +++++++++++++++++++++++++++++++++++
- MAINTAINERS                         |    1 +
- 5 files changed, 160 insertions(+), 1 deletions(-)
- create mode 100644 Documentation/ABI/testing/jtag-dev
- create mode 100644 Documentation/jtag/overview
- create mode 100644 Documentation/jtag/transactions
-
-diff --git a/Documentation/ABI/testing/gpio-cdev b/Documentation/ABI/testing/gpio-cdev
-index 7b265fb..c09d589 100644
---- a/Documentation/ABI/testing/gpio-cdev
-+++ b/Documentation/ABI/testing/gpio-cdev
-@@ -12,7 +12,6 @@ Description:
- 		The following file operations are supported:
- 
- 		open(2)
--		Currently the only useful flags are O_RDWR.
- 
- 		ioctl(2)
- 		Initiate various actions.
-diff --git a/Documentation/ABI/testing/jtag-dev b/Documentation/ABI/testing/jtag-dev
-new file mode 100644
-index 0000000..08249fe
---- /dev/null
-+++ b/Documentation/ABI/testing/jtag-dev
-@@ -0,0 +1,23 @@
-+What:		/dev/jtag[0-9]+
-+Date:		May 2018
-+KernelVersion:	4.18
-+Contact:	oleksandrs@mellanox.com
-+Description:
-+		The misc device files /dev/jtag* are the interface
-+		between JTAG master interface and userspace.
-+
-+		The ioctl(2)-based ABI is defined and documented in
-+		[include/uapi]<linux/jtag.h>.
-+
-+		The following file operations are supported:
-+
-+		open(2)
-+		Opens and allocates file descriptor.
-+
-+		ioctl(2)
-+		Initiate various actions.
-+		See the inline documentation in [include/uapi]<linux/jtag.h>
-+		for descriptions of all ioctls.
-+
-+Users:
-+		userspace tools which wants to access to JTAG bus
-diff --git a/Documentation/jtag/overview b/Documentation/jtag/overview
-new file mode 100644
-index 0000000..3c39052
---- /dev/null
-+++ b/Documentation/jtag/overview
-@@ -0,0 +1,27 @@
-+Linux kernel JTAG support
-+=========================
-+
-+JTAG is an industry standard for verifying hardware. JTAG provides access to
-+many logic signals of a complex integrated circuit, including the device pins.
-+
-+A JTAG interface is a special interface added to a chip.
-+Depending on the version of JTAG, two, four, or five pins are added.
-+
-+The connector pins are:
-+	TDI (Test Data In)
-+	TDO (Test Data Out)
-+	TCK (Test Clock)
-+	TMS (Test Mode Select)
-+	TRST (Test Reset) optional
-+
-+JTAG interface is designed to have two parts - basic core driver and
-+hardware specific driver. The basic driver introduces a general interface
-+which is not dependent of specific hardware. It provides communication
-+between user space and hardware specific driver.
-+Each JTAG device is represented as a char device from (jtag0, jtag1, ...).
-+Access to a JTAG device is performed through IOCTL calls.
-+
-+Call flow example:
-+User: open  -> /dev/jatgX
-+User: ioctl -> /dev/jtagX -> JTAG core driver -> JTAG hardware specific driver
-+User: close -> /dev/jatgX
-diff --git a/Documentation/jtag/transactions b/Documentation/jtag/transactions
-new file mode 100644
-index 0000000..e86fb73
---- /dev/null
-+++ b/Documentation/jtag/transactions
-@@ -0,0 +1,109 @@
-+The JTAG API
-+=============
-+
-+JTAG master devices can be accessed through a character misc-device.
-+Each JTAG master interface can be accessed by using /dev/jtagN.
-+
-+JTAG system calls set:
-+- SIR (Scan Instruction Register, IEEE 1149.1 Instruction Register scan);
-+- SDR (Scan Data Register, IEEE 1149.1 Data Register scan);
-+- RUNTEST (Forces the IEEE 1149.1 bus to a run state for a specified
-+number of clocks.
-+
-+open(), close()
-+-------
-+open() opens JTAG device.
-+
-+Open/Close  device:
-+- jtag_fd = open("/dev/jtag0", O_RDWR);
-+- close(jtag_fd);
-+
-+ioctl()
-+-------
-+All access operations to JTAG devices are performed through ioctl interface.
-+The IOCTL interface supports these requests:
-+	JTAG_IOCRUNTEST - Force JTAG state machine to RUN_TEST/IDLE state
-+	JTAG_SIOCFREQ - Set JTAG TCK frequency
-+	JTAG_GIOCFREQ - Get JTAG TCK frequency
-+	JTAG_IOCXFER - send JTAG data Xfer
-+	JTAG_GIOCSTATUS - get current JTAG TAP status
-+	JTAG_SIOCMODE - set JTAG mode flags.
-+
-+JTAG_SIOCFREQ, JTAG_GIOCFREQ
-+------
-+Set/Get JTAG clock speed:
-+
-+	unsigned int jtag_fd;
-+	ioctl(jtag_fd, JTAG_SIOCFREQ, &frq);
-+	ioctl(jtag_fd, JTAG_GIOCFREQ, &frq);
-+
-+JTAG_IOCRUNTEST
-+------
-+Force JTAG state machine to RUN_TEST/IDLE state
-+
-+struct jtag_run_test_idle {
-+	__u8	reset;
-+	__u8	endstate;
-+	__u8	tck;
-+};
-+
-+reset:
-+	JTAG_NO_RESET - run IDLE/PAUSE from current state
-+	JTAG_FORCE_RESET - go through TEST_LOGIC/RESET state before IDLE/PAUSE
-+endstate: completion flag
-+tck: clock counter
-+
-+Example:
-+	struct jtag_run_test_idle runtest;
-+
-+	runtest.endstate = JTAG_STATE_IDLE;
-+	runtest.reset = 0;
-+	runtest.tck = data_p->tck;
-+	usleep(25 * 1000);
-+	ioctl(jtag_fd, JTAG_IOCRUNTEST, &runtest);
-+
-+JTAG_IOCXFER
-+------
-+Send SDR/SIR transaction
-+
-+struct jtag_xfer {
-+	__u8	type;
-+	__u8	direction;
-+	__u8	endstate;
-+	__u8	padding;
-+	__u32	length;
-+	__u64	tdio;
-+};
-+
-+type: transfer type - JTAG_SIR_XFER/JTAG_SDR_XFER
-+direction: xfer direction - JTAG_SIR_XFER/JTAG_SDR_XFER
-+length: xfer data length in bits
-+tdio : xfer data array
-+endstate: xfer end state after transaction finish
-+	   can be: JTAG_STATE_IDLE/JTAG_STATE_PAUSEIR/JTAG_STATE_PAUSEDR
-+
-+Example:
-+	struct jtag_xfer xfer;
-+	static char buf[64];
-+	static unsigned int buf_len = 0;
-+	[...]
-+	xfer.type = JTAG_SDR_XFER;
-+	xfer.tdio = (__u64)buf;
-+	xfer.length = buf_len;
-+	xfer.endstate = JTAG_STATE_IDLE;
-+
-+	if (is_read)
-+		xfer.direction = JTAG_READ_XFER;
-+	else
-+		xfer.direction = JTAG_WRITE_XFER;
-+
-+	ioctl(jtag_fd, JTAG_IOCXFER, &xfer);
-+
-+JTAG_SIOCMODE
-+------
-+If hardware driver can support different running modes you can change it.
-+
-+Example:
-+	unsigned int mode;
-+	mode = JTAG_XFER_HW_MODE;
-+	ioctl(jtag_fd, JTAG_SIOCMODE, &mode);
-diff --git a/MAINTAINERS b/MAINTAINERS
-index a5e5f75..e067eda 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7618,6 +7618,7 @@ F:	include/linux/jtag.h
- F:	include/uapi/linux/jtag.h
- F:	drivers/jtag/
- F:	Documentation/devicetree/bindings/jtag/
-+F:	Documentation/ABI/testing/jtag-dev
- 
- K10TEMP HARDWARE MONITORING DRIVER
- M:	Clemens Ladisch <clemens@ladisch.de>
--- 
-1.7.1
 
