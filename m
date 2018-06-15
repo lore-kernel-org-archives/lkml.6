@@ -2,97 +2,111 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6334EC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF42C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B239F20C0B
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:33:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD657208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:34:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="iCAT/bky"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B239F20C0B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ZyMU/Yh9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD657208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966100AbeFOTdD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 15:33:03 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:56416 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965768AbeFOTdC (ORCPT
+        id S966115AbeFOTeq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 15:34:46 -0400
+Received: from merlin.infradead.org ([205.233.59.134]:60514 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965768AbeFOTep (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 15:33:02 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FJTI0M015457
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:33:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=mime-version :
- references : in-reply-to : from : date : message-id : subject : to : cc :
- content-type; s=corp-2017-10-26;
- bh=RpERRARaJ0TtYWNqnw6ne/1Ffw/lPL62gPnHjxn2jrc=;
- b=iCAT/bkyeL/cnVfQroxvb6cIrLq/bYcYjZPBk19N7p9D/UVYY+nrVgUviwYfMIarr438
- D3SDFiMpU6uCjVJGjhSl9TjnJ51dnT+Lt2+0adYKuK7JNCa6DgvynixXADRS0GQ8aT/G
- oMuWtS3IBaaB5Xefg/qULes+k/s26dXhzjWi2JhXADKTDaYCpiMfCqF9tNWMc/icfcgE
- ePNDgZHwf3bFSXgdDquPH+3W6rqQWKq1knJBega0eJTzccg2SCkgOAlklf2oaP+5paNy
- M5e2qp4WCukpQaytM4ypxGzJnDpr24fsFn7q2TJLC/zMuub30b2fbOZy0F1lxh9BZTvP UA== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2130.oracle.com with ESMTP id 2jk0xr2693-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:33:01 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5FJWxm1027430
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK)
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:32:59 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5FJWxXU007060
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 19:32:59 GMT
-Received: from mail-ot0-f177.google.com (/74.125.82.177)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jun 2018 12:32:59 -0700
-Received: by mail-ot0-f177.google.com with SMTP id p95-v6so12199661ota.5
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 12:32:59 -0700 (PDT)
-X-Gm-Message-State: APt69E0iSdqYn/HD0dgbTiMNvB9IbcZToSR7aTAf+Olaw/iEdfOfLgW4
-        maWQcwwT4iUAEqCk96WCd3mqYfQ0cx59UrfbIQs=
-X-Google-Smtp-Source: ADUXVKJmn7TDOE5vRoCbAF78+bRH4TJ0sv9EmAzI9yNUMEiZKlvXwMUrN5EFmZaR9ESOrCzx+Fd0eMXHbN4kAq9IkdI=
-X-Received: by 2002:a9d:4e12:: with SMTP id p18-v6mr1941026otf.260.1529091179117;
- Fri, 15 Jun 2018 12:32:59 -0700 (PDT)
+        Fri, 15 Jun 2018 15:34:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5lafXdAvp4KqA5Y2JT8DicmPWcDyn2SJek/oM2IJJ6Q=; b=ZyMU/Yh9cBzRcCa530k0zRG8F
+        q/qBj51k4VoMkXDc3jbpptnWaureiqFHk3993gzB8s5yn7dQy4fLQZyXqBWyku9Bfb59X0s6XnBpK
+        iZ5C1Gns6JzgK1BgOTddHiRpIxFuxspm64RTOe2gLrWQxuTahHnYhMTa2s4lgVbTb8vHJR4k84XHo
+        RO41r8dMhut/9I9EoykdjPVUoajMQudpyv+Xl/9UHQ6WohW8i+Pd5/2DzV3gwekdDIwdu/vQ1fLrq
+        /aY/UftLqSJODzkaWtZ5ERGEj44UPDB40Dn5dJs2BnrACrEjq5euVcJbFxbc6+xwGP6PlvCzRkUwU
+        t9XOI3gJA==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fTuUb-0007Lp-89; Fri, 15 Jun 2018 19:34:41 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 7BFE92029FA0B; Fri, 15 Jun 2018 21:34:38 +0200 (CEST)
+Date:   Fri, 15 Jun 2018 21:34:38 +0200
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        Andy Lutomirski <luto@amacapital.net>
+Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
+Message-ID: <20180615193438.GE2458@hirez.programming.kicks-ass.net>
+References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
+ <alpine.DEB.2.21.1806151815080.1582@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20180615155733.1175-1-pasha.tatashin@oracle.com> <20180615181113.GA27558@techadventures.net>
-In-Reply-To: <20180615181113.GA27558@techadventures.net>
-From:   Pavel Tatashin <pasha.tatashin@oracle.com>
-Date:   Fri, 15 Jun 2018 15:32:23 -0400
-X-Gmail-Original-Message-ID: <CAGM2rea+sUcewR+Ur58gNFC-fkdnK5_UHh6qgOvARpZ7un2n_A@mail.gmail.com>
-Message-ID: <CAGM2rea+sUcewR+Ur58gNFC-fkdnK5_UHh6qgOvARpZ7un2n_A@mail.gmail.com>
-Subject: Re: [PATCH] mm: skip invalid pages block at a time in zero_resv_unresv
-To:     osalvador@techadventures.net
-Cc:     Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>, n-horiguchi@ah.jp.nec.com,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        osalvador@suse.de, willy@infradead.org, mingo@kernel.org,
-        dan.j.williams@intel.com, ying.huang@intel.com
-Content-Type: text/plain; charset="UTF-8"
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=3 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=550
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806150208
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.1806151815080.1582@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Hi Pavel,
->
-> Thanks for the patch.
-> This looks good to me.
->
-> Reviewed-by: Oscar Salvador <osalvador@suse.de>
+On Fri, Jun 15, 2018 at 06:25:39PM +0200, Thomas Gleixner wrote:
+> On Fri, 15 Jun 2018, Jason A. Donenfeld wrote:
+> > In a loop this looks like:
+> > 
+> > for (thing) {
+> >   kernel_fpu_begin();
+> >   encrypt(thing);
+> >   kernel_fpu_end();
+> > }
+> > 
+> > This is obviously very bad, because begin() and end() are slow, so
+> > WireGuard does the obvious:
+> > 
+> > kernel_fpu_begin();
+> > for (thing)
+> >   encrypt(thing);
+> > kernel_fpu_end();
+> > 
+> > This is fine and well, and the crypto API I'm working on will enable
+> 
+> It might be fine crypto performance wise, but it's a total nightmare
+> latency wise because kernel_fpu_begin() disables preemption. We've seen
+> latencies in the larger millisecond range due to processing large data sets
+> with kernel FPU.
+> 
+> If you want to go there then we really need a better approach which allows
+> kernel FPU usage in preemptible context and in case of preemption a way to
+> stash the preempted FPU context and restore it when the task gets scheduled
+> in again. Just using the existing FPU stuff and moving the loops inside the
+> begin/end section and keeping preemption disabled for arbitrary time spans
+> is not going to fly.
 
-Thank you Oscar!
+Didn't we recently do a bunch of crypto patches to help with this?
 
-Pavel
+I think they had the pattern:
+
+	kernel_fpu_begin();
+	for (units-of-work) {
+		do_unit_of_work();
+		if (need_resched()) {
+			kernel_fpu_end();
+			cond_resched();
+			kernel_fpu_begin();
+		}
+	}
+	kernel_fpu_end();
+
+I'd have to go dig out the actual series, but I think they had a bunch
+of helpers to deal with that.
