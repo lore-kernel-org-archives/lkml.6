@@ -2,91 +2,93 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8FCDAC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:14:30 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 803EEC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4669820896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:14:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4669820896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id 3300520896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:15:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyPg5KzZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3300520896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965789AbeFOLO2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 07:14:28 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:33809 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965626AbeFOLO0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 07:14:26 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EA1D38037D; Fri, 15 Jun 2018 13:14:24 +0200 (CEST)
-Date:   Fri, 15 Jun 2018 13:14:24 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-mm@kvack.org, linux-arch@vger.kernel.org, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
-        Mike Kravetz <mike.kravetz@oracle.com>
-Subject: Re: [PATCH 5/5] Documentation/x86: Add CET description
-Message-ID: <20180615111424.GA4473@amd>
-References: <20180607143544.3477-1-yu-cheng.yu@intel.com>
- <20180607143544.3477-6-yu-cheng.yu@intel.com>
+        id S965757AbeFOLPv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 07:15:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965626AbeFOLPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 07:15:49 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 213E220896;
+        Fri, 15 Jun 2018 11:15:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529061349;
+        bh=iO6Irxy+rg6mbpYVqCRZphfkidJ8SB5KGXfW3ozZ53c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZyPg5KzZK+j0Ntz6m7LvJhIGtbJHIbLVA0E7/7sC8i1zvzwdf0uskaO/VkGEGTfP7
+         heuYQgvkWF8PTXQJkPhr6pSKbu3I/GVfJCE7Un+aHhKyMRDYHhHK723LawYtfjZuYa
+         Pg4I9LMiu9OBsL6bLb08IrjiARxrDhxtNwWU/NFc=
+Date:   Fri, 15 Jun 2018 13:15:25 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     devel@driverdev.osuosl.org, Kees Cook <keescook@chromium.org>,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH] staging: rtl8192u: add error handling for usb_alloc_urb
+Message-ID: <20180615111525.GA27391@kroah.com>
+References: <1528705874-34845-1-git-send-email-jiazhouyang09@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180607143544.3477-6-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <1528705874-34845-1-git-send-email-jiazhouyang09@gmail.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---J/dobhs11T7y2rNN
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu 2018-06-07 07:35:44, Yu-cheng Yu wrote:
-> Explain how CET works and the noshstk/noibt kernel parameters.
->=20
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+On Mon, Jun 11, 2018 at 04:31:11PM +0800, Zhouyang Jia wrote:
+> When usb_alloc_urb fails, the lack of error-handling code may
+> cause unexpected results.
+> 
+> This patch adds error-handling code after calling usb_alloc_urb.
+> 
+> Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
 > ---
->  Documentation/admin-guide/kernel-parameters.txt |   6 +
->  Documentation/x86/intel_cet.txt                 | 161 ++++++++++++++++++=
-++++++
+>  drivers/staging/rtl8192u/r8192U_core.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
+> index 7a0dbc0..3f09615 100644
+> --- a/drivers/staging/rtl8192u/r8192U_core.c
+> +++ b/drivers/staging/rtl8192u/r8192U_core.c
+> @@ -1666,6 +1666,9 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
+>  		void *oldaddr, *newaddr;
+>  
+>  		priv->rx_urb[16] = usb_alloc_urb(0, GFP_KERNEL);
+> +		if (!priv->rx_urb[16])
+> +			return -ENOMEM;
+> +
 
-Should new files be .rst formatted or something like that?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+You just leaked memory :(
 
---J/dobhs11T7y2rNN
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Well, this whole function leaks memory on the error paths, like here:
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+>  		priv->oldaddr = kmalloc(16, GFP_KERNEL);
+>  		if (!priv->oldaddr)
+>  			return -ENOMEM;
 
-iEYEARECAAYFAlsjn5AACgkQMOfwapXb+vIrLACdF8+Q8AQ/dM8fzyRDyCCmwlJ/
-HQUAoKPtdfC/Lj3jXlarYZh5kidBqA/B
-=z2+S
------END PGP SIGNATURE-----
+So can you fix this all up at the same time?
 
---J/dobhs11T7y2rNN--
+thanks,
+
+greg k-h
