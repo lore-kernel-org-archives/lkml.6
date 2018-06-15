@@ -3,27 +3,28 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE6FC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF76DC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9EAC208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:56:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9EAC208B2
+	by mail.kernel.org (Postfix) with ESMTP id 8114F205C9
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:00:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8114F205C9
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966208AbeFOT4h (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 15:56:37 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:52730 "EHLO ale.deltatee.com"
+        id S966292AbeFOUAq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 16:00:46 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:52786 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966065AbeFOT4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 15:56:36 -0400
+        id S966117AbeFOUAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:00:45 -0400
 Received: from guinness.priv.deltatee.com ([172.16.1.162])
         by ale.deltatee.com with esmtp (Exim 4.89)
         (envelope-from <logang@deltatee.com>)
-        id 1fTupk-00070u-Dc; Fri, 15 Jun 2018 13:56:33 -0600
+        id 1fTutl-00072j-Cy; Fri, 15 Jun 2018 14:00:42 -0600
 To:     Serge Semin <fancer.lancer@gmail.com>
 Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
         Jon Mason <jdmason@kudzu.us>,
@@ -32,23 +33,22 @@ Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
         Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
         Shuah Khan <shuah@kernel.org>
 References: <20180609000819.13883-1-logang@deltatee.com>
- <20180609000819.13883-5-logang@deltatee.com>
- <20180615194929.GA24025@mobilestation>
+ <20180609000819.13883-9-logang@deltatee.com>
+ <20180615195122.GA25387@mobilestation>
 From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <6fab7e2b-e7aa-8e67-a318-5ce790677c0d@deltatee.com>
-Date:   Fri, 15 Jun 2018 13:56:28 -0600
+Message-ID: <505f2281-adcf-d1dc-ddca-8090cb34b1e6@deltatee.com>
+Date:   Fri, 15 Jun 2018 14:00:40 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180615194929.GA24025@mobilestation>
+In-Reply-To: <20180615195122.GA25387@mobilestation>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 X-SA-Exim-Connect-IP: 172.16.1.162
 X-SA-Exim-Rcpt-To: shuah@kernel.org, Shyam-sundar.S-k@amd.com, allenbh@gmail.com, dave.jiang@intel.com, jdmason@kudzu.us, linux-ntb@googlegroups.com, linux-kernel@vger.kernel.org, fancer.lancer@gmail.com
 X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH 4/8] NTB: ntb_pingpong: Choose doorbells based on port
- number
+Subject: Re: [PATCH 7/8] NTB: perf: Fix race condition when run with ntb_test
 X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
 X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,23 +58,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 15/06/18 01:49 PM, Serge Semin wrote:
-> Regarding the patch. The idea of using the port number instead of linearised
-> unique index should also work for Intel/AMD/IDT drivers. But the ports-space
-> linearization algorithm was created for the case if the real port numbers
-> would exceed the available Doorbell bits. I thought this might be the case of
-> multi-ports version of the switchtec driver.
+On 15/06/18 01:51 PM, Serge Semin wrote:
+> On Fri, Jun 08, 2018 at 06:08:18PM -0600, Logan Gunthorpe <logang@deltatee.com> wrote:
+>> When running ntb_test, the script tries to run the ntb_perf test
+>> immediately after probing the modules. Since adding multi-port support,
+>> this fails seeing the new initialization procedure in ntb_perf
+>> can not complete instantly.
+>>
+>> To fix this we add a completion which is waited on when a test is
+>> started. In this way, run can be written any time after the module is
+>> loaded and it will wait for the initialization to complete instead of
+>> sending an error.
+>>
+> 
+> Hmm, this behavior is the feature of the driver and isn't a bug or race to be
+> fixed. ntb_perf driver returns -ENOLINK until the link is actually established,
+> when the memory windows are properly initialized so the test can be performed.
+> What do you think of leaving the algorithm as is, but instead to develop
+> the polling scheme in the ntb_test.sh script and break the script execution if
+> the link isn't established after sometime? At least we won't need to wait forever
+> in case if the peer hanged up or crashed while the NTB link negotiation algorithm
+> was in-progress.
 
-Well, the switchtec driver splits its 64 doorbells in two sets, one for
-each port right now. That will likely have to change when we go to a
-multi-port implementation. In that case we will have 64 doorbells and a
-maximum 48 ports. So I don't think we have to concern ourselves with
-more ports than doorbells.
+I think polling is really ugly and doesn't really address solve the
+issue of waiting forever. It's pretty easy to interrupt out of the wait
+and provides a much better clue to whats going on than an error.
 
-> Needless to say, that if Switchtec driver had the ports-index API implementation,
-> this patch wouldn't be needed.
-
-As I've said, it's impossible to write for the crosslink topology so the
-clients must support that case.
+If we want to be more explicit, it would be pretty easy to start a timer
+in the bash script and use SIGALRM to exit if the link doesn't come up
+after 30 seconds or something.
 
 Logan
