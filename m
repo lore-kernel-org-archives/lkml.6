@@ -6,48 +6,49 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B2C23C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:33:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 71CEEC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 589D020693
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:33:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17DD820693
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="nougTwbe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 589D020693
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="E//F70Pz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17DD820693
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965351AbeFOAdV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 20:33:21 -0400
-Received: from relmlor3.renesas.com ([210.160.252.173]:7426 "EHLO
-        relmlie2.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965192AbeFOAdR (ORCPT
+        id S965356AbeFOAf2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 20:35:28 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:31880 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S965192AbeFOAfZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 20:33:17 -0400
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie2.idc.renesas.com with ESMTP; 15 Jun 2018 09:33:15 +0900
-Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 481C471031;
-        Fri, 15 Jun 2018 09:33:15 +0900 (JST)
+        Thu, 14 Jun 2018 20:35:25 -0400
+Received: from unknown (HELO relmlir2.idc.renesas.com) ([10.200.68.152])
+  by relmlie3.idc.renesas.com with ESMTP; 15 Jun 2018 09:35:23 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir2.idc.renesas.com (Postfix) with ESMTP id 8F5236ED3D;
+        Fri, 15 Jun 2018 09:35:23 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.51,224,1526310000"; 
-   d="scan'208";a="282572537"
-Received: from mail-ty1jpn01lp0178.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.178])
-  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2018 09:33:15 +0900
+   d="scan'208";a="284052276"
+Received: from mail-os2jpn01lp0147.outbound.protection.outlook.com (HELO JPN01-OS2-obe.outbound.protection.outlook.com) ([23.103.139.147])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2018 09:35:23 +0900
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9G1wlyE9IMPRZU1DSexKoL5J9e7jYbNDEHdmsqJfdKQ=;
- b=nougTwbeI4jzIgXq4Qlv0fKbfLi3FZXikEba01XoOBkywvjjKaQvOUQCgDeLRKOrwrJtTIQXTjRlv4BUaZVUYXw41BUAdjnjLtP946yIzUtSHlTqRQZEs82WoH6hCkN/oF+IT6ukWmNVwdlC8/Ch2fTvSIuMZ1psr+2WbqUhEK8=
+ bh=9jSIvgkFRGBqpcSlADE8sKkROc5uvfphKvp9BOS4lv0=;
+ b=E//F70PzvQ1pmyeSoglNdDGsYIx+zMq/0agYF61X5bZ0DlOBMTpkXmrJQNjciYBg+KHDDm6ThPA1neaKo7lKP9/98RPZRh0a9osnemWQuUPYACIFLJ7wo3Kxe7M1ntJmVykp4Hg6jP1T/MqkyE+D0rpSBtpZqFlFzTVkXlYouvw=
 Authentication-Results: spf=none (sender IP is )
  smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
 Received: from morimoto-PC.renesas.com (211.11.155.138) by
- OSAPR01MB2065.jpnprd01.prod.outlook.com (2603:1096:603:18::12) with Microsoft
+ OSBPR01MB2071.jpnprd01.prod.outlook.com (2603:1096:603:22::14) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.863.16; Fri, 15 Jun 2018 00:33:12 +0000
-Message-ID: <87o9gcsxj3.wl%kuninori.morimoto.gx@renesas.com>
+ 15.20.841.18; Fri, 15 Jun 2018 00:35:20 +0000
+Message-ID: <87muvwsxfj.wl%kuninori.morimoto.gx@renesas.com>
 From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+To:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>, <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
         Magnus Damm <magnus.damm@gmail.com>,
         Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
@@ -58,91 +59,94 @@ Cc:     <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>
 Subject: Re: [PATCH v2] dmaengine: rcar-dmac: don't use DMAC error interrupt
-In-Reply-To: <CAMuHMdV-MoVnfJarHc9xZX_ZN7sHmKjGKxnhHyYUBof_P6R9ew@mail.gmail.com>
+In-Reply-To: <87o9gcsxj3.wl%kuninori.morimoto.gx@renesas.com>
 References: <8736xrkrci.wl%kuninori.morimoto.gx@renesas.com>
         <CAMuHMdV-MoVnfJarHc9xZX_ZN7sHmKjGKxnhHyYUBof_P6R9ew@mail.gmail.com>
+        <87o9gcsxj3.wl%kuninori.morimoto.gx@renesas.com>
 User-Agent: Wanderlust/2.15.9 Emacs/24.3 Mule/6.0
 MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
 Content-Type: text/plain; charset=US-ASCII
-Date:   Fri, 15 Jun 2018 00:33:12 +0000
+Date:   Fri, 15 Jun 2018 00:35:20 +0000
 X-Originating-IP: [211.11.155.138]
-X-ClientProxiedBy: TY2PR01CA0007.jpnprd01.prod.outlook.com
- (2603:1096:404:a::19) To OSAPR01MB2065.jpnprd01.prod.outlook.com
- (2603:1096:603:18::12)
+X-ClientProxiedBy: TYAPR01CA0075.jpnprd01.prod.outlook.com
+ (2603:1096:404:2c::15) To OSBPR01MB2071.jpnprd01.prod.outlook.com
+ (2603:1096:603:22::14)
 X-MS-PublicTrafficType: Email
 X-MS-Office365-Filtering-HT: Tenant
-X-MS-Office365-Filtering-Correlation-Id: e358be12-4d60-4e86-723f-08d5d25793ac
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:OSAPR01MB2065;
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;3:MV5SzXmBj1Z2L49WA8hthqAVH7XIe/UpjDJf8Pp8OQfVDTzVIkleKqVUN+cDagtGI87vmeuLrD0Y/SS9Ul9EzlaLe9JXMFi1MDlCxsjl0DmhMwgV9IjxBa9akv1IGTiCvb/XNceN3/hOM6ryMVaI5/8DtguZBMsfkd2+N+b6qXEg2ck7cmxe1oPDJrW4mbJU03A7ftDqLfiaMxEuwfymlxlA1kyLDthaG0U5r36B9isoFzO+REW51RkMTo+PXgin;25:rfaN9KfFCjdZgmHuIfR2EWu+guryGxAsu045VxhzynaVreLdREP7BYWhnd1qCuQCCe6/OqyYr4hGEf28ohMwswGfb0zzENFE3M4w2eezl9F9IVfwKE3G7iAiV9SKSoHzWsVl96D5OsH4tsm99ph3H2nQtbvtf+1+GCfJLuBVpCXkJgVosn1kEnj0YKkkNWeFJplpF/MDl7OmR5CiTK4SweqbKzi95SOaAnSi7Xc3ppJcQHnb+i7arXFzTROqo5jtlx7nCb79byz6N1pfS1mF7YPzcoI0U5+uDCCoDaGGYCnQ7jco/sHw3Ixg7rIE8qf4+Nwf0H3SQLZZE1dhm3vjBA==;31:9NGRBDbWMi4HLabJhLREiP96kM5I+QhTpa6WggerycJmKtKVNPpw+EYbVbQxfP7RblTtXuOkkhNQP1ChF94rWugwUhj582qmzy9m6beAmAa/lrcXDE4iGlETUvkuHOKVxCOzeLYHXAaj7spFzJS230avV3762L6Vz6VjNZFZCxYH/cP0HpVNQO9ni6MY10qwK7gD9/Mcx81onabtxtKjzFJoJ7e7aLnfe/wStfTUDAQ=
-X-MS-TrafficTypeDiagnostic: OSAPR01MB2065:
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;20:rCO853DGICIIQthTlVLhWyX8T1fwQOq9XtQXmshF6uUs9r65jExJxgSKYDO4mZeqjCE6ai8UyZXUClYNvhXt+92YiO2PDO0/F66T0mF3/evWjniQC233VbCssIgnUYyZyvTKfkRX3bwLXJbwzXNjhxV1B3v+/zAbHZND/vwYngXkxwp8GkRGwajJ1jlKAWghPnqwNRx2Um9s9esIxS1RosK4sgi1cuEmk0fL3cr1DP3aEZZIGDS2OpIOnzxIYdMC06PZxHFeW8c38g9pkMhBWAKbk5rD9o+bmce9jKm5KARU0IQdYDDn7eDaTMHxEhIi6ZyWs+4UfxyU7Ac2ojCfYkGMxDvMXKe/kDj24AKjYb5JnNiomiFSZUbwsGgszkppm6XhHaVl9H6bbQlPFx2OQxAtq71OJpZdz48oL6JBsKQXLg0CRx3MP6+T/05KnkettgXtRPITLiMdc1DCfFi0KFbMMMMzHEFsWgU8+nQnd0e8Z+zBHaLZmtENUGhWIjcH;4:DXY6pFJT/tkDD+cZlRjbtbgAn8W2acjhQphmyq11kQvWom6FeSf33X7+h3+US9uh5T/0QrBEK800YEAgKSK1SxuBZkq0/YxVLlmMR6sF9Dv9E+NYZna7k8Rbbw9gbG+9Ztk/JwXMj0cV4CQn5GgCUv//hA76YVpXjkQVHtv/I48AnvTLAf6DRfWIg6ana0A4x45h9XVWaK2IfX3lenglpHPxnIJOEwAl5CDKueCwcHpd+8daPjlrjS9KxOOLjOZzJn2/VCdwMEBDwpB44zWIMA==
-X-Microsoft-Antispam-PRVS: <OSAPR01MB20654DFE2FBD0772CAE1CD07D47C0@OSAPR01MB2065.jpnprd01.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: 50d8a849-6704-4bc8-abc7-08d5d257e016
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:OSBPR01MB2071;
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;3:SmF5tiC2CGma12R2qQFIFE5tUYf97LW0FRXqbGOlmUR2dXjSoKk3TLfCMYgNh28WyfByqjQE7SSz6B1Z+ICrTOt5tPp3/1dzxOjf5LaVvKfL7aMuYMlHwpEZibrYvNuqhvjfF+EzZWnj3pIeil97CLeZth2hP60AF6fNeqyIjhOVWjqyhJpaN04FbJ2BeynVCBCUXPJcWDRfNmpu68025ba/vBdpahSrY1upGgX90xheUEE+KA2k4l/BNAjIYo0g;25:5MAMty9koqzfXh3d+KEfNHdm+9fFKPdjhoDyZ/3BEtVcnQybo+RkOfgpeHdhqzmj/gkejZCKifavNI31MQzwg7+JPSrvZL7Ba5rP6tRM0pBEKpiE0ehj9jJHGqLqNYUbjgaQHfLS1F3wIF3yUTW1f+jLyxBcShvgZZhV/tWj6Fo9vZ1zERJtj+Dps+IZoJZeN1yF2SChEGHiEs0CpS8fKBg8CoHdbOcSNAnqc2mVHsGWUmJz38uDRelE2pW8hjRgMQlKsajxP/GpVxEbhqYNPp0usLLnyyfHBKJoN8GgdTSHG94fXvH08MwWvBvbkwz3A/JqYXOXSpUlMApYUmsL2w==;31:q1cvpmWvWiMDevWF+J/FWM9JheY01npWxT9JWQt08STTozDzv4mSjzA1JOsvQlgjAt29JVWjb2S3SRYef59fmdmpkuAgSBS6ojrqzCOpJnairHFBx8hNdJ4ORrfERLMUriXs/gPsutrZBXQHiGoyNhzgSWUp9MAR1KKmnwTmxHJf9AOIMomQ1zrS3crgqHocODCx6zFQO7KamPELX86LD7v6e2KrpyPp3kiY6Td5VKE=
+X-MS-TrafficTypeDiagnostic: OSBPR01MB2071:
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;20:ntPufGZqE+78cP09bUPkY+41/xCARMHSQ+xtGcLWKcNE3EObAlz37N00LkIAKJAjuqQHFUJvtg0RTYed50lnzLQS9Lc3pjZpigA6VJBXsMIdCnO9Onhc7Lmx6lLpaduui4VM8L6Cqy2K/pwYX8oKLSzVZXX30XH44Ske6niOvKjGngAgc6jE2KnXLIJKeorP9V0Er4gvJTu4W/aU+Vw6tM5RJQERjmPhzfCeUHkz3IO1ZTTqwEcDpxjeOX1tqGoI68WivwU7FRC02fiNAJRbo20i/9Uwk6Nyk5/vOkESPRmGCp446FtKzFSYt4C2NWWsrMra5/5KzN0a4pXT13VV7gxcwheuSHJvCzjvaqQ7TTBw6OFPMw/3ALp09bgbCWaPIoz6XVLvFRoz1cgziS7hyvTyo4o9YspHI3AgIXqBrCFzXm+Z+FLgrKBNRxlb/AFpnMONA4EjIaE21kWIpy5A/+NBRS/3VFiH0YOAHdcpiPPMKcusEDbzt+gK/gW2lcmn;4:8TBvvu3bmWdKmj9AY5n9AZG2l4Uv4MXRqu2xOPB/j7SeUaDre1QUrZhZRGp+hg4s4dpRnoLeN4adeJpj8WXR1aTAOXAhIw8xe43RQmGjvrG16Xq1TGEFXJsl30CQoU8c5h28Si4J8LQSFyaPjhZzP3U4P7GMjAXznFkAYKKaMOHRrP9WjTATF7IeLxtzYq4FrzFAmdGNazpDeLg5z0K1jihUd8TxwEjR39YbMttS5FOmPZ0gbvr10jfFgJEwUeVa183gPGU+6ap3v/Qa3BT6Qg==
+X-Microsoft-Antispam-PRVS: <OSBPR01MB2071AD02E700B6395F1098B3D47C0@OSBPR01MB2071.jpnprd01.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(10201501046)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123564045)(20161123560045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:OSAPR01MB2065;BCL:0;PCL:0;RULEID:;SRVR:OSAPR01MB2065;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231254)(944501410)(52105095)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:OSBPR01MB2071;BCL:0;PCL:0;RULEID:;SRVR:OSBPR01MB2071;
 X-Forefront-PRVS: 0704670F76
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(366004)(376002)(396003)(39380400002)(346002)(39860400002)(199004)(189003)(11346002)(47776003)(53936002)(486006)(476003)(956004)(25786009)(4326008)(2616005)(6246003)(16586007)(229853002)(7416002)(446003)(6916009)(478600001)(39060400002)(345774005)(86362001)(316002)(6486002)(58126008)(66066001)(54906003)(5660300001)(106356001)(105586002)(386003)(6116002)(23726003)(69596002)(76176011)(50466002)(305945005)(7736002)(68736007)(186003)(16526019)(26005)(3846002)(36756003)(2906002)(8936002)(8676002)(52116002)(81166006)(97736004)(81156014)(7696005)(53416004)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSAPR01MB2065;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(376002)(396003)(39380400002)(346002)(366004)(39860400002)(189003)(199004)(8676002)(50466002)(6200100001)(81156014)(81166006)(7736002)(26005)(6116002)(7049001)(229853002)(23726003)(86362001)(97736004)(4326008)(316002)(58126008)(105586002)(16526019)(2906002)(305945005)(16586007)(3846002)(106356001)(37006003)(54906003)(47776003)(486006)(69596002)(8936002)(66066001)(53416004)(446003)(2616005)(956004)(11346002)(476003)(25786009)(5660300001)(39060400002)(36756003)(6486002)(386003)(68736007)(6862004)(478600001)(7416002)(6246003)(76176011)(53936002)(7696005)(52116002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:OSBPR01MB2071;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 Received-SPF: None (protection.outlook.com: renesas.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSAPR01MB2065;23:dzCwaKip8U9XmKpcqZTXLpOjTLfeADxRAGJlywuj0?=
- =?us-ascii?Q?zlDn0hLAPhbq0vQwetdISVOa/RC1+H9OUu1wI6uZMJ6NGDc2fRNuHC6aRYL5?=
- =?us-ascii?Q?ZeSIlGzHrUosrYUQBbDIdw5t08a4BWLZUsw895pwItsqzSWPa7CT1hjrEv7K?=
- =?us-ascii?Q?OXJ0IKBp7vWCQf7r6XeBrtZIWDgiqF2yeJ7ZXpua7CUPB8urhEScAXSfRfuu?=
- =?us-ascii?Q?HOoJkNwTiW9OmyViwARj8J+Stff4TzqeX91ZXU83pUp00aP2QPb2b5OWJVn2?=
- =?us-ascii?Q?iSfNiznqAxn06YhIvOg0AlRzcElKNK3TQxkORsxg9lb/lciWX/CsEYlkRq/4?=
- =?us-ascii?Q?qJZLkRroyQgfUW9P8AQrJgbNIUusITQpYl0kW6lkLTmNMlZ140tEUqyOUP9/?=
- =?us-ascii?Q?O/AafYM9qydDo74QR2AbslR9yQGQknmuZmFNTCXHnvD8w8inY/gfKr9dqmOg?=
- =?us-ascii?Q?ET35pN9EcbGr06Rq+yzN5QN48Xf/zWet5RtvvRvg5nll572N2prTJV5To0J7?=
- =?us-ascii?Q?HikyUZ5jTf5GPmbZZVy+RAqNXYI109LZ5wMSs07qI0DugXTf/TonibJI3894?=
- =?us-ascii?Q?3LtH1gpBNri1Nkij4Zh/rZhbEIPR5n6DScsDvtPEvkuzjvffd+EwVDO3+Yyn?=
- =?us-ascii?Q?AukfGSIyqyirc9P5dTHXWGB/WfYAjLaSTDzNgS/W/rflcv+yyo1C+TsPt1gN?=
- =?us-ascii?Q?Senxufiesa5Uryx+T5QZeB1ECQU+J18AwqjaOeJ67spm1Y4PWPlocqmwFhCg?=
- =?us-ascii?Q?o94PB1VHpxP19cC0APYnWaUlwmgRFMkDfehoxqNSAwKCid6SsnerKoudwo31?=
- =?us-ascii?Q?SeO272z9truWg3DzJ/ynalkpupp93+uUsH5nsEu87JEk/vuArF2tNy4t93HO?=
- =?us-ascii?Q?PExeF4npBHoDuffILKm/qI9ZcMw+u0uFZLoa6AUDMWBWKnbSIjsYnmC2H9OF?=
- =?us-ascii?Q?TlfiPNLYltyJdYo4dCObh1ussoJz9VcOkwt5XhrzLbAaxZnlZo5PJStjMRX6?=
- =?us-ascii?Q?gc+1pImDzUj1uJmBRCNQvh4sHz3Pp4S/r6RlDSrnvm1+wdcSKKbh9bZPQREP?=
- =?us-ascii?Q?xkCCZPfVcYNtpq6SoYKiSnNRrNmx14KIncTiGyoYo6+bD/Ro/UL6KAMxyuU2?=
- =?us-ascii?Q?zCiM1hz6HP005X8652WubrxjjKUzwsAIqbLoAHTp9kSY8Kt9llVt/nB163US?=
- =?us-ascii?Q?YwGIjLous3c7O6uTmE1xi71fl6fN1A9Bf+AOXp/+ThLCSeGkGHJoci5/OJyE?=
- =?us-ascii?Q?+4JSmNcszFkY8GBsejyluuTi9+X0K4+2pR1rbh2JlXVD/g93ODFTnjQ/Og+O?=
- =?us-ascii?Q?Q2BTnST78tgs7fsvwJc3tM=3D?=
-X-Microsoft-Antispam-Message-Info: iwyFpRM+lxUgG42sSTfw7IxQ7AM+vo2ArGzwZGbGybwksP1xFW/D+/GaIcautY0w2BZGZK5eaNXnhTLwesLLO1+d5LbSZtLDuxDnsUMqyQegOgR4awX5GkaHKrqORx3Pe4+oIPCYyqWeuhHHWlr+r7vxus39b/NY4czDBGH3PatM8L6wVCxVm48VR/5pqRD9
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;6:9DzliNhie7Yt2XWQJYQvciUvhItug68pQCU1LyXlRfL8Yz+iK0UqodjBAopmskXs/QpmIaVCAF/4Gvzohl+vrxf0B2bN5+Ax0E1PQKESh2KxvdbzbSmcIWn531LFMiez2xn9+1JteajXv+sgWZR6uvx+neigCjgZUAampiYlldCMrhnn2betG1PS0IGGQx3n58Mu5ynG1SGiPoWKHJnrJBYWqzTpLSvQMYUosoSEGNkxTGmumX3I0CSAWvHwuPQfnjXXFWxA4yp25dXP2MqXSX38+1BEYgAK5ci2FBXgxIL8SoNg/+HGluGLgkWRfANesjTekz1/vpYH7e21s+7mnIuQxLGc+4IU16FzO8gGeKq5J02Q0gwdXmY/E/pAMpqsdDtqXVuzpQ2BnZFOx4TLy2ra3HIgy439eirVDJwYhXMVimYIJGrfWiMj+eDbN0Ns4P82/q+Mi1rdVlCx6xjliQ==;5:anOyXSkhEof5jDlgguJS8HpNYKJtsiIZkMG/H+P/QzISsd1Ppx3kgYd0r0ffBA9ZHRAZRhqbbZHveXUJl5eaCRAP3rB6n065SWG7fTNO6h9PJlH1423z7arB7D15yQq+CdSX9g17K3deHNGBahfnozekIY1xkSuq+z0Z00ppdtk=;24:TRVLmFAbgw5L+TbdM2DGKvJ5I/r1x6Zs9hWKuqbCxPxAUTkFDfyC4r8u/Ov5OCPYzCMN3I4DguRj1pMtevaEEi6Qv9lKBrubqvi90WjLul4=
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;OSBPR01MB2071;23:AafzTyIwA2tFmnLUTCBHkvZ7ukQLEA+SFJf4PAWSN?=
+ =?us-ascii?Q?NISZu5Je5pQOEEuAyznNpuu4erLVIhWioQ9lRggmCUR29IbnOxjW+fVa/Qdi?=
+ =?us-ascii?Q?Htc/sNKivQMXyNqSkX9Jhc7OQvEzaAXdAJUrNTHYNJFWrMFqfw6wnNhuqbll?=
+ =?us-ascii?Q?03aiui3SBkb7i1qXmceUy6JTgCl+wGCb5UKfLQFm6TBaD0dYfprnY36BX2fP?=
+ =?us-ascii?Q?1PiJSEUW5hVqbpCTpW/l+1LcJUep3TgVf4D0ndaXJYw8QzjZVwhxZYmE1dJZ?=
+ =?us-ascii?Q?c9dxYlUbBbyX5ZmNigUwcYVNGwmH7XNNbBuGOTg6nu1fJ5KOrARoYzbF+HV+?=
+ =?us-ascii?Q?KPJkV2jjSQtKnPZ0ko4vFf9Of4S5hGEKhhk2Z911q95vyXNbhzpQli6AObHx?=
+ =?us-ascii?Q?vgmK90hSOwuWnj2AM20/jJiCSwJM+YfqVc3h0qz2KVxTnExfDiFIsq7bralj?=
+ =?us-ascii?Q?/es+kQ3+odhPxsw1VbetipLKRsCbkbisRDvmmCzXF8nUxT6EPMC0tKXbF6do?=
+ =?us-ascii?Q?NZi8/Tjw6JKVnVtgmC+Pa+qr60YqSRQkpk7I/u+MwQIn/Vx9hFdxWWRDpPM4?=
+ =?us-ascii?Q?oALl0RzvKzhkilLPUXkL3XeWmOLgcOn1xd/VkBNlb2UcJcs3NvhbKH0SV6BS?=
+ =?us-ascii?Q?blVEKNFR+qRHcb6qLSK18TPFTHi0UNvtiY/r9RvA59RyUxkJ5KZUbvkWWABX?=
+ =?us-ascii?Q?083yD8rsbePtTk1USNQKmsFYDue8Yg06MQhMgAR1ktJ1ODW0/g4Mwd36ctKF?=
+ =?us-ascii?Q?VexmbogWnigx6uQxG0LSphcqiNp0MdYmiMYE0udrfju0XENhzJHIxhVxv/YJ?=
+ =?us-ascii?Q?G1xUpVxsmpkGRp9DagXnaBKFnml+NbfIAGObUrluG/PfEjfEhYF3MBK8KT4v?=
+ =?us-ascii?Q?q57Ly222TsGtcIvJ1FIufsMDqEfJF4xfsjjTg3s7s807Cz8HtptB6Yy3Rjda?=
+ =?us-ascii?Q?Gz0jxrVowPlSO681OmI+Gqtz9am5KsPOYa0hPdvgXKcW3H4cUdkoSgBvb7lp?=
+ =?us-ascii?Q?TSmKniL2CBhIkTYM3U/+mxGX9Q6ByZEkNHbpO2+N+dAvL2sh04xqvumd7rPL?=
+ =?us-ascii?Q?GGzpNwfPSwMtgyWwK1i7rdSUzvrWXf1fna3+Q8yfmWusYU7TT7rcCRgXYubr?=
+ =?us-ascii?Q?B6JU2Pfg09kKWu5HTfuapJHTDou1PPoC/1V5cQ7wafl5RHRnhWQkg+QEUcxm?=
+ =?us-ascii?Q?E7jGPUD1DR/bAk8JM43C0BpOfSpK04+hdIHOHlWqiokCUZdLixOo3OJUB05S?=
+ =?us-ascii?Q?LixrLhGr8VebfMLFRw1KaCOD1HbL8CSPHY3PcYavY6S5dQdHq8VP1xOcKr0x?=
+ =?us-ascii?Q?o+q3pauxlBZZ6Rmyv5ECArzJ/K8Wf7nlbh1V1KNeTTqPnxHWloQkJRGfqe1b?=
+ =?us-ascii?Q?LlbGg=3D=3D?=
+X-Microsoft-Antispam-Message-Info: PSy41cepZMwq/U1V/pcMqXeXmkCcvhFDVqazONouzgaf6ftD53faCY3owH5iqoedX70q3mZWP1wTKRkgcKTMZmTVLBPjdOYFa474EY1GrhKvs/c5HP4EdSHwQUY0TVD0sUpZzPQ9gJwHoNdcX2zbBzTt8ZbMFtxJto+br2o3D3jA0+BgCI99IFbwYiaYP/+z
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;6:ifNiAZjKO3RazW+X5QYuGxAwCjkrx64nJn8IOTt9TC8DZWQr9HE49UBWnb7Jqe0vm2W0/3KLycBWRzwLfMJPJyGd4HFT1JmwxVbUukwxgN5d8IQMB7wgAD3UMahv3Lf77ec13uZCom1MLRrI2cXoBavXMXfGUJ/1XX7FdMRlAeUdlyd8JX8fi+EaWvm0pVCvbj7P+5QPN2ZeSICu/bk/ZxEAYdWsgphVRn0eHvwYsdKoap0GMorQDKwG8JeRIQL7mBINPNJk8vHx8oFOoYy8Mslt3sDs/9raJzxWMUg9zKe7gu4WoGn9RhoPDAx9Lg0pmv1RAD5tVvD6nrce0Gu4auLckq1zkNb7xOvc2HaIEqiEulNsz/RzdrFG1bAnr05A48tgE9QIfREHyB6WMW2TqRY6Zv7okUurd8/2a4qnGlqSzhH6FVKBQ/Vg9LiGrv2H8uJyc/7LZooD/2rjc+hk5g==;5:JAIc22kQevr1lyDer8xZykJDw+kLSMz1IXbthIpoClR5BajcP9EqceVOawQZHMRGPoCZKdJmoWw8IJAYXZrKcDHJjNiYWct1mrwOu34KG9eAVcCZ82apFQjmUY7Lp27rgDbY3IZca0oB0NlnVfzuzS+AACjPItfY+v8TBVPYDKY=;24:av0kO59djVbvajln58ZyYNpgVAcocTwQqFBnm1fO6aOscrJRBqTvkwl+uM2/5L9ur+cY9tR1hrWCCfcQO3FbaDgLpBTtwG1Bo6OoW0M8NRw=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;OSAPR01MB2065;7:x7TTcD4SQiBOnEHPch6KeB7KBpvOhxM++JKJ8hbBUSmGWYHk8Vm3/yLxRfO/RyxyUYlK5zP0VnbmtF/Twp6nBwJvFGzWUCoKQrxXSIbx7S4RSZnRmzZ8d7XcsPb29bG4uEqvTUQJGXjg5uu07vYzE+vXq++iPSZ1G+d91n2iaalSyyE0H9d7NTbHz2bSA4bLR6QbVzsIJV6abKOCo1WpLpkQAJHXfiFh6TOS7huz6/tyWIn1tnNS+2LTcOpIrqou;20:5+rXQGfpUgen2GKyF47CnrSwJLIUMlFaMarrFzi0Gm17UT4uX4GfyzU+S0leL0YaSEwvVlP7+CWocMyTAmv/QNr75veeAe0sypJBpvwL+Oq4LXKYtoPkQZ4DdQ2oP2pwlDZZAqlbM22N5YnQys1dibxH6Co6rVxkHacyvupZiNA=
+X-Microsoft-Exchange-Diagnostics: 1;OSBPR01MB2071;7:k199y7Nf8fUfRudrLpu0I1a67fVN30L1zrDtwOzC39bQ9WrHIFVXyJN7yyBHqWXF447jwdyTNMiGkTInl48mgduq7Ub75OdzTusK772k78b7cbWJSZa8GBAxa2eveXyBDdJml9IQY1Iz0ToGmkuEpU4/MoC0eVC/KLmCD1XWLsYb7t+DL7kaHvHX33oDNs8fr2IqhAj2OIj/iqcnAEv8Sauj2gpphuBOhZAXda9JVP4tPk3LyDUrtHSM+PoNFKZW;20:RIJLSTp5hvb1Fswrzj3cmUYZUgj/Evzl4PQ+xVzV2CMuEP3ew/GOVNMxZyO9nA5yItxf3+JtaKBjGm2Fcy/vwtCDPaWeyQSNCIGJN34MvtaWyUAI6pJYkFyoaL7IfCiiRzM8SMAHY4NpLasaqDUYjifdUn3FTAcDNK3VQeTTFYc=
 X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2018 00:33:12.1833 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e358be12-4d60-4e86-723f-08d5d25793ac
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2018 00:35:20.3706 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50d8a849-6704-4bc8-abc7-08d5d257e016
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSAPR01MB2065
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OSBPR01MB2071
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-Hi Geert
+Hi, again
 
-Thank you for your feedback
-
-> > Current rcar-dmac is using DMAC error interrupt which will handle all
-> > channel's error. But in this design, error handling itself will be
-> > issue if user want to use virtualization, multi OS, etc.
-> > This patch removes current DMAC error interrupt handling, and handle it
-> > on each channel interrupt handler.
+> > > Current rcar-dmac is using DMAC error interrupt which will handle all
+> > > channel's error. But in this design, error handling itself will be
+> > > issue if user want to use virtualization, multi OS, etc.
+> > > This patch removes current DMAC error interrupt handling, and handle it
+> > > on each channel interrupt handler.
+> > 
+> > Just wondering, what's the usage pattern where this causes a problem?
+> > Do you plan to export part of a SYS-DMAC instance to a guest?
 > 
-> Just wondering, what's the usage pattern where this causes a problem?
-> Do you plan to export part of a SYS-DMAC instance to a guest?
+> "virtualization, multi OS" part is maybe misleading.
+> It will be problem on non virtualization, too.
+> 
+> > How to maintain host/guest isolation?
+> 
+> This is another topic/issue, I think
 
-"virtualization, multi OS" part is maybe misleading.
-It will be problem on non virtualization, too.
+I will post v3 patch, soon
 
-> How to maintain host/guest isolation?
-
-This is another topic/issue, I think
 
 Best regards
 ---
