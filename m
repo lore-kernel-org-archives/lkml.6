@@ -2,198 +2,157 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D2EA0C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:05:21 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 72AA6C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:07:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 823C8208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:05:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 823C8208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=iogearbox.net
+	by mail.kernel.org (Postfix) with ESMTP id EC4C7208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:07:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kLl3Ox/O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC4C7208D7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936252AbeFOOFT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 10:05:19 -0400
-Received: from www62.your-server.de ([213.133.104.62]:34308 "EHLO
-        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756209AbeFOODR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 10:03:17 -0400
-Received: from [178.197.249.15] (helo=linux.home)
-        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-SHA:256)
-        (Exim 4.85_2)
-        (envelope-from <daniel@iogearbox.net>)
-        id 1fTpJq-0004Qm-UJ; Fri, 15 Jun 2018 16:03:15 +0200
-Subject: Re: [PATCH] bpf: attach type BPF_LIRC_MODE2 should not depend on
- CONFIG_CGROUP_BPF
-To:     Sean Young <sean@mess.org>
-Cc:     Y Song <ys114321@gmail.com>, Matthias Reichl <hias@horus.com>,
-        linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        netdev <netdev@vger.kernel.org>,
-        Devin Heitmueller <dheitmueller@kernellabs.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>
-References: <cover.1527419762.git.sean@mess.org>
- <9f2c54d4956f962f44fcda739a824397ddea132c.1527419762.git.sean@mess.org>
- <20180604174730.sctfoklq7klswebp@camel2.lan>
- <20180605101629.yffyp64o7adg6hu5@gofer.mess.org>
- <04cc36e7-4597-dc57-4ad7-71afcc17244a@iogearbox.net>
- <20180606210939.q3vviyc4b2h6gu3c@gofer.mess.org>
- <CAH3MdRXE8=dE25Sj3TPDzVh7ytnvCkUDvCDzZkEZe0N84dy-Zw@mail.gmail.com>
- <34406f72-722d-9c23-327f-b7c5d7a3090c@iogearbox.net>
- <20180614184207.khwcmwmj4duous4c@gofer.mess.org>
-From:   Daniel Borkmann <daniel@iogearbox.net>
-Message-ID: <d2613314-406e-dd7d-1cf0-b5a78a155e3b@iogearbox.net>
-Date:   Fri, 15 Jun 2018 16:03:13 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.3.0
+        id S965591AbeFOOHF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 10:07:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53816 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756005AbeFOOHD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 10:07:03 -0400
+Received: from mail-wm0-f47.google.com (mail-wm0-f47.google.com [74.125.82.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04328208E0;
+        Fri, 15 Jun 2018 14:07:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529071623;
+        bh=WtUCGl5LkkPAiKnJiBuvyAn62CChe1NHgWm2gK25ODM=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=kLl3Ox/OMZnVb9kDhgFttfqQQEewL8VqzNwQTAXqvnegvBSw9bW4ExVqgL9hUHaXF
+         RwxIDxP+JaHRhbfhmcEKCkwpxtuNjizzs7XdZJca2lEYkER0/WpoqARwpNhCoasr03
+         z20/ZgBTKa910gj9A47x2R60mzxP9Y5ZAkW7QGU4=
+Received: by mail-wm0-f47.google.com with SMTP id e16-v6so3776916wmd.0;
+        Fri, 15 Jun 2018 07:07:02 -0700 (PDT)
+X-Gm-Message-State: APt69E2FWWxyohRBdGZdjWSss7KnCu3VKLi2D82ua90yybvczLbrPE14
+        I2qaL8zgF16L9QxxU+0H/RKXoHkDKjbn70YMfy0=
+X-Google-Smtp-Source: ADUXVKKwM/RMs10hGr9YS2UgVXuc82MQ1/2w4o7EuU/43HR3k+OCdxjmk2mRXTK2GhQwZWQbadumK9wfbMmTpWAfjHY=
+X-Received: by 2002:a1c:c05:: with SMTP id 5-v6mr1477559wmm.117.1529071621434;
+ Fri, 15 Jun 2018 07:07:01 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180614184207.khwcmwmj4duous4c@gofer.mess.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Authenticated-Sender: daniel@iogearbox.net
-X-Virus-Scanned: Clear (ClamAV 0.99.3/24665/Fri Jun 15 14:39:28 2018)
+Received: by 2002:adf:9166:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 07:07:00
+ -0700 (PDT)
+In-Reply-To: <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
+References: <CAJKOXPd2rntNOpU1quR9Zm_J22+=pEaj4ZTC_tdZ0zcRYUciFg@mail.gmail.com>
+ <CAPKp9uZ79ybkv7dMpcy2GQ9L+rWk+vdExQ48diWWQPOUdDQtSQ@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 15 Jun 2018 16:07:00 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
+Message-ID: <CAJKOXPfX0CytKcYDaDAYYuCQjk-mcGjFRHfZco-wPQsc4G1agA@mail.gmail.com>
+Subject: Re: [BUG BISECT] NFSv4 client fails on Flush Journal to Persistent Storage
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Trond Myklebust <trond.myklebust@primarydata.com>,
+        linux-nfs@vger.kernel.org,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        netdev <netdev@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sean,
+On Fri, Jun 15, 2018 at 2:53 PM, Sudeep Holla <sudeep.holla@arm.com> wrote:
+> Hi,
+>
+> On Thu, Jun 7, 2018 at 12:19 PM, Krzysztof Kozlowski <krzk@kernel.org> wr=
+ote:
+>> Hi,
+>>
+>> When booting my boards under recent linux-next, I see failures of system=
+d:
+>>
+>> [FAILED] Failed to start Flush Journal to Persistent Storage.
+>> See 'systemctl status systemd-journal-flush.service' for details.
+>>          Starting Create Volatile Files and Directories...
+>> [**    ] A start job is running for Create V=E2=80=A6 [  223.209289] nfs=
+:
+>> server 192.168.1.10 not responding, still trying
+>> [  223.209377] nfs: server 192.168.1.10 not responding, still trying
+>>
+>> Effectively the boards fails to boot. Example is here:
+>> https://krzk.eu/#/builders/1/builds/2157
+>>
+>
+> I too encountered the same issue.
+>
+>> This was bisected to:
+>> commit 37ac86c3a76c113619b7d9afe0251bbfc04cb80a
+>> Author: Chuck Lever <chuck.lever@oracle.com>
+>> Date:   Fri May 4 15:34:53 2018 -0400
+>>
+>>     SUNRPC: Initialize rpc_rqst outside of xprt->reserve_lock
+>>
+>>     alloc_slot is a transport-specific op, but initializing an rpc_rqst
+>>     is common to all transports. In addition, the only part of initial-
+>>     izing an rpc_rqst that needs serialization is getting a fresh XID.
+>>
+>>     Move rpc_rqst initialization to common code in preparation for
+>>     adding a transport-specific alloc_slot to xprtrdma.
+>>
+>>     Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+>>     Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+>>
+>
+> Unfortunately, spent time to bisect independently without seeing this
+> report and got the same culprit.
+>
+>>
+>> Bisect log attached. Full configuration:
+>> 1. exynos_defconfig
+>> 2. ARMv7, octa-core, Exynos5422 and Exynos4412 (Odroid XU3, U3 and other=
+s)
+>> 3. NFSv4 client (from Raspberry Pi)
+>>
+>
+> Yes the issue is seen only with NFSv4 client and with latest systemd I th=
+ink.
+> My Ubuntu 16.04(32bit FS) is  boots fine while 18.04 has the above issue.
+> Passing nfsv3 in kernel command line makes it work again.
 
-On 06/14/2018 08:42 PM, Sean Young wrote:
-> If the kernel is compiled with CONFIG_CGROUP_BPF not enabled, it is not
-> possible to attach, detach or query IR BPF programs to /dev/lircN devices,
-> making them impossible to use. For embedded devices, it should be possible
-> to use IR decoding without cgroups or CONFIG_CGROUP_BPF enabled.
-> 
-> This change requires some refactoring, since bpf_prog_{attach,detach,query}
-> functions are now always compiled, but their code paths for cgroups need
-> moving out. Rather than a #ifdef CONFIG_CGROUP_BPF in kernel/bpf/syscall.c,
-> moving them to kernel/bpf/cgroup.c does not require #ifdefs since that file
-> is already conditionally compiled.
-> 
-> Signed-off-by: Sean Young <sean@mess.org>
+Thanks for reply!
 
-Just two minor edits below from my side:
+I test it on systemd versions 236 and 238... and it fails on both.
+However one board passes always - it is Odroid HC1 with same core
+configuration as described before. Probably there is some different SW
+package on it.
 
->  include/linux/bpf-cgroup.h |  31 +++++++++++
->  kernel/bpf/cgroup.c        | 110 +++++++++++++++++++++++++++++++++++++
->  kernel/bpf/syscall.c       | 105 ++---------------------------------
->  3 files changed, 145 insertions(+), 101 deletions(-)
-> 
-> diff --git a/include/linux/bpf-cgroup.h b/include/linux/bpf-cgroup.h
-> index 975fb4cf1bb7..ee67cd35f426 100644
-> --- a/include/linux/bpf-cgroup.h
-> +++ b/include/linux/bpf-cgroup.h
-> @@ -188,12 +188,43 @@ int __cgroup_bpf_check_dev_permission(short dev_type, u32 major, u32 minor,
->  									      \
->  	__ret;								      \
->  })
-> +int sockmap_get_from_fd(const union bpf_attr *attr, int type, bool attach);
-> +int cgroup_bpf_prog_attach(const union bpf_attr *attr,
-> +			   enum bpf_prog_type ptype);
-> +int cgroup_bpf_prog_detach(const union bpf_attr *attr,
-> +			   enum bpf_prog_type ptype);
-> +int cgroup_bpf_prog_query(const union bpf_attr *attr,
-> +			  union bpf_attr __user *uattr);
->  #else
->  
->  struct cgroup_bpf {};
->  static inline void cgroup_bpf_put(struct cgroup *cgrp) {}
->  static inline int cgroup_bpf_inherit(struct cgroup *cgrp) { return 0; }
->  
-> +static inline int sockmap_get_from_fd(const union bpf_attr *attr,
-> +				      int type, bool attach)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static inline int cgroup_bpf_prog_attach(const union bpf_attr *attr,
-> +					 enum bpf_prog_type ptype)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static inline int cgroup_bpf_prog_detach(const union bpf_attr *attr,
-> +					 enum bpf_prog_type ptype)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +static inline int cgroup_bpf_prog_query(const union bpf_attr *attr,
-> +					union bpf_attr __user *uattr)
-> +{
-> +	return -EINVAL;
-> +}
-> +
->  #define cgroup_bpf_enabled (0)
->  #define BPF_CGROUP_PRE_CONNECT_ENABLED(sk) (0)
->  #define BPF_CGROUP_RUN_PROG_INET_INGRESS(sk,skb) ({ 0; })
-> diff --git a/kernel/bpf/cgroup.c b/kernel/bpf/cgroup.c
-> index f7c00bd6f8e4..d6e18f9dc0c4 100644
-> --- a/kernel/bpf/cgroup.c
-> +++ b/kernel/bpf/cgroup.c
-> @@ -428,6 +428,116 @@ int __cgroup_bpf_query(struct cgroup *cgrp, const union bpf_attr *attr,
->  	return ret;
->  }
->  
-> +int bpf_prog_attach_check_attach_type(const struct bpf_prog *prog,
-> +				      enum bpf_attach_type attach_type)
-> +{
-> +	switch (prog->type) {
-> +	case BPF_PROG_TYPE_CGROUP_SOCK:
-> +	case BPF_PROG_TYPE_CGROUP_SOCK_ADDR:
-> +		return attach_type == prog->expected_attach_type ? 0 : -EINVAL;
-> +	default:
-> +		return 0;
-> +	}
-> +}
+>> Let me know if you need any more information.
+>>
+>
+> Also I was observing this issue with Linus master branch from
+> the time the above patch was merged until today. The issue
+> is no longer seen since this morning however I just enabled lockdep
+> and got these messages.
 
-This one is rather BPF core, cgroup progs only happen to use it. Could
-you either move it as static inline into include/linux/bpf.h or leave it
-in kernel/bpf/syscall.c? In any case the #ifdef CONFIG_CGROUP_BPF wrapper
-could probably be dropped as well from it.
+All recent linux-next fail. Today's Linus' tree (4c5e8fc62d6a ("Merge
+tag 'linux-kselftest-4.18-rc1-2' of
+git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux-kselftest"))
+managed to get up on one board but stuck on different board with the
+same issue.
 
-> +int sockmap_get_from_fd(const union bpf_attr *attr, int type, bool attach)
-> +{
-> +	struct bpf_prog *prog = NULL;
-> +	int ufd = attr->target_fd;
-> +	struct bpf_map *map;
-> +	struct fd f;
-> +	int err;
-> +
-> +	f = fdget(ufd);
-> +	map = __bpf_map_get(f);
-> +	if (IS_ERR(map))
-> +		return PTR_ERR(map);
-> +
-> +	if (attach) {
-> +		prog = bpf_prog_get_type(attr->attach_bpf_fd, type);
-> +		if (IS_ERR(prog)) {
-> +			fdput(f);
-> +			return PTR_ERR(prog);
-> +		}
-> +	}
-> +
-> +	err = sock_map_prog(map, prog, attr->attach_type);
-> +	if (err) {
-> +		fdput(f);
-> +		if (prog)
-> +			bpf_prog_put(prog);
-> +		return err;
-> +	}
-> +
-> +	fdput(f);
-> +	return 0;
-> +}
+I am quite surprised that there is no response from the author of the
+commit and this was just moved from next (while failing) to Linus'
+tree... bringing the issue to mainline now.
 
-And this one should rather end up in kernel/bpf/sockmap.c to have it with
-the rest of sockmap code. Moving into cgroup.c would rather be a in the
-wrong place given what the code does.
-
-Thanks,
-Daniel
+Best regards,
+Krzysztof
