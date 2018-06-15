@@ -1,49 +1,49 @@
 Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E192BC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B3A9DC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F0B420891
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F0B420891
+	by mail.kernel.org (Postfix) with ESMTP id 5DAC720891
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DAC720891
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965447AbeFOCRN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 22:17:13 -0400
-Received: from regular1.263xmail.com ([211.150.99.136]:32982 "EHLO
+        id S965493AbeFOCRW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 22:17:22 -0400
+Received: from regular1.263xmail.com ([211.150.99.136]:33012 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936073AbeFOCRL (ORCPT
+        with ESMTP id S965373AbeFOCRQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 22:17:11 -0400
+        Thu, 14 Jun 2018 22:17:16 -0400
 Received: from zhangqing?rock-chips.com (unknown [192.168.167.205])
-        by regular1.263xmail.com (Postfix) with ESMTP id BC35D79;
-        Fri, 15 Jun 2018 10:17:07 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id 42EC386;
+        Fri, 15 Jun 2018 10:17:11 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id 2EDD833B;
-        Fri, 15 Jun 2018 10:16:59 +0800 (CST)
+        by smtp.263.net (Postfix) with ESMTPA id C92D33C4;
+        Fri, 15 Jun 2018 10:17:05 +0800 (CST)
 X-RL-SENDER: zhangqing@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <54362dc0175128f9a0280007f6070df6>
+X-UNIQUE-TAG: <5e24ef4d9db5c1488521981343f35c29>
 X-ATTACHMENT-NUM: 0
 X-SENDER: zhangqing@rock-chips.com
 X-DNS-TYPE: 0
 Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 16162TU3JOQ;
-        Fri, 15 Jun 2018 10:17:05 +0800 (CST)
+        by smtp.263.net (Postfix) whith SMTP id 16162NWD6YG;
+        Fri, 15 Jun 2018 10:17:09 +0800 (CST)
 From:   Elaine Zhang <zhangqing@rock-chips.com>
 To:     heiko@sntech.de
 Cc:     sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -52,9 +52,9 @@ Cc:     sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
         huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 2/4] clk: rockchip: add dt-binding header for px30
-Date:   Fri, 15 Jun 2018 10:16:49 +0800
-Message-Id: <1529029011-15021-3-git-send-email-zhangqing@rock-chips.com>
+Subject: [PATCH v3 3/4] clk: rockchip: add support for half divider
+Date:   Fri, 15 Jun 2018 10:16:50 +0800
+Message-Id: <1529029011-15021-4-git-send-email-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
 References: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
@@ -63,412 +63,403 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the dt-bindings header for the px30, that gets shared between
-the clock controller and the clock references in the dts.
-Add softreset ID for px30.
+The new Rockchip socs have optional half divider:
+The formula is shown as:
+	freq_out = 2*freq_in / (2*div + 3)
+Is this the same for all of new SoCs.
+
+So we use "branch_half_divider" + "COMPOSITE_NOMUX_HALFDIV \
+DIV_HALF \ COMPOSITE_HALFDIV \ CMPOSITE_NOGATE_HALFDIV"
+to hook that special divider clock-type into our clock-tree.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- include/dt-bindings/clock/px30-cru.h | 389 +++++++++++++++++++++++++++++++++++
- 1 file changed, 389 insertions(+)
- create mode 100644 include/dt-bindings/clock/px30-cru.h
+ drivers/clk/rockchip/Makefile           |   1 +
+ drivers/clk/rockchip/clk-half-divider.c | 230 ++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.c              |  10 ++
+ drivers/clk/rockchip/clk.h              |  85 ++++++++++++
+ 4 files changed, 326 insertions(+)
+ create mode 100644 drivers/clk/rockchip/clk-half-divider.c
 
-diff --git a/include/dt-bindings/clock/px30-cru.h b/include/dt-bindings/clock/px30-cru.h
+diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
+index 59b8d320960a..2b380fafd232 100644
+--- a/drivers/clk/rockchip/Makefile
++++ b/drivers/clk/rockchip/Makefile
+@@ -7,6 +7,7 @@ obj-y	+= clk-rockchip.o
+ obj-y	+= clk.o
+ obj-y	+= clk-pll.o
+ obj-y	+= clk-cpu.o
++obj-y	+= clk-half-divider.o
+ obj-y	+= clk-inverter.o
+ obj-y	+= clk-mmc-phase.o
+ obj-y	+= clk-muxgrf.o
+diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
 new file mode 100644
-index 000000000000..00101479f7c4
+index 000000000000..fb7a6501e0c1
 --- /dev/null
-+++ b/include/dt-bindings/clock/px30-cru.h
-@@ -0,0 +1,389 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
++++ b/drivers/clk/rockchip/clk-half-divider.c
+@@ -0,0 +1,230 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018 Fuzhou Rockchip Electronics Co., Ltd
++ */
 +
-+#ifndef _DT_BINDINGS_CLK_ROCKCHIP_PX30_H
-+#define _DT_BINDINGS_CLK_ROCKCHIP_PX30_H
++#include <linux/slab.h>
++#include <linux/bitops.h>
++#include <linux/regmap.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
++#include "clk.h"
 +
-+/* core clocks */
-+#define PLL_APLL		1
-+#define PLL_DPLL		2
-+#define PLL_CPLL		3
-+#define PLL_NPLL		4
-+#define APLL_BOOST_H		5
-+#define APLL_BOOST_L		6
-+#define ARMCLK			7
++#define div_mask(width)	((1 << (width)) - 1)
 +
-+/* sclk gates (special clocks) */
-+#define USB480M			14
-+#define SCLK_PDM		15
-+#define SCLK_I2S0_TX		16
-+#define SCLK_I2S0_TX_OUT	17
-+#define SCLK_I2S0_RX		18
-+#define SCLK_I2S0_RX_OUT	19
-+#define SCLK_I2S1		20
-+#define SCLK_I2S1_OUT		21
-+#define SCLK_I2S2		22
-+#define SCLK_I2S2_OUT		23
-+#define SCLK_UART1		24
-+#define SCLK_UART2		25
-+#define SCLK_UART3		26
-+#define SCLK_UART4		27
-+#define SCLK_UART5		28
-+#define SCLK_I2C0		29
-+#define SCLK_I2C1		30
-+#define SCLK_I2C2		31
-+#define SCLK_I2C3		32
-+#define SCLK_I2C4		33
-+#define SCLK_PWM0		34
-+#define SCLK_PWM1		35
-+#define SCLK_SPI0		36
-+#define SCLK_SPI1		37
-+#define SCLK_TIMER0		38
-+#define SCLK_TIMER1		39
-+#define SCLK_TIMER2		40
-+#define SCLK_TIMER3		41
-+#define SCLK_TIMER4		42
-+#define SCLK_TIMER5		43
-+#define SCLK_TSADC		44
-+#define SCLK_SARADC		45
-+#define SCLK_OTP		46
-+#define SCLK_OTP_USR		47
-+#define SCLK_CRYPTO		48
-+#define SCLK_CRYPTO_APK		49
-+#define SCLK_DDRC		50
-+#define SCLK_ISP		51
-+#define SCLK_CIF_OUT		52
-+#define SCLK_RGA_CORE		53
-+#define SCLK_VOPB_PWM		54
-+#define SCLK_NANDC		55
-+#define SCLK_SDIO		56
-+#define SCLK_EMMC		57
-+#define SCLK_SFC		58
-+#define SCLK_SDMMC		59
-+#define SCLK_OTG_ADP		60
-+#define SCLK_GMAC_SRC		61
-+#define SCLK_GMAC		62
-+#define SCLK_GMAC_RX_TX		63
-+#define SCLK_MAC_REF		64
-+#define SCLK_MAC_REFOUT		65
-+#define SCLK_MAC_OUT		66
-+#define SCLK_SDMMC_DRV		67
-+#define SCLK_SDMMC_SAMPLE	68
-+#define SCLK_SDIO_DRV		69
-+#define SCLK_SDIO_SAMPLE	70
-+#define SCLK_EMMC_DRV		71
-+#define SCLK_EMMC_SAMPLE	72
-+#define SCLK_GPU		73
-+#define SCLK_PVTM		74
-+#define SCLK_CORE_VPU		75
-+#define SCLK_GMAC_RMII		76
-+#define SCLK_UART2_SRC		77
-+#define SCLK_NANDC_DIV		78
-+#define SCLK_NANDC_DIV50	79
-+#define SCLK_SDIO_DIV		80
-+#define SCLK_SDIO_DIV50		81
-+#define SCLK_EMMC_DIV		82
-+#define SCLK_EMMC_DIV50		83
-+#define SCLK_DDRCLK		84
-+#define SCLK_UART1_SRC		85
++static bool _is_best_half_div(unsigned long rate, unsigned long now,
++			      unsigned long best, unsigned long flags)
++{
++	if (flags & CLK_DIVIDER_ROUND_CLOSEST)
++		return abs(rate - now) < abs(rate - best);
 +
-+/* dclk gates */
-+#define DCLK_VOPB		150
-+#define DCLK_VOPL		151
++	return now <= rate && now > best;
++}
 +
-+/* aclk gates */
-+#define ACLK_GPU		170
-+#define ACLK_BUS_PRE		171
-+#define ACLK_CRYPTO		172
-+#define ACLK_VI_PRE		173
-+#define ACLK_VO_PRE		174
-+#define ACLK_VPU		175
-+#define ACLK_PERI_PRE		176
-+#define ACLK_GMAC		178
-+#define ACLK_CIF		179
-+#define ACLK_ISP		180
-+#define ACLK_VOPB		181
-+#define ACLK_VOPL		182
-+#define ACLK_RGA		183
-+#define ACLK_GIC		184
-+#define ACLK_DCF		186
-+#define ACLK_DMAC		187
-+#define ACLK_BUS_SRC		188
-+#define ACLK_PERI_SRC		189
++static unsigned long clk_half_divider_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned int val;
 +
-+/* hclk gates */
-+#define HCLK_BUS_PRE		240
-+#define HCLK_CRYPTO		241
-+#define HCLK_VI_PRE		242
-+#define HCLK_VO_PRE		243
-+#define HCLK_VPU		244
-+#define HCLK_PERI_PRE		245
-+#define HCLK_MMC_NAND		246
-+#define HCLK_SDMMC		247
-+#define HCLK_USB		248
-+#define HCLK_CIF		249
-+#define HCLK_ISP		250
-+#define HCLK_VOPB		251
-+#define HCLK_VOPL		252
-+#define HCLK_RGA		253
-+#define HCLK_NANDC		254
-+#define HCLK_SDIO		255
-+#define HCLK_EMMC		256
-+#define HCLK_SFC		257
-+#define HCLK_OTG		258
-+#define HCLK_HOST		259
-+#define HCLK_HOST_ARB		260
-+#define HCLK_PDM		261
-+#define HCLK_I2S0		262
-+#define HCLK_I2S1		263
-+#define HCLK_I2S2		264
++	val = clk_readl(divider->reg) >> divider->shift;
++	val &= div_mask(divider->width);
++	val = val * 2 + 3;
 +
-+/* pclk gates */
-+#define PCLK_BUS_PRE		320
-+#define PCLK_DDR		321
-+#define PCLK_VO_PRE		322
-+#define PCLK_GMAC		323
-+#define PCLK_MIPI_DSI		324
-+#define PCLK_MIPIDSIPHY		325
-+#define PCLK_MIPICSIPHY		326
-+#define PCLK_USB_GRF		327
-+#define PCLK_DCF		328
-+#define PCLK_UART1		329
-+#define PCLK_UART2		330
-+#define PCLK_UART3		331
-+#define PCLK_UART4		332
-+#define PCLK_UART5		333
-+#define PCLK_I2C0		334
-+#define PCLK_I2C1		335
-+#define PCLK_I2C2		336
-+#define PCLK_I2C3		337
-+#define PCLK_I2C4		338
-+#define PCLK_PWM0		339
-+#define PCLK_PWM1		340
-+#define PCLK_SPI0		341
-+#define PCLK_SPI1		342
-+#define PCLK_SARADC		343
-+#define PCLK_TSADC		344
-+#define PCLK_TIMER		345
-+#define PCLK_OTP_NS		346
-+#define PCLK_WDT_NS		347
-+#define PCLK_GPIO1		348
-+#define PCLK_GPIO2		349
-+#define PCLK_GPIO3		350
-+#define PCLK_ISP		351
-+#define PCLK_CIF		352
-+#define PCLK_OTP_PHY		353
++	return DIV_ROUND_UP_ULL(((u64)parent_rate * 2), val);
++}
 +
-+#define CLK_NR_CLKS		(PCLK_OTP_PHY + 1)
++static int clk_half_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
++				    unsigned long *best_parent_rate, u8 width,
++				    unsigned long flags)
++{
++	unsigned int i, bestdiv = 0;
++	unsigned long parent_rate, best = 0, now, maxdiv;
++	unsigned long parent_rate_saved = *best_parent_rate;
 +
-+/* pmu-clocks indices */
++	if (!rate)
++		rate = 1;
 +
-+#define PLL_GPLL		1
++	maxdiv = div_mask(width);
 +
-+#define SCLK_RTC32K_PMU		4
-+#define SCLK_WIFI_PMU		5
-+#define SCLK_UART0_PMU		6
-+#define SCLK_PVTM_PMU		7
-+#define PCLK_PMU_PRE		8
-+#define SCLK_REF24M_PMU		9
-+#define SCLK_USBPHY_REF		10
-+#define SCLK_MIPIDSIPHY_REF	11
++	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
++		parent_rate = *best_parent_rate;
++		bestdiv = DIV_ROUND_UP_ULL(((u64)parent_rate * 2), rate);
++		if (bestdiv < 3)
++			bestdiv = 0;
++		else
++			bestdiv = (bestdiv - 3) / 2;
++		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
++		return bestdiv;
++	}
 +
-+#define XIN24M_DIV		12
++	/*
++	 * The maximum divider we can use without overflowing
++	 * unsigned long in rate * i below
++	 */
++	maxdiv = min(ULONG_MAX / rate, maxdiv);
 +
-+#define PCLK_GPIO0_PMU		20
-+#define PCLK_UART0_PMU		21
++	for (i = 0; i <= maxdiv; i++) {
++		if (((u64)rate * (i * 2 + 3)) == ((u64)parent_rate_saved * 2)) {
++			/*
++			 * It's the most ideal case if the requested rate can be
++			 * divided from parent clock without needing to change
++			 * parent rate, so return the divider immediately.
++			 */
++			*best_parent_rate = parent_rate_saved;
++			return i;
++		}
++		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
++						((u64)rate * (i * 2 + 3)) / 2);
++		now = DIV_ROUND_UP_ULL(((u64)parent_rate * 2),
++				       (i * 2 + 3));
 +
-+#define CLKPMU_NR_CLKS		(PCLK_UART0_PMU + 1)
++		if (_is_best_half_div(rate, now, best, flags)) {
++			bestdiv = i;
++			best = now;
++			*best_parent_rate = parent_rate;
++		}
++	}
 +
-+/* soft-reset indices */
-+#define SRST_CORE0_PO		0
-+#define SRST_CORE1_PO		1
-+#define SRST_CORE2_PO		2
-+#define SRST_CORE3_PO		3
-+#define SRST_CORE0		4
-+#define SRST_CORE1		5
-+#define SRST_CORE2		6
-+#define SRST_CORE3		7
-+#define SRST_CORE0_DBG		8
-+#define SRST_CORE1_DBG		9
-+#define SRST_CORE2_DBG		10
-+#define SRST_CORE3_DBG		11
-+#define SRST_TOPDBG		12
-+#define SRST_CORE_NOC		13
-+#define SRST_STRC_A		14
-+#define SRST_L2C		15
++	if (!bestdiv) {
++		bestdiv = div_mask(width);
++		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
++	}
 +
-+#define SRST_DAP		16
-+#define SRST_CORE_PVTM		17
-+#define SRST_GPU		18
-+#define SRST_GPU_NIU		19
-+#define SRST_UPCTL2		20
-+#define SRST_UPCTL2_A		21
-+#define SRST_UPCTL2_P		22
-+#define SRST_MSCH		23
-+#define SRST_MSCH_P		24
-+#define SRST_DDRMON_P		25
-+#define SRST_DDRSTDBY_P		26
-+#define SRST_DDRSTDBY		27
-+#define SRST_DDRGRF_p		28
-+#define SRST_AXI_SPLIT_A	29
-+#define SRST_AXI_CMD_A		30
-+#define SRST_AXI_CMD_P		31
++	return bestdiv;
++}
 +
-+#define SRST_DDRPHY		32
-+#define SRST_DDRPHYDIV		33
-+#define SRST_DDRPHY_P		34
-+#define SRST_VPU_A		36
-+#define SRST_VPU_NIU_A		37
-+#define SRST_VPU_H		38
-+#define SRST_VPU_NIU_H		39
-+#define SRST_VI_NIU_A		40
-+#define SRST_VI_NIU_H		41
-+#define SRST_ISP_H		42
-+#define SRST_ISP		43
-+#define SRST_CIF_A		44
-+#define SRST_CIF_H		45
-+#define SRST_CIF_PCLKIN		46
-+#define SRST_MIPICSIPHY_P	47
++static long clk_half_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++					unsigned long *prate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	int div;
 +
-+#define SRST_VO_NIU_A		48
-+#define SRST_VO_NIU_H		49
-+#define SRST_VO_NIU_P		50
-+#define SRST_VOPB_A		51
-+#define SRST_VOPB_H		52
-+#define SRST_VOPB		53
-+#define SRST_PWM_VOPB		54
-+#define SRST_VOPL_A		55
-+#define SRST_VOPL_H		56
-+#define SRST_VOPL		57
-+#define SRST_RGA_A		58
-+#define SRST_RGA_H		59
-+#define SRST_RGA		60
-+#define SRST_MIPIDSI_HOST_P	61
-+#define SRST_MIPIDSIPHY_P	62
-+#define SRST_VPU_CORE		63
++	div = clk_half_divider_bestdiv(hw, rate, prate,
++				       divider->width,
++				       divider->flags);
 +
-+#define SRST_PERI_NIU_A		64
-+#define SRST_USB_NIU_H		65
-+#define SRST_USB2OTG_H		66
-+#define SRST_USB2OTG		67
-+#define SRST_USB2OTG_ADP	68
-+#define SRST_USB2HOST_H		69
-+#define SRST_USB2HOST_ARB_H	70
-+#define SRST_USB2HOST_AUX_H	71
-+#define SRST_USB2HOST_EHCI	72
-+#define SRST_USB2HOST		73
-+#define SRST_USBPHYPOR		74
-+#define SRST_USBPHY_OTG_PORT	75
-+#define SRST_USBPHY_HOST_PORT	76
-+#define SRST_USBPHY_GRF		77
-+#define SRST_CPU_BOOST_P	78
-+#define SRST_CPU_BOOST		79
++	return DIV_ROUND_UP_ULL(((u64)*prate * 2), div * 2 + 3);
++}
 +
-+#define SRST_MMC_NAND_NIU_H	80
-+#define SRST_SDIO_H		81
-+#define SRST_EMMC_H		82
-+#define SRST_SFC_H		83
-+#define SRST_SFC		84
-+#define SRST_SDCARD_NIU_H	85
-+#define SRST_SDMMC_H		86
-+#define SRST_NANDC_H		89
-+#define SRST_NANDC		90
-+#define SRST_GMAC_NIU_A		92
-+#define SRST_GMAC_NIU_P		93
-+#define SRST_GMAC_A		94
++static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
++				     unsigned long parent_rate)
++{
++	struct clk_divider *divider = to_clk_divider(hw);
++	unsigned int value;
++	unsigned long flags = 0;
++	u32 val;
 +
-+#define SRST_PMU_NIU_P		96
-+#define SRST_PMU_SGRF_P		97
-+#define SRST_PMU_GRF_P		98
-+#define SRST_PMU		99
-+#define SRST_PMU_MEM_P		100
-+#define SRST_PMU_GPIO0_P	101
-+#define SRST_PMU_UART0_P	102
-+#define SRST_PMU_CRU_P		103
-+#define SRST_PMU_PVTM		104
-+#define SRST_PMU_UART		105
-+#define SRST_PMU_NIU_H		106
-+#define SRST_PMU_DDR_FAIL_SAVE	107
-+#define SRST_PMU_CORE_PERF_A	108
-+#define SRST_PMU_CORE_GRF_P	109
-+#define SRST_PMU_GPU_PERF_A	110
-+#define SRST_PMU_GPU_GRF_P	111
++	value = DIV_ROUND_UP_ULL(((u64)parent_rate * 2), rate);
++	value = (value - 3) / 2;
++	value =  min_t(unsigned int, value, div_mask(divider->width));
 +
-+#define SRST_CRYPTO_NIU_A	112
-+#define SRST_CRYPTO_NIU_H	113
-+#define SRST_CRYPTO_A		114
-+#define SRST_CRYPTO_H		115
-+#define SRST_CRYPTO		116
-+#define SRST_CRYPTO_APK		117
-+#define SRST_BUS_NIU_H		120
-+#define SRST_USB_NIU_P		121
-+#define SRST_BUS_TOP_NIU_P	122
-+#define SRST_INTMEM_A		123
-+#define SRST_GIC_A		124
-+#define SRST_ROM_H		126
-+#define SRST_DCF_A		127
++	if (divider->lock)
++		spin_lock_irqsave(divider->lock, flags);
++	else
++		__acquire(divider->lock);
 +
-+#define SRST_DCF_P		128
-+#define SRST_PDM_H		129
-+#define SRST_PDM		130
-+#define SRST_I2S0_H		131
-+#define SRST_I2S0_TX		132
-+#define SRST_I2S1_H		133
-+#define SRST_I2S1		134
-+#define SRST_I2S2_H		135
-+#define SRST_I2S2		136
-+#define SRST_UART1_P		137
-+#define SRST_UART1		138
-+#define SRST_UART2_P		139
-+#define SRST_UART2		140
-+#define SRST_UART3_P		141
-+#define SRST_UART3		142
-+#define SRST_UART4_P		143
++	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
++		val = div_mask(divider->width) << (divider->shift + 16);
++	} else {
++		val = clk_readl(divider->reg);
++		val &= ~(div_mask(divider->width) << divider->shift);
++	}
++	val |= value << divider->shift;
++	clk_writel(val, divider->reg);
 +
-+#define SRST_UART4		144
-+#define SRST_UART5_P		145
-+#define SRST_UART5		146
-+#define SRST_I2C0_P		147
-+#define SRST_I2C0		148
-+#define SRST_I2C1_P		149
-+#define SRST_I2C1		150
-+#define SRST_I2C2_P		151
-+#define SRST_I2C2		152
-+#define SRST_I2C3_P		153
-+#define SRST_I2C3		154
-+#define SRST_PWM0_P		157
-+#define SRST_PWM0		158
-+#define SRST_PWM1_P		159
++	if (divider->lock)
++		spin_unlock_irqrestore(divider->lock, flags);
++	else
++		__release(divider->lock);
 +
-+#define SRST_PWM1		160
-+#define SRST_SPI0_P		161
-+#define SRST_SPI0		162
-+#define SRST_SPI1_P		163
-+#define SRST_SPI1		164
-+#define SRST_SARADC_P		165
-+#define SRST_SARADC		166
-+#define SRST_TSADC_P		167
-+#define SRST_TSADC		168
-+#define SRST_TIMER_P		169
-+#define SRST_TIMER0		170
-+#define SRST_TIMER1		171
-+#define SRST_TIMER2		172
-+#define SRST_TIMER3		173
-+#define SRST_TIMER4		174
-+#define SRST_TIMER5		175
++	return 0;
++}
 +
-+#define SRST_OTP_NS_P		176
-+#define SRST_OTP_NS_SBPI	177
-+#define SRST_OTP_NS_USR		178
-+#define SRST_OTP_PHY_P		179
-+#define SRST_OTP_PHY		180
-+#define SRST_WDT_NS_P		181
-+#define SRST_GPIO1_P		182
-+#define SRST_GPIO2_P		183
-+#define SRST_GPIO3_P		184
-+#define SRST_SGRF_P		185
-+#define SRST_GRF_P		186
-+#define SRST_I2S0_RX		191
++const struct clk_ops clk_half_divider_ops = {
++	.recalc_rate = clk_half_divider_recalc_rate,
++	.round_rate = clk_half_divider_round_rate,
++	.set_rate = clk_half_divider_set_rate,
++};
++EXPORT_SYMBOL_GPL(clk_half_divider_ops);
 +
-+#endif
++/**
++ * Register a clock branch.
++ * Most clock branches have a form like
++ *
++ * src1 --|--\
++ *        |M |--[GATE]-[DIV]-
++ * src2 --|--/
++ *
++ * sometimes without one of those components.
++ */
++struct clk *rockchip_clk_register_halfdiv(const char *name,
++					  const char *const *parent_names,
++					  u8 num_parents, void __iomem *base,
++					  int muxdiv_offset, u8 mux_shift,
++					  u8 mux_width, u8 mux_flags,
++					  u8 div_shift, u8 div_width,
++					  u8 div_flags, int gate_offset,
++					  u8 gate_shift, u8 gate_flags,
++					  unsigned long flags,
++					  spinlock_t *lock)
++{
++	struct clk *clk;
++	struct clk_mux *mux = NULL;
++	struct clk_gate *gate = NULL;
++	struct clk_divider *div = NULL;
++	const struct clk_ops *mux_ops = NULL, *div_ops = NULL,
++			     *gate_ops = NULL;
++
++	if (num_parents > 1) {
++		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
++		if (!mux)
++			return ERR_PTR(-ENOMEM);
++
++		mux->reg = base + muxdiv_offset;
++		mux->shift = mux_shift;
++		mux->mask = BIT(mux_width) - 1;
++		mux->flags = mux_flags;
++		mux->lock = lock;
++		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
++							: &clk_mux_ops;
++	}
++
++	if (gate_offset >= 0) {
++		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
++		if (!gate)
++			goto err_gate;
++
++		gate->flags = gate_flags;
++		gate->reg = base + gate_offset;
++		gate->bit_idx = gate_shift;
++		gate->lock = lock;
++		gate_ops = &clk_gate_ops;
++	}
++
++	if (div_width > 0) {
++		div = kzalloc(sizeof(*div), GFP_KERNEL);
++		if (!div)
++			goto err_div;
++
++		div->flags = div_flags;
++		div->reg = base + muxdiv_offset;
++		div->shift = div_shift;
++		div->width = div_width;
++		div->lock = lock;
++		div_ops = &clk_half_divider_ops;
++	}
++
++	clk = clk_register_composite(NULL, name, parent_names, num_parents,
++				     mux ? &mux->hw : NULL, mux_ops,
++				     div ? &div->hw : NULL, div_ops,
++				     gate ? &gate->hw : NULL, gate_ops,
++				     flags);
++
++	return clk;
++err_div:
++	kfree(gate);
++err_gate:
++	kfree(mux);
++	return ERR_PTR(-ENOMEM);
++}
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 3cd8ad59e0b7..cd1474c05c91 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -498,6 +498,16 @@ void __init rockchip_clk_register_branches(
+ 				list->gate_flags, flags, list->child,
+ 				&ctx->lock);
+ 			break;
++		case branch_half_divider:
++			clk = rockchip_clk_register_halfdiv(list->name,
++				list->parent_names, list->num_parents,
++				ctx->reg_base, list->muxdiv_offset,
++				list->mux_shift, list->mux_width,
++				list->mux_flags, list->div_shift,
++				list->div_width, list->div_flags,
++				list->gate_offset, list->gate_shift,
++				list->gate_flags, flags, &ctx->lock);
++			break;
+ 		case branch_gate:
+ 			flags |= CLK_SET_RATE_PARENT;
+ 
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index ef601dded32c..23c569a875d4 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -354,6 +354,7 @@ enum rockchip_clk_branch_type {
+ 	branch_inverter,
+ 	branch_factor,
+ 	branch_ddrclk,
++	branch_half_divider,
+ };
+ 
+ struct rockchip_clk_branch {
+@@ -684,6 +685,79 @@ struct rockchip_clk_branch {
+ 		.gate_flags	= gf,				\
+ 	}
+ 
++#define COMPOSITE_HALFDIV(_id, cname, pnames, f, mo, ms, mw, mf, ds, dw,\
++			  df, go, gs, gf)				\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_half_divider,		\
++		.name		= cname,			\
++		.parent_names	= pnames,			\
++		.num_parents	= ARRAY_SIZE(pnames),		\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.mux_shift	= ms,				\
++		.mux_width	= mw,				\
++		.mux_flags	= mf,				\
++		.div_shift	= ds,				\
++		.div_width	= dw,				\
++		.div_flags	= df,				\
++		.gate_offset	= go,				\
++		.gate_shift	= gs,				\
++		.gate_flags	= gf,				\
++	}
++
++#define COMPOSITE_NOGATE_HALFDIV(_id, cname, pnames, f, mo, ms, mw, mf,	\
++				 ds, dw, df)				\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_half_divider,		\
++		.name		= cname,			\
++		.parent_names	= pnames,			\
++		.num_parents	= ARRAY_SIZE(pnames),		\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.mux_shift	= ms,				\
++		.mux_width	= mw,				\
++		.mux_flags	= mf,				\
++		.div_shift	= ds,				\
++		.div_width	= dw,				\
++		.div_flags	= df,				\
++		.gate_offset	= -1,				\
++	}
++
++#define COMPOSITE_NOMUX_HALFDIV(_id, cname, pname, f, mo, ds, dw, df,	\
++			go, gs, gf)				\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_half_divider,		\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.flags		= f,				\
++		.muxdiv_offset	= mo,				\
++		.div_shift	= ds,				\
++		.div_width	= dw,				\
++		.div_flags	= df,				\
++		.gate_offset	= go,				\
++		.gate_shift	= gs,				\
++		.gate_flags	= gf,				\
++	}
++
++#define DIV_HALF(_id, cname, pname, f, o, s, w, df)			\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_half_divider,		\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.flags		= f,				\
++		.muxdiv_offset	= o,				\
++		.div_shift	= s,				\
++		.div_width	= w,				\
++		.div_flags	= df,				\
++		.gate_offset	= -1,				\
++	}
++
+ struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
+ 			void __iomem *base, unsigned long nr_clks);
+ void rockchip_clk_of_add_provider(struct device_node *np,
+@@ -708,6 +782,17 @@ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
+ 
+ #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
+ 
++struct clk *rockchip_clk_register_halfdiv(const char *name,
++					  const char *const *parent_names,
++					  u8 num_parents, void __iomem *base,
++					  int muxdiv_offset, u8 mux_shift,
++					  u8 mux_width, u8 mux_flags,
++					  u8 div_shift, u8 div_width,
++					  u8 div_flags, int gate_offset,
++					  u8 gate_shift, u8 gate_flags,
++					  unsigned long flags,
++					  spinlock_t *lock);
++
+ #ifdef CONFIG_RESET_CONTROLLER
+ void rockchip_register_softrst(struct device_node *np,
+ 			       unsigned int num_regs,
 -- 
 1.9.1
 
