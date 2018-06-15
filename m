@@ -2,97 +2,105 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 39E7DC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:08:46 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AB75AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:09:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBAEA208D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBAEA208D7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 6AC8F20896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:09:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AC8F20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936247AbeFONIn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 09:08:43 -0400
-Received: from verein.lst.de ([213.95.11.211]:51131 "EHLO newverein.lst.de"
+        id S936274AbeFONJ2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 09:09:28 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40769 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933771AbeFONIm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 09:08:42 -0400
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id DBF9A68E44; Fri, 15 Jun 2018 15:17:10 +0200 (CEST)
-Date:   Fri, 15 Jun 2018 15:17:10 +0200
-From:   Christoph Hellwig <hch@lst.de>
-To:     Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Cc:     linux-snps-arc@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>, hch@lst.de
-Subject: Re: [RFC] ARC: allow to use IOC and non-IOC DMA devices
-        simultaneously
-Message-ID: <20180615131710.GA30776@lst.de>
-References: <20180615125819.527-1-Eugeniy.Paltsev@synopsys.com>
+        id S936215AbeFONJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 09:09:27 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DD691AC62;
+        Fri, 15 Jun 2018 13:09:25 +0000 (UTC)
+Date:   Fri, 15 Jun 2018 15:09:25 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Mikulas Patocka <mpatocka@redhat.com>
+Cc:     jing xia <jing.xia.mail@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, agk@redhat.com,
+        dm-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: dm bufio: Reduce dm_bufio_lock contention
+Message-ID: <20180615130925.GI24039@dhcp22.suse.cz>
+References: <1528790608-19557-1-git-send-email-jing.xia@unisoc.com>
+ <20180612212007.GA22717@redhat.com>
+ <alpine.LRH.2.02.1806131001250.15845@file01.intranet.prod.int.rdu2.redhat.com>
+ <CAN=25QMQiJ7wvfvYvmZnEnrkeb-SA7_hPj+N2RnO8y-aVO8wOQ@mail.gmail.com>
+ <20180614073153.GB9371@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806141424510.30404@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180615073201.GB24039@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806150724260.15022@file01.intranet.prod.int.rdu2.redhat.com>
+ <20180615115547.GH24039@dhcp22.suse.cz>
+ <alpine.LRH.2.02.1806150832100.26650@file01.intranet.prod.int.rdu2.redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180615125819.527-1-Eugeniy.Paltsev@synopsys.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <alpine.LRH.2.02.1806150832100.26650@file01.intranet.prod.int.rdu2.redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> +#ifndef ASM_ARC_DMA_MAPPING_H
-> +#define ASM_ARC_DMA_MAPPING_H
-> +
-> +#define arch_setup_dma_ops arch_setup_dma_ops
-> +
-> +#include <asm-generic/dma-mapping.h>
-> +
-> +void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-> +			const struct iommu_ops *iommu, bool coherent);
+On Fri 15-06-18 08:47:52, Mikulas Patocka wrote:
+> 
+> 
+> On Fri, 15 Jun 2018, Michal Hocko wrote:
+> 
+> > On Fri 15-06-18 07:35:07, Mikulas Patocka wrote:
+> > > 
+> > > Because mempool uses it. Mempool uses allocations with "GFP_NOIO | 
+> > > __GFP_NORETRY | __GFP_NOMEMALLOC | __GFP_NOWARN". An so dm-bufio uses 
+> > > these flags too. dm-bufio is just a big mempool.
+> > 
+> > This doesn't answer my question though. Somebody else is doing it is not
+> > an explanation. Prior to your 41c73a49df31 there was no GFP_NOIO
+> > allocation AFAICS. So why do you really need it now? Why cannot you
+> 
+> dm-bufio always used "GFP_NOIO | __GFP_NORETRY | __GFP_NOMEMALLOC | 
+> __GFP_NOWARN" since the kernel 3.2 when it was introduced.
+> 
+> In the kernel 4.10, dm-bufio was changed so that it does GFP_NOWAIT 
+> allocation, then drops the lock and does GFP_NOIO with the dropped lock 
+> (because someone was likely experiencing the same issue that is reported 
+> in this thread) - there are two commits that change it - 9ea61cac0 and 
+> 41c73a49df31.
 
-Can you keep the #define for arch_setup_dma_ops right next to the
-prototype?
+OK, I see. Is there any fundamental reason why this path has to do one
+round of GFP_IO or it can keep NOWAIT, drop the lock, sleep and retry
+again?
 
-> index 000000000000..9d0d310bbf5a
-> --- /dev/null
-> +++ b/arch/arc/mm/dma-mapping.c
-> @@ -0,0 +1,20 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +// (C) 2018 Synopsys, Inc. (www.synopsys.com)
-> +
-> +#include <linux/dma-mapping.h>
-> +
-> +void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-> +			const struct iommu_ops *iommu, bool coherent)
-> +{
-> +	const struct dma_map_ops *dma_ops = &dma_noncoherent_ops;
-> +
-> +	/*
-> +	 * IOC hardware snoops all DMA traffic keeping the caches consistent
-> +	 * with memory - eliding need for any explicit cache maintenance of
-> +	 * DMA buffers - so we can use dma_direct cache ops.
-> +	 */
-> +	if (is_isa_arcv2() && ioc_enable && coherent)
-> +		dma_ops = &dma_direct_ops;
-> +
-> +	set_dma_ops(dev, dma_ops);
-> +}
+[...]
+> > is the same class of problem, honestly, I dunno. And I've already said
+> > that stalling __GFP_NORETRY might be a good way around that but that
+> > needs much more consideration and existing users examination. I am not
+> > aware anybody has done that. Doing changes like that based on a single
+> > user is certainly risky.
+> 
+> Why don't you set any rules how these flags should be used?
 
+It is really hard to change rules during the game. You basically have to
+examine all existing users and that is well beyond my time scope. I've
+tried that where it was possible. E.g. __GFP_REPEAT and turned it into a
+well defined semantic. __GFP_NORETRY is a bigger beast.
 
-Why not just write the routines as:
-
-void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-			const struct iommu_ops *iommu, bool coherent)
-{
-	if (is_isa_arcv2() && ioc_enable && coherent)
-		set_dma_ops(dev, &dma_direct_ops);
-	else
-		set_dma_ops(dev, &dma_noncoherent_ops);
-}
-
-Also a new file just for this routine seems a little wasteful.  Can't
-you just squeeze it into setup.c or some other file?
+Anyway, I believe that it would be much safer to look at the problem
+from a highlevel perspective. You seem to be focused on __GFP_NORETRY
+little bit too much IMHO. We are not throttling callers which explicitly
+do not want to or cannot - see current_may_throttle. Is it possible that
+both your md and mempool allocators can either (ab)use PF_LESS_THROTTLE
+or use other means? E.g. do you have backing_dev_info at that time?
+-- 
+Michal Hocko
+SUSE Labs
