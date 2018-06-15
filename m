@@ -2,95 +2,115 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55ECDC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:50:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C2A7C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0345F208DA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:50:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mJ+mp2lO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0345F208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id DF4F7208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:50:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF4F7208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756379AbeFOSuF (ORCPT
+        id S1756472AbeFOSuZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 14:50:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35096 "EHLO mail.kernel.org"
+        Fri, 15 Jun 2018 14:50:25 -0400
+Received: from mga09.intel.com ([134.134.136.24]:2588 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756299AbeFOSuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 14:50:04 -0400
-Received: from mail-wm0-f49.google.com (mail-wm0-f49.google.com [74.125.82.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E520A208E1
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 18:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529088604;
-        bh=aKafc1FFuiPvRXbw4WkNPXm736JSnKh+WTqcmV8T2kg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=mJ+mp2lOPlXC//kiGd94Jdt5H7kbIaM42L9yX0zkxVQetfOu4nYkORtf2yYZ+ANLT
-         L1u25atGkFu8qbvHzX2ZuPdpwpv4OOaYBelV5JSnjdgN42uholfekvXdB7kNlTGtf6
-         WTfbO+9VIbEhttu0k0+rBr6F/w1mckSybxcZso5c=
-Received: by mail-wm0-f49.google.com with SMTP id v16-v6so4973580wmh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 11:50:03 -0700 (PDT)
-X-Gm-Message-State: APt69E3wMtmDFmJd+wAWgW9BJI22msD4cynRqQN8t/we2nhB6hxSkcmE
-        DZB6OXnDwFmijltZdvPMG36PpUUoRFTdX664mOfTHQ==
-X-Google-Smtp-Source: ADUXVKKkFiceQA9522I/yuloMSQw2UXD5SfF38Om4At/EID2mDnjVSMRG3o4jBREqtdhE+WSG4jOC0/W0PQvM+m5APo=
-X-Received: by 2002:a1c:34c9:: with SMTP id b192-v6mr2190945wma.21.1529088602388;
- Fri, 15 Jun 2018 11:50:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
- <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com> <368b8069-0463-6161-d603-10769fd2ec57@linux.intel.com>
-In-Reply-To: <368b8069-0463-6161-d603-10769fd2ec57@linux.intel.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Fri, 15 Jun 2018 11:49:50 -0700
-X-Gmail-Original-Message-ID: <CALCETrXrWR92L+JP1gaotpjkWd2TowjE9OrJTcj254L=wJfxMw@mail.gmail.com>
-Message-ID: <CALCETrXrWR92L+JP1gaotpjkWd2TowjE9OrJTcj254L=wJfxMw@mail.gmail.com>
+        id S1756433AbeFOSuY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 14:50:24 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 11:50:23 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
+   d="scan'208";a="64929319"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga001.jf.intel.com with ESMTP; 15 Jun 2018 11:50:23 -0700
 Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
-To:     Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     Andrew Lutomirski <luto@kernel.org>,
+To:     Andy Lutomirski <luto@kernel.org>,
         "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Rik van Riel <riel@surriel.com>
+References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
+ <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <6eecf873-9d87-5345-70ba-5c064a31714b@linux.intel.com>
+Date:   Fri, 15 Jun 2018 11:48:34 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 11:43 AM Dave Hansen
-<dave.hansen@linux.intel.com> wrote:
->
-> On 06/15/2018 11:31 AM, Andy Lutomirski wrote:
-> > Using WRPKRU is easy, but,
-> > unless we do something very clever, actually finding PKRU in the
-> > in-memory fpstate image may be slightly nontrivial.
->
-> Why?
->
-> It's at a constant offset during any one boot, for sure.  XSAVEC/XSAVES
-> can move it around, but only if you change the Requested Feature BitMap
-> (RFBM) that we pass to XSAVES or change the control register that
-> enables XSAVE states (XCR0).
->
-> We don't change XCR0 after boot, and RFBM is hard-coded to -1 as far as
-> I remember.
+On 06/15/2018 11:31 AM, Andy Lutomirski wrote:
+> for (thing) {
+>   kernel_fpu_begin();
+>   encrypt(thing);
+>   kernel_fpu_end();
+> }
 
-I thought that XSAVES didn't allocate space for parts of the state
-that are in the init state. I guess I was wrong :)
+Don't forget that the processor has optimizations for this, too.  The
+"modified optimization" will notice that between:
 
-So never mind, context switch should just need to WRPKRU the field at
-the predetermined offset in fpstate for the new task.  And, if some
-appropriate debug option is set, it should warn if TIF_FPU_UNLOADED is
-clear for the new task.
+	kernel_fpu_end();   -> XRSTOR
+and
+	kernel_fpu_start(); -> XSAVE(S|OPT)
 
-I suspect that the whole patch should only be a couple hundred lines
-of code.  And I think there are VM workloads where it would be a
-*huge* win.
-
---Andy
+the processor has not modified the states.  It'll skip doing any writes
+of the state.  Doing what Andy is describing is still way better than
+letting the processor do it, but you should just know up front that this
+may not be as much of a win as you would expect.
