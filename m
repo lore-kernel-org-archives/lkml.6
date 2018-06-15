@@ -2,109 +2,97 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id E1523C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:11:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 32429C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:14:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92DC6208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:11:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Ha8uTBda"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92DC6208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id D9563208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:14:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9563208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965608AbeFONLc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 09:11:32 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:54517 "EHLO frisell.zx2c4.com"
+        id S965654AbeFONOU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 09:14:20 -0400
+Received: from mga14.intel.com ([192.55.52.115]:10375 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936144AbeFONLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 09:11:31 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 899d2237
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 15 Jun 2018 13:06:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :from:date:message-id:subject:to:content-type; s=mail; bh=AD2nk5
-        uymHhBT8XbLMXduM0LCNA=; b=Ha8uTBdaNluTBZmGwV8JhrA9D07erFAjjwCg15
-        oULihI4HIItAuehVw1K4irPvsTzpMZfUcMn2fP08lF5ccUnBdwqotBPrVz2JtUCp
-        XIW71SbPVaLbUkcTB47qF+X4uNJNrQZ27NAYiOEZO+93AAx8Nus2DIh+KK5pWF0G
-        +N9i1qT0zchSiqagT66rBNN9LAb0jvlZo1CIVJzLjSDZ8fEZO3mAh6OCkHto89TW
-        7HqHq3eo7PR39//uNwp836cdTZdaXoiU5BAxJCgGHOZODCky7AFZs0jz+SD5k8Eu
-        PRKPuLn/Pfx4tKT7PsulZyMtKJubOeNsqlvjpjqTUs9fd3jA==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 169695b6 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 15 Jun 2018 13:06:08 +0000 (UTC)
-Received: by mail-ot0-f175.google.com with SMTP id 101-v6so10927422oth.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 06:11:29 -0700 (PDT)
-X-Gm-Message-State: APt69E235EaU6LpkwjZyjv+OUKRuINq7RDk3yeeYTHlDxxxW/MYdv6Nk
-        ne12WyZEFSzXxAPQTj6R7raT3NkAn6dM6JOJJvQ=
-X-Google-Smtp-Source: ADUXVKKmEVztk+8gqnNwgDNoE7U0nqdCFvPHBYxL8Qmt4FjGucmfjGQHYX3vxjTHqrBsCBPUtGazP9c1fC0zFB2ToLc=
-X-Received: by 2002:a9d:20e3:: with SMTP id x90-v6mr1010389ota.338.1529068287965;
- Fri, 15 Jun 2018 06:11:27 -0700 (PDT)
+        id S936209AbeFONOT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 09:14:19 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 06:14:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,227,1526367600"; 
+   d="scan'208";a="63487848"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Jun 2018 06:14:16 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 30ED3172; Fri, 15 Jun 2018 16:14:17 +0300 (EEST)
+Date:   Fri, 15 Jun 2018 16:14:17 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv3 08/17] x86/mm: Implement vma_is_encrypted() and
+ vma_keyid()
+Message-ID: <20180615131416.sl7ib6kt2mg5ufya@black.fi.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-9-kirill.shutemov@linux.intel.com>
+ <cc63f92a-4020-79b5-9b49-4cdd5cb800d2@intel.com>
 MIME-Version: 1.0
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 15 Jun 2018 15:11:15 +0200
-X-Gmail-Original-Message-ID: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
-Message-ID: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
-Subject: Lazy FPU restoration / moving kernel_fpu_end() to context switch
-To:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Andy Lutomirski <luto@amacapital.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc63f92a-4020-79b5-9b49-4cdd5cb800d2@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andy & folks,
+On Wed, Jun 13, 2018 at 06:18:05PM +0000, Dave Hansen wrote:
+> On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
+> > +bool vma_is_encrypted(struct vm_area_struct *vma)
+> > +{
+> > +	return pgprot_val(vma->vm_page_prot) & mktme_keyid_mask;
+> > +}
+> > +
+> > +int vma_keyid(struct vm_area_struct *vma)
+> > +{
+> > +	pgprotval_t prot;
+> > +
+> > +	if (!vma_is_anonymous(vma))
+> > +		return 0;
+> > +
+> > +	prot = pgprot_val(vma->vm_page_prot);
+> > +	return (prot & mktme_keyid_mask) >> mktme_keyid_shift;
+> > +}
+> 
+> Why do we have a vma_is_anonymous() in one of these but not the other?
 
-Lots of crypto routines look like this:
+It shouldn't be there. It's from earlier approach to the function.
+I'll fix this.
 
-kernel_fpu_begin();
-encrypt();
-kernel_fpu_end();
+And I'll drop vma_is_encrypted(). It is not very useful.
 
-If you call such a routine twice, you get:
+> While this reuse of ->vm_page_prot is cute, is there any downside?  It's
+> the first place I know of that we can't derive ->vm_page_prot from
+> ->vm_flags on non-VM_IO/PFNMAP VMAs.  Is that a problem?
 
-kernel_fpu_begin();
-encrypt();
-kernel_fpu_end();
-kernel_fpu_begin();
-encrypt();
-kernel_fpu_end();
+I don't think so.
 
-In a loop this looks like:
+It need to be covered in pte_modify() and such, but it's about it.
 
-for (thing) {
-  kernel_fpu_begin();
-  encrypt(thing);
-  kernel_fpu_end();
-}
+That's relatively isolated change and we can move KeyID into a standalone
+field, if this approach proves to be problematic.
 
-This is obviously very bad, because begin() and end() are slow, so
-WireGuard does the obvious:
-
-kernel_fpu_begin();
-for (thing)
-  encrypt(thing);
-kernel_fpu_end();
-
-This is fine and well, and the crypto API I'm working on will enable
-this to be done in a clear way, but I do wonder if maybe this is not
-something that should be happening at the level of the caller, but
-rather in the fpu functions themselves. Namely, what are your thoughts
-on modifying kernel_fpu_end() so that it doesn't actually restore the
-state, but just reenables preemption and marks that on the next
-context switch, the state should be restored? Then, essentially,
-kernel_fpu_begin() and end() become free after the first usage of
-kernel_fpu_begin().
-
-Is this something feasible? I know that performance-wise, I'm really
-gaining a lot from hoisting those functions out of the loops, and API
-wise, it'd be slightly simpler to implement if I didn't have to all
-for that hoisting.
-
-Regards,
-Jason
+-- 
+ Kirill A. Shutemov
