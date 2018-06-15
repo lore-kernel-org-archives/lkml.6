@@ -2,706 +2,124 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2040DC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 84A30C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3EA520896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r5seO7GO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3EA520896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 40500208E6
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40500208E6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965928AbeFONnC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 09:43:02 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33512 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936251AbeFONmf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 09:42:35 -0400
-Received: by mail-wm0-f67.google.com with SMTP id z6-v6so6835198wma.0;
-        Fri, 15 Jun 2018 06:42:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7GvGQKBreF7rJ/CMPHkwnrgJqHTBjImaoIQiZjstySo=;
-        b=r5seO7GOy/GEY8E9rkqeVRvlyG9XCk0Fpz200Urt67JY82tJ2xIokZLAzZL01hzbY6
-         i+XI3WaaVaMRvAq6jWpZ1liIUjfwTmKFZpr3BrXCppMEFUCyRrnBPEg7+KfQpez4aWOS
-         TzsP++aHynp6+yTZhDxbpg29wuRAi/OMdOp9DZasD3ocn+fGJG+2dP8aWAchbmzpY0IE
-         b8UirAIap89024PRmkWBKC3q8NvxnjAbqmR08DHEHL4PYKKoVkGS4yhSu3j/ITyuwgbA
-         MXR55K51rQYqjHbl/ddO0snulBKh4StMe9gtOkg4VDaOgPZ91nWfdZPCrLxrECAyDyIM
-         emVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=7GvGQKBreF7rJ/CMPHkwnrgJqHTBjImaoIQiZjstySo=;
-        b=J25R1UJyZDgjr1fK5ahapD8MWaPPO2LASVMK2xHRrSjAARW9LR/2qOfZHjepy00SuN
-         KLImIJWdIPei07nlylU5+uJZ/aZhGXUtSueC/8Us9nQmLrYze4UXY3ZyVe9QG+AD1jIi
-         MqDgRby68RRGRXJvvl27qWawqH0QhGQWkGSc0XWd8c4CSX7ZRo/oLgD+a0+1rtglTqDe
-         aIMX//upyqkHSK/yGQ8PXYAVnAl7CjGETXw8LpF3FRE3LrH6aSKFmxw+1hpZNwDFWMHg
-         pkyOuDKNTWrhHWiwN2wHOuhZBjqmATszrTKK8mZ1Hh09+Gq9voT9wvqtY4fQt80cZ6r4
-         8kqQ==
-X-Gm-Message-State: APt69E0Ze9UddgHZ8KV+DwyS3dro+b5CRWIOhWwx8Ldk7QF8PmVarswQ
-        nvWUzBr8jq0wHMCbxgTXuXDg5pqB3ww=
-X-Google-Smtp-Source: ADUXVKIelPXXwnCbcX9ajJaVcJBVmTVKFl0wDomXU9xEdAW369jUYqNEURPbHAeU3lE+vWtpBkLOsQ==
-X-Received: by 2002:a1c:5c93:: with SMTP id q141-v6mr1303519wmb.77.1529070153038;
-        Fri, 15 Jun 2018 06:42:33 -0700 (PDT)
-Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
-        by smtp.gmail.com with ESMTPSA id d5-v6sm9816346wrp.64.2018.06.15.06.42.31
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 15 Jun 2018 06:42:32 -0700 (PDT)
-From:   Ben Whitten <ben.whitten@gmail.com>
-X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
-To:     devicetree@vger.kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, nicolas.ferre@microchip.com,
-        Ben Whitten <ben.whitten@lairdtech.com>
-Subject: [PATCH v2 6/6] arm: dts: add support for Laird SOM60 module and DVK boards
-Date:   Fri, 15 Jun 2018 14:40:55 +0100
-Message-Id: <1529070055-18701-6-git-send-email-ben.whitten@lairdtech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
-References: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
+        id S965949AbeFONnL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 09:43:11 -0400
+Received: from mga09.intel.com ([134.134.136.24]:52746 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S965931AbeFONnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 09:43:06 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 06:43:05 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,227,1526367600"; 
+   d="scan'208";a="47359275"
+Received: from wacevedo-mobl1.amr.corp.intel.com (HELO [10.254.109.167]) ([10.254.109.167])
+  by fmsmga007.fm.intel.com with ESMTP; 15 Jun 2018 06:43:04 -0700
+Subject: Re: [PATCHv3 07/17] x86/mm: Preserve KeyID on pte_modify() and
+ pgprot_modify()
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-8-kirill.shutemov@linux.intel.com>
+ <8c31f6d2-6512-2726-763e-6dd1cbb0350a@intel.com>
+ <20180615125720.r755xaegvfcqfr6x@black.fi.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <645a4ca8-ae77-dcdd-0cbc-0da467fc210d@intel.com>
+Date:   Fri, 15 Jun 2018 06:43:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180615125720.r755xaegvfcqfr6x@black.fi.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds support for Lairds upcoming SOM module, featuring Marvell WiFi
-and Bluetooth, 2Gb NAND / 1Gb LPDDR SDRAM, and an Atmel SAMA5D3 CPU.
+On 06/15/2018 05:57 AM, Kirill A. Shutemov wrote:
+>>> +#define _PAGE_CHG_MASK	(PTE_PFN_MASK_MAX | _PAGE_PCD | _PAGE_PWT |		\
+>>>  			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
+>>>  			 _PAGE_SOFT_DIRTY)
+>>>  #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
+>> This makes me a bit nervous.  We have some places (here) where we
+>> pretend that the KeyID is part of the paddr and then other places like
+>> pte_pfn() where it's not.
+> Other option is to include KeyID mask into _PAGE_CHG_MASK. But it means
+> _PAGE_CHG_MASK would need to reference *two* variables: physical_mask and
+> mktme_keyid_mask. I mentioned this in the commit message.
 
-Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
----
- arch/arm/boot/dts/Makefile                    |   1 +
- arch/arm/boot/dts/at91-dvk_som60.dts          |  95 +++++++++++
- arch/arm/boot/dts/at91-dvk_su60_somc.dtsi     | 159 ++++++++++++++++++
- arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi |  90 ++++++++++
- arch/arm/boot/dts/at91-som60.dtsi             | 231 ++++++++++++++++++++++++++
- 5 files changed, 576 insertions(+)
- create mode 100644 arch/arm/boot/dts/at91-dvk_som60.dts
- create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
- create mode 100644 arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
- create mode 100644 arch/arm/boot/dts/at91-som60.dtsi
+Why can't it be one variable with a different name that's populated by
+OR'ing physical_mask and mktme_keyid_mask together?
 
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index 214d5d9..b0e164a 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -51,6 +51,7 @@ dtb-$(CONFIG_SOC_SAM_V7) += \
- 	at91-sama5d2_ptc_ek.dtb \
- 	at91-sama5d2_xplained.dtb \
- 	at91-sama5d3_xplained.dtb \
-+	at91-dvk_som60.dtb \
- 	at91-gatwick.dtb \
- 	at91-tse850-3.dtb \
- 	at91-wb50n.dtb \
-diff --git a/arch/arm/boot/dts/at91-dvk_som60.dts b/arch/arm/boot/dts/at91-dvk_som60.dts
-new file mode 100644
-index 0000000..ededd5b
---- /dev/null
-+++ b/arch/arm/boot/dts/at91-dvk_som60.dts
-@@ -0,0 +1,95 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * at91-dvk_som60.dts - Device Tree file for the DVK SOM60 board
-+ *
-+ *  Copyright (C) 2018 Laird,
-+ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
-+ *
-+ */
-+/dts-v1/;
-+#include "at91-som60.dtsi"
-+#include "at91-dvk_su60_somc.dtsi"
-+#include "at91-dvk_su60_somc_lcm.dtsi"
-+
-+/ {
-+	model = "Laird DVK SOM60";
-+	compatible = "laird,dvk-som60", "laird,som60", "atmel,sama5d36", "atmel,sama5d3", "atmel,sama5";
-+
-+	chosen {
-+		stdout-path = &dbgu;
-+		tick-timer = &pit;
-+	};
-+};
-+
-+&mmc0 {
-+	status = "okay";
-+};
-+
-+&spi0 {
-+	status = "okay";
-+};
-+
-+&ssc0 {
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+};
-+
-+&usart1 {
-+	status = "okay";
-+};
-+
-+&usart2 {
-+	status = "okay";
-+};
-+
-+&usart3 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&dbgu {
-+	status = "okay";
-+};
-+
-+&pit {
-+	status = "okay";
-+};
-+
-+&adc0 {
-+	status = "okay";
-+};
-+
-+&can1 {
-+	status = "okay";
-+};
-+
-+&macb0 {
-+	status = "okay";
-+};
-+
-+&macb1 {
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	status = "okay";
-+};
-+
-+&usb2 {
-+	status = "okay";
-+};
-+
-diff --git a/arch/arm/boot/dts/at91-dvk_su60_somc.dtsi b/arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
-new file mode 100644
-index 0000000..bb86f17
---- /dev/null
-+++ b/arch/arm/boot/dts/at91-dvk_su60_somc.dtsi
-@@ -0,0 +1,159 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * at91-dvk_su60_somc.dtsi - Device Tree file for the DVK SOM60 base board
-+ *
-+ *  Copyright (C) 2018 Laird,
-+ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
-+ *
-+ */
-+
-+/ {
-+	sound {
-+		compatible = "atmel,asoc-wm8904";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_pck2_as_audio_mck>;
-+
-+		atmel,model = "wm8904 @ DVK-SOM60";
-+		atmel,audio-routing =
-+			"Headphone Jack", "HPOUTL",
-+			"Headphone Jack", "HPOUTR",
-+			"IN2L", "Line In Jack",
-+			"IN2R", "Line In Jack",
-+			"Mic", "MICBIAS",
-+			"IN1L", "Mic";
-+
-+		atmel,ssc-controller = <&ssc0>;
-+		atmel,audio-codec = <&wm8904>;
-+
-+		status = "okay";
-+	};
-+};
-+
-+&mmc0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&pinctrl_mmc0_clk_cmd_dat0 &pinctrl_mmc0_dat1_3 &pinctrl_mmc0_cd>;
-+	slot@0 {
-+		bus-width = <4>;
-+		cd-gpios = <&pioE 31 GPIO_ACTIVE_HIGH>;
-+		cd-inverted;
-+	};
-+};
-+
-+&spi0 {
-+	status = "okay";
-+
-+	/* spi0.0: 4M Flash Macronix MX25R4035FM1IL0 */
-+	spi-flash@0 {
-+		compatible = "mxicy,mx25u4035", "jedec,spi-nor";
-+		spi-max-frequency = <33000000>;
-+		reg = <0>;
-+	};
-+};
-+
-+&ssc0 {
-+	atmel,clk-from-rk-pin;
-+	status = "okay";
-+};
-+
-+&i2c0 {
-+	status = "okay";
-+
-+	wm8904: wm8904@1a {
-+		compatible = "wlf,wm8904";
-+		reg = <0x1a>;
-+		clocks = <&pck2>;
-+		clock-names = "mclk";
-+	};
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	eeprom@87 {
-+		compatible = "giantec,gt24c32a", "atmel,24c32";
-+		reg = <87>;
-+		pagesize = <32>;
-+	};
-+};
-+
-+&usart1 {
-+	status = "okay";
-+};
-+
-+&usart2 {
-+	status = "okay";
-+};
-+
-+&usart3 {
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	status = "okay";
-+};
-+
-+&dbgu {
-+	status = "okay";
-+};
-+
-+&pit {
-+	status = "okay";
-+};
-+
-+&adc0 {
-+	status = "okay";
-+};
-+
-+&can1 {
-+	status = "okay";
-+};
-+
-+&macb0 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	ethernet-phy@7 {
-+		reg = <7>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_geth_int>;
-+		interrupt-parent = <&pioB>;
-+		interrupts = <25 IRQ_TYPE_EDGE_FALLING>;
-+		txen-skew-ps = <800>;
-+		txc-skew-ps = <3000>;
-+		rxdv-skew-ps = <400>;
-+		rxc-skew-ps = <3000>;
-+		rxd0-skew-ps = <400>;
-+		rxd1-skew-ps = <400>;
-+		rxd2-skew-ps = <400>;
-+		rxd3-skew-ps = <400>;
-+	};
-+};
-+
-+&macb1 {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	status = "okay";
-+
-+	ethernet-phy@1 {
-+		reg = <1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_eth_int>;
-+		interrupt-parent = <&pioC>;
-+		interrupts = <10 IRQ_TYPE_EDGE_FALLING>;
-+	};
-+};
-+
-+&usb0 {
-+	status = "okay";
-+};
-+
-+&usb1 {
-+	status = "okay";
-+};
-+
-+&usb2 {
-+	status = "okay";
-+};
-+
-diff --git a/arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi b/arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
-new file mode 100644
-index 0000000..4b9176d
---- /dev/null
-+++ b/arch/arm/boot/dts/at91-dvk_su60_somc_lcm.dtsi
-@@ -0,0 +1,90 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * at91-dvk_su60_somc_lcm.dtsi - Device Tree file for the DVK SOM60 LCD board
-+ *
-+ *  Copyright (C) 2018 Laird,
-+ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
-+ *
-+ */
-+
-+/ {
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&hlcdc_pwm 0 50000 0>;
-+		brightness-levels = <0 4 8 16 32 64 128 255>;
-+		default-brightness-level = <6>;
-+		status = "okay";
-+	};
-+
-+	panel: panel {
-+		compatible = "winstar,wf70gtiagdng0", "innolux,at070tn92", "simple-panel";
-+		backlight = <&backlight>;
-+		power-supply = <&vcc_lcd_reg>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		status = "okay";
-+
-+		port@0 {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			reg = <0>;
-+
-+			panel_input: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&hlcdc_panel_output>;
-+			};
-+		};
-+	};
-+
-+	vcc_lcd_reg: fixedregulator_lcd {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC LCM";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+		status = "okay";
-+	};
-+};
-+
-+&pinctrl {
-+	board {
-+		pinctrl_lcd_ctp_int: lcd_ctp_int {
-+			 atmel,pins =
-+				 <AT91_PIOC 28 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP_DEGLITCH>;
-+		};
-+	};
-+};
-+
-+&i2c1 {
-+	status = "okay";
-+
-+	ft5426@56 {
-+		compatible = "focaltech,ft5426", "edt,edt-ft5406";
-+		reg = <56>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lcd_ctp_int>;
-+
-+		interrupt-parent = <&pioC>;
-+		interrupts = <28 IRQ_TYPE_EDGE_FALLING>;
-+
-+		touchscreen-size-x = <800>;
-+		touchscreen-size-y = <480>;
-+	};
-+};
-+
-+&hlcdc {
-+	status = "okay";
-+
-+	hlcdc-display-controller {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_lcd_base &pinctrl_lcd_rgb888>;
-+
-+		port@0 {
-+			hlcdc_panel_output: endpoint@0 {
-+				reg = <0>;
-+				remote-endpoint = <&panel_input>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/at91-som60.dtsi b/arch/arm/boot/dts/at91-som60.dtsi
-new file mode 100644
-index 0000000..6472fce
---- /dev/null
-+++ b/arch/arm/boot/dts/at91-som60.dtsi
-@@ -0,0 +1,231 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * at91-som60.dtsi - Device Tree file for the SOM60 module
-+ *
-+ *  Copyright (C) 2018 Laird,
-+ *		  2018 Ben Whitten <ben.whitten@lairdtech.com>
-+ *
-+ */
-+#include "sama5d36.dtsi"
-+
-+/ {
-+	model = "Laird SOM60";
-+	compatible = "laird,som60", "atmel,sama5d36", "atmel,sama5d3", "atmel,sama5";
-+
-+	chosen {
-+		stdout-path = &dbgu;
-+	};
-+
-+	memory {
-+		reg = <0x20000000 0x8000000>;
-+	};
-+
-+	clocks {
-+		slow_xtal {
-+			clock-frequency = <32768>;
-+		};
-+
-+		main_xtal {
-+			clock-frequency = <12000000>;
-+		};
-+	};
-+};
-+
-+&pinctrl {
-+	board {
-+		pinctrl_mmc0_cd: mmc0_cd {
-+			atmel,pins =
-+				<AT91_PIOE 31 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
-+		};
-+
-+		pinctrl_mmc0_en: mmc0_en {
-+			atmel,pins =
-+				<AT91_PIOE 30 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
-+		};
-+
-+		pinctrl_nand0_wp: nand0_wp {
-+			atmel,pins =
-+				<AT91_PIOE 14 AT91_PERIPH_GPIO AT91_PINCTRL_PULL_UP>;
-+		};
-+
-+		pinctrl_usb_vbus: usb_vbus {
-+			atmel,pins =
-+				<AT91_PIOE 20 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
-+				/* Conflicts with USART2_SCK */
-+		};
-+
-+		pinctrl_usart2_sck: usart2_sck {
-+			atmel,pins =
-+				<AT91_PIOE 20 AT91_PERIPH_B AT91_PINCTRL_NONE>;
-+				/* Conflicts with USB_VBUS */
-+		};
-+
-+		pinctrl_usb_oc: usb_oc {
-+			atmel,pins =
-+				<AT91_PIOE 15 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
-+				/* Conflicts with USART3_SCK */
-+		};
-+
-+		pinctrl_usart3_sck: usart3_sck {
-+			atmel,pins =
-+				<AT91_PIOE 15 AT91_PERIPH_B AT91_PINCTRL_NONE>;
-+				/* Conflicts with USB_OC */
-+		};
-+
-+		pinctrl_usba_vbus: usba_vbus {
-+		   atmel,pins =
-+				<AT91_PIOC 14 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
-+		};
-+
-+		pinctrl_geth_int: geth_int {
-+			atmel,pins =
-+				<AT91_PIOB 25 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
-+				/* Conflicts with USART1_SCK */
-+		};
-+
-+		pinctrl_usart1_sck: usart1_sck {
-+			atmel,pins =
-+				<AT91_PIOB 25 AT91_PERIPH_A AT91_PINCTRL_NONE>;
-+				/* Conflicts with GETH_INT */
-+		};
-+
-+		pinctrl_eth_int: eth_int {
-+			atmel,pins =
-+				<AT91_PIOC 10 AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;
-+		};
-+
-+		pinctrl_pck2_as_audio_mck: pck2_as_audio_mck {
-+			atmel,pins =
-+				<AT91_PIOC 15 AT91_PERIPH_B AT91_PINCTRL_NONE>;
-+		};
-+	};
-+};
-+
-+&mmc0 {
-+	slot@0 {
-+		reg = <0>;
-+		bus-width = <8>;
-+	};
-+};
-+
-+&mmc1 {
-+	status = "okay";
-+	slot@0 {
-+		reg = <0>;
-+		bus-width = <4>;
-+	};
-+};
-+
-+&spi0 {
-+	cs-gpios = <&pioD 13 0>, <0>, <0>, <0>;
-+};
-+
-+&usart0 {
-+	atmel,use-dma-rx;
-+	atmel,use-dma-tx;
-+	status = "okay";
-+	pinctrl-0 = <&pinctrl_usart0 &pinctrl_usart0_rts_cts>;
-+};
-+
-+&usart1 {
-+	pinctrl-0 = <&pinctrl_usart1 &pinctrl_usart1_rts_cts>;
-+};
-+
-+&usart2 {
-+	pinctrl-0 = <&pinctrl_usart2 &pinctrl_usart2_rts_cts>;
-+};
-+
-+&usart3 {
-+	pinctrl-0 = <&pinctrl_usart3 &pinctrl_usart3_rts_cts>;
-+};
-+
-+&adc0 {
-+	pinctrl-0 = <
-+		&pinctrl_adc0_adtrg
-+		&pinctrl_adc0_ad0
-+		&pinctrl_adc0_ad1
-+		&pinctrl_adc0_ad2
-+		&pinctrl_adc0_ad3
-+		&pinctrl_adc0_ad4
-+		&pinctrl_adc0_ad5
-+		>;
-+};
-+
-+&macb0 {
-+	phy-mode = "rgmii";
-+};
-+
-+&macb1 {
-+	phy-mode = "rmii";
-+};
-+
-+
-+&ebi {
-+	pinctrl-0 = <&pinctrl_ebi_nand_addr>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&nand_controller {
-+	status = "okay";
-+
-+	nand: nand@3 {
-+		reg = <0x3 0x0 0x2>;
-+		atmel,rb = <0>;
-+		nand-bus-width = <8>;
-+		nand-ecc-mode = "hw";
-+		nand-ecc-strength = <8>;
-+		nand-ecc-step-size = <512>;
-+		nand-on-flash-bbt;
-+		label = "atmel_nand";
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			ubootspl@0 {
-+				label = "u-boot-spl";
-+				reg = <0x0 0x20000>;
-+			};
-+
-+			uboot@20000 {
-+				label = "u-boot";
-+				reg = <0x20000 0x80000>;
-+			};
-+
-+			ubootenv@a0000 {
-+				label = "u-boot-env";
-+				reg = <0xa0000 0x20000>;
-+			};
-+
-+			ubootenv@c0000 {
-+				label = "u-boot-env";
-+				reg = <0xc0000 0x20000>;
-+			};
-+
-+			ubi@e0000 {
-+				label = "ubi";
-+				reg = <0xe0000 0xfe00000>;
-+			};
-+		};
-+	};
-+};
-+
-+&usb0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usba_vbus>;
-+	atmel,vbus-gpio = <&pioC 14 GPIO_ACTIVE_HIGH>;
-+};
-+
-+&usb1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usb_vbus &pinctrl_usb_oc>;
-+	num-ports = <3>;
-+	atmel,vbus-gpio = <0
-+		&pioE 20 GPIO_ACTIVE_HIGH
-+		0>;
-+	atmel,oc-gpio = <0
-+		&pioE 15 GPIO_ACTIVE_LOW
-+		0>;
-+};
--- 
-2.7.4
+My issue here is that it this approach adds confusion around the logical
+separation between physical address and the bits immediately above the
+physical address in the PTE that are stolen for the keyID.
 
+Whatever you come up with will probably fine, as long as things that are
+called "PFN" or physical address don't also get used for keyID bits.
