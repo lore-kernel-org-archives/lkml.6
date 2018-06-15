@@ -5,82 +5,123 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6B44C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C11E4C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:57:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC38E20693
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:55:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC38E20693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 81DC6208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:57:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81DC6208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=surriel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756582AbeFOUzk (ORCPT
+        id S1756496AbeFOU5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:55:40 -0400
-Received: from mga18.intel.com ([134.134.136.126]:27375 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756499AbeFOUzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:55:39 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 13:55:38 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
-   d="scan'208";a="63591427"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmsmga004.fm.intel.com with ESMTP; 15 Jun 2018 13:55:35 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-        id 37DDB166; Fri, 15 Jun 2018 23:55:36 +0300 (EEST)
-Date:   Fri, 15 Jun 2018 23:55:36 +0300
-From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCHv3 07/17] x86/mm: Preserve KeyID on pte_modify() and
- pgprot_modify()
-Message-ID: <20180615205535.32nhgqelbyjihzts@black.fi.intel.com>
-References: <20180612143915.68065-8-kirill.shutemov@linux.intel.com>
- <8c31f6d2-6512-2726-763e-6dd1cbb0350a@intel.com>
- <20180615125720.r755xaegvfcqfr6x@black.fi.intel.com>
- <645a4ca8-ae77-dcdd-0cbc-0da467fc210d@intel.com>
- <20180615152731.3y6rre7g66rmncxr@black.fi.intel.com>
- <cbca7e78-d70b-3eae-1c73-6ad859661b8a@intel.com>
- <20180615160613.arntdivl5gdpfwfw@black.fi.intel.com>
- <445af5b3-eaca-0589-8899-88a3b26fb509@intel.com>
- <20180615204512.axt2avr4ysc2iyrp@black.fi.intel.com>
- <c9645eb2-2223-b374-1e30-2c5566ff73c6@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c9645eb2-2223-b374-1e30-2c5566ff73c6@intel.com>
-User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
+        Fri, 15 Jun 2018 16:57:01 -0400
+Received: from shelob.surriel.com ([96.67.55.147]:34402 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753541AbeFOU5A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:57:00 -0400
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.90_1)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1fTvmF-0005gk-1i; Fri, 15 Jun 2018 16:56:59 -0400
+Message-ID: <1529096218.7898.158.camel@surriel.com>
+Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
+From:   Rik van Riel <riel@surriel.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andrew Lutomirski <luto@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
+Date:   Fri, 15 Jun 2018 16:56:58 -0400
+In-Reply-To: <7e415c4d-415b-0ff6-5488-1681e522d2dc@linux.intel.com>
+References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
+         <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
+         <CAHmME9qhmSVNBq_GnkYrGU-PPEX9Fk0yiGktsCeEXo+LTB9KPg@mail.gmail.com>
+         <7e415c4d-415b-0ff6-5488-1681e522d2dc@linux.intel.com>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-YBC3ZSL+colrEHF43o3A"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 08:45:21PM +0000, Dave Hansen wrote:
-> On 06/15/2018 01:45 PM, Kirill A. Shutemov wrote:
-> > On Fri, Jun 15, 2018 at 04:58:24PM +0000, Dave Hansen wrote:
-> >> On 06/15/2018 09:06 AM, Kirill A. Shutemov wrote:
-> >>> I have no idea what such concept should be called. I cannot come with
-> >>> anything better than PTE_PFN_MASK_MAX. Do you?
-> >> PTE_PRESERVE_MASK
-> >>
-> >> Or maybe:
-> >>
-> >> PTE_MODIFY_PRESERVE_MASK
-> > It just replacing one confusion with another. Preserve what?
-> 
-> "Preserve this mask when modifying pte permission bits"
 
-We preserve more than these bits. See _PAGE_CHG_MASK.
+--=-YBC3ZSL+colrEHF43o3A
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
--- 
- Kirill A. Shutemov
+On Fri, 2018-06-15 at 13:42 -0700, Dave Hansen wrote:
+> On 06/15/2018 01:33 PM, Jason A. Donenfeld wrote:
+> > On Fri, Jun 15, 2018 at 8:32 PM Andy Lutomirski <luto@kernel.org>
+> > wrote:
+> > > quite in the form you imagined.  The idea that we've tossed
+> > > around is
+> > > to restore FPU state on return to user mode.  Roughly, we'd
+> > > introduce
+> > > a new thread flag TIF_FPU_UNLOADED (name TBD).
+> > > prepare_exit_to_usermode() would notice this flag, copy the
+> > > fpstate to
+> > > fpregs, and clear the flag.  (Or maybe exit_to_usermode_loop() --
+> > > No
+> > > one has quite thought it through, but I think it should be
+> > > outside the
+> > > loop.)  We'd update all the FPU accessors to understand the flag.
+> >=20
+> > Yes! This is exactly what I was thinking. Then those calls to
+> > begin()
+> > and end() could be placed as close to the actual FPU usage as
+> > possible.
+>=20
+> Andy, what was the specific concern about PKRU?  That we might do:
+>=20
+> 	kernel_fpu_begin(); <- Saves the first time
+> 	something()
+> 	kernel_fpu_end(); <- Does not XRSTOR
+>=20
+> 	copy_from_user(); <- Sees old PKRU, does the wrong thing
+>=20
+> 	prepare_exit_to_usermode(); <- Does the XRSTOR
+> 	// only now does PKRU have the right value
+> 	SYSRET/IRET
+>=20
+> ?
+>=20
+> Does that *matter* unless something() modified PKRU?  We could just
+> make
+> the rule that nobody is supposed to mess with it and that it's not
+> covered by kernel_fpu_begin/end() semantics.  We could even
+> theoretically enforce that in a debug environment if we watch its
+> value.
+
+KVM needs to change out guest and host PKRU values
+when switching between guest and host mode, but
+since f775b13eedee ("x86,kvm: move qemu/guest FPU=20
+switching out to vcpu_run") that no longer happens
+under kernel_fpu_begin/end so we don't need to care
+about that :)
+
+--=20
+All Rights Reversed.
+--=-YBC3ZSL+colrEHF43o3A
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlskKBoACgkQznnekoTE
+3oOx9QgAka+/LeW7LyIzrZh6JE+0ctj35QONbWRvOMWdsAge1+J7MM65isl3ihPD
+6KHJQ93GxvF3YI/md+PfmOyWv/teVtW0sVq7j8rIczGGMS+G5jdzofR3sN+U+Idy
+/Aba9lfG0U+kPP+XqS/aOQmCBCCQbwukUUJurED5glfMyxbncEqgG/IjQxCW3MYJ
+7ltMzl2gilo6rleJlMgDObj4eMAnNcCjP3WawiABcRpWP3SORCAZsVyQT3D+2i0/
+fObkqGvEjRn6eUPt3UinoP7wpiPrOcC8NgipxvgdpwErSzdhrLv0QYkYQVrxpapB
+du11W8DdxPm92O5DXIepCdM1REs83g==
+=Ai7+
+-----END PGP SIGNATURE-----
+
+--=-YBC3ZSL+colrEHF43o3A--
+
