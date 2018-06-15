@@ -2,114 +2,168 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DE1C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E185DC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:52:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9788E208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:50:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9788E208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 8A8DE208C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:52:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pados.hu header.i=@pados.hu header.b="xB+c3yUY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A8DE208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=pados.hu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756610AbeFOVt7 (ORCPT
+        id S1756628AbeFOVwQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 17:49:59 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:54505 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753688AbeFOVt5 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 17:49:57 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 416vKZ3zQdz1qtPl;
-        Fri, 15 Jun 2018 23:49:53 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 416vKY3QG1z1qsdH;
-        Fri, 15 Jun 2018 23:49:53 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id vsz3E36mvodG; Fri, 15 Jun 2018 23:49:47 +0200 (CEST)
-X-Auth-Info: VX7u6Mp7EKiIcN2y1y4kiCQNBoGmomY2fjTmXEO1/AQ=
-Received: from [IPv6:::1] (unknown [195.140.253.167])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Fri, 15 Jun 2018 23:49:46 +0200 (CEST)
-Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "stefan@agner.ch" <stefan@agner.ch>
-Cc:     dl-linux-imx <linux-imx@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "marcofrk@gmail.com" <marcofrk@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>
-References: <cover.1529091248.git.leonard.crestez@nxp.com>
- <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
- <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
- <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
-From:   Marek Vasut <marex@denx.de>
-Message-ID: <638457fd-85da-8fec-d146-517c43f71813@denx.de>
-Date:   Fri, 15 Jun 2018 23:36:58 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 15 Jun 2018 17:52:16 -0400
+Received: from erza.pados.hu ([176.9.136.194]:40540 "EHLO erza.pados.hu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1756235AbeFOVwP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 17:52:15 -0400
+X-Greylist: delayed 1328 seconds by postgrey-1.27 at vger.kernel.org; Fri, 15 Jun 2018 17:52:14 EDT
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=pados.hu;
+         s=february2016; h=Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
+        MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=ihX2rBtX5+w3LNm02LK+p4/oeMCAiBWFqxtNClGXFyM=; b=xB+c3yUYydw2ys+L4IoO6Lgoig
+        ZN7t58R7j/BLDl/eIqiByd0projjy0Ta5dRJvuNrJcgnna8nQqKiYK+iGzpPFSejrAwI9EziXwvp2
+        wSeB5nac9y8KEJ3mOmnJ2YIvPqJk/ME64JqLAW5GWu0Tylr6sXap+km/P353yLscOCtG9kNE7/E5Q
+        yPbxVkBCif7kKMjOK3Cjx7tmJdbrgs7KgloUgEPxG0SoPyVutrA+AHhLJ0Y+l3KOklq4MOyEJpeWY
+        PsygK6fYWgrkK4kEzk+q/eSYcN9yXWGrrZ7Mv4B0kHfFbIVuMZ+E0NVMJPYSxX6q9QZSY0qOjurdk
+        cXF3flIA==;
+Received: from 188-143-49-191.pool.digikabel.hu ([188.143.49.191] helo=localhost)
+        by erza with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <pados@pados.hu>)
+        id 1fTwIF-0006U0-FC; Fri, 15 Jun 2018 23:30:04 +0200
+From:   Karoly Pados <pados@pados.hu>
+To:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Karoly Pados <pados@pados.hu>
+Subject: [PATCH] USB: serial: cp210x: Improve baudrate support for CP2102N
+Date:   Fri, 15 Jun 2018 23:29:57 +0200
+Message-Id: <20180615212957.26539-1-pados@pados.hu>
+X-Mailer: git-send-email 2.17.1
+X-Spam_score: -2.9
+X-Spam_report: Spam detection software, running on the system "erza",
+ has NOT identified this incoming email as spam.  The original
+ message has been attached to this so you can view it or label
+ similar future email.  If you have any questions, see
+ the administrator of that system for details.
+ Content preview:  The CP2102N supports more baudrates than earlier chips by
+   SiLabs. This patch adds support for all rates documented in the datasheet
+   of this device. Signed-off-by: Karoly Pados <pados@pados.hu> --- drivers/usb/serial/cp210x.c
+    | 39 ++++++++++++++++++++++++++ 1 file changed, 28 insertions(+), 11 deletions(-)
+    [...] 
+ Content analysis details:   (-2.9 points, 5.0 required)
+  pts rule name              description
+ ---- ---------------------- --------------------------------------------------
+ -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
+  0.0 TVD_RCVD_IP            Message was received from an IP address
+  0.0 URIBL_BLOCKED          ADMINISTRATOR NOTICE: The query to URIBL was blocked.
+                             See
+                             http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+                              for more information.
+                             [URIs: pados.hu]
+ -1.9 BAYES_00               BODY: Bayes spam probability is 0 to 1%
+                             [score: 0.0000]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 10:58 PM, Leonard Crestez wrote:
-> On Fri, 2018-06-15 at 16:47 -0300, Fabio Estevam wrote:
-> 
->> On Fri, Jun 15, 2018 at 4:43 PM, Leonard Crestez
->> <leonard.crestez@nxp.com> wrote:
->>> The FBDEV driver uses the same name and both can't be registered at the
->>> same time. Fix this by renaming the drm driver to mxsfb-drm
->>>
->>> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
->>
->> Stefan sent the same patch a few days ago:
->> http://www.spinics.net/lists/dri-devel/msg179489.html
-> 
-> In that thread there is a proposal for removing the old fbdev/mxsfb
-> driver entirely.
-> 
-> That would break old DTBs, isn't this generally considered bad? Also,
-> are we sure the removal of fbdev/mxsfb wouldn't lose any features?
-> 
-> What my series does is make both drivers work with the same kernel
-> image and turns the choice into a board-level dtb decision. Supporting
-> everything at once seems desirable to me and it allows for a very
-> smooth upgrade path.
+The CP2102N supports more baudrates than earlier chips by SiLabs.
+This patch adds support for all rates documented in the datasheet
+of this device.
 
-Having two drivers in the kernel with different set of bugs is always bad.
+Signed-off-by: Karoly Pados <pados@pados.hu>
+---
+ drivers/usb/serial/cp210x.c | 39 ++++++++++++++++++++++++++-----------
+ 1 file changed, 28 insertions(+), 11 deletions(-)
 
-> The old driver could be removed later, after all users are converted.
-
-Both drivers were in for long enough already. And let's be realistic,
-how many MX23/MX28 users of old DTs with new kernels are there who
-cannot update the DT as well ?
-
-IMO keeping the old FBDEV driver in is just an excuse to postpone the
-long overdue DT update and I dislike that. Update any remaining DTs and
-nuke the FBDEV driver already.
-
+diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+index b1849f657e01..793b86252c46 100644
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -357,6 +357,9 @@ static struct usb_serial_driver * const serial_drivers[] = {
+ #define CP210X_PARTNUM_CP2104	0x04
+ #define CP210X_PARTNUM_CP2105	0x05
+ #define CP210X_PARTNUM_CP2108	0x08
++#define CP210X_PARTNUM_CP2102N_QFN28	0x20
++#define CP210X_PARTNUM_CP2102N_QFN24	0x21
++#define CP210X_PARTNUM_CP2102N_QFN20	0x22
+ #define CP210X_PARTNUM_UNKNOWN	0xFF
+ 
+ /* CP210X_GET_COMM_STATUS returns these 0x13 bytes */
+@@ -758,8 +761,12 @@ static int cp210x_get_line_ctl(struct usb_serial_port *port, u16 *ctl)
+ /*
+  * cp210x_quantise_baudrate
+  * Quantises the baud rate as per AN205 Table 1
++ * The CP2102N is fully (except for baud rate aliasing) software-
++ * compatible, but supports some additional baudrates. However, there is
++ * no quantitisation table available for this model, so in this case we
++ * take the supported baudrate which is closest to the requested one.
+  */
+-static unsigned int cp210x_quantise_baudrate(unsigned int baud)
++static unsigned int cp210x_quantise_baudrate(unsigned int baud, bool cp2102n)
+ {
+ 	if (baud <= 300)
+ 		baud = 300;
+@@ -790,10 +797,17 @@ static unsigned int cp210x_quantise_baudrate(unsigned int baud)
+ 	else if (baud <= 491520)   baud = 460800;
+ 	else if (baud <= 567138)   baud = 500000;
+ 	else if (baud <= 670254)   baud = 576000;
+-	else if (baud < 1000000)
+-		baud = 921600;
+-	else if (baud > 2000000)
+-		baud = 2000000;
++	else if (cp2102n) {
++		if (baud <= 960800)        baud = 921600;
++		else if (baud <= 1100000)  baud = 1000000;
++		else if (baud <= 1350000)  baud = 1200000;
++		else if (baud <= 1750000)  baud = 1500000;
++		else if (baud <= 2500000)  baud = 2000000;
++		else                       baud = 3000000;
++	} else {
++		if (baud < 1000000)        baud = 921600;
++		else if (baud > 2000000)   baud = 2000000;
++	}
+ 	return baud;
+ }
+ 
+@@ -1045,16 +1059,19 @@ static void cp210x_get_termios_port(struct usb_serial_port *port,
+ static void cp210x_change_speed(struct tty_struct *tty,
+ 		struct usb_serial_port *port, struct ktermios *old_termios)
+ {
+-	u32 baud;
+-
+-	baud = tty->termios.c_ospeed;
++	bool is_cp2102n;
++	u32 baud = tty->termios.c_ospeed;
++	struct cp210x_serial_private *priv = usb_get_serial_data(port->serial);
+ 
+-	/* This maps the requested rate to a rate valid on cp2102 or cp2103,
+-	 * or to an arbitrary rate in [1M,2M].
++	/* This maps the requested rate to a rate valid on cp2102(n) or
++	 * cp2103 or to an arbitrary rate in [1M,2M].
+ 	 *
+ 	 * NOTE: B0 is not implemented.
+ 	 */
+-	baud = cp210x_quantise_baudrate(baud);
++	is_cp2102n =	(priv->partnum == CP210X_PARTNUM_CP2102N_QFN28) ||
++			(priv->partnum == CP210X_PARTNUM_CP2102N_QFN24) ||
++			(priv->partnum == CP210X_PARTNUM_CP2102N_QFN20);
++	baud = cp210x_quantise_baudrate(baud, is_cp2102n);
+ 
+ 	dev_dbg(&port->dev, "%s - setting baud rate to %u\n", __func__, baud);
+ 	if (cp210x_write_u32_reg(port, CP210X_SET_BAUDRATE, baud)) {
 -- 
-Best regards,
-Marek Vasut
+2.17.1
+
