@@ -2,112 +2,83 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E647C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:38:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22480C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53748208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:38:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53748208B2
+	by mail.kernel.org (Postfix) with ESMTP id DAF95208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:38:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAF95208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966280AbeFOQhg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:37:36 -0400
-Received: from osg.samsung.com ([64.30.133.232]:48489 "EHLO osg.samsung.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966084AbeFOQbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:31:05 -0400
+        id S966156AbeFOQif (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:38:35 -0400
+Received: from mailout.easymail.ca ([64.68.200.34]:38583 "EHLO
+        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965982AbeFOQic (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 12:38:32 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by osg.samsung.com (Postfix) with ESMTP id A4D4622BB6;
-        Fri, 15 Jun 2018 09:31:04 -0700 (PDT)
-X-Virus-Scanned: Debian amavisd-new at dev.s-opensource.com
-X-Amavis-Alert: BAD HEADER SECTION, Duplicate header field: "References"
-Received: from osg.samsung.com ([127.0.0.1])
-        by localhost (localhost [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id MxUqSoIjmTJJ; Fri, 15 Jun 2018 09:31:03 -0700 (PDT)
-Received: from smtp.s-opensource.com (177.41.114.220.dynamic.adsl.gvt.net.br [177.41.114.220])
-        by osg.samsung.com (Postfix) with ESMTPSA id 942EB22B49;
-        Fri, 15 Jun 2018 09:30:58 -0700 (PDT)
-Received: from mchehab by smtp.s-opensource.com with local (Exim 4.91)
-        (envelope-from <mchehab@smtp.s-opensource.com>)
-        id 1fTrcm-00083s-AS; Fri, 15 Jun 2018 13:30:56 -0300
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 12/26] scripts/documentation-file-ref-check: add a fix logic for DT
-Date:   Fri, 15 Jun 2018 13:30:40 -0300
-Message-Id: <31d20450593b3b6e354a675b7b4e1d35d1a864e9.1529079120.git.mchehab+samsung@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1529079119.git.mchehab+samsung@kernel.org>
-References: <cover.1529079119.git.mchehab+samsung@kernel.org>
-In-Reply-To: <cover.1529079119.git.mchehab+samsung@kernel.org>
-References: <cover.1529079119.git.mchehab+samsung@kernel.org>
+        by mailout.easymail.ca (Postfix) with ESMTP id 47B0B216A4;
+        Fri, 15 Jun 2018 16:38:31 +0000 (UTC)
+Received: from mailout.easymail.ca ([127.0.0.1])
+        by localhost (emo02-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id JdDtIjyeLEsQ; Fri, 15 Jun 2018 16:38:31 +0000 (UTC)
+Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mailout.easymail.ca (Postfix) with ESMTPSA id E18EF2169F;
+        Fri, 15 Jun 2018 16:38:24 +0000 (UTC)
+Subject: Re: [PATCH] selftests: sparc64: delete RUN_TESTS and EMIT_TESTS
+ overrides
+To:     Tom Hromatka <tom.hromatka@oracle.com>,
+        "davem@davemloft.net" <davem@davemloft.net>
+Cc:     linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Shuah Khan <shuah@kernel.org>
+References: <20180612232403.28031-1-shuah@kernel.org>
+ <8eb11b0a-3284-c580-6ae5-f0204ce5c5bf@oracle.com>
+From:   Shuah Khan <shuah@kernel.org>
+Message-ID: <ec9901c2-504a-5505-b6c3-7e18ee30e26c@kernel.org>
+Date:   Fri, 15 Jun 2018 10:38:24 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <8eb11b0a-3284-c580-6ae5-f0204ce5c5bf@oracle.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are several links broken due to DT file movements. Add
-a hint logic to seek for those changes.
+On 06/13/2018 11:18 AM, Tom Hromatka wrote:
+> Thanks for the clean up, Shuah.  Looks good to me.
+> 
+> Tom
+> 
+> 
+> 
+> On 06/12/2018 05:24 PM, Shuah Khan (Samsung OSG) wrote:
+>> Delete RUN_TESTS and EMIT_TESTS overrides and use common defines in
+>> lib.mk. Common defines work just fine and there is no need to define
+>> custom overrides.
+>>
+>> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
+> 
+> Reviewed-by: Tom Hromatka <tom.hromatka@oracle.com>
+> 
+> 
 
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
----
- scripts/documentation-file-ref-check | 20 +++++++++++++++++---
- 1 file changed, 17 insertions(+), 3 deletions(-)
+get_maintainers didn't include your name for this patch. Would you like to
+take this fix through sparc tree? This is cleanup fix would be good candidate
+for 4.18-rc2
 
-diff --git a/scripts/documentation-file-ref-check b/scripts/documentation-file-ref-check
-index 9d5e21b10346..c8bc1c1c1d6e 100755
---- a/scripts/documentation-file-ref-check
-+++ b/scripts/documentation-file-ref-check
-@@ -64,7 +64,7 @@ while (<IN>) {
- 		next if (grep -e, glob("$ref $fulref"));
- 
- 		if ($fix) {
--			if (!($ref =~ m/(devicetree|scripts|Kconfig|Kbuild)/)) {
-+			if (!($ref =~ m/(scripts|Kconfig|Kbuild)/)) {
- 				$broken_ref{$ref}++;
- 			}
- 		} else {
-@@ -84,10 +84,19 @@ foreach my $ref (keys %broken_ref) {
- 	# get just the basename
- 	$new =~ s,.*/,,;
- 
--	# Seek for the same name on another place, as it may have been moved
- 	my $f="";
- 
--	$f = qx(find . -iname $new) if ($new);
-+	# usual reason for breakage: DT file moved around
-+	if ($ref =~ /devicetree/) {
-+		my $search = $new;
-+		$search =~ s,^.*/,,;
-+		$f = qx(find Documentation/devicetree/ -iname "*$search*") if ($search);
-+		if (!$f) {
-+			# Manufacturer name may have changed
-+			$search =~ s/^.*,//;
-+			$f = qx(find Documentation/devicetree/ -iname "*$search*") if ($search);
-+		}
-+	}
- 
- 	# usual reason for breakage: file renamed to .rst
- 	if (!$f) {
-@@ -95,6 +104,11 @@ foreach my $ref (keys %broken_ref) {
- 		$f=qx(find . -iname $new) if ($new);
- 	}
- 
-+	# Wild guess: seek for the same name on another place
-+	if (!$f) {
-+		$f = qx(find . -iname $new) if ($new);
-+	}
-+
- 	my @find = split /\s+/, $f;
- 
- 	if (!$f) {
--- 
-2.17.1
+If so, please let me know if you would like me to resend the patch
+with Tom's Reviewed-by tag.
 
+thanks,
+-- Shuah
