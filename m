@@ -6,94 +6,91 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B5DEAC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:32:15 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id CA57DC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:32:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69CAB2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:32:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69CAB2087E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DF782087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:32:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DF782087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755606AbeFOFcN (ORCPT
+        id S1755681AbeFOFcb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 01:32:13 -0400
-Received: from mx2.suse.de ([195.135.220.15]:52778 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755515AbeFOFcM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 01:32:12 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E765BADBA;
-        Fri, 15 Jun 2018 05:32:10 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Herbert Xu <herbert@gondor.apana.org.au>,
-        Tom Herbert <tom@herbertland.com>
-Date:   Fri, 15 Jun 2018 15:31:54 +1000
-Cc:     Thomas Graf <tgraf@suug.ch>,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Tom Herbert <tom@quantonium.net>
-Subject: Re: [PATCH RFC v2] rhashtable: implement rhashtable_walk_peek() using rhashtable_walk_last_seen()
-In-Reply-To: <20180615042331.3dmqi3bumzk6lu5c@gondor.apana.org.au>
-References: <87sh63pakb.fsf@notabene.neil.brown.name> <CALx6S35sf4oj=x73SfhUxi1e9-u4Stxgr9BAj5E7KKmbufntwg@mail.gmail.com> <87r2lmnj2c.fsf@notabene.neil.brown.name> <CALx6S36Ce-rXQMzmFYZVPGD10Bo6udvRAHiZ5gWwnzVwoTVv0w@mail.gmail.com> <87in6wo636.fsf@notabene.neil.brown.name> <871sdjnwkr.fsf@notabene.neil.brown.name> <87y3frmhyx.fsf@notabene.neil.brown.name> <CALx6S35GgUOd0dPgv7P96wNNTv5pN7fij0pcAoccqcSWZhvY7Q@mail.gmail.com> <871sdck9ds.fsf@notabene.neil.brown.name> <CALx6S35Yr8th_LFoCLjEqfzti0cp7+7nKZC7KO3dzeQkU7c0nw@mail.gmail.com> <20180615042331.3dmqi3bumzk6lu5c@gondor.apana.org.au>
-Message-ID: <874li4hayd.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        Fri, 15 Jun 2018 01:32:31 -0400
+Received: from youngberry.canonical.com ([91.189.89.112]:40215 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755629AbeFOFc3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 01:32:29 -0400
+Received: from 2.general.khfeng.us.vpn ([10.172.68.175] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1fThLT-0002wG-4Q; Fri, 15 Jun 2018 05:32:23 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     davem@davemloft.net
+Cc:     ryankao@realtek.com, hayeswang@realtek.com, hau@realtek.com,
+        hkallweit1@gmail.com, romieu@fr.zoreil.com, bhelgaas@google.com,
+        acelan.kao@canonical.com, netdev@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>
+Subject: [PATCH net-next v3 1/2] r8169: Don't disable ASPM in the driver
+Date:   Fri, 15 Jun 2018 13:32:18 +0800
+Message-Id: <20180615053219.14053-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Enable or disable ASPM should be done in PCI core instead of in the
+device driver.
 
-On Fri, Jun 15 2018, Herbert Xu wrote:
+Commit ba04c7c93bbc ("r8169: disable ASPM") uses
+pci_disable_link_state() to disable ASPM, but it's not the best way to
+do it. If the device really wants to disable ASPM, we can use a quirk in
+PCI core to prevent the PCI core from setting ASPM before probe.
 
-> On Thu, Jun 14, 2018 at 10:41:05AM -0700, Tom Herbert wrote:
->> On Mon, Jun 11, 2018 at 7:48 PM, NeilBrown <neilb@suse.com> wrote:
->> >
->> > rhashtable_walk_last_seen() does most of the work that
->> > rhashtable_walk_peek() needs done, so use it and put
->> > it in a "static inline".
->> > Also update the documentation for rhashtable_walk_peek() to clarify
->> > the expected use case.
->> >
->> > Signed-off-by: NeilBrown <neilb@suse.com>
->>=20
->> Acked-by: Tom Herbert <tom@quantonium.net>
->
-> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+Let's remove pci_disable_link_state() for now. Use PCI core quirks if
+any regression happens.
 
-Thanks to your both.
-I assume this is an implicit Ack for
-  rhashtable: add rhashtable_walk_last_seen()
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+v3:
+- Change commit message wording.
+- Rename the function to rtl_hw_aspm_clkreq_enable().
 
-I'll send out a patchset of all the acked patches shortly after the
-merge window closes, and then see where we are up to.
+v2:
+- Remove module parameter.
+- Remove pci_disable_link_state().
 
-Thanks,
-NeilBrown
+ drivers/net/ethernet/realtek/r8169.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
+index 75dfac0248f4..9b55ce513a36 100644
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -25,7 +25,6 @@
+ #include <linux/dma-mapping.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/firmware.h>
+-#include <linux/pci-aspm.h>
+ #include <linux/prefetch.h>
+ #include <linux/ipv6.h>
+ #include <net/ip6_checksum.h>
+@@ -7647,10 +7646,6 @@ static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 	mii->reg_num_mask = 0x1f;
+ 	mii->supports_gmii = cfg->has_gmii;
+ 
+-	/* disable ASPM completely as that cause random device stop working
+-	 * problems as well as full system hangs for some PCIe devices users */
+-	pci_disable_link_state(pdev, PCIE_LINK_STATE_L0S | PCIE_LINK_STATE_L1 |
+-				     PCIE_LINK_STATE_CLKPM);
+ 
+ 	/* enable device (incl. PCI PM wakeup and hotplug setup) */
+ 	rc = pcim_enable_device(pdev);
+-- 
+2.17.0
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsjT04ACgkQOeye3VZi
-gbnIjRAAhoFgFxeVa1i9Tj4pNvweB7AJK/9cHwN1gIRqHR609tmU285IRy5wYsVK
-HFJXBRDXLBwM+SCn7HfsmX5ykz4PsibbD0RaFY851UcOluHmAwa0l+CSI7+SWRjc
-daFZ23cMOf8beQvf6POOfP7/jyZeAfqroakpwK/GQnlU5g6uzmUIaLclTk2rV24H
-JC2CpBokwEoAnqWMYTNFQl3Oj7MKQRriUDCAwwxKzALe8aNIqj9ogh/IWF3N69Xk
-9cwTWNKLTV1QjIV+jK5aezwghfFq6oYNLG2QgApz+9jcFykAwGDwXnxW4KOwbJdF
-IRK+iPaDRQNu/Jvac5FC/dJS60FkDgSQ6scTHLjnxj59D/FWNZKBQ8O6TTW/nb5Y
-/Zzy78doxZB6Koy4jgt+dt2cz9dllZwKAO20zr3+YIMy8GSw8pKfqrFdhW+5CQi/
-DWkVtTY8ybMB+rMNgy2MFGLYDHNYxbsLgx9g8QPTdA8HRgKO/paBSaSkp5w5sDql
-UbTAFG81x9AVTpjp6ds6DMNyYkbPHq0Im6kSf8y77Xh+1XqqkQtuD/3y4nEUeaFn
-PehXt+ohu29JvHgMWnM/svqvHnQk7pdQt3wZTLfvrIvetctiEFSnOrB7+Rj4ErIc
-awxn/FV6dCZtsy5uBqGK9NQC35/82fZ9vrPWgYQaWXthElGKUmE=
-=8cXD
------END PGP SIGNATURE-----
---=-=-=--
