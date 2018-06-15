@@ -2,157 +2,166 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D256C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E134C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCAB0208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:13:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="m6gXzwJV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCAB0208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	by mail.kernel.org (Postfix) with ESMTP id 159C0208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:13:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 159C0208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936332AbeFORNJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:13:09 -0400
-Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:62975 "EHLO
-        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1756275AbeFORNH (ORCPT
+        id S966046AbeFORNn convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:13:43 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:35388 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756314AbeFORNl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:13:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1529082476; x=1560618476;
-  h=from:to:cc:subject:date:message-id;
-  bh=oQZqgBvt0nQB+Mwqbb5HTI3I66zH7R/3NylK46JUdU8=;
-  b=m6gXzwJVSgYcvdleZ+gqGG+ZcmA7cyeS9mkdhaEkD5JAyvJqOY/yEf3y
-   H+Wo2qCtbuxz8WKwTmxfOgi5yA/RAFnldglq8B6Ihs4HId2KuA8B2f3lH
-   byw29MSiPz4EEX1eo38+FGkc7l9fFAqcg34Tq9U3wmPTjcWWeoEw0aNYP
-   8=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2F/AADp8iNbmMmZ6ERbHAEBAQQBAQoBA?=
- =?us-ascii?q?YUpKIt9jFKWboF4C4RsglUhNBgBAgEBAQEBAQIBAQIQAQEBAQEICwsGKS+CNSQ?=
- =?us-ascii?q?Bgn5ST28BEoMiggGrVDOISIFoiEyBVD+BD41XAodQhU6LcAcCgWqNFwKNNQGRQ?=
- =?us-ascii?q?YFBggtwgxOCIQ4JjjVRkFkBAQ?=
-X-IPAS-Result: =?us-ascii?q?A2F/AADp8iNbmMmZ6ERbHAEBAQQBAQoBAYUpKIt9jFKWboF?=
- =?us-ascii?q?4C4RsglUhNBgBAgEBAQEBAQIBAQIQAQEBAQEICwsGKS+CNSQBgn5ST28BEoMig?=
- =?us-ascii?q?gGrVDOISIFoiEyBVD+BD41XAodQhU6LcAcCgWqNFwKNNQGRQYFBggtwgxOCIQ4?=
- =?us-ascii?q?JjjVRkFkBAQ?=
-Received: from esa1.dell-outbound2.iphmx.com ([68.232.153.201])
-  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 12:07:56 -0500
-Received: from ausc60pc101.us.dell.com ([143.166.85.206])
-  by esa1.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 23:07:32 +0600
-X-LoopCount0: from 10.208.86.39
-X-IronPort-AV: E=Sophos;i="5.51,227,1526360400"; 
-   d="scan'208";a="1262692554"
-X-DLP:  DLP_GlobalPCIDSS
-From:   Mario Limonciello <mario.limonciello@dell.com>
-To:     dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        platform-driver-x86@vger.kernel.org,
-        Mario Limonciello <mario.limonciello@dell.com>
-Subject: [PATCH] platform/x86: dell-smbios-base: Support systems without tokens
-Date:   Fri, 15 Jun 2018 12:12:51 -0500
-Message-Id: <1529082771-21309-1-git-send-email-mario.limonciello@dell.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 15 Jun 2018 13:13:41 -0400
+Received: by mail-wm0-f68.google.com with SMTP id j15-v6so5135853wme.0;
+        Fri, 15 Jun 2018 10:13:40 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=tQVPlrQID9tyIuc78cpsyLCRRJsK74UL48g9PkmLhYI=;
+        b=UtDnbKVOIQ7GMYgaqGEvmi4Iv7XOnOnj86s0OfAGRaUZjUZfCYBcU44VICINyhVpFb
+         LLFPtToT4qU5QGHQKd/hQenBL+ag0adzA++yjca9qMM5CG+8JS8r1fsk7+SxlWFXIpis
+         h6hkLcm5voKCkZqYk4Tn7olYoeBsCXT7v9BaVDwNdA0cwDrP9cs4oEd14uQkcuqezO92
+         e2nsdawrCMU7mwqnKBi6RF8tugpxfWdXCheoJNxgVKdXdaCs/JI4FCu0rwCrTcY/oIGY
+         v/wPLfHUX/fhqbUNIKvXdWISJXe+UZUKdeeiUauC0tiU1EiCsKyJN9dcTUFcc0t6e0AG
+         MjyQ==
+X-Gm-Message-State: APt69E2TLqivlinZ/AHQbXgkCYIGWVBXuZ2nhc8rlz2n6xMK5R4HOoIh
+        lgirTmZjMLVEtP6yBLT5WcauY5qC
+X-Google-Smtp-Source: ADUXVKJZNhxvRydukzTlaDluG3iaXe9YsBLFEx8/VEUr54iGT3fpF/1w+gLp361ZkLwzLmXsUxUrAQ==
+X-Received: by 2002:a50:81a4:: with SMTP id 33-v6mr2544206ede.215.1529082819489;
+        Fri, 15 Jun 2018 10:13:39 -0700 (PDT)
+Received: from mail-wm0-f47.google.com (mail-wm0-f47.google.com. [74.125.82.47])
+        by smtp.gmail.com with ESMTPSA id b58-v6sm4223184edb.59.2018.06.15.10.13.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Jun 2018 10:13:38 -0700 (PDT)
+Received: by mail-wm0-f47.google.com with SMTP id v16-v6so4618824wmh.5;
+        Fri, 15 Jun 2018 10:13:38 -0700 (PDT)
+X-Received: by 2002:a1c:454f:: with SMTP id s76-v6mr1855581wma.16.1529082818254;
+ Fri, 15 Jun 2018 10:13:38 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:adf:a158:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 10:13:17
+ -0700 (PDT)
+In-Reply-To: <2948115.KggauuSURZ@jernej-laptop>
+References: <20180612200036.21483-1-jernej.skrabec@siol.net>
+ <20180612200036.21483-12-jernej.skrabec@siol.net> <20180615083110.laruycabvyjmesmo@flea>
+ <2948115.KggauuSURZ@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sat, 16 Jun 2018 01:13:17 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66UFRKRF4_zbm8nQJYoOHb-iLbiU_0iYWep=WNiQDftMQ@mail.gmail.com>
+Message-ID: <CAGb2v66UFRKRF4_zbm8nQJYoOHb-iLbiU_0iYWep=WNiQDftMQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support
+ for tcon-top gate
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        David Airlie <airlied@linux.ie>,
+        Gustavo Padovan <gustavo@padovan.org>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Sean Paul <seanpaul@chromium.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some Dell servers can use dell-smbios but they don't support the
-token interface.  Make it optional.
+On Sat, Jun 16, 2018 at 12:41 AM, Jernej Škrabec
+<jernej.skrabec@siol.net> wrote:
+> Hi,
+>
+> Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
+>> Hi,
+>>
+>> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
+>> > TV TCONs connected to TCON TOP have to enable additional gate in order
+>> > to work.
+>> >
+>> > Add support for such TCONs.
+>> >
+>> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+>> > ---
+>> >
+>> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
+>> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
+>> >  2 files changed, 15 insertions(+)
+>> >
+>> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
+>> > 100644
+>> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+>> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
+>> >
+>> >             dev_err(dev, "Couldn't get the TCON bus clock\n");
+>> >             return PTR_ERR(tcon->clk);
+>> >
+>> >     }
+>> >
+>> > +
+>> > +   if (tcon->quirks->has_tcon_top_gate) {
+>> > +           tcon->top_clk = devm_clk_get(dev, "tcon-top");
+>> > +           if (IS_ERR(tcon->top_clk)) {
+>> > +                   dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
+>> > +                   return PTR_ERR(tcon->top_clk);
+>> > +           }
+>> > +           clk_prepare_enable(tcon->top_clk);
+>> > +   }
+>> > +
+>>
+>> Is it required for the TCON itself to operate, or does the TCON
+>> requires the TCON TOP, which in turn requires that clock to be
+>> functional?
+>>
+>> I find it quite odd to have a clock that isn't meant for a particular
+>> device to actually be wired to another device. I'm not saying this
+>> isn't the case, but it would be a first.
+>
+> Documentation doesn't say much about that gate. I did few tests and TCON
+> registers can be read and written even if TCON TOP TV TCON gate is disabled.
+> However, there is no image, as expected.
 
-Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
----
- drivers/platform/x86/dell-smbios-base.c | 35 ++++++++++++++++++++-------------
- 1 file changed, 21 insertions(+), 14 deletions(-)
+The R40 manual does include it in the diagram, on page 504. There's also a
+mux to select whether the clock comes directly from the CCU or the TV encoder
+(a feedback mode?). I assume this is the gate you are referring to here, in
+which case it is not a bus clock, but rather the TCON module or channel clock,
+strangely routed.
 
-diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
-index 446dbff..ac88032 100644
---- a/drivers/platform/x86/dell-smbios-base.c
-+++ b/drivers/platform/x86/dell-smbios-base.c
-@@ -212,6 +212,12 @@ int dell_smbios_call_filter(struct device *d,
- 	if ((buffer->cmd_class == CLASS_TOKEN_READ ||
- 	     buffer->cmd_class == CLASS_TOKEN_WRITE) &&
- 	     buffer->cmd_select < 3) {
-+		/* tokens enabled ? */
-+		if (!da_tokens) {
-+			dev_dbg(d, "no token support on this system\n");
-+			return -EINVAL;
-+		}
-+
- 		/* find the matching token ID */
- 		for (i = 0; i < da_num_tokens; i++) {
- 			if (da_tokens[i].location != buffer->input[0])
-@@ -315,6 +321,9 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
- {
- 	int i;
- 
-+	if (!da_tokens)
-+		return NULL;
-+
- 	for (i = 0; i < da_num_tokens; i++) {
- 		if (da_tokens[i].tokenID == tokenid)
- 			return &da_tokens[i];
-@@ -570,11 +579,6 @@ static int __init dell_smbios_init(void)
- 
- 	dmi_walk(find_tokens, NULL);
- 
--	if (!da_tokens)  {
--		pr_info("Unable to find dmi tokens\n");
--		return -ENODEV;
--	}
--
- 	ret = platform_driver_register(&platform_driver);
- 	if (ret)
- 		goto fail_platform_driver;
-@@ -588,13 +592,6 @@ static int __init dell_smbios_init(void)
- 	if (ret)
- 		goto fail_platform_device_add;
- 
--	/* duplicate tokens will cause problems building sysfs files */
--	zero_duplicates(&platform_device->dev);
--
--	ret = build_tokens_sysfs(platform_device);
--	if (ret)
--		goto fail_create_group;
--
- 	/* register backends */
- 	wmi = init_dell_smbios_wmi();
- 	if (wmi)
-@@ -605,7 +602,16 @@ static int __init dell_smbios_init(void)
- 	if (wmi && smm) {
- 		pr_err("No SMBIOS backends available (wmi: %d, smm: %d)\n",
- 			wmi, smm);
--		goto fail_sysfs;
-+		goto fail_create_group;
-+	}
-+
-+	if (da_tokens)  {
-+		/* duplicate tokens will cause problems building sysfs files */
-+		zero_duplicates(&platform_device->dev);
-+
-+		ret = build_tokens_sysfs(platform_device);
-+		if (ret)
-+			goto fail_sysfs;
- 	}
- 
- 	return 0;
-@@ -633,7 +639,8 @@ static void __exit dell_smbios_exit(void)
- 	exit_dell_smbios_smm();
- 	mutex_lock(&smbios_mutex);
- 	if (platform_device) {
--		free_group(platform_device);
-+		if (da_tokens)
-+			free_group(platform_device);
- 		platform_device_unregister(platform_device);
- 		platform_driver_unregister(&platform_driver);
- 	}
--- 
-2.7.4
+> More interestingly, I enabled test pattern directly in TCON to eliminate
+> influence of the mixer. As soon as I disabled that gate, test pattern on HDMI
+> screen was gone, which suggest that this gate influences something inside
+> TCON.
+>
+> Another test I did was that I moved enable/disable gate code to
+> sun4i_tcon_channel_set_status() and it worked just as well.
+>
+> I'll ask AW engineer what that gate actually does, but from what I saw, I
+> would say that most appropriate location to enable/disable TCON TOP TV TCON
+> gate is TCON driver. Alternatively, TCON TOP driver could check if any TV TCON
+> is in use and enable appropriate gate. However, that doesn't sound right to me
+> for some reason.
 
+If what I said above it true, then yes, the appropriate location to enable it
+is the TCON driver, but moreover, the representation of the clock tree should
+be fixed such that the TCON takes the clock from the TCON TOP as its channel/
+module clock instead. That way you don't need this patch, but you'd add another
+for all the clock routing.
+
+ChenYu
