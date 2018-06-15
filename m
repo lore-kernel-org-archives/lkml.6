@@ -7,121 +7,138 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9F142C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:03:19 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F0A99C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4800A208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:03:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A304F208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 04:04:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gB69DBtH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4800A208B8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="goc812Kb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A304F208B8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754419AbeFOEDR (ORCPT
+        id S1755503AbeFOEEu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 00:03:17 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42783 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750765AbeFOEDO (ORCPT
+        Fri, 15 Jun 2018 00:04:50 -0400
+Received: from mail-lf0-f65.google.com ([209.85.215.65]:34053 "EHLO
+        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750890AbeFOEEr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 00:03:14 -0400
-Received: by mail-wr0-f196.google.com with SMTP id w10-v6so8487457wrk.9;
-        Thu, 14 Jun 2018 21:03:14 -0700 (PDT)
+        Fri, 15 Jun 2018 00:04:47 -0400
+Received: by mail-lf0-f65.google.com with SMTP id o9-v6so12626352lfk.1;
+        Thu, 14 Jun 2018 21:04:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=EK5/NMSvCynvoOMsYkOc3HXGmChaQWVApBkgjnNsxGU=;
-        b=gB69DBtHLYGrJgKU2j7utepgfCCTgIBiuuHOAcd9Hr/qzVXFLZevyg5wG366mQTgG/
-         89ZevSyhAzR0Dxtb2nkO3jM/MYFOURygFDuWH4+yYfuknYEaI/R56Z+rIQ295uBqyZg/
-         G44C6E+SwonQWwqDCIaaXp5nQ2EW7NpSVBHDOVoEt60f/6hqCFSVXa5Khj1LKkMD35ZY
-         h3gopJL56QsBhoHxajjKjvHBzzZJ0QuoJwfNEQQBEEhH0PfcrxVV/6szk462UX9PBg+5
-         hmhsdeiW5vsCCf2bUlS+rBaimEtdm+78Ro48clQXE2cBSym9XLK//DdrQSWEssKh/Y+P
-         mgVQ==
+        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=VN32mAWuP/M7mDALBruH5lUHjVq3Gko9f32gJXgG3M0=;
+        b=goc812KbK7lMqqt/9kI5Wx4F9fPSGQt9YsYgdQF5vXkapj3ZKZwxZnglDWKUfwzKtg
+         jr3CbFEZCJgPG0RQi5MZcUjc0YpPj40m6WVTqKCVK9PQube8+AK/baSHybshi6iDx0zt
+         fkBPNqAP3EU60d65uw6mfFxly3Qj16zD+LmRfu9KU4mMaX7pz9V1uUedse8eSPphI4JW
+         PrljgkqinDySZXMQBA1loLwghgioGzv0YX9SPy56FSK1aKFcUmovA22tkKaYq++9y1g8
+         E/KhioJW0bg8yLWg2bL4mbPIa6xwS1298URE0Uybn6TvMNjRzxp+6JRY/mkC9byTS5s8
+         8jSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=EK5/NMSvCynvoOMsYkOc3HXGmChaQWVApBkgjnNsxGU=;
-        b=HBj+cXY9YijrOPkU50GA4cc/0PqqUmRNv9nxGXJ8dMn5nv4OvL3PsNKxE3WafywNdk
-         3qdMr/PtIlK0IrGs9oAVtFgpvgcEBJJse6PIjW2bCxxqfrMR5N8MHrISeWFlqZpzXa0r
-         DQfg9siSzu2WKy6+ZY3nwIIITqNVpE2h6xZlqQDlgqfVFLgHhsmHTb3bWfcZyjPd9yyC
-         1OxGPrhfSC9VXLitI/HRieXRoiEJFEqFQTFcbFbHThtuAj+m1U6cnflwehvECkOMr9Oz
-         d1g+zVjWSyO5WTA3KSqT0Y1MaGSJR/Pfp6Uptv5n1CmBir2UqWHwkJlXRm04zEDB7s6a
-         JlnQ==
-X-Gm-Message-State: APt69E2l70NG5ZgCuZCqM19o9K7hgKwVUXuNKLC3c7lm1aBYfZm4GqeT
-        QUr+o3BwN37NJMWhHhC/LhPv9XGIIRE2mByGkQc=
-X-Google-Smtp-Source: ADUXVKIjA/u6agXrUgfdCBnxfXQsV5DcJPyTFon8YeNSjx+3Byc1LOUPhgFKd48MWw+4uT9Mwf8hFZNJYuhkST2s8bs=
-X-Received: by 2002:adf:c7c3:: with SMTP id y3-v6mr15180wrg.230.1529035393563;
- Thu, 14 Jun 2018 21:03:13 -0700 (PDT)
+        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
+         :from:date:message-id:subject:to:cc;
+        bh=VN32mAWuP/M7mDALBruH5lUHjVq3Gko9f32gJXgG3M0=;
+        b=GSDXjTYabGDtnyc2an+7eompxtYFA9sXXPQq1Rd6FVsT0ysEa1kZO3T6qM/bcXbSwV
+         yd5xoKubZkgRv1ZHD9Dz7ivQB2lTDqsl1NoxouzyKD9Puhkph1P65qF8ZOpF7A0srYqk
+         VpEErmPJzqOw2QiTG4GBWaZ5dfVPL0M/Ye7GXLZVfCO7zk7cpQkM9aWSxuj/oX7hDNJJ
+         IXWPTy9qge7FQOYuU+XffwNH/HPJ9+paBB84otB2OUcSQ2yUY9W1fO74+IOUoe7Pbubb
+         fbfHdFqAf2Uvpe79KnSQc1M/n3AuYFVhNbRBntNx64h01pY6DiTSJsUuQbXBJjPC8qYc
+         yeWQ==
+X-Gm-Message-State: APt69E3k9WwDCK2zuflAa7pKvJPy8ao1njwKLA7fIVGm3DExbjjb4+W7
+        MYJ82ZGn3kuamr5ssBcmZoZr7R1jG9JdgSs4CiA=
+X-Google-Smtp-Source: ADUXVKJiAA3cI7tuYp4g+oOGUWiKjUnm7IyvqolQEx4c0nWkulwUNE34S7+SVUNEWixdt7SQ3/5O/UpSiEXlPNlkQUk=
+X-Received: by 2002:a2e:5b95:: with SMTP id m21-v6mr5187lje.79.1529035486137;
+ Thu, 14 Jun 2018 21:04:46 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a1c:97c6:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 21:03:12
- -0700 (PDT)
-In-Reply-To: <7a77829a-ba5f-8975-edb0-ffdf25dc71d6@oracle.com>
-References: <1529027847-29085-1-git-send-email-jianchao.w.wang@oracle.com>
- <CACVXFVMe4zSvfXfuSn0NFayeQqbmDwBBy1kcso=5iznT6EfpSA@mail.gmail.com>
- <3dd3f82a-5b68-f039-3a8a-7c5fe4e24c3e@oracle.com> <e5344293-b0b7-d2e0-f2e7-c0700efdfbe4@oracle.com>
- <CACVXFVMRCM6AvNJjAESbwOeJ_P5AZ+1C-7RfhE9L4u0T=_5h4Q@mail.gmail.com>
- <3970fdc7-52d9-d05b-4118-059d48bf4f2d@oracle.com> <CACVXFVMPAdFbX3x-KUjHCQhb_rT6p9ROYHg63aUtEqdbitEaKQ@mail.gmail.com>
- <7a77829a-ba5f-8975-edb0-ffdf25dc71d6@oracle.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Fri, 15 Jun 2018 12:03:12 +0800
-Message-ID: <CACVXFVO+GsQHCgoc6GuP1osnWprfeGrsikBgxj49+KiJoOsvBA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] block: export __blk_complete_request
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-        James Bottomley <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux SCSI List <linux-scsi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Received: by 2002:a19:b87:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 21:04:45 -0700 (PDT)
+Reply-To: sedat.dilek@gmail.com
+In-Reply-To: <CAKwvOdngs8k_T=nDKh8JYdAwwFoJRcCU0bZu0tJHQ+keZ5+RFQ@mail.gmail.com>
+References: <20180613210518.113983-1-ndesaulniers@google.com>
+ <20180613210518.113983-3-ndesaulniers@google.com> <b027a324-ffae-fd5e-d8a3-03934be91a2d@zytor.com>
+ <CAKwvOdngs8k_T=nDKh8JYdAwwFoJRcCU0bZu0tJHQ+keZ5+RFQ@mail.gmail.com>
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Fri, 15 Jun 2018 06:04:45 +0200
+Message-ID: <CA+icZUWTqyrHGj=OzUtb7Kry0x_dH0-C9d5CpmDgzgZc0a9=Lg@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] x86/asm: add _ASM_ARG* constants for argument
+ registers to <asm/asm.h>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     hpa@zytor.com, Andrew Morton <akpm@linux-foundation.org>,
+        mingo@redhat.com, Thomas Gleixner <tglx@linutronix.de>,
+        linux-efi@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        x86@kernel.org, virtualization@lists.linux-foundation.org,
+        Alistair Strachan <astrachan@google.com>,
+        Manoj Gupta <manojgupta@google.com>,
+        Greg Hackmann <ghackmann@google.com>, tstellar@redhat.com,
+        Kees Cook <keescook@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        geert@linux-m68k.org, Will Deacon <will.deacon@arm.com>,
+        mawilcox@microsoft.com, Arnd Bergmann <arnd@arndb.de>,
+        David Rientjes <rientjes@google.com>, acme@redhat.com,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        boris.ostrovsky@oracle.com, "J. Kiszka" <jan.kiszka@siemens.com>,
+        rostedt@goodmis.org, kirill.shutemov@linux.intel.com,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        akataria@vmware.com, brijesh.singh@amd.com,
+        Cao jin <caoj.fnst@cn.fujitsu.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        jarkko.sakkinen@linux.intel.com, jgross@suse.com,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Matthias Kaehlcke <mka@chromium.org>, thomas.lendacky@amd.com,
+        Thiebaud Weksteen <tweek@google.com>, mjg59@google.com,
+        joe@perches.com, andrea.parri@amarulasolutions.com,
+        "H. Peter Anvin" <hpa@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 11:26 AM, jianchao.wang
-<jianchao.w.wang@oracle.com> wrote:
-> Hi Ming
->
-> On 06/15/2018 11:20 AM, Ming Lei wrote:
->> On Fri, Jun 15, 2018 at 11:04 AM, jianchao.wang
->> <jianchao.w.wang@oracle.com> wrote:
->>> Hi Ming
->>>
->>> Thanks for your kindly response.
->>>
->>> On 06/15/2018 10:56 AM, Ming Lei wrote:
->>>>>> IMO, ref-counter is just to fix the blk-mq req life recycle issue.
->>>>>> It cannot replace the blk_mark_rq_complete which could avoid the race between
->>>>>> timeout and io completion path.
->>>>> The .timeout return BLK_EH_DONE doesn't always mean the request has been completed.
->>>>> Such as scsi-mid layer, its .timeout callback return BLK_EH_DONE but the timed out
->>>>> request is still in abort or eh process. What if a completion irq come during that ?
->>>> For blk-mq, it is avoided by the atomic state change in
->>>> __blk_mq_complete_request(),
->>>> that is why I mentioned the question in my last reply.
->>>>
->>>
->>> but blk_mq_check_expired doesn't do that.
->>> do I miss anything ?
+On Thu, Jun 14, 2018 at 10:59 PM, Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> On Thu, Jun 14, 2018 at 1:48 PM H. Peter Anvin <hpa@zytor.com> wrote:
 >>
->> Right, that is the difference between blk-mq and legacy now,
+>> On 06/13/18 14:05, Nick Desaulniers wrote:
+>> > From: "H. Peter Anvin" <hpa@linux.intel.com>
+>> >
+>> > i386 and x86-64 uses different registers for arguments; make them
+>> > available so we don't have to #ifdef in the actual code.
+>> >
+>> > Native size and specified size (q, l, w, b) versions are provided.
+>> >
+>> > Suggested-by: Sedat Dilek <sedat.dilek@gmail.com>
+>> > Signed-off-by: H. Peter Anvin <hpa@linux.intel.com>
+>> > Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+>>
+>> I still object to Suggested-by: here.  Sedat did a correction, which is
+>> a Reviewed-by:, but unless I'm completely out to sea, there was no
+>> suggestion on Sedat's part of this; and I had certainly not seen it when
+>> I wrote the code.
 >
-> Sorry, I cannot follow your point.
-> blk_mq_check_expired doesn't do a atmoc state change from IN-FLIGHT to COMPLETE.
-> __blk_mq_complete_request could still proceed to complete a timed out request
-> which is in scsi abort or eh process. Is it really OK ?
+> I'm fine with changing it from a Suggested-by to a Reviewed-by.  Can
+> you do that when you apply the set, or should I send a v6?
+>
 
-That is the idea of Christoph's patchset of 'complete requests from ->timeout',
-then drivers need to cover race between timeout and normal completeion.
+Hi,
 
-But at least the request won't be completed twice because of the atomic
-state change in __blk_mq_complete_request().
+this issue with Clang and Paravirt is such an ancient issue.
+Back to the days in 2011 before LLVMlinux was born, the project was
+called lll-project.
+Fact is the issue is today fixed.
+Not sure about the credits Suggested-by/Reviewed-by in the
+Linux-kernel development process.
+I did not count the number of compiler runs here.
+A Tested-by is OK for me.
+Anyway, the beast is dead, this counts for me.
 
-So what is your real concern about blk-mq's timeout?
-
-Thanks,
-Ming
+Regards,
+- Sedat -
