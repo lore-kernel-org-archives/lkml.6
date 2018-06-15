@@ -2,195 +2,142 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1381BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00475C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:26:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BAC7720864
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:25:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BAC7720864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id AE661208C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:26:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRRnwyVJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE661208C3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756690AbeFOWZc (ORCPT
+        id S1756724AbeFOW0E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 18:25:32 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:59556 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1756429AbeFOWZb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 18:25:31 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B67695821;
-        Fri, 15 Jun 2018 22:25:30 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5FB392166BB2;
-        Fri, 15 Jun 2018 22:25:30 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id w5FMPUME007217;
-        Fri, 15 Jun 2018 18:25:30 -0400
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id w5FMPTM8007213;
-        Fri, 15 Jun 2018 18:25:29 -0400
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Fri, 15 Jun 2018 18:25:29 -0400 (EDT)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] slub: fix failure when we delete and create a slab cache
-Message-ID: <alpine.LRH.2.02.1806151817130.6333@file01.intranet.prod.int.rdu2.redhat.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
+        Fri, 15 Jun 2018 18:26:04 -0400
+Received: from mail-qt0-f196.google.com ([209.85.216.196]:40882 "EHLO
+        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756429AbeFOW0D (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 18:26:03 -0400
+Received: by mail-qt0-f196.google.com with SMTP id q6-v6so10492629qtn.7
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 15:26:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=AQtI9HCegF1HRxom7L4r4ihjfxjqVJW6f7HX4X+3x08=;
+        b=bRRnwyVJUtbYpw3fRV7vmBdhdEXzrWVorp16WNGZ2H33G+6eC0h+Zda+qDaFe3AYya
+         X468uTuCX4W4XyoIlK1akgDPlZlggTpklnh2Vdjf0SFTFKuoDBHuw/ZmSGkEeRuGH3/k
+         cOc+5OvabLZI1nzenf5yzTe+LtoaWvh3aLdnDGj1kDk789InJuBPdyp19wNd4P0yQCEc
+         eGf33Qhkyb8g/C2w3xRc4bYYLlVJwckIYmuoEuXGiI1Se1DiiO47G7Wm382Tzla1YE3t
+         xvMgp1ycQFTNwj+58zAifPy8+zhlQW1j6V8db3ulwzqgTQxREPTd893F339T0Wg67OgN
+         4z2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=AQtI9HCegF1HRxom7L4r4ihjfxjqVJW6f7HX4X+3x08=;
+        b=YyPbtz0X6D7MuQLoN8MIKB63DhT3vMcEK1DpQcVYF3vGArcTzvW7E0SGD+Jnxm0wz5
+         hcc1VKKBWtBxl6ygHc/7QFij5zNbmzBgigl5KC3wWxnAGDFEJu1s7FwYzlpTPF3WxJVL
+         GSeVpLlHWYMKyrA91/LSEi6uYEAH+SzOQFb9Lt7diMv8ueyrh0XrEUjuZp/eYlksRaeX
+         ypmjVOEhNhAV42ySjqB+GkRnV44/laXoVY4Nxg3IaYIhd1m7D8A6VXnD559rYJbzpJIe
+         5iSw+RPUkRejvnWw6LBY0EXdsm6cESvGaIwiZw/wkp4AKNJPZLspgwFXfsLtx3jI6pCj
+         k51w==
+X-Gm-Message-State: APt69E3zY7zQf94P75TymcC3G0NTO8BLlXoJESgrjKuhwHbp9ywt3w7y
+        1GRczu6jUc3z8ISkHVZbZMSDLyGm3v10pEmP5F8=
+X-Google-Smtp-Source: ADUXVKJvbahqpmkU7gaCMUtwk1MiJQwRnLRkuNlcOZ1HxGeOw1cLJRj1/f3KljIXkCIboHXMBt3FVdlQt5x8u16afRU=
+X-Received: by 2002:aed:3e51:: with SMTP id m17-v6mr3262971qtf.283.1529101562629;
+ Fri, 15 Jun 2018 15:26:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 15 Jun 2018 22:25:30 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 15 Jun 2018 22:25:30 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mpatocka@redhat.com' RCPT:''
+Received: by 2002:ac8:7190:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 15:26:01
+ -0700 (PDT)
+In-Reply-To: <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
+References: <20180606194144.16990-1-malat@debian.org> <CA+8MBbKj4A5kh=hE0vcadzD+=cEAFY7OCWFCzvubu6cWULCJ0A@mail.gmail.com>
+ <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
+From:   Tony Luck <tony.luck@gmail.com>
+Date:   Fri, 15 Jun 2018 15:26:01 -0700
+Message-ID: <CA+8MBbJyXC7YmnjG-k+mahC0ZiSgZy=EoiO0N5gvw8S4afLqng@mail.gmail.com>
+Subject: Re: [PATCH] mm/memblock: add missing include <linux/bootmem.h>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Mathieu Malaterre <malat@debian.org>, linux-mm@kvack.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the kernel 4.17 I removed some code from dm-bufio that did slab cache
-merging (21bb13276768) - both slab and slub support merging caches with
-identical attributes, so dm-bufio now just calls kmem_cache_create and
-relies on implicit merging.
+On Fri, Jun 15, 2018 at 12:17 PM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
 
-This uncovered a bug in the slub subsystem - if we delete a cache and
-immediatelly create another cache with the same attributes, it fails
-because of duplicate filename in /sys/kernel/slab/. The slub subsystem
-offloads freeing the cache to a workqueue - and if we create the new cache
-before the workqueue runs, it complains because of duplicate filename in
-sysfs.
+> Huh.  How did that ever work.  I guess it's either this:
+>
+> --- a/mm/Makefile~a
+> +++ a/mm/Makefile
+> @@ -45,6 +45,7 @@ obj-y += init-mm.o
+>
+>  ifdef CONFIG_NO_BOOTMEM
+>         obj-y           += nobootmem.o
+> +       obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
+>  else
+>         obj-y           += bootmem.o
+>  endif
+> @@ -53,7 +54,6 @@ obj-$(CONFIG_ADVISE_SYSCALLS) += fadvise
+>  ifdef CONFIG_MMU
+>         obj-$(CONFIG_ADVISE_SYSCALLS)   += madvise.o
+>  endif
+> -obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
+>
+>  obj-$(CONFIG_SWAP)     += page_io.o swap_state.o swapfile.o swap_slots.o
+>  obj-$(CONFIG_FRONTSWAP)        += frontswap.o
 
-This patch fixes the bug by moving the call of kobject_del from 
-sysfs_slab_remove_workfn to shutdown_cache. kobject_del must be called 
-while we hold slab_mutex - so that the sysfs entry is deleted before a 
-cache with the same attributes could be created.
+That option gave me a boatload of undefined symbols.
 
+> or this:
+>
+> --- a/include/linux/bootmem.h~a
+> +++ a/include/linux/bootmem.h
+> @@ -154,7 +154,7 @@ extern void *__alloc_bootmem_low_node(pg
+>         __alloc_bootmem_low_node(pgdat, x, PAGE_SIZE, 0)
+>
+>
+> -#if defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM)
+> +#if defined(CONFIG_HAVE_MEMBLOCK)
+>
+>  /* FIXME: use MEMBLOCK_ALLOC_* variants here */
+>  #define BOOTMEM_ALLOC_ACCESSIBLE       0
 
-Running device-mapper-test-suite with:
-  dmtest run --suite thin-provisioning -n /commit_failure_causes_fallback/
+That compiles cleanly, but didn't boot:
 
-triggers:
-
-[  119.618958] Buffer I/O error on dev dm-0, logical block 1572848, async page read
-[  119.686224] device-mapper: thin: 253:1: metadata operation 'dm_pool_alloc_data_block' failed: error = -5
-[  119.695821] device-mapper: thin: 253:1: aborting current metadata transaction
-[  119.703255] sysfs: cannot create duplicate filename '/kernel/slab/:a-0000144'
-[  119.710394] CPU: 2 PID: 1037 Comm: kworker/u48:1 Not tainted 4.17.0.snitm+ #25
-[  119.717608] Hardware name: Supermicro SYS-1029P-WTR/X11DDW-L, BIOS 2.0a 12/06/2017
-[  119.725177] Workqueue: dm-thin do_worker [dm_thin_pool]
-[  119.730401] Call Trace:
-[  119.732856]  dump_stack+0x5a/0x73
-[  119.736173]  sysfs_warn_dup+0x58/0x70
-[  119.739839]  sysfs_create_dir_ns+0x77/0x80
-[  119.743939]  kobject_add_internal+0xba/0x2e0
-[  119.748210]  kobject_init_and_add+0x70/0xb0
-[  119.752399]  ? sysfs_slab_add+0x101/0x250
-[  119.756409]  sysfs_slab_add+0xb1/0x250
-[  119.760161]  __kmem_cache_create+0x116/0x150
-[  119.764436]  ? number+0x2fb/0x340
-[  119.767755]  ? _cond_resched+0x15/0x30
-[  119.771508]  create_cache+0xd9/0x1f0
-[  119.775085]  kmem_cache_create_usercopy+0x1c1/0x250
-[  119.779965]  kmem_cache_create+0x18/0x20
-[  119.783894]  dm_bufio_client_create+0x1ae/0x410 [dm_bufio]
-[  119.789380]  ? dm_block_manager_alloc_callback+0x20/0x20 [dm_persistent_data]
-[  119.796509]  ? kmem_cache_alloc_trace+0xae/0x1d0
-[  119.801131]  dm_block_manager_create+0x5e/0x90 [dm_persistent_data]
-[  119.807397]  __create_persistent_data_objects+0x38/0x940 [dm_thin_pool]
-[  119.814008]  dm_pool_abort_metadata+0x64/0x90 [dm_thin_pool]
-[  119.819669]  metadata_operation_failed+0x59/0x100 [dm_thin_pool]
-[  119.825673]  alloc_data_block.isra.53+0x86/0x180 [dm_thin_pool]
-[  119.831592]  process_cell+0x2a3/0x550 [dm_thin_pool]
-[  119.836558]  ? mempool_alloc+0x6f/0x180
-[  119.840400]  ? u32_swap+0x10/0x10
-[  119.843717]  ? sort+0x17b/0x270
-[  119.846863]  ? u32_swap+0x10/0x10
-[  119.850181]  do_worker+0x28d/0x8f0 [dm_thin_pool]
-[  119.854890]  ? move_linked_works+0x6f/0xa0
-[  119.858989]  process_one_work+0x171/0x370
-[  119.862999]  worker_thread+0x49/0x3f0
-[  119.866669]  kthread+0xf8/0x130
-[  119.869813]  ? max_active_store+0x80/0x80
-[  119.873827]  ? kthread_bind+0x10/0x10
-[  119.877493]  ret_from_fork+0x35/0x40
-[  119.881076] kobject_add_internal failed for :a-0000144 with -EEXIST, don't try to register things with the same name in the same directory.
-[  119.893580] kmem_cache_create(dm_bufio_buffer-16) failed with error -17
+ [<a000000100029910>] ia64_fault+0xf0/0xe00
+                                sp=e0000004fb37f8a0 bsp=e0000004fb371438
+ [<a00000010000c920>] ia64_leave_kernel+0x0/0x270
+                                sp=e0000004fb37fba0 bsp=e0000004fb371438
+hid-generic 0003:0624:0200.0001: input: USB HID v1.10 Mouse [Avocent
+USB_AMIQ] on usb-0000:00:1d.0-2/input1
+ [<a00000010020b100>] pcpu_find_block_fit+0x20/0x300
+                                sp=e0000004fb37fd70 bsp=e0000004fb3713a8
+ [<a00000010020ee70>] pcpu_alloc+0x630/0xc40
+                                sp=e0000004fb37fd90 bsp=e0000004fb371308
+input: Avocent USB_AMIQ as
+/devices/pci0000:00/0000:00:1d.0/usb4/4-2/4-2:1.0/0003:0624:0200.0002/input/input3
+ [<a00000010020f520>] __alloc_percpu+0x40/0x60
+                                sp=e0000004fb37fda0 bsp=e0000004fb3712e0
+ [<a0000001002fb4c0>] alloc_vfsmnt+0x1c0/0x4e0
+                                sp=e0000004fb37fda0 bsp=e0000004fb371280
+ [<a000000100303d10>] vfs_kern_mount+0x30/0x2a0
+                                sp=e0000004fb37fdf0 bsp=e0000004fb371238
 
 
-Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
-Reported-by: Mike Snitzer <snitzer@redhat.com>
-Tested-by: Mike Snitzer <snitzer@redhat.com>
-Cc: stable@vger.kernel.org
+> and I'm not sure which.  I think I'll just revert $subject for now.
 
-Index: linux-2.6/mm/slub.c
-===================================================================
---- linux-2.6.orig/mm/slub.c
-+++ linux-2.6/mm/slub.c
-@@ -5694,7 +5694,6 @@ static void sysfs_slab_remove_workfn(str
- 	kset_unregister(s->memcg_kset);
- #endif
- 	kobject_uevent(&s->kobj, KOBJ_REMOVE);
--	kobject_del(&s->kobj);
- out:
- 	kobject_put(&s->kobj);
- }
-@@ -5779,6 +5778,12 @@ static void sysfs_slab_remove(struct kme
- 	schedule_work(&s->kobj_remove_work);
- }
- 
-+void sysfs_slab_unlink(struct kmem_cache *s)
-+{
-+	if (slab_state >= FULL)
-+		kobject_del(&s->kobj);
-+}
-+
- void sysfs_slab_release(struct kmem_cache *s)
- {
- 	if (slab_state >= FULL)
-Index: linux-2.6/include/linux/slub_def.h
-===================================================================
---- linux-2.6.orig/include/linux/slub_def.h
-+++ linux-2.6/include/linux/slub_def.h
-@@ -156,8 +156,12 @@ struct kmem_cache {
- 
- #ifdef CONFIG_SYSFS
- #define SLAB_SUPPORTS_SYSFS
-+void sysfs_slab_unlink(struct kmem_cache *);
- void sysfs_slab_release(struct kmem_cache *);
- #else
-+static inline void sysfs_slab_unlink(struct kmem_cache *s)
-+{
-+}
- static inline void sysfs_slab_release(struct kmem_cache *s)
- {
- }
-Index: linux-2.6/mm/slab_common.c
-===================================================================
---- linux-2.6.orig/mm/slab_common.c
-+++ linux-2.6/mm/slab_common.c
-@@ -566,10 +566,14 @@ static int shutdown_cache(struct kmem_ca
- 	list_del(&s->list);
- 
- 	if (s->flags & SLAB_TYPESAFE_BY_RCU) {
-+#ifdef SLAB_SUPPORTS_SYSFS
-+		sysfs_slab_unlink(s);
-+#endif
- 		list_add_tail(&s->list, &slab_caches_to_rcu_destroy);
- 		schedule_work(&slab_caches_to_rcu_destroy_work);
- 	} else {
- #ifdef SLAB_SUPPORTS_SYSFS
-+		sysfs_slab_unlink(s);
- 		sysfs_slab_release(s);
- #else
- 		slab_kmem_cache_release(s);
+Reverting is a good short term fix.
+
+-Tony
