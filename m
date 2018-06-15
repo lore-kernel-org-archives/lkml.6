@@ -2,330 +2,144 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68021C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:15:09 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EE48FC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D93B208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:15:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D93B208B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id A413A208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:16:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iAVg92Yq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A413A208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756012AbeFOIPG (ORCPT
+        id S1756028AbeFOIQB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:15:06 -0400
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57840 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755755AbeFOIPE (ORCPT
+        Fri, 15 Jun 2018 04:16:01 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:53835 "EHLO
+        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755819AbeFOIP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:15:04 -0400
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 2CA268051C; Fri, 15 Jun 2018 10:15:03 +0200 (CEST)
-Date:   Fri, 15 Jun 2018 10:15:01 +0200
-From:   Pavel Machek <pavel@ucw.cz>
-To:     kernel list <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
-        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
-Subject: [RFC] cpcap: allow modifying voltages and currents
-Message-ID: <20180615081501.GA31594@amd>
+        Fri, 15 Jun 2018 04:15:58 -0400
+Received: by mail-wm0-f67.google.com with SMTP id x6-v6so2112156wmc.3;
+        Fri, 15 Jun 2018 01:15:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vXDO+ySUROgoAJpFoMVL6sZVzd79uv2B1Oh0umIU2es=;
+        b=iAVg92Yqn4Vzl0sEzLykSlW7U6v3o9YEH66yfiLwWWV5xkflMKAWua4q7vJDj5OWR3
+         MGDAXjlc+bgLA6VZ2j7ifaMoKf+e5TgxHwaG4PHrLjTgblhCZGYpF+xnP7hX7yXFD7e4
+         4HVJ/PSly/RobV0YVsvtH4pIb6jYG/jjhLODo/Y10EdX943dEMgHRXNsh0E9PCfQEyVe
+         PfYh/2yfX5/h+4J8DdHmXHQLqusBF5RMsr6ncbxFUFNIXYcsT5uPlT7KrbYZXEfycLh0
+         8zbhnv23Tuac3DQm1BNHi41xkO4Ryspu+AV3QHpFmJX31yvRGzFrbBJRnzLTzr7SLcDO
+         ePiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vXDO+ySUROgoAJpFoMVL6sZVzd79uv2B1Oh0umIU2es=;
+        b=I9SgUso02zcyqwvzX0cif/Mt8e8kMplgAX4nOMDWBKrk7JNBCTGyh9bEBsGD4kLz/0
+         kvSCzcbpks+ZE6uzDpJJI6TSKSkpygIEdWOgskPPa8VsnIKGNd9cEvUpWZ8UHR5iA1VR
+         hMvX2oUcptWi/Hd66FRYQqYDXONmfnW3CuD3ttFfFe9zeIe6zd9itLzhv+p/ym4FNE79
+         p9jwu2o2BF5rHSGPDBRtLdlksTTUlgIW0/MY7KM2r1gxsPJ8QETRcdP5QcKKzEfnZ/9r
+         VGLv0ECQB39Vk3v9uyo4NYFXqkjCiBXE+bG8pEr3VRToajA84YbWgSWNSPg9/VBYqgl+
+         ARzg==
+X-Gm-Message-State: APt69E0ONM0pi5dzlau1AkCuQ90CAiilkf/zEHHQEC4hetRTR4qXi75X
+        L6Ms3jTyHqiWmn6XfL89Km8=
+X-Google-Smtp-Source: ADUXVKKcZuh6SmEnL3sx6L4xNFdNlhxrfMjFwxsNhsrAuNnHU+Nff8Or2jCes9sNzp+GAvYCjGj6wg==
+X-Received: by 2002:a1c:dac2:: with SMTP id r185-v6mr415321wmg.31.1529050557236;
+        Fri, 15 Jun 2018 01:15:57 -0700 (PDT)
+Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
+        by smtp.googlemail.com with ESMTPSA id a203-v6sm1357743wme.46.2018.06.15.01.15.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Jun 2018 01:15:56 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 10:15:54 +0200
+From:   Corentin Labbe <clabbe.montjoie@gmail.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     davem@davemloft.net, herbert@gondor.apana.org.au, wens@csie.org,
+        linux-arm-kernel@lists.infradead.org, linux-crypto@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH] crypto: sun4i-ss: prevent deadlock on emulated hardware
+Message-ID: <20180615081554.GA3047@Red>
+References: <20180614193659.29261-1-clabbe.montjoie@gmail.com>
+ <20180615075754.b3ivyagjsomiafwk@flea>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180615075754.b3ivyagjsomiafwk@flea>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jun 15, 2018 at 09:57:54AM +0200, Maxime Ripard wrote:
+> On Thu, Jun 14, 2018 at 09:36:59PM +0200, Corentin Labbe wrote:
+> > Running a qemu emulated cubieboard with sun4i-ss driver enabled led to a never
+> > ending boot.
+> > This is due to sun4i-ss deadlocked and taking all cpu in an infinite loop.
+> > Since the crypto hardware is not implemented, all registers are read as 0.
+> > So sun4i-ss will never progress in any operations. (TX_CNT being always 0)
+> > 
+> > The first idea is to add a "TX_CNT always zero timeout" but this made cipher/hash loops
+> > more complex and prevent a case that never happen on real hardware.
+> > 
+> > The best way to fix is to check at probe time if we run on a virtual
+> > machine with hardware emulated but non-implemented and prevent
+> > sun4i-ss to be loaded in that case.
+> > Letting sun4i-ss to load is useless anyway since all crypto algorithm will be
+> > disabled since they will fail crypto selftests.
+> > 
+> > Tested-on: qemu-cubieboard
+> > Tested-on: cubieboard2
+> > 
+> > Signed-off-by: Corentin Labbe <clabbe.montjoie@gmail.com>
+> > ---
+> >  drivers/crypto/sunxi-ss/sun4i-ss-core.c | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> > 
+> > diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-core.c b/drivers/crypto/sunxi-ss/sun4i-ss-core.c
+> > index a81d89b3b7d8..a178e80adcf3 100644
+> > --- a/drivers/crypto/sunxi-ss/sun4i-ss-core.c
+> > +++ b/drivers/crypto/sunxi-ss/sun4i-ss-core.c
+> > @@ -341,9 +341,18 @@ static int sun4i_ss_probe(struct platform_device *pdev)
+> >  	 * I expect to be a sort of Security System Revision number.
+> >  	 * Since the A80 seems to have an other version of SS
+> >  	 * this info could be useful
+> > +	 * Detect virtual machine with non-implemented hardware
+> > +	 * (qemu-cubieboard) by checking the register value after a write to it.
+> > +	 * On non-implemented hardware, all registers are read as 0.
+> > +	 * On real hardware we should have a value > 0.
+> >  	 */
+> >  	writel(SS_ENABLED, ss->base + SS_CTL);
+> >  	v = readl(ss->base + SS_CTL);
+> > +	if (!v) {
+> > +		dev_err(&pdev->dev, "Qemu with non-implemented SS detected.\n");
+> > +		err = -ENODEV;
+> > +		goto error_rst;
+> > +	}
+> 
+> This is wrong way to tackle the issue. There's multiple reason why
+> this could happen (for example the device not being clocked, or
+> maintained in reset). There's nothing specific about qemu here, and
+> the fundamental issue isn't that the device isn't functional in qemu,
+> it's that qemu lies about which hardware it can emulate in the DT it
+> passes to the kernel.
+> 
+> There's no way this can scale, alone from the fact that qemu should
+> patch the DT according to what it can do. Not trying to chase after
+> each and every device that is broken in qemu.
+> 
+> NAK.
+> 
 
---J2SCkAp4GZ/dPZZf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My fix detect also when the device is badly clocked.
+So since it could fix problem unrelated to qemu, I will send a V2 with updated comment.
 
-Hi!
-
-This allows user to disable the green LED, so that it can be used for
-other notifications. It also allows him to set lower voltage limits,
-and adjust current: lower current and voltage limits will result in
-longer battery lifetime.
-
-Currently I'm using
-
-POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT,
-POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
-POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
-
-attributes to control it. Do we have something suitable for LED
-control? Are the current/voltage limits ok to use?
-
-Best regards,
-								Pavel
-
-
-diff --git a/drivers/power/supply/cpcap-battery.c b/drivers/power/supply/cp=
-cap-battery.c
-index 98ba078..839e365 100644
---- a/drivers/power/supply/cpcap-battery.c
-+++ b/drivers/power/supply/cpcap-battery.c
-@@ -3,7 +3,7 @@
-  *
-  * Copyright (C) 2017 Tony Lindgren <tony@atomide.com>
-  *
-- * Some parts of the code based on earlie Motorola mapphone Linux kernel
-+ * Some parts of the code based on earlier Motorola mapphone Linux kernel
-  * drivers:
-  *
-  * Copyright (C) 2009-2010 Motorola, Inc.
-diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/supply/cp=
-cap-charger.c
-index e4905be..7de07ae 100644
---- a/drivers/power/supply/cpcap-charger.c
-+++ b/drivers/power/supply/cpcap-charger.c
-@@ -93,6 +93,17 @@
- #define CPCAP_REG_CRM_VCHRG_4V42	CPCAP_REG_CRM_VCHRG(0xe)
- #define CPCAP_REG_CRM_VCHRG_4V44	CPCAP_REG_CRM_VCHRG(0xf)
-=20
-+static int voltage_to_register(int microvolt)
-+{
-+	switch (microvolt/1000) {
-+	case 3800: return CPCAP_REG_CRM_VCHRG_3V80;
-+	case 4100: return CPCAP_REG_CRM_VCHRG_4V10;
-+	case 4200: return CPCAP_REG_CRM_VCHRG_4V20;
-+	case 4350: return CPCAP_REG_CRM_VCHRG_4V35;
-+	default: return -EINVAL;
-+	}
-+}
-+
- /*
-  * CPCAP_REG_CRM charge currents. These seem to match MC13783UG.pdf
-  * values in "Table 8-3. Charge Path Regulator Current Limit
-@@ -116,6 +127,18 @@
- #define CPCAP_REG_CRM_ICHRG_1A596	CPCAP_REG_CRM_ICHRG(0xe)
- #define CPCAP_REG_CRM_ICHRG_NO_LIMIT	CPCAP_REG_CRM_ICHRG(0xf)
-=20
-+static int current_to_register(int microamp)
-+{
-+	switch (microamp/1000) {
-+	case 0:    return CPCAP_REG_CRM_ICHRG_0A000;
-+	case 70:   return CPCAP_REG_CRM_ICHRG_0A070;
-+	case 177:  return CPCAP_REG_CRM_ICHRG_0A177;
-+	case 532:  return CPCAP_REG_CRM_ICHRG_0A532;
-+	case 1596: return CPCAP_REG_CRM_ICHRG_1A596;
-+	default: return -EINVAL;
-+	}
-+}
-+
- enum {
- 	CPCAP_CHARGER_IIO_BATTDET,
- 	CPCAP_CHARGER_IIO_VOLTAGE,
-@@ -142,6 +165,10 @@ struct cpcap_charger_ddata {
- 	atomic_t active;
-=20
- 	int status;
-+
-+	int led_enabled;
-+	int limit_current;
-+	int limit_voltage;
- };
-=20
- struct cpcap_interrupt_desc {
-@@ -163,11 +190,17 @@ struct cpcap_charger_ints_state {
- 	bool battdetb;
- };
-=20
-+#define POWER_SUPPLY_PROP_INDICATION POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT
-+
- static enum power_supply_property cpcap_charger_props[] =3D {
- 	POWER_SUPPLY_PROP_STATUS,
- 	POWER_SUPPLY_PROP_ONLINE,
- 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
- 	POWER_SUPPLY_PROP_CURRENT_NOW,
-+
-+        POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
-+	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
-+	POWER_SUPPLY_PROP_INDICATION,
- };
-=20
- static bool cpcap_charger_battery_found(struct cpcap_charger_ddata *ddata)
-@@ -229,6 +262,7 @@ static int cpcap_charger_get_property(struct power_supp=
-ly *psy,
- 		val->intval =3D ddata->status;
- 		break;
- 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
-+		/* FIXME? Display voltage even when not charging? */
- 		if (ddata->status =3D=3D POWER_SUPPLY_STATUS_CHARGING)
- 			val->intval =3D cpcap_charger_get_charge_voltage(ddata) *
- 				1000;
-@@ -245,6 +279,50 @@ static int cpcap_charger_get_property(struct power_sup=
-ply *psy,
- 	case POWER_SUPPLY_PROP_ONLINE:
- 		val->intval =3D ddata->status =3D=3D POWER_SUPPLY_STATUS_CHARGING;
- 		break;
-+	=09
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
-+		// -> charger -- current limit
-+		val->intval =3D ddata->limit_current;
-+		break;
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
-+		val->intval =3D ddata->limit_voltage;
-+		break;
-+	case POWER_SUPPLY_PROP_INDICATION:
-+		val->intval =3D ddata->led_enabled;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
-+static int cpcap_charger_set_property(struct power_supply *psy,
-+				      enum power_supply_property psp,
-+				      const union power_supply_propval *val)
-+{
-+	struct cpcap_charger_ddata *ddata =3D dev_get_drvdata(psy->dev.parent);
-+
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
-+		printk("charge current: %d\n", val->intval);
-+		if (current_to_register(val->intval) < 0)
-+			return -EINVAL;
-+		ddata->limit_current =3D val->intval;
-+		schedule_delayed_work(&ddata->detect_work, 0);
-+		break;
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
-+		printk("charge voltage: %d\n", val->intval);
-+		if (voltage_to_register(val->intval) < 0)
-+			return -EINVAL;
-+		ddata->limit_voltage =3D val->intval;
-+		schedule_delayed_work(&ddata->detect_work, 0);
-+		break;
-+	case POWER_SUPPLY_PROP_INDICATION:
-+		printk("hack indication: %d\n", val->intval);
-+		ddata->led_enabled =3D !!val->intval;
-+		schedule_delayed_work(&ddata->detect_work, 0);
-+		break;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -296,7 +374,7 @@ static int cpcap_charger_set_state(struct cpcap_charger=
-_ddata *ddata,
- 	}
-=20
- 	error =3D regmap_update_bits(ddata->reg, CPCAP_REG_CRM, 0x3fff,
--				   CPCAP_REG_CRM_CHRG_LED_EN |
-+				   ddata->led_enabled * CPCAP_REG_CRM_CHRG_LED_EN |
- 				   trickle_current |
- 				   CPCAP_REG_CRM_FET_OVRD |
- 				   CPCAP_REG_CRM_FET_CTRL |
-@@ -440,16 +518,38 @@ static void cpcap_usb_detect(struct work_struct *work)
- 		return;
-=20
- 	if (cpcap_charger_vbus_valid(ddata) && s.chrgcurr1) {
--		int max_current;
-+		int m_voltage, m_current;
-+		int reg_current, reg_voltage;
-=20
- 		if (cpcap_charger_battery_found(ddata))
--			max_current =3D CPCAP_REG_CRM_ICHRG_1A596;
-+			m_current =3D 1596000;
- 		else
--			max_current =3D CPCAP_REG_CRM_ICHRG_0A532;
-+			m_current =3D 532000;
-+
-+		if (m_current > ddata->limit_current)
-+			m_current =3D ddata->limit_current;
-+	=09
-+		m_voltage =3D 4350000;
-+		if (m_voltage > ddata->limit_voltage)
-+			m_voltage =3D ddata->limit_voltage;
-+
-+		printk("Charging, %d uV, %d uA\n", m_voltage, m_current);
-+	=09
-+		reg_voltage =3D voltage_to_register(m_voltage);
-+		if (reg_voltage < 0) {
-+			dev_err(ddata->dev, "%s impossible voltage\n", __func__);
-+			return;
-+		}
-+		=09
-+		reg_current =3D current_to_register(m_current);
-+		if (reg_current < 0) {
-+			dev_err(ddata->dev, "%s impossible current\n", __func__);
-+			return;
-+		}
-=20
- 		error =3D cpcap_charger_set_state(ddata,
--						CPCAP_REG_CRM_VCHRG_4V35,
--						max_current, 0);
-+						reg_voltage,
-+						reg_current, 0);
- 		if (error)
- 			goto out_err;
- 	} else {
-@@ -579,12 +679,27 @@ static int cpcap_charger_init_iio(struct cpcap_charge=
-r_ddata *ddata)
- 	return error;
- }
-=20
-+static int cpcap_charger_property_is_writeable(struct power_supply *psy,
-+						 enum power_supply_property psp)
-+{
-+	switch (psp) {
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
-+	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
-+	case POWER_SUPPLY_PROP_INDICATION:
-+		return 1;
-+	default:
-+		return 0;
-+	}
-+}
-+
- static const struct power_supply_desc cpcap_charger_usb_desc =3D {
- 	.name		=3D "usb",
- 	.type		=3D POWER_SUPPLY_TYPE_USB,
- 	.properties	=3D cpcap_charger_props,
- 	.num_properties	=3D ARRAY_SIZE(cpcap_charger_props),
- 	.get_property	=3D cpcap_charger_get_property,
-+	.set_property	=3D cpcap_charger_set_property,
-+	.property_is_writeable =3D cpcap_charger_property_is_writeable,
- };
-=20
- #ifdef CONFIG_OF
-@@ -619,6 +734,10 @@ static int cpcap_charger_probe(struct platform_device =
-*pdev)
- 	if (!ddata->reg)
- 		return -ENODEV;
-=20
-+	ddata->limit_current =3D 1596000;
-+	ddata->limit_voltage =3D 4350000;
-+	ddata->led_enabled =3D 1;
-+
- 	INIT_LIST_HEAD(&ddata->irq_list);
- 	INIT_DELAYED_WORK(&ddata->detect_work, cpcap_usb_detect);
- 	INIT_DELAYED_WORK(&ddata->vbus_work, cpcap_charger_vbus_work);
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---J2SCkAp4GZ/dPZZf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlsjdYUACgkQMOfwapXb+vJX1ACdG+7fQ/CJxpGJ5pqxIuPKO6b6
-VtcAn1dvIpWQH5HMBwIWhMZppCyWMgku
-=9k2Z
------END PGP SIGNATURE-----
-
---J2SCkAp4GZ/dPZZf--
+Regards
