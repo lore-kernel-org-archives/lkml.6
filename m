@@ -2,239 +2,254 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02D39C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:46:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 138DEC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:48:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EB6C208DF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Ec3Zf6N0";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZbDIG2CE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EB6C208DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id AAA0F208DF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:48:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAA0F208DF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756580AbeFOVqT (ORCPT
+        id S1756606AbeFOVr7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 17:46:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:53192 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753761AbeFOVqR (ORCPT
+        Fri, 15 Jun 2018 17:47:59 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:51142 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753762AbeFOVr6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 17:46:17 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 14677607E4; Fri, 15 Jun 2018 21:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529099177;
-        bh=oAyTSlrfMW7Tjgf1HO2NG4UEFdjFRLZPk0e0MKBubDM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Ec3Zf6N0Bgc/DdwyqKqhrPLZlsAjbOkm0wEcn4MLWtpql7Va6VBjb8gbDdYEGRZT+
-         S6SL04PHUJfiDiu5Kog+BW6D6eFmyUEY/uXcddb5Qc1VDmFIveGeTbw7f7TUizwDqo
-         mI/2v2bxrTGXL/wYM9ZgWjss+Ou6a6S10GzTW3Nk=
-Received: from [10.46.160.165] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: collinsd@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id D48EA60540;
-        Fri, 15 Jun 2018 21:46:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529099176;
-        bh=oAyTSlrfMW7Tjgf1HO2NG4UEFdjFRLZPk0e0MKBubDM=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZbDIG2CEoxhg7OInwd6qhRyOl4MYDhp/RQQFBMXUErio8kWQTedUN8kTW7NrnOVpi
-         uqOOkvmx/wikXgXtvtvMoVZ0pqdPkxm/gDMmonPKvVYkavlr9x8OVI9RKjZ8Ipa4Lc
-         rhvowYIroOIIL/M627K6kI23+0u/nRth8QDm83no=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org D48EA60540
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=collinsd@codeaurora.org
-Subject: Re: [PATCH v3 6/7] soc: qcom: Add RPMh Power domain driver
-To:     Ulf Hansson <ulf.hansson@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20180612044052.4402-1-rnayak@codeaurora.org>
- <20180612044052.4402-7-rnayak@codeaurora.org>
- <d438946d-3d6f-4436-27c7-3eae4559ec53@codeaurora.org>
- <f6b166ee-538f-c8b7-3be5-57c20a599d47@codeaurora.org>
- <bd8999bd-a3ae-b7e2-a805-b31d38571ec6@codeaurora.org>
- <CAPDyKFrz=+nnLS+YnrSKzo_UXVgKLoTvH5XQL1o_EV5u3zvw9g@mail.gmail.com>
-From:   David Collins <collinsd@codeaurora.org>
-Message-ID: <9193c5c7-78a9-f57c-4529-2346ddaafc13@codeaurora.org>
-Date:   Fri, 15 Jun 2018 14:46:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
-MIME-Version: 1.0
-In-Reply-To: <CAPDyKFrz=+nnLS+YnrSKzo_UXVgKLoTvH5XQL1o_EV5u3zvw9g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Fri, 15 Jun 2018 17:47:58 -0400
+Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48BDD901;
+        Fri, 15 Jun 2018 21:47:57 +0000 (UTC)
+Date:   Fri, 15 Jun 2018 14:47:56 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
+        linux-kernel@vger.kernel.org, mhocko@suse.com,
+        n-horiguchi@ah.jp.nec.com, linux-mm@kvack.org, osalvador@suse.de,
+        willy@infradead.org, mingo@kernel.org, dan.j.williams@intel.com,
+        ying.huang@intel.com
+Subject: Re: [PATCH] mm: skip invalid pages block at a time in
+ zero_resv_unresv
+Message-Id: <20180615144756.89479279f1506697f87bc61e@linux-foundation.org>
+In-Reply-To: <20180615155733.1175-1-pasha.tatashin@oracle.com>
+References: <20180615155733.1175-1-pasha.tatashin@oracle.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Ulf,
+On Fri, 15 Jun 2018 11:57:33 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
 
-On 06/15/2018 02:25 AM, Ulf Hansson wrote:
-> On 14 June 2018 at 20:17, David Collins <collinsd@codeaurora.org> wrote:
->> On 06/13/2018 11:54 PM, Rajendra Nayak wrote:
->>> On 06/14/2018 06:02 AM, David Collins wrote:
->>>> On 06/11/2018 09:40 PM, Rajendra Nayak wrote:
->> ...
->>>>> +static int rpmhpd_power_off(struct generic_pm_domain *domain)
->>>>> +{
->>>>> +   struct rpmhpd *pd = domain_to_rpmhpd(domain);
->>>>> +   int ret = 0;
->>>>> +
->>>>> +   mutex_lock(&rpmhpd_lock);
->>>>> +
->>>>> +   if (pd->level[0] == 0)
->>>>> +           ret = rpmhpd_aggregate_corner(pd, 0);
->>>>
->>>> I'm not sure that we want to have the 'pd->level[0] == 0' check,
->>>> especially when considering aggregation with the peer pd.  I understand
->>>> its intention to try to keep enable state and level setting orthogonal.
->>>> However, as it stands now, the final request sent to hardware would differ
->>>> depending upon the order of calls.  Consider the following example.
->>>>
->>>> Initial state:
->>>> pd->level[0] == 0
->>>> pd->corner = 5, pd->enabled = true, pd->active_only = false
->>>> pd->peer->corner = 7, pd->peer->enabled = true, pd->peer->active_only = true
->>>>
->>>> Outstanding requests:
->>>> RPMH_ACTIVE_ONLY_STATE = 7, RPMH_WAKE_ONLY_STATE = 7, RPMH_SLEEP_STATE = 5
->>>>
->>>> Case A:
->>>>      1. set pd->corner = 6
->>>>              --> new value request: RPMH_SLEEP_STATE = 6
->>>>              --> duplicate value requests: RPMH_ACTIVE_ONLY_STATE = 7,
->>>>                      RPMH_WAKE_ONLY_STATE = 7
->>>>      2. power_off pd->peer
->>>>              --> no requests
->>>
->>> I am not sure why there would be no requests, since we do end up aggregating
->>> with pd->peer->corner = 0.
->>> So the final state would be
->>>
->>> RPMH_ACTIVE_ONLY_STATE = max(6, 0) = 6
->>> RPMH_WAKE_ONLY_STATE = 6
->>> RPMH_SLEEP_STATE = max(6, 0) = 6
->>
->> Argh, my example was ruined by a one character typo.  I meant to have:
->>
->>         Initial state:
->>         pd->level[0] != 0
->>
->>
->>>>
->>>>      Final state:
->>>>      RPMH_ACTIVE_ONLY_STATE = 7
->>>>      RPMH_WAKE_ONLY_STATE = 7
->>>>      RPMH_SLEEP_STATE = 6
->>>>
->>>> Case B:
->>>>      1. power_off pd->peer
->>>>              --> no requests
->>>
->>> Here it would be again be aggregation based on pd->peer->corner = 0
->>> so,
->>> RPMH_ACTIVE_ONLY_STATE = max(5, 0) = 5
->>> RPMH_WAKE_ONLY_STATE = 5
->>> RPMH_SLEEP_STATE = max(5, 0) = 5
->>>
->>>>      2. set pd->corner = 6
->>>>              --> new value requests: RPMH_ACTIVE_ONLY_STATE = 6,
->>>>                     RPMH_WAKE_ONLY_STATE = 6, RPMH_SLEEP_STATE = 6
->>>>
->>>>      Final state:
->>>>      RPMH_ACTIVE_ONLY_STATE = 6
->>>>      RPMH_WAKE_ONLY_STATE = 6
->>>>      RPMH_SLEEP_STATE = 6
->>>
->>> correct,
->>> RPMH_ACTIVE_ONLY_STATE = max(6, 0) = 6
->>> RPMH_WAKE_ONLY_STATE = 6
->>> RPMH_SLEEP_STATE = max(6, 0) = 6
->>>
->>>>
->>>> Without the check, Linux would vote for the lowest supported level when
->>>> power_off is called.  This seems semantically reasonable given that the
->>>> consumer is ok with the power domain going fully off and that would be the
->>>> closest that we can get.
->>>
->>> So are you suggesting I replace
->>>
->>>>> +   if (pd->level[0] == 0)
->>>>> +           ret = rpmhpd_aggregate_corner(pd, 0);
->>>
->>> with
->>>
->>>>> +   ret = rpmhpd_aggregate_corner(pd, pd->level[0]);
->>
->> Yes, this is the modification that I'm requesting.
->>
->>
->>> I can see what you said above makes sense but if its
->>>> Initial state:
->>>> pd->level[0] != 0
->>>
->>> Was that what you meant?
->>
->> Yes.
+> The role of zero_resv_unavail() is to make sure that every struct page that
+> is allocated but is not backed by memory that is accessible by kernel is
+> zeroed and not in some uninitialized state.
 > 
-> Apologize for jumping into the discussion.
+> Since struct pages are allocated in blocks (2M pages in x86 case), we can
+> skip pageblock_nr_pages at a time, when the first one is found to be
+> invalid.
 > 
-> I have a couple of ideas, that may simplify/improve things related to the above.
+> This optimization may help since now on x86 every hole in e820 maps
+> is marked as reserved in memblock, and thus will go through this function.
 > 
-> 1) Would it be easier if genpd calls ->set_performance_state(0) before
-> it is about to call the ->power_off() callback? Actually Viresh wanted
-> that from the start, but I thought it was useless.
+> This function is called before sched_clock() is initialized, so I used my
+> x86 early boot clock patches to measure the performance improvement.
+> 
+> With 1T hole on i7-8700 currently we would take 0.606918s of boot time, but
+> with this optimization 0.001103s.
 
-This sounds like a relatively reasonable thing to do that falls in line
-with the semantics of the API.  It would also necessitate genpd
-aggregating performance state requests again when ->power_on() is called
-so that ->set_performance_state() can be called with an appropriate value.
+This conflicts with mm-zero-remaining-unavailable-struct-pages.patch, below.
 
-I think that the issue that I identified above should be solved outright
-within the rpmhpd driver though.  It is a bug in the RPMh-specific active
-+ sleep vs active-only aggregation logic.
-
-The feature you are describing here seems more like a power optimization
-that would help in the case of consumer disabling the power domain without
-scaling down the performance level for a power domain that does not
-support enable/disable.
-
-Would this behavior in genpd be implemented per power domain or per consumer?
+mm-zero-remaining-unavailable-struct-pages.patch (which you have yet to
+review, please) fixes an oops and is rather higher priority.
 
 
-> 2) When device are becoming runtime suspended, the ->runtime_suspend()
-> callback of genpd is invoked (genpd_runtime_suspend()). However, in
-> there we don't care to re-evaluate the votes on the performance level,
-> but instead rely on the corresponding driver for the device to drop
-> the vote. I think it would be a good idea of managing this internally
-> in genpd instead, thus, depending on if the aggregated vote can be
-> decreased we should call  ->set_performance_state(new-vote). Of
-> course, once the device get runtime resumed, the votes needs to be
-> restored for the device.
 
-This feature sounds a little risky.  Is it really safe for all cases for
-the genpd framework to unilaterally make these kind of decisions for
-consumers?  Could there be any interdependencies between resources that
-consumers need to enforce that would not be possible if genpd handled
-power state reduction automatically (for example two power domains with a
-sequencing requirement between them)?
+From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Subject: mm: zero remaining unavailable struct pages
 
-Thanks,
-David
+There is a kernel panic that is triggered when reading /proc/kpageflags on
+the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+  BUG: unable to handle kernel paging request at fffffffffffffffe
+  PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
+  Oops: 0000 [#1] SMP PTI
+  CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
+  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+  RIP: 0010:stable_page_flags+0x27/0x3c0
+  Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
+  RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
+  RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
+  RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
+  RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
+  R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
+  R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
+  FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
+  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+  CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
+  Call Trace:
+   kpageflags_read+0xc7/0x120
+   proc_reg_read+0x3c/0x60
+   __vfs_read+0x36/0x170
+   vfs_read+0x89/0x130
+   ksys_pread64+0x71/0x90
+   do_syscall_64+0x5b/0x160
+   entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  RIP: 0033:0x7efc42e75e23
+  Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+
+According to kernel bisection, this problem became visible due to commit
+f7f99100d8d9 which changes how struct pages are initialized.
+
+Memblock layout affects the pfn ranges covered by node/zone. Consider
+that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
+the default (no memmap= given) memblock layout is like below:
+
+  MEMBLOCK configuration:
+   memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
+   memory.cnt  = 0x4
+   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+   memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
+   memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+   ...
+
+If you give memmap=1G!4G (so it just covers memory[0x2]),
+the range [0x100000000-0x13fffffff] is gone:
+
+  MEMBLOCK configuration:
+   memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
+   memory.cnt  = 0x3
+   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+   memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+   ...
+
+This causes shrinking node 0's pfn range because it is calculated by
+the address range of memblock.memory. So some of struct pages in the
+gap range are left uninitialized.
+
+We have a function zero_resv_unavail() which does zeroing the struct
+pages outside memblock.memory, but currently it covers only the reserved
+unavailable range (i.e. memblock.memory && !memblock.reserved).
+This patch extends it to cover all unavailable range, which fixes
+the reported issue.
+
+Link: http://lkml.kernel.org/r/20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp
+Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
+Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Tested-by: Oscar Salvador <osalvador@suse.de>
+Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
+Cc: Steven Sistare <steven.sistare@oracle.com>
+Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Huang Ying <ying.huang@intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+---
+
+ include/linux/memblock.h |   16 ----------------
+ mm/page_alloc.c          |   33 ++++++++++++++++++++++++---------
+ 2 files changed, 24 insertions(+), 25 deletions(-)
+
+diff -puN include/linux/memblock.h~mm-zero-remaining-unavailable-struct-pages include/linux/memblock.h
+--- a/include/linux/memblock.h~mm-zero-remaining-unavailable-struct-pages
++++ a/include/linux/memblock.h
+@@ -236,22 +236,6 @@ void __next_mem_pfn_range(int *idx, int
+ 	for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,	\
+ 			       nid, flags, p_start, p_end, p_nid)
+ 
+-/**
+- * for_each_resv_unavail_range - iterate through reserved and unavailable memory
+- * @i: u64 used as loop variable
+- * @flags: pick from blocks based on memory attributes
+- * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
+- * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
+- *
+- * Walks over unavailable but reserved (reserved && !memory) areas of memblock.
+- * Available as soon as memblock is initialized.
+- * Note: because this memory does not belong to any physical node, flags and
+- * nid arguments do not make sense and thus not exported as arguments.
+- */
+-#define for_each_resv_unavail_range(i, p_start, p_end)			\
+-	for_each_mem_range(i, &memblock.reserved, &memblock.memory,	\
+-			   NUMA_NO_NODE, MEMBLOCK_NONE, p_start, p_end, NULL)
+-
+ static inline void memblock_set_region_flags(struct memblock_region *r,
+ 					     unsigned long flags)
+ {
+diff -puN mm/page_alloc.c~mm-zero-remaining-unavailable-struct-pages mm/page_alloc.c
+--- a/mm/page_alloc.c~mm-zero-remaining-unavailable-struct-pages
++++ a/mm/page_alloc.c
+@@ -6390,25 +6390,40 @@ void __paginginit free_area_init_node(in
+  * struct pages which are reserved in memblock allocator and their fields
+  * may be accessed (for example page_to_pfn() on some configuration accesses
+  * flags). We must explicitly zero those struct pages.
++ *
++ * This function also addresses a similar issue where struct pages are left
++ * uninitialized because the physical address range is not covered by
++ * memblock.memory or memblock.reserved. That could happen when memblock
++ * layout is manually configured via memmap=.
+  */
+ void __paginginit zero_resv_unavail(void)
+ {
+ 	phys_addr_t start, end;
+ 	unsigned long pfn;
+ 	u64 i, pgcnt;
++	phys_addr_t next = 0;
+ 
+ 	/*
+-	 * Loop through ranges that are reserved, but do not have reported
+-	 * physical memory backing.
++	 * Loop through unavailable ranges not covered by memblock.memory.
+ 	 */
+ 	pgcnt = 0;
+-	for_each_resv_unavail_range(i, &start, &end) {
+-		for (pfn = PFN_DOWN(start); pfn < PFN_UP(end); pfn++) {
+-			if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
+-				continue;
+-			mm_zero_struct_page(pfn_to_page(pfn));
+-			pgcnt++;
++	for_each_mem_range(i, &memblock.memory, NULL,
++			NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end, NULL) {
++		if (next < start) {
++			for (pfn = PFN_DOWN(next); pfn < PFN_UP(start); pfn++) {
++				if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
++					continue;
++				mm_zero_struct_page(pfn_to_page(pfn));
++				pgcnt++;
++			}
+ 		}
++		next = end;
++	}
++	for (pfn = PFN_DOWN(next); pfn < max_pfn; pfn++) {
++		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
++			continue;
++		mm_zero_struct_page(pfn_to_page(pfn));
++		pgcnt++;
+ 	}
+ 
+ 	/*
+@@ -6419,7 +6434,7 @@ void __paginginit zero_resv_unavail(void
+ 	 * this code can be removed.
+ 	 */
+ 	if (pgcnt)
+-		pr_info("Reserved but unavailable: %lld pages", pgcnt);
++		pr_info("Zeroed struct page in unavailable ranges: %lld pages", pgcnt);
+ }
+ #endif /* CONFIG_HAVE_MEMBLOCK */
+ 
+_
+
