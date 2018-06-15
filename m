@@ -2,127 +2,111 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF440C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 899FDC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9784220896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:37:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9784220896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 39732208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:39:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="o8IdY+UZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39732208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936405AbeFOUhf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:37:35 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:43950 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S936295AbeFOUhc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:37:32 -0400
-Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w5FKbWX0019529
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 16:37:32 -0400
-Received: from mail-qk0-f200.google.com (mail-qk0-f200.google.com [209.85.220.200])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w5FKbRvt020695
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 16:37:32 -0400
-Received: by mail-qk0-f200.google.com with SMTP id g2-v6so8886804qkm.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 13:37:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-transfer-encoding:date:message-id;
-        bh=QsO8U5UCExfeQ1Jh8K4XfbcjDpaiJIIryELDY0XWM2U=;
-        b=qL4KXTNqtO0zEOpp27eTgQ85urxtY5pnPSVDdrKGnSjn49WDJyYSMV0HvQ0sqxRmVU
-         1HFRQBh8vUypA2in/fNlIWcN4q/J6GZbSukP7OkuuTU4Rh3ewb7H09AeCiU2JZrRevTn
-         jTXp1qL/LFxMacifvJGarhhFDLGBOeFpK522PT6kmLLvRCF+eiBawTEKxbT6hyKER3Xr
-         TdIohyL/gm2FDzVhwGGooU+GS+AggpmIDSgz76eT3HgF9noQ70hvn2GDexB2lSPhBHmo
-         tBN0E1mDVl0rdGE/8chX3a6+DtHgX0Hoizzjqh868aC4JErS52UCwMA84s12ISbHWZB9
-         wFtg==
-X-Gm-Message-State: APt69E3yxiMtjOQs4Vqr1WQSN3TTFkbC9EcNmRLMiY0TRQRBiFSyAWv1
-        O5oEeKtAs71XnRkyhs0wvYklZ8SQ9KuoA7uO74jZdopbNSyKuwhAQGe94z69zfyi7xGhhIYGQTY
-        YDRYkz7H8G0u+UeEE9yyTlUacmRLdotERd10=
-X-Received: by 2002:ae9:d615:: with SMTP id r21-v6mr2762528qkk.135.1529095046975;
-        Fri, 15 Jun 2018 13:37:26 -0700 (PDT)
-X-Google-Smtp-Source: ADUXVKJeNnDKZjW9n3lxA8OJuDyrk4dhwzPeHy7emJ/0zU/ORlpO9rRw2CQkR5BY7bnqXjCaZ1m97A==
-X-Received: by 2002:ae9:d615:: with SMTP id r21-v6mr2762501qkk.135.1529095046716;
-        Fri, 15 Jun 2018 13:37:26 -0700 (PDT)
-Received: from turing-police.cc.vt.edu ([2607:b400:24:0:c5a7:bb98:8d38:c9af])
-        by smtp.gmail.com with ESMTPSA id g18-v6sm7325129qtg.59.2018.06.15.13.37.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Jun 2018 13:37:25 -0700 (PDT)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-To:     Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc:     "sayalil@codeaurora.org" <sayalil@codeaurora.org>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "vinholikatti@gmail.com" <vinholikatti@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "asutoshd@codeaurora.org" <asutoshd@codeaurora.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "evgreen@chromium.org" <evgreen@chromium.org>,
-        "cang@codeaurora.org" <cang@codeaurora.org>,
-        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
-        "subhashj@codeaurora.org" <subhashj@codeaurora.org>,
-        "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vivek.gautam@codeaurora.org" <vivek.gautam@codeaurora.org>,
-        "rnayak@codeaurora.org" <rnayak@codeaurora.org>,
-        "jejb@linux.vnet.ibm.com" <jejb@linux.vnet.ibm.com>,
-        "malat@debian.org" <malat@debian.org>
-Subject: Re: [PATCH V2 1/3] scsi: ufs: set the device reference clock setting
-In-Reply-To: <33eec86a35248e5b20f15bb568641b9affcc0a9b.camel@wdc.com>
-References: <1528455990-24572-1-git-send-email-sayalil@codeaurora.org> <1528455990-24572-2-git-send-email-sayalil@codeaurora.org> <20180612192636.GA31725@rob-hp-laptop> <000101d403d3$87210d20$95632760$@codeaurora.org>
- <33eec86a35248e5b20f15bb568641b9affcc0a9b.camel@wdc.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1529095054_2750P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 15 Jun 2018 16:37:34 -0400
-Message-ID: <95985.1529095054@turing-police.cc.vt.edu>
+        id S936412AbeFOUjC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 16:39:02 -0400
+Received: from mail-eopbgr690073.outbound.protection.outlook.com ([40.107.69.73]:58925
+        "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755493AbeFOUjB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:39:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0sHNsmM49A2DKHYKwNWOvrFe7XswX6om0+LUbLWF/U0=;
+ b=o8IdY+UZw9XUO/BpiyYDt65o2jNXtG9aDZmKATJv23HYFEcN+yOh8nrsgUJrervO8L9k5GL5E0gXOYQaMHed0DUywTCi9xVluGD4Tg/9jfnFRJ5mrEp0Js8xfNMplAcYntg/sCOGa0L+ZATIhQBtIfmqgnxdsl+4q/nizHp+U3E=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4055.namprd05.prod.outlook.com (52.135.199.32) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.6; Fri, 15 Jun 2018 20:38:58 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::1010:9926:76ba:c7b7]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::1010:9926:76ba:c7b7%3]) with mapi id 15.20.0884.010; Fri, 15 Jun 2018
+ 20:38:58 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     "valdis.kletnieks@vt.edu" <valdis.kletnieks@vt.edu>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Xavier Deguillard <xdeguillard@vmware.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 6/7] vmw_balloon: update copyright message
+Thread-Topic: [PATCH v2 6/7] vmw_balloon: update copyright message
+Thread-Index: AQHUA1rMO9cx543LJ0SFW/MABZa0SKRfOSaAgAACqQCAAo46AIAAAQQA
+Date:   Fri, 15 Jun 2018 20:38:57 +0000
+Message-ID: <5151EA1B-D065-44D1-995C-47B791F574E1@vmware.com>
+References: <20180613135412.81660-1-namit@vmware.com>
+ <20180613135412.81660-7-namit@vmware.com> <20180614052413.GB29739@kroah.com>
+ <F8F02A0A-133F-458A-9492-30C3ABD8C592@vmware.com>
+ <81730.1529094918@turing-police.cc.vt.edu>
+In-Reply-To: <81730.1529094918@turing-police.cc.vt.edu>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [208.91.2.2]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4055;7:ZBgZOx1maIzK13i8TNC0LLM8Cut74gjbN0VJcm6FF5+hEg9d9THcDQsw8To5nyIiFhCcQje9QYs73n55V114ujhDk7Z7wKU0h3TNVw6FSTTohd+FJyL3boveaGKMpRuDIzTz2cn2w6I30BOdGbHG9h7Yq72qU85ToUnmTot4QgrtH9zb64jB7qOJXx2UKNPwOfZULxZdeErEpFipvRd2ljzBW+rqlDXBMLp+NwxeCjsQ+dxSX/srIgHkJ0wALqFb;20:z6hZskJCNmdPuxcLHKBVxz2N32JelKNmZ2g1Osfdjwn/PhNpZnSKd5EvonXKAP6xKzwvIkoxXkQlBM4ivtitAqqmzQdOUSNBZlwcPULtZnc2n34MKVafibCNQZqI3TJZg6hNcgM11+rkBXm2N3WIlhSb3NrwzyLORnBWFg0IKtM=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 97feb2e4-5061-42ef-9d62-08d5d3000508
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4055;
+x-ms-traffictypediagnostic: BYAPR05MB4055:
+x-microsoft-antispam-prvs: <BYAPR05MB4055D347ACFDCC18E19D70B7D07C0@BYAPR05MB4055.namprd05.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BYAPR05MB4055;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4055;
+x-forefront-prvs: 0704670F76
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(39380400002)(39860400002)(199004)(189003)(186003)(26005)(4326008)(102836004)(14454004)(66066001)(81166006)(7736002)(5250100002)(8676002)(81156014)(6506007)(2900100001)(6116002)(2501003)(33656002)(2351001)(105586002)(305945005)(68736007)(3660700001)(3280700002)(82746002)(3846002)(2906002)(76176011)(5660300001)(86362001)(6512007)(99286004)(36756003)(25786009)(486006)(6436002)(2616005)(229853002)(93886005)(11346002)(476003)(54906003)(316002)(8936002)(6486002)(106356001)(478600001)(53936002)(446003)(6246003)(2171002)(97736004)(83716003)(5640700003)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4055;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: IwWkbse4hWSpEY801DnYeN2LgEL9/1m1RBiduh+8oQkIoqmwRA3tnGq9ndocmPjWiNfyOQoJKtb7PziO2aNB20vuJFmon2Pzm36DcAJGi8DSN8eVhD0EjsHVp25bHL65ifMMZVbX89DBHIcf9ehxhIJi7K+f5c1G520x8jK4kwnsVQOATm80/vRN3N/B+vKX
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D748B939DCED1F49AD112A03295E47F1@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97feb2e4-5061-42ef-9d62-08d5d3000508
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jun 2018 20:38:57.8513
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4055
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1529095054_2750P
-Content-Type: text/plain; charset=us-ascii
-
-Actually, it makes it easier to follow the conversation.
-
-On Thu, 14 Jun 2018 13:35:08 -0000, Bart Van Assche said:
-> On Thu, 2018-06-14 at 17:03 +0530, sayali wrote:
-> > Comment inline.
->
-> Hello Sayali,
->
-> Please don't use inline replies. That makes it very hard to follow the
-> conversation.
-
-Actually, it makes it easier to follow the conversation.
-
-> * If IMAP has been enabled on the Exchange server that you are using then
->   that means that you can choose from the many open source e-mail clients
->   that support IMAP.
-
-Which of the two is easier to follow?
-
-
---==_Exmh_1529095054_2750P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBWyQjjo0DS38y7CIcAQIQLAgAp4CV2ml7V5VMI6ixb1ZY/6ZfY95RvdNx
-RWUKlkwzqUUCX6GLRYPPWGn0wa4QXL9/zbT2vQSRMH0L6vRvE1QkVAwYWm0jzC/A
-yrCIBsJQlS3PG/6FcqbO240nAtqbCASHlgCWPPD+KvjDmifI21s5d5DzsRR6zzGN
-bw/8Asd7Sr8hhyhNxqb0Axsi4sVvdg5pmGqRAtBXC47B/eB9x56ESf/PaemsgjTx
-RJ98C2HlRirF9rwcq13x1Ippk+hIEQdzUx8Taay90Pf5oB9z2h3/Pi5/tGo2gOO2
-+uoJx+tNUnGrjdgj8lAILryYKotWOhlgJ+H1S10kOvttemxq1l1BBQ==
-=YF+i
------END PGP SIGNATURE-----
-
---==_Exmh_1529095054_2750P--
+YXQgMTozNSBQTSwgdmFsZGlzLmtsZXRuaWVrc0B2dC5lZHUgd3JvdGU6DQoNCj4gT24gVGh1LCAx
+NCBKdW4gMjAxOCAwNTozMzo0NiAtMDAwMCwgTmFkYXYgQW1pdCBzYWlkOg0KPiANCj4+Pj4gSW4g
+YWRkaXRpb24sIHVwZGF0aW5nIHRoZSB5ZWFyIGFuZCBhZGRpbmcgYSBsaWNlbnNlIHRhZy4NCj4g
+DQo+Pj4+ICsvLyBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KPiANCj4+PiBZb3Ug
+c3RpbGwgaGF2ZSBhIGxvdCBvZiBib2lsZXItcGxhdGUgdGV4dCBpbiBoZXJlIHRoYXQgY2FuIGJl
+IHJlbW92ZWQuDQo+Pj4gUGxlYXNlIGRvIHNvLg0KPiANCj4+IEJ1dCB3aGF0IGVsc2UgZG8geW91
+IHdhbnQgbWUgdG8gcmVtb3ZlPyBUaGlzIGlzIGEgc3RhbmRhcmQgR1BMIGxpY2Vuc2UuIElmIEkN
+Cj4+IGFtIHJlcXVpcmVkIHRvIHJlbW92ZSB0aGUgR1BMIGxpY2Vuc2UsIEkgd2lsbCBoYXZlIHRv
+IHJ1biBjaGVja3MgdG8gZW5zdXJlDQo+PiBpdCBpcyBhcHByb3ByaWF0ZS4NCj4gDQo+IFlvdSBt
+ZWFuIHRoZSBjaGVja3MgdGhhdCB5b3Ugc2hvdWxkIGhhdmUgZG9uZSB3aGVuIHlvdSBzdHVjayB0
+aGUgU1BEWA0KPiB0YWcgb24gdGhlIGZpbGU/DQo+IA0KPiAoSGludDogVGhpbmsgb2YgdGhlIFNQ
+RFggdGFnIGFzIGEgJyNpbmNsdWRlIGdwbHYyLmxpY2Vuc2UuYmx1cmIiIDopDQoNCkkgbWF0Y2hl
+ZCB0aGUgU1BEWCB0byB0aGUgbGljZW5zZSB3ZSBoYXZlLCB0dXQgSSBkb27igJl0IGtub3cgd2hl
+dGhlciBteQ0KY29tcGFueSByZWdhcmRzIGFuIFNQRFggdGFnIGFzIGEgc3VmZmljaWVudCBtZWFu
+cyB0byBwcm90ZWN0IGNvcHlyaWdodHMsDQp3aGljaCBhbGxvd3MgdG8gcmVtb3ZlIGFsbCB0aGUg
+cmVzdCBvZiB0aGUgdGV4dC4NCg0KSnVzdCB0cnlpbmcgbm90IHRvIGdldCBmaXJlZCBmb3IgYSBz
+dHVwaWQgcmVhc29uIDspDQoNCg==
