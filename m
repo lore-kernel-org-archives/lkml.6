@@ -2,76 +2,113 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0055DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:34:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1114C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A043420896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:34:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="YcaMk5gw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A043420896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
+	by mail.kernel.org (Postfix) with ESMTP id 73EEA208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:35:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73EEA208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966442AbeFOUeD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:34:03 -0400
-Received: from frisell.zx2c4.com ([192.95.5.64]:52143 "EHLO frisell.zx2c4.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S966118AbeFOUeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:34:02 -0400
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id 41eb9e91
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 15 Jun 2018 20:28:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=mime-version
-        :references:in-reply-to:from:date:message-id:subject:to:cc
-        :content-type; s=mail; bh=dhzbR9Rzbz95OZkTVQ4Hb9LZ7k4=; b=YcaMk5
-        gwbajH67+sLPbqxivjlWE7/bek+M4i3Bdk2osEz7V/n/9fPUvFZWoyr3gWkeT3co
-        hLi2d69WKd229WxyrOGb2xhEGp6oUn4rNfGI1kZvE3iGQzOl1fOVoMgDHP2ttLf9
-        QbQRwilpDvNhk3vngti29jtfHa1J80+2lCrFa82U0LASJUGKV8E+gysLlccoOeMv
-        jskaOGsOlZKvvHu8eB+FKIB5LN0nccG5HYatqXeLsIb/WqobdKdDja8aKbL66ogB
-        gpXJNKcOCVE5zmjdaSwjT/3OqwGMf4oQghSdF5ZrwNDAaCWonAklPC1dCkFXa31f
-        /oVvA2orJ2wYqK4g==
-Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id ca293eb6 (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128:NO)
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 15 Jun 2018 20:28:36 +0000 (UTC)
-Received: by mail-ot0-f182.google.com with SMTP id a5-v6so12359503otf.12
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 13:34:00 -0700 (PDT)
-X-Gm-Message-State: APt69E3QNvS/5tGtdFuXvzChIZYQEGA7d3Aiw2GQ80XDhWmVxeZ+1CB9
-        65k5i5lvf4ZgcObFRjORmiRXwK1zUHGpSHrJ9C0=
-X-Google-Smtp-Source: ADUXVKKxogGt94V6ovIIm/LGo7YWKxGpL4WLWp7ahkSNFrXqXFZBIRiIfOcRn5ggkiJSbDyPxLDTyr9VzRri9fHEuRo=
-X-Received: by 2002:a9d:59ed:: with SMTP id u45-v6mr2086541otg.320.1529094839684;
- Fri, 15 Jun 2018 13:33:59 -0700 (PDT)
-MIME-Version: 1.0
-References: <CAHmME9pBqGhCjdwx64GxYTKWiMkDNY3v2gnVL_Xm2q=3guOAsQ@mail.gmail.com>
- <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
-In-Reply-To: <CALCETrU+2mBPDfkBz1i_GT1EOJau+mzj4yOK8N0UnT2pGjiUWQ@mail.gmail.com>
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Fri, 15 Jun 2018 22:33:47 +0200
-X-Gmail-Original-Message-ID: <CAHmME9qhmSVNBq_GnkYrGU-PPEX9Fk0yiGktsCeEXo+LTB9KPg@mail.gmail.com>
-Message-ID: <CAHmME9qhmSVNBq_GnkYrGU-PPEX9Fk0yiGktsCeEXo+LTB9KPg@mail.gmail.com>
-Subject: Re: Lazy FPU restoration / moving kernel_fpu_end() to context switch
-To:     Andrew Lutomirski <luto@kernel.org>
-Cc:     riel@surriel.com, dave.hansen@linux.intel.com,
-        LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S936376AbeFOUfS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 16:35:18 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:43502 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1753732AbeFOUfR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:35:17 -0400
+Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w5FKZGs8019048
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 16:35:16 -0400
+Received: from mail-qk0-f198.google.com (mail-qk0-f198.google.com [209.85.220.198])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w5FKZBFC013543
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 16:35:16 -0400
+Received: by mail-qk0-f198.google.com with SMTP id s133-v6so8760622qke.21
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 13:35:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=PJ991lyrEEl0JVfhnTx7RZpaVM1jI1YD7tN+SFRLuyQ=;
+        b=QofW7wTyjbUwqubyemUVHKQkUJZOqCVGGhy8d254DTF8j6HoiR2DNfw+bQCFUXOjRc
+         Mgl6wLbX4zBzPsevxKvIyZZxs6DgKXazxsyNaZdl0Zcxog2eDIlZ9GC5619GrkFd0zc8
+         I7trmop8N+Uc2jdhkrcEp+1cwJyAZsPEzkqh70gPmdn4zrSihNbVu7xc6xoEkTGJmLEI
+         W+IdRxFH3Wiq5aZnLQ/O7/cZd8kFRvZ9wT3jp+kmkqDN7eEGAgvVRuqK7qX9H7rx1LWQ
+         RgzAbzFAnYSEx8EQF+9C2gDlzZFvWHcllwqlxi17T6jiGngQtvxIpjCBBudhGdI11MIx
+         K+WQ==
+X-Gm-Message-State: APt69E3ejJ1ZFZ0FKCD9KL20XolRHzOuwiyyNXrkhRPdfKJzHQDOS7Um
+        n7l32EOH6EpFoR+W/a8D1W7eEi3qQMGDxHzspJKsUKXJ81dsZ2JXZJPLEsABfY9jaFZcy49G4ZO
+        nMKodSLjtzU743tm5PMzLMby4XyW6b5fNNbM=
+X-Received: by 2002:aed:3e51:: with SMTP id m17-v6mr2961351qtf.283.1529094911109;
+        Fri, 15 Jun 2018 13:35:11 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKIq7Gx/rVsW/EMk9q3k4H2fA1ElBRO+6o35lbeZwsWgne32ny/PJsf+GwpqC/OvrqbDgva48w==
+X-Received: by 2002:aed:3e51:: with SMTP id m17-v6mr2961335qtf.283.1529094910855;
+        Fri, 15 Jun 2018 13:35:10 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2607:b400:24:0:c5a7:bb98:8d38:c9af])
+        by smtp.gmail.com with ESMTPSA id l25-v6sm5517296qkk.49.2018.06.15.13.35.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Jun 2018 13:35:09 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Xavier Deguillard <xdeguillard@vmware.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 6/7] vmw_balloon: update copyright message
+In-Reply-To: <F8F02A0A-133F-458A-9492-30C3ABD8C592@vmware.com>
+References: <20180613135412.81660-1-namit@vmware.com> <20180613135412.81660-7-namit@vmware.com> <20180614052413.GB29739@kroah.com>
+ <F8F02A0A-133F-458A-9492-30C3ABD8C592@vmware.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1529094918_2750P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 15 Jun 2018 16:35:18 -0400
+Message-ID: <81730.1529094918@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 8:32 PM Andy Lutomirski <luto@kernel.org> wrote:
-> quite in the form you imagined.  The idea that we've tossed around is
-> to restore FPU state on return to user mode.  Roughly, we'd introduce
-> a new thread flag TIF_FPU_UNLOADED (name TBD).
-> prepare_exit_to_usermode() would notice this flag, copy the fpstate to
-> fpregs, and clear the flag.  (Or maybe exit_to_usermode_loop() -- No
-> one has quite thought it through, but I think it should be outside the
-> loop.)  We'd update all the FPU accessors to understand the flag.
+--==_Exmh_1529094918_2750P
+Content-Type: text/plain; charset=us-ascii
 
-Yes! This is exactly what I was thinking. Then those calls to begin()
-and end() could be placed as close to the actual FPU usage as
-possible.
+On Thu, 14 Jun 2018 05:33:46 -0000, Nadav Amit said:
+
+> >> In addition, updating the year and adding a license tag.
+
+> >> +// SPDX-License-Identifier: GPL-2.0
+
+> > You still have a lot of boiler-plate text in here that can be removed.
+> > Please do so.
+
+> But what else do you want me to remove? This is a standard GPL license. If I
+> am required to remove the GPL license, I will have to run checks to ensure
+> it is appropriate.
+
+You mean the checks that you should have done when you stuck the SPDX
+tag on the file?
+
+(Hint: Think of the SPDX tag as a '#include gplv2.license.blurb" :)
+
+--==_Exmh_1529094918_2750P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWyQjBo0DS38y7CIcAQIT+AgAjWtfnkYiNH+srK1KXZcQBUQ2HcuNOCXY
+7tghg1rcUKPU/0Pq0bVq+Ib96jGTRXo1Eb69xPn0KTKIfapFVX9Fkwnv6xYuQMxh
+hCWY5wxVtX45OTJkO0HGTy4bAX41HNbGL0kqs9By7jKE352VsDnrCsOqKEa7+hep
+rScr6B1he2DnBFC52nyD/BfNUjc8/SxoPX+r2+Goj6QFzYudvi3dukjc9vtIN3Bq
+/En5YTu8g6qruBsCd2ztFX9mM40yvLl4QE6Ukx8zcvpq/6rgw5qxJSzK9tklobdj
+GjGTVa8EOTPICZ9IZ9ugwu6LZ1zMUfcgEBLWaEYMIpIfzEqSIn2p7g==
+=Rzxx
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1529094918_2750P--
