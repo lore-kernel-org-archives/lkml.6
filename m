@@ -3,283 +3,578 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5DEA2C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:58:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 53D7AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07B7820896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:58:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC6A620896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:00:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="DnYqmkjG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B7820896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=profitbricks-com.20150623.gappssmtp.com header.i=@profitbricks-com.20150623.gappssmtp.com header.b="LdFfsOem"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC6A620896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=profitbricks.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965631AbeFOM63 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 08:58:29 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:55080 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936192AbeFOM61 (ORCPT
+        id S1756161AbeFOM77 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 08:59:59 -0400
+Received: from mail-wm0-f52.google.com ([74.125.82.52]:37079 "EHLO
+        mail-wm0-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755944AbeFOM75 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 08:58:27 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 9FBF51E04A8;
-        Fri, 15 Jun 2018 14:58:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529067505; bh=wr8dqsHixcmjiVVfYDGVjQ+tgHMIsloj4hRBtBfwBc8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DnYqmkjGAkhvlK5203Lu7TcAmbES9v9CJgsSk5LUSLGsfoZidHlT6LoPZVF3nLMp7
-         CaTJY2mnvU8tHep9cDns816oqEqYqAZZu16D8VGhNYnLshCC1jcxSbQDwPdm06Qhlw
-         v6jyazkhXHBJWO6wnUSbMtqND8S69bc+9dHZlBxio2vHKoD1zFTO7JS3zrpmWvOfd6
-         DgBYr49QYuA+kFpegFE8PMaEhzgrySVE87uUprpWVLxi5EcGlsQYYt7U+QPrQUpemb
-         C7PwzagIQmADqPkgn2GJJnBzQ2jClHyrf5dsUXCL7hq9CFzzHFmp8QDDdukXX+v/wP
-         V6LeRVIRIq0JA==
-Received: from paltsev-e7480.internal.synopsys.com (unknown [10.121.8.86])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 20A965894;
-        Fri, 15 Jun 2018 05:58:22 -0700 (PDT)
-From:   Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-To:     linux-snps-arc@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        Alexey Brodkin <Alexey.Brodkin@synopsys.com>, hch@lst.de,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
-Subject: [RFC] ARC: allow to use IOC and non-IOC DMA devices simultaneously
-Date:   Fri, 15 Jun 2018 15:58:19 +0300
-Message-Id: <20180615125819.527-1-Eugeniy.Paltsev@synopsys.com>
-X-Mailer: git-send-email 2.14.4
+        Fri, 15 Jun 2018 08:59:57 -0400
+Received: by mail-wm0-f52.google.com with SMTP id r125-v6so3741679wmg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 05:59:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=profitbricks-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ia30mlPWZvtVm3l57INH8BHP7alIQGhrWVDtf3PbMxw=;
+        b=LdFfsOemT2IgFCjfcZVFVaN52Dl/spMGBO5kuIU+DRcPK4N0jABYdANGB+EMJHj+uH
+         v7BaD1uV5dIKJ1J8lZIts8PRZtfpjQmXwZqjZPUcLV0rlLJNGcmh/sF7BbU5FMiFi/5+
+         GHnJD9gtwubLM6T7IBClntCtwmf+YYvg86aLyiKpJrGJfcs1bbtGv6TjvdqExwuBt4pg
+         rbhQFxXqMD7kdEy4M6E04dlig/PbFv52HrO8estLLp0TarWK+pvLaKKVTmcDodT17tH6
+         QYjet7VVBnM3GTg4ABhPBGbIFUUllrHlp/MaPK29fMX4Hu16ktPQD93hMdtGXlz7SLEi
+         403Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ia30mlPWZvtVm3l57INH8BHP7alIQGhrWVDtf3PbMxw=;
+        b=OoEKXXUhMLhPdD6wsi1osTjaaJzvUaS3c67cI0JCBssxgSq+Ul/0A2nEEFAHc6z6JV
+         QrkGPIBmv3PYVVqYO6+yW5xjztbrLyW33z2Ow2CnitfnALceV2DrtOCNsd0r8HVHWF9O
+         Pas5BTEWnOu1wco7WXINQyA0ariB4VTMKrF2aFLPYXj+b8B2U+nYadWiPBgHFhLXsaL5
+         VzWtxKdl+Lg6lrKLt0bfj9eZRCHau9sLojJoDO/C/wYs0anXj7G2Mqd9155ul8f6xUit
+         3xCGNOTpUl+8OhRNIYpk1a12nMfWoRX3N61UWL2rlETAQ2cvcwjVidzls1hl1vF+wPli
+         aIPw==
+X-Gm-Message-State: APt69E1IL32+Zxoa9yhTUz9AH7nPGYNUFlSB34eScr0+EHVKNa5btaEu
+        WigwZdjJ9zJGxqBeVTa/USLPZpL5E8B7Vjfx1QyZMw==
+X-Google-Smtp-Source: ADUXVKJpjiSoI8Kzimm7lY3oE9CJgqFYOoqpWC9520L53stB109LVVQEM0KnngiGv+EYHhv81TTLR1GzXQHlxcBNYpQ=
+X-Received: by 2002:a50:8c41:: with SMTP id p59-v6mr1839956edp.207.1529067595389;
+ Fri, 15 Jun 2018 05:59:55 -0700 (PDT)
+MIME-Version: 1.0
+References: <20180609123014.8861-1-ming.lei@redhat.com>
+In-Reply-To: <20180609123014.8861-1-ming.lei@redhat.com>
+From:   Gi-Oh Kim <gi-oh.kim@profitbricks.com>
+Date:   Fri, 15 Jun 2018 14:59:19 +0200
+Message-ID: <CAJX1YtaRtCGt7f8H0VEDrDkcOYusB0JoL-CNB_E--MYGhcvbow@mail.gmail.com>
+Subject: Re: [PATCH V6 00/30] block: support multipage bvec
+To:     ming.lei@redhat.com
+Cc:     Jens Axboe <axboe@fb.com>, hch@infradead.org,
+        Al Viro <viro@zeniv.linux.org.uk>, kent.overstreet@gmail.com,
+        dsterba@suse.cz, ying.huang@intel.com,
+        linux-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, tytso@mit.edu,
+        darrick.wong@oracle.com, colyli@suse.de, fdmanana@gmail.com,
+        rdunlap@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ARC HS processor provides an IOC port (I/O coherency bus
-interface) that allows external devices such as DMA devices
-to access memory through the cache hierarchy, providing
-coherency between I/O transactions and the complete memory
-hierarchy.
+>
+> - bio size can be increased and it should improve some high-bandwidth IO
+> case in theory[4].
+>
 
-Some recent SoC with ARC HS (like HSDK) allow to select bus
-port (IOC or non-IOC port) for connecting DMA devices in runtime.
+Hi,
 
-With this patch we can use both HW-coherent and regular DMA
-peripherals simultaneously.
+I would like to report your patch set works well on my system based on v4.1=
+4.48.
+I thought the multipage bvec could improve the performance of my system.
+(FYI, my system has v4.14.48 and provides KVM-base virtualization service.)
 
-For example we can connect USB and SDIO controllers through IOC port
-(so we don't need to need to maintain cache coherency for these
-devices manualy. All cache sync ops will be nop)
-And we can connect Ethernet directly to RAM port (so we had to
-maintain cache coherency manualy. Cache sync ops will be real
-flush/invalidate operations)
+So I did back-porting your patches to v4.14.48.
+It has done without any serious problem.
+I only needed to cherry-pick "blk-merge: compute
+bio->bi_seg_front_size efficiently" and
+"block: move bio_alloc_pages() to bcache" patches before back-porting
+to prevent conflicts.
+And I ran my own test-suit for checking features of md and RAID1 layer.
+There was no problem. All test cases passed.
+(If you want, I will send you the back-ported patches.)
 
-Cache ops are set per-device and depends on "dma-coherent" device
-tree property:
-"dma_noncoherent_ops" are used if no "dma-coherent" property is
-present (or IOC is disabled)
-"dma_direct_ops" are used if "dma-coherent" property is present.
+Then I did two performance test as following.
+To say the conclusion first, I failed to show performance improvement
+of the patch set.
+Of course, my test cases would not be suitable to test your patch set.
+Or maybe I did test wrong.
+Please inform me which tools are suitable, then I will try them.
+
+1. fio
+
+First I ran fio with null device to check the performance of the block-laye=
+r.
+I am not sure those test is suitable to show the performance
+improvement or degradation.
+Nevertheless there was a little (-6%) performance degradation.
+
+If it is not much trouble to you, please review my options for fio and
+inform me if I used wrong or incorrect options.
+Then I will run the test again.
+
+1.1 Following is my options for fio.
+
+gkim@ib1:~/pb-ltp/benchmark/fio$ cat go_local.sh
+#!/bin/bash
+echo "fio start   : $(date)"
+echo "kernel info : $(uname -a)"
+echo "fio version : $(fio --version)"
+
+# set "none" io-scheduler
+modprobe -r null_blk
+modprobe null_blk
+echo "none" > /sys/block/nullb0/queue/scheduler
+
+FIO_OPTION=3D"--direct=3D1 --rw=3Drandrw:2 --time_based=3D1 --group_reporti=
+ng \
+            --ioengine=3Dlibaio --iodepth=3D64 --name=3Dfiotest --numjobs=
+=3D8 \
+            --bssplit=3D512/20:1k/16:2k/9:4k/12:8k/19:16k/10:32k/8:64k/4 \
+            --fadvise_hint=3D0 --iodepth_batch_submit=3D64
+--iodepth_batch_complete=3D64"
+# fio test null_blk device, so it is not necessary to run long.
+fio $FIO_OPTION --filename=3D/dev/nullb0 --runtime=3D600
+
+1.2 Following is the result before porting.
+
+fio start   : Mon Jun 11 04:30:01 CEST 2018
+kernel info : Linux ib1 4.14.48-1-pserver
+#4.14.48-1.1+feature+daily+update+20180607.0857+1bbde0b~deb8 SMP
+x86_64 GNU/Linux
+fio version : fio-2.2.10
+fiotest: (g=3D0): rw=3Drandrw, bs=3D512-64K/512-64K/512-64K,
+ioengine=3Dlibaio, iodepth=3D64
+...
+fio-2.2.10
+Starting 8 processes
+
+fiotest: (groupid=3D0, jobs=3D8): err=3D 0: pid=3D1655: Mon Jun 11 04:40:02=
+ 2018
+  read : io=3D7133.2GB, bw=3D12174MB/s, iops=3D1342.1K, runt=3D600001msec
+    slat (usec): min=3D1, max=3D15750, avg=3D123.78, stdev=3D153.79
+    clat (usec): min=3D0, max=3D15758, avg=3D24.70, stdev=3D77.93
+     lat (usec): min=3D2, max=3D15782, avg=3D148.49, stdev=3D167.54
+    clat percentiles (usec):
+     |  1.00th=3D[    0],  5.00th=3D[    1], 10.00th=3D[    1], 20.00th=3D[=
+    1],
+     | 30.00th=3D[    2], 40.00th=3D[    2], 50.00th=3D[    2], 60.00th=3D[=
+    6],
+     | 70.00th=3D[   22], 80.00th=3D[   36], 90.00th=3D[   72], 95.00th=3D[=
+  107],
+     | 99.00th=3D[  173], 99.50th=3D[  203], 99.90th=3D[  932], 99.95th=3D[=
+ 1416],
+     | 99.99th=3D[ 2960]
+    bw (MB  /s): min=3D 1096, max=3D 2147, per=3D12.51%, avg=3D1522.69, std=
+ev=3D253.89
+  write: io=3D7131.3GB, bw=3D12171MB/s, iops=3D1343.6K, runt=3D600001msec
+    slat (usec): min=3D1, max=3D15751, avg=3D124.73, stdev=3D154.11
+    clat (usec): min=3D0, max=3D15758, avg=3D24.69, stdev=3D77.84
+     lat (usec): min=3D2, max=3D15780, avg=3D149.43, stdev=3D167.82
+    clat percentiles (usec):
+     |  1.00th=3D[    0],  5.00th=3D[    1], 10.00th=3D[    1], 20.00th=3D[=
+    1],
+     | 30.00th=3D[    2], 40.00th=3D[    2], 50.00th=3D[    2], 60.00th=3D[=
+    6],
+     | 70.00th=3D[   22], 80.00th=3D[   36], 90.00th=3D[   72], 95.00th=3D[=
+  107],
+     | 99.00th=3D[  173], 99.50th=3D[  203], 99.90th=3D[  932], 99.95th=3D[=
+ 1416],
+     | 99.99th=3D[ 2960]
+    bw (MB  /s): min=3D 1080, max=3D 2121, per=3D12.51%, avg=3D1522.33, std=
+ev=3D253.96
+    lat (usec) : 2=3D21.63%, 4=3D37.80%, 10=3D2.12%, 20=3D6.43%, 50=3D16.70=
+%
+    lat (usec) : 100=3D8.86%, 250=3D6.07%, 500=3D0.17%, 750=3D0.08%, 1000=
+=3D0.05%
+    lat (msec) : 2=3D0.06%, 4=3D0.02%, 10=3D0.01%, 20=3D0.01%
+  cpu          : usr=3D22.39%, sys=3D64.19%, ctx=3D15425825, majf=3D0, minf=
+=3D97
+  IO depths    : 1=3D1.8%, 2=3D1.8%, 4=3D8.8%, 8=3D14.4%, 16=3D12.3%, 32=3D=
+41.7%, >=3D64=3D19.3%
+     submit    : 0=3D0.0%, 4=3D5.8%, 8=3D9.7%, 16=3D15.0%, 32=3D18.0%, 64=
+=3D51.5%, >=3D64=3D0.0%
+     complete  : 0=3D0.0%, 4=3D0.1%, 8=3D0.0%, 16=3D0.1%, 32=3D0.1%, 64=3D1=
+00.0%, >=3D64=3D0.0%
+     issued    : total=3Dr=3D805764385/w=3D806127393/d=3D0, short=3Dr=3D0/w=
+=3D0/d=3D0,
+drop=3Dr=3D0/w=3D0/d=3D0
+     latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D64
+
+Run status group 0 (all jobs):
+   READ: io=3D7133.2GB, aggrb=3D12174MB/s, minb=3D12174MB/s, maxb=3D12174MB=
+/s,
+mint=3D600001msec, maxt=3D600001msec
+  WRITE: io=3D7131.3GB, aggrb=3D12171MB/s, minb=3D12171MB/s, maxb=3D12171MB=
+/s,
+mint=3D600001msec, maxt=3D600001msec
+
+Disk stats (read/write):
+  nullb0: ios=3D442461761/442546060, merge=3D363197836/363473703,
+ticks=3D12280990/12452480, in_queue=3D2740, util=3D0.43%
+
+1.3 Following is the result after porting.
+
+fio start   : Fri Jun 15 12:42:47 CEST 2018
+kernel info : Linux ib1 4.14.48-1-pserver-mpbvec+ #12 SMP Fri Jun 15
+12:21:36 CEST 2018 x86_64 GNU/Linux
+fio version : fio-2.2.10
+fiotest: (g=3D0): rw=3Drandrw, bs=3D512-64K/512-64K/512-64K,
+ioengine=3Dlibaio, iodepth=3D64
+...
+fio-2.2.10
+Starting 8 processes
+Jobs: 4 (f=3D0): [m(1),_(2),m(1),_(1),m(2),_(1)] [100.0% done]
+[8430MB/8444MB/0KB /s] [961K/963K/0 iops] [eta 00m:00s]
+fiotest: (groupid=3D0, jobs=3D8): err=3D 0: pid=3D14096: Fri Jun 15 12:52:4=
+8 2018
+  read : io=3D6633.8GB, bw=3D11322MB/s, iops=3D1246.9K, runt=3D600005msec
+    slat (usec): min=3D1, max=3D16939, avg=3D135.34, stdev=3D156.23
+    clat (usec): min=3D0, max=3D16947, avg=3D26.10, stdev=3D78.50
+     lat (usec): min=3D2, max=3D16957, avg=3D161.45, stdev=3D168.88
+    clat percentiles (usec):
+     |  1.00th=3D[    0],  5.00th=3D[    1], 10.00th=3D[    1], 20.00th=3D[=
+    1],
+     | 30.00th=3D[    2], 40.00th=3D[    2], 50.00th=3D[    2], 60.00th=3D[=
+    5],
+     | 70.00th=3D[   23], 80.00th=3D[   37], 90.00th=3D[   79], 95.00th=3D[=
+  115],
+     | 99.00th=3D[  181], 99.50th=3D[  211], 99.90th=3D[  948], 99.95th=3D[=
+ 1416],
+     | 99.99th=3D[ 2864]
+    bw (MB  /s): min=3D 1106, max=3D 2031, per=3D12.51%, avg=3D1416.05, std=
+ev=3D201.81
+  write: io=3D6631.1GB, bw=3D11318MB/s, iops=3D1247.5K, runt=3D600005msec
+    slat (usec): min=3D1, max=3D16938, avg=3D136.48, stdev=3D156.54
+    clat (usec): min=3D0, max=3D16947, avg=3D26.08, stdev=3D78.43
+     lat (usec): min=3D2, max=3D16957, avg=3D162.58, stdev=3D169.15
+    clat percentiles (usec):
+     |  1.00th=3D[    0],  5.00th=3D[    1], 10.00th=3D[    1], 20.00th=3D[=
+    1],
+     | 30.00th=3D[    2], 40.00th=3D[    2], 50.00th=3D[    2], 60.00th=3D[=
+    5],
+     | 70.00th=3D[   23], 80.00th=3D[   37], 90.00th=3D[   79], 95.00th=3D[=
+  115],
+     | 99.00th=3D[  181], 99.50th=3D[  211], 99.90th=3D[  948], 99.95th=3D[=
+ 1416],
+     | 99.99th=3D[ 2864]
+    bw (MB  /s): min=3D 1084, max=3D 2044, per=3D12.51%, avg=3D1415.67, std=
+ev=3D201.93
+    lat (usec) : 2=3D20.98%, 4=3D38.82%, 10=3D2.15%, 20=3D5.08%, 50=3D16.91=
+%
+    lat (usec) : 100=3D8.75%, 250=3D6.91%, 500=3D0.19%, 750=3D0.09%, 1000=
+=3D0.05%
+    lat (msec) : 2=3D0.07%, 4=3D0.02%, 10=3D0.01%, 20=3D0.01%
+  cpu          : usr=3D21.02%, sys=3D65.53%, ctx=3D15321661, majf=3D0, minf=
+=3D78
+  IO depths    : 1=3D1.9%, 2=3D1.9%, 4=3D9.5%, 8=3D13.6%, 16=3D11.2%, 32=3D=
+42.1%, >=3D64=3D19.9%
+     submit    : 0=3D0.0%, 4=3D6.3%, 8=3D10.1%, 16=3D14.1%, 32=3D18.2%,
+64=3D51.3%, >=3D64=3D0.0%
+     complete  : 0=3D0.0%, 4=3D0.1%, 8=3D0.0%, 16=3D0.1%, 32=3D0.1%, 64=3D1=
+00.0%, >=3D64=3D0.0%
+     issued    : total=3Dr=3D748120019/w=3D748454509/d=3D0, short=3Dr=3D0/w=
+=3D0/d=3D0,
+drop=3Dr=3D0/w=3D0/d=3D0
+     latency   : target=3D0, window=3D0, percentile=3D100.00%, depth=3D64
+
+Run status group 0 (all jobs):
+   READ: io=3D6633.8GB, aggrb=3D11322MB/s, minb=3D11322MB/s, maxb=3D11322MB=
+/s,
+mint=3D600005msec, maxt=3D600005msec
+  WRITE: io=3D6631.1GB, aggrb=3D11318MB/s, minb=3D11318MB/s, maxb=3D11318MB=
+/s,
+mint=3D600005msec, maxt=3D600005msec
+
+Disk stats (read/write):
+  nullb0: ios=3D410911387/410974086, merge=3D337127604/337396176,
+ticks=3D12482050/12662790, in_queue=3D1780, util=3D0.27%
 
 
-NOTE 1:
-It works perfectly fine only if we don't have ZONE_HIGHMEM used
-as IOC doesn't cover all physical memory. As for today It configured
-to cover 1GiB starting from 0x8z (which is ZONE_NORMAL memory for
-us). Transactions outside this region are sent on the non-coherent
-I/O bus interface.
-We can't configure IOC to cover all physical memory as it has several
-limitations relating to aperture size and start address.
+2. Unixbench
 
-And if we get DMA buffer from ZONE_HIGHMEM memory we need to
-do real flush/invalidate operations on that buffer, which is obviously
-not done by "dma_direct_ops".
+Second I rand Unixbench to check general performance.
+I think there is no difference before and after porting the patches.
+Unixbench might not be suitable to check the performance improvement
+of the block layer.
+If you inform me which tools is suitable, I will try it on my system.
 
-So I am not sure about "dma_direct_ops" using - probably we need to
-create our special cache ops like "arc_ioc_ops" which will handle
-ZONE_HIGHMEM case.
+2.1 Following is the result before porting.
 
-(BTW: current ARC dma_noncoherent_ops implementation also has same
-problem if IOC and HIGHMEM are enabled.)
+   BYTE UNIX Benchmarks (Version 5.1.3)
+
+   System: ib1: GNU/Linux
+   OS: GNU/Linux -- 4.14.48-1-pserver --
+#4.14.48-1.1+feature+daily+update+20180607.0857+1bbde0b~deb8 SMP
+   Machine: x86_64 (unknown)
+   Language: en_US.utf8 (charmap=3D"UTF-8", collate=3D"UTF-8")
+   CPU 0: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 1: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 2: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 3: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 4: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 5: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 6: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 7: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   05:00:01 up 3 days, 16:20,  2 users,  load average: 0.00, 0.11,
+1.11; runlevel 2018-06-07
+
+------------------------------------------------------------------------
+Benchmark Run: Mon Jun 11 2018 05:00:01 - 05:28:54
+8 CPUs in system; running 1 parallel copy of tests
+
+Dhrystone 2 using register variables       47158867.7 lps   (10.0 s, 7 samp=
+les)
+Double-Precision Whetstone                     3878.8 MWIPS (15.2 s, 7 samp=
+les)
+Execl Throughput                               9203.9 lps   (30.0 s, 2 samp=
+les)
+File Copy 1024 bufsize 2000 maxblocks       1490834.8 KBps  (30.0 s, 2 samp=
+les)
+File Copy 256 bufsize 500 maxblocks          388784.2 KBps  (30.0 s, 2 samp=
+les)
+File Copy 4096 bufsize 8000 maxblocks       3744780.2 KBps  (30.0 s, 2 samp=
+les)
+Pipe Throughput                             2682620.1 lps   (10.0 s, 7 samp=
+les)
+Pipe-based Context Switching                 263786.5 lps   (10.0 s, 7 samp=
+les)
+Process Creation                              19674.0 lps   (30.0 s, 2 samp=
+les)
+Shell Scripts (1 concurrent)                  16121.5 lpm   (60.0 s, 2 samp=
+les)
+Shell Scripts (8 concurrent)                   5623.5 lpm   (60.0 s, 2 samp=
+les)
+System Call Overhead                        4068991.3 lps   (10.0 s, 7 samp=
+les)
+
+System Benchmarks Index Values               BASELINE       RESULT    INDEX
+Dhrystone 2 using register variables         116700.0   47158867.7   4041.0
+Double-Precision Whetstone                       55.0       3878.8    705.2
+Execl Throughput                                 43.0       9203.9   2140.4
+File Copy 1024 bufsize 2000 maxblocks          3960.0    1490834.8   3764.7
+File Copy 256 bufsize 500 maxblocks            1655.0     388784.2   2349.1
+File Copy 4096 bufsize 8000 maxblocks          5800.0    3744780.2   6456.5
+Pipe Throughput                               12440.0    2682620.1   2156.4
+Pipe-based Context Switching                   4000.0     263786.5    659.5
+Process Creation                                126.0      19674.0   1561.4
+Shell Scripts (1 concurrent)                     42.4      16121.5   3802.2
+Shell Scripts (8 concurrent)                      6.0       5623.5   9372.5
+System Call Overhead                          15000.0    4068991.3   2712.7
+                                                                   =3D=3D=
+=3D=3D=3D=3D=3D=3D
+System Benchmarks Index Score                                        2547.7
+
+------------------------------------------------------------------------
+Benchmark Run: Mon Jun 11 2018 05:28:54 - 05:57:07
+8 CPUs in system; running 8 parallel copies of tests
+
+Dhrystone 2 using register variables      234727639.9 lps   (10.0 s, 7 samp=
+les)
+Double-Precision Whetstone                    35350.9 MWIPS (10.7 s, 7 samp=
+les)
+Execl Throughput                              43811.3 lps   (30.0 s, 2 samp=
+les)
+File Copy 1024 bufsize 2000 maxblocks       1401373.1 KBps  (30.0 s, 2 samp=
+les)
+File Copy 256 bufsize 500 maxblocks          366033.9 KBps  (30.0 s, 2 samp=
+les)
+File Copy 4096 bufsize 8000 maxblocks       4360829.6 KBps  (30.0 s, 2 samp=
+les)
+Pipe Throughput                            12875165.6 lps   (10.0 s, 7 samp=
+les)
+Pipe-based Context Switching                2431725.6 lps   (10.0 s, 7 samp=
+les)
+Process Creation                              97360.8 lps   (30.0 s, 2 samp=
+les)
+Shell Scripts (1 concurrent)                  58879.6 lpm   (60.0 s, 2 samp=
+les)
+Shell Scripts (8 concurrent)                   9232.5 lpm   (60.0 s, 2 samp=
+les)
+System Call Overhead                        9497958.7 lps   (10.0 s, 7 samp=
+les)
+
+System Benchmarks Index Values               BASELINE       RESULT    INDEX
+Dhrystone 2 using register variables         116700.0  234727639.9  20113.8
+Double-Precision Whetstone                       55.0      35350.9   6427.4
+Execl Throughput                                 43.0      43811.3  10188.7
+File Copy 1024 bufsize 2000 maxblocks          3960.0    1401373.1   3538.8
+File Copy 256 bufsize 500 maxblocks            1655.0     366033.9   2211.7
+File Copy 4096 bufsize 8000 maxblocks          5800.0    4360829.6   7518.7
+Pipe Throughput                               12440.0   12875165.6  10349.8
+Pipe-based Context Switching                   4000.0    2431725.6   6079.3
+Process Creation                                126.0      97360.8   7727.0
+Shell Scripts (1 concurrent)                     42.4      58879.6  13886.7
+Shell Scripts (8 concurrent)                      6.0       9232.5  15387.5
+System Call Overhead                          15000.0    9497958.7   6332.0
+                                                                   =3D=3D=
+=3D=3D=3D=3D=3D=3D
+System Benchmarks Index Score                                        7803.5
 
 
-NOTE 2:
-In this RFC only hsdk.dts changes are shown to reduce patch size.
-AXS103 device tree changes are not shown.
+2.2 Following is the result after porting.
 
-Signed-off-by: Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>
----
- arch/arc/Kconfig                   |  1 +
- arch/arc/boot/dts/hsdk.dts         |  4 ++++
- arch/arc/include/asm/dma-mapping.h | 14 ++++++++++++++
- arch/arc/mm/Makefile               |  2 +-
- arch/arc/mm/cache.c                | 15 +--------------
- arch/arc/mm/dma-mapping.c          | 20 ++++++++++++++++++++
- arch/arc/mm/dma.c                  | 14 +-------------
- 7 files changed, 42 insertions(+), 28 deletions(-)
- create mode 100644 arch/arc/include/asm/dma-mapping.h
- create mode 100644 arch/arc/mm/dma-mapping.c
+   BYTE UNIX Benchmarks (Version 5.1.3)
 
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index e81bcd271be7..0a2fcd2a8c32 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -17,6 +17,7 @@ config ARC
- 	select CLONE_BACKWARDS
- 	select COMMON_CLK
- 	select DMA_NONCOHERENT_OPS
-+	select DMA_DIRECT_OPS
- 	select DMA_NONCOHERENT_MMAP
- 	select GENERIC_ATOMIC64 if !ISA_ARCV2 || !(ARC_HAS_LL64 && ARC_HAS_LLSC)
- 	select GENERIC_CLOCKEVENTS
-diff --git a/arch/arc/boot/dts/hsdk.dts b/arch/arc/boot/dts/hsdk.dts
-index 006aa3de5348..ebb686c21393 100644
---- a/arch/arc/boot/dts/hsdk.dts
-+++ b/arch/arc/boot/dts/hsdk.dts
-@@ -176,6 +176,7 @@
- 			phy-handle = <&phy0>;
- 			resets = <&cgu_rst HSDK_ETH_RESET>;
- 			reset-names = "stmmaceth";
-+			dma-coherent;
- 
- 			mdio {
- 				#address-cells = <1>;
-@@ -194,12 +195,14 @@
- 			compatible = "snps,hsdk-v1.0-ohci", "generic-ohci";
- 			reg = <0x60000 0x100>;
- 			interrupts = <15>;
-+			dma-coherent;
- 		};
- 
- 		ehci@40000 {
- 			compatible = "snps,hsdk-v1.0-ehci", "generic-ehci";
- 			reg = <0x40000 0x100>;
- 			interrupts = <15>;
-+			dma-coherent;
- 		};
- 
- 		mmc@a000 {
-@@ -212,6 +215,7 @@
- 			clock-names = "biu", "ciu";
- 			interrupts = <12>;
- 			bus-width = <4>;
-+			dma-coherent;
- 		};
- 	};
- 
-diff --git a/arch/arc/include/asm/dma-mapping.h b/arch/arc/include/asm/dma-mapping.h
-new file mode 100644
-index 000000000000..640a851bd331
---- /dev/null
-+++ b/arch/arc/include/asm/dma-mapping.h
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// (C) 2018 Synopsys, Inc. (www.synopsys.com)
-+
-+#ifndef ASM_ARC_DMA_MAPPING_H
-+#define ASM_ARC_DMA_MAPPING_H
-+
-+#define arch_setup_dma_ops arch_setup_dma_ops
-+
-+#include <asm-generic/dma-mapping.h>
-+
-+void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-+			const struct iommu_ops *iommu, bool coherent);
-+
-+#endif
-diff --git a/arch/arc/mm/Makefile b/arch/arc/mm/Makefile
-index 3703a4969349..45683897c27b 100644
---- a/arch/arc/mm/Makefile
-+++ b/arch/arc/mm/Makefile
-@@ -7,5 +7,5 @@
- #
- 
- obj-y	:= extable.o ioremap.o dma.o fault.o init.o
--obj-y	+= tlb.o tlbex.o cache.o mmap.o
-+obj-y	+= tlb.o tlbex.o cache.o mmap.o dma-mapping.o
- obj-$(CONFIG_HIGHMEM)	+= highmem.o
-diff --git a/arch/arc/mm/cache.c b/arch/arc/mm/cache.c
-index 9dbe645ee127..c5d1f2a2c4da 100644
---- a/arch/arc/mm/cache.c
-+++ b/arch/arc/mm/cache.c
-@@ -896,15 +896,6 @@ static void __dma_cache_wback_slc(phys_addr_t start, unsigned long sz)
- 	slc_op(start, sz, OP_FLUSH);
- }
- 
--/*
-- * DMA ops for systems with IOC
-- * IOC hardware snoops all DMA traffic keeping the caches consistent with
-- * memory - eliding need for any explicit cache maintenance of DMA buffers
-- */
--static void __dma_cache_wback_inv_ioc(phys_addr_t start, unsigned long sz) {}
--static void __dma_cache_inv_ioc(phys_addr_t start, unsigned long sz) {}
--static void __dma_cache_wback_ioc(phys_addr_t start, unsigned long sz) {}
--
- /*
-  * Exported DMA API
-  */
-@@ -1253,11 +1244,7 @@ void __init arc_cache_init_master(void)
- 	if (is_isa_arcv2() && ioc_enable)
- 		arc_ioc_setup();
- 
--	if (is_isa_arcv2() && ioc_enable) {
--		__dma_cache_wback_inv = __dma_cache_wback_inv_ioc;
--		__dma_cache_inv = __dma_cache_inv_ioc;
--		__dma_cache_wback = __dma_cache_wback_ioc;
--	} else if (is_isa_arcv2() && l2_line_sz && slc_enable) {
-+	if (is_isa_arcv2() && l2_line_sz && slc_enable) {
- 		__dma_cache_wback_inv = __dma_cache_wback_inv_slc;
- 		__dma_cache_inv = __dma_cache_inv_slc;
- 		__dma_cache_wback = __dma_cache_wback_slc;
-diff --git a/arch/arc/mm/dma-mapping.c b/arch/arc/mm/dma-mapping.c
-new file mode 100644
-index 000000000000..9d0d310bbf5a
---- /dev/null
-+++ b/arch/arc/mm/dma-mapping.c
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// (C) 2018 Synopsys, Inc. (www.synopsys.com)
-+
-+#include <linux/dma-mapping.h>
-+
-+void arch_setup_dma_ops(struct device *dev, u64 dma_base, u64 size,
-+			const struct iommu_ops *iommu, bool coherent)
-+{
-+	const struct dma_map_ops *dma_ops = &dma_noncoherent_ops;
-+
-+	/*
-+	 * IOC hardware snoops all DMA traffic keeping the caches consistent
-+	 * with memory - eliding need for any explicit cache maintenance of
-+	 * DMA buffers - so we can use dma_direct cache ops.
-+	 */
-+	if (is_isa_arcv2() && ioc_enable && coherent)
-+		dma_ops = &dma_direct_ops;
-+
-+	set_dma_ops(dev, dma_ops);
-+}
-diff --git a/arch/arc/mm/dma.c b/arch/arc/mm/dma.c
-index 8c1071840979..4fd130e786c7 100644
---- a/arch/arc/mm/dma.c
-+++ b/arch/arc/mm/dma.c
-@@ -33,19 +33,7 @@ void *arch_dma_alloc(struct device *dev, size_t size, dma_addr_t *dma_handle,
- 	if (!page)
- 		return NULL;
- 
--	/*
--	 * IOC relies on all data (even coherent DMA data) being in cache
--	 * Thus allocate normal cached memory
--	 *
--	 * The gains with IOC are two pronged:
--	 *   -For streaming data, elides need for cache maintenance, saving
--	 *    cycles in flush code, and bus bandwidth as all the lines of a
--	 *    buffer need to be flushed out to memory
--	 *   -For coherent data, Read/Write to buffers terminate early in cache
--	 *   (vs. always going to memory - thus are faster)
--	 */
--	if ((is_isa_arcv2() && ioc_enable) ||
--	    (attrs & DMA_ATTR_NON_CONSISTENT))
-+	if (attrs & DMA_ATTR_NON_CONSISTENT)
- 		need_coh = 0;
- 
- 	/*
--- 
-2.14.4
+   System: ib1: GNU/Linux
+   OS: GNU/Linux -- 4.14.48-1-pserver-mpbvec+ -- #12 SMP Fri Jun 15
+12:21:36 CEST 2018
+   Machine: x86_64 (unknown)
+   Language: en_US.utf8 (charmap=3D"UTF-8", collate=3D"UTF-8")
+   CPU 0: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 1: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 2: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 3: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 4: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 5: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 6: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   CPU 7: Intel(R) Xeon(R) CPU E3-1245 v5 @ 3.50GHz (7008.0 bogomips)
+          Hyper-Threading, x86-64, MMX, Physical Address Ext,
+SYSENTER/SYSEXIT, SYSCALL/SYSRET, Intel virtualization
+   13:16:11 up 50 min,  1 user,  load average: 0.00, 1.40, 3.46;
+runlevel 2018-06-15
 
+------------------------------------------------------------------------
+Benchmark Run: Fri Jun 15 2018 13:16:11 - 13:45:04
+8 CPUs in system; running 1 parallel copy of tests
+
+Dhrystone 2 using register variables       47103754.6 lps   (10.0 s, 7 samp=
+les)
+Double-Precision Whetstone                     3886.3 MWIPS (15.1 s, 7 samp=
+les)
+Execl Throughput                               8965.0 lps   (30.0 s, 2 samp=
+les)
+File Copy 1024 bufsize 2000 maxblocks       1510285.9 KBps  (30.0 s, 2 samp=
+les)
+File Copy 256 bufsize 500 maxblocks          395196.9 KBps  (30.0 s, 2 samp=
+les)
+File Copy 4096 bufsize 8000 maxblocks       3802788.0 KBps  (30.0 s, 2 samp=
+les)
+Pipe Throughput                             2670169.1 lps   (10.0 s, 7 samp=
+les)
+Pipe-based Context Switching                 275093.8 lps   (10.0 s, 7 samp=
+les)
+Process Creation                              19707.1 lps   (30.0 s, 2 samp=
+les)
+Shell Scripts (1 concurrent)                  16046.8 lpm   (60.0 s, 2 samp=
+les)
+Shell Scripts (8 concurrent)                   5600.8 lpm   (60.0 s, 2 samp=
+les)
+System Call Overhead                        4104142.0 lps   (10.0 s, 7 samp=
+les)
+
+System Benchmarks Index Values               BASELINE       RESULT    INDEX
+Dhrystone 2 using register variables         116700.0   47103754.6   4036.3
+Double-Precision Whetstone                       55.0       3886.3    706.6
+Execl Throughput                                 43.0       8965.0   2084.9
+File Copy 1024 bufsize 2000 maxblocks          3960.0    1510285.9   3813.9
+File Copy 256 bufsize 500 maxblocks            1655.0     395196.9   2387.9
+File Copy 4096 bufsize 8000 maxblocks          5800.0    3802788.0   6556.5
+Pipe Throughput                               12440.0    2670169.1   2146.4
+Pipe-based Context Switching                   4000.0     275093.8    687.7
+Process Creation                                126.0      19707.1   1564.1
+Shell Scripts (1 concurrent)                     42.4      16046.8   3784.6
+Shell Scripts (8 concurrent)                      6.0       5600.8   9334.6
+System Call Overhead                          15000.0    4104142.0   2736.1
+                                                                   =3D=3D=
+=3D=3D=3D=3D=3D=3D
+System Benchmarks Index Score                                        2560.0
+
+------------------------------------------------------------------------
+Benchmark Run: Fri Jun 15 2018 13:45:04 - 14:13:17
+8 CPUs in system; running 8 parallel copies of tests
+
+Dhrystone 2 using register variables      237271982.6 lps   (10.0 s, 7 samp=
+les)
+Double-Precision Whetstone                    35186.8 MWIPS (10.7 s, 7 samp=
+les)
+Execl Throughput                              42557.8 lps   (30.0 s, 2 samp=
+les)
+File Copy 1024 bufsize 2000 maxblocks       1403922.0 KBps  (30.0 s, 2 samp=
+les)
+File Copy 256 bufsize 500 maxblocks          367436.5 KBps  (30.0 s, 2 samp=
+les)
+File Copy 4096 bufsize 8000 maxblocks       4380468.3 KBps  (30.0 s, 2 samp=
+les)
+Pipe Throughput                            12872664.6 lps   (10.0 s, 7 samp=
+les)
+Pipe-based Context Switching                2451404.5 lps   (10.0 s, 7 samp=
+les)
+Process Creation                              97788.2 lps   (30.0 s, 2 samp=
+les)
+Shell Scripts (1 concurrent)                  58505.9 lpm   (60.0 s, 2 samp=
+les)
+Shell Scripts (8 concurrent)                   9195.4 lpm   (60.0 s, 2 samp=
+les)
+System Call Overhead                        9467372.2 lps   (10.0 s, 7 samp=
+les)
+
+System Benchmarks Index Values               BASELINE       RESULT    INDEX
+Dhrystone 2 using register variables         116700.0  237271982.6  20331.8
+Double-Precision Whetstone                       55.0      35186.8   6397.6
+Execl Throughput                                 43.0      42557.8   9897.2
+File Copy 1024 bufsize 2000 maxblocks          3960.0    1403922.0   3545.3
+File Copy 256 bufsize 500 maxblocks            1655.0     367436.5   2220.2
+File Copy 4096 bufsize 8000 maxblocks          5800.0    4380468.3   7552.5
+Pipe Throughput                               12440.0   12872664.6  10347.8
+Pipe-based Context Switching                   4000.0    2451404.5   6128.5
+Process Creation                                126.0      97788.2   7761.0
+Shell Scripts (1 concurrent)                     42.4      58505.9  13798.6
+Shell Scripts (8 concurrent)                      6.0       9195.4  15325.6
+System Call Overhead                          15000.0    9467372.2   6311.6
+                                                                   =3D=3D=
+=3D=3D=3D=3D=3D=3D
+System Benchmarks Index Score                                        7794.3
+
+
+--=20
+GIOH KIM
+Linux Kernel Entwickler
+
+ProfitBricks GmbH
+Greifswalder Str. 207
+D - 10405 Berlin
+
+Tel:       +49 176 2697 8962
+Fax:      +49 30 577 008 299
+Email:    gi-oh.kim@profitbricks.com
+URL:      https://www.profitbricks.de
+
+Sitz der Gesellschaft: Berlin
+Registergericht: Amtsgericht Charlottenburg, HRB 125506 B
+Gesch=C3=A4ftsf=C3=BChrer: Achim Weiss, Matthias Steinberg, Christoph Steff=
+ens
