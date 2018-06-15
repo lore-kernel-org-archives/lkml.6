@@ -2,190 +2,312 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 139BDC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:52:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 2D088C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:53:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B996C208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:52:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7E57208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:53:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="k4aaXpGu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B996C208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ba4ddd0p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7E57208AF
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755537AbeFOAw2 (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 20:52:28 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:44751 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753485AbeFOAwZ (ORCPT
+        id S965381AbeFOAxm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 20:53:42 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:34021 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1753485AbeFOAxi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 20:52:25 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20180615005223epoutp031287a91ab3128b492557e4b469a95b5b~4LyzwWvjm2001320013epoutp03b;
-        Fri, 15 Jun 2018 00:52:23 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20180615005223epoutp031287a91ab3128b492557e4b469a95b5b~4LyzwWvjm2001320013epoutp03b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1529023943;
-        bh=CrLOYoyR+Fzw5i+4E3qnHn7DcyJvRSrX90nd8CNqC20=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=k4aaXpGu6Jejcc83MkMm8PDEGEsM4Twt4HVNobDdqoGylbBQZzXXtMGdFwS3tuXXW
-         iYSxAcrIymd3PJzOxZNcizyCcDP5olSJpDj8SjkEER76zbbrRjk1Z3VnvKK98H0BiX
-         gB8drsye2ejwxdsf72gnA65c9FiJsCQax+PpWtXE=
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.156]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20180615005220epcas1p3f113eadeecf1252313eb4e53e43b450a~4LywimFgB2131921319epcas1p3B;
-        Fri, 15 Jun 2018 00:52:20 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        85.69.04068.1CD032B5; Fri, 15 Jun 2018 09:52:17 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20180615005217epcas1p1cd4b4263c886653644da34e664e381d5~4LyuZrwbZ0341203412epcas1p1B;
-        Fri, 15 Jun 2018 00:52:17 +0000 (GMT)
-X-AuditID: b6c32a36-bd1ff70000000fe4-92-5b230dc10b89
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id C8.B2.03915.1CD032B5; Fri, 15 Jun
-        2018 09:52:17 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PAC0014JAF5MM80@mmp2.samsung.com>; Fri, 15 Jun 2018 09:52:17 +0900 (KST)
-Message-id: <5B230DC0.3050000@samsung.com>
-Date:   Fri, 15 Jun 2018 09:52:16 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Roger Quadros <rogerq@ti.com>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        chanwoo@kernel.org, myungjoo.ham@samsung.com,
-        stable <stable@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Tony Giaccone <tony@giaccone.org>
-Subject: Re: [PATCH] extcon: Release locking when sending the notification
- of connector state
-In-reply-to: <764C1A35-7D06-48AD-8809-0F6BB3526A23@goldelico.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrBKsWRmVeSWpSXmKPExsWy7bCmnu5BXuVogx/3rS0m3rjCYvFj21cm
-        iwtPe9gsLu+aw2Zxu3EFm0XPIy2LBRsfMVrcOv6W0YHD49j8E0wea96fYvbYtKqTzaNvyypG
-        j+M3tjN5fN4kF8AWlWqTkZqYklqkkJqXnJ+SmZduq+QdHO8cb2pmYKhraGlhrqSQl5ibaqvk
-        4hOg65aZA3SPkkJZYk4pUCggsbhYSd/Opii/tCRVISO/uMRWKdrQ0EjP0MBcz8gISBvHWhmZ
-        ApUkpGb8Wr6EuaBVpOLFs82sDYy7BboYOTkkBEwkGjbcZO9i5OIQEtjBKNF6u4EJwvnOKHH2
-        2HdGmKo3v1uhqjYwSsye08EOkuAVEJT4MfkeSxcjBwezgLzEkUvZIGFmAU2JF18msUDU32WU
-        OPqvnQ2iXkvi6Ya9rCD1LAKqEtNvi4CE2YDC+1/cACvhF1CUuPrjMdheUYEIiZ3zv7GDlIsI
-        +Es0PCgGGckscIdR4svXOWA1wgLxEg0f1oH1cgo4SrQdW84IUiQhcJtN4uzbI2wQD7hIfLz+
-        hAnCFpZ4dXwL2FAJAWmJS0dtIerbgYa+aGaFcCYwSnw4tRmqwVji2cIuJojP+CTefe1hhWjm
-        lehoE4Io8ZD4OOMm1MMrmCQO/7/KOoFRdhZSGM1ChNEspDBawMi8ilEstaA4Nz212LDASK84
-        Mbe4NC9dLzk/dxMjONVpme1gXHTO5xCjAAejEg+vQYFStBBrYllxZe4hRgkOZiUR3t4SoBBv
-        SmJlVWpRfnxRaU5q8SFGU2AQT2SWEk3OB6bhvJJ4Q1MjY2NjCxNDM1NDQyVx3oqbAtFCAumJ
-        JanZqakFqUUwfUwcnFINjEHbPziLHOFcKfdtU48fR/XN3Zlrbd6ue3DBZIt4lc/O0jP3duTe
-        7t7eaXE8Yt7eH9FG9/0zjqo965J9fv8+79rGTMmLs45Okgko23dR/Wd54E0D49S3aQwHc097
-        b5p/KupInFvx/w2TvXfZXr9dd3/elBtpL2c/Mqq5seZAjYjaSwbBGEf+eWVKLMUZiYZazEXF
-        iQDXyzEeiwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsVy+t9jQd2DvMrRBj+W6FhMvHGFxeLHtq9M
-        Fhee9rBZXN41h83iduMKNoueR1oWCzY+YrS4dfwtowOHx7H5J5g81rw/xeyxaVUnm0ffllWM
-        HsdvbGfy+LxJLoAtissmJTUnsyy1SN8ugSvj1/IlzAWtIhUvnm1mbWDcLdDFyMkhIWAi8eZ3
-        K3sXIxeHkMA6RolFW7exgyR4BQQlfky+x9LFyMHBLCAvceRSNoSpLjFlSi5E+X1Giak99xkh
-        yrUknm7YywpSwyKgKjH9tghImA0ovP/FDTYQm19AUeLqj8eMICWiAhES3ScqQcIiAr4SP1/t
-        YgYZySxwi1Fi/r8JrCAJYYF4iak7t7BB7FrFJLH2Tg/YIE4BR4m2Y8sZJzAKzEJy6SyES2ch
-        XLqAkXkVo2RqQXFuem6xUYFhXmq5XnFibnFpXrpecn7uJkZg4G87rNW3g/H+kvhDjAIcjEo8
-        vAYFStFCrIllxZW5hxglOJiVRHh7S4BCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeW/nHYsUEkhP
-        LEnNTk0tSC2CyTJxcEo1MOp5W7+q/r+S8fNZZf1Vfe+XhVtarCmXy50ksVz0fF9MUP4H4eja
-        EzNuffX0E/g7LfL6LUHZl5KCHGavBaJm6AWvcF+VkK7tfsBCm8Xg/ZO25FKnvAWzNFYv26Cq
-        2vrx4ldnUcNFrJvOe3X9bnx47HYZq/GptxybRCdnr1vTfmvOSpHJmoYhT5RYijMSDbWYi4oT
-        AScfG/J4AgAA
-X-CMS-MailID: 20180615005217epcas1p1cd4b4263c886653644da34e664e381d5
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d
-References: <CGME20180614041448epcas2p400dad902581dc6875461d4c3dd3a231d@epcas2p4.samsung.com>
-        <1528949687-32002-1-git-send-email-cw00.choi@samsung.com>
-        <5B22410C.9080002@samsung.com>
-        <9AEF5153-4234-4C30-984A-8A3D51D04623@goldelico.com>
-        <764C1A35-7D06-48AD-8809-0F6BB3526A23@goldelico.com>
+        Thu, 14 Jun 2018 20:53:38 -0400
+Received: from unknown (HELO relmlir1.idc.renesas.com) ([10.200.68.151])
+  by relmlie3.idc.renesas.com with ESMTP; 15 Jun 2018 09:53:36 +0900
+Received: from relmlii1.idc.renesas.com (relmlii1.idc.renesas.com [10.200.68.65])
+        by relmlir1.idc.renesas.com (Postfix) with ESMTP id 1D99E5000A;
+        Fri, 15 Jun 2018 09:53:36 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,225,1526310000"; 
+   d="scan'208";a="282574503"
+Received: from mail-ty1jpn01lp0182.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.182])
+  by relmlii1.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2018 09:53:35 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wOBlYa9LvgWnmAF3Jc8zV2mdmKQkthyJmC2KPfRvDTA=;
+ b=ba4ddd0pJr4CrTHWvs+FmO++RmcDeb1y0Xb1zDzDq48isvjfmKovHk0HO+aV0xn0TgKyw8Hm3zXpFOJpuFNutm1EFBstfocNb3CYba2w1MXspnv4+THWHb9kbgldpVqjcWLgdwChcFurBDZhC+Ss/jpVg82zX3VU3BRgxwA71es=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.138) by
+ TYAPR01MB2078.jpnprd01.prod.outlook.com (2603:1096:404:8::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.16; Fri, 15 Jun 2018 00:53:33 +0000
+Message-ID: <87lgbgswl5.wl%kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Subject: [PATCH v3] dmaengine: rcar-dmac: don't use DMAC error interrupt
+User-Agent: Wanderlust/2.15.9 Emacs/24.3 Mule/6.0
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+CC:     <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        <dmaengine@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 15 Jun 2018 00:53:33 +0000
+X-Originating-IP: [211.11.155.138]
+X-ClientProxiedBy: TY1PR01CA0158.jpnprd01.prod.outlook.com
+ (2603:1096:402:1::34) To TYAPR01MB2078.jpnprd01.prod.outlook.com
+ (2603:1096:404:8::10)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: 68eb55c8-4320-4169-301d-08d5d25a6bd9
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2078;
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;3:sYXLN8B4RrBkNgyyMb5CexJDZt4iPMgu2cfoP3AKhrbcsgaUgCX7/6LJ+8Ox9Y2fMwqoShB/fpev9VEwKZtYCBbVO+q+UCGx/c528PETT3Gl9+ym4n2eZNeaRry4DEoIPL6jEQ5cngGneOxqPL7u/TuAlZO1uYUKxWGdxf/4PT4f+qF3MBvoCKlH11T5sDG8nTAIW3oAtWsrvhqqEagatmoqpDp7ngqCvDHqcEOpS6mcX2LbpR9jt2/W+kAzWJV2;25:VWsxUAx4B7uCfmkwGMl5ToQo7/GvhmGA5TyBMSURHoFn3pVnaLdZTin7WNevxujuHRmSv3dSG0zGUadlPNy5R2vQ2fzNNK4LTNxvJIZ2b2qHppC7o0bHzFLZE2JEVUfodsrtgKpPokZHkhr3TAQm045vV8IlhuoeABPwRITEwaVVCPd9gxMaEecmaBiQ1ilaaH92zgQRwPv458j37aVoem9zXdDfVwT2thE/ZixQUFhLuszm2EOdHpfjO2jd4+rceC2FS+O9W9KUb1QoBc3XvIBl/nVBa/BTx8LYtdQlqgJSsU6JsPIXmj2EKYypN/9j4pHlh5EfiEwZ3qtBqreuCg==;31:f628dwrz46Os9Tk2d5J7FPOGt8CH7nd7hCDHeVJdy0Z0Oako2f+MtBnRLObKjTNEayikNQeyNa0QLvilND+Wy4Qk61O6XnHB32Cy3G8qut5Y2yE+L38CnYsinvlbJL1TwEn7uSjsBR3U/UeghmJUnj/eldoOiPea+d0qFYoSqirFLJ/0zhhbX7CtoI1HivHBdEgcoCeAliZt++QpGdAL+jButbrAkg69TFWCjwycHkQ=
+X-MS-TrafficTypeDiagnostic: TYAPR01MB2078:
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;20:DAPceGwfUIZDMHfgIOAIQxy6q33iAfwssU4tue28Lg4GLhra/CxvlKUhOCpg2n2SEw0YK0PpLx4HtD5iLi2+JTP40v2AYDz2FE0kzb99my/jZSRSxfhFbEqnWoeiFmAS74aO+sbKRUoRnze993GbeaoRbZx649jbPun5VDkoMq2TwU59mCzeU1djtaWatYMIUPjhWmGEE+UQsoYsZrMKpfRIQlecKERiiwZgSIJrHtAxWaxjMaEegXvrvVyYabUD6Ilid83zuKdd8JsXYNuMV3cvphlpsxu/3kf8AdyOSjSVk0JgDUnBuK6q933bFr0+Cs+tQAbixVQamnp8HgNziHDFlOxKi7q1zs3I27m+Mc4OXjvuDnBnpUQwiZb/hS5b6LDfZOuY7abAcSENRjeMp/BDNAJ/r7GrHcjFasB8NQoJBikOqLH/77oyZV9wLScVZY3l+w78fWsscI3nfwSv0DjQN/OYXJf60YaYv6EgxcmOC7nwMi3ItbfQ8qf43KMS;4:YRGVc31NWKIRGtidk1DAYJut7ZhCnY+0Bf2FezrZzqRsV1dLa0xkQenO02NzguSKBDRQ/+Eq4rhCJ5dkYSuLRKY7tK70+s8PBOVufyofum1RZJAmFxK6fpNXk0qHcZIF8MXyNP9SFSW7asjj2NxuVkZfMZ9kly+EL5IcsV47YeqC6kyycXFz+1VbOaVWfqx66MWdkB8pvZqKZio7DR2ai1n0reIYXUEs80dLr1KX3oFrdxyI3rL8R8pSCZy7O55twPRU0jXt8wL+pl4x6rluOQ==
+X-Microsoft-Antispam-PRVS: <TYAPR01MB20786FAB2438862A3FE36EE8D47C0@TYAPR01MB2078.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(93006095)(93001095)(3002001)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123560045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:TYAPR01MB2078;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2078;
+X-Forefront-PRVS: 0704670F76
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(39380400002)(376002)(346002)(366004)(199004)(189003)(316002)(26005)(58126008)(23726003)(52116002)(106356001)(105586002)(6116002)(478600001)(3846002)(5660300001)(186003)(50466002)(53416004)(16586007)(59450400001)(16526019)(54906003)(386003)(7696005)(6916009)(86362001)(8936002)(7416002)(4326008)(36756003)(25786009)(69596002)(53936002)(8676002)(39060400002)(68736007)(6486002)(476003)(956004)(2906002)(7736002)(2616005)(81166006)(305945005)(47776003)(486006)(81156014)(97736004)(66066001)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2078;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYAPR01MB2078;23:Wv2sPY4d68zTcO2bWz6lepTAgGXfIwVZQ/ZNYBlkF?=
+ =?us-ascii?Q?Rza/Hx98qgKywSeuXpy4vftSrVGHbStWLBQwZ4n71vMcfQC15CtxofPysDib?=
+ =?us-ascii?Q?KY7tmZqFRZB0QrDAV/7dPVQMwGJlVHeVfZE/4WV3YKDP4JlqCoj/kVcs+o2N?=
+ =?us-ascii?Q?2uuL0cs76UuxDnj/tGxF8UH0pQ8OT1qTT3CI+x2GZjIzRKJ53jDXdNty8gXz?=
+ =?us-ascii?Q?aGRzvnbplPoyikx5/TZ4r9oFUfiT6pzNwUUFwugmrCSoZeJTzEoD4wvolfM3?=
+ =?us-ascii?Q?Rgw//LdXkgNj9K8gcoxpElwT1Mrr+oAF8OnVgUHut5JpnZdS+u9aT5IHjlaA?=
+ =?us-ascii?Q?CgZM54BDsKe5XDbAKaARVBxFnp4PXnRaglcwSn8kbjli+NlZVqM2aTn5gIsL?=
+ =?us-ascii?Q?SGPQZLxuhX27RQu9yw89XIvjsY/hOqiGygDaTm3QthaJ9uQgHTZvI2BSTss9?=
+ =?us-ascii?Q?QVlXpWcOqTVfBasX3I+YmhlO338ehOMlVhIiWQrfulfxqsZxvX2y4nYupPqR?=
+ =?us-ascii?Q?moPNviAzB6nG52xOOctTw+IFAx01wmOK9uIj2MpZAHWPVybdotQbjFCEFNDz?=
+ =?us-ascii?Q?eUrY23VbsfqGFVzlJqFsdW3MIqJHl8gTP41iCtItsfxfaoMj4Jl1ZlyOWusw?=
+ =?us-ascii?Q?GlY/0nVA2s4OU33PWGHNAFGYHnjuBANhGWj6d/pBZqINLT3Q7WL8e6V+gAHr?=
+ =?us-ascii?Q?/kAP0OB6/ca2yFH9co6lxpYbBhIXtmSJtL251ZeHjAbv/h7gohle8kh8zXKc?=
+ =?us-ascii?Q?3+kTsdng5yhNjcH6raB7K9pUKa0D7YKhG/VZOc9wE0btzt3vY+/l3QE7mEId?=
+ =?us-ascii?Q?+h50smn9N1hHuHpydMKrl9qfkMbrRoZ1uMigtguFXr1m7gWWLqDl2+DuuvP1?=
+ =?us-ascii?Q?yYI0Cry2YU9VxspQ5tsXKgDCtUxMuBOwHOLEHGp+ZaMNmjCeBerdUt9lYLWD?=
+ =?us-ascii?Q?aBysFFC3hxvitPB9Mv8CHtnDhwPSYaOvsKrRm1Ybtf1puduLKhf2gA6R6PZI?=
+ =?us-ascii?Q?DcKBz+FGPtBlwnuJBz02CygRKtSNGHI3XPzUunWMJCByn9N0Ncs3Tq8ajyyQ?=
+ =?us-ascii?Q?MMj2NDzCQhgb9c0oIYqDot80qPTIl1HUsmp9j9X4WaqVRXACEbD1egFRgA5e?=
+ =?us-ascii?Q?4voddR0kvQ8Twv8++sSmZEqCj0woStnbVcpBm98hTDlLY8wkCziTThUyaLyX?=
+ =?us-ascii?Q?f1cprUMvCaKNkNLD98YAWFQ/mxJP/4dSuVQRD3xDYR2P1e+mSzZN6yGfw=3D?=
+ =?us-ascii?Q?=3D?=
+X-Microsoft-Antispam-Message-Info: 41HlhPqHODKI9iIWakJnkmW8C6tWR2Iv46RL34HD+a/OesFHG8y4k81d2v3q1SbaSXl+0nGJZ9eZylebhDUj/v2BGoO6hAvjU7Tg5FH0jkbEMQxzWBdfpz8NfE8eUfzb1mOZ0WDpB0A8cOCr0DxLxWjU2c3+LKZmY/PnU7NIB6AM1sdoqNzrGBRkrDUTwT3R
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;6:2ZWc51GV4GvqbcZMiJJs0ZFm7tl0OquWM+nglysdSZRHHPkKFMzkE8cwkmJ4ChuDok9T9EqZsq7dWnVbGrdybz7B6Y8yYGEcxzTWE1PXOwUId5rpcNUFqdvLJl5hODgsI2yLxFJ7tDFN+hytXqp3UKDT0VH2Jyrf4phhLcKjrW/DVh7WgM68x5AwtKnpUdG1TebxjL+qhjfJPq4TWowSVbQ3Y0A3SF5CSI/PQef5YsYLVzFWXLdtJCHWckuZZGu0MTiI/ARP5B2uW7mfP9bVCK5eqvHDoeMSCiK6b3HnAioh4Eatk+bR+/aGz8tzHjIeo3DjkOYPwDbQ+AghdMvrISRE645xkGtUlx50CIE08GVpRoL6Fos0IYpFwCdpDTJ8BuuSIgs6XvhugLDYX5u55Ao2mWpZ8uUWT0y7c2zTnMNQPzX+XARMhc6eRxNGG+0Tgv/kifkl+XpfYFA1YlHj1g==;5:plYk6rx8/NDqK4NmjnxAiny/aM1HASnE8mD6YJ/G7YWNe0OuhCGdp31h8lXfNBjGwQBXnL4VUDxTFa0x5JrGZ+6lug0TImtFK+zMcrxWWHxOg2gYJvYsaJyVwOrNk8KHyeH56Pc4JmoyCUyDdqZifU0toW1nvrPaRv0i9byuAb4=;24:N4wPzDiN3w7Rhkx5foeqPSqPhAw6wU/J50EyQXFllXBg+DchcVZ6SRbVPJkvteB/2fQdr7B00wZY+uHU4ZeQ4NeQvjy5rxvfKT6+o0wt4ao=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2078;7:hAPoOMbyoq96M4hxhpc4vNdqy6SwT1uVsF5mwfduWPEJu3DoZqqKn/sJmTCCzYf2jbtbmGdDCgV9TBOTCRlBplwlXGBDiJJY6LaoG2/8+vwZFcYLLhT5iWOQiPbib2rdVMBn37iTXICFVC2Y8UdIeCKIW+IjUfCzxBOEbgNBmjwcWIOlrm0rb4Fr3IPwdM1ty9Kx9ZjH0Dck6VbpY6KVuqHqKfGVKkItK5OVdvIpIZQCVe4DRLDbpqAJnt48nmMA;20:u6FpUc3Nt8mKH4XLZ6+xGoomm2Gm5eQ8ixXcyQISiTgO00AfNv5t094+D1/n5eYA79Muuiba02s7A5wAn4+LEA6gJEW9P/0jjOtV2v+L2ctbdOtXk/Jp1n1PPd5VqVA1G1fy5j56vz6jMXFVcv5WNBiPhbtc5fNnI1DMsgaGT/0=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2018 00:53:33.9467 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 68eb55c8-4320-4169-301d-08d5d25a6bd9
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2078
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Roger,
 
-If possible, Could you please review this patch? 
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-Regards,
-Chanwoo Choi
+rcar-dmac has 2 types of interrupt, 1) error IRQ (for all),
+2) IRQ for each channels.
+If error happens on some channels, the error IRQ will be handled
+by 1), and "all" channels will be restarted.
+But in this design, error handling itself will be problem for
+non error channel users.
+This patch removes 1) handler, and handles error IRQ on 2)
 
-On 2018년 06월 14일 20:33, H. Nikolaus Schaller wrote:
-> 
->> Am 14.06.2018 um 12:39 schrieb H. Nikolaus Schaller <hns@goldelico.com>:
->>
->> Hi Roger and Chanwoo,
->>
->>> Am 14.06.2018 um 12:18 schrieb Chanwoo Choi <cw00.choi@samsung.com>:
->>>
->>> + H. Nikolaus Schaller <hns@goldelico.com>
->>>
->>> On 2018년 06월 14일 13:14, Chanwoo Choi wrote:
->>>> Previously, extcon used the spinlock before calling the notifier_call_chain
->>>> to prevent the scheduled out of task and to prevent the notification delay.
->>>> When spinlock is locked for sending the notification, deadlock issue
->>>> occured on the side of extcon consumer device. To fix this issue,
->>>> extcon consumer device should always use the work. it is always not
->>>> reasonable to use work.
->>>>
->>>> To fix this issue on extcon consumer device, release locking when sending
->>>> the notification of connector state.
->>>>
->>>> Fixes: ab11af049f88 ("extcon: Add the synchronization extcon APIs to support the notification")
->>>> Cc: stable@vger.kernel.org
->>>> Cc: Roger Quadros <rogerq@ti.com>
->>>> Cc: Kishon Vijay Abraham I <kishon@ti.com>
->>>> Signed-off-by: Chanwoo Choi <cw00.choi@samsung.com>
->>>> ---
->>>> drivers/extcon/extcon.c | 3 ++-
->>>> 1 file changed, 2 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
->>>> index 8bff5fd18185..f75b08a45d4e 100644
->>>> --- a/drivers/extcon/extcon.c
->>>> +++ b/drivers/extcon/extcon.c
->>>> @@ -433,8 +433,8 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
->>>> 		return index;
->>>>
->>>> 	spin_lock_irqsave(&edev->lock, flags);
->>>> -
->>>> 	state = !!(edev->state & BIT(index));
->>>> +	spin_unlock_irqrestore(&edev->lock, flags);
->>>>
->>>> 	/*
->>>> 	 * Call functions in a raw notifier chain for the specific one
->>>> @@ -448,6 +448,7 @@ int extcon_sync(struct extcon_dev *edev, unsigned int id)
->>>> 	 */
->>>> 	raw_notifier_call_chain(&edev->nh_all, state, edev);
->>>>
->>>> +	spin_lock_irqsave(&edev->lock, flags);
->>>> 	/* This could be in interrupt handler */
->>>> 	prop_buf = (char *)get_zeroed_page(GFP_ATOMIC);
->>>> 	if (!prop_buf) {
->>>>
->>
->> I have tested on the Pyra handheld prototype and now it works. Plugging in an OTG cable
->> enables/disables OTG power as expected and there are no kernel oops any more.
-> 
-> I did take some minutes to check and it now also works again on the OMAP5EVM.
-> 
-> BR,
-> Nikolaus
-> 
-> 
+Signed-off-by: Magnus Damm <damm+renesas@opensource.se>
+[Kuninori: updated patch to adjust DMACHCR/DMAOR]
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Tested-by: Nguyen Viet Dung <nv-dung@jinso.co.jp>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+v2 -> v3
+
+ - don't touch to DT binding text
+ - tidyup git log
+ - added Reviewed-by from Geert
+
+ drivers/dma/sh/rcar-dmac.c | 72 ++++++++++++++--------------------------------
+ 1 file changed, 22 insertions(+), 50 deletions(-)
+
+diff --git a/drivers/dma/sh/rcar-dmac.c b/drivers/dma/sh/rcar-dmac.c
+index 2a2ccd9..279c930 100644
+--- a/drivers/dma/sh/rcar-dmac.c
++++ b/drivers/dma/sh/rcar-dmac.c
+@@ -431,7 +431,8 @@ static void rcar_dmac_chan_start_xfer(struct rcar_dmac_chan *chan)
+ 		chcr |= RCAR_DMACHCR_DPM_DISABLED | RCAR_DMACHCR_IE;
+ 	}
+ 
+-	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr | RCAR_DMACHCR_DE);
++	rcar_dmac_chan_write(chan, RCAR_DMACHCR,
++			     chcr | RCAR_DMACHCR_DE | RCAR_DMACHCR_CAIE);
+ }
+ 
+ static int rcar_dmac_init(struct rcar_dmac *dmac)
+@@ -783,7 +784,8 @@ static void rcar_dmac_chan_halt(struct rcar_dmac_chan *chan)
+ 	u32 chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
+ 
+ 	chcr &= ~(RCAR_DMACHCR_DSE | RCAR_DMACHCR_DSIE | RCAR_DMACHCR_IE |
+-		  RCAR_DMACHCR_TE | RCAR_DMACHCR_DE);
++		  RCAR_DMACHCR_TE | RCAR_DMACHCR_DE |
++		  RCAR_DMACHCR_CAE | RCAR_DMACHCR_CAIE);
+ 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr);
+ 	rcar_dmac_chcr_de_barrier(chan);
+ }
+@@ -812,12 +814,7 @@ static void rcar_dmac_chan_reinit(struct rcar_dmac_chan *chan)
+ 	}
+ }
+ 
+-static void rcar_dmac_stop(struct rcar_dmac *dmac)
+-{
+-	rcar_dmac_write(dmac, RCAR_DMAOR, 0);
+-}
+-
+-static void rcar_dmac_abort(struct rcar_dmac *dmac)
++static void rcar_dmac_stop_all_chan(struct rcar_dmac *dmac)
+ {
+ 	unsigned int i;
+ 
+@@ -829,11 +826,10 @@ static void rcar_dmac_abort(struct rcar_dmac *dmac)
+ 		spin_lock(&chan->lock);
+ 		rcar_dmac_chan_halt(chan);
+ 		spin_unlock(&chan->lock);
+-
+-		rcar_dmac_chan_reinit(chan);
+ 	}
+ }
+ 
++
+ /* -----------------------------------------------------------------------------
+  * Descriptors preparation
+  */
+@@ -1522,11 +1518,18 @@ static irqreturn_t rcar_dmac_isr_channel(int irq, void *dev)
+ 	u32 mask = RCAR_DMACHCR_DSE | RCAR_DMACHCR_TE;
+ 	struct rcar_dmac_chan *chan = dev;
+ 	irqreturn_t ret = IRQ_NONE;
++	bool reinit = false;
+ 	u32 chcr;
+ 
+ 	spin_lock(&chan->lock);
+ 
+ 	chcr = rcar_dmac_chan_read(chan, RCAR_DMACHCR);
++	if (chcr & RCAR_DMACHCR_CAE) {
++		rcar_dmac_chan_halt(chan);
++		reinit = true;
++		goto spin_lock_end;
++	}
++
+ 	if (chcr & RCAR_DMACHCR_TE)
+ 		mask |= RCAR_DMACHCR_DE;
+ 	rcar_dmac_chan_write(chan, RCAR_DMACHCR, chcr & ~mask);
+@@ -1539,8 +1542,16 @@ static irqreturn_t rcar_dmac_isr_channel(int irq, void *dev)
+ 	if (chcr & RCAR_DMACHCR_TE)
+ 		ret |= rcar_dmac_isr_transfer_end(chan);
+ 
++spin_lock_end:
+ 	spin_unlock(&chan->lock);
+ 
++	if (reinit) {
++		dev_err(chan->chan.device->dev, "Channel Address Error\n");
++
++		rcar_dmac_chan_reinit(chan);
++		ret = IRQ_HANDLED;
++	}
++
+ 	return ret;
+ }
+ 
+@@ -1597,24 +1608,6 @@ static irqreturn_t rcar_dmac_isr_channel_thread(int irq, void *dev)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static irqreturn_t rcar_dmac_isr_error(int irq, void *data)
+-{
+-	struct rcar_dmac *dmac = data;
+-
+-	if (!(rcar_dmac_read(dmac, RCAR_DMAOR) & RCAR_DMAOR_AE))
+-		return IRQ_NONE;
+-
+-	/*
+-	 * An unrecoverable error occurred on an unknown channel. Halt the DMAC,
+-	 * abort transfers on all channels, and reinitialize the DMAC.
+-	 */
+-	rcar_dmac_stop(dmac);
+-	rcar_dmac_abort(dmac);
+-	rcar_dmac_init(dmac);
+-
+-	return IRQ_HANDLED;
+-}
+-
+ /* -----------------------------------------------------------------------------
+  * OF xlate and channel filter
+  */
+@@ -1784,8 +1777,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 	struct rcar_dmac *dmac;
+ 	struct resource *mem;
+ 	unsigned int i;
+-	char *irqname;
+-	int irq;
+ 	int ret;
+ 
+ 	dmac = devm_kzalloc(&pdev->dev, sizeof(*dmac), GFP_KERNEL);
+@@ -1824,17 +1815,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dmac->iomem))
+ 		return PTR_ERR(dmac->iomem);
+ 
+-	irq = platform_get_irq_byname(pdev, "error");
+-	if (irq < 0) {
+-		dev_err(&pdev->dev, "no error IRQ specified\n");
+-		return -ENODEV;
+-	}
+-
+-	irqname = devm_kasprintf(dmac->dev, GFP_KERNEL, "%s:error",
+-				 dev_name(dmac->dev));
+-	if (!irqname)
+-		return -ENOMEM;
+-
+ 	/* Enable runtime PM and initialize the device. */
+ 	pm_runtime_enable(&pdev->dev);
+ 	ret = pm_runtime_get_sync(&pdev->dev);
+@@ -1885,14 +1865,6 @@ static int rcar_dmac_probe(struct platform_device *pdev)
+ 			goto error;
+ 	}
+ 
+-	ret = devm_request_irq(&pdev->dev, irq, rcar_dmac_isr_error, 0,
+-			       irqname, dmac);
+-	if (ret) {
+-		dev_err(&pdev->dev, "failed to request IRQ %u (%d)\n",
+-			irq, ret);
+-		return ret;
+-	}
+-
+ 	/* Register the DMAC as a DMA provider for DT. */
+ 	ret = of_dma_controller_register(pdev->dev.of_node, rcar_dmac_of_xlate,
+ 					 NULL);
+@@ -1932,7 +1904,7 @@ static void rcar_dmac_shutdown(struct platform_device *pdev)
+ {
+ 	struct rcar_dmac *dmac = platform_get_drvdata(pdev);
+ 
+-	rcar_dmac_stop(dmac);
++	rcar_dmac_stop_all_chan(dmac);
+ }
+ 
+ static const struct of_device_id rcar_dmac_of_ids[] = {
+-- 
+1.9.1
 
