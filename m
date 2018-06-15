@@ -2,313 +2,221 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 42B7FC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:24:00 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7538CC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE15D208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:23:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VK+4JD5o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE15D208E2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 33FBE208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:25:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33FBE208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936327AbeFOPX5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 11:23:57 -0400
-Received: from mail-qk0-f202.google.com ([209.85.220.202]:49969 "EHLO
-        mail-qk0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936293AbeFOPXz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 11:23:55 -0400
-Received: by mail-qk0-f202.google.com with SMTP id w203-v6so8086704qkb.16
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 08:23:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:date:message-id:subject:from:to:cc;
-        bh=Xr2wc0g51Kk8BfEnfM9vv/KIVvwwAP6g6vvGloA/aFk=;
-        b=VK+4JD5o6BGY0FO8o6GwScRoAKSu//oiH8+Z2t5apGuG5hf6d81OJwYxEg4CNvsvpF
-         MenZ39gp4RwhiUX6gif85m8eggY9UNdcNVn+5kuBYSMgjyZZAXzcsFqgwUM/kYgQ2y20
-         vYSSFGFa2irvdOT3RkoxlOMEi/sCj8iUbM5G1sXFTEg/2OlPS1tEujUUhtw/OSNGCuO6
-         zl765O/D8tnEwdb7RJmH/VF9ZxLbimq1yopnLL3swwglwXo/O9waAnEtcxp0tChDcOjC
-         Xjvvt2Vfa+7JJTciMtqxxzY0+pmmIRQr1mCrL5l7IBQw4/IcEgnbi9Am5rO2ywC1Y811
-         f42Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to:cc;
-        bh=Xr2wc0g51Kk8BfEnfM9vv/KIVvwwAP6g6vvGloA/aFk=;
-        b=GMb7DNJvKdfnjwjADzdXYsSuYyYlnY+rXOi9Hkf5utYGwjN7qnKAUZEqHNmILnLXXG
-         knWlkPNN06LuSJGf+PLU6z80TCzT5JF5sq2j3wbktG77FgwOgsLyIHtWNuYD214F8HiL
-         b2Hf+0rb8RF4fg9GuQGMRixkIDI6Gu+y1oRTuI2wE+HfNBUBvs3JSQm+ztDllcDhlr2l
-         YHyikAoxQ0pQptEI5N34Y7bRTwvfa5jpb7ya/yHWWWt/sgbuiFZ7yGbf5/inbZndM3by
-         Dk/cAEr+FpFqljdEcjXtonxMYsw44LRSnZ9Zws4xi817mZLIDLHfrWZgSKeAvg4Xk9DT
-         DsNA==
-X-Gm-Message-State: APt69E3G0PtH9eAgYFNGZapmb5VLAcRFz8a0qHvOXKiH06KLVooEPNxO
-        DizVIfEsAG/OW2ueyw6boEQNGe1M0g==
-X-Google-Smtp-Source: ADUXVKIo4Y4VePaJ6AVswSHgn5ERJyCzmU5dSHk6WMfhpM+Xq5W37kdMPT/8mEq//6lzX3D6c8uwTDDQUA==
+        id S936342AbeFOPY7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 11:24:59 -0400
+Received: from mx2.suse.de ([195.135.220.15]:56095 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935695AbeFOPY6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 11:24:58 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 8AD84ACC4;
+        Fri, 15 Jun 2018 15:24:57 +0000 (UTC)
+Subject: Re: [Xen-devel] [PATCH] xen: add new hypercall buffer mapping device
+To:     Jan Beulich <JBeulich@suse.com>
+Cc:     xen-devel <xen-devel@lists.xenproject.org>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <20180615131740.5037-1-jgross@suse.com>
+ <5B23CE9502000078001CBA36@suse.com>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <cc607075-2d0b-3171-65e1-e24318777114@suse.com>
+Date:   Fri, 15 Jun 2018 17:24:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-Received: by 2002:a37:ab0e:: with SMTP id u14-v6mr1045868qke.46.1529076234580;
- Fri, 15 Jun 2018 08:23:54 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 17:23:35 +0200
-Message-Id: <20180615152335.208202-1-jannh@google.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-Subject: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in release
-From:   Jann Horn <jannh@google.com>
-To:     Jens Axboe <axboe@kernel.dk>,
-        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
-        Doug Gilbert <dgilbert@interlog.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
-        jannh@google.com
-Cc:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        kernel-hardening@lists.openwall.com, security@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <5B23CE9502000078001CBA36@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Al Viro noted in commit 128394eff343 ("sg_write()/bsg_write() is not fit
-to be called under KERNEL_DS"), sg and bsg improperly access userspace
-memory outside the provided buffer, permitting kernel memory corruption via
-splice().
-But they don't just do it on ->write(), also on ->read() and (in the case
-of bsg) even on ->release().
+On 15/06/18 16:35, Jan Beulich wrote:
+>>>> On 15.06.18 at 15:17, <jgross@suse.com> wrote:
+>> --- /dev/null
+>> +++ b/drivers/xen/privcmd-buf.c
+>> @@ -0,0 +1,216 @@
+>> +// SPDX-License-Identifier: GPL-2.0 OR MIT
+>> +
+>> +/******************************************************************************
+>> + * privcmd-buf.c
+>> + *
+>> + * Mmap of hypercall buffers.
+>> + *
+>> + * Copyright (c) 2018 Juergen Gross
+>> + */
+>> +
+>> +#define pr_fmt(fmt) "xen:" KBUILD_MODNAME ": " fmt
+>> +
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/list.h>
+>> +#include <linux/miscdevice.h>
+>> +#include <linux/mm.h>
+>> +#include <linux/slab.h>
+>> +
+>> +#include "privcmd.h"
+>> +
+>> +MODULE_LICENSE("GPL");
+>> +
+>> +static int limit = 64;
+>> +module_param(limit, int, 0644);
+> 
+> Can this go negative? If not - "unsigned int" and "uint" prehaps?
 
-As a band-aid, make sure that the ->read() and ->write() handlers can not
-be called in weird contexts (kernel context or credentials different from
-file opener), like for ib_safe_file_access().
-Also, completely prevent user memory accesses from ->release().
+Perhaps. ;-)
 
-If someone needs to use these interfaces from different security contexts,
-a new interface should be written that goes through the ->ioctl() handler.
+> 
+>> +static int privcmd_buf_mmap(struct file *file, struct vm_area_struct *vma)
+>> +{
+>> +	struct privcmd_buf_private *file_priv = file->private_data;
+>> +	struct privcmd_buf_vma_private *vma_priv;
+>> +	unsigned int count = vma_pages(vma);
+>> +	unsigned int i;
+>> +	int ret = 0;
+>> +
+>> +	if (!(vma->vm_flags & VM_SHARED)) {
+>> +		pr_err("Mapping must be shared\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (file_priv->allocated + count > limit) {
+>> +		pr_err("Mapping limit reached!\n");
+> 
+> For both error messages - if you really want them, I think they should be
+> made more helpful such that it is possible to identify the offender. Log at
+> least process name and pid, or drop the messages?
 
-I've mostly copypasted ib_safe_file_access() over as
-scsi_safe_file_access() because I couldn't find a good common header -
-please tell me if you know a better way.
-The duplicate pr_err_once() calls are so that each of them fires once;
-otherwise, this would probably have to be a macro.
+I think dropping them should be fine.
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Jann Horn <jannh@google.com>
----
+> 
+>> +		return -ENOSPC;
+>> +	}
+>> +
+>> +	vma_priv = kzalloc(sizeof(*vma_priv) + count * sizeof(void *),
+>> +			   GFP_KERNEL);
+>> +	if (!vma_priv)
+>> +		return -ENOMEM;
+>> +
+>> +	vma_priv->n_pages = count;
+>> +	count = 0;
+>> +	for (i = 0; i < vma_priv->n_pages; i++) {
+>> +		vma_priv->pages[i] = alloc_page(GFP_KERNEL | __GFP_ZERO);
+>> +		if (!vma_priv->pages[i])
+>> +			break;
+>> +		count++;
+>> +	}
+>> +
+>> +	mutex_lock(&file_priv->lock);
+>> +
+>> +	file_priv->allocated += count;
+>> +
+>> +	vma_priv->file_priv = file_priv;
+>> +	vma_priv->users = 1;
+>> +
+>> +	vma->vm_flags |= VM_IO | VM_DONTEXPAND | VM_DONTDUMP;
+>> +	vma->vm_ops = &privcmd_buf_vm_ops;
+>> +	vma->vm_private_data = vma_priv;
+>> +
+>> +	list_add(&vma_priv->list, &file_priv->list);
+>> +
+>> +	if (vma_priv->n_pages != count)
+>> +		ret = -ENOMEM;
+>> +	else
+>> +		for (i = 0; i < vma_priv->n_pages; i++) {
+>> +			ret = vm_insert_page(vma, vma->vm_start + i * PAGE_SIZE,
+>> +					     vma_priv->pages[i]);
+>> +			if (ret)
+>> +				break;
+>> +		}
+>> +
+>> +	if (ret)
+>> +		privcmd_buf_vmapriv_free(vma_priv);
+> 
+> Don't you also need to undo the partially successful insertion?
 
-I'm CC-ing security@ on this patch in case someone cares a lot, but
-since you already need to have some pretty high privileges to use these
-devices in the first place, I think this can be handled publicly.
+No, this is done by generic mmap() handling when I'm returning an error.
 
-In case anyone is interested in how I found these: I was looking at a
-reverse callgraph of __might_fault and spotted the ->release handler of
-block/bsg.c in there.
+> 
+>> +struct miscdevice xen_privcmdbuf_dev = {
+>> +	.minor = MISC_DYNAMIC_MINOR,
+> 
+> While dynamic minors are of course much better than fixed ones (as
+> we used to use many years ago), but aren't they still a relatively
+> limited resource? By setting a "mode" on a handle to the original
+> privcmd interface, no new minor would be needed.
 
- block/bsg-lib.c          |  5 ++++-
- block/bsg.c              | 29 +++++++++++++++++++++--------
- drivers/scsi/sg.c        | 11 ++++++++++-
- include/linux/bsg.h      |  3 ++-
- include/scsi/scsi_cmnd.h | 19 +++++++++++++++++++
- 5 files changed, 56 insertions(+), 11 deletions(-)
+Hmm, I'm not very fond of this idea. That would make all privcmd
+file ops rather clumsy. OTOH I can see the benfits.
 
-diff --git a/block/bsg-lib.c b/block/bsg-lib.c
-index 9419def8c017..cf5d4fdddbeb 100644
---- a/block/bsg-lib.c
-+++ b/block/bsg-lib.c
-@@ -53,7 +53,8 @@ static int bsg_transport_fill_hdr(struct request *rq, struct sg_io_v4 *hdr,
- 	return 0;
- }
- 
--static int bsg_transport_complete_rq(struct request *rq, struct sg_io_v4 *hdr)
-+static int bsg_transport_complete_rq(struct request *rq, struct sg_io_v4 *hdr,
-+		bool cleaning_up)
- {
- 	struct bsg_job *job = blk_mq_rq_to_pdu(rq);
- 	int ret = 0;
-@@ -79,6 +80,8 @@ static int bsg_transport_complete_rq(struct request *rq, struct sg_io_v4 *hdr)
- 	if (job->reply_len && hdr->response) {
- 		int len = min(hdr->max_response_len, job->reply_len);
- 
-+		if (unlikely(cleaning_up))
-+			ret = -EINVAL;
- 		if (copy_to_user(uptr64(hdr->response), job->reply, len))
- 			ret = -EFAULT;
- 		else
-diff --git a/block/bsg.c b/block/bsg.c
-index 132e657e2d91..e64ef807d2d0 100644
---- a/block/bsg.c
-+++ b/block/bsg.c
-@@ -159,7 +159,8 @@ static int bsg_scsi_fill_hdr(struct request *rq, struct sg_io_v4 *hdr,
- 	return 0;
- }
- 
--static int bsg_scsi_complete_rq(struct request *rq, struct sg_io_v4 *hdr)
-+static int bsg_scsi_complete_rq(struct request *rq, struct sg_io_v4 *hdr,
-+		bool cleaning_up)
- {
- 	struct scsi_request *sreq = scsi_req(rq);
- 	int ret = 0;
-@@ -179,7 +180,9 @@ static int bsg_scsi_complete_rq(struct request *rq, struct sg_io_v4 *hdr)
- 		int len = min_t(unsigned int, hdr->max_response_len,
- 					sreq->sense_len);
- 
--		if (copy_to_user(uptr64(hdr->response), sreq->sense, len))
-+		if (cleaning_up)
-+			ret = -EINVAL;
-+		else if (copy_to_user(uptr64(hdr->response), sreq->sense, len))
- 			ret = -EFAULT;
- 		else
- 			hdr->response_len = len;
-@@ -383,11 +386,12 @@ static struct bsg_command *bsg_get_done_cmd(struct bsg_device *bd)
- }
- 
- static int blk_complete_sgv4_hdr_rq(struct request *rq, struct sg_io_v4 *hdr,
--				    struct bio *bio, struct bio *bidi_bio)
-+				    struct bio *bio, struct bio *bidi_bio,
-+				    bool cleaning_up)
- {
- 	int ret;
- 
--	ret = rq->q->bsg_dev.ops->complete_rq(rq, hdr);
-+	ret = rq->q->bsg_dev.ops->complete_rq(rq, hdr, cleaning_up);
- 
- 	if (rq->next_rq) {
- 		blk_rq_unmap_user(bidi_bio);
-@@ -453,7 +457,7 @@ static int bsg_complete_all_commands(struct bsg_device *bd)
- 			break;
- 
- 		tret = blk_complete_sgv4_hdr_rq(bc->rq, &bc->hdr, bc->bio,
--						bc->bidi_bio);
-+						bc->bidi_bio, true);
- 		if (!ret)
- 			ret = tret;
- 
-@@ -488,7 +492,7 @@ __bsg_read(char __user *buf, size_t count, struct bsg_device *bd,
- 		 * bsg_complete_work() cannot do that for us
- 		 */
- 		ret = blk_complete_sgv4_hdr_rq(bc->rq, &bc->hdr, bc->bio,
--					       bc->bidi_bio);
-+					       bc->bidi_bio, false);
- 
- 		if (copy_to_user(buf, &bc->hdr, sizeof(bc->hdr)))
- 			ret = -EFAULT;
-@@ -532,6 +536,12 @@ bsg_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
- 	int ret;
- 	ssize_t bytes_read;
- 
-+	if (!scsi_safe_file_access(file)) {
-+		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
-+			__func__, task_tgid_vnr(current), current->comm);
-+		return -EINVAL;
-+	}
-+
- 	bsg_dbg(bd, "read %zd bytes\n", count);
- 
- 	bsg_set_block(bd, file);
-@@ -608,8 +618,11 @@ bsg_write(struct file *file, const char __user *buf, size_t count, loff_t *ppos)
- 
- 	bsg_dbg(bd, "write %zd bytes\n", count);
- 
--	if (unlikely(uaccess_kernel()))
-+	if (!scsi_safe_file_access(file)) {
-+		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
-+			__func__, task_tgid_vnr(current), current->comm);
- 		return -EINVAL;
-+	}
- 
- 	bsg_set_block(bd, file);
- 
-@@ -859,7 +872,7 @@ static long bsg_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- 		at_head = (0 == (hdr.flags & BSG_FLAG_Q_AT_TAIL));
- 		blk_execute_rq(bd->queue, NULL, rq, at_head);
--		ret = blk_complete_sgv4_hdr_rq(rq, &hdr, bio, bidi_bio);
-+		ret = blk_complete_sgv4_hdr_rq(rq, &hdr, bio, bidi_bio, false);
- 
- 		if (copy_to_user(uarg, &hdr, sizeof(hdr)))
- 			return -EFAULT;
-diff --git a/drivers/scsi/sg.c b/drivers/scsi/sg.c
-index 53ae52dbff84..997e06a22527 100644
---- a/drivers/scsi/sg.c
-+++ b/drivers/scsi/sg.c
-@@ -393,6 +393,12 @@ sg_read(struct file *filp, char __user *buf, size_t count, loff_t * ppos)
- 	struct sg_header *old_hdr = NULL;
- 	int retval = 0;
- 
-+	if (!scsi_safe_file_access(filp)) {
-+		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
-+			__func__, task_tgid_vnr(current), current->comm);
-+		return -EINVAL;
-+	}
-+
- 	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
- 	SCSI_LOG_TIMEOUT(3, sg_printk(KERN_INFO, sdp,
-@@ -581,8 +587,11 @@ sg_write(struct file *filp, const char __user *buf, size_t count, loff_t * ppos)
- 	sg_io_hdr_t *hp;
- 	unsigned char cmnd[SG_MAX_CDB_SIZE];
- 
--	if (unlikely(uaccess_kernel()))
-+	if (!scsi_safe_file_access(filp)) {
-+		pr_err_once("%s: process %d (%s) changed security contexts after opening file descriptor, this is not allowed.\n",
-+			__func__, task_tgid_vnr(current), current->comm);
- 		return -EINVAL;
-+	}
- 
- 	if ((!(sfp = (Sg_fd *) filp->private_data)) || (!(sdp = sfp->parentdp)))
- 		return -ENXIO;
-diff --git a/include/linux/bsg.h b/include/linux/bsg.h
-index dac37b6e00ec..c22bc359552a 100644
---- a/include/linux/bsg.h
-+++ b/include/linux/bsg.h
-@@ -11,7 +11,8 @@ struct bsg_ops {
- 	int	(*check_proto)(struct sg_io_v4 *hdr);
- 	int	(*fill_hdr)(struct request *rq, struct sg_io_v4 *hdr,
- 				fmode_t mode);
--	int	(*complete_rq)(struct request *rq, struct sg_io_v4 *hdr);
-+	int	(*complete_rq)(struct request *rq, struct sg_io_v4 *hdr,
-+				bool cleaning_up);
- 	void	(*free_rq)(struct request *rq);
- };
- 
-diff --git a/include/scsi/scsi_cmnd.h b/include/scsi/scsi_cmnd.h
-index aaf1e971c6a3..d22118a38aa4 100644
---- a/include/scsi/scsi_cmnd.h
-+++ b/include/scsi/scsi_cmnd.h
-@@ -8,6 +8,8 @@
- #include <linux/types.h>
- #include <linux/timer.h>
- #include <linux/scatterlist.h>
-+#include <linux/cred.h> /* for scsi_safe_file_access() */
-+#include <linux/fs.h> /* for scsi_safe_file_access() */
- #include <scsi/scsi_device.h>
- #include <scsi/scsi_request.h>
- 
-@@ -363,4 +365,21 @@ static inline unsigned scsi_transfer_length(struct scsi_cmnd *scmd)
- 	return xfer_len;
- }
- 
-+/*
-+ * The SCSI interfaces that use read() and write() as an asynchronous variant of
-+ * ioctl(..., SG_IO, ...) are fundamentally unsafe, since there are lots of ways
-+ * to trigger read() and write() calls from various contexts with elevated
-+ * privileges. This can lead to kernel memory corruption (e.g. if these
-+ * interfaces are called through splice()) and privilege escalation inside
-+ * userspace (e.g. if a process with access to such a device passes a file
-+ * descriptor to a SUID binary as stdin/stdout/stderr).
-+ *
-+ * This function provides protection for the legacy API by restricting the
-+ * calling context.
-+ */
-+static inline bool scsi_safe_file_access(struct file *filp)
-+{
-+	return filp->f_cred == current_cred() && !uaccess_kernel();
-+}
-+
- #endif /* _SCSI_SCSI_CMND_H */
--- 
-2.18.0.rc1.244.gcf134e6275-goog
+Anyone wanting to comment on this idea?
 
+> 
+>> --- a/drivers/xen/privcmd.c
+>> +++ b/drivers/xen/privcmd.c
+>> @@ -1007,12 +1007,21 @@ static int __init privcmd_init(void)
+>>  		pr_err("Could not register Xen privcmd device\n");
+>>  		return err;
+>>  	}
+>> +
+>> +	err = misc_register(&xen_privcmdbuf_dev);
+>> +	if (err != 0) {
+>> +		pr_err("Could not register Xen hypercall-buf device\n");
+>> +		misc_deregister(&privcmd_dev);
+>> +		return err;
+> 
+> Wouldn't this better be a warning only, without failing driver init?
+
+No, I don't think so. We rather want the hypercall buffer handling to
+be clean from now on.
+
+
+Juergen
