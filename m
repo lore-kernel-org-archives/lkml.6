@@ -2,124 +2,191 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7D7C4C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:38:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0928DC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D067620896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:38:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zw33HmUv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D067620896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B33B3208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B33B3208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756096AbeFOIiL (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:38:11 -0400
-Received: from mail-pl0-f41.google.com ([209.85.160.41]:36413 "EHLO
-        mail-pl0-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755759AbeFOIiJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:38:09 -0400
-Received: by mail-pl0-f41.google.com with SMTP id a7-v6so5007618plp.3;
-        Fri, 15 Jun 2018 01:38:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5VaEwDlQA7ZVagtHdnMhXMuq2Mg/unuu0il5UHgOdDk=;
-        b=Zw33HmUvGrq5KHmWNWdI2lyEZCAGK8eokakVjUTrU1vSoazt1aIkRRhUB6DYkELSEj
-         /UN+qfXSSwaPLj06YveHFVDFujWiSfbqZSlFRrw6hdbMeGTXsUk0uXwD36G1JaVRRCMH
-         bg1wWqyd2YKRDv02ZjM8Zo68bvS75JYqbYViXS9UKdTKFKN1yMjx0rZ0zbaDSXdUsfSr
-         gETQaOyEFcQW4nIjFA9y6dYQdHGnzt5g/PYbHqmXeVDrGY4deW/QmTPyv6bFiZu1asJ2
-         Ui1wqww/vSEH3L3/2vJbxtlb+y5YsqQPM9DTN6Z0Uk7F3noKb1phdfdSW04zc2+eE7TJ
-         hMBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5VaEwDlQA7ZVagtHdnMhXMuq2Mg/unuu0il5UHgOdDk=;
-        b=MevQgjwhxHBqKodvQw0o/b9jwcvET+C4bll3WtCvVUvlkIMkZIvJEVnXLUtVovRcWO
-         I/kBkwsfC96UNtmbEPvO7Z8UIrHNC9U343x9UbjZ4UjUBAv4j2odsDcmg6VUNO6qRvt9
-         4ZNUgfz2f3o5+ihbPvou24fO24ZvvdDfny9pQeL0SJLY11rWvCMPzC8Vqlg825w7Va55
-         N+TBRCQOv/ZA+diKzcX9NNTGJ4gXIVTseTyrI/mMtO/acmyGVe4XYvWIbVyiUg7tsML7
-         iujbYVFd8OqZVfrseuBGgFq/u6SSK1WeMdAAUm/XgkCGAWbhR76K11dVr9pFdc2BZw0f
-         CyBA==
-X-Gm-Message-State: APt69E1qe7xsB3uZQ1roPGgD6SmOvmYpFJEJAPQ6ziAd7eI8wr8GhTU1
-        kuCCTXhZHSPAla/h/m0WhNk=
-X-Google-Smtp-Source: ADUXVKLA86rylHs8q2rsKMLZRidsM7p1yUSIOEbkwhIvPj/CWZPi8eLLJqhd6HNcBqmEt45J2CPDhw==
-X-Received: by 2002:a17:902:422:: with SMTP id 31-v6mr928219ple.320.1529051889235;
-        Fri, 15 Jun 2018 01:38:09 -0700 (PDT)
-Received: from localhost ([175.223.48.179])
-        by smtp.gmail.com with ESMTPSA id m7-v6sm10019864pgr.5.2018.06.15.01.38.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Jun 2018 01:38:07 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 17:38:04 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
-        syzbot <syzbot+43e93968b964e369db0b@syzkaller.appspotmail.com>,
-        linux-kernel@vger.kernel.org, rostedt@goodmis.org,
-        syzkaller-bugs@googlegroups.com,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>, linux-serial@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: possible deadlock in console_unlock
-Message-ID: <20180615083804.GB8964@jagdpanzerIV>
-References: <00000000000087008b056df8fbb3@google.com>
- <20180607051019.GA10406@jagdpanzerIV>
- <20180607110034.qrkencwsr4stv6xp@pathway.suse.cz>
- <20180607140100.GA398@tigerII.localdomain>
- <20180608081855.ctqakvwmg27aydby@pathway.suse.cz>
+        id S935562AbeFOIjD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 04:39:03 -0400
+Received: from mx2.suse.de ([195.135.220.15]:40666 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755675AbeFOIjC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 04:39:02 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 32500AB3E;
+        Fri, 15 Jun 2018 08:39:01 +0000 (UTC)
+Date:   Fri, 15 Jun 2018 10:39:00 +0200
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+Cc:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Oscar Salvador <osalvador@techadventures.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "mingo@kernel.org" <mingo@kernel.org>,
+        "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
+        Huang Ying <ying.huang@intel.com>
+Subject: Re: [PATCH v1] mm: zero remaining unavailable struct pages (Re:
+ kernel panic in reading /proc/kpageflags when enabling RAM-simulated PMEM)
+Message-ID: <20180615083900.GD24039@dhcp22.suse.cz>
+References: <20180606092405.GA6562@hori1.linux.bs1.fc.nec.co.jp>
+ <20180607062218.GB22554@hori1.linux.bs1.fc.nec.co.jp>
+ <20180607065940.GA7334@techadventures.net>
+ <20180607094921.GA8545@techadventures.net>
+ <20180607100256.GA9129@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp>
+ <20180613090700.GG13364@dhcp22.suse.cz>
+ <20180614051618.GB17860@hori1.linux.bs1.fc.nec.co.jp>
+ <20180614070050.GA9371@dhcp22.suse.cz>
+ <20180615010722.GB1196@hori1.linux.bs1.fc.nec.co.jp>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180608081855.ctqakvwmg27aydby@pathway.suse.cz>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180615010722.GB1196@hori1.linux.bs1.fc.nec.co.jp>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On (06/08/18 10:18), Petr Mladek wrote:
-[..]
-> > Could be.
-> > The good thing about printk_safe is that printk_safe sections can nest.
-> > I suspect there might be locks/printk_safe sections nesting at some
-> > point. In any case, switching to a new flavor of printk_safe will be
-> > pretty easy - just replace printk_safe_enter() with printk_foo_enter()
-> > and the same for printk_save_exit().
+On Fri 15-06-18 01:07:22, Naoya Horiguchi wrote:
+> On Thu, Jun 14, 2018 at 09:00:50AM +0200, Michal Hocko wrote:
+> > On Thu 14-06-18 05:16:18, Naoya Horiguchi wrote:
+> > > On Wed, Jun 13, 2018 at 11:07:00AM +0200, Michal Hocko wrote:
+> > > > On Wed 13-06-18 05:41:08, Naoya Horiguchi wrote:
+> > > > [...]
+> > > > > From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > > > > Date: Wed, 13 Jun 2018 12:43:27 +0900
+> > > > > Subject: [PATCH] mm: zero remaining unavailable struct pages
+> > > > >
+> > > > > There is a kernel panic that is triggered when reading /proc/kpageflags
+> > > > > on the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
+> > > > >
+> > > > >   BUG: unable to handle kernel paging request at fffffffffffffffe
+> > > > >   PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
+> > > > >   Oops: 0000 [#1] SMP PTI
+> > > > >   CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
+> > > > >   Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
+> > > > >   RIP: 0010:stable_page_flags+0x27/0x3c0
+> > > > >   Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
+> > > > >   RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
+> > > > >   RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
+> > > > >   RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
+> > > > >   RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
+> > > > >   R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
+> > > > >   R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
+> > > > >   FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
+> > > > >   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > >   CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
+> > > > >   Call Trace:
+> > > > >    kpageflags_read+0xc7/0x120
+> > > > >    proc_reg_read+0x3c/0x60
+> > > > >    __vfs_read+0x36/0x170
+> > > > >    vfs_read+0x89/0x130
+> > > > >    ksys_pread64+0x71/0x90
+> > > > >    do_syscall_64+0x5b/0x160
+> > > > >    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+> > > > >   RIP: 0033:0x7efc42e75e23
+> > > > >   Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
+> > > > >
+> > > > > According to kernel bisection, this problem became visible due to commit
+> > > > > f7f99100d8d9 which changes how struct pages are initialized.
+> > > > >
+> > > > > Memblock layout affects the pfn ranges covered by node/zone. Consider
+> > > > > that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
+> > > > > the default (no memmap= given) memblock layout is like below:
+> > > > >
+> > > > >   MEMBLOCK configuration:
+> > > > >    memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
+> > > > >    memory.cnt  = 0x4
+> > > > >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+> > > > >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+> > > > >    memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
+> > > > >    memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+> > > > >    ...
+> > > > >
+> > > > > If you give memmap=1G!4G (so it just covers memory[0x2]),
+> > > > > the range [0x100000000-0x13fffffff] is gone:
+> > > > >
+> > > > >   MEMBLOCK configuration:
+> > > > >    memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
+> > > > >    memory.cnt  = 0x3
+> > > > >    memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
+> > > > >    memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
+> > > > >    memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
+> > > > >    ...
+> > > > >
+> > > > > This causes shrinking node 0's pfn range because it is calculated by
+> > > > > the address range of memblock.memory. So some of struct pages in the
+> > > > > gap range are left uninitialized.
+> > > > >
+> > > > > We have a function zero_resv_unavail() which does zeroing the struct
+> > > > > pages outside memblock.memory, but currently it covers only the reserved
+> > > > > unavailable range (i.e. memblock.memory && !memblock.reserved).
+> > > > > This patch extends it to cover all unavailable range, which fixes
+> > > > > the reported issue.
+> > > >
+> > > > Thanks for pin pointing this down Naoya! I am wondering why we cannot
+> > > > simply mark the excluded ranges to be reserved instead.
+> > > 
+> > > I tried your idea with the change below, and it also fixes the kernel panic.
+> > > 
+> > > ---
+> > > diff --git a/arch/x86/kernel/e820.c b/arch/x86/kernel/e820.c
+> > > index d1f25c831447..2cef120535d4 100644
+> > > --- a/arch/x86/kernel/e820.c
+> > > +++ b/arch/x86/kernel/e820.c
+> > > @@ -1248,6 +1248,7 @@ void __init e820__memblock_setup(void)
+> > >  {
+> > >  	int i;
+> > >  	u64 end;
+> > > +	u64 addr = 0;
+> > >  
+> > >  	/*
+> > >  	 * The bootstrap memblock region count maximum is 128 entries
+> > > @@ -1264,13 +1265,16 @@ void __init e820__memblock_setup(void)
+> > >  		struct e820_entry *entry = &e820_table->entries[i];
+> > >  
+> > >  		end = entry->addr + entry->size;
+> > > +		if (addr < entry->addr)
+> > > +			memblock_reserve(addr, entry->addr - addr);
+> > > +		addr = end;
+> > >  		if (end != (resource_size_t)end)
+> > >  			continue;
+> > >  
+> > >  		if (entry->type != E820_TYPE_RAM && entry->type != E820_TYPE_RESERVED_KERN)
+> > > -			continue;
+> > > -
+> > > -		memblock_add(entry->addr, entry->size);
+> > > +			memblock_reserve(entry->addr, entry->size);
+> > > +		else
+> > > +			memblock_add(entry->addr, entry->size);
+> > >  	}
+> > >  
+> > >  	/* Throw away partial pages: */
+> > 
+> > Yes, this looks so much better. Although I was more focusing on
+> > e820__range_remove.
 > 
-> We could allow nesting. It is just a matter of how many bits we
-> reserve for it in printk_context variable.
-[..]
-> In each case, I would like to keep the printk_safe context usage
-> at minimum. It has its own problems caused by limited per-cpu buffers
-> and the need to flush them.
+> Could you go into detail on e820__range_remove?
+> Is it helpful to fix the issue in better way?
 
-May be. Every new printk_safe flavour comes with increasing memory
-usage. We already have a bunch of pages pinned [and mostly unused]
-to every CPU for printk_nmi and printk_safe. I'm a little unsure if
-we have enough reasons to pin yet another bunch of pages to every
-CPU. After all printk_safe is not used very commonly, so all in all
-I think we should be fine with printk_safe buffers for the time being.
-We always can introduce new printk_safe mode later.
+I thought that this is a general method to remove invalid ranges of
+memory so it would be better and more obvious fix. I am not entirely
+sure though.
 
-> It is basically needed only to prevent deadlocks related to logbuf_lock.
-
-I wouldn't say that we need printk_safe for logbuf_lock only.
-printk_safe helps us to avoid deadlocks on:
-
-- logbuf_lock spin_lock
-- console_sem ->lock spin_lock
-- console_owner spin_lock
-- scheduler ->pi_lock spin_lock
-- and probably something else.
-
-	-ss
+-- 
+Michal Hocko
+SUSE Labs
