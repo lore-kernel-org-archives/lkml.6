@@ -2,90 +2,103 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D26C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:16:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83765C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CC62208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:16:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7CC62208AF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 39C53208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:16:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uk3T+5Zo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39C53208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966029AbeFOQQH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:16:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964966AbeFOQQG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:16:06 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FD71208AF;
-        Fri, 15 Jun 2018 16:16:05 +0000 (UTC)
-Date:   Fri, 15 Jun 2018 12:16:03 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Joel Fernandes <joelaf@google.com>
-Cc:     "BarclaycardUS" 
-        <1eaff0972layfivcia3p5kbiaaaaabtyzcthzutkdtiyaaaaa@offers.BarclaycardUS.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] tracing: Call triggers only if event passes filter
- checks
-Message-ID: <20180615121603.33007151@gandalf.local.home>
-In-Reply-To: <20180615010113.127718-1-joel@joelfernandes.org>
-References: <20180615010113.127718-1-joel@joelfernandes.org>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S966042AbeFOQQw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:16:52 -0400
+Received: from mail-yb0-f177.google.com ([209.85.213.177]:33058 "EHLO
+        mail-yb0-f177.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964966AbeFOQQu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 12:16:50 -0400
+Received: by mail-yb0-f177.google.com with SMTP id x36-v6so3701045ybi.0;
+        Fri, 15 Jun 2018 09:16:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=tdG+trXG1kBx0hQ2bKXsm97k/QxWxuelgCi5+5yuNbg=;
+        b=uk3T+5Zo01OuIBCBK54GXfb7cf7pfBirnRuq/d5d9/YViODiY0IaiN4KQRR588NDxm
+         ykd102eWbaFpaTlVPEUTn87PHNz0wkI4tbWraD0Lz6mcnSGQm1cLf06afTGpjBcGlka9
+         HMK746pB6pmokdhuMRFMPHfWFLDquxrf8lBVWeXt3AEdd4s+Qx/EImdwKKiCQl1MH3ja
+         Ch/dq+jqgYNksqHYQefgQi8/yShhx6DXy/deRVJUf8rsnD818gyQxbFc1hzd/wkUVVil
+         kXcaJL4zIFM5hjbVX1/Nhoy0zDbb40PRYxvcKG3nPRYMoMYPg/Y3AmDE/kUlCBlvbjfT
+         3tBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=tdG+trXG1kBx0hQ2bKXsm97k/QxWxuelgCi5+5yuNbg=;
+        b=DWTyVgbixtXWIOlLTQOgmpkwqyccfvMx6PLAEVEKn7Ni3mSa/JKtNvpz0bobsm4zE1
+         6TYF4G6dZZYNyojxxOE2Qz3/V83pQtJQmETQxhcPbZt0sliyHA7s/e3qi2Y1qPd9OcUE
+         uvPmMcEIlOngdyHqTB6jHQOx96aPw2mj755Evy8nLZRW5yNvag4Klkq26uSkbkmspMNp
+         EOLFqnWK9mKX22XKZD8oPtoioT9h9wcDVUem9o3QgyI0ojF0gC8w/+1kW3NhfIVVWRjD
+         CPS06zc7gvqghZ4DhmeHLfP0B4+sj4cqH+zjle61onxZOmP++WbTIuWkzAGBa06WA6le
+         qlSg==
+X-Gm-Message-State: APt69E2ibSmEHUw6r8q6N8sHnpFi1F+bDa/nLv238yKaAsEECKcccAnV
+        L++KXk3Qm55vLv9fjP0gMgY=
+X-Google-Smtp-Source: ADUXVKKlmerpXvTmAcGK5Uobjb4HZCWW3yUuhC7mnNZx5KkTNd3Sx0Zrh6YEdHF+fWvlsj9aizim+w==
+X-Received: by 2002:a25:a087:: with SMTP id y7-v6mr92113ybh.219.1529079410090;
+        Fri, 15 Jun 2018 09:16:50 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:180::1:f114])
+        by smtp.gmail.com with ESMTPSA id n19-v6sm4857823ywh.55.2018.06.15.09.16.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 15 Jun 2018 09:16:48 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 09:16:47 -0700
+From:   Tejun Heo <tj@kernel.org>
+To:     Ivan Zahariev <famzah@icdsoft.com>
+Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Cgroups "pids" controller does not update "pids.current" count
+ immediately
+Message-ID: <20180615161647.GW1351649@devbig577.frc2.facebook.com>
+References: <77af3805-e912-2664-f347-e30c0919d0c4@icdsoft.com>
+ <20180614150650.GU1351649@devbig577.frc2.facebook.com>
+ <7860105c-553a-534b-57fc-222d931cb972@icdsoft.com>
+ <20180615154140.GV1351649@devbig577.frc2.facebook.com>
+ <1d635d1d-6152-ecfc-d235-147ff1fe7c95@icdsoft.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d635d1d-6152-ecfc-d235-147ff1fe7c95@icdsoft.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 14 Jun 2018 18:01:13 -0700
-Joel Fernandes <joelaf@google.com> wrote:
+Hello,
 
-> From: "Joel Fernandes (Google)" <joel@joelfernandes.org>
+On Fri, Jun 15, 2018 at 07:07:27PM +0300, Ivan Zahariev wrote:
+> I understand all concerns and design decisions. However, having
+> RLIMIT_NPROC support combined with "cgroups" hierarchy would be very
+> handy.
 > 
-> Currently, trace event triggers are called regardless of if the event
-> filter checks pass or fail. Thus if one were to enable event triggers
-> and filters at the same time, then the triggers will always be called
-> even if the filter checks didn't pass.
-> 
-> This is a problem for a usecase I was experimenting with: measuring the
-> time preemption is disabled using synthetic events and dump the stack
-> using the stacktrace trigger if the total preempt off time was greater
-> than a threshold. Following are the commands for the same:
-> 
-> Create synthetic event:
-> 
-> echo 'preemptdisable u64 lat' >> \
-> 	      /sys/kernel/debug/tracing/synthetic_events
-> 
-> echo 'hist:keys=cpu:ts0=common_timestamp.usecs:scpu=cpu' >> \
-> 	      /sys/kernel/debug/tracing/events/preemptirq/preempt_disable/trigger
-> 
-> echo 'hist:keys=cpu:wakeup_lat=common_timestamp.usecs-$ts0:\
-> onmatch(preemptirq.preempt_disable).preemptdisable($wakeup_lat)' >> \
-> 	        /sys/kernel/debug/tracing/events/preemptirq/preempt_enable/trigger
-> 
-> Enable synthetic event:
-> 
-> echo stacktrace > /sys/kernel/debug/tracing/events/synthetic/preemptdisable/trigger
-> echo 'lat > 400' > /sys/kernel/debug/tracing/events/synthetic/preemptdisable/filter
-> echo 1 > /sys/kernel/debug/tracing/events/synthetic/preemptdisable/enable
-> 
-> With the patch, the stacktrace is triggered only if the filter checks
-> passed. It also seems sensible to call triggers only if filter checks
-> pass so lets do that.
+> Does it make sense that you introduce "nproc.current" and
+> "nproc.max" metrics which work in the same atomic, real-time way
+> like RLIMIT_NPROC? Or make this in a new "nproc" controller?
 
-No, it worked as expected. The filter is only to be used it the event
-should be recorded or not. What you wanted to do is:
+I'm skeptical for two reasons.
 
- echo 'stacktrace if lat > 400' > events/synthetic/preemptdisable/trigger
+1. That doesn't sound much like a resource control problem but more of
+   a policy enforcement problem.
 
--- Steve
+2. and it's difficult to see why such policies would need to be that
+   strict.  Where is the requirement coming from?
+
+Thanks.
+
+-- 
+tejun
