@@ -2,129 +2,160 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 90B09C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:44:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 38388C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 438552086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:44:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S6HVgI6B";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IK50Zl0L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438552086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id DF8FA2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 05:45:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8FA2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755686AbeFOFox (ORCPT
+        id S1755736AbeFOFpA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 01:44:53 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:34644 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755563AbeFOFov (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 01:44:51 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 65E7260116; Fri, 15 Jun 2018 05:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529041490;
-        bh=MTDFZ54X4aS0x461rDWnSOFSNFq+PxsezZCM+v2ORxQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=S6HVgI6BZoFlGarg6gSD9UuKBKh7qA2rVZtKP0f1BWazGKZ6iXe+Nq0sHsDnFYW+G
-         lBYGq2KnyCXQ+9+LZ/SJ/YHG7EaEy1CtBDE5PUodNTzqqSMDMFBNj+s7gn+k3bN+Se
-         5nN3tGUFIdi8UGvctctMEBZF5mOvkhSZtzuiBNXQ=
-Received: from [10.206.25.30] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vviswana@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C942160116;
-        Fri, 15 Jun 2018 05:44:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529041489;
-        bh=MTDFZ54X4aS0x461rDWnSOFSNFq+PxsezZCM+v2ORxQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=IK50Zl0L478qB61dz9VEjMkHICtYApcDNgpMAvYHp3BjNP6W4vDIW3P7Zo+hPF/yG
-         zjvMqmQrQaqVmfI3WGnZYBUsvdQKDJZLIx7icFi7zBhlB1q6nMPnh2CVCb+mq+2UbN
-         7hTlmK1Gik1QXcuR69Y9Mws2Guxzoh1bO1YHhAz4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C942160116
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vviswana@codeaurora.org
-Subject: Re: [PATCH V2 4/4] mmc: host: Register changes for sdcc V5
-To:     Stephen Boyd <swboyd@chromium.org>, adrian.hunter@intel.com,
-        mark.rutland@arm.com, robh+dt@kernel.org, ulf.hansson@linaro.org
-Cc:     linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        shawn.lin@rock-chips.com, linux-arm-msm@vger.kernel.org,
-        georgi.djakov@linaro.org, devicetree@vger.kernel.org,
-        asutoshd@codeaurora.org, stummala@codeaurora.org,
-        venkatg@codeaurora.org, jeremymc@redhat.com,
-        bjorn.andersson@linaro.org, riteshh@codeaurora.org,
-        vbadigan@codeaurora.org, dianders@google.com,
-        sayalil@codeaurora.org
-References: <1527587561-27448-1-git-send-email-vviswana@codeaurora.org>
- <1527587561-27448-5-git-send-email-vviswana@codeaurora.org>
- <152884592336.16708.2751337614926643627@swboyd.mtv.corp.google.com>
-From:   Vijay Viswanath <vviswana@codeaurora.org>
-Message-ID: <4a215e3a-16af-4574-efca-0ebe5960705a@codeaurora.org>
-Date:   Fri, 15 Jun 2018 11:14:41 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 01:45:00 -0400
+Received: from mga09.intel.com ([134.134.136.24]:40576 "EHLO mga09.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755691AbeFOFoz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 01:44:55 -0400
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 22:44:54 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,225,1526367600"; 
+   d="scan'208";a="237351600"
+Received: from bee.sh.intel.com (HELO bee) ([10.239.97.14])
+  by fmsmga005.fm.intel.com with ESMTP; 14 Jun 2018 22:44:53 -0700
+Received: from kbuild by bee with local (Exim 4.84_2)
+        (envelope-from <lkp@intel.com>)
+        id 1fThXY-0007Tf-G6; Fri, 15 Jun 2018 13:44:52 +0800
+Date:   Fri, 15 Jun 2018 13:44:40 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     linux-scsi-owner@vger.kernel.org
+Cc:     kbuild-all@01.org, Zhouyang Jia <jiazhouyang09@gmail.com>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        xen-devel@lists.xenproject.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] scsi: xen-scsifront: add error handling for
+ xenbus_printf
+Message-ID: <201806151305.MldLqVQQ%fengguang.wu@intel.com>
+References: <1529017154-54719-1-git-send-email-jiazhouyang09@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <152884592336.16708.2751337614926643627@swboyd.mtv.corp.google.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529017154-54719-1-git-send-email-jiazhouyang09@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: lkp@intel.com
+X-SA-Exim-Scanned: No (on bee); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
+
+Thank you for the patch! Perhaps something to improve:
+
+[auto build test WARNING on xen-tip/linux-next]
+[also build test WARNING on v4.17 next-20180614]
+[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+
+url:    https://github.com/0day-ci/linux/commits/linux-scsi-owner-vger-kernel-org/scsi-xen-scsifront-add-error-handling-for-xenbus_printf/20180615-070404
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/xen/tip.git linux-next
+reproduce:
+        # apt-get install sparse
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF=-D__CHECK_ENDIAN__
 
 
-On 6/13/2018 4:55 AM, Stephen Boyd wrote:
-> Quoting Vijay Viswanath (2018-05-29 02:52:41)
->> @@ -137,6 +125,12 @@
->>   /* Timeout value to avoid infinite waiting for pwr_irq */
->>   #define MSM_PWR_IRQ_TIMEOUT_MS 5000
->>   
->> +#define MSM_HOST_READL(msm_host, host, offset) \
->> +       msm_host->var_ops->msm_readl_relaxed(host, offset)
->> +
->> +#define MSM_HOST_WRITEL(msm_host, val, host, offset) \
->> +       msm_host->var_ops->msm_writel_relaxed(val, host, offset)
-> 
-> Is there a reason these macros are capitalized? We don't have READL and
-> WRITEL macros in the kernel because function-like macros are typically
-> lowercase.
-> 
+sparse warnings: (new ones prefixed by >>)
 
-will change them to lower case. Didn't notice that...
+   drivers/scsi/xen-scsifront.c:267:21: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:440:33: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:440:33: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:473:33: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:473:33: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:474:33: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:474:33: sparse: expression using sizeof(void)
+>> drivers/scsi/xen-scsifront.c:663:47: sparse: incorrect type in argument 1 (different base types) @@    expected struct xenbus_device *dev @@    got xenbus_device *dev @@
+   drivers/scsi/xen-scsifront.c:663:47:    expected struct xenbus_device *dev
+   drivers/scsi/xen-scsifront.c:663:47:    got struct device *<noident>
+   drivers/scsi/xen-scsifront.c:681:47: sparse: incorrect type in argument 1 (different base types) @@    expected struct xenbus_device *dev @@    got xenbus_device *dev @@
+   drivers/scsi/xen-scsifront.c:681:47:    expected struct xenbus_device *dev
+   drivers/scsi/xen-scsifront.c:681:47:    got struct device *<noident>
+   drivers/scsi/xen-scsifront.c:1022:59: sparse: incorrect type in argument 1 (different base types) @@    expected struct xenbus_device *dev @@    got xenbus_device *dev @@
+   drivers/scsi/xen-scsifront.c:1022:59:    expected struct xenbus_device *dev
+   drivers/scsi/xen-scsifront.c:1022:59:    got struct device *<noident>
+   drivers/scsi/xen-scsifront.c:1042:59: sparse: incorrect type in argument 1 (different base types) @@    expected struct xenbus_device *dev @@    got xenbus_device *dev @@
+   drivers/scsi/xen-scsifront.c:1042:59:    expected struct xenbus_device *dev
+   drivers/scsi/xen-scsifront.c:1042:59:    got struct device *<noident>
+   drivers/scsi/xen-scsifront.c:1063:19: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:1064:19: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c:1065:19: sparse: expression using sizeof(void)
+   drivers/scsi/xen-scsifront.c: In function 'scsifront_sdev_configure':
+   drivers/scsi/xen-scsifront.c:663:21: error: passing argument 1 of 'xenbus_dev_error' from incompatible pointer type [-Werror=incompatible-pointer-types]
+       xenbus_dev_error(&info->dev->dev, err,
+                        ^
+   In file included from drivers/scsi/xen-scsifront.c:50:0:
+   include/xen/xenbus.h:224:6: note: expected 'struct xenbus_device *' but argument is of type 'struct device *'
+    void xenbus_dev_error(struct xenbus_device *dev, int err, const char *fmt, ...);
+         ^~~~~~~~~~~~~~~~
+   drivers/scsi/xen-scsifront.c: In function 'scsifront_sdev_destroy':
+   drivers/scsi/xen-scsifront.c:681:21: error: passing argument 1 of 'xenbus_dev_error' from incompatible pointer type [-Werror=incompatible-pointer-types]
+       xenbus_dev_error(&info->dev->dev, err,
+                        ^
+   In file included from drivers/scsi/xen-scsifront.c:50:0:
+   include/xen/xenbus.h:224:6: note: expected 'struct xenbus_device *' but argument is of type 'struct device *'
+    void xenbus_dev_error(struct xenbus_device *dev, int err, const char *fmt, ...);
+         ^~~~~~~~~~~~~~~~
+   drivers/scsi/xen-scsifront.c: In function 'scsifront_do_lun_hotplug':
+   drivers/scsi/xen-scsifront.c:1022:23: error: passing argument 1 of 'xenbus_dev_error' from incompatible pointer type [-Werror=incompatible-pointer-types]
+         xenbus_dev_error(&dev->dev, err,
+                          ^
+   In file included from drivers/scsi/xen-scsifront.c:50:0:
+   include/xen/xenbus.h:224:6: note: expected 'struct xenbus_device *' but argument is of type 'struct device *'
+    void xenbus_dev_error(struct xenbus_device *dev, int err, const char *fmt, ...);
+         ^~~~~~~~~~~~~~~~
+   drivers/scsi/xen-scsifront.c:1042:23: error: passing argument 1 of 'xenbus_dev_error' from incompatible pointer type [-Werror=incompatible-pointer-types]
+         xenbus_dev_error(&dev->dev, err,
+                          ^
+   In file included from drivers/scsi/xen-scsifront.c:50:0:
+   include/xen/xenbus.h:224:6: note: expected 'struct xenbus_device *' but argument is of type 'struct device *'
+    void xenbus_dev_error(struct xenbus_device *dev, int err, const char *fmt, ...);
+         ^~~~~~~~~~~~~~~~
+   cc1: some warnings being treated as errors
 
->> +
->>   struct sdhci_msm_offset {
->>          u32 core_hc_mode;
->>          u32 core_mci_data_cnt;
->> @@ -268,6 +262,14 @@ struct sdhci_msm_host {
->>          const struct sdhci_msm_offset *offset;
->>   };
->>   
->> +const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
-> 
-> static?
-> 
+vim +663 drivers/scsi/xen-scsifront.c
 
-will do
+   653	
+   654	static int scsifront_sdev_configure(struct scsi_device *sdev)
+   655	{
+   656		struct vscsifrnt_info *info = shost_priv(sdev->host);
+   657		int err;
+   658	
+   659		if (info && current == info->curr) {
+   660			err = xenbus_printf(XBT_NIL, info->dev->nodename,
+   661				      info->dev_state_path, "%d", XenbusStateConnected);
+   662			if (err) {
+ > 663				xenbus_dev_error(&info->dev->dev, err,
+   664					"%s: writing dev_state_path", __func__);
+   665				return err;
+   666			}
+   667		}
+   668	
+   669		return 0;
+   670	}
+   671	
 
->> +{
->> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->> +       struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->> +
->> +       return msm_host->offset;
->> +}
->> +
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+---
+0-DAY kernel test infrastructure                Open Source Technology Center
+https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
