@@ -6,567 +6,207 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 21B8EC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:24:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 0C8ACC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:25:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADC17208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:24:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B69E1208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:25:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Om5g3Fuh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADC17208AF
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="egME8bPD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B69E1208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755884AbeFOJYk (ORCPT
+        id S1756108AbeFOJZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 05:24:40 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:38729 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755650AbeFOJYi (ORCPT
+        Fri, 15 Jun 2018 05:25:26 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:53216 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755749AbeFOJZX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 05:24:38 -0400
-Received: by mail-wm0-f67.google.com with SMTP id 69-v6so2635690wmf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 02:24:37 -0700 (PDT)
+        Fri, 15 Jun 2018 05:25:23 -0400
+Received: by mail-it0-f67.google.com with SMTP id m194-v6so1829911itg.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 02:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=sooHETqgRfEnNwfYEOCBm78DMvbGpq3cgaNTMaYXQfM=;
-        b=Om5g3FuhJ70Ttivf1/cJPMzBquwTChmz8B/r+CUuflOa45gw9L+hHH863kjpEzuglZ
-         dWaoOOw3ysZs2+jEGUzGvPByPI5luIZrrWqdFiu29CvvI3JE69e2nTnYuLeKUgxo6h5z
-         EDdAaz0ePhkaTaQi4b/47jiDwGhff9URQPd0g=
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Q8V1APV7OmfUGCoTrcOz0le7cy/T9LfH7WzeGXWIU78=;
+        b=egME8bPD4jO7NRArwMDL95w9mFcA6yrdYenXGrqw0MTbuqCn+mZQ/PtRprAWytyz2k
+         LIuzZVVJNbI/wTsQiacNDz3hngdE35ufbhisCl7Ptczyxu9WUrFecwVdoJfMNOCSM0X2
+         vR1IKvLh80CJU9svr0FVpOeGC1gQkpw2eaWRQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=sooHETqgRfEnNwfYEOCBm78DMvbGpq3cgaNTMaYXQfM=;
-        b=PPwtmyfBGY7GcbPdOwe5DGEjDqBzjk43NnUZpkLvaV+G5mN7/GQNt703BomdbsOmqt
-         naf4xtltlV9YRoLNLOKmuVnJWKOCIJ7LqetUMH5I292pHtiUeAEETZ1Fx83+DJOvB4nj
-         M8Cu+aYa9V6korSzQsB6VF/1EX2CNSW2moyqWxnqfXqwny/vMi7u3oOD/Du1nMhfn94B
-         PujFb06GozAxFjB2/6ZQIMInvULP9ctNVVLEzpuHzm2UHcDcWAfMeAl/kMeeNnGgQDGQ
-         VK6lefFzmFKKucr7s5lzEO3bG3+fpVnAuK2XvbYXAXjQYWLU2hsYQh4gWXAG5G0hvWL9
-         tTKQ==
-X-Gm-Message-State: APt69E1hQQcUPnfqHx7LxhpxG0A3vqbuFfubgSl/pewwSMJEuVfBQ49Z
-        WfXrYoKmkPQdPFUrmCQLTOrz6g==
-X-Google-Smtp-Source: ADUXVKJzqeljtzg2MS8aGry8KUTWmM5qzszaigmmI4czm9crzrcPshbV3+1Z7lB5I1k3sFxkxWGp/g==
-X-Received: by 2002:a1c:5b0d:: with SMTP id p13-v6mr624670wmb.53.1529054676690;
-        Fri, 15 Jun 2018 02:24:36 -0700 (PDT)
-Received: from localhost.localdomain ([2a01:e35:879a:6cd0:3c1c:667c:9a1d:b28a])
-        by smtp.gmail.com with ESMTPSA id c129-v6sm1225137wma.37.2018.06.15.02.24.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 15 Jun 2018 02:24:35 -0700 (PDT)
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-To:     viresh.kumar@linaro.org, rjw@rjwysocki.net
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: [PATCH V7] powercap/drivers/idle_injection: Add an idle injection framework
-Date:   Fri, 15 Jun 2018 11:19:49 +0200
-Message-Id: <1529054393-27077-1-git-send-email-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Q8V1APV7OmfUGCoTrcOz0le7cy/T9LfH7WzeGXWIU78=;
+        b=Xuw8xc1vyI0lBEYrFAK+GPWxTkr7gXcTVKpXpw79z+QfCe7MfFsvO0at3csU+oR8HP
+         9e+FoYEs51mvxyXQPlJkB2F9I/Ndt03XX0/TJ3wRpvWx0DsSD59Ll0aka9+AN2WrRaLx
+         zKIUL9Co4Pg7Y1m77lEtPYoCZYxxabZsGpuXY5uPm1m4OGGvSrIfgZUquZLaU69efsTj
+         aM+I9iGxXuCaOD0bFupypcWSdtRZZJEP2yXq3IoKcygnVe5XU4Eb5dK4WvbeyVTgd51w
+         MnG7QzJ4EJB0pEm0F+QXGK38dRztfI2tF8VftjSMt5Yr/n+bKcX25iM2RSj5YfD7Rswy
+         lS1g==
+X-Gm-Message-State: APt69E2yGpP230PWb60nfCb6meHss1SfUjb76/MQiDMbRiaVcXCoYQsl
+        VJG3PTV4i2dxoiJ3maLT3w5GJERaOY6fp8iASwIWzg==
+X-Google-Smtp-Source: ADUXVKJ4IEBnxdKHuEFTyNd5cNdimGcO4EUOFSPE/UumpGA2Ss3Zmp71P+xbxOs+6eDcgo8BMLtEoYnBpWEeRnQ/ev4=
+X-Received: by 2002:a02:f45:: with SMTP id h66-v6mr122169jad.121.1529054723057;
+ Fri, 15 Jun 2018 02:25:23 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a02:c054:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 02:25:22
+ -0700 (PDT)
+In-Reply-To: <bd8999bd-a3ae-b7e2-a805-b31d38571ec6@codeaurora.org>
+References: <20180612044052.4402-1-rnayak@codeaurora.org> <20180612044052.4402-7-rnayak@codeaurora.org>
+ <d438946d-3d6f-4436-27c7-3eae4559ec53@codeaurora.org> <f6b166ee-538f-c8b7-3be5-57c20a599d47@codeaurora.org>
+ <bd8999bd-a3ae-b7e2-a805-b31d38571ec6@codeaurora.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Fri, 15 Jun 2018 11:25:22 +0200
+Message-ID: <CAPDyKFrz=+nnLS+YnrSKzo_UXVgKLoTvH5XQL1o_EV5u3zvw9g@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] soc: qcom: Add RPMh Power domain driver
+To:     David Collins <collinsd@codeaurora.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andy Gross <andy.gross@linaro.org>, devicetree@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Initially, the cpu_cooling device for ARM was changed by adding a new
-policy inserting idle cycles. The intel_powerclamp driver does a
-similar action.
+David, Rajendra,
 
-Instead of implementing idle injections privately in the cpu_cooling
-device, move the idle injection code in a dedicated framework and give
-the opportunity to other frameworks to make use of it.
+On 14 June 2018 at 20:17, David Collins <collinsd@codeaurora.org> wrote:
+> Hello Rajendra,
+>
+> On 06/13/2018 11:54 PM, Rajendra Nayak wrote:
+>> On 06/14/2018 06:02 AM, David Collins wrote:
+>>> On 06/11/2018 09:40 PM, Rajendra Nayak wrote:
+> ...
+>>>> +static int rpmhpd_power_off(struct generic_pm_domain *domain)
+>>>> +{
+>>>> +   struct rpmhpd *pd = domain_to_rpmhpd(domain);
+>>>> +   int ret = 0;
+>>>> +
+>>>> +   mutex_lock(&rpmhpd_lock);
+>>>> +
+>>>> +   if (pd->level[0] == 0)
+>>>> +           ret = rpmhpd_aggregate_corner(pd, 0);
+>>>
+>>> I'm not sure that we want to have the 'pd->level[0] == 0' check,
+>>> especially when considering aggregation with the peer pd.  I understand
+>>> its intention to try to keep enable state and level setting orthogonal.
+>>> However, as it stands now, the final request sent to hardware would differ
+>>> depending upon the order of calls.  Consider the following example.
+>>>
+>>> Initial state:
+>>> pd->level[0] == 0
+>>> pd->corner = 5, pd->enabled = true, pd->active_only = false
+>>> pd->peer->corner = 7, pd->peer->enabled = true, pd->peer->active_only = true
+>>>
+>>> Outstanding requests:
+>>> RPMH_ACTIVE_ONLY_STATE = 7, RPMH_WAKE_ONLY_STATE = 7, RPMH_SLEEP_STATE = 5
+>>>
+>>> Case A:
+>>>      1. set pd->corner = 6
+>>>              --> new value request: RPMH_SLEEP_STATE = 6
+>>>              --> duplicate value requests: RPMH_ACTIVE_ONLY_STATE = 7,
+>>>                      RPMH_WAKE_ONLY_STATE = 7
+>>>      2. power_off pd->peer
+>>>              --> no requests
+>>
+>> I am not sure why there would be no requests, since we do end up aggregating
+>> with pd->peer->corner = 0.
+>> So the final state would be
+>>
+>> RPMH_ACTIVE_ONLY_STATE = max(6, 0) = 6
+>> RPMH_WAKE_ONLY_STATE = 6
+>> RPMH_SLEEP_STATE = max(6, 0) = 6
+>
+> Argh, my example was ruined by a one character typo.  I meant to have:
+>
+>         Initial state:
+>         pd->level[0] != 0
+>
+>
+>>>
+>>>      Final state:
+>>>      RPMH_ACTIVE_ONLY_STATE = 7
+>>>      RPMH_WAKE_ONLY_STATE = 7
+>>>      RPMH_SLEEP_STATE = 6
+>>>
+>>> Case B:
+>>>      1. power_off pd->peer
+>>>              --> no requests
+>>
+>> Here it would be again be aggregation based on pd->peer->corner = 0
+>> so,
+>> RPMH_ACTIVE_ONLY_STATE = max(5, 0) = 5
+>> RPMH_WAKE_ONLY_STATE = 5
+>> RPMH_SLEEP_STATE = max(5, 0) = 5
+>>
+>>>      2. set pd->corner = 6
+>>>              --> new value requests: RPMH_ACTIVE_ONLY_STATE = 6,
+>>>                     RPMH_WAKE_ONLY_STATE = 6, RPMH_SLEEP_STATE = 6
+>>>
+>>>      Final state:
+>>>      RPMH_ACTIVE_ONLY_STATE = 6
+>>>      RPMH_WAKE_ONLY_STATE = 6
+>>>      RPMH_SLEEP_STATE = 6
+>>
+>> correct,
+>> RPMH_ACTIVE_ONLY_STATE = max(6, 0) = 6
+>> RPMH_WAKE_ONLY_STATE = 6
+>> RPMH_SLEEP_STATE = max(6, 0) = 6
+>>
+>>>
+>>> Without the check, Linux would vote for the lowest supported level when
+>>> power_off is called.  This seems semantically reasonable given that the
+>>> consumer is ok with the power domain going fully off and that would be the
+>>> closest that we can get.
+>>
+>> So are you suggesting I replace
+>>
+>>>> +   if (pd->level[0] == 0)
+>>>> +           ret = rpmhpd_aggregate_corner(pd, 0);
+>>
+>> with
+>>
+>>>> +   ret = rpmhpd_aggregate_corner(pd, pd->level[0]);
+>
+> Yes, this is the modification that I'm requesting.
+>
+>
+>> I can see what you said above makes sense but if its
+>>> Initial state:
+>>> pd->level[0] != 0
+>>
+>> Was that what you meant?
+>
+> Yes.
 
-The framework relies on the smpboot kthreads which handles via its
-main loop the common code for hotplugging and [un]parking.
+Apologize for jumping into the discussion.
 
-This code was previously tested with the cpu cooling device and went
-through several iterations. It results now in split code and API
-exported in the header file. It was tested with the cpu cooling device
-with success.
+I have a couple of ideas, that may simplify/improve things related to the above.
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Eduardo Valentin <edubezval@gmail.com>
-Cc: Javi Merino <javi.merino@kernel.org>
-Cc: Leo Yan <leo.yan@linaro.org>
-Cc: Kevin Wangtao <kevin.wangtao@linaro.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Rui Zhang <rui.zhang@intel.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Andrea Parri <andrea.parri@amarulasolutions.com>
----
-V7:
-   - Replace count approach by htimer_forward and restart (Peter Zijlstra)
-   - Wait for task inactive when stopping the idle injections
-   - Changed the comments and description
+1) Would it be easier if genpd calls ->set_performance_state(0) before
+it is about to call the ->power_off() callback? Actually Viresh wanted
+that from the start, but I thought it was useless.
 
-V6:
-   - Move count to wake up function (Viresh Kumar)
-   - Split atomic/non-atomic context to wake up tasks
-   - Add the park callback to handle unplug/inject race
-   - Replace atomic by READ_ONCE and WRITE_ONCE (Peter Zijlstra)
+2) When device are becoming runtime suspended, the ->runtime_suspend()
+callback of genpd is invoked (genpd_runtime_suspend()). However, in
+there we don't care to re-evaluate the votes on the performance level,
+but instead rely on the corresponding driver for the device to drop
+the vote. I think it would be a good idea of managing this internally
+in genpd instead, thus, depending on if the aggregated vote can be
+decreased we should call  ->set_performance_state(new-vote). Of
+course, once the device get runtime resumed, the votes needs to be
+restored for the device.
 
-V5:
-   - Move init_completion in the init function (Viresh Kumar)
-   - Increment task count in the wakeup function (Viresh Kumar)
-   - Remove rollback at init time (Viresh Kumar)
+What do you think?
 
-V4:
-   - Wait for completion when stopping (Viresh Kumar)
-   - Check init already done and rollback (Viresh Kumar)
+[...]
 
-V3:
-   - Fixed typos (Viresh Kumar)
-   - Removed extra blank line (Viresh Kumar)
-   - Added full stop (Viresh Kumar)
-   - Fixed Return kerneldoc format (Viresh Kumar)
-   - Fixed multiple kthreads initialization (Viresh Kumar)
-   - Fixed rollbacking the actions in the unregister function (Viresh Kumar)
-   - Make idle injection kthreads name hardcoded
-   - Kthreads are created in the initcall process
-
- V2: Fixed checkpatch warnings
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/powercap/Kconfig          |  10 ++
- drivers/powercap/Makefile         |   1 +
- drivers/powercap/idle_injection.c | 355 ++++++++++++++++++++++++++++++++++++++
- include/linux/idle_injection.h    |  29 ++++
- 4 files changed, 395 insertions(+)
- create mode 100644 drivers/powercap/idle_injection.c
- create mode 100644 include/linux/idle_injection.h
-
-diff --git a/drivers/powercap/Kconfig b/drivers/powercap/Kconfig
-index 85727ef..a767ef2 100644
---- a/drivers/powercap/Kconfig
-+++ b/drivers/powercap/Kconfig
-@@ -29,4 +29,14 @@ config INTEL_RAPL
- 	  controller, CPU core (Power Plance 0), graphics uncore (Power Plane
- 	  1), etc.
- 
-+config IDLE_INJECTION
-+	bool "Idle injection framework"
-+	depends on CPU_IDLE
-+	default n
-+	help
-+	  This enables support for the idle injection framework. It
-+	  provides a way to force idle periods on a set of specified
-+	  CPUs for power capping. Idle period can be injected
-+	  synchronously on a set of specified CPUs or alternatively
-+	  on a per CPU basis.
- endif
-diff --git a/drivers/powercap/Makefile b/drivers/powercap/Makefile
-index 0a21ef3..c3bbfee 100644
---- a/drivers/powercap/Makefile
-+++ b/drivers/powercap/Makefile
-@@ -1,2 +1,3 @@
- obj-$(CONFIG_POWERCAP)	+= powercap_sys.o
- obj-$(CONFIG_INTEL_RAPL) += intel_rapl.o
-+obj-$(CONFIG_IDLE_INJECTION) += idle_injection.o
-diff --git a/drivers/powercap/idle_injection.c b/drivers/powercap/idle_injection.c
-new file mode 100644
-index 0000000..9dadfb0
---- /dev/null
-+++ b/drivers/powercap/idle_injection.c
-@@ -0,0 +1,355 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2018 Linaro Limited
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ * The idle injection framework proposes a way to force a cpu to enter
-+ * an idle state during a specified amount of time for a specified
-+ * period.
-+ *
-+ * It relies on the smpboot kthreads which handles, via its main loop,
-+ * the common code for hotplugging and [un]parking.
-+ *
-+ * At init time, all the kthreads are created.
-+ *
-+ * A cpumask is specified as parameter for the idle injection
-+ * registering function. The kthreads will be synchronized regarding
-+ * this cpumask.
-+ *
-+ * The idle + run duration is specified via the helpers and then the
-+ * idle injection can be started at this point.
-+ *
-+ * A kthread will call play_idle() with the specified idle duration
-+ * from above.
-+ *
-+ * A timer is set after waking up all the tasks, to the next idle
-+ * injection cycle.
-+ *
-+ * The task handling the timer interrupt will wakeup all the kthreads
-+ * belonging to the cpumask.
-+ *
-+ * Stopping the idle injection is synchonuous, when the function
-+ * returns, there is the guarantee there is no more idle injection
-+ * kthread in activity.
-+ *
-+ * It is up to the user of this framework to provide a lock at an
-+ * upper level to prevent stupid things to happen, like starting while
-+ * we are unregistering.
-+ */
-+#define pr_fmt(fmt) "ii_dev: " fmt
-+
-+#include <linux/cpu.h>
-+#include <linux/freezer.h>
-+#include <linux/hrtimer.h>
-+#include <linux/kthread.h>
-+#include <linux/sched.h>
-+#include <linux/slab.h>
-+#include <linux/smpboot.h>
-+
-+#include <uapi/linux/sched/types.h>
-+
-+/**
-+ * struct idle_injection_thread - task on/off switch structure
-+ * @tsk: a pointer to a task_struct injecting the idle cycles
-+ * @should_run: a integer used as a boolean by the smpboot kthread API
-+ */
-+struct idle_injection_thread {
-+	struct task_struct *tsk;
-+	int should_run;
-+};
-+
-+/**
-+ * struct idle_injection_device - data for the idle injection
-+ * @timer: a hrtimer giving the tempo for the idle injection
-+ * @idle_duration_ms: an unsigned int specifying the idle duration
-+ * @run_duration_ms: an unsigned int specifying the running duration
-+ * @cpumask: a cpumask containing the list of CPUs managed by the device
-+ */
-+struct idle_injection_device {
-+	struct hrtimer timer;
-+	unsigned int idle_duration_ms;
-+	unsigned int run_duration_ms;
-+	unsigned long int cpumask[0];
-+};
-+
-+static DEFINE_PER_CPU(struct idle_injection_thread, idle_injection_thread);
-+static DEFINE_PER_CPU(struct idle_injection_device *, idle_injection_device);
-+
-+/**
-+ * idle_injection_wakeup - Wake up all idle injection threads
-+ * @ii_dev: the idle injection device
-+ *
-+ * Every idle injection task belonging to the idle injection device
-+ * and running on an online CPU will be wake up by this call.
-+ */
-+static void idle_injection_wakeup(struct idle_injection_device *ii_dev)
-+{
-+	struct idle_injection_thread *iit;
-+	unsigned int cpu;
-+
-+	for_each_cpu_and(cpu, to_cpumask(ii_dev->cpumask), cpu_online_mask) {
-+		iit = per_cpu_ptr(&idle_injection_thread, cpu);
-+		iit->should_run = 1;
-+		wake_up_process(iit->tsk);
-+	}
-+}
-+
-+/**
-+ * idle_injection_wakeup_fn - idle injection timer callback
-+ * @timer: a hrtimer structure
-+ *
-+ * This function is called when the idle injection timer expires which
-+ * will wake up the idle injection tasks and these ones, in turn, play
-+ * idle a specified amount of time.
-+ *
-+ * Return: HRTIMER_RESTART.
-+ */
-+static enum hrtimer_restart idle_injection_wakeup_fn(struct hrtimer *timer)
-+{
-+	unsigned int run_duration_ms;
-+	unsigned int idle_duration_ms;
-+	struct idle_injection_device *ii_dev =
-+		container_of(timer, struct idle_injection_device, timer);
-+
-+	run_duration_ms = READ_ONCE(ii_dev->run_duration_ms);
-+	idle_duration_ms = READ_ONCE(ii_dev->idle_duration_ms);
-+
-+	idle_injection_wakeup(ii_dev);
-+
-+	hrtimer_forward_now(timer,
-+			    ms_to_ktime(idle_duration_ms + run_duration_ms));
-+
-+	return HRTIMER_RESTART;
-+}
-+
-+/**
-+ * idle_injection_fn - idle injection routine
-+ * @cpu: the CPU number the task belongs to
-+ *
-+ * The idle injection routine will stay idle the specified amount of
-+ * time
-+ */
-+static void idle_injection_fn(unsigned int cpu)
-+{
-+	struct idle_injection_device *ii_dev;
-+	struct idle_injection_thread *iit;
-+
-+	ii_dev = per_cpu(idle_injection_device, cpu);
-+	iit = per_cpu_ptr(&idle_injection_thread, cpu);
-+
-+	/*
-+	 * Boolean used by the smpboot main loop and used as a
-+	 * flip-flop in this function
-+	 */
-+	iit->should_run = 0;
-+
-+	play_idle(READ_ONCE(ii_dev->idle_duration_ms));
-+}
-+
-+/**
-+ * idle_injection_set_duration - idle and run duration helper
-+ * @run_duration_ms: an unsigned int giving the running time in milliseconds
-+ * @idle_duration_ms: an unsigned int giving the idle time in milliseconds
-+ */
-+void idle_injection_set_duration(struct idle_injection_device *ii_dev,
-+				 unsigned int run_duration_ms,
-+				 unsigned int idle_duration_ms)
-+{
-+	if (run_duration_ms && idle_duration_ms) {
-+		WRITE_ONCE(ii_dev->run_duration_ms, run_duration_ms);
-+		WRITE_ONCE(ii_dev->idle_duration_ms, idle_duration_ms);
-+	}
-+}
-+
-+/**
-+ * idle_injection_get_duration - idle and run duration helper
-+ * @run_duration_ms: a pointer to an unsigned int to store the running time
-+ * @idle_duration_ms: a pointer to an unsigned int to store the idle time
-+ */
-+void idle_injection_get_duration(struct idle_injection_device *ii_dev,
-+				 unsigned int *run_duration_ms,
-+				 unsigned int *idle_duration_ms)
-+{
-+	*run_duration_ms = READ_ONCE(ii_dev->run_duration_ms);
-+	*idle_duration_ms = READ_ONCE(ii_dev->idle_duration_ms);
-+}
-+
-+/**
-+ * idle_injection_start - starts the idle injections
-+ * @ii_dev: a pointer to an idle_injection_device structure
-+ *
-+ * The function starts the idle injection cycles by first waking up
-+ * all the tasks the ii_dev is attached to and let them handle the
-+ * idle-run periods.
-+ *
-+ * Return: -EINVAL if the idle or the running durations are not set.
-+ */
-+int idle_injection_start(struct idle_injection_device *ii_dev)
-+{
-+	unsigned int idle_duration_ms = READ_ONCE(ii_dev->idle_duration_ms);
-+	unsigned int run_duration_ms = READ_ONCE(ii_dev->run_duration_ms);
-+
-+	if (!idle_duration_ms || !run_duration_ms)
-+		return -EINVAL;
-+
-+	pr_debug("Starting injecting idle cycles on CPUs '%*pbl'\n",
-+		 cpumask_pr_args(to_cpumask(ii_dev->cpumask)));
-+
-+	idle_injection_wakeup(ii_dev);
-+
-+	hrtimer_start(&ii_dev->timer,
-+		      ms_to_ktime(idle_duration_ms + run_duration_ms),
-+		      HRTIMER_MODE_REL);
-+
-+	return 0;
-+}
-+
-+/**
-+ * idle_injection_stop - stops the idle injections
-+ * @ii_dev: a pointer to an idle injection_device structure
-+ *
-+ * The function stops the idle injection and waits for the threads to
-+ * complete. If we are in the process of injecting an idle cycle, then
-+ * this will wait the end of the cycle.
-+ *
-+ * When the function returns there is no more idle injection
-+ * activity. The kthreads are scheduled out and the periodic timer is
-+ * off.
-+ */
-+void idle_injection_stop(struct idle_injection_device *ii_dev)
-+{
-+	struct idle_injection_thread *iit;
-+	unsigned int cpu;
-+
-+	pr_debug("Stopping injecting idle cycles on CPUs '%*pbl'\n",
-+		 cpumask_pr_args(to_cpumask(ii_dev->cpumask)));
-+
-+	hrtimer_cancel(&ii_dev->timer);
-+
-+	/*
-+	 * We want the guarantee we have a quescient point where
-+	 * parked threads stay in there state while we are stopping
-+	 * the idle injection. After exiting the loop, if any CPU is
-+	 * plugged in, the 'should_run' boolean being false, the
-+	 * smpboot main loop schedules the task out.
-+	 */
-+	cpu_hotplug_disable();
-+
-+	for_each_cpu_and(cpu, to_cpumask(ii_dev->cpumask), cpu_online_mask) {
-+		iit = per_cpu_ptr(&idle_injection_thread, cpu);
-+		iit->should_run = 0;
-+
-+		wait_task_inactive(iit->tsk, 0);
-+	}
-+
-+	cpu_hotplug_enable();
-+}
-+
-+/**
-+ * idle_injection_setup - initialize the current task as a RT task
-+ * @cpu: the CPU number where the kthread is running on (not used)
-+ *
-+ * Called one time, this function is in charge of setting the task
-+ * scheduler parameters.
-+ */
-+static void idle_injection_setup(unsigned int cpu)
-+{
-+	struct sched_param param = { .sched_priority = MAX_USER_RT_PRIO / 2 };
-+
-+	set_freezable();
-+
-+	sched_setscheduler(current, SCHED_FIFO, &param);
-+}
-+
-+/**
-+ * idle_injection_should_run - function helper for the smpboot API
-+ * @cpu: the CPU number where the kthread is running on
-+ *
-+ * Return: a boolean telling if the thread can run.
-+ */
-+static int idle_injection_should_run(unsigned int cpu)
-+{
-+	struct idle_injection_thread *iit =
-+		per_cpu_ptr(&idle_injection_thread, cpu);
-+
-+	return iit->should_run;
-+}
-+
-+/**
-+ * idle_injection_register - idle injection init routine
-+ * @cpumask: the list of CPUs managed by the idle injection device
-+ *
-+ * This is the initialization function in charge of creating the
-+ * initializing of the timer and allocate the structures. It does not
-+ * starts the idle injection cycles.
-+ *
-+ * Return: NULL if an allocation fails.
-+ */
-+struct idle_injection_device *idle_injection_register(struct cpumask *cpumask)
-+{
-+	struct idle_injection_device *ii_dev;
-+	int cpu;
-+
-+	ii_dev = kzalloc(sizeof(*ii_dev) + cpumask_size(), GFP_KERNEL);
-+	if (!ii_dev)
-+		return NULL;
-+
-+	cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
-+	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-+	ii_dev->timer.function = idle_injection_wakeup_fn;
-+
-+	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
-+
-+		if (per_cpu(idle_injection_device, cpu)) {
-+			pr_err("cpu%d is already registered\n", cpu);
-+			goto out_rollback_per_cpu;
-+		}
-+
-+		per_cpu(idle_injection_device, cpu) = ii_dev;
-+	}
-+
-+	return ii_dev;
-+
-+out_rollback_per_cpu:
-+	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask))
-+		per_cpu(idle_injection_device, cpu) = NULL;
-+
-+	kfree(ii_dev);
-+
-+	return NULL;
-+}
-+
-+/**
-+ * idle_injection_unregister - Unregister the idle injection device
-+ * @ii_dev: a pointer to an idle injection device
-+ *
-+ * The function is in charge of stopping the idle injections,
-+ * unregister the kthreads and free the allocated memory in the
-+ * register function.
-+ */
-+void idle_injection_unregister(struct idle_injection_device *ii_dev)
-+{
-+	unsigned int cpu;
-+
-+	idle_injection_stop(ii_dev);
-+
-+	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask))
-+		per_cpu(idle_injection_device, cpu) = NULL;
-+
-+	kfree(ii_dev);
-+}
-+
-+static struct smp_hotplug_thread idle_injection_threads = {
-+	.store = &idle_injection_thread.tsk,
-+	.setup = idle_injection_setup,
-+	.thread_fn = idle_injection_fn,
-+	.thread_comm = "idle_inject/%u",
-+	.thread_should_run = idle_injection_should_run,
-+};
-+
-+static int __init idle_injection_init(void)
-+{
-+	return smpboot_register_percpu_thread(&idle_injection_threads);
-+}
-+early_initcall(idle_injection_init);
-diff --git a/include/linux/idle_injection.h b/include/linux/idle_injection.h
-new file mode 100644
-index 0000000..ffd20d7
---- /dev/null
-+++ b/include/linux/idle_injection.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2018 Linaro Ltd
-+ *
-+ * Author: Daniel Lezcano <daniel.lezcano@linaro.org>
-+ *
-+ */
-+#ifndef __IDLE_INJECTION_H__
-+#define __IDLE_INJECTION_H__
-+
-+/* private idle injection device structure */
-+struct idle_injection_device;
-+
-+struct idle_injection_device *idle_injection_register(struct cpumask *cpumask);
-+
-+void idle_injection_unregister(struct idle_injection_device *ii_dev);
-+
-+int idle_injection_start(struct idle_injection_device *ii_dev);
-+
-+void idle_injection_stop(struct idle_injection_device *ii_dev);
-+
-+void idle_injection_set_duration(struct idle_injection_device *ii_dev,
-+				 unsigned int run_duration_ms,
-+				 unsigned int idle_duration_ms);
-+
-+void idle_injection_get_duration(struct idle_injection_device *ii_dev,
-+				 unsigned int *run_duration_ms,
-+				 unsigned int *idle_duration_ms);
-+#endif /* __IDLE_INJECTION_H__ */
--- 
-2.7.4
-
+Kind regards
+Uffe
