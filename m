@@ -6,250 +6,110 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 138DEC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:48:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0DE1C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:50:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAA0F208DF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:48:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAA0F208DF
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 9788E208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:50:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9788E208B8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756606AbeFOVr7 (ORCPT
+        id S1756610AbeFOVt7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 17:47:59 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51142 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753762AbeFOVr6 (ORCPT
+        Fri, 15 Jun 2018 17:49:59 -0400
+Received: from mail-out.m-online.net ([212.18.0.10]:54505 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753688AbeFOVt5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 17:47:58 -0400
-Received: from akpm3.svl.corp.google.com (unknown [104.133.9.92])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48BDD901;
-        Fri, 15 Jun 2018 21:47:57 +0000 (UTC)
-Date:   Fri, 15 Jun 2018 14:47:56 -0700
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc:     steven.sistare@oracle.com, daniel.m.jordan@oracle.com,
-        linux-kernel@vger.kernel.org, mhocko@suse.com,
-        n-horiguchi@ah.jp.nec.com, linux-mm@kvack.org, osalvador@suse.de,
-        willy@infradead.org, mingo@kernel.org, dan.j.williams@intel.com,
-        ying.huang@intel.com
-Subject: Re: [PATCH] mm: skip invalid pages block at a time in
- zero_resv_unresv
-Message-Id: <20180615144756.89479279f1506697f87bc61e@linux-foundation.org>
-In-Reply-To: <20180615155733.1175-1-pasha.tatashin@oracle.com>
-References: <20180615155733.1175-1-pasha.tatashin@oracle.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        Fri, 15 Jun 2018 17:49:57 -0400
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 416vKZ3zQdz1qtPl;
+        Fri, 15 Jun 2018 23:49:53 +0200 (CEST)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 416vKY3QG1z1qsdH;
+        Fri, 15 Jun 2018 23:49:53 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id vsz3E36mvodG; Fri, 15 Jun 2018 23:49:47 +0200 (CEST)
+X-Auth-Info: VX7u6Mp7EKiIcN2y1y4kiCQNBoGmomY2fjTmXEO1/AQ=
+Received: from [IPv6:::1] (unknown [195.140.253.167])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Fri, 15 Jun 2018 23:49:46 +0200 (CEST)
+Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "stefan@agner.ch" <stefan@agner.ch>
+Cc:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+        "marcofrk@gmail.com" <marcofrk@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+References: <cover.1529091248.git.leonard.crestez@nxp.com>
+ <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
+ <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
+ <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
+From:   Marek Vasut <marex@denx.de>
+Message-ID: <638457fd-85da-8fec-d146-517c43f71813@denx.de>
+Date:   Fri, 15 Jun 2018 23:36:58 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 15 Jun 2018 11:57:33 -0400 Pavel Tatashin <pasha.tatashin@oracle.com> wrote:
-
-> The role of zero_resv_unavail() is to make sure that every struct page that
-> is allocated but is not backed by memory that is accessible by kernel is
-> zeroed and not in some uninitialized state.
+On 06/15/2018 10:58 PM, Leonard Crestez wrote:
+> On Fri, 2018-06-15 at 16:47 -0300, Fabio Estevam wrote:
 > 
-> Since struct pages are allocated in blocks (2M pages in x86 case), we can
-> skip pageblock_nr_pages at a time, when the first one is found to be
-> invalid.
+>> On Fri, Jun 15, 2018 at 4:43 PM, Leonard Crestez
+>> <leonard.crestez@nxp.com> wrote:
+>>> The FBDEV driver uses the same name and both can't be registered at the
+>>> same time. Fix this by renaming the drm driver to mxsfb-drm
+>>>
+>>> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+>>
+>> Stefan sent the same patch a few days ago:
+>> http://www.spinics.net/lists/dri-devel/msg179489.html
 > 
-> This optimization may help since now on x86 every hole in e820 maps
-> is marked as reserved in memblock, and thus will go through this function.
+> In that thread there is a proposal for removing the old fbdev/mxsfb
+> driver entirely.
 > 
-> This function is called before sched_clock() is initialized, so I used my
-> x86 early boot clock patches to measure the performance improvement.
+> That would break old DTBs, isn't this generally considered bad? Also,
+> are we sure the removal of fbdev/mxsfb wouldn't lose any features?
 > 
-> With 1T hole on i7-8700 currently we would take 0.606918s of boot time, but
-> with this optimization 0.001103s.
+> What my series does is make both drivers work with the same kernel
+> image and turns the choice into a board-level dtb decision. Supporting
+> everything at once seems desirable to me and it allows for a very
+> smooth upgrade path.
 
-This conflicts with mm-zero-remaining-unavailable-struct-pages.patch, below.
+Having two drivers in the kernel with different set of bugs is always bad.
 
-mm-zero-remaining-unavailable-struct-pages.patch (which you have yet to
-review, please) fixes an oops and is rather higher priority.
+> The old driver could be removed later, after all users are converted.
 
+Both drivers were in for long enough already. And let's be realistic,
+how many MX23/MX28 users of old DTs with new kernels are there who
+cannot update the DT as well ?
 
+IMO keeping the old FBDEV driver in is just an excuse to postpone the
+long overdue DT update and I dislike that. Update any remaining DTs and
+nuke the FBDEV driver already.
 
-From: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Subject: mm: zero remaining unavailable struct pages
-
-There is a kernel panic that is triggered when reading /proc/kpageflags on
-the kernel booted with kernel parameter 'memmap=nn[KMG]!ss[KMG]':
-
-  BUG: unable to handle kernel paging request at fffffffffffffffe
-  PGD 9b20e067 P4D 9b20e067 PUD 9b210067 PMD 0
-  Oops: 0000 [#1] SMP PTI
-  CPU: 2 PID: 1728 Comm: page-types Not tainted 4.17.0-rc6-mm1-v4.17-rc6-180605-0816-00236-g2dfb086ef02c+ #160
-  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.0-2.fc28 04/01/2014
-  RIP: 0010:stable_page_flags+0x27/0x3c0
-  Code: 00 00 00 0f 1f 44 00 00 48 85 ff 0f 84 a0 03 00 00 41 54 55 49 89 fc 53 48 8b 57 08 48 8b 2f 48 8d 42 ff 83 e2 01 48 0f 44 c7 <48> 8b 00 f6 c4 01 0f 84 10 03 00 00 31 db 49 8b 54 24 08 4c 89 e7
-  RSP: 0018:ffffbbd44111fde0 EFLAGS: 00010202
-  RAX: fffffffffffffffe RBX: 00007fffffffeff9 RCX: 0000000000000000
-  RDX: 0000000000000001 RSI: 0000000000000202 RDI: ffffed1182fff5c0
-  RBP: ffffffffffffffff R08: 0000000000000001 R09: 0000000000000001
-  R10: ffffbbd44111fed8 R11: 0000000000000000 R12: ffffed1182fff5c0
-  R13: 00000000000bffd7 R14: 0000000002fff5c0 R15: ffffbbd44111ff10
-  FS:  00007efc4335a500(0000) GS:ffff93a5bfc00000(0000) knlGS:0000000000000000
-  CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-  CR2: fffffffffffffffe CR3: 00000000b2a58000 CR4: 00000000001406e0
-  Call Trace:
-   kpageflags_read+0xc7/0x120
-   proc_reg_read+0x3c/0x60
-   __vfs_read+0x36/0x170
-   vfs_read+0x89/0x130
-   ksys_pread64+0x71/0x90
-   do_syscall_64+0x5b/0x160
-   entry_SYSCALL_64_after_hwframe+0x44/0xa9
-  RIP: 0033:0x7efc42e75e23
-  Code: 09 00 ba 9f 01 00 00 e8 ab 81 f4 ff 66 2e 0f 1f 84 00 00 00 00 00 90 83 3d 29 0a 2d 00 00 75 13 49 89 ca b8 11 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 34 c3 48 83 ec 08 e8 db d3 01 00 48 89 04 24
-
-According to kernel bisection, this problem became visible due to commit
-f7f99100d8d9 which changes how struct pages are initialized.
-
-Memblock layout affects the pfn ranges covered by node/zone. Consider
-that we have a VM with 2 NUMA nodes and each node has 4GB memory, and
-the default (no memmap= given) memblock layout is like below:
-
-  MEMBLOCK configuration:
-   memory size = 0x00000001fff75c00 reserved size = 0x000000000300c000
-   memory.cnt  = 0x4
-   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
-   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
-   memory[0x2]     [0x0000000100000000-0x000000013fffffff], 0x0000000040000000 bytes on node 0 flags: 0x0
-   memory[0x3]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
-   ...
-
-If you give memmap=1G!4G (so it just covers memory[0x2]),
-the range [0x100000000-0x13fffffff] is gone:
-
-  MEMBLOCK configuration:
-   memory size = 0x00000001bff75c00 reserved size = 0x000000000300c000
-   memory.cnt  = 0x3
-   memory[0x0]     [0x0000000000001000-0x000000000009efff], 0x000000000009e000 bytes on node 0 flags: 0x0
-   memory[0x1]     [0x0000000000100000-0x00000000bffd6fff], 0x00000000bfed7000 bytes on node 0 flags: 0x0
-   memory[0x2]     [0x0000000140000000-0x000000023fffffff], 0x0000000100000000 bytes on node 1 flags: 0x0
-   ...
-
-This causes shrinking node 0's pfn range because it is calculated by
-the address range of memblock.memory. So some of struct pages in the
-gap range are left uninitialized.
-
-We have a function zero_resv_unavail() which does zeroing the struct
-pages outside memblock.memory, but currently it covers only the reserved
-unavailable range (i.e. memblock.memory && !memblock.reserved).
-This patch extends it to cover all unavailable range, which fixes
-the reported issue.
-
-Link: http://lkml.kernel.org/r/20180613054107.GA5329@hori1.linux.bs1.fc.nec.co.jp
-Fixes: f7f99100d8d9 ("mm: stop zeroing memory during allocation in vmemmap")
-Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
-Tested-by: Oscar Salvador <osalvador@suse.de>
-Cc: Pavel Tatashin <pasha.tatashin@oracle.com>
-Cc: Steven Sistare <steven.sistare@oracle.com>
-Cc: Daniel Jordan <daniel.m.jordan@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Huang Ying <ying.huang@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
----
-
- include/linux/memblock.h |   16 ----------------
- mm/page_alloc.c          |   33 ++++++++++++++++++++++++---------
- 2 files changed, 24 insertions(+), 25 deletions(-)
-
-diff -puN include/linux/memblock.h~mm-zero-remaining-unavailable-struct-pages include/linux/memblock.h
---- a/include/linux/memblock.h~mm-zero-remaining-unavailable-struct-pages
-+++ a/include/linux/memblock.h
-@@ -236,22 +236,6 @@ void __next_mem_pfn_range(int *idx, int
- 	for_each_mem_range_rev(i, &memblock.memory, &memblock.reserved,	\
- 			       nid, flags, p_start, p_end, p_nid)
- 
--/**
-- * for_each_resv_unavail_range - iterate through reserved and unavailable memory
-- * @i: u64 used as loop variable
-- * @flags: pick from blocks based on memory attributes
-- * @p_start: ptr to phys_addr_t for start address of the range, can be %NULL
-- * @p_end: ptr to phys_addr_t for end address of the range, can be %NULL
-- *
-- * Walks over unavailable but reserved (reserved && !memory) areas of memblock.
-- * Available as soon as memblock is initialized.
-- * Note: because this memory does not belong to any physical node, flags and
-- * nid arguments do not make sense and thus not exported as arguments.
-- */
--#define for_each_resv_unavail_range(i, p_start, p_end)			\
--	for_each_mem_range(i, &memblock.reserved, &memblock.memory,	\
--			   NUMA_NO_NODE, MEMBLOCK_NONE, p_start, p_end, NULL)
--
- static inline void memblock_set_region_flags(struct memblock_region *r,
- 					     unsigned long flags)
- {
-diff -puN mm/page_alloc.c~mm-zero-remaining-unavailable-struct-pages mm/page_alloc.c
---- a/mm/page_alloc.c~mm-zero-remaining-unavailable-struct-pages
-+++ a/mm/page_alloc.c
-@@ -6390,25 +6390,40 @@ void __paginginit free_area_init_node(in
-  * struct pages which are reserved in memblock allocator and their fields
-  * may be accessed (for example page_to_pfn() on some configuration accesses
-  * flags). We must explicitly zero those struct pages.
-+ *
-+ * This function also addresses a similar issue where struct pages are left
-+ * uninitialized because the physical address range is not covered by
-+ * memblock.memory or memblock.reserved. That could happen when memblock
-+ * layout is manually configured via memmap=.
-  */
- void __paginginit zero_resv_unavail(void)
- {
- 	phys_addr_t start, end;
- 	unsigned long pfn;
- 	u64 i, pgcnt;
-+	phys_addr_t next = 0;
- 
- 	/*
--	 * Loop through ranges that are reserved, but do not have reported
--	 * physical memory backing.
-+	 * Loop through unavailable ranges not covered by memblock.memory.
- 	 */
- 	pgcnt = 0;
--	for_each_resv_unavail_range(i, &start, &end) {
--		for (pfn = PFN_DOWN(start); pfn < PFN_UP(end); pfn++) {
--			if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
--				continue;
--			mm_zero_struct_page(pfn_to_page(pfn));
--			pgcnt++;
-+	for_each_mem_range(i, &memblock.memory, NULL,
-+			NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end, NULL) {
-+		if (next < start) {
-+			for (pfn = PFN_DOWN(next); pfn < PFN_UP(start); pfn++) {
-+				if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
-+					continue;
-+				mm_zero_struct_page(pfn_to_page(pfn));
-+				pgcnt++;
-+			}
- 		}
-+		next = end;
-+	}
-+	for (pfn = PFN_DOWN(next); pfn < max_pfn; pfn++) {
-+		if (!pfn_valid(ALIGN_DOWN(pfn, pageblock_nr_pages)))
-+			continue;
-+		mm_zero_struct_page(pfn_to_page(pfn));
-+		pgcnt++;
- 	}
- 
- 	/*
-@@ -6419,7 +6434,7 @@ void __paginginit zero_resv_unavail(void
- 	 * this code can be removed.
- 	 */
- 	if (pgcnt)
--		pr_info("Reserved but unavailable: %lld pages", pgcnt);
-+		pr_info("Zeroed struct page in unavailable ranges: %lld pages", pgcnt);
- }
- #endif /* CONFIG_HAVE_MEMBLOCK */
- 
-_
-
+-- 
+Best regards,
+Marek Vasut
