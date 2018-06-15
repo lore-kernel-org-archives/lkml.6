@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AFC6EC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:40:31 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4628AC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:40:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F872208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:40:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEF20208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:40:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfWv7W6l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F872208B8
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ocIfxGNU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEF20208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756001AbeFOJka (ORCPT
+        id S1756115AbeFOJkg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 05:40:30 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:40791 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755727AbeFOJk0 (ORCPT
+        Fri, 15 Jun 2018 05:40:36 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:38508 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755727AbeFOJkc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 05:40:26 -0400
-Received: by mail-pf0-f195.google.com with SMTP id z24-v6so4615231pfe.7;
-        Fri, 15 Jun 2018 02:40:26 -0700 (PDT)
+        Fri, 15 Jun 2018 05:40:32 -0400
+Received: by mail-pg0-f65.google.com with SMTP id c9-v6so4197646pgf.5;
+        Fri, 15 Jun 2018 02:40:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=7stQGUpLXvpT66R3542N2aU/vqQaiwK+zjcMnliT7o0=;
-        b=kfWv7W6lnRGgb2xYBxrk5lvN8GbvuntIP0AgpmJRXWw5OXdr5ILxxQQhUI3e7au9Gt
-         ouJRknSB1V/zovCgx0cbZYuTx+hoZbDEZm92XSn+QGrxqHgmAL/m82Jdqinn7vKzPG0D
-         rELRR7fN+qvK+1bLwwSmcHXVzc749qpisDS/oxjIhbvZA7QmHLMXuirlZvjZkW0738Xu
-         jJeYj3Ef+Oh6R5Ox7uNnEGmPwCEBGXCVDRGS7usolShBbAnfwZih9+Gct0gTgC9BUw9B
-         GSVNvY4sfKSD+nt2k7K93M1RAMJHGOXiOMP9j0LZgpvs0eXPzYCafChbRRLx7TabTvhl
-         pxHg==
+        bh=t5apb6k5nSC0HUfE/+7Wt3NSt9FbkZt1amlbcSiyy6A=;
+        b=ocIfxGNU2wb6L+jU8/9EvSVKj9kmc043k02o4AORKIXdse4hINx0Cdwi96qMHJwjP6
+         VOV5nwNLeABticJWeKFKlAl+m3IgqkbtbAC9++0MTQHzRnHpPQ5UPa4EzL+bAdevOa24
+         gHtVg6msq3ElfclzwGZ3KzXoEGbi1xNfOeYYnSw5s1MmW3oKLhozgyVTj2DLmHhkOQqB
+         pn72HmDh8h5FlUTlicjc3AmE3WihDVWJdcSIVeD99BPqUu0vpy0tx5rzVNo66mMzFXQ6
+         A+REGSeFuJcIYIFIhG3UxdVgxBk1DcFvLoF/APDrMXRvEAoXXxvJbi++ruQaEx39iMub
+         CrEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=7stQGUpLXvpT66R3542N2aU/vqQaiwK+zjcMnliT7o0=;
-        b=jhbSBodqpNHxIwdP6X62gG/rKcGWMgsTboDyiN9BffjBGpAt37+UIDG4pVomOXufbu
-         Hb+/4JweHm0XcwjCVn1zhI5G3z/qdz7Bimx8OobdOfYeqzT1Pvr6ZoayLaxYA0W94mf1
-         3qEjp2/cz9rIW275IdZul9s93WNZIn83VoAA4JYCefHjFo4tx8oIhPs3rp97DwUQSLMX
-         QSWupEYIHc7l9M3ZgSn8cu4NvQ/Ne4u5JoSo0eX/ug/gDyMTUfvhZH24u8UBO3pf7EJh
-         sk0ij4zFbGHEK+IFjZG6dg+YaHK9S8ZeRcEYjqBdtxheI1IOBHRJgt7l+jsSNCofXrJj
-         B4hQ==
-X-Gm-Message-State: APt69E02MyfGyID8keRcMVtupReFQrS+N6I14D9FioQpyAL6sF570/7J
-        2+cFjrpVnHUepwShIEarUoA=
-X-Google-Smtp-Source: ADUXVKLIE+nZ7e7TmzZ9sZYNPMcCNvgpu0JUiFeIje40SBvTGSh1SOKJio22imITHWba20FxHgm/wA==
-X-Received: by 2002:a62:4c04:: with SMTP id z4-v6mr1050644pfa.205.1529055625177;
-        Fri, 15 Jun 2018 02:40:25 -0700 (PDT)
+        bh=t5apb6k5nSC0HUfE/+7Wt3NSt9FbkZt1amlbcSiyy6A=;
+        b=PR9P0IvVpafTYEDCLLwAVWZBTsddUi+V8C2ZCRyeGQ3Wg7l3XN1joSOJEpm717BruS
+         zM8RCz5me61JpFZH91ek5pcsEK6DAzWwZ37Yh1MrbETu7WgN82trUZYaFReQDjfZrv+j
+         qXsssL+H3h7MBD+B+M02Y7PcDnmvdyf5XjaowlC+ltG5mr8q/n5fcLbopPJwGN1zJ/PY
+         pFfECGGwZpL0S8UVGujz7CaQ4/CTa+jFc2hBSXqfbBbmvDNgauGSlwwUhCfB2zXnuWgg
+         RO3pmw8x+MiwKmGLHlWOQUkWpbWpVDiNjKahAjtlai3c4KkEh+VAyEL2uYg2ZnI71YFb
+         VTxQ==
+X-Gm-Message-State: APt69E3I0hffzxVCMS2W5zIvlUuaKwJZncm1EtUsvbMh0C53K2P8ZeBw
+        W/nNOwcIKL4SdzjSEFMTsVA=
+X-Google-Smtp-Source: ADUXVKLwTyH7ZnT52KKCv7BB5C4XwMBAD4nOEe2vXUt3jjzuhcZWSR/t4+7cadYVGY0bz1SK7vtCcw==
+X-Received: by 2002:a63:27c6:: with SMTP id n189-v6mr918816pgn.164.1529055632225;
+        Fri, 15 Jun 2018 02:40:32 -0700 (PDT)
 Received: from localhost.localdomain ([175.223.48.179])
-        by smtp.gmail.com with ESMTPSA id p1-v6sm11628551pfh.58.2018.06.15.02.40.18
+        by smtp.gmail.com with ESMTPSA id p1-v6sm11628551pfh.58.2018.06.15.02.40.26
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 02:40:23 -0700 (PDT)
+        Fri, 15 Jun 2018 02:40:31 -0700 (PDT)
 From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
 X-Google-Original-From: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 To:     Petr Mladek <pmladek@suse.com>,
@@ -71,9 +71,9 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
         Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Subject: [RFC][PATCH 1/6] printk: move printk_safe macros to printk header
-Date:   Fri, 15 Jun 2018 18:39:14 +0900
-Message-Id: <20180615093919.559-2-sergey.senozhatsky@gmail.com>
+Subject: [RFC][PATCH 2/6] tty: add tty_port locking helpers
+Date:   Fri, 15 Jun 2018 18:39:15 +0900
+Message-Id: <20180615093919.559-3-sergey.senozhatsky@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
 References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
@@ -82,117 +82,80 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make printk_safe_enter_irqsave()/etc macros available to the
-rest of the kernel, so we can use them in TTY and UART code.
+TTY port spin_lock is one of the locks that can cause a
+printk-recursion deadlock, thus we need to lock it from
+printk_safe context. E.g.
+
+ioctl()
+ tty_ioctl()
+  spin_lock(&tty_port->lock)
+   printk()
+    call_console_drivers()
+     foo_console_write()
+      spin_lock(&uart_port->lock)
+       tty_wakeup()
+        spin_lock(&tty_port->lock)    << deadlock
+
+This patch adds tty_port->lock helper macros which take care
+of printk_safe context and redirect potentially unsafe printk()
+calls to per-CPU buffers, which we flush later from safe a
+context. The helper macros will turn the above mentioned deadlock
+scenario into:
+
+ioctl()
+ tty_ioctl()
+  printk_safe_enter()
+   spin_lock(&tty_port->lock)
+    printk()
+     printk_safe_log_store()
+      irq_work_queue()
+   spin_unlock(&tty_port->lock)
+  printk_safe_exit()
+
+ IRQ
+  printk_safe_flush_buffer()
+   vprintk_deferred()
 
 Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
 ---
- include/linux/printk.h   | 40 ++++++++++++++++++++++++++++++++++++++++
- kernel/printk/internal.h | 37 -------------------------------------
- 2 files changed, 40 insertions(+), 37 deletions(-)
+ include/linux/tty.h | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/include/linux/printk.h b/include/linux/printk.h
-index 6d7e800affd8..8b4e1e667919 100644
---- a/include/linux/printk.h
-+++ b/include/linux/printk.h
-@@ -153,6 +153,46 @@ static inline void printk_nmi_enter(void) { }
- static inline void printk_nmi_exit(void) { }
- #endif /* PRINTK_NMI */
+diff --git a/include/linux/tty.h b/include/linux/tty.h
+index c56e3978b00f..828f91ab680b 100644
+--- a/include/linux/tty.h
++++ b/include/linux/tty.h
+@@ -252,6 +252,30 @@ struct tty_port {
+ 	void 			*client_data;
+ };
  
-+#ifdef CONFIG_PRINTK
-+extern void __printk_safe_enter(void);
-+extern void __printk_safe_exit(void);
-+
-+#define printk_safe_enter_irqsave(flags)	\
-+	do {					\
-+		local_irq_save(flags);		\
-+		__printk_safe_enter();		\
++#define tty_port_lock_irq(lock)				\
++	do {						\
++		printk_safe_enter_irq();		\
++		spin_lock(lock);			\
 +	} while (0)
 +
-+#define printk_safe_exit_irqrestore(flags)	\
-+	do {					\
-+		__printk_safe_exit();		\
-+		local_irq_restore(flags);	\
++#define tty_port_unlock_irq(lock)			\
++	do {						\
++		spin_unlock(lock);			\
++		printk_safe_exit_irq();			\
 +	} while (0)
 +
-+#define printk_safe_enter_irq()		\
-+	do {					\
-+		local_irq_disable();		\
-+		__printk_safe_enter();		\
++#define tty_port_lock_irqsave(lock, flags)		\
++	do {						\
++		printk_safe_enter_irqsave(flags);	\
++		spin_lock(lock);			\
 +	} while (0)
 +
-+#define printk_safe_exit_irq()			\
-+	do {					\
-+		__printk_safe_exit();		\
-+		local_irq_enable();		\
++#define tty_port_unlock_irqrestore(lock, flags)		\
++	do {						\
++		spin_unlock(lock);			\
++		printk_safe_exit_irqrestore(flags);	\
 +	} while (0)
-+#else
-+/*
-+ * On !PRINTK builds we still export console output related locks
-+ * and some functions (console_unlock()/tty/etc.), so printk-safe
-+ * must preserve the existing local IRQ guarantees.
-+ */
-+#define printk_safe_enter_irqsave(flags) local_irq_save(flags)
-+#define printk_safe_exit_irqrestore(flags) local_irq_restore(flags)
 +
-+#define printk_safe_enter_irq() local_irq_disable()
-+#define printk_safe_exit_irq() local_irq_enable()
-+#endif
-+
- #ifdef CONFIG_PRINTK
- asmlinkage __printf(5, 0)
- int vprintk_emit(int facility, int level,
-diff --git a/kernel/printk/internal.h b/kernel/printk/internal.h
-index 2a7d04049af4..cf4f85e53cc2 100644
---- a/kernel/printk/internal.h
-+++ b/kernel/printk/internal.h
-@@ -27,46 +27,9 @@ extern raw_spinlock_t logbuf_lock;
- __printf(1, 0) int vprintk_default(const char *fmt, va_list args);
- __printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args);
--void __printk_safe_enter(void);
--void __printk_safe_exit(void);
--
--#define printk_safe_enter_irqsave(flags)	\
--	do {					\
--		local_irq_save(flags);		\
--		__printk_safe_enter();		\
--	} while (0)
--
--#define printk_safe_exit_irqrestore(flags)	\
--	do {					\
--		__printk_safe_exit();		\
--		local_irq_restore(flags);	\
--	} while (0)
--
--#define printk_safe_enter_irq()		\
--	do {					\
--		local_irq_disable();		\
--		__printk_safe_enter();		\
--	} while (0)
--
--#define printk_safe_exit_irq()			\
--	do {					\
--		__printk_safe_exit();		\
--		local_irq_enable();		\
--	} while (0)
- 
- #else
- 
- __printf(1, 0) int vprintk_func(const char *fmt, va_list args) { return 0; }
- 
--/*
-- * In !PRINTK builds we still export logbuf_lock spin_lock, console_sem
-- * semaphore and some of console functions (console_unlock()/etc.), so
-- * printk-safe must preserve the existing local IRQ guarantees.
-- */
--#define printk_safe_enter_irqsave(flags) local_irq_save(flags)
--#define printk_safe_exit_irqrestore(flags) local_irq_restore(flags)
--
--#define printk_safe_enter_irq() local_irq_disable()
--#define printk_safe_exit_irq() local_irq_enable()
--
- #endif /* CONFIG_PRINTK */
+ /* tty_port::iflags bits -- use atomic bit ops */
+ #define TTY_PORT_INITIALIZED	0	/* device is initialized */
+ #define TTY_PORT_SUSPENDED	1	/* device is suspended */
 -- 
 2.17.1
 
