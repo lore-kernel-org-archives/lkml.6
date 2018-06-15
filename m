@@ -4,61 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC620C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:48:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EE48C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:49:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77969208E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:48:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7A6D208E3
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 19:49:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSAltVm7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77969208E2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M9gSYB97"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A6D208E3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966391AbeFOTsn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 15:48:43 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37443 "EHLO
+        id S966402AbeFOTtX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 15:49:23 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38428 "EHLO
         mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965768AbeFOTsl (ORCPT
+        with ESMTP id S965768AbeFOTtW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 15:48:41 -0400
-Received: by mail-lf0-f67.google.com with SMTP id g21-v6so16254819lfb.4
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 12:48:40 -0700 (PDT)
+        Fri, 15 Jun 2018 15:49:22 -0400
+Received: by mail-lf0-f67.google.com with SMTP id i83-v6so16241977lfh.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 12:49:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=7iX6gnIOvgG6lg0e2OT7l5TvsqVROT2ECIC6EdAqETI=;
-        b=lSAltVm7e3ehwpJGdLpghijGBo08fHn69ItPZWoKnpN0OG6PTIXbkQ7yAafJ3MiW32
-         9B9ff4WfYENF+7xgKIMZUuq/hdKlIChqqC00kb1b2Hu3PyiHZ+SQY/g1YevtYDnbt0Zf
-         v1GNz74uGyOnoTQV/EOYZqZTOA04pZvOQaQCb1K3GguVEYdEGHxTelLb67L4tBR+uvVE
-         TJwURRr7IbBoSlnw/RRJ+oK+j5AzLo3ope1CvDGMapOjqF6SIycZ2froJDQbxUaMIYVw
-         xxKnAfuwFBEEy49OC4Xre/DXKTaPOB/a3WTiEBV78W2hd+8f6LZkw/9mKFfH/f6I+imM
-         4rsQ==
+        bh=bWQeohNjEzDuNAOeTbK9OgZaaROzzz6Ml+LFMGy7VHo=;
+        b=M9gSYB97Xn4ZlmTECraR7qYPBXpoF6dvuBZiIVOtO64qVvLJMH+9b7eoBw9p9aLqRD
+         q9CUGDPFR8xMyDBf3U8cMBNdpVl1L7DnZTNHYaxoGPPFnunP4mKPC39Z+Lw+y6uhEE/5
+         oGF0Fdy1je8u6FThVEUncKuAYtTh7XkwoJyapPaKb2kavIG5zt0glQmKQdT+C+dBV9gT
+         QPXyOgaqgoTQRdOKwB9G/a/e93aNzNMaHyLLxRvCr5MRqO6LF3vttT5Ld/YcYBWbCOEZ
+         lbOSDh2DVC/spuJLIHWCBVMW9l6CpPmk8CqasR7jS4+Q7/pJ/5q5shnj3hP+afsQpvwm
+         9/+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7iX6gnIOvgG6lg0e2OT7l5TvsqVROT2ECIC6EdAqETI=;
-        b=nWBS42y8coNhrxbY5DnM7+TCgMR85CT5kwKRIyjqa8uMJqOwV2qJTzz/SVBU0kTGNP
-         4yuZy6ZFVALeyBwZUBleFPYnN/N6Z04UVySe8PbF5SiEj+x09QZgRelMwi0B8ccyNwIB
-         heohRxAUOq/s1i6LXmmwRqN78WNtjyLbnQ6wUgcEk/WxzKOaszP+82qim2GHYZZQXpzQ
-         wYx2bIq8nRo8bP3qFAkDmIke7hMd+hfJjtUdLxb/q/675mowmYwzd1yeV/EeMXeDZrHY
-         NoFfCvvOO6SXLdWdfFDleM1HedSqWPnD9Y+ZIEXrkkE/27NO9AhCzUOyxvXlFnAyNGcz
-         N0Cw==
-X-Gm-Message-State: APt69E2ubRXtpvQ214XyTt5x7NVGQnP08E4pFNLQd8otCKcIQihdHm51
-        D0pNd/TejUe+W6uv6F+J7as=
-X-Google-Smtp-Source: ADUXVKItar4cZ9IwWbsTe2Ucaaxomhslg4bUPtbQ7tB/9f93WFTWH7RQtJwN12cRAj0QhHKY1fCLjg==
-X-Received: by 2002:a2e:200f:: with SMTP id g15-v6mr2137176ljg.63.1529092120282;
-        Fri, 15 Jun 2018 12:48:40 -0700 (PDT)
+        bh=bWQeohNjEzDuNAOeTbK9OgZaaROzzz6Ml+LFMGy7VHo=;
+        b=c+JcbrU4tHdfVTjJLh1tsi1KbCvgxCHvYANFxlujgHWObiQY4QRGkZpA1QK57/oLET
+         oAWwDF+9Mg181j6rE6IzWujx4ZeJXBxPrz00YHm1eQbiOZlk9+5U4aj1MgsqIISkmuwv
+         RXWwa3Z6Dwh3F+Hzhk/4ZR0ahKxknk1l0ksXDmu8OX5i24/kOm4oi85QL9F8JZ+exInk
+         czvffIvEw85CQPrGaidGkGLyjcyW/sNZ18uvsHuRlT67St000G5vUAHlWo5cS6L+Njb1
+         d52TUOJE6+UDvkiKSu/VcR4pT5dXYx1GM27ilsOX0uqs0I7wgIq92SJVz6Y6NHbp6GS/
+         jGzg==
+X-Gm-Message-State: APt69E1Lgfdrmf/dSXHyZzTbpdabnRfMXpebgGIiYNIFxPWWxHiguqOQ
+        MGRwoERNURImDAcUoNK/v7fvEg==
+X-Google-Smtp-Source: ADUXVKLQtcnzX5yVtuyFXIjQshK+EsFPO0ux6zCYPZ4VH8uu+nHOMipyernsZovbHp3thfI/cdPMpg==
+X-Received: by 2002:a19:c452:: with SMTP id u79-v6mr1902204lff.5.1529092160884;
+        Fri, 15 Jun 2018 12:49:20 -0700 (PDT)
 Received: from mobilestation ([5.166.218.73])
-        by smtp.gmail.com with ESMTPSA id 74-v6sm432369lfp.32.2018.06.15.12.48.39
+        by smtp.gmail.com with ESMTPSA id p28-v6sm1630867lfh.24.2018.06.15.12.49.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 12:48:39 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 22:48:48 +0300
+        Fri, 15 Jun 2018 12:49:20 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 22:49:29 +0300
 From:   Serge Semin <fancer.lancer@gmail.com>
 To:     Logan Gunthorpe <logang@deltatee.com>
 Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
@@ -67,125 +67,107 @@ Cc:     linux-kernel@vger.kernel.org, linux-ntb@googlegroups.com,
         Allen Hubbe <allenbh@gmail.com>,
         Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
         Shuah Khan <shuah@kernel.org>
-Subject: Re: [PATCH 3/8] NTB: Fix the default port and peer numbers for
- legacy drivers
-Message-ID: <20180615194848.GA22880@mobilestation>
+Subject: Re: [PATCH 4/8] NTB: ntb_pingpong: Choose doorbells based on port
+ number
+Message-ID: <20180615194929.GA24025@mobilestation>
 References: <20180609000819.13883-1-logang@deltatee.com>
- <20180609000819.13883-4-logang@deltatee.com>
+ <20180609000819.13883-5-logang@deltatee.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180609000819.13883-4-logang@deltatee.com>
+In-Reply-To: <20180609000819.13883-5-logang@deltatee.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 08, 2018 at 06:08:13PM -0600, Logan Gunthorpe <logang@deltatee.com> wrote:
-> When the commit adding ntb_default_port_number() and
-> ntb_default_peer_port_number()  entered the kernel there was no
-> users of it so it was impossible to tell what the API needed.
+On Fri, Jun 08, 2018 at 06:08:14PM -0600, Logan Gunthorpe <logang@deltatee.com> wrote:
+> This commit fixes pingpong support for existing drivers that do not
+> implement ntb_default_port_number() and ntb_default_peer_port_number().
+> This is required for hardware (like the crosslink topology of
+> switchtec) which cannot assign reasonable port numbers to each port due
+> to its perfect symmetry.
 > 
-> When a user finally landed a year later (ntb_pingpong) there were
-> more NTB topologies were created and no consideration was considered
-> to how other drivers had changed.
+> Instead of picking the doorbell to use based on the the index of the
+> peer, we use the peer's port number. This is a bit clearer and easier
+> to understand.
 > 
-> Now that there is a user it can be fixed to provide a sensible default
-> for the legacy drivers that do not implement ntb_{peer_}port_number().
-> Seeing ntb_pingpong doesn't check error codes returning EINVAL was also
-> not sensible.
-> 
-> Patches for ntb_pingpong and ntb_perf follow (which are broken
-> otherwise) to support hardware that doesn't have port numbers. This is
-> important not only to not break support with existing drivers but for
-> the cross link topology which, due to its perfect symmetry, cannot
-> assign unique port numbers to each side.
-> 
-> Fixes: 1e5301196a88 ("NTB: Add indexed ports NTB API")
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 
-As a part of the multi-port NTB API the port-index interface was freshly
-introduced. The main idea was to somehow address local/peer domains within one
-NTB device, since from now there can be more than one peer domain to send
-message to or to set MWs up with. For this we invented the two-spaces interface
-which mapped in general non-linear ports space to the locally linear ports
-indexes space, and vise-versa. That mapping was implemented by new callbacks:
-ntb_port*()/ntb_peer_port*().
+Thanks for the patch. It was the original version of the ping-pong driver,
+I was going to submit. But I've decided to develop it a bit different. And
+here is why.
 
-Even though it perfectly fitted the IDT NTB functions, the Intel/AMD devices
-didn't have explicit ports numbering. Instead we decided to assign the numbers
-by using the topology type. So the Primary and B2B US sides got port
-NTB_PORT_PRI_USD, Secondary and B2B DS sides got port NTB_PORT_SEC_DSD.
-In order to make it being default for all pure two-ports devices like
-Intel/AMD the new methods ntb_default_port_number() and
-ntb_default_peer_port_number() were developed and utilized in the
-ntb_port*()/ntb_peer_port*() API functions (see ntb.h header file).
+My goal was to create the multi-port version of the ping-pong test.
+The idea of the new driver was to implement the cyclic port-to-port
+ping-pong algorithm. Simply speaking each port selects two partner-ports,
+one partner would be used as the source of pings and another one would be
+target of pongs sent to with the defined delay.
 
-So to speak the main purpose of the default methods is to assign some unique
-port number to the NTB devices based on the topology at current implementation.
-Please note, that it is essential for the NTB API to have each port uniquely
-enumerated within one device. This is the way the multi-port NTB API has been
-designed in the first place. That was the reason we altered the Intel/AMD and
-IDT drivers about two years ago.
+Since IDT got a global Doorbell register, which is shared between all
+the ports, I had to assign an unique doorbell bit to each port. I created a
+simple algorithm, which linearised in general non-linear port numbers.
+Then I used the globally unique port index to select the corresponding
+doorbell bit. pp_init_flds() methods implements the corresponding algorithm,
+while pp_find_next_peer() performs the next port selection to convey the
+pong to.
 
-Based on this I redeveloped the ntb_tool/ntb_perf/ntb_pingpong drivers.
-Needless to say that I was sure all the NTB devices followed the API convention
-regarding the port numbers. Since the Switchtec driver doesn't provide the
-explicit port-index API callbacks, the NTB API internals uses the default
-methods, which as you can see don't know anything about SWITCH and CROSSLINK
-topologies. That's why the methods return -EINVAL so the test drivers don't
-work properly.
+Regarding the patch. The idea of using the port number instead of linearised
+unique index should also work for Intel/AMD/IDT drivers. But the ports-space
+linearization algorithm was created for the case if the real port numbers
+would exceed the available Doorbell bits. I thought this might be the case of
+multi-ports version of the switchtec driver.
 
-Concerning the fix of the discovered issues and fixes introduced by this
-patchset. I'd suggest to add the ports-index callbacks to the Switchtec
-driver, which identify local and peer ports. After this the current version
-of all the test drivers shall perfectly work.
-
-As far as I can see the PFX family switches documentation operates with the
-definitions like Ports/Partitions (similar to the IDT switches) as well as
-the switchtec management driver. It might be a clue to the switch functionality,
-which can be used to find something similar to the ports numbering.
+Needless to say, that if Switchtec driver had the ports-index API implementation,
+this patch wouldn't be needed.
 
 Regards,
 -Sergey
 
+> Fixes: c7aeb0afdcc2 ("NTB: ntb_pp: Add full multi-port NTB API support")
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
 > ---
->  drivers/ntb/ntb.c | 9 ++-------
->  1 file changed, 2 insertions(+), 7 deletions(-)
+>  drivers/ntb/test/ntb_pingpong.c | 14 ++++++--------
+>  1 file changed, 6 insertions(+), 8 deletions(-)
 > 
-> diff --git a/drivers/ntb/ntb.c b/drivers/ntb/ntb.c
-> index 93f24440d11d..d955a92a095a 100644
-> --- a/drivers/ntb/ntb.c
-> +++ b/drivers/ntb/ntb.c
-> @@ -225,10 +225,8 @@ int ntb_default_port_number(struct ntb_dev *ntb)
->  	case NTB_TOPO_B2B_DSD:
->  		return NTB_PORT_SEC_DSD;
->  	default:
-> -		break;
-> +		return 0;
->  	}
-> -
-> -	return -EINVAL;
->  }
->  EXPORT_SYMBOL(ntb_default_port_number);
+> diff --git a/drivers/ntb/test/ntb_pingpong.c b/drivers/ntb/test/ntb_pingpong.c
+> index 65865e460ab8..18d00eec7b02 100644
+> --- a/drivers/ntb/test/ntb_pingpong.c
+> +++ b/drivers/ntb/test/ntb_pingpong.c
+> @@ -121,15 +121,14 @@ static int pp_find_next_peer(struct pp_ctx *pp)
+>  	link = ntb_link_is_up(pp->ntb, NULL, NULL);
 >  
-> @@ -251,10 +249,8 @@ int ntb_default_peer_port_number(struct ntb_dev *ntb, int pidx)
->  	case NTB_TOPO_B2B_DSD:
->  		return NTB_PORT_PRI_USD;
->  	default:
-> -		break;
-> +		return 0;
->  	}
-> -
-> -	return -EINVAL;
->  }
->  EXPORT_SYMBOL(ntb_default_peer_port_number);
+>  	/* Find next available peer */
+> -	if (link & pp->nmask) {
+> +	if (link & pp->nmask)
+>  		pidx = __ffs64(link & pp->nmask);
+> -		out_db = BIT_ULL(pidx + 1);
+> -	} else if (link & pp->pmask) {
+> +	else if (link & pp->pmask)
+>  		pidx = __ffs64(link & pp->pmask);
+> -		out_db = BIT_ULL(pidx);
+> -	} else {
+> +	else
+>  		return -ENODEV;
+> -	}
+> +
+> +	out_db = BIT_ULL(ntb_peer_port_number(pp->ntb, pidx));
 >  
-> @@ -326,4 +322,3 @@ static void __exit ntb_driver_exit(void)
->  	bus_unregister(&ntb_bus);
+>  	spin_lock(&pp->lock);
+>  	pp->out_pidx = pidx;
+> @@ -303,7 +302,7 @@ static void pp_init_flds(struct pp_ctx *pp)
+>  			break;
+>  	}
+>  
+> -	pp->in_db = BIT_ULL(pidx);
+> +	pp->in_db = BIT_ULL(lport);
+>  	pp->pmask = GENMASK_ULL(pidx, 0) >> 1;
+>  	pp->nmask = GENMASK_ULL(pcnt - 1, pidx);
+>  
+> @@ -435,4 +434,3 @@ static void __exit pp_exit(void)
+>  	debugfs_remove_recursive(pp_dbgfs_topdir);
 >  }
->  module_exit(ntb_driver_exit);
+>  module_exit(pp_exit);
 > -
 > -- 
 > 2.11.0
@@ -194,5 +176,5 @@ Regards,
 > You received this message because you are subscribed to the Google Groups "linux-ntb" group.
 > To unsubscribe from this group and stop receiving emails from it, send an email to linux-ntb+unsubscribe@googlegroups.com.
 > To post to this group, send email to linux-ntb@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/20180609000819.13883-4-logang%40deltatee.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/linux-ntb/20180609000819.13883-5-logang%40deltatee.com.
 > For more options, visit https://groups.google.com/d/optout.
