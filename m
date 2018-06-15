@@ -3,151 +3,352 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA1A4C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:02:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CE2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:03:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89463208C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:02:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3625D208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 21:03:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="KzbFzCzc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89463208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="by+OUzu2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3625D208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756677AbeFOVCy (ORCPT
+        id S1756664AbeFOVCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 17:02:54 -0400
-Received: from aserp2130.oracle.com ([141.146.126.79]:33364 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756413AbeFOVCs (ORCPT
+        Fri, 15 Jun 2018 17:02:51 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:33247 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756635AbeFOVCa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 17:02:48 -0400
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5FL0hZ2072430;
-        Fri, 15 Jun 2018 21:02:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2017-10-26;
- bh=XO3uULWB5Xv4cgYpCxZJW4nR6bUdonsRboz/+ck+43w=;
- b=KzbFzCzcJcBUfJrTRYijHP00lj0+DK2+NmeA4rjOHLUs3aZOrAzIXfIq7Af5zuo4tpD6
- A/xvFciQAIl57gxM2d0wUZPlyNnndCil6yAPw2s9zusZoYPX+If+7UCVm7kjpmsQCOvn
- /q4KGzSGywQpbY6AUz3BWoWson0IT+CcHmiCEnYHZr6DDL9hH2HNczjHXcrqr/v5IeB0
- O1++5dgi+emwnylT7v4cQihZETYrvRXHD2HCrXisF4SKAT1KxTX8A4SIc6VwJUVQxb69
- gR9/CKTxeemPP1PdhWmt94P8w/jL3nt4pAhkAldSzO5i+wY6SFhzr97M8P1/kZVEYzAr sQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by aserp2130.oracle.com with ESMTP id 2jk0xr2cp7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 21:02:39 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5FL2cd1010312
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 15 Jun 2018 21:02:39 GMT
-Received: from abhmp0002.oracle.com (abhmp0002.oracle.com [141.146.116.8])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5FL2cmx022743;
-        Fri, 15 Jun 2018 21:02:38 GMT
-Received: from dhcp-burlington7-2nd-B-east-10-152-55-162.usdhcp.oraclecorp.com (/10.152.32.65)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 15 Jun 2018 14:02:37 -0700
-Subject: Re: [PATCH v4 8/9] xen/gntdev: Implement dma-buf export functionality
-To:     Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        jgross@suse.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com,
-        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
-References: <20180615062753.9229-1-andr2000@gmail.com>
- <20180615062753.9229-9-andr2000@gmail.com>
-From:   Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=boris.ostrovsky@oracle.com; prefer-encrypt=mutual; keydata=
- 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
- Jg6OxFYd01z+a+oL
-Message-ID: <901a32b1-baae-7717-31f7-23bd31e23f05@oracle.com>
-Date:   Fri, 15 Jun 2018 17:02:23 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180615062753.9229-9-andr2000@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=777
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806150225
+        Fri, 15 Jun 2018 17:02:30 -0400
+Received: by mail-pl0-f66.google.com with SMTP id 6-v6so5397970plb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 14:02:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=1ve4XPJHG0F5feSHWhGHR0RyoBRrTZ3UHvjlXsUawvQ=;
+        b=by+OUzu2kbauTXPdwQZ9p3HLdLEjzIN7LNhcI27qUtlpH/vV+DyEbTTcnAj7NolkHM
+         Ba9MJSEg1ojUWNdkbLL4IKTqjeGEWdSMO1N+QIMnSzn2C/eSAO1lyIdb+mi2S82ZZ9s6
+         MfKey6CgQw91pDgEan6xQAuQfQOURjiDUyAJI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=1ve4XPJHG0F5feSHWhGHR0RyoBRrTZ3UHvjlXsUawvQ=;
+        b=NkGSxNI44oP1Owr0bdgliks4Ib/xg0kpUckg3pxuBdSQomu7bJ7rKKwnAY8xmZ3oOV
+         xrfC1XDYsd6ZMLLknEpqzH+v5ERJvesUJjCxt0qJxrakVvTFzg+RhBzPyZa84TG8dgJw
+         ReDGVOlY3SpKZOLMYeSeYQdWrtOkThurU7keIqbYcLpEvyAZ7LW2mr3wW3nv/vZ4pvJf
+         k+w6zAx3UUdXNYX+WgnUs7I63dXCv6ewIgl5Lkd6hGvT5rsOzIz8Jivn0TDWTUoAcf1V
+         z/Ik4cLDN9Xjyg3TmsF1psO8og7SCFsXMONqizLF1aAmIwJK/YpQf464DwOta0f2C/wE
+         sFxg==
+X-Gm-Message-State: APt69E15Rhu374a1fycqfTW+Ll35o1ZKwa30cotnpnath6HAkVmkUOsZ
+        ek9xQPtTSIPPSFW2eKt54ZzPPA==
+X-Google-Smtp-Source: ADUXVKIBOKtDBH38p7+4rZgIT2q3Jvu3sAfGeFUJVtRNnwbk4qb1doeugjwjGlT6nlcpVxSsG8J8Yw==
+X-Received: by 2002:a17:902:8486:: with SMTP id c6-v6mr3715698plo.283.1529096549700;
+        Fri, 15 Jun 2018 14:02:29 -0700 (PDT)
+Received: from evgreen2.mtv.corp.google.com ([2620:0:1000:1511:116f:8bf3:133b:f7fd])
+        by smtp.gmail.com with ESMTPSA id v13-v6sm17664346pfa.131.2018.06.15.14.02.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 15 Jun 2018 14:02:28 -0700 (PDT)
+From:   Evan Green <evgreen@chromium.org>
+To:     Vinayak Holikatti <vinholikatti@gmail.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        Stanislav Nijnikov <stanislav.nijnikov@wdc.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bart Van Assche <Bart.VanAssche@wdc.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org
+Cc:     Evan Green <evgreen@chromium.org>
+Subject: [PATCH v2 4/4] scsi: ufs: Enable writing config descriptor
+Date:   Fri, 15 Jun 2018 14:00:49 -0700
+Message-Id: <20180615210049.126123-5-evgreen@chromium.org>
+X-Mailer: git-send-email 2.13.5
+In-Reply-To: <20180615210049.126123-1-evgreen@chromium.org>
+References: <20180615210049.126123-1-evgreen@chromium.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 02:27 AM, Oleksandr Andrushchenko wrote:
-> From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
->
-> 1. Create a dma-buf from grant references provided by the foreign
->    domain. By default dma-buf is backed by system memory pages, but
->    by providing GNTDEV_DMA_FLAG_XXX flags it can also be created
->    as a DMA write-combine/coherent buffer, e.g. allocated with
->    corresponding dma_alloc_xxx API.
->    Export the resulting buffer as a new dma-buf.
->
-> 2. Implement waiting for the dma-buf to be released: block until the
->    dma-buf with the file descriptor provided is released.
->    If within the time-out provided the buffer is not released then
->    -ETIMEDOUT error is returned. If the buffer with the file descriptor
->    does not exist or has already been released, then -ENOENT is
->    returned. For valid file descriptors this must not be treated as
->    error.
->
-> 3. Make gntdev's common code and structures available to dma-buf.
->
-> Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+This change enables writing to fields of the config descriptor
+via sysfs. It can be used to provision an unprovisioned UFS
+device, or reprovision an unlocked device.
 
+Signed-off-by: Evan Green <evgreen@chromium.org>
+---
+Changes since v2:
+        - New common _store function, since I'm using kobj_type now.
+        - Tried to make the endianness more explicit as suggested by Bart.
+I opted not to go as far as creating rw_desc_param{16,32} and friends,
+as those would simply turn around and call the generic function, which
+didn't seem all that useful.
 
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+ Documentation/ABI/testing/sysfs-driver-ufs | 17 ------
+ drivers/scsi/ufs/ufs-sysfs.c               | 83 +++++++++++++++++++++++++++++-
+ 2 files changed, 81 insertions(+), 19 deletions(-)
+
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index d7477fffe0d1..fef594d912de 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -244,7 +244,6 @@ Description:	This file shows whether or not the UFS boot feature is enabled.
+ 		This is one of the UFS configuration descriptor parameters.
+ 		More information about the descriptor can be found in the UFS
+ 		2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/descriptor_access_enable
+ Date:		May 2018
+@@ -254,7 +253,6 @@ Description:	This file shows whether or not access will be permitted to the
+ 		boot sequence. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/high_priority_lun
+ Date:		May 2018
+@@ -263,7 +261,6 @@ Description:	This file shows the identifier of the high priority logical
+ 		unit. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/init_active_icc_level
+ Date:		May 2018
+@@ -272,7 +269,6 @@ Description:	This file shows the ICC level in active mode after device
+ 		initialization or hardware reset. This is one of the UFS
+ 		configuration descriptor parameters. More information about the
+ 		descriptor can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/initial_power_mode
+ Date:		May 2018
+@@ -281,7 +277,6 @@ Description:	This file shows the power mode after device initialization or
+ 		hardware reset. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/number_of_luns
+ Date:		May 2018
+@@ -290,7 +285,6 @@ Description:	This file shows the number of logical units that the device will
+ 		support. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/periodic_rtc_update
+ Date:		May 2018
+@@ -299,7 +293,6 @@ Description:	This file shows the frequency and method of real time clock
+ 		updates. This is one of the UFS configuration descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/secure_removal_type
+ Date:		May 2018
+@@ -308,7 +301,6 @@ Description:	This file shows the secure removal type of the UFS device. This
+ 		is one of the UFS configuration descriptor parameters. More
+ 		information about the descriptor can be found in the UFS 2.1
+ 		specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/allocation_units
+ Date:		May 2018
+@@ -317,7 +309,6 @@ Description:	This file shows the number of allocation units assigned to the
+ 		particular logical unit. This is one of the UFS configuration
+ 		unit descriptor parameters. More information about the
+ 		descriptor can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/boot_lun_id
+ Date:		May 2018
+@@ -327,7 +318,6 @@ Description:	This file shows the boot LUN ID for this particular logical
+ 		This is one of the UFS configuration unit descriptor parameters.
+ 		More information about the descriptor can be found in the UFS
+ 		2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/context_capabilities
+ Date:		May 2018
+@@ -336,7 +326,6 @@ Description:	This file shows the context capabilities for the particular
+ 		logical unit. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/data_reliability
+ Date:		May 2018
+@@ -345,7 +334,6 @@ Description:	This file shows the data reliability for the particular logical
+ 		unit. This is one of the UFS configuration unit descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/logical_block_size
+ Date:		May 2018
+@@ -354,7 +342,6 @@ Description:	This file shows the logical block size for the particular
+ 		logical unit as a power of two. This is one of the UFS
+ 		configuration unit descriptor parameters. More information
+ 		about the descriptor can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/lu_enable
+ Date:		May 2018
+@@ -363,7 +350,6 @@ Description:	This file shows whether or not the particular logical unit is
+ 		enabled. This is one of the UFS configuration unit descriptor
+ 		parameters. More information about the descriptor can be found
+ 		in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/lu_write_protect
+ Date:		May 2018
+@@ -372,7 +358,6 @@ Description:	This file shows the write protect status for the particular
+ 		logical unit. This is one of the UFS configuration unit
+ 		descriptor parameters. More information about the descriptor
+ 		can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/memory_type
+ Date:		May 2018
+@@ -381,7 +366,6 @@ Description:	This file shows the memory type for the particular logical unit.
+ 		This is one of the UFS configuration unit descriptor parameters.
+ 		More information about the descriptor can be found in the UFS
+ 		2.1 specification.
+-		The file is read only.
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/config_descriptor/unit*/provisioning_type
+ Date:		May 2018
+@@ -390,7 +374,6 @@ Description:	This file shows the provisioning type information for the
+ 		particular logical unit. This is one of the UFS configuration
+ 		uint descriptor parameters. More information about the
+ 		descriptor can be found in the UFS 2.1 specification.
+-		The file is read only.
+ 
+ 
+ What:		/sys/bus/platform/drivers/ufshcd/*/interconnect_descriptor/unipro_version
+diff --git a/drivers/scsi/ufs/ufs-sysfs.c b/drivers/scsi/ufs/ufs-sysfs.c
+index d0365e8bf839..9e6e592280bb 100644
+--- a/drivers/scsi/ufs/ufs-sysfs.c
++++ b/drivers/scsi/ufs/ufs-sysfs.c
+@@ -252,6 +252,56 @@ static ssize_t ufs_sysfs_read_desc_param(struct ufs_hba *hba,
+ 	return ret;
+ }
+ 
++static ssize_t ufs_sysfs_write_desc_param(struct ufs_hba *hba,
++				  enum desc_idn desc_id,
++				  u8 desc_index,
++				  u8 param_offset,
++				  const char *buf,
++				  ssize_t buf_size,
++				  u8 width)
++{
++	int ret;
++	unsigned long long value;
++	u8 value8;
++	__be16 value16;
++	__be32 value32;
++	__be64 value64;
++	u8 *valueptr;
++
++	if (kstrtoull(buf, 0, &value))
++		return -EINVAL;
++
++	switch (width) {
++	case 1:
++		value8 = (u8)value;
++		valueptr = &value8;
++		break;
++
++	case 2:
++		value16 = cpu_to_be16(value);
++		valueptr = (u8 *)&value16;
++		break;
++
++	case 4:
++		value32 = cpu_to_be32(value);
++		valueptr = (u8 *)&value32;
++		break;
++
++	case 8:
++		value64 = cpu_to_be64(value);
++		valueptr = (u8 *)&value64;
++		break;
++	}
++
++	ret = ufshcd_rw_desc_param(hba, UPIU_QUERY_OPCODE_WRITE_DESC, desc_id,
++				desc_index, param_offset,
++				valueptr, width);
++	if (ret)
++		return -EINVAL;
++
++	return buf_size;
++}
++
+ #define UFS_DESC_PARAM(_name, _puname, _duname, _size)			\
+ static ssize_t _name##_show(struct device *dev,				\
+ 	struct device_attribute *attr, char *buf)			\
+@@ -346,7 +396,7 @@ struct ufs_config_desc_attr {
+ #define UFS_CONFIG_DESC_PARAM(_name, _uname, _size)			\
+ static struct ufs_config_desc_attr ufs_cfg_attr_##_name = {		\
+ 	.attr = {.name = __stringify(_name),				\
+-		 .mode = VERIFY_OCTAL_PERMISSIONS(0444) }, \
++		 .mode = VERIFY_OCTAL_PERMISSIONS(0644) }, 		\
+ 	.offset = CONFIGURATION_DESC_PARAM##_uname,			\
+ 	.size = _size							\
+ }
+@@ -375,7 +425,7 @@ static struct attribute *ufs_sysfs_config_descriptor[] = {
+ #define UFS_CONFIG_UNIT_DESC_PARAM(_name, _uname, _size)		\
+ static struct ufs_config_desc_attr ufs_cfg_unit_attr_##_name = {	\
+ 	.attr = {.name = __stringify(_name),				\
+-		 .mode = VERIFY_OCTAL_PERMISSIONS(0444) },		\
++		 .mode = VERIFY_OCTAL_PERMISSIONS(0644) },		\
+ 	.offset = CONFIGURATION_UNIT_DESC_PARAM##_uname,		\
+ 	.size = _size							\
+ }
+@@ -430,8 +480,37 @@ static ssize_t ufs_cfg_attr_show(struct kobject *kobj, struct attribute *attr,
+ 					 offset, buf, cfg_attr->size);
+ }
+ 
++static ssize_t ufs_cfg_attr_store(struct kobject *kobj, struct attribute *attr,
++			      const char *buf, size_t count)
++{
++	struct ufs_config_desc_attr *cfg_attr = to_ufs_cfg_desc_attr(attr);
++	struct ufs_cfg_object *cfg_obj = to_ufs_cfg_obj(kobj);
++	u8 offset = cfg_attr->offset;
++	struct device *dev;
++	struct ufs_hba *hba;
++
++	/*
++	 * For unit config descriptors, add the unit's offset and get the
++	 * device parent two up.
++	 */
++	if (cfg_obj->index >= 0) {
++		offset += CONFIGURATION_DESC_PARAM_UNIT0 +
++			(CONFIGURATION_UNIT_DESC_SIZE * cfg_obj->index);
++
++		dev = kobj_to_dev(cfg_obj->kobj.parent->parent);
++
++	} else {
++		dev = kobj_to_dev(cfg_obj->kobj.parent);
++	}
++
++	hba = dev_get_drvdata(dev);
++	return ufs_sysfs_write_desc_param(hba, QUERY_DESC_IDN_CONFIGURATION, 0,
++					 offset, buf, count, cfg_attr->size);
++}
++
+ static const struct sysfs_ops ufs_sysfs_config_descriptor_ops = {
+ 	.show	= ufs_cfg_attr_show,
++	.store	= ufs_cfg_attr_store,
+ };
+ 
+ static void ufs_cfg_kobject_release(struct kobject *kobj)
+-- 
+2.13.5
 
