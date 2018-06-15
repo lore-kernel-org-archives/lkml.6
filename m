@@ -2,123 +2,330 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5C169C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:13:43 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68021C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B4A208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:13:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="X6+l5p/j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11B4A208B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1D93B208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:15:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D93B208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756040AbeFOINl (ORCPT
+        id S1756012AbeFOIPG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:13:41 -0400
-Received: from mail-wr0-f196.google.com ([209.85.128.196]:42175 "EHLO
-        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755819AbeFOINj (ORCPT
+        Fri, 15 Jun 2018 04:15:06 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:57840 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755755AbeFOIPE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:13:39 -0400
-Received: by mail-wr0-f196.google.com with SMTP id w10-v6so9001554wrk.9
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 01:13:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=TscHnC8B090qoRFOh8rHdcMaVcJBgvaWrkd3SOYPsRQ=;
-        b=X6+l5p/jLbOonTwyewlPfA2Pigjk6s8C8pgK2BgwsLVOCj2iTG0zMa5PcQAK2yMOvx
-         cvSfTdyE0r71+iDbGail1jFKZ51L/dPDIxbk+xWrTwNSj+sQ5kJuT8ETUq56zBWzkyAW
-         FPMpWEDlqN2haI/IipnlduwGqLoTkSLqWD8jA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=TscHnC8B090qoRFOh8rHdcMaVcJBgvaWrkd3SOYPsRQ=;
-        b=sw+NqmKjRhYhaRZvkkyUevSjRowJGQY+WOT3JdNfOdrqPRWgCnjgqxFHa4/QrjMApA
-         c9nuLvaKZgqNSW+0b0PqU0Rg+i8zjcn7v687DiibOpSSeAEsCdIsvF0yZYsfuxF1NbJ8
-         C8ZonCGRhhuhgMBGvio3XsUAnOyVsV+fJ3yw6s5SrmZ3i3AN/SDzkgqCHESZAj7M34nW
-         2becTBE46uSW42Qm3L5g3Pjoi38kgGXeNckuRakYEZIcjYky2s15flD4W8QwAHmMuyXP
-         8Xo6sD4k3Ou5KAzwIaOZrB/NLf188XEazo/sgg75rKmtppHuzT81MmA4LpCqK5dx4+tC
-         LQMQ==
-X-Gm-Message-State: APt69E0sShnmHae0WMPGTb7EFo88iOuKSRy0GueT3pmPyqDW/1T5Pv9v
-        sj3s+1X/GtfXfoJNfBQTWwX1Xg==
-X-Google-Smtp-Source: ADUXVKI4VOvasioXl+bCcbdvTR1xQpvHl5yjivNe7iwYZHIxf5q0qRCBh8Rwzd40iVq41DSHTy1xcg==
-X-Received: by 2002:adf:be09:: with SMTP id n9-v6mr714749wrh.267.1529050417882;
-        Fri, 15 Jun 2018 01:13:37 -0700 (PDT)
-Received: from ?IPv6:2001:41d0:fe90:b800:c420:d140:2202:2512? ([2001:41d0:fe90:b800:c420:d140:2202:2512])
-        by smtp.googlemail.com with ESMTPSA id n56-v6sm16133436wrn.72.2018.06.15.01.13.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 01:13:37 -0700 (PDT)
-Subject: Re: [PATCH V6] powercap/drivers/idle_injection: Add an idle injection
- framework
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-References: <1528804816-32636-1-git-send-email-daniel.lezcano@linaro.org>
- <20180612123036.GJ12180@hirez.programming.kicks-ass.net>
- <16d5649d-863c-10c7-9287-202568e713e6@linaro.org>
- <20180612125247.GO12217@hirez.programming.kicks-ass.net>
- <16770447-afe3-0fd7-19f9-1bd52c4c8ced@linaro.org>
- <20180612140654.GQ12217@hirez.programming.kicks-ass.net>
- <cce05d92-d51a-ab4f-83f2-37dcdee0cd6a@linaro.org>
- <20180612155841.GT12217@hirez.programming.kicks-ass.net>
- <7190a58e-05f2-216c-8b36-70692fa722bf@linaro.org>
- <20180612173514.GV12217@hirez.programming.kicks-ass.net>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <4eaf5987-4532-5c81-ec3a-89614bf339f5@linaro.org>
-Date:   Fri, 15 Jun 2018 10:13:37 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 04:15:04 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 2CA268051C; Fri, 15 Jun 2018 10:15:03 +0200 (CEST)
+Date:   Fri, 15 Jun 2018 10:15:01 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     kernel list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-omap@vger.kernel.org, tony@atomide.com, sre@kernel.org,
+        nekit1000@gmail.com, mpartap@gmx.net, merlijn@wizzup.org
+Subject: [RFC] cpcap: allow modifying voltages and currents
+Message-ID: <20180615081501.GA31594@amd>
 MIME-Version: 1.0
-In-Reply-To: <20180612173514.GV12217@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/06/2018 19:35, Peter Zijlstra wrote:
 
-[ ... ]
+--J2SCkAp4GZ/dPZZf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->>>> Yes, drifting is not an issue if that happens. This scheme is simpler
->>>> and safer than setting the timer ahead before waking up the tasks with
->>>> the risk it expires before all the tasks ended their idle cycles.
->>>
->>> sloppy though..
->>
->> Ok, do you prefer to see the timer set in the wakeup function and thus
->> having a periodic tick for the idle injection ?
-> 
-> I think having a HRTIMER_RESTART handler that does hrtimer_forward() is
-> the most sensible. You will end up having to deal with threads not being
-> ready, but I think that's not a real problem.
+Hi!
 
-Thanks for the restartable timer suggestion. I'm finishing polishing the
-code and definitively the result is much more nicer.
+This allows user to disable the green LED, so that it can be used for
+other notifications. It also allows him to set lower voltage limits,
+and adjust current: lower current and voltage limits will result in
+longer battery lifetime.
+
+Currently I'm using
+
+POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT,
+POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
+POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
+
+attributes to control it. Do we have something suitable for LED
+control? Are the current/voltage limits ok to use?
+
+Best regards,
+								Pavel
 
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+diff --git a/drivers/power/supply/cpcap-battery.c b/drivers/power/supply/cp=
+cap-battery.c
+index 98ba078..839e365 100644
+--- a/drivers/power/supply/cpcap-battery.c
++++ b/drivers/power/supply/cpcap-battery.c
+@@ -3,7 +3,7 @@
+  *
+  * Copyright (C) 2017 Tony Lindgren <tony@atomide.com>
+  *
+- * Some parts of the code based on earlie Motorola mapphone Linux kernel
++ * Some parts of the code based on earlier Motorola mapphone Linux kernel
+  * drivers:
+  *
+  * Copyright (C) 2009-2010 Motorola, Inc.
+diff --git a/drivers/power/supply/cpcap-charger.c b/drivers/power/supply/cp=
+cap-charger.c
+index e4905be..7de07ae 100644
+--- a/drivers/power/supply/cpcap-charger.c
++++ b/drivers/power/supply/cpcap-charger.c
+@@ -93,6 +93,17 @@
+ #define CPCAP_REG_CRM_VCHRG_4V42	CPCAP_REG_CRM_VCHRG(0xe)
+ #define CPCAP_REG_CRM_VCHRG_4V44	CPCAP_REG_CRM_VCHRG(0xf)
+=20
++static int voltage_to_register(int microvolt)
++{
++	switch (microvolt/1000) {
++	case 3800: return CPCAP_REG_CRM_VCHRG_3V80;
++	case 4100: return CPCAP_REG_CRM_VCHRG_4V10;
++	case 4200: return CPCAP_REG_CRM_VCHRG_4V20;
++	case 4350: return CPCAP_REG_CRM_VCHRG_4V35;
++	default: return -EINVAL;
++	}
++}
++
+ /*
+  * CPCAP_REG_CRM charge currents. These seem to match MC13783UG.pdf
+  * values in "Table 8-3. Charge Path Regulator Current Limit
+@@ -116,6 +127,18 @@
+ #define CPCAP_REG_CRM_ICHRG_1A596	CPCAP_REG_CRM_ICHRG(0xe)
+ #define CPCAP_REG_CRM_ICHRG_NO_LIMIT	CPCAP_REG_CRM_ICHRG(0xf)
+=20
++static int current_to_register(int microamp)
++{
++	switch (microamp/1000) {
++	case 0:    return CPCAP_REG_CRM_ICHRG_0A000;
++	case 70:   return CPCAP_REG_CRM_ICHRG_0A070;
++	case 177:  return CPCAP_REG_CRM_ICHRG_0A177;
++	case 532:  return CPCAP_REG_CRM_ICHRG_0A532;
++	case 1596: return CPCAP_REG_CRM_ICHRG_1A596;
++	default: return -EINVAL;
++	}
++}
++
+ enum {
+ 	CPCAP_CHARGER_IIO_BATTDET,
+ 	CPCAP_CHARGER_IIO_VOLTAGE,
+@@ -142,6 +165,10 @@ struct cpcap_charger_ddata {
+ 	atomic_t active;
+=20
+ 	int status;
++
++	int led_enabled;
++	int limit_current;
++	int limit_voltage;
+ };
+=20
+ struct cpcap_interrupt_desc {
+@@ -163,11 +190,17 @@ struct cpcap_charger_ints_state {
+ 	bool battdetb;
+ };
+=20
++#define POWER_SUPPLY_PROP_INDICATION POWER_SUPPLY_PROP_CHARGE_CONTROL_LIMIT
++
+ static enum power_supply_property cpcap_charger_props[] =3D {
+ 	POWER_SUPPLY_PROP_STATUS,
+ 	POWER_SUPPLY_PROP_ONLINE,
+ 	POWER_SUPPLY_PROP_VOLTAGE_NOW,
+ 	POWER_SUPPLY_PROP_CURRENT_NOW,
++
++        POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
++	POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE,
++	POWER_SUPPLY_PROP_INDICATION,
+ };
+=20
+ static bool cpcap_charger_battery_found(struct cpcap_charger_ddata *ddata)
+@@ -229,6 +262,7 @@ static int cpcap_charger_get_property(struct power_supp=
+ly *psy,
+ 		val->intval =3D ddata->status;
+ 		break;
+ 	case POWER_SUPPLY_PROP_VOLTAGE_NOW:
++		/* FIXME? Display voltage even when not charging? */
+ 		if (ddata->status =3D=3D POWER_SUPPLY_STATUS_CHARGING)
+ 			val->intval =3D cpcap_charger_get_charge_voltage(ddata) *
+ 				1000;
+@@ -245,6 +279,50 @@ static int cpcap_charger_get_property(struct power_sup=
+ply *psy,
+ 	case POWER_SUPPLY_PROP_ONLINE:
+ 		val->intval =3D ddata->status =3D=3D POWER_SUPPLY_STATUS_CHARGING;
+ 		break;
++	=09
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		// -> charger -- current limit
++		val->intval =3D ddata->limit_current;
++		break;
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
++		val->intval =3D ddata->limit_voltage;
++		break;
++	case POWER_SUPPLY_PROP_INDICATION:
++		val->intval =3D ddata->led_enabled;
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int cpcap_charger_set_property(struct power_supply *psy,
++				      enum power_supply_property psp,
++				      const union power_supply_propval *val)
++{
++	struct cpcap_charger_ddata *ddata =3D dev_get_drvdata(psy->dev.parent);
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		printk("charge current: %d\n", val->intval);
++		if (current_to_register(val->intval) < 0)
++			return -EINVAL;
++		ddata->limit_current =3D val->intval;
++		schedule_delayed_work(&ddata->detect_work, 0);
++		break;
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
++		printk("charge voltage: %d\n", val->intval);
++		if (voltage_to_register(val->intval) < 0)
++			return -EINVAL;
++		ddata->limit_voltage =3D val->intval;
++		schedule_delayed_work(&ddata->detect_work, 0);
++		break;
++	case POWER_SUPPLY_PROP_INDICATION:
++		printk("hack indication: %d\n", val->intval);
++		ddata->led_enabled =3D !!val->intval;
++		schedule_delayed_work(&ddata->detect_work, 0);
++		break;
+ 	default:
+ 		return -EINVAL;
+ 	}
+@@ -296,7 +374,7 @@ static int cpcap_charger_set_state(struct cpcap_charger=
+_ddata *ddata,
+ 	}
+=20
+ 	error =3D regmap_update_bits(ddata->reg, CPCAP_REG_CRM, 0x3fff,
+-				   CPCAP_REG_CRM_CHRG_LED_EN |
++				   ddata->led_enabled * CPCAP_REG_CRM_CHRG_LED_EN |
+ 				   trickle_current |
+ 				   CPCAP_REG_CRM_FET_OVRD |
+ 				   CPCAP_REG_CRM_FET_CTRL |
+@@ -440,16 +518,38 @@ static void cpcap_usb_detect(struct work_struct *work)
+ 		return;
+=20
+ 	if (cpcap_charger_vbus_valid(ddata) && s.chrgcurr1) {
+-		int max_current;
++		int m_voltage, m_current;
++		int reg_current, reg_voltage;
+=20
+ 		if (cpcap_charger_battery_found(ddata))
+-			max_current =3D CPCAP_REG_CRM_ICHRG_1A596;
++			m_current =3D 1596000;
+ 		else
+-			max_current =3D CPCAP_REG_CRM_ICHRG_0A532;
++			m_current =3D 532000;
++
++		if (m_current > ddata->limit_current)
++			m_current =3D ddata->limit_current;
++	=09
++		m_voltage =3D 4350000;
++		if (m_voltage > ddata->limit_voltage)
++			m_voltage =3D ddata->limit_voltage;
++
++		printk("Charging, %d uV, %d uA\n", m_voltage, m_current);
++	=09
++		reg_voltage =3D voltage_to_register(m_voltage);
++		if (reg_voltage < 0) {
++			dev_err(ddata->dev, "%s impossible voltage\n", __func__);
++			return;
++		}
++		=09
++		reg_current =3D current_to_register(m_current);
++		if (reg_current < 0) {
++			dev_err(ddata->dev, "%s impossible current\n", __func__);
++			return;
++		}
+=20
+ 		error =3D cpcap_charger_set_state(ddata,
+-						CPCAP_REG_CRM_VCHRG_4V35,
+-						max_current, 0);
++						reg_voltage,
++						reg_current, 0);
+ 		if (error)
+ 			goto out_err;
+ 	} else {
+@@ -579,12 +679,27 @@ static int cpcap_charger_init_iio(struct cpcap_charge=
+r_ddata *ddata)
+ 	return error;
+ }
+=20
++static int cpcap_charger_property_is_writeable(struct power_supply *psy,
++						 enum power_supply_property psp)
++{
++	switch (psp) {
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_VOLTAGE:
++	case POWER_SUPPLY_PROP_INDICATION:
++		return 1;
++	default:
++		return 0;
++	}
++}
++
+ static const struct power_supply_desc cpcap_charger_usb_desc =3D {
+ 	.name		=3D "usb",
+ 	.type		=3D POWER_SUPPLY_TYPE_USB,
+ 	.properties	=3D cpcap_charger_props,
+ 	.num_properties	=3D ARRAY_SIZE(cpcap_charger_props),
+ 	.get_property	=3D cpcap_charger_get_property,
++	.set_property	=3D cpcap_charger_set_property,
++	.property_is_writeable =3D cpcap_charger_property_is_writeable,
+ };
+=20
+ #ifdef CONFIG_OF
+@@ -619,6 +734,10 @@ static int cpcap_charger_probe(struct platform_device =
+*pdev)
+ 	if (!ddata->reg)
+ 		return -ENODEV;
+=20
++	ddata->limit_current =3D 1596000;
++	ddata->limit_voltage =3D 4350000;
++	ddata->led_enabled =3D 1;
++
+ 	INIT_LIST_HEAD(&ddata->irq_list);
+ 	INIT_DELAYED_WORK(&ddata->detect_work, cpcap_usb_detect);
+ 	INIT_DELAYED_WORK(&ddata->vbus_work, cpcap_charger_vbus_work);
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
 
+--J2SCkAp4GZ/dPZZf
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlsjdYUACgkQMOfwapXb+vJX1ACdG+7fQ/CJxpGJ5pqxIuPKO6b6
+VtcAn1dvIpWQH5HMBwIWhMZppCyWMgku
+=9k2Z
+-----END PGP SIGNATURE-----
+
+--J2SCkAp4GZ/dPZZf--
