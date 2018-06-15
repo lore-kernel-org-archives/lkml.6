@@ -2,277 +2,146 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 28538C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:15:16 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 211DFC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:15:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA14E20660
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA14E20660
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id BFE7A20660
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:15:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="dPVwqSDn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFE7A20660
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932442AbeFOHPN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 03:15:13 -0400
-Received: from mga03.intel.com ([134.134.136.65]:17578 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754623AbeFOHPM (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 03:15:12 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 00:15:07 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,226,1526367600"; 
-   d="scan'208";a="237369902"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.30]) ([10.239.161.30])
-  by fmsmga005.fm.intel.com with ESMTP; 15 Jun 2018 00:15:04 -0700
-Subject: Re: [PATCH v1 1/2] perf/core: Use sysctl to turn on/off dropping
- leaked kernel samples
-To:     Stephane Eranian <eranian@google.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        me@kylehuey.com, LKML <Linux-kernel@vger.kernel.org>,
-        Vince Weaver <vincent.weaver@maine.edu>,
-        Will Deacon <will.deacon@arm.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>,
-        "Liang, Kan" <kan.liang@intel.com>, "Jin, Yao" <yao.jin@intel.com>
-References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
- <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
- <CABPqkBRoecNKQEuJaEw1E+1a5KF-aTucAWK+St8A15FU9dsZsw@mail.gmail.com>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <5ee8dba2-3346-615c-84a2-3a65203c06a8@linux.intel.com>
-Date:   Fri, 15 Jun 2018 15:15:03 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CABPqkBRoecNKQEuJaEw1E+1a5KF-aTucAWK+St8A15FU9dsZsw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S936124AbeFOHPn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 03:15:43 -0400
+Received: from relmlor4.renesas.com ([210.160.252.174]:14385 "EHLO
+        relmlie3.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932452AbeFOHPk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 03:15:40 -0400
+Received: from unknown (HELO relmlir3.idc.renesas.com) ([10.200.68.153])
+  by relmlie3.idc.renesas.com with ESMTP; 15 Jun 2018 16:15:38 +0900
+Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
+        by relmlir3.idc.renesas.com (Postfix) with ESMTP id 4BEF4822E2;
+        Fri, 15 Jun 2018 16:15:38 +0900 (JST)
+X-IronPort-AV: E=Sophos;i="5.51,225,1526310000"; 
+   d="scan'208";a="284095997"
+Received: from mail-ty1jpn01lp0176.outbound.protection.outlook.com (HELO JPN01-TY1-obe.outbound.protection.outlook.com) ([23.103.139.176])
+  by relmlii2.idc.renesas.com with ESMTP/TLS/AES256-SHA256; 15 Jun 2018 16:15:38 +0900
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector1-renesas-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wjZGTaYisR1yG7pV5uTRB9E/ft3NadTZzsHcqqsilW0=;
+ b=dPVwqSDnMLakLZzCF++9exyPJ9Vx720+/ML/MYMY7iFDPV6DQmLLmaxBuOeZn1MCsV0E+BrtqTR6j71n+WtO1SfsXr17V5C6Am2dl4JBaW2+F+XUWsDt9AEve1zUYusMunngi2HmevJgJd+5xBuQIG3o8yfw4Xbg+13nsupOyYU=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=kuninori.morimoto.gx@renesas.com; 
+Received: from morimoto-PC.renesas.com (211.11.155.138) by
+ TYAPR01MB2079.jpnprd01.prod.outlook.com (2603:1096:404:8::11) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.16; Fri, 15 Jun 2018 07:15:35 +0000
+Message-ID: <87y3fgbk34.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     <vkoul@kernel.org>, Dan Williams <dan.j.williams@intel.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran@ksquared.org.uk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        <dmaengine@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3] dmaengine: rcar-dmac: don't use DMAC error interrupt
+In-Reply-To: <CAMuHMdU_csJSYQ==Z+MOMGMi1LJ07_ZOojYADyUwaDcFLTT9dA@mail.gmail.com>
+References: <87lgbgswl5.wl%kuninori.morimoto.gx@renesas.com>
+        <CAMuHMdU_csJSYQ==Z+MOMGMi1LJ07_ZOojYADyUwaDcFLTT9dA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 Emacs/25.2 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+Date:   Fri, 15 Jun 2018 07:15:35 +0000
+X-Originating-IP: [211.11.155.138]
+X-ClientProxiedBy: KAWPR01CA0067.jpnprd01.prod.outlook.com
+ (2603:1096:402:b::27) To TYAPR01MB2079.jpnprd01.prod.outlook.com
+ (2603:1096:404:8::11)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-HT: Tenant
+X-MS-Office365-Filtering-Correlation-Id: a85e009b-dc7c-49bb-9b53-08d5d28fca3e
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(48565401081)(5600026)(711020)(4534165)(4627221)(201703031133081)(201702281549075)(2017052603328)(7153060)(7193020);SRVR:TYAPR01MB2079;
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;3:pv+uHRq2eOs8jMKjJ5h6eYHDNNMExYhkDIFIpPILFvZhd1+ZtXypArkAfdGYaeshhQCzjNaz9sCKZxtTb/e7/USBD4S1337qpqSQ55WuQNg2PtI8kXDsBXTTKDixcQApW3DNXofDtktzDHQ21I1lmqi1kXjR98baQeiuNJojJPJ5Ecir43IkXaYEPbUYKSbIApzkmOc+DzWxCGWwdQhBcXFia8VYSSa8mYph1CEWPUEETodJEBYHdRodLN1IHQoS;25:0nx2a20OnTZk8VJR/Lkv/rbWa3JRfHVRi7ia32oS4ZdbteKg9z48A1wY5py840JTYd57DKfMavciiRDM3cTqIsB7Jesjy84BKuwmMrATcwkkNrkqxxF18BIWl43e6cJuzp2Waw8fXqduQ0Q52DxTi1czdUNGyOox7V9jzg81s4oLieYU0vHMyyKvbmenr0HVL0/ePeNPl0vmRMsTRH6eHu0t4mV7P0N1lfZU/SHVft4eyFCZw0TC6SbVrjmBkQddgTB6DivmQcuC6JP17ZYvZsurZksEB6qVRNiBVs+Qzej4ICaKmXmUBlyTs9FW4YQAgo6drqH1cCLQTV3ZIP428A==;31:zsX99zIT91eg9oT+uma0A195zXLirbSuEx+QeU4hzYGbkHa/d4MVmdCqBIooq3TnFUTolggy/jWn2sWfh1zMcrwldr9Ae3HwVbBt14TNv8ort9r2SpCuXn+3g4kPdxqexJHJP6gH+uQE/Iwc/T3IGK3ltEwgJ/dvExRPhjXSKxT8vdqOXfS/AbZ0kIDxLcqmUCARUtHPv/eSf2WbW30I6LUJu1KfM46vH5VTvIHYbT8=
+X-MS-TrafficTypeDiagnostic: TYAPR01MB2079:
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;20:EU+Tsi4tabja/XuP/KZUwjRRsY4VOTQGAADNbyzYLKuRq2ivIViyq0o1BPZO1E6yYuSNQ7ubhyMhbZSZC52LTT8EO3diHqV+WUwzCqtJ4zxeK5rMdrNBC/FTmKdlo5W05WDckNVAHZvhITnkgixWPtKsY0223RxrmBslZURJi+xFWImMgTpzjToFagp/AdzLl+R1OUUq/RDH+ilUBb71bPbkpFJ9jlo3EtcuG2HxJwpTWON8ztYD1N/yd2OHbnbnDvaGg6vLEBdrQjPnIjwrgk5ITzx8FMjGELphJVWva6S3/FbNaD8ZL9DQhd96biLQV7KAkK+vaa+Uf79e+ifd6Xt+kZlxlPaxyCKzeMO8lKmC3E3JxGU4gvbvI0/5haXPozznhmCvfYH964aHKaplpDyOgfzvJN/RGwCtpDlPo3/kjRcf4kpyHp74nYC0oRQN+aZUzivpanRtx2+XX5SAWywdq/v0qXbwc0bAoCg+ZXVyz8dJs816FyX9f3dChGAP;4:noeegwI3MgmpP/CD5wlhdX5O8AEbJjnWhPyT7UOS6a/ASNoLyublnSnHDv3rHoa5pOKXs60TMnYkJwVhBK+hqlrfmdbVk2188ZDC1b4d5P6AJwFcjKJKZyO6RhBMNP+g/JcIyT2AKTonBZAePPqOHroCzZrCFGAkjWmZay7R0Qhkn5y/gwl/r78rjitQ9mDfMIB7s/bxaFF1ur3Mpck55h5SpNAA9JIlMEPUwF2d9kVlAki1bd2omvpWHCVSEeE533yvB7lektlXdOuivG7KIw==
+X-Microsoft-Antispam-PRVS: <TYAPR01MB20794AF32FF77F8F4544F407D47C0@TYAPR01MB2079.jpnprd01.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231254)(944501410)(52105095)(10201501046)(93006095)(93001095)(6055026)(149027)(150027)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(6072148)(201708071742011)(7699016);SRVR:TYAPR01MB2079;BCL:0;PCL:0;RULEID:;SRVR:TYAPR01MB2079;
+X-Forefront-PRVS: 0704670F76
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(39380400002)(346002)(376002)(366004)(396003)(39860400002)(199004)(189003)(229853002)(76176011)(478600001)(81156014)(81166006)(8936002)(956004)(8676002)(52116002)(486006)(2616005)(7416002)(11346002)(69596002)(53416004)(7696005)(36756003)(6916009)(106356001)(105586002)(476003)(446003)(6486002)(23726003)(5660300001)(2906002)(86362001)(316002)(16586007)(66066001)(58126008)(186003)(6246003)(7736002)(47776003)(6116002)(39060400002)(305945005)(3846002)(4326008)(53936002)(26005)(68736007)(25786009)(386003)(16526019)(54906003)(97736004)(50466002)(16060500001);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB2079;H:morimoto-PC.renesas.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;TYAPR01MB2079;23:qICe1tsWRSe8F7QWYCx3Ci3tjIEk6Hj5mvhmopTpI?=
+ =?us-ascii?Q?xGSA+21G7b1CbTukkMFsQAV4LKtXFnvABy1kSe14qzjuow5DPdWpN8ZUERW5?=
+ =?us-ascii?Q?FLsVVrWLcAGfTrzpBZgu8w4Hewb+CtzY7dxsG0zJ3Gm9plegqAqxLT9iiqfu?=
+ =?us-ascii?Q?Fg50vXZiMf6n5gRQPTu+geJ+OS8o6SpDwzQRj9DxBXcD49nT5+QIlfdTi49x?=
+ =?us-ascii?Q?7+SO94eqeDp5GyV6QCMPhvYNaO+fUxMFvnV1/e344qXLs4s/F6NYzD8W13SV?=
+ =?us-ascii?Q?4QpQ6VaFxeAdMICGn2SlW47KqFPPyyxIO0kWPxUicUONqcrb25aYANxmP/pB?=
+ =?us-ascii?Q?jUVrQ7gqhuNs5S6MOWIXGQqsGZa2Uppiy0KowR1mhj9Wi1VK/hOAylaekgp9?=
+ =?us-ascii?Q?KuR5+OAtS0GeO/0LG1a3Ca3GtRUQgUHDbtmLSxIER9uhH6bhoeojRNLRto5r?=
+ =?us-ascii?Q?UnXDYBrVv22/kvAijGYad1Zm2CgrX5vFdoCD/Jbh0bjBF03JPBTJESRzQRrl?=
+ =?us-ascii?Q?GKJqS45U+XnN+B4lvsM8wHexfzMqRQAPX9M2szLFDSGBhJuF+pmdelYKYfb4?=
+ =?us-ascii?Q?rGi/Bl3Yt5wtV1dsjMcLNRjKfpzEEwTCr/qjAvBBzbHhCt0nVPxp8Y4RKSir?=
+ =?us-ascii?Q?9kLT1dxkb+a15eJARG6Qa0dmFfAezmS7AECxdUVT644PdbKBmjxT80jNYnn/?=
+ =?us-ascii?Q?TG6DQtOn/hao1XyqDK6JWyilWw5gG1yaRCWRfKt3rxaMD8ZcfJGAUcHRIxQD?=
+ =?us-ascii?Q?+QfL9gd5yU45i9CGoMujCpc79/RyTUIywH7h7Qm9vF9X4ASRx0TShZ9gIR/T?=
+ =?us-ascii?Q?Wyw2ITdoVhHTOja8q+DauhNF5tLGe1X6pY46GWYxHG3qUF4AaFxRDxjI2jTc?=
+ =?us-ascii?Q?vh6nNa08YwZrM3dJSWtHF8M59ORw33YpbDHzCiKyrAdshTPFZ4EVWGiXYx68?=
+ =?us-ascii?Q?FQpu4CxUEWKT8nWcU4pf6vM7zaa8W4+tiHsr1VsuyiFvkT0/p7sHOUmeqt6c?=
+ =?us-ascii?Q?Hjayb0RIqTyFbzHKXGpyRgukWtA400TqRr7FWq8kDopixFuKNUFKo8QgAUSa?=
+ =?us-ascii?Q?dbZdd4NBKgo8yRJ3nrkd4lEWeexHF+YQ7aaHztFUzSZIlO8y+t5IvbgD2aWy?=
+ =?us-ascii?Q?ekb/kgke9Oj05CEw9NCqn7/ulcYpmbT6d12mwi698Gj70WTdGo+TLs5xNQ7c?=
+ =?us-ascii?Q?IZqjHk8p/Qf6QcDrfbvlk2ZdG4XX1w+bQe+a7k5E0sFEtVNkbGoA8HRotl4I?=
+ =?us-ascii?Q?vdHJMtPvBV+80xhljC+V9MschcHplYh1oAN+vCfNhJOAUw9AWE0+M92RzB4v?=
+ =?us-ascii?B?QT09?=
+X-Microsoft-Antispam-Message-Info: VoyEGJqO4GNndH/JOWqtgxKZ6vS43Pk4/hYjcV0MJpNQQ9L+biKqSJBcS10ugRS9rTEibPnso2pn0ms29TMKqVBTUgn0s2dYwSBEu/ikyiNn+8kI0XvBI7RMkjO98FR15NiI134DDvdLeKIYXP8IBtI9D0hOld9HYgsjgdPnNMAMqlEifAXSzu2ZwJtszcJy
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;6:Xi079hiH7vMznYYB661bv39MkcuLNSoq+mPVpYu/PH9o2hJykIPCWPfs0muRQrr/yLVF8M5LJvNt6MIuS1v9ZP1D9H3NiDrRnDuP1FSSO7XF4EzdWunZq9bAY12pGnezs3TOwvv0uzukgXb6UGIHEwg1sXZgKfmrTRaawxMnw9u+13UNqRAV+/PDASYw5A8VuyB2OnFMssbzQ1uGwObmaNFD7mEky9vvY7n91CGkIJkjZ50jUsxx9PJX+SnQHoLSdRorteOTLT9Q8i//IP22HmuVS0d+18nnJxdYzSybfUNgUZUpchdrerfvU/lH1UrPCNIDjiJrsZ0A8kBWaR7Lvcc9GZFYB0KLjj4hOocxrPOBH0xds1HEpmeO7hMKfmWOSt0nRhdA9jpEy5Lhsi5PDJ72XoMNEN0uwSy/APAc9ZVJGLNhCEiaKQji9kNIfVmGVjUAvfVfqBh8h2W+A+WZ7w==;5:vtHfTNPZEKiWXHujjFBG8/+6tD30/z+Vynxz38jmODu9gdRDsechs7yeL5qZFPapEAlQ0s4GlDRl/o73SPPPnRtEwmc3J3Dp/HQuN3PGof+KhjjtLIjhecF9s99K80erVKr9NCb7a6Z4RYZrEEI+sOKzLf0OKRm9gUf10TX93gQ=;24:qYdVkL6cwuHqmCo6S6C2ghHqlYl/f4+tQfaYALmIdNipumm8SGpfzvxpnCgT1QIiEfb7veStliB752YqLeMI84x3/Hmr550jn0dDTWyXQ5A=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;TYAPR01MB2079;7:KokyXxUzb8Vjosj9KgBZa7YZ1WgZaW8pulHu6+Qf1dI1uR38iJGIFiDqOCRV3AOjPvhy6TTXEmdZBpf7rIN3mTLgSnfTk+BePaITzNQnaACrSS/WoJ9eSsPB/yWNxR/dq6JGxlkfxzZy3RsBpPbanvosg2uR7b4Qo3V9o0/ktnxsb9ayrPfDOWhPE8ciMVdSZQdTq21fFc01gGjUhaqXuB9C3BS4+qXK+JdBNB0GwOz5v010bOrB+wU50uoavLts;20:uSgbRg/Mc4L9a4XF756innuTbF0Ebj2QtFrnjRIzqSKSci6fkNvoPHr68/mw2Cgl/lUO8wG0HQ6+PxyVD2B8D9v/YcTj4ZtBeS85J1TXh+z0yr7grWskvz9MqzeRVpWTX1MZClFfxMtbFt36jLE8xFPZazrQmBkGB2tqrNa69VU=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2018 07:15:35.6649 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a85e009b-dc7c-49bb-9b53-08d5d28fca3e
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB2079
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
+Hi Geert
 
-On 6/15/2018 1:59 PM, Stephane Eranian wrote:
-> On Thu, Jun 14, 2018 at 7:10 PM Jin Yao <yao.jin@linux.intel.com> wrote:
->>
->> When doing sampling, for example:
->>
->> perf record -e cycles:u ...
->>
->> On workloads that do a lot of kernel entry/exits we see kernel
->> samples, even though :u is specified. This is due to skid existing.
->>
->> This might be a security issue because it can leak kernel addresses even
->> though kernel sampling support is disabled.
->>
->> One patch "perf/core: Drop kernel samples even though :u is specified"
->> was posted in last year but it was reverted because it introduced a
->> regression issue that broke the rr-project, which used sampling
->> events to receive a signal on overflow. These signals were critical
->> to the correct operation of rr.
->>
->> See '6a8a75f32357 ("Revert "perf/core: Drop kernel samples even
->> though :u is specified"")' for detail.
->>
->> Now the idea is to use sysctl to control the dropping of leaked
->> kernel samples.
->>
->> /sys/devices/cpu/perf_allow_sample_leakage:
->>
->> 0 - default, drop the leaked kernel samples.
->> 1 - don't drop the leaked kernel samples.
->>
->> For rr it can write 1 to /sys/devices/cpu/perf_allow_sample_leakage.
->>
->> For example,
->>
->> root@skl:/tmp# cat /sys/devices/cpu/perf_allow_sample_leakage
->> 0
->> root@skl:/tmp# perf record -e cycles:u ./div
->> root@skl:/tmp# perf report --stdio
->>
->> ........  .......  .............  ................
->>
->>      47.01%  div      div            [.] main
->>      20.74%  div      libc-2.23.so   [.] __random_r
->>      15.59%  div      libc-2.23.so   [.] __random
->>       8.68%  div      div            [.] compute_flag
->>       4.48%  div      libc-2.23.so   [.] rand
->>       3.50%  div      div            [.] rand@plt
->>       0.00%  div      ld-2.23.so     [.] do_lookup_x
->>       0.00%  div      ld-2.23.so     [.] memcmp
->>       0.00%  div      ld-2.23.so     [.] _dl_start
->>       0.00%  div      ld-2.23.so     [.] _start
->>
->> There is no kernel symbol reported.
->>
->> root@skl:/tmp# echo 1 > /sys/devices/cpu/perf_allow_sample_leakage
->> root@skl:/tmp# cat /sys/devices/cpu/perf_allow_sample_leakage
->> 1
->> root@skl:/tmp# perf record -e cycles:u ./div
->> root@skl:/tmp# perf report --stdio
->>
->> ........  .......  ................  .............
->>
->>      47.53%  div      div               [.] main
->>      20.62%  div      libc-2.23.so      [.] __random_r
->>      15.32%  div      libc-2.23.so      [.] __random
->>       8.66%  div      div               [.] compute_flag
->>       4.53%  div      libc-2.23.so      [.] rand
->>       3.34%  div      div               [.] rand@plt
->>       0.00%  div      [kernel.vmlinux]  [k] apic_timer_interrupt
->>       0.00%  div      libc-2.23.so      [.] intel_check_word
->>       0.00%  div      ld-2.23.so        [.] brk
->>       0.00%  div      [kernel.vmlinux]  [k] page_fault
->>       0.00%  div      ld-2.23.so        [.] _start
->>
->> We can see the kernel symbols apic_timer_interrupt and page_fault.
->>
-> These kernel symbols do not match your description here. How much skid
-> do you think you have here?
-> You're saying you are at the user level, you get a counter overflow,
-> and the interrupted IP lands in the kernel
-> because you where there by the time the interrupt is delivered. How
-> many instructions does it take to get
-> from user land to apic_timer_interrupt() or page_fault()? These
-> functions are not right at the kernel entry,
-> I believe. So how did you get there, the skid must have been VERY big
-> or symbolization has a problem.
+> > rcar-dmac has 2 types of interrupt, 1) error IRQ (for all),
+> > 2) IRQ for each channels.
+> > If error happens on some channels, the error IRQ will be handled
+> > by 1), and "all" channels will be restarted.
+> > But in this design, error handling itself will be problem for
+> > non error channel users.
+> > This patch removes 1) handler, and handles error IRQ on 2)
 > 
-
-I'm testing with the latest perf/core branch (4.17+). Again I test with 
-Linux's vmstat (not test with my application).
-
-perf record -e cycles:u vmstat 1
-perf script -F ip
-
-      7f84e2b0bc30
-      7f84e2b0bc30
-      7f84e2b0bc30
-      7f84e2b0bc30
-  ffffffffb7a01070
-      7f84e2b243f0
-      7f84e2b11891
-      7f84e2b27f5e
-      7f84e25a3b26
-      7f84e25680f5
-
-cat /proc/kallsyms  | grep page_fault
-....
-ffffffffb7a01070 T page_fault
-ffffffffb7a010a0 T async_page_fault
-....
-
-So one sample (ip ffffffffb7a01070) hits on page_fault.
-
-Maybe you can have a try too. :)
+> Thank you, that explains the rationale!
 
 Thanks
-Jin Yao
 
->> Signed-off-by: Jin Yao <yao.jin@linux.intel.com>
->> ---
->>   kernel/events/core.c | 58 ++++++++++++++++++++++++++++++++++++++++++++++++++++
->>   1 file changed, 58 insertions(+)
->>
->> diff --git a/kernel/events/core.c b/kernel/events/core.c
->> index 80cca2b..7867541 100644
->> --- a/kernel/events/core.c
->> +++ b/kernel/events/core.c
->> @@ -7721,6 +7721,28 @@ int perf_event_account_interrupt(struct perf_event *event)
->>          return __perf_event_account_interrupt(event, 1);
->>   }
->>
->> +static int perf_allow_sample_leakage __read_mostly;
->> +
->> +static bool sample_is_allowed(struct perf_event *event, struct pt_regs *regs)
->> +{
->> +       int allow_leakage = READ_ONCE(perf_allow_sample_leakage);
->> +
->> +       if (allow_leakage)
->> +               return true;
->> +
->> +       /*
->> +        * Due to interrupt latency (AKA "skid"), we may enter the
->> +        * kernel before taking an overflow, even if the PMU is only
->> +        * counting user events.
->> +        * To avoid leaking information to userspace, we must always
->> +        * reject kernel samples when exclude_kernel is set.
->> +        */
->> +       if (event->attr.exclude_kernel && !user_mode(regs))
->> +               return false;
->> +
->> +       return true;
->> +}
->> +
->>   /*
->>    * Generic event overflow handling, sampling.
->>    */
->> @@ -7742,6 +7764,12 @@ static int __perf_event_overflow(struct perf_event *event,
->>          ret = __perf_event_account_interrupt(event, throttle);
->>
->>          /*
->> +        * For security, drop the skid kernel samples if necessary.
->> +        */
->> +       if (!sample_is_allowed(event, regs))
->> +               return ret;
->> +
->> +       /*
->>           * XXX event_limit might not quite work as expected on inherited
->>           * events
->>           */
->> @@ -9500,9 +9528,39 @@ perf_event_mux_interval_ms_store(struct device *dev,
->>   }
->>   static DEVICE_ATTR_RW(perf_event_mux_interval_ms);
->>
->> +static ssize_t
->> +perf_allow_sample_leakage_show(struct device *dev,
->> +                              struct device_attribute *attr, char *page)
->> +{
->> +       int allow_leakage = READ_ONCE(perf_allow_sample_leakage);
->> +
->> +       return snprintf(page, PAGE_SIZE-1, "%d\n", allow_leakage);
->> +}
->> +
->> +static ssize_t
->> +perf_allow_sample_leakage_store(struct device *dev,
->> +                               struct device_attribute *attr,
->> +                               const char *buf, size_t count)
->> +{
->> +       int allow_leakage, ret;
->> +
->> +       ret = kstrtoint(buf, 0, &allow_leakage);
->> +       if (ret)
->> +               return ret;
->> +
->> +       if (allow_leakage != 0 && allow_leakage != 1)
->> +               return -EINVAL;
->> +
->> +       WRITE_ONCE(perf_allow_sample_leakage, allow_leakage);
->> +
->> +       return count;
->> +}
->> +static DEVICE_ATTR_RW(perf_allow_sample_leakage);
->> +
->>   static struct attribute *pmu_dev_attrs[] = {
->>          &dev_attr_type.attr,
->>          &dev_attr_perf_event_mux_interval_ms.attr,
->> +       &dev_attr_perf_allow_sample_leakage.attr,
->>          NULL,
->>   };
->>   ATTRIBUTE_GROUPS(pmu_dev);
->> --
->> 2.7.4
->>
+> BTW, how can you trigger an error, for testing?
+
+We created local patch to break address alignment.
+
+Best regards
+---
+Kuninori Morimoto
