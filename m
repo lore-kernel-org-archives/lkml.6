@@ -5,94 +5,244 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F1250C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:46:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8B449C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5833208B8
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:46:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5833208B8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FB64208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:47:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB64208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755924AbeFOGqy (ORCPT
+        id S1755898AbeFOGqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 02:46:54 -0400
-Received: from mx2.suse.de ([195.135.220.15]:60603 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755800AbeFOGqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 02:46:52 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:36582 "EHLO huawei.com"
+        rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1755792AbeFOGqu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Jun 2018 02:46:50 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4BA60AF1A;
-        Fri, 15 Jun 2018 06:46:49 +0000 (UTC)
-Subject: Re: [PATCH v4 5/9] xen/gntdev: Allow mappings for DMA buffers
-To:     Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>,
-        Oleksandr Andrushchenko <andr2000@gmail.com>,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-media@vger.kernel.org,
-        boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
-Cc:     daniel.vetter@intel.com, dongwon.kim@intel.com,
-        matthew.d.roper@intel.com
-References: <20180615062753.9229-1-andr2000@gmail.com>
- <20180615062753.9229-6-andr2000@gmail.com>
- <e892748a-c268-9622-e568-4c361366bce1@epam.com>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <b9c3f740-dea1-638b-49d9-60cf5880619d@suse.com>
-Date:   Fri, 15 Jun 2018 08:46:46 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 20F604D67D1D4;
+        Fri, 15 Jun 2018 14:46:44 +0800 (CST)
+Received: from SZV1000284525.huawei.com (10.120.216.130) by
+ DGGEMS406-HUB.china.huawei.com (10.3.19.206) with Microsoft SMTP Server id
+ 14.3.382.0; Fri, 15 Jun 2018 14:46:40 +0800
+From:   Chao Yu <yuchao0@huawei.com>
+To:     <jaegeuk@kernel.org>
+CC:     <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <chao@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>
+Subject: [PATCH] f2fs: fix to propagate return value of scan_nat_page()
+Date:   Fri, 15 Jun 2018 14:45:57 +0800
+Message-ID: <20180615064557.5096-1-yuchao0@huawei.com>
+X-Mailer: git-send-email 2.18.0.rc1
 MIME-Version: 1.0
-In-Reply-To: <e892748a-c268-9622-e568-4c361366bce1@epam.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.120.216.130]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/06/18 08:32, Oleksandr Andrushchenko wrote:
-> Please note, that this will need a change (attached) while
-> applying to the mainline kernel because of API changes [1].
-> 
-> Unfortunately, current Xen tip kernel tree is v4.17-rc5 based,
-> so I cannot make the change in this patch now.
+As Anatoly Trosinenko reported in bugzilla:
 
-I don't see any chance this series could go into 4.18, as the merge
-window is just closing. So please post the patch based on current
-Linux master of torvalds/linux.git
+How to reproduce:
+1. Compile the 73fcb1a370c76 version of the kernel using the config attached
+2. Unpack and mount the attached filesystem image as F2FS
+3. The kernel will BUG() on mount (BUGs are explicitly enabled in config)
 
+[    2.233612] F2FS-fs (sda): Found nat_bits in checkpoint
+[    2.248422] ------------[ cut here ]------------
+[    2.248857] kernel BUG at fs/f2fs/node.c:1967!
+[    2.249760] invalid opcode: 0000 [#1] SMP NOPTI
+[    2.250219] Modules linked in:
+[    2.251848] CPU: 0 PID: 944 Comm: mount Not tainted 4.17.0-rc5+ #1
+[    2.252331] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1ubuntu1 04/01/2014
+[    2.253305] RIP: 0010:build_free_nids+0x337/0x3f0
+[    2.253672] RSP: 0018:ffffae7fc0857c50 EFLAGS: 00000246
+[    2.254080] RAX: 00000000ffffffff RBX: 0000000000000123 RCX: 0000000000000001
+[    2.254638] RDX: ffff9aa7063d5c00 RSI: 0000000000000122 RDI: ffff9aa705852e00
+[    2.255190] RBP: ffff9aa705852e00 R08: 0000000000000001 R09: ffff9aa7059090c0
+[    2.255719] R10: 0000000000000000 R11: 0000000000000000 R12: ffff9aa705852e00
+[    2.256242] R13: ffff9aa7063ad000 R14: ffff9aa705919000 R15: 0000000000000123
+[    2.256809] FS:  00000000023078c0(0000) GS:ffff9aa707800000(0000) knlGS:0000000000000000
+[    2.258654] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    2.259153] CR2: 00000000005511ae CR3: 0000000005872000 CR4: 00000000000006f0
+[    2.259801] Call Trace:
+[    2.260583]  build_node_manager+0x5cd/0x600
+[    2.260963]  f2fs_fill_super+0x66a/0x17c0
+[    2.261300]  ? f2fs_commit_super+0xe0/0xe0
+[    2.261622]  mount_bdev+0x16e/0x1a0
+[    2.261899]  mount_fs+0x30/0x150
+[    2.262398]  vfs_kern_mount.part.28+0x4f/0xf0
+[    2.262743]  do_mount+0x5d0/0xc60
+[    2.263010]  ? _copy_from_user+0x37/0x60
+[    2.263313]  ? memdup_user+0x39/0x60
+[    2.263692]  ksys_mount+0x7b/0xd0
+[    2.263960]  __x64_sys_mount+0x1c/0x20
+[    2.264268]  do_syscall_64+0x43/0xf0
+[    2.264560]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[    2.265095] RIP: 0033:0x48d31a
+[    2.265502] RSP: 002b:00007ffc6fe60a08 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+[    2.266089] RAX: ffffffffffffffda RBX: 0000000000008000 RCX: 000000000048d31a
+[    2.266607] RDX: 00007ffc6fe62fa5 RSI: 00007ffc6fe62f9d RDI: 00007ffc6fe62f94
+[    2.267130] RBP: 00000000023078a0 R08: 0000000000000000 R09: 0000000000000000
+[    2.267670] R10: 0000000000008000 R11: 0000000000000246 R12: 0000000000000000
+[    2.268192] R13: 0000000000000000 R14: 00007ffc6fe60c78 R15: 0000000000000000
+[    2.268767] Code: e8 5f c3 ff ff 83 c3 01 41 83 c7 01 81 fb c7 01 00 00 74 48 44 39 7d 04 76 42 48 63 c3 48 8d 04 c0 41 8b 44 06 05 83 f8 ff 75 c1 <0f> 0b 49 8b 45 50 48 8d b8 b0 00 00 00 e8 37 59 69 00 b9 01 00
+[    2.270434] RIP: build_free_nids+0x337/0x3f0 RSP: ffffae7fc0857c50
+[    2.271426] ---[ end trace ab20c06cd3c8fde4 ]---
 
-Juergen
+During loading NAT entries, we will do sanity check, once the entry info
+is corrupted, it will cause BUG_ON directly to protect user data from
+being overwrited.
+
+In this case, it will be better to just return failure on mount() instead
+of panic, so that user can get hint from kmsg and try fsck for recovery
+immediately rather than after an abnormal reboot.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=199769
+
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+---
+ fs/f2fs/f2fs.h |  2 +-
+ fs/f2fs/node.c | 42 ++++++++++++++++++++++++++++++------------
+ 2 files changed, 31 insertions(+), 13 deletions(-)
+
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index d2b8365e0a64..8ea76fdd1bfd 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2837,7 +2837,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+ int f2fs_sync_node_pages(struct f2fs_sb_info *sbi,
+ 			struct writeback_control *wbc,
+ 			bool do_balance, enum iostat_type io_type);
+-void f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
++int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount);
+ bool f2fs_alloc_nid(struct f2fs_sb_info *sbi, nid_t *nid);
+ void f2fs_alloc_nid_done(struct f2fs_sb_info *sbi, nid_t nid);
+ void f2fs_alloc_nid_failed(struct f2fs_sb_info *sbi, nid_t nid);
+diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+index 4a3311be4003..65bc29862169 100644
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1968,7 +1968,7 @@ static void remove_free_nid(struct f2fs_sb_info *sbi, nid_t nid)
+ 		kmem_cache_free(free_nid_slab, i);
+ }
+ 
+-static void scan_nat_page(struct f2fs_sb_info *sbi,
++static int scan_nat_page(struct f2fs_sb_info *sbi,
+ 			struct page *nat_page, nid_t start_nid)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+@@ -1986,7 +1986,10 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 			break;
+ 
+ 		blk_addr = le32_to_cpu(nat_blk->entries[i].block_addr);
+-		f2fs_bug_on(sbi, blk_addr == NEW_ADDR);
++
++		if (blk_addr == NEW_ADDR)
++			return -EINVAL;
++
+ 		if (blk_addr == NULL_ADDR) {
+ 			add_free_nid(sbi, start_nid, true, true);
+ 		} else {
+@@ -1995,6 +1998,8 @@ static void scan_nat_page(struct f2fs_sb_info *sbi,
+ 			spin_unlock(&NM_I(sbi)->nid_list_lock);
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ static void scan_curseg_cache(struct f2fs_sb_info *sbi)
+@@ -2050,11 +2055,11 @@ static void scan_free_nid_bits(struct f2fs_sb_info *sbi)
+ 	up_read(&nm_i->nat_tree_lock);
+ }
+ 
+-static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
++static int __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 						bool sync, bool mount)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	int i = 0;
++	int i = 0, ret;
+ 	nid_t nid = nm_i->next_scan_nid;
+ 
+ 	if (unlikely(nid >= nm_i->max_nid))
+@@ -2062,17 +2067,17 @@ static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 
+ 	/* Enough entries */
+ 	if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
+-		return;
++		return 0;
+ 
+ 	if (!sync && !f2fs_available_free_memory(sbi, FREE_NIDS))
+-		return;
++		return 0;
+ 
+ 	if (!mount) {
+ 		/* try to find free nids in free_nid_bitmap */
+ 		scan_free_nid_bits(sbi);
+ 
+ 		if (nm_i->nid_cnt[FREE_NID] >= NAT_ENTRY_PER_BLOCK)
+-			return;
++			return 0;
+ 	}
+ 
+ 	/* readahead nat pages to be scanned */
+@@ -2086,8 +2091,16 @@ static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 						nm_i->nat_block_bitmap)) {
+ 			struct page *page = get_current_nat_page(sbi, nid);
+ 
+-			scan_nat_page(sbi, page, nid);
++			ret = scan_nat_page(sbi, page, nid);
+ 			f2fs_put_page(page, 1);
++
++			if (ret) {
++				up_read(&nm_i->nat_tree_lock);
++				f2fs_bug_on(sbi, !mount);
++				f2fs_msg(sbi->sb, KERN_ERR,
++					"NAT is corrupt, run fsck to fix it");
++				return -EINVAL;
++			}
+ 		}
+ 
+ 		nid += (NAT_ENTRY_PER_BLOCK - (nid % NAT_ENTRY_PER_BLOCK));
+@@ -2108,13 +2121,19 @@ static void __f2fs_build_free_nids(struct f2fs_sb_info *sbi,
+ 
+ 	f2fs_ra_meta_pages(sbi, NAT_BLOCK_OFFSET(nm_i->next_scan_nid),
+ 					nm_i->ra_nid_pages, META_NAT, false);
++
++	return 0;
+ }
+ 
+-void f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
++int f2fs_build_free_nids(struct f2fs_sb_info *sbi, bool sync, bool mount)
+ {
++	int ret;
++
+ 	mutex_lock(&NM_I(sbi)->build_lock);
+-	__f2fs_build_free_nids(sbi, sync, mount);
++	ret = __f2fs_build_free_nids(sbi, sync, mount);
+ 	mutex_unlock(&NM_I(sbi)->build_lock);
++
++	return ret;
+ }
+ 
+ /*
+@@ -2797,8 +2816,7 @@ int f2fs_build_node_manager(struct f2fs_sb_info *sbi)
+ 	/* load free nid status from nat_bits table */
+ 	load_free_nid_bitmap(sbi);
+ 
+-	f2fs_build_free_nids(sbi, true, true);
+-	return 0;
++	return f2fs_build_free_nids(sbi, true, true);
+ }
+ 
+ void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi)
+-- 
+2.18.0.rc1
+
