@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B3A9DC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:23 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id D090EC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAC720891
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DAC720891
+	by mail.kernel.org (Postfix) with ESMTP id 5BC7020891
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:17:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC7020891
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rock-chips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965493AbeFOCRW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 22:17:22 -0400
-Received: from regular1.263xmail.com ([211.150.99.136]:33012 "EHLO
+        id S965517AbeFOCR3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 22:17:29 -0400
+Received: from regular1.263xmail.com ([211.150.99.131]:46468 "EHLO
         regular1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965373AbeFOCRQ (ORCPT
+        with ESMTP id S965392AbeFOCRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 22:17:16 -0400
+        Thu, 14 Jun 2018 22:17:24 -0400
 Received: from zhangqing?rock-chips.com (unknown [192.168.167.205])
-        by regular1.263xmail.com (Postfix) with ESMTP id 42EC386;
-        Fri, 15 Jun 2018 10:17:11 +0800 (CST)
+        by regular1.263xmail.com (Postfix) with ESMTP id 0F01762B4;
+        Fri, 15 Jun 2018 10:17:15 +0800 (CST)
 X-263anti-spam: KSV:0;
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-KSVirus-check: 0
 X-ABS-CHECKED: 4
 Received: from localhost.localdomain (localhost [127.0.0.1])
-        by smtp.263.net (Postfix) with ESMTPA id C92D33C4;
-        Fri, 15 Jun 2018 10:17:05 +0800 (CST)
+        by smtp.263.net (Postfix) with ESMTPA id 983FE33B;
+        Fri, 15 Jun 2018 10:17:09 +0800 (CST)
 X-RL-SENDER: zhangqing@rock-chips.com
 X-FST-TO: heiko@sntech.de
 X-SENDER-IP: 58.22.7.114
 X-LOGIN-NAME: zhangqing@rock-chips.com
-X-UNIQUE-TAG: <5e24ef4d9db5c1488521981343f35c29>
+X-UNIQUE-TAG: <dcce29a97110916f9a7435809f57f5a6>
 X-ATTACHMENT-NUM: 0
 X-SENDER: zhangqing@rock-chips.com
 X-DNS-TYPE: 0
 Received: from unknown (unknown [58.22.7.114])
-        by smtp.263.net (Postfix) whith SMTP id 16162NWD6YG;
-        Fri, 15 Jun 2018 10:17:09 +0800 (CST)
+        by smtp.263.net (Postfix) whith SMTP id 16162J23JY8;
+        Fri, 15 Jun 2018 10:17:13 +0800 (CST)
 From:   Elaine Zhang <zhangqing@rock-chips.com>
 To:     heiko@sntech.de
 Cc:     sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -52,9 +52,9 @@ Cc:     sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         cl@rock-chips.com, xxx@rock-chips.com, xf@rock-chips.com,
         huangtao@rock-chips.com, Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v3 3/4] clk: rockchip: add support for half divider
-Date:   Fri, 15 Jun 2018 10:16:50 +0800
-Message-Id: <1529029011-15021-4-git-send-email-zhangqing@rock-chips.com>
+Subject: [PATCH v3 4/4] clk: rockchip: add clock controller for px30
+Date:   Fri, 15 Jun 2018 10:16:51 +0800
+Message-Id: <1529029011-15021-5-git-send-email-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
 References: <1529029011-15021-1-git-send-email-zhangqing@rock-chips.com>
@@ -63,403 +63,1166 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new Rockchip socs have optional half divider:
-The formula is shown as:
-	freq_out = 2*freq_in / (2*div + 3)
-Is this the same for all of new SoCs.
-
-So we use "branch_half_divider" + "COMPOSITE_NOMUX_HALFDIV \
-DIV_HALF \ COMPOSITE_HALFDIV \ CMPOSITE_NOGATE_HALFDIV"
-to hook that special divider clock-type into our clock-tree.
+Add the clock tree definition for the new px30 SoC.
 
 Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/rockchip/Makefile           |   1 +
- drivers/clk/rockchip/clk-half-divider.c | 230 ++++++++++++++++++++++++++++++++
- drivers/clk/rockchip/clk.c              |  10 ++
- drivers/clk/rockchip/clk.h              |  85 ++++++++++++
- 4 files changed, 326 insertions(+)
- create mode 100644 drivers/clk/rockchip/clk-half-divider.c
+ drivers/clk/rockchip/Makefile   |    1 +
+ drivers/clk/rockchip/clk-px30.c | 1080 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h      |   41 +-
+ 3 files changed, 1121 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/rockchip/clk-px30.c
 
 diff --git a/drivers/clk/rockchip/Makefile b/drivers/clk/rockchip/Makefile
-index 59b8d320960a..2b380fafd232 100644
+index 2b380fafd232..e8fb6069649c 100644
 --- a/drivers/clk/rockchip/Makefile
 +++ b/drivers/clk/rockchip/Makefile
-@@ -7,6 +7,7 @@ obj-y	+= clk-rockchip.o
- obj-y	+= clk.o
- obj-y	+= clk-pll.o
- obj-y	+= clk-cpu.o
-+obj-y	+= clk-half-divider.o
- obj-y	+= clk-inverter.o
- obj-y	+= clk-mmc-phase.o
- obj-y	+= clk-muxgrf.o
-diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
+@@ -14,6 +14,7 @@ obj-y	+= clk-muxgrf.o
+ obj-y	+= clk-ddr.o
+ obj-$(CONFIG_RESET_CONTROLLER)	+= softrst.o
+ 
++obj-y	+= clk-px30.o
+ obj-y	+= clk-rv1108.o
+ obj-y	+= clk-rk3036.o
+ obj-y	+= clk-rk3128.o
+diff --git a/drivers/clk/rockchip/clk-px30.c b/drivers/clk/rockchip/clk-px30.c
 new file mode 100644
-index 000000000000..fb7a6501e0c1
+index 000000000000..b4a0223e83ca
 --- /dev/null
-+++ b/drivers/clk/rockchip/clk-half-divider.c
-@@ -0,0 +1,230 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/drivers/clk/rockchip/clk-px30.c
+@@ -0,0 +1,1080 @@
 +/*
-+ * Copyright (c) 2018 Fuzhou Rockchip Electronics Co., Ltd
++ * Copyright (c) 2018 Rockchip Electronics Co. Ltd.
++ * Author: Elaine Zhang<zhangqing@rock-chips.com>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 2 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
 + */
 +
-+#include <linux/slab.h>
-+#include <linux/bitops.h>
-+#include <linux/regmap.h>
-+#include <linux/clk.h>
 +#include <linux/clk-provider.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/syscore_ops.h>
++#include <dt-bindings/clock/px30-cru.h>
 +#include "clk.h"
 +
-+#define div_mask(width)	((1 << (width)) - 1)
++#define PX30_GRF_SOC_STATUS0		0x480
 +
-+static bool _is_best_half_div(unsigned long rate, unsigned long now,
-+			      unsigned long best, unsigned long flags)
-+{
-+	if (flags & CLK_DIVIDER_ROUND_CLOSEST)
-+		return abs(rate - now) < abs(rate - best);
++enum px30_plls {
++	apll, dpll, cpll, npll, apll_b_h, apll_b_l,
++};
 +
-+	return now <= rate && now > best;
++enum px30_pmu_plls {
++	gpll,
++};
++
++static struct rockchip_pll_rate_table px30_pll_rates[] = {
++	/* _mhz, _refdiv, _fbdiv, _postdiv1, _postdiv2, _dsmpd, _frac */
++	RK3036_PLL_RATE(1608000000, 1, 67, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1584000000, 1, 66, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1560000000, 1, 65, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1536000000, 1, 64, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1512000000, 1, 63, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1488000000, 1, 62, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1464000000, 1, 61, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1440000000, 1, 60, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1416000000, 1, 59, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1392000000, 1, 58, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1368000000, 1, 57, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1344000000, 1, 56, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1320000000, 1, 55, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1296000000, 1, 54, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1272000000, 1, 53, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1248000000, 1, 52, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1200000000, 1, 50, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1188000000, 2, 99, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1104000000, 1, 46, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1100000000, 12, 550, 1, 1, 1, 0),
++	RK3036_PLL_RATE(1008000000, 1, 84, 2, 1, 1, 0),
++	RK3036_PLL_RATE(1000000000, 6, 500, 2, 1, 1, 0),
++	RK3036_PLL_RATE(984000000, 1, 82, 2, 1, 1, 0),
++	RK3036_PLL_RATE(960000000, 1, 80, 2, 1, 1, 0),
++	RK3036_PLL_RATE(936000000, 1, 78, 2, 1, 1, 0),
++	RK3036_PLL_RATE(912000000, 1, 76, 2, 1, 1, 0),
++	RK3036_PLL_RATE(900000000, 4, 300, 2, 1, 1, 0),
++	RK3036_PLL_RATE(888000000, 1, 74, 2, 1, 1, 0),
++	RK3036_PLL_RATE(864000000, 1, 72, 2, 1, 1, 0),
++	RK3036_PLL_RATE(840000000, 1, 70, 2, 1, 1, 0),
++	RK3036_PLL_RATE(816000000, 1, 68, 2, 1, 1, 0),
++	RK3036_PLL_RATE(800000000, 6, 400, 2, 1, 1, 0),
++	RK3036_PLL_RATE(700000000, 6, 350, 2, 1, 1, 0),
++	RK3036_PLL_RATE(696000000, 1, 58, 2, 1, 1, 0),
++	RK3036_PLL_RATE(624000000, 1, 52, 2, 1, 1, 0),
++	RK3036_PLL_RATE(600000000, 1, 75, 3, 1, 1, 0),
++	RK3036_PLL_RATE(594000000, 2, 99, 2, 1, 1, 0),
++	RK3036_PLL_RATE(504000000, 1, 63, 3, 1, 1, 0),
++	RK3036_PLL_RATE(500000000, 6, 250, 2, 1, 1, 0),
++	RK3036_PLL_RATE(408000000, 1, 68, 2, 2, 1, 0),
++	RK3036_PLL_RATE(312000000, 1, 52, 2, 2, 1, 0),
++	RK3036_PLL_RATE(216000000, 1, 72, 4, 2, 1, 0),
++	RK3036_PLL_RATE(96000000, 1, 64, 4, 4, 1, 0),
++	{ /* sentinel */ },
++};
++
++#define PX30_DIV_ACLKM_MASK		0x7
++#define PX30_DIV_ACLKM_SHIFT		12
++#define PX30_DIV_PCLK_DBG_MASK	0xf
++#define PX30_DIV_PCLK_DBG_SHIFT	8
++
++#define PX30_CLKSEL0(_aclk_core, _pclk_dbg)				\
++{									\
++	.reg = PX30_CLKSEL_CON(0),					\
++	.val = HIWORD_UPDATE(_aclk_core, PX30_DIV_ACLKM_MASK,		\
++			     PX30_DIV_ACLKM_SHIFT) |			\
++	       HIWORD_UPDATE(_pclk_dbg, PX30_DIV_PCLK_DBG_MASK,	\
++			     PX30_DIV_PCLK_DBG_SHIFT),		\
 +}
 +
-+static unsigned long clk_half_divider_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int val;
-+
-+	val = clk_readl(divider->reg) >> divider->shift;
-+	val &= div_mask(divider->width);
-+	val = val * 2 + 3;
-+
-+	return DIV_ROUND_UP_ULL(((u64)parent_rate * 2), val);
++#define PX30_CPUCLK_RATE(_prate, _aclk_core, _pclk_dbg)		\
++{									\
++	.prate = _prate,						\
++	.divs = {							\
++		PX30_CLKSEL0(_aclk_core, _pclk_dbg),			\
++	},								\
 +}
 +
-+static int clk_half_divider_bestdiv(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long *best_parent_rate, u8 width,
-+				    unsigned long flags)
-+{
-+	unsigned int i, bestdiv = 0;
-+	unsigned long parent_rate, best = 0, now, maxdiv;
-+	unsigned long parent_rate_saved = *best_parent_rate;
++static struct rockchip_cpuclk_rate_table px30_cpuclk_rates[] __initdata = {
++	PX30_CPUCLK_RATE(1608000000, 1, 7),
++	PX30_CPUCLK_RATE(1584000000, 1, 7),
++	PX30_CPUCLK_RATE(1560000000, 1, 7),
++	PX30_CPUCLK_RATE(1536000000, 1, 7),
++	PX30_CPUCLK_RATE(1512000000, 1, 7),
++	PX30_CPUCLK_RATE(1488000000, 1, 5),
++	PX30_CPUCLK_RATE(1464000000, 1, 5),
++	PX30_CPUCLK_RATE(1440000000, 1, 5),
++	PX30_CPUCLK_RATE(1416000000, 1, 5),
++	PX30_CPUCLK_RATE(1392000000, 1, 5),
++	PX30_CPUCLK_RATE(1368000000, 1, 5),
++	PX30_CPUCLK_RATE(1344000000, 1, 5),
++	PX30_CPUCLK_RATE(1320000000, 1, 5),
++	PX30_CPUCLK_RATE(1296000000, 1, 5),
++	PX30_CPUCLK_RATE(1272000000, 1, 5),
++	PX30_CPUCLK_RATE(1248000000, 1, 5),
++	PX30_CPUCLK_RATE(1224000000, 1, 5),
++	PX30_CPUCLK_RATE(1200000000, 1, 5),
++	PX30_CPUCLK_RATE(1104000000, 1, 5),
++	PX30_CPUCLK_RATE(1008000000, 1, 5),
++	PX30_CPUCLK_RATE(912000000, 1, 5),
++	PX30_CPUCLK_RATE(816000000, 1, 3),
++	PX30_CPUCLK_RATE(696000000, 1, 3),
++	PX30_CPUCLK_RATE(600000000, 1, 3),
++	PX30_CPUCLK_RATE(408000000, 1, 1),
++	PX30_CPUCLK_RATE(312000000, 1, 1),
++	PX30_CPUCLK_RATE(216000000,  1, 1),
++	PX30_CPUCLK_RATE(96000000, 1, 1),
++};
 +
-+	if (!rate)
-+		rate = 1;
++static const struct rockchip_cpuclk_reg_data px30_cpuclk_data = {
++	.core_reg = PX30_CLKSEL_CON(0),
++	.div_core_shift = 0,
++	.div_core_mask = 0xf,
++	.mux_core_alt = 1,
++	.mux_core_main = 0,
++	.mux_core_shift = 7,
++	.mux_core_mask = 0x1,
++};
 +
-+	maxdiv = div_mask(width);
++PNAME(mux_pll_p)		= { "xin24m"};
++PNAME(mux_usb480m_p)		= { "xin24m", "usb480m_phy", "clk_rtc32k_pmu" };
++PNAME(mux_armclk_p)		= { "apll_core", "gpll_core" };
++PNAME(mux_ddrphy_p)		= { "dpll_ddr", "gpll_ddr" };
++PNAME(mux_ddrstdby_p)		= { "clk_ddrphy1x", "clk_stdby_2wrap" };
++PNAME(mux_4plls_p)		= { "gpll", "dummy_cpll", "usb480m", "npll" };
++PNAME(mux_cpll_npll_p)		= { "cpll", "npll" };
++PNAME(mux_npll_cpll_p)		= { "npll", "cpll" };
++PNAME(mux_gpll_cpll_p)		= { "gpll", "dummy_cpll" };
++PNAME(mux_gpll_npll_p)		= { "gpll", "npll" };
++PNAME(mux_gpll_xin24m_p)		= { "gpll", "xin24m"};
++PNAME(mux_gpll_cpll_npll_p)		= { "gpll", "dummy_cpll", "npll" };
++PNAME(mux_gpll_cpll_npll_xin24m_p)	= { "gpll", "dummy_cpll", "npll", "xin24m" };
++PNAME(mux_gpll_xin24m_npll_p)		= { "gpll", "xin24m", "npll"};
++PNAME(mux_pdm_p)		= { "clk_pdm_src", "clk_pdm_frac" };
++PNAME(mux_i2s0_tx_p)		= { "clk_i2s0_tx_src", "clk_i2s0_tx_frac", "mclk_i2s0_tx_in", "xin12m"};
++PNAME(mux_i2s0_rx_p)		= { "clk_i2s0_rx_src", "clk_i2s0_rx_frac", "mclk_i2s0_rx_in", "xin12m"};
++PNAME(mux_i2s1_p)		= { "clk_i2s1_src", "clk_i2s1_frac", "i2s1_clkin", "xin12m"};
++PNAME(mux_i2s2_p)		= { "clk_i2s2_src", "clk_i2s2_frac", "i2s2_clkin", "xin12m"};
++PNAME(mux_i2s0_tx_out_p)	= { "clk_i2s0_tx", "xin12m", "clk_i2s0_rx"};
++PNAME(mux_i2s0_rx_out_p)	= { "clk_i2s0_rx", "xin12m", "clk_i2s0_tx"};
++PNAME(mux_i2s1_out_p)		= { "clk_i2s1", "xin12m"};
++PNAME(mux_i2s2_out_p)		= { "clk_i2s2", "xin12m"};
++PNAME(mux_i2s0_tx_rx_p)		= { "clk_i2s0_tx_mux", "clk_i2s0_rx_mux"};
++PNAME(mux_i2s0_rx_tx_p)		= { "clk_i2s0_rx_mux", "clk_i2s0_tx_mux"};
++PNAME(mux_uart_src_p)		= { "gpll", "xin24m", "usb480m", "npll" };
++PNAME(mux_uart1_p)		= { "clk_uart1_src", "clk_uart1_np5", "clk_uart1_frac" };
++PNAME(mux_uart2_p)		= { "clk_uart2_src", "clk_uart2_np5", "clk_uart2_frac" };
++PNAME(mux_uart3_p)		= { "clk_uart3_src", "clk_uart3_np5", "clk_uart3_frac" };
++PNAME(mux_uart4_p)		= { "clk_uart4_src", "clk_uart4_np5", "clk_uart4_frac" };
++PNAME(mux_uart5_p)		= { "clk_uart5_src", "clk_uart5_np5", "clk_uart5_frac" };
++PNAME(mux_cif_out_p)		= { "xin24m", "dummy_cpll", "npll", "usb480m" };
++PNAME(mux_dclk_vopb_p)		= { "dclk_vopb_src", "dclk_vopb_frac", "xin24m" };
++PNAME(mux_dclk_vopl_p)		= { "dclk_vopl_src", "dclk_vopl_frac", "xin24m" };
++PNAME(mux_gmac_p)		= { "clk_gmac_src", "gmac_clkin" };
++PNAME(mux_gmac_rmii_sel_p)	= { "clk_gmac_rx_tx_div20", "clk_gmac_rx_tx_div2" };
++PNAME(mux_rtc32k_pmu_p)		= { "xin32k", "pmu_pvtm_32k", "clk_rtc32k_frac", };
++PNAME(mux_wifi_pmu_p)		= { "xin24m", "clk_wifi_pmu_src" };
++PNAME(mux_uart0_pmu_p)		= { "clk_uart0_pmu_src", "clk_uart0_np5", "clk_uart0_frac" };
++PNAME(mux_usbphy_ref_p)		= { "xin24m", "clk_ref24m_pmu" };
++PNAME(mux_mipidsiphy_ref_p)	= { "xin24m", "clk_ref24m_pmu" };
++PNAME(mux_gpu_p)	= { "clk_gpu_div", "clk_gpu_np5" };
 +
-+	if (!(clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT)) {
-+		parent_rate = *best_parent_rate;
-+		bestdiv = DIV_ROUND_UP_ULL(((u64)parent_rate * 2), rate);
-+		if (bestdiv < 3)
-+			bestdiv = 0;
-+		else
-+			bestdiv = (bestdiv - 3) / 2;
-+		bestdiv = bestdiv > maxdiv ? maxdiv : bestdiv;
-+		return bestdiv;
-+	}
++static struct rockchip_pll_clock px30_pll_clks[] __initdata = {
++	[apll] = PLL(pll_rk3328, PLL_APLL, "apll", mux_pll_p,
++		     0, PX30_PLL_CON(0),
++		     PX30_MODE_CON, 0, 0, 0, px30_pll_rates),
++	[dpll] = PLL(pll_rk3328, PLL_DPLL, "dpll", mux_pll_p,
++		     0, PX30_PLL_CON(8),
++		     PX30_MODE_CON, 4, 1, 0, NULL),
++	[cpll] = PLL(pll_rk3328, PLL_CPLL, "cpll", mux_pll_p,
++		     0, PX30_PLL_CON(16),
++		     PX30_MODE_CON, 2, 2, 0, px30_pll_rates),
++	[npll] = PLL(pll_rk3328, PLL_NPLL, "npll", mux_pll_p,
++		     0, PX30_PLL_CON(24),
++		     PX30_MODE_CON, 6, 4, 0, px30_pll_rates),
++};
++
++static struct rockchip_pll_clock px30_pmu_pll_clks[] __initdata = {
++	[gpll] = PLL(pll_rk3328, PLL_GPLL, "gpll",  mux_pll_p, 0, PX30_PMU_PLL_CON(0),
++		     PX30_PMU_MODE, 0, 3, 0, px30_pll_rates),
++};
++
++#define MFLAGS CLK_MUX_HIWORD_MASK
++#define DFLAGS CLK_DIVIDER_HIWORD_MASK
++#define GFLAGS (CLK_GATE_HIWORD_MASK | CLK_GATE_SET_TO_DISABLE)
++
++static struct rockchip_clk_branch px30_pdm_fracmux __initdata =
++	MUX(0, "clk_pdm_mux", mux_pdm_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(26), 15, 1, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s0_tx_fracmux __initdata =
++	MUX(0, "clk_i2s0_tx_mux", mux_i2s0_tx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(28), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s0_rx_fracmux __initdata =
++	MUX(0, "clk_i2s0_rx_mux", mux_i2s0_rx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(58), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s1_fracmux __initdata =
++	MUX(0, "clk_i2s1_mux", mux_i2s1_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(30), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_i2s2_fracmux __initdata =
++	MUX(0, "clk_i2s2_mux", mux_i2s2_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(32), 10, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart1_fracmux __initdata =
++	MUX(0, "clk_uart1_mux", mux_uart1_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(35), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart2_fracmux __initdata =
++	MUX(0, "clk_uart2_mux", mux_uart2_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(38), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart3_fracmux __initdata =
++	MUX(0, "clk_uart3_mux", mux_uart3_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(41), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart4_fracmux __initdata =
++	MUX(0, "clk_uart4_mux", mux_uart4_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(44), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart5_fracmux __initdata =
++	MUX(0, "clk_uart5_mux", mux_uart5_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(47), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_dclk_vopb_fracmux __initdata =
++	MUX(0, "dclk_vopb_mux", mux_dclk_vopb_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(5), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_dclk_vopl_fracmux __initdata =
++	MUX(0, "dclk_vopl_mux", mux_dclk_vopl_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(8), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_rtc32k_pmu_fracmux __initdata =
++	MUX(SCLK_RTC32K_PMU, "clk_rtc32k_pmu", mux_rtc32k_pmu_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(0), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_uart0_pmu_fracmux __initdata =
++	MUX(0, "clk_uart0_pmu_mux", mux_uart0_pmu_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(4), 14, 2, MFLAGS);
++
++static struct rockchip_clk_branch px30_clk_branches[] __initdata = {
++	/*
++	 * Clock-Architecture Diagram 1
++	 */
++
++	MUX(USB480M, "usb480m", mux_usb480m_p, CLK_SET_RATE_PARENT,
++			PX30_MODE_CON, 8, 2, MFLAGS),
++	FACTOR(0, "xin12m", "xin24m", 0, 1, 2),
 +
 +	/*
-+	 * The maximum divider we can use without overflowing
-+	 * unsigned long in rate * i below
++	 * Clock-Architecture Diagram 3
 +	 */
-+	maxdiv = min(ULONG_MAX / rate, maxdiv);
 +
-+	for (i = 0; i <= maxdiv; i++) {
-+		if (((u64)rate * (i * 2 + 3)) == ((u64)parent_rate_saved * 2)) {
-+			/*
-+			 * It's the most ideal case if the requested rate can be
-+			 * divided from parent clock without needing to change
-+			 * parent rate, so return the divider immediately.
-+			 */
-+			*best_parent_rate = parent_rate_saved;
-+			return i;
-+		}
-+		parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw),
-+						((u64)rate * (i * 2 + 3)) / 2);
-+		now = DIV_ROUND_UP_ULL(((u64)parent_rate * 2),
-+				       (i * 2 + 3));
++	/* PD_CORE */
++	GATE(0, "apll_core", "apll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 0, GFLAGS),
++	GATE(0, "gpll_core", "gpll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 0, GFLAGS),
++	COMPOSITE_NOMUX(0, "pclk_dbg", "armclk", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(0), 8, 4, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			PX30_CLKGATE_CON(0), 2, GFLAGS),
++	COMPOSITE_NOMUX(0, "aclk_core", "armclk", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(0), 12, 3, DFLAGS | CLK_DIVIDER_READ_ONLY,
++			PX30_CLKGATE_CON(0), 1, GFLAGS),
++	GATE(0, "aclk_core_niu", "aclk_core", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 4, GFLAGS),
++	GATE(0, "aclk_core_prf", "aclk_core", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 5, GFLAGS),
++	GATE(0, "pclk_dbg_niu", "pclk_dbg", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 5, GFLAGS),
++	GATE(0, "pclk_core_dbg", "pclk_dbg", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 6, GFLAGS),
++	GATE(0, "pclk_core_grf", "pclk_dbg", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 6, GFLAGS),
 +
-+		if (_is_best_half_div(rate, now, best, flags)) {
-+			bestdiv = i;
-+			best = now;
-+			*best_parent_rate = parent_rate;
-+		}
-+	}
++	GATE(0, "clk_jtag", "jtag_clkin", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 3, GFLAGS),
++	GATE(SCLK_PVTM, "clk_pvtm", "xin24m", 0,
++			PX30_CLKGATE_CON(17), 4, GFLAGS),
 +
-+	if (!bestdiv) {
-+		bestdiv = div_mask(width);
-+		*best_parent_rate = clk_hw_round_rate(clk_hw_get_parent(hw), 1);
-+	}
++	/* PD_GPU */
++	COMPOSITE_NODIV(0, "clk_gpu_src", mux_4plls_p, 0,
++			PX30_CLKSEL_CON(1), 6, 2, MFLAGS,
++			PX30_CLKGATE_CON(0), 8, GFLAGS),
++	COMPOSITE_NOMUX(0, "clk_gpu_div", "clk_gpu_src", 0,
++			PX30_CLKSEL_CON(1), 0, 4, DFLAGS,
++			PX30_CLKGATE_CON(0), 12, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_gpu_np5", "clk_gpu_src", 0,
++			PX30_CLKSEL_CON(1), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(0), 9, GFLAGS),
++	COMPOSITE_NODIV(SCLK_GPU, "clk_gpu", mux_gpu_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(1), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(0), 10, GFLAGS),
++	COMPOSITE_NOMUX(0, "aclk_gpu", "clk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(1), 13, 2, DFLAGS,
++			PX30_CLKGATE_CON(17), 10, GFLAGS),
++	GATE(0, "aclk_gpu_niu", "aclk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 11, GFLAGS),
++	GATE(0, "aclk_gpu_prf", "aclk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 8, GFLAGS),
++	GATE(0, "pclk_gpu_grf", "aclk_gpu", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(17), 9, GFLAGS),
 +
-+	return bestdiv;
-+}
++	/*
++	 * Clock-Architecture Diagram 4
++	 */
 +
-+static long clk_half_divider_round_rate(struct clk_hw *hw, unsigned long rate,
-+					unsigned long *prate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	int div;
++	/* PD_DDR */
++	GATE(0, "dpll_ddr", "dpll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 7, GFLAGS),
++	GATE(0, "gpll_ddr", "gpll", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 13, GFLAGS),
++	COMPOSITE_NOGATE(SCLK_DDRCLK, "sclk_ddrc", mux_ddrphy_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 7, 1, MFLAGS, 0, 3, DFLAGS | CLK_DIVIDER_POWER_OF_TWO),
++	COMPOSITE_NOGATE(0, "clk_ddrphy4x", mux_ddrphy_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 7, 1, MFLAGS, 0, 3, DFLAGS),
++	FACTOR_GATE(0, "clk_ddrphy1x", "clk_ddrphy4x", CLK_IGNORE_UNUSED, 1, 4,
++			PX30_CLKGATE_CON(0), 14, GFLAGS),
++	FACTOR_GATE(0, "clk_stdby_2wrap", "clk_ddrphy4x", CLK_IGNORE_UNUSED, 1, 4,
++			PX30_CLKGATE_CON(1), 0, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_ddrstdby", mux_ddrstdby_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 4, 1, MFLAGS,
++			PX30_CLKGATE_CON(1), 13, GFLAGS),
++	GATE(0, "aclk_split", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 15, GFLAGS),
++	GATE(0, "clk_msch", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 8, GFLAGS),
++	GATE(0, "aclk_ddrc", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 5, GFLAGS),
++	GATE(0, "clk_core_ddrc", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 6, GFLAGS),
++	GATE(0, "aclk_cmd_buff", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 6, GFLAGS),
++	GATE(0, "clk_ddrmon", "clk_ddrphy1x", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 11, GFLAGS),
 +
-+	div = clk_half_divider_bestdiv(hw, rate, prate,
-+				       divider->width,
-+				       divider->flags);
++	GATE(0, "clk_ddrmon_timer", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(0), 15, GFLAGS),
 +
-+	return DIV_ROUND_UP_ULL(((u64)*prate * 2), div * 2 + 3);
-+}
++	COMPOSITE_NOMUX(PCLK_DDR, "pclk_ddr", "gpll", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(2), 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(1), 1, GFLAGS),
++	GATE(0, "pclk_ddrmon", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 10, GFLAGS),
++	GATE(0, "pclk_ddrc", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 7, GFLAGS),
++	GATE(0, "pclk_msch", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 9, GFLAGS),
++	GATE(0, "pclk_stdby", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 12, GFLAGS),
++	GATE(0, "pclk_ddr_grf", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 14, GFLAGS),
++	GATE(0, "pclk_cmdbuff", "pclk_ddr", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(1), 3, GFLAGS),
 +
-+static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
-+				     unsigned long parent_rate)
-+{
-+	struct clk_divider *divider = to_clk_divider(hw);
-+	unsigned int value;
-+	unsigned long flags = 0;
-+	u32 val;
++	/*
++	 * Clock-Architecture Diagram 5
++	 */
 +
-+	value = DIV_ROUND_UP_ULL(((u64)parent_rate * 2), rate);
-+	value = (value - 3) / 2;
-+	value =  min_t(unsigned int, value, div_mask(divider->width));
++	/* PD_VI */
++	COMPOSITE(ACLK_VI_PRE, "aclk_vi_pre", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(11), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 8, GFLAGS),
++	COMPOSITE_NOMUX(HCLK_VI_PRE, "hclk_vi_pre", "aclk_vi_pre", 0,
++			PX30_CLKSEL_CON(11), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(4), 12, GFLAGS),
++	COMPOSITE(SCLK_ISP, "clk_isp", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(12), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 9, GFLAGS),
++	COMPOSITE(SCLK_CIF_OUT, "clk_cif_out", mux_cif_out_p, 0,
++			PX30_CLKSEL_CON(13), 6, 2, MFLAGS, 0, 6, DFLAGS,
++			PX30_CLKGATE_CON(4), 11, GFLAGS),
++	GATE(PCLK_ISP, "pclkin_isp", "ext_pclkin", 0,
++			PX30_CLKGATE_CON(4), 13, GFLAGS),
++	GATE(PCLK_CIF, "pclkin_cif", "ext_pclkin", 0,
++			PX30_CLKGATE_CON(4), 14, GFLAGS),
 +
-+	if (divider->lock)
-+		spin_lock_irqsave(divider->lock, flags);
-+	else
-+		__acquire(divider->lock);
++	/*
++	 * Clock-Architecture Diagram 6
++	 */
 +
-+	if (divider->flags & CLK_DIVIDER_HIWORD_MASK) {
-+		val = div_mask(divider->width) << (divider->shift + 16);
-+	} else {
-+		val = clk_readl(divider->reg);
-+		val &= ~(div_mask(divider->width) << divider->shift);
-+	}
-+	val |= value << divider->shift;
-+	clk_writel(val, divider->reg);
++	/* PD_VO */
++	COMPOSITE(ACLK_VO_PRE, "aclk_vo_pre", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(3), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(2), 0, GFLAGS),
++	COMPOSITE_NOMUX(HCLK_VO_PRE, "hclk_vo_pre", "aclk_vo_pre", 0,
++			PX30_CLKSEL_CON(3), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(2), 12, GFLAGS),
++	COMPOSITE_NOMUX(PCLK_VO_PRE, "pclk_vo_pre", "aclk_vo_pre", 0,
++			PX30_CLKSEL_CON(3), 12, 4, DFLAGS,
++			PX30_CLKGATE_CON(2), 13, GFLAGS),
++	COMPOSITE(SCLK_RGA_CORE, "clk_rga_core", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(4), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(2), 1, GFLAGS),
 +
-+	if (divider->lock)
-+		spin_unlock_irqrestore(divider->lock, flags);
-+	else
-+		__release(divider->lock);
++	COMPOSITE(SCLK_VOPB_PWM, "clk_vopb_pwm", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(7), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(2), 5, GFLAGS),
++	COMPOSITE(0, "dclk_vopb_src", mux_cpll_npll_p, CLK_SET_RATE_PARENT | CLK_SET_RATE_NO_REPARENT,
++			PX30_CLKSEL_CON(5), 11, 1, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(2), 2, GFLAGS),
++	COMPOSITE_FRACMUX(0, "dclk_vopb_frac", "dclk_vopb_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(6), 0,
++			PX30_CLKGATE_CON(2), 3, GFLAGS,
++			&px30_dclk_vopb_fracmux),
++	GATE(DCLK_VOPB, "dclk_vopb", "dclk_vopb_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(2), 4, GFLAGS),
++	COMPOSITE(0, "dclk_vopl_src", mux_npll_cpll_p, 0,
++			PX30_CLKSEL_CON(8), 11, 1, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(2), 6, GFLAGS),
++	COMPOSITE_FRACMUX(0, "dclk_vopl_frac", "dclk_vopl_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(9), 0,
++			PX30_CLKGATE_CON(2), 7, GFLAGS,
++			&px30_dclk_vopl_fracmux),
++	GATE(DCLK_VOPL, "dclk_vopl", "dclk_vopl_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(2), 8, GFLAGS),
 +
-+	return 0;
-+}
++	/* PD_VPU */
++	COMPOSITE(0, "aclk_vpu_pre", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(10), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 0, GFLAGS),
++	COMPOSITE_NOMUX(0, "hclk_vpu_pre", "aclk_vpu_pre", 0,
++			PX30_CLKSEL_CON(10), 8, 4, DFLAGS,
++			PX30_CLKGATE_CON(4), 2, GFLAGS),
++	COMPOSITE(SCLK_CORE_VPU, "sclk_core_vpu", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(13), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(4), 1, GFLAGS),
 +
-+const struct clk_ops clk_half_divider_ops = {
-+	.recalc_rate = clk_half_divider_recalc_rate,
-+	.round_rate = clk_half_divider_round_rate,
-+	.set_rate = clk_half_divider_set_rate,
++	/*
++	 * Clock-Architecture Diagram 7
++	 */
++
++	COMPOSITE_NODIV(ACLK_PERI_SRC, "aclk_peri_src", mux_gpll_cpll_p, 0,
++			PX30_CLKSEL_CON(14), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(5), 7, GFLAGS),
++	COMPOSITE_NOMUX(ACLK_PERI_PRE, "aclk_peri_pre", "aclk_peri_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(14), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(5), 8, GFLAGS),
++	DIV(HCLK_PERI_PRE, "hclk_peri_pre", "aclk_peri_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(14), 8, 5, DFLAGS),
++
++	/* PD_MMC_NAND */
++	GATE(HCLK_MMC_NAND, "hclk_mmc_nand", "hclk_peri_pre", 0,
++			PX30_CLKGATE_CON(6), 0, GFLAGS),
++	COMPOSITE(SCLK_NANDC, "clk_nandc", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(15), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(5), 13, GFLAGS),
++
++	COMPOSITE(SCLK_SDIO, "clk_sdio", mux_gpll_cpll_npll_xin24m_p, 0,
++			PX30_CLKSEL_CON(18), 14, 2, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(6), 3, GFLAGS),
++
++	COMPOSITE(SCLK_EMMC, "clk_emmc", mux_gpll_cpll_npll_xin24m_p, 0,
++			PX30_CLKSEL_CON(20), 14, 2, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(6), 6, GFLAGS),
++
++	COMPOSITE(SCLK_SFC, "clk_sfc", mux_gpll_cpll_p, 0,
++			PX30_CLKSEL_CON(22), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(6), 7, GFLAGS),
++
++	MMC(SCLK_SDMMC_DRV, "sdmmc_drv", "clk_sdmmc",
++	    PX30_SDMMC_CON0, 1),
++	MMC(SCLK_SDMMC_SAMPLE, "sdmmc_sample", "clk_sdmmc",
++	    PX30_SDMMC_CON1, 1),
++
++	MMC(SCLK_SDIO_DRV, "sdio_drv", "clk_sdio",
++	    PX30_SDIO_CON0, 1),
++	MMC(SCLK_SDIO_SAMPLE, "sdio_sample", "clk_sdio",
++	    PX30_SDIO_CON1, 1),
++
++	MMC(SCLK_EMMC_DRV, "emmc_drv", "clk_emmc",
++	    PX30_EMMC_CON0, 1),
++	MMC(SCLK_EMMC_SAMPLE, "emmc_sample", "clk_emmc",
++	    PX30_EMMC_CON1, 1),
++
++	/* PD_SDCARD */
++	GATE(0, "hclk_sdmmc_pre", "hclk_peri_pre", 0,
++			PX30_CLKGATE_CON(6), 12, GFLAGS),
++	COMPOSITE(SCLK_SDMMC, "clk_sdmmc", mux_gpll_cpll_npll_xin24m_p, 0,
++			PX30_CLKSEL_CON(16), 14, 2, MFLAGS, 0, 8, DFLAGS,
++			PX30_CLKGATE_CON(6), 15, GFLAGS),
++
++	/* PD_USB */
++	GATE(HCLK_USB, "hclk_usb", "hclk_peri_pre", 0,
++			PX30_CLKGATE_CON(7), 2, GFLAGS),
++	GATE(SCLK_OTG_ADP, "clk_otg_adp", "clk_rtc32k_pmu", 0,
++			PX30_CLKGATE_CON(7), 3, GFLAGS),
++
++	/* PD_GMAC */
++	COMPOSITE(SCLK_GMAC_SRC, "clk_gmac_src", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(22), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(7), 11, GFLAGS),
++	MUX(SCLK_GMAC, "clk_gmac", mux_gmac_p,  CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(23), 6, 1, MFLAGS),
++	GATE(SCLK_MAC_REF, "clk_mac_ref", "clk_gmac", 0,
++			PX30_CLKGATE_CON(7), 15, GFLAGS),
++	GATE(SCLK_GMAC_RX_TX, "clk_gmac_rx_tx", "clk_gmac", 0,
++			PX30_CLKGATE_CON(7), 13, GFLAGS),
++	FACTOR(0, "clk_gmac_rx_tx_div2", "clk_gmac_rx_tx", 0, 1, 2),
++	FACTOR(0, "clk_gmac_rx_tx_div20", "clk_gmac_rx_tx", 0, 1, 20),
++	MUX(SCLK_GMAC_RMII, "clk_gmac_rmii_sel", mux_gmac_rmii_sel_p,  CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(23), 7, 1, MFLAGS),
++
++	GATE(0, "aclk_gmac_pre", "aclk_peri_pre", 0,
++			PX30_CLKGATE_CON(7), 10, GFLAGS),
++	COMPOSITE_NOMUX(0, "pclk_gmac_pre", "aclk_gmac_pre", 0,
++			PX30_CLKSEL_CON(23), 0, 4, DFLAGS,
++			PX30_CLKGATE_CON(7), 12, GFLAGS),
++
++	COMPOSITE(SCLK_MAC_OUT, "clk_mac_out", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(12), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 5, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 8
++	 */
++
++	/* PD_BUS */
++	COMPOSITE_NODIV(ACLK_BUS_SRC, "aclk_bus_src", mux_gpll_cpll_p, CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(23), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(8), 6, GFLAGS),
++	COMPOSITE_NOMUX(HCLK_BUS_PRE, "hclk_bus_pre", "aclk_bus_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(24), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 8, GFLAGS),
++	COMPOSITE_NOMUX(ACLK_BUS_PRE, "aclk_bus_pre", "aclk_bus_src", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(23), 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 7, GFLAGS),
++	COMPOSITE_NOMUX(PCLK_BUS_PRE, "pclk_bus_pre", "aclk_bus_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKSEL_CON(24), 8, 2, DFLAGS,
++			PX30_CLKGATE_CON(8), 9, GFLAGS),
++	GATE(0, "pclk_top_pre", "pclk_bus_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(8), 10, GFLAGS),
++
++	COMPOSITE(0, "clk_pdm_src", mux_gpll_xin24m_npll_p, 0,
++			PX30_CLKSEL_CON(26), 8, 2, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(9), 9, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_pdm_frac", "clk_pdm_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(27), 0,
++			PX30_CLKGATE_CON(9), 10, GFLAGS,
++			&px30_pdm_fracmux),
++	GATE(SCLK_PDM, "clk_pdm", "clk_pdm_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(9), 11, GFLAGS),
++
++	COMPOSITE(0, "clk_i2s0_tx_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(28), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(9), 12, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s0_tx_frac", "clk_i2s0_tx_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(29), 0,
++			PX30_CLKGATE_CON(9), 13, GFLAGS,
++			&px30_i2s0_tx_fracmux),
++	COMPOSITE_NODIV(SCLK_I2S0_TX, "clk_i2s0_tx", mux_i2s0_tx_rx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(28), 12, 1, MFLAGS,
++			PX30_CLKGATE_CON(9), 14, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s0_tx_out_pre", mux_i2s0_tx_out_p, 0,
++			PX30_CLKSEL_CON(28), 14, 2, MFLAGS,
++			PX30_CLKGATE_CON(9), 15, GFLAGS),
++	GATE(SCLK_I2S0_TX_OUT, "clk_i2s0_tx_out", "clk_i2s0_tx_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 8, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(0, "clk_i2s0_rx_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(58), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(17), 0, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s0_rx_frac", "clk_i2s0_rx_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(59), 0,
++			PX30_CLKGATE_CON(17), 1, GFLAGS,
++			&px30_i2s0_rx_fracmux),
++	COMPOSITE_NODIV(SCLK_I2S0_RX, "clk_i2s0_rx", mux_i2s0_rx_tx_p, CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(58), 12, 1, MFLAGS,
++			PX30_CLKGATE_CON(17), 2, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s0_rx_out_pre", mux_i2s0_rx_out_p, 0,
++			PX30_CLKSEL_CON(58), 14, 2, MFLAGS,
++			PX30_CLKGATE_CON(17), 3, GFLAGS),
++	GATE(SCLK_I2S0_RX_OUT, "clk_i2s0_rx_out", "clk_i2s0_rx_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 11, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(0, "clk_i2s1_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(30), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(10), 0, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s1_frac", "clk_i2s1_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(31), 0,
++			PX30_CLKGATE_CON(10), 1, GFLAGS,
++			&px30_i2s1_fracmux),
++	GATE(SCLK_I2S1, "clk_i2s1", "clk_i2s1_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 2, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s1_out_pre", mux_i2s1_out_p, 0,
++			PX30_CLKSEL_CON(30), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(10), 3, GFLAGS),
++	GATE(SCLK_I2S1_OUT, "clk_i2s1_out", "clk_i2s1_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 9, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(0, "clk_i2s2_src", mux_gpll_npll_p, 0,
++			PX30_CLKSEL_CON(32), 8, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(10), 4, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_i2s2_frac", "clk_i2s2_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(33), 0,
++			PX30_CLKGATE_CON(10), 5, GFLAGS,
++			&px30_i2s2_fracmux),
++	GATE(SCLK_I2S2, "clk_i2s2", "clk_i2s2_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 6, GFLAGS),
++	COMPOSITE_NODIV(0, "clk_i2s2_out_pre", mux_i2s2_out_p, 0,
++			PX30_CLKSEL_CON(32), 15, 1, MFLAGS,
++			PX30_CLKGATE_CON(10), 7, GFLAGS),
++	GATE(SCLK_I2S2_OUT, "clk_i2s2_out", "clk_i2s2_out_pre", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 10, CLK_GATE_HIWORD_MASK),
++
++	COMPOSITE(SCLK_UART1_SRC, "clk_uart1_src", mux_uart_src_p, CLK_SET_RATE_NO_REPARENT,
++			PX30_CLKSEL_CON(34), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(10), 12, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart1_np5", "clk_uart1_src", 0,
++			PX30_CLKSEL_CON(35), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(10), 13, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart1_frac", "clk_uart1_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(36), 0,
++			PX30_CLKGATE_CON(10), 14, GFLAGS,
++			&px30_uart1_fracmux),
++	GATE(SCLK_UART1, "clk_uart1", "clk_uart1_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(10), 15, GFLAGS),
++
++	COMPOSITE(SCLK_UART2_SRC, "clk_uart2_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(37), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 0, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart2_np5", "clk_uart2_src", 0,
++			PX30_CLKSEL_CON(38), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 1, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart2_frac", "clk_uart2_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(39), 0,
++			PX30_CLKGATE_CON(11), 2, GFLAGS,
++			&px30_uart2_fracmux),
++	GATE(SCLK_UART2, "clk_uart2", "clk_uart2_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 3, GFLAGS),
++
++	COMPOSITE(0, "clk_uart3_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(40), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 4, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart3_np5", "clk_uart3_src", 0,
++			PX30_CLKSEL_CON(41), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 5, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart3_frac", "clk_uart3_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(42), 0,
++			PX30_CLKGATE_CON(11), 6, GFLAGS,
++			&px30_uart3_fracmux),
++	GATE(SCLK_UART3, "clk_uart3", "clk_uart3_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 7, GFLAGS),
++
++	COMPOSITE(0, "clk_uart4_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(43), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 8, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart4_np5", "clk_uart4_src", 0,
++			PX30_CLKSEL_CON(44), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 9, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart4_frac", "clk_uart4_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(45), 0,
++			PX30_CLKGATE_CON(11), 10, GFLAGS,
++			&px30_uart4_fracmux),
++	GATE(SCLK_UART4, "clk_uart4", "clk_uart4_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 11, GFLAGS),
++
++	COMPOSITE(0, "clk_uart5_src", mux_uart_src_p, 0,
++			PX30_CLKSEL_CON(46), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 12, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart5_np5", "clk_uart5_src", 0,
++			PX30_CLKSEL_CON(47), 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(11), 13, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart5_frac", "clk_uart5_src", CLK_SET_RATE_PARENT,
++			PX30_CLKSEL_CON(48), 0,
++			PX30_CLKGATE_CON(11), 14, GFLAGS,
++			&px30_uart5_fracmux),
++	GATE(SCLK_UART5, "clk_uart5", "clk_uart5_mux", CLK_SET_RATE_PARENT,
++			PX30_CLKGATE_CON(11), 15, GFLAGS),
++
++	COMPOSITE(SCLK_I2C0, "clk_i2c0", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(49), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 0, GFLAGS),
++	COMPOSITE(SCLK_I2C1, "clk_i2c1", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(49), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 1, GFLAGS),
++	COMPOSITE(SCLK_I2C2, "clk_i2c2", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(50), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 2, GFLAGS),
++	COMPOSITE(SCLK_I2C3, "clk_i2c3", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(50), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 3, GFLAGS),
++	COMPOSITE(SCLK_PWM0, "clk_pwm0", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(52), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 5, GFLAGS),
++	COMPOSITE(SCLK_PWM1, "clk_pwm1", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(52), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 6, GFLAGS),
++	COMPOSITE(SCLK_SPI0, "clk_spi0", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(53), 7, 1, MFLAGS, 0, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 7, GFLAGS),
++	COMPOSITE(SCLK_SPI1, "clk_spi1", mux_gpll_xin24m_p, 0,
++			PX30_CLKSEL_CON(53), 15, 1, MFLAGS, 8, 7, DFLAGS,
++			PX30_CLKGATE_CON(12), 8, GFLAGS),
++
++	GATE(SCLK_TIMER0, "sclk_timer0", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 0, GFLAGS),
++	GATE(SCLK_TIMER1, "sclk_timer1", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 1, GFLAGS),
++	GATE(SCLK_TIMER2, "sclk_timer2", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 2, GFLAGS),
++	GATE(SCLK_TIMER3, "sclk_timer3", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 3, GFLAGS),
++	GATE(SCLK_TIMER4, "sclk_timer4", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 4, GFLAGS),
++	GATE(SCLK_TIMER5, "sclk_timer5", "xin24m", 0,
++			PX30_CLKGATE_CON(13), 5, GFLAGS),
++
++	COMPOSITE_NOMUX(SCLK_TSADC, "clk_tsadc", "xin24m", 0,
++			PX30_CLKSEL_CON(54), 0, 11, DFLAGS,
++			PX30_CLKGATE_CON(12), 9, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_SARADC, "clk_saradc", "xin24m", 0,
++			PX30_CLKSEL_CON(55), 0, 11, DFLAGS,
++			PX30_CLKGATE_CON(12), 10, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_OTP, "clk_otp", "xin24m", 0,
++			PX30_CLKSEL_CON(56), 0, 3, DFLAGS,
++			PX30_CLKGATE_CON(12), 11, GFLAGS),
++	COMPOSITE_NOMUX(SCLK_OTP_USR, "clk_otp_usr", "clk_otp", 0,
++			PX30_CLKSEL_CON(56), 4, 2, DFLAGS,
++			PX30_CLKGATE_CON(13), 6, GFLAGS),
++
++	GATE(0, "clk_cpu_boost", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(12), 12, GFLAGS),
++
++	/* PD_CRYPTO */
++	GATE(0, "aclk_crypto_pre", "aclk_bus_pre", 0,
++			PX30_CLKGATE_CON(8), 12, GFLAGS),
++	GATE(0, "hclk_crypto_pre", "hclk_bus_pre", 0,
++			PX30_CLKGATE_CON(8), 13, GFLAGS),
++	COMPOSITE(SCLK_CRYPTO, "clk_crypto", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(25), 6, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 14, GFLAGS),
++	COMPOSITE(SCLK_CRYPTO_APK, "clk_crypto_apk", mux_gpll_cpll_npll_p, 0,
++			PX30_CLKSEL_CON(25), 14, 2, MFLAGS, 8, 5, DFLAGS,
++			PX30_CLKGATE_CON(8), 15, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 9
++	 */
++
++	/* PD_BUS_TOP */
++	GATE(0, "pclk_top_niu", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 0, GFLAGS),
++	GATE(0, "pclk_top_cru", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 1, GFLAGS),
++	GATE(PCLK_OTP_PHY, "pclk_otp_phy", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 2, GFLAGS),
++	GATE(0, "pclk_ddrphy", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 3, GFLAGS),
++	GATE(PCLK_MIPIDSIPHY, "pclk_mipidsiphy", "pclk_top_pre", 0, PX30_CLKGATE_CON(16), 4, GFLAGS),
++	GATE(PCLK_MIPICSIPHY, "pclk_mipicsiphy", "pclk_top_pre", 0, PX30_CLKGATE_CON(16), 5, GFLAGS),
++	GATE(PCLK_USB_GRF, "pclk_usb_grf", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 6, GFLAGS),
++	GATE(0, "pclk_cpu_hoost", "pclk_top_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(16), 7, GFLAGS),
++
++	/* PD_VI */
++	GATE(0, "aclk_vi_niu", "aclk_vi_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(4), 15, GFLAGS),
++	GATE(ACLK_CIF, "aclk_cif", "aclk_vi_pre", 0, PX30_CLKGATE_CON(5), 1, GFLAGS),
++	GATE(ACLK_ISP, "aclk_isp", "aclk_vi_pre", 0, PX30_CLKGATE_CON(5), 3, GFLAGS),
++	GATE(0, "hclk_vi_niu", "hclk_vi_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(5), 0, GFLAGS),
++	GATE(HCLK_CIF, "hclk_cif", "hclk_vi_pre", 0, PX30_CLKGATE_CON(5), 2, GFLAGS),
++	GATE(HCLK_ISP, "hclk_isp", "hclk_vi_pre", 0, PX30_CLKGATE_CON(5), 4, GFLAGS),
++
++	/* PD_VO */
++	GATE(0, "aclk_vo_niu", "aclk_vo_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(3), 0, GFLAGS),
++	GATE(ACLK_VOPB, "aclk_vopb", "aclk_vo_pre", 0, PX30_CLKGATE_CON(3), 3, GFLAGS),
++	GATE(ACLK_RGA, "aclk_rga", "aclk_vo_pre", 0, PX30_CLKGATE_CON(3), 7, GFLAGS),
++	GATE(ACLK_VOPL, "aclk_vopl", "aclk_vo_pre", 0, PX30_CLKGATE_CON(3), 5, GFLAGS),
++
++	GATE(0, "hclk_vo_niu", "hclk_vo_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(3), 1, GFLAGS),
++	GATE(HCLK_VOPB, "hclk_vopb", "hclk_vo_pre", 0, PX30_CLKGATE_CON(3), 4, GFLAGS),
++	GATE(HCLK_RGA, "hclk_rga", "hclk_vo_pre", 0, PX30_CLKGATE_CON(3), 8, GFLAGS),
++	GATE(HCLK_VOPL, "hclk_vopl", "hclk_vo_pre", 0, PX30_CLKGATE_CON(3), 6, GFLAGS),
++
++	GATE(0, "pclk_vo_niu", "pclk_vo_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(3), 2, GFLAGS),
++	GATE(PCLK_MIPI_DSI, "pclk_mipi_dsi", "pclk_vo_pre", 0, PX30_CLKGATE_CON(3), 9, GFLAGS),
++
++	/* PD_BUS */
++	GATE(0, "aclk_bus_niu", "aclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 8, GFLAGS),
++	GATE(0, "aclk_intmem", "aclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 11, GFLAGS),
++	GATE(ACLK_GIC, "aclk_gic", "aclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 12, GFLAGS),
++	GATE(ACLK_DCF, "aclk_dcf", "aclk_bus_pre", 0, PX30_CLKGATE_CON(13), 15, GFLAGS),
++
++	GATE(0, "hclk_bus_niu", "hclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 9, GFLAGS),
++	GATE(0, "hclk_rom", "hclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 14, GFLAGS),
++	GATE(HCLK_PDM, "hclk_pdm", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 1, GFLAGS),
++	GATE(HCLK_I2S0, "hclk_i2s0", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 2, GFLAGS),
++	GATE(HCLK_I2S1, "hclk_i2s1", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 3, GFLAGS),
++	GATE(HCLK_I2S2, "hclk_i2s2", "hclk_bus_pre", 0, PX30_CLKGATE_CON(14), 4, GFLAGS),
++
++	GATE(0, "pclk_bus_niu", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(13), 10, GFLAGS),
++	GATE(PCLK_DCF, "pclk_dcf", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 0, GFLAGS),
++	GATE(PCLK_UART1, "pclk_uart1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 5, GFLAGS),
++	GATE(PCLK_UART2, "pclk_uart2", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 6, GFLAGS),
++	GATE(PCLK_UART3, "pclk_uart3", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 7, GFLAGS),
++	GATE(PCLK_UART4, "pclk_uart4", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 8, GFLAGS),
++	GATE(PCLK_UART5, "pclk_uart5", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 9, GFLAGS),
++	GATE(PCLK_I2C0, "pclk_i2c0", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 10, GFLAGS),
++	GATE(PCLK_I2C1, "pclk_i2c1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 11, GFLAGS),
++	GATE(PCLK_I2C2, "pclk_i2c2", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 12, GFLAGS),
++	GATE(PCLK_I2C3, "pclk_i2c3", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 13, GFLAGS),
++	GATE(PCLK_I2C4, "pclk_i2c4", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 14, GFLAGS),
++	GATE(PCLK_PWM0, "pclk_pwm0", "pclk_bus_pre", 0, PX30_CLKGATE_CON(14), 15, GFLAGS),
++	GATE(PCLK_PWM1, "pclk_pwm1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 0, GFLAGS),
++	GATE(PCLK_SPI0, "pclk_spi0", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 1, GFLAGS),
++	GATE(PCLK_SPI1, "pclk_spi1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 2, GFLAGS),
++	GATE(PCLK_SARADC, "pclk_saradc", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 3, GFLAGS),
++	GATE(PCLK_TSADC, "pclk_tsadc", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 4, GFLAGS),
++	GATE(PCLK_TIMER, "pclk_timer", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 5, GFLAGS),
++	GATE(PCLK_OTP_NS, "pclk_otp_ns", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 6, GFLAGS),
++	GATE(PCLK_WDT_NS, "pclk_wdt_ns", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 7, GFLAGS),
++	GATE(PCLK_GPIO1, "pclk_gpio1", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 8, GFLAGS),
++	GATE(PCLK_GPIO2, "pclk_gpio2", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 9, GFLAGS),
++	GATE(PCLK_GPIO3, "pclk_gpio3", "pclk_bus_pre", 0, PX30_CLKGATE_CON(15), 10, GFLAGS),
++	GATE(0, "pclk_grf", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 11, GFLAGS),
++	GATE(0, "pclk_sgrf", "pclk_bus_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(15), 12, GFLAGS),
++
++	/* PD_VPU */
++	GATE(0, "hclk_vpu_niu", "hclk_vpu_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(4), 7, GFLAGS),
++	GATE(HCLK_VPU, "hclk_vpu", "hclk_vpu_pre", 0, PX30_CLKGATE_CON(4), 6, GFLAGS),
++	GATE(0, "aclk_vpu_niu", "aclk_vpu_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(4), 5, GFLAGS),
++	GATE(ACLK_VPU, "aclk_vpu", "aclk_vpu_pre", 0, PX30_CLKGATE_CON(4), 4, GFLAGS),
++
++	/* PD_CRYPTO */
++	GATE(0, "hclk_crypto_niu", "hclk_crypto_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(9), 3, GFLAGS),
++	GATE(HCLK_CRYPTO, "hclk_crypto", "hclk_crypto_pre", 0, PX30_CLKGATE_CON(9), 5, GFLAGS),
++	GATE(0, "aclk_crypto_niu", "aclk_crypto_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(9), 2, GFLAGS),
++	GATE(ACLK_CRYPTO, "aclk_crypto", "aclk_crypto_pre", 0, PX30_CLKGATE_CON(9), 4, GFLAGS),
++
++	/* PD_SDCARD */
++	GATE(0, "hclk_sdmmc_niu", "hclk_sdmmc_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(7), 0, GFLAGS),
++	GATE(HCLK_SDMMC, "hclk_sdmmc", "hclk_sdmmc_pre", 0, PX30_CLKGATE_CON(7), 1, GFLAGS),
++
++	/* PD_PERI */
++	GATE(0, "aclk_peri_niu", "aclk_peri_pre", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(5), 9, GFLAGS),
++
++	/* PD_MMC_NAND */
++	GATE(HCLK_NANDC, "hclk_nandc", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(5), 15, GFLAGS),
++	GATE(0, "hclk_mmc_nand_niu", "hclk_mmc_nand", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(6), 8, GFLAGS),
++	GATE(HCLK_SDIO, "hclk_sdio", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(6), 9, GFLAGS),
++	GATE(HCLK_EMMC, "hclk_emmc", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(6), 10, GFLAGS),
++	GATE(HCLK_SFC, "hclk_sfc", "hclk_mmc_nand", 0, PX30_CLKGATE_CON(6), 11, GFLAGS),
++
++	/* PD_USB */
++	GATE(0, "hclk_usb_niu", "hclk_usb", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(7), 4, GFLAGS),
++	GATE(HCLK_OTG, "hclk_otg", "hclk_usb", 0, PX30_CLKGATE_CON(7), 5, GFLAGS),
++	GATE(HCLK_HOST, "hclk_host", "hclk_usb", 0, PX30_CLKGATE_CON(7), 6, GFLAGS),
++	GATE(HCLK_HOST_ARB, "hclk_host_arb", "hclk_usb", CLK_IGNORE_UNUSED, PX30_CLKGATE_CON(7), 8, GFLAGS),
++
++	/* PD_GMAC */
++	GATE(0, "aclk_gmac_niu", "aclk_gmac_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(8), 0, GFLAGS),
++	GATE(ACLK_GMAC, "aclk_gmac", "aclk_gmac_pre", 0,
++			PX30_CLKGATE_CON(8), 2, GFLAGS),
++	GATE(0, "pclk_gmac_niu", "pclk_gmac_pre", CLK_IGNORE_UNUSED,
++			PX30_CLKGATE_CON(8), 1, GFLAGS),
++	GATE(PCLK_GMAC, "pclk_gmac", "pclk_gmac_pre", 0,
++			PX30_CLKGATE_CON(8), 3, GFLAGS),
 +};
-+EXPORT_SYMBOL_GPL(clk_half_divider_ops);
 +
-+/**
-+ * Register a clock branch.
-+ * Most clock branches have a form like
-+ *
-+ * src1 --|--\
-+ *        |M |--[GATE]-[DIV]-
-+ * src2 --|--/
-+ *
-+ * sometimes without one of those components.
-+ */
-+struct clk *rockchip_clk_register_halfdiv(const char *name,
-+					  const char *const *parent_names,
-+					  u8 num_parents, void __iomem *base,
-+					  int muxdiv_offset, u8 mux_shift,
-+					  u8 mux_width, u8 mux_flags,
-+					  u8 div_shift, u8 div_width,
-+					  u8 div_flags, int gate_offset,
-+					  u8 gate_shift, u8 gate_flags,
-+					  unsigned long flags,
-+					  spinlock_t *lock)
++static struct rockchip_clk_branch px30_clk_pmu_branches[] __initdata = {
++	/*
++	 * Clock-Architecture Diagram 2
++	 */
++
++	COMPOSITE_FRACMUX(0, "clk_rtc32k_frac", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_PMU_CLKSEL_CON(1), 0,
++			PX30_PMU_CLKGATE_CON(0), 13, GFLAGS,
++			&px30_rtc32k_pmu_fracmux),
++
++	COMPOSITE_NOMUX(XIN24M_DIV, "xin24m_div", "xin24m", CLK_IGNORE_UNUSED,
++			PX30_PMU_CLKSEL_CON(0), 8, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 12, GFLAGS),
++
++	COMPOSITE_NOMUX(0, "clk_wifi_pmu_src", "gpll", 0,
++			PX30_PMU_CLKSEL_CON(2), 8, 6, DFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 14, GFLAGS),
++	COMPOSITE_NODIV(SCLK_WIFI_PMU, "clk_wifi_pmu", mux_wifi_pmu_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(2), 15, 1, MFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 15, GFLAGS),
++
++	COMPOSITE(0, "clk_uart0_pmu_src", mux_uart_src_p, 0,
++			PX30_PMU_CLKSEL_CON(3), 14, 2, MFLAGS, 0, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 0, GFLAGS),
++	COMPOSITE_NOMUX_HALFDIV(0, "clk_uart0_np5", "clk_uart0_pmu_src", 0,
++			PX30_PMU_CLKSEL_CON(4), 0, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 1, GFLAGS),
++	COMPOSITE_FRACMUX(0, "clk_uart0_frac", "clk_uart0_pmu_src", CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(5), 0,
++			PX30_PMU_CLKGATE_CON(1), 2, GFLAGS,
++			&px30_uart0_pmu_fracmux),
++	GATE(SCLK_UART0_PMU, "clk_uart0_pmu", "clk_uart0_pmu_mux", CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKGATE_CON(1), 3, GFLAGS),
++
++	GATE(SCLK_PVTM_PMU, "clk_pvtm_pmu", "xin24m", 0,
++			PX30_PMU_CLKGATE_CON(1), 4, GFLAGS),
++
++	COMPOSITE_NOMUX(PCLK_PMU_PRE, "pclk_pmu_pre", "gpll", 0,
++			PX30_PMU_CLKSEL_CON(0), 0, 5, DFLAGS,
++			PX30_PMU_CLKGATE_CON(0), 0, GFLAGS),
++
++	COMPOSITE_NOMUX(SCLK_REF24M_PMU, "clk_ref24m_pmu", "gpll", 0,
++			PX30_PMU_CLKSEL_CON(2), 0, 6, DFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 8, GFLAGS),
++	COMPOSITE_NODIV(SCLK_USBPHY_REF, "clk_usbphy_ref", mux_usbphy_ref_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(2), 6, 1, MFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 9, GFLAGS),
++	COMPOSITE_NODIV(SCLK_MIPIDSIPHY_REF, "clk_mipidsiphy_ref", mux_mipidsiphy_ref_p, CLK_SET_RATE_PARENT,
++			PX30_PMU_CLKSEL_CON(2), 7, 1, MFLAGS,
++			PX30_PMU_CLKGATE_CON(1), 10, GFLAGS),
++
++	/*
++	 * Clock-Architecture Diagram 9
++	 */
++
++	/* PD_PMU */
++	GATE(0, "pclk_pmu_niu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 1, GFLAGS),
++	GATE(0, "pclk_pmu_sgrf", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 2, GFLAGS),
++	GATE(0, "pclk_pmu_grf", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 3, GFLAGS),
++	GATE(0, "pclk_pmu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 4, GFLAGS),
++	GATE(0, "pclk_pmu_mem", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 5, GFLAGS),
++	GATE(PCLK_GPIO0_PMU, "pclk_gpio0_pmu", "pclk_pmu_pre", 0, PX30_PMU_CLKGATE_CON(0), 6, GFLAGS),
++	GATE(PCLK_UART0_PMU, "pclk_uart0_pmu", "pclk_pmu_pre", 0, PX30_PMU_CLKGATE_CON(0), 7, GFLAGS),
++	GATE(0, "pclk_cru_pmu", "pclk_pmu_pre", CLK_IGNORE_UNUSED, PX30_PMU_CLKGATE_CON(0), 8, GFLAGS),
++};
++
++static const char *const px30_pmucru_critical_clocks[] __initconst = {
++	"aclk_bus_pre",
++	"pclk_bus_pre",
++	"hclk_bus_pre",
++	"aclk_peri_pre",
++	"hclk_peri_pre",
++	"aclk_gpu_niu",
++	"pclk_top_pre",
++	"pclk_pmu_pre",
++	"hclk_usb_niu",
++	"pll_npll",
++	"usb480m",
++	"clk_uart2",
++	"pclk_uart2",
++};
++
++static void __iomem *px30_cru_base;
++static void __iomem *px30_pmucru_base;
++
++void px30_dump_cru(void)
 +{
-+	struct clk *clk;
-+	struct clk_mux *mux = NULL;
-+	struct clk_gate *gate = NULL;
-+	struct clk_divider *div = NULL;
-+	const struct clk_ops *mux_ops = NULL, *div_ops = NULL,
-+			     *gate_ops = NULL;
-+
-+	if (num_parents > 1) {
-+		mux = kzalloc(sizeof(*mux), GFP_KERNEL);
-+		if (!mux)
-+			return ERR_PTR(-ENOMEM);
-+
-+		mux->reg = base + muxdiv_offset;
-+		mux->shift = mux_shift;
-+		mux->mask = BIT(mux_width) - 1;
-+		mux->flags = mux_flags;
-+		mux->lock = lock;
-+		mux_ops = (mux_flags & CLK_MUX_READ_ONLY) ? &clk_mux_ro_ops
-+							: &clk_mux_ops;
++	if (px30_cru_base) {
++		pr_warn("CRU:\n");
++		print_hex_dump(KERN_WARNING, "", DUMP_PREFIX_OFFSET,
++			       32, 4, px30_cru_base,
++			       0x400, false);
 +	}
-+
-+	if (gate_offset >= 0) {
-+		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
-+		if (!gate)
-+			goto err_gate;
-+
-+		gate->flags = gate_flags;
-+		gate->reg = base + gate_offset;
-+		gate->bit_idx = gate_shift;
-+		gate->lock = lock;
-+		gate_ops = &clk_gate_ops;
++	if (px30_pmucru_base) {
++		pr_warn("PMU CRU:\n");
++		print_hex_dump(KERN_WARNING, "", DUMP_PREFIX_OFFSET,
++			       32, 4, px30_pmucru_base,
++			       0x90, false);
 +	}
-+
-+	if (div_width > 0) {
-+		div = kzalloc(sizeof(*div), GFP_KERNEL);
-+		if (!div)
-+			goto err_div;
-+
-+		div->flags = div_flags;
-+		div->reg = base + muxdiv_offset;
-+		div->shift = div_shift;
-+		div->width = div_width;
-+		div->lock = lock;
-+		div_ops = &clk_half_divider_ops;
-+	}
-+
-+	clk = clk_register_composite(NULL, name, parent_names, num_parents,
-+				     mux ? &mux->hw : NULL, mux_ops,
-+				     div ? &div->hw : NULL, div_ops,
-+				     gate ? &gate->hw : NULL, gate_ops,
-+				     flags);
-+
-+	return clk;
-+err_div:
-+	kfree(gate);
-+err_gate:
-+	kfree(mux);
-+	return ERR_PTR(-ENOMEM);
 +}
-diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-index 3cd8ad59e0b7..cd1474c05c91 100644
---- a/drivers/clk/rockchip/clk.c
-+++ b/drivers/clk/rockchip/clk.c
-@@ -498,6 +498,16 @@ void __init rockchip_clk_register_branches(
- 				list->gate_flags, flags, list->child,
- 				&ctx->lock);
- 			break;
-+		case branch_half_divider:
-+			clk = rockchip_clk_register_halfdiv(list->name,
-+				list->parent_names, list->num_parents,
-+				ctx->reg_base, list->muxdiv_offset,
-+				list->mux_shift, list->mux_width,
-+				list->mux_flags, list->div_shift,
-+				list->div_width, list->div_flags,
-+				list->gate_offset, list->gate_shift,
-+				list->gate_flags, flags, &ctx->lock);
-+			break;
- 		case branch_gate:
- 			flags |= CLK_SET_RATE_PARENT;
- 
++EXPORT_SYMBOL_GPL(px30_dump_cru);
++
++static int px30_clk_panic(struct notifier_block *this,
++			  unsigned long ev, void *ptr)
++{
++	px30_dump_cru();
++	return NOTIFY_DONE;
++}
++
++static struct notifier_block px30_clk_panic_block = {
++	.notifier_call = px30_clk_panic,
++};
++
++static void __init px30_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++	void __iomem *reg_base;
++	struct clk *clk;
++
++	reg_base = of_iomap(np, 0);
++	if (!reg_base) {
++		pr_err("%s: could not map cru region\n", __func__);
++		return;
++	}
++
++	px30_cru_base = reg_base;
++
++	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	if (IS_ERR(ctx)) {
++		pr_err("%s: rockchip clk init failed\n", __func__);
++		iounmap(reg_base);
++		return;
++	}
++
++	/* aclk_dmac is controlled by sgrf_soc_con1[11]. */
++	clk = clk_register_fixed_factor(NULL, "aclk_dmac", "aclk_bus_pre", 0, 1, 1);
++	if (IS_ERR(clk))
++		pr_warn("%s: could not register clock aclk_dmac: %ld\n",
++			__func__, PTR_ERR(clk));
++	else
++		rockchip_clk_add_lookup(ctx, clk, ACLK_DMAC);
++
++	rockchip_clk_register_plls(ctx, px30_pll_clks,
++				   ARRAY_SIZE(px30_pll_clks),
++				   PX30_GRF_SOC_STATUS0);
++	rockchip_clk_register_branches(ctx, px30_clk_branches,
++				       ARRAY_SIZE(px30_clk_branches));
++
++	rockchip_clk_register_armclk(ctx, ARMCLK, "armclk",
++				     mux_armclk_p, ARRAY_SIZE(mux_armclk_p),
++				     &px30_cpuclk_data, px30_cpuclk_rates,
++				     ARRAY_SIZE(px30_cpuclk_rates));
++
++	rockchip_register_softrst(np, 12, reg_base + PX30_SOFTRST_CON(0),
++				  ROCKCHIP_SOFTRST_HIWORD_MASK);
++
++	rockchip_register_restart_notifier(ctx, PX30_GLB_SRST_FST, NULL);
++
++	rockchip_clk_of_add_provider(np, ctx);
++
++	atomic_notifier_chain_register(&panic_notifier_list,
++				       &px30_clk_panic_block);
++}
++
++CLK_OF_DECLARE(px30_cru, "rockchip,px30-cru", px30_clk_init);
++
++static void __init px30_pmu_clk_init(struct device_node *np)
++{
++	struct rockchip_clk_provider *ctx;
++	void __iomem *reg_base;
++
++	reg_base = of_iomap(np, 0);
++	if (!reg_base) {
++		pr_err("%s: could not map cru pmu region\n", __func__);
++		return;
++	}
++
++	px30_pmucru_base = reg_base;
++
++	ctx = rockchip_clk_init(np, reg_base, CLKPMU_NR_CLKS);
++	if (IS_ERR(ctx)) {
++		pr_err("%s: rockchip pmu clk init failed\n", __func__);
++		return;
++	}
++
++	rockchip_clk_register_plls(ctx, px30_pmu_pll_clks,
++				   ARRAY_SIZE(px30_pmu_pll_clks), PX30_GRF_SOC_STATUS0);
++
++	rockchip_clk_register_branches(ctx, px30_clk_pmu_branches,
++				       ARRAY_SIZE(px30_clk_pmu_branches));
++
++	rockchip_clk_protect_critical(px30_pmucru_critical_clocks,
++				      ARRAY_SIZE(px30_pmucru_critical_clocks));
++
++	rockchip_clk_of_add_provider(np, ctx);
++}
++
++CLK_OF_DECLARE(px30_cru_pmu, "rockchip,px30-pmucru", px30_pmu_clk_init);
++
 diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
-index ef601dded32c..23c569a875d4 100644
+index 23c569a875d4..6b53fff4cc96 100644
 --- a/drivers/clk/rockchip/clk.h
 +++ b/drivers/clk/rockchip/clk.h
-@@ -354,6 +354,7 @@ enum rockchip_clk_branch_type {
- 	branch_inverter,
- 	branch_factor,
- 	branch_ddrclk,
-+	branch_half_divider,
- };
+@@ -34,7 +34,46 @@
+ #define HIWORD_UPDATE(val, mask, shift) \
+ 		((val) << (shift) | (mask) << ((shift) + 16))
  
- struct rockchip_clk_branch {
-@@ -684,6 +685,79 @@ struct rockchip_clk_branch {
- 		.gate_flags	= gf,				\
- 	}
- 
-+#define COMPOSITE_HALFDIV(_id, cname, pnames, f, mo, ms, mw, mf, ds, dw,\
-+			  df, go, gs, gf)				\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_half_divider,		\
-+		.name		= cname,			\
-+		.parent_names	= pnames,			\
-+		.num_parents	= ARRAY_SIZE(pnames),		\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.mux_shift	= ms,				\
-+		.mux_width	= mw,				\
-+		.mux_flags	= mf,				\
-+		.div_shift	= ds,				\
-+		.div_width	= dw,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= go,				\
-+		.gate_shift	= gs,				\
-+		.gate_flags	= gf,				\
-+	}
+-/* register positions shared by RV1108, RK2928, RK3036, RK3066, RK3188 and RK3228 */
++/* register positions shared by PX30, RV1108, RK2928, RK3036, RK3066, RK3188 and RK3228 */
++#define BOOST_PLL_H_CON(x)		((x) * 0x4)
++#define BOOST_CLK_CON			0x0008
++#define BOOST_BOOST_CON			0x000c
++#define BOOST_SWITCH_CNT		0x0010
++#define BOOST_HIGH_PERF_CNT0		0x0014
++#define BOOST_HIGH_PERF_CNT1		0x0018
++#define BOOST_STATIS_THRESHOLD		0x001c
++#define BOOST_SHORT_SWITCH_CNT		0x0020
++#define BOOST_SWITCH_THRESHOLD		0x0024
++#define BOOST_FSM_STATUS		0x0028
++#define BOOST_PLL_L_CON(x)		((x) * 0x4 + 0x2c)
++#define BOOST_RECOVERY_MASK		0x1
++#define BOOST_RECOVERY_SHIFT		1
++#define BOOST_SW_CTRL_MASK		0x1
++#define BOOST_SW_CTRL_SHIFT		2
++#define BOOST_LOW_FREQ_EN_MASK		0x1
++#define BOOST_LOW_FREQ_EN_SHIFT		3
++#define BOOST_BUSY_STATE		BIT(8)
 +
-+#define COMPOSITE_NOGATE_HALFDIV(_id, cname, pnames, f, mo, ms, mw, mf,	\
-+				 ds, dw, df)				\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_half_divider,		\
-+		.name		= cname,			\
-+		.parent_names	= pnames,			\
-+		.num_parents	= ARRAY_SIZE(pnames),		\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.mux_shift	= ms,				\
-+		.mux_width	= mw,				\
-+		.mux_flags	= mf,				\
-+		.div_shift	= ds,				\
-+		.div_width	= dw,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= -1,				\
-+	}
++#define PX30_PLL_CON(x)			((x) * 0x4)
++#define PX30_CLKSEL_CON(x)		((x) * 0x4 + 0x100)
++#define PX30_CLKGATE_CON(x)		((x) * 0x4 + 0x200)
++#define PX30_GLB_SRST_FST		0xb8
++#define PX30_GLB_SRST_SND		0xbc
++#define PX30_SOFTRST_CON(x)		((x) * 0x4 + 0x300)
++#define PX30_MODE_CON			0xa0
++#define PX30_MISC_CON			0xa4
++#define PX30_SDMMC_CON0			0x380
++#define PX30_SDMMC_CON1			0x384
++#define PX30_SDIO_CON0			0x388
++#define PX30_SDIO_CON1			0x38c
++#define PX30_EMMC_CON0			0x390
++#define PX30_EMMC_CON1			0x394
 +
-+#define COMPOSITE_NOMUX_HALFDIV(_id, cname, pname, f, mo, ds, dw, df,	\
-+			go, gs, gf)				\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_half_divider,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= mo,				\
-+		.div_shift	= ds,				\
-+		.div_width	= dw,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= go,				\
-+		.gate_shift	= gs,				\
-+		.gate_flags	= gf,				\
-+	}
++#define PX30_PMU_PLL_CON(x)		((x) * 0x4)
++#define PX30_PMU_CLKSEL_CON(x)		((x) * 0x4 + 0x40)
++#define PX30_PMU_CLKGATE_CON(x)		((x) * 0x4 + 0x80)
++#define PX30_PMU_MODE			0x0020
 +
-+#define DIV_HALF(_id, cname, pname, f, o, s, w, df)			\
-+	{							\
-+		.id		= _id,				\
-+		.branch_type	= branch_half_divider,		\
-+		.name		= cname,			\
-+		.parent_names	= (const char *[]){ pname },	\
-+		.num_parents	= 1,				\
-+		.flags		= f,				\
-+		.muxdiv_offset	= o,				\
-+		.div_shift	= s,				\
-+		.div_width	= w,				\
-+		.div_flags	= df,				\
-+		.gate_offset	= -1,				\
-+	}
-+
- struct rockchip_clk_provider *rockchip_clk_init(struct device_node *np,
- 			void __iomem *base, unsigned long nr_clks);
- void rockchip_clk_of_add_provider(struct device_node *np,
-@@ -708,6 +782,17 @@ void rockchip_register_restart_notifier(struct rockchip_clk_provider *ctx,
- 
- #define ROCKCHIP_SOFTRST_HIWORD_MASK	BIT(0)
- 
-+struct clk *rockchip_clk_register_halfdiv(const char *name,
-+					  const char *const *parent_names,
-+					  u8 num_parents, void __iomem *base,
-+					  int muxdiv_offset, u8 mux_shift,
-+					  u8 mux_width, u8 mux_flags,
-+					  u8 div_shift, u8 div_width,
-+					  u8 div_flags, int gate_offset,
-+					  u8 gate_shift, u8 gate_flags,
-+					  unsigned long flags,
-+					  spinlock_t *lock);
-+
- #ifdef CONFIG_RESET_CONTROLLER
- void rockchip_register_softrst(struct device_node *np,
- 			       unsigned int num_regs,
+ #define RV1108_PLL_CON(x)		((x) * 0x4)
+ #define RV1108_CLKSEL_CON(x)		((x) * 0x4 + 0x60)
+ #define RV1108_CLKGATE_CON(x)		((x) * 0x4 + 0x120)
 -- 
 1.9.1
 
