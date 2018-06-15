@@ -5,32 +5,32 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 59874C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:21:15 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 80FB6C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:21:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B61208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:21:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19B61208B2
+	by mail.kernel.org (Postfix) with ESMTP id 410BF208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:21:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 410BF208B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965887AbeFONVL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 09:21:11 -0400
-Received: from mga03.intel.com ([134.134.136.65]:30593 "EHLO mga03.intel.com"
+        id S965698AbeFONUX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 09:20:23 -0400
+Received: from mga12.intel.com ([192.55.52.136]:16380 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965760AbeFONUZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 09:20:25 -0400
+        id S936144AbeFONUV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 09:20:21 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 06:20:24 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 06:20:20 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,227,1526367600"; 
-   d="scan'208";a="50163145"
+   d="scan'208";a="47355779"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 15 Jun 2018 06:20:21 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 15 Jun 2018 06:20:17 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id 7B8D24A2; Fri, 15 Jun 2018 16:20:18 +0300 (EEST)
+        id 6FB1F477; Fri, 15 Jun 2018 16:20:18 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alasdair Kergon <agk@redhat.com>,
         Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
@@ -41,9 +41,9 @@ To:     Alasdair Kergon <agk@redhat.com>,
         Yury Norov <ynorov@caviumnetworks.com>,
         linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v2 5/5] Input: evdev - Switch to bitmap_zalloc()
-Date:   Fri, 15 Jun 2018 16:20:17 +0300
-Message-Id: <20180615132017.23889-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2 4/5] Input: gpio-keys - Switch to bitmap_zalloc()
+Date:   Fri, 15 Jun 2018 16:20:16 +0300
+Message-Id: <20180615132017.23889-5-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180615132017.23889-1-andriy.shevchenko@linux.intel.com>
 References: <20180615132017.23889-1-andriy.shevchenko@linux.intel.com>
@@ -58,76 +58,49 @@ Besides that it returns pointer of bitmap type instead of opaque void *.
 Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/input/evdev.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ drivers/input/keyboard/gpio_keys.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index c81c79d01d93..370206f987f9 100644
---- a/drivers/input/evdev.c
-+++ b/drivers/input/evdev.c
-@@ -481,7 +481,7 @@ static int evdev_release(struct inode *inode, struct file *file)
- 	evdev_detach_client(evdev, client);
+diff --git a/drivers/input/keyboard/gpio_keys.c b/drivers/input/keyboard/gpio_keys.c
+index 052e37675086..492a971b95b5 100644
+--- a/drivers/input/keyboard/gpio_keys.c
++++ b/drivers/input/keyboard/gpio_keys.c
+@@ -196,7 +196,7 @@ static ssize_t gpio_keys_attr_show_helper(struct gpio_keys_drvdata *ddata,
+ 	ssize_t ret;
+ 	int i;
  
- 	for (i = 0; i < EV_CNT; ++i)
--		kfree(client->evmasks[i]);
-+		bitmap_free(client->evmasks[i]);
- 
- 	kvfree(client);
- 
-@@ -925,17 +925,15 @@ static int evdev_handle_get_val(struct evdev_client *client,
- {
- 	int ret;
- 	unsigned long *mem;
--	size_t len;
- 
--	len = BITS_TO_LONGS(maxbit) * sizeof(unsigned long);
--	mem = kmalloc(len, GFP_KERNEL);
-+	mem = bitmap_alloc(maxbit, GFP_KERNEL);
- 	if (!mem)
+-	bits = kcalloc(BITS_TO_LONGS(n_events), sizeof(*bits), GFP_KERNEL);
++	bits = bitmap_zalloc(n_events, GFP_KERNEL);
+ 	if (!bits)
  		return -ENOMEM;
  
- 	spin_lock_irq(&dev->event_lock);
- 	spin_lock(&client->buffer_lock);
+@@ -216,7 +216,7 @@ static ssize_t gpio_keys_attr_show_helper(struct gpio_keys_drvdata *ddata,
+ 	buf[ret++] = '\n';
+ 	buf[ret] = '\0';
  
--	memcpy(mem, bits, len);
-+	bitmap_copy(mem, bits, maxbit);
- 
- 	spin_unlock(&dev->event_lock);
- 
-@@ -947,7 +945,7 @@ static int evdev_handle_get_val(struct evdev_client *client,
- 	if (ret < 0)
- 		evdev_queue_syn_dropped(client);
- 
--	kfree(mem);
-+	bitmap_free(mem);
+-	kfree(bits);
++	bitmap_free(bits);
  
  	return ret;
  }
-@@ -1003,13 +1001,13 @@ static int evdev_set_mask(struct evdev_client *client,
- 	if (!cnt)
- 		return 0;
+@@ -240,7 +240,7 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+ 	ssize_t error;
+ 	int i;
  
--	mask = kcalloc(sizeof(unsigned long), BITS_TO_LONGS(cnt), GFP_KERNEL);
-+	mask = bitmap_zalloc(cnt, GFP_KERNEL);
- 	if (!mask)
+-	bits = kcalloc(BITS_TO_LONGS(n_events), sizeof(*bits), GFP_KERNEL);
++	bits = bitmap_zalloc(n_events, GFP_KERNEL);
+ 	if (!bits)
  		return -ENOMEM;
  
- 	error = bits_from_user(mask, cnt - 1, codes_size, codes, compat);
- 	if (error < 0) {
--		kfree(mask);
-+		bitmap_free(mask);
- 		return error;
- 	}
+@@ -284,7 +284,7 @@ static ssize_t gpio_keys_attr_store_helper(struct gpio_keys_drvdata *ddata,
+ 	mutex_unlock(&ddata->disable_lock);
  
-@@ -1018,7 +1016,7 @@ static int evdev_set_mask(struct evdev_client *client,
- 	client->evmasks[type] = mask;
- 	spin_unlock_irqrestore(&client->buffer_lock, flags);
- 
--	kfree(oldmask);
-+	bitmap_free(oldmask);
- 
- 	return 0;
+ out:
+-	kfree(bits);
++	bitmap_free(bits);
+ 	return error;
  }
+ 
 -- 
 2.17.1
 
