@@ -6,209 +6,356 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8E0A1C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:06:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 777D2C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39870208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39870208B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 2CD21208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 12:07:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CD21208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936187AbeFOMGZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 08:06:25 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59854 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755650AbeFOMGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 08:06:23 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 3B3CAACA7;
-        Fri, 15 Jun 2018 12:06:21 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 764731E11E9; Fri, 15 Jun 2018 14:06:20 +0200 (CEST)
-Date:   Fri, 15 Jun 2018 14:06:20 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
-Message-ID: <20180615120620.uyc7h6sudbpsecnm@quack2.suse.cz>
-References: <CACT4Y+bHDWDapwOonO1EpR6TiRa=qf9nSDtHArq75yCGuHf=gg@mail.gmail.com>
- <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
- <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
- <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
- <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
- <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
- <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
- <20180611172053.GR1351649@devbig577.frc2.facebook.com>
- <20180612155754.x5k2yndh5t6wlmpy@quack2.suse.cz>
- <20180613143315.GS1351649@devbig577.frc2.facebook.com>
+        id S965618AbeFOMHL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 08:07:11 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:34735 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936193AbeFOMHK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 08:07:10 -0400
+X-IronPort-AV: E=Sophos;i="5.51,226,1526367600"; 
+   d="scan'208";a="15288827"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES128-SHA; 15 Jun 2018 05:07:09 -0700
+Received: from [10.159.205.91] (10.10.76.4) by CHN-SV-EXCH01.mchp-main.com
+ (10.10.76.37) with Microsoft SMTP Server id 14.3.352.0; Fri, 15 Jun 2018
+ 05:07:08 -0700
+Subject: Re: [PATCH 1/4] arm: dts: add support for Laird WB45N cpu module and
+ DVK
+To:     Ben Whitten <Ben.Whitten@lairdtech.com>,
+        Ben Whitten <ben.whitten@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <1528966340-23216-1-git-send-email-ben.whitten@lairdtech.com>
+ <03f0f635-3fc2-085b-20e0-e1fcaa9e8062@microchip.com>
+ <BY1PR02MB1114728E5FF0709137B4224FE77C0@BY1PR02MB1114.namprd02.prod.outlook.com>
+From:   Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+Message-ID: <c6006d92-ac7b-4f5f-8981-ee6a257f2f5a@microchip.com>
+Date:   Fri, 15 Jun 2018 14:07:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="scbfshupznc5roe3"
-Content-Disposition: inline
-In-Reply-To: <20180613143315.GS1351649@devbig577.frc2.facebook.com>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <BY1PR02MB1114728E5FF0709137B4224FE77C0@BY1PR02MB1114.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---scbfshupznc5roe3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed 13-06-18 07:33:15, Tejun Heo wrote:
-> Hello, Jan.
+On 15/06/2018 at 12:01, Ben Whitten wrote:
+>> On 14/06/2018 at 10:51, Ben Whitten wrote:
+>>> Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+>>> ---
+>>>    arch/arm/boot/dts/Makefile        |   3 +-
+>>>    arch/arm/boot/dts/at91-wb45n.dts  |  66 +++++++++++++++
+>>>    arch/arm/boot/dts/at91-wb45n.dtsi | 169
+>> ++++++++++++++++++++++++++++++++++++++
+>>>    3 files changed, 237 insertions(+), 1 deletion(-)
+>>>    create mode 100644 arch/arm/boot/dts/at91-wb45n.dts
+>>>    create mode 100644 arch/arm/boot/dts/at91-wb45n.dtsi
+>>>
+>>> diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
+>>> index 7e24249..1ee94ee 100644
+>>> --- a/arch/arm/boot/dts/Makefile
+>>> +++ b/arch/arm/boot/dts/Makefile
+>>> @@ -42,7 +42,8 @@ dtb-$(CONFIG_SOC_AT91SAM9) += \
+>>>    	at91sam9g25ek.dtb \
+>>>    	at91sam9g35ek.dtb \
+>>>    	at91sam9x25ek.dtb \
+>>> -	at91sam9x35ek.dtb
+>>> +	at91sam9x35ek.dtb \
+>>> +	at91-wb45n.dtb
+>>>    dtb-$(CONFIG_SOC_SAM_V7) += \
+>>>    	at91-kizbox2.dtb \
+>>>    	at91-nattis-2-natte-2.dtb \
+>>> diff --git a/arch/arm/boot/dts/at91-wb45n.dts b/arch/arm/boot/dts/at91-
+>> wb45n.dts
+>>> new file mode 100644
+>>> index 0000000..4e88815
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/at91-wb45n.dts
+>>> @@ -0,0 +1,66 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * at91-wb45n.dts - Device Tree file for WB45NBT board
+>>> + *
+>>> + *  Copyright (C) 2018 Laird
+>>> + *
+>>> +*/
+>>> +/dts-v1/;
+>>> +#include "at91-wb45n.dtsi"
+>>> +
+>>> +/ {
+>>> +	model = "Laird Workgroup Bridge 45N - Atmel AT91SAM (dt)";
+>>> +	compatible = "laird,wb45n", "laird,wbxx", "atmel,at91sam9x5",
+>> "atmel,at91sam9";
+>>
+>> "laird" prefix must be added to
+>> Documentation/devicetree/bindings/vendor-prefixes.txt before using it:
+>> you can do a little patch as a first patch of this series.
+>> Otherwise it will trigger a warning message while running
+>> scripts/checkpatch.pl on top of your patch.
+>>
+>>
+>>> +
+>>> +	ahb {
+>>> +		apb {
+>>> +			watchdog@fffffe40 {
+>>> +				status = "okay";
+>>> +			};
+>>> +		};
+>>> +	};
+>>> +
+>>> +	gpio_keys {
+>>> +		compatible = "gpio-keys";
+>>> +		#address-cells = <1>;
+>>> +		#size-cells = <0>;
+>>> +		irqbtn@pb18 {
+>>
+>> I'm not sure that the @pb18 can be used like this. This address
+>> extension must be used in a "reg" property in the node. dtc used with
+>> warning switch on might trigger an error for this.
+>>
+>>> +			label = "IRQBTN";
+>>> +			linux,code = <99>;
+>>> +			gpios = <&pioB 18 GPIO_ACTIVE_LOW>;
+>>> +			gpio-key,wakeup = <1>;
+>>> +		};
+>>> +	};
+>>> +};
+>>> +
+>>> +&usb0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&mmc0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&spi0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&macb0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&dbgu {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&usart0 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&usart3 {
+>>> +	status = "okay";
+>>> +};
+>>> +
+>>> +&i2c1 {
+>>> +	status = "okay";
+>>> +};
+>>> diff --git a/arch/arm/boot/dts/at91-wb45n.dtsi b/arch/arm/boot/dts/at91-
+>> wb45n.dtsi
+>>> new file mode 100644
+>>> index 0000000..2fa58e2
+>>> --- /dev/null
+>>> +++ b/arch/arm/boot/dts/at91-wb45n.dtsi
+>>> @@ -0,0 +1,169 @@
+>>> +// SPDX-License-Identifier: GPL-2.0
+>>> +/*
+>>> + * at91-wb45n.dtsi - Device Tree file for WB45NBT board
+>>> + *
+>>> + *  Copyright (C) 2018 Laird
+>>> + *
+>>> + */
+>>> +
+>>> +#include "at91sam9g25.dtsi"
+>>> +
+>>> +/ {
+>>> +	model = "Laird Workgroup Bridge 45N - Atmel AT91SAM (dt)";
+>>> +	compatible = "laird,wb45n", "laird,wbxx", "atmel,at91sam9x5",
+>> "atmel,at91sam9";
+>>> +
+>>> +	chosen {
+>>> +		bootargs = "ubi.mtd=6 root=ubi0:rootfs rootfstype=ubifs
+>> rw";
+>>> +		stdout-path = "serial0:115200n8";
+>>> +	};
+>>> +
+>>> +	memory {
+>>> +		reg = <0x20000000 0x4000000>;
+>>> +	};
+>>> +
+>>> +	ahb {
+>>> +		apb {
+>>> +			shdwc@fffffe10 {
+>>
+>> I would advice you to take exactly the node name:
+>> "shutdown-controller@fffffe10"; Anyway, it will go away after you use
+>> the label notation as advised by Alexandre.
+>>
+>>> +				atmel,wakeup-mode = "low";
+>>> +			};
+>>> +
+>>> +			pinctrl@fffff400 {
+>>> +				usb2 {
+>>> +					pinctrl_board_usb2: usb2-board {
+>>> +						atmel,pins =
+>>> +							<AT91_PIOB 11
+>> AT91_PERIPH_GPIO AT91_PINCTRL_DEGLITCH>;		/* PB11 gpio
+>> vbus sense, deglitch */
+>>> +					};
+>>> +				};
+>>> +			};
+>>> +
+>>> +			rstc@fffffe00 {
+>>> +				compatible = "atmel,sama5d3-rstc";
+>>> +			};
+>>
+>> I don't think this node is needed.
 > 
-> On Tue, Jun 12, 2018 at 05:57:54PM +0200, Jan Kara wrote:
-> > > Yeah, right, so the root cause is that we're walking the wb_list while
-> > > holding lock and expecting the object to stay there even after lock is
-> > > released.  Hmm... we can use a mutex to synchronize the two
-> > > destruction paths.  It's not like they're hot paths anyway.
-> > 
-> > Hmm, do you mean like having a per-bdi or even a global mutex that would
-> > protect whole wb_shutdown()? Yes, that should work and we could get rid of
-> > WB_shutting_down bit as well with that. Just it seems a bit strange to
+> I dug through our old code reviews and found this message relating to testing
+> reboot over several thousand times in our testbed:
+> After the slow clock has been enabled on the reset controller via upstream
+> changes, the dram disable access and power down code is causing the SAM9G25
+> to hang occasionally on reboot.  Using the simple reset function provided
+> for SAMA5D3 instead.
 > 
-> Yeap.
-> 
-> > introduce a mutex only to synchronize these two shutdown paths - usually
-> > locks protect data structures and in this case we have cgwb_lock for
-> > that so it looks like a duplication from a first look.
-> 
-> Yeah, I feel a bit reluctant too but I think that's the right thing to
-> do here.  This is an inherently weird case where there are two ways
-> that an object can go away with the immediate drain requirement from
-> one side.  It's not a hot path and the dumber the synchronization the
-> better, right?
+> So it appears to be a workaround for a bug that existed ~2 years ago, may still be
+> relevant as there haven't been many changes to the reset code in that time.
 
-Yeah, fair enough. Something like attached patch? It is indeed considerably
-simpler than fixing synchronization using WB_shutting_down. This one even
-got some testing using scsi_debug, I want to do more testing next week with
-more cgroup writeback included.
+All right, I read too quickly and thought it was sama5d3... Your 
+feedback is interesting anyway. I'll store this for future reference and 
+investigation.
 
-								Honza
+>>> +
+>>> +		};
+>>> +	};
+>>> +
+>>> +	atheros {
+>>> +		compatible = "atheros,ath6kl";
+>>> +		atheros,board-id = "SD32";
+>>> +	};
+>>> +};
+>>> +
+>>> +&slow_xtal {
+>>> +	clock-frequency = <32768>;
+>>> +};
+>>> +
+>>> +&main_xtal {
+>>> +	clock-frequency = <12000000>;
+>>> +};
+>>> +
+>>> +&ebi {
+>>> +	status = "okay";
+>>> +	nand_controller: nand-controller {
+>>> +		pinctrl-0 = <&pinctrl_nand_cs &pinctrl_nand_rb
+>> &pinctrl_nand_oe_we>;
+>>> +		pinctrl-names = "default";
+>>> +		status = "okay";
+>>> +
+>>> +		nand@3 {
+>>> +			reg = <0x3 0x0 0x800000>;
+>>> +			rb-gpios = <&pioD 5 GPIO_ACTIVE_HIGH>;
+>>> +			cs-gpios = <&pioD 4 GPIO_ACTIVE_HIGH>;
+>>> +			nand-bus-width = <8>;
+>>> +			nand-ecc-mode = "hw";
+>>> +			nand-ecc-strength = <4>;
+>>> +			nand-ecc-step-size = <512>;
+>>> +			nand-on-flash-bbt;
+>>> +			label = "atmel_nand";
+>>> +
+>>> +			partitions {
+>>> +				compatible = "fixed-partitions";
+>>> +				#address-cells = <1>;
+>>> +				#size-cells = <1>;
+>>> +
+>>> +				at91bootstrap@0 {
+>>> +					label = "at91bs";
+>>> +					reg = <0x0 0x20000>;
+>>> +				};
+>>> +
+>>> +				uboot@20000 {
+>>> +					label = "u-boot";
+>>> +					reg = <0x20000 0x80000>;
+>>> +				};
+>>> +
+>>> +				ubootenv@a0000 {
+>>> +					label = "u-boot-env";
+>>> +					reg = <0xa0000 0x20000>;
+>>> +				};
+>>> +
+>>> +				ubootenv@c0000 {
+>>> +					label = "redund-env";
+>>> +					reg = <0xc0000 0x20000>;
+>>> +				};
+>>> +
+>>> +				kernel-a@e0000 {
+>>> +					label = "kernel-a";
+>>> +					reg = <0xe0000 0x280000>;
+>>> +				};
+>>> +
+>>> +				kernel-b@360000 {
+>>> +					label = "kernel-b";
+>>> +					reg = <0x360000 0x280000>;
+>>> +				};
+>>> +
+>>> +				rootfs-a@5e0000 {
+>>> +					label = "rootfs-a";
+>>> +					reg = <0x5e0000 0x2600000>;
+>>> +				};
+>>> +
+>>> +				rootfs-b@2be0000 {
+>>> +					label = "rootfs-b";
+>>> +					reg = <0x2be0000 0x2600000>;
+>>> +				};
+>>> +
+>>> +				user@51e0000 {
+>>> +					label = "user";
+>>> +					reg = <0x51e0000 0x2dc0000>;
+>>> +				};
+>>> +
+>>> +				logs@7fa0000 {
+>>> +					label = "logs";
+>>> +					reg = <0x7fa0000 0x60000>;
+>>> +				};
+>>> +
+>>> +			};
+>>> +		};
+>>> +	};
+>>> +};
+>>> +
+>>> +&usb0 {
+>>
+>> This must be &usb1 label, isn't it?
+>> Because you are referring to ohci binding I suspect (found by having a
+>> look at: atmel,oc-gpio property...).
+> 
+> I believe usb0 is correct, as this is a at91sam9x5 part, the node in dtsi is -ohci.
+> sama5d3 is usb1 for -ohci.
+
+All right, like previous comment, I thought it was sama5d3: sorry for 
+the noise.
+
+Best regards,
+   Nicolas
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
-
---scbfshupznc5roe3
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-bdi-Fix-another-oops-in-wb_workfn.patch"
-
-From 95fa7fe8ebc7dcf4d09a2e097c06abdf24ba81b5 Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Thu, 14 Jun 2018 14:30:03 +0200
-Subject: [PATCH] bdi: Fix another oops in wb_workfn()
-
-syzbot is reporting NULL pointer dereference at wb_workfn() [1] due to
-wb->bdi->dev being NULL. And Dmitry confirmed that wb->state was
-WB_shutting_down after wb->bdi->dev became NULL. This indicates that
-unregister_bdi() failed to call wb_shutdown() on one of wb objects.
-
-The problem is in cgwb_bdi_unregister() which does cgwb_kill() and thus
-drops bdi's reference to wb structures before going through the list of
-wbs again and calling wb_shutdown() on each of them. This way the loop
-iterating through all wbs can easily miss a wb if that wb has already
-passed through cgwb_remove_from_bdi_list() called from wb_shutdown()
-from cgwb_release_workfn() and as a result fully shutdown bdi although
-wb_workfn() for this wb structure is still running. In fact there are
-also other ways cgwb_bdi_unregister() can race with
-cgwb_release_workfn() leading e.g. to use-after-free issues:
-
-CPU1                            CPU2
-                                cgwb_bdi_unregister()
-                                  cgwb_kill(*slot);
-
-cgwb_release()
-  queue_work(cgwb_release_wq, &wb->release_work);
-cgwb_release_workfn()
-                                  wb = list_first_entry(&bdi->wb_list, ...)
-                                  spin_unlock_irq(&cgwb_lock);
-  wb_shutdown(wb);
-  ...
-  kfree_rcu(wb, rcu);
-                                  wb_shutdown(wb); -> oops use-after-free
-
-We solve these issues by synchronizing writeback structure shutdown from
-cgwb_bdi_unregister() with cgwb_release_workfn() using a new mutex.
-
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- include/linux/backing-dev-defs.h | 1 +
- mm/backing-dev.c                 | 7 +++++++
- 2 files changed, 8 insertions(+)
-
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-index 0bd432a4d7bd..661e3121e580 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -189,6 +189,7 @@ struct backing_dev_info {
- #ifdef CONFIG_CGROUP_WRITEBACK
- 	struct radix_tree_root cgwb_tree; /* radix tree of active cgroup wbs */
- 	struct rb_root cgwb_congested_tree; /* their congested states */
-+	struct mutex cgwb_release_mutex;  /* protect shutdown of wb structs */
- #else
- 	struct bdi_writeback_congested *wb_congested;
- #endif
-diff --git a/mm/backing-dev.c b/mm/backing-dev.c
-index 347cc834c04a..078cb4e0fb62 100644
---- a/mm/backing-dev.c
-+++ b/mm/backing-dev.c
-@@ -508,10 +508,12 @@ static void cgwb_release_workfn(struct work_struct *work)
- 	struct bdi_writeback *wb = container_of(work, struct bdi_writeback,
- 						release_work);
- 
-+	mutex_lock(&wb->bdi->cgwb_release_mutex);
- 	wb_shutdown(wb);
- 
- 	css_put(wb->memcg_css);
- 	css_put(wb->blkcg_css);
-+	mutex_unlock(&wb->bdi->cgwb_release_mutex);
- 
- 	fprop_local_destroy_percpu(&wb->memcg_completions);
- 	percpu_ref_exit(&wb->refcnt);
-@@ -697,6 +699,7 @@ static int cgwb_bdi_init(struct backing_dev_info *bdi)
- 
- 	INIT_RADIX_TREE(&bdi->cgwb_tree, GFP_ATOMIC);
- 	bdi->cgwb_congested_tree = RB_ROOT;
-+	mutex_init(&bdi->cgwb_release_mutex);
- 
- 	ret = wb_init(&bdi->wb, bdi, 1, GFP_KERNEL);
- 	if (!ret) {
-@@ -717,7 +720,10 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
- 	spin_lock_irq(&cgwb_lock);
- 	radix_tree_for_each_slot(slot, &bdi->cgwb_tree, &iter, 0)
- 		cgwb_kill(*slot);
-+	spin_unlock_irq(&cgwb_lock);
- 
-+	mutex_lock(&bdi->cgwb_release_mutex);
-+	spin_lock_irq(&cgwb_lock);
- 	while (!list_empty(&bdi->wb_list)) {
- 		wb = list_first_entry(&bdi->wb_list, struct bdi_writeback,
- 				      bdi_node);
-@@ -726,6 +732,7 @@ static void cgwb_bdi_unregister(struct backing_dev_info *bdi)
- 		spin_lock_irq(&cgwb_lock);
- 	}
- 	spin_unlock_irq(&cgwb_lock);
-+	mutex_unlock(&bdi->cgwb_release_mutex);
- }
- 
- /**
--- 
-2.16.4
-
-
---scbfshupznc5roe3--
+Nicolas Ferre
