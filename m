@@ -6,86 +6,83 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 6E863C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:12:49 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 417B8C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E96220896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:12:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E96220896
+	by mail.kernel.org (Postfix) with ESMTP id 014E5208E5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 11:13:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 014E5208E5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965832AbeFOLMq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 07:12:46 -0400
-Received: from muru.com ([72.249.23.125]:47338 "EHLO muru.com"
+        id S965845AbeFOLNY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 07:13:24 -0400
+Received: from muru.com ([72.249.23.125]:47388 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965626AbeFOLLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 07:11:51 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 2CD4F8076;
-        Fri, 15 Jun 2018 11:14:29 +0000 (UTC)
+        id S965626AbeFOLNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 07:13:21 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 4ED2D82AE;
+        Fri, 15 Jun 2018 11:15:59 +0000 (UTC)
+Date:   Fri, 15 Jun 2018 04:13:18 -0700
 From:   Tony Lindgren <tony@atomide.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Sean Wang <sean.wang@mediatek.com>
-Subject: [PATCH 2/5] pinctrl: pinmux: Return selector to the pinctrl driver
-Date:   Fri, 15 Jun 2018 04:11:38 -0700
-Message-Id: <20180615111141.37184-3-tony@atomide.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180615111141.37184-1-tony@atomide.com>
-References: <20180615111141.37184-1-tony@atomide.com>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@pyra-handheld.com
+Subject: Re: BUG: drivers/pinctrl/core: races in pinctrl_groups and deferred
+ probing
+Message-ID: <20180615111318.GJ112168@atomide.com>
+References: <F20BD6B3-D4D7-4D5D-B464-64402650BDE5@goldelico.com>
+ <20180614120157.GE112168@atomide.com>
+ <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com>
+ <20180615065810.GI112168@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180615065810.GI112168@atomide.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We must return the selector from pinmux_generic_add_function() so
-pin controller device drivers can remove the right group if needed
-for deferred probe for example.
+* Tony Lindgren <tony@atomide.com> [180615 07:00]:
+> * H. Nikolaus Schaller <hns@goldelico.com> [180614 12:15]:
+> > Hi Tony,
+> > 
+> > > Am 14.06.2018 um 14:01 schrieb Tony Lindgren <tony@atomide.com>:
+> > > 
+> > > * H. Nikolaus Schaller <hns@goldelico.com> [180613 12:41]:
+> > >> 
+> > >> Now if I look into pinctrl_generic_add_group() and pinctrl_generic_get_group_name(),
+> > >> pctldev->num_groups++ is not protected if pinctrl_generic_add_group() may be called by
+> > >> two threads in parallel for the same pctldev. Hence a second thread may try to insert
+> > >> a different node into the radix tree at the same selector index. This fails but there
+> > >> is no error check - and the second entry is completely missing (but probably assumed to
+> > >> be there).
+> > > 
+> > > Sounds like pinctrl-single.c is missing mutex around calls to
+> > > pinctrl_generic_add_group()?
+> > 
+> > Yes, that could be. I didn't research the call path, just the one of
+> > devm_pinctrl_get(). That uses a mutex in
+> 
+> In addition to missing mutex lock around the generic pinctrl functions
+> we also have racy helpers pinctrl_generic_remove_last_group() and
+> pinmux_generic_remove_last_function() like you pointed out. I'll post
+> a patch for you later on today to test.
 
-Note that fixes are also needed for the pin controller drivers to
-use the selector value.
+OK I posted a series to fix these issues hopefully as thread
+"[PATCH 0/5] pinctrl fixes for generic functions and groups".
 
-Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
-managing groups")
-Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Paul Cercueil <paul@crapouillou.net>
-Cc: Sean Wang <sean.wang@mediatek.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
----
- drivers/pinctrl/pinmux.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+Can you please test and see if that is enough to fix the issues
+you're seeing?
 
-diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
---- a/drivers/pinctrl/pinmux.c
-+++ b/drivers/pinctrl/pinmux.c
-@@ -775,6 +775,7 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
- 				void *data)
- {
- 	struct function_desc *function;
-+	int selector = pctldev->num_functions;
- 
- 	function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
- 	if (!function)
-@@ -785,12 +786,12 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
- 	function->num_group_names = num_groups;
- 	function->data = data;
- 
--	radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
-+	radix_tree_insert(&pctldev->pin_function_tree, selector,
- 			  function);
- 
- 	pctldev->num_functions++;
- 
--	return 0;
-+	return selector;
- }
- EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
- 
--- 
-2.17.1
+Regards,
+
+Tony
+
