@@ -5,116 +5,122 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id B9039C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:27:05 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 82BFBC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79056208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:27:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79056208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 38668208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 09:28:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38668208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755865AbeFOJ1E (ORCPT
+        id S1756125AbeFOJ16 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 05:27:04 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:60366 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755597AbeFOJ1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 05:27:02 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 266DEF68B9;
-        Fri, 15 Jun 2018 09:27:02 +0000 (UTC)
-Received: from krava (unknown [10.43.17.64])
-        by smtp.corp.redhat.com (Postfix) with SMTP id D0DDE20284D6;
-        Fri, 15 Jun 2018 09:27:00 +0000 (UTC)
-Date:   Fri, 15 Jun 2018 11:27:00 +0200
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Thomas-Mich Richter <tmricht@linux.ibm.com>
-Cc:     Paul Clarke <pc@us.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org,
-        brueckner@linux.vnet.ibm.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com
-Subject: Re: [PATCH 2/3] perf alias: Rebuild alias expression string to make
- it comparable
-Message-ID: <20180615092700.GH5082@krava>
-References: <20180614114845.41221-1-tmricht@linux.ibm.com>
- <20180614114845.41221-2-tmricht@linux.ibm.com>
- <809ff562-511d-26e9-bac3-e8f7b84666e5@us.ibm.com>
- <20180615081242.GF5082@krava>
- <f78bbadb-047d-afad-eac6-b1236bd56c81@linux.ibm.com>
+        Fri, 15 Jun 2018 05:27:58 -0400
+Received: from mx2.suse.de ([195.135.220.15]:46957 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755645AbeFOJ15 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 05:27:57 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 0725BAC3B;
+        Fri, 15 Jun 2018 09:27:55 +0000 (UTC)
+Received: by unicorn.suse.cz (Postfix, from userid 1000)
+        id DC271A09E2; Fri, 15 Jun 2018 11:27:53 +0200 (CEST)
+Date:   Fri, 15 Jun 2018 11:27:53 +0200
+From:   Michal Kubecek <mkubecek@suse.cz>
+To:     Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@helsinki.fi>
+Cc:     Yuchung Cheng <ycheng@google.com>, netdev <netdev@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH RESEND] tcp: avoid F-RTO if SACK and timestamps are
+ disabled
+Message-ID: <20180615092753.lmxqh65moc33rzbq@unicorn.suse.cz>
+References: <20180613164802.99B89A09E2@unicorn.suse.cz>
+ <20180613165543.0F92DA09E2@unicorn.suse.cz>
+ <CAK6E8=eCOLU9AX0+bSrOg_UYBm1mFxrGT=ybksba9B0OUfp7jg@mail.gmail.com>
+ <alpine.DEB.2.20.1806141045430.29120@whs-18.cs.helsinki.fi>
+ <20180614093408.5e34ijwhome4t5yn@unicorn.suse.cz>
+ <alpine.DEB.2.20.1806141409150.29120@whs-18.cs.helsinki.fi>
+ <20180614131801.hd474jgrhmtqzhag@unicorn.suse.cz>
+ <alpine.DEB.2.20.1806151048000.29120@whs-18.cs.helsinki.fi>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <f78bbadb-047d-afad-eac6-b1236bd56c81@linux.ibm.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 15 Jun 2018 09:27:02 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Fri, 15 Jun 2018 09:27:02 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'jolsa@redhat.com' RCPT:''
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <alpine.DEB.2.20.1806151048000.29120@whs-18.cs.helsinki.fi>
+User-Agent: NeoMutt/20170912 (1.9.0)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 11:09:05AM +0200, Thomas-Mich Richter wrote:
-> On 06/15/2018 10:12 AM, Jiri Olsa wrote:
-> > On Thu, Jun 14, 2018 at 08:53:14AM -0500, Paul Clarke wrote:
-> > 
-> > SNIP
-> > 
-> >>> +		if (ret)
-> >>> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
-> >>> +					 ",");
-> >>> +		if (term->type_val == PARSE_EVENTS__TERM_TYPE_NUM)
-> >>> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
-> >>> +					 "%s=%#x", term->config, term->val.num);
-> >>> +		else if (term->type_val == PARSE_EVENTS__TERM_TYPE_STR)
-> >>> +			ret += scnprintf(newval + ret, sizeof(newval) - ret,
-> >>> +					 "%s=%s", term->config, term->val.str);
-> >>
-> >> If we exceed 256, we just suddenly terminate the rebuilding without reporting any issues.
-> >>
-> >>> +	}
-> >>> +
-> >>>  	alias->name = strdup(name);
-> >>>  	if (dir) {
-> >>>  		/*
-> >>> @@ -285,7 +308,7 @@ static int __perf_pmu__new_alias(struct list_head *list, char *dir, char *name,
-> >>>  		snprintf(alias->unit, sizeof(alias->unit), "%s", unit);
-> >>>  	}
-> >>>  	alias->per_pkg = perpkg && sscanf(perpkg, "%d", &num) == 1 && num == 1;
-> >>> -	alias->str = strdup(val);
-> >>> +	alias->str = strdup(newval);
-> > 
-> > hum, how is newval different from val? AFAICS it's the same
-> > 
+On Fri, Jun 15, 2018 at 11:05:03AM +0300, Ilpo Järvinen wrote:
+> On Thu, 14 Jun 2018, Michal Kubecek wrote:
+> > The trace wouldn't look so nice but it can be reproduced even with more
+> > data to send. I've copied an example below. I couldn't find a really
+> > nice one quickly so that first few retransmits (17:22:13.865105 through
+> > 17:23:05.841105) are without new data but starting at 17:23:58.189150,
+> > you can see that sending new (previously unsent) data may not suffice to
+> > break the loop.
 > 
-> Not really, depends on the platform, here is some debug output from s390:
-> root@s35lp76 perf]# ./perf stat -e tx_nc_tend -- ~/mytesttx 1 >/tmp/111
-> 
->  Performance counter stats for '/root/mytesttx 1':
-> 
->                  1      tx_nc_tend                                                  
-> 
->        0.001050150 seconds time elapsed
-> 
-> [root@s35lp76 perf]# fgrep -i tx_nc_tend /tmp/111
-> __perf_pmu__new_alias TX_NC_TEND val:event=0x008d newval:event=0x8d
-> __perf_pmu__new_alias tx_nc_tend val:event=0x8d newval:event=0x8d
-> TX_NC_TEND	1 rc 8
-> [root@s35lp76 perf]# 
-> 
-> On s390 the events in the PMU sysfs file are printed with leading zeroes.
-> This means the strcmp() of alias->str differs, but the contents is logically
-> identical. (Same of some files contains spaces).
-> 
-> Thats why I do the rewrite of val into newval.
-> 
-> The alias name does not match too, but we use strcasecmp() to ignore case.
-> 
-> Hope this helps.
+> My point was that the new data segment bursts that occur if the sender 
+> isn't application limited indicate that there's something going wrong
+> with FRTO. And that wrong is also what is causing that RTO loop because
+> the sender doesn't see the previous FRTO recovery on second RTO. With 
+> my FRTO undo fix, (new_recovery || icsk->icsk_retransmits) will be false
+> and that will prevent the RTO loop.
 
-yep.. should have read the full change log ;-) thanks
+Yes, it would prevent the loop in this case (except it would be a bit
+later, after second RTO rather than after first). But I'm not convinced
+the logic of the patch is correct. If I understand it correctly, it
+essentially changes "presumption of innocence" (if we get an ack past
+what we retransmitted, we assume it was received earlier - i.e. would
+have been sacked before if SACK was in use) to "presumption of guilt"
+(whenever a retransmitted segment is acked, we assume nothing else acked
+with it was received earlier). Or that you trade false negatives for
+false positives.
 
-jirka
+Maybe I understand it wrong but it seems that you de facto prevent
+Step (3b) from ever happening in non-SACK case.
+
+> > > No! The window should not update window on ACKs the receiver intends to 
+> > > designate as "duplicate ACKs". That is not without some potential cost 
+> > > though as it requires delaying window updates up to the next cumulative 
+> > > ACK. In the non-SACK series one of the changes is fixing this for
+> > > non-SACK Linux TCP flows.
+> > 
+> > That sounds like a reasonable change (at least at the first glance,
+> > I didn't think about it too deeply) but even if we fix Linux stack to
+> > behave like this, we cannot force everyone else to do the same.
+> 
+> Unfortunately I don't know what the other stacks besides Linux do. But 
+> for Linux, the cause for the changing receiver window is the receiver 
+> window auto-tuning and I'm not sure if other stacks have a similar 
+> feature (or if that affects (almost) all ACKs like in Linux).
+
+The capture from my previous e-mail and some others I have seen indicate
+that at least some implementations do not take care to never change
+window size when responding to an out-of-order segment.  That means that
+even if we change linux TCP this way (we might still need to send
+a separate window update in some cases), we still cannot rely on others
+doing the same.
+
+I checked the capture attached to my previous e-mail again and there is
+one thing where our F-RTO implementation (in 4.4, at least) is wrong,
+IMHO. While the first ACK after "new data" (sent in (2b)) was a window
+update (and therefore not dupack by definition) so that we could take
+neither (3a) nor (3b), in some iterations there were further acks which
+did not change window size. The text just before Step 1 says
+
+  The F-RTO algorithm does not specify actions for receiving
+  a segment that neither acknowledges new data nor is a duplicate
+  acknowledgment.  The TCP sender SHOULD ignore such segments and
+  wait for a segment that either acknowledges new data or is
+  a duplicate acknowledgment.
+
+My understanding is that this means that while the first ack after new
+data is correctly ignored, the following ack which preserves window size
+should be recognized as a dupack and (3a) should be taken.
+
+Michal Kubecek
