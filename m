@@ -2,148 +2,156 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC46C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:15:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5FF5C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:17:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24F48208DA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:15:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MB6nTE7a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24F48208DA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 7305E208DA
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 18:17:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7305E208DA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756568AbeFOSPc (ORCPT
+        id S1756344AbeFOSRS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 14:15:32 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38730 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756298AbeFOSNR (ORCPT
+        Fri, 15 Jun 2018 14:17:18 -0400
+Received: from 9pmail.ess.barracuda.com ([64.235.154.211]:45346 "EHLO
+        9pmail.ess.barracuda.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753686AbeFOSRR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 14:13:17 -0400
-Received: by mail-lf0-f68.google.com with SMTP id i83-v6so15891667lfh.5
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 11:13:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=j3jIepUwDw2xc+pgExVeFYswjqlQIgEI3e1Xbicq7EM=;
-        b=MB6nTE7aJ3eJJTiSH6BDy3JK8a4ovz4lxXEQP7zZnX3rhojCabrb37HXiMoqRRVdkT
-         pqacbX0SZpNdNN7hH6xHv3kpPFwbJIihGIoXkjDUM9RiHqMzs4ityas8Fl1234aVJ3ZP
-         x5jzSDsGuaTrhSKeiciCXeuQKGhQChQgJbOS8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=j3jIepUwDw2xc+pgExVeFYswjqlQIgEI3e1Xbicq7EM=;
-        b=JcYGM5uWfZ4PqAmAugzKnnZ7/fBpvXxCL559OFRrndnajfyw80l6mvh0zVv+IrQQeI
-         aIC/Ib8uyaTMH+VkSaRIizTuvRMdyZqs8iGA5TCgwqPUh8kypLM5hzljoDIC4+ghUbW8
-         ++vwNxhSg19Gizr/asv2yFpnTjU/DlbTDKRAZKKuXTxaBCUKDr51h8lOoDobwe7s6X+u
-         oTnYPA3yaJ3e0acpoB4bsLMGshe4CEDRvoZw9xgwmgc03jLNQWD9314wovG0KfQrFkNb
-         S56RlVPqSgC7ok58tG7/imrvAWyXVp+BRj+ahUBpZ3e1eEzCa/fY0VZwY08UPI++AL+O
-         TudQ==
-X-Gm-Message-State: APt69E24e6tDX2smqFxITZQn2Z7880CK/UcxqTrw6MLou1GG/K5om1CC
-        QTyfRidd1klPStIFZirMRiycdA==
-X-Google-Smtp-Source: ADUXVKKkYgf6LrW5EFIzd4TVmANqUWwHUCfQKvmfonDly+FlwvCFESN1ymCniyrVnLt6j0z7n408xA==
-X-Received: by 2002:a19:ef11:: with SMTP id n17-v6mr1947708lfh.66.1529086396162;
-        Fri, 15 Jun 2018 11:13:16 -0700 (PDT)
-Received: from localhost.localdomain (59-201-94-178.pool.ukrtel.net. [178.94.201.59])
-        by smtp.gmail.com with ESMTPSA id h4-v6sm1543260ljc.8.2018.06.15.11.13.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 11:13:15 -0700 (PDT)
-From:   Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-To:     grygorii.strashko@ti.com, davem@davemloft.net
-Cc:     corbet@lwn.net, akpm@linux-foundation.org, netdev@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-omap@vger.kernel.org, vinicius.gomes@intel.com,
-        henrik@austad.us, jesus.sanchez-palencia@intel.com,
-        ilias.apalodimas@linaro.org, p-varis@ti.com, spatton@ti.com,
-        francois.ozog@linaro.org, yogeshs@ti.com, nsekhar@ti.com,
-        andrew@lunn.ch, Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
-Subject: [PATCH v3 net-next 1/6] net: ethernet: ti: cpsw: use cpdma channels in backward order for txq
-Date:   Fri, 15 Jun 2018 21:13:05 +0300
-Message-Id: <20180615181310.10437-2-ivan.khoronzhuk@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180615181310.10437-1-ivan.khoronzhuk@linaro.org>
-References: <20180615181310.10437-1-ivan.khoronzhuk@linaro.org>
+        Fri, 15 Jun 2018 14:17:17 -0400
+Received: from mipsdag03.mipstec.com (mail3.mips.com [12.201.5.33]) by mx1401.ess.rzc.cudaops.com (version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=NO); Fri, 15 Jun 2018 11:16:54 -0700
+Received: from mipsdag02.mipstec.com (10.20.40.47) by mipsdag03.mipstec.com
+ (10.20.40.48) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1415.2; Fri, 15
+ Jun 2018 11:17:06 -0700
+Received: from localhost (10.20.2.29) by mipsdag02.mipstec.com (10.20.40.47)
+ with Microsoft SMTP Server id 15.1.1415.2 via Frontend Transport; Fri, 15 Jun
+ 2018 11:17:06 -0700
+Date:   Fri, 15 Jun 2018 11:16:54 -0700
+From:   Paul Burton <paul.burton@mips.com>
+To:     James Hogan <jhogan@kernel.org>
+CC:     <linux-mips@linux-mips.org>, Peter Zijlstra <peterz@infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Subject: Re: [PATCH 4/4] rseq/selftests: Implement MIPS support
+Message-ID: <20180615181654.wmaadjgqgq7wksc5@pburton-laptop>
+References: <20180614235211.31357-1-paul.burton@mips.com>
+ <20180614235211.31357-5-paul.burton@mips.com>
+ <20180615105809.GB7603@jamesdev>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20180615105809.GB7603@jamesdev>
+User-Agent: NeoMutt/20180512
+X-BESS-ID: 1529086614-321457-25883-48-1
+X-BESS-VER: 2018.7-r1806151722
+X-BESS-Apparent-Source-IP: 12.201.5.33
+X-BESS-Envelope-From: Paul.Burton@mips.com
+X-BESS-Outbound-Spam-Score: 0.00
+X-BESS-Outbound-Spam-Report: Code version 3.2, rules version 3.2.2.194091
+        Rule breakdown below
+         pts rule name              description
+        ---- ---------------------- --------------------------------
+        0.00 BSF_BESS_OUTBOUND      META: BESS Outbound 
+X-BESS-Outbound-Spam-Status: SCORE=0.00 using account:ESS59374 scores of KILL_LEVEL=7.0 tests=BSF_BESS_OUTBOUND
+X-BESS-Orig-Rcpt: jhogan@kernel.org,linux-mips@linux-mips.org,peterz@infradead.org,linux-kernel@vger.kernel.org,mathieu.desnoyers@efficios.com,boqun.feng@gmail.com,paulmck@linux.vnet.ibm.com,ralf@linux-mips.org
+X-BESS-BRTS-Status: 1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The cpdma channel highest priority is from hi to lo number.
-The driver has limited number of descriptors that are shared between
-number of cpdma channels. Number of queues can be tuned with ethtool,
-that allows to not spend descriptors on not needed cpdma channels.
-In AVB usually only 2 tx queues can be enough with rate limitation.
-The rate limitation can be used only for hi priority queues. Thus, to
-use only 2 queues the 8 has to be created. It's wasteful.
+On Fri, Jun 15, 2018 at 11:58:10AM +0100, James Hogan wrote:
+> On Thu, Jun 14, 2018 at 04:52:10PM -0700, Paul Burton wrote:
+> > +#define __RSEQ_ASM_DEFINE_TABLE(version, flags,	start_ip,			\
+> 
+> Nit: technically all these \'s are on 81st column...
 
-So, in order to allow using only needed number of rate limited
-tx queues, save resources, and be able to set rate limitation for
-them, let assign tx cpdma channels in backward order to queues.
+True... I'll replace the runs of tabs with a single space.
 
-Signed-off-by: Ivan Khoronzhuk <ivan.khoronzhuk@linaro.org>
----
- drivers/net/ethernet/ti/cpsw.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+> > +#define __RSEQ_ASM_DEFINE_ABORT(table_label, label, teardown,			\
+> > +				abort_label, version, flags,			\
+> > +				start_ip, post_commit_offset, abort_ip)		\
+> > +		".balign 32\n\t"						\
+> 
+> ARM doesn't do this for DEFINE_ABORT. Is it intentional that we do for
+> MIPS?
 
-diff --git a/drivers/net/ethernet/ti/cpsw.c b/drivers/net/ethernet/ti/cpsw.c
-index 534596ce00d3..406537d74ec1 100644
---- a/drivers/net/ethernet/ti/cpsw.c
-+++ b/drivers/net/ethernet/ti/cpsw.c
-@@ -967,8 +967,8 @@ static int cpsw_tx_mq_poll(struct napi_struct *napi_tx, int budget)
- 
- 	/* process every unprocessed channel */
- 	ch_map = cpdma_ctrl_txchs_state(cpsw->dma);
--	for (ch = 0, num_tx = 0; ch_map; ch_map >>= 1, ch++) {
--		if (!(ch_map & 0x01))
-+	for (ch = 0, num_tx = 0; ch_map & 0xff; ch_map <<= 1, ch++) {
-+		if (!(ch_map & 0x80))
- 			continue;
- 
- 		txv = &cpsw->txv[ch];
-@@ -2431,7 +2431,7 @@ static int cpsw_update_channels_res(struct cpsw_priv *priv, int ch_num, int rx)
- 	void (*handler)(void *, int, int);
- 	struct netdev_queue *queue;
- 	struct cpsw_vector *vec;
--	int ret, *ch;
-+	int ret, *ch, vch;
- 
- 	if (rx) {
- 		ch = &cpsw->rx_ch_num;
-@@ -2444,7 +2444,8 @@ static int cpsw_update_channels_res(struct cpsw_priv *priv, int ch_num, int rx)
- 	}
- 
- 	while (*ch < ch_num) {
--		vec[*ch].ch = cpdma_chan_create(cpsw->dma, *ch, handler, rx);
-+		vch = rx ? *ch : 7 - *ch;
-+		vec[*ch].ch = cpdma_chan_create(cpsw->dma, vch, handler, rx);
- 		queue = netdev_get_tx_queue(priv->ndev, *ch);
- 		queue->tx_maxrate = 0;
- 
-@@ -2980,7 +2981,7 @@ static int cpsw_probe(struct platform_device *pdev)
- 	u32 slave_offset, sliver_offset, slave_size;
- 	const struct soc_device_attribute *soc;
- 	struct cpsw_common		*cpsw;
--	int ret = 0, i;
-+	int ret = 0, i, ch;
- 	int irq;
- 
- 	cpsw = devm_kzalloc(&pdev->dev, sizeof(struct cpsw_common), GFP_KERNEL);
-@@ -3155,7 +3156,8 @@ static int cpsw_probe(struct platform_device *pdev)
- 	if (soc)
- 		cpsw->quirk_irq = 1;
- 
--	cpsw->txv[0].ch = cpdma_chan_create(cpsw->dma, 0, cpsw_tx_handler, 0);
-+	ch = cpsw->quirk_irq ? 0 : 7;
-+	cpsw->txv[0].ch = cpdma_chan_create(cpsw->dma, ch, cpsw_tx_handler, 0);
- 	if (IS_ERR(cpsw->txv[0].ch)) {
- 		dev_err(priv->dev, "error initializing tx dma channel\n");
- 		ret = PTR_ERR(cpsw->txv[0].ch);
--- 
-2.17.1
+We need to align this structure at least in the MIPS64 case because the
+.dword directive seems to lead to extra padding if we don't, and that
+messes up the offsets of the fields.
 
+For example here's an extract from basic_percpu_ops_test built for
+MIPS64r6el without the .balign directive, starting from the
+RSEQ_ASM_STORE_RSEQ_CS macro in rseq_cmpeqv_storev():
+
+   120001298:   df848068        ld      a0,-32664(gp)
+   12000129c:   fc640008        sd      a0,8(v1)
+   1200012a0:   8c640004        lw      a0,4(v1)
+   1200012a4:   14820011        bne     a0,v0,1200012ec <.L4^B1>
+   1200012a8:   00000000        nop
+   1200012ac:   dca40000        ld      a0,0(a1)
+   1200012b0:   14870015        bne     a0,a3,120001308 <.L5>
+   1200012b4:   00000000        nop
+   1200012b8:   fca60000        sd      a2,0(a1)
+   1200012bc:   1000000d        b       1200012f4 <.L5^B1>
+   1200012c0:   00000000        nop
+   1200012c4:   00000000        nop
+   1200012c8:   00000000        nop
+   1200012cc:   00000000        nop
+   1200012d0:   200012a0        bovc    zero,zero,120005d54 <__FRAME_END__+0x3e28>
+   1200012d4:   00000001        0x1
+   1200012d8:   0000001c        0x1c
+   1200012dc:   00000000        nop
+   1200012e0:   200012ec        bovc    zero,zero,120005e94 <__FRAME_END__+0x3f68>
+   1200012e4:   00000001        0x1
+   1200012e8:   53053053        0x53053053
+
+...
+
+   120012118:   200012c4        bovc    zero,zero,120016c2c <_end+0x49bc>
+   12001211c:   00000001        0x1
+
+And _gp, which the gp register contains the address of:
+
+   $ nm tools/testing/selftests/rseq/basic_percpu_ops_test | grep gp
+   000000012001a0b0 d _gp
+
+The ld instruction @120001298 is what the "dla $4, 3f" expanded to, so
+it's loading the address of the table which we're going to write to
+rseq_cs. It loads from gp-32664, ie. 0x12001a0b0-32664, ie. 0x120012118,
+so the table address loaded is 0x1200012c4.
+
+If we take that as the start of the struct rseq_cs then we get:
+
+   1200012c4: __u32 version = 0x0
+   1200012c8: __u32 flags = 0x0
+   1200012cc: __u64 start_ip = 200012a000000000
+
+Where start_ip is both not naturally aligned, so might be slow to access
+or involve T&E, and more importantly doesn't have the intended value.
+What happened is that gas inserted 4 bytes of padding at 1200012cc to
+naturally align the .dword directive for start_ip, and that throws us
+off.
+
+Using the .balign directive avoids this, and I went with 32 bytes
+because that's what struct rseq_cs is declared with in linux/rseq.h.
+
+The ARM code has probably gotten away with it because it's 32 bit only,
+so isn't emitting any 64 bit values (though if it did I don't know what
+an ARM64 assembler would do with regards to alignment & padding anyway).
+
+> Otherwise this whole series looks reasonable to me, so feel free to add
+> my rb on the whole series if you do apply youself:
+> 
+> Reviewed-by: James Hogan <jhogan@kernel.org>
+
+Thanks James :)
+
+Paul
