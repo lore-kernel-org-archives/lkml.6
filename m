@@ -2,129 +2,103 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1251C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8275BC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:45:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97F66208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:42:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97F66208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=siol.net
+	by mail.kernel.org (Postfix) with ESMTP id 2936C208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:45:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SN2d/mxJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2936C208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966113AbeFOQm2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:42:28 -0400
-Received: from mailoutvs40.siol.net ([185.57.226.231]:45580 "EHLO
-        mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S965985AbeFOQm0 (ORCPT
+        id S966078AbeFOQpF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:45:05 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:38891 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964992AbeFOQpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:42:26 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTP id E4C02520679;
-        Fri, 15 Jun 2018 18:42:22 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at psrvmta09.zcs-production.pri
-Received: from mail.siol.net ([127.0.0.1])
-        by localhost (psrvmta09.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 8FtG1iOslO-Z; Fri, 15 Jun 2018 18:42:22 +0200 (CEST)
-Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Postfix) with ESMTPS id 46CC75202D0;
-        Fri, 15 Jun 2018 18:42:22 +0200 (CEST)
-Received: from jernej-laptop.localnet (unknown [194.152.15.144])
-        (Authenticated sender: 031275009)
-        by mail.siol.net (Postfix) with ESMTPA id 4A562520679;
-        Fri, 15 Jun 2018 18:42:20 +0200 (CEST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@siol.net>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     wens@csie.org, robh+dt@kernel.org, airlied@linux.ie,
-        gustavo@padovan.org, maarten.lankhorst@linux.intel.com,
-        seanpaul@chromium.org, mark.rutland@arm.com,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v2 11/27] drm/sun4i: tcon: Add support for tcon-top gate
-Date:   Fri, 15 Jun 2018 18:41:16 +0200
-Message-ID: <2948115.KggauuSURZ@jernej-laptop>
-In-Reply-To: <20180615083110.laruycabvyjmesmo@flea>
-References: <20180612200036.21483-1-jernej.skrabec@siol.net> <20180612200036.21483-12-jernej.skrabec@siol.net> <20180615083110.laruycabvyjmesmo@flea>
+        Fri, 15 Jun 2018 12:45:03 -0400
+Received: by mail-oi0-f66.google.com with SMTP id d5-v6so9356721oib.5
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 09:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=MEFaJhiXyNan8nBVc3ywGNwatyQN9rFssV/TKLDuqis=;
+        b=SN2d/mxJ2goYBb70AhMmblYACvAkaFLsSlBc2ZhM5cyb+JhB9gJAwQV8Kz8NOdUlrI
+         o1degSL5cPf5wJOETaOEV2bCVBfIyEqiSxGjclXdfxDsaOsgdPy2Ae4MupYWRyoPJqJ7
+         uFAmzybxDYx4ODqQxNLO0QlWmhhaTdx+bwtlqaZl1iD5MJjO7Y0W3szVk8s0nNsyClFR
+         BH2Ipu0pzuLlwy9W+jF/Sn1YehLQ6kp6Pwo+rnO9+nX2Fbqae7VuPLm6iIBQfHq6YMvO
+         zkx6FWcl+sAlJaTeRshwrgsjsrVQcYVHvYEjXbVIIV5HKSPQ9wDc/Uu8unw7Bi9ArpKj
+         pURg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MEFaJhiXyNan8nBVc3ywGNwatyQN9rFssV/TKLDuqis=;
+        b=EJv8r2WiMpHLnKJZCkOuHyXiDRJIIGsWZ5V96PgLiD58gtDRlain2LNdjnrqE+DUXm
+         IcXam2WQgCwMNFvn66HHejPS3T8LQNvd64PunJXhoIm/JSzOFN9+Cvim9+oZSiDcp6sv
+         9d1O8/XVLYfo7aiF06O17lg+q/yYpAOz+LvGsKpDZR7XFr700F97rO9Y0qbR8oteDHBH
+         k6P9XgYCqJt04ihpnUjnF0WAp3cGFbek3yQZBHZ18Y7Ud35fzKX9qXaRh1nTboGTDypf
+         3NzPOun/tNzbAjRW80mqA/IXkY7BZyuq/kKuePriZ6WTCh9hgTn7CvnxCqioMVQ7OPe8
+         hjaw==
+X-Gm-Message-State: APt69E0plGWWF/1x0YR/irdQW3IHgcZ3x3Lz91RqmI+ShVqGyWqquTuD
+        gh4Bzco7JEA2FzjDBdVunBDcWPCiUcT+eVpjAh0YoA==
+X-Google-Smtp-Source: ADUXVKLBAlbs3rze3jgXzRNYgEIXnR0XfjQtCHZSOKBCwoPpYtRRQjd3pEG9GqMtTJiPVQMIbG+HUwDsnOOTcBCWE1Y=
+X-Received: by 2002:aca:6b03:: with SMTP id g3-v6mr1211431oic.219.1529081102715;
+ Fri, 15 Jun 2018 09:45:02 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <20180615152335.208202-1-jannh@google.com> <20180615164009.GD30522@ZenIV.linux.org.uk>
+In-Reply-To: <20180615164009.GD30522@ZenIV.linux.org.uk>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 15 Jun 2018 18:44:51 +0200
+Message-ID: <CAG48ez2Fku77S+FM2w5n8J_utOhO0EW_RFbMib=t5Nmwc9pwfQ@mail.gmail.com>
+Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in release
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
+        dgilbert@interlog.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        security@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Dne petek, 15. junij 2018 ob 10:31:10 CEST je Maxime Ripard napisal(a):
-> Hi,
-> 
-> On Tue, Jun 12, 2018 at 10:00:20PM +0200, Jernej Skrabec wrote:
-> > TV TCONs connected to TCON TOP have to enable additional gate in order
-> > to work.
-> > 
-> > Add support for such TCONs.
-> > 
-> > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+On Fri, Jun 15, 2018 at 6:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> On Fri, Jun 15, 2018 at 05:23:35PM +0200, Jann Horn wrote:
+>
+> > I've mostly copypasted ib_safe_file_access() over as
+> > scsi_safe_file_access() because I couldn't find a good common header -
+> > please tell me if you know a better way.
+> > The duplicate pr_err_once() calls are so that each of them fires once;
+> > otherwise, this would probably have to be a macro.
+> >
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Jann Horn <jannh@google.com>
 > > ---
-> > 
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.c | 11 +++++++++++
-> >  drivers/gpu/drm/sun4i/sun4i_tcon.h |  4 ++++
-> >  2 files changed, 15 insertions(+)
-> > 
-> > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > b/drivers/gpu/drm/sun4i/sun4i_tcon.c index 08747fc3ee71..0afb5a94a414
-> > 100644
-> > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > @@ -688,6 +688,16 @@ static int sun4i_tcon_init_clocks(struct device *dev,
-> > 
-> >  		dev_err(dev, "Couldn't get the TCON bus clock\n");
-> >  		return PTR_ERR(tcon->clk);
-> >  	
-> >  	}
-> > 
-> > +
-> > +	if (tcon->quirks->has_tcon_top_gate) {
-> > +		tcon->top_clk = devm_clk_get(dev, "tcon-top");
-> > +		if (IS_ERR(tcon->top_clk)) {
-> > +			dev_err(dev, "Couldn't get the TCON TOP bus clock\n");
-> > +			return PTR_ERR(tcon->top_clk);
-> > +		}
-> > +		clk_prepare_enable(tcon->top_clk);
-> > +	}
-> > +
-> 
-> Is it required for the TCON itself to operate, or does the TCON
-> requires the TCON TOP, which in turn requires that clock to be
-> functional?
-> 
-> I find it quite odd to have a clock that isn't meant for a particular
-> device to actually be wired to another device. I'm not saying this
-> isn't the case, but it would be a first.
+>
+> WTF do you mean, in ->release()?  That makes no sense whatsoever -
+> what kind of copy_{to,from}_user() would be possible in there?
 
-Documentation doesn't say much about that gate. I did few tests and TCON 
-registers can be read and written even if TCON TOP TV TCON gate is disabled. 
-However, there is no image, as expected.
+bsg_release -> bsg_put_device -> bsg_complete_all_commands ->
+blk_complete_sgv4_hdr_rq -> bsg_scsi_complete_rq -> copy_to_user.
+I don't think that was intentional.
 
-More interestingly, I enabled test pattern directly in TCON to eliminate 
-influence of the mixer. As soon as I disabled that gate, test pattern on HDMI 
-screen was gone, which suggest that this gate influences something inside 
-TCON.
-
-Another test I did was that I moved enable/disable gate code to 
-sun4i_tcon_channel_set_status() and it worked just as well.
-
-I'll ask AW engineer what that gate actually does, but from what I saw, I 
-would say that most appropriate location to enable/disable TCON TOP TV TCON 
-gate is TCON driver. Alternatively, TCON TOP driver could check if any TV TCON 
-is in use and enable appropriate gate. However, that doesn't sound right to me 
-for some reason.
-
-Best regards,
-Jernej
-
-
+Basically, the sense buffer is copied to a userspace address supplied
+in the previous ->write() when you ->read() the reply. But when you
+->release() the file without reading the reply, they have to clean it
+up, and for that, they reuse the same code they use for ->read() - so
+the sense buffer is written to userspace on ->release().
