@@ -3,56 +3,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 589B7C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:26:26 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 5C018C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:28:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D60E20896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:26:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 093E920896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 14:28:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="qlGR1Fwv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D60E20896
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=de.bosch.com header.i=@de.bosch.com header.b="byqOgaO/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 093E920896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.bosch.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756239AbeFOO0Y (ORCPT
+        id S1756227AbeFOO2h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 10:26:24 -0400
-Received: from de-out1.bosch-org.com ([139.15.230.186]:56814 "EHLO
+        Fri, 15 Jun 2018 10:28:37 -0400
+Received: from de-out1.bosch-org.com ([139.15.230.186]:52864 "EHLO
         de-out1.bosch-org.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755816AbeFOO0V (ORCPT
+        with ESMTP id S1756005AbeFOO2e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 10:26:21 -0400
-Received: from fe0vm1649.rbesz01.com (unknown [139.15.230.188])
-        by si0vms0216.rbdmz01.com (Postfix) with ESMTPS id 416jTl6BKMz1XLFtG;
-        Fri, 15 Jun 2018 16:26:19 +0200 (CEST)
+        Fri, 15 Jun 2018 10:28:34 -0400
+Received: from fe0vm1650.rbesz01.com (unknown [139.15.230.188])
+        by fe0vms0186.rbdmz01.com (Postfix) with ESMTPS id 416jXK2dyDz1XLFjK;
+        Fri, 15 Jun 2018 16:28:33 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=de.bosch.com;
-        s=2015-01-21; t=1529072779;
-        bh=8kQS3p+bvawjwzAgJsHtGVf2NYPdIRS1vLSshqpTpOo=; l=10;
+        s=2015-01-21; t=1529072913;
+        bh=i9jJeFoYPhV6nkBu4CxI188Ht54+ZxBWJ0nMMevJtzs=; l=10;
         h=From:From:Reply-To:Sender;
-        b=qlGR1FwvPytOQdjlwPyEGa+Pb4rweuwvmJ9Q45Fl1g+F2EZHIjjomcFFzmEjhHUDS
-         vrAqgV5JISxz475S/jQ8+qO8ZjXQlJzGRgBFUmi/if+J0xhRu3oY1krekL+cyxnCwO
-         OO6EzuqWsE59McDhkzdSCQS0ubC/+cN0/h/v/alQ=
-Received: from si0vm2082.rbesz01.com (unknown [10.58.172.176])
-        by fe0vm1649.rbesz01.com (Postfix) with ESMTP id 416jTl5pm1z1N9;
-        Fri, 15 Jun 2018 16:26:19 +0200 (CEST)
-X-AuditID: 0a3aad16-be7ff70000000413-e0-5b23cc84575e
-Received: from si0vm1949.rbesz01.com ( [10.58.173.29])
+        b=byqOgaO/3WxcZZhkVwmGBrvD9SHEaBBXh7nTix1tzOGhlAk4Nop2jz5oax9CJIu1I
+         gi0OKKEYi6J1BO7jPyGrHw6VG5IytScQEtCGmFiW2vrd4l29Tq6xAzvk/WtsjaxK7O
+         NOf56MRdx355t3zVckE4JxYPaX1Z5u/vSPvZNxB4=
+Received: from fe0vm1740.rbesz01.com (unknown [10.58.172.176])
+        by fe0vm1650.rbesz01.com (Postfix) with ESMTPS id 416jXK2G68z1W4;
+        Fri, 15 Jun 2018 16:28:33 +0200 (CEST)
+X-AuditID: 0a3aad14-93dff70000003a2f-8d-5b23cd1d1309
+Received: from si0vm1950.rbesz01.com ( [10.58.173.29])
         (using TLS with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (Client did not present a certificate)
-        by si0vm2082.rbesz01.com (SMG Outbound) with SMTP id 0A.2F.01043.48CC32B5; Fri, 15 Jun 2018 16:26:12 +0200 (CEST)
-Received: from FE-MBX2051.de.bosch.com (fe-mbx2051.de.bosch.com [10.3.231.61])
-        by si0vm1949.rbesz01.com (Postfix) with ESMTPS id 416jTl49x9z6D44M7;
-        Fri, 15 Jun 2018 16:26:19 +0200 (CEST)
-Received: from FE-MBX2051.de.bosch.com (10.3.231.61) by
- FE-MBX2051.de.bosch.com (10.3.231.61) with Microsoft SMTP Server
+        by fe0vm1740.rbesz01.com (SMG Outbound) with SMTP id 80.4D.14895.D1DC32B5; Fri, 15 Jun 2018 16:28:45 +0200 (CEST)
+Received: from FE-MBX2036.de.bosch.com (fe-mbx2036.de.bosch.com [10.3.231.46])
+        by si0vm1950.rbesz01.com (Postfix) with ESMTPS id 416jXK0JLKzCpP8;
+        Fri, 15 Jun 2018 16:28:33 +0200 (CEST)
+Received: from SGPMBX2031.APAC.bosch.com (10.187.56.92) by
+ FE-MBX2036.de.bosch.com (10.3.231.46) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.1466.3; Fri, 15 Jun 2018 16:26:19 +0200
+ 15.1.1466.3; Fri, 15 Jun 2018 16:28:32 +0200
+Received: from FE-MBX2051.de.bosch.com (10.3.231.61) by
+ SGPMBX2031.APAC.bosch.com (10.187.56.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.1466.3; Fri, 15 Jun 2018 22:28:29 +0800
 Received: from FE-MBX2051.de.bosch.com ([fe80::d5b5:44fa:ef15:153e]) by
  FE-MBX2051.de.bosch.com ([fe80::d5b5:44fa:ef15:153e%6]) with mapi id
- 15.01.1466.008; Fri, 15 Jun 2018 16:26:19 +0200
+ 15.01.1466.008; Fri, 15 Jun 2018 16:28:27 +0200
 From:   "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>
 To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
 CC:     Rob Herring <robh+dt@kernel.org>,
@@ -65,13 +69,12 @@ CC:     Rob Herring <robh+dt@kernel.org>,
         "D_ZHU Yi (BT-FIR/ENG1-Zhu)" <D_Yi.Zhu5@cn.bosch.com>,
         "ZHANG Kevin (BT-FIR/ENG1-Zhu)" <Kevin.Zhang3@cn.bosch.com>,
         Zhu Yi <zhuyi882004@126.com>,
-        "Jonas Mark (BT-FIR/ENG1)" <Mark.Jonas@de.bosch.com>,
         "RUAN Tingquan (BT-FIR/ENG1-Zhu)" <Tingquan.Ruan@cn.bosch.com>
-Subject: Re: [PATCH v5] Input: add bu21029 touch driver
+Subject: AW: [PATCH v5] Input: add bu21029 touch driver
 Thread-Topic: [PATCH v5] Input: add bu21029 touch driver
-Thread-Index: AdQEtL7RQCg/6r2vTbqVlvssv9t8Uw==
-Date:   Fri, 15 Jun 2018 14:26:19 +0000
-Message-ID: <df1d4c275c554533944cc17cec7e93ed@de.bosch.com>
+Thread-Index: AdQEtL7RQCg/6r2vTbqVlvssv9t8UwAADJCw
+Date:   Fri, 15 Jun 2018 14:28:27 +0000
+Message-ID: <2a68611474694fb2b68146d8d167bf26@de.bosch.com>
 Accept-Language: de-DE, en-US
 Content-Language: de-DE
 X-MS-Has-Attach: 
@@ -80,73 +83,46 @@ x-originating-ip: [10.19.142.147]
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA21TbUxTVxjm9N6WS9fLblsL7zq76UUmulERXbzRZWMu2/qDLC4ubpMlrow7
-        2ggt6W0bYUuGmyh2uiEfK5QCIoM1DCY2MD786FYhQnGiEhEmihN0WnHZVBTJgmu5YPtj/573
-        ed/nfc55Tg6ByToJJaE3mFmTQZtFi8S4eH2zKnHX6bi0pLaKZOZW0UnE1HSfETInD91ETMfo
-        GMaM3H0gZAa7nCKm/uI5AVNwvDuSqR+oQylRmvqRs7imqboJaaodvbim03E5UuNu3CvS3HM/
-        t0m0VfxKBpult7KmVa9+LNZ5vh0X5FyX7NjZ1Ybno2KxDREEUGuhcUhjQ2JCRpUL4Ni5IQFf
-        nEDgLnWJ+OIOAq/jKMYXvyB4dPx8pA1FESJqPexp6J/Di6hV0F45g4JDGDWJw797ZrBgQ06t
-        g97J2vkhBhoGjgh4rIbKbu8cj1PxYB+9JApiktoAVWfG5mYQpYKWloG5PRgVC+4bD4VBDBQF
-        3x/jeaAUcGt8VsjfZyk4yzfy42oYLisV8fhFaKi9jfHrpdBXMYEXIYUjbKsjTOIIkzjCJAcR
-        3ogUnD7Jmp2cxCSrTeksl5e0Wv2JMduN+LeM6UBf/ZrhRRSBaAmp9MalyYRaK5eb7UUvEwJa
-        QVbbA1R0ujEjV6fldNtMliyWo5UkioiIkMmf0JwlPVvPcXqjwYuAwOhF5H4znSYjM7S5eazJ
-        yMu86FkCp2PJiZS/t8qoTK2Z3c6yOaxpobuBIGgglf0BQ6mJzWR3fKrPMi+0aRXvGRPeCbcV
-        EFFetIaQBLz/8gVWkFyONpvTZ87Ln+HlsgU2JPWhN4jJ3fv2YTLcYDSwyliyMHgEKjipsxie
-        nEC5mExrXZImU4Q1Qlv8aAQFMpSTUUGxJPBlQt5AdsidH8qk82RIlFwf0FCVBIw9KEXgGRlE
-        cHj2DgZ995tFMOV4HAl+zyMCpptcYjhSf+IpKKj9UwLTF3wklFy+SoKnsjgavrlSGw0zFWVP
-        w67b1RSMVu2Vws3yTikMu3oV0GI/HAMllzpi4ZpjWgmzA92LYaLvn+fh6LWCOCiua10GLudM
-        PJyuOvUC3Lt7cTl42u0roPBg90twf+pUIlw5O5zoDwQrCATb07MkGKxZa/6fYOfZ0O2U+ags
-        5e3PbHkJ1I0D599a+9OXBV8nLi2Jc71j/uD6axuLvnv8+tX3p3x6S69N/Vuievvvvizr522H
-        TNb36grzNezumv4xQ4Jqsu/AINjf3Nwljx7a/O42f/zY9AXFTsNHqtShTT+v9Cc0/7Bist2Y
-        N7AlxfJj6hrx8tQ/mrEvanrG929pdS6jcU6nXb0SM3Ha/wAyvHYHzAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA21TfUwbZRjv2zvKgRweLYxnVcbsookzfM2ZnUPnMuNSxQkSY7I1isc4aJW2
+        pFcQiH8wJ4xNnKwOx0phG/NYJMCgEukErSuQ0SIy5GOQAHMZQzr2IbKPBBPmlYO1f/jPm+f5
+        fTy/930uR2DyfkJJ6Axm1mRgclWyUDx0e3NMXMzAJk3i2FQE7a3sRvSpnt+D6O76OUQ7Jq9i
+        9MQ/D4Lo4Z9sMpq/MiSlS3/uCab5wbNoZ4ian7iMq5vqmpC6ztqHqy9Yp4LV9sbDMvWifUOa
+        bF/oK1lsrq6ANSXs+ChU6yy/Js3rxwu/KavESpAXO4IIAqit8KBv8xEUSsipaim4xy0yselC
+        MDd7ARebvxGc/rHV31R/cWy1+RXBvaEaoQkhZNR2ONTQH+yrI6kE6KhZQj4RRrXjMFZRKfMR
+        CmobTP41JhNFNDQMtknFegssXbFivhqnngV+YGFFQ1LJcMw9sxKAqBhobR1c0WBUNNhnHwb5
+        aqAo+K5LxIGKAu/15SDxcc+ArXqXKI+H8arjMrF+ARrOzGPi+Ahwn5zBK9E6a8BUa4DFGmCx
+        BlhOI7wRRWWziQX6pG1bE+NNmSxXnJgUv9+otyPxw0Y6kOValgtRBFKFkXGuTRp5EFPAFeld
+        6CVCqooi604IUHimMatIy3DaDFN+LsuplCSSSCRyxWOYy8/U6zhOZzS4EBCYKpL8yqzSyMks
+        pqiYNRlFmws9ReCqaLK8ybtPTuUwZvYTls1jTWtsMkGogBzvFwIjTGwOW5ityzWv0aoYMXNd
+        IBMYKyVCXOhFIkzInvaNILk8Rs/pclbt60W7fA31Wz3odeJWWUUFJscNRgOrjCa9Pj/lU2rz
+        DY9voHya1LRv1MijAgj/lJtoGgk7VJCLPnOY8P/4s4F0KGx75RGroN+0pVHwUMdxcE4MIzi/
+        fBuD+9ZHwdDG//IEOGss4bB0supJGLnTooD24aUNMONeiAVnx4nn4d79S3FwdPoGDd6mqzuh
+        88+JN8Dptr0JdUctb0NLmX0POL69uAcO95xJhXIXnw6Tt/i9UL588ENwnnJlwB3PDwws3m3U
+        wh9LD3Uw92+tHrq+vnQAwWLfgc8RjHQeEk7LYKNwPiobLUU3he1Khe329m70bdfMmP9nu6uo
+        /4nKEiTZz/Pd52amNBL+yw8GMLcnfIw72zuQ8mrtdd3FXSUjL7+T4agqnkhPnb/7aW1/tW32
+        YEr0c5ezjUTza4wkrcVz+7fRhti2ud2y9annPW91fDZf646l04Y8o9KPbTE74h2Fnab67vc7
+        Ukbtyeml794wnpv7fqE5oVKJ7X6vnurjp1Q4p2WSNmMmjvkP28fO794EAAA=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dmitry,
+Hi,
 
-> > > > [PATCH v5] Input: add bu21029 touch driver
-> > > >
-> > > > Add Rohm BU21029 resistive touch panel controller support with I2C
-> > > > interface.
-> > >
-> > > Is the patch ready to be pushed upstream? Is there anything I still n=
-eed to do?
-> >
-> > I would like to kindly remind you of the BU21029 touch screen driver.
-> > Could you please forward it to the mainline kernel?
->=20
-> Sorry for the delay. Could you please tell me if the patch below (shoudl
-> apply on top of your v5 version) works?
+Correction:
 
-Yes, the patch works. We applied and compiled it with 4.14 and
-4.17-rc3. We tested on our hardware with 4.14.
+> Only for 4.14 an #include <linux/regulator/consumer.h> was missing. I
+> Guess the API changed here a little in the meantime.
 
-Only for 4.14 an #include <linux/regulator/consumer.h> was missing. I
-Guess the API changed here a little in the meantime.
-
-Because we do not have a controllable power supply on our board we see
-the following complaint. But I think it is intentional and ok, right?
-
-	[    1.715963] bu21029 0-0040: 0-0040 supply vdd not found, using dummy re=
-gulator
-	[    1.723806] input: bu21029 as /devices/soc0/soc/2100000.aips-bus/21a000=
-0.i2c/i2c-0/0-0040/input/input0=20
-
-> + - vdd-supply              : power supply for the controoler
-
-There is a typo in controller.
-
-What's the next step?
+The missing include is #include <linux/irq.h>.
 
 Greetings,
 Mark
 
-Building Technologies, Panel Software Fire (BT-FIR/ENG1)=20
+Building Technologies, Panel Software Fire (BT-FIR/ENG1)
 Bosch Sicherheitssysteme GmbH | Postfach 11 11 | 85626 Grasbrunn | GERMANY =
 | www.boschsecurity.com
 
-Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118=20
+Sitz: Stuttgart, Registergericht: Amtsgericht Stuttgart HRB 23118
 Aufsichtsratsvorsitzender: Stefan Hartung; Gesch=E4ftsf=FChrung: Gert van I=
 peren, Andreas Bartz, Thomas Quante, Bernhard Schuster
