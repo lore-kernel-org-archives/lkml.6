@@ -3,57 +3,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 03098C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:18:22 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9FD50C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:18:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1DA9208DA
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:18:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53C85208DD
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 15:18:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="5D1tpgTS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1DA9208DA
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=roeck-us.net header.i=@roeck-us.net header.b="whMh0HIF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53C85208DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936315AbeFOPSR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 11:18:17 -0400
-Received: from bh-25.webhostbox.net ([208.91.199.152]:41796 "EHLO
+        id S965728AbeFOPSp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 11:18:45 -0400
+Received: from bh-25.webhostbox.net ([208.91.199.152]:60169 "EHLO
         bh-25.webhostbox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935695AbeFOPSQ (ORCPT
+        with ESMTP id S935695AbeFOPSn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 11:18:16 -0400
+        Fri, 15 Jun 2018 11:18:43 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=roeck-us.net; s=default; h=In-Reply-To:Content-Type:MIME-Version:References
         :Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding
         :Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
         List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=nCzNNugP2zccx8dMQsKqiVPB6LZ/Jn6jim6/R5TcTog=; b=5D1tpgTSWKvqIqemWCaYZh3Iwl
-        MlrUKvw5HUPVKZDINwCtIDw6mzl+idGCIkqYdLAdu5sBfyUQV3zvelccGV/yeXbgS9ScK2RezjBhK
-        3DbJtsmaOK8WgeQ8d4oCc+3jTHZliJAq/zIFxuoNUfXkhubIKf2O8FBWJRySUwJVdryrMPjaSaVhn
-        a9zHUUZiyTx4v+HPmoTBw3DeKjJ5dJaXGmN1KnkTOYc0hYBazX0DefEsaK2/Z1/Wv6/DyTf34MLi7
-        f07WjjL490yfrOOfUyKb5eYE/tAvwcbhrWOC/htKNGotBllk0hkOngFsxStuf8NVj6xuguUjYcBir
-        2yiHE4og==;
-Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:47890 helo=localhost)
+        bh=HzRFEOU+/edM7p3VSU21D9wL5OyhXx3Nh+QrFY9PIIU=; b=whMh0HIFJKQaDRIIbI/8NVZLjw
+        OkBUyEaY07DoH6aRfNQuqOCa+AH8GicEhDNLbbquaP6R6o2Nc7snqVNLchoZkOPYLCq9aSReLe3l7
+        9w+h1CwVItkxzUXfGS7VFAb++TLUNkvym/qtg3xnCimCfA7M1cg2vuaSoe8rFv5OKMrMWrJbPNkl6
+        r33UOllNsdUix5b73C5wush+lUndlTljC9dRyBP7UiVIzui975z0QrpVwlQ8La/+h3VXCxg6LerS4
+        NJS1nYngIZi9jGx6nFy6uYOXMPI/+Mw5iQ1VHqu2XEcrnpj/gVce2ahErVMZyqL4jqm5/xTZSuT6J
+        tcgjIRMw==;
+Received: from 108-223-40-66.lightspeed.sntcca.sbcglobal.net ([108.223.40.66]:47904 helo=localhost)
         by bh-25.webhostbox.net with esmtpa (Exim 4.89)
         (envelope-from <linux@roeck-us.net>)
-        id 1fTqUQ-00HSjx-PP; Fri, 15 Jun 2018 15:18:15 +0000
-Date:   Fri, 15 Jun 2018 08:18:13 -0700
+        id 1fTqUt-00HZhk-0S; Fri, 15 Jun 2018 15:18:43 +0000
+Date:   Fri, 15 Jun 2018 08:18:42 -0700
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
         akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
         ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
         stable@vger.kernel.org
-Subject: Re: [PATCH 4.4 00/24] 4.4.138-stable review
-Message-ID: <20180615151813.GA28450@roeck-us.net>
-References: <20180614132724.483802160@linuxfoundation.org>
+Subject: Re: [PATCH 4.9 00/30] 4.9.109-stable review
+Message-ID: <20180615151842.GB28450@roeck-us.net>
+References: <20180614132600.255515394@linuxfoundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180614132724.483802160@linuxfoundation.org>
+In-Reply-To: <20180614132600.255515394@linuxfoundation.org>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 X-Authenticated_sender: guenter@roeck-us.net
 X-OutGoing-Spam-Status: No, score=-1.0
@@ -72,20 +72,20 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 04:04:55PM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.4.138 release.
-> There are 24 patches in this series, all will be posted as a response
+On Thu, Jun 14, 2018 at 04:04:41PM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.109 release.
+> There are 30 patches in this series, all will be posted as a response
 > to this one.  If anyone has any issues with these being applied, please
 > let me know.
 > 
-> Responses should be made by Sat Jun 16 13:27:15 UTC 2018.
+> Responses should be made by Sat Jun 16 13:25:48 UTC 2018.
 > Anything received after that time might be too late.
 > 
 
 Build results:
 	total: 148 pass: 148 fail: 0
 Qemu test results:
-	total: 135 pass: 135 fail: 0
+	total: 147 pass: 147 fail: 0
 
 Details are available at http://kerneltests.org/builders.
 
