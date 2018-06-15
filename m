@@ -2,161 +2,175 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 7AADDC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:54:27 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C1710C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3876208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:54:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYsT3cq0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3876208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CB34208B8
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CB34208B8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965541AbeFOIyY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:54:24 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:37879 "EHLO
-        mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936130AbeFOIyW (ORCPT
+        id S965557AbeFOI4Y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 04:56:24 -0400
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:52488 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S936183AbeFOI4X (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:54:22 -0400
-Received: by mail-wm0-f67.google.com with SMTP id r125-v6so2489199wmg.2;
-        Fri, 15 Jun 2018 01:54:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=//1QW5BDdKrjD1MZZ7v/O5HdGQ+/SUtA4MjkgIjkFCo=;
-        b=YYsT3cq0hrtQ/kfYlnGym60Ga2LAfStqZbvbbW2iWpnBAi8m7HSbMy27nWWomGGHNY
-         9qgsGOHAYJsOJ64thJgLk1SDaacKKeqKXEN/jbR+wEa+vzZhwcvjeAkYHtV8AfgFiC61
-         w8OQQlrkgIhuP1grhssQaCAIMf36nLEjesxqDS9ZtevBgqEy7eupS8/ZYAu2i1q4Yz8c
-         w2HIiq0POY9wVuCuVDbImx3FCTk3cXQANnVcRu1yuPFbCg8iT0SnN6NOIOzyXiBF2Xp4
-         oyt0fqCSd6Urp/jZUKXFnZODdqx+7kmV5aaxXOMZht0gJcy1M26/y3LO44vu8SmQQqFq
-         sD0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=//1QW5BDdKrjD1MZZ7v/O5HdGQ+/SUtA4MjkgIjkFCo=;
-        b=ZPkRuUJqax5YlGMfPKQefMlJ/BYHJOUhn5EoTKR1ebOzORA1LXoJIOBDH2vTg5uM+p
-         CdX9iTGKNpWp7i4hJweDQbpOTDDrxtUPnII3pOSdQ0rIYPS9Q+ypRrVpfEmaf2wrEEz0
-         s58xfFUoQJ/a/5aPSsw+QGak3sP6Al5E6e5kL2XFJ3pX76tzRCLByprtl2gWY1ocqWTA
-         ssWpyb0MKcqgHz9bMXgbvGwGjY3TxOlIZJmYersTgwl+gQESdjOIQba8XNeM6nc8TGks
-         c/PyvH11L0IiT5ieQIyztpp6jOJM93MtIhIZIBbidZMyqrsR2EvjqtaPgYjTKTAG8KND
-         JSIg==
-X-Gm-Message-State: APt69E2/KnhRK1iKS/Bmd1Yqdyx2OHlCq3UN8ffS8lL5ezKyew9o4Rp7
-        YO00J2l04PSC/jjeWpZJryE=
-X-Google-Smtp-Source: ADUXVKIfM5QNDhfKghn25mb1foub1+/A52TTFV3/cqecWmBeJXwmDQTUbnhyNm+9wWXI6jY/EdpJSQ==
-X-Received: by 2002:a50:9ae2:: with SMTP id p89-v6mr1170680edb.112.1529052860832;
-        Fri, 15 Jun 2018 01:54:20 -0700 (PDT)
-Received: from ziggy.stardust ([37.223.147.195])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm3256655edp.57.2018.06.15.01.54.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 15 Jun 2018 01:54:19 -0700 (PDT)
-Subject: Re: [PATCH 2/2] arm64: dts: mediatek: add mt6765 support
-To:     Mars Cheng <mars.cheng@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        Jades Shih <jades.shih@mediatek.com>,
-        Yingjoe Chen <yingjoe.chen@mediatek.com>,
-        My Chuang <my.chuang@mediatek.com>,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        devicetree@vger.kernel.org, wsd_upstream@mediatek.com
-References: <1528843243-29782-1-git-send-email-mars.cheng@mediatek.com>
- <1528843243-29782-3-git-send-email-mars.cheng@mediatek.com>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <80bca2ae-eb08-3d6c-a863-140107286b2d@gmail.com>
-Date:   Fri, 15 Jun 2018 10:54:18 +0200
+        Fri, 15 Jun 2018 04:56:23 -0400
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5F8roiw113878
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 04:56:23 -0400
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2jm7qa6fq7-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 04:56:23 -0400
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <tmricht@linux.ibm.com>;
+        Fri, 15 Jun 2018 09:56:20 +0100
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 15 Jun 2018 09:56:18 +0100
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5F8uHC834144390
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 15 Jun 2018 08:56:17 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id BAB1CA4055;
+        Fri, 15 Jun 2018 09:47:05 +0100 (BST)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C927A4059;
+        Fri, 15 Jun 2018 09:47:05 +0100 (BST)
+Received: from oc3784624756.ibm.com (unknown [9.152.212.222])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Fri, 15 Jun 2018 09:47:05 +0100 (BST)
+Subject: Re: [PATCH 3/3] perf stat: Remove duplicate event counting
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org, brueckner@linux.vnet.ibm.com,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com
+References: <20180614114845.41221-1-tmricht@linux.ibm.com>
+ <20180614114845.41221-3-tmricht@linux.ibm.com> <20180615082124.GG5082@krava>
+From:   Thomas-Mich Richter <tmricht@linux.ibm.com>
+Organization: IBM LTC
+Date:   Fri, 15 Jun 2018 10:56:16 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1528843243-29782-3-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <20180615082124.GG5082@krava>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+x-cbid: 18061508-0012-0000-0000-0000027FB1D0
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061508-0013-0000-0000-000020B0D885
+Message-Id: <351a9e7d-5cca-57ae-8e87-4a792bde5ecd@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-15_06:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806150096
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 06/15/2018 10:21 AM, Jiri Olsa wrote:
+> On Thu, Jun 14, 2018 at 01:48:45PM +0200, Thomas Richter wrote:
+> 
+> SNIP
+> 
+>> +static void perf_pmu_assign_str(char *name, const char *field, char **old_str,
+>> +				char **new_str)
+>> +{
+>> +	if (!*old_str)
+>> +		goto set_new;
+>> +
+>> +	if (*new_str) {	/* Have new string, check with old */
+>> +		if (strcasecmp(*old_str, *new_str))
+>> +			pr_debug("alias %s differs in field '%s'\n",
+>> +				 name, field);
+>> +		zfree(old_str);
+>> +	} else		/* Nothing new --> keep old string */
+>> +		return;
+>> +set_new:
+>> +	*old_str = *new_str;
+>> +	*new_str = NULL;
+>> +}
+>> +
+>> +static void perf_pmu_update_alias(struct perf_pmu_alias *old,
+>> +				  struct perf_pmu_alias *newalias)
+>> +{
+>> +	perf_pmu_assign_str(old->name, "desc", &old->desc, &newalias->desc);
+>> +	perf_pmu_assign_str(old->name, "long_desc", &old->long_desc,
+>> +			    &newalias->long_desc);
+>> +	perf_pmu_assign_str(old->name, "topic", &old->topic, &newalias->topic);
+>> +	perf_pmu_assign_str(old->name, "metric_expr", &old->metric_expr,
+>> +			    &newalias->metric_expr);
+>> +	perf_pmu_assign_str(old->name, "metric_name", &old->metric_name,
+>> +			    &newalias->metric_name);
+>> +	perf_pmu_assign_str(old->name, "value", &old->str, &newalias->str);
+>> +	old->scale = newalias->scale;
+>> +	old->per_pkg = newalias->per_pkg;
+>> +	old->snapshot = newalias->snapshot;
+>> +	memcpy(old->unit, newalias->unit, sizeof(old->unit));
+>> +}
+>> +
+>> +/* Delete an alias entry. */
+>> +static void perf_pmu_free_alias(struct perf_pmu_alias *newalias)
+>> +{
+>> +	zfree(&newalias->name);
+>> +	zfree(&newalias->desc);
+>> +	zfree(&newalias->long_desc);
+>> +	zfree(&newalias->topic);
+>> +	zfree(&newalias->str);
+>> +	zfree(&newalias->metric_expr);
+>> +	zfree(&newalias->metric_name);
+>> +	parse_events_terms__purge(&newalias->terms);
+>> +	free(newalias);
+>> +}
+>> +
+>> +/* Merge an alias, search in alias list. If this name is already
+>> + * present merge both of them to combine all information.
+>> + */
+>> +static bool perf_pmu_merge_alias(struct perf_pmu_alias *newalias,
+>> +				 struct list_head *alist)
+>> +{
+>> +	struct perf_pmu_alias *a;
+>> +
+>> +	list_for_each_entry(a, alist, list) {
+>> +		if (!strcasecmp(newalias->name, a->name)) {
+>> +			perf_pmu_update_alias(a, newalias);
+>> +			perf_pmu_free_alias(newalias);
+>> +			return true;
+>> +		}
+>> +	}
+>> +	return false;
+>> +}
+> 
+> ok, I like your change better.. we can rebuilt it to use
+> rb tree later when we have this fixed
+> 
+> thanks,
+> jirka
+> 
 
+Thanks for the review. I will resend the patch set later today when I have added
+Arnaldo's comments.
+After that we add your rb tree stuff.
 
-On 13/06/18 00:40, Mars Cheng wrote:
-> +
-> +	uart0: serial@11002000 {
-> +		compatible = "mediatek,mt6765-uart",
-> +			     "mediatek,mt6577-uart";
-> +		reg = <0 0x11002000 0 0x400>;
-> +		interrupts = <GIC_SPI 91 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&uart_clk>;
-> +		status = "disabled";
-> +	};
+-- 
+Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
+--
+Vorsitzende des Aufsichtsrats: Martina Koederitz 
+Geschäftsführung: Dirk Wittkopp
+Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
-You need "baud" and "bus" clock. Also add clock-names please.
-
-> +
-> +	uart1: serial@11003000 {
-> +		compatible = "mediatek,mt6765-uart",
-> +			     "mediatek,mt6577-uart";
-> +		reg = <0 0x11003000 0 0x400>;
-> +		interrupts = <GIC_SPI 92 IRQ_TYPE_LEVEL_LOW>;
-> +		clocks = <&uart_clk>;
-> +		status = "disabled";
-
-Same here obviously.
-
-Regards,
-Matthias
