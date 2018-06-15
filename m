@@ -4,127 +4,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id F422CC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:50:32 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 9BDBDC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:51:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A70AC208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52146208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:51:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=fastmail.com header.i=@fastmail.com header.b="U5Euhq7b";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GhxMP14j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A70AC208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fastmail.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cqvXwqaS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52146208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965415AbeFOIua (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:50:30 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:52677 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S934701AbeFOIu2 (ORCPT
+        id S965549AbeFOIvU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 04:51:20 -0400
+Received: from mail-vk0-f66.google.com ([209.85.213.66]:36909 "EHLO
+        mail-vk0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936185AbeFOIvS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:50:28 -0400
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.42])
-        by mailout.nyi.internal (Postfix) with ESMTP id 8061021AEF;
-        Fri, 15 Jun 2018 04:50:27 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Fri, 15 Jun 2018 04:50:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.com; h=
-        cc:date:from:message-id:subject:to:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=dw3V9oVcv3wp6JYIkZfEpD4fdBMqQ3dLcnC67dOfu
-        LQ=; b=U5Euhq7bq9Es6LBd6bIeL8Jenw9+XgXnZh0pIqsTeK7l5+43rszMdaeyg
-        DRxYOh3ONNmMxO2qiIZyTuS9CMm1T5QRff6rzHmRTZ6k8fOc1l0fU3jiBPXT0GaD
-        lMQ9zhZ2RDvMvBvghmQK6ZRu9QhvllRCV0VmfaA6+CKIljiz9FTR5mx5ONT6KElq
-        GqZcaeYbtJEJg+S7rcc44k1F7YE8jipPxnZnlMWNLo/mJxIv0M3BRbDP82o4SS0S
-        1cqz6sH8BwMuEu+LwvwDNAjeIk9f0tIe7NGVCTz7DwyVRrxAQBGthCg/TmzCRusH
-        01z3NXcXl4D6Jypm8xzHbOEi6wCNw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:date:from:message-id:subject:to
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; bh=dw3V9oVcv3wp6JYIk
-        ZfEpD4fdBMqQ3dLcnC67dOfuLQ=; b=GhxMP14jy88PUuHxtuT45pufGn5yD7Wm0
-        tZjD93NvA5BhnhTEY1U4n5FKVeXyb4KUDVBtkKajTaLTICUzhXuGKoFY81vr3S7E
-        zgwN5Sx54PQSOooeO3veC5lB88jazeTZKpcBC7cy1hYFpGvj/DKrize2n3Nahoy8
-        oEufPkaWoFXNI1pRL8YAaPVpY/b7PXDmYFpubxqt5drPXfpRYEOxhTEfHvtyEwKW
-        98T7oYeQs9GxI6Yqg4N/1M4xneCtdCi1Ogk2moEx+Vyo5GXfrBHyJ34RzsmK3Vzz
-        VQgKETtHtuZ7VavSWO5bANy6XTPxHFgpv/3jELyj568Qxvyd3HEyQ==
-X-ME-Proxy: <xmx:030jW3JBA2u9U29DJuOtsTkWGn2V9CX-jv3XLd8Vytnx8ojPm77U4A>
-    <xmx:030jW55nKTf7Y7BiaszW_ojWmjtqtIpkFweOp9XMhl7Uy9YNBziVvQ>
-    <xmx:030jW_Savj7NNx-z1VGn5dgHm7jxWUW_TLaHSpbKPqSpuP_Z7OoKRQ>
-    <xmx:030jW6t3hgjirYEAfyUJixhIivuEXElMUqLWhjJEcB5rlEk-FDP9Kw>
-    <xmx:030jW2ufRySCy_SGgFod5UxHEYyT2et5eC2pP8Naj-w5SnyXgzXQMA>
-    <xmx:030jWzmunYUNcG_ztw0TkCUX_mvkVvsUbopIxXP8meW3eE4MthAvzg>
-X-ME-Sender: <xms:030jW6BSxXnxfRGVBkdhLXujGUsqC05D-KLYxR7FUbZiudLzyYj5iw>
-Received: from blackbeard.lan (pool-108-18-105-9.washdc.fios.verizon.net [108.18.105.9])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 1B0171028B;
-        Fri, 15 Jun 2018 04:50:27 -0400 (EDT)
-From:   Tristian Celestin <tristiancelestin@fastmail.com>
-To:     rjw@rjwysocki.net
-Cc:     lenb@kernel.org, linux-acpi@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Tristian Celestin <tristiancelestin@fastmail.com>
-Subject: [PATCH] Default to s2idle in all machines supporting LP S0.
-Date:   Fri, 15 Jun 2018 04:50:18 -0400
-Message-Id: <1529052618-370-1-git-send-email-tristiancelestin@fastmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Fri, 15 Jun 2018 04:51:18 -0400
+Received: by mail-vk0-f66.google.com with SMTP id w8-v6so5272896vkh.4
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 01:51:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=QXNj93zNUmn86i366sRjWAoWBHlfeiG5u+n+lrREuFg=;
+        b=cqvXwqaS8Q5HLtQtDWDmJPbCmn+84RGnE4cDo55xYMZpekcAi+tgYH3jFkGgvOPW+X
+         wQ5bKydMAktHJZgDPvNM9u2c0O7oqWOImNzuMAh3STmgNGMnkjsjujN0q03ONXtwvyP8
+         Wmy4ONiwy9oWSMOlR49Ix90NC2PPq+oV9q6Xw3Vus1LhHwWNcC8d4Zt/LXiD+pIDihHc
+         rnUKFsxUSLq7rVKVvyPseGN1yxJ1cGHjZAMReBxtZGya2KOYz1z3NlmLrGWVX8FMjpR1
+         DaYhLF3Yq41JqRyJfanyUunJL51T1e7akvWZATDV48nZpqtLiemCTyYC+rPrLIKBuIVC
+         RzWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=QXNj93zNUmn86i366sRjWAoWBHlfeiG5u+n+lrREuFg=;
+        b=buKrrpIeb3+o/9NalsQByDk3RgBq3itcuDPocIXBktQtQpLw0u2R0tQRVq342Qp55J
+         7WTeCZyJchvPUNso3KS3IWF1CtGVVsv8VDopFWfpQdSxkFSoPSn5f0Vi0Ma0Y/NeXdrC
+         HdHz4erKYDOO/PEwaNJc2EE1xv5ZIbZxKmpfm6O3bl5RNmIFfWvRtSMzvp7gV+ZPzahN
+         sKmAVf4MpVfsfKWqivYiUu2OK0qIgH2aCHxUVNLU9QgrjQtqRVzi3rVw12ggdsL72qIA
+         XKJaLPmswKASmW2H5+wrma8BJJ5hIL6U90vAlBnjcaQPdhfAXwafjPVrJ7meKC48UCCN
+         y2HA==
+X-Gm-Message-State: APt69E3+NncKU8A9XKzgIj84ZTwYBzlWuYPHQaVXaVO3sO2ACDJ/O+zX
+        4upEqtU9OZBwsOWngYRgz5wbdvq/ZolPHnAgQe+BrA==
+X-Google-Smtp-Source: ADUXVKKZ0TNyIop+SbCb4Ew8Brt7YuQ0NLNfpMmqIDw/tlJoISIIB8iAfjz4xKp7ktVasainj5FXJan9/nzrB8O5rTc=
+X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr410436vkd.15.1529052678222;
+ Fri, 15 Jun 2018 01:51:18 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 01:51:17
+ -0700 (PDT)
+In-Reply-To: <20180614212643.29563-1-johannes@sipsolutions.net>
+References: <20180614212643.29563-1-johannes@sipsolutions.net>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Fri, 15 Jun 2018 11:51:17 +0300
+Message-ID: <CAHp75Vf372rACqseUNYEba3Gw1Hg+PmdFdn+a2ex=2JzWZ2nWQ@mail.gmail.com>
+Subject: Re: [PATCH v2] bitfield: fix *_encode_bits()
+To:     Johannes Berg <johannes@sipsolutions.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Dell Venue Pro 7140 supports the Low Power S0 Idle state, but does not
-support any of the _DSM functions that the current heuristic checks
-for. Since suspend-to-mem can not be safely performed on this machine,
-and since the bitfield check can't cover this case, it is safer
-to enable s2idle by default by checking for the presence of the _DSM
-alone and removing the bitfield check.
+On Fri, Jun 15, 2018 at 12:26 AM, Johannes Berg
+<johannes@sipsolutions.net> wrote:
+> There's a bug in *_encode_bits() in using ~field_multiplier() for
+> the check whether or not the constant value fits into the field,
+> this is wrong and clearly ~field_mask() was intended. This was
+> triggering for me for both constant and non-constant values.
+>
+> Additionally, make this case actually into an compile error.
+> Declaring the extern function that will never exist with just a
+> warning is pointless as then later we'll just get a link error.
+>
+> While at it, also fix the indentation in those lines I'm touching.
 
-Signed-off-by: Tristian Celestin <tristiancelestin@fastmail.com>
----
- drivers/acpi/sleep.c | 22 ++++++++--------------
- 1 file changed, 8 insertions(+), 14 deletions(-)
+I'm just wondering if we have test cases for that API.
+If not, perhaps it's a good time to start (perhaps extend test_bitmap.c)?
 
-diff --git a/drivers/acpi/sleep.c b/drivers/acpi/sleep.c
-index 974e584..d0ddd4d 100644
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -718,9 +718,6 @@ static int acpi_suspend_begin_old(suspend_state_t pm_state)
- #define ACPI_LPS0_ENTRY		5
- #define ACPI_LPS0_EXIT		6
- 
--#define ACPI_LPS0_SCREEN_MASK	((1 << ACPI_LPS0_SCREEN_OFF) | (1 << ACPI_LPS0_SCREEN_ON))
--#define ACPI_LPS0_PLATFORM_MASK	((1 << ACPI_LPS0_ENTRY) | (1 << ACPI_LPS0_EXIT))
--
- static acpi_handle lps0_device_handle;
- static guid_t lps0_dsm_guid;
- static char lps0_dsm_func_mask;
-@@ -924,17 +921,14 @@ static int lps0_device_attach(struct acpi_device *adev,
- 	if (out_obj && out_obj->type == ACPI_TYPE_BUFFER) {
- 		char bitmask = *(char *)out_obj->buffer.pointer;
- 
--		if ((bitmask & ACPI_LPS0_PLATFORM_MASK) == ACPI_LPS0_PLATFORM_MASK ||
--		    (bitmask & ACPI_LPS0_SCREEN_MASK) == ACPI_LPS0_SCREEN_MASK) {
--			lps0_dsm_func_mask = bitmask;
--			lps0_device_handle = adev->handle;
--			/*
--			 * Use suspend-to-idle by default if the default
--			 * suspend mode was not set from the command line.
--			 */
--			if (mem_sleep_default > PM_SUSPEND_MEM)
--				mem_sleep_current = PM_SUSPEND_TO_IDLE;
--		}
-+		lps0_dsm_func_mask = bitmask;
-+		lps0_device_handle = adev->handle;
-+		/*
-+		 * Use suspend-to-idle by default if the default
-+		 * suspend mode was not set from the command line.
-+		 */
-+		if (mem_sleep_default > PM_SUSPEND_MEM)
-+			mem_sleep_current = PM_SUSPEND_TO_IDLE;
- 
- 		acpi_handle_debug(adev->handle, "_DSM function mask: 0x%x\n",
- 				  bitmask);
+Otherwise, the fix looks good!
+
+>
+> Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
+> Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
+> ---
+> v2: replace stray tab by space
+>
+> If you don't mind, I'd like to take this through the networking
+> tree(s) as a fix since I have some pending code that depends on
+> it.
+> ---
+>  include/linux/bitfield.h | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
+> index cf2588d81148..147a7bb341dd 100644
+> --- a/include/linux/bitfield.h
+> +++ b/include/linux/bitfield.h
+> @@ -104,7 +104,7 @@
+>                 (typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask)); \
+>         })
+>
+> -extern void __compiletime_warning("value doesn't fit into mask")
+> +extern void __compiletime_error("value doesn't fit into mask")
+>  __field_overflow(void);
+>  extern void __compiletime_error("bad bitfield mask")
+>  __bad_mask(void);
+> @@ -121,8 +121,8 @@ static __always_inline u64 field_mask(u64 field)
+>  #define ____MAKE_OP(type,base,to,from)                                 \
+>  static __always_inline __##type type##_encode_bits(base v, base field) \
+>  {                                                                      \
+> -        if (__builtin_constant_p(v) && (v & ~field_multiplier(field))) \
+> -                           __field_overflow();                         \
+> +       if (__builtin_constant_p(v) && (v & ~field_mask(field)))        \
+> +               __field_overflow();                                     \
+>         return to((v & field_mask(field)) * field_multiplier(field));   \
+>  }                                                                      \
+>  static __always_inline __##type type##_replace_bits(__##type old,      \
+> --
+> 2.14.4
+>
+
+
+
 -- 
-1.8.3.1
-
+With Best Regards,
+Andy Shevchenko
