@@ -5,121 +5,125 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90450C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:47:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97C52C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43DBD208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:47:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43DBD208B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5C299208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 20:48:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C299208B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756352AbeFOUrQ (ORCPT
+        id S1756484AbeFOUsK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 16:47:16 -0400
-Received: from mga17.intel.com ([192.55.52.151]:3880 "EHLO mga17.intel.com"
+        Fri, 15 Jun 2018 16:48:10 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:52151 "EHLO smtp.infotech.no"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752133AbeFOUrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 16:47:15 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 13:47:15 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
-   d="scan'208";a="64951736"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga001.jf.intel.com with ESMTP; 15 Jun 2018 13:47:10 -0700
-Subject: Re: [PATCHv3 07/17] x86/mm: Preserve KeyID on pte_modify() and
- pgprot_modify()
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-8-kirill.shutemov@linux.intel.com>
- <8c31f6d2-6512-2726-763e-6dd1cbb0350a@intel.com>
- <20180615125720.r755xaegvfcqfr6x@black.fi.intel.com>
- <645a4ca8-ae77-dcdd-0cbc-0da467fc210d@intel.com>
- <20180615152731.3y6rre7g66rmncxr@black.fi.intel.com>
- <cbca7e78-d70b-3eae-1c73-6ad859661b8a@intel.com>
- <20180615160613.arntdivl5gdpfwfw@black.fi.intel.com>
- <445af5b3-eaca-0589-8899-88a3b26fb509@intel.com>
- <20180615204512.axt2avr4ysc2iyrp@black.fi.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <c9645eb2-2223-b374-1e30-2c5566ff73c6@intel.com>
-Date:   Fri, 15 Jun 2018 13:45:21 -0700
+        id S1756404AbeFOUsG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 16:48:06 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 36FFC20423F;
+        Fri, 15 Jun 2018 22:48:03 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 93xPPDv8MqHN; Fri, 15 Jun 2018 22:47:57 +0200 (CEST)
+Received: from [192.168.0.151] (CPEa84e3fcc6793-CMa84e3fcc6790.cpe.net.cable.rogers.com [99.242.181.9])
+        by smtp.infotech.no (Postfix) with ESMTPA id 77F91204154;
+        Fri, 15 Jun 2018 22:47:50 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in
+ release
+To:     Al Viro <viro@ZenIV.linux.org.uk>, Jann Horn <jannh@google.com>
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        FUJITA Tomonori <fujita.tomonori@lab.ntt.co.jp>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-block@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-hardening@lists.openwall.com,
+        security@kernel.org
+References: <20180615152335.208202-1-jannh@google.com>
+ <20180615164009.GD30522@ZenIV.linux.org.uk>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <90063ef3-68fa-e983-9b47-838e6076b0f4@interlog.com>
+Date:   Fri, 15 Jun 2018 16:47:47 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <20180615204512.axt2avr4ysc2iyrp@black.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180615164009.GD30522@ZenIV.linux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 01:45 PM, Kirill A. Shutemov wrote:
-> On Fri, Jun 15, 2018 at 04:58:24PM +0000, Dave Hansen wrote:
->> On 06/15/2018 09:06 AM, Kirill A. Shutemov wrote:
->>> I have no idea what such concept should be called. I cannot come with
->>> anything better than PTE_PFN_MASK_MAX. Do you?
->> PTE_PRESERVE_MASK
+On 2018-06-15 12:40 PM, Al Viro wrote:
+> On Fri, Jun 15, 2018 at 05:23:35PM +0200, Jann Horn wrote:
+> 
+>> I've mostly copypasted ib_safe_file_access() over as
+>> scsi_safe_file_access() because I couldn't find a good common header -
+>> please tell me if you know a better way.
+>> The duplicate pr_err_once() calls are so that each of them fires once;
+>> otherwise, this would probably have to be a macro.
 >>
->> Or maybe:
->>
->> PTE_MODIFY_PRESERVE_MASK
-> It just replacing one confusion with another. Preserve what?
+>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Jann Horn <jannh@google.com>
+>> ---
+> 
+> WTF do you mean, in ->release()?  That makes no sense whatsoever -
+> what kind of copy_{to,from}_user() would be possible in there?
 
-"Preserve this mask when modifying pte permission bits"
+The folks responsible are no longer active in kernel development ***
+but as far as I know the async write(command), read(response) were
+added to bsg over 10 years ago as proof-of-concept and never properly
+worked in this async mode. The biggest design problem with it that I'm
+aware of is that two tasks which issue write(commands) at about the
+same time to the same device can receive one another's read(response).
+The tracking of which response belongs to which task is in part the
+reason why the sg driver's data structures are more complex than the
+bsg driver's are. Hence the code work to fix that problem in the bsg
+driver is not trivial and probably a reason why no-one has attempted it.
 
+Once real world users (needing an async SCSI (or general storage)
+pass-through) find out about that bsg "feature", they don't use it.
+They use the sg driver or something else. So the fact that bsg has
+other glaring errors in it in async mode is no surprise to me.
+
+When I took over the maintenance of the sg driver in 1998, it only
+had an async (i.e. write(command), read(response)) interface.
+The SG_IO ioctl was added at the suggestion of Jørg Schilling (of
+cdrecord "fame"). The sg driver implementation was essentially to
+put a write(command) and read(response) back-to-back. The bsg driver
+came along later and started with the synchronous SG_IO ioctl
+interface only. The async write(command)/read(response) functionality
+was added later to bsg. Perhaps that part of the bsg driver should be
+deprecated/withdrawn if a maintainer/rewriter cannot be found.
+[BTW the bsg sync SG_IO ioctl implementation can probably get the
+wrong response, it's just that the window is a lot narrower.]
+
+That said, the bsg driver has lots of other users. For example it is
+the only generic pass-through in Linux for the SAS Management Protocol
+(SMP) used to control SAS based storage enclosures. I have a user space
+package based on it (in Linux) called smp_utils which works well IMO.
+However disk enclosures won't typically have contention between users
+trying to control them and I'm not aware of any disk enclosures that
+support Persistent Reservations. So the bsg driver's "async" problems
+are not a practical issue in this case. Also I believe some high end
+storage hardware uses bsg to communicate with their hardware from their
+user space tools.
+
+
+Just some observations from an interested observer ...
+
+Doug Gilbert
+
+
+*** Well Jens Axbø's Copyright notice is on the bsg driver, together with
+     and Peter M. Jones. Since I have been watching the bsg driver I'm
+     not aware of any substantial patches or reworks for them. As far as
+     I know FUJITA Tomonori did a ground up rewrite of it and he no longer
+     works in this area. Makes you wonder what exactly Copyright banners
+     mean on some code; 10, 15, 20 years on.
