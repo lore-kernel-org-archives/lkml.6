@@ -2,321 +2,178 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,URIBL_BLOCKED
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id C95A2C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:45:55 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 12340C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68443208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:45:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B76C620896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 00:47:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YUu87D1X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68443208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e1iqejrR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B76C620896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965372AbeFOApx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 20:45:53 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:41054 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965218AbeFOApv (ORCPT
+        id S965388AbeFOArL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 20:47:11 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:41827 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965218AbeFOArJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 20:45:51 -0400
-Received: by mail-lf0-f68.google.com with SMTP id d24-v6so12143089lfa.8
-        for <linux-kernel@vger.kernel.org>; Thu, 14 Jun 2018 17:45:50 -0700 (PDT)
+        Thu, 14 Jun 2018 20:47:09 -0400
+Received: by mail-pg0-f65.google.com with SMTP id l65-v6so3665395pgl.8;
+        Thu, 14 Jun 2018 17:47:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=8T/YC4klSM5yD7e5b1rhMfmiQw6zotEUR7FA/pQOTjA=;
-        b=YUu87D1XwZ7uSuCXfFB23sajCIz3x3IMtfvohEEVR3gGYivS83LdGojBvpVISvY4Jv
-         93M5yutboV8n1woSW3qu5QF3ZONhhkybXdNJ9FHrHbe+bGGoE1zVG9Xc95anaIbON4e5
-         BgjO50FqwYV/49jl55XugnhGdiW4PBAmuJIyk=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kZXlJWeIV+j6rvw5L6asJJGupCBG5qouf3Mu9N0MJu4=;
+        b=e1iqejrR5cNTmC4HblFXPjXJAYDNsplV7K/8BiCTinFvOhlKRTRiPGPL578fYR11oy
+         72bKSzkH/30pz8KP/k07OZVhPkAeGmKbvj3cp98H1kpdsCCXrlw7T6GpNeXe84fooMg+
+         S6qBf1RXrSGFxel66X/pLnpV/FaIs18jwhU/Fm5WTnfu8Od8Vz7dZ+Mf63/qnd5aivH2
+         kiK5SCjAv+48CbuXwHJqIG6Yezz/CFWKxeY3TeF3dfh2wJMPbsPavuf3sGHVfmMizaum
+         RqHMgJQ9bJLCeFzoc7E9mD/cRApbRQ2MZRnslE82dWDrIkkQL+Sv5+Vk9Mmx5x0Dqcgy
+         jkCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=8T/YC4klSM5yD7e5b1rhMfmiQw6zotEUR7FA/pQOTjA=;
-        b=VaDnQWRihEF27QuWZbnqKtYzC10ka7lFkBtHdXH0+Q1U2Mwe8sKVdbq2cy7Td7qtWg
-         0sA3ZM84qCRngrWMMgSuMy5+VoukkyFTyiCtpAjQoe6TVbDp9HnjFhp6DNkdTqUT+Yr2
-         6f1IJ2u2AnjWOjaoPoUNIoeqfZixlyLMgUnRJrp2rnGuktlgFY57FNFnwjnpoGK2VqzK
-         RBr2r9kbcvy8Q6fU9msobsWBbHBtk856i+VBa83MKkr1qOdke2fA1t3vGOx2zvCOusV/
-         AJFsUar7iL8CTQaaPJkYniMWL9ApAPPsgARSot66Q/srmYFC0dM+LOJO77OPOXLqv39L
-         AVuQ==
-X-Gm-Message-State: APt69E2ZOs8c6V2KH+KFp23lA0D9gWD6IC2fowEOJWg6T01/WB/uhGkz
-        viVcDPTSKL5zKieuROoo2WINnSazAofBhoFxWupzIw==
-X-Google-Smtp-Source: ADUXVKIloEb1kSVL1rn2YoFIOxzONjhQoLGKye2sei5RwGnrlbFrQyHyvT6yBuWQdOdGxBxkZnd2UT+46vzjsHIumfA=
-X-Received: by 2002:a19:944f:: with SMTP id w76-v6mr7547849lfd.90.1529023549222;
- Thu, 14 Jun 2018 17:45:49 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kZXlJWeIV+j6rvw5L6asJJGupCBG5qouf3Mu9N0MJu4=;
+        b=Ehqji86AycnnIlogQy8OdYFYnuCr+amOMFN0ZbC/pO2i6cNlpgs7lEXL2/symV1VcX
+         0w2n3wpGPZJnYm8iAY20DGRCpKmZdhz3tWG3ol7i6D62cTFovJhGSUS2uq5HBEkiulgX
+         XoAzSBdprITr7/unA3PZltYITKPUU9lExNasVgw4ISP1zKx30Kx8yl2T+W6OIpYvbjuI
+         NzX4ze7yxLfJc242Sn82uRAJOkpOG7mbh02q3MuyPBe2KGylc09opNjXUwoOdDYci3kP
+         Al71LVUwVQx2SsPHROQQRqjMXQTaMC5AvurCEdooClpR/Oz9ETkKUH5EhmhWkyNaItxz
+         i5IQ==
+X-Gm-Message-State: APt69E1B3hn+Fa476TMNZ7Mz9GXhUbQ2WEVZaDz5P+AgtwRUEB5Fniar
+        7w3DgjDunjwVF6plpzKWy04=
+X-Google-Smtp-Source: ADUXVKL4z9SBx9+VqPo5nDP9UVzqyVhW1u4Z6yKu4jCrFGHN8vwLtmP5+C6SoFjgj69jkmcHTtN+7Q==
+X-Received: by 2002:a62:c45a:: with SMTP id y87-v6mr11833913pff.190.1529023628977;
+        Thu, 14 Jun 2018 17:47:08 -0700 (PDT)
+Received: from ast-mbp.dhcp.thefacebook.com ([2620:10d:c090:200::5:3f9])
+        by smtp.gmail.com with ESMTPSA id o77-v6sm13462849pfj.0.2018.06.14.17.47.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 14 Jun 2018 17:47:08 -0700 (PDT)
+Date:   Thu, 14 Jun 2018 17:47:06 -0700
+From:   Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     netdev@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: [PATCH v2 2/3] bpfilter: include bpfilter_umh in assembly
+ instead of using objcopy
+Message-ID: <20180615004704.u5gofft7k6ehmhwi@ast-mbp.dhcp.thefacebook.com>
+References: <1528987172-19810-1-git-send-email-yamada.masahiro@socionext.com>
+ <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-Received: by 2002:a19:ee14:0:0:0:0:0 with HTTP; Thu, 14 Jun 2018 17:45:48
- -0700 (PDT)
-In-Reply-To: <20180614132126.797006529@linuxfoundation.org>
-References: <20180614132126.797006529@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 15 Jun 2018 06:15:48 +0530
-Message-ID: <CA+G9fYtLq0STwKXEnn5cHQGMOKxiaPfdnAuPhvpwhfMdsWJANw@mail.gmail.com>
-Subject: Re: [PATCH 4.17 00/45] 4.17.2-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        lkft-triage@lists.linaro.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        linux- stable <stable@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>, ltp@lists.linux.it
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1528987172-19810-3-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20180223
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14 June 2018 at 19:33, Greg Kroah-Hartman <gregkh@linuxfoundation.org> w=
-rote:
-> This is the start of the stable review cycle for the 4.17.2 release.
-> There are 45 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Jun 16 13:21:05 UTC 2018.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.17.2-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.17.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On Thu, Jun 14, 2018 at 11:39:31PM +0900, Masahiro Yamada wrote:
+> What we want here is to embed a user-space program into the kernel.
+> Instead of the complex ELF magic, let's simply wrap it in the assembly
+> with the '.incbin' directive.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+> Changes in v2:
+>   - Rebase
+> 
+>  net/bpfilter/Makefile            | 15 ++-------------
+>  net/bpfilter/bpfilter_kern.c     | 11 +++++------
+>  net/bpfilter/bpfilter_umh_blob.S |  7 +++++++
+>  3 files changed, 14 insertions(+), 19 deletions(-)
+>  create mode 100644 net/bpfilter/bpfilter_umh_blob.S
+> 
+> diff --git a/net/bpfilter/Makefile b/net/bpfilter/Makefile
+> index e0bbe75..39c6980 100644
+> --- a/net/bpfilter/Makefile
+> +++ b/net/bpfilter/Makefile
+> @@ -15,18 +15,7 @@ ifeq ($(CONFIG_BPFILTER_UMH), y)
+>  HOSTLDFLAGS += -static
+>  endif
+>  
+> -# a bit of elf magic to convert bpfilter_umh binary into a binary blob
+> -# inside bpfilter_umh.o elf file referenced by
+> -# _binary_net_bpfilter_bpfilter_umh_start symbol
+> -# which bpfilter_kern.c passes further into umh blob loader at run-time
+> -quiet_cmd_copy_umh = GEN $@
+> -      cmd_copy_umh = echo ':' > $(obj)/.bpfilter_umh.o.cmd; \
+> -      $(OBJCOPY) -I binary -O `$(OBJDUMP) -f $<|grep format|cut -d' ' -f8` \
+> -      -B `$(OBJDUMP) -f $<|grep architecture|cut -d, -f1|cut -d' ' -f2` \
+> -      --rename-section .data=.init.rodata $< $@
+> -
+> -$(obj)/bpfilter_umh.o: $(obj)/bpfilter_umh
+> -	$(call cmd,copy_umh)
+> +$(obj)/bpfilter_umh_blob.o: $(obj)/bpfilter_umh
+>  
+>  obj-$(CONFIG_BPFILTER_UMH) += bpfilter.o
+> -bpfilter-objs += bpfilter_kern.o bpfilter_umh.o
+> +bpfilter-objs += bpfilter_kern.o bpfilter_umh_blob.o
+> diff --git a/net/bpfilter/bpfilter_kern.c b/net/bpfilter/bpfilter_kern.c
+> index 0952257..6de3ae5 100644
+> --- a/net/bpfilter/bpfilter_kern.c
+> +++ b/net/bpfilter/bpfilter_kern.c
+> @@ -10,11 +10,8 @@
+>  #include <linux/file.h>
+>  #include "msgfmt.h"
+>  
+> -#define UMH_start _binary_net_bpfilter_bpfilter_umh_start
+> -#define UMH_end _binary_net_bpfilter_bpfilter_umh_end
+> -
+> -extern char UMH_start;
+> -extern char UMH_end;
+> +extern char bpfilter_umh_start;
+> +extern char bpfilter_umh_end;
+>  
+>  static struct umh_info info;
+>  /* since ip_getsockopt() can run in parallel, serialize access to umh */
+> @@ -93,7 +90,9 @@ static int __init load_umh(void)
+>  	int err;
+>  
+>  	/* fork usermode process */
+> -	err = fork_usermode_blob(&UMH_start, &UMH_end - &UMH_start, &info);
+> +	err = fork_usermode_blob(&bpfilter_umh_end,
+> +				 &bpfilter_umh_end - &bpfilter_umh_start,
+> +				 &info);
+>  	if (err)
+>  		return err;
+>  	pr_info("Loaded bpfilter_umh pid %d\n", info.pid);
+> diff --git a/net/bpfilter/bpfilter_umh_blob.S b/net/bpfilter/bpfilter_umh_blob.S
+> new file mode 100644
+> index 0000000..40311d1
+> --- /dev/null
+> +++ b/net/bpfilter/bpfilter_umh_blob.S
+> @@ -0,0 +1,7 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +	.section .init.rodata, "a"
+> +	.global bpfilter_umh_start
+> +bpfilter_umh_start:
+> +	.incbin "net/bpfilter/bpfilter_umh"
+> +	.global bpfilter_umh_end
+> +bpfilter_umh_end:
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm and x86_64.
+for some reason it doesn't work.
+fork_usermode_blob() returns ENOEXEC
+You should be able to test it simply running 'iptables -L'.
+Without this patch you should see:
+[   12.696937] bpfilter: Loaded bpfilter_umh pid 225
+Started bpfilter
 
-NOTE:
-fcntl36 is an intermittent failure on qemu arm32 for all branches.
-fcntl36.c:205: FAIL: Unexpected data offset 12304 value 9
-Old open bug to investigate, https://bugs.linaro.org/show_bug.cgi?id=3D3339
+where first line comes from kernel module and second from umh.
 
-Summary
-------------------------------------------------------------------------
 
-kernel: 4.17.2-rc1
-git repo:
-https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-git branch: linux-4.17.y
-git commit: f11fc39630770031c4dd042acc5ad98adc5de301
-git describe: v4.17.1-46-gf11fc3963077
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.17-oe/bu=
-ild\
-/v4.17.1-46-gf11fc3963077
-^ Please join URL
-
-No regressions (compared to build v4.17.1)
-------------------------------------------------------------------------
-
-Boards, architectures and test suites:
--------------------------------------
-
-dragonboard-410c - arm64
-* boot - pass: 21,
-* kselftest - skip: 28, pass: 46, fail: 6
-* libhugetlbfs - skip: 1, pass: 89, fail: 1
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-cve-tests - skip: 8, pass: 27,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 6, pass: 60,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - skip: 1, pass: 21,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - pass: 14,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 131, pass: 1018,
-* ltp-timers-tests - pass: 13,
-
-hi6220-hikey - arm64
-* boot - pass: 21,
-* kselftest - skip: 22, pass: 53, fail: 4
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-cve-tests - skip: 8, pass: 27,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - skip: 1, pass: 21,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 4, pass: 10,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 132, pass: 1017,
-* ltp-timers-tests - pass: 13,
-
-juno-r2 - arm64
-* boot - pass: 21,
-* kselftest - skip: 24, pass: 51, fail: 5
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-cve-tests - skip: 9, pass: 26,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 6, pass: 60,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 4, pass: 10,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 131, pass: 1018,
-* ltp-timers-tests - pass: 13,
-
-qemu_arm
-* boot - pass: 21,
-* kselftest - skip: 32, pass: 45, fail: 8
-* libhugetlbfs - skip: 1, pass: 87,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 18, pass: 63,
-* ltp-cve-tests - skip: 12, pass: 23,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 5, pass: 61,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - skip: 1, pass: 21,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 7, pass: 7,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 94, pass: 1052, fail: 3
-* ltp-timers-tests - pass: 13,
-
-qemu_arm64
-* boot - pass: 20, fail: 1
-* kselftest - skip: 30, pass: 52, fail: 5
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-cve-tests - skip: 10, pass: 25,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 6, pass: 60,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 6, pass: 8,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 154, pass: 995,
-* ltp-timers-tests - pass: 13,
-
-qemu_x86_64
-* boot - pass: 21,
-* kselftest - skip: 30, pass: 67, fail: 3
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-cve-tests - skip: 4, pass: 31,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 6, pass: 60,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 1, pass: 13,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 152, pass: 997,
-* ltp-timers-tests - pass: 13,
-
-x15 - arm
-* boot - pass: 21,
-* kselftest - skip: 29, pass: 47, fail: 8
-* libhugetlbfs - skip: 1, pass: 87,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 18, pass: 63,
-* ltp-cve-tests - skip: 10, pass: 25,
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 5, pass: 61,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - skip: 2, pass: 20,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 1, pass: 13,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 76, pass: 1073,
-* ltp-timers-tests - pass: 13,
-
-x86_64
-* boot - pass: 23,
-* kselftest - skip: 25, pass: 66, fail: 2
-* kselftest-vsyscall-mode-native - skip: 25, pass: 67, fail: 3
-* kselftest-vsyscall-mode-none - skip: 25, pass: 65, fail: 3
-* libhugetlbfs - skip: 1, pass: 90,
-* ltp-cap_bounds-tests - pass: 2,
-* ltp-containers-tests - skip: 17, pass: 64,
-* ltp-cve-tests - skip: 5, pass: 28, fail: 2
-* ltp-fcntl-locktests-tests - pass: 2,
-* ltp-filecaps-tests - pass: 2,
-* ltp-fs-tests - skip: 5, pass: 61,
-* ltp-fs_bind-tests - pass: 2,
-* ltp-fs_perms_simple-tests - pass: 19,
-* ltp-fsx-tests - pass: 2,
-* ltp-hugetlb-tests - pass: 22,
-* ltp-io-tests - pass: 3,
-* ltp-ipc-tests - pass: 9,
-* ltp-math-tests - pass: 11,
-* ltp-nptl-tests - pass: 2,
-* ltp-pty-tests - pass: 4,
-* ltp-sched-tests - skip: 5, pass: 9,
-* ltp-securebits-tests - pass: 4,
-* ltp-syscalls-tests - skip: 116, pass: 1033,
-* ltp-timers-tests - pass: 13,
-
---=20
-Linaro QA (BETA)
-https://qa-reports.linaro.org
