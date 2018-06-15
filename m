@@ -2,131 +2,176 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2478BC433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E580BC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:03:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF779208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:58:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF779208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8858A208AF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:03:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="psnzJ+k1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8858A208AF
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756302AbeFOQ61 (ORCPT
+        id S1756282AbeFORC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:58:27 -0400
-Received: from mga18.intel.com ([134.134.136.126]:17560 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756257AbeFOQ6Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:58:25 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 09:58:25 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,227,1526367600"; 
-   d="scan'208";a="50215836"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga006.jf.intel.com with ESMTP; 15 Jun 2018 09:58:25 -0700
-Subject: Re: [PATCHv3 07/17] x86/mm: Preserve KeyID on pte_modify() and
- pgprot_modify()
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-8-kirill.shutemov@linux.intel.com>
- <8c31f6d2-6512-2726-763e-6dd1cbb0350a@intel.com>
- <20180615125720.r755xaegvfcqfr6x@black.fi.intel.com>
- <645a4ca8-ae77-dcdd-0cbc-0da467fc210d@intel.com>
- <20180615152731.3y6rre7g66rmncxr@black.fi.intel.com>
- <cbca7e78-d70b-3eae-1c73-6ad859661b8a@intel.com>
- <20180615160613.arntdivl5gdpfwfw@black.fi.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <445af5b3-eaca-0589-8899-88a3b26fb509@intel.com>
-Date:   Fri, 15 Jun 2018 09:58:24 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 13:02:59 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:44373 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755310AbeFORC4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 13:02:56 -0400
+Received: by mail-oi0-f65.google.com with SMTP id c128-v6so9386389oig.11
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 10:02:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pRl2Fgx/Y865bWO6X/pDMIZgVKps8TK7GnU+XZooaHs=;
+        b=psnzJ+k1ktGfoIh7S9p5VdQY+IVfMmpd5mGh9o6+6oP75sDYnwQBZf138AqSI0vlTD
+         Sv2na0qusiCufw9aoWWK1E4HwAOOAqNd2CM8JWHRzHFw76tTzonvrTjuCY86Ox59xpRN
+         bHhbKbZfNHZvzflkK8o9qsc77qa60t9gbgTH3cwcldb9H5xU1fcEDUGZYcQJbIa2pvl4
+         kS5ri99G0/s7ZCojBGaiviQnl6IpU39uZgT/XMxKdKAdR3Lkt4/yziJmsQd+bH1EFYIF
+         lbu3DhyXxOvO73TdmGQAI1tp4KH5KlipI+HOzyz/48LkgbXClNDyat5RAJPzIUxi608q
+         u6qg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pRl2Fgx/Y865bWO6X/pDMIZgVKps8TK7GnU+XZooaHs=;
+        b=rj74lwaXlCvkYejq1OtnJZ6x4X+RB+nkM5rh4yNhj4j6ia5tb4P8hMte7D7fg3NkoL
+         Y+IP5sIv7nTlYdUDV7lDPBQQ3okX83cEXagbhUsnQ7g5dE4leeqBBov6T9I9YtW5GTC8
+         5ACthH1jTdKpnou2gwaqUn+xVcT4L8ty0l/xN0RfjcB3/S05cy/ioaj3zSk8Y8gbOzs3
+         We8VAQKJmUKKETnjfn86fbYvRPXcD+N2O8lJQ1y/5w3nFWXKYSwmIO7kRHIw9/qGCAWB
+         Rujc+Am17+RF0k8e46RUixmBqdGmj0x9ANx0JosjRLAJnzpMYHsRe7SJWUh4EuMq+q7w
+         SULg==
+X-Gm-Message-State: APt69E1pafWFRSKWyaIX01/VudhuQNGBDPR3o5S9p3i4yTks/liVs6LR
+        WhZ9DfPPM4qzF2av+cdRPDeCeBnhsOQH4dlBQdlV1w==
+X-Google-Smtp-Source: ADUXVKJI6oWxExf7fWoYO1HXj1nC72XsCBWClNnb8CnqfdHRHV7V/ys1UZDlHNAzGozs9cEBSbVzGjJtzfFS5aH43uc=
+X-Received: by 2002:aca:6b03:: with SMTP id g3-v6mr1246948oic.219.1529082175956;
+ Fri, 15 Jun 2018 10:02:55 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180615160613.arntdivl5gdpfwfw@black.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20180615152335.208202-1-jannh@google.com> <20180615164930.GE30522@ZenIV.linux.org.uk>
+ <CAG48ez0x+d78yUc3FxHcQOtJRCF1j3Af+iR=UojnDrqqYzzTcg@mail.gmail.com>
+In-Reply-To: <CAG48ez0x+d78yUc3FxHcQOtJRCF1j3Af+iR=UojnDrqqYzzTcg@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Fri, 15 Jun 2018 19:02:44 +0200
+Message-ID: <CAG48ez1G84FsGOSp_R89Fn8W1q4fNj1REiEVvfiQZO-cE18Z9Q@mail.gmail.com>
+Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in release
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
+        dgilbert@interlog.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        security@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 09:06 AM, Kirill A. Shutemov wrote:
-> I have no idea what such concept should be called. I cannot come with
-> anything better than PTE_PFN_MASK_MAX. Do you?
+On Fri, Jun 15, 2018 at 6:58 PM Jann Horn <jannh@google.com> wrote:
+>
+> On Fri, Jun 15, 2018 at 6:49 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Fri, Jun 15, 2018 at 05:23:35PM +0200, Jann Horn wrote:
+> > > As Al Viro noted in commit 128394eff343 ("sg_write()/bsg_write() is not fit
+> > > to be called under KERNEL_DS"), sg and bsg improperly access userspace
+> > > memory outside the provided buffer, permitting kernel memory corruption via
+> > > splice().
+> > > But they don't just do it on ->write(), also on ->read() and (in the case
+> > > of bsg) even on ->release().
+> > >
+> > > As a band-aid, make sure that the ->read() and ->write() handlers can not
+> > > be called in weird contexts (kernel context or credentials different from
+> > > file opener), like for ib_safe_file_access().
+> > > Also, completely prevent user memory accesses from ->release().
+> >
+> > Band-aid it is, and a bloody awful one, at that.  What the hell is going on
+> > in bsg_put_device() and can it _ever_ hit that call chain?  I.e.
+> >         bsg_release()
+> >                 bsg_put_device()
+> >                         blk_complete_sgv4_hdr_rq()
+> >                                 ->complete_rq()
+> >                                         copy_to_user()
+> > If it can, the whole thing is FUBAR by design - ->release() may bloody well
+> > be called in a context that has no userspace at all.
+> >
+> > This is completely insane; what's going on there?
+>
+> Perhaps I should have split my patch into two parts; it consists of
+> two somewhat related changes.
+>
+> The first change is that ->read() and ->write() violate the normal
+> contract and, as a band-aid, should not be called in uaccess_kernel()
+> context or with changed creds.
+>
+> The second change is an actual fix: AFAICS ->release() accidentally
+> accessed userspace, which I've fixed using the added "cleaning_up"
+> parameter.
 
-PTE_PRESERVE_MASK
+FWIW, the demo code I'm using to test this in a QEMU VM:
 
-Or maybe:
+$ cat test.c
+#define _GNU_SOURCE
+#include <fcntl.h>
+#include <unistd.h>
+#include <linux/bsg.h>
+#include <string.h>
+#include <err.h>
+#include <stdio.h>
 
-PTE_MODIFY_PRESERVE_MASK
+int main(void) {
+  int fd = open("/dev/bsg/0:0:0:0", O_RDWR);
+  if (fd == -1)
+    err(1, "foo");
+  __u8 buf1[255];
+  __u8 request[10] = {
+    [0] = 0x5a, // MODE_SENSE_10
+    [2] = 0x41,
+    [8] = 0x10
+  };
+  __u8 sense[32];
+  memset(sense, 'A', sizeof(sense));
+  memset(buf1, 'A', sizeof(buf1));
+  struct sg_io_v4 req = {
+    .guard = 'Q',
+    .protocol = BSG_PROTOCOL_SCSI,
+    .subprotocol = BSG_SUB_PROTOCOL_SCSI_CMD,
+    .request_len = sizeof(request),
+    .request = (__u64)request,
+    .max_response_len = sizeof(sense),
+    .response = (__u64)sense,
+    .din_xfer_len = sizeof(buf1),
+    .din_xferp = (__u64)buf1,
+    .timeout = 1000
+  };
+  if (write(fd, &req, sizeof(req)) != sizeof(req))
+    err(1, "write");
+  printf("sense[0] after write: 0x%02hhx\n", sense[0]);
 
-Maybe a comment to go along with it:
+  /*
+  struct sg_io_v4 resp;
+  if (splice(fd, NULL, pipe_fds[1], NULL, sizeof(struct sg_io_v4), 0)
+!= sizeof(struct sg_io_v4))
+    err(1, "splice");
+    */
 
-/*
- * These are the bits that must be preserved during when doing a
- * PTE permission modification operation, like taking a PTE from
- * R/W->R/O.  They include the physical address and the memory
- * encryption keyID.  The paddr and the keyID never occupy the same
- * bits at the same time.  But, a given bit might be used for the keyID
- * on one system and used for the physical address on another.  As an
- * optimization, we manage them in one unit here since their combination
- * always occupies the same hardware bits.
- */
+  sleep(1);
+  printf("sense[0] after sleep: 0x%02hhx\n", sense[0]);
+  close(fd);
+  printf("sense[0] after close: 0x%02hhx\n", sense[0]);
+}
+$ gcc -o test test.c -Wall && sudo ./test
+sense[0] after write: 0x41
+sense[0] after sleep: 0x41
+sense[0] after close: 0xf0
+$ uname -a
+Linux debian 4.17.0+ #10 SMP Fri Jun 15 14:48:42 CEST 2018 x86_64 GNU/Linux
