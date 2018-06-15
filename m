@@ -5,78 +5,73 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 1EB65C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:24:56 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id AE453C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2051208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:24:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2051208B5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 654C020896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 08:27:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 654C020896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756041AbeFOIYx (ORCPT
+        id S1756021AbeFOI1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 04:24:53 -0400
-Received: from mga18.intel.com ([134.134.136.126]:5053 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755847AbeFOIYw (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 04:24:52 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 01:24:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,226,1526367600"; 
-   d="scan'208";a="237381833"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.239.161.30]) ([10.239.161.30])
-  by fmsmga005.fm.intel.com with ESMTP; 15 Jun 2018 01:24:49 -0700
-Subject: Re: [PATCH v1 0/2] perf: Drop leaked kernel samples
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     acme@kernel.org, jolsa@kernel.org, mingo@redhat.com,
-        alexander.shishkin@linux.intel.com, me@kylehuey.com,
-        Linux-kernel@vger.kernel.org, vincent.weaver@maine.edu,
-        will.deacon@arm.com, eranian@google.com, namhyung@kernel.org,
-        ak@linux.intel.com, kan.liang@intel.com, yao.jin@intel.com
-References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
- <20180615074504.GA2458@hirez.programming.kicks-ass.net>
- <11958be5-dc05-611b-6839-f1f6903c7ca8@linux.intel.com>
- <20180615081223.GB2458@hirez.programming.kicks-ass.net>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <a8ba2079-b880-a145-a4e0-754d58ccdc8f@linux.intel.com>
-Date:   Fri, 15 Jun 2018 16:24:49 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 04:27:33 -0400
+Received: from Galois.linutronix.de ([146.0.238.70]:49377 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755847AbeFOI1c (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 04:27:32 -0400
+Received: from hsi-kbw-5-158-153-52.hsi19.kabel-badenwuerttemberg.de ([5.158.153.52] helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1fTk4q-0004dN-G5; Fri, 15 Jun 2018 10:27:24 +0200
+Date:   Fri, 15 Jun 2018 10:27:21 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     =?ISO-8859-15?Q?Daniel_D=EDaz?= <daniel.diaz@linaro.org>
+cc:     x86@kernel.org, anders.roxell@linaro.org,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] x86: x86_64_defconfig: Enable KSM.
+In-Reply-To: <1529016629-2948-1-git-send-email-daniel.diaz@linaro.org>
+Message-ID: <alpine.DEB.2.21.1806151026330.2079@nanos.tec.linutronix.de>
+References: <1529016629-2948-1-git-send-email-daniel.diaz@linaro.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20180615081223.GB2458@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/mixed; boundary="8323329-1187883524-1529051244=:2079"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
+--8323329-1187883524-1529051244=:2079
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 
-On 6/15/2018 4:12 PM, Peter Zijlstra wrote:
-> On Fri, Jun 15, 2018 at 04:01:45PM +0800, Jin, Yao wrote:
+On Thu, 14 Jun 2018, Daniel Díaz wrote:
+
+> As per the documentation, Kernel Samepage Merging (available
+> since 2.6.32) is a memory-saving de-duplication feature,
+> enabled by CONFIG_KSM=y and activated via sysfs. More
+> information can be found here:
+>   https://www.kernel.org/doc/Documentation/vm/ksm.txt
 > 
->> Bring more overhead to kernel if we zero the bits considering the number of
->> leaked samples may be not too small?
-> 
-> Keeping the samples at least allows you to know how many samples
-> happened and such things.
-> 
+> When enabled in the kernel, the default is to not do anything
+> at all, until it is activated at run-time with:
+>   echo 1 > /sys/kernel/mm/ksm/run
 
-Yeah, agree, but a little bit overhead ...
+We all know that, but the above does not make an argument WHY this needs to
+be enabled in defconfig.
 
->> And the skid information may be interesting (see example of hitting on
->> page_fault in previous mail). If we zero it, we will not know.
-> 
-> If you throw them out the window you also don't know, do you?
-> 
+Thanks,
 
-Yes, default I can't know that window. I have to use sysctl to enable.
-
-Thanks
-Jin Yao
+	tglx
+--8323329-1187883524-1529051244=:2079--
