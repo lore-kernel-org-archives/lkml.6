@@ -6,145 +6,153 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7829DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D256C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FBC7208B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:12:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCAB0208B2
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 17:13:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Uw35zaZq";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Uw35zaZq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FBC7208B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="m6gXzwJV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCAB0208B2
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936300AbeFORMP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 13:12:15 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60944 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756127AbeFORMN (ORCPT
+        id S936332AbeFORNJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 13:13:09 -0400
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:62975 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1756275AbeFORNH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 13:12:13 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id D58F5600D0; Fri, 15 Jun 2018 17:12:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529082732;
-        bh=Y7c999DdPQgN/acUR2K39sfLPJbCqUnrCzguWN/1rxw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Uw35zaZqpIImhy9oc9EZZ2U3MGLTlpObIskwnV1ka/6zUlr54p7qNO1YD0OjxkJ94
-         sGcK9L6xwDtmQ7LuKYlsOmnr6TSUwy02nSqGbGKls2Fym6PC2ha65UvApR0SyE4TE+
-         6vNnzT70hy9eBBVSBbxan+RNQxJRO/tBBDvmFxiQ=
-Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5D48E600D0;
-        Fri, 15 Jun 2018 17:12:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1529082732;
-        bh=Y7c999DdPQgN/acUR2K39sfLPJbCqUnrCzguWN/1rxw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Uw35zaZqpIImhy9oc9EZZ2U3MGLTlpObIskwnV1ka/6zUlr54p7qNO1YD0OjxkJ94
-         sGcK9L6xwDtmQ7LuKYlsOmnr6TSUwy02nSqGbGKls2Fym6PC2ha65UvApR0SyE4TE+
-         6vNnzT70hy9eBBVSBbxan+RNQxJRO/tBBDvmFxiQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5D48E600D0
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Fri, 15 Jun 2018 11:12:09 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Will Deacon <will.deacon@arm.com>
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>, robin.murphy@arm.com,
-        joro@8bytes.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, pdaly@codeaurora.org
-Subject: Re: [PATCH 1/1] iommu/arm-smmu: Add support to use Last level cache
-Message-ID: <20180615171208.GN11565@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Will Deacon <will.deacon@arm.com>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>, robin.murphy@arm.com,
-        joro@8bytes.org, linux-arm-kernel@lists.infradead.org,
-        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, pdaly@codeaurora.org
-References: <20180615105329.26800-1-vivek.gautam@codeaurora.org>
- <20180615165232.GE2202@arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180615165232.GE2202@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Fri, 15 Jun 2018 13:13:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1529082476; x=1560618476;
+  h=from:to:cc:subject:date:message-id;
+  bh=oQZqgBvt0nQB+Mwqbb5HTI3I66zH7R/3NylK46JUdU8=;
+  b=m6gXzwJVSgYcvdleZ+gqGG+ZcmA7cyeS9mkdhaEkD5JAyvJqOY/yEf3y
+   H+Wo2qCtbuxz8WKwTmxfOgi5yA/RAFnldglq8B6Ihs4HId2KuA8B2f3lH
+   byw29MSiPz4EEX1eo38+FGkc7l9fFAqcg34Tq9U3wmPTjcWWeoEw0aNYP
+   8=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2F/AADp8iNbmMmZ6ERbHAEBAQQBAQoBA?=
+ =?us-ascii?q?YUpKIt9jFKWboF4C4RsglUhNBgBAgEBAQEBAQIBAQIQAQEBAQEICwsGKS+CNSQ?=
+ =?us-ascii?q?Bgn5ST28BEoMiggGrVDOISIFoiEyBVD+BD41XAodQhU6LcAcCgWqNFwKNNQGRQ?=
+ =?us-ascii?q?YFBggtwgxOCIQ4JjjVRkFkBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2F/AADp8iNbmMmZ6ERbHAEBAQQBAQoBAYUpKIt9jFKWboF?=
+ =?us-ascii?q?4C4RsglUhNBgBAgEBAQEBAQIBAQIQAQEBAQEICwsGKS+CNSQBgn5ST28BEoMig?=
+ =?us-ascii?q?gGrVDOISIFoiEyBVD+BD41XAodQhU6LcAcCgWqNFwKNNQGRQYFBggtwgxOCIQ4?=
+ =?us-ascii?q?JjjVRkFkBAQ?=
+Received: from esa1.dell-outbound2.iphmx.com ([68.232.153.201])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 12:07:56 -0500
+Received: from ausc60pc101.us.dell.com ([143.166.85.206])
+  by esa1.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 23:07:32 +0600
+X-LoopCount0: from 10.208.86.39
+X-IronPort-AV: E=Sophos;i="5.51,227,1526360400"; 
+   d="scan'208";a="1262692554"
+X-DLP:  DLP_GlobalPCIDSS
+From:   Mario Limonciello <mario.limonciello@dell.com>
+To:     dvhart@infradead.org, Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        platform-driver-x86@vger.kernel.org,
+        Mario Limonciello <mario.limonciello@dell.com>
+Subject: [PATCH] platform/x86: dell-smbios-base: Support systems without tokens
+Date:   Fri, 15 Jun 2018 12:12:51 -0500
+Message-Id: <1529082771-21309-1-git-send-email-mario.limonciello@dell.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 05:52:32PM +0100, Will Deacon wrote:
-> Hi Vivek,
-> 
-> On Fri, Jun 15, 2018 at 04:23:29PM +0530, Vivek Gautam wrote:
-> > Qualcomm SoCs have an additional level of cache called as
-> > System cache or Last level cache[1]. This cache sits right
-> > before the DDR, and is tightly coupled with the memory
-> > controller.
-> > The cache is available to all the clients present in the
-> > SoC system. The clients request their slices from this system
-> > cache, make it active, and can then start using it. For these
-> > clients with smmu, to start using the system cache for
-> > dma buffers and related page tables [2], few of the memory
-> > attributes need to be set accordingly.
-> > This change makes the related memory Outer-Shareable, and
-> > updates the MAIR with necessary protection.
-> > 
-> > The MAIR attribute requirements are:
-> >     Inner Cacheablity = 0
-> >     Outer Cacheablity = 1, Write-Back Write Allocate
-> >     Outer Shareablity = 1
-> 
-> Hmm, so is this cache coherent with the CPU or not? Why don't normal
-> non-cacheable mappings allocated in the LLC by default?
-> 
-> > diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-> > index f7a96bcf94a6..8058e7205034 100644
-> > --- a/drivers/iommu/arm-smmu.c
-> > +++ b/drivers/iommu/arm-smmu.c
-> > @@ -249,6 +249,7 @@ struct arm_smmu_domain {
-> >  	struct mutex			init_mutex; /* Protects smmu pointer */
-> >  	spinlock_t			cb_lock; /* Serialises ATS1* ops and TLB syncs */
-> >  	struct iommu_domain		domain;
-> > +	bool				has_sys_cache;
-> >  };
-> >  
-> >  struct arm_smmu_option_prop {
-> > @@ -862,6 +863,8 @@ static int arm_smmu_init_domain_context(struct iommu_domain *domain,
-> >  
-> >  	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
-> >  		pgtbl_cfg.quirks = IO_PGTABLE_QUIRK_NO_DMA;
-> > +	if (smmu_domain->has_sys_cache)
-> > +		pgtbl_cfg.quirks |= IO_PGTABLE_QUIRK_SYS_CACHE;
-> >  
-> >  	smmu_domain->smmu = smmu;
-> >  	pgtbl_ops = alloc_io_pgtable_ops(fmt, &pgtbl_cfg, smmu_domain);
-> > @@ -1477,6 +1480,9 @@ static int arm_smmu_domain_get_attr(struct iommu_domain *domain,
-> >  	case DOMAIN_ATTR_NESTING:
-> >  		*(int *)data = (smmu_domain->stage == ARM_SMMU_DOMAIN_NESTED);
-> >  		return 0;
-> > +	case DOMAIN_ATTR_USE_SYS_CACHE:
-> > +		*((int *)data) = smmu_domain->has_sys_cache;
-> > +		return 0;
-> 
-> I really don't like exposing this to clients directly like this,
-> particularly as there aren't any in-tree users. I would prefer that we
-> provide a way for the io-pgtable code to have its MAIR values overridden
-> so that all non-coherent DMA ends up using the system cache.
+Some Dell servers can use dell-smbios but they don't support the
+token interface.  Make it optional.
 
-FWIW here is a future in-tree user for LLC:
+Signed-off-by: Mario Limonciello <mario.limonciello@dell.com>
+---
+ drivers/platform/x86/dell-smbios-base.c | 35 ++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
-https://patchwork.freedesktop.org/series/40545/
-
-Specifically:
-
-https://patchwork.freedesktop.org/patch/212400/
-
-Jordan
-
+diff --git a/drivers/platform/x86/dell-smbios-base.c b/drivers/platform/x86/dell-smbios-base.c
+index 446dbff..ac88032 100644
+--- a/drivers/platform/x86/dell-smbios-base.c
++++ b/drivers/platform/x86/dell-smbios-base.c
+@@ -212,6 +212,12 @@ int dell_smbios_call_filter(struct device *d,
+ 	if ((buffer->cmd_class == CLASS_TOKEN_READ ||
+ 	     buffer->cmd_class == CLASS_TOKEN_WRITE) &&
+ 	     buffer->cmd_select < 3) {
++		/* tokens enabled ? */
++		if (!da_tokens) {
++			dev_dbg(d, "no token support on this system\n");
++			return -EINVAL;
++		}
++
+ 		/* find the matching token ID */
+ 		for (i = 0; i < da_num_tokens; i++) {
+ 			if (da_tokens[i].location != buffer->input[0])
+@@ -315,6 +321,9 @@ struct calling_interface_token *dell_smbios_find_token(int tokenid)
+ {
+ 	int i;
+ 
++	if (!da_tokens)
++		return NULL;
++
+ 	for (i = 0; i < da_num_tokens; i++) {
+ 		if (da_tokens[i].tokenID == tokenid)
+ 			return &da_tokens[i];
+@@ -570,11 +579,6 @@ static int __init dell_smbios_init(void)
+ 
+ 	dmi_walk(find_tokens, NULL);
+ 
+-	if (!da_tokens)  {
+-		pr_info("Unable to find dmi tokens\n");
+-		return -ENODEV;
+-	}
+-
+ 	ret = platform_driver_register(&platform_driver);
+ 	if (ret)
+ 		goto fail_platform_driver;
+@@ -588,13 +592,6 @@ static int __init dell_smbios_init(void)
+ 	if (ret)
+ 		goto fail_platform_device_add;
+ 
+-	/* duplicate tokens will cause problems building sysfs files */
+-	zero_duplicates(&platform_device->dev);
+-
+-	ret = build_tokens_sysfs(platform_device);
+-	if (ret)
+-		goto fail_create_group;
+-
+ 	/* register backends */
+ 	wmi = init_dell_smbios_wmi();
+ 	if (wmi)
+@@ -605,7 +602,16 @@ static int __init dell_smbios_init(void)
+ 	if (wmi && smm) {
+ 		pr_err("No SMBIOS backends available (wmi: %d, smm: %d)\n",
+ 			wmi, smm);
+-		goto fail_sysfs;
++		goto fail_create_group;
++	}
++
++	if (da_tokens)  {
++		/* duplicate tokens will cause problems building sysfs files */
++		zero_duplicates(&platform_device->dev);
++
++		ret = build_tokens_sysfs(platform_device);
++		if (ret)
++			goto fail_sysfs;
+ 	}
+ 
+ 	return 0;
+@@ -633,7 +639,8 @@ static void __exit dell_smbios_exit(void)
+ 	exit_dell_smbios_smm();
+ 	mutex_lock(&smbios_mutex);
+ 	if (platform_device) {
+-		free_group(platform_device);
++		if (da_tokens)
++			free_group(platform_device);
+ 		platform_device_unregister(platform_device);
+ 		platform_driver_unregister(&platform_driver);
+ 	}
 -- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.7.4
+
