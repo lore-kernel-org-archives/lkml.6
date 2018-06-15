@@ -2,78 +2,118 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id DD5DEC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:58:17 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68252C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:00:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88EE5208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 06:58:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88EE5208B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DC1D208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:00:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DC1D208B5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933626AbeFOG6Q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 02:58:16 -0400
-Received: from muru.com ([72.249.23.125]:47306 "EHLO muru.com"
+        id S1755679AbeFOHAb (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 03:00:31 -0400
+Received: from mx2.suse.de ([195.135.220.15]:33491 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755699AbeFOG6O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 02:58:14 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 84CB88076;
-        Fri, 15 Jun 2018 07:00:51 +0000 (UTC)
-Date:   Thu, 14 Jun 2018 23:58:10 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
-Subject: Re: BUG: drivers/pinctrl/core: races in pinctrl_groups and deferred
- probing
-Message-ID: <20180615065810.GI112168@atomide.com>
-References: <F20BD6B3-D4D7-4D5D-B464-64402650BDE5@goldelico.com>
- <20180614120157.GE112168@atomide.com>
- <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com>
+        id S1754119AbeFOHAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 03:00:30 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 4F32DAF59;
+        Fri, 15 Jun 2018 07:00:29 +0000 (UTC)
+Subject: Re: [PATCH] x86/pti: don't report XenPV as vulnerable
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Mike Latimer <mlatimer@suse.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <nycvar.YFH.7.76.1806150025220.6203@cbobk.fhfr.pm>
+ <a5bfcabb-827b-fbf7-9395-de9332697c25@suse.com>
+ <nycvar.YFH.7.76.1806150801530.6203@cbobk.fhfr.pm>
+ <ff9f4a24-6e69-cc7b-ba75-e82c9182a805@suse.com>
+ <nycvar.YFH.7.76.1806150815440.6203@cbobk.fhfr.pm>
+ <821642fe-775b-e68c-2a66-73b73c810289@suse.com>
+ <nycvar.YFH.7.76.1806150837100.6203@cbobk.fhfr.pm>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <37a18a24-7825-9e75-39a7-a66086a5e3a6@suse.com>
+Date:   Fri, 15 Jun 2018 09:00:28 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <nycvar.YFH.7.76.1806150837100.6203@cbobk.fhfr.pm>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* H. Nikolaus Schaller <hns@goldelico.com> [180614 12:15]:
-> Hi Tony,
+On 15/06/18 08:39, Jiri Kosina wrote:
+> On Fri, 15 Jun 2018, Juergen Gross wrote:
 > 
-> > Am 14.06.2018 um 14:01 schrieb Tony Lindgren <tony@atomide.com>:
-> > 
-> > * H. Nikolaus Schaller <hns@goldelico.com> [180613 12:41]:
-> >> 
-> >> Now if I look into pinctrl_generic_add_group() and pinctrl_generic_get_group_name(),
-> >> pctldev->num_groups++ is not protected if pinctrl_generic_add_group() may be called by
-> >> two threads in parallel for the same pctldev. Hence a second thread may try to insert
-> >> a different node into the radix tree at the same selector index. This fails but there
-> >> is no error check - and the second entry is completely missing (but probably assumed to
-> >> be there).
-> > 
-> > Sounds like pinctrl-single.c is missing mutex around calls to
-> > pinctrl_generic_add_group()?
+>> Why? PTI has to be disabled in PV guests as it can't work there due to 
+>> missing paravirtualization of the PTI feature (mov to/from %cr3).
+>>
+>> The Xen meltdown mitigation ("XPTI") for 64-bit pv guests is primarily 
+>> securing the hypervisor against meltdown attacks of the guest. The guest 
+>> itself can't do anything in this regard in 64-bit mode, as user and 
+>> kernel code are already using different %cr3 values even without PTI.
 > 
-> Yes, that could be. I didn't research the call path, just the one of
-> devm_pinctrl_get(). That uses a mutex in
+> That I know. Then I am probably dense today, but could you please again 
+> explain what you meant by this in your first reply:
+> 
+> 	"This is wrong for [ ... ] for 64-bit, too, in case the mitigation is 
+> 	 disabled at hypervisor level."
+> 
 
-In addition to missing mutex lock around the generic pinctrl functions
-we also have racy helpers pinctrl_generic_remove_last_group() and
-pinmux_generic_remove_last_function() like you pointed out. I'll post
-a patch for you later on today to test.
+Like it is possible to switch off PTI in the kernel it is possible to do
+the same with XPTI in the hypervisor (it is even possible to disable
+XPTI for dom0 only).
 
-Regards,
+In case XPTI is disabled for the currently running system it is possible
+to make use of Meltdown in user programs to read arbitrary physical host
+memory (i.e. attacking the hypervisor) and this includes the own systems
+kernel memory.
 
-Tony
+So telling a user the system isn't vulnerable regarding Meltdown when
+running as 64-bit pv-guest might not be the truth.
 
+
+Juergen
