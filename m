@@ -5,115 +5,242 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 68252C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:00:34 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 420B6C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DC1D208B5
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:00:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DC1D208B5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id E15AF208B5
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 07:01:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E15AF208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755679AbeFOHAb (ORCPT
+        id S1755777AbeFOHBj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 03:00:31 -0400
-Received: from mx2.suse.de ([195.135.220.15]:33491 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754119AbeFOHAa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 03:00:30 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 4F32DAF59;
-        Fri, 15 Jun 2018 07:00:29 +0000 (UTC)
-Subject: Re: [PATCH] x86/pti: don't report XenPV as vulnerable
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
-        Mike Latimer <mlatimer@suse.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <nycvar.YFH.7.76.1806150025220.6203@cbobk.fhfr.pm>
- <a5bfcabb-827b-fbf7-9395-de9332697c25@suse.com>
- <nycvar.YFH.7.76.1806150801530.6203@cbobk.fhfr.pm>
- <ff9f4a24-6e69-cc7b-ba75-e82c9182a805@suse.com>
- <nycvar.YFH.7.76.1806150815440.6203@cbobk.fhfr.pm>
- <821642fe-775b-e68c-2a66-73b73c810289@suse.com>
- <nycvar.YFH.7.76.1806150837100.6203@cbobk.fhfr.pm>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <37a18a24-7825-9e75-39a7-a66086a5e3a6@suse.com>
-Date:   Fri, 15 Jun 2018 09:00:28 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 03:01:39 -0400
+Received: from mail-wm0-f65.google.com ([74.125.82.65]:53134 "EHLO
+        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755565AbeFOHBh (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 03:01:37 -0400
+Received: by mail-wm0-f65.google.com with SMTP id p126-v6so1808720wmb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 00:01:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=zNuZfBdgmokBKtHnqQK9GqJbA+rffFkRvb9YyqBims8=;
+        b=elawvXd/trPjLUQgoIVdUydjrL1rIMyVL9uqBkABuxsazuNZwtq4ANqIhvIJdvC17q
+         Bde0tKv0Waqfi1Nt1qH0ApsS9bbf5cFd95Q+nZ4HNI6Zanfc3u/byFIr/B0MJu9eK0Iu
+         58WBaIfSJMPHHQGD+4v5fCGnuhPwy2wHrKr7I49Hu3hcVGBfudOXVwWGZklXIeZz9Iqx
+         CSfsiBCJ1arQODt6y/u1rLtidhC5Hz3xjtXkk6jlatHki1hubEMmgaEjhITfT5hLeXSH
+         dn/dsCAMGFQH1LZqOkK6zyFH4FVpNoEGrGCuNpb+X9aHbtJmTL5xB4I3Du/eded0dPOj
+         q5pw==
+X-Gm-Message-State: APt69E0kQIqjrT2N6lvNwsRN3tsTJ/O5563e6R7gKbI8e5EQwO5h3nL9
+        WSZJ32SsULkErDakFsPIgIedHg==
+X-Google-Smtp-Source: ADUXVKLuoIeJ8+7EpnPa5VzSC0qukwDX5mZoGO0BvlD+3UwQFfvRTAW+E+radWfQkI6H6RYi7Tt4Tw==
+X-Received: by 2002:a1c:78b:: with SMTP id 133-v6mr230767wmh.59.1529046095344;
+        Fri, 15 Jun 2018 00:01:35 -0700 (PDT)
+Received: from localhost.localdomain ([151.15.207.242])
+        by smtp.gmail.com with ESMTPSA id s3-v6sm5773644wrp.76.2018.06.15.00.01.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Jun 2018 00:01:34 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 09:01:32 +0200
+From:   Juri Lelli <juri.lelli@redhat.com>
+To:     Steven Rostedt <rostedt@goodmis.org>
+Cc:     peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org, luca.abeni@santannapisa.it,
+        claudio@evidence.eu.com, tommaso.cucinotta@santannapisa.it,
+        bristot@redhat.com, mathieu.poirier@linaro.org, lizefan@huawei.com,
+        cgroups@vger.kernel.org
+Subject: Re: [PATCH v4 4/5] sched/core: Prevent race condition between cpuset
+ and __sched_setscheduler()
+Message-ID: <20180615070132.GA30871@localhost.localdomain>
+References: <20180613121711.5018-1-juri.lelli@redhat.com>
+ <20180613121711.5018-5-juri.lelli@redhat.com>
+ <20180614161142.69f186a6@gandalf.local.home>
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1806150837100.6203@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614161142.69f186a6@gandalf.local.home>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/06/18 08:39, Jiri Kosina wrote:
-> On Fri, 15 Jun 2018, Juergen Gross wrote:
+On 14/06/18 16:11, Steven Rostedt wrote:
+> On Wed, 13 Jun 2018 14:17:10 +0200
+> Juri Lelli <juri.lelli@redhat.com> wrote:
 > 
->> Why? PTI has to be disabled in PV guests as it can't work there due to 
->> missing paravirtualization of the PTI feature (mov to/from %cr3).
->>
->> The Xen meltdown mitigation ("XPTI") for 64-bit pv guests is primarily 
->> securing the hypervisor against meltdown attacks of the guest. The guest 
->> itself can't do anything in this regard in 64-bit mode, as user and 
->> kernel code are already using different %cr3 values even without PTI.
+> > +/**
+> > + * cpuset_lock - Grab the cpuset_mutex from another subsysytem
+> > + */
+> > +int cpuset_lock(void)
+> > +{
+> > +	return mutex_trylock(&cpuset_mutex);
+> > +}
+> > +
+> > +/**
+> > + * cpuset_unlock - Release the cpuset_mutex from another subsysytem
+> > + */
+> > +void cpuset_unlock(void)
+> > +{
+> > +	mutex_unlock(&cpuset_mutex);
+> > +}
+> > +
+> >  /**
+> >   * cpuset_cpus_allowed - return cpus_allowed mask from a tasks cpuset.
+> >   * @tsk: pointer to task_struct from which to obtain cpuset->cpus_allowed.
+> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> > index ca788f74259d..a5b0c6c25b44 100644
+> > --- a/kernel/sched/core.c
+> > +++ b/kernel/sched/core.c
+> > @@ -4218,6 +4218,14 @@ static int __sched_setscheduler(struct task_struct *p,
+> >  		if (attr->sched_flags & SCHED_FLAG_SUGOV)
+> >  			return -EINVAL;
+> >  
+> > +		/*
+> > +		 * Make sure we don't race with the cpuset subsystem where root
+> > +		 * domains can be rebuilt or modified while operations like DL
+> > +		 * admission checks are carried out.
+> > +		 */
+> > +		if (!cpuset_lock())
+> > +			return -EBUSY;
+> > +
 > 
-> That I know. Then I am probably dense today, but could you please again 
-> explain what you meant by this in your first reply:
+> How important is this for being a trylock? Reason I am asking is that
+> it is making my deadline test fail to get the resources. What my test
+> does is to create a bunch of threads, and they try to get the deadline
+> resources as they are created. This happens in parallel. Thus, when one
+> gets the cpuset_lock, the others are hitting this and returning -EBUSY.
+> At first I thought I was over committing somehow but after adding a
+> trace_printk() in cpuset_lock(), and this fail case it became obvious
+> to what was happening:
 > 
-> 	"This is wrong for [ ... ] for 64-bit, too, in case the mitigation is 
-> 	 disabled at hypervisor level."
-> 
+>    deadline_test-1376  [004]   107.179693: sys_enter_sched_setattr: pid: 0x00000000, uattr: 0x7f017fceeed0, flags: 0x00000000
+>    deadline_test-1376  [004]   107.179697: bputs:                cpuset_lock: cpuset_mutex trylock
+>    deadline_test-1377  [003]   107.179763: sys_exit_futex:       0x0
+>    deadline_test-1377  [003]   107.179767: sys_enter_sched_setattr: pid: 0x00000000, uattr: 0x7f017f4eded0, flags: 0x00000000
+>    deadline_test-1377  [003]   107.179771: bputs:                cpuset_lock: cpuset_mutex trylock
+>    deadline_test-1377  [003]   107.179771: bputs:                __sched_setscheduler: cpuset_lock
+>    deadline_test-1377  [003]   107.179773: sys_exit_sched_setattr: 0xfffffffffffffff0
 
-Like it is possible to switch off PTI in the kernel it is possible to do
-the same with XPTI in the hypervisor (it is even possible to disable
-XPTI for dom0 only).
+Right, not nice.
 
-In case XPTI is disabled for the currently running system it is possible
-to make use of Meltdown in user programs to read arbitrary physical host
-memory (i.e. attacking the hypervisor) and this includes the own systems
-kernel memory.
+So, even if we can rework sched_setattr and do_sched_setscheduler to
+endup calling __sched_setscheduler outside of RCU read_lock sections (as
+Peter suggested) it seems that we might still get into troubles, e.g.
 
-So telling a user the system isn't vulnerable regarding Meltdown when
-running as 64-bit pv-guest might not be the truth.
+[   39.890366] ======================================================
+[   39.892741] WARNING: possible circular locking dependency detected
+[   39.894723] 4.17.0-rc6-before+ #169 Not tainted
+[   39.896380] ------------------------------------------------------
+[   39.898369] bash/2206 is trying to acquire lock:
+[   39.899862] 0000000083b596bc (cpu_hotplug_lock.rw_sem){++++}, at: rebuild_sched_domains_locked+0x29/0x660
+[   39.902931]
+[   39.902931] but task is already holding lock:
+[   39.904790] 000000004fc7a567 (cpuset_mutex){+.+.}, at: cpuset_write_u64+0x23/0x140
+[   39.907263]
+[   39.907263] which lock already depends on the new lock.
+[   39.907263]
+[   39.909936]
+[   39.909936] the existing dependency chain (in reverse order) is:
+[   39.912479]
+[   39.912479] -> #2 (cpuset_mutex){+.+.}:
+[   39.914249]        __sched_setscheduler+0xc6/0x880
+[   39.915779]        _sched_setscheduler+0x77/0xa0
+[   39.917270]        __kthread_create_on_node+0x122/0x1a0
+[   39.918948]        kthread_create_on_node+0x46/0x70
+[   39.920512]        init_rescuer.part.8+0x49/0xa0
+[   39.921688]        workqueue_init+0x1ec/0x2d5
+[   39.922659]        kernel_init_freeable+0x23b/0x5b9
+[   39.923756]        kernel_init+0xa/0x110
+[   39.924656]        ret_from_fork+0x3a/0x50
+[   39.925570]
+[   39.925570] -> #1 (wq_pool_mutex){+.+.}:
+[   39.926591]        apply_workqueue_attrs+0x20/0x50
+[   39.927554]        __alloc_workqueue_key+0x1c7/0x490
+[   39.928700]        workqueue_init_early+0x257/0x33f
+[   39.929685]        start_kernel+0x2fe/0x531
+[   39.930530]        secondary_startup_64+0xa5/0xb0
+[   39.931336]
+[   39.931336] -> #0 (cpu_hotplug_lock.rw_sem){++++}:
+[   39.932195]        cpus_read_lock+0x39/0xa0
+[   39.932772]        rebuild_sched_domains_locked+0x29/0x660
+[   39.933513]        update_flag+0x1fd/0x210
+[   39.934075]        cpuset_write_u64+0xe7/0x140
+[   39.934708]        cgroup_file_write+0x174/0x230
+[   39.935350]        kernfs_fop_write+0x113/0x1a0
+[   39.935991]        __vfs_write+0x36/0x180
+[   39.936473]        vfs_write+0xc5/0x1b0
+[   39.936991]        ksys_write+0x55/0xc0
+[   39.937504]        do_syscall_64+0x73/0x4d0
+[   39.938061]        entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   39.938803]
+[   39.938803] other info that might help us debug this:
+[   39.938803]
+[   39.939708] Chain exists of:
+[   39.939708]   cpu_hotplug_lock.rw_sem --> wq_pool_mutex --> cpuset_mutex
+[   39.939708]
+[   39.940960]  Possible unsafe locking scenario:
+[   39.940960]
+[   39.941607]        CPU0                    CPU1
+[   39.942056]        ----                    ----
+[   39.942523]   lock(cpuset_mutex);
+[   39.942858]                                lock(wq_pool_mutex);
+[   39.943436]                                lock(cpuset_mutex);
+[   39.944028]   lock(cpu_hotplug_lock.rw_sem);
+[   39.944449]
+[   39.944449]  *** DEADLOCK ***
+[   39.944449]
+[   39.945113] 4 locks held by bash/2206:
+[   39.945485]  #0: 000000003cc231db (sb_writers#10){.+.+}, at: vfs_write+0x193/0x1b0
+[   39.946246]  #1: 00000000fdc2c059 (&of->mutex){+.+.}, at: kernfs_fop_write+0xe2/0x1a0
+[   39.946980]  #2: 00000000e12e3a5d (kn->count#11){.+.+}, at: kernfs_fop_write+0xeb/0x1a0
+[   39.947736]  #3: 000000004fc7a567 (cpuset_mutex){+.+.}, at: cpuset_write_u64+0x23/0x140
+[   39.948463]
+[   39.948463] stack backtrace:
+[   39.948871] CPU: 0 PID: 2206 Comm: bash Not tainted 4.17.0-rc6-before+ #169
+[   39.949489] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-2.fc27 04/01/2014
+[   39.950271] Call Trace:
+[   39.950502]  dump_stack+0x67/0x9b
+[   39.950810]  print_circular_bug.isra.24+0x1c8/0x2b0
+[   39.951252]  __lock_acquire+0x1813/0x18e0
+[   39.951618]  ? __lock_acquire+0x1219/0x18e0
+[   39.952016]  ? lock_acquire+0x8e/0x240
+[   39.952357]  lock_acquire+0x8e/0x240
+[   39.952683]  ? rebuild_sched_domains_locked+0x29/0x660
+[   39.953179]  cpus_read_lock+0x39/0xa0
+[   39.953516]  ? rebuild_sched_domains_locked+0x29/0x660
+[   39.953981]  rebuild_sched_domains_locked+0x29/0x660
+[   39.954431]  ? mark_held_locks+0x56/0x80
+[   39.954790]  ? _raw_spin_unlock_irq+0x29/0x50
+[   39.955186]  update_flag+0x1fd/0x210
+[   39.955541]  cpuset_write_u64+0xe7/0x140
+[   39.955900]  cgroup_file_write+0x174/0x230
+[   39.956274]  kernfs_fop_write+0x113/0x1a0
+[   39.956640]  __vfs_write+0x36/0x180
+[   39.956963]  ? rcu_read_lock_sched_held+0x74/0x80
+[   39.957482]  ? rcu_sync_lockdep_assert+0x2e/0x60
+[   39.957969]  ? __sb_start_write+0x154/0x1f0
+[   39.958415]  ? __sb_start_write+0x16a/0x1f0
+[   39.958877]  vfs_write+0xc5/0x1b0
+[   39.959310]  ksys_write+0x55/0xc0
+[   39.959696]  do_syscall_64+0x73/0x4d0
+[   39.960054]  ? trace_hardirqs_off_thunk+0x1a/0x1c
+[   39.960533]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[   39.961071] RIP: 0033:0x7f534866d780
+[   39.961477] RSP: 002b:00007fff54dfa398 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[   39.962380] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 00007f534866d780
+[   39.963166] RDX: 0000000000000002 RSI: 0000000000d97408 RDI: 0000000000000001
+[   39.964008] RBP: 0000000000d97408 R08: 000000000000000a R09: 00007f5348f6d700
+[   39.964780] R10: 0000000000000000 R11: 0000000000000246 R12: 00007f53489237a0
+[   39.965588] R13: 0000000000000002 R14: 0000000000000001 R15: 0000000000000000
 
+Happening the moment one disables sched_load_balance at root level.
 
-Juergen
+I'll try harder to find alternatives, but suggestions are welcome! :-)
+
+Best,
+
+- Juri
