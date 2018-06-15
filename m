@@ -2,142 +2,144 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00475C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1AB2C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:36:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE661208C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:26:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B31620896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 22:36:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bRRnwyVJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE661208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=gouders.net header.i=@gouders.net header.b="pUUWIWZ0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B31620896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gouders.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756724AbeFOW0E (ORCPT
+        id S1756698AbeFOWg2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 18:26:04 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:40882 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756429AbeFOW0D (ORCPT
+        Fri, 15 Jun 2018 18:36:28 -0400
+Received: from services.gouders.net ([141.101.32.176]:33583 "EHLO
+        services.gouders.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756583AbeFOWg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 18:26:03 -0400
-Received: by mail-qt0-f196.google.com with SMTP id q6-v6so10492629qtn.7
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 15:26:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=AQtI9HCegF1HRxom7L4r4ihjfxjqVJW6f7HX4X+3x08=;
-        b=bRRnwyVJUtbYpw3fRV7vmBdhdEXzrWVorp16WNGZ2H33G+6eC0h+Zda+qDaFe3AYya
-         X468uTuCX4W4XyoIlK1akgDPlZlggTpklnh2Vdjf0SFTFKuoDBHuw/ZmSGkEeRuGH3/k
-         cOc+5OvabLZI1nzenf5yzTe+LtoaWvh3aLdnDGj1kDk789InJuBPdyp19wNd4P0yQCEc
-         eGf33Qhkyb8g/C2w3xRc4bYYLlVJwckIYmuoEuXGiI1Se1DiiO47G7Wm382Tzla1YE3t
-         xvMgp1ycQFTNwj+58zAifPy8+zhlQW1j6V8db3ulwzqgTQxREPTd893F339T0Wg67OgN
-         4z2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=AQtI9HCegF1HRxom7L4r4ihjfxjqVJW6f7HX4X+3x08=;
-        b=YyPbtz0X6D7MuQLoN8MIKB63DhT3vMcEK1DpQcVYF3vGArcTzvW7E0SGD+Jnxm0wz5
-         hcc1VKKBWtBxl6ygHc/7QFij5zNbmzBgigl5KC3wWxnAGDFEJu1s7FwYzlpTPF3WxJVL
-         GSeVpLlHWYMKyrA91/LSEi6uYEAH+SzOQFb9Lt7diMv8ueyrh0XrEUjuZp/eYlksRaeX
-         ypmjVOEhNhAV42ySjqB+GkRnV44/laXoVY4Nxg3IaYIhd1m7D8A6VXnD559rYJbzpJIe
-         5iSw+RPUkRejvnWw6LBY0EXdsm6cESvGaIwiZw/wkp4AKNJPZLspgwFXfsLtx3jI6pCj
-         k51w==
-X-Gm-Message-State: APt69E3zY7zQf94P75TymcC3G0NTO8BLlXoJESgrjKuhwHbp9ywt3w7y
-        1GRczu6jUc3z8ISkHVZbZMSDLyGm3v10pEmP5F8=
-X-Google-Smtp-Source: ADUXVKJvbahqpmkU7gaCMUtwk1MiJQwRnLRkuNlcOZ1HxGeOw1cLJRj1/f3KljIXkCIboHXMBt3FVdlQt5x8u16afRU=
-X-Received: by 2002:aed:3e51:: with SMTP id m17-v6mr3262971qtf.283.1529101562629;
- Fri, 15 Jun 2018 15:26:02 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:ac8:7190:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 15:26:01
- -0700 (PDT)
-In-Reply-To: <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
-References: <20180606194144.16990-1-malat@debian.org> <CA+8MBbKj4A5kh=hE0vcadzD+=cEAFY7OCWFCzvubu6cWULCJ0A@mail.gmail.com>
- <20180615121716.37fb93385825b0b2f59240cc@linux-foundation.org>
-From:   Tony Luck <tony.luck@gmail.com>
-Date:   Fri, 15 Jun 2018 15:26:01 -0700
-Message-ID: <CA+8MBbJyXC7YmnjG-k+mahC0ZiSgZy=EoiO0N5gvw8S4afLqng@mail.gmail.com>
-Subject: Re: [PATCH] mm/memblock: add missing include <linux/bootmem.h>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Mathieu Malaterre <malat@debian.org>, linux-mm@kvack.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 15 Jun 2018 18:36:26 -0400
+Received: from lena.gouders.net (ipservice-047-071-023-039.pools.arcor-ip.net [47.71.23.39])
+        (authenticated bits=0)
+        by services.gouders.net (8.14.8/8.14.8) with ESMTP id w5FMTCfH020007
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
+        Sat, 16 Jun 2018 00:29:24 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gouders.net; s=gnet;
+        t=1529101767; bh=M01q+/dgp1UXPKZAfgyUD9hBfKSMRu2W48WEQ5B24tI=;
+        h=From:To:Cc:Subject:Date;
+        b=pUUWIWZ06nJESG5C9r3fSyokZRUbDjz114LmBytwSSecztHbsZFOiENHBebxi2Ouw
+         1mFWBC3TK/cecUoQDbSnCZWtzOJKPFnbugN/AEYIFAQJC3tRQ6BR5+2fw2/6+VzUUo
+         qj/lKGDl/jYBvJ+celPISkJI4k7+DPIfbtfN/vqM=
+From:   Dirk Gouders <dirk@gouders.net>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Dirk Gouders <dirk@gouders.net>
+Subject: [RFC v6 0/1] mconf: global i-search in menu structure
+Date:   Sat, 16 Jun 2018 00:29:06 +0200
+Message-Id: <20180615222907.23449-1-dirk@gouders.net>
+X-Mailer: git-send-email 2.16.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 12:17 PM, Andrew Morton
-<akpm@linux-foundation.org> wrote:
+Hello,
 
-> Huh.  How did that ever work.  I guess it's either this:
->
-> --- a/mm/Makefile~a
-> +++ a/mm/Makefile
-> @@ -45,6 +45,7 @@ obj-y += init-mm.o
->
->  ifdef CONFIG_NO_BOOTMEM
->         obj-y           += nobootmem.o
-> +       obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
->  else
->         obj-y           += bootmem.o
->  endif
-> @@ -53,7 +54,6 @@ obj-$(CONFIG_ADVISE_SYSCALLS) += fadvise
->  ifdef CONFIG_MMU
->         obj-$(CONFIG_ADVISE_SYSCALLS)   += madvise.o
->  endif
-> -obj-$(CONFIG_HAVE_MEMBLOCK) += memblock.o
->
->  obj-$(CONFIG_SWAP)     += page_io.o swap_state.o swapfile.o swap_slots.o
->  obj-$(CONFIG_FRONTSWAP)        += frontswap.o
+version 6 of this RFC was mainly influenced by a discussion with Randy
+Dunlap about a patch for i-search in nconf.
 
-That option gave me a boatload of undefined symbols.
+In that discussion I stated that it would be a lot of work to
+implement a global i-search but while thinking about that statement
+afterwards, I realized that most of the needed functionality is
+already there in search_conf(), the search function for config
+symbols.
 
-> or this:
->
-> --- a/include/linux/bootmem.h~a
-> +++ a/include/linux/bootmem.h
-> @@ -154,7 +154,7 @@ extern void *__alloc_bootmem_low_node(pg
->         __alloc_bootmem_low_node(pgdat, x, PAGE_SIZE, 0)
->
->
-> -#if defined(CONFIG_HAVE_MEMBLOCK) && defined(CONFIG_NO_BOOTMEM)
-> +#if defined(CONFIG_HAVE_MEMBLOCK)
->
->  /* FIXME: use MEMBLOCK_ALLOC_* variants here */
->  #define BOOTMEM_ALLOC_ACCESSIBLE       0
+The menu tree is converted in a flat menu to ease the implementation
+of a cyclic i-search and the rest of the implementation does no longer
+interfere so much with current menu handling.
 
-That compiles cleanly, but didn't boot:
+Dirk
 
- [<a000000100029910>] ia64_fault+0xf0/0xe00
-                                sp=e0000004fb37f8a0 bsp=e0000004fb371438
- [<a00000010000c920>] ia64_leave_kernel+0x0/0x270
-                                sp=e0000004fb37fba0 bsp=e0000004fb371438
-hid-generic 0003:0624:0200.0001: input: USB HID v1.10 Mouse [Avocent
-USB_AMIQ] on usb-0000:00:1d.0-2/input1
- [<a00000010020b100>] pcpu_find_block_fit+0x20/0x300
-                                sp=e0000004fb37fd70 bsp=e0000004fb3713a8
- [<a00000010020ee70>] pcpu_alloc+0x630/0xc40
-                                sp=e0000004fb37fd90 bsp=e0000004fb371308
-input: Avocent USB_AMIQ as
-/devices/pci0000:00/0000:00:1d.0/usb4/4-2/4-2:1.0/0003:0624:0200.0002/input/input3
- [<a00000010020f520>] __alloc_percpu+0x40/0x60
-                                sp=e0000004fb37fda0 bsp=e0000004fb3712e0
- [<a0000001002fb4c0>] alloc_vfsmnt+0x1c0/0x4e0
-                                sp=e0000004fb37fda0 bsp=e0000004fb371280
- [<a000000100303d10>] vfs_kern_mount+0x30/0x2a0
-                                sp=e0000004fb37fdf0 bsp=e0000004fb371238
+Changes in v6:
 
+* The modification of the function print_autowrap() was reworked and
+  is no longer a separate function.
 
-> and I'm not sure which.  I think I'll just revert $subject for now.
+* The i-search navigation was completely reworked and now works on the
+  whole menu tree.
 
-Reverting is a good short term fix.
+* Hotkeys are back, because they do not interfere that much with this
+  version of i-search navigation.
 
--Tony
+Changes in v5:
+
+* More thoroughly tested code
+
+* Hotkey navigation concept completely dropped
+
+* Printable characters except special ones form the search string
+
+* Focus-sensitive help text above menu
+
+* DEL erases search string
+
+* Matching string is highlighted in selected menu item
+
+* README help text adjusted
+
+Changes in v4:
+
+* Prototype: consequent i-search navigation concept
+
+Changes in v3:
+
+* Use current git tree to make the patch apply.
+
+* Eliminate debugging output to stderr.
+
+Changes in v2:
+
+* Additionally to CTRL-s, \ can be used to start isearch.
+
+* Raw mode is off by default an can be enabled by an environment
+  variable MENUCONFIG_RAW_MODE.
+
+* I also added a variable for toggling raw mode but did not implement
+  anything else.
+
+* The isearch indicator is now displayed as soon as isearch is
+  started.
+
+* Any key except \, CTRL-s, alphanumeric characters and space
+  terminates isearch and -- except ESC ESC -- is further processed,
+  e.g. ENTER terminates isearch and is then used to navigate into a
+  submenu.
+
+* Problems with mismatches and matches above the current position were
+  fixed.
+
+Dirk Gouders (1):
+  mconf: global i-search in menu structure
+
+ scripts/kconfig/lxdialog/checklist.c |   2 +-
+ scripts/kconfig/lxdialog/dialog.h    |   3 +-
+ scripts/kconfig/lxdialog/inputbox.c  |   2 +-
+ scripts/kconfig/lxdialog/menubox.c   | 177 +++++++++++++++++++++++++++++-----
+ scripts/kconfig/lxdialog/util.c      |  37 ++++++-
+ scripts/kconfig/lxdialog/yesno.c     |   2 +-
+ scripts/kconfig/mconf.c              | 181 +++++++++++++++++++++++++++++++++--
+ 7 files changed, 364 insertions(+), 40 deletions(-)
+
+-- 
+2.16.4
+
