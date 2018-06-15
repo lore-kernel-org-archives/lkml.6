@@ -2,124 +2,106 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIM_INVALID
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 84A30C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:14 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 8341CC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40500208E6
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40500208E6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 388FB20896
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 13:43:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u3eKATvO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 388FB20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965949AbeFONnL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 09:43:11 -0400
-Received: from mga09.intel.com ([134.134.136.24]:52746 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965931AbeFONnG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 09:43:06 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 06:43:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,227,1526367600"; 
-   d="scan'208";a="47359275"
-Received: from wacevedo-mobl1.amr.corp.intel.com (HELO [10.254.109.167]) ([10.254.109.167])
-  by fmsmga007.fm.intel.com with ESMTP; 15 Jun 2018 06:43:04 -0700
-Subject: Re: [PATCHv3 07/17] x86/mm: Preserve KeyID on pte_modify() and
- pgprot_modify()
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-8-kirill.shutemov@linux.intel.com>
- <8c31f6d2-6512-2726-763e-6dd1cbb0350a@intel.com>
- <20180615125720.r755xaegvfcqfr6x@black.fi.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <645a4ca8-ae77-dcdd-0cbc-0da467fc210d@intel.com>
-Date:   Fri, 15 Jun 2018 06:43:03 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180615125720.r755xaegvfcqfr6x@black.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        id S965815AbeFONm3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 09:42:29 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:45643 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936144AbeFONm0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 09:42:26 -0400
+Received: by mail-wr0-f196.google.com with SMTP id o12-v6so9967641wrm.12;
+        Fri, 15 Jun 2018 06:42:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=Pn0n44zKPmOWSd824pfHgLDNMlrKh0VjWoGYmZxYIJs=;
+        b=u3eKATvOAq/p3OBDJFe7qV/Oc16KNboDCSguCGfCbTtucgMxTwX8Sa3E8IP63mZJlk
+         iEYahQQnuhK2WjOQW5xY8H0ddTE+o2pZu1bwDo6F9rOINYnQV8hfV/tZYT2PWExpSu+M
+         IimhDfouNjHD9vjFskNl5raJ5vbW3t7lpyJ3L610kN1f95HSJTNqtNF9m4v8rTFqpah0
+         jPlobmy/4uwsf46GWx5rD0OG9OuSf7aouaxYrQJX7KH0ZjOUFl5GRcV6AKRSfrP8MH4k
+         v6mslpS0A2ERe8mRFUvquhfo+OZGPBUbxnF5XN+aNZppg3htboRhyCOEFSNmIIyiO/QQ
+         HtZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=Pn0n44zKPmOWSd824pfHgLDNMlrKh0VjWoGYmZxYIJs=;
+        b=l7YGqIy/fqK4J6TCb1Vp+Ko1gByWPDMHPwqCzIopYw7gvI7vDiFynFuiNqPM3WDfsx
+         qUvdTNXOStbFRh7+vkvY185BVw/Ar2GmNpFiqdAk9YzhMNt8TSNI7L7RZT03khSuFTg5
+         wQfFeDv2jXoiIZCqQWb2wNuW9Qiv5ZtKasFuUQovrv8jF4GuswXWwEdPHTB7h6fDmVZD
+         V9J7bzo3jt3KENUP01Kt7g4RuB/z4Tw7wjW0APICcLurFpMVe43GQu6GTkBpTgTG1MqS
+         c4t9y3MvyurOAfF903VrKr8BZOqzCtdJHsWtT8AXrOb5E3uV6etmBIZ3N8Kuaivw5vsu
+         D4ag==
+X-Gm-Message-State: APt69E322xen9Z2Odz33Bxm69KCBAbvyK9d0vpASsGdMiu1LXRLHcVV1
+        GqAi5QjlWUhxDKIDca0s0PD50m1C6jw=
+X-Google-Smtp-Source: ADUXVKLW0hJ6kPm+/vgzPN7aTWY+DUnC8Sa/arSD0MW265jJZ/XruWFqzPF+5i5XJI3l+Ca0v3nTFA==
+X-Received: by 2002:adf:ad4c:: with SMTP id p70-v6mr1644567wrc.44.1529070144683;
+        Fri, 15 Jun 2018 06:42:24 -0700 (PDT)
+Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
+        by smtp.gmail.com with ESMTPSA id d5-v6sm9816346wrp.64.2018.06.15.06.42.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 15 Jun 2018 06:42:23 -0700 (PDT)
+From:   Ben Whitten <ben.whitten@gmail.com>
+X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
+To:     devicetree@vger.kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, nicolas.ferre@microchip.com,
+        Ben Whitten <ben.whitten@lairdtech.com>
+Subject: [PATCH v2 1/6] dt-bindings: add laird and giantec vendor prefix
+Date:   Fri, 15 Jun 2018 14:40:50 +0100
+Message-Id: <1529070055-18701-1-git-send-email-ben.whitten@lairdtech.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 05:57 AM, Kirill A. Shutemov wrote:
->>> +#define _PAGE_CHG_MASK	(PTE_PFN_MASK_MAX | _PAGE_PCD | _PAGE_PWT |		\
->>>  			 _PAGE_SPECIAL | _PAGE_ACCESSED | _PAGE_DIRTY |	\
->>>  			 _PAGE_SOFT_DIRTY)
->>>  #define _HPAGE_CHG_MASK (_PAGE_CHG_MASK | _PAGE_PSE)
->> This makes me a bit nervous.  We have some places (here) where we
->> pretend that the KeyID is part of the paddr and then other places like
->> pte_pfn() where it's not.
-> Other option is to include KeyID mask into _PAGE_CHG_MASK. But it means
-> _PAGE_CHG_MASK would need to reference *two* variables: physical_mask and
-> mktme_keyid_mask. I mentioned this in the commit message.
+This adds a vendor prefix "laird" for Laird PLC who make
+CPU modules and system on chips.
+Also adds "giantec" for Giantec Semiconductor, Inc. who
+make eeprom memory used on Laird designs.
 
-Why can't it be one variable with a different name that's populated by
-OR'ing physical_mask and mktme_keyid_mask together?
+Signed-off-by: Ben Whitten <ben.whitten@lairdtech.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-My issue here is that it this approach adds confusion around the logical
-separation between physical address and the bits immediately above the
-physical address in the PTE that are stolen for the keyID.
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
+index a38d8bf..adf808c 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -132,6 +132,7 @@ geekbuying	GeekBuying
+ gef	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
+ GEFanuc	GE Fanuc Intelligent Platforms Embedded Systems, Inc.
+ geniatech	Geniatech, Inc.
++giantec	Giantec Semiconductor, Inc.
+ giantplus	Giantplus Technology Co., Ltd.
+ globalscale	Globalscale Technologies, Inc.
+ gmt	Global Mixed-mode Technology, Inc.
+@@ -188,6 +189,7 @@ kingnovel	Kingnovel Technology Co., Ltd.
+ kosagi	Sutajio Ko-Usagi PTE Ltd.
+ kyo	Kyocera Corporation
+ lacie	LaCie
++laird	Laird PLC
+ lantiq	Lantiq Semiconductor
+ lattice	Lattice Semiconductor
+ lego	LEGO Systems A/S
+-- 
+2.7.4
 
-Whatever you come up with will probably fine, as long as things that are
-called "PFN" or physical address don't also get used for keyID bits.
