@@ -2,118 +2,85 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3CC3C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A57C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:53:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8E1120896
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:52:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8E1120896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 332F3208D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 16:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332F3208D7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966305AbeFOQwK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 12:52:10 -0400
-Received: from mailout.easymail.ca ([64.68.200.34]:44963 "EHLO
-        mailout.easymail.ca" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965985AbeFOQwI (ORCPT
+        id S1756165AbeFOQxT (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 12:53:19 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:40356 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752703AbeFOQxR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 12:52:08 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mailout.easymail.ca (Postfix) with ESMTP id 469B841753;
-        Fri, 15 Jun 2018 16:52:07 +0000 (UTC)
-Received: from mailout.easymail.ca ([127.0.0.1])
-        by localhost (emo03-pco.easydns.vpn [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id vSeDTxfccGLJ; Fri, 15 Jun 2018 16:52:07 +0000 (UTC)
-Received: from [192.168.1.87] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mailout.easymail.ca (Postfix) with ESMTPSA id 8738E40D17;
-        Fri, 15 Jun 2018 16:51:59 +0000 (UTC)
-Subject: Re: [PATCH] selftests: sparc64: Fix to do nothing on non-sparc64
-To:     David Miller <davem@redhat.com>
-Cc:     tom.hromatka@oracle.com, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org, f.fainelli@gmail.com,
-        Shuah Khan <shuah@kernel.org>
-References: <20180612232348.27979-1-shuah@kernel.org>
- <d6a1ce6d-4903-ec7a-10aa-d40118fce45c@oracle.com>
- <d8ec82b2-a27a-7a7a-9d8a-b3b937e8e959@kernel.org>
- <20180615.094145.334438195653112696.davem@redhat.com>
-From:   Shuah Khan <shuah@kernel.org>
-Message-ID: <fa06cf9a-e38b-df0d-3e15-a8ecff1e923f@kernel.org>
-Date:   Fri, 15 Jun 2018 10:51:58 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Fri, 15 Jun 2018 12:53:17 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fTryI-00065b-52; Fri, 15 Jun 2018 16:53:10 +0000
+Date:   Fri, 15 Jun 2018 17:53:10 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     axboe@kernel.dk, fujita.tomonori@lab.ntt.co.jp,
+        dgilbert@interlog.com, jejb@linux.vnet.ibm.com,
+        martin.petersen@oracle.com, linux-block@vger.kernel.org,
+        linux-scsi@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        security@kernel.org
+Subject: Re: [PATCH] sg, bsg: mitigate read/write abuse, block uaccess in
+ release
+Message-ID: <20180615165310.GF30522@ZenIV.linux.org.uk>
+References: <20180615152335.208202-1-jannh@google.com>
+ <20180615164009.GD30522@ZenIV.linux.org.uk>
+ <CAG48ez2Fku77S+FM2w5n8J_utOhO0EW_RFbMib=t5Nmwc9pwfQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20180615.094145.334438195653112696.davem@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez2Fku77S+FM2w5n8J_utOhO0EW_RFbMib=t5Nmwc9pwfQ@mail.gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/15/2018 10:41 AM, David Miller wrote:
-> From: Shuah Khan <shuah@kernel.org>
-> Date: Fri, 15 Jun 2018 10:33:21 -0600
+On Fri, Jun 15, 2018 at 06:44:51PM +0200, Jann Horn wrote:
+> On Fri, Jun 15, 2018 at 6:40 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> >
+> > On Fri, Jun 15, 2018 at 05:23:35PM +0200, Jann Horn wrote:
+> >
+> > > I've mostly copypasted ib_safe_file_access() over as
+> > > scsi_safe_file_access() because I couldn't find a good common header -
+> > > please tell me if you know a better way.
+> > > The duplicate pr_err_once() calls are so that each of them fires once;
+> > > otherwise, this would probably have to be a macro.
+> > >
+> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > > Cc: <stable@vger.kernel.org>
+> > > Signed-off-by: Jann Horn <jannh@google.com>
+> > > ---
+> >
+> > WTF do you mean, in ->release()?  That makes no sense whatsoever -
+> > what kind of copy_{to,from}_user() would be possible in there?
 > 
->> On 06/13/2018 11:20 AM, Tom Hromatka wrote:
->>> Thanks, Shuah!
->>>
->>> Tom
->>>
->>>
->>> On 06/12/2018 05:23 PM, Shuah Khan (Samsung OSG) wrote:
->>>> sparc64 test fails with the following errors on non-sparc64 systems. Fix
->>>> the Makefile to do nothing on non-sparc64 systems to suppress the errors:
->>>>
->>>> make run_tests
->>>> adi-test.c: Assembler messages:
->>>> adi-test.c:302: Error: no such instruction: `rd %tick,%r13'
->>>> adi-test.c:304: Error: no such instruction: `rd %tick,%rbp'
->>>> adi-test.c:190: Error: no such instruction: `rd %tick,%rbp'
->>>> adi-test.c:192: Error: no such instruction: `rd %tick,%rdx'
->>>> adi-test.c:273: Error: no such instruction: `rd %tick,%rbx'
->>>> adi-test.c:276: Error: no such instruction: `rd %tick,%rdx'
->>>> adi-test.c:217: Error: no such instruction: `rd %tick,%rbp'
->>>> adi-test.c:220: Error: no such instruction: `rd %tick,%rdx'
->>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>>> adi-test.c:246: Error: no such instruction: `rd %tick,%rbp'
->>>> adi-test.c:248: Error: no such instruction: `rd %tick,%rdx'
->>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>>> adi-test.c:79: Error: no such instruction: `rd %tick,%rax'
->>>> <builtin>: recipe for target 'adi-test' failed
->>>> make[1]: *** [adi-test] Error 1
->>>> adi: [FAIL]
->>>> ./drivers_test.sh: 24: ./drivers_test.sh: ./adi-test: not found
->>>> ../lib.mk:73: recipe for target 'run_tests' failed
->>>> make: *** [run_tests] Error 1
->>>>
->>>> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
->>>
->>> Reviewed-by: Tom Hromatka <tom.hromatka@oracle.com>
->>>
->>
->> get_maintainers didn't include your name for this patch. Would you like to
->> take this fix through sparc tree? It would be good to get this in for
->> 4.18-rc2
->>
->> If so, please let me know if you would like me to resend the patch
->> with Tom's Reviewed-by tag.
+> bsg_release -> bsg_put_device -> bsg_complete_all_commands ->
+> blk_complete_sgv4_hdr_rq -> bsg_scsi_complete_rq -> copy_to_user.
+> I don't think that was intentional.
 > 
-> I'm very busy, so this time could you merge this for me?  Thanks!
-> 
-> Acked-by: David S. Miller <davem@davemloft.net>
-> 
+> Basically, the sense buffer is copied to a userspace address supplied
+> in the previous ->write() when you ->read() the reply. But when you
+> ->release() the file without reading the reply, they have to clean it
+> up, and for that, they reuse the same code they use for ->read() - so
+> the sense buffer is written to userspace on ->release().
 
-Okay. I will take care of this.
-
-thanks,
--- Shuah
+Pardon me, that has only one fix - git rm.  This is too broken for words -
+if your reading is correct, the interface is unsalvagable.  I hope you
+*are* misreading it, but if not... how did that insanity get through
+review at merge time?
