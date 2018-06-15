@@ -6,238 +6,206 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 93859C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:01:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 4B22EC433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:03:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A899208AF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:01:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D688E20863
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 10:03:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=onelaird.onmicrosoft.com header.i=@onelaird.onmicrosoft.com header.b="MYvFskGV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A899208AF
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=lairdtech.com
+	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="Y53Ixv36"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D688E20863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936245AbeFOKBy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 06:01:54 -0400
-Received: from mail-sn1nam02on0127.outbound.protection.outlook.com ([104.47.36.127]:43251
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        id S936254AbeFOKDm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 06:03:42 -0400
+Received: from mail-dm3nam03on0076.outbound.protection.outlook.com ([104.47.41.76]:31980
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S934900AbeFOKBw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 06:01:52 -0400
+        id S934900AbeFOKDk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 06:03:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=onelaird.onmicrosoft.com; s=selector1-lairdtech-com;
+ d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s4yWvHekHAkrJWd1qJEQk9DT/qbmGMq6ApevenTFolk=;
- b=MYvFskGVfTO77U5a7/AZCe3mCQlpYjGw9NwiAjgXjKuXTwDFNucnMOhXtgP+buWjWl+SAhEkzETZjcD92XNHWekztaUjsYjKfdZ40QflUhwx25hh955AIXQQocQOph+HlWc/DCvBpu/+uPpNnsj4t+4LIz0WtmRX85NMbkMzs9Q=
-Received: from BY1PR02MB1114.namprd02.prod.outlook.com (10.162.108.140) by
- BY1PR02MB1132.namprd02.prod.outlook.com (10.162.108.146) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.841.17; Fri, 15 Jun 2018 10:01:49 +0000
-Received: from BY1PR02MB1114.namprd02.prod.outlook.com
- ([fe80::b549:fe07:e2d:5d4]) by BY1PR02MB1114.namprd02.prod.outlook.com
- ([fe80::b549:fe07:e2d:5d4%4]) with mapi id 15.20.0841.019; Fri, 15 Jun 2018
- 10:01:49 +0000
-From:   Ben Whitten <Ben.Whitten@lairdtech.com>
-To:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Ben Whitten <ben.whitten@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 1/4] arm: dts: add support for Laird WB45N cpu module and
- DVK
-Thread-Topic: [PATCH 1/4] arm: dts: add support for Laird WB45N cpu module and
- DVK
-Thread-Index: AQHUA70IjwvuwcSlFUa3d79TxShE3aRftZuAgAFfeBA=
-Date:   Fri, 15 Jun 2018 10:01:49 +0000
-Message-ID: <BY1PR02MB1114728E5FF0709137B4224FE77C0@BY1PR02MB1114.namprd02.prod.outlook.com>
-References: <1528966340-23216-1-git-send-email-ben.whitten@lairdtech.com>
- <03f0f635-3fc2-085b-20e0-e1fcaa9e8062@microchip.com>
-In-Reply-To: <03f0f635-3fc2-085b-20e0-e1fcaa9e8062@microchip.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Ben.Whitten@lairdtech.com; 
-x-originating-ip: [109.174.151.67]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BY1PR02MB1132;7:mYme+3GaOHQryoldcMPauk7yhHPNL5y0PEvtOx9z+VcJ/FI/M1hRL654jjawm3hDiKrLi4tQqtYsoHa8TbUbwpdb9g4Q9UceF57ZpbL0HmQQRotPkT/eTaYm5VDn6FNFyo9sCWr/j6m4qGpTNZFZw4WOfldRPYnV4yoSyW40xmVpWYS0oVsUwtqpcLkzGwym1zLaECKr/VkV1JV5ukbqK7YmZGAhWaJai0raukTItF6R3my/+HyCrn63cCvdHij7
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 7a642d71-0d3a-4442-7327-08d5d2a702e3
-x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:BY1PR02MB1132;
-x-ms-traffictypediagnostic: BY1PR02MB1132:
-x-microsoft-antispam-prvs: <BY1PR02MB1132ACE7D2A26370973F3E4BE77C0@BY1PR02MB1132.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231254)(944501410)(52105095)(3002001)(10201501046)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:BY1PR02MB1132;BCL:0;PCL:0;RULEID:;SRVR:BY1PR02MB1132;
-x-forefront-prvs: 0704670F76
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(39380400002)(39860400002)(346002)(396003)(366004)(199004)(189003)(52314003)(97736004)(33656002)(110136005)(81166006)(81156014)(54906003)(74316002)(26005)(316002)(8936002)(53936002)(6116002)(3846002)(186003)(3660700001)(478600001)(9686003)(72206003)(66066001)(8676002)(3280700002)(14454004)(68736007)(105586002)(2900100001)(106356001)(2906002)(59450400001)(2501003)(86362001)(4326008)(6506007)(53546011)(11346002)(99286004)(476003)(7696005)(55016002)(486006)(25786009)(446003)(76176011)(5250100002)(39060400002)(5660300001)(6436002)(6246003)(7736002)(305945005)(102836004)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY1PR02MB1132;H:BY1PR02MB1114.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: lairdtech.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: j5/wAnWe7xgeiwSy2HoORDe/nqLQPopN2no/0mXBw2VTM4cI97z4NPDVRkt+3z+GKB6/Nc4B6BZN3dA/tRAbbOiJeAt9BXXqQvimKVq+oQX5kLDEbiYalcTZOGNNdPTu9ZcaSvt1tZ2pjLyQPDr/kwMMvdmBarpY0pZNA9el4SWLpyQgYnEWiY4AcswYWN7Q
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ bh=ihHNYgPb5bTp029n70Lx1C+VhXqQHlbPNgGJ1UTHq/A=;
+ b=Y53Ixv363APsTQz6gAMz/leFT9wz9COLfp9a3jR11o/KCHiV9A5xeI/N49EKs8fr3cIPNQloeAPXIJw31xnnGTNQVxoOwO/56YPaC+leR+RPMfnhZpocRL0N/OEaio/fxE168ut2Q3Cw9Ok1INFUqYeTh/qCXTrxaLTDJTE6gEE=
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=George.Cherian@cavium.com; 
+Received: from sbr2s-28.caveonetworks.com (50.233.148.156) by
+ SN6PR07MB4926.namprd07.prod.outlook.com (2603:10b6:805:a5::27) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.841.17; Fri, 15 Jun 2018 10:03:33 +0000
+From:   George Cherian <george.cherian@cavium.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc:     viresh.kumar@linaro.org, rjw@rjwysocki.net,
+        pprakash@codeaurora.org, George Cherian <george.cherian@cavium.com>
+Subject: [PATCH v2] cpufreq / CPPC: Add cpuinfo_cur_freq support for CPPC
+Date:   Fri, 15 Jun 2018 03:03:15 -0700
+Message-Id: <1529056995-122792-1-git-send-email-george.cherian@cavium.com>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: lairdtech.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7a642d71-0d3a-4442-7327-08d5d2a702e3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jun 2018 10:01:49.1073
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: c4d27a54-2db1-4088-a044-1a83c778ad1b
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR02MB1132
+Content-Type: text/plain
+X-Originating-IP: [50.233.148.156]
+X-ClientProxiedBy: CO2PR04CA0137.namprd04.prod.outlook.com (2603:10b6:104::15)
+ To SN6PR07MB4926.namprd07.prod.outlook.com (2603:10b6:805:a5::27)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 11cd22c7-f39e-44fa-9efd-08d5d2a741a0
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4926;
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4926;3:nHk/g7QBMHm2oD4NroLJFgf3ScPeKTyWl0yz0Dxfp48YwEy8ifeD6U8VJ79euZr6WkKgaxCQvzQhymmrH9on7ZjZf3Or9xrh5Xbl3bShuuVQqOOixWNrW8CamHb5JS/2LMi1DxTsI3S5otdnNZ7osZ7wl2mwBOYhR8eZuVBWgFHApn+UsCYSo9qcM6h43DsA2Ie6Tg+QBjoRQ48F8k+N6ghZm16sGKL2GhnhJdQ8JpmQeei+0nlkS/hVAXl5C5R6;25:R9PuXs/41oRZnYvefumr0xA+uVjz9YvKoCv46AuTXwEHg/0AG3TPVzqiNrg/hmmepkBcoOj+MNKG3IxFDAv7LVjfcv105ggxJ4HMXZO5NefysPZ9T4lqZRatgLonMYXn3GcRvorhaTr8NjECqOI59GBJAWDVIEf0JkDDxKGkh4x3WTQ7UbDeNJjjRay0ofcWmRXLFQ/zHMQ1EvhS+b23C5MbncbjACvyn+AZM0iS1vsbLLu6QY5/D+vPbWzdaddu36grOqYoRuR21ICsF5mybU54+xIKLAMpIkBmJawmlhzDPLiEviZsOaHN+ZwC/pi2L3P0lG3vNMx8vC5Q622iAg==;31:NLgy2HiO16PNr5q4agaW/EunS+05dtHTM0QFvlclRv5fvQpPE/NL5i6+2hjiqBHRcg+ntMnphIRqmDiNFvsA5o22D01G2BDziRG5l9Ag40Rkyl1UauvmvvAug7AKURJ36XR1J7D7jDeX98+I0a7DThNqM5bUDAtjYdPdN/gZaeJ3JBKi2GKs7JRLpQIBuseNlrPYwP8E+2XKAZIPUg0KJroJXV1ls82bUCkNIkE4taQ=
+X-MS-TrafficTypeDiagnostic: SN6PR07MB4926:
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4926;20:DyFKa+cZ8xUohB+l+dvi5+h4w26ISBo0cwrFm9A2QcXQkveZgrbcimMUYKsuqIwELXwBmfV6GL20++RRU38W3UgozMeFp3mXHXnPvEm/uWjkQEn/8WaikCUaebtxyANPa5c3MQYwV+unSCBFsuHpkhTMHH+99SzhSHnDYKPKwIuUd9eMppTBR8vwtyxJZHahy8BwNMcba999OD3860oIA5J7UUDTusfxxu0bxzDvQugHUrF2BoX+yc9QwoJH/wva8lBGnHmmKSMTvIcWC2dghkTHUAbcDlmo7Fu1tAQPvf8E2aot309GOHdh8mQV0P0H+aWhfQ5dNY4aOTyojahJlLcGpTXZRiiVTIk/LDxu1WZWt4Rtz7tcpa62Y6RzIn03TEuPjnhpKsmh++6q9tJsdYORnFHvBge0bsQlHiMvXWtmDZWGezvIK/9/ZltgjsH5HVH2qBf/ZGJd0j5u9IBU+Eo+8MCKPSnd+0ACW8ntia5LhQpLgo4fIQwrzj531QZZ;4:CaMHjaihQukaH6s8cFkudqbSn2Ir9ZVKjipyVlaM8B8f53mYPYq/+Fw1ez4O5ZCKQSeMoH7l+7iviQsURL8pkDyg/fdlNxTG4GM2QmkroifCTzjJW1g4YP6DiBHBMlDJ4hieuW+0VP+lyVA18SnQIAICebuIM7tLUCeD6chtZLpILPufq3l2+RVx7GBFad6ge8UZ9EzhTQKSqcGOFf1gL1hdP1nv7UWa7Sf8sFvlnWJoI/5b+t1yAU2xFSWs8PvDhBHiVX86Fe4txXc+OlVNRQ==
+X-Microsoft-Antispam-PRVS: <SN6PR07MB4926AF2E43104265F3E2C298F97C0@SN6PR07MB4926.namprd07.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231254)(944501410)(52105095)(93006095)(93001095)(3002001)(10201501046)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123558120)(20161123562045)(6072148)(201708071742011)(7699016);SRVR:SN6PR07MB4926;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4926;
+X-Forefront-PRVS: 0704670F76
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(39380400002)(366004)(376002)(346002)(199004)(189003)(3846002)(8676002)(6116002)(97736004)(53416004)(50226002)(81156014)(81166006)(25786009)(8936002)(72206003)(478600001)(4720700003)(6666003)(7736002)(5660300001)(305945005)(48376002)(69596002)(2906002)(36756003)(50466002)(107886003)(105586002)(4326008)(106356001)(6486002)(53936002)(6512007)(476003)(2616005)(956004)(86362001)(186003)(16526019)(6506007)(386003)(59450400001)(51416003)(26005)(52116002)(47776003)(486006)(68736007)(66066001)(16586007)(316002)(44832011);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4926;H:sbr2s-28.caveonetworks.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: cavium.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN6PR07MB4926;23:rxv26aSMoV/0Dt89r/SnpI13OA/K+vxOagKgNZyCV?=
+ =?us-ascii?Q?dt3brAKyIh2HtO2BJoZVna1M5rL1EmLIP7asgZHyVdWK7c0D9uq6MWDRb/p9?=
+ =?us-ascii?Q?Zjt+/GMQTb4Nvv4y1nzKZSlV59ytEbXGclpt3wTH1VFxsU7gYYsR8cR8P9bc?=
+ =?us-ascii?Q?lp+zayvPJRzVx7+CftxZNtIxRQHIZlM7jA227uv2s3g0tfOXrxF70lylXGia?=
+ =?us-ascii?Q?czdlDGpkAqI2/2NPX1RC6d3S3tqdG6RlE78Pf2Jt/XG6l8ZKZ+vA390WUY88?=
+ =?us-ascii?Q?RctpNzhbR3XHCbOs6x6Vx5lXptlJ3yBW0cF8sRdP33sDFGiI36xJAzhMvGcd?=
+ =?us-ascii?Q?XJu8FdOtTSQ8UyQr74xBvqGIqZaJ72rOzMe1Mf1qRJIXlQ6Cde2Z1B+wbXpS?=
+ =?us-ascii?Q?THGogv/wy7axetFUk8iYzU4Rsn5QkHVgpSJ1T461ZTVMzcKQ8YYucTuBCeGt?=
+ =?us-ascii?Q?ODYHH0I3DAQ43rd51NgzcGCzlBBlxAZZQ8WIM34ORcXTyxCbmL46T+lUwalI?=
+ =?us-ascii?Q?w2bDMcRmEoBHK6cDQmL84ygMrYBUWmF3KDC9wNi90+mqcILnHG8YzX34MHE3?=
+ =?us-ascii?Q?tDDDPvx16UxW4d2i5WEv2XjvAJGd9BbG6b/Wd/LZFTyk/r83co7Y5D3fXSOM?=
+ =?us-ascii?Q?g7iM5C/YFQKy+W6vLKmoohCAQHa19vojlKYTtjFN4C4zUOKJKOLWIUjQmsM2?=
+ =?us-ascii?Q?CesTuxeXwULWQ1aNM5dagvrxNFHJeE13mwDCDJKVnE0WQ20XvEFNcDbHwTxN?=
+ =?us-ascii?Q?wo1C8chfmZhWgW7/fB96AuDvXm0kUSacPojdplmE9tH5A+qfh3OoofKxQSnM?=
+ =?us-ascii?Q?NYPITNM7FrU1kpAB25Y8XiYm5IdjttjqTIbcdOkbstHeDWiEt/+vTNRrsp9o?=
+ =?us-ascii?Q?KxO3noY0h6AB4SYcTxY4KGE+CCSd/xnTM9pjicyC2HDD74L/pJWskA/vIQgH?=
+ =?us-ascii?Q?BzsHxNTJiB5OsVZXDVg+ET5X8eSZTK6xbyychqH6ElXtSKIYG7w/VmhBH7pg?=
+ =?us-ascii?Q?LsjbSiLzfFUaZliT3hG6r4s98LXu7R0SOp4Il4UG12wlIbPC0EAKfrEgrDdK?=
+ =?us-ascii?Q?fiq/HS8owjaBYg7Rpsvm4+cQFNxwS7SQLkRkn4Gpt052Wn2htlbOXn/2k1b9?=
+ =?us-ascii?Q?Tgxl/13uTX46sRPtU+YfNqosgWKwddPqHVWzaZhpIN6AAW6vquqNS9J8Qdli?=
+ =?us-ascii?Q?o5p3lgysYdjeMycXiqdj9m4cdu6TGFM8NIBGP8YjXPbHWm69tbQSf5A0135k?=
+ =?us-ascii?Q?mObiTGh1gdiuCu2Mewk44tuOoqDtkMC0sliL6PS?=
+X-Microsoft-Antispam-Message-Info: pEyPmT9Fsz5Ac53TzCUllqGUNa6DtGDahuh1zCxtOYALZIes2nj9dqQMEJRdR8kO1LeC6rVKQivw3cYgFw768liD8HAm5HFiMQ46XB4TlLZXdBuryhVXHTOqpyyzcJSx9mB9lDnTjfYXigcd+3eQeQdB76yJqIYrvmmT+BjXdAWMY/Fshmrv2nrU3mM05yS3
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4926;6:FYlK+Im5aqfrRXUEr5DZgcrtBVHfHRUDnmXxrCF5iE1+w9Jjv4MePVpc2FBrCSwb1Q8CLZRZ40f811QB1dmjcdOBsgjqqc3/ih43MOv70cBJiG/VvGG2OJcbOj9JoMcniuI2KTmSYAkiiw+1fHCA4kwFj4UA+zbd4ECXKdnf1n7+LER3buRh7x5pCDghJRGtrPzGu0d5gB1VrE1ObsFUni0tWGrHGx75N9xsHC1lNU6mb+8qySl4bOFY9IbArqrqU7aInrDNvi4htUHc8bGp56sd975AEPnnufZqYpsDVf6xbBTQS4g9w4j2MjysywGSzxxxQIXe1k4MKTbKfenvA317mibiqdRhWB2RiFsJvVfZEhlrOq59AIVeaigxABat8ylDnN2G0dyi+A6G5aFqS8qV3UI965cQx2L9vBYYcqwfc9m02r56OtkIlGjoZ2B/Pw8BfTj/+EWlGz6j1s+GAQ==;5:Sf5xhd1g5DTAzm6EsrK6x3X9bbhSVgrsJoCG0oTGMgXgwE6mUD7tZvG4kb0PNJUe29UAon72Y6qPP+sd9shKMt7yN7ru1YHWClyEz1aRJyfW6twdQ1EIDFMg8S8Z1aAPcXnNASprjPC1CX8tE6mBWAi61YcrOc95uv35eTnlrIQ=;24:2G5vpwRudjsAJfNnywcLFszdXAX8DYVdjDSTqahCupy+tr6ja3d7IegQfUx1mi/ydrhAHIigsT6zRqzmKCo8HXm+/YplicQuXSE1uk1hX7A=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;SN6PR07MB4926;7:R/Ktj6ecZ6bIoA/mvt5S13RfNAcXmcwJuOoUU3Oj2TeEu0WFLsnTabOr8O7LwTV8gxiK9jIwAN6GvruAM171A1GByHCTLtGUnKhC7NHffnEjKYuhQr88UtHT9+wBzFq24naIoCrA16/hGodCrl1Ro1kmROhvAouni3mkNSVuUfQe0HforMNYSz3akCSYzDUFr+zYKRrJKKbRdyGpriYwzMt/Bx+zHb8YFa2OFzWgOFRpk1TinIv3ZwXU2PJFDFom
+X-OriginatorOrg: cavium.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Jun 2018 10:03:33.9576 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11cd22c7-f39e-44fa-9efd-08d5d2a741a0
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4926
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBPbiAxNC8wNi8yMDE4IGF0IDEwOjUxLCBCZW4gV2hpdHRlbiB3cm90ZToNCj4gPiBTaWduZWQt
-b2ZmLWJ5OiBCZW4gV2hpdHRlbiA8YmVuLndoaXR0ZW5AbGFpcmR0ZWNoLmNvbT4NCj4gPiAtLS0N
-Cj4gPiAgIGFyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlICAgICAgICB8ICAgMyArLQ0KPiA+ICAg
-YXJjaC9hcm0vYm9vdC9kdHMvYXQ5MS13YjQ1bi5kdHMgIHwgIDY2ICsrKysrKysrKysrKysrKw0K
-PiA+ICAgYXJjaC9hcm0vYm9vdC9kdHMvYXQ5MS13YjQ1bi5kdHNpIHwgMTY5DQo+ICsrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gICAzIGZpbGVzIGNoYW5nZWQsIDIz
-NyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pDQo+ID4gICBjcmVhdGUgbW9kZSAxMDA2NDQg
-YXJjaC9hcm0vYm9vdC9kdHMvYXQ5MS13YjQ1bi5kdHMNCj4gPiAgIGNyZWF0ZSBtb2RlIDEwMDY0
-NCBhcmNoL2FybS9ib290L2R0cy9hdDkxLXdiNDVuLmR0c2kNCj4gPg0KPiA+IGRpZmYgLS1naXQg
-YS9hcmNoL2FybS9ib290L2R0cy9NYWtlZmlsZSBiL2FyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxl
-DQo+ID4gaW5kZXggN2UyNDI0OS4uMWVlOTRlZSAxMDA2NDQNCj4gPiAtLS0gYS9hcmNoL2FybS9i
-b290L2R0cy9NYWtlZmlsZQ0KPiA+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL01ha2VmaWxlDQo+
-ID4gQEAgLTQyLDcgKzQyLDggQEAgZHRiLSQoQ09ORklHX1NPQ19BVDkxU0FNOSkgKz0gXA0KPiA+
-ICAgCWF0OTFzYW05ZzI1ZWsuZHRiIFwNCj4gPiAgIAlhdDkxc2FtOWczNWVrLmR0YiBcDQo+ID4g
-ICAJYXQ5MXNhbTl4MjVlay5kdGIgXA0KPiA+IC0JYXQ5MXNhbTl4MzVlay5kdGINCj4gPiArCWF0
-OTFzYW05eDM1ZWsuZHRiIFwNCj4gPiArCWF0OTEtd2I0NW4uZHRiDQo+ID4gICBkdGItJChDT05G
-SUdfU09DX1NBTV9WNykgKz0gXA0KPiA+ICAgCWF0OTEta2l6Ym94Mi5kdGIgXA0KPiA+ICAgCWF0
-OTEtbmF0dGlzLTItbmF0dGUtMi5kdGIgXA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL2FybS9ib290
-L2R0cy9hdDkxLXdiNDVuLmR0cyBiL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtDQo+IHdiNDVuLmR0
-cw0KPiA+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+ID4gaW5kZXggMDAwMDAwMC4uNGU4ODgxNQ0K
-PiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9hcmNoL2FybS9ib290L2R0cy9hdDkxLXdiNDVu
-LmR0cw0KPiA+IEBAIC0wLDAgKzEsNjYgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZp
-ZXI6IEdQTC0yLjANCj4gPiArLyoNCj4gPiArICogYXQ5MS13YjQ1bi5kdHMgLSBEZXZpY2UgVHJl
-ZSBmaWxlIGZvciBXQjQ1TkJUIGJvYXJkDQo+ID4gKyAqDQo+ID4gKyAqICBDb3B5cmlnaHQgKEMp
-IDIwMTggTGFpcmQNCj4gPiArICoNCj4gPiArKi8NCj4gPiArL2R0cy12MS87DQo+ID4gKyNpbmNs
-dWRlICJhdDkxLXdiNDVuLmR0c2kiDQo+ID4gKw0KPiA+ICsvIHsNCj4gPiArCW1vZGVsID0gIkxh
-aXJkIFdvcmtncm91cCBCcmlkZ2UgNDVOIC0gQXRtZWwgQVQ5MVNBTSAoZHQpIjsNCj4gPiArCWNv
-bXBhdGlibGUgPSAibGFpcmQsd2I0NW4iLCAibGFpcmQsd2J4eCIsICJhdG1lbCxhdDkxc2FtOXg1
-IiwNCj4gImF0bWVsLGF0OTFzYW05IjsNCj4gDQo+ICJsYWlyZCIgcHJlZml4IG11c3QgYmUgYWRk
-ZWQgdG8NCj4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL3ZlbmRvci1wcmVmaXhl
-cy50eHQgYmVmb3JlIHVzaW5nIGl0Og0KPiB5b3UgY2FuIGRvIGEgbGl0dGxlIHBhdGNoIGFzIGEg
-Zmlyc3QgcGF0Y2ggb2YgdGhpcyBzZXJpZXMuDQo+IE90aGVyd2lzZSBpdCB3aWxsIHRyaWdnZXIg
-YSB3YXJuaW5nIG1lc3NhZ2Ugd2hpbGUgcnVubmluZw0KPiBzY3JpcHRzL2NoZWNrcGF0Y2gucGwg
-b24gdG9wIG9mIHlvdXIgcGF0Y2guDQo+IA0KPiANCj4gPiArDQo+ID4gKwlhaGIgew0KPiA+ICsJ
-CWFwYiB7DQo+ID4gKwkJCXdhdGNoZG9nQGZmZmZmZTQwIHsNCj4gPiArCQkJCXN0YXR1cyA9ICJv
-a2F5IjsNCj4gPiArCQkJfTsNCj4gPiArCQl9Ow0KPiA+ICsJfTsNCj4gPiArDQo+ID4gKwlncGlv
-X2tleXMgew0KPiA+ICsJCWNvbXBhdGlibGUgPSAiZ3Bpby1rZXlzIjsNCj4gPiArCQkjYWRkcmVz
-cy1jZWxscyA9IDwxPjsNCj4gPiArCQkjc2l6ZS1jZWxscyA9IDwwPjsNCj4gPiArCQlpcnFidG5A
-cGIxOCB7DQo+IA0KPiBJJ20gbm90IHN1cmUgdGhhdCB0aGUgQHBiMTggY2FuIGJlIHVzZWQgbGlr
-ZSB0aGlzLiBUaGlzIGFkZHJlc3MNCj4gZXh0ZW5zaW9uIG11c3QgYmUgdXNlZCBpbiBhICJyZWci
-IHByb3BlcnR5IGluIHRoZSBub2RlLiBkdGMgdXNlZCB3aXRoDQo+IHdhcm5pbmcgc3dpdGNoIG9u
-IG1pZ2h0IHRyaWdnZXIgYW4gZXJyb3IgZm9yIHRoaXMuDQo+IA0KPiA+ICsJCQlsYWJlbCA9ICJJ
-UlFCVE4iOw0KPiA+ICsJCQlsaW51eCxjb2RlID0gPDk5PjsNCj4gPiArCQkJZ3Bpb3MgPSA8JnBp
-b0IgMTggR1BJT19BQ1RJVkVfTE9XPjsNCj4gPiArCQkJZ3Bpby1rZXksd2FrZXVwID0gPDE+Ow0K
-PiA+ICsJCX07DQo+ID4gKwl9Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJnVzYjAgew0KPiA+ICsJ
-c3RhdHVzID0gIm9rYXkiOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJm1tYzAgew0KPiA+ICsJc3Rh
-dHVzID0gIm9rYXkiOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJnNwaTAgew0KPiA+ICsJc3RhdHVz
-ID0gIm9rYXkiOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJm1hY2IwIHsNCj4gPiArCXN0YXR1cyA9
-ICJva2F5IjsNCj4gPiArfTsNCj4gPiArDQo+ID4gKyZkYmd1IHsNCj4gPiArCXN0YXR1cyA9ICJv
-a2F5IjsNCj4gPiArfTsNCj4gPiArDQo+ID4gKyZ1c2FydDAgew0KPiA+ICsJc3RhdHVzID0gIm9r
-YXkiOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJnVzYXJ0MyB7DQo+ID4gKwlzdGF0dXMgPSAib2th
-eSI7DQo+ID4gK307DQo+ID4gKw0KPiA+ICsmaTJjMSB7DQo+ID4gKwlzdGF0dXMgPSAib2theSI7
-DQo+ID4gK307DQo+ID4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtd2I0NW4u
-ZHRzaSBiL2FyY2gvYXJtL2Jvb3QvZHRzL2F0OTEtDQo+IHdiNDVuLmR0c2kNCj4gPiBuZXcgZmls
-ZSBtb2RlIDEwMDY0NA0KPiA+IGluZGV4IDAwMDAwMDAuLjJmYTU4ZTINCj4gPiAtLS0gL2Rldi9u
-dWxsDQo+ID4gKysrIGIvYXJjaC9hcm0vYm9vdC9kdHMvYXQ5MS13YjQ1bi5kdHNpDQo+ID4gQEAg
-LTAsMCArMSwxNjkgQEANCj4gPiArLy8gU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAN
-Cj4gPiArLyoNCj4gPiArICogYXQ5MS13YjQ1bi5kdHNpIC0gRGV2aWNlIFRyZWUgZmlsZSBmb3Ig
-V0I0NU5CVCBib2FyZA0KPiA+ICsgKg0KPiA+ICsgKiAgQ29weXJpZ2h0IChDKSAyMDE4IExhaXJk
-DQo+ID4gKyAqDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiArI2luY2x1ZGUgImF0OTFzYW05ZzI1LmR0
-c2kiDQo+ID4gKw0KPiA+ICsvIHsNCj4gPiArCW1vZGVsID0gIkxhaXJkIFdvcmtncm91cCBCcmlk
-Z2UgNDVOIC0gQXRtZWwgQVQ5MVNBTSAoZHQpIjsNCj4gPiArCWNvbXBhdGlibGUgPSAibGFpcmQs
-d2I0NW4iLCAibGFpcmQsd2J4eCIsICJhdG1lbCxhdDkxc2FtOXg1IiwNCj4gImF0bWVsLGF0OTFz
-YW05IjsNCj4gPiArDQo+ID4gKwljaG9zZW4gew0KPiA+ICsJCWJvb3RhcmdzID0gInViaS5tdGQ9
-NiByb290PXViaTA6cm9vdGZzIHJvb3Rmc3R5cGU9dWJpZnMNCj4gcnciOw0KPiA+ICsJCXN0ZG91
-dC1wYXRoID0gInNlcmlhbDA6MTE1MjAwbjgiOw0KPiA+ICsJfTsNCj4gPiArDQo+ID4gKwltZW1v
-cnkgew0KPiA+ICsJCXJlZyA9IDwweDIwMDAwMDAwIDB4NDAwMDAwMD47DQo+ID4gKwl9Ow0KPiA+
-ICsNCj4gPiArCWFoYiB7DQo+ID4gKwkJYXBiIHsNCj4gPiArCQkJc2hkd2NAZmZmZmZlMTAgew0K
-PiANCj4gSSB3b3VsZCBhZHZpY2UgeW91IHRvIHRha2UgZXhhY3RseSB0aGUgbm9kZSBuYW1lOg0K
-PiAic2h1dGRvd24tY29udHJvbGxlckBmZmZmZmUxMCI7IEFueXdheSwgaXQgd2lsbCBnbyBhd2F5
-IGFmdGVyIHlvdSB1c2UNCj4gdGhlIGxhYmVsIG5vdGF0aW9uIGFzIGFkdmlzZWQgYnkgQWxleGFu
-ZHJlLg0KPiANCj4gPiArCQkJCWF0bWVsLHdha2V1cC1tb2RlID0gImxvdyI7DQo+ID4gKwkJCX07
-DQo+ID4gKw0KPiA+ICsJCQlwaW5jdHJsQGZmZmZmNDAwIHsNCj4gPiArCQkJCXVzYjIgew0KPiA+
-ICsJCQkJCXBpbmN0cmxfYm9hcmRfdXNiMjogdXNiMi1ib2FyZCB7DQo+ID4gKwkJCQkJCWF0bWVs
-LHBpbnMgPQ0KPiA+ICsJCQkJCQkJPEFUOTFfUElPQiAxMQ0KPiBBVDkxX1BFUklQSF9HUElPIEFU
-OTFfUElOQ1RSTF9ERUdMSVRDSD47CQkvKiBQQjExIGdwaW8NCj4gdmJ1cyBzZW5zZSwgZGVnbGl0
-Y2ggKi8NCj4gPiArCQkJCQl9Ow0KPiA+ICsJCQkJfTsNCj4gPiArCQkJfTsNCj4gPiArDQo+ID4g
-KwkJCXJzdGNAZmZmZmZlMDAgew0KPiA+ICsJCQkJY29tcGF0aWJsZSA9ICJhdG1lbCxzYW1hNWQz
-LXJzdGMiOw0KPiA+ICsJCQl9Ow0KPiANCj4gSSBkb24ndCB0aGluayB0aGlzIG5vZGUgaXMgbmVl
-ZGVkLg0KDQpJIGR1ZyB0aHJvdWdoIG91ciBvbGQgY29kZSByZXZpZXdzIGFuZCBmb3VuZCB0aGlz
-IG1lc3NhZ2UgcmVsYXRpbmcgdG8gdGVzdGluZw0KcmVib290IG92ZXIgc2V2ZXJhbCB0aG91c2Fu
-ZCB0aW1lcyBpbiBvdXIgdGVzdGJlZDoNCkFmdGVyIHRoZSBzbG93IGNsb2NrIGhhcyBiZWVuIGVu
-YWJsZWQgb24gdGhlIHJlc2V0IGNvbnRyb2xsZXIgdmlhIHVwc3RyZWFtDQpjaGFuZ2VzLCB0aGUg
-ZHJhbSBkaXNhYmxlIGFjY2VzcyBhbmQgcG93ZXIgZG93biBjb2RlIGlzIGNhdXNpbmcgdGhlIFNB
-TTlHMjUNCnRvIGhhbmcgb2NjYXNpb25hbGx5IG9uIHJlYm9vdC4gIFVzaW5nIHRoZSBzaW1wbGUg
-cmVzZXQgZnVuY3Rpb24gcHJvdmlkZWQNCmZvciBTQU1BNUQzIGluc3RlYWQuDQoNClNvIGl0IGFw
-cGVhcnMgdG8gYmUgYSB3b3JrYXJvdW5kIGZvciBhIGJ1ZyB0aGF0IGV4aXN0ZWQgfjIgeWVhcnMg
-YWdvLCBtYXkgc3RpbGwgYmUNCnJlbGV2YW50IGFzIHRoZXJlIGhhdmVuJ3QgYmVlbiBtYW55IGNo
-YW5nZXMgdG8gdGhlIHJlc2V0IGNvZGUgaW4gdGhhdCB0aW1lLg0KDQo+ID4gKw0KPiA+ICsJCX07
-DQo+ID4gKwl9Ow0KPiA+ICsNCj4gPiArCWF0aGVyb3Mgew0KPiA+ICsJCWNvbXBhdGlibGUgPSAi
-YXRoZXJvcyxhdGg2a2wiOw0KPiA+ICsJCWF0aGVyb3MsYm9hcmQtaWQgPSAiU0QzMiI7DQo+ID4g
-Kwl9Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJnNsb3dfeHRhbCB7DQo+ID4gKwljbG9jay1mcmVx
-dWVuY3kgPSA8MzI3Njg+Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJm1haW5feHRhbCB7DQo+ID4g
-KwljbG9jay1mcmVxdWVuY3kgPSA8MTIwMDAwMDA+Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJmVi
-aSB7DQo+ID4gKwlzdGF0dXMgPSAib2theSI7DQo+ID4gKwluYW5kX2NvbnRyb2xsZXI6IG5hbmQt
-Y29udHJvbGxlciB7DQo+ID4gKwkJcGluY3RybC0wID0gPCZwaW5jdHJsX25hbmRfY3MgJnBpbmN0
-cmxfbmFuZF9yYg0KPiAmcGluY3RybF9uYW5kX29lX3dlPjsNCj4gPiArCQlwaW5jdHJsLW5hbWVz
-ID0gImRlZmF1bHQiOw0KPiA+ICsJCXN0YXR1cyA9ICJva2F5IjsNCj4gPiArDQo+ID4gKwkJbmFu
-ZEAzIHsNCj4gPiArCQkJcmVnID0gPDB4MyAweDAgMHg4MDAwMDA+Ow0KPiA+ICsJCQlyYi1ncGlv
-cyA9IDwmcGlvRCA1IEdQSU9fQUNUSVZFX0hJR0g+Ow0KPiA+ICsJCQljcy1ncGlvcyA9IDwmcGlv
-RCA0IEdQSU9fQUNUSVZFX0hJR0g+Ow0KPiA+ICsJCQluYW5kLWJ1cy13aWR0aCA9IDw4PjsNCj4g
-PiArCQkJbmFuZC1lY2MtbW9kZSA9ICJodyI7DQo+ID4gKwkJCW5hbmQtZWNjLXN0cmVuZ3RoID0g
-PDQ+Ow0KPiA+ICsJCQluYW5kLWVjYy1zdGVwLXNpemUgPSA8NTEyPjsNCj4gPiArCQkJbmFuZC1v
-bi1mbGFzaC1iYnQ7DQo+ID4gKwkJCWxhYmVsID0gImF0bWVsX25hbmQiOw0KPiA+ICsNCj4gPiAr
-CQkJcGFydGl0aW9ucyB7DQo+ID4gKwkJCQljb21wYXRpYmxlID0gImZpeGVkLXBhcnRpdGlvbnMi
-Ow0KPiA+ICsJCQkJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+ID4gKwkJCQkjc2l6ZS1jZWxscyA9
-IDwxPjsNCj4gPiArDQo+ID4gKwkJCQlhdDkxYm9vdHN0cmFwQDAgew0KPiA+ICsJCQkJCWxhYmVs
-ID0gImF0OTFicyI7DQo+ID4gKwkJCQkJcmVnID0gPDB4MCAweDIwMDAwPjsNCj4gPiArCQkJCX07
-DQo+ID4gKw0KPiA+ICsJCQkJdWJvb3RAMjAwMDAgew0KPiA+ICsJCQkJCWxhYmVsID0gInUtYm9v
-dCI7DQo+ID4gKwkJCQkJcmVnID0gPDB4MjAwMDAgMHg4MDAwMD47DQo+ID4gKwkJCQl9Ow0KPiA+
-ICsNCj4gPiArCQkJCXVib290ZW52QGEwMDAwIHsNCj4gPiArCQkJCQlsYWJlbCA9ICJ1LWJvb3Qt
-ZW52IjsNCj4gPiArCQkJCQlyZWcgPSA8MHhhMDAwMCAweDIwMDAwPjsNCj4gPiArCQkJCX07DQo+
-ID4gKw0KPiA+ICsJCQkJdWJvb3RlbnZAYzAwMDAgew0KPiA+ICsJCQkJCWxhYmVsID0gInJlZHVu
-ZC1lbnYiOw0KPiA+ICsJCQkJCXJlZyA9IDwweGMwMDAwIDB4MjAwMDA+Ow0KPiA+ICsJCQkJfTsN
-Cj4gPiArDQo+ID4gKwkJCQlrZXJuZWwtYUBlMDAwMCB7DQo+ID4gKwkJCQkJbGFiZWwgPSAia2Vy
-bmVsLWEiOw0KPiA+ICsJCQkJCXJlZyA9IDwweGUwMDAwIDB4MjgwMDAwPjsNCj4gPiArCQkJCX07
-DQo+ID4gKw0KPiA+ICsJCQkJa2VybmVsLWJAMzYwMDAwIHsNCj4gPiArCQkJCQlsYWJlbCA9ICJr
-ZXJuZWwtYiI7DQo+ID4gKwkJCQkJcmVnID0gPDB4MzYwMDAwIDB4MjgwMDAwPjsNCj4gPiArCQkJ
-CX07DQo+ID4gKw0KPiA+ICsJCQkJcm9vdGZzLWFANWUwMDAwIHsNCj4gPiArCQkJCQlsYWJlbCA9
-ICJyb290ZnMtYSI7DQo+ID4gKwkJCQkJcmVnID0gPDB4NWUwMDAwIDB4MjYwMDAwMD47DQo+ID4g
-KwkJCQl9Ow0KPiA+ICsNCj4gPiArCQkJCXJvb3Rmcy1iQDJiZTAwMDAgew0KPiA+ICsJCQkJCWxh
-YmVsID0gInJvb3Rmcy1iIjsNCj4gPiArCQkJCQlyZWcgPSA8MHgyYmUwMDAwIDB4MjYwMDAwMD47
-DQo+ID4gKwkJCQl9Ow0KPiA+ICsNCj4gPiArCQkJCXVzZXJANTFlMDAwMCB7DQo+ID4gKwkJCQkJ
-bGFiZWwgPSAidXNlciI7DQo+ID4gKwkJCQkJcmVnID0gPDB4NTFlMDAwMCAweDJkYzAwMDA+Ow0K
-PiA+ICsJCQkJfTsNCj4gPiArDQo+ID4gKwkJCQlsb2dzQDdmYTAwMDAgew0KPiA+ICsJCQkJCWxh
-YmVsID0gImxvZ3MiOw0KPiA+ICsJCQkJCXJlZyA9IDwweDdmYTAwMDAgMHg2MDAwMD47DQo+ID4g
-KwkJCQl9Ow0KPiA+ICsNCj4gPiArCQkJfTsNCj4gPiArCQl9Ow0KPiA+ICsJfTsNCj4gPiArfTsN
-Cj4gPiArDQo+ID4gKyZ1c2IwIHsNCj4gDQo+IFRoaXMgbXVzdCBiZSAmdXNiMSBsYWJlbCwgaXNu
-J3QgaXQ/DQo+IEJlY2F1c2UgeW91IGFyZSByZWZlcnJpbmcgdG8gb2hjaSBiaW5kaW5nIEkgc3Vz
-cGVjdCAoZm91bmQgYnkgaGF2aW5nIGENCj4gbG9vayBhdDogYXRtZWwsb2MtZ3BpbyBwcm9wZXJ0
-eS4uLikuDQoNCkkgYmVsaWV2ZSB1c2IwIGlzIGNvcnJlY3QsIGFzIHRoaXMgaXMgYSBhdDkxc2Ft
-OXg1IHBhcnQsIHRoZSBub2RlIGluIGR0c2kgaXMgLW9oY2kuDQpzYW1hNWQzIGlzIHVzYjEgZm9y
-IC1vaGNpLg0KDQo+ID4gKwludW0tcG9ydHMgPSA8Mj47DQo+ID4gKwlhdG1lbCx2YnVzLWdwaW8g
-PSA8DQo+ID4gKwkJJnBpb0IgMTIgR1BJT19BQ1RJVkVfSElHSA0KPiA+ICsJCSZwaW9BIDMxIEdQ
-SU9fQUNUSVZFX0hJR0gNCj4gPiArCQk+Ow0KPiA+ICsJYXRtZWwsb2MtZ3BpbyA9IDwmcGlvQiAx
-MyBHUElPX0FDVElWRV9MT1c+Ow0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJm1hY2IwIHsNCj4gPiAr
-CXBoeS1tb2RlID0gInJtaWkiOw0KPiA+ICt9Ow0KPiA+ICsNCj4gPiArJnNwaTAgew0KPiA+ICsJ
-Y3MtZ3Bpb3MgPSA8JnBpb0EgMTQgMD4sIDwmcGlvQSA3IDA+LCA8MD4sIDwwPjsNCj4gPiArfTsN
-Cj4gPiArDQo+ID4gKyZ1c2IyIHsNCj4gPiArCXBpbmN0cmwtbmFtZXMgPSAiZGVmYXVsdCI7DQo+
-ID4gKwlwaW5jdHJsLTAgPSA8JnBpbmN0cmxfYm9hcmRfdXNiMj47DQo+ID4gKwlhdG1lbCx2YnVz
-LWdwaW8gPSA8JnBpb0IgMTEgR1BJT19BQ1RJVkVfSElHSD47DQo+ID4gK307DQo+ID4gKw0KPiA+
-ICsmbW1jMCB7DQo+ID4gKwlwaW5jdHJsLTAgPSA8DQo+ID4gKwkJJnBpbmN0cmxfbW1jMF9zbG90
-MF9jbGtfY21kX2RhdDANCj4gPiArCQkmcGluY3RybF9tbWMwX3Nsb3QwX2RhdDFfMz47DQo+ID4g
-KwlzbG90QDAgew0KPiA+ICsJCXJlZyA9IDwwPjsNCj4gPiArCQlidXMtd2lkdGggPSA8ND47DQo+
-ID4gKwl9Ow0KPiA+ICt9Ow0KPiA+DQo+IA0KPiANCj4gLS0NCj4gTmljb2xhcyBGZXJyZQ0K
+Per Section 8.4.7.1.3 of ACPI 6.2, The platform provides performance
+feedback via set of performance counters. To determine the actual
+performance level delivered over time, OSPM may read a set of
+performance counters from the Reference Performance Counter Register
+and the Delivered Performance Counter Register.
+
+OSPM calculates the delivered performance over a given time period by
+taking a beginning and ending snapshot of both the reference and
+delivered performance counters, and calculating:
+
+delivered_perf = reference_perf X (delta of delivered_perf counter / delta of reference_perf counter).
+
+Implement the above and hook this to the cpufreq->get method.
+
+Signed-off-by: George Cherian <george.cherian@cavium.com>
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+---
+ drivers/cpufreq/cppc_cpufreq.c | 71 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+
+diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+index 3464580..3fe7625 100644
+--- a/drivers/cpufreq/cppc_cpufreq.c
++++ b/drivers/cpufreq/cppc_cpufreq.c
+@@ -296,10 +296,81 @@ static int cppc_cpufreq_cpu_init(struct cpufreq_policy *policy)
+ 	return ret;
+ }
+ 
++static int cppc_get_rate_from_fbctrs(struct cppc_cpudata *cpu,
++				     struct cppc_perf_fb_ctrs fb_ctrs_t0,
++				     struct cppc_perf_fb_ctrs fb_ctrs_t1)
++{
++	u64 delta_reference, delta_delivered;
++	u64 reference_perf, delivered_perf;
++
++	reference_perf = fb_ctrs_t0.reference_perf;
++	if (fb_ctrs_t1.reference > fb_ctrs_t0.reference) {
++		delta_reference = fb_ctrs_t1.reference - fb_ctrs_t0.reference;
++	} else {
++		/*
++		 * Counters would have wrapped-around
++		 * We also need to find whether the low level fw
++		 * maintains 32 bit or 64 bit counters, to calculate
++		 * the correct delta.
++		 */
++		if (fb_ctrs_t0.reference > (~(u32)0))
++			delta_reference  = (~((u64)0) - fb_ctrs_t0.reference) +
++					fb_ctrs_t1.reference;
++		else
++			delta_reference  = (~((u32)0) - fb_ctrs_t0.reference) +
++					fb_ctrs_t1.reference;
++	}
++
++	if (fb_ctrs_t1.delivered > fb_ctrs_t0.delivered) {
++		delta_delivered = fb_ctrs_t1.delivered - fb_ctrs_t0.delivered;
++	} else {
++		/*
++		 * Counters would have wrapped-around
++		 * We also need to find whether the low level fw
++		 * maintains 32 bit or 64 bit counters, to calculate
++		 * the correct delta.
++		 */
++		if (fb_ctrs_t0.delivered > (~(u32)0))
++			delta_delivered  = (~((u64)0) - fb_ctrs_t0.delivered) +
++					fb_ctrs_t1.delivered;
++		else
++			delta_delivered  = (~((u32)0) - fb_ctrs_t0.delivered) +
++					fb_ctrs_t1.delivered;
++	}
++
++	if (delta_reference)  /* Check to avoid divide-by zero */
++		delivered_perf = (reference_perf * delta_delivered) /
++					delta_reference;
++	else
++		delivered_perf = reference_perf;
++
++	return cppc_cpufreq_perf_to_khz(cpu, delivered_perf);
++}
++
++static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
++{
++	struct cppc_perf_fb_ctrs fb_ctrs_t0 = {0}, fb_ctrs_t1 = {0};
++	struct cppc_cpudata *cpu = all_cpu_data[cpunum];
++	int ret;
++
++	ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t0);
++	if (ret)
++		return ret;
++
++	udelay(2); /* 2usec delay between sampling */
++
++	ret = cppc_get_perf_ctrs(cpunum, &fb_ctrs_t1);
++	if (ret)
++		return ret;
++
++	return cppc_get_rate_from_fbctrs(cpu, fb_ctrs_t0, fb_ctrs_t1);
++}
++
+ static struct cpufreq_driver cppc_cpufreq_driver = {
+ 	.flags = CPUFREQ_CONST_LOOPS,
+ 	.verify = cppc_verify_policy,
+ 	.target = cppc_cpufreq_set_target,
++	.get = cppc_cpufreq_get_rate,
+ 	.init = cppc_cpufreq_cpu_init,
+ 	.stop_cpu = cppc_cpufreq_stop_cpu,
+ 	.name = "cppc_cpufreq",
+-- 
+2.7.4
+
