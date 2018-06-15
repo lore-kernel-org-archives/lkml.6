@@ -2,157 +2,94 @@ Return-Path: <SRS0=sQLo=JB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (pdx-korg-mail-1.web.codeaurora.org [172.30.200.123])
-	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id EBB29C433EF
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:06:57 +0000 (UTC)
+	by aws-us-west-2-korg-lkml-1.web.codeaurora.org (Postfix) with ESMTP id 53766C433EF
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7A0C20891
-	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:06:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A0C20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 08E2620891
+	for <linux-kernel@archiver.kernel.org>; Fri, 15 Jun 2018 02:07:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="o7MQxgwW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08E2620891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965425AbeFOCGz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 14 Jun 2018 22:06:55 -0400
-Received: from mga02.intel.com ([134.134.136.20]:44523 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S965159AbeFOCGx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 14 Jun 2018 22:06:53 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Jun 2018 19:06:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,225,1526367600"; 
-   d="scan'208";a="237603997"
-Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Jun 2018 19:06:51 -0700
-Date:   Thu, 14 Jun 2018 19:03:14 -0700
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Don Zickus <dzickus@redhat.com>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Babu Moger <babu.moger@oracle.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Byungchul Park <byungchul.park@lge.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        "Luis R. Rodriguez" <mcgrof@kernel.org>,
-        Waiman Long <longman@redhat.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Christoffer Dall <cdall@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Rientjes <rientjes@google.com>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [RFC PATCH 17/23] watchdog/hardlockup/hpet: Convert the timer's
- interrupt to NMI
-Message-ID: <20180615020314.GA11625@voyager>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-18-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de>
+        id S965515AbeFOCHo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 14 Jun 2018 22:07:44 -0400
+Received: from aserp2120.oracle.com ([141.146.126.78]:38936 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965440AbeFOCHl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 14 Jun 2018 22:07:41 -0400
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5F23uAE037776;
+        Fri, 15 Jun 2018 02:07:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2017-10-26;
+ bh=hFGjZl2zM6CbnYti9FdoE6OUqvBJMuwG6kXhNGMMuzE=;
+ b=o7MQxgwWRDziM3NlXlheDdCfavAWLR0Kyh9edoQBdkSZ4JgLX/HD5Opt7T2ZTWUTBEi4
+ lnGIGa6Mqzjer5yYf4d7oAeuQksqmT+la/3p2e1M7x0BXnm1xbB6L3M1+7TspDOdJVmq
+ XxeuQE8yXxRd4RbsL7sLh1K2Lbe/Ak+EEhX5t+fE/93U2/g0ceRiOUU+fr+oVt9R8JZi
+ PsauEZgG5XZtrUddB6T6BwjrOQlWCWxtIRa17Wg7BfszJzvohDQguA/wHGqLZtZt4a9C
+ ayenSa92SR688dwq0tebF29UNHPKKIGrdSxRSLoKTA4K5kGpB84p1MzZjlQF1ebskHmB 5w== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by aserp2120.oracle.com with ESMTP id 2jk0xrq7va-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jun 2018 02:07:03 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id w5F272VF000788
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 15 Jun 2018 02:07:03 GMT
+Received: from abhmp0010.oracle.com (abhmp0010.oracle.com [141.146.116.16])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5F271IB022906;
+        Fri, 15 Jun 2018 02:07:02 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 14 Jun 2018 19:07:01 -0700
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
+        target-devel@vger.kernel.org,
+        linux1394-devel@lists.sourceforge.net, linux-usb@vger.kernel.org,
+        kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+        qla2xxx-upstream@qlogic.com,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 0/3] Use sbitmap instead of percpu_ida
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <20180612190545.10781-1-willy@infradead.org>
+Date:   Thu, 14 Jun 2018 22:06:58 -0400
+In-Reply-To: <20180612190545.10781-1-willy@infradead.org> (Matthew Wilcox's
+        message of "Tue, 12 Jun 2018 12:05:42 -0700")
+Message-ID: <yq136xols59.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1806131128570.2280@nanos.tec.linutronix.de>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8924 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=88 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=88 mlxscore=88 mlxlogscore=-84
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806150020
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jun 13, 2018 at 11:40:00AM +0200, Thomas Gleixner wrote:
-> On Tue, 12 Jun 2018, Ricardo Neri wrote:
-> > @@ -183,6 +184,8 @@ static irqreturn_t hardlockup_detector_irq_handler(int irq, void *data)
-> >  	if (!(hdata->flags & HPET_DEV_PERI_CAP))
-> >  		kick_timer(hdata);
-> >  
-> > +	pr_err("This interrupt should not have happened. Ensure delivery mode is NMI.\n");
-> 
-> Eeew.
 
-If you don't mind me asking. What is the problem with this error message?
-> 
-> >  /**
-> > + * hardlockup_detector_nmi_handler() - NMI Interrupt handler
-> > + * @val:	Attribute associated with the NMI. Not used.
-> > + * @regs:	Register values as seen when the NMI was asserted
-> > + *
-> > + * When an NMI is issued, look for hardlockups. If the timer is not periodic,
-> > + * kick it. The interrupt is always handled when if delivered via the
-> > + * Front-Side Bus.
-> > + *
-> > + * Returns:
-> > + *
-> > + * NMI_DONE if the HPET timer did not cause the interrupt. NMI_HANDLED
-> > + * otherwise.
-> > + */
-> > +static int hardlockup_detector_nmi_handler(unsigned int val,
-> > +					   struct pt_regs *regs)
-> > +{
-> > +	struct hpet_hld_data *hdata = hld_data;
-> > +	unsigned int use_fsb;
-> > +
-> > +	/*
-> > +	 * If FSB delivery mode is used, the timer interrupt is programmed as
-> > +	 * edge-triggered and there is no need to check the ISR register.
-> > +	 */
-> > +	use_fsb = hdata->flags & HPET_DEV_FSB_CAP;
-> > +
-> > +	if (!use_fsb && !is_hpet_wdt_interrupt(hdata))
-> > +		return NMI_DONE;
-> 
-> So for 'use_fsb == True' every single NMI will fall through into the
-> watchdog code below.
-> 
-> > +	inspect_for_hardlockups(regs);
-> > +
-> > +	if (!(hdata->flags & HPET_DEV_PERI_CAP))
-> > +		kick_timer(hdata);
-> 
-> And in case that the HPET does not support periodic mode this reprogramms
-> the timer on every NMI which means that while perf is running the watchdog
-> will never ever detect anything.
+Matthew,
 
-Yes. I see that this is wrong. With MSI interrupts, as far as I can
-see, there is not a way to make sure that the HPET timer caused the NMI
-perhaps the only option is to use an IO APIC interrupt and read the
-interrupt status register.
+> Removing the percpu_ida code nets over 400 lines of removal.  It's not
+> as spectacular as deleting an entire architecture, but it's still a
+> worthy reduction in lines of code.
 
-> 
-> Aside of that, reading TWO HPET registers for every NMI is insane. HPET
-> access is horribly slow, so any high frequency perf monitoring will take a
-> massive performance hit.
+Since most of the changes are in scsi or target, should I take this
+series through my tree?
 
-If an IO APIC interrupt is used, only HPET register (the status register)
-would need to be read for every NMI. Would that be more acceptable? Otherwise,
-there is no way to determine if the HPET cause the NMI.
-
-Alternatively, there could be a counter that skips reading the HPET status
-register (and the detection of hardlockups) for every X NMIs. This would
-reduce the overall frequency of HPET register reads.
-
-Is that more acceptable?
-
-Thanks and BR,
-Ricardo
+-- 
+Martin K. Petersen	Oracle Linux Engineering
