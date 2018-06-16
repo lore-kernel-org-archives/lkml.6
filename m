@@ -2,97 +2,89 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22731C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27217C433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:45:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8492088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:25:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8492088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=i2se.com
+	by mail.kernel.org (Postfix) with ESMTP id B13962087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:45:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="kaBa1cqp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B13962087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932998AbeFPTZb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 15:25:31 -0400
-Received: from mout.kundenserver.de ([212.227.126.187]:33179 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932542AbeFPTZ3 (ORCPT
+        id S933116AbeFPTpE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 15:45:04 -0400
+Received: from mail.efficios.com ([167.114.142.138]:51488 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932878AbeFPTpD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 15:25:29 -0400
-Received: from null ([172.19.249.154]) by mrelayeu.kundenserver.de (mreue001
- [212.227.15.167]) with ESMTPSA (Nemesis) id 0MJJta-1fX1yt3KJu-002psa; Sat, 16
- Jun 2018 21:25:21 +0200
-Date:   Sat, 16 Jun 2018 21:25:21 +0200 (CEST)
-From:   Stefan Wahren <stefan.wahren@i2se.com>
-To:     Fabio Estevam <festevam@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <2103480434.399682.1529177121085@email.1und1.de>
-In-Reply-To: <CAOMZO5D7FAiE8dXKmLHCmOdHek4w_LuYjz8uP9jdD7U6Z-7f5Q@mail.gmail.com>
-References: <1529063093-19582-1-git-send-email-stefan.wahren@i2se.com>
- <CAOMZO5D7FAiE8dXKmLHCmOdHek4w_LuYjz8uP9jdD7U6Z-7f5Q@mail.gmail.com>
-Subject: Re: [PATCH RFC 0/2] regulator: pfuze100: add pfuze3001 support
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev28
-X-Originating-Client: open-xchange-appsuite
-X-Provags-ID: V03:K1:CenHevTDGC+XeFyq7FcO4KbZ21T03Gt5KLzlggnqXZ17VqS/uv8
- x8y2hB8SEZrz0Mapp7QK3v+GG3Q1AynJGk2m3B/XN2vJBvFefIZr+XRDSlY7S0dKtQaC5ri
- jc1BFyM2WAdEiytq1m0IWj+Dv9YIM91UTkXhnzG9kCASaZPqg0nBgPVJ5ZD3OtY+wMvfK2C
- MGDrFo8/yccN4lqS7bBJA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:4WXUD7v8u9g=:8mW8Qdd0JVrkOWFA49FL4W
- r10RnsGFvsnDj3XYv1bklye0z57r+LYeqSueFCTgnK0h0Bkr/YKAXOYWSIOLspkYcGuD031Ta
- H/WUR2SAgQOzh/xItbkD4a/NG3V2L0ev2Y8r2g/W0zmNPzfJMNKhnZPYW6QMAQp1zbkBg82wg
- ZaJB7bfatbFLQWgZPBPNV23+geXfCcdMUnACeUfsrolYMNzAc4qnvMmHj5M6TX60EsgzZGXEC
- abQmw8eLCc5AwXa20OVdKAqe1P9fLx0vo60hpoq5pY6SVYVo0wfgKHzSPHNiXbMtAgtyBr4oI
- MH0gloXnn5HBTHfRUtMyc7nP4z5xyr9taZCAkcO9ZTasvJqo2uHd+aHEtEkRbToPg8mUPVXEL
- hDzGzeONmkW2UqETxnN5t5H/XauWBENsErOJ4supTCM8P8fQO4rrxJhs6EuuEfoicsb/Uh4cc
- pqvVITguNRAt6wluCYYMZi76fTs9W+kXI4W/AWttiEw7uYGL8webjWstFlNq0dlyeBje75deZ
- 2dihUFpn3BTttOmBY9rAgv3n/zBgbDeJr+s+/jNVHMxmwteGpAFs7sPCPwNHvEao8CqlcOW4R
- ivpGdTgkg6i+lcaNc/rPYsZIIk8XsyLgziC0ePcQfkWpl/gZln24g+YfrQuA9MYs5MI/4ExRY
- Ey8X8ebxAvfvrnALXYRa6p/MkkfaHRmc9oEmgHT6/IOKh49Qx2i8XmnEMSvVuL8se2fcK4wzn
- E2LGAMAZ5OXrzeKS
+        Sat, 16 Jun 2018 15:45:03 -0400
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 7A7E81B0DB5;
+        Sat, 16 Jun 2018 15:45:02 -0400 (EDT)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id iKdGCMOYKdP7; Sat, 16 Jun 2018 15:45:02 -0400 (EDT)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 20E041B0DB0;
+        Sat, 16 Jun 2018 15:45:02 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 20E041B0DB0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1529178302;
+        bh=9vqTt1QjrVOj1I0Il40X1FwjMbid8+qfeTHaH3UWPMs=;
+        h=From:To:Date:Message-Id;
+        b=kaBa1cqpoqBNQsJGfX+6nfTKq9aFcvLJe5Q3EeN7V0eBw8uJfy4EY4qkydawC/HiS
+         fTCYtPJOX4JeINkrCgt/RMpnE0iMXSrbyyyJKI0rTxamZKXn6GByY7Jtbns+FNehmH
+         F4UEL8dxOY5yUkKWShgWbrruOcQVcsiGBS0T5yfy027TTlgvSqRcHepR0IA6+jpTyk
+         GHsx1efI98bXLCCQa/ZlA9x5CCngMXIeyvH7GCUfeM9Rrt6bM82Ye5C/pMXJZdyvV0
+         2ravpou+qdKwAMGsV0gdNtno5eKhnVhRg9VN2K4vCYzk+GGIDmQravrQisqYSzckXF
+         OJY/sj0TyNKNA==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id 9zC6V1ptowZJ; Sat, 16 Jun 2018 15:45:02 -0400 (EDT)
+Received: from thinkos.etherlink (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
+        by mail.efficios.com (Postfix) with ESMTPSA id CB55C1B0DAB;
+        Sat, 16 Jun 2018 15:45:01 -0400 (EDT)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 0/2] Restartable Sequences selftests fixes
+Date:   Sat, 16 Jun 2018 15:44:54 -0400
+Message-Id: <20180616194456.26159-1-mathieu.desnoyers@efficios.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Fabio,
+Those are trivial restartable sequences selftest fixes for 4.18.
 
-> Fabio Estevam <festevam@gmail.com> hat am 16. Juni 2018 um 20:40 geschrieben:
-> 
-> 
-> Hi Stefan,
-> 
-> On Fri, Jun 15, 2018 at 8:44 AM, Stefan Wahren <stefan.wahren@i2se.com> wrote:
-> > This patch series adds support for the NXP PMIC PF3001. This
-> > based mostly on the patches by Robin Gong and Mauro Salvini from
-> > here [1].
-> >
-> > [1] - https://community.nxp.com/docs/DOC-331899
-> >
-> > Stefan Wahren (2):
-> >   dt-bindings: pfuze100: add pfuze3001 support
-> >   regulator: pfuze100: add pfuze3001 support
-> 
-> This series looks good.
-> 
-> Any particular reason for marking it as RFC?
+The executable flag of run_param_test.sh got lost in the merge of the
+rseq patchset.
 
-since most of the changes based on Robin's and Mauro's work. 
+On ARM, align the struct rseq_cs definition in the inline asm to match
+the alignment of that structure in the uapi headers.
 
-> 
-> Thanks
+Thanks,
+
+Mathieu
+
+Mathieu Desnoyers (2):
+  rseq/selftests: run_param_test.sh should be executable
+  rseq/selftests: arm: align struct rseq_cs on 32 bytes
+
+ tools/testing/selftests/rseq/rseq-arm.h        | 1 +
+ tools/testing/selftests/rseq/run_param_test.sh | 0
+ 2 files changed, 1 insertion(+)
+ mode change 100644 => 100755 tools/testing/selftests/rseq/run_param_test.sh
+
+-- 
+2.11.0
+
