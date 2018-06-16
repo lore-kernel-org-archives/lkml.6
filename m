@@ -2,96 +2,80 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDA7C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEA2CC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:38:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CF920874
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:28:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1CF920874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5B33420896
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:38:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rQdDsmDh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B33420896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935806AbeFPI2U (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 04:28:20 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:45216 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932188AbeFPI12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 04:27:28 -0400
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S934966AbeFPIiF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 04:38:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48796 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932376AbeFPIiD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 04:38:03 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 25221406F8B0;
-        Sat, 16 Jun 2018 08:27:27 +0000 (UTC)
-Received: from 192.168.1.112 (ovpn-12-46.pek2.redhat.com [10.72.12.46])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7BDBC20244E0;
-        Sat, 16 Jun 2018 08:27:24 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     iommu@lists.linux-foundation.org, kexec@lists.infradead.org,
-        thomas.lendacky@amd.com, dyoung@redhat.com
-Subject: [PATCH 2/4 V3] Allocate pages for kdump without encryption when SME is enabled
-Date:   Sat, 16 Jun 2018 16:27:12 +0800
-Message-Id: <20180616082714.32035-3-lijiang@redhat.com>
-In-Reply-To: <20180616082714.32035-1-lijiang@redhat.com>
-References: <20180616082714.32035-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 16 Jun 2018 08:27:27 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Sat, 16 Jun 2018 08:27:27 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'lijiang@redhat.com' RCPT:''
+        by mail.kernel.org (Postfix) with ESMTPSA id EA8DA20896;
+        Sat, 16 Jun 2018 08:38:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529138283;
+        bh=2rIa9GJ3pMpoYd9V7rWpQ9MPpx4nFPNMFbxP5Zz2qUI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rQdDsmDhFA4yYw0YTBVEyYJBBEWIgLnYVWU71yI36aF2wkKYAEtt437RcT7KsBc6b
+         /dd6kYjRdk4jOSOnl/UHALydGmRDmLiQnUtzgQDQJs8ERgAWuScf8Tf6/o89AQ31Xh
+         gCLt1I6kUEYIf9OHhe+ovf2xUU8I/uf03n8nbxCQ=
+Date:   Sat, 16 Jun 2018 10:37:40 +0200
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Rajat Jain <rajatja@google.com>
+Cc:     linux-kernel@vger.kernel.org, rajatxjain@gmail.com
+Subject: Re: [PATCH v2] sysfs: Fix internal_create_group() for named group
+ updates
+Message-ID: <20180616083740.GA23039@kroah.com>
+References: <CAA93t1rOdj4zorR=iU1=9qJmzeTeqD9L5GdX8pm7=NHXzSiy_g@mail.gmail.com>
+ <20180616081837.62730-1-rajatja@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180616081837.62730-1-rajatja@google.com>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When SME is enabled in the first kernel, we will allocate pages
-for kdump without encryption in order to be able to boot the
-second kernel in the same manner as kexec, which helps to keep
-the same code style.
+On Sat, Jun 16, 2018 at 01:18:37AM -0700, Rajat Jain wrote:
+> There are a couple of problems with named group updates in the code
+> today:
+> 
+> * sysfs_update_group() will always fail for a named group, because
+>   internal_create_group() will try to create a new sysfs directory
+>   unconditionally, which will ofcourse fail with -EEXIST.
+> 
+> * We can leak the kernfs_node for grp->name if some one tries to:
+>   - rename a group (change grp->name), or
+>   - update a named group, to an unnamed group
+> 
+> It appears that the whole purpose of sysfs_update_group() was to
+> allow changing the permissions or visibility of attributes and not
+> the names. So make it clear in the comments, and allow it to update
+> an existing named group.
+> 
+> Signed-off-by: Rajat Jain <rajatja@google.com>
+> ---
+> v2: Use pr_warn() instead of WARN()
 
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
----
- kernel/kexec_core.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Looks good, I'll queue it up after 4.18-rc1 is out, thanks for the
+update so quickly.
 
-diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
-index 20fef1a..3c22a9b 100644
---- a/kernel/kexec_core.c
-+++ b/kernel/kexec_core.c
-@@ -471,6 +471,16 @@ static struct page *kimage_alloc_crash_control_pages(struct kimage *image,
- 		}
- 	}
- 
-+	if (pages) {
-+		unsigned int count, i;
-+
-+		pages->mapping = NULL;
-+		set_page_private(pages, order);
-+		count = 1 << order;
-+		for (i = 0; i < count; i++)
-+			SetPageReserved(pages + i);
-+		arch_kexec_post_alloc_pages(page_address(pages), 1 << order, 0);
-+	}
- 	return pages;
- }
- 
-@@ -865,6 +875,7 @@ static int kimage_load_crash_segment(struct kimage *image,
- 			result  = -ENOMEM;
- 			goto out;
- 		}
-+		arch_kexec_post_alloc_pages(page_address(page), 1, 0);
- 		ptr = kmap(page);
- 		ptr += maddr & ~PAGE_MASK;
- 		mchunk = min_t(size_t, mbytes,
-@@ -882,6 +893,7 @@ static int kimage_load_crash_segment(struct kimage *image,
- 			result = copy_from_user(ptr, buf, uchunk);
- 		kexec_flush_icache_page(page);
- 		kunmap(page);
-+		arch_kexec_pre_free_pages(page_address(page), 1);
- 		if (result) {
- 			result = -EFAULT;
- 			goto out;
--- 
-2.9.5
-
+greg k-h
