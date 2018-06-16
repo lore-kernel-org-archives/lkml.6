@@ -2,181 +2,138 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AB8CC433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:48:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65DCC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44C6320891
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:48:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 532B120891
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:50:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g98B75O9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C6320891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEBLTMuZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532B120891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756865AbeFPPsF (ORCPT
+        id S1756884AbeFPPuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 11:48:05 -0400
-Received: from mail-pl0-f67.google.com ([209.85.160.67]:33698 "EHLO
-        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754184AbeFPPsD (ORCPT
+        Sat, 16 Jun 2018 11:50:22 -0400
+Received: from mail-oi0-f51.google.com ([209.85.218.51]:39245 "EHLO
+        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754201AbeFPPuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 11:48:03 -0400
-Received: by mail-pl0-f67.google.com with SMTP id 6-v6so6301049plb.0
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 08:48:03 -0700 (PDT)
+        Sat, 16 Jun 2018 11:50:20 -0400
+Received: by mail-oi0-f51.google.com with SMTP id t22-v6so11393126oih.6;
+        Sat, 16 Jun 2018 08:50:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=QmQWerMdO8XKmMjfwUJ+qFXRhXoKD+Yz6eOAMPMLwTw=;
-        b=g98B75O97cyTD2fBcwyXFAzZt0WzLiOR7goQHZmA/SYOU2l4CiXApk8wLduSnH/Htb
-         xlhJrwRig1QM6M6PcMH0w4Tm8CD8G45UNzfuxSfKAnAIUs6l5gpbkz8N1D6HFez0/FT5
-         /S+HbN1QxRmUObZ4LFE3Jy/Aw2VKomZY0mgXyZjduQKT1XBtCOwp+1YtzqNr2Cz69Oxx
-         TCixVfNuHsCzH1YelrOxPJf8vYhtfqJke315PBrChtTpaxbJzjYYPFRJtwobmh5y77Tg
-         KI8csJkDrPnCYkn4HjhRjUsuYC6nD8bg6Kl1u5/VOB98JQ+C/lM3fp7LnhW7MxPDZAQ8
-         diWQ==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=ZXGg18g5pPjSRyZDeoTUVX9XCegl+mmO+OHaGdnq0uk=;
+        b=VEBLTMuZsXyWzKCTvg3QYcZSVmm624ACetQ73ZVzuf4qRSpz9X5PLi7zvzlLOmy+/v
+         qzhXpC8nSYfX8/8+RFESzZfFaVxHlRxm/w6ph8DYxje9CPuXSAPg5Q4BhrBj4lhdLeKX
+         9xRl9x3kphldHog2QL++H6Wl12vQPsaFt/PzxVCzaXWuUz+4qOfQ/H6HHPudv+7X3ccy
+         DBW4hGD+wwDjNHPsZNqQDhGhAJY2ss4Rrli4MrALaQrDNsbBzPbA8mAuVDfZoTPBGgIP
+         haCWFnzrbo89mz8K9OrirFSvCGRkSWG0Uvs/muVZdoG/CP8jXmVEL5QdZGW2PGsVCi9P
+         fIDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=QmQWerMdO8XKmMjfwUJ+qFXRhXoKD+Yz6eOAMPMLwTw=;
-        b=H6RlFHlsdWkIXCjaZEBGPqraGqvvY80WOG6ie6ZF6jebBllqWD+0dR3dk4EM+tT0EX
-         3h4gJCKEvlUmuIgxYmDIGIVPnubreTMPO1QuZPEWTDBTqMj1ccFK83/1e3trI6PJmd3V
-         mAJpFIgJfuWH8QKIwD2oEqR+M4pMAFabxhwPdc9PIrmCI5VFAQqNOiTlcqiF5MgnWsb/
-         UabGClxXucotBz90Fay5uLnaVw/GI4UjyJQE56nTUXSPeSvi/W772a2sM6DEuk94Nw4z
-         VqLB3o/ye5i44jXZrKfs5M6BWES+4U4bQPOWWyaYe6eKawLH4bxmTsAETKN7H6JD7kou
-         PA1w==
-X-Gm-Message-State: APt69E0u+5TTQvor8dDHEIwYZkzKZXqWCgjxyKCCcyJ6ioFllueT60cH
-        E1ZakLFf7LmnnQK/pOsPWwY=
-X-Google-Smtp-Source: ADUXVKKdOtFYrqtVCzQcii7IfWLw1V+s+YXYc+nE6WgJIgLgCokFf6f6+4TXEpZqcf1oWKJcKHW/oQ==
-X-Received: by 2002:a17:902:2f43:: with SMTP id s61-v6mr6987256plb.274.1529164083469;
-        Sat, 16 Jun 2018 08:48:03 -0700 (PDT)
-Received: from localhost ([103.88.46.82])
-        by smtp.gmail.com with ESMTPSA id z28-v6sm17486091pfl.169.2018.06.16.08.48.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Jun 2018 08:48:02 -0700 (PDT)
-From:   Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     Zhouyang Jia <jiazhouyang09@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kees Cook <keescook@chromium.org>, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5] staging: rtl8192u: add error handling for usb_alloc_urb
-Date:   Sat, 16 Jun 2018 23:47:50 +0800
-Message-Id: <1529164073-63349-1-git-send-email-jiazhouyang09@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1528705874-34845-1-git-send-email-jiazhouyang09@gmail.com>
-References: <1528705874-34845-1-git-send-email-jiazhouyang09@gmail.com>
-To:     unlisted-recipients:; (no To-header on input)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=ZXGg18g5pPjSRyZDeoTUVX9XCegl+mmO+OHaGdnq0uk=;
+        b=f8UGrA2Dr2dzggrPRa/cO1HqRukTO9fHXO6tH2jO2JDkpvDfyoAzvQ5h26TPv6lKlO
+         MHzjZOf52Cb8heo0F0AKoV5bkxrN/f8YF7Pu6GVGvbWN4LBpN98SRmmRJ1Np66w8DEof
+         zEgYQ384CEi98NGgc50h9xqnz+XnXMyfCsfuu0MhJdXgXIHIMGBk62p1irJRFoGgnDff
+         it8dk/AJ67KZTk2SaNbhaVUF/Nck9VBv1ZihU+Y346zRdouixdABoPmC0Fdoa2ohnwta
+         BsUJjovnxvySnxAcKsAVX6BieNod0uqNYwzKsk2f+wb1uuxpk0g6cZa62Qfkv5bMGHLL
+         xZBg==
+X-Gm-Message-State: APt69E1A5cZs6uziKAyKSw4N/mynSjP90Xv6PALRpMBJTdlOu+oa3/tm
+        7Nwv90uAiX4mOPNzVWIp7oUP7+SLSbVhQIDZi/8=
+X-Google-Smtp-Source: ADUXVKKFzqJI9IsUsLn0w/u+xtwF+GvU1WwmMkeBkOhG3tYswZlYc9LRQu+r0B3eHDj5XdTBZ8oaQZ0LVFR8YUZdR9E=
+X-Received: by 2002:aca:5bc6:: with SMTP id p189-v6mr3592943oib.116.1529164219309;
+ Sat, 16 Jun 2018 08:50:19 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Sat, 16 Jun 2018 08:50:18
+ -0700 (PDT)
+In-Reply-To: <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
+ <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
+ <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com> <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Sat, 16 Jun 2018 17:50:18 +0200
+X-Google-Sender-Auth: kRGg-iVx55l3k5aqgemkFTJTEro
+Message-ID: <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
+Subject: Re: ACPI support in common clock framework
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Srinath Mannam <srinath.mannam@broadcom.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When usb_alloc_urb fails, the lack of error-handling code may
-cause unexpected results.
+On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Rafael J. Wysocki (2018-06-13 01:27:39)
+>> On Wed, Jun 13, 2018 at 10:13 AM, Andy Shevchenko
+>> <andy.shevchenko@gmail.com> wrote:
+>> > +Cc: Rafael, ACPI ML
+>> >
+>> > On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
+>> > <srinath.mannam@broadcom.com> wrote:
+>> >> Hi Michael, Stephen,
+>> >>
+>> >> We are adding ACPI support in our Linux based platform.
+>> >> At present our clock hierarchy using common clock framework through DTS.
+>> >> Now we required ACPI support in common clock framework to upgrade our platform.
+>> >>
+>> >> For example, clk_get API called in many drivers to get clock device is
+>> >> tightly coupled with DT framework.
+>> >>
+>> >> Please let us know, if anybody in Open Source community have plans to
+>> >> add ACPI support for common clock framework.
+>>
+>> There are no plans for doing that AFAICS.
+>>
+>> Moreover, it generally would not be consistent with ACPI power
+>> management defined by the specification.
+>
+> This matches my understanding.
+>
+>>
+>> >> If not please suggest us alternative method to use common clock
+>> >> framework in ACPI use case.
+>>
+>> The problem with using the clock framework on systems with ACPI is
+>> that, in general, the clock manipulation is expected to be carried out
+>> by ACPI power management and therefore it is "owned" by AML.
+>> Currently, there are no defined methods for synchronizing the AML's
+>> use of clocks for power management with what the OS may do with them
+>> directly.
+>>
+>> In theory, that can be worked around to some extent by representing
+>> clocks as power resources in ASL (even though the provider information
+>> would be missing then) and manipulating those power resources directly
+>> from the OS.  I'm not aware of anyone doing that successfully,
+>> however.
+>>
+>> For simple power management it should be sufficient to let drivers
+>> rely on the ACPI PM domain which should happen automatically in the
+>> majority of cases anyway.
+>>
+>
+> Is this for clk_enable/disable? What about clk_set_rate() or
+> clk_set_phase()? Is ACPI's AML taking care of that?
 
-This patch adds error-handling code after calling usb_alloc_urb,
-and fixes memory leaks in error paths.
+That's for clk_enable/disable AFAICS.
 
-Signed-off-by: Zhouyang Jia <jiazhouyang09@gmail.com>
----
-v1->v2:
-- Fix memory leak.
-v2->v3:
-- Release memory in error path.
-v3->v4:
-- Use kcalloc instead of kmalloc_array.
-v4->v5:
-- Free priv->rx_urb[i]->transfer_buffer and priv->oldaddr.
----
- drivers/staging/rtl8192u/r8192U_core.c | 34 ++++++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/staging/rtl8192u/r8192U_core.c b/drivers/staging/rtl8192u/r8192U_core.c
-index 7a0dbc0..9413f29 100644
---- a/drivers/staging/rtl8192u/r8192U_core.c
-+++ b/drivers/staging/rtl8192u/r8192U_core.c
-@@ -1639,8 +1639,9 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
- static short rtl8192_usb_initendpoints(struct net_device *dev)
- {
- 	struct r8192_priv *priv = ieee80211_priv(dev);
-+	int i;
- 
--	priv->rx_urb = kmalloc(sizeof(struct urb *) * (MAX_RX_URB + 1),
-+	priv->rx_urb = kcalloc(MAX_RX_URB + 1, sizeof(struct urb *),
- 			       GFP_KERNEL);
- 	if (!priv->rx_urb)
- 		return -ENOMEM;
-@@ -1649,12 +1650,12 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
- 	for (i = 0; i < (MAX_RX_URB + 1); i++) {
- 		priv->rx_urb[i] = usb_alloc_urb(0, GFP_KERNEL);
- 		if (!priv->rx_urb[i])
--			return -ENOMEM;
-+			goto out_release_urb;
- 
- 		priv->rx_urb[i]->transfer_buffer =
- 			kmalloc(RX_URB_SIZE, GFP_KERNEL);
- 		if (!priv->rx_urb[i]->transfer_buffer)
--			return -ENOMEM;
-+			goto out_release_urb;
- 
- 		priv->rx_urb[i]->transfer_buffer_length = RX_URB_SIZE;
- 	}
-@@ -1666,9 +1667,13 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
- 		void *oldaddr, *newaddr;
- 
- 		priv->rx_urb[16] = usb_alloc_urb(0, GFP_KERNEL);
-+		if (!priv->rx_urb[16])
-+			goto out_release_urb;
-+
- 		priv->oldaddr = kmalloc(16, GFP_KERNEL);
- 		if (!priv->oldaddr)
--			return -ENOMEM;
-+			goto out_release_urb;
-+
- 		oldaddr = priv->oldaddr;
- 		align = ((long)oldaddr) & 3;
- 		if (align) {
-@@ -1686,17 +1691,26 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
- 	priv->pp_rxskb = kcalloc(MAX_RX_URB, sizeof(struct sk_buff *),
- 				 GFP_KERNEL);
- 	if (!priv->pp_rxskb) {
--		kfree(priv->rx_urb);
--
--		priv->pp_rxskb = NULL;
--		priv->rx_urb = NULL;
--
- 		DMESGE("Endpoint Alloc Failure");
--		return -ENOMEM;
-+		goto out_release_oldaddr;
- 	}
- 
- 	netdev_dbg(dev, "End of initendpoints\n");
- 	return 0;
-+
-+out_release_oldaddr:
-+	kfree(priv->oldaddr);
-+
-+out_release_urb:
-+	for (i = 0; i < (MAX_RX_URB + 1); i++) {
-+		if (priv->rx_urb[i]) {
-+			kfree(priv->rx_urb[i]->transfer_buffer);
-+			kfree(priv->rx_urb[i]);
-+		}
-+	}
-+	kfree(priv->rx_urb);
-+	priv->rx_urb = NULL;
-+	return -ENOMEM;
- }
- 
- #ifdef THOMAS_BEACON
--- 
-2.7.4
-
+AML doesn't manage device performance states at all.
