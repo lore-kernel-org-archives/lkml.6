@@ -6,51 +6,51 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA0AC433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:45:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02196C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:45:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90FF7208AF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:45:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC982087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SfOdZ9lM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90FF7208AF
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="Lw/azW9k"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BDC982087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933218AbeFPTpO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 15:45:14 -0400
-Received: from mail.efficios.com ([167.114.142.138]:51516 "EHLO
+        id S933178AbeFPTpJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 15:45:09 -0400
+Received: from mail.efficios.com ([167.114.142.138]:51584 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932878AbeFPTpF (ORCPT
+        with ESMTP id S933127AbeFPTpF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 15:45:05 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 407FD1B0DC5;
+        by mail.efficios.com (Postfix) with ESMTP id E5F441B0DD3;
         Sat, 16 Jun 2018 15:45:04 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id h3QpA7BbqWcA; Sat, 16 Jun 2018 15:45:03 -0400 (EDT)
+        with ESMTP id YCTH9q-nubw9; Sat, 16 Jun 2018 15:45:04 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 47A391B0DBB;
-        Sat, 16 Jun 2018 15:45:03 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 47A391B0DBB
+        by mail.efficios.com (Postfix) with ESMTP id 64F1F1B0DCD;
+        Sat, 16 Jun 2018 15:45:04 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 64F1F1B0DCD
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1529178303;
-        bh=dc7ioORrLkLrc6wQCUC+eJzUO5Shuwci3kT0nPVw+W4=;
+        s=default; t=1529178304;
+        bh=0OJoINPUcxvGyfxN4txUzwJs07J4h7qCo1KNrEDIRYk=;
         h=From:To:Date:Message-Id;
-        b=SfOdZ9lMrVhdGVRUO7VOd9Qhy97Y0ydQ5lignaYxAWkwNFI1lJnmP47pu6Atf1ynQ
-         oDpZRz36FIeEkfeOA8FGtQUKusiyE2JtpW6T+l46V+5aXnSwTpE4iyVfnPB6Bsb6nS
-         CekTKlVcW07VVM/z0wMZkAmdT0xAa/dLQ6+utpOdo4R7iyE2p3xGZChuhhJXLy7Vta
-         BcvpuaIL67A8hFNSJ6d47lCFTvwA/5qJ1uYv9s9anDvHQgYJz5s7yJiMj6ijBcU66X
-         gPW3YsSTXEwLqiXi72r0w6+7MUKMFI2lJD5ufnBmYWB/ZKFRIHCcL2FF/NKdaeQD9Z
-         FkjD2Qzi6lVzQ==
+        b=Lw/azW9kD6kA2OyEUs7BwGKr/Hnp8Wh42zkp5wsGYpZWopWS3go1C5ONCnbROlPsN
+         8G3ywFyEi4ic2zRfW3dCv5wi9Ijg3kR9qM1IbUV0gKpoIPGS3sQ3pyDKdcHcpY3s7x
+         vuvop5jz0YNGk6ctf1o7vu/JMwJ74g5vOZaY0gaXdl0FbQqWZJyL5NyYHwArRfhWB7
+         7TxH3VgvRtqHTYwiwHpzPp6ziEt/lBJIWM2RviD1O1QfKlKXfiXp61lCbzW5kCMXIb
+         AoFa30Ro6F9D7J1oaIgLuE5kxgx2m8B3KjZ94dxc6UFGwVMiZ3QMYs4JQr7lvGCVkR
+         /DeRHtyxxLY+A==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id jv2bNvgkbxB4; Sat, 16 Jun 2018 15:45:03 -0400 (EDT)
+        with ESMTP id uIPyw0BxsJ2T; Sat, 16 Jun 2018 15:45:04 -0400 (EDT)
 Received: from thinkos.etherlink (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 228231B0DB1;
-        Sat, 16 Jun 2018 15:45:02 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 482A81B0DBC;
+        Sat, 16 Jun 2018 15:45:03 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org,
@@ -76,9 +76,9 @@ Cc:     linux-kernel@vger.kernel.org,
         Andy Lutomirski <luto@amacapital.net>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>
-Subject: [RFC PATCH for 4.18 1/2] rseq/selftests: run_param_test.sh should be executable
-Date:   Sat, 16 Jun 2018 15:44:55 -0400
-Message-Id: <20180616194456.26159-2-mathieu.desnoyers@efficios.com>
+Subject: [RFC PATCH for 4.18 2/2] rseq/selftests: arm: align struct rseq_cs on 32 bytes
+Date:   Sat, 16 Jun 2018 15:44:56 -0400
+Message-Id: <20180616194456.26159-3-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180616194456.26159-1-mathieu.desnoyers@efficios.com>
 References: <20180616194456.26159-1-mathieu.desnoyers@efficios.com>
@@ -87,8 +87,9 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The executable bit of the run_param_test.sh script got lost in
-the merge.
+uapi/linux/rseq.h aligns struct rseq_cs on 32 bytes. Satisfy this
+alignment requirement in its definition within the rseq-arm.h
+inline assembly.
 
 Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
@@ -116,13 +117,21 @@ Cc: Andy Lutomirski <luto@amacapital.net>
 Cc: Andrew Morton <akpm@linux-foundation.org>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 ---
- tools/testing/selftests/rseq/run_param_test.sh | 0
- 1 file changed, 0 insertions(+), 0 deletions(-)
- mode change 100644 => 100755 tools/testing/selftests/rseq/run_param_test.sh
+ tools/testing/selftests/rseq/rseq-arm.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/testing/selftests/rseq/run_param_test.sh b/tools/testing/selftests/rseq/run_param_test.sh
-old mode 100644
-new mode 100755
+diff --git a/tools/testing/selftests/rseq/rseq-arm.h b/tools/testing/selftests/rseq/rseq-arm.h
+index 3b055f9aeaab..3cea19877227 100644
+--- a/tools/testing/selftests/rseq/rseq-arm.h
++++ b/tools/testing/selftests/rseq/rseq-arm.h
+@@ -57,6 +57,7 @@ do {									\
+ #define __RSEQ_ASM_DEFINE_ABORT(table_label, label, teardown,		\
+ 				abort_label, version, flags,		\
+ 				start_ip, post_commit_offset, abort_ip)	\
++		".balign 32\n\t"					\
+ 		__rseq_str(table_label) ":\n\t"				\
+ 		".word " __rseq_str(version) ", " __rseq_str(flags) "\n\t" \
+ 		".word " __rseq_str(start_ip) ", 0x0, " __rseq_str(post_commit_offset) ", 0x0, " __rseq_str(abort_ip) ", 0x0\n\t" \
 -- 
 2.11.0
 
