@@ -2,136 +2,122 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08239C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9ACCC433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9BA920896
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:14:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiKINQjF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9BA920896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 7BE0020896
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:15:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BE0020896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932585AbeFPHOz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S933447AbeFPHO7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 03:14:59 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:41936 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932319AbeFPHOz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 03:14:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60686 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932319AbeFPHOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 03:14:54 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F404F20896;
-        Sat, 16 Jun 2018 07:14:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529133293;
-        bh=Z6bqxMeDE4vfkr9KhbXhKbWhDL3S1EjTJ/6tW5sXAZ8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IiKINQjF/wrZT67LKQATck/MvT7XcOvt90+y20R56VYESyDnMvy19hlmiY1KThpAc
-         rSXKlixwtUsf85I1t5mFB5rwXU944ZruqRMg+rEHno77YHfJ0PaR3jmCBQbRXXWrgn
-         NgZlnfltBcar56A1LyVMUWAK4pmUTfDj23Mp+rHQ=
-Date:   Sat, 16 Jun 2018 09:14:30 +0200
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] uio: ensure class is registered before devices
-Message-ID: <20180616071430.GC30558@kroah.com>
-References: <20180615155249.17607-1-alexandre.belloni@bootlin.com>
+Received: by mail-oi0-f66.google.com with SMTP id a141-v6so10760022oii.8;
+        Sat, 16 Jun 2018 00:14:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=dB5O9f/IkgffsDMnfx+LjEzmMOI7sS84QF9b7eMQMWg=;
+        b=BoS1bVuy1fkT2Awc36muF609AFQs1kabcN9JmuN/1O6xieDH5sIvuh7+xLvZm6ddBo
+         1bSTbJxYuN/5lnqkgKDY1bJYKQmMOcoDeN/9bycE/ILsmBmTvfjeeO+XW1HVt0k29p44
+         LdnsSEgPxNygCv6M2LexEkDr23KPbHQ3CD5+1opJt0Pb6a4EHOxe+s96ootoQBQIXP5J
+         cajy3L8zB8enCDs8QBYIPdz6+3eEmlW3X+9feOmO7zQmZIzvh8zTZBE1ebOlx1cUWSPZ
+         4lQTzsLfg4LJIBuILlfWQgBWh9Dkqh6j4L8MyMWdeFzanK63/lSBC91+Y9QlAA1EAAZY
+         0BUg==
+X-Gm-Message-State: APt69E0MEBUwfCKhA8jKry/stBy9ZijZ0JLV3MagtlPUMRu2uQAxPP3o
+        jPygm8/TQ8GPZ8R89jvIApszNjV1nTnS6hEFPII=
+X-Google-Smtp-Source: ADUXVKLQd89jacL1iouEgC5IwVEvCtJJGKpyC0B5AbkG51z0tD4frkib9qpJZ69qdDW6oZTb+yuFoKTLCN5G9oAHSAQ=
+X-Received: by 2002:aca:b184:: with SMTP id a126-v6mr2760225oif.67.1529133294686;
+ Sat, 16 Jun 2018 00:14:54 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180615155249.17607-1-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+References: <20180615185645.8921-1-malat@debian.org> <fbb95c11-240c-1a11-0a62-0483908c577e@gmail.com>
+In-Reply-To: <fbb95c11-240c-1a11-0a62-0483908c577e@gmail.com>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Sat, 16 Jun 2018 09:14:42 +0200
+Message-ID: <CA+7wUsysaip70ARGQ7Byg1Zktfg0Y1esjEc9HxBGU4sKL8crhg@mail.gmail.com>
+Subject: Re: [PATCH] Revert "net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends"
+To:     eric.dumazet@gmail.com
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Christophe LEROY <christophe.leroy@c-s.fr>,
+        Meelis Roos <mroos@linux.ee>, schwab@linux-m68k.org,
+        netdev@vger.kernel.org,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 05:52:49PM +0200, Alexandre Belloni wrote:
-> When both uio and the uio drivers are built in the kernel, it is possible
-> for a driver to register devices before the uio class is registered.
-> 
-> This may result in a NULL pointer dereference later on in
-> get_device_parent() when accessing the class glue_dirs spinlock.
-> 
-> The trace looks like that:
-> 
-> Unable to handle kernel NULL pointer dereference at virtual address 00000140
-> [...]
-> Process swapper/0 (pid: 1, stack limit = 0xffff000008070000)
-> Call trace:
-> Exception stack(0xffff000008073810 to 0xffff000008073950)
-> 3800:                                   0000000000000140 0000000000000001
-> 3820: ffff800078f60000 ffffffffffffffff 0000000000000000 0000000000000000
-> 3840: 0000000000000d39 07650764075f0774 0765076307690776 077207610770075f
-> 3860: 07200774076e0765 0720072007200720 0720072007200720 0720072007200720
-> 3880: 0720072007200720 ffffffffffffffff 0000000000000000 ffff0000089e88c0
-> 38a0: 0000000000000010 ffff000008e0c000 ffff8000780990b0 ffff8000780f4ec0
-> 38c0: ffff000008c41a48 ffff000008c41a30 ffff000008a59660 ffff000008c41a30
-> 38e0: ffff000008a59660 ffff8000780f4c80 ffff000008c41000 ffff000008073950
-> 3900: ffff0000084f3bb0 ffff000008073950 ffff0000089cc234 0000000040000045
-> 3920: 00000000000005e7 ffff000008a59660 ffffffffffffffff 0000000000000000
-> 3940: ffff000008073950 ffff0000089cc234
-> [<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
-> [<ffff0000084f56bc>] device_add+0x154/0x6a0
-> [<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
-> [<ffff0000084f5edc>] device_create+0x54/0x60
-> [<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
-> [<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
-> [<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
-> [<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
-> [<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
-> [<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
-> [<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
-> [<ffff0000084f81b8>] driver_attach+0x20/0x28
-> [<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
-> [<ffff0000084f93c0>] driver_register+0x60/0xf8
-> [<ffff0000083fb918>] __pci_register_driver+0x40/0x48
-> 
-> Return EPROBE_DEFER in that case so the driver can register the device
-> later.
-> 
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
-> 
-> Hi Greg,
-> 
-> I'm not sure using struct class::p to test for class registration is really
-> something we should do but this allows to have a small patch.
-> 
-> The other solutions to fix this are:
->  - use a similar change but with a boolean to store whether the class has been
->    registered.
->  - or instead of EPROBE_DEFER, just register the class when the first uio
->    device is registered.
->  _ or stop allowing to compile uio as a module and use subsys_initcall instead
->  of module_init
-> 
-> What do you think?
-> 
->  drivers/uio/uio.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
-> index e8f4ac9400ea..3fb84ab3dd99 100644
-> --- a/drivers/uio/uio.c
-> +++ b/drivers/uio/uio.c
-> @@ -853,6 +853,9 @@ int __uio_register_device(struct module *owner,
->  	struct uio_device *idev;
->  	int ret = 0;
->  
-> +	if (!uio_class.p)
-> +		return -EPROBE_DEFER;
+Hi Eric,
 
-Ick, you are right, don't touch the .p field please.  We just need a "is
-uio all initialized" flag for the class here that we should check
-instead.
+On Fri, Jun 15, 2018 at 9:14 PM Eric Dumazet <eric.dumazet@gmail.com> wrote:
+>
+>
+>
+> On 06/15/2018 11:56 AM, Mathieu Malaterre wrote:
+> > This reverts commit 88078d98d1bb085d72af8437707279e203524fa5.
+> >
+> > It causes regressions for people using chips driven by the sungem
+> > driver. Suspicion is that the skb->csum value isn't being adjusted
+> > properly.
+> >
+> > Symptoms as seen on G4+sungem are:
+> >
+> > [   34.023281] eth0: hw csum failure
+> > [   34.023438] CPU: 0 PID: 0 Comm: swapper Not tainted 4.17.0+ #2
+> > [   34.023618] Call Trace:
+> > [   34.023707] [dffedbd0] [c069ddac] __skb_checksum_complete+0xf0/0x108 (unreliable)
+> > [   34.023948] [dffedbf0] [c0777a70] tcp_v4_rcv+0x604/0xe00
+> > [   34.024118] [dffedc70] [c0731624] ip_local_deliver_finish+0xa8/0x3c4
+> > [   34.024315] [dffedcb0] [c0732430] ip_local_deliver+0xf0/0x154
+> > [   34.024493] [dffedcf0] [c07328dc] ip_rcv+0x448/0x774
+> > [   34.024653] [dffedd50] [c06aeae0] __netif_receive_skb_core+0x5e8/0x1184
+> > [   34.024857] [dffedde0] [c06bba20] napi_gro_receive+0x160/0x22c
+> > [   34.025044] [dffede10] [e14b2590] gem_poll+0x7fc/0x1ac0 [sungem]
+> > [   34.025228] [dffedee0] [c06bacf0] net_rx_action+0x34c/0x618
+> > [   34.025402] [dffedf60] [c07fd27c] __do_softirq+0x16c/0x5f0
+> > [   34.025575] [dffedfd0] [c0064c7c] irq_exit+0x110/0x1a8
+> > [   34.025738] [dffedff0] [c0016170] call_do_irq+0x24/0x3c
+> > [   34.025903] [c0cf7e80] [c0009a84] do_IRQ+0x98/0x1a0
+> > [   34.026055] [c0cf7eb0] [c001b474] ret_from_except+0x0/0x14
+> > [   34.026225] --- interrupt: 501 at arch_cpu_idle+0x30/0x78
+> >                    LR = arch_cpu_idle+0x30/0x78
+> > [   34.026510] [c0cf7f70] [c0cf6000] 0xc0cf6000 (unreliable)
+> > [   34.026682] [c0cf7f80] [c00a3868] do_idle+0xc4/0x158
+> > [   34.026835] [c0cf7fb0] [c00a3ab0] cpu_startup_entry+0x20/0x28
+> > [   34.027013] [c0cf7fc0] [c0998820] start_kernel+0x47c/0x490
+> > [   34.027181] [c0cf7ff0] [00003444] 0x3444
+> >
+> > See commit 7ce5a27f2ef8 ("Revert "net: Handle CHECKSUM_COMPLETE more
+> > adequately in pskb_trim_rcsum()."") for previous reference.
+>
+> This fix seems to hide a bug in csum functions on this architecture.
 
-thanks,
+That's odd since it seems to only affect g4+sungem user. None of the
+ppc64 seems to be having it. And some ppc32 users are not even seeing
+it.
 
-greg k-h
+> Or a bug on this NIC when receiving a small packet (less than 60 bytes).
+> Maybe the padding bytes are not included in NIC provided csum, and not 0.
+
+Ok in that case the bug is located in
+./drivers/net/ethernet/sun/sungem.c that seems more likely. I'll try
+to understand that code, then.
+
+Thanks
+
+>
+>
+>
