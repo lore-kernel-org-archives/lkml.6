@@ -2,161 +2,115 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C38C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 056D5C433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 750682088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A85D62088E
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:11:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DAQGLY4U"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 750682088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AP1ktJp0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A85D62088E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932427AbeFPIJr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 04:09:47 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:40513 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753949AbeFPIJo (ORCPT
+        id S932528AbeFPILw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 04:11:52 -0400
+Received: from userp2120.oracle.com ([156.151.31.85]:37184 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932188AbeFPILu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 04:09:44 -0400
-Received: by mail-ua0-f195.google.com with SMTP id l11-v6so7868350uak.7
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 01:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=RQNVUFk5wBRArzV/fdrwoI0x5mEfVxwFCUI/F4yjT8g=;
-        b=DAQGLY4UzDtvufcY8yM13dIVM6hpSWAdmRMDq1IZGExn9h3JI3E1jeOSNdcN8vZ+61
-         TtbgBL8boUJYCtKrpBiPCp+2H/WvUxQQCE2cswpu37hboIhjkI81JswTXXTWOMf97T4d
-         gtufYpSlh2F06udC+Jtpt0L9FsKZqSgkeiSMS/oRezYcdTlUDONpvFlDyY7bskM0pP/c
-         NKkF/FKDxmxFIExvy4vr1SwmNMYtQ9v2Si55Drbtgeo5yQrqMgVrCaY1As1KuPNbBsWZ
-         MqSHUUeygPnT7DlXrxgRuFX2NHXnrMgtJgm0I38eDlstGitgd0T/qJFULyFlTV61o+pd
-         9eUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:cc;
-        bh=RQNVUFk5wBRArzV/fdrwoI0x5mEfVxwFCUI/F4yjT8g=;
-        b=rFKvu39dppEzzdvuFmIyrN57TeCjVpJH/uIYSMhtELxojNuttwyOcSPIcpNl2w+KoK
-         ECzZbcEf1UoaakjriJhSmnNs0V1BUYc+7lX+3szlnEYcy8rT8g+EDuwmcJKbextbkpku
-         mDaJ3FWogcUooGhcDP9z0CGENtjolyZEtzAMl/Bvoha3a3aiMAwhAwICC+ynrD9M3/pO
-         vl23YroxanAc2GJZqocNS20q3ME5MGUZ7STthWiVmOO86tLaTGA82oJ6Uk2uHbBhe3uY
-         +d56SgceZO+O8SIYQ4urEhwCXxmcaKh7nwlA8t502dENrgJwXph9aNqoCVNY4UfmMoce
-         xEyQ==
-X-Gm-Message-State: APt69E2IyQsG+/ad0Ebms5UCeSQNZD+QQlSrBob6zbifW8Tv6+leZYoO
-        lV9HTfKW2EOVHwsi9mk520nmTtCHFJssxk0JXnc=
-X-Google-Smtp-Source: ADUXVKI5rZxJaMeIo4hVIw+dJ2M31C18gi98AsP6bW61Vttgx9a/STRQ4NGuZ9/bptVn9oFPedSZqzCAta2smiic9gM=
-X-Received: by 2002:ab0:1571:: with SMTP id p46-v6mr2965857uae.129.1529136583033;
- Sat, 16 Jun 2018 01:09:43 -0700 (PDT)
+        Sat, 16 Jun 2018 04:11:50 -0400
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5G89FcC131964;
+        Sat, 16 Jun 2018 08:11:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=4Wjp8uT6jXqVz6RBSU2u9+urxE+HlI5VNcS7HcwsyVw=;
+ b=AP1ktJp0wLqWB5MeGsorbkelpgl2w2nVApLX38N6BuP7MKqG9pISLoLsYtcmM+VODwQu
+ 69edNSyOuHzWT8OMTt6yrSQWERA+XlXbK6Pkbcw0XyHTaVKwWrdvKiAsKksgaCW7IzIA
+ CXLan3j7Ivz84ZXEdW1xPR5Nag6wUo7tpMgmKYkV7NpJhhzL8ZUOl6e30jYf92lXQ5wE
+ kmWN94DeJ7Qqgb4N6+zoj0t24UD3khW8snZlnEaXbNBmUQPInzAG1MN3U8T2Xrg2ZTll
+ CFpjH6LgIxZXI+pv1PsDLmJzToFyPTpvSyjMs08CxgvV9hFLBuOT3QIN0yoWHgfflH0Y iQ== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2jmu6xg652-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 16 Jun 2018 08:11:43 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5G8Bgnn030349
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sat, 16 Jun 2018 08:11:42 GMT
+Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5G8BePs015013;
+        Sat, 16 Jun 2018 08:11:41 GMT
+Received: from mwanda (/41.202.241.23)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Sat, 16 Jun 2018 01:11:40 -0700
+Date:   Sat, 16 Jun 2018 11:11:27 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Zhouyang Jia <jiazhouyang09@gmail.com>
+Cc:     devel@driverdev.osuosl.org, Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Shreeya Patel <shreeya.patel23498@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>
+Subject: Re: [PATCH v4] staging: rtl8192u: add error handling for
+ usb_alloc_urb
+Message-ID: <20180616081127.oqendremoierdndg@mwanda>
+References: <1528705874-34845-1-git-send-email-jiazhouyang09@gmail.com>
+ <1529114485-60684-1-git-send-email-jiazhouyang09@gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a67:3593:0:0:0:0:0 with HTTP; Sat, 16 Jun 2018 01:09:42
- -0700 (PDT)
-Reply-To: rajatxjain@gmail.com
-In-Reply-To: <20180616071108.GB30558@kroah.com>
-References: <20180616012910.152694-1-rajatja@google.com> <20180616071108.GB30558@kroah.com>
-From:   Rajat Jain <rajatxjain@gmail.com>
-Date:   Sat, 16 Jun 2018 01:09:42 -0700
-Message-ID: <CAA93t1rOdj4zorR=iU1=9qJmzeTeqD9L5GdX8pm7=NHXzSiy_g@mail.gmail.com>
-Subject: Re: [PATCH] sysfs: Fix internal_create_group() for named group updates
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rajat Jain <rajatja@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529114485-60684-1-git-send-email-jiazhouyang09@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=878
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806160102
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+I was actually OK with v1 on the theory that everything else leaked and
+so this didn't really introduce anything new... :P
 
-Thanks for your review.
-
-On Sat, Jun 16, 2018 at 12:11 AM, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
-> On Fri, Jun 15, 2018 at 06:29:10PM -0700, Rajat Jain wrote:
->> There are a couple of problems with named group updates in the code
->> today:
->>
->> * sysfs_update_group() will always fail for a named group, because
->>   internal_create_group() will try to create a new sysfs directory
->>   unconditionally, which will ofcourse fail with -EEXIST.
->>
->> * We can leak the kernfs_node for grp->name if some one tries to:
->>   - rename a group (change grp->name), or
->>   - update a named group, to an unnamed group
->>
->> It appears that the whole purpose of sysfs_update_group() was to
->> allow changing the permissions or visibility of attributes and not
->> the names. So make it clear in the comments, and allow it to update
->> an existing named group.
->
-> Who uses sysfs_update_group() today that has these problems?  Or do you
-> want to use it in new code?  How can it be broken today so badly that it
-> does not work?
-
-Sorry, my bad, I need to provide more clarification: None of the
-existing users of this API use it on a named attribute group, thus
-will not see this issue. I hit this issue while writing new code
-(However, since then my code logic has changed so that it does not
-need to use this API anymore).
-
-I'm just trying to fix an issue with this API, that I stumbled upon,
-which might be seen in future by any new code that uses this API with
-named attribute groups. At the minimum, I think we should clarify in
-comments (or better yet, ensure) that this API cannot be misused.
+On Sat, Jun 16, 2018 at 10:01:22AM +0800, Zhouyang Jia wrote:
+> --- a/drivers/staging/rtl8192u/r8192U_core.c
+> +++ b/drivers/staging/rtl8192u/r8192U_core.c
+> @@ -1639,8 +1639,9 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
+>  static short rtl8192_usb_initendpoints(struct net_device *dev)
+>  {
+>  	struct r8192_priv *priv = ieee80211_priv(dev);
+> +	int i;
+>  
+> -	priv->rx_urb = kmalloc(sizeof(struct urb *) * (MAX_RX_URB + 1),
+> +	priv->rx_urb = kcalloc(MAX_RX_URB + 1, sizeof(struct urb *),
+>  			       GFP_KERNEL);
+>  	if (!priv->rx_urb)
+>  		return -ENOMEM;
+> @@ -1649,12 +1650,12 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
+>  	for (i = 0; i < (MAX_RX_URB + 1); i++) {
+>  		priv->rx_urb[i] = usb_alloc_urb(0, GFP_KERNEL);
+>  		if (!priv->rx_urb[i])
+> -			return -ENOMEM;
+> +			goto out_release_mem;
+>  
+>  		priv->rx_urb[i]->transfer_buffer =
+>  			kmalloc(RX_URB_SIZE, GFP_KERNEL);
 
 
->
->> Signed-off-by: Rajat Jain <rajatja@google.com>
->> ---
->>  fs/sysfs/group.c | 26 +++++++++++++++++++-------
->>  1 file changed, 19 insertions(+), 7 deletions(-)
->>
->> diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
->> index 4802ec0e1e3a..8bd10dc730ae 100644
->> --- a/fs/sysfs/group.c
->> +++ b/fs/sysfs/group.c
->> @@ -119,12 +119,23 @@ static int internal_create_group(struct kobject *kobj, int update,
->>               return -EINVAL;
->>       }
->>       if (grp->name) {
->> -             kn = kernfs_create_dir(kobj->sd, grp->name,
->> -                                    S_IRWXU | S_IRUGO | S_IXUGO, kobj);
->> -             if (IS_ERR(kn)) {
->> -                     if (PTR_ERR(kn) == -EEXIST)
->> -                             sysfs_warn_dup(kobj->sd, grp->name);
->> -                     return PTR_ERR(kn);
->> +             if (update) {
->> +                     kn = kernfs_find_and_get(kobj->sd, grp->name);
->> +                     if (!kn) {
->> +                             WARN(1,
->> +                                  "Can't update unknown attr grp name: %s/%s\n",
->> +                                  kobj->name, grp->name);
->> +                             return -EINVAL;
->
-> This is going to cause the syzbot to bug the heck out of us, as people
-> do run with panic-on-warning.  Just make this a "normal" error message
-> and dump the stack if you want that.
+You need to free priv->rx_urb[i]->transfer_buffer as well and there are
+several other resources which are also not freed.
 
-Agreed, I will turn into a normal error.
+regards,
+dan carpenter
 
->
-> But maybe we should just get rid of this function entirely, it feels
-> very ackward and I can't remember why we added it...
-
-There are a couple of existing in-tree users of this API, and I do not
-understand a lot about that code.
-
-Thanks & Best Regards,
-
-Rajat
-
->
-> thanks,
->
-> greg k-h
