@@ -3,120 +3,129 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 072F0C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 22:05:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659E4C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 22:49:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9341520895
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 22:05:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9341520895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 0AE1320895
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 22:49:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE1320895
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756898AbeFPWFf (ORCPT
+        id S1754243AbeFPWtu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 18:05:35 -0400
-Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:49183 "EHLO
-        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1753755AbeFPWFd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 18:05:33 -0400
-Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.84_2)
-        (envelope-from <ben@decadent.org.uk>)
-        id 1fUJK7-00054j-TL; Sat, 16 Jun 2018 23:05:32 +0100
-Date:   Sat, 16 Jun 2018 23:05:31 +0100
-From:   Ben Hutchings <ben@decadent.org.uk>
-To:     Julius Werner <jwerner@chromium.org>,
-        Thierry Escande <thierry.escande@collabora.com>
-Cc:     linux-kernel@vger.kernel.org,
-        Paul Menzel <pm.debian@googlemail.com>
-Message-ID: <20180616220531.GB14131@decadent.org.uk>
+        Sat, 16 Jun 2018 18:49:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:59667 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751968AbeFPWtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 18:49:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 13666AC89;
+        Sat, 16 Jun 2018 22:49:48 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     James Simmons <jsimmons@infradead.org>
+Date:   Sun, 17 Jun 2018 08:49:40 +1000
+Cc:     Oleg Drokin <green@linuxhacker.ru>,
+        Andreas Dilger <andreas.dilger@whamcloud.io>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lustre Development List <lustre-devel@lists.lustre.org>
+Subject: Re: [PATCH 01/11] staging: lustre: simplify use of interval-tree.
+In-Reply-To: <alpine.LFD.2.21.1806160344210.6450@casper.infradead.org>
+References: <152826510267.16761.14361003167157833896.stgit@noble> <152826511890.16761.16115276596203531205.stgit@noble> <alpine.LFD.2.21.1806160344210.6450@casper.infradead.org>
+Message-ID: <87sh5mfit7.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="hYooF8G/hrfVAmum"
-Content-Disposition: inline
-User-Agent: Mutt/1.5.23 (2014-03-12)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: ben@decadent.org.uk
-Subject: [PATCH] firmware: Update Kconfig help text for Google firmware
-X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
-X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---hYooF8G/hrfVAmum
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--=-=-=
+Content-Type: text/plain
 Content-Transfer-Encoding: quoted-printable
 
-The help text for GOOGLE_FIRMWARE states that it should only be
-enabled when building a kernel for Google's own servers.  However, it
-is now also a dependency for various Chromebook firmware drivers.
+On Sat, Jun 16 2018, James Simmons wrote:
 
-Update the help text to reflect this double duty.  Add the qualifier
-"server" to the help text for GOOGLE_SMI, which doesn't appear to be
-useful on Chromebooks.
-
-Fixes: d384d6f43d1e ("firmware: google memconsole: Add coreboot support")
-Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
----
- drivers/firmware/google/Kconfig | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/firmware/google/Kconfig b/drivers/firmware/google/Kcon=
-fig
-index f16b381a569c..6fda2c5c69e4 100644
---- a/drivers/firmware/google/Kconfig
-+++ b/drivers/firmware/google/Kconfig
-@@ -2,9 +2,8 @@ menuconfig GOOGLE_FIRMWARE
- 	bool "Google Firmware Drivers"
- 	default n
- 	help
--	  These firmware drivers are used by Google's servers.  They are
--	  only useful if you are working directly on one of their
--	  proprietary servers.  If in doubt, say "N".
-+	  These firmware drivers are used by Google servers and
-+	  Chromebooks.  If in doubt, say "N".
+>> Lustre has a private interval-tree implementation.  This
+>> implementation (inexplicably) refuses to insert an interval if an
+>> identical interval already exists.  It is OK with all sorts of
+>> overlapping intervals, but identical intervals are rejected.
+>
+> I talked to Oleg about this since this changes the behavior. He is worried
+> about having identical items that would end up being merged.  If we can=20
+> guarantee by some other means there are no identical nodes, we are=20
+> probably fine with the interval tree code allowing this. Oleg can explain=
 =20
- if GOOGLE_FIRMWARE
-=20
-@@ -14,8 +13,8 @@ config GOOGLE_SMI
- 	select EFI_VARS
- 	help
- 	  Say Y here if you want to enable SMI callbacks for Google
--	  platforms.  This provides an interface for writing to and
--	  clearing the EFI event log and reading and writing NVRAM
-+	  server platforms.  This provides an interface for writing to
-+	  and clearing the EFI event log and reading and writing NVRAM
- 	  variables.
-=20
- config GOOGLE_COREBOOT_TABLE
+> better than me in this case.
 
---hYooF8G/hrfVAmum
+I don't think this is a change in behaviour.
+In the driver/staging client code, interval tree is being used in two
+places and both of them have clumsy work-arounds for the fact that they
+cannot insert duplicates in the interval tree.
+The patch just cleans his up.
+
+However if I have missed something, please provide details.
+What "identical items" might get merged?
+
+>=20=20
+>> Both users of interval-tree in lustre would be simpler if this was not
+>> the case.  They need to store all intervals, even if some are
+>> identical.
+>>=20
+>> llite/range_lock.c add a rl_next_lock list_head to each lock.
+>> If it cannot insert a new lock because the range is in use, it
+>> attached the new lock to the existing lock using rl_next_lock.
+>> This requires extra code to iterate over the rl_next_lock lists when
+>> iterating over locks, and to update the list when deleting a lock from
+>> the tree.
+>>=20
+>> ldlm_extend allocates a separate ldlm_interval which as a list of
+>> ldlm_locks which share the same interval.  This is linked together
+>> by over-loading the l_sl_policy which, for non-extent locks, is used
+>> for linking together locks with the same policy.
+>> This doesn't only require extra code, but also an extra memory
+>> allocation.
+>>=20
+>> This patch removes all that complexity.
+>> - interval_insert() now never fails.
+>
+> Its not really a failure. What it does is if it finds a already existing
+> node with the range requested it returns the already existing node=20
+> pointer. If not it just creates a new node and returns NULL. Sometimes
+> identical request can happen. A good example of this is with HSM request
+> on the MDS server. In that case sometimes we get identical progress
+> reports which we want to filter out so not add the same data.
+
+This example is server-side code which is not a focus at present.
+Having a quick look, it looks like it would be easy enough to do a
+lookup first and then only insert if the lookup failed.
+I think this is a much nicer approach than never allowing duplicates in
+the interval tree.
+
+Thanks,
+NeilBrown
+
+--=-=-=
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
 
-iQIVAwUBWyWJq+e/yOyVhhEJAQoW5xAAwjjDATRkFIn/TBjtEdswvmYS2cY6KJW1
-Gpcl+DMAsslQRm3nZ8RWTeiRxPtqW3Svcgz4MIpnK8umXJER9tQ84Mq+zYdupTvJ
-Q2yBYcKmaHXMgP506F8oW7xcsL9tkzSyFhB+XVLvdKvAyULE52f37V1cM7O2Kw20
-XD+C1q9Qx+i4mhXix+ieWlA3Fw8oryQe0zUV/G4YgQuHen38DhlnHzOIJbN8g2FI
-mkSGP1Q1+zYZAtO9QPQalz9Mzui+GoBCKs+RaJJMP5sd1xSH1ORHE2nFYLgfpjo6
-+2CA929M+jZh8gXq9002K7rs4eGyDpUfAPWMHZlPjHgkw20Nkkf2zorKEXO8XuYO
-2Li5E4PO8E/SS05XvgaDfiX92p87PIIbzhTSAG3CPukeCK2Cu8W9le1f1QGzNNBT
-fggkdpiLhE8vtslk7HRXKqEYW5HaEcGYhzZaE8dsrexiACkhMp0bOBJNnMg114RO
-SmGVBw/5SVkVuH0URQOTVG4CZFKP+hoCzWaAIywEpr9mzxAwGGf/5qwD7eXszkBS
-6kG5WM4VsMJrco6P8Hdlwcer0Ekp38g+EvgNMmVU8ODs6+WwKDkQqUpBj0k2vQBN
-KNY5bIc7d5vf/rNU+4nKUeDnQdoEzn1mATvcyyzrL154/71C/O0HRQflbT3KmZDV
-jcZvG0xLQb4=
-=0lv0
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsllAUACgkQOeye3VZi
+gbnf+BAAtbUPleL8Aq0gTjDET1nZx1mUvkd5MMHqam1z5U/vqMWk5sdlwAnxQMk6
+pydJ2rNuyqQfesKJ9ZX2eIQI6DnWIF3+Qp5VNu23fdXkAkBV1U0NdtuZzzPgrJZy
+WxXvLFSpP4Qx3vPI8xWjwAYxrQx5HJcvHMLTmiDIoAfaBu/Umxjjffj2LP44heyO
+eqp/9cKyMVkmLYh03ysQVvkzr7yYKENRShaT4SnIg0DsehAAKgc2W8ZPzWSPzQVt
+8VIc5wTENhGjHkEABjh9nSgH1LwwScw5kWPUUBTdP5oL+0zwgPGmFBcXzyA5wpxZ
+YWnZSHtkWIT9xWryz3e6UgDfKWJ7JIPa6Yws2Y6A024F2w1W+H2+doKMIsGsKbxo
+ZpKNBWYhzTadItW6DoSUY4ndR0/VDsrlpE1vkhil4gJReCoVISvO4VMYt/hKHXpq
+EBuNguFoFgDG5XKyvb2MY2nieV8N4Lhgfa31yGtN/o6aSq8ZQSvbOM/qUN+35TjP
+R8blk+IyiFQJ+Wxu1wCmwlIq0WhhYB/cHUpmY4GouL+olSLyyHufXL87pE8bIcpB
+SQaxhL2pPBvS9vKiJHCniqGxF+g4t8BJXYi5Hg1Q6WI5tq7elHV+aOw4t0Y4dEGw
+duYI6bvRsju23kzu5JJDIJEH+9Bxai4lkkj33gBtwoJBVwarXfs=
+=09ih
 -----END PGP SIGNATURE-----
-
---hYooF8G/hrfVAmum--
+--=-=-=--
