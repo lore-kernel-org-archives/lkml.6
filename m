@@ -2,91 +2,167 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F72AC433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD757C433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8885208E0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:47:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KqJQG8x8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8885208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 704B020896
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:50:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 704B020896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756818AbeFPArI (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 20:47:08 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:46564 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753539AbeFPArH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 20:47:07 -0400
-Received: by mail-pl0-f65.google.com with SMTP id 30-v6so6145960pld.13
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 17:47:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=GFpvAd/fU0CyhQ0zKxnwWj17TUo6i2ZCvI/MgWndbrY=;
-        b=KqJQG8x84/hcN+F34upZBVEQVU2xX+TYvlP9hJ70ylkRmLZO/7kzkYUYsnNmIUeILW
-         zzHjqw5kWOSl1/+EvmdYOb1Xj7vOEYlb1bt2MIlxp5P3e55Mr7QFRQ9kBGItychYC5sv
-         nDyc2B45V2zbblm9n1yzCb+D4NWsW9wbBOHng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=GFpvAd/fU0CyhQ0zKxnwWj17TUo6i2ZCvI/MgWndbrY=;
-        b=psM4M4f2dmEgLLYcXSusa6S34Nz7PR2i1a/1Z6nOnxY3albdIaYIupCJOYWwJp4Isc
-         4Y9O+iUk/wFkml+4ic5HjqG+0ClGZF7l5tCzrDiGrz1V7+Vd1/xJHP8Qr9FeCQUFq1Vx
-         u+JtD9Ykqw+xZMi2WlFnv9NIvJOLXHhN4YhS/mZ3f3DmDMcdMkhwEWgRWhSvi9K1Feyr
-         fevaSnEEPfj0VjUzFsTRtNgrKDd/9Bk7lytBXqkc9UTNmChBX4tYWt62GTJvHJmJI2NL
-         XTXSjjFcXNrhlQKJeFrX0iRp1zk9DbgdEYQh/PITonSnPVglm2I0PRn09YCjsq3EeSR+
-         Mshw==
-X-Gm-Message-State: APt69E2yeIN6/+ckPPCFaC5vCP1R5bNbWViC0GqU8gJBvMVHd3JzYG5J
-        4UoRyjHsmOlDqRv8izYN8QzIqw==
-X-Google-Smtp-Source: ADUXVKLYSAi4EoCXvLmAQv4QscV+EGdOI7qUhW3ZV2ATqecnNlG1MvH5s7WfbJy4pjykGy/pPaY+Uw==
-X-Received: by 2002:a17:902:2924:: with SMTP id g33-v6mr4529772plb.26.1529110026810;
-        Fri, 15 Jun 2018 17:47:06 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
-        by smtp.gmail.com with ESMTPSA id z19-v6sm10524864pgv.12.2018.06.15.17.47.05
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Jun 2018 17:47:05 -0700 (PDT)
-Date:   Fri, 15 Jun 2018 17:47:05 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     bskeggs@redhat.com, airlied@linux.ie, jeyu@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
+        id S966035AbeFPAuO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Fri, 15 Jun 2018 20:50:14 -0400
+Received: from mga04.intel.com ([192.55.52.120]:16403 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753724AbeFPAuM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 20:50:12 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 17:50:11 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
+   d="scan'208";a="64551644"
+Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
+  by fmsmga001.fm.intel.com with ESMTP; 15 Jun 2018 17:50:11 -0700
+Date:   Fri, 15 Jun 2018 17:46:31 -0700
+From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+        Andi Kleen <andi.kleen@intel.com>,
+        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
+        Tony Luck <tony.luck@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Don Zickus <dzickus@redhat.com>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Babu Moger <babu.moger@oracle.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
         Philippe Ombredanne <pombredanne@nexb.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/nouveau/nvif: remove const attribute from
- nvif_mclass
-Message-ID: <20180616004705.GQ88063@google.com>
-References: <CAKwvOd=ntzV5x+rDSH6VEoS2ONZacnqeemewNgv3Aotm3Hd-hA@mail.gmail.com>
- <20180615230044.189899-1-ndesaulniers@google.com>
+        Colin Ian King <colin.king@canonical.com>,
+        Byungchul Park <byungchul.park@lge.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Luis R. Rodriguez" <mcgrof@kernel.org>,
+        Waiman Long <longman@redhat.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Christoffer Dall <cdall@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Rientjes <rientjes@google.com>,
+        iommu@lists.linux-foundation.org
+Subject: Re: [RFC PATCH 20/23] watchdog/hardlockup/hpet: Rotate interrupt
+ among all monitored CPUs
+Message-ID: <20180616004631.GB6659@voyager>
+References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <1528851463-21140-21-git-send-email-ricardo.neri-calderon@linux.intel.com>
+ <alpine.DEB.2.21.1806131140560.2280@nanos.tec.linutronix.de>
+ <20180615021629.GD11625@voyager>
+ <alpine.DEB.2.21.1806151122070.2079@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180615230044.189899-1-ndesaulniers@google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <alpine.DEB.2.21.1806151122070.2079@nanos.tec.linutronix.de>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 04:00:42PM -0700, Nick Desaulniers wrote:
-> Similar to commit 0bf8bf50eddc ("module: Remove
-> const attribute from alias for MODULE_DEVICE_TABLE")
+On Fri, Jun 15, 2018 at 12:29:06PM +0200, Thomas Gleixner wrote:
+> On Thu, 14 Jun 2018, Ricardo Neri wrote:
+> > On Wed, Jun 13, 2018 at 11:48:09AM +0200, Thomas Gleixner wrote:
+> > > On Tue, 12 Jun 2018, Ricardo Neri wrote:
+> > > > +	/* There are no CPUs to monitor. */
+> > > > +	if (!cpumask_weight(&hdata->monitored_mask))
+> > > > +		return NMI_HANDLED;
+> > > > +
+> > > >  	inspect_for_hardlockups(regs);
+> > > >  
+> > > > +	/*
+> > > > +	 * Target a new CPU. Keep trying until we find a monitored CPU. CPUs
+> > > > +	 * are addded and removed to this mask at cpu_up() and cpu_down(),
+> > > > +	 * respectively. Thus, the interrupt should be able to be moved to
+> > > > +	 * the next monitored CPU.
+> > > > +	 */
+> > > > +	spin_lock(&hld_data->lock);
+> > > 
+> > > Yuck. Taking a spinlock from NMI ...
+> > 
+> > I am sorry. I will look into other options for locking. Do you think rcu_lock
+> > would help in this case? I need this locking because the CPUs being monitored
+> > changes as CPUs come online and offline.
 > 
-> Fixes many -Wduplicate-decl-specifier warnings due to the combination of
-> const typeof() of already const variables.
+> Sure, but you _cannot_ take any locks in NMI context which are also taken
+> in !NMI context. And RCU will not help either. How so? The NMI can hit
+> exactly before the CPU bit is cleared and then the CPU goes down. So RCU
+> _cannot_ protect anything.
 > 
-> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> All you can do there is make sure that the TIMn_CONF is only ever accessed
+> in !NMI code. Then you can stop the timer _before_ a CPU goes down and make
+> sure that the eventually on the fly NMI is finished. After that you can
+> fiddle with the CPU mask and restart the timer. Be aware that this is going
+> to be more corner case handling that actual functionality.
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Thanks for the suggestion. It makes sense to stop the timer when updating the
+CPU mask. In this manner the timer will not cause any NMI.
+> 
+> > > > +	for_each_cpu_wrap(cpu, &hdata->monitored_mask, smp_processor_id() + 1) {
+> > > > +		if (!irq_set_affinity(hld_data->irq, cpumask_of(cpu)))
+> > > > +			break;
+> > > 
+> > > ... and then calling into generic interrupt code which will take even more
+> > > locks is completely broken.
+> > 
+> > I will into reworking how the destination of the interrupt is set.
+> 
+> You have to consider two cases:
+> 
+>  1) !remapped mode:
+> 
+>     That's reasonably simple because you just have to deal with the HPET
+>     TIMERn_PROCMSG_ROUT register. But then you need to do this directly and
+>     not through any of the existing interrupt facilities.
+
+Indeed, there is no need to use the generic interrupt faciities to set affinity;
+I am dealing with an NMI anyways.
+> 
+>  2) remapped mode:
+> 
+>     That's way more complex as you _cannot_ ever do anything which touches
+>     the IOMMU and the related tables.
+> 
+>     So you'd need to reserve an IOMMU remapping entry for each CPU upfront,
+>     store the resulting value for the HPET TIMERn_PROCMSG_ROUT register in
+>     per cpu storage and just modify that one from NMI.
+> 
+>     Though there might be subtle side effects involved, which are related to
+>     the acknowledge part. You need to talk to the IOMMU wizards first.
+
+I see. I will look into the code and prototype something that makes sense for
+the IOMMU maintainers.
+
+> 
+> All in all, the idea itself is interesting, but the envisioned approach of
+> round robin and no fast accessible NMI reason detection is going to create
+> more problems than it solves.
+
+I see it more clearly now.
+
+Thanks and BR,
+Ricardo
