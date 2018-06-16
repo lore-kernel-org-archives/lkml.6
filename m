@@ -2,71 +2,144 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ADBDC433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:03:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CC05C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:05:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C65A420896
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:03:27 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XkaeYprm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C65A420896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 3E14A20896
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:05:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E14A20896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932665AbeFPHD0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 03:03:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59790 "EHLO mail.kernel.org"
+        id S932972AbeFPHFo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 03:05:44 -0400
+Received: from mx2.suse.de ([195.135.220.15]:36726 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932319AbeFPHDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 03:03:24 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B23420896;
-        Sat, 16 Jun 2018 07:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529132604;
-        bh=RoC8XU4xuYhFyqj0pRUfM1u4aOe+tXmvWkZaDNbpjVo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XkaeYprmMoL7DVPo6NuSGfqe3QwWfdnR23/OYVr9ub2n2qpM2wDwj/socM364pVIi
-         MEtqfi/np8iHrAjHGckmBtWPpeR3Nud0W2sTydAOd0M7N+oa6edf4450Xho0YdUahZ
-         Gt7WQn8BH3niuejhg7tEz+eYjh3f6V1UMceZWyRM=
-Date:   Sat, 16 Jun 2018 09:03:01 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     "JoonHwan.Kim" <spilit464@gmail.com>
-Cc:     alan@linux.intel.com, sakari.ailus@linux.intel.com,
-        mchehab@kernel.org, devel@driverdev.osuosl.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        andriy.shevchenko@linux.intel.com, linux-media@vger.kernel.org
-Subject: Re: [PATCH] media: staging: atomisp: add a blank line after
- declarations
-Message-ID: <20180616070301.GA30558@kroah.com>
-References: <2750553.3y1WJKmnP5@joonhwan-virtualbox>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2750553.3y1WJKmnP5@joonhwan-virtualbox>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S1753910AbeFPHFn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 03:05:43 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id A12DAAED4;
+        Sat, 16 Jun 2018 07:05:41 +0000 (UTC)
+Date:   Sat, 16 Jun 2018 09:05:41 +0200
+Message-ID: <s5hmuvvtdmi.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+In-Reply-To: <20180615190959.pqipwnm6a3tf3lxc@pali>
+References: <20180608111057.4wxpg7m7nm7suf6n@pali>
+        <s5hk1r01acc.wl-tiwai@suse.de>
+        <20180615190959.pqipwnm6a3tf3lxc@pali>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 01:30:48PM +0900, JoonHwan.Kim wrote:
-> fix checkpatch.pl warning:
->   * Missing a blank line after declarations
+On Fri, 15 Jun 2018 21:09:59 +0200,
+Pali Rohár wrote:
 > 
-> Signed-off-by: Joonhwan Kim <spilit464@gmail.com>
-> ---
->  drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c | 5 +++++
+> On Friday 15 June 2018 14:51:47 Takashi Iwai wrote:
+> > On Fri, 08 Jun 2018 13:10:57 +0200,
+> > Pali Rohár wrote:
+> > > 
+> > > Hi! With up-to-date thinkpad_acpi.ko driver on ThinkPad T480s I'm seeing
+> > > a strange behavior of LEDs which are integrated into mic mute (Fn+F4)
+> > > and mute (Fn+F1) keys.
+> > > 
+> > > When thinkpad_acpi.ko is not loaded, then mute key is working fine. When
+> > > pressed, it correctly generates KEY_MUTE on AT Translated Set 2 keyboard
+> > > input device and also turn on/of mute led. But when micmute key is
+> > > pressed then, nothing happen. No key event is reported and also led is
+> > > not turned on/off.
+> > > 
+> > > On the other hand, when thinkpad_acpi.ko is loaded, then both buttons
+> > > mute and micmute correctly generates input events; mute via AT keyboard
+> > > and micmute via ThinkPad Extra Buttons. But led is not changed. When
+> > > thinkpad_acpi.ko is loaded it turn off both leds (mute and micmute) and
+> > > leds after pressing any of those buttons, leds are not turned on again.
+> > > 
+> > > When thinkpad_acpi.ko is unloaded, then pressing mute button again start
+> > > switching led on/off.
+> > > 
+> > > So it seems that some init sequence of thinkpad_acpi.ko breaks mute led.
+> > > And fini sequence of thinkpad_acpi.ko makes mute led working again.
+> > 
+> > Usually the mute LED on Thinkpad is triggered from HD-audio driver
+> > (sound/pci/hda/thinkpad_helper.c), and it's a soft-bound via
+> > symbol_request(tpacpi_led_set).  I thought thinkpad_acpi is
+> > auto-loaded when the module gets bound.
+> > 
+> > A possible explanation would be that TPT480s has neither IBM0068,
+> > LEN0068 nor LEN0268 ACPI HIDs, hence the driver is not auto-loaded.
+> 
+> I have Debian Stretch kernel (4.9) which does not have LEN0268 alias for
+> thinkpad_acpi.ko. So thinkpad_acpi.ko is not loaded automatically. But I
+> have put thinkpad_acpi into /etc/modules and it is now automatically
+> loaded at boot.
 
-Always work against the latest development tree so you do not duplicate
-work.  This file is gone in Linus's tree, and in linux-next :(
+That's odd.  It's exposed via
+  MODULE_DEVICE_TABLE(acpi, ibm_htk_device_ids);
+
+It's been already in 4.9.  At this point, something is fishy.
+
+> I also compiled upstream version of thinkpad_acpi.ko, loaded it in
+> Stretch kernel, but it behaves in same way.
+>
+> Maybe... there could be a problem that thinkpad_acpi.ko must be already
+> loaded when sound subsystem is doing initialization? If yes, this could
+> explain it as /etc/modules is loaded at later stage and manually loading
+> of new version of thinkpad_acpi.ko at runtime does not help when sound
+> subsystem is already running.
+
+Not really.  The HD-audio driver tries to bind with tpacpi_led_set()
+via symbol_request().  i.e. if it's not present, it tries to load a
+module.
+
+Check whether hda_fixup_thinkpad_acpi() is called and the symbol gets
+loaded or not.
+
+But, I don't think it's worth to debug such an old kernel primarily.
+Could you test the latest Linus tree or 4.17.x at least as a test
+basis?
+
+> > (In HD-audio driver side, the ACPI ID is checked and the mute LED
+> >  control is applied only to these three IDs, too.)
+> > Meanwhile, when you load thinkpad_acpi, it does still recognize some
+> > device and initialize it.  By the initialization, it goes out of BIOS
+> > control, and the OS control is expected...   This is my wild guess.
+> > 
+> > 
+> > BTW, the reason we have no LED class for these is that we don't want
+> > to confuse users by providing multiple ways to access to the single
+> > stuff.  We've had already the mute LED control from the audio driver
+> > since long time ago, we don't want to drop and enforce the user-space
+> > solution (that is anyway flakier than in kernel in most cases).
+> 
+> If possible... I would prefer swapped LED behavior: turn led on when
+> microphone is turned on AND turn led off when microphone is turned off.
+> Because current behavior is to have turned led off when microphone is
+> on which seems a bit strange. Also microphone is in majority of time not
+> used and when is not used it is (or should be) turned off. On the other
+> hand e.g. CAPSLOCK led is turned on when CAPSLOCK is enabled (and not
+> opposite) -- which matches uses, it is not used in majority of time.
+
+Currently the mixer control to change such LED behavior is provided
+only for Dell laptops.  It'd be trivial to port to Thinkpad, though.
+I can provide a patch once after you test with the recent kernels.
+
 
 thanks,
 
-greg k-h
+Takashi
