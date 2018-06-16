@@ -6,206 +6,192 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB989C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 01:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2506FC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 01:09:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 969F9204EC
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 01:09:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 969F9204EC
+	by mail.kernel.org (Postfix) with ESMTP id D28D6204EC
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 01:09:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D28D6204EC
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756451AbeFPBJl (ORCPT
+        id S936473AbeFPBJx convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 21:09:41 -0400
-Received: from mga02.intel.com ([134.134.136.20]:62578 "EHLO mga02.intel.com"
+        Fri, 15 Jun 2018 21:09:53 -0400
+Received: from mga02.intel.com ([134.134.136.20]:62582 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756240AbeFPBJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 21:09:39 -0400
+        id S1756515AbeFPBJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 21:09:49 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 18:09:39 -0700
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 18:09:48 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
-   d="scan'208";a="237893143"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.145])
-  by fmsmga006.fm.intel.com with ESMTP; 15 Jun 2018 18:09:38 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH] x86/efi: Free allocated memory if remap fails
-Date:   Fri, 15 Jun 2018 18:09:24 -0700
-Message-Id: <1529111365-32295-1-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
+   d="scan'208";a="50310420"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by orsmga006.jf.intel.com with ESMTP; 15 Jun 2018 18:09:48 -0700
+Received: from fmsmsx115.amr.corp.intel.com (10.18.116.19) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 15 Jun 2018 18:09:47 -0700
+Received: from shsmsx151.ccr.corp.intel.com (10.239.6.50) by
+ fmsmsx115.amr.corp.intel.com (10.18.116.19) with Microsoft SMTP Server (TLS)
+ id 14.3.319.2; Fri, 15 Jun 2018 18:09:46 -0700
+Received: from shsmsx102.ccr.corp.intel.com ([169.254.2.223]) by
+ SHSMSX151.ccr.corp.intel.com ([169.254.3.116]) with mapi id 14.03.0319.002;
+ Sat, 16 Jun 2018 09:09:44 +0800
+From:   "Wang, Wei W" <wei.w.wang@intel.com>
+To:     "'Michael S. Tsirkin'" <mst@redhat.com>
+CC:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "virtualization@lists.linux-foundation.org" 
+        <virtualization@lists.linux-foundation.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "mhocko@kernel.org" <mhocko@kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
+        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
+        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
+        "nilal@redhat.com" <nilal@redhat.com>,
+        "riel@redhat.com" <riel@redhat.com>,
+        "peterx@redhat.com" <peterx@redhat.com>
+Subject: RE: [PATCH v33 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Topic: [PATCH v33 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
+Thread-Index: AQHUBGb1uIuE7GdLXUGMzLE4+zixk6RgrO+AgACbr0D//5LxAIAAh+Ew
+Date:   Sat, 16 Jun 2018 01:09:44 +0000
+Message-ID: <286AC319A985734F985F78AFA26841F7396A5CB0@shsmsx102.ccr.corp.intel.com>
+References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
+ <1529037793-35521-3-git-send-email-wei.w.wang@intel.com>
+ <20180615144000-mutt-send-email-mst@kernel.org>
+ <286AC319A985734F985F78AFA26841F7396A3D04@shsmsx102.ccr.corp.intel.com>
+ <20180615171635-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20180615171635-mutt-send-email-mst@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMGI0MTE4ZmMtYjJjNy00Y2Y4LThkZGUtNDQwZGFmODhkZTI4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoicjBWZ3oxNHcxOGpaZjZzcjhYVGFQdURidlRkWER5MkNyVE1tVHpRbmVSYmw0Wmo4RW1NMUtPTlBoMm1ZQklFayJ9
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.200.100
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+On Friday, June 15, 2018 10:29 PM, Michael S. Tsirkin wrote:
+> On Fri, Jun 15, 2018 at 02:11:23PM +0000, Wang, Wei W wrote:
+> > On Friday, June 15, 2018 7:42 PM, Michael S. Tsirkin wrote:
+> > > On Fri, Jun 15, 2018 at 12:43:11PM +0800, Wei Wang wrote:
+> > > > Negotiation of the VIRTIO_BALLOON_F_FREE_PAGE_HINT feature
+> > > > indicates the support of reporting hints of guest free pages to host via
+> virtio-balloon.
+> > > >
+> > > > Host requests the guest to report free page hints by sending a
+> > > > command to the guest via setting the
+> > > VIRTIO_BALLOON_HOST_CMD_FREE_PAGE_HINT
+> > > > bit of the host_cmd config register.
+> > > >
+> > > > As the first step here, virtio-balloon only reports free page
+> > > > hints from the max order (10) free page list to host. This has
+> > > > generated similar good results as reporting all free page hints during
+> our tests.
+> > > >
+> > > > TODO:
+> > > > - support reporting free page hints from smaller order free page lists
+> > > >   when there is a need/request from users.
+> > > >
+> > > > Signed-off-by: Wei Wang <wei.w.wang@intel.com>
+> > > > Signed-off-by: Liang Li <liang.z.li@intel.com>
+> > > > Cc: Michael S. Tsirkin <mst@redhat.com>
+> > > > Cc: Michal Hocko <mhocko@kernel.org>
+> > > > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > > > ---
+> > > >  drivers/virtio/virtio_balloon.c     | 187
+> +++++++++++++++++++++++++++++--
+> > > -----
+> > > >  include/uapi/linux/virtio_balloon.h |  13 +++
+> > > >  2 files changed, 163 insertions(+), 37 deletions(-)
+> > > >
+> > > > diff --git a/drivers/virtio/virtio_balloon.c
+> > > > b/drivers/virtio/virtio_balloon.c index 6b237e3..582a03b 100644
+> > > > --- a/drivers/virtio/virtio_balloon.c
+> > > > +++ b/drivers/virtio/virtio_balloon.c
+> > > > @@ -43,6 +43,9 @@
+> > > >  #define OOM_VBALLOON_DEFAULT_PAGES 256  #define
+> > > > VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
+> > > >
+> > > > +/* The size of memory in bytes allocated for reporting free page
+> > > > +hints */ #define FREE_PAGE_HINT_MEM_SIZE (PAGE_SIZE * 16)
+> > > > +
+> > > >  static int oom_pages = OOM_VBALLOON_DEFAULT_PAGES;
+> > > > module_param(oom_pages, int, S_IRUSR | S_IWUSR);
+> > > > MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
+> > >
+> > > Doesn't this limit memory size of the guest we can report?
+> > > Apparently to several gigabytes ...
+> > > OTOH huge guests with lots of free memory is exactly where we would
+> > > gain the most ...
+> >
+> > Yes, the 16-page array can report up to 32GB (each page can hold 512
+> addresses of 4MB free page blocks, i.e. 2GB free memory per page) free
+> memory to host. It is not flexible.
+> >
+> > How about allocating the buffer according to the guest memory size
+> > (proportional)? That is,
+> >
+> > /* Calculates the maximum number of 4MB (equals to 1024 pages) free
+> > pages blocks that the system can have */ 4m_page_blocks =
+> > totalram_pages / 1024;
+> >
+> > /* Allocating one page can hold 512 free page blocks, so calculates
+> > the number of pages that can hold those 4MB blocks. And this
+> > allocation should not exceed 1024 pages */ pages_to_allocate =
+> > min(4m_page_blocks / 512, 1024);
+> >
+> > For a 2TB guests, which has 2^19 page blocks (4MB each), we will allocate
+> 1024 pages as the buffer.
+> >
+> > When the guest has large memory, it should be easier to succeed in
+> allocation of large buffer. If that allocation fails, that implies that nothing
+> would be got from the 4MB free page list.
+> >
+> > I think the proportional allocation is simpler compared to other
+> > approaches like
+> > - scattered buffer, which will complicate the get_from_free_page_list
+> > implementation;
+> > - one buffer to call get_from_free_page_list multiple times, which needs
+> get_from_free_page_list to maintain states.. also too complicated.
+> >
+> > Best,
+> > Wei
+> >
+> 
+> That's more reasonable, but question remains what to do if that value
+> exceeds MAX_ORDER. I'd say maybe tell host we can't report it.
 
-efi_memmap_alloc(), as the name suggests, allocates memory for a new efi
-memory map. It's referenced from couple of places, namely,
-efi_arch_mem_reserve() and efi_free_boot_services(). These callers,
-after allocating memory, remap it for further use. As usual, a routine
-check is performed to confirm successful remap. If the remap fails,
-ideally, the allocated memory should be freed but presently we just
-return without freeing it up. Hence, fix this bug by introducing
-efi_memmap_free() which frees memory allocated by efi_memmap_alloc().
+Not necessarily, I think. We have min(4m_page_blocks / 512, 1024) above, so the maximum memory that can be reported is 2TB. For larger guests, e.g. 4TB, the optimization can still offer 2TB free memory (better than no optimization).
 
-As efi_memmap_alloc() allocates memory depending on whether mm_init()
-has already been invoked or not, similarly efi_memmap_free() frees
-memory accordingly.
+On the other hand, large guests being large mostly because the guests need to use large memory. In that case, they usually won't have that much free memory to report.
 
-efi_fake_memmap() also references efi_memmap_alloc() but it frees
-memory correctly using memblock_free(), but replace it with
-efi_memmap_free() to maintain consistency, as in, allocate memory with
-efi_memmap_alloc() and free memory with efi_memmap_free().
+> 
+> Also allocating it with GFP_KERNEL is out. You only want to take it off the free
+> list. So I guess __GFP_NOMEMALLOC and __GFP_ATOMIC.
 
-It's a fact that memremap() and early_memremap() might never fail and
-this code might never get a chance to run but to maintain good kernel
-programming semantics, we might need this patch.
+Sounds good, thanks.
 
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Reviewed-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Ricardo Neri <ricardo.neri@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
----
+> Also you can't allocate this on device start. First totalram_pages can change.
+> Second that's too much memory to tie up forever.
 
-I found this bug when working on a different patch set which uses
-efi_memmap_alloc() and then noticed that I never freed the allocated
-memory. I found it weird, in the sense that, memory is allocated but is
-not freed (upon returning from an error). So, wasn't sure if that should
-be treated as a bug or should I just leave it as is because everything
-works fine even without this patch. Since the effort for the patch is
-very minimal, I just went ahead and posted one, so that I could know
-your thoughts on it.
+Yes, makes sense.
 
-Note: Patch based on Linus's mainline tree V4.17
-
- arch/x86/platform/efi/quirks.c  | 10 ++++++----
- drivers/firmware/efi/fake_mem.c |  2 +-
- drivers/firmware/efi/memmap.c   | 27 +++++++++++++++++++++++++++
- include/linux/efi.h             |  1 +
- 4 files changed, 35 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 36c1f8b9f7e0..f223093f2df7 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -285,6 +285,7 @@ void __init efi_arch_mem_reserve(phys_addr_t addr, u64 size)
- 	new = early_memremap(new_phys, new_size);
- 	if (!new) {
- 		pr_err("Failed to map new boot services memmap\n");
-+		efi_memmap_free(new_phys, num_entries);
- 		return;
- 	}
- 
-@@ -429,7 +430,7 @@ void __init efi_free_boot_services(void)
- 	new = memremap(new_phys, new_size, MEMREMAP_WB);
- 	if (!new) {
- 		pr_err("Failed to map new EFI memmap\n");
--		return;
-+		goto free_mem;
- 	}
- 
- 	/*
-@@ -450,10 +451,11 @@ void __init efi_free_boot_services(void)
- 
- 	memunmap(new);
- 
--	if (efi_memmap_install(new_phys, num_entries)) {
-+	if (efi_memmap_install(new_phys, num_entries))
- 		pr_err("Could not install new EFI memmap\n");
--		return;
--	}
-+
-+free_mem:
-+	efi_memmap_free(new_phys, num_entries);
- }
- 
- /*
-diff --git a/drivers/firmware/efi/fake_mem.c b/drivers/firmware/efi/fake_mem.c
-index 6c7d60c239b5..63edcedee25b 100644
---- a/drivers/firmware/efi/fake_mem.c
-+++ b/drivers/firmware/efi/fake_mem.c
-@@ -79,7 +79,7 @@ void __init efi_fake_memmap(void)
- 	new_memmap = early_memremap(new_memmap_phy,
- 				    efi.memmap.desc_size * new_nr_map);
- 	if (!new_memmap) {
--		memblock_free(new_memmap_phy, efi.memmap.desc_size * new_nr_map);
-+		efi_memmap_free(new_memmap_phy, new_nr_map);
- 		return;
- 	}
- 
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index 5fc70520e04c..27d28cb4652d 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -50,6 +50,33 @@ phys_addr_t __init efi_memmap_alloc(unsigned int num_entries)
- }
- 
- /**
-+ * efi_memmap_free - Free memory allocated by efi_memmap_alloc()
-+ * @mem: Physical address allocated by efi_memmap_alloc()
-+ * @num_entries: Number of entries in the allocated map.
-+ *
-+ * efi_memmap_alloc() allocates memory depending on whether mm_init()
-+ * has already been invoked or not. It uses either memblock or "normal"
-+ * page allocation. Use this function to free the memory allocated by
-+ * efi_memmap_alloc(). Since the allocation is done in two different
-+ * ways, similarly, we free it in two different ways.
-+ *
-+ */
-+void __init efi_memmap_free(phys_addr_t mem, unsigned int num_entries)
-+{
-+	unsigned long size = num_entries * efi.memmap.desc_size;
-+	unsigned int order = get_order(size);
-+	phys_addr_t end = mem + size - 1;
-+
-+	if (slab_is_available()) {
-+		__free_pages(pfn_to_page(PHYS_PFN(mem)), order);
-+		return;
-+	}
-+
-+	if (memblock_free(mem, size))
-+		pr_err("Failed to free mem from %pa to %pa\n", &mem, &end);
-+}
-+
-+/**
-  * __efi_memmap_init - Common code for mapping the EFI memory map
-  * @data: EFI memory map data
-  * @late: Use early or late mapping function?
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 3016d8c456bc..f5d1cf44b320 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1016,6 +1016,7 @@ extern int __init efi_memmap_split_count(efi_memory_desc_t *md,
- 					 struct range *range);
- extern void __init efi_memmap_insert(struct efi_memory_map *old_memmap,
- 				     void *buf, struct efi_mem_range *mem);
-+void __init efi_memmap_free(phys_addr_t mem, unsigned int num_entries);
- 
- extern int efi_config_init(efi_config_table_type_t *arch_tables);
- #ifdef CONFIG_EFI_ESRT
--- 
-2.7.4
-
+Best,
+Wei
