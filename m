@@ -5,127 +5,157 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 659E4C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 22:49:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1755EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 23:01:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE1320895
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 22:49:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AE1320895
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id B6E1A2088E
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 23:01:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6E1A2088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754243AbeFPWtu (ORCPT
+        id S1754269AbeFPXA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 18:49:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:59667 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751968AbeFPWtt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 18:49:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 13666AC89;
-        Sat, 16 Jun 2018 22:49:48 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     James Simmons <jsimmons@infradead.org>
-Date:   Sun, 17 Jun 2018 08:49:40 +1000
-Cc:     Oleg Drokin <green@linuxhacker.ru>,
-        Andreas Dilger <andreas.dilger@whamcloud.io>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lustre Development List <lustre-devel@lists.lustre.org>
-Subject: Re: [PATCH 01/11] staging: lustre: simplify use of interval-tree.
-In-Reply-To: <alpine.LFD.2.21.1806160344210.6450@casper.infradead.org>
-References: <152826510267.16761.14361003167157833896.stgit@noble> <152826511890.16761.16115276596203531205.stgit@noble> <alpine.LFD.2.21.1806160344210.6450@casper.infradead.org>
-Message-ID: <87sh5mfit7.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        Sat, 16 Jun 2018 19:00:58 -0400
+Received: from smtprelay0089.hostedemail.com ([216.40.44.89]:33895 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1754016AbeFPXA5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 19:00:57 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay07.hostedemail.com (Postfix) with ESMTP id 1477F181D340F;
+        Sat, 16 Jun 2018 23:00:56 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: force98_7ec01f5aff43
+X-Filterd-Recvd-Size: 4454
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf01.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 16 Jun 2018 23:00:54 +0000 (UTC)
+Message-ID: <aa97094ecc116745d817acb762486c00b6c17507.camel@perches.com>
+Subject: Re: [PATCH v2] staging: rtl8712: Adjust if statements to reduce
+ indentation level
+From:   Joe Perches <joe@perches.com>
+To:     Joonhwan Kim <spilit464@gmail.com>, gregkh@linuxfoundation.org
+Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
+        liamryandev@gmail.com, martin@martinhomuth.de,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        stefano.manni@gmail.com, kernel-janitors@vger.kernel.org
+Date:   Sat, 16 Jun 2018 16:00:53 -0700
+In-Reply-To: <3225099.6uizQ2pf4A@joonhwan-virtualbox>
+References: <3225099.6uizQ2pf4A@joonhwan-virtualbox>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Sat, 2018-06-16 at 15:03 +0900, Joonhwan Kim wrote:
+> Merge two condition of if statements in
+> r8712_surveydone_event_callback()
 
-On Sat, Jun 16 2018, James Simmons wrote:
+Are you sure you are not changing the logic here?
 
->> Lustre has a private interval-tree implementation.  This
->> implementation (inexplicably) refuses to insert an interval if an
->> identical interval already exists.  It is OK with all sorts of
->> overlapping intervals, but identical intervals are rejected.
->
-> I talked to Oleg about this since this changes the behavior. He is worried
-> about having identical items that would end up being merged.  If we can=20
-> guarantee by some other means there are no identical nodes, we are=20
-> probably fine with the interval tree code allowing this. Oleg can explain=
-=20
-> better than me in this case.
+I think it'd be nicer to refactor the code instead.
 
-I don't think this is a change in behaviour.
-In the driver/staging client code, interval tree is being used in two
-places and both of them have clumsy work-arounds for the fact that they
-cannot insert duplicates in the interval tree.
-The patch just cleans his up.
+Something like:
+---
+ drivers/staging/rtl8712/rtl871x_mlme.c | 73 +++++++++++++++++-----------------
+ 1 file changed, 36 insertions(+), 37 deletions(-)
 
-However if I have missed something, please provide details.
-What "identical items" might get merged?
-
->=20=20
->> Both users of interval-tree in lustre would be simpler if this was not
->> the case.  They need to store all intervals, even if some are
->> identical.
->>=20
->> llite/range_lock.c add a rl_next_lock list_head to each lock.
->> If it cannot insert a new lock because the range is in use, it
->> attached the new lock to the existing lock using rl_next_lock.
->> This requires extra code to iterate over the rl_next_lock lists when
->> iterating over locks, and to update the list when deleting a lock from
->> the tree.
->>=20
->> ldlm_extend allocates a separate ldlm_interval which as a list of
->> ldlm_locks which share the same interval.  This is linked together
->> by over-loading the l_sl_policy which, for non-extent locks, is used
->> for linking together locks with the same policy.
->> This doesn't only require extra code, but also an extra memory
->> allocation.
->>=20
->> This patch removes all that complexity.
->> - interval_insert() now never fails.
->
-> Its not really a failure. What it does is if it finds a already existing
-> node with the range requested it returns the already existing node=20
-> pointer. If not it just creates a new node and returns NULL. Sometimes
-> identical request can happen. A good example of this is with HSM request
-> on the MDS server. In that case sometimes we get identical progress
-> reports which we want to filter out so not add the same data.
-
-This example is server-side code which is not a focus at present.
-Having a quick look, it looks like it would be easy enough to do a
-lookup first and then only insert if the lookup failed.
-I think this is a much nicer approach than never allowing duplicates in
-the interval tree.
-
-Thanks,
-NeilBrown
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsllAUACgkQOeye3VZi
-gbnf+BAAtbUPleL8Aq0gTjDET1nZx1mUvkd5MMHqam1z5U/vqMWk5sdlwAnxQMk6
-pydJ2rNuyqQfesKJ9ZX2eIQI6DnWIF3+Qp5VNu23fdXkAkBV1U0NdtuZzzPgrJZy
-WxXvLFSpP4Qx3vPI8xWjwAYxrQx5HJcvHMLTmiDIoAfaBu/Umxjjffj2LP44heyO
-eqp/9cKyMVkmLYh03ysQVvkzr7yYKENRShaT4SnIg0DsehAAKgc2W8ZPzWSPzQVt
-8VIc5wTENhGjHkEABjh9nSgH1LwwScw5kWPUUBTdP5oL+0zwgPGmFBcXzyA5wpxZ
-YWnZSHtkWIT9xWryz3e6UgDfKWJ7JIPa6Yws2Y6A024F2w1W+H2+doKMIsGsKbxo
-ZpKNBWYhzTadItW6DoSUY4ndR0/VDsrlpE1vkhil4gJReCoVISvO4VMYt/hKHXpq
-EBuNguFoFgDG5XKyvb2MY2nieV8N4Lhgfa31yGtN/o6aSq8ZQSvbOM/qUN+35TjP
-R8blk+IyiFQJ+Wxu1wCmwlIq0WhhYB/cHUpmY4GouL+olSLyyHufXL87pE8bIcpB
-SQaxhL2pPBvS9vKiJHCniqGxF+g4t8BJXYi5Hg1Q6WI5tq7elHV+aOw4t0Y4dEGw
-duYI6bvRsju23kzu5JJDIJEH+9Bxai4lkkj33gBtwoJBVwarXfs=
-=09ih
------END PGP SIGNATURE-----
---=-=-=--
+diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
+index ac547ddd72d1..d711305b33e1 100644
+--- a/drivers/staging/rtl8712/rtl871x_mlme.c
++++ b/drivers/staging/rtl8712/rtl871x_mlme.c
+@@ -552,6 +552,19 @@ void r8712_survey_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 	spin_unlock_irqrestore(&pmlmepriv->lock2, flags);
+ }
+ 
++static bool r8712_under_linking_then_join(struct mlme_priv *pmlmepriv)
++{
++	set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
++
++	if (r8712_select_and_join_from_scan(pmlmepriv) != _SUCCESS)
++		return false;
++
++	mod_timer(&pmlmepriv->assoc_timer,
++		  jiffies + msecs_to_jiffies(MAX_JOIN_TIMEOUT));
++
++	return true;
++}
++
+ void r8712_surveydone_event_callback(struct _adapter *adapter, u8 *pbuf)
+ {
+ 	unsigned long irqL;
+@@ -565,45 +578,31 @@ void r8712_surveydone_event_callback(struct _adapter *adapter, u8 *pbuf)
+ 		_clr_fwstate_(pmlmepriv, _FW_UNDER_SURVEY);
+ 	}
+ 
+-	if (pmlmepriv->to_join) {
+-		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
+-			if (!check_fwstate(pmlmepriv, _FW_LINKED)) {
+-				set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
++	if (!pmlmepriv->to_join)
++		goto exit;
++
++	if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
++		if (check_fwstate(pmlmepriv, _FW_LINKED) ||
++		    r8712_under_linking_then_join(pmlmepriv))
++			goto exit;
++
++		pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;
++		memcpy(&adapter->registrypriv.dev_network.Ssid,
++		       &pmlmepriv->assoc_ssid,
++		       sizeof(struct ndis_802_11_ssid));
++		r8712_update_registrypriv_dev_network(adapter);
++		r8712_generate_random_ibss(adapter->registrypriv.dev_network.MacAddress);
++		pmlmepriv->fw_state = WIFI_ADHOC_MASTER_STATE;
++		pmlmepriv->to_join = false;
++	} else {
++		pmlmepriv->to_join = false;
++		if (r8712_under_linking_then_join(pmlmepriv))
++			goto exit;
+ 
+-				if (r8712_select_and_join_from_scan(pmlmepriv)
+-				    == _SUCCESS) {
+-					mod_timer(&pmlmepriv->assoc_timer, jiffies +
+-						  msecs_to_jiffies(MAX_JOIN_TIMEOUT));
+-				} else {
+-					struct wlan_bssid_ex *pdev_network =
+-					  &(adapter->registrypriv.dev_network);
+-					u8 *pibss =
+-						 adapter->registrypriv.
+-							dev_network.MacAddress;
+-					pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;
+-					memcpy(&pdev_network->Ssid,
+-						&pmlmepriv->assoc_ssid,
+-						sizeof(struct
+-							 ndis_802_11_ssid));
+-					r8712_update_registrypriv_dev_network
+-						(adapter);
+-					r8712_generate_random_ibss(pibss);
+-					pmlmepriv->fw_state =
+-						 WIFI_ADHOC_MASTER_STATE;
+-					pmlmepriv->to_join = false;
+-				}
+-			}
+-		} else {
+-			pmlmepriv->to_join = false;
+-			set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
+-			if (r8712_select_and_join_from_scan(pmlmepriv) ==
+-			    _SUCCESS)
+-				mod_timer(&pmlmepriv->assoc_timer, jiffies +
+-					  msecs_to_jiffies(MAX_JOIN_TIMEOUT));
+-			else
+-				_clr_fwstate_(pmlmepriv, _FW_UNDER_LINKING);
+-		}
++		_clr_fwstate_(pmlmepriv, _FW_UNDER_LINKING);
+ 	}
++
++exit:
+ 	spin_unlock_irqrestore(&pmlmepriv->lock, irqL);
+ }
+ 
