@@ -6,74 +6,103 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF40C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558AAC433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:33:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF82D2088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:31:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF82D2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osadl.org
+	by mail.kernel.org (Postfix) with ESMTP id D088020874
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:33:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D088020874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754085AbeFPH3S (ORCPT
+        id S1754117AbeFPHdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 03:29:18 -0400
-Received: from www.osadl.org ([62.245.132.105]:49668 "EHLO www.osadl.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753776AbeFPH3R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 03:29:17 -0400
-Received: from debian01.hofrr.at (178.115.242.59.static.drei.at [178.115.242.59] (may be forged))
-        by www.osadl.org (8.13.8/8.13.8/OSADL-2007092901) with ESMTP id w5G7QpAQ009199;
-        Sat, 16 Jun 2018 09:26:51 +0200
-From:   Nicholas Mc Guire <hofrat@osadl.org>
-To:     Ralf Baechle <ralf@linux-mips.org>
-Cc:     Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        David Daney <david.daney@cavium.com>,
-        "Steven J. Hill" <Steven.Hill@cavium.com>,
-        Joe Perches <joe@perches.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>
-Subject: [PATCH] MIPS: Octeon: assign bool true/false not 1/0
-Date:   Sat, 16 Jun 2018 09:26:32 +0200
-Message-Id: <1529133992-15360-1-git-send-email-hofrat@osadl.org>
-X-Mailer: git-send-email 2.1.4
+        Sat, 16 Jun 2018 03:33:41 -0400
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58225 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753776AbeFPHdj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 03:33:39 -0400
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id B2AE880548; Sat, 16 Jun 2018 09:33:37 +0200 (CEST)
+Date:   Sat, 16 Jun 2018 09:33:34 +0200
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Henrique de Moraes Holschuh <hmh@hmh.eng.br>
+Cc:     Pali =?iso-8859-1?Q?Roh=E1r?= <pali.rohar@gmail.com>,
+        Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+Message-ID: <20180616073334.GA13880@amd>
+References: <20180608111057.4wxpg7m7nm7suf6n@pali>
+ <20180615112606.GA3986@amd>
+ <20180615113728.h7snxhe2juaqvjyx@pali>
+ <20180615123007.nxsymdvr3nj3it5i@khazad-dum.debian.net>
+ <20180615190915.cdntdeesc52ei35u@pali>
+ <20180615233628.gy2ffgupctheyqof@khazad-dum.debian.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="J/dobhs11T7y2rNN"
+Content-Disposition: inline
+In-Reply-To: <20180615233628.gy2ffgupctheyqof@khazad-dum.debian.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Booleans should be assigned true/false not 1/0 as comparison is not needed
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
----
+--J/dobhs11T7y2rNN
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Problem located by scripts/coccinelle/misc/boolinit.cocci
-  ./arch/mips/cavium-octeon/octeon-irq.c:817:3-13:
-  WARNING: Assignment of bool to 0/1
+Hi!
 
-Patch was compile tested with: cavium_octeon_defconfig
-(with a number of sparse warnings - not related to the proposed change)
+On Fri 2018-06-15 20:36:28, Henrique de Moraes Holschuh wrote:
+> On Fri, 15 Jun 2018, Pali Roh=E1r wrote:
+> > This means that kernel should not export any led class device. Or when
+> > exported, then "set" operation should always fail.
+>=20
+> "not export" is right.
+>=20
+> > > 2. Otherwise implement it in-kernel, so that userspace cannot unmute
+> > >    when the human has activated the "mute" switch, and the LED cannot=
+ be
+> > >    controlled by userspace to lie (report mute when it is not mute).
+> >=20
+> > This looks like a good candidate to use led "trigger" interface. Create
+> > a mute trigger and attach it to that led device.
+>=20
+> Maybe, as long as done in-kernel and not possible to mess with from
+> userspace.
 
-Patch is against 4.17.0 (localversion-next is next-20180614)
+Question is if we want flexibility or security.
 
- arch/mips/cavium-octeon/octeon-irq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+If we want security, going through LED subsystem makes no sense, just
+control the LED as hardware would, or let hardware do it.
 
-diff --git a/arch/mips/cavium-octeon/octeon-irq.c b/arch/mips/cavium-octeon/octeon-irq.c
-index b3aec10..31be6a9 100644
---- a/arch/mips/cavium-octeon/octeon-irq.c
-+++ b/arch/mips/cavium-octeon/octeon-irq.c
-@@ -814,7 +814,7 @@ static int octeon_irq_ciu_set_affinity(struct irq_data *data,
- 			pen = &per_cpu(octeon_irq_ciu1_en_mirror, cpu);
- 
- 		if (cpumask_test_cpu(cpu, dest) && enable_one) {
--			enable_one = 0;
-+			enable_one = false;
- 			__set_bit(cd->bit, pen);
- 		} else {
- 			__clear_bit(cd->bit, pen);
--- 
-2.1.4
+For full flexibility, just export the LED and use normal mechanisms we
+have (such as triggers). root should be allowed to configure the LEDs,
+and he can change the kernel, too, so...
 
+Best regards,
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--J/dobhs11T7y2rNN
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlskvU4ACgkQMOfwapXb+vK1RQCeLVrYE7V2GyAon12ifTwHynuY
+BBgAoLNGg86oMopWJezrgikBQEkW/03t
+=g9hn
+-----END PGP SIGNATURE-----
+
+--J/dobhs11T7y2rNN--
