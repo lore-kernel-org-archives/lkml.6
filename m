@@ -2,155 +2,118 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF618C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 06:03:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B66D1C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 06:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74D6420864
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 06:03:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzzxdsDF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74D6420864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6A72120896
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 06:36:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A72120896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756877AbeFPGD3 (ORCPT
+        id S1754017AbeFPGgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 02:03:29 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:37998 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753975AbeFPGD0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 02:03:26 -0400
-Received: by mail-pl0-f68.google.com with SMTP id b14-v6so6386562pls.5;
-        Fri, 15 Jun 2018 23:03:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Z+VzEqbBKzVBTdM11cwTXo5712b5DHL2DQGTDC8I+mU=;
-        b=dzzxdsDFmoMCxUiKlF+hx7G8GPnyY/nPiRqTHB1fbNWKrFOAMZpDZB75JcV5f0Wy9f
-         7fZL7zzfljzZEt/4J4UhP2G7VPO4j3Y8PiFhd0XR3B3YtmDLpWwgXeKWV8VlqccFsSaw
-         pVb3wvRTyK9ZQc1OSWGFLwHstgPfbYWZf9KADRpug0fh+qkki0OOXmMf3tTB4ZkSJrju
-         v7oXizv3pVSquekN+0Iv+tXGx8Jj8jfxjXehMkSorQ+97OjyETO/JwCKrbUAX/LDESnI
-         dfYiL6g3q7qSpD5ln9dSa4QihLvFiUTzKst3xPEXzPw0oTGrpc/9oFKibGq0CNk9ycbz
-         YcWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Z+VzEqbBKzVBTdM11cwTXo5712b5DHL2DQGTDC8I+mU=;
-        b=PiBU17vm4XvqwqLeQtnusAgY4ucqGLm9RFfirXcXlheCp9sOwHfaNcVEHclHUvjyMz
-         Mx0LQv9TW5XDZSUOLo6n1nB6VSQXlVTXRbfGJeg8bHoJmPl63rIPgjv0dUyOrtHzaoLd
-         AgOvZ3EHc19fySqshbFitlel/UjQTVkvNoyHO1ELAbv5TC5qe7WinMDgDJ9uRwEbsxf9
-         yXbXYefX8+2wVh+2qgr9z8SwUzADB+P4MyKlbY1sUs9zedte+/CXK0/bUhKjcAb8Dz/b
-         Js1MQbr7htjuvyDgDXCe+2Hjhew7lBmBHbopsf0Tx3ac0sjo4Bn/Yq4v2FzUftA4XETu
-         AbYg==
-X-Gm-Message-State: APt69E0RgAltrQurcbiXjihKAYyQkEQ1G54jH2STfWGybTD6a8SSRBVJ
-        kqqIbYgjCCHlyDLhpDxd04Y=
-X-Google-Smtp-Source: ADUXVKLr+rFjqgrWjvMCicsIdcZOCdCmYy1bfSqNO4W5TCkvhZDCAga+U7JUW6xlDpvsV5jlxtHIfA==
-X-Received: by 2002:a17:902:1023:: with SMTP id b32-v6mr5430556pla.145.1529129006185;
-        Fri, 15 Jun 2018 23:03:26 -0700 (PDT)
-Received: from joonhwan-virtualbox.localnet ([220.149.255.57])
-        by smtp.gmail.com with ESMTPSA id o77-v6sm18235874pfj.0.2018.06.15.23.03.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 15 Jun 2018 23:03:25 -0700 (PDT)
-From:   Joonhwan Kim <spilit464@gmail.com>
-To:     gregkh@linuxfoundation.org
-Cc:     Larry.Finger@lwfinger.net, florian.c.schilhabel@googlemail.com,
-        liamryandev@gmail.com, martin@martinhomuth.de,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        stefano.manni@gmail.com, kernel-janitors@vger.kernel.org
-Subject: [PATCH v2] staging: rtl8712: Adjust if statements to reduce indentation level
-Date:   Sat, 16 Jun 2018 15:03:22 +0900
-Message-ID: <3225099.6uizQ2pf4A@joonhwan-virtualbox>
+        Sat, 16 Jun 2018 02:36:35 -0400
+Received: from mx2.suse.de ([195.135.220.15]:35539 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753907AbeFPGge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 02:36:34 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 042C7AD8D;
+        Sat, 16 Jun 2018 06:36:32 +0000 (UTC)
+Subject: Re: [PATCH] x86/pti: don't report XenPV as vulnerable
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
+        Mike Latimer <mlatimer@suse.com>, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <nycvar.YFH.7.76.1806150025220.6203@cbobk.fhfr.pm>
+ <a5bfcabb-827b-fbf7-9395-de9332697c25@suse.com>
+ <nycvar.YFH.7.76.1806150801530.6203@cbobk.fhfr.pm>
+ <ff9f4a24-6e69-cc7b-ba75-e82c9182a805@suse.com>
+ <nycvar.YFH.7.76.1806150815440.6203@cbobk.fhfr.pm>
+ <821642fe-775b-e68c-2a66-73b73c810289@suse.com>
+ <nycvar.YFH.7.76.1806150837100.6203@cbobk.fhfr.pm>
+ <37a18a24-7825-9e75-39a7-a66086a5e3a6@suse.com>
+ <nycvar.YFH.7.76.1806152304400.6203@cbobk.fhfr.pm>
+From:   Juergen Gross <jgross@suse.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c8d238e9-2109-3fd2-01b8-37a7c5815fce@suse.com>
+Date:   Sat, 16 Jun 2018 08:36:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <nycvar.YFH.7.76.1806152304400.6203@cbobk.fhfr.pm>
+Content-Type: text/plain; charset=utf-8
+Content-Language: de-DE
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge two condition of if statements in
-r8712_surveydone_event_callback()
+On 15/06/18 23:10, Jiri Kosina wrote:
+> On Fri, 15 Jun 2018, Juergen Gross wrote:
+> 
+>> Like it is possible to switch off PTI in the kernel it is possible to do 
+>> the same with XPTI in the hypervisor (it is even possible to disable 
+>> XPTI for dom0 only).
+>>
+>> In case XPTI is disabled for the currently running system it is possible 
+>> to make use of Meltdown in user programs to read arbitrary physical host 
+>> memory (i.e. attacking the hypervisor) and this includes the own systems 
+>> kernel memory.
+>>
+>> So telling a user the system isn't vulnerable regarding Meltdown when
+>> running as 64-bit pv-guest might not be the truth.
+> 
+> Ok, what a mess.
+> 
+> As I don't think it'd be wise to try to let guest kernel figure out 
+> whether host has XPTI, I'd suggest at least making the message somehow 
+> more informative. Something like
+> 
+> +               if (hypervisor_is_type(X86_HYPER_XEN_PV))
+> +                       return sprintf(buf, "Unknown (XEN PV detected, hypervisor mitigation required\n");
+> 
+> perhaps?
 
-Signed-off-by: Joonhwan Kim <spilit464@gmail.com>
----
-v2: fix my name without period in email header
-
- drivers/staging/rtl8712/rtl871x_mlme.c | 51 +++++++++++++-------------
- 1 file changed, 25 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/staging/rtl8712/rtl871x_mlme.c b/drivers/staging/rtl8712/rtl871x_mlme.c
-index ac547ddd72d1..b8618b0565d5 100644
---- a/drivers/staging/rtl8712/rtl871x_mlme.c
-+++ b/drivers/staging/rtl8712/rtl871x_mlme.c
-@@ -566,32 +566,31 @@ void r8712_surveydone_event_callback(struct _adapter *adapter, u8 *pbuf)
- 	}
- 
- 	if (pmlmepriv->to_join) {
--		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE)) {
--			if (!check_fwstate(pmlmepriv, _FW_LINKED)) {
--				set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
--
--				if (r8712_select_and_join_from_scan(pmlmepriv)
--				    == _SUCCESS) {
--					mod_timer(&pmlmepriv->assoc_timer, jiffies +
--						  msecs_to_jiffies(MAX_JOIN_TIMEOUT));
--				} else {
--					struct wlan_bssid_ex *pdev_network =
--					  &(adapter->registrypriv.dev_network);
--					u8 *pibss =
--						 adapter->registrypriv.
--							dev_network.MacAddress;
--					pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;
--					memcpy(&pdev_network->Ssid,
--						&pmlmepriv->assoc_ssid,
--						sizeof(struct
--							 ndis_802_11_ssid));
--					r8712_update_registrypriv_dev_network
--						(adapter);
--					r8712_generate_random_ibss(pibss);
--					pmlmepriv->fw_state =
--						 WIFI_ADHOC_MASTER_STATE;
--					pmlmepriv->to_join = false;
--				}
-+		if (check_fwstate(pmlmepriv, WIFI_ADHOC_STATE) &&
-+		    !check_fwstate(pmlmepriv, _FW_LINKED)) {
-+			set_fwstate(pmlmepriv, _FW_UNDER_LINKING);
-+
-+			if (r8712_select_and_join_from_scan(pmlmepriv)
-+			    == _SUCCESS) {
-+				mod_timer(&pmlmepriv->assoc_timer, jiffies +
-+					  msecs_to_jiffies(MAX_JOIN_TIMEOUT));
-+			} else {
-+				struct wlan_bssid_ex *pdev_network =
-+				  &(adapter->registrypriv.dev_network);
-+				u8 *pibss =
-+					 adapter->registrypriv.
-+						dev_network.MacAddress;
-+				pmlmepriv->fw_state ^= _FW_UNDER_SURVEY;
-+				memcpy(&pdev_network->Ssid,
-+					&pmlmepriv->assoc_ssid,
-+					sizeof(struct
-+						 ndis_802_11_ssid));
-+				r8712_update_registrypriv_dev_network
-+					(adapter);
-+				r8712_generate_random_ibss(pibss);
-+				pmlmepriv->fw_state =
-+					 WIFI_ADHOC_MASTER_STATE;
-+				pmlmepriv->to_join = false;
- 			}
- 		} else {
- 			pmlmepriv->to_join = false;
--- 
-2.17.1
+Works for me.
 
 
-
-
+Juergen
