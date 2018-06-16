@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8436C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74E4DC433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA644208E2
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA644208E2
+	by mail.kernel.org (Postfix) with ESMTP id 34675208DA
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34675208DA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756896AbeFPDIH (ORCPT
+        id S1756883AbeFPDIF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 23:08:07 -0400
+        Fri, 15 Jun 2018 23:08:05 -0400
 Received: from mga05.intel.com ([192.55.52.43]:3363 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753923AbeFPDIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756852AbeFPDIC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Jun 2018 23:08:02 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,9 +28,9 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 20:08:01 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
-   d="scan'208";a="233011916"
+   d="scan'208";a="233011926"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
-  by orsmga005.jf.intel.com with ESMTP; 15 Jun 2018 20:07:27 -0700
+  by orsmga005.jf.intel.com with ESMTP; 15 Jun 2018 20:07:28 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
 To:     "Thomas Gleixner" <tglx@linutronix.de>,
         "Ingo Molnar" <mingo@redhat.com>, "H Peter Anvin" <hpa@zytor.com>
@@ -39,9 +39,9 @@ Cc:     "Ashok Raj" <ashok.raj@intel.com>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>,
         "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [RFC PATCH 3/8] x86/cpufeatures: Enumerate UMONITOR, UMWAIT, and TPAUSE instructions
-Date:   Fri, 15 Jun 2018 20:06:10 -0700
-Message-Id: <1529118375-90191-4-git-send-email-fenghua.yu@intel.com>
+Subject: [RFC PATCH 6/8] x86/lib_direct_store.h: Add APIs for direct store instructions
+Date:   Fri, 15 Jun 2018 20:06:13 -0700
+Message-Id: <1529118375-90191-7-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com>
 References: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com>
@@ -50,51 +50,187 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-UMONITOR, UMWAIT, and TPAUSE are a set of user wait instructions.
+Direct store instructions MOVDIRI and MOVDIR64B are published in the
+latest Intel Instruction Set Extensions document.
 
-UMONITOR arms address monitoring hardware using an address. A store
-to an address within the specified address range triggers the
-monitoring hardware to wake up the processor waiting in umwait.
+Define the APIs for user or kernel to use the instructions.
 
-UMWAIT instructs the processor to enter an implementation-dependent
-optimized state while monitoring a range of addresses. The optimized
-state may be either a light-weight power/performance optimized state
-(c0.1 state) or an improved power/performance optimized state
-(c0.2 state).
-
-The UMONITOR and UMWAIT operate together to provide power saving
-in idle.
-
-TPAUSE instructs the processor to enter an implementation-dependent
-optimized state c0.1 or c0.2 state and wake up when time-stamp counter
-reaches specified timeout.
-
-The three instructions may be executed at any privilege level.
-
-Availability of the user wait instructions is indicated by the presence
-of the CPUID feature flag WAITPKG CPUID.0x07.0x0:ECX[5].
-
-Please check the latest Intel Architecture Instruction Set Extensions
-and Future Features Programming Reference for more details on the
-instructions and CPUID feature WAITPKG flag.
+If feature enabled GCC is available in the future, implementation
+of the APIs will be changed to call the intrinsic instructions.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- arch/x86/include/asm/cpufeatures.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/uapi/asm/lib_direct_store.h | 161 +++++++++++++++++++++++++++
+ 1 file changed, 161 insertions(+)
+ create mode 100644 arch/x86/include/uapi/asm/lib_direct_store.h
 
-diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-index 69f1137877b6..70ed3087821d 100644
---- a/arch/x86/include/asm/cpufeatures.h
-+++ b/arch/x86/include/asm/cpufeatures.h
-@@ -318,6 +318,7 @@
- #define X86_FEATURE_UMIP		(16*32+ 2) /* User Mode Instruction Protection */
- #define X86_FEATURE_PKU			(16*32+ 3) /* Protection Keys for Userspace */
- #define X86_FEATURE_OSPKE		(16*32+ 4) /* OS Protection Keys Enable */
-+#define X86_FEATURE_WAITPKG		(16*32+ 5) /* UMONITOR/UMWAIT/TPAUSE Instructions */
- #define X86_FEATURE_AVX512_VBMI2	(16*32+ 6) /* Additional AVX512 Vector Bit Manipulation Instructions */
- #define X86_FEATURE_GFNI		(16*32+ 8) /* Galois Field New Instructions */
- #define X86_FEATURE_VAES		(16*32+ 9) /* Vector AES */
+diff --git a/arch/x86/include/uapi/asm/lib_direct_store.h b/arch/x86/include/uapi/asm/lib_direct_store.h
+new file mode 100644
+index 000000000000..95a676f170ff
+--- /dev/null
++++ b/arch/x86/include/uapi/asm/lib_direct_store.h
+@@ -0,0 +1,161 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * This library provides a set of APIs for user or kernel to use
++ * some new instructions:
++ * - Director stores: movdiri and movdir64b
++ *
++ * Detailed information on the instructions can be found in
++ * Intel Architecture Instruction Set Extensions and Future Features
++ * Programming Reference.
++ *
++ * Copyright (C) 2018 Intel Corporation
++ *
++ * Author:
++ *     Fenghua Yu <fenghua.yu@intel.com>
++ */
++#ifndef _ASM_X86_LIB_DIRECT_STORES_H
++#define _ASM_X86_LIB_DIRECT_STORES_H
++
++#include <stdbool.h>
++
++/* CPUID.07H.0H:ECX[bit 27] */
++#define MOVDIRI_BIT		27
++/* CPUID.07H.0H:ECX[bit 28] */
++#define MOVDIR64B_BIT		28
++
++static bool _movdiri_supported, _movdiri_enumerated;
++static bool _movdir64b_supported, _movdir64b_enumerated;
++
++/**
++ * movdiri_supported() - Is movdiri instruction supported?
++ *
++ * Return:
++ * true: supported
++ *
++ * false: not supported
++ */
++static inline bool movdiri_supported(void)
++{
++	int eax, ebx, ecx, edx;
++	bool ret;
++
++	/*
++	 * If movdiri has been enumerated before, return cached movdiri
++	 * support info.
++	 */
++	if (_movdiri_enumerated)
++		return _movdiri_supported;
++
++	/* Otherwise, enumerate movdiri from CPUID. */
++	asm volatile("mov $7, %%eax\t\n"
++		     "mov $0, %%ecx\t\n"
++		     "cpuid\t\n"
++		     : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx));
++
++	if (ecx & (1 << MOVDIRI_BIT))
++		ret = true;
++	else
++		ret = false;
++
++	/*
++	 * Cache movdiri support info so we can use it later without
++	 * calling CPUID.
++	 */
++	_movdiri_enumerated = true;
++	_movdiri_supported = ret;
++
++	return ret;
++}
++
++/**
++ * movdir64b_supported() - Is movdir64b instruction supported?
++ *
++ * Return:
++ * true: supported
++ *
++ * false: not supported
++ */
++static inline bool movdir64b_supported(void)
++{
++	int eax, ebx, ecx, edx;
++	int ret;
++
++	/*
++	 * If movdir64b has been enumerated before, return cached movdir64b
++	 * support info.
++	 */
++	if (_movdir64b_enumerated)
++		return _movdir64b_supported;
++
++	/* Otherwise, enumerate movdir64b from CPUID. */
++	asm volatile("mov $7, %%eax\t\n"
++		     "mov $0, %%ecx\t\n"
++		     "cpuid\t\n"
++		     : "=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx));
++
++	if (ecx & (1 << MOVDIR64B_BIT))
++		ret = true;
++	else
++		ret = false;
++
++	/*
++	 * Cache movdir64b support info so we can use it later without
++	 * calling CPUID.
++	 */
++	_movdir64b_enumerated = true;
++	_movdir64b_supported = ret;
++
++	return ret;
++}
++
++/**
++ * movdiri32() - Move doubleword using direct store.
++ * @dst: Destination address.
++ * @data: 32-bit data.
++ *
++ * Moves the doubleword integer in @data to the destination address @dst
++ * using a direct-store operation.
++ */
++static inline void movdiri32(int *dst, int data)
++{
++	/* movdiri eax, [rdx] */
++	asm volatile(".byte 0x0f, 0x38, 0xf9, 0x02"
++		     : "=m" (*dst)
++		     : "a" (data), "d" (dst));
++}
++
++/**
++ * movdiri64() - Move quadword using direct store
++ * @dst: Destination address
++ * @data: 64-bit data
++ *
++ * Moves the quadword integer in @data to the destination address @dst
++ * using a direct-store operation.
++ */
++static inline void movdiri64(long *dst, long data)
++{
++	/* movdiri rax, [rdx] */
++	asm volatile(".byte 0x48, 0x0f, 0x38, 0xf9, 0x02"
++		     : "=m" (*dst)
++		     : "a" (data), "d" (dst));
++}
++
++/**
++ * movdir64b() - Move 64 bytes using direct store
++ * @dst: Destination address
++ * @src: Source address
++ *
++ * Moves 64 bytes as direct store with 64 bytes write atomicity from
++ * source memory address @src to destination address @dst.
++ *
++ * @dst must be 64-byte aligned. No alignment requirement for @src.
++ */
++static inline void movdir64b(void *dst, void *src)
++{
++	 /* movdir64b [rax], rdx */
++	asm volatile(".byte 0x66, 0x0f, 0x38, 0xf8, 0x02"
++		     : "=m" (*dst)
++		     : "a" (src), "d" (dst));
++}
++
++#endif /* _ASM_X86_LIB_DIRECT_STORES_H */
 -- 
 2.5.0
 
