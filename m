@@ -2,169 +2,91 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C82CC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F72AC433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:47:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5CD208C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:43:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D5CD208C3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B8885208E0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 00:47:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KqJQG8x8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8885208E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756806AbeFPAnA (ORCPT
+        id S1756818AbeFPArI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 20:43:00 -0400
-Received: from mga06.intel.com ([134.134.136.31]:19892 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753539AbeFPAm7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 15 Jun 2018 20:42:59 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 17:42:58 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
-   d="scan'208";a="59631091"
-Received: from voyager.sc.intel.com (HELO voyager) ([10.3.52.149])
-  by orsmga003.jf.intel.com with ESMTP; 15 Jun 2018 17:42:56 -0700
-Date:   Fri, 15 Jun 2018 17:39:16 -0700
-From:   Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
+        Fri, 15 Jun 2018 20:47:08 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:46564 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753539AbeFPArH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 15 Jun 2018 20:47:07 -0400
+Received: by mail-pl0-f65.google.com with SMTP id 30-v6so6145960pld.13
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 17:47:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=GFpvAd/fU0CyhQ0zKxnwWj17TUo6i2ZCvI/MgWndbrY=;
+        b=KqJQG8x84/hcN+F34upZBVEQVU2xX+TYvlP9hJ70ylkRmLZO/7kzkYUYsnNmIUeILW
+         zzHjqw5kWOSl1/+EvmdYOb1Xj7vOEYlb1bt2MIlxp5P3e55Mr7QFRQ9kBGItychYC5sv
+         nDyc2B45V2zbblm9n1yzCb+D4NWsW9wbBOHng=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=GFpvAd/fU0CyhQ0zKxnwWj17TUo6i2ZCvI/MgWndbrY=;
+        b=psM4M4f2dmEgLLYcXSusa6S34Nz7PR2i1a/1Z6nOnxY3albdIaYIupCJOYWwJp4Isc
+         4Y9O+iUk/wFkml+4ic5HjqG+0ClGZF7l5tCzrDiGrz1V7+Vd1/xJHP8Qr9FeCQUFq1Vx
+         u+JtD9Ykqw+xZMi2WlFnv9NIvJOLXHhN4YhS/mZ3f3DmDMcdMkhwEWgRWhSvi9K1Feyr
+         fevaSnEEPfj0VjUzFsTRtNgrKDd/9Bk7lytBXqkc9UTNmChBX4tYWt62GTJvHJmJI2NL
+         XTXSjjFcXNrhlQKJeFrX0iRp1zk9DbgdEYQh/PITonSnPVglm2I0PRn09YCjsq3EeSR+
+         Mshw==
+X-Gm-Message-State: APt69E2yeIN6/+ckPPCFaC5vCP1R5bNbWViC0GqU8gJBvMVHd3JzYG5J
+        4UoRyjHsmOlDqRv8izYN8QzIqw==
+X-Google-Smtp-Source: ADUXVKLYSAi4EoCXvLmAQv4QscV+EGdOI7qUhW3ZV2ATqecnNlG1MvH5s7WfbJy4pjykGy/pPaY+Uw==
+X-Received: by 2002:a17:902:2924:: with SMTP id g33-v6mr4529772plb.26.1529110026810;
+        Fri, 15 Jun 2018 17:47:06 -0700 (PDT)
+Received: from localhost ([2620:0:1000:1501:8e2d:4727:1211:622])
+        by smtp.gmail.com with ESMTPSA id z19-v6sm10524864pgv.12.2018.06.15.17.47.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Jun 2018 17:47:05 -0700 (PDT)
+Date:   Fri, 15 Jun 2018 17:47:05 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     bskeggs@redhat.com, airlied@linux.ie, jeyu@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andi Kleen <andi.kleen@intel.com>,
-        Ashok Raj <ashok.raj@intel.com>, Borislav Petkov <bp@suse.de>,
-        Tony Luck <tony.luck@intel.com>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>, x86@kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Jacob Pan <jacob.jun.pan@intel.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Bartosz Golaszewski <brgl@bgdev.pl>,
-        Doug Berger <opendmb@gmail.com>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        iommu@lists.linux-foundation.org
-Subject: Re: [RFC PATCH 03/23] genirq: Introduce IRQF_DELIVER_AS_NMI
-Message-ID: <20180616003916.GA6659@voyager>
-References: <1528851463-21140-1-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <1528851463-21140-4-git-send-email-ricardo.neri-calderon@linux.intel.com>
- <20180613083419.GS12258@hirez.programming.kicks-ass.net>
- <26687332-ab8f-7f6d-909a-f0918dbfea86@arm.com>
- <alpine.DEB.2.21.1806131104570.2280@nanos.tec.linutronix.de>
- <c000699c-7859-74ec-7944-ec484e887f60@arm.com>
- <20180615021213.GC11625@voyager>
- <4eb34b18-11f8-7d70-46a5-f206d127b768@arm.com>
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/nouveau/nvif: remove const attribute from
+ nvif_mclass
+Message-ID: <20180616004705.GQ88063@google.com>
+References: <CAKwvOd=ntzV5x+rDSH6VEoS2ONZacnqeemewNgv3Aotm3Hd-hA@mail.gmail.com>
+ <20180615230044.189899-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <4eb34b18-11f8-7d70-46a5-f206d127b768@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20180615230044.189899-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 09:01:02AM +0100, Julien Thierry wrote:
-> Hi Ricardo,
+On Fri, Jun 15, 2018 at 04:00:42PM -0700, Nick Desaulniers wrote:
+> Similar to commit 0bf8bf50eddc ("module: Remove
+> const attribute from alias for MODULE_DEVICE_TABLE")
 > 
-> On 15/06/18 03:12, Ricardo Neri wrote:
-> >On Wed, Jun 13, 2018 at 11:06:25AM +0100, Marc Zyngier wrote:
-> >>On 13/06/18 10:20, Thomas Gleixner wrote:
-> >>>On Wed, 13 Jun 2018, Julien Thierry wrote:
-> >>>>On 13/06/18 09:34, Peter Zijlstra wrote:
-> >>>>>On Tue, Jun 12, 2018 at 05:57:23PM -0700, Ricardo Neri wrote:
-> >>>>>>diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-> >>>>>>index 5426627..dbc5e02 100644
-> >>>>>>--- a/include/linux/interrupt.h
-> >>>>>>+++ b/include/linux/interrupt.h
-> >>>>>>@@ -61,6 +61,8 @@
-> >>>>>>    *                interrupt handler after suspending interrupts. For
-> >>>>>>system
-> >>>>>>    *                wakeup devices users need to implement wakeup
-> >>>>>>detection in
-> >>>>>>    *                their interrupt handlers.
-> >>>>>>+ * IRQF_DELIVER_AS_NMI - Configure interrupt to be delivered as
-> >>>>>>non-maskable, if
-> >>>>>>+ *                supported by the chip.
-> >>>>>>    */
-> >>>>>
-> >>>>>NAK on the first 6 patches. You really _REALLY_ don't want to expose
-> >>>>>NMIs to this level.
-> >>>>>
-> >>>>
-> >>>>I've been working on something similar on arm64 side, and effectively the one
-> >>>>thing that might be common to arm64 and intel is the interface to set an
-> >>>>interrupt as NMI. So I guess it would be nice to agree on the right approach
-> >>>>for this.
-> >>>>
-> >>>>The way I did it was by introducing a new irq_state and let the irqchip driver
-> >>>>handle most of the work (if it supports that state):
-> >>>>
-> >>>>https://lkml.org/lkml/2018/5/25/181
-> >>>>
-> >>>>This has not been ACKed nor NAKed. So I am just asking whether this is a more
-> >>>>suitable approach, and if not, is there any suggestions on how to do this?
-> >>>
-> >>>I really didn't pay attention to that as it's burried in the GIC/ARM series
-> >>>which is usually Marc's playground.
-> >>
-> >>I'm working my way through it ATM now that I have some brain cycles back.
-> >>
-> >>>Adding NMI delivery support at low level architecture irq chip level is
-> >>>perfectly fine, but the exposure of that needs to be restricted very
-> >>>much. Adding it to the generic interrupt control interfaces is not going to
-> >>>happen. That's doomed to begin with and a complete abuse of the interface
-> >>>as the handler can not ever be used for that.
-> >>
-> >>I can only agree with that. Allowing random driver to use request_irq()
-> >>to make anything an NMI ultimately turns it into a complete mess ("hey,
-> >>NMI is *faster*, let's use that"), and a potential source of horrible
-> >>deadlocks.
-> >>
-> >>What I'd find more palatable is a way for an irqchip to be able to
-> >>prioritize some interrupts based on a set of architecturally-defined
-> >>requirements, and a separate NMI requesting/handling framework that is
-> >>separate from the IRQ API, as the overall requirements are likely to
-> >>completely different.
-> >>
-> >>It shouldn't have to be nearly as complex as the IRQ API, and require
-> >>much stricter requirements in terms of what you can do there (flow
-> >>handling should definitely be different).
-> >
-> >Marc, Julien, do you plan to actively work on this? Would you mind keeping
-> >me in the loop? I also need this work for this watchdog. In the meantime,
-> >I will go through Julien's patches and try to adapt it to my work.
+> Fixes many -Wduplicate-decl-specifier warnings due to the combination of
+> const typeof() of already const variables.
 > 
-> We are going to work on this and of course your input is most welcome to
-> make sure we have an interface usable across different architectures.
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
 
-Great! Thanks! I will keep an eye to future version of your "arm64: provide
-pseudo NMI with GICv3" series.
-> 
-> In my patches, I'm not sure there is much to adapt to your work as most of
-> it is arch specific (although I wont say no to another pair of eyes looking
-> at them). From what I've seen of your patches, the point where we converge
-> is that need for some code to be able to tell the irqchip "I want that
-> particular interrupt line to be treated/setup as an NMI".
-
-Indeed, there has to be a generic way for the irqchip to announce that it
-supports configuring an interrupt as NMI... and a way to actually configuring
-it.
-
-> 
-> We'll make sure to keep you in the loop for discussions/suggestions on this.
-
-Thank you!
-
-Thanks and BR,
-Ricardo
+Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
