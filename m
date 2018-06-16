@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 77AD5C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD01C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:45:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3085D2088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33786208AF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:45:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LZu+yq8A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3085D2088E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTXodPtl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33786208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933036AbeFPSnH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 14:43:07 -0400
-Received: from mail-ua0-f196.google.com ([209.85.217.196]:44586 "EHLO
-        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932594AbeFPSnE (ORCPT
+        id S932950AbeFPSpv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 14:45:51 -0400
+Received: from mail-vk0-f67.google.com ([209.85.213.67]:37115 "EHLO
+        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932482AbeFPSpt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 14:43:04 -0400
-Received: by mail-ua0-f196.google.com with SMTP id f30-v6so8427994uab.11;
-        Sat, 16 Jun 2018 11:43:04 -0700 (PDT)
+        Sat, 16 Jun 2018 14:45:49 -0400
+Received: by mail-vk0-f67.google.com with SMTP id w8-v6so7441772vkh.4;
+        Sat, 16 Jun 2018 11:45:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=SxnT7IeDDFvAM3/pyOC2CTcwocS6ZwOOGxIsQwg7ERk=;
-        b=LZu+yq8AEKpzqkc91XLP8e5T9VU30DVhJaBt29EIZbStwSUz6JPdSVvT6Kr8P52C1A
-         OD1VcbMxTpKn975b0wRvLmd4xtu50AenKpJkAtKU+6MWrovAGz3i4z0scE97lR5xAymc
-         XrNWXyxS8iYxPw/GDPCu0aarqhGXQYg4Q1mJQHjTlJNXwFNkAQs4zDUPTa8yqmwpGPVG
-         9506UXIceuBKk3UQFDz8vNNxaBXK8PIJld7mmcxunZNnSKdvZGJQ+tjy7C7LVVKzu7iM
-         2vBlFmcGCbjQqStvda0EYZ4xCq/JqAhkIaHQy/acck8ReSdU0SepsUVEgRJ8GOfppxDQ
-         0S2g==
+        bh=BZUQNSgyTknAdPpmJSnNpI1XMw395wDvZJTrQqGEI10=;
+        b=DTXodPtlASjuXajB26X/BG567W2UeuNglUggVj7ipotwgVesO7v7YfqkBSSHepuZym
+         YtWTCzA3ECcQ9Qomcq0RlxwY8tTlfkL2rj2ja+6KKWhE+gHu860VuMwciFGF/JNmzGaw
+         IfEkgGyZU7nA02mwlzgzIEDYWWn2KDPw3v22TOlB8+VwdXzFrzc1z3UrincyHPDLtEjZ
+         W5ijzCvUzhP7KZc/e+pgXgiqLumR89Z4TtwMXRifoUvKrY9mIBM2IUgtd9f3WVAmCe7a
+         v/LUlJsnZ22O/nn4SkUYdgjjCQX7oljeZsmnBmMyDQLVVEIZrtkU1Xd1SBMaQgDRn+7G
+         Ne/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=SxnT7IeDDFvAM3/pyOC2CTcwocS6ZwOOGxIsQwg7ERk=;
-        b=dy0NiXU4gIPlTfeesxKMb1m9GvhnLf5xM+DDg4Ps0nEDpL4jIlhHsVXKNtGn+wpvw2
-         4pR6TqTMrHljA1N4tuf1CXnqPvAZtNYgOKmtcB+xCvYqrilbu3wHUE1X8rjBBjcleL30
-         j2ZCDguAe1Th0qUcVbcESlVJ+fEXZJOX59krr0yb1lSDPqaaJmHLiDePbZ57nBK51kiL
-         p3Qu1Q1O3H9DSJmIQkuZDF0hrfLMhiI9DoVi2Epb47qJNrNOJa5F5MVjcpKZf8cNbmXp
-         iOY79g5Koe96DhFjKsrF93ragn85FH1b+cBKIsWDb8/I7kcqP/hBb0ljE8LHpYrsFtsN
-         y1kw==
-X-Gm-Message-State: APt69E1W+bq+DKeMDWQ45UG2vjX21qOCrRoDGepysqacFE6usNQgN2We
-        HxFl7oGUTkY+sjpZdP83NffGjyohzlghJPsADFk=
-X-Google-Smtp-Source: ADUXVKLQ3hmvwiVyc7vXXXtkbxYHL0sg/rfVZZPLTF0MCfwV5alZlkwlicgowKAUFnSM6ZhO2hkcsyxWzLjUV214w2w=
-X-Received: by 2002:ab0:1b9b:: with SMTP id k27-v6mr4244618uai.122.1529174583818;
- Sat, 16 Jun 2018 11:43:03 -0700 (PDT)
+        bh=BZUQNSgyTknAdPpmJSnNpI1XMw395wDvZJTrQqGEI10=;
+        b=nUH0J7va1PfHESrO4vEHz+nwEd/epDhHYn7YXYcdr8N6PclUzD6vWRlBaKN86nR/ad
+         JtW/P3G1nR7mv+SxCzOPWJzPFdoxqvunjOSE8tpN6S18uP8lHwmxQqOfSrT1+vrm2RP1
+         D4L649oEgF9QSfOYdUw40nJIKUmbss9NK/KoH2aF/gaReGBfUPUy/gbHCRRYX4iWlfRS
+         oc4FziK80geLqbrzXpIhBhBBKSPO8Zuci3zK9idmnBA2xjCsjt4vnJjwFdKv5j5Ca3oD
+         lpsNlxkXvoS7C3OT911yLCPPCaedYCbauOZlpvbClQnHYptR+MZ+BZA6PWLrzEeYqes+
+         o34g==
+X-Gm-Message-State: APt69E1I4X9Tm00tIpN6VqrrUqAxppBCRTWJoxnuB/b2hZraLgoLVvlm
+        z89QAc6PnR+BPam+Gf5XCdMprbsqqflnKXICSL8=
+X-Google-Smtp-Source: ADUXVKI20eS2NQM6DZ5b4LGaMs3oRWpK4OGkZQQAIZeRrkiJZdS1pNmqpMq9BV/AoOgOPXxGcDYBMRiA7Fle7ik9Qb0=
+X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr3729552vkd.15.1529174748024;
+ Sat, 16 Jun 2018 11:45:48 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180615132017.23889-1-andriy.shevchenko@linux.intel.com>
- <20180615132017.23889-4-andriy.shevchenko@linux.intel.com> <20180615222346.GC371@yury-thinkpad>
-In-Reply-To: <20180615222346.GC371@yury-thinkpad>
+ <20180615132017.23889-6-andriy.shevchenko@linux.intel.com> <20180615214231.GA371@yury-thinkpad>
+In-Reply-To: <20180615214231.GA371@yury-thinkpad>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 16 Jun 2018 21:42:52 +0300
-Message-ID: <CAHp75VfH7ZOQDXv+uDpXv8d_KX23-MWnWeWwd7i3RDvhWu_HnQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
+Date:   Sat, 16 Jun 2018 21:45:37 +0300
+Message-ID: <CAHp75VcxYPCLYq1J8qqjPdgDdQnWDgZKkavmyEWD8GNxcW2mWg@mail.gmail.com>
+Subject: Re: [PATCH v2 5/5] Input: evdev - Switch to bitmap_zalloc()
 To:     Yury Norov <ynorov@caviumnetworks.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         agk@redhat.com, Mike Snitzer <snitzer@redhat.com>,
@@ -77,27 +77,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 1:24 AM Yury Norov <ynorov@caviumnetworks.com> wrote:
-> On Fri, Jun 15, 2018 at 04:20:15PM +0300, Andy Shevchenko wrote:
-> > A lot of code become ugly because of open coding allocations for bitmaps.
-> >
-> > Introduce three helpers to allow users be more clear of intention
-> > and keep their code neat.
+On Sat, Jun 16, 2018 at 12:46 AM Yury Norov <ynorov@caviumnetworks.com> wrote:
+> On Fri, Jun 15, 2018 at 04:20:17PM +0300, Andy Shevchenko wrote:
+> > Switch to bitmap_zalloc() to show clearly what we are allocating.
+> > Besides that it returns pointer of bitmap type instead of opaque void *.
+
+
+> > +       mem = bitmap_alloc(maxbit, GFP_KERNEL);
+> >         if (!mem)
+> >                 return -ENOMEM;
 >
-> I like the idea. But in following patches you switch to new API only
-> couple of drivers.
+> But in commit message you say you switch to bitmap_zalloc(). IIUC
+> bitmap_alloc() is OK here. But could you please update comment to
+> avoid confusing.
 
-I have converted much more, indeed.
-I published only for couple of drivers as an example. This is I
-mentioned in cover letter.
+There are two places, one with alloc, another with zalloc.
+I will clarify this in commit message of next version.
 
-> I think, it worth to switch more, especially core
-> users to make new API visible for developers. Brief grepping for
-> candidates showse only 17 suspected places:
+> > +       mask = bitmap_zalloc(cnt, GFP_KERNEL);
+> >         if (!mask)
+> >                 return -ENOMEM;
+> >
+> >         error = bits_from_user(mask, cnt - 1, codes_size, codes, compat);
+>
+> If my understanding of bits_from_user() correct, here you can also use
+> bitmap_alloc(), true?
 
-Yes, but not in this series. Since it covers many subsystems and
-drivers the applying that kind of series would take ages. That's why I
-have decided to submit for one subsystem only.
+While it might be true, it's a material for separate change.
+Original code uses zalloc version.
 
 -- 
 With Best Regards,
