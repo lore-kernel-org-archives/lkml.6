@@ -2,115 +2,141 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 056D5C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22B42C433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A85D62088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B623A20874
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 08:18:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AP1ktJp0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A85D62088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aeQFXalv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B623A20874
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932528AbeFPILw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 04:11:52 -0400
-Received: from userp2120.oracle.com ([156.151.31.85]:37184 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932188AbeFPILu (ORCPT
+        id S932508AbeFPISy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 04:18:54 -0400
+Received: from mail-ua0-f202.google.com ([209.85.217.202]:46936 "EHLO
+        mail-ua0-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932188AbeFPISw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 04:11:50 -0400
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5G89FcC131964;
-        Sat, 16 Jun 2018 08:11:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2017-10-26;
- bh=4Wjp8uT6jXqVz6RBSU2u9+urxE+HlI5VNcS7HcwsyVw=;
- b=AP1ktJp0wLqWB5MeGsorbkelpgl2w2nVApLX38N6BuP7MKqG9pISLoLsYtcmM+VODwQu
- 69edNSyOuHzWT8OMTt6yrSQWERA+XlXbK6Pkbcw0XyHTaVKwWrdvKiAsKksgaCW7IzIA
- CXLan3j7Ivz84ZXEdW1xPR5Nag6wUo7tpMgmKYkV7NpJhhzL8ZUOl6e30jYf92lXQ5wE
- kmWN94DeJ7Qqgb4N6+zoj0t24UD3khW8snZlnEaXbNBmUQPInzAG1MN3U8T2Xrg2ZTll
- CFpjH6LgIxZXI+pv1PsDLmJzToFyPTpvSyjMs08CxgvV9hFLBuOT3QIN0yoWHgfflH0Y iQ== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2jmu6xg652-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 16 Jun 2018 08:11:43 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5G8Bgnn030349
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sat, 16 Jun 2018 08:11:42 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id w5G8BePs015013;
-        Sat, 16 Jun 2018 08:11:41 GMT
-Received: from mwanda (/41.202.241.23)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Sat, 16 Jun 2018 01:11:40 -0700
-Date:   Sat, 16 Jun 2018 11:11:27 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Zhouyang Jia <jiazhouyang09@gmail.com>
-Cc:     devel@driverdev.osuosl.org, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Shreeya Patel <shreeya.patel23498@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>
-Subject: Re: [PATCH v4] staging: rtl8192u: add error handling for
- usb_alloc_urb
-Message-ID: <20180616081127.oqendremoierdndg@mwanda>
-References: <1528705874-34845-1-git-send-email-jiazhouyang09@gmail.com>
- <1529114485-60684-1-git-send-email-jiazhouyang09@gmail.com>
+        Sat, 16 Jun 2018 04:18:52 -0400
+Received: by mail-ua0-f202.google.com with SMTP id m1-v6so4071026uao.13
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 01:18:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:date:in-reply-to:message-id:references:subject:from:to
+         :cc;
+        bh=T3SBQtHO/b26sBIquivD1pc77kYIMRAxo1vAdKNF47Y=;
+        b=aeQFXalvppdUHFoUFqz4aDpfbzqnY3R10l6rnQWksAtjMbWc6tyeyVSanusBhVy+LG
+         4U+6Pkp11VSR1CURZE6p6GFlgMsNnQ5B2b1RRkSrcSp7jlXzZ/stLV7rBoU+mDWHsIVd
+         QPLx+35CgcsdPkZsdntdUdILeWVOj8GLN06hQamyuNSakG9AZ42wE84Q3rrnAfQsylBS
+         p6Hs13BH/07l9/6uFNxySGoz4iSRZyRE1csgU/mpJ0FqcdJNXwCG8tVe79u86kURhmep
+         Ge3D7ulSciOPxAi9VnCe6jXIg7NgqdPVXv9O97NLrrVoHGFShFtFqN1tAHGop3n3KZJF
+         fE+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id
+         :references:subject:from:to:cc;
+        bh=T3SBQtHO/b26sBIquivD1pc77kYIMRAxo1vAdKNF47Y=;
+        b=Fa1WJQKIavwr4IBWf58ULQ8ZBW+H4UywOl8XbaBoP7rvg9NQMOyxyt9KNib9rTr9UZ
+         55hKSpvhgyC1rsYB78DLIBxR61ck/iChuIWRet9MuvnxIdShasx+oDz6hmyGZcdCNoZm
+         nhwCPwY3MQrFMaZGvqINrWKNtku0c/IopZipX/OqGD1gDQ2u6vcgIEX7QYfKtkgPIumN
+         dLwJ+GD98Cgsdnq6nEnAvq9lJjmYLguIhgstUFaotFiFak461kmbIGCyRttSplbRmh2T
+         7HZ3xKVROP2XVKp7GabUSenf2msvXXtQMycC9dUu6qzy0HUSNsAvK1aw697hg3w5pcEv
+         4shg==
+X-Gm-Message-State: APt69E3AX8SZVlralqvTKs3cDea2fXkhAS5ZYHX7C3wRIhjc6jEy5UA/
+        tlSZ1xBD1sp/0mWyT1BRxsCFHtTUY3gZ
+X-Google-Smtp-Source: ADUXVKKsYZV1EUEdm2jeZKkbEUpIQCgsTnz5g10lcUdV3PQuWNZw0rDzXrTdVUtgkah0KnaPR22WpuKhj8PD
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529114485-60684-1-git-send-email-jiazhouyang09@gmail.com>
-User-Agent: NeoMutt/20170609 (1.8.3)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8925 signatures=668702
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=878
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1805220000 definitions=main-1806160102
+X-Received: by 2002:ab0:4741:: with SMTP id i1-v6mr2042028uac.116.1529137131853;
+ Sat, 16 Jun 2018 01:18:51 -0700 (PDT)
+Date:   Sat, 16 Jun 2018 01:18:37 -0700
+In-Reply-To: <CAA93t1rOdj4zorR=iU1=9qJmzeTeqD9L5GdX8pm7=NHXzSiy_g@mail.gmail.com>
+Message-Id: <20180616081837.62730-1-rajatja@google.com>
+References: <CAA93t1rOdj4zorR=iU1=9qJmzeTeqD9L5GdX8pm7=NHXzSiy_g@mail.gmail.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+Subject: [PATCH v2] sysfs: Fix internal_create_group() for named group updates
+From:   Rajat Jain <rajatja@google.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     Rajat Jain <rajatja@google.com>, rajatxjain@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I was actually OK with v1 on the theory that everything else leaked and
-so this didn't really introduce anything new... :P
+There are a couple of problems with named group updates in the code
+today:
 
-On Sat, Jun 16, 2018 at 10:01:22AM +0800, Zhouyang Jia wrote:
-> --- a/drivers/staging/rtl8192u/r8192U_core.c
-> +++ b/drivers/staging/rtl8192u/r8192U_core.c
-> @@ -1639,8 +1639,9 @@ short rtl8192_tx(struct net_device *dev, struct sk_buff *skb)
->  static short rtl8192_usb_initendpoints(struct net_device *dev)
->  {
->  	struct r8192_priv *priv = ieee80211_priv(dev);
-> +	int i;
->  
-> -	priv->rx_urb = kmalloc(sizeof(struct urb *) * (MAX_RX_URB + 1),
-> +	priv->rx_urb = kcalloc(MAX_RX_URB + 1, sizeof(struct urb *),
->  			       GFP_KERNEL);
->  	if (!priv->rx_urb)
->  		return -ENOMEM;
-> @@ -1649,12 +1650,12 @@ static short rtl8192_usb_initendpoints(struct net_device *dev)
->  	for (i = 0; i < (MAX_RX_URB + 1); i++) {
->  		priv->rx_urb[i] = usb_alloc_urb(0, GFP_KERNEL);
->  		if (!priv->rx_urb[i])
-> -			return -ENOMEM;
-> +			goto out_release_mem;
->  
->  		priv->rx_urb[i]->transfer_buffer =
->  			kmalloc(RX_URB_SIZE, GFP_KERNEL);
+* sysfs_update_group() will always fail for a named group, because
+  internal_create_group() will try to create a new sysfs directory
+  unconditionally, which will ofcourse fail with -EEXIST.
 
+* We can leak the kernfs_node for grp->name if some one tries to:
+  - rename a group (change grp->name), or
+  - update a named group, to an unnamed group
 
-You need to free priv->rx_urb[i]->transfer_buffer as well and there are
-several other resources which are also not freed.
+It appears that the whole purpose of sysfs_update_group() was to
+allow changing the permissions or visibility of attributes and not
+the names. So make it clear in the comments, and allow it to update
+an existing named group.
 
-regards,
-dan carpenter
+Signed-off-by: Rajat Jain <rajatja@google.com>
+---
+v2: Use pr_warn() instead of WARN()
+
+ fs/sysfs/group.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
+
+diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
+index 4802ec0e1e3a..2b7d3536e6cb 100644
+--- a/fs/sysfs/group.c
++++ b/fs/sysfs/group.c
+@@ -119,12 +119,22 @@ static int internal_create_group(struct kobject *kobj, int update,
+ 		return -EINVAL;
+ 	}
+ 	if (grp->name) {
+-		kn = kernfs_create_dir(kobj->sd, grp->name,
+-				       S_IRWXU | S_IRUGO | S_IXUGO, kobj);
+-		if (IS_ERR(kn)) {
+-			if (PTR_ERR(kn) == -EEXIST)
+-				sysfs_warn_dup(kobj->sd, grp->name);
+-			return PTR_ERR(kn);
++		if (update) {
++			kn = kernfs_find_and_get(kobj->sd, grp->name);
++			if (!kn) {
++				pr_warn("Can't update unknown attr grp name: %s/%s\n",
++					kobj->name, grp->name);
++				return -EINVAL;
++			}
++		} else {
++			kn = kernfs_create_dir(kobj->sd, grp->name,
++					       S_IRWXU | S_IRUGO | S_IXUGO,
++					       kobj);
++			if (IS_ERR(kn)) {
++				if (PTR_ERR(kn) == -EEXIST)
++					sysfs_warn_dup(kobj->sd, grp->name);
++				return PTR_ERR(kn);
++			}
+ 		}
+ 	} else
+ 		kn = kobj->sd;
+@@ -199,7 +209,8 @@ EXPORT_SYMBOL_GPL(sysfs_create_groups);
+  * of the attribute files being created already exist.  Furthermore,
+  * if the visibility of the files has changed through the is_visible()
+  * callback, it will update the permissions and add or remove the
+- * relevant files.
++ * relevant files. Changing a group's name (subdirectory name under
++ * kobj's directory in sysfs) is not allowed.
+  *
+  * The primary use for this function is to call it after making a change
+  * that affects group visibility.
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
 
