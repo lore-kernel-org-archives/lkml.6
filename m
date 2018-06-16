@@ -2,91 +2,136 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBE7C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 04:24:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8D98C433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 04:30:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C982088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 04:24:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A21520896
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 04:30:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DANzvjtP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6C982088E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOsFzJ4J"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A21520896
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754632AbeFPEYE (ORCPT
+        id S1754671AbeFPEaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 00:24:04 -0400
-Received: from mail-qt0-f194.google.com ([209.85.216.194]:33339 "EHLO
-        mail-qt0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751075AbeFPEYD (ORCPT
+        Sat, 16 Jun 2018 00:30:55 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:37051 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751407AbeFPEax (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 00:24:03 -0400
-Received: by mail-qt0-f194.google.com with SMTP id l10-v6so10960600qtj.0;
-        Fri, 15 Jun 2018 21:24:02 -0700 (PDT)
+        Sat, 16 Jun 2018 00:30:53 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y5-v6so5745794pfn.4;
+        Fri, 15 Jun 2018 21:30:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=FCRM1ddD4Uq7GeOXc0lJuKcI/CaIekCdZG6CJ8aRqUw=;
-        b=DANzvjtP4z12KJa8e3nJwfl/3rpmH58/Fcf1FXZ6KXuKC8fgPApitO2uK36tOJPCnC
-         YNm2Yxh0TJtDX9amdR30xhvAGGipUY/WDcwYqGTp2Af4eUbJ2Ct/vREPItM3VMP8yaxX
-         0Qt6tOv7YQA4PZcVyzeFlUcHaNc7lHoPZCo21NMqMjYECWn9NOAkG2spg04tRlKh8M4d
-         Qxtv2ghTPjdJ26J6z7b/ZXUBFG7k/v82+DQAcjvwgCC86GvVAPtA5Vgjusej6R5BOrKu
-         Bf/YGPn/Hh3z40LNzs5z/KGasrI9HkEft3UyuEFUcEswEjdKSngPvatvrFsjLpWLLIZ3
-         WWHg==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hzPiEcQ1NbvlbikwYjjcH6PJt0AmS2AgOtFFi12qWPQ=;
+        b=GOsFzJ4JNCbZTJfo0Lpmbw0gLh9Ma248kIX9A4pL2nLyd4884ykfW7R2H4ljAHGZXJ
+         KpJAKh072dn1fF8+YlQsX2gn8B6fWOIZoKHYk8a0gEN/R4XuejArkCqVRrRPmMmkVL13
+         qSMedSRKfCXyuR5NG9QWA2dLp/FKJuq/YqeokO2dIyWVxYwxtT2cYkkYfDkCWUYL6x7e
+         0DyRxrHP3Sc6nCYOkPRKpwTM83ZcG5vI3sCoVuGzE+iAd3B3HM2jNelkBcgmuAeh7sMT
+         73NIFwBlUJ/H718zAhOpE+yonBERRYCKdi/tp/TKXlX6d7okPmPpkISJzv3MvBxDYfZ1
+         1VaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=FCRM1ddD4Uq7GeOXc0lJuKcI/CaIekCdZG6CJ8aRqUw=;
-        b=q1aw6NTJo/7kamzQXeTzP16NLfJBTLV4phhpexqBV3bO4w6DTu7Kw7Et+AYfcVUsak
-         q7xe0iRJcDtQTdOIx3lkwXOkoFaFbWS4F1LgCKi+VpusnWn77CmInNZwOcQtCji4m8IK
-         559QxbUz1cMpcN3TdX3v5eiYur/olUyCtZuJkMeyGY5aTISY0oVPfi8fhrwXtxkLlhR5
-         sxV4Qqz2E/lSZ1YEi3zJQ6wfIRiksXUD4mBrVjS0mAHTH3SaL4WrP4WvCF7Uq80xhAq+
-         Voz41Iw8PFmTjz39ebJNTXwMkJazUBMM2oTEUV8PMe9v3YzlW1DGFBpvxkKhBnBNVm+s
-         Lw9g==
-X-Gm-Message-State: APt69E06hJaMGQ+tEfbMD6eo4s5qb/AkNswMsqjT+uvJ0oEnwPe3a8jC
-        ivOCoh8idlGIqA8uzAPOgIhhZFbZCKIGf2HzjKs=
-X-Google-Smtp-Source: ADUXVKJ6Y69GguyXcoDgRC8bPO/KLfzxntwbUDeCdr85sFURTiGmom/zy2CMKRDZRTtuxppOaT1CF0AF71mZPqdAKjY=
-X-Received: by 2002:ac8:2372:: with SMTP id b47-v6mr3970789qtb.358.1529123042470;
- Fri, 15 Jun 2018 21:24:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=hzPiEcQ1NbvlbikwYjjcH6PJt0AmS2AgOtFFi12qWPQ=;
+        b=KMTpHOHA8HqtePs79lc/fT+QHyL0c2d03FXbA8/fV2P97YqtxrGKx+aurmOZNgzoPB
+         pXc6DdYLyf5pyUl89nrON4c9dRG6TpCnTc+eNBhMtH2aSGB/dPtj1gRQ1CgCufJGGFV3
+         8IGcmnCK/MiOxjfT38paSUt7CRI7JsBPNB1OL/sqPONWQjg2Vn+1rgGPFiRuQr6SO0cT
+         bHJaq90Gpz7WQFemGF6eisRm4SZ7pE6EqtMkwZ9Fvxwf+3FiluYro+4eeXvNfRbS8mrl
+         YJA257d8a7onMUDCEG+JMXxOwcPtS0/zGMUf1tBV6A75aqIMkeZ0+Z0O1gpkWZnpHQV/
+         vXNw==
+X-Gm-Message-State: APt69E0ItthsQSpA5Z0g4ETC8RDtPIp6ivVXwKCOLca6pyR7z2XRRMU+
+        Vr3j3UKtmFAaUbUIcIE4CIs=
+X-Google-Smtp-Source: ADUXVKL1cMFnV91UnBiFNBnfHmwqSwhln2cptZQ6tb1c9B0bX3K7KvnZz228xmk1R1K76ihs8kbKAQ==
+X-Received: by 2002:aa7:81d3:: with SMTP id c19-v6mr4931160pfn.224.1529123453265;
+        Fri, 15 Jun 2018 21:30:53 -0700 (PDT)
+Received: from joonhwan-virtualbox.localnet ([220.149.255.57])
+        by smtp.gmail.com with ESMTPSA id r30-v6sm16160334pgn.58.2018.06.15.21.30.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 15 Jun 2018 21:30:52 -0700 (PDT)
+From:   "JoonHwan.Kim" <spilit464@gmail.com>
+To:     alan@linux.intel.com, sakari.ailus@linux.intel.com,
+        mchehab@kernel.org
+Cc:     gregkh@linuxfoundation.org, andriy.shevchenko@linux.intel.com,
+        aishpant@gmail.com, linux-media@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: [PATCH] media: staging: atomisp: add a blank line after declarations
+Date:   Sat, 16 Jun 2018 13:30:48 +0900
+Message-ID: <2750553.3y1WJKmnP5@joonhwan-virtualbox>
 MIME-Version: 1.0
-Received: by 2002:ac8:27a1:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 21:24:01
- -0700 (PDT)
-In-Reply-To: <20180615110820.GB14855@kroah.com>
-References: <1986308.HpuS17FQ0J@os-virtualbox> <20180615110820.GB14855@kroah.com>
-From:   =?UTF-8?B?6rmA7ZiE7J28?= <thtlwlsmsgkfla@gmail.com>
-Date:   Sat, 16 Jun 2018 13:24:01 +0900
-Message-ID: <CAO7xFUZJm_Jk90=TVx8j5t2-_owb=Q3Rw=WcsfQo7ZU_UjbKLw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] staging: rtl8192e: remove brace for single statement
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     devel@driverdev.osuosl.org, Kees Cook <keescook@chromium.org>,
-        johannes.berg@intel.com, Malcolm Priestley <tvboxspy@gmail.com>,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Linyu.Yuan@alcatel-sbell.com.cn,
-        Colin King <colin.king@canonical.com>, davem@davemloft.net
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks greg.
-Let me check and send again
-regards
-Hyunil Kim
+fix checkpatch.pl warning:
+  * Missing a blank line after declarations
 
-On Fri, Jun 15, 2018 at 8:08 PM, Greg KH <gregkh@linuxfoundation.org> wrote:
-> On Sat, Jun 09, 2018 at 03:05:56PM +0900, thtlwlsmsgkfla@gmail.com wrote:
->> * fix checkpatch.pl warning:
->>   WARNING: braces { are not necessary for single statement blocks
->>
->> Signed-off-by: Hyunil Kim <thtlwlsmsgkfla@gmail.com>
->
-> This does not match your "From:" line in your email headers :(
->
+Signed-off-by: Joonhwan Kim <spilit464@gmail.com>
+---
+ drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c
+index 61bd550dafb9..4c8ff1c90f63 100644
+--- a/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c
++++ b/drivers/staging/media/atomisp/pci/atomisp2/atomisp_ioctl.c
+@@ -1194,6 +1194,7 @@ static int atomisp_qbuf(struct file *file, void *fh, struct v4l2_buffer *buf)
+ 	 */
+ 	if (buf->memory == V4L2_MEMORY_USERPTR) {
+ 		struct hrt_userbuffer_attr attributes;
++
+ 		vb = pipe->capq.bufs[buf->index];
+ 		vm_mem = vb->priv;
+ 		if (!vm_mem) {
+@@ -1557,6 +1558,7 @@ int atomisp_stream_on_master_slave_sensor(struct atomisp_device *isp,
+ 	 */
+ 	for (i = 0; i < isp->num_of_streams; i++) {
+ 		int sensor_index = isp->asd[i].input_curr;
++
+ 		if (isp->inputs[sensor_index].camera_caps->
+ 				sensor[isp->asd[i].sensor_curr].is_slave)
+ 			slave = sensor_index;
+@@ -1643,6 +1645,7 @@ static void atomisp_pause_buffer_event(struct atomisp_device *isp)
+ 
+ 	for (i = 0; i < isp->num_of_streams; i++) {
+ 		int sensor_index = isp->asd[i].input_curr;
++
+ 		if (isp->inputs[sensor_index].camera_caps->
+ 				sensor[isp->asd[i].sensor_curr].is_slave) {
+ 			v4l2_event_queue(isp->asd[i].subdev.devnode, &event);
+@@ -1656,6 +1659,7 @@ static void atomisp_pause_buffer_event(struct atomisp_device *isp)
+ /* invalidate. SW workaround for this is to set burst length */
+ /* manually to 128 in case of 13MPx snapshot and to 1 otherwise. */
+ static void atomisp_dma_burst_len_cfg(struct atomisp_sub_device *asd)
++
+ {
+ 
+ 	struct v4l2_mbus_framefmt *sink;
+@@ -2138,6 +2142,7 @@ int __atomisp_streamoff(struct file *file, void *fh, enum v4l2_buf_type type)
+ 	if (isp->sw_contex.power_state == ATOM_ISP_POWER_UP) {
+ 		unsigned int i;
+ 		bool recreate_streams[MAX_STREAM_NUM] = {0};
++
+ 		if (isp->isp_timeout)
+ 			dev_err(isp->dev, "%s: Resetting with WA activated",
+ 				__func__);
+-- 
+2.17.1
+
+
+
+
