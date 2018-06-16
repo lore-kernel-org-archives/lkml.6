@@ -2,356 +2,211 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E887AC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 16:04:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD40C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 17:21:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F51420874
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 16:04:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F51420874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
+	by mail.kernel.org (Postfix) with ESMTP id 0F6A420864
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 17:21:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="Q1bXYCOV";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="cq2aB5aO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F6A420864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756902AbeFPQEq (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 12:04:46 -0400
-Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:40725 "EHLO
-        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1752631AbeFPQEo (ORCPT
+        id S932710AbeFPRVj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 13:21:39 -0400
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:41086 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1752814AbeFPRVh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 12:04:44 -0400
-X-IronPort-AV: E=Sophos;i="5.51,231,1526335200"; 
-   d="scan'208";a="332075626"
-Received: from abo-154-110-68.mrs.modulonet.fr (HELO [192.168.0.15]) ([85.68.110.154])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jun 2018 18:04:41 +0200
-Date:   Sat, 16 Jun 2018 18:04:41 +0200 (CEST)
-From:   Julia Lawall <julia.lawall@lip6.fr>
-X-X-Sender: jll@hadrien
-To:     Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
-cc:     Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Hakon Bugge <haakon.bugge@oracle.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Wei Wang <wei.w.wang@intel.com>,
-        Chris Mi <chrism@mellanox.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kbuild-all@01.org
-Subject: Re: [PATCH v3 2/2] IB/mad: Use ID allocator routines to allocate
- agent number (fwd)
-Message-ID: <alpine.DEB.2.20.1806161803360.2838@hadrien>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Sat, 16 Jun 2018 13:21:37 -0400
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5GHHRKB027148;
+        Sat, 16 Jun 2018 10:20:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=facebook;
+ bh=v6KY/HKYw2olasscIeCNWdDlY0/JDbIWGJZChuCvD+I=;
+ b=Q1bXYCOVtDM28pz8g/9GLmbfzboslzLMbH/7H2vd55Y3nOq/87yO0lHcJXpD0sVBgEDw
+ /WJSGiinVfiVyYRavDhP8UkSkSwJEfVWUAfhtDAO8fTQuArZzWRIwBT1x6JOkmWcIUzX
+ 0BFLljLsoTbH2BchyB943bqh5uBnCdEINFg= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2jn1us8ern-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Sat, 16 Jun 2018 10:20:54 -0700
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.28) with Microsoft SMTP Server (TLS)
+ id 14.3.361.1; Sat, 16 Jun 2018 13:20:51 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=v6KY/HKYw2olasscIeCNWdDlY0/JDbIWGJZChuCvD+I=;
+ b=cq2aB5aO3qCWqGoePaD9kEAX/p1kBmfD+K4/zOcinYjXXGzzvtOEnOVrwPhOOcLIBbThPuvak+agyIDMDZBg8cAlNVARMancUFTjPHMjt/bHRqzRh0b+BmBKs9kj9K7bu+J1K1PCQ1db7wwQPid2OgmkAi9vrH6FPtdoXc3JSO0=
+Received: from macbook-pro-52.dhcp.thefacebook.com (2620:10d:c090:180::1:58f6)
+ by CY1PR15MB0078.namprd15.prod.outlook.com (2a01:111:e400:5849::28) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.19; Sat, 16 Jun
+ 2018 17:20:46 +0000
+Subject: Re: perf tools: LIBCLANGLLVM=1 build broken with llvm 7/clang 6
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Wang Nan <wangnan0@huawei.com>
+CC:     Jiri Olsa <jolsa@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@fb.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+References: <20180616122608.GM30043@kernel.org>
+From:   Yonghong Song <yhs@fb.com>
+Message-ID: <91a76633-54e4-984d-cb68-ca0445146b15@fb.com>
+Date:   Sat, 16 Jun 2018 10:20:21 -0700
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+ Gecko/20100101 Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20180616122608.GM30043@kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [2620:10d:c090:180::1:58f6]
+X-ClientProxiedBy: MWHPR04CA0098.namprd04.prod.outlook.com
+ (2603:10b6:301:3a::39) To CY1PR15MB0078.namprd15.prod.outlook.com
+ (2a01:111:e400:5849::28)
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 92067ff3-053c-4bae-39c3-08d5d3ad8000
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:CY1PR15MB0078;
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0078;3:OV2qNX7OS9A1g6bTPH5yPvrYWTBMU8G27KaYB+p0mFL9dOKtzBKcfGFPM9bpvxuQL1UyQ68mxZGkDmeJe06rRpqsr08pVxcDFCDqDWj/Lfd5fvPbDLKgBytRHoYflWloOD5rAWP/4pfjHguR405Jso7uUMFpXMKVEr0mO34ZDk99DL/KHinFEdDf5+RhqteccZu8cyBFVK8fFRkgpzeGEywULRMfvQUo0WhH4xpYXxi1yGbkvTae7Wfy895YdhZR;25:EK7xrzrGYwskkQeZhwPmscCp7rGY1Giz1XjbyS69Yp/7zCnj3X6EexmXFLOC8GAkYJglr4oIcLTWdAk1fMKRARAwrSA0K6I6GivdBQcOtlzrzZLIyrwzA8uHWBiF6uxqhdxzP4OatrGI11QqJp9LudrG4hlBgDRy0m6G9bZLGZhJUudP1DzsmYHc/JxbzIhjJt4cM5T8ULrt5P2Hs5KD/jWDr42qkz+6v+1m4Li0UMuvlr7IYbS4P1wLavAlOcu8JoExW0F4QKsqm7UkugcFNmyt5L2PSrKceIoXzTP4nlW2kXPV2VFYhogWRrqe3y7BT3AdxsNhJNcJjte6ThrM3Q==;31:pmq8Qpr5Es8aINeXILa+PSa9ywuxwxTKJkjMh/IFrY3OPC6RpYoUuP6FkriAp3kHXxycUr2HVA/uvZJNTIpTb2BP1UxM2JpiySzeWg/WQinSudbzjST1h4GqhszKpWny5yfOFx1HVBIlzxC6sWkEr27nc3EqUJ39BnreqeyFfP0jmlAhyaibIdhvIPB+2jfgFGgImffGfjRT3jZj5owpK/cHTPnBX2g1QGQD4hjWA7c=
+X-MS-TrafficTypeDiagnostic: CY1PR15MB0078:
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0078;20:Ic/AJKwbqGbeRlPR2KDoBYGWYyxOZxfSFndgRvI8sFfac4mAa9/OgVmWJzpPGzUd32dIxlNG8PhkQqe3kP473R2nezFTxSdnkGHQLE6/o5ZOHH+rIbINEw/F3psHA8C5axPGwfWOeuKgWq9pKzIla0suY6WfJRwK/ZxgC0h4GhrB1MtGbPMKeWhPVhwxpIJrXgYHPJk/t93jgjswPTaSACaKHm1lVcYpM0t15xVBa4UGC4D0I4ve63p9k18S+jbkP/Zfkxw4teNB+SfS0+PcMUS1UoPNEgnd9GuBQzb7i3EyEDPTnGvLvirytA051yNc1B2JbNQCk9eYzM4XKyXgvJ/BOGUdigeZHIFhVRoRP9j8hZgpCpWorrPXY0b1jpE/qAVkxSQRwnShPnTSc2PYED+EBz6DxHOiv6ssYV9M+pEKLjQRz00tj6yKiN5EujUGqe762Lb6SlF8CFhoPioztxaTLzrramKTSe3OGknpqBjYOHrHFqJSPwErcrwbhyzu;4:liri7oNtsOUivJN2/cRuquWOZmayZmqvTqKbFANhC4ie8EHog0YOrkqYPbIluq+eAZYuKpS5PJD8C5krJnNjGyJb6oAEDlGb/SENy83FrSjNytFpKtYqIpHjMWvvx0lSYozsHuIPPSVnUV9r9kd1vx2pTJzD6sQ2JmYS2lQNnaQO0xs/28RzE9qke4ovE0bJ58rfy4jbiapQIpJiAdCdTtY8ZhOSZkE1TXQ6A0h8qFfzhyctnGxJaXzE9w6vnkllFTrbOQvCBJce8otKcv4xRw==
+X-Microsoft-Antispam-PRVS: <CY1PR15MB00789A34DC2F766D7DA1FC3ED3730@CY1PR15MB0078.namprd15.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:;
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(11241501184)(944501410)(52105095)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:CY1PR15MB0078;BCL:0;PCL:0;RULEID:;SRVR:CY1PR15MB0078;
+X-Forefront-PRVS: 0705EB1700
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(396003)(366004)(346002)(376002)(39860400002)(39380400002)(199004)(189003)(65956001)(65806001)(110136005)(58126008)(36756003)(23676004)(2486003)(52146003)(52396003)(76176011)(6116002)(31696002)(47776003)(53936002)(86362001)(386003)(52116002)(6506007)(53546011)(54906003)(6666003)(6512007)(305945005)(8676002)(2616005)(106356001)(16526019)(186003)(25786009)(6246003)(46003)(478600001)(2870700001)(7736002)(105586002)(64126003)(486006)(446003)(316002)(11346002)(8936002)(67846002)(68736007)(229853002)(65826007)(97736004)(6486002)(5660300001)(2906002)(81156014)(81166006)(31686004)(50466002)(4326008)(476003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY1PR15MB0078;H:macbook-pro-52.dhcp.thefacebook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+Received-SPF: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtDWTFQUjE1TUIwMDc4OzIzOk9nOFZxSmo2OFArRklKK0dFQjNUcndnU3k3?=
+ =?utf-8?B?NnFEeXB5S3dVZUl0OHc2VGVROFdibmZCekp2cmo1LzFOa0FONzVzQWpZbWZW?=
+ =?utf-8?B?RExUM1JVZE9KSURnN0hYbGorQTZQVHdodU8yYm41dUhaVGE0cGdvbVRraTBI?=
+ =?utf-8?B?blJmOVJINkNzbHdIdkJLYVdiejlPUGVSSDc5bUt2RWJjYlZjZ1N0RGtHV2x5?=
+ =?utf-8?B?d3VDcUtNUGt1dEpqa3VIbjBmZnMyS3BONUppWVZrb0M2a2RLanBQdEZoSWQr?=
+ =?utf-8?B?WmhEb2t1ditXVS9qZFJZU1pDdzgySlMzSzJFbnVQdkV1aEUvNXBaTzc0QVZ5?=
+ =?utf-8?B?U1FGN1Nkd1czYnpJdzNUc2p1Z1dvTDN3OSs2dmFnQllGckF0b2cyanJLVzhJ?=
+ =?utf-8?B?RmtlNm0razZRNS9XVUNBdFJ4OE1sSmxrdTZSSjlONjdLZWNSR3k4REkraHFs?=
+ =?utf-8?B?bWVMcW03WmpGdWcvQU50ZjBMbmRTekFHRlI1K0F5SGtxWmFTRWcwUjZOenVy?=
+ =?utf-8?B?eWgxc3hENHZ2bExJVS82RGtLZk8xYnBlRVd3OGxTUmxzQU9IQXRRNVBiOHhr?=
+ =?utf-8?B?ZlQzY0ZibWc4enBSaXlmeE1LRElGNVEvWFVwcW9scGdNRXR2YjZYNHhxb1hT?=
+ =?utf-8?B?elZ3Zm1RcWlkU1BUMVFXNmJYZnpySmlTa2gvOS9tM3dseVlsQzl4TTdRb1Fw?=
+ =?utf-8?B?Z1JaQTFHY1c0Uk1SSFVQdjZvMzBHM1VhTFdnakdHM0dtamlEVEE4SVlObitx?=
+ =?utf-8?B?c0Z5V29rY21wWlBZRFZEQ2JaVjdzUzY2ZG0zbnpOa0xtSk1OWFFUbVdVeHhD?=
+ =?utf-8?B?OUhnWnFpSUlMVXZYRGM3amJDQzFmSzlsUUFlblY3SE8zSlpwRUt2Q0NCQ2hr?=
+ =?utf-8?B?MUEyeE82dlgwOWJoZW5QU3VxRndoUUx2eERzbnlXbU5qTjFuQnpCa0VhWmVH?=
+ =?utf-8?B?WWZkUWtZcTM4OTlOOCtLWmhDRFdzLytlc2tKcno3Zk5MM0hIS1VHUGk1dkVJ?=
+ =?utf-8?B?b0VhV0RUOGM5eGh1bHdVUTJIRHp1TEpDcHUvMnNIdHg4Y0tNUFFMM1dVMGY5?=
+ =?utf-8?B?TnNYVzhKdWNucDNtK1UwR2FHMnJrdmg2MG5yTEJORUxmRlRFcVFiUUhNMU5V?=
+ =?utf-8?B?R056aklHWDhXWlEzc0o1T3o2d0xiSEhhalQ4RDhIcURLdHE5Y0NJY2tpQk1B?=
+ =?utf-8?B?ODNzVUVwc3RtaWhGa2JwREJHQWluUTE0ZnpsQ1ZvY2s4dHdDdTFsR21sdTR0?=
+ =?utf-8?B?a3RtTVgrci82UWMySDliczRzaUZhVGI1NUZHYWliSERXK0lSK3hyTEJwdkJh?=
+ =?utf-8?B?RUVsbkpWU3l4c3VGSm1SbGtseGZUTmE5Y3M4anhMYkdBclFRMHduVURFRmFs?=
+ =?utf-8?B?aHdGMkY0clUxV2NVWlVtbm9nT2FEcVp5N0hVd3llMUN5UGxGSmtJc3owZE43?=
+ =?utf-8?B?cENPQXoxYzFOOU9McVQ5SThvZlRnWVIyZmpTVk1OZE1QVStaM3BKbFowb05a?=
+ =?utf-8?B?OERVU3dmUzVsd1VKdm5BdXgwdlovRGpYbTIrUEU5NUZ0WDZsOXpYSGM3VjdL?=
+ =?utf-8?B?bE5iRGVSKzZBOFd4eHJFL0Z5OTNDZElwV1o1Y0pIZGlYMUVPTFR4Qm9PVlNB?=
+ =?utf-8?B?WUt3QnA3dzFPbVRjQ3ZXMHdNekh6SzUrd3lxMEljZmZDSlRQZWI0Z1hDZFV4?=
+ =?utf-8?B?QWJsU01CdlZhaHplSmFOemJGQ3JIOEpreXJmRDdoOWFIQkovbUwrSWJGTGVj?=
+ =?utf-8?B?T3UwOFBxYU5RNlV2ZFdrejFOREtFaUZEY3V2Wjl4TjdnaEsvQlRtZ0dCZUpT?=
+ =?utf-8?B?K2dBK3dVcWJWNG9MS2h6Rmo2c09ic09RRktaZFJxbTB5dGlGZ3dWMHJsa0xv?=
+ =?utf-8?B?bEZUNGJibjlXV3FKQThXT2NGSWY4K1R2TXE5U3FmQk9LcitGT2t5WkZkLzNm?=
+ =?utf-8?B?K1VrSDcyQzdRPT0=?=
+X-Microsoft-Antispam-Message-Info: J569u16R/T2cI/71nslQt8L/LGvuZXxsuUwnGSi/d7TwARD3OegW49XgY//EvYGgS8mOFEbdAn7lhW6jbiKPXZFDQJZTG65rO2lZNhdco/SM3HLxyDklgWt3Ngw9usce58haAhL+3icraf6CLxF5bOvLeGXpZMFMl1KWY7NWAA2H2dDwWPoykomB5MOQwExv
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0078;6:U93lNtK7NnRxGK0AOJah4MImFypOW1OxWiiFjpyY+t4vugwgitiYkeRC7HXjf8L46BR4uqIiB9+KyOAT+kh9XKEa6OrXp5dotzuVdUX+B2Dry71sj3BV5nPL3ZM6MEgoxK1QHZLR/Z7vPy26T4wQGnNPVdfGmynmADkzmaiY7KmBZ6g+B5m9BOQv8nLYM0fSgZ+gwZm7kp+NgKXxqARI953XVCl5DC48lFaIjnSDVjdVgJeMuYha8FuWwiOx6HV+icRbb5xrOHN7ZVsI9mU/Lc/eMnMP+ROVdb31kU3wS7TC3SBzUML9WP/5Zghgub2t9YU1oDYF/zt/fLN7NQbgNMB/QhCmaNB3UZPrhkYaMaGK3Euq5LnPFxotIc7aNnmFi+6RP3zCEcB5VvyAJSm6sFXBxFsCjjo/vSGYjbK2y+LdLTwNu9SNfRJRRe3encLONNcOaO2mICNf2YRl79oQYA==;5:ADMI7W9n/CvjMO/UEW712q0m9tSMP1ZRot0D/gnF3YtPy9WKUjqlyez0mHNjRy75nEu0etIMYSZBklMBK77aooOW1tcMx/t2jnMlWusQmx7cvUEbw1OqCUh+ees1efoByfnNytvWLXs4Jz6ap3SLip4hmV48X7KsIUrR/Ho+LxM=;24:H0KXoKbCWkU0eWcZZI4xRvJGz/3AbpKDRmlvxlu6F2trifW3jeDodj3xnihiLbylWF6LFkKihYdHrWVH/xrBLx4YE+a1fQyE18lDt5nOmAU=
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;CY1PR15MB0078;7:7gfDeF1O4vUf4l0ZMb+VVxrlXpwH5VvL0oz9NW850Knxw7+3Flki4GIqsns4gbV/or0elOfQzJ4YIMwsg0KbeVbUwEFQrccsG8IOuyXMj0ornz7hE9OnvyW+Tiw9mxVC+ymysyu3e2bWEyhA8G+0MomM9eO1bpDztn52i73RRjP/WflskWYQF/PBjd8qbUUKi3BKVcfyBpqc6dFrGrxPruLyTPLgYVG6nFEZqYOhsCrixmYx1J8nM1Nc/V/Sa+mg;20:aWCdc4syfwhyqaw/5xofuYGz6+1F2nFo/coCvSx/VExsS+YBdwjQN6UC2JdIMgP9TSoqPIMsAGC/LA85alb/HZ//89YK0Hx6ZHNwA7is443R+sXMDHFa6L9IHDqdU+m3BG3tkNK1FxRoeg2SJTJy84UnDnTpj1h6yp8OVrn/Em0=
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Jun 2018 17:20:46.1285 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92067ff3-053c-4bae-39c3-08d5d3ad8000
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY1PR15MB0078
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-16_09:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ib_mad_client_id is declared as u32, so it will not be < 0 (line 382).
 
-julia
 
----------- Forwarded message ----------
-Date: Fri, 8 Jun 2018 08:49:57 +0800
-From: kbuild test robot <lkp@intel.com>
-To: kbuild@01.org
-Cc: Julia Lawall <julia.lawall@lip6.fr>
-Subject: Re: [PATCH v3 2/2] IB/mad: Use ID allocator routines to allocate agent
-    number
+On 6/16/18 5:26 AM, Arnaldo Carvalho de Melo wrote:
+> Hi Wang, Yogong,
+> 
+> 	While reviewing the BTF patches for pahole, I updated llvm/clang
+> to HEAD and then building perf with clang embedded I noticed this, will
+> investigate, posting here to document the regression, maybe this is
+> something you came across in other scenario:
+> 
+>   $ make LIBCLANGLLVM=1 -C tools/perf/
+>   <SNIP>
+>    CC       /tmp/tmp.t53Qo38zci/tests/kmod-path.o
+> util/c++/clang.cpp: In function ‘std::unique_ptr<llvm::SmallVectorImpl<char> > perf::getBPFObjectFromModule(llvm::Module*)’:
+> util/c++/clang.cpp:150:43: error: no matching function for call to ‘llvm::TargetMachine::addPassesToEmitFile(llvm::legacy::PassManager&, llvm::raw_svector_ostream&, llvm::TargetMachine::CodeGenFileType)’
+>               TargetMachine::CGFT_ObjectFile)) {
+>                                             ^
+> In file included from util/c++/clang.cpp:25:0:
+> /usr/local/include/llvm/Target/TargetMachine.h:254:16: note: candidate: virtual bool llvm::TargetMachine::addPassesToEmitFile(llvm::legacy::PassManagerBase&, llvm::raw_pwrite_stream&, llvm::raw_pwrite_stream*, llvm::TargetMachine::CodeGenFileType, bool, llvm::MachineModuleInfo*)
+>     virtual bool addPassesToEmitFile(PassManagerBase &, raw_pwrite_stream &,
+>                  ^~~~~~~~~~~~~~~~~~~
+> /usr/local/include/llvm/Target/TargetMachine.h:254:16: note:   candidate expects 6 arguments, 3 provided
+> mv: cannot stat '/tmp/tmp.t53Qo38zci/util/c++/.clang.o.tmp': No such file or directory
+> make[7]: *** [/home/acme/git/perf/tools/build/Makefile.build:101: /tmp/tmp.t53Qo38zci/util/c++/clang.o] Error 1
+> make[6]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: c++] Error 2
+> make[5]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: util] Error 2
+> make[5]: *** Waiting for unfinished jobs....
+>    CC       /tmp/tmp.t53Qo38zci/tests/thread-map.o
 
-Hi Hans,
+There is an interface change in llvm 7.0 (trunk) for function 
+llvm::TargetMachine::addPassesToEmitFile. The following patch
+should fix the problem.
 
-Thank you for the patch! Perhaps something to improve:
+-bash-4.2$ git diff
+diff --git a/tools/perf/util/c++/clang.cpp b/tools/perf/util/c++/clang.cpp
+index bf31cea..11dee58 100644
+--- a/tools/perf/util/c++/clang.cpp
++++ b/tools/perf/util/c++/clang.cpp
+@@ -146,8 +146,15 @@ getBPFObjectFromModule(llvm::Module *Module)
+         raw_svector_ostream ostream(*Buffer);
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v4.17]
-[if your patch is applied to the wrong git tree, please drop us a note to help improve the system]
+         legacy::PassManager PM;
+-       if (TargetMachine->addPassesToEmitFile(PM, ostream,
+- 
+TargetMachine::CGFT_ObjectFile)) {
++       bool NotAdded;
++#if CLANG_VERSION_MAJOR < 7
++       NotAdded = TargetMachine->addPassesToEmitFile(PM, ostream,
++ 
+TargetMachine::CGFT_ObjectFile);
++#else
++       NotAdded = TargetMachine->addPassesToEmitFile(PM, ostream, nullptr,
++ 
+TargetMachine::CGFT_ObjectFile);
++#endif
++       if (!NotAdded) {
+                 llvm::errs() << "TargetMachine can't emit a file of 
+this type\n";
+                 return 
+std::unique_ptr<llvm::SmallVectorImpl<char>>(nullptr);;
+         }
+-bash-4.2$
 
-url:    https://github.com/0day-ci/linux/commits/Hans-Westgaard-Ry/IB-mad-Use-ID-allocator-routines-to-allocate-agent-number/20180608-022348
-:::::: branch date: 6 hours ago
-:::::: commit date: 6 hours ago
+Will submit a formal patch soon.
 
->> drivers/infiniband/core/mad.c:382:5-21: WARNING: Unsigned expression compared with zero: ib_mad_client_id < 0
-
-# https://github.com/0day-ci/linux/commit/74b1ba09003c9d132878734bf44f32a62bad31db
-git remote add linux-review https://github.com/0day-ci/linux
-git remote update linux-review
-git checkout 74b1ba09003c9d132878734bf44f32a62bad31db
-vim +382 drivers/infiniband/core/mad.c
-
-2527e681 Sean Hefty        2006-07-20  190
-^1da177e Linus Torvalds    2005-04-16  191  /*
-^1da177e Linus Torvalds    2005-04-16  192   * ib_register_mad_agent - Register to send/receive MADs
-^1da177e Linus Torvalds    2005-04-16  193   */
-^1da177e Linus Torvalds    2005-04-16  194  struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
-^1da177e Linus Torvalds    2005-04-16  195  					   u8 port_num,
-^1da177e Linus Torvalds    2005-04-16  196  					   enum ib_qp_type qp_type,
-^1da177e Linus Torvalds    2005-04-16  197  					   struct ib_mad_reg_req *mad_reg_req,
-^1da177e Linus Torvalds    2005-04-16  198  					   u8 rmpp_version,
-^1da177e Linus Torvalds    2005-04-16  199  					   ib_mad_send_handler send_handler,
-^1da177e Linus Torvalds    2005-04-16  200  					   ib_mad_recv_handler recv_handler,
-0f29b46d Ira Weiny         2014-08-08  201  					   void *context,
-0f29b46d Ira Weiny         2014-08-08  202  					   u32 registration_flags)
-^1da177e Linus Torvalds    2005-04-16  203  {
-^1da177e Linus Torvalds    2005-04-16  204  	struct ib_mad_port_private *port_priv;
-^1da177e Linus Torvalds    2005-04-16  205  	struct ib_mad_agent *ret = ERR_PTR(-EINVAL);
-^1da177e Linus Torvalds    2005-04-16  206  	struct ib_mad_agent_private *mad_agent_priv;
-^1da177e Linus Torvalds    2005-04-16  207  	struct ib_mad_reg_req *reg_req = NULL;
-^1da177e Linus Torvalds    2005-04-16  208  	struct ib_mad_mgmt_class_table *class;
-^1da177e Linus Torvalds    2005-04-16  209  	struct ib_mad_mgmt_vendor_class_table *vendor;
-^1da177e Linus Torvalds    2005-04-16  210  	struct ib_mad_mgmt_vendor_class *vendor_class;
-^1da177e Linus Torvalds    2005-04-16  211  	struct ib_mad_mgmt_method_table *method;
-^1da177e Linus Torvalds    2005-04-16  212  	int ret2, qpn;
-^1da177e Linus Torvalds    2005-04-16  213  	unsigned long flags;
-^1da177e Linus Torvalds    2005-04-16  214  	u8 mgmt_class, vclass;
-74b1ba09 Hans Westgaard Ry 2018-06-07  215  	u32 ib_mad_client_id;
-^1da177e Linus Torvalds    2005-04-16  216  	/* Validate parameters */
-^1da177e Linus Torvalds    2005-04-16  217  	qpn = get_spl_qp_index(qp_type);
-9ad13a42 Ira Weiny         2014-08-08  218  	if (qpn == -1) {
-9ad13a42 Ira Weiny         2014-08-08  219  		dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  220  			   "ib_register_mad_agent: invalid QP Type %d\n",
-9ad13a42 Ira Weiny         2014-08-08  221  			   qp_type);
-^1da177e Linus Torvalds    2005-04-16  222  		goto error1;
-9ad13a42 Ira Weiny         2014-08-08  223  	}
-^1da177e Linus Torvalds    2005-04-16  224
-9ad13a42 Ira Weiny         2014-08-08  225  	if (rmpp_version && rmpp_version != IB_MGMT_RMPP_VERSION) {
-9ad13a42 Ira Weiny         2014-08-08  226  		dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  227  			   "ib_register_mad_agent: invalid RMPP Version %u\n",
-9ad13a42 Ira Weiny         2014-08-08  228  			   rmpp_version);
-fa619a77 Hal Rosenstock    2005-07-27  229  		goto error1;
-9ad13a42 Ira Weiny         2014-08-08  230  	}
-^1da177e Linus Torvalds    2005-04-16  231
-^1da177e Linus Torvalds    2005-04-16  232  	/* Validate MAD registration request if supplied */
-^1da177e Linus Torvalds    2005-04-16  233  	if (mad_reg_req) {
-9ad13a42 Ira Weiny         2014-08-08  234  		if (mad_reg_req->mgmt_class_version >= MAX_MGMT_VERSION) {
-9ad13a42 Ira Weiny         2014-08-08  235  			dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  236  				   "ib_register_mad_agent: invalid Class Version %u\n",
-9ad13a42 Ira Weiny         2014-08-08  237  				   mad_reg_req->mgmt_class_version);
-^1da177e Linus Torvalds    2005-04-16  238  			goto error1;
-9ad13a42 Ira Weiny         2014-08-08  239  		}
-9ad13a42 Ira Weiny         2014-08-08  240  		if (!recv_handler) {
-9ad13a42 Ira Weiny         2014-08-08  241  			dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  242  				   "ib_register_mad_agent: no recv_handler\n");
-^1da177e Linus Torvalds    2005-04-16  243  			goto error1;
-9ad13a42 Ira Weiny         2014-08-08  244  		}
-^1da177e Linus Torvalds    2005-04-16  245  		if (mad_reg_req->mgmt_class >= MAX_MGMT_CLASS) {
-^1da177e Linus Torvalds    2005-04-16  246  			/*
-^1da177e Linus Torvalds    2005-04-16  247  			 * IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE is the only
-^1da177e Linus Torvalds    2005-04-16  248  			 * one in this range currently allowed
-^1da177e Linus Torvalds    2005-04-16  249  			 */
-^1da177e Linus Torvalds    2005-04-16  250  			if (mad_reg_req->mgmt_class !=
-9ad13a42 Ira Weiny         2014-08-08  251  			    IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE) {
-9ad13a42 Ira Weiny         2014-08-08  252  				dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  253  					   "ib_register_mad_agent: Invalid Mgmt Class 0x%x\n",
-9ad13a42 Ira Weiny         2014-08-08  254  					   mad_reg_req->mgmt_class);
-^1da177e Linus Torvalds    2005-04-16  255  				goto error1;
-9ad13a42 Ira Weiny         2014-08-08  256  			}
-^1da177e Linus Torvalds    2005-04-16  257  		} else if (mad_reg_req->mgmt_class == 0) {
-^1da177e Linus Torvalds    2005-04-16  258  			/*
-^1da177e Linus Torvalds    2005-04-16  259  			 * Class 0 is reserved in IBA and is used for
-^1da177e Linus Torvalds    2005-04-16  260  			 * aliasing of IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE
-^1da177e Linus Torvalds    2005-04-16  261  			 */
-9ad13a42 Ira Weiny         2014-08-08  262  			dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  263  				   "ib_register_mad_agent: Invalid Mgmt Class 0\n");
-^1da177e Linus Torvalds    2005-04-16  264  			goto error1;
-^1da177e Linus Torvalds    2005-04-16  265  		} else if (is_vendor_class(mad_reg_req->mgmt_class)) {
-^1da177e Linus Torvalds    2005-04-16  266  			/*
-^1da177e Linus Torvalds    2005-04-16  267  			 * If class is in "new" vendor range,
-^1da177e Linus Torvalds    2005-04-16  268  			 * ensure supplied OUI is not zero
-^1da177e Linus Torvalds    2005-04-16  269  			 */
-9ad13a42 Ira Weiny         2014-08-08  270  			if (!is_vendor_oui(mad_reg_req->oui)) {
-9ad13a42 Ira Weiny         2014-08-08  271  				dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  272  					   "ib_register_mad_agent: No OUI specified for class 0x%x\n",
-9ad13a42 Ira Weiny         2014-08-08  273  					   mad_reg_req->mgmt_class);
-^1da177e Linus Torvalds    2005-04-16  274  				goto error1;
-^1da177e Linus Torvalds    2005-04-16  275  			}
-9ad13a42 Ira Weiny         2014-08-08  276  		}
-618a3c03 Hal Rosenstock    2006-03-28  277  		/* Make sure class supplied is consistent with RMPP */
-64cb9c6a Hal Rosenstock    2006-04-12  278  		if (!ib_is_mad_class_rmpp(mad_reg_req->mgmt_class)) {
-9ad13a42 Ira Weiny         2014-08-08  279  			if (rmpp_version) {
-9ad13a42 Ira Weiny         2014-08-08  280  				dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  281  					   "ib_register_mad_agent: RMPP version for non-RMPP class 0x%x\n",
-9ad13a42 Ira Weiny         2014-08-08  282  					   mad_reg_req->mgmt_class);
-618a3c03 Hal Rosenstock    2006-03-28  283  				goto error1;
-618a3c03 Hal Rosenstock    2006-03-28  284  			}
-9ad13a42 Ira Weiny         2014-08-08  285  		}
-1471cb6c Ira Weiny         2014-08-08  286
-^1da177e Linus Torvalds    2005-04-16  287  		/* Make sure class supplied is consistent with QP type */
-^1da177e Linus Torvalds    2005-04-16  288  		if (qp_type == IB_QPT_SMI) {
-^1da177e Linus Torvalds    2005-04-16  289  			if ((mad_reg_req->mgmt_class !=
-^1da177e Linus Torvalds    2005-04-16  290  					IB_MGMT_CLASS_SUBN_LID_ROUTED) &&
-^1da177e Linus Torvalds    2005-04-16  291  			    (mad_reg_req->mgmt_class !=
-9ad13a42 Ira Weiny         2014-08-08  292  					IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE)) {
-9ad13a42 Ira Weiny         2014-08-08  293  				dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  294  					   "ib_register_mad_agent: Invalid SM QP type: class 0x%x\n",
-9ad13a42 Ira Weiny         2014-08-08  295  					   mad_reg_req->mgmt_class);
-^1da177e Linus Torvalds    2005-04-16  296  				goto error1;
-9ad13a42 Ira Weiny         2014-08-08  297  			}
-^1da177e Linus Torvalds    2005-04-16  298  		} else {
-^1da177e Linus Torvalds    2005-04-16  299  			if ((mad_reg_req->mgmt_class ==
-^1da177e Linus Torvalds    2005-04-16  300  					IB_MGMT_CLASS_SUBN_LID_ROUTED) ||
-^1da177e Linus Torvalds    2005-04-16  301  			    (mad_reg_req->mgmt_class ==
-9ad13a42 Ira Weiny         2014-08-08  302  					IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE)) {
-9ad13a42 Ira Weiny         2014-08-08  303  				dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  304  					   "ib_register_mad_agent: Invalid GS QP type: class 0x%x\n",
-9ad13a42 Ira Weiny         2014-08-08  305  					   mad_reg_req->mgmt_class);
-^1da177e Linus Torvalds    2005-04-16  306  				goto error1;
-^1da177e Linus Torvalds    2005-04-16  307  			}
-9ad13a42 Ira Weiny         2014-08-08  308  		}
-^1da177e Linus Torvalds    2005-04-16  309  	} else {
-^1da177e Linus Torvalds    2005-04-16  310  		/* No registration request supplied */
-^1da177e Linus Torvalds    2005-04-16  311  		if (!send_handler)
-^1da177e Linus Torvalds    2005-04-16  312  			goto error1;
-1471cb6c Ira Weiny         2014-08-08  313  		if (registration_flags & IB_MAD_USER_RMPP)
-1471cb6c Ira Weiny         2014-08-08  314  			goto error1;
-^1da177e Linus Torvalds    2005-04-16  315  	}
-^1da177e Linus Torvalds    2005-04-16  316
-^1da177e Linus Torvalds    2005-04-16  317  	/* Validate device and port */
-^1da177e Linus Torvalds    2005-04-16  318  	port_priv = ib_get_mad_port(device, port_num);
-^1da177e Linus Torvalds    2005-04-16  319  	if (!port_priv) {
-f57e8ca5 Yuval Shaia       2017-01-19  320  		dev_notice(&device->dev,
-f57e8ca5 Yuval Shaia       2017-01-19  321  			   "ib_register_mad_agent: Invalid port %d\n",
-f57e8ca5 Yuval Shaia       2017-01-19  322  			   port_num);
-^1da177e Linus Torvalds    2005-04-16  323  		ret = ERR_PTR(-ENODEV);
-^1da177e Linus Torvalds    2005-04-16  324  		goto error1;
-^1da177e Linus Torvalds    2005-04-16  325  	}
-^1da177e Linus Torvalds    2005-04-16  326
-c8367c4c Ira Weiny         2011-05-19  327  	/* Verify the QP requested is supported.  For example, Ethernet devices
-c8367c4c Ira Weiny         2011-05-19  328  	 * will not have QP0 */
-c8367c4c Ira Weiny         2011-05-19  329  	if (!port_priv->qp_info[qpn].qp) {
-9ad13a42 Ira Weiny         2014-08-08  330  		dev_notice(&device->dev,
-9ad13a42 Ira Weiny         2014-08-08  331  			   "ib_register_mad_agent: QP %d not supported\n", qpn);
-c8367c4c Ira Weiny         2011-05-19  332  		ret = ERR_PTR(-EPROTONOSUPPORT);
-c8367c4c Ira Weiny         2011-05-19  333  		goto error1;
-c8367c4c Ira Weiny         2011-05-19  334  	}
-c8367c4c Ira Weiny         2011-05-19  335
-^1da177e Linus Torvalds    2005-04-16  336  	/* Allocate structures */
-de6eb66b Roland Dreier     2005-11-02  337  	mad_agent_priv = kzalloc(sizeof *mad_agent_priv, GFP_KERNEL);
-^1da177e Linus Torvalds    2005-04-16  338  	if (!mad_agent_priv) {
-^1da177e Linus Torvalds    2005-04-16  339  		ret = ERR_PTR(-ENOMEM);
-^1da177e Linus Torvalds    2005-04-16  340  		goto error1;
-^1da177e Linus Torvalds    2005-04-16  341  	}
-b82cab6b Hal Rosenstock    2005-07-27  342
-^1da177e Linus Torvalds    2005-04-16  343  	if (mad_reg_req) {
-9893e742 Julia Lawall      2010-05-15  344  		reg_req = kmemdup(mad_reg_req, sizeof *reg_req, GFP_KERNEL);
-^1da177e Linus Torvalds    2005-04-16  345  		if (!reg_req) {
-^1da177e Linus Torvalds    2005-04-16  346  			ret = ERR_PTR(-ENOMEM);
-b82cab6b Hal Rosenstock    2005-07-27  347  			goto error3;
-^1da177e Linus Torvalds    2005-04-16  348  		}
-^1da177e Linus Torvalds    2005-04-16  349  	}
-^1da177e Linus Torvalds    2005-04-16  350
-^1da177e Linus Torvalds    2005-04-16  351  	/* Now, fill in the various structures */
-^1da177e Linus Torvalds    2005-04-16  352  	mad_agent_priv->qp_info = &port_priv->qp_info[qpn];
-^1da177e Linus Torvalds    2005-04-16  353  	mad_agent_priv->reg_req = reg_req;
-fa619a77 Hal Rosenstock    2005-07-27  354  	mad_agent_priv->agent.rmpp_version = rmpp_version;
-^1da177e Linus Torvalds    2005-04-16  355  	mad_agent_priv->agent.device = device;
-^1da177e Linus Torvalds    2005-04-16  356  	mad_agent_priv->agent.recv_handler = recv_handler;
-^1da177e Linus Torvalds    2005-04-16  357  	mad_agent_priv->agent.send_handler = send_handler;
-^1da177e Linus Torvalds    2005-04-16  358  	mad_agent_priv->agent.context = context;
-^1da177e Linus Torvalds    2005-04-16  359  	mad_agent_priv->agent.qp = port_priv->qp_info[qpn].qp;
-^1da177e Linus Torvalds    2005-04-16  360  	mad_agent_priv->agent.port_num = port_num;
-0f29b46d Ira Weiny         2014-08-08  361  	mad_agent_priv->agent.flags = registration_flags;
-d9620a4c Ralph Campbell    2009-02-27  362  	spin_lock_init(&mad_agent_priv->lock);
-d9620a4c Ralph Campbell    2009-02-27  363  	INIT_LIST_HEAD(&mad_agent_priv->send_list);
-d9620a4c Ralph Campbell    2009-02-27  364  	INIT_LIST_HEAD(&mad_agent_priv->wait_list);
-d9620a4c Ralph Campbell    2009-02-27  365  	INIT_LIST_HEAD(&mad_agent_priv->done_list);
-d9620a4c Ralph Campbell    2009-02-27  366  	INIT_LIST_HEAD(&mad_agent_priv->rmpp_list);
-d9620a4c Ralph Campbell    2009-02-27  367  	INIT_DELAYED_WORK(&mad_agent_priv->timed_work, timeout_sends);
-d9620a4c Ralph Campbell    2009-02-27  368  	INIT_LIST_HEAD(&mad_agent_priv->local_list);
-d9620a4c Ralph Campbell    2009-02-27  369  	INIT_WORK(&mad_agent_priv->local_work, local_completions);
-d9620a4c Ralph Campbell    2009-02-27  370  	atomic_set(&mad_agent_priv->refcount, 1);
-d9620a4c Ralph Campbell    2009-02-27  371  	init_completion(&mad_agent_priv->comp);
-^1da177e Linus Torvalds    2005-04-16  372
-47a2b338 Daniel Jurgens    2017-05-19  373  	ret2 = ib_mad_agent_security_setup(&mad_agent_priv->agent, qp_type);
-47a2b338 Daniel Jurgens    2017-05-19  374  	if (ret2) {
-47a2b338 Daniel Jurgens    2017-05-19  375  		ret = ERR_PTR(ret2);
-47a2b338 Daniel Jurgens    2017-05-19  376  		goto error4;
-47a2b338 Daniel Jurgens    2017-05-19  377  	}
-74b1ba09 Hans Westgaard Ry 2018-06-07  378  	ib_mad_client_id = ida_simple_get_cyclic(&ib_mad_client_ids,
-74b1ba09 Hans Westgaard Ry 2018-06-07  379  						1,
-74b1ba09 Hans Westgaard Ry 2018-06-07  380  						BIT(24) - 1,
-74b1ba09 Hans Westgaard Ry 2018-06-07  381  						GFP_KERNEL);
-74b1ba09 Hans Westgaard Ry 2018-06-07 @382  	if (ib_mad_client_id < 0) {
-74b1ba09 Hans Westgaard Ry 2018-06-07  383  		pr_err("Couldn't allocate agent tid; errcode: %#x\n",
-74b1ba09 Hans Westgaard Ry 2018-06-07  384  			ib_mad_client_id);
-74b1ba09 Hans Westgaard Ry 2018-06-07  385  		ret = ERR_PTR(ib_mad_client_id);
-74b1ba09 Hans Westgaard Ry 2018-06-07  386  		goto error4;
-74b1ba09 Hans Westgaard Ry 2018-06-07  387  	}
-74b1ba09 Hans Westgaard Ry 2018-06-07  388  	mad_agent_priv->agent.hi_tid = ib_mad_client_id;
-47a2b338 Daniel Jurgens    2017-05-19  389
-^1da177e Linus Torvalds    2005-04-16  390  	spin_lock_irqsave(&port_priv->reg_lock, flags);
-^1da177e Linus Torvalds    2005-04-16  391
-^1da177e Linus Torvalds    2005-04-16  392  	/*
-^1da177e Linus Torvalds    2005-04-16  393  	 * Make sure MAD registration (if supplied)
-^1da177e Linus Torvalds    2005-04-16  394  	 * is non overlapping with any existing ones
-^1da177e Linus Torvalds    2005-04-16  395  	 */
-^1da177e Linus Torvalds    2005-04-16  396  	if (mad_reg_req) {
-^1da177e Linus Torvalds    2005-04-16  397  		mgmt_class = convert_mgmt_class(mad_reg_req->mgmt_class);
-^1da177e Linus Torvalds    2005-04-16  398  		if (!is_vendor_class(mgmt_class)) {
-^1da177e Linus Torvalds    2005-04-16  399  			class = port_priv->version[mad_reg_req->
-^1da177e Linus Torvalds    2005-04-16  400  						   mgmt_class_version].class;
-^1da177e Linus Torvalds    2005-04-16  401  			if (class) {
-^1da177e Linus Torvalds    2005-04-16  402  				method = class->method_table[mgmt_class];
-^1da177e Linus Torvalds    2005-04-16  403  				if (method) {
-^1da177e Linus Torvalds    2005-04-16  404  					if (method_in_use(&method,
-^1da177e Linus Torvalds    2005-04-16  405  							   mad_reg_req))
-47a2b338 Daniel Jurgens    2017-05-19  406  						goto error5;
-^1da177e Linus Torvalds    2005-04-16  407  				}
-^1da177e Linus Torvalds    2005-04-16  408  			}
-^1da177e Linus Torvalds    2005-04-16  409  			ret2 = add_nonoui_reg_req(mad_reg_req, mad_agent_priv,
-^1da177e Linus Torvalds    2005-04-16  410  						  mgmt_class);
-^1da177e Linus Torvalds    2005-04-16  411  		} else {
-^1da177e Linus Torvalds    2005-04-16  412  			/* "New" vendor class range */
-^1da177e Linus Torvalds    2005-04-16  413  			vendor = port_priv->version[mad_reg_req->
-^1da177e Linus Torvalds    2005-04-16  414  						    mgmt_class_version].vendor;
-^1da177e Linus Torvalds    2005-04-16  415  			if (vendor) {
-^1da177e Linus Torvalds    2005-04-16  416  				vclass = vendor_class_index(mgmt_class);
-^1da177e Linus Torvalds    2005-04-16  417  				vendor_class = vendor->vendor_class[vclass];
-^1da177e Linus Torvalds    2005-04-16  418  				if (vendor_class) {
-^1da177e Linus Torvalds    2005-04-16  419  					if (is_vendor_method_in_use(
-^1da177e Linus Torvalds    2005-04-16  420  							vendor_class,
-^1da177e Linus Torvalds    2005-04-16  421  							mad_reg_req))
-47a2b338 Daniel Jurgens    2017-05-19  422  						goto error5;
-^1da177e Linus Torvalds    2005-04-16  423  				}
-^1da177e Linus Torvalds    2005-04-16  424  			}
-^1da177e Linus Torvalds    2005-04-16  425  			ret2 = add_oui_reg_req(mad_reg_req, mad_agent_priv);
-^1da177e Linus Torvalds    2005-04-16  426  		}
-^1da177e Linus Torvalds    2005-04-16  427  		if (ret2) {
-^1da177e Linus Torvalds    2005-04-16  428  			ret = ERR_PTR(ret2);
-47a2b338 Daniel Jurgens    2017-05-19  429  			goto error5;
-^1da177e Linus Torvalds    2005-04-16  430  		}
-^1da177e Linus Torvalds    2005-04-16  431  	}
-^1da177e Linus Torvalds    2005-04-16  432
-^1da177e Linus Torvalds    2005-04-16  433  	/* Add mad agent into port's agent list */
-^1da177e Linus Torvalds    2005-04-16  434  	list_add_tail(&mad_agent_priv->agent_list, &port_priv->agent_list);
-^1da177e Linus Torvalds    2005-04-16  435  	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
-^1da177e Linus Torvalds    2005-04-16  436
-^1da177e Linus Torvalds    2005-04-16  437  	return &mad_agent_priv->agent;
-47a2b338 Daniel Jurgens    2017-05-19  438  error5:
-^1da177e Linus Torvalds    2005-04-16  439  	spin_unlock_irqrestore(&port_priv->reg_lock, flags);
-47a2b338 Daniel Jurgens    2017-05-19  440  	ib_mad_agent_security_cleanup(&mad_agent_priv->agent);
-74b1ba09 Hans Westgaard Ry 2018-06-07  441  	ida_simple_remove(&ib_mad_client_ids, ib_mad_client_id);
-74b1ba09 Hans Westgaard Ry 2018-06-07  442
-47a2b338 Daniel Jurgens    2017-05-19  443  error4:
-^1da177e Linus Torvalds    2005-04-16  444  	kfree(reg_req);
-b82cab6b Hal Rosenstock    2005-07-27  445  error3:
-2012a116 Adrian Bunk       2005-11-27  446  	kfree(mad_agent_priv);
-^1da177e Linus Torvalds    2005-04-16  447  error1:
-^1da177e Linus Torvalds    2005-04-16  448  	return ret;
-^1da177e Linus Torvalds    2005-04-16  449  }
-^1da177e Linus Torvalds    2005-04-16  450  EXPORT_SYMBOL(ib_register_mad_agent);
-^1da177e Linus Torvalds    2005-04-16  451
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> 
+> - Arnaldo
+> 
