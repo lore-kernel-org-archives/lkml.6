@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B5FC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 073F8C433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96C8B2088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96C8B2088E
+	by mail.kernel.org (Postfix) with ESMTP id B0E3C2088E
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 03:08:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E3C2088E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756910AbeFPDIc (ORCPT
+        id S1756921AbeFPDIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 15 Jun 2018 23:08:32 -0400
-Received: from mga17.intel.com ([192.55.52.151]:51110 "EHLO mga17.intel.com"
+        Fri, 15 Jun 2018 23:08:46 -0400
+Received: from mga17.intel.com ([192.55.52.151]:51107 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1756864AbeFPDIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1756860AbeFPDIE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 15 Jun 2018 23:08:04 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
@@ -28,7 +28,7 @@ Received: from orsmga005.jf.intel.com ([10.7.209.41])
   by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Jun 2018 20:08:02 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,228,1526367600"; 
-   d="scan'208";a="233011933"
+   d="scan'208";a="233011930"
 Received: from romley-ivt3.sc.intel.com ([172.25.110.60])
   by orsmga005.jf.intel.com with ESMTP; 15 Jun 2018 20:07:29 -0700
 From:   Fenghua Yu <fenghua.yu@intel.com>
@@ -39,9 +39,9 @@ Cc:     "Ashok Raj" <ashok.raj@intel.com>,
         "Ravi V Shankar" <ravi.v.shankar@intel.com>,
         "linux-kernel" <linux-kernel@vger.kernel.org>,
         "x86" <x86@kernel.org>, Fenghua Yu <fenghua.yu@intel.com>
-Subject: [RFC PATCH 8/8] selftests/x86: Self test for the APIs in lib_direct_store.h and lib_user_wait.h
-Date:   Fri, 15 Jun 2018 20:06:15 -0700
-Message-Id: <1529118375-90191-9-git-send-email-fenghua.yu@intel.com>
+Subject: [RFC PATCH 7/8] x86/lib_user_wait.h: Add APIs for user wait instructions
+Date:   Fri, 15 Jun 2018 20:06:14 -0700
+Message-Id: <1529118375-90191-8-git-send-email-fenghua.yu@intel.com>
 X-Mailer: git-send-email 2.5.0
 In-Reply-To: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com>
 References: <1529118375-90191-1-git-send-email-fenghua.yu@intel.com>
@@ -50,250 +50,281 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The self test checks APIs defined in arch/x86/include/uapi/asm/
-lib_direct_store.h and arch/x86/include/uapi/asm/lib_user_wait.h
+A few new user wait instructions UMONITOR, UMWAIT, and TPAUSE are
+published in the latest Intel Instruction Set Extensions document.
 
-Limited by testing environment, this test suit only tests simple cases.
-More test cases may be added later.
+Define the APIs for user or kernel to use the instructions.
+
+If feature enabled GCC is available in the future, implementation
+of the APIs will be changed to call the intrinsic instructions.
 
 Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 ---
- tools/testing/selftests/x86/Makefile             |   5 +-
- tools/testing/selftests/x86/directstore_umwait.c | 202 +++++++++++++++++++++++
- 2 files changed, 205 insertions(+), 2 deletions(-)
- create mode 100644 tools/testing/selftests/x86/directstore_umwait.c
+ arch/x86/include/uapi/asm/lib_user_wait.h | 255 ++++++++++++++++++++++++++++++
+ 1 file changed, 255 insertions(+)
+ create mode 100644 arch/x86/include/uapi/asm/lib_user_wait.h
 
-diff --git a/tools/testing/selftests/x86/Makefile b/tools/testing/selftests/x86/Makefile
-index 186520198de7..36cf86f3eeae 100644
---- a/tools/testing/selftests/x86/Makefile
-+++ b/tools/testing/selftests/x86/Makefile
-@@ -12,7 +12,8 @@ CAN_BUILD_WITH_NOPIE := $(shell ./check_cc.sh $(CC) trivial_program.c -no-pie)
- 
- TARGETS_C_BOTHBITS := single_step_syscall sysret_ss_attrs syscall_nt test_mremap_vdso \
- 			check_initial_reg_state sigreturn iopl mpx-mini-test ioperm \
--			protection_keys test_vdso test_vsyscall mov_ss_trap
-+			protection_keys test_vdso test_vsyscall mov_ss_trap \
-+			directstore_umwait
- TARGETS_C_32BIT_ONLY := entry_from_vm86 syscall_arg_fault test_syscall_vdso unwind_vdso \
- 			test_FCMOV test_FCOMI test_FISTTP \
- 			vdso_restorer
-@@ -73,7 +74,7 @@ $(BINARIES_32): $(OUTPUT)/%_32: %.c
- 	$(CC) -m32 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $^ -lrt -ldl -lm
- 
- $(BINARIES_64): $(OUTPUT)/%_64: %.c
--	$(CC) -m64 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $^ -lrt -ldl
-+	$(CC) -m64 -o $@ $(CFLAGS) $(EXTRA_CFLAGS) $^ -lrt -ldl -lm
- 
- # x86_64 users should be encouraged to install 32-bit libraries
- ifeq ($(CAN_BUILD_I386)$(CAN_BUILD_X86_64),01)
-diff --git a/tools/testing/selftests/x86/directstore_umwait.c b/tools/testing/selftests/x86/directstore_umwait.c
+diff --git a/arch/x86/include/uapi/asm/lib_user_wait.h b/arch/x86/include/uapi/asm/lib_user_wait.h
 new file mode 100644
-index 000000000000..d1bb1293d2ad
+index 000000000000..027d45c1e383
 --- /dev/null
-+++ b/tools/testing/selftests/x86/directstore_umwait.c
-@@ -0,0 +1,202 @@
-+// SPDX-License-Identifier: GPL-2.0
++++ b/arch/x86/include/uapi/asm/lib_user_wait.h
+@@ -0,0 +1,255 @@
++/* SPDX-License-Identifier: GPL-2.0 */
 +/*
-+ * directstore_umwait.c - Test APIs defined in lib_direct_store.h and
-+ * lib_user_wait.h
++ * This library provides a set of APIs for user or kernel to use
++ * some new user wait instructions:
++ * - tpause, umonitor, and umwait
 + *
-+ * Copyright (c) 2018 Intel Corporation
-+ * Fenghua Yu <fenghua.yu@intel.com>
++ * Detailed information on the instructions can be found in
++ * Intel Architecture Instruction Set Extensions and Future Features
++ * Programming Reference.
 + */
-+#define _GNU_SOURCE
 +
-+#include <stdlib.h>
++#ifndef _ASM_X86_LIB_USER_WAIT_H
++#define _ASM_X86_LIB_USER_WAIT_H
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <stdbool.h>
 +#include <stdio.h>
-+#include <time.h>
-+#include <unistd.h>
-+#include <string.h>
-+#include <asm/lib_direct_store.h>
-+#include <asm/lib_user_wait.h>
++#include <math.h>
 +
-+void test_movdiri_32_bit(void)
++/* CPUID.07H.0H:ECX[5] */
++#define WAITPKG_BIT		5
++
++static bool _waitpkg_supported, _waitpkg_enumerated;
++static unsigned long tsc_khz;
++
++/**
++ * waitpkg_supported() - Is CPU flag waitpkg supported?
++ *
++ * Return:
++ * true: supported
++ *
++ * false: not supported
++ */
++static inline int waitpkg_supported(void)
 +{
-+	int __attribute((aligned(64))) dst[10];
-+	int __attribute((aligned(64))) data;
++	int eax, ebx, ecx, edx, ret;
 +
-+	if (!movdiri_supported()) {
-+		printf("movdiri is not supported\n");
++	/*
++	 * If waitpkg has been enumerated before, return cached waitpkg
++	 * support info.
++	 */
++	if (_waitpkg_enumerated)
++		return _waitpkg_supported;
 +
-+		return;
-+	}
-+	dst[0] = 0;
-+	data = 0x12345670;
++	/* Otherwise, enumerate the feature from CPUID. */
++	asm volatile("mov $7, %%eax\t\n"
++		     "mov $0, %%ecx\t\n"
++		     "cpuid\t\n"
++		     : "=a"(eax), "=b" (ebx), "=c" (ecx), "=d" (edx));
 +
-+	movdiri32(dst, data);
-+
-+	if (dst[0] == data)
-+		printf("movdiri 32-bit test passed\n");
++	if (ecx & (1 << WAITPKG_BIT))
++		ret = true;
 +	else
-+		printf("movdiri 32-bit test failed\n");
++		ret = false;
++
++	/* Cache waitpkg support for future use. */
++	_waitpkg_enumerated = true;
++	_waitpkg_supported = true;
++
++	return ret;
 +}
 +
-+void test_movdiri_64_bit(void)
++static inline int get_tsc_khz(unsigned long *tsc_khz_val)
 +{
-+	long __attribute((aligned(64))) dst[10];
-+	long __attribute((aligned(64))) data;
++	int fd, ret = 0;
++	char buf[32];
 +
-+	if (!movdiri_supported()) {
-+		printf("movdiri is not supported\n");
-+
-+		return;
++	if (tsc_khz != 0) {
++		*tsc_khz_val = tsc_khz;
++		return 0;
 +	}
-+	dst[0] = 0;
-+	data = 0x123456789abcdef0;
 +
-+	movdiri64(dst, data);
++	fd = open("/sys/devices/system/cpu/user_wait/tsc_khz", O_RDONLY);
++	if (!fd)
++		return -1;
++	ret = read(fd, buf, 32);
++	if (ret < 0)
++		goto out;
 +
-+	if (dst[0] == data)
-+		printf("movdiri 64-bit test passed\n");
-+	else
-+		printf("movdiri 64-bit test failed\n");
++	tsc_khz = atol(buf);
++	*tsc_khz_val = tsc_khz;
++printf("tsc_khz=%ld\n", tsc_khz);
++
++out:
++	close(fd);
++	return ret;
 +}
 +
-+void test_movdiri(void)
++#define	USEC_PER_SEC	1000000
++
++static inline int nsec_to_tsc(unsigned long nsec, unsigned long *tsc)
 +{
-+	test_movdiri_32_bit();
-+	test_movdiri_64_bit();
-+}
-+
-+void test_movdir64b(void)
-+{
-+	char __attribute((aligned(64))) src[1024], dst[1024];
-+
-+	if (!movdir64b_supported()) {
-+		printf("movdir64b is not supported\n");
-+
-+		return;
-+	}
-+	memset(src, 0, 1024);
-+	memset(dst, 0, 1024);
-+	for (int i = 0; i < 1024; i++)
-+		dst[i] = i;
-+
-+	movdir64b(src, dst);
-+	if (memcmp(src, dst, 64))
-+		printf("movdir64b test failed\n");
-+	else
-+		printf("movdir64b test passed\n");
-+}
-+
-+void test_timeout(char *test_name, int state, unsigned long timeout_ns,
-+		  unsigned long overhead_ns)
-+{
-+	unsigned long tsc1, tsc2, real_tsc, real_ns, tsc_per_nsec;
 +	int ret;
 +
-+	ret = nsec_to_tsc(1, &tsc_per_nsec);
-+	if (ret) {
-+		printf("umwait test failed: nsec cannot be coverted to tsc.\n");
-+		return;
-+	}
++	/* Get tsc frequency in HZ */
++	ret = get_tsc_khz(&tsc_khz);
++	if (ret < 0)
++		return ret;
 +
-+	if (waitpkg_supported()) {
-+		if (!strcmp(test_name, "umwait")) {
-+			tsc1 = rdtsc();
-+			umwait(state, timeout_ns);
-+			tsc2 = rdtsc();
-+		} else {
-+			tsc1 = rdtsc();
-+			tpause(state, timeout_ns);
-+			tsc2 = rdtsc();
-+		}
-+		real_tsc = tsc2 - tsc1;
-+		real_ns = real_tsc / tsc_per_nsec;
-+		/* Give enough time for overhead on slow running machine. */
-+		if (abs(real_ns - timeout_ns) < overhead_ns) {
-+			printf("%s test passed\n", test_name);
-+		} else {
-+			printf("%s test failed:\n", test_name);
-+			printf("real=%luns, expected=%luns. ",
-+			       real_ns, timeout_ns);
-+			printf("Likely due to slow machine. ");
-+			printf("Please adjust overhead_ns or re-run test for a few more times.\n");
-+		}
-+	} else {
-+		printf("%s is not supported\n", test_name);
-+	}
++	*tsc = (unsigned long)round((double)tsc_khz * nsec / USEC_PER_SEC);
++
++	return 0;
 +}
 +
-+void test_tpause_timeout(int state)
++/**
++ * umonitor() - Set up monitoring address
++ * @addr: Monitored address
++ *
++ * This API sets up address monitoring hardware using address @addr.
++ * It can be executed at any privilege level.
++ */
++static inline void umonitor(void *addr)
 +{
++	asm volatile("mov %0, %%rdi\t\n"
++		     ".byte 0xf3, 0x0f, 0xae, 0xf7\t\n"
++		     : : "r" (addr));
++}
++
++static inline int _umwait(int state, unsigned long eax, unsigned long edx)
++{
++	unsigned long cflags;
++
++	asm volatile("mov %3, %%edi\t\n"
++		     ".byte 0xf2, 0x0f, 0xae, 0xf7\t\n"
++		     "pushf\t\n"
++		     "pop %0\t\n"
++		     : "=r" (cflags)
++		     : "d" (edx), "a" (eax), "r"(state));
++
 +	/*
-+	 * Timeout 100usec. Assume overhead of executing umwait is 10usec.
-+	 * You can adjust the overhead number based on your machine.
++	 * If the processor wakes due to expiration of OS time-limit, the CF
++	 * flag is set. Otherwise, the flag is cleared.
 +	 */
-+	test_timeout("tpause", state, 100000, 10000);
++	return cflags & 1;
 +}
 +
-+void test_tpause(void)
++static unsigned long rdtsc(void)
 +{
-+	/* Test timeout in state 0 (C0.2). */
-+	test_tpause_timeout(0);
-+	/* Test timeout in state 1 (C0.1). */
-+	test_tpause_timeout(1);
-+	/* More tests ... */
++	unsigned int low, high;
++
++	asm volatile ("rdtsc\t\n"
++		      : "=a" (low), "=d" (high));
++
++	return (unsigned long)high << 32 | low;
 +}
 +
-+char umonitor_range[1024];
-+
-+void test_umonitor_only(void)
-+{
-+	if (waitpkg_supported()) {
-+		umonitor(umonitor_range);
-+		printf("umonitor test passed\n");
-+	} else {
-+		printf("waitpkg not supported\n");
-+	}
-+}
-+
-+void show_basic_info(void)
++/**
++ * umwait() - Monitor wait
++ * @state: State
++ * @nsec: Time out in nano seconds
++ *
++ * A hint that allows the processor to stop instruction execution and
++ * enter an implementation-dependent optimized state. The processor
++ * wakes up because of events such as store to the monitored address,
++ * timeout, NMI, SMI, machine check, debug exception, etc.
++ *
++ * State 0 is light-weight power optimized state. It allows the processor
++ * to enter C0.2 state which has larger power saving but slower wakeup time.
++ *
++ * State 1 is performance optimized state. It allows the processor
++ * to enter C0.1 state which has smaller power saving but faster wakeup time.
++ *
++ * This function can be executed at any privilege level.
++ *
++ * Return:
++ * 1: the processor wakes due to expiration of OS time-limit
++ *
++ * 0: the processor wakes due to other reasons
++ *
++ * less than 0: error
++ */
++static inline int umwait(int state, unsigned long nsec)
 +{
 +	unsigned long tsc;
 +	int ret;
 +
-+	ret = nsec_to_tsc(1, &tsc);
-+	if (ret < 0)
-+		printf("not tsc freq CPUID available\n");
-+	else
-+		printf("1 nsec = %lu tsc\n", tsc);
++	if (state != 0 && state != 1)
++		return -1;
++
++	ret = nsec_to_tsc(nsec, &tsc);
++	if (ret)
++		return ret;
++
++	/* Get umwait deadline */
++	tsc += rdtsc();
++	ret = _umwait(state, tsc & 0xffffffff, tsc >> 32);
++
++	return ret;
 +}
 +
-+void test_umonitor(void)
++static inline int _tpause(int state, unsigned long eax, unsigned long edx)
 +{
-+	test_umonitor_only();
-+}
++	unsigned long cflags;
 +
-+void test_umwait_timeout(int state)
-+{
++	asm volatile("mov %3, %%edi\t\n"
++		     ".byte 0x66, 0x0f, 0xae, 0xf7\t\n"
++		     "pushf\t\n"
++		     "pop %0\t\n"
++		     : "=r" (cflags)
++		     : "d" (edx), "a" (eax), "r"(state));
++
 +	/*
-+	 * Timeout 100usec. Overhead of executing umwait assumes 90usec.
-+	 * You can adjust the overhead number based on your machine.
++	 * If the processor wakes due to expiration of OS time-limit, the CF
++	 * flag is set. Otherwise, the flag is cleared.
 +	 */
-+	test_timeout("umwait", state, 100000, 90000);
++	return cflags & 1;
 +}
 +
-+void test_umwait(void)
++/**
++ * tpause() - Timed pause
++ * @state: State
++ * @nsec: Timeout in nano seconds
++ *
++ * tpause() allows the processor to stop instruction execution and
++ * enter an implementation-dependent optimized state. The processor
++ * wakes up because of events such as store to the monitored
++ * address, timeout, NMI, SMI, machine check, debug exception, etc.
++ *
++ * State 0 is light-weight power optimized state. It allows the processor
++ * to enter C0.2 state which has larger power saving but slower wakeup time.
++ *
++ * State 1 is performance optimized state. It allows the processor
++ * to enter C0.1 state which has smaller power saving but faster wakeup time.
++ *
++ * This function can be executed at any privilege level.
++ *
++ * Return:
++ * 1: the processor wakes due to expiration of OS time-limit
++ *
++ * 0: the processor wakes due to other reasons
++ *
++ * less than 0: error
++ */
++static inline int tpause(int state, unsigned long nsec)
 +{
-+	/* Test timeout in state 0 (C0.2). */
-+	test_umwait_timeout(0);
-+	/* Test timeout in state 1 (C0.1). */
-+	test_umwait_timeout(1);
-+	/* More tests ... */
++	unsigned long tsc;
++	int ret;
++
++	if (state != 0 && state != 1)
++		return -1;
++
++	ret = nsec_to_tsc(nsec, &tsc);
++	if (ret)
++		return ret;
++
++	/* Get tpause deadline */
++	tsc += rdtsc();
++	ret = _tpause(state, tsc & 0xffffffff, tsc >> 32);
++
++	return ret;
 +}
 +
-+int main(void)
-+{
-+	show_basic_info();
-+	test_movdiri();
-+	test_movdir64b();
-+	test_tpause();
-+	test_umonitor();
-+	test_umwait();
-+
-+	return 0;
-+}
++#endif /* _ASM_X86_LIB_USER_WAIT_H */
 -- 
 2.5.0
 
