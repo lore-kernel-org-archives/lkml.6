@@ -2,179 +2,140 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D05FAC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 05:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 554B8C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 05:23:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC8A520896
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 05:04:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99D0120864
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 05:23:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S3AE/Rsv";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="Lf3/JTlA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC8A520896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=jms.id.au
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="AhelvM0e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99D0120864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753962AbeFPFEg (ORCPT
+        id S1756240AbeFPFW7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 01:04:36 -0400
-Received: from mail-qk0-f193.google.com ([209.85.220.193]:41763 "EHLO
-        mail-qk0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751826AbeFPFEe (ORCPT
+        Sat, 16 Jun 2018 01:22:59 -0400
+Received: from mail-oi0-f68.google.com ([209.85.218.68]:34440 "EHLO
+        mail-oi0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753736AbeFPFW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 01:04:34 -0400
-Received: by mail-qk0-f193.google.com with SMTP id w23-v6so6817229qkb.8
-        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 22:04:34 -0700 (PDT)
+        Sat, 16 Jun 2018 01:22:57 -0400
+Received: by mail-oi0-f68.google.com with SMTP id i205-v6so10657378oib.1
+        for <linux-kernel@vger.kernel.org>; Fri, 15 Jun 2018 22:22:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=LtkncO6ICCujrX1d2Cbs7dsIf9AHKQGWi3jLxRLv5Kc=;
-        b=S3AE/RsvjeB4RBlg+0KqC1Etxcv6vLldWnBOW8PHDRViquy7m37ZDtRYDqUBO60oyO
-         C6JXedAsD1g1+8xDpNsdpHJvtnsuPxx/1pFgEZtGcZrqiemC3vf7K9muULfkvPiAQnwq
-         XQ2DzmEBE4d2NlQcK1q58G+uT97QwnWTxJDyy7xZQzSo9/s6qs8BwkcL4J0P9nIAb+cX
-         zn+OP2tDzYWdBinw7vRKzZWafABBWcfSJJ7nGj3LubLnV/Y7eY5EjV56tUKy578a/XpN
-         DC90wAL7drynRt/HbwZUw93uZ7Z15hTHIsH3v5+fCtEI/qXjdz9p2Zx7dg8heN/fuWjg
-         KyNg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=LtkncO6ICCujrX1d2Cbs7dsIf9AHKQGWi3jLxRLv5Kc=;
-        b=Lf3/JTlAKP4EuznfSIFamAI5EDWvKEe4y++Vf3oPJ3JX9udbDndmgUKSCshx5f37Fd
-         LvUCZxo2ZSfNoLbTBP0Z5RZEH74VnTg945k8rvXq2QBGqx2e3Fc70js8xcLzE5gqCGa5
-         S9LwnE/HCvZSDbCjF9B5uCYpPSmgIJkXhXwzk=
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=ssHxAHaGBREW6Ld382hsfj+7WLxGBeoGQVafsOULEpw=;
+        b=AhelvM0eqkVBAb25NBOr0AlbBUQTNosr1ScL+uC0esoREPfgDAC2khMSY5sc2sFkIC
+         A9U53V1sBnuG8QX3HLQBIw4UZJznYx3MTquFUnlTsCaFrKFIjhQfZ6cC+paU8NzI0EYs
+         yuMdouVv40kvV6jFWKpRpT2s6tiCZg+YumF/V49y95Agvyya2ZSbwFEUwBUfkGlnMjLP
+         K7yItQcd6rJ6nweb8qLn1BTGE4aPGW7h04QzeBmw859kjPElAm5x7biwzFJd3ii3wqc6
+         nX7frTjfzLZOU91TaeIYOYa7fddICs3LMj+9G73wIjrCChMCpnyQgHA5fO1JbThGPDWT
+         kUJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=LtkncO6ICCujrX1d2Cbs7dsIf9AHKQGWi3jLxRLv5Kc=;
-        b=fgtVPZeihgAN2A6FqWwywMEBxNA5i1OkhSM0jTtYrdiBtPxIQmVzOMC4bTNcy/g8q4
-         9QjdhwXzWm+qidH4uZ6hTVDiYPgytFSKSxINxH8SIMQNpJfV+fUzGuaKquadYPt5G0oQ
-         ieX/TyCbga9DojqONonp4rEv/beCw7cDB/Op6DtMSnhLIHDrPK5QMl5F926qCeii+V8z
-         4I0NaHiHU/1Hd83oyp69oiWBo94giwcUdGnUlU4XRfK/rpN4xsvhKo1WMjuVCY5OHqoH
-         nBpqwtiT3HsWiCQHmjwYfFrDHWLP8dZaVSL+GEcG4DSgq/rZTIpGKrftR7SmF3aCANJg
-         gQ9g==
-X-Gm-Message-State: APt69E1rMXR9+iOO49esFKrcr2CNpFeaArJ6InZfmz2q/2+joh/cwKLx
-        mR9VBCIE/84UEns5PNmsCg36yhydRgT/3vwPhF4awTPI
-X-Google-Smtp-Source: ADUXVKJW9onEuTYqrFZ8x8csIVVmT9wb5XXShB3OggEGAF6Rjt6DAVQEX08gKwDAOCzG/016+Z0UmrZUZIE0d/IK5ic=
-X-Received: by 2002:a37:6983:: with SMTP id e125-v6mr3672198qkc.352.1529125473860;
- Fri, 15 Jun 2018 22:04:33 -0700 (PDT)
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=ssHxAHaGBREW6Ld382hsfj+7WLxGBeoGQVafsOULEpw=;
+        b=ihGCDEM0zh3RlOlYZVMJifs/RT8KTjaAunDN3XoOo65H2nwJ6GoqDn9sHMntjsBtnI
+         krg1iIGVssUN42MQlKqTORtC7YA60HK5h787bh/omgznYob6WzySk7CCvTjasuvSgzlh
+         RC9AXZm0B8+FRDLmBUeOKQecwj5E4CRL9nUZKV1cuqji6/gTQefdvHtLqGtVuiJ1U4Lu
+         PIS+GkVMnYxxD9I/1pk6mNGu7Pzy6LcfKu7b4pZWulYOjfzrRQaRtWDgS6juENaEnp06
+         orl76bkaBnVXZNTuiEwIQfhN8hQmCQVF3hGV1m7OadaQWlk6hqWPb1ApuOvU5wuvlT45
+         wS2A==
+X-Gm-Message-State: APt69E2Csg3qLoSyHblxVhMXXbJubCS7l4qZwi6dvsrrYLSinry8SIg+
+        bqkACSyxweybFWE7T9nAQ7pZoGnLxrznGOlHWZkEPA==
+X-Google-Smtp-Source: ADUXVKKSgNJ7JEfy9oDwb5eKbaPKNrD6zTGAhuXZppk+bpcS8Qf5PbEqh3IRDRq9iZxKgngUc4APZVnypIUQ5to7WKU=
+X-Received: by 2002:aca:a902:: with SMTP id s2-v6mr2604671oie.72.1529126577161;
+ Fri, 15 Jun 2018 22:22:57 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ac8:184d:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 22:04:13
+Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Fri, 15 Jun 2018 22:22:56
  -0700 (PDT)
-In-Reply-To: <20180612051911.20690-6-benh@kernel.crashing.org>
-References: <20180612051911.20690-1-benh@kernel.crashing.org> <20180612051911.20690-6-benh@kernel.crashing.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Sat, 16 Jun 2018 14:34:13 +0930
-X-Google-Sender-Auth: QJB4BN8AuqrPdoRVyWH9gVqYpa0
-Message-ID: <CACPK8Xcp4gEVOrNdcZhbDx9LU1K6d=tV0vmJ9nLut4Fjwp0Xpg@mail.gmail.com>
-Subject: Re: [RFC PATCH 5/5] fsi/scom: Major overhaul
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc:     OpenBMC Maillist <openbmc@lists.ozlabs.org>,
+In-Reply-To: <1970355c-ebca-7f7d-38f7-ceac1ae553fb@nvidia.com>
+References: <CAFhSwD9RNcsaTNdT-4DiE_BKK6zrsdBbNbGBEkBoJuwQn1JdQA@mail.gmail.com>
+ <CAPcyv4hpjNaUz6qpJ0_Wh1SAz9tS9a5HLsYSgeCh_pNZKfY74A@mail.gmail.com> <1970355c-ebca-7f7d-38f7-ceac1ae553fb@nvidia.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Fri, 15 Jun 2018 22:22:56 -0700
+Message-ID: <CAPcyv4j=LFY31zn7yFXUrsrvzQEz=a92VLOa=Tp46JbGHhC7Xw@mail.gmail.com>
+Subject: Re: OpenAFS module libafs.ko uses GPL-only symbol '__put_devmap_managed_page'
+To:     John Hubbard <jhubbard@nvidia.com>
+Cc:     Joe Gorse <jhgorse@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linux MM <linux-mm@kvack.org>, Christoph Hellwig <hch@lst.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12 June 2018 at 14:49, Benjamin Herrenschmidt
-<benh@kernel.crashing.org> wrote:
-> This was too hard to split ... this adds a number of features
-> to the SCOM user interface:
+On Fri, Jun 15, 2018 at 9:43 PM, John Hubbard <jhubbard@nvidia.com> wrote:
+> On 06/13/2018 12:51 PM, Dan Williams wrote:
+>> [ adding Andrew, Christoph, and linux-mm ]
+>>
+>> On Wed, Jun 13, 2018 at 12:33 PM, Joe Gorse <jhgorse@gmail.com> wrote:
+>>> Greetings,
+>>>
+>>> Please CC answers & comments to this email. Thanks! =)
+>>>
+>>> Our build is breaking as of
+>>> commit e7638488434415aa478e78435cac8f0365737638
+>>> Author: Dan Williams <dan.j.williams@intel.com>
+>>> Date: Wed May 16 11:46:08 2018 -0700
+>>>
+>>> mm: introduce MEMORY_DEVICE_FS_DAX and CONFIG_DEV_PAGEMAP_OPS
+>>> ... snip ...
+>>> https://patchwork.kernel.org/patch/10412459/
+>>>
+>>> We do not directly use the GPL-only symbol '__put_devmap_managed_page'. It
+>>> appears to be picked up from static-inlining in put_page(), which we need.
+>>>
+>>> How shall we proceed? Would it be reasonable to request the change of the
+>>> GPL-only exports for this commit?
+>>>
+>>> Cheers,
+>>> Joe Gorse
+>>>
+>>> P.S. The build failure, for the morbidly curious:
+>>>> FATAL: modpost: GPL-incompatible module libafs.ko uses GPL-only symbol
+>>>> '__put_devmap_managed_page'
+>>>> scripts/Makefile.modpost:92: recipe for target '__modpost' failed
+>>>> make[6]: *** [__modpost] Error 1
+>>
+>> I think the right answer here is to make __put_devmap_managed_page()
+>> EXPORT_SYMBOL(), since features like devm_memremap_pages() want to
+>> change the behavior of all users of put_page(). It again holds that
+>> devm_memremap_pages() needs to become EXPORT_SYMBOL_GPL() because it,
+>> not put_page(), is the interface that is leaking control of core
+>> kernel state/infrastructure to its users.
+>>
 >
->  - Support for indirect SCOMs
+> Hi Dan and all,
 >
->  - read()/write() interface now handle errors and retries
+> It looks like put_page() also picks up one more GPL symbol:
+> devmap_managed_key.
 >
->  - New ioctl() "raw" interface for use by debuggers
+> put_page
+>     put_devmap_managed_page
+>         devmap_managed_key
 >
-> Signed-off-by: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-
-Looks okay to me. I will put it in the openbmc tree with Eddie's ack
-for more testing.
-
-I got a warning from the 0day infra, I made comments below.
-
-We should get Alistair review the ioctl interface to ensure we have
-everything that pdbg might need.
-
-> +++ b/include/uapi/linux/fsi.h
-> @@ -0,0 +1,56 @@
-> +#ifndef _UAPI_LINUX_FSI_H
-> +#define _UAPI_LINUX_FSI_H
-> +
-> +#include <linux/ioctl.h>
-
-This needs to include <linux/types.h> for the __u64 etc types.
-
-We should also put a licence in the header. Probably:
-
-/* SPDX-License-Identifier: GPL-2.0+ WITH Linux-syscall-note */
-
-
-Cheers,
-
-Joel
-
-> +
-> +/*
-> + * /dev/scom "raw" ioctl interface
-> + *
-> + * The driver supports a high level "read/write" interface which
-> + * handles retries and converts the status to Linux error codes,
-> + * however low level tools an debugger need to access the "raw"
-> + * HW status information and interpret it themselves, so this
-> + * ioctl interface is also provided for their use case.
-> + */
-> +
-> +/* Structure for SCOM read/write */
-> +struct scom_access {
-> +       __u64   addr;           /* SCOM address, supports indirect */
-> +       __u64   data;           /* SCOM data (in for write, out for read) */
-> +       __u64   mask;           /* Data mask for writes */
-> +       __u32   intf_errors;    /* Interface error flags */
-> +#define SCOM_INTF_ERR_PARITY           0x00000001 /* Parity error */
-> +#define SCOM_INTF_ERR_PROTECTION       0x00000002 /* Blocked by secure boot */
-> +#define SCOM_INTF_ERR_ABORT            0x00000004 /* PIB reset during access */
-> +#define SCOM_INTF_ERR_UNKNOWN          0x80000000 /* Unknown error */
-> +       /*
-> +        * Note: Any other bit set in intf_errors need to be considered as an
-> +        * error. Future implementations may define new error conditions. The
-> +        * pib_status below is only valid if intf_errors is 0.
-> +        */
-> +       __u8    pib_status;     /* 3-bit PIB status */
-> +#define SCOM_PIB_SUCCESS       0       /* Access successful */
-> +#define SCOM_PIB_BLOCKED       1       /* PIB blocked, pls retry */
-> +#define SCOM_PIB_OFFLINE       2       /* Chiplet offline */
-> +#define SCOM_PIB_PARTIAL       3       /* Partial good */
-> +#define SCOM_PIB_BAD_ADDR      4       /* Invalid address */
-> +#define SCOM_PIB_CLK_ERR       5       /* Clock error */
-> +#define SCOM_PIB_PARITY_ERR    6       /* Parity error on the PIB bus */
-> +#define SCOM_PIB_TIMEOUT       7       /* Bus timeout */
-> +       __u8    pad;
-> +};
-> +
-> +/* Flags for SCOM check */
-> +#define SCOM_CHECK_SUPPORTED   0x00000001      /* Interface supported */
-> +#define SCOM_CHECK_PROTECTED   0x00000002      /* Interface blocked by secure boot */
-> +
-> +/* Flags for SCOM reset */
-> +#define SCOM_RESET_INTF                0x00000001      /* Reset interface */
-> +#define SCOM_RESET_PIB         0x00000002      /* Reset PIB */
-> +
-> +#define FSI_SCOM_CHECK _IOR('s', 0x00, __u32)
-> +#define FSI_SCOM_READ  _IOWR('s', 0x01, struct scom_access)
-> +#define FSI_SCOM_WRITE _IOWR('s', 0x02, struct scom_access)
-> +#define FSI_SCOM_RESET _IOW('s', 0x03, __u32)
-> +
-> +#endif /* _UAPI_LINUX_FSI_H */
-> --
-> 2.17.0
+>     __put_devmap_managed_page
 >
+>
+> So if the goal is to restore put_page() to be effectively EXPORT_SYMBOL
+> again, then I think there would also need to be either a non-inlined
+> wrapper for devmap_managed_key (awkward for a static key), or else make
+> it EXPORT_SYMBOL, or maybe something else that's less obvious to me at the
+> moment.
+
+Right, certainly flipping the key is a kernel internal detail since it
+is giving the dev_pagemap owner purview over all kernel page events,
+but put_page() users are silent consumers. And you're right there's
+currently no good way I see to export the 'producer' and 'consumer'
+side of the key with different export types.
