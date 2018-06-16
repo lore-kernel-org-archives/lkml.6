@@ -6,134 +6,215 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A65DCC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:50:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E53E8C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:52:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 532B120891
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:50:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 75E92208B5
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 15:52:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEBLTMuZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 532B120891
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ja7ikoLi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E92208B5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756884AbeFPPuW (ORCPT
+        id S1756893AbeFPPwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 11:50:22 -0400
-Received: from mail-oi0-f51.google.com ([209.85.218.51]:39245 "EHLO
-        mail-oi0-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754201AbeFPPuU (ORCPT
+        Sat, 16 Jun 2018 11:52:33 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:43142 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754201AbeFPPwa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 11:50:20 -0400
-Received: by mail-oi0-f51.google.com with SMTP id t22-v6so11393126oih.6;
-        Sat, 16 Jun 2018 08:50:19 -0700 (PDT)
+        Sat, 16 Jun 2018 11:52:30 -0400
+Received: by mail-ot0-f196.google.com with SMTP id i19-v6so14172874otk.10;
+        Sat, 16 Jun 2018 08:52:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:sender:in-reply-to:references:from:date:message-id
          :subject:to:cc;
-        bh=ZXGg18g5pPjSRyZDeoTUVX9XCegl+mmO+OHaGdnq0uk=;
-        b=VEBLTMuZsXyWzKCTvg3QYcZSVmm624ACetQ73ZVzuf4qRSpz9X5PLi7zvzlLOmy+/v
-         qzhXpC8nSYfX8/8+RFESzZfFaVxHlRxm/w6ph8DYxje9CPuXSAPg5Q4BhrBj4lhdLeKX
-         9xRl9x3kphldHog2QL++H6Wl12vQPsaFt/PzxVCzaXWuUz+4qOfQ/H6HHPudv+7X3ccy
-         DBW4hGD+wwDjNHPsZNqQDhGhAJY2ss4Rrli4MrALaQrDNsbBzPbA8mAuVDfZoTPBGgIP
-         haCWFnzrbo89mz8K9OrirFSvCGRkSWG0Uvs/muVZdoG/CP8jXmVEL5QdZGW2PGsVCi9P
-         fIDA==
+        bh=YDO4vdgLSxBiJM8N5ohdi/1VH3OLIR4x97zll5GqT50=;
+        b=Ja7ikoLiKVumhlX8eaGM4sxIfOAehhUGJGuoKiERowqkq9hKM8MylFEzB5kQ3xRnSW
+         5qBmDeRkXxpQQG4wQDmbGA5TDq/udVLxMzTRzzgO8IcRC+7B0AsF392oPDHH9OdALuLd
+         nUTWnpznt8uFTFYGk4f3rUnRl2Dcg7pGSRRSxHNUEgKGHyNwMs7PiBqpZ63KcQded0pt
+         97dzy/DeWqc+NHCBqx2WfbxLoiA0TzeYp2XUJmklkuCN2Za3x+Qe5x0OU/ZPtZMaezcf
+         IEkZZY4ZtCm5EkA3+Gpulkc/8pCQQfPcJbIzUgyqFC5mF2thEf5+iVmT6H2gNVi+dsQ/
+         aOQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
          :date:message-id:subject:to:cc;
-        bh=ZXGg18g5pPjSRyZDeoTUVX9XCegl+mmO+OHaGdnq0uk=;
-        b=f8UGrA2Dr2dzggrPRa/cO1HqRukTO9fHXO6tH2jO2JDkpvDfyoAzvQ5h26TPv6lKlO
-         MHzjZOf52Cb8heo0F0AKoV5bkxrN/f8YF7Pu6GVGvbWN4LBpN98SRmmRJ1Np66w8DEof
-         zEgYQ384CEi98NGgc50h9xqnz+XnXMyfCsfuu0MhJdXgXIHIMGBk62p1irJRFoGgnDff
-         it8dk/AJ67KZTk2SaNbhaVUF/Nck9VBv1ZihU+Y346zRdouixdABoPmC0Fdoa2ohnwta
-         BsUJjovnxvySnxAcKsAVX6BieNod0uqNYwzKsk2f+wb1uuxpk0g6cZa62Qfkv5bMGHLL
-         xZBg==
-X-Gm-Message-State: APt69E1A5cZs6uziKAyKSw4N/mynSjP90Xv6PALRpMBJTdlOu+oa3/tm
-        7Nwv90uAiX4mOPNzVWIp7oUP7+SLSbVhQIDZi/8=
-X-Google-Smtp-Source: ADUXVKKFzqJI9IsUsLn0w/u+xtwF+GvU1WwmMkeBkOhG3tYswZlYc9LRQu+r0B3eHDj5XdTBZ8oaQZ0LVFR8YUZdR9E=
-X-Received: by 2002:aca:5bc6:: with SMTP id p189-v6mr3592943oib.116.1529164219309;
- Sat, 16 Jun 2018 08:50:19 -0700 (PDT)
+        bh=YDO4vdgLSxBiJM8N5ohdi/1VH3OLIR4x97zll5GqT50=;
+        b=oK2ut2zpe4lNuOAR7o8ajKt8kqNPEs7rBSdo38D1v9im2D8e8gPcIHOLnR0tHZ2VZV
+         PeLBMDQY7vl3+VX3ofGgdyXJqCOYfKx/x0M2+HMuTSqKfzY/SF0NngcmYRSZ2aDEjHDk
+         bG6SwRt5puNoK18twJRGED6nkkTG7AHqsXhCDi0NgUyu+bv6xrKZV6w6MwArdFDhQFpJ
+         qU9PCQ8MxVVCRm4v2jb7AXRFmfWpJg4E5Hxb2oof9hBNMMdfF2LKPMncPFMpDPuvJbei
+         J70Rx80bqPrM6lqZRFkW+R4bszTZAGMXw93mKE71U+KSPgqrgsjXZwXp3XoPdN3osgQO
+         JVaQ==
+X-Gm-Message-State: APt69E15DyyxfEoQnkVCF8vdEXWutbaTSvKfvSeWhxH4TFSc8W/YxT9v
+        gry+d5lJzbSK24NL+V5H/oqOp4TSmbU0MLVMl8g=
+X-Google-Smtp-Source: ADUXVKIUktA10eenpVtT9YE8b89/030xRoIo9hjHCUc+T/u2vSGOzycJuwC7p5ST1+zGL5inr2RVrLhOjTC59u1Zx4Y=
+X-Received: by 2002:a9d:55d7:: with SMTP id z23-v6mr3943162oti.271.1529164349982;
+ Sat, 16 Jun 2018 08:52:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Sat, 16 Jun 2018 08:50:18
+Received: by 2002:a9d:1429:0:0:0:0:0 with HTTP; Sat, 16 Jun 2018 08:52:29
  -0700 (PDT)
-In-Reply-To: <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
-References: <CABe79T6zQ_7Ycws5b=xaQ3edpVn1QPQyWd9p24eqLGpYbdtt0A@mail.gmail.com>
- <CAHp75VdSW1po7fVv+A6ATTU7CkN-4nQ1haQSCq7b_+ZR9tNXCQ@mail.gmail.com>
- <CAJZ5v0iJcTg=X_j-4nap9d_H4jq2rwOETT8Sukx6UL5UsDKjgA@mail.gmail.com> <152908459103.16708.4012421602830600322@swboyd.mtv.corp.google.com>
+In-Reply-To: <041e7a803fc0e5c5dfc1fb8b2f761074ca0baa2c.1529079120.git.mchehab+samsung@kernel.org>
+References: <cover.1529079119.git.mchehab+samsung@kernel.org> <041e7a803fc0e5c5dfc1fb8b2f761074ca0baa2c.1529079120.git.mchehab+samsung@kernel.org>
 From:   "Rafael J. Wysocki" <rafael@kernel.org>
-Date:   Sat, 16 Jun 2018 17:50:18 +0200
-X-Google-Sender-Auth: kRGg-iVx55l3k5aqgemkFTJTEro
-Message-ID: <CAJZ5v0gA76NwwgRnuztY+dUOKXS+__-7Ghw7Azb-84h_eMRt4w@mail.gmail.com>
-Subject: Re: ACPI support in common clock framework
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "Rafael J. Wysocki" <rafael@kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Srinath Mannam <srinath.mannam@broadcom.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
+Date:   Sat, 16 Jun 2018 17:52:29 +0200
+X-Google-Sender-Auth: cZ0-985e1RM50MFNeUnKMiqDD_c
+Message-ID: <CAJZ5v0gVBxDZnNXG4Kf9M0wMwR1R97kg6uNmAYi5Rf-5kPBNQQ@mail.gmail.com>
+Subject: Re: [PATCH v4 26/26] fix a series of Documentation/ broken file name references
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Linux Doc Mailing List <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mauro Carvalho Chehab <mchehab@infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
+        Harry Wei <harryxiyou@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Luis de Bethencourt <luisbg@kernel.org>,
+        Salah Triki <salah.triki@gmail.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        linux-kernel@zh-kernel.org, dmaengine <dmaengine@vger.kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        sparclinux@vger.kernel.org, devel@lists.orangefs.org,
+        Linux PM <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 7:43 PM, Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Rafael J. Wysocki (2018-06-13 01:27:39)
->> On Wed, Jun 13, 2018 at 10:13 AM, Andy Shevchenko
->> <andy.shevchenko@gmail.com> wrote:
->> > +Cc: Rafael, ACPI ML
->> >
->> > On Wed, Jun 13, 2018 at 7:14 AM, Srinath Mannam
->> > <srinath.mannam@broadcom.com> wrote:
->> >> Hi Michael, Stephen,
->> >>
->> >> We are adding ACPI support in our Linux based platform.
->> >> At present our clock hierarchy using common clock framework through DTS.
->> >> Now we required ACPI support in common clock framework to upgrade our platform.
->> >>
->> >> For example, clk_get API called in many drivers to get clock device is
->> >> tightly coupled with DT framework.
->> >>
->> >> Please let us know, if anybody in Open Source community have plans to
->> >> add ACPI support for common clock framework.
->>
->> There are no plans for doing that AFAICS.
->>
->> Moreover, it generally would not be consistent with ACPI power
->> management defined by the specification.
+On Fri, Jun 15, 2018 at 6:30 PM, Mauro Carvalho Chehab
+<mchehab+samsung@kernel.org> wrote:
+> As files move around, their previous links break. Fix the
+> references for them.
 >
-> This matches my understanding.
+> Acked-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> ---
+>  Documentation/translations/zh_CN/io_ordering.txt | 2 +-
+>  drivers/dma/dmaengine.c                          | 2 +-
+>  drivers/platform/x86/Kconfig                     | 2 +-
+>  drivers/sbus/char/oradax.c                       | 2 +-
+>  fs/befs/ChangeLog                                | 2 +-
+>  fs/orangefs/orangefs-sysfs.c                     | 2 +-
+>  include/linux/platform_data/sc18is602.h          | 2 +-
+>  kernel/power/main.c                              | 5 +++--
+>  8 files changed, 10 insertions(+), 9 deletions(-)
 >
->>
->> >> If not please suggest us alternative method to use common clock
->> >> framework in ACPI use case.
->>
->> The problem with using the clock framework on systems with ACPI is
->> that, in general, the clock manipulation is expected to be carried out
->> by ACPI power management and therefore it is "owned" by AML.
->> Currently, there are no defined methods for synchronizing the AML's
->> use of clocks for power management with what the OS may do with them
->> directly.
->>
->> In theory, that can be worked around to some extent by representing
->> clocks as power resources in ASL (even though the provider information
->> would be missing then) and manipulating those power resources directly
->> from the OS.  I'm not aware of anyone doing that successfully,
->> however.
->>
->> For simple power management it should be sufficient to let drivers
->> rely on the ACPI PM domain which should happen automatically in the
->> majority of cases anyway.
->>
+> diff --git a/Documentation/translations/zh_CN/io_ordering.txt b/Documentation/translations/zh_CN/io_ordering.txt
+> index e592daf4e014..1f8127bdd415 100644
+> --- a/Documentation/translations/zh_CN/io_ordering.txt
+> +++ b/Documentation/translations/zh_CN/io_ordering.txt
+> @@ -1,4 +1,4 @@
+> -Chinese translated version of Documentation/io_orderings.txt
+> +Chinese translated version of Documentation/io_ordering.txt
 >
-> Is this for clk_enable/disable? What about clk_set_rate() or
-> clk_set_phase()? Is ACPI's AML taking care of that?
+>  If you have any comment or update to the content, please contact the
+>  original document maintainer directly.  However, if you have a problem
+> diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+> index b451354735d3..08ba8473a284 100644
+> --- a/drivers/dma/dmaengine.c
+> +++ b/drivers/dma/dmaengine.c
+> @@ -38,7 +38,7 @@
+>   * Each device has a channels list, which runs unlocked but is never modified
+>   * once the device is registered, it's just setup by the driver.
+>   *
+> - * See Documentation/dmaengine.txt for more details
+> + * See Documentation/driver-api/dmaengine for more details
+>   */
+>
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index f27cb186437d..ac4d48830415 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -1052,7 +1052,7 @@ config SAMSUNG_LAPTOP
+>           function keys, wireless LED, LCD backlight level.
+>
+>           It may also provide some sysfs files described in
+> -         <file:Documentation/ABI/testing/sysfs-platform-samsung-laptop>
+> +         <file:Documentation/ABI/testing/sysfs-driver-samsung-laptop>
+>
+>           To compile this driver as a module, choose M here: the module
+>           will be called samsung-laptop.
+> diff --git a/drivers/sbus/char/oradax.c b/drivers/sbus/char/oradax.c
+> index 1754f55e2fac..524f9ea62e52 100644
+> --- a/drivers/sbus/char/oradax.c
+> +++ b/drivers/sbus/char/oradax.c
+> @@ -30,7 +30,7 @@
+>   * the recommended way for applications to use the coprocessor, and
+>   * the driver interface is not intended for general use.
+>   *
+> - * See Documentation/sparc/oradax/oracle_dax.txt for more details.
+> + * See Documentation/sparc/oradax/oracle-dax.txt for more details.
+>   */
+>
+>  #include <linux/uaccess.h>
+> diff --git a/fs/befs/ChangeLog b/fs/befs/ChangeLog
+> index 16f2dfe8c2f7..aff7eec8f327 100644
+> --- a/fs/befs/ChangeLog
+> +++ b/fs/befs/ChangeLog
+> @@ -389,7 +389,7 @@ Version 0.4 (2001-10-28)
+>         (fs/nls/Config.in)
+>
+>  * Added Configure.help entries for CONFIG_BEFS_FS and CONFIG_DEBUG_BEFS
+> -       (Documentation/Configure.help)
+> +       (currently at fs/befs/Kconfig)
+>
+>  2001-08-??
+>  ==========
+> diff --git a/fs/orangefs/orangefs-sysfs.c b/fs/orangefs/orangefs-sysfs.c
+> index 079a465796f3..dd28079f518c 100644
+> --- a/fs/orangefs/orangefs-sysfs.c
+> +++ b/fs/orangefs/orangefs-sysfs.c
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  /*
+> - * Documentation/ABI/stable/orangefs-sysfs:
+> + * Documentation/ABI/stable/sysfs-fs-orangefs:
+>   *
+>   * What:               /sys/fs/orangefs/perf_counter_reset
+>   * Date:               June 2015
+> diff --git a/include/linux/platform_data/sc18is602.h b/include/linux/platform_data/sc18is602.h
+> index 997b06634152..18602cab7799 100644
+> --- a/include/linux/platform_data/sc18is602.h
+> +++ b/include/linux/platform_data/sc18is602.h
+> @@ -7,7 +7,7 @@
+>   * it under the terms of the GNU General Public License version 2 as
+>   * published by the Free Software Foundation.
+>   *
+> - * For further information, see the Documentation/spi/sc18is602 file.
+> + * For further information, see the Documentation/spi/spi-sc18is602 file.
+>   */
+>
+>  /**
+> diff --git a/kernel/power/main.c b/kernel/power/main.c
+> index 705c2366dafe..d9706da10930 100644
+> --- a/kernel/power/main.c
+> +++ b/kernel/power/main.c
+> @@ -455,8 +455,9 @@ struct kobject *power_kobj;
+>   * state - control system sleep states.
+>   *
+>   * show() returns available sleep state labels, which may be "mem", "standby",
+> - * "freeze" and "disk" (hibernation).  See Documentation/power/states.txt for a
+> - * description of what they mean.
+> + * "freeze" and "disk" (hibernation).
+> + * See Documentation/admin-guide/pm/sleep-states.rst for a description of
+> + * what they mean.
 
-That's for clk_enable/disable AFAICS.
+Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-AML doesn't manage device performance states at all.
+for the PM part above.
+
+>   *
+>   * store() accepts one of those strings, translates it into the proper
+>   * enumerated value, and initiates a suspend transition.
+> --
