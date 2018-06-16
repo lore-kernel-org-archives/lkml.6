@@ -2,144 +2,125 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C99C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 17:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB63C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 17:49:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F1B420895
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 17:47:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C6540208B5
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 17:49:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="PQ6FIkq6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1B420895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6PylhoE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6540208B5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932723AbeFPRrn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 13:47:43 -0400
-Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:55268 "EHLO
-        mx0b-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S932337AbeFPRrm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 13:47:42 -0400
-Received: from pps.filterd (m0109331.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5GHgfpr006163
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 10:47:42 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : subject :
- date : message-id : mime-version : content-type :
- content-transfer-encoding; s=facebook;
- bh=gSboO0QZwW0cTrQWKJCn64eZTeMkX9zF19fgpPudVr8=;
- b=PQ6FIkq6eqViTLrBCjP9DsMbbGDWlBVuh9wTnV+O4wbIsFLlIKt3PJGvPpoWTex42c21
- 0AqWflYxDe/Iz3m1XfhjOR/FbMdpYuU72llFBVweTrFrDcdWkJYuFNlDIScMA43koEv7
- lr92DBXRkH4G7J4tdBnhjRzczeqCyySNiHw= 
-Received: from mail.thefacebook.com ([199.201.64.23])
-        by mx0a-00082601.pphosted.com with ESMTP id 2jn0cm0m1k-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 10:47:42 -0700
-Received: from mx-out.facebook.com (192.168.52.123) by mail.thefacebook.com
- (192.168.16.24) with Microsoft SMTP Server (TLS) id 14.3.361.1; Sat, 16 Jun
- 2018 10:47:40 -0700
-Received: by devbig003.ftw2.facebook.com (Postfix, from userid 128203)  id
- D7DB83701240; Sat, 16 Jun 2018 10:47:39 -0700 (PDT)
-Smtp-Origin-Hostprefix: devbig
-From:   Yonghong Song <yhs@fb.com>
-Smtp-Origin-Hostname: devbig003.ftw2.facebook.com
-To:     <acme@redhat.com>, <wangnan0@huawei.com>, <jolsa@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <ast@fb.com>, <kafai@fb.com>,
-        <daniel@iogearbox.net>
-Smtp-Origin-Cluster: ftw2c04
-Subject: [PATCH] tools/perf: fix a clang 7.0 compilation error
-Date:   Sat, 16 Jun 2018 10:47:39 -0700
-Message-ID: <20180616174739.1076733-1-yhs@fb.com>
-X-Mailer: git-send-email 2.9.5
+        id S932870AbeFPRtR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 13:49:17 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S932439AbeFPRtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 13:49:15 -0400
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D895420895;
+        Sat, 16 Jun 2018 17:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529171355;
+        bh=Xne0yNIzpZIG/KW4aSXXkC7aAskB7qqwOUBcs0NFu7U=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=G6PylhoE4HSevwrGSt47QCUhB0zSTIy9vLvwRCfMfqO6UeI1hysY4ccWpUSzy3Vwl
+         pI4Hzw5wiaCV2g7yRWDdCFq0PBFqni51TMgLEc8nMQZ9ewHKtP6rfVWQmNV/JJA0Ke
+         2fVCs5ovnOGNfhLLe4fFkbAMGJGrl8lkNZpuoQF4=
+Date:   Sat, 16 Jun 2018 18:49:07 +0100
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Stefan Popa <stefan.popa@analog.com>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald <pmeerw@pmeerw.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, linux-iio@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] dt-bindings: iio: dac: Add docs for AD5758 DAC
+Message-ID: <20180616184907.5831c24a@archlinux>
+In-Reply-To: <CACRpkda5T-nUMoJKUUUDmC_MvQPs=ZP3W3ZwkgfpjozxtrHuoQ@mail.gmail.com>
+References: <1528377065-647-1-git-send-email-stefan.popa@analog.com>
+        <CACRpkda5T-nUMoJKUUUDmC_MvQPs=ZP3W3ZwkgfpjozxtrHuoQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-16_09:,,
- signatures=0
-X-Proofpoint-Spam-Reason: safe
-X-FB-Internal: Safe
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Arnaldo reported the perf build failure with latest llvm/clang
-compiler (7.0).
+On Mon, 11 Jun 2018 10:42:35 +0200
+Linus Walleij <linus.walleij@linaro.org> wrote:
 
-   $ make LIBCLANGLLVM=3D1 -C tools/perf/
-   <SNIP>
-    CC       /tmp/tmp.t53Qo38zci/tests/kmod-path.o
-   util/c++/clang.cpp: In function =E2=80=98std::unique_ptr<llvm::SmallVe=
-ctorImpl<char> >
-       perf::getBPFObjectFromModule(llvm::Module*)=E2=80=99:
-   util/c++/clang.cpp:150:43: error: no matching function for call to
-       =E2=80=98llvm::TargetMachine::addPassesToEmitFile(llvm::legacy::Pa=
-ssManager&,
-        llvm::raw_svector_ostream&, llvm::TargetMachine::CodeGenFileType)=
-=E2=80=99
-               TargetMachine::CGFT_ObjectFile)) {
-                                             ^
-   In file included from util/c++/clang.cpp:25:0:
-   /usr/local/include/llvm/Target/TargetMachine.h:254:16: note: candidate=
-:
-       virtual bool llvm::TargetMachine::addPassesToEmitFile(
-       llvm::legacy::PassManagerBase&, llvm::raw_pwrite_stream&,
-       llvm::raw_pwrite_stream*, llvm::TargetMachine::CodeGenFileType, bo=
-ol,
-       llvm::MachineModuleInfo*)
-     virtual bool addPassesToEmitFile(PassManagerBase &, raw_pwrite_strea=
-m &,
-                  ^~~~~~~~~~~~~~~~~~~
-  /usr/local/include/llvm/Target/TargetMachine.h:254:16: note:
-      candidate expects 6 arguments, 3 provided
-  mv: cannot stat '/tmp/tmp.t53Qo38zci/util/c++/.clang.o.tmp': No such fi=
-le or directory
-  make[7]: *** [/home/acme/git/perf/tools/build/Makefile.build:101:
-      /tmp/tmp.t53Qo38zci/util/c++/clang.o] Error 1
-  make[6]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: c++] =
-Error 2
-  make[5]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: util]=
- Error 2
-  make[5]: *** Waiting for unfinished jobs....
-    CC       /tmp/tmp.t53Qo38zci/tests/thread-map.o
+> On Thu, Jun 7, 2018 at 3:11 PM, Stefan Popa <stefan.popa@analog.com> wrote:
+> 
+> > + - adi,slew: Array of slewrate settings should contain 3 fields:
+> > +       1: Should be either 0 or 1 in order to enable or disable slewrate.  
+> 
+> We have a standard binding in pin control for "slew-rate".
+> 
+> It doesn't have a unit today though.
+> 
+> > +       2: Slew rate clock:
+> > +               Valid values for the slew rate update frequency [Hz]:
+> > +               * 240000
+> > +               * 200000
+> > +               * 150000
+> > +               * 128000
+> > +               * 64000
+> > +               * 32000
+> > +               * 16000
+> > +               * 8000
+> > +               * 4000
+> > +               * 2000
+> > +               * 1000
+> > +               * 512
+> > +               * 256
+> > +               * 128
+> > +               * 64
+> > +               * 16
+> > +       3: Slew rate step:
+> > +               Defines by how much the output value changes at each update.
+> > +               Valid values for the step size LSBs:
+> > +               * 4
+> > +               * 12
+> > +               * 64
+> > +               * 120
+> > +               * 256
+> > +               * 500
+> > +               * 1820
+> > +               * 2048  
+> 
+> This is pretty idiomatic and just encodes the configuration fields from the
+> hardware into the device tree.
+> 
+> The normal slew rate unit is Volts per microsecond.
+> 
+> I get the feeling that we could define that simply, and then calculate
+> the slew rate clock and step using that to find the best match for
+> a certain slew rate.
+> 
+> Yours,
+> Linus Walleij
+Agreed. A single value would be nice if possible.
 
-The function addPassesToEmitFile signature changed in llvm 7.0 and such
-a change caused the failure. This patch fixed the issue with using
-proper function signatures under different compiler versions.
-
-Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Yonghong Song <yhs@fb.com>
----
- tools/perf/util/c++/clang.cpp | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/c++/clang.cpp b/tools/perf/util/c++/clang.cp=
-p
-index bf31cea..8951250 100644
---- a/tools/perf/util/c++/clang.cpp
-+++ b/tools/perf/util/c++/clang.cpp
-@@ -146,8 +146,15 @@ getBPFObjectFromModule(llvm::Module *Module)
- 	raw_svector_ostream ostream(*Buffer);
-=20
- 	legacy::PassManager PM;
--	if (TargetMachine->addPassesToEmitFile(PM, ostream,
--					       TargetMachine::CGFT_ObjectFile)) {
-+	bool NotAdded;
-+#if CLANG_VERSION_MAJOR < 7
-+	NotAdded =3D TargetMachine->addPassesToEmitFile(PM, ostream,
-+						      TargetMachine::CGFT_ObjectFile);
-+#else
-+	NotAdded =3D TargetMachine->addPassesToEmitFile(PM, ostream, nullptr,
-+						      TargetMachine::CGFT_ObjectFile);
-+#endif
-+	if (NotAdded) {
- 		llvm::errs() << "TargetMachine can't emit a file of this type\n";
- 		return std::unique_ptr<llvm::SmallVectorImpl<char>>(nullptr);;
- 	}
---=20
-2.9.5
+J
 
