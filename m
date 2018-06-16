@@ -6,53 +6,53 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32958C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB35DC433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 20:20:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5752088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 19:58:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10E80208AF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 20:20:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="sjpnVDdr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC5752088E
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lhu9tN5O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10E80208AF
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933145AbeFPT6X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 15:58:23 -0400
-Received: from mail.efficios.com ([167.114.142.138]:51998 "EHLO
+        id S933079AbeFPUUh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 16:20:37 -0400
+Received: from mail.efficios.com ([167.114.142.138]:53940 "EHLO
         mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932667AbeFPT6U (ORCPT
+        with ESMTP id S932554AbeFPUUe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 15:58:20 -0400
+        Sat, 16 Jun 2018 16:20:34 -0400
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id EA8A41AD14F;
-        Sat, 16 Jun 2018 15:58:19 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTP id 1081E1AD662;
+        Sat, 16 Jun 2018 16:20:34 -0400 (EDT)
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id z1zhG3xeiwiS; Sat, 16 Jun 2018 15:58:19 -0400 (EDT)
+        with ESMTP id LnAYrlEjVhV4; Sat, 16 Jun 2018 16:20:32 -0400 (EDT)
 Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 3C7AC1AD14C;
-        Sat, 16 Jun 2018 15:58:19 -0400 (EDT)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com 3C7AC1AD14C
+        by mail.efficios.com (Postfix) with ESMTP id D37FB1AD65D;
+        Sat, 16 Jun 2018 16:20:32 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com D37FB1AD65D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1529179099;
-        bh=/7IkQzguAs8FhhRceIaus2OoUp8oDsXih+G+gmFuMFw=;
+        s=default; t=1529180432;
+        bh=YMwjhGfL5TbbSDYTVCSkBW8k9LlUjO4Q638FR6qXUIs=;
         h=From:To:Date:Message-Id;
-        b=sjpnVDdrgfoNrUAYqKp/r61g+5SCcDK/6M/9tQvsJ7VuNnm/5Z6wHCLyGsMZtsgj6
-         UIlUASIY7QDmWW5liJhNLcqJj+oaKYeMhJZlF+nR17rcG0P6o6ogO0lVUyc0svO+8R
-         PlihLvZrnhaoT6RbxILj581Z0k31MVjFtUgwtfBZuIy5vmo+HQ+Ky/JRfej/0L7fCW
-         LwxJDTW9IUV05tbKB17EQDXbBEwj0pBq+m/kur5QD0In7iBNNvO/P6A8v6WMTgP827
-         0g6/W0Tj8BroVpdTDTLuZZKXNOPq1HkPwe/d640oRKCwJNuoVFhetx26kstfNY9M1i
-         82hNhm0gbI+pA==
+        b=lhu9tN5ObIhGJ4Hzz/CaS1PzsKJoR7esz5J9php2bZuU33CF1dkz/lUufdMtq4N3f
+         l3Sfk4eWfyvqrikQvhH2aoU783XB9OVHujPo9z624ykkhZQFO1cypAbateVqc+Mnvv
+         yyByPjK9xi7HYYhAqHnBP5jwFtLQrVYi/rrDu7imnUpk8hA+8Yitx9EVjXORYdZuYZ
+         UNNwE/PXZ95UmImPrZ/SG3lVyGOptfmtVlQvTQp2ZmjYzg7v0DqrtJkxgDtLSIU73Y
+         Dn6vHkkMSk32izkFPp3dd4KTeTk88/tfSwoxJ5plefiDvTSKpsnrOQGgqBuW3VRMom
+         K5xkDIqds7kAw==
 X-Virus-Scanned: amavisd-new at efficios.com
 Received: from mail.efficios.com ([IPv6:::1])
         by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id oXVXf6goEiu4; Sat, 16 Jun 2018 15:58:19 -0400 (EDT)
+        with ESMTP id yus46nI0XdfV; Sat, 16 Jun 2018 16:20:32 -0400 (EDT)
 Received: from thinkos.etherlink (192-222-157-41.qc.cable.ebox.net [192.222.157.41])
-        by mail.efficios.com (Postfix) with ESMTPSA id 1390C1AD147;
-        Sat, 16 Jun 2018 15:58:18 -0400 (EDT)
+        by mail.efficios.com (Postfix) with ESMTPSA id 875851AD658;
+        Sat, 16 Jun 2018 16:20:31 -0400 (EDT)
 From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Michael Kerrisk <mtk.manpages@gmail.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Peter Zijlstra <peterz@infradead.org>,
         "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>,
@@ -61,9 +61,8 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Dave Watson <davejwatson@fb.com>, Paul Turner <pjt@google.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Russell King <linux@arm.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andrew Hunter <ahh@google.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
         Andi Kleen <andi@firstfloor.org>, Chris Lameter <cl@linux.com>,
         Ben Maurer <bmaurer@fb.com>,
         Steven Rostedt <rostedt@goodmis.org>,
@@ -71,321 +70,76 @@ Cc:     linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Will Deacon <will.deacon@arm.com>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: [RFC PATCH man-pages] Add rseq manpage
-Date:   Sat, 16 Jun 2018 15:58:03 -0400
-Message-Id: <20180616195803.29877-1-mathieu.desnoyers@efficios.com>
+        Michael Kerrisk <mtk.manpages@gmail.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Shuah Khan <shuahkh@osg.samsung.com>,
+        linux-kselftest@vger.kernel.org
+Subject: [RFC PATCH for 4.18] rseq: cleanup: no need to abort rseq c.s. in child on fork
+Date:   Sat, 16 Jun 2018 16:20:13 -0400
+Message-Id: <20180616202013.32354-1-mathieu.desnoyers@efficios.com>
 X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-CC: "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-CC: Peter Zijlstra <peterz@infradead.org>
-CC: Paul Turner <pjt@google.com>
-CC: Thomas Gleixner <tglx@linutronix.de>
-CC: Andrew Hunter <ahh@google.com>
-CC: Andy Lutomirski <luto@amacapital.net>
-CC: Andi Kleen <andi@firstfloor.org>
-CC: Dave Watson <davejwatson@fb.com>
-CC: Chris Lameter <cl@linux.com>
-CC: Ingo Molnar <mingo@redhat.com>
-CC: "H. Peter Anvin" <hpa@zytor.com>
-CC: Ben Maurer <bmaurer@fb.com>
-CC: Steven Rostedt <rostedt@goodmis.org>
-CC: Josh Triplett <josh@joshtriplett.org>
-CC: Linus Torvalds <torvalds@linux-foundation.org>
-CC: Andrew Morton <akpm@linux-foundation.org>
-CC: Russell King <linux@arm.linux.org.uk>
-CC: Catalin Marinas <catalin.marinas@arm.com>
-CC: Will Deacon <will.deacon@arm.com>
-CC: Michael Kerrisk <mtk.manpages@gmail.com>
-CC: Boqun Feng <boqun.feng@gmail.com>
-CC: linux-api@vger.kernel.org
----
- man2/rseq.2 | 271 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 271 insertions(+)
- create mode 100644 man2/rseq.2
+Considering that we explicitly forbid system calls in rseq critical
+sections, it is not valid to issue a fork or clone system call within a
+rseq critical section, so rseq_fork() is not required to restart an
+active rseq c.s. in the child process.
 
-diff --git a/man2/rseq.2 b/man2/rseq.2
-new file mode 100644
-index 000000000..ab2519f82
---- /dev/null
-+++ b/man2/rseq.2
-@@ -0,0 +1,271 @@
-+.\" Copyright 2015-2017 Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-+.\"
-+.\" %%%LICENSE_START(VERBATIM)
-+.\" Permission is granted to make and distribute verbatim copies of this
-+.\" manual provided the copyright notice and this permission notice are
-+.\" preserved on all copies.
-+.\"
-+.\" Permission is granted to copy and distribute modified versions of this
-+.\" manual under the conditions for verbatim copying, provided that the
-+.\" entire resulting derived work is distributed under the terms of a
-+.\" permission notice identical to this one.
-+.\"
-+.\" Since the Linux kernel and libraries are constantly changing, this
-+.\" manual page may be incorrect or out-of-date.  The author(s) assume no
-+.\" responsibility for errors or omissions, or for damages resulting from
-+.\" the use of the information contained herein.  The author(s) may not
-+.\" have taken the same level of care in the production of this manual,
-+.\" which is licensed free of charge, as they might when working
-+.\" professionally.
-+.\"
-+.\" Formatted or processed versions of this manual, if unaccompanied by
-+.\" the source, must acknowledge the copyright and authors of this work.
-+.\" %%%LICENSE_END
-+.\"
-+.TH RSEQ 2 2018-06-16 "Linux" "Linux Programmer's Manual"
-+.SH NAME
-+rseq \- Restartable sequences and cpu number cache
-+.SH SYNOPSIS
-+.nf
-+.B #include <linux/rseq.h>
-+.sp
-+.BI "int rseq(struct rseq * " rseq ", uint32_t " rseq_len ", int " flags ", uint32_t " sig ");
-+.sp
-+.SH DESCRIPTION
-+The
-+.BR rseq ()
-+ABI accelerates user-space operations on per-cpu data by defining a
-+shared data structure ABI between each user-space thread and the kernel.
-+
-+It allows user-space to perform update operations on per-cpu data
-+without requiring heavy-weight atomic operations.
-+
-+The term CPU used in this documentation refers to a hardware execution
-+context.
-+
-+Restartable sequences are atomic with respect to preemption (making it
-+atomic with respect to other threads running on the same CPU), as well
-+as signal delivery (user-space execution contexts nested over the same
-+thread).
-+
-+It is suited for update operations on per-cpu data.
-+
-+It can be used on data structures shared between threads within a
-+process, and on data structures shared between threads across different
-+processes.
-+
-+.PP
-+Some examples of operations that can be accelerated or improved
-+by this ABI:
-+.IP \[bu] 2
-+Memory allocator per-cpu free-lists,
-+.IP \[bu] 2
-+Querying the current CPU number,
-+.IP \[bu] 2
-+Incrementing per-CPU counters,
-+.IP \[bu] 2
-+Modifying data protected by per-CPU spinlocks,
-+.IP \[bu] 2
-+Inserting/removing elements in per-CPU linked-lists,
-+.IP \[bu] 2
-+Writing/reading per-CPU ring buffers content.
-+.IP \[bu] 2
-+Accurately reading performance monitoring unit counters
-+with respect to thread migration.
-+
-+.PP
-+Restartable sequences must not perform system calls. Doing so may result
-+in termination of the process by a segmentation fault.
-+
-+.PP
-+The
-+.I rseq
-+argument is a pointer to the thread-local rseq structure to be shared
-+between kernel and user-space.
-+
-+.PP
-+The layout of
-+.B struct rseq
-+is as follows:
-+.TP
-+.B Structure alignment
-+This structure is aligned on multiples of 32 bytes.
-+.TP
-+.B Structure size
-+This structure is extensible. Its size is passed as parameter to the
-+rseq system call.
-+.TP
-+.B Fields
-+
-+.TP
-+.in +4n
-+.I cpu_id_start
-+Optimistic cache of the CPU number on which the current thread is
-+running. Its value is guaranteed to always be a possible CPU number,
-+even when rseq is not initialized. The value it contains should always
-+be confirmed by reading the cpu_id field.
-+.in
-+.TP
-+.in +4n
-+.I cpu_id
-+Cache of the CPU number on which the current thread is running.
-+-1 if uninitialized.
-+.in
-+.TP
-+.in +4n
-+.I rseq_cs
-+The rseq_cs field is a pointer to a struct rseq_cs. Is is NULL when no
-+rseq assembly block critical section is active for the current thread.
-+Setting it to point to a critical section descriptor (struct rseq_cs)
-+marks the beginning of the critical section.
-+.in
-+.TP
-+.in +4n
-+.I flags
-+Flags indicating the restart behavior for the current thread. This is
-+mainly used for debugging purposes. Can be either:
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
-+.in
-+
-+.PP
-+The layout of
-+.B struct rseq_cs
-+version 0 is as follows:
-+.TP
-+.B Structure alignment
-+This structure is aligned on multiples of 32 bytes.
-+.TP
-+.B Structure size
-+This structure has a fixed size of 32 bytes.
-+.TP
-+.B Fields
-+
-+.TP
-+.in +4n
-+.I version
-+Version of this structure.
-+.in
-+.TP
-+.in +4n
-+.I flags
-+Flags indicating the restart behavior of this structure. Can be
-+either:
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_PREEMPT
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_SIGNAL
-+.IP \[bu]
-+RSEQ_CS_FLAG_NO_RESTART_ON_MIGRATE
-+.TP
-+.in +4n
-+.I start_ip
-+Instruction pointer address of the first instruction of the sequence of
-+consecutive assembly instructions.
-+.in
-+.TP
-+.in +4n
-+.I post_commit_offset
-+Offset (from start_ip address) of the address after the last instruction
-+of the sequence of consecutive assembly instructions.
-+.in
-+.TP
-+.in +4n
-+.I abort_ip
-+Instruction pointer address where to move the execution flow in case of
-+abort of the sequence of consecutive assembly instructions.
-+.in
-+
-+.PP
-+The
-+.I rseq_len
-+argument is the size of the
-+.I struct rseq
-+to register.
-+
-+.PP
-+The
-+.I flags
-+argument is 0 for registration, and
-+.IR RSEQ_FLAG_UNREGISTER
-+for unregistration.
-+
-+.PP
-+The
-+.I sig
-+argument is the 32-bit signature to be expected before the abort
-+handler code.
-+
-+.PP
-+A single library per process should keep the rseq structure in a
-+thread-local storage variable.
-+The
-+.I cpu_id
-+field should be initialized to -1, and the
-+.I cpu_id_start
-+field should be initialized to a possible CPU value (typically 0).
-+
-+.PP
-+Each thread is responsible for registering and unregistering its rseq
-+structure. No more than one rseq structure address can be registered
-+per thread at a given time.
-+
-+.PP
-+In a typical usage scenario, the thread registering the rseq
-+structure will be performing loads and stores from/to that structure. It
-+is however also allowed to read that structure from other threads.
-+The rseq field updates performed by the kernel provide relaxed atomicity
-+semantics, which guarantee that other threads performing relaxed atomic
-+reads of the cpu number cache will always observe a consistent value.
-+
-+.SH RETURN VALUE
-+A return value of 0 indicates success. On error, \-1 is returned, and
-+.I errno
-+is set appropriately.
-+
-+.SH ERRORS
-+.TP
-+.B EINVAL
-+Either
-+.I flags
-+contains an invalid value, or
-+.I rseq
-+contains an address which is not appropriately aligned, or
-+.I rseq_len
-+contains a size that does not match the size received on registration.
-+.TP
-+.B ENOSYS
-+The
-+.BR rseq ()
-+system call is not implemented by this kernel.
-+.TP
-+.B EFAULT
-+.I rseq
-+is an invalid address.
-+.TP
-+.B EBUSY
-+Restartable sequence is already registered for this thread.
-+.TP
-+.B EPERM
-+The
-+.I sig
-+argument on unregistration does not match the signature received
-+on registration.
-+
-+.SH VERSIONS
-+The
-+.BR rseq ()
-+system call was added in Linux 4.18.
-+
-+.SH CONFORMING TO
-+.BR rseq ()
-+is Linux-specific.
-+
-+.in
-+.SH SEE ALSO
-+.BR sched_getcpu (3) ,
-+.BR membarrier (2)
+Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Joel Fernandes <joelaf@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Dave Watson <davejwatson@fb.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Shuah Khan <shuahkh@osg.samsung.com>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: linux-kselftest@vger.kernel.org
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Chris Lameter <cl@linux.com>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Michael Kerrisk <mtk.manpages@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@linux.vnet.ibm.com>
+Cc: Paul Turner <pjt@google.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Josh Triplett <josh@joshtriplett.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Ben Maurer <bmaurer@fb.com>
+Cc: linux-api@vger.kernel.org
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+---
+ include/linux/sched.h | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 87bf02d93a27..c1882643d455 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1831,9 +1831,7 @@ static inline void rseq_migrate(struct task_struct *t)
+ 
+ /*
+  * If parent process has a registered restartable sequences area, the
+- * child inherits. Only applies when forking a process, not a thread. In
+- * case a parent fork() in the middle of a restartable sequence, set the
+- * resume notifier to force the child to retry.
++ * child inherits. Only applies when forking a process, not a thread.
+  */
+ static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags)
+ {
+@@ -1847,7 +1845,6 @@ static inline void rseq_fork(struct task_struct *t, unsigned long clone_flags)
+ 		t->rseq_len = current->rseq_len;
+ 		t->rseq_sig = current->rseq_sig;
+ 		t->rseq_event_mask = current->rseq_event_mask;
+-		rseq_preempt(t);
+ 	}
+ }
+ 
 -- 
 2.11.0
 
