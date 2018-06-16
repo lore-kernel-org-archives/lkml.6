@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD01C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65F96C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33786208AF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:45:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 166012087E
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 18:50:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTXodPtl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33786208AF
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EFWgFxfY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 166012087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932950AbeFPSpv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 14:45:51 -0400
-Received: from mail-vk0-f67.google.com ([209.85.213.67]:37115 "EHLO
-        mail-vk0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932482AbeFPSpt (ORCPT
+        id S932965AbeFPSud (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 14:50:33 -0400
+Received: from mail-ua0-f195.google.com ([209.85.217.195]:36034 "EHLO
+        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932482AbeFPSub (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 14:45:49 -0400
-Received: by mail-vk0-f67.google.com with SMTP id w8-v6so7441772vkh.4;
-        Sat, 16 Jun 2018 11:45:48 -0700 (PDT)
+        Sat, 16 Jun 2018 14:50:31 -0400
+Received: by mail-ua0-f195.google.com with SMTP id c23-v6so8434223uan.3;
+        Sat, 16 Jun 2018 11:50:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=BZUQNSgyTknAdPpmJSnNpI1XMw395wDvZJTrQqGEI10=;
-        b=DTXodPtlASjuXajB26X/BG567W2UeuNglUggVj7ipotwgVesO7v7YfqkBSSHepuZym
-         YtWTCzA3ECcQ9Qomcq0RlxwY8tTlfkL2rj2ja+6KKWhE+gHu860VuMwciFGF/JNmzGaw
-         IfEkgGyZU7nA02mwlzgzIEDYWWn2KDPw3v22TOlB8+VwdXzFrzc1z3UrincyHPDLtEjZ
-         W5ijzCvUzhP7KZc/e+pgXgiqLumR89Z4TtwMXRifoUvKrY9mIBM2IUgtd9f3WVAmCe7a
-         v/LUlJsnZ22O/nn4SkUYdgjjCQX7oljeZsmnBmMyDQLVVEIZrtkU1Xd1SBMaQgDRn+7G
-         Ne/g==
+        bh=tFdMHNPs8ziCdFtG5v7nJ85VkXeoczbgS7JwBJXSK0E=;
+        b=EFWgFxfYuqrBoX9J5y88ykkHK9m2Za3JCJbfmLemA3p/mAJyqm13JjtmOpl/7BvFMZ
+         58snthhplOoSIrAEi9Ic5QxruCjesRf6L0xolKFWo7CPb+2ivIan3QsRRoScwv7pAYC2
+         qzbrLik31taVDu0XSpnVRgthbLFCEEYxe4WcLODf6ZuNxd6Ew3CNaM4qxQaDuNVpuR5O
+         2Tkol4C3u5wDXQxeQOH24uxmqHOz70q0aTDOvENDp9Ze2PeFZJlf6R4JzF95v1oiI5eY
+         sjiv1ICk0U2tdbUlwC12K3F9+RwYa4xaYCbY05kFptMk6vyi9ztJNhj1RfZui0CnK0RM
+         kYPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=BZUQNSgyTknAdPpmJSnNpI1XMw395wDvZJTrQqGEI10=;
-        b=nUH0J7va1PfHESrO4vEHz+nwEd/epDhHYn7YXYcdr8N6PclUzD6vWRlBaKN86nR/ad
-         JtW/P3G1nR7mv+SxCzOPWJzPFdoxqvunjOSE8tpN6S18uP8lHwmxQqOfSrT1+vrm2RP1
-         D4L649oEgF9QSfOYdUw40nJIKUmbss9NK/KoH2aF/gaReGBfUPUy/gbHCRRYX4iWlfRS
-         oc4FziK80geLqbrzXpIhBhBBKSPO8Zuci3zK9idmnBA2xjCsjt4vnJjwFdKv5j5Ca3oD
-         lpsNlxkXvoS7C3OT911yLCPPCaedYCbauOZlpvbClQnHYptR+MZ+BZA6PWLrzEeYqes+
-         o34g==
-X-Gm-Message-State: APt69E1I4X9Tm00tIpN6VqrrUqAxppBCRTWJoxnuB/b2hZraLgoLVvlm
-        z89QAc6PnR+BPam+Gf5XCdMprbsqqflnKXICSL8=
-X-Google-Smtp-Source: ADUXVKI20eS2NQM6DZ5b4LGaMs3oRWpK4OGkZQQAIZeRrkiJZdS1pNmqpMq9BV/AoOgOPXxGcDYBMRiA7Fle7ik9Qb0=
-X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr3729552vkd.15.1529174748024;
- Sat, 16 Jun 2018 11:45:48 -0700 (PDT)
+        bh=tFdMHNPs8ziCdFtG5v7nJ85VkXeoczbgS7JwBJXSK0E=;
+        b=a2Y1P/m31xVgmkbxsr7MMSf7eblFtuadsTeWmHU0ILMi+WJHWZu2Dql2NOmMLFLZGa
+         FD+COLaqCO32+3D5CnyiEJywoj7EDgUKzxeKsUdd/wAH380mIaN4I0ZbkWyirFWPUv7t
+         +kd749igWkRkJyCOaW1vXQJQRfMaOWHdJSrtsFq/VvTKS7sm6nWJX7qO56cXEpI7uVrn
+         5W0HagPnVDsZMLVz5j0XrcUi617pqqcG/0LfZ9IRyBplqXfb/xwMcNBPQJKIKGelFHWT
+         iV2IdFVgr3amYlOduiAnysZcnjw68VHNAlTw+I8RiooSqMk8GNZB5PnJAl3+EWZDKDQg
+         WMEw==
+X-Gm-Message-State: APt69E2YB/PMuUgTROogfeAD10B+ebR368SfbGfrcPVmZwLItHP5GKpD
+        GvCZgXkd7TFo12Lh2pbIO8tNTGeYzDH6VS+ME3M=
+X-Google-Smtp-Source: ADUXVKJTnfsmY72A8ro5gf1P5UY5KdlB+kpFE147nRN/7s1+p6SeBPtGQ/Pq13RfYA6z1zSrlzSAWc/T9hlNtDnvqXY=
+X-Received: by 2002:a9f:3613:: with SMTP id r19-v6mr4435543uad.49.1529175030811;
+ Sat, 16 Jun 2018 11:50:30 -0700 (PDT)
 MIME-Version: 1.0
 References: <20180615132017.23889-1-andriy.shevchenko@linux.intel.com>
- <20180615132017.23889-6-andriy.shevchenko@linux.intel.com> <20180615214231.GA371@yury-thinkpad>
-In-Reply-To: <20180615214231.GA371@yury-thinkpad>
+ <20180615132017.23889-5-andriy.shevchenko@linux.intel.com> <20180615220610.GB371@yury-thinkpad>
+In-Reply-To: <20180615220610.GB371@yury-thinkpad>
 From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sat, 16 Jun 2018 21:45:37 +0300
-Message-ID: <CAHp75VcxYPCLYq1J8qqjPdgDdQnWDgZKkavmyEWD8GNxcW2mWg@mail.gmail.com>
-Subject: Re: [PATCH v2 5/5] Input: evdev - Switch to bitmap_zalloc()
+Date:   Sat, 16 Jun 2018 21:50:19 +0300
+Message-ID: <CAHp75Ve_EMq=+4gvF449z1tM_oMHwRyYx03WCY-Lcet2JwJsjg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] Input: gpio-keys - Switch to bitmap_zalloc()
 To:     Yury Norov <ynorov@caviumnetworks.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         agk@redhat.com, Mike Snitzer <snitzer@redhat.com>,
@@ -77,34 +77,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 12:46 AM Yury Norov <ynorov@caviumnetworks.com> wrote:
-> On Fri, Jun 15, 2018 at 04:20:17PM +0300, Andy Shevchenko wrote:
+On Sat, Jun 16, 2018 at 1:08 AM Yury Norov <ynorov@caviumnetworks.com> wrote:
+>
+> On Fri, Jun 15, 2018 at 04:20:16PM +0300, Andy Shevchenko wrote:
+> > External Email
+> >
 > > Switch to bitmap_zalloc() to show clearly what we are allocating.
 > > Besides that it returns pointer of bitmap type instead of opaque void *.
-
-
-> > +       mem = bitmap_alloc(maxbit, GFP_KERNEL);
-> >         if (!mem)
-> >                 return -ENOMEM;
 >
-> But in commit message you say you switch to bitmap_zalloc(). IIUC
-> bitmap_alloc() is OK here. But could you please update comment to
-> avoid confusing.
+> Nit. There's no special type for bitmaps, bitmap_zalloc() returns long *.
+> Is it less opaque than void *, not sure.
 
-There are two places, one with alloc, another with zalloc.
-I will clarify this in commit message of next version.
+Yes, it enables type checking by compiler, which is good thing.
+You can't supply other pointer to this API, like
 
-> > +       mask = bitmap_zalloc(cnt, GFP_KERNEL);
-> >         if (!mask)
-> >                 return -ENOMEM;
-> >
-> >         error = bits_from_user(mask, cnt - 1, codes_size, codes, compat);
->
-> If my understanding of bits_from_user() correct, here you can also use
-> bitmap_alloc(), true?
+unsigned char *bar = kmalloc(BITS_PER_LONGS(nbits) * sizeof(unsigned
+long), GFP_KERNEL);
+...
 
-While it might be true, it's a material for separate change.
-Original code uses zalloc version.
+bitmap_free(bar); //<< compiler will not pass this silently!
+
+Or other way around:
+
+unsigned char *foo = bitmap_alloc(nbits, GFP_KERNEL); //<< wrong types!
 
 -- 
 With Best Regards,
