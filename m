@@ -3,111 +3,134 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53473C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08239C433EF
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02FF420896
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9BA920896
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 07:14:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nXYyk9x3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FF420896
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IiKINQjF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9BA920896
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756861AbeFPHLd (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 03:11:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60260 "EHLO mail.kernel.org"
+        id S932585AbeFPHOz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 03:14:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754015AbeFPHLb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 03:11:31 -0400
+        id S932319AbeFPHOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 03:14:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D902720896;
-        Sat, 16 Jun 2018 07:11:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F404F20896;
+        Sat, 16 Jun 2018 07:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529133091;
-        bh=qKcbbHNGs48M46Nr7op7MZ57jID9CQXoxJF+2ujhERs=;
+        s=default; t=1529133293;
+        bh=Z6bqxMeDE4vfkr9KhbXhKbWhDL3S1EjTJ/6tW5sXAZ8=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=nXYyk9x3Ox6WeAFszciwEZaR+w+A/Iwa+T4q0y6YBhYREBTvdJBNORGBsIpLWTTsA
-         n8k0xX/sBW1WwB2nfXBvephoZ1IZ/781oN97AKiK12qgpAybfL4xGInsFfN4J7CyON
-         GBflab5YW43dA0WMW/srzUMvCv5+rOItACAr+9jc=
-Date:   Sat, 16 Jun 2018 09:11:08 +0200
+        b=IiKINQjF/wrZT67LKQATck/MvT7XcOvt90+y20R56VYESyDnMvy19hlmiY1KThpAc
+         rSXKlixwtUsf85I1t5mFB5rwXU944ZruqRMg+rEHno77YHfJ0PaR3jmCBQbRXXWrgn
+         NgZlnfltBcar56A1LyVMUWAK4pmUTfDj23Mp+rHQ=
+Date:   Sat, 16 Jun 2018 09:14:30 +0200
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Rajat Jain <rajatja@google.com>
-Cc:     linux-kernel@vger.kernel.org, rajatxjain@gmail.com
-Subject: Re: [PATCH] sysfs: Fix internal_create_group() for named group
- updates
-Message-ID: <20180616071108.GB30558@kroah.com>
-References: <20180616012910.152694-1-rajatja@google.com>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] uio: ensure class is registered before devices
+Message-ID: <20180616071430.GC30558@kroah.com>
+References: <20180615155249.17607-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180616012910.152694-1-rajatja@google.com>
+In-Reply-To: <20180615155249.17607-1-alexandre.belloni@bootlin.com>
 User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 06:29:10PM -0700, Rajat Jain wrote:
-> There are a couple of problems with named group updates in the code
-> today:
+On Fri, Jun 15, 2018 at 05:52:49PM +0200, Alexandre Belloni wrote:
+> When both uio and the uio drivers are built in the kernel, it is possible
+> for a driver to register devices before the uio class is registered.
 > 
-> * sysfs_update_group() will always fail for a named group, because
->   internal_create_group() will try to create a new sysfs directory
->   unconditionally, which will ofcourse fail with -EEXIST.
+> This may result in a NULL pointer dereference later on in
+> get_device_parent() when accessing the class glue_dirs spinlock.
 > 
-> * We can leak the kernfs_node for grp->name if some one tries to:
->   - rename a group (change grp->name), or
->   - update a named group, to an unnamed group
+> The trace looks like that:
 > 
-> It appears that the whole purpose of sysfs_update_group() was to
-> allow changing the permissions or visibility of attributes and not
-> the names. So make it clear in the comments, and allow it to update
-> an existing named group.
-
-Who uses sysfs_update_group() today that has these problems?  Or do you
-want to use it in new code?  How can it be broken today so badly that it
-does not work?
-
-> Signed-off-by: Rajat Jain <rajatja@google.com>
+> Unable to handle kernel NULL pointer dereference at virtual address 00000140
+> [...]
+> Process swapper/0 (pid: 1, stack limit = 0xffff000008070000)
+> Call trace:
+> Exception stack(0xffff000008073810 to 0xffff000008073950)
+> 3800:                                   0000000000000140 0000000000000001
+> 3820: ffff800078f60000 ffffffffffffffff 0000000000000000 0000000000000000
+> 3840: 0000000000000d39 07650764075f0774 0765076307690776 077207610770075f
+> 3860: 07200774076e0765 0720072007200720 0720072007200720 0720072007200720
+> 3880: 0720072007200720 ffffffffffffffff 0000000000000000 ffff0000089e88c0
+> 38a0: 0000000000000010 ffff000008e0c000 ffff8000780990b0 ffff8000780f4ec0
+> 38c0: ffff000008c41a48 ffff000008c41a30 ffff000008a59660 ffff000008c41a30
+> 38e0: ffff000008a59660 ffff8000780f4c80 ffff000008c41000 ffff000008073950
+> 3900: ffff0000084f3bb0 ffff000008073950 ffff0000089cc234 0000000040000045
+> 3920: 00000000000005e7 ffff000008a59660 ffffffffffffffff 0000000000000000
+> 3940: ffff000008073950 ffff0000089cc234
+> [<ffff0000089cc234>] _raw_spin_lock+0x14/0x48
+> [<ffff0000084f56bc>] device_add+0x154/0x6a0
+> [<ffff0000084f5e48>] device_create_groups_vargs+0x120/0x128
+> [<ffff0000084f5edc>] device_create+0x54/0x60
+> [<ffff0000086e72c0>] __uio_register_device+0x120/0x4a8
+> [<ffff000008528b7c>] jaguar2_pci_probe+0x2d4/0x558
+> [<ffff0000083fc18c>] local_pci_probe+0x3c/0xb8
+> [<ffff0000083fd81c>] pci_device_probe+0x11c/0x180
+> [<ffff0000084f88bc>] driver_probe_device+0x22c/0x2d8
+> [<ffff0000084f8a24>] __driver_attach+0xbc/0xc0
+> [<ffff0000084f69fc>] bus_for_each_dev+0x4c/0x98
+> [<ffff0000084f81b8>] driver_attach+0x20/0x28
+> [<ffff0000084f7d08>] bus_add_driver+0x1b8/0x228
+> [<ffff0000084f93c0>] driver_register+0x60/0xf8
+> [<ffff0000083fb918>] __pci_register_driver+0x40/0x48
+> 
+> Return EPROBE_DEFER in that case so the driver can register the device
+> later.
+> 
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 > ---
->  fs/sysfs/group.c | 26 +++++++++++++++++++-------
->  1 file changed, 19 insertions(+), 7 deletions(-)
 > 
-> diff --git a/fs/sysfs/group.c b/fs/sysfs/group.c
-> index 4802ec0e1e3a..8bd10dc730ae 100644
-> --- a/fs/sysfs/group.c
-> +++ b/fs/sysfs/group.c
-> @@ -119,12 +119,23 @@ static int internal_create_group(struct kobject *kobj, int update,
->  		return -EINVAL;
->  	}
->  	if (grp->name) {
-> -		kn = kernfs_create_dir(kobj->sd, grp->name,
-> -				       S_IRWXU | S_IRUGO | S_IXUGO, kobj);
-> -		if (IS_ERR(kn)) {
-> -			if (PTR_ERR(kn) == -EEXIST)
-> -				sysfs_warn_dup(kobj->sd, grp->name);
-> -			return PTR_ERR(kn);
-> +		if (update) {
-> +			kn = kernfs_find_and_get(kobj->sd, grp->name);
-> +			if (!kn) {
-> +				WARN(1,
-> +				     "Can't update unknown attr grp name: %s/%s\n",
-> +				     kobj->name, grp->name);
-> +				return -EINVAL;
+> Hi Greg,
+> 
+> I'm not sure using struct class::p to test for class registration is really
+> something we should do but this allows to have a small patch.
+> 
+> The other solutions to fix this are:
+>  - use a similar change but with a boolean to store whether the class has been
+>    registered.
+>  - or instead of EPROBE_DEFER, just register the class when the first uio
+>    device is registered.
+>  _ or stop allowing to compile uio as a module and use subsys_initcall instead
+>  of module_init
+> 
+> What do you think?
+> 
+>  drivers/uio/uio.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/uio/uio.c b/drivers/uio/uio.c
+> index e8f4ac9400ea..3fb84ab3dd99 100644
+> --- a/drivers/uio/uio.c
+> +++ b/drivers/uio/uio.c
+> @@ -853,6 +853,9 @@ int __uio_register_device(struct module *owner,
+>  	struct uio_device *idev;
+>  	int ret = 0;
+>  
+> +	if (!uio_class.p)
+> +		return -EPROBE_DEFER;
 
-This is going to cause the syzbot to bug the heck out of us, as people
-do run with panic-on-warning.  Just make this a "normal" error message
-and dump the stack if you want that.
-
-But maybe we should just get rid of this function entirely, it feels
-very ackward and I can't remember why we added it...
+Ick, you are right, don't touch the .p field please.  We just need a "is
+uio all initialized" flag for the class here that we should check
+instead.
 
 thanks,
 
