@@ -2,469 +2,152 @@ Return-Path: <SRS0=eDXJ=JC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB766C433EF
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 10:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B11C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 10:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81B1E2088E
-	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 10:27:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81B1E2088E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 404EA20891
+	for <linux-kernel@archiver.kernel.org>; Sat, 16 Jun 2018 10:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 404EA20891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754167AbeFPK1F (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 06:27:05 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:54744 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754052AbeFPK1D (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 06:27:03 -0400
-Received: by mail-it0-f70.google.com with SMTP id w16-v6so1573265itb.4
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 03:27:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=pN5obiKqFmUctu+Qw6DKC659yFkXf0Gj4DzmRr5HfFY=;
-        b=m5S5rmta+G4pHu05BTiROLVa9RMrs+6oBZNTo0y9hWOJI5nc1qRiNNdVP0BSxPKpg5
-         8Haw++Mn5DtxBbOTmhKjFFEOctQ77rdno6efBO9SL3zye97Ekdez64FIliVi/BluBJuc
-         bQGD2VxNHMSfmzmuANeNWdXzPEiXh/+dXrUuvY1QfQIAzqr5/OhebqiToyBetDIyYvgq
-         MNzmUnNiaXOeQW20eOo/wH0mBgOMWqAogppZHx3WPKu6I7lDfgsQdqRXEiGBsL+Utd/E
-         FuF+2UnJWA3Grtfco/+MlNjoX9wfnQP2O5G8aJmonEKgizkF0ioeDIGtSXe6jkBOJJCA
-         Qj3g==
-X-Gm-Message-State: APt69E3dcJgl1zBAUVO4+oABiNo51iMqFArjCgDJ63j86HkCBeHpdt1O
-        cnvg94J1aRK1kgmaAc7LGvdOT5Jj7+quEDDCJH0KitMPdJJL
-X-Google-Smtp-Source: ADUXVKK3md+ffY2vLftzd97nNogJ+jTYly8FLAUWj8gLIBPLH8HWvsuerAe1LgdH5ctxSj9QisKkm7PkgXytcvo4saRhtgUktgR0
+        id S932632AbeFPKgN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 06:36:13 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:58612 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754052AbeFPKgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 06:36:11 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id x7bpvJRYZue4; Sat, 16 Jun 2018 12:36:09 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BDAB600329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2bda:b600:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9886E1EC00E9;
+        Sat, 16 Jun 2018 12:36:09 +0200 (CEST)
+Date:   Sat, 16 Jun 2018 12:36:05 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     linux-block@vger.kernel.org
+Cc:     lkml <linux-kernel@vger.kernel.org>
+Subject: list_add double add in blk_mq_check_expired()
+Message-ID: <20180616103605.GA28657@zn.tnic>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:b302:: with SMTP id c2-v6mr1970970iof.30.1529144822701;
- Sat, 16 Jun 2018 03:27:02 -0700 (PDT)
-Date:   Sat, 16 Jun 2018 03:27:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f7b199056ebfc5ef@google.com>
-Subject: KASAN: slab-out-of-bounds Write in vmac_final
-From:   syzbot <syzbot+264bca3a6e8d645550d3@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, herbert@gondor.apana.org.au,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Hi,
 
-syzbot found the following crash on:
-
-HEAD commit:    8efcf34a2639 Merge tag 'armsoc-late' of git://git.kernel.o..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b9503f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3de185e943e1d12f
-dashboard link: https://syzkaller.appspot.com/bug?extid=264bca3a6e8d645550d3
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syzkaller repro:https://syzkaller.appspot.com/x/repro.syz?x=158bc21f800000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12506eaf800000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+264bca3a6e8d645550d3@syzkaller.appspotmail.com
-
-==================================================================
-kasan: CONFIG_KASAN_INLINE enabled
-BUG: KASAN: slab-out-of-bounds in memset include/linux/string.h:330 [inline]
-BUG: KASAN: slab-out-of-bounds in vmac_final+0x161/0x26a0 crypto/vmac.c:611
-Write of size 18446744073709551516 at addr ffff8801ac760f0c by task  
-syz-executor345/4580
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-
-CPU: 1 PID: 4580 Comm: syz-executor345 Not tainted 4.17.0+ #98
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
-  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
-  memset+0x23/0x40 mm/kasan/kasan.c:285
-  memset include/linux/string.h:330 [inline]
-  vmac_final+0x161/0x26a0 crypto/vmac.c:611
-  crypto_shash_final+0x104/0x260 crypto/shash.c:152
-  shash_async_final+0x35/0x40 crypto/shash.c:252
-  crypto_ahash_op+0xcf/0x180 crypto/ahash.c:362
-  crypto_ahash_final+0x57/0x70 crypto/ahash.c:367
-  hash_sendmsg+0x750/0xac0 crypto/algif_hash.c:126
-  sock_sendmsg_nosec net/socket.c:645 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:655
-  ___sys_sendmsg+0x805/0x940 net/socket.c:2161
-CPU: 0 PID: 0 Comm:  Not tainted 4.17.0+ #98
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
-RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149  
-[inline]
-RIP: 0010:account_system_index_time+0xea/0x5b0 kernel/sched/cputime.c:168
-Code:
-63
-04 00
-00
-  __sys_sendmsg+0x115/0x270 net/socket.c:2199
-48 8b
-83
-b8
-06
-  __do_sys_sendmsg net/socket.c:2208 [inline]
-  __se_sys_sendmsg net/socket.c:2206 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2206
-00
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-00
-48
-ba
-00
-00
-00 00
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-00
-RIP: 0033:0x445e69
-fc
-Code:
-ff df
-e8
-48
-5c
-8d
-e7
-b8
-ff
-38
-ff
-01
-48
-00
-83
-00
-c4
-48 8d
-18
-88
-c3
-20
-0f
-01
-1f
-00
-80 00
-00
-00
-48
-00
-89
-00
-fe
-48
-48
-89
-c1
-f8
-ee
-48
-03
-89
-<0f>
-f7
-b6
-48
-14
-89
-16
-d6
-48
-48
-89
-89
-fe
-ca
-83
-4d
-e6
-89
-07
-c2
-40
-4d
-38
-89
-f2
-c8
-7f
-4c
-08
-8b
-84
-4c
-d2
-24
-0f
-08
-85
-0f
-f6
-05
-03
-<48>
-00
-3d
-01
-RSP: 0018:ffff8801dae07980 EFLAGS: 00010006
-f0
-ff
-RAX: 0000000000000000 RBX: ffff8801ad1a4500 RCX: 0000000000000120
-ff
-RDX: dffffc0000000000 RSI: 0000000000000027 RDI: 0000000000000138
-0f
-RBP: ffff8801dae07a68 R08: ffff8801ad1a4500 R09: 0000000000000000
-83
-R10: ffffed0043fff001 R11: ffff88021fff8017 R12: ffff8801dae07a40
-eb
-R13: ffff8801ad1a4500 R14: 00000000000f4240 R15: 0000000000000002
-51
-FS:  00007fd7e78fb700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-00
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-00
-CR2: 00007fd7e78b8e78 CR3: 00000001ae829000 CR4: 00000000001406f0
-c3
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-66
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-2e
-Call Trace:
-0f
-  <IRQ>
-1f
-84
-00
-00
-00
-00
-  account_system_time+0x7f/0xb0 kernel/sched/cputime.c:199
-  account_process_tick+0x76/0x240 kernel/sched/cputime.c:498
-RSP: 002b:00007fd7e78d9db8 EFLAGS: 00000246
-  ORIG_RAX: 000000000000002e
-  update_process_times+0x21/0x70 kernel/time/timer.c:1634
-RAX: ffffffffffffffda RBX: 00000000006dac5c RCX: 0000000000445e69
-  tick_sched_handle+0x9f/0x180 kernel/time/tick-sched.c:164
-RDX: 0000000000000000 RSI: 00000000200000c0 RDI: 00000000000003ff
-  tick_sched_timer+0x45/0x130 kernel/time/tick-sched.c:1274
-RBP: 00000000006dac58 R08: 0000000000000000 R09: 0000000000000000
-  __run_hrtimer kernel/time/hrtimer.c:1398 [inline]
-  __hrtimer_run_queues+0x3e3/0x10a0 kernel/time/hrtimer.c:1460
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffde323e10f R14: 00007fd7e78da9c0 R15: 000000000000000b
-
-Allocated by task 4557:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  __do_kmalloc mm/slab.c:3718 [inline]
-  __kmalloc+0x14e/0x760 mm/slab.c:3727
-  kmalloc include/linux/slab.h:518 [inline]
-  kzalloc include/linux/slab.h:706 [inline]
-  crypto_create_tfm+0x87/0x310 crypto/api.c:464
-  crypto_init_shash_ops_async+0x5d/0x3e4 crypto/shash.c:357
-  crypto_ahash_init_tfm+0x357/0x430 crypto/ahash.c:458
-  crypto_create_tfm+0xe9/0x310 crypto/api.c:471
-  crypto_alloc_tfm+0x1b5/0x2d0 crypto/api.c:543
-  crypto_alloc_ahash+0x2c/0x40 crypto/ahash.c:539
-  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
-  hash_bind+0x25/0x30 crypto/algif_hash.c:408
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
-  alg_bind+0x2be/0x560 crypto/af_alg.c:183
-  __sys_bind+0x331/0x440 net/socket.c:1528
-  __do_sys_bind net/socket.c:1539 [inline]
-  __se_sys_bind net/socket.c:1537 [inline]
-  __x64_sys_bind+0x73/0xb0 net/socket.c:1537
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-Freed by task 0:
-  </IRQ>
-(stack is not available)
-Modules linked in:
-
-The buggy address belongs to the object at ffff8801ac760d00
-  which belongs to the cache kmalloc-512 of size 512
-Dumping ftrace buffer:
-The buggy address is located 12 bytes to the right of
-  512-byte region [ffff8801ac760d00, ffff8801ac760f00)
-    (ftrace buffer empty)
-The buggy address belongs to the page:
----[ end trace d7db9a753b3ac637 ]---
-page:ffffea0006b1d800 count:1 mapcount:0 mapping:ffff8801da800940 index:0x0
-RIP: 0010:__read_once_size include/linux/compiler.h:188 [inline]
-RIP: 0010:get_running_cputimer include/linux/sched/cputime.h:85 [inline]
-RIP: 0010:account_group_system_time include/linux/sched/cputime.h:149  
-[inline]
-RIP: 0010:account_system_index_time+0xea/0x5b0 kernel/sched/cputime.c:168
-Code:
-flags: 0x2fffc0000000100(slab)
-63
-raw: 02fffc0000000100 ffffea000762d788 ffffea0007626dc8 ffff8801da800940
-04
-raw: 0000000000000000 ffff8801ac760080 0000000100000006 0000000000000000
-00
-page dumped because: kasan: bad access detected
-00
-
-48
-Memory state around the buggy address:
-8b
-  ffff8801ac760e00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-83
-  ffff8801ac760e80: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-b8
-> ffff8801ac760f00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-06
-                       ^
-00
-  ffff8801ac760f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-00
-  ffff8801ac761000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-48
-==================================================================
-ba
-BUG: unable to handle kernel
-00
-NULL pointer dereference
-00 00
-  at 0000000000000000
-00
-PGD 1ae22a067
-00
-P4D 1ae22a067
-fc
-PUD 1adcde067
-ff
-PMD 0
-df
-48
-Oops: 0010 [#2] SMP KASAN
-8d
-CPU: 1 PID: 4580 Comm: syz-executor345 Tainted: G    B D           4.17.0+  
-#98
-b8
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-38
-RIP: 0010:          (null)
-01
-Code:
-00
-Bad RIP value.
-00
-RSP: 0018:ffff8801daf07b58 EFLAGS: 00010006
-48
-8d
-RAX: 0000000000000000 RBX: ffff8801ad297ce0 RCX: ffffffff8168de27
-88
-RDX: 0000000000010000 RSI: ffffffff8168d644 RDI: ffff8801ad297ce0
-20
-RBP: ffff8801daf07de0 R08: ffff8801ae6ae300 R09: ffffed003b5e4b90
-01
-R10: ffffed003b5e4b90 R11: ffff8801daf25c83 R12: ffff8801daf25d00
-00
-R13: 0000000000000000 R14: dffffc0000000000 R15: 0000000000000000
-00
-FS:  00007fd7e78da700(0000) GS:ffff8801daf00000(0000) knlGS:0000000000000000
-48
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-89
-CR2: ffffffffffffffd6 CR3: 00000001ae829000 CR4: 00000000001406e0
-fe
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-48
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-c1 ee
-Call Trace:
-03
-  <IRQ>
-<0f>
-b6
-14
-16
-48
-89
-fe
-83
-e6
-07
-40
-  hrtimer_interrupt+0x2f3/0x750 kernel/time/hrtimer.c:1518
-38
-  local_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1025 [inline]
-  smp_apic_timer_interrupt+0x15d/0x710 arch/x86/kernel/apic/apic.c:1050
-f2
-7f
-08
-84
-d2
-0f
-85
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:863
-f6
-  </IRQ>
-03
-RIP: 0010:arch_local_irq_restore arch/x86/include/asm/paravirt.h:783  
-[inline]
-RIP: 0010:__raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:160  
-[inline]
-RIP: 0010:_raw_spin_unlock_irqrestore+0xa1/0xc0  
-kernel/locking/spinlock.c:184
-00
-Code:
-68
-RSP: 0018:ffff8801dae07980 EFLAGS: 00010006
-a8
-f1
-RAX: 0000000000000000 RBX: ffff8801ad1a4500 RCX: 0000000000000120
-88
-RDX: dffffc0000000000 RSI: 0000000000000027 RDI: 0000000000000138
-48
-RBP: ffff8801dae07a68 R08: ffff8801ad1a4500 R09: 0000000000000000
-b8
-R10: ffffed0043fff001 R11: ffff88021fff8017 R12: ffff8801dae07a40
-00
-R13: ffff8801ad1a4500 R14: 00000000000f4240 R15: 0000000000000002
-00
-FS:  00007fd7e78fb700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-00
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-00
-CR2: 00007fd7e78b8e78 CR3: 00000001ae829000 CR4: 00000000001406f0
-00
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-fc
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-ff
-
+just triggered the below in a qemu guest, kernel is Linus' master from
+yesterday + tip/master. It doesn't fire reliably so it could be some
+transient thing of the merge window:
 
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+...
+
+[    2.387633] EXT4-fs (sda1): mounting ext3 file system using the ext4 subsystem
+[    2.500490] EXT4-fs (sda1): mounted filesystem with ordered data mode. Opts: (null)
+[    2.503122] VFS: Mounted root (ext3 filesystem) readonly on device 8:1.
+[    2.507917] Freeing unused kernel memory: 1332K
+[    2.509362] Write protecting the kernel read-only data: 16384k
+[    2.511774] Freeing unused kernel memory: 2008K
+[    2.514999] Freeing unused kernel memory: 956K
+[    2.523429] x86/mm: Checked W+X mappings: passed, no W+X pages found.
+[    3.485227] random: fast init done
+[    7.904105] ------------[ cut here ]------------
+[    7.906706] list_add double add: new=ffff88007b342180, prev=ffff88007b342180, next=ffff88007ad07060.
+[    7.910001] WARNING: CPU: 7 PID: 1543 at lib/list_debug.c:31 __list_add_valid+0x67/0x70
+[    7.910001] Modules linked in:
+[    7.910001] CPU: 7 PID: 1543 Comm: kworker/7:1H Not tainted 4.17.0+ #7
+[    7.910001] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
+[    7.910001] Workqueue: kblockd blk_mq_timeout_work
+[    7.910001] RIP: 0010:__list_add_valid+0x67/0x70
+[    7.910001] Code: c1 4c 89 c6 48 c7 c7 30 27 e6 81 e8 63 50 d2 ff 0f 0b 31 c0 c3 48 89 f2 4c 89 c1 48 89 fe 48 c7 c7 80 27 e6 81 e8 49 50 d2 ff <0f> 0b 31 c0 c3 0f 1f 40 00 48 8b 07 48 b9 00 01 00 00 00 00 ad de 
+[    7.910001] RSP: 0018:ffffc9000080fd68 EFLAGS: 00010096
+[    7.910001] RAX: 0000000000000058 RBX: ffff88007ad07000 RCX: ffffffff82042488
+[    7.910001] RDX: 0000000000000001 RSI: 0000000000000086 RDI: ffffffff824c2d8c
+[    7.910001] RBP: ffff88007b342130 R08: ffffffff814254a0 R09: 0000000000000181
+[    7.910001] R10: 0000000000aaaaaa R11: ffff88007c7056d0 R12: ffff88007b342180
+[    7.910001] R13: 0000000000000282 R14: ffff88007b342180 R15: ffff88007ad07060
+[    7.910001] FS:  0000000000000000(0000) GS:ffff88007d3c0000(0000) knlGS:0000000000000000
+[    7.910001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.910001] CR2: 00007f58744b3a80 CR3: 0000000002009000 CR4: 00000000003406e0
+[    7.910001] Call Trace:
+[    7.910001]  scsi_eh_scmd_add+0xc5/0x160
+[    7.910001]  scsi_times_out+0x9a/0x1a0
+[    7.910001]  blk_mq_check_expired+0xf2/0x130
+[    7.910001]  bt_iter+0x48/0x50
+[    7.910001]  blk_mq_queue_tag_busy_iter+0x129/0x220
+[    7.910001]  ? blk_mq_timeout_work+0x150/0x150
+[    7.910001]  ? blk_mq_timeout_work+0x150/0x150
+[    7.910001]  blk_mq_timeout_work+0x80/0x150
+[    7.910001]  process_one_work+0x18c/0x3a0
+[    7.910001]  worker_thread+0x30/0x3a0
+[    7.910001]  ? process_one_work+0x3a0/0x3a0
+[    7.910001]  kthread+0x113/0x130
+[    7.910001]  ? kthread_create_worker_on_cpu+0x40/0x40
+[    7.910001]  ret_from_fork+0x22/0x40
+[    7.910001] ---[ end trace 0d2f1accf0e2ed60 ]---
+[    7.992080] WARNING: CPU: 7 PID: 0 at kernel/rcu/tree.c:2596 rcu_process_callbacks+0x49a/0x4c0
+[    7.995041] Modules linked in:
+[    7.996049] CPU: 7 PID: 0 Comm: swapper/7 Tainted: G        W         4.17.0+ #7
+[    7.996049] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.11.1-1 04/01/2014
+[    7.996049] RIP: 0010:rcu_process_callbacks+0x49a/0x4c0
+[    7.996049] Code: e9 56 fd ff ff 48 c7 83 90 00 00 00 00 00 00 00 48 8b 95 50 03 00 00 48 89 93 98 00 00 00 e9 60 fd ff ff 0f 0b e9 bb fb ff ff <0f> 0b e9 68 fd ff ff 0f 0b e9 89 fc ff ff 4c 89 ee 4c 89 e7 66 90 
+[    7.996049] RSP: 0018:ffff88007d3c3f18 EFLAGS: 00010002
+[    7.996049] RAX: 0000000000000000 RBX: ffff88007d3e18c0 RCX: ffff88007c505e80
+[    7.996049] RDX: ffffffffffffd801 RSI: ffff88007d3c3f20 RDI: ffff88007d3e18f8
+[    7.996049] RBP: ffffffff82043a80 R08: ffff88007d3e1810 R09: 0000000000000101
+[    7.996049] R10: ffff88007c0ac6c0 R11: 0000000000000000 R12: ffff88007d3e18f8
+[    7.996049] R13: 0000000000000246 R14: 7fffffffffffffff R15: 0000000000000202
+[    7.996049] FS:  0000000000000000(0000) GS:ffff88007d3c0000(0000) knlGS:0000000000000000
+[    7.996049] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    7.996049] CR2: 00007f58744b3a80 CR3: 0000000002009000 CR4: 00000000003406e0
+[    7.996049] Call Trace:
+[    7.996049]  <IRQ>
+[    7.996049]  __do_softirq+0xd6/0x2dc
+[    7.996049]  irq_exit+0xaf/0xc0
+[    7.996049]  smp_apic_timer_interrupt+0x6c/0x150
+[    7.996049]  apic_timer_interrupt+0xf/0x20
+[    7.996049]  </IRQ>
+[    7.996049] RIP: 0010:default_idle+0x25/0x140
+[    7.996049] Code: 90 90 90 90 90 0f 1f 44 00 00 48 83 ec 18 48 89 1c 24 48 89 6c 24 08 4c 89 64 24 10 65 8b 2d a2 98 93 7e 0f 1f 44 00 00 fb f4 <65> 8b 2d 94 98 93 7e 0f 1f 44 00 00 48 8b 1c 24 48 8b 6c 24 08 4c 
+[    7.996049] RSP: 0018:ffffc900003bfed0 EFLAGS: 00000282 ORIG_RAX: ffffffffffffff13
+[    7.996049] RAX: ffffffff816d5870 RBX: 0000000000000007 RCX: ffff88007d3d95c0
+[    7.996049] RDX: ffffffff82043af8 RSI: ffff88007d3d95c0 RDI: 00000001dc1f3500
+[    7.996049] RBP: 0000000000000007 R08: 0000000000001400 R09: 0000000000000000
+[    7.996049] R10: 0000000000001400 R11: 0000000000000001 R12: 0000000000000000
+[    7.996049] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+[    7.996049]  ? __sched_text_end+0x6/0x6
+[    7.996049]  do_idle+0x18a/0x230
+[    7.996049]  cpu_startup_entry+0x5f/0x70
+[    7.996049]  start_secondary+0x189/0x1c0
+[    7.996049]  secondary_startup_64+0xa5/0xb0
+[    7.996049] ---[ end trace 0d2f1accf0e2ed61 ]---
+[   10.612152] Adding 917500k swap on /dev/sda2.  Priority:-2 extents:1 across:917500k 
+[   10.631761] EXT4-fs (sda1): re-mounted. Opts: (null)
+[   11.505751] EXT4-fs (sda1): re-mounted. Opts: errors=remount-ro
+[   13.052771] random: dd: uninitialized urandom read (512 bytes read)
+[   13.822765] 8139cp 0000:00:03.0 eth0: link up, 100Mbps, full-duplex, lpa 0x05E1
+[   20.022242] random: dbus-daemon: uninitialized urandom read (12 bytes read)
+[   20.456262] random: dbus-daemon: uninitialized urandom read (12 bytes read)
+[   21.504397] random: exim4: uninitialized urandom read (120 bytes read)
+[   21.506713] random: exim4: uninitialized urandom read (120 bytes read)
+[   21.509112] random: exim4: uninitialized urandom read (120 bytes read)
+[   30.172294] random: crng init done
+[   30.173029] random: 4 urandom warning(s) missed due to ratelimiting
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
