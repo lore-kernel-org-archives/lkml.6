@@ -7,97 +7,167 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ED59C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2C0C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A94982086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 275E12086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="muBidcQC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A94982086A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YiAgENSV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 275E12086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752171AbeFQFMF (ORCPT
+        id S1753137AbeFQFMN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 01:12:05 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:41590 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751517AbeFQFMD (ORCPT
+        Sun, 17 Jun 2018 01:12:13 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:34018 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751579AbeFQFMK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 01:12:03 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a11-v6so6644110pff.8;
-        Sat, 16 Jun 2018 22:12:02 -0700 (PDT)
+        Sun, 17 Jun 2018 01:12:10 -0400
+Received: by mail-pl0-f67.google.com with SMTP id g20-v6so7346789plq.1;
+        Sat, 16 Jun 2018 22:12:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=D4n350cCCB/hHdOEonAhrnLl41AmAWn4q4W6SIER87Y=;
-        b=muBidcQCJspt2ipEy7Ci8PLBWZJaLaAzeTpba8uOYLswQQMeq4yF8QjimeB36v46j0
-         fDmY+lCZCKiME56oKnt+EGjesh6S3xglT1tWvsS8/tFnHDd/uIg566U5KB9b5D9JLkvg
-         QXxs0sl3/zI1/MhMlI+Z4JX5CaH82MrlbAyXpXOPva2tAfUaYkxsXCPA7LjgCIQsbg3U
-         /CHPmCBcveVgKTW5mn3tLftGPIBfGygheT1NtCSDvDZX2UbzQ6KjOJScU+/91fl2xnPP
-         7NDb6Mb/SMgJCGMi4uiflJg62A4s4wOuPSCpsL48aKbBHPFjLXi7Y3ZV5X2CQyRhMdcw
-         WyAg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=8CR6LN2ME8wAYyJjwenexwwZITdcsn6dUhuLKZ/Drxk=;
+        b=YiAgENSVX5d+6b5IErAXSzMtGUeNWzcol6ElmZba9Z8ioFoygLGfKoEQ2bgMsEdnym
+         ms5NVrwTNHG3FlVOhi72KNV1/Eitok9kkWgSwk/cpGH0HHFCMLAdZ/aztETFP4BK5wBm
+         ocNNpNfLzQpeG9Qt8fLaHVUzzlzyQjO5ERuyM5hUEjIuGaf5gaIF0ejJTl4EbismU3vk
+         RBW0PvRIiq0BelqxlStz06Dng0A3yQhd0Rpuu7cxY/D2S2bQ5zrcBKlnAeOSPXIGiCJZ
+         xeGtIXTogi0EJR2TT65J+RnzMQ9EWWSEpkc/gpuv455Uqu5Tng2Hu5fQQ8whiGIB36Gb
+         VRjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=D4n350cCCB/hHdOEonAhrnLl41AmAWn4q4W6SIER87Y=;
-        b=MtI51CswrX9U4apuFtKrRiGWUo8WnQm5JHDs1koVu4TnfcWXwiT8PbuhNhAB45l4Vc
-         Io4e7ECaLCvHnuUwhFtrPPnMPMC3me7PKuB79N5xLVpOyE3VXI7DjD98IHavpyU76Wca
-         Xovk1am5XKf2GgWspWxaEhng3KsNl3hVA2Ozk8qdk8+Jk48ozEzEvFPJpJJrhfwYqsug
-         H+NXAlxl1teHJWxIVJXtiVyq696UdFB6qjDpu6kHFaXNCri7GKqt3cRIUMqvcu6KSSER
-         JOQxV1XdhSTzpK87HpDnOgfppubVYlWjo24ckC9uXKU1o0A5vTAz+1B1tskacd7CeZ9Y
-         Vw7Q==
-X-Gm-Message-State: APt69E0kNWw3yHSRaCZ/Zd55ukJyVFZZ5fttagzJvzs/eluFNzfdbFeW
-        T4Bz86wbLS+H2K5nLNA1W0TxoQ==
-X-Google-Smtp-Source: ADUXVKLEbLMPKj/XdgG8v0ZGHEmLcXxAs8lChu3C+cQ7L9uMCoIECb+5h6QMvqQUwtESmu2JTq44PQ==
-X-Received: by 2002:a65:6612:: with SMTP id w18-v6mr6816736pgv.38.1529212322633;
-        Sat, 16 Jun 2018 22:12:02 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=8CR6LN2ME8wAYyJjwenexwwZITdcsn6dUhuLKZ/Drxk=;
+        b=pJPYuegIliOj/xN93f77W562OEbLRgJ06Sq5UHiqzWLOLRbuTxtfxFLUUHJCWbtLoY
+         +KZEFh6gIjjvwFKXdQ0NLFPDToWdZPGcXFgnfRchvkUgUZsLYocXzW2m5l/8YkjPTYQk
+         H+iRD866MoZUPwANELF8XrgwOOTMCocYV5SzDlho0tAfnH5o3sK/LYww9VI/haWytM7o
+         1eH7ENN/GUaC1MtuNiw5gdDrXqY7wyo9BP78ZvK4UKSz4+FwHZajnwvt9ZzGQpGLIkwc
+         HetD+yLni//FlcaCYOL8qTfSfnYevGpjpWKCBqpXUlW0qfRZxVGGTwiW+94TaAYrFQK7
+         5O5Q==
+X-Gm-Message-State: APt69E1Zh7f06eXA8Z6rfgPV20ata+ep1sn9I4sAYBvNlnqGBwm2bj8u
+        J+2ujEE97nDtCOb3CsUK5xvkbA==
+X-Google-Smtp-Source: ADUXVKJVtEFiWrGtRSJNTL43G7pSxp5LXqtD/i4FBr3uCc1Ul7Onp7kg+scuuhcbw/iMDUpanKUaPQ==
+X-Received: by 2002:a17:902:5402:: with SMTP id d2-v6mr4600481pli.38.1529212329602;
+        Sat, 16 Jun 2018 22:12:09 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-67-170-212-194.hsd1.ca.comcast.net. [67.170.212.194])
-        by smtp.gmail.com with ESMTPSA id h27-v6sm28354594pfk.160.2018.06.16.22.12.01
+        by smtp.gmail.com with ESMTPSA id h27-v6sm28354594pfk.160.2018.06.16.22.12.08
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Jun 2018 22:12:01 -0700 (PDT)
+        Sat, 16 Jun 2018 22:12:09 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     arnd@arndb.de, tglx@linutronix.de, linux-kernel@vger.kernel.org
 Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org, y2038@lists.linaro.org
-Subject: [PATCH 0/3] time: Add y2038 safe struct __kernel_itimerspec
-Date:   Sat, 16 Jun 2018 22:11:41 -0700
-Message-Id: <20180617051144.29756-1-deepa.kernel@gmail.com>
+Subject: [PATCH 1/3] time: Introduce struct __kernel_itimerspec
+Date:   Sat, 16 Jun 2018 22:11:42 -0700
+Message-Id: <20180617051144.29756-2-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180617051144.29756-1-deepa.kernel@gmail.com>
+References: <20180617051144.29756-1-deepa.kernel@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The series aims at adding a new y2038-safe struct __kernel_itimerspec.
-This is intended to replace the struct itimerspec at ABI level.
+struct itimerspec is not y2038-safe.
+Introduce a new struct __kernel_itimerspec based on the
+kernel internal y2038-safe struct itimerspec64.
 
-The series is a continuation of efforts to convert all syscalls with
-time_t or time_t-derived structures to be y2038-safe.
+The definition of struct __kernel_itimerspec includes two
+struct __kernel_timespec.
+And, since struct __kernel_timespec has the same representation in native
+and compat modes, so does struct __kernel_itimerspec. This helps have a
+common entry point for syscalls using struct __kernel_itimerspec.
 
-Arnd, maybe this series can go along with the rest of syscalls that you
-have in your y2038 tree?
+New y2038-safe syscalls will use this new type. Since most of the new
+syscalls are just an update to the native syscalls with the type update,
+place the new definition under CONFIG_64BIT_TIME. This helps
+architectures that do not support the above config to keep using the
+old definition of struct itimerspec.
+Also change the get/put_itimerspec64 to use struct__kernel_itimerspec.
+This will help 32 bit architectures to use the new syscalls when
+architectures select CONFIG_64BIT_TIME.
 
-Deepa Dinamani (3):
-  time: Introduce struct __kernel_itimerspec
-  time: Enable get/put_compat_itimerspec64 always
-  time: Change types to new y2038 safe __kernel_itimerspec
+Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
+---
+ include/linux/time.h      | 4 ++--
+ include/linux/time64.h    | 1 +
+ include/uapi/linux/time.h | 7 +++++++
+ kernel/time/time.c        | 4 ++--
+ 4 files changed, 12 insertions(+), 4 deletions(-)
 
- fs/timerfd.c                |  8 ++++----
- include/linux/compat.h      |  9 ---------
- include/linux/compat_time.h |  9 +++++++++
- include/linux/syscalls.h    | 10 +++++-----
- include/linux/time.h        |  4 ++--
- include/linux/time64.h      |  1 +
- include/uapi/linux/time.h   |  7 +++++++
- kernel/compat.c             | 29 -----------------------------
- kernel/time/posix-timers.c  | 12 +++++++-----
- kernel/time/time.c          | 25 +++++++++++++++++++++++--
- 10 files changed, 58 insertions(+), 56 deletions(-)
-
-
-base-commit: 4b373f94fee5acf2ff4c1efbb3f702060379df1f
+diff --git a/include/linux/time.h b/include/linux/time.h
+index aed74463592d..27d83fd2ae61 100644
+--- a/include/linux/time.h
++++ b/include/linux/time.h
+@@ -14,9 +14,9 @@ int get_timespec64(struct timespec64 *ts,
+ int put_timespec64(const struct timespec64 *ts,
+ 		struct __kernel_timespec __user *uts);
+ int get_itimerspec64(struct itimerspec64 *it,
+-			const struct itimerspec __user *uit);
++			const struct __kernel_itimerspec __user *uit);
+ int put_itimerspec64(const struct itimerspec64 *it,
+-			struct itimerspec __user *uit);
++			struct __kernel_itimerspec __user *uit);
+ 
+ extern time64_t mktime64(const unsigned int year, const unsigned int mon,
+ 			const unsigned int day, const unsigned int hour,
+diff --git a/include/linux/time64.h b/include/linux/time64.h
+index 0a7b2f79cec7..05634afba0db 100644
+--- a/include/linux/time64.h
++++ b/include/linux/time64.h
+@@ -12,6 +12,7 @@ typedef __u64 timeu64_t;
+  */
+ #ifndef CONFIG_64BIT_TIME
+ #define __kernel_timespec timespec
++#define __kernel_itimerspec itimerspec
+ #endif
+ 
+ #include <uapi/linux/time.h>
+diff --git a/include/uapi/linux/time.h b/include/uapi/linux/time.h
+index fcf936656493..6b56a2208be7 100644
+--- a/include/uapi/linux/time.h
++++ b/include/uapi/linux/time.h
+@@ -49,6 +49,13 @@ struct __kernel_timespec {
+ };
+ #endif
+ 
++#ifndef __kernel_itimerspec
++struct __kernel_itimerspec {
++	struct __kernel_timespec it_interval;    /* timer period */
++	struct __kernel_timespec it_value;       /* timer expiration */
++};
++#endif
++
+ /*
+  * legacy timeval structure, only embedded in structures that
+  * traditionally used 'timeval' to pass time intervals (not absolute
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 6fa99213fc72..4e65916e3d13 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -929,7 +929,7 @@ int compat_put_timespec64(const struct timespec64 *ts, void __user *uts)
+ EXPORT_SYMBOL_GPL(compat_put_timespec64);
+ 
+ int get_itimerspec64(struct itimerspec64 *it,
+-			const struct itimerspec __user *uit)
++			const struct __kernel_itimerspec __user *uit)
+ {
+ 	int ret;
+ 
+@@ -944,7 +944,7 @@ int get_itimerspec64(struct itimerspec64 *it,
+ EXPORT_SYMBOL_GPL(get_itimerspec64);
+ 
+ int put_itimerspec64(const struct itimerspec64 *it,
+-			struct itimerspec __user *uit)
++			struct __kernel_itimerspec __user *uit)
+ {
+ 	int ret;
+ 
 -- 
 2.17.1
 
