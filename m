@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E6CCC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:07:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43224C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD21C20895
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:07:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F20322086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CcFsLVjf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD21C20895
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mnOUCgq4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F20322086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934104AbeFQCBP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:01:15 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58998 "EHLO
+        id S934742AbeFQCHM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:07:12 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59476 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933871AbeFQCBF (ORCPT
+        with ESMTP id S934051AbeFQCBO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 22:01:05 -0400
+        Sat, 16 Jun 2018 22:01:14 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=nftG592FglmKPNkS0O3i9Vic0KQckutXgqXmFPqt590=; b=CcFsLVjfPRyi1vknngu8RhDQ8
-        muB7aY4XhABG07Aog0tciv2jAAj+KgiMLi5p4zFe6qMimHLGhUgET3eDeUHWK18b87QRicc0bLHHJ
-        hRys3NiUYJ665IgdlLKQmaO2xFNFTA6RF3LB0y/Ya9jwGKHmts8iRV+I0258DQrcioJZZ9Do+zdLo
-        Nu+P5FbQ8EFn4blFG+ygkyaQD560JEjLv7sgINzBT2VY1zeN8ta+xZUf2I1XOD1P5oxMWvwpA/mFR
-        K97JtgH0UjLe7lx+RWdLwM4j6xCv5kdJ9LKfHWgllsKYwCVFqb2JEMjVTGslTZGzE348aItwPzpgb
-        TtUNgVr5Q==;
+         bh=taP8BwheHg3CEkDXuvl7b4R9WQ7b3YzBrhJkOgu4qeA=; b=mnOUCgq42hLXgcqQvdSJolBa4
+        M2pHHerVUVQEAix/TXoPd/ZLNBXq46cwsAlwSXV34gaKqxdjMLDbIBuoLXtyO82BlJoMu8EfMh9ux
+        pU3APwkzHc+vWtyGCLTLQ0cASLWRek2CsfN52jLPIlRjl9TV8tFIG/BNt6M9s9LZtM+AhKQ7EzJAp
+        Y0JCImZZCPzVXB8OH2ekbiLa4xE5a2zPEzVoiptNgLCITKe5yxa70ZBRvxCZSbxxWiBqH4a2eOYWC
+        +vtRoNDpb/8Lt7UHE2Cbqt6i3VnUNVTgVl8WLCtiLvyowoAKYnhgT5Dk3nnSM+cKTl0E7N2qZ6y0Q
+        a/tTBK1sw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN04-0001L7-5o; Sun, 17 Jun 2018 02:01:04 +0000
+        id 1fUN0C-0001S2-0j; Sun, 17 Jun 2018 02:01:12 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 37/74] mm: Convert truncate to XArray
-Date:   Sat, 16 Jun 2018 19:00:15 -0700
-Message-Id: <20180617020052.4759-38-willy@infradead.org>
+Subject: [PATCH v14 54/74] memfd: Convert memfd_wait_for_pins to XArray
+Date:   Sat, 16 Jun 2018 19:00:32 -0700
+Message-Id: <20180617020052.4759-55-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,51 +63,117 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is essentially xa_cmpxchg() with the locking handled above us,
-and it doesn't have to handle replacing a NULL entry.
+Simplify the locking by taking the spinlock while we walk the tree on
+the assumption that many acquires and releases of the lock will be worse
+than holding the lock while we process an entire batch of pages.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Reviewed-by: Mike Kravetz <mike.kravetz@oracle.com>
 ---
- mm/truncate.c | 15 ++++++---------
- 1 file changed, 6 insertions(+), 9 deletions(-)
+ mm/memfd.c | 61 ++++++++++++++++++++++--------------------------------
+ 1 file changed, 25 insertions(+), 36 deletions(-)
 
-diff --git a/mm/truncate.c b/mm/truncate.c
-index ed778555c9f3..45d68e90b703 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -33,15 +33,12 @@
- static inline void __clear_shadow_entry(struct address_space *mapping,
- 				pgoff_t index, void *entry)
+diff --git a/mm/memfd.c b/mm/memfd.c
+index 27069518e3c5..e7d6be725b7a 100644
+--- a/mm/memfd.c
++++ b/mm/memfd.c
+@@ -21,7 +21,7 @@
+ #include <uapi/linux/memfd.h>
+ 
+ /*
+- * We need a tag: a new tag would expand every radix_tree_node by 8 bytes,
++ * We need a tag: a new tag would expand every xa_node by 8 bytes,
+  * so reuse a tag which we firmly believe is never set or cleared on tmpfs
+  * or hugetlbfs because they are memory only filesystems.
+  */
+@@ -72,9 +72,7 @@ static void memfd_tag_pins(struct address_space *mapping)
+  */
+ static int memfd_wait_for_pins(struct address_space *mapping)
  {
--	struct radix_tree_node *node;
--	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, index);
+-	struct radix_tree_iter iter;
+-	void __rcu **slot;
+-	pgoff_t start;
++	XA_STATE(xas, &mapping->i_pages, 0);
+ 	struct page *page;
+ 	int error, scan;
  
--	if (!__radix_tree_lookup(&mapping->i_pages, index, &node, &slot))
-+	xas_set_update(&xas, workingset_update_node);
-+	if (xas_load(&xas) != entry)
- 		return;
--	if (*slot != entry)
--		return;
--	__radix_tree_replace(&mapping->i_pages, node, slot, NULL,
--			     workingset_update_node);
-+	xas_store(&xas, NULL);
- 	mapping->nrexceptional--;
- }
+@@ -82,7 +80,9 @@ static int memfd_wait_for_pins(struct address_space *mapping)
  
-@@ -738,10 +735,10 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 		index++;
+ 	error = 0;
+ 	for (scan = 0; scan <= LAST_SCAN; scan++) {
+-		if (!radix_tree_tagged(&mapping->i_pages, MEMFD_TAG_PINNED))
++		unsigned int tagged = 0;
++
++		if (!xas_tagged(&xas, MEMFD_TAG_PINNED))
+ 			break;
+ 
+ 		if (!scan)
+@@ -90,45 +90,34 @@ static int memfd_wait_for_pins(struct address_space *mapping)
+ 		else if (schedule_timeout_killable((HZ << scan) / 200))
+ 			scan = LAST_SCAN;
+ 
+-		start = 0;
+-		rcu_read_lock();
+-		radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter,
+-					   start, MEMFD_TAG_PINNED) {
+-
+-			page = radix_tree_deref_slot(slot);
+-			if (radix_tree_exception(page)) {
+-				if (radix_tree_deref_retry(page)) {
+-					slot = radix_tree_iter_retry(&iter);
+-					continue;
+-				}
+-
+-				page = NULL;
+-			}
+-
+-			if (page &&
+-			    page_count(page) - page_mapcount(page) != 1) {
+-				if (scan < LAST_SCAN)
+-					goto continue_resched;
+-
++		xas_set(&xas, 0);
++		xas_lock_irq(&xas);
++		xas_for_each_tagged(&xas, page, ULONG_MAX, MEMFD_TAG_PINNED) {
++			bool clear = true;
++			if (xa_is_value(page))
++				continue;
++			if (page_count(page) - page_mapcount(page) != 1) {
+ 				/*
+ 				 * On the last scan, we clean up all those tags
+ 				 * we inserted; but make a note that we still
+ 				 * found pages pinned.
+ 				 */
+-				error = -EBUSY;
++				if (scan == LAST_SCAN)
++					error = -EBUSY;
++				else
++					clear = false;
+ 			}
++			if (clear)
++				xas_clear_tag(&xas, MEMFD_TAG_PINNED);
++			if (++tagged % XA_CHECK_SCHED)
++				continue;
+ 
+-			xa_lock_irq(&mapping->i_pages);
+-			radix_tree_tag_clear(&mapping->i_pages,
+-					     iter.index, MEMFD_TAG_PINNED);
+-			xa_unlock_irq(&mapping->i_pages);
+-continue_resched:
+-			if (need_resched()) {
+-				slot = radix_tree_iter_resume(slot, &iter);
+-				cond_resched_rcu();
+-			}
++			xas_pause(&xas);
++			xas_unlock_irq(&xas);
++			cond_resched();
++			xas_lock_irq(&xas);
+ 		}
+-		rcu_read_unlock();
++		xas_unlock_irq(&xas);
  	}
- 	/*
--	 * For DAX we invalidate page tables after invalidating radix tree.  We
-+	 * For DAX we invalidate page tables after invalidating page cache.  We
- 	 * could invalidate page tables while invalidating each entry however
- 	 * that would be expensive. And doing range unmapping before doesn't
--	 * work as we have no cheap way to find whether radix tree entry didn't
-+	 * work as we have no cheap way to find whether page cache entry didn't
- 	 * get remapped later.
- 	 */
- 	if (dax_mapping(mapping)) {
+ 
+ 	return error;
 -- 
 2.17.1
 
