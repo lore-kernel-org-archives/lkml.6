@@ -2,160 +2,123 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	FREEMAIL_REPLYTO_END_DIGIT,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5047C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 03:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 504DEC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 03:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5466C208A5
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 03:23:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F33CB2086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 03:41:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fWnRNOMc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5466C208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="MxsjQzkw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F33CB2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933527AbeFQDXQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 23:23:16 -0400
-Received: from mail-it0-f68.google.com ([209.85.214.68]:34932 "EHLO
-        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754082AbeFQDXP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 23:23:15 -0400
-Received: by mail-it0-f68.google.com with SMTP id a3-v6so7782003itd.0;
-        Sat, 16 Jun 2018 20:23:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:reply-to:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=Ul4OAsZiCbWFc6cLCTku1njSWcCC5uYCg8BkAM9h7KM=;
-        b=fWnRNOMcU0v5/Um/4FRU7GyPrCMDVY2Qw0bg4zSwBeGYk8mZfDaRyEBAoqe3qPEAow
-         EEnp1OHFEabMAwC9OAuYNMdUIvVHUGeMRvSLh+Nj+HXPTTJdGsF0oFnM/N5LaSR4atiK
-         wm7NKT73VAixd9K3NGsrjJ/wIADPj/eNJ2uoKkH2zXcPdbfVbhi1QAUBMgUUmSevNTq8
-         TPutWbtO06drioI+2gH28oky/giK7+ssRr19pjRL2BNtbklgwuDO/Hm/ZnewMPKkBxlJ
-         iMGcmcFzhhLVJMqHzuyB7P9iKju2j5kiK1ZW14mx14rEyGBnoNIF4+eEgOzLpGzc25X6
-         hsTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:reply-to:in-reply-to:references
-         :from:date:message-id:subject:to:cc;
-        bh=Ul4OAsZiCbWFc6cLCTku1njSWcCC5uYCg8BkAM9h7KM=;
-        b=mTl566A4bEIcnOfzRBEQQV3ngMMWNf15X4HXEQsEduKNKyLwhUGMyrtflh4ZrLQHNZ
-         lekym9oeRaElPjXqEa5T+jo0M1w2qd3gBQMgljpESrGumbMrGM9vWqlTxygURyFqiIA6
-         20JgCDz+65j9oDYsXSWdcqgJJSbBUZDS/LfoQGnWG95UqBXQb7apnW1rma/5o+zIMT/V
-         ZR8WFJQthq09h6nD6LxRrMI+J0M25LPyBwn5Q1szTDFENtwFnJ4PnNsXWfVGtQiy5G6d
-         /Xn8cZVXQsoJ6N3J+/N/JZBK2MAoRw6hqg4FGIFMhqG+ij6HtKUqX9C8SJvVYnlyeR/U
-         uw2w==
-X-Gm-Message-State: APt69E2a9ZPHo+S8OKyiVzudamnd7t1+ajQgJhZrbA7B0IMGUgf/NfXy
-        3Chcovp0nETZ1d0KEHCfl99D85O6OiPPdiKhSGM=
-X-Google-Smtp-Source: ADUXVKIUOAADfpuZZqD7q/6uhqrexJsdE/zzoyjT/Y/lYrp2RVMsT6bQlL77M/YH7bWBrVkJGlgDt3JowJ4wgCnWbLA=
-X-Received: by 2002:a24:e645:: with SMTP id e66-v6mr6210514ith.41.1529205794322;
- Sat, 16 Jun 2018 20:23:14 -0700 (PDT)
+        id S1754842AbeFQDlJ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 23:41:09 -0400
+Received: from ozlabs.org ([203.11.71.1]:40939 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754240AbeFQDlI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 23:41:08 -0400
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 417g4K4CjMz9s19;
+        Sun, 17 Jun 2018 13:41:05 +1000 (AEST)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1529206865;
+        bh=MX9JPPOAFVERmu/usCIIWCNp6Ttgkv58/RfdxzhqvVY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=MxsjQzkwB0wA7oMcthU3A8j/Kgzdxfmef4e12yHcMeqXWOKpelw6fSDcezuwoUXUQ
+         ucDhQKcspD52sJ/oekvzosT2KyENR97w6X6cFL/Sd50M4x//1pksAU13FQ5hY5/voX
+         COY8M4o1yvx9vHYhPIscGB4Avpdz4jl87KPQhTs10v4Li/zSCgg1hX/POL+SDSu0uK
+         5P8mcOo/pEtncaGhNCG60Zmtc2CEJXyejbGti00nZdwNKojQlnyT7GjrxhSlwsk9UH
+         1ewP+P50867splruDNo0sos0zewOmoEEjF1nykeh6y/+BouFoOatMeb16wGWElraFm
+         AH72Wmf8+hg9g==
+Date:   Sun, 17 Jun 2018 13:41:04 +1000
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: XArray -next inclusion request
+Message-ID: <20180617134104.68c24ffc@canb.auug.org.au>
+In-Reply-To: <20180617021521.GA18455@bombadil.infradead.org>
+References: <20180617021521.GA18455@bombadil.infradead.org>
 MIME-Version: 1.0
-Received: by 2002:a4f:8d04:0:0:0:0:0 with HTTP; Sat, 16 Jun 2018 20:23:13
- -0700 (PDT)
-Reply-To: cwchoi00@gmail.com
-In-Reply-To: <20180615151217.29872-1-enric.balletbo@collabora.com>
-References: <20180615151217.29872-1-enric.balletbo@collabora.com>
-From:   Chanwoo Choi <cwchoi00@gmail.com>
-Date:   Sun, 17 Jun 2018 12:23:13 +0900
-Message-ID: <CAGTfZH16O6u_3QJ2u1eecUnGptSBf1ho47RPefOTmrw+Syxr0w@mail.gmail.com>
-Subject: Re: [PATCH] devfreq: rk3399_dmc: Fix duplicated opp table on reload.
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>, kernel@collabora.com,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_//10i7lQzwXr2dcjDSpTezyV"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Enric,
+--Sig_//10i7lQzwXr2dcjDSpTezyV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-2018-06-16 0:12 GMT+09:00 Enric Balletbo i Serra <enric.balletbo@collabora.com>:
-> The opp table is not removed when the driver is unloaded neither when
-> there is an error within probe, so if the driver is reloaded the opp
-> core shows the following warning:
->
->   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->                200000000, volt: 900000, enabled: 1. New: freq: 200000000,
->                volt: 900000, enabled: 1
->   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->                400000000, volt: 900000, enabled: 1. New: freq: 400000000,
->                volt: 900000, enabled: 1
->   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->                666000000, volt: 900000, enabled: 1. New: freq: 666000000,
->                volt: 900000, enabled: 1
->   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->                800000000, volt: 900000, enabled: 1. New: freq: 800000000,
->                volt: 900000, enabled: 1
->   rk3399-dmc-freq dmc: _opp_add: duplicate OPPs detected. Existing: freq:
->                928000000, volt: 900000, enabled: 1. New: freq: 928000000,
->                volt: 900000, enabled: 1
->
-> This patch fixes the error path in the probe function and adds a .remove
-> function to properly cleanup the opp table on unloading.
->
-> Fixes: 5a893e31a636c (PM / devfreq: rockchip: add devfreq driver for rk3399 dmc)
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
-> ---
->
->  drivers/devfreq/rk3399_dmc.c | 31 +++++++++++++++++++++++++++----
->  1 file changed, 27 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/devfreq/rk3399_dmc.c b/drivers/devfreq/rk3399_dmc.c
-> index d5c03e5abe13..e795ad2b3f6b 100644
-> --- a/drivers/devfreq/rk3399_dmc.c
-> +++ b/drivers/devfreq/rk3399_dmc.c
-> @@ -375,8 +375,10 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->         data->rate = clk_get_rate(data->dmc_clk);
->
->         opp = devfreq_recommended_opp(dev, &data->rate, 0);
-> -       if (IS_ERR(opp))
-> -               return PTR_ERR(opp);
-> +       if (IS_ERR(opp)) {
-> +               ret = PTR_ERR(opp);
-> +               goto err_free_opp;
-> +       }
->
->         data->rate = dev_pm_opp_get_freq(opp);
->         data->volt = dev_pm_opp_get_voltage(opp);
-> @@ -388,13 +390,33 @@ static int rk3399_dmcfreq_probe(struct platform_device *pdev)
->                                            &rk3399_devfreq_dmc_profile,
->                                            DEVFREQ_GOV_SIMPLE_ONDEMAND,
->                                            &data->ondemand_data);
-> -       if (IS_ERR(data->devfreq))
-> -               return PTR_ERR(data->devfreq);
-> +       if (IS_ERR(data->devfreq)) {
-> +               ret = PTR_ERR(data->devfreq);
-> +               goto err_free_opp;
-> +       }
-> +
->         devm_devfreq_register_opp_notifier(dev, data->devfreq);
->
->         data->dev = dev;
->         platform_set_drvdata(pdev, data);
->
-> +       return 0;
+Hi Willy,
 
-It looks strange. Because rk3399_dmcfreq_probe() already include
-'return 0' when success.
-What is the base commit of this patch?
+On Sat, 16 Jun 2018 19:15:22 -0700 Matthew Wilcox <willy@infradead.org> wro=
+te:
+>
+> Please add
+>=20
+> git://git.infradead.org/users/willy/linux-dax.git xarray
+>=20
+> to linux-next.  It is based on -rc1.  You will find some conflicts
+> against Dan's current patches to DAX; these are all resolved correctly
+> in the xarray-20180615 branch which is based on next-20180615.
 
-[snip]
+Added from tomorrow.
 
-Anyway, if probe fail, device driver have to remove registered OPP table.
-Looks good to me.
+> In a masterstroke of timing, I'm going to be on a plane to Tokyo on
+> Monday.  If this causes any problems, please just ignore the request
+> for now and we'll resolve it when I'm available to fix problems.
 
-Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+No worries, I will check your other branch and if things are still to
+difficult, you will get an email and I will just drop it for a few days.
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+Thanks for adding your subsystem tree as a participant of linux-next.  As
+you may know, this is not a judgement of your code.  The purpose of
+linux-next is for integration testing and to lower the impact of
+conflicts between subsystems in the next merge window.=20
+
+You will need to ensure that the patches/commits in your tree/series have
+been:
+     * submitted under GPL v2 (or later) and include the Contributor's
+        Signed-off-by,
+     * posted to the relevant mailing list,
+     * reviewed by you (or another maintainer of your subsystem tree),
+     * successfully unit tested, and=20
+     * destined for the current or next Linux merge window.
+
+Basically, this should be just what you would send to Linus (or ask him
+to fetch).  It is allowed to be rebased if you deem it necessary.
+
+--=20
+Cheers,
+Stephen Rothwell=20
+sfr@canb.auug.org.au
+
+--Sig_//10i7lQzwXr2dcjDSpTezyV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsl2FAACgkQAVBC80lX
+0GyZmgf9HRW8/VuzETFcFcp0l4cXJLhNuCSRRP4FXGPKh6KJwwf0FIEW3hmwqoNj
+ifKVtyBMtcLg3I6RSizxtAonQp6Cg8+pa84MA6B4I+wP4Dpb7OuhonqRd88oLn5J
+7C453g0Deoq4v0vOwXb36WnaxHmo/HejWa8UFXwS9HuTWqCYWSshvWHyXLAUX1Ke
+7XPlDXin/YnqxEyHMQokWI4YX1IO2JBzytqrDUPKtL11k20zl0C4JcAEJCTFG5l0
+U8vhofT96EUCqCD9Ql7CC7mJIHo5yjZk0Arubd/RgcIm9RV7GWuua3jd//ElFaDb
+hnwctZDxCzIYpKHRv3kDGPH2AORxoA==
+=xx4Q
+-----END PGP SIGNATURE-----
+
+--Sig_//10i7lQzwXr2dcjDSpTezyV--
