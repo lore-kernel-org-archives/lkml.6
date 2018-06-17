@@ -2,116 +2,80 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E36C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:17:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAC83C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:21:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C8E420693
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:17:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klak7P7s"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C8E420693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1898420693
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:21:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1898420693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stu.xidian.edu.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933277AbeFQLRD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 07:17:03 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:44413 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754255AbeFQLRC (ORCPT
+        id S1755027AbeFQLVd (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 07:21:33 -0400
+Received: from stumail.xidian.edu.cn ([202.117.112.40]:49320 "HELO
+        stu.xidian.edu.cn" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with SMTP id S1754255AbeFQLVc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 07:17:02 -0400
-Received: by mail-pf0-f194.google.com with SMTP id h12-v6so6834376pfk.11
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 04:17:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=XbyL4z96xfT3YlWw8BGvtGOlSct9gr9UlwfO+ED5Xsc=;
-        b=klak7P7sqevcta86Mmxlo42WJKai1jIZBm5JVtr0b5GuvpDWtZKxChIUx3Jx/P7FYT
-         JaKcouNxCccIt7qWJICndlqXq7tCPugLoDrO7bjt76kWgYeCac70uXWdpiQrFuBzZNbi
-         nocsRCv4urJgiZLWNKqSaK+MDsWIXvhGCjskpzHbhiOquoQ3oeYINij07Orl98kos5Iu
-         0NxqOWAOH0gH0xM5SsuFIAlDX8LKgMA4F8TkdV3gbw4ItKwL4VVG0GDAPfSxV4sJu6BP
-         ilagHJqvLYblEn8wDXxWLVgcT4J1h6nltNQtPy/0GLNmDtaR+Dm+YZrnj9G9X1mwNsef
-         JKsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=XbyL4z96xfT3YlWw8BGvtGOlSct9gr9UlwfO+ED5Xsc=;
-        b=WeG2Fexr87X+g/6ZYD32UJbKKeY8NvIHvvrulMe9x3hZQqncsMchYSfYg0DYsVzul3
-         v4wDEU/rky8rB8A7V4+78CXboiWfvZRJFET/CtQsRrq7rRFSQznCfPnViOZVjxqAWq0l
-         bjXvl8S6b8rh7d/MVxqnVI8ylL9IlqKS774oE0S8Qg7TzV2BWZA9dOkfPTxZYTkv6pFH
-         WXi5qfsVXbNnwUe6ew2k4SdJXhcXqjrNS2sDIKQSzd71evL11VuXuZXYFT7NHDPgHTxZ
-         CNsRJdFPhYjQmbilGhu465e/wNqNkj1DciDzPnppJi03AWMKTg9p5TB7XKhVqwbyYkhj
-         WP/A==
-X-Gm-Message-State: APt69E1pa7+UbnOF+zg5MrluMkiTWoTaHIogCPD1tiuzg7a6Du6RPiI8
-        fdpVRqeDa23kuS7CG290aPuFnQ==
-X-Google-Smtp-Source: ADUXVKIOa1LrtHE4wFV/d7vnhqrj9cUnpVmIxMLjQS2kswZjWjqByT55O3up5Y3bNVtcEpNFPjh92Q==
-X-Received: by 2002:a65:56c1:: with SMTP id w1-v6mr7724265pgs.227.1529234222202;
-        Sun, 17 Jun 2018 04:17:02 -0700 (PDT)
-Received: from shreeya-VirtualBox ([103.212.140.156])
-        by smtp.gmail.com with ESMTPSA id o65-v6sm16178047pga.75.2018.06.17.04.17.00
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 17 Jun 2018 04:17:01 -0700 (PDT)
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     oleg.drokin@intel.com, andreas.dilger@intel.com,
-        jsimmons@infradead.org, gregkh@linuxfoundation.org,
-        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Cc:     Shreeya Patel <shreeya.patel23498@gmail.com>
-Subject: [PATCH] Staging: lustre: Use kmemdup() instead of kzalloc and memcpy
-Date:   Sun, 17 Jun 2018 16:46:55 +0530
-Message-Id: <1529234215-4010-1-git-send-email-shreeya.patel23498@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 17 Jun 2018 07:21:32 -0400
+X-Greylist: delayed 367 seconds by postgrey-1.27 at vger.kernel.org; Sun, 17 Jun 2018 07:21:32 EDT
+Received: from localhost (localhost [10.170.26.222])
+        by stu.xidian.edu.cn (eYou MTA v8.1.0) with ESMTP id 8b5ec090895555936b1f6023946f8033
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 19:16:12 +0800
+X-Eyou-Smtpauth: ryxi@stu.xidian.edu.cn
+From:   Xi Ruoyao <ryxi@stu.xidian.edu.cn>
+Date:   Sun, 17 Jun 2018 18:16:07 +0800
+Subject: [PATCH] Kbuild: fix mismatched if/endif pairs
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Michal Marek <michal.lkml@markovi.net>
+Cc:     linux-kbuild@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Cc:     Xi Ruoyao <ryxi@stu.xidian.edu.cn>
+X-Eyou-Sender: <ryxi@stu.xidian.edu.cn>
+Message-Id: <180617191612798b1a5d7a74c59e7905c31fd3f36f5d@stu.xidian.edu.cn>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace calls to kzalloc or kmalloc followed by a memcpy with
-a direct call to kmemdup to shorten the code.
+In scripts/Makefile.build, there are two mismatched if/endif pairs.
+They stop the generation of orc unwind table if CONFIG_FTRACE_MCOUNT_RECORD
+is not set.  dmesg complains:
 
-The Coccinelle semantic patch used to make this change is as follows:
-@@
-expression from,to,size,flag;
-statement S;
-@@
+WARNING: WARNING: Bad or missing .orc_unwind table.  Disabling unwinder.
 
--  to = \(kmalloc\|kzalloc\)(size,flag);
-+  to = kmemdup(from,size,flag);
-   if (to==NULL || ...) S
--  memcpy(to, from, size);
+This comment moves an endif to match the if/endif pairs.
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+Signed-off-by: Xi Ruoyao <ryxi@stu.xidian.edu.cn>
 ---
- drivers/staging/lustre/lnet/lnet/api-ni.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ scripts/Makefile.build | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
-index f9ed697..36ea14e 100644
---- a/drivers/staging/lustre/lnet/lnet/api-ni.c
-+++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
-@@ -1271,15 +1271,14 @@ lnet_startup_lndni(struct lnet_ni *ni, struct lnet_ioctl_config_data *conf)
- 		lnd_tunables = (struct lnet_ioctl_config_lnd_tunables *)conf->cfg_bulk;
+diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+index 34d9e9ce97c2..16509a038d77 100644
+--- a/scripts/Makefile.build
++++ b/scripts/Makefile.build
+@@ -239,6 +239,7 @@ cmd_record_mcount =						\
+ 	     "$(CC_FLAGS_FTRACE)" ]; then			\
+ 		$(sub_cmd_record_mcount)			\
+ 	fi;
++endif # cc-option(-mrecord-mcount)
+ endif # CONFIG_FTRACE_MCOUNT_RECORD
  
- 	if (lnd_tunables) {
--		ni->ni_lnd_tunables = kzalloc(sizeof(*ni->ni_lnd_tunables),
-+		ni->ni_lnd_tunables = kmemdup(lnd_tunables,
-+					      sizeof(*ni->ni_lnd_tunables),
- 					      GFP_NOFS);
- 		if (!ni->ni_lnd_tunables) {
- 			mutex_unlock(&the_lnet.ln_lnd_mutex);
- 			rc = -ENOMEM;
- 			goto failed0;
- 		}
--		memcpy(ni->ni_lnd_tunables, lnd_tunables,
--		       sizeof(*ni->ni_lnd_tunables));
- 	}
+ ifdef CONFIG_STACK_VALIDATION
+@@ -263,7 +264,6 @@ ifneq ($(RETPOLINE_CFLAGS),)
+   objtool_args += --retpoline
+ endif
+ endif
+-endif
  
- 	/*
+ 
+ ifdef CONFIG_MODVERSIONS
 -- 
-2.7.4
+2.16.2
 
