@@ -2,142 +2,101 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765DEC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 075B2C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:27:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B3F520874
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:04:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B3F520874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hofr.at
+	by mail.kernel.org (Postfix) with ESMTP id A2E3820896
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:27:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VyLdJkae"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2E3820896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932996AbeFQIEI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 04:04:08 -0400
-Received: from 178.115.242.59.static.drei.at ([178.115.242.59]:60930 "EHLO
-        mail.osadl.at" rhost-flags-OK-FAIL-OK-OK) by vger.kernel.org
-        with ESMTP id S932451AbeFQIEG (ORCPT
+        id S932689AbeFQI1N (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 04:27:13 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34734 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932478AbeFQI1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 04:04:06 -0400
-Received: by mail.osadl.at (Postfix, from userid 1001)
-        id BCCB65C098D; Sun, 17 Jun 2018 08:02:42 +0000 (UTC)
-Date:   Sun, 17 Jun 2018 08:02:42 +0000
-From:   Nicholas Mc Guire <der.herr@hofr.at>
-To:     Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, ldv-project@linuxtesting.org,
-        alsa-devel@alsa-project.org, sil2review@lists.osadl.org,
-        linux-kernel@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>,
-        linux-tegra@vger.kernel.org
-Subject: Re: [SIL2review] [PATCH] ASoC: tegra: fix device_node refcounting
-Message-ID: <20180617080242.GB24046@osadl.at>
-References: <1529101378-5543-1-git-send-email-khoroshilov@ispras.ru>
+        Sun, 17 Jun 2018 04:27:10 -0400
+Received: by mail-pl0-f65.google.com with SMTP id g20-v6so7458051plq.1;
+        Sun, 17 Jun 2018 01:27:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=otHDokM3AQ3Bt9ycdAEpolsZFlDdrdWUum9h3+69LpI=;
+        b=VyLdJkaeq+wGJhcQ6gmIBHZ74r6NDdxUo1FeekmA1ODTyvHlHaE8wcx0KJoBsKn7fu
+         YtjrCSJqXnujVPyhWQGKUa9hwYoqol6f3N0KcQjbrYCd8qgjeGFlrMjvQdemSNRnVRVb
+         1jZsHCyH+xXlxPrRtBG5O1j6zGYXIsbbo6odnFxjTHBHbZaxhQTPoQSwy6iI4dgdCo/M
+         +gHK/+6NtvxXurSmAuy0dBYSbagZMhzMBK9m1liizr9zxKmo9GM5FYVhzH/uS4zXnTlr
+         Cllk2Ix10Oc/Zje0hivWIEeAj0eDDjNtOGq6i/cTziM0qAtaYSe+K9/zheMkHQUoILov
+         /1Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=otHDokM3AQ3Bt9ycdAEpolsZFlDdrdWUum9h3+69LpI=;
+        b=X0KIGzVGt+RtZG0Q1pQjYtFaqOuelevuTBST15CsAuIR4pR1M9O8GgvbamH+TAjHYh
+         NSuHv0KVqYF4eXXCnXs8XYzggq9QDK5tNzKppXvOlsnKeBPSOsJwhDmJeofjY05SA06M
+         c2Io8mObLqqUfJF9+aEmMLEAWC7yBtvEkzKjRN6wias1+WDmIjEBpR/BDOgCUvMuVIKR
+         2jsVfFoEUsNP+LX0lcr9J/wjmOO8mqggx+IwSLEMhWJBaaXtMwTcrOmTq3AHwu1mTf8a
+         H85pgSQh1WnuaO8mAhxCprETOtGu3b4zyRwZQP8sjKxMrVCxglY+ax8XurIzfR3UAExv
+         fIjw==
+X-Gm-Message-State: APt69E2RsjOOB9Ir6AEcCQjzNlPWSGAeoW6ibNDcx/NS/GOGG7/6nsRF
+        J0EafytnDJ30pV+OSrhICQA=
+X-Google-Smtp-Source: ADUXVKLJTSF3xM9jO/ixJ06f7ZXGuQxTDG8sHGMqCl5lXFr6QPey7Fs54naJ61JH51fnRY/3komoeg==
+X-Received: by 2002:a17:902:868b:: with SMTP id g11-v6mr9065712plo.305.1529224029830;
+        Sun, 17 Jun 2018 01:27:09 -0700 (PDT)
+Received: from nishad ([106.51.24.189])
+        by smtp.gmail.com with ESMTPSA id b22-v6sm17298619pfi.144.2018.06.17.01.27.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Jun 2018 01:27:09 -0700 (PDT)
+Date:   Sun, 17 Jun 2018 13:57:01 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Dan Carpenter <dan.carpenter@oracle.com>
+Cc:     Aditya Shankar <aditya.shankar@microchip.com>,
+        Ganesh Krishna <ganesh.krishna@microchip.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: wilc1000: Fix type of argument in
+ ieee80211_is_action()
+Message-ID: <20180617082700.GA2594@nishad>
+References: <20180610071013.GA8771@nishad>
+ <20180612131413.qlv3wes43obfbmhe@mwanda>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1529101378-5543-1-git-send-email-khoroshilov@ispras.ru>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20180612131413.qlv3wes43obfbmhe@mwanda>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 01:22:58AM +0300, Alexey Khoroshilov wrote:
-> tegra_rt5677_probe() gets a couple of device nodes with of_parse_phandle(),
-> but there is no release of them.
+On Tue, Jun 12, 2018 at 04:14:13PM +0300, Dan Carpenter wrote:
+> On Sun, Jun 10, 2018 at 12:40:17PM +0530, Nishad Kamdar wrote:
+> > Type used is unsigned char but expected is restricted __le16.
+> > Warning reported by sparse. Part of eudyptula challenge.
+> > 
 > 
-> The patch adds the release to tegra_rt5677_remove() and
-> to error handling paths in the probe.
+> The code is buggy, but this fix just papers over it.  We discussed this
+> code earlier.
 > 
-> Found by Linux Driver Verification project (linuxtesting.org).
-
-static int tegra_rt5677_probe(struct platform_device *pdev)
-{
-        struct device_node *np = pdev->dev.of_node;
-
- calls of_get_named_gpio() three times and then checks for 
- -EPROBE_DEFER and bails out in that error cases. but of_get_named_gpio()
- may have incremented  np  at that point. The call try i think is:
-
- of_get_named_gpio(np,....) 
-  -> of_get_named_gpio_flags()
-    -> of_get_named_gpiod_flags()
-      -> of_parse_phandle_with_args_map()
-        -> of_for_each_phandle()
-          -> of_phandle_iterator_next()
-            -> of_find_node_by_phandle()
-              -> of_node_get(np)
-
- so that got refcounted as well and not decremented/released in the
- non -EPROBE_DEFER case. I think those should be added while cleaning
- up the other missing of_node_put() you detected below.
-
- I think thos of_node_put() are also missing.
-
+> https://lkml.org/lkml/2018/6/5/304
 > 
-> Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Reviewed-by: Nicholas Mc Guire <der.herr@hofr.at>
+> regards,
+> dan carpenter
+> 
 
-> ---
->  sound/soc/tegra/tegra_rt5677.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
-> index 0e4805c7b4ca..7081f15302cc 100644
-> --- a/sound/soc/tegra/tegra_rt5677.c
-> +++ b/sound/soc/tegra/tegra_rt5677.c
-> @@ -264,13 +264,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev,
->  			"Property 'nvidia,i2s-controller' missing or invalid\n");
->  		ret = -EINVAL;
-> -		goto err;
-> +		goto err_put_codec_of_node;
->  	}
->  	tegra_rt5677_dai.platform_of_node = tegra_rt5677_dai.cpu_of_node;
->  
->  	ret = tegra_asoc_utils_init(&machine->util_data, &pdev->dev);
->  	if (ret)
-> -		goto err;
-> +		goto err_put_cpu_of_node;
->  
->  	ret = snd_soc_register_card(card);
->  	if (ret) {
-> @@ -283,6 +283,13 @@ static int tegra_rt5677_probe(struct platform_device *pdev)
->  
->  err_fini_utils:
->  	tegra_asoc_utils_fini(&machine->util_data);
-> +err_put_cpu_of_node:
-> +	of_node_put(tegra_rt5677_dai.cpu_of_node);
-> +	tegra_rt5677_dai.cpu_of_node = NULL;
-> +	tegra_rt5677_dai.platform_of_node = NULL;
-> +err_put_codec_of_node:
-> +	of_node_put(tegra_rt5677_dai.codec_of_node);
-> +	tegra_rt5677_dai.codec_of_node = NULL;
->  err:
->  	return ret;
->  }
-> @@ -296,6 +303,12 @@ static int tegra_rt5677_remove(struct platform_device *pdev)
->  
->  	tegra_asoc_utils_fini(&machine->util_data);
->  
-> +	tegra_rt5677_dai.platform_of_node = NULL;
-> +	of_node_put(tegra_rt5677_dai.codec_of_node);
-> +	tegra_rt5677_dai.codec_of_node = NULL;
-> +	of_node_put(tegra_rt5677_dai.cpu_of_node);
-> +	tegra_rt5677_dai.cpu_of_node = NULL;
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.7.4
-> 
-> _______________________________________________
-> SIL2review mailing list
-> SIL2review@lists.osadl.org
-> https://lists.osadl.org/mailman/listinfo/sil2review
+Ok, I will look at the discussion. Thanks for the review.
+
+regards,
+nishad kamdar
