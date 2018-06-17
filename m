@@ -2,191 +2,101 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D854C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7168AC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:30:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE3D20895
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:26:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HAn+YLjM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE3D20895
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 2DFB42086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:30:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFB42086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933557AbeFQB0G (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 21:26:06 -0400
-Received: from mail-oi0-f66.google.com ([209.85.218.66]:39940 "EHLO
-        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932562AbeFQBZn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 21:25:43 -0400
-Received: by mail-oi0-f66.google.com with SMTP id f79-v6so11972427oib.7;
-        Sat, 16 Jun 2018 18:25:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FeVrjoPVRRZyCyaiH643pOCRIcU631sOz5GKaUUbf2U=;
-        b=HAn+YLjMNBKQNnGEZbhpWegEQZ0E5bRW2bqkfNeM6urOH4sfo+3ZZJmflyqH/fP3FV
-         3su+xTuCXteuX8AUxPoI7CgO4BA8n7tjYhWJoE3unSuvF1DXfjoaFYVNqWVVzPYi2H79
-         MCXKJ7/YuwXheWgOBlq+drpGd6TXC6kegNLLPuMKRc9y1F6JZ/+M3roWcReWY+XOTbWe
-         X9VM2l3rsELKyHDoMkUnVTl+yxPDxPjGc9EKnM44S0Ta9yBB26lEYWB81NagEtc+iPPt
-         XTQsPB8lSpKAc1ba6O36hwKqPLKFvRJVKJ5sxTT6G5IpTmqApTggBh/+9mLhUNokrk4h
-         PbBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=FeVrjoPVRRZyCyaiH643pOCRIcU631sOz5GKaUUbf2U=;
-        b=Wiz1eF+zpgkB08CbQsDkdBhuqx5FYAoYy0QhHnvUr7ic3TxOLDwGekAa+fF4vVoNb8
-         MUzHPdj5mYD8o0I2N4RWpb+FiN0MCYPs0Sug8kRgw2PqkF4tiW36snnb7AwJevgD+Dy6
-         U3a9RnIrCiu809l8I7NECSE+urV7TkKOmkWrkgxesqEe9zgp5od84O9aMd8iCq2L6nsX
-         uWkTYvj5CQCygYDv4T3HDDPyz+6Dzx1cDQpjZAPHDidWbOQW21SVmaUMXBXjqsq/2zdG
-         veptx2QFCwgvi8CnZV7l8umaq4K7K2E1Kq1Y1fZaZsez6AFv+BT+jyWS8CSw7tJ1mm/S
-         Dgsw==
-X-Gm-Message-State: APt69E2wT0vz9BPs2qzhS/qFlNMiPebbNzaE38UcfnORFTN3PePlGgf1
-        f9UfGEnPQaiK25O7p+fK48Y=
-X-Google-Smtp-Source: ADUXVKKBjUtB1RGyebUCknkJWt8kmgRf2mMvSOu/BOunbzuocKv7Qmd0CWM8RzACP2qOyJTc9ecokA==
-X-Received: by 2002:aca:cf0a:: with SMTP id f10-v6mr4345274oig.258.1529198742662;
-        Sat, 16 Jun 2018 18:25:42 -0700 (PDT)
-Received: from sandstorm.nvidia.com ([2600:1700:43b0:3120:feaa:14ff:fe9e:34cb])
-        by smtp.gmail.com with ESMTPSA id u13-v6sm4666912oiv.18.2018.06.16.18.25.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Jun 2018 18:25:41 -0700 (PDT)
-From:   john.hubbard@gmail.com
-X-Google-Original-From: jhubbard@nvidia.com
-To:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>
-Cc:     linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: [PATCH 1/2] consolidate get_user_pages error handling
-Date:   Sat, 16 Jun 2018 18:25:09 -0700
-Message-Id: <20180617012510.20139-2-jhubbard@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180617012510.20139-1-jhubbard@nvidia.com>
-References: <20180617012510.20139-1-jhubbard@nvidia.com>
-X-NVConfidentiality: public
+        id S933388AbeFQBah (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 21:30:37 -0400
+Received: from szxga03-in.huawei.com ([45.249.212.189]:5564 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S932418AbeFQBaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 21:30:35 -0400
+Received: from DGGEMA406-HUB.china.huawei.com (unknown [172.30.72.56])
+        by Forcepoint Email with ESMTP id 69C1AD8596F21;
+        Sun, 17 Jun 2018 09:30:20 +0800 (CST)
+Received: from DGGEMA503-MBX.china.huawei.com ([169.254.1.111]) by
+ DGGEMA406-HUB.china.huawei.com ([10.3.20.47]) with mapi id 14.03.0382.000;
+ Sun, 17 Jun 2018 09:30:21 +0800
+From:   gengdongjiu <gengdongjiu@huawei.com>
+To:     James Morse <james.morse@arm.com>
+CC:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "christoffer.dall@arm.com" <christoffer.dall@arm.com>,
+        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Subject: Re: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add
+ KVM_GET/SET_VCPU_EVENTS
+Thread-Topic: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add
+ KVM_GET/SET_VCPU_EVENTS
+Thread-Index: AdQF2PP8MBanP2tNQqWU0qZjd6ZgSw==
+Date:   Sun, 17 Jun 2018 01:30:20 +0000
+Message-ID: <0184EA26B2509940AA629AE1405DD7F201CE33F0@DGGEMA503-MBX.china.huawei.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.45.61.108]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: John Hubbard <jhubbard@nvidia.com>
-
-In preparation for a subsequent patch, consolidate the error handling
-for __get_user_pages(). This provides a single location (the "out:" label)
-for operating on the collected set of pages that are about to be returned.
-
-As long as we are already touching every use of the "ret" variable, fix
-its name: "ret" --> "err". This also gets rid of two shadowed variable
-declarations, as tiny beneficial a side effect.
-
-Signed-off-by: John Hubbard <jhubbard@nvidia.com>
----
- mm/gup.c | 37 ++++++++++++++++++++++---------------
- 1 file changed, 22 insertions(+), 15 deletions(-)
-
-diff --git a/mm/gup.c b/mm/gup.c
-index b70d7ba7cc13..73f0b3316fa7 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -660,6 +660,7 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		struct vm_area_struct **vmas, int *nonblocking)
- {
- 	long i = 0;
-+	int err = 0;
- 	unsigned int page_mask;
- 	struct vm_area_struct *vma = NULL;
- 
-@@ -685,18 +686,19 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		if (!vma || start >= vma->vm_end) {
- 			vma = find_extend_vma(mm, start);
- 			if (!vma && in_gate_area(mm, start)) {
--				int ret;
--				ret = get_gate_page(mm, start & PAGE_MASK,
-+				err = get_gate_page(mm, start & PAGE_MASK,
- 						gup_flags, &vma,
- 						pages ? &pages[i] : NULL);
--				if (ret)
--					return i ? : ret;
-+				if (err)
-+					goto out;
- 				page_mask = 0;
- 				goto next_page;
- 			}
- 
--			if (!vma || check_vma_flags(vma, gup_flags))
--				return i ? : -EFAULT;
-+			if (!vma || check_vma_flags(vma, gup_flags)) {
-+				err = -EFAULT;
-+				goto out;
-+			}
- 			if (is_vm_hugetlb_page(vma)) {
- 				i = follow_hugetlb_page(mm, vma, pages, vmas,
- 						&start, &nr_pages, i,
-@@ -709,23 +711,25 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		 * If we have a pending SIGKILL, don't keep faulting pages and
- 		 * potentially allocating memory.
- 		 */
--		if (unlikely(fatal_signal_pending(current)))
--			return i ? i : -ERESTARTSYS;
-+		if (unlikely(fatal_signal_pending(current))) {
-+			err = -ERESTARTSYS;
-+			goto out;
-+		}
- 		cond_resched();
- 		page = follow_page_mask(vma, start, foll_flags, &page_mask);
- 		if (!page) {
--			int ret;
--			ret = faultin_page(tsk, vma, start, &foll_flags,
-+			err = faultin_page(tsk, vma, start, &foll_flags,
- 					nonblocking);
--			switch (ret) {
-+			switch (err) {
- 			case 0:
- 				goto retry;
- 			case -EFAULT:
- 			case -ENOMEM:
- 			case -EHWPOISON:
--				return i ? i : ret;
-+				goto out;
- 			case -EBUSY:
--				return i;
-+				err = 0;
-+				goto out;
- 			case -ENOENT:
- 				goto next_page;
- 			}
-@@ -737,7 +741,8 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 			 */
- 			goto next_page;
- 		} else if (IS_ERR(page)) {
--			return i ? i : PTR_ERR(page);
-+			err = PTR_ERR(page);
-+			goto out;
- 		}
- 		if (pages) {
- 			pages[i] = page;
-@@ -757,7 +762,9 @@ static long __get_user_pages(struct task_struct *tsk, struct mm_struct *mm,
- 		start += page_increm * PAGE_SIZE;
- 		nr_pages -= page_increm;
- 	} while (nr_pages);
--	return i;
-+
-+out:
-+	return i ? i : err;
- }
- 
- static bool vma_permits_fault(struct vm_area_struct *vma,
--- 
-2.17.1
-
+PiA+Pj4+PiAtLS0gYS9hcmNoL2FybS9pbmNsdWRlL3VhcGkvYXNtL2t2bS5oDQo+ID4+Pj4+ICsr
+KyBiL2FyY2gvYXJtL2luY2x1ZGUvdWFwaS9hc20va3ZtLmgNCj4gPj4+Pj4gQEAgLTEyNCw2ICsx
+MjQsMTggQEAgc3RydWN0IGt2bV9zeW5jX3JlZ3MgeyAgc3RydWN0DQo+ID4+Pj4+IGt2bV9hcmNo
+X21lbW9yeV9zbG90IHsgIH07DQo+ID4+Pj4+DQo+ID4+Pj4+ICsvKiBmb3IgS1ZNX0dFVC9TRVRf
+VkNQVV9FVkVOVFMgKi8gc3RydWN0IGt2bV92Y3B1X2V2ZW50cyB7DQo+ID4+Pj4+ICsJc3RydWN0
+IHsNCj4gPj4+Pj4gKwkJX191OCBzZXJyb3JfcGVuZGluZzsNCj4gPj4+Pj4gKwkJX191OCBzZXJy
+b3JfaGFzX2VzcjsNCj4gPj4+Pj4gKwkJLyogQWxpZ24gaXQgdG8gOCBieXRlcyAqLw0KPiA+Pj4+
+PiArCQlfX3U4IHBhZFs2XTsNCj4gPj4+Pj4gKwkJX191NjQgc2Vycm9yX2VzcjsNCj4gPj4+Pj4g
+Kwl9IGV4Y2VwdGlvbjsNCj4gPj4+Pj4gKwlfX3UzMiByZXNlcnZlZFsxMl07DQo+ID4+Pj4+ICt9
+Ow0KPiA+Pj4+PiArDQo+ID4+Pj4NCj4gPj4+PiBZb3UgaGF2ZW4ndCBkZWZpbmVkIF9fS1ZNX0hB
+VkVfVkNQVV9FVkVOVFMgZm9yIDMyYml0LCBzbyBwcmVzdW1hYmx5DQo+ID4+Pj4gdGhpcyBzdHJ1
+Y3Qgd2lsbCBuZXZlciBiZSB1c2VkLiBXaHkgaXMgaXQgaGVyZT8NCj4gPj4NCj4gPj4+ICAgaWYg
+bm90IGFkZCBpdCBmb3IgMzIgYml0cy4gdGhlIDMyIGFybSBwbGF0Zm9ybSB3aWxsIGJ1aWxkIEZh
+aWwsIHdoZXRoZXIgeW91IGhhdmUgZ29vZA0KPiA+Pj4gICAgaWRlYSB0byBhdm9pZCB0aGlzIEZh
+aWx1cmUgaWYgbm90IGFkZCB0aGlzIHN0cnVjdCBmb3IgdGhlIDMyIGJpdD8NCj4gPj4NCj4gPj4g
+SG93IGRvZXMgdGhpcyAzMmJpdCBjb2RlIGJ1aWxkIHdpdGhvdXQgdGhpcyBwYXRjaD8NCj4gPj4g
+SWYgZG8geW91IHByb3ZpZGUgdGhlIHN0cnVjdCwgaG93IHdpbGwgdGhhdCBjb2RlIGJ1aWxkIHdp
+dGggb2xkZXIgaGVhZGVycz8NCj4gPj4NCj4gPj4gQXMgZmFyIGFzIEkgY2FuIHNlZSwgdGhpcyBp
+cyB3aGF0IHRoZSBfX0tWTV9IQVZFX1ZDUFVfRVZFTlRTIGRlZmluZSBpcyBmb3IuDQo+ID4+DQo+
+ID4+IFRoaXMgc2hvdWxkIGJlIGJvdGgsIG9yIG5laXRoZXIuIEhhdmluZyBqdXN0IHRoZSBzdHJ1
+Y3QgaXMgdXNlbGVzcy4NCj4gPiBJdCBiZWNhdXNlIHRoZSBjYWxsZXIgb2Yga3ZtX2FybV92Y3B1
+X2dldC9zZXRfZXZlbnRzKCkgaXMgaW4gInZpcnQva3ZtL2FybS9hcm0uYyIuDQo+ID4gdGhlIHZp
+cnQva3ZtL2FybS9hcm0uYyB3aWxsIHVzZWQgYnkgYm90aCBhcm02NCBhbmQgYXJtLg0KPiA+IHNv
+IEl0IG5lZWRzIHRvIGFkZCBrdm1fYXJtX3ZjcHVfZ2V0L3NldF9ldmVudHMoKSBmb3IgdGhlIDMy
+IGJpdHMsDQo+ID4gaG93ZXZlciwga3ZtX2FybV92Y3B1X2dldC9zZXRfZXZlbnRzKCkgd2lsbCBk
+aXJlY3RseSByZXR1cm4sDQo+IA0KPiBTbyB5b3UgYXJlIGFkZGluZyBhIHVhcGkgc3RydWN0IHRo
+YXQgdXNlci1zcGFjZSBjYW4ndCBhY3R1YWxseSB1c2UsIHRvIGF2b2lkIGEga2VybmVsIGJ1aWxk
+LWVycm9yLiBGaW5lLCBpdCBqdXN0IGxvb2tzIHJlYWxseSBzdHJhbmdlLg0KPiANCj4gMzJiaXQg
+dXNlci1zcGFjZSBzaG91bGRuJ3QgdHJ5IHRvIGNhbGwgdGhpcyBhcyBjaGVjay1leHRlbnNpb24g
+cmVwb3J0cyBpdCBhcyBub3QgcHJlc2VudC4gSWYgaXQgZG9lcywgaXQgZ2V0cyAtRUlOVkFMIGJh
+Y2ssIHdoaWNoIGlzIGFsc28gdGhlDQo+IGRlZmF1bHQgZm9yIGt2bV9hcmNoX3ZjcHVfaW9jdGwo
+KS4NCg0KSXQgaW5kZWVkIGxvb2tzIHN0cmFuZ2UuIEJlY2F1c2UgInZpcnQva3ZtL2FybS9hcm0u
+YyIgaXMgc2hhcmVkIGJ5IGFybTY0IGFuZCBhcm0zMiwgaWYgbm90IGFkZGluZywgaXQgd2lsbCBi
+dWlsZC1lcnJvci4gRG8geW91IGhhdmUgYSBiZXR0ZXIgaWRlYSB0byBhdm9pZCBhZGRpbmcgaW4g
+YXJtMzI/IA0KSSBzdGlsbCBub3QgdGhpbmsgb3V0IGEgZ29vZCBtZXRob2QuIDMyIHVzZXItc3Bh
+Y2Ugd2lsbCBub3QgY2FsbCB0aGlzIEtWTV9HRVQvU0VUX1ZDUFVfRVZFTlRTIElPQ1RMIGFzIGNo
+ZWNrLWV4dGVuc2lvbiByZXBvcnRzIGl0IGFzIG5vdCBwcmVzZW50Lg0KDQo+IA0KPiANCj4gVGhh
+bmtzLA0KPiANCj4gSmFtZXMNCg==
