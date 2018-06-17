@@ -2,143 +2,112 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C10DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8CCC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:50:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD9AD2086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:36:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="s3VNVuAc";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q5TyX9LF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9AD2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 61D9420863
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:50:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D9420863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933815AbeFQRgl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 13:36:41 -0400
-Received: from mail-yb0-f194.google.com ([209.85.213.194]:38988 "EHLO
-        mail-yb0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751462AbeFQRgj (ORCPT
+        id S1754340AbeFQRuQ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 13:50:16 -0400
+Received: from mail-lf0-f68.google.com ([209.85.215.68]:38946 "EHLO
+        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752077AbeFQRuN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 13:36:39 -0400
-Received: by mail-yb0-f194.google.com with SMTP id m137-v6so5194559ybm.6
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 10:36:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=e8fzZIfvrWMu9g/aqE5RH4pFlwjRGIalLIvgzoa3+SA=;
-        b=s3VNVuAc0Pfp4qTCExwSURok8Tgw6wX/W/qLsf2svRWZKpEUrc1cVOCadN/T21CcgW
-         vkmtGlMM/+D7bBdUVHE3JC7HCoVa4NzS18HONw7Lxm2Q/oytTJTZ5qrbid2A9M1DsZX8
-         5jP/sy9K6ekjL73iTFsf/qECQvdtM1qIMa/xx/UechqJU4twfabxzBMPUglIIueKJt6Z
-         sNwEUuCjxy2ioywZ4bnsp6413zfz685xnyp3C/7efa6DMDI6CIX2XUsYhGBLYo8cjdcT
-         LrP4zK6TO+3tfK1cUO6pyrIpC3TaYfff2lcyES2+oKFB2arh7jT0yip+nwD3E+e/g3he
-         b5zQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc:content-transfer-encoding;
-        bh=e8fzZIfvrWMu9g/aqE5RH4pFlwjRGIalLIvgzoa3+SA=;
-        b=Q5TyX9LFB4nrrd2AnR6Ea4CwG15LsREP6QcVUTCTw4wSCOsJtXTA3rwxPCIYmoPgVO
-         CmmPQdlJuMPf0rZ7sF7ITYbv4V6xQVJVLbw76p9jqMtMuZncyiDo5gW/y9czIgi4fgNn
-         Cr/SXeF/QB/zDmW+qsh3k/ONM24vZwuVibmpg=
+        Sun, 17 Jun 2018 13:50:13 -0400
+Received: by mail-lf0-f68.google.com with SMTP id t2-v6so14904982lfd.6;
+        Sun, 17 Jun 2018 10:50:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc:content-transfer-encoding;
-        bh=e8fzZIfvrWMu9g/aqE5RH4pFlwjRGIalLIvgzoa3+SA=;
-        b=NeOPi9GJUkFL5nc+6CrF9vlwNfRzN2MAZPylDfEItFKx7XBr4UWHED7PDyvkqv4kd9
-         CM1rncXRP4/SdEnFC7aVjG8gFUYiXlGje+68nZHlIzgSZ/6pWZ0QZsasNIg0+625ot8o
-         qXWYGAcSNxeZrnQD6vFz5ImEbXIfJoK/N/ahOdQ3yNfbPOUHYCS5pT8buQ8XVm1DMLe+
-         3UK8JRSe2FkfB9KZ0YJ70s5WQg+4qPveXwNh7WB7D/8lS9NfPcNX/O9va68LwpVgPZnc
-         8aiX+9xJjbWAPUIckRpNnLHIqtp33bE8Ge9tRJmRInhXPTSDp6FsmfUeK4qaIjzs0mlM
-         S8Kw==
-X-Gm-Message-State: APt69E3bCWidhaVmJgJi3ATDWHOZ6ZrnlH3LPeWMQcq4Rs5qaCQYRsp4
-        PypCf4WiAiLOxgZjzotZi7V/WWB/yGiEsk2ufYSGYQ==
-X-Google-Smtp-Source: ADUXVKJbH5dD8gDPgI55+yJWOEqep+/5LU7FE4K3olLcgmp3JAaiqj2JgJcp8EgGDKEuNVC0+ahiIIIc9vKvlOZ0xfk=
-X-Received: by 2002:a25:a301:: with SMTP id d1-v6mr5113446ybi.193.1529256998513;
- Sun, 17 Jun 2018 10:36:38 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a25:d6c5:0:0:0:0:0 with HTTP; Sun, 17 Jun 2018 10:36:37
- -0700 (PDT)
-In-Reply-To: <1529186697.2784.2.camel@gmail.com>
-References: <1529182886.3450.3.camel@gmail.com> <1529186697.2784.2.camel@gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sun, 17 Jun 2018 10:36:37 -0700
-X-Google-Sender-Auth: L9KOPrkCPL91MLX7ogNRH59a_g4
-Message-ID: <CAGXu5jLwA37YJWi50i7bQZ6N7MtctvbXjsVg337zgD11AQ=9SA@mail.gmail.com>
-Subject: Re: wmi: usercopy: Kernel memory overwrite attempt detected to spans
- multiple pages (offset 0, size 4104)
-To:     =?UTF-8?B?TWloYWkgRG9uyJt1?= <mihai.dontu@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=ZRPW0j7eYlNHkO+1KvWJIKyhGIGkZcpi/U+p/Zbuqjo=;
+        b=frQfeJ20lPWv7GxONsYaNPevMyGZ+o3Eq4iFOWmzsJ13egojRgLB0XOPS7l6JYhDJT
+         gGJe68kfS5ZghZFwe1cQCYtUM8RIRR2WaSnCm5zRh4Myy8tFhe4bDpVKg8nEoaTQjofr
+         ilmT09TxW4xL4vNiqsRiBW5jJXhqM64lFXwbr4s70fV0rMrNL2LhsQ4eiafxYd6yOtdC
+         fO+LBGhnuct/GovSMAtBvAME1U9150awbyiJc20MU6vmYjFT5waRO0vFClrwrDlwzXBX
+         Y/91OV2ny2UXzE2c0zAa0+JBp3xZi72vqwQJGHcIgRnE9dzFN3z27JCpwRvMwGiigDlb
+         XI3A==
+X-Gm-Message-State: APt69E0a9InvCjXZirE3GBcmKoc80JfYd/cnGCQgijB6e5Q4+gkqdu5I
+        9awsbVe4n7EIXfbDX4Loszc=
+X-Google-Smtp-Source: ADUXVKIq8YpHWREAEo7zta5h6JZrIviKxx8XAWaR+Jx3c+medonZROf8cmkY9QXPZj87h22POI+6Uw==
+X-Received: by 2002:a19:188a:: with SMTP id 10-v6mr5843315lfy.26.1529257812389;
+        Sun, 17 Jun 2018 10:50:12 -0700 (PDT)
+Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
+        by smtp.googlemail.com with ESMTPSA id p28-v6sm2431487lfh.24.2018.06.17.10.50.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Jun 2018 10:50:11 -0700 (PDT)
+From:   efremov@linux.com
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ldv-project@linuxtesting.org, Denis Efremov <efremov@linux.com>
+Subject: [PATCH] crypto: skcipher: remove static declaration of export function
+Date:   Sun, 17 Jun 2018 20:49:59 +0300
+Message-Id: <20180617174959.29864-1-efremov@linux.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 3:04 PM, Mihai Don=C8=9Bu <mihai.dontu@gmail.com> w=
-rote:
-> On Sun, 2018-06-17 at 00:01 +0300, Mihai Don=C8=9Bu wrote:
->> While trying to adjust the keyboard backlight mode, I hit this BUG:
->>
->> Jun 16 22:16:07 mdontu-l kernel: usercopy: Kernel memory overwrite attem=
-pt detected to spans multiple pages (offset 0, size 4104)!
+The function skcipher_walk_next declared as static and marked as
+EXPORT_SYMBOL. It's a bit confusing since export symbol means that
+we want others to use this function. The area of visibility for such
+function is its .c file and all other modules. Other *.c files of the
+same module can't use it, despite all other modules can. Relying on
+that such behavior was not the original intention, the patch just
+removes the static keyword.
 
-CONFIG_HARDENED_USERCOPY_PAGESPAN=3Dy is really only useful for
-debugging special cases. For now, I recommend leaving it disabled,
-since there are a lot of cases it still trips over.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-> I eventually sprinkled some printk-s and got this:
->
->  855         if (copy_from_user(buf, input, wblock->req_buf_size)) {
->  856                 dev_dbg(&wblock->dev.dev, "Copy %llu from user faile=
-d\n",
->  857                         wblock->req_buf_size);
->  858                 ret =3D -EFAULT;
->  859                 goto out_ioctl;
->  860         }
+Signed-off-by: Denis Efremov <efremov@linux.com>
+---
+ crypto/skcipher.c                  | 4 +---
+ include/crypto/internal/skcipher.h | 1 +
+ 2 files changed, 2 insertions(+), 3 deletions(-)
 
-However, since you tracked this one down, I think this would be fixed
-by adjusting the handler_data allocation:
+diff --git a/crypto/skcipher.c b/crypto/skcipher.c
+index 0fe2a2923ad0..d28d2f2be562 100644
+--- a/crypto/skcipher.c
++++ b/crypto/skcipher.c
+@@ -44,8 +44,6 @@ struct skcipher_walk_buffer {
+ 	u8 buffer[];
+ };
+ 
+-static int skcipher_walk_next(struct skcipher_walk *walk);
+-
+ static inline void skcipher_unmap(struct scatter_walk *walk, void *vaddr)
+ {
+ 	if (PageHighMem(scatterwalk_page(walk)))
+@@ -335,7 +333,7 @@ static int skcipher_next_fast(struct skcipher_walk *walk)
+ 	return 0;
+ }
+ 
+-static int skcipher_walk_next(struct skcipher_walk *walk)
++int skcipher_walk_next(struct skcipher_walk *walk)
+ {
+ 	unsigned int bsize;
+ 	unsigned int n;
+diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
+index e42f7063f245..8602684d912b 100644
+--- a/include/crypto/internal/skcipher.h
++++ b/include/crypto/internal/skcipher.h
+@@ -154,6 +154,7 @@ int skcipher_walk_aead_encrypt(struct skcipher_walk *walk,
+ int skcipher_walk_aead_decrypt(struct skcipher_walk *walk,
+ 			       struct aead_request *req, bool atomic);
+ void skcipher_walk_complete(struct skcipher_walk *walk, int err);
++int skcipher_walk_next(struct skcipher_walk *walk);
+ 
+ static inline void ablkcipher_request_complete(struct ablkcipher_request *req,
+ 					       int err)
+-- 
+2.17.1
 
-
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index 8e3d0146ff8c..ea6bf98f197a 100644
---- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -918,8 +918,8 @@ static int wmi_dev_probe(struct device *dev)
-                }
-
-                count =3D get_order(wblock->req_buf_size);
--               wblock->handler_data =3D (void *)__get_free_pages(GFP_KERNE=
-L,
--                                                               count);
-+               wblock->handler_data =3D (void *)
-+                       __get_free_pages(GFP_KERNEL | __GFP_COMP, count);
-                if (!wblock->handler_data) {
-                        ret =3D -ENOMEM;
-                        goto probe_failure;
-
-
-But in looking further, I don't know why this is using
-__get_free_pages() instead of kmalloc? In fact, there is a kfree() in
-the error path, which looks wrong:
-
-        kfree(wblock->handler_data);
-
-I think this should just be converted to using kmalloc/kfree everywhere.
-
--Kees
-
---=20
-Kees Cook
-Pixel Security
