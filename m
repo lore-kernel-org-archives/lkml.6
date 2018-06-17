@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D85C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:36:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2068BC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93C272083D
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:36:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C832620895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="bi+b6CN8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93C272083D
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="H4RD3vva"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C832620895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757010AbeFQAg0 (ORCPT
+        id S1757036AbeFQAga (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 20:36:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:57836 "EHLO
+        Sat, 16 Jun 2018 20:36:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57842 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756937AbeFQAgY (ORCPT
+        with ESMTP id S1756937AbeFQAg0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 20:36:24 -0400
+        Sat, 16 Jun 2018 20:36:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
         Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
         Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=W99e0eKU8kgaSiOPttqMPOONhS4kdEcTmxAqLpJw28A=; b=bi+b6CN8aX//9jSGmmC2YzubH
-        SgVEOscNGQuwSuil4BfHYrNsHZTbGFW/VYsQTjEMHgENCDmn6K+BljyuDQtQQRejsMyDPnnT62KdC
-        2l3eRptWDFsDAL9yZS9fWZkFrky+4PL+AP1ZYctF2cE/nMec10EbH+adhShKb+DgMPL5uKsKR4ZtC
-        10rNODwGNO398sCZN/8HZoBHQswvnoxA3K6nLjs0mNaDz6DDsrwd4WZnNodfIvZRanqOXVospINb3
-        0r9FUYxM24oYgp9SCI1mxaU7uj+gjSLA17WT69UQtOUw7RtAjBnYD/ATw/+U2mda22Ixsq9hqZAci
-        CvVtuyLfg==;
+         bh=hhOV2Gl15R+7rLB27ZLysOWRZjv41zY0bVfZiukkQyo=; b=H4RD3vva0te/Ghm8FbCLzuvCH
+        orZ2E0nyH+WlrhsP7XnC4bRVsR/yFrUV7Sl3oSJQmukVJWKdGcViV1iDjUIpQ7HlUpMhbAjafUKkN
+        Nrr/JFnngzBBCOGIxcT+upmziUnQJ/rsFSayhXhfVdH9uTMZiLU3RwQ9L3ifoh8W4qhGbO7fzYuCv
+        PYcOXGulrW+1WBbjhe6fNTv22mO7qTl31YN4IrmTGzI7Cd1Xt361Y4bQ2E1kUv4CDaD0RDHNdlyvN
+        vStyG2T7cwSVHZ5ObqNxE6Vgf1TboqDKangSTAt4DRK4pY3IzKjLlehY/kclZmpAwebqB6pZWfUOU
+        BS/La2jsQ==;
 Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fULg6-0006XI-38; Sun, 17 Jun 2018 00:36:22 +0000
-To:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        David Miller <davem@davemloft.net>
+        id 1fULgA-0006Xl-Aj; Sun, 17 Jun 2018 00:36:26 +0000
+To:     "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        David Miller <davem@davemloft.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Aaron Brown <aaron.f.brown@intel.com>
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        aaron.f.brown@intel.com
 From:   Randy Dunlap <rdunlap@infradead.org>
-Subject: [PATCH] net: fix e100.rst Documentation build errors
-Message-ID: <72f13386-c484-3eed-c363-a5b667aea2e6@infradead.org>
-Date:   Sat, 16 Jun 2018 17:36:20 -0700
+Subject: [PATCH] net: fix e1000.rst Documentation build errors
+Message-ID: <4e7a8aa5-cd19-3f57-cc60-6e6224d02a69@infradead.org>
+Date:   Sat, 16 Jun 2018 17:36:25 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
@@ -63,13 +63,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Randy Dunlap <rdunlap@infradead.org>
 
-Fix Documentation build errors in e100.rst.  Several section titles
-and the corresponding underlines should not be indented.
+Fix Documentation build errors in e1000.rst.  Several section titles and
+their underlines should not be indented.
 
-Documentation/networking/e100.rst:90: (SEVERE/4) Unexpected section title.
-Documentation/networking/e100.rst:109: (SEVERE/4) Unexpected section title.
+Documentation/networking/e1000.rst:358: (SEVERE/4) Unexpected section title.
 
-Fixes: 85d63445f411 ("Documentation: e100: Update the Intel 10/100 driver doc")
+Fixes: 228046e76189 ("Documentation: e1000: Update kernel documentation")
 
 Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
@@ -78,45 +77,34 @@ Cc: Aaron Brown <aaron.f.brown@intel.com>
 Is there a Sphinx version problem here?  Tested-by: should indicate
 that there was no error like I am seeing.
 
- Documentation/networking/e100.rst |   24 ++++++++++++------------
- 1 file changed, 12 insertions(+), 12 deletions(-)
+ Documentation/networking/e1000.rst |   12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
---- lnx-418-rc1.orig/Documentation/networking/e100.rst
-+++ lnx-418-rc1/Documentation/networking/e100.rst
-@@ -86,8 +86,8 @@ Event Log Message Level:  The driver use
+--- lnx-418-rc1.orig/Documentation/networking/e1000.rst
++++ lnx-418-rc1/Documentation/networking/e1000.rst
+@@ -354,8 +354,8 @@ previously mentioned to force the adapte
  Additional Configurations
  =========================
  
--  Configuring the Driver on Different Distributions
--  -------------------------------------------------
-+Configuring the Driver on Different Distributions
-+-------------------------------------------------
- 
-   Configuring a network driver to load properly when the system is started is
-   distribution dependent. Typically, the configuration process involves adding
-@@ -105,8 +105,8 @@ Additional Configurations
-        alias eth0 e100
-        alias eth1 e100
- 
--  Viewing Link Messages
--  ---------------------
-+Viewing Link Messages
-+---------------------
-   In order to see link messages and other Intel driver information on your
-   console, you must set the dmesg level up to six. This can be done by
-   entering the following on the command line before loading the e100 driver::
-@@ -119,8 +119,8 @@ Additional Configurations
-   NOTE: This setting is not saved across reboots.
- 
+-  Jumbo Frames
+-  ------------
++Jumbo Frames
++------------
+   Jumbo Frames support is enabled by changing the MTU to a value larger than
+   the default of 1500.  Use the ifconfig command to increase the MTU size.
+   For example::
+@@ -389,8 +389,8 @@ Additional Configurations
+      Intel(R) PRO/1000 Gigabit Server Adapter
+      Intel(R) PRO/1000 PM Network Connection
  
 -  ethtool
 -  -------
 +ethtool
 +-------
- 
    The driver utilizes the ethtool interface for driver configuration and
    diagnostics, as well as displaying statistical information.  The ethtool
-@@ -129,8 +129,8 @@ Additional Configurations
+   version 1.6 or later is required for this functionality.
+@@ -398,8 +398,8 @@ Additional Configurations
    The latest release of ethtool can be found from
    https://www.kernel.org/pub/software/network/ethtool/
  
@@ -124,29 +112,8 @@ that there was no error like I am seeing.
 -  ---------------------------
 +Enabling Wake on LAN* (WoL)
 +---------------------------
-   WoL is provided through the ethtool* utility.  For instructions on enabling
-   WoL with ethtool, refer to the ethtool man page.
+   WoL is configured through the ethtool* utility.
  
-@@ -138,16 +138,16 @@ Additional Configurations
-   this driver version, in order to enable WoL, the e100 driver must be
-   loaded when shutting down or rebooting the system.
- 
--  NAPI
--  ----
-+NAPI
-+----
- 
-   NAPI (Rx polling mode) is supported in the e100 driver.
- 
-   See https://wiki.linuxfoundation.org/networking/napi for more information
-   on NAPI.
- 
--  Multiple Interfaces on Same Ethernet Broadcast Network
--  ------------------------------------------------------
-+Multiple Interfaces on Same Ethernet Broadcast Network
-+------------------------------------------------------
- 
-   Due to the default ARP behavior on Linux, it is not possible to have
-   one system on two IP networks in the same Ethernet broadcast domain
+   WoL will be enabled on the system during the next shut down or reboot.
 
 
