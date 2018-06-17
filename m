@@ -2,176 +2,103 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE920C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CA9C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BC2820891
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:04:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iz8MXFS1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BC2820891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 389B6208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:26:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 389B6208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934128AbeFQQEJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 12:04:09 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38155 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933506AbeFQQEH (ORCPT
+        id S934166AbeFQQ0o (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 12:26:44 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:46626 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933955AbeFQQ0n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 12:04:07 -0400
-Received: by mail-pl0-f65.google.com with SMTP id b14-v6so7719210pls.5;
-        Sun, 17 Jun 2018 09:04:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=6SkbvkrlIT/+VYIs+K3O0rVU7WFwFKMeAAjgzKJ6b14=;
-        b=iz8MXFS1ioiLa13ptA4wtUZRAXrvy8+XVjYaSNTJAi66ldY1aBvz4Uu5dM1auurw1d
-         1Q+ZJNNsj6gzDC7BKy4E1TDWCWiunRqi2QajEwmmo9ao3uenFZ1/eFPiFII5x14dG7RO
-         e2dzZvSyP4gBLtUJm3qs26Noz2CemMivRYIST7wMcuP+2XLPbCEjZa53aIkPleTQXFGq
-         L5d1amDlcGK+QtauTO+bY149/oQfhnioiuJs81hLBSYQ9DWgpk5V4e8csP1WQ/3b4jNd
-         2VpNE3aOIBcwTEKkTi2hPnUspn3paO6Iyw6Q99D9LYp41IcBAKz8SfiZILjEFy2HbPZ1
-         xSmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=6SkbvkrlIT/+VYIs+K3O0rVU7WFwFKMeAAjgzKJ6b14=;
-        b=LpnO/YToyVyV3YUoNIkxeVLjg/b+1EaPpTWKm5XKwqAnOA6PoPivZddrKi8qIn9wvf
-         esPUxNRnq0KhNZoCX6gny45GLBLxF/acZ1D0SW2U9xrppY5qN7qJ4ArK94y0xekCEMo7
-         KgywICnM58kE9mpMP6q9UZaG2z+dVlmZwr2QMEsfqYhBbELpEeVbHI9QRmghUmUgfXMI
-         SL6PoCYQc/OhdPh+zuEPpU2/LY9k90OYHIkNy8uYW/gLzsQFJJvi3xnl1SIIhTrSGz1X
-         s4TMroS/qX32SZsHL+x2OAHsitzkdlpx0FDtGXFXzEiaKJQDubK1ifUKoqT7PCnCkr7f
-         lzEA==
-X-Gm-Message-State: APt69E1hyecQjPIlQ+6FdURAGRlV9KVpC8fU8emGpLGoHC0BF7aPC+r0
-        Brn8sPjLAqSSIynNKjvBRJQUeg==
-X-Google-Smtp-Source: ADUXVKLhrFWMrUA90K2DYrTF7BoDEJ4FkTwLw5IFYzRKp2qHoUXYGGiZ10tXDM7b9w0WbHnaMGyQ7A==
-X-Received: by 2002:a17:902:8e87:: with SMTP id bg7-v6mr10524505plb.129.1529251447041;
-        Sun, 17 Jun 2018 09:04:07 -0700 (PDT)
-Received: from localhost.localdomain (mobile-166-137-176-247.mycingular.net. [166.137.176.247])
-        by smtp.gmail.com with ESMTPSA id e5-v6sm14773066pgs.59.2018.06.17.09.04.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 17 Jun 2018 09:04:06 -0700 (PDT)
-From:   frowand.list@gmail.com
-To:     Alan Tull <atull@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        pantelis.antoniou@konsulko.com,
-        Pantelis Antoniou <panto@antoniou-consulting.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        geert@linux-m68k.org
-Subject: [RFC PATCH] of: overlay: update phandle cache on overlay apply and remove
-Date:   Sun, 17 Jun 2018 09:03:36 -0700
-Message-Id: <1529251416-14814-1-git-send-email-frowand.list@gmail.com>
-X-Mailer: git-send-email 2.7.4
+        Sun, 17 Jun 2018 12:26:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126] helo=xylophone)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1fUaVi-0004qW-JH; Sun, 17 Jun 2018 17:26:38 +0100
+Message-ID: <1529252797.2289.206.camel@codethink.co.uk>
+Subject: Re: [PATCH 4.4 181/268] Btrfs: fix copy_items() return value when
+ logging an inode
+From:   Ben Hutchings <ben.hutchings@codethink.co.uk>
+To:     Filipe Manana <fdmanana@suse.com>, David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Cc:     stable@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Date:   Sun, 17 Jun 2018 17:26:37 +0100
+In-Reply-To: <20180528100222.864980245@linuxfoundation.org>
+References: <20180528100202.045206534@linuxfoundation.org>
+         <20180528100222.864980245@linuxfoundation.org>
+Organization: Codethink Ltd.
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+On Mon, 2018-05-28 at 12:02 +0200, Greg Kroah-Hartman wrote:
+> 4.4-stable review patch.  If anyone has any objections, please let me know.
+> 
+> ------------------
+> 
+> From: Filipe Manana <fdmanana@suse.com>
+> 
+> [ Upstream commit 8434ec46c6e3232cebc25a910363b29f5c617820 ]
 
-A comment in the review of the patch adding the phandle cache said that
-the cache would have to be updated when modules are applied and removed.
-This patch implements the cache updates.
+Should stable branches also get a backport of commit
+4ee3fad34a9cc2cf33303dfbd0cf554248651c86?  It looks like 4.4 and 4.9
+would need a minor change (inode->root to BTRFS_I(inode)->root) but I
+don't know whether that's really sufficient.
 
-Fixes: 0b3ce78e90fc ("of: cache phandle nodes to reduce cost of of_find_node_by_phandle()")
-Reported-by: Alan Tull <atull@kernel.org>
-Suggested-by: Alan Tull <atull@kernel.org>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
----
+Ben.
 
-Compiles for one configuration.
-NOT boot tested.
-Not run through my normal process to check for new warnings, etc.
+> When logging an inode, at tree-log.c:copy_items(), if we call
+> btrfs_next_leaf() at the loop which checks for the need to log holes, we
+> need to make sure copy_items() returns the value 1 to its caller and
+> not 0 (on success). This is because the path the caller passed was
+> released and is now different from what is was before, and the caller
+> expects a return value of 0 to mean both success and that the path
+> has not changed, while a return value of 1 means both success and
+> signals the caller that it can not reuse the path, it has to perform
+> another tree search.
+> 
+> Even though this is a case that should not be triggered on normal
+> circumstances or very rare at least, its consequences can be very
+> unpredictable (especially when replaying a log tree).
+> 
+> Fixes: 16e7549f045d ("Btrfs: incompatible format change to remove hole extents")
+> Signed-off-by: Filipe Manana <fdmanana@suse.com>
+> Signed-off-by: David Sterba <dsterba@suse.com>
+> Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  fs/btrfs/tree-log.c |    1 +
+>  1 file changed, 1 insertion(+)
+> 
+> --- a/fs/btrfs/tree-log.c
+> +++ b/fs/btrfs/tree-log.c
+> @@ -3835,6 +3835,7 @@ fill_holes:
+>  			ASSERT(ret == 0);
+>  			src = src_path->nodes[0];
+>  			i = 0;
+> +			need_find_last_extent = true;
+>  		}
+>  
+>  		btrfs_item_key_to_cpu(src, &key, i);
 
-It is late, I'm tired, my brain is fuzzy.  I need to review this more to have
-any confidence in it.  But I wanted to get a version out for Alan to see (and
-test if he wants).
-
- drivers/of/base.c       |  6 +++---
- drivers/of/of_private.h |  2 ++
- drivers/of/overlay.c    | 12 ++++++++++++
- 3 files changed, 17 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 848f549164cd..466e3c8582f0 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -102,7 +102,7 @@ static u32 phandle_cache_mask;
-  *   - the phandle lookup overhead reduction provided by the cache
-  *     will likely be less
-  */
--static void of_populate_phandle_cache(void)
-+void of_populate_phandle_cache(void)
- {
- 	unsigned long flags;
- 	u32 cache_entries;
-@@ -134,8 +134,7 @@ static void of_populate_phandle_cache(void)
- 	raw_spin_unlock_irqrestore(&devtree_lock, flags);
- }
- 
--#ifndef CONFIG_MODULES
--static int __init of_free_phandle_cache(void)
-+int of_free_phandle_cache(void)
- {
- 	unsigned long flags;
- 
-@@ -148,6 +147,7 @@ static int __init of_free_phandle_cache(void)
- 
- 	return 0;
- }
-+#if !defined(CONFIG_MODULES)
- late_initcall_sync(of_free_phandle_cache);
- #endif
- 
-diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-index 891d780c076a..216175d11d3d 100644
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -79,6 +79,8 @@ int of_resolve_phandles(struct device_node *tree);
- #if defined(CONFIG_OF_OVERLAY)
- void of_overlay_mutex_lock(void);
- void of_overlay_mutex_unlock(void);
-+int of_free_phandle_cache(void);
-+void of_populate_phandle_cache(void);
- #else
- static inline void of_overlay_mutex_lock(void) {};
- static inline void of_overlay_mutex_unlock(void) {};
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 7baa53e5b1d7..3f76e58fbec4 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -804,6 +804,8 @@ static int of_overlay_apply(const void *fdt, struct device_node *tree,
- 		goto err_free_overlay_changeset;
- 	}
- 
-+	of_populate_phandle_cache();
-+
- 	ret = __of_changeset_apply_notify(&ovcs->cset);
- 	if (ret)
- 		pr_err("overlay changeset entry notify error %d\n", ret);
-@@ -1046,8 +1048,18 @@ int of_overlay_remove(int *ovcs_id)
- 
- 	list_del(&ovcs->ovcs_list);
- 
-+	/*
-+	 * Empty and disable phandle cache.  Must empty here so that
-+	 * changeset notifiers do not use stale cache entry for a removed
-+	 * phandle.
-+	 */
-+	of_free_phandle_cache();
-+
- 	ret_apply = 0;
- 	ret = __of_changeset_revert_entries(&ovcs->cset, &ret_apply);
-+
-+	of_populate_phandle_cache();
-+
- 	if (ret) {
- 		if (ret_apply)
- 			devicetree_state_flags |= DTSF_REVERT_FAIL;
 -- 
-Frank Rowand <frank.rowand@sony.com>
-
+Ben Hutchings, Software Developer                         Codethink Ltd
+https://www.codethink.co.uk/                 Dale House, 35 Dale Street
+                                     Manchester, M1 2HF, United Kingdom
