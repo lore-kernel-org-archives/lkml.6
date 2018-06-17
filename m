@@ -6,243 +6,66 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44123C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88086C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:22:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8DD8208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:17:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8DD8208E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+	by mail.kernel.org (Postfix) with ESMTP id 4617C208D5
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:22:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4617C208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ZenIV.linux.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934222AbeFQSRQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 14:17:16 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:34508 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754317AbeFQSRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 14:17:13 -0400
-Received: from [192.168.178.170] (p57BC9B2C.dip0.t-ipconnect.de [87.188.155.44])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id A0A8B28984A;
-        Sun, 17 Jun 2018 18:14:08 +0000 (UTC)
-Subject: Re: [PATCH v3 09/14] ASoC: pxa: remove the dmaengine compat need
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20180617170217.24177-1-robert.jarzmik@free.fr>
- <20180617170217.24177-10-robert.jarzmik@free.fr>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <1984a4a7-e33b-6349-31f3-6f85ff1582b8@zonque.org>
-Date:   Sun, 17 Jun 2018 20:17:09 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934030AbeFQSWG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 14:22:06 -0400
+Received: from zeniv.linux.org.uk ([195.92.253.2]:50446 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933681AbeFQSWE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 14:22:04 -0400
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.87 #1 (Red Hat Linux))
+        id 1fUcJO-0006uB-Ht; Sun, 17 Jun 2018 18:22:02 +0000
+Date:   Sun, 17 Jun 2018 19:22:02 +0100
+From:   Al Viro <viro@ZenIV.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: Re: [RFC][PATCHES] getting rid of int *open in ->atomic_open() and
+ friends
+Message-ID: <20180617182202.GA17927@ZenIV.linux.org.uk>
+References: <20180608184842.GD30522@ZenIV.linux.org.uk>
+ <CA+55aFz9cS3m=wZxqKbzrCLEjhPoPddKw5U2MDKNqbG79Wx6bw@mail.gmail.com>
+ <20180609051051.GF30522@ZenIV.linux.org.uk>
 MIME-Version: 1.0
-In-Reply-To: <20180617170217.24177-10-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180609051051.GF30522@ZenIV.linux.org.uk>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
-
-I prepared a series of patches for 4.18 that conflict with this one. 
-Instead of letting other people resolve this down the road, I'd prefer 
-if this one went through the ASoC tree, if you don't mind.
-
-I've talked to Robert off-list, and he's fine with this approach.
-
-
-Thanks,
-Daniel
-
-On Sunday, June 17, 2018 07:02 PM, Robert Jarzmik wrote:
-> As the pxa architecture switched towards the dmaengine slave map, the
-> old compatibility mechanism to acquire the dma requestor line number and
-> priority are not needed anymore.
+On Sat, Jun 09, 2018 at 06:10:51AM +0100, Al Viro wrote:
+> On Fri, Jun 08, 2018 at 11:57:06AM -0700, Linus Torvalds wrote:
+> > I'm obviously biased since I asked for this, but:
+> > 
+> > On Fri, Jun 8, 2018 at 11:48 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > >
+> > >  33 files changed, 135 insertions(+), 180 deletions(-)
+> > 
+> > this already looks nice.
+> > 
+> > I'll go through the individual patches and see if there's anything
+> > there that raises my hackles. Silence will mean assent in this case
 > 
-> This patch simplifies the dma resource acquisition, using the more
-> generic function dma_request_slave_channel().
-> 
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> Reviewed-by: Daniel Mack <daniel@zonque.org>
-> Acked-by: Mark Brown <broonie@kernel.org>
-> ---
->   sound/arm/pxa2xx-ac97.c     | 14 ++------------
->   sound/arm/pxa2xx-pcm-lib.c  |  6 +++---
->   sound/soc/pxa/pxa2xx-ac97.c | 32 +++++---------------------------
->   sound/soc/pxa/pxa2xx-i2s.c  |  6 ++----
->   4 files changed, 12 insertions(+), 46 deletions(-)
-> 
-> diff --git a/sound/arm/pxa2xx-ac97.c b/sound/arm/pxa2xx-ac97.c
-> index 4bc244c40f80..236a63cdaf9f 100644
-> --- a/sound/arm/pxa2xx-ac97.c
-> +++ b/sound/arm/pxa2xx-ac97.c
-> @@ -63,28 +63,18 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
->   	.reset	= pxa2xx_ac97_legacy_reset,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_out_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 12,
-> -};
-> -
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_out = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_out",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_out_req,
-> -};
-> -
-> -static struct pxad_param pxa2xx_ac97_pcm_in_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 11,
->   };
->   
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_in = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_in",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_in_req,
->   };
->   
->   static struct snd_pcm *pxa2xx_ac97_pcm;
-> diff --git a/sound/arm/pxa2xx-pcm-lib.c b/sound/arm/pxa2xx-pcm-lib.c
-> index e8da3b8ee721..dcbe7ecc1835 100644
-> --- a/sound/arm/pxa2xx-pcm-lib.c
-> +++ b/sound/arm/pxa2xx-pcm-lib.c
-> @@ -125,9 +125,9 @@ int __pxa2xx_pcm_open(struct snd_pcm_substream *substream)
->   	if (ret < 0)
->   		return ret;
->   
-> -	return snd_dmaengine_pcm_open_request_chan(substream,
-> -					pxad_filter_fn,
-> -					dma_params->filter_data);
-> +	return snd_dmaengine_pcm_open(
-> +		substream, dma_request_slave_channel(rtd->cpu_dai->dev,
-> +						     dma_params->chan_name));
->   }
->   EXPORT_SYMBOL(__pxa2xx_pcm_open);
->   
-> diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-> index 803818aabee9..1b41c0f2a8fb 100644
-> --- a/sound/soc/pxa/pxa2xx-ac97.c
-> +++ b/sound/soc/pxa/pxa2xx-ac97.c
-> @@ -68,61 +68,39 @@ static struct snd_ac97_bus_ops pxa2xx_ac97_ops = {
->   	.reset	= pxa2xx_ac97_cold_reset,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_stereo_in_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 11,
-> -};
-> -
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_in = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_in",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_stereo_in_req,
-> -};
-> -
-> -static struct pxad_param pxa2xx_ac97_pcm_stereo_out_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 12,
->   };
->   
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_stereo_out = {
->   	.addr		= __PREG(PCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "pcm_pcm_stereo_out",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_ac97_pcm_stereo_out_req,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_aux_mono_out_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 10,
-> -};
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_out = {
->   	.addr		= __PREG(MODR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-> +	.chan_name	= "pcm_aux_mono_out",
->   	.maxburst	= 16,
-> -	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_out_req,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_aux_mono_in_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 9,
-> -};
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_aux_mono_in = {
->   	.addr		= __PREG(MODR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-> +	.chan_name	= "pcm_aux_mono_in",
->   	.maxburst	= 16,
-> -	.filter_data	= &pxa2xx_ac97_pcm_aux_mono_in_req,
->   };
->   
-> -static struct pxad_param pxa2xx_ac97_pcm_aux_mic_mono_req = {
-> -	.prio = PXAD_PRIO_LOWEST,
-> -	.drcmr = 8,
-> -};
->   static struct snd_dmaengine_dai_dma_data pxa2xx_ac97_pcm_mic_mono_in = {
->   	.addr		= __PREG(MCDR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_2_BYTES,
-> +	.chan_name	= "pcm_aux_mic_mono",
->   	.maxburst	= 16,
-> -	.filter_data	= &pxa2xx_ac97_pcm_aux_mic_mono_req,
->   };
->   
->   static int pxa2xx_ac97_hifi_startup(struct snd_pcm_substream *substream,
-> diff --git a/sound/soc/pxa/pxa2xx-i2s.c b/sound/soc/pxa/pxa2xx-i2s.c
-> index 3fb60baf6eab..e7184de0de04 100644
-> --- a/sound/soc/pxa/pxa2xx-i2s.c
-> +++ b/sound/soc/pxa/pxa2xx-i2s.c
-> @@ -82,20 +82,18 @@ static struct pxa_i2s_port pxa_i2s;
->   static struct clk *clk_i2s;
->   static int clk_ena = 0;
->   
-> -static unsigned long pxa2xx_i2s_pcm_stereo_out_req = 3;
->   static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_out = {
->   	.addr		= __PREG(SADR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "tx",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_i2s_pcm_stereo_out_req,
->   };
->   
-> -static unsigned long pxa2xx_i2s_pcm_stereo_in_req = 2;
->   static struct snd_dmaengine_dai_dma_data pxa2xx_i2s_pcm_stereo_in = {
->   	.addr		= __PREG(SADR),
->   	.addr_width	= DMA_SLAVE_BUSWIDTH_4_BYTES,
-> +	.chan_name	= "rx",
->   	.maxburst	= 32,
-> -	.filter_data	= &pxa2xx_i2s_pcm_stereo_in_req,
->   };
->   
->   static int pxa2xx_i2s_startup(struct snd_pcm_substream *substream,
-> 
+> BTW, looking through alloc_file() callers - in cxl_getfile() we have
+[snip]
 
+> That's a double iput when we hit alloc_file failure...  There's a bunch
+> of callers that can be massaged into something along such lines (not
+> sharing that bug, though) and I wonder if we would be better off with
+> wrapper like
+
+... and call-by-editor strikes again - this window we've got it
+cut'n'pasted into ocxlflash_getfile(), with the same double iput
+in place...
