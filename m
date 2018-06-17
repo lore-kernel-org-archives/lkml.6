@@ -2,130 +2,127 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 250B3C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8837C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D25C7208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B44A20896
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:03:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="q2evcvPp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D25C7208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tASNR7ZM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B44A20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755568AbeFQNrh (ORCPT
+        id S1753934AbeFQODk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 09:47:37 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:47068 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754357AbeFQNre (ORCPT
+        Sun, 17 Jun 2018 10:03:40 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:38012 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751248AbeFQODh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 09:47:34 -0400
-Received: from trochilidae.lan (unknown [37.17.239.3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7EA7B5C00F6;
-        Sun, 17 Jun 2018 15:47:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529243253;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=eBgYbAvAeUgat/9LmSLthWg8/GnXlU5LdZIgVoc1QGY=;
-        b=q2evcvPpSZEQtQoUg5AFuM6pb4M30DIQvq/ycZ655ExkSHlPrgoO5XTXxTXQjHwJrHAdgw
-        23+1rIqFD63qjIHrYtyzSDraUX6MnezO9P0CA1OxB1xxkQz0WRNjBEnkqMvSp/cv7+np2s
-        VfEQVV9xLoLzNgW/Y2ubWfdFlJsM1cg=
-From:   Stefan Agner <stefan@agner.ch>
-To:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     Stefan Agner <stefan@agner.ch>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: ctxfi: use enum type CT_SUM_CTL where appropriate
-Date:   Sun, 17 Jun 2018 15:46:49 +0200
-Message-Id: <20180617134652.1638-1-stefan@agner.ch>
+        Sun, 17 Jun 2018 10:03:37 -0400
+Received: by mail-pl0-f65.google.com with SMTP id b14-v6so7645856pls.5;
+        Sun, 17 Jun 2018 07:03:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=JY4ecY2hNvoD2gJibJnty0k2GYL4jklbWXnltNxBS04=;
+        b=tASNR7ZMtzFW/I0cF2D4lsjzkAWuRQDktbd/36yhB81daqZtBrqofBcGseAOStbyhX
+         P2AvJmaFRSvsMATLLgWk72dmAVAorC7XkJ6RKSUknZGdDo0+7MI72hZyAggy0vx+s2tw
+         I9nUkm/xy4vDezaTCYa91qtQZwJ9FbBoRWnZfGS/FxEhCX45rZCV2NNwix8mOnIGy1zK
+         e1h4u81A4xheIYmDrGZIfy0WCKwBP4LMjncWimPZNYtX9qR5KRj/d30rNY28xP8FwaVR
+         tfznB4x+tFPughf3qoPNMqpbC5GosLrd11xIJ0gGuOe79V8xgup7bdVvXwKKRpiZMnMk
+         fNSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=JY4ecY2hNvoD2gJibJnty0k2GYL4jklbWXnltNxBS04=;
+        b=tgBhsikPnIAtK6saDWsa1LI48dCT7hVqiypzqIieIeXtAHAW9xR5xx+ovr8rF5tsYK
+         O70AYxy454E8RyKejNOw/qVBqvmFkZR/UXjhzU3PxaEY6amJf1kvhYOXEpMrEpKVIzwZ
+         Vk9W7QUSjnV710kBaCqWI4oJPTPh/fxn9RazqDRAxt1rjVYWP8dY5eMtwbofeas/S5mu
+         NRry2h1iFZD0EmAgbXVwGYyQS/ei8zoTQv3wgpHknLb5c80PrY5T6pAgbFixi0r7arCT
+         2AQhtwJ79IhHF+n9uHt4ESU9rWN+VvGnJRIfMm8TUmksf3MYVq3KbHKqjfpzUMN/wKZT
+         BIXQ==
+X-Gm-Message-State: APt69E030Xvy1iVSaI7x6iwsd61y3s6M2uXMwrEGzcTcEiTpgtQKmzYr
+        mZnNvuWMeCxZFc49UnMpAbDLEdEraXA=
+X-Google-Smtp-Source: ADUXVKIfvooDxiKEpX5BED0GqeU1+KZegBq8ugQgz7jhAx/61z0qJgBBfNlA97Cym8zUEbN6rDG61Q==
+X-Received: by 2002:a17:902:7c8b:: with SMTP id y11-v6mr9947875pll.222.1529244216213;
+        Sun, 17 Jun 2018 07:03:36 -0700 (PDT)
+Received: from localhost.localdomain ([101.23.151.28])
+        by smtp.gmail.com with ESMTPSA id k84-v6sm34465470pfh.110.2018.06.17.07.03.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 17 Jun 2018 07:03:35 -0700 (PDT)
+From:   youling257 <youling257@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
+        andy@infradead.org, dvhart@infradead.org, hdegoede@redhat.com,
+        youling257 <youling257@gmail.com>
+Subject: [PATCH v3] platform/x86: touchscreen_dmi: Add info for the ONDA V891W Dual OS
+Date:   Sun, 17 Jun 2018 22:03:26 +0800
+Message-Id: <20180617140326.12854-1-youling257@gmail.com>
 X-Mailer: git-send-email 2.17.1
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         RCPT_COUNT_FIVE(0.00)[5];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently a variable of type enum CT_AMIXER_CTL is used for enum
-CT_SUM_CTL values. This leads to warnings when using clang:
-sound/pci/ctxfi/ctmixer.c:945:32: warning: implicit conversion from enumeration type
-      'enum CT_SUM_CTL' to different enumeration type 'enum CT_AMIXER_CTL'
-      [-Wenum-conversion]
-        for (i = AMIXER_MASTER_F, j = SUM_IN_F;
-                                    ~ ^~~~~~~~
-sound/pci/ctxfi/ctmixer.c:975:29: warning: implicit conversion from enumeration type
-      'enum CT_SUM_CTL' to different enumeration type 'enum CT_AMIXER_CTL'
-      [-Wenum-conversion]
-        for (i = AMIXER_PCM_F, j = SUM_IN_F; i <= AMIXER_PCM_S; i++, j++) {
-                                 ~ ^~~~~~~~
+Add touchscreen info for the ONDA V891W Dual OS
 
-Introduce enum CT_SUM_CTL k and it instead.
-
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: youling257 <youling257@gmail.com>
 ---
- sound/pci/ctxfi/ctmixer.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/platform/x86/touchscreen_dmi.c | 27 ++++++++++++++++++++++++++
+ 1 file changed, 27 insertions(+)
 
-diff --git a/sound/pci/ctxfi/ctmixer.c b/sound/pci/ctxfi/ctmixer.c
-index db710d0a609f..4777d50fbbf8 100644
---- a/sound/pci/ctxfi/ctmixer.c
-+++ b/sound/pci/ctxfi/ctmixer.c
-@@ -938,17 +938,18 @@ static int ct_mixer_topology_build(struct ct_mixer *mixer)
- 	struct sum *sum;
- 	struct amixer *amix_d, *amix_s;
- 	enum CT_AMIXER_CTL i, j;
-+	enum CT_SUM_CTL k;
+diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
+index 6284946cb0d1..2ad9327c8c0f 100644
+--- a/drivers/platform/x86/touchscreen_dmi.c
++++ b/drivers/platform/x86/touchscreen_dmi.c
+@@ -221,6 +221,24 @@ static const struct ts_dmi_data onda_v891w_v1_data = {
+ 	.properties	= onda_v891w_v1_props,
+ };
  
- 	/* Build topology from destination to source */
- 
- 	/* Set up Master mixer */
--	for (i = AMIXER_MASTER_F, j = SUM_IN_F;
--					i <= AMIXER_MASTER_S; i++, j++) {
-+	for (i = AMIXER_MASTER_F, k = SUM_IN_F;
-+					i <= AMIXER_MASTER_S; i++, k++) {
- 		amix_d = mixer->amixers[i*CHN_NUM];
--		sum = mixer->sums[j*CHN_NUM];
-+		sum = mixer->sums[k*CHN_NUM];
- 		amix_d->ops->setup(amix_d, &sum->rsc, INIT_VOL, NULL);
- 		amix_d = mixer->amixers[i*CHN_NUM+1];
--		sum = mixer->sums[j*CHN_NUM+1];
-+		sum = mixer->sums[k*CHN_NUM+1];
- 		amix_d->ops->setup(amix_d, &sum->rsc, INIT_VOL, NULL);
- 	}
- 
-@@ -972,12 +973,12 @@ static int ct_mixer_topology_build(struct ct_mixer *mixer)
- 	amix_d->ops->setup(amix_d, &amix_s->rsc, INIT_VOL, NULL);
- 
- 	/* Set up PCM-in mixer */
--	for (i = AMIXER_PCM_F, j = SUM_IN_F; i <= AMIXER_PCM_S; i++, j++) {
-+	for (i = AMIXER_PCM_F, k = SUM_IN_F; i <= AMIXER_PCM_S; i++, k++) {
- 		amix_d = mixer->amixers[i*CHN_NUM];
--		sum = mixer->sums[j*CHN_NUM];
-+		sum = mixer->sums[k*CHN_NUM];
- 		amix_d->ops->setup(amix_d, NULL, INIT_VOL, sum);
- 		amix_d = mixer->amixers[i*CHN_NUM+1];
--		sum = mixer->sums[j*CHN_NUM+1];
-+		sum = mixer->sums[k*CHN_NUM+1];
- 		amix_d->ops->setup(amix_d, NULL, INIT_VOL, sum);
- 	}
- 
++static const struct property_entry onda_v891w_v3_props[] = {
++	PROPERTY_ENTRY_U32("touchscreen-min-x", 35),
++	PROPERTY_ENTRY_U32("touchscreen-min-y", 15),
++	PROPERTY_ENTRY_U32("touchscreen-size-x", 1625),
++	PROPERTY_ENTRY_U32("touchscreen-size-y", 1135),
++	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
++	PROPERTY_ENTRY_STRING("firmware-name",
++			      "gsl3676-onda-v891w-v3.fw"),
++	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
++	PROPERTY_ENTRY_BOOL("silead,home-button"),
++	{ }
++};
++
++static const struct ts_dmi_data onda_v891w_v3_data = {
++	.acpi_name	= "MSSL1680:00",
++	.properties	= onda_v891w_v3_props,
++};
++
+ static const struct property_entry pipo_w2s_props[] = {
+ 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
+ 	PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
+@@ -481,6 +499,15 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
+ 			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "ONDA.W89EBBN08"),
+ 		},
+ 	},
++	{
++		/* ONDA V891w Dual OS P891DCF2V1A01274 64GB */
++		.driver_data = (void *)&onda_v891w_v3_data,
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "ONDA Tablet"),
++			DMI_MATCH(DMI_BIOS_VERSION, "ONDA.D890HBBNR0A"),
++		},
++	},
+ 	{
+ 		/* Pipo W2S */
+ 		.driver_data = (void *)&pipo_w2s_data,
 -- 
 2.17.1
 
