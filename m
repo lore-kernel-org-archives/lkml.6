@@ -2,101 +2,87 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7168AC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:30:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D156C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DFB42086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:30:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DFB42086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 43E2020874
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 01:54:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mY7iS6Dn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43E2020874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933388AbeFQBah (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 21:30:37 -0400
-Received: from szxga03-in.huawei.com ([45.249.212.189]:5564 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S932418AbeFQBaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 21:30:35 -0400
-Received: from DGGEMA406-HUB.china.huawei.com (unknown [172.30.72.56])
-        by Forcepoint Email with ESMTP id 69C1AD8596F21;
-        Sun, 17 Jun 2018 09:30:20 +0800 (CST)
-Received: from DGGEMA503-MBX.china.huawei.com ([169.254.1.111]) by
- DGGEMA406-HUB.china.huawei.com ([10.3.20.47]) with mapi id 14.03.0382.000;
- Sun, 17 Jun 2018 09:30:21 +0800
-From:   gengdongjiu <gengdongjiu@huawei.com>
-To:     James Morse <james.morse@arm.com>
-CC:     "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "christoffer.dall@arm.com" <christoffer.dall@arm.com>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
-        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Subject: Re: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add
- KVM_GET/SET_VCPU_EVENTS
-Thread-Topic: [PATCH RESEND v4 2/2] arm/arm64: KVM: Add
- KVM_GET/SET_VCPU_EVENTS
-Thread-Index: AdQF2PP8MBanP2tNQqWU0qZjd6ZgSw==
-Date:   Sun, 17 Jun 2018 01:30:20 +0000
-Message-ID: <0184EA26B2509940AA629AE1405DD7F201CE33F0@DGGEMA503-MBX.china.huawei.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.45.61.108]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S933488AbeFQByF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 21:54:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58608 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932815AbeFQByE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 16 Jun 2018 21:54:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=MQSFtpj+CzW9VjzahFIgMfo/GQZ+SLB7lEps/OqJb5w=; b=mY7iS6Dnb2oOIVPVDoM+3v18v
+        /YSlsrKL8vPJbl/AiFNWZIGJuxgKQBkbuzAUjebAOH3clbYMQK2MUwQ4uksMMSWtmliwo++ywh6Ck
+        r6CswJB5ncBiZozzUbek0cmtla/v2lmV995CCCWxtuCHZr8PIHi0EAuJDZK0rUGsyunpL8CQZ72Tk
+        vm8HrQ/qzPUbP43EnI8on0MIfMIQT7ofi5cQ9VbJGHkgICuPVNZdoV6fuuzXKXTnCI12xwqF0UcAI
+        t63uXgNCVHf+oSIWbMkHI2jrO5xDNEK/SxTvGR2Qpz8yUrtdv2fGF2eF2l3/O8jPfkoAnY2LftE/s
+        QiJ3KHnMg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fUMtD-0006uB-Bj; Sun, 17 Jun 2018 01:53:59 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nipun Gupta <nipun.gupta@nxp.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] linux/device.h: fix kernel-doc notation warning
+Message-ID: <9316b40a-c098-043d-25db-faaa83885d4c@infradead.org>
+Date:   Sat, 16 Jun 2018 18:53:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+Pj4+PiAtLS0gYS9hcmNoL2FybS9pbmNsdWRlL3VhcGkvYXNtL2t2bS5oDQo+ID4+Pj4+ICsr
-KyBiL2FyY2gvYXJtL2luY2x1ZGUvdWFwaS9hc20va3ZtLmgNCj4gPj4+Pj4gQEAgLTEyNCw2ICsx
-MjQsMTggQEAgc3RydWN0IGt2bV9zeW5jX3JlZ3MgeyAgc3RydWN0DQo+ID4+Pj4+IGt2bV9hcmNo
-X21lbW9yeV9zbG90IHsgIH07DQo+ID4+Pj4+DQo+ID4+Pj4+ICsvKiBmb3IgS1ZNX0dFVC9TRVRf
-VkNQVV9FVkVOVFMgKi8gc3RydWN0IGt2bV92Y3B1X2V2ZW50cyB7DQo+ID4+Pj4+ICsJc3RydWN0
-IHsNCj4gPj4+Pj4gKwkJX191OCBzZXJyb3JfcGVuZGluZzsNCj4gPj4+Pj4gKwkJX191OCBzZXJy
-b3JfaGFzX2VzcjsNCj4gPj4+Pj4gKwkJLyogQWxpZ24gaXQgdG8gOCBieXRlcyAqLw0KPiA+Pj4+
-PiArCQlfX3U4IHBhZFs2XTsNCj4gPj4+Pj4gKwkJX191NjQgc2Vycm9yX2VzcjsNCj4gPj4+Pj4g
-Kwl9IGV4Y2VwdGlvbjsNCj4gPj4+Pj4gKwlfX3UzMiByZXNlcnZlZFsxMl07DQo+ID4+Pj4+ICt9
-Ow0KPiA+Pj4+PiArDQo+ID4+Pj4NCj4gPj4+PiBZb3UgaGF2ZW4ndCBkZWZpbmVkIF9fS1ZNX0hB
-VkVfVkNQVV9FVkVOVFMgZm9yIDMyYml0LCBzbyBwcmVzdW1hYmx5DQo+ID4+Pj4gdGhpcyBzdHJ1
-Y3Qgd2lsbCBuZXZlciBiZSB1c2VkLiBXaHkgaXMgaXQgaGVyZT8NCj4gPj4NCj4gPj4+ICAgaWYg
-bm90IGFkZCBpdCBmb3IgMzIgYml0cy4gdGhlIDMyIGFybSBwbGF0Zm9ybSB3aWxsIGJ1aWxkIEZh
-aWwsIHdoZXRoZXIgeW91IGhhdmUgZ29vZA0KPiA+Pj4gICAgaWRlYSB0byBhdm9pZCB0aGlzIEZh
-aWx1cmUgaWYgbm90IGFkZCB0aGlzIHN0cnVjdCBmb3IgdGhlIDMyIGJpdD8NCj4gPj4NCj4gPj4g
-SG93IGRvZXMgdGhpcyAzMmJpdCBjb2RlIGJ1aWxkIHdpdGhvdXQgdGhpcyBwYXRjaD8NCj4gPj4g
-SWYgZG8geW91IHByb3ZpZGUgdGhlIHN0cnVjdCwgaG93IHdpbGwgdGhhdCBjb2RlIGJ1aWxkIHdp
-dGggb2xkZXIgaGVhZGVycz8NCj4gPj4NCj4gPj4gQXMgZmFyIGFzIEkgY2FuIHNlZSwgdGhpcyBp
-cyB3aGF0IHRoZSBfX0tWTV9IQVZFX1ZDUFVfRVZFTlRTIGRlZmluZSBpcyBmb3IuDQo+ID4+DQo+
-ID4+IFRoaXMgc2hvdWxkIGJlIGJvdGgsIG9yIG5laXRoZXIuIEhhdmluZyBqdXN0IHRoZSBzdHJ1
-Y3QgaXMgdXNlbGVzcy4NCj4gPiBJdCBiZWNhdXNlIHRoZSBjYWxsZXIgb2Yga3ZtX2FybV92Y3B1
-X2dldC9zZXRfZXZlbnRzKCkgaXMgaW4gInZpcnQva3ZtL2FybS9hcm0uYyIuDQo+ID4gdGhlIHZp
-cnQva3ZtL2FybS9hcm0uYyB3aWxsIHVzZWQgYnkgYm90aCBhcm02NCBhbmQgYXJtLg0KPiA+IHNv
-IEl0IG5lZWRzIHRvIGFkZCBrdm1fYXJtX3ZjcHVfZ2V0L3NldF9ldmVudHMoKSBmb3IgdGhlIDMy
-IGJpdHMsDQo+ID4gaG93ZXZlciwga3ZtX2FybV92Y3B1X2dldC9zZXRfZXZlbnRzKCkgd2lsbCBk
-aXJlY3RseSByZXR1cm4sDQo+IA0KPiBTbyB5b3UgYXJlIGFkZGluZyBhIHVhcGkgc3RydWN0IHRo
-YXQgdXNlci1zcGFjZSBjYW4ndCBhY3R1YWxseSB1c2UsIHRvIGF2b2lkIGEga2VybmVsIGJ1aWxk
-LWVycm9yLiBGaW5lLCBpdCBqdXN0IGxvb2tzIHJlYWxseSBzdHJhbmdlLg0KPiANCj4gMzJiaXQg
-dXNlci1zcGFjZSBzaG91bGRuJ3QgdHJ5IHRvIGNhbGwgdGhpcyBhcyBjaGVjay1leHRlbnNpb24g
-cmVwb3J0cyBpdCBhcyBub3QgcHJlc2VudC4gSWYgaXQgZG9lcywgaXQgZ2V0cyAtRUlOVkFMIGJh
-Y2ssIHdoaWNoIGlzIGFsc28gdGhlDQo+IGRlZmF1bHQgZm9yIGt2bV9hcmNoX3ZjcHVfaW9jdGwo
-KS4NCg0KSXQgaW5kZWVkIGxvb2tzIHN0cmFuZ2UuIEJlY2F1c2UgInZpcnQva3ZtL2FybS9hcm0u
-YyIgaXMgc2hhcmVkIGJ5IGFybTY0IGFuZCBhcm0zMiwgaWYgbm90IGFkZGluZywgaXQgd2lsbCBi
-dWlsZC1lcnJvci4gRG8geW91IGhhdmUgYSBiZXR0ZXIgaWRlYSB0byBhdm9pZCBhZGRpbmcgaW4g
-YXJtMzI/IA0KSSBzdGlsbCBub3QgdGhpbmsgb3V0IGEgZ29vZCBtZXRob2QuIDMyIHVzZXItc3Bh
-Y2Ugd2lsbCBub3QgY2FsbCB0aGlzIEtWTV9HRVQvU0VUX1ZDUFVfRVZFTlRTIElPQ1RMIGFzIGNo
-ZWNrLWV4dGVuc2lvbiByZXBvcnRzIGl0IGFzIG5vdCBwcmVzZW50Lg0KDQo+IA0KPiANCj4gVGhh
-bmtzLA0KPiANCj4gSmFtZXMNCg==
+From: Randy Dunlap <rdunlap@infradead.org>
+
+Fix kernel-doc build warning (missing " *" at beginning of line):
+
+../include/linux/device.h:93: warning: bad line:                         this bus.
+
+Fixes: 07397df29e57c ("dma-mapping: move dma configuration to bus infrastructure")
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Nipun Gupta <nipun.gupta@nxp.com>
+Cc: Christoph Hellwig <hch@lst.de>
+---
+ include/linux/device.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- lnx-418-rc1.orig/include/linux/device.h
++++ lnx-418-rc1/include/linux/device.h
+@@ -90,7 +90,7 @@ extern void bus_remove_file(struct bus_t
+  * @num_vf:	Called to find out how many virtual functions a device on this
+  *		bus supports.
+  * @dma_configure:	Called to setup DMA configuration on a device on
+-			this bus.
++ *			this bus.
+  * @pm:		Power management operations of this bus, callback the specific
+  *		device driver's pm-ops.
+  * @iommu_ops:  IOMMU specific operations for this bus, used to attach IOMMU
+
+
