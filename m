@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B0A9C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E559DC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A322086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9EB892086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Qk0kdlsh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A322086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mPOhuSdO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EB892086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934125AbeFQCTe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:19:34 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58726 "EHLO
+        id S934262AbeFQCUU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:20:20 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58702 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933512AbeFQCA7 (ORCPT
+        with ESMTP id S933391AbeFQCA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 22:00:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,14 +30,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=VdpoJRm08Fy75h+aB/tZALbxOrorEzQ33N3ElwwjXic=; b=Qk0kdlsh4Ep6idoSb/jl6gD1b
-        azUsOgqA5gvnbRrfU1orJygex5AlA5CrXQUWdQxviF9d2Y3qN+o67xPYf5PWGikoKwk9yfo/Q693A
-        /13vI3PJQlHyQB3eyGzWLHdHwmfpwboG8nnCp3omEdANd6DILTcOjieZsOng7v2OBs5rumg8cAcyL
-        YNnpJC9WuCDYtszaivGd3bUkJJoNwcuTKow4ZmsN4fsUCJG4xypR6fWoPsyiaaZ8timQ7HoE5m5nm
-        Zva4dhQ9e8rxmjEGR8/G+pDm7pLC0KbGRoby8zG7w141RokAX/ZqT5NpPOYEschpzgt84F2kABrcN
-        /UEZV/e6g==;
+         bh=W0ynj2cOXWAnsurcEVHQi3Lm3HZqNiOYUwJR3JyoSgg=; b=mPOhuSdOlghTW4EZ48RYSLVFr
+        L1QHIV0mnAWcK/e4GNgt+vfH4MD8ZwX57Zk8sYt7QIofkZsQw7WE+sBNvkXAaqXXbV22pD8mK8nPu
+        4vs5fcc3ipwxEppipseSwGBknmfUkkqaZpxEF8b1g4SIm8Wyj7ERKDaliIVW2mmeo5waimsCJdIpa
+        KKlueWEsIgZ9GPMURo0FcHSPLN5OGpXYXRHJoJmIDNvZy3+gaT77ozcPzkHhIePHjZn9fpcX8A02p
+        QrdnLPfet3rYarQuuNPajHC6ZO/0z2WeJaEejxDA8Do5QKqwvFNVn+qYyGz6DSBd7CTS8XjisGORh
+        f1f6RlcFA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUMzz-0001Hs-AP; Sun, 17 Jun 2018 02:00:59 +0000
+        id 1fUMzy-0001Gu-9X; Sun, 17 Jun 2018 02:00:58 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 23/74] page cache: Convert page deletion to XArray
-Date:   Sat, 16 Jun 2018 19:00:01 -0700
-Message-Id: <20180617020052.4759-24-willy@infradead.org>
+Subject: [PATCH v14 20/74] page cache: Rearrange address_space
+Date:   Sat, 16 Jun 2018 18:59:58 -0700
+Message-Id: <20180617020052.4759-21-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,70 +63,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The code is slightly shorter and simpler.
+Change i_pages from a radix_tree_root to an xarray, convert the
+documentation into kernel-doc format and change the order of the elements
+to pack them better on 64-bit systems.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- mm/filemap.c | 31 +++++++++++++------------------
- 1 file changed, 13 insertions(+), 18 deletions(-)
+ include/linux/fs.h | 46 +++++++++++++++++++++++++++++++---------------
+ 1 file changed, 31 insertions(+), 15 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 965ff68e5b8d..7cdb1d4b8117 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -111,31 +111,26 @@
-  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
-  */
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 8c1c56584e08..f1716ce5ff6f 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -396,24 +396,40 @@ int pagecache_write_end(struct file *, struct address_space *mapping,
+ 				loff_t pos, unsigned len, unsigned copied,
+ 				struct page *page, void *fsdata);
  
--static void page_cache_tree_delete(struct address_space *mapping,
-+static void page_cache_delete(struct address_space *mapping,
- 				   struct page *page, void *shadow)
- {
--	int i, nr;
-+	XA_STATE(xas, &mapping->i_pages, page->index);
-+	unsigned int nr = 1;
- 
--	/* hugetlb pages are represented by one entry in the radix tree */
--	nr = PageHuge(page) ? 1 : hpage_nr_pages(page);
-+	mapping_set_update(&xas, mapping);
-+
-+	/* hugetlb pages are represented by a single entry in the xarray */
-+	if (!PageHuge(page)) {
-+		xas_set_order(&xas, page->index, compound_order(page));
-+		nr = 1U << compound_order(page);
-+	}
- 
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(PageTail(page), page);
- 	VM_BUG_ON_PAGE(nr != 1 && shadow, page);
- 
--	for (i = 0; i < nr; i++) {
--		struct radix_tree_node *node;
--		void **slot;
--
--		__radix_tree_lookup(&mapping->i_pages, page->index + i,
--				    &node, &slot);
--
--		VM_BUG_ON_PAGE(!node && nr != 1, page);
--
--		radix_tree_clear_tags(&mapping->i_pages, node, slot);
--		__radix_tree_replace(&mapping->i_pages, node, slot, shadow,
--				workingset_lookup_update(mapping));
--	}
-+	xas_store(&xas, shadow);
-+	xas_init_tags(&xas);
- 
- 	page->mapping = NULL;
- 	/* Leave page->index set: truncation lookup relies upon it */
-@@ -234,7 +229,7 @@ void __delete_from_page_cache(struct page *page, void *shadow)
- 	trace_mm_filemap_delete_from_page_cache(page);
- 
- 	unaccount_page_cache_page(mapping, page);
--	page_cache_tree_delete(mapping, page, shadow);
-+	page_cache_delete(mapping, page, shadow);
- }
- 
- static void page_cache_free_page(struct address_space *mapping,
++/**
++ * struct address_space - Contents of a cacheable, mappable object.
++ * @host: Owner, either the inode or the block_device.
++ * @i_pages: Cached pages.
++ * @gfp_mask: Memory allocation flags to use for allocating pages.
++ * @i_mmap_writable: Number of VM_SHARED mappings.
++ * @i_mmap: Tree of private and shared mappings.
++ * @i_mmap_rwsem: Protects @i_mmap and @i_mmap_writable.
++ * @nrpages: Number of page entries, protected by the i_pages lock.
++ * @nrexceptional: Shadow or DAX entries, protected by the i_pages lock.
++ * @writeback_index: Writeback starts here.
++ * @a_ops: Methods.
++ * @flags: Error bits and flags (AS_*).
++ * @wb_err: The most recent error which has occurred.
++ * @private_lock: For use by the owner of the address_space.
++ * @private_list: For use by the owner of the address_space.
++ * @private_data: For use by the owner of the address_space.
++ */
+ struct address_space {
+-	struct inode		*host;		/* owner: inode, block_device */
+-	struct radix_tree_root	i_pages;	/* cached pages */
+-	atomic_t		i_mmap_writable;/* count VM_SHARED mappings */
+-	struct rb_root_cached	i_mmap;		/* tree of private and shared mappings */
+-	struct rw_semaphore	i_mmap_rwsem;	/* protect tree, count, list */
+-	/* Protected by the i_pages lock */
+-	unsigned long		nrpages;	/* number of total pages */
+-	/* number of shadow or DAX exceptional entries */
++	struct inode		*host;
++	struct xarray		i_pages;
++	gfp_t			gfp_mask;
++	atomic_t		i_mmap_writable;
++	struct rb_root_cached	i_mmap;
++	struct rw_semaphore	i_mmap_rwsem;
++	unsigned long		nrpages;
+ 	unsigned long		nrexceptional;
+-	pgoff_t			writeback_index;/* writeback starts here */
+-	const struct address_space_operations *a_ops;	/* methods */
+-	unsigned long		flags;		/* error bits */
+-	spinlock_t		private_lock;	/* for use by the address_space */
+-	gfp_t			gfp_mask;	/* implicit gfp mask for allocations */
+-	struct list_head	private_list;	/* for use by the address_space */
+-	void			*private_data;	/* ditto */
++	pgoff_t			writeback_index;
++	const struct address_space_operations *a_ops;
++	unsigned long		flags;
+ 	errseq_t		wb_err;
++	spinlock_t		private_lock;
++	struct list_head	private_list;
++	void			*private_data;
+ } __attribute__((aligned(sizeof(long)))) __randomize_layout;
+ 	/*
+ 	 * On most architectures that alignment is already the case; but
 -- 
 2.17.1
 
