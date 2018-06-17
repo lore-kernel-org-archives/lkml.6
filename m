@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AA5C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A220DC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:16:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F7442086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C19820895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:16:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="m+LOI1px"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F7442086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="okPB77XZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C19820895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936563AbeFQCQV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:16:21 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58772 "EHLO
+        id S936546AbeFQCQS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:16:18 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58778 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933677AbeFQCBB (ORCPT
+        with ESMTP id S933686AbeFQCBB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 22:01:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,14 +30,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Yeiu2kmNiusFRVYFnSwKz/rR6RSVxilKq9nNpzSrFOE=; b=m+LOI1px17ZSX5HKevG2D55D6
-        WGE20+eKIdSX26zGYKp1NJ6fKmQVz9TeDZYY2DXweQpbJxgCHb3Hi5OE61FnLqgC9mCXy7ziofOeN
-        9wrsRmwJGlNfGUUIX6s0jhoqytilmgM4katZytiJIuds+7k9iRJY0mVTVXPc+G9txr3bE2z8iCKPR
-        w42OLBaGlBN/PWDF3t3EbBHftT2tyegU/WqWin9w+H/PFRZHu2IFFTXmhaTQ1DIOhMzcU2q4yNL0F
-        sqRF1xwdUMq+DK8WxDBpeTFS51/Fu9NqDsrxJA8BmxnEyzJ3C93MWVLru6U1HWrEECsEWSazm8sIQ
-        LaP1JPyjg==;
+         bh=AKP5kPHLAsjH4oWHNfWRxP+epB3/+vM9u8ylV5gaNUw=; b=okPB77XZe6XRpnpeP6AUMA+6p
+        N32Pu3z6V+C1Xrh8qb/dG65uQhx6HmtgVy2XI7b5XMdBYqh5zDZs0daNiqloNE32jXGhbcPY77SU6
+        WNbWLYj+tjB9srSGsmTxwzzilG7mguxPhKuulR/1UrO95bFp5yHTr1ofTpQH9GSWLR4BKoTqCvlgr
+        YG0eHLZNqrFDb0zaQRwQahMljnfuwWzotRE8PjGzJiJKc1duoL5yRIQZ8pXhvLUiZcZ1Z1bl6pczS
+        lWU654Tymzf7uGG5IpUtbkHR0xISNNZm803fjCLuDJlTHcqvkuBgdXb5H8zviHABUTTtR1nq304w6
+        VmKJyvIIg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN00-0001Iu-NL; Sun, 17 Jun 2018 02:01:00 +0000
+        id 1fUN00-0001J3-TS; Sun, 17 Jun 2018 02:01:00 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 30/74] page cache: Convert filemap_map_pages to XArray
-Date:   Sat, 16 Jun 2018 19:00:08 -0700
-Message-Id: <20180617020052.4759-31-willy@infradead.org>
+Subject: [PATCH v14 31/74] radix tree test suite: Convert regression1 to XArray
+Date:   Sat, 16 Jun 2018 19:00:09 -0700
+Message-Id: <20180617020052.4759-32-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,102 +63,118 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Slight change of strategy here; if we have trouble getting hold of a
-page for whatever reason (eg a compound page is split underneath us),
-don't spin to stabilise the page, just continue the iteration, like we
-would if we failed to trylock the page.  Since this is a speculative
-optimisation, it feels like we should allow the process to take an extra
-fault if it turns out to need this page instead of spending time to pin
-down a page it may not need.
+Now the page cache lookup is using the XArray, let's convert this
+regression test from the radix tree API to the XArray so it's testing
+roughly the same thing it was testing before.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- mm/filemap.c | 42 +++++++++++++-----------------------------
- 1 file changed, 13 insertions(+), 29 deletions(-)
+ tools/testing/radix-tree/regression1.c | 58 +++++++++-----------------
+ 1 file changed, 19 insertions(+), 39 deletions(-)
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 67f04bcdf9ef..4204d9df003b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2516,45 +2516,31 @@ EXPORT_SYMBOL(filemap_fault);
- void filemap_map_pages(struct vm_fault *vmf,
- 		pgoff_t start_pgoff, pgoff_t end_pgoff)
+diff --git a/tools/testing/radix-tree/regression1.c b/tools/testing/radix-tree/regression1.c
+index 0aece092f40e..b4a4a7168986 100644
+--- a/tools/testing/radix-tree/regression1.c
++++ b/tools/testing/radix-tree/regression1.c
+@@ -53,12 +53,12 @@ struct page {
+ 	unsigned long index;
+ };
+ 
+-static struct page *page_alloc(void)
++static struct page *page_alloc(int index)
  {
--	struct radix_tree_iter iter;
--	void **slot;
- 	struct file *file = vmf->vma->vm_file;
- 	struct address_space *mapping = file->f_mapping;
- 	pgoff_t last_pgoff = start_pgoff;
- 	unsigned long max_idx;
-+	XA_STATE(xas, &mapping->i_pages, start_pgoff);
- 	struct page *head, *page;
+ 	struct page *p;
+ 	p = malloc(sizeof(struct page));
+ 	p->count = 1;
+-	p->index = 1;
++	p->index = index;
+ 	pthread_mutex_init(&p->lock, NULL);
+ 
+ 	return p;
+@@ -80,53 +80,33 @@ static void page_free(struct page *p)
+ static unsigned find_get_pages(unsigned long start,
+ 			    unsigned int nr_pages, struct page **pages)
+ {
+-	unsigned int i;
+-	unsigned int ret;
+-	unsigned int nr_found;
++	XA_STATE(xas, &mt_tree, start);
++	struct page *page;
++	unsigned int ret = 0;
  
  	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start_pgoff) {
--		if (iter.index > end_pgoff)
--			break;
+-restart:
+-	nr_found = radix_tree_gang_lookup_slot(&mt_tree,
+-				(void ***)pages, NULL, start, nr_pages);
+-	ret = 0;
+-	for (i = 0; i < nr_found; i++) {
+-		struct page *page;
 -repeat:
--		page = radix_tree_deref_slot(slot);
+-		page = radix_tree_deref_slot((void **)pages[i]);
 -		if (unlikely(!page))
--			goto next;
++	xas_for_each(&xas, page, ULONG_MAX) {
++		if (xas_retry(&xas, page))
+ 			continue;
+ 
 -		if (radix_tree_exception(page)) {
 -			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
+-				/*
+-				 * Transient condition which can only trigger
+-				 * when entry at index 0 moves out of or back
+-				 * to root: none yet gotten, safe to restart.
+-				 */
+-				assert((start | i) == 0);
+-				goto restart;
 -			}
-+	xas_for_each(&xas, page, end_pgoff) {
-+		if (xas_retry(&xas, page))
-+			continue;
-+		if (xa_is_value(page))
- 			goto next;
+-			/*
+-			 * No exceptional entries are inserted in this test.
+-			 */
+-			assert(0);
 -		}
- 
- 		head = compound_head(page);
- 		if (!page_cache_get_speculative(head))
--			goto repeat;
-+			goto next;
- 
- 		/* The page was split under us? */
--		if (compound_head(page) != head) {
--			put_page(head);
+-
+ 		pthread_mutex_lock(&page->lock);
+-		if (!page->count) {
+-			pthread_mutex_unlock(&page->lock);
 -			goto repeat;
 -		}
-+		if (compound_head(page) != head)
-+			goto skip;
++		if (!page->count)
++			goto unlock;
++
+ 		/* don't actually update page refcount */
+ 		pthread_mutex_unlock(&page->lock);
  
  		/* Has the page moved? */
--		if (unlikely(page != *slot)) {
--			put_page(head);
+-		if (unlikely(page != *((void **)pages[i]))) {
 -			goto repeat;
 -		}
 +		if (unlikely(page != xas_reload(&xas)))
-+			goto skip;
++			goto put_page;
  
- 		if (!PageUptodate(page) ||
- 				PageReadahead(page) ||
-@@ -2573,10 +2559,10 @@ void filemap_map_pages(struct vm_fault *vmf,
- 		if (file->f_ra.mmap_miss > 0)
- 			file->f_ra.mmap_miss--;
- 
--		vmf->address += (iter.index - last_pgoff) << PAGE_SHIFT;
-+		vmf->address += (xas.xa_index - last_pgoff) << PAGE_SHIFT;
- 		if (vmf->pte)
--			vmf->pte += iter.index - last_pgoff;
--		last_pgoff = iter.index;
-+			vmf->pte += xas.xa_index - last_pgoff;
-+		last_pgoff = xas.xa_index;
- 		if (alloc_set_pte(vmf, NULL, page))
- 			goto unlock;
- 		unlock_page(page);
-@@ -2589,8 +2575,6 @@ void filemap_map_pages(struct vm_fault *vmf,
- 		/* Huge page is mapped? No need to proceed. */
- 		if (pmd_trans_huge(*vmf->pmd))
- 			break;
--		if (iter.index == end_pgoff)
--			break;
+ 		pages[ret] = page;
+ 		ret++;
++		continue;
++unlock:
++		pthread_mutex_unlock(&page->lock);
++put_page:
++		xas_reset(&xas);
  	}
  	rcu_read_unlock();
- }
+ 	return ret;
+@@ -145,12 +125,12 @@ static void *regression1_fn(void *arg)
+ 		for (j = 0; j < 1000000; j++) {
+ 			struct page *p;
+ 
+-			p = page_alloc();
++			p = page_alloc(0);
+ 			pthread_mutex_lock(&mt_lock);
+ 			radix_tree_insert(&mt_tree, 0, p);
+ 			pthread_mutex_unlock(&mt_lock);
+ 
+-			p = page_alloc();
++			p = page_alloc(1);
+ 			pthread_mutex_lock(&mt_lock);
+ 			radix_tree_insert(&mt_tree, 1, p);
+ 			pthread_mutex_unlock(&mt_lock);
 -- 
 2.17.1
 
