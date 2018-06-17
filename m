@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8568CC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:52:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DF8C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:53:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 364E6208A5
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:52:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87739208A5
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:53:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="yYn2khpG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364E6208A5
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="yETdzH5N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87739208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932762AbeFQIwv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 04:52:51 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:43772 "EHLO
+        id S933134AbeFQIxt (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 04:53:49 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:43784 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932478AbeFQIwt (ORCPT
+        with ESMTP id S932897AbeFQIxs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 04:52:49 -0400
+        Sun, 17 Jun 2018 04:53:48 -0400
 Received: from trochilidae.lan (unknown [37.17.239.3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 74AFE5C037A;
-        Sun, 17 Jun 2018 10:52:48 +0200 (CEST)
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 3D58A5C115F;
+        Sun, 17 Jun 2018 10:53:47 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529225568;
+        t=1529225627;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=CB48aVpV0RgnRWL0sppEAN3vWmirvHvhS94TraMA13g=;
-        b=yYn2khpG7QgwV/00vQJnzwqQOmBAXTyvaBwUCaU3T6aIIZ1UYO+pXxOlFtlLlo66MGcSlx
-        bU0Od8wNfr1TJbFBVNXHDejPRt9LFo8spnxXIVsi3L6E/jeEDcPAK1Oiv97MQaRTZzSvaC
-        Rsf3TKBd43KEdWlh5Ihx9lcUGEkU7q4=
+         in-reply-to:references; bh=S56oTnM0X/4dVHOuywLQSLm+dJWcEKccpa86jm+E5wo=;
+        b=yETdzH5NGoIxHRhPY4dteMm9flecqoVrf4bbfmkHGUhUC7Mawt9eZPMoPLTTmn0j7gKHNU
+        uVN7UE1/g/W4hr2eOXhjj8J24wIUc2D6GGIU+FWR1wfheKqD0+0vv3kzkgipLf4JahTpvg
+        nJO2ZEgVPSrvaenRn3aWZg0wJVFUirg=
 From:   Stefan Agner <stefan@agner.ch>
 To:     Alex Deucher <alexander.deucher@amd.com>
-Cc:     Stefan Agner <stefan@agner.ch>, James Zhu <James.Zhu@amd.com>,
+Cc:     Stefan Agner <stefan@agner.ch>,
         =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
         David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org,
         dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drm/amdgpu: use first uvd instance to avoid clang build error
-Date:   Sun, 17 Jun 2018 10:52:12 +0200
-Message-Id: <20180617085218.7753-1-stefan@agner.ch>
+Subject: [PATCH] drm/amd/display: don't initialize result
+Date:   Sun, 17 Jun 2018 10:53:38 +0200
+Message-Id: <20180617085343.10760-1-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
 X-Spamd-Result: default: False [-2.10 / 15.00];
          TO_MATCH_ENVRCPT_ALL(0.00)[];
          BAYES_HAM(-3.00)[100.00%];
          MIME_GOOD(-0.10)[text/plain];
          FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[9];
+         RCPT_COUNT_SEVEN(0.00)[8];
          FROM_EQ_ENVFROM(0.00)[];
          DKIM_SIGNED(0.00)[];
          TO_DN_SOME(0.00)[];
@@ -65,49 +65,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Explicitly use the first uvd instance to avoid a build error when
-using clang 6:
-drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c:1148:52: error: expected ')'
-                container_of(work, struct amdgpu_device, uvd.inst->idle_work.work);
-                                                                 ^
-drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c:1148:3: note: to match this '('
-                container_of(work, struct amdgpu_device, uvd.inst->idle_work.work);
-                ^
-./include/linux/kernel.h:967:21: note: expanded from macro 'container_of'
-        ((type *)(__mptr - offsetof(type, member))); })
-                           ^
-./include/linux/stddef.h:17:32: note: expanded from macro 'offsetof'
-                                ^
-./include/linux/compiler-gcc.h:170:20: note: expanded from macro
-      '__compiler_offsetof'
-        __builtin_offsetof(a, b)
-                          ^
-drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c:1147:24: error: initializing
-      'struct amdgpu_device *' with an expression of incompatible type 'void'
-        struct amdgpu_device *adev =
-                              ^
-2 errors generated.
+The wrong enum type is used to initialize the result, leading to a
+warning when using clang:
+drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_link_dp.c:1998:26: warning:
+      implicit conversion from enumeration type 'enum ddc_result' to different
+      enumeration type 'enum dc_status' [-Wenum-conversion]
+        enum dc_status result = DDC_RESULT_UNKNOWN;
+                       ~~~~~~   ^~~~~~~~~~~~~~~~~~
+1 warning generated.
 
-Fixes: 10dd74eac4db ("drm/amdgpu/vg20:Restruct uvd.inst to support multiple instances")
-Cc: James Zhu <James.Zhu@amd.com>
+Initialization of result is unnecessary anyway, just drop the
+initialization.
+
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c | 2 +-
+ drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
-index bcf68f80bbf0..6666a5888c44 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
-@@ -1145,7 +1145,7 @@ int amdgpu_uvd_get_destroy_msg(struct amdgpu_ring *ring, uint32_t handle,
- static void amdgpu_uvd_idle_work_handler(struct work_struct *work)
+diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+index 7857cb42b3e6..1dbfbfc0fd45 100644
+--- a/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
++++ b/drivers/gpu/drm/amd/display/dc/core/dc_link_dp.c
+@@ -1995,7 +1995,7 @@ bool dc_link_handle_hpd_rx_irq(struct dc_link *link, union hpd_irq_data *out_hpd
  {
- 	struct amdgpu_device *adev =
--		container_of(work, struct amdgpu_device, uvd.inst->idle_work.work);
-+		container_of(work, struct amdgpu_device, uvd.inst[0].idle_work.work);
- 	unsigned fences = 0, i, j;
- 
- 	for (i = 0; i < adev->uvd.num_uvd_inst; ++i) {
+ 	union hpd_irq_data hpd_irq_dpcd_data = {{{{0}}}};
+ 	union device_service_irq device_service_clear = { { 0 } };
+-	enum dc_status result = DDC_RESULT_UNKNOWN;
++	enum dc_status result;
+ 	bool status = false;
+ 	/* For use cases related to down stream connection status change,
+ 	 * PSR and device auto test, refer to function handle_sst_hpd_irq
 -- 
 2.17.1
 
