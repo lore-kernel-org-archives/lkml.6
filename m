@@ -2,100 +2,116 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AC2C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E36C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:17:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB13C20693
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C8E420693
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:17:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="IcEJ+fje"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB13C20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klak7P7s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C8E420693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754346AbeFQLNI (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 07:13:08 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:44500 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752705AbeFQLNG (ORCPT
+        id S933277AbeFQLRD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 07:17:03 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:44413 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754255AbeFQLRC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 07:13:06 -0400
-Received: from trochilidae.lan (unknown [37.17.239.3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 03DC95C019E;
-        Sun, 17 Jun 2018 13:13:05 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529233985;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=VPgxNF9QFrrAXHGesHwS3fGFmhoFiJfMl/w6w8MyCYA=;
-        b=IcEJ+fjeQ4g72uet7vlC2moveOzJrKua8qZ8EmSaujDpnDZEJsAG/9mDjfz9zv+aJgKaGq
-        o7HndCPflLU+TOavRthg8XU7jCj6KMeKfYlc+kTv+8tNQfxfZhL9aZEkC5YlWgqfckEobN
-        JnZc/ynKdhKvr+trVnYIbHfnx4oSmxs=
-From:   Stefan Agner <stefan@agner.ch>
-To:     Jon Hunter <jonathanh@nvidia.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Stefan Agner <stefan@agner.ch>,
-        Mathias Nyman <mathias.nyman@intel.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        Sun, 17 Jun 2018 07:17:02 -0400
+Received: by mail-pf0-f194.google.com with SMTP id h12-v6so6834376pfk.11
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 04:17:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=XbyL4z96xfT3YlWw8BGvtGOlSct9gr9UlwfO+ED5Xsc=;
+        b=klak7P7sqevcta86Mmxlo42WJKai1jIZBm5JVtr0b5GuvpDWtZKxChIUx3Jx/P7FYT
+         JaKcouNxCccIt7qWJICndlqXq7tCPugLoDrO7bjt76kWgYeCac70uXWdpiQrFuBzZNbi
+         nocsRCv4urJgiZLWNKqSaK+MDsWIXvhGCjskpzHbhiOquoQ3oeYINij07Orl98kos5Iu
+         0NxqOWAOH0gH0xM5SsuFIAlDX8LKgMA4F8TkdV3gbw4ItKwL4VVG0GDAPfSxV4sJu6BP
+         ilagHJqvLYblEn8wDXxWLVgcT4J1h6nltNQtPy/0GLNmDtaR+Dm+YZrnj9G9X1mwNsef
+         JKsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XbyL4z96xfT3YlWw8BGvtGOlSct9gr9UlwfO+ED5Xsc=;
+        b=WeG2Fexr87X+g/6ZYD32UJbKKeY8NvIHvvrulMe9x3hZQqncsMchYSfYg0DYsVzul3
+         v4wDEU/rky8rB8A7V4+78CXboiWfvZRJFET/CtQsRrq7rRFSQznCfPnViOZVjxqAWq0l
+         bjXvl8S6b8rh7d/MVxqnVI8ylL9IlqKS774oE0S8Qg7TzV2BWZA9dOkfPTxZYTkv6pFH
+         WXi5qfsVXbNnwUe6ew2k4SdJXhcXqjrNS2sDIKQSzd71evL11VuXuZXYFT7NHDPgHTxZ
+         CNsRJdFPhYjQmbilGhu465e/wNqNkj1DciDzPnppJi03AWMKTg9p5TB7XKhVqwbyYkhj
+         WP/A==
+X-Gm-Message-State: APt69E1pa7+UbnOF+zg5MrluMkiTWoTaHIogCPD1tiuzg7a6Du6RPiI8
+        fdpVRqeDa23kuS7CG290aPuFnQ==
+X-Google-Smtp-Source: ADUXVKIOa1LrtHE4wFV/d7vnhqrj9cUnpVmIxMLjQS2kswZjWjqByT55O3up5Y3bNVtcEpNFPjh92Q==
+X-Received: by 2002:a65:56c1:: with SMTP id w1-v6mr7724265pgs.227.1529234222202;
+        Sun, 17 Jun 2018 04:17:02 -0700 (PDT)
+Received: from shreeya-VirtualBox ([103.212.140.156])
+        by smtp.gmail.com with ESMTPSA id o65-v6sm16178047pga.75.2018.06.17.04.17.00
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 17 Jun 2018 04:17:01 -0700 (PDT)
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     oleg.drokin@intel.com, andreas.dilger@intel.com,
+        jsimmons@infradead.org, gregkh@linuxfoundation.org,
+        lustre-devel@lists.lustre.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] usb: xhci: tegra: fix runtime PM error handling
-Date:   Sun, 17 Jun 2018 13:12:55 +0200
-Message-Id: <20180617111258.13447-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.17.1
-X-Spamd-Result: default: False [-2.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         TAGGED_RCPT(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         MID_CONTAINS_FROM(1.00)[];
-         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
-         RCVD_TLS_ALL(0.00)[];
-         ARC_NA(0.00)[]
+Cc:     Shreeya Patel <shreeya.patel23498@gmail.com>
+Subject: [PATCH] Staging: lustre: Use kmemdup() instead of kzalloc and memcpy
+Date:   Sun, 17 Jun 2018 16:46:55 +0530
+Message-Id: <1529234215-4010-1-git-send-email-shreeya.patel23498@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The address-of operator will always evaluate to true. However,
-power should be explicitly disabled if no power domain is used.
+Replace calls to kzalloc or kmalloc followed by a memcpy with
+a direct call to kmemdup to shorten the code.
 
-Remove the address-of operator.
+The Coccinelle semantic patch used to make this change is as follows:
+@@
+expression from,to,size,flag;
+statement S;
+@@
 
-Fixes: 58c38116c6cc ("usb: xhci: tegra: Add support for managing powergates")
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+-  to = \(kmalloc\|kzalloc\)(size,flag);
++  to = kmemdup(from,size,flag);
+   if (to==NULL || ...) S
+-  memcpy(to, from, size);
+
+Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
 ---
- drivers/usb/host/xhci-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/lustre/lnet/lnet/api-ni.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index a8c1d073cba0..33daac4136e8 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -1223,10 +1223,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	pm_runtime_disable(&pdev->dev);
- 	usb_put_hcd(tegra->hcd);
- disable_xusbc:
--	if (!&pdev->dev.pm_domain)
-+	if (!pdev->dev.pm_domain)
- 		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
- disable_xusba:
--	if (!&pdev->dev.pm_domain)
-+	if (!pdev->dev.pm_domain)
- 		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
- put_padctl:
- 	tegra_xusb_padctl_put(tegra->padctl);
+diff --git a/drivers/staging/lustre/lnet/lnet/api-ni.c b/drivers/staging/lustre/lnet/lnet/api-ni.c
+index f9ed697..36ea14e 100644
+--- a/drivers/staging/lustre/lnet/lnet/api-ni.c
++++ b/drivers/staging/lustre/lnet/lnet/api-ni.c
+@@ -1271,15 +1271,14 @@ lnet_startup_lndni(struct lnet_ni *ni, struct lnet_ioctl_config_data *conf)
+ 		lnd_tunables = (struct lnet_ioctl_config_lnd_tunables *)conf->cfg_bulk;
+ 
+ 	if (lnd_tunables) {
+-		ni->ni_lnd_tunables = kzalloc(sizeof(*ni->ni_lnd_tunables),
++		ni->ni_lnd_tunables = kmemdup(lnd_tunables,
++					      sizeof(*ni->ni_lnd_tunables),
+ 					      GFP_NOFS);
+ 		if (!ni->ni_lnd_tunables) {
+ 			mutex_unlock(&the_lnet.ln_lnd_mutex);
+ 			rc = -ENOMEM;
+ 			goto failed0;
+ 		}
+-		memcpy(ni->ni_lnd_tunables, lnd_tunables,
+-		       sizeof(*ni->ni_lnd_tunables));
+ 	}
+ 
+ 	/*
 -- 
-2.17.1
+2.7.4
 
