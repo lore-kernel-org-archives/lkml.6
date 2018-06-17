@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D63B4C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3E5AC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EDD52086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7A8620895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P9S9rDSz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EDD52086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UE+DTm1/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A7A8620895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936482AbeFQCTf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:19:35 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58718 "EHLO
+        id S936535AbeFQCTg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:19:36 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58708 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933506AbeFQCA7 (ORCPT
+        with ESMTP id S933396AbeFQCA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 22:00:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,14 +30,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=SeRSb0Y9h85iyiF7jwGNJotyxofsAVlcnNE7p5237z8=; b=P9S9rDSzHT9kigYQF2plix5v0
-        4Vb/mYk96kvFcF1w14mVmU/8H+hyphvGf8oxT2WapEt16o/4vr8gRh9UPuDyXla3kgnmR/hwd0QlH
-        aSpool7u9knzjFCcS3L7EN6DbOah5c2nKtOTRIC8GwOVi7Bg70M8ZQjOMDOp5LzBQOOhrD2jPgXDq
-        Lh8A7r2X85ZvaBlc9ZUmdZ5Ux7JavSvSOuneIR1m/mEnJ+tAFf3+DlJmJVV+TjTCMY7SdIRAlSuXq
-        kZuetj1Cb0C+2ErNS2KxJFK0+mgBu8GJwClDJ3nZPVmzsoMgXOE+UOsJK7Nmr4W9mIxbTaWGLZMW4
-        p1xQGQtDw==;
+         bh=ZknMFf1EBgxh8JXW2iXsRYKErSknCKbuLaQiFwSf5lE=; b=UE+DTm1/XJKSP/yG1FhYs0aQQ
+        EgrNraz0cQ/yXL6R5p98pMpFnKgqtG0nrwUTtgsK8P8gNRgO5XQvfyOPi6VEgxxaN9QlJIzJFhaK1
+        MO5e1Gw61fIaVmTmlORQacK4UoCtKv76yLQ1UEp6qDpyliJ4crOvgcvZ40ADn7tFKGfzO0psNnVSJ
+        JuwuxuViHpdE0YJpwTn6gHogVAlxsZ4FZSnIRmyrX+5OYqu9fmUto6NSMSs4eP9VHB9zQky2otCHo
+        MBd5md1NnjQNHfPzDJr1nFrp9/QtnXCJ2KweAnVUe/4KmdG1mK9Crsot4Z8WDI+qjc2LOp/ZSFoEq
+        TaoxiJhBw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUMzz-0001HX-4P; Sun, 17 Jun 2018 02:00:59 +0000
+        id 1fUMzy-0001HM-NK; Sun, 17 Jun 2018 02:00:58 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 22/74] page cache: Add and replace pages using the XArray
-Date:   Sat, 16 Jun 2018 19:00:00 -0700
-Message-Id: <20180617020052.4759-23-willy@infradead.org>
+Subject: [PATCH v14 21/74] page cache: Convert hole search to XArray
+Date:   Sat, 16 Jun 2018 18:59:59 -0700
+Message-Id: <20180617020052.4759-22-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,271 +63,212 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the XArray APIs to add and replace pages in the page cache.  This
-removes two uses of the radix tree preload API and is significantly
-shorter code.  It also removes the last user of __radix_tree_create()
-outside radix-tree.c itself, so make it static.
+The page cache offers the ability to search for a miss in the previous or
+next N locations.  Rather than teach the XArray about the page cache's
+definition of a miss, use xas_prev() and xas_next() to search the page
+array.  This should be more efficient as it does not have to start the
+lookup from the top for each index.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- include/linux/radix-tree.h |   3 -
- include/linux/swap.h       |   8 ++-
- lib/radix-tree.c           |   6 +-
- mm/filemap.c               | 139 +++++++++++++++----------------------
- 4 files changed, 66 insertions(+), 90 deletions(-)
+ fs/nfs/blocklayout/blocklayout.c |   2 +-
+ include/linux/pagemap.h          |   4 +-
+ mm/filemap.c                     | 110 ++++++++++++++-----------------
+ mm/readahead.c                   |   4 +-
+ 4 files changed, 55 insertions(+), 65 deletions(-)
 
-diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index f64beb9ba175..4b6f685309fc 100644
---- a/include/linux/radix-tree.h
-+++ b/include/linux/radix-tree.h
-@@ -231,9 +231,6 @@ static inline int radix_tree_exception(void *arg)
- 	return unlikely((unsigned long)arg & RADIX_TREE_ENTRY_MASK);
- }
- 
--int __radix_tree_create(struct radix_tree_root *, unsigned long index,
--			unsigned order, struct radix_tree_node **nodep,
--			void __rcu ***slotp);
- int __radix_tree_insert(struct radix_tree_root *, unsigned long index,
- 			unsigned order, void *);
- static inline int radix_tree_insert(struct radix_tree_root *root,
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index f73eafcaf4e9..1b91e7f7bdeb 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -300,8 +300,12 @@ void *workingset_eviction(struct address_space *mapping, struct page *page);
- bool workingset_refault(void *shadow);
- void workingset_activation(struct page *page);
- 
--/* Do not use directly, use workingset_lookup_update */
--void workingset_update_node(struct radix_tree_node *node);
-+/* Only track the nodes of mappings with shadow entries */
-+void workingset_update_node(struct xa_node *node);
-+#define mapping_set_update(xas, mapping) do {				\
-+	if (!dax_mapping(mapping) && !shmem_mapping(mapping))		\
-+		xas_set_update(xas, workingset_update_node);		\
-+} while (0)
- 
- /* Returns workingset_update_node() if the mapping has shadow entries. */
- #define workingset_lookup_update(mapping)				\
-diff --git a/lib/radix-tree.c b/lib/radix-tree.c
-index f7785f7cbd5f..5c8a262f506c 100644
---- a/lib/radix-tree.c
-+++ b/lib/radix-tree.c
-@@ -740,9 +740,9 @@ static bool delete_node(struct radix_tree_root *root,
-  *
-  *	Returns -ENOMEM, or 0 for success.
-  */
--int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
--			unsigned order, struct radix_tree_node **nodep,
--			void __rcu ***slotp)
-+static int __radix_tree_create(struct radix_tree_root *root,
-+		unsigned long index, unsigned order,
-+		struct radix_tree_node **nodep, void __rcu ***slotp)
- {
- 	struct radix_tree_node *node = NULL, *child;
- 	void __rcu **slot = (void __rcu **)&root->xa_head;
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 8de36e14e22f..965ff68e5b8d 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -111,35 +111,6 @@
-  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
-  */
- 
--static int page_cache_tree_insert(struct address_space *mapping,
--				  struct page *page, void **shadowp)
--{
--	struct radix_tree_node *node;
--	void **slot;
--	int error;
--
--	error = __radix_tree_create(&mapping->i_pages, page->index, 0,
--				    &node, &slot);
--	if (error)
--		return error;
--	if (*slot) {
--		void *p;
--
--		p = radix_tree_deref_slot_protected(slot,
--						    &mapping->i_pages.xa_lock);
--		if (!xa_is_value(p))
--			return -EEXIST;
--
--		mapping->nrexceptional--;
--		if (shadowp)
--			*shadowp = p;
--	}
--	__radix_tree_replace(&mapping->i_pages, node, slot, page,
--			     workingset_lookup_update(mapping));
--	mapping->nrpages++;
--	return 0;
--}
--
- static void page_cache_tree_delete(struct address_space *mapping,
- 				   struct page *page, void *shadow)
- {
-@@ -775,51 +746,44 @@ EXPORT_SYMBOL(file_write_and_wait_range);
-  * locked.  This function does not add the new page to the LRU, the
-  * caller must do that.
-  *
-- * The remove + add is atomic.  The only way this function can fail is
-- * memory allocation failure.
-+ * The remove + add is atomic.  This function cannot fail.
-  */
- int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
- {
--	int error;
-+	struct address_space *mapping = old->mapping;
-+	void (*freepage)(struct page *) = mapping->a_ops->freepage;
-+	pgoff_t offset = old->index;
-+	XA_STATE(xas, &mapping->i_pages, offset);
-+	unsigned long flags;
- 
- 	VM_BUG_ON_PAGE(!PageLocked(old), old);
- 	VM_BUG_ON_PAGE(!PageLocked(new), new);
- 	VM_BUG_ON_PAGE(new->mapping, new);
- 
--	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
--	if (!error) {
--		struct address_space *mapping = old->mapping;
--		void (*freepage)(struct page *);
--		unsigned long flags;
--
--		pgoff_t offset = old->index;
--		freepage = mapping->a_ops->freepage;
-+	get_page(new);
-+	new->mapping = mapping;
-+	new->index = offset;
- 
--		get_page(new);
--		new->mapping = mapping;
--		new->index = offset;
-+	xas_lock_irqsave(&xas, flags);
-+	xas_store(&xas, new);
- 
--		xa_lock_irqsave(&mapping->i_pages, flags);
--		__delete_from_page_cache(old, NULL);
--		error = page_cache_tree_insert(mapping, new, NULL);
--		BUG_ON(error);
--
--		/*
--		 * hugetlb pages do not participate in page cache accounting.
--		 */
--		if (!PageHuge(new))
--			__inc_node_page_state(new, NR_FILE_PAGES);
--		if (PageSwapBacked(new))
--			__inc_node_page_state(new, NR_SHMEM);
--		xa_unlock_irqrestore(&mapping->i_pages, flags);
--		mem_cgroup_migrate(old, new);
--		radix_tree_preload_end();
--		if (freepage)
--			freepage(old);
--		put_page(old);
--	}
-+	old->mapping = NULL;
-+	/* hugetlb pages do not participate in page cache accounting. */
-+	if (!PageHuge(old))
-+		__dec_node_page_state(new, NR_FILE_PAGES);
-+	if (!PageHuge(new))
-+		__inc_node_page_state(new, NR_FILE_PAGES);
-+	if (PageSwapBacked(old))
-+		__dec_node_page_state(new, NR_SHMEM);
-+	if (PageSwapBacked(new))
-+		__inc_node_page_state(new, NR_SHMEM);
-+	xas_unlock_irqrestore(&xas, flags);
-+	mem_cgroup_migrate(old, new);
-+	if (freepage)
-+		freepage(old);
-+	put_page(old);
- 
--	return error;
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(replace_page_cache_page);
- 
-@@ -828,12 +792,15 @@ static int __add_to_page_cache_locked(struct page *page,
- 				      pgoff_t offset, gfp_t gfp_mask,
- 				      void **shadowp)
- {
-+	XA_STATE(xas, &mapping->i_pages, offset);
- 	int huge = PageHuge(page);
- 	struct mem_cgroup *memcg;
- 	int error;
-+	void *old;
- 
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(PageSwapBacked(page), page);
-+	mapping_set_update(&xas, mapping);
- 
- 	if (!huge) {
- 		error = mem_cgroup_try_charge(page, current->mm,
-@@ -842,39 +809,47 @@ static int __add_to_page_cache_locked(struct page *page,
- 			return error;
+diff --git a/fs/nfs/blocklayout/blocklayout.c b/fs/nfs/blocklayout/blocklayout.c
+index 7cb5c38c19e4..961901685007 100644
+--- a/fs/nfs/blocklayout/blocklayout.c
++++ b/fs/nfs/blocklayout/blocklayout.c
+@@ -895,7 +895,7 @@ static u64 pnfs_num_cont_bytes(struct inode *inode, pgoff_t idx)
+ 	end = DIV_ROUND_UP(i_size_read(inode), PAGE_SIZE);
+ 	if (end != inode->i_mapping->nrpages) {
+ 		rcu_read_lock();
+-		end = page_cache_next_hole(mapping, idx + 1, ULONG_MAX);
++		end = page_cache_next_gap(mapping, idx + 1, ULONG_MAX);
+ 		rcu_read_unlock();
  	}
  
--	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
--	if (error) {
--		if (!huge)
--			mem_cgroup_cancel_charge(page, memcg, false);
--		return error;
--	}
--
- 	get_page(page);
- 	page->mapping = mapping;
- 	page->index = offset;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index b1bd2186e6d2..2f5d2d3ebaac 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -241,9 +241,9 @@ static inline gfp_t readahead_gfp_mask(struct address_space *x)
  
--	xa_lock_irq(&mapping->i_pages);
--	error = page_cache_tree_insert(mapping, page, shadowp);
--	radix_tree_preload_end();
--	if (unlikely(error))
--		goto err_insert;
-+	do {
-+		xas_lock_irq(&xas);
-+		old = xas_load(&xas);
-+		if (old && !xa_is_value(old))
-+			xas_set_err(&xas, -EEXIST);
-+		xas_store(&xas, page);
-+		if (xas_error(&xas))
-+			goto unlock;
-+
-+		if (xa_is_value(old)) {
-+			mapping->nrexceptional--;
-+			if (shadowp)
-+				*shadowp = old;
-+		}
-+		mapping->nrpages++;
-+
-+		/* hugetlb pages do not participate in page cache accounting */
-+		if (!huge)
-+			__inc_node_page_state(page, NR_FILE_PAGES);
-+unlock:
-+		xas_unlock_irq(&xas);
-+	} while (xas_nomem(&xas, gfp_mask & GFP_RECLAIM_MASK));
-+
-+	if (xas_error(&xas))
-+		goto error;
+ typedef int filler_t(void *, struct page *);
  
--	/* hugetlb pages do not participate in page cache accounting. */
--	if (!huge)
--		__inc_node_page_state(page, NR_FILE_PAGES);
--	xa_unlock_irq(&mapping->i_pages);
- 	if (!huge)
- 		mem_cgroup_commit_charge(page, memcg, false, false);
- 	trace_mm_filemap_add_to_page_cache(page);
- 	return 0;
--err_insert:
-+error:
- 	page->mapping = NULL;
- 	/* Leave page->index set: truncation relies upon it */
--	xa_unlock_irq(&mapping->i_pages);
- 	if (!huge)
- 		mem_cgroup_cancel_charge(page, memcg, false);
- 	put_page(page);
--	return error;
-+	return xas_error(&xas);
+-pgoff_t page_cache_next_hole(struct address_space *mapping,
++pgoff_t page_cache_next_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan);
+-pgoff_t page_cache_prev_hole(struct address_space *mapping,
++pgoff_t page_cache_prev_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan);
+ 
+ #define FGP_ACCESSED		0x00000001
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 4de14e75c4ec..8de36e14e22f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -1326,86 +1326,76 @@ int __lock_page_or_retry(struct page *page, struct mm_struct *mm,
  }
  
  /**
+- * page_cache_next_hole - find the next hole (not-present entry)
+- * @mapping: mapping
+- * @index: index
+- * @max_scan: maximum range to search
+- *
+- * Search the set [index, min(index+max_scan-1, MAX_INDEX)] for the
+- * lowest indexed hole.
+- *
+- * Returns: the index of the hole if found, otherwise returns an index
+- * outside of the set specified (in which case 'return - index >=
+- * max_scan' will be true). In rare cases of index wrap-around, 0 will
+- * be returned.
+- *
+- * page_cache_next_hole may be called under rcu_read_lock. However,
+- * like radix_tree_gang_lookup, this will not atomically search a
+- * snapshot of the tree at a single point in time. For example, if a
+- * hole is created at index 5, then subsequently a hole is created at
+- * index 10, page_cache_next_hole covering both indexes may return 10
+- * if called under rcu_read_lock.
++ * page_cache_next_gap() - Find the next gap in the page cache.
++ * @mapping: Mapping.
++ * @index: Index.
++ * @max_scan: Maximum range to search.
++ *
++ * Search the range [index, min(index + max_scan - 1, ULONG_MAX)] for the
++ * gap with the lowest index.
++ *
++ * This function may be called under the rcu_read_lock.  However, this will
++ * not atomically search a snapshot of the cache at a single point in time.
++ * For example, if a gap is created at index 5, then subsequently a gap is
++ * created at index 10, page_cache_next_gap covering both indices may
++ * return 10 if called under the rcu_read_lock.
++ *
++ * Return: The index of the gap if found, otherwise an index outside the
++ * range specified (in which case 'return - index >= max_scan' will be true).
++ * In the rare case of index wrap-around, 0 will be returned.
+  */
+-pgoff_t page_cache_next_hole(struct address_space *mapping,
++pgoff_t page_cache_next_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan)
+ {
+-	unsigned long i;
++	XA_STATE(xas, &mapping->i_pages, index);
+ 
+-	for (i = 0; i < max_scan; i++) {
+-		struct page *page;
+-
+-		page = radix_tree_lookup(&mapping->i_pages, index);
+-		if (!page || xa_is_value(page))
++	while (max_scan--) {
++		void *entry = xas_next(&xas);
++		if (!entry || xa_is_value(entry))
+ 			break;
+-		index++;
+-		if (index == 0)
++		if (xas.xa_index == 0)
+ 			break;
+ 	}
+ 
+-	return index;
++	return xas.xa_index;
+ }
+-EXPORT_SYMBOL(page_cache_next_hole);
++EXPORT_SYMBOL(page_cache_next_gap);
+ 
+ /**
+- * page_cache_prev_hole - find the prev hole (not-present entry)
+- * @mapping: mapping
+- * @index: index
+- * @max_scan: maximum range to search
+- *
+- * Search backwards in the range [max(index-max_scan+1, 0), index] for
+- * the first hole.
+- *
+- * Returns: the index of the hole if found, otherwise returns an index
+- * outside of the set specified (in which case 'index - return >=
+- * max_scan' will be true). In rare cases of wrap-around, ULONG_MAX
+- * will be returned.
+- *
+- * page_cache_prev_hole may be called under rcu_read_lock. However,
+- * like radix_tree_gang_lookup, this will not atomically search a
+- * snapshot of the tree at a single point in time. For example, if a
+- * hole is created at index 10, then subsequently a hole is created at
+- * index 5, page_cache_prev_hole covering both indexes may return 5 if
+- * called under rcu_read_lock.
++ * page_cache_prev_gap() - Find the next gap in the page cache.
++ * @mapping: Mapping.
++ * @index: Index.
++ * @max_scan: Maximum range to search.
++ *
++ * Search the range [max(index - max_scan + 1, 0), index] for the
++ * gap with the highest index.
++ *
++ * This function may be called under the rcu_read_lock.  However, this will
++ * not atomically search a snapshot of the cache at a single point in time.
++ * For example, if a gap is created at index 10, then subsequently a gap is
++ * created at index 5, page_cache_prev_gap() covering both indices may
++ * return 5 if called under the rcu_read_lock.
++ *
++ * Return: The index of the gap if found, otherwise an index outside the
++ * range specified (in which case 'index - return >= max_scan' will be true).
++ * In the rare case of wrap-around, ULONG_MAX will be returned.
+  */
+-pgoff_t page_cache_prev_hole(struct address_space *mapping,
++pgoff_t page_cache_prev_gap(struct address_space *mapping,
+ 			     pgoff_t index, unsigned long max_scan)
+ {
+-	unsigned long i;
+-
+-	for (i = 0; i < max_scan; i++) {
+-		struct page *page;
++	XA_STATE(xas, &mapping->i_pages, index);
+ 
+-		page = radix_tree_lookup(&mapping->i_pages, index);
+-		if (!page || xa_is_value(page))
++	while (max_scan--) {
++		void *entry = xas_prev(&xas);
++		if (!entry || xa_is_value(entry))
+ 			break;
+-		index--;
+-		if (index == ULONG_MAX)
++		if (xas.xa_index == ULONG_MAX)
+ 			break;
+ 	}
+ 
+-	return index;
++	return xas.xa_index;
+ }
+-EXPORT_SYMBOL(page_cache_prev_hole);
++EXPORT_SYMBOL(page_cache_prev_gap);
+ 
+ /**
+  * find_get_entry - find and get a page cache entry
+diff --git a/mm/readahead.c b/mm/readahead.c
+index 3757aa549709..59998ca31f2a 100644
+--- a/mm/readahead.c
++++ b/mm/readahead.c
+@@ -334,7 +334,7 @@ static pgoff_t count_history_pages(struct address_space *mapping,
+ 	pgoff_t head;
+ 
+ 	rcu_read_lock();
+-	head = page_cache_prev_hole(mapping, offset - 1, max);
++	head = page_cache_prev_gap(mapping, offset - 1, max);
+ 	rcu_read_unlock();
+ 
+ 	return offset - 1 - head;
+@@ -422,7 +422,7 @@ ondemand_readahead(struct address_space *mapping,
+ 		pgoff_t start;
+ 
+ 		rcu_read_lock();
+-		start = page_cache_next_hole(mapping, offset + 1, max_pages);
++		start = page_cache_next_gap(mapping, offset + 1, max_pages);
+ 		rcu_read_unlock();
+ 
+ 		if (!start || start - offset > max_pages)
 -- 
 2.17.1
 
