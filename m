@@ -3,31 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C15DC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 21:11:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66476C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 21:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34CD8208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 21:11:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 34CD8208E0
+	by mail.kernel.org (Postfix) with ESMTP id 0A90F20891
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 21:11:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A90F20891
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeFQVLH (ORCPT
+        id S1752849AbeFQVL3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 17:11:07 -0400
-Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:45951 "EHLO
+        Sun, 17 Jun 2018 17:11:29 -0400
+Received: from faui40.informatik.uni-erlangen.de ([131.188.34.40]:45960 "EHLO
         faui40.informatik.uni-erlangen.de" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1751032AbeFQVLE (ORCPT
+        by vger.kernel.org with ESMTP id S1751340AbeFQVLE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 17 Jun 2018 17:11:04 -0400
-X-Greylist: delayed 503 seconds by postgrey-1.27 at vger.kernel.org; Sun, 17 Jun 2018 17:11:04 EDT
 Received: from faui49man9 (faui49man9.informatik.uni-erlangen.de [131.188.42.54])
-        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 7663658C4C9;
-        Sun, 17 Jun 2018 23:02:43 +0200 (CEST)
-Received: by faui49man9 (sSMTP sendmail emulation); Sun, 17 Jun 2018 23:02:43 +0200
+        by faui40.informatik.uni-erlangen.de (Postfix) with SMTP id 9CEBB58C4C4;
+        Sun, 17 Jun 2018 23:02:39 +0200 (CEST)
+Received: by faui49man9 (sSMTP sendmail emulation); Sun, 17 Jun 2018 23:02:39 +0200
 From:   =?UTF-8?q?Fabian=20Bl=C3=A4se?= <fabian.blaese@fau.de>
 To:     gregkh@linuxfoundation.org
 Cc:     maximilian.o.ott@fau.de, linux-kernel@i4.cs.fau.de,
@@ -36,9 +34,9 @@ Cc:     maximilian.o.ott@fau.de, linux-kernel@i4.cs.fau.de,
         dafna3@gmail.com, keescook@chromium.org,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Fabian=20Bl=C3=A4se?= <fabian.blaese@fau.de>
-Subject: [PATCH 2/2] rtl8192u/rtl819x_BAProc.c: Adjust spaces to coding guidelines
-Date:   Sun, 17 Jun 2018 23:02:31 +0200
-Message-Id: <1529269351-21941-3-git-send-email-fabian.blaese@fau.de>
+Subject: [PATCH 1/2] rtl8192u/rtl819x_Qos.h: Adjust spaces to coding guidelines
+Date:   Sun, 17 Jun 2018 23:02:30 +0200
+Message-Id: <1529269351-21941-2-git-send-email-fabian.blaese@fau.de>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529269351-21941-1-git-send-email-fabian.blaese@fau.de>
 References: <1529269351-21941-1-git-send-email-fabian.blaese@fau.de>
@@ -58,246 +56,364 @@ This patch fixes errors reported by checkpatch.
 Signed-off-by: Fabian Bläse <fabian.blaese@fau.de>
 Signed-off-by: Maximilian Ott <maximilian.o.ott@fau.de>
 ---
- .../staging/rtl8192u/ieee80211/rtl819x_BAProc.c    | 71 ++++++++++------------
- 1 file changed, 31 insertions(+), 40 deletions(-)
+ drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h | 94 ++++++++++++------------
+ 1 file changed, 47 insertions(+), 47 deletions(-)
 
-diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-index 86c7357..2dc4d0e 100644
---- a/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-+++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_BAProc.c
-@@ -19,7 +19,7 @@
- static void ActivateBAEntry(struct ieee80211_device *ieee, PBA_RECORD pBA, u16 Time)
- {
- 	pBA->bValid = true;
--	if(Time != 0)
-+	if (Time != 0)
- 		mod_timer(&pBA->Timer, jiffies + msecs_to_jiffies(Time));
- }
+diff --git a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
+index 71df9d9..96e9621 100644
+--- a/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
++++ b/drivers/staging/rtl8192u/ieee80211/rtl819x_Qos.h
+@@ -31,7 +31,7 @@ typedef u32 QOS_MODE, *PQOS_MODE;
+ // QoS ACK Policy Field Values
+ // Ref: WMM spec 2.1.6: QoS Control Field, p.10.
+ //
+-typedef	enum _ACK_POLICY{
++typedef	enum _ACK_POLICY {
+ 	eAckPlc0_ACK		= 0x00,
+ 	eAckPlc1_NoACK		= 0x01,
+ } ACK_POLICY, *PACK_POLICY;
+@@ -44,7 +44,7 @@ typedef	enum _ACK_POLICY{
+ //	1. WMM spec 2.1.6: QoS Control Field, p.9.
+ //	2. 802.11e/D13.0 7.1.3.5, p.26.
+ //
+-typedef	union _QOS_CTRL_FIELD{
++typedef	union _QOS_CTRL_FIELD {
+ 	u8	charData[2];
+ 	u16	shortData;
  
-@@ -117,13 +117,13 @@ static struct sk_buff *ieee80211_ADDBA(struct ieee80211_device *ieee, u8 *Dst, P
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "pBA is NULL\n");
- 		return NULL;
- 	}
--	skb = dev_alloc_skb(len + sizeof( struct rtl_80211_hdr_3addr)); //need to add something others? FIXME
-+	skb = dev_alloc_skb(len + sizeof(struct rtl_80211_hdr_3addr)); //need to add something others? FIXME
- 	if (!skb) {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't alloc skb for ADDBA_REQ\n");
- 		return NULL;
- 	}
+@@ -56,7 +56,7 @@ typedef	union _QOS_CTRL_FIELD{
+ 		u8		AckPolicy:2;
+ 		u8		usRsvd2:1;
+ 		u8		ucRsvdByte;
+-	}WMM;
++	} WMM;
  
--	memset(skb->data, 0, sizeof( struct rtl_80211_hdr_3addr));	//I wonder whether it's necessary. Apparently kernel will not do it when alloc a skb.
-+	memset(skb->data, 0, sizeof(struct rtl_80211_hdr_3addr));	//I wonder whether it's necessary. Apparently kernel will not do it when alloc a skb.
- 	skb_reserve(skb, ieee->tx_headroom);
+ 	// 802.11e: QoS data type frame sent by non-AP QSTAs.
+ 	struct {
+@@ -65,7 +65,7 @@ typedef	union _QOS_CTRL_FIELD{
+ 		u8		AckPolicy:2;
+ 		u8		usRsvd:1;
+ 		u8		TxopOrQsize;	// (BIT4=0)TXOP Duration Requested or (BIT4=1)Queue Size.
+-	}BySta;
++	} BySta;
  
- 	BAReq = skb_put(skb, sizeof(struct rtl_80211_hdr_3addr));
-@@ -137,10 +137,10 @@ static struct sk_buff *ieee80211_ADDBA(struct ieee80211_device *ieee, u8 *Dst, P
+ 	// 802.11e: QoS data, QoS Null, and QoS Data+CF-Ack frames sent by HC.
+ 	struct {
+@@ -74,7 +74,7 @@ typedef	union _QOS_CTRL_FIELD{
+ 		u8		AckPolicy:2;
+ 		u8		usRsvd:1;
+ 		u8		PSBufState;		// QAP PS Buffer State.
+-	}ByHc_Data;
++	} ByHc_Data;
  
- 	//tag += sizeof( struct rtl_80211_hdr_3addr); //move to action field
- 	tag = skb_put(skb, 9);
--	*tag ++= ACT_CAT_BA;
--	*tag ++= type;
-+	*tag++ = ACT_CAT_BA;
-+	*tag++ = type;
- 	// Dialog Token
--	*tag ++= pBA->DialogToken;
-+	*tag++ = pBA->DialogToken;
+ 	// 802.11e: QoS (+) CF-Poll frames sent by HC.
+ 	struct {
+@@ -83,9 +83,9 @@ typedef	union _QOS_CTRL_FIELD{
+ 		u8		AckPolicy:2;
+ 		u8		usRsvd:1;
+ 		u8		TxopLimit;		// TXOP Limit.
+-	}ByHc_CFP;
++	} ByHc_CFP;
  
- 	if (ACT_ADDBARSP == type) {
- 		// Status Code
-@@ -201,10 +201,10 @@ static struct sk_buff *ieee80211_DELBA(
- 
- 	memset(&DelbaParamSet, 0, 2);
- 
--	DelbaParamSet.field.Initiator	= (TxRxSelect==TX_DIR)?1:0;
-+	DelbaParamSet.field.Initiator	= (TxRxSelect == TX_DIR) ? 1 : 0;
- 	DelbaParamSet.field.TID	= pBA->BaParamSet.field.TID;
- 
--	skb = dev_alloc_skb(len + sizeof( struct rtl_80211_hdr_3addr)); //need to add something others? FIXME
-+	skb = dev_alloc_skb(len + sizeof(struct rtl_80211_hdr_3addr)); //need to add something others? FIXME
- 	if (!skb) {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't alloc skb for ADDBA_REQ\n");
- 		return NULL;
-@@ -221,8 +221,8 @@ static struct sk_buff *ieee80211_DELBA(
- 
- 	tag = skb_put(skb, 6);
- 
--	*tag ++= ACT_CAT_BA;
--	*tag ++= ACT_DELBA;
-+	*tag++ = ACT_CAT_BA;
-+	*tag++ = ACT_DELBA;
- 
- 	// DELBA Parameter Set
- 
-@@ -258,8 +258,7 @@ static void ieee80211_send_ADDBAReq(struct ieee80211_device *ieee,
- 		//add statistic needed here.
- 		//and skb will be freed in softmac_mgmt_xmit(), so omit all dev_kfree_skb_any() outside softmac_mgmt_xmit()
- 		//WB
--	}
--	else {
-+	} else {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "alloc skb error in function %s()\n", __func__);
- 	}
- }
-@@ -280,8 +279,7 @@ static void ieee80211_send_ADDBARsp(struct ieee80211_device *ieee, u8 *dst,
- 	if (skb) {
- 		softmac_mgmt_xmit(skb, ieee);
- 		//same above
--	}
--	else {
-+	} else {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "alloc skb error in function %s()\n", __func__);
- 	}
- 
-@@ -307,8 +305,7 @@ static void ieee80211_send_DELBA(struct ieee80211_device *ieee, u8 *dst,
- 	if (skb) {
- 		softmac_mgmt_xmit(skb, ieee);
- 		//same above
--	}
--	else {
-+	} else {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "alloc skb error in function %s()\n", __func__);
- 	}
- }
-@@ -367,7 +364,7 @@ int ieee80211_rx_ADDBAReq(struct ieee80211_device *ieee, struct sk_buff *skb)
- 			dst,
- 			(u8)(pBaParamSet->field.TID),
- 			RX_DIR,
--			true)	) {
-+			true)) {
- 		rc = ADDBA_STATUS_REFUSED;
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't get TS in %s()\n", __func__);
- 		goto OnADDBAReq_Fail;
-@@ -450,7 +447,7 @@ int ieee80211_rx_ADDBARsp(struct ieee80211_device *ieee, struct sk_buff *skb)
- 	if (ieee->current_network.qos_data.active == 0  ||
- 	    !ieee->pHTInfo->bCurrentHTSupport ||
- 	    !ieee->pHTInfo->bCurrentAMPDUEnable) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "reject to ADDBA_RSP as some capability is not ready(%d, %d, %d)\n",ieee->current_network.qos_data.active, ieee->pHTInfo->bCurrentHTSupport, ieee->pHTInfo->bCurrentAMPDUEnable);
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "reject to ADDBA_RSP as some capability is not ready(%d, %d, %d)\n", ieee->current_network.qos_data.active, ieee->pHTInfo->bCurrentHTSupport, ieee->pHTInfo->bCurrentAMPDUEnable);
- 		ReasonCode = DELBA_REASON_UNKNOWN_BA;
- 		goto OnADDBARsp_Reject;
- 	}
-@@ -466,7 +463,7 @@ int ieee80211_rx_ADDBARsp(struct ieee80211_device *ieee, struct sk_buff *skb)
- 			dst,
- 			(u8)(pBaParamSet->field.TID),
- 			TX_DIR,
--			false)	) {
-+			false)) {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR, "can't get TS in %s()\n", __func__);
- 		ReasonCode = DELBA_REASON_UNKNOWN_BA;
- 		goto OnADDBARsp_Reject;
-@@ -485,19 +482,17 @@ int ieee80211_rx_ADDBARsp(struct ieee80211_device *ieee, struct sk_buff *skb)
- 		// Since BA is already setup, we ignore all other ADDBA Response.
- 		IEEE80211_DEBUG(IEEE80211_DL_BA, "OnADDBARsp(): Recv ADDBA Rsp. Drop because already admit it! \n");
- 		return -1;
--	}
--	else if((!pPendingBA->bValid) ||(*pDialogToken != pPendingBA->DialogToken)) {
-+	} else if ((!pPendingBA->bValid) || (*pDialogToken != pPendingBA->DialogToken)) {
- 		IEEE80211_DEBUG(IEEE80211_DL_ERR,  "OnADDBARsp(): Recv ADDBA Rsp. BA invalid, DELBA! \n");
- 		ReasonCode = DELBA_REASON_UNKNOWN_BA;
- 		goto OnADDBARsp_Reject;
--	}
--	else {
-+	} else {
- 		IEEE80211_DEBUG(IEEE80211_DL_BA, "OnADDBARsp(): Recv ADDBA Rsp. BA is admitted! Status code:%X\n", *pStatusCode);
- 		DeActivateBAEntry(ieee, pPendingBA);
- 	}
+-}QOS_CTRL_FIELD, *PQOS_CTRL_FIELD;
++} QOS_CTRL_FIELD, *PQOS_CTRL_FIELD;
  
  
--	if(*pStatusCode == ADDBA_STATUS_SUCCESS) {
-+	if (*pStatusCode == ADDBA_STATUS_SUCCESS) {
- 		//
- 		// Determine ADDBA Rsp content here.
- 		// We can compare the value of BA parameter set that Peer returned and Self sent.
-@@ -521,8 +516,7 @@ int ieee80211_rx_ADDBARsp(struct ieee80211_device *ieee, struct sk_buff *skb)
- 		pAdmittedBA->BaParamSet = *pBaParamSet;
- 		DeActivateBAEntry(ieee, pAdmittedBA);
- 		ActivateBAEntry(ieee, pAdmittedBA, *pBaTimeoutVal);
--	}
--	else {
-+	} else {
- 		// Delay next ADDBA process.
- 		pTS->bAddBaReqDelayed = true;
- 	}
-@@ -562,7 +556,7 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
+ //
+@@ -94,13 +94,13 @@ typedef	union _QOS_CTRL_FIELD{
+ //	1. WMM spec 2.2.1: WME Information Element, p.11.
+ //	2. 8185 QoS code: QOS_INFO [def. in QoS_mp.h]
+ //
+-typedef	union _QOS_INFO_FIELD{
++typedef	union _QOS_INFO_FIELD {
+ 	u8	charData;
  
- 	if (ieee->current_network.qos_data.active == 0 ||
- 	    !ieee->pHTInfo->bCurrentHTSupport) {
--		IEEE80211_DEBUG(IEEE80211_DL_ERR, "received DELBA while QOS or HT is not supported(%d, %d)\n",ieee->current_network.qos_data.active, ieee->pHTInfo->bCurrentHTSupport);
-+		IEEE80211_DEBUG(IEEE80211_DL_ERR, "received DELBA while QOS or HT is not supported(%d, %d)\n", ieee->current_network.qos_data.active, ieee->pHTInfo->bCurrentHTSupport);
- 		return -1;
- 	}
+ 	struct {
+ 		u8		ucParameterSetCount:4;
+ 		u8		ucReserved:4;
+-	}WMM;
++	} WMM;
  
-@@ -571,7 +565,7 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
- 	dst = &delba->addr2[0];
- 	pDelBaParamSet = (PDELBA_PARAM_SET)&delba->payload[2];
+ 	struct {
+ 		//Ref WMM_Specification_1-1.pdf, 2006-06-13 Isaiah
+@@ -112,14 +112,14 @@ typedef	union _QOS_INFO_FIELD{
+ 		u8		ucMaxSPLen:2;
+ 		u8		ucReserved2:1;
  
--	if(pDelBaParamSet->field.Initiator == 1) {
-+	if (pDelBaParamSet->field.Initiator == 1) {
- 		PRX_TS_RECORD	pRxTs;
+-	}ByWmmPsSta;
++	} ByWmmPsSta;
  
- 		if (!GetTs(
-@@ -580,14 +574,13 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
- 				dst,
- 				(u8)pDelBaParamSet->field.TID,
- 				RX_DIR,
--				false)	) {
-+				false)) {
- 			IEEE80211_DEBUG(IEEE80211_DL_ERR,  "can't get TS for RXTS in %s()\n", __func__);
- 			return -1;
- 		}
+ 	struct {
+ 		//Ref WMM_Specification_1-1.pdf, 2006-06-13 Isaiah
+ 		u8		ucParameterSetCount:4;
+ 		u8		ucReserved:3;
+ 		u8		ucApUapsd:1;
+-	}ByWmmPsAp;
++	} ByWmmPsAp;
  
- 		RxTsDeleteBA(ieee, pRxTs);
--	}
--	else {
-+	} else {
- 		PTX_TS_RECORD	pTxTs;
+ 	struct {
+ 		u8		ucAC3_UAPSD:1;
+@@ -172,7 +172,7 @@ typedef	union _QOS_INFO_FIELD{
+ 		u8		ucApUapsd:1;
+ 	} ByAllAp;
  
- 		if (!GetTs(
-@@ -596,7 +589,7 @@ int ieee80211_rx_DELBA(struct ieee80211_device *ieee, struct sk_buff *skb)
- 			dst,
- 			(u8)pDelBaParamSet->field.TID,
- 			TX_DIR,
--			false)	) {
-+			false)) {
- 			IEEE80211_DEBUG(IEEE80211_DL_ERR,  "can't get TS for TXTS in %s()\n", __func__);
- 			return -1;
- 		}
-@@ -645,29 +638,27 @@ TsInitAddBA(
- }
+-}QOS_INFO_FIELD, *PQOS_INFO_FIELD;
++} QOS_INFO_FIELD, *PQOS_INFO_FIELD;
  
- void
--TsInitDelBA( struct ieee80211_device *ieee, PTS_COMMON_INFO pTsCommonInfo, TR_SELECT TxRxSelect)
-+TsInitDelBA(struct ieee80211_device *ieee, PTS_COMMON_INFO pTsCommonInfo, TR_SELECT TxRxSelect)
- {
--
--	if(TxRxSelect == TX_DIR) {
-+	if (TxRxSelect == TX_DIR) {
- 		PTX_TS_RECORD	pTxTs = (PTX_TS_RECORD)pTsCommonInfo;
+ //
+ // ACI to AC coding.
+@@ -198,7 +198,7 @@ typedef u32 AC_CODING;
+ // ACI/AIFSN Field.
+ // Ref: WMM spec 2.2.2: WME Parameter Element, p.12.
+ //
+-typedef	union _ACI_AIFSN{
++typedef	union _ACI_AIFSN {
+ 	u8	charData;
  
--		if(TxTsDeleteBA(ieee, pTxTs))
-+		if (TxTsDeleteBA(ieee, pTxTs))
- 			ieee80211_send_DELBA(
- 				ieee,
- 				pTsCommonInfo->Addr,
- 				(pTxTs->TxAdmittedBARecord.bValid)?(&pTxTs->TxAdmittedBARecord):(&pTxTs->TxPendingBARecord),
- 				TxRxSelect,
- 				DELBA_REASON_END_BA);
--	}
--	else if(TxRxSelect == RX_DIR) {
-+	} else if (TxRxSelect == RX_DIR) {
- 		PRX_TS_RECORD	pRxTs = (PRX_TS_RECORD)pTsCommonInfo;
--		if(RxTsDeleteBA(ieee, pRxTs))
-+		if (RxTsDeleteBA(ieee, pRxTs))
- 			ieee80211_send_DELBA(
- 				ieee,
- 				pTsCommonInfo->Addr,
- 				&pRxTs->RxAdmittedBARecord,
- 				TxRxSelect,
--				DELBA_REASON_END_BA	);
-+				DELBA_REASON_END_BA);
- 	}
- }
- /********************************************************************************************************************
+ 	struct {
+@@ -206,26 +206,26 @@ typedef	union _ACI_AIFSN{
+ 		u8	ACM:1;
+ 		u8	ACI:2;
+ 		u8	Reserved:1;
+-	}f;	// Field
+-}ACI_AIFSN, *PACI_AIFSN;
++	} f;	// Field
++} ACI_AIFSN, *PACI_AIFSN;
+ 
+ //
+ // ECWmin/ECWmax field.
+ // Ref: WMM spec 2.2.2: WME Parameter Element, p.13.
+ //
+-typedef	union _ECW{
++typedef	union _ECW {
+ 	u8	charData;
+ 	struct {
+ 		u8	ECWmin:4;
+ 		u8	ECWmax:4;
+-	}f;	// Field
+-}ECW, *PECW;
++	} f;	// Field
++} ECW, *PECW;
+ 
+ //
+ // AC Parameters Record Format.
+ // Ref: WMM spec 2.2.2: WME Parameter Element, p.12.
+ //
+-typedef	union _AC_PARAM{
++typedef	union _AC_PARAM {
+ 	u32	longData;
+ 	u8	charData[4];
+ 
+@@ -233,15 +233,15 @@ typedef	union _AC_PARAM{
+ 		ACI_AIFSN	AciAifsn;
+ 		ECW		Ecw;
+ 		u16		TXOPLimit;
+-	}f;	// Field
+-}AC_PARAM, *PAC_PARAM;
++	} f;	// Field
++} AC_PARAM, *PAC_PARAM;
+ 
+ 
+ 
+ //
+ // QoS element subtype
+ //
+-typedef	enum _QOS_ELE_SUBTYPE{
++typedef	enum _QOS_ELE_SUBTYPE {
+ 	QOSELE_TYPE_INFO	= 0x00,		// 0x00: Information element
+ 	QOSELE_TYPE_PARAM	= 0x01,		// 0x01: parameter element
+ } QOS_ELE_SUBTYPE, *PQOS_ELE_SUBTYPE;
+@@ -251,7 +251,7 @@ typedef	enum _QOS_ELE_SUBTYPE{
+ // Direction Field Values.
+ // Ref: WMM spec 2.2.11: WME TSPEC Element, p.18.
+ //
+-typedef	enum _DIRECTION_VALUE{
++typedef	enum _DIRECTION_VALUE {
+ 	DIR_UP			= 0,		// 0x00	// UpLink
+ 	DIR_DOWN		= 1,		// 0x01	// DownLink
+ 	DIR_DIRECT		= 2,		// 0x10	// DirectLink
+@@ -265,7 +265,7 @@ typedef	enum _DIRECTION_VALUE{
+ //	1. WMM spec 2.2.11: WME TSPEC Element, p.18.
+ //	2. 8185 QoS code: QOS_TSINFO [def. in QoS_mp.h]
+ //
+-typedef union _QOS_TSINFO{
++typedef union _QOS_TSINFO {
+ 	u8		charData[3];
+ 	struct {
+ 		u8		ucTrafficType:1;			//WMM is reserved
+@@ -278,14 +278,14 @@ typedef union _QOS_TSINFO{
+ 		u8		ucTSInfoAckPolicy:2;		//WMM is reserved
+ 		u8		ucSchedule:1;			//WMM is reserved
+ 		u8		ucReserved:7;
+-	}field;
+-}QOS_TSINFO, *PQOS_TSINFO;
++	} field;
++} QOS_TSINFO, *PQOS_TSINFO;
+ 
+ //
+ // WMM TSPEC Body.
+ // Ref: WMM spec 2.2.11: WME TSPEC Element, p.16.
+ //
+-typedef union _TSPEC_BODY{
++typedef union _TSPEC_BODY {
+ 	u8		charData[55];
+ 
+ 	struct {
+@@ -306,14 +306,14 @@ typedef union _TSPEC_BODY{
+ 		u16	SurplusBandwidthAllowance;
+ 		u16	MediumTime;
+ 	} f;	// Field
+-}TSPEC_BODY, *PTSPEC_BODY;
++} TSPEC_BODY, *PTSPEC_BODY;
+ 
+ 
+ //
+ // WMM TSPEC Element.
+ // Ref: WMM spec 2.2.11: WME TSPEC Element, p.16.
+ //
+-typedef struct _WMM_TSPEC{
++typedef struct _WMM_TSPEC {
+ 	u8		ID;
+ 	u8		Length;
+ 	u8		OUI[3];
+@@ -327,19 +327,19 @@ typedef struct _WMM_TSPEC{
+ // ACM implementation method.
+ // Annie, 2005-12-13.
+ //
+-typedef	enum _ACM_METHOD{
++typedef	enum _ACM_METHOD {
+ 	eAcmWay0_SwAndHw		= 0,		// By SW and HW.
+ 	eAcmWay1_HW			= 1,		// By HW.
+ 	eAcmWay2_SW			= 2,		// By SW.
+ } ACM_METHOD, *PACM_METHOD;
+ 
+ 
+-typedef struct _ACM{
++typedef struct _ACM {
+ //	u8		RegEnableACM;
+ 	u64		UsedTime;
+ 	u64		MediumTime;
+ 	u8		HwAcmCtl;	// TRUE: UsedTime exceed => Do NOT USE this AC. It wll be written to ACM_CONTROL(0xBF BIT 0/1/2 in 8185B).
+-}ACM, *PACM;
++} ACM, *PACM;
+ 
+ typedef	u8		AC_UAPSD, *PAC_UAPSD;
+ 
+@@ -359,15 +359,15 @@ typedef	u8		AC_UAPSD, *PAC_UAPSD;
+ //typedef struct _TCLASS{
+ // TODO
+ //} TCLASS, *PTCLASS;
+-typedef union _QOS_TCLAS{
++typedef union _QOS_TCLAS {
+ 
+-	struct _TYPE_GENERAL{
++	struct _TYPE_GENERAL {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+ 	} TYPE_GENERAL;
+ 
+-	struct _TYPE0_ETH{
++	struct _TYPE0_ETH {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+@@ -376,7 +376,7 @@ typedef union _QOS_TCLAS{
+ 		u16		Type;
+ 	} TYPE0_ETH;
+ 
+-	struct _TYPE1_IPV4{
++	struct _TYPE1_IPV4 {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+@@ -390,7 +390,7 @@ typedef union _QOS_TCLAS{
+ 		u8		Reserved;
+ 	} TYPE1_IPV4;
+ 
+-	struct _TYPE1_IPV6{
++	struct _TYPE1_IPV6 {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+@@ -402,7 +402,7 @@ typedef union _QOS_TCLAS{
+ 		u8		FlowLabel[3];
+ 	} TYPE1_IPV6;
+ 
+-	struct _TYPE2_8021Q{
++	struct _TYPE2_8021Q {
+ 		u8		Priority;
+ 		u8		ClassifierType;
+ 		u8		Mask;
+@@ -415,7 +415,7 @@ typedef union _QOS_TCLAS{
+ //- TSPEC
+ //- AC (which to mapping)
+ //} WMM_TSTREAM, *PWMM_TSTREAM;
+-typedef struct _QOS_TSTREAM{
++typedef struct _QOS_TSTREAM {
+ 	u8			AC;
+ 	WMM_TSPEC		TSpec;
+ 	QOS_TCLAS		TClass;
+@@ -439,16 +439,16 @@ typedef struct _QOS_TSTREAM{
+ //----------------------------------------------------------------------------
+ //      802.11 Management frame Status Code field
+ //----------------------------------------------------------------------------
+-typedef struct _OCTET_STRING{
++typedef struct _OCTET_STRING {
+ 	u8		*Octet;
+ 	u16             Length;
+-}OCTET_STRING, *POCTET_STRING;
++} OCTET_STRING, *POCTET_STRING;
+ 
+ //
+ // STA QoS data.
+ // Ref: DOT11_QOS in 8185 code. [def. in QoS_mp.h]
+ //
+-typedef struct _STA_QOS{
++typedef struct _STA_QOS {
+ 	//DECLARE_RT_OBJECT(STA_QOS);
+ 	u8				WMMIEBuf[MAX_WMMELE_LENGTH];
+ 	u8				*WMMIE;
+@@ -495,13 +495,13 @@ typedef struct _STA_QOS{
+ 	// Enable/Disable Rx immediate BA capability.
+ 	u8				bEnableRxImmBA;
+ 
+-}STA_QOS, *PSTA_QOS;
++} STA_QOS, *PSTA_QOS;
+ 
+ //
+ // BSS QOS data.
+ // Ref: BssDscr in 8185 code. [def. in BssDscr.h]
+ //
+-typedef struct _BSS_QOS{
++typedef struct _BSS_QOS {
+ 	QOS_MODE		bdQoSMode;
+ 
+ 	u8			bdWMMIEBuf[MAX_WMMELE_LENGTH];
+@@ -514,7 +514,7 @@ typedef struct _BSS_QOS{
+ 
+ 	QOS_INFO_FIELD		QosInfoField;
+ 	AC_PARAM		AcParameter[4];
+-}BSS_QOS, *PBSS_QOS;
++} BSS_QOS, *PBSS_QOS;
+ 
+ 
+ //
+@@ -522,12 +522,12 @@ typedef struct _BSS_QOS{
+ //#define QoSCtl   ((	(Adapter->bRegQoS) && (Adapter->dot11QoS.QoSMode &(QOS_EDCA|QOS_HCCA))	  )  ?sQoSCtlLng:0)
+ //
+ #define sQoSCtlLng			2
+-#define	QOS_CTRL_LEN(_QosMode)		((_QosMode > QOS_DISABLE)? sQoSCtlLng : 0)
++#define	QOS_CTRL_LEN(_QosMode)		((_QosMode > QOS_DISABLE) ? sQoSCtlLng : 0)
+ 
+ 
+ //Added by joseph
+ //UP Mapping to AC, using in MgntQuery_SequenceNumber() and maybe for DSCP
+ //#define UP2AC(up)			((up<3)?((up==0)?1:0):(up>>1))
+-#define IsACValid(ac)			((ac<=7 )?true:false )
++#define IsACValid(ac)			((ac <= 7) ? true : false)
+ 
+ #endif // #ifndef __INC_QOS_TYPE_H
 -- 
 2.7.4
 
