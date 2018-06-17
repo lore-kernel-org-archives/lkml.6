@@ -2,131 +2,99 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8147C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:39:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4DEC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E266208A5
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:39:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E266208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id ABA26208A6
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:45:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="hk7OtWIB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABA26208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755125AbeFQNjw (ORCPT
+        id S1755286AbeFQNpf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 09:39:52 -0400
-Received: from mout.gmx.net ([212.227.15.19]:40979 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753970AbeFQNju (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 09:39:50 -0400
-Received: from homer.simpson.net ([188.174.240.203]) by mail.gmx.com (mrgmx003
- [212.227.17.190]) with ESMTPSA (Nemesis) id 0LztHH-1gGirC39SV-0150dV; Sun, 17
- Jun 2018 15:38:41 +0200
-Message-ID: <1529242717.4472.3.camel@gmx.de>
-Subject: Re: [tip:x86/pti] x86/asm: Pad assembly functions with INT3
- instructions
-From:   Mike Galbraith <efault@gmx.de>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
-        torvalds@linux-foundation.org, tglx@linutronix.de,
-        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
-        peterz@infradead.org, brgerst@gmail.com, hpa@zytor.com,
-        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
-        h.peter.anvin@intel.com,
-        linux-tip-commits <linux-tip-commits@vger.kernel.org>
-Date:   Sun, 17 Jun 2018 15:38:37 +0200
-In-Reply-To: <20180617120012.GB16877@zn.tnic>
-References: <20180507213755.GA32406@avx2>
-         <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
-         <1529235613.4572.7.camel@gmx.de> <20180617120012.GB16877@zn.tnic>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:pwCDEx0mG02bUtnWVpbGK0xYugS/A5fGADDKPwvcBIKucazboKV
- GiHDlRIDY5KuMC5UzSUBiWVSg5u1krMKeeppj1RVIvIKYB0gfsgDoJ+DagXq03Ot6/+YjXT
- o//c0tlaNSLGG5mXHDTG6MVsNDtKIS+EXjKOlIk4Iai3qcOAtVIrkv5+pqUt1RPMAEBiWPI
- smUFuPyoGBkHBJBMam3jQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zDnIGCRwvXc=:ebuhYf7/7oJ5SsE+TVR4ui
- O1lWhQTsY2oSMHza3Ymcy4ZVDHrQMaEsKRC16ReGE2Qde8CCbX0RzupyvsWGV6RrKC2BNs6Zd
- 0GtDTF6fBFYeVh7+cKS901d9+9se8h1y9IV+uolfJFSzxAi6Fhbj+AOB9BNGy324v3gGB9F+Q
- PKW1b+kyDpDOY6POdvXkaVi+P7gGoAzocFLNbitPFuxTio2C4FjMtFUXK3DmlnH43UGr61tBn
- DEVhGl9H3P4xYF4aziFGx3PZvTOUfH4jWljAGFTL3Jg1AB/48DwoVUJKnjdOEzdiQu+MJxvRT
- MhZmx3iCANYJTkU07n6bQBl+wvWXJ2QjtELHjuSiAih4YHeWiKeHA6xEKJF0LnndUSdM90zm8
- +uxFb1uZme42bmO8FjvGotS5cL467ZOM1gemaiYlcAQEgaYDgjvgktcFxRDsScX650iypPNAX
- PA2d67/xTyL4Af5tHDPGFx5N0OkqtLNSSz1NXeydEyIAyXjPogxQS807VJDw3ZbufqxevTf+H
- X14Z3rKRav35P+BJ3zby2uCKO57pptVI5flbh+jq4C1I5sSa5HUGoeMSf/EnnEIIpMEqJf6d6
- 0c2p5yYXLClA6sRD0K8vgUFlNIvQFY097U2QLILzjEkLXOX1BA/JhnxXXIMbN3UwwJvk+0s80
- 8Lxu/kqH94puILVpDPZpeKVl7kRbaahpCedHu4jbSRQD4bcriVifn2Yvx+DQcjHJXNavigF42
- TzrQmJbsgBYDhgxulKJwR1B/F7rwTp/MGaBL0f8WB46jn7zfakjVoHZ9DqTSZClo+PbezmNvL
- zCy8cW5
+        Sun, 17 Jun 2018 09:45:35 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:47028 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754339AbeFQNpe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 09:45:34 -0400
+Received: from trochilidae.lan (unknown [37.17.239.3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 7852E5C00F6;
+        Sun, 17 Jun 2018 15:45:33 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529243133;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=sk6Fbjh5a8Kv6MrDZ2eC/sOiWjq3V+FEVhVk2bKQvfU=;
+        b=hk7OtWIBqL6awwP8n4MtzdptR3W+mEBJa8lVhJ2XxXiXEGKAjEPYQgeMRnTs3JBGzWHQWE
+        GmsRjGjmSPxiYdofAvqXVLGJDgDGd8AUKMIxPWhWiuPvqlPkL6X+NffKPEpb696Bj/grXE
+        1+UZjGKP6IgsTzFRqHe8ATAHQEE1jc8=
+From:   Stefan Agner <stefan@agner.ch>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: codecs: PCM1789: unconditionally flush work
+Date:   Sun, 17 Jun 2018 15:45:29 +0200
+Message-Id: <20180617134532.1070-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.1
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-06-17 at 14:00 +0200, Borislav Petkov wrote:
-> On Sun, Jun 17, 2018 at 01:40:13PM +0200, Mike Galbraith wrote:
-> > On Mon, 2018-05-14 at 05:53 -0700, tip-bot for Alexey Dobriyan wrote:
-> > > Commit-ID:  51bad67ffbce0aaa44579f84ef5d05597054ec6a
-> > > Gitweb:     https://git.kernel.org/tip/51bad67ffbce0aaa44579f84ef5d05597054ec6a
-> > > Author:     Alexey Dobriyan <adobriyan@gmail.com>
-> > > AuthorDate: Tue, 8 May 2018 00:37:55 +0300
-> > > Committer:  Ingo Molnar <mingo@kernel.org>
-> > > CommitDate: Mon, 14 May 2018 11:43:03 +0200
-> > > 
-> > > x86/asm: Pad assembly functions with INT3 instructions
-> > > 
-> > > Use INT3 instead of NOP. All that padding between functions is
-> > > an illegal area, no legitimate code should jump into it.
-> > 
-> > Is dinky patchlet suggesting cryptomgr is being naughty?
-> > 
-> > (revert silences spew, but..)
-> > 
-> > ...
-> > [   21.041608] int3: 0000 [#1] SMP PTI
-> > [   21.041754] CPU: 3 PID: 935 Comm: cryptomgr_test Tainted: G            E     4.17.0.g075a1d3-tip-default #146
-> > [   21.041888] Hardware name: MEDION MS-7848/MS-7848, BIOS M7848W08.20C 09/23/2013
-> > [   21.042035] RIP: 0010:crypto_aegis128_aesni_enc_tail+0x74/0x80 [aegis128_aesni]
-> > [   21.042171] Code: 38 dc ca 66 0f 38 dc d3 66 0f 38 dc de 66 0f ef e5 f3 0f 7f 27 f3 0f 7f 47 10 f3 0f 7f 4f 20 f3 0f 7f 57 30 f3 0f 7f 5f 40 cc <cc> cc cc cc cc cc cc cc cc cc cc cc 48 83 fe 10 0f 82 c3 03 00 00
-> 
-> Looks like it misses a RET:
+Work is guaranteed to be initialized on exit. Drop the unnecessary
+if statement and always call flush_work.
 
-Bingo.
+This fixes a warning seen with clang:
+sound/soc/codecs/pcm1789.c:265:13: warning: address of 'priv->work' will
+      always evaluate to 'true' [-Wpointer-bool-conversion]
+        if (&priv->work)
+        ~~   ~~~~~~^~~~
 
-[   28.751069] RIP: 0010:crypto_aegis128l_aesni_enc_tail+0xcd/0xd0 [aegis128l_aesni]
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ sound/soc/codecs/pcm1789.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Next next next..
+diff --git a/sound/soc/codecs/pcm1789.c b/sound/soc/codecs/pcm1789.c
+index 21f15219b3ad..8df6447c76a6 100644
+--- a/sound/soc/codecs/pcm1789.c
++++ b/sound/soc/codecs/pcm1789.c
+@@ -262,8 +262,7 @@ int pcm1789_common_exit(struct device *dev)
+ {
+ 	struct pcm1789_private *priv = dev_get_drvdata(dev);
+ 
+-	if (&priv->work)
+-		flush_work(&priv->work);
++	flush_work(&priv->work);
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
-> ---
-> From 6ac281ee69f4cb5b581d5f49662fb56b6326155a Mon Sep 17 00:00:00 2001
-> From: Borislav Petkov <bp@suse.de>
-> Date: Sun, 17 Jun 2018 13:57:42 +0200
-> Subject: [PATCH] x86/crypto: Add a missing RET
-> 
-> crypto_aegis128_aesni_enc_tail() needs to return too.
-> 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> ---
->  arch/x86/crypto/aegis128-aesni-asm.S | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/crypto/aegis128-aesni-asm.S b/arch/x86/crypto/aegis128-aesni-asm.S
-> index 9254e0b6cc06..717bf0776421 100644
-> --- a/arch/x86/crypto/aegis128-aesni-asm.S
-> +++ b/arch/x86/crypto/aegis128-aesni-asm.S
-> @@ -535,6 +535,7 @@ ENTRY(crypto_aegis128_aesni_enc_tail)
->  	movdqu STATE3, 0x40(STATEP)
->  
->  	FRAME_END
-> +	ret
->  ENDPROC(crypto_aegis128_aesni_enc_tail)
->  
->  .macro decrypt_block a s0 s1 s2 s3 s4 i
-> -- 
-> 2.17.0.582.gccdcbd54c
-> 
