@@ -2,89 +2,95 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A66BC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:08:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15315C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:09:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3C8F2088E
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:08:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA3162088E
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 00:09:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="AS3Iki2a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3C8F2088E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NrbCXeGI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA3162088E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1756993AbeFQAIU (ORCPT
+        id S1756997AbeFQAJp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 20:08:20 -0400
-Received: from conuserg-09.nifty.com ([210.131.2.76]:58218 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1756939AbeFQAIS (ORCPT
+        Sat, 16 Jun 2018 20:09:45 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57596 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1756940AbeFQAJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 20:08:18 -0400
-Received: from grover.sesame (FL1-125-199-20-195.osk.mesh.ad.jp [125.199.20.195]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id w5H07Em6031999;
-        Sun, 17 Jun 2018 09:07:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com w5H07Em6031999
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529194035;
-        bh=qttswublYIxKlQXb5xDiAdgenLXL5qiCO3yLLh1JdgE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AS3Iki2ajojegMrh+zijcgy9LiBpXxtq3iUnXEg431eh6wMMkocK0G8c1zoTBOxg5
-         9Oqa5kiCbJy8HtkhuxVbRv+Dm7sbEr2YWcKTutYaBK1hEiy7EY1Zolw38nywQeLOfa
-         Sbvm1YjyZ2Hue8vYEmo/EXthAAP9EhjDKd0PKBzodvwn58zjKFeNy/Y/WuUnW6y5Ih
-         LxfqO8oZGxoVShga8AzXx9DMPPs0yq876dlxVjiynZxaBWXZVWvcada+mi21hosSKG
-         fq4yUnD0ryaxsZEqMCXVQhRHLoUCAhfypBASLIhcqpjukaNP4rgCdBaTgLNsVF0fgX
-         /z0tcDA10B0MA==
-X-Nifty-SrcIP: [125.199.20.195]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        Sat, 16 Jun 2018 20:09:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:Date:Message-ID:Subject:From:Cc:To:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=ZGvy9zEFeb1TaVHNCqBe3/vRs8eosxPgnykYCqlE/9Q=; b=NrbCXeGI6ALpGwUyJBsjcvRgX
+        PFLO7W7n6ra8SoVIs5ArJFToEoFkmfL3kpcSZO2Buz9Jmbof9iomiVtcCw4xql9V5eAT2D6k8fO5o
+        aCzmzuv27Nmnsdp2V9NOIqhZrxqGbRMCYtdcMqGLS2XsIVSuIizp5Zem0fsfBZbiTduEtnGR3E7Tl
+        wO6rDUE9QaRsThumlz4sg+4nWM1ayPhm+yP4A0dXdQe7LEHBGByAsfhCmvcLAG3emJyBGvYLKveaK
+        GEdmAVhh5M42ywpJKeK16oJeNy4B5+vuz+HovWp5jdtTx80lZ+gDT9LLhW/4SnR8qn1cWJ7BKm3Yl
+        9F5Ol1SIg==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fULGJ-0005Q4-4N; Sun, 17 Jun 2018 00:09:43 +0000
+To:     LKML <linux-kernel@vger.kernel.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: [PATCH 2/2] kbuild: do not update config for 'make kernelrelease'
-Date:   Sun, 17 Jun 2018 09:07:07 +0900
-Message-Id: <1529194027-15752-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529194027-15752-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1529194027-15752-1-git-send-email-yamada.masahiro@socionext.com>
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Ingo Molnar <mingo@redhat.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Subject: [PATCH] v4.18-rc1: fix Documentation build due to rename of main.c to
+ mtrr.c
+Message-ID: <335ff56a-4d19-5c91-acc7-9f24e5797c60@infradead.org>
+Date:   Sat, 16 Jun 2018 17:09:41 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-'make kernelrelease' depends on CONFIG_LOCALVERSION(_AUTO), but
-for the same reason as install targets, we do not want to update
-the configuration just for printing the kernelrelease string.
+From: Randy Dunlap <rdunlap@infradead.org>
 
-This is likely to happen if you forget to pass CROSS_COMPILE when
-running 'make kernelrelease' in the source tree configured for
-cross-compilation.
+Fixes this documentation build error that is due to a file rename:
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Error: Cannot open file ../arch/x86/kernel/cpu/mtrr/main.c
+
+Fixes 0afe832e55a7:
+  ("Merge branch 'x86-cleanups-for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip")
+
+Merge: 42964c6f6261 844ea8f62619
+    Pull x86 cleanups from Ingo Molnar:
+      "Misc cleanups"
+
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
 ---
+How do you want the Fixes: info formatted?
 
- Makefile | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ Documentation/core-api/kernel-api.rst |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Makefile b/Makefile
-index f934a81..f4fecda 100644
---- a/Makefile
-+++ b/Makefile
-@@ -225,7 +225,8 @@ no-dot-config-targets := $(clean-targets) \
- 			 cscope gtags TAGS tags help% %docs check% coccicheck \
- 			 $(version_h) headers_% archheaders archscripts \
- 			 kernelversion %src-pkg
--no-sync-config-targets := $(no-dot-config-targets) install %install
-+no-sync-config-targets := $(no-dot-config-targets) install %install \
-+			   kernelrelease
+--- lnx-418-rc1.orig/Documentation/core-api/kernel-api.rst
++++ lnx-418-rc1/Documentation/core-api/kernel-api.rst
+@@ -284,7 +284,7 @@ Resources Management
+ MTRR Handling
+ -------------
  
- config-targets  := 0
- mixed-targets   := 0
--- 
-2.7.4
+-.. kernel-doc:: arch/x86/kernel/cpu/mtrr/main.c
++.. kernel-doc:: arch/x86/kernel/cpu/mtrr/mtrr.c
+    :export:
+ 
+ Security Framework
+
 
