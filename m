@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E54C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF95EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EAB720895
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8285320895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ATucbrbf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EAB720895
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XrCh3f2V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8285320895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934371AbeFQCB2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:01:28 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59822 "EHLO
+        id S934435AbeFQCBa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:01:30 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60128 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933899AbeFQCBV (ORCPT
+        with ESMTP id S934362AbeFQCB2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 22:01:21 -0400
+        Sat, 16 Jun 2018 22:01:28 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yhxlc91nQ8tv5+dbe3KldhL1aWJiFQRriK/2+uk71C4=; b=ATucbrbfwI0IsSz7beDJkwGfs
-        aQC8Jv/mKj1RIou0S87kzCtyg9yAbWH0XE7KCCgysQll2lwI9+wCSQKsw+EucYOoyNi/eW/aAtKjH
-        wmtGkLAfSA07OTdtqYdVft/K3GIIZFFql5OZ1/wmIo8gjVlE1MBTDH052+4mxJ1M7mgkxLWN9OQji
-        KBOZGbZfrYuF7m211usY/1URfkjUmgyS8oNF7Zt2iWa8/Gg6on77Jg/CmHSi9aTRkzTZfd0hJmURi
-        o34d10EALJHLzKsTEgSFB6UqTPpiEGlBDk6ww5mOR3P9zIzgmbmQsnturAFQrOZyG63E/Ag9C7PHz
-        iuT4FWvpQ==;
+         bh=CjM3ufNnj7C7JJCH94R+YEBzzht8Do1jsqaRSwkI/Ok=; b=XrCh3f2VfRQxnl9MOIXQ7HjQA
+        zS5FFePOn100Yh7aPRqfcg0H2Ykcft6L0xum9lFOCSw+osQvK5Mn8PswAZF9mN8T4oRprG+kcxngU
+        DReirM7B5h83tN8J1du5ziLedeL1jEx0XrnRjbK2TTqn001cl/fM/bak4nvz6IcldNADgjBx0fkZ5
+        Q+nOPPh/mCgoBD3FiZJAtcRHeIaCbaapiai50jQWiFztQMmC0afa6oF8izmvkggcK5BWi/qH2y8kf
+        OB+1qkKsqKCX7utOwm4/WMnuQ+t5sPFCwtlm24U82IYj9icymynWaHVr9UJC1SDJpsOJ+jwy1Eh0x
+        4GdrD5YWw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN0H-0001Sq-Bg; Sun, 17 Jun 2018 02:01:17 +0000
+        id 1fUN0Q-0001YG-41; Sun, 17 Jun 2018 02:01:26 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 57/74] btrfs: Convert page cache to XArray
-Date:   Sat, 16 Jun 2018 19:00:35 -0700
-Message-Id: <20180617020052.4759-58-willy@infradead.org>
+Subject: [PATCH v14 60/74] nilfs2: Convert to XArray
+Date:   Sat, 16 Jun 2018 19:00:38 -0700
+Message-Id: <20180617020052.4759-61-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,47 +63,168 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
-Acked-by: David Sterba <dsterba@suse.com>
----
- fs/btrfs/compression.c | 4 +---
- fs/btrfs/extent_io.c   | 8 +++-----
- 2 files changed, 4 insertions(+), 8 deletions(-)
+This is close to a 1:1 replacement of radix tree APIs with their XArray
+equivalents.  It would be possible to optimise nilfs_copy_back_pages(),
+but that doesn't seem to be in the performance path.  Also, I think
+it has a pre-existing bug, and I've added a note to that effect in the
+source code.
 
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 8db29f791984..1d051d841cb7 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -444,9 +444,7 @@ static noinline int add_ra_bio_pages(struct inode *inode,
- 		if (pg_index > end_index)
- 			break;
+Signed-off-by: Matthew Wilcox <willy@infradead.org>
+---
+ fs/nilfs2/btnode.c | 26 +++++++++-----------------
+ fs/nilfs2/page.c   | 29 +++++++++++++----------------
+ 2 files changed, 22 insertions(+), 33 deletions(-)
+
+diff --git a/fs/nilfs2/btnode.c b/fs/nilfs2/btnode.c
+index dec98cab729d..e9fcffb3a15c 100644
+--- a/fs/nilfs2/btnode.c
++++ b/fs/nilfs2/btnode.c
+@@ -177,24 +177,18 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 	ctxt->newbh = NULL;
  
--		rcu_read_lock();
--		page = radix_tree_lookup(&mapping->i_pages, pg_index);
--		rcu_read_unlock();
-+		page = xa_load(&mapping->i_pages, pg_index);
- 		if (page && !xa_is_value(page)) {
- 			misses++;
- 			if (misses > 4)
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index ac105d97dd81..e97aec67f52d 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -5169,11 +5169,9 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
+ 	if (inode->i_blkbits == PAGE_SHIFT) {
+-		lock_page(obh->b_page);
+-		/*
+-		 * We cannot call radix_tree_preload for the kernels older
+-		 * than 2.6.23, because it is not exported for modules.
+-		 */
++		struct page *opage = obh->b_page;
++		lock_page(opage);
+ retry:
+-		err = radix_tree_preload(GFP_NOFS & ~__GFP_HIGHMEM);
+-		if (err)
+-			goto failed_unlock;
+ 		/* BUG_ON(oldkey != obh->b_page->index); */
+-		if (unlikely(oldkey != obh->b_page->index))
+-			NILFS_PAGE_BUG(obh->b_page,
++		if (unlikely(oldkey != opage->index))
++			NILFS_PAGE_BUG(opage,
+ 				       "invalid oldkey %lld (newkey=%lld)",
+ 				       (unsigned long long)oldkey,
+ 				       (unsigned long long)newkey);
  
- 		clear_page_dirty_for_io(page);
- 		xa_lock_irq(&page->mapping->i_pages);
--		if (!PageDirty(page)) {
--			radix_tree_tag_clear(&page->mapping->i_pages,
--						page_index(page),
--						PAGECACHE_TAG_DIRTY);
--		}
-+		if (!PageDirty(page))
-+			__xa_clear_tag(&page->mapping->i_pages,
-+					page_index(page), PAGECACHE_TAG_DIRTY);
- 		xa_unlock_irq(&page->mapping->i_pages);
- 		ClearPageError(page);
- 		unlock_page(page);
+ 		xa_lock_irq(&btnc->i_pages);
+-		err = radix_tree_insert(&btnc->i_pages, newkey, obh->b_page);
++		err = __xa_insert(&btnc->i_pages, newkey, opage, GFP_NOFS);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 		/*
+ 		 * Note: page->index will not change to newkey until
+@@ -202,7 +196,6 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 		 * To protect the page in intermediate state, the page lock
+ 		 * is held.
+ 		 */
+-		radix_tree_preload_end();
+ 		if (!err)
+ 			return 0;
+ 		else if (err != -EEXIST)
+@@ -212,7 +205,7 @@ int nilfs_btnode_prepare_change_key(struct address_space *btnc,
+ 		if (!err)
+ 			goto retry;
+ 		/* fallback to copy mode */
+-		unlock_page(obh->b_page);
++		unlock_page(opage);
+ 	}
+ 
+ 	nbh = nilfs_btnode_create_block(btnc, newkey);
+@@ -252,9 +245,8 @@ void nilfs_btnode_commit_change_key(struct address_space *btnc,
+ 		mark_buffer_dirty(obh);
+ 
+ 		xa_lock_irq(&btnc->i_pages);
+-		radix_tree_delete(&btnc->i_pages, oldkey);
+-		radix_tree_tag_set(&btnc->i_pages, newkey,
+-				   PAGECACHE_TAG_DIRTY);
++		__xa_erase(&btnc->i_pages, oldkey);
++		__xa_set_tag(&btnc->i_pages, newkey, PAGECACHE_TAG_DIRTY);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 
+ 		opage->index = obh->b_blocknr = newkey;
+@@ -284,7 +276,7 @@ void nilfs_btnode_abort_change_key(struct address_space *btnc,
+ 
+ 	if (nbh == NULL) {	/* blocksize == pagesize */
+ 		xa_lock_irq(&btnc->i_pages);
+-		radix_tree_delete(&btnc->i_pages, newkey);
++		__xa_erase(&btnc->i_pages, newkey);
+ 		xa_unlock_irq(&btnc->i_pages);
+ 		unlock_page(ctxt->bh->b_page);
+ 	} else
+diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
+index 4cb850a6f1c2..8384473b98b8 100644
+--- a/fs/nilfs2/page.c
++++ b/fs/nilfs2/page.c
+@@ -298,7 +298,7 @@ int nilfs_copy_dirty_pages(struct address_space *dmap,
+  * @dmap: destination page cache
+  * @smap: source page cache
+  *
+- * No pages must no be added to the cache during this process.
++ * No pages must be added to the cache during this process.
+  * This must be ensured by the caller.
+  */
+ void nilfs_copy_back_pages(struct address_space *dmap,
+@@ -307,7 +307,6 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 	struct pagevec pvec;
+ 	unsigned int i, n;
+ 	pgoff_t index = 0;
+-	int err;
+ 
+ 	pagevec_init(&pvec);
+ repeat:
+@@ -322,35 +321,34 @@ void nilfs_copy_back_pages(struct address_space *dmap,
+ 		lock_page(page);
+ 		dpage = find_lock_page(dmap, offset);
+ 		if (dpage) {
+-			/* override existing page on the destination cache */
++			/* overwrite existing page in the destination cache */
+ 			WARN_ON(PageDirty(dpage));
+ 			nilfs_copy_page(dpage, page, 0);
+ 			unlock_page(dpage);
+ 			put_page(dpage);
++			/* Do we not need to remove page from smap here? */
+ 		} else {
+-			struct page *page2;
++			struct page *p;
+ 
+ 			/* move the page to the destination cache */
+ 			xa_lock_irq(&smap->i_pages);
+-			page2 = radix_tree_delete(&smap->i_pages, offset);
+-			WARN_ON(page2 != page);
+-
++			p = __xa_erase(&smap->i_pages, offset);
++			WARN_ON(page != p);
+ 			smap->nrpages--;
+ 			xa_unlock_irq(&smap->i_pages);
+ 
+ 			xa_lock_irq(&dmap->i_pages);
+-			err = radix_tree_insert(&dmap->i_pages, offset, page);
+-			if (unlikely(err < 0)) {
+-				WARN_ON(err == -EEXIST);
++			p = __xa_store(&dmap->i_pages, offset, page, GFP_NOFS);
++			if (unlikely(p)) {
++				/* Probably -ENOMEM */
+ 				page->mapping = NULL;
+-				put_page(page); /* for cache */
++				put_page(page);
+ 			} else {
+ 				page->mapping = dmap;
+ 				dmap->nrpages++;
+ 				if (PageDirty(page))
+-					radix_tree_tag_set(&dmap->i_pages,
+-							   offset,
+-							   PAGECACHE_TAG_DIRTY);
++					__xa_set_tag(&dmap->i_pages, offset,
++							PAGECACHE_TAG_DIRTY);
+ 			}
+ 			xa_unlock_irq(&dmap->i_pages);
+ 		}
+@@ -476,8 +474,7 @@ int __nilfs_clear_page_dirty(struct page *page)
+ 	if (mapping) {
+ 		xa_lock_irq(&mapping->i_pages);
+ 		if (test_bit(PG_dirty, &page->flags)) {
+-			radix_tree_tag_clear(&mapping->i_pages,
+-					     page_index(page),
++			__xa_clear_tag(&mapping->i_pages, page_index(page),
+ 					     PAGECACHE_TAG_DIRTY);
+ 			xa_unlock_irq(&mapping->i_pages);
+ 			return clear_page_dirty_for_io(page);
 -- 
 2.17.1
 
