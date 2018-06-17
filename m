@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D896FC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:03:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C5F6C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95FB5208D5
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:03:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95FB5208D5
+	by mail.kernel.org (Postfix) with ESMTP id 4812E208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:03:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4812E208AE
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934478AbeFQRDS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 13:03:18 -0400
-Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:23745 "EHLO
+        id S936799AbeFQRDZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 13:03:25 -0400
+Received: from smtp07.smtpout.orange.fr ([80.12.242.129]:60642 "EHLO
         smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934495AbeFQRDF (ORCPT
+        with ESMTP id S934559AbeFQRDH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 13:03:05 -0400
+        Sun, 17 Jun 2018 13:03:07 -0400
 Received: from belgarion.home ([90.55.203.186])
         by mwinf5d83 with ME
-        id zt2e1x00N41oiFu03t32PN; Sun, 17 Jun 2018 19:03:04 +0200
+        id zt2e1x00N41oiFu03t34Pu; Sun, 17 Jun 2018 19:03:05 +0200
 X-ME-Helo: belgarion.home
 X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sun, 17 Jun 2018 19:03:04 +0200
+X-ME-Date: Sun, 17 Jun 2018 19:03:05 +0200
 X-ME-IP: 90.55.203.186
 From:   Robert Jarzmik <robert.jarzmik@free.fr>
 To:     Daniel Mack <daniel@zonque.org>,
@@ -53,9 +53,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
         linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
         alsa-devel@alsa-project.org
-Subject: [PATCH v3 04/14] mmc: pxamci: remove the dmaengine compat need
-Date:   Sun, 17 Jun 2018 19:02:07 +0200
-Message-Id: <20180617170217.24177-5-robert.jarzmik@free.fr>
+Subject: [PATCH v3 05/14] media: pxa_camera: remove the dmaengine compat need
+Date:   Sun, 17 Jun 2018 19:02:08 +0200
+Message-Id: <20180617170217.24177-6-robert.jarzmik@free.fr>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20180617170217.24177-1-robert.jarzmik@free.fr>
 References: <20180617170217.24177-1-robert.jarzmik@free.fr>
@@ -72,72 +72,63 @@ This patch simplifies the dma resource acquisition, using the more
 generic function dma_request_slave_channel().
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Hans Verkuil <hans.verkuil@cisco.com>
+Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 ---
- drivers/mmc/host/pxamci.c | 29 +++--------------------------
- 1 file changed, 3 insertions(+), 26 deletions(-)
+ drivers/media/platform/pxa_camera.c | 22 +++-------------------
+ 1 file changed, 3 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/mmc/host/pxamci.c b/drivers/mmc/host/pxamci.c
-index c763b404510f..6c94474e36f4 100644
---- a/drivers/mmc/host/pxamci.c
-+++ b/drivers/mmc/host/pxamci.c
-@@ -24,7 +24,6 @@
- #include <linux/interrupt.h>
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
--#include <linux/dma/pxa-dma.h>
- #include <linux/clk.h>
- #include <linux/err.h>
- #include <linux/mmc/host.h>
-@@ -637,10 +636,8 @@ static int pxamci_probe(struct platform_device *pdev)
- {
- 	struct mmc_host *mmc;
- 	struct pxamci_host *host = NULL;
--	struct resource *r, *dmarx, *dmatx;
--	struct pxad_param param_rx, param_tx;
-+	struct resource *r;
- 	int ret, irq, gpio_cd = -1, gpio_ro = -1, gpio_power = -1;
+diff --git a/drivers/media/platform/pxa_camera.c b/drivers/media/platform/pxa_camera.c
+index c71a00736541..4c82d1880753 100644
+--- a/drivers/media/platform/pxa_camera.c
++++ b/drivers/media/platform/pxa_camera.c
+@@ -2357,8 +2357,6 @@ static int pxa_camera_probe(struct platform_device *pdev)
+ 		.src_maxburst = 8,
+ 		.direction = DMA_DEV_TO_MEM,
+ 	};
 -	dma_cap_mask_t mask;
+-	struct pxad_param params;
+ 	char clk_name[V4L2_CLK_NAME_SIZE];
+ 	int irq;
+ 	int err = 0, i;
+@@ -2432,34 +2430,20 @@ static int pxa_camera_probe(struct platform_device *pdev)
+ 	pcdev->base = base;
  
- 	ret = pxamci_of_init(pdev);
- 	if (ret)
-@@ -739,34 +736,14 @@ static int pxamci_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, mmc);
- 
--	if (!pdev->dev.of_node) {
--		dmarx = platform_get_resource(pdev, IORESOURCE_DMA, 0);
--		dmatx = platform_get_resource(pdev, IORESOURCE_DMA, 1);
--		if (!dmarx || !dmatx) {
--			ret = -ENXIO;
--			goto out;
--		}
--		param_rx.prio = PXAD_PRIO_LOWEST;
--		param_rx.drcmr = dmarx->start;
--		param_tx.prio = PXAD_PRIO_LOWEST;
--		param_tx.drcmr = dmatx->start;
--	}
--
+ 	/* request dma */
 -	dma_cap_zero(mask);
 -	dma_cap_set(DMA_SLAVE, mask);
+-	dma_cap_set(DMA_PRIVATE, mask);
 -
--	host->dma_chan_rx =
+-	params.prio = 0;
+-	params.drcmr = 68;
+-	pcdev->dma_chans[0] =
 -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param_rx, &pdev->dev, "rx");
-+	host->dma_chan_rx = dma_request_slave_channel(&pdev->dev, "rx");
- 	if (host->dma_chan_rx == NULL) {
- 		dev_err(&pdev->dev, "unable to request rx dma channel\n");
- 		ret = -ENODEV;
- 		goto out;
+-						 &params, &pdev->dev, "CI_Y");
++	pcdev->dma_chans[0] = dma_request_slave_channel(&pdev->dev, "CI_Y");
+ 	if (!pcdev->dma_chans[0]) {
+ 		dev_err(&pdev->dev, "Can't request DMA for Y\n");
+ 		return -ENODEV;
  	}
  
--	host->dma_chan_tx =
+-	params.drcmr = 69;
+-	pcdev->dma_chans[1] =
 -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
--						 &param_tx,  &pdev->dev, "tx");
-+	host->dma_chan_tx = dma_request_slave_channel(&pdev->dev, "tx");
- 	if (host->dma_chan_tx == NULL) {
- 		dev_err(&pdev->dev, "unable to request tx dma channel\n");
- 		ret = -ENODEV;
+-						 &params, &pdev->dev, "CI_U");
++	pcdev->dma_chans[1] = dma_request_slave_channel(&pdev->dev, "CI_U");
+ 	if (!pcdev->dma_chans[1]) {
+ 		dev_err(&pdev->dev, "Can't request DMA for Y\n");
+ 		err = -ENODEV;
+ 		goto exit_free_dma_y;
+ 	}
+ 
+-	params.drcmr = 70;
+-	pcdev->dma_chans[2] =
+-		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+-						 &params, &pdev->dev, "CI_V");
++	pcdev->dma_chans[2] = dma_request_slave_channel(&pdev->dev, "CI_V");
+ 	if (!pcdev->dma_chans[2]) {
+ 		dev_err(&pdev->dev, "Can't request DMA for V\n");
+ 		err = -ENODEV;
 -- 
 2.11.0
 
