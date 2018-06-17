@@ -2,73 +2,89 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71131C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99828C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:45:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC1A20693
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:38:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC1A20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
+	by mail.kernel.org (Postfix) with ESMTP id 4DF9420891
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:45:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DF9420891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933675AbeFQKiQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 06:38:16 -0400
-Received: from mout.gmx.net ([212.227.17.21]:44901 "EHLO mout.gmx.net"
+        id S933686AbeFQKpp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 06:45:45 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:33642 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932810AbeFQKiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 06:38:14 -0400
-Received: from homer.simpson.net ([188.174.240.203]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0M20Jj-1gNQ2O1rvn-00u1Fm; Sun, 17
- Jun 2018 12:38:07 +0200
-Message-ID: <1529231886.5303.6.camel@gmx.de>
-Subject: Re: v4.14.21+: ATOMIC_SLEEP splat bisected  to 9428088c90b6
- ("drm/qxl: reapply cursor after resetting primary")
-From:   Mike Galbraith <efault@gmx.de>
-To:     Greg KH <gregkh@linuxfoundation.org>
-Cc:     Ray Strode <rstrode@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Date:   Sun, 17 Jun 2018 12:38:06 +0200
-In-Reply-To: <20180617093607.GA27652@kroah.com>
-References: <1529163551.16103.16.camel@gmx.de>
-         <20180617093607.GA27652@kroah.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:BHZRzQcEFwMnBIN5p7YxXBR0KKPhWvKrHzJNofXVWQjRBQuOVKV
- xv/UfxwNyw18sMYkxAVes/3wvGaUQDPToRfUQo/YgtQASmlvG0UcMaVdQupHDKpr5hPCUv+
- FTCEKthtmfM9dgIM2ZO6NDs9d6WC6VjiBQqCmWpcB2oRN95PA0ZfgYX3AlGbAhQvPYcrzPr
- QXedH3uk3tiBxUlot/oxQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:HjdfgBiCkd0=:6roXTLnhsdsfKH//VS0Zw1
- BzktI1P/fZf0s2zv34Xh+l0hCzTtxQpmib1/LRS5smRi4sCn7hOa+/rHK1M9napDW5kelAOJj
- LUQ6Adca3Ndyk5Sd6Jcu7pGIChlLDmRXXQ5fzO2dbvfDjOEJPFJveLEJE22na6APDuhqjdOR1
- MB3z5Dl7tzJ3466WxDxPS5M7WGRJURqvpv8wTrpGISQwPKCM5+wsIT2cU1+Dp5T/TaJbx8dPj
- 5htHpuLmh7B0C5C90fDKiTv3A0f+kMTINrt3sKTyaV8TUgrAXXN4gP8UFAvEebJ3H8isf5CPa
- nvKUg8TYtLFoEd2GVrOHvkfXKXJsCfWmBHqvmURg7AaPxlovYJqNeroRvvWzNgzyWnl3vOJE+
- KfaMP19eJkjWvjiG36AFh3IVadlcwyhe9NjMkDaU7WoS2zbYtObT/mJ4LukA/soUs3PPUhmR4
- sEKQ3Tpii1+SfQbyvmBxEnEjA2DSxY1tLjMA0GnFVkHGSE3n5IoLQLgIVQ01tYGHIIUGB7RvG
- XKKvvwp0d0kWNK75ogOWkGinKDiaaMrLjWabf/aHkHrzEEiKXLLIeIroiT4WariySuwiWcteT
- Qtf667xGNzHSLBcAgbXLzY7x4/8n5Jf5krCcc/20GDr6wRq+PePhEC/TWbMNL7mtSOMhUQyIx
- 1lu612KxiuOsJ4wgBp9N8ncQUXAMWkCtdoh3jmU/FL+UOCBrJXtSeKCzPEB969pekyhhROf1u
- lboC0BWDHr9tFkOcVFvUYx7Anu7VP/raS6b+aoC053+zzekvEIvshAtcXfzKhDlh3oG01e+vw
- d8M9INU
+        id S933490AbeFQKpn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 06:45:43 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id AfJtHHTo0lBD; Sun, 17 Jun 2018 12:45:41 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BE29C00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be2:9c00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8CFB01EC0136;
+        Sun, 17 Jun 2018 12:45:41 +0200 (CEST)
+Date:   Sun, 17 Jun 2018 12:45:38 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Thor Thayer <thor.thayer@linux.intel.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc:     mchehab@kernel.org, linux-edac@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH V2] EDAC, altera: Fix an error handling path in
+ 'altr_s10_sdram_probe()'
+Message-ID: <20180617104538.GA16877@zn.tnic>
+References: <20180610174532.22071-1-christophe.jaillet@wanadoo.fr>
+ <092ce90c-1f68-1041-4385-997dcb13bc22@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <092ce90c-1f68-1041-4385-997dcb13bc22@linux.intel.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-06-17 at 11:36 +0200, Greg KH wrote:
+On Mon, Jun 11, 2018 at 09:53:53AM -0500, Thor Thayer wrote:
+> On 06/10/2018 12:45 PM, Christophe JAILLET wrote:
+> > IF 'regmap_write()' fails, we should release some resources as done in all
+> > the other error handling paths of the function.
+> > 
+> > Fixes: e9918d7fafae ("EDAC, altera: Handle SDRAM Uncorrectable Errors on Stratix10")
+> > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> > ---
+> > v1 -> v2: Fix subject line
+> > ---
+> >   drivers/edac/altera_edac.c | 3 ++-
+> >   1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/edac/altera_edac.c b/drivers/edac/altera_edac.c
+> > index d0d5c4dbe097..5762c3c383f2 100644
+> > --- a/drivers/edac/altera_edac.c
+> > +++ b/drivers/edac/altera_edac.c
+> > @@ -730,7 +730,8 @@ static int altr_s10_sdram_probe(struct platform_device *pdev)
+> >   			 S10_DDR0_IRQ_MASK)) {
+> >   		edac_printk(KERN_ERR, EDAC_MC,
+> >   			    "Error clearing SDRAM ECC count\n");
+> > -		return -ENODEV;
+> > +		ret = -ENODEV;
+> > +		goto err2;
+> >   	}
+> >   	if (regmap_update_bits(drvdata->mc_vbase, priv->ecc_irq_en_offset,
+> > Thanks.
 > 
-> And if you revert that patch, does everything work again?
+> Reviewed-by: Thor Thayer <thor.thayer@linux.intel.com>
 
-Yes.
+Applied, thanks.
 
-	-Mike
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
