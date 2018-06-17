@@ -2,97 +2,75 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC7EC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:50:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FBBC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:02:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A14E208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:50:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A14E208AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id E519F20896
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:02:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSp6hzaE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E519F20896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933706AbeFQKuR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 06:50:17 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:18476 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933359AbeFQKuP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 06:50:15 -0400
-Received: from belgarion.home ([90.55.203.186])
-        by mwinf5d18 with ME
-        id zmq51x00141oiFu03mq9zC; Sun, 17 Jun 2018 12:50:12 +0200
-X-ME-Helo: belgarion.home
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sun, 17 Jun 2018 12:50:12 +0200
-X-ME-IP: 90.55.203.186
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc:     alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 1/2] ASoC: pxa: add binding for pxa2xx-ac97 audio complex
-Date:   Sun, 17 Jun 2018 12:50:00 +0200
-Message-Id: <20180617105001.17784-1-robert.jarzmik@free.fr>
-X-Mailer: git-send-email 2.11.0
+        id S1754304AbeFQLCZ (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 07:02:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752659AbeFQLCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 07:02:24 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56E2320896;
+        Sun, 17 Jun 2018 11:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529233343;
+        bh=SCfO6SBgw+JoIPhB68HYCmSX/AEWp3TBIHUgKeOsFzU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qSp6hzaEIOaMQpXgOtxARXXumvHFiZ2tdK83cXZt66ncBpeEozAx38XcwX7iLvlF6
+         eY8BrW5gu5RmOl6tOGY1b0ie5LdfggblN5NQpcefnjujo7MLyGS8fo5ltJx+MEEto/
+         jTsOI+Mxw31rpqTIp2GV3hd4NkaH5H/FXFIIg5P4=
+Date:   Sun, 17 Jun 2018 13:02:00 +0200
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Mike Galbraith <efault@gmx.de>
+Cc:     Ray Strode <rstrode@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        virtualization@lists.linux-foundation.org
+Subject: Re: v4.14.21+: ATOMIC_SLEEP splat bisected  to 9428088c90b6
+ ("drm/qxl: reapply cursor after resetting primary")
+Message-ID: <20180617110200.GA19216@kroah.com>
+References: <1529163551.16103.16.camel@gmx.de>
+ <20180617093607.GA27652@kroah.com>
+ <1529231886.5303.6.camel@gmx.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1529231886.5303.6.camel@gmx.de>
+User-Agent: Mutt/1.10.0 (2018-05-17)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds a binding for the Marvell PXA audio complex, available in
-pxa2xx and pxa3xx variants.
+On Sun, Jun 17, 2018 at 12:38:06PM +0200, Mike Galbraith wrote:
+> On Sun, 2018-06-17 at 11:36 +0200, Greg KH wrote:
+> > 
+> > And if you revert that patch, does everything work again?
+> 
+> Yes.
 
-Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
----
-Since v1: Rob's review, compatible string, reset-gpios, status
----
- .../bindings/sound/marvell,pxa2xx-ac97.txt         | 27 ++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
+Great, Dave, care to revert this in 4.18 so I can queue up that revert
+in older kernels as well?
 
-diff --git a/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt b/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
-new file mode 100644
-index 000000000000..2ea85d5be6a4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
-@@ -0,0 +1,27 @@
-+Marvell PXA2xx audio complex
-+
-+This descriptions matches the AC97 controller found in pxa2xx and pxa3xx series.
-+
-+Required properties:
-+  - compatible: should be one of the following:
-+    "marvell,pxa250-ac97"
-+    "marvell,pxa270-ac97"
-+    "marvell,pxa300-ac97"
-+  - reg: device MMIO address space
-+  - interrupts: single interrupt generated by AC97 IP
-+  - clocks: input clock of the AC97 IP, refer to clock-bindings.txt
-+
-+Optional properties:
-+  - pinctrl-names, pinctrl-0: refer to pinctrl-bindings.txt
-+  - reset-gpios: gpio used for AC97 reset, refer to gpio.txt
-+
-+Example:
-+	ac97: sound@40500000 {
-+		compatible = "marvell,pxa250-ac97";
-+		reg = < 0x40500000 0x1000 >;
-+		interrupts = <14>;
-+		reset-gpios = <&gpio 113 GPIO_ACTIVE_HIGH>;
-+		#sound-dai-cells = <1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = < &pmux_ac97_default >;
-+	};
--- 
-2.11.0
+thanks,
 
+greg k-h
