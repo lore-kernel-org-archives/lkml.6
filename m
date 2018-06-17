@@ -7,55 +7,56 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA28AC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 122D1C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:59:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F141208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:59:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0CED208E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:59:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2UVRlBp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F141208E0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cdj185o0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0CED208E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933593AbeFQO7n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 10:59:43 -0400
-Received: from mail-lf0-f67.google.com ([209.85.215.67]:37168 "EHLO
-        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933039AbeFQO7k (ORCPT
+        id S933859AbeFQO7t (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 10:59:49 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44681 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933163AbeFQO7l (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 10:59:40 -0400
-Received: by mail-lf0-f67.google.com with SMTP id g21-v6so21003739lfb.4;
-        Sun, 17 Jun 2018 07:59:38 -0700 (PDT)
+        Sun, 17 Jun 2018 10:59:41 -0400
+Received: by mail-lf0-f66.google.com with SMTP id p23-v6so9283130lfh.11;
+        Sun, 17 Jun 2018 07:59:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JMMmPiTvCMP/Mix7ZltN6uEW+A4Pxu7sDog1I18bxGw=;
-        b=l2UVRlBpw7hiP2B/+3wPwU6xTUvOnWLw+Dhz9AjPkQORQwzlQJqXbnKVjRZq4qDfn0
-         cd/ujQeqys5VnRLt08R8zX/4ffLGnXnpTA8c4lbgSH+o6TlHNpfUqoKCsntT5WYG0bAs
-         GQjRciqbKQ64WMySN1A3dWCYzJ79OWWrR6h+06bjSPNm5uhSyCroWiuKPhKngsRLj/mQ
-         nWVuzkMEfibXqjQdzJFOGL/TCyBGnsBd7BFLjRqx3tCWdqHamjYwcoCk+L0iR03QmGXC
-         2Q5Di35qniD8Kpeekd+E2mzRtbFPd3Xe5cknEDcr7oG4lljbVcNqor2INC9YfXoSMxTU
-         pSbw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=0E1oKwFdB0/Kn7N4eiV+FcFKrKY1Xjxl6IUgu2EF5Aw=;
+        b=cdj185o0LfO0KNpw0FXKZWzDwlCNad0QQj+DeqfstGFpbyXbMhKQzWWbRgbBQ1V/I3
+         kZkQeA4aLOD44FUH63PQUaCLdbdZv+UpYPSuPHW72racJ5Ydayvbv13CBX8YeLSnGFxf
+         5p/zn0jsExzfOL+uQA+rQKbAbuNkpR7bqOfTAfdBJr9/VKBbs0rYcmnlnADPYp6ku1sr
+         X2+8+MSWeHZqbSxgFHuW++akc57k3HzarkwjXxn6AHIipUzht7U4u/U8+00Pqeo8X46q
+         r5cK482YgDI5nj1ejVn6gDw+SPep9l9F6a+AsusNi+WmIIwzQwgg1ZCCCDHCBL/5+gJI
+         B0PQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JMMmPiTvCMP/Mix7ZltN6uEW+A4Pxu7sDog1I18bxGw=;
-        b=I2GiwFJ0ddXBo9r0zP7fY1eKmvPUzi04mQ9rKrl1xzcw0U2SmDumSdX13WvhHmmuIE
-         qHDhxX3s3MhiOSfAEuEP0BUPWcSnl5ODAu1CjYa37cCFUy2dRgMh9n5t09r3ETaz7/z1
-         McZhQWtI0NcwFtC5KliLNLodIQ4fkcmMvP2Uy15jPxABbPwjz/yqe8WcyC5GiILRt8F/
-         XGYB0wIt8vjzr8fUdGzCVwsuok7po2JIUj3+fK9wGzFA2l93iirCJNQuyr3Bx8o/vOnl
-         gkd6yGGF87CgQfJjJeFECE3HJ8qGTlosgY+V1xMuqx1h457faG+ExCgtUuFS8eDTxTkl
-         zn9g==
-X-Gm-Message-State: APt69E0ZiLNl82kR1qFoHjnN1Qugec/sZjpY9EhRfXCFPCfawe+Vjaw0
-        I4ajOtdcA4OR2TcQfT0zbls=
-X-Google-Smtp-Source: ADUXVKKiNRSJ9Sw5CXtuHCtcXCjw2C2ZhM15xiDKr7MZJFZrRfq4CCzHmVeAY8gpCWJLFGmvUhzkCQ==
-X-Received: by 2002:a2e:5b4a:: with SMTP id p71-v6mr5778300ljb.13.1529247578137;
-        Sun, 17 Jun 2018 07:59:38 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=0E1oKwFdB0/Kn7N4eiV+FcFKrKY1Xjxl6IUgu2EF5Aw=;
+        b=p/qHQ6hmLcAUcnVe098guoanAQKpz8EjlDktMuutkYAG7oXmE87clRd29+9maVY7Fb
+         y9sVOgfG6lGJ3e7YPAisgR+jOzng9rS4zfI7fvjMGTbApO7bmyNNxHcwE6KHPyJCCU2e
+         83v76tBHzEKny1AYdn09+XJ2/tY44jnh5RW393xJtuVWa+e8Vz75i33TVWaNyJyM3vI/
+         KIwMaunaxXFne4o5eiRtGsqtabqynq7KDqQFtAVclegYZJxYnAhT3YgyLlzvyEILctXd
+         MJ/HhTuN+6MmSF9UmAJT4qnpswtc9GAEuA8afs37cEWzvtNsI7pyqVWHShEOnCSozig7
+         mGdA==
+X-Gm-Message-State: APt69E3aFhktIrUGN9lvfiqIRhK3PTJI6d5YrI1dvQO2OXoWFEfSUUes
+        WErRRQcRoyumBw19acWJUwo=
+X-Google-Smtp-Source: ADUXVKLhIHC23a7+pl+1foj0LzfuIRsOD2/tr/h5YGmDPY947FLD5Jlh8u2LehOTPL1fp6DQtjHwEA==
+X-Received: by 2002:a19:9c4b:: with SMTP id f72-v6mr5593378lfe.119.1529247579254;
+        Sun, 17 Jun 2018 07:59:39 -0700 (PDT)
 Received: from localhost.localdomain ([109.252.55.139])
-        by smtp.gmail.com with ESMTPSA id r21-v6sm2296173lja.92.2018.06.17.07.59.36
+        by smtp.gmail.com with ESMTPSA id r21-v6sm2296173lja.92.2018.06.17.07.59.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jun 2018 07:59:37 -0700 (PDT)
+        Sun, 17 Jun 2018 07:59:38 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -67,73 +68,47 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 0/8] Tegra20 External Memory Controller driver
-Date:   Sun, 17 Jun 2018 17:55:31 +0300
-Message-Id: <20180617145539.4758-1-digetx@gmail.com>
+Subject: [PATCH v3 1/8] dt: bindings: tegra20-emc: Document interrupt property
+Date:   Sun, 17 Jun 2018 17:55:32 +0300
+Message-Id: <20180617145539.4758-2-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
+References: <20180617145539.4758-1-digetx@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+EMC has a dedicated interrupt that is used to notify about completion of
+HW operations. Document the interrupt property.
 
-Couple years ago the Tegra20 EMC driver was removed from the kernel
-due to incompatible changes in the Tegra's clock driver. This patchset
-introduces a modernized EMC driver. Currently the sole purpose of the
-driver is to initialize DRAM frequency to maximum rate during of the
-kernels boot-up. Later we may consider implementing dynamic memory
-frequency scaling, utilizing functionality provided by this driver.
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+---
+ .../devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt        | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Changelog:
-
-v3:
-	- Handle "nvidia,use-ram-code" DT property, its handling was missed
-	  in the previous versions.
-
-	- Honor "emc-tables" DT node naming which is explicitly specified
-	  in the DT binding, also was missed in the previous versions.
-
-	- Two new DT binding patches: one adds the EMC clock property,
-	  other relocates the binding doc file to the appropriate directory.
-	  One new patch that adds EMC clock property to the DTS file.
-
-	- Addressed v2 review comments from Thierry Reding. Driver does not
-	  preserve backwards compatibility with older device tree binding.
-
-	- The PLL_M and PLL_P clocks are kept internal to the driver because
-	  after some more considering I couldn't find a really good reason why
-	  these clocks should be in the device tree.
-
-	- Some minor cleanups and fixes in the drivers code.
-
-v2:
-	- Minor code cleanups like consistent use of writel_relaxed instead
-	  of non-relaxed version, reworded error messages, etc.
-
-	- Factored out use_pllm_ud bit checking into a standalone patch for
-	  consistency.
-
-Dmitry Osipenko (8):
-  dt: bindings: tegra20-emc: Document interrupt property
-  dt: bindings: tegra20-emc: Document clock property
-  dt: bindings: Move tegra20-emc binding to memory-controllers directory
-  ARM: dts: tegra20: Add interrupt entry to External Memory Controller
-  ARM: dts: tegra20: Add clock entry to External Memory Controller
-  clk: tegra20: Turn EMC clock gate into divider
-  clk: tegra20: Check whether direct PLLM sourcing is turned off for EMC
-  memory: tegra: Introduce Tegra20 EMC driver
-
- .../nvidia,tegra20-emc.txt                    |   4 +
- arch/arm/boot/dts/tegra20.dtsi                |   2 +
- drivers/clk/tegra/clk-tegra20.c               |  46 +-
- drivers/memory/tegra/Kconfig                  |  10 +
- drivers/memory/tegra/Makefile                 |   1 +
- drivers/memory/tegra/tegra20-emc.c            | 574 ++++++++++++++++++
- 6 files changed, 627 insertions(+), 10 deletions(-)
- rename Documentation/devicetree/bindings/{arm/tegra => memory-controllers}/nvidia,tegra20-emc.txt (95%)
- create mode 100644 drivers/memory/tegra/tegra20-emc.c
-
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+index 4c33b29dc660..a6fe401d0d48 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-emc.txt
+@@ -10,6 +10,7 @@ Properties:
+   and chosen using the ramcode board selector. If omitted, only one
+   set of tables can be present and said tables will be used
+   irrespective of ram-code configuration.
++- interrupts : Should contain EMC General interrupt.
+ 
+ Child device nodes describe the memory settings for different configurations and clock rates.
+ 
+@@ -20,6 +21,7 @@ Example:
+ 		#size-cells = < 0 >;
+ 		compatible = "nvidia,tegra20-emc";
+ 		reg = <0x7000f4000 0x200>;
++		interrupts = <0 78 0x04>;
+ 	}
+ 
+ 
 -- 
 2.17.1
 
