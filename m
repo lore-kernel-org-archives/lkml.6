@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84620C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7793BC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:18:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33BA12086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3481620895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:18:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N4eJ/m/1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33BA12086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="aAQmFyx0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3481620895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934239AbeFQCRw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:17:52 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58758 "EHLO
+        id S934023AbeFQCRu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:17:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58766 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933651AbeFQCBB (ORCPT
+        with ESMTP id S933663AbeFQCBB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 22:01:01 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,14 +30,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=gqfXkur72PH7I4OwP3gFuN/VelhPslyzABAv8sFERLY=; b=N4eJ/m/1odYXrpVpDWKP9mHAx
-        V5k/MIG6m++e1+yf1i6Wap4ai0h2aTAwzT3yVGr0l8qjjX7vMRxpckgJyFt56oUPpIplHvUbXBytX
-        czN/ZY6jfxsiFSX5Ce9NqAsCPRIbCyFkEopfs8NpvR8SRQzLw25ah5+hxCFoSsbhXGSrRVp9DBJnk
-        yxKpxmkR27U7UT+U2c4u7kq9kefaoDxKR2wjq0KefjLrFI1igcvolGB1uzXDGz5qEESGb/IqpxtnD
-        SXlyIbm9TCtKyvEscsj9W/z+NodFSszg13XEHJl9adI2VrmYV+PZ2VI1EKnk4QQGSc5R6Q8Dnr+Ki
-        TA42+or4g==;
+         bh=swEIFSIKt2NvfdWOTUWTQV6Qzybb5fYEWm8H1x1L5ac=; b=aAQmFyx0cVjTXqtePBlN/Gge1
+        6GAqypN2Sd/9jLth3wwwkxuXRtSKKxfGDSJxHjw7XruOko4f2+J0aQEazFxZbT9st3pkFvQLjdS5O
+        Uk8iT+UyZGL2vvJgRvMNeJOih+Olkwe0ZNKGxWm42YfgBEXYLL+Ma3PKpwudp432g9+I4RYJqK+Rh
+        ShFqf+Mwx7QTpycJl7TivE24r6HwkGfGeKRQP82noTMR4vc4FBRZ7+njOGBaBtiXX9Myku4R08p+7
+        jzlcpj59lkspt2+2QvIHBLvky5rchFeVlmSuULPcfE4kugcNx4j+dd/kEeomdvqXgUTOhmgR/EyOe
+        4DdD+SVBA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN00-0001Ih-Bs; Sun, 17 Jun 2018 02:01:00 +0000
+        id 1fUN00-0001Io-Gy; Sun, 17 Jun 2018 02:01:00 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 28/74] page cache; Convert find_get_pages_range_tag to XArray
-Date:   Sat, 16 Jun 2018 19:00:06 -0700
-Message-Id: <20180617020052.4759-29-willy@infradead.org>
+Subject: [PATCH v14 29/74] page cache: Convert find_get_entries_tag to XArray
+Date:   Sat, 16 Jun 2018 19:00:07 -0700
+Message-Id: <20180617020052.4759-30-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,90 +63,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'end' parameter of the xas_for_each iterator avoids a useless
-iteration at the end of the range.
+Slightly shorter and simpler code.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- include/linux/pagemap.h |  4 +--
- mm/filemap.c            | 68 ++++++++++++++++-------------------------
- 2 files changed, 28 insertions(+), 44 deletions(-)
+ include/linux/pagemap.h |  2 +-
+ mm/filemap.c            | 54 ++++++++++++++++++-----------------------
+ 2 files changed, 25 insertions(+), 31 deletions(-)
 
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 2f5d2d3ebaac..a6d635fefb01 100644
+index a6d635fefb01..442977811b59 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -363,10 +363,10 @@ static inline unsigned find_get_pages(struct address_space *mapping,
- unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t start,
- 			       unsigned int nr_pages, struct page **pages);
- unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, int tag, unsigned int nr_pages,
-+			pgoff_t end, xa_tag_t tag, unsigned int nr_pages,
- 			struct page **pages);
- static inline unsigned find_get_pages_tag(struct address_space *mapping,
--			pgoff_t *index, int tag, unsigned int nr_pages,
-+			pgoff_t *index, xa_tag_t tag, unsigned int nr_pages,
- 			struct page **pages)
- {
- 	return find_get_pages_range_tag(mapping, index, (pgoff_t)-1, tag,
+@@ -373,7 +373,7 @@ static inline unsigned find_get_pages_tag(struct address_space *mapping,
+ 					nr_pages, pages);
+ }
+ unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
+-			int tag, unsigned int nr_entries,
++			xa_tag_t tag, unsigned int nr_entries,
+ 			struct page **entries, pgoff_t *indices);
+ 
+ struct page *grab_cache_page_write_begin(struct address_space *mapping,
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 8a69613fcdf3..83328635edaa 100644
+index 83328635edaa..67f04bcdf9ef 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1789,74 +1789,58 @@ EXPORT_SYMBOL(find_get_pages_contig);
-  * @tag.   We update @index to index the next page for the traversal.
+@@ -1866,57 +1866,51 @@ EXPORT_SYMBOL(find_get_pages_range_tag);
+  * @tag.
   */
- unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, int tag, unsigned int nr_pages,
-+			pgoff_t end, xa_tag_t tag, unsigned int nr_pages,
- 			struct page **pages)
+ unsigned find_get_entries_tag(struct address_space *mapping, pgoff_t start,
+-			int tag, unsigned int nr_entries,
++			xa_tag_t tag, unsigned int nr_entries,
+ 			struct page **entries, pgoff_t *indices)
  {
--	struct radix_tree_iter iter;
 -	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, *index);
++	XA_STATE(xas, &mapping->i_pages, start);
 +	struct page *page;
- 	unsigned ret = 0;
+ 	unsigned int ret = 0;
+-	struct radix_tree_iter iter;
  
- 	if (unlikely(!nr_pages))
+ 	if (!nr_entries)
  		return 0;
  
  	rcu_read_lock();
--	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, *index, tag) {
+-	radix_tree_for_each_tagged(slot, &mapping->i_pages, &iter, start, tag) {
 -		struct page *head, *page;
--
--		if (iter.index > end)
--			break;
 -repeat:
 -		page = radix_tree_deref_slot(slot);
 -		if (unlikely(!page))
-+	xas_for_each_tagged(&xas, page, end, tag) {
++	xas_for_each_tagged(&xas, page, ULONG_MAX, tag) {
 +		struct page *head;
 +		if (xas_retry(&xas, page))
  			continue;
--
 -		if (radix_tree_exception(page)) {
 -			if (radix_tree_deref_retry(page)) {
 -				slot = radix_tree_iter_retry(&iter);
 -				continue;
 -			}
+-
 -			/*
--			 * A shadow entry of a recently evicted page.
--			 *
--			 * Those entries should never be tagged, but
--			 * this tree walk is lockless and the tags are
--			 * looked up in bulk, one radix tree node at a
--			 * time, so there is a sizable window for page
--			 * reclaim to evict a page we saw tagged.
--			 *
--			 * Skip over it.
+-			 * A shadow entry of a recently evicted page, a swap
+-			 * entry from shmem/tmpfs or a DAX entry.  Return it
+-			 * without attempting to raise page count.
 -			 */
 +		/*
-+		 * Shadow entries should never be tagged, but this iteration
-+		 * is lockless so there is a window for page reclaim to evict
-+		 * a page we saw tagged.  Skip over it.
++		 * A shadow entry of a recently evicted page, a swap
++		 * entry from shmem/tmpfs or a DAX entry.  Return it
++		 * without attempting to raise page count.
 +		 */
 +		if (xa_is_value(page))
- 			continue;
+ 			goto export;
 -		}
  
  		head = compound_head(page);
@@ -169,31 +155,21 @@ index 8a69613fcdf3..83328635edaa 100644
 -		}
 +		if (unlikely(page != xas_reload(&xas)))
 +			goto put_page;
- 
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*index = pages[ret - 1]->index + 1;
-+			*index = page->index + 1;
- 			goto out;
- 		}
++
+ export:
+-		indices[ret] = iter.index;
++		indices[ret] = xas.xa_index;
+ 		entries[ret] = page;
+ 		if (++ret == nr_entries)
+ 			break;
 +		continue;
 +put_page:
 +		put_page(head);
 +retry:
 +		xas_reset(&xas);
  	}
- 
- 	/*
--	 * We come here when we got at @end. We take care to not overflow the
-+	 * We come here when we got to @end. We take care to not overflow the
- 	 * index @index as it confuses some of the callers. This breaks the
--	 * iteration when there is page at index -1 but that is already broken
--	 * anyway.
-+	 * iteration when there is a page at index -1 but that is already
-+	 * broken anyway.
- 	 */
- 	if (end == (pgoff_t)-1)
- 		*index = (pgoff_t)-1;
+ 	rcu_read_unlock();
+ 	return ret;
 -- 
 2.17.1
 
