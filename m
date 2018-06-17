@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98EE1C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F76FC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5729D2086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D5C620895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:20:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gDF3lmtK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5729D2086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rXhq53Uj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D5C620895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936510AbeFQCUm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:20:42 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58678 "EHLO
+        id S934583AbeFQCUk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:20:40 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58684 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933352AbeFQCA6 (ORCPT
+        with ESMTP id S933389AbeFQCA6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 22:00:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,14 +30,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=OyTxRmV4rAGKG2darjx2yztVr7oEJA+CTmBQXtKXahU=; b=gDF3lmtKPsIfl/KAjw0ZGO5lb
-        Oz3l57T7cUbwXB++x26fnGv4h1FC/U7AwhfOSit0DD0lz+suJ7uk1YdKchwDBcBBbvGhsRGzwpG1A
-        KsBakYBNx9W0h5XuKS33Hd3Xg8A31SplhEfMTJrD0ZkTLOPhqNdYZI9vNcdFn3vTJ1AJxOIdICnMw
-        SoRP5Eqf8Nk0vREpa8lgzOsLVOH1M8U5ABopvFYzPgtjbCzCUGepXp94Z2AAwYQNjw1ufqVpWjS5J
-        QjpNih1c0jMNLwMvl62NQTpaZqt3NqGEKmoLoL4M/8VR3Hn8l6FwDkc4IClxwJw8w+sbQwk2WEG7F
-        jrCv2EQXw==;
+         bh=0xwqQnlfUM1sDyJOL5OYBxl3xxx0qTseCxmywLTPNeM=; b=rXhq53UjsLheBQaP2NvHHNl1B
+        NtkSd3HSz3W5yBifjn2oAKy6CslDhXpm87KMUhIVb/jwTAmGZxS0m02urExadB2IQwJ4LjGI8FlZf
+        D3sQHRuHec4ta9Jgce0zYU9g58sTbrub4m7OZugSL56CCFEq/STp4VAwxti/Iw1B4ICnFuo8OWZiU
+        7pmdc1ydvJoN+ohifSVW4gAjwxLS30T8nuMMAX/VebUklL34uNyMEENPQHEWWmyNhs2lcgQFyKyvN
+        QU95VFJ6kUBTqvyfIb1+E9nHyUnrnNdDf0R4ZneyFIvvqFCWE351vFOXETbz1SPq13dFGnpIUDM7S
+        bk2myy/XA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUMzx-0001Gl-Hi; Sun, 17 Jun 2018 02:00:57 +0000
+        id 1fUMzx-0001Gp-Vh; Sun, 17 Jun 2018 02:00:57 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 18/74] xarray: Add xas_create_range
-Date:   Sat, 16 Jun 2018 18:59:56 -0700
-Message-Id: <20180617020052.4759-19-willy@infradead.org>
+Subject: [PATCH v14 19/74] xarray: Add MAINTAINERS entry
+Date:   Sat, 16 Jun 2018 18:59:57 -0700
+Message-Id: <20180617020052.4759-20-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,61 +63,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This hopefully temporary function is useful for users who have not yet
-been converted to multi-index entries.
+Add myself as XArray and IDR maintainer.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- include/linux/xarray.h |  2 ++
- lib/xarray.c           | 22 ++++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ MAINTAINERS | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 0a9f66266c9a..b78c2e9aa065 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -780,6 +780,8 @@ void xas_init_tags(const struct xa_state *);
- bool xas_nomem(struct xa_state *, gfp_t);
- void xas_pause(struct xa_state *);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 6dc2c9cb2d7b..959cc42e33ad 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15596,6 +15596,17 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/vdso
+ S:	Maintained
+ F:	arch/x86/entry/vdso/
  
-+void xas_create_range(struct xa_state *, unsigned long max);
++XARRAY
++M:	Matthew Wilcox <willy@infradead.org>
++L:	linux-fsdevel@vger.kernel.org
++S:	Supported
++F:	Documentation/core-api/xarray.rst
++F:	lib/idr.c
++F:	lib/xarray.c
++F:	include/linux/idr.h
++F:	include/linux/xarray.h
++F:	tools/testing/radix-tree
 +
- /**
-  * xas_reload() - Refetch an entry from the xarray.
-  * @xas: XArray operation state.
-diff --git a/lib/xarray.c b/lib/xarray.c
-index 31c5332c8146..8dddad5b237c 100644
---- a/lib/xarray.c
-+++ b/lib/xarray.c
-@@ -624,6 +624,28 @@ static void *xas_create(struct xa_state *xas)
- 	return entry;
- }
- 
-+/**
-+ * xas_create_range() - Ensure that stores to this range will succeed
-+ * @xas: XArray operation state.
-+ * @max: The highest index to create a slot for.
-+ *
-+ * Creates all of the slots in the range between the current position of
-+ * @xas and @max.  This is for the benefit of users who have not yet been
-+ * converted to multi-index entries.
-+ *
-+ * The implementation is naive.
-+ */
-+void xas_create_range(struct xa_state *xas, unsigned long max)
-+{
-+	XA_STATE(tmp, xas->xa, xas->xa_index);
-+
-+	do {
-+		xas_create(&tmp);
-+		xas_set(&tmp, tmp.xa_index + XA_CHUNK_SIZE);
-+	} while (tmp.xa_index < max);
-+}
-+EXPORT_SYMBOL_GPL(xas_create_range);
-+
- static void update_node(struct xa_state *xas, struct xa_node *node,
- 		int count, int values)
- {
+ XC2028/3028 TUNER DRIVER
+ M:	Mauro Carvalho Chehab <mchehab@kernel.org>
+ L:	linux-media@vger.kernel.org
 -- 
 2.17.1
 
