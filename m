@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4390C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:09:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52558C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CB332086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:09:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E4E620895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:09:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tl7JYoDT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CB332086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="NLAHcQX2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E4E620895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934362AbeFQCJv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:09:51 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59182 "EHLO
+        id S936507AbeFQCJ5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:09:57 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59122 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933953AbeFQCBJ (ORCPT
+        with ESMTP id S933940AbeFQCBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 22:01:09 -0400
+        Sat, 16 Jun 2018 22:01:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=L6O28U5bPiiNtAEzNBl43V8G8xo3oJqGs/4QpqAVQhg=; b=tl7JYoDThgJELlV7nSJi9IIDV
-        OfbXxR9CH0fIieO+rRqBzXr7h+GVspI0Ku3Y1/zp+VlYY5EHSkg0SFcNfMnTO2vCucsZC2RcNWP4h
-        OkZ+Li1NnFfvpobXmooUXkVVCYIM90Rsxs4vccWME81KDr/BWupjwTTloNIVQ7vgjMQd+kTABpbf4
-        EHAqbOIIZIXfyd3PzqnkhlEzE+JGDMdHLTGzigeUGGJR0v7oMzkxd/ll4XHkQZe8Gn1zILSpQWC01
-        WrRkE9Poy0DFiBl1ysSbTmWp/HZPqCaOYKbOFt1jX+Of08BVfgy0jg61pzX3j5/hRR9mlfHlPccZN
-        5q+D2d6sQ==;
+         bh=OoAF9vwIWIQcgx5UcrxtXLEzDcPJ64kC3chNz+6Igus=; b=NLAHcQX2xmKLG2q0l7Ph4IHHm
+        g0dEUPNrCaenU+lq87ESTTrwADiCa8xM5oRjWIVJ+7YkfBybIlAWnbCl+jH/o2Y+IdFCZiLrG2AG9
+        0BNiquc4siOPFazZEM1SHpoBt3BdOZstGZ8OBusQ6XVYZCfxk6dW5KRQ5Ls8GGM+9us0jiPXtGsfO
+        ikd1RanlULfRVaw2LMW3x6eHAq6CgI3JzpkRPnh/WshmSHVIIbU986JVIJGiJOajtlXyyEhbi2PGT
+        jhKLJrA6inLPl39kDSaq/wHd7/Mdbl+cn3tqvBRxBTewQvURXHCqyOf08obk1THt5DKWx25I6fYkB
+        G4kGuI8ig==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN08-0001O6-MX; Sun, 17 Jun 2018 02:01:08 +0000
+        id 1fUN06-0001Mp-NJ; Sun, 17 Jun 2018 02:01:06 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 48/74] shmem: Convert shmem_confirm_swap to XArray
-Date:   Sat, 16 Jun 2018 19:00:26 -0700
-Message-Id: <20180617020052.4759-49-willy@infradead.org>
+Subject: [PATCH v14 44/74] mm: Convert khugepaged_scan_shmem to XArray
+Date:   Sat, 16 Jun 2018 19:00:22 -0700
+Message-Id: <20180617020052.4759-45-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,31 +63,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-xa_load has its own RCU locking, so we can eliminate it here.
+Slightly shorter and easier to read code.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- mm/shmem.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
+ mm/khugepaged.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 2b8720d32e7a..479e4a8e6d68 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -348,12 +348,7 @@ static int shmem_replace_entry(struct address_space *mapping,
- static bool shmem_confirm_swap(struct address_space *mapping,
- 			       pgoff_t index, swp_entry_t swap)
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 43598cc5998b..28579ad0c5fe 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1538,8 +1538,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
+ 		pgoff_t start, struct page **hpage)
  {
--	void *item;
+ 	struct page *page = NULL;
+-	struct radix_tree_iter iter;
+-	void **slot;
++	XA_STATE(xas, &mapping->i_pages, start);
+ 	int present, swap;
+ 	int node = NUMA_NO_NODE;
+ 	int result = SCAN_SUCCEED;
+@@ -1548,17 +1547,11 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
+ 	swap = 0;
+ 	memset(khugepaged_node_load, 0, sizeof(khugepaged_node_load));
+ 	rcu_read_lock();
+-	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
+-		if (iter.index >= start + HPAGE_PMD_NR)
+-			break;
 -
--	rcu_read_lock();
--	item = radix_tree_lookup(&mapping->i_pages, index);
--	rcu_read_unlock();
--	return item == swp_to_radix_entry(swap);
-+	return xa_load(&mapping->i_pages, index) == swp_to_radix_entry(swap);
- }
+-		page = radix_tree_deref_slot(slot);
+-		if (radix_tree_deref_retry(page)) {
+-			slot = radix_tree_iter_retry(&iter);
++	xas_for_each(&xas, page, start + HPAGE_PMD_NR - 1) {
++		if (xas_retry(&xas, page))
+ 			continue;
+-		}
  
- /*
+-		if (radix_tree_exception(page)) {
++		if (xa_is_value(page)) {
+ 			if (++swap > khugepaged_max_ptes_swap) {
+ 				result = SCAN_EXCEED_SWAP_PTE;
+ 				break;
+@@ -1597,7 +1590,7 @@ static void khugepaged_scan_shmem(struct mm_struct *mm,
+ 		present++;
+ 
+ 		if (need_resched()) {
+-			slot = radix_tree_iter_resume(slot, &iter);
++			xas_pause(&xas);
+ 			cond_resched_rcu();
+ 		}
+ 	}
 -- 
 2.17.1
 
