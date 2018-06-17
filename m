@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B713C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:04:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F175AC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:04:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E50AC20891
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD23420891
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:04:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="T/bJ9W1g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E50AC20891
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ekXbeFxc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD23420891
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933898AbeFQCEC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:04:02 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60356 "EHLO
+        id S934800AbeFQCEf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:04:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60318 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934502AbeFQCBf (ORCPT
+        with ESMTP id S934460AbeFQCBe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 22:01:35 -0400
+        Sat, 16 Jun 2018 22:01:34 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uEhl2GVsZi2AzucrCrWLvoJ15vil7guXqBgRqe3hcQw=; b=T/bJ9W1gtAk//W2f7MmM28AhU
-        sjdfVR8H1y2NHYYaEH5hrHoT4+mhVwCVsL8N8RVGaZTawVWRPkr4ZllO8GOAVnM/yt+r2c22VCttQ
-        3Z+866SAC5WLAwzRCVZ/Sh7RydLOqbIU7nfGHaDOGCRmBYNl4tV2HSMAQmmGJsNjjdjYKgdfRdqFA
-        XRrOfcGjPxzrvMKRVAFwjPApVCAXYCugxmVEfZZ8IsVQAmuu/eBpkgjDSBhIsxMbnGkCjtR7STxtf
-        ImtM9h3509LsWMV5DTkROh2mysY7SU9/RsUfqtgUe0ZwuPZiepclyfySo2Hv4pae9ZsOKnXa1Q7bG
-        qKe6w6/Fg==;
+         bh=tEOFzlT+od5bOh/ypS1B0w/JWs8F+t7+Bb3rIKpKXVE=; b=ekXbeFxcrWCKvvU7zDX+ol38A
+        43Vty+N9h9n1RbL4ER3Q/jb6kwujjlJHYpCpdPn5B3WypBVhOWL8tXiycJtM+OZb5xo/M2/DqX220
+        sWc0nLMkzFG/VPkuCxy8afGjp90uN18FEy5nRfbcCksC5hv38VuMbm2R+PUdAGbf/GTX54h3XmPmE
+        4CiiLUtYjWBuDBz4MLwwuI+Jk8LXEsF2g7PjxZ1bGWCHkPeHnmrnK7HbH14z81GDsi0FmGOfoAmkU
+        vhm9hD9ANSvnO9vdJ2pUoqjUzv2KP5vwzfYW/+wFvOgjFhBAge/7aqbMtibL5Sk9O0Q7ak/ZMPPlZ
+        cCQPQ2LKA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN0Y-0001fB-W6; Sun, 17 Jun 2018 02:01:35 +0000
+        id 1fUN0X-0001e8-70; Sun, 17 Jun 2018 02:01:33 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 67/74] dax: Convert dax writeback to XArray
-Date:   Sat, 16 Jun 2018 19:00:45 -0700
-Message-Id: <20180617020052.4759-68-willy@infradead.org>
+Subject: [PATCH v14 65/74] dax: Convert dax_layout_busy_page to XArray
+Date:   Sat, 16 Jun 2018 19:00:43 -0700
+Message-Id: <20180617020052.4759-66-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,193 +63,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use XArray iteration instead of a pagevec.
+Instead of using a pagevec, just use the XArray iterators.  Add a
+conditional rescheduling point which probably should have been there in
+the original.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- fs/dax.c | 130 ++++++++++++++++++++++++++-----------------------------
- 1 file changed, 62 insertions(+), 68 deletions(-)
+ fs/dax.c | 57 +++++++++++++++++++++-----------------------------------
+ 1 file changed, 21 insertions(+), 36 deletions(-)
 
 diff --git a/fs/dax.c b/fs/dax.c
-index fe5cc4470d99..08595ffde566 100644
+index 71181f4bb1d3..7b80b17cba50 100644
 --- a/fs/dax.c
 +++ b/fs/dax.c
-@@ -973,11 +973,9 @@ static void dax_entry_mkclean(struct address_space *mapping, pgoff_t index,
- 	i_mmap_unlock_read(mapping);
- }
- 
--static int dax_writeback_one(struct dax_device *dax_dev,
--		struct address_space *mapping, pgoff_t index, void *entry)
-+static int dax_writeback_one(struct xa_state *xas, struct dax_device *dax_dev,
-+		struct address_space *mapping, void *entry)
+@@ -697,11 +697,10 @@ static void *grab_mapping_entry(struct address_space *mapping, pgoff_t index,
+  */
+ struct page *dax_layout_busy_page(struct address_space *mapping)
  {
--	struct radix_tree_root *pages = &mapping->i_pages;
--	void *entry2, **slot;
- 	unsigned long pfn;
- 	long ret = 0;
- 	size_t size;
-@@ -989,29 +987,35 @@ static int dax_writeback_one(struct dax_device *dax_dev,
- 	if (WARN_ON(!xa_is_value(entry)))
- 		return -EIO;
- 
--	xa_lock_irq(pages);
--	entry2 = get_unlocked_mapping_entry(mapping, index, &slot);
--	/* Entry got punched out / reallocated? */
--	if (!entry2 || WARN_ON_ONCE(!xa_is_value(entry2)))
--		goto put_unlocked;
--	/*
--	 * Entry got reallocated elsewhere? No need to writeback. We have to
--	 * compare pfns as we must not bail out due to difference in lockbit
--	 * or entry type.
--	 */
--	if (dax_to_pfn(entry2) != dax_to_pfn(entry))
--		goto put_unlocked;
--	if (WARN_ON_ONCE(dax_is_empty_entry(entry) ||
--				dax_is_zero_entry(entry))) {
--		ret = -EIO;
--		goto put_unlocked;
-+	if (unlikely(dax_is_locked(entry))) {
-+		void *old_entry = entry;
-+
-+		entry = get_unlocked_entry(xas);
-+
-+		/* Entry got punched out / reallocated? */
-+		if (!entry || WARN_ON_ONCE(!xa_is_value(entry)))
-+			goto put_unlocked;
-+		/*
-+		 * Entry got reallocated elsewhere? No need to writeback.
-+		 * We have to compare pfns as we must not bail out due to
-+		 * difference in lockbit or entry type.
-+		 */
-+		if (dax_to_pfn(old_entry) != dax_to_pfn(entry))
-+			goto put_unlocked;
-+		if (WARN_ON_ONCE(dax_is_empty_entry(entry) ||
-+					dax_is_zero_entry(entry))) {
-+			ret = -EIO;
-+			goto put_unlocked;
-+		}
-+
-+		/* Another fsync thread may have already done this entry */
-+		if (!xas_get_tag(xas, PAGECACHE_TAG_TOWRITE))
-+			goto put_unlocked;
- 	}
- 
--	/* Another fsync thread may have already written back this entry */
--	if (!radix_tree_tag_get(pages, index, PAGECACHE_TAG_TOWRITE))
--		goto put_unlocked;
- 	/* Lock the entry to serialize with page faults */
--	entry = lock_slot(mapping, slot);
-+	dax_lock_entry(xas, entry);
-+
- 	/*
- 	 * We can clear the tag now but we have to be careful so that concurrent
- 	 * dax_writeback_one() calls for the same index cannot finish before we
-@@ -1019,8 +1023,8 @@ static int dax_writeback_one(struct dax_device *dax_dev,
- 	 * at the entry only under the i_pages lock and once they do that
- 	 * they will see the entry locked and wait for it to unlock.
- 	 */
--	radix_tree_tag_clear(pages, index, PAGECACHE_TAG_TOWRITE);
--	xa_unlock_irq(pages);
-+	xas_clear_tag(xas, PAGECACHE_TAG_TOWRITE);
-+	xas_unlock_irq(xas);
- 
- 	/*
- 	 * Even if dax_writeback_mapping_range() was given a wbc->range_start
-@@ -1032,7 +1036,7 @@ static int dax_writeback_one(struct dax_device *dax_dev,
- 	pfn = dax_to_pfn(entry);
- 	size = PAGE_SIZE << dax_entry_order(entry);
- 
--	dax_entry_mkclean(mapping, index, pfn);
-+	dax_entry_mkclean(mapping, xas->xa_index, pfn);
- 	dax_flush(dax_dev, page_address(pfn_to_page(pfn)), size);
- 	/*
- 	 * After we have flushed the cache, we can clear the dirty tag. There
-@@ -1040,16 +1044,18 @@ static int dax_writeback_one(struct dax_device *dax_dev,
- 	 * the pfn mappings are writeprotected and fault waits for mapping
- 	 * entry lock.
- 	 */
--	xa_lock_irq(pages);
--	radix_tree_tag_clear(pages, index, PAGECACHE_TAG_DIRTY);
--	xa_unlock_irq(pages);
--	trace_dax_writeback_one(mapping->host, index, size >> PAGE_SHIFT);
--	put_locked_mapping_entry(mapping, index);
-+	xas_reset(xas);
-+	xas_lock_irq(xas);
-+	xas_store(xas, entry);
-+	xas_clear_tag(xas, PAGECACHE_TAG_DIRTY);
-+	dax_wake_entry(xas, entry, false);
-+
-+	trace_dax_writeback_one(mapping->host, xas->xa_index,
-+			size >> PAGE_SHIFT);
- 	return ret;
- 
-  put_unlocked:
--	put_unlocked_mapping_entry(mapping, index, entry2);
--	xa_unlock_irq(pages);
-+	put_unlocked_entry(xas, entry);
- 	return ret;
- }
- 
-@@ -1061,13 +1067,13 @@ static int dax_writeback_one(struct dax_device *dax_dev,
- int dax_writeback_mapping_range(struct address_space *mapping,
- 		struct block_device *bdev, struct writeback_control *wbc)
- {
-+	XA_STATE(xas, &mapping->i_pages, wbc->range_start >> PAGE_SHIFT);
- 	struct inode *inode = mapping->host;
--	pgoff_t start_index, end_index;
--	pgoff_t indices[PAGEVEC_SIZE];
-+	pgoff_t end_index = wbc->range_end >> PAGE_SHIFT;
- 	struct dax_device *dax_dev;
--	struct pagevec pvec;
--	bool done = false;
--	int i, ret = 0;
+-	pgoff_t	indices[PAGEVEC_SIZE];
++	XA_STATE(xas, &mapping->i_pages, 0);
 +	void *entry;
-+	int ret = 0;
 +	unsigned int scanned = 0;
+ 	struct page *page = NULL;
+-	struct pagevec pvec;
+-	pgoff_t	index, end;
+-	unsigned i;
  
- 	if (WARN_ON_ONCE(inode->i_blkbits != PAGE_SHIFT))
- 		return -EIO;
-@@ -1079,41 +1085,29 @@ int dax_writeback_mapping_range(struct address_space *mapping,
- 	if (!dax_dev)
- 		return -EIO;
- 
--	start_index = wbc->range_start >> PAGE_SHIFT;
--	end_index = wbc->range_end >> PAGE_SHIFT;
--
--	trace_dax_writeback_range(inode, start_index, end_index);
--
--	tag_pages_for_writeback(mapping, start_index, end_index);
-+	trace_dax_writeback_range(inode, xas.xa_index, end_index);
+ 	/*
+ 	 * In the 'limited' case get_user_pages() for dax is disabled.
+@@ -712,13 +711,9 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	if (!dax_mapping(mapping) || !mapping_mapped(mapping))
+ 		return NULL;
  
 -	pagevec_init(&pvec);
--	while (!done) {
--		pvec.nr = find_get_entries_tag(mapping, start_index,
--				PAGECACHE_TAG_TOWRITE, PAGEVEC_SIZE,
--				pvec.pages, indices);
-+	tag_pages_for_writeback(mapping, xas.xa_index, end_index);
+-	index = 0;
+-	end = -1;
+-
+ 	/*
+ 	 * If we race get_user_pages_fast() here either we'll see the
+-	 * elevated page count in the pagevec_lookup and wait, or
++	 * elevated page count in the iteration and wait, or
+ 	 * get_user_pages_fast() will see that the page it took a reference
+ 	 * against is no longer mapped in the page tables and bail to the
+ 	 * get_user_pages() slow path.  The slow path is protected by
+@@ -730,36 +725,26 @@ struct page *dax_layout_busy_page(struct address_space *mapping)
+ 	 */
+ 	unmap_mapping_range(mapping, 0, 0, 1);
  
--		if (pvec.nr == 0)
-+	xas_lock_irq(&xas);
-+	xas_for_each_tagged(&xas, entry, end_index, PAGECACHE_TAG_TOWRITE) {
-+		ret = dax_writeback_one(&xas, dax_dev, mapping, entry);
-+		if (ret < 0) {
-+			mapping_set_error(mapping, ret);
- 			break;
+-	while (index < end && pagevec_lookup_entries(&pvec, mapping, index,
+-				min(end - index, (pgoff_t)PAGEVEC_SIZE),
+-				indices)) {
+-		for (i = 0; i < pagevec_count(&pvec); i++) {
+-			struct page *pvec_ent = pvec.pages[i];
+-			void *entry;
 -
--		for (i = 0; i < pvec.nr; i++) {
--			if (indices[i] > end_index) {
--				done = true;
+-			index = indices[i];
+-			if (index >= end)
 -				break;
--			}
 -
--			ret = dax_writeback_one(dax_dev, mapping, indices[i],
--					pvec.pages[i]);
--			if (ret < 0) {
--				mapping_set_error(mapping, ret);
--				goto out;
--			}
- 		}
--		start_index = indices[pvec.nr - 1] + 1;
+-			if (!xa_is_value(pvec_ent))
+-				continue;
+-
+-			xa_lock_irq(&mapping->i_pages);
+-			entry = get_unlocked_mapping_entry(mapping, index, NULL);
+-			if (entry)
+-				page = dax_busy_page(entry);
+-			put_unlocked_mapping_entry(mapping, index, entry);
+-			xa_unlock_irq(&mapping->i_pages);
+-			if (page)
+-				break;
+-		}
+-		pagevec_remove_exceptionals(&pvec);
+-		pagevec_release(&pvec);
+-		index++;
+-
++	xas_lock_irq(&xas);
++	xas_for_each(&xas, entry, ULONG_MAX) {
++		if (!xa_is_value(entry))
++			continue;
++		if (unlikely(dax_is_locked(entry)))
++			entry = get_unlocked_entry(&xas);
++		if (entry)
++			page = dax_busy_page(entry);
++		put_unlocked_entry(&xas, entry);
+ 		if (page)
+ 			break;
 +		if (++scanned % XA_CHECK_SCHED)
 +			continue;
 +
@@ -258,16 +156,10 @@ index fe5cc4470d99..08595ffde566 100644
 +		cond_resched();
 +		xas_lock_irq(&xas);
  	}
--out:
 +	xas_unlock_irq(&xas);
- 	put_dax(dax_dev);
--	trace_dax_writeback_range_done(inode, start_index, end_index);
--	return (ret < 0 ? ret : 0);
-+	trace_dax_writeback_range_done(inode, xas.xa_index, end_index);
-+	return ret;
+ 	return page;
  }
- EXPORT_SYMBOL_GPL(dax_writeback_mapping_range);
- 
+ EXPORT_SYMBOL_GPL(dax_layout_busy_page);
 -- 
 2.17.1
 
