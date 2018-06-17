@@ -2,121 +2,116 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8553EC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:54:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88795C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:59:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31F4B20891
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:54:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LTCu70ak"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31F4B20891
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E4EA208A6
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:59:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E4EA208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754227AbeFQWyy (ORCPT
+        id S1754246AbeFQW7o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 18:54:54 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46976 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752809AbeFQWyv (ORCPT
+        Sun, 17 Jun 2018 18:59:44 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:41124 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752915AbeFQW7n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 18:54:51 -0400
-Received: by mail-pf0-f193.google.com with SMTP id q1-v6so7212137pff.13;
-        Sun, 17 Jun 2018 15:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=lxETX4DhBQbKYLCrDPYmuMFE6cj3I8bZjDQzt70yHVA=;
-        b=LTCu70akI2I7Umnh0baiy8ipDZsWOXOMYeeQhEFmwPOqVE5Y7qj/G6Wmgn7ftEHQKz
-         mDpP9O3zcMfDP4EOSiYrLVgkIiglMH89jYXa+F1gO+6yQAWzsiK7ebkII9zxWzhvF/Fq
-         AFiN9HxT5wMfN0jzSDauPkZI7Gmi+kSjlJFT44yEm7OyLZ167JX/hl1npE0MFiSzd+88
-         7ntq+yhJIWjNPLkvogl4UkyzrZjUJPxBvOPToAsFQRHccMQgFJRgxPl6CkAFDfeI7Un8
-         7gLeJGQ2tw8c4LoWo+xsDhhPQgJbWvzGzbkiML4gdj9TOvK1hV3fX+xTewh6FCij+oaw
-         RXsQ==
+        Sun, 17 Jun 2018 18:59:43 -0400
+Received: from mr4.cc.vt.edu (mr4.cc.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w5HMxg0C006680
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 18:59:42 -0400
+Received: from mail-qk0-f200.google.com (mail-qk0-f200.google.com [209.85.220.200])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w5HMxbOA017938
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 18:59:42 -0400
+Received: by mail-qk0-f200.google.com with SMTP id w74-v6so13355192qka.4
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 15:59:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=lxETX4DhBQbKYLCrDPYmuMFE6cj3I8bZjDQzt70yHVA=;
-        b=E2yPcEancVhjsFES8QWVqePt6/sluCRe1FepAKr1tR3ueVbsRvBgquMvKE/Ckgh/8O
-         76xPJ8pqCaZsL+/7Su6U8PsxPY1uVl+1kCp9X3lLyFAMSEewF4C6WAKsX7JRu81YIBlC
-         Xdczn0qVThIv/niRJw0sfSlCN/B8rkB1vaI5CMIBgDzif968PRDegYFuI2ZhR73g0ehn
-         4it2WjQntNptQ/XRezbxOTgMi02eQGmYOCdJDEgDr5N/XWnElvXUaKeErBTgwkYULCGm
-         n6gIDyqIYKNfK4s/Y6T6jAB1LKrZ1vw9kjctSNxNByPCIeWzUVqK6y3BqGvO5kZTydey
-         AWgw==
-X-Gm-Message-State: APt69E13RKTX/mX1qJtvDt30/KBxzv+FxSyyPYhMDbQFTRxUqxgIMjbe
-        17mC+e/tuX27NVG64R9HSpRQCZdY
-X-Google-Smtp-Source: ADUXVKLXHK0ldqyiU4eR4kcGdFiudH33CnP3eaE/QqbHAhU3PZXaeD+sbARNvzyA2JWMQ6PEpbqmRw==
-X-Received: by 2002:a62:484d:: with SMTP id v74-v6mr11136702pfa.256.1529276090800;
-        Sun, 17 Jun 2018 15:54:50 -0700 (PDT)
-Received: from [192.168.86.235] (c-67-180-167-114.hsd1.ca.comcast.net. [67.180.167.114])
-        by smtp.gmail.com with ESMTPSA id e1-v6sm16280707pgt.71.2018.06.17.15.54.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jun 2018 15:54:49 -0700 (PDT)
-Subject: Re: [PATCH] Revert "net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are
- friends"
-To:     Andreas Schwab <schwab@linux-m68k.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christophe LEROY <christophe.leroy@c-s.fr>,
-        Meelis Roos <mroos@linux.ee>, netdev@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <20180615185645.8921-1-malat@debian.org>
- <fbb95c11-240c-1a11-0a62-0483908c577e@gmail.com>
- <CA+7wUsysaip70ARGQ7Byg1Zktfg0Y1esjEc9HxBGU4sKL8crhg@mail.gmail.com>
- <9d88677a-f2be-2089-79df-15df4e9a5dd6@gmail.com>
- <m2tvq1672p.fsf@linux-m68k.org>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <e1a9b126-3226-72d0-82b2-b69ca5f59ccb@gmail.com>
-Date:   Sun, 17 Jun 2018 15:54:48 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <m2tvq1672p.fsf@linux-m68k.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=Qml89vVaYb8jJ2wNT2FwAVEIz9TvN0FmcLaRHniq8ZA=;
+        b=k65yRGXMwkHoqYatfAgoA3RtTvuL07sXRZSBz6cweTQTXA+CffKYV6k5QAsItvLp8y
+         EzWwn4Z91tpcyY/rVUMsAKbTvtyPTkU5spDdE12c8GrHFL9A2Qbu6fnBIJaMk55ceVca
+         /nSfiWFNpIU8mBkWUtt77sOTKv0KVq8GHwRU3uipDrXE64LQ22X5Ost5yzF9Pp+KoQaV
+         8NWyqLO42QWwEury/aYCgqD1AUrkTKI7Q6kW9Byt4qjkBkOb4h0geHZAXuuiVAQZLVtC
+         pVtAZTsuLoC9L+I3DucuPEMWUSe3Ug5JnWsL4xcrkwrILk3OH1TLvx8wCEorD6GsTeeg
+         SnCA==
+X-Gm-Message-State: APt69E3eN81rzGKX9BvFCfpKKi6Dm1o/L9kwthESVAgaVbtPJ0BZMCBi
+        qOGUMjHsvlJHytYowQT0gwh1i+xqk/obziMjYYabYBhDHKD9wy64XExKN6tkniliynHDuoqzhHj
+        II63YrDVnXRpTzsthUYop1n1QbMallDeI/74=
+X-Received: by 2002:a0c:964e:: with SMTP id 14-v6mr8798169qvy.98.1529276377374;
+        Sun, 17 Jun 2018 15:59:37 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKKykizX8ndOvUr6YYH4V9FNr7ciUNrV59bZAej36spcW0kg4DhiqPiQKBdzOhDETU4A37S8Kg==
+X-Received: by 2002:a0c:964e:: with SMTP id 14-v6mr8798165qvy.98.1529276377124;
+        Sun, 17 Jun 2018 15:59:37 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341:2116:22ff:b17b:7cd6])
+        by smtp.gmail.com with ESMTPSA id g56-v6sm12961705qta.83.2018.06.17.15.59.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Jun 2018 15:59:34 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Dave Mielke <Dave@mielke.cc>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/4] vt: preserve unicode values corresponding to screen characters
+In-Reply-To: <20180617190706.14614-2-nicolas.pitre@linaro.org>
+References: <20180617190706.14614-1-nicolas.pitre@linaro.org>
+ <20180617190706.14614-2-nicolas.pitre@linaro.org>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1529276384_2593P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
 Content-Transfer-Encoding: 7bit
+Date:   Sun, 17 Jun 2018 18:59:44 -0400
+Message-ID: <117799.1529276384@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+--==_Exmh_1529276384_2593P
+Content-Type: text/plain; charset=us-ascii
 
+On Sun, 17 Jun 2018 15:07:03 -0400, Nicolas Pitre said:
 
-On 06/17/2018 03:27 AM, Andreas Schwab wrote:
+> diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
+> index 1eb1a376a0..7b636638b3 100644
+> --- a/drivers/tty/vt/vt.c
+> +++ b/drivers/tty/vt/vt.c
+> @@ -317,6 +317,171 @@ void schedule_console_callback(void)
+>  	schedule_work(&console_work);
+>  }
+>
+> +/*
+> + * Code to manage unicode-based screen buffers
+> + */
+> +
+> +#ifdef NO_VC_UNI_SCREEN
 
-> 
-> That doesn't change anything.
+This preprocessor variable seems to be dangling in the breeze, with
+no way for it to get set?  As a result, we pick up the #else define by
+default.
 
-OK, thanks !
+--==_Exmh_1529276384_2593P
+Content-Type: application/pgp-signature
 
-Oh this is silly, please try :
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
 
-diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index c642304f178ce0a4e1358d59e45032a39f76fb3f..54dd9c18ecad817812898d6f335e1794a07dabbe 100644
---- a/net/core/skbuff.c
-+++ b/net/core/skbuff.c
-@@ -1845,10 +1845,9 @@ EXPORT_SYMBOL(___pskb_trim);
- int pskb_trim_rcsum_slow(struct sk_buff *skb, unsigned int len)
- {
-        if (skb->ip_summed == CHECKSUM_COMPLETE) {
--               int delta = skb->len - len;
-+               __wsum csumdiff = skb_checksum(skb, len, skb->len - len, 0);
- 
--               skb->csum = csum_sub(skb->csum,
--                                    skb_checksum(skb, len, delta, 0));
-+               skb->csum = csum_block_sub(skb->csum, csumdiff, len);
-        }
-        return __pskb_trim(skb, len);
- }
+iQEVAwUBWybn4I0DS38y7CIcAQI9hgf+KaUp8bw6OLI3BroIso2q62HSKJZJSImI
+bkhkcR5hEODpXgfJfRnIkDhVZ7SgMWxmyHQyF6qWz0eR/5rPCaOo9by9Vyc187LH
+AVidMis4qgQTWYIPGVFICfjNBMSHU2Rya590Tf8B6Cld5SgirKsqQy1ELXwlKJ/4
+b9txVlkYd4pkoi3CTVydFgQ4hu99hfNS5qOFwQIKDPl+nMDLG5JMUCjmjv1JrYnZ
+2s1P5I/wUtqyOBoUrJmaRdcjoyBo1BJ/opdyH5Nz8m6WGMO9vTMcXN2BDrO1fUzt
+qoyIQg7YvO/yN9Hb8tfENoCLYbHndVlt8UXf01vkd3t8dn7G+zy46Q==
+=Gzaz
+-----END PGP SIGNATURE-----
 
-
+--==_Exmh_1529276384_2593P--
