@@ -2,104 +2,112 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B260C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:28:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF0E1C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:34:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4922C20693
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:28:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4922C20693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 575F720693
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 10:34:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="v3Pfky/w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 575F720693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933624AbeFQK2D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 06:28:03 -0400
-Received: from mail-out.m-online.net ([212.18.0.10]:47633 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932679AbeFQK2B (ORCPT
+        id S1754330AbeFQKeV (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 06:34:21 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:44294 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753976AbeFQKeT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 06:28:01 -0400
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 417r5r2sQpz1qvyc;
-        Sun, 17 Jun 2018 12:28:00 +0200 (CEST)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 417r5r25ffz1qqkM;
-        Sun, 17 Jun 2018 12:28:00 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id QOWN7psJjp1o; Sun, 17 Jun 2018 12:27:59 +0200 (CEST)
-X-Auth-Info: rWtJt8g99fRXG+cudho5R53XTVIJCOvQrU4HAnAYPlrxoleNmkzc+GXF9QR4BW4f
-Received: from linux.local (ppp-188-174-159-255.dynamic.mnet-online.de [188.174.159.255])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Sun, 17 Jun 2018 12:27:59 +0200 (CEST)
-Received: by linux.local (Postfix, from userid 501)
-        id 916831E5885; Sun, 17 Jun 2018 12:27:58 +0200 (CEST)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Eric Dumazet <eric.dumazet@gmail.com>
-Cc:     Mathieu Malaterre <malat@debian.org>,
+        Sun, 17 Jun 2018 06:34:19 -0400
+Received: from trochilidae.lan (unknown [37.17.239.3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 955935C019E;
+        Sun, 17 Jun 2018 12:34:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529231657;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=TKu9k3pkXk/ER6SiHJYzujn4jQk3e1WECqrw3PwNOsM=;
+        b=v3Pfky/w1IxwLR6DUZjKow5qFISLwS21Fp4Gz1YHF/+KZnmLdIU5y7TxXdvBuyl+jz7jwc
+        uUEJlwzJqCvQfD61WHfrerRXEC+GtG6cm5iQ5BLL9+H8dfgOh9I0AQlOWfkhK+G0S7VrNf
+        uSDhAMVxm2xnbPHY2yhasO7mJxK7du4=
+From:   Stefan Agner <stefan@agner.ch>
+To:     Kalle Valo <kvalo@codeaurora.org>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Tobias Regnery <tobias.regnery@gmail.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Franky Lin <franky.lin@broadcom.com>,
+        Hante Meuleman <hante.meuleman@broadcom.com>,
+        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
+        Wright Feng <wright.feng@cypress.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Christophe LEROY <christophe.leroy@c-s.fr>,
-        Meelis Roos <mroos@linux.ee>, netdev@vger.kernel.org,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Subject: Re: [PATCH] Revert "net: pskb_trim_rcsum() and CHECKSUM_COMPLETE are friends"
-References: <20180615185645.8921-1-malat@debian.org>
-        <fbb95c11-240c-1a11-0a62-0483908c577e@gmail.com>
-        <CA+7wUsysaip70ARGQ7Byg1Zktfg0Y1esjEc9HxBGU4sKL8crhg@mail.gmail.com>
-        <9d88677a-f2be-2089-79df-15df4e9a5dd6@gmail.com>
-X-Yow:  -- I can do ANYTHING ... I can even ... SHOPLIFT!!
-Date:   Sun, 17 Jun 2018 12:27:58 +0200
-In-Reply-To: <9d88677a-f2be-2089-79df-15df4e9a5dd6@gmail.com> (Eric Dumazet's
-        message of "Sat, 16 Jun 2018 05:45:42 -0700")
-Message-ID: <m2tvq1672p.fsf@linux-m68k.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        linux-wireless@vger.kernel.org,
+        brcm80211-dev-list.pdl@broadcom.com,
+        brcm80211-dev-list@cypress.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] brcm80211: fix wrap around in conversion from constant to s16
+Date:   Sun, 17 Jun 2018 12:33:50 +0200
+Message-Id: <20180617103407.27819-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.1
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[14];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Jun 16 2018, Eric Dumazet <eric.dumazet@gmail.com> wrote:
+The last value in the log_table wraps around to a negative value
+since s16 has a value range of -32768 to 32767. This is not what
+the table intends to represent. Use the closest positive value
+32767.
 
-> I would try something like :
->
-> Basically do not bother using CHECKSUM_COMPLETE for small frames that might have been padded.
->
-> Since we need to bring one cache line in eth_type_trans() and further header processing,
-> computing the checksum in software will be almost free anyway.
->
-> diff --git a/drivers/net/ethernet/sun/sungem.c b/drivers/net/ethernet/sun/sungem.c
-> index 7a16d40a72d13cf1d522e8a3a396c826fe76f9b9..071039f211a8a33153e888bd4014314ba5e686a4 100644
-> --- a/drivers/net/ethernet/sun/sungem.c
-> +++ b/drivers/net/ethernet/sun/sungem.c
-> @@ -855,9 +855,11 @@ static int gem_rx(struct gem *gp, int work_to_do)
->                         skb = copy_skb;
->                 }
->  
-> -               csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
-> -               skb->csum = csum_unfold(csum);
-> -               skb->ip_summed = CHECKSUM_COMPLETE;
-> +               if (len > ETH_ZLEN) {
-> +                       csum = (__force __sum16)htons((status & RXDCTRL_TCPCSUM) ^ 0xffff);
-> +                       skb->csum = csum_unfold(csum);
-> +                       skb->ip_summed = CHECKSUM_COMPLETE;
-> +               }
->                 skb->protocol = eth_type_trans(skb, gp->dev);
->  
->                 napi_gro_receive(&gp->napi, skb);
+This fixes a warning seen with clang:
+drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c:216:2: warning:
+      implicit conversion from 'int' to 's16' (aka 'short') changes
+value from 32768
+      to -32768 [-Wconstant-conversion]
+        32768
+        ^~~~~
+1 warning generated.
 
-That doesn't change anything.
+Fixes: 4c0bfeaae9f9 ("brcmsmac: fix array out-of-bounds access in qm_log10")
+Cc: Tobias Regnery <tobias.regnery@gmail.com>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ .../net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c    | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Andreas.
-
+diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c
+index b9672da24a9d..b24bc57ca91b 100644
+--- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c
++++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/phy/phy_qmath.c
+@@ -213,7 +213,7 @@ static const s16 log_table[] = {
+ 	30498,
+ 	31267,
+ 	32024,
+-	32768
++	32767
+ };
+ 
+ #define LOG_TABLE_SIZE 32       /* log_table size */
 -- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+2.17.1
+
