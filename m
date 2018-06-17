@@ -2,94 +2,110 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 078EFC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 12:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C2A6C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:03:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5F9A208A5
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 12:55:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F9A208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.net
+	by mail.kernel.org (Postfix) with ESMTP id 03A2620863
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 13:03:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="B9VldBEb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03A2620863
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933659AbeFQMzB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 08:55:01 -0400
-Received: from mout.gmx.net ([212.227.17.20]:58351 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933241AbeFQMy7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 08:54:59 -0400
-Received: from longitude ([109.91.33.105]) by mail.gmx.com (mrgmx101
- [212.227.17.168]) with ESMTPSA (Nemesis) id 0Lpfas-1g6bZi03le-00fUhc; Sun, 17
- Jun 2018 14:54:52 +0200
-From:   =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>
-To:     linuxppc-dev@lists.ozlabs.org
-Cc:     =?UTF-8?q?Jonathan=20Neusch=C3=A4fer?= <j.neuschaefer@gmx.net>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        id S933662AbeFQNDo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 09:03:44 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:45232 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933241AbeFQNDm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 09:03:42 -0400
+Received: from trochilidae.lan (unknown [37.17.239.3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id E593A5C002A;
+        Sun, 17 Jun 2018 15:03:39 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529240620;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=KSDO7pvIMo2QkcUx+p1tvfNslYfN4zzKMRszNYUzGkM=;
+        b=B9VldBEb5rtnZLl4gfLQVV1VKutQiVMzUi4uR3N9rsglBJ181ni3QLN16/KbVSKFyjz3wz
+        b0JMwc12s0X3kssNNiqFtYeimPMt/hb/9tov/Rqn8PPw5bm+Hd0rb5i0CxixWciepIBTEm
+        wgAkJ8zBw+414pYYysVvCkhfemXTU74=
+From:   Stefan Agner <stefan@agner.ch>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Stefan Agner <stefan@agner.ch>, netdev@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc: wii: Remove outdated comment about memory fixups
-Date:   Sun, 17 Jun 2018 14:49:06 +0200
-Message-Id: <20180617124909.26828-1-j.neuschaefer@gmx.net>
+Subject: [PATCH] net: hamradio: remove unused variable
+Date:   Sun, 17 Jun 2018 15:03:30 +0200
+Message-Id: <20180617130335.3947-1-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:D/5oVsDoai77aBk0uT3b6uSRqQNmm8e0ycNhS9oW5f9iQVgXtsQ
- fNYJogslQQCNiuymmxE/l7VYT7rXkB6acDR1OfEa9HCF0dzCvzFNxSQ8IHXmLH2wQoAKCcR
- 3kTcdmauthAvkKK8SxxLRZIOG4GErzLe8aTboOmKLGESWbuUieWvJMZA03x3C8f79MMsfSy
- ByK8LHQfN8c6bXTy1cbvA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:0u5vHJGrCGg=:V+qrQRhIqCWPxCLqKd808s
- rK8FKtUcKOF++NURnXRLbTUA4CIm3h0rtJwX35G6vmB5Jnt6l1BLFcCK0g0c4guhepnxy7XNK
- BvcCyL1m3NULZzHEIY3QxCW+9wZnK9jmR9hezLZRALT0o6o27iY7NzzDnUelSm0745LqeccPi
- tcpkhG4T3B8p0aK4ZDCedxfgenmn8e+DgXqnFPqH5zfk+PB6Ades6/oqQB29gjQQawmGHXbch
- IIp2Aa7S837P+7Dfmnyiwlgjlx3Fr7HptbcCe1074jIOgxK8/V6sgiviJsndWExUwiK4UD4Bx
- BmMcNR0OqRjREuDeJeociZoG9rIUSegDQorfJoZEdJ0GUnWA0D1eS8//6IqUHo5UBJiJCqA3k
- lnrifeJAA7aJ66iN/WRh3qXUzZYR6KVMpiLsKxnFl6mXYNYVOxFzSnIYUSy8NjEFK+Xp84FqO
- u4KCJjuq5mHugbg+etykML+5ZYGQAqsHvzjzofFXfSiEKo2DdeD6/oE8eNSqdlxhzfQ1Vs0OL
- V6svzmVejqw8DA/IOmFs4EKbBS72krxIasyJTW5DqhxylnZSgKDWZINNr1Y9uaLBjV2KcXqDE
- 5HV69Xq6uxbjnEb6p3ekOcFbVeb35Us/+oBjwEUpUotJPVEao3VCkbq8eGn2dk3J732WvyxQ+
- JxZV/vg2wmS9ZD1Tz8JlLm1pky1+W5ucHbYeRULMIy7Nbz6VPspssaH8wtB72ylL7alBahXSm
- S/qVOb2FvUNW+R/ojJe38flIdFPCgY/Ca+ILqaXJR75XPDcH4QvPPdWtkXENK13oTXNf4tLTl
- MHwnGvU
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_THREE(0.00)[4];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The workaround has been removed. What stays is just code to find the
-memory hole so the BATs can be configured properly in the function below.
+The array bpq_eth_addr is only used to get the size of an
+address. Remove the array and use the size of the array
+bcast_addr which is actually copied.
 
-Fixes: 57deb8fea01f ("powerpc/wii: Don't rely on the reserved memory hack")
-Signed-off-by: Jonathan Neuschäfer <j.neuschaefer@gmx.net>
+Also constify and tidy up the bcast_addr declaration.
+
+This fixes a warning seen with clang:
+drivers/net/hamradio/bpqether.c:94:13: warning: variable 'bpq_eth_addr' is not
+      needed and will not be emitted [-Wunneeded-internal-declaration]
+static char bpq_eth_addr[6];
+            ^
+1 warning generated.
+
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- arch/powerpc/platforms/embedded6xx/wii.c | 10 ----------
- 1 file changed, 10 deletions(-)
+ drivers/net/hamradio/bpqether.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-diff --git a/arch/powerpc/platforms/embedded6xx/wii.c b/arch/powerpc/platforms/embedded6xx/wii.c
-index fc00d82691e1..a133b70bfe6f 100644
---- a/arch/powerpc/platforms/embedded6xx/wii.c
-+++ b/arch/powerpc/platforms/embedded6xx/wii.c
-@@ -68,16 +68,6 @@ void __init wii_memory_fixups(void)
- {
- 	struct memblock_region *p = memblock.memory.regions;
+diff --git a/drivers/net/hamradio/bpqether.c b/drivers/net/hamradio/bpqether.c
+index f347fd9c5b28..8c9c9977241e 100644
+--- a/drivers/net/hamradio/bpqether.c
++++ b/drivers/net/hamradio/bpqether.c
+@@ -89,9 +89,7 @@
+ static const char banner[] __initconst = KERN_INFO \
+ 	"AX.25: bpqether driver version 004\n";
  
--	/*
--	 * This is part of a workaround to allow the use of two
--	 * discontinuous RAM ranges on the Wii, even if this is
--	 * currently unsupported on 32-bit PowerPC Linux.
--	 *
--	 * We coalesce the two memory ranges of the Wii into a
--	 * single range, then create a reservation for the "hole"
--	 * between both ranges.
--	 */
+-static char bcast_addr[6]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 -
- 	BUG_ON(memblock.memory.cnt != 2);
- 	BUG_ON(!page_aligned(p[0].base) || !page_aligned(p[1].base));
+-static char bpq_eth_addr[6];
++static const char bcast_addr[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
  
+ static int bpq_rcv(struct sk_buff *, struct net_device *, struct packet_type *, struct net_device *);
+ static int bpq_device_event(struct notifier_block *, unsigned long, void *);
+@@ -501,8 +499,8 @@ static int bpq_new_device(struct net_device *edev)
+ 	bpq->ethdev = edev;
+ 	bpq->axdev = ndev;
+ 
+-	memcpy(bpq->dest_addr, bcast_addr, sizeof(bpq_eth_addr));
+-	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bpq_eth_addr));
++	memcpy(bpq->dest_addr, bcast_addr, sizeof(bcast_addr));
++	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bcast_addr));
+ 
+ 	err = register_netdevice(ndev);
+ 	if (err)
 -- 
 2.17.1
 
