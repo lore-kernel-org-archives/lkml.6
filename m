@@ -2,116 +2,125 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42491C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:28:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1864BC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B3920864
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:28:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3B3920864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id B3512208A6
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:46:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="ejgnoLMW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3512208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934390AbeFQU2m (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 16:28:42 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:10978 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933744AbeFQU2k (ORCPT
+        id S934343AbeFQUqM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 16:46:12 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:50304 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754060AbeFQUqI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 16:28:40 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b26c4640000>; Sun, 17 Jun 2018 13:28:20 -0700
-Received: from HQMAIL107.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 17 Jun 2018 13:28:44 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 17 Jun 2018 13:28:44 -0700
-Received: from [10.2.175.123] (10.2.175.123) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Sun, 17 Jun
- 2018 20:28:39 +0000
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-To:     Dan Williams <dan.j.williams@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>
-CC:     <john.hubbard@gmail.com>, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-References: <20180617012510.20139-1-jhubbard@nvidia.com>
- <20180617012510.20139-3-jhubbard@nvidia.com>
- <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
- <20180617200432.krw36wrcwidb25cj@ziepe.ca>
- <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
-Date:   Sun, 17 Jun 2018 13:28:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
-X-Originating-IP: [10.2.175.123]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sun, 17 Jun 2018 16:46:08 -0400
+Received: from trochilidae.lan (unknown [37.17.239.3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 820CC5C1279;
+        Sun, 17 Jun 2018 22:46:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529268366;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Sam56dJzffh/HgwJOXi79xAsu0HRMYX5+/Q/e7SsbuA=;
+        b=ejgnoLMWclzgLXO9X85/k4XE1BSst9XNUGBSHoaSyDgU9YckFdQT0vfwYsOnA6ErT7uLL4
+        pRt34WDP/2BSUprZ388rcfIwSX5+TqrIi6kZQzEst1WjVPAlclVxJQtaraOke6BZPXWpVv
+        alBa1afbjUgr6CxpV4ac0GLEGLrJyd8=
+From:   Stefan Agner <stefan@agner.ch>
+To:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, marek.vasut@gmail.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
+Cc:     dev@lynxeye.de, miquel.raynal@bootlin.com, richard@nod.at,
+        marcel@ziswiler.com, krzk@kernel.org, digetx@gmail.com,
+        benjamin.lindqvist@endian.se, jonathanh@nvidia.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mirza.krak@gmail.com,
+        gaireg@gaireg.de, linux-mtd@lists.infradead.org,
+        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
+Subject: [PATCH v5 1/6] mtd: rawnand: add Reed-Solomon error correction algorithm
+Date:   Sun, 17 Jun 2018 22:46:00 +0200
+Message-Id: <20180617204605.4648-2-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180617204605.4648-1-stefan@agner.ch>
+References: <20180617204605.4648-1-stefan@agner.ch>
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[24];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/17/2018 01:10 PM, Dan Williams wrote:
-> On Sun, Jun 17, 2018 at 1:04 PM, Jason Gunthorpe <jgg@ziepe.ca> wrote:
->> On Sun, Jun 17, 2018 at 12:53:04PM -0700, Dan Williams wrote:
->>>> diff --git a/mm/rmap.c b/mm/rmap.c
->>>> index 6db729dc4c50..37576f0a4645 100644
->>>> +++ b/mm/rmap.c
->>>> @@ -1360,6 +1360,8 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
->>>>                                 flags & TTU_SPLIT_FREEZE, page);
->>>>         }
->>>>
->>>> +       if (PageDmaPinned(page))
->>>> +               return false;
->>>>         /*
->>>>          * We have to assume the worse case ie pmd for invalidation. Note that
->>>>          * the page can not be free in this function as call of try_to_unmap()
->>>
->>> We have a similiar problem with DAX and the conclusion we came to is
->>> that it is not acceptable for userspace to arbitrarily block kernel
->>> actions. The conclusion there was: 'wait' if the DMA is transient, and
->>> 'revoke' if the DMA is long lived, or otherwise 'block' long-lived DMA
->>> if a revocation mechanism is not available.
->>
->> This might be the right answer for certain things, but it shouldn't be
->> the immediate reaction to everthing. There are many user APIs that
->> block kernel actions and hold kernel resources.
->>
->> IMHO, there should be an identifiable objection, eg is blocking going
->> to create a DOS, dead-lock, insecurity, etc?
-> 
-> I believe kernel behavior regression is a primary concern as now
-> fallocate() and truncate() can randomly fail where they didn't before.
-> 
+Add Reed-Solomon (RS) to the enumeration of ECC algorithms.
 
-Yes. However, my thinking was: get_user_pages() can become a way to indicate that 
-these pages are going to be treated specially. In particular, the caller
-does not really want or need to support certain file operations, while the
-page is flagged this way.
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/mtd/nand.txt | 2 +-
+ drivers/mtd/nand/raw/nand_base.c               | 1 +
+ include/linux/mtd/rawnand.h                    | 1 +
+ 3 files changed, 3 insertions(+), 1 deletion(-)
 
-If necessary, we could add a new API call. But either way, I think we could
-reasonably document that "if you pin these pages (either via get_user_pages,
-or some new, similar-looking API call), you can DMA to/from them, and safely
-mark them as dirty when you're done, and the right things will happen. 
-And in the interim, you can expect that the follow file system API calls
-will not behave predictably: fallocate, truncate, ..."
-
-Maybe in the near future, we can remove that last qualification, if we
-find a more comprehensive design for this (as opposed to this cheap fix
-I'm proposing here).
+diff --git a/Documentation/devicetree/bindings/mtd/nand.txt b/Documentation/devicetree/bindings/mtd/nand.txt
+index 8bb11d809429d..eaef8c657aa5c 100644
+--- a/Documentation/devicetree/bindings/mtd/nand.txt
++++ b/Documentation/devicetree/bindings/mtd/nand.txt
+@@ -25,7 +25,7 @@ Optional NAND chip properties:
+ 		  Deprecated values:
+ 		  "soft_bch": use "soft" and nand-ecc-algo instead
+ - nand-ecc-algo: string, algorithm of NAND ECC.
+-		 Supported values are: "hamming", "bch".
++		 Valid values are: "hamming", "bch", "rs".
+ - nand-bus-width : 8 or 16 bus width if not present 8
+ - nand-on-flash-bbt: boolean to enable on flash bbt option if not present false
+ 
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 10c4f9919850c..47e9cb9063da4 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5777,6 +5777,7 @@ static int of_get_nand_ecc_mode(struct device_node *np)
+ static const char * const nand_ecc_algos[] = {
+ 	[NAND_ECC_HAMMING]	= "hamming",
+ 	[NAND_ECC_BCH]		= "bch",
++	[NAND_ECC_RS]		= "rs",
+ };
+ 
+ static int of_get_nand_ecc_algo(struct device_node *np)
+diff --git a/include/linux/mtd/rawnand.h b/include/linux/mtd/rawnand.h
+index 3e8ec3b8a39c7..2d9cb7acbc3d8 100644
+--- a/include/linux/mtd/rawnand.h
++++ b/include/linux/mtd/rawnand.h
+@@ -121,6 +121,7 @@ enum nand_ecc_algo {
+ 	NAND_ECC_UNKNOWN,
+ 	NAND_ECC_HAMMING,
+ 	NAND_ECC_BCH,
++	NAND_ECC_RS,
+ };
+ 
+ /*
+-- 
+2.17.1
 
