@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2248C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D63B4C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640D22086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EDD52086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g3lwimEi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640D22086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P9S9rDSz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EDD52086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1757089AbeFQCSY (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:18:24 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58752 "EHLO
+        id S936482AbeFQCTf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:19:35 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58718 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933604AbeFQCBA (ORCPT
+        with ESMTP id S933506AbeFQCA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 22:01:00 -0400
+        Sat, 16 Jun 2018 22:00:59 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=r5CukERBzeIlr83uJco+d+VA4O1H8AQ0gO0fzR7QlcY=; b=g3lwimEixpXcUgohYChEkZtdz
-        KwtKpKEVIHRsMIDjtXndB528/7mspQy7lemPMRVSf2zv3eeLNbm5RUZCZvdaAG34MfOAUH8dRF2/X
-        U8GfQKTloejRWx4/xhXh2IT2sTkw6R0VSMva1pe3Pc/8FZLkl1mnev7orE9UhVTsSkxlRfd+agKbW
-        Mc5tbBMT0rnlSXj/gWatpCtkdXFfM92SAuhSKjOLiSASHrK/hn9LdNFM1L5lP0n/hcrpRXMJvOgn5
-        O9sXLaa1Hejr0piN9oqWTIcPGLPVp9hJzqG7cyDWRWxFovEh2N9jZlAnTO9w91tb2cMnliW1Q6V5R
-        +sBQNJk4g==;
+         bh=SeRSb0Y9h85iyiF7jwGNJotyxofsAVlcnNE7p5237z8=; b=P9S9rDSzHT9kigYQF2plix5v0
+        4Vb/mYk96kvFcF1w14mVmU/8H+hyphvGf8oxT2WapEt16o/4vr8gRh9UPuDyXla3kgnmR/hwd0QlH
+        aSpool7u9knzjFCcS3L7EN6DbOah5c2nKtOTRIC8GwOVi7Bg70M8ZQjOMDOp5LzBQOOhrD2jPgXDq
+        Lh8A7r2X85ZvaBlc9ZUmdZ5Ux7JavSvSOuneIR1m/mEnJ+tAFf3+DlJmJVV+TjTCMY7SdIRAlSuXq
+        kZuetj1Cb0C+2ErNS2KxJFK0+mgBu8GJwClDJ3nZPVmzsoMgXOE+UOsJK7Nmr4W9mIxbTaWGLZMW4
+        p1xQGQtDw==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN00-0001IZ-6C; Sun, 17 Jun 2018 02:01:00 +0000
+        id 1fUMzz-0001HX-4P; Sun, 17 Jun 2018 02:00:59 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -53,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 27/74] page cache: Convert find_get_pages_contig to XArray
-Date:   Sat, 16 Jun 2018 19:00:05 -0700
-Message-Id: <20180617020052.4759-28-willy@infradead.org>
+Subject: [PATCH v14 22/74] page cache: Add and replace pages using the XArray
+Date:   Sat, 16 Jun 2018 19:00:00 -0700
+Message-Id: <20180617020052.4759-23-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -64,192 +63,271 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's no direct replacement for radix_tree_for_each_contig()
-in the XArray API as it's an unusual thing to do.  Instead,
-open-code a loop using xas_next().  This removes the only user of
-radix_tree_for_each_contig() so delete the iterator from the API and
-the test suite code for it.
+Use the XArray APIs to add and replace pages in the page cache.  This
+removes two uses of the radix tree preload API and is significantly
+shorter code.  It also removes the last user of __radix_tree_create()
+outside radix-tree.c itself, so make it static.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- .clang-format                          |  1 -
- include/linux/radix-tree.h             | 17 ---------
- mm/filemap.c                           | 53 +++++++++++---------------
- tools/testing/radix-tree/regression3.c | 23 -----------
- 4 files changed, 22 insertions(+), 72 deletions(-)
+ include/linux/radix-tree.h |   3 -
+ include/linux/swap.h       |   8 ++-
+ lib/radix-tree.c           |   6 +-
+ mm/filemap.c               | 139 +++++++++++++++----------------------
+ 4 files changed, 66 insertions(+), 90 deletions(-)
 
-diff --git a/.clang-format b/.clang-format
-index faffc0d5af4e..c1de31c6875e 100644
---- a/.clang-format
-+++ b/.clang-format
-@@ -323,7 +323,6 @@ ForEachMacros:
-   - 'protocol_for_each_card'
-   - 'protocol_for_each_dev'
-   - 'queue_for_each_hw_ctx'
--  - 'radix_tree_for_each_contig'
-   - 'radix_tree_for_each_slot'
-   - 'radix_tree_for_each_tagged'
-   - 'rbtree_postorder_for_each_entry_safe'
 diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
-index 4b6f685309fc..eefa0b099dd5 100644
+index f64beb9ba175..4b6f685309fc 100644
 --- a/include/linux/radix-tree.h
 +++ b/include/linux/radix-tree.h
-@@ -522,23 +522,6 @@ static __always_inline void __rcu **radix_tree_next_slot(void __rcu **slot,
- 	     slot || (slot = radix_tree_next_chunk(root, iter, 0)) ;	\
- 	     slot = radix_tree_next_slot(slot, iter, 0))
+@@ -231,9 +231,6 @@ static inline int radix_tree_exception(void *arg)
+ 	return unlikely((unsigned long)arg & RADIX_TREE_ENTRY_MASK);
+ }
  
--/**
-- * radix_tree_for_each_contig - iterate over contiguous slots
-- *
-- * @slot:	the void** variable for pointer to slot
-- * @root:	the struct radix_tree_root pointer
-- * @iter:	the struct radix_tree_iter pointer
-- * @start:	iteration starting index
-- *
-- * @slot points to radix tree slot, @iter->index contains its index.
-- */
--#define radix_tree_for_each_contig(slot, root, iter, start)		\
--	for (slot = radix_tree_iter_init(iter, start) ;			\
--	     slot || (slot = radix_tree_next_chunk(root, iter,		\
--				RADIX_TREE_ITER_CONTIG)) ;		\
--	     slot = radix_tree_next_slot(slot, iter,			\
--				RADIX_TREE_ITER_CONTIG))
--
- /**
-  * radix_tree_for_each_tagged - iterate over tagged slots
+-int __radix_tree_create(struct radix_tree_root *, unsigned long index,
+-			unsigned order, struct radix_tree_node **nodep,
+-			void __rcu ***slotp);
+ int __radix_tree_insert(struct radix_tree_root *, unsigned long index,
+ 			unsigned order, void *);
+ static inline int radix_tree_insert(struct radix_tree_root *root,
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index f73eafcaf4e9..1b91e7f7bdeb 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -300,8 +300,12 @@ void *workingset_eviction(struct address_space *mapping, struct page *page);
+ bool workingset_refault(void *shadow);
+ void workingset_activation(struct page *page);
+ 
+-/* Do not use directly, use workingset_lookup_update */
+-void workingset_update_node(struct radix_tree_node *node);
++/* Only track the nodes of mappings with shadow entries */
++void workingset_update_node(struct xa_node *node);
++#define mapping_set_update(xas, mapping) do {				\
++	if (!dax_mapping(mapping) && !shmem_mapping(mapping))		\
++		xas_set_update(xas, workingset_update_node);		\
++} while (0)
+ 
+ /* Returns workingset_update_node() if the mapping has shadow entries. */
+ #define workingset_lookup_update(mapping)				\
+diff --git a/lib/radix-tree.c b/lib/radix-tree.c
+index f7785f7cbd5f..5c8a262f506c 100644
+--- a/lib/radix-tree.c
++++ b/lib/radix-tree.c
+@@ -740,9 +740,9 @@ static bool delete_node(struct radix_tree_root *root,
   *
+  *	Returns -ENOMEM, or 0 for success.
+  */
+-int __radix_tree_create(struct radix_tree_root *root, unsigned long index,
+-			unsigned order, struct radix_tree_node **nodep,
+-			void __rcu ***slotp)
++static int __radix_tree_create(struct radix_tree_root *root,
++		unsigned long index, unsigned order,
++		struct radix_tree_node **nodep, void __rcu ***slotp)
+ {
+ 	struct radix_tree_node *node = NULL, *child;
+ 	void __rcu **slot = (void __rcu **)&root->xa_head;
 diff --git a/mm/filemap.c b/mm/filemap.c
-index 019c263bb6be..8a69613fcdf3 100644
+index 8de36e14e22f..965ff68e5b8d 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1721,57 +1721,43 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
- unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
- 			       unsigned int nr_pages, struct page **pages)
- {
--	struct radix_tree_iter iter;
+@@ -111,35 +111,6 @@
+  *   ->tasklist_lock            (memory_failure, collect_procs_ao)
+  */
+ 
+-static int page_cache_tree_insert(struct address_space *mapping,
+-				  struct page *page, void **shadowp)
+-{
+-	struct radix_tree_node *node;
 -	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, index);
-+	struct page *page;
- 	unsigned int ret = 0;
- 
- 	if (unlikely(!nr_pages))
- 		return 0;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_contig(slot, &mapping->i_pages, &iter, index) {
--		struct page *head, *page;
--repeat:
--		page = radix_tree_deref_slot(slot);
--		/* The hole, there no reason to continue */
--		if (unlikely(!page))
--			break;
+-	int error;
 -
--		if (radix_tree_exception(page)) {
--			if (radix_tree_deref_retry(page)) {
--				slot = radix_tree_iter_retry(&iter);
--				continue;
--			}
--			/*
--			 * A shadow entry of a recently evicted page,
--			 * or a swap entry from shmem/tmpfs.  Stop
--			 * looking for contiguous pages.
--			 */
-+	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
-+		struct page *head;
-+		if (xas_retry(&xas, page))
-+			continue;
-+		/*
-+		 * If the entry has been swapped out, we can stop looking.
-+		 * No current caller is looking for DAX entries.
-+		 */
-+		if (xa_is_value(page))
- 			break;
--		}
- 
- 		head = compound_head(page);
- 		if (!page_cache_get_speculative(head))
--			goto repeat;
-+			goto retry;
- 
- 		/* The page was split under us? */
--		if (compound_head(page) != head) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (compound_head(page) != head)
-+			goto put_page;
- 
- 		/* Has the page moved? */
--		if (unlikely(page != *slot)) {
--			put_page(head);
--			goto repeat;
--		}
-+		if (unlikely(page != xas_reload(&xas)))
-+			goto put_page;
- 
- 		/*
- 		 * must check mapping and index after taking the ref.
- 		 * otherwise we can get both false positives and false
- 		 * negatives, which is just confusing to the caller.
- 		 */
--		if (page->mapping == NULL || page_to_pgoff(page) != iter.index) {
-+		if (!page->mapping || page_to_pgoff(page) != xas.xa_index) {
- 			put_page(page);
- 			break;
- 		}
-@@ -1779,6 +1765,11 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
- 		pages[ret] = page;
- 		if (++ret == nr_pages)
- 			break;
-+		continue;
-+put_page:
-+		put_page(head);
-+retry:
-+		xas_reset(&xas);
- 	}
- 	rcu_read_unlock();
- 	return ret;
-diff --git a/tools/testing/radix-tree/regression3.c b/tools/testing/radix-tree/regression3.c
-index ace2543c3eda..9f9a3b280f56 100644
---- a/tools/testing/radix-tree/regression3.c
-+++ b/tools/testing/radix-tree/regression3.c
-@@ -69,21 +69,6 @@ void regression3_test(void)
- 			continue;
- 		}
- 	}
--	radix_tree_delete(&root, 1);
+-	error = __radix_tree_create(&mapping->i_pages, page->index, 0,
+-				    &node, &slot);
+-	if (error)
+-		return error;
+-	if (*slot) {
+-		void *p;
 -
--	first = true;
--	radix_tree_for_each_contig(slot, &root, &iter, 0) {
--		printv(2, "contig %ld %p\n", iter.index, *slot);
--		if (first) {
--			radix_tree_insert(&root, 1, ptr);
--			first = false;
--		}
--		if (radix_tree_deref_retry(*slot)) {
--			printv(2, "retry at %ld\n", iter.index);
--			slot = radix_tree_iter_retry(&iter);
--			continue;
--		}
+-		p = radix_tree_deref_slot_protected(slot,
+-						    &mapping->i_pages.xa_lock);
+-		if (!xa_is_value(p))
+-			return -EEXIST;
+-
+-		mapping->nrexceptional--;
+-		if (shadowp)
+-			*shadowp = p;
 -	}
+-	__radix_tree_replace(&mapping->i_pages, node, slot, page,
+-			     workingset_lookup_update(mapping));
+-	mapping->nrpages++;
+-	return 0;
+-}
+-
+ static void page_cache_tree_delete(struct address_space *mapping,
+ 				   struct page *page, void *shadow)
+ {
+@@ -775,51 +746,44 @@ EXPORT_SYMBOL(file_write_and_wait_range);
+  * locked.  This function does not add the new page to the LRU, the
+  * caller must do that.
+  *
+- * The remove + add is atomic.  The only way this function can fail is
+- * memory allocation failure.
++ * The remove + add is atomic.  This function cannot fail.
+  */
+ int replace_page_cache_page(struct page *old, struct page *new, gfp_t gfp_mask)
+ {
+-	int error;
++	struct address_space *mapping = old->mapping;
++	void (*freepage)(struct page *) = mapping->a_ops->freepage;
++	pgoff_t offset = old->index;
++	XA_STATE(xas, &mapping->i_pages, offset);
++	unsigned long flags;
  
- 	radix_tree_for_each_slot(slot, &root, &iter, 0) {
- 		printv(2, "slot %ld %p\n", iter.index, *slot);
-@@ -93,14 +78,6 @@ void regression3_test(void)
- 		}
+ 	VM_BUG_ON_PAGE(!PageLocked(old), old);
+ 	VM_BUG_ON_PAGE(!PageLocked(new), new);
+ 	VM_BUG_ON_PAGE(new->mapping, new);
+ 
+-	error = radix_tree_preload(gfp_mask & GFP_RECLAIM_MASK);
+-	if (!error) {
+-		struct address_space *mapping = old->mapping;
+-		void (*freepage)(struct page *);
+-		unsigned long flags;
+-
+-		pgoff_t offset = old->index;
+-		freepage = mapping->a_ops->freepage;
++	get_page(new);
++	new->mapping = mapping;
++	new->index = offset;
+ 
+-		get_page(new);
+-		new->mapping = mapping;
+-		new->index = offset;
++	xas_lock_irqsave(&xas, flags);
++	xas_store(&xas, new);
+ 
+-		xa_lock_irqsave(&mapping->i_pages, flags);
+-		__delete_from_page_cache(old, NULL);
+-		error = page_cache_tree_insert(mapping, new, NULL);
+-		BUG_ON(error);
+-
+-		/*
+-		 * hugetlb pages do not participate in page cache accounting.
+-		 */
+-		if (!PageHuge(new))
+-			__inc_node_page_state(new, NR_FILE_PAGES);
+-		if (PageSwapBacked(new))
+-			__inc_node_page_state(new, NR_SHMEM);
+-		xa_unlock_irqrestore(&mapping->i_pages, flags);
+-		mem_cgroup_migrate(old, new);
+-		radix_tree_preload_end();
+-		if (freepage)
+-			freepage(old);
+-		put_page(old);
+-	}
++	old->mapping = NULL;
++	/* hugetlb pages do not participate in page cache accounting. */
++	if (!PageHuge(old))
++		__dec_node_page_state(new, NR_FILE_PAGES);
++	if (!PageHuge(new))
++		__inc_node_page_state(new, NR_FILE_PAGES);
++	if (PageSwapBacked(old))
++		__dec_node_page_state(new, NR_SHMEM);
++	if (PageSwapBacked(new))
++		__inc_node_page_state(new, NR_SHMEM);
++	xas_unlock_irqrestore(&xas, flags);
++	mem_cgroup_migrate(old, new);
++	if (freepage)
++		freepage(old);
++	put_page(old);
+ 
+-	return error;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(replace_page_cache_page);
+ 
+@@ -828,12 +792,15 @@ static int __add_to_page_cache_locked(struct page *page,
+ 				      pgoff_t offset, gfp_t gfp_mask,
+ 				      void **shadowp)
+ {
++	XA_STATE(xas, &mapping->i_pages, offset);
+ 	int huge = PageHuge(page);
+ 	struct mem_cgroup *memcg;
+ 	int error;
++	void *old;
+ 
+ 	VM_BUG_ON_PAGE(!PageLocked(page), page);
+ 	VM_BUG_ON_PAGE(PageSwapBacked(page), page);
++	mapping_set_update(&xas, mapping);
+ 
+ 	if (!huge) {
+ 		error = mem_cgroup_try_charge(page, current->mm,
+@@ -842,39 +809,47 @@ static int __add_to_page_cache_locked(struct page *page,
+ 			return error;
  	}
  
--	radix_tree_for_each_contig(slot, &root, &iter, 0) {
--		printv(2, "contig %ld %p\n", iter.index, *slot);
--		if (!iter.index) {
--			printv(2, "next at %ld\n", iter.index);
--			slot = radix_tree_iter_resume(slot, &iter);
--		}
+-	error = radix_tree_maybe_preload(gfp_mask & GFP_RECLAIM_MASK);
+-	if (error) {
+-		if (!huge)
+-			mem_cgroup_cancel_charge(page, memcg, false);
+-		return error;
 -	}
 -
- 	radix_tree_tag_set(&root, 0, 0);
- 	radix_tree_tag_set(&root, 1, 0);
- 	radix_tree_for_each_tagged(slot, &root, &iter, 0, 0) {
+ 	get_page(page);
+ 	page->mapping = mapping;
+ 	page->index = offset;
+ 
+-	xa_lock_irq(&mapping->i_pages);
+-	error = page_cache_tree_insert(mapping, page, shadowp);
+-	radix_tree_preload_end();
+-	if (unlikely(error))
+-		goto err_insert;
++	do {
++		xas_lock_irq(&xas);
++		old = xas_load(&xas);
++		if (old && !xa_is_value(old))
++			xas_set_err(&xas, -EEXIST);
++		xas_store(&xas, page);
++		if (xas_error(&xas))
++			goto unlock;
++
++		if (xa_is_value(old)) {
++			mapping->nrexceptional--;
++			if (shadowp)
++				*shadowp = old;
++		}
++		mapping->nrpages++;
++
++		/* hugetlb pages do not participate in page cache accounting */
++		if (!huge)
++			__inc_node_page_state(page, NR_FILE_PAGES);
++unlock:
++		xas_unlock_irq(&xas);
++	} while (xas_nomem(&xas, gfp_mask & GFP_RECLAIM_MASK));
++
++	if (xas_error(&xas))
++		goto error;
+ 
+-	/* hugetlb pages do not participate in page cache accounting. */
+-	if (!huge)
+-		__inc_node_page_state(page, NR_FILE_PAGES);
+-	xa_unlock_irq(&mapping->i_pages);
+ 	if (!huge)
+ 		mem_cgroup_commit_charge(page, memcg, false, false);
+ 	trace_mm_filemap_add_to_page_cache(page);
+ 	return 0;
+-err_insert:
++error:
+ 	page->mapping = NULL;
+ 	/* Leave page->index set: truncation relies upon it */
+-	xa_unlock_irq(&mapping->i_pages);
+ 	if (!huge)
+ 		mem_cgroup_cancel_charge(page, memcg, false);
+ 	put_page(page);
+-	return error;
++	return xas_error(&xas);
+ }
+ 
+ /**
 -- 
 2.17.1
 
