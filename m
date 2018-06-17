@@ -2,470 +2,525 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	T_DKIMWL_WL_MED,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7591AC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 06:20:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E32C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 06:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0508920896
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 06:20:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 312C820864
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 06:35:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fORyCoRy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0508920896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=dev-mellanox-co-il.20150623.gappssmtp.com header.i=@dev-mellanox-co-il.20150623.gappssmtp.com header.b="zQM8e9Ol"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 312C820864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dev.mellanox.co.il
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754210AbeFQGUX (ORCPT
+        id S1754298AbeFQGfY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 02:20:23 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:37442 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753569AbeFQGUV (ORCPT
+        Sun, 17 Jun 2018 02:35:24 -0400
+Received: from mail-wr0-f196.google.com ([209.85.128.196]:39900 "EHLO
+        mail-wr0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753695AbeFQGfV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 02:20:21 -0400
-Received: by mail-io0-f194.google.com with SMTP id s26-v6so14162586ioj.4
-        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 23:20:21 -0700 (PDT)
+        Sun, 17 Jun 2018 02:35:21 -0400
+Received: by mail-wr0-f196.google.com with SMTP id w7-v6so13592473wrn.6
+        for <linux-kernel@vger.kernel.org>; Sat, 16 Jun 2018 23:35:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Sx5RvJEFkgfQt+xoEgf8dADPcvg/IOK+Fqtm6cQw5wc=;
-        b=fORyCoRygF8y83sormog7bISa0re79WFM6J31vfqFuN0Qjhre9f2M4Ukv/x3BViq3Y
-         Q3l1OD7JMDp4BSCw3frqFgOWzxcy8+NpnYqdZnnhFQR8gZJ7C0Bquh82nkIrGkXlJjK6
-         9dRz9S3cWDIJgdHQ4Fz+V03TMDS5myJVaugkvbYkEp0QjpIjbVTHtiVtwRAyHrY+A8cz
-         uZUeUXCqZDzlYlSfOAq8DygSVLmA2RImwa6sDxZjcxllBWZEFj3MZHmpfqBiOKyUwPT9
-         5hGiStRw2Hd2HC3GrainkKjai87vjfe4t7m5U1ryT4X+iJYxQz0v1ErvBL/nE21QE1BO
-         utyA==
+        d=dev-mellanox-co-il.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=bo6yWoKwdm1qXJz537I+5CDM3rZM5vQp5V8BKzr1AEg=;
+        b=zQM8e9OlJ81+66JRguBSuKt/mkBCCmsaXr/NlL7n4N6D22LqoFqcIb//3j9FXj6fcw
+         ZlH1lNsAUvDvbKaRA8fNpwoMF+8gge+WOjcM+ZVLsa8/+mNwqIKh9CbAu7x5sMaeUrVM
+         R2x8kKGXwx9g2+eOxFeazXdhIoWuQ7RXdaMMy+4SGmr2WFCNSUS8JrB+ZiICWHZnMu26
+         fRJUzGq3NXSUQNVTBFPpHXtXgDyM3T6dQ4iKY1ysby+neD/zgN9JGQ3IWfByWUDMqSoH
+         lV5egHXXwh0jrVMRqaNI1rqD0TR38GOZoZu6ox87xTE2as1A6naB4l5MH2i5tt7B+wKD
+         Mx9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Sx5RvJEFkgfQt+xoEgf8dADPcvg/IOK+Fqtm6cQw5wc=;
-        b=PfHgi5D7z9g+TQ1+w9DwL9IReVtsQg3wnE37eeaf3qaAfhOrYhK5dXffwkuPwthPUk
-         UYZkvYkLqadoZl//3O23znfr7Mo3SX3pYe6kiyryw+JBtdePoPziTsjq4FcgvPDsuyz9
-         bNRThaIZolPtOemvLegKhAac/dZfJdVNrXZ5iQ/kfPGgIm18NKvSd6dCCIWbJwklg0WT
-         KFeZJqQfwXevtFK2YbQd8mp5nRKcQ+Vms/5/6VgpI6JDpfQNT1BSU5SHPrcqaCm22uXQ
-         kVZOQAI4HpYRzadhih4LzpEkFopMk0YM6Ee/pqsVNBiF7QGau530l6lQ9hTtAwQpWg5Q
-         UyNg==
-X-Gm-Message-State: APt69E2VQO1YFBMXWe0Ig8PIT5TmJVIxE8RDQQjjpuAPt1cFhACFGXwH
-        rAkPsGURINDb1NRbOgvNgmLZ+PGstqfT6ajtsYdO2A==
-X-Google-Smtp-Source: ADUXVKLArwdoYNSvJwQMTQqe03XlDF722oANxNtG0LhcJ8faJyfZpbfHt1/AXqIdFc6NJZ7kxCqEJ1iMiC1VFto8V+c=
-X-Received: by 2002:a6b:a7cc:: with SMTP id q195-v6mr6297768ioe.130.1529216420891;
- Sat, 16 Jun 2018 23:20:20 -0700 (PDT)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=bo6yWoKwdm1qXJz537I+5CDM3rZM5vQp5V8BKzr1AEg=;
+        b=RZ9L/hY/+7pVh4WObKh7KWUVc8GX/XA5ATDjLlLc1Z0fcCrvT6zjqoB8duWh3sHCtQ
+         aC09C+gOawbFv0tdDTOnSYTBrRBzoj54HUf5H600qhI9hes75dn0pcgoby5Iefxd8tbj
+         r73I6is79fpE1gqrYfaspM1d5cazMGJi9CMvlTGVh3O2Y22avW78s0iCzjIvEs3ZKQFP
+         9zB+vjtLDl3D6FSv1Uemv9dPdsQ9b6TzBCmcwUwkhuWVyXZxL/yV+qb1he2yuCItrY9Y
+         G6485xpYF7Ymr4AamrD2vJgNlR4Q7+Xc8lDb8mUJaLWh65m9/SLHRYDagij4mtDDqNHp
+         M8RQ==
+X-Gm-Message-State: APt69E1S93YxHEF9gABueJDWI5Fnzmm6IBkm1E42BoNyFea3bdgzBskq
+        lQboUztgZbpgrA+P/koDcGJuXA==
+X-Google-Smtp-Source: ADUXVKL5qUiN16yIOF1IGChSA8RM+4BItL0iVSn4l1XX4W3rAINwO1roJWSKsgViccCnT1y7HAInEw==
+X-Received: by 2002:adf:858f:: with SMTP id 15-v6mr6951493wrt.31.1529217320183;
+        Sat, 16 Jun 2018 23:35:20 -0700 (PDT)
+Received: from localhost ([141.226.180.24])
+        by smtp.gmail.com with ESMTPSA id l84-v6sm6777240wmi.3.2018.06.16.23.35.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 16 Jun 2018 23:35:19 -0700 (PDT)
+Date:   Sun, 17 Jun 2018 09:35:15 +0300
+From:   jackm <jackm@dev.mellanox.co.il>
+To:     Julia Lawall <julia.lawall@lip6.fr>
+Cc:     Hans Westgaard Ry <hans.westgaard.ry@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Hakon Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Wei Wang <wei.w.wang@intel.com>,
+        Chris Mi <chrism@mellanox.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kbuild-all@01.org
+Subject: Re: [PATCH v3 2/2] IB/mad: Use ID allocator routines to allocate
+ agent number (fwd)
+Message-ID: <20180617093515.000043b8@dev.mellanox.co.il>
+In-Reply-To: <alpine.DEB.2.20.1806161803360.2838@hadrien>
+References: <alpine.DEB.2.20.1806161803360.2838@hadrien>
+Organization: Mellanox
+X-Mailer: Claws Mail 3.15.0 (GTK+ 2.24.31; i686-w64-mingw32)
 MIME-Version: 1.0
-References: <20180611195744.154962-1-astrachan@google.com> <87bmcgpzno.fsf@xmission.com>
- <CANDihLFmc21Ox_pe9S+oimiZcHB-hQLkv4avF7nReu+QjjL2Zg@mail.gmail.com>
- <87fu1svynb.fsf@xmission.com> <874li3pg2u.fsf_-_@xmission.com> <87lgbem8aw.fsf_-_@xmission.com>
-In-Reply-To: <87lgbem8aw.fsf_-_@xmission.com>
-From:   Alistair Strachan <astrachan@google.com>
-Date:   Sat, 16 Jun 2018 23:20:09 -0700
-Message-ID: <CANDihLH6cXC+qQ5qm8dm3FnF1Wxv=RF3LsQMaoXggsWH=hscDw@mail.gmail.com>
-Subject: Re: [PATCH v2] proc: Simplify and fix proc by removing the kernel mount
-To:     "Eric W. Biederman" <ebiederm@xmission.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Seth Forshee <seth.forshee@canonical.com>,
-        Djalal Harouni <tixxdz@gmail.com>, kernel-team@android.com,
-        linux-kernel@vger.kernel.org, containers@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+On Sat, 16 Jun 2018 18:04:41 +0200 (CEST)
+Julia Lawall <julia.lawall@lip6.fr> wrote:
 
-Thanks a lot for looking into this problem.
+> ib_mad_client_id is declared as u32, so it will not be < 0 (line 382).
+> 
+> julia
+> 
+Julia, your are correct.
+However, I was under the impression that this patch set was abandoned
+in favor of the one submitted by Matthew Wilcox! (Convert IB/mad to use
+an IDR for agent IDs)
 
-On Sat, Jun 16, 2018 at 7:55 PM Eric W. Biederman <ebiederm@xmission.com> wrote:
->
->
-> Today there are three users of proc_mnt.
-> - The legacy sysctl system call implementation.
-> - The uml mconsole driver.
-> - The process cleanup function proc_flush_task.
->
-> The first two are slow path and essentially unused.  I expect soon we
-> will be able to remove the legacy sysctl system call entirely.  To
-> keep them working for now a new wrapper file_open_proc_is added to
-> mount and unmount proc around file_open_root.  Which nicely removes
-> the need for a always mounted proc instance for these cases.
->
-> Handling proc_flush_task which is regularly used requires a little more
-> work.  First I optimize proc_flush_task to do nothing where there is
-> evidence that there are no entries in proc, by looking at pid->count.
-> Then I carefully update proc_fill_super and proc_kill_sb to maintain a
-> ns->proc_super pointer to the super block for proc.  This allows
-> proc_flush_task to find the appropriate instance of proc via rcu.
->
-> Once the appropriate instance of proc is found in proc_flush_task
-> atomic_inc_not_zero is used to increase the s_active count ensuring
-> proc_kill_sb will not be called, until the superblock is deactivated.
-> This makes it safe to inspect the instance of proc and invalidate any
-> dentries that mention the exiting task.
->
-> The two extra atomics operations in exit are not my favorite but given
-> that exit is already almost completely serialized with the task lock I
-> do not expect this change will be measurable.
->
-> The benefit for all of this change is that one of the most error prone
-> and tricky parts of the pid namespace implementation, maintaining
-> kernel mounts of proc is removed.
->
-> In addition removing the unnecessary complexity of the kernel mount
-> fixes a regression that caused the proc mount options to be ignored.
-> Now that the initial mount of proc comes from userspace, those mount
-> options are again honored.  This fixes Android's usage of the proc
-> hidepid option.
->
-> Reported-by: Alistair Strachan <astrachan@google.com>
-> Cc: stable@vger.kernel.org
-> Fixes: e94591d0d90c ("proc: Convert proc_mount to use mount_ns.")
-> Signed-off-by: "Eric W. Biederman" <ebiederm@xmission.com>
+Hans, Matthew?
+
+-Jack
+> ---------- Forwarded message ----------
+> Date: Fri, 8 Jun 2018 08:49:57 +0800
+> From: kbuild test robot <lkp@intel.com>
+> To: kbuild@01.org
+> Cc: Julia Lawall <julia.lawall@lip6.fr>
+> Subject: Re: [PATCH v3 2/2] IB/mad: Use ID allocator routines to
+> allocate agent number
+> 
+> Hi Hans,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v4.17]
+> [if your patch is applied to the wrong git tree, please drop us a
+> note to help improve the system]
+> 
+> url:
+> https://github.com/0day-ci/linux/commits/Hans-Westgaard-Ry/IB-mad-Use-ID-allocator-routines-to-allocate-agent-number/20180608-022348 ::::::
+> branch date: 6 hours ago :::::: commit date: 6 hours ago
+> 
+> >> drivers/infiniband/core/mad.c:382:5-21: WARNING: Unsigned
+> >> expression compared with zero: ib_mad_client_id < 0  
+> 
+> #
+> https://github.com/0day-ci/linux/commit/74b1ba09003c9d132878734bf44f32a62bad31db
+> git remote add linux-review https://github.com/0day-ci/linux git
+> remote update linux-review git checkout
+> 74b1ba09003c9d132878734bf44f32a62bad31db vim +382
+> drivers/infiniband/core/mad.c
+> 
+> 2527e681 Sean Hefty        2006-07-20  190
+> ^1da177e Linus Torvalds    2005-04-16  191  /*
+> ^1da177e Linus Torvalds    2005-04-16  192   * ib_register_mad_agent
+> - Register to send/receive MADs ^1da177e Linus Torvalds
+> 2005-04-16  193   */ ^1da177e Linus Torvalds    2005-04-16  194
+> struct ib_mad_agent *ib_register_mad_agent(struct ib_device *device,
+> ^1da177e Linus Torvalds    2005-04-16  195
+> 					   u8 port_num, ^1da177e
+> Linus Torvalds    2005-04-16  196
+> 					   enum ib_qp_type qp_type,
+> ^1da177e Linus Torvalds    2005-04-16  197
+> 					   struct ib_mad_reg_req
+> *mad_reg_req, ^1da177e Linus Torvalds    2005-04-16  198
+> 					   u8 rmpp_version, ^1da177e
+> Linus Torvalds    2005-04-16  199
+> 					   ib_mad_send_handler
+> send_handler, ^1da177e Linus Torvalds    2005-04-16  200
+> 					   ib_mad_recv_handler
+> recv_handler, 0f29b46d Ira Weiny         2014-08-08  201
+> 					   void *context, 0f29b46d
+> Ira Weiny         2014-08-08  202
+> 					   u32 registration_flags)
+> ^1da177e Linus Torvalds    2005-04-16  203  { ^1da177e Linus
+> Torvalds    2005-04-16  204  	struct ib_mad_port_private
+> *port_priv; ^1da177e Linus Torvalds    2005-04-16  205
+> struct ib_mad_agent *ret = ERR_PTR(-EINVAL); ^1da177e Linus
+> Torvalds    2005-04-16  206  	struct ib_mad_agent_private
+> *mad_agent_priv; ^1da177e Linus Torvalds    2005-04-16  207
+> struct ib_mad_reg_req *reg_req = NULL; ^1da177e Linus Torvalds
+> 2005-04-16  208  	struct ib_mad_mgmt_class_table *class;
+> ^1da177e Linus Torvalds    2005-04-16  209  	struct
+> ib_mad_mgmt_vendor_class_table *vendor; ^1da177e Linus Torvalds
+> 2005-04-16  210  	struct ib_mad_mgmt_vendor_class
+> *vendor_class; ^1da177e Linus Torvalds    2005-04-16  211
+> struct ib_mad_mgmt_method_table *method; ^1da177e Linus Torvalds
+> 2005-04-16  212  	int ret2, qpn; ^1da177e Linus Torvalds
+> 2005-04-16  213  	unsigned long flags; ^1da177e Linus
+> Torvalds    2005-04-16  214  	u8 mgmt_class, vclass; 74b1ba09
+> Hans Westgaard Ry 2018-06-07  215  	u32 ib_mad_client_id;
+> ^1da177e Linus Torvalds    2005-04-16  216  	/* Validate
+> parameters */ ^1da177e Linus Torvalds    2005-04-16  217  	qpn
+> = get_spl_qp_index(qp_type); 9ad13a42 Ira Weiny         2014-08-08
+> 218  	if (qpn == -1) { 9ad13a42 Ira Weiny         2014-08-08
+> 219  		dev_notice(&device->dev, 9ad13a42 Ira
+> Weiny         2014-08-08  220
+> "ib_register_mad_agent: invalid QP Type %d\n", 9ad13a42 Ira
+> Weiny         2014-08-08  221  			   qp_type);
+> ^1da177e Linus Torvalds    2005-04-16  222  		goto
+> error1; 9ad13a42 Ira Weiny         2014-08-08  223  	}
+> ^1da177e Linus Torvalds    2005-04-16  224 9ad13a42 Ira Weiny
+> 2014-08-08  225  	if (rmpp_version && rmpp_version !=
+> IB_MGMT_RMPP_VERSION) { 9ad13a42 Ira Weiny         2014-08-08  226
+> 		dev_notice(&device->dev, 9ad13a42 Ira Weiny
+> 2014-08-08  227  			   "ib_register_mad_agent:
+> invalid RMPP Version %u\n", 9ad13a42 Ira Weiny         2014-08-08
+> 228  			   rmpp_version); fa619a77 Hal
+> Rosenstock    2005-07-27  229  		goto error1; 9ad13a42
+> Ira Weiny         2014-08-08  230  	} ^1da177e Linus
+> Torvalds    2005-04-16  231 ^1da177e Linus Torvalds    2005-04-16
+> 232  	/* Validate MAD registration request if supplied */
+> ^1da177e Linus Torvalds    2005-04-16  233  	if (mad_reg_req)
+> { 9ad13a42 Ira Weiny         2014-08-08  234  		if
+> (mad_reg_req->mgmt_class_version >= MAX_MGMT_VERSION) { 9ad13a42 Ira
+> Weiny         2014-08-08  235
+> dev_notice(&device->dev, 9ad13a42 Ira Weiny         2014-08-08  236
+> 				   "ib_register_mad_agent: invalid
+> Class Version %u\n", 9ad13a42 Ira Weiny         2014-08-08  237
+> 				   mad_reg_req->mgmt_class_version);
+> ^1da177e Linus Torvalds    2005-04-16  238
+> goto error1; 9ad13a42 Ira Weiny         2014-08-08  239
+> 		} 9ad13a42 Ira Weiny         2014-08-08  240
+> 		if (!recv_handler) { 9ad13a42 Ira Weiny
+> 2014-08-08  241  			dev_notice(&device->dev,
+> 9ad13a42 Ira Weiny         2014-08-08  242
+> 				   "ib_register_mad_agent: no
+> recv_handler\n"); ^1da177e Linus Torvalds    2005-04-16  243
+> 			goto error1; 9ad13a42 Ira Weiny
+> 2014-08-08  244  		} ^1da177e Linus Torvalds
+> 2005-04-16  245  		if (mad_reg_req->mgmt_class >=
+> MAX_MGMT_CLASS) { ^1da177e Linus Torvalds    2005-04-16  246
+> 			/* ^1da177e Linus Torvalds    2005-04-16
+> 247  			 * IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE is
+> the only ^1da177e Linus Torvalds    2005-04-16  248
+> 			 * one in this range currently allowed
+> ^1da177e Linus Torvalds    2005-04-16  249
+> */ ^1da177e Linus Torvalds    2005-04-16  250
+> 			if (mad_reg_req->mgmt_class != 9ad13a42 Ira
+> Weiny         2014-08-08  251
+> IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE) { 9ad13a42 Ira Weiny
+> 2014-08-08  252
+> dev_notice(&device->dev, 9ad13a42 Ira Weiny         2014-08-08  253
+> 					   "ib_register_mad_agent:
+> Invalid Mgmt Class 0x%x\n", 9ad13a42 Ira Weiny         2014-08-08
+> 254
+> mad_reg_req->mgmt_class); ^1da177e Linus Torvalds    2005-04-16  255
+> 				goto error1; 9ad13a42 Ira
+> Weiny         2014-08-08  256  			} ^1da177e
+> Linus Torvalds    2005-04-16  257  		} else if
+> (mad_reg_req->mgmt_class == 0) { ^1da177e Linus Torvalds
+> 2005-04-16  258  			/* ^1da177e Linus
+> Torvalds    2005-04-16  259  			 * Class 0 is
+> reserved in IBA and is used for ^1da177e Linus Torvalds
+> 2005-04-16  260  			 * aliasing of
+> IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE ^1da177e Linus Torvalds
+> 2005-04-16  261  			 */ 9ad13a42 Ira
+> Weiny         2014-08-08  262
+> dev_notice(&device->dev, 9ad13a42 Ira Weiny         2014-08-08  263
+> 				   "ib_register_mad_agent: Invalid
+> Mgmt Class 0\n"); ^1da177e Linus Torvalds    2005-04-16  264
+> 			goto error1; ^1da177e Linus Torvalds
+> 2005-04-16  265  		} else if
+> (is_vendor_class(mad_reg_req->mgmt_class)) { ^1da177e Linus
+> Torvalds    2005-04-16  266  			/* ^1da177e
+> Linus Torvalds    2005-04-16  267  			 * If
+> class is in "new" vendor range, ^1da177e Linus Torvalds
+> 2005-04-16  268  			 * ensure supplied OUI is
+> not zero ^1da177e Linus Torvalds    2005-04-16  269
+> 			 */ 9ad13a42 Ira Weiny         2014-08-08
+> 270  			if (!is_vendor_oui(mad_reg_req->oui))
+> { 9ad13a42 Ira Weiny         2014-08-08  271
+> 				dev_notice(&device->dev, 9ad13a42 Ira
+> Weiny         2014-08-08  272
+> 					   "ib_register_mad_agent: No
+> OUI specified for class 0x%x\n", 9ad13a42 Ira Weiny
+> 2014-08-08  273
+> mad_reg_req->mgmt_class); ^1da177e Linus Torvalds    2005-04-16  274
+> 				goto error1; ^1da177e Linus
+> Torvalds    2005-04-16  275  			} 9ad13a42 Ira
+> Weiny         2014-08-08  276  		} 618a3c03 Hal
+> Rosenstock    2006-03-28  277  		/* Make sure class
+> supplied is consistent with RMPP */ 64cb9c6a Hal Rosenstock
+> 2006-04-12  278  		if
+> (!ib_is_mad_class_rmpp(mad_reg_req->mgmt_class)) { 9ad13a42 Ira
+> Weiny         2014-08-08  279  			if
+> (rmpp_version) { 9ad13a42 Ira Weiny         2014-08-08  280
+> 				dev_notice(&device->dev, 9ad13a42 Ira
+> Weiny         2014-08-08  281
+> 					   "ib_register_mad_agent:
+> RMPP version for non-RMPP class 0x%x\n", 9ad13a42 Ira Weiny
+> 2014-08-08  282
+> mad_reg_req->mgmt_class); 618a3c03 Hal Rosenstock    2006-03-28  283
+> 				goto error1; 618a3c03 Hal
+> Rosenstock    2006-03-28  284  			} 9ad13a42 Ira
+> Weiny         2014-08-08  285  		} 1471cb6c Ira
+> Weiny         2014-08-08  286 ^1da177e Linus Torvalds    2005-04-16
+> 287  		/* Make sure class supplied is consistent with
+> QP type */ ^1da177e Linus Torvalds    2005-04-16  288
+> 		if (qp_type == IB_QPT_SMI) { ^1da177e Linus
+> Torvalds    2005-04-16  289  			if
+> ((mad_reg_req->mgmt_class != ^1da177e Linus Torvalds    2005-04-16
+> 290
+> IB_MGMT_CLASS_SUBN_LID_ROUTED) && ^1da177e Linus Torvalds
+> 2005-04-16  291
+> (mad_reg_req->mgmt_class != 9ad13a42 Ira Weiny         2014-08-08
+> 292
+> IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE)) { 9ad13a42 Ira Weiny
+> 2014-08-08  293
+> dev_notice(&device->dev, 9ad13a42 Ira Weiny         2014-08-08  294
+> 					   "ib_register_mad_agent:
+> Invalid SM QP type: class 0x%x\n", 9ad13a42 Ira Weiny
+> 2014-08-08  295
+> mad_reg_req->mgmt_class); ^1da177e Linus Torvalds    2005-04-16  296
+> 				goto error1; 9ad13a42 Ira
+> Weiny         2014-08-08  297  			} ^1da177e
+> Linus Torvalds    2005-04-16  298  		} else { ^1da177e
+> Linus Torvalds    2005-04-16  299  			if
+> ((mad_reg_req->mgmt_class == ^1da177e Linus Torvalds    2005-04-16
+> 300
+> IB_MGMT_CLASS_SUBN_LID_ROUTED) || ^1da177e Linus Torvalds
+> 2005-04-16  301  			    (mad_reg_req->mgmt_class
+> == 9ad13a42 Ira Weiny         2014-08-08  302
+> 					IB_MGMT_CLASS_SUBN_DIRECTED_ROUTE))
+> { 9ad13a42 Ira Weiny         2014-08-08  303
+> 				dev_notice(&device->dev, 9ad13a42 Ira
+> Weiny         2014-08-08  304
+> 					   "ib_register_mad_agent:
+> Invalid GS QP type: class 0x%x\n", 9ad13a42 Ira Weiny
+> 2014-08-08  305
+> mad_reg_req->mgmt_class); ^1da177e Linus Torvalds    2005-04-16  306
+> 				goto error1; ^1da177e Linus
+> Torvalds    2005-04-16  307  			} 9ad13a42 Ira
+> Weiny         2014-08-08  308  		} ^1da177e Linus
+> Torvalds    2005-04-16  309  	} else { ^1da177e Linus
+> Torvalds    2005-04-16  310  		/* No registration
+> request supplied */ ^1da177e Linus Torvalds    2005-04-16  311
+> 		if (!send_handler) ^1da177e Linus Torvalds
+> 2005-04-16  312  			goto error1; 1471cb6c Ira
+> Weiny         2014-08-08  313  		if (registration_flags
+> & IB_MAD_USER_RMPP) 1471cb6c Ira Weiny         2014-08-08  314
+> 			goto error1; ^1da177e Linus Torvalds
+> 2005-04-16  315  	} ^1da177e Linus Torvalds    2005-04-16  316
+> ^1da177e Linus Torvalds    2005-04-16  317  	/* Validate
+> device and port */ ^1da177e Linus Torvalds    2005-04-16  318
+> 	port_priv = ib_get_mad_port(device, port_num); ^1da177e Linus
+> Torvalds    2005-04-16  319  	if (!port_priv) { f57e8ca5 Yuval
+> Shaia       2017-01-19  320  		dev_notice(&device->dev,
+> f57e8ca5 Yuval Shaia       2017-01-19  321
+> 			   "ib_register_mad_agent: Invalid port
+> %d\n", f57e8ca5 Yuval Shaia       2017-01-19  322
+> 			   port_num); ^1da177e Linus Torvalds
+> 2005-04-16  323  		ret = ERR_PTR(-ENODEV); ^1da177e
+> Linus Torvalds    2005-04-16  324  		goto error1;
+> ^1da177e Linus Torvalds    2005-04-16  325  	} ^1da177e Linus
+> Torvalds    2005-04-16  326 c8367c4c Ira Weiny         2011-05-19
+> 327  	/* Verify the QP requested is supported.  For example,
+> Ethernet devices c8367c4c Ira Weiny         2011-05-19  328
+> * will not have QP0 */ c8367c4c Ira Weiny         2011-05-19  329
+> 	if (!port_priv->qp_info[qpn].qp) { 9ad13a42 Ira Weiny
+> 2014-08-08  330  		dev_notice(&device->dev, 9ad13a42
+> Ira Weiny         2014-08-08  331
+> "ib_register_mad_agent: QP %d not supported\n", qpn); c8367c4c Ira
+> Weiny         2011-05-19  332  		ret =
+> ERR_PTR(-EPROTONOSUPPORT); c8367c4c Ira Weiny         2011-05-19
+> 333  		goto error1; c8367c4c Ira Weiny
+> 2011-05-19  334  	} c8367c4c Ira Weiny         2011-05-19  335
+> ^1da177e Linus Torvalds    2005-04-16  336  	/* Allocate
+> structures */ de6eb66b Roland Dreier     2005-11-02  337
+> mad_agent_priv = kzalloc(sizeof *mad_agent_priv, GFP_KERNEL);
+> ^1da177e Linus Torvalds    2005-04-16  338  	if
+> (!mad_agent_priv) { ^1da177e Linus Torvalds    2005-04-16  339
+> 		ret = ERR_PTR(-ENOMEM); ^1da177e Linus Torvalds
+> 2005-04-16  340  		goto error1; ^1da177e Linus
+> Torvalds    2005-04-16  341  	} b82cab6b Hal Rosenstock
+> 2005-07-27  342 ^1da177e Linus Torvalds    2005-04-16  343
+> if (mad_reg_req) { 9893e742 Julia Lawall      2010-05-15  344
+> 		reg_req = kmemdup(mad_reg_req, sizeof *reg_req,
+> GFP_KERNEL); ^1da177e Linus Torvalds    2005-04-16  345
+> 		if (!reg_req) { ^1da177e Linus Torvalds
+> 2005-04-16  346  			ret = ERR_PTR(-ENOMEM);
+> b82cab6b Hal Rosenstock    2005-07-27  347
+> goto error3; ^1da177e Linus Torvalds    2005-04-16  348
+> 		} ^1da177e Linus Torvalds    2005-04-16  349
+> 	} ^1da177e Linus Torvalds    2005-04-16  350 ^1da177e Linus
+> Torvalds    2005-04-16  351  	/* Now, fill in the various
+> structures */ ^1da177e Linus Torvalds    2005-04-16  352
+> mad_agent_priv->qp_info = &port_priv->qp_info[qpn]; ^1da177e Linus
+> Torvalds    2005-04-16  353  	mad_agent_priv->reg_req =
+> reg_req; fa619a77 Hal Rosenstock    2005-07-27  354
+> mad_agent_priv->agent.rmpp_version = rmpp_version; ^1da177e Linus
+> Torvalds    2005-04-16  355  	mad_agent_priv->agent.device =
+> device; ^1da177e Linus Torvalds    2005-04-16  356
+> mad_agent_priv->agent.recv_handler = recv_handler; ^1da177e Linus
+> Torvalds    2005-04-16  357
+> mad_agent_priv->agent.send_handler = send_handler; ^1da177e Linus
+> Torvalds    2005-04-16  358  	mad_agent_priv->agent.context =
+> context; ^1da177e Linus Torvalds    2005-04-16  359
+> mad_agent_priv->agent.qp = port_priv->qp_info[qpn].qp; ^1da177e Linus
+> Torvalds    2005-04-16  360  	mad_agent_priv->agent.port_num =
+> port_num; 0f29b46d Ira Weiny         2014-08-08  361
+> mad_agent_priv->agent.flags = registration_flags; d9620a4c Ralph
+> Campbell    2009-02-27  362
+> spin_lock_init(&mad_agent_priv->lock); d9620a4c Ralph Campbell
+> 2009-02-27  363  	INIT_LIST_HEAD(&mad_agent_priv->send_list);
+> d9620a4c Ralph Campbell    2009-02-27  364
+> INIT_LIST_HEAD(&mad_agent_priv->wait_list); d9620a4c Ralph
+> Campbell    2009-02-27  365
+> INIT_LIST_HEAD(&mad_agent_priv->done_list); d9620a4c Ralph
+> Campbell    2009-02-27  366
+> INIT_LIST_HEAD(&mad_agent_priv->rmpp_list); d9620a4c Ralph
+> Campbell    2009-02-27  367
+> INIT_DELAYED_WORK(&mad_agent_priv->timed_work, timeout_sends);
+> d9620a4c Ralph Campbell    2009-02-27  368
+> INIT_LIST_HEAD(&mad_agent_priv->local_list); d9620a4c Ralph
+> Campbell    2009-02-27  369
+> INIT_WORK(&mad_agent_priv->local_work, local_completions); d9620a4c
+> Ralph Campbell    2009-02-27  370
+> atomic_set(&mad_agent_priv->refcount, 1); d9620a4c Ralph Campbell
+> 2009-02-27  371  	init_completion(&mad_agent_priv->comp);
+> ^1da177e Linus Torvalds    2005-04-16  372 47a2b338 Daniel Jurgens
+> 2017-05-19  373  	ret2 =
+> ib_mad_agent_security_setup(&mad_agent_priv->agent, qp_type);
+> 47a2b338 Daniel Jurgens    2017-05-19  374  	if (ret2)
+> { 47a2b338 Daniel Jurgens    2017-05-19  375  		ret =
+> ERR_PTR(ret2); 47a2b338 Daniel Jurgens    2017-05-19  376
+> 		goto error4; 47a2b338 Daniel Jurgens    2017-05-19
+> 377  	} 74b1ba09 Hans Westgaard Ry 2018-06-07  378
+> ib_mad_client_id = ida_simple_get_cyclic(&ib_mad_client_ids, 74b1ba09
+> Hans Westgaard Ry 2018-06-07  379
+> 						1, 74b1ba09 Hans
+> Westgaard Ry 2018-06-07  380
+> 						BIT(24) - 1, 74b1ba09
+> Hans Westgaard Ry 2018-06-07  381
+> 						GFP_KERNEL); 74b1ba09
+> Hans Westgaard Ry 2018-06-07 @382  	if (ib_mad_client_id < 0)
+> { 74b1ba09 Hans Westgaard Ry 2018-06-07  383
+> pr_err("Couldn't allocate agent tid; errcode: %#x\n", 74b1ba09 Hans
+> Westgaard Ry 2018-06-07  384
+> ib_mad_client_id); 74b1ba09 Hans Westgaard Ry 2018-06-07  385
+> 		ret = ERR_PTR(ib_mad_client_id); 74b1ba09 Hans
+> Westgaard Ry 2018-06-07  386  		goto error4; 74b1ba09
+> Hans Westgaard Ry 2018-06-07  387  	} 74b1ba09 Hans Westgaard
+> Ry 2018-06-07  388  	mad_agent_priv->agent.hi_tid =
+> ib_mad_client_id; 47a2b338 Daniel Jurgens    2017-05-19  389 ^1da177e
+> Linus Torvalds    2005-04-16  390
+> spin_lock_irqsave(&port_priv->reg_lock, flags); ^1da177e Linus
+> Torvalds    2005-04-16  391 ^1da177e Linus Torvalds    2005-04-16
+> 392  	/* ^1da177e Linus Torvalds    2005-04-16  393
+> * Make sure MAD registration (if supplied) ^1da177e Linus Torvalds
+> 2005-04-16  394  	 * is non overlapping with any existing ones
+> ^1da177e Linus Torvalds    2005-04-16  395  	 */ ^1da177e
+> Linus Torvalds    2005-04-16  396  	if (mad_reg_req)
+> { ^1da177e Linus Torvalds    2005-04-16  397
+> mgmt_class = convert_mgmt_class(mad_reg_req->mgmt_class); ^1da177e
+> Linus Torvalds    2005-04-16  398  		if
+> (!is_vendor_class(mgmt_class)) { ^1da177e Linus Torvalds
+> 2005-04-16  399  			class =
+> port_priv->version[mad_reg_req-> ^1da177e Linus Torvalds
+> 2005-04-16  400
+> mgmt_class_version].class; ^1da177e Linus Torvalds    2005-04-16
+> 401  			if (class) { ^1da177e Linus Torvalds
+> 2005-04-16  402  				method =
+> class->method_table[mgmt_class]; ^1da177e Linus Torvalds
+> 2005-04-16  403  				if (method)
+> { ^1da177e Linus Torvalds    2005-04-16  404
+> 					if (method_in_use(&method,
+> ^1da177e Linus Torvalds    2005-04-16  405
+> 							   mad_reg_req))
+> 47a2b338 Daniel Jurgens    2017-05-19  406
+> 						goto error5; ^1da177e
+> Linus Torvalds    2005-04-16  407  				}
+> ^1da177e Linus Torvalds    2005-04-16  408  			}
+> ^1da177e Linus Torvalds    2005-04-16  409
+> ret2 = add_nonoui_reg_req(mad_reg_req, mad_agent_priv, ^1da177e Linus
+> Torvalds    2005-04-16  410
+> 						  mgmt_class);
+> ^1da177e Linus Torvalds    2005-04-16  411  		} else
+> { ^1da177e Linus Torvalds    2005-04-16  412
+> 			/* "New" vendor class range */ ^1da177e Linus
+> Torvalds    2005-04-16  413  			vendor =
+> port_priv->version[mad_reg_req-> ^1da177e Linus Torvalds
+> 2005-04-16  414
+> mgmt_class_version].vendor; ^1da177e Linus Torvalds    2005-04-16
+> 415  			if (vendor) { ^1da177e Linus Torvalds
+> 2005-04-16  416  				vclass =
+> vendor_class_index(mgmt_class); ^1da177e Linus Torvalds
+> 2005-04-16  417  				vendor_class =
+> vendor->vendor_class[vclass]; ^1da177e Linus Torvalds    2005-04-16
+> 418  				if (vendor_class) { ^1da177e
+> Linus Torvalds    2005-04-16  419
+> 					if
+> (is_vendor_method_in_use( ^1da177e Linus Torvalds    2005-04-16  420
+> 							vendor_class,
+> ^1da177e Linus Torvalds    2005-04-16  421
+> 							mad_reg_req))
+> 47a2b338 Daniel Jurgens    2017-05-19  422
+> 						goto error5; ^1da177e
+> Linus Torvalds    2005-04-16  423  				}
+> ^1da177e Linus Torvalds    2005-04-16  424  			}
+> ^1da177e Linus Torvalds    2005-04-16  425
+> ret2 = add_oui_reg_req(mad_reg_req, mad_agent_priv); ^1da177e Linus
+> Torvalds    2005-04-16  426  		} ^1da177e Linus
+> Torvalds    2005-04-16  427  		if (ret2) { ^1da177e
+> Linus Torvalds    2005-04-16  428  			ret =
+> ERR_PTR(ret2); 47a2b338 Daniel Jurgens    2017-05-19  429
+> 			goto error5; ^1da177e Linus Torvalds
+> 2005-04-16  430  		} ^1da177e Linus Torvalds
+> 2005-04-16  431  	} ^1da177e Linus Torvalds    2005-04-16  432
+> ^1da177e Linus Torvalds    2005-04-16  433  	/* Add mad agent
+> into port's agent list */ ^1da177e Linus Torvalds    2005-04-16  434
+> 	list_add_tail(&mad_agent_priv->agent_list,
+> &port_priv->agent_list); ^1da177e Linus Torvalds    2005-04-16  435
+> 	spin_unlock_irqrestore(&port_priv->reg_lock, flags); ^1da177e
+> Linus Torvalds    2005-04-16  436 ^1da177e Linus Torvalds
+> 2005-04-16  437  	return &mad_agent_priv->agent; 47a2b338
+> Daniel Jurgens    2017-05-19  438  error5: ^1da177e Linus Torvalds
+> 2005-04-16  439  	spin_unlock_irqrestore(&port_priv->reg_lock,
+> flags); 47a2b338 Daniel Jurgens    2017-05-19  440
+> ib_mad_agent_security_cleanup(&mad_agent_priv->agent); 74b1ba09 Hans
+> Westgaard Ry 2018-06-07  441
+> ida_simple_remove(&ib_mad_client_ids, ib_mad_client_id); 74b1ba09
+> Hans Westgaard Ry 2018-06-07  442 47a2b338 Daniel Jurgens
+> 2017-05-19  443  error4: ^1da177e Linus Torvalds    2005-04-16  444
+> 	kfree(reg_req); b82cab6b Hal Rosenstock    2005-07-27  445
+> error3: 2012a116 Adrian Bunk       2005-11-27  446
+> kfree(mad_agent_priv); ^1da177e Linus Torvalds    2005-04-16  447
+> error1: ^1da177e Linus Torvalds    2005-04-16  448  	return
+> ret; ^1da177e Linus Torvalds    2005-04-16  449  } ^1da177e Linus
+> Torvalds    2005-04-16  450  EXPORT_SYMBOL(ib_register_mad_agent);
+> ^1da177e Linus Torvalds    2005-04-16  451
+> 
 > ---
->
-> Alistair if you can test and confirm this fixes your issue I will add
-> your tested by and send the fix to Linus.
+> 0-DAY kernel test infrastructure                Open Source
+> Technology Center
+> https://lists.01.org/pipermail/kbuild-all                   Intel
+> Corporation
 
-I tested v2 with both UML and qemu-system-x86_64 / ARCH=x86_64 against
-4.18-rc1, 4.14 and 4.9 and I couldn't break it. The hidepid problem is
-resolved, and the mount flags can now only be specified on the first
-userspace mount for that pid namespace.
-
-Tested-by: Alistair Strachan <astrachan@google.com>
-
-> Since my earlier posting I have spot tested this.  Fixed a few bugs that
-> showed up and verified my changes work.  So I think this is ready to go
-> unless someone looks at this and in testing or code review spots a bug.
-
-Agreed!
-
-> Eric
->
->  arch/um/drivers/mconsole_kern.c |  4 ++--
->  fs/proc/base.c                  | 36 ++++++++++++++++++++++++++-------
->  fs/proc/inode.c                 |  5 ++++-
->  fs/proc/root.c                  | 28 ++++++++++---------------
->  include/linux/pid_namespace.h   |  3 +--
->  include/linux/proc_ns.h         |  7 ++-----
->  kernel/pid.c                    |  8 --------
->  kernel/pid_namespace.c          |  7 -------
->  kernel/sysctl_binary.c          |  5 ++---
->  9 files changed, 51 insertions(+), 52 deletions(-)
->
-> diff --git a/arch/um/drivers/mconsole_kern.c b/arch/um/drivers/mconsole_kern.c
-> index d5f9a2d1da1b..36af0e02d56b 100644
-> --- a/arch/um/drivers/mconsole_kern.c
-> +++ b/arch/um/drivers/mconsole_kern.c
-> @@ -27,6 +27,7 @@
->  #include <linux/file.h>
->  #include <linux/uaccess.h>
->  #include <asm/switch_to.h>
-> +#include <linux/proc_ns.h>
->
->  #include <init.h>
->  #include <irq_kern.h>
-> @@ -124,7 +125,6 @@ void mconsole_log(struct mc_request *req)
->
->  void mconsole_proc(struct mc_request *req)
->  {
-> -       struct vfsmount *mnt = task_active_pid_ns(current)->proc_mnt;
->         char *buf;
->         int len;
->         struct file *file;
-> @@ -135,7 +135,7 @@ void mconsole_proc(struct mc_request *req)
->         ptr += strlen("proc");
->         ptr = skip_spaces(ptr);
->
-> -       file = file_open_root(mnt->mnt_root, mnt, ptr, O_RDONLY, 0);
-> +       file = file_open_proc(ptr, O_RDONLY, 0);
->         if (IS_ERR(file)) {
->                 mconsole_reply(req, "Failed to open file", 1, 0);
->                 printk(KERN_ERR "open /proc/%s: %ld\n", ptr, PTR_ERR(file));
-> diff --git a/fs/proc/base.c b/fs/proc/base.c
-> index 1b2ede6abcdf..cd7b68a64ed1 100644
-> --- a/fs/proc/base.c
-> +++ b/fs/proc/base.c
-> @@ -3052,7 +3052,7 @@ static const struct inode_operations proc_tgid_base_inode_operations = {
->         .permission     = proc_pid_permission,
->  };
->
-> -static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
-> +static void proc_flush_task_root(struct dentry *proc_root, pid_t pid, pid_t tgid)
->  {
->         struct dentry *dentry, *leader, *dir;
->         char buf[10 + 1];
-> @@ -3061,7 +3061,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
->         name.name = buf;
->         name.len = snprintf(buf, sizeof(buf), "%u", pid);
->         /* no ->d_hash() rejects on procfs */
-> -       dentry = d_hash_and_lookup(mnt->mnt_root, &name);
-> +       dentry = d_hash_and_lookup(proc_root, &name);
->         if (dentry) {
->                 d_invalidate(dentry);
->                 dput(dentry);
-> @@ -3072,7 +3072,7 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
->
->         name.name = buf;
->         name.len = snprintf(buf, sizeof(buf), "%u", tgid);
-> -       leader = d_hash_and_lookup(mnt->mnt_root, &name);
-> +       leader = d_hash_and_lookup(proc_root, &name);
->         if (!leader)
->                 goto out;
->
-> @@ -3102,8 +3102,8 @@ static void proc_flush_task_mnt(struct vfsmount *mnt, pid_t pid, pid_t tgid)
->   * @task: task that should be flushed.
->   *
->   * When flushing dentries from proc, one needs to flush them from global
-> - * proc (proc_mnt) and from all the namespaces' procs this task was seen
-> - * in. This call is supposed to do all of this job.
-> + * proc and from all the namespaces' procs this task was seen in. This call
-> + * is supposed to do all of this job.
->   *
->   * Looks in the dcache for
->   * /proc/@pid
-> @@ -3127,15 +3127,37 @@ void proc_flush_task(struct task_struct *task)
->         int i;
->         struct pid *pid, *tgid;
->         struct upid *upid;
-> +       int expected = 1;
->
->         pid = task_pid(task);
->         tgid = task_tgid(task);
-> +       if (thread_group_leader(task)) {
-> +               if (task_pgrp(task) == pid)
-> +                       expected++;
-> +               if (task_session(task) == pid)
-> +                       expected++;
-> +       }
-> +
-> +       /* Nothing to do if proc inodes have not take a reference to pid */
-> +       if (atomic_read(&pid->count) == expected)
-> +               return;
->
-> +       rcu_read_lock();
->         for (i = 0; i <= pid->level; i++) {
-> +               struct super_block *sb;
->                 upid = &pid->numbers[i];
-> -               proc_flush_task_mnt(upid->ns->proc_mnt, upid->nr,
-> -                                       tgid->numbers[i].nr);
-> +
-> +               sb = rcu_dereference(upid->ns->proc_super);
-> +               if (!sb || !atomic_inc_not_zero(&sb->s_active))
-> +                       continue;
-> +               rcu_read_unlock();
-> +
-> +               proc_flush_task_root(sb->s_root, upid->nr, tgid->numbers[i].nr);
-> +               deactivate_super(sb);
-> +
-> +               rcu_read_lock();
->         }
-> +       rcu_read_unlock();
->  }
->
->  static int proc_pid_instantiate(struct inode *dir,
-> diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-> index 2cf3b74391ca..1dd9514fa068 100644
-> --- a/fs/proc/inode.c
-> +++ b/fs/proc/inode.c
-> @@ -532,5 +532,8 @@ int proc_fill_super(struct super_block *s, void *data, int silent)
->         if (ret) {
->                 return ret;
->         }
-> -       return proc_setup_thread_self(s);
-> +       ret = proc_setup_thread_self(s);
-> +
-> +       rcu_assign_pointer(ns->proc_super, s);
-> +       return ret;
->  }
-> diff --git a/fs/proc/root.c b/fs/proc/root.c
-> index 61b7340b357a..59ca06c386a0 100644
-> --- a/fs/proc/root.c
-> +++ b/fs/proc/root.c
-> @@ -89,14 +89,7 @@ int proc_remount(struct super_block *sb, int *flags, char *data)
->  static struct dentry *proc_mount(struct file_system_type *fs_type,
->         int flags, const char *dev_name, void *data)
->  {
-> -       struct pid_namespace *ns;
-> -
-> -       if (flags & SB_KERNMOUNT) {
-> -               ns = data;
-> -               data = NULL;
-> -       } else {
-> -               ns = task_active_pid_ns(current);
-> -       }
-> +       struct pid_namespace *ns = task_active_pid_ns(current);
->
->         return mount_ns(fs_type, flags, data, ns, ns->user_ns, proc_fill_super);
->  }
-> @@ -106,6 +99,7 @@ static void proc_kill_sb(struct super_block *sb)
->         struct pid_namespace *ns;
->
->         ns = (struct pid_namespace *)sb->s_fs_info;
-> +       rcu_assign_pointer(ns->proc_super, NULL);
->         if (ns->proc_self)
->                 dput(ns->proc_self);
->         if (ns->proc_thread_self)
-> @@ -208,19 +202,19 @@ struct proc_dir_entry proc_root = {
->         .inline_name    = "/proc",
->  };
->
-> -int pid_ns_prepare_proc(struct pid_namespace *ns)
-> +#if defined(CONFIG_SYSCTL_SYSCALL) || defined(CONFIG_MCONSOLE)
-> +struct file *file_open_proc(const char *pathname, int flags, umode_t mode)
->  {
->         struct vfsmount *mnt;
-> +       struct file *file;
->
-> -       mnt = kern_mount_data(&proc_fs_type, ns);
-> +       mnt = kern_mount(&proc_fs_type);
->         if (IS_ERR(mnt))
-> -               return PTR_ERR(mnt);
-> +               return ERR_CAST(mnt);
->
-> -       ns->proc_mnt = mnt;
-> -       return 0;
-> -}
-> +       file = file_open_root(mnt->mnt_root, mnt, pathname, flags, mode);
-> +       kern_unmount(mnt);
->
-> -void pid_ns_release_proc(struct pid_namespace *ns)
-> -{
-> -       kern_unmount(ns->proc_mnt);
-> +       return file;
->  }
-> +#endif
-> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-> index 49538b172483..dfa70858b19a 100644
-> --- a/include/linux/pid_namespace.h
-> +++ b/include/linux/pid_namespace.h
-> @@ -31,7 +31,7 @@ struct pid_namespace {
->         unsigned int level;
->         struct pid_namespace *parent;
->  #ifdef CONFIG_PROC_FS
-> -       struct vfsmount *proc_mnt;
-> +       struct super_block __rcu *proc_super;
->         struct dentry *proc_self;
->         struct dentry *proc_thread_self;
->  #endif
-> @@ -40,7 +40,6 @@ struct pid_namespace {
->  #endif
->         struct user_namespace *user_ns;
->         struct ucounts *ucounts;
-> -       struct work_struct proc_work;
->         kgid_t pid_gid;
->         int hide_pid;
->         int reboot;     /* group exit code if this pidns was rebooted */
-> diff --git a/include/linux/proc_ns.h b/include/linux/proc_ns.h
-> index d31cb6215905..8f1b9edf40ba 100644
-> --- a/include/linux/proc_ns.h
-> +++ b/include/linux/proc_ns.h
-> @@ -47,16 +47,11 @@ enum {
->
->  #ifdef CONFIG_PROC_FS
->
-> -extern int pid_ns_prepare_proc(struct pid_namespace *ns);
-> -extern void pid_ns_release_proc(struct pid_namespace *ns);
->  extern int proc_alloc_inum(unsigned int *pino);
->  extern void proc_free_inum(unsigned int inum);
->
->  #else /* CONFIG_PROC_FS */
->
-> -static inline int pid_ns_prepare_proc(struct pid_namespace *ns) { return 0; }
-> -static inline void pid_ns_release_proc(struct pid_namespace *ns) {}
-> -
->  static inline int proc_alloc_inum(unsigned int *inum)
->  {
->         *inum = 1;
-> @@ -86,4 +81,6 @@ extern int ns_get_name(char *buf, size_t size, struct task_struct *task,
->                         const struct proc_ns_operations *ns_ops);
->  extern void nsfs_init(void);
->
-> +extern struct file *file_open_proc(const char *pathname, int flags, umode_t mode);
-> +
->  #endif /* _LINUX_PROC_NS_H */
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index 157fe4b19971..7a1a4f39e527 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -143,9 +143,6 @@ void free_pid(struct pid *pid)
->                         /* Handle a fork failure of the first process */
->                         WARN_ON(ns->child_reaper);
->                         ns->pid_allocated = 0;
-> -                       /* fall through */
-> -               case 0:
-> -                       schedule_work(&ns->proc_work);
->                         break;
->                 }
->
-> @@ -204,11 +201,6 @@ struct pid *alloc_pid(struct pid_namespace *ns)
->                 tmp = tmp->parent;
->         }
->
-> -       if (unlikely(is_child_reaper(pid))) {
-> -               if (pid_ns_prepare_proc(ns))
-> -                       goto out_free;
-> -       }
-> -
->         get_pid_ns(ns);
->         atomic_set(&pid->count, 1);
->         for (type = 0; type < PIDTYPE_MAX; ++type)
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 2a2ac53d8b8b..3018cc18ac38 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -58,12 +58,6 @@ static struct kmem_cache *create_pid_cachep(unsigned int level)
->         return READ_ONCE(*pkc);
->  }
->
-> -static void proc_cleanup_work(struct work_struct *work)
-> -{
-> -       struct pid_namespace *ns = container_of(work, struct pid_namespace, proc_work);
-> -       pid_ns_release_proc(ns);
-> -}
-> -
->  static struct ucounts *inc_pid_namespaces(struct user_namespace *ns)
->  {
->         return inc_ucount(ns, current_euid(), UCOUNT_PID_NAMESPACES);
-> @@ -115,7 +109,6 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->         ns->user_ns = get_user_ns(user_ns);
->         ns->ucounts = ucounts;
->         ns->pid_allocated = PIDNS_ADDING;
-> -       INIT_WORK(&ns->proc_work, proc_cleanup_work);
->
->         return ns;
->
-> diff --git a/kernel/sysctl_binary.c b/kernel/sysctl_binary.c
-> index 07148b497451..b655410fa05a 100644
-> --- a/kernel/sysctl_binary.c
-> +++ b/kernel/sysctl_binary.c
-> @@ -17,6 +17,7 @@
->  #include <linux/uuid.h>
->  #include <linux/slab.h>
->  #include <linux/compat.h>
-> +#include <linux/proc_ns.h>
->
->  #ifdef CONFIG_SYSCTL_SYSCALL
->
-> @@ -1278,7 +1279,6 @@ static ssize_t binary_sysctl(const int *name, int nlen,
->         void __user *oldval, size_t oldlen, void __user *newval, size_t newlen)
->  {
->         const struct bin_table *table = NULL;
-> -       struct vfsmount *mnt;
->         struct file *file;
->         ssize_t result;
->         char *pathname;
-> @@ -1301,8 +1301,7 @@ static ssize_t binary_sysctl(const int *name, int nlen,
->                 goto out_putname;
->         }
->
-> -       mnt = task_active_pid_ns(current)->proc_mnt;
-> -       file = file_open_root(mnt->mnt_root, mnt, pathname, flags, 0);
-> +       file = file_open_proc(pathname, flags, 0);
->         result = PTR_ERR(file);
->         if (IS_ERR(file))
->                 goto out_putname;
-> --
-> 2.17.1
