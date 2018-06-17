@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FFFC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF47C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:00:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B6E208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 340FC208E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:00:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OshHu/0M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18B6E208E0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdK5qrXT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 340FC208E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934223AbeFQPAF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 11:00:05 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:41540 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933039AbeFQO7q (ORCPT
+        id S934320AbeFQPAq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 11:00:46 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:38821 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933757AbeFQO7t (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 10:59:46 -0400
-Received: by mail-lf0-f65.google.com with SMTP id d24-v6so20977381lfa.8;
-        Sun, 17 Jun 2018 07:59:45 -0700 (PDT)
+        Sun, 17 Jun 2018 10:59:49 -0400
+Received: by mail-lf0-f67.google.com with SMTP id i83-v6so20983503lfh.5;
+        Sun, 17 Jun 2018 07:59:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=U8guvA3QSPbQam4GL6funZK7ex1FuKPm9OCklaz8lhE=;
-        b=OshHu/0M0Emuzq8qWRTfR43jT//NVh+6nq2z0Yc5Hcmn58WBCqz3PwxbY5ncoz+QQA
-         TVDimaGdm3xQViSicWm3TizjNqI3IYlh3gUEBEAkH7E2KwsKiy1hD0uBztXyJ5zloED8
-         1GXffpxO8/HzqqrKyyo9bKelj283Mvm/mfEOZtqJHoMEC8NncktDz1lcIY8UCNenhdr+
-         E1Uw+KFXhawK+BEI+Qa6UlV5Dpfx3KVMG95INEPJFAaVAGKDSP3tXtSBBofKMttqT3Z/
-         o4vhXEcEtKyK46f9THrznaMNJ0VNsugfogY9o/54secRfrg67HY29Sr/TGEal8J1Jgma
-         q4Gw==
+        bh=vZkEJRadCP5tB2PdPTLxKaEPpZsMkPVl8HAWbiyC1ZU=;
+        b=LdK5qrXTNXxye9MypnUPmiymAWluRPa3XJX9fAChAz2lhc44TQFrn4E2wMEnPsl7F3
+         S1PxYc5T2ER7AVnjRzzPqldO9QDVly/cEWRwW4dNOnOxNaCQ0XQclPyrFzPc+IXdUor6
+         d0PLCTNfAvBi/hIvG04dcNG/47HIeLufXB1cSkAcCCP8pplWNS1Ks7FNfzbypsoGKZNv
+         vno2o6JCCFGI6HakFibZfrcNLjqFMLxeKyW1pdPJvIosQc2hCOPAtdfrIv1/f0pUuQGu
+         msSbdoAMRPXOo/XFh2120+yVwMIsuMQL+P0w42wlLu5A9063l4lDvV48lJTEE4pmmINS
+         rEhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=U8guvA3QSPbQam4GL6funZK7ex1FuKPm9OCklaz8lhE=;
-        b=Kwpp1WJY8HNMYry/TXwDQwDW1AZF1mm1Mwof66zYLv1qrwv+C6P18lkBMLG6u5PLTn
-         nPef5noH+qwyShCKjMxXSg/Q3FHZNmQ+ijSS8giTH3E8GsIQ1G1F64Kl5C+oUEZQkB4b
-         hFic+be81iNvAI65Mbnke+4nITne/i92PrtldnSoiPtZDeKqqetk8bWJgOhXTR/xXMy3
-         sbBI+r1RZx06MQEtBPSg+iM2bJBgPFQTKl+oh5C+R8W0LvEnz9qm7RPwCMsyJEk7Hxi5
-         CNMgehGA+1KP/KWlXbhEd6pSG+jUNQmS3wPwPkjsp3mr0AFQlSD88nZmkA2uGMSZeOz1
-         ul4g==
-X-Gm-Message-State: APt69E0w9gLoUU+1HgJU0zIdxmjYhY26OF5VLvjmxy4kjt4Kl3BVehCh
-        QFDa5wMmc758UYnXLFp5NEI=
-X-Google-Smtp-Source: ADUXVKIMAEBP9B58DkgZxJKpdKDQ3/oczGDr3/p763RjPqZCNvg/nDkbQjcSfsqUEgy4Oeuo50dVzQ==
-X-Received: by 2002:a2e:cf:: with SMTP id e76-v6mr5750426lji.82.1529247584403;
-        Sun, 17 Jun 2018 07:59:44 -0700 (PDT)
+        bh=vZkEJRadCP5tB2PdPTLxKaEPpZsMkPVl8HAWbiyC1ZU=;
+        b=iQXPnNO1XOJWZgcSccFgLP+3xpuHoJrjt8b3IbqeX4EZQTbljIMMIO4qebL6WTtTX6
+         pXksfExbk4gguLnUpJbpD/VR+9Q4ndUQO65jUz0R3Mj05JMBOikbC/mkcHZo5RirK5Bn
+         OwYAABKuNRjP6SbAuL8E/IA7e34wiB4wL0OF2Eja5qNIOtphjt7bkMGKMUmJy6RNk7+o
+         4IMpU2xwxguP43dy0O0wfWrCS7YjrHf6H8LvGydCGnQVSOszSbMLjs6OyzBVkPvO8xZU
+         N/elKWsLFvaungFIyvmayHDmlx3UVhfTSSG5nmxelHU/59QMocatynZFnX8TxpepYAy+
+         hjKw==
+X-Gm-Message-State: APt69E3aeTGUeUKl6oXOc71s20C+9Y9mgMPHMkeSO8MV1eH1xbvynHYC
+        7ddrlZvd85qmxjok1lLmUJY=
+X-Google-Smtp-Source: ADUXVKLm+LYPL211XTdWsqndtBLUAJs23LI7TFYTqb6BwiC4pfBADZvblLkFNSPf41tzFQ9DwlEnvw==
+X-Received: by 2002:a2e:2f02:: with SMTP id v2-v6mr6318141ljv.113.1529247586596;
+        Sun, 17 Jun 2018 07:59:46 -0700 (PDT)
 Received: from localhost.localdomain ([109.252.55.139])
-        by smtp.gmail.com with ESMTPSA id r21-v6sm2296173lja.92.2018.06.17.07.59.43
+        by smtp.gmail.com with ESMTPSA id r21-v6sm2296173lja.92.2018.06.17.07.59.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jun 2018 07:59:43 -0700 (PDT)
+        Sun, 17 Jun 2018 07:59:46 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -68,9 +68,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Mark Rutland <mark.rutland@arm.com>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/8] clk: tegra20: Turn EMC clock gate into divider
-Date:   Sun, 17 Jun 2018 17:55:37 +0300
-Message-Id: <20180617145539.4758-7-digetx@gmail.com>
+Subject: [PATCH v3 8/8] memory: tegra: Introduce Tegra20 EMC driver
+Date:   Sun, 17 Jun 2018 17:55:39 +0300
+Message-Id: <20180617145539.4758-9-digetx@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180617145539.4758-1-digetx@gmail.com>
 References: <20180617145539.4758-1-digetx@gmail.com>
@@ -79,78 +79,632 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kernel should never gate the EMC clock as it causes immediate lockup, so
-removing clk-gate functionality doesn't affect anything. Turning EMC clk
-gate into divider allows to implement glitch-less EMC scaling, avoiding
-reparenting to a backup clock.
+Introduce driver for the External Memory Controller (EMC) found on Tegra20
+chips, which controls the external DRAM on the board. The purpose of this
+driver is to program memory timing for external memory on the EMC clock
+rate change.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 10 deletions(-)
+ drivers/memory/tegra/Kconfig       |  10 +
+ drivers/memory/tegra/Makefile      |   1 +
+ drivers/memory/tegra/tegra20-emc.c | 574 +++++++++++++++++++++++++++++
+ 3 files changed, 585 insertions(+)
+ create mode 100644 drivers/memory/tegra/tegra20-emc.c
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index cc857d4d4a86..2bd35418716a 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
- 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
- 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
- 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
--	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
- };
+diff --git a/drivers/memory/tegra/Kconfig b/drivers/memory/tegra/Kconfig
+index 6d74e499e18d..34e0b70f5c5f 100644
+--- a/drivers/memory/tegra/Kconfig
++++ b/drivers/memory/tegra/Kconfig
+@@ -6,6 +6,16 @@ config TEGRA_MC
+ 	  This driver supports the Memory Controller (MC) hardware found on
+ 	  NVIDIA Tegra SoCs.
  
- static unsigned long tegra20_clk_measure_input_freq(void)
-@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
- 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
- };
++config TEGRA20_EMC
++	bool "NVIDIA Tegra20 External Memory Controller driver"
++	default y
++	depends on ARCH_TEGRA_2x_SOC
++	help
++	  This driver is for the External Memory Controller (EMC) found on
++	  Tegra20 chips. The EMC controls the external DRAM on the board.
++	  This driver is required to change memory timings / clock rate for
++	  external memory.
++
+ config TEGRA124_EMC
+ 	bool "NVIDIA Tegra124 External Memory Controller driver"
+ 	default y
+diff --git a/drivers/memory/tegra/Makefile b/drivers/memory/tegra/Makefile
+index 94ab16ba075b..3971a6b7c487 100644
+--- a/drivers/memory/tegra/Makefile
++++ b/drivers/memory/tegra/Makefile
+@@ -10,5 +10,6 @@ tegra-mc-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210.o
  
-+static void __init tegra20_emc_clk_init(void)
-+{
+ obj-$(CONFIG_TEGRA_MC) += tegra-mc.o
+ 
++obj-$(CONFIG_TEGRA20_EMC)  += tegra20-emc.o
+ obj-$(CONFIG_TEGRA124_EMC) += tegra124-emc.o
+ obj-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186.o
+diff --git a/drivers/memory/tegra/tegra20-emc.c b/drivers/memory/tegra/tegra20-emc.c
+new file mode 100644
+index 000000000000..b4a0066bdf4f
+--- /dev/null
++++ b/drivers/memory/tegra/tegra20-emc.c
+@@ -0,0 +1,574 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Tegra20 External Memory Controller driver
++ *
++ * Author: Dmitry Osipenko <digetx@gmail.com>
++ */
++
++#include <linux/clk.h>
++#include <linux/completion.h>
++#include <linux/err.h>
++#include <linux/interrupt.h>
++#include <linux/iopoll.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/sort.h>
++#include <linux/types.h>
++
++#include <soc/tegra/fuse.h>
++
++#define EMC_INTSTATUS				0x000
++#define EMC_INTMASK				0x004
++#define EMC_TIMING_CONTROL			0x028
++#define EMC_RC					0x02c
++#define EMC_RFC					0x030
++#define EMC_RAS					0x034
++#define EMC_RP					0x038
++#define EMC_R2W					0x03c
++#define EMC_W2R					0x040
++#define EMC_R2P					0x044
++#define EMC_W2P					0x048
++#define EMC_RD_RCD				0x04c
++#define EMC_WR_RCD				0x050
++#define EMC_RRD					0x054
++#define EMC_REXT				0x058
++#define EMC_WDV					0x05c
++#define EMC_QUSE				0x060
++#define EMC_QRST				0x064
++#define EMC_QSAFE				0x068
++#define EMC_RDV					0x06c
++#define EMC_REFRESH				0x070
++#define EMC_BURST_REFRESH_NUM			0x074
++#define EMC_PDEX2WR				0x078
++#define EMC_PDEX2RD				0x07c
++#define EMC_PCHG2PDEN				0x080
++#define EMC_ACT2PDEN				0x084
++#define EMC_AR2PDEN				0x088
++#define EMC_RW2PDEN				0x08c
++#define EMC_TXSR				0x090
++#define EMC_TCKE				0x094
++#define EMC_TFAW				0x098
++#define EMC_TRPAB				0x09c
++#define EMC_TCLKSTABLE				0x0a0
++#define EMC_TCLKSTOP				0x0a4
++#define EMC_TREFBW				0x0a8
++#define EMC_QUSE_EXTRA				0x0ac
++#define EMC_ODT_WRITE				0x0b0
++#define EMC_ODT_READ				0x0b4
++#define EMC_FBIO_CFG5				0x104
++#define EMC_FBIO_CFG6				0x114
++#define EMC_AUTO_CAL_INTERVAL			0x2a8
++#define EMC_CFG_2				0x2b8
++#define EMC_CFG_DIG_DLL				0x2bc
++#define EMC_DLL_XFORM_DQS			0x2c0
++#define EMC_DLL_XFORM_QUSE			0x2c4
++#define EMC_ZCAL_REF_CNT			0x2e0
++#define EMC_ZCAL_WAIT_CNT			0x2e4
++#define EMC_CFG_CLKTRIM_0			0x2d0
++#define EMC_CFG_CLKTRIM_1			0x2d4
++#define EMC_CFG_CLKTRIM_2			0x2d8
++
++#define EMC_CLKCHANGE_REQ_ENABLE		BIT(0)
++#define EMC_CLKCHANGE_PD_ENABLE			BIT(1)
++#define EMC_CLKCHANGE_SR_ENABLE			BIT(2)
++
++#define EMC_TIMING_UPDATE			BIT(0)
++
++#define EMC_CLKCHANGE_COMPLETE_INT		BIT(4)
++
++static const u16 emc_timing_registers[] = {
++	EMC_RC,
++	EMC_RFC,
++	EMC_RAS,
++	EMC_RP,
++	EMC_R2W,
++	EMC_W2R,
++	EMC_R2P,
++	EMC_W2P,
++	EMC_RD_RCD,
++	EMC_WR_RCD,
++	EMC_RRD,
++	EMC_REXT,
++	EMC_WDV,
++	EMC_QUSE,
++	EMC_QRST,
++	EMC_QSAFE,
++	EMC_RDV,
++	EMC_REFRESH,
++	EMC_BURST_REFRESH_NUM,
++	EMC_PDEX2WR,
++	EMC_PDEX2RD,
++	EMC_PCHG2PDEN,
++	EMC_ACT2PDEN,
++	EMC_AR2PDEN,
++	EMC_RW2PDEN,
++	EMC_TXSR,
++	EMC_TCKE,
++	EMC_TFAW,
++	EMC_TRPAB,
++	EMC_TCLKSTABLE,
++	EMC_TCLKSTOP,
++	EMC_TREFBW,
++	EMC_QUSE_EXTRA,
++	EMC_FBIO_CFG6,
++	EMC_ODT_WRITE,
++	EMC_ODT_READ,
++	EMC_FBIO_CFG5,
++	EMC_CFG_DIG_DLL,
++	EMC_DLL_XFORM_DQS,
++	EMC_DLL_XFORM_QUSE,
++	EMC_ZCAL_REF_CNT,
++	EMC_ZCAL_WAIT_CNT,
++	EMC_AUTO_CAL_INTERVAL,
++	EMC_CFG_CLKTRIM_0,
++	EMC_CFG_CLKTRIM_1,
++	EMC_CFG_CLKTRIM_2,
++};
++
++struct emc_timing {
++	unsigned long rate;
++	u32 data[ARRAY_SIZE(emc_timing_registers)];
++};
++
++struct tegra_emc {
++	struct device *dev;
++	struct completion clk_handshake_complete;
++	struct notifier_block clk_nb;
++	struct clk *backup_clk;
++	struct clk *emc_mux;
++	struct clk *pll_m;
 +	struct clk *clk;
++	void __iomem *regs;
 +
-+	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
-+			       ARRAY_SIZE(mux_pllmcp_clkm),
-+			       CLK_SET_RATE_NO_REPARENT,
-+			       clk_base + CLK_SOURCE_EMC,
-+			       30, 2, 0, &emc_lock);
++	struct emc_timing *timings;
++	unsigned int num_timings;
++};
 +
-+	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
-+				    &emc_lock);
-+	clks[TEGRA20_CLK_MC] = clk;
++static irqreturn_t tegra_emc_isr(int irq, void *data)
++{
++	struct tegra_emc *emc = data;
++	u32 intmask = EMC_CLKCHANGE_COMPLETE_INT;
++	u32 status;
 +
-+	/*
-+	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
-+	 * the same time due to a HW bug, this won't happen because we're
-+	 * defining 'emc_mux' and 'emc' as a distinct clocks.
-+	 */
-+	clk = clk_register_divider(NULL, "emc", "emc_mux", CLK_IS_CRITICAL,
-+				   clk_base + CLK_SOURCE_EMC, 0, 7,
-+				   0, &emc_lock);
-+	clks[TEGRA20_CLK_EMC] = clk;
++	status = readl_relaxed(emc->regs + EMC_INTSTATUS) & intmask;
++	if (!status)
++		return IRQ_NONE;
++
++	/* clear interrupts */
++	writel_relaxed(status, emc->regs + EMC_INTSTATUS);
++
++	/* notify about EMC-CAR handshake completion */
++	complete(&emc->clk_handshake_complete);
++
++	return IRQ_HANDLED;
 +}
 +
- static void __init tegra20_periph_clk_init(void)
- {
- 	struct tegra_periph_init_data *data;
-@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
- 	clks[TEGRA20_CLK_AC97] = clk;
- 
- 	/* emc */
--	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
--			       ARRAY_SIZE(mux_pllmcp_clkm),
--			       CLK_SET_RATE_NO_REPARENT,
--			       clk_base + CLK_SOURCE_EMC,
--			       30, 2, 0, &emc_lock);
--
--	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
--				    &emc_lock);
--	clks[TEGRA20_CLK_MC] = clk;
-+	tegra20_emc_clk_init();
- 
- 	/* dsi */
- 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
++static struct emc_timing *tegra_emc_find_timing(struct tegra_emc *emc,
++						unsigned long rate)
++{
++	struct emc_timing *timing = NULL;
++	unsigned int i;
++
++	for (i = 0; i < emc->num_timings; i++) {
++		if (emc->timings[i].rate >= rate) {
++			timing = &emc->timings[i];
++			break;
++		}
++	}
++
++	if (!timing) {
++		dev_err(emc->dev, "no timing for rate %lu\n", rate);
++		return NULL;
++	}
++
++	return timing;
++}
++
++static int emc_prepare_timing_change(struct tegra_emc *emc, unsigned long rate)
++{
++	struct emc_timing *timing = tegra_emc_find_timing(emc, rate);
++	unsigned int i;
++
++	if (!timing)
++		return -EINVAL;
++
++	dev_dbg(emc->dev, "%s: using timing rate %lu for requested rate %lu\n",
++		__func__, timing->rate, rate);
++
++	/* program shadow registers */
++	for (i = 0; i < ARRAY_SIZE(timing->data); i++)
++		writel_relaxed(timing->data[i],
++			       emc->regs + emc_timing_registers[i]);
++
++	/* wait until programming has settled */
++	readl_relaxed(emc->regs + emc_timing_registers[0]);
++
++	reinit_completion(&emc->clk_handshake_complete);
++
++	return 0;
++}
++
++static int emc_complete_timing_change(struct tegra_emc *emc, bool flush)
++{
++	long timeout;
++
++	dev_dbg(emc->dev, "%s: flush %d\n", __func__, flush);
++
++	if (flush) {
++		/* manually initiate memory timing update */
++		writel_relaxed(EMC_TIMING_UPDATE,
++			       emc->regs + EMC_TIMING_CONTROL);
++		return 0;
++	}
++
++	timeout = wait_for_completion_timeout(&emc->clk_handshake_complete,
++					      usecs_to_jiffies(100));
++	if (timeout == 0) {
++		dev_err(emc->dev, "EMC-CAR handshake failed\n");
++		return -EIO;
++	} else if (timeout < 0) {
++		dev_err(emc->dev, "failed to wait for EMC-CAR handshake: %ld\n",
++			timeout);
++		return timeout;
++	}
++
++	return 0;
++}
++
++static int tegra_emc_clk_change_notify(struct notifier_block *nb,
++				       unsigned long msg, void *data)
++{
++	struct tegra_emc *emc = container_of(nb, struct tegra_emc, clk_nb);
++	struct clk_notifier_data *cnd = data;
++	int err;
++
++	switch (msg) {
++	case PRE_RATE_CHANGE:
++		err = emc_prepare_timing_change(emc, cnd->new_rate);
++		break;
++
++	case ABORT_RATE_CHANGE:
++		err = emc_prepare_timing_change(emc, cnd->old_rate);
++		if (err)
++			break;
++
++		err = emc_complete_timing_change(emc, true);
++		break;
++
++	case POST_RATE_CHANGE:
++		err = emc_complete_timing_change(emc, false);
++		break;
++
++	default:
++		return NOTIFY_DONE;
++	}
++
++	return notifier_from_errno(err);
++}
++
++static int load_one_timing_from_dt(struct tegra_emc *emc,
++				   struct emc_timing *timing,
++				   struct device_node *node)
++{
++	u32 rate;
++	int err;
++
++	if (!of_device_is_compatible(node, "nvidia,tegra20-emc-table")) {
++		dev_err(emc->dev, "incompatible DT node: %pOF\n", node);
++		return -EINVAL;
++	}
++
++	err = of_property_read_u32(node, "clock-frequency", &rate);
++	if (err) {
++		dev_err(emc->dev, "timing %pOF: failed to read rate: %d\n",
++			node, err);
++		return err;
++	}
++
++	err = of_property_read_u32_array(node, "nvidia,emc-registers",
++					 timing->data,
++					 ARRAY_SIZE(emc_timing_registers));
++	if (err) {
++		dev_err(emc->dev,
++			"timing %pOF: failed to read emc timing data: %d\n",
++			node, err);
++		return err;
++	}
++
++	/*
++	 * The EMC clock rate is twice the bus rate, and the bus rate is
++	 * measured in kHz.
++	 */
++	timing->rate = rate * 2 * 1000;
++
++	dev_dbg(emc->dev, "%s: %pOF: EMC rate %lu\n",
++		__func__, node, timing->rate);
++
++	return 0;
++}
++
++static int cmp_timings(const void *_a, const void *_b)
++{
++	const struct emc_timing *a = _a;
++	const struct emc_timing *b = _b;
++
++	if (a->rate < b->rate)
++		return -1;
++
++	if (a->rate > b->rate)
++		return 1;
++
++	return 0;
++}
++
++static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
++					  struct device_node *node)
++{
++	struct device_node *child;
++	struct emc_timing *timing;
++	int child_count;
++	int err;
++
++	child_count = of_get_child_count(node);
++	if (!child_count) {
++		dev_err(emc->dev, "no memory timings in DT node: %pOF\n", node);
++		return -EINVAL;
++	}
++
++	emc->timings = devm_kcalloc(emc->dev, child_count, sizeof(*timing),
++				    GFP_KERNEL);
++	if (!emc->timings)
++		return -ENOMEM;
++
++	emc->num_timings = child_count;
++	timing = emc->timings;
++
++	for_each_child_of_node(node, child) {
++		err = load_one_timing_from_dt(emc, timing++, child);
++		of_node_put(child);
++		if (err)
++			return err;
++	}
++
++	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
++	     NULL);
++
++	return 0;
++}
++
++static struct device_node *
++tegra_emc_find_node_by_ram_code(struct device *dev)
++{
++	struct device_node *np;
++	u32 value, ram_code;
++	int err;
++
++	if (!of_property_read_bool(dev->of_node, "nvidia,use-ram-code"))
++		return of_node_get(dev->of_node);
++
++	ram_code = tegra_read_ram_code();
++	np = dev->of_node;
++
++	for_each_node_by_name(np, "emc-tables") {
++		err = of_property_read_u32(np, "nvidia,ram-code", &value);
++		if (err || value != ram_code) {
++			of_node_put(np);
++			continue;
++		}
++
++		return np;
++	}
++
++	dev_err(dev, "no memory timings for RAM code %u found in device tree\n",
++		ram_code);
++
++	return NULL;
++}
++
++static int emc_setup_hw(struct tegra_emc *emc)
++{
++	u32 emc_cfg;
++
++	emc_cfg = readl_relaxed(emc->regs + EMC_CFG_2);
++
++	/*
++	 * Depending on a memory type, DRAM should enter either self-refresh
++	 * or power-down state on EMC clock change.
++	 */
++	if (!(emc_cfg & EMC_CLKCHANGE_PD_ENABLE) &&
++	    !(emc_cfg & EMC_CLKCHANGE_SR_ENABLE))
++	{
++		dev_err(emc->dev,
++			"bootloader didn't specify DRAM auto-suspend mode\n");
++		return -EINVAL;
++	}
++
++	/* allow EMC and CAR to handshake on PLL divider/source changes */
++	emc_cfg |= EMC_CLKCHANGE_REQ_ENABLE;
++	writel_relaxed(emc_cfg, emc->regs + EMC_CFG_2);
++
++	/* initialize interrupt */
++	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTMASK);
++	writel_relaxed(EMC_CLKCHANGE_COMPLETE_INT, emc->regs + EMC_INTSTATUS);
++
++	return 0;
++}
++
++static int emc_init(struct tegra_emc *emc, unsigned long rate)
++{
++	int err, ret;
++
++	err = clk_set_parent(emc->emc_mux, emc->backup_clk);
++	if (err) {
++		dev_err(emc->dev,
++			"failed to reparent to backup source: %d\n", err);
++		return err;
++	}
++
++	ret = clk_set_rate(emc->pll_m, rate);
++	if (ret)
++		dev_err(emc->dev,
++			"failed to change pll_m rate: %d\n", ret);
++
++	err = clk_set_parent(emc->emc_mux, emc->pll_m);
++	if (err) {
++		dev_err(emc->dev,
++			"failed to reparent to pll_m: %d\n", err);
++		return err;
++	}
++
++	return ret;
++}
++
++static int tegra_emc_probe(struct platform_device *pdev)
++{
++	struct device_node *np;
++	struct tegra_emc *emc;
++	struct resource *res;
++	int irq, err;
++
++	/* driver has nothing to do in a case of memory timing absence */
++	if (of_get_child_count(pdev->dev.of_node) == 0) {
++		dev_info(&pdev->dev,
++			 "EMC device tree node doesn't have memory timings\n");
++		return 0;
++	}
++
++	irq = platform_get_irq(pdev, 0);
++	if (irq < 0) {
++		dev_err(&pdev->dev, "interrupt not specified\n");
++		dev_err(&pdev->dev, "please update your device tree\n");
++		return irq;
++	}
++
++	np = tegra_emc_find_node_by_ram_code(&pdev->dev);
++	if (!np)
++		return -EINVAL;
++
++	emc = devm_kzalloc(&pdev->dev, sizeof(*emc), GFP_KERNEL);
++	if (!emc) {
++		of_node_put(np);
++		return -ENOMEM;
++	}
++
++	init_completion(&emc->clk_handshake_complete);
++	emc->clk_nb.notifier_call = tegra_emc_clk_change_notify;
++	emc->dev = &pdev->dev;
++
++	err = tegra_emc_load_timings_from_dt(emc, np);
++	of_node_put(np);
++	if (err)
++		return err;
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	emc->regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(emc->regs))
++		return PTR_ERR(emc->regs);
++
++	err = emc_setup_hw(emc);
++	if (err)
++		return err;
++
++	err = devm_request_irq(&pdev->dev, irq, tegra_emc_isr, 0,
++			       dev_name(&pdev->dev), emc);
++	if (err) {
++		dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n", irq, err);
++		return err;
++	}
++
++	emc->clk = devm_clk_get(&pdev->dev, "emc");
++	if (IS_ERR(emc->clk)) {
++		err = PTR_ERR(emc->clk);
++		dev_err(&pdev->dev, "failed to get emc clock: %d\n", err);
++		return err;
++	}
++
++	emc->pll_m = clk_get_sys(NULL, "pll_m");
++	if (IS_ERR(emc->pll_m)) {
++		err = PTR_ERR(emc->pll_m);
++		dev_err(&pdev->dev, "failed to get pll_m clock: %d\n", err);
++		return err;
++	}
++
++	emc->backup_clk = clk_get_sys(NULL, "pll_p");
++	if (IS_ERR(emc->backup_clk)) {
++		err = PTR_ERR(emc->backup_clk);
++		dev_err(&pdev->dev, "failed to get pll_p clock: %d\n", err);
++		goto put_pll_m;
++	}
++
++	emc->emc_mux = clk_get_parent(emc->clk);
++	if (IS_ERR(emc->emc_mux)) {
++		err = PTR_ERR(emc->emc_mux);
++		dev_err(&pdev->dev, "failed to get emc_mux clock: %d\n", err);
++		goto put_backup;
++	}
++
++	err = clk_notifier_register(emc->clk, &emc->clk_nb);
++	if (err) {
++		dev_err(&pdev->dev, "failed to register clk notifier: %d\n",
++			err);
++		goto put_backup;
++	}
++
++	/* set DRAM clock rate to maximum */
++	err = emc_init(emc, emc->timings[emc->num_timings - 1].rate);
++	if (err) {
++		dev_err(&pdev->dev, "failed to initialize EMC clock rate: %d\n",
++			err);
++		goto unreg_notifier;
++	}
++
++	return 0;
++
++unreg_notifier:
++	clk_notifier_unregister(emc->clk, &emc->clk_nb);
++put_backup:
++	clk_put(emc->backup_clk);
++put_pll_m:
++	clk_put(emc->pll_m);
++
++	return err;
++}
++
++static const struct of_device_id tegra_emc_of_match[] = {
++	{ .compatible = "nvidia,tegra20-emc", },
++	{},
++};
++
++static struct platform_driver tegra_emc_driver = {
++	.probe = tegra_emc_probe,
++	.driver = {
++		.name = "tegra20-emc",
++		.of_match_table = tegra_emc_of_match,
++		.suppress_bind_attrs = true,
++	},
++};
++
++static int __init tegra_emc_init(void)
++{
++	return platform_driver_register(&tegra_emc_driver);
++}
++subsys_initcall(tegra_emc_init);
 -- 
 2.17.1
 
