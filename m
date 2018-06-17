@@ -2,134 +2,102 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B5BC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B1AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:52:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4EBED208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:51:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FA3220891
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 16:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XUz8xLvJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EBED208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ol2vbKxj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FA3220891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934444AbeFQQvd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 12:51:33 -0400
-Received: from mail-ua0-f195.google.com ([209.85.217.195]:40145 "EHLO
-        mail-ua0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934108AbeFQQv3 (ORCPT
+        id S934523AbeFQQwZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 12:52:25 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:47926 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934108AbeFQQwX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 12:51:29 -0400
-Received: by mail-ua0-f195.google.com with SMTP id l11-v6so9309771uak.7;
-        Sun, 17 Jun 2018 09:51:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=K2nHH+JbSV+j9JQGicjZw86DMLGhlVT65xtfs/Zktys=;
-        b=XUz8xLvJEWznzfUZJtIvckvObBZOhgPCDvqAa0kFueIKdB5jyYI8BECHCxMG/bFzEj
-         3FqeVgeLk2CWELVFTrI+9JmLziLQIlq0pCMaOy8DHCzz3TvTcBWtuAWELTTfc5091BFV
-         yPGdzEbi+0WF/Vh+OLjwTSfXmZhRD9tXEYI+SPvdZc6q/hN9jMAzY9xhfDUCAGUkIdgq
-         iDxJB3qA2Il/T0ir3ygt60yctoInGcmcDQj5Dq+BNfZaA0DTwTToTtkVhbh9E36CvJfK
-         J+wIwLy93cTukUg9GXzhw0hEoT5HqEHJSUUMpCsPEghVEnNxCLUutdgxrG0jCsddu3Wo
-         bqPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=K2nHH+JbSV+j9JQGicjZw86DMLGhlVT65xtfs/Zktys=;
-        b=nAeJNJFA4AmgIkxB7VeyTs02dExGjSTl+7/xRZ8l5wkDl4gJ7PZ/h5gFOvhg401rGa
-         F7Tl0WCOvB/qD5Y/l/ituWDLJRjVZjZKYwv1ZymCus/dDmGnQvJIRmcY1gjqNSiKiC2W
-         YJn4aNSHvOkhxiUIhi1RIxUqt8HcoRmPH/gw497m+qaGGrXK3HVEjnlrPuB24QnUf9kh
-         lCNLIRd8fhc5ED1ZU9UEeIYJAoV6kDKYDK/PqQH5egIF9YXtrA/09Et3jTUcEYXI2QpQ
-         6wSAxuSbPzkX7oKGgIa0Pdc0162M4jwCpClP7D7Fpim8E3Fr/yrJkuZ+79fCU5JrFZqM
-         eWBw==
-X-Gm-Message-State: APt69E2Y/SPxVlILqarQ0+F2Fk0a7ik44w2gYkNTfBoNO/biMeH828kD
-        HuoArj1zPh2hqwYNjM74jV3Y0VUHq+raEICo0N4=
-X-Google-Smtp-Source: ADUXVKI1TSGXcLRAUmNaHILNt8ZVsLjgM4o1/Sb9JuO+3WvG4FTfeFcErComgmrLo7oecVQGK6y3ePrcX7tS+nib9o0=
-X-Received: by 2002:a9f:3613:: with SMTP id r19-v6mr6236350uad.49.1529254288349;
- Sun, 17 Jun 2018 09:51:28 -0700 (PDT)
+        Sun, 17 Jun 2018 12:52:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3grIIalnNEa4wifl/c2uHQTse8l0gDLiMfKpCvxDyA0=; b=ol2vbKxjH/aKPr17a48UzT7HH
+        iz9fGSKZtjdlA7Iz5ZP5sxPwncXSUkZ14ZnDbIFxlen4KWvZk8gR8sw6P2zQXBedxv7al2cbeuNpa
+        lASmNZwBtcmjhHsH8SnizPSkqHBXuPd6L2JpBtr/arK0Ebwbhz8jqtX0rSX5Ye1yor54hk6K11Dil
+        kuABEDzKEibSQy+G7Gv+8YsDaZwqEFjpNGfWyKa/LKasVMGcJfPbZdWXWhc/3vhuueZU600RJH2Pr
+        d3L9cByAwtYJzfaGNDPofhbByZGU9AxtgW85Vq53D9f4kVe3FvG98iuYTmRZQFoRPSpOqcu06TaLK
+        MiBEsbDKA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fUauZ-0003Yn-3z; Sun, 17 Jun 2018 16:52:19 +0000
+Subject: Re: [PATCH v6 6/8] platform/mellanox: Introduce support for Mellanox
+ register access driver
+To:     Vadim Pasternak <vadimp@mellanox.com>, dvhart@infradead.org,
+        andy.shevchenko@gmail.com, gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com
+References: <1529254615-88124-1-git-send-email-vadimp@mellanox.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <b804ccc4-77c3-e7a9-9486-8d12d50ec5f7@infradead.org>
+Date:   Sun, 17 Jun 2018 09:52:16 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-References: <20180615111141.37184-1-tony@atomide.com> <20180615111141.37184-3-tony@atomide.com>
-In-Reply-To: <20180615111141.37184-3-tony@atomide.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 17 Jun 2018 19:51:17 +0300
-Message-ID: <CAHp75Ve4BYRbFsJRiwA2D-gJzVBj7JD2dfGhHSP3NDYwhAQyMg@mail.gmail.com>
-Subject: Re: [PATCH 2/5] pinctrl: pinmux: Return selector to the pinctrl driver
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Haojian Zhuang <haojian.zhuang@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Paul Cercueil <paul@crapouillou.net>, sean.wang@mediatek.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1529254615-88124-1-git-send-email-vadimp@mellanox.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 2:15 PM Tony Lindgren <tony@atomide.com> wrote:
->
-> We must return the selector from pinmux_generic_add_function() so
-> pin controller device drivers can remove the right group if needed
-> for deferred probe for example.
->
-> Note that fixes are also needed for the pin controller drivers to
-> use the selector value.
->
-> Fixes: a76edc89b100 ("pinctrl: core: Add generic pinctrl functions for
-> managing groups")
-> Reported-by: H. Nikolaus Schaller <hns@goldelico.com>
-> Cc: Haojian Zhuang <haojian.zhuang@linaro.org>
-> Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Cc: Paul Cercueil <paul@crapouillou.net>
-> Cc: Sean Wang <sean.wang@mediatek.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
+On 06/17/2018 09:56 AM, Vadim Pasternak wrote:
 > ---
->  drivers/pinctrl/pinmux.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/pinctrl/pinmux.c b/drivers/pinctrl/pinmux.c
-> --- a/drivers/pinctrl/pinmux.c
-> +++ b/drivers/pinctrl/pinmux.c
-> @@ -775,6 +775,7 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
->                                 void *data)
->  {
->         struct function_desc *function;
-> +       int selector = pctldev->num_functions;
->
->         function = devm_kzalloc(pctldev->dev, sizeof(*function), GFP_KERNEL);
->         if (!function)
-> @@ -785,12 +786,12 @@ int pinmux_generic_add_function(struct pinctrl_dev *pctldev,
->         function->num_group_names = num_groups;
->         function->data = data;
->
-> -       radix_tree_insert(&pctldev->pin_function_tree, pctldev->num_functions,
-> +       radix_tree_insert(&pctldev->pin_function_tree, selector,
->                           function);
+>  drivers/platform/mellanox/Kconfig     |  11 ++
+>  drivers/platform/mellanox/Makefile    |   1 +
+>  drivers/platform/mellanox/mlxreg-io.c | 245 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 257 insertions(+)
+>  create mode 100644 drivers/platform/mellanox/mlxreg-io.c
 
-Same nit: One line now?
+Hi,
 
->
+> diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
+> index 591bccd..ddfae9fc 100644
+> --- a/drivers/platform/mellanox/Kconfig
+> +++ b/drivers/platform/mellanox/Kconfig
+> @@ -23,4 +23,15 @@ config MLXREG_HOTPLUG
+>  	  This driver handles hot-plug events for the power suppliers, power
+>  	  cables and fans on the wide range Mellanox IB and Ethernet systems.
+>  
+> +config MLXREG_IO
+> +	tristate "Mellanox platform register access driver support"
+> +	depends on REGMAP
+> +	depends on HWMON
+> +	help
+> +	  This driver allows access to Mellanox programmable device register
+> +	  space trough sysfs interface. The sets of registers for sysfs access
 
->         pctldev->num_functions++;
->
-> -       return 0;
-> +       return selector;
->  }
->  EXPORT_SYMBOL_GPL(pinmux_generic_add_function);
->
-> --
-> 2.17.1
+	        through
 
+> +	  are defined per system type bases and includes the registers related
+
+	                                    and include the
+
+> +	  to system resets operation, system reset causes monitoring and some
+> +	  kinds of mux selection.
+> +
+>  endif # MELLANOX_PLATFORM
 
 
 -- 
-With Best Regards,
-Andy Shevchenko
+~Randy
