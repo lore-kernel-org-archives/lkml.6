@@ -2,150 +2,115 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC9B9C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66B6AC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A21D20874
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09AEF208B6
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 20:04:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V0Rr8kuZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A21D20874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="bNqe1cQ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09AEF208B6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934190AbeFQUCI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 16:02:08 -0400
-Received: from mail-wr0-f193.google.com ([209.85.128.193]:39232 "EHLO
-        mail-wr0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933406AbeFQUCG (ORCPT
+        id S934169AbeFQUEi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 16:04:38 -0400
+Received: from mail-pg0-f66.google.com ([74.125.83.66]:45132 "EHLO
+        mail-pg0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933406AbeFQUEe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 16:02:06 -0400
-Received: by mail-wr0-f193.google.com with SMTP id w7-v6so14637882wrn.6;
-        Sun, 17 Jun 2018 13:02:05 -0700 (PDT)
+        Sun, 17 Jun 2018 16:04:34 -0400
+Received: by mail-pg0-f66.google.com with SMTP id z1-v6so6536205pgv.12
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 13:04:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=d4zT/6YexChyiDRVTQtrztEwPasvSPv6qHjHtaZWTXY=;
-        b=V0Rr8kuZs7pYgFcClIvLX52AEU6jJmgbLRDI0DHLp4J1HznEqpb7nLuXa/l5gHzPGb
-         2kq8PYjplI0nNHxIJOEm5+xx2FmJNGmdXLMmhUAQZRvyrnMFyeH06vqPdN6+V/Enqv/b
-         9ZLcu+m04vONY1DEnx21K0Jv/AUvXVrLS13+ynjmi9WSr9/51YH9OqbNuw2mzUJK6Pho
-         /goGes1/MRWrwklFTTfv1e1xMypOLjAetiWjdiuesLp6yVBTClRTLLTY+DnT1ZXcC/Gp
-         GVNp3ndeTQMXNOkZ6qAXda7tZBL2XCiaXTEbJqwD/bE2SRjafdJ6FKD+Nst6hGXW3qpw
-         QtmQ==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=1aEWhbYTu0k1BM5uwwCOuLuUj8CVLiw4bbQtiEWl9Ec=;
+        b=bNqe1cQ9J9jg34xmSvy/mqCcjStYzyGG89M97bnhzpM/C6bHb0L0om2wns3fcZDIWl
+         7w/PzlxPc9CuX2orLToQRuX3A/glEVg0qbvL7d0RhCv/ActvGlcj+Y+ZSpjZ2wko5SVV
+         nyIoicpjj7hm4J/SnCoNCLKrOiX7u8e2ZLf/99uf8UMieZsAx8y3DkGSRfnbPT4EZEDq
+         deua5QTtkQDQ/r7KmIYaIg09za6AkR5lHs4lKix07g0x4jkuhImdXccviADeMkYk//UW
+         DwHGIs5+HqG1PIrHdWWR72DDPzpbpe8eyvbbZahbDg2D4ywaYiQzrvPo7bnjRf0nzump
+         Vx3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=d4zT/6YexChyiDRVTQtrztEwPasvSPv6qHjHtaZWTXY=;
-        b=IlnFpVv5zEvLg6ax/AlR/IIDzX+GU1/+7hmFgixDSu9mKO+DEEsaWQMYAT8EyrH8Yu
-         QWM0geOzq0ObPTjzx+XI33mkKWWTax1IIdAvlCk0+add3gTr49TcW/C/Q9bvYbe8CHqG
-         dQnKR3XMz18J6Degax/uU1G5Q4Qqnrr+NZ9a1vEOwgiycqmOrZ/nOGnFhRrKf6bvjLDw
-         UHTs04ZTFLVAGnJWCqgJ/rDuI/t5J5+Mztosjx5voAYeuUATnA2iMMfENxFTDzGwGdwh
-         UHSffwtxB5BVLmOxWWmYMNHXdkzS1UDHi0tFAgAl8bJgoAMJ2gq8h4KTKrSxjLpzzu4l
-         NWkw==
-X-Gm-Message-State: APt69E1KT+l2hJp038A/cH3B0o5ma3kysubC3V1i0zqXS+/6KeJcBwXG
-        n9nJSBt0ApJVnONA1AkerZE=
-X-Google-Smtp-Source: ADUXVKI8HVa+LRahxd9RVVnvvqcY9eR5HHTcjjRXcjo8AI1rp7gO6gMaVEtnZIJem5SK6gszf03AXw==
-X-Received: by 2002:adf:e392:: with SMTP id e18-v6mr8385966wrm.94.1529265725042;
-        Sun, 17 Jun 2018 13:02:05 -0700 (PDT)
-Received: from gcc67.tetaneutral.net (gcc67.tetaneutral.net. [2a03:7220:8080:c00::1])
-        by smtp.gmail.com with ESMTPSA id j131-v6sm6917375wmb.35.2018.06.17.13.02.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jun 2018 13:02:04 -0700 (PDT)
-From:   ilia.lin@gmail.com
-To:     ilia.lin@gmail.com
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] cpufreq: kryo: Add module remove and exit
-Date:   Sun, 17 Jun 2018 22:01:46 +0200
-Message-Id: <20180617200146.16425-1-ilia.lin@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180614204212.2028-1-ilia.lin@gmail.com>
-References: <20180614204212.2028-1-ilia.lin@gmail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=1aEWhbYTu0k1BM5uwwCOuLuUj8CVLiw4bbQtiEWl9Ec=;
+        b=beGpwaXJ9sJYkDKV68wb7GcZBpTsaHOYS1Ofvy23cJUR1JOw6oE3wiP9aVwwpfqeHh
+         i70bGUqBhY7wvkAXVwD9+kSCeEKkQrod8tliggKD+zF43UfcyQuJNoJlw4fVom6fuxEr
+         d8C5XXcjzegrQuIv9br65ib62pwGfRtQQ4UkQlDhT8dVk37BVS8/iuzS4JJYkLhgZbAs
+         rmUP3iIQJycffAS2sSWaxgVQ0ahhxsugBbTSOZ5XjZ35z76GmG5EWriHV9N9/2MZbKrK
+         3tHwZRsUiCcuWp8J3QkmE6R4UiOB41G0SqisH8zXmer5A5BLYJzmm+10Ci1CNp77n3AH
+         oCZg==
+X-Gm-Message-State: APt69E2SwNAdgAL2jQqg2DB++ylfM0iWZLqGhu/U+Bq2vEBcNN22jXrJ
+        00ghO3gIuCQGuwPboAMXcPnEH8gjO7M=
+X-Google-Smtp-Source: ADUXVKJ55LedqgY67rhU36zNEYnl1+rk2SeD0CONNDqCR1zRkQHJxgN7EWLKqIylgw017Mzgn2Ba9g==
+X-Received: by 2002:a62:1146:: with SMTP id z67-v6mr10595796pfi.135.1529265874328;
+        Sun, 17 Jun 2018 13:04:34 -0700 (PDT)
+Received: from ziepe.ca (S01061cabc0afab23.cg.shawcable.net. [68.146.141.74])
+        by smtp.gmail.com with ESMTPSA id t17-v6sm21822917pfj.75.2018.06.17.13.04.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 17 Jun 2018 13:04:33 -0700 (PDT)
+Received: from jgg by jggl with local (Exim 4.89)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fUdua-00013h-Mn; Sun, 17 Jun 2018 14:04:32 -0600
+Date:   Sun, 17 Jun 2018 14:04:32 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
+        Linux MM <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
+Message-ID: <20180617200432.krw36wrcwidb25cj@ziepe.ca>
+References: <20180617012510.20139-1-jhubbard@nvidia.com>
+ <20180617012510.20139-3-jhubbard@nvidia.com>
+ <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilia Lin <ilia.lin@gmail.com>
+On Sun, Jun 17, 2018 at 12:53:04PM -0700, Dan Williams wrote:
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index 6db729dc4c50..37576f0a4645 100644
+> > +++ b/mm/rmap.c
+> > @@ -1360,6 +1360,8 @@ static bool try_to_unmap_one(struct page *page, struct vm_area_struct *vma,
+> >                                 flags & TTU_SPLIT_FREEZE, page);
+> >         }
+> >
+> > +       if (PageDmaPinned(page))
+> > +               return false;
+> >         /*
+> >          * We have to assume the worse case ie pmd for invalidation. Note that
+> >          * the page can not be free in this function as call of try_to_unmap()
+> 
+> We have a similiar problem with DAX and the conclusion we came to is
+> that it is not acceptable for userspace to arbitrarily block kernel
+> actions. The conclusion there was: 'wait' if the DMA is transient, and
+> 'revoke' if the DMA is long lived, or otherwise 'block' long-lived DMA
+> if a revocation mechanism is not available.
 
-Add device remove and module exit code to make the driver
-functioning as a loadable module.
+This might be the right answer for certain things, but it shouldn't be
+the immediate reaction to everthing. There are many user APIs that
+block kernel actions and hold kernel resources.
 
-Fixes: ac28927659be (cpufreq: kryo: allow building as a loadable module)
-Signed-off-by: Ilia Lin <ilia.lin@gmail.com>
----
- drivers/cpufreq/qcom-cpufreq-kryo.c | 22 +++++++++++++++++++---
- 1 file changed, 19 insertions(+), 3 deletions(-)
+IMHO, there should be an identifiable objection, eg is blocking going
+to create a DOS, dead-lock, insecurity, etc?
 
-diff --git a/drivers/cpufreq/qcom-cpufreq-kryo.c b/drivers/cpufreq/qcom-cpufreq-kryo.c
-index 74b9b93d511b..01bddacf5c3b 100644
---- a/drivers/cpufreq/qcom-cpufreq-kryo.c
-+++ b/drivers/cpufreq/qcom-cpufreq-kryo.c
-@@ -42,6 +42,8 @@ enum _msm8996_version {
- 	NUM_OF_MSM8996_VERSIONS,
- };
- 
-+struct platform_device *cpufreq_dt_pdev, *kryo_cpufreq_pdev;
-+
- static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
- {
- 	size_t len;
-@@ -74,7 +76,6 @@ static enum _msm8996_version __init qcom_cpufreq_kryo_get_msm_id(void)
- static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
- {
- 	struct opp_table *opp_tables[NR_CPUS] = {0};
--	struct platform_device *cpufreq_dt_pdev;
- 	enum _msm8996_version msm8996_version;
- 	struct nvmem_cell *speedbin_nvmem;
- 	struct device_node *np;
-@@ -165,8 +166,15 @@ static int qcom_cpufreq_kryo_probe(struct platform_device *pdev)
- 	return ret;
- }
- 
-+static int qcom_cpufreq_kryo_remove(struct platform_device *pdev)
-+{
-+	platform_device_unregister(cpufreq_dt_pdev);
-+	return 0;
-+}
-+
- static struct platform_driver qcom_cpufreq_kryo_driver = {
- 	.probe = qcom_cpufreq_kryo_probe,
-+	.remove = qcom_cpufreq_kryo_remove,
- 	.driver = {
- 		.name = "qcom-cpufreq-kryo",
- 	},
-@@ -201,8 +209,9 @@ static int __init qcom_cpufreq_kryo_init(void)
- 	if (unlikely(ret < 0))
- 		return ret;
- 
--	ret = PTR_ERR_OR_ZERO(platform_device_register_simple(
--		"qcom-cpufreq-kryo", -1, NULL, 0));
-+	kryo_cpufreq_pdev = platform_device_register_simple(
-+		"qcom-cpufreq-kryo", -1, NULL, 0);
-+	ret = PTR_ERR_OR_ZERO(kryo_cpufreq_pdev);
- 	if (0 == ret)
- 		return 0;
- 
-@@ -211,5 +220,12 @@ static int __init qcom_cpufreq_kryo_init(void)
- }
- module_init(qcom_cpufreq_kryo_init);
- 
-+static void __init qcom_cpufreq_kryo_exit(void)
-+{
-+	platform_device_unregister(kryo_cpufreq_pdev);
-+	platform_driver_unregister(&qcom_cpufreq_kryo_driver);
-+}
-+module_exit(qcom_cpufreq_kryo_exit);
-+
- MODULE_DESCRIPTION("Qualcomm Technologies, Inc. Kryo CPUfreq driver");
- MODULE_LICENSE("GPL v2");
--- 
-2.11.0
-
+Jason
