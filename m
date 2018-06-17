@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A395DC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 091E4C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:21:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 631AF208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:20:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 631AF208E0
+	by mail.kernel.org (Postfix) with ESMTP id C469E20891
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:20:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C469E20891
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934101AbeFQPUb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 11:20:31 -0400
-Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:55286 "EHLO
+        id S934192AbeFQPU4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 11:20:56 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:55296 "EHLO
         mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S933753AbeFQPU2 (ORCPT
+        with ESMTP id S933774AbeFQPU3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 11:20:28 -0400
+        Sun, 17 Jun 2018 11:20:29 -0400
 Received: from Internal Mail-Server by MTLPINE1 (envelope-from vadimp@mellanox.com)
-        with ESMTPS (AES256-SHA encrypted); 17 Jun 2018 18:03:47 +0300
+        with ESMTPS (AES256-SHA encrypted); 17 Jun 2018 18:03:48 +0300
 Received: from r-mgtswh-226.mtr.labs.mlnx. (r-mgtswh-226.mtr.labs.mlnx [10.209.1.51])
-        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w5HF1D6h002833;
-        Sun, 17 Jun 2018 18:01:17 +0300
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w5HF1D6i002833;
+        Sun, 17 Jun 2018 18:01:19 +0300
 From:   Vadim Pasternak <vadimp@mellanox.com>
 To:     dvhart@infradead.org, andy.shevchenko@gmail.com,
         gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
         jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com,
         Vadim Pasternak <vadimp@mellanox.com>
-Subject: [PATCH v6 7/8] platform/x86: mlx-platform: Add mlxreg-io platform driver activation
-Date:   Sun, 17 Jun 2018 16:56:54 +0000
-Message-Id: <1529254615-88124-2-git-send-email-vadimp@mellanox.com>
+Subject: [PATCH v6 8/8] Documentation/ABI: Add documentation mlxreg-io sysfs interfaces
+Date:   Sun, 17 Jun 2018 16:56:55 +0000
+Message-Id: <1529254615-88124-3-git-send-email-vadimp@mellanox.com>
 X-Mailer: git-send-email 2.1.4
 In-Reply-To: <1529254615-88124-1-git-send-email-vadimp@mellanox.com>
 References: <1529254615-88124-1-git-send-email-vadimp@mellanox.com>
@@ -44,349 +44,114 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add mlxreg-io platform driver activation. Access driver uses the same
-regmap infrastructure as others Mellanox platform drivers.
-Specific registers description for default platform data configuration are
-added to mlx-platform. There are the registers for resets control, reset
-causes monitoring, programmable devices version reading and mux select
-control. This platform data is passed to mlxreg-io driver. Also some
-default values for the register are set at initialization time through
-the regmap infrastructure, which are necessary for moving write protection
-from the general purpose registers, which are used by mlxreg-io for
-write access.
+Add documentation for mlxreg-io platform driver sysfs interfaces to allow
+user space access for system resets control, reset causes monitoring,
+programmable devices version reading and device selection control.
 
 Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
-v4-v5:
- Changes added by Vadim:
- - Add two new attributes for ASIC health and main power domain shutdown.
 ---
- drivers/platform/x86/mlx-platform.c | 175 +++++++++++++++++++++++++++++++++++-
- 1 file changed, 173 insertions(+), 2 deletions(-)
+v5-v6:
+ Changes added by Vadim:
+ - Change kernel version from 4.18 to 4.19.
+v4-v5:
+ Comments pointed out by Darren:
+ - Rename cause to reset.
+ - Extend explanation in doc file.
+ Changes added by Vadim:
+ - Add two new attributes.
+ - Re-arrange in alphabetic order after changes.
+ - Change date from May to June.
+v4:
+ Comments pointed out by Greg:
+ Add Documentation/ABI/ entries for the new sysfs files.
+---
+ Documentation/ABI/stable/sysfs-driver-mlxreg-io | 77 +++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/ABI/stable/sysfs-driver-mlxreg-io
 
-diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
-index a0fd9aa..3a22750 100644
---- a/drivers/platform/x86/mlx-platform.c
-+++ b/drivers/platform/x86/mlx-platform.c
-@@ -47,15 +47,23 @@
- /* LPC bus IO offsets */
- #define MLXPLAT_CPLD_LPC_I2C_BASE_ADRR		0x2000
- #define MLXPLAT_CPLD_LPC_REG_BASE_ADRR		0x2500
-+#define MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET	0x00
-+#define MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET	0x01
-+#define MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET	0x1d
- #define MLXPLAT_CPLD_LPC_REG_LED1_OFFSET	0x20
- #define MLXPLAT_CPLD_LPC_REG_LED2_OFFSET	0x21
- #define MLXPLAT_CPLD_LPC_REG_LED3_OFFSET	0x22
- #define MLXPLAT_CPLD_LPC_REG_LED4_OFFSET	0x23
- #define MLXPLAT_CPLD_LPC_REG_LED5_OFFSET	0x24
-+#define MLXPLAT_CPLD_LPC_REG_GP1_OFFSET		0x30
-+#define MLXPLAT_CPLD_LPC_REG_WP1_OFFSET		0x31
-+#define MLXPLAT_CPLD_LPC_REG_GP2_OFFSET		0x32
-+#define MLXPLAT_CPLD_LPC_REG_WP2_OFFSET		0x33
- #define MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET	0x3a
- #define MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET	0x3b
- #define MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET	0x40
- #define MLXPLAT_CPLD_LPC_REG_AGGRLO_MASK_OFFSET	0x41
-+#define MLXPLAT_CPLD_LPC_REG_ASIC_HEALTH_OFFSET 0x50
- #define MLXPLAT_CPLD_LPC_REG_PSU_OFFSET		0x58
- #define MLXPLAT_CPLD_LPC_REG_PSU_EVENT_OFFSET	0x59
- #define MLXPLAT_CPLD_LPC_REG_PSU_MASK_OFFSET	0x5a
-@@ -122,12 +130,14 @@
-  * @pdev_mux - array of mux platform devices
-  * @pdev_hotplug - hotplug platform devices
-  * @pdev_led - led platform devices
-+ * @pdev_io_regs - register access platform devices
-  */
- struct mlxplat_priv {
- 	struct platform_device *pdev_i2c;
- 	struct platform_device *pdev_mux[MLXPLAT_CPLD_LPC_MUX_DEVS];
- 	struct platform_device *pdev_hotplug;
- 	struct platform_device *pdev_led;
-+	struct platform_device *pdev_io_regs;
- };
- 
- /* Regions for LPC I2C controller and LPC base register space */
-@@ -813,6 +823,111 @@ static struct mlxreg_core_platform_data mlxplat_default_ng_led_data = {
- 		.counter = ARRAY_SIZE(mlxplat_mlxcpld_default_ng_led_data),
- };
- 
-+/* Platform register access default */
-+static struct mlxreg_core_data mlxplat_mlxcpld_default_regs_io_data[] = {
-+	{
-+		.label = "cpld1_version",
-+		.reg = MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET,
-+		.bit = GENMASK(7, 0),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "cpld2_version",
-+		.reg = MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET,
-+		.bit = GENMASK(7, 0),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_long_pb",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(0),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_short_pb",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(1),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_aux_pwr_or_ref",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(2),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_main_pwr_fail",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(3),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_sw_reset",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(4),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_fw_reset",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(5),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_hotswap_or_wd",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(6),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "reset_asic_thermal",
-+		.reg = MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(7),
-+		.mode = 0444,
-+	},
-+	{
-+		.label = "psu1_on",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP1_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(0),
-+		.mode = 0200,
-+	},
-+	{
-+		.label = "psu2_on",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP1_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(1),
-+		.mode = 0200,
-+	},
-+	{
-+		.label = "pwr_cycle",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP1_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(2),
-+		.mode = 0200,
-+	},
-+	{
-+		.label = "pwr_down",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP1_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(3),
-+		.mode = 0200,
-+	},
-+	{
-+		.label = "select_iio",
-+		.reg = MLXPLAT_CPLD_LPC_REG_GP2_OFFSET,
-+		.mask = GENMASK(7, 0) & ~BIT(6),
-+		.mode = 0644,
-+	},
-+	{
-+		.label = "asic_health",
-+		.reg = MLXPLAT_CPLD_LPC_REG_ASIC_HEALTH_OFFSET,
-+		.mask = GENMASK(1, 0),
-+		.bit = 1,
-+		.mode = 0444,
-+	},
-+};
+diff --git a/Documentation/ABI/stable/sysfs-driver-mlxreg-io b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+new file mode 100644
+index 0000000..815689b
+--- /dev/null
++++ b/Documentation/ABI/stable/sysfs-driver-mlxreg-io
+@@ -0,0 +1,77 @@
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
++							asic_health
 +
-+static struct mlxreg_core_platform_data mlxplat_default_regs_io_data = {
-+		.data = mlxplat_mlxcpld_default_regs_io_data,
-+		.counter = ARRAY_SIZE(mlxplat_mlxcpld_default_regs_io_data),
-+};
- 
- static bool mlxplat_mlxcpld_writeable_reg(struct device *dev, unsigned int reg)
- {
-@@ -822,6 +937,10 @@ static bool mlxplat_mlxcpld_writeable_reg(struct device *dev, unsigned int reg)
- 	case MLXPLAT_CPLD_LPC_REG_LED3_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED4_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED5_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP2_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_EVENT_OFFSET:
-@@ -838,15 +957,23 @@ static bool mlxplat_mlxcpld_writeable_reg(struct device *dev, unsigned int reg)
- static bool mlxplat_mlxcpld_readable_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-+	case MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED1_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED3_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED4_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED5_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP2_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_WP2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_MASK_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_ASIC_HEALTH_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_EVENT_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_MASK_OFFSET:
-@@ -864,15 +991,21 @@ static bool mlxplat_mlxcpld_readable_reg(struct device *dev, unsigned int reg)
- static bool mlxplat_mlxcpld_volatile_reg(struct device *dev, unsigned int reg)
- {
- 	switch (reg) {
-+	case MLXPLAT_CPLD_LPC_REG_CPLD1_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_CPLD2_VER_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_RESET_CAUSE_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED1_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED3_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED4_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_LED5_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP1_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_GP2_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGR_MASK_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_AGGRLO_MASK_OFFSET:
-+	case MLXPLAT_CPLD_LPC_REG_ASIC_HEALTH_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_EVENT_OFFSET:
- 	case MLXPLAT_CPLD_LPC_REG_PSU_MASK_OFFSET:
-@@ -887,6 +1020,11 @@ static bool mlxplat_mlxcpld_volatile_reg(struct device *dev, unsigned int reg)
- 	return false;
- }
- 
-+static const struct reg_default mlxplat_mlxcpld_regmap_default[] = {
-+	{ MLXPLAT_CPLD_LPC_REG_WP1_OFFSET, 0x00 },
-+	{ MLXPLAT_CPLD_LPC_REG_WP2_OFFSET, 0x00 },
-+};
++Date:		June 2018
++KernelVersion:	4.19
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	This file shows ASIC health status. The possible values are:
++		0 - health failed, 2 - health OK, 3 - ASIC in booting state.
 +
- struct mlxplat_mlxcpld_regmap_context {
- 	void __iomem *base;
- };
-@@ -919,6 +1057,8 @@ static const struct regmap_config mlxplat_mlxcpld_regmap_config = {
- 	.writeable_reg = mlxplat_mlxcpld_writeable_reg,
- 	.readable_reg = mlxplat_mlxcpld_readable_reg,
- 	.volatile_reg = mlxplat_mlxcpld_volatile_reg,
-+	.reg_defaults = mlxplat_mlxcpld_regmap_default,
-+	.num_reg_defaults = ARRAY_SIZE(mlxplat_mlxcpld_regmap_default),
- 	.reg_read = mlxplat_mlxcpld_reg_read,
- 	.reg_write = mlxplat_mlxcpld_reg_write,
- };
-@@ -930,6 +1070,7 @@ static struct resource mlxplat_mlxcpld_resources[] = {
- static struct platform_device *mlxplat_dev;
- static struct mlxreg_core_hotplug_platform_data *mlxplat_hotplug;
- static struct mlxreg_core_platform_data *mlxplat_led;
-+static struct mlxreg_core_platform_data *mlxplat_regs_io;
- 
- static int __init mlxplat_dmi_default_matched(const struct dmi_system_id *dmi)
- {
-@@ -944,6 +1085,7 @@ static int __init mlxplat_dmi_default_matched(const struct dmi_system_id *dmi)
- 	mlxplat_hotplug->deferred_nr =
- 		mlxplat_default_channels[i - 1][MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
- 	mlxplat_led = &mlxplat_default_led_data;
-+	mlxplat_regs_io = &mlxplat_default_regs_io_data;
- 
- 	return 1;
- };
-@@ -978,6 +1120,7 @@ static int __init mlxplat_dmi_msn274x_matched(const struct dmi_system_id *dmi)
- 	mlxplat_hotplug->deferred_nr =
- 		mlxplat_msn21xx_channels[MLXPLAT_CPLD_GRP_CHNL_NUM - 1];
- 	mlxplat_led = &mlxplat_default_led_data;
-+	mlxplat_regs_io = &mlxplat_default_regs_io_data;
- 
- 	return 1;
- };
-@@ -1163,7 +1306,7 @@ static int mlxplat_mlxcpld_verify_bus_topology(int *nr)
- static int __init mlxplat_init(void)
- {
- 	struct mlxplat_priv *priv;
--	int i, nr, err;
-+	int i, j, nr, err;
- 
- 	if (!dmi_check_system(mlxplat_dmi_table))
- 		return -ENODEV;
-@@ -1233,6 +1376,15 @@ static int __init mlxplat_init(void)
- 		goto fail_platform_mux_register;
- 	}
- 
-+	/* Set default registers. */
-+	for (j = 0; j <  mlxplat_mlxcpld_regmap_config.num_reg_defaults; j++) {
-+		err = regmap_write(mlxplat_hotplug->regmap,
-+				   mlxplat_mlxcpld_regmap_default[j].reg,
-+				   mlxplat_mlxcpld_regmap_default[j].def);
-+		if (err)
-+			goto fail_platform_mux_register;
-+	}
++		The files are read only.
 +
- 	/* Add LED driver. */
- 	mlxplat_led->regmap = mlxplat_hotplug->regmap;
- 	priv->pdev_led = platform_device_register_resndata(
-@@ -1244,14 +1396,31 @@ static int __init mlxplat_init(void)
- 		goto fail_platform_hotplug_register;
- 	}
- 
-+	/* Add registers io access driver. */
-+	if (mlxplat_regs_io) {
-+		mlxplat_regs_io->regmap = mlxplat_hotplug->regmap;
-+		priv->pdev_io_regs = platform_device_register_resndata(
-+					&mlxplat_dev->dev, "mlxreg-io",
-+					PLATFORM_DEVID_NONE, NULL, 0,
-+					mlxplat_regs_io,
-+					sizeof(*mlxplat_regs_io));
-+		if (IS_ERR(priv->pdev_io_regs)) {
-+			err = PTR_ERR(priv->pdev_io_regs);
-+			goto fail_platform_led_register;
-+		}
-+	}
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
++							cpld1_version
++							cpld2_version
 +
- 	/* Sync registers with hardware. */
- 	regcache_mark_dirty(mlxplat_hotplug->regmap);
- 	err = regcache_sync(mlxplat_hotplug->regmap);
- 	if (err)
--		goto fail_platform_led_register;
-+		goto fail_platform_io_regs_register;
- 
- 	return 0;
- 
-+fail_platform_io_regs_register:
-+	if (mlxplat_regs_io)
-+		platform_device_unregister(priv->pdev_io_regs);
- fail_platform_led_register:
- 	platform_device_unregister(priv->pdev_led);
- fail_platform_hotplug_register:
-@@ -1272,6 +1441,8 @@ static void __exit mlxplat_exit(void)
- 	struct mlxplat_priv *priv = platform_get_drvdata(mlxplat_dev);
- 	int i;
- 
-+	if (priv->pdev_io_regs)
-+		platform_device_unregister(priv->pdev_io_regs);
- 	platform_device_unregister(priv->pdev_led);
- 	platform_device_unregister(priv->pdev_hotplug);
- 
++Date:		June 2018
++KernelVersion:	4.19
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	These files show with which CPLD versions have been burned
++		on carrier and switch boards.
++
++		The files are read only.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/select_iio
++Date:		June 2018
++KernelVersion:	4.19
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	This file allows iio devices selection.
++
++		Attribute select_iio can be written with 0 or with 1. It
++		selects which one of iio devices can be accessed.
++
++		The file is read/write.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu1_on
++		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/psu2_on
++		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/pwr_cycle
++		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/pwr_down
++Date:		June 2018
++KernelVersion:	4.19
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	These files allow asserting system power cycling, switching
++		power supply units on and off and system's main power domain
++		shutdown.
++		Expected behavior:
++		When pwr_cycle is written 1: auxiliary power domain will go
++		down and after short period (about 1 second) up.
++		When  psu1_on or psu2_on is written 1, related unit will be
++		disconnected from the power source, when written 0 - connected.
++		If both are written 1 - power supplies main power domain will
++		go down.
++		When pwr_down is written 1, system's main power domain will go
++		down.
++
++		The files are write only.
++
++What:		/sys/devices/platform/mlxplat/mlxreg-io/hwmon/hwmon*/
++							reset_aux_pwr_or_ref
++							reset_asic_thermal
++							reset_hotswap_or_wd
++							reset_fw_reset
++							reset_long_pb
++							reset_main_pwr_fail
++							reset_short_pb
++							reset_sw_reset
++Date:		June 2018
++KernelVersion:	4.19
++Contact:	Vadim Pasternak <vadimpmellanox.com>
++Description:	These files show the system reset cause, as following: power
++		auxiliary outage or power refresh, ASIC thermal shutdown,
++		hotswap or watchdog, firmware reset, long press power button,
++		short press power button, software reset. Value 1 in file means
++		this is reset cause, 0 - otherwise. Only one of the above
++		causes could be 1 at the same time, representing only last
++		reset cause.
++
++		The files are read only.
 -- 
 2.1.4
 
