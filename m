@@ -2,115 +2,74 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 173DAC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:23:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C047C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:50:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C05682083D
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:23:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05682083D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 02FB420891
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 22:50:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BmOj2Qil"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02FB420891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754136AbeFQWXh (ORCPT
+        id S1753766AbeFQWuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 18:23:37 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13069 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752698AbeFQWXg (ORCPT
+        Sun, 17 Jun 2018 18:50:50 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:57560 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751868AbeFQWut (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 18:23:36 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b26df540000>; Sun, 17 Jun 2018 15:23:16 -0700
-Received: from HQMAIL107.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 17 Jun 2018 15:23:40 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 17 Jun 2018 15:23:40 -0700
-Received: from [10.2.175.123] (10.2.175.123) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Sun, 17 Jun
- 2018 22:23:35 +0000
-Subject: Re: [PATCH 0/2] mm: gup: don't unmap or drop filesystem buffers
-To:     Christopher Lameter <cl@linux.com>, <john.hubbard@gmail.com>
-CC:     Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-References: <20180617012510.20139-1-jhubbard@nvidia.com>
- <010001640fbe0dd8-f999e7f6-7b6e-4deb-b073-0c572006727d-000000@email.amazonses.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <4708f5be-1829-3a20-8fad-5a445d18aa84@nvidia.com>
-Date:   Sun, 17 Jun 2018 15:23:14 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Sun, 17 Jun 2018 18:50:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=HuQ/rOQfuykGNRh7B1gAYf/iZ8DQ+lM7rwBaMHv5eGA=; b=BmOj2QilFr62G/Xrs5tSbj+nA
+        EzkRcLR+0LCWB/+mFvcj0zsn4+UlDyTFBKqKzopaf8b5198vuInF10hsaoirMQJlRmvvK0tU2sFan
+        k5LC4RHFZpYDZHxDmGUUZHl0AEUi4n/OZoNQGmW5zJMkUoqeVYJZsXFjdgzYxJ9RlkPhXB5sxBs6M
+        wbW7VtEH5wGpkGhvlWsxEeDQQqCvY93ldueFOrylWRIYY93b2yE5Onrn3IOokbeCsH9B+AlCBDr9k
+        /sm4TgAI8+8T6N60zvldZoBbGSoEjtZ9UpfTfpZWOJNENml9PF8MaWGOFTccpHUjXhU024AO/LAOG
+        fiJTODvlg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fUgVS-0002WV-B2; Sun, 17 Jun 2018 22:50:46 +0000
+Date:   Sun, 17 Jun 2018 15:50:46 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Stafford Horne <shorne@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        openrisc@lists.librecores.org
+Subject: Re: [PATCH] openrisc: Call destructor during __pte_free_tlb
+Message-ID: <20180617225046.GB21805@bombadil.infradead.org>
+References: <20180617221243.10126-1-shorne@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <010001640fbe0dd8-f999e7f6-7b6e-4deb-b073-0c572006727d-000000@email.amazonses.com>
-X-Originating-IP: [10.2.175.123]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180617221243.10126-1-shorne@gmail.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/17/2018 02:54 PM, Christopher Lameter wrote:
-> On Sat, 16 Jun 2018, john.hubbard@gmail.com wrote:
+On Mon, Jun 18, 2018 at 07:12:42AM +0900, Stafford Horne wrote:
+> During the __pte_free_tlb path openrisc fails to call the page
+> destructor which would clear the new bits that were introduced.
+> To fix this we are calling the destructor.
 > 
->> I've come up with what I claim is a simple, robust fix, but...I'm
->> presuming to burn a struct page flag, and limit it to 64-bit arches, in
->> order to get there. Given that the problem is old (Jason Gunthorpe noted
->> that RDMA has been living with this problem since 2005), I think it's
->> worth it.
->>
->> Leaving the new page flag set "nearly forever" is not great, but on the
->> other hand, once the page is actually freed, the flag does get cleared.
->> It seems like an acceptable tradeoff, given that we only get one bit
->> (and are lucky to even have that).
-> 
-> This is not robust. Multiple processes may register a page with the RDMA
-> subsystem. How do you decide when to clear the flag? I think you would
-> need an additional refcount for the number of times the page was
-> registered.
+> It seem openrisc was the only architecture missing this,  all other
+> architectures either call the destructor like we are doing here or use
+> pte_free.
 
-Effectively, page->_refcount is what does that here. It would be a nice, but 
-not strictly required optimization to have a separate reference count. That's
-because the new page flag gets cleared when the page is fully freed. So unless
-we're dealing with pages that don't get freed, it's functional, right?
+It may be worth noting that failing to call the destructor was also
+messing up the zone stats (and would be causing other problems if
+you were using SPLIT_PTE_PTLOCKS).
 
-Each of those multiple processes also wants protection from the ravages
-of try_to_unmap() and drop_buffers(), anyway. Having said that, it would
-be nice to have that refcount, but seems hard to get one.
-
-> 
-> I still think the cleanest solution here is to require mmu notifier
-> callbacks and to not pin the page in the first place. If a NIC does not
-> support a hardware mmu then it can still simulate it in software by
-> holding off the ummapping the mmu notifier callback until any pending
-> operation is complete and then invalidate the mapping so that future
-> operations require a remapping (or refaulting).
-> 
-
-Interesting. I didn't want a solution that only supported the few devices
-that can support their own replayable page faulting, so I was sort of putting
-the mmu notifier idea on the back burner. But somehow I missed the
-idea of just holding off the invalidation, in MMU notifier callback, to 
-work for non-page-faultable hardware. On one hand, it's wild to hold off
-the invalidation perhaps for a long time, but on the other hand--you get
-behavior that the hardware cannot otherwise do: access to non-pinned memory.
-
-I know this was brought up before. Definitely would like to hear more 
-opinions and brainstorming here.
-
-thanks,
--- 
-John Hubbard
-NVIDIA
+At any rate, Acked-by: Matthew Wilcox <willy@infradead.org>
