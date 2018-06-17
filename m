@@ -2,157 +2,371 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27046C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:09:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B6A7C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6EBB20864
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:09:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kq5WIhkx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6EBB20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 28AC020891
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 15:20:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28AC020891
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mellanox.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933809AbeFQPJg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 11:09:36 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44996 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933418AbeFQPJf (ORCPT
+        id S934019AbeFQPU3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 11:20:29 -0400
+Received: from mail-il-dmz.mellanox.com ([193.47.165.129]:55275 "EHLO
+        mellanox.co.il" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S933432AbeFQPU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 11:09:35 -0400
-Received: by mail-pf0-f196.google.com with SMTP id h12-v6so6958429pfk.11
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 08:09:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+Bn7GJ65B47Eq9coU4GRDAJrg/uIRpbDVpkLr70wEuc=;
-        b=kq5WIhkxTmZcsblHUm/8Zam3JNnjFkq4KR8NcZd85XXGN28FKjKIEoxK+J35DqouC9
-         Fobdfs1tpqIGlRRGcZ6lxML6Ic3FCDiDoDRM+ia8hiOkYY5n60oPUh/fAqeuu6P/7lg9
-         butN3n3H4DcSG7FpnI6hmEBMulK+En+V6bR8ATVOMphIodelmf1E5WLYDaJ13LF7pkEQ
-         AMhtBkLeXekORVvWxoshuEcsQ5SWscembrqlOtQFE+iC/SHQrvj0rMy/xEvyvaZTAqBt
-         F5inQnhIXOC2I2vUO8MsRLDcwrb9xfZTouTJD4ICqP6xIPvP1drxIduGE4E4qxLfW+TC
-         7jew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+Bn7GJ65B47Eq9coU4GRDAJrg/uIRpbDVpkLr70wEuc=;
-        b=XSvhsQPu19FPpqtXzPlkbvg1SVBpT+BTtONgjSsiLl6qkPjVPfTAOgsL6W0y3OBwKj
-         F+N38aOicPqKhCN3sTQp/sH7IpUJPdoTG622oHWuMoCyDgQaRTb9P7wYHj/v/bTywznG
-         kBWW2dYR8kgb7Uav55LCtg+G61LP4YIpRvPhjFRU7XkCpeVkpH1fYWrTLUiG7fQpmIm/
-         Ypce9WhGp0V6170eGVKDaheWLRgm6JgwZ/E2CUQVEoV8C/Su/zyZ0+meN160RZlkOAod
-         /JuV7jbMgu3CnX2OfG21641UA/kighgRLGQBFIMNekGlylDLbwsWBa+ODQ28gloOOytf
-         /1Jg==
-X-Gm-Message-State: APt69E1UOp+SoqyoiJsi8fO68Eda/Y+jcfp7NRpABhlcOOi6AmMA9s3v
-        +ITLOX8lunIqlW2Za5c5NzY=
-X-Google-Smtp-Source: ADUXVKK6HRqXFLEVgA4STJvah2qgoWD0fBiOgUyfwXxp2/yPmU3vg9qj+dwnFNjsLe7xeybRaUoFaw==
-X-Received: by 2002:a65:4348:: with SMTP id k8-v6mr8274586pgq.341.1529248174508;
-        Sun, 17 Jun 2018 08:09:34 -0700 (PDT)
-Received: from localhost (g134.124-44-9.ppp.wakwak.ne.jp. [124.44.9.134])
-        by smtp.gmail.com with ESMTPSA id s19-v6sm22830600pfe.97.2018.06.17.08.09.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 17 Jun 2018 08:09:33 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 00:09:31 +0900
-From:   Stafford Horne <shorne@gmail.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] mm: Mark pages in use for page tables
-Message-ID: <20180617150931.GB24595@lianli.shorne-pla.net>
-References: <20180307134443.32646-1-willy@infradead.org>
- <20180307134443.32646-5-willy@infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180307134443.32646-5-willy@infradead.org>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Sun, 17 Jun 2018 11:20:27 -0400
+Received: from Internal Mail-Server by MTLPINE1 (envelope-from vadimp@mellanox.com)
+        with ESMTPS (AES256-SHA encrypted); 17 Jun 2018 18:03:41 +0300
+Received: from r-mgtswh-226.mtr.labs.mlnx. (r-mgtswh-226.mtr.labs.mlnx [10.209.1.51])
+        by labmailer.mlnx (8.13.8/8.13.8) with ESMTP id w5HF1D6g002833;
+        Sun, 17 Jun 2018 18:01:13 +0300
+From:   Vadim Pasternak <vadimp@mellanox.com>
+To:     dvhart@infradead.org, andy.shevchenko@gmail.com,
+        gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+        jiri@resnulli.us, michaelsh@mellanox.com, ivecera@redhat.com,
+        Vadim Pasternak <vadimp@mellanox.com>
+Subject: [PATCH v6 6/8] platform/mellanox: Introduce support for Mellanox register access driver
+Date:   Sun, 17 Jun 2018 16:56:53 +0000
+Message-Id: <1529254615-88124-1-git-send-email-vadimp@mellanox.com>
+X-Mailer: git-send-email 2.1.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Mar 07, 2018 at 05:44:43AM -0800, Matthew Wilcox wrote:
-> From: Matthew Wilcox <mawilcox@microsoft.com>
-> 
-> Define a new PageTable bit in the page_type and use it to mark pages in
-> use as page tables.  This can be helpful when debugging crashdumps or
-> analysing memory fragmentation.  Add a KPF flag to report these pages
-> to userspace and update page-types.c to interpret that flag.
-> 
-> Note that only pages currently accounted as NR_PAGETABLES are tracked
-> as PageTable; this does not include pgd/p4d/pud/pmd pages.  Those will
-> be the subject of a later patch.
-> 
-> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
-> Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> ---
->  arch/tile/mm/pgtable.c                 | 3 +++
->  fs/proc/page.c                         | 2 ++
->  include/linux/mm.h                     | 2 ++
->  include/linux/page-flags.h             | 6 ++++++
->  include/uapi/linux/kernel-page-flags.h | 1 +
->  tools/vm/page-types.c                  | 1 +
->  6 files changed, 15 insertions(+)
-> 
+Introduce new Mellanox platform driver to allow access to Mellanox
+programmable device register space trough sysfs interface.
+The driver purpose is to provide sysfs interface for user space for the
+registers essential for system control and monitoring.
+The sets of registers for sysfs access are supposed to be defined per
+system type bases and include the registers related to system resets
+operation, system reset causes monitoring and some kinds of mux selection.
 
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+---
+v5-v6:
+ Comments pointed out by Darren:
+ - Fix "filed" to "field" and "form" to "from".
+ - Drop redundant case for "full register" kind of attribute.
+   Since regmap_config structure includes the field with the number of
+   bits in a register address, it protects register from reading/writing
+   above this limit.
+ - Use len parameter, received from the user space in kstrtou32 to prevent
+   reading beyond the end of input buffer.
+ - Move comment to correct location in mlxreg_io_attr_store routine.
+ - Provide regval reading operation into a static local function.
+v4-v5:
+ Comments pointed out by Darren:
+ - Add more comments.
+ - Add validation for the buffer length in attribute store method.
+ - Remove unnecessary check for input value in attribute store method.
+ - Change name val to input_value in order to improve code readability.
+ Changes added by Vadim:
+ - Extend logic in attribute show and store methods to cover all
+   configurations.
+v2->v3:
+ Comments pointed out by Darren:
+ - Remove conditional assignment per attribute mode type, because mode
+   will guard against not permitted access.
+   Verified by Vadim.
+v1->v2:
+ Change added by Vadim:
+ - Change ---help--- to help in Kconfig, according to new requirements;
+---
+ drivers/platform/mellanox/Kconfig     |  11 ++
+ drivers/platform/mellanox/Makefile    |   1 +
+ drivers/platform/mellanox/mlxreg-io.c | 245 ++++++++++++++++++++++++++++++++++
+ 3 files changed, 257 insertions(+)
+ create mode 100644 drivers/platform/mellanox/mlxreg-io.c
 
-Helloi Matthew,
+diff --git a/drivers/platform/mellanox/Kconfig b/drivers/platform/mellanox/Kconfig
+index 591bccd..ddfae9fc 100644
+--- a/drivers/platform/mellanox/Kconfig
++++ b/drivers/platform/mellanox/Kconfig
+@@ -23,4 +23,15 @@ config MLXREG_HOTPLUG
+ 	  This driver handles hot-plug events for the power suppliers, power
+ 	  cables and fans on the wide range Mellanox IB and Ethernet systems.
+ 
++config MLXREG_IO
++	tristate "Mellanox platform register access driver support"
++	depends on REGMAP
++	depends on HWMON
++	help
++	  This driver allows access to Mellanox programmable device register
++	  space trough sysfs interface. The sets of registers for sysfs access
++	  are defined per system type bases and includes the registers related
++	  to system resets operation, system reset causes monitoring and some
++	  kinds of mux selection.
++
+ endif # MELLANOX_PLATFORM
+diff --git a/drivers/platform/mellanox/Makefile b/drivers/platform/mellanox/Makefile
+index 7c8385e..57074d9c 100644
+--- a/drivers/platform/mellanox/Makefile
++++ b/drivers/platform/mellanox/Makefile
+@@ -4,3 +4,4 @@
+ # Mellanox Platform-Specific Drivers
+ #
+ obj-$(CONFIG_MLXREG_HOTPLUG)	+= mlxreg-hotplug.o
++obj-$(CONFIG_MLXREG_IO) += mlxreg-io.o
+diff --git a/drivers/platform/mellanox/mlxreg-io.c b/drivers/platform/mellanox/mlxreg-io.c
+new file mode 100644
+index 0000000..c192dfe
+--- /dev/null
++++ b/drivers/platform/mellanox/mlxreg-io.c
+@@ -0,0 +1,245 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Mellanox register access driver
++ *
++ * Copyright (C) 2018 Mellanox Technologies
++ * Copyright (C) 2018 Vadim Pasternak <vadimp@mellanox.com>
++ */
++
++#include <linux/bitops.h>
++#include <linux/device.h>
++#include <linux/hwmon.h>
++#include <linux/hwmon-sysfs.h>
++#include <linux/module.h>
++#include <linux/of_device.h>
++#include <linux/platform_data/mlxreg.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++/* Attribute parameters. */
++#define MLXREG_IO_ATT_SIZE	10
++#define MLXREG_IO_ATT_NUM	48
++
++/**
++ * struct mlxreg_io_priv_data - driver's private data:
++ *
++ * @pdev: platform device;
++ * @pdata: platform data;
++ * @hwmon: hwmon device;
++ * @mlxreg_io_attr: sysfs attributes array;
++ * @mlxreg_io_dev_attr: sysfs sensor device attribute array;
++ * @group: sysfs attribute group;
++ * @groups: list of sysfs attribute group for hwmon registration;
++ */
++struct mlxreg_io_priv_data {
++	struct platform_device *pdev;
++	struct mlxreg_core_platform_data *pdata;
++	struct device *hwmon;
++	struct attribute *mlxreg_io_attr[MLXREG_IO_ATT_NUM + 1];
++	struct sensor_device_attribute mlxreg_io_dev_attr[MLXREG_IO_ATT_NUM];
++	struct attribute_group group;
++	const struct attribute_group *groups[2];
++};
++
++static int
++mlxreg_io_get_reg(void *regmap, struct mlxreg_core_data *data, u32 in_val,
++		  bool rw_flag, u32 *regval)
++{
++	int ret;
++
++	ret = regmap_read(regmap, data->reg, regval);
++	if (ret)
++		goto access_error;
++
++	/*
++	 * There are three kinds of attributes: single bit, full register's
++	 * bits and bit sequence. For the first kind field mask indicates which
++	 * bits are not related and field bit is set zero. For the second kind
++	 * field mask is set to zero and field bit is set with all bits one.
++	 * No special handling for such kind of attributes - pass value as is.
++	 * For the third kind, field mask indicates which bits are related and
++	 * field bit is set to the first bit number (from 1 to 32) is the bit
++	 * sequence.
++	 */
++	if (!data->bit) {
++		/* Single bit. */
++		if (rw_flag) {
++			/* For show: expose effective bit value as 0 or 1. */
++			*regval = !!(*regval & ~data->mask);
++		} else {
++			/* For store: set effective bit value. */
++			*regval &= data->mask;
++			if (in_val)
++				*regval |= ~data->mask;
++		}
++	} else if (data->mask) {
++		/* Bit sequence. */
++		if (rw_flag) {
++			/* For show: mask and shift right. */
++			*regval = ror32(*regval & data->mask, (data->bit - 1));
++		} else {
++			/* For store: shift to the position and mask. */
++			in_val = rol32(in_val, data->bit - 1) & data->mask;
++			/* Clear relevant bits and set them to new value. */
++			*regval = (*regval & ~data->mask) | in_val;
++		}
++	}
++
++access_error:
++	return ret;
++}
++
++static ssize_t
++mlxreg_io_attr_show(struct device *dev, struct device_attribute *attr,
++		    char *buf)
++{
++	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
++	int index = to_sensor_dev_attr(attr)->index;
++	struct mlxreg_core_data *data = priv->pdata->data + index;
++	u32 regval = 0;
++	int ret;
++
++	ret = mlxreg_io_get_reg(priv->pdata->regmap, data, 0, true, &regval);
++	if (ret)
++		goto access_error;
++
++	return sprintf(buf, "%u\n", regval);
++
++access_error:
++	return ret;
++}
++
++static ssize_t
++mlxreg_io_attr_store(struct device *dev, struct device_attribute *attr,
++		     const char *buf, size_t len)
++{
++	struct mlxreg_io_priv_data *priv = dev_get_drvdata(dev);
++	int index = to_sensor_dev_attr(attr)->index;
++	struct mlxreg_core_data *data = priv->pdata->data + index;
++	u32 input_val, regval;
++	int ret;
++
++	if (len > MLXREG_IO_ATT_SIZE)
++		return -EINVAL;
++
++	/* Convert buffer to input value. */
++	ret = kstrtou32(buf, len, &input_val);
++	if (ret)
++		return ret;
++
++	ret = mlxreg_io_get_reg(priv->pdata->regmap, data, input_val, false,
++				&regval);
++	if (ret)
++		goto access_error;
++
++	ret = regmap_write(priv->pdata->regmap, data->reg, regval);
++	if (ret)
++		goto access_error;
++
++	return len;
++
++access_error:
++	dev_err(&priv->pdev->dev, "Bus access error\n");
++	return ret;
++}
++
++static struct device_attribute mlxreg_io_devattr_rw = {
++	.show	= mlxreg_io_attr_show,
++	.store	= mlxreg_io_attr_store,
++};
++
++static int mlxreg_io_attr_init(struct mlxreg_io_priv_data *priv)
++{
++	int i;
++
++	priv->group.attrs = devm_kzalloc(&priv->pdev->dev,
++					 priv->pdata->counter *
++					 sizeof(struct attribute *),
++					 GFP_KERNEL);
++	if (!priv->group.attrs)
++		return -ENOMEM;
++
++	for (i = 0; i < priv->pdata->counter; i++) {
++		priv->mlxreg_io_attr[i] =
++				&priv->mlxreg_io_dev_attr[i].dev_attr.attr;
++		memcpy(&priv->mlxreg_io_dev_attr[i].dev_attr,
++		       &mlxreg_io_devattr_rw, sizeof(struct device_attribute));
++
++		/* Set attribute name as a label. */
++		priv->mlxreg_io_attr[i]->name =
++				devm_kasprintf(&priv->pdev->dev, GFP_KERNEL,
++					       priv->pdata->data[i].label);
++
++		if (!priv->mlxreg_io_attr[i]->name) {
++			dev_err(&priv->pdev->dev, "Memory allocation failed for sysfs attribute %d.\n",
++				i + 1);
++			return -ENOMEM;
++		}
++
++		priv->mlxreg_io_dev_attr[i].dev_attr.attr.mode =
++						priv->pdata->data[i].mode;
++		priv->mlxreg_io_dev_attr[i].dev_attr.attr.name =
++					priv->mlxreg_io_attr[i]->name;
++		priv->mlxreg_io_dev_attr[i].index = i;
++		sysfs_attr_init(&priv->mlxreg_io_dev_attr[i].dev_attr.attr);
++	}
++
++	priv->group.attrs = priv->mlxreg_io_attr;
++	priv->groups[0] = &priv->group;
++	priv->groups[1] = NULL;
++
++	return 0;
++}
++
++static int mlxreg_io_probe(struct platform_device *pdev)
++{
++	struct mlxreg_io_priv_data *priv;
++	int err;
++
++	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->pdata = dev_get_platdata(&pdev->dev);
++	if (!priv->pdata) {
++		dev_err(&pdev->dev, "Failed to get platform data.\n");
++		return -EINVAL;
++	}
++
++	priv->pdev = pdev;
++
++	err = mlxreg_io_attr_init(priv);
++	if (err) {
++		dev_err(&priv->pdev->dev, "Failed to allocate attributes: %d\n",
++			err);
++		return err;
++	}
++
++	priv->hwmon = devm_hwmon_device_register_with_groups(&pdev->dev,
++							     "mlxreg_io",
++							      priv,
++							      priv->groups);
++	if (IS_ERR(priv->hwmon)) {
++		dev_err(&pdev->dev, "Failed to register hwmon device %ld\n",
++			PTR_ERR(priv->hwmon));
++		return PTR_ERR(priv->hwmon);
++	}
++
++	dev_set_drvdata(&pdev->dev, priv);
++
++	return 0;
++}
++
++static struct platform_driver mlxreg_io_driver = {
++	.driver = {
++	    .name = "mlxreg-io",
++	},
++	.probe = mlxreg_io_probe,
++};
++
++module_platform_driver(mlxreg_io_driver);
++
++MODULE_AUTHOR("Vadim Pasternak <vadimp@mellanox.com>");
++MODULE_DESCRIPTION("Mellanox regmap I/O access driver");
++MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:mlxreg-io");
+-- 
+2.1.4
 
-I have bisected a regression on OpenRISC in v4.18-rc1 to this commit.  Using
-our defconfig after boot I am getting:
-
-    BUG: Bad page state in process hostname  pfn:00b5c
-    page:c1ff0b80 count:0 mapcount:-1024 mapping:00000000 index:0x0
-    flags: 0x0()
-    raw: 00000000 00000000 00000000 fffffbff 00000000 00000100 00000200 00000000
-    page dumped because: nonzero mapcount
-    Modules linked in:
-    CPU: 1 PID: 38 Comm: hostname Tainted: G    B
-    4.17.0-simple-smp-07461-g1d40a5ea01d5-dirty #993
-    Call trace:
-    [<(ptrval)>] show_stack+0x44/0x54
-    [<(ptrval)>] dump_stack+0xb0/0xe8
-    [<(ptrval)>] bad_page+0x138/0x174
-    [<(ptrval)>] ? ipi_icache_page_inv+0x0/0x24
-    [<(ptrval)>] ? cpumask_next+0x24/0x34
-    [<(ptrval)>] free_pages_check_bad+0x6c/0xd0
-    [<(ptrval)>] free_pcppages_bulk+0x174/0x42c
-    [<(ptrval)>] free_unref_page_commit.isra.17+0xb8/0xc8
-    [<(ptrval)>] free_unref_page_list+0x10c/0x190
-    [<(ptrval)>] ? set_reset_devices+0x0/0x2c
-    [<(ptrval)>] release_pages+0x3a0/0x414
-    [<(ptrval)>] tlb_flush_mmu_free+0x5c/0x90
-    [<(ptrval)>] tlb_flush_mmu+0x90/0xa4
-    [<(ptrval)>] arch_tlb_finish_mmu+0x50/0x94
-    [<(ptrval)>] tlb_finish_mmu+0x30/0x64
-    [<(ptrval)>] exit_mmap+0x110/0x1e0
-    [<(ptrval)>] mmput+0x50/0xf0
-    [<(ptrval)>] do_exit+0x274/0xa94
-    [<(ptrval)>] ? _raw_spin_unlock_irqrestore+0x1c/0x2c
-    [<(ptrval)>] ? __up_read+0x70/0x88
-    [<(ptrval)>] do_group_exit+0x50/0x110
-    [<(ptrval)>] __wake_up_parent+0x0/0x38
-    [<(ptrval)>] _syscall_return+0x0/0x4
-
-
-In this series we are overloading mapcount with page_type, the above is caused
-due to this check in mm/page_alloc.c (free_pages_check_bad):
-
-        if (unlikely(atomic_read(&page->_mapcount) != -1))
-                bad_reason = "nonzero mapcount";
-
-We can see in the dump above that _mapcount is fffffbff, this corresponds to the
-'PG_table' flag.  Which was added here.  But it seems for some case in openrisc
-its not getting cleared during page free.
-
-This is as far as I got tracing it.  It might be an issue with OpenRISC, but our
-implementation is mostly generic.  I will look into it more in the next few days
-but I figured you might be able to spot something more quickly.
-
--Stafford
