@@ -6,74 +6,83 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F692C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B96CEC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4421620896
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:31:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4421620896
+	by mail.kernel.org (Postfix) with ESMTP id 7FABD20896
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:31:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FABD20896
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tamalin.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753308AbeFQFbP (ORCPT
+        id S1753853AbeFQFbQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 01:31:15 -0400
-Received: from mout.perfora.net ([74.208.4.194]:40853 "EHLO mout.perfora.net"
+        Sun, 17 Jun 2018 01:31:16 -0400
+Received: from mout.perfora.net ([74.208.4.194]:46603 "EHLO mout.perfora.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932123AbeFQFbL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 01:31:11 -0400
+        id S932176AbeFQFbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 01:31:12 -0400
 Received: from kahja.local ([73.231.184.107]) by mrelay.perfora.net
- (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0MO9FS-1fXi3n0n1I-005Xo2;
- Sun, 17 Jun 2018 07:31:03 +0200
+ (mreueus002 [74.208.5.2]) with ESMTPSA (Nemesis) id 0MgdbV-1fpVvj0IKt-00O2GH;
+ Sun, 17 Jun 2018 07:31:04 +0200
 From:   Quytelda Kahja <quytelda@tamalin.org>
 To:     gregkh@linuxfoundation.org, hadess@hadess.net, hdegoede@redhat.com,
         Larry.Finger@lwfinger.net
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Quytelda Kahja <quytelda@tamalin.org>
-Subject: [PATCH 08/11] staging: rtl8723bs: Fix spelling mistake in comment.
-Date:   Sat, 16 Jun 2018 22:30:37 -0700
-Message-Id: <20180617053040.5903-8-quytelda@tamalin.org>
+Subject: [PATCH 09/11] staging: rtl8723bs: Merge conditionals with similar bodies.
+Date:   Sat, 16 Jun 2018 22:30:38 -0700
+Message-Id: <20180617053040.5903-9-quytelda@tamalin.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180617053040.5903-1-quytelda@tamalin.org>
 References: <20180617053040.5903-1-quytelda@tamalin.org>
-X-Provags-ID: V03:K1:71ku56bCFU+fnR3zE6G8dcr6DWjLz8wltsbWtdv2igsKEnSo1wN
- 4GlSeCPshlvQxB76UIsnoF6UPqqfaC66hIwn8XHfQWmc6EkUV5AidwIZjlWyJcUIWWk65Vp
- BdrA+cCHlYj31rU6tb643PoyIS6mRzVNyP7OWYsXhgoA+sKhUoTpBd+y4vVJ5P7+CsaYVIL
- vKw13b2Y0jlMw2clV26Ig==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:VF3ls8CNam8=:YScJ5qGv29g6CENyybiJ5Z
- x/wFsQlaYA2/jJbW7AG3NfPL/Rh8b0Sw7AXBt3vGIyaGKbrmRb+IwgNCBPXeZ6vBLRIUGmqA5
- Z5LUOSMjC0Sj4HbVVycgX5dZGI2O/Jei5kzgw5CSwGkmYa1SUkvmI5tNY+RTKw+o5BbfVYYJj
- DrpDTxo2UcEnQFB5qY5iI0L43Yc9MfvUTkEJRJPQKLlq+Ybb/OmfHE/42mHzu+PTbcVxYjmq7
- HVoRnW1FHB+Xyn4JZsEukW1CWuIu7ZbJWH09qn2p6kcisxk3BP3y3wg/Cf0cNWpC5CacLDWxd
- hA5ICoo8Qvo42oAY94RP3HkOZ9MjpB7+H4s1tJrKP0VhveaeyLQqWwBfpH6G58BBOADoOuc9n
- 9Oo3YSAn69gRc6bit+WibRYK2IBfXLvNZU+nkUbWn20CfsILZwlmiUYNYk+PcsTwka/5pFIUX
- V0GtdwmZp89OdZHg9nRLQpMd6LGCLIYGS6ePRYTORKoHEzSoDRbVFYoCiB59FLfs078UuT2s/
- E7jLHItGy7hhjUt0lBS/undoi8Zlpxd8CkY41DqoMcp0CGDMdWFM0BspoKRnsfW9xlXs8bPj5
- 2N9ENJY6QR7yJCBXdwGpZh9F6uHDdks1CzrIui0WmXKP1pGbOUHw2LZewNOpdL/xpTVCYl+5V
- N0gzww6w2OAcq7oKccx/rTNqA1sfFyXiDHZyFuXeNbDMxhOHbDQmXTpbabdI5bmMucbU=
+X-Provags-ID: V03:K1:oZsn9/0drw2QPz+H3MbsZGJD0eVI3TyuOUSwgXHRelusaDkUv/F
+ 4qNCm3qfqeqAKJAmEPSJRAmjvUCBPPHOEwMVr3F3/LWL8fNA+iKZofBJM6ukzGXGAyo9OsK
+ oVQghcPeLxRHzQwaAMmWkUuji6fXIs1ca7T4KhUWzhnt0mvIN9foepF8VReCA1uHONAYGrV
+ Ye0bWkL2NAb/XI7x54YEg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:o4v3UrDbjW4=:ABUcDWN01OgiMDmxQKSWnC
+ CWd91m6I+UV6iKSl0lxccvSpQOsx35i/Ak3aXaOCo5L3QeLTPhKY96ZvcBUGetun/YXQru9aT
+ 7bvzjFxYyxWFFVn31j+HXrQOVsoq7Z8hUUvOJYkfqUm1f2YEvnaz6rDkXGwKKHxzPMrn1pcOy
+ l+qYLj6vQA87HESvVk4QSDla2+etjCfi6jb9qMkGWWupvCZ9FkFSW2kwsaDTFuG0+XBS2SdDV
+ 5krgTLBceKx8TTCcWLxk59qRnqxmnl5tE0XSKTywy5xmM60abfR5RXQTMKLvUsS56RgaWcL2N
+ GgslQNVHKB5qd6fdYrCO6uEkH3ZqLZVLrMNUWhoeGlW1bIRjbXYcBFvx3M5RV5WcDzDSpQSMd
+ vdXmKO3Dp4oYhmvoxMy973DdXxbO4XBgz/a8qJLHRQVMkNga+N257VkQhsW7ICKOt8YeykItY
+ /IgQ3unYWtBr8wSee3yVT3Fz4aLCAwn0iY0wtPH3SvFgsx/d/rjYHG/fyfO/lE9y+juf/CiRw
+ u1h1RkO4T2etSqkU/p/dgKd0Hhx7xf8nEJ6hnJ4a33vVHJagkAe9Gut98iMsaLRk9hyYCM7gE
+ n+IzR/ZSEdumASXnfLfKJ+LRaHnTXu47baa0uLMNFsPE8jtMsKnczXkmAObgcceMyi+P6cfWY
+ Ly7Kg4MaZ3MqmfsypZF7VohPAtVWOLxuud8pDap4f/0az5rVVEaRMuBJfb2dMpZ+Urqc=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Two conditionals that set 'channel' based on 'band_type' in
+'phy_get_tx_pwr_lmt()' can be simplified into one single-line conditional.
+
 Signed-off-by: Quytelda Kahja <quytelda@tamalin.org>
 ---
- drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/rtl8723bs/hal/hal_com_phycfg.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-index 6d8a07ac7bb3..dd097df86fa3 100644
+index dd097df86fa3..9e6dc238c028 100644
 --- a/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
 +++ b/drivers/staging/rtl8723bs/hal/hal_com_phycfg.c
-@@ -1731,7 +1731,7 @@ s8 phy_get_tx_pwr_lmt(struct adapter *adapter, u32 reg_pwr_tbl_sel,
- 	if (idx_rate_sctn == 0 || idx_rate_sctn == 1)
- 		idx_bandwidth = 0;
+@@ -1738,12 +1738,8 @@ s8 phy_get_tx_pwr_lmt(struct adapter *adapter, u32 reg_pwr_tbl_sel,
+ 		idx_bandwidth = 1;
+ 	}
  
--	/*  workaround for wrong indxe combination to obtain tx power limit, */
-+	/*  workaround for wrong index combination to obtain tx power limit, */
- 	/*  HT on 80M will reference to HT on 40M */
- 	if ((idx_rate_sctn == 2 || idx_rate_sctn == 3) &&
- 	    band_type == BAND_ON_5G && idx_bandwidth == 2) {
+-	if (band_type == BAND_ON_2_4G)
+-		channel = phy_GetChannelIndexOfTxPowerLimit(BAND_ON_2_4G,
+-							    channel);
+-	else if (band_type == BAND_ON_5G)
+-		channel = phy_GetChannelIndexOfTxPowerLimit(BAND_ON_5G,
+-							    channel);
++	if (band_type == BAND_ON_2_4G || band_type == BAND_ON_5G)
++		channel = phy_GetChannelIndexOfTxPowerLimit(band_type, channel);
+ 
+ 	if (idx_band == -1 || idx_regulation == -1 || idx_bandwidth == -1 ||
+ 	    idx_rate_sctn == -1 || idx_channel == -1) {
 -- 
 2.17.1
 
