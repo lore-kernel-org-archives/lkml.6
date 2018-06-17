@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 855C2C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:08:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54BFCC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:08:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41A8920895
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:08:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 115FA2086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:08:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ObeYbgFH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41A8920895
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="enZlbfI9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 115FA2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964989AbeFQCII (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:08:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59202 "EHLO
+        id S936494AbeFQCIF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:08:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59240 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933960AbeFQCBJ (ORCPT
+        with ESMTP id S933978AbeFQCBK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 22:01:09 -0400
+        Sat, 16 Jun 2018 22:01:10 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=UL7Dd8P+07FgmPfVgBxdWbMx7UGqU9gll23MkeO9Cj4=; b=ObeYbgFHW40CIoI9Iay9YDcWB
-        R1kLjrm1K4zSgLFf60/M+hfgncpEpteXsSNjqaVrhSZvqoTB2A0s+iXwQq1cN9GVs5+sRvopf5eMH
-        B703/nXeYHsQFY6Lkn2WXqx3JncFQC1iCAFeZHlG+RkpUFWs9kAyLv24VPpLXF9tyOdje0VuVPW2B
-        o1I2d7ZOtcKOHNlNKbd0UjtCs+Gz4jQ23VF2GTFIX0G3jFkRjv1Jvo6LOmX9tm/xmecUSqeyfjHqz
-        mz5vLYkpNOs+kyQZv7ToapcRmRYgjsF7lWY8j6fbwTiEXriorLtlJkugjjUMNw/rNpYoPWNDZoxe3
-        g/CiG4N/A==;
+         bh=6CtH22NpoaemDSFVaBuH/UKCnAIo12i5SDA7CsPpPB8=; b=enZlbfI9wXXz6+EBEkFiy9m/k
+        kt+C1t9v+DOjsgRjSlROOtXSExB0JfbGElKzRRlkpDixFmAsj7NqoYl2vkaNRaAV9e2qsBLbawMd7
+        2V+NPrpcpZr6Tz9vH6txcgm1gsZQEthoYzoWVpuIbZN9iKx8Nczisl6Kf7ODKpnWM5U4nNqJUzKQU
+        k2dxk7v2a30hWRXlDFVIobiPkbwfGy5H5+5On4MFGEIG4gDqydppCgcT8oHofRynWzWHq3ynIWJKE
+        yI4DbKG1dLpTYowlYpBvwZBWXNe7JCH1ajp+0EW+pTITfO03ovzN3TENi+EQ8pMTkW4/YaYTdvDrE
+        75myFGVhg==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN09-0001OE-1u; Sun, 17 Jun 2018 02:01:09 +0000
+        id 1fUMzw-0001GS-Lp; Sun, 17 Jun 2018 02:00:56 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 49/74] shmem: Convert find_swap_entry to XArray
-Date:   Sat, 16 Jun 2018 19:00:27 -0700
-Message-Id: <20180617020052.4759-50-willy@infradead.org>
+Subject: [PATCH v14 14/74] xarray: Extract entries from an XArray
+Date:   Sat, 16 Jun 2018 18:59:52 -0700
+Message-Id: <20180617020052.4759-15-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,62 +63,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a 1:1 conversion.
+The xa_extract function combines the functionality of
+radix_tree_gang_lookup() and radix_tree_gang_lookup_tagged().
+It extracts entries matching the specified filter into a normal array.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- mm/shmem.c | 27 ++++++++++-----------------
- 1 file changed, 10 insertions(+), 17 deletions(-)
+ include/linux/xarray.h |  2 ++
+ lib/xarray.c           | 80 ++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 82 insertions(+)
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 479e4a8e6d68..983a27656e2e 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1099,34 +1099,27 @@ static void shmem_evict_inode(struct inode *inode)
- 	clear_inode(inode);
- }
+diff --git a/include/linux/xarray.h b/include/linux/xarray.h
+index 0790b3b098f0..6f398732b664 100644
+--- a/include/linux/xarray.h
++++ b/include/linux/xarray.h
+@@ -227,6 +227,8 @@ void *xa_find(struct xarray *xa, unsigned long *index,
+ 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
+ void *xa_find_after(struct xarray *xa, unsigned long *index,
+ 		unsigned long max, xa_tag_t) __attribute__((nonnull(2)));
++unsigned int xa_extract(struct xarray *, void **dst, unsigned long start,
++		unsigned long max, unsigned int n, xa_tag_t);
  
--static unsigned long find_swap_entry(struct radix_tree_root *root, void *item)
-+static unsigned long find_swap_entry(struct xarray *xa, void *item)
- {
--	struct radix_tree_iter iter;
--	void __rcu **slot;
--	unsigned long found = -1;
-+	XA_STATE(xas, xa, 0);
- 	unsigned int checked = 0;
+ /**
+  * xa_init() - Initialise an empty XArray.
+diff --git a/lib/xarray.c b/lib/xarray.c
+index 8756ca22363e..1e15ead40d78 100644
+--- a/lib/xarray.c
++++ b/lib/xarray.c
+@@ -1413,6 +1413,86 @@ void *xa_find_after(struct xarray *xa, unsigned long *indexp,
+ }
+ EXPORT_SYMBOL(xa_find_after);
+ 
++static unsigned int xas_extract_present(struct xa_state *xas, void **dst,
++			unsigned long max, unsigned int n)
++{
 +	void *entry;
- 
- 	rcu_read_lock();
--	radix_tree_for_each_slot(slot, root, &iter, 0) {
--		void *entry = radix_tree_deref_slot(slot);
--
--		if (radix_tree_deref_retry(entry)) {
--			slot = radix_tree_iter_retry(&iter);
-+	xas_for_each(&xas, entry, ULONG_MAX) {
-+		if (xas_retry(&xas, entry))
- 			continue;
--		}
--		if (entry == item) {
--			found = iter.index;
-+		if (entry == item)
- 			break;
--		}
- 		checked++;
--		if ((checked % 4096) != 0)
-+		if ((checked % XA_CHECK_SCHED) != 0)
- 			continue;
--		slot = radix_tree_iter_resume(slot, &iter);
-+		xas_pause(&xas);
- 		cond_resched_rcu();
- 	}
--
- 	rcu_read_unlock();
--	return found;
++	unsigned int i = 0;
 +
-+	return xas_invalid(&xas) ? -1 : xas.xa_index;
- }
- 
- /*
++	rcu_read_lock();
++	xas_for_each(xas, entry, max) {
++		if (xas_retry(xas, entry))
++			continue;
++		dst[i++] = entry;
++		if (i == n)
++			break;
++	}
++	rcu_read_unlock();
++
++	return i;
++}
++
++static unsigned int xas_extract_tag(struct xa_state *xas, void **dst,
++			unsigned long max, unsigned int n, xa_tag_t tag)
++{
++	void *entry;
++	unsigned int i = 0;
++
++	rcu_read_lock();
++	xas_for_each_tagged(xas, entry, max, tag) {
++		if (xas_retry(xas, entry))
++			continue;
++		dst[i++] = entry;
++		if (i == n)
++			break;
++	}
++	rcu_read_unlock();
++
++	return i;
++}
++
++/**
++ * xa_extract() - Copy selected entries from the XArray into a normal array.
++ * @xa: The source XArray to copy from.
++ * @dst: The buffer to copy entries into.
++ * @start: The first index in the XArray eligible to be selected.
++ * @max: The last index in the XArray eligible to be selected.
++ * @n: The maximum number of entries to copy.
++ * @filter: Selection criterion.
++ *
++ * Copies up to @n entries that match @filter from the XArray.  The
++ * copied entries will have indices between @start and @max, inclusive.
++ *
++ * The @filter may be an XArray tag value, in which case entries which are
++ * tagged with that tag will be copied.  It may also be %XA_PRESENT, in
++ * which case non-NULL entries will be copied.
++ *
++ * The entries returned may not represent a snapshot of the XArray at a
++ * moment in time.  For example, if another thread stores to index 5, then
++ * index 10, calling xa_extract() may return the old contents of index 5
++ * and the new contents of index 10.  Indices not modified while this
++ * function is running will not be skipped.
++ *
++ * If you need stronger guarantees, holding the xa_lock across calls to this
++ * function will prevent concurrent modification.
++ *
++ * Context: Any context.  Takes and releases the RCU lock.
++ * Return: The number of entries copied.
++ */
++unsigned int xa_extract(struct xarray *xa, void **dst, unsigned long start,
++			unsigned long max, unsigned int n, xa_tag_t filter)
++{
++	XA_STATE(xas, xa, start);
++
++	if (!n)
++		return 0;
++
++	if ((__force unsigned int)filter < XA_MAX_TAGS)
++		return xas_extract_tag(&xas, dst, max, n, filter);
++	return xas_extract_present(&xas, dst, max, n);
++}
++EXPORT_SYMBOL(xa_extract);
++
+ #ifdef XA_DEBUG
+ void xa_dump_node(const struct xa_node *node)
+ {
 -- 
 2.17.1
 
