@@ -2,131 +2,114 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9CAC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD8BC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 19:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22FB4208E0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31D9A2086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 19:07:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="UX3bHyQf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22FB4208E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
+	dkim=pass (1024-bit key) header.d=pobox.com header.i=@pobox.com header.b="FjK0rC3s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31D9A2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754292AbeFQS5l (ORCPT
+        id S1754350AbeFQTHO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 14:57:41 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:49172 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752696AbeFQS5k (ORCPT
+        Sun, 17 Jun 2018 15:07:14 -0400
+Received: from pb-smtp1.pobox.com ([64.147.108.70]:51536 "EHLO
+        pb-smtp1.pobox.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1753455AbeFQTHM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 14:57:40 -0400
-Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id B1A7E5C0E8F;
-        Sun, 17 Jun 2018 20:57:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529261858;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DrNTsVYlzr5yMhQlyFuAKQGtEqTaTyOM5AGsbfR+7ww=;
-        b=UX3bHyQfpK+KUe4yMpu0Z+Hh+vx3+RtthVs5jR6MejLPsxKAv7/1eVjIBZZoLoZ+iwZkz2
-        IHAoeI8n3tX0N1v+eeFIda6KTYx8bhbOmTKjBzyVVwaNWLA3JmlppH8rpQZqdEONu4zW4E
-        bsc2RSJISxSAmtSNB7cxT4ce/Dhswt4=
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Date:   Sun, 17 Jun 2018 20:57:38 +0200
-From:   Stefan Agner <stefan@agner.ch>
-To:     Joe Perches <joe@perches.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        Sun, 17 Jun 2018 15:07:12 -0400
+Received: from pb-smtp1.pobox.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id D6505FC138;
+        Sun, 17 Jun 2018 15:07:09 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=pobox.com; h=from:to:cc
+        :subject:date:message-id; s=sasl; bh=OlWf7tyGxY9ASHst7eR5fxeKMh8
+        =; b=FjK0rC3sw/u7cllgsSgMPlpyfAK/IPv9ABJhaH7rghDnyUrlKhL/9kjOWLZ
+        NJs/sAQx/WYEcBLpgU6B9sz6c+dSKDR69iofnw1xSfxiUPFA07QxcGuN1seAt6k/
+        LxhpGyK38f/weLsBjm3WrJvoGLx0+RD+g0INJH+Tlz5WafCY=
+Received: from pb-smtp1.nyi.icgroup.com (unknown [127.0.0.1])
+        by pb-smtp1.pobox.com (Postfix) with ESMTP id CDDF5FC137;
+        Sun, 17 Jun 2018 15:07:09 -0400 (EDT)
+Received: from yoda.home (unknown [70.82.104.228])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by pb-smtp1.pobox.com (Postfix) with ESMTPSA id 49511FC12F;
+        Sun, 17 Jun 2018 15:07:09 -0400 (EDT)
+Received: from xanadu.home (xanadu.home [192.168.2.2])
+        by yoda.home (Postfix) with ESMTP id 4E0E12DA019C;
+        Sun, 17 Jun 2018 15:07:08 -0400 (EDT)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Dave Mielke <Dave@mielke.cc>,
+        Samuel Thibault <samuel.thibault@ens-lyon.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: hamradio: remove unused variable
-In-Reply-To: <051e78ff15ac6a2e647b0c8c539ac80b3aec6328.camel@perches.com>
-References: <20180617130335.3947-1-stefan@agner.ch>
- <051e78ff15ac6a2e647b0c8c539ac80b3aec6328.camel@perches.com>
-Message-ID: <89a40f827d9557141707b87a86533593@agner.ch>
-X-Sender: stefan@agner.ch
-User-Agent: Roundcube Webmail/1.3.4
-X-Spamd-Result: default: False [-3.10 / 15.00];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MID_RHS_MATCH_FROM(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_THREE(0.00)[4];
-         FROM_EQ_ENVFROM(0.00)[];
-         DKIM_SIGNED(0.00)[];
-         TO_DN_SOME(0.00)[];
-         RCVD_COUNT_ZERO(0.00)[0];
-         RCVD_TLS_ALL(0.00)[];
-         BAYES_HAM(-3.00)[100.00%];
-         ARC_NA(0.00)[]
+Subject: [PATCH v2 0/4] have the vt console preserve unicode characters
+Date:   Sun, 17 Jun 2018 15:07:02 -0400
+Message-Id: <20180617190706.14614-1-nicolas.pitre@linaro.org>
+X-Mailer: git-send-email 2.17.1
+X-Pobox-Relay-ID: A22E641C-7261-11E8-B023-44CE1968708C-78420484!pb-smtp1.pobox.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 17.06.2018 20:15, Joe Perches wrote:
-> On Sun, 2018-06-17 at 15:03 +0200, Stefan Agner wrote:
->> The array bpq_eth_addr is only used to get the size of an
->> address. Remove the array and use the size of the array
->> bcast_addr which is actually copied.
->>
->> Also constify and tidy up the bcast_addr declaration.
->>
->> This fixes a warning seen with clang:
->> drivers/net/hamradio/bpqether.c:94:13: warning: variable 'bpq_eth_addr' is not
->>       needed and will not be emitted [-Wunneeded-internal-declaration]
->> static char bpq_eth_addr[6];
->>             ^
->> 1 warning generated.
->>
->> Signed-off-by: Stefan Agner <stefan@agner.ch>
->> ---
->>  drivers/net/hamradio/bpqether.c | 8 +++-----
->>  1 file changed, 3 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/net/hamradio/bpqether.c b/drivers/net/hamradio/bpqether.c
->> index f347fd9c5b28..8c9c9977241e 100644
->> --- a/drivers/net/hamradio/bpqether.c
->> +++ b/drivers/net/hamradio/bpqether.c
->> @@ -89,9 +89,7 @@
->>  static const char banner[] __initconst = KERN_INFO \
->>  	"AX.25: bpqether driver version 004\n";
->>
->> -static char bcast_addr[6]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
->> -
->> -static char bpq_eth_addr[6];
->> +static const char bcast_addr[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
->>
->>  static int bpq_rcv(struct sk_buff *, struct net_device *, struct packet_type *, struct net_device *);
->>  static int bpq_device_event(struct notifier_block *, unsigned long, void *);
->> @@ -501,8 +499,8 @@ static int bpq_new_device(struct net_device *edev)
->>  	bpq->ethdev = edev;
->>  	bpq->axdev = ndev;
->>
->> -	memcpy(bpq->dest_addr, bcast_addr, sizeof(bpq_eth_addr));
->> -	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bpq_eth_addr));
->> +	memcpy(bpq->dest_addr, bcast_addr, sizeof(bcast_addr));
->> +	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bcast_addr));
-> 
-> Probably better to remove bcast_addr altogether and use
-> 
-> 	eth_broadcast_addr(bpq->dst_addr);
-> 	eth_broadcast_addr(bpq->acpt_addr);
-> 
+The vt code translates UTF-8 strings into glyph index values and stores
+those glyph values directly in the screen buffer. Because there can only
+be at most 512 glyphs, it is impossible to represent most unicode
+characters, in which case a default glyph (often '?') is displayed
+instead. The original unicode value is then lost.
 
-Sounds sensible, will send a v2.
+This also means that the /dev/vcs* devices only provide user space with
+glyph index values, and then user applications must get hold of the
+unicode-to-glyph table the kernel is using in order to back-translate
+those into actual characters. It is not possible to get back the original
+unicode value when multiple unicode characters map to the same glyph,
+especially for the vast majority that maps to the default replacement
+glyph.
 
---
-Stefan
+The 512-glyph limitation is inherent to VGA displays, but users of
+/dev/vcs* shouldn't have to be restricted to a narrow unicode space from
+lossy screen content because of that. This is especially true for
+accessibility applications such as BRLTTY that rely on /dev/vcs to rander
+screen content onto braille terminals.
 
-> 
->>
->>  	err = register_netdevice(ndev);
->>  	if (err)
+This patch series introduces unicode support to /dev/vcs* devices,
+allowing full unicode access from userspace to the vt console which
+can, amongst other purposes, appropriately translate actual unicode
+screen content into braille. Memory is allocated, and possible CPU
+overhead introduced, only if /dev/vcsu is read at least once.
+
+I'm a prime user of this feature, as well as the BRLTTY maintainer Dave Mielke
+who implemented support for this in BRLTTY. There is therefore a vested
+interest in maintaining this feature as necessary. And this received
+extensive testing as well at this point.
+
+Patch #4 was used for validation and is included for completeness, however
+if people think it is unappropriate for mainline then it can be dropped.
+
+This is also available on top of v4.18-rc1 here:
+
+  git://git.linaro.org/people/nicolas.pitre/linux vt-unicode
+
+Changes from v1:
+
+- Rebased to v4.18-rc1.
+- Dropped first patch (now in mainline as commit 4b4ecd9cb8).
+- Removed a printk instance from an error path easily triggerable
+  from user space.
+- Minor cleanup.
+
+Diffstat:
+
+ drivers/tty/vt/vc_screen.c     |  90 +++++++--
+ drivers/tty/vt/vt.c            | 347 +++++++++++++++++++++++++++++++++--
+ include/linux/console_struct.h |   2 +
+ include/linux/selection.h      |   5 +
+ 4 files changed, 419 insertions(+), 25 deletions(-)
+
