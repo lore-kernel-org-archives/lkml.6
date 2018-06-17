@@ -7,64 +7,64 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42616C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C9EC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E674B2086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BD212086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 05:12:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YB/6W6Ld"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E674B2086A
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="t/F6eodU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BD212086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753628AbeFQFMS (ORCPT
+        id S1754053AbeFQFMp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 01:12:18 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:36242 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753141AbeFQFMN (ORCPT
+        Sun, 17 Jun 2018 01:12:45 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:43837 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752440AbeFQFMM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 01:12:13 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a12-v6so6662655pfi.3;
-        Sat, 16 Jun 2018 22:12:13 -0700 (PDT)
+        Sun, 17 Jun 2018 01:12:12 -0400
+Received: by mail-pf0-f196.google.com with SMTP id y8-v6so6651396pfm.10;
+        Sat, 16 Jun 2018 22:12:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZSMjW9fzrLdVDATyVHmykY7RbhvdhToLNNjkpZ9bW+M=;
-        b=YB/6W6LdvM1OOXcrJl2RfQcosKQzV6FsVtBTnAl2QeSNSkIMDAK/rQ+fe8Sh/VXyNB
-         HXFq+x+AM1daQsebrHs339tOSz+a920S1w4qgvtr9WMO0mHjfdjxzY2kxsA8FlZqasNO
-         xhS3cjlUM6A3Da8u10xXDs9+oIY+nC+5KFOzbAk02TimbsGhcqylInpaXg5DEr6MBXmd
-         igcCXiiKqrCUkEVRrjyYm4lB4cw4zepCH+sRWXnh9EPsp5mBI+faHV2YMWDpcZNl/ZOr
-         a1DgzfxAdc8yuIUuYEbeBP3RPslPau2jS2IfxqDO1NqWfaKBcTDldF6ggqHu4JWbr213
-         hWLA==
+        bh=PA0NrdNsd0KXOdx5GvsA2TB5KoIFGLpO6aMantl+yZM=;
+        b=t/F6eodUuQ1CgQ4EAyHLWFOiMLbBX/RWoITrOdrt3z7EfqwJjyNT4mtsnYZrxucDxI
+         w/P7ky3W95HpsO4KdhdwRnXl5W3bQlagqQGmnw0Gv4C+6AyDT29O3TleXLL/ufHtFkIw
+         dd6DPGcPVnudi1NamTVpAsmKBdUw6ekqRTwdLpB22sP1mfqRYOSrpexZO42SmBb3y+Q0
+         Gy79n5hwbZXuX6pNb1uaU715qgwKtktmRQ7CqAyJzz84n8au+HvVeUf1pp60hKtuupAV
+         QRm2s/r84BnKzcvX4OBhnsv+TDTMQL80Y1tKsUbP66sbqOwlDrbqRNm1fbzlUXuvt5Tg
+         rr0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZSMjW9fzrLdVDATyVHmykY7RbhvdhToLNNjkpZ9bW+M=;
-        b=dMTVF93uKErNvUiTklIqoJeFD3UKd7bxH3X2VwWdzPDsTMTFqG6n4nVnvJspvGpJET
-         26OM7EiwYS4Fn3r2o8/NZW+sWA/SR3loMg/k7l51+JXQbDFY6Hu3Np0YYsa0IrGamGi8
-         7IGkq1F3f3ymPO+ieXHytQZmbyRItx4EAYINdQCQzvw+8gCdQUC+pblwBhVdeFjlA4l0
-         pjw6V/vfmr1tC6EBzRBHZU7ptVEkY2lnuVIYpdbYgOEbT/PbhKSWukh+qombudFm6VvN
-         mTMRkeksinCHRkUADEnPM7iTTDNU2RYi7uL8RYhw+BlfeUOnYaj6LJl8k1ZFr4OcH0uR
-         ajQg==
-X-Gm-Message-State: APt69E0qkkYmzNv8Zoc2iDAcTdHeuKtucaL8O1nkGpiURhwgYrehlB7H
-        K8u/MhU6G3YJzxC4ZdzONL4=
-X-Google-Smtp-Source: ADUXVKL1Wsz6bRzFHbLGnII6dk+/mqJQ4dISlMjs2vQ7tDEjXEKUsI+ka+NbxrLyQYiU3EzBNMcxww==
-X-Received: by 2002:a62:5d48:: with SMTP id r69-v6mr8412717pfb.84.1529212333345;
-        Sat, 16 Jun 2018 22:12:13 -0700 (PDT)
+        bh=PA0NrdNsd0KXOdx5GvsA2TB5KoIFGLpO6aMantl+yZM=;
+        b=X85FoXN1cCU3ZCbeoeoNMEqywHUfkwFrNlmVJWm9vSldkGkYqZGFqGHuF7O1roTxmo
+         ozKzehPQ8hfWsmC5PKBgJCOtmgByjpllMVhvdMCLOovrn9/1v/SFFVkdkXjT1TwPSDyR
+         kC0bHcS0THwJDob/9ZM9TaI/9hzrhpAKwkXeIAEs9SDd5uqHf1lUrRcTKlcKQlp1pTMZ
+         Ckiid4SZfW/t8mqNyhim7OFXj8fw4JyoVBDczjI3ZyZNg5fVl6o3MQE4TlW0yakTn1NL
+         QMb0pFK+Wkc4hMRUZxsfmgHBJHH7LniqeM1teCs4X9tVki4lETInQ8WJ7Z9/zP9nU9rl
+         ukuQ==
+X-Gm-Message-State: APt69E3xKjiAOUwdpI9qLkslRtBmlKR1N72tpm8PjoIbNe59O260Jbou
+        gMzB8GlDdnD1098EUZU5eNw=
+X-Google-Smtp-Source: ADUXVKIkFvIUtvKbX4NhgpiSJvc4tg5C7H67QIl+fzDrCvRQqSiEN9gY0HPC6M9AXA953yacXC3ydg==
+X-Received: by 2002:a62:9385:: with SMTP id r5-v6mr8469038pfk.59.1529212331843;
+        Sat, 16 Jun 2018 22:12:11 -0700 (PDT)
 Received: from deepa-ubuntu.lan (c-67-170-212-194.hsd1.ca.comcast.net. [67.170.212.194])
-        by smtp.gmail.com with ESMTPSA id h27-v6sm28354594pfk.160.2018.06.16.22.12.12
+        by smtp.gmail.com with ESMTPSA id h27-v6sm28354594pfk.160.2018.06.16.22.12.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 16 Jun 2018 22:12:12 -0700 (PDT)
+        Sat, 16 Jun 2018 22:12:11 -0700 (PDT)
 From:   Deepa Dinamani <deepa.kernel@gmail.com>
 To:     arnd@arndb.de, tglx@linutronix.de, linux-kernel@vger.kernel.org
 Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org, y2038@lists.linaro.org
-Subject: [PATCH 3/3] time: Change types to new y2038 safe __kernel_itimerspec
-Date:   Sat, 16 Jun 2018 22:11:44 -0700
-Message-Id: <20180617051144.29756-4-deepa.kernel@gmail.com>
+Subject: [PATCH 2/3] time: Enable get/put_compat_itimerspec64 always
+Date:   Sat, 16 Jun 2018 22:11:43 -0700
+Message-Id: <20180617051144.29756-3-deepa.kernel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180617051144.29756-1-deepa.kernel@gmail.com>
 References: <20180617051144.29756-1-deepa.kernel@gmail.com>
@@ -73,133 +73,137 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-timer_set/gettime and timerfd_set/get apis use struct itimerspec at the
-user interface layer.  struct itimerspec is not y2038-safe.
-Change these interfaces to use y2038-safe struct __kernel_itimerspec
-instead.  This will help define new syscalls when architectures select
-CONFIG_64BIT_TIME.
+This will aid in enabling the compat syscalls on 32-bit
+architectures later on.
+
+Also move compat_itimerspec and related defines to compat_time.h.
+The compat_time.h file will eventually be deleted.
 
 Signed-off-by: Deepa Dinamani <deepa.kernel@gmail.com>
 ---
- fs/timerfd.c               |  8 ++++----
- include/linux/syscalls.h   | 10 +++++-----
- kernel/time/posix-timers.c | 12 +++++++-----
- 3 files changed, 16 insertions(+), 14 deletions(-)
+ include/linux/compat.h      |  9 ---------
+ include/linux/compat_time.h |  9 +++++++++
+ kernel/compat.c             | 29 -----------------------------
+ kernel/time/time.c          | 21 +++++++++++++++++++++
+ 4 files changed, 30 insertions(+), 38 deletions(-)
 
-diff --git a/fs/timerfd.c b/fs/timerfd.c
-index d84a2bee4f82..8bb926253f88 100644
---- a/fs/timerfd.c
-+++ b/fs/timerfd.c
-@@ -533,8 +533,8 @@ static int do_timerfd_gettime(int ufd, struct itimerspec64 *t)
- }
+diff --git a/include/linux/compat.h b/include/linux/compat.h
+index b1a5562b3215..18a13f2df14b 100644
+--- a/include/linux/compat.h
++++ b/include/linux/compat.h
+@@ -109,11 +109,6 @@ typedef	compat_ulong_t		compat_aio_context_t;
+ struct compat_sel_arg_struct;
+ struct rusage;
  
- SYSCALL_DEFINE4(timerfd_settime, int, ufd, int, flags,
--		const struct itimerspec __user *, utmr,
--		struct itimerspec __user *, otmr)
-+		const struct __kernel_itimerspec __user *, utmr,
-+		struct __kernel_itimerspec __user *, otmr)
- {
- 	struct itimerspec64 new, old;
- 	int ret;
-@@ -550,7 +550,7 @@ SYSCALL_DEFINE4(timerfd_settime, int, ufd, int, flags,
- 	return ret;
- }
+-struct compat_itimerspec {
+-	struct compat_timespec it_interval;
+-	struct compat_timespec it_value;
+-};
+-
+ struct compat_utimbuf {
+ 	compat_time_t		actime;
+ 	compat_time_t		modtime;
+@@ -294,10 +289,6 @@ extern int compat_get_timespec(struct timespec *, const void __user *);
+ extern int compat_put_timespec(const struct timespec *, void __user *);
+ extern int compat_get_timeval(struct timeval *, const void __user *);
+ extern int compat_put_timeval(const struct timeval *, void __user *);
+-extern int get_compat_itimerspec64(struct itimerspec64 *its,
+-			const struct compat_itimerspec __user *uits);
+-extern int put_compat_itimerspec64(const struct itimerspec64 *its,
+-			struct compat_itimerspec __user *uits);
  
--SYSCALL_DEFINE2(timerfd_gettime, int, ufd, struct itimerspec __user *, otmr)
-+SYSCALL_DEFINE2(timerfd_gettime, int, ufd, struct __kernel_itimerspec __user *, otmr)
- {
- 	struct itimerspec64 kotmr;
- 	int ret = do_timerfd_gettime(ufd, &kotmr);
-@@ -559,7 +559,7 @@ SYSCALL_DEFINE2(timerfd_gettime, int, ufd, struct itimerspec __user *, otmr)
- 	return put_itimerspec64(&kotmr, otmr) ? -EFAULT : 0;
- }
+ struct compat_iovec {
+ 	compat_uptr_t	iov_base;
+diff --git a/include/linux/compat_time.h b/include/linux/compat_time.h
+index 31f2774f1994..e70bfd1d2c3f 100644
+--- a/include/linux/compat_time.h
++++ b/include/linux/compat_time.h
+@@ -17,7 +17,16 @@ struct compat_timeval {
+ 	s32		tv_usec;
+ };
  
--#ifdef CONFIG_COMPAT
-+#ifdef CONFIG_COMPAT_32BIT_TIME
- COMPAT_SYSCALL_DEFINE4(timerfd_settime, int, ufd, int, flags,
- 		const struct compat_itimerspec __user *, utmr,
- 		struct compat_itimerspec __user *, otmr)
-diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-index 73810808cdf2..38b9ec152024 100644
---- a/include/linux/syscalls.h
-+++ b/include/linux/syscalls.h
-@@ -501,9 +501,9 @@ asmlinkage long sys_sync_file_range(int fd, loff_t offset, loff_t nbytes,
- /* fs/timerfd.c */
- asmlinkage long sys_timerfd_create(int clockid, int flags);
- asmlinkage long sys_timerfd_settime(int ufd, int flags,
--				    const struct itimerspec __user *utmr,
--				    struct itimerspec __user *otmr);
--asmlinkage long sys_timerfd_gettime(int ufd, struct itimerspec __user *otmr);
-+				    const struct __kernel_itimerspec __user *utmr,
-+				    struct __kernel_itimerspec __user *otmr);
-+asmlinkage long sys_timerfd_gettime(int ufd, struct __kernel_itimerspec __user *otmr);
- 
- /* fs/utimes.c */
- asmlinkage long sys_utimensat(int dfd, const char __user *filename,
-@@ -568,10 +568,10 @@ asmlinkage long sys_timer_create(clockid_t which_clock,
- 				 struct sigevent __user *timer_event_spec,
- 				 timer_t __user * created_timer_id);
- asmlinkage long sys_timer_gettime(timer_t timer_id,
--				struct itimerspec __user *setting);
-+				struct __kernel_itimerspec __user *setting);
- asmlinkage long sys_timer_getoverrun(timer_t timer_id);
- asmlinkage long sys_timer_settime(timer_t timer_id, int flags,
--				const struct itimerspec __user *new_setting,
-+				const struct __kernel_itimerspec __user *new_setting,
- 				struct itimerspec __user *old_setting);
- asmlinkage long sys_timer_delete(timer_t timer_id);
- asmlinkage long sys_clock_settime(clockid_t which_clock,
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index e08ce3f27447..bc35603cf2a9 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -743,7 +743,7 @@ static int do_timer_gettime(timer_t timer_id,  struct itimerspec64 *setting)
- 
- /* Get the time remaining on a POSIX.1b interval timer. */
- SYSCALL_DEFINE2(timer_gettime, timer_t, timer_id,
--		struct itimerspec __user *, setting)
-+		struct __kernel_itimerspec __user *, setting)
- {
- 	struct itimerspec64 cur_setting;
- 
-@@ -755,7 +755,8 @@ SYSCALL_DEFINE2(timer_gettime, timer_t, timer_id,
- 	return ret;
- }
- 
--#ifdef CONFIG_COMPAT
-+#ifdef CONFIG_COMPAT_32BIT_TIME
++struct compat_itimerspec {
++	struct compat_timespec it_interval;
++	struct compat_timespec it_value;
++};
 +
- COMPAT_SYSCALL_DEFINE2(timer_gettime, timer_t, timer_id,
- 		       struct compat_itimerspec __user *, setting)
- {
-@@ -768,6 +769,7 @@ COMPAT_SYSCALL_DEFINE2(timer_gettime, timer_t, timer_id,
- 	}
+ extern int compat_get_timespec64(struct timespec64 *, const void __user *);
+ extern int compat_put_timespec64(const struct timespec64 *, void __user *);
++extern int get_compat_itimerspec64(struct itimerspec64 *its,
++			const struct compat_itimerspec __user *uits);
++extern int put_compat_itimerspec64(const struct itimerspec64 *its,
++			struct compat_itimerspec __user *uits);
+ 
+ #endif /* _LINUX_COMPAT_TIME_H */
+diff --git a/kernel/compat.c b/kernel/compat.c
+index 702aa846ddac..8e40efc2928a 100644
+--- a/kernel/compat.c
++++ b/kernel/compat.c
+@@ -324,35 +324,6 @@ COMPAT_SYSCALL_DEFINE3(sched_getaffinity, compat_pid_t,  pid, unsigned int, len,
  	return ret;
  }
-+
- #endif
  
+-/* Todo: Delete these extern declarations when get/put_compat_itimerspec64()
+- * are moved to kernel/time/time.c .
+- */
+-extern int __compat_get_timespec64(struct timespec64 *ts64,
+-				   const struct compat_timespec __user *cts);
+-extern int __compat_put_timespec64(const struct timespec64 *ts64,
+-				   struct compat_timespec __user *cts);
+-
+-int get_compat_itimerspec64(struct itimerspec64 *its,
+-			const struct compat_itimerspec __user *uits)
+-{
+-
+-	if (__compat_get_timespec64(&its->it_interval, &uits->it_interval) ||
+-	    __compat_get_timespec64(&its->it_value, &uits->it_value))
+-		return -EFAULT;
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(get_compat_itimerspec64);
+-
+-int put_compat_itimerspec64(const struct itimerspec64 *its,
+-			struct compat_itimerspec __user *uits)
+-{
+-	if (__compat_put_timespec64(&its->it_interval, &uits->it_interval) ||
+-	    __compat_put_timespec64(&its->it_value, &uits->it_value))
+-		return -EFAULT;
+-	return 0;
+-}
+-EXPORT_SYMBOL_GPL(put_compat_itimerspec64);
+-
  /*
-@@ -906,8 +908,8 @@ static int do_timer_settime(timer_t timer_id, int flags,
- 
- /* Set a POSIX.1b interval timer */
- SYSCALL_DEFINE4(timer_settime, timer_t, timer_id, int, flags,
--		const struct itimerspec __user *, new_setting,
--		struct itimerspec __user *, old_setting)
-+		const struct __kernel_itimerspec __user *, new_setting,
-+		struct __kernel_itimerspec __user *, old_setting)
- {
- 	struct itimerspec64 new_spec, old_spec;
- 	struct itimerspec64 *rtn = old_setting ? &old_spec : NULL;
-@@ -927,7 +929,7 @@ SYSCALL_DEFINE4(timer_settime, timer_t, timer_id, int, flags,
- 	return error;
+  * We currently only need the following fields from the sigevent
+  * structure: sigev_value, sigev_signo, sig_notify and (sometimes
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 4e65916e3d13..c7342e313886 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -957,3 +957,24 @@ int put_itimerspec64(const struct itimerspec64 *it,
+ 	return ret;
  }
- 
--#ifdef CONFIG_COMPAT
-+#ifdef CONFIG_COMPAT_32BIT_TIME
- COMPAT_SYSCALL_DEFINE4(timer_settime, timer_t, timer_id, int, flags,
- 		       struct compat_itimerspec __user *, new,
- 		       struct compat_itimerspec __user *, old)
+ EXPORT_SYMBOL_GPL(put_itimerspec64);
++
++int get_compat_itimerspec64(struct itimerspec64 *its,
++			const struct compat_itimerspec __user *uits)
++{
++
++	if (__compat_get_timespec64(&its->it_interval, &uits->it_interval) ||
++	    __compat_get_timespec64(&its->it_value, &uits->it_value))
++		return -EFAULT;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(get_compat_itimerspec64);
++
++int put_compat_itimerspec64(const struct itimerspec64 *its,
++			struct compat_itimerspec __user *uits)
++{
++	if (__compat_put_timespec64(&its->it_interval, &uits->it_interval) ||
++	    __compat_put_timespec64(&its->it_value, &uits->it_value))
++		return -EFAULT;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(put_compat_itimerspec64);
 -- 
 2.17.1
 
