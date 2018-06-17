@@ -6,108 +6,121 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE8CCC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:50:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52432C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61D9420863
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 17:50:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61D9420863
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F18A2086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F18A2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754340AbeFQRuQ (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 13:50:16 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:38946 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752077AbeFQRuN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 13:50:13 -0400
-Received: by mail-lf0-f68.google.com with SMTP id t2-v6so14904982lfd.6;
-        Sun, 17 Jun 2018 10:50:13 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=ZRPW0j7eYlNHkO+1KvWJIKyhGIGkZcpi/U+p/Zbuqjo=;
-        b=frQfeJ20lPWv7GxONsYaNPevMyGZ+o3Eq4iFOWmzsJ13egojRgLB0XOPS7l6JYhDJT
-         gGJe68kfS5ZghZFwe1cQCYtUM8RIRR2WaSnCm5zRh4Myy8tFhe4bDpVKg8nEoaTQjofr
-         ilmT09TxW4xL4vNiqsRiBW5jJXhqM64lFXwbr4s70fV0rMrNL2LhsQ4eiafxYd6yOtdC
-         fO+LBGhnuct/GovSMAtBvAME1U9150awbyiJc20MU6vmYjFT5waRO0vFClrwrDlwzXBX
-         Y/91OV2ny2UXzE2c0zAa0+JBp3xZi72vqwQJGHcIgRnE9dzFN3z27JCpwRvMwGiigDlb
-         XI3A==
-X-Gm-Message-State: APt69E0a9InvCjXZirE3GBcmKoc80JfYd/cnGCQgijB6e5Q4+gkqdu5I
-        9awsbVe4n7EIXfbDX4Loszc=
-X-Google-Smtp-Source: ADUXVKIq8YpHWREAEo7zta5h6JZrIviKxx8XAWaR+Jx3c+medonZROf8cmkY9QXPZj87h22POI+6Uw==
-X-Received: by 2002:a19:188a:: with SMTP id 10-v6mr5843315lfy.26.1529257812389;
-        Sun, 17 Jun 2018 10:50:12 -0700 (PDT)
-Received: from green.intra.ispras.ru (bran.ispras.ru. [83.149.199.196])
-        by smtp.googlemail.com with ESMTPSA id p28-v6sm2431487lfh.24.2018.06.17.10.50.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 17 Jun 2018 10:50:11 -0700 (PDT)
-From:   efremov@linux.com
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ldv-project@linuxtesting.org, Denis Efremov <efremov@linux.com>
-Subject: [PATCH] crypto: skcipher: remove static declaration of export function
-Date:   Sun, 17 Jun 2018 20:49:59 +0300
-Message-Id: <20180617174959.29864-1-efremov@linux.com>
-X-Mailer: git-send-email 2.17.1
+        id S934031AbeFQSMz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 14:12:55 -0400
+Received: from mail.bugwerft.de ([46.23.86.59]:34452 "EHLO mail.bugwerft.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933374AbeFQSMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 14:12:52 -0400
+Received: from [192.168.178.170] (p57BC9B2C.dip0.t-ipconnect.de [87.188.155.44])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 5C4C928984A;
+        Sun, 17 Jun 2018 18:09:48 +0000 (UTC)
+Subject: Re: [PATCH v3 06/14] mtd: rawnand: marvell: remove the dmaengine
+ compat need
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tejun Heo <tj@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <20180617170217.24177-1-robert.jarzmik@free.fr>
+ <20180617170217.24177-7-robert.jarzmik@free.fr>
+From:   Daniel Mack <daniel@zonque.org>
+Message-ID: <3a2a8951-f380-af99-bf97-6ff722404410@zonque.org>
+Date:   Sun, 17 Jun 2018 20:12:49 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180617170217.24177-7-robert.jarzmik@free.fr>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function skcipher_walk_next declared as static and marked as
-EXPORT_SYMBOL. It's a bit confusing since export symbol means that
-we want others to use this function. The area of visibility for such
-function is its .c file and all other modules. Other *.c files of the
-same module can't use it, despite all other modules can. Relying on
-that such behavior was not the original intention, the patch just
-removes the static keyword.
+On Sunday, June 17, 2018 07:02 PM, Robert Jarzmik wrote:
+> As the pxa architecture switched towards the dmaengine slave map, the
+> old compatibility mechanism to acquire the dma requestor line number and
+> priority are not needed anymore.
+> 
+> This patch simplifies the dma resource acquisition, using the more
+> generic function dma_request_slave_channel().
+> 
+> Signed-off-by: Signed-off-by: Daniel Mack <daniel@zonque.org>
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Something went wrong here, but you can simply fix that when applying the 
+series :)
 
-Signed-off-by: Denis Efremov <efremov@linux.com>
----
- crypto/skcipher.c                  | 4 +---
- include/crypto/internal/skcipher.h | 1 +
- 2 files changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/crypto/skcipher.c b/crypto/skcipher.c
-index 0fe2a2923ad0..d28d2f2be562 100644
---- a/crypto/skcipher.c
-+++ b/crypto/skcipher.c
-@@ -44,8 +44,6 @@ struct skcipher_walk_buffer {
- 	u8 buffer[];
- };
- 
--static int skcipher_walk_next(struct skcipher_walk *walk);
--
- static inline void skcipher_unmap(struct scatter_walk *walk, void *vaddr)
- {
- 	if (PageHighMem(scatterwalk_page(walk)))
-@@ -335,7 +333,7 @@ static int skcipher_next_fast(struct skcipher_walk *walk)
- 	return 0;
- }
- 
--static int skcipher_walk_next(struct skcipher_walk *walk)
-+int skcipher_walk_next(struct skcipher_walk *walk)
- {
- 	unsigned int bsize;
- 	unsigned int n;
-diff --git a/include/crypto/internal/skcipher.h b/include/crypto/internal/skcipher.h
-index e42f7063f245..8602684d912b 100644
---- a/include/crypto/internal/skcipher.h
-+++ b/include/crypto/internal/skcipher.h
-@@ -154,6 +154,7 @@ int skcipher_walk_aead_encrypt(struct skcipher_walk *walk,
- int skcipher_walk_aead_decrypt(struct skcipher_walk *walk,
- 			       struct aead_request *req, bool atomic);
- void skcipher_walk_complete(struct skcipher_walk *walk, int err);
-+int skcipher_walk_next(struct skcipher_walk *walk);
- 
- static inline void ablkcipher_request_complete(struct ablkcipher_request *req,
- 					       int err)
--- 
-2.17.1
+Daniel
+
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>   drivers/mtd/nand/raw/marvell_nand.c | 17 +----------------
+>   1 file changed, 1 insertion(+), 16 deletions(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
+> index 10e953218948..64618254d6de 100644
+> --- a/drivers/mtd/nand/raw/marvell_nand.c
+> +++ b/drivers/mtd/nand/raw/marvell_nand.c
+> @@ -2613,8 +2613,6 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
+>   						    dev);
+>   	struct dma_slave_config config = {};
+>   	struct resource *r;
+> -	dma_cap_mask_t mask;
+> -	struct pxad_param param;
+>   	int ret;
+>   
+>   	if (!IS_ENABLED(CONFIG_PXA_DMA)) {
+> @@ -2627,20 +2625,7 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
+>   	if (ret)
+>   		return ret;
+>   
+> -	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
+> -	if (!r) {
+> -		dev_err(nfc->dev, "No resource defined for data DMA\n");
+> -		return -ENXIO;
+> -	}
+> -
+> -	param.drcmr = r->start;
+> -	param.prio = PXAD_PRIO_LOWEST;
+> -	dma_cap_zero(mask);
+> -	dma_cap_set(DMA_SLAVE, mask);
+> -	nfc->dma_chan =
+> -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
+> -						 &param, nfc->dev,
+> -						 "data");
+> +	nfc->dma_chan =	dma_request_slave_channel(nfc->dev, "data");
+>   	if (!nfc->dma_chan) {
+>   		dev_err(nfc->dev,
+>   			"Unable to request data DMA channel\n");
+> 
 
