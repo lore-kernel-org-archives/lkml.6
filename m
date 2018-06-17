@@ -6,22 +6,23 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2691FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2248C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3D522086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 640D22086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:19:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="INyNmPzi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3D522086A
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g3lwimEi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640D22086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934386AbeFQCS0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:18:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58742 "EHLO
+        id S1757089AbeFQCSY (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:18:24 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:58752 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933588AbeFQCBA (ORCPT
+        with ESMTP id S933604AbeFQCBA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 22:01:00 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -30,14 +31,14 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=DJ+dstBiK4VALgrPZuDMj7L+o/CdChWFWdvZH44f17s=; b=INyNmPzixk4Iz1eA54QXSKCAC
-        LXiTbJfuzUeHSUZOgBVZBiK9SYrHS6o2gb3cXQ0eDvqcxFzV3PcFS6ZLb/03K8TzefDmyOAKMa73m
-        nyvomD5baJtL8um6jdPYkxCEERKUDhfLacbpRrYHV9R8EFevpaw5cPrUEQ/WfCHuxsQiMw/unxQmW
-        f/E6sPBowdhT4+snThknwZULxAD7oLlyLnB0fn51Pp1PlXh4LHNq5ZiEo1ARCOXsPQ+b3mtRoyYND
-        3No1Tp0zHY5kT8cPmHz/94pc+EFRxrSkPABDskr+YSaNRIjlbgAyAhin6FmNDfH5pNINrjlBvGrHz
-        V3x1PifuQ==;
+         bh=r5CukERBzeIlr83uJco+d+VA4O1H8AQ0gO0fzR7QlcY=; b=g3lwimEixpXcUgohYChEkZtdz
+        KwtKpKEVIHRsMIDjtXndB528/7mspQy7lemPMRVSf2zv3eeLNbm5RUZCZvdaAG34MfOAUH8dRF2/X
+        U8GfQKTloejRWx4/xhXh2IT2sTkw6R0VSMva1pe3Pc/8FZLkl1mnev7orE9UhVTsSkxlRfd+agKbW
+        Mc5tbBMT0rnlSXj/gWatpCtkdXFfM92SAuhSKjOLiSASHrK/hn9LdNFM1L5lP0n/hcrpRXMJvOgn5
+        O9sXLaa1Hejr0piN9oqWTIcPGLPVp9hJzqG7cyDWRWxFovEh2N9jZlAnTO9w91tb2cMnliW1Q6V5R
+        +sBQNJk4g==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUMzz-0001IM-Tr; Sun, 17 Jun 2018 02:00:59 +0000
+        id 1fUN00-0001IZ-6C; Sun, 17 Jun 2018 02:01:00 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +53,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 26/74] page cache: Convert find_get_pages_range to XArray
-Date:   Sat, 16 Jun 2018 19:00:04 -0700
-Message-Id: <20180617020052.4759-27-willy@infradead.org>
+Subject: [PATCH v14 27/74] page cache: Convert find_get_pages_contig to XArray
+Date:   Sat, 16 Jun 2018 19:00:05 -0700
+Message-Id: <20180617020052.4759-28-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,44 +64,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The 'end' parameter of the xas_for_each iterator avoids a useless
-iteration at the end of the range.
+There's no direct replacement for radix_tree_for_each_contig()
+in the XArray API as it's an unusual thing to do.  Instead,
+open-code a loop using xas_next().  This removes the only user of
+radix_tree_for_each_contig() so delete the iterator from the API and
+the test suite code for it.
 
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
 ---
- mm/filemap.c | 52 +++++++++++++++++++---------------------------------
- 1 file changed, 19 insertions(+), 33 deletions(-)
+ .clang-format                          |  1 -
+ include/linux/radix-tree.h             | 17 ---------
+ mm/filemap.c                           | 53 +++++++++++---------------
+ tools/testing/radix-tree/regression3.c | 23 -----------
+ 4 files changed, 22 insertions(+), 72 deletions(-)
 
+diff --git a/.clang-format b/.clang-format
+index faffc0d5af4e..c1de31c6875e 100644
+--- a/.clang-format
++++ b/.clang-format
+@@ -323,7 +323,6 @@ ForEachMacros:
+   - 'protocol_for_each_card'
+   - 'protocol_for_each_dev'
+   - 'queue_for_each_hw_ctx'
+-  - 'radix_tree_for_each_contig'
+   - 'radix_tree_for_each_slot'
+   - 'radix_tree_for_each_tagged'
+   - 'rbtree_postorder_for_each_entry_safe'
+diff --git a/include/linux/radix-tree.h b/include/linux/radix-tree.h
+index 4b6f685309fc..eefa0b099dd5 100644
+--- a/include/linux/radix-tree.h
++++ b/include/linux/radix-tree.h
+@@ -522,23 +522,6 @@ static __always_inline void __rcu **radix_tree_next_slot(void __rcu **slot,
+ 	     slot || (slot = radix_tree_next_chunk(root, iter, 0)) ;	\
+ 	     slot = radix_tree_next_slot(slot, iter, 0))
+ 
+-/**
+- * radix_tree_for_each_contig - iterate over contiguous slots
+- *
+- * @slot:	the void** variable for pointer to slot
+- * @root:	the struct radix_tree_root pointer
+- * @iter:	the struct radix_tree_iter pointer
+- * @start:	iteration starting index
+- *
+- * @slot points to radix tree slot, @iter->index contains its index.
+- */
+-#define radix_tree_for_each_contig(slot, root, iter, start)		\
+-	for (slot = radix_tree_iter_init(iter, start) ;			\
+-	     slot || (slot = radix_tree_next_chunk(root, iter,		\
+-				RADIX_TREE_ITER_CONTIG)) ;		\
+-	     slot = radix_tree_next_slot(slot, iter,			\
+-				RADIX_TREE_ITER_CONTIG))
+-
+ /**
+  * radix_tree_for_each_tagged - iterate over tagged slots
+  *
 diff --git a/mm/filemap.c b/mm/filemap.c
-index b49290131e85..019c263bb6be 100644
+index 019c263bb6be..8a69613fcdf3 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -1650,64 +1650,50 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
- 			      pgoff_t end, unsigned int nr_pages,
- 			      struct page **pages)
+@@ -1721,57 +1721,43 @@ unsigned find_get_pages_range(struct address_space *mapping, pgoff_t *start,
+ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
+ 			       unsigned int nr_pages, struct page **pages)
  {
 -	struct radix_tree_iter iter;
 -	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, *start);
++	XA_STATE(xas, &mapping->i_pages, index);
 +	struct page *page;
- 	unsigned ret = 0;
+ 	unsigned int ret = 0;
  
  	if (unlikely(!nr_pages))
  		return 0;
  
  	rcu_read_lock();
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, *start) {
+-	radix_tree_for_each_contig(slot, &mapping->i_pages, &iter, index) {
 -		struct page *head, *page;
--
--		if (iter.index > end)
--			break;
 -repeat:
 -		page = radix_tree_deref_slot(slot);
+-		/* The hole, there no reason to continue */
 -		if (unlikely(!page))
-+	xas_for_each(&xas, page, end) {
-+		struct page *head;
-+		if (xas_retry(&xas, page))
- 			continue;
+-			break;
 -
 -		if (radix_tree_exception(page)) {
 -			if (radix_tree_deref_retry(page)) {
@@ -109,12 +151,19 @@ index b49290131e85..019c263bb6be 100644
 -			}
 -			/*
 -			 * A shadow entry of a recently evicted page,
--			 * or a swap entry from shmem/tmpfs.  Skip
--			 * over it.
+-			 * or a swap entry from shmem/tmpfs.  Stop
+-			 * looking for contiguous pages.
 -			 */
-+		/* Skip over shadow, swap and DAX entries */
++	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
++		struct page *head;
++		if (xas_retry(&xas, page))
++			continue;
++		/*
++		 * If the entry has been swapped out, we can stop looking.
++		 * No current caller is looking for DAX entries.
++		 */
 +		if (xa_is_value(page))
- 			continue;
+ 			break;
 -		}
  
  		head = compound_head(page);
@@ -138,27 +187,69 @@ index b49290131e85..019c263bb6be 100644
 +		if (unlikely(page != xas_reload(&xas)))
 +			goto put_page;
  
- 		pages[ret] = page;
- 		if (++ret == nr_pages) {
--			*start = pages[ret - 1]->index + 1;
-+			*start = page->index + 1;
- 			goto out;
+ 		/*
+ 		 * must check mapping and index after taking the ref.
+ 		 * otherwise we can get both false positives and false
+ 		 * negatives, which is just confusing to the caller.
+ 		 */
+-		if (page->mapping == NULL || page_to_pgoff(page) != iter.index) {
++		if (!page->mapping || page_to_pgoff(page) != xas.xa_index) {
+ 			put_page(page);
+ 			break;
  		}
+@@ -1779,6 +1765,11 @@ unsigned find_get_pages_contig(struct address_space *mapping, pgoff_t index,
+ 		pages[ret] = page;
+ 		if (++ret == nr_pages)
+ 			break;
 +		continue;
 +put_page:
 +		put_page(head);
 +retry:
 +		xas_reset(&xas);
  	}
+ 	rcu_read_unlock();
+ 	return ret;
+diff --git a/tools/testing/radix-tree/regression3.c b/tools/testing/radix-tree/regression3.c
+index ace2543c3eda..9f9a3b280f56 100644
+--- a/tools/testing/radix-tree/regression3.c
++++ b/tools/testing/radix-tree/regression3.c
+@@ -69,21 +69,6 @@ void regression3_test(void)
+ 			continue;
+ 		}
+ 	}
+-	radix_tree_delete(&root, 1);
+-
+-	first = true;
+-	radix_tree_for_each_contig(slot, &root, &iter, 0) {
+-		printv(2, "contig %ld %p\n", iter.index, *slot);
+-		if (first) {
+-			radix_tree_insert(&root, 1, ptr);
+-			first = false;
+-		}
+-		if (radix_tree_deref_retry(*slot)) {
+-			printv(2, "retry at %ld\n", iter.index);
+-			slot = radix_tree_iter_retry(&iter);
+-			continue;
+-		}
+-	}
  
- 	/*
- 	 * We come here when there is no page beyond @end. We take care to not
- 	 * overflow the index @start as it confuses some of the callers. This
--	 * breaks the iteration when there is page at index -1 but that is
-+	 * breaks the iteration when there is a page at index -1 but that is
- 	 * already broken anyway.
- 	 */
- 	if (end == (pgoff_t)-1)
+ 	radix_tree_for_each_slot(slot, &root, &iter, 0) {
+ 		printv(2, "slot %ld %p\n", iter.index, *slot);
+@@ -93,14 +78,6 @@ void regression3_test(void)
+ 		}
+ 	}
+ 
+-	radix_tree_for_each_contig(slot, &root, &iter, 0) {
+-		printv(2, "contig %ld %p\n", iter.index, *slot);
+-		if (!iter.index) {
+-			printv(2, "next at %ld\n", iter.index);
+-			slot = radix_tree_iter_resume(slot, &iter);
+-		}
+-	}
+-
+ 	radix_tree_tag_set(&root, 0, 0);
+ 	radix_tree_tag_set(&root, 1, 0);
+ 	radix_tree_for_each_tagged(slot, &root, &iter, 0, 0) {
 -- 
 2.17.1
 
