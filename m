@@ -2,127 +2,184 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8837C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13888C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B44A20896
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:03:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tASNR7ZM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B44A20896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id CBACD20896
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 14:04:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBACD20896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1753934AbeFQODk (ORCPT
+        id S1754368AbeFQOD7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 10:03:40 -0400
-Received: from mail-pl0-f65.google.com ([209.85.160.65]:38012 "EHLO
-        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1751248AbeFQODh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 10:03:37 -0400
-Received: by mail-pl0-f65.google.com with SMTP id b14-v6so7645856pls.5;
-        Sun, 17 Jun 2018 07:03:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=JY4ecY2hNvoD2gJibJnty0k2GYL4jklbWXnltNxBS04=;
-        b=tASNR7ZMtzFW/I0cF2D4lsjzkAWuRQDktbd/36yhB81daqZtBrqofBcGseAOStbyhX
-         P2AvJmaFRSvsMATLLgWk72dmAVAorC7XkJ6RKSUknZGdDo0+7MI72hZyAggy0vx+s2tw
-         I9nUkm/xy4vDezaTCYa91qtQZwJ9FbBoRWnZfGS/FxEhCX45rZCV2NNwix8mOnIGy1zK
-         e1h4u81A4xheIYmDrGZIfy0WCKwBP4LMjncWimPZNYtX9qR5KRj/d30rNY28xP8FwaVR
-         tfznB4x+tFPughf3qoPNMqpbC5GosLrd11xIJ0gGuOe79V8xgup7bdVvXwKKRpiZMnMk
-         fNSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=JY4ecY2hNvoD2gJibJnty0k2GYL4jklbWXnltNxBS04=;
-        b=tgBhsikPnIAtK6saDWsa1LI48dCT7hVqiypzqIieIeXtAHAW9xR5xx+ovr8rF5tsYK
-         O70AYxy454E8RyKejNOw/qVBqvmFkZR/UXjhzU3PxaEY6amJf1kvhYOXEpMrEpKVIzwZ
-         Vk9W7QUSjnV710kBaCqWI4oJPTPh/fxn9RazqDRAxt1rjVYWP8dY5eMtwbofeas/S5mu
-         NRry2h1iFZD0EmAgbXVwGYyQS/ei8zoTQv3wgpHknLb5c80PrY5T6pAgbFixi0r7arCT
-         2AQhtwJ79IhHF+n9uHt4ESU9rWN+VvGnJRIfMm8TUmksf3MYVq3KbHKqjfpzUMN/wKZT
-         BIXQ==
-X-Gm-Message-State: APt69E030Xvy1iVSaI7x6iwsd61y3s6M2uXMwrEGzcTcEiTpgtQKmzYr
-        mZnNvuWMeCxZFc49UnMpAbDLEdEraXA=
-X-Google-Smtp-Source: ADUXVKIfvooDxiKEpX5BED0GqeU1+KZegBq8ugQgz7jhAx/61z0qJgBBfNlA97Cym8zUEbN6rDG61Q==
-X-Received: by 2002:a17:902:7c8b:: with SMTP id y11-v6mr9947875pll.222.1529244216213;
-        Sun, 17 Jun 2018 07:03:36 -0700 (PDT)
-Received: from localhost.localdomain ([101.23.151.28])
-        by smtp.gmail.com with ESMTPSA id k84-v6sm34465470pfh.110.2018.06.17.07.03.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jun 2018 07:03:35 -0700 (PDT)
-From:   youling257 <youling257@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-        andy@infradead.org, dvhart@infradead.org, hdegoede@redhat.com,
-        youling257 <youling257@gmail.com>
-Subject: [PATCH v3] platform/x86: touchscreen_dmi: Add info for the ONDA V891W Dual OS
-Date:   Sun, 17 Jun 2018 22:03:26 +0800
-Message-Id: <20180617140326.12854-1-youling257@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Sun, 17 Jun 2018 10:03:59 -0400
+Received: from mout.gmx.net ([212.227.15.19]:50873 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754082AbeFQOD5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 10:03:57 -0400
+Received: from homer.simpson.net ([188.174.240.203]) by mail.gmx.com (mrgmx001
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MWTfu-1fjIwJ0yAU-00XcWO; Sun, 17
+ Jun 2018 16:03:01 +0200
+Message-ID: <1529244178.4674.1.camel@gmx.de>
+Subject: Re: [tip:x86/pti] x86/asm: Pad assembly functions with INT3
+ instructions
+From:   Mike Galbraith <efault@gmx.de>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Alexey Dobriyan <adobriyan@gmail.com>,
+        torvalds@linux-foundation.org, tglx@linutronix.de,
+        mingo@kernel.org, jpoimboe@redhat.com, luto@kernel.org,
+        peterz@infradead.org, brgerst@gmail.com, hpa@zytor.com,
+        linux-kernel@vger.kernel.org, dvlasenk@redhat.com,
+        h.peter.anvin@intel.com,
+        linux-tip-commits <linux-tip-commits@vger.kernel.org>
+Date:   Sun, 17 Jun 2018 16:02:58 +0200
+In-Reply-To: <1529242717.4472.3.camel@gmx.de>
+References: <20180507213755.GA32406@avx2>
+         <tip-51bad67ffbce0aaa44579f84ef5d05597054ec6a@git.kernel.org>
+         <1529235613.4572.7.camel@gmx.de> <20180617120012.GB16877@zn.tnic>
+         <1529242717.4472.3.camel@gmx.de>
+Content-Type: text/plain; charset="ISO-8859-15"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:jkaTpEn97dNo335C7zTWkTIclQ3eqP46kuaf+xi4tZ8SFVX2u88
+ Yd8EMvRgGFIkDBGWr8YmDyIjpejIcGcRy2oiir+JOmYVU9jJOaJBfKog6aJHNqvcpkv/KiF
+ rX7v9cEzLZGkqkZ4/QEYzcj3zC4JqvHTCp7R0W1LOTRVuhoEb7lv8EbJ7cThup8wvxcxgeZ
+ GDQIiMIrsfqVN8vKaWG6w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:vR3tMdBYsHo=:PIiuJNbKneyo3TxaajUf2o
+ dWguheJeQ+nvaJLBBvjfk4wgx8CPxHC9NVkyuLPaBK4MPQ4cRwIZMpAtE7nNf6dxB8RcoU0ml
+ x0A6NTTzhR8kLsAnZLUJNopgT1EwSI+Y1fSt83gkhRTxuMcREUePVvVrS2xqqZyUOGb8+qiB1
+ /qF71szbq/VP8PKKfA+Xv4Fjdq6EnaOhUjJ3nsiJY2ZPYt1KP8/C5BTPjqchRj51UB2o8P3Q9
+ Gq83evq3ajp4zG7X6rHFpJEeRNMwqftQpzmzIOhn+BwW6j6JVDz7xru6mDHjT1AgLe/XbEWtg
+ H18OFUcI1gHr/piQk54P1gUa8DrQT2NK2do6jkHElUYmzkp80MBSBnvj8FVZ0ekVHu/rQTbnM
+ IA3HiYd4i2pcH797ioT4+wm8xEAMGPVXqgDoC0WawMS9eLLhB7H+dvewgGdEN8UaLjLqjmpiv
+ 1OkfldNPCYleD4g5MgXa/Otqn6AIr8mJ4R4d01M2pGTX497Hxivww6WJkKHLnbYOR7P4CZ39/
+ fw2WFEwT7QpFI4zsIHnFc8qquShxX4FDaTQ8Tmho+QixKDfhJoR5V0BQUzNkyYMCpZayVKb+i
+ JrdvDkYVZnZM1e7LgVFUPWHiOj6suwz/s8wtHaJJetvm7EMJhQ+Q2kSzaHAg0P0EeT6GalmJ9
+ RCIzUftiHjV72KEzLjlp16n9a1XkSei3KUqQHnOnLNVUDpApgkqOJVGtiVhB0tsMqVcTJh5Tl
+ 4TorB/dWyadq76fcr2RaScxh81692NE6PmIeh6epsIArLoAclHXan0xqE95uK6LakZcZux7OQ
+ VhCqnFO
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add touchscreen info for the ONDA V891W Dual OS
+On Sun, 2018-06-17 at 15:38 +0200, Mike Galbraith wrote:
+> On Sun, 2018-06-17 at 14:00 +0200, Borislav Petkov wrote:
+> > On Sun, Jun 17, 2018 at 01:40:13PM +0200, Mike Galbraith wrote:
+> > > On Mon, 2018-05-14 at 05:53 -0700, tip-bot for Alexey Dobriyan wrote:
+> > > > Commit-ID:  51bad67ffbce0aaa44579f84ef5d05597054ec6a
+> > > > Gitweb:     https://git.kernel.org/tip/51bad67ffbce0aaa44579f84ef5d05597054ec6a
+> > > > Author:     Alexey Dobriyan <adobriyan@gmail.com>
+> > > > AuthorDate: Tue, 8 May 2018 00:37:55 +0300
+> > > > Committer:  Ingo Molnar <mingo@kernel.org>
+> > > > CommitDate: Mon, 14 May 2018 11:43:03 +0200
+> > > > 
+> > > > x86/asm: Pad assembly functions with INT3 instructions
+> > > > 
+> > > > Use INT3 instead of NOP. All that padding between functions is
+> > > > an illegal area, no legitimate code should jump into it.
+> > > 
+> > > Is dinky patchlet suggesting cryptomgr is being naughty?
+> > > 
+> > > (revert silences spew, but..)
+> > > 
+> > > ...
+> > > [   21.041608] int3: 0000 [#1] SMP PTI
+> > > [   21.041754] CPU: 3 PID: 935 Comm: cryptomgr_test Tainted: G            E     4.17.0.g075a1d3-tip-default #146
+> > > [   21.041888] Hardware name: MEDION MS-7848/MS-7848, BIOS M7848W08.20C 09/23/2013
+> > > [   21.042035] RIP: 0010:crypto_aegis128_aesni_enc_tail+0x74/0x80 [aegis128_aesni]
+> > > [   21.042171] Code: 38 dc ca 66 0f 38 dc d3 66 0f 38 dc de 66 0f ef e5 f3 0f 7f 27 f3 0f 7f 47 10 f3 0f 7f 4f 20 f3 0f 7f 57 30 f3 0f 7f 5f 40 cc <cc> cc cc cc cc cc cc cc cc cc cc cc 48 83 fe 10 0f 82 c3 03 00 00
+> > 
+> > Looks like it misses a RET:
+> 
+> Bingo.
+> 
+> [   28.751069] RIP: 0010:crypto_aegis128l_aesni_enc_tail+0xcd/0xd0 [aegis128l_aesni]
+> 
+> Next next next..
 
-Signed-off-by: youling257 <youling257@gmail.com>
+(/me does that.. all better)
+
+From 6ac281ee69f4cb5b581d5f49662fb56b6326155a Mon Sep 17 00:00:00 2001
+From: Borislav Petkov <bp@suse.de>
+Date: Sun, 17 Jun 2018 13:57:42 +0200
+Subject: [PATCH] x86/crypto: Add a missing RET
+
+crypto_aegis128_aesni_enc_tail() needs to return too.
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
 ---
- drivers/platform/x86/touchscreen_dmi.c | 27 ++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ arch/x86/crypto/aegis128-aesni-asm.S  |    1 +
+ arch/x86/crypto/aegis128l-aesni-asm.S |    1 +
+ arch/x86/crypto/aegis256-aesni-asm.S  |    1 +
+ arch/x86/crypto/morus1280-avx2-asm.S  |    1 +
+ arch/x86/crypto/morus1280-sse2-asm.S  |    1 +
+ arch/x86/crypto/morus640-sse2-asm.S   |    1 +
+ 6 files changed, 6 insertions(+)
 
-diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
-index 6284946cb0d1..2ad9327c8c0f 100644
---- a/drivers/platform/x86/touchscreen_dmi.c
-+++ b/drivers/platform/x86/touchscreen_dmi.c
-@@ -221,6 +221,24 @@ static const struct ts_dmi_data onda_v891w_v1_data = {
- 	.properties	= onda_v891w_v1_props,
- };
+--- a/arch/x86/crypto/aegis128-aesni-asm.S
++++ b/arch/x86/crypto/aegis128-aesni-asm.S
+@@ -535,6 +535,7 @@ ENTRY(crypto_aegis128_aesni_enc_tail)
+ 	movdqu STATE3, 0x40(STATEP)
  
-+static const struct property_entry onda_v891w_v3_props[] = {
-+	PROPERTY_ENTRY_U32("touchscreen-min-x", 35),
-+	PROPERTY_ENTRY_U32("touchscreen-min-y", 15),
-+	PROPERTY_ENTRY_U32("touchscreen-size-x", 1625),
-+	PROPERTY_ENTRY_U32("touchscreen-size-y", 1135),
-+	PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
-+	PROPERTY_ENTRY_STRING("firmware-name",
-+			      "gsl3676-onda-v891w-v3.fw"),
-+	PROPERTY_ENTRY_U32("silead,max-fingers", 10),
-+	PROPERTY_ENTRY_BOOL("silead,home-button"),
-+	{ }
-+};
-+
-+static const struct ts_dmi_data onda_v891w_v3_data = {
-+	.acpi_name	= "MSSL1680:00",
-+	.properties	= onda_v891w_v3_props,
-+};
-+
- static const struct property_entry pipo_w2s_props[] = {
- 	PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
- 	PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
-@@ -481,6 +499,15 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
- 			DMI_EXACT_MATCH(DMI_BIOS_VERSION, "ONDA.W89EBBN08"),
- 		},
- 	},
-+	{
-+		/* ONDA V891w Dual OS P891DCF2V1A01274 64GB */
-+		.driver_data = (void *)&onda_v891w_v3_data,
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "ONDA Tablet"),
-+			DMI_MATCH(DMI_BIOS_VERSION, "ONDA.D890HBBNR0A"),
-+		},
-+	},
- 	{
- 		/* Pipo W2S */
- 		.driver_data = (void *)&pipo_w2s_data,
--- 
-2.17.1
-
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_aegis128_aesni_enc_tail)
+ 
+ .macro decrypt_block a s0 s1 s2 s3 s4 i
+--- a/arch/x86/crypto/aegis128l-aesni-asm.S
++++ b/arch/x86/crypto/aegis128l-aesni-asm.S
+@@ -645,6 +645,7 @@ ENTRY(crypto_aegis128l_aesni_enc_tail)
+ 	state_store0
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_aegis128l_aesni_enc_tail)
+ 
+ /*
+--- a/arch/x86/crypto/aegis256-aesni-asm.S
++++ b/arch/x86/crypto/aegis256-aesni-asm.S
+@@ -543,6 +543,7 @@ ENTRY(crypto_aegis256_aesni_enc_tail)
+ 	state_store0
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_aegis256_aesni_enc_tail)
+ 
+ /*
+--- a/arch/x86/crypto/morus1280-avx2-asm.S
++++ b/arch/x86/crypto/morus1280-avx2-asm.S
+@@ -453,6 +453,7 @@ ENTRY(crypto_morus1280_avx2_enc_tail)
+ 	vmovdqu STATE4, (4 * 32)(%rdi)
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_morus1280_avx2_enc_tail)
+ 
+ /*
+--- a/arch/x86/crypto/morus1280-sse2-asm.S
++++ b/arch/x86/crypto/morus1280-sse2-asm.S
+@@ -652,6 +652,7 @@ ENTRY(crypto_morus1280_sse2_enc_tail)
+ 	movdqu STATE4_HI, (9 * 16)(%rdi)
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_morus1280_sse2_enc_tail)
+ 
+ /*
+--- a/arch/x86/crypto/morus640-sse2-asm.S
++++ b/arch/x86/crypto/morus640-sse2-asm.S
+@@ -437,6 +437,7 @@ ENTRY(crypto_morus640_sse2_enc_tail)
+ 	movdqu STATE4, (4 * 16)(%rdi)
+ 
+ 	FRAME_END
++	ret
+ ENDPROC(crypto_morus640_sse2_enc_tail)
+ 
+ /*
