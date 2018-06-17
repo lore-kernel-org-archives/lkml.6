@@ -2,107 +2,114 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B13E9C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 23:17:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 999EFC5CFC1
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 23:23:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 598EF208AE
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 23:17:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="T+4cKioB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 598EF208AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4BE48208AE
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 23:23:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BE48208AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754410AbeFQXR4 (ORCPT
+        id S1754277AbeFQXXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 19:17:56 -0400
-Received: from mail-qt0-f196.google.com ([209.85.216.196]:45896 "EHLO
-        mail-qt0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754281AbeFQXRy (ORCPT
+        Sun, 17 Jun 2018 19:23:35 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:57548 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1752919AbeFQXXc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 19:17:54 -0400
-Received: by mail-qt0-f196.google.com with SMTP id i18-v6so13681847qtp.12
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 16:17:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=7LkQLRRmoaRlU9u70vKz9wnlRX9lLJG0LtR8nVurD88=;
-        b=T+4cKioBVgV1ahkDAWVf0zsAxti0IzxzFaTIIu3o0k3q5DlZYvozDlgfzirH1RUZD2
-         Vq6nfRURGjfPDiwJphLoKUP2JL12+0fZFhZf0T2qsbIbXMn9h+JaawnMtHCJbJeNqU4n
-         XDQ9iljfww7DpnhEf6/2wa9uZB5Ey7fmU+V/M=
+        Sun, 17 Jun 2018 19:23:32 -0400
+Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w5HNNWg0008349
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 19:23:32 -0400
+Received: from mail-qt0-f198.google.com (mail-qt0-f198.google.com [209.85.216.198])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w5HNNRZG007746
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 19:23:32 -0400
+Received: by mail-qt0-f198.google.com with SMTP id f8-v6so12703119qth.9
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 16:23:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=7LkQLRRmoaRlU9u70vKz9wnlRX9lLJG0LtR8nVurD88=;
-        b=MpPbXydep0/EAYMbg7jRYBL04O8hBgWwSnN+Wum2jLsAQUjWfEv+DbvWFC9QaP3vZd
-         erb8W6hzog384U90mJuHRbU+zEzs0L/C9uOhx6ntsKbwQKcqcKx2KFz7i6F9ogk95t15
-         i0hbXlqx1KzV67A5ZG9gbN7JXJ8qpnO1qMqnKD22mcEaSPFw5v7U06m6glGdUH/85A2x
-         8P8lhkA9vSrWeeeWwXQPihNSAM9noNxZE3Fi5HBOGhvsYwaMZLUUIvrqOSAcygwjWv8o
-         tNmRucPhSnsWDyQH058VTlfm3I0sgAZcq2grPiPWilcYbbIdZYmxQka+ul9uAI8Gh27a
-         MZ+Q==
-X-Gm-Message-State: APt69E00jqWMr1STpqrxqWGBIafi+DW4O5mChCgvrIQ2mPXKPs0sIQ5t
-        bwtiCPwn8yVPlMWCqzfCUZpAJxMpaqc=
-X-Google-Smtp-Source: ADUXVKIXgayQnwDpjUxmPBaHHrPAldpPoeIRZbe92ctaCI6lmvXlw50ErIYPzLPprxUxi9xME5IPqA==
-X-Received: by 2002:a0c:f3c2:: with SMTP id f2-v6mr8707481qvm.230.1529277473421;
-        Sun, 17 Jun 2018 16:17:53 -0700 (PDT)
-Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
-        by smtp.gmail.com with ESMTPSA id z12-v6sm7324406qkf.66.2018.06.17.16.17.52
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=BxATfzqFKmGEq2qwbSneWzHiBTbXJNitojQH/T89Ek0=;
+        b=F6gvxOSReEHANY0iBg2b/e7Vh0q+8H6yJLG9Rzi3npw2kT7MGIeFktGPITn3qiT9iv
+         sgi4qcHqKCu/w0+Rby3DfO2HukWP2mNgSdnhKNc+8LNWIkUac1K3yc0bXYt16QwybXlh
+         +uGvapMA1FBRzI2wslt70IA7AfeZgZhYs6u6o0LdKFcCztO2bISPUYJkkWeXFtqEojgE
+         XRbhOcB3+awSrAVhT5dsfahz4fi3kSIFScJk7X0ocStUPgxQC9/I62RoZIaehlNY3ZMq
+         ciISI0aKkyj2vz+SuPDddqqo8r7C6qKQ508eN0SxDevqgS+RdXM0doJYNPaz3ugqOpN6
+         UcUg==
+X-Gm-Message-State: APt69E2qN84Mlow5JkZFXM3Sy+TqkO9ay9N3/kk5Dekaa99hkQSUsZaj
+        A+lz7zQRH7YGZ1fNPy+qm8KClcuJQ4Na8eRUucaO/gpUW0LJ3N29IZussvb29+1dMDpULSx9XGE
+        Lrp8xky4k9FvAItg5SpE6OIwvri1lWgVxHHM=
+X-Received: by 2002:a0c:90e1:: with SMTP id p88-v6mr8781175qvp.145.1529277807217;
+        Sun, 17 Jun 2018 16:23:27 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKJEHZ8RvTksQAuu7YN29pCxjgogmbz1lpvgumGAa40T32wicAm9PobBrc0CACdzgNr7xGsTNQ==
+X-Received: by 2002:a0c:90e1:: with SMTP id p88-v6mr8781163qvp.145.1529277806995;
+        Sun, 17 Jun 2018 16:23:26 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341:2116:22ff:b17b:7cd6])
+        by smtp.gmail.com with ESMTPSA id p51-v6sm11471937qtc.43.2018.06.17.16.23.25
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 17 Jun 2018 16:17:52 -0700 (PDT)
-Date:   Sun, 17 Jun 2018 19:17:51 -0400 (EDT)
-From:   Nicolas Pitre <nicolas.pitre@linaro.org>
-To:     valdis.kletnieks@vt.edu
-cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sun, 17 Jun 2018 16:23:25 -0700 (PDT)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+To:     Nicolas Pitre <nicolas.pitre@linaro.org>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Mielke <Dave@mielke.cc>,
         Samuel Thibault <samuel.thibault@ens-lyon.org>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] vt: preserve unicode values corresponding to
- screen characters
-In-Reply-To: <117799.1529276384@turing-police.cc.vt.edu>
-Message-ID: <nycvar.YSQ.7.76.1806171909250.16670@knanqh.ubzr>
+Subject: Re: [PATCH v2 1/4] vt: preserve unicode values corresponding to screen characters
+In-Reply-To: <nycvar.YSQ.7.76.1806171909250.16670@knanqh.ubzr>
 References: <20180617190706.14614-1-nicolas.pitre@linaro.org> <20180617190706.14614-2-nicolas.pitre@linaro.org> <117799.1529276384@turing-police.cc.vt.edu>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+ <nycvar.YSQ.7.76.1806171909250.16670@knanqh.ubzr>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1529277815_2593P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 17 Jun 2018 19:23:35 -0400
+Message-ID: <204888.1529277815@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 17 Jun 2018, valdis.kletnieks@vt.edu wrote:
+--==_Exmh_1529277815_2593P
+Content-Type: text/plain; charset=us-ascii
 
-> On Sun, 17 Jun 2018 15:07:03 -0400, Nicolas Pitre said:
-> 
-> > diff --git a/drivers/tty/vt/vt.c b/drivers/tty/vt/vt.c
-> > index 1eb1a376a0..7b636638b3 100644
-> > --- a/drivers/tty/vt/vt.c
-> > +++ b/drivers/tty/vt/vt.c
-> > @@ -317,6 +317,171 @@ void schedule_console_callback(void)
-> >  	schedule_work(&console_work);
-> >  }
-> >
-> > +/*
-> > + * Code to manage unicode-based screen buffers
-> > + */
-> > +
-> > +#ifdef NO_VC_UNI_SCREEN
-> 
-> This preprocessor variable seems to be dangling in the breeze, with
-> no way for it to get set?  As a result, we pick up the #else define by
-> default.
+On Sun, 17 Jun 2018 19:17:51 -0400, Nicolas Pitre said:
+> On Sun, 17 Jun 2018, valdis.kletnieks@vt.edu wrote:
 
-That's actually what's intended here.
+> > This preprocessor variable seems to be dangling in the breeze, with
+> > no way for it to get set?  As a result, we pick up the #else define by
+> > default.
+>
+> That's actually what's intended here.
+>
+> If vc_screen.c ever becomes configurable then this could be used to
+> compile out this code. Or if someone wants to disable it for some
+> debugging reasons. For now it is just a self-explanatory placeholder
+> with very little chance of being set by mistake for any other purpose.
 
-If vc_screen.c ever becomes configurable then this could be used to 
-compile out this code. Or if someone wants to disable it for some 
-debugging reasons. For now it is just a self-explanatory placeholder 
-with very little chance of being set by mistake for any other purpose.
+Oh, OK.  It's code that makes sense if it's intentional - but could just as
+easily been an unintended debugging/whatever leftover...
 
+--==_Exmh_1529277815_2593P
+Content-Type: application/pgp-signature
 
-Nicolas
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWybtd40DS38y7CIcAQIQFQf9HXDPSvciReAmSJmv1yDb1Z5NEvELgzHO
+fsYkumb/fRffwTt3aKQYXSw6ijwd6TqonpUVpdpWAgfSKtjaJQNlBbLQubu5j0zJ
+FK0cIbFSLf0ABcOtafFqaLIVSIrfbjrKyCBCTGllxlocZxE60zYWdTnhnzwFYN66
+32+qGShB/y6x9X8irJMEiZWya5iLutlrUTbsOBGXVg1dxzTv3LtcmnMZX/308qwD
+iGZMqXFWeg16hNAAADCbTh4UlNBZ7P3xJVGQZKO0sn5sCMvDxNHyqc1FAitQeadf
+/+Dgv5ZHF8SXRlzjUzBbhq2VQuZ+cXhFd8XiiNz2xzhsWiAIZKchwA==
+=k3xZ
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1529277815_2593P--
