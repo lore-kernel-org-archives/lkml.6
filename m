@@ -6,52 +6,52 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12CEBC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8568CC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB6220874
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:48:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 364E6208A5
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 08:52:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="GHeQ03pv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BB6220874
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="yYn2khpG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 364E6208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932829AbeFQIsw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 04:48:52 -0400
-Received: from mail.kmu-office.ch ([178.209.48.109]:43728 "EHLO
+        id S932762AbeFQIwv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 04:52:51 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:43772 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932478AbeFQIsu (ORCPT
+        with ESMTP id S932478AbeFQIwt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 04:48:50 -0400
+        Sun, 17 Jun 2018 04:52:49 -0400
 Received: from trochilidae.lan (unknown [37.17.239.3])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id ABF885C037A;
-        Sun, 17 Jun 2018 10:48:49 +0200 (CEST)
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 74AFE5C037A;
+        Sun, 17 Jun 2018 10:52:48 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1529225329;
+        t=1529225568;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
-         in-reply-to:references; bh=ZjvNVXWFdRVsCVQNAEc1HToxaABQiBl/rg5vop04hj0=;
-        b=GHeQ03pvQj+f4rB8Gl6uihwrhOv7wKULqDXY8e1F6j1b5n8WQqiSmyvE3KG+qEU8ROI2lm
-        cOgHK9GhglBASoxSEi54ClEH+6DA76Sum6Dv6iADg8dmSpvWGPazsTim8+6TmFDKOMmgkT
-        VE8LLRu5pwZ/HMS/gYC14r4uKhrOeCs=
+         in-reply-to:references; bh=CB48aVpV0RgnRWL0sppEAN3vWmirvHvhS94TraMA13g=;
+        b=yYn2khpG7QgwV/00vQJnzwqQOmBAXTyvaBwUCaU3T6aIIZ1UYO+pXxOlFtlLlo66MGcSlx
+        bU0Od8wNfr1TJbFBVNXHDejPRt9LFo8spnxXIVsi3L6E/jeEDcPAK1Oiv97MQaRTZzSvaC
+        Rsf3TKBd43KEdWlh5Ihx9lcUGEkU7q4=
 From:   Stefan Agner <stefan@agner.ch>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Stefan Agner <stefan@agner.ch>, David Airlie <airlied@linux.ie>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/atmel-hlcdc: check stride values in the first plane
-Date:   Sun, 17 Jun 2018 10:48:22 +0200
-Message-Id: <20180617084826.31885-1-stefan@agner.ch>
+To:     Alex Deucher <alexander.deucher@amd.com>
+Cc:     Stefan Agner <stefan@agner.ch>, James Zhu <James.Zhu@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amdgpu: use first uvd instance to avoid clang build error
+Date:   Sun, 17 Jun 2018 10:52:12 +0200
+Message-Id: <20180617085218.7753-1-stefan@agner.ch>
 X-Mailer: git-send-email 2.17.1
 X-Spamd-Result: default: False [-2.10 / 15.00];
          TO_MATCH_ENVRCPT_ALL(0.00)[];
          BAYES_HAM(-3.00)[100.00%];
          MIME_GOOD(-0.10)[text/plain];
          FROM_HAS_DN(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
+         RCPT_COUNT_SEVEN(0.00)[9];
          FROM_EQ_ENVFROM(0.00)[];
          DKIM_SIGNED(0.00)[];
          TO_DN_SOME(0.00)[];
@@ -65,36 +65,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The statement always evaluates to true since the struct fields
-are arrays. This has shown up as a warning when compiling with
-clang:
-  warning: address of array 'desc->layout.xstride' will always
-      evaluate to 'true' [-Wpointer-bool-conversion]
+Explicitly use the first uvd instance to avoid a build error when
+using clang 6:
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c:1148:52: error: expected ')'
+                container_of(work, struct amdgpu_device, uvd.inst->idle_work.work);
+                                                                 ^
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c:1148:3: note: to match this '('
+                container_of(work, struct amdgpu_device, uvd.inst->idle_work.work);
+                ^
+./include/linux/kernel.h:967:21: note: expanded from macro 'container_of'
+        ((type *)(__mptr - offsetof(type, member))); })
+                           ^
+./include/linux/stddef.h:17:32: note: expanded from macro 'offsetof'
+                                ^
+./include/linux/compiler-gcc.h:170:20: note: expanded from macro
+      '__compiler_offsetof'
+        __builtin_offsetof(a, b)
+                          ^
+drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c:1147:24: error: initializing
+      'struct amdgpu_device *' with an expression of incompatible type 'void'
+        struct amdgpu_device *adev =
+                              ^
+2 errors generated.
 
-Check for values in the first plane instead.
-
+Fixes: 10dd74eac4db ("drm/amdgpu/vg20:Restruct uvd.inst to support multiple instances")
+Cc: James Zhu <James.Zhu@amd.com>
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
-Changes in v2:
-- Check for first value instead of dropping if statement
-  (subject was: drm/atmel-hlcdc: remove unnecessary if statement)
-
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c | 2 +-
+ drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-index 73c875db45f4..47e0992f3908 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
-@@ -839,7 +839,7 @@ static int atmel_hlcdc_plane_init_properties(struct atmel_hlcdc_plane *plane)
- 			return ret;
- 	}
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+index bcf68f80bbf0..6666a5888c44 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
+@@ -1145,7 +1145,7 @@ int amdgpu_uvd_get_destroy_msg(struct amdgpu_ring *ring, uint32_t handle,
+ static void amdgpu_uvd_idle_work_handler(struct work_struct *work)
+ {
+ 	struct amdgpu_device *adev =
+-		container_of(work, struct amdgpu_device, uvd.inst->idle_work.work);
++		container_of(work, struct amdgpu_device, uvd.inst[0].idle_work.work);
+ 	unsigned fences = 0, i, j;
  
--	if (desc->layout.xstride && desc->layout.pstride) {
-+	if (desc->layout.xstride[0] && desc->layout.pstride[0]) {
- 		int ret;
- 
- 		ret = drm_plane_create_rotation_property(&plane->base,
+ 	for (i = 0; i < adev->uvd.num_uvd_inst; ++i) {
 -- 
 2.17.1
 
