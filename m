@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40AC4C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7E54C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DAA20895
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EAB720895
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:01:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Il0H28C2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0DAA20895
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ATucbrbf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EAB720895
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934211AbeFQCBT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:01:19 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59016 "EHLO
+        id S934371AbeFQCB2 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:01:28 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59822 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933899AbeFQCBF (ORCPT
+        with ESMTP id S933899AbeFQCBV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 16 Jun 2018 22:01:05 -0400
+        Sat, 16 Jun 2018 22:01:21 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
         Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=yX7COoR3qpQTI44IF0CKAN0FYL15jSRAoxDg2ICiPI0=; b=Il0H28C25zfV0VHkQ/z2BP/sL
-        j2GFiYIFRFfED9aSWwB1+B4IVgHafUbnt2fXg3t4xTCj7BKHTRNWKn4IKbf+P656D6wj9xIxnqx7f
-        t+yqsmGtLBHByfm1mwnHPeCwaJC6tX2zcK/h15FZJluKs/1JCia/yBgv7vE3VlhzlQjAvK1NuOw2l
-        DjedgD9yrLSJ9FS3Sc68HzAKy1tommRyJsU4mMa6Mb6oEER/8uJjlxTaUNHqs2Ziftg4j6E64bBqO
-        q1/AKSp8CLOXI/TZ3cXDergYlYCdI1bTJoLZWThBMcC+8gyVisw4T5bhh/lVL9/vSB8hMSwCKORwM
-        0+WGU0XAg==;
+         bh=yhxlc91nQ8tv5+dbe3KldhL1aWJiFQRriK/2+uk71C4=; b=ATucbrbfwI0IsSz7beDJkwGfs
+        aQC8Jv/mKj1RIou0S87kzCtyg9yAbWH0XE7KCCgysQll2lwI9+wCSQKsw+EucYOoyNi/eW/aAtKjH
+        wmtGkLAfSA07OTdtqYdVft/K3GIIZFFql5OZ1/wmIo8gjVlE1MBTDH052+4mxJ1M7mgkxLWN9OQji
+        KBOZGbZfrYuF7m211usY/1URfkjUmgyS8oNF7Zt2iWa8/Gg6on77Jg/CmHSi9aTRkzTZfd0hJmURi
+        o34d10EALJHLzKsTEgSFB6UqTPpiEGlBDk6ww5mOR3P9zIzgmbmQsnturAFQrOZyG63E/Ag9C7PHz
+        iuT4FWvpQ==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN04-0001Lt-WA; Sun, 17 Jun 2018 02:01:04 +0000
+        id 1fUN0H-0001Sq-Bg; Sun, 17 Jun 2018 02:01:17 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,9 +52,9 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 39/74] mm: Convert delete_from_swap_cache to XArray
-Date:   Sat, 16 Jun 2018 19:00:17 -0700
-Message-Id: <20180617020052.4759-40-willy@infradead.org>
+Subject: [PATCH v14 57/74] btrfs: Convert page cache to XArray
+Date:   Sat, 16 Jun 2018 19:00:35 -0700
+Message-Id: <20180617020052.4759-58-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
 In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
 References: <20180617020052.4759-1-willy@infradead.org>
@@ -63,105 +63,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both callers of __delete_from_swap_cache have the swp_entry_t already,
-so pass that in to make constructing the XA_STATE easier.
-
 Signed-off-by: Matthew Wilcox <willy@infradead.org>
+Acked-by: David Sterba <dsterba@suse.com>
 ---
- include/linux/swap.h |  5 +++--
- mm/swap_state.c      | 24 ++++++++++--------------
- mm/vmscan.c          |  2 +-
- 3 files changed, 14 insertions(+), 17 deletions(-)
+ fs/btrfs/compression.c | 4 +---
+ fs/btrfs/extent_io.c   | 8 +++-----
+ 2 files changed, 4 insertions(+), 8 deletions(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index a450a1d40b19..470570dac9e8 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -404,7 +404,7 @@ extern void show_swap_cache_info(void);
- extern int add_to_swap(struct page *page);
- extern int add_to_swap_cache(struct page *, swp_entry_t, gfp_t);
- extern int __add_to_swap_cache(struct page *page, swp_entry_t entry);
--extern void __delete_from_swap_cache(struct page *);
-+extern void __delete_from_swap_cache(struct page *, swp_entry_t entry);
- extern void delete_from_swap_cache(struct page *);
- extern void free_page_and_swap_cache(struct page *);
- extern void free_pages_and_swap_cache(struct page **, int);
-@@ -564,7 +564,8 @@ static inline int add_to_swap_cache(struct page *page, swp_entry_t entry,
- 	return -1;
- }
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index 8db29f791984..1d051d841cb7 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -444,9 +444,7 @@ static noinline int add_ra_bio_pages(struct inode *inode,
+ 		if (pg_index > end_index)
+ 			break;
  
--static inline void __delete_from_swap_cache(struct page *page)
-+static inline void __delete_from_swap_cache(struct page *page,
-+							swp_entry_t entry)
- {
- }
+-		rcu_read_lock();
+-		page = radix_tree_lookup(&mapping->i_pages, pg_index);
+-		rcu_read_unlock();
++		page = xa_load(&mapping->i_pages, pg_index);
+ 		if (page && !xa_is_value(page)) {
+ 			misses++;
+ 			if (misses > 4)
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index ac105d97dd81..e97aec67f52d 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -5169,11 +5169,9 @@ void clear_extent_buffer_dirty(struct extent_buffer *eb)
  
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index ca18407a79aa..5cd42d05177e 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -154,23 +154,22 @@ int add_to_swap_cache(struct page *page, swp_entry_t entry, gfp_t gfp)
-  * This must be called only on pages that have
-  * been verified to be in the swap cache.
-  */
--void __delete_from_swap_cache(struct page *page)
-+void __delete_from_swap_cache(struct page *page, swp_entry_t entry)
- {
--	struct address_space *address_space;
-+	struct address_space *address_space = swap_address_space(entry);
- 	int i, nr = hpage_nr_pages(page);
--	swp_entry_t entry;
--	pgoff_t idx;
-+	pgoff_t idx = swp_offset(entry);
-+	XA_STATE(xas, &address_space->i_pages, idx);
- 
- 	VM_BUG_ON_PAGE(!PageLocked(page), page);
- 	VM_BUG_ON_PAGE(!PageSwapCache(page), page);
- 	VM_BUG_ON_PAGE(PageWriteback(page), page);
- 
--	entry.val = page_private(page);
--	address_space = swap_address_space(entry);
--	idx = swp_offset(entry);
- 	for (i = 0; i < nr; i++) {
--		radix_tree_delete(&address_space->i_pages, idx + i);
-+		void *entry = xas_store(&xas, NULL);
-+		VM_BUG_ON_PAGE(entry != page + i, entry);
- 		set_page_private(page + i, 0);
-+		xas_next(&xas);
- 	}
- 	ClearPageSwapCache(page);
- 	address_space->nrpages -= nr;
-@@ -243,14 +242,11 @@ int add_to_swap(struct page *page)
-  */
- void delete_from_swap_cache(struct page *page)
- {
--	swp_entry_t entry;
--	struct address_space *address_space;
--
--	entry.val = page_private(page);
-+	swp_entry_t entry = { .val = page_private(page) };
-+	struct address_space *address_space = swap_address_space(entry);
- 
--	address_space = swap_address_space(entry);
- 	xa_lock_irq(&address_space->i_pages);
--	__delete_from_swap_cache(page);
-+	__delete_from_swap_cache(page, entry);
- 	xa_unlock_irq(&address_space->i_pages);
- 
- 	put_swap_page(page, entry);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f86f288..0448b1b366d9 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -753,7 +753,7 @@ static int __remove_mapping(struct address_space *mapping, struct page *page,
- 	if (PageSwapCache(page)) {
- 		swp_entry_t swap = { .val = page_private(page) };
- 		mem_cgroup_swapout(page, swap);
--		__delete_from_swap_cache(page);
-+		__delete_from_swap_cache(page, swap);
- 		xa_unlock_irqrestore(&mapping->i_pages, flags);
- 		put_swap_page(page, swap);
- 	} else {
+ 		clear_page_dirty_for_io(page);
+ 		xa_lock_irq(&page->mapping->i_pages);
+-		if (!PageDirty(page)) {
+-			radix_tree_tag_clear(&page->mapping->i_pages,
+-						page_index(page),
+-						PAGECACHE_TAG_DIRTY);
+-		}
++		if (!PageDirty(page))
++			__xa_clear_tag(&page->mapping->i_pages,
++					page_index(page), PAGECACHE_TAG_DIRTY);
+ 		xa_unlock_irq(&page->mapping->i_pages);
+ 		ClearPageError(page);
+ 		unlock_page(page);
 -- 
 2.17.1
 
