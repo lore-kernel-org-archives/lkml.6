@@ -2,133 +2,131 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18991C433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:53:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A9CAC433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:57:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B83B420891
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:53:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22FB4208E0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:57:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s/eo940W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B83B420891
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="UX3bHyQf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 22FB4208E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934097AbeFQSw0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 14:52:26 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60448 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933681AbeFQSwY (ORCPT
+        id S1754292AbeFQS5l (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 14:57:41 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:49172 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752696AbeFQS5k (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 14:52:24 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=RtBpPFWU7Z1ankEmh9L4Q2xmPwM/ri+SlSKPS3gzeqQ=; b=s/eo940WY8UecJBu2ULdYD3Au
-        4G7ia6+5N1MSWmg9rCgHOxI9foOJHHp49mtuevWZfAGCXxzb832V2L6edAcfvcK40t8Z6pszF3wNq
-        PSK0Z3Y7j2I3quRPrEvchbDTzIx2Ixs5adcei8/tJ2zBdR3KacPt6lJ83Pk1iCV6qso+vgyNJ3Eyc
-        pBOUAILl1gsOCo5sUjfwVRZ9s5JjP/yhEcE/+KsH9eHgl+0T7amj57BwBQVBhQR0Nbjs4yvmYz/jl
-        JDh9FSya3dtGG9uWKZzjqTFZeR/IhOLqLKByYMONcFuc7svW5a+sXziVWebIkC2LiWQ7Fs7urwiuG
-        Tz7hpOqfg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUcmk-0001Vw-FU; Sun, 17 Jun 2018 18:52:22 +0000
-Date:   Sun, 17 Jun 2018 11:52:22 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Stafford Horne <shorne@gmail.com>
-Cc:     linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 4/4] mm: Mark pages in use for page tables
-Message-ID: <20180617185222.GA21805@bombadil.infradead.org>
-References: <20180307134443.32646-1-willy@infradead.org>
- <20180307134443.32646-5-willy@infradead.org>
- <20180617150931.GB24595@lianli.shorne-pla.net>
+        Sun, 17 Jun 2018 14:57:40 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id B1A7E5C0E8F;
+        Sun, 17 Jun 2018 20:57:38 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529261858;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=DrNTsVYlzr5yMhQlyFuAKQGtEqTaTyOM5AGsbfR+7ww=;
+        b=UX3bHyQfpK+KUe4yMpu0Z+Hh+vx3+RtthVs5jR6MejLPsxKAv7/1eVjIBZZoLoZ+iwZkz2
+        IHAoeI8n3tX0N1v+eeFIda6KTYx8bhbOmTKjBzyVVwaNWLA3JmlppH8rpQZqdEONu4zW4E
+        bsc2RSJISxSAmtSNB7cxT4ce/Dhswt4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180617150931.GB24595@lianli.shorne-pla.net>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 17 Jun 2018 20:57:38 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Joe Perches <joe@perches.com>
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: hamradio: remove unused variable
+In-Reply-To: <051e78ff15ac6a2e647b0c8c539ac80b3aec6328.camel@perches.com>
+References: <20180617130335.3947-1-stefan@agner.ch>
+ <051e78ff15ac6a2e647b0c8c539ac80b3aec6328.camel@perches.com>
+Message-ID: <89a40f827d9557141707b87a86533593@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-3.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_THREE(0.00)[4];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 12:09:31AM +0900, Stafford Horne wrote:
-> On Wed, Mar 07, 2018 at 05:44:43AM -0800, Matthew Wilcox wrote:
-> > Define a new PageTable bit in the page_type and use it to mark pages in
-> > use as page tables.  This can be helpful when debugging crashdumps or
-> > analysing memory fragmentation.  Add a KPF flag to report these pages
-> > to userspace and update page-types.c to interpret that flag.
+On 17.06.2018 20:15, Joe Perches wrote:
+> On Sun, 2018-06-17 at 15:03 +0200, Stefan Agner wrote:
+>> The array bpq_eth_addr is only used to get the size of an
+>> address. Remove the array and use the size of the array
+>> bcast_addr which is actually copied.
+>>
+>> Also constify and tidy up the bcast_addr declaration.
+>>
+>> This fixes a warning seen with clang:
+>> drivers/net/hamradio/bpqether.c:94:13: warning: variable 'bpq_eth_addr' is not
+>>       needed and will not be emitted [-Wunneeded-internal-declaration]
+>> static char bpq_eth_addr[6];
+>>             ^
+>> 1 warning generated.
+>>
+>> Signed-off-by: Stefan Agner <stefan@agner.ch>
+>> ---
+>>  drivers/net/hamradio/bpqether.c | 8 +++-----
+>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>
+>> diff --git a/drivers/net/hamradio/bpqether.c b/drivers/net/hamradio/bpqether.c
+>> index f347fd9c5b28..8c9c9977241e 100644
+>> --- a/drivers/net/hamradio/bpqether.c
+>> +++ b/drivers/net/hamradio/bpqether.c
+>> @@ -89,9 +89,7 @@
+>>  static const char banner[] __initconst = KERN_INFO \
+>>  	"AX.25: bpqether driver version 004\n";
+>>
+>> -static char bcast_addr[6]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
+>> -
+>> -static char bpq_eth_addr[6];
+>> +static const char bcast_addr[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+>>
+>>  static int bpq_rcv(struct sk_buff *, struct net_device *, struct packet_type *, struct net_device *);
+>>  static int bpq_device_event(struct notifier_block *, unsigned long, void *);
+>> @@ -501,8 +499,8 @@ static int bpq_new_device(struct net_device *edev)
+>>  	bpq->ethdev = edev;
+>>  	bpq->axdev = ndev;
+>>
+>> -	memcpy(bpq->dest_addr, bcast_addr, sizeof(bpq_eth_addr));
+>> -	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bpq_eth_addr));
+>> +	memcpy(bpq->dest_addr, bcast_addr, sizeof(bcast_addr));
+>> +	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bcast_addr));
 > 
-> I have bisected a regression on OpenRISC in v4.18-rc1 to this commit.  Using
-> our defconfig after boot I am getting:
-
-Hi Stafford.  Thanks for the report!
-
->     BUG: Bad page state in process hostname  pfn:00b5c
->     page:c1ff0b80 count:0 mapcount:-1024 mapping:00000000 index:0x0
->     flags: 0x0()
->     raw: 00000000 00000000 00000000 fffffbff 00000000 00000100 00000200 00000000
->     page dumped because: nonzero mapcount
->     Modules linked in:
->     CPU: 1 PID: 38 Comm: hostname Tainted: G    B
->     4.17.0-simple-smp-07461-g1d40a5ea01d5-dirty #993
->     Call trace:
->     [<(ptrval)>] show_stack+0x44/0x54
->     [<(ptrval)>] dump_stack+0xb0/0xe8
->     [<(ptrval)>] bad_page+0x138/0x174
->     [<(ptrval)>] ? ipi_icache_page_inv+0x0/0x24
->     [<(ptrval)>] ? cpumask_next+0x24/0x34
->     [<(ptrval)>] free_pages_check_bad+0x6c/0xd0
->     [<(ptrval)>] free_pcppages_bulk+0x174/0x42c
->     [<(ptrval)>] free_unref_page_commit.isra.17+0xb8/0xc8
->     [<(ptrval)>] free_unref_page_list+0x10c/0x190
->     [<(ptrval)>] ? set_reset_devices+0x0/0x2c
->     [<(ptrval)>] release_pages+0x3a0/0x414
->     [<(ptrval)>] tlb_flush_mmu_free+0x5c/0x90
->     [<(ptrval)>] tlb_flush_mmu+0x90/0xa4
->     [<(ptrval)>] arch_tlb_finish_mmu+0x50/0x94
->     [<(ptrval)>] tlb_finish_mmu+0x30/0x64
->     [<(ptrval)>] exit_mmap+0x110/0x1e0
->     [<(ptrval)>] mmput+0x50/0xf0
->     [<(ptrval)>] do_exit+0x274/0xa94
->     [<(ptrval)>] ? _raw_spin_unlock_irqrestore+0x1c/0x2c
->     [<(ptrval)>] ? __up_read+0x70/0x88
->     [<(ptrval)>] do_group_exit+0x50/0x110
->     [<(ptrval)>] __wake_up_parent+0x0/0x38
->     [<(ptrval)>] _syscall_return+0x0/0x4
+> Probably better to remove bcast_addr altogether and use
 > 
+> 	eth_broadcast_addr(bpq->dst_addr);
+> 	eth_broadcast_addr(bpq->acpt_addr);
 > 
-> In this series we are overloading mapcount with page_type, the above is caused
-> due to this check in mm/page_alloc.c (free_pages_check_bad):
+
+Sounds sensible, will send a v2.
+
+--
+Stefan
+
 > 
->         if (unlikely(atomic_read(&page->_mapcount) != -1))
->                 bad_reason = "nonzero mapcount";
-> 
-> We can see in the dump above that _mapcount is fffffbff, this corresponds to the
-> 'PG_table' flag.  Which was added here.  But it seems for some case in openrisc
-> its not getting cleared during page free.
-> 
-> This is as far as I got tracing it.  It might be an issue with OpenRISC, but our
-> implementation is mostly generic.  I will look into it more in the next few days
-> but I figured you might be able to spot something more quickly.
-
-More than happy to help.  You've done a great job of debugging this.
-I think the problem is in your __pte_free_tlb definition.  Most other
-architectures are doing:
-
-#define __pte_free_tlb(tlb, pte, address) pte_free((tlb)->mm, pte)
-
-while you're doing:
-
-#define __pte_free_tlb(tlb, pte, addr) tlb_remove_page((tlb), (pte))
-
-and that doesn't call pgtable_page_dtor().
-
-Up to you how you want to fix this ;-)  x86 defines a ___pte_free_tlb which
-calls pgtable_page_dtor() before calling tlb_remove_table() as an example.
+>>
+>>  	err = register_netdevice(ndev);
+>>  	if (err)
