@@ -3,74 +3,99 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44FBBC5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:02:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02AC2C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:13:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E519F20896
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:02:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB13C20693
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 11:13:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qSp6hzaE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E519F20896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="IcEJ+fje"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB13C20693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754304AbeFQLCZ (ORCPT
+        id S1754346AbeFQLNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 07:02:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44904 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752659AbeFQLCY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 07:02:24 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 56E2320896;
-        Sun, 17 Jun 2018 11:02:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529233343;
-        bh=SCfO6SBgw+JoIPhB68HYCmSX/AEWp3TBIHUgKeOsFzU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qSp6hzaEIOaMQpXgOtxARXXumvHFiZ2tdK83cXZt66ncBpeEozAx38XcwX7iLvlF6
-         eY8BrW5gu5RmOl6tOGY1b0ie5LdfggblN5NQpcefnjujo7MLyGS8fo5ltJx+MEEto/
-         jTsOI+Mxw31rpqTIp2GV3hd4NkaH5H/FXFIIg5P4=
-Date:   Sun, 17 Jun 2018 13:02:00 +0200
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Mike Galbraith <efault@gmx.de>
-Cc:     Ray Strode <rstrode@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        stable <stable@vger.kernel.org>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Dave Airlie <airlied@redhat.com>,
-        virtualization@lists.linux-foundation.org
-Subject: Re: v4.14.21+: ATOMIC_SLEEP splat bisected  to 9428088c90b6
- ("drm/qxl: reapply cursor after resetting primary")
-Message-ID: <20180617110200.GA19216@kroah.com>
-References: <1529163551.16103.16.camel@gmx.de>
- <20180617093607.GA27652@kroah.com>
- <1529231886.5303.6.camel@gmx.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529231886.5303.6.camel@gmx.de>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        Sun, 17 Jun 2018 07:13:08 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:44500 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752705AbeFQLNG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 07:13:06 -0400
+Received: from trochilidae.lan (unknown [37.17.239.3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 03DC95C019E;
+        Sun, 17 Jun 2018 13:13:05 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529233985;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:content-type:content-transfer-encoding:
+         in-reply-to:references; bh=VPgxNF9QFrrAXHGesHwS3fGFmhoFiJfMl/w6w8MyCYA=;
+        b=IcEJ+fjeQ4g72uet7vlC2moveOzJrKua8qZ8EmSaujDpnDZEJsAG/9mDjfz9zv+aJgKaGq
+        o7HndCPflLU+TOavRthg8XU7jCj6KMeKfYlc+kTv+8tNQfxfZhL9aZEkC5YlWgqfckEobN
+        JnZc/ynKdhKvr+trVnYIbHfnx4oSmxs=
+From:   Stefan Agner <stefan@agner.ch>
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Stefan Agner <stefan@agner.ch>,
+        Mathias Nyman <mathias.nyman@intel.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] usb: xhci: tegra: fix runtime PM error handling
+Date:   Sun, 17 Jun 2018 13:12:55 +0200
+Message-Id: <20180617111258.13447-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.17.1
+X-Spamd-Result: default: False [-2.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         BAYES_HAM(-3.00)[100.00%];
+         TAGGED_RCPT(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[8];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         MID_CONTAINS_FROM(1.00)[];
+         ASN(0.00)[asn:13030, ipnet:37.17.238.0/23, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 12:38:06PM +0200, Mike Galbraith wrote:
-> On Sun, 2018-06-17 at 11:36 +0200, Greg KH wrote:
-> > 
-> > And if you revert that patch, does everything work again?
-> 
-> Yes.
+The address-of operator will always evaluate to true. However,
+power should be explicitly disabled if no power domain is used.
 
-Great, Dave, care to revert this in 4.18 so I can queue up that revert
-in older kernels as well?
+Remove the address-of operator.
 
-thanks,
+Fixes: 58c38116c6cc ("usb: xhci: tegra: Add support for managing powergates")
+Signed-off-by: Stefan Agner <stefan@agner.ch>
+---
+ drivers/usb/host/xhci-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-greg k-h
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index a8c1d073cba0..33daac4136e8 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1223,10 +1223,10 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	pm_runtime_disable(&pdev->dev);
+ 	usb_put_hcd(tegra->hcd);
+ disable_xusbc:
+-	if (!&pdev->dev.pm_domain)
++	if (!pdev->dev.pm_domain)
+ 		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBC);
+ disable_xusba:
+-	if (!&pdev->dev.pm_domain)
++	if (!pdev->dev.pm_domain)
+ 		tegra_powergate_power_off(TEGRA_POWERGATE_XUSBA);
+ put_padctl:
+ 	tegra_xusb_padctl_put(tegra->padctl);
+-- 
+2.17.1
+
