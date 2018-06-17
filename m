@@ -3,41 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E04FC433EF
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:10:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6B0C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CD8A20895
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:10:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 721A92086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 02:10:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tYei/KCa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CD8A20895
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="R/f1/wbe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 721A92086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936580AbeFQCKI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 16 Jun 2018 22:10:08 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59076 "EHLO
+        id S936568AbeFQCKF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sat, 16 Jun 2018 22:10:05 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59096 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933925AbeFQCBH (ORCPT
+        with ESMTP id S933931AbeFQCBH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Sat, 16 Jun 2018 22:01:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=References:In-Reply-To:Message-Id:
-        Date:Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        d=infradead.org; s=bombadil.20170209; h=Message-Id:Date:Subject:Cc:To:From:
+        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=EfWb78+lY/amxkkVC2MGGQorEW4wxVNB31XfpKnUteU=; b=tYei/KCarY7BjyZB9oVTi94E9
-        0821zJbbPF1Op8yjo8hoecO3vGYC6jc0MP+r1ZQtZkYRO1peUyq23QFAi1abubTbSng+jDHyMD+ZE
-        unaNoWhuBwk42fJyjJrTU0k/RoSnwPIj5fcisdO/PNXKrfVy0/00NVTaAsHLUI3suVsG3TiXtOd+E
-        B1ANz95PRq9juuRtypXNPxHFUSd/AFcQZN5A1ZQZvMAUHxgrYb6fAn+BzaiPtiHVCtMN+eyYYEFMg
-        nqXUmmDF0aECRfOT1hiAfYe+5QpBj9HHuVVqEsa6Il8I3ZNoIvBW6+kCtmF4wirumue/5iC82svZQ
-        nj7sDAnAQ==;
+         bh=un5RPHiZpuPv1Ddl0TI9kUAEgyeh1KmB8SXTxaDzC3c=; b=R/f1/wbe9/B13hO+L4w6YKZAy
+        J9EI1eKPYO92qWs5Un8Ki/W3aqtuZCmqpIM/ISNnRVB1qXKnWg92xWeRHM9sgPguxu1O/0AVc6R6A
+        PqtAtviQ05MqUjGkaV09RBNLwkM9wPjS07Ey4WmzFlzhxAndlSOb7Ml2PwsDEugRc9YIWcvCzCkxQ
+        Nblpc/3yKHuTTm9mhw3Sc38Hp/SaH9KWW7L4vZolRrljlmrtMZ8dx4zssYBZAWVW/O1F0BsIY+z/Q
+        5l0iCEDzUxpAHHVBq+2TjmTRZIcq20zcLYvh2IFwiJ/t6qSmC0X3Z39TuJufi6CsBJZjCPx9xVqFZ
+        F2MCfMSKA==;
 Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUN06-0001Me-94; Sun, 17 Jun 2018 02:01:06 +0000
+        id 1fUMzu-0001FY-Eu; Sun, 17 Jun 2018 02:00:54 +0000
 From:   Matthew Wilcox <willy@infradead.org>
 To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
@@ -52,316 +52,219 @@ Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
         linux-nilfs@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
         Chao Yu <yuchao0@huawei.com>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH v14 43/74] mm: Convert collapse_shmem to XArray
-Date:   Sat, 16 Jun 2018 19:00:21 -0700
-Message-Id: <20180617020052.4759-44-willy@infradead.org>
+Subject: [PATCH v14 00/74] Convert page cache to XArray
+Date:   Sat, 16 Jun 2018 18:59:38 -0700
+Message-Id: <20180617020052.4759-1-willy@infradead.org>
 X-Mailer: git-send-email 2.14.3
-In-Reply-To: <20180617020052.4759-1-willy@infradead.org>
-References: <20180617020052.4759-1-willy@infradead.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I found another victim of the radix tree being hard to use.  Because
-there was no call to radix_tree_preload(), khugepaged was allocating
-radix_tree_nodes using GFP_ATOMIC.
+The XArray is a replacement for the radix tree.  For the moment it uses
+the same data structures, enabling a gradual replacement.  This patch
+set implements the XArray and converts the page cache to use it.
 
-I also converted a local_irq_save()/restore() pair to
-disable()/enable().
+A version of these patches has been running under xfstests for over
+48 hours, so I have some confidence in them.  The DAX changes have now
+also had a reasonable test outing.  This is based on next-20180615 and
+is available as a git tree at
+git://git.infradead.org/users/willy/linux-dax.git xarray-20180615
 
-Signed-off-by: Matthew Wilcox <willy@infradead.org>
----
- mm/khugepaged.c | 158 ++++++++++++++++++++----------------------------
- 1 file changed, 65 insertions(+), 93 deletions(-)
+I shall create a git branch from -rc1 and ask for that to be included in
+-next.  I'm a little concerned I still have no reviews on some of the
+later patches.
 
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index d6992ba1f604..43598cc5998b 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1287,17 +1287,17 @@ static void retract_page_tables(struct address_space *mapping, pgoff_t pgoff)
-  *
-  * Basic scheme is simple, details are more complex:
-  *  - allocate and freeze a new huge page;
-- *  - scan over radix tree replacing old pages the new one
-+ *  - scan page cache replacing old pages with the new one
-  *    + swap in pages if necessary;
-  *    + fill in gaps;
-- *    + keep old pages around in case if rollback is required;
-- *  - if replacing succeed:
-+ *    + keep old pages around in case rollback is required;
-+ *  - if replacing succeeds:
-  *    + copy data over;
-  *    + free old pages;
-  *    + unfreeze huge page;
-  *  - if replacing failed;
-  *    + put all pages back and unfreeze them;
-- *    + restore gaps in the radix-tree;
-+ *    + restore gaps in the page cache;
-  *    + free huge page;
-  */
- static void collapse_shmem(struct mm_struct *mm,
-@@ -1305,12 +1305,11 @@ static void collapse_shmem(struct mm_struct *mm,
- 		struct page **hpage, int node)
- {
- 	gfp_t gfp;
--	struct page *page, *new_page, *tmp;
-+	struct page *new_page;
- 	struct mem_cgroup *memcg;
- 	pgoff_t index, end = start + HPAGE_PMD_NR;
- 	LIST_HEAD(pagelist);
--	struct radix_tree_iter iter;
--	void **slot;
-+	XA_STATE(xas, &mapping->i_pages, start);
- 	int nr_none = 0, result = SCAN_SUCCEED;
- 
- 	VM_BUG_ON(start & (HPAGE_PMD_NR - 1));
-@@ -1335,48 +1334,48 @@ static void collapse_shmem(struct mm_struct *mm,
- 	__SetPageLocked(new_page);
- 	BUG_ON(!page_ref_freeze(new_page, 1));
- 
--
- 	/*
--	 * At this point the new_page is 'frozen' (page_count() is zero), locked
--	 * and not up-to-date. It's safe to insert it into radix tree, because
--	 * nobody would be able to map it or use it in other way until we
--	 * unfreeze it.
-+	 * At this point the new_page is 'frozen' (page_count() is zero),
-+	 * locked and not up-to-date. It's safe to insert it into the page
-+	 * cache, because nobody would be able to map it or use it in other
-+	 * way until we unfreeze it.
- 	 */
- 
--	index = start;
--	xa_lock_irq(&mapping->i_pages);
--	radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
--		int n = min(iter.index, end) - index;
--
--		/*
--		 * Handle holes in the radix tree: charge it from shmem and
--		 * insert relevant subpage of new_page into the radix-tree.
--		 */
--		if (n && !shmem_charge(mapping->host, n)) {
--			result = SCAN_FAIL;
-+	/* This will be less messy when we use multi-index entries */
-+	do {
-+		xas_lock_irq(&xas);
-+		xas_create_range(&xas, end - 1);
-+		if (!xas_error(&xas))
- 			break;
--		}
--		nr_none += n;
--		for (; index < min(iter.index, end); index++) {
--			radix_tree_insert(&mapping->i_pages, index,
--					new_page + (index % HPAGE_PMD_NR));
--		}
-+		xas_unlock_irq(&xas);
-+		if (!xas_nomem(&xas, GFP_KERNEL))
-+			goto out;
-+	} while (1);
- 
--		/* We are done. */
--		if (index >= end)
--			break;
-+	for (index = start; index < end; index++) {
-+		struct page *page = xas_next(&xas);
-+
-+		VM_BUG_ON(index != xas.xa_index);
-+		if (!page) {
-+			if (!shmem_charge(mapping->host, 1)) {
-+				result = SCAN_FAIL;
-+				break;
-+			}
-+			xas_store(&xas, new_page + (index % HPAGE_PMD_NR));
-+			nr_none++;
-+			continue;
-+		}
- 
--		page = radix_tree_deref_slot_protected(slot,
--				&mapping->i_pages.xa_lock);
- 		if (xa_is_value(page) || !PageUptodate(page)) {
--			xa_unlock_irq(&mapping->i_pages);
-+			xas_unlock_irq(&xas);
- 			/* swap in or instantiate fallocated page */
- 			if (shmem_getpage(mapping->host, index, &page,
- 						SGP_NOHUGE)) {
- 				result = SCAN_FAIL;
--				goto tree_unlocked;
-+				goto xa_unlocked;
- 			}
--			xa_lock_irq(&mapping->i_pages);
-+			xas_lock_irq(&xas);
-+			xas_set(&xas, index);
- 		} else if (trylock_page(page)) {
- 			get_page(page);
- 		} else {
-@@ -1396,7 +1395,7 @@ static void collapse_shmem(struct mm_struct *mm,
- 			result = SCAN_TRUNCATED;
- 			goto out_unlock;
- 		}
--		xa_unlock_irq(&mapping->i_pages);
-+		xas_unlock_irq(&xas);
- 
- 		if (isolate_lru_page(page)) {
- 			result = SCAN_DEL_PAGE_LRU;
-@@ -1406,17 +1405,16 @@ static void collapse_shmem(struct mm_struct *mm,
- 		if (page_mapped(page))
- 			unmap_mapping_pages(mapping, index, 1, false);
- 
--		xa_lock_irq(&mapping->i_pages);
-+		xas_lock(&xas);
-+		xas_set(&xas, index);
- 
--		slot = radix_tree_lookup_slot(&mapping->i_pages, index);
--		VM_BUG_ON_PAGE(page != radix_tree_deref_slot_protected(slot,
--					&mapping->i_pages.xa_lock), page);
-+		VM_BUG_ON_PAGE(page != xas_load(&xas), page);
- 		VM_BUG_ON_PAGE(page_mapped(page), page);
- 
- 		/*
- 		 * The page is expected to have page_count() == 3:
- 		 *  - we hold a pin on it;
--		 *  - one reference from radix tree;
-+		 *  - one reference from page cache;
- 		 *  - one from isolate_lru_page;
- 		 */
- 		if (!page_ref_freeze(page, 3)) {
-@@ -1431,56 +1429,30 @@ static void collapse_shmem(struct mm_struct *mm,
- 		list_add_tail(&page->lru, &pagelist);
- 
- 		/* Finally, replace with the new page. */
--		radix_tree_replace_slot(&mapping->i_pages, slot,
--				new_page + (index % HPAGE_PMD_NR));
--
--		slot = radix_tree_iter_resume(slot, &iter);
--		index++;
-+		xas_store(&xas, new_page + (index % HPAGE_PMD_NR));
- 		continue;
- out_lru:
--		xa_unlock_irq(&mapping->i_pages);
-+		xas_unlock_irq(&xas);
- 		putback_lru_page(page);
- out_isolate_failed:
- 		unlock_page(page);
- 		put_page(page);
--		goto tree_unlocked;
-+		goto xa_unlocked;
- out_unlock:
- 		unlock_page(page);
- 		put_page(page);
- 		break;
- 	}
-+	xas_unlock_irq(&xas);
- 
--	/*
--	 * Handle hole in radix tree at the end of the range.
--	 * This code only triggers if there's nothing in radix tree
--	 * beyond 'end'.
--	 */
--	if (result == SCAN_SUCCEED && index < end) {
--		int n = end - index;
--
--		if (!shmem_charge(mapping->host, n)) {
--			result = SCAN_FAIL;
--			goto tree_locked;
--		}
--
--		for (; index < end; index++) {
--			radix_tree_insert(&mapping->i_pages, index,
--					new_page + (index % HPAGE_PMD_NR));
--		}
--		nr_none += n;
--	}
--
--tree_locked:
--	xa_unlock_irq(&mapping->i_pages);
--tree_unlocked:
--
-+xa_unlocked:
- 	if (result == SCAN_SUCCEED) {
--		unsigned long flags;
-+		struct page *page, *tmp;
- 		struct zone *zone = page_zone(new_page);
- 
- 		/*
--		 * Replacing old pages with new one has succeed, now we need to
--		 * copy the content and free old pages.
-+		 * Replacing old pages with new one has succeeded, now we
-+		 * need to copy the content and free the old pages.
- 		 */
- 		list_for_each_entry_safe(page, tmp, &pagelist, lru) {
- 			copy_highpage(new_page + (page->index % HPAGE_PMD_NR),
-@@ -1494,16 +1466,16 @@ static void collapse_shmem(struct mm_struct *mm,
- 			put_page(page);
- 		}
- 
--		local_irq_save(flags);
-+		local_irq_disable();
- 		__inc_node_page_state(new_page, NR_SHMEM_THPS);
- 		if (nr_none) {
- 			__mod_node_page_state(zone->zone_pgdat, NR_FILE_PAGES, nr_none);
- 			__mod_node_page_state(zone->zone_pgdat, NR_SHMEM, nr_none);
- 		}
--		local_irq_restore(flags);
-+		local_irq_enable();
- 
- 		/*
--		 * Remove pte page tables, so we can re-faulti
-+		 * Remove pte page tables, so we can re-fault
- 		 * the page as huge.
- 		 */
- 		retract_page_tables(mapping, start);
-@@ -1518,37 +1490,37 @@ static void collapse_shmem(struct mm_struct *mm,
- 
- 		*hpage = NULL;
- 	} else {
--		/* Something went wrong: rollback changes to the radix-tree */
-+		struct page *page;
-+		/* Something went wrong: roll back page cache changes */
- 		shmem_uncharge(mapping->host, nr_none);
--		xa_lock_irq(&mapping->i_pages);
--		radix_tree_for_each_slot(slot, &mapping->i_pages, &iter, start) {
--			if (iter.index >= end)
--				break;
-+		xas_lock_irq(&xas);
-+		xas_set(&xas, start);
-+		xas_for_each(&xas, page, end - 1) {
- 			page = list_first_entry_or_null(&pagelist,
- 					struct page, lru);
--			if (!page || iter.index < page->index) {
-+			if (!page || xas.xa_index < page->index) {
- 				if (!nr_none)
- 					break;
- 				nr_none--;
- 				/* Put holes back where they were */
--				radix_tree_delete(&mapping->i_pages, iter.index);
-+				xas_store(&xas, NULL);
- 				continue;
- 			}
- 
--			VM_BUG_ON_PAGE(page->index != iter.index, page);
-+			VM_BUG_ON_PAGE(page->index != xas.xa_index, page);
- 
- 			/* Unfreeze the page. */
- 			list_del(&page->lru);
- 			page_ref_unfreeze(page, 2);
--			radix_tree_replace_slot(&mapping->i_pages, slot, page);
--			slot = radix_tree_iter_resume(slot, &iter);
--			xa_unlock_irq(&mapping->i_pages);
-+			xas_store(&xas, page);
-+			xas_pause(&xas);
-+			xas_unlock_irq(&xas);
- 			putback_lru_page(page);
- 			unlock_page(page);
--			xa_lock_irq(&mapping->i_pages);
-+			xas_lock_irq(&xas);
- 		}
- 		VM_BUG_ON(nr_none);
--		xa_unlock_irq(&mapping->i_pages);
-+		xas_unlock_irq(&xas);
- 
- 		/* Unfreeze new_page, caller would take care about freeing it */
- 		page_ref_unfreeze(new_page, 1);
+Changes since v13:
+ - Actually fixed bug in workingset conversion that led to exceptional
+   entries not being deleted from the XArray.  Not sure how I dropped
+   that patch for v13.  Thanks to David Sterba for noticing.
+ - Fixed bug in DAX writeback conversion that failed to wake up waiters.
+   Thanks to Ross for testing, and to Dan & Jeff for helping me get a
+   setup working to reproduce the problem.
+ - Converted the new dax_lock_page / dax_unlock_page functions.
+ - Moved XArray test suite entirely into the test_xarray kernel module
+   to match other test suites.  It can still be built in userspace as
+   part of the radix tree test suite.
+ - Changed email address.
+ - Moved a few functions into different patches to make the test-suite
+   additions more logical.
+ - Fixed a bug in XA_BUG_ON (oh the irony) where it evaluated the
+   condition twice.
+ - Constified xa_head() / xa_parent() / xa_entry() and their _locked
+   variants.
+ - Moved xa_parent() to xarray.h so it can be used from the workingset code.
+ - Call the xarray testsuite from the radix tree test suite to ensure
+   that I remember to run both test suites ;-)
+ - Added some more tests to the test suite.
+
+Matthew Wilcox (74):
+  Update email address
+  radix tree test suite: Enable ubsan
+  dax: Fix use of zero page
+  xarray: Replace exceptional entries
+  xarray: Change definition of sibling entries
+  xarray: Add definition of struct xarray
+  xarray: Define struct xa_node
+  xarray: Add documentation
+  xarray: Add XArray load operation
+  xarray: Add XArray tags
+  xarray: Add XArray unconditional store operations
+  xarray: Add XArray conditional store operations
+  xarray: Add XArray iterators
+  xarray: Extract entries from an XArray
+  xarray: Destroy an XArray
+  xarray: Step through an XArray
+  xarray: Add xas_for_each_conflict
+  xarray: Add xas_create_range
+  xarray: Add MAINTAINERS entry
+  page cache: Rearrange address_space
+  page cache: Convert hole search to XArray
+  page cache: Add and replace pages using the XArray
+  page cache: Convert page deletion to XArray
+  page cache: Convert find_get_entry to XArray
+  page cache: Convert find_get_entries to XArray
+  page cache: Convert find_get_pages_range to XArray
+  page cache: Convert find_get_pages_contig to XArray
+  page cache; Convert find_get_pages_range_tag to XArray
+  page cache: Convert find_get_entries_tag to XArray
+  page cache: Convert filemap_map_pages to XArray
+  radix tree test suite: Convert regression1 to XArray
+  page cache: Convert delete_batch to XArray
+  page cache: Remove stray radix comment
+  page cache: Convert filemap_range_has_page to XArray
+  mm: Convert page-writeback to XArray
+  mm: Convert workingset to XArray
+  mm: Convert truncate to XArray
+  mm: Convert add_to_swap_cache to XArray
+  mm: Convert delete_from_swap_cache to XArray
+  mm: Convert __do_page_cache_readahead to XArray
+  mm: Convert page migration to XArray
+  mm: Convert huge_memory to XArray
+  mm: Convert collapse_shmem to XArray
+  mm: Convert khugepaged_scan_shmem to XArray
+  mm: Convert is_page_cache_freeable to XArray
+  pagevec: Use xa_tag_t
+  shmem: Convert shmem_radix_tree_replace to XArray
+  shmem: Convert shmem_confirm_swap to XArray
+  shmem: Convert find_swap_entry to XArray
+  shmem: Convert shmem_add_to_page_cache to XArray
+  shmem: Convert shmem_alloc_hugepage to XArray
+  shmem: Convert shmem_free_swap to XArray
+  shmem: Convert shmem_partial_swap_usage to XArray
+  memfd: Convert memfd_wait_for_pins to XArray
+  memfd: Convert memfd_tag_pins to XArray
+  shmem: Comment fixups
+  btrfs: Convert page cache to XArray
+  fs: Convert buffer to XArray
+  fs: Convert writeback to XArray
+  nilfs2: Convert to XArray
+  f2fs: Convert to XArray
+  dax: Rename some functions
+  dax: Hash on XArray instead of mapping
+  dax: Convert dax_insert_pfn_mkwrite to XArray
+  dax: Convert dax_layout_busy_page to XArray
+  dax: Convert __dax_invalidate_entry to XArray
+  dax: Convert dax writeback to XArray
+  dax: Convert dax_lock_page to XArray
+  dax: Convert page fault handlers to XArray
+  page cache: Finish XArray conversion
+  radix tree: Remove radix_tree_update_node_t
+  radix tree: Remove split/join code
+  radix tree: Remove radix_tree_maybe_preload_order
+  radix tree: Remove radix_tree_clear_tags
+
+ .clang-format                                 |    1 -
+ .mailmap                                      |    7 +
+ Documentation/core-api/index.rst              |    1 +
+ Documentation/core-api/xarray.rst             |  395 ++++
+ MAINTAINERS                                   |   17 +-
+ arch/powerpc/include/asm/book3s/64/pgtable.h  |    4 +-
+ arch/powerpc/include/asm/nohash/64/pgtable.h  |    4 +-
+ drivers/gpu/drm/i915/i915_gem.c               |   17 +-
+ fs/btrfs/compression.c                        |    6 +-
+ fs/btrfs/extent_io.c                          |   12 +-
+ fs/buffer.c                                   |   14 +-
+ fs/dax.c                                      |  878 ++++-----
+ fs/ext4/inode.c                               |    2 +-
+ fs/f2fs/data.c                                |    6 +-
+ fs/f2fs/dir.c                                 |    2 +-
+ fs/f2fs/f2fs.h                                |    2 +-
+ fs/f2fs/inline.c                              |    2 +-
+ fs/f2fs/node.c                                |    6 +-
+ fs/fs-writeback.c                             |   25 +-
+ fs/gfs2/aops.c                                |    2 +-
+ fs/inode.c                                    |    2 +-
+ fs/nfs/blocklayout/blocklayout.c              |    2 +-
+ fs/nilfs2/btnode.c                            |   26 +-
+ fs/nilfs2/page.c                              |   29 +-
+ fs/proc/task_mmu.c                            |    2 +-
+ include/linux/fs.h                            |   63 +-
+ include/linux/pagemap.h                       |   10 +-
+ include/linux/pagevec.h                       |    8 +-
+ include/linux/radix-tree.h                    |  136 +-
+ include/linux/swap.h                          |   22 +-
+ include/linux/swapops.h                       |   19 +-
+ include/linux/xarray.h                        | 1047 +++++++++-
+ lib/Kconfig.debug                             |    3 +
+ lib/Makefile                                  |    3 +-
+ lib/idr.c                                     |   66 +-
+ lib/radix-tree.c                              |  575 +-----
+ lib/test_xarray.c                             |  676 +++++++
+ lib/xarray.c                                  | 1753 +++++++++++++++++
+ mm/filemap.c                                  |  723 +++----
+ mm/huge_memory.c                              |   17 +-
+ mm/khugepaged.c                               |  177 +-
+ mm/madvise.c                                  |    2 +-
+ mm/memcontrol.c                               |    2 +-
+ mm/memfd.c                                    |  105 +-
+ mm/migrate.c                                  |   48 +-
+ mm/mincore.c                                  |    2 +-
+ mm/page-writeback.c                           |   72 +-
+ mm/readahead.c                                |   10 +-
+ mm/shmem.c                                    |  201 +-
+ mm/swap.c                                     |    6 +-
+ mm/swap_state.c                               |  119 +-
+ mm/truncate.c                                 |   27 +-
+ mm/vmscan.c                                   |   10 +-
+ mm/workingset.c                               |   69 +-
+ tools/include/asm-generic/bitops.h            |    1 +
+ tools/include/asm-generic/bitops/atomic.h     |    9 -
+ tools/include/asm-generic/bitops/non-atomic.h |  109 +
+ tools/include/linux/bitmap.h                  |    1 +
+ tools/include/linux/kernel.h                  |    1 +
+ tools/include/linux/spinlock.h                |   12 +-
+ tools/testing/radix-tree/.gitignore           |    1 +
+ tools/testing/radix-tree/Makefile             |   16 +-
+ tools/testing/radix-tree/benchmark.c          |   91 -
+ tools/testing/radix-tree/bitmap.c             |   23 +
+ tools/testing/radix-tree/idr-test.c           |    6 +-
+ tools/testing/radix-tree/linux/bug.h          |    1 +
+ tools/testing/radix-tree/linux/kconfig.h      |    1 +
+ tools/testing/radix-tree/linux/kernel.h       |    5 +
+ tools/testing/radix-tree/linux/lockdep.h      |   11 +
+ tools/testing/radix-tree/linux/radix-tree.h   |    1 -
+ tools/testing/radix-tree/linux/rcupdate.h     |    2 +
+ tools/testing/radix-tree/linux/xarray.h       |    2 +
+ tools/testing/radix-tree/main.c               |   21 +-
+ tools/testing/radix-tree/multiorder.c         |  272 +--
+ tools/testing/radix-tree/regression1.c        |   58 +-
+ tools/testing/radix-tree/regression3.c        |   23 -
+ tools/testing/radix-tree/tag_check.c          |   29 -
+ tools/testing/radix-tree/test.c               |    8 +-
+ tools/testing/radix-tree/test.h               |    1 +
+ tools/testing/radix-tree/xarray.c             |   33 +
+ 80 files changed, 5462 insertions(+), 2711 deletions(-)
+ create mode 100644 Documentation/core-api/xarray.rst
+ create mode 100644 lib/test_xarray.c
+ create mode 100644 lib/xarray.c
+ create mode 100644 tools/include/asm-generic/bitops/non-atomic.h
+ create mode 100644 tools/testing/radix-tree/bitmap.c
+ create mode 100644 tools/testing/radix-tree/linux/kconfig.h
+ create mode 100644 tools/testing/radix-tree/linux/lockdep.h
+ create mode 100644 tools/testing/radix-tree/linux/xarray.h
+ create mode 100644 tools/testing/radix-tree/xarray.c
+
 -- 
 2.17.1
 
