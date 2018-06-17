@@ -6,121 +6,99 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52432C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33975C433EF
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:15:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F18A2086A
-	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F18A2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zonque.org
+	by mail.kernel.org (Postfix) with ESMTP id D6CC12086A
+	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:15:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6CC12086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934031AbeFQSMz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 14:12:55 -0400
-Received: from mail.bugwerft.de ([46.23.86.59]:34452 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933374AbeFQSMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 14:12:52 -0400
-Received: from [192.168.178.170] (p57BC9B2C.dip0.t-ipconnect.de [87.188.155.44])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 5C4C928984A;
-        Sun, 17 Jun 2018 18:09:48 +0000 (UTC)
-Subject: Re: [PATCH v3 06/14] mtd: rawnand: marvell: remove the dmaengine
- compat need
-To:     Robert Jarzmik <robert.jarzmik@free.fr>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Tejun Heo <tj@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Nicolas Pitre <nico@fluxnic.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        alsa-devel@alsa-project.org
-References: <20180617170217.24177-1-robert.jarzmik@free.fr>
- <20180617170217.24177-7-robert.jarzmik@free.fr>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <3a2a8951-f380-af99-bf97-6ff722404410@zonque.org>
-Date:   Sun, 17 Jun 2018 20:12:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180617170217.24177-7-robert.jarzmik@free.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+        id S934189AbeFQSP1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 14:15:27 -0400
+Received: from smtprelay0128.hostedemail.com ([216.40.44.128]:48082 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932524AbeFQSPZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 14:15:25 -0400
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay05.hostedemail.com (Postfix) with ESMTP id E7B081802EC3D;
+        Sun, 17 Jun 2018 18:15:24 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: net76_2eb2e1bb9c863
+X-Filterd-Recvd-Size: 2768
+Received: from XPS-9350.home (unknown [47.151.150.235])
+        (Authenticated sender: joe@perches.com)
+        by omf07.hostedemail.com (Postfix) with ESMTPA;
+        Sun, 17 Jun 2018 18:15:20 +0000 (UTC)
+Message-ID: <051e78ff15ac6a2e647b0c8c539ac80b3aec6328.camel@perches.com>
+Subject: Re: [PATCH] net: hamradio: remove unused variable
+From:   Joe Perches <joe@perches.com>
+To:     Stefan Agner <stefan@agner.ch>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Sun, 17 Jun 2018 11:15:19 -0700
+In-Reply-To: <20180617130335.3947-1-stefan@agner.ch>
+References: <20180617130335.3947-1-stefan@agner.ch>
+Content-Type: text/plain; charset="ISO-8859-1"
+X-Mailer: Evolution 3.28.1-2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sunday, June 17, 2018 07:02 PM, Robert Jarzmik wrote:
-> As the pxa architecture switched towards the dmaengine slave map, the
-> old compatibility mechanism to acquire the dma requestor line number and
-> priority are not needed anymore.
+On Sun, 2018-06-17 at 15:03 +0200, Stefan Agner wrote:
+> The array bpq_eth_addr is only used to get the size of an
+> address. Remove the array and use the size of the array
+> bcast_addr which is actually copied.
 > 
-> This patch simplifies the dma resource acquisition, using the more
-> generic function dma_request_slave_channel().
+> Also constify and tidy up the bcast_addr declaration.
 > 
-> Signed-off-by: Signed-off-by: Daniel Mack <daniel@zonque.org>
-
-Something went wrong here, but you can simply fix that when applying the 
-series :)
-
-
-Daniel
-
-> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
-> Acked-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> This fixes a warning seen with clang:
+> drivers/net/hamradio/bpqether.c:94:13: warning: variable 'bpq_eth_addr' is not
+>       needed and will not be emitted [-Wunneeded-internal-declaration]
+> static char bpq_eth_addr[6];
+>             ^
+> 1 warning generated.
+> 
+> Signed-off-by: Stefan Agner <stefan@agner.ch>
 > ---
->   drivers/mtd/nand/raw/marvell_nand.c | 17 +----------------
->   1 file changed, 1 insertion(+), 16 deletions(-)
+>  drivers/net/hamradio/bpqether.c | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
-> index 10e953218948..64618254d6de 100644
-> --- a/drivers/mtd/nand/raw/marvell_nand.c
-> +++ b/drivers/mtd/nand/raw/marvell_nand.c
-> @@ -2613,8 +2613,6 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
->   						    dev);
->   	struct dma_slave_config config = {};
->   	struct resource *r;
-> -	dma_cap_mask_t mask;
-> -	struct pxad_param param;
->   	int ret;
->   
->   	if (!IS_ENABLED(CONFIG_PXA_DMA)) {
-> @@ -2627,20 +2625,7 @@ static int marvell_nfc_init_dma(struct marvell_nfc *nfc)
->   	if (ret)
->   		return ret;
->   
-> -	r = platform_get_resource(pdev, IORESOURCE_DMA, 0);
-> -	if (!r) {
-> -		dev_err(nfc->dev, "No resource defined for data DMA\n");
-> -		return -ENXIO;
-> -	}
+> diff --git a/drivers/net/hamradio/bpqether.c b/drivers/net/hamradio/bpqether.c
+> index f347fd9c5b28..8c9c9977241e 100644
+> --- a/drivers/net/hamradio/bpqether.c
+> +++ b/drivers/net/hamradio/bpqether.c
+> @@ -89,9 +89,7 @@
+>  static const char banner[] __initconst = KERN_INFO \
+>  	"AX.25: bpqether driver version 004\n";
+>  
+> -static char bcast_addr[6]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 > -
-> -	param.drcmr = r->start;
-> -	param.prio = PXAD_PRIO_LOWEST;
-> -	dma_cap_zero(mask);
-> -	dma_cap_set(DMA_SLAVE, mask);
-> -	nfc->dma_chan =
-> -		dma_request_slave_channel_compat(mask, pxad_filter_fn,
-> -						 &param, nfc->dev,
-> -						 "data");
-> +	nfc->dma_chan =	dma_request_slave_channel(nfc->dev, "data");
->   	if (!nfc->dma_chan) {
->   		dev_err(nfc->dev,
->   			"Unable to request data DMA channel\n");
-> 
+> -static char bpq_eth_addr[6];
+> +static const char bcast_addr[6] = { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF };
+>  
+>  static int bpq_rcv(struct sk_buff *, struct net_device *, struct packet_type *, struct net_device *);
+>  static int bpq_device_event(struct notifier_block *, unsigned long, void *);
+> @@ -501,8 +499,8 @@ static int bpq_new_device(struct net_device *edev)
+>  	bpq->ethdev = edev;
+>  	bpq->axdev = ndev;
+>  
+> -	memcpy(bpq->dest_addr, bcast_addr, sizeof(bpq_eth_addr));
+> -	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bpq_eth_addr));
+> +	memcpy(bpq->dest_addr, bcast_addr, sizeof(bcast_addr));
+> +	memcpy(bpq->acpt_addr, bcast_addr, sizeof(bcast_addr));
 
+Probably better to remove bcast_addr altogether and use
+
+	eth_broadcast_addr(bpq->dst_addr);
+	eth_broadcast_addr(bpq->acpt_addr);
+
+
+>  
+>  	err = register_netdevice(ndev);
+>  	if (err)
