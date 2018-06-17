@@ -2,125 +2,133 @@ Return-Path: <SRS0=XTOn=JD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F4DCC5CFC1
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18991C433EF
 	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFF6D208B6
+	by mail.kernel.org (Postfix) with ESMTP id B83B420891
 	for <linux-kernel@archiver.kernel.org>; Sun, 17 Jun 2018 18:53:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSJZx3OJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFF6D208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="s/eo940W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B83B420891
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934385AbeFQSw7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 14:52:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43132 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933681AbeFQSw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 14:52:57 -0400
-Received: from localhost (unknown [5.29.173.205])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7C25520891;
-        Sun, 17 Jun 2018 18:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529261577;
-        bh=Cy7qn3XGTqpobxnlVENRPFH1I7ZQo99tEXdaNRx+AS4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XSJZx3OJ3MbfC4CdWH9lnN0D9PieRf4UsjhxXoNgtEu7zziARrbdpoIoc3fg3pyN9
-         eazumAcJGmrcIHACAhxr+pZj7bFo3GmVdwT5NAf4OnNTDA3dXUkb+TDLfdTfIjfa8s
-         zU/sc7/qc9trX17hF2hZiKei8MwjX27P8f7AsQe0=
-Date:   Sun, 17 Jun 2018 21:52:53 +0300
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Saeed Mahameed <saeedm@mellanox.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Doug Ledford <dledford@redhat.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-netdev <netdev@vger.kernel.org>,
-        RDMA mailing list <linux-rdma@vger.kernel.org>
-Subject: Re: linux-next: Please add mlx5-next tree
-Message-ID: <20180617185253.GA7393@mtr-leonro.mtl.com>
-References: <20180606192500.GZ2958@mtr-leonro.mtl.com>
- <20180608074726.5b3883e2@canb.auug.org.au>
- <20180610054128.GG12407@mtr-leonro.mtl.com>
+        id S934097AbeFQSw0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Sun, 17 Jun 2018 14:52:26 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60448 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933681AbeFQSwY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 14:52:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=RtBpPFWU7Z1ankEmh9L4Q2xmPwM/ri+SlSKPS3gzeqQ=; b=s/eo940WY8UecJBu2ULdYD3Au
+        4G7ia6+5N1MSWmg9rCgHOxI9foOJHHp49mtuevWZfAGCXxzb832V2L6edAcfvcK40t8Z6pszF3wNq
+        PSK0Z3Y7j2I3quRPrEvchbDTzIx2Ixs5adcei8/tJ2zBdR3KacPt6lJ83Pk1iCV6qso+vgyNJ3Eyc
+        pBOUAILl1gsOCo5sUjfwVRZ9s5JjP/yhEcE/+KsH9eHgl+0T7amj57BwBQVBhQR0Nbjs4yvmYz/jl
+        JDh9FSya3dtGG9uWKZzjqTFZeR/IhOLqLKByYMONcFuc7svW5a+sXziVWebIkC2LiWQ7Fs7urwiuG
+        Tz7hpOqfg==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fUcmk-0001Vw-FU; Sun, 17 Jun 2018 18:52:22 +0000
+Date:   Sun, 17 Jun 2018 11:52:22 -0700
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Stafford Horne <shorne@gmail.com>
+Cc:     linux-mm@kvack.org, Matthew Wilcox <mawilcox@microsoft.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/4] mm: Mark pages in use for page tables
+Message-ID: <20180617185222.GA21805@bombadil.infradead.org>
+References: <20180307134443.32646-1-willy@infradead.org>
+ <20180307134443.32646-5-willy@infradead.org>
+ <20180617150931.GB24595@lianli.shorne-pla.net>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="/04w6evG8XlLl3ft"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180610054128.GG12407@mtr-leonro.mtl.com>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+In-Reply-To: <20180617150931.GB24595@lianli.shorne-pla.net>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jun 18, 2018 at 12:09:31AM +0900, Stafford Horne wrote:
+> On Wed, Mar 07, 2018 at 05:44:43AM -0800, Matthew Wilcox wrote:
+> > Define a new PageTable bit in the page_type and use it to mark pages in
+> > use as page tables.  This can be helpful when debugging crashdumps or
+> > analysing memory fragmentation.  Add a KPF flag to report these pages
+> > to userspace and update page-types.c to interpret that flag.
+> 
+> I have bisected a regression on OpenRISC in v4.18-rc1 to this commit.  Using
+> our defconfig after boot I am getting:
 
---/04w6evG8XlLl3ft
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Stafford.  Thanks for the report!
 
-On Sun, Jun 10, 2018 at 08:41:28AM +0300, Leon Romanovsky wrote:
-> On Fri, Jun 08, 2018 at 07:47:26AM +1000, Stephen Rothwell wrote:
-> > Hi Leon,
-> >
-> > On Wed, 6 Jun 2018 22:25:00 +0300 Leon Romanovsky <leon@kernel.org> wrote:
-> > >
-> > > Can you please add the branch "mlx5-next" from the following tree to the
-> > > linux-next integration tree?
-> > >
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/mellanox/linux.git/
-> > >
-> > > The mlx5-next branch is used to send shared pull requests to both netdev
-> > > and RDMA subsystems and it is worth to have linux-next coverage on it
-> > > before.
-> >
-> > I try hard not to add new trees during the merge window, sorry.  If I
-> > forget to add it after -rc1 has been released, please remind me.
->
-> Thanks Stephen, I'll do.
->
+>     BUG: Bad page state in process hostname  pfn:00b5c
+>     page:c1ff0b80 count:0 mapcount:-1024 mapping:00000000 index:0x0
+>     flags: 0x0()
+>     raw: 00000000 00000000 00000000 fffffbff 00000000 00000100 00000200 00000000
+>     page dumped because: nonzero mapcount
+>     Modules linked in:
+>     CPU: 1 PID: 38 Comm: hostname Tainted: G    B
+>     4.17.0-simple-smp-07461-g1d40a5ea01d5-dirty #993
+>     Call trace:
+>     [<(ptrval)>] show_stack+0x44/0x54
+>     [<(ptrval)>] dump_stack+0xb0/0xe8
+>     [<(ptrval)>] bad_page+0x138/0x174
+>     [<(ptrval)>] ? ipi_icache_page_inv+0x0/0x24
+>     [<(ptrval)>] ? cpumask_next+0x24/0x34
+>     [<(ptrval)>] free_pages_check_bad+0x6c/0xd0
+>     [<(ptrval)>] free_pcppages_bulk+0x174/0x42c
+>     [<(ptrval)>] free_unref_page_commit.isra.17+0xb8/0xc8
+>     [<(ptrval)>] free_unref_page_list+0x10c/0x190
+>     [<(ptrval)>] ? set_reset_devices+0x0/0x2c
+>     [<(ptrval)>] release_pages+0x3a0/0x414
+>     [<(ptrval)>] tlb_flush_mmu_free+0x5c/0x90
+>     [<(ptrval)>] tlb_flush_mmu+0x90/0xa4
+>     [<(ptrval)>] arch_tlb_finish_mmu+0x50/0x94
+>     [<(ptrval)>] tlb_finish_mmu+0x30/0x64
+>     [<(ptrval)>] exit_mmap+0x110/0x1e0
+>     [<(ptrval)>] mmput+0x50/0xf0
+>     [<(ptrval)>] do_exit+0x274/0xa94
+>     [<(ptrval)>] ? _raw_spin_unlock_irqrestore+0x1c/0x2c
+>     [<(ptrval)>] ? __up_read+0x70/0x88
+>     [<(ptrval)>] do_group_exit+0x50/0x110
+>     [<(ptrval)>] __wake_up_parent+0x0/0x38
+>     [<(ptrval)>] _syscall_return+0x0/0x4
+> 
+> 
+> In this series we are overloading mapcount with page_type, the above is caused
+> due to this check in mm/page_alloc.c (free_pages_check_bad):
+> 
+>         if (unlikely(atomic_read(&page->_mapcount) != -1))
+>                 bad_reason = "nonzero mapcount";
+> 
+> We can see in the dump above that _mapcount is fffffbff, this corresponds to the
+> 'PG_table' flag.  Which was added here.  But it seems for some case in openrisc
+> its not getting cleared during page free.
+> 
+> This is as far as I got tracing it.  It might be an issue with OpenRISC, but our
+> implementation is mostly generic.  I will look into it more in the next few days
+> but I figured you might be able to spot something more quickly.
 
-Hi Stephen,
+More than happy to help.  You've done a great job of debugging this.
+I think the problem is in your __pte_free_tlb definition.  Most other
+architectures are doing:
 
-This is reminder.
+#define __pte_free_tlb(tlb, pte, address) pte_free((tlb)->mm, pte)
 
-Thanks
+while you're doing:
 
-> >
-> > --
-> > Cheers,
-> > Stephen Rothwell
->
->
+#define __pte_free_tlb(tlb, pte, addr) tlb_remove_page((tlb), (pte))
 
+and that doesn't call pgtable_page_dtor().
 
-
---/04w6evG8XlLl3ft
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJbJq4FAAoJEORje4g2clinc0MP/iyLkAw8x2jg3WfXW1flAH75
-QY6mdmkx94bLPQq0k/wYnQQfoo3aMdxRWcABzKEGsAY8toWFLK0lkUkt8w/njzgv
-grGlBNSHXQbPHCAXNuxbUSBLqZ4xpD5ainJkUZqDW/Z/4zpX4xcqjElyMCDPF10u
-V2izS5DorHb0ny2+YSxrrckSldEWtFTsLBXHUXVya5Edsf6755DdirwgEyTD/92e
-a1FJ+aDRh74zzgMDOJzZjUPgj5fwVnINuf4v6o0+YMJIVfkI7XDI1B4cP6XL2vT+
-kYyIfd53MNqZ1m5UtPowLxWyLHNn1UnWERlGDxbzvqhPBLfVClTZQDyqSp6VbfoR
-+zem0z/8bLVzPbZLDZqdYwGOfHo9K6BM99jMdYvDseyoG1pgtgXat03YjdxRWPZl
-WvLeSNDGJg+Lar79HMkCAznW0SNSdRKmipELGqnVvS5vq11welLOfzvQ+s67Oy4U
-lIbnwm2YgDZ8iN+GRNJHmr1Pu6A1wvsDfLsBl3sV1qe0RrVHouwBcuN6YgUOCqpg
-lhg6S+HWHrKqxJ1cuW+DW0RSmfpVz/OqtNZXGhOB6o/n8Z/2FAd2rbtycqfijDr+
-2VeMK6o+nplk0kEcSEef+YVQ5JPU/7b0K6CUXHYHNZH5jZ+RCyN5K85NYKuTvlb3
-SNQXxmpLiItcQAI9Ca1w
-=Sq+z
------END PGP SIGNATURE-----
-
---/04w6evG8XlLl3ft--
+Up to you how you want to fix this ;-)  x86 defines a ___pte_free_tlb which
+calls pgtable_page_dtor() before calling tlb_remove_table() as an example.
