@@ -2,139 +2,110 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5935C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 440A0C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:42:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7711320836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:39:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rs9l0F20"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7711320836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
+	by mail.kernel.org (Postfix) with ESMTP id EC75D20836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC75D20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935445AbeFRRjN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:39:13 -0400
-Received: from mail-pg0-f67.google.com ([74.125.83.67]:39719 "EHLO
-        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935230AbeFRRjL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:39:11 -0400
-Received: by mail-pg0-f67.google.com with SMTP id w12-v6so7855099pgc.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 10:39:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:reply-to:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=k2s+Fhu1TE8dZhPc6ZjDSqP5rpq5CNAh5CTwScldGBQ=;
-        b=rs9l0F20zXrCcMBEcCwEp/e9PVzkLd7pOfOjCa6kTaF9fkgZI/Of7aOdSxTKZrMvfU
-         YQNDpvZU0AsURtxPyU5vPu8qpSs+8YsaD3mxaaRivHRYbx6lNcHTNrJSKoa9PANL1Kq1
-         NdZLusF3axSEZVcnZKSKz9lGXL1ykiXqYG8SAMc4A3uaXsRC/Bp6YCS3FMHdNRD19VPn
-         lQCw5aC298fdDCug85hLM8DSTFrILh+rI4wF+qc7Y/wgnzfuDTqgdG0YoE7Jm7y48T3E
-         CWqGPplgROcaE6Q3u2vDwoaK3QFyCAtQ4MPZvLpWZThQ0lD2kRKqy6xhgbzYF10AMHev
-         W/UA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=k2s+Fhu1TE8dZhPc6ZjDSqP5rpq5CNAh5CTwScldGBQ=;
-        b=JDlnakeM5bPqVzJEVar0KNZ7+DsKZlapbLUZ8as0y3gCHX9fnUn1MdVzhA7FztRygK
-         swEDt5VttV0CyMO6nRPkicwYkR6hhOWAehoktXphsSX5wGzvFSirYB6aaIxK2db9063A
-         +R/Y9zvU8I/+W+IALmEti05Zspeg0mh1BzumTObTATETrDih4P07Vg16l9ViWF94cIJV
-         7cb6uwkxPtfG55jGuQxE3KkHU667H3X+kPQj4OoyCYV2DccgwyBT25M/rD7szGSaXwuO
-         e2+sD23qDNju8SJSSkjDEekdSc67KmyF+xMYRf0UnxsWNADF4tFtnjN9gJYRe06qHjK+
-         x1Wg==
-X-Gm-Message-State: APt69E3HH7BlejbCVQooFu4txZmNqcPcLV8HS390AYL4w7s1js1WjDMH
-        +Sx0iw2k5M2C1+gajpMfm0W/bug=
-X-Google-Smtp-Source: ADUXVKJFa4MJjbzhgGPnMVNBr5bs1qC5Q3X+VLKPQXDZleMpxKAdri2ndXz5wMc9RlGjdleYZCnsfg==
-X-Received: by 2002:a62:c809:: with SMTP id z9-v6mr14358363pff.5.1529343550742;
-        Mon, 18 Jun 2018 10:39:10 -0700 (PDT)
-Received: from serve.minyard.net ([47.184.170.59])
-        by smtp.gmail.com with ESMTPSA id n68-v6sm28662249pfk.145.2018.06.18.10.39.09
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 10:39:09 -0700 (PDT)
-Received: from [192.168.27.3] (t430m.minyard.net [192.168.27.3])
-        by serve.minyard.net (Postfix) with ESMTPSA id 06FB98AE;
-        Mon, 18 Jun 2018 12:39:08 -0500 (CDT)
-Reply-To: minyard@acm.org
-Subject: Re: [PATCH] ipmi: Change to ktime_get_ts64()
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-References: <20180618142717.3683096-1-arnd@arndb.de>
-From:   Corey Minyard <minyard@acm.org>
-Message-ID: <59c7f897-4280-5f45-81a1-45b070377c22@acm.org>
-Date:   Mon, 18 Jun 2018 12:39:06 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <20180618142717.3683096-1-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        id S935475AbeFRRl7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:41:59 -0400
+Received: from mga01.intel.com ([192.55.52.88]:34611 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934957AbeFRRl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 13:41:57 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 10:41:56 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
+   d="scan'208";a="65564581"
+Received: from sai-dev-mach.sc.intel.com ([143.183.140.145])
+  by orsmga001.jf.intel.com with ESMTP; 18 Jun 2018 10:41:56 -0700
+Message-ID: <1529343708.2333.65.camel@intel.com>
+Subject: Re: [PATCH] x86/efi: Free allocated memory if remap fails
+From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     linux-efi <linux-efi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
+        Tony Luck <tony.luck@intel.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Bhupesh Sharma <bhsharma@redhat.com>,
+        Ricardo Neri <ricardo.neri@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ravi Shankar <ravi.v.shankar@intel.com>,
+        Matt Fleming <matt@codeblueprint.co.uk>
+Date:   Mon, 18 Jun 2018 10:41:48 -0700
+In-Reply-To: <CAKv+Gu9-YrLPuduh3YH67Fk0+tL1AfAveguu+mPjBwEBNU+==Q@mail.gmail.com>
+References: <1529111365-32295-1-git-send-email-sai.praneeth.prakhya@intel.com>
+         <CAKv+Gu-L=UMkzet7s1rUEYMYZxtoE1M_Qa1dqKo134S_hoZWuw@mail.gmail.com>
+         <1529342439.2333.60.camel@intel.com>
+         <CAKv+Gu9-YrLPuduh3YH67Fk0+tL1AfAveguu+mPjBwEBNU+==Q@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.18.5.2-0ubuntu3.2 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 09:27 AM, Arnd Bergmann wrote:
-> getnstimeofday64() is deprecated because of the inconsistent naming,
-> it is only a wrapper around ktime_get_real_ts64() now, which could be
-> used as a direct replacement.
->
-> However, it is generally better to use CLOCK_MONOTONIC timestamps
-> where possible, to avoid glitches with a concurrent settimeofday()
-> or leap second.
->
-> The uses in ipmi are either for debugging prints or for comparing against
-> a prior timestamp, so using a monotonic ktime_get_ts64() is probably
-> best here.
 
-This is definitely better.  Queued for 4.19 (or whatever it will be called).
 
-Thanks,
+> > > > +void __init efi_memmap_free(phys_addr_t mem, unsigned int
+> > > > num_entries)
+> > > > +{
+> > > > +       unsigned long size = num_entries * efi.memmap.desc_size;
+> > > > +       unsigned int order = get_order(size);
+> > > > +       phys_addr_t end = mem + size - 1;
+> > > > +
+> > > > +       if (slab_is_available()) {
+> > > > +               __free_pages(pfn_to_page(PHYS_PFN(mem)), order);
+> > > How do you know that the memory you are freeing was allocated when
+> > > slab_is_available() was already true?
+> > > 
+> > efi_memmap_free() should be used *only* in conjunction
+> > with efi_memmap_alloc()(As I explicitly didn't mention this, maybe it
+> > might
+> > have confused you).
+> > 
+> > When allocating memory efi_memmap_alloc() does similar check
+> > for slab_is_available() and if so, it allocates memory using
+> > alloc_pages().
+> > So, to free pages allocated using alloc_pages(), efi_memmap_free()
+> > uses __free_pages().
+> > 
+> I understand that. But by abstracting away the free() routine as well
+> as the alloc() routine, you are hiding this fact.
+> 
+> What is preventing me from using efi_memmap_alloc() to allocate space
+> for the memmap, and using efi_memmap_free() in another place? How are
+> you preventing that this does not happen in a way where mm_init() may
+> be called in the mean time?
+> 
+> Whether __free_pages() should be used or memblock_free() is a property
+> of the *allocation* itself, not of whether mm_init() has already been
+> called. So if (!slab_is_available()), you can use memblock_free().
+> However, if (slab_is_available()), you cannot use __free_pages()
+> because the allocation could have been made before mm_init() was
+> called.
+> 
 
--corey
+Aahh.. Thanks a lot! for making it clear. I see the bug now
+(efi_memmap_alloc() could be called before mm_init() in which case it uses
+memblock_alloc() where as efi_memmap_free() could be called after mm_init() in
+which case it uses __free_pages()).
 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/char/ipmi/ipmi_si_intf.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> index ad353be871bf..fb19c796f0fa 100644
-> --- a/drivers/char/ipmi/ipmi_si_intf.c
-> +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> @@ -269,7 +269,7 @@ void debug_timestamp(char *msg)
->   {
->   	struct timespec64 t;
->   
-> -	getnstimeofday64(&t);
-> +	ktime_get_ts64(&t);
->   	pr_debug("**%s: %lld.%9.9ld\n", msg, (long long) t.tv_sec, t.tv_nsec);
->   }
->   #else
-> @@ -961,12 +961,12 @@ static inline int ipmi_thread_busy_wait(enum si_sm_result smi_result,
->   	if (max_busy_us == 0 || smi_result != SI_SM_CALL_WITH_DELAY)
->   		ipmi_si_set_not_busy(busy_until);
->   	else if (!ipmi_si_is_busy(busy_until)) {
-> -		getnstimeofday64(busy_until);
-> +		ktime_get_ts64(busy_until);
->   		timespec64_add_ns(busy_until, max_busy_us*NSEC_PER_USEC);
->   	} else {
->   		struct timespec64 now;
->   
-> -		getnstimeofday64(&now);
-> +		ktime_get_ts64(&now);
->   		if (unlikely(timespec64_compare(&now, busy_until) > 0)) {
->   			ipmi_si_set_not_busy(busy_until);
->   			return 0;
+I will fix this.
 
+Regards,
+Sai
 
