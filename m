@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2389C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:21:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C747C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:21:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 833F020864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:21:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 833F020864
+	by mail.kernel.org (Postfix) with ESMTP id C5368208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:21:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5368208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935834AbeFRIVe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:21:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55324 "EHLO
+        id S965093AbeFRIVh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:21:37 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55336 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935726AbeFRIVa (ORCPT
+        with ESMTP id S935828AbeFRIVd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:21:30 -0400
+        Mon, 18 Jun 2018 04:21:33 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEFFBC7F;
-        Mon, 18 Jun 2018 08:21:29 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3DEFC84;
+        Mon, 18 Jun 2018 08:21:32 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        ak@linux.intel.com, eranian@google.com, acme@redhat.com,
+        stable@vger.kernel.org,
+        Tobias Jordan <Tobias.Jordan@elektrobit.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 101/279] perf/x86/intel: Dont enable freeze-on-smi for PerfMon V1
-Date:   Mon, 18 Jun 2018 10:11:26 +0200
-Message-Id: <20180618080612.978030095@linuxfoundation.org>
+Subject: [PATCH 4.16 102/279] remoteproc: qcom: Fix potential device node leaks
+Date:   Mon, 18 Jun 2018 10:11:27 +0200
+Message-Id: <20180618080613.042194341@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,72 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Kan Liang <kan.liang@linux.intel.com>
+From: Tobias Jordan <Tobias.Jordan@elektrobit.com>
 
-[ Upstream commit 4e949e9b9d1e3edcdab3b54656c5851bd9e49c67 ]
+[ Upstream commit 278d744c46fd4f1925aec77752d18a0e4a9cbec3 ]
 
-The SMM freeze feature was introduced since PerfMon V2. But the current
-code unconditionally enables the feature for all platforms. It can
-generate #GP exception, if the related FREEZE_WHILE_SMM bit is set for
-the machine with PerfMon V1.
+Add missing of_node_put()s at two places for device nodes returned by
+of_parse_phandle().
 
-To disable the feature for PerfMon V1, perf needs to
-- Remove the freeze_on_smi sysfs entry by moving intel_pmu_attrs to
-  intel_pmu, which is only applied to PerfMon V2 and later.
-- Check the PerfMon version before flipping the SMM bit when starting CPU
-
-Fixes: 6089327f5424 ("perf/x86: Add sysfs entry to freeze counters on SMI")
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: ak@linux.intel.com
-Cc: eranian@google.com
-Cc: acme@redhat.com
-Link: https://lkml.kernel.org/r/1524682637-63219-1-git-send-email-kan.liang@linux.intel.com
+Fixes: 051fb70fd4ea ("remoteproc: qcom: Driver for the self-authenticating
+ Hexagon v5")
+Signed-off-by: Tobias Jordan <Tobias.Jordan@elektrobit.com>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/events/intel/core.c |    9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/remoteproc/qcom_q6v5_pil.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/arch/x86/events/intel/core.c
-+++ b/arch/x86/events/intel/core.c
-@@ -3331,7 +3331,8 @@ static void intel_pmu_cpu_starting(int c
+--- a/drivers/remoteproc/qcom_q6v5_pil.c
++++ b/drivers/remoteproc/qcom_q6v5_pil.c
+@@ -1088,6 +1088,7 @@ static int q6v5_alloc_memory_region(stru
+ 		dev_err(qproc->dev, "unable to resolve mba region\n");
+ 		return ret;
+ 	}
++	of_node_put(node);
  
- 	cpuc->lbr_sel = NULL;
+ 	qproc->mba_phys = r.start;
+ 	qproc->mba_size = resource_size(&r);
+@@ -1105,6 +1106,7 @@ static int q6v5_alloc_memory_region(stru
+ 		dev_err(qproc->dev, "unable to resolve mpss region\n");
+ 		return ret;
+ 	}
++	of_node_put(node);
  
--	flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
-+	if (x86_pmu.version > 1)
-+		flip_smm_bit(&x86_pmu.attr_freeze_on_smi);
- 
- 	if (!cpuc->shared_regs)
- 		return;
-@@ -3494,6 +3495,8 @@ static __initconst const struct x86_pmu
- 	.cpu_dying		= intel_pmu_cpu_dying,
- };
- 
-+static struct attribute *intel_pmu_attrs[];
-+
- static __initconst const struct x86_pmu intel_pmu = {
- 	.name			= "Intel",
- 	.handle_irq		= intel_pmu_handle_irq,
-@@ -3524,6 +3527,8 @@ static __initconst const struct x86_pmu
- 	.format_attrs		= intel_arch3_formats_attr,
- 	.events_sysfs_show	= intel_event_sysfs_show,
- 
-+	.attrs			= intel_pmu_attrs,
-+
- 	.cpu_prepare		= intel_pmu_cpu_prepare,
- 	.cpu_starting		= intel_pmu_cpu_starting,
- 	.cpu_dying		= intel_pmu_cpu_dying,
-@@ -3902,8 +3907,6 @@ __init int intel_pmu_init(void)
- 
- 	x86_pmu.max_pebs_events		= min_t(unsigned, MAX_PEBS_EVENTS, x86_pmu.num_counters);
- 
--
--	x86_pmu.attrs			= intel_pmu_attrs;
- 	/*
- 	 * Quirk: v2 perfmon does not report fixed-purpose events, so
- 	 * assume at least 3 events, when not running in a hypervisor:
+ 	qproc->mpss_phys = qproc->mpss_reloc = r.start;
+ 	qproc->mpss_size = resource_size(&r);
 
 
