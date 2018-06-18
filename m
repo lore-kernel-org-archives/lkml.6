@@ -2,103 +2,116 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C6BC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:39:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47B46C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:41:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18A6A208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:39:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dwyixRgU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18A6A208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D737820850
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:41:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D737820850
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754403AbeFRMji (ORCPT
+        id S1754508AbeFRMlk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:39:38 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:46345 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754091AbeFRMjg (ORCPT
+        Mon, 18 Jun 2018 08:41:40 -0400
+Received: from gateway33.websitewelcome.com ([192.185.146.82]:48845 "EHLO
+        gateway33.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1751560AbeFRMli (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:39:36 -0400
-Received: by mail-lf0-f66.google.com with SMTP id u5-v6so3172403lff.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 05:39:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r06CF2EtJ884SBqC0CJhFy9ZVM4kJlzWyOaNx8Ri0aA=;
-        b=dwyixRgUuXgDNK287GyMnhgUHiPvdI3+nVN69mYrGE29ugDtR5awwk1bQz5AXqmh8N
-         siWtnZsk/uQY2Kc2Qksxx1ZuisXG1ddz93xjQhVKkgxaDWcRZ7eRE3w765CH8CVM1I2h
-         Y9zf/P0aTb4ZhNuewhhV30tq7Dagpq3s/XvII=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r06CF2EtJ884SBqC0CJhFy9ZVM4kJlzWyOaNx8Ri0aA=;
-        b=n8GSELdFAoYB59zsei9lhV1igb9Y1WdAJCG0OsSnYQl819DwPr71nn3Gc6MPo0R8Ro
-         CMOpPuSCnEIXkdkO5SQiewhMaaxgGNstJbxzryL4WkfGMhJUXlEMECCJ9K0y4P4Fxxjv
-         cGp+yqz3BiijehRm9JIBLNzM1rzpIJqj4CnWfzeTDbdk0dXkka1+BUxnHTvoN8c9Gkhf
-         oD0je7rsyaOlFm6joevjogHxGzsrfWuFEZPcrLZvTH9FV6+9S+jIGUeLWFxApR9NJylV
-         NzFYMlGoTqxI6UiCQ5stKa0pp0d0pfwnH2qQPiIMVwmRtkM89FTVdHsjCqQ2R36lUIFU
-         Q9Og==
-X-Gm-Message-State: APt69E3TBuerO/Fo4umHusjy+tmuDWofiij47bL7q/7p1q/sGixxS4/p
-        G+lOvbneNFT7dPPerf73W1JHlQ==
-X-Google-Smtp-Source: ADUXVKI879u7qGhPqn7dd9ACiOYd3aLsj7mtKmyhFJDiPK9egQMpuLDDPAf4/2lXphJM02W42QIEnw==
-X-Received: by 2002:a2e:5687:: with SMTP id k7-v6mr8491280lje.140.1529325575262;
-        Mon, 18 Jun 2018 05:39:35 -0700 (PDT)
-Received: from centauri.lan (h-229-118.A785.priv.bahnhof.se. [5.150.229.118])
-        by smtp.gmail.com with ESMTPSA id g17-v6sm2694138ljg.27.2018.06.18.05.39.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 05:39:34 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 14:39:32 +0200
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Mark Brown <broonie@kernel.org>, robh+dt@kernel.org,
-        frowand.list@gmail.com
-Cc:     andy.gross@linaro.org, Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] ASoC: qdsp6: Add depends on OF
-Message-ID: <20180618123932.GA28476@centauri.lan>
-References: <20180614111138.8923-1-niklas.cassel@linaro.org>
- <20180614111138.8923-6-niklas.cassel@linaro.org>
- <20180618110642.GA6928@sirena.org.uk>
+        Mon, 18 Jun 2018 08:41:38 -0400
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway33.websitewelcome.com (Postfix) with ESMTP id A531E49ACE
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:41:37 -0500 (CDT)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id UtTVf2OcnaSeyUtTVfjncc; Mon, 18 Jun 2018 07:41:37 -0500
+X-Authority-Reason: nr=8
+Received: from [189.250.78.11] (port=58750 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1fUtTV-0046c3-3A; Mon, 18 Jun 2018 07:41:37 -0500
+Date:   Mon, 18 Jun 2018 07:41:34 -0500
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Johannes Berg <johannes@sipsolutions.net>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Subject: [PATCH] mac80211: fix potential null pointer dereference
+Message-ID: <20180618124134.GA13487@embeddedor.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180618110642.GA6928@sirena.org.uk>
-User-Agent: Mutt/1.10.0 (2018-05-17)
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.78.11
+X-Source-L: No
+X-Exim-ID: 1fUtTV-0046c3-3A
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.78.11]:58750
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 5
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 12:06:42PM +0100, Mark Brown wrote:
-> On Thu, Jun 14, 2018 at 01:11:36PM +0200, Niklas Cassel wrote:
-> > of_platform_device_destroy is only defined when building
-> > with CONFIG_OF=y. Add a depends on OF.
-> 
-> Is it sensible that of_platform_device_destroy() is only defined when
-> building with CONFIG_OF=y?
+he_op is being dereferenced before it is null checked, hence there
+is a potential null pointer dereference.
 
-I'm redirecting that question to the device tree maintainers.
+Fix this by moving the pointer dereference after he_op has been
+properly null checked.
 
-There are a few of_* functions in include/linux/of_platform.h
-that are only defined when CONFIG_OF=y:
+Notice that, currently, he_op is already being null checked before
+calling this function at 4593:
 
-of_platform_device_create()
-of_platform_device_destroy()
-of_platform_bus_probe()
-of_device_alloc()
+4593	if (!he_oper ||
+4594	    !ieee80211_verify_sta_he_mcs_support(sband, he_oper))
+4595		ifmgd->flags |= IEEE80211_STA_DISABLE_HE;
 
-Rob, Frank, do you want me to create static inline dummy versions of these?
+but in case ieee80211_verify_sta_he_mcs_support is ever called
+without verifying he_oper is not null, we will end up having a
+null pointer dereference. So, we better don't take any chances.
 
-Regards,
-Niklas
+Addresses-Coverity-ID: 1470068 ("Dereference before null check")
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ net/mac80211/mlme.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/net/mac80211/mlme.c b/net/mac80211/mlme.c
+index 0322d78..f451303 100644
+--- a/net/mac80211/mlme.c
++++ b/net/mac80211/mlme.c
+@@ -4458,12 +4458,14 @@ ieee80211_verify_sta_he_mcs_support(struct ieee80211_supported_band *sband,
+ {
+ 	const struct ieee80211_sta_he_cap *sta_he_cap =
+ 		ieee80211_get_he_sta_cap(sband);
+-	u16 ap_min_req_set = le16_to_cpu(he_op->he_mcs_nss_set);
++	u16 ap_min_req_set;
+ 	int i;
+ 
+ 	if (!sta_he_cap || !he_op)
+ 		return false;
+ 
++	ap_min_req_set = le16_to_cpu(he_op->he_mcs_nss_set);
++
+ 	/* Need to go over for 80MHz, 160MHz and for 80+80 */
+ 	for (i = 0; i < 3; i++) {
+ 		const struct ieee80211_he_mcs_nss_supp *sta_mcs_nss_supp =
+-- 
+2.7.4
+
