@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3370BC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A84FC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE0F320864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE0F320864
+	by mail.kernel.org (Postfix) with ESMTP id E91BB20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E91BB20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966989AbeFRIaf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:30:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33714 "EHLO
+        id S967003AbeFRIai (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:30:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33724 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966718AbeFRIac (ORCPT
+        with ESMTP id S966982AbeFRIae (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:30:32 -0400
+        Mon, 18 Jun 2018 04:30:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5AB7AC83;
-        Mon, 18 Jun 2018 08:30:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 299A6C83;
+        Mon, 18 Jun 2018 08:30:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Archit Taneja <architt@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
+        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org,
+        Emil Velikov <emil.velikov@collabora.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 037/189] drm/msm/dsi: use correct enum in dsi_get_cmd_fmt
-Date:   Mon, 18 Jun 2018 10:12:13 +0200
-Message-Id: <20180618081210.804082923@linuxfoundation.org>
+Subject: [PATCH 4.14 038/189] drm/msm: dont deref error pointer in the msm_fbdev_create error path
+Date:   Mon, 18 Jun 2018 10:12:14 +0200
+Message-Id: <20180618081210.885917775@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,39 +52,55 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Emil Velikov <emil.velikov@collabora.com>
 
-[ Upstream commit a4af89286f8fc382459308764ea05935dc477cdc ]
+[ Upstream commit 789d4c300e10eb2096ee83c3497118e67ccc951e ]
 
-The function dsi_get_cmd_fmt returns enum dsi_cmd_dst_format,
-use the correct enum value also for MIPI_DSI_FMT_RGB666/_PACKED.
+Currently the error pointer returned by msm_alloc_stolen_fb gets passed
+to drm_framebuffer_remove. The latter handles only NULL pointers, thus
+a nasty crash will occur.
 
-This has been discovered using clang:
-  drivers/gpu/drm/msm/dsi/dsi_host.c:743:35: warning: implicit conversion
-        from enumeration type 'enum dsi_vid_dst_format' to different
-        enumeration type 'enum dsi_cmd_dst_format' [-Wenum-conversion]
-          case MIPI_DSI_FMT_RGB666:       return VID_DST_FORMAT_RGB666;
-                                          ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~
+Drop the unnecessary fail label and the associated checks - both err and
+fb will be set at this stage.
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
+Cc: Rob Clark <robdclark@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Signed-off-by: Emil Velikov <emil.velikov@collabora.com>
 Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/dsi/dsi_host.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_fbdev.c |   11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -740,7 +740,7 @@ static inline enum dsi_cmd_dst_format ds
- 	switch (mipi_fmt) {
- 	case MIPI_DSI_FMT_RGB888:	return CMD_DST_FORMAT_RGB888;
- 	case MIPI_DSI_FMT_RGB666_PACKED:
--	case MIPI_DSI_FMT_RGB666:	return VID_DST_FORMAT_RGB666;
-+	case MIPI_DSI_FMT_RGB666:	return CMD_DST_FORMAT_RGB666;
- 	case MIPI_DSI_FMT_RGB565:	return CMD_DST_FORMAT_RGB565;
- 	default:			return CMD_DST_FORMAT_RGB888;
+--- a/drivers/gpu/drm/msm/msm_fbdev.c
++++ b/drivers/gpu/drm/msm/msm_fbdev.c
+@@ -92,8 +92,7 @@ static int msm_fbdev_create(struct drm_f
+ 
+ 	if (IS_ERR(fb)) {
+ 		dev_err(dev->dev, "failed to allocate fb\n");
+-		ret = PTR_ERR(fb);
+-		goto fail;
++		return PTR_ERR(fb);
  	}
+ 
+ 	bo = msm_framebuffer_bo(fb, 0);
+@@ -151,13 +150,7 @@ static int msm_fbdev_create(struct drm_f
+ 
+ fail_unlock:
+ 	mutex_unlock(&dev->struct_mutex);
+-fail:
+-
+-	if (ret) {
+-		if (fb)
+-			drm_framebuffer_remove(fb);
+-	}
+-
++	drm_framebuffer_remove(fb);
+ 	return ret;
+ }
+ 
 
 
