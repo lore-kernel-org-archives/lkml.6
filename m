@@ -2,125 +2,145 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D578BC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 559F6C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:03:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 853E8208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:02:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853E8208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 0A5AA208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:03:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="dkQ59HDy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A5AA208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965273AbeFRPC6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:02:58 -0400
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:32994 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S964900AbeFRPCy (ORCPT
+        id S935493AbeFRPCd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:02:33 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:42215 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964939AbeFRPBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:02:54 -0400
-Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w5IF2r0O016998
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 11:02:53 -0400
-Received: from mail-qt0-f197.google.com (mail-qt0-f197.google.com [209.85.216.197])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w5IF2mW9007880
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 11:02:53 -0400
-Received: by mail-qt0-f197.google.com with SMTP id a10-v6so14240493qtp.2
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:02:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:mime-version
-         :content-transfer-encoding:date:message-id;
-        bh=gTngdsnTIWkpwQrxeB+eUkUpfINsJa5xPAcnZ/o1vzg=;
-        b=du4lN+4/VVV3U3HeNvo2+2yXkVnVPnt/WwPZbf8InM2h4fgT8t3ypLyVIFLb2bQ7Qu
-         TuuZO1hDbNfxekDnhpGkBXhzdX1WCrwxQnAZVhW86psxS5BGoQGdcUSDSA4MYvJf/AOW
-         V3IB9QUaokAyK68Xla3P/tcyJsBqA/5NL9BUOWoutR/e5G0Gd2iEZtsBOPwQjQmIcCmP
-         mAAnEZ04Clwy+Kz4nSzc4oP6C1gKBjPlfjl5z9tzyf6PVfcn7AT27HXdOVQHKlKqKyY5
-         Q5qAxbu96CClZUfcthgvDgan1Rc+Oj3poJeh9A9p3bYgs9DTKMwgVJPtWEcULhKPIeOE
-         1Nkg==
-X-Gm-Message-State: APt69E0cb1k/yJ+JErNC4KdazTqopOUMenaZxPKVYiFV00L69AINSoTK
-        Yuy9P/LPPQu9xEBziHfUHcOEndgD0cZSPO4r8nRF/8+wIaOPh20xr/gCnX585O1K52yTIdH80kw
-        HAV5UKcN9Erf9vBAT6bIMk+eVdQ0DfYwYOu4=
-X-Received: by 2002:a37:99c3:: with SMTP id b186-v6mr10453403qke.261.1529334168537;
-        Mon, 18 Jun 2018 08:02:48 -0700 (PDT)
-X-Google-Smtp-Source: ADUXVKJKhGEdVzQGK3tcpVb/UsceUSefpHBBpl9+8T3W/bL+AB7ZJiwYTTu1jfEAPY/rkugcGKyhsg==
-X-Received: by 2002:a37:99c3:: with SMTP id b186-v6mr10453384qke.261.1529334168281;
-        Mon, 18 Jun 2018 08:02:48 -0700 (PDT)
-Received: from turing-police.cc.vt.edu ([2607:b400:24:0:3d62:c4f9:2f6a:b486])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm9250085qtn.86.2018.06.18.08.02.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 08:02:46 -0700 (PDT)
-X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
-From:   valdis.kletnieks@vt.edu
-To:     netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: 4.14.(44->48) IPv6 RA issue?
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="==_Exmh_1529334166_20151P";
-         micalg=pgp-sha1; protocol="application/pgp-signature"
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 18 Jun 2018 11:02:46 -0400
-Message-ID: <35958.1529334166@turing-police.cc.vt.edu>
+        Mon, 18 Jun 2018 11:01:05 -0400
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id CA0D81E16D1;
+        Mon, 18 Jun 2018 17:01:02 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529334063; bh=Myh2a3H4lN2rsrDF6RZ7vEEvgKfAVXcS4Hy2GmTlGlQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=dkQ59HDyP4q+oEXxeguvaLAwK3TSMqJmeESgjLCoo1BTT02htWrCGpflAjlmhwAsa
+         fR2IcAWc9Kbeb15n0CASDhcpXxyfeWVTC+waLbN45KaRBMEqhsWBXx4TvIXcHRe5np
+         ey0MyxsW+ByKeKJRiBgjY5zau12QV4JrO7bsi3HbE83rqsOHRxGm4BPFNJkgynaik0
+         NCwHWMyI9fr9TkkwDXGY4Fgy7LD+AVZ+bi4qkg6Mjv/8raQt7dC7HHuewxn0FxvfVR
+         uX+1kTqOsN8t9lYbIvEiJXk7SZUdvDRlP7nEdypQ64WYIjQ/JQq3Frf2tYX8/CH09o
+         JB1RwPLgN8N7g==
+Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id AF9E75034;
+        Mon, 18 Jun 2018 08:01:01 -0700 (PDT)
+Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
+        by pt02.synopsys.com (Postfix) with ESMTP id 50D583D759;
+        Mon, 18 Jun 2018 16:01:00 +0100 (WEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v4 05/10] PCI: dwc: Add legacy interrupt callback handler
+Date:   Mon, 18 Jun 2018 16:00:24 +0100
+Message-Id: <b87c5d32bd6213a3d512108bfe93d00da6a8fdb0.1529329262.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---==_Exmh_1529334166_20151P
-Content-Type: text/plain; charset=us-ascii
+Add a legacy interrupt callback handler. Currently DesignWare IP don't
+allow trigger legacy interrupts.
 
-So I'm trying to troubleshoot an issue on an OpenWRT/Lede based
-router, where IPv6 connectivity totally fails. I've bisected it down to:
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Nothing changed, just to follow the patch set version.
+Change v3->v4:
+ - Rebased to Lorenzo's master branch v4.18-rc1.
 
-git log --oneline 187da94808a634477b5e5a69109ea0c566dfa64b..73d8a6ab7668173d70adbed45b61be5256c505e
-73d8a6ab7668 (refs/bisect/bad) base-files: fix UCI config parsing and callback handling
-e52f3e9b1376 kernel: bump 4.14 to 4.14.48
-7590c3c58f5e (HEAD) scripts: Replace obsolete POSIX tmpnam in slugimage.pl with File::Temp function
-987900f2de76 hostapd: properly build hostapd-only SSL variants
+ drivers/pci/controller/dwc/pcie-designware-ep.c   | 10 ++++++++++
+ drivers/pci/controller/dwc/pcie-designware-plat.c |  3 +--
+ drivers/pci/controller/dwc/pcie-designware.h      |  6 ++++++
+ 3 files changed, 17 insertions(+), 2 deletions(-)
 
-and am pretty sure that it's the kernel bump (works with a 4.14.44 kernel,
-breaks with 4.14.48) as the other 3 commits don't go anywhere near IPv6 handling.
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index 89d9e52..e8a70d8 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -370,6 +370,16 @@ static const struct pci_epc_ops epc_ops = {
+ 	.stop			= dw_pcie_ep_stop,
+ };
+ 
++int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
++{
++	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	struct device *dev = pci->dev;
++
++	dev_err(dev, "EP cannot trigger legacy IRQs\n");
++
++	return -EINVAL;
++}
++
+ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 			     u8 interrupt_num)
+ {
+diff --git a/drivers/pci/controller/dwc/pcie-designware-plat.c b/drivers/pci/controller/dwc/pcie-designware-plat.c
+index 654dcb5..90a8c95 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-plat.c
++++ b/drivers/pci/controller/dwc/pcie-designware-plat.c
+@@ -84,8 +84,7 @@ static int dw_plat_pcie_ep_raise_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 
+ 	switch (type) {
+ 	case PCI_EPC_IRQ_LEGACY:
+-		dev_err(pci->dev, "EP cannot trigger legacy IRQs\n");
+-		return -EINVAL;
++		return dw_pcie_ep_raise_legacy_irq(ep, func_no);
+ 	case PCI_EPC_IRQ_MSI:
+ 		return dw_pcie_ep_raise_msi_irq(ep, func_no, interrupt_num);
+ 	case PCI_EPC_IRQ_MSIX:
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index a0ab12f..69e6e17 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -350,6 +350,7 @@ static inline int dw_pcie_allocate_domains(struct pcie_port *pp)
+ void dw_pcie_ep_linkup(struct dw_pcie_ep *ep);
+ int dw_pcie_ep_init(struct dw_pcie_ep *ep);
+ void dw_pcie_ep_exit(struct dw_pcie_ep *ep);
++int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no);
+ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 			     u8 interrupt_num);
+ int dw_pcie_ep_raise_msix_irq(struct dw_pcie_ep *ep, u8 func_no,
+@@ -369,6 +370,11 @@ static inline void dw_pcie_ep_exit(struct dw_pcie_ep *ep)
+ {
+ }
+ 
++static inline int dw_pcie_ep_raise_legacy_irq(struct dw_pcie_ep *ep, u8 func_no)
++{
++	return 0;
++}
++
+ static inline int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 					   u8 interrupt_num)
+ {
+-- 
+2.7.4
 
-Symptoms:
-With a good kernel, 'ip -6 neigh' reports:
 
-ip -6 neigh
-2601:5c0:c001:4341:2116:22ff:b17b:7cd6 dev wlan1 lladdr bc:85:56:1f:4f:6d REACHABLE
-fe80::201:5cff:fe6f:1a46 dev eth1 lladdr 00:01:5c:6f:1a:46 router REACHABLE
-fe80::9325:3b21:5021:fbd8 dev eth0 lladdr b8:27:eb:f7:0b:20 REACHABLE
-fe80::2d9:d1ff:fed9:51a3 dev eth0 lladdr 00:d9:d1:d9:51:a3 REACHABLE
-
-With a bad one, I get:
-
-ip -6 neigh
-fe80::be85:56ff:fe1f:4f6d dev wlan1 lladdr bc:85:56:1f:4f:6d STALE
-fe80::2d9:d1ff:fed9:51a3 dev eth0 lladdr 00:d9:d1:d9:51:a3 STALE
-fe80::9325:3b21:5021:fbd8 dev eth0 lladdr b8:27:eb:f7:0b:20 DELAY
-2601:5c0:c001:4341:2116:22ff:b17b:7cd6 dev wlan1 lladdr bc:85:56:1f:4f:6d REACHABLE
-fe80::201:5cff:fe6f:1a46 dev eth1  INCOMPLETE
-
-Note that eth1 is the uplink towards my ISP.  I've pointed a 'tcpdump -n -i eth1 ip6'
-at it, and see plenty of RA packets come in, but neighbor discovery never completes.
-Looking at the Changelogs for .45->.50 don't show any smoking-gun patches.
-
-This ring any bells, before I delve deeper into it?
-
---==_Exmh_1529334166_20151P
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Comment: Exmh version 2.8.0 04/21/2017
-
-iQEVAwUBWyfJlo0DS38y7CIcAQJqRAf+Iy4OXUxuBVdMttqWqg8n4FMRa7fxLASq
-LYTDD/3tgv8K25J5JquZxQxbAymUGaka1y2GAgLGKaujllOU/Hu4rVFJ+b0DW443
-tYC4D56XR7kE45tGG1qnqg9GaTxie2XrXdi5rFGaGXgkoKHTzOUN7FC4aoki1TIa
-1vbee9iCatuuQQe1mjwRaZIytptek7pXbj5cBhAgzGLLqDkBfrzJC0EBLtUs8l/k
-zKslRjFhIG3wVpDvk8gYxE+jpNkUdoDijrnflkFkmc5cs8ol74aLaNvCZfIhcoUm
-Ik/BU7rOdy04XaGaX7QAf/aUhS5hFWJYuHrDxAu2cq5Ap6kfw7Taiw==
-=fa0F
------END PGP SIGNATURE-----
-
---==_Exmh_1529334166_20151P--
