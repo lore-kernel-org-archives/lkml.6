@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 896EBC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9A7C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF97208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF97208A6
+	by mail.kernel.org (Postfix) with ESMTP id 5FE4A20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE4A20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936199AbeFRIYl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:24:41 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56066 "EHLO
+        id S936243AbeFRIYq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:24:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56084 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936091AbeFRIYh (ORCPT
+        with ESMTP id S936091AbeFRIYm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:24:37 -0400
+        Mon, 18 Jun 2018 04:24:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A53A9BAD;
-        Mon, 18 Jun 2018 08:24:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 00489BAD;
+        Mon, 18 Jun 2018 08:24:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Alakesh Haloi <alakeshh@amazon.com>,
+        Vallish Vaidyeshwara <vallish@amazon.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 173/279] IB/hfi1 Use correct type for num_user_context
-Date:   Mon, 18 Jun 2018 10:12:38 +0200
-Message-Id: <20180618080616.003228663@linuxfoundation.org>
+Subject: [PATCH 4.16 201/279] x86/xen: Reset VCPU0 info pointer after shared_info remap
+Date:   Mon, 18 Jun 2018 10:13:06 +0200
+Message-Id: <20180618080617.219989948@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,39 +55,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
+From: "van der Linden, Frank" <fllinden@amazon.com>
 
-[ Upstream commit 5da9e742be44d9b7c68b1bf6e1aaf46a1aa7a52b ]
+[ Upstream commit d1ecfa9d1f402366b1776fbf84e635678a51414f ]
 
-The module parameter num_user_context is defined as 'int' and
-defaults to -1.  The module_param_named() says that it is uint.
+This patch fixes crashes during boot for HVM guests on older (pre HVM
+vector callback) Xen versions. Without this, current kernels will always
+fail to boot on those Xen versions.
 
-Correct module_param_named() type information and update the modinfo
-text to reflect the default value.
+Sample stack trace:
 
-Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+   BUG: unable to handle kernel paging request at ffffffffff200000
+   IP: __xen_evtchn_do_upcall+0x1e/0x80
+   PGD 1e0e067 P4D 1e0e067 PUD 1e10067 PMD 235c067 PTE 0
+    Oops: 0002 [#1] SMP PTI
+   Modules linked in:
+   CPU: 0 PID: 512 Comm: kworker/u2:0 Not tainted 4.14.33-52.13.amzn1.x86_64 #1
+   Hardware name: Xen HVM domU, BIOS 3.4.3.amazon 11/11/2016
+   task: ffff88002531d700 task.stack: ffffc90000480000
+   RIP: 0010:__xen_evtchn_do_upcall+0x1e/0x80
+   RSP: 0000:ffff880025403ef0 EFLAGS: 00010046
+   RAX: ffffffff813cc760 RBX: ffffffffff200000 RCX: ffffc90000483ef0
+   RDX: ffff880020540a00 RSI: ffff880023c78000 RDI: 000000000000001c
+   RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+   R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+   R13: ffff880025403f5c R14: 0000000000000000 R15: 0000000000000000
+   FS:  0000000000000000(0000) GS:ffff880025400000(0000) knlGS:0000000000000000
+   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+   CR2: ffffffffff200000 CR3: 0000000001e0a000 CR4: 00000000000006f0
+    Call Trace:
+   <IRQ>
+   do_hvm_evtchn_intr+0xa/0x10
+   __handle_irq_event_percpu+0x43/0x1a0
+   handle_irq_event_percpu+0x20/0x50
+   handle_irq_event+0x39/0x60
+   handle_fasteoi_irq+0x80/0x140
+   handle_irq+0xaf/0x120
+   do_IRQ+0x41/0xd0
+   common_interrupt+0x7d/0x7d
+   </IRQ>
+
+During boot, the HYPERVISOR_shared_info page gets remapped to make it work
+with KASLR. This means that any pointer derived from it needs to be
+adjusted.
+
+The only value that this applies to is the vcpu_info pointer for VCPU 0.
+For PV and HVM with the callback vector feature, this gets done via the
+smp_ops prepare_boot_cpu callback. Older Xen versions do not support the
+HVM callback vector, so there is no Xen-specific smp_ops set up in that
+scenario. So, the vcpu_info pointer for VCPU 0 never gets set to the proper
+value, and the first reference of it will be bad. Fix this by resetting it
+immediately after the remap.
+
+Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+Reviewed-by: Eduardo Valentin <eduval@amazon.com>
+Reviewed-by: Alakesh Haloi <alakeshh@amazon.com>
+Reviewed-by: Vallish Vaidyeshwara <vallish@amazon.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: xen-devel@lists.xenproject.org
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/hfi1/init.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/x86/xen/enlighten_hvm.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/drivers/infiniband/hw/hfi1/init.c
-+++ b/drivers/infiniband/hw/hfi1/init.c
-@@ -88,9 +88,9 @@
-  * pio buffers per ctxt, etc.)  Zero means use one user context per CPU.
-  */
- int num_user_contexts = -1;
--module_param_named(num_user_contexts, num_user_contexts, uint, S_IRUGO);
-+module_param_named(num_user_contexts, num_user_contexts, int, 0444);
- MODULE_PARM_DESC(
--	num_user_contexts, "Set max number of user contexts to use");
-+	num_user_contexts, "Set max number of user contexts to use (default: -1 will use the real (non-HT) CPU count)");
+--- a/arch/x86/xen/enlighten_hvm.c
++++ b/arch/x86/xen/enlighten_hvm.c
+@@ -65,6 +65,19 @@ static void __init xen_hvm_init_mem_mapp
+ {
+ 	early_memunmap(HYPERVISOR_shared_info, PAGE_SIZE);
+ 	HYPERVISOR_shared_info = __va(PFN_PHYS(shared_info_pfn));
++
++	/*
++	 * The virtual address of the shared_info page has changed, so
++	 * the vcpu_info pointer for VCPU 0 is now stale.
++	 *
++	 * The prepare_boot_cpu callback will re-initialize it via
++	 * xen_vcpu_setup, but we can't rely on that to be called for
++	 * old Xen versions (xen_have_vector_callback == 0).
++	 *
++	 * It is, in any case, bad to have a stale vcpu_info pointer
++	 * so reset it now.
++	 */
++	xen_vcpu_info_reset(0);
+ }
  
- uint krcvqs[RXE_NUM_DATA_VL];
- int krcvqsset;
+ static void __init init_hvm_pv_info(void)
 
 
