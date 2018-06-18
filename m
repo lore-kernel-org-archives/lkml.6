@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DFA8C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF554C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 413F620874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:02:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 413F620874
+	by mail.kernel.org (Postfix) with ESMTP id 961342086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:02:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 961342086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967436AbeFRJCd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:02:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35042 "EHLO
+        id S967446AbeFRJCy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:02:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34712 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967076AbeFRIcr (ORCPT
+        with ESMTP id S967037AbeFRIch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:32:47 -0400
+        Mon, 18 Jun 2018 04:32:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AB5A4C9F;
-        Mon, 18 Jun 2018 08:32:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67347CA8;
+        Mon, 18 Jun 2018 08:32:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jingju Hou <Jingju.Hou@synaptics.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 054/189] net: phy: marvell: clear wol event before setting it
-Date:   Mon, 18 Jun 2018 10:12:30 +0200
-Message-Id: <20180618081211.502918854@linuxfoundation.org>
+Subject: [PATCH 4.14 052/189] dt-bindings: meson-uart: DT fix s/clocks-names/clock-names/
+Date:   Mon, 18 Jun 2018 10:12:28 +0200
+Message-Id: <20180618081211.423616717@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,41 +50,28 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jingju Hou <Jingju.Hou@synaptics.com>
+From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit b6a930fa88083b41d26ddf1cab95cbd740936c22 ]
+[ Upstream commit 34df2466b48dfe258e14fe2a7bc4641416575ade ]
 
-If WOL event happened once, the LED[2] interrupt pin will not be
-cleared unless we read the CSISR register. If interrupts are in use,
-the normal interrupt handling will clear the WOL event. Let's clear the
-WOL event before enabling it if !phy_interrupt_is_valid().
-
-Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/marvell.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ Documentation/devicetree/bindings/serial/amlogic,meson-uart.txt |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -1409,6 +1409,15 @@ static int m88e1318_set_wol(struct phy_d
- 		if (err < 0)
- 			return err;
- 
-+		/* If WOL event happened once, the LED[2] interrupt pin
-+		 * will not be cleared unless we reading the interrupt status
-+		 * register. If interrupts are in use, the normal interrupt
-+		 * handling will clear the WOL event. Clear the WOL event
-+		 * before enabling it if !phy_interrupt_is_valid()
-+		 */
-+		if (!phy_interrupt_is_valid(phydev))
-+			phy_read(phydev, MII_M1011_IEVENT);
-+
- 		/* Enable the WOL interrupt */
- 		temp = phy_read(phydev, MII_88E1318S_PHY_CSIER);
- 		temp |= MII_88E1318S_PHY_CSIER_WOL_EIE;
+--- a/Documentation/devicetree/bindings/serial/amlogic,meson-uart.txt
++++ b/Documentation/devicetree/bindings/serial/amlogic,meson-uart.txt
+@@ -21,7 +21,7 @@ Required properties:
+ - interrupts : identifier to the device interrupt
+ - clocks : a list of phandle + clock-specifier pairs, one for each
+ 	   entry in clock names.
+-- clocks-names :
++- clock-names :
+    * "xtal" for external xtal clock identifier
+    * "pclk" for the bus core clock, either the clk81 clock or the gate clock
+    * "baud" for the source of the baudrate generator, can be either the xtal
 
 
