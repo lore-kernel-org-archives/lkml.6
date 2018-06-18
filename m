@@ -3,33 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 988E6C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:14:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 778D7C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:14:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 573CC20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:14:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 573CC20864
+	by mail.kernel.org (Postfix) with ESMTP id 3286820864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:14:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3286820864
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752877AbeFREOo (ORCPT
+        id S1753970AbeFREOt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 00:14:44 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:41958 "EHLO mx1.redhat.com"
+        Mon, 18 Jun 2018 00:14:49 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:32792 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1750762AbeFREOl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 00:14:41 -0400
+        id S1752890AbeFREOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 00:14:46 -0400
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6C5EB400E9AF;
-        Mon, 18 Jun 2018 04:14:40 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id D10B683207;
+        Mon, 18 Jun 2018 04:14:45 +0000 (UTC)
 Received: from llong.com (ovpn-121-11.rdu2.redhat.com [10.10.121.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 08623201E288;
-        Mon, 18 Jun 2018 04:14:33 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CCB0E201E288;
+        Mon, 18 Jun 2018 04:14:40 +0000 (UTC)
 From:   Waiman Long <longman@redhat.com>
 To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
         Johannes Weiner <hannes@cmpxchg.org>,
@@ -42,139 +41,251 @@ Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
         Juri Lelli <juri.lelli@redhat.com>,
         Patrick Bellasi <patrick.bellasi@arm.com>,
         Waiman Long <longman@redhat.com>
-Subject: [PATCH v10 0/9] cpuset: Enable cpuset controller in default hierarchy
-Date:   Mon, 18 Jun 2018 12:13:59 +0800
-Message-Id: <1529295249-5207-1-git-send-email-longman@redhat.com>
+Subject: [PATCH v10 1/9] cpuset: Enable cpuset controller in default hierarchy
+Date:   Mon, 18 Jun 2018 12:14:00 +0800
+Message-Id: <1529295249-5207-2-git-send-email-longman@redhat.com>
+In-Reply-To: <1529295249-5207-1-git-send-email-longman@redhat.com>
+References: <1529295249-5207-1-git-send-email-longman@redhat.com>
 X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 18 Jun 2018 04:14:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 18 Jun 2018 04:14:40 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 18 Jun 2018 04:14:45 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.1]); Mon, 18 Jun 2018 04:14:45 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-v10:
- - Remove the cpuset.sched.load_balance patch for now as it may not
-   be that useful.
- - Break the large patch 2 into smaller patches to make them a bit
-   easier to review.
- - Test and fix issues related to changing "cpuset.cpus" and cpu
-   online/offline in a domain root.
- - Rename isolated_cpus to reserved_cpus as this cpumask holds CPUs
-   reserved for child sched domains.
- - Rework the scheduling domain debug printing code in the last patch.
- - Document update to the newly moved
-   Documentation/admin-guide/cgroup-v2.rst.
+Given the fact that thread mode had been merged into 4.14, it is now
+time to enable cpuset to be used in the default hierarchy (cgroup v2)
+as it is clearly threaded.
 
-v9:
- - Rename cpuset.sched.domain to cpuset.sched.domain_root to better
-   identify its purpose as the root of a new scheduling domain or
-   partition.
- - Clarify in the document about the purpose of domain_root and
-   load_balance. Using domain_root is th only way to create new
-   partition.
- - Fix a lockdep warning in update_isolated_cpumask() function.
- - Add a new patch to eliminate call to generate_sched_domains() for
-   v2 when a change in cpu list does not touch a domain_root.
+The cpuset controller had experienced feature creep since its
+introduction more than a decade ago. Besides the core cpus and mems
+control files to limit cpus and memory nodes, there are a bunch of
+additional features that can be controlled from the userspace. Some of
+the features are of doubtful usefulness and may not be actively used.
 
-v8:
- - Remove cpuset.cpus.isolated and add a new cpuset.sched.domain flag
-   and rework the code accordingly.
+This patch enables cpuset controller in the default hierarchy with
+a minimal set of features, namely just the cpus and mems and their
+effective_* counterparts.  We can certainly add more features to the
+default hierarchy in the future if there is a real user need for them
+later on.
 
-v7:
- - Add a root-only cpuset.cpus.isolated control file for CPU isolation.
- - Enforce that load_balancing can only be turned off on cpusets with
-   CPUs from the isolated list.
- - Update sched domain generation to allow cpusets with CPUs only
-   from the isolated CPU list to be in separate root domains.
+Alternatively, with the unified hiearachy, it may make more sense
+to move some of those additional cpuset features, if desired, to
+memory controller or may be to the cpu controller instead of staying
+with cpuset.
 
-v6:
- - Hide cpuset control knobs in root cgroup.
- - Rename effective_cpus and effective_mems to cpus.effective and
-   mems.effective respectively.
- - Remove cpuset.flags and add cpuset.sched_load_balance instead
-   as the behavior of sched_load_balance has changed and so is
-   not a simple flag.
- - Update cgroup-v2.txt accordingly.
+Signed-off-by: Waiman Long <longman@redhat.com>
+---
+ Documentation/admin-guide/cgroup-v2.rst | 109 ++++++++++++++++++++++++++++++--
+ kernel/cgroup/cpuset.c                  |  48 +++++++++++++-
+ 2 files changed, 149 insertions(+), 8 deletions(-)
 
-v5:
- - Add patch 2 to provide the cpuset.flags control knob for the
-   sched_load_balance flag which should be the only feature that is
-   essential as a replacement of the "isolcpus" kernel boot parameter.
-
-v4:
- - Further minimize the feature set by removing the flags control knob.
-
-v3:
- - Further trim the additional features down to just memory_migrate.
- - Update Documentation/cgroup-v2.txt.
-
-v7 patch: https://lkml.org/lkml/2018/4/19/448
-v8 patch: https://lkml.org/lkml/2018/5/17/939
-v9 patch: https://lkml.org/lkml/2018/5/29/507
-
-The purpose of this patchset is to provide a basic set of cpuset control
-files for cgroup v2. This basic set includes the non-root "cpus", "mems"
-and "sched.domain_root". The "cpus.effective" and "mems.effective"
-will appear in all cpuset-enabled cgroups.
-
-The new control file that is unique to v2 is "sched.domain_root". It
-is a boolean flag file that designates if a cgroup is the root of a new
-scheduling domain or partition with its own set of unique list of CPUs
-from scheduling perspective disjointed from other partitions. The root
-cgroup is always a scheduling domain root. Multiple levels of scheduling
-domains are supported with some limitations. So a container scheduling
-domain root can behave like a real root.
-
-When a scheduling domain root cgroup is removed, its list of exclusive
-CPUs will be returned to the parent's cpus.effective automatically.
-
-This patchset does not exclude the possibility of adding more features
-in the future after careful consideration.
-
-Patch 1 enables cpuset in cgroup v2 with cpus, mems and their effective
-counterparts.
-
-Patch 2 adds a new "sched.domain_root" control file for setting up
-multiple scheduling domains or partitions. A scheduling domain root
-implies cpu_exclusive.
-
-Patch 3 handles the proper deletion of a domain root cgroup by turning
-off the domain_root flag automatically before deletion.
-
-Patch 4 allows "cpuset.cpus" of a domain root cgroup to be changed
-subject to certain constraints.
-
-Patch 5 makes the hotplug code deal with domain root properly.
-
-Patch 6 updates the scheduling domain genaration code to work with
-the new domain root feature.
-
-Patch 7 exposes cpus.effective and mems.effective to the root cgroup as
-enabling child scheduling domains will take CPUs away from the root cgroup.
-So it will be nice to monitor what CPUs are left there.
-
-Patch 8 eliminates the need to rebuild sched domains for v2 if cpu list
-changes occur to non-domain root cpusets only.
-
-Patch 9 enables the printing the debug information about scheduling
-domain generation.
-
-Waiman Long (9):
-  cpuset: Enable cpuset controller in default hierarchy
-  cpuset: Add new v2 cpuset.sched.domain_root flag
-  cpuset: Simulate auto-off of sched.domain_root at cgroup removal
-  cpuset: Allow changes to cpus in a domain root
-  cpuset: Make sure that domain roots work properly with CPU hotplug
-  cpuset: Make generate_sched_domains() recognize reserved_cpus
-  cpuset: Expose cpus.effective and mems.effective on cgroup v2 root
-  cpuset: Don't rebuild sched domains if cpu changes in non-domain root
-  cpuset: Allow reporting of sched domain generation info
-
- Documentation/admin-guide/cgroup-v2.rst | 158 ++++++++++++-
- kernel/cgroup/cpuset.c                  | 406 ++++++++++++++++++++++++++++++--
- 2 files changed, 543 insertions(+), 21 deletions(-)
-
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 8a2c52d..fbc30b6 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -53,11 +53,13 @@ v1 is available under Documentation/cgroup-v1/.
+        5-3-2. Writeback
+      5-4. PID
+        5-4-1. PID Interface Files
+-     5-5. Device
+-     5-6. RDMA
+-       5-6-1. RDMA Interface Files
+-     5-7. Misc
+-       5-7-1. perf_event
++     5-5. Cpuset
++       5.5-1. Cpuset Interface Files
++     5-6. Device
++     5-7. RDMA
++       5-7-1. RDMA Interface Files
++     5-8. Misc
++       5-8-1. perf_event
+      5-N. Non-normative information
+        5-N-1. CPU controller root cgroup process behaviour
+        5-N-2. IO controller root cgroup process behaviour
+@@ -1486,6 +1488,103 @@ through fork() or clone(). These will return -EAGAIN if the creation
+ of a new process would cause a cgroup policy to be violated.
+ 
+ 
++Cpuset
++------
++
++The "cpuset" controller provides a mechanism for constraining
++the CPU and memory node placement of tasks to only the resources
++specified in the cpuset interface files in a task's current cgroup.
++This is especially valuable on large NUMA systems where placing jobs
++on properly sized subsets of the systems with careful processor and
++memory placement to reduce cross-node memory access and contention
++can improve overall system performance.
++
++The "cpuset" controller is hierarchical.  That means the controller
++cannot use CPUs or memory nodes not allowed in its parent.
++
++
++Cpuset Interface Files
++~~~~~~~~~~~~~~~~~~~~~~
++
++  cpuset.cpus
++	A read-write multiple values file which exists on non-root
++	cpuset-enabled cgroups.
++
++	It lists the requested CPUs to be used by tasks within this
++	cgroup.  The actual list of CPUs to be granted, however, is
++	subjected to constraints imposed by its parent and can differ
++	from the requested CPUs.
++
++	The CPU numbers are comma-separated numbers or ranges.
++	For example:
++
++	  # cat cpuset.cpus
++	  0-4,6,8-10
++
++	An empty value indicates that the cgroup is using the same
++	setting as the nearest cgroup ancestor with a non-empty
++	"cpuset.cpus" or all the available CPUs if none is found.
++
++	The value of "cpuset.cpus" stays constant until the next update
++	and won't be affected by any CPU hotplug events.
++
++  cpuset.cpus.effective
++	A read-only multiple values file which exists on non-root
++	cpuset-enabled cgroups.
++
++	It lists the onlined CPUs that are actually granted to this
++	cgroup by its parent.  These CPUs are allowed to be used by
++	tasks within the current cgroup.
++
++	If "cpuset.cpus" is empty, the "cpuset.cpus.effective" file shows
++	all the CPUs from the parent cgroup that can be available to
++	be used by this cgroup.  Otherwise, it should be a subset of
++	"cpuset.cpus" unless none of the CPUs listed in "cpuset.cpus"
++	can be granted.  In this case, it will be treated just like an
++	empty "cpuset.cpus".
++
++	Its value will be affected by CPU hotplug events.
++
++  cpuset.mems
++	A read-write multiple values file which exists on non-root
++	cpuset-enabled cgroups.
++
++	It lists the requested memory nodes to be used by tasks within
++	this cgroup.  The actual list of memory nodes granted, however,
++	is subjected to constraints imposed by its parent and can differ
++	from the requested memory nodes.
++
++	The memory node numbers are comma-separated numbers or ranges.
++	For example:
++
++	  # cat cpuset.mems
++	  0-1,3
++
++	An empty value indicates that the cgroup is using the same
++	setting as the nearest cgroup ancestor with a non-empty
++	"cpuset.mems" or all the available memory nodes if none
++	is found.
++
++	The value of "cpuset.mems" stays constant until the next update
++	and won't be affected by any memory nodes hotplug events.
++
++  cpuset.mems.effective
++	A read-only multiple values file which exists on non-root
++	cpuset-enabled cgroups.
++
++	It lists the onlined memory nodes that are actually granted to
++	this cgroup by its parent. These memory nodes are allowed to
++	be used by tasks within the current cgroup.
++
++	If "cpuset.mems" is empty, it shows all the memory nodes from the
++	parent cgroup that will be available to be used by this cgroup.
++	Otherwise, it should be a subset of "cpuset.mems" unless none of
++	the memory nodes listed in "cpuset.mems" can be granted.  In this
++	case, it will be treated just like an empty "cpuset.mems".
++
++	Its value will be affected by memory nodes hotplug events.
++
++
+ Device controller
+ -----------------
+ 
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index 266f10c..2b5c447 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -1824,12 +1824,11 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ 	return 0;
+ }
+ 
+-
+ /*
+  * for the common functions, 'private' gives the type of file
+  */
+ 
+-static struct cftype files[] = {
++static struct cftype legacy_files[] = {
+ 	{
+ 		.name = "cpus",
+ 		.seq_show = cpuset_common_seq_show,
+@@ -1932,6 +1931,47 @@ static s64 cpuset_read_s64(struct cgroup_subsys_state *css, struct cftype *cft)
+ };
+ 
+ /*
++ * This is currently a minimal set for the default hierarchy. It can be
++ * expanded later on by migrating more features and control files from v1.
++ */
++static struct cftype dfl_files[] = {
++	{
++		.name = "cpus",
++		.seq_show = cpuset_common_seq_show,
++		.write = cpuset_write_resmask,
++		.max_write_len = (100U + 6 * NR_CPUS),
++		.private = FILE_CPULIST,
++		.flags = CFTYPE_NOT_ON_ROOT,
++	},
++
++	{
++		.name = "mems",
++		.seq_show = cpuset_common_seq_show,
++		.write = cpuset_write_resmask,
++		.max_write_len = (100U + 6 * MAX_NUMNODES),
++		.private = FILE_MEMLIST,
++		.flags = CFTYPE_NOT_ON_ROOT,
++	},
++
++	{
++		.name = "cpus.effective",
++		.seq_show = cpuset_common_seq_show,
++		.private = FILE_EFFECTIVE_CPULIST,
++		.flags = CFTYPE_NOT_ON_ROOT,
++	},
++
++	{
++		.name = "mems.effective",
++		.seq_show = cpuset_common_seq_show,
++		.private = FILE_EFFECTIVE_MEMLIST,
++		.flags = CFTYPE_NOT_ON_ROOT,
++	},
++
++	{ }	/* terminate */
++};
++
++
++/*
+  *	cpuset_css_alloc - allocate a cpuset css
+  *	cgrp:	control group that the new cpuset will be part of
+  */
+@@ -2105,8 +2145,10 @@ struct cgroup_subsys cpuset_cgrp_subsys = {
+ 	.post_attach	= cpuset_post_attach,
+ 	.bind		= cpuset_bind,
+ 	.fork		= cpuset_fork,
+-	.legacy_cftypes	= files,
++	.legacy_cftypes	= legacy_files,
++	.dfl_cftypes	= dfl_files,
+ 	.early_init	= true,
++	.threaded	= true,
+ };
+ 
+ /**
 -- 
 1.8.3.1
 
