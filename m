@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF9BC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8CBC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:41:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2177D208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:41:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2177D208E8
+	by mail.kernel.org (Postfix) with ESMTP id C211120864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:41:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C211120864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968115AbeFRIlN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:41:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36986 "EHLO
+        id S968307AbeFRIly (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:41:54 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36938 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968217AbeFRIiT (ORCPT
+        with ESMTP id S968196AbeFRIiN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:38:19 -0400
+        Mon, 18 Jun 2018 04:38:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 339C2CBB;
-        Mon, 18 Jun 2018 08:38:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 899FFC5C;
+        Mon, 18 Jun 2018 08:38:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,9 +38,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 162/189] x86/pkeys/selftests: Fix pointer math
-Date:   Mon, 18 Jun 2018 10:14:18 +0200
-Message-Id: <20180618081215.733540335@linuxfoundation.org>
+Subject: [PATCH 4.14 160/189] x86/pkeys/selftests: Add PROT_EXEC test
+Date:   Mon, 18 Jun 2018 10:14:16 +0200
+Message-Id: <20180618081215.655070976@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -59,17 +59,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit 3d64f4ed15c3c53dba4c514bf59c334464dee373 ]
+[ Upstream commit 6af17cf89e99b64cf1f660bf848755442ab2f047 ]
 
-We dump out the entire area of the siginfo where the si_pkey_ptr is
-supposed to be.  But, we do some math on the poitner, which is a u32.
-We intended to do byte math, not u32 math on the pointer.
+Under the covers, implement executable-only memory with
+protection keys when userspace calls mprotect(PROT_EXEC).
 
-Cast it over to a u8* so it works.
-
-Also, move this block of code to below th si_code check.  It doesn't
-hurt anything, but the si_pkey field is gibberish for other signal
-types.
+But, we did not have a selftest for that.  Now we do.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -81,43 +76,73 @@ Cc: Ram Pai <linuxram@us.ibm.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171352.9BE09819@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180509171348.9EEE4BEF@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   44 ++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
 --- a/tools/testing/selftests/x86/protection_keys.c
 +++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -303,13 +303,6 @@ void signal_handler(int signum, siginfo_
- 		dump_mem(pkru_ptr - 128, 256);
- 	pkey_assert(*pkru_ptr);
+@@ -1303,6 +1303,49 @@ void test_executing_on_unreadable_memory
+ 	expected_pk_fault(pkey);
+ }
  
--	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
--	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
--	dump_mem(si_pkey_ptr - 8, 24);
--	siginfo_pkey = *si_pkey_ptr;
--	pkey_assert(siginfo_pkey < NR_PKEYS);
--	last_si_pkey = siginfo_pkey;
--
- 	if ((si->si_code == SEGV_MAPERR) ||
- 	    (si->si_code == SEGV_ACCERR) ||
- 	    (si->si_code == SEGV_BNDERR)) {
-@@ -317,6 +310,13 @@ void signal_handler(int signum, siginfo_
- 		exit(4);
- 	}
- 
-+	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
-+	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
-+	dump_mem((u8 *)si_pkey_ptr - 8, 24);
-+	siginfo_pkey = *si_pkey_ptr;
-+	pkey_assert(siginfo_pkey < NR_PKEYS);
-+	last_si_pkey = siginfo_pkey;
++void test_implicit_mprotect_exec_only_memory(int *ptr, u16 pkey)
++{
++	void *p1;
++	int scratch;
++	int ptr_contents;
++	int ret;
 +
- 	dprintf1("signal pkru from xsave: %08x\n", *pkru_ptr);
- 	/* need __rdpkru() version so we do not do shadow_pkru checking */
- 	dprintf1("signal pkru from  pkru: %08x\n", __rdpkru());
++	dprintf1("%s() start\n", __func__);
++
++	p1 = get_pointer_to_instructions();
++	lots_o_noops_around_write(&scratch);
++	ptr_contents = read_ptr(p1);
++	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
++
++	/* Use a *normal* mprotect(), not mprotect_pkey(): */
++	ret = mprotect(p1, PAGE_SIZE, PROT_EXEC);
++	pkey_assert(!ret);
++
++	dprintf2("pkru: %x\n", rdpkru());
++
++	/* Make sure this is an *instruction* fault */
++	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
++	lots_o_noops_around_write(&scratch);
++	do_not_expect_pk_fault("executing on PROT_EXEC memory");
++	ptr_contents = read_ptr(p1);
++	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
++	expected_pk_fault(UNKNOWN_PKEY);
++
++	/*
++	 * Put the memory back to non-PROT_EXEC.  Should clear the
++	 * exec-only pkey off the VMA and allow it to be readable
++	 * again.  Go to PROT_NONE first to check for a kernel bug
++	 * that did not clear the pkey when doing PROT_NONE.
++	 */
++	ret = mprotect(p1, PAGE_SIZE, PROT_NONE);
++	pkey_assert(!ret);
++
++	ret = mprotect(p1, PAGE_SIZE, PROT_READ|PROT_EXEC);
++	pkey_assert(!ret);
++	ptr_contents = read_ptr(p1);
++	do_not_expect_pk_fault("plain read on recently PROT_EXEC area");
++}
++
+ void test_mprotect_pkey_on_unsupported_cpu(int *ptr, u16 pkey)
+ {
+ 	int size = PAGE_SIZE;
+@@ -1327,6 +1370,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
+ 	test_kernel_gup_of_access_disabled_region,
+ 	test_kernel_gup_write_to_write_disabled_region,
+ 	test_executing_on_unreadable_memory,
++	test_implicit_mprotect_exec_only_memory,
+ 	test_ptrace_of_child,
+ 	test_pkey_syscalls_on_non_allocated_pkey,
+ 	test_pkey_syscalls_bad_args,
 
 
