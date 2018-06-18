@@ -6,36 +6,38 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0774C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33076C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:31:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF9AE20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF9AE20864
+	by mail.kernel.org (Postfix) with ESMTP id E8CD420864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:31:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E8CD420864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966024AbeFRJa5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:30:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56174 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935926AbeFRIZF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S936436AbeFRIZF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 18 Jun 2018 04:25:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56150 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935926AbeFRIZA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 04:25:00 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3AC8FBAD;
-        Mon, 18 Jun 2018 08:25:05 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 63EACC74;
+        Mon, 18 Jun 2018 08:24:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Jack Morgenstein <jackm@dev.mellanox.co.il>,
-        Leon Romanovsky <leonro@mellanox.com>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Sebastian Sanchez <sebastian.sanchez@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
         Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 176/279] IB/mlx4: Fix integer overflow when calculating optimal MTT size
-Date:   Mon, 18 Jun 2018 10:12:41 +0200
-Message-Id: <20180618080616.213734209@linuxfoundation.org>
+Subject: [PATCH 4.16 174/279] IB/{hfi1, rdmavt}: Fix memory leak in hfi1_alloc_devdata() upon failure
+Date:   Mon, 18 Jun 2018 10:12:39 +0200
+Message-Id: <20180618080616.082039671@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,58 +54,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jack Morgenstein <jackm@dev.mellanox.co.il>
+From: Sebastian Sanchez <sebastian.sanchez@intel.com>
 
-[ Upstream commit b03bcde962606d2ee59a4e9dd470db9ad53c5418 ]
+[ Upstream commit e9777ad4399c26c70318c4945f94efac2ed95391 ]
 
-When the kernel was compiled using the UBSAN option,
-we saw the following stack trace:
+When allocating device data, if there's an allocation failure, the
+already allocated memory won't be freed such as per-cpu counters.
 
-[ 1184.827917] UBSAN: Undefined behaviour in drivers/infiniband/hw/mlx4/mr.c:349:27
-[ 1184.828114] signed integer overflow:
-[ 1184.828247] -2147483648 - 1 cannot be represented in type 'int'
+Fix memory leaks in exception path by creating a common reentrant
+clean up function hfi1_clean_devdata() to be used at driver unload
+time and device data allocation failure.
 
-The problem was caused by calling round_up in procedure
-mlx4_ib_umem_calc_optimal_mtt_size (on line 349, as noted in the stack
-trace) with the second parameter (1 << block_shift) (which is an int).
-The second parameter should have been (1ULL << block_shift) (which
-is an unsigned long long).
+To accomplish this, free_platform_config() and clean_up_i2c() are
+changed to be reentrant to remove dependencies when they are called
+in different order. This helps avoid NULL pointer dereferences
+introduced by this patch if those two functions weren't reentrant.
 
-(1 << block_shift) is treated by the compiler as an int (because 1 is
-an integer).
+In addition, set dd->int_counter, dd->rcv_limit,
+dd->send_schedule and dd->tx_opstats to NULL after they're freed in
+hfi1_clean_devdata(), so that hfi1_clean_devdata() is fully reentrant.
 
-Now, local variable block_shift is initialized to 31.
-If block_shift is 31, 1 << block_shift is 1 << 31 = 0x80000000=-214748368.
-This is the most negative int value.
-
-Inside the round_up macro, there is a cast applied to ((1 << 31) - 1).
-However, this cast is applied AFTER ((1 << 31) - 1) is calculated.
-Since (1 << 31) is treated as an int, we get the negative overflow
-identified by UBSAN in the process of calculating ((1 << 31) - 1).
-
-The fix is to change (1 << block_shift) to (1ULL << block_shift) on
-line 349.
-
-Fixes: 9901abf58368 ("IB/mlx4: Use optimal numbers of MTT entries")
-Signed-off-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Sebastian Sanchez <sebastian.sanchez@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx4/mr.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/init.c     |   37 ++++++++++++++++++++++++----------
+ drivers/infiniband/hw/hfi1/platform.c |    1 
+ drivers/infiniband/hw/hfi1/qsfp.c     |    2 +
+ 3 files changed, 30 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/hw/mlx4/mr.c
-+++ b/drivers/infiniband/hw/mlx4/mr.c
-@@ -346,7 +346,7 @@ int mlx4_ib_umem_calc_optimal_mtt_size(s
- 	/* Add to the first block the misalignment that it suffers from. */
- 	total_len += (first_block_start & ((1ULL << block_shift) - 1ULL));
- 	last_block_end = current_block_start + current_block_len;
--	last_block_aligned_end = round_up(last_block_end, 1 << block_shift);
-+	last_block_aligned_end = round_up(last_block_end, 1ULL << block_shift);
- 	total_len += (last_block_aligned_end - last_block_end);
+--- a/drivers/infiniband/hw/hfi1/init.c
++++ b/drivers/infiniband/hw/hfi1/init.c
+@@ -1209,30 +1209,49 @@ static void finalize_asic_data(struct hf
+ 	kfree(ad);
+ }
  
- 	if (total_len & ((1ULL << block_shift) - 1ULL))
+-static void __hfi1_free_devdata(struct kobject *kobj)
++/**
++ * hfi1_clean_devdata - cleans up per-unit data structure
++ * @dd: pointer to a valid devdata structure
++ *
++ * It cleans up all data structures set up by
++ * by hfi1_alloc_devdata().
++ */
++static void hfi1_clean_devdata(struct hfi1_devdata *dd)
+ {
+-	struct hfi1_devdata *dd =
+-		container_of(kobj, struct hfi1_devdata, kobj);
+ 	struct hfi1_asic_data *ad;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&hfi1_devs_lock, flags);
+-	idr_remove(&hfi1_unit_table, dd->unit);
+-	list_del(&dd->list);
++	if (!list_empty(&dd->list)) {
++		idr_remove(&hfi1_unit_table, dd->unit);
++		list_del_init(&dd->list);
++	}
+ 	ad = release_asic_data(dd);
+ 	spin_unlock_irqrestore(&hfi1_devs_lock, flags);
+-	if (ad)
+-		finalize_asic_data(dd, ad);
++
++	finalize_asic_data(dd, ad);
+ 	free_platform_config(dd);
+ 	rcu_barrier(); /* wait for rcu callbacks to complete */
+ 	free_percpu(dd->int_counter);
+ 	free_percpu(dd->rcv_limit);
+ 	free_percpu(dd->send_schedule);
+ 	free_percpu(dd->tx_opstats);
++	dd->int_counter   = NULL;
++	dd->rcv_limit     = NULL;
++	dd->send_schedule = NULL;
++	dd->tx_opstats    = NULL;
+ 	sdma_clean(dd, dd->num_sdma);
+ 	rvt_dealloc_device(&dd->verbs_dev.rdi);
+ }
+ 
++static void __hfi1_free_devdata(struct kobject *kobj)
++{
++	struct hfi1_devdata *dd =
++		container_of(kobj, struct hfi1_devdata, kobj);
++
++	hfi1_clean_devdata(dd);
++}
++
+ static struct kobj_type hfi1_devdata_type = {
+ 	.release = __hfi1_free_devdata,
+ };
+@@ -1333,9 +1352,7 @@ struct hfi1_devdata *hfi1_alloc_devdata(
+ 	return dd;
+ 
+ bail:
+-	if (!list_empty(&dd->list))
+-		list_del_init(&dd->list);
+-	rvt_dealloc_device(&dd->verbs_dev.rdi);
++	hfi1_clean_devdata(dd);
+ 	return ERR_PTR(ret);
+ }
+ 
+--- a/drivers/infiniband/hw/hfi1/platform.c
++++ b/drivers/infiniband/hw/hfi1/platform.c
+@@ -199,6 +199,7 @@ void free_platform_config(struct hfi1_de
+ {
+ 	/* Release memory allocated for eprom or fallback file read. */
+ 	kfree(dd->platform_config.data);
++	dd->platform_config.data = NULL;
+ }
+ 
+ void get_port_type(struct hfi1_pportdata *ppd)
+--- a/drivers/infiniband/hw/hfi1/qsfp.c
++++ b/drivers/infiniband/hw/hfi1/qsfp.c
+@@ -204,6 +204,8 @@ static void clean_i2c_bus(struct hfi1_i2
+ 
+ void clean_up_i2c(struct hfi1_devdata *dd, struct hfi1_asic_data *ad)
+ {
++	if (!ad)
++		return;
+ 	clean_i2c_bus(ad->i2c_bus0);
+ 	ad->i2c_bus0 = NULL;
+ 	clean_i2c_bus(ad->i2c_bus1);
 
 
