@@ -2,127 +2,137 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56395C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55685C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DE6A20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE6A20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 0A45520852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="o1huBMSV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A45520852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935148AbeFROdP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:33:15 -0400
-Received: from mout.kundenserver.de ([212.227.126.131]:33837 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935072AbeFROdM (ORCPT
+        id S935182AbeFROdW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:33:22 -0400
+Received: from mail-it0-f67.google.com ([209.85.214.67]:38559 "EHLO
+        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935072AbeFROdS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:33:12 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0Mcj5x-1fmB700mET-00Htdb; Mon, 18 Jun 2018 16:32:47 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] posix-timers: Use new ktime_get_*_ts64() helpers
-Date:   Mon, 18 Jun 2018 16:32:24 +0200
-Message-Id: <20180618143246.3865099-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:6bdONtQglpD7vXCZAWKArAanS0s6iJC5f39/7U5GGeHM58V24+M
- WN5t1/kgBWJZNiqzZf+Nm17hIRuoZ0ooEbtW5TOM+AKXkj+A8iq1A7yLc6mP9AlWcn7uvar
- Nq9rHU8NWBgnXDd1tGF4ZzAMoGxMyhhsBjYCACxzAR2fnW9g/0frsvv2+iYvqDpy8bp/dS3
- Kyg1I/nW9yXvGTsrFmqEw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:lNxvMUgOGuc=:C/SAJ7m79JrPM4iFanYgy3
- 7xMvUNod/qSM6c+o8LzW6U4NpRAPoV4MCqyynVKNpLxcdC/0X5yRMCBgwPfrHlXHeb3FRZ9z7
- ca08QI2JuKc9Jnr17dgJ24SiNBNCrhWoihDiWX4mrie5hE7zsNaHMNsVVFUzyICSNlBw3qYJK
- sgKHY6AzxnY2rI59I6WjAQBE0Aj/D2S1M7FArsqun/OroAEcH7V7AHpRCV/Kzf2KLXVGct4QS
- o14862BFUg8Ed/7vORYPl4LwdWuLXN+TtqjA2py2mZKLy/9MBvgcoq3fSd6p4M6km0kwxqGBK
- DER5JAcLbheJq27nNJiWD1Xf0Gx8/Mve59gxtAnDiYcSMAIhXT0ZmQwIuDKeGmD+5F7GdNmZu
- JWNx7MutidMMzIkn0btBIChNEOytDseA92tPHjgESM8lmZou84Qpa1RucoJi04W9l1m3ZxC6r
- Ey6lzOpqqh88gkq3t6VjS1Mo/xYcftTOiOjKM4lyvXq7QrtgXfY17eyQy9eg8beX8Rs6wSrLt
- ewoipF04norHHAUzdBIO9Sm8Y9H7GVuPCbsCQu9EW/QOPOwbL4dRMpUZV9P0H5vFQDxIB04ZF
- WHojXP1YRcJF7hHP50hdJVSuXkmVa5jW7B1BAJ2ILddY0dpmLr+vWCeTN7zyzFpH17Mdlb5YF
- L555Uc/IoyA7SyF7Vocge+R7r9hk2VIGojEXkps4/TsMnvmdwbmKxZZ/erE1q9RZ12+k=
+        Mon, 18 Jun 2018 10:33:18 -0400
+Received: by mail-it0-f67.google.com with SMTP id v83-v6so12270866itc.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:33:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=yuMiMSflelDEEimEVFsc4yRS6OR+JzcbmlL5zbydOr0=;
+        b=o1huBMSVL9FXfWNV1mssk/f+pwKL7w0HHLsu8CvmBn2kEfDVaFJGCTPvmC0CjmDuhX
+         93RCAfzTHVQr27TzV6aVKB/FVfkuSjjOexH24K2N8MoSNI/WLXRfuKpmppOST61IhaoN
+         IswzVnOL03HQTooC258RjmKJ148287iLsDvNKRleUq4/Aeax77fv0zSquqESkYQPTwNQ
+         1aalF603KluTJUyuVJeJx33olDBQoAhU3CBa4q579nvjbrMVCitX/15soXtU6Lx009KP
+         HjaUG6A4pHQHZecJ5QjlH9JoEEJWuM1sDXdlGp0Km5YGfgJek0n1WKQvaT5WHkQEOCv2
+         I5Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=yuMiMSflelDEEimEVFsc4yRS6OR+JzcbmlL5zbydOr0=;
+        b=YfifA7u/IHQA95JiZlCr8xc6AzCAkklScPKkcq15+64pBQAFunkEVSfMibuUPwP85g
+         ycMXSFTGoJMS17JiQEPhy0a2JYjoGbUqgeYuMuisRz76Xvlu/w0j3PIyVYR+urRfRvg7
+         lETl9QDq7w2PuUWkjC7sASbXanM7ZgjJ94GncUqr4vC7YKixrwVYLmLe2c7pnSF0F/bl
+         aSMD6gtroUm970evChwYAXN9GKCejrYbcAP+DNG47xM2gLh8MeJu8vfuIanutBV3Nexy
+         ++eAmZ0KeCny5rUPYVTCQR0ayBsAZvSoXh+KWj1yBbrF/bHkBFQdNy2AiaDPkhku8P9z
+         QF4w==
+X-Gm-Message-State: APt69E3JChS19wwD2gWP0MZGB0Ee8L26+O8FwPawEMN4f/9W7IM0dy8m
+        HC9MPM4o0Xgf1/3GepT1TW9HlQ==
+X-Google-Smtp-Source: ADUXVKK3UxDQQSlnpfM3gUis7dyf+lJcsaunJB1FUzUulAP148apaEv01xL1YquLM19X/ULqrvN17Q==
+X-Received: by 2002:a24:690f:: with SMTP id e15-v6mr9679980itc.70.1529332397968;
+        Mon, 18 Jun 2018 07:33:17 -0700 (PDT)
+Received: from [192.168.1.167] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id y64-v6sm4231382itb.33.2018.06.18.07.33.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 07:33:16 -0700 (PDT)
+Subject: Re: Constant ata messages on console with commit 28361c403683
+ ("libata: add extra internal command") (was Re: [GIT PULL 2/2] libata changes
+ for v4.18-rc1)
+To:     Michael Ellerman <mpe@ellerman.id.au>, Tejun Heo <tj@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-ide@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+References: <20180605190807.GE1351649@devbig577.frc2.facebook.com>
+ <20180605191525.GF1351649@devbig577.frc2.facebook.com>
+ <87bmc8a6qi.fsf@concordia.ellerman.id.au>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ddef9feb-2764-6959-3a36-e97fbe377931@kernel.dk>
+Date:   Mon, 18 Jun 2018 08:33:15 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.0
+MIME-Version: 1.0
+In-Reply-To: <87bmc8a6qi.fsf@concordia.ellerman.id.au>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some of the oddly named time accessor functions now have a more
-consistent naming, which should be used from now on so we can
-remove the aliases.
+On 6/18/18 1:33 AM, Michael Ellerman wrote:
+> Tejun Heo <tj@kernel.org> writes:
+> ...
+>> Jens Axboe (10):
+>>       libata: introduce notion of separate hardware tags
+>>       libata: convert core and drivers to ->hw_tag usage
+>>       libata: bump ->qc_active to a 64-bit type
+>>       libata: use ata_tag_internal() consistently
+>>       libata: remove assumption that ATA_MAX_QUEUE - 1 is the max
+>>       sata_nv: set host can_queue count appropriately
+>>       libata: add extra internal command
+> 
+> Replying here because I can't find the original mail.
+> 
+> The above commit is causing one of my machines to constantly spew ata
+> messages on the console, according to bisect:
+> 
+> # first bad commit: [28361c403683c2b00d4f5e76045f3ccd299bf99d] libata: add extra internal command
+> 
+> To get it to boot I have to also apply:
+> 
+>   88e10092f6a6 ("sata_fsl: use the right type for tag bitshift")
+> 
+> 
+> The system boots OK and seems fine, except that it's just printing
+> multiple of these per second:
+> 
+>   ata2: Signature Update detected @ 0 msecs
+>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>   ata2.00: configured for UDMA/100
+>   ata2: Signature Update detected @ 0 msecs
+>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>   ata2.00: configured for UDMA/100
+>   ata2: Signature Update detected @ 0 msecs
+>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>   ata2.00: configured for UDMA/100
+>   ata2: Signature Update detected @ 0 msecs
+>   ata2: SATA link up 1.5 Gbps (SStatus 113 SControl 300)
+>   ata2.00: configured for UDMA/100
+>   ata2: Signature Update detected @ 0 msecs
+> 
+> And it never seems to stop.
+> 
+> The machine is a Freescale/NXP P5020ds, using the sata_fsl driver
+> presumably. Any ideas?
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- kernel/time/posix-stubs.c  |  2 +-
- kernel/time/posix-timers.c | 10 +++++-----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+Hmm that's odd. Can you include the boot log from a working boot as
+well? Would be nice to see what devices are on the sata adapter.
+The above just looks like a hardreset loop.
 
-diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
-index 26203a705011..706e2c7338d2 100644
---- a/kernel/time/posix-stubs.c
-+++ b/kernel/time/posix-stubs.c
-@@ -81,7 +81,7 @@ int do_clock_gettime(clockid_t which_clock, struct timespec64 *tp)
- 		ktime_get_ts64(tp);
- 		break;
- 	case CLOCK_BOOTTIME:
--		get_monotonic_boottime64(tp);
-+		ktime_get_boottime_ts64(tp);
- 		break;
- 	default:
- 		return -EINVAL;
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index 4cb8316bb042..234fb699caf1 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -228,21 +228,21 @@ static int posix_ktime_get_ts(clockid_t which_clock, struct timespec64 *tp)
-  */
- static int posix_get_monotonic_raw(clockid_t which_clock, struct timespec64 *tp)
- {
--	getrawmonotonic64(tp);
-+	ktime_get_raw_ts64(tp);
- 	return 0;
- }
- 
- 
- static int posix_get_realtime_coarse(clockid_t which_clock, struct timespec64 *tp)
- {
--	*tp = current_kernel_time64();
-+	ktime_get_coarse_real_ts64(tp);
- 	return 0;
- }
- 
- static int posix_get_monotonic_coarse(clockid_t which_clock,
- 						struct timespec64 *tp)
- {
--	*tp = get_monotonic_coarse64();
-+	ktime_get_coarse_ts64(tp);
- 	return 0;
- }
- 
-@@ -254,13 +254,13 @@ static int posix_get_coarse_res(const clockid_t which_clock, struct timespec64 *
- 
- static int posix_get_boottime(const clockid_t which_clock, struct timespec64 *tp)
- {
--	get_monotonic_boottime64(tp);
-+	ktime_get_boottime_ts64(tp);
- 	return 0;
- }
- 
- static int posix_get_tai(clockid_t which_clock, struct timespec64 *tp)
- {
--	timekeeping_clocktai64(tp);
-+	ktime_get_clocktai_ts64(tp);
- 	return 0;
- }
- 
 -- 
-2.9.0
+Jens Axboe
 
