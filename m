@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9DFC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:01:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 989AFC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:01:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1504208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:01:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49B35208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:01:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="aMvJYnQI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1504208A6
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="CZzwombR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B35208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965093AbeFRPBK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:01:10 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:42210 "EHLO
+        id S965042AbeFRPBI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:01:08 -0400
+Received: from smtprelay6.synopsys.com ([198.182.37.59]:42209 "EHLO
         smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964921AbeFRPBD (ORCPT
+        with ESMTP id S964920AbeFRPBD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Jun 2018 11:01:03 -0400
-Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id DB0B61E1410;
+Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id AEAD01E140F;
         Mon, 18 Jun 2018 17:01:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529334062; bh=Yx1wb3mNI+8Cwb4baqQH8pQG455FUKreFNlpJVs6lFw=;
+        t=1529334061; bh=aJjeELTUfF10bo7M91KNCUjvhvv1n2PMAfXFqaWYehI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
          References:From;
-        b=aMvJYnQIehp7EPo+JRoXDQaJyhAVGzrOVySTdVBQMQ+K113wQvgvCokz4N4SdoGFg
-         X73hCxRwnjNpDXmti8Rsxnww1qCcfwrvu6O1IDTqN0PTpLUJyzBLsdqyi3HSFasyhD
-         iaZ+EzQdfaE9MDdWEUqxNwvgxFYGsoVFsERWMyPps4hjkOfbJ8uH5knLJ5sMKAr2un
-         W7vFR+UzsHkJIphxNL2otwAFajvBbKn0twAB6kf3enVh1FmJYlMh9IPWv0RBOhRRFl
-         aiACKcFtSHjSVhs6KyLFOnT66UXQJcguzkPZwedh+z1r37Bpzqm8/Ju6KByf+QPRNh
-         hXn/elFVIts5g==
+        b=CZzwombRB0e4mSZf25Opd2xNXjj0P/JAZ/Th9E9ZOMkFnZt5ISAtFb/gVoxsCEiEs
+         dmMMAMQawR9AnVjKPt/3cHEZo4RgWqTnvhZX6slTFBVpcLjy3m/srl5wwfcqazB9Kr
+         +y8654DoM/d2bPTuTpFbZ3SvUYSNUjkV5IBGcU6fvgN2XYVWOnO9hg/vFA7atn+tIL
+         CJjO4kvVsCnSBjlmW5EEj0Cs8U7BJoI52zHmhK+iw+9PtpLtSmgc8b6hfXWuwRmedy
+         oP8oe5eh5itB1XwD04mevFRZl+Wr6zqmkwNVtGDv6AMRqcmhSzpBpu5ZaFsg4sMrFA
+         fBx/t/w8n5x9Q==
 Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 90A82367D;
+        by mailhost.synopsys.com (Postfix) with ESMTP id D70325FFB;
         Mon, 18 Jun 2018 08:01:00 -0700 (PDT)
 Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id E66533D740;
-        Mon, 18 Jun 2018 16:00:59 +0100 (WEST)
+        by pt02.synopsys.com (Postfix) with ESMTP id 3C6823D756;
+        Mon, 18 Jun 2018 16:01:00 +0100 (WEST)
 From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
 To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
         Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
@@ -50,9 +50,9 @@ To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
 Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v4 01/10] PCI: endpoint: Add MSI-X interfaces
-Date:   Mon, 18 Jun 2018 16:00:20 +0100
-Message-Id: <80e29cd7dc34363f27e74a099b727175f94242d4.1529329262.git.gustavo.pimentel@synopsys.com>
+Subject: [PATCH v4 04/10] PCI: dwc: Rework MSI callbacks handler
+Date:   Mon, 18 Jun 2018 16:00:23 +0100
+Message-Id: <c6320411aa93d76e3e861f6275cebb1caf6cf893.1529329262.git.gustavo.pimentel@synopsys.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
 References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
@@ -63,198 +63,150 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PCI_EPC_IRQ_MSIX type.
+Remove duplicate defines located on pcie-designware.h file already
+available on /include/uapi/linux/pci-regs.h file.
 
-Add MSI-X callbacks signatures to the ops structure.
-
-Add sysfs interface for set/get MSI-X capability maximum number.
+Add pci_epc_set_msi() maximum 32 interrupts validation.
 
 Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
 ---
 Change v1->v2:
  - Nothing changed, just to follow the patch set version.
 Change v2->v3:
- - Moved pci_epc_raise_irq() signature changes to patch file #3.
+ - Replaced wrong return value 0 to -EINVAL.
 Change v3->v4:
  - Rebased to Lorenzo's master branch v4.18-rc1.
 
- drivers/pci/endpoint/pci-ep-cfs.c   | 24 ++++++++++++++++
- drivers/pci/endpoint/pci-epc-core.c | 57 +++++++++++++++++++++++++++++++++++++
- include/linux/pci-epc.h             |  9 ++++++
- include/linux/pci-epf.h             |  1 +
- 4 files changed, 91 insertions(+)
+ drivers/pci/controller/dwc/pcie-designware-ep.c | 49 +++++++++++++++++--------
+ drivers/pci/controller/dwc/pcie-designware.h    | 11 ------
+ drivers/pci/endpoint/pci-epc-core.c             |  3 +-
+ 3 files changed, 35 insertions(+), 28 deletions(-)
 
-diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
-index 018ea34..d1288a0 100644
---- a/drivers/pci/endpoint/pci-ep-cfs.c
-+++ b/drivers/pci/endpoint/pci-ep-cfs.c
-@@ -286,6 +286,28 @@ static ssize_t pci_epf_msi_interrupts_show(struct config_item *item,
- 		       to_pci_epf_group(item)->epf->msi_interrupts);
+diff --git a/drivers/pci/controller/dwc/pcie-designware-ep.c b/drivers/pci/controller/dwc/pcie-designware-ep.c
+index ad25654..89d9e52 100644
+--- a/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ b/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -246,29 +246,38 @@ static int dw_pcie_ep_map_addr(struct pci_epc *epc, u8 func_no,
+ 
+ static int dw_pcie_ep_get_msi(struct pci_epc *epc, u8 func_no)
+ {
+-	int val;
+ 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	u32 val, reg;
++
++	if (!ep->msi_cap)
++		return -EINVAL;
+ 
+-	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
+-	if (!(val & MSI_CAP_MSI_EN_MASK))
++	reg = ep->msi_cap + PCI_MSI_FLAGS;
++	val = dw_pcie_readw_dbi(pci, reg);
++	if (!(val & PCI_MSI_FLAGS_ENABLE))
+ 		return -EINVAL;
+ 
+-	val = (val & MSI_CAP_MME_MASK) >> MSI_CAP_MME_SHIFT;
++	val = (val & PCI_MSI_FLAGS_QSIZE) >> 4;
++
+ 	return val;
  }
  
-+static ssize_t pci_epf_msix_interrupts_store(struct config_item *item,
-+					     const char *page, size_t len)
-+{
-+	u16 val;
-+	int ret;
-+
-+	ret = kstrtou16(page, 0, &val);
-+	if (ret)
-+		return ret;
-+
-+	to_pci_epf_group(item)->epf->msix_interrupts = val;
-+
-+	return len;
-+}
-+
-+static ssize_t pci_epf_msix_interrupts_show(struct config_item *item,
-+					    char *page)
-+{
-+	return sprintf(page, "%d\n",
-+		       to_pci_epf_group(item)->epf->msix_interrupts);
-+}
-+
- PCI_EPF_HEADER_R(vendorid)
- PCI_EPF_HEADER_W_u16(vendorid)
+-static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 encode_int)
++static int dw_pcie_ep_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ {
+-	int val;
+ 	struct dw_pcie_ep *ep = epc_get_drvdata(epc);
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
++	u32 val, reg;
  
-@@ -327,6 +349,7 @@ CONFIGFS_ATTR(pci_epf_, subsys_vendor_id);
- CONFIGFS_ATTR(pci_epf_, subsys_id);
- CONFIGFS_ATTR(pci_epf_, interrupt_pin);
- CONFIGFS_ATTR(pci_epf_, msi_interrupts);
-+CONFIGFS_ATTR(pci_epf_, msix_interrupts);
- 
- static struct configfs_attribute *pci_epf_attrs[] = {
- 	&pci_epf_attr_vendorid,
-@@ -340,6 +363,7 @@ static struct configfs_attribute *pci_epf_attrs[] = {
- 	&pci_epf_attr_subsys_id,
- 	&pci_epf_attr_interrupt_pin,
- 	&pci_epf_attr_msi_interrupts,
-+	&pci_epf_attr_msix_interrupts,
- 	NULL,
- };
- 
-diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
-index b0ee427..7d77bd0 100644
---- a/drivers/pci/endpoint/pci-epc-core.c
-+++ b/drivers/pci/endpoint/pci-epc-core.c
-@@ -218,6 +218,63 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
- EXPORT_SYMBOL_GPL(pci_epc_set_msi);
- 
- /**
-+ * pci_epc_get_msix() - get the number of MSI-X interrupt numbers allocated
-+ * @epc: the EPC device to which MSI-X interrupts was requested
-+ * @func_no: the endpoint function number in the EPC device
-+ *
-+ * Invoke to get the number of MSI-X interrupts allocated by the RC
-+ */
-+int pci_epc_get_msix(struct pci_epc *epc, u8 func_no)
-+{
-+	int interrupt;
-+	unsigned long flags;
-+
-+	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
-+		return 0;
-+
-+	if (!epc->ops->get_msix)
-+		return 0;
-+
-+	spin_lock_irqsave(&epc->lock, flags);
-+	interrupt = epc->ops->get_msix(epc, func_no);
-+	spin_unlock_irqrestore(&epc->lock, flags);
-+
-+	if (interrupt < 0)
-+		return 0;
-+
-+	return interrupt + 1;
-+}
-+EXPORT_SYMBOL_GPL(pci_epc_get_msix);
-+
-+/**
-+ * pci_epc_set_msix() - set the number of MSI-X interrupt numbers required
-+ * @epc: the EPC device on which MSI-X has to be configured
-+ * @func_no: the endpoint function number in the EPC device
-+ * @interrupts: number of MSI-X interrupts required by the EPF
-+ *
-+ * Invoke to set the required number of MSI-X interrupts.
-+ */
-+int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
-+{
-+	int ret;
-+	unsigned long flags;
-+
-+	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
-+	    interrupts < 1 || interrupts > 2048)
+-	val = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
+-	val &= ~MSI_CAP_MMC_MASK;
+-	val |= (encode_int << MSI_CAP_MMC_SHIFT) & MSI_CAP_MMC_MASK;
++	if (!ep->msi_cap)
 +		return -EINVAL;
 +
-+	if (!epc->ops->set_msix)
-+		return 0;
-+
-+	spin_lock_irqsave(&epc->lock, flags);
-+	ret = epc->ops->set_msix(epc, func_no, interrupts - 1);
-+	spin_unlock_irqrestore(&epc->lock, flags);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(pci_epc_set_msix);
-+
-+/**
-  * pci_epc_unmap_addr() - unmap CPU address from PCI address
-  * @epc: the EPC device on which address is allocated
-  * @func_no: the endpoint function number in the EPC device
-diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
-index 243eaa5..89f079f 100644
---- a/include/linux/pci-epc.h
-+++ b/include/linux/pci-epc.h
-@@ -17,6 +17,7 @@ enum pci_epc_irq_type {
- 	PCI_EPC_IRQ_UNKNOWN,
- 	PCI_EPC_IRQ_LEGACY,
- 	PCI_EPC_IRQ_MSI,
-+	PCI_EPC_IRQ_MSIX,
- };
++	reg = ep->msi_cap + PCI_MSI_FLAGS;
++	val = dw_pcie_readw_dbi(pci, reg);
++	val &= ~PCI_MSI_FLAGS_QMASK;
++	val |= (interrupts << 1) & PCI_MSI_FLAGS_QMASK;
+ 	dw_pcie_dbi_ro_wr_en(pci);
+-	dw_pcie_writew_dbi(pci, MSI_MESSAGE_CONTROL, val);
++	dw_pcie_writew_dbi(pci, reg, val);
+ 	dw_pcie_dbi_ro_wr_dis(pci);
  
- /**
-@@ -30,6 +31,10 @@ enum pci_epc_irq_type {
-  *	     capability register
-  * @get_msi: ops to get the number of MSI interrupts allocated by the RC from
-  *	     the MSI capability register
-+ * @set_msix: ops to set the requested number of MSI-X interrupts in the
-+ *	     MSI-X capability register
-+ * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
-+ *	     from the MSI-X capability register
-  * @raise_irq: ops to raise a legacy or MSI interrupt
-  * @start: ops to start the PCI link
-  * @stop: ops to stop the PCI link
-@@ -48,6 +53,8 @@ struct pci_epc_ops {
- 			      phys_addr_t addr);
- 	int	(*set_msi)(struct pci_epc *epc, u8 func_no, u8 interrupts);
- 	int	(*get_msi)(struct pci_epc *epc, u8 func_no);
-+	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
-+	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
- 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
- 			     enum pci_epc_irq_type type, u8 interrupt_num);
- 	int	(*start)(struct pci_epc *epc);
-@@ -144,6 +151,8 @@ void pci_epc_unmap_addr(struct pci_epc *epc, u8 func_no,
- 			phys_addr_t phys_addr);
- int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts);
- int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
-+int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
-+int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
- int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
- 		      enum pci_epc_irq_type type, u8 interrupt_num);
- int pci_epc_start(struct pci_epc *epc);
-diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
-index 4e77649..ec02f587 100644
---- a/include/linux/pci-epf.h
-+++ b/include/linux/pci-epf.h
-@@ -119,6 +119,7 @@ struct pci_epf {
- 	struct pci_epf_header	*header;
- 	struct pci_epf_bar	bar[6];
- 	u8			msi_interrupts;
-+	u16			msix_interrupts;
- 	u8			func_no;
+ 	return 0;
+@@ -367,21 +376,29 @@ int dw_pcie_ep_raise_msi_irq(struct dw_pcie_ep *ep, u8 func_no,
+ 	struct dw_pcie *pci = to_dw_pcie_from_ep(ep);
+ 	struct pci_epc *epc = ep->epc;
+ 	u16 msg_ctrl, msg_data;
+-	u32 msg_addr_lower, msg_addr_upper;
++	u32 msg_addr_lower, msg_addr_upper, reg;
+ 	u64 msg_addr;
+ 	bool has_upper;
+ 	int ret;
  
- 	struct pci_epc		*epc;
++	if (!ep->msi_cap)
++		return -EINVAL;
++
+ 	/* Raise MSI per the PCI Local Bus Specification Revision 3.0, 6.8.1. */
+-	msg_ctrl = dw_pcie_readw_dbi(pci, MSI_MESSAGE_CONTROL);
++	reg = ep->msi_cap + PCI_MSI_FLAGS;
++	msg_ctrl = dw_pcie_readw_dbi(pci, reg);
+ 	has_upper = !!(msg_ctrl & PCI_MSI_FLAGS_64BIT);
+-	msg_addr_lower = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_L32);
++	reg = ep->msi_cap + PCI_MSI_ADDRESS_LO;
++	msg_addr_lower = dw_pcie_readl_dbi(pci, reg);
+ 	if (has_upper) {
+-		msg_addr_upper = dw_pcie_readl_dbi(pci, MSI_MESSAGE_ADDR_U32);
+-		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_64);
++		reg = ep->msi_cap + PCI_MSI_ADDRESS_HI;
++		msg_addr_upper = dw_pcie_readl_dbi(pci, reg);
++		reg = ep->msi_cap + PCI_MSI_DATA_64;
++		msg_data = dw_pcie_readw_dbi(pci, reg);
+ 	} else {
+ 		msg_addr_upper = 0;
+-		msg_data = dw_pcie_readw_dbi(pci, MSI_MESSAGE_DATA_32);
++		reg = ep->msi_cap + PCI_MSI_DATA_32;
++		msg_data = dw_pcie_readw_dbi(pci, reg);
+ 	}
+ 	msg_addr = ((u64) msg_addr_upper) << 32 | msg_addr_lower;
+ 	ret = dw_pcie_ep_map_addr(epc, func_no, ep->msi_mem_phys, msg_addr,
+diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
+index b22c5bb..a0ab12f 100644
+--- a/drivers/pci/controller/dwc/pcie-designware.h
++++ b/drivers/pci/controller/dwc/pcie-designware.h
+@@ -96,17 +96,6 @@
+ #define PCIE_GET_ATU_INB_UNR_REG_OFFSET(region)				\
+ 			((0x3 << 20) | ((region) << 9) | (0x1 << 8))
+ 
+-#define MSI_MESSAGE_CONTROL		0x52
+-#define MSI_CAP_MMC_SHIFT		1
+-#define MSI_CAP_MMC_MASK		(7 << MSI_CAP_MMC_SHIFT)
+-#define MSI_CAP_MME_SHIFT		4
+-#define MSI_CAP_MSI_EN_MASK		0x1
+-#define MSI_CAP_MME_MASK		(7 << MSI_CAP_MME_SHIFT)
+-#define MSI_MESSAGE_ADDR_L32		0x54
+-#define MSI_MESSAGE_ADDR_U32		0x58
+-#define MSI_MESSAGE_DATA_32		0x58
+-#define MSI_MESSAGE_DATA_64		0x5C
+-
+ #define MAX_MSI_IRQS			256
+ #define MAX_MSI_IRQS_PER_CTRL		32
+ #define MAX_MSI_CTRLS			(MAX_MSI_IRQS / MAX_MSI_IRQS_PER_CTRL)
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index c72e656..094dcc3 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -201,7 +201,8 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ 	u8 encode_int;
+ 	unsigned long flags;
+ 
+-	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
++	    interrupts > 32)
+ 		return -EINVAL;
+ 
+ 	if (!epc->ops->set_msi)
 -- 
 2.7.4
 
