@@ -5,147 +5,122 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19142C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93BECC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C189F20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:22:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C189F20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id 46A1120864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:47:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46A1120864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.crashing.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754237AbeFREWu (ORCPT
+        id S1754067AbeFREq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 00:22:50 -0400
-Received: from mx2.suse.de ([195.135.220.15]:58189 "EHLO mx2.suse.de"
+        Mon, 18 Jun 2018 00:46:59 -0400
+Received: from gate.crashing.org ([63.228.1.57]:59514 "EHLO gate.crashing.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1753569AbeFREWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 00:22:49 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E8049ABC7;
-        Mon, 18 Jun 2018 04:22:47 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     paulmck@linux.vnet.ibm.com
-Date:   Mon, 18 Jun 2018 14:22:40 +1000
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        trondmy@hammerspace.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: [PATCH] rculist: improve documentation for list_for_each_entry_from_rcu()
-In-Reply-To: <20180613100607.GH3593@linux.vnet.ibm.com>
-References: <e5c90488937d14e9df81752a024be9d1e73ed398.camel@hammerspace.com> <CA+55aFxYMg+F9Jdi_25X-Qtt=7imqjQhLnjEyQXOQ6+eJvy83A@mail.gmail.com> <CA+55aFw+2+xCRAaMo8qgvZ7qNgRMo6D=WkwP7APQndG-y5b3dw@mail.gmail.com> <CA+55aFz3jmGST_cOB+qH6qZTFa5HJcw2JoeWxJEZdWgeO4=vNQ@mail.gmail.com> <20180613010427.GD3593@linux.vnet.ibm.com> <CA+55aFyWS-MC44k=LnGWr-Kq4_DRkJmub00Fj-tVrGxCL-PxGA@mail.gmail.com> <20180613013914.GE3593@linux.vnet.ibm.com> <87muvzihr8.fsf@notabene.neil.brown.name> <20180613100607.GH3593@linux.vnet.ibm.com>
-Message-ID: <874li0g1v3.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        id S1751462AbeFREq6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 00:46:58 -0400
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by gate.crashing.org (8.14.1/8.14.1) with ESMTP id w5I4kYJs011416;
+        Sun, 17 Jun 2018 23:46:35 -0500
+Message-ID: <33924c2e545b2dfabf2849d9c485f165c339323f.camel@kernel.crashing.org>
+Subject: Re: [RFC PATCH 5/5] fsi/scom: Major overhaul
+From:   Benjamin Herrenschmidt <benh@kernel.crashing.org>
+To:     Alistair Popple <alistair@popple.id.au>, openbmc@lists.ozlabs.org
+Cc:     Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Date:   Mon, 18 Jun 2018 14:46:33 +1000
+In-Reply-To: <1908243.hVhg7auBNd@new-mexico>
+References: <20180612051911.20690-1-benh@kernel.crashing.org>
+         <f2421fad1ea210b32a6813454832c0ed66770bf5.camel@kernel.crashing.org>
+         <aff7b975390119239bfcb5bdef869bdfd28e712a.camel@kernel.crashing.org>
+         <1908243.hVhg7auBNd@new-mexico>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.2 (3.28.2-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+On Mon, 2018-06-18 at 14:09 +1000, Alistair Popple wrote:
+> On Sunday, 17 June 2018 11:22:11 AM AEST Benjamin Herrenschmidt wrote:
+> > On Sun, 2018-06-17 at 11:17 +1000, Benjamin Herrenschmidt wrote:
+> > > 
+> > > We have everything that cronus needs and more than pdbg needs afaik :-)
+> 
+> Yep, has what we need and more (such as put scom under mask and indirect scom).
+> Only other useful thing would be repeated getsom/putscom operations (eg. read
+> the same scom address n times) as they would help with ADU access which can do
+> autoincrement or scanscom (although we should just use the scan engine directly
+> for that so not a big issue).
+> 
+> > +	for (retries = 0; retries < SCOM_MAX_RETRIES; retries++) {
+> > +		rc = raw_get_scom(scom, value, addr, &status);
+> > +		if (rc) {
+> > +			/* Try resetting the bridge if FSI fails */
+> > +			if (rc != -ENODEV && retries == 0) {
+> > +				fsi_device_write(scom->fsi_dev, SCOM_FSI2PIB_RESET_REG,
+> > +						 &dummy, sizeof(uint32_t));
+> > +				rc = -EBUSY;
+> > +			} else
+> > +				return rc;
+> > +		} else
+> > +			rc = handle_fsi2pib_status(scom, status);
+> > +		if (rc && rc != -EBUSY)
+> > +			break;
+> > +		if (rc == 0) {
+> > +			rc = handle_pib_status(scom,
+> > +					       (status & SCOM_STATUS_PIB_RESP_MASK)
+> > +					       >> SCOM_STATUS_PIB_RESP_SHIFT);
+> > +			if (rc && rc != -EBUSY)
+> > +				break;
+> > +		}
+> > +		if (rc == 0)
+> > +			break;
+> > +		msleep(1);
+> > +	}
+> 
+> The rc handling above took me a little while to grok but I didn't come up with a
+> cleaner alternative and I think it's correct.
 
+Ack-by or Reviewed-by tag pls ? :-)
 
-Unfortunately the patch for adding list_for_each_entry_from_rcu()
-wasn't the final patch after all review.  It is functionally
-correct but the documentation was incomplete.
+Cheers,
+Ben.
 
-This patch adds this missing documentation which includes an update to
-the documentation for list_for_each_entry_continue_rcu() to match the
-documentation for the new list_for_each_entry_from_rcu(), and adds
-list_for_each_entry_from_rcu() and the already existing
-hlist_for_each_entry_from_rcu() to section 7 of whatisRCU.txt.
-
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
- Documentation/RCU/whatisRCU.txt |  2 ++
- include/linux/rculist.h         | 19 ++++++++++++++++++-
- 2 files changed, 20 insertions(+), 1 deletion(-)
-
-diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.=
-txt
-index 65eb856526b7..d43524493fb3 100644
-=2D-- a/Documentation/RCU/whatisRCU.txt
-+++ b/Documentation/RCU/whatisRCU.txt
-@@ -816,11 +816,13 @@ RCU list traversal:
- 	list_next_rcu
- 	list_for_each_entry_rcu
- 	list_for_each_entry_continue_rcu
-+	list_for_each_entry_from_rcu
- 	hlist_first_rcu
- 	hlist_next_rcu
- 	hlist_pprev_rcu
- 	hlist_for_each_entry_rcu
- 	hlist_for_each_entry_rcu_bh
-+	hlist_for_each_entry_from_rcu
- 	hlist_for_each_entry_continue_rcu
- 	hlist_for_each_entry_continue_rcu_bh
- 	hlist_nulls_first_rcu
-diff --git a/include/linux/rculist.h b/include/linux/rculist.h
-index 36df6ccbc874..4786c2235b98 100644
-=2D-- a/include/linux/rculist.h
-+++ b/include/linux/rculist.h
-@@ -396,7 +396,16 @@ static inline void list_splice_tail_init_rcu(struct li=
-st_head *list,
-  * @member:	the name of the list_head within the struct.
-  *
-  * Continue to iterate over list of given type, continuing after
-=2D * the current position.
-+ * the current position which must have been in the list when the RCU read
-+ * lock was taken.
-+ * This would typically require either that you obtained the node from a
-+ * previous walk of the list in the same RCU read-side critical section, or
-+ * that you held some sort of non-RCU reference (such as a reference count)
-+ * to keep the node alive *and* in the list.
-+ *
-+ * This iterator is similar to list_for_each_entry_from_rcu() except
-+ * this starts after the given position and that one starts at the given
-+ * position.
-  */
- #define list_for_each_entry_continue_rcu(pos, head, member) 		\
- 	for (pos =3D list_entry_rcu(pos->member.next, typeof(*pos), member); \
-@@ -411,6 +420,14 @@ static inline void list_splice_tail_init_rcu(struct li=
-st_head *list,
-  *
-  * Iterate over the tail of a list starting from a given position,
-  * which must have been in the list when the RCU read lock was taken.
-+ * This would typically require either that you obtained the node from a
-+ * previous walk of the list in the same RCU read-side critical section, or
-+ * that you held some sort of non-RCU reference (such as a reference count)
-+ * to keep the node alive *and* in the list.
-+ *
-+ * This iterator is similar to list_for_each_entry_continue_rcu() except
-+ * this starts from the given position and that one starts from the positi=
-on
-+ * after the given position.
-  */
- #define list_for_each_entry_from_rcu(pos, head, member)			\
- 	for (; &(pos)->member !=3D (head);					\
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsnM5AACgkQOeye3VZi
-gbmEsQ/+MSPCAMzBIMqVEHJKY0GyWBgmBMOg0Rv+BMTSM3rN67iuafzsYH1cEbsB
-O+c7RvtgDUdWxYfLAhNs1w+PlgmTruV48+pnfbLx1zR+O3sjir3Pm82u6VZigeNt
-icv+kOBWH0fLQZaRvmTvzLCy9TpwBJ937iDPW0Rl0rNlbAFPBBRTf2WnovaTKRk3
-yNM6FfVj6SjGFXnfBv7JtKMLhFhL9gJ5q+kf0ygyOKZtcSkPTSa+EkSaEJ/AAaIT
-h50P6xrUtY1yRvvXbwKb/LqNq3XpJXkCfmAh++EUW7AreauyJokP4RHbVg92t0MG
-s7xMt0taFjqakJt/892c8fiw/85M3Ln4I4ztI34FDmAo2RXTeqjwtXasEQ+85FDs
-8ic2GIHxXBfEgPkROwC6tfEDHSQyU5M3Kwb37XTJYnEKsIa+F4mNJQWfQkdC8JKw
-OtZhalvmuZvmjQsst2xyM4LiZzJvP3UApo2N9ZQu1pmCvzqW/9cfNQgFyv/+4ZtZ
-ngWqDEQ3yaDw9czMaGasuRyJefKxYXjLTSBjmSy0XpuXwlUQFMB8Brm3C4AvpGV0
-q6P3hmbYJH1y77TCA6XaR9KR745XigNutgMSlM6K6bsQIdcZMWSPF7AKZCmtKxRO
-oWHK0EeZyNsiV7NybSr+9rzUlL1JNl861837LqSwAzrcqFKjgeM=
-=A31H
------END PGP SIGNATURE-----
---=-=-=--
+> - Alistair
+> 
+> > > 
+> > > That said, cronus does a bunch of other stupid things that I'm still
+> > > trying to figure out how to fix.
+> > > 
+> > > We might need to create a /dev/cfam rather than going through that
+> > > magic sysfs "raw" file, and I wouldn't mind using a single IDA so that
+> > > all the devices below a given FSI slace (cfam itself, sbefifo, occ,
+> > > ...) have the same "number".
+> > 
+> > Also while we're at reworking how all this is exposed to our broken
+> > userspace, I wouldn't mind putting all these dev entries under a
+> > directory, if I can figure out how to do that (I haven't really looked
+> > yet).
+> > 
+> > /dev/fsi/{cfamN,sbefifoN,occN, ...} and possibly similar by-id and by-
+> > path that other subsystems use, so we have something more deterministic
+> > than the "random number" crap we do now.
+> > 
+> > We can always keep hacks to do symlinks in our kernel tree until we
+> > have converted all our userspace users.
+> > 
+> > We currently control the only userspace users of this, so now is a good
+> > time to cleanup how we expose things. This won't always be the case.
+> > 
+> > Cheers,
+> > Ben.
+> > 
+> > 
+> 
+> 
