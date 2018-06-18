@@ -6,33 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B8A1C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:54:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F7CC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:54:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB244208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:54:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB244208A6
+	by mail.kernel.org (Postfix) with ESMTP id A5868208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:54:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5868208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967875AbeFRIyK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:54:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35880 "EHLO
+        id S967834AbeFRIyo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:54:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35846 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967762AbeFRIex (ORCPT
+        with ESMTP id S967731AbeFRIeo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:34:53 -0400
+        Mon, 18 Jun 2018 04:34:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4075DC49;
-        Mon, 18 Jun 2018 08:34:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 57EA6BAD;
+        Mon, 18 Jun 2018 08:34:43 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Helge Deller <deller@gmx.de>,
+        stable@vger.kernel.org,
+        Alexandre Jutras <alexandre.jutras@nxp.com>,
+        Etienne Carriere <etienne.carriere@linaro.org>,
+        Jens Wiklander <jens.wiklander@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 104/189] parisc: drivers.c: Fix section mismatches
-Date:   Mon, 18 Jun 2018 10:13:20 +0200
-Message-Id: <20180618081213.454407889@linuxfoundation.org>
+Subject: [PATCH 4.14 119/189] tee: check shm references are consistent in offset/size
+Date:   Mon, 18 Jun 2018 10:13:35 +0200
+Message-Id: <20180618081214.032696342@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -49,45 +52,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Helge Deller <deller@gmx.de>
+From: Etienne Carriere <etienne.carriere@linaro.org>
 
-[ Upstream commit b819439fea305a0bfd6ca23a7994fd1a8847c0d8 ]
+[ Upstream commit ab9d3db5b320a052452b9cd035599ee3c84bbee9 ]
 
-Fix two section mismatches in drivers.c:
-1) Section mismatch in reference from the function alloc_tree_node() to
-   the function .init.text:create_tree_node().
-2) Section mismatch in reference from the function walk_native_bus() to
-   the function .init.text:alloc_pa_dev().
+This change prevents userland from referencing TEE shared memory
+outside the area initially allocated by its owner. Prior this change an
+application could not reference or access memory it did not own but
+it could reference memory not explicitly allocated by owner but still
+allocated to the owner due to the memory allocation granule.
 
-Signed-off-by: Helge Deller <deller@gmx.de>
+Reported-by: Alexandre Jutras <alexandre.jutras@nxp.com>
+Signed-off-by: Etienne Carriere <etienne.carriere@linaro.org>
+Signed-off-by: Jens Wiklander <jens.wiklander@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/parisc/kernel/drivers.c |    7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+ drivers/tee/tee_core.c |   11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
---- a/arch/parisc/kernel/drivers.c
-+++ b/arch/parisc/kernel/drivers.c
-@@ -448,7 +448,8 @@ static int match_by_id(struct device * d
-  * Checks all the children of @parent for a matching @id.  If none
-  * found, it allocates a new device and returns it.
-  */
--static struct parisc_device * alloc_tree_node(struct device *parent, char id)
-+static struct parisc_device * __init alloc_tree_node(
-+			struct device *parent, char id)
- {
- 	struct match_id_data d = {
- 		.id = id,
-@@ -825,8 +826,8 @@ void walk_lower_bus(struct parisc_device
-  * devices which are not physically connected (such as extra serial &
-  * keyboard ports).  This problem is not yet solved.
-  */
--static void walk_native_bus(unsigned long io_io_low, unsigned long io_io_high,
--                            struct device *parent)
-+static void __init walk_native_bus(unsigned long io_io_low,
-+	unsigned long io_io_high, struct device *parent)
- {
- 	int i, devices_found = 0;
- 	unsigned long hpa = io_io_low;
+--- a/drivers/tee/tee_core.c
++++ b/drivers/tee/tee_core.c
+@@ -181,6 +181,17 @@ static int params_from_user(struct tee_c
+ 			if (IS_ERR(shm))
+ 				return PTR_ERR(shm);
+ 
++			/*
++			 * Ensure offset + size does not overflow offset
++			 * and does not overflow the size of the referred
++			 * shared memory object.
++			 */
++			if ((ip.a + ip.b) < ip.a ||
++			    (ip.a + ip.b) > shm->size) {
++				tee_shm_put(shm);
++				return -EINVAL;
++			}
++
+ 			params[n].u.memref.shm_offs = ip.a;
+ 			params[n].u.memref.size = ip.b;
+ 			params[n].u.memref.shm = shm;
 
 
