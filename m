@@ -2,132 +2,140 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07332C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6541C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1B89208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:07:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9493020852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:07:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="W1ez3wtL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1B89208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B/LF7gqK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9493020852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755289AbeFRQHl (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:07:41 -0400
-Received: from mail-wm0-f66.google.com ([74.125.82.66]:53547 "EHLO
-        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752877AbeFRQHj (ORCPT
+        id S934711AbeFRQHq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 12:07:46 -0400
+Received: from mail-oi0-f67.google.com ([209.85.218.67]:40120 "EHLO
+        mail-oi0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752877AbeFRQHn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:07:39 -0400
-Received: by mail-wm0-f66.google.com with SMTP id x6-v6so14987250wmc.3
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 09:07:38 -0700 (PDT)
+        Mon, 18 Jun 2018 12:07:43 -0400
+Received: by mail-oi0-f67.google.com with SMTP id f79-v6so15316103oib.7;
+        Mon, 18 Jun 2018 09:07:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=NnaW0rtbWHGoQLrkYxMBTwU30bx/UShD/Uk0hY8cqmg=;
-        b=W1ez3wtLmogV5TXjM5rOs+FyE9Jwp9NSgRVcCU7gBDxblb3vJNrUXSjvG2cxSoR9GI
-         JEJCQ1Cf7bG4GbhGPVkoJycf3Mhjbh8JKpEJQ6ZLcnY0qm2zGrKGaK46+ZKC1RNqbNkx
-         0gr7QAoI8fpCGpw8olLAfGLskXvtz2tdaO6MU=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=LwqPkrRKSHLwplVPk+u6CH4dMZuWTpW7aOKATQl5uU8=;
+        b=B/LF7gqKhJz+vYw8j7QjpA0wbR7whWaSYnl+oDWqaW0c5QDT2IelU75fNLGByU6hUX
+         Gg9AbqgNQVobmcBVeDSOBsq2U6iaFydm74ufa8kGq6u0BI2mmnqmW4pdXbmRa9WOuchF
+         x+ri1K/IizdEMjJfaL2IKVsckeApVeg5lXqclTktECakjB92waaLFg6C7SqSt1OJ7GIB
+         5aSoLDcgPx/Nu0q6B3T3QKT+iZX0p2/BJ56D7OL7f9eYcWMjuopTnVi2SHDF5KYjJ0xz
+         dtK0MHySmutzCPbaxzyM5ds3Q3Ohh79NXESCqRXFFBVgfn7rqp4+WdtRbjAm7dSR6Pbw
+         dWFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=NnaW0rtbWHGoQLrkYxMBTwU30bx/UShD/Uk0hY8cqmg=;
-        b=NtGIImbeXOIMar8E9s+8LLUdGDH+bQHApXGwu/Qwmz8iKhyz1PalFOMTjucCBMsnCG
-         mI2xAbFM7X0n9rqsr8ht/7O59EpTWvsxxcc7KI87BHUZ9WV1n65gxb7qAnAFIiJfTWdH
-         1oRLtDv6jnt+Escng/CRwGptNr8YuRtxr+wreXpx2T6hkL+JxEbgiQ9mL/xf0Z33NdtL
-         l4SfyHsItXV//pUDwmw2/ON4Eso4KrBDZbbPTjDkwRfBDu92CJeQu7DM10NCFXnDXhus
-         PzZROjWl54CihWr8Zx38ieQ2mPMZyzLWUPOJBgTkn2+6xdgYgrE5Uc6qRFClTTe5scQc
-         fZLw==
-X-Gm-Message-State: APt69E2eeYcVubJs6OxhxHidttZdmzKBk+M02Ppvck21HbSntturoom+
-        WsI1hHOKplC2Kt3wW8a+7PT8uA==
-X-Google-Smtp-Source: ADUXVKKIJb6+tIhxSwWjvsb6BmlQNW7JrprDm8gI93opakCl2qDSOJNf8kCRTaJc9J5P7SVq/WvorA==
-X-Received: by 2002:a50:cd96:: with SMTP id p22-v6mr11527418edi.159.1529338058259;
-        Mon, 18 Jun 2018 09:07:38 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:d0c7:bcda:eea:9e5d])
-        by smtp.gmail.com with ESMTPSA id d7-v6sm4739199edi.79.2018.06.18.09.07.37
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=LwqPkrRKSHLwplVPk+u6CH4dMZuWTpW7aOKATQl5uU8=;
+        b=G+6RrM45N4cYhJRKgbusDmtgMqIzyFC6fJxhH+aHJII2XkUkHlbGntKge97WwkyiSq
+         TrhC+VYoMnH29bAEDgjbdwP/Su71JBjwli2raMX1BMRAXEfijpyp/6M/O/G4oUx5G7dJ
+         VKQOBok8/OTidWJ/6K1zU2gigiBPFDQn6AHTJObgoREr1+itaP/CZ30AUDV0GjmbIBpj
+         Ff5ixcKASZu082NPuJ6TP2NzPM68OuuOV03yzAoBwBEwM3tYLEOMQlA/I0B8nXbE6w6C
+         +sZ44u8iIZW7SUpjuv/kMOxzDOt5wPHIjLdFqbofU5Fm3N0KsGKQ0CTNpOdqVvmR9kgD
+         4z8A==
+X-Gm-Message-State: APt69E3IDazPTZYWxi9C6uJY3xhv8aJOuHdOGUho6sTyUXrXQuvrpy45
+        Q6yToWRmPizfRSWopoBvCIM=
+X-Google-Smtp-Source: ADUXVKJMssmK0HHrlrJqSqR/dHfztnsnApQzT4QoENtMJ9EepmdpSIxTxvowJ+BWj8fIx5Ltq+PZUQ==
+X-Received: by 2002:aca:1c8:: with SMTP id 191-v6mr7720649oib.291.1529338062673;
+        Mon, 18 Jun 2018 09:07:42 -0700 (PDT)
+Received: from nuclearis2_1.lan (c-98-201-114-184.hsd1.tx.comcast.net. [98.201.114.184])
+        by smtp.gmail.com with ESMTPSA id v8-v6sm15420025oti.35.2018.06.18.09.07.41
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 09:07:37 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 18:07:35 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, y2038@lists.linaro.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [Intel-gfx] [PATCH] i915: remove timespec_to_jiffies_timeout
-Message-ID: <20180618160735.GL22478@phenom.ffwll.local>
-Mail-Followup-To: Arnd Bergmann <arnd@arndb.de>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>,
-        David Airlie <airlied@linux.ie>, y2038@lists.linaro.org,
-        intel-gfx@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-References: <20180618153855.2126048-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618153855.2126048-1-arnd@arndb.de>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
-User-Agent: Mutt/1.9.5 (2018-04-13)
+        Mon, 18 Jun 2018 09:07:42 -0700 (PDT)
+From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To:     bhelgaas@google.com
+Cc:     alex_gagniuc@dellteam.com, austin_bolen@dell.com,
+        shyam_iyer@dell.com, andy.shevchenko@gmail.com,
+        okaya@codeaurora.org, Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4] PCI: Check for PCIe downtraining conditions
+Date:   Mon, 18 Jun 2018 11:07:32 -0500
+Message-Id: <20180618160734.8134-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.14.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 05:38:43PM +0200, Arnd Bergmann wrote:
-> This function has been unused since commit 5ed0bdf21a85 ("drm: i915:
-> Use nsec based interfaces"). Let's remove the definition as well now
-> to help get rid of all uses of 'timespec'.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+PCIe downtraining happens when both the device and PCIe port are
+capable of a larger bus width or higher speed than negotiated.
+Downtraining might be indicative of other problems in the system, and
+identifying this from userspace is neither intuitive, nor straigh
+forward.
 
-Applied, thanks for the patch.
--Daniel
+The easiest way to detect this is with pcie_print_link_status(),
+since the bottleneck is usually the link that is downtrained. It's not
+a perfect solution, but it works extremely well in most cases.
 
-> ---
->  drivers/gpu/drm/i915/i915_drv.h | 8 --------
->  1 file changed, 8 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/i915_drv.h b/drivers/gpu/drm/i915/i915_drv.h
-> index 34c125e2d90c..5f61676e8fb8 100644
-> --- a/drivers/gpu/drm/i915/i915_drv.h
-> +++ b/drivers/gpu/drm/i915/i915_drv.h
-> @@ -3673,14 +3673,6 @@ static inline unsigned long nsecs_to_jiffies_timeout(const u64 n)
->          return min_t(u64, MAX_JIFFY_OFFSET, nsecs_to_jiffies64(n) + 1);
->  }
->  
-> -static inline unsigned long
-> -timespec_to_jiffies_timeout(const struct timespec *value)
-> -{
-> -	unsigned long j = timespec_to_jiffies(value);
-> -
-> -	return min_t(unsigned long, MAX_JIFFY_OFFSET, j + 1);
-> -}
-> -
->  /*
->   * If you need to wait X milliseconds between events A and B, but event B
->   * doesn't happen exactly after event A, you record the timestamp (jiffies) of
-> -- 
-> 2.9.0
-> 
-> _______________________________________________
-> Intel-gfx mailing list
-> Intel-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/intel-gfx
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
 
+Changes since v3:
+ - Remove extra newline and parentheses.
+ - Make sure v4.18-rc1 is still happy with the change (it is).
+
+Changes since v2:
+ - Check dev->is_virtfn flag
+
+Changes since v1:
+ - Use pcie_print_link_status() instead of reimplementing logic
+
+ drivers/pci/probe.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index ac876e32de4b..5e0d0a34fe8c 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -2205,6 +2205,24 @@ static struct pci_dev *pci_scan_device(struct pci_bus *bus, int devfn)
+ 	return dev;
+ }
+ 
++static void pcie_check_upstream_link(struct pci_dev *dev)
++{
++	if (!pci_is_pcie(dev))
++		return;
++
++	/* Look from the device up to avoid downstream ports with no devices. */
++	if ((pci_pcie_type(dev) != PCI_EXP_TYPE_ENDPOINT) &&
++	    (pci_pcie_type(dev) != PCI_EXP_TYPE_LEG_END) &&
++	    (pci_pcie_type(dev) != PCI_EXP_TYPE_UPSTREAM))
++		return;
++
++	/* Multi-function PCIe share the same link/status. */
++	if (PCI_FUNC(dev->devfn) != 0 || dev->is_virtfn)
++		return;
++
++	pcie_print_link_status(dev);
++}
++
+ static void pci_init_capabilities(struct pci_dev *dev)
+ {
+ 	/* Enhanced Allocation */
+@@ -2240,6 +2258,9 @@ static void pci_init_capabilities(struct pci_dev *dev)
+ 	/* Advanced Error Reporting */
+ 	pci_aer_init(dev);
+ 
++	/* Check link and detect downtrain errors */
++	pcie_check_upstream_link(dev);
++
+ 	if (pci_probe_reset_function(dev) == 0)
+ 		dev->reset_fn = 1;
+ }
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.14.3
+
