@@ -2,90 +2,126 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A11C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:06:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E84F9C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C362208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:06:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C362208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F3B1208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:07:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cIJh3ceo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F3B1208D5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754821AbeFRGGZ (ORCPT
+        id S1754852AbeFRGHV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 02:06:25 -0400
-Received: from icp-osb-irony-out7.external.iinet.net.au ([203.59.1.107]:5715
-        "EHLO icp-osb-irony-out7.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1754488AbeFRGGX (ORCPT
+        Mon, 18 Jun 2018 02:07:21 -0400
+Received: from mail-lf0-f67.google.com ([209.85.215.67]:45733 "EHLO
+        mail-lf0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754458AbeFRGHU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 02:06:23 -0400
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2ArAgAJSydb/zXSMGdbHAEBAQQBAQoBA?=
- =?us-ascii?q?YNIYm0SKIt9jFJGAQEBAQEGgT+UYIF4HgwMAYRAglUhNBgBAgEBAQEBAQJtHAy?=
- =?us-ascii?q?GKCgncBKDJQKBcgwQrAYaAoQ/g2eBYwWIVIEMgQeHF4dPApkWCAGFfIkCiCOFI?=
- =?us-ascii?q?gGKEoh8OIFSMxoIKAiCfh+CAheIWYVQLTB6AQGPWwEB?=
-X-IPAS-Result: =?us-ascii?q?A2ArAgAJSydb/zXSMGdbHAEBAQQBAQoBAYNIYm0SKIt9jFJ?=
- =?us-ascii?q?GAQEBAQEGgT+UYIF4HgwMAYRAglUhNBgBAgEBAQEBAQJtHAyGKCgncBKDJQKBc?=
- =?us-ascii?q?gwQrAYaAoQ/g2eBYwWIVIEMgQeHF4dPApkWCAGFfIkCiCOFIgGKEoh8OIFSMxo?=
- =?us-ascii?q?IKAiCfh+CAheIWYVQLTB6AQGPWwEB?=
-X-IronPort-AV: E=Sophos;i="5.51,238,1526313600"; 
-   d="scan'208";a="90009903"
-Received: from unknown (HELO goober.digi.com) ([103.48.210.53])
-  by icp-osb-irony-out7.iinet.net.au with ESMTP; 18 Jun 2018 14:05:00 +0800
-From:   Greg Ungerer <gerg@linux-m68k.org>
-To:     mawilcox@microsoft.com, linux-m68k@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Greg Ungerer <gerg@linux-m68k.org>
-Subject: [PATCH] m68k: fix "bad page state" oops on ColdFire boot
-Date:   Mon, 18 Jun 2018 16:04:26 +1000
-Message-Id: <20180618060426.24497-1-gerg@linux-m68k.org>
+        Mon, 18 Jun 2018 02:07:20 -0400
+Received: by mail-lf0-f67.google.com with SMTP id a13-v6so2654645lfk.12
+        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 23:07:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=TYdgGtAUZgdonklPmw9db3u5DotkG5GQ4FXvZy0fcaU=;
+        b=cIJh3ceoKKMPGqN6263C3kp2uHTO7pdHWpHVhIzQDVMxFqg4kMfu6QF2K8l6hdufvC
+         h5hc36ScI59DU3Zv+qG+q8eNp+XaqO2+6gNtaf4CWT5j992hqu8m3T0OsdnzKPVo4OSo
+         djTfK/zTPcrJKX0oWTJCv6sPOSW0vGSWTu+i8G/LuaM1QmFYh0K10yHj9BjkSKPJEzud
+         LDBf+mMx5acu5yhA8ly0LgWiZFJIiBqBo0H0Qg1R62QvmY3+Ulj6BjTwvZaqEcmiGI1C
+         CIDMD+SXTn5KE68qKKU4oubv8Gu2bboNqaqzaoGv4MS5nL+wIGHYWgycFmEfq7YZnY6R
+         rzCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=TYdgGtAUZgdonklPmw9db3u5DotkG5GQ4FXvZy0fcaU=;
+        b=KyCksot16GaHyGwMTaj0kkdNSDy+hmfJ9n6cHHwGqzC+olHql0S1oSdwEF4JkXELgT
+         MOITH7b4ptaHLX1KUcSM9YHmgcVnk5PI6k1LIBfI4xhMbYOJlUcabvsucsl5pchKS3ir
+         hvoYZU3S1RPcZIWq6x/CDl5EFTBsXsT4smgiHQtnDGff9EHDjNFPBydVNLmYQmGFkZDe
+         vMHh2x/WPubnroSdDXJQ5F9iWFHh5nBcKI2qk2PQXYsDaq4oJgI/QejO+OxZzCfSzT5f
+         UaxGCnTxBurPANYwALN3IQB60EEIlTox7ASRlYvfSClnRE9pKCNAigT7b6WCNLHZo+Cj
+         ciKQ==
+X-Gm-Message-State: APt69E34X43hyiKdIS3iU17Ii3cngxl6iXtI+IKTg3zgb6mBXHVpxVmT
+        0jZ7CuejvyXCuSjSEvqhmNo=
+X-Google-Smtp-Source: ADUXVKLnzyTJW6OKQgjnKJwGaahH37KoBRalm2pjw6d4KIKgugpl8ll1l4p8OPAY/RhMHVmrPm4L1g==
+X-Received: by 2002:a19:f03:: with SMTP id e3-v6mr4137607lfi.83.1529302038711;
+        Sun, 17 Jun 2018 23:07:18 -0700 (PDT)
+Received: from a2k-HP-ProDesk-600-G2-SFF.kyiv.epam.com (ll-74.141.223.85.sovam.net.ua. [85.223.141.74])
+        by smtp.gmail.com with ESMTPSA id c74-v6sm2627134lfh.78.2018.06.17.23.07.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sun, 17 Jun 2018 23:07:17 -0700 (PDT)
+From:   Oleksandr Andrushchenko <andr2000@gmail.com>
+To:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org,
+        gustavo@padovan.org, jgross@suse.com, boris.ostrovsky@oracle.com,
+        dan.carpenter@oracle.com
+Cc:     andr2000@gmail.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: [PATCH v2] drm: Replace NULL with error value in drm_prime_pages_to_sg
+Date:   Mon, 18 Jun 2018 09:07:09 +0300
+Message-Id: <20180618060709.14290-1-andr2000@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Booting a ColdFire m68k core with MMU enabled causes a "bad page state"
-oops since commit 1d40a5ea01d5 ("mm: mark pages in use for page tables"):
+From: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
 
- BUG: Bad page state in process sh  pfn:01ce2
- page:004fefc8 count:0 mapcount:-1024 mapping:00000000 index:0x0
- flags: 0x0()
- raw: 00000000 00000000 00000000 fffffbff 00000000 00000100 00000200 00000000
- raw: 039c4000
- page dumped because: nonzero mapcount
- Modules linked in:
- CPU: 0 PID: 22 Comm: sh Not tainted 4.17.0-07461-g1d40a5ea01d5 #13
+Dan Carpenter has reported that there is the following static checker
+warning:
+	drivers/gpu/drm/drm_prime.c:317 drm_gem_map_dma_buf()
+	warn: 'sgt' can also be NULL
 
-Fix by calling pgtable_page_dtor() in our __pte_free_tlb() code path,
-so that the PG_table flag is cleared before we free the pte page.
+314	sgt = obj->dev->driver->gem_prime_get_sg_table(obj);
+315
+316	if (!IS_ERR(sgt)) {
+317		if (!dma_map_sg_attrs(attach->dev, sgt->sgl, sgt->nents, dir,
 
-Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
-CC: Matthew Wilcox <mawilcox@microsoft.com>
+Problematic functions are xen_drm_front_gem_get_sg_table and
+drm_gem_cma_prime_get_sg_table. Fix those by replacing NULL with error value.
+
+Signed-off-by: Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
 ---
- arch/m68k/include/asm/mcf_pgalloc.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/drm_gem_cma_helper.c    | 2 +-
+ drivers/gpu/drm/xen/xen_drm_front_gem.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Matthew: I came across this thread at https://lkml.org/lkml/2018/6/17/163
-         about a similar problem with openrisc. Based on that I came up
-         with this fix for m68k/ColdFire. Fixes the issue for me.
-
-diff --git a/arch/m68k/include/asm/mcf_pgalloc.h b/arch/m68k/include/asm/mcf_pgalloc.h
-index 8b707c249026..8c441eb57b80 100644
---- a/arch/m68k/include/asm/mcf_pgalloc.h
-+++ b/arch/m68k/include/asm/mcf_pgalloc.h
-@@ -44,6 +44,7 @@ extern inline pmd_t *pmd_alloc_kernel(pgd_t *pgd, unsigned long address)
- static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t page,
- 				  unsigned long address)
- {
-+	pgtable_page_dtor(page);
- 	__free_page(page);
- }
+diff --git a/drivers/gpu/drm/drm_gem_cma_helper.c b/drivers/gpu/drm/drm_gem_cma_helper.c
+index 80a5115c3846..ce868ce288fb 100644
+--- a/drivers/gpu/drm/drm_gem_cma_helper.c
++++ b/drivers/gpu/drm/drm_gem_cma_helper.c
+@@ -436,7 +436,7 @@ struct sg_table *drm_gem_cma_prime_get_sg_table(struct drm_gem_object *obj)
  
+ 	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
+ 	if (!sgt)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	ret = dma_get_sgtable(obj->dev->dev, sgt, cma_obj->vaddr,
+ 			      cma_obj->paddr, obj->size);
+diff --git a/drivers/gpu/drm/xen/xen_drm_front_gem.c b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+index c85bfe7571cb..47ff019d3aef 100644
+--- a/drivers/gpu/drm/xen/xen_drm_front_gem.c
++++ b/drivers/gpu/drm/xen/xen_drm_front_gem.c
+@@ -179,7 +179,7 @@ struct sg_table *xen_drm_front_gem_get_sg_table(struct drm_gem_object *gem_obj)
+ 	struct xen_gem_object *xen_obj = to_xen_gem_obj(gem_obj);
+ 
+ 	if (!xen_obj->pages)
+-		return NULL;
++		return ERR_PTR(-ENOMEM);
+ 
+ 	return drm_prime_pages_to_sg(xen_obj->pages, xen_obj->num_pages);
+ }
 -- 
 2.17.1
 
