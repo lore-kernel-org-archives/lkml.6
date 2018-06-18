@@ -2,108 +2,163 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CBC8C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:04:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AC2DC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:04:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6D8B208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:04:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="kx7OJiXO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D8B208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 2EF81208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:04:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EF81208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965331AbeFRPEJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:04:09 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:42207 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964918AbeFRPBD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:01:03 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 98D311E04F7;
-        Mon, 18 Jun 2018 17:01:01 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529334061; bh=BPUL6tm3QsV4cXmbS1MdxYx6PO+LVGi6PCd9tRsjytE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kx7OJiXOQeLBhfwqeLMsbtbov/QLNeH4AFe7lvlBHuaYpzUAttHWWjAKc9ZGYkzCt
-         X3sM1hSF5amI07vxooKe8Ok+kPxUAwNnZLwOZh+KFay532uUBv81thPBjEGnrcj9X2
-         wJ7l1FVhg9P7Uh2UCF+jC/1YOD4YC67SERsKciUhGdABkb+KvODScrLB2Q+naqtSVs
-         S5OjaV7w7dnlyEG/pwhAi7NQy9cIu7nw/opQf7k8ux9hVNMTG/XpR8+GRKlHWtIt6a
-         1UipDpjWLOsmlMWq3i5znt9mdwqQe44GjN29PKRiVwWpE1h8SFy5QsF1srKK2yv2MI
-         V2ybXkmWQHM8Q==
-Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 9AAD35FEA;
-        Mon, 18 Jun 2018 08:01:00 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id CD1EA3D73D;
-        Mon, 18 Jun 2018 16:00:59 +0100 (WEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v4 00/10] Add MSI-X support on pcitest tool
-Date:   Mon, 18 Jun 2018 16:00:19 +0100
-Message-Id: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
+        id S965358AbeFRPEP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:04:15 -0400
+Received: from mga03.intel.com ([134.134.136.65]:41696 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S964915AbeFRPEK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:04:10 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 08:04:10 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
+   d="scan'208";a="47966659"
+Received: from abyunus-mobl.amr.corp.intel.com (HELO [10.254.89.6]) ([10.254.89.6])
+  by fmsmga007.fm.intel.com with ESMTP; 18 Jun 2018 08:04:09 -0700
+Subject: Re: [RFC PATCH] x86/arch_prctl: Add ARCH_SET_XCR0 to mask XCR0
+ per-thread
+To:     Keno Fischer <keno@juliacomputing.com>
+References: <1529195582-64207-1-git-send-email-keno@alumni.harvard.edu>
+ <d8503ac3-b6a4-d6cc-3db7-4e092724b79d@linux.intel.com>
+ <CABV8kRwhrQ75g9y7v4Mq05CfZ9khhVQCwkp052jcNOvKs6-2Fg@mail.gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <andi@firstfloor.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Kyle Huey <khuey@kylehuey.com>,
+        Robert O'Callahan <robert@ocallahan.org>
+From:   Dave Hansen <dave.hansen@linux.intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@linux.intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <11347d3a-8491-1545-d47d-a1cb2fb9b410@linux.intel.com>
+Date:   Mon, 18 Jun 2018 08:04:09 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <CABV8kRwhrQ75g9y7v4Mq05CfZ9khhVQCwkp052jcNOvKs6-2Fg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Patch series made against Lorenzo's master branch.
+On 06/18/2018 07:42 AM, Keno Fischer wrote:
+>> There's no way this is even close to viable until it has been made to
+>> cope with holes.
+> 
+> Ok, it seems to me the first decision is whether it should be allowed
+> to have the compacted format (with holes) in an in-memory xstate
+> image. Doing so seems possible, but would require more invasive
+> changes to the kernel, so I'm gonna ignore it for now.
+> 
+> If we want to keep the in-memory xstate layout constant after boot
+> time, I see four ways to do that for this feature.
+> 
+> 1) Set up XCR0 in a different place, so that the kernel xsaves/xrstors
+>     use an XCR0 that matches the layout the kernel expects.
 
-Add MSI-X support on pcitest tool.
+... and do XCR0 writes before every XSAVES/XRSTORS, including in the
+context-switch path?
 
-Add new callbacks methods and handlers to trigger the MSI-X interrupts
-on the EP DesignWare IP driver.
+> 2) Use xsaveopt when this particular thread flag is set and have the
+>     kernel be able to deal with non-compressed xstate images, even
+>     if xsaves is available.
 
-Allow to set/get MSI-X EP maximum capability number.
+What about if there is supervisor state in place?
 
-Rework on set/get and triggering MSI methods on EP DesignWare IP driver.
+> 3) What's in this patch now, but fix up the xstate after saving it.
 
-Add a new input parameter (msix) to pcitest tool to test MSI-X feature.
+That's _maybe_ viable.  But, it's going to slow things down quite a bit
+and has to be done with preempt disabled.
 
-Update the pcitest.sh script to support MSI-X feature tests.
+> 4) Catch the fault thrown by xsaves/xrestors in this situation, update
+>     XCR0, redo the xsaves/restores, put XCR0 back and continue
+>     execution after the faulting instruction.
 
-Gustavo Pimentel (10):
-  PCI: endpoint: Add MSI-X interfaces
-  PCI: dwc: Add MSI-X callbacks handler
-  PCI: Update xxx_pcie_ep_raise_irq() and pci_epc_raise_irq() signatures
-  PCI: dwc: Rework MSI callbacks handler
-  PCI: dwc: Add legacy interrupt callback handler
-  pci-epf-test/pci_endpoint_test: Cleanup PCI_ENDPOINT_TEST memspace
-  pci-epf-test/pci_endpoint_test: Use irq_type module parameter
-  pci-epf-test/pci_endpoint_test: Add MSI-X support
-  pci_endpoint_test: Add 2 ioctl commands
-  tools: PCI: Add MSI-X support
+I'm worried about the kernel pieces that go digging in the XSAVE data
+getting confused more than the hardware getting confused.
 
- Documentation/misc-devices/pci-endpoint-test.txt  |   6 +
- drivers/misc/pci_endpoint_test.c                  | 261 ++++++++++++++++------
- drivers/pci/controller/dwc/pci-dra7xx.c           |   2 +-
- drivers/pci/controller/dwc/pcie-artpec6.c         |   2 +-
- drivers/pci/controller/dwc/pcie-designware-ep.c   | 205 +++++++++++++++--
- drivers/pci/controller/dwc/pcie-designware-plat.c |   7 +-
- drivers/pci/controller/dwc/pcie-designware.h      |  31 ++-
- drivers/pci/controller/pcie-cadence-ep.c          |   3 +-
- drivers/pci/endpoint/functions/pci-epf-test.c     |  81 +++++--
- drivers/pci/endpoint/pci-ep-cfs.c                 |  24 ++
- drivers/pci/endpoint/pci-epc-core.c               |  68 +++++-
- include/linux/pci-epc.h                           |  15 +-
- include/linux/pci-epf.h                           |   1 +
- include/uapi/linux/pcitest.h                      |   3 +
- tools/pci/pcitest.c                               |  51 ++++-
- tools/pci/pcitest.sh                              |  15 ++
- 16 files changed, 643 insertions(+), 132 deletions(-)
+> Option 1) seems easiest, but it would also require adding code
+> somewhere on the common path, which I assume is a no-go ;).
 
--- 
-2.7.4
+Yeah, that would be horribly slow.
 
+You then also have to be really careful with interrupts and preempt when
+you're in a funky XCR0 configuration.
 
+> Option 3) seems doable entirely in the slow path for this feature.
+> If we xsaves with the modified XCR0, we can then fix up the memory
+> image to match the expected layout. Similarly, we could xrestors
+> in the slow path (from standard layout) and rely on the
+> `fpregs_state_valid` mechanism to prevent the fault.
+
+... with one more modification.  You need two buffers _anyway_ if you do
+this.  So you would probably just XSAVE to a new buffer and then convert
+that back to the "real" buffer in the thread struct.
+
+> At least currently, it is my understanding that `xfeatures_mask` only has
+> user features, am I mistaken about that?
+
+We're slowing adding supervisor support.  I think accounting for
+supervisor features is a requirement for any new XSAVE code.
