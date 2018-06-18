@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C61C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBBFAC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F30A120864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30A120864
+	by mail.kernel.org (Postfix) with ESMTP id A544620864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A544620864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966960AbeFRIa1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:30:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33672 "EHLO
+        id S966973AbeFRIab (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:30:31 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33702 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966920AbeFRIaX (ORCPT
+        with ESMTP id S966718AbeFRIa3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:30:23 -0400
+        Mon, 18 Jun 2018 04:30:29 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18EEAC87;
-        Mon, 18 Jun 2018 08:30:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 7CE00C7A;
+        Mon, 18 Jun 2018 08:30:28 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+        stable@vger.kernel.org,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Rob Clark <robdclark@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 034/189] netfilter: nf_tables: fix out-of-bounds in nft_chain_commit_update
-Date:   Mon, 18 Jun 2018 10:12:10 +0200
-Message-Id: <20180618081210.648276962@linuxfoundation.org>
+Subject: [PATCH 4.14 036/189] drm/msm: Fix possible null dereference on failure of get_pages()
+Date:   Mon, 18 Jun 2018 10:12:12 +0200
+Message-Id: <20180618081210.732323282@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,63 +52,62 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Taehee Yoo <ap420073@gmail.com>
+From: Ben Hutchings <ben.hutchings@codethink.co.uk>
 
-[ Upstream commit d71efb599ad42ef1e564c652d8084252bdc85edf ]
+[ Upstream commit 3976626ea3d2011f8fd3f3a47070a8b792018253 ]
 
-When chain name is changed, nft_chain_commit_update is called.
-In the nft_chain_commit_update, trans->ctx.chain->name has old chain name
-and nft_trans_chain_name(trans) has new chain name.
-If new chain name is longer than old chain name, KASAN warns
-slab-out-of-bounds.
+Commit 62e3a3e342af changed get_pages() to initialise
+msm_gem_object::pages before trying to initialise msm_gem_object::sgt,
+so that put_pages() would properly clean up pages in the failure
+case.
 
-[  175.015012] BUG: KASAN: slab-out-of-bounds in strcpy+0x9e/0xb0
-[  175.022735] Write of size 1 at addr ffff880114e022da by task iptables-compat/1458
+However, this means that put_pages() now needs to check that
+msm_gem_object::sgt is not null before trying to clean it up, and
+this check was only applied to part of the cleanup code.  Move
+it all into the conditional block.  (Strictly speaking we don't
+need to make the kfree() conditional, but since we can't avoid
+checking for null ourselves we may as well do so.)
 
-[  175.031353] CPU: 0 PID: 1458 Comm: iptables-compat Not tainted 4.16.0-rc7+ #146
-[  175.031353] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
-[  175.031353] Call Trace:
-[  175.031353]  dump_stack+0x68/0xa0
-[  175.031353]  print_address_description+0xd0/0x260
-[  175.031353]  ? strcpy+0x9e/0xb0
-[  175.031353]  kasan_report+0x234/0x350
-[  175.031353]  __asan_report_store1_noabort+0x1c/0x20
-[  175.031353]  strcpy+0x9e/0xb0
-[  175.031353]  nf_tables_commit+0x1ccc/0x2990
-[  175.031353]  nfnetlink_rcv+0x141e/0x16c0
-[  175.031353]  ? nfnetlink_net_init+0x150/0x150
-[  175.031353]  ? lock_acquire+0x370/0x370
-[  175.031353]  ? lock_acquire+0x370/0x370
-[  175.031353]  netlink_unicast+0x444/0x640
-[  175.031353]  ? netlink_attachskb+0x700/0x700
-[  175.031353]  ? _copy_from_iter_full+0x180/0x740
-[  175.031353]  ? kasan_check_write+0x14/0x20
-[  175.031353]  ? _copy_from_user+0x9b/0xd0
-[  175.031353]  netlink_sendmsg+0x845/0xc70
-[ ... ]
-
-Steps to reproduce:
-   iptables-compat -N 1
-   iptables-compat -E 1 aaaaaaaaa
-
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: 62e3a3e342af ("drm/msm: fix leak in failed get_pages")
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/netfilter/nf_tables_api.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/msm/msm_gem.c |   20 +++++++++++---------
+ 1 file changed, 11 insertions(+), 9 deletions(-)
 
---- a/net/netfilter/nf_tables_api.c
-+++ b/net/netfilter/nf_tables_api.c
-@@ -4977,7 +4977,7 @@ static void nft_chain_commit_update(stru
- 	struct nft_base_chain *basechain;
+--- a/drivers/gpu/drm/msm/msm_gem.c
++++ b/drivers/gpu/drm/msm/msm_gem.c
+@@ -132,17 +132,19 @@ static void put_pages(struct drm_gem_obj
+ 	struct msm_gem_object *msm_obj = to_msm_bo(obj);
  
- 	if (nft_trans_chain_name(trans))
--		strcpy(trans->ctx.chain->name, nft_trans_chain_name(trans));
-+		swap(trans->ctx.chain->name, nft_trans_chain_name(trans));
+ 	if (msm_obj->pages) {
+-		/* For non-cached buffers, ensure the new pages are clean
+-		 * because display controller, GPU, etc. are not coherent:
+-		 */
+-		if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
+-			dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
+-					msm_obj->sgt->nents, DMA_BIDIRECTIONAL);
++		if (msm_obj->sgt) {
++			/* For non-cached buffers, ensure the new
++			 * pages are clean because display controller,
++			 * GPU, etc. are not coherent:
++			 */
++			if (msm_obj->flags & (MSM_BO_WC|MSM_BO_UNCACHED))
++				dma_unmap_sg(obj->dev->dev, msm_obj->sgt->sgl,
++					     msm_obj->sgt->nents,
++					     DMA_BIDIRECTIONAL);
  
- 	if (!nft_is_base_chain(trans->ctx.chain))
- 		return;
+-		if (msm_obj->sgt)
+ 			sg_free_table(msm_obj->sgt);
+-
+-		kfree(msm_obj->sgt);
++			kfree(msm_obj->sgt);
++		}
+ 
+ 		if (use_pages(obj))
+ 			drm_gem_put_pages(obj, msm_obj->pages, true, false);
 
 
