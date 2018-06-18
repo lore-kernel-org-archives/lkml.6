@@ -2,91 +2,122 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA57C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E22EBC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 924E7208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 923DD208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:47:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WaMNCFoq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 924E7208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLExMCxN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923DD208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933189AbeFRPrN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:47:13 -0400
-Received: from mail-ot0-f193.google.com ([74.125.82.193]:36215 "EHLO
-        mail-ot0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752765AbeFRPrL (ORCPT
+        id S934140AbeFRPrc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:47:32 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:43375 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933524AbeFRPra (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:47:11 -0400
-Received: by mail-ot0-f193.google.com with SMTP id c15-v6so19031706otl.3;
-        Mon, 18 Jun 2018 08:47:11 -0700 (PDT)
+        Mon, 18 Jun 2018 11:47:30 -0400
+Received: by mail-lf0-f66.google.com with SMTP id x13-v6so9962420lff.10;
+        Mon, 18 Jun 2018 08:47:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=VIF0q25lrG4JYObPzZsdGexK5EJlSyx/wtPLT7veHQE=;
-        b=WaMNCFoq5UzjbKc7CEqr0akwmkGWCNzLPNaBebHAVD7cZd7S3DetyNJgKoHmwFtKKt
-         cxZIcz3svcJNY816X9vRs0l2bLJSBjY0YME02Zo62L2TP2OuD1ID3PS7mT47ACE5LEid
-         U3TQ7xIxHQ9IxB+dw6bbcDAjhHlK0NTaf4Dq217PNkJ7KyR7HAk+KxIYUBEk94CD6Anv
-         hWf7lzgGbJcpeQOH2vToivXfnTvrov4xm+eF1XfVkXHpIHF5OGmX/5cZCGMPBwQIH2iU
-         +kYcrAt5tmAvrxMa/vzmU3U+lDSLWeB4WNlK+pWiOOFxRrW69h6k+uJ2nx8JApT0Oxt9
-         QXAw==
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=qgzqnrQalWsGW1RJVA40c2sIz7hW8l0vaoU27TZiEco=;
+        b=ZLExMCxNBYTqhWy/KRYNEbP0v74/bZNn2kC6fDdbzepymZqDoIeuClUhYhnJ+EoWfF
+         UIN5wwdwqJR641ZAdWtJGAkBvuCvcBPf1UTYx4ICUSKs5Ah6b9SWNEOM5c9L8BgfCswh
+         AKUgVhEakh6cPSTev7Vx/qNPdOK1IYihMz+/ScngoHxVWjeR2v7+pNgodcnAydjFQsJV
+         Tv6GpXSQF57ZUd/ijPLNxh5yU52v4uuzk+dg0juk+9nikbudkE8WrJm8pIPHcxmO12MT
+         hY9ubxMw8UejiPLA6VM6/u2m2j7Lx211ay/7C10bCbR+zE4Kehck4bFVvNrYhjrjG8RD
+         PP2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=VIF0q25lrG4JYObPzZsdGexK5EJlSyx/wtPLT7veHQE=;
-        b=Px+RZItBUFWjAtQIKC9GoR8PB5R6rI75kn4xXZSfoU3ck73gl5duW6HBLUYRINjYnk
-         9ncMiGgZyVlIGDnuk0dRTWiR5Urmsd/WTsq8KCnd7jlDsXSopJTVtPGlfjrmbb9opXrN
-         80+630rRtFO5evy5Zg3EzAp9IUy2NexslQySA6G0J2yoa4nhWYAwofcULL8w9uAddhEv
-         c4kgaBznCHl9/PT5MHhQlsmHiEHy60Yv7NI0kw1z6GZ0dfumSbxYQLFLIs/gaT86c4F+
-         l1sstsJwcFjpa6TQykPtFBpszDAOxrcXRAYUD/UCOSQnOn6VVL/jPMzMTSwO3qzIo7dZ
-         F51w==
-X-Gm-Message-State: APt69E1M9c+jXN3YuzlPEqNQBDcV1IATZ3nMq1kpbsDPoxwmvykoqtZJ
-        W3CnwwkCE2D6LY0QLek2+gtlaAWIsE/13z3jyXE=
-X-Google-Smtp-Source: ADUXVKKeBUn4yOx4a9lo9l4fnpdlgXsEjiBmXNT4vrKtMkkRicAr15znf8IP313I2e49VRW+zEjqpmF0nyrqk3x/fyM=
-X-Received: by 2002:a9d:1813:: with SMTP id b19-v6mr8309514ote.128.1529336830745;
- Mon, 18 Jun 2018 08:47:10 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=qgzqnrQalWsGW1RJVA40c2sIz7hW8l0vaoU27TZiEco=;
+        b=JvfQSbNoKe/pObgPSmeDEq6wudzbs3RXRXwHUMfUajRf4Rc6OK6L01340logzozQts
+         IpYXohU6CJCfuRkS5ZxqNSC6ddfLMC/BHNGQS0RK0mAd0E7v1H5s9WuXR98NFk5Uommr
+         Z6Khehp6Y9twbF4UIT/kkI7AaLVLCGYKK2vFmTd60dBqtyy0VmTe/xiO8Z8Zl1IY2pp1
+         aGzWAdIcezC4Orh2tOtRfMgFb929XgMqRUOPz4WYo9Ww3yVWQkLJcQ1/JAxrzBDcVsza
+         8sMbVeYxl3Pk069k6tiPCoKTBjtn8gRdiD7Hckgsf9CFnT1fO/RF37GPTANtIW3F+ugl
+         1qZA==
+X-Gm-Message-State: APt69E2VmnIsV2L7/oTwiVZw3KzGY+ZGijLGg8CaGmOPEZck7pkpehe2
+        Et9OTb9v7OUiizZDxg1PUtb7rpGJWtidMR3Z0mw=
+X-Google-Smtp-Source: ADUXVKI5mFeSzSlEh8xn8+Kudft9xYR5VJUplKTE26kDGptmPtSvO12sUb+AfOrDy+rWglC2Hq3gQP3JbDNKhCOFS8c=
+X-Received: by 2002:a2e:9ac4:: with SMTP id p4-v6mr8528334ljj.60.1529336849179;
+ Mon, 18 Jun 2018 08:47:29 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:47:10
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:47:28
  -0700 (PDT)
-In-Reply-To: <20180618154257.16919-1-manu@freebsd.org>
-References: <20180618154257.16919-1-manu@freebsd.org>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 18 Jun 2018 12:47:10 -0300
-Message-ID: <CAOMZO5Bt+7FGT4Xk7HZdVjukNsG=eY5-P+9Qnig6h-cQSJvOvA@mail.gmail.com>
-Subject: Re: [PATCH] ARM: dts: imx6: RIoTboard Add chosen stdout-path property
-To:     Emmanuel Vadot <manu@freebsd.org>
-Cc:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
+In-Reply-To: <20180618150715.GA30470@amd>
+References: <20180618144210.72367-1-arnd@arndb.de> <20180618150715.GA30470@amd>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Jun 2018 17:47:28 +0200
+X-Google-Sender-Auth: GmNvrDGxJQNLPUaVoGXl3Pz7yAU
+Message-ID: <CAK8P3a1K19WoEGaqrj6Fx0GYyj1jmA50dS+dMJuF7ugkwjCiug@mail.gmail.com>
+Subject: Re: [PATCH] leds: ledtrig-activity: use ktime_get_boot_ns()
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Kees Cook <keescook@chromium.org>, Willy Tarreau <w@1wt.eu>,
+        linux-leds@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 12:42 PM, Emmanuel Vadot <manu@freebsd.org> wrote:
-> The RIoTboard debug uart is connected to serial1.
-> Add a chosen property in the DTS so OS knows what serial port to use for
-> the console.
+On Mon, Jun 18, 2018 at 5:07 PM, Pavel Machek <pavel@ucw.cz> wrote:
+> Hi!
 >
-> Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
+>> get_monotonic_boottime() is deprecated, so let's convert this to
+>> the simpler ktime_get_boot_ns().
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+>
+> Have you tested it?
 
-Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
+No, only build-tested.
+
+>> diff --git a/drivers/leds/trigger/ledtrig-activity.c b/drivers/leds/trigger/ledtrig-activity.c
+>> index 5081894082bd..589c1bc4d0b9 100644
+>> --- a/drivers/leds/trigger/ledtrig-activity.c
+>> +++ b/drivers/leds/trigger/ledtrig-activity.c
+>> @@ -37,7 +37,6 @@ static void led_activity_function(struct timer_list *t)
+>>       struct activity_data *activity_data = from_timer(activity_data, t,
+>>                                                        timer);
+>>       struct led_classdev *led_cdev = activity_data->led_cdev;
+>> -     struct timespec boot_time;
+>>       unsigned int target;
+>>       unsigned int usage;
+>>       int delay;
+>> @@ -57,7 +56,7 @@ static void led_activity_function(struct timer_list *t)
+>>               return;
+>>       }
+>>
+>> -     get_monotonic_boottime(&boot_time);
+>> +     curr_boot = ktime_get_boot_ns();
+>>
+>>       cpus = 0;
+>>       curr_used = 0;
+>> @@ -76,7 +75,6 @@ static void led_activity_function(struct timer_list *t)
+>>        * down to 16us, ensuring we won't overflow 32-bit computations below
+>>        * even up to 3k CPUs, while keeping divides cheap on smaller systems.
+>>        */
+>> -     curr_boot = timespec_to_ns(&boot_time) * cpus;
+>
+> Original code is pretty weird (notice the * cpus), so I'm
+> double-checking.
+
+Ok, dropping the *cpus was not intentional, I'll repost a version that puts
+it that back. Thanks for pointing this out!
+
+       Arnd
