@@ -2,158 +2,91 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83F2C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA2E4C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:01:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DDD2083D
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:59:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8DDD2083D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 78C9320836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:01:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="JscAzfmd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78C9320836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936168AbeFRS66 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 14:58:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57228 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935828AbeFRS65 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 14:58:57 -0400
-Received: from gandalf.local.home (cpe-66-24-56-78.stny.res.rr.com [66.24.56.78])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0B3620693;
-        Mon, 18 Jun 2018 18:58:55 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 14:58:54 -0400
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-Cc:     hverkuil@xs4all.nl, mchehab@kernel.org, mingo@redhat.com,
-        isely@pobox.com, bhumirks@gmail.com, colin.king@canonical.com,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] Add TRACE_EVENTs in pwc_isoc_handler()
-Message-ID: <20180618145854.2092c6e0@gandalf.local.home>
-In-Reply-To: <20180617143625.32133-1-matwey@sai.msu.ru>
-References: <20180617143625.32133-1-matwey@sai.msu.ru>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S936040AbeFRTBw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:01:52 -0400
+Received: from mail-io0-f193.google.com ([209.85.223.193]:37404 "EHLO
+        mail-io0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935893AbeFRTBt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:01:49 -0400
+Received: by mail-io0-f193.google.com with SMTP id s26-v6so17810117ioj.4;
+        Mon, 18 Jun 2018 12:01:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=+sgfX94el/0wEApQrpeej6G0XMDdTH8E3B/hil/sYlo=;
+        b=JscAzfmdVLWj6mdcnQ7QKVB6u0M3XbZq0LprPiy9qWziQioOk3I9LiKKTRtztJGUA6
+         oLKDDkL6W3isylf4QWaygkQ/nCblAV1Jvj1xgW1aG7aolNyqnUgcXE+A9clrGgqiVc+x
+         a12ld1XhwkxHOsEpn3CEunjp55ve23+vp3sFQEG/wWeX2RXzfudcowYABQSpz/LG2+uX
+         3+uvcR044dt24qj47im4HkXvCtDbYO/Fc2S8F68pie7yWCvayUU3vCOlPrppEzWP3aIK
+         6bWVUO4evs4v3nW52ffvyNKgrBrio+RWpCbww+BrOpgQEFDh2yuV7EskS1WhHEDZVwLI
+         Bouw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=+sgfX94el/0wEApQrpeej6G0XMDdTH8E3B/hil/sYlo=;
+        b=jIZZwqSVgxAdAX/UGznjivPf8UgVxRo0FLEHZ4hadj1hPu0DP4QxSjw1x+tvXDb2Qy
+         DJkJwxQxjQ461rRDPj1KozAkrXBM58woVyV5FeqQ5NIlS7ruHd/Y3FXMp0NbJJDljEDW
+         R4BO3W/HDPc9PNmSHSEwDpf8xDD52z++A3fZCc8+cMlS1Fz6RTEoP2RrjBKqaeu70Ptw
+         IflxxTdTJu+tQZ/qiG7UfTiBKlj2oWlrwUgmZsVoryXYoJCYw5q1jcSd5TDJti6GRR/L
+         xjjo5r/7BgEr81tM9cjoIItUXtH7dkQr5PHuKemMV5srIpiVA8U/toLAo8NKrxrEHVng
+         H/IA==
+X-Gm-Message-State: APt69E3s5t75/ClwSi8/m33bapoQaUj+mHRBI8B0KN+8rSArc7Rsb2ey
+        We9tC/T55oHKRfcB2PYbxaZdmMjTsbgwdsNIkiM=
+X-Google-Smtp-Source: ADUXVKIswAFW9F1U5yVw9tnro9+/MBIfZjKKuhmxgbFNeBX7TVycDsuLBd/M+lCGhlxEljVLGbGNuaS052nxRsznvow=
+X-Received: by 2002:a6b:a58e:: with SMTP id o136-v6mr10449581ioe.142.1529348508969;
+ Mon, 18 Jun 2018 12:01:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1461620099-11933-1-git-send-email-toshi.kani@hpe.com> <1461620099-11933-2-git-send-email-toshi.kani@hpe.com>
+In-Reply-To: <1461620099-11933-2-git-send-email-toshi.kani@hpe.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 18 Jun 2018 12:01:37 -0700
+Message-ID: <CAA9_cmenbY9GStibRjO0BfTq0kzzzqThiLeOygJsT9L03BFsBQ@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with ACPI 6.1
+To:     Toshi Kani <toshi.kani@hpe.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bob Moore <robert.moore@intel.com>,
+        Linux ACPI <linux-acpi@vger.kernel.org>,
+        "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>,
+        juston.li@intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 17 Jun 2018 17:36:24 +0300
-"Matwey V. Kornilov" <matwey@sai.msu.ru> wrote:
+On Mon, Apr 25, 2016 at 2:43 PM Toshi Kani <toshi.kani@hpe.com> wrote:
+>
+> ACPI 6.1, Table 5-133, updates NVDIMM Control Region Structure
+> as follows.
+>  - Valid Fields, Manufacturing Location, and Manufacturing Date
+>    are added from reserved range.  No change in the structure size.
+>  - IDs (SPD values) are stored as arrays of bytes (i.e. big-endian
+>    format).  The spec clarifies that they need to be represented
+>    as arrays of bytes as well.
+>
 
-I would prefer a change log here that would explain why these
-tracepoints are being added.
-
-
-> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> ---
->  drivers/media/usb/pwc/pwc-if.c |  7 +++++++
->  include/trace/events/pwc.h     | 45 ++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 52 insertions(+)
->  create mode 100644 include/trace/events/pwc.h
-> 
-> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
-> index 54b036d39c5b..5775d1f60668 100644
-> --- a/drivers/media/usb/pwc/pwc-if.c
-> +++ b/drivers/media/usb/pwc/pwc-if.c
-> @@ -57,6 +57,9 @@
->     - Pham Thanh Nam: webcam snapshot button as an event input device
->  */
->  
-> +#define CREATE_TRACE_POINTS
-> +#include <trace/events/pwc.h>
-> +
->  #include <linux/errno.h>
->  #include <linux/init.h>
->  #include <linux/mm.h>
-> @@ -260,6 +263,8 @@ static void pwc_isoc_handler(struct urb *urb)
->  	int i, fst, flen;
->  	unsigned char *iso_buf = NULL;
->  
-> +	trace_pwc_handler_enter(urb);
-> +
->  	if (urb->status == -ENOENT || urb->status == -ECONNRESET ||
->  	    urb->status == -ESHUTDOWN) {
->  		PWC_DEBUG_OPEN("URB (%p) unlinked %ssynchronously.\n",
-
-Looks like if this is hit, we will return from the function without
-calling trace_pwc_handler_exit().
-
-> @@ -347,6 +352,8 @@ static void pwc_isoc_handler(struct urb *urb)
->  		pdev->vlast_packet_size = flen;
->  	}
->  
-> +	trace_pwc_handler_exit(urb);
-> +
->  handler_end:
-
-Why not add the tracepoint after handler_end. In fact, why not add some
-exit status to the trace event? I would think that would be useful as
-well.
-
-
->  	i = usb_submit_urb(urb, GFP_ATOMIC);
->  	if (i != 0)
-> diff --git a/include/trace/events/pwc.h b/include/trace/events/pwc.h
-> new file mode 100644
-> index 000000000000..b13d2118bb7a
-> --- /dev/null
-> +++ b/include/trace/events/pwc.h
-> @@ -0,0 +1,45 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#if !defined(_TRACE_PWC_H) || defined(TRACE_HEADER_MULTI_READ)
-> +#define _TRACE_PWC_H
-> +
-> +#include <linux/usb.h>
-> +#include <linux/tracepoint.h>
-> +
-> +#undef TRACE_SYSTEM
-> +#define TRACE_SYSTEM pwc
-> +
-> +TRACE_EVENT(pwc_handler_enter,
-> +	TP_PROTO(struct urb *urb),
-> +	TP_ARGS(urb),
-> +	TP_STRUCT__entry(
-> +		__field(struct urb*, urb)
-> +		__field(int, urb__status)
-> +		__field(u32, urb__actual_length)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->urb = urb;
-> +		__entry->urb__status = urb->status;
-> +		__entry->urb__actual_length = urb->actual_length;
-
-Is there any other data that may be interesting to record here?
-
--- Steve
-
-> +	),
-> +	TP_printk("urb=%p (status=%d actual_length=%u)",
-> +		__entry->urb,
-> +		__entry->urb__status,
-> +		__entry->urb__actual_length)
-> +);
-> +
-> +TRACE_EVENT(pwc_handler_exit,
-> +	TP_PROTO(struct urb *urb),
-> +	TP_ARGS(urb),
-> +	TP_STRUCT__entry(
-> +		__field(struct urb*, urb)
-> +	),
-> +	TP_fast_assign(
-> +		__entry->urb = urb;
-> +	),
-> +	TP_printk("urb=%p", __entry->urb)
-> +);
-> +
-> +#endif /* _TRACE_PWC_H */
-> +
-> +/* This part must be outside protection */
-> +#include <trace/define_trace.h>
-
+Circling back on this a couple years too late... where are you reading
+this "arrays of bytes" note. As far as I can see this is wrong. JEDEC
+says that vendor id is stored LSB of the id is stored at the lowest
+byte in SPD, which is little endian. So it seems Linux has showing the
+incorrect value for a long time now.
