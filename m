@@ -2,184 +2,188 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B7AC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:31:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 372C0C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:32:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B0F20850
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:31:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B0F20850
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id DA6ED20850
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:32:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="btrxRa37"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6ED20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934281AbeFRNbF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:31:05 -0400
-Received: from mail-io0-f198.google.com ([209.85.223.198]:46399 "EHLO
-        mail-io0-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933738AbeFRNbD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:31:03 -0400
-Received: by mail-io0-f198.google.com with SMTP id m15-v6so13496685ioj.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 06:31:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=xariJre3Cin4FrWvXySvz0NXSD4U8U5OENMsMPN+0GY=;
-        b=ZCOGG886e9iPrQ9StKNNZyWbSve9rJ4VQUQzzV26HOVyGpI2LpQnK1pFu7YcrRXvlT
-         o/gFyrzqjyU9+00cO4G0tSRF1/xZNaglDQRSPqQPu2pKGxIRixldWev/8rqbEIa7KmoO
-         v0/6g97voxU6kRqRTjgiDBxVDvLX7tZYSAXaggZmLa3Jz3L/WJ+fD1nzJYmgvp5osjdi
-         fmxs5TUsMwI45K50bK66KyxB/ObVSjHHNG0wK0ZRt3lYuyaOJgQoEGzqMhsYSllh8jYU
-         wHDdqm3LBP5erSttNaH7NeM90TjtcM4K4LytKB+nlhzBRv211oTzQbwJybLUtmYiLeDi
-         +BoA==
-X-Gm-Message-State: APt69E0i3iCXQTK+3cux/cFjpVnw+5hZAkCsuFE70hrVaFWmJoM1qpha
-        sWQco4YfZ+cRbAcXdz8riszxKzaJ6QHuMPT3C9E90Pbu2ai+
-X-Google-Smtp-Source: ADUXVKL5GNX/A6f21/6wcINUxUUBiLKEwTwiwCSpV4R4S11mXwmE/dX8tNhpJWlfBJFnOkwPnYxOf2dHvZ/zF5oaDPcQWxtd38TJ
+        id S934367AbeFRNcd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:32:33 -0400
+Received: from mail-he1eur01on0065.outbound.protection.outlook.com ([104.47.0.65]:26752
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933557AbeFRNcb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:32:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3KNOdCZpNN9VmIBJNNm+pw95emHz+kX6KNNaCphPLrk=;
+ b=btrxRa375/ArXghiWZgvsm7oSLo+VKYbqq+9u0b2VYem/MWwIsGVclVBjtG7dClQxFain4VPMZaBO6KtNXlYYsfkd2Yer5nw47s1W0k5qDwD+bNcvO5sqqqFyUD+3NOJIG/K6Pa/9C6Qh2ikLKD/1cOM6B+qmkqAiHlgbC7teZk=
+Received: from DB6PR0402MB2838.eurprd04.prod.outlook.com (10.172.247.10) by
+ DB6PR0402MB2760.eurprd04.prod.outlook.com (10.172.246.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.19; Mon, 18 Jun 2018 13:32:28 +0000
+Received: from DB6PR0402MB2838.eurprd04.prod.outlook.com
+ ([fe80::49a5:1040:801d:2b97]) by DB6PR0402MB2838.eurprd04.prod.outlook.com
+ ([fe80::49a5:1040:801d:2b97%2]) with mapi id 15.20.0863.016; Mon, 18 Jun 2018
+ 13:32:27 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        David Wolfe <david.wolfe@nxp.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+CC:     "richard@nod.at" <richard@nod.at>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        Han Xu <han.xu@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        Frieder Schrempf <frieder.schrempf@exceet.de>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>
+Subject: RE: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Topic: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Index: AQHT+BiB2hXNm2lXyUydyOG4FdlBjqRWHnBAgABANgCABEvZ8IAAFd0AgAAehWCAAAtnAIAAAPSwgAFUQ+CAAAoIAIAAGBOggAT9CYCAAATqYIAADVmAgASumwA=
+Date:   Mon, 18 Jun 2018 13:32:27 +0000
+Message-ID: <DB6PR0402MB2838C4F67D17337ADBC5D5F899710@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
+        <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
+        <DB6PR0402MB283845A1A98672FE63C89550997B0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180608145130.09f979f9@bbrezillon>
+        <DB6PR0402MB2838D514CF38AC5E6C004E8499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180611094616.5c8f82cf@bbrezillon>
+        <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180611121618.40f4b609@bbrezillon>
+        <DB6PR0402MB28388D9DEB86629BB58DD5E499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <DB6PR0402MB2838563F1BA71A9A21ABBE01997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180612091328.67734adb@bbrezillon>
+        <DB6PR0402MB28387FE79F2742C9BEBD4037997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+        <20180615145019.734f23a9@bbrezillon>
+        <DB6PR0402MB28382767652782E0CC6C14A0997C0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
+ <20180615155541.4f43e9bb@bbrezillon>
+In-Reply-To: <20180615155541.4f43e9bb@bbrezillon>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DB6PR0402MB2760;7:xXYFodu8FZDf0YjLXvOmfXKr+zEG9nmAPIruiTpKklmojiK3KlPRi9+YSrc5qGXAOs4YuEAZVonzWaIjP9GuEp0Rshr7F/NwW7NuXry9pX7JBQ4pG4R1NDN/fZUWnzADwfzvXrE2eCITSIpqYV52a1nmg2ckvUghpZpZ3tfKZzGQoyi6ubq9dTAHzaOXUCCkbqpnEg7BMlBtNXGCaEsE71LkTnNbq/Da9DaRsmWC8jkAnmbRyw9I2t6jpPY6Ov7Y
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 8b96215d-6f55-4a55-39a1-08d5d51fef61
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(48565401081)(2017052603328)(7153060)(7193020);SRVR:DB6PR0402MB2760;
+x-ms-traffictypediagnostic: DB6PR0402MB2760:
+x-microsoft-antispam-prvs: <DB6PR0402MB27601F427EB5015896E99A5A99710@DB6PR0402MB2760.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(185117386973197)(85827821059158)(258649278758335);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(93001095)(10201501046)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:DB6PR0402MB2760;BCL:0;PCL:0;RULEID:;SRVR:DB6PR0402MB2760;
+x-forefront-prvs: 0707248B64
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39380400002)(366004)(346002)(376002)(39860400002)(396003)(13464003)(189003)(199004)(74316002)(3846002)(6116002)(305945005)(110136005)(54906003)(86362001)(99286004)(2900100001)(97736004)(33656002)(81166006)(8676002)(81156014)(8936002)(551984002)(478600001)(7736002)(2501003)(14454004)(5250100002)(66066001)(76176011)(39060400002)(106356001)(105586002)(316002)(186003)(2906002)(446003)(26005)(3280700002)(25786009)(4326008)(6436002)(55016002)(9686003)(7416002)(53936002)(6246003)(93886005)(476003)(6506007)(3660700001)(55236004)(102836004)(486006)(11346002)(5660300001)(68736007)(229853002)(7696005)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:DB6PR0402MB2760;H:DB6PR0402MB2838.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: OIDMKQ6x+lAcKwxWgn0Ww15Jd5LfmyVRSpJc/5OmLS4S7b1TjPqGhGByYpNYa+OHs/YOGrMlO1UQkB7NAOTXbLY5525U97/UHLgWzN/8DsI/rJlx54DF9As1hQqhApO4DQ5gRailnobyhGkIV/rtoMoxLbyb5cEgaaXKjeuny7AD2SJO7SbQZJ2/s+7u7Cg3cZcGoJLM3yhQPz8/5HrQaqGnNkJI6hI7DQjXmmko43fMegNoJQOLgJ3QCSdHoXF4tD5Cq2yo2r9Jm+Nu0QOTOEDDZ+mkRTAlCZ6C1D9Z+TEvAaxe242RuIe8uFEh1jKfvyUnCMFXsswIneIDGRJ3Bg==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Received: by 2002:a24:4a54:: with SMTP id k81-v6mr4909681itb.54.1529328662799;
- Mon, 18 Jun 2018 06:31:02 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 06:31:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000b0ee7a056eea93a7@google.com>
-Subject: KASAN: use-after-free Read in ipv6_gso_pull_exthdrs
-From:   syzbot <syzbot+7b9ed9872dab8c32305d@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, yoshfuji@linux-ipv6.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b96215d-6f55-4a55-39a1-08d5d51fef61
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2018 13:32:27.9153
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB6PR0402MB2760
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-syzbot found the following crash on:
-
-HEAD commit:    f0dc7f9c6dd9 Merge git://git.kernel.org/pub/scm/linux/kern..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=1463121f800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fa9c20c48788d1c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=7b9ed9872dab8c32305d
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+7b9ed9872dab8c32305d@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in ipv6_gso_pull_exthdrs+0x53e/0x5d0  
-net/ipv6/ip6_offload.c:45
-Read of size 1 at addr ffff8801cf0d7769 by task syz-executor0/21808
-
-CPU: 1 PID: 21808 Comm: syz-executor0 Not tainted 4.17.0+ #84
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1b9/0x294 lib/dump_stack.c:113
-  print_address_description+0x6c/0x20b mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.7+0x242/0x2fe mm/kasan/report.c:412
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/report.c:430
-  ipv6_gso_pull_exthdrs+0x53e/0x5d0 net/ipv6/ip6_offload.c:45
-netlink: 48 bytes leftover after parsing attributes in process  
-`syz-executor6'.
-  ipv6_gso_segment+0x372/0x11c0 net/ipv6/ip6_offload.c:87
-  skb_mac_gso_segment+0x3ad/0x720 net/core/dev.c:2792
-  nsh_gso_segment+0x470/0xb40 net/nsh/nsh.c:111
-  skb_mac_gso_segment+0x3ad/0x720 net/core/dev.c:2792
-  __skb_gso_segment+0x3bb/0x870 net/core/dev.c:2865
-  skb_gso_segment include/linux/netdevice.h:4079 [inline]
-  validate_xmit_skb+0x638/0xf20 net/core/dev.c:3104
-  __dev_queue_xmit+0xc0c/0x3900 net/core/dev.c:3561
-  dev_queue_xmit+0x17/0x20 net/core/dev.c:3602
-  packet_snd net/packet/af_packet.c:2921 [inline]
-  packet_sendmsg+0x4275/0x6100 net/packet/af_packet.c:2946
-  sock_sendmsg_nosec net/socket.c:645 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:655
-  __sys_sendto+0x3d7/0x670 net/socket.c:1833
-  __do_sys_sendto net/socket.c:1845 [inline]
-  __se_sys_sendto net/socket.c:1841 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1841
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455b29
-Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f1665cd0c68 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 00007f1665cd16d4 RCX: 0000000000455b29
-RDX: 000000000000020b RSI: 00000000200016c0 RDI: 0000000000000013
-RBP: 000000000072bea0 R08: 00000000200000c0 R09: 000000000000001c
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004c0eb8 R14: 00000000004d0960 R15: 0000000000000000
-
-Allocated by task 21219:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc4/0xe0 mm/kasan/kasan.c:553
-  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
-  kmem_cache_alloc+0x12e/0x760 mm/slab.c:3554
-  getname_flags+0xd0/0x5a0 fs/namei.c:140
-  user_path_at_empty+0x2d/0x50 fs/namei.c:2555
-  user_path_at include/linux/namei.h:57 [inline]
-  do_faccessat+0x24a/0x7c0 fs/open.c:389
-  __do_sys_access fs/open.c:441 [inline]
-  __se_sys_access fs/open.c:439 [inline]
-  __x64_sys_access+0x59/0x80 fs/open.c:439
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 21219:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x11a/0x170 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kmem_cache_free+0x86/0x2d0 mm/slab.c:3756
-  putname+0xf2/0x130 fs/namei.c:261
-  filename_lookup+0x38b/0x4f0 fs/namei.c:2330
-  user_path_at_empty+0x40/0x50 fs/namei.c:2555
-  user_path_at include/linux/namei.h:57 [inline]
-  do_faccessat+0x24a/0x7c0 fs/open.c:389
-  __do_sys_access fs/open.c:441 [inline]
-  __se_sys_access fs/open.c:439 [inline]
-  __x64_sys_access+0x59/0x80 fs/open.c:439
-  do_syscall_64+0x1b1/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8801cf0d6d00
-  which belongs to the cache names_cache of size 4096
-The buggy address is located 2665 bytes inside of
-  4096-byte region [ffff8801cf0d6d00, ffff8801cf0d7d00)
-The buggy address belongs to the page:
-page:ffffea00073c3580 count:1 mapcount:0 mapping:ffff8801da986dc0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000008100(slab|head)
-raw: 02fffc0000008100 ffffea00073c3508 ffffea0006a10008 ffff8801da986dc0
-raw: 0000000000000000 ffff8801cf0d6d00 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8801cf0d7600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801cf0d7680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8801cf0d7700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                           ^
-  ffff8801cf0d7780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8801cf0d7800: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+-----Original Message-----
+From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]=20
+Sent: Friday, June 15, 2018 7:26 PM
+To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Fabio Estevam <fabio.=
+estevam@nxp.com>; David Wolfe <david.wolfe@nxp.com>; dwmw2@infradead.org
+Cc: richard@nod.at; Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>; Han Xu=
+ <han.xu@nxp.com>; linux-kernel@vger.kernel.org; linux-spi@vger.kernel.org;=
+ marek.vasut@gmail.com; Frieder Schrempf <frieder.schrempf@exceet.de>; broo=
+nie@kernel.org; linux-mtd@lists.infradead.org; miquel.raynal@bootlin.com; c=
+omputersforpeace@gmail.com
+Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI =
+controller
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+On Fri, 15 Jun 2018 13:42:12 +0000
+Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+
+> Hi Boris,
+>=20
+> I am still debugging the issue.
+> With some analysis, able to check that proper values are not being writte=
+n for QUADSPI_SFA2AD/ QUADSPI_SFB1AD/ QUADSPI_SFB2AD register.
+>=20
+> In current code, value of map_addr are being assigned to these register.
+>              map_addr =3D q->memmap_phy +
+>                         2 * q->devtype_data->ahb_buf_size;
+>=20
+>      qspi_writel(q, map_addr, q->iobase + QUADSPI_SFA1AD + (i * 4));
+>=20
+> But instead of "q->devtype_data->ahb_buf_size" it should be flash size.
+
+No, because we're only using 2 * ->ahb_buf_size in the direct mapping for e=
+ach device, and we're modifying the mapping dynamically based on the select=
+ed device. Maybe we got the logic wrong though.
+
+Yes, for register QUADSPI_SFA2AD/ QUADSPI_SFB1AD/ QUADSPI_SFB2AD, we need t=
+o save starting actual address from where this flash is getting started.
+Thus, if my first flash size is 64MB, then register QUADSPI_SFA2AD would ha=
+ve value of q->memmap_phy + 0x4000000 i.e. (QUADSPI_SFA1AD + sizeof First F=
+lash)
+If second flash is of size 32MB, then register QUADSPI_SFB1AD would have va=
+lue of value of QUADSPI_SFA2AD + sizeof second flash.
+
+> For my case flash size is 0x4000000 and with this hard coded value I am a=
+ble to perform Write and Erase operation.
+> One more change, I have to do is adding the flash_size when writing the b=
+ase_address in SFAR register for case when "mem->spi->chip_select =3D=3D 1"
+> 	qspi_writel(q, q->memmap_phy + 0x4000000, base + QUADSPI_SFAR);
+
+I don't want to expose the full device in the direct mapping yet (that's pa=
+rt of the direct-mapping API I posted here [1]). What this version of the d=
+river does is, map only 2 time the ahb_size so that we can bypass the inter=
+nal cache of the QSPI engine.
+
+To perform any operation on second flash, we need to provide it's base addr=
+ess should be saved in SFAR register for this particular operation.
+Exposing only 2 time of ahb_size is design decision but value in SFAR regis=
+ter should be correct.
+
+>=20
+> Thus, there should be mechanism or the entry in structure where we can ha=
+ve the information of the size of the connected slave device.
+
+Because that's exactly the kind of thing I'd like to avoid. What if the dev=
+ice is bigger than the reserved memory region? What if the sum of all devic=
+es does not fit in there? Here I tried to support all cases by just mapping=
+ the portion of memory we need.
+
+So IMO, there should be mechanism to have value of start address of each sl=
+ave device. This might can be done from DTS entry of each slave device conn=
+ected to the controller.
