@@ -2,147 +2,144 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D8C1C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:11:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBEBC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:13:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 544B020874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:11:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZYOhmqgm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 544B020874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4B5CE208E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 05:13:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B5CE208E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=collabora.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754856AbeFRFLl (ORCPT
+        id S1754808AbeFRFNI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 01:11:41 -0400
-Received: from mail-pf0-f196.google.com ([209.85.192.196]:44572 "EHLO
-        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754288AbeFRFKt (ORCPT
+        Mon, 18 Jun 2018 01:13:08 -0400
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:51402 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751207AbeFRFNG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 01:10:49 -0400
-Received: by mail-pf0-f196.google.com with SMTP id h12-v6so7546816pfk.11
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 22:10:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=VluCxox9i+3sQWY1zqCtkHVxp5JhXszaU7yPvjVQVQo=;
-        b=ZYOhmqgmlPCpkPaX3GPPro7Z9Dne6z9R2muhpb7SRLqgtHtTDwzlw11aC5A3wJXdXd
-         +feNQaz4vlmvHWj27G2ltDDCY4Bn7n3r6xXiJprbntvsmqc/PUlGtCYwekFJAxFhq+57
-         KUPGkSbsXnUJ9q7FYBFmf+koTxEJRMDVmSZOA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=VluCxox9i+3sQWY1zqCtkHVxp5JhXszaU7yPvjVQVQo=;
-        b=TJ0dDMpOOhyyv7RTPmTRmHdXkb+26q040kKCR9eVc6GelFYM+LtkjiK+SpnwKAIkBO
-         yTxDVnGQy4Iu8hSn3S5hfDKFSwKVEtoDa9Aa7bXYwGlte06Y3k3GIwknN4Vvl1DoSyCY
-         98yrbdE+tSLflWWxPO2HNggRk6M7fJxP19GuGnasyv6nzVXrRtfV/NJ9xDyDS4hStCcn
-         p0Nx13y2wIkcCeJAx30hpqZkLAjgBTU7AFYfGSQo4jAwCsE4+cFhZg0hEzdf2fc7Tjhd
-         E59pGYYhwBLUbS6VREHrYwOwcSQFAG8qoKF9Ce8B6SKvSydEwxbH/RcG98Wz/pEWK2wM
-         f9PQ==
-X-Gm-Message-State: APt69E3w1Tq6WbzIyhnMEveqpnc+sC+yfV3m/bIrjEVvQVR1jeUIeieL
-        FMngpTweKDT7IkcMGSJpXv+nhg==
-X-Google-Smtp-Source: ADUXVKKc1GAT7Kc3YeW0cB6FhQhWJqk8V2vz7dGqKkIFhey8AIbUz4uQ9g11sKNy0m7x1S+wXfKvmw==
-X-Received: by 2002:a63:449:: with SMTP id 70-v6mr9788230pge.229.1529298648903;
-        Sun, 17 Jun 2018 22:10:48 -0700 (PDT)
-Received: from localhost.localdomain (li1181-92.members.linode.com. [45.79.82.92])
-        by smtp.gmail.com with ESMTPSA id l15-v6sm29051710pfg.88.2018.06.17.22.10.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Sun, 17 Jun 2018 22:10:48 -0700 (PDT)
-From:   Leo Yan <leo.yan@linaro.org>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Kim Phillips <kim.phillips@arm.com>
-Cc:     Leo Yan <leo.yan@linaro.org>
-Subject: [PATCH v1 4/6] perf cs-etm: Support dummy address value for CS_ETM_TRACE_ON packet
-Date:   Mon, 18 Jun 2018 13:09:57 +0800
-Message-Id: <1529298599-3876-5-git-send-email-leo.yan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529298599-3876-1-git-send-email-leo.yan@linaro.org>
-References: <1529298599-3876-1-git-send-email-leo.yan@linaro.org>
+        Mon, 18 Jun 2018 01:13:06 -0400
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: ezequiel)
+        with ESMTPSA id 1073F260844
+Message-ID: <c02f92a8998fc62d3e3d48aa154fbaa7e223dd10.camel@collabora.com>
+Subject: Re: [PATCH 2/2] media: usb: pwc: Don't use coherent DMA buffers for
+ ISO transfer
+From:   Ezequiel Garcia <ezequiel@collabora.com>
+To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>, hverkuil@xs4all.nl,
+        mchehab@kernel.org,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc:     rostedt@goodmis.org, mingo@redhat.com, isely@pobox.com,
+        bhumirks@gmail.com, colin.king@canonical.com,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 18 Jun 2018 02:11:25 -0300
+In-Reply-To: <20180617143625.32133-2-matwey@sai.msu.ru>
+References: <20180617143625.32133-1-matwey@sai.msu.ru>
+         <20180617143625.32133-2-matwey@sai.msu.ru>
+Organization: Collabora
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For CS_ETM_TRACE_ON packet, its fields 'packet->start_addr' and
-'packet->end_addr' equal to 0xdeadbeefdeadbeefUL which are emitted in
-the decoder layer as dummy value, but the dummy value is pointless for
-branch sample when we use 'perf script' command to check program flow.
++ Laurent
 
-This patch is a preparation to support CS_ETM_TRACE_ON packet for
-branch sample, it converts the dummy address value to zero for more
-readable; this is accomplished by cs_etm__last_executed_instr() and
-cs_etm__first_executed_instr().  The later one is a new function
-introduced by this patch.
+On Sun, 2018-06-17 at 17:36 +0300, Matwey V. Kornilov wrote:
+> DMA cocherency slows the transfer down on systems without hardware
+> coherent DMA.
+> 
+> Based on previous commit the following performance benchmarks have been
+> carried out. Average memcpy() data transfer rate (rate) and handler
+> completion time (time) have been measured when running video stream at
+> 640x480 resolution at 10fps.
+> 
+> x86_64 based system (Intel Core i5-3470). This platform has hardware
+> coherent DMA support and proposed change doesn't make big difference here.
+> 
+>  * kmalloc:            rate = (4.4 +- 1.0) GBps
+>                        time = (2.4 +- 1.2) usec
+>  * usb_alloc_coherent: rate = (4.1 +- 0.9) GBps
+>                        time = (2.5 +- 1.0) usec
+> 
+> We see that the measurements agree well within error ranges in this case.
+> So no performance downgrade is introduced.
+> 
+> armv7l based system (TI AM335x BeagleBone Black). This platform has no
+> hardware coherent DMA support. DMA coherence is implemented via disabled
+> page caching that slows down memcpy() due to memory controller behaviour.
+> 
+>  * kmalloc:            rate =  (190 +-  30) MBps
+>                        time =   (50 +-  10) usec
+>  * usb_alloc_coherent: rate =   (33 +-   4) MBps
+>                        time = (3000 +- 400) usec
+> 
+> Note, that quantative difference leads (this commit leads to 5 times
+> acceleration) to qualitative behavior change in this case. As it was
+> stated before, the video stream can not be successfully received at AM335x
+> platforms with MUSB based USB host controller due to performance issues
+> [1].
+> 
+> [1] https://www.spinics.net/lists/linux-usb/msg165735.html
+> 
 
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
----
- tools/perf/util/cs-etm.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+This is quite interesting! I have receive similar complaints
+from users wanting to use stk1160 on BBB and Raspberrys,
+without much luck on either, due to insufficient isoc bandwidth.
 
-diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-index ae7c9c88..976db84 100644
---- a/tools/perf/util/cs-etm.c
-+++ b/tools/perf/util/cs-etm.c
-@@ -494,6 +494,10 @@ static inline void cs_etm__reset_last_branch_rb(struct cs_etm_queue *etmq)
- 
- static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
- {
-+	/* Returns 0 for the CS_ETM_TRACE_ON packet */
-+	if (packet->sample_type == CS_ETM_TRACE_ON)
-+		return 0;
-+
- 	/*
- 	 * The packet records the execution range with an exclusive end address
- 	 *
-@@ -505,6 +509,15 @@ static inline u64 cs_etm__last_executed_instr(struct cs_etm_packet *packet)
- 	return packet->end_addr - A64_INSTR_SIZE;
- }
- 
-+static inline u64 cs_etm__first_executed_instr(struct cs_etm_packet *packet)
-+{
-+	/* Returns 0 for the CS_ETM_TRACE_ON packet */
-+	if (packet->sample_type == CS_ETM_TRACE_ON)
-+		return 0;
-+
-+	return packet->start_addr;
-+}
-+
- static inline u64 cs_etm__instr_count(const struct cs_etm_packet *packet)
- {
- 	/*
-@@ -546,7 +559,7 @@ static void cs_etm__update_last_branch_rb(struct cs_etm_queue *etmq)
- 
- 	be       = &bs->entries[etmq->last_branch_pos];
- 	be->from = cs_etm__last_executed_instr(etmq->prev_packet);
--	be->to	 = etmq->packet->start_addr;
-+	be->to	 = cs_etm__first_executed_instr(etmq->packet);
- 	/* No support for mispredict */
- 	be->flags.mispred = 0;
- 	be->flags.predicted = 1;
-@@ -701,7 +714,7 @@ static int cs_etm__synth_branch_sample(struct cs_etm_queue *etmq)
- 	sample.ip = cs_etm__last_executed_instr(etmq->prev_packet);
- 	sample.pid = etmq->pid;
- 	sample.tid = etmq->tid;
--	sample.addr = etmq->packet->start_addr;
-+	sample.addr = cs_etm__first_executed_instr(etmq->packet);
- 	sample.id = etmq->etm->branches_id;
- 	sample.stream_id = etmq->etm->branches_id;
- 	sample.period = 1;
--- 
-2.7.4
+I'm guessing other ARM platforms could be suffering
+from the same issue.
 
+Note that stk1160 and uvcvideo drivers use kmalloc on platforms
+where DMA_NONCOHERENT is defined, but this is not the case
+on ARM platforms.
+
+So, what is the benefit of using consistent 
+for these URBs, as opposed to streaming?
+
+If the choice is simply platform dependent,
+can't we somehow detect which mapping should
+be prefered?
+
+> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
+> ---
+>  drivers/media/usb/pwc/pwc-if.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/media/usb/pwc/pwc-if.c b/drivers/media/usb/pwc/pwc-if.c
+> index 5775d1f60668..6a3cd9680a7f 100644
+> --- a/drivers/media/usb/pwc/pwc-if.c
+> +++ b/drivers/media/usb/pwc/pwc-if.c
+> @@ -427,11 +427,8 @@ static int pwc_isoc_init(struct pwc_device *pdev)
+>  		urb->interval = 1; // devik
+>  		urb->dev = udev;
+>  		urb->pipe = usb_rcvisocpipe(udev, pdev->vendpoint);
+> -		urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+> -		urb->transfer_buffer = usb_alloc_coherent(udev,
+> -							  ISO_BUFFER_SIZE,
+> -							  GFP_KERNEL,
+> -							  &urb->transfer_dma);
+> +		urb->transfer_flags = URB_ISO_ASAP;
+> +		urb->transfer_buffer = kmalloc(ISO_BUFFER_SIZE, GFP_KERNEL);
+>  		if (urb->transfer_buffer == NULL) {
+>  			PWC_ERROR("Failed to allocate urb buffer %d\n", i);
+>  			pwc_isoc_cleanup(pdev);
+> @@ -491,10 +488,7 @@ static void pwc_iso_free(struct pwc_device *pdev)
+>  		if (pdev->urbs[i]) {
+>  			PWC_DEBUG_MEMORY("Freeing URB\n");
+>  			if (pdev->urbs[i]->transfer_buffer) {
+> -				usb_free_coherent(pdev->udev,
+> -					pdev->urbs[i]->transfer_buffer_length,
+> -					pdev->urbs[i]->transfer_buffer,
+> -					pdev->urbs[i]->transfer_dma);
+> +				kfree(pdev->urbs[i]->transfer_buffer);
+>  			}
+>  			usb_free_urb(pdev->urbs[i]);
+>  			pdev->urbs[i] = NULL;
