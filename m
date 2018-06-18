@@ -6,39 +6,34 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8A9C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73AE0C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A3D520864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B3EA208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:45:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="L1lXoVO/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A3D520864
+	dkim=pass (1024-bit key) header.d=virtuozzo.com header.i=@virtuozzo.com header.b="K4OSnMMZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B3EA208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755298AbeFRJpW (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:45:22 -0400
-Received: from mail-db5eur01on0114.outbound.protection.outlook.com ([104.47.2.114]:29682
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        id S965351AbeFRJpc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:45:32 -0400
+Received: from mail-ve1eur01on0110.outbound.protection.outlook.com ([104.47.1.110]:46080
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1755091AbeFRJpS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:45:18 -0400
+        id S1755091AbeFRJp3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 05:45:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=virtuozzo.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f1AS0rDHhCxT62oyo0eTh+vZjglhq92cQLpt3RuGN3A=;
- b=L1lXoVO/6hGlDtn2pJoMnphwM4XXTqGUpGGW1R3R2RkmR3IHi5q+Uxb+0ucmjH+UOkel8IS10QkFjE8ocBlyb0gXq58AmL14YPbFXAXyJZTNW8VUxNcdtXfUOrpt8tFrHJFToZvZKFJ5oq1XIN8KKIZKWH/B495acjxLwFTSeS0=
-Authentication-Results: spf=none (sender IP is )
- smtp.mailfrom=ktkhai@virtuozzo.com; 
+ bh=Mz1edjlLoesrcj1TJbgogzpJaej9F1Z9g3jkD+bPpaE=;
+ b=K4OSnMMZkxwW3HUUSHQ3n9P8nZuwkIMncX6uJxw0h2CKpdO7fpUKPh/ddxaYEVU4JiI823e+BmWXi9wxkqibUud0hsi8PS23uYcsJlfQw5ss22OBAJms/kLuQQc8AJrEeDp32D3YW50My0KmnGAVRCtIh6f/kwMFVAtK9tWN2rw=
 Received: from localhost.localdomain (195.214.232.6) by
- AM5PR0801MB1329.eurprd08.prod.outlook.com (2603:10a6:203:1f::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.863.17; Mon, 18 Jun
- 2018 09:45:12 +0000
-Subject: [PATCH v7 REBASED 02/17] mm: Introduce CONFIG_MEMCG_KMEM as
- combination of CONFIG_MEMCG && !CONFIG_SLOB
+ HE1PR0801MB1339.eurprd08.prod.outlook.com (2603:10a6:3:3a::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.16; Mon, 18 Jun 2018 09:45:22 +0000
+Subject: [PATCH v7 REBASED 03/17] mm: Assign id to every memcg-aware shrinker
 From:   Kirill Tkhai <ktkhai@virtuozzo.com>
 To:     vdavydov.dev@gmail.com, shakeelb@google.com,
         viro@zeniv.linux.org.uk, hannes@cmpxchg.org, mhocko@kernel.org,
@@ -50,8 +45,8 @@ To:     vdavydov.dev@gmail.com, shakeelb@google.com,
         linux@roeck-us.net, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, willy@infradead.org, lirongqing@baidu.com,
         aryabinin@virtuozzo.com
-Date:   Mon, 18 Jun 2018 12:45:09 +0300
-Message-ID: <152931510922.28457.18115445564323612603.stgit@localhost.localdomain>
+Date:   Mon, 18 Jun 2018 12:45:19 +0300
+Message-ID: <152931511969.28457.16645798841790418186.stgit@localhost.localdomain>
 In-Reply-To: <152931506756.28457.5620076974981468927.stgit@localhost.localdomain>
 References: <152931506756.28457.5620076974981468927.stgit@localhost.localdomain>
 User-Agent: StGit/0.18
@@ -59,370 +54,198 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Originating-IP: [195.214.232.6]
-X-ClientProxiedBy: HE1PR0802CA0009.eurprd08.prod.outlook.com
- (2603:10a6:3:bd::19) To AM5PR0801MB1329.eurprd08.prod.outlook.com
- (2603:10a6:203:1f::7)
+X-ClientProxiedBy: HE1PR0802CA0015.eurprd08.prod.outlook.com
+ (2603:10a6:3:bd::25) To HE1PR0801MB1339.eurprd08.prod.outlook.com
+ (2603:10a6:3:3a::7)
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: f6684dcb-98df-4f79-36bd-08d5d500311b
-X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AM5PR0801MB1329;
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;3:XP7vo6/GMiud+Ucpb6TmMnYyxU9zQhfdEJFGcl0KY7uL7o95uQv/2r+YGGG8MmFCd6ZDjhB4j900bd6eESv4WpR5sGSJr1g/uQORGZ5qRJPJrvQzwO38TL/GtDBncVEebh2E1rb+22UC00ZwLcvvmTYzwkoaHLXgww+X3w150nldGmA1ftnZABcOfqDOD9IK7Kt6Yr70rYhMfsA+pcGdiKfDLC7jwdtSxgAaOTdLgEw7DHxMgPrugbEe6CnERz6F;25:OwH1m7cCFukL01unCVK2/t0biDkrU2I6WWPwqnyTqv9VsiWK4AU8M0rcfzsk6a7CQNi8GGZmC0p7WeSFmmPO8bDEwRDbe+B/mSotMFYpZJk2wr5vSiBP2mIYWHk1AkCShTuZVWfYQQrJHErnND9zS0rg8VaKHdUtMkcZ55171DXoX8T2eaVIGZf9hMeaVRKo0TRUdsaAR1oiinBkPWMxHFcMgbehuHWlEU4+pyU4U8WI+gGLd1pgQGIfG65Cd6oJ+EK4gQcFwNWWSg/gfu/T//b1WnUJ5t3g8gPX0kHIm4kBPXsLR1828hozQ38MJcRmcWnLucpBaqCuztA1pgCgnA==;31:07Ks5WaWu/bhbIf88FJ20duOY0b+zoT6am7DO7rDLOPV4oY+rvygTpTsASy/LS4YmeO1fOi+dKmn0rdcQ80K2NhyXbL9J1UOVUxsEAx5irdwydVXesUr5DA8vswJbZkbcOM4Io7x4U2E/GVFMajCXVcUXr2Lss23TXh6cBHPDWN/ofJMVJ6jD1PeRrsQ6M8C2PSH7SiocH9KXjBhPaOcy9wrqTnMEZskP1L66gowcFA=
-X-MS-TrafficTypeDiagnostic: AM5PR0801MB1329:
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;20:5+Doo6XJuSBLYx6sQ3orr/PV7ZkS+E6tf0teFjv+cLOrTLKqmM6l/GfxqxlnfuySq3lTM75KOP0iPjcyvg4iW3mSrQ2BiNO9gOb9ZEZGjib2iae0i4bu0G0nPia0RXF9ehvju3Ab3fNtVcIJYVfMWDkcGtaUecBF/CQuhQsXDTzpXDxsvrHfQ/8Dh1QzhMlzX9k8Bu+mVUcTan1LMv7nP/2Uo+bZciijopMy08QPtbEc0BL55e5LZNHeZu/pJiUxh3ZZPhSz3b9aroLrVeCYrXQN43w2JylwBVPhwUzrYNoqWDmlAOJD9GQHpw9vfCbBUel5mptepSwH3Bhzmsd2XoSI7beB+Ek21Jnbzh87XjGhIR28aYgoESzV6TfBdVf4bnH9itDxmQUee64voblJ88yPD9xKJZXsgML0cY+f90VVhE7fY8B5xw/xO0HnjwVfRJI5WPxY/Geq8jzVLkHRU9QB64xgNUjZ+J7D99XSZ89A0C9gdLNAQUlrB+WjZc+3;4:1wBH1fs4WWZFnfdwQKyZsbYQpf2CJbbApPQ9woX2HlrOpojHB1adtluDfq25FbofTPDdcglJOZNot7MsoetN3kMMXCuAs4q8V69i/QOIgBg8H9EHnRWM62C2CjV3gqEudlwHJwZe4RPORMuOHWrQ7h+arXBUFe6kyLn9b7AW5O/cRZrBwJlw/l19+ZM4utGQK68Dj3dq6hWB4MIlX5MIZZgQSwuQFk1b6NtJpD4XL7Px6SnbTDLKzOylTQx8Y9J9+d/N878IEXFgiRtpLoYWv6ca3fyJcBoh3ZrCYXKrOLJFEB1Btq8u8PRugxIklQA5+nBm7MROFlFQUGGQAwgjw1ZNS+nkDlpldsJtXqG/UFbq2J4OSI39Au6UQdmnGLfolKbNNX8FD+davrLY+70el1jCUnJotiNI1fueXlMFo18=
-X-Microsoft-Antispam-PRVS: <AM5PR0801MB1329BCEB4EA691D2CA23C676CD710@AM5PR0801MB1329.eurprd08.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(788757137089)(211936372134217)(153496737603132);
+X-MS-Office365-Filtering-Correlation-Id: d49424fe-eb82-448c-f4c2-08d5d500367d
+X-Microsoft-Antispam: UriScan:;BCL:0;PCL:0;RULEID:(7020095)(4652020)(4534165)(7168020)(4627221)(201703031133081)(201702281549075)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:HE1PR0801MB1339;
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;3:KucFE9ZjDXNkJSqKfzFnlumIRn/sCTW8AN6XuSO5XAnVteGXYo9TVfzJc/TybTObexjdLmEZiObLvqIK2iI9YR9+mMJyxkbtZ4uVMQ3U5GM6QV6/cJcgUazWXaWGEsOgNpwQdpoiDKUdhpAuIRCUHK/rbcByYoHTbw5IPxbPOAaHez5fDZ2lHOYAEFC58H6/lRR9U4dKhe6LQLEEv+hGTtz7cvEkV8aGkXTNnMg7oW6JwVnQvzrVhS2TkSsBrfk0;25:7Y48AdR958qzCX3QZbo1tb2U/T5VMsmgOmY0H5XH1GPNcQPOZrR5kR3Hc8OlM6GkEBz6wJQlJOyJBCJESV1Z8uyjxJQXRomSFxd/fNToPNwOln38ITCoTVnOEKYLXYGn+czp4GrpiEXWw28umZq2Ph/vk6chEAJXn3ofC4Otbs1dUKKA7EwKkRlJRNe8pj9Io5B5HM+O/pS+P7KDXOQsUyMxhPL1avP88J/FSh7Snz+ASptcxKIu25F9K1RSGxxh7SSFkWctVKS1sJBd3Ci69S452byRT287agCM54BH9p8E/rDzQ3chG0q5aDaPM/uVLgj8j03ZuWDblv+W27xqYA==;31:9wnOzOYGCwRp2b/RvKQAZnZwz7feG0RG18Fut0qhZnDpzrA4K/hoGDiOALZ7Jm5Arg/7ysneiK+w+MZJKrIoNnRficiSlpNkMez5ZhvVr67HjobkVMMw14OT7ROiwSIHYR6rEzhh5QIlX5dPZlPv4/ZG+3rlx8LC6nWNfLusUqWzrlqJw9TRrtjFegs3yMwQababsVDVM1B8/1C6jujk8IUQ8zXVIxlVnS7/RY7Krfc=
+X-MS-TrafficTypeDiagnostic: HE1PR0801MB1339:
+Authentication-Results: spf=none (sender IP is )
+ smtp.mailfrom=ktkhai@virtuozzo.com; 
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;20:x9PRnULj07UhOBnS4k2oL4z6zQSYsZpZnuWL4K5tO5ypfg0sVF1jaVKJi3/we8Ye1NqvazVEj6aXXS38L39Y2DiClY763a9Iz05Kvs0OrqtQ5iPcSurhLpr1BQs4XqfjaFSDleRKNIFMUnTCcc9z+Xo5L9jLp1q4gSQlmxf7fyRCw8X0d7TNnklDHr22hcuOugab4PZOTDtTS6bqS1qqcFWL6D8qPEBZHIbuFBA+LPRECyqLwteUeHKqHx69H46hWgja0fQPRp+IAD2y8erEQXGfGZC6MEX/YLyBiHbLjxEdXPt5fEfZ+HkAF21Goag1bEMdj2UluhOHlKcALDWIk5SCMcsUKqAInaHqV0/2o7toVRjR2+hcA7r7pzLJOBmLKhcYL+dPjznglqTKD6PJNwX6tZVkfrY6/MXAWPtRrYl7mrYbLTGeVOcJ2Xl9jKI+e7XN3ry2fioHTFgXCygxjz5ZvVd4aTEFzteybN0ce8Ik6XjOP4xl2kljT1ljrFcG;4:hztHOHXsfwccILXYkkiw+c73fIKOrbiJZhCdAHGcJdHLkurSdbGu13ZLcJGdCs3+tQW2TSUqFt+V1FcELVMiVWEBea9oWA6t3UwdhHGHu7ZewvQsfb8Wq6DOk7pUYJKzD1USAqGXxe2HLYZTVOdEwFw6tJW0dBx6Ast45Sr9Np7dkl2RmhpX8eOKrA00Omj2WgeFtEHOjrkrJnd9QgiCHtwz/qtSET97vF8ujR1nO1283JT/wYTM6ZtXlDNwYNJJOf3nBuKfKtEhzPnMrtOdx4C2oFAwbw5bjz9CUQhU6tpJfbzkqJ0JgQJ4I6Zpr4HW5y51FZlyMt/8lwdKyA1mUMxqB95QR0rY6cCeB0W1BdfOlXoUflN7mdX0X1uLt3HM
+X-Microsoft-Antispam-PRVS: <HE1PR0801MB13393853A9F4349F7010A053CD710@HE1PR0801MB1339.eurprd08.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(85827821059158)(211936372134217)(153496737603132);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:AM5PR0801MB1329;BCL:0;PCL:0;RULEID:;SRVR:AM5PR0801MB1329;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(149027)(150027)(6041310)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(20161123558120)(6072148)(201708071742011)(7699016);SRVR:HE1PR0801MB1339;BCL:0;PCL:0;RULEID:;SRVR:HE1PR0801MB1339;
 X-Forefront-PRVS: 0707248B64
-X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(376002)(39380400002)(346002)(396003)(39840400004)(189003)(199004)(9686003)(26005)(52116002)(186003)(478600001)(6116002)(59450400001)(3846002)(53936002)(97736004)(956004)(11346002)(476003)(6506007)(386003)(103116003)(7696005)(76176011)(2486003)(23676004)(575784001)(16526019)(486006)(55016002)(86362001)(81156014)(8676002)(8936002)(81166006)(446003)(50466002)(25786009)(39060400002)(68736007)(58126008)(316002)(105586002)(106356001)(61506002)(6666003)(6636002)(55236004)(7416002)(33896004)(66066001)(5660300001)(230700001)(47776003)(305945005)(2906002)(7736002)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:AM5PR0801MB1329;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+X-Forefront-Antispam-Report: SFV:NSPM;SFS:(10019020)(6069001)(366004)(39380400002)(346002)(376002)(39840400004)(396003)(199004)(189003)(476003)(11346002)(3846002)(16526019)(26005)(478600001)(9686003)(186003)(105586002)(486006)(6116002)(106356001)(6666003)(86362001)(6636002)(446003)(956004)(68736007)(103116003)(2906002)(53936002)(39060400002)(386003)(8936002)(23676004)(2486003)(52116002)(8676002)(76176011)(7696005)(7416002)(58126008)(61506002)(97736004)(305945005)(55016002)(50466002)(47776003)(230700001)(59450400001)(7736002)(5660300001)(81166006)(55236004)(81156014)(33896004)(66066001)(6506007)(316002)(25786009)(921003)(1121003);DIR:OUT;SFP:1102;SCL:1;SRVR:HE1PR0801MB1339;H:localhost.localdomain;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 Received-SPF: None (protection.outlook.com: virtuozzo.com does not designate
  permitted sender hosts)
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtBTTVQUjA4MDFNQjEzMjk7MjM6SUc1WlFTdEVDaVR3UmpObEJiVGxMakww?=
- =?utf-8?B?N3ZCN0dKbTVMY0V4SDRoa2h2WWV1VVhMTHZES3FBK0RxY1AyYVJmdENZUjhM?=
- =?utf-8?B?K3BzMWZOOFlhaWZ5SCtuL0JJbzZld0haUExKbEJkMEM3NUoyWTNoTmtzRm4z?=
- =?utf-8?B?b0oybDcveFFLTmlETUFCWElRMXl5ZFIzbktqTHROV3hyajBrZW5mWHJHZk5X?=
- =?utf-8?B?ZGRPdjEyalZFV1I2Z01NOTJUZXlJc1VSVnBPYk52LzFHeWxyV3pwR1paLzBy?=
- =?utf-8?B?M1Y4c0duT3BTQUJGL1dnWlQvVUQrMFh0WnVpVjNaU3cxK0RTekF2WktxVGgy?=
- =?utf-8?B?RGx0SVlpd3FUYjllUUlVbDBKZVlZWVB5NHNOZFB5djYvWm5GbzFINDF5SzZk?=
- =?utf-8?B?RzdnSWJ0aE1JWWtrVUFTVXpjOHhqb0lHZG91RjNQZzZFa0hiUFVXaVVVUnQ1?=
- =?utf-8?B?TVVXNlo0NmQwZTh5MnN6VVRMTlowM1FVTGRCT09kSzgzblZQR25nSElsUk1l?=
- =?utf-8?B?bUF5STM2dUNXaEo3eForWjdQV3BibVlyaXNZNS9YSnFYQ0owUGNoNFRuS1VW?=
- =?utf-8?B?QmFKeTA3N1poVnR5S0RaSkU4MkNjakNNNUlQU3YyRUhiWGhyRFB3QWRCNnBT?=
- =?utf-8?B?dXVvWWxOK3J5TGFLZjVLWXhkZlpIYlk1QkRkbmJKNldBYllpdFZYU2ZTSHhq?=
- =?utf-8?B?OC9lMVQvaVd6MXUyV2JPcUt2eHg3UHU4RW5HMDA4QXpKd0tJQUNmL1U5YitT?=
- =?utf-8?B?cG1TcEVUQW9uQnhrbmJmTDVVaEE1L3dFUDdDRFJMN3d3Vzh1bENhcWw3L0s0?=
- =?utf-8?B?dGdoREJKS2FYbE9XUlF1cXkrRy8rU1RtTThzckVrOVZidUp4VUlNcXdZdzgz?=
- =?utf-8?B?Y0dUZGkwb0VrVlMwKzk0OXNwY3BEK0pWSXVWclBFM0p1eTgwVzlQZ3V0c3NY?=
- =?utf-8?B?RTlJd1NBZThad2RwbWVaYWJtVmpWaFVvUzEyd3B4Wit2aWJFWXZvOUtxa1BV?=
- =?utf-8?B?dndYNzZNSDEvaEptT3oyZVE0d1NoZHhGV2s3R2JuT3pVNkhqb1RmWjdpbjAx?=
- =?utf-8?B?eEtleUhwb21DazNtT05RNDJabExZekd4d1F1S2pwRXlSZFlTZWVFTEpnRzFZ?=
- =?utf-8?B?L2tVVFlaY2xMUlgrbG9iREo3Z29IdDQ1ZExUQ2FuSDFQdUFEU0ZBZGdRcW1s?=
- =?utf-8?B?YnVQY1JFejJlQTNXcDVmWG1ObzM0NytzZ3ZSd2ZFdndVbjVYQXdsZ1VUR3ox?=
- =?utf-8?B?T2JyQmRpRnRtS2hwU2tzOTZ0Y2lSZnVZclRKUThDZlRCQjdPT3dBN1lFNmZ4?=
- =?utf-8?B?YmI3dW5WMzYxTDFtejljSkljYzhFUG5vbFJidXM1M1dwUFkrWmlCVlRlWU5w?=
- =?utf-8?B?N1paZnFHeG93S29sTTlQTDlRMVpHc2FtVFp3bVhWbDhRSWFLM00xMmdueFdI?=
- =?utf-8?B?Q2lNc1BLMzNYdDJsdlJKS2dzMmNoSUx5ZU0reFVZcVJZWWJ2aElRaWJteUJW?=
- =?utf-8?B?MVQ3MXd3akhPc3J5elJSRUpnZUtOalpRZXhiVFg5MEJ4VDBhazNRWkJvYVNp?=
- =?utf-8?B?cnF4a0F6YkRFNy9XaXdvd2xNaU8rZm1yOGNxUmNnbHJNMTVoVkhjVWNiTzEx?=
- =?utf-8?B?aTdPS3ZwNDRJWmpEQitoVDRiWlVla1VxbVZMWVVMTEJGTXZ3dUVhb0NhN2Zj?=
- =?utf-8?B?NGpSazZuL1BRRzRuOWJVdjBEclMxZ1hZZ1dUOXRvcnorcTE0eTRWaHRjNHpF?=
- =?utf-8?B?clkwZy9Helo2aHhzcCs4aWRQcS8xbWVHR0NpdDZGNVppdFF5alZ6R3N1a1hB?=
- =?utf-8?B?NTFkanZ0cHhwS01WdTJXYjdFTFRIZzN3WU92bGJ4d2tWTHMyM2hBdHA2L0NZ?=
- =?utf-8?Q?ly6e4WHGPSP6w=3D?=
-X-Microsoft-Antispam-Message-Info: ea91DHZ0zd4YDqH3YXUlx6+f7LDFybTnSjrUsMl6/pjJ4NsP7yqreg9sbX23oelLPtp/TAi67VRh/L2Pmz1t/UGnQ6Wef4pDGVtavv9XGoDappHZMzhzqt1eTLvlAJSC+ZeDIrK1u/q7Op+d2AjbOqZtPraWSJdKIyAWGGu5dku96uvAxJjPwIlH1sR4Msgn
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;6:KEG8PFIDr313rchyyvZtg9OGVX2VJb+d2g1Gc/ep1++mY4kJSSDCpIT02B2raXS2JEFyY1yyuZsU83jsaDq0t5ucv7iTo2+TZpkj1pfzOses/hiBCX+UkwDDwgYfsR9Fz5PxuOMfnaqbo/j6I7mEpmX0tnyHIItPBB+P1eL8Owlqg6CWmc5mulNfPGeZzaJ3xNruUnQj0+30q6BFZrxuKKQGpNTHJJJfIoQolDePzKLeXOHs+hX1b+jrfkMCxuhn3quLC5if8ju9kWf9XYpjICqdkHoafZhwlbtsmfACnHuJYr1eyjv/m3deUC4KEFhZG8BEjOFWS0L72A/ecKccCD10QaDV8Y1kBxiz+VyO26wCSIKnY11Xo55tDLIJlfStMi9JyO5sg07g/O7ECxjZqJjwBml836phxPstBh7vtFVWxdIAMhPtgH/pAljk/s+P0wEIDzGhDlA7kBNplhwfSg==;5:7DgIdAXIONz8UlIcsDsPm2zUJBmuw3uVxxv3a63vkIe4a6jZQmBYL75XeFai9MunnBPEnojpFs2P9DxxWgqncJ5kHXn5ha564YGpPhHBD75BIYix0J3EfXHQSx72MJGufjcy0PgpFG3aB+lEYcU5MIqYMtCdFmwIMbO4DJZq0Pk=;24:4K8XXBRPvnhhZTj03tDi8D3B5I7yokX7F3a8csVp8oeG+RNFtcBFN7kRMwssqVK3GUEdJlmzQfURKV3TR1bTpyFftfYUMtrAEz32sEvRZLU=
+X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtIRTFQUjA4MDFNQjEzMzk7MjM6MFFMUTY0WkxPRlVuVEdWa2NiV29oMmNz?=
+ =?utf-8?B?d3NxOGJ5WHp1VjFQWldPV1RJYjZRQllOZk9pb2JVWHJoNUJsTlZhWit2VXFR?=
+ =?utf-8?B?UTZNZHU1Ui9hbzYrdmRsVjNsQURGV080UU9pNHIrMThMZjFaTnM5VUFGM0FB?=
+ =?utf-8?B?NWtjeXhvUmk0TWJ6Sm1aTFFGRjhaa1drbDNueUZpdFFjOThKWmF0ODZGa0hm?=
+ =?utf-8?B?OTV3RzNQVFJINnVxajJuVDV2cEZpcEhPWWVYZE9lZWRhMWhITDBUNGZMcllN?=
+ =?utf-8?B?aVJxclUyVWdydjF5b2Z1amFXTDRIZStEdG1ROXErN0RuQ3pZQjdXLzVpRUxT?=
+ =?utf-8?B?dzJyL3lVdXBYUlQ2OS9PeG5BMGtRZTVPTXQ1QWp4VitidnBPNTFKV3ozWW44?=
+ =?utf-8?B?UWpjMDlaSXBvK2FYb0VwYVQ4aXVFNms3dEgwZElRdlhkWlRDTWc2NmlJdkFJ?=
+ =?utf-8?B?TGtqcWRhc00yVFNNNjhGZFFJUUl4bG5UTkdoUlQ4aDhhRWNhbkc5S1ZjcHFj?=
+ =?utf-8?B?cDdVaE8wM1c2dVd5bDN5OW1GQ3VYNXlzZ3RiYzVxUVFraGVacExwMGVTN2RC?=
+ =?utf-8?B?U09WZ0xqRU1wTzJwaTB3TlFDNTdsSEVweXNyaS8vTDd4aTBqaWM5eVY4VUhD?=
+ =?utf-8?B?UW15WE96aXRzc2IzMkx4eG1WZjQ2amgzM2JYNzRFUmxLSmFhSmNYMno0VDBZ?=
+ =?utf-8?B?U3pTV0k5Z0RUUjM3OGtBS2tkSHFkVTlYcnRwKzZKejYyK2JqQ21OMVlxVk1P?=
+ =?utf-8?B?Z0M0cFEzVUthQmIwaHBPWEtrTHJocWNVNzNMa3B4ODNIckd2Zis5MUgwVWN0?=
+ =?utf-8?B?akp2eXVXV04wcWxmOXZIaUhWTTJsd2RJcTVVWmYzd2UxMEwrR3RBaEpUVzBK?=
+ =?utf-8?B?dHF4MWlQTzNlTkJySUNuK282aEFiUWRVNWV6QnpSNUZGaGQ1bHpqVGdpOGo1?=
+ =?utf-8?B?QW1INzVvZ1pseHNKdjlqd25KaG1nMmZySFhEWHg3NjRNejF3dWI0bEdtNmNn?=
+ =?utf-8?B?TlRwNklGNkJqNnpndmJSTUk4YUI1ZW42ZE8vYnRabDIzNkV5V2ZWMFNsQTNq?=
+ =?utf-8?B?VmhoSHBJdWlabHNENXU3Q3B5T2lvVmhiam0yQWtyNDd3UTdVbHd2U0VxNW1U?=
+ =?utf-8?B?bnZiTUtaMWxxOXNwMmpkdjJtOU1UR2NKVEZ2VkFXaG5ma2N4ZFBBV1dzY1Vh?=
+ =?utf-8?B?ZGkzSGFFM0xYeVROZlhLSUo4T2lncm8wbXB0cFFEQU16K2FRQUdVcnBQc0Zo?=
+ =?utf-8?B?ZGJqNmhuaURuWng1a0xiZ1ZDQ29iZ2ZBMGRTTmx3eWtYRWJYb2lwa1NOaHpK?=
+ =?utf-8?B?akFVQ2FhUy95N2F6d3hRcjdxNlJ3NnB2N2dnQVVvcUpSeW1nczF0OStIb1d5?=
+ =?utf-8?B?cWlLaElKTGpLdWRIbDBZRXlHWHJNZXpBS1FFQ2N6OVJ5L3hkbkRZRkQ1R2Fq?=
+ =?utf-8?B?dExkdmZBWkJDeUNkeVBhZ0lQVkpqV3pDenhOVVFjOTYwendsVnFNVzRIUXVD?=
+ =?utf-8?B?NW9Na1ZMZC96dXE2ZklzTmg1dmRHdHJiQjMvaCtzbXZ1cWRiVmo5bW1lbGd0?=
+ =?utf-8?B?VW04WFYxWWZUQnVvK1Q0dHpQR1ZsdW9rT0R0ZnBhRXc2MEFTLyt4WWhTZHpW?=
+ =?utf-8?B?YkxSOXVLa0hJcDZvYnhFQ2VIY2FJeVZCZjdFdnJqV1JNQVVwYVYwK2k4UEdz?=
+ =?utf-8?B?Tm16cWpwaFRyQ3l3S2FYTmo3ckZNSjZydkIzYXFQN3poNmJLOUpzREdBRnJ0?=
+ =?utf-8?B?MUZ0RGFZTG1jWFlOVStROXNrL0p4ZVhtUU5La053M1pIMm9ZRlFCYVZaYWRU?=
+ =?utf-8?B?bFRNMDZ5L280RUNDREg2S2RITWU5T2JZVnJjUWxJeDlQakRBZz09?=
+X-Microsoft-Antispam-Message-Info: mLCXPoDlyKNn+aferz5MdQ8KyTz0jbTKE7AECBNIrpocAbS438lhtjbtiWhEQFuMjf0yO393qJIiB5DbVqzS2oQGUhLfKjB4yE1O0U155IaMxO0VyZNV7kLWZBlULQ2ownA0kbamEAXPQz9E5NMeryVsTpuOlGLCrENRpqpagjckyc6nV3ZyOb3cz1sn0BJM
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;6:aFuddwXssYtgVVR3NDX3qj1khrLLO2Q1I8JBmmGv+qFXXESw+vj0j6iAvf5DRpAfMBgrBIm/+FyI11XYSBk9F44ZaAy9TX1kEO69Dbc75RIcugQrLSZeqpdBiX2QiA9978PTgIfy+yZMgZ4djLKMsFEQyb9sTWlLWlRT0BqeEEt7xvJdX+IkbB5P2zurtKBRCGf9VzszQqeI1cXRr/sNRfiFTeSpjRmxm/qwpJTN++sKrayG4JZBBFkei0m9x8BTKOpDR48BQxr47fZ0pBewVdZZ/No0ByNOlvgPr4W445gA7yGaKkZ2Nr5oS6m8e4n/klX81GYZbmOapd2aqlfIL7bQwdDCjvaZ/L+RC/L/cg6g3fCrnDqTn4tehrS/ekw5L8M6X2ge6vyOKf8q+WKfUdZZE6eOmaNddpMD8HxgoYPzA7mOmU4i/t022qtRBMohjdiCdGuFyBT9cwbns3aNRA==;5:oNUNpACjGB7pCFluXSdU53DpsxcJLvTplNaBxfZUMNGavGSoyb3iU2xj4RFGb9SComi3EaoZ3ICMDw1QLr3+LJHO6lRuDhsfQlSAT8Io+Ti2Y3cTpnzC8sIzLvrnjJhRof9eIkXD9UCIbo9QwGoq0qQbU34VHrucGHa6i9wCMQE=;24:Svc2nfNwH7SNBPhq//qHb4cqsHcRdIBAh+PtcAQtEaJ3ucZyV0TOT6UDvWaoXalp8XhdE6pEaRZkQ6djEYnnA6coSxkwzIh6FYFIIaHbXJA=
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;AM5PR0801MB1329;7:pyuyWkwbQqTgcZZ65td7JxqWTzc2XRSk1VAkbt/4IrhCiSHt6XhZiBzJDx6IrFqOA/95mu77CY/+AyAfS2K+HD7Wc4UFuW6566omWqdNcUQl79vnAvokDohjpFpERQ5p1XsO+sttHgYVqAUrrdXxSJt2nKwj9mzYistsQ5+JJIINoVLXBkeC9Ldk4MzhHE8YTLiEQJV9ScMkf2rFXQ9z6KRNQRm+vYar7pHiaqAeXpp5vH84qgD8SzAiSfD5D44R;20:TMekNwXVsgfKiST06HU/ChdLZGIfST4tWdYh1DMGKrDHJoo5p8UIsDDUJHg97d0jsRL7MkHhYL8l6YL7oxUsZreY2G0SHgQSaQFKqGlMnRJM2gh3DDyx45RiEc7Hzv8H+HnONgiTMrEJvtoF2do0aC3+2oTGWdzqx3odW1PjOkY=
+X-Microsoft-Exchange-Diagnostics: 1;HE1PR0801MB1339;7:20SaB5GrfMP0pEepJGLLA7iYJn2c4vDR1fbMPNN335v3eU9yRTNqSbuAG/giF4oCWqj8bWIrrrWkrnuBN1SHSWd3GG8KjayXlhj0LFQBe8Pmju6FMI0YTr7SX8Hi11SqVsN8m8GA18kAVOTro4pxQy6cGZBECa1C+ChQa+yhybNoIh5xxHNjVKZu7WNyUNRLwCucx3gwEz4xm73hlLoD37trUIFQdbtuHOKUJb0rmSz4vHaAQLVZy1JxGPyx4Nfs;20:wK+A5TvonuZNRAYM5kbAV4nhfohP5/V0zjlfBtg8zSHXAIX1sbGZ4CSJkiwgxczLmQWsxUp4qluKNUq4wVNKSxepqWs8y7AukCL2AHWmS9Rzbk0j63ouFg18qY18cXm3IvQ2fittArgLQC0Chh+c9Pz3AyQHx2tjc93PHKAFhG8=
 X-OriginatorOrg: virtuozzo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2018 09:45:12.8314 (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: f6684dcb-98df-4f79-36bd-08d5d500311b
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 18 Jun 2018 09:45:22.6017 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: d49424fe-eb82-448c-f4c2-08d5d500367d
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 0bc7f26d-0264-416e-a6fc-8352af79c58f
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM5PR0801MB1329
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: HE1PR0801MB1339
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch introduces new config option, which is used
-to replace repeating CONFIG_MEMCG && !CONFIG_SLOB pattern.
-Next patches add a little more memcg+kmem related code,
-so let's keep the defines more clearly.
+The patch introduces shrinker::id number, which is used to enumerate
+memcg-aware shrinkers. The number start from 0, and the code tries
+to maintain it as small as possible.
+
+This will be used as to represent a memcg-aware shrinkers in memcg
+shrinkers map.
+
+Since all memcg-aware shrinkers are based on list_lru, which is per-memcg
+in case of !CONFIG_MEMCG_KMEM only, the new functionality will be under
+this config option.
 
 Signed-off-by: Kirill Tkhai <ktkhai@virtuozzo.com>
 Acked-by: Vladimir Davydov <vdavydov.dev@gmail.com>
 Tested-by: Shakeel Butt <shakeelb@google.com>
 ---
- include/linux/list_lru.h   |    4 ++--
- include/linux/memcontrol.h |    6 +++---
- include/linux/sched.h      |    2 +-
- include/linux/slab.h       |    2 +-
- init/Kconfig               |    5 +++++
- mm/list_lru.c              |    8 ++++----
- mm/memcontrol.c            |   16 ++++++++--------
- mm/slab.h                  |    6 +++---
- mm/slab_common.c           |    8 ++++----
- 9 files changed, 31 insertions(+), 26 deletions(-)
+ include/linux/shrinker.h |    4 +++
+ mm/vmscan.c              |   62 ++++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
 
-diff --git a/include/linux/list_lru.h b/include/linux/list_lru.h
-index 96def9d15b1b..2d23b5b745be 100644
---- a/include/linux/list_lru.h
-+++ b/include/linux/list_lru.h
-@@ -42,7 +42,7 @@ struct list_lru_node {
- 	spinlock_t		lock;
- 	/* global list, used for the root cgroup in cgroup aware lrus */
- 	struct list_lru_one	lru;
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- 	/* for cgroup aware lrus points to per cgroup lists, otherwise NULL */
- 	struct list_lru_memcg	__rcu *memcg_lrus;
- #endif
-@@ -51,7 +51,7 @@ struct list_lru_node {
+diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
+index 6794490f25b2..7ca9c18cf130 100644
+--- a/include/linux/shrinker.h
++++ b/include/linux/shrinker.h
+@@ -66,6 +66,10 @@ struct shrinker {
  
- struct list_lru {
- 	struct list_lru_node	*node;
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
+ 	/* These are for internal use */
+ 	struct list_head list;
 +#ifdef CONFIG_MEMCG_KMEM
- 	struct list_head	list;
- #endif
++	/* ID in shrinker_idr */
++	int id;
++#endif
+ 	/* objs pending delete, per node */
+ 	atomic_long_t *nr_deferred;
  };
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index 6c6fb116e925..d9e38a7c0c05 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -271,7 +271,7 @@ struct mem_cgroup {
- 	bool			tcpmem_active;
- 	int			tcpmem_pressure;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 03822f86f288..f9fe0915d71c 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -169,6 +169,49 @@ unsigned long vm_total_pages;
+ static LIST_HEAD(shrinker_list);
+ static DECLARE_RWSEM(shrinker_rwsem);
  
--#ifndef CONFIG_SLOB
 +#ifdef CONFIG_MEMCG_KMEM
-         /* Index in the kmem_cache->memcg_params.memcg_caches array */
- 	int kmemcg_id;
- 	enum memcg_kmem_state kmem_state;
-@@ -1194,7 +1194,7 @@ int memcg_kmem_charge_memcg(struct page *page, gfp_t gfp, int order,
- int memcg_kmem_charge(struct page *page, gfp_t gfp, int order);
- void memcg_kmem_uncharge(struct page *page, int order);
- 
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- extern struct static_key_false memcg_kmem_enabled_key;
- extern struct workqueue_struct *memcg_kmem_cache_wq;
- 
-@@ -1247,6 +1247,6 @@ static inline void memcg_put_cache_ids(void)
- {
- }
- 
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
- 
- #endif /* _LINUX_MEMCONTROL_H */
-diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 87bf02d93a27..15d79ef7e460 100644
---- a/include/linux/sched.h
-+++ b/include/linux/sched.h
-@@ -723,7 +723,7 @@ struct task_struct {
- #endif
- #ifdef CONFIG_MEMCG
- 	unsigned			memcg_may_oom:1;
--#ifndef CONFIG_SLOB
-+#ifdef CONFIG_MEMCG_KMEM
- 	unsigned			memcg_kmem_skip_account:1;
- #endif
- #endif
-diff --git a/include/linux/slab.h b/include/linux/slab.h
-index 14e3fe4bd6a1..ed9cbddeb4a6 100644
---- a/include/linux/slab.h
-+++ b/include/linux/slab.h
-@@ -97,7 +97,7 @@
- # define SLAB_FAILSLAB		0
- #endif
- /* Account to memcg */
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- # define SLAB_ACCOUNT		((slab_flags_t __force)0x04000000U)
- #else
- # define SLAB_ACCOUNT		0
-diff --git a/init/Kconfig b/init/Kconfig
-index 5a52f07259a2..d9025be3063d 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -678,6 +678,11 @@ config MEMCG_SWAP_ENABLED
- 	  select this option (if, for some reason, they need to disable it
- 	  then swapaccount=0 does the trick).
- 
-+config MEMCG_KMEM
-+	bool
-+	depends on MEMCG && !SLOB
-+	default y
++static DEFINE_IDR(shrinker_idr);
++static int shrinker_nr_max;
 +
- config BLK_CGROUP
- 	bool "IO controller"
- 	depends on BLOCK
-diff --git a/mm/list_lru.c b/mm/list_lru.c
-index 1e3e2f3a2a64..7621084d5a7d 100644
---- a/mm/list_lru.c
-+++ b/mm/list_lru.c
-@@ -12,7 +12,7 @@
- #include <linux/mutex.h>
- #include <linux/memcontrol.h>
- 
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- static LIST_HEAD(list_lrus);
- static DEFINE_MUTEX(list_lrus_mutex);
- 
-@@ -103,7 +103,7 @@ list_lru_from_kmem(struct list_lru_node *nlru, void *ptr)
- {
- 	return &nlru->lru;
- }
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
- 
- bool list_lru_add(struct list_lru *lru, struct list_head *item)
- {
-@@ -290,7 +290,7 @@ static void init_one_lru(struct list_lru_one *l)
- 	l->nr_items = 0;
- }
- 
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- static void __memcg_destroy_list_lru_node(struct list_lru_memcg *memcg_lrus,
- 					  int begin, int end)
- {
-@@ -549,7 +549,7 @@ static int memcg_init_list_lru(struct list_lru *lru, bool memcg_aware)
- static void memcg_destroy_list_lru(struct list_lru *lru)
- {
- }
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
- 
- int __list_lru_init(struct list_lru *lru, bool memcg_aware,
- 		    struct lock_class_key *key)
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index e6f0d5ef320a..fca9326fba99 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -251,7 +251,7 @@ static inline bool mem_cgroup_is_root(struct mem_cgroup *memcg)
- 	return (memcg == root_mem_cgroup);
- }
- 
--#ifndef CONFIG_SLOB
-+#ifdef CONFIG_MEMCG_KMEM
- /*
-  * This will be the memcg's index in each cache's ->memcg_params.memcg_caches.
-  * The main reason for not using cgroup id for this:
-@@ -305,7 +305,7 @@ EXPORT_SYMBOL(memcg_kmem_enabled_key);
- 
- struct workqueue_struct *memcg_kmem_cache_wq;
- 
--#endif /* !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
- 
- /**
-  * mem_cgroup_css_from_page - css of the memcg associated with a page
-@@ -2119,7 +2119,7 @@ static void commit_charge(struct page *page, struct mem_cgroup *memcg,
- 		unlock_page_lru(page, isolated);
- }
- 
--#ifndef CONFIG_SLOB
-+#ifdef CONFIG_MEMCG_KMEM
- static int memcg_alloc_cache_id(void)
- {
- 	int id, size;
-@@ -2384,7 +2384,7 @@ void memcg_kmem_uncharge(struct page *page, int order)
- 
- 	css_put_many(&memcg->css, nr_pages);
- }
--#endif /* !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
- 
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
- 
-@@ -2779,7 +2779,7 @@ static u64 mem_cgroup_read_u64(struct cgroup_subsys_state *css,
- 	}
- }
- 
--#ifndef CONFIG_SLOB
-+#ifdef CONFIG_MEMCG_KMEM
- static int memcg_online_kmem(struct mem_cgroup *memcg)
- {
- 	int memcg_id;
-@@ -2879,7 +2879,7 @@ static void memcg_offline_kmem(struct mem_cgroup *memcg)
- static void memcg_free_kmem(struct mem_cgroup *memcg)
- {
- }
--#endif /* !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
- 
- static int memcg_update_kmem_max(struct mem_cgroup *memcg,
- 				 unsigned long max)
-@@ -4176,7 +4176,7 @@ static struct mem_cgroup *mem_cgroup_alloc(void)
- 	INIT_LIST_HEAD(&memcg->event_list);
- 	spin_lock_init(&memcg->event_list_lock);
- 	memcg->socket_pressure = jiffies;
--#ifndef CONFIG_SLOB
-+#ifdef CONFIG_MEMCG_KMEM
- 	memcg->kmemcg_id = -1;
- #endif
- #ifdef CONFIG_CGROUP_WRITEBACK
-@@ -6003,7 +6003,7 @@ static int __init mem_cgroup_init(void)
- {
- 	int cpu, node;
- 
--#ifndef CONFIG_SLOB
-+#ifdef CONFIG_MEMCG_KMEM
- 	/*
- 	 * Kmem cache creation is mostly done with the slab_mutex held,
- 	 * so use a workqueue with limited concurrency to avoid stalling
-diff --git a/mm/slab.h b/mm/slab.h
-index 68bdf498da3b..58c6c1c2a78e 100644
---- a/mm/slab.h
-+++ b/mm/slab.h
-@@ -203,7 +203,7 @@ ssize_t slabinfo_write(struct file *file, const char __user *buffer,
- void __kmem_cache_free_bulk(struct kmem_cache *, size_t, void **);
- int __kmem_cache_alloc_bulk(struct kmem_cache *, gfp_t, size_t, void **);
- 
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- 
- /* List of all root caches. */
- extern struct list_head		slab_root_caches;
-@@ -296,7 +296,7 @@ extern void memcg_link_cache(struct kmem_cache *s);
- extern void slab_deactivate_memcg_cache_rcu_sched(struct kmem_cache *s,
- 				void (*deact_fn)(struct kmem_cache *));
- 
--#else /* CONFIG_MEMCG && !CONFIG_SLOB */
++static int prealloc_memcg_shrinker(struct shrinker *shrinker)
++{
++	int id, ret = -ENOMEM;
++
++	down_write(&shrinker_rwsem);
++	id = idr_alloc(&shrinker_idr, shrinker, 0, 0, GFP_KERNEL);
++	if (id < 0)
++		goto unlock;
++
++	if (id >= shrinker_nr_max)
++		shrinker_nr_max = id + 1;
++	shrinker->id = id;
++	ret = 0;
++unlock:
++	up_write(&shrinker_rwsem);
++	return ret;
++}
++
++static void unregister_memcg_shrinker(struct shrinker *shrinker)
++{
++	int id = shrinker->id;
++
++	BUG_ON(id < 0);
++
++	down_write(&shrinker_rwsem);
++	idr_remove(&shrinker_idr, id);
++	up_write(&shrinker_rwsem);
++}
 +#else /* CONFIG_MEMCG_KMEM */
- 
- /* If !memcg, all caches are root. */
- #define slab_root_caches	slab_caches
-@@ -351,7 +351,7 @@ static inline void memcg_link_cache(struct kmem_cache *s)
- {
- }
- 
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
++static int prealloc_memcg_shrinker(struct shrinker *shrinker)
++{
++	return 0;
++}
++
++static void unregister_memcg_shrinker(struct shrinker *shrinker)
++{
++}
 +#endif /* CONFIG_MEMCG_KMEM */
- 
- static inline struct kmem_cache *cache_from_obj(struct kmem_cache *s, void *x)
++
+ #ifdef CONFIG_MEMCG
+ static bool global_reclaim(struct scan_control *sc)
  {
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 890b1f04a03a..06f721ab90d3 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -127,7 +127,7 @@ int __kmem_cache_alloc_bulk(struct kmem_cache *s, gfp_t flags, size_t nr,
- 	return i;
- }
- 
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- 
- LIST_HEAD(slab_root_caches);
- 
-@@ -256,7 +256,7 @@ static inline void destroy_memcg_params(struct kmem_cache *s)
- static inline void memcg_unlink_cache(struct kmem_cache *s)
- {
- }
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
- 
- /*
-  * Figure out what the alignment of the objects will be given a set of
-@@ -580,7 +580,7 @@ static int shutdown_cache(struct kmem_cache *s)
+@@ -313,13 +356,30 @@ int prealloc_shrinker(struct shrinker *shrinker)
+ 	shrinker->nr_deferred = kzalloc(size, GFP_KERNEL);
+ 	if (!shrinker->nr_deferred)
+ 		return -ENOMEM;
++
++	if (shrinker->flags & SHRINKER_MEMCG_AWARE) {
++		if (prealloc_memcg_shrinker(shrinker))
++			goto free_deferred;
++	}
++
  	return 0;
++
++free_deferred:
++	kfree(shrinker->nr_deferred);
++	shrinker->nr_deferred = NULL;
++	return -ENOMEM;
  }
  
--#if defined(CONFIG_MEMCG) && !defined(CONFIG_SLOB)
-+#ifdef CONFIG_MEMCG_KMEM
- /*
-  * memcg_create_kmem_cache - Create a cache for a memory cgroup.
-  * @memcg: The memory cgroup the new cache is for.
-@@ -857,7 +857,7 @@ static inline int shutdown_memcg_caches(struct kmem_cache *s)
- static inline void flush_memcg_workqueue(struct kmem_cache *s)
+ void free_prealloced_shrinker(struct shrinker *shrinker)
  {
++	if (!shrinker->nr_deferred)
++		return;
++
+ 	kfree(shrinker->nr_deferred);
+ 	shrinker->nr_deferred = NULL;
++
++	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
++		unregister_memcg_shrinker(shrinker);
  }
--#endif /* CONFIG_MEMCG && !CONFIG_SLOB */
-+#endif /* CONFIG_MEMCG_KMEM */
  
- void slab_kmem_cache_release(struct kmem_cache *s)
+ void register_shrinker_prepared(struct shrinker *shrinker)
+@@ -347,6 +407,8 @@ void unregister_shrinker(struct shrinker *shrinker)
  {
+ 	if (!shrinker->nr_deferred)
+ 		return;
++	if (shrinker->flags & SHRINKER_MEMCG_AWARE)
++		unregister_memcg_shrinker(shrinker);
+ 	down_write(&shrinker_rwsem);
+ 	list_del(&shrinker->list);
+ 	up_write(&shrinker_rwsem);
 
