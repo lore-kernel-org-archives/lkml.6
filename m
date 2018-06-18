@@ -2,168 +2,129 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_MED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5102C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F6AC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:57:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BCB02086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:54:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BCB02086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 444992086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:57:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uIfY47Xn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 444992086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933389AbeFRMyl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:54:41 -0400
-Received: from mail-wr0-f194.google.com ([209.85.128.194]:39400 "EHLO
-        mail-wr0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754229AbeFRMyj (ORCPT
+        id S1754565AbeFRM5h (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:57:37 -0400
+Received: from mail-pl0-f67.google.com ([209.85.160.67]:35195 "EHLO
+        mail-pl0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754237AbeFRM5g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:54:39 -0400
-Received: by mail-wr0-f194.google.com with SMTP id w7-v6so16721166wrn.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 05:54:38 -0700 (PDT)
+        Mon, 18 Jun 2018 08:57:36 -0400
+Received: by mail-pl0-f67.google.com with SMTP id k1-v6so9011049plt.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 05:57:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=9Ov7TBW7BuSNN9tr01UsDeqw26CKjpVgi8DUNvd7IqQ=;
+        b=uIfY47XnhnLaR8/nKlVxsi9AN+XvL/Jdbm6RFANSucSDIH/QFX48Y7TheRjEy+LfyX
+         JKdXPIVYQHhI/nUVF9yr9eBQcQ9OP5K7cmjZERqzuEbHLu8hdK9ReynByIYblAon1T8R
+         yyl84wbHU74+OL5z/7VT8kiicBG7VOjVlpWA6tN2Cg1LPrEx93mxl3xpAPctQIAqiwC4
+         ISEYXsPjoxE8XZ6PtTI5KbKlEQWfomHRKF+9uwpaNxs8Xw6d5KeJCuXRJvlgtkSJ5i9d
+         6F1lKhqdasJePzZTAvZ9V+rXHiusGRetQw+PN+fd0qkXii3OgfbT9dj6g4EOiVIXNOt0
+         gQuw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=j3OCswB0/mLez6zAI5hRvo5Vdh3mwW0opc1bYcn1Cpo=;
-        b=b3B7aNeeIdit7c1CbFm5K9xM3cYGt2ab3QF3cmmrCD2cLz7H2hg2nO/wtyBhKiRgts
-         uf5et/ktXaTr1WUbFb+2zQ7S5Q+uUshgSQWaLmty4SPhCupJ2okJOrpBTv4L5Thjw0Zd
-         CPvkfooRX7VTc7d6rKQXQFCMPFXKCBqbc93p34hDvzQb9Hzr6zhOqZItvgnpf1SGMmmX
-         lgWmiPN3fTQfWCwGjy86PInyX1HtruoQ3CE++wnWxSRQ+3zNrww+o5Ss+V8Vg5XrVB5e
-         3xUJKGx9Ss4BBDxYfpau+2ewePJ45WZ5VePpVI2C1hJzAbwJ4OWVChsx36iuIGrN5SmC
-         bfBg==
-X-Gm-Message-State: APt69E3IuSxTzPEFXTnoYvlOK9AwRh/fVGohjd8Si5eGJ3Fj2fVOhfW7
-        V0ULBPMmQlGJXgRu6jhEvxTFOQ==
-X-Google-Smtp-Source: ADUXVKK/fomzM3d71WE8aXQbETJudLM69xHoADpikoHTO2vgV8+wgBu8Gka6jMjH5QUNcf+KyviwvA==
-X-Received: by 2002:adf:c4b6:: with SMTP id m51-v6mr10305556wrf.103.1529326477940;
-        Mon, 18 Jun 2018 05:54:37 -0700 (PDT)
-Received: from shalem.localdomain (546A5441.cm-12-3b.dynamic.ziggo.nl. [84.106.84.65])
-        by smtp.gmail.com with ESMTPSA id z13-v6sm13913994wrr.71.2018.06.18.05.54.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 05:54:37 -0700 (PDT)
-Subject: Re: [PATCH v4] platform/x86: touchscreen_dmi: Add info for the ONDA
- V891W Dual OS tablet
-From:   Hans de Goede <hdegoede@redhat.com>
-To:     youling257 <youling257@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-input@vger.kernel.org,
-        andy@infradead.org, dvhart@infradead.org
-References: <20180617235812.18596-1-youling257@gmail.com>
- <342c314e-6e9f-aefc-3ec0-300b53071089@redhat.com>
-Message-ID: <32076294-07ac-7801-2220-7468e71c275e@redhat.com>
-Date:   Mon, 18 Jun 2018 14:54:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <342c314e-6e9f-aefc-3ec0-300b53071089@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9Ov7TBW7BuSNN9tr01UsDeqw26CKjpVgi8DUNvd7IqQ=;
+        b=EDPcWkQ+Cz9XJmzxF12Qiq+Ya347xm9h+KIfPbsFnx5CPCLqKy4vYyohRwu8ogfyKw
+         gbbiasXrKXsHz19WMxsye/VW2rmbGb5bJuwY/uJD0Dxb0pRFTSZbv3JLRhz67m8tY6G9
+         Nyv/ix9qlr1FIq0PCYINO+bx44vF2D4PIn9GpgAeDeDCmqn6MMa3UGlWGTY9/fDhQW1V
+         Qov1/PWvqhbiYgiZpw1T87EhjKpfqdU3OWZtxSH9x+zB9AauyyDu4enEDtkcvLcqpyNp
+         MQadHyJ1vemodxA8ndwItms8rdu2432iE0S92O5ZN+DivkpUl7LT7vdiikXGqIGYHIHR
+         zN+w==
+X-Gm-Message-State: APt69E2rdv84DWegHJq177mdgSSOZhTjb3saJsD/5IjUv6NF0twffjGH
+        m/sG/jvkm13E2U2JIgT3b2Ni1Q==
+X-Google-Smtp-Source: ADUXVKKaMdvFEBYDuZvtlyM9O9VJutaVRMrzakbrYAmM1Ykv67wp67SQ9v03eJIYzCUgI+I5dpeBZw==
+X-Received: by 2002:a17:902:ac89:: with SMTP id h9-v6mr14101442plr.311.1529326655417;
+        Mon, 18 Jun 2018 05:57:35 -0700 (PDT)
+Received: from localhost ([2620:15c:2c4:201:f5a:7eca:440a:3ead])
+        by smtp.gmail.com with ESMTPSA id n25-v6sm22238716pff.119.2018.06.18.05.57.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 05:57:34 -0700 (PDT)
+From:   Eric Dumazet <edumazet@google.com>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Willem de Bruijn <willemb@google.com>
+Subject: [PATCH] genirq: use rcu in kstat_irqs_usr()
+Date:   Mon, 18 Jun 2018 05:56:12 -0700
+Message-Id: <20180618125612.155057-1-edumazet@google.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Jeremy Dorfman identified mutex contention when multiple threads
+parse /proc/stat concurrently.
 
-On 18-06-18 10:43, Hans de Goede wrote:
-> Hi,
-> 
-> On 18-06-18 01:58, youling257 wrote:
->> Add touchscreen info for the ONDA V891W Dual OS tablet
-> 
-> Nitpick: still missing a period '.' at the end, this should be:
-> 
-> Add touchscreen info for the ONDA V891W Dual OS tablet.
-> 
->> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->> Signed-off-by: youling257 <youling257@gmail.com>
-> 
-> As Andy indicated you need to use your real name when submitting
-> kernel patches, not an internet alias (or a nick).
-> 
-> So you need to re-submit this with something like this:
-> 
-> Signed-off-by: FirstName LastName <youling257@gmail.com>
+Since Thomas Gleixner commit 425a5072dcd1 ("genirq: Free irq_desc
+with rcu"), we can easily switch kstat_irqs_usr() to rcu locking
+and remove this mutex contetion.
 
-youling has indicated to me (off-list) that he does not
-want to use his real name.
+show_interrupts() case will be handled in a separate patch.
 
-He has already provided me with the touchscreen details
-and dmi strings for this tablet a while ago and I had
-writing the exact same quirk on my TODO list already.
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: Jeremy Dorfman <jdorfman@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Willem de Bruijn <willemb@google.com>
+---
+ kernel/irq/irqdesc.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-As such I've no doubt that he created this patch and
-has the rights to Submit it under the GPL license.
+diff --git a/kernel/irq/irqdesc.c b/kernel/irq/irqdesc.c
+index afc7f902d74a3eff5d1f8a5e407159c5d28625f7..a668b7ad8a5d5e3b191e3a1dc8f9f32293658d42 100644
+--- a/kernel/irq/irqdesc.c
++++ b/kernel/irq/irqdesc.c
+@@ -443,6 +443,7 @@ static void free_desc(unsigned int irq)
+ 	 * We free the descriptor, masks and stat fields via RCU. That
+ 	 * allows demultiplex interrupts to do rcu based management of
+ 	 * the child interrupts.
++	 * This also allows us to use rcu in kstat_irqs_usr().
+ 	 */
+ 	call_rcu(&desc->rcu, delayed_free_desc);
+ }
+@@ -928,17 +929,17 @@ unsigned int kstat_irqs(unsigned int irq)
+  * kstat_irqs_usr - Get the statistics for an interrupt
+  * @irq:	The interrupt number
+  *
+- * Returns the sum of interrupt counts on all cpus since boot for
+- * @irq. Contrary to kstat_irqs() this can be called from any
+- * preemptible context. It's protected against concurrent removal of
+- * an interrupt descriptor when sparse irqs are enabled.
++ * Returns the sum of interrupt counts on all cpus since boot for @irq.
++ * Contrary to kstat_irqs() this can be called from any context.
++ * It uses rcu since a concurrent removal of an interrupt descriptor is
++ * observing an rcu grace period before delayed_free_desc()/irq_kobj_release().
+  */
+ unsigned int kstat_irqs_usr(unsigned int irq)
+ {
+ 	unsigned int sum;
+ 
+-	irq_lock_sparse();
++	rcu_read_lock();
+ 	sum = kstat_irqs(irq);
+-	irq_unlock_sparse();
++	rcu_read_unlock();
+ 	return sum;
+ }
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
 
-So I'm going to resubmit this with his S-o-b removed
-and replaced with mine. Where the intent of my
-S-o-b is to certify point c. of the certificate
-of origin, quoting from:
-
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#developer-s-certificate-of-origin-1-1
-
-"c. The contribution was provided directly to me by some other person who certified (a), (b) or (c) and I have not modified it."
-
-This seems better then me re-creating the exact
-same patch from scratch.
-
-Regards,
-
-Hans
-
-
-
-
-
->> ---
->>   drivers/platform/x86/touchscreen_dmi.c | 27 ++++++++++++++++++++++++++
->>   1 file changed, 27 insertions(+)
->>
->> diff --git a/drivers/platform/x86/touchscreen_dmi.c b/drivers/platform/x86/touchscreen_dmi.c
->> index 6284946cb0d1..2ad9327c8c0f 100644
->> --- a/drivers/platform/x86/touchscreen_dmi.c
->> +++ b/drivers/platform/x86/touchscreen_dmi.c
->> @@ -221,6 +221,24 @@ static const struct ts_dmi_data onda_v891w_v1_data = {
->>       .properties    = onda_v891w_v1_props,
->>   };
->> +static const struct property_entry onda_v891w_v3_props[] = {
->> +    PROPERTY_ENTRY_U32("touchscreen-min-x", 35),
->> +    PROPERTY_ENTRY_U32("touchscreen-min-y", 15),
->> +    PROPERTY_ENTRY_U32("touchscreen-size-x", 1625),
->> +    PROPERTY_ENTRY_U32("touchscreen-size-y", 1135),
->> +    PROPERTY_ENTRY_BOOL("touchscreen-inverted-y"),
->> +    PROPERTY_ENTRY_STRING("firmware-name",
->> +                  "gsl3676-onda-v891w-v3.fw"),
->> +    PROPERTY_ENTRY_U32("silead,max-fingers", 10),
->> +    PROPERTY_ENTRY_BOOL("silead,home-button"),
->> +    { }
->> +};
->> +
->> +static const struct ts_dmi_data onda_v891w_v3_data = {
->> +    .acpi_name    = "MSSL1680:00",
->> +    .properties    = onda_v891w_v3_props,
->> +};
->> +
->>   static const struct property_entry pipo_w2s_props[] = {
->>       PROPERTY_ENTRY_U32("touchscreen-size-x", 1660),
->>       PROPERTY_ENTRY_U32("touchscreen-size-y", 880),
->> @@ -481,6 +499,15 @@ static const struct dmi_system_id touchscreen_dmi_table[] = {
->>               DMI_EXACT_MATCH(DMI_BIOS_VERSION, "ONDA.W89EBBN08"),
->>           },
->>       },
->> +    {
->> +        /* ONDA V891w Dual OS P891DCF2V1A01274 64GB */
->> +        .driver_data = (void *)&onda_v891w_v3_data,
->> +        .matches = {
->> +            DMI_MATCH(DMI_SYS_VENDOR, "Insyde"),
->> +            DMI_MATCH(DMI_PRODUCT_NAME, "ONDA Tablet"),
->> +            DMI_MATCH(DMI_BIOS_VERSION, "ONDA.D890HBBNR0A"),
->> +        },
->> +    },
->>       {
->>           /* Pipo W2S */
->>           .driver_data = (void *)&pipo_w2s_data,
->>
