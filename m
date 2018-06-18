@@ -2,98 +2,151 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,
+	FROM_LOCAL_NOVOWEL,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F00C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 791FAC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96AA620864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:38:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96AA620864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lxorguk.ukuu.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 33463208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:39:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WAJ//o8V";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="mr7BJeTu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33463208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935030AbeFRNiy (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:38:54 -0400
-Received: from www.llwyncelyn.cymru ([82.70.14.225]:33268 "EHLO fuzix.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934267AbeFRNiw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:38:52 -0400
-Received: from alans-desktop (82-70-14-226.dsl.in-addr.zen.co.uk [82.70.14.226])
-        by fuzix.org (8.15.2/8.15.2) with ESMTP id w5IDcJE5007311;
-        Mon, 18 Jun 2018 14:38:19 +0100
-Date:   Mon, 18 Jun 2018 14:38:18 +0100
-From:   Alan Cox <gnomes@lxorguk.ukuu.org.uk>
-To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: Re: [RFC][PATCH 0/6] Use printk_safe context for TTY and UART port
- locks
-Message-ID: <20180618143818.50b2f2f9@alans-desktop>
-In-Reply-To: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
-References: <20180615093919.559-1-sergey.senozhatsky@gmail.com>
-Organization: Intel Corporation
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S935038AbeFRNjN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:39:13 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42438 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934807AbeFRNhz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:37:55 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 45E2660B15; Mon, 18 Jun 2018 13:37:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529329075;
+        bh=pLOwIBxDTltsSVQbBtdC0E8Hyq6eVarFPLCIbhHn1/A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WAJ//o8VNVa5gX33ccn5ulb4RtBGI2gvP4O3j/T+PcrFI5n8NcuDm6j24ycPLf7Jz
+         gqOB95ArW3k55QWkaXfay0TODi80TwXLnDTjjFmVENZ4AMcTMJ+BhyFHECCN4w9CxA
+         ov/iht4qcOn98AA02Bxd393bzPLlN6IRCTDfgkL8=
+Received: from rplsssn-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rplsssn@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 43AD060B19;
+        Mon, 18 Jun 2018 13:37:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529329074;
+        bh=pLOwIBxDTltsSVQbBtdC0E8Hyq6eVarFPLCIbhHn1/A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=mr7BJeTuEgij3tQ5L7z2a1QAyC+78vLZC0iSDxYNHxecYIoYhmKAD+TeIg1PDPzrI
+         VqAz/Fkzz6w1m63ZcifMQS+T2YBEEFzZlPAHedRP3y3Dzyr0CIpm7Bp/GlaBfrFMXD
+         4KR2+BNW13ZpFLaSlYPNTFg4sRh15yAgEfxFkGu4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 43AD060B19
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rplsssn@codeaurora.org
+From:   Raju P L S S S N <rplsssn@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Cc:     rnayak@codeaurora.org, bjorn.andersson@linaro.org,
+        linux-kernel@vger.kernel.org, sboyd@kernel.org,
+        evgreen@chromium.org, dianders@chromium.org, mka@chromium.org,
+        ilina@codeaurora.org, "Raju P.L.S.S.S.N" <rplsssn@codeaurora.org>
+Subject: [PATCH v11 06/10] drivers: qcom: rpmh-rsc: allow invalidation of sleep/wake TCS
+Date:   Mon, 18 Jun 2018 19:07:16 +0530
+Message-Id: <1529329040-2606-7-git-send-email-rplsssn@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1529329040-2606-1-git-send-email-rplsssn@codeaurora.org>
+References: <1529329040-2606-1-git-send-email-rplsssn@codeaurora.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> It doesn't come as a surprise that recursive printk() calls are not the
-> only way for us to deadlock in printk() and we still have a whole bunch
-> of other printk() deadlock scenarios. For instance, those that involve
-> TTY port->lock spin_lock and UART port->lock spin_lock.
+From: Lina Iyer <ilina@codeaurora.org>
 
-The tty layer code there is not re-entrant. Nor is it supposed to be
+Allow sleep and wake commands to be cleared from the respective TCSes,
+so that they can be re-populated.
 
-> So the idea of this patch set is to take tty_port->lock and
-> uart_port->lock from printk_safe context and to eliminate some
-> of non-recursive printk() deadlocks - the ones that don't start
-> in printk(), but involve console related locks and thus eventually
-> deadlock us in printk(). For this purpose the patch set introduces
-> several helper macros:
+Signed-off-by: Lina Iyer <ilina@codeaurora.org>
+Signed-off-by: Raju P.L.S.S.S.N <rplsssn@codeaurora.org>
+---
+Changes in v9:
+	- Remove EXPORT_SYMBOL
 
-I don't see how this helps - if you recurse into the uart code you are
-still hitting the paths that are unsafe when re-entered. All you've done
-is messed up a pile of locking code on critical performance paths.
+Changes in v7:
+	- Move bitmap_zero() outside the loop
 
-As it stands I think it's a bad idea.
+Changes in v6:
+	- remove unnecessary locks around __tcs_invalidate
+	- rename function to tcs_invaldiate
 
-> Of course, TTY and UART port spin_locks are not the only locks that
-> we can deadlock on. So this patch set does not address all deadlock
-> scenarios, it just makes a small step forward.
-> 
-> Any opinions?
+Changes in v4:
+	- refactored the rphm_rsc_invalidate()
+---
+ drivers/soc/qcom/rpmh-rsc.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-The cure is worse than the disease.
+diff --git a/drivers/soc/qcom/rpmh-rsc.c b/drivers/soc/qcom/rpmh-rsc.c
+index b87f9b0..a68dcd1 100644
+--- a/drivers/soc/qcom/rpmh-rsc.c
++++ b/drivers/soc/qcom/rpmh-rsc.c
+@@ -101,6 +101,50 @@ static struct tcs_group *get_tcs_of_type(struct rsc_drv *drv, int type)
+ 	return &drv->tcs[type];
+ }
+ 
++static int tcs_invalidate(struct rsc_drv *drv, int type)
++{
++	int m;
++	struct tcs_group *tcs;
++
++	tcs = get_tcs_of_type(drv, type);
++	if (IS_ERR(tcs))
++		return PTR_ERR(tcs);
++
++	spin_lock(&tcs->lock);
++	if (bitmap_empty(tcs->slots, MAX_TCS_SLOTS)) {
++		spin_unlock(&tcs->lock);
++		return 0;
++	}
++
++	for (m = tcs->offset; m < tcs->offset + tcs->num_tcs; m++) {
++		if (!tcs_is_free(drv, m)) {
++			spin_unlock(&tcs->lock);
++			return -EAGAIN;
++		}
++		write_tcs_reg_sync(drv, RSC_DRV_CMD_ENABLE, m, 0);
++	}
++	bitmap_zero(tcs->slots, MAX_TCS_SLOTS);
++	spin_unlock(&tcs->lock);
++
++	return 0;
++}
++
++/**
++ * rpmh_rsc_invalidate - Invalidate sleep and wake TCSes
++ *
++ * @drv: the RSC controller
++ */
++int rpmh_rsc_invalidate(struct rsc_drv *drv)
++{
++	int ret;
++
++	ret = tcs_invalidate(drv, SLEEP_TCS);
++	if (!ret)
++		ret = tcs_invalidate(drv, WAKE_TCS);
++
++	return ret;
++}
++
+ static struct tcs_group *get_tcs_for_msg(struct rsc_drv *drv,
+ 					 const struct tcs_request *msg)
+ {
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,\na Linux Foundation Collaborative Project
 
-The only case that's worth looking at is the direct polled console code
-paths. The moment you touch the other layers you add essentially never
-needed code to hot paths.
-
-Given printk nowdays is already somewhat unreliable with all the perf
-related changes, and we have other good debug tools I think it would be
-far cleaner to have some kind of
-
-
-	if (spin_trylock(...)) {
-		console_defer(buffer);
-		return;
-	}
-
-helper layer in the printk/console logic, at least for the non panic/oops
-cases.
-
-Alan
