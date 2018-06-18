@@ -3,87 +3,124 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0BD3C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:52:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0A2C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:53:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 977D1208E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:52:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 977D1208E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=opensource.cirrus.com
+	by mail.kernel.org (Postfix) with ESMTP id 6F155208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:53:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F155208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967956AbeFRIwx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:52:53 -0400
-Received: from mx0a-001ae601.pphosted.com ([67.231.149.25]:44758 "EHLO
-        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965791AbeFRIwv (ORCPT
+        id S967926AbeFRIxa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:53:30 -0400
+Received: from mail-ua0-f196.google.com ([209.85.217.196]:40802 "EHLO
+        mail-ua0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966364AbeFRIx1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:52:51 -0400
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-        by mx0a-001ae601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5I8mWWi014910;
-        Mon, 18 Jun 2018 03:52:46 -0500
-Authentication-Results: ppops.net;
-        spf=none smtp.mailfrom=ckeepax@opensource.cirrus.com
-Received: from mail4.cirrus.com ([87.246.98.35])
-        by mx0a-001ae601.pphosted.com with ESMTP id 2jmyy2b3s4-1;
-        Mon, 18 Jun 2018 03:52:46 -0500
-Received: from EX17.ad.cirrus.com (unknown [172.20.9.81])
-        by mail4.cirrus.com (Postfix) with ESMTP id 16E8C611C8A7;
-        Mon, 18 Jun 2018 03:53:39 -0500 (CDT)
-Received: from imbe.wolfsonmicro.main (198.61.95.81) by EX17.ad.cirrus.com
- (172.20.9.81) with Microsoft SMTP Server id 14.3.301.0; Mon, 18 Jun 2018
- 09:52:45 +0100
-Received: from imbe.wolfsonmicro.main (imbe.wolfsonmicro.main [198.61.95.81])
-        by imbe.wolfsonmicro.main (8.14.4/8.14.4) with ESMTP id w5I8qjvA001757; Mon,
- 18 Jun 2018 09:52:45 +0100
-Date:   Mon, 18 Jun 2018 09:52:45 +0100
-From:   Charles Keepax <ckeepax@opensource.cirrus.com>
-To:     Lee Jones <lee.jones@linaro.org>
-CC:     <andy.shevchenko@gmail.com>, <patches@opensource.cirrus.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] mfd: arizona: Don't use regmap_read_poll_timeout
-Message-ID: <20180618085245.GE18740@imbe.wolfsonmicro.main>
-References: <20180604115750.6126-1-ckeepax@opensource.cirrus.com>
- <20180618062754.GF31141@dell>
+        Mon, 18 Jun 2018 04:53:27 -0400
+Received: by mail-ua0-f196.google.com with SMTP id l11-v6so10186998uak.7;
+        Mon, 18 Jun 2018 01:53:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TEfxwfB+qu3ElJd4Mz2XR0KZ1uRkHbuFEHSOpNUVM00=;
+        b=k9rnV/QZdobo4MAFQTwgJxStDyAUY+myuIHhpEYn00sYY+1EtJxcihrlB2eogqT8p6
+         Dd3NExXfSrODnP0BaFtIsqNjS0wzWBN2lx5Fj46kZ8MNgGgh3j+ndygUU/hOa+SyLKVq
+         Z82ZCcVufJlNzLvjLkGipkC+aVLJOcLznI58cAexlOqp1q79mOS1QJAHi+thcr/brz1q
+         tyf0tIDg7RQ0NMoz6XYWtgWp9Zw5RuaTziqQMCzKRXaPT1GGP4mcvS/5tcaU9sFDT4LR
+         FtrQl9ElCMrpMfKFxmhv1jC+giKgZI+OKaQoGadpvBxDkghUhA2ZlPuCI7wwdbdC4hLt
+         l/vQ==
+X-Gm-Message-State: APt69E1nKzTL3X8vAoWUCHhqjUKuYhampgcwjXjLm29qucgL9ZXtatIi
+        QvTQE3gKvxS0+bSC/yJ7YWKBBRsk8TG4kPoJI9s=
+X-Google-Smtp-Source: ADUXVKItt6lxkwvfdpoUZekmj4VVdU8grYeqW5Ok5cWU9z+oIdBqZDuuazMqrW/JL68QCTbtE6ZH4KX4WSGp3wsyn3c=
+X-Received: by 2002:ab0:48e1:: with SMTP id y30-v6mr7176447uac.180.1529312006985;
+ Mon, 18 Jun 2018 01:53:26 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20180618062754.GF31141@dell>
-User-Agent: Mutt/1.5.20 (2009-12-10)
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1805220000
- definitions=main-1806180109
+References: <20180618080608.851973560@linuxfoundation.org> <20180618080609.641888971@linuxfoundation.org>
+ <b00cf160-5457-1a2c-2020-4b2fffe047cc@cogentembedded.com>
+In-Reply-To: <b00cf160-5457-1a2c-2020-4b2fffe047cc@cogentembedded.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 18 Jun 2018 10:53:15 +0200
+Message-ID: <CAMuHMdUweN=HowbFBOV+8TYom42aGR3jKRNigS0DCaOBbUUhbg@mail.gmail.com>
+Subject: Re: [PATCH 4.16 020/279] dt-bindings: net: ravb: Add support for
+ r8a77965 SoC
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Rob Herring <robh@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 07:27:54AM +0100, Lee Jones wrote:
-> On Mon, 04 Jun 2018, Charles Keepax wrote:
-> > @@ -240,18 +241,28 @@ static int arizona_poll_reg(struct arizona *arizona,
-> >  			    int timeout_ms, unsigned int reg,
-> >  			    unsigned int mask, unsigned int target)
-> >  {
-> > +	ktime_t timeout = ktime_add_us(ktime_get(), timeout_ms * USEC_PER_MSEC);
-> >  	unsigned int val = 0;
-> > -	int ret;
-> > +	int ret = regmap_read(arizona->regmap, reg, &val);
-> 
-> I'm not a fan of this type of initialisation.
-> 
-> Also, what's the point of assigning 'ret' if you never check it?
-> 
+Hi Sergei,
 
-It could get checked if the timeout value is very small causing
-the while loop to be skipped and almost certainly will cause
-un-initialised warnings without it.
+On Mon, Jun 18, 2018 at 10:46 AM Sergei Shtylyov
+<sergei.shtylyov@cogentembedded.com> wrote:
+> On 6/18/2018 11:10 AM, Greg Kroah-Hartman wrote:
+>
+> > 4.16-stable review patch.  If anyone has any objections, please let me know.
+> >
+> > ------------------
+> >
+> > From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> >
+> > [ Upstream commit 1a862488729a6ea9cfd285d2c90f8738949ae7d2 ]
+> >
+> > Add documentation for r8a77965 compatible string to renesas ravb device
+> > tree bindings documentation.
+> >
+> > Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+> > Acked-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+> > Signed-off-by: Rob Herring <robh@kernel.org>
+> > Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > ---
+> >   Documentation/devicetree/bindings/net/renesas,ravb.txt |    1 +
+> >   1 file changed, 1 insertion(+)
+> >
+> > --- a/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> > +++ b/Documentation/devicetree/bindings/net/renesas,ravb.txt
+> > @@ -17,6 +17,7 @@ Required properties:
+> >
+> >         - "renesas,etheravb-r8a7795" for the R8A7795 SoC.
+> >         - "renesas,etheravb-r8a7796" for the R8A7796 SoC.
+> > +      - "renesas,etheravb-r8a77965" for the R8A77965 SoC.
+> >         - "renesas,etheravb-r8a77970" for the R8A77970 SoC.
+> >         - "renesas,etheravb-r8a77980" for the R8A77980 SoC.
+> >         - "renesas,etheravb-r8a77995" for the R8A77995 SoC.
+>
+>     Seeing the bindings update in -stable for the 1st time, and I highly doubt
+> that it's necessary here.
 
-I can move it to its own line if you prefer? Would you want a
-comment as well?
+They don't hurt (as long as no _separate_ driver update is needed!), hence
+I don't object to backporting in-se.
 
-Thanks,
-Charles
+But their usefulness can be doubted, as they don't change the behavior of the
+kernel, unlikely adding e.g. new PCI IDs, or extending drivers with
+new compatible
+values. It's purely a documentation update.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
