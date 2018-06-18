@@ -2,180 +2,226 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.6 required=3.0 tests=BODY_8BITS,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EE65C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12ED2C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:44:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE6AE208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1D41208E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:44:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="iYbPlXRb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE6AE208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IKHMMYfF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1D41208E1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755122AbeFRHn1 (ORCPT
+        id S1755240AbeFRHou (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 03:43:27 -0400
-Received: from mail-wm0-f67.google.com ([74.125.82.67]:33953 "EHLO
+        Mon, 18 Jun 2018 03:44:50 -0400
+Received: from mail-wm0-f67.google.com ([74.125.82.67]:38943 "EHLO
         mail-wm0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754721AbeFRHnY (ORCPT
+        with ESMTP id S1754636AbeFRHor (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 03:43:24 -0400
-Received: by mail-wm0-f67.google.com with SMTP id l15-v6so13872404wmc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 00:43:23 -0700 (PDT)
+        Mon, 18 Jun 2018 03:44:47 -0400
+Received: by mail-wm0-f67.google.com with SMTP id p11-v6so13568895wmc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 00:44:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=sender:date:from:to:cc:subject:message-id:mail-followup-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tOG2pfeWl9hb6IAzVdoeUIDCAhZ05eNoe2uT6cijC2s=;
-        b=iYbPlXRb4+RBdfVt8Ihw520iZodyw0rbhUIm5Bid9fycISyhhFs8qjQt/BQ4PS+yTS
-         tX4dTPnIDMyzoCmkD55iJpwpA2KfERYrVkD93SN/P/FY4VhMngMTi9DuM8LfgmjIkJO8
-         aaYoBwydmODyL/zy5js7JM7KYJxBjjS+IZfJQ=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4GGfxzmuxipuT1gKbZviJZawPvwar4wBFaLDWRO1nI8=;
+        b=IKHMMYfFVYxKL5a04cbaiT0WEpkWknz3l2/YcE2NCMhwS5fSiA8OAF6od+7LEUigyd
+         dMPsmDPEjWJjbFxEtSk1M5vRtPOw+gQDh4bs1wPxzP9kwqaAp+FiSm3ImfmvHd3gKKj6
+         ogZU+f7pYvFley+g2snC082fQmR7xCg5sCbNY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=tOG2pfeWl9hb6IAzVdoeUIDCAhZ05eNoe2uT6cijC2s=;
-        b=cVP9KKxMGyy8InUL5FfEJInkCOZSx5zOmkXqG/MXz5jHxoH5Kzm5sGCQpQBxVd2AAK
-         K1db5b61edBp0+2Q0g2j8z7ZJfYfPsLycfU7qpqg+UhU4z70c7eIGglKLPkOVRSyMEFW
-         CUoTDAhDebthMBtnGdiQkWvcnwsEwxseENzh/oJg4P9/q51zU4yU6fPH2JO4ZaV+bnCO
-         EEGzLoICW2wktZ29frJQ2X1cjtNaaOPO6RFwJmiCR0vqo29ij/h6/pOqWUZDDnzTggqM
-         KqOADJOnJTJkXMyAntBUDQJU2DQFywAsTakFRemEjzhAwiiXkMriBu5uStUy3bHsH3gD
-         s+8g==
-X-Gm-Message-State: APt69E2OeqmfhzVnZ/RD79iUZx5sS3KFvLqRuh/Lp6guzqmwyQXYnIiP
-        jXdFAa/ARyqgyi2HNqa220Spiw==
-X-Google-Smtp-Source: ADUXVKIp/ZS+ZLtVCXs+PMM5PKol+zhAE9zMl5f1FPkva9ujdeAAYOtlDVH0hJoa2rTut1tkVuPQ8w==
-X-Received: by 2002:a50:ad07:: with SMTP id y7-v6mr10560103edc.78.1529307803291;
-        Mon, 18 Jun 2018 00:43:23 -0700 (PDT)
-Received: from phenom.ffwll.local ([2a02:168:5628:0:d0c7:bcda:eea:9e5d])
-        by smtp.gmail.com with ESMTPSA id d16-v6sm7458237ede.21.2018.06.18.00.43.21
+        bh=4GGfxzmuxipuT1gKbZviJZawPvwar4wBFaLDWRO1nI8=;
+        b=OwStdNzK3T81mH/Os6/F0TZC4APTpgopr5V0rn4G2L2K/MPAo/XpwBnWJyYIIvwAHo
+         +K2Ke81J44IpZ95Vd6bbgP6YnYVOW14PvLfigJ9MtrZjHXzTVF02ZDoLxT7XTgoMlPmf
+         Y8sPnXnW/bww/wo4I8NbfDObutJY4tny4KdOaJH8+k5dqf3grY1/cpsoz4Ah6OAfe+TV
+         kNYraGpWKGPBPER7u6NyBXWNvnD4IyaZ1XARd/dH/EdZ4VG2/MoVoGHzp6w9UpKLwcTL
+         jukA54HpklIK1NUlFpQuvrvfozuUQ93CD9qTURAuk5sGGHHEdNBO9KCpWXyAFhpTqucl
+         sA3Q==
+X-Gm-Message-State: APt69E2xM8cUiAHyF4D4ZfXG2teps1HffGtT2I0/T3ZR70NKyvM6A73j
+        l43fmcZ+8hfOZxLz3f6qpVeomg==
+X-Google-Smtp-Source: ADUXVKLlDZn0XG1pcz7yIckyrbN0hYfXaJoC7gKlfQyW/2LNCYgXLJQJ9GRvT55sOBUFl1KtvSMwdQ==
+X-Received: by 2002:a1c:3bc4:: with SMTP id i187-v6mr8198847wma.57.1529307886624;
+        Mon, 18 Jun 2018 00:44:46 -0700 (PDT)
+Received: from dell ([95.149.160.78])
+        by smtp.gmail.com with ESMTPSA id q201-v6sm7576079wmd.20.2018.06.18.00.44.45
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 00:43:22 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 09:43:20 +0200
-From:   Daniel Vetter <daniel@ffwll.ch>
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "marex@denx.de" <marex@denx.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "marcofrk@gmail.com" <marcofrk@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
-Message-ID: <20180618074320.GS3438@phenom.ffwll.local>
-Mail-Followup-To: Marek Vasut <marek.vasut@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "marex@denx.de" <marex@denx.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
-        "marcofrk@gmail.com" <marcofrk@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <cover.1529091248.git.leonard.crestez@nxp.com>
- <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
- <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
- <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
- <638457fd-85da-8fec-d146-517c43f71813@denx.de>
- <b3fa74c5110b45e5992920485749869ab1f7ebce.camel@nxp.com>
- <6995fa4b-47a9-887b-5e4f-4284ca6a2c79@gmail.com>
+        Mon, 18 Jun 2018 00:44:45 -0700 (PDT)
+Date:   Mon, 18 Jun 2018 08:44:43 +0100
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     airlied@linux.ie, hans.verkuil@cisco.com, olof@lixom.net,
+        seanpaul@google.com, sadolfsson@google.com, felixe@google.com,
+        bleung@google.com, darekm@google.com, marcheu@chromium.org,
+        fparent@baylibre.com, dri-devel@lists.freedesktop.org,
+        linux-media@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, eballetbo@gmail.com,
+        Stefan Adolfsson <sadolfsson@chromium.org>
+Subject: Re: [PATCH v7 3/6] mfd: cros-ec: Increase maximum mkbp event size
+Message-ID: <20180618074443.GK31141@dell>
+References: <1527841154-24832-1-git-send-email-narmstrong@baylibre.com>
+ <1527841154-24832-4-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6995fa4b-47a9-887b-5e4f-4284ca6a2c79@gmail.com>
-X-Operating-System: Linux phenom 4.15.0-3-amd64 
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1527841154-24832-4-git-send-email-narmstrong@baylibre.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 01:32:44AM +0200, Marek Vasut wrote:
-> On 06/16/2018 12:42 AM, Leonard Crestez wrote:
-> > On Fri, 2018-06-15 at 23:36 +0200, Marek Vasut wrote:
-> >> On 06/15/2018 10:58 PM, Leonard Crestez wrote:
-> >>> On Fri, 2018-06-15 at 16:47 -0300, Fabio Estevam wrote:
-> >>>> On Fri, Jun 15, 2018 at 4:43 PM, Leonard Crestez
-> >>>> <leonard.crestez@nxp.com> wrote:
-> > 
-> >>>>> The FBDEV driver uses the same name and both can't be registered at the
-> >>>>> same time. Fix this by renaming the drm driver to mxsfb-drm
-> >>>>
-> >>>> Stefan sent the same patch a few days ago:
-> >>>
-> >>> In that thread there is a proposal for removing the old fbdev/mxsfb
-> >>> driver entirely.
-> >>>
-> >>> That would break old DTBs, isn't this generally considered bad? Also,
-> >>> are we sure the removal of fbdev/mxsfb wouldn't lose any features?
-> >>>
-> >>> What my series does is make both drivers work with the same kernel
-> >>> image and turns the choice into a board-level dtb decision. Supporting
-> >>> everything at once seems desirable to me and it allows for a very
-> >>> smooth upgrade path.
-> >>
-> >> Having two drivers in the kernel with different set of bugs is always bad.
-> >>
-> >>> The old driver could be removed later, after all users are converted.
-> >>
-> >> Both drivers were in for long enough already. And let's be realistic,
-> >> how many MX23/MX28 users of old DTs with new kernels are there who
-> >> cannot update the DT as well ?
-> > 
-> > Grepping for "display =" in arch/arm/boot/dts/imx* I see that old
-> > bindings are also used by 3rd-party boards for imx6/7:
-> >  * imx6sx-nitrogen6sx
-> >  * imx6ul-geam
-> >  * imx6ul-isiot
-> >  * imx6ul-opos6uldev
-> >  * imx6ul-pico-hobbit
-> >  * imx6ul-tx6ul
-> >  * imx7d-nitrogen7
-> 
-> Er, yes, a handful of boards which could be updated :)
-> 
-> > Converting everything might be quite a bit of work, and explicitly
-> > supporting old bindings is also work.
-> 
-> Does adding support for old bindings justify the effort invested ? I
-> doubt so, it only adds more code to maintain.
-> 
-> > It is very confusing that there is a whole set of displays for imx6/7
-> > which are supported by upstream but only with a non-default config.
-> > While it is extremely common in the embedded field to have custom
-> > configs the default one in the kernel should try to "just work".
-> > 
-> > Couldn't this patch series be considered a bugfix? It was also
-> > surprisingly small.
-> 
-> I think it's just a workaround which allows you to postpone the real
-> fix, and I don't like that.
+On Fri, 01 Jun 2018, Neil Armstrong wrote:
 
-Yeah agreed, imo the proper fix here would be to either update the dts for
-the affected boards and/or make mxsfb accept the old dt bindings for
-backwards compat. Artificially extending the life of the fbdev drivers
-seems silly.
--Daniel
+> Having a 16 byte mkbp event size makes it possible to send CEC
+> messages from the EC to the AP directly inside the mkbp event
+> instead of first doing a notification and then a read.
+> 
+> Signed-off-by: Stefan Adolfsson <sadolfsson@chromium.org>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> Tested-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+>  drivers/platform/chrome/cros_ec_proto.c | 40 +++++++++++++++++++++++++--------
+>  include/linux/mfd/cros_ec.h             |  2 +-
+>  include/linux/mfd/cros_ec_commands.h    | 19 ++++++++++++++++
+>  3 files changed, 51 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+> index e7bbdf9..c4f6c44 100644
+> --- a/drivers/platform/chrome/cros_ec_proto.c
+> +++ b/drivers/platform/chrome/cros_ec_proto.c
+> @@ -504,10 +504,31 @@ int cros_ec_cmd_xfer_status(struct cros_ec_device *ec_dev,
+>  }
+>  EXPORT_SYMBOL(cros_ec_cmd_xfer_status);
+>  
+> +static int get_next_event_xfer(struct cros_ec_device *ec_dev,
+> +			       struct cros_ec_command *msg,
+> +			       int version, uint32_t size)
+> +{
+> +	int ret;
+> +
+> +	msg->version = version;
+> +	msg->command = EC_CMD_GET_NEXT_EVENT;
+> +	msg->insize = size;
+> +	msg->outsize = 0;
+> +
+> +	ret = cros_ec_cmd_xfer(ec_dev, msg);
+> +	if (ret > 0) {
+> +		ec_dev->event_size = ret - 1;
+> +		memcpy(&ec_dev->event_data, msg->data, ec_dev->event_size);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  static int get_next_event(struct cros_ec_device *ec_dev)
+>  {
+>  	u8 buffer[sizeof(struct cros_ec_command) + sizeof(ec_dev->event_data)];
+>  	struct cros_ec_command *msg = (struct cros_ec_command *)&buffer;
+> +	static int cmd_version = 1;
+>  	int ret;
+>  
+>  	if (ec_dev->suspended) {
+> @@ -515,18 +536,19 @@ static int get_next_event(struct cros_ec_device *ec_dev)
+>  		return -EHOSTDOWN;
+>  	}
+>  
+> -	msg->version = 0;
+> -	msg->command = EC_CMD_GET_NEXT_EVENT;
+> -	msg->insize = sizeof(ec_dev->event_data);
+> -	msg->outsize = 0;
+> +	if (cmd_version == 1) {
+> +		ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+> +				sizeof(struct ec_response_get_next_event_v1));
+> +		if (ret < 0 || msg->result != EC_RES_INVALID_VERSION)
+> +			return ret;
+>  
+> -	ret = cros_ec_cmd_xfer(ec_dev, msg);
+> -	if (ret > 0) {
+> -		ec_dev->event_size = ret - 1;
+> -		memcpy(&ec_dev->event_data, msg->data,
+> -		       sizeof(ec_dev->event_data));
+> +		/* Fallback to version 0 for future send attempts */
+> +		cmd_version = 0;
+>  	}
+>  
+> +	ret = get_next_event_xfer(ec_dev, msg, cmd_version,
+> +				  sizeof(struct ec_response_get_next_event));
+> +
+>  	return ret;
+>  }
+>  
+> diff --git a/include/linux/mfd/cros_ec.h b/include/linux/mfd/cros_ec.h
+> index f36125e..32caef3 100644
+> --- a/include/linux/mfd/cros_ec.h
+> +++ b/include/linux/mfd/cros_ec.h
+> @@ -147,7 +147,7 @@ struct cros_ec_device {
+>  	bool mkbp_event_supported;
+>  	struct blocking_notifier_head event_notifier;
+>  
+> -	struct ec_response_get_next_event event_data;
+> +	struct ec_response_get_next_event_v1 event_data;
+>  	int event_size;
+>  	u32 host_event_wake_mask;
+>  };
+> diff --git a/include/linux/mfd/cros_ec_commands.h b/include/linux/mfd/cros_ec_commands.h
+> index f2edd99..cc0768e 100644
+> --- a/include/linux/mfd/cros_ec_commands.h
+> +++ b/include/linux/mfd/cros_ec_commands.h
+> @@ -2093,12 +2093,31 @@ union ec_response_get_next_data {
+>  	uint32_t   sysrq;
+>  } __packed;
+>  
+> +union ec_response_get_next_data_v1 {
+> +	uint8_t   key_matrix[16];
+> +
+> +	/* Unaligned */
+
+That's funny!
+
+> +	uint32_t  host_event;
+> +
+> +	uint32_t   buttons;
+> +	uint32_t   switches;
+> +	uint32_t   sysrq;
+> +	uint32_t   cec_events;
+> +	uint8_t    cec_message[16];
+
+Since there are some whitespace alignment issues in here.
+
+> +} __packed;
+
+How come these guys have kerneldoc headers?
+
+>  struct ec_response_get_next_event {
+>  	uint8_t event_type;
+>  	/* Followed by event data if any */
+>  	union ec_response_get_next_data data;
+>  } __packed;
+>  
+> +struct ec_response_get_next_event_v1 {
+> +	uint8_t event_type;
+> +	/* Followed by event data if any */
+> +	union ec_response_get_next_data_v1 data;
+> +} __packed;
+> +
+>  /* Bit indices for buttons and switches.*/
+>  /* Buttons */
+>  #define EC_MKBP_POWER_BUTTON	0
+
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
