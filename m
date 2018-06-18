@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99AC9C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D83DEC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE5620852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FE5620852
+	by mail.kernel.org (Postfix) with ESMTP id 9DE1520852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE1520852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935139AbeFROO7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:14:59 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:41653 "EHLO
+        id S934780AbeFRON1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:13:27 -0400
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:59372 "EHLO
         esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935034AbeFROOH (ORCPT
+        with ESMTP id S933134AbeFRONU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:14:07 -0400
+        Mon, 18 Jun 2018 10:13:20 -0400
 X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
-   d="scan'208";a="16045991"
+   d="scan'208";a="16045950"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 07:14:06 -0700
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 07:13:19 -0700
 Received: from rob-ult-m19940.microchip.com (10.10.76.4) by
  chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 18 Jun 2018 07:14:01 -0700
+ 14.3.352.0; Mon, 18 Jun 2018 07:13:09 -0700
 From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
 To:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
@@ -36,14 +36,11 @@ To:     <linux-arm-kernel@lists.infradead.org>,
         <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
         <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
         <broonie@kernel.org>, <sboyd@kernel.org>
-CC:     <Cristian.Birsan@microchip.com>,
-        Cyrille Pitchen <cyrille.pitchen@atmel.com>
-Subject: [PATCH v5 5/5] ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
-Date:   Mon, 18 Jun 2018 17:12:39 +0300
-Message-ID: <20180618141239.10892-6-codrin.ciubotariu@microchip.com>
+CC:     <Cristian.Birsan@microchip.com>
+Subject: [PATCH v5 0/5] ASoC: add driver for Atmel I2S controller
+Date:   Mon, 18 Jun 2018 17:12:34 +0300
+Message-ID: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
-References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -51,76 +48,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cyrille Pitchen <cyrille.pitchen@atmel.com>
+This is a rework of Cyrille's patches named:
+[PATCH v3 0/2] ASoC: add driver for Atmel I2S controller
+https://lkml.org/lkml/2015/9/29/454
 
-This patch sets the pin muxing for the I2S controllers
+This is the version 5 of the series, and addresses the received feedback
+on the mailing lists.
 
-Signed-off-by: Cyrille Pitchen <cyrille.pitchen@atmel.com>
-[codrin.ciubotariu@microchip.com: added pin muxing for the second
-controller]
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
+This series applies on top of clk-next branch of clk/linux.git.
 
-Changes in v5:
-	- Previous name was:
-	  [PATCH v4 7/7] ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
+Based on received feedback, I created a mux clock driver to select the I2S
+clock source, that also includes proper devicetree bindings and nodes.
+Also, I added the I2S nodes in sama5d2's devicetree, with the missing
+pin muxing for the second I2S controller.
 
- arch/arm/boot/dts/at91-sama5d2_xplained.dts | 28 +++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+Alexandre Belloni plans to change the at91 fine grained clock nodes and
+he recommended to leave the bindings for this clock driver in the same
+(wrong) manner, so he could fix them all at once.
 
-diff --git a/arch/arm/boot/dts/at91-sama5d2_xplained.dts b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-index e4bbb7e0f793..03917312dec1 100644
---- a/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-+++ b/arch/arm/boot/dts/at91-sama5d2_xplained.dts
-@@ -281,6 +281,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s0: i2s@f8050000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s0_default>;
-+			};
-+
- 			can0: can@f8054000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can0_default>;
-@@ -424,6 +429,24 @@
- 					bias-disable;
- 				};
- 
-+				pinctrl_i2s0_default: i2s0_default {
-+					pinmux = <PIN_PC1__I2SC0_CK>,
-+						 <PIN_PC2__I2SC0_MCK>,
-+						 <PIN_PC3__I2SC0_WS>,
-+						 <PIN_PC4__I2SC0_DI0>,
-+						 <PIN_PC5__I2SC0_DO0>;
-+					bias-disable;
-+				};
-+
-+				pinctrl_i2s1_default: i2s1_default {
-+					pinmux = <PIN_PA15__I2SC1_CK>,
-+						 <PIN_PA14__I2SC1_MCK>,
-+						 <PIN_PA16__I2SC1_WS>,
-+						 <PIN_PA17__I2SC1_DI0>,
-+						 <PIN_PA18__I2SC1_DO0>;
-+					bias-disable;
-+				};
-+
- 				pinctrl_key_gpio_default: key_gpio_default {
- 					pinmux = <PIN_PB9__GPIO>;
- 					bias-pull-up;
-@@ -546,6 +569,11 @@
- 				status = "okay";
- 			};
- 
-+			i2s1: i2s@fc04c000 {
-+				pinctrl-names = "default";
-+				pinctrl-0 = <&pinctrl_i2s1_default>;
-+			};
-+
- 			can1: can@fc050000 {
- 				pinctrl-names = "default";
- 				pinctrl-0 = <&pinctrl_can1_default>;
+This series of patches adds support to the new Atmel I2S controller
+embedded on sama5d2 SoCs.
+
+ChangeLog
+
+v4 -> v5
+ - removed patches:
+   [PATCH v4 4/7] ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
+   [PATCH v4 5/7] ASoC: atmel-i2s: add driver for the new Atmel I2S controller
+   from this series since they were applied to the asoc tree at:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
+ - addressed comments received on the mux clock;
+
+v3 -> v4
+ - as suggested by Rob Herring:
+   - added a clock mux driver for I2S's clock control bit;
+   - more precise description of I2S's devicetree bindings;
+   - removed SoC and internal detalls from bindings;
+ - addressed comments from Mark Brown;
+ - added devicetree nodes and pin muxing for I2S;
+
+v2 -> v3
+ - fix the coding style, add some more comments and add a section dedicated
+  to sama5d2 SoCs in the DT binding documentation as suggested by Mark
+  Brown.
+
+v1 -> v2
+ - initialize dev->dev before calling dev->caps->mck_init()
+
+Codrin Ciubotariu (3):
+  dt-bindings: clk: at91: add an I2S mux clock
+  clk: at91: add I2S clock mux driver
+  ARM: dts: at91: sama5d2: add I2S clock muxing nodes
+
+Cyrille Pitchen (2):
+  ARM: dts: at91: sama5d2: add nodes for I2S controllers
+  ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
+
+ .../devicetree/bindings/clock/at91-clock.txt  |  35 ++++++
+ arch/arm/boot/dts/at91-sama5d2_xplained.dts   |  28 +++++
+ arch/arm/boot/dts/sama5d2.dtsi                |  52 ++++++++
+ arch/arm/mach-at91/Kconfig                    |   4 +
+ drivers/clk/at91/Makefile                     |   1 +
+ drivers/clk/at91/clk-i2s-mux.c                | 116 ++++++++++++++++++
+ 6 files changed, 236 insertions(+)
+ create mode 100644 drivers/clk/at91/clk-i2s-mux.c
+
 -- 
 2.17.1
 
