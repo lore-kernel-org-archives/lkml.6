@@ -2,138 +2,128 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.9 required=3.0 tests=BODY_8BITS,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAE3C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61203C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A66B720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:43:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HEMLFLc9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A66B720874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F4A720864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:43:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F4A720864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030474AbeFRInQ (ORCPT
+        id S1030489AbeFRIni (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:43:16 -0400
-Received: from mail-qk0-f196.google.com ([209.85.220.196]:45884 "EHLO
-        mail-qk0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966072AbeFRInL (ORCPT
+        Mon, 18 Jun 2018 04:43:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36914 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S968179AbeFRIiK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:43:11 -0400
-Received: by mail-qk0-f196.google.com with SMTP id c198-v6so8897925qkg.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 01:43:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=xg4NeEpLOwxFuD6U12W9lZ/t1i37wL1dFYPKqAv6mcw=;
-        b=HEMLFLc9sp6YmDkODXMSpO4W8tQKzVnp8uNxw6JLMsT/TCeqUFdEqdTg+jBea3Qlt3
-         kYv2nN86o0RYQgGMo3mvPg0JCWlD529X3Nz2IbKNRhEmx1G8THucZfakr1tFbRN+K370
-         BmUBZGyzmWUGhs6z4KVG9lrZ93EyFk1NhRb3j0Hy4x+z0pnnZaiyZFqZsE9fk9+SRCZO
-         NOdvjfc2OLrF6T4e759tV6r5i2aS28Csyd4bhs//razZRTriXG42QQKvqYCjpbvqyKL7
-         ZnujIj3LIWwOeHgMosYm6A0iLwbPNs3Hby7RflTRwDQ2TSMPJd57svOI3wBi2i8KUz0O
-         EDPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=xg4NeEpLOwxFuD6U12W9lZ/t1i37wL1dFYPKqAv6mcw=;
-        b=nG/jSUoK9uuflX6hQkoawGoHtIhPM/SoXQqeOngjbD7ZVH/dUsDQ1atzFIcNFsRkOl
-         mQSWCdfkgVRMNoDCbIc5tUiFZkxp4n9MJ4Mx+SGG4NLNvVLtSdpsxZIhuEFufj1LHR7d
-         YE7u9A3OdFy1H6iBKxp2AFo8pWZGGOQyi90xclJk16Taj3IUMKMypGYD75H+5KqudcMH
-         kw46mTi8Hui2DhOkNOm4aKw3lvAsQ9r+ZMIoKB61Iomfnyiyql/KhNbRvou5ggrj88S2
-         SLy3mWQC9oFUTsFRuNiWYhpM/xJejqhj/UNGAwpSel2d3FV1xlB8q9E+4PRz5YkpGv5J
-         YUTg==
-X-Gm-Message-State: APt69E2ERl8cWoNtgnYFkTOs3RBDqoVtwLUYRPA9mm1meeDjCtBGk7VU
-        hYFZfTsHcfBDRKvmSuaOaoheMrTLEVBfFldnXB4=
-X-Google-Smtp-Source: ADUXVKJWQxpwJenZJF5oFwucpw7IphM+WD2T3eJESIcjll7Pm2cKw95uTr0xxJTOcjt9XWDIcxzrNhk4nIJHwaMvZv8=
-X-Received: by 2002:a37:9f0b:: with SMTP id i11-v6mr9188462qke.171.1529311390824;
- Mon, 18 Jun 2018 01:43:10 -0700 (PDT)
+        Mon, 18 Jun 2018 04:38:10 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C7823C49;
+        Mon, 18 Jun 2018 08:38:09 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellermen <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 159/189] x86/pkeys/selftests: Factor out "instruction page"
+Date:   Mon, 18 Jun 2018 10:14:15 +0200
+Message-Id: <20180618081215.617261351@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
+References: <20180618081209.254234434@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <20180606150900.8342-1-enric.balletbo@collabora.com>
- <20180606150900.8342-4-enric.balletbo@collabora.com> <20180618071801.GI31141@dell>
- <20180618072021.GJ31141@dell> <CAFqH_51Fsyr-zE4zzKLxqPZeep9gj7X_1HOnBeEbg9jXju8S4A@mail.gmail.com>
- <20180618081323.GM31141@dell>
-In-Reply-To: <20180618081323.GM31141@dell>
-From:   Enric Balletbo Serra <eballetbo@gmail.com>
-Date:   Mon, 18 Jun 2018 10:42:59 +0200
-Message-ID: <CAFqH_50yB6718K4mJNxZZ=gxKjzbmj69o01rP5RSdskb8dxoiA@mail.gmail.com>
-Subject: Re: [PATCH v3 03/12] mfd: cros_ec: Make license text and module
- license match.
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lee,
-Missatge de Lee Jones <lee.jones@linaro.org> del dia dl., 18 de juny
-2018 a les 10:13:
->
-> On Mon, 18 Jun 2018, Enric Balletbo Serra wrote:
->
-> > Hi Lee,
-> > Missatge de Lee Jones <lee.jones@linaro.org> del dia dl., 18 de juny
-> > 2018 a les 9:21:
-> > >
-> > > On Mon, 18 Jun 2018, Lee Jones wrote:
-> > >
-> > > > On Wed, 06 Jun 2018, Enric Balletbo i Serra wrote:
-> > > >
-> > > > > The license text is specifying "GPLv2" but the MODULE_LICENSE is =
-set to
-> > > > > GPL which means GNU Public License v2 or later. When MODULE_LICEN=
-SE and
-> > > > > boiler plate does not match, go for boiler plate license.
-> > > > >
-> > > > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.c=
-om>
-> > > > > ---
-> > > > >
-> > > > > Changes in v3: None
-> > > > > Changes in v2: None
-> > > > >
-> > > > >  drivers/mfd/cros_ec.c     | 2 +-
-> > > > >  drivers/mfd/cros_ec_i2c.c | 2 +-
-> > > > >  2 files changed, 2 insertions(+), 2 deletions(-)
-> > > >
-> > > > Applied, thanks.
-> > >
-> > > I've just seen Joe's comment.
-> > >
-> >
-> > Did you read my answer [1] to the Joe's email?
-> >
-> > According to the doc if MODULE_LICENSE is GPL that means  GPL-2.0 or
-> > later which to be strict is wrong if your file is GPL-2.0 only. It's
-> > right that there are modules in the kernel that have this mismatch but
-> > IMHO is wrong, there are also some examples where people fix this, i.e
-> > [2]
->
-> I did.  Did you read his comment about making these changes wider?
->
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
-Ah ok, that's the reason, so you prefer I do a script to fix this in a
-more general way instead of only fix this for cros-ec devices. I'll
-do.
+------------------
 
-Thanks,
- Enric
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-> --
-> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
-> Linaro Services Technical Lead
-> Linaro.org =E2=94=82 Open source software for ARM SoCs
-> Follow Linaro: Facebook | Twitter | Blog
+[ Upstream commit 3fcd2b2d928904cbf30b01e2c5e4f1dd2f9ab262 ]
+
+We currently have an execute-only test, but it is for
+the explicit mprotect_pkey() interface.  We will soon
+add a test for the implicit mprotect(PROT_EXEC)
+enterface.  We need this code in both tests.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171347.C64AB733@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ tools/testing/selftests/x86/protection_keys.c |   21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
+
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -1253,12 +1253,9 @@ void test_ptrace_of_child(int *ptr, u16
+ 	free(plain_ptr_unaligned);
+ }
+ 
+-void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
++void *get_pointer_to_instructions(void)
+ {
+ 	void *p1;
+-	int scratch;
+-	int ptr_contents;
+-	int ret;
+ 
+ 	p1 = ALIGN_PTR_UP(&lots_o_noops_around_write, PAGE_SIZE);
+ 	dprintf3("&lots_o_noops: %p\n", &lots_o_noops_around_write);
+@@ -1268,7 +1265,23 @@ void test_executing_on_unreadable_memory
+ 	/* Point 'p1' at the *second* page of the function: */
+ 	p1 += PAGE_SIZE;
+ 
++	/*
++	 * Try to ensure we fault this in on next touch to ensure
++	 * we get an instruction fault as opposed to a data one
++	 */
+ 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
++
++	return p1;
++}
++
++void test_executing_on_unreadable_memory(int *ptr, u16 pkey)
++{
++	void *p1;
++	int scratch;
++	int ptr_contents;
++	int ret;
++
++	p1 = get_pointer_to_instructions();
+ 	lots_o_noops_around_write(&scratch);
+ 	ptr_contents = read_ptr(p1);
+ 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
+
+
