@@ -2,73 +2,73 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URG_BIZ,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC00C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:50:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1093C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA35B208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:50:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82F7B208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:52:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iLhPKT/o"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA35B208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOYNb5oK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82F7B208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933524AbeFRPut (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:50:49 -0400
-Received: from mail-it0-f65.google.com ([209.85.214.65]:35553 "EHLO
-        mail-it0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754091AbeFRPur (ORCPT
+        id S1754821AbeFRPwr (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:52:47 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:39993 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752765AbeFRPwq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:50:47 -0400
-Received: by mail-it0-f65.google.com with SMTP id a3-v6so12694106itd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:50:47 -0700 (PDT)
+        Mon, 18 Jun 2018 11:52:46 -0400
+Received: by mail-lf0-f66.google.com with SMTP id q11-v6so25436809lfc.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:52:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=HWniTUO/mCVBgyBmopP5hRnFwVsP8Zwle68vqY3Fe3o=;
-        b=iLhPKT/owTIiEHt8wkbbSfpu44xxs+H5ZB8ac76/NkyICyZmsQ3UpCJ8d6yISflr0v
-         GGSg7MS0chNo2hI/Z2r6EJPwXulo73KNG6bT4lbcUw/z4/m0lLjT+LbSohyLbReQ1Mfu
-         p1vfNA36nUYwFb2aMOlWzrTWw9mSdoLps9h5Y=
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=AQD6G6yBWFaAofnHIYUzUxsr4JneB/w07fY1sdQAtJw=;
+        b=TOYNb5oKrfS1/fmG6vG2inGd8bG1oE+/9h4WQS6TB1gravokP8u05+sCyGHBSbGiTj
+         3MGyWejjkJ+ChmzkbhVu6XYy54rehO2IsnVjZxLik+LZ+6EPQCHQjhjxXYs8w0+NnSpq
+         htlvmYHnf13j7A1s4ifKzczCbvnFwVaM975JZ5oeq0D6vCv4UEua3DhKM5LZCIFSLDlR
+         D1UCUKfBh07BraugJKzqM1SVIwAz4yx9WVl6zS/NX7OouEGkxP+T9slS7eUXo6bRFU1+
+         qaHDaDXZQWpIqfpYX5wQGf+gi+lkx6V1ZfmSoXP+estN8m46U53urmnaT+bBtJIUVMD+
+         adRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=HWniTUO/mCVBgyBmopP5hRnFwVsP8Zwle68vqY3Fe3o=;
-        b=a0fRxe5gWglF92D75U5hAIcipztI7PUV2gJLzey5/63TbbCYVmMnRZxX6hneODgN4h
-         /0PkJAAB1fIBoC+5jBqz1a+NIPxSooHEpzWg9BrAwsiHJ57fMKnlDpGgcVJ03oumChrF
-         N8t0YggjtYr8TkhwRb4Q92vB3I4E1+nsXyajlA2yvIo9vr54GiPFE32eabnClKJZcKgJ
-         C9TuADCiurJ/VQ2zFfFdreRq5wf0KBVWKBic8Mrk0XbyZ8uJc0/WIebGbLWl4AX3L2jU
-         ncFFHAguZC9MU7IcfzxlHzSf/DeWLj/FOC8k0faNPyYiDPnogWhmXE0ovOGgrYELCSSU
-         IWVg==
-X-Gm-Message-State: APt69E1zT3oeI30TL5f7e/SIjkMoC83Rq+wRUtuD4hhNgEGT3YbmTHmT
-        eJE66C6tSB4IXPujBzfCSx0hu4FDfxEzHvaRsR1vbQ==
-X-Google-Smtp-Source: ADUXVKKOl3Lwsf9RwwmuHywfWMVhEsjsZr13+hDYYRv4VkYQ1uiuUz9mRmkB1x3BBVls4zBtCyYT6Po/B0K9hEHtbz4=
-X-Received: by 2002:a02:2422:: with SMTP id f34-v6mr10500010jaa.2.1529337047162;
- Mon, 18 Jun 2018 08:50:47 -0700 (PDT)
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=AQD6G6yBWFaAofnHIYUzUxsr4JneB/w07fY1sdQAtJw=;
+        b=KOya+QRQ4B/D+zFBxC6JlXfIdqI5QgsSb8mYLNMfLz/JT0SvwDCu1RuNxp8sqqfcW6
+         QqpVF/vV7d3DMjnlAetUYYZHTKvGTRtFzqZ8Z0ZpIW81zO2jEfyuRdWH+F7lVuJE7nW0
+         uKWum/oNZLUsrqTMeN629q0MHhxYN9kTsCEQsx8+pf2aEIL2x+9e5TkWJYmmvV4+0FcV
+         qfSfAFT6Kt+Sg8YdouN1GhWx0yh7wyx96yqs1Vu5S0T4ifrRl7mK2nlc8GiuUNatLZ+i
+         ve3oeFxv0D1m2+AZ8wVSOX4cvfjw1nn87JWN1X5v3sdF15G0Mnm6L4MPFUTvB5jjeo7y
+         WV4Q==
+X-Gm-Message-State: APt69E0MlW2FBPN58Ux6+SG8VoND31oEQXXxwGhxbBl3uqO7kZOdO4Ew
+        kGZ4NqOkGRpTSJIPIYZNN14IoLUxa8v0lrCs7Uc=
+X-Google-Smtp-Source: ADUXVKJschH0exks40jGmpuA98ZSkE5n0F1bdIPCykqGYXQ7ZtyvTyCjaORQk1UIxQId/5Ej87hU2/xrJ2+t/ubN5fA=
+X-Received: by 2002:a19:97cb:: with SMTP id z194-v6mr8369747lfd.17.1529337164798;
+ Mon, 18 Jun 2018 08:52:44 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a6b:bbc7:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:50:46
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:52:43
  -0700 (PDT)
-In-Reply-To: <CAK8P3a0dP+zvucn=_um1zRgBYQCskrhqa2KNSDtnpSu199baWw@mail.gmail.com>
-References: <20180618141811.3353245-1-arnd@arndb.de> <CAKv+Gu-r_+b_tCXeZeE6=EN3=1N98rheODOwV_4mpb9GMzdqrQ@mail.gmail.com>
- <CAK8P3a0dP+zvucn=_um1zRgBYQCskrhqa2KNSDtnpSu199baWw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Mon, 18 Jun 2018 17:50:46 +0200
-Message-ID: <CAKv+Gu9OD6s24Aq1bLBr-yq_tn6wPR0TAkddO+VTwM7jR76dOQ@mail.gmail.com>
-Subject: Re: [PATCH] efi: cper: avoid using get_seconds()
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
-        Yazen Ghannam <yazen.ghannam@amd.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        gengdongjiu <gengdongjiu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
+In-Reply-To: <s5htvq0w12d.wl-tiwai@suse.de>
+References: <20180618154108.2227779-1-arnd@arndb.de> <s5htvq0w12d.wl-tiwai@suse.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Jun 2018 17:52:43 +0200
+X-Google-Sender-Auth: USbGkKeL7L9P6a6ZrRg3DFdCr1k
+Message-ID: <CAK8P3a13rsTxinJ5m6-VOZJx6pXeWav41AQNtS7dSMahYzqXaw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ALSA: use ktime_get_raw_ts64() instead of getrawmonotonic64()
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,38 +76,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18 June 2018 at 17:49, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Mon, Jun 18, 2018 at 5:47 PM, Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
->> On 18 June 2018 at 16:17, Arnd Bergmann <arnd@arndb.de> wrote:
->
->>> -               atomic64_set(&seq, ((u64)get_seconds()) << 32);
->>> +       if (!atomic64_read(&seq)) {
->>> +               time64_t time = ktime_get_real_seconds();
->>> +
->>> +               /*
->>> +                * This code is unlikely to still be needed in year 2106,
->>> +                * but just in case, let's use a few more bits for timestamps
->>> +                * after y2038 to be sure they keep increasing monotonically
->>> +                * for the next few hundred years...
->>> +                */
->>> +               if (time < 0x80000000)
->>> +                       atomic64_set(&seq, (ktime_get_real_seconds()) << 32);
->>> +               else
->>> +                       atomic64_set(&seq, 0x8000000000000000ull |
->>> +                                          ktime_get_real_seconds() << 24);
->>> +       }
+On Mon, Jun 18, 2018 at 5:45 PM, Takashi Iwai <tiwai@suse.de> wrote:
+> On Mon, 18 Jun 2018 17:41:00 +0200,
+> Arnd Bergmann wrote:
 >>
->> Given that these values are never decoded and interpreted as
->> timestamps, can't we simply switch to the second flavour immediately?
+>> The API got renamed for consistency and the old name will
+>> be removed once the last users are gone.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 >
-> I considered that, but the downside would be that all future filenames would
-> come before all past file names.
+> These two fixes can be postponed for 4.19, or urgently needed for
+> 4.18?  I suppose the former, but just to be sure.
 
-Won't we have that same problem in 2038?
+Not urgent at all. I also noticed (slightly too late) that the first one doesn't
+even apply,
+I had written it on top of my tree that contained the previously discussed
+API conversion, which Baolin and I still need to follow up on. I'll fold
+the first patch into that series, please apply just the seconds patch
+for 4.19 for now.
 
-> I don't know if the order is important at
-> all, but the current implementation at least looks like it's intended to keep
-> all file names strictly sorted across boots.
->
->          Arnd
+        Arnd
