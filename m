@@ -6,34 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DF4C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 173F4C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC599208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC599208E8
+	by mail.kernel.org (Postfix) with ESMTP id CE9D520864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:40:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE9D520864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968093AbeFRIj4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:39:56 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37178 "EHLO
+        id S1030433AbeFRIiX (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:38:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36960 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030477AbeFRIim (ORCPT
+        with ESMTP id S968207AbeFRIiS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:38:42 -0400
+        Mon, 18 Jun 2018 04:38:18 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF983C5C;
-        Mon, 18 Jun 2018 08:38:41 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C200CBA;
+        Mon, 18 Jun 2018 08:38:15 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellermen <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 187/189] Btrfs: fix scrub to repair raid6 corruption
-Date:   Mon, 18 Jun 2018 10:14:43 +0200
-Message-Id: <20180618081216.729929955@linuxfoundation.org>
+Subject: [PATCH 4.14 161/189] x86/pkeys/selftests: Fix pkey exhaustion test off-by-one
+Date:   Mon, 18 Jun 2018 10:14:17 +0200
+Message-Id: <20180618081215.696074572@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,124 +58,60 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-From: Liu Bo <bo.li.liu@oracle.com>
+[ Upstream commit f50b4878329ab61d8e05796f655adeb6f5fb57c6 ]
 
-[ Upstream commit 762221f095e3932669093466aaf4b85ed9ad2ac1 ]
+In our "exhaust all pkeys" test, we make sure that there
+is the expected number available.  Turns out that the
+test did not cover the execute-only key, but discussed
+it anyway.  It did *not* discuss the test-allocated
+key.
 
-The raid6 corruption is that,
-suppose that all disks can be read without problems and if the content
-that was read out doesn't match its checksum, currently for raid6
-btrfs at most retries twice,
+Now that we have a test for the mprotect(PROT_EXEC) case,
+this off-by-one issue showed itself.  Correct the off-by-
+one and add the explanation for the case we missed.
 
-- the 1st retry is to rebuild with all other stripes, it'll eventually
-  be a raid5 xor rebuild,
-- if the 1st fails, the 2nd retry will deliberately fail parity p so
-  that it will do raid6 style rebuild,
-
-however, the chances are that another non-parity stripe content also
-has something corrupted, so that the above retries are not able to
-return correct content.
-
-We've fixed normal reads to rebuild raid6 correctly with more retries
-in Patch "Btrfs: make raid6 rebuild retry more"[1], this is to fix
-scrub to do the exactly same rebuild process.
-
-[1]: https://patchwork.kernel.org/patch/10091755/
-
-Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171350.E1656B95@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/scrub.c |   44 ++++++++++++++++++++++++++++++++------------
- 1 file changed, 32 insertions(+), 12 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
---- a/fs/btrfs/scrub.c
-+++ b/fs/btrfs/scrub.c
-@@ -301,6 +301,11 @@ static void __scrub_blocked_if_needed(st
- static void scrub_blocked_if_needed(struct btrfs_fs_info *fs_info);
- static void scrub_put_ctx(struct scrub_ctx *sctx);
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -1163,12 +1163,15 @@ void test_pkey_alloc_exhaust(int *ptr, u
+ 	pkey_assert(i < NR_PKEYS*2);
  
-+static inline int scrub_is_page_on_raid56(struct scrub_page *page)
-+{
-+	return page->recover &&
-+	       (page->recover->bbio->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK);
-+}
- 
- static void scrub_pending_bio_inc(struct scrub_ctx *sctx)
- {
-@@ -1323,15 +1328,34 @@ nodatasum_case:
- 	 * could happen otherwise that a correct page would be
- 	 * overwritten by a bad one).
+ 	/*
+-	 * There are 16 pkeys supported in hardware.  One is taken
+-	 * up for the default (0) and another can be taken up by
+-	 * an execute-only mapping.  Ensure that we can allocate
+-	 * at least 14 (16-2).
++	 * There are 16 pkeys supported in hardware.  Three are
++	 * allocated by the time we get here:
++	 *   1. The default key (0)
++	 *   2. One possibly consumed by an execute-only mapping.
++	 *   3. One allocated by the test code and passed in via
++	 *      'pkey' to this function.
++	 * Ensure that we can allocate at least another 13 (16-3).
  	 */
--	for (mirror_index = 0;
--	     mirror_index < BTRFS_MAX_MIRRORS &&
--	     sblocks_for_recheck[mirror_index].page_count > 0;
--	     mirror_index++) {
-+	for (mirror_index = 0; ;mirror_index++) {
- 		struct scrub_block *sblock_other;
+-	pkey_assert(i >= NR_PKEYS-2);
++	pkey_assert(i >= NR_PKEYS-3);
  
- 		if (mirror_index == failed_mirror_index)
- 			continue;
--		sblock_other = sblocks_for_recheck + mirror_index;
-+
-+		/* raid56's mirror can be more than BTRFS_MAX_MIRRORS */
-+		if (!scrub_is_page_on_raid56(sblock_bad->pagev[0])) {
-+			if (mirror_index >= BTRFS_MAX_MIRRORS)
-+				break;
-+			if (!sblocks_for_recheck[mirror_index].page_count)
-+				break;
-+
-+			sblock_other = sblocks_for_recheck + mirror_index;
-+		} else {
-+			struct scrub_recover *r = sblock_bad->pagev[0]->recover;
-+			int max_allowed = r->bbio->num_stripes -
-+						r->bbio->num_tgtdevs;
-+
-+			if (mirror_index >= max_allowed)
-+				break;
-+			if (!sblocks_for_recheck[1].page_count)
-+				break;
-+
-+			ASSERT(failed_mirror_index == 0);
-+			sblock_other = sblocks_for_recheck + 1;
-+			sblock_other->pagev[0]->mirror_num = 1 + mirror_index;
-+		}
- 
- 		/* build and submit the bios, check checksums */
- 		scrub_recheck_block(fs_info, sblock_other, 0);
-@@ -1679,18 +1703,13 @@ static void scrub_bio_wait_endio(struct
- 	complete(&ret->event);
- }
- 
--static inline int scrub_is_page_on_raid56(struct scrub_page *page)
--{
--	return page->recover &&
--	       (page->recover->bbio->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK);
--}
--
- static int scrub_submit_raid56_bio_wait(struct btrfs_fs_info *fs_info,
- 					struct bio *bio,
- 					struct scrub_page *page)
- {
- 	struct scrub_bio_ret done;
- 	int ret;
-+	int mirror_num;
- 
- 	init_completion(&done.event);
- 	done.status = 0;
-@@ -1698,9 +1717,10 @@ static int scrub_submit_raid56_bio_wait(
- 	bio->bi_private = &done;
- 	bio->bi_end_io = scrub_bio_wait_endio;
- 
-+	mirror_num = page->sblock->pagev[0]->mirror_num;
- 	ret = raid56_parity_recover(fs_info, bio, page->recover->bbio,
- 				    page->recover->map_length,
--				    page->mirror_num, 0);
-+				    mirror_num, 0);
- 	if (ret)
- 		return ret;
- 
+ 	for (i = 0; i < nr_allocated_pkeys; i++) {
+ 		err = sys_pkey_free(allocated_pkeys[i]);
 
 
