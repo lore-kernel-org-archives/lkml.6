@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 58B12C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDA64C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 144BD20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 144BD20874
+	by mail.kernel.org (Postfix) with ESMTP id A4971208E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:31:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4971208E1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936810AbeFRIbi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:31:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34162 "EHLO
+        id S936834AbeFRIbn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:31:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34176 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967158AbeFRIbf (ORCPT
+        with ESMTP id S936811AbeFRIbi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:31:35 -0400
+        Mon, 18 Jun 2018 04:31:38 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E3A76C75;
-        Mon, 18 Jun 2018 08:31:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0378FC75;
+        Mon, 18 Jun 2018 08:31:37 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans de Goede <hdegoede@redhat.com>,
-        Zhang Rui <rui.zhang@intel.com>,
+        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 058/189] thermal: int3403_thermal: Fix NULL pointer deref on module load / probe
-Date:   Mon, 18 Jun 2018 10:12:34 +0200
-Message-Id: <20180618081211.654646476@linuxfoundation.org>
+Subject: [PATCH 4.14 059/189] net: ethtool: Add missing kernel doc for FEC parameters
+Date:   Mon, 18 Jun 2018 10:12:35 +0200
+Message-Id: <20180618081211.691498045@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,42 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Hans de Goede <hdegoede@redhat.com>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 13b86f50eaaddaea4bdd2fe476fd12e6a0951add ]
+[ Upstream commit d805c5209350ae725e3a1ee0204ba27d9e75ce3e ]
 
-Starting with kernel 4.17 thermal_cooling_device_register() will call the
-get_max_state() op during register.
+While adding support for ethtool::get_fecparam and set_fecparam, kernel
+doc for these functions was missed, add those.
 
-Since we deref priv->priv in int3403_get_max_state() this means we must
-set priv->priv before calling thermal_cooling_device_register().
-
-Signed-off-by: Hans de Goede <hdegoede@redhat.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Fixes: 1a5f3da20bd9 ("net: ethtool: add support for forward error correction modes")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/thermal/int340x_thermal/int3403_thermal.c |    3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ include/linux/ethtool.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/thermal/int340x_thermal/int3403_thermal.c
-+++ b/drivers/thermal/int340x_thermal/int3403_thermal.c
-@@ -194,6 +194,7 @@ static int int3403_cdev_add(struct int34
- 		return -EFAULT;
- 	}
- 
-+	priv->priv = obj;
- 	obj->max_state = p->package.count - 1;
- 	obj->cdev =
- 		thermal_cooling_device_register(acpi_device_bid(priv->adev),
-@@ -201,8 +202,6 @@ static int int3403_cdev_add(struct int34
- 	if (IS_ERR(obj->cdev))
- 		result = PTR_ERR(obj->cdev);
- 
--	priv->priv = obj;
--
- 	kfree(buf.pointer);
- 	/* TODO: add ACPI notification support */
- 
+--- a/include/linux/ethtool.h
++++ b/include/linux/ethtool.h
+@@ -300,6 +300,8 @@ bool ethtool_convert_link_mode_to_legacy
+  *	fields should be ignored (use %__ETHTOOL_LINK_MODE_MASK_NBITS
+  *	instead of the latter), any change to them will be overwritten
+  *	by kernel. Returns a negative error code or zero.
++ * @get_fecparam: Get the network device Forward Error Correction parameters.
++ * @set_fecparam: Set the network device Forward Error Correction parameters.
+  *
+  * All operations are optional (i.e. the function pointer may be set
+  * to %NULL) and callers must take this into account.  Callers must
 
 
