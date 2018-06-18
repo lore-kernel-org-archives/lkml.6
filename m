@@ -6,59 +6,60 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 977FAC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:08:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1323EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48BF020852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:08:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3B1E20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:08:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="f0kcZLXU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48BF020852
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="ejh2by3C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B1E20852
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935708AbeFRPIm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:08:42 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:38933 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935469AbeFRPIj (ORCPT
+        id S964824AbeFRPI6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:08:58 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43772 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935277AbeFRPIz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:08:39 -0400
-Received: by mail-pf0-f194.google.com with SMTP id r11-v6so8321582pfl.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:08:39 -0700 (PDT)
+        Mon, 18 Jun 2018 11:08:55 -0400
+Received: by mail-pl0-f66.google.com with SMTP id c41-v6so9188658plj.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:08:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=49j1iPAN3lGCmW9h/UZLYMoEo97FvFLn1KGgxCvlTkw=;
-        b=f0kcZLXUMZcaSZwalkzDlDYwVhULX4TpkaMlTpcw6ftH5C/yiKeJuos33so0GaCgyv
-         pCSsPogMBij8vs8tXZPP7WUjzoBddo4QqaFQLGw8ORxleAt2qYJ/MNYAM0GlnupgSB3v
-         V4gG5dF8MviBO+urLPPW2YoXup7YTqOO04v4qTwpmdgfuof19D8CRkifGvSX8kOSzGIT
-         1HhHRn1gKitzKkIa+fWPFLYIcJgOhVw07TbpfpoZ5lVCZXhnMA5QrFu7rjuOLpfzjSMM
-         /e6BYtg8UZ6kWVhDzAOxYqAiBe4eSKBA6irjpTSJsijjfNMw8uCkhGFsTW/KNhX+z5vQ
-         gr+A==
+        bh=JuvxweFTcRzmxkzWcSbXPEqCe+2P0+NqBKtnGp9jj+k=;
+        b=ejh2by3C3GoZQfZUQBH8SjS9wHcIQ0brv8ziSas15/DMUO9ahLj6G139MMTFsTNukM
+         amo70KnSKvNCR40rG8V04Znbuuxy5tWMkbvZP5k1JW4yDubFPv7N7HK9oe62L3Wr3B5Y
+         kYgvd0SxszOhRhPkF3VMJRE/JSlTvSA/LxJYH+sfSZFrKxyO0+RpvkXHz4Lcyj4rF4IW
+         NNZZ9zUzHD6E9Z78uPFUF/oe+18mBEkgd7V+dJw42HkaQR1onLsF82X168PX9tSd22HV
+         wlaNsg+WaM/CIti1KZNjkFkZ5H67/WDppgI6BCQURLqpexOk+QnuT8cqECrO7dwOvXk4
+         57Hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=49j1iPAN3lGCmW9h/UZLYMoEo97FvFLn1KGgxCvlTkw=;
-        b=DW9CXMpW3IbAkatnkSNeodPSk+Hz6CfJii1WaCiOAE7+t3zY0D3Ty1wtLfJX7DOiE7
-         0bcBCSerGvG8w2dxJdjWtoigk5WA155XxZ+GP2kAAPVJYkvCbnpUwcE4No+WsRAjBwEf
-         8ugr9Hmqc4v5JRtCG8X3W3dTvGKR1NR0QX1mnXsECFUM0f3EpqkbvNcZ8IUP2P90Wrrk
-         iDNwGFRYpxX04Lg29aD4QJkp6oXOVX6fM/8eOraS8y1b2rD6tT2jSnOglAUWObUVViAO
-         +uqR6AtIsnDn23O5/PaRwYEP35D1up0hqjlU85C505XMDPIwvyTfZ0SuYcS/ohhFR8RU
-         g/1g==
-X-Gm-Message-State: APt69E2z+W/m89s8my6HXOyRi6PzvmjWJTsGwLd5iXofCxCGgSD1ePdi
-        FGJKCXzQIjCLLNIGbApHI0ufKBT16V8=
-X-Google-Smtp-Source: ADUXVKI8MT1ODJlafUnT8XhHSYO0Do0ruWCNEtSvyeIkeuk5qhdcuGX2shKp5Vtq0lOm3Q8UE/V/EQ==
-X-Received: by 2002:a63:a05d:: with SMTP id u29-v6mr11226843pgn.80.1529334518582;
-        Mon, 18 Jun 2018 08:08:38 -0700 (PDT)
+        bh=JuvxweFTcRzmxkzWcSbXPEqCe+2P0+NqBKtnGp9jj+k=;
+        b=uZyBKYZ6+cPQSusUBL9YJ4Rm4uIBJHzTQ2zxGCEEPMN4gGs380aHP6Tg0VivCtTnuY
+         4PIONMhpB9dV+4nM4x7XYupxXgzNF39lmUb241YUXF+7dkIGR1MMyOyFVvnJIQSVHb5q
+         sdq8Yw689C2w5tH/g3MhIbEKFnisRJzCJ/MRHvch5Z/RzZdY5L5ldQN3W2MvaF5S8mI9
+         zpCcH1ZnJ/C5uBA5gYSGenWh5yuLkd6X8pgyFFn1aXs0142pKzIkYW5b82QqPOqZTD3q
+         4OCaWQfOoYo67N3m9mACcTg6N8AZandPfCEFUL+m9DkJ5rvNmvnq2v/WwuDoZeJVncgY
+         xrPA==
+X-Gm-Message-State: APt69E1CM6ciD6sYBsUs9y0/19wolDxMLgaTn5+u3sTewGpgmo3SzR6O
+        QM7QZ4GHosZMo5oPLAh0LJYq+IhGPXY=
+X-Google-Smtp-Source: ADUXVKJ53ifwjLYnJ5qcqXYb5JETAwCfDTJpGkr0I33/QwM3QjmHoXT8AkDvoR/2iVh6rTuVKl22EQ==
+X-Received: by 2002:a17:902:ba8a:: with SMTP id k10-v6mr14493245pls.338.1529334534977;
+        Mon, 18 Jun 2018 08:08:54 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:6077:8eec:bc7e:d0f4])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.08.37
+        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.08.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 08:08:37 -0700 (PDT)
+        Mon, 18 Jun 2018 08:08:54 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Mark Salyzyn <salyzyn@android.com>,
+Cc:     Mark Salyzyn <salyzyn@google.com>,
+        Mark Salyzyn <salyzyn@android.com>,
         James Morse <james.morse@arm.com>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
@@ -76,12 +77,12 @@ Cc:     Mark Salyzyn <salyzyn@android.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
         Jeremy Linton <Jeremy.Linton@arm.com>,
-        Mark Salyzyn <salyzyn@google.com>,
+        Jinbum Park <jinb.park7@gmail.com>,
         "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
         Ingo Molnar <mingo@kernel.org>
-Subject: RESEND [PATCH v5 12/12] lib: vdso: do not expose gettimeofday, if no arch supported timer
-Date:   Mon, 18 Jun 2018 08:05:58 -0700
-Message-Id: <20180618150613.10322-13-salyzyn@android.com>
+Subject: RESEND [PATCH] lib: vdso: add support for time
+Date:   Mon, 18 Jun 2018 08:05:59 -0700
+Message-Id: <20180618150613.10322-14-salyzyn@android.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 In-Reply-To: <20180618150613.10322-1-salyzyn@android.com>
 References: <20180618150613.10322-1-salyzyn@android.com>
@@ -90,16 +91,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Take an effort to recode the arm64 vdso code from assembler to C
-previously submitted by Andrew Pinski <apinski@cavium.com>, rework
-it for use in both arm and arm64, overlapping any optimizations
-for each architecture. But instead of landing it in arm64, land the
-result into lib/vdso and unify both implementations to simplify
-future maintenance.
+From: Mark Salyzyn <salyzyn@google.com>
 
-If ARCH_PROVIDES_TIMER is not defined, do not expose gettimeofday.
-libc will default directly to syscall.  Also ifdef clock_gettime
-switch cases and stubs if not supported and other unused components.
+Add time() vdso support to match up with existing support in the x86's
+vdso.  Currently benefitting arm and arm64 which uses the common
+vgettimeofday.c implementation.  On arm provides about a ~14 fold
+improvement in speed over the straight syscall, and about a ~5 fold
+improvement in speed over an alternate library implementation that
+relies on the vdso call to gettimeofday to fulfill the request.
+
+We can provide __vdso_time even if we can not provide a speed
+enhanced __vdso_gettimeofday. (arm, virtual counters).
 
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
 Cc: James Morse <james.morse@arm.com>
@@ -120,125 +122,79 @@ Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: Jeremy Linton <Jeremy.Linton@arm.com>
-
-v3:
-- do not expose gettimeofday if arch does not support user space timer.
-
-v4:
-- update commit message to reflect overall reasoning of patch series.
-
-v5:
-- rebase
 ---
- lib/vdso/vgettimeofday.c | 52 ++++++++++++++++------------------------
- 1 file changed, 20 insertions(+), 32 deletions(-)
+ arch/arm/kernel/vdso.c            |  1 +
+ arch/arm/vdso/vdso.lds.S          |  1 +
+ arch/arm64/kernel/vdso/compiler.h |  1 +
+ arch/arm64/kernel/vdso/vdso.lds.S |  1 +
+ lib/vdso/vgettimeofday.c          | 10 ++++++++++
+ 5 files changed, 14 insertions(+)
 
+diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
+index 51d8dcbd9952..6721854c5ae6 100644
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -192,6 +192,7 @@ static void __init patch_vdso(void *ehdr)
+ 		vdso_nullpatch_one(&einfo, "__vdso_gettimeofday");
+ 		vdso_nullpatch_one(&einfo, "__vdso_clock_gettime");
+ 		vdso_nullpatch_one(&einfo, "__vdso_clock_getres");
++		/* do not zero out __vdso_time, no cntvct_ok dependency */
+ 	}
+ }
+ 
+diff --git a/arch/arm/vdso/vdso.lds.S b/arch/arm/vdso/vdso.lds.S
+index 1d81e8c3acf6..1eb577091d1f 100644
+--- a/arch/arm/vdso/vdso.lds.S
++++ b/arch/arm/vdso/vdso.lds.S
+@@ -83,6 +83,7 @@ VERSION
+ 		__vdso_clock_gettime;
+ 		__vdso_gettimeofday;
+ 		__vdso_clock_getres;
++		__vdso_time;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/arm64/kernel/vdso/compiler.h b/arch/arm64/kernel/vdso/compiler.h
+index 921a7191b497..fb27545640f2 100644
+--- a/arch/arm64/kernel/vdso/compiler.h
++++ b/arch/arm64/kernel/vdso/compiler.h
+@@ -65,5 +65,6 @@ static __always_inline notrace u64 arch_vdso_read_counter(void)
+ #define __vdso_clock_gettime __kernel_clock_gettime
+ #define __vdso_gettimeofday __kernel_gettimeofday
+ #define __vdso_clock_getres __kernel_clock_getres
++#define __vdso_time __kernel_time
+ 
+ #endif /* __VDSO_COMPILER_H */
+diff --git a/arch/arm64/kernel/vdso/vdso.lds.S b/arch/arm64/kernel/vdso/vdso.lds.S
+index beca249bc2f3..9de0ffc369c5 100644
+--- a/arch/arm64/kernel/vdso/vdso.lds.S
++++ b/arch/arm64/kernel/vdso/vdso.lds.S
+@@ -88,6 +88,7 @@ VERSION
+ 		__kernel_gettimeofday;
+ 		__kernel_clock_gettime;
+ 		__kernel_clock_getres;
++		__kernel_time;
+ 	local: *;
+ 	};
+ }
 diff --git a/lib/vdso/vgettimeofday.c b/lib/vdso/vgettimeofday.c
-index 4c3af7bc6499..54e519c99c4b 100644
+index 54e519c99c4b..dfced9608cd3 100644
 --- a/lib/vdso/vgettimeofday.c
 +++ b/lib/vdso/vgettimeofday.c
-@@ -30,7 +30,9 @@
- #include "compiler.h"
- #include "datapage.h"
- 
-+#ifdef ARCH_PROVIDES_TIMER
- DEFINE_FALLBACK(gettimeofday, struct timeval *, tv, struct timezone *, tz)
-+#endif
- DEFINE_FALLBACK(clock_gettime, clockid_t, clock, struct timespec *, ts)
- DEFINE_FALLBACK(clock_getres, clockid_t, clock, struct timespec *, ts)
- 
-@@ -292,30 +294,6 @@ static notrace int do_boottime(const struct vdso_data *vd, struct timespec *ts)
- 	return 0;
- }
- 
--#else /* ARCH_PROVIDES_TIMER */
--
--static notrace int do_realtime(const struct vdso_data *vd, struct timespec *ts)
--{
--	return -1;
--}
--
--static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
--{
--	return -1;
--}
--
--static notrace int do_monotonic_raw(const struct vdso_data *vd,
--				    struct timespec *ts)
--{
--	return -1;
--}
--
--static notrace int do_boottime(const struct vdso_data *vd,
--			       struct timespec *ts)
--{
--	return -1;
--}
--
- #endif /* ARCH_PROVIDES_TIMER */
- 
- notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
-@@ -329,6 +307,7 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 	case CLOCK_MONOTONIC_COARSE:
- 		do_monotonic_coarse(vd, ts);
- 		break;
-+#ifdef ARCH_PROVIDES_TIMER
- 	case CLOCK_REALTIME:
- 		if (do_realtime(vd, ts))
- 			goto fallback;
-@@ -345,6 +324,7 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 		if (do_boottime(vd, ts))
- 			goto fallback;
- 		break;
-+#endif
- 	default:
- 		goto fallback;
- 	}
-@@ -354,6 +334,7 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 	return clock_gettime_fallback(clock, ts);
- }
- 
-+#ifdef ARCH_PROVIDES_TIMER
- notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
- {
- 	const struct vdso_data *vd = __get_datapage();
-@@ -375,21 +356,28 @@ notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+@@ -386,3 +386,13 @@ int __vdso_clock_getres(clockid_t clock, struct timespec *res)
  
  	return 0;
  }
-+#endif
- 
- int __vdso_clock_getres(clockid_t clock, struct timespec *res)
- {
- 	long nsec;
- 
--	if (clock == CLOCK_REALTIME ||
--	    clock == CLOCK_BOOTTIME ||
--	    clock == CLOCK_MONOTONIC ||
--	    clock == CLOCK_MONOTONIC_RAW)
--		nsec = MONOTONIC_RES_NSEC;
--	else if (clock == CLOCK_REALTIME_COARSE ||
--		 clock == CLOCK_MONOTONIC_COARSE)
-+	switch (clock) {
-+	case CLOCK_REALTIME_COARSE:
-+	case CLOCK_MONOTONIC_COARSE:
- 		nsec = LOW_RES_NSEC;
--	else
-+		break;
-+#ifdef ARCH_PROVIDES_TIMER
-+	case CLOCK_REALTIME:
-+	case CLOCK_MONOTONIC:
-+	case CLOCK_MONOTONIC_RAW:
-+	case CLOCK_BOOTTIME:
-+		nsec = MONOTONIC_RES_NSEC;
-+		break;
-+#endif
-+	default:
- 		return clock_getres_fallback(clock, res);
-+	}
- 
- 	if (likely(res != NULL)) {
- 		res->tv_sec = 0;
++
++notrace time_t __vdso_time(time_t *t)
++{
++	const struct vdso_data *vd = __get_datapage();
++	time_t result = READ_ONCE(vd->xtime_coarse_sec);
++
++	if (t)
++		*t = result;
++	return result;
++}
 -- 
 2.18.0.rc1.244.gcf134e6275-goog
 
