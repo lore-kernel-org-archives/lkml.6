@@ -2,104 +2,88 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C3EFC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0117C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:31:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12E6E2075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:27:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12E6E2075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A4ADB208B4
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:31:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4ADB208B4
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936370AbeFRT1z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:27:55 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50581 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935859AbeFRT1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:27:52 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 98172207C2; Mon, 18 Jun 2018 21:27:50 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 32CD920733;
-        Mon, 18 Jun 2018 21:27:40 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 21:27:40 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Frieder Schrempf <frieder.schrempf@exceet.de>
-Cc:     linux-mtd@lists.infradead.org, linux-spi@vger.kernel.org,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        marek.vasut@gmail.com, richard@nod.at, miquel.raynal@bootlin.com,
-        broonie@kernel.org, david.wolfe@nxp.com, fabio.estevam@nxp.com,
-        prabhakar.kushwaha@nxp.com, yogeshnarayan.gaur@nxp.com,
-        han.xu@nxp.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Message-ID: <20180618212740.6b25c089@bbrezillon>
-In-Reply-To: <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
-        <1527686082-15142-4-git-send-email-frieder.schrempf@exceet.de>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S936375AbeFRTbv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:31:51 -0400
+Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:29833 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936040AbeFRTbr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:31:47 -0400
+Received: from belgarion ([90.55.203.186])
+        by mwinf5d79 with ME
+        id 0KXT1y00B41oiFu03KXT87; Mon, 18 Jun 2018 21:31:45 +0200
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Mon, 18 Jun 2018 21:31:45 +0200
+X-ME-IP: 90.55.203.186
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Tejun Heo <tj@kernel.org>, Vinod Koul <vinod.koul@intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Nicolas Pitre <nico@fluxnic.net>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-ide@vger.kernel.org, dmaengine@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH v3 06/14] mtd: rawnand: marvell: remove the dmaengine compat need
+References: <20180617170217.24177-1-robert.jarzmik@free.fr>
+        <20180617170217.24177-7-robert.jarzmik@free.fr>
+        <3a2a8951-f380-af99-bf97-6ff722404410@zonque.org>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Mon, 18 Jun 2018 21:31:27 +0200
+In-Reply-To: <3a2a8951-f380-af99-bf97-6ff722404410@zonque.org> (Daniel Mack's
+        message of "Sun, 17 Jun 2018 20:12:49 +0200")
+Message-ID: <87h8lzriwg.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yogesh,
+Daniel Mack <daniel@zonque.org> writes:
 
-On Wed, 30 May 2018 15:14:32 +0200
-Frieder Schrempf <frieder.schrempf@exceet.de> wrote:
+> On Sunday, June 17, 2018 07:02 PM, Robert Jarzmik wrote:
+>> As the pxa architecture switched towards the dmaengine slave map, the
+>> old compatibility mechanism to acquire the dma requestor line number and
+>> priority are not needed anymore.
+>>
+>> This patch simplifies the dma resource acquisition, using the more
+>> generic function dma_request_slave_channel().
+>>
+>> Signed-off-by: Signed-off-by: Daniel Mack <daniel@zonque.org>
+>
+> Something went wrong here, but you can simply fix that when applying the series
+> :)
+Indeed, fixed before applying to the pxa/for-next tree.
 
-> +static void fsl_qspi_select_mem(struct fsl_qspi *q, struct spi_device *spi)
-> +{
-> +	unsigned long rate = spi->max_speed_hz;
-> +	int ret, i;
-> +	u32 map_addr;
-> +
-> +	if (q->selected == spi->chip_select)
-> +		return;
-> +
-> +	/*
-> +	 * In HW there can be a maximum of four chips on two buses with
-> +	 * two chip selects on each bus. We use four chip selects in SW
-> +	 * to differentiate between the four chips.
-> +	 * We use the SFA1AD, SFA2AD, SFB1AD, SFB2AD registers to select
-> +	 * the chip we want to access.
-> +	 */
-> +	for (i = 0; i < 4; i++) {
-> +		if (i < spi->chip_select)
-
-Can you try with:
-
-		if (i <= spi->chip_select)
-
-and let me know if it fixes the problem you have when CS != 0?
-
-> +			map_addr = q->memmap_phy;
-> +		else
-> +			map_addr = q->memmap_phy +
-> +				   2 * q->devtype_data->ahb_buf_size;
-> +
-> +		qspi_writel(q, map_addr, q->iobase + QUADSPI_SFA1AD + (i * 4));
-> +	}
-> +
-> +	if (needs_4x_clock(q))
-> +		rate *= 4;
-> +
-> +	fsl_qspi_clk_disable_unprep(q);
-> +
-> +	ret = clk_set_rate(q->clk, rate);
-> +	if (ret)
-> +		return;
-> +
-> +	ret = fsl_qspi_clk_prep_enable(q);
-> +	if (ret)
-> +		return;
-> +
-> +	q->selected = spi->chip_select;
-> +}
+--
+Robert
