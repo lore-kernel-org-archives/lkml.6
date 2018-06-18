@@ -6,34 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BEAC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7998DC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A62720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A62720874
+	by mail.kernel.org (Postfix) with ESMTP id 3DBE220874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBE220874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935914AbeFRIXj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:23:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55830 "EHLO
+        id S935923AbeFRIXl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:23:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55840 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932870AbeFRIXe (ORCPT
+        with ESMTP id S935894AbeFRIXh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:23:34 -0400
+        Mon, 18 Jun 2018 04:23:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9AC14C74;
-        Mon, 18 Jun 2018 08:23:33 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6C9C1C49;
+        Mon, 18 Jun 2018 08:23:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        stable@vger.kernel.org,
+        Tobias Jakobi <tjakobi@math.uni-bielefeld.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
         Inki Dae <inki.dae@samsung.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 180/279] drm/exynos/mixer: fix synchronization check in interlaced mode
-Date:   Mon, 18 Jun 2018 10:12:45 +0200
-Message-Id: <20180618080616.388468631@linuxfoundation.org>
+Subject: [PATCH 4.16 181/279] drm/exynos: mixer: avoid Oops in vp_video_buffer()
+Date:   Mon, 18 Jun 2018 10:12:46 +0200
+Message-Id: <20180618080616.430684344@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,59 +52,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andrzej Hajda <a.hajda@samsung.com>
+From: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
 
-[ Upstream commit 2eced8e917b060587fc8ed46df41c364957a5050 ]
+[ Upstream commit 0ccc1c8f0282e237a0bd6dca7cdac4ed5e318ee7 ]
 
-In case of interlace mode video processor registers and mixer config
-register must be check to ensure internal state is in sync with shadow
-registers.
-This patch fixes page-faults in interlaced mode.
+If an interlaced video mode is selected, a IOMMU pagefault is
+triggered by vp_video_buffer().
 
+Fix the most apparent bugs:
+- pitch value for chroma plane
+- divide by two of height and vpos of source and destination
+
+Signed-off-by: Tobias Jakobi <tjakobi@math.uni-bielefeld.de>
+[ a.hajda: Halved also destination height and vpos, updated commit message ]
 Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
 Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/exynos/exynos_mixer.c |   10 ++++++++++
- drivers/gpu/drm/exynos/regs-mixer.h   |    1 +
- 2 files changed, 11 insertions(+)
+ drivers/gpu/drm/exynos/exynos_mixer.c |   12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
 --- a/drivers/gpu/drm/exynos/exynos_mixer.c
 +++ b/drivers/gpu/drm/exynos/exynos_mixer.c
-@@ -494,6 +494,7 @@ static void vp_video_buffer(struct mixer
+@@ -485,7 +485,7 @@ static void vp_video_buffer(struct mixer
+ 			chroma_addr[1] = chroma_addr[0] + 0x40;
+ 		} else {
+ 			luma_addr[1] = luma_addr[0] + fb->pitches[0];
+-			chroma_addr[1] = chroma_addr[0] + fb->pitches[0];
++			chroma_addr[1] = chroma_addr[0] + fb->pitches[1];
+ 		}
+ 	} else {
+ 		luma_addr[1] = 0;
+@@ -508,21 +508,23 @@ static void vp_video_buffer(struct mixer
+ 	vp_reg_write(ctx, VP_IMG_SIZE_Y, VP_IMG_HSIZE(fb->pitches[0]) |
+ 		VP_IMG_VSIZE(fb->height));
+ 	/* chroma plane for NV12/NV21 is half the height of the luma plane */
+-	vp_reg_write(ctx, VP_IMG_SIZE_C, VP_IMG_HSIZE(fb->pitches[0]) |
++	vp_reg_write(ctx, VP_IMG_SIZE_C, VP_IMG_HSIZE(fb->pitches[1]) |
+ 		VP_IMG_VSIZE(fb->height / 2));
  
- 	spin_lock_irqsave(&ctx->reg_slock, flags);
- 
-+	vp_reg_write(ctx, VP_SHADOW_UPDATE, 1);
- 	/* interlace or progressive scan mode */
- 	val = (test_bit(MXR_BIT_INTERLACE, &ctx->flags) ? ~0 : 0);
- 	vp_reg_writemask(ctx, VP_MODE, val, VP_MODE_LINE_SKIP);
-@@ -711,6 +712,15 @@ static irqreturn_t mixer_irq_handler(int
- 
- 		/* interlace scan need to check shadow register */
- 		if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
-+			if (test_bit(MXR_BIT_VP_ENABLED, &ctx->flags) &&
-+			    vp_reg_read(ctx, VP_SHADOW_UPDATE))
-+				goto out;
+ 	vp_reg_write(ctx, VP_SRC_WIDTH, state->src.w);
+-	vp_reg_write(ctx, VP_SRC_HEIGHT, state->src.h);
+ 	vp_reg_write(ctx, VP_SRC_H_POSITION,
+ 			VP_SRC_H_POSITION_VAL(state->src.x));
+-	vp_reg_write(ctx, VP_SRC_V_POSITION, state->src.y);
+-
+ 	vp_reg_write(ctx, VP_DST_WIDTH, state->crtc.w);
+ 	vp_reg_write(ctx, VP_DST_H_POSITION, state->crtc.x);
 +
-+			base = mixer_reg_read(ctx, MXR_CFG);
-+			shadow = mixer_reg_read(ctx, MXR_CFG_S);
-+			if (base != shadow)
-+				goto out;
-+
- 			base = mixer_reg_read(ctx, MXR_GRAPHIC_BASE(0));
- 			shadow = mixer_reg_read(ctx, MXR_GRAPHIC_BASE_S(0));
- 			if (base != shadow)
---- a/drivers/gpu/drm/exynos/regs-mixer.h
-+++ b/drivers/gpu/drm/exynos/regs-mixer.h
-@@ -47,6 +47,7 @@
- #define MXR_MO				0x0304
- #define MXR_RESOLUTION			0x0310
- 
-+#define MXR_CFG_S			0x2004
- #define MXR_GRAPHIC0_BASE_S		0x2024
- #define MXR_GRAPHIC1_BASE_S		0x2044
- 
+ 	if (test_bit(MXR_BIT_INTERLACE, &ctx->flags)) {
++		vp_reg_write(ctx, VP_SRC_HEIGHT, state->src.h / 2);
++		vp_reg_write(ctx, VP_SRC_V_POSITION, state->src.y / 2);
+ 		vp_reg_write(ctx, VP_DST_HEIGHT, state->crtc.h / 2);
+ 		vp_reg_write(ctx, VP_DST_V_POSITION, state->crtc.y / 2);
+ 	} else {
++		vp_reg_write(ctx, VP_SRC_HEIGHT, state->src.h);
++		vp_reg_write(ctx, VP_SRC_V_POSITION, state->src.y);
+ 		vp_reg_write(ctx, VP_DST_HEIGHT, state->crtc.h);
+ 		vp_reg_write(ctx, VP_DST_V_POSITION, state->crtc.y);
+ 	}
 
 
