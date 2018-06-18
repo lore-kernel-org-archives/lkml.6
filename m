@@ -6,104 +6,92 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 411D0C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:21:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E25A7C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:22:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F110C208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:21:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F110C208A6
+	by mail.kernel.org (Postfix) with ESMTP id 98B1420852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:22:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98B1420852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934931AbeFROVU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:21:20 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:38035 "EHLO
+        id S934732AbeFROWw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:22:52 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:44143 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933445AbeFROVT (ORCPT
+        with ESMTP id S933445AbeFROWu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:21:19 -0400
+        Mon, 18 Jun 2018 10:22:50 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue003 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MP3gp-1fXMvo3hZ9-006SEP; Mon, 18 Jun 2018 16:21:12 +0200
+ (mreue004 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MDl62-1fR8UL45Py-00H7ZT; Mon, 18 Jun 2018 16:22:40 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Richard Cochran <richardcochran@gmail.com>,
-        Yangbo Lu <yangbo.lu@nxp.com>
+To:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        "David S. Miller" <davem@davemloft.net>,
-        Fabio Estevam <fabio.estevam@nxp.com>, netdev@vger.kernel.org,
+        John Stultz <john.stultz@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>, linux-rtc@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] ptp: replace getnstimeofday64() with ktime_get_real_ts64()
-Date:   Mon, 18 Jun 2018 16:20:39 +0200
-Message-Id: <20180618142109.3445025-1-arnd@arndb.de>
+Subject: [PATCH] rtc: use ktime_get_real_ts64() instead of getnstimeofday64()
+Date:   Mon, 18 Jun 2018 16:22:14 +0200
+Message-Id: <20180618142238.3509274-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:DyjzbJGryhQxvJQc2aQ48knZXBAaUySvgqWgTCV1ih6dJJVXN2v
- Yg0TEgh5qeFayPMpvvEueyRhuFupmjG6bXsSfWxNGuCc+RyBLF9D0VhNvFtk7tYslqjzfT6
- e6EE8vrW5P4+W4qwbLQq22wO27FLIZgHnXGafyFkgNIDJ2ZD8mdqHV05nX2N9/jikYO9vPR
- 7PIJbMhv5+LdH8eIRmzoQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:BSYMvt0trUQ=:z0Y6m1VZk5HcmOW7uN4wlv
- DyqnxhmhFJQo5E0Nn7AEw+sqkel/S5WhbApyM6rMG6s7rnJFjeWO1iofIOgAmxL7Cu6Yl/a6y
- pUI7AFAVRbGLIVDbwAG7cQ3VmqpshB8ktmVEStMnDUsPD8yWJ/KoZQqa3j0J6+xqfyGR5H6F5
- YFlQuBgY7PDx8Yn+hQrF4CVVawUazabUmzwPaA7mYo7Iv0D+PDqAoVgvOJ+Q+YcH2/gKmvuuE
- VENWSb4kk4IiBRLC8ymRxI9cM3fGHVpwt/cS4jBA4UmmVNeNUvx6HQwGCwuDjdY12XM7pbabe
- Zfy9rsJqVR6E1ihvhsntbXur9JDVyvEFT4+sOR3ThiGoIfTNOSC6ie7QZ+HeuBpsbeQpvIzH+
- hRRY6QQ4gxKWYDE7F7EiLwwyNye6P0d9DVvZ+eQcIiN0Kw/WacmSVJHjXDqwSNvTJDobRmCfV
- A1g6vHwJtRtL84vFU+GuKtSlkiaxIm9B3CBwW/H+Yxt33K1RuJop1D8DRF5/Zqqu0VjT1T83T
- ssu6dKgwoUGe0b52srldtLNRfRL+KFX3wHSgf0nmu5eRbT1YLdbW+Wze3HgWD0kCnHR0cuIYa
- 1luSEKrWLMfBfLRAWXvoxEDkqW0Z9QbQfxAoUhnoFBs1OTYYzfMZhy5QOgOng6paUT+zFXrJ9
- +j5Jg9HtUnZIT51R5XR2SbgNUvm7K0nhtb7pqCV5P+V0bqlTViNsQBNpjABcRxts/vfs=
+X-Provags-ID: V03:K1:K2Lw+Iu4ix/Pc/R17HKwR7RQ9nDkEcx/qZGVyiV3s0CoAhlEAaA
+ NjBUE/D7V+ZVRLh1577DuzTIbImKajTvYg0R6gXAEIY8FiIGi+CEVzQCXxvfqoylzfLFY0U
+ ZeKh10p5txPeS5Io41fxj2kdF2U3Ok/WWL1btTZH5ymO5hOSr5BRL2A2UonHxnUB0W8NWAt
+ n0ekbRKrACo/ONykyjJ1Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:+l6XrIyDNK0=:gnE0nQBY1oRY5LrvEIZzog
+ 7ulKVr/jod7oe7A0LFgl1FqFebZznLSsLlVU6/7OWlt9oKUVU/5v3MJfu55JxexzzYSW3dPyk
+ nWwfR0QjSF5C3sbbpEeS5SShghrVrtraE10um4Cb0MmjI45l12LX7aIpByU9K0TYVlq4yZOsG
+ bFVRQOTgYSOPUpmTiH6x8D2ZATGDgyOpABQdSop7H27wivhUQtoHBVSTGZjEv+Faw0avH3X6F
+ pFZzSJOqHTaCKC01VWzzvjPq9oj+i7VMj8uVkY/mGfYRjgWJrDJkSLQwNlKQyhCoBkeN+Vf3g
+ DJQitoNiza83RsxdNhYCuZk7B3uXXeUlKIc8IO0ZWt5C4oPyxUc2X687t4M1tgaAN01l1Wv3d
+ /3z5UyxIsW8IywwRAKdijQPI0FKDu9guRfbz11D7McNoadJP3qofS+7hlPCtyrkDD6HOuqLt7
+ neP/l4URFkKFnB9Zadl8q+jzoo2xUUK5sY6fJP3QeFq9HXAKXk0SZ04P0bJuBi3IGU5BBpuR0
+ BqBHG6h09f7xLVQ1Y/6VCvcLT8ycLOJVCImQeqLhOuux7O2AbznGc35k1/bkekaCkZIh4ZX8K
+ OeRsuXT31QoEoFSmza/cOCq2dE09kVMAftakVDobNoxpAbrzAtBvr/yMKziZe0l7Y2Sp6+BKS
+ 0oWo7bm8vq5KN/u8t8FfiMsaAPx7C3LscKTclKhlzt3DUWSs2UNPFF6oyw6wgapIakYk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-getnstimeofday64() is deprecated and getting replaced throughout
-the kernel with ktime_get_*() based helpers for a more consistent
-interface.
+getnstimeofday64() is just a wrapper around the ktime accessor, so
+we should use that directly.
 
-The two functions do the exact same thing, so this is just
-a cosmetic change.
+I considered using ktime_get_boottime_ts64() (to avoid leap second
+problems) or ktime_get_real_seconds() (to simplify the calculation,
+but in the end concluded that the existing interface is probably
+the most appropriate in this case.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/ptp/ptp_chardev.c | 4 ++--
- drivers/ptp/ptp_qoriq.c   | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ drivers/rtc/class.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
-index 767c485af59b..547dbdac9d54 100644
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -221,7 +221,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
- 		}
- 		pct = &sysoff->ts[0];
- 		for (i = 0; i < sysoff->n_samples; i++) {
--			getnstimeofday64(&ts);
-+			ktime_get_real_ts64(&ts);
- 			pct->sec = ts.tv_sec;
- 			pct->nsec = ts.tv_nsec;
- 			pct++;
-@@ -230,7 +230,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
- 			pct->nsec = ts.tv_nsec;
- 			pct++;
- 		}
--		getnstimeofday64(&ts);
-+		ktime_get_real_ts64(&ts);
- 		pct->sec = ts.tv_sec;
- 		pct->nsec = ts.tv_nsec;
- 		if (copy_to_user((void __user *)arg, sysoff, sizeof(*sysoff)))
-diff --git a/drivers/ptp/ptp_qoriq.c b/drivers/ptp/ptp_qoriq.c
-index 1468a1642b49..e8652c148c52 100644
---- a/drivers/ptp/ptp_qoriq.c
-+++ b/drivers/ptp/ptp_qoriq.c
-@@ -374,7 +374,7 @@ static int qoriq_ptp_probe(struct platform_device *dev)
- 		pr_err("ioremap ptp registers failed\n");
- 		goto no_ioremap;
+diff --git a/drivers/rtc/class.c b/drivers/rtc/class.c
+index d37588f08055..7fa32c922617 100644
+--- a/drivers/rtc/class.c
++++ b/drivers/rtc/class.c
+@@ -68,7 +68,7 @@ static int rtc_suspend(struct device *dev)
+ 		return 0;
  	}
--	getnstimeofday64(&now);
-+	ktime_get_real_ts64(&now);
- 	ptp_qoriq_settime(&qoriq_ptp->caps, &now);
  
- 	tmr_ctrl =
+-	getnstimeofday64(&old_system);
++	ktime_get_real_ts64(&old_system);
+ 	old_rtc.tv_sec = rtc_tm_to_time64(&tm);
+ 
+ 
+@@ -110,7 +110,7 @@ static int rtc_resume(struct device *dev)
+ 		return 0;
+ 
+ 	/* snapshot the current rtc and system time at resume */
+-	getnstimeofday64(&new_system);
++	ktime_get_real_ts64(&new_system);
+ 	err = rtc_read_time(rtc, &tm);
+ 	if (err < 0) {
+ 		pr_debug("%s:  fail to read rtc time\n", dev_name(&rtc->dev));
 -- 
 2.9.0
 
