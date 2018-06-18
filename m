@@ -2,135 +2,205 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CADCC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:48:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1FEC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:49:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF8C8208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:48:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7rHcpGn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8C8208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B6F6320020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:49:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F6320020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755357AbeFRQsY (ORCPT
+        id S1755374AbeFRQtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:48:24 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:37624 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752835AbeFRQsV (ORCPT
+        Mon, 18 Jun 2018 12:49:10 -0400
+Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:53288 "EHLO
+        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1752835AbeFRQtJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:48:21 -0400
-Received: by mail-pf0-f193.google.com with SMTP id y5-v6so8459170pfn.4;
-        Mon, 18 Jun 2018 09:48:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Q11XRtjbqqMUasQGLsI7jy0txfH61VaWuivAZxYYUEU=;
-        b=g7rHcpGnrUrUwW63ltXuTKvdzPFUNB3PJsGK+6wgEZorjxnmFeGpnAs3E2QaDW6lp7
-         u66oJjLcq1KC9gT7QSZyXknggl3EcL2wduW12gSO2SKXY64aOA3Qz9mIdYVxq9eqBAox
-         bWYsPBgMrLAQkecNfzYT1cdgJH6qojydzntGtGNf1Oz4PSRjJkT4Hdr/WKmsuVDlqHEI
-         erFPaGqY1SJ8Vi0TNUhDecsJ/cOxgRT1oixB1LDKR3ueVht02LYvKFIUKSv2oscndvkZ
-         3TuvMW3+kr9Ri2SoJXKPsWNarrsw4ULbnwolmZdqOI0PVRiKnTUpswyVt2/fo2xQFzzb
-         Hs7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Q11XRtjbqqMUasQGLsI7jy0txfH61VaWuivAZxYYUEU=;
-        b=atRMS8bvGZH7f6nIsi4lERb9sgHh8LEh8G5/31eGuT47bZP0mrCboUD3PN5jHP9GpL
-         4QvyNJecdXbXCDjt8y4uG+DubF7IQNw6Qt4MpZ/ACDiHDOgHUkr3Wit+JarBtbyidjn+
-         M8vSFyo3+J6OZ/VFO+TEUiIwfAyUYBwtVulRXPhePXZuwpCbc/pEoHj+Fb8z/3snuJx9
-         4YpTThUoMKwu5FOzCKzyw3vn3mCBvAt0TjK1sR48mBbZvgpOy8gXoypeCyKfWXMOv4vw
-         Q6kN2v3MUUzpCf8FvwNbOdTRCYrEkEX/0CmlsLRGbb7DVBlG5DZlh5aCr8RcS9/qLRLt
-         cRgQ==
-X-Gm-Message-State: APt69E1/A91lxUDQNrfYtkuPqw2aIWQg21jY1vVqsobQpUBQMQm47ppw
-        8oR0T9bo/asjijFzvrRw+ZysNXnl
-X-Google-Smtp-Source: ADUXVKLCbxlqFdE20Nhx9aJHhBZzg+KPulTtLvqWcfldhfuHAV08ibrJb5NugF+xiwQtp/tmgPPwQw==
-X-Received: by 2002:a65:51cb:: with SMTP id i11-v6mr11874408pgq.320.1529340501056;
-        Mon, 18 Jun 2018 09:48:21 -0700 (PDT)
-Received: from [10.69.41.93] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id a23-v6sm18401197pgd.85.2018.06.18.09.48.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 09:48:19 -0700 (PDT)
-Subject: Re: [PATCH 0/5] Fix Cygnus, NS2, Stingray interrupt type
-To:     Ray Jui <ray.jui@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Florian Fainelli <f.fainelli@gmail.com>
-Cc:     Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
-References: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-Message-ID: <ac955f7d-6770-63a1-db85-024b0ee0b8af@gmail.com>
-Date:   Mon, 18 Jun 2018 09:48:18 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-MIME-Version: 1.0
-In-Reply-To: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Mon, 18 Jun 2018 12:49:09 -0400
+Received: from e110455-lin.cambridge.arm.com (e110455-lin.cambridge.arm.com [10.2.131.61])
+        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id w5IGn2Vg020899;
+        Mon, 18 Jun 2018 17:49:02 +0100
+From:   Liviu Dudau <Liviu.Dudau@arm.com>
+To:     Mali DP Maintainers <malidp@foss.arm.com>
+Cc:     DRI-devel <dri-devel@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Brian Starkey <brian.starkey@arm.com>,
+        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
+        Ayan Halder <ayan.halder@arm.com>,
+        Liviu Dudau <liviu.dudau@arm.com>
+Subject: [PATCH] drm/mali-dp: Improve writeback handling for DP500.
+Date:   Mon, 18 Jun 2018 17:49:02 +0100
+Message-Id: <20180618164902.10153-1-Liviu.Dudau@arm.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/12/2018 01:21 PM, Ray Jui wrote:
-> This patch series fixes incorrect interrupt types for I2C and PCIe in DT
-> for Broadcom Cygnus, NS2, and Stingray SoCs
-> 
-> This patch series is based off v4.17 and is available on GIHUB:
-> repo: https://github.com/Broadcom/arm64-linux.git
-> branch: cygnus-ns2-dt-irq-type-fix-v1
+Mali DP500 operates in continuous writeback mode (writes frame content
+until stopped) and it needs special handling in order to behave like
+a one-shot writeback engine. The original state machine added for DP500
+was a bit fragile, as it did not handle correctly cases where a new
+atomic commit was in progress when the SE IRQ happens and it would
+commit some partial updates.
 
-Series applied to:
+Improve the handling by adding a parameter to the set_config_valid()
+function to clear the config valid bit in hardware before starting a
+new commit and by introducing a MW_RESTART state in the writeback
+state machine to cater for the case where a new writeback commit
+gets submitted while the last one is still being active.
 
-- 1&2: devicetree/fixes
-- 3-5: devicetree-arm64/fixes
+Reported-by: Brian Starkey <brian.starkey@arm.com>
+Reviewed-by: Brian Starkey <brian.starkey@arm.com>
+Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
+---
+ drivers/gpu/drm/arm/malidp_drv.c |  3 ++-
+ drivers/gpu/drm/arm/malidp_hw.c  | 39 +++++++++++++++++++++++---------
+ drivers/gpu/drm/arm/malidp_hw.h  | 11 +++++----
+ 3 files changed, 36 insertions(+), 17 deletions(-)
 
-Thanks Ray.
+diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
+index fc264554c5035..83e8f911f1579 100644
+--- a/drivers/gpu/drm/arm/malidp_drv.c
++++ b/drivers/gpu/drm/arm/malidp_drv.c
+@@ -171,7 +171,7 @@ static int malidp_set_and_wait_config_valid(struct drm_device *drm)
+ 	struct malidp_hw_device *hwdev = malidp->dev;
+ 	int ret;
+ 
+-	hwdev->hw->set_config_valid(hwdev);
++	hwdev->hw->set_config_valid(hwdev, 1);
+ 	/* don't wait for config_valid flag if we are in config mode */
+ 	if (hwdev->hw->in_config_mode(hwdev)) {
+ 		atomic_set(&malidp->config_valid, MALIDP_CONFIG_VALID_DONE);
+@@ -230,6 +230,7 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
+ 	 * know that we are updating registers
+ 	 */
+ 	atomic_set(&malidp->config_valid, MALIDP_CONFIG_START);
++	malidp->dev->hw->set_config_valid(malidp->dev, 0);
+ 
+ 	drm_atomic_helper_commit_modeset_disables(drm, state);
+ 
+diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
+index e0de7a35a0beb..8759f90c313d9 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.c
++++ b/drivers/gpu/drm/arm/malidp_hw.c
+@@ -27,7 +27,8 @@ enum {
+ 	MW_NOT_ENABLED = 0,	/* SE writeback not enabled */
+ 	MW_ONESHOT,		/* SE in one-shot mode for writeback */
+ 	MW_START,		/* SE started writeback */
+-	MW_STOP,		/* SE finished writeback */
++	MW_RESTART,		/* SE will start another writeback after this one */
++	MW_STOP,		/* SE needs to stop after this writeback */
+ };
+ 
+ static const struct malidp_format_id malidp500_de_formats[] = {
+@@ -231,9 +232,12 @@ static bool malidp500_in_config_mode(struct malidp_hw_device *hwdev)
+ 	return false;
+ }
+ 
+-static void malidp500_set_config_valid(struct malidp_hw_device *hwdev)
++static void malidp500_set_config_valid(struct malidp_hw_device *hwdev, u8 value)
+ {
+-	malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP500_CONFIG_VALID);
++	if (value)
++		malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP500_CONFIG_VALID);
++	else
++		malidp_hw_clearbits(hwdev, MALIDP_CFG_VALID, MALIDP500_CONFIG_VALID);
+ }
+ 
+ static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *mode)
+@@ -386,7 +390,11 @@ static int malidp500_enable_memwrite(struct malidp_hw_device *hwdev,
+ 	/* enable the scaling engine block */
+ 	malidp_hw_setbits(hwdev, MALIDP_SCALE_ENGINE_EN, de_base + MALIDP_DE_DISPLAY_FUNC);
+ 
+-	hwdev->mw_state = MW_START;
++	/* restart the writeback if already enabled */
++	if (hwdev->mw_state != MW_NOT_ENABLED)
++		hwdev->mw_state = MW_RESTART;
++	else
++		hwdev->mw_state = MW_START;
+ 
+ 	malidp_hw_write(hwdev, fmt_id, base + MALIDP_MW_FORMAT);
+ 	switch (num_planes) {
+@@ -415,7 +423,7 @@ static void malidp500_disable_memwrite(struct malidp_hw_device *hwdev)
+ {
+ 	u32 base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
+ 
+-	if (hwdev->mw_state == MW_START)
++	if (hwdev->mw_state == MW_START || hwdev->mw_state == MW_RESTART)
+ 		hwdev->mw_state = MW_STOP;
+ 	malidp_hw_clearbits(hwdev, MALIDP_SE_MEMWRITE_EN, MALIDP500_SE_CONTROL);
+ 	malidp_hw_clearbits(hwdev, MALIDP_SCALE_ENGINE_EN, base + MALIDP_DE_DISPLAY_FUNC);
+@@ -500,9 +508,12 @@ static bool malidp550_in_config_mode(struct malidp_hw_device *hwdev)
+ 	return false;
+ }
+ 
+-static void malidp550_set_config_valid(struct malidp_hw_device *hwdev)
++static void malidp550_set_config_valid(struct malidp_hw_device *hwdev, u8 value)
+ {
+-	malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP550_CONFIG_VALID);
++	if (value)
++		malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP550_CONFIG_VALID);
++	else
++		malidp_hw_clearbits(hwdev, MALIDP_CFG_VALID, MALIDP550_CONFIG_VALID);
+ }
+ 
+ static void malidp550_modeset(struct malidp_hw_device *hwdev, struct videomode *mode)
+@@ -1004,15 +1015,21 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
+ 			/* disable writeback after stop */
+ 			hwdev->mw_state = MW_NOT_ENABLED;
+ 			break;
++		case MW_RESTART:
++			drm_writeback_signal_completion(&malidp->mw_connector, 0);
++			/* fall through to a new start */
+ 		case MW_START:
+ 			/* writeback started, need to emulate one-shot mode */
+ 			hw->disable_memwrite(hwdev);
+ 			/*
+-			 * only set config_valid HW bit if there is no
+-			 * other update in progress
++			 * only set config_valid HW bit if there is no other update
++			 * in progress or if we raced ahead of the DE IRQ handler
++			 * and config_valid flag will not be update until later
+ 			 */
+-			if (atomic_read(&malidp->config_valid) != MALIDP_CONFIG_START)
+-				hw->set_config_valid(hwdev);
++			status = malidp_hw_read(hwdev, hw->map.dc_base + MALIDP_REG_STATUS);
++			if ((atomic_read(&malidp->config_valid) != MALIDP_CONFIG_START) ||
++			    (status & hw->map.dc_irq_map.vsync_irq))
++				hw->set_config_valid(hwdev, 1);
+ 			break;
+ 		}
+ 	}
+diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
+index c479738b81af5..bd41aa6974a06 100644
+--- a/drivers/gpu/drm/arm/malidp_hw.h
++++ b/drivers/gpu/drm/arm/malidp_hw.h
+@@ -152,12 +152,13 @@ struct malidp_hw {
+ 	bool (*in_config_mode)(struct malidp_hw_device *hwdev);
+ 
+ 	/*
+-	 * Set configuration valid flag for hardware parameters that can
+-	 * be changed outside the configuration mode. Hardware will use
+-	 * the new settings when config valid is set after the end of the
+-	 * current buffer scanout
++	 * Set/clear configuration valid flag for hardware parameters that can
++	 * be changed outside the configuration mode to the given value.
++	 * Hardware will use the new settings when config valid is set,
++	 * after the end of the current buffer scanout, and will ignore
++	 * any new values for those parameters if config valid flag is cleared
+ 	 */
+-	void (*set_config_valid)(struct malidp_hw_device *hwdev);
++	void (*set_config_valid)(struct malidp_hw_device *hwdev, u8 value);
+ 
+ 	/*
+ 	 * Set a new mode in hardware. Requires the hardware to be in
 -- 
-Florian
+2.17.1
+
