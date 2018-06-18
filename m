@@ -6,41 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31863C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7860EC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE7120874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE7120874
+	by mail.kernel.org (Postfix) with ESMTP id 3CE0420864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CE0420864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966630AbeFRI2U (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:28:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:59096 "EHLO
+        id S966648AbeFRI2Z (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:28:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59128 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966613AbeFRI2Q (ORCPT
+        with ESMTP id S966622AbeFRI2T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:28:16 -0400
+        Mon, 18 Jun 2018 04:28:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0F48D5D;
-        Mon, 18 Jun 2018 08:28:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CE5C3C7A;
+        Mon, 18 Jun 2018 08:28:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellermen <mpe@ellerman.id.au>,
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Waiman Long <longman@redhat.com>,
         Peter Zijlstra <peterz@infradead.org>,
-        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Davidlohr Bueso <dave@stgolabs.net>, Jan Kara <jack@suse.cz>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleg Nesterov <oleg@redhat.com>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        "Theodore Y. Tso" <tytso@mit.edu>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        linux-fsdevel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 239/279] x86/pkeys/selftests: Remove dead debugging code, fix dprint_in_signal
-Date:   Mon, 18 Jun 2018 10:13:44 +0200
-Message-Id: <20180618080618.682438301@linuxfoundation.org>
+Subject: [PATCH 4.16 268/279] locking/percpu-rwsem: Annotate rwsem ownership transfer by setting RWSEM_OWNER_UNKNOWN
+Date:   Mon, 18 Jun 2018 10:14:13 +0200
+Message-Id: <20180618080619.779208657@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -57,59 +61,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Waiman Long <longman@redhat.com>
 
-[ Upstream commit a50093d60464dd51d1ae0c2267b0abe9e1de77f3 ]
+[ Upstream commit 5a817641f68a6399a5fac8b7d2da67a73698ffed ]
 
-There is some noisy debug code at the end of the signal handler.  It was
-disabled by an early, unconditional "return".  However, that return also
-hid a dprint_in_signal=0, which kept dprint_in_signal=1 and effectively
-locked us into permanent dprint_in_signal=1 behavior.
+The filesystem freezing code needs to transfer ownership of a rwsem
+embedded in a percpu-rwsem from the task that does the freezing to
+another one that does the thawing by calling percpu_rwsem_release()
+after freezing and percpu_rwsem_acquire() before thawing.
 
-Remove the return and the dead code, fixing dprint_in_signal.
+However, the new rwsem debug code runs afoul with this scheme by warning
+that the task that releases the rwsem isn't the one that acquires it,
+as reported by Amir Goldstein:
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+  DEBUG_LOCKS_WARN_ON(sem->owner != get_current())
+  WARNING: CPU: 1 PID: 1401 at /home/amir/build/src/linux/kernel/locking/rwsem.c:133 up_write+0x59/0x79
+
+  Call Trace:
+   percpu_up_write+0x1f/0x28
+   thaw_super_locked+0xdf/0x120
+   do_vfs_ioctl+0x270/0x5f1
+   ksys_ioctl+0x52/0x71
+   __x64_sys_ioctl+0x16/0x19
+   do_syscall_64+0x5d/0x167
+   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+To work properly with the rwsem debug code, we need to annotate that the
+rwsem ownership is unknown during the tranfer period until a brave soul
+comes forward to acquire the ownership. During that period, optimistic
+spinning will be disabled.
+
+Reported-by: Amir Goldstein <amir73il@gmail.com>
+Tested-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Waiman Long <longman@redhat.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
 Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Jan Kara <jack@suse.cz>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Cc: Theodore Y. Ts'o <tytso@mit.edu>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171342.846B9B2E@viggo.jf.intel.com
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: linux-fsdevel@vger.kernel.org
+Link: http://lkml.kernel.org/r/1526420991-21213-3-git-send-email-longman@redhat.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   16 ----------------
- 1 file changed, 16 deletions(-)
+ include/linux/percpu-rwsem.h |    6 +++++-
+ include/linux/rwsem.h        |    6 ++++++
+ kernel/locking/rwsem-xadd.c  |    2 ++
+ 3 files changed, 13 insertions(+), 1 deletion(-)
 
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -325,22 +325,6 @@ void signal_handler(int signum, siginfo_
- 	dprintf1("WARNING: set PRKU=0 to allow faulting instruction to continue\n");
- 	pkru_faults++;
- 	dprintf1("<<<<==================================================\n");
--	return;
--	if (trapno == 14) {
--		fprintf(stderr,
--			"ERROR: In signal handler, page fault, trapno = %d, ip = %016lx\n",
--			trapno, ip);
--		fprintf(stderr, "si_addr %p\n", si->si_addr);
--		fprintf(stderr, "REG_ERR: %lx\n",
--				(unsigned long)uctxt->uc_mcontext.gregs[REG_ERR]);
--		exit(1);
--	} else {
--		fprintf(stderr, "unexpected trap %d! at 0x%lx\n", trapno, ip);
--		fprintf(stderr, "si_addr %p\n", si->si_addr);
--		fprintf(stderr, "REG_ERR: %lx\n",
--				(unsigned long)uctxt->uc_mcontext.gregs[REG_ERR]);
--		exit(2);
--	}
- 	dprint_in_signal = 0;
+--- a/include/linux/percpu-rwsem.h
++++ b/include/linux/percpu-rwsem.h
+@@ -133,7 +133,7 @@ static inline void percpu_rwsem_release(
+ 	lock_release(&sem->rw_sem.dep_map, 1, ip);
+ #ifdef CONFIG_RWSEM_SPIN_ON_OWNER
+ 	if (!read)
+-		sem->rw_sem.owner = NULL;
++		sem->rw_sem.owner = RWSEM_OWNER_UNKNOWN;
+ #endif
  }
+ 
+@@ -141,6 +141,10 @@ static inline void percpu_rwsem_acquire(
+ 					bool read, unsigned long ip)
+ {
+ 	lock_acquire(&sem->rw_sem.dep_map, 0, 1, read, 1, NULL, ip);
++#ifdef CONFIG_RWSEM_SPIN_ON_OWNER
++	if (!read)
++		sem->rw_sem.owner = current;
++#endif
+ }
+ 
+ #endif
+--- a/include/linux/rwsem.h
++++ b/include/linux/rwsem.h
+@@ -44,6 +44,12 @@ struct rw_semaphore {
+ #endif
+ };
+ 
++/*
++ * Setting bit 0 of the owner field with other non-zero bits will indicate
++ * that the rwsem is writer-owned with an unknown owner.
++ */
++#define RWSEM_OWNER_UNKNOWN	((struct task_struct *)-1L)
++
+ extern struct rw_semaphore *rwsem_down_read_failed(struct rw_semaphore *sem);
+ extern struct rw_semaphore *rwsem_down_read_failed_killable(struct rw_semaphore *sem);
+ extern struct rw_semaphore *rwsem_down_write_failed(struct rw_semaphore *sem);
+--- a/kernel/locking/rwsem-xadd.c
++++ b/kernel/locking/rwsem-xadd.c
+@@ -352,6 +352,8 @@ static inline bool rwsem_can_spin_on_own
+ 	struct task_struct *owner;
+ 	bool ret = true;
+ 
++	BUILD_BUG_ON(!rwsem_has_anonymous_owner(RWSEM_OWNER_UNKNOWN));
++
+ 	if (need_resched())
+ 		return false;
  
 
 
