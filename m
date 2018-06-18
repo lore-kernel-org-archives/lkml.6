@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 177B4C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34E0CC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBFA5208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:09:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8921208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:09:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="OiZw9g3+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBFA5208D5
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="J5TALy07"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8921208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935755AbeFRPJa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:09:30 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:46519 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935442AbeFRPJ1 (ORCPT
+        id S935782AbeFRPJj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:09:39 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:40400 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935310AbeFRPJf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:09:27 -0400
-Received: by mail-pf0-f193.google.com with SMTP id q1-v6so8320686pff.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:09:27 -0700 (PDT)
+        Mon, 18 Jun 2018 11:09:35 -0400
+Received: by mail-pg0-f65.google.com with SMTP id w8-v6so4638290pgp.7
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:09:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=OaELTQw2RDxK69EIJRpzEZSOniPvvy6Q+QK1TVFJ+EY=;
-        b=OiZw9g3+gWGlWDJFmVNvIqbTcSN0ZpeNFl7264qjDE9OIo6w8eBJXfRq7YQ0l9QP9e
-         HAkPU8PRMtWRMlTXsgrF28ffcnX+Na7qo4a6Y6gEtSVxp29TEshKWEG5mR0N9v9E22Ux
-         UqJwfnhjNKyWi3fpOM+yAmIWwwRBIeNplGD4CunOyrugGOf2irjThgSOlCYubLPcgon6
-         8XDrfsQlDwi0BaeApVh3xSbsnftASqVv9Vtji8GCeIafdtElVv9jPYXxCw41fQtRvbkC
-         1g3DLGQk1V9yrSGQqieu1HWmU93OPSvwPbRXQJ8PcvlSTMuIsApQ4aAfJ18Xol8oozHe
-         Qxqg==
+        bh=YE/jYytYSn2pNCWpT5sfab90T2GfMqcfvGW9tA9CHqQ=;
+        b=J5TALy07TugtJU2uwHPqDZXcyPMmH30arYlCEzbQaLkx7A183Z6wWC93qpMJkNjpGE
+         m896OL+TPnKLNfzDFvKCVXIygzt/t3f9++G6yzgLul8JHzp0UbhmcNtDYRgplYuShk4V
+         WSzI7Nj3rTrhBJac0d4FP6hh9is2jxt0B37Hlt0FsL3AqYZf758nWEyU8n9Oe3cVsnOP
+         0KTmvoIRPSe7F3aw0DbYQLYlk1o7xNeW5JftcyQbqKdDczVbt1Bk5MWl3pS77CmJPsqk
+         VYpiJZ1T6noiWqH+TZLnww2oGdy5IFPL+LXa0EV03HjT6g3LlSbuZWaHnuC6gFfz4G8c
+         R//w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=OaELTQw2RDxK69EIJRpzEZSOniPvvy6Q+QK1TVFJ+EY=;
-        b=LX/DwL5Kj2h2C9/cfrGvyND+qIPpyVDcAaqYmGqwrqL6MpVKZLNiJHtPY9kOVJuvqE
-         k6yY4IMqIiFrJcnS28Zrb2cwPhtf/psF6vYqeaw2iR8XJeMuKTrZFviEtcbYm2P7NFAW
-         mgd68fwXyc/VHtDeuHIyD7GBy23kVIuYC2ylYn4g4Xxw2FgHE/4n90z8KLAYrzkUbyjL
-         q3LqURrMoemyDi+PUM1/NzFyFSUWvJ1vxHB3RWzdvOWc81btMs/3KShYD1bSf3M2RdiT
-         YqMrMXrpqVFCib7lyjQwpKJRDECRlhNebe/HbTQdLYzkIeRNr61zrWGxfeAgdmpsGQ6E
-         +FXw==
-X-Gm-Message-State: APt69E0ZCQyVzySbtzUmzOIhzjZRsav9lnxIJQRQPfAqE+69LJ9yRu+n
-        YGqr9MOgsWnNk15URr2PuVg1FXxIkxw=
-X-Google-Smtp-Source: ADUXVKJHQJt5S+doddx2ep+Djnwc64EARW73qaPTgd2qgrai/8kt1rOojWfXd95PTRUI628NhEjKSQ==
-X-Received: by 2002:a62:4a0c:: with SMTP id x12-v6mr14029123pfa.142.1529334566300;
-        Mon, 18 Jun 2018 08:09:26 -0700 (PDT)
+        bh=YE/jYytYSn2pNCWpT5sfab90T2GfMqcfvGW9tA9CHqQ=;
+        b=VmqoQ2u1srN2lWs4OkU+/uQqU3PUmoQos52srcv+c8AuWLJhhqXdBf3R+ATRBEDZDU
+         EZssHHGv41sZZzT3kmPabB65heBwZGrO6IaEqEHD72NRKxpVwo5ZI5CmsR8xdRgqSlz/
+         Ix350tb1uzhD3SoiBcqnYBzfYm2kSXIUcOeqSVdGmG7rRSIGfVgeEw96C3CinuE8oAyw
+         HCKBT87ov+Rw2p+PtucxTaWBpmH7CL5K/h5X+8lH0TsT53LfX1iloScm1M5INPFqXsU2
+         byvjB1+/Ph+xTXNBDkLGqoLJ4YTPg2weM1v+NkR4O3syfz6E10nTGB2fIlf1+pqfXDkC
+         RxjA==
+X-Gm-Message-State: APt69E2Kz8piAw7eRYUVvBxAP9w0E95V2zydt1KM/jalBiesZ3VSSvG7
+        N9qR4TZDNqKxzTLfw8kt3hMgPvUoHCw=
+X-Google-Smtp-Source: ADUXVKKb1QsMLUqlPIpGPKPK9LkNVzH0M+v4xSlVoHfVjFTeLU7nH3gHc9Rhr0CNNhnW4eIV2WnQpg==
+X-Received: by 2002:a62:aa18:: with SMTP id e24-v6mr13893392pff.72.1529334575044;
+        Mon, 18 Jun 2018 08:09:35 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:6077:8eec:bc7e:d0f4])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.09.25
+        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.09.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 08:09:25 -0700 (PDT)
+        Mon, 18 Jun 2018 08:09:34 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
@@ -75,13 +75,13 @@ Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
         Andrew Pinski <apinski@cavium.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
+        Dave Martin <Dave.Martin@arm.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
         Jeremy Linton <Jeremy.Linton@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: RESEND [PATCH v2 3/3] arm64: compat: Add CONFIG_KUSER_HELPERS
-Date:   Mon, 18 Jun 2018 08:06:02 -0700
-Message-Id: <20180618150613.10322-17-salyzyn@android.com>
+        Marc Zyngier <marc.zyngier@arm.com>
+Subject: RESEND [PATCH] arm64: compat: Expose offset to registers in sigframes
+Date:   Mon, 18 Jun 2018 08:06:03 -0700
+Message-Id: <20180618150613.10322-18-salyzyn@android.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 In-Reply-To: <20180618150613.10322-1-salyzyn@android.com>
 References: <20180618150613.10322-1-salyzyn@android.com>
@@ -92,11 +92,12 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kevin Brodsky <kevin.brodsky@arm.com>
 
-Make it possible to disable the kuser helpers by adding a KUSER_HELPERS
-config option (enabled by default). When disabled, all kuser
-helpers-related code is removed from the kernel and no mapping is done
-at the fixed high address (0xffff0000); any attempt to use a kuser
-helper from a 32-bit process will result in a segfault.
+This will be needed to provide unwinding information in compat
+sigreturn trampolines, part of the future compat vDSO. There is no
+obvious header the compat_sig* struct's should be moved to, so let's
+put them in signal32.h.
+
+Also fix minor style issues reported by checkpatch.
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
@@ -112,148 +113,176 @@ Cc: Laura Abbott <labbott@redhat.com>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc: Andy Gross <andy.gross@linaro.org>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>
 Cc: Andrew Pinski <apinski@cavium.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
+Cc: Dave Martin <Dave.Martin@arm.com>
+Cc: Eric W. Biederman <ebiederm@xmission.com>
 Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 
-v2:
-- split off assembler changes to a new previous patch in series to reduce churn
-- modify slightly the feature documentation to reduce its reach
-- modify slightly the feature documentation to rationalize the yes default.
-- There are more ifdefs as a result of the rebase.
-
-v3:
-- rebase
+NB:
+Basically unchanged as part of a vDSO32 effort through 4 revisions,
+Resubmitted as a standalone change for quciker approval.
 ---
- arch/arm64/Kconfig         | 30 ++++++++++++++++++++++++++++++
- arch/arm64/kernel/Makefile |  2 +-
- arch/arm64/kernel/vdso.c   | 10 ++++++++++
- 3 files changed, 41 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/signal32.h | 46 +++++++++++++++++++++++++++++++
+ arch/arm64/kernel/asm-offsets.c   | 13 +++++++++
+ arch/arm64/kernel/signal32.c      | 46 -------------------------------
+ 3 files changed, 59 insertions(+), 46 deletions(-)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 42c090cf0292..11b4c6aef7d7 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1296,6 +1296,36 @@ config COMPAT
+diff --git a/arch/arm64/include/asm/signal32.h b/arch/arm64/include/asm/signal32.h
+index 58e288aaf0ba..bcd0e139ee4a 100644
+--- a/arch/arm64/include/asm/signal32.h
++++ b/arch/arm64/include/asm/signal32.h
+@@ -20,6 +20,52 @@
+ #ifdef CONFIG_COMPAT
+ #include <linux/compat.h>
  
- 	  If you want to execute 32-bit userspace applications, say Y.
- 
-+config KUSER_HELPERS
-+	bool "Enable the kuser helpers page in 32-bit processes"
-+	depends on COMPAT
-+	default y
-+	help
-+	  Warning: disabling this option may break 32-bit applications.
++struct compat_sigcontext {
++	/* We always set these two fields to 0 */
++	compat_ulong_t			trap_no;
++	compat_ulong_t			error_code;
 +
-+	  Provide kuser helpers in a special purpose fixed-address page. The
-+	  kernel provides helper code to userspace in read-only form at a fixed
-+	  location to allow userspace to be independent of the CPU type fitted
-+	  to the system. This permits 32-bit binaries to be run on ARMv6 through
-+	  to ARMv8 without modification.
++	compat_ulong_t			oldmask;
++	compat_ulong_t			arm_r0;
++	compat_ulong_t			arm_r1;
++	compat_ulong_t			arm_r2;
++	compat_ulong_t			arm_r3;
++	compat_ulong_t			arm_r4;
++	compat_ulong_t			arm_r5;
++	compat_ulong_t			arm_r6;
++	compat_ulong_t			arm_r7;
++	compat_ulong_t			arm_r8;
++	compat_ulong_t			arm_r9;
++	compat_ulong_t			arm_r10;
++	compat_ulong_t			arm_fp;
++	compat_ulong_t			arm_ip;
++	compat_ulong_t			arm_sp;
++	compat_ulong_t			arm_lr;
++	compat_ulong_t			arm_pc;
++	compat_ulong_t			arm_cpsr;
++	compat_ulong_t			fault_address;
++};
 +
-+	  See Documentation/arm/kernel_user_helpers.txt for details.
++struct compat_ucontext {
++	compat_ulong_t			uc_flags;
++	compat_uptr_t			uc_link;
++	compat_stack_t			uc_stack;
++	struct compat_sigcontext	uc_mcontext;
++	compat_sigset_t			uc_sigmask;
++	int __unused[32 - (sizeof(compat_sigset_t) / sizeof(int))];
++	compat_ulong_t			uc_regspace[128] __aligned(8);
++};
 +
-+	  However, the fixed-address nature of these helpers can be used by ROP
-+	  (return-orientated programming) authors when creating exploits.
++struct compat_sigframe {
++	struct compat_ucontext		uc;
++	compat_ulong_t			retcode[2];
++};
 +
-+	  If all of the 32-bit binaries and libraries that run on your platform
-+	  are built specifically for your platform, and make no use of these
-+	  helpers, then you can turn this option off to hinder such exploits.
-+	  However, in that case, if a binary or library relying on those helpers
-+	  is run, it will receive a SIGSEGV signal, which will terminate the
-+	  program. Typically, binaries compiled for ARMv7 or later do not use
-+	  the kuser helpers.
++struct compat_rt_sigframe {
++	struct compat_siginfo		info;
++	struct compat_sigframe		sig;
++};
 +
-+	  Say N here only if you are absolutely certain that you do not need
-+	  these helpers; otherwise, the safe option is to say Y (the default
-+	  for now)
-+
- config SYSVIPC_COMPAT
- 	def_bool y
- 	depends on COMPAT && SYSVIPC
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index 9851be3ef932..c16be3cf39bf 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -29,7 +29,7 @@ $(obj)/%.stub.o: $(obj)/%.o FORCE
- arm64-obj-$(CONFIG_COMPAT)		+= sys32.o signal32.o	\
- 					   sys_compat.o entry32.o
- arm64-obj-$(CONFIG_COMPAT)		+= sigreturn32.o
--arm64-obj-$(CONFIG_COMPAT)		+= kuser32.o
-+arm64-obj-$(CONFIG_KUSER_HELPERS)	+= kuser32.o
- arm64-obj-$(CONFIG_FUNCTION_TRACER)	+= ftrace.o entry-ftrace.o
- arm64-obj-$(CONFIG_MODULES)		+= arm64ksyms.o module.o
- arm64-obj-$(CONFIG_ARM64_MODULE_PLTS)	+= module-plts.o
-diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
-index 5398f6454ce1..76a94bed4bd5 100644
---- a/arch/arm64/kernel/vdso.c
-+++ b/arch/arm64/kernel/vdso.c
-@@ -62,18 +62,22 @@ static const struct vm_special_mapping compat_vdso_spec[] = {
- 		.name	= "[sigpage]",
- 		.pages	= &vectors_page[0],
- 	},
-+#ifdef CONFIG_KUSER_HELPERS
- 	{
- 		.name	= "[kuserhelpers]",
- 		.pages	= &vectors_page[1],
- 	},
+ int compat_setup_frame(int usig, struct ksignal *ksig, sigset_t *set,
+ 		       struct pt_regs *regs);
+ int compat_setup_rt_frame(int usig, struct ksignal *ksig, sigset_t *set,
+diff --git a/arch/arm64/kernel/asm-offsets.c b/arch/arm64/kernel/asm-offsets.c
+index 8938a4223690..a79507c5d845 100644
+--- a/arch/arm64/kernel/asm-offsets.c
++++ b/arch/arm64/kernel/asm-offsets.c
+@@ -29,6 +29,7 @@
+ #include <asm/fixmap.h>
+ #include <asm/thread_info.h>
+ #include <asm/memory.h>
++#include <asm/signal32.h>
+ #include <asm/smp_plat.h>
+ #include <asm/suspend.h>
+ #include <asm/vdso_datapage.h>
+@@ -81,6 +82,18 @@ int main(void)
+   DEFINE(S_STACKFRAME,		offsetof(struct pt_regs, stackframe));
+   DEFINE(S_FRAME_SIZE,		sizeof(struct pt_regs));
+   BLANK();
++#ifdef CONFIG_COMPAT
++  DEFINE(COMPAT_SIGFRAME_REGS_OFFSET,
++				offsetof(struct compat_sigframe, uc) +
++				offsetof(struct compat_ucontext, uc_mcontext) +
++				offsetof(struct compat_sigcontext, arm_r0));
++  DEFINE(COMPAT_RT_SIGFRAME_REGS_OFFSET,
++				offsetof(struct compat_rt_sigframe, sig) +
++				offsetof(struct compat_sigframe, uc) +
++				offsetof(struct compat_ucontext, uc_mcontext) +
++				offsetof(struct compat_sigcontext, arm_r0));
++  BLANK();
 +#endif
- };
- static struct page *vectors_page[ARRAY_SIZE(compat_vdso_spec)] __ro_after_init;
+   DEFINE(MM_CONTEXT_ID,		offsetof(struct mm_struct, context.id.counter));
+   BLANK();
+   DEFINE(VMA_VM_MM,		offsetof(struct vm_area_struct, vm_mm));
+diff --git a/arch/arm64/kernel/signal32.c b/arch/arm64/kernel/signal32.c
+index 9c018878056b..096c88731c56 100644
+--- a/arch/arm64/kernel/signal32.c
++++ b/arch/arm64/kernel/signal32.c
+@@ -30,42 +30,6 @@
+ #include <linux/uaccess.h>
+ #include <asm/unistd.h>
  
- static int __init alloc_vectors_page(void)
- {
-+#ifdef CONFIG_KUSER_HELPERS
- 	extern char __kuser_helper_start[], __kuser_helper_end[];
- 	size_t kuser_sz = __kuser_helper_end - __kuser_helper_start;
- 	unsigned long kuser_vpage;
-+#endif
+-struct compat_sigcontext {
+-	/* We always set these two fields to 0 */
+-	compat_ulong_t			trap_no;
+-	compat_ulong_t			error_code;
+-
+-	compat_ulong_t			oldmask;
+-	compat_ulong_t			arm_r0;
+-	compat_ulong_t			arm_r1;
+-	compat_ulong_t			arm_r2;
+-	compat_ulong_t			arm_r3;
+-	compat_ulong_t			arm_r4;
+-	compat_ulong_t			arm_r5;
+-	compat_ulong_t			arm_r6;
+-	compat_ulong_t			arm_r7;
+-	compat_ulong_t			arm_r8;
+-	compat_ulong_t			arm_r9;
+-	compat_ulong_t			arm_r10;
+-	compat_ulong_t			arm_fp;
+-	compat_ulong_t			arm_ip;
+-	compat_ulong_t			arm_sp;
+-	compat_ulong_t			arm_lr;
+-	compat_ulong_t			arm_pc;
+-	compat_ulong_t			arm_cpsr;
+-	compat_ulong_t			fault_address;
+-};
+-
+-struct compat_ucontext {
+-	compat_ulong_t			uc_flags;
+-	compat_uptr_t			uc_link;
+-	compat_stack_t			uc_stack;
+-	struct compat_sigcontext	uc_mcontext;
+-	compat_sigset_t			uc_sigmask;
+-	int		__unused[32 - (sizeof (compat_sigset_t) / sizeof (int))];
+-	compat_ulong_t	uc_regspace[128] __attribute__((__aligned__(8)));
+-};
+-
+ struct compat_vfp_sigframe {
+ 	compat_ulong_t	magic;
+ 	compat_ulong_t	size;
+@@ -92,16 +56,6 @@ struct compat_aux_sigframe {
+ 	unsigned long			end_magic;
+ } __attribute__((__aligned__(8)));
  
- 	extern char __aarch32_sigret_code_start[], __aarch32_sigret_code_end[];
- 	size_t sigret_sz =
-@@ -84,22 +88,26 @@ static int __init alloc_vectors_page(void)
- 	if (!sigret_vpage)
- 		return -ENOMEM;
+-struct compat_sigframe {
+-	struct compat_ucontext	uc;
+-	compat_ulong_t		retcode[2];
+-};
+-
+-struct compat_rt_sigframe {
+-	struct compat_siginfo info;
+-	struct compat_sigframe sig;
+-};
+-
+ #define _BLOCKABLE (~(sigmask(SIGKILL) | sigmask(SIGSTOP)))
  
-+#ifdef CONFIG_KUSER_HELPERS
- 	kuser_vpage = get_zeroed_page(GFP_ATOMIC);
- 	if (!kuser_vpage) {
- 		free_page(sigret_vpage);
- 		return -ENOMEM;
- 	}
-+#endif
- 
- 	/* sigreturn code */
- 	memcpy((void *)sigret_vpage, __aarch32_sigret_code_start, sigret_sz);
- 	flush_icache_range(sigret_vpage, sigret_vpage + PAGE_SIZE);
- 	vectors_page[0] = virt_to_page(sigret_vpage);
- 
-+#ifdef CONFIG_KUSER_HELPERS
- 	/* kuser helpers */
- 	memcpy((void *)kuser_vpage + 0x1000 - kuser_sz, __kuser_helper_start,
- 		kuser_sz);
- 	flush_icache_range(kuser_vpage, kuser_vpage + PAGE_SIZE);
- 	vectors_page[1] = virt_to_page(kuser_vpage);
-+#endif
- 
- 	return 0;
- }
-@@ -128,11 +136,13 @@ int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
- 
- 	current->mm->context.vdso = (void *)addr;
- 
-+#ifdef CONFIG_KUSER_HELPERS
- 	/* Map the kuser helpers at the ABI-defined high address. */
- 	ret = _install_special_mapping(mm, AARCH32_KUSER_HELPERS_BASE,
- 				       PAGE_SIZE,
- 				       VM_READ|VM_EXEC|VM_MAYREAD|VM_MAYEXEC,
- 				       &compat_vdso_spec[1]);
-+#endif
- out:
- 	up_write(&mm->mmap_sem);
- 
+ static inline int put_sigset_t(compat_sigset_t __user *uset, sigset_t *set)
 -- 
 2.18.0.rc1.244.gcf134e6275-goog
 
