@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AAAFC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 024E4C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F6BF20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F6BF20864
+	by mail.kernel.org (Postfix) with ESMTP id B815A208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B815A208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964973AbeFRIUg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:20:36 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55096 "EHLO
+        id S935700AbeFRIUk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:20:40 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55118 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964908AbeFRIUb (ORCPT
+        with ESMTP id S964908AbeFRIUh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:20:31 -0400
+        Mon, 18 Jun 2018 04:20:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B050FC7A;
-        Mon, 18 Jun 2018 08:20:30 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76E01C7A;
+        Mon, 18 Jun 2018 08:20:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alaa Hleihel <alaa@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org,
+        Jakub Kicinski <jakub.kicinski@netronome.com>,
+        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 117/279] RDMA/mlx5: Properly check return value of mlx5_get_uars_page
-Date:   Mon, 18 Jun 2018 10:11:42 +0200
-Message-Id: <20180618080613.654060805@linuxfoundation.org>
+Subject: [PATCH 4.16 119/279] nfp: dont depend on eth_tbl being available
+Date:   Mon, 18 Jun 2018 10:11:44 +0200
+Message-Id: <20180618080613.735533647@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,36 +52,135 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Leon Romanovsky <leonro@mellanox.com>
+From: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-[ Upstream commit 444261ca6ff201fa03de97a5041237e67a9d8d31 ]
+[ Upstream commit c55ca688ed99a9cb79367aee2ed2ff6cb80fc039 ]
 
-Starting from commit 72f36be06138 ("net/mlx5: Fix mlx5_get_uars_page to
-return error code") the mlx5_get_uars_page() call returns error in case
-of failure, but it was mistakenly overlooked in the merge commit.
+For very very old generation of the management FW Ethernet port
+information table may theoretically not be available.  This in
+turn will cause the nfp_port structures to not be allocated.
 
-Fixes: e7996a9a77fc ("Merge tag v4.15 of git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux-2.6.git")
-Reported-by: Alaa Hleihel <alaa@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Make sure we don't crash the kernel when there is no eth_tbl:
+
+RIP: 0010:nfp_net_pci_probe+0xf2/0xb40 [nfp]
+...
+Call Trace:
+  nfp_pci_probe+0x6de/0xab0 [nfp]
+  local_pci_probe+0x47/0xa0
+  work_for_cpu_fn+0x1a/0x30
+  process_one_work+0x1de/0x3e0
+
+Found while working with broken/development version of management FW.
+
+Fixes: a5950182c00e ("nfp: map mac_stats and vf_cfg BARs")
+Fixes: 93da7d9660ee ("nfp: provide nfp_port to of nfp_net_get_mac_addr()")
+Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/mlx5/main.c |    4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ drivers/net/ethernet/netronome/nfp/flower/main.c  |    2 -
+ drivers/net/ethernet/netronome/nfp/nfp_app_nic.c  |    2 -
+ drivers/net/ethernet/netronome/nfp/nfp_main.h     |    4 ++
+ drivers/net/ethernet/netronome/nfp/nfp_net_main.c |   31 ++++++++++++----------
+ 4 files changed, 23 insertions(+), 16 deletions(-)
 
---- a/drivers/infiniband/hw/mlx5/main.c
-+++ b/drivers/infiniband/hw/mlx5/main.c
-@@ -4833,9 +4833,7 @@ static void mlx5_ib_stage_cong_debugfs_c
- static int mlx5_ib_stage_uar_init(struct mlx5_ib_dev *dev)
+--- a/drivers/net/ethernet/netronome/nfp/flower/main.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/main.c
+@@ -358,7 +358,7 @@ nfp_flower_spawn_phy_reprs(struct nfp_ap
+ 		}
+ 
+ 		SET_NETDEV_DEV(repr, &priv->nn->pdev->dev);
+-		nfp_net_get_mac_addr(app->pf, port);
++		nfp_net_get_mac_addr(app->pf, repr, port);
+ 
+ 		cmsg_port_id = nfp_flower_cmsg_phys_port(phys_port);
+ 		err = nfp_repr_init(app, repr,
+--- a/drivers/net/ethernet/netronome/nfp/nfp_app_nic.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_app_nic.c
+@@ -69,7 +69,7 @@ int nfp_app_nic_vnic_alloc(struct nfp_ap
+ 	if (err)
+ 		return err < 0 ? err : 0;
+ 
+-	nfp_net_get_mac_addr(app->pf, nn->port);
++	nfp_net_get_mac_addr(app->pf, nn->dp.netdev, nn->port);
+ 
+ 	return 0;
+ }
+--- a/drivers/net/ethernet/netronome/nfp/nfp_main.h
++++ b/drivers/net/ethernet/netronome/nfp/nfp_main.h
+@@ -171,7 +171,9 @@ void nfp_net_pci_remove(struct nfp_pf *p
+ int nfp_hwmon_register(struct nfp_pf *pf);
+ void nfp_hwmon_unregister(struct nfp_pf *pf);
+ 
+-void nfp_net_get_mac_addr(struct nfp_pf *pf, struct nfp_port *port);
++void
++nfp_net_get_mac_addr(struct nfp_pf *pf, struct net_device *netdev,
++		     struct nfp_port *port);
+ 
+ bool nfp_ctrl_tx(struct nfp_net *nn, struct sk_buff *skb);
+ 
+--- a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
++++ b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
+@@ -67,23 +67,26 @@
+ /**
+  * nfp_net_get_mac_addr() - Get the MAC address.
+  * @pf:       NFP PF handle
++ * @netdev:   net_device to set MAC address on
+  * @port:     NFP port structure
+  *
+  * First try to get the MAC address from NSP ETH table. If that
+  * fails generate a random address.
+  */
+-void nfp_net_get_mac_addr(struct nfp_pf *pf, struct nfp_port *port)
++void
++nfp_net_get_mac_addr(struct nfp_pf *pf, struct net_device *netdev,
++		     struct nfp_port *port)
  {
- 	dev->mdev->priv.uar = mlx5_get_uars_page(dev->mdev);
--	if (!dev->mdev->priv.uar)
--		return -ENOMEM;
--	return 0;
-+	return PTR_ERR_OR_ZERO(dev->mdev->priv.uar);
+ 	struct nfp_eth_table_port *eth_port;
+ 
+ 	eth_port = __nfp_port_get_eth_port(port);
+ 	if (!eth_port) {
+-		eth_hw_addr_random(port->netdev);
++		eth_hw_addr_random(netdev);
+ 		return;
+ 	}
+ 
+-	ether_addr_copy(port->netdev->dev_addr, eth_port->mac_addr);
+-	ether_addr_copy(port->netdev->perm_addr, eth_port->mac_addr);
++	ether_addr_copy(netdev->dev_addr, eth_port->mac_addr);
++	ether_addr_copy(netdev->perm_addr, eth_port->mac_addr);
  }
  
- static void mlx5_ib_stage_uar_cleanup(struct mlx5_ib_dev *dev)
+ static struct nfp_eth_table_port *
+@@ -511,16 +514,18 @@ static int nfp_net_pci_map_mem(struct nf
+ 		return PTR_ERR(mem);
+ 	}
+ 
+-	min_size =  NFP_MAC_STATS_SIZE * (pf->eth_tbl->max_index + 1);
+-	pf->mac_stats_mem = nfp_rtsym_map(pf->rtbl, "_mac_stats",
+-					  "net.macstats", min_size,
+-					  &pf->mac_stats_bar);
+-	if (IS_ERR(pf->mac_stats_mem)) {
+-		if (PTR_ERR(pf->mac_stats_mem) != -ENOENT) {
+-			err = PTR_ERR(pf->mac_stats_mem);
+-			goto err_unmap_ctrl;
++	if (pf->eth_tbl) {
++		min_size =  NFP_MAC_STATS_SIZE * (pf->eth_tbl->max_index + 1);
++		pf->mac_stats_mem = nfp_rtsym_map(pf->rtbl, "_mac_stats",
++						  "net.macstats", min_size,
++						  &pf->mac_stats_bar);
++		if (IS_ERR(pf->mac_stats_mem)) {
++			if (PTR_ERR(pf->mac_stats_mem) != -ENOENT) {
++				err = PTR_ERR(pf->mac_stats_mem);
++				goto err_unmap_ctrl;
++			}
++			pf->mac_stats_mem = NULL;
+ 		}
+-		pf->mac_stats_mem = NULL;
+ 	}
+ 
+ 	pf->vf_cfg_mem = nfp_net_pf_map_rtsym(pf, "net.vfcfg",
 
 
