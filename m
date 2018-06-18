@@ -2,117 +2,146 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D83DEC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21646C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE1520852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE1520852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id CA0B620852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:15:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FHA8Gtn8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA0B620852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934780AbeFRON1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:13:27 -0400
-Received: from esa1.microchip.iphmx.com ([68.232.147.91]:59372 "EHLO
-        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933134AbeFRONU (ORCPT
+        id S934731AbeFRON0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:13:26 -0400
+Received: from mail-pf0-f196.google.com ([209.85.192.196]:38421 "EHLO
+        mail-pf0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934599AbeFRONW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:13:20 -0400
-X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
-   d="scan'208";a="16045950"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 07:13:19 -0700
-Received: from rob-ult-m19940.microchip.com (10.10.76.4) by
- chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 18 Jun 2018 07:13:09 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
-        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
-        <broonie@kernel.org>, <sboyd@kernel.org>
-CC:     <Cristian.Birsan@microchip.com>
-Subject: [PATCH v5 0/5] ASoC: add driver for Atmel I2S controller
-Date:   Mon, 18 Jun 2018 17:12:34 +0300
-Message-ID: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain
+        Mon, 18 Jun 2018 10:13:22 -0400
+Received: by mail-pf0-f196.google.com with SMTP id b74-v6so8242424pfl.5
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=2jjJjgKXmdsO7Czd4wGiZl0sVCxbgmZGgWTvl3dKYiw=;
+        b=FHA8Gtn8Gjl42AtmPbdjiqGRd2lRkLXqI9kDdM0kL+BiY8ATGKsHRNAOP93thuYH/R
+         h169QlXOmSSLFw33AZxU4K3G2jp5aO3lD1E3v0LqZZPzGISKRnipAQiDHo5phjvkwfyA
+         Sebr6+upjbE13j+tU0AityMC34kuBTCSQcZxI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=2jjJjgKXmdsO7Czd4wGiZl0sVCxbgmZGgWTvl3dKYiw=;
+        b=ZDa5FrhwG1VYbYCqdTBdPS8Qor3omLM6HDvxrovZbDu3pRKVYr/+a1eWwFGhLujnFz
+         4aMhhTJCleQaKnTrqO0w9wvdlQIgEr013yChpSnd5cKgBWkciFpDq7Kj0VZoPIT4MS5G
+         bO5YK3zIY5ifkl7HjBEJf8kPHt9mapXD2b07cHj65gHBqDm8mNot1WZE4MX4UPdcAW7Y
+         bIWTnhQlKG3egnXRjsESjPEeNGrfwFm/yUq1iRE1sCDoCJ2GEZ+rrLXzVn2i5h8Euxop
+         FKOI32b7VWAToRPh7FZfpKWVPyVzBnUE0SJvWgXRBFHRmt3eVbUaPUGt6ui4shGvNXbX
+         FfHw==
+X-Gm-Message-State: APt69E1MKo5xtA+8KpYmxH+IINDg/0m32YHVnUZAJh58Y915Vavak46D
+        2lfok38u3Az3p3fzjO6jO6OmcV1C/mw=
+X-Google-Smtp-Source: ADUXVKJbg9mjFSFTI6MktxtnjwmQ5C51H8nnqyKXCvVR+av5eHRaPjWxY7VBv/pstizHOrMdGqXlZA==
+X-Received: by 2002:a65:611a:: with SMTP id z26-v6mr11090251pgu.61.1529331202015;
+        Mon, 18 Jun 2018 07:13:22 -0700 (PDT)
+Received: from localhost.localdomain ([27.59.118.133])
+        by smtp.gmail.com with ESMTPSA id t17-v6sm25813339pfj.75.2018.06.18.07.13.17
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 07:13:21 -0700 (PDT)
+From:   Vinod Koul <vinod.koul@linaro.org>
+X-Google-Original-From: Vinod Koul <vkoul@kernel.org>
+To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
+Subject: [PATCH 1/3] hwrng: msm - Move hwrng to a table
+Date:   Mon, 18 Jun 2018 19:42:57 +0530
+Message-Id: <20180618141259.23141-2-vkoul@kernel.org>
+X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180618141259.23141-1-vkoul@kernel.org>
+References: <20180618141259.23141-1-vkoul@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is a rework of Cyrille's patches named:
-[PATCH v3 0/2] ASoC: add driver for Atmel I2S controller
-https://lkml.org/lkml/2015/9/29/454
+Future versions of msm-prng require bit differs callbacks so move
+driver to use a table for hwrng.
 
-This is the version 5 of the series, and addresses the received feedback
-on the mailing lists.
+No functional change.
 
-This series applies on top of clk-next branch of clk/linux.git.
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/char/hw_random/msm-rng.c | 23 +++++++++++++----------
+ 1 file changed, 13 insertions(+), 10 deletions(-)
 
-Based on received feedback, I created a mux clock driver to select the I2S
-clock source, that also includes proper devicetree bindings and nodes.
-Also, I added the I2S nodes in sama5d2's devicetree, with the missing
-pin muxing for the second I2S controller.
-
-Alexandre Belloni plans to change the at91 fine grained clock nodes and
-he recommended to leave the bindings for this clock driver in the same
-(wrong) manner, so he could fix them all at once.
-
-This series of patches adds support to the new Atmel I2S controller
-embedded on sama5d2 SoCs.
-
-ChangeLog
-
-v4 -> v5
- - removed patches:
-   [PATCH v4 4/7] ASoC: atmel-i2s: dt-bindings: add DT bindings for I2S controller
-   [PATCH v4 5/7] ASoC: atmel-i2s: add driver for the new Atmel I2S controller
-   from this series since they were applied to the asoc tree at:
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git
- - addressed comments received on the mux clock;
-
-v3 -> v4
- - as suggested by Rob Herring:
-   - added a clock mux driver for I2S's clock control bit;
-   - more precise description of I2S's devicetree bindings;
-   - removed SoC and internal detalls from bindings;
- - addressed comments from Mark Brown;
- - added devicetree nodes and pin muxing for I2S;
-
-v2 -> v3
- - fix the coding style, add some more comments and add a section dedicated
-  to sama5d2 SoCs in the DT binding documentation as suggested by Mark
-  Brown.
-
-v1 -> v2
- - initialize dev->dev before calling dev->caps->mck_init()
-
-Codrin Ciubotariu (3):
-  dt-bindings: clk: at91: add an I2S mux clock
-  clk: at91: add I2S clock mux driver
-  ARM: dts: at91: sama5d2: add I2S clock muxing nodes
-
-Cyrille Pitchen (2):
-  ARM: dts: at91: sama5d2: add nodes for I2S controllers
-  ARM: dts: at91: sama5d2 Xplained: add pin muxing for I2S
-
- .../devicetree/bindings/clock/at91-clock.txt  |  35 ++++++
- arch/arm/boot/dts/at91-sama5d2_xplained.dts   |  28 +++++
- arch/arm/boot/dts/sama5d2.dtsi                |  52 ++++++++
- arch/arm/mach-at91/Kconfig                    |   4 +
- drivers/clk/at91/Makefile                     |   1 +
- drivers/clk/at91/clk-i2s-mux.c                | 116 ++++++++++++++++++
- 6 files changed, 236 insertions(+)
- create mode 100644 drivers/clk/at91/clk-i2s-mux.c
-
+diff --git a/drivers/char/hw_random/msm-rng.c b/drivers/char/hw_random/msm-rng.c
+index 841fee845ec9..7644474035e5 100644
+--- a/drivers/char/hw_random/msm-rng.c
++++ b/drivers/char/hw_random/msm-rng.c
+@@ -38,14 +38,12 @@
+ struct msm_rng {
+ 	void __iomem *base;
+ 	struct clk *clk;
+-	struct hwrng hwrng;
++	struct hwrng *hwrng;
+ };
+ 
+-#define to_msm_rng(p)	container_of(p, struct msm_rng, hwrng)
+-
+ static int msm_rng_enable(struct hwrng *hwrng, int enable)
+ {
+-	struct msm_rng *rng = to_msm_rng(hwrng);
++	struct msm_rng *rng = (struct msm_rng *)hwrng->priv;
+ 	u32 val;
+ 	int ret;
+ 
+@@ -80,7 +78,7 @@ static int msm_rng_enable(struct hwrng *hwrng, int enable)
+ 
+ static int msm_rng_read(struct hwrng *hwrng, void *data, size_t max, bool wait)
+ {
+-	struct msm_rng *rng = to_msm_rng(hwrng);
++	struct msm_rng *rng = (struct msm_rng *)hwrng->priv;
+ 	size_t currsize = 0;
+ 	u32 *retdata = data;
+ 	size_t maxsize;
+@@ -127,6 +125,13 @@ static void msm_rng_cleanup(struct hwrng *hwrng)
+ 	msm_rng_enable(hwrng, 0);
+ }
+ 
++static struct hwrng msm_rng = {
++	.name = KBUILD_MODNAME,
++	.init = msm_rng_init,
++	.cleanup = msm_rng_cleanup,
++	.read = msm_rng_read,
++};
++
+ static int msm_rng_probe(struct platform_device *pdev)
+ {
+ 	struct resource *res;
+@@ -148,12 +153,10 @@ static int msm_rng_probe(struct platform_device *pdev)
+ 	if (IS_ERR(rng->clk))
+ 		return PTR_ERR(rng->clk);
+ 
+-	rng->hwrng.name = KBUILD_MODNAME,
+-	rng->hwrng.init = msm_rng_init,
+-	rng->hwrng.cleanup = msm_rng_cleanup,
+-	rng->hwrng.read = msm_rng_read,
++	rng->hwrng = &msm_rng;
+ 
+-	ret = devm_hwrng_register(&pdev->dev, &rng->hwrng);
++	rng->hwrng->priv = (unsigned long)rng;
++	ret = devm_hwrng_register(&pdev->dev, rng->hwrng);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "failed to register hwrng\n");
+ 		return ret;
 -- 
-2.17.1
+2.14.4
 
