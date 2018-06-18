@@ -6,35 +6,41 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 122E8C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:26:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D87F0C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:26:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98F920864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:26:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C98F920864
+	by mail.kernel.org (Postfix) with ESMTP id 9D9B620864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:26:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D9B620864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965990AbeFRI0A (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:26:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:57056 "EHLO
+        id S966016AbeFRI0D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:26:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:57104 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965887AbeFRIZy (ORCPT
+        with ESMTP id S965887AbeFRI0B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:25:54 -0400
+        Mon, 18 Jun 2018 04:26:01 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id BBDABBAD;
-        Mon, 18 Jun 2018 08:25:51 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 25B7BC5C;
+        Mon, 18 Jun 2018 08:26:00 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Paulo Alcantara <palcantara@suse.de>,
-        Aurelien Aptel <aaptel@suse.com>,
-        Steve French <smfrench@gmail.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 209/279] cifs: smb2ops: Fix listxattr() when there are no EAs
-Date:   Mon, 18 Jun 2018 10:13:14 +0200
-Message-Id: <20180618080617.532558186@linuxfoundation.org>
+        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
+        Dave Anderson <anderson@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Andi Kleen <andi@firstfloor.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Alexey Dobriyan <adobriyan@gmail.com>
+Subject: [PATCH 4.16 229/279] proc/kcore: dont bounds check against address 0
+Date:   Mon, 18 Jun 2018 10:13:34 +0200
+Message-Id: <20180618080618.296533742@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,52 +57,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Paulo Alcantara <palcantara@suse.de>
+From: Laura Abbott <labbott@redhat.com>
 
-[ Upstream commit ae2cd7fb478b8da707906ee1706ae1379968a8f9 ]
+[ Upstream commit 3955333df9a50e8783d115613a397ae55d905080 ]
 
-As per listxattr(2):
+The existing kcore code checks for bad addresses against __va(0) with
+the assumption that this is the lowest address on the system.  This may
+not hold true on some systems (e.g.  arm64) and produce overflows and
+crashes.  Switch to using other functions to validate the address range.
 
-       On success, a nonnegative number is returned indicating the size
-       of the extended attribute name list.  On failure, -1 is returned
-       and errno  is set appropriately.
+It's currently only seen on arm64 and it's not clear if anyone wants to
+use that particular combination on a stable release.  So this is not
+urgent for stable.
 
-In SMB1, when the server returns an empty EA list through a listxattr(),
-it will correctly return 0 as there are no EAs for the given file.
-
-However, in SMB2+, it returns -ENODATA in listxattr() which is wrong since
-the request and response were sent successfully, although there's no actual
-EA for the given file.
-
-This patch fixes listxattr() for SMB2+ by returning 0 in cifs_listxattr()
-when the server returns an empty list of EAs.
-
-Signed-off-by: Paulo Alcantara <palcantara@suse.de>
-Reviewed-by: Aurelien Aptel <aaptel@suse.com>
-Signed-off-by: Steve French <smfrench@gmail.com>
+Link: http://lkml.kernel.org/r/20180501201143.15121-1-labbott@redhat.com
+Signed-off-by: Laura Abbott <labbott@redhat.com>
+Tested-by: Dave Anderson <anderson@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Andi Kleen <andi@firstfloor.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>a
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/smb2ops.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/proc/kcore.c |   23 ++++++++++++++++-------
+ 1 file changed, 16 insertions(+), 7 deletions(-)
 
---- a/fs/cifs/smb2ops.c
-+++ b/fs/cifs/smb2ops.c
-@@ -589,9 +589,15 @@ smb2_query_eas(const unsigned int xid, s
+--- a/fs/proc/kcore.c
++++ b/fs/proc/kcore.c
+@@ -209,25 +209,34 @@ kclist_add_private(unsigned long pfn, un
+ {
+ 	struct list_head *head = (struct list_head *)arg;
+ 	struct kcore_list *ent;
++	struct page *p;
++
++	if (!pfn_valid(pfn))
++		return 1;
++
++	p = pfn_to_page(pfn);
++	if (!memmap_valid_within(pfn, p, page_zone(p)))
++		return 1;
  
- 	SMB2_close(xid, tcon, fid.persistent_fid, fid.volatile_fid);
+ 	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
+ 	if (!ent)
+ 		return -ENOMEM;
+-	ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
++	ent->addr = (unsigned long)page_to_virt(p);
+ 	ent->size = nr_pages << PAGE_SHIFT;
  
+-	/* Sanity check: Can happen in 32bit arch...maybe */
+-	if (ent->addr < (unsigned long) __va(0))
++	if (!virt_addr_valid(ent->addr))
+ 		goto free_out;
+ 
+ 	/* cut not-mapped area. ....from ppc-32 code. */
+ 	if (ULONG_MAX - ent->addr < ent->size)
+ 		ent->size = ULONG_MAX - ent->addr;
+ 
+-	/* cut when vmalloc() area is higher than direct-map area */
+-	if (VMALLOC_START > (unsigned long)__va(0)) {
+-		if (ent->addr > VMALLOC_START)
+-			goto free_out;
 +	/*
-+	 * If ea_name is NULL (listxattr) and there are no EAs, return 0 as it's
-+	 * not an error. Otherwise, the specified ea_name was not found.
++	 * We've already checked virt_addr_valid so we know this address
++	 * is a valid pointer, therefore we can check against it to determine
++	 * if we need to trim
 +	 */
- 	if (!rc)
- 		rc = move_smb2_ea_to_cifs(ea_data, buf_size, smb2_data,
- 					  SMB2_MAX_EA_BUF, ea_name);
-+	else if (!ea_name && rc == -ENODATA)
-+		rc = 0;
- 
- 	kfree(smb2_data);
- 	return rc;
++	if (VMALLOC_START > ent->addr) {
+ 		if (VMALLOC_START - ent->addr < ent->size)
+ 			ent->size = VMALLOC_START - ent->addr;
+ 	}
 
 
