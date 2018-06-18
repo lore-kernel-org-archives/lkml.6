@@ -2,310 +2,394 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B2DC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:43:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC075C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF5B820874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:43:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fsr3tUKm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF5B820874
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 91E8D208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:46:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91E8D208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754942AbeFRGni (ORCPT
+        id S1755000AbeFRGqR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 02:43:38 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:43813 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754542AbeFRGnh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 02:43:37 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y8-v6so7654169pfm.10
-        for <linux-kernel@vger.kernel.org>; Sun, 17 Jun 2018 23:43:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AuZugMHtd/MGYq4JNhEo1H0f9rlSnzey8+714SSDSWQ=;
-        b=fsr3tUKmGYgXu4L948cWAO0Fv74gysDZqrUtY9FoSjyeIr3AkoL8yuym0zzOZMke+J
-         sR+Cht1rOaqnvXA3SrKXfimXeCat5m4jDgrfurVvLakV/zwaFfrMTkvFmSUGEvnZGV/G
-         KyG8dwGpKM3+g3chwRIXs+62d8cqIoODQxz7k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=AuZugMHtd/MGYq4JNhEo1H0f9rlSnzey8+714SSDSWQ=;
-        b=tA4aVDAbpViTeJ4uSO5DUol3TVPf3ud+JVfU2SQ4vA0QrYLzSe2FCvrD0xmRYlKsnU
-         tgVarx4uWoP6UQxCuRHD1pQje4WT1NaMpQ4xCmOHQPoVTkDIFbk1Xnsgv+oVAkqZuj8O
-         lYURjQk87pczju+aRWbxNQCeMKdGxZEaER71HBx8ASmuHkaPwYBYoLwJoUMiWgws7YdX
-         7zTTlMG1zfKSWbmPcM0XLB2Y49aUfIl4khsNYr0WTCah74JKpS0DhMHukuAiVfMWYtTM
-         PLqGm3DU+J6lJcy2Vbl7TnwcbBhDzZErQ4ZfZ4HaujbaZ9QrMDyBZ3W82lc3Vp1wFjSK
-         2TrQ==
-X-Gm-Message-State: APt69E0jx8rPUT7husrmFf9OJjIOlEAKOWZQXaeuqdxaBzQaqr+PVUHZ
-        xlPWsnVuyKXtNaKqxlERDmheBA==
-X-Google-Smtp-Source: ADUXVKIg/t15JHav0BGUpV0vCwxphqVeC047b8SQgdqQXU0zYqt6TOGRsgplY/owBT7Tf72C5maYtw==
-X-Received: by 2002:a63:a84f:: with SMTP id i15-v6mr10185743pgp.422.1529304216691;
-        Sun, 17 Jun 2018 23:43:36 -0700 (PDT)
-Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id c12-v6sm19948966pfi.177.2018.06.17.23.43.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 17 Jun 2018 23:43:36 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 15:44:14 +0900
-From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
-To:     James Morse <james.morse@arm.com>
-Cc:     catalin.marinas@arm.com, will.deacon@arm.com,
-        akpm@linux-foundation.org, ard.biesheuvel@linaro.org,
-        tbaicar@codeaurora.org, bhsharma@redhat.com, dyoung@redhat.com,
-        mark.rutland@arm.com, al.stone@linaro.org,
-        graeme.gregory@linaro.org, hanjun.guo@linaro.org,
-        lorenzo.pieralisi@arm.com, sudeep.holla@arm.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kexec@lists.infradead.org
-Subject: Re: [PATCH 2/3] arm64: acpi,efi: fix alignment fault in accessing
- ACPI tables at kdump
-Message-ID: <20180618064413.GF23681@linaro.org>
-Mail-Followup-To: AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        James Morse <james.morse@arm.com>, catalin.marinas@arm.com,
-        will.deacon@arm.com, akpm@linux-foundation.org,
-        ard.biesheuvel@linaro.org, tbaicar@codeaurora.org,
-        bhsharma@redhat.com, dyoung@redhat.com, mark.rutland@arm.com,
-        al.stone@linaro.org, graeme.gregory@linaro.org,
-        hanjun.guo@linaro.org, lorenzo.pieralisi@arm.com,
-        sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, kexec@lists.infradead.org
-References: <20180615075623.13454-1-takahiro.akashi@linaro.org>
- <20180615075623.13454-3-takahiro.akashi@linaro.org>
- <026a4d23-ac91-ed35-d711-c55882242037@arm.com>
+        Mon, 18 Jun 2018 02:46:17 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43837 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754904AbeFRGqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 02:46:15 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 774E0AF7B;
+        Mon, 18 Jun 2018 06:46:13 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 18 Jun 2018 16:46:04 +1000
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: [PATCH resend*3] VFS: simplify seq_file iteration code and interface
+In-Reply-To: <874lintqa6.fsf@notabene.neil.brown.name>
+References: <87vacsrt0r.fsf@notabene.neil.brown.name> <87fu3dihtf.fsf@notabene.neil.brown.name> <874lintqa6.fsf@notabene.neil.brown.name>
+Message-ID: <87y3fcegnn.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <026a4d23-ac91-ed35-d711-c55882242037@arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-James,
-
-On Fri, Jun 15, 2018 at 05:30:08PM +0100, James Morse wrote:
-> Hi Akashi,
-> 
-> On 15/06/18 08:56, AKASHI Takahiro wrote:
-> > This is a fix against the issue that crash dump kernel may hang up
-> > during booting, which can happen on any ACPI-based system with "ACPI
-> > Reclaim Memory."
-> > 
-> > (kernel messages after panic kicked off kdump)
-> > 	   (snip...)
-> > 	Bye!
-> > 	   (snip...)
-> > 	ACPI: Core revision 20170728
-> > 	pud=000000002e7d0003, *pmd=000000002e7c0003, *pte=00e8000039710707
-> > 	Internal error: Oops: 96000021 [#1] SMP
-> > 	Modules linked in:
-> > 	CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.14.0-rc6 #1
-> > 	task: ffff000008d05180 task.stack: ffff000008cc0000
-> > 	PC is at acpi_ns_lookup+0x25c/0x3c0
-> > 	LR is at acpi_ds_load1_begin_op+0xa4/0x294
-> > 	   (snip...)
-> > 	Process swapper/0 (pid: 0, stack limit = 0xffff000008cc0000)
-> > 	Call trace:
-> > 	   (snip...)
-> > 	[<ffff0000084a6764>] acpi_ns_lookup+0x25c/0x3c0
-> > 	[<ffff00000849b4f8>] acpi_ds_load1_begin_op+0xa4/0x294
-> > 	[<ffff0000084ad4ac>] acpi_ps_build_named_op+0xc4/0x198
-> > 	[<ffff0000084ad6cc>] acpi_ps_create_op+0x14c/0x270
-> > 	[<ffff0000084acfa8>] acpi_ps_parse_loop+0x188/0x5c8
-> > 	[<ffff0000084ae048>] acpi_ps_parse_aml+0xb0/0x2b8
-> > 	[<ffff0000084a8e10>] acpi_ns_one_complete_parse+0x144/0x184
-> > 	[<ffff0000084a8e98>] acpi_ns_parse_table+0x48/0x68
-> > 	[<ffff0000084a82cc>] acpi_ns_load_table+0x4c/0xdc
-> > 	[<ffff0000084b32f8>] acpi_tb_load_namespace+0xe4/0x264
-> > 	[<ffff000008baf9b4>] acpi_load_tables+0x48/0xc0
-> > 	[<ffff000008badc20>] acpi_early_init+0x9c/0xd0
-> > 	[<ffff000008b70d50>] start_kernel+0x3b4/0x43c
-> > 	Code: b9008fb9 2a000318 36380054 32190318 (b94002c0)
-> > 	---[ end trace c46ed37f9651c58e ]---
-> > 	Kernel panic - not syncing: Fatal exception
-> > 	Rebooting in 10 seconds..
-> > 
-> > (diagnosis)
-> > * This fault is a data abort, alignment fault (ESR=0x96000021)
-> >   during reading out ACPI table.
-> > * Initial ACPI tables are normally stored in system ram and marked as
-> >   "ACPI Reclaim memory" by the firmware.
-> > * After the commit f56ab9a5b73c ("efi/arm: Don't mark ACPI reclaim
-> >   memory as MEMBLOCK_NOMAP"), those regions are differently handled
-> >   as they are "memblock-reserved", without NOMAP bit.
-> > * So they are now excluded from device tree's "usable-memory-range"
-> >   which kexec-tools determines based on a current view of /proc/iomem.
-> > * When crash dump kernel boots up, it tries to accesses ACPI tables by
-> >   mapping them with ioremap(), not ioremap_cache(), in acpi_os_ioremap()
-> >   since they are no longer part of mapped system ram.
-> > * Given that ACPI accessor/helper functions are compiled in without
-> >   unaligned access support (ACPI_MISALIGNMENT_NOT_SUPPORTED),
-> >   any unaligned access to ACPI tables can cause a fatal panic.
-> > 
-> > With this patch, acpi_os_ioremap() always honors memory attribute
-> > information provided by the firmware (EFI) and retaining cacheability
-> > allows the kernel safe access to ACPI tables.
-> 
-> 
-> > Please note that arm_enable_runtime_services() is now renamed to
-> > efi_enter_virtual_mode() due to the similarity to x86's.
-> 
-> Just a rename?:
-
-and maps EFI memory map whether or not runtime service is enabled.
-
-> >  drivers/firmware/efi/arm-runtime.c | 27 ++++++++++++---------------
-> 
-> 
-> 
-> > diff --git a/arch/arm64/include/asm/acpi.h b/arch/arm64/include/asm/acpi.h
-> > index 32f465a80e4e..d53c95f4e1a9 100644
-> > --- a/arch/arm64/include/asm/acpi.h
-> > +++ b/arch/arm64/include/asm/acpi.h
-> > @@ -29,18 +31,22 @@
-> >  
-> >  /* Basic configuration for ACPI */
-> >  #ifdef	CONFIG_ACPI
-> > +pgprot_t __acpi_get_mem_attribute(phys_addr_t addr);
-> > +
-> >  /* ACPI table mapping after acpi_permanent_mmap is set */
-> >  static inline void __iomem *acpi_os_ioremap(acpi_physical_address phys,
-> >  					    acpi_size size)
-> >  {
-> > +	/* For normal memory we already have a cacheable mapping. */
-> > +	if (memblock_is_map_memory(phys))
-> > +		return (void __iomem *)__phys_to_virt(phys);
-> 
-> >  	/*
-> > -	 * EFI's reserve_regions() call adds memory with the WB attribute
-> > -	 * to memblock via early_init_dt_add_memory_arch().
-> > +	 * We should still honor the memory's attribute here because
-> > +	 * crash dump kernel possibly excludes some ACPI (reclaim)
-> > +	 * regions from memblock list.
-> >  	 */
-> 
-> (Even without kdump we would still need this. Regions ACPI wants mapped may not
-> be covered by the linear map. In this case we need to use the attributes
-> firmware described in the UEFI memory map. Kdump exacerbates this by
-> artificially reducing the range of the linear map.)
-> 
-> 
-> > -	if (!memblock_is_memory(phys))
-> > -		return ioremap(phys, size);
-> > -
-> > -	return ioremap_cache(phys, size);
-> > +	return __ioremap(phys, size, __acpi_get_mem_attribute(phys));
-> >  }
-> 
-> 
-> 
-> > diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-> > index 5889cbea60b8..566ef0a9edb5 100644
-> > --- a/drivers/firmware/efi/arm-runtime.c
-> > +++ b/drivers/firmware/efi/arm-runtime.c
-> > @@ -106,46 +106,43 @@ static bool __init efi_virtmap_init(void)
-> >   * non-early mapping of the UEFI system table and virtual mappings for all
-> >   * EFI_MEMORY_RUNTIME regions.
-> >   */
-> > -static int __init arm_enable_runtime_services(void)
-> > +void __init efi_enter_virtual_mode(void)
-> >  {
-> >  	u64 mapsize;
-> >  
-> >  	if (!efi_enabled(EFI_BOOT)) {
-> >  		pr_info("EFI services will not be available.\n");
-> > -		return 0;
-> > +		return;
-> > +	}
-> > +
-> > +	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
-> > +
-> > +	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
-> > +		pr_err("Failed to remap EFI memory map\n");
-> > +		return;
-> >  	}
-> >  
-> >  	if (efi_runtime_disabled()) {
-> >  		pr_info("EFI runtime services will be disabled.\n");
-> > -		return 0;
-> > +		return;
-> >  	}
-> >  
-> >  	if (efi_enabled(EFI_RUNTIME_SERVICES)) {
-> >  		pr_info("EFI runtime services access via paravirt.\n");
-> > -		return 0;
-> > +		return;
-> >  	}
-> >  
-> >  	pr_info("Remapping and enabling EFI services.\n");
-> >  
-> > -	mapsize = efi.memmap.desc_size * efi.memmap.nr_map;
-> > -
-> > -	if (efi_memmap_init_late(efi.memmap.phys_map, mapsize)) {
-> > -		pr_err("Failed to remap EFI memory map\n");
-> > -		return -ENOMEM;
-> > -	}
-> > -
-> >  	if (!efi_virtmap_init()) {
-> >  		pr_err("UEFI virtual mapping missing or invalid -- runtime services will not be available\n");
-> > -		return -ENOMEM;
-> > +		return;
-> >  	}
-> >  
-> >  	/* Set up runtime services function pointers */
-> >  	efi_native_runtime_setup();
-> >  	set_bit(EFI_RUNTIME_SERVICES, &efi.flags);
-> > -
-> > -	return 0;
-> >  }
-> 
-> Please have the drivers/firmware/efi/arm-runtime.c changes in a separate patch
-> (maybe combine it with patch 3). The 'efi/arm: ' prefix is more likely to catch
-> the maintainers attention.
->
-> I think this is what Ard meant by:
-> | Could you please move the changes to this file and init/main.c into a
-> | separate patch?
-> 
-> https://patchwork.kernel.org/patch/10361761/
-> 
-> 
-> > -early_initcall(arm_enable_runtime_services);
-> 
-> With just this patch, surely nothing ever calls arm_enable_runtime_services(),
-> and now acpi_os_ioremap() will return device memory for anything that isn't part
-> of the linear region. (This breaks RAS).
-
-Actually I noticed the issue.
-
-> This will make it difficult to bisect through for any RAS or
-> efi-runtime-services issue. Its easily fixed: please put the efi+init changes in
-> a patch before the acpi_os_ioremap() changes.
-
-I was reluctant to put different part of code changes into one.
-But if nobody cares, I will do so in three patches.
-  * change arm_enable_runtime_services() with renaming
-  * move this function earlier in start_kernel()
-  * modify acpi_os_ioremap()
-
-Thanks,
--Takahiro AKASHI
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
 
-> Otherwise, looks good to me!
-> 
-> 
-> Thanks,
-> 
-> James
+The documentation for seq_file suggests that it is necessary to be
+able to move the iterator to a given offset, however that is not the
+case.  If the iterator is stored in the private data and is stable
+from one read() syscall to the next, it is only necessary to support
+first/next interactions.  Implementing this in a client is a little
+clumsy.
+=2D if ->start() is given a pos of zero, it should go to start of
+  sequence.
+=2D if ->start() is given the name pos that was given to the most recent
+  next() or start(), it should restore the iterator to state just
+  before that last call
+=2D if ->start is given another number, it should set the iterator one
+  beyond the start just before the last ->start or ->next call.
+
+
+Also, the documentation says that the implementation can interpret the
+pos however it likes (other than zero meaning start), but seq_file
+increments the pos sometimes which does impose on the implementation.
+
+This patch simplifies the interface for first/next iteration and
+simplifies the code, while maintaining complete backward
+compatability.  Now:
+
+=2D if ->start() is given a pos of zero, it should return an iterator
+  placed at the start of the sequence
+=2D if ->start() is given a non-zero pos, it should return the iterator
+  in the same state it was after the last ->start or ->next.
+
+This is particularly useful for interators which walk the multiple
+chains in a hash table, e.g. using rhashtable_walk*. See
+fs/gfs2/glock.c and drivers/staging/lustre/lustre/llite/vvp_dev.c
+
+A large part of achieving this is to *always* call ->next after ->show
+has successfully stored all of an entry in the buffer.  Never just
+increment the index instead.
+Also:
+ - always pass &m->index to ->start() and ->next(), never a temp
+   variable
+ - don't clear ->from when ->count is zero, as ->from is dead when
+    ->count is zero.
+
+
+Some ->next functions do not increment *pos when they return NULL.
+To maintain compatability with this, we still need to increment
+m->index in one place, if ->next didn't increment it.
+Note that such ->next functions are buggy and should be fixed.
+A simple demonstration is
+   dd if=3D/proc/swaps bs=3D1000 skip=3D1
+Choose any block size larger than the size of /proc/swaps.
+This will always show the whole last line of /proc/swaps.
+
+This patch doesn't work around buggy next() functions for this case.
+
+Acked-by: Jonathan Corbet <corbet@lwn.net> (For the docs part)
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+
+Still hoping someone might apply this, or at least review it,
+or maybe just tell me how insane it is - anything but silence :-(
+
+NeilBrown
+
+
+ Documentation/filesystems/seq_file.txt | 63 ++++++++++++++++++++++--------=
+----
+ fs/seq_file.c                          | 53 +++++++++++-----------------
+ 2 files changed, 62 insertions(+), 54 deletions(-)
+
+diff --git a/Documentation/filesystems/seq_file.txt b/Documentation/filesys=
+tems/seq_file.txt
+index 9de4303201e1..d412b236a9d6 100644
+=2D-- a/Documentation/filesystems/seq_file.txt
++++ b/Documentation/filesystems/seq_file.txt
+@@ -66,23 +66,39 @@ kernel 3.10. Current versions require the following upd=
+ate
+=20
+ The iterator interface
+=20
+=2DModules implementing a virtual file with seq_file must implement a simple
+=2Diterator object that allows stepping through the data of interest.
+=2DIterators must be able to move to a specific position - like the file th=
+ey
+=2Dimplement - but the interpretation of that position is up to the iterator
+=2Ditself. A seq_file implementation that is formatting firewall rules, for
+=2Dexample, could interpret position N as the Nth rule in the chain.
+=2DPositioning can thus be done in whatever way makes the most sense for the
+=2Dgenerator of the data, which need not be aware of how a position transla=
+tes
+=2Dto an offset in the virtual file. The one obvious exception is that a
+=2Dposition of zero should indicate the beginning of the file.
++Modules implementing a virtual file with seq_file must implement an
++iterator object that allows stepping through the data of interest
++during a "session" (roughly one read() system call).  If the iterator
++is able to move to a specific position - like the file they implement,
++though with freedom to map the position number to a sequence location
++in whatever way is convenient - the iterator need only exist
++transiently during a session.  If the iterator cannot easily find a
++numerical position but works well with a first/next interface, the
++iterator can be stored in the private data area and continue from one
++session to the next.
++
++A seq_file implementation that is formatting firewall rules from a
++table, for example, could provide a simple iterator that interprets
++position N as the Nth rule in the chain.  A seq_file implementation
++that presents the content of a, potentially volatile, linked list
++might record a pointer into that list, providing that can be done
++without risk of the current location being removed.
++
++Positioning can thus be done in whatever way makes the most sense for
++the generator of the data, which need not be aware of how a position
++translates to an offset in the virtual file. The one obvious exception
++is that a position of zero should indicate the beginning of the file.
+=20
+ The /proc/sequence iterator just uses the count of the next number it
+ will output as its position.
+=20
+=2DFour functions must be implemented to make the iterator work. The first,
+=2Dcalled start() takes a position as an argument and returns an iterator
+=2Dwhich will start reading at that position. For our simple sequence examp=
+le,
++Four functions must be implemented to make the iterator work. The
++first, called start(), starts a session and takes a position as an
++argument, returning an iterator which will start reading at that
++position.  The pos passed to start() will always be either zero, or
++the most recent pos used in the previous session.
++
++For our simple sequence example,
+ the start() function looks like:
+=20
+ 	static void *ct_seq_start(struct seq_file *s, loff_t *pos)
+@@ -101,11 +117,12 @@ implementations; in most cases the start() function s=
+hould check for a
+ "past end of file" condition and return NULL if need be.
+=20
+ For more complicated applications, the private field of the seq_file
+=2Dstructure can be used. There is also a special value which can be return=
+ed
+=2Dby the start() function called SEQ_START_TOKEN; it can be used if you wi=
+sh
+=2Dto instruct your show() function (described below) to print a header at =
+the
+=2Dtop of the output. SEQ_START_TOKEN should only be used if the offset is
+=2Dzero, however.
++structure can be used to hold state from session to session.  There is
++also a special value which can be returned by the start() function
++called SEQ_START_TOKEN; it can be used if you wish to instruct your
++show() function (described below) to print a header at the top of the
++output. SEQ_START_TOKEN should only be used if the offset is zero,
++however.
+=20
+ The next function to implement is called, amazingly, next(); its job is to
+ move the iterator forward to the next position in the sequence.  The
+@@ -121,9 +138,13 @@ complete. Here's the example version:
+ 	        return spos;
+ 	}
+=20
+=2DThe stop() function is called when iteration is complete; its job, of
+=2Dcourse, is to clean up. If dynamic memory is allocated for the iterator,
+=2Dstop() is the place to free it.
++The stop() function closes a session; its job, of course, is to clean
++up. If dynamic memory is allocated for the iterator, stop() is the
++place to free it; if a lock was taken by start(), stop() must release
++that lock.  The value that *pos was set to by the last next() call
++before stop() is remembered, and used for the first start() call of
++the next session unless lseek() has been called on the file; in that
++case next start() will be asked to start at position zero.
+=20
+ 	static void ct_seq_stop(struct seq_file *s, void *v)
+ 	{
+diff --git a/fs/seq_file.c b/fs/seq_file.c
+index 4cc090b50cc5..fd82585ab50f 100644
+=2D-- a/fs/seq_file.c
++++ b/fs/seq_file.c
+@@ -90,23 +90,22 @@ EXPORT_SYMBOL(seq_open);
+=20
+ static int traverse(struct seq_file *m, loff_t offset)
+ {
+=2D	loff_t pos =3D 0, index;
++	loff_t pos =3D 0;
+ 	int error =3D 0;
+ 	void *p;
+=20
+ 	m->version =3D 0;
+=2D	index =3D 0;
++	m->index =3D 0;
+ 	m->count =3D m->from =3D 0;
+=2D	if (!offset) {
+=2D		m->index =3D index;
++	if (!offset)
+ 		return 0;
+=2D	}
++
+ 	if (!m->buf) {
+ 		m->buf =3D seq_buf_alloc(m->size =3D PAGE_SIZE);
+ 		if (!m->buf)
+ 			return -ENOMEM;
+ 	}
+=2D	p =3D m->op->start(m, &index);
++	p =3D m->op->start(m, &m->index);
+ 	while (p) {
+ 		error =3D PTR_ERR(p);
+ 		if (IS_ERR(p))
+@@ -123,20 +122,15 @@ static int traverse(struct seq_file *m, loff_t offset)
+ 		if (pos + m->count > offset) {
+ 			m->from =3D offset - pos;
+ 			m->count -=3D m->from;
+=2D			m->index =3D index;
+ 			break;
+ 		}
+ 		pos +=3D m->count;
+ 		m->count =3D 0;
+=2D		if (pos =3D=3D offset) {
+=2D			index++;
+=2D			m->index =3D index;
++		p =3D m->op->next(m, p, &m->index);
++		if (pos =3D=3D offset)
+ 			break;
+=2D		}
+=2D		p =3D m->op->next(m, p, &index);
+ 	}
+ 	m->op->stop(m, p);
+=2D	m->index =3D index;
+ 	return error;
+=20
+ Eoverflow:
+@@ -160,7 +154,6 @@ ssize_t seq_read(struct file *file, char __user *buf, s=
+ize_t size, loff_t *ppos)
+ {
+ 	struct seq_file *m =3D file->private_data;
+ 	size_t copied =3D 0;
+=2D	loff_t pos;
+ 	size_t n;
+ 	void *p;
+ 	int err =3D 0;
+@@ -223,16 +216,11 @@ ssize_t seq_read(struct file *file, char __user *buf,=
+ size_t size, loff_t *ppos)
+ 		size -=3D n;
+ 		buf +=3D n;
+ 		copied +=3D n;
+=2D		if (!m->count) {
+=2D			m->from =3D 0;
+=2D			m->index++;
+=2D		}
+ 		if (!size)
+ 			goto Done;
+ 	}
+ 	/* we need at least one record in buffer */
+=2D	pos =3D m->index;
+=2D	p =3D m->op->start(m, &pos);
++	p =3D m->op->start(m, &m->index);
+ 	while (1) {
+ 		err =3D PTR_ERR(p);
+ 		if (!p || IS_ERR(p))
+@@ -243,8 +231,7 @@ ssize_t seq_read(struct file *file, char __user *buf, s=
+ize_t size, loff_t *ppos)
+ 		if (unlikely(err))
+ 			m->count =3D 0;
+ 		if (unlikely(!m->count)) {
+=2D			p =3D m->op->next(m, p, &pos);
+=2D			m->index =3D pos;
++			p =3D m->op->next(m, p, &m->index);
+ 			continue;
+ 		}
+ 		if (m->count < m->size)
+@@ -256,29 +243,33 @@ ssize_t seq_read(struct file *file, char __user *buf,=
+ size_t size, loff_t *ppos)
+ 		if (!m->buf)
+ 			goto Enomem;
+ 		m->version =3D 0;
+=2D		pos =3D m->index;
+=2D		p =3D m->op->start(m, &pos);
++		p =3D m->op->start(m, &m->index);
+ 	}
+ 	m->op->stop(m, p);
+ 	m->count =3D 0;
+ 	goto Done;
+ Fill:
+ 	/* they want more? let's try to get some more */
+=2D	while (m->count < size) {
++	while (1) {
+ 		size_t offs =3D m->count;
+=2D		loff_t next =3D pos;
+=2D		p =3D m->op->next(m, p, &next);
++		loff_t pos =3D m->index;
++
++		p =3D m->op->next(m, p, &m->index);
++		if (pos =3D=3D m->index)
++			/* Buggy ->next function */
++			m->index++;
+ 		if (!p || IS_ERR(p)) {
+ 			err =3D PTR_ERR(p);
+ 			break;
+ 		}
++		if (m->count >=3D size)
++			break;
+ 		err =3D m->op->show(m, p);
+ 		if (seq_has_overflowed(m) || err) {
+ 			m->count =3D offs;
+ 			if (likely(err <=3D 0))
+ 				break;
+ 		}
+=2D		pos =3D next;
+ 	}
+ 	m->op->stop(m, p);
+ 	n =3D min(m->count, size);
+@@ -287,11 +278,7 @@ ssize_t seq_read(struct file *file, char __user *buf, =
+size_t size, loff_t *ppos)
+ 		goto Efault;
+ 	copied +=3D n;
+ 	m->count -=3D n;
+=2D	if (m->count)
+=2D		m->from =3D n;
+=2D	else
+=2D		pos++;
+=2D	m->index =3D pos;
++	m->from =3D n;
+ Done:
+ 	if (!copied)
+ 		copied =3D err;
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsnVSwACgkQOeye3VZi
+gblhvQ//VA7o7gc58OfB/fQmINAlSInLUQbkSDo5lSTNBkyJJGwFNAko3daSATpA
+Qn8n7scLFOyyOhBv5+4/J4RNcXv9aPkRRlyo5i7/tRRKBGHgwZWDi1l3iJf7jucv
+/RycDYOmzfAy6162mrqmELR9AiljiBJdSTGvxg5csYgD73N3KuoOOkW9IlXbaU85
+e5iS0THMAd2rNRozWKOVk7RkDx5VEtTBDj9q8qfcAnW/RoKGkri5GBFdlGfo3EeO
+NRV/jKHH0VSlRu93v7GOZh5aCZ66xyWF2tHvB13i7dL61T6ggExUoTzWBrc9nJRE
+lNgpsNLZs7AZfegMmS5efey6V5dIxzTt47Nb1XLEpThHTsdkwCsvSkx0O+8/Casz
+XVds8PdVlQRw4tuTndd/xuVxBsSCkIy7CMfZVDaMIfr4InFE6fmny7AvzNZYNDsu
+zR589VwJiotZlJqOPt6th3s2VAJVI8q22V5uM3+lDdClyMr9MGsmyJU9oULpHif6
+jCQ/lf8oNJnOLrGu6aO/2abJKlnPG1I/rL0Arv+KWfp+vpQ1OX7XXiZL3q/iS+ob
+tHzffulerolVjIMyg37R+nWLmoiPjxEKNWcy+ypC31ni7HKTHUVgsOviMJ4+Ybcc
+deCg2aot2I1IafjZLDUSTdqgFfjUiCkK6OkzdnnZC6KZR1yadpI=
+=GqP+
+-----END PGP SIGNATURE-----
+--=-=-=--
