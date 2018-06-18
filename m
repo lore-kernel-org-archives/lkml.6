@@ -2,79 +2,97 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA59AC5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE327C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:56:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6924A2075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:56:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6924A2075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
+	by mail.kernel.org (Postfix) with ESMTP id 6B41F20836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:56:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B41F20836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936834AbeFRT4X (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:56:23 -0400
-Received: from smtp03.smtpout.orange.fr ([80.12.242.125]:34940 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935743AbeFRT4W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:56:22 -0400
-Received: from belgarion ([90.55.203.186])
-        by mwinf5d79 with ME
-        id 0KwL1y00E41oiFu03KwL1u; Mon, 18 Jun 2018 21:56:21 +0200
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Mon, 18 Jun 2018 21:56:21 +0200
-X-ME-IP: 90.55.203.186
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Mark Brown <broonie@kernel.org>, Daniel Mack <daniel@zonque.org>,
-        Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 00/14] ARM: pxa: switch to DMA slave maps
-References: <20180617170217.24177-1-robert.jarzmik@free.fr>
-        <20180618104159.24b9fffb@bbrezillon>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Mon, 18 Jun 2018 21:56:20 +0200
-In-Reply-To: <20180618104159.24b9fffb@bbrezillon> (Boris Brezillon's message
-        of "Mon, 18 Jun 2018 10:41:59 +0200")
-Message-ID: <87d0wnrhqz.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/24.5 (gnu/linux)
+        id S1754136AbeFRT4Z (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:56:25 -0400
+Received: from mail.skyhub.de ([5.9.137.197]:41782 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935743AbeFRT4Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:56:24 -0400
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id U0OhzL_MIVD2; Mon, 18 Jun 2018 21:56:22 +0200 (CEST)
+Received: from zn.tnic (p200300EC2BE29C00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be2:9c00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A32621EC00EE;
+        Mon, 18 Jun 2018 21:56:22 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 21:56:19 +0200
+From:   Borislav Petkov <bp@alien8.de>
+To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
+Cc:     Linux-Kernel <linux-kernel@vger.kernel.org>, mingo@redhat.com,
+        tglx@linutronix.de, Srinivas REDDY Eeda <srinivas.eeda@oracle.com>,
+        hpa@zytor.com
+Subject: Re: [PATCH] x86/microcode/intel: Ensure new microcode processor
+ flags match with cpu's pf
+Message-ID: <20180618195619.GH24921@zn.tnic>
+References: <7d20be40-4c15-4e15-a4d0-cd2efda6d701@default>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7d20be40-4c15-4e15-a4d0-cd2efda6d701@default>
+User-Agent: Mutt/1.9.5 (2018-04-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Boris Brezillon <boris.brezillon@bootlin.com> writes:
+On Mon, Jun 04, 2018 at 08:16:51AM +0000, Zhenzhong Duan wrote:
+> Intel spec says: 'The processor flags in the 48-byte header and the
+> processor flags field associated with the extended processor signature
+> structures may have multiple bits set.'
+> 
+> Make sure processor flags of the new microcode intersect with current
+> cpu's. Comparing with old microcode's pf can't guarantee this.
+> 
+> Signed-off-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
+> ---
+>  arch/x86/kernel/cpu/microcode/intel.c |    8 +++-----
+>  1 files changed, 3 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/microcode/intel.c b/arch/x86/kernel/cpu/microcode/intel.c
+> index 461e315..54f4014 100644
+> --- a/arch/x86/kernel/cpu/microcode/intel.c
+> +++ b/arch/x86/kernel/cpu/microcode/intel.c
+> @@ -371,12 +371,10 @@ static int microcode_sanity_check(void *mc, int print_err)
+>  				goto next;
+>  
+>  		} else {
+> -			struct microcode_header_intel *phdr = &patch->hdr;
+> -
+>  			if (!has_newer_microcode(data,
+> -						 phdr->sig,
+> -						 phdr->pf,
+> -						 phdr->rev))
+> +						 uci->cpu_sig.sig,
+> +						 uci->cpu_sig.pf,
+> +						 patch->hdr.rev))
+>  				goto next;
+>  		}
+>  
+> -- 
 
-> Hi Robert,
->
-> On Sun, 17 Jun 2018 19:02:03 +0200
-> Robert Jarzmik <robert.jarzmik@free.fr> wrote:
->
->> As I gathered almost all the required acks, this is an information only post
->> before queuing to the PXA tree.
->
-> We'll need an immutable branch/tag containing those changes, just in
-> case other conflicting changes get submitted to the NAND driver.
-Sure, this branch will be usable from next Wednesday onward, here :
- - git fetch https://github.com/rjarzmik/linux.git
-   tags/pxa-for-4.19-dma_slave_map
+So I'm scratching my head over this and have no clue what you're trying
+to achieve. Is this a fix for a bug you're seeing or what? You'd need to
+be a lot more verbose when explaining what this patch is trying to do...
 
-I must insist on "Wednesday", as I need to have one last pass from 0-day kernel
-checker to be fully covered, and I'd like as well to know which tree the ASoC
-patch will take, ie. if Mark commits to take it, or rather wants to pull from
-the imutable branch.
-
-Until Wednesday, even if the branch exist, consider it doesn't please, and
-Thursday morning you can pull if you wish.
-
-Cheers.
+Thx.
 
 -- 
-Robert
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
