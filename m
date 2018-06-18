@@ -3,114 +3,135 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE4A3C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E1DC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9278F20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:39:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9278F20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 256D220864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:39:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 256D220864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935993AbeFRJjQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:39:16 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55714 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965700AbeFRIXH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:23:07 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CC8FCC7A;
-        Mon, 18 Jun 2018 08:23:06 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Janusz Krzysztofik <jmkrzyszt@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 169/279] ARM: OMAP1: ams-delta: fix deferred_fiq handler
-Date:   Mon, 18 Jun 2018 10:12:34 +0200
-Message-Id: <20180618080615.816817881@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
-References: <20180618080608.851973560@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        id S936011AbeFRJjW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:39:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:43008 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935898AbeFRJjU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 05:39:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 9F10DAB3D;
+        Mon, 18 Jun 2018 09:39:18 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 11:39:17 +0200
+From:   Petr Mladek <pmladek@suse.com>
+To:     Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
+Cc:     Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        linux-kernel@vger.kernel.org, "4 . 13+" <stable@vger.kernel.org>
+Subject: Re: [PATCH] printk/nmi: Prevent deadlock when serializing NMI
+ backtraces
+Message-ID: <20180618093917.qeaatnlqh5if6t3r@pathway.suse.cz>
+References: <20180517143903.19339-1-pmladek@suse.com>
+ <20180605124729.3vix5nlkjpjzdljx@pathway.suse.cz>
+ <20180606051029.GA19211@tigerII.localdomain>
+ <20180606103356.GB19211@tigerII.localdomain>
+ <20180608104825.e7xoxteelaxnwx66@pathway.suse.cz>
+ <20180618063738.GC27996@jagdpanzerIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180618063738.GC27996@jagdpanzerIV>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+On Mon 2018-06-18 15:37:38, Sergey Senozhatsky wrote:
+> On (06/08/18 12:48), Petr Mladek wrote:
+> [..]
+> > diff --git a/include/linux/printk.h b/include/linux/printk.h
+> > index 6d7e800affd8..872fbdf8df26 100644
+> > --- a/include/linux/printk.h
+> > +++ b/include/linux/printk.h
+> > @@ -148,9 +148,13 @@ void early_printk(const char *s, ...) { }
+> >  #ifdef CONFIG_PRINTK_NMI
+> >  extern void printk_nmi_enter(void);
+> >  extern void printk_nmi_exit(void);
+> > +extern void printk_nmi_direct_enter(void);
+> > +extern void printk_nmi_direct_exit(void);
+> >  #else
+> >  static inline void printk_nmi_enter(void) { }
+> >  static inline void printk_nmi_exit(void) { }
+> > +static void printk_nmi_direct_enter(void) { }
+> > +static void printk_nmi_direct_exit(void) { }
+> 
+> Can we have better names may be? Since direct printk_nmi is not
+> in fact always `direct'.
 
-------------------
-
-From: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-
-[ Upstream commit baf64250b4a513bf4ac226fd938692dc1836f4f6 ]
-
-The deferred_fiq handler used to limit hardware operations to IRQ
-unmask only, relying on gpio-omap assigned handler performing the ACKs.
-Since commit 80ac93c27441 ("gpio: omap: Fix lost edge interrupts") this
-is no longer the case as handle_edge_irq() has been replaced with
-handle_simmple_irq() which doesn't touch the hardware.
-
-Add single ACK operation per each active IRQ pin to the handler. While
-being at it, move unmask operation out of irq_counter loop so it is
-also called only once for each active IRQ pin.
-
-Fixes: 80ac93c27441 ("gpio: omap: Fix lost edge interrupts")
-Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/mach-omap1/ams-delta-fiq.c |   26 ++++++++++++++------------
- 1 file changed, 14 insertions(+), 12 deletions(-)
-
---- a/arch/arm/mach-omap1/ams-delta-fiq.c
-+++ b/arch/arm/mach-omap1/ams-delta-fiq.c
-@@ -58,22 +58,24 @@ static irqreturn_t deferred_fiq(int irq,
- 		irq_num = gpio_to_irq(gpio);
- 		fiq_count = fiq_buffer[FIQ_CNT_INT_00 + gpio];
- 
--		while (irq_counter[gpio] < fiq_count) {
--			if (gpio != AMS_DELTA_GPIO_PIN_KEYBRD_CLK) {
--				struct irq_data *d = irq_get_irq_data(irq_num);
-+		if (irq_counter[gpio] < fiq_count &&
-+				gpio != AMS_DELTA_GPIO_PIN_KEYBRD_CLK) {
-+			struct irq_data *d = irq_get_irq_data(irq_num);
- 
--				/*
--				 * It looks like handle_edge_irq() that
--				 * OMAP GPIO edge interrupts default to,
--				 * expects interrupt already unmasked.
--				 */
--				if (irq_chip && irq_chip->irq_unmask)
-+			/*
-+			 * handle_simple_irq() that OMAP GPIO edge
-+			 * interrupts default to since commit 80ac93c27441
-+			 * requires interrupt already acked and unmasked.
-+			 */
-+			if (irq_chip) {
-+				if (irq_chip->irq_ack)
-+					irq_chip->irq_ack(d);
-+				if (irq_chip->irq_unmask)
- 					irq_chip->irq_unmask(d);
- 			}
--			generic_handle_irq(irq_num);
--
--			irq_counter[gpio]++;
- 		}
-+		for (; irq_counter[gpio] < fiq_count; irq_counter[gpio]++)
-+			generic_handle_irq(irq_num);
- 	}
- 	return IRQ_HANDLED;
- }
+What about printk_chatty_nmi_enter(), printk_large_nmi_enter()
+or something similar?
 
 
+> > +#ifdef CONFIG_PRINTK_NMI
+> > +__printf(1, 0) int vprintk_nmi(const char *fmt, va_list args);
+> > +#else
+> > +__printf(1, 0) int vprintk_nmi(const char *fmt, va_list args) { return 0; }
+> > +#endif
+> 
+> Hmm, printk_safe.c knows about printk.c, printk.c knows about
+> printk_safe.c.
+
+I am sorry but I do not understand the problem. The function is
+defined in printk_safe.c and we need to call it also from printk.c.
+It seems reasonable to declare it in kernel/printk/internal.h.
+
+
+> >  __printf(1, 0) int vprintk_default(const char *fmt, va_list args);
+> >  __printf(1, 0) int vprintk_deferred(const char *fmt, va_list args);
+> >  __printf(1, 0) int vprintk_func(const char *fmt, va_list args);
+> > diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+> > index 247808333ba4..cf55bece43d9 100644
+> > --- a/kernel/printk/printk.c
+> > +++ b/kernel/printk/printk.c
+> > @@ -1845,7 +1845,13 @@ asmlinkage int vprintk_emit(int facility, int level,
+> >  	printk_delay();
+> >  
+> >  	/* This stops the holder of console_sem just where we want him */
+> > -	logbuf_lock_irqsave(flags);
+> > +	printk_safe_enter_irqsave(flags);
+> > +	if (in_nmi() && !raw_spin_trylock(&logbuf_lock)) {
+> > +		printed_len = vprintk_nmi(fmt, args);
+> > +		printk_safe_exit_irqrestore(flags);
+> > +		return printed_len;
+> > +	} else
+> > +		raw_spin_lock(&logbuf_lock);
+> 
+> OK... Can we do this in vprintk_func()? The race window should be super
+> tiny [if matters at all], but in exchange we don't have to mix nmi, printk,
+> printk_mni, etc.
+
+You are right that it would still solve the main risk (NMI comes
+inside logbuf_lock critical section).
+
+In fact, the only real risk would be another lock serializing NMIs
+and printk() called with that lock. This patch removes one in
+nmi_backtrace() and I am not aware of any other.
+
+The less hairy code really might be worth the rather theoretical risk.
+
+
+> So over all I understand why you did it this way. May be I'd prefer to
+> have less universal but shorter solution (e.g. modify only nmi_backtrace
+> function and put there "printk_nmi_restricted_buffer"), but I won't really
+> object your patch [unless I see some real issues with it].
+
+Thanks in advance. I'll send v2 once we have a conclusion on
+the function names and includes.
+
+Best Regards,
+Petr
