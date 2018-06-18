@@ -6,29 +6,29 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2000C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73C24C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97B3A208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97B3A208A6
+	by mail.kernel.org (Postfix) with ESMTP id 3980620862
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:08:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3980620862
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936581AbeFRKIM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:08:12 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:2617 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935437AbeFRKIA (ORCPT
+        id S936754AbeFRKIk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:08:40 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:30081 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935939AbeFRKHt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:08:00 -0400
+        Mon, 18 Jun 2018 06:07:49 -0400
 X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
-   d="scan'208";a="15346674"
+   d="scan'208";a="13149594"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 03:07:59 -0700
+  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 03:07:49 -0700
 Received: from m19893.microchip.com (10.10.76.4) by
  chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 18 Jun 2018 03:07:59 -0700
+ 14.3.352.0; Mon, 18 Jun 2018 03:07:47 -0700
 From:   Radu Pirea <radu.pirea@microchip.com>
 To:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
         <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
@@ -39,9 +39,9 @@ CC:     <linux-spi@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-serial@vger.kernel.org>,
         Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v8 6/6] tty/serial: atmel: change the driver to work under at91-usart mfd
-Date:   Mon, 18 Jun 2018 13:08:29 +0300
-Message-ID: <20180618100829.13875-7-radu.pirea@microchip.com>
+Subject: [PATCH v8 3/6] mfd: at91-usart: added mfd driver for usart
+Date:   Mon, 18 Jun 2018 13:08:26 +0300
+Message-ID: <20180618100829.13875-4-radu.pirea@microchip.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618100829.13875-1-radu.pirea@microchip.com>
 References: <20180618100829.13875-1-radu.pirea@microchip.com>
@@ -52,174 +52,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch modifies the place where resources and device tree properties
-are searched.
+This mfd driver is just a wrapper over atmel_serial driver and
+spi-at91-usart driver. Selection of one of the drivers is based on a
+property from device tree. If the property is not specified, the default
+driver is atmel_serial.
 
 Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Acked-by: Richard Genoud <richard.genoud@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
 Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 ---
- drivers/tty/serial/Kconfig        |  1 +
- drivers/tty/serial/atmel_serial.c | 42 ++++++++++++++++++++-----------
- 2 files changed, 28 insertions(+), 15 deletions(-)
+ drivers/mfd/Kconfig      |  9 +++++
+ drivers/mfd/Makefile     |  1 +
+ drivers/mfd/at91-usart.c | 71 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 81 insertions(+)
+ create mode 100644 drivers/mfd/at91-usart.c
 
-diff --git a/drivers/tty/serial/Kconfig b/drivers/tty/serial/Kconfig
-index 3682fd3e960c..25e55332f8b1 100644
---- a/drivers/tty/serial/Kconfig
-+++ b/drivers/tty/serial/Kconfig
-@@ -119,6 +119,7 @@ config SERIAL_ATMEL
- 	depends on ARCH_AT91 || COMPILE_TEST
- 	select SERIAL_CORE
- 	select SERIAL_MCTRL_GPIO if GPIOLIB
-+	select MFD_AT91_USART
- 	help
- 	  This enables the driver for the on-chip UARTs of the Atmel
- 	  AT91 processors.
-diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
-index df46a9e88c34..107114d73c5d 100644
---- a/drivers/tty/serial/atmel_serial.c
-+++ b/drivers/tty/serial/atmel_serial.c
-@@ -193,8 +193,7 @@ static struct console atmel_console;
+diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+index b860eb5aa194..a886672b960d 100644
+--- a/drivers/mfd/Kconfig
++++ b/drivers/mfd/Kconfig
+@@ -99,6 +99,15 @@ config MFD_AAT2870_CORE
+ 	  additional drivers must be enabled in order to use the
+ 	  functionality of the device.
  
- #if defined(CONFIG_OF)
- static const struct of_device_id atmel_serial_dt_ids[] = {
--	{ .compatible = "atmel,at91rm9200-usart" },
--	{ .compatible = "atmel,at91sam9260-usart" },
-+	{ .compatible = "atmel,at91rm9200-usart-serial" },
- 	{ /* sentinel */ }
- };
- #endif
-@@ -915,6 +914,7 @@ static void atmel_tx_dma(struct uart_port *port)
- static int atmel_prepare_tx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
- 	int ret, nent;
-@@ -922,7 +922,7 @@ static int atmel_prepare_tx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_SLAVE, mask);
- 
--	atmel_port->chan_tx = dma_request_slave_channel(port->dev, "tx");
-+	atmel_port->chan_tx = dma_request_slave_channel(mfd_dev, "tx");
- 	if (atmel_port->chan_tx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for tx DMA transfers\n",
-@@ -1093,6 +1093,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
- static int atmel_prepare_rx_dma(struct uart_port *port)
- {
- 	struct atmel_uart_port *atmel_port = to_atmel_uart_port(port);
-+	struct device *mfd_dev = port->dev->parent;
- 	struct dma_async_tx_descriptor *desc;
- 	dma_cap_mask_t		mask;
- 	struct dma_slave_config config;
-@@ -1104,7 +1105,7 @@ static int atmel_prepare_rx_dma(struct uart_port *port)
- 	dma_cap_zero(mask);
- 	dma_cap_set(DMA_CYCLIC, mask);
- 
--	atmel_port->chan_rx = dma_request_slave_channel(port->dev, "rx");
-+	atmel_port->chan_rx = dma_request_slave_channel(mfd_dev, "rx");
- 	if (atmel_port->chan_rx == NULL)
- 		goto chan_err;
- 	dev_info(port->dev, "using %s for rx DMA transfers\n",
-@@ -2222,8 +2223,8 @@ static const char *atmel_type(struct uart_port *port)
-  */
- static void atmel_release_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	release_mem_region(port->mapbase, size);
- 
-@@ -2238,8 +2239,8 @@ static void atmel_release_port(struct uart_port *port)
-  */
- static int atmel_request_port(struct uart_port *port)
- {
--	struct platform_device *pdev = to_platform_device(port->dev);
--	int size = pdev->resource[0].end - pdev->resource[0].start + 1;
-+	struct platform_device *mpdev = to_platform_device(port->dev->parent);
-+	int size = resource_size(mpdev->resource);
- 
- 	if (!request_mem_region(port->mapbase, size, "atmel_serial"))
- 		return -EBUSY;
-@@ -2341,27 +2342,28 @@ static int atmel_init_port(struct atmel_uart_port *atmel_port,
- {
- 	int ret;
- 	struct uart_port *port = &atmel_port->uart;
-+	struct platform_device *mpdev = to_platform_device(pdev->dev.parent);
- 
- 	atmel_init_property(atmel_port, pdev);
- 	atmel_set_ops(port);
- 
--	uart_get_rs485_mode(&pdev->dev, &port->rs485);
-+	uart_get_rs485_mode(&mpdev->dev, &port->rs485);
- 
- 	port->iotype		= UPIO_MEM;
- 	port->flags		= UPF_BOOT_AUTOCONF | UPF_IOREMAP;
- 	port->ops		= &atmel_pops;
- 	port->fifosize		= 1;
- 	port->dev		= &pdev->dev;
--	port->mapbase	= pdev->resource[0].start;
--	port->irq	= pdev->resource[1].start;
-+	port->mapbase		= mpdev->resource[0].start;
-+	port->irq		= mpdev->resource[1].start;
- 	port->rs485_config	= atmel_config_rs485;
--	port->membase	= NULL;
-+	port->membase		= NULL;
- 
- 	memset(&atmel_port->rx_ring, 0, sizeof(atmel_port->rx_ring));
- 
- 	/* for console, the clock could already be configured */
- 	if (!atmel_port->clk) {
--		atmel_port->clk = clk_get(&pdev->dev, "usart");
-+		atmel_port->clk = clk_get(&mpdev->dev, "usart");
- 		if (IS_ERR(atmel_port->clk)) {
- 			ret = PTR_ERR(atmel_port->clk);
- 			atmel_port->clk = NULL;
-@@ -2694,13 +2696,22 @@ static void atmel_serial_probe_fifos(struct atmel_uart_port *atmel_port,
- static int atmel_serial_probe(struct platform_device *pdev)
- {
- 	struct atmel_uart_port *atmel_port;
--	struct device_node *np = pdev->dev.of_node;
-+	struct device_node *np = pdev->dev.parent->of_node;
- 	void *data;
- 	int ret = -ENODEV;
- 	bool rs485_enabled;
- 
- 	BUILD_BUG_ON(ATMEL_SERIAL_RINGSIZE & (ATMEL_SERIAL_RINGSIZE - 1));
- 
-+	/*
-+	 * In device tree there is no node with "atmel,at91rm9200-usart-serial"
-+	 * as compatible string. This driver is probed by at91-usart mfd driver
-+	 * which is just a wrapper over the atmel_serial driver and
-+	 * spi-at91-usart driver. All attributes needed by this driver are
-+	 * found in of_node of parent.
-+	 */
-+	pdev->dev.of_node = np;
++config MFD_AT91_USART
++	tristate "AT91 USART Driver"
++	select MFD_CORE
++	help
++	  Select this to get support for AT91 USART IP. This is a wrapper
++	  over at91-usart-serial driver and usart-spi-driver. Only one function
++	  can be used at a time. The choice is done at boot time by the probe
++	  function of this MFD driver according to a device tree property.
 +
- 	ret = of_alias_get_id(np, "serial");
- 	if (ret < 0)
- 		/* port id not found in platform data nor device-tree aliases:
-@@ -2835,6 +2846,7 @@ static int atmel_serial_remove(struct platform_device *pdev)
- 
- 	clk_put(atmel_port->clk);
- 	atmel_port->clk = NULL;
-+	pdev->dev.of_node = NULL;
- 
- 	return ret;
- }
-@@ -2845,7 +2857,7 @@ static struct platform_driver atmel_serial_driver = {
- 	.suspend	= atmel_serial_suspend,
- 	.resume		= atmel_serial_resume,
- 	.driver		= {
--		.name			= "atmel_usart",
-+		.name			= "atmel_usart_serial",
- 		.of_match_table		= of_match_ptr(atmel_serial_dt_ids),
- 	},
- };
+ config MFD_ATMEL_FLEXCOM
+ 	tristate "Atmel Flexcom (Flexible Serial Communication Unit)"
+ 	select MFD_CORE
+diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+index d9d2cf0d32ef..db1332aa96db 100644
+--- a/drivers/mfd/Makefile
++++ b/drivers/mfd/Makefile
+@@ -185,6 +185,7 @@ obj-$(CONFIG_MFD_SPMI_PMIC)	+= qcom-spmi-pmic.o
+ obj-$(CONFIG_TPS65911_COMPARATOR)	+= tps65911-comparator.o
+ obj-$(CONFIG_MFD_TPS65090)	+= tps65090.o
+ obj-$(CONFIG_MFD_AAT2870_CORE)	+= aat2870-core.o
++obj-$(CONFIG_MFD_AT91_USART)	+= at91-usart.o
+ obj-$(CONFIG_MFD_ATMEL_FLEXCOM)	+= atmel-flexcom.o
+ obj-$(CONFIG_MFD_ATMEL_HLCDC)	+= atmel-hlcdc.o
+ obj-$(CONFIG_MFD_ATMEL_SMC)	+= atmel-smc.o
+diff --git a/drivers/mfd/at91-usart.c b/drivers/mfd/at91-usart.c
+new file mode 100644
+index 000000000000..ba5754a1b7af
+--- /dev/null
++++ b/drivers/mfd/at91-usart.c
+@@ -0,0 +1,71 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Driver for AT91 USART
++ *
++ * Copyright (C) 2018 Microchip Technology
++ *
++ * Author: Radu Pirea <radu.pirea@microchip.com>
++ *
++ */
++
++#include <dt-bindings/mfd/at91-usart.h>
++
++#include <linux/module.h>
++#include <linux/mfd/core.h>
++#include <linux/property.h>
++
++static struct mfd_cell at91_usart_spi_subdev = {
++		.name = "at91_usart_spi",
++		.of_compatible = "microchip,at91sam9g45-usart-spi",
++	};
++
++static struct mfd_cell at91_usart_serial_subdev = {
++		.name = "atmel_usart_serial",
++		.of_compatible = "atmel,at91rm9200-usart-serial",
++	};
++
++static int at91_usart_mode_probe(struct platform_device *pdev)
++{
++	struct mfd_cell cell;
++	u32 opmode = AT91_USART_MODE_SERIAL;
++
++	device_property_read_u32(&pdev->dev, "atmel,usart-mode", &opmode);
++
++	switch (opmode) {
++	case AT91_USART_MODE_SPI:
++		cell = at91_usart_spi_subdev;
++		break;
++	case AT91_USART_MODE_SERIAL:
++		cell = at91_usart_serial_subdev;
++		break;
++	default:
++		dev_err(&pdev->dev, "atmel,usart-mode has an invalid value %u\n",
++			opmode);
++		return -EINVAL;
++	}
++
++	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO, &cell, 1,
++			      NULL, 0, NULL);
++}
++
++static const struct of_device_id at91_usart_mode_of_match[] = {
++	{ .compatible = "atmel,at91rm9200-usart" },
++	{ .compatible = "atmel,at91sam9260-usart" },
++	{ /* sentinel */ }
++};
++
++MODULE_DEVICE_TABLE(of, at91_flexcom_of_match);
++
++static struct platform_driver at91_usart_mfd = {
++	.probe	= at91_usart_mode_probe,
++	.driver	= {
++		.name		= "at91_usart_mode",
++		.of_match_table	= at91_usart_mode_of_match,
++	},
++};
++
++module_platform_driver(at91_usart_mfd);
++
++MODULE_AUTHOR("Radu Pirea <radu.pirea@microchip.com>");
++MODULE_DESCRIPTION("AT91 USART MFD driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
 
