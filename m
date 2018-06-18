@@ -6,41 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B500C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24742C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F8BE20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F8BE20874
+	by mail.kernel.org (Postfix) with ESMTP id DF63720874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF63720874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S968044AbeFRIgS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:36:18 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36224 "EHLO
+        id S1030242AbeFRIgW (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:36:22 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36262 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030229AbeFRIgN (ORCPT
+        with ESMTP id S968045AbeFRIgT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:13 -0400
+        Mon, 18 Jun 2018 04:36:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E933CC8A;
-        Mon, 18 Jun 2018 08:36:12 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6833CB6;
+        Mon, 18 Jun 2018 08:36:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Laura Abbott <labbott@redhat.com>,
-        Dave Anderson <anderson@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Andi Kleen <andi@firstfloor.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH 4.14 147/189] proc/kcore: dont bounds check against address 0
-Date:   Mon, 18 Jun 2018 10:14:03 +0200
-Message-Id: <20180618081215.142601807@linuxfoundation.org>
+        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
+        Eduardo Valentin <eduval@amazon.com>,
+        Alakesh Haloi <alakeshh@amazon.com>,
+        Vallish Vaidyeshwara <vallish@amazon.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>,
+        xen-devel@lists.xenproject.org,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 131/189] x86/xen: Reset VCPU0 info pointer after shared_info remap
+Date:   Mon, 18 Jun 2018 10:13:47 +0200
+Message-Id: <20180618081214.494031535@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -57,78 +56,94 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Laura Abbott <labbott@redhat.com>
+From: "van der Linden, Frank" <fllinden@amazon.com>
 
-[ Upstream commit 3955333df9a50e8783d115613a397ae55d905080 ]
+[ Upstream commit d1ecfa9d1f402366b1776fbf84e635678a51414f ]
 
-The existing kcore code checks for bad addresses against __va(0) with
-the assumption that this is the lowest address on the system.  This may
-not hold true on some systems (e.g.  arm64) and produce overflows and
-crashes.  Switch to using other functions to validate the address range.
+This patch fixes crashes during boot for HVM guests on older (pre HVM
+vector callback) Xen versions. Without this, current kernels will always
+fail to boot on those Xen versions.
 
-It's currently only seen on arm64 and it's not clear if anyone wants to
-use that particular combination on a stable release.  So this is not
-urgent for stable.
+Sample stack trace:
 
-Link: http://lkml.kernel.org/r/20180501201143.15121-1-labbott@redhat.com
-Signed-off-by: Laura Abbott <labbott@redhat.com>
-Tested-by: Dave Anderson <anderson@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Andi Kleen <andi@firstfloor.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>a
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+   BUG: unable to handle kernel paging request at ffffffffff200000
+   IP: __xen_evtchn_do_upcall+0x1e/0x80
+   PGD 1e0e067 P4D 1e0e067 PUD 1e10067 PMD 235c067 PTE 0
+    Oops: 0002 [#1] SMP PTI
+   Modules linked in:
+   CPU: 0 PID: 512 Comm: kworker/u2:0 Not tainted 4.14.33-52.13.amzn1.x86_64 #1
+   Hardware name: Xen HVM domU, BIOS 3.4.3.amazon 11/11/2016
+   task: ffff88002531d700 task.stack: ffffc90000480000
+   RIP: 0010:__xen_evtchn_do_upcall+0x1e/0x80
+   RSP: 0000:ffff880025403ef0 EFLAGS: 00010046
+   RAX: ffffffff813cc760 RBX: ffffffffff200000 RCX: ffffc90000483ef0
+   RDX: ffff880020540a00 RSI: ffff880023c78000 RDI: 000000000000001c
+   RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
+   R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+   R13: ffff880025403f5c R14: 0000000000000000 R15: 0000000000000000
+   FS:  0000000000000000(0000) GS:ffff880025400000(0000) knlGS:0000000000000000
+   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+   CR2: ffffffffff200000 CR3: 0000000001e0a000 CR4: 00000000000006f0
+    Call Trace:
+   <IRQ>
+   do_hvm_evtchn_intr+0xa/0x10
+   __handle_irq_event_percpu+0x43/0x1a0
+   handle_irq_event_percpu+0x20/0x50
+   handle_irq_event+0x39/0x60
+   handle_fasteoi_irq+0x80/0x140
+   handle_irq+0xaf/0x120
+   do_IRQ+0x41/0xd0
+   common_interrupt+0x7d/0x7d
+   </IRQ>
+
+During boot, the HYPERVISOR_shared_info page gets remapped to make it work
+with KASLR. This means that any pointer derived from it needs to be
+adjusted.
+
+The only value that this applies to is the vcpu_info pointer for VCPU 0.
+For PV and HVM with the callback vector feature, this gets done via the
+smp_ops prepare_boot_cpu callback. Older Xen versions do not support the
+HVM callback vector, so there is no Xen-specific smp_ops set up in that
+scenario. So, the vcpu_info pointer for VCPU 0 never gets set to the proper
+value, and the first reference of it will be bad. Fix this by resetting it
+immediately after the remap.
+
+Signed-off-by: Frank van der Linden <fllinden@amazon.com>
+Reviewed-by: Eduardo Valentin <eduval@amazon.com>
+Reviewed-by: Alakesh Haloi <alakeshh@amazon.com>
+Reviewed-by: Vallish Vaidyeshwara <vallish@amazon.com>
+Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: Juergen Gross <jgross@suse.com>
+Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Cc: xen-devel@lists.xenproject.org
+Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/kcore.c |   23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ arch/x86/xen/enlighten_hvm.c |   13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
---- a/fs/proc/kcore.c
-+++ b/fs/proc/kcore.c
-@@ -209,25 +209,34 @@ kclist_add_private(unsigned long pfn, un
+--- a/arch/x86/xen/enlighten_hvm.c
++++ b/arch/x86/xen/enlighten_hvm.c
+@@ -64,6 +64,19 @@ static void __init xen_hvm_init_mem_mapp
  {
- 	struct list_head *head = (struct list_head *)arg;
- 	struct kcore_list *ent;
-+	struct page *p;
+ 	early_memunmap(HYPERVISOR_shared_info, PAGE_SIZE);
+ 	HYPERVISOR_shared_info = __va(PFN_PHYS(shared_info_pfn));
 +
-+	if (!pfn_valid(pfn))
-+		return 1;
-+
-+	p = pfn_to_page(pfn);
-+	if (!memmap_valid_within(pfn, p, page_zone(p)))
-+		return 1;
- 
- 	ent = kmalloc(sizeof(*ent), GFP_KERNEL);
- 	if (!ent)
- 		return -ENOMEM;
--	ent->addr = (unsigned long)__va((pfn << PAGE_SHIFT));
-+	ent->addr = (unsigned long)page_to_virt(p);
- 	ent->size = nr_pages << PAGE_SHIFT;
- 
--	/* Sanity check: Can happen in 32bit arch...maybe */
--	if (ent->addr < (unsigned long) __va(0))
-+	if (!virt_addr_valid(ent->addr))
- 		goto free_out;
- 
- 	/* cut not-mapped area. ....from ppc-32 code. */
- 	if (ULONG_MAX - ent->addr < ent->size)
- 		ent->size = ULONG_MAX - ent->addr;
- 
--	/* cut when vmalloc() area is higher than direct-map area */
--	if (VMALLOC_START > (unsigned long)__va(0)) {
--		if (ent->addr > VMALLOC_START)
--			goto free_out;
 +	/*
-+	 * We've already checked virt_addr_valid so we know this address
-+	 * is a valid pointer, therefore we can check against it to determine
-+	 * if we need to trim
++	 * The virtual address of the shared_info page has changed, so
++	 * the vcpu_info pointer for VCPU 0 is now stale.
++	 *
++	 * The prepare_boot_cpu callback will re-initialize it via
++	 * xen_vcpu_setup, but we can't rely on that to be called for
++	 * old Xen versions (xen_have_vector_callback == 0).
++	 *
++	 * It is, in any case, bad to have a stale vcpu_info pointer
++	 * so reset it now.
 +	 */
-+	if (VMALLOC_START > ent->addr) {
- 		if (VMALLOC_START - ent->addr < ent->size)
- 			ent->size = VMALLOC_START - ent->addr;
- 	}
++	xen_vcpu_info_reset(0);
+ }
+ 
+ static void __init init_hvm_pv_info(void)
 
 
