@@ -6,35 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDF50C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D40B1C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B205220864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B205220864
+	by mail.kernel.org (Postfix) with ESMTP id 98F4A20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F4A20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030503AbeFRIis (ORCPT
+        id S1030524AbeFRIjF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:38:48 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36466 "EHLO
+        Mon, 18 Jun 2018 04:39:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37208 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968104AbeFRIgp (ORCPT
+        with ESMTP id S1030504AbeFRIit (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:45 -0400
+        Mon, 18 Jun 2018 04:38:49 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1739FC5C;
-        Mon, 18 Jun 2018 08:36:44 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64099C49;
+        Mon, 18 Jun 2018 08:38:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Gilhooley <dgilhooley@nvidia.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 134/189] arm64: Add MIDR encoding for NVIDIA CPUs
-Date:   Mon, 18 Jun 2018 10:13:50 +0200
-Message-Id: <20180618081214.616776194@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Wei Wang <weiwan@google.com>,
+        Neal Cardwell <ncardwell@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Benjamin Gilbert <benjamin.gilbert@coreos.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: [PATCH 4.14 189/189] tcp: do not overshoot window_clamp in tcp_rcv_space_adjust()
+Date:   Mon, 18 Jun 2018 10:14:45 +0200
+Message-Id: <20180618081216.811616359@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,49 +55,43 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Gilhooley <dgilhooley@nvidia.com>
+From: Eric Dumazet <edumazet@google.com>
 
-[ Upstream commit 1b06bd8dd95f7a19ab33fdf0f477c94950822ab3 ]
+commit 02db55718d53f9d426cee504c27fb768e9ed4ffe upstream.
 
-This patch adds the MIDR encodings for NVIDIA as well as
-the Denver and Carmel CPUs used in Tegra SoCs.
+While rcvbuf is properly clamped by tcp_rmem[2], rcvwin
+is left to a potentially too big value.
 
-Signed-off-by: David Gilhooley <dgilhooley@nvidia.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+It has no serious effect, since :
+1) tcp_grow_window() has very strict checks.
+2) window_clamp can be mangled by user space to any value anyway.
+
+tcp_init_buffer_space() and companions use tcp_full_space(),
+we use tcp_win_from_space() to avoid reloading sk->sk_rcvbuf
+
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
+Acked-by: Wei Wang <weiwan@google.com>
+Acked-by: Neal Cardwell <ncardwell@google.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Cc: Benjamin Gilbert <benjamin.gilbert@coreos.com>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm64/include/asm/cputype.h |    6 ++++++
- 1 file changed, 6 insertions(+)
 
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -75,6 +75,7 @@
- #define ARM_CPU_IMP_CAVIUM		0x43
- #define ARM_CPU_IMP_BRCM		0x42
- #define ARM_CPU_IMP_QCOM		0x51
-+#define ARM_CPU_IMP_NVIDIA		0x4E
+---
+ net/ipv4/tcp_input.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/ipv4/tcp_input.c
++++ b/net/ipv4/tcp_input.c
+@@ -647,7 +647,7 @@ void tcp_rcv_space_adjust(struct sock *s
+ 			sk->sk_rcvbuf = rcvbuf;
  
- #define ARM_CPU_PART_AEM_V8		0xD0F
- #define ARM_CPU_PART_FOUNDATION		0xD00
-@@ -98,6 +99,9 @@
- #define QCOM_CPU_PART_FALKOR		0xC00
- #define QCOM_CPU_PART_KRYO		0x200
- 
-+#define NVIDIA_CPU_PART_DENVER		0x003
-+#define NVIDIA_CPU_PART_CARMEL		0x004
-+
- #define MIDR_CORTEX_A53 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A53)
- #define MIDR_CORTEX_A55 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A55)
- #define MIDR_CORTEX_A57 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A57)
-@@ -112,6 +116,8 @@
- #define MIDR_QCOM_FALKOR_V1 MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR_V1)
- #define MIDR_QCOM_FALKOR MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_FALKOR)
- #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
-+#define MIDR_NVIDIA_DENVER MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_DENVER)
-+#define MIDR_NVIDIA_CARMEL MIDR_CPU_MODEL(ARM_CPU_IMP_NVIDIA, NVIDIA_CPU_PART_CARMEL)
- 
- #ifndef __ASSEMBLY__
- 
+ 			/* Make the window clamp follow along.  */
+-			tp->window_clamp = rcvwin;
++			tp->window_clamp = tcp_win_from_space(rcvbuf);
+ 		}
+ 	}
+ 	tp->rcvq_space.space = copied;
 
 
