@@ -6,39 +6,38 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BC6C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:14:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E215C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:15:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BBB1208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:14:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BBB1208D5
+	by mail.kernel.org (Postfix) with ESMTP id 191AB20652
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:15:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 191AB20652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966863AbeFRJO1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:14:27 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33336 "EHLO
+        id S966775AbeFRJPS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:15:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33316 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964950AbeFRI3D (ORCPT
+        with ESMTP id S965180AbeFRI26 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:29:03 -0400
+        Mon, 18 Jun 2018 04:28:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2A7F8BBE;
-        Mon, 18 Jun 2018 08:29:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4BF48BAD;
+        Mon, 18 Jun 2018 08:28:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
-        Jan Kara <jack@suse.cz>,
+        stable@vger.kernel.org, Anson Huang <Anson.Huang@nxp.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 011/189] isofs: fix potential memory leak in mount option parsing
-Date:   Mon, 18 Jun 2018 10:11:47 +0200
-Message-Id: <20180618081209.688771457@linuxfoundation.org>
+Subject: [PATCH 4.14 001/189] clocksource/drivers/imx-tpm: Correct some registers operation flow
+Date:   Mon, 18 Jun 2018 10:11:37 +0200
+Message-Id: <20180618081209.309799607@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
 User-Agent: quilt/0.65
-X-stable: review
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
@@ -50,36 +49,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chengguang Xu <cgxu519@gmx.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit 4f34a5130a471f32f2fe7750769ab4057dc3eaa0 ]
+[ Upstream commit 506a7be93ff773d5d4cf75a59f342865605b4910 ]
 
-When specifying string type mount option (e.g., iocharset)
-several times in a mount, current option parsing may
-cause memory leak. Hence, call kfree for previous one
-in this case. Meanwhile, check memory allocation result
-for it.
+According to i.MX7ULP reference manual, TPM_SC_CPWMS can ONLY be written when
+counter is disabled, TPM_SC_TOF is write-1-clear, TPM_C0SC_CHF is also
+write-1-clear, correct these registers initialization flow;
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/isofs/inode.c |    3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clocksource/timer-imx-tpm.c |    8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
---- a/fs/isofs/inode.c
-+++ b/fs/isofs/inode.c
-@@ -394,7 +394,10 @@ static int parse_options(char *options,
- 			break;
- #ifdef CONFIG_JOLIET
- 		case Opt_iocharset:
-+			kfree(popt->iocharset);
- 			popt->iocharset = match_strdup(&args[0]);
-+			if (!popt->iocharset)
-+				return 0;
- 			break;
- #endif
- 		case Opt_map_a:
+--- a/drivers/clocksource/timer-imx-tpm.c
++++ b/drivers/clocksource/timer-imx-tpm.c
+@@ -20,6 +20,7 @@
+ #define TPM_SC				0x10
+ #define TPM_SC_CMOD_INC_PER_CNT		(0x1 << 3)
+ #define TPM_SC_CMOD_DIV_DEFAULT		0x3
++#define TPM_SC_TOF_MASK			(0x1 << 7)
+ #define TPM_CNT				0x14
+ #define TPM_MOD				0x18
+ #define TPM_STATUS			0x1c
+@@ -29,6 +30,7 @@
+ #define TPM_C0SC_MODE_SHIFT		2
+ #define TPM_C0SC_MODE_MASK		0x3c
+ #define TPM_C0SC_MODE_SW_COMPARE	0x4
++#define TPM_C0SC_CHF_MASK		(0x1 << 7)
+ #define TPM_C0V				0x24
+ 
+ static void __iomem *timer_base;
+@@ -205,9 +207,13 @@ static int __init tpm_timer_init(struct
+ 	 * 4) Channel0 disabled
+ 	 * 5) DMA transfers disabled
+ 	 */
++	/* make sure counter is disabled */
+ 	writel(0, timer_base + TPM_SC);
++	/* TOF is W1C */
++	writel(TPM_SC_TOF_MASK, timer_base + TPM_SC);
+ 	writel(0, timer_base + TPM_CNT);
+-	writel(0, timer_base + TPM_C0SC);
++	/* CHF is W1C */
++	writel(TPM_C0SC_CHF_MASK, timer_base + TPM_C0SC);
+ 
+ 	/* increase per cnt, div 8 by default */
+ 	writel(TPM_SC_CMOD_INC_PER_CNT | TPM_SC_CMOD_DIV_DEFAULT,
 
 
