@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFBFBC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1762C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B2A020874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B2A020874
+	by mail.kernel.org (Postfix) with ESMTP id 83DFF20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:34:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83DFF20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967599AbeFRId6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:33:58 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35626 "EHLO
+        id S967611AbeFRIeE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:34:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35636 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967582AbeFRIdz (ORCPT
+        with ESMTP id S967594AbeFRId6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:55 -0400
+        Mon, 18 Jun 2018 04:33:58 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B6FA0C3C;
-        Mon, 18 Jun 2018 08:33:54 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C98E0C3C;
+        Mon, 18 Jun 2018 08:33:57 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Maloy <jon.maloy@ericsson.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Greg Thelen <gthelen@google.com>,
+        Tarick Bedeir <tarick@google.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 078/189] tipc: fix bug in function tipc_nl_node_dump_monitor
-Date:   Mon, 18 Jun 2018 10:12:54 +0200
-Message-Id: <20180618081212.404615117@linuxfoundation.org>
+Subject: [PATCH 4.14 079/189] nvme: depend on INFINIBAND_ADDR_TRANS
+Date:   Mon, 18 Jun 2018 10:12:55 +0200
+Message-Id: <20180618081212.440254921@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,38 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jon Maloy <jon.maloy@ericsson.com>
+From: Greg Thelen <gthelen@google.com>
 
-[ Upstream commit 7dbc73e6124ce4d0cfbdd6166de388e9367c47ad ]
+[ Upstream commit 3af7a156bdc356946098e13180be66b6420619bf ]
 
-Commit 36a50a989ee8 ("tipc: fix infinite loop when dumping link monitor
-summary") intended to fix a problem with user tool looping when max
-number of bearers are enabled.
+NVME_RDMA code depends on INFINIBAND_ADDR_TRANS provided symbols.  So
+declare the kconfig dependency.  This is necessary to allow for enabling
+INFINIBAND without INFINIBAND_ADDR_TRANS.
 
-Unfortunately, the wrong version of the commit was posted, so the
-problem was not solved at all.
-
-This commit adds the missing part.
-
-Fixes: 36a50a989ee8 ("tipc: fix infinite loop when dumping link monitor summary")
-Signed-off-by: Jon Maloy <jon.maloy@ericsson.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Cc: Tarick Bedeir <tarick@google.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/tipc/node.c |    2 +-
+ drivers/nvme/host/Kconfig |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/tipc/node.c
-+++ b/net/tipc/node.c
-@@ -2125,7 +2125,7 @@ int tipc_nl_node_dump_monitor(struct sk_
+--- a/drivers/nvme/host/Kconfig
++++ b/drivers/nvme/host/Kconfig
+@@ -18,7 +18,7 @@ config NVME_FABRICS
  
- 	rtnl_lock();
- 	for (bearer_id = prev_bearer; bearer_id < MAX_BEARERS; bearer_id++) {
--		err = __tipc_nl_add_monitor(net, &msg, prev_bearer);
-+		err = __tipc_nl_add_monitor(net, &msg, bearer_id);
- 		if (err)
- 			break;
- 	}
+ config NVME_RDMA
+ 	tristate "NVM Express over Fabrics RDMA host driver"
+-	depends on INFINIBAND && BLOCK
++	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && BLOCK
+ 	select NVME_CORE
+ 	select NVME_FABRICS
+ 	select SG_POOL
 
 
