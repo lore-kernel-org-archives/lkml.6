@@ -2,114 +2,224 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9D3C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3569AC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8427020864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:29:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="cEzj8ERz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8427020864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
+	by mail.kernel.org (Postfix) with ESMTP id DA5AD20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5AD20864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965947AbeFRJ3n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:29:43 -0400
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:17751 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965795AbeFRJ3j (ORCPT
+        id S965911AbeFRJaO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:30:14 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56254 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S936013AbeFRIZU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:29:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1529314175;
-        s=strato-dkim-0002; d=goldelico.com;
-        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=H0E3ZocxlplOSMipf87iLjMSJYBycfQmrfHDfDwvSO0=;
-        b=cEzj8ERzFq/4NzJsxZIjoU8XKPRV/dZsgeiYEo56/nh032mGJ8BtS34r7LmefclIDV
-        GbwQ3L/Qj2FsorUfQlO87VwsLlSuMxNx5PnCDOXKX/HJX8afcrITimYFqdO9t2Vpvyy6
-        TgY4pDb4nV+fdBA8w5bYUukExaQJn/5UBvnzDz31rDhArrpywt5O0fuHQszizRLi2E9b
-        mX1MmoXlttrMZ3xXciuf54HI0jX11bbJmTPwfXA/jo0cEwUQkqcjv+mnNekva9gcKclc
-        0TehFEvob6X60qKFTYRkrGydWNJYGP+lHTCYMZQ9HqW8vC/Yp7Jj8IXQiPW5OciWnGgn
-        27bg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qEjr9Tw=="
-X-RZG-CLASS-ID: mo00
-Received: from imac.fritz.box
-        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
-        with ESMTPSA id D025bfu5I9TVCtI
-        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Mon, 18 Jun 2018 11:29:31 +0200 (CEST)
-Content-Type: text/plain; charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
-Subject: Re: [Letux-kernel] BUG: drivers/pinctrl/core: races in pinctrl_groups and deferred probing
-From:   "H. Nikolaus Schaller" <hns@goldelico.com>
-In-Reply-To: <20180618091433.GP112168@atomide.com>
-Date:   Mon, 18 Jun 2018 11:29:30 +0200
-Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel@pyra-handheld.com,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BB5DB278-9827-4351-99DF-54C875B1879F@goldelico.com>
-References: <F20BD6B3-D4D7-4D5D-B464-64402650BDE5@goldelico.com> <20180614120157.GE112168@atomide.com> <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com> <20180615065810.GI112168@atomide.com> <20180615111318.GJ112168@atomide.com> <029F115C-480E-485A-B547-9D5873925CEF@goldelico.com> <4DE2E482-B0D3-4799-9E2D-74E2180B305B@goldelico.com> <CAHp75Vf7-xcsoSJ--9nJYbxpwSfDv201UwnxJHoFbwtD187SPw@mail.gmail.com> <20180618091433.GP112168@atomide.com>
-To:     Tony Lindgren <tony@atomide.com>
-X-Mailer: Apple Mail (2.3124)
+        Mon, 18 Jun 2018 04:25:20 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7872C7F;
+        Mon, 18 Jun 2018 08:25:19 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Steve French <stfrench@microsoft.com>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Tom Talpey <ttalpey@microsoft.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 208/279] cifs: Allocate validate negotiation request through kmalloc
+Date:   Mon, 18 Jun 2018 10:13:13 +0200
+Message-Id: <20180618080617.491899318@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-> Am 18.06.2018 um 11:14 schrieb Tony Lindgren <tony@atomide.com>:
->=20
-> * Andy Shevchenko <andy.shevchenko@gmail.com> [180618 08:25]:
->> On Sat, Jun 16, 2018 at 2:08 PM H. Nikolaus Schaller =
-<hns@goldelico.com> wrote:
->>> But it looks as if we still have duplicate assignments by deferred =
-probing, i.e. some cleanup is
->>> missing (or is this intended behaviour?).
->>=20
->>> But I think the fundamental problem is that the same driver assigns =
-multiple slots if
->>> probing is deferred.
->>=20
->> Indeed.
->>=20
->> I think there is a simple way to clean up pinctrl stuff on failed =
-probe. See
->> =
-https://elixir.bootlin.com/linux/v4.18-rc1/source/drivers/base/dd.c#L416
->>=20
->> We only bind pins, and do not perform any actions when failure =
-happens later on.
->=20
-> Yup seems like a good approach. I'll take a look if we can just
-> check if the function or group name already exists and return
-> the existing selector in that case.
+------------------
 
-Ok, that would also solve the duplication issue.
+From: Long Li <longli@microsoft.com>
 
-On the other hand we still have a stale entry if the probing process
-finally fails after several attempts.
+[ Upstream commit 2796d303e3c5ec213c578ed3a66872205c126eb8 ]
 
-This may happen if a driver with a valid DT entry is blacklisted in
-/etc/modprobe.d/blacklist.conf. Then, the kernel will try to modprobe
-it several times through udev until it gives up. The reason seems to
-be that the deferred probing thread does not know why the driver did
-not probe successfully.
+The data buffer allocated on the stack can't be DMA'ed, ib_dma_map_page will
+return an invalid DMA address for a buffer on stack. Even worse, this
+incorrect address can't be detected by ib_dma_mapping_error. Sending data
+from this address to hardware will not fail, but the remote peer will get
+junk data.
 
-BR and thanks,
-Nikolaus
+Fix this by allocating the request on the heap in smb3_validate_negotiate.
 
->=20
-> Regards,
->=20
-> Tony
+Changes in v2:
+Removed duplicated code on freeing buffers on function exit.
+(Thanks to Parav Pandit <parav@mellanox.com>)
+Fixed typo in the patch title.
+
+Changes in v3:
+Added "Fixes" to the patch.
+Changed several sizeof() to use *pointer in place of struct.
+
+Changes in v4:
+Added detailed comments on the failure through RDMA.
+Allocate request buffer using GPF_NOFS.
+Fixed possible memory leak.
+
+Changes in v5:
+Removed variable ret for checking return value.
+Changed to use pneg_inbuf->Dialects[0] to calculate unused space in pneg_inbuf.
+
+Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
+Signed-off-by: Long Li <longli@microsoft.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Reviewed-by: Tom Talpey <ttalpey@microsoft.com>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/cifs/smb2pdu.c |   68 ++++++++++++++++++++++++++++++------------------------
+ 1 file changed, 38 insertions(+), 30 deletions(-)
+
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -621,8 +621,8 @@ neg_exit:
+ 
+ int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
+ {
+-	int rc = 0;
+-	struct validate_negotiate_info_req vneg_inbuf;
++	int rc;
++	struct validate_negotiate_info_req *pneg_inbuf;
+ 	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
+ 	u32 rsplen;
+ 	u32 inbuflen; /* max of 4 dialects */
+@@ -656,63 +656,69 @@ int smb3_validate_negotiate(const unsign
+ 	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
+ 		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag sent by server\n");
+ 
+-	vneg_inbuf.Capabilities =
++	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_NOFS);
++	if (!pneg_inbuf)
++		return -ENOMEM;
++
++	pneg_inbuf->Capabilities =
+ 			cpu_to_le32(tcon->ses->server->vals->req_capabilities);
+-	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
++	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
+ 					SMB2_CLIENT_GUID_SIZE);
+ 
+ 	if (tcon->ses->sign)
+-		vneg_inbuf.SecurityMode =
++		pneg_inbuf->SecurityMode =
+ 			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
+ 	else if (global_secflags & CIFSSEC_MAY_SIGN)
+-		vneg_inbuf.SecurityMode =
++		pneg_inbuf->SecurityMode =
+ 			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
+ 	else
+-		vneg_inbuf.SecurityMode = 0;
++		pneg_inbuf->SecurityMode = 0;
+ 
+ 
+ 	if (strcmp(tcon->ses->server->vals->version_string,
+ 		SMB3ANY_VERSION_STRING) == 0) {
+-		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
+-		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
+-		vneg_inbuf.DialectCount = cpu_to_le16(2);
++		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
++		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
++		pneg_inbuf->DialectCount = cpu_to_le16(2);
+ 		/* structure is big enough for 3 dialects, sending only 2 */
+-		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
++		inbuflen = sizeof(*pneg_inbuf) -
++				sizeof(pneg_inbuf->Dialects[0]);
+ 	} else if (strcmp(tcon->ses->server->vals->version_string,
+ 		SMBDEFAULT_VERSION_STRING) == 0) {
+-		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
+-		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
+-		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
+-		vneg_inbuf.DialectCount = cpu_to_le16(3);
++		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
++		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
++		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
++		pneg_inbuf->DialectCount = cpu_to_le16(3);
+ 		/* structure is big enough for 3 dialects */
+-		inbuflen = sizeof(struct validate_negotiate_info_req);
++		inbuflen = sizeof(*pneg_inbuf);
+ 	} else {
+ 		/* otherwise specific dialect was requested */
+-		vneg_inbuf.Dialects[0] =
++		pneg_inbuf->Dialects[0] =
+ 			cpu_to_le16(tcon->ses->server->vals->protocol_id);
+-		vneg_inbuf.DialectCount = cpu_to_le16(1);
++		pneg_inbuf->DialectCount = cpu_to_le16(1);
+ 		/* structure is big enough for 3 dialects, sending only 1 */
+-		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
++		inbuflen = sizeof(*pneg_inbuf) -
++				sizeof(pneg_inbuf->Dialects[0]) * 2;
+ 	}
+ 
+ 	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
+ 		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
+-		(char *)&vneg_inbuf, sizeof(struct validate_negotiate_info_req),
+-		(char **)&pneg_rsp, &rsplen);
++		(char *)pneg_inbuf, inbuflen, (char **)&pneg_rsp, &rsplen);
+ 
+ 	if (rc != 0) {
+ 		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
+-		return -EIO;
++		rc = -EIO;
++		goto out_free_inbuf;
+ 	}
+ 
+-	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
++	rc = -EIO;
++	if (rsplen != sizeof(*pneg_rsp)) {
+ 		cifs_dbg(VFS, "invalid protocol negotiate response size: %d\n",
+ 			 rsplen);
+ 
+ 		/* relax check since Mac returns max bufsize allowed on ioctl */
+-		if ((rsplen > CIFSMaxBufSize)
+-		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
+-			goto err_rsp_free;
++		if (rsplen > CIFSMaxBufSize || rsplen < sizeof(*pneg_rsp))
++			goto out_free_rsp;
+ 	}
+ 
+ 	/* check validate negotiate info response matches what we got earlier */
+@@ -729,15 +735,17 @@ int smb3_validate_negotiate(const unsign
+ 		goto vneg_out;
+ 
+ 	/* validate negotiate successful */
++	rc = 0;
+ 	cifs_dbg(FYI, "validate negotiate info successful\n");
+-	kfree(pneg_rsp);
+-	return 0;
++	goto out_free_rsp;
+ 
+ vneg_out:
+ 	cifs_dbg(VFS, "protocol revalidation - security settings mismatch\n");
+-err_rsp_free:
++out_free_rsp:
+ 	kfree(pneg_rsp);
+-	return -EIO;
++out_free_inbuf:
++	kfree(pneg_inbuf);
++	return rc;
+ }
+ 
+ enum securityEnum
+
 
