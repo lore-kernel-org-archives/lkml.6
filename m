@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 942ECC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:56:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9FF1C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FD5620852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:56:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FD5620852
+	by mail.kernel.org (Postfix) with ESMTP id 76D6620852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:56:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76D6620852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935369AbeFRK4q (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        id S935389AbeFRK4w (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:56:52 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59942 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935344AbeFRK4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Jun 2018 06:56:46 -0400
-Received: from foss.arm.com ([217.140.101.70]:59922 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932665AbeFRK4n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:56:43 -0400
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 072FD15B2;
-        Mon, 18 Jun 2018 03:56:43 -0700 (PDT)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E383915BF;
+        Mon, 18 Jun 2018 03:56:45 -0700 (PDT)
 Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 1CD733F25D;
-        Mon, 18 Jun 2018 03:56:41 -0700 (PDT)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 6C2C83F25D;
+        Mon, 18 Jun 2018 03:56:44 -0700 (PDT)
 From:   Suzuki K Poulose <suzuki.poulose@arm.com>
 To:     linux-arm-kernel@lists.infradead.org
 Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 2/6] coresight: Add helper device type
-Date:   Mon, 18 Jun 2018 11:56:15 +0100
-Message-Id: <1529319379-17895-3-git-send-email-suzuki.poulose@arm.com>
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        devicetree@vger.kernel.org, frowand.list@gmail.com,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCH 4/6] dts: bindings: Document device tree binding for CATU
+Date:   Mon, 18 Jun 2018 11:56:17 +0100
+Message-Id: <1529319379-17895-5-git-send-email-suzuki.poulose@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1529319379-17895-1-git-send-email-suzuki.poulose@arm.com>
 References: <1529319379-17895-1-git-send-email-suzuki.poulose@arm.com>
@@ -42,182 +45,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a new coresight device type, which do not belong to any
-of the existing types, i.e, source, sink, link etc. A helper
-device could be connected to a coresight device, which could
-augment the functionality of the coresight device.
+Document CATU device-tree bindings. CATU augments the TMC-ETR
+by providing an improved Scatter Gather mechanism for streaming
+trace data to non-contiguous system RAM pages.
 
-This is intended to cover Coresight Address Translation Unit (CATU)
-devices, which provide improved Scatter Gather mechanism for TMC
-ETR. The idea is that the helper device could be controlled by
-the driver of the device it is attached to (in this case ETR),
-transparent to the generic coresight driver (and paths).
-
-The operations include enable(), disable(), both of which could
-accept a device specific "data" which the driving device and
-the helper device could share. Since they don't appear in the
-coresight "path" tracked by software, we have to ensure that
-they are powered up/down whenever the master device is turned
-on.
-
+Cc: devicetree@vger.kernel.org
+Cc: frowand.list@gmail.com
+Cc: Rob Herring <robh@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
 Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
 Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 ---
- drivers/hwtracing/coresight/coresight.c | 43 +++++++++++++++++++++++++++++++--
- include/linux/coresight.h               | 24 ++++++++++++++++++
- 2 files changed, 65 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/arm/coresight.txt          | 53 ++++++++++++++++++++++
+ 1 file changed, 53 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight.c b/drivers/hwtracing/coresight/coresight.c
-index 7f2b478..3e07fd3 100644
---- a/drivers/hwtracing/coresight/coresight.c
-+++ b/drivers/hwtracing/coresight/coresight.c
-@@ -425,6 +425,42 @@ struct coresight_device *coresight_get_enabled_sink(bool deactivate)
- 	return dev ? to_coresight_device(dev) : NULL;
- }
+diff --git a/Documentation/devicetree/bindings/arm/coresight.txt b/Documentation/devicetree/bindings/arm/coresight.txt
+index 9aa30a1..5d1ad09 100644
+--- a/Documentation/devicetree/bindings/arm/coresight.txt
++++ b/Documentation/devicetree/bindings/arm/coresight.txt
+@@ -39,6 +39,8 @@ its hardware characteristcs.
  
-+/*
-+ * coresight_grab_device - Power up this device and any of the helper
-+ * devices connected to it for trace operation. Since the helper devices
-+ * don't appear on the trace path, they should be handled along with the
-+ * the master device.
-+ */
-+static void coresight_grab_device(struct coresight_device *csdev)
-+{
-+	int i;
-+
-+	for (i = 0; i < csdev->nr_outport; i++) {
-+		struct coresight_device *child = csdev->conns[i].child_dev;
-+
-+		if (child && child->type == CORESIGHT_DEV_TYPE_HELPER)
-+			pm_runtime_get_sync(child->dev.parent);
-+	}
-+	pm_runtime_get_sync(csdev->dev.parent);
-+}
-+
-+/*
-+ * coresight_drop_device - Release this device and any of the helper
-+ * devices connected to it.
-+ */
-+static void coresight_drop_device(struct coresight_device *csdev)
-+{
-+	int i;
-+
-+	pm_runtime_put(csdev->dev.parent);
-+	for (i = 0; i < csdev->nr_outport; i++) {
-+		struct coresight_device *child = csdev->conns[i].child_dev;
-+
-+		if (child && child->type == CORESIGHT_DEV_TYPE_HELPER)
-+			pm_runtime_put(child->dev.parent);
-+	}
-+}
-+
- /**
-  * _coresight_build_path - recursively build a path from a @csdev to a sink.
-  * @csdev:	The device to start from.
-@@ -473,9 +509,9 @@ static int _coresight_build_path(struct coresight_device *csdev,
- 	if (!node)
- 		return -ENOMEM;
+ 		- System Trace Macrocell:
+ 			"arm,coresight-stm", "arm,primecell"; [1]
++		- Coresight Address Translation Unit (CATU)
++			"arm,coresight-catu", "arm,primecell";
  
-+	coresight_grab_device(csdev);
- 	node->csdev = csdev;
- 	list_add(&node->link, path);
--	pm_runtime_get_sync(csdev->dev.parent);
+ 	* reg: physical base address and length of the register
+ 	  set(s) of the component.
+@@ -90,6 +92,10 @@ its hardware characteristcs.
+ 	* arm,scatter-gather: boolean. Indicates that the TMC-ETR can safely
+ 	  use the SG mode on this system.
  
- 	return 0;
- }
-@@ -519,7 +555,7 @@ void coresight_release_path(struct list_head *path)
- 	list_for_each_entry_safe(nd, next, path, link) {
- 		csdev = nd->csdev;
- 
--		pm_runtime_put_sync(csdev->dev.parent);
-+		coresight_drop_device(csdev);
- 		list_del(&nd->link);
- 		kfree(nd);
- 	}
-@@ -770,6 +806,9 @@ static struct device_type coresight_dev_type[] = {
- 		.name = "source",
- 		.groups = coresight_source_groups,
- 	},
-+	{
-+		.name = "helper",
-+	},
- };
- 
- static void coresight_device_release(struct device *dev)
-diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-index 7c188c2..3d40a2b 100644
---- a/include/linux/coresight.h
-+++ b/include/linux/coresight.h
-@@ -40,6 +40,7 @@ enum coresight_dev_type {
- 	CORESIGHT_DEV_TYPE_LINK,
- 	CORESIGHT_DEV_TYPE_LINKSINK,
- 	CORESIGHT_DEV_TYPE_SOURCE,
-+	CORESIGHT_DEV_TYPE_HELPER,
- };
- 
- enum coresight_dev_subtype_sink {
-@@ -62,6 +63,10 @@ enum coresight_dev_subtype_source {
- 	CORESIGHT_DEV_SUBTYPE_SOURCE_SOFTWARE,
- };
- 
-+enum coresight_dev_subtype_helper {
-+	CORESIGHT_DEV_SUBTYPE_HELPER_NONE,
-+};
++* Optional property for CATU :
++	* interrupts : Exactly one SPI may be listed for reporting the address
++	  error
 +
- /**
-  * union coresight_dev_subtype - further characterisation of a type
-  * @sink_subtype:	type of sink this component is, as defined
-@@ -70,6 +75,8 @@ enum coresight_dev_subtype_source {
-  *			by @coresight_dev_subtype_link.
-  * @source_subtype:	type of source this component is, as defined
-  *			by @coresight_dev_subtype_source.
-+ * @helper_subtype:	type of helper this component is, as defined
-+ *			by @coresight_dev_subtype_helper.
-  */
- union coresight_dev_subtype {
- 	/* We have some devices which acts as LINK and SINK */
-@@ -78,6 +85,7 @@ union coresight_dev_subtype {
- 		enum coresight_dev_subtype_link link_subtype;
+ Example:
+ 
+ 1. Sinks
+@@ -121,6 +127,35 @@ Example:
+ 		};
  	};
- 	enum coresight_dev_subtype_source source_subtype;
-+	enum coresight_dev_subtype_helper helper_subtype;
- };
  
- /**
-@@ -172,6 +180,7 @@ struct coresight_device {
- #define source_ops(csdev)	csdev->ops->source_ops
- #define sink_ops(csdev)		csdev->ops->sink_ops
- #define link_ops(csdev)		csdev->ops->link_ops
-+#define helper_ops(csdev)	csdev->ops->helper_ops
- 
- /**
-  * struct coresight_ops_sink - basic operations for a sink
-@@ -231,10 +240,25 @@ struct coresight_ops_source {
- 			struct perf_event *event);
- };
- 
-+/**
-+ * struct coresight_ops_helper - Operations for a helper device.
-+ *
-+ * All operations could pass in a device specific data, which could
-+ * help the helper device to determine what to do.
-+ *
-+ * @enable	: Enable the device
-+ * @disable	: Disable the device
-+ */
-+struct coresight_ops_helper {
-+	int (*enable)(struct coresight_device *csdev, void *data);
-+	int (*disable)(struct coresight_device *csdev, void *data);
-+};
++	etr@20070000 {
++		compatible = "arm,coresight-tmc", "arm,primecell";
++		reg = <0 0x20070000 0 0x1000>;
 +
- struct coresight_ops {
- 	const struct coresight_ops_sink *sink_ops;
- 	const struct coresight_ops_link *link_ops;
- 	const struct coresight_ops_source *source_ops;
-+	const struct coresight_ops_helper *helper_ops;
- };
++		clocks = <&oscclk6a>;
++		clock-names = "apb_pclk";
++		ports {
++			#address-cells = <1>;
++			#size-cells = <0>;
++
++			/* input port */
++			port@0 {
++				reg =  <0>;
++				etr_in_port: endpoint {
++					slave-mode;
++					remote-endpoint = <&replicator2_out_port0>;
++				};
++			};
++
++			/* CATU link represented by output port */
++			port@1 {
++				reg = <1>;
++				etr_out_port: endpoint {
++					remote-endpoint = <&catu_in_port>;
++				};
++			};
++		};
++	};
++
+ 2. Links
+ 	replicator {
+ 		/* non-configurable replicators don't show up on the
+@@ -250,5 +285,23 @@ Example:
+ 		};
+ 	};
  
- #ifdef CONFIG_CORESIGHT
++5. CATU
++
++	catu@207e0000 {
++		compatible = "arm,coresight-catu", "arm,primecell";
++		reg = <0 0x207e0000 0 0x1000>;
++
++		clocks = <&oscclk6a>;
++		clock-names = "apb_pclk";
++
++		interrupts = <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
++		port {
++			catu_in_port: endpoint {
++				slave-mode;
++				remote-endpoint = <&etr_out_port>;
++			};
++		};
++	};
++
+ [1]. There is currently two version of STM: STM32 and STM500.  Both
+ have the same HW interface and as such don't need an explicit binding name.
 -- 
 2.7.4
 
