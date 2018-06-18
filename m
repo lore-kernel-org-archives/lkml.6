@@ -6,99 +6,78 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE2DC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B97C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 910A9208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 910A9208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 3BB7F208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BB7F208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935403AbeFRKFp (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:05:45 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:60451 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934927AbeFRKFm (ORCPT
+        id S935140AbeFRKHD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:07:03 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54120 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934808AbeFRIRY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:05:42 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue006 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MKxUa-1fUr2X3oDg-0007HR; Mon, 18 Jun 2018 12:05:38 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-s390@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] s390: hypfs: use ktime_get_seconds() instead of get_seconds()
-Date:   Mon, 18 Jun 2018 12:05:00 +0200
-Message-Id: <20180618100534.1857997-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:KGgJLfdQ/HqP0GR5FYdAvj8PBrlFjxGx/cKaP/jfBz5gcsyed1F
- aBdrUxBAihrcQrL/XXeO/ubrBycB91ETX1oF5UYpXajvwZTClHWShal8QvdDhumvnQ1spvy
- 1kjYufZ26n4x79up1YpZQX55q0tNgLuMMnrk/vgpvSkNCIz5krsYKFew2d3F+uFxzjqp4n5
- dF3xf3QcD+57vLIjy3WKw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:o6vKrHjPPUA=:ZqPtTzNRlRqPFrQLa2vxMA
- 0GsJy9YVse4mLA0RA0Y814wUbd7RuszeTioMFWdmGU/PygdpaNqEvRv8fwY0SRexI5B92XOc4
- T+BhwQpt8i4EC5C1f57R9oeFPLvHUTnMOzqjrtH8aG1SW8iOnW6fvNRMy2UYlyN0ZBsUhU6BD
- 8TVzJxuhXPMq6oh0wyQM3CZ7dvEUdUL9MkyxJSlhw7SYQ6gGiWgxa5kXZrNhRHxR6ZIT/PSp6
- w2MT2Ty7rAtvJSGF+kH876ykEv+G5Ts+vkMeX/D6tJvFHt6i0K6vJhVUIKe/82LmMOZ+DTBzi
- L9nENxNGkPd5MueVKmDELrr6ALcN2VoKg6LeQDgXhQ1UjaAjkqSI93kCLAFXsFO1QbiYILxHX
- e0UVFb1UigQi44HDIJdpE7pDTZYJs51uDBIuUws4jIIg18gELi27DJgtqCaY53VG5V5jgSQAA
- jNnLyj73lZ7p3dqe4POC0J1Z01FabltV1ruOoD7YPLxqYE3NTL1pWRaN0RfyaUEvsBiUfnlRl
- 0aBZDeftoYHMlxfeS4lEbQqsHwFv+k54zcGnazxUBri5PN7O484ztmebVF6qjuRn0y8tfgmn4
- utlJ0nnomX/vYQ657TwWqFGbqI29iMnMj3QJ1+lHGNKEoO88F0DwfnjSiTeifiH9PgmExxU9Z
- y10yOo2JbNBNoHvasJXZe/hM9t5yErOrv2wWQDX4kmA3FQSt2buJrIwPoMTuWdrZNJxE=
+        Mon, 18 Jun 2018 04:17:24 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B7CE1C84;
+        Mon, 18 Jun 2018 08:17:23 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Rob Herring <robh@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 022/279] dt-bindings: dmaengine: rcar-dmac: document R8A77965 support
+Date:   Mon, 18 Jun 2018 10:10:07 +0200
+Message-Id: <20180618080609.725096329@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-time_t and get_seconds() are deprecated because they will overflow on
-32-bit architectures in the future. This is not a problem on 64-bit s390,
-but we should use proper interfaces anyway.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Besides moving to the time64_t based interface, the CLOCK_MONOTONIC
-based ktime_get_seconds() is preferred for kernel internal timekeeping
-because it does not behave in unexpected ways during leap second changes
-or settimeofday() calls.
+------------------
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
+
+[ Upstream commit b89bc283286b105e50aab9ab35992c0237ac77d8 ]
+
+Add documentation for r8a77965 compatible string to rcar-dmac device
+tree bindings documentation.
+
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/s390/hypfs/inode.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/s390/hypfs/inode.c b/arch/s390/hypfs/inode.c
-index 06b513d192b9..c681329fdeec 100644
---- a/arch/s390/hypfs/inode.c
-+++ b/arch/s390/hypfs/inode.c
-@@ -36,7 +36,7 @@ struct hypfs_sb_info {
- 	kuid_t uid;			/* uid used for files and dirs */
- 	kgid_t gid;			/* gid used for files and dirs */
- 	struct dentry *update_file;	/* file to trigger update */
--	time_t last_update;		/* last update time in secs since 1970 */
-+	time64_t last_update;		/* last update, CLOCK_MONOTONIC time */
- 	struct mutex lock;		/* lock to protect update process */
- };
+--- a/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
++++ b/Documentation/devicetree/bindings/dma/renesas,rcar-dmac.txt
+@@ -25,6 +25,7 @@ Required Properties:
+ 		- "renesas,dmac-r8a7794" (R-Car E2)
+ 		- "renesas,dmac-r8a7795" (R-Car H3)
+ 		- "renesas,dmac-r8a7796" (R-Car M3-W)
++		- "renesas,dmac-r8a77965" (R-Car M3-N)
+ 		- "renesas,dmac-r8a77970" (R-Car V3M)
  
-@@ -52,7 +52,7 @@ static void hypfs_update_update(struct super_block *sb)
- 	struct hypfs_sb_info *sb_info = sb->s_fs_info;
- 	struct inode *inode = d_inode(sb_info->update_file);
- 
--	sb_info->last_update = get_seconds();
-+	sb_info->last_update = ktime_get_seconds();
- 	inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
- }
- 
-@@ -179,7 +179,7 @@ static ssize_t hypfs_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 	 *    to restart data collection in this case.
- 	 */
- 	mutex_lock(&fs_info->lock);
--	if (fs_info->last_update == get_seconds()) {
-+	if (fs_info->last_update == ktime_get_seconds()) {
- 		rc = -EBUSY;
- 		goto out;
- 	}
--- 
-2.9.0
+ - reg: base address and length of the registers block for the DMAC
+
 
