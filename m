@@ -2,170 +2,140 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCDBC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:00:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E20FC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:02:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D45B7208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:00:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="T0IdJ828"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45B7208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+	by mail.kernel.org (Postfix) with ESMTP id E269B208E7
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:02:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E269B208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934599AbeFRQAO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:00:14 -0400
-Received: from mail-io0-f194.google.com ([209.85.223.194]:43250 "EHLO
-        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932442AbeFRQAM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:00:12 -0400
-Received: by mail-io0-f194.google.com with SMTP id t6-v6so17257958iob.10
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 09:00:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=UC5UT7DCoM6UP9KeiiKK6268yi5oWSn9Xg9opObNozA=;
-        b=T0IdJ828PHm7JZwJ1QodpiSu88UfTQOEU3y+jroJkoCXcWZ3EEyMDJVbn5Ela7QRJw
-         b1J2HEoKDuJOUre+F01bvkNDzahKdrIsAEt9DigS60a8bTfkEzYS7DdkSNqutrKK8rzO
-         I4Qz73JsVXtmKBl2oH6Eaa543WH1cJw8XbG9Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=UC5UT7DCoM6UP9KeiiKK6268yi5oWSn9Xg9opObNozA=;
-        b=qHymravnke3lQWESKrBuDozfcnOZxAYmUNw56klKe4I/Yn3VhX6PZdTPQvnObcvp87
-         ncsPPu90i2lMjLg8w5H7XEupLfgqUQJiJ4q+gXP3Is2eABSZxVe/IxM7hbNqzPxQC3Dy
-         Q+MRYjTyiXOzIYRKvmQgUOLQ6vCnBDE9UmqTcW2OiSjN75KsJw7MOTX9tMJ+8yRc+4Ma
-         brgLM+0AzYO8TUOrPSLW6fSbz93dNtuvfWSFfHDwC2cpotRN9k+2sNdfHu5pZenfLZCh
-         iOVFoHuowni3rZctDoWNXU9cj6E6uDBJlGsZp3Gwlz0Y6FY29/3lqzfniLWLbaXMqkVQ
-         nI2A==
-X-Gm-Message-State: APt69E2bZ4KwGOei5GajlL2jffkiD2sLG9dHuRFGAQ4wJoIH8hsEpMVF
-        U0gP7YxKJ9ahSSIM0iBjYte069L3DptlkXRCUaofQw==
-X-Google-Smtp-Source: ADUXVKINFubr1CE1ZFwh1GxvXSnXxfsoXtERITNxlZ4/qrj0wc8TSZKRkZGV/I3lSWpuueej1BZ4OzPQSNrP9uUDPqA=
-X-Received: by 2002:a6b:c544:: with SMTP id v65-v6mr10422230iof.278.1529337612073;
- Mon, 18 Jun 2018 09:00:12 -0700 (PDT)
+        id S934394AbeFRQCG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 12:02:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46270 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1751704AbeFRQCD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 12:02:03 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id DC3F4207C2; Mon, 18 Jun 2018 18:02:00 +0200 (CEST)
+Received: from localhost (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A96DB20799;
+        Mon, 18 Jun 2018 18:01:50 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 18:01:50 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Marco Franchi <marco.franchi@nxp.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tom Saeger <tom.saeger@oracle.com>,
+        Smitha T Murthy <smitha.t@samsung.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
+        Jacob Chen <jacob-chen@iotwrt.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Sami Tolvanen <samitolvanen@google.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com,
+        Hugues Fruchet <hugues.fruchet@st.com>,
+        Randy Li <ayaka@soulik.info>
+Subject: Re: [PATCH v4 03/19] dt-bindings: sram: sunxi: Add A13 binding for
+ the C1 SRAM region
+Message-ID: <20180618160150.cowgucupmsm47tl7@flea>
+References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
+ <20180618145843.14631-4-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-Received: by 2002:a4f:e48b:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 09:00:11
- -0700 (PDT)
-X-Originating-IP: [2a02:168:5628:0:d0c7:bcda:eea:9e5d]
-In-Reply-To: <CAFqt6zZ3NtY6qL2B-ovwMZ3b8R2W8KKgshZuOdZAwuxwPA8aEQ@mail.gmail.com>
-References: <20180416150232.GA26745@jordon-HP-15-Notebook-PC>
- <CAFqt6zZ6VaPXoPs+3exLjNZ6yzS=v9=2TMXdFqHf_Zv5zEvSAA@mail.gmail.com>
- <20180510185138.GL33053@art_vandelay> <20180514162617.GD28661@phenom.ffwll.local>
- <CAFqt6zZ+ExTFKmzRycJiSW-u718pbGm1Ute+1UXF2NPn1WpLfA@mail.gmail.com>
- <20180524125756.GO3438@phenom.ffwll.local> <CAFqt6zZ3NtY6qL2B-ovwMZ3b8R2W8KKgshZuOdZAwuxwPA8aEQ@mail.gmail.com>
-From:   Daniel Vetter <daniel@ffwll.ch>
-Date:   Mon, 18 Jun 2018 18:00:11 +0200
-X-Google-Sender-Auth: 5rmr5DG7On7fPavoV9asu9EUoc0
-Message-ID: <CAKMK7uGPSJs2CN-RtKS51sHd5doTXYJrpJcLuhPfJF8g4zCQ+g@mail.gmail.com>
-Subject: Re: [PATCH] gpu: drm: vgem: Change return type to vm_fault_t
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     Sean Paul <seanpaul@chromium.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="4bghc2ietqyeucl6"
+Content-Disposition: inline
+In-Reply-To: <20180618145843.14631-4-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 1:26 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> On Thu, May 24, 2018 at 6:27 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
->> On Wed, May 23, 2018 at 03:05:35PM +0530, Souptick Joarder wrote:
->>> On Mon, May 14, 2018 at 9:56 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
->>> > On Thu, May 10, 2018 at 02:51:38PM -0400, Sean Paul wrote:
->>> >> On Thu, May 10, 2018 at 07:58:11PM +0530, Souptick Joarder wrote:
->>> >> > Hi Sean,
->>> >> >
->>> >> > On Mon, Apr 16, 2018 at 8:32 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->>> >> > > Use new return type vm_fault_t for fault handler.
->>> >> > >
->>> >> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->>> >> > > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
->>> >> > > ---
->>> >> > >  drivers/gpu/drm/vgem/vgem_drv.c | 5 ++---
->>> >> > >  1 file changed, 2 insertions(+), 3 deletions(-)
->>> >> > >
->>> >> > > diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
->>> >> > > index 2524ff1..c64a859 100644
->>> >> > > --- a/drivers/gpu/drm/vgem/vgem_drv.c
->>> >> > > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
->>> >> > > @@ -61,13 +61,13 @@ static void vgem_gem_free_object(struct drm_gem_object *obj)
->>> >> > >         kfree(vgem_obj);
->>> >> > >  }
->>> >> > >
->>> >> > > -static int vgem_gem_fault(struct vm_fault *vmf)
->>> >> > > +static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
->>> >> > >  {
->>> >> > >         struct vm_area_struct *vma = vmf->vma;
->>> >> > >         struct drm_vgem_gem_object *obj = vma->vm_private_data;
->>> >> > >         /* We don't use vmf->pgoff since that has the fake offset */
->>> >> > >         unsigned long vaddr = vmf->address;
->>> >> > > -       int ret;
->>> >> > > +       vm_fault_t ret = VM_FAULT_SIGBUS;
->>> >> > >         loff_t num_pages;
->>> >> > >         pgoff_t page_offset;
->>> >> > >         page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
->>> >> > > @@ -77,7 +77,6 @@ static int vgem_gem_fault(struct vm_fault *vmf)
->>> >> > >         if (page_offset > num_pages)
->>> >> > >                 return VM_FAULT_SIGBUS;
->>> >> > >
->>> >> > > -       ret = -ENOENT;
->>> >> > >         mutex_lock(&obj->pages_lock);
->>> >> > >         if (obj->pages) {
->>> >> > >                 get_page(obj->pages[page_offset]);
->>> >> > > --
->>> >> > > 1.9.1
->>> >> > >
->>> >> >
->>> >> > Any further comment on this patch ?
->>> >>
->>> >> Patch looks good to me. My build test fails, though, since vm_fault_t doesn't
->>> >> exist in drm-misc-next yet.
->>> >
->>> > vm_fault_t is already in upstream, just needs Maarten to do a backmerge.
->>> > Which I think he's done by now ... Otherwise nag him more :-)
->>> > -Daniel
->>> >
->>> >>
->>> >> So, for now,
->>> >>
->>> >> Reviewed-by: Sean Paul <seanpaul@chromium.org>
->>> >>
->>> >>
->>> >> --
->>> >> Sean Paul, Software Engineer, Google / Chromium OS
->>> >> _______________________________________________
->>> >> dri-devel mailing list
->>> >> dri-devel@lists.freedesktop.org
->>> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
->>> >
->>> > --
->>> > Daniel Vetter
->>> > Software Engineer, Intel Corporation
->>> > http://blog.ffwll.ch
->>>
->>> Daniel/ Sean, is this patch already merged for 4.18 ?
->>
->> Nope, fell through the cracks. Thanks for the reminder, queued for 4.18
->> now.
->> -Daniel
->>
->
-> Daniel, This patch is not available in 4.18-rc-1 :-)
 
-I mixed up my book-keeping, it was queued for 4.19. Should show up in
-linux-next any day (well as soon as drm-misc maintainers get their
-book-keeping updated).
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-+41 (0) 79 365 57 48 - http://blog.ffwll.ch
+--4bghc2ietqyeucl6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jun 18, 2018 at 04:58:27PM +0200, Paul Kocialkowski wrote:
+> This introduces a dedicated binding for the C1 SRAM region for the A13
+> sunxi platform.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+>=20
+> diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Docu=
+mentation/devicetree/bindings/sram/sunxi-sram.txt
+> index 5af5bafd5572..ddc82cbd7f4d 100644
+> --- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+> +++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+> @@ -32,6 +32,9 @@ The valid sections compatible for A10 are:
+>      - allwinner,sun4i-a10-sram-c1
+>      - allwinner,sun4i-a10-sram-d
+> =20
+> +The valid sections compatible for A13 are:
+> +    - allwinner,sun5i-a13-sram-c1
+
+It supports more SRAM than that, namely the SRAM A3-A4, C1 and D, at
+least.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin (formerly Free Electrons)
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--4bghc2ietqyeucl6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsn124ACgkQ0rTAlCFN
+r3SvQA/+Iw9jjksH/IgnN9KPIcnWIeqr9rZC6PInBUCNmGP+bJ79yYFB2U6rbuHd
+OUseTfvdNHrHoe73LXn4HOIUIdMxjSLQzvY9sAMyr0OEeg66/ZcqG7NhgIJWr4JI
+zTMpC1jCDPAFTumhHhAZUeMRBPlvEy27PAYXWBbMJ5WWCO81FBSh7KBIN0yU1T6S
+C9YtDAnZTeOsnIvrPwKlWBD06vXjpNfohBTapbpaJefmByZ3ayR+U50N5i7pgewN
+IJOJWgEATcAP4vkDkxgykkNMxXPJ1B9/yxttEahindbUMES5MCfejiuA8sjqcdW6
+wOncBz6FhRBQX6YsBb2vtQY623tUiEVITp9q2578TF+5aCdtKwnsNh+3AoN+DcaM
+irmW9VG6c2Sx1DzHrjBixjFPqtJV7ncl0AuhRLhHCmbQPut8VbgiJw3gvfdsh+d4
+sjdGT6x/mBcKyGdA9t++dzojFqgDUuEagLjEvBDoDOygTmah8URiP7UQWO9nl0ct
+ojnG505c1qaaIBhcX7I4wpVsPFIu5m6MYzI7bl1FSmAnWtNuD0x+i8oLyZ7zw0YR
+UdqlTf0mipMevdBqhsXdAsZ74rgcydPkEfS02GIBF0A8T8PXtr6HWuEY6/IwszTi
++z49dL8gYUhEBY3zcNIxqMmRKkWUU2oJvM9p4MHjWbYptlqiEvo=
+=2GOu
+-----END PGP SIGNATURE-----
+
+--4bghc2ietqyeucl6--
