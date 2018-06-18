@@ -3,87 +3,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3646FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C81A9C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:08:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F041920852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:08:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F041920852
+	by mail.kernel.org (Postfix) with ESMTP id 89D9C20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:08:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89D9C20852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754690AbeFROIk (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:08:40 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:33357 "EHLO
+        id S933830AbeFROIz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:08:55 -0400
+Received: from mout.kundenserver.de ([212.227.17.13]:50337 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754601AbeFROIh (ORCPT
+        with ESMTP id S1754601AbeFROIx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:08:37 -0400
+        Mon, 18 Jun 2018 10:08:53 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
  (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Mb8iR-1fnx6y0B8l-00KekP; Mon, 18 Jun 2018 16:08:15 +0200
+ 0MC1MO-1fM58435wO-008vJO; Mon, 18 Jun 2018 16:08:40 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Thomas Gleixner <tglx@linutronix.de>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>,
         Ingo Molnar <mingo@kernel.org>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/3] posix-timers: fix nanosleep_copyout() for CONFIG_COMPAT_32BIT_TIME
-Date:   Mon, 18 Jun 2018 16:07:59 +0200
-Message-Id: <20180618140811.2998503-1-arnd@arndb.de>
+Subject: [PATCH 3/3] timekeeping: use ktime_get_real_ts64() instead of getnstimeofday64()
+Date:   Mon, 18 Jun 2018 16:08:01 +0200
+Message-Id: <20180618140811.2998503-3-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:KWcztfOL8CF0VfxuTS9pFEZN5Pz4QPo0cxd06aMQ3S4ucXfTmnN
- pa6lkzGkFn4M7g3ab+oJA16LLEDrEgnYusH7pTayUomDDBrB0075pgZEaXtqO/Bq1YkyN16
- 2L+J+EebgME7t28FnV6NTa3NKe+tH2HdNdf8VOS0sMVEP6OBgMdNkIcPBtN5AbYPMhQVVj4
- 9/guOoL0Z4VcZgRJikLrQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:uct43v7Tppw=:vUicSlTQrWWgXrn4a1rmOw
- tEunvrSw7KawJ1wB9xCYqliIiLVQuRgjnDwSGW5bqscIi9zgkddMZNyB7raUvrQTWcbPAijM9
- yx/vZ5ODUDaVa4P0eGFh8DHx5Ve9+cM5nrpyAT7L/jaOgo1/cAqbSmw9q3FXU/F/sJcsV9eul
- p51JovstadcnaTezWbDWD0wIbpVhvbwX4HMHGHlwnxCUsZxgFbwGJ15kMMo0aJXOqFVzQZBe4
- 0Ten5SF47ARRMgs0so3Yg3qyoxXHHmpZxJrMyoj08pZbCGyQOwK/+LER6rnwADg3JcSjwxbH3
- x2N/ffC+5miCvSCeX63v6oZLQkZ+TR+hFtxB/PYdr22e/xdPRC6stXwOHWDQ2NLJ4ZV0BhASj
- FdsywdQSHDMUtdKNlt/b602nCu/IaL9noCBprzxvLBDXbrPwTgcK1HvVzCCY+QYw0keI7M1wf
- OScel5vMB0qaPnDXuGecM+qc4YFHPiE6IBVQYqAYg/pyIN6csU4Ug2F7GKVZ82l+g4QhEh8Dd
- 6+U2zH0PBZzkEspLlemxZf72V6FfiMwOHnfraLiaHCuC2L2CniPZx9OxfxTNs3KMWp77MImOV
- cdOB/kEWRLIUwKDl8YUXPsS/cwO1pi9yx01N+epcuc+R8Dy4dtcmI5welIBWlI2oFrzyVthzq
- rHW/LvQ97977KQiDMlMwFZ2u+yckpn09p950MLOZt67ilD/BBX60wkrfWAMMB8p6QStY=
+In-Reply-To: <20180618140811.2998503-1-arnd@arndb.de>
+References: <20180618140811.2998503-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:Wjc6Acd7epJAakSEfRIj6Q0bDR2aY4j5OVhwZfl6AS4iA9yxzzS
+ LX80oCYQRT8sPr9mePhBUrkuq4cDxK2orqsufvKQ9xajCGzVW3dD8D1luWs7uywT4SHTRUo
+ PQF7u0BwvTRA0AV0VldV9mHl0jqvpcYcU1aGHUIV6IojEoyXQKNpiOuZ0SyP0n7hYQ/jxSZ
+ Asqhq0SHcVIkUhDSLre8Q==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:K1Xd0KNhYVY=:YxRkWWetJz0fF4O9xKXQHN
+ LYxYKkkyWuCZ9qfzrPZe0unqU4ZxoSt7sOioub+aeFqVWMJRwwTfgGOoE+kpBkhtSBQWCgXvV
+ 3+Xh4I78Kne1bTwHcRhwVd89bKkrtvMl18F86+Km8GAsQUjEaBJHSW86lq5djcWcqc9YXVodH
+ gWh3NXuCzDMBMu9wRxh8Elpw0ja/2Z1tlvlMGWWtcss8bJQtozCwGqmJhuEv2LPqsplDZn2pc
+ WHHI3YmcWhATD1yGcChWh8F5ea6ebt2DJL01LwglKZ+HR8d7J+ChNtpL+iIs6nwuFoSp53mqN
+ euPsh8ZQQHsufa1vRYs4+bnxz6OL/wXz5EKSRYv0u71FpN6mI15xAF2RxU/mODTj5ZzuEkupG
+ 1L3i/uGq8oUHX+P0Cf9vaKv432y5W/HDzviFvBHTAGBU18e9QiSh58QEcAC13qQDs8vo+TB7G
+ VlLRZnlInNZ0VyYnCi9ZkZtLcg13yV6Qrb89KTNvMtNN4E5AT6AZVj2AhyPtE9vxtpy8mWi47
+ LfTt4Vf5JeQPwMJMwNm2L9JllOzDi/OnVa4gZ3/+o+qL1rSO4UhM+d/fG2xxeT66A4mOohph5
+ Jy2bF5ydq2O7y+t7LckR3WDWcKb49+IGJSkEUk3r8Fc0xg2nIXjSVY7IkaCY8CJa5OCWDTH/2
+ LhHn2MmUiaYrCnB3JKnVgtvzoQccM2ULo4+38/GffwGWt+SdUXE2QJCnscS9cR6Byp10=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit b5793b0d92c9 ("posix-timers: Make compat syscalls depend on
-CONFIG_COMPAT_32BIT_TIME") added support for building the nanosleep
-compat system call on 32-bit architectures, but missed one change
-in nanosleep_copyout(), which would trigger a BUG() as soon as we
-switch any architecture over to use it.
-
-This makes sure the TT_COMPAT handler is available when we need it.
+The two do the same, this moves all users to the newer name for consistency.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- kernel/time/hrtimer.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/ntp.c         | 6 +++---
+ kernel/time/timekeeping.c | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 055a4a728c00..3e93c54bd3a1 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1659,7 +1659,7 @@ EXPORT_SYMBOL_GPL(hrtimer_init_sleeper);
- int nanosleep_copyout(struct restart_block *restart, struct timespec64 *ts)
+diff --git a/kernel/time/ntp.c b/kernel/time/ntp.c
+index a09ded765f6c..10a79053e82f 100644
+--- a/kernel/time/ntp.c
++++ b/kernel/time/ntp.c
+@@ -502,7 +502,7 @@ static void sched_sync_hw_clock(struct timespec64 now,
  {
- 	switch(restart->nanosleep.type) {
--#ifdef CONFIG_COMPAT
-+#ifdef CONFIG_COMPAT_32BIT_TIME
- 	case TT_COMPAT:
- 		if (compat_put_timespec64(ts, restart->nanosleep.compat_rmtp))
- 			return -EFAULT;
+ 	struct timespec64 next;
+ 
+-	getnstimeofday64(&next);
++	ktime_get_real_ts64(&next);
+ 	if (!fail)
+ 		next.tv_sec = 659;
+ 	else {
+@@ -537,7 +537,7 @@ static void sync_rtc_clock(void)
+ 	if (!IS_ENABLED(CONFIG_RTC_SYSTOHC))
+ 		return;
+ 
+-	getnstimeofday64(&now);
++	ktime_get_real_ts64(&now);
+ 
+ 	adjust = now;
+ 	if (persistent_clock_is_local)
+@@ -591,7 +591,7 @@ static bool sync_cmos_clock(void)
+ 	 * Architectures are strongly encouraged to use rtclib and not
+ 	 * implement this legacy API.
+ 	 */
+-	getnstimeofday64(&now);
++	ktime_get_real_ts64(&now);
+ 	if (rtc_tv_nsec_ok(-1 * target_nsec, &adjust, &now)) {
+ 		if (persistent_clock_is_local)
+ 			adjust.tv_sec -= (sys_tz.tz_minuteswest * 60);
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 4786df904c22..77c436a0070b 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -2310,7 +2310,7 @@ int do_adjtimex(struct timex *txc)
+ 			return ret;
+ 	}
+ 
+-	getnstimeofday64(&ts);
++	ktime_get_real_ts64(&ts);
+ 
+ 	raw_spin_lock_irqsave(&timekeeper_lock, flags);
+ 	write_seqcount_begin(&tk_core.seq);
 -- 
 2.9.0
 
