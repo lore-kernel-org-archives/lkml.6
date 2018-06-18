@@ -3,96 +3,264 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15414C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D02BC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B95FF2075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B95FF2075E
+	by mail.kernel.org (Postfix) with ESMTP id C2E6A2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:38:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E6A2075E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935727AbeFRUiI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 16:38:08 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:57970 "EHLO
+        id S936874AbeFRUiv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 16:38:51 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:57978 "EHLO
         sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934880AbeFRUiH (ORCPT
+        with ESMTP id S935090AbeFRUiH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Jun 2018 16:38:07 -0400
 Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.91)
         (envelope-from <johannes@sipsolutions.net>)
-        id 1fV0ub-0003Ao-Mr; Mon, 18 Jun 2018 22:38:05 +0200
+        id 1fV0uc-0003Ao-9n; Mon, 18 Jun 2018 22:38:06 +0200
 From:   Johannes Berg <johannes@sipsolutions.net>
 To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
 Cc:     Al Viro <viro@zeniv.linux.org.uk>,
         Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v4 1/3] bitfield: fix *_encode_bits()
-Date:   Mon, 18 Jun 2018 22:37:48 +0200
-Message-Id: <20180618203750.28658-1-johannes@sipsolutions.net>
+Subject: [PATCH v4 3/3] bitfield: add tests
+Date:   Mon, 18 Jun 2018 22:37:50 +0200
+Message-Id: <20180618203750.28658-3-johannes@sipsolutions.net>
 X-Mailer: git-send-email 2.14.4
+In-Reply-To: <20180618203750.28658-1-johannes@sipsolutions.net>
+References: <20180618203750.28658-1-johannes@sipsolutions.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There's a bug in *_encode_bits() in using ~field_multiplier() for
-the check whether or not the constant value fits into the field,
-this is wrong and clearly ~field_mask() was intended. This was
-triggering for me for both constant and non-constant values.
+Add tests for the bitfield helpers. The constant ones will all
+be folded to nothing by the compiler (if everything is correct
+in the header file), and the variable ones do some tests against
+open-coding the necessary shifts.
 
-Additionally, make this case actually into an compile error.
-Declaring the extern function that will never exist with just a
-warning is pointless as then later we'll just get a link error.
+A few test cases that should fail/warn compilation are provided
+under ifdef.
 
-While at it, also fix the indentation in those lines I'm touching.
-
-Finally, as suggested by Andy Shevchenko, add some tests and for
-that introduce also u8 helpers. The tests don't compile without
-the fix, showing that it's necessary.
-
-Fixes: 00b0c9b82663 ("Add primitives for manipulating bitfields both in host- and fixed-endian.")
+Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
 Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
 ---
-v2: replace stray tab by space
-v3: u8 helpers, tests
-v4: minor cleanup (Andy)
-    split into two patches (Andy)
+ lib/Kconfig.debug   |   7 +++
+ lib/Makefile        |   1 +
+ lib/test_bitfield.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 176 insertions(+)
+ create mode 100644 lib/test_bitfield.c
 
-If you don't mind, I'd like to take this through the networking
-tree(s) as a fix since I have some pending code that depends on
-it.
----
- include/linux/bitfield.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/bitfield.h b/include/linux/bitfield.h
-index cf2588d81148..147a7bb341dd 100644
---- a/include/linux/bitfield.h
-+++ b/include/linux/bitfield.h
-@@ -104,7 +104,7 @@
- 		(typeof(_mask))(((_reg) & (_mask)) >> __bf_shf(_mask));	\
- 	})
+diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+index eb885942eb0f..b0870377b4d1 100644
+--- a/lib/Kconfig.debug
++++ b/lib/Kconfig.debug
+@@ -1799,6 +1799,13 @@ config TEST_BITMAP
  
--extern void __compiletime_warning("value doesn't fit into mask")
-+extern void __compiletime_error("value doesn't fit into mask")
- __field_overflow(void);
- extern void __compiletime_error("bad bitfield mask")
- __bad_mask(void);
-@@ -121,8 +121,8 @@ static __always_inline u64 field_mask(u64 field)
- #define ____MAKE_OP(type,base,to,from)					\
- static __always_inline __##type type##_encode_bits(base v, base field)	\
- {									\
--        if (__builtin_constant_p(v) &&	(v & ~field_multiplier(field)))	\
--			    __field_overflow();				\
-+	if (__builtin_constant_p(v) && (v & ~field_mask(field)))	\
-+		__field_overflow();					\
- 	return to((v & field_mask(field)) * field_multiplier(field));	\
- }									\
- static __always_inline __##type type##_replace_bits(__##type old,	\
+ 	  If unsure, say N.
+ 
++config TEST_BITFIELD
++	tristate "Test bitfield functions at runtime"
++	help
++	  Enable this option to test the bitfield functions at boot.
++
++	  If unsure, say N.
++
+ config TEST_UUID
+ 	tristate "Test functions located in the uuid module at runtime"
+ 
+diff --git a/lib/Makefile b/lib/Makefile
+index 84c6dcb31fbb..02ab4c1a64d1 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -68,6 +68,7 @@ obj-$(CONFIG_TEST_STATIC_KEYS) += test_static_keys.o
+ obj-$(CONFIG_TEST_STATIC_KEYS) += test_static_key_base.o
+ obj-$(CONFIG_TEST_PRINTF) += test_printf.o
+ obj-$(CONFIG_TEST_BITMAP) += test_bitmap.o
++obj-$(CONFIG_TEST_BITFIELD) += test_bitfield.o
+ obj-$(CONFIG_TEST_UUID) += test_uuid.o
+ obj-$(CONFIG_TEST_PARMAN) += test_parman.o
+ obj-$(CONFIG_TEST_KMOD) += test_kmod.o
+diff --git a/lib/test_bitfield.c b/lib/test_bitfield.c
+new file mode 100644
+index 000000000000..c9bf2d542244
+--- /dev/null
++++ b/lib/test_bitfield.c
+@@ -0,0 +1,168 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Test cases for bitfield helpers.
++ */
++
++#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
++
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/bitfield.h>
++
++#define CHECK_ENC_GET_U(tp, v, field, res) do {				\
++		{							\
++			u##tp _res;					\
++									\
++			_res = u##tp##_encode_bits(v, field);		\
++			if (_res != res) {				\
++				pr_warn("u" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != " #res "\n",\
++					(u64)_res);			\
++				return -EINVAL;				\
++			}						\
++			if (u##tp##_get_bits(_res, field) != v)		\
++				return -EINVAL;				\
++		}							\
++	} while (0)
++
++#define CHECK_ENC_GET_LE(tp, v, field, res) do {			\
++		{							\
++			__le##tp _res;					\
++									\
++			_res = le##tp##_encode_bits(v, field);		\
++			if (_res != cpu_to_le##tp(res)) {		\
++				pr_warn("le" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != 0x%llx\n",\
++					(u64)le##tp##_to_cpu(_res),	\
++					(u64)(res));			\
++				return -EINVAL;				\
++			}						\
++			if (le##tp##_get_bits(_res, field) != v)	\
++				return -EINVAL;				\
++		}							\
++	} while (0)
++
++#define CHECK_ENC_GET_BE(tp, v, field, res) do {			\
++		{							\
++			__be##tp _res;					\
++									\
++			_res = be##tp##_encode_bits(v, field);		\
++			if (_res != cpu_to_be##tp(res)) {		\
++				pr_warn("be" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != 0x%llx\n",\
++					(u64)be##tp##_to_cpu(_res),	\
++					(u64)(res));			\
++				return -EINVAL;				\
++			}						\
++			if (be##tp##_get_bits(_res, field) != v)	\
++				return -EINVAL;				\
++		}							\
++	} while (0)
++
++#define CHECK_ENC_GET(tp, v, field, res) do {				\
++		CHECK_ENC_GET_U(tp, v, field, res);			\
++		CHECK_ENC_GET_LE(tp, v, field, res);			\
++		CHECK_ENC_GET_BE(tp, v, field, res);			\
++	} while (0)
++
++static int test_constants(void)
++{
++	/*
++	 * NOTE
++	 * This whole function compiles (or at least should, if everything
++	 * is going according to plan) to nothing after optimisation.
++	 */
++
++	CHECK_ENC_GET(16,  1, 0x000f, 0x0001);
++	CHECK_ENC_GET(16,  3, 0x00f0, 0x0030);
++	CHECK_ENC_GET(16,  5, 0x0f00, 0x0500);
++	CHECK_ENC_GET(16,  7, 0xf000, 0x7000);
++	CHECK_ENC_GET(16, 14, 0x000f, 0x000e);
++	CHECK_ENC_GET(16, 15, 0x00f0, 0x00f0);
++
++	CHECK_ENC_GET_U(8,  1, 0x0f, 0x01);
++	CHECK_ENC_GET_U(8,  3, 0xf0, 0x30);
++	CHECK_ENC_GET_U(8, 14, 0x0f, 0x0e);
++	CHECK_ENC_GET_U(8, 15, 0xf0, 0xf0);
++
++	CHECK_ENC_GET(32,  1, 0x00000f00, 0x00000100);
++	CHECK_ENC_GET(32,  3, 0x0000f000, 0x00003000);
++	CHECK_ENC_GET(32,  5, 0x000f0000, 0x00050000);
++	CHECK_ENC_GET(32,  7, 0x00f00000, 0x00700000);
++	CHECK_ENC_GET(32, 14, 0x0f000000, 0x0e000000);
++	CHECK_ENC_GET(32, 15, 0xf0000000, 0xf0000000);
++
++	CHECK_ENC_GET(64,  1, 0x00000f0000000000ull, 0x0000010000000000ull);
++	CHECK_ENC_GET(64,  3, 0x0000f00000000000ull, 0x0000300000000000ull);
++	CHECK_ENC_GET(64,  5, 0x000f000000000000ull, 0x0005000000000000ull);
++	CHECK_ENC_GET(64,  7, 0x00f0000000000000ull, 0x0070000000000000ull);
++	CHECK_ENC_GET(64, 14, 0x0f00000000000000ull, 0x0e00000000000000ull);
++	CHECK_ENC_GET(64, 15, 0xf000000000000000ull, 0xf000000000000000ull);
++
++	return 0;
++}
++
++#define CHECK(tp, mask) do {						\
++		u64 v;							\
++									\
++		for (v = 0; v < 1 << hweight32(mask); v++)		\
++			if (tp##_encode_bits(v, mask) != v << __ffs64(mask)) \
++				return -EINVAL;				\
++	} while (0)
++
++static int test_variables(void)
++{
++	CHECK(u8, 0x0f);
++	CHECK(u8, 0xf0);
++	CHECK(u8, 0x38);
++
++	CHECK(u16, 0x0038);
++	CHECK(u16, 0x0380);
++	CHECK(u16, 0x3800);
++	CHECK(u16, 0x8000);
++
++	CHECK(u32, 0x80000000);
++	CHECK(u32, 0x7f000000);
++	CHECK(u32, 0x07e00000);
++	CHECK(u32, 0x00018000);
++
++	CHECK(u64, 0x8000000000000000ull);
++	CHECK(u64, 0x7f00000000000000ull);
++	CHECK(u64, 0x0001800000000000ull);
++	CHECK(u64, 0x0000000080000000ull);
++	CHECK(u64, 0x000000007f000000ull);
++	CHECK(u64, 0x0000000018000000ull);
++	CHECK(u64, 0x0000001f8000000ull);
++
++	return 0;
++}
++
++static int __init test_bitfields(void)
++{
++	int ret = test_constants();
++
++	if (ret) {
++		pr_warn("constant tests failed!\n");
++		return ret;
++	}
++
++	ret = test_variables();
++	if (ret) {
++		pr_warn("variable tests failed!\n");
++		return ret;
++	}
++
++#ifdef TEST_BITFIELD_COMPILE
++	/* these should fail compilation */
++	CHECK_ENC_GET(16, 16, 0x0f00, 0x1000);
++	u32_encode_bits(7, 0x06000000);
++
++	/* this should at least give a warning */
++	u16_encode_bits(0, 0x60000);
++#endif
++
++	pr_info("tests passed\n");
++
++	return 0;
++}
++module_init(test_bitfields)
++
++MODULE_AUTHOR("Johannes Berg <johannes@sipsolutions.net>");
++MODULE_LICENSE("GPL");
 -- 
 2.14.4
 
