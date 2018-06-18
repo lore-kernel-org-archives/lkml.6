@@ -3,61 +3,63 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B2EC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680D6C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA3D20850
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240E3208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="JAWoaBO/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AA3D20850
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="PUcRidz6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 240E3208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934921AbeFRMAX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:00:23 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45310 "EHLO
+        id S934953AbeFRMAc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:00:32 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45880 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934724AbeFRMAM (ORCPT
+        with ESMTP id S933575AbeFRMA3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:00:12 -0400
+        Mon, 18 Jun 2018 08:00:29 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=YvFs6YDd1Tz5Vz+67hoqRvd0g1qX41webe04qQdSeDk=; b=JAWoaBO/SLiY
-        qU1+sjZtxTjZnshyoKla2Bu4GZKdggW2OAQqHt1N/U8//gyvrrpm7e+8Bf9+7dVAMgqmFriyOaA4U
-        4mtqsqmGSC8/mysrhLLFhF/pF4INKS5ep2ckhIHTx0idfJvqQvGMyCXUP2Ro+hOUCsGBD1Y1jnq4y
-        YRqP8=;
+        List-Archive; bh=+7ew39sr4Feny/u0aX5Molqap3LpGBm3vj42I3g413E=; b=PUcRidz6Q8cm
+        GiDvZe0qamj5FFaDgxqqzgb7V5l4w2LQDteVCTrkRTJygyZygOlW1Og6QAF/ToCJuo3E/mHx6Lhwd
+        zls9MI+0EnjQRlyyjW1jjWJ521i4hcr8qkeKQL9jCsFngJbjoFoABR+pStG58GNcfO2y5AuuhMOSV
+        4sdxk=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspH-0007xQ-Sh; Mon, 18 Jun 2018 12:00:03 +0000
+        id 1fUspf-0007z8-1B; Mon, 18 Jun 2018 12:00:27 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspH-0008WL-AN; Mon, 18 Jun 2018 13:00:03 +0100
+        id 1fUspe-0000H5-Il; Mon, 18 Jun 2018 13:00:26 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Peter Ujfalusi <peter.ujfalusi@ti.com>,
+To:     Agrawal@sirena.org.uk, Akshu <Akshu.Agrawal@amd.com>
+Cc:     Akshu Agrawal <akshu.agrawal@amd.com>,
         Mark Brown <broonie@kernel.org>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Jarkko Nikula <jarkko.nikula@bitmer.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        Takashi Iwai <tiwai@suse.com>,
+        Liam Girdwood <lgirdwood@gmail.com>, djkurtz@chromium.org,
         Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-omap@vger.kernel.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: twl6040: make pointer dmic_codec_dev static" to the asoc tree
-In-Reply-To:  <20180606093504.30255-1-colin.king@canonical.com>
-Message-Id: <E1fUspH-0008WL-AN@debutante>
-Date:   Mon, 18 Jun 2018 13:00:03 +0100
+        "Mukunda,, Vijendar" <Vijendar.Mukunda@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        akshu.agrawal@amd.com, Guenter Roeck <linux@roeck-us.net>,
+        alsa-devel@alsa-project.org
+Subject: Applied "ASoC: AMD: Add NULL pointer check" to the asoc tree
+In-Reply-To:  <1528354129-5023-1-git-send-email-akshu.agrawal@amd.com>
+Message-Id: <E1fUspe-0000H5-Il@debutante>
+Date:   Mon, 18 Jun 2018 13:00:26 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,7 +67,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: twl6040: make pointer dmic_codec_dev static
+   ASoC: AMD: Add NULL pointer check
 
 has been applied to the asoc tree at
 
@@ -90,37 +92,35 @@ to this mail.
 Thanks,
 Mark
 
-From 510e419cb85798915c6426c496a164ec6328d1a7 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 6 Jun 2018 10:35:04 +0100
-Subject: [PATCH] ASoC: twl6040: make pointer dmic_codec_dev static
+From 6e56e5d04191aa20e08430dcb203c081fa247e93 Mon Sep 17 00:00:00 2001
+From: "Agrawal, Akshu" <Akshu.Agrawal@amd.com>
+Date: Thu, 7 Jun 2018 14:48:43 +0800
+Subject: [PATCH] ASoC: AMD: Add NULL pointer check
 
-The pointer dmic_codec_dev is local to the source and does not need
-to be in global scope, so make it static.
+Fix crash in those platforms whose machine driver does not expose
+platform_info. For those platforms we rely on default value and
+select I2SSP channel.
 
-Cleans up sparse warning:
-warning: symbol 'dmic_codec_dev' was not declared. Should it be static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Acked-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Akshu Agrawal <akshu.agrawal@amd.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/omap/omap-abe-twl6040.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ sound/soc/amd/acp-pcm-dma.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/sound/soc/omap/omap-abe-twl6040.c b/sound/soc/omap/omap-abe-twl6040.c
-index 15ccbf479c96..d5ae9eb8c756 100644
---- a/sound/soc/omap/omap-abe-twl6040.c
-+++ b/sound/soc/omap/omap-abe-twl6040.c
-@@ -40,7 +40,7 @@ struct abe_twl6040 {
- 	int	mclk_freq;	/* MCLK frequency speed for twl6040 */
- };
+diff --git a/sound/soc/amd/acp-pcm-dma.c b/sound/soc/amd/acp-pcm-dma.c
+index 77203841c535..1458b5048498 100644
+--- a/sound/soc/amd/acp-pcm-dma.c
++++ b/sound/soc/amd/acp-pcm-dma.c
+@@ -773,7 +773,8 @@ static int acp_dma_hw_params(struct snd_pcm_substream *substream,
+ 	if (WARN_ON(!rtd))
+ 		return -EINVAL;
  
--struct platform_device *dmic_codec_dev;
-+static struct platform_device *dmic_codec_dev;
- 
- static int omap_abe_hw_params(struct snd_pcm_substream *substream,
- 	struct snd_pcm_hw_params *params)
+-	rtd->i2s_instance = pinfo->i2s_instance;
++	if (pinfo)
++		rtd->i2s_instance = pinfo->i2s_instance;
+ 	if (adata->asic_type == CHIP_STONEY) {
+ 		val = acp_reg_read(adata->acp_mmio,
+ 				   mmACP_I2S_16BIT_RESOLUTION_EN);
 -- 
 2.17.1
 
