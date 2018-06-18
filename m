@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 024E4C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91A59C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B815A208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B815A208A6
+	by mail.kernel.org (Postfix) with ESMTP id 5890B208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:20:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5890B208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935700AbeFRIUk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:20:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55118 "EHLO
+        id S935721AbeFRIUo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:20:44 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55136 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964908AbeFRIUh (ORCPT
+        with ESMTP id S935703AbeFRIUm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:20:37 -0400
+        Mon, 18 Jun 2018 04:20:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 76E01C7A;
-        Mon, 18 Jun 2018 08:20:36 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EEE4BC7A;
+        Mon, 18 Jun 2018 08:20:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Dirk van der Merwe <dirk.vandermerwe@netronome.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Greg Thelen <gthelen@google.com>,
+        Tarick Bedeir <tarick@google.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 119/279] nfp: dont depend on eth_tbl being available
-Date:   Mon, 18 Jun 2018 10:11:44 +0200
-Message-Id: <20180618080613.735533647@linuxfoundation.org>
+Subject: [PATCH 4.16 121/279] nvmet-rdma: depend on INFINIBAND_ADDR_TRANS
+Date:   Mon, 18 Jun 2018 10:11:46 +0200
+Message-Id: <20180618080613.820798714@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,135 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jakub Kicinski <jakub.kicinski@netronome.com>
+From: Greg Thelen <gthelen@google.com>
 
-[ Upstream commit c55ca688ed99a9cb79367aee2ed2ff6cb80fc039 ]
+[ Upstream commit d6fc6a22fc7d3df987666725496ed5dd2dd30f23 ]
 
-For very very old generation of the management FW Ethernet port
-information table may theoretically not be available.  This in
-turn will cause the nfp_port structures to not be allocated.
+NVME_TARGET_RDMA code depends on INFINIBAND_ADDR_TRANS provided symbols.
+So declare the kconfig dependency.  This is necessary to allow for
+enabling INFINIBAND without INFINIBAND_ADDR_TRANS.
 
-Make sure we don't crash the kernel when there is no eth_tbl:
-
-RIP: 0010:nfp_net_pci_probe+0xf2/0xb40 [nfp]
-...
-Call Trace:
-  nfp_pci_probe+0x6de/0xab0 [nfp]
-  local_pci_probe+0x47/0xa0
-  work_for_cpu_fn+0x1a/0x30
-  process_one_work+0x1de/0x3e0
-
-Found while working with broken/development version of management FW.
-
-Fixes: a5950182c00e ("nfp: map mac_stats and vf_cfg BARs")
-Fixes: 93da7d9660ee ("nfp: provide nfp_port to of nfp_net_get_mac_addr()")
-Signed-off-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Reviewed-by: Dirk van der Merwe <dirk.vandermerwe@netronome.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Cc: Tarick Bedeir <tarick@google.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/netronome/nfp/flower/main.c  |    2 -
- drivers/net/ethernet/netronome/nfp/nfp_app_nic.c  |    2 -
- drivers/net/ethernet/netronome/nfp/nfp_main.h     |    4 ++
- drivers/net/ethernet/netronome/nfp/nfp_net_main.c |   31 ++++++++++++----------
- 4 files changed, 23 insertions(+), 16 deletions(-)
+ drivers/nvme/target/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/netronome/nfp/flower/main.c
-+++ b/drivers/net/ethernet/netronome/nfp/flower/main.c
-@@ -358,7 +358,7 @@ nfp_flower_spawn_phy_reprs(struct nfp_ap
- 		}
+--- a/drivers/nvme/target/Kconfig
++++ b/drivers/nvme/target/Kconfig
+@@ -27,7 +27,7 @@ config NVME_TARGET_LOOP
  
- 		SET_NETDEV_DEV(repr, &priv->nn->pdev->dev);
--		nfp_net_get_mac_addr(app->pf, port);
-+		nfp_net_get_mac_addr(app->pf, repr, port);
- 
- 		cmsg_port_id = nfp_flower_cmsg_phys_port(phys_port);
- 		err = nfp_repr_init(app, repr,
---- a/drivers/net/ethernet/netronome/nfp/nfp_app_nic.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_app_nic.c
-@@ -69,7 +69,7 @@ int nfp_app_nic_vnic_alloc(struct nfp_ap
- 	if (err)
- 		return err < 0 ? err : 0;
- 
--	nfp_net_get_mac_addr(app->pf, nn->port);
-+	nfp_net_get_mac_addr(app->pf, nn->dp.netdev, nn->port);
- 
- 	return 0;
- }
---- a/drivers/net/ethernet/netronome/nfp/nfp_main.h
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_main.h
-@@ -171,7 +171,9 @@ void nfp_net_pci_remove(struct nfp_pf *p
- int nfp_hwmon_register(struct nfp_pf *pf);
- void nfp_hwmon_unregister(struct nfp_pf *pf);
- 
--void nfp_net_get_mac_addr(struct nfp_pf *pf, struct nfp_port *port);
-+void
-+nfp_net_get_mac_addr(struct nfp_pf *pf, struct net_device *netdev,
-+		     struct nfp_port *port);
- 
- bool nfp_ctrl_tx(struct nfp_net *nn, struct sk_buff *skb);
- 
---- a/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
-+++ b/drivers/net/ethernet/netronome/nfp/nfp_net_main.c
-@@ -67,23 +67,26 @@
- /**
-  * nfp_net_get_mac_addr() - Get the MAC address.
-  * @pf:       NFP PF handle
-+ * @netdev:   net_device to set MAC address on
-  * @port:     NFP port structure
-  *
-  * First try to get the MAC address from NSP ETH table. If that
-  * fails generate a random address.
-  */
--void nfp_net_get_mac_addr(struct nfp_pf *pf, struct nfp_port *port)
-+void
-+nfp_net_get_mac_addr(struct nfp_pf *pf, struct net_device *netdev,
-+		     struct nfp_port *port)
- {
- 	struct nfp_eth_table_port *eth_port;
- 
- 	eth_port = __nfp_port_get_eth_port(port);
- 	if (!eth_port) {
--		eth_hw_addr_random(port->netdev);
-+		eth_hw_addr_random(netdev);
- 		return;
- 	}
- 
--	ether_addr_copy(port->netdev->dev_addr, eth_port->mac_addr);
--	ether_addr_copy(port->netdev->perm_addr, eth_port->mac_addr);
-+	ether_addr_copy(netdev->dev_addr, eth_port->mac_addr);
-+	ether_addr_copy(netdev->perm_addr, eth_port->mac_addr);
- }
- 
- static struct nfp_eth_table_port *
-@@ -511,16 +514,18 @@ static int nfp_net_pci_map_mem(struct nf
- 		return PTR_ERR(mem);
- 	}
- 
--	min_size =  NFP_MAC_STATS_SIZE * (pf->eth_tbl->max_index + 1);
--	pf->mac_stats_mem = nfp_rtsym_map(pf->rtbl, "_mac_stats",
--					  "net.macstats", min_size,
--					  &pf->mac_stats_bar);
--	if (IS_ERR(pf->mac_stats_mem)) {
--		if (PTR_ERR(pf->mac_stats_mem) != -ENOENT) {
--			err = PTR_ERR(pf->mac_stats_mem);
--			goto err_unmap_ctrl;
-+	if (pf->eth_tbl) {
-+		min_size =  NFP_MAC_STATS_SIZE * (pf->eth_tbl->max_index + 1);
-+		pf->mac_stats_mem = nfp_rtsym_map(pf->rtbl, "_mac_stats",
-+						  "net.macstats", min_size,
-+						  &pf->mac_stats_bar);
-+		if (IS_ERR(pf->mac_stats_mem)) {
-+			if (PTR_ERR(pf->mac_stats_mem) != -ENOENT) {
-+				err = PTR_ERR(pf->mac_stats_mem);
-+				goto err_unmap_ctrl;
-+			}
-+			pf->mac_stats_mem = NULL;
- 		}
--		pf->mac_stats_mem = NULL;
- 	}
- 
- 	pf->vf_cfg_mem = nfp_net_pf_map_rtsym(pf, "net.vfcfg",
+ config NVME_TARGET_RDMA
+ 	tristate "NVMe over Fabrics RDMA target support"
+-	depends on INFINIBAND
++	depends on INFINIBAND && INFINIBAND_ADDR_TRANS
+ 	depends on NVME_TARGET
+ 	select SGL_ALLOC
+ 	help
 
 
