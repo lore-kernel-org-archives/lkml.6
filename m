@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7282EC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32DBFC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38E8A20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38E8A20864
+	by mail.kernel.org (Postfix) with ESMTP id D910E20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D910E20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965592AbeFRIWw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:22:52 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55640 "EHLO
+        id S965628AbeFRIW5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:22:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55658 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935849AbeFRIWt (ORCPT
+        with ESMTP id S965596AbeFRIWy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:22:49 -0400
+        Mon, 18 Jun 2018 04:22:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6063BC7F;
-        Mon, 18 Jun 2018 08:22:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB3ACC7F;
+        Mon, 18 Jun 2018 08:22:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jagannathan Raman <jag.raman@oracle.com>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Chengguang Xu <cgxu519@gmx.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Keith Busch <keith.busch@intel.com>,
+        Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 163/279] iommu/vt-d: Fix usage of force parameter in intel_ir_reconfigure_irte()
-Date:   Mon, 18 Jun 2018 10:12:28 +0200
-Message-Id: <20180618080615.569482551@linuxfoundation.org>
+Subject: [PATCH 4.16 165/279] nvme: fix potential memory leak in option parsing
+Date:   Mon, 18 Jun 2018 10:12:30 +0200
+Message-Id: <20180618080615.649253719@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,55 +53,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jagannathan Raman <jag.raman@oracle.com>
+From: Chengguang Xu <cgxu519@gmx.com>
 
-[ Upstream commit aa7528fe3576d11f4a10237178a723a1f080a547 ]
+[ Upstream commit 59a2f3f00fd744dbad22593f47552037d3154ca6 ]
 
-It was noticed that the IRTE configured for guest OS kernel
-was over-written while the guest was running. As a result,
-vt-d Posted Interrupts configured for the guest are not being
-delivered directly, and instead bounces off the host. Every
-interrupt delivery takes a VM Exit.
+When specifying same string type option several times,
+current option parsing may cause memory leak. Hence,
+call kfree for previous one in this case.
 
-It was noticed that the following stack is doing the over-write:
-[  147.463177]  modify_irte+0x171/0x1f0
-[  147.463405]  intel_ir_set_affinity+0x5c/0x80
-[  147.463641]  msi_domain_set_affinity+0x32/0x90
-[  147.463881]  irq_do_set_affinity+0x37/0xd0
-[  147.464125]  irq_set_affinity_locked+0x9d/0xb0
-[  147.464374]  __irq_set_affinity+0x42/0x70
-[  147.464627]  write_irq_affinity.isra.5+0xe1/0x110
-[  147.464895]  proc_reg_write+0x38/0x70
-[  147.465150]  __vfs_write+0x36/0x180
-[  147.465408]  ? handle_mm_fault+0xdf/0x200
-[  147.465671]  ? _cond_resched+0x15/0x30
-[  147.465936]  vfs_write+0xad/0x1a0
-[  147.466204]  SyS_write+0x52/0xc0
-[  147.466472]  do_syscall_64+0x74/0x1a0
-[  147.466744]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-reversing the sense of force check in intel_ir_reconfigure_irte()
-restores proper posted interrupt functionality
-
-Signed-off-by: Jagannathan Raman <jag.raman@oracle.com>
-Fixes: d491bdff888e ('iommu/vt-d: Reevaluate vector configuration on activate()')
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/intel_irq_remapping.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvme/host/fabrics.c |    6 ++++++
+ 1 file changed, 6 insertions(+)
 
---- a/drivers/iommu/intel_irq_remapping.c
-+++ b/drivers/iommu/intel_irq_remapping.c
-@@ -1136,7 +1136,7 @@ static void intel_ir_reconfigure_irte(st
- 	irte->dest_id = IRTE_DEST(cfg->dest_apicid);
- 
- 	/* Update the hardware only if the interrupt is in remapped mode. */
--	if (!force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
-+	if (force || ir_data->irq_2_iommu.mode == IRQ_REMAPPING)
- 		modify_irte(&ir_data->irq_2_iommu, irte);
- }
- 
+--- a/drivers/nvme/host/fabrics.c
++++ b/drivers/nvme/host/fabrics.c
+@@ -668,6 +668,7 @@ static int nvmf_parse_options(struct nvm
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
++			kfree(opts->transport);
+ 			opts->transport = p;
+ 			break;
+ 		case NVMF_OPT_NQN:
+@@ -676,6 +677,7 @@ static int nvmf_parse_options(struct nvm
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
++			kfree(opts->subsysnqn);
+ 			opts->subsysnqn = p;
+ 			nqnlen = strlen(opts->subsysnqn);
+ 			if (nqnlen >= NVMF_NQN_SIZE) {
+@@ -698,6 +700,7 @@ static int nvmf_parse_options(struct nvm
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
++			kfree(opts->traddr);
+ 			opts->traddr = p;
+ 			break;
+ 		case NVMF_OPT_TRSVCID:
+@@ -706,6 +709,7 @@ static int nvmf_parse_options(struct nvm
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
++			kfree(opts->trsvcid);
+ 			opts->trsvcid = p;
+ 			break;
+ 		case NVMF_OPT_QUEUE_SIZE:
+@@ -792,6 +796,7 @@ static int nvmf_parse_options(struct nvm
+ 				ret = -EINVAL;
+ 				goto out;
+ 			}
++			nvmf_host_put(opts->host);
+ 			opts->host = nvmf_host_add(p);
+ 			kfree(p);
+ 			if (!opts->host) {
+@@ -817,6 +822,7 @@ static int nvmf_parse_options(struct nvm
+ 				ret = -ENOMEM;
+ 				goto out;
+ 			}
++			kfree(opts->host_traddr);
+ 			opts->host_traddr = p;
+ 			break;
+ 		case NVMF_OPT_HOST_ID:
 
 
