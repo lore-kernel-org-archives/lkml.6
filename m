@@ -3,150 +3,138 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAC7C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5123AC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:23:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7077C208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:22:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7077C208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 1275B20850
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:23:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1275B20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934232AbeFRNWG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:22:06 -0400
-Received: from mga06.intel.com ([134.134.136.31]:11773 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933182AbeFRNWC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:22:02 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 06:22:02 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
-   d="scan'208";a="47945468"
-Received: from abyunus-mobl.amr.corp.intel.com (HELO [10.254.89.6]) ([10.254.89.6])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Jun 2018 06:22:01 -0700
-Subject: Re: [PATCHv3 14/17] x86/mm: Introduce direct_mapping_size
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-15-kirill.shutemov@linux.intel.com>
- <4ece14a4-27bd-e10a-4c2c-822c3e629dcd@intel.com>
- <20180618131247.myt6vjiav3nwww5p@black.fi.intel.com>
-Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
- CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
- 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
- K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
- VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
- e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
- ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
- kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
- rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
- f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
- mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
- UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
- sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
- 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
- cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
- UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
- db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
- lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
- kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
- gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
- AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
- XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
- e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
- pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
- YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
- lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
- M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
- 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
- 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
- OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
- ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
- z5cecg==
-Message-ID: <ba2950ff-dc47-43c0-a096-ad993114c301@intel.com>
-Date:   Mon, 18 Jun 2018 06:22:01 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S934303AbeFRNXM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:23:12 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:47452 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S933517AbeFRNXK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:23:10 -0400
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8E87401DE60;
+        Mon, 18 Jun 2018 13:23:09 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 79A24111F3B6;
+        Mon, 18 Jun 2018 13:23:07 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 09:23:07 -0400
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Cc:     Mikulas Patocka <mpatocka@redhat.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        X86 ML <x86@kernel.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 RESEND] x86: optimize memcpy_flushcache
+Message-ID: <20180618132306.GA25431@redhat.com>
+References: <20180519052503.325953342@debian.vm>
+ <20180519052631.730455475@debian.vm>
+ <CAPcyv4jpY0x7kZtT+afAKnHKy8Uy1AC_N_QM7RrELSj_0iNrRw@mail.gmail.com>
+ <20180524182013.GA59755@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <20180618131247.myt6vjiav3nwww5p@black.fi.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180524182013.GA59755@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 18 Jun 2018 13:23:09 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.6]); Mon, 18 Jun 2018 13:23:09 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 06:12 AM, Kirill A. Shutemov wrote:
-> On Wed, Jun 13, 2018 at 06:37:07PM +0000, Dave Hansen wrote:
->> On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
->>> Kernel need to have a way to access encrypted memory. We are going to
->> "The kernel needs"...
->>
->>> use per-KeyID direct mapping to facilitate the access with minimal
->>> overhead.
->>
->> What are the security implications of this approach?
-> 
-> I'll add this to the message:
-> 
-> Per-KeyID mappings require a lot more virtual address space. On 4-level
-> machine with 64 KeyIDs we max out 46-bit virtual address space dedicated
-> for direct mapping with 1TiB of RAM. Given that we round up any
-> calculation on direct mapping size to 1TiB, we effectively claim all
-> 46-bit address space for direct mapping on such machine regardless of
-> RAM size.
-...
+From: Mikulas Patocka <mpatocka@redhat.com>
+Subject: [PATCH v2] x86: optimize memcpy_flushcache
 
-I was thinking more in terms of the exposure of keeping the plaintext
-mapped all the time.
+In the context of constant short length stores to persistent memory,
+memcpy_flushcache suffers from a 2% performance degradation compared to
+explicitly using the "movnti" instruction.
 
-Imagine Meltdown if the decrypted page is not mapped into the kernel:
-this feature could actually have protected user data.
+Optimize 4, 8, and 16 byte memcpy_flushcache calls to explicitly use the
+movnti instruction with inline assembler.
 
-But, with this scheme, it exposes the data... all the data... with all
-possible keys... all the time.  That's one heck of an attack surface.
-Can we do better?
+Signed-off-by: Mikulas Patocka <mpatocka@redhat.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+---
+ arch/x86/include/asm/string_64.h | 28 +++++++++++++++++++++++++++-
+ arch/x86/lib/usercopy_64.c       |  4 ++--
+ 2 files changed, 29 insertions(+), 3 deletions(-)
 
->>>  struct page_ext_operations page_mktme_ops = {
->>>  	.need = need_page_mktme,
->>>  };
->>> +
->>> +void __init setup_direct_mapping_size(void)
->>> +{
-...
->>> +}
->>
->> Do you really need two copies of this function?  Shouldn't it see
->> mktme_status!=MKTME_ENUMERATED and just jump out?  How is the code
->> before that "goto out" different from the CONFIG_MKTME=n case?
-> 
-> mktme.c is not compiled for CONFIG_MKTME=n.
-
-I'd rather have one copy in shared code which is mosty optimized away
-when CONFIG_MKTME=n than two copies.
+diff --git a/arch/x86/include/asm/string_64.h b/arch/x86/include/asm/string_64.h
+index 533f74c300c2..aaba83478cdc 100644
+--- a/arch/x86/include/asm/string_64.h
++++ b/arch/x86/include/asm/string_64.h
+@@ -147,7 +147,33 @@ memcpy_mcsafe(void *dst, const void *src, size_t cnt)
+ 
+ #ifdef CONFIG_ARCH_HAS_UACCESS_FLUSHCACHE
+ #define __HAVE_ARCH_MEMCPY_FLUSHCACHE 1
+-void memcpy_flushcache(void *dst, const void *src, size_t cnt);
++void __memcpy_flushcache(void *dst, const void *src, size_t cnt);
++static __always_inline void memcpy_flushcache(void *dst, const void *src, size_t cnt)
++{
++	if (__builtin_constant_p(cnt)) {
++		switch (cnt) {
++		case 4:
++			asm volatile("movntil %1, %0"
++				     : "=m" (*(u32 *)dst)
++				     : "r" (*(u32 *)src));
++			return;
++		case 8:
++			asm volatile("movntiq %1, %0"
++				     : "=m" (*(u64 *)dst)
++				     : "r" (*(u64 *)src));
++			return;
++		case 16:
++			asm volatile("movntiq %1, %0"
++				     : "=m" (*(u64 *)dst)
++				     : "r" (*(u64 *)src));
++			asm volatile("movntiq %1, %0"
++				     : "=m" (*(u64 *)(dst + 8))
++				     : "r" (*(u64 *)(src + 8)));
++			return;
++		}
++	}
++	__memcpy_flushcache(dst, src, cnt);
++}
+ #endif
+ 
+ #endif /* __KERNEL__ */
+diff --git a/arch/x86/lib/usercopy_64.c b/arch/x86/lib/usercopy_64.c
+index 75d3776123cc..26f515aa3529 100644
+--- a/arch/x86/lib/usercopy_64.c
++++ b/arch/x86/lib/usercopy_64.c
+@@ -133,7 +133,7 @@ long __copy_user_flushcache(void *dst, const void __user *src, unsigned size)
+ 	return rc;
+ }
+ 
+-void memcpy_flushcache(void *_dst, const void *_src, size_t size)
++void __memcpy_flushcache(void *_dst, const void *_src, size_t size)
+ {
+ 	unsigned long dest = (unsigned long) _dst;
+ 	unsigned long source = (unsigned long) _src;
+@@ -196,7 +196,7 @@ void memcpy_flushcache(void *_dst, const void *_src, size_t size)
+ 		clean_cache_range((void *) dest, size);
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(memcpy_flushcache);
++EXPORT_SYMBOL_GPL(__memcpy_flushcache);
+ 
+ void memcpy_page_flushcache(char *to, struct page *page, size_t offset,
+ 		size_t len)
+-- 
+2.15.0
 
