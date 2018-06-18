@@ -2,380 +2,125 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B1A7C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D578BC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:02:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E759F208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:02:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="R/n7k20+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E759F208B1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 853E8208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:02:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 853E8208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935525AbeFRPCf (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:02:35 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:42213 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964927AbeFRPBF (ORCPT
+        id S965273AbeFRPC6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:02:58 -0400
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:32994 "EHLO
+        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S964900AbeFRPCy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:01:05 -0400
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id AB2661E16CE;
-        Mon, 18 Jun 2018 17:01:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529334063; bh=wLcHPNjgzoZoCWCaiQdNtA/ikRtPInwCNfw9IKXFSd8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=R/n7k20+LaqTfPCtksBz19Z6+g9zs6NcJsj7BE4bNyqweJ7r3fZfF/976EOtawFIh
-         yz4QvxzbA3Lh8SVgRdkZWFU6+iZsFPYbb+8ESxViP8tGDMD43SzaC7OZ2iHOr04e3w
-         aPJKZ3zgh7qXEdSEQYL3Y6xmg2BxmoN1vghqs4F12lyf7df/THpKVSIW7oopVcXzQo
-         9Ui7dQrKbcmGcLAA3ipKVtyAelRPWesGZB82IsbdIuw98cppnE1rl5JIAgpNFqPs3s
-         TlhXXkdh9iwTnYeDLQqMMz0IQcXcY8r6jtq0moRgBkizOUJEdqQshCxk951zSr12TF
-         h9lk+qeGBfnog==
-Received: from pt02.synopsys.com (pt02.internal.synopsys.com [10.107.23.240])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B4E3A381F;
-        Mon, 18 Jun 2018 08:01:01 -0700 (PDT)
-Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
-        by pt02.synopsys.com (Postfix) with ESMTP id 5FD7C3D75E;
-        Mon, 18 Jun 2018 16:01:00 +0100 (WEST)
-From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
-        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
-        adouglas@cadence.com, jesper.nilsson@axis.com
-Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
-Subject: [PATCH v4 06/10] pci-epf-test/pci_endpoint_test: Cleanup PCI_ENDPOINT_TEST memspace
-Date:   Mon, 18 Jun 2018 16:00:25 +0100
-Message-Id: <13077810f3630c01835041e41b338dd85fa91953.1529329262.git.gustavo.pimentel@synopsys.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
-References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
-References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+        Mon, 18 Jun 2018 11:02:54 -0400
+Received: from mr2.cc.vt.edu (mr2.cc.ipv6.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
+        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id w5IF2r0O016998
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 11:02:53 -0400
+Received: from mail-qt0-f197.google.com (mail-qt0-f197.google.com [209.85.216.197])
+        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id w5IF2mW9007880
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 11:02:53 -0400
+Received: by mail-qt0-f197.google.com with SMTP id a10-v6so14240493qtp.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:02:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:mime-version
+         :content-transfer-encoding:date:message-id;
+        bh=gTngdsnTIWkpwQrxeB+eUkUpfINsJa5xPAcnZ/o1vzg=;
+        b=du4lN+4/VVV3U3HeNvo2+2yXkVnVPnt/WwPZbf8InM2h4fgT8t3ypLyVIFLb2bQ7Qu
+         TuuZO1hDbNfxekDnhpGkBXhzdX1WCrwxQnAZVhW86psxS5BGoQGdcUSDSA4MYvJf/AOW
+         V3IB9QUaokAyK68Xla3P/tcyJsBqA/5NL9BUOWoutR/e5G0Gd2iEZtsBOPwQjQmIcCmP
+         mAAnEZ04Clwy+Kz4nSzc4oP6C1gKBjPlfjl5z9tzyf6PVfcn7AT27HXdOVQHKlKqKyY5
+         Q5qAxbu96CClZUfcthgvDgan1Rc+Oj3poJeh9A9p3bYgs9DTKMwgVJPtWEcULhKPIeOE
+         1Nkg==
+X-Gm-Message-State: APt69E0cb1k/yJ+JErNC4KdazTqopOUMenaZxPKVYiFV00L69AINSoTK
+        Yuy9P/LPPQu9xEBziHfUHcOEndgD0cZSPO4r8nRF/8+wIaOPh20xr/gCnX585O1K52yTIdH80kw
+        HAV5UKcN9Erf9vBAT6bIMk+eVdQ0DfYwYOu4=
+X-Received: by 2002:a37:99c3:: with SMTP id b186-v6mr10453403qke.261.1529334168537;
+        Mon, 18 Jun 2018 08:02:48 -0700 (PDT)
+X-Google-Smtp-Source: ADUXVKJKhGEdVzQGK3tcpVb/UsceUSefpHBBpl9+8T3W/bL+AB7ZJiwYTTu1jfEAPY/rkugcGKyhsg==
+X-Received: by 2002:a37:99c3:: with SMTP id b186-v6mr10453384qke.261.1529334168281;
+        Mon, 18 Jun 2018 08:02:48 -0700 (PDT)
+Received: from turing-police.cc.vt.edu ([2607:b400:24:0:3d62:c4f9:2f6a:b486])
+        by smtp.gmail.com with ESMTPSA id t6-v6sm9250085qtn.86.2018.06.18.08.02.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 08:02:46 -0700 (PDT)
+X-Mailer: exmh version 2.8.0 04/21/2017 with nmh-1.7+dev
+From:   valdis.kletnieks@vt.edu
+To:     netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: 4.14.(44->48) IPv6 RA issue?
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1529334166_20151P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 18 Jun 2018 11:02:46 -0400
+Message-ID: <35958.1529334166@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Cleanup PCI_ENDPOINT_TEST memspace (by moving the interrupt number away
-from command section).
+--==_Exmh_1529334166_20151P
+Content-Type: text/plain; charset=us-ascii
 
-Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
----
-Change v2->v3:
- - New patch file created base on the previous patch
-"misc: pci_endpoint_test: Add MSI-X support" patch file following
-Kishon's suggestion.
-Change v3->v4:
- - Rebased to Lorenzo's master branch v4.18-rc1.
+So I'm trying to troubleshoot an issue on an OpenWRT/Lede based
+router, where IPv6 connectivity totally fails. I've bisected it down to:
 
- drivers/misc/pci_endpoint_test.c              | 84 ++++++++++++++++-----------
- drivers/pci/endpoint/functions/pci-epf-test.c | 60 ++++++++++++-------
- 2 files changed, 91 insertions(+), 53 deletions(-)
+git log --oneline 187da94808a634477b5e5a69109ea0c566dfa64b..73d8a6ab7668173d70adbed45b61be5256c505e
+73d8a6ab7668 (refs/bisect/bad) base-files: fix UCI config parsing and callback handling
+e52f3e9b1376 kernel: bump 4.14 to 4.14.48
+7590c3c58f5e (HEAD) scripts: Replace obsolete POSIX tmpnam in slugimage.pl with File::Temp function
+987900f2de76 hostapd: properly build hostapd-only SSL variants
 
-diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-index 7b37046..56be808 100644
---- a/drivers/misc/pci_endpoint_test.c
-+++ b/drivers/misc/pci_endpoint_test.c
-@@ -35,38 +35,42 @@
- 
- #include <uapi/linux/pcitest.h>
- 
--#define DRV_MODULE_NAME			"pci-endpoint-test"
--
--#define PCI_ENDPOINT_TEST_MAGIC		0x0
--
--#define PCI_ENDPOINT_TEST_COMMAND	0x4
--#define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
--#define COMMAND_RAISE_MSI_IRQ		BIT(1)
--#define MSI_NUMBER_SHIFT		2
--/* 6 bits for MSI number */
--#define COMMAND_READ                    BIT(8)
--#define COMMAND_WRITE                   BIT(9)
--#define COMMAND_COPY                    BIT(10)
--
--#define PCI_ENDPOINT_TEST_STATUS	0x8
--#define STATUS_READ_SUCCESS             BIT(0)
--#define STATUS_READ_FAIL                BIT(1)
--#define STATUS_WRITE_SUCCESS            BIT(2)
--#define STATUS_WRITE_FAIL               BIT(3)
--#define STATUS_COPY_SUCCESS             BIT(4)
--#define STATUS_COPY_FAIL                BIT(5)
--#define STATUS_IRQ_RAISED               BIT(6)
--#define STATUS_SRC_ADDR_INVALID         BIT(7)
--#define STATUS_DST_ADDR_INVALID         BIT(8)
--
--#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0xc
-+#define DRV_MODULE_NAME				"pci-endpoint-test"
-+
-+#define IRQ_TYPE_LEGACY				0
-+#define IRQ_TYPE_MSI				1
-+
-+#define PCI_ENDPOINT_TEST_MAGIC			0x0
-+
-+#define PCI_ENDPOINT_TEST_COMMAND		0x4
-+#define COMMAND_RAISE_LEGACY_IRQ		BIT(0)
-+#define COMMAND_RAISE_MSI_IRQ			BIT(1)
-+#define COMMAND_READ				BIT(3)
-+#define COMMAND_WRITE				BIT(4)
-+#define COMMAND_COPY				BIT(5)
-+
-+#define PCI_ENDPOINT_TEST_STATUS		0x8
-+#define STATUS_READ_SUCCESS			BIT(0)
-+#define STATUS_READ_FAIL			BIT(1)
-+#define STATUS_WRITE_SUCCESS			BIT(2)
-+#define STATUS_WRITE_FAIL			BIT(3)
-+#define STATUS_COPY_SUCCESS			BIT(4)
-+#define STATUS_COPY_FAIL			BIT(5)
-+#define STATUS_IRQ_RAISED			BIT(6)
-+#define STATUS_SRC_ADDR_INVALID			BIT(7)
-+#define STATUS_DST_ADDR_INVALID			BIT(8)
-+
-+#define PCI_ENDPOINT_TEST_LOWER_SRC_ADDR	0x0c
- #define PCI_ENDPOINT_TEST_UPPER_SRC_ADDR	0x10
- 
- #define PCI_ENDPOINT_TEST_LOWER_DST_ADDR	0x14
- #define PCI_ENDPOINT_TEST_UPPER_DST_ADDR	0x18
- 
--#define PCI_ENDPOINT_TEST_SIZE		0x1c
--#define PCI_ENDPOINT_TEST_CHECKSUM	0x20
-+#define PCI_ENDPOINT_TEST_SIZE			0x1c
-+#define PCI_ENDPOINT_TEST_CHECKSUM		0x20
-+
-+#define PCI_ENDPOINT_TEST_IRQ_TYPE		0x24
-+#define PCI_ENDPOINT_TEST_IRQ_NUMBER		0x28
- 
- static DEFINE_IDA(pci_endpoint_test_ida);
- 
-@@ -179,6 +183,9 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
- {
- 	u32 val;
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 IRQ_TYPE_LEGACY);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 0);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
- 				 COMMAND_RAISE_LEGACY_IRQ);
- 	val = wait_for_completion_timeout(&test->irq_raised,
-@@ -190,20 +197,22 @@ static bool pci_endpoint_test_legacy_irq(struct pci_endpoint_test *test)
- }
- 
- static bool pci_endpoint_test_msi_irq(struct pci_endpoint_test *test,
--				      u8 msi_num)
-+				      u8 irq_num)
- {
- 	u32 val;
- 	struct pci_dev *pdev = test->pdev;
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, irq_num);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 msi_num << MSI_NUMBER_SHIFT |
- 				 COMMAND_RAISE_MSI_IRQ);
- 	val = wait_for_completion_timeout(&test->irq_raised,
- 					  msecs_to_jiffies(1000));
- 	if (!val)
- 		return false;
- 
--	if (pci_irq_vector(pdev, msi_num - 1) == test->last_irq)
-+	if (pci_irq_vector(pdev, irq_num - 1) == test->last_irq)
- 		return true;
- 
- 	return false;
-@@ -281,8 +290,11 @@ static bool pci_endpoint_test_copy(struct pci_endpoint_test *test, size_t size)
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE,
- 				 size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_COPY);
-+				 COMMAND_COPY);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-@@ -348,8 +360,11 @@ static bool pci_endpoint_test_write(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_READ);
-+				 COMMAND_READ);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-@@ -403,8 +418,11 @@ static bool pci_endpoint_test_read(struct pci_endpoint_test *test, size_t size)
- 
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_SIZE, size);
- 
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_TYPE,
-+				 no_msi ? IRQ_TYPE_LEGACY : IRQ_TYPE_MSI);
-+	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_IRQ_NUMBER, 1);
- 	pci_endpoint_test_writel(test, PCI_ENDPOINT_TEST_COMMAND,
--				 1 << MSI_NUMBER_SHIFT | COMMAND_WRITE);
-+				 COMMAND_WRITE);
- 
- 	wait_for_completion(&test->irq_raised);
- 
-diff --git a/drivers/pci/endpoint/functions/pci-epf-test.c b/drivers/pci/endpoint/functions/pci-epf-test.c
-index 63ed706..ff92524 100644
---- a/drivers/pci/endpoint/functions/pci-epf-test.c
-+++ b/drivers/pci/endpoint/functions/pci-epf-test.c
-@@ -18,13 +18,14 @@
- #include <linux/pci-epf.h>
- #include <linux/pci_regs.h>
- 
-+#define IRQ_TYPE_LEGACY			0
-+#define IRQ_TYPE_MSI			1
-+
- #define COMMAND_RAISE_LEGACY_IRQ	BIT(0)
- #define COMMAND_RAISE_MSI_IRQ		BIT(1)
--#define MSI_NUMBER_SHIFT		2
--#define MSI_NUMBER_MASK			(0x3f << MSI_NUMBER_SHIFT)
--#define COMMAND_READ			BIT(8)
--#define COMMAND_WRITE			BIT(9)
--#define COMMAND_COPY			BIT(10)
-+#define COMMAND_READ			BIT(3)
-+#define COMMAND_WRITE			BIT(4)
-+#define COMMAND_COPY			BIT(5)
- 
- #define STATUS_READ_SUCCESS		BIT(0)
- #define STATUS_READ_FAIL		BIT(1)
-@@ -56,6 +57,8 @@ struct pci_epf_test_reg {
- 	u64	dst_addr;
- 	u32	size;
- 	u32	checksum;
-+	u32	irq_type;
-+	u32	irq_number;
- } __packed;
- 
- static struct pci_epf_header test_header = {
-@@ -244,31 +247,39 @@ static int pci_epf_test_write(struct pci_epf_test *epf_test)
- 	return ret;
- }
- 
--static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq)
-+static void pci_epf_test_raise_irq(struct pci_epf_test *epf_test, u8 irq_type,
-+				   u16 irq)
- {
--	u8 msi_count;
- 	struct pci_epf *epf = epf_test->epf;
-+	struct device *dev = &epf->dev;
- 	struct pci_epc *epc = epf->epc;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
- 
- 	reg->status |= STATUS_IRQ_RAISED;
--	msi_count = pci_epc_get_msi(epc, epf->func_no);
--	if (irq > msi_count || msi_count <= 0)
-+
-+	switch (irq_type) {
-+	case IRQ_TYPE_LEGACY:
- 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_LEGACY, 0);
--	else
-+		break;
-+	case IRQ_TYPE_MSI:
- 		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-+		break;
-+	default:
-+		dev_err(dev, "Failed to raise IRQ, unknown type\n");
-+		break;
-+	}
- }
- 
- static void pci_epf_test_cmd_handler(struct work_struct *work)
- {
- 	int ret;
--	u8 irq;
--	u8 msi_count;
-+	u16 count;
- 	u32 command;
- 	struct pci_epf_test *epf_test = container_of(work, struct pci_epf_test,
- 						     cmd_handler.work);
- 	struct pci_epf *epf = epf_test->epf;
-+	struct device *dev = &epf->dev;
- 	struct pci_epc *epc = epf->epc;
- 	enum pci_barno test_reg_bar = epf_test->test_reg_bar;
- 	struct pci_epf_test_reg *reg = epf_test->reg[test_reg_bar];
-@@ -280,7 +291,10 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 	reg->command = 0;
- 	reg->status = 0;
- 
--	irq = (command & MSI_NUMBER_MASK) >> MSI_NUMBER_SHIFT;
-+	if (reg->irq_type > IRQ_TYPE_MSI) {
-+		dev_err(dev, "Failed to detect IRQ type\n");
-+		goto reset_handler;
-+	}
- 
- 	if (command & COMMAND_RAISE_LEGACY_IRQ) {
- 		reg->status = STATUS_IRQ_RAISED;
-@@ -294,7 +308,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_WRITE_FAIL;
- 		else
- 			reg->status |= STATUS_WRITE_SUCCESS;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -304,7 +319,8 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_READ_SUCCESS;
- 		else
- 			reg->status |= STATUS_READ_FAIL;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -314,16 +330,18 @@ static void pci_epf_test_cmd_handler(struct work_struct *work)
- 			reg->status |= STATUS_COPY_SUCCESS;
- 		else
- 			reg->status |= STATUS_COPY_FAIL;
--		pci_epf_test_raise_irq(epf_test, irq);
-+		pci_epf_test_raise_irq(epf_test, reg->irq_type,
-+				       reg->irq_number);
- 		goto reset_handler;
- 	}
- 
- 	if (command & COMMAND_RAISE_MSI_IRQ) {
--		msi_count = pci_epc_get_msi(epc, epf->func_no);
--		if (irq > msi_count || msi_count <= 0)
-+		count = pci_epc_get_msi(epc, epf->func_no);
-+		if (reg->irq_number > count || count <= 0)
- 			goto reset_handler;
- 		reg->status = STATUS_IRQ_RAISED;
--		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI, irq);
-+		pci_epc_raise_irq(epc, epf->func_no, PCI_EPC_IRQ_MSI,
-+				  reg->irq_number);
- 		goto reset_handler;
- 	}
- 
-@@ -457,8 +475,10 @@ static int pci_epf_test_bind(struct pci_epf *epf)
- 		return ret;
- 
- 	ret = pci_epc_set_msi(epc, epf->func_no, epf->msi_interrupts);
--	if (ret)
-+	if (ret) {
-+		dev_err(dev, "MSI configuration failed\n");
- 		return ret;
-+	}
- 
- 	if (!epf_test->linkup_notifier)
- 		queue_work(kpcitest_workqueue, &epf_test->cmd_handler.work);
--- 
-2.7.4
+and am pretty sure that it's the kernel bump (works with a 4.14.44 kernel,
+breaks with 4.14.48) as the other 3 commits don't go anywhere near IPv6 handling.
 
+Symptoms:
+With a good kernel, 'ip -6 neigh' reports:
 
+ip -6 neigh
+2601:5c0:c001:4341:2116:22ff:b17b:7cd6 dev wlan1 lladdr bc:85:56:1f:4f:6d REACHABLE
+fe80::201:5cff:fe6f:1a46 dev eth1 lladdr 00:01:5c:6f:1a:46 router REACHABLE
+fe80::9325:3b21:5021:fbd8 dev eth0 lladdr b8:27:eb:f7:0b:20 REACHABLE
+fe80::2d9:d1ff:fed9:51a3 dev eth0 lladdr 00:d9:d1:d9:51:a3 REACHABLE
+
+With a bad one, I get:
+
+ip -6 neigh
+fe80::be85:56ff:fe1f:4f6d dev wlan1 lladdr bc:85:56:1f:4f:6d STALE
+fe80::2d9:d1ff:fed9:51a3 dev eth0 lladdr 00:d9:d1:d9:51:a3 STALE
+fe80::9325:3b21:5021:fbd8 dev eth0 lladdr b8:27:eb:f7:0b:20 DELAY
+2601:5c0:c001:4341:2116:22ff:b17b:7cd6 dev wlan1 lladdr bc:85:56:1f:4f:6d REACHABLE
+fe80::201:5cff:fe6f:1a46 dev eth1  INCOMPLETE
+
+Note that eth1 is the uplink towards my ISP.  I've pointed a 'tcpdump -n -i eth1 ip6'
+at it, and see plenty of RA packets come in, but neighbor discovery never completes.
+Looking at the Changelogs for .45->.50 don't show any smoking-gun patches.
+
+This ring any bells, before I delve deeper into it?
+
+--==_Exmh_1529334166_20151P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.8.0 04/21/2017
+
+iQEVAwUBWyfJlo0DS38y7CIcAQJqRAf+Iy4OXUxuBVdMttqWqg8n4FMRa7fxLASq
+LYTDD/3tgv8K25J5JquZxQxbAymUGaka1y2GAgLGKaujllOU/Hu4rVFJ+b0DW443
+tYC4D56XR7kE45tGG1qnqg9GaTxie2XrXdi5rFGaGXgkoKHTzOUN7FC4aoki1TIa
+1vbee9iCatuuQQe1mjwRaZIytptek7pXbj5cBhAgzGLLqDkBfrzJC0EBLtUs8l/k
+zKslRjFhIG3wVpDvk8gYxE+jpNkUdoDijrnflkFkmc5cs8ol74aLaNvCZfIhcoUm
+Ik/BU7rOdy04XaGaX7QAf/aUhS5hFWJYuHrDxAu2cq5Ap6kfw7Taiw==
+=fa0F
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1529334166_20151P--
