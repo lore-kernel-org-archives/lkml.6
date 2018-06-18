@@ -6,42 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDDDC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239F8C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C93020874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C93020874
+	by mail.kernel.org (Postfix) with ESMTP id C9AC920864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9AC920864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030308AbeFRIhH (ORCPT
+        id S1030329AbeFRIhS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:37:07 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36564 "EHLO
+        Mon, 18 Jun 2018 04:37:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36580 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030289AbeFRIhE (ORCPT
+        with ESMTP id S1030301AbeFRIhH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:37:04 -0400
+        Mon, 18 Jun 2018 04:37:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 56389C5C;
-        Mon, 18 Jun 2018 08:37:03 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60C04CB7;
+        Mon, 18 Jun 2018 08:37:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellermen <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Ben Hutchings <ben@decadent.org.uk>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 156/189] x86/pkeys/selftests: Stop using assert()
-Date:   Mon, 18 Jun 2018 10:14:12 +0200
-Message-Id: <20180618081215.503060714@linuxfoundation.org>
+Subject: [PATCH 4.14 165/189] mtd: Fix comparison in map_word_andequal()
+Date:   Mon, 18 Jun 2018 10:14:21 +0200
+Message-Id: <20180618081215.856872890@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -58,64 +51,37 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Ben Hutchings <ben@decadent.org.uk>
 
-[ Upstream commit 86b9eea230edf4c67d4d4a70fba9b74505867a25 ]
+[ Upstream commit ea739a287f4f16d6250bea779a1026ead79695f2 ]
 
-If we use assert(), the program "crashes".  That can be scary to users,
-so stop doing it.  Just exit with a >0 exit code instead.
+Commit 9e343e87d2c4 ("mtd: cfi: convert inline functions to macros")
+changed map_word_andequal() into a macro, but also changed the right
+hand side of the comparison from val3 to val2.  Change it back to use
+val3 on the right hand side.
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171340.E63EF7DA@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Thankfully this did not cause a regression because all callers
+currently pass the same argument for val2 and val3.
+
+Fixes: 9e343e87d2c4 ("mtd: cfi: convert inline functions to macros")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ include/linux/mtd/map.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -72,10 +72,9 @@ extern void abort_hooks(void);
- 				test_nr, iteration_nr);	\
- 		dprintf0("errno at assert: %d", errno);	\
- 		abort_hooks();			\
--		assert(condition);		\
-+		exit(__LINE__);			\
- 	}					\
- } while (0)
--#define raw_assert(cond) assert(cond)
- 
- void cat_into_file(char *str, char *file)
- {
-@@ -87,12 +86,17 @@ void cat_into_file(char *str, char *file
- 	 * these need to be raw because they are called under
- 	 * pkey_assert()
- 	 */
--	raw_assert(fd >= 0);
-+	if (fd < 0) {
-+		fprintf(stderr, "error opening '%s'\n", str);
-+		perror("error: ");
-+		exit(__LINE__);
-+	}
-+
- 	ret = write(fd, str, strlen(str));
- 	if (ret != strlen(str)) {
- 		perror("write to file failed");
- 		fprintf(stderr, "filename: '%s' str: '%s'\n", file, str);
--		raw_assert(0);
-+		exit(__LINE__);
- 	}
- 	close(fd);
- }
+--- a/include/linux/mtd/map.h
++++ b/include/linux/mtd/map.h
+@@ -312,7 +312,7 @@ void map_destroy(struct mtd_info *mtd);
+ ({									\
+ 	int i, ret = 1;							\
+ 	for (i = 0; i < map_words(map); i++) {				\
+-		if (((val1).x[i] & (val2).x[i]) != (val2).x[i]) {	\
++		if (((val1).x[i] & (val2).x[i]) != (val3).x[i]) {	\
+ 			ret = 0;					\
+ 			break;						\
+ 		}							\
 
 
