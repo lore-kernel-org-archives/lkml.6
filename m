@@ -6,133 +6,314 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30853C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:37:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 331C7C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE7622075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:37:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE7622075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E17392075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:37:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E17392075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936386AbeFRThH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:37:07 -0400
-Received: from mga09.intel.com ([134.134.136.24]:23422 "EHLO mga09.intel.com"
+        id S936848AbeFRThR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:37:17 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:43762 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935923AbeFRThF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:37:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 12:37:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
-   d="scan'208";a="50313564"
-Received: from sai-dev-mach.sc.intel.com ([143.183.140.145])
-  by orsmga008.jf.intel.com with ESMTP; 18 Jun 2018 12:37:04 -0700
-From:   Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-To:     linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sai Praneeth <sai.praneeth.prakhya@intel.com>,
-        Lee Chun-Yi <jlee@suse.com>, Borislav Petkov <bp@alien8.de>,
-        Tony Luck <tony.luck@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Bhupesh Sharma <bhsharma@redhat.com>,
-        Ricardo Neri <ricardo.neri@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Subject: [PATCH V2] x86/efi: Free allocated memory if remap fails
-Date:   Mon, 18 Jun 2018 12:36:54 -0700
-Message-Id: <1529350614-15555-1-git-send-email-sai.praneeth.prakhya@intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S936376AbeFRThI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:37:08 -0400
+Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
+        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fUzxX-0001HZ-NM; Mon, 18 Jun 2018 13:37:07 -0600
+Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
+        (envelope-from <gunthorp@deltatee.com>)
+        id 1fUzxR-0004EE-UM; Mon, 18 Jun 2018 13:36:58 -0600
+From:   Logan Gunthorpe <logang@deltatee.com>
+To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Cc:     Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        Logan Gunthorpe <logang@deltatee.com>
+Date:   Mon, 18 Jun 2018 13:36:34 -0600
+Message-Id: <20180618193636.16210-2-logang@deltatee.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180618193636.16210-1-logang@deltatee.com>
+References: <20180618193636.16210-1-logang@deltatee.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 172.16.1.31
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
+X-SA-Exim-Mail-From: gunthorp@deltatee.com
+Subject: [PATCH v3 1/3] PCI: Make specifying PCI devices in kernel parameters reusable
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sai Praneeth <sai.praneeth.prakhya@intel.com>
+Separate out the code to match a PCI device with a string (typically
+originating from a kernel parameter) from the
+pci_specified_resource_alignment() function into its own helper
+function.
 
-efi_memmap_alloc(), as the name suggests, allocates memory for a new efi
-memory map. It's referenced from couple of places, namely,
-efi_arch_mem_reserve() and efi_free_boot_services(). These callers,
-after allocating memory, remap it for further use. As usual, a routine
-check is performed to confirm successful remap. If the remap fails,
-ideally, the allocated memory should be freed but presently we just
-return without freeing it up. Hence, fix this bug by freeing up the
-memory appropriately.
+While we are at it, this change fixes the kernel style of the function
+(fixing a number of long lines and extra parentheses).
 
-As efi_memmap_alloc() allocates memory depending on whether mm_init()
-has already been invoked or not, similarly, while freeing use
-memblock_free() to free memory allocated before invoking mm_init() and
-__free_pages() to free memory allocated after invoking mm_init().
+Additionally, make the analogous change to the kernel parameter
+documentation: Separating the description of how to specify a PCI device
+into it's own section at the head of the pci= parameter.
 
-It's a fact that memremap() and early_memremap() might never fail and
-this code might never get a chance to run but to maintain good kernel
-programming semantics, we might need this patch.
+This patch should have no functional alterations.
 
-Signed-off-by: Sai Praneeth Prakhya <sai.praneeth.prakhya@intel.com>
-Cc: Lee Chun-Yi <jlee@suse.com>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Bhupesh Sharma <bhsharma@redhat.com>
-Cc: Ricardo Neri <ricardo.neri@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ravi Shankar <ravi.v.shankar@intel.com>
-Cc: Matt Fleming <matt@codeblueprint.co.uk>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+Reviewed-by: Stephen Bates <sbates@raithlin.com>
+Acked-by: Christian König <christian.koenig@amd.com>
 ---
+ Documentation/admin-guide/kernel-parameters.txt |  26 +++-
+ drivers/pci/pci.c                               | 153 +++++++++++++++---------
+ 2 files changed, 120 insertions(+), 59 deletions(-)
 
-I found this bug when working on a different patch set which uses
-efi_memmap_alloc() and then noticed that I never freed the allocated
-memory. I found it weird, in the sense that, memory is allocated but is
-not freed (upon returning from an error). So, wasn't sure if that should
-be treated as a bug or should I just leave it as is because everything
-works fine even without this patch. Since the effort for the patch is
-very minimal, I just went ahead and posted one, so that I could know
-your thoughts on it.
-
-Changes from V1 to V2:
-----------------------
-1. Fix the bug of freeing memory map that was just installed by correctly
-    calling free_pages().
-2. Call memblock_free() and __free_pages() directly from the appropriate
-    places instead of efi_memmap_free().
-
-Note: Patch based on Linus's mainline tree V4.18-rc1
-
- arch/x86/platform/efi/quirks.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/x86/platform/efi/quirks.c b/arch/x86/platform/efi/quirks.c
-index 36c1f8b9f7e0..cfa93af97def 100644
---- a/arch/x86/platform/efi/quirks.c
-+++ b/arch/x86/platform/efi/quirks.c
-@@ -285,6 +285,7 @@ void __init efi_arch_mem_reserve(phys_addr_t addr, u64 size)
- 	new = early_memremap(new_phys, new_size);
- 	if (!new) {
- 		pr_err("Failed to map new boot services memmap\n");
-+		memblock_free(new_phys, new_size);
- 		return;
- 	}
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index efc7aa7a0670..760fb2b0b349 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -2994,7 +2994,24 @@
+ 			See header of drivers/block/paride/pcd.c.
+ 			See also Documentation/blockdev/paride.txt.
  
-@@ -429,6 +430,7 @@ void __init efi_free_boot_services(void)
- 	new = memremap(new_phys, new_size, MEMREMAP_WB);
- 	if (!new) {
- 		pr_err("Failed to map new EFI memmap\n");
-+		__free_pages(pfn_to_page(PHYS_PFN(new_phys)), get_order(new_size));
- 		return;
- 	}
+-	pci=option[,option...]	[PCI] various PCI subsystem options:
++	pci=option[,option...]	[PCI] various PCI subsystem options.
++
++				Some options herein operate on a specific device
++				or a set of devices (<pci_dev>). These are
++				specified in one of the following formats:
++
++				[<domain>:]<bus>:<slot>.<func>
++				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
++
++				Note: the first format specifies a PCI
++				bus/slot/function address which may change
++				if new hardware is inserted, if motherboard
++				firmware changes, or due to changes caused
++				by other kernel parameters. The second format
++				selects devices using IDs from the
++				configuration space which may match multiple
++				devices in the system.
++
+ 		earlydump	[X86] dump PCI config space before the kernel
+ 				changes anything
+ 		off		[X86] don't probe for the PCI bus
+@@ -3123,11 +3140,10 @@
+ 				window. The default value is 64 megabytes.
+ 		resource_alignment=
+ 				Format:
+-				[<order of align>@][<domain>:]<bus>:<slot>.<func>[; ...]
+-				[<order of align>@]pci:<vendor>:<device>\
+-						[:<subvendor>:<subdevice>][; ...]
++				[<order of align>@]<pci_dev>[; ...]
+ 				Specifies alignment and device to reassign
+-				aligned memory resources.
++				aligned memory resources. How to
++				specify the device is described above.
+ 				If <order of align> is not specified,
+ 				PAGE_SIZE is used as alignment.
+ 				PCI-PCI bridge can be specified, if resource
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 97acba712e4e..bec1bef6f326 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -191,6 +191,88 @@ void __iomem *pci_ioremap_wc_bar(struct pci_dev *pdev, int bar)
+ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
+ #endif
  
-@@ -452,6 +454,7 @@ void __init efi_free_boot_services(void)
++/**
++ * pci_dev_str_match - test if a string matches a device
++ * @dev:    the PCI device to test
++ * @p:      string to match the device against
++ * @endptr: pointer to the string after the match
++ *
++ * Test if a string (typically from a kernel parameter) matches a
++ * specified. The string may be of one of two forms formats:
++ *
++ *   [<domain>:]<bus>:<slot>.<func>
++ *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
++ *
++ * The first format specifies a PCI bus/slot/function address which
++ * may change if new hardware is inserted, if motherboard firmware changes,
++ * or due to changes caused in kernel parameters.
++ *
++ * The second format matches devices using IDs in the configuration
++ * space which may match multiple devices in the system. A value of 0
++ * for any field will match all devices.
++ *
++ * Returns 1 if the string matches the device, 0 if it does not and
++ * a negative error code if the string cannot be parsed.
++ */
++static int pci_dev_str_match(struct pci_dev *dev, const char *p,
++			     const char **endptr)
++{
++	int ret;
++	int seg, bus, slot, func, count;
++	unsigned short vendor, device, subsystem_vendor, subsystem_device;
++
++	if (strncmp(p, "pci:", 4) == 0) {
++		/* PCI vendor/device (subvendor/subdevice) ids are specified */
++		p += 4;
++		ret = sscanf(p, "%hx:%hx:%hx:%hx%n", &vendor, &device,
++			     &subsystem_vendor, &subsystem_device, &count);
++		if (ret != 4) {
++			ret = sscanf(p, "%hx:%hx%n", &vendor, &device, &count);
++			if (ret != 2)
++				return -EINVAL;
++
++			subsystem_vendor = 0;
++			subsystem_device = 0;
++		}
++
++		p += count;
++
++		if ((!vendor || vendor == dev->vendor) &&
++		    (!device || device == dev->device) &&
++		    (!subsystem_vendor ||
++			    subsystem_vendor == dev->subsystem_vendor) &&
++		    (!subsystem_device ||
++			    subsystem_device == dev->subsystem_device))
++			goto found;
++
++	} else {
++		/* PCI Bus,Slot,Function ids are specified */
++		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
++			     &func, &count);
++		if (ret != 4) {
++			seg = 0;
++			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
++				     &func, &count);
++			if (ret != 3)
++				return -EINVAL;
++		}
++
++		p += count;
++
++		if (seg == pci_domain_nr(dev->bus) &&
++		    bus == dev->bus->number &&
++		    slot == PCI_SLOT(dev->devfn) &&
++		    func == PCI_FUNC(dev->devfn))
++			goto found;
++	}
++
++	*endptr = p;
++	return 0;
++
++found:
++	*endptr = p;
++	return 1;
++}
  
- 	if (efi_memmap_install(new_phys, num_entries)) {
- 		pr_err("Could not install new EFI memmap\n");
-+		__free_pages(pfn_to_page(PHYS_PFN(new_phys)), get_order(new_size));
- 		return;
- 	}
- }
+ static int __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+ 				   u8 pos, int cap, int *ttl)
+@@ -5454,10 +5536,10 @@ static DEFINE_SPINLOCK(resource_alignment_lock);
+ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 							bool *resize)
+ {
+-	int seg, bus, slot, func, align_order, count;
+-	unsigned short vendor, device, subsystem_vendor, subsystem_device;
++	int align_order, count;
+ 	resource_size_t align = pcibios_default_alignment();
+-	char *p;
++	const char *p;
++	int ret;
+ 
+ 	spin_lock(&resource_alignment_lock);
+ 	p = resource_alignment_param;
+@@ -5477,58 +5559,21 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+ 		} else {
+ 			align_order = -1;
+ 		}
+-		if (strncmp(p, "pci:", 4) == 0) {
+-			/* PCI vendor/device (subvendor/subdevice) ids are specified */
+-			p += 4;
+-			if (sscanf(p, "%hx:%hx:%hx:%hx%n",
+-				&vendor, &device, &subsystem_vendor, &subsystem_device, &count) != 4) {
+-				if (sscanf(p, "%hx:%hx%n", &vendor, &device, &count) != 2) {
+-					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: pci:%s\n",
+-						p);
+-					break;
+-				}
+-				subsystem_vendor = subsystem_device = 0;
+-			}
+-			p += count;
+-			if ((!vendor || (vendor == dev->vendor)) &&
+-				(!device || (device == dev->device)) &&
+-				(!subsystem_vendor || (subsystem_vendor == dev->subsystem_vendor)) &&
+-				(!subsystem_device || (subsystem_device == dev->subsystem_device))) {
+-				*resize = true;
+-				if (align_order == -1)
+-					align = PAGE_SIZE;
+-				else
+-					align = 1 << align_order;
+-				/* Found */
+-				break;
+-			}
+-		}
+-		else {
+-			if (sscanf(p, "%x:%x:%x.%x%n",
+-				&seg, &bus, &slot, &func, &count) != 4) {
+-				seg = 0;
+-				if (sscanf(p, "%x:%x.%x%n",
+-						&bus, &slot, &func, &count) != 3) {
+-					/* Invalid format */
+-					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: %s\n",
+-						p);
+-					break;
+-				}
+-			}
+-			p += count;
+-			if (seg == pci_domain_nr(dev->bus) &&
+-				bus == dev->bus->number &&
+-				slot == PCI_SLOT(dev->devfn) &&
+-				func == PCI_FUNC(dev->devfn)) {
+-				*resize = true;
+-				if (align_order == -1)
+-					align = PAGE_SIZE;
+-				else
+-					align = 1 << align_order;
+-				/* Found */
+-				break;
+-			}
++
++		ret = pci_dev_str_match(dev, p, &p);
++		if (ret == 1) {
++			*resize = true;
++			if (align_order == -1)
++				align = PAGE_SIZE;
++			else
++				align = 1 << align_order;
++			break;
++		} else if (ret < 0) {
++			pr_info("PCI: Can't parse resource_alignment parameter: pci:%s\n",
++				p);
++			break;
+ 		}
++
+ 		if (*p != ';' && *p != ',') {
+ 			/* End of param or invalid format */
+ 			break;
 -- 
-2.7.4
+2.11.0
 
