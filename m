@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D55C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:40:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C0BC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763CB208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:40:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 763CB208D5
+	by mail.kernel.org (Postfix) with ESMTP id 3F36D208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:40:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F36D208A5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934264AbeFRPkk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:40:40 -0400
-Received: from mx2.suse.de ([195.135.220.15]:47769 "EHLO mx2.suse.de"
+        id S934536AbeFRPkv (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:40:51 -0400
+Received: from mx2.suse.de ([195.135.220.15]:47825 "EHLO mx2.suse.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932442AbeFRPkj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:40:39 -0400
+        id S932442AbeFRPkt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:40:49 -0400
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id 2EA98ACB1;
-        Mon, 18 Jun 2018 15:40:38 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 17:40:37 +0200
-Message-ID: <s5hzhzsw1ai.wl-tiwai@suse.de>
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id AFCC9AD73;
+        Mon, 18 Jun 2018 15:40:48 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 17:40:48 +0200
+Message-ID: <s5hy3fcw1a7.wl-tiwai@suse.de>
 From:   Takashi Iwai <tiwai@suse.de>
 To:     "Stefan Agner" <stefan@agner.ch>
 Cc:     "Jaroslav Kysela" <perex@perex.cz>, <alsa-devel@alsa-project.org>,
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ALSA: ice1724: remove unused array
-In-Reply-To: <20180617134632.1479-1-stefan@agner.ch>
-References: <20180617134632.1479-1-stefan@agner.ch>
+Subject: Re: [PATCH] ALSA: ctxfi: use enum type CT_SUM_CTL where appropriate
+In-Reply-To: <20180617134652.1638-1-stefan@agner.ch>
+References: <20180617134652.1638-1-stefan@agner.ch>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
  (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -44,19 +44,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 17 Jun 2018 15:46:29 +0200,
+On Sun, 17 Jun 2018 15:46:49 +0200,
 Stefan Agner wrote:
 > 
-> This fixes a warning seen with clang:
+> Currently a variable of type enum CT_AMIXER_CTL is used for enum
+> CT_SUM_CTL values. This leads to warnings when using clang:
+> sound/pci/ctxfi/ctmixer.c:945:32: warning: implicit conversion from enumeration type
+>       'enum CT_SUM_CTL' to different enumeration type 'enum CT_AMIXER_CTL'
+>       [-Wenum-conversion]
+>         for (i = AMIXER_MASTER_F, j = SUM_IN_F;
+>                                     ~ ^~~~~~~~
+> sound/pci/ctxfi/ctmixer.c:975:29: warning: implicit conversion from enumeration type
+>       'enum CT_SUM_CTL' to different enumeration type 'enum CT_AMIXER_CTL'
+>       [-Wenum-conversion]
+>         for (i = AMIXER_PCM_F, j = SUM_IN_F; i <= AMIXER_PCM_S; i++, j++) {
+>                                  ~ ^~~~~~~~
 > 
-> sound/pci/ice1712/prodigy_hifi.c:321:28: warning: variable 'wm_vol' is not
->       needed and will not be emitted [-Wunneeded-internal-declaration]
-> static const unsigned char wm_vol[256] = {
->                            ^
+> Introduce enum CT_SUM_CTL k and it instead.
 > 
 > Signed-off-by: Stefan Agner <stefan@agner.ch>
 
-Thanks, applied now.
+Applied, thanks.
 
 
 Takashi
