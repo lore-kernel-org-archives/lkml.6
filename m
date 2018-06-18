@@ -2,104 +2,107 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	T_DKIMWL_WL_HIGH,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABACC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:27:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23CC2C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19794208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:27:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19794208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id ACD6E208E4
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:30:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="S/JrQ3rB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACD6E208E4
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755101AbeFRM1e (ORCPT
+        id S1753570AbeFRMaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:27:34 -0400
-Received: from mx2.suse.de ([195.135.220.15]:39666 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751560AbeFRM1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:27:32 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id A6907ADD3;
-        Mon, 18 Jun 2018 12:27:30 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id A7C251E0A81; Mon, 18 Jun 2018 14:27:29 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 14:27:29 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        syzbot <syzbot+4a7438e774b21ddd8eca@syzkaller.appspotmail.com>,
-        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-block@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH] bdi: Fix another oops in wb_workfn()
-Message-ID: <20180618122729.f5gh7nuaibuvf3e7@quack2.suse.cz>
-References: <CACT4Y+Z4i=bD49cb4pJ5zOMxVu675NT8wCNk+c2n2XJVOXG2bg@mail.gmail.com>
- <2b437c6f-3e10-3d83-bdf3-82075d3eaa1a@i-love.sakura.ne.jp>
- <3cf4b0e3-31b6-8cdc-7c1e-15ba575a7879@i-love.sakura.ne.jp>
- <20180611091248.2i6nt27h5mxrodm2@quack2.suse.cz>
- <20180611160131.GQ1351649@devbig577.frc2.facebook.com>
- <20180611162920.mwapvuqotvhkntt3@quack2.suse.cz>
- <20180611172053.GR1351649@devbig577.frc2.facebook.com>
- <20180612155754.x5k2yndh5t6wlmpy@quack2.suse.cz>
- <20180613143315.GS1351649@devbig577.frc2.facebook.com>
- <20180615120620.uyc7h6sudbpsecnm@quack2.suse.cz>
+        Mon, 18 Jun 2018 08:30:20 -0400
+Received: from aserp2130.oracle.com ([141.146.126.79]:51806 "EHLO
+        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750711AbeFRMaT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 08:30:19 -0400
+Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
+        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id w5ICTSdC194193;
+        Mon, 18 Jun 2018 12:30:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2017-10-26;
+ bh=PmexbElviRYbWHu8+PLJzIyzyjQ+rifJVhpMVNOo9Y0=;
+ b=S/JrQ3rB5XefQxd/N4zo/qaKGOwHuwVWazEaDqk3iYIyY1I9WdlQKgIq9zks1U4YoF5r
+ 2Of4ICBfHdgKnJBY7XnTz7+tE6KbHTJZbZ0viAqNxseOMo64dcdxIMhTwyDsLOuAJvZC
+ N3O+N1lzQtk50XdZHmYwBdho2hYOW6WXgYy30mDsqRjkYlrJq3NZSpN8MQEo7PFDrHYN
+ 5199BtE2qDwSLIjGiYvH9MFerEoQEpA7HdCAWXoAS7bLT5MsRq5CX2Pxrstm2q+3BvBn
+ koc0V1nPz1tL1179tbsgI8a3/FgBhwx8VuElyrvM+s2w+7loSBVBfsAVvAKF6WQvaHbY +A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2130.oracle.com with ESMTP id 2jmr2mbyfq-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Jun 2018 12:30:03 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id w5ICU155021314
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 18 Jun 2018 12:30:02 GMT
+Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id w5ICU0YI008014;
+        Mon, 18 Jun 2018 12:30:00 GMT
+Received: from mwanda (/197.157.0.62)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Mon, 18 Jun 2018 05:29:59 -0700
+Date:   Mon, 18 Jun 2018 15:29:51 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Oleksandr Andrushchenko <andr2000@gmail.com>
+Cc:     xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, airlied@linux.ie,
+        daniel.vetter@intel.com, seanpaul@chromium.org,
+        gustavo@padovan.org, jgross@suse.com, boris.ostrovsky@oracle.com,
+        Oleksandr Andrushchenko <oleksandr_andrushchenko@epam.com>
+Subject: Re: [PATCH v2] drm: Replace NULL with error value in
+ drm_prime_pages_to_sg
+Message-ID: <20180618122951.v55dxtjg4azezjvg@mwanda>
+References: <20180618060709.14290-1-andr2000@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180615120620.uyc7h6sudbpsecnm@quack2.suse.cz>
-User-Agent: NeoMutt/20170912 (1.9.0)
+In-Reply-To: <20180618060709.14290-1-andr2000@gmail.com>
+User-Agent: NeoMutt/20170609 (1.8.3)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=8927 signatures=668702
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=714
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1805220000 definitions=main-1806180151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 15-06-18 14:06:20, Jan Kara wrote:
-> On Wed 13-06-18 07:33:15, Tejun Heo wrote:
-> > Hello, Jan.
-> > 
-> > On Tue, Jun 12, 2018 at 05:57:54PM +0200, Jan Kara wrote:
-> > > > Yeah, right, so the root cause is that we're walking the wb_list while
-> > > > holding lock and expecting the object to stay there even after lock is
-> > > > released.  Hmm... we can use a mutex to synchronize the two
-> > > > destruction paths.  It's not like they're hot paths anyway.
-> > > 
-> > > Hmm, do you mean like having a per-bdi or even a global mutex that would
-> > > protect whole wb_shutdown()? Yes, that should work and we could get rid of
-> > > WB_shutting_down bit as well with that. Just it seems a bit strange to
-> > 
-> > Yeap.
-> > 
-> > > introduce a mutex only to synchronize these two shutdown paths - usually
-> > > locks protect data structures and in this case we have cgwb_lock for
-> > > that so it looks like a duplication from a first look.
-> > 
-> > Yeah, I feel a bit reluctant too but I think that's the right thing to
-> > do here.  This is an inherently weird case where there are two ways
-> > that an object can go away with the immediate drain requirement from
-> > one side.  It's not a hot path and the dumber the synchronization the
-> > better, right?
+On Mon, Jun 18, 2018 at 09:07:09AM +0300, Oleksandr Andrushchenko wrote:
+>  drivers/gpu/drm/drm_gem_cma_helper.c    | 2 +-
+>  drivers/gpu/drm/xen/xen_drm_front_gem.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
 > 
-> Yeah, fair enough. Something like attached patch? It is indeed considerably
-> simpler than fixing synchronization using WB_shutting_down. This one even
-> got some testing using scsi_debug, I want to do more testing next week with
-> more cgroup writeback included.
+> diff --git a/drivers/gpu/drm/drm_gem_cma_helper.c b/drivers/gpu/drm/drm_gem_cma_helper.c
+> index 80a5115c3846..ce868ce288fb 100644
+> --- a/drivers/gpu/drm/drm_gem_cma_helper.c
+> +++ b/drivers/gpu/drm/drm_gem_cma_helper.c
+> @@ -436,7 +436,7 @@ struct sg_table *drm_gem_cma_prime_get_sg_table(struct drm_gem_object *obj)
+>  
+>  	sgt = kzalloc(sizeof(*sgt), GFP_KERNEL);
+>  	if (!sgt)
+> -		return NULL;
+> +		return ERR_PTR(-ENOMEM);
+>  
+>  	ret = dma_get_sgtable(obj->dev->dev, sgt, cma_obj->vaddr,
+>  			      cma_obj->paddr, obj->size);
 
-OK, the test has passed some beating with cgroup writeback running. I'll do
-official posting shortly.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+If dma_get_sgtable() fails then we return NULL.
+
+Fix that and it should be good.
+
+regards,
+dan carpenter
+
