@@ -3,31 +3,32 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 816D7C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC27C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41BBE208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41BBE208A6
+	by mail.kernel.org (Postfix) with ESMTP id DB486208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:07:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB486208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936078AbeFRKHu (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:07:50 -0400
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:36981 "EHLO
+        id S935417AbeFRKHz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:07:55 -0400
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:44760 "EHLO
         esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934967AbeFRKHp (ORCPT
+        with ESMTP id S934967AbeFRKHx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:07:45 -0400
+        Mon, 18 Jun 2018 06:07:53 -0400
 X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
-   d="scan'208";a="15346660"
+   d="scan'208";a="15346670"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 03:07:44 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 03:07:52 -0700
 Received: from m19893.microchip.com (10.10.76.4) by
  chn-sv-exch05.mchp-main.com (10.10.76.106) with Microsoft SMTP Server id
- 14.3.352.0; Mon, 18 Jun 2018 03:07:43 -0700
+ 14.3.352.0; Mon, 18 Jun 2018 03:07:51 -0700
 From:   Radu Pirea <radu.pirea@microchip.com>
 To:     <broonie@kernel.org>, <nicolas.ferre@microchip.com>,
         <alexandre.belloni@bootlin.com>, <lee.jones@linaro.org>,
@@ -38,9 +39,9 @@ CC:     <linux-spi@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-serial@vger.kernel.org>,
         Radu Pirea <radu.pirea@microchip.com>
-Subject: [PATCH v8 2/6] dt-bindings: add binding for atmel-usart in SPI mode
-Date:   Mon, 18 Jun 2018 13:08:25 +0300
-Message-ID: <20180618100829.13875-3-radu.pirea@microchip.com>
+Subject: [PATCH v8 4/6] MAINTAINERS: add at91 usart spi driver
+Date:   Mon, 18 Jun 2018 13:08:27 +0300
+Message-ID: <20180618100829.13875-5-radu.pirea@microchip.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618100829.13875-1-radu.pirea@microchip.com>
 References: <20180618100829.13875-1-radu.pirea@microchip.com>
@@ -51,90 +52,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch moves the bindings for serial from serial/atmel-usart.txt to
-mfd/atmel-usart.txt and adds bindings for USART in SPI mode.
+Added entry for at91 usart mfd driver.
 
 Signed-off-by: Radu Pirea <radu.pirea@microchip.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../bindings/{serial => mfd}/atmel-usart.txt  | 25 +++++++++++++++++--
- include/dt-bindings/mfd/at91-usart.h          | 17 +++++++++++++
- 2 files changed, 40 insertions(+), 2 deletions(-)
- rename Documentation/devicetree/bindings/{serial => mfd}/atmel-usart.txt (76%)
- create mode 100644 include/dt-bindings/mfd/at91-usart.h
+ MAINTAINERS | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/serial/atmel-usart.txt b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-similarity index 76%
-rename from Documentation/devicetree/bindings/serial/atmel-usart.txt
-rename to Documentation/devicetree/bindings/mfd/atmel-usart.txt
-index 7c0d6b2f53e4..3b9e18642c3b 100644
---- a/Documentation/devicetree/bindings/serial/atmel-usart.txt
-+++ b/Documentation/devicetree/bindings/mfd/atmel-usart.txt
-@@ -1,6 +1,6 @@
- * Atmel Universal Synchronous Asynchronous Receiver/Transmitter (USART)
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 12203d07c6af..dae31df711fb 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -9201,6 +9201,13 @@ F:	drivers/mfd/at91-usart.c
+ F:	include/dt-bindings/mfd/at91-usart.h
+ F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
  
--Required properties:
-+Required properties for USART:
- - compatible: Should be "atmel,<chip>-usart" or "atmel,<chip>-dbgu"
-   The compatible <chip> indicated will be the first SoC to support an
-   additional mode or an USART new feature.
-@@ -11,7 +11,13 @@ Required properties:
- 	Required elements: "usart"
- - clocks: phandles to input clocks.
- 
--Optional properties:
-+Required properties for USART in SPI mode:
-+- #size-cells      : Must be <0>
-+- #address-cells   : Must be <1>
-+- cs-gpios: chipselects (internal cs not supported)
-+- atmel,usart-mode : Must be <USART_MODE_SPI> (found in dt-bindings/mfd/at91-usart.h)
++MICROCHIP AT91 USART SPI DRIVER
++M:	Radu Pirea <radu.pirea@microchip.com>
++L:	linux-spi@vger.kernel.org
++S:	Supported
++F:	drivers/spi/spi-at91-usart.c
++F:	Documentation/devicetree/bindings/mfd/atmel-usart.txt
 +
-+Optional properties in serial mode:
- - atmel,use-dma-rx: use of PDC or DMA for receiving data
- - atmel,use-dma-tx: use of PDC or DMA for transmitting data
- - {rts,cts,dtr,dsr,rng,dcd}-gpios: specify a GPIO for RTS/CTS/DTR/DSR/RI/DCD line respectively.
-@@ -62,3 +68,18 @@ Example:
- 		dma-names = "tx", "rx";
- 		atmel,fifo-size = <32>;
- 	};
-+
-+- SPI mode:
-+	#include <dt-bindings/mfd/at91-usart.h>
-+
-+	spi0: spi@f001c000 {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		compatible = "atmel,at91rm9200-usart", "atmel,at91sam9260-usart";
-+		atmel,usart-mode = <USART_MODE_SPI>;
-+		reg = <0xf001c000 0x100>;
-+		interrupts = <12 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&usart0_clk>;
-+		clock-names = "usart";
-+		cs-gpios = <&pioB 3 0>;
-+	};
-diff --git a/include/dt-bindings/mfd/at91-usart.h b/include/dt-bindings/mfd/at91-usart.h
-new file mode 100644
-index 000000000000..2de5bc312e1e
---- /dev/null
-+++ b/include/dt-bindings/mfd/at91-usart.h
-@@ -0,0 +1,17 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * This header provides macros for AT91 USART DT bindings.
-+ *
-+ * Copyright (C) 2018 Microchip Technology
-+ *
-+ * Author: Radu Pirea <radu.pirea@microchip.com>
-+ *
-+ */
-+
-+#ifndef __DT_BINDINGS_AT91_USART_H__
-+#define __DT_BINDINGS_AT91_USART_H__
-+
-+#define AT91_USART_MODE_SERIAL	0
-+#define AT91_USART_MODE_SPI	1
-+
-+#endif /* __DT_BINDINGS_AT91_USART_H__ */
+ MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER
+ M:	Woojung Huh <Woojung.Huh@microchip.com>
+ M:	Microchip Linux Driver Support <UNGLinuxDriver@microchip.com>
 -- 
 2.17.1
 
