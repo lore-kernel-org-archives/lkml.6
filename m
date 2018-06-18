@@ -2,334 +2,120 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39916C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6DFC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:44:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D32E620836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:44:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32E620836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 23EC820836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:44:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGzJCx4M"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23EC820836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936412AbeFRVof convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 17:44:35 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:33694 "EHLO mx1.redhat.com"
+        id S936974AbeFRVot (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 17:44:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40388 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933241AbeFRVod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 17:44:33 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S936504AbeFRVor (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 17:44:47 -0400
+Received: from mail-wm0-f44.google.com (mail-wm0-f44.google.com [74.125.82.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B07A2308FBA4;
-        Mon, 18 Jun 2018 21:44:32 +0000 (UTC)
-Received: from t450s.home (ovpn-116-135.phx2.redhat.com [10.3.116.135])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 17D23308BDAE;
-        Mon, 18 Jun 2018 21:44:31 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 15:44:30 -0600
-From:   Alex Williamson <alex.williamson@redhat.com>
-To:     Logan Gunthorpe <logang@deltatee.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
-Subject: Re: [PATCH v3 1/3] PCI: Make specifying PCI devices in kernel
- parameters reusable
-Message-ID: <20180618154430.1af3d42f@t450s.home>
-In-Reply-To: <20180618193636.16210-2-logang@deltatee.com>
-References: <20180618193636.16210-1-logang@deltatee.com>
-        <20180618193636.16210-2-logang@deltatee.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B6FB20874
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529358286;
+        bh=gDw8i04v+PnkkUDymHS9ykQ+jmxZYRMZE4jHMJO8o/M=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SGzJCx4MrpeTQuPJDZg1dnUpY6AmYGqyE8U09bxIvEIQbyGhv9effZP8FjAsE2P87
+         mkzltxoWYRPrOMe5Qmh2tp0ju5p9Z2yHyYz9LBWcORnIBhAu4vC6Vy2PfNGMJHDvoE
+         cMCMky/tdi/OkYNhPbSK9+IEL1BTpMboqG/OstcY=
+Received: by mail-wm0-f44.google.com with SMTP id r15-v6so16483363wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 14:44:46 -0700 (PDT)
+X-Gm-Message-State: APt69E25ScFRCeSeNGjpx/qOI7S5BDbKD5XXiuUVnZjR9vH/g+6Si0cY
+        MjsT8lgd0/S6Pa8KB+vTh4lTgpBAtl5LFH5L1AvDIA==
+X-Google-Smtp-Source: ADUXVKIb8qUh7XC+sL9MOcnqlLKDxU4C6RRWGSqu7pZ/LNB0urpcMNsHJR2ldbkC/H8WuhAjX3zKMHzLUuLV6tgXErc=
+X-Received: by 2002:a1c:f902:: with SMTP id x2-v6mr9232918wmh.116.1529358285009;
+ Mon, 18 Jun 2018 14:44:45 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 18 Jun 2018 21:44:33 +0000 (UTC)
+References: <20180607143807.3611-1-yu-cheng.yu@intel.com> <bbfde1b3-5e1b-80e3-30e8-fd1e46a2ceb1@gmail.com>
+ <1528815820.8271.16.camel@2b52.sc.intel.com> <814fc15e80908d8630ff665be690ccbe6e69be88.camel@gmail.com>
+ <1528988176.13101.15.camel@2b52.sc.intel.com> <2b77abb17dfaf58b7c23fac9d8603482e1887337.camel@gmail.com>
+In-Reply-To: <2b77abb17dfaf58b7c23fac9d8603482e1887337.camel@gmail.com>
+From:   Andy Lutomirski <luto@kernel.org>
+Date:   Mon, 18 Jun 2018 14:44:33 -0700
+X-Gmail-Original-Message-ID: <CALCETrWCEjuM56J8dqXPR==MevJTYKan5dnAMFJaXzFMYr8Q_A@mail.gmail.com>
+Message-ID: <CALCETrWCEjuM56J8dqXPR==MevJTYKan5dnAMFJaXzFMYr8Q_A@mail.gmail.com>
+Subject: Re: [PATCH 00/10] Control Flow Enforcement - Part (3)
+To:     Balbir Singh <bsingharora@gmail.com>
+Cc:     Yu-cheng Yu <yu-cheng.yu@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-arch <linux-arch@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. J. Lu" <hjl.tools@gmail.com>,
+        "Shanbhogue, Vedvyas" <vedvyas.shanbhogue@intel.com>,
+        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Oleg Nesterov <oleg@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        mike.kravetz@oracle.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 18 Jun 2018 13:36:34 -0600
-Logan Gunthorpe <logang@deltatee.com> wrote:
+On Sat, Jun 16, 2018 at 8:16 PM Balbir Singh <bsingharora@gmail.com> wrote:
+>
+> On Thu, 2018-06-14 at 07:56 -0700, Yu-cheng Yu wrote:
+> > On Thu, 2018-06-14 at 11:07 +1000, Balbir Singh wrote:
+> > > On Tue, 2018-06-12 at 08:03 -0700, Yu-cheng Yu wrote:
+> > > > On Tue, 2018-06-12 at 20:56 +1000, Balbir Singh wrote:
+> > > > >
+> > > > > On 08/06/18 00:37, Yu-cheng Yu wrote:
+> > > > > > This series introduces CET - Shadow stack
+> > > > > >
+> > > > > > At the high level, shadow stack is:
+> > > > > >
+> > > > > >       Allocated from a task's address space with vm_flags VM_SHSTK;
+> > > > > >       Its PTEs must be read-only and dirty;
+> > > > > >       Fixed sized, but the default size can be changed by sys admin.
+> > > > > >
+> > > > > > For a forked child, the shadow stack is duplicated when the next
+> > > > > > shadow stack access takes place.
+> > > > > >
+> > > > > > For a pthread child, a new shadow stack is allocated.
+> > > > > >
+> > > > > > The signal handler uses the same shadow stack as the main program.
+> > > > > >
+> > > > >
+> > > > > Even with sigaltstack()?
+> > > > >
+> > > >
+> > > > Yes.
+> > >
+> > > I am not convinced that it would work, as we switch stacks, oveflow might
+> > > be an issue. I also forgot to bring up setcontext(2), I presume those
+> > > will get new shadow stacks
+> >
+> > Do you mean signal stack/sigaltstack overflow or swapcontext in a signal
+> > handler?
+> >
+>
+> I meant any combination of that. If there is a user space threads implementation that uses sigaltstack for switching threads
+>
 
-> Separate out the code to match a PCI device with a string (typically
-> originating from a kernel parameter) from the
-> pci_specified_resource_alignment() function into its own helper
-> function.
-> 
-> While we are at it, this change fixes the kernel style of the function
-> (fixing a number of long lines and extra parentheses).
-> 
-> Additionally, make the analogous change to the kernel parameter
-> documentation: Separating the description of how to specify a PCI device
-> into it's own section at the head of the pci= parameter.
-> 
-> This patch should have no functional alterations.
-> 
-> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-> Reviewed-by: Stephen Bates <sbates@raithlin.com>
-> Acked-by: Christian König <christian.koenig@amd.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt |  26 +++-
->  drivers/pci/pci.c                               | 153 +++++++++++++++---------
->  2 files changed, 120 insertions(+), 59 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index efc7aa7a0670..760fb2b0b349 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2994,7 +2994,24 @@
->  			See header of drivers/block/paride/pcd.c.
->  			See also Documentation/blockdev/paride.txt.
->  
-> -	pci=option[,option...]	[PCI] various PCI subsystem options:
-> +	pci=option[,option...]	[PCI] various PCI subsystem options.
-> +
-> +				Some options herein operate on a specific device
-> +				or a set of devices (<pci_dev>). These are
-> +				specified in one of the following formats:
-> +
-> +				[<domain>:]<bus>:<slot>.<func>
-> +				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
-> +
-> +				Note: the first format specifies a PCI
-> +				bus/slot/function address which may change
-> +				if new hardware is inserted, if motherboard
-> +				firmware changes, or due to changes caused
-> +				by other kernel parameters. The second format
-
-Nit, is it worth noting that when unspecified, domain is zero?
-
-> +				selects devices using IDs from the
-> +				configuration space which may match multiple
-> +				devices in the system.
-> +
->  		earlydump	[X86] dump PCI config space before the kernel
->  				changes anything
->  		off		[X86] don't probe for the PCI bus
-> @@ -3123,11 +3140,10 @@
->  				window. The default value is 64 megabytes.
->  		resource_alignment=
->  				Format:
-> -				[<order of align>@][<domain>:]<bus>:<slot>.<func>[; ...]
-> -				[<order of align>@]pci:<vendor>:<device>\
-> -						[:<subvendor>:<subdevice>][; ...]
-> +				[<order of align>@]<pci_dev>[; ...]
->  				Specifies alignment and device to reassign
-> -				aligned memory resources.
-> +				aligned memory resources. How to
-> +				specify the device is described above.
->  				If <order of align> is not specified,
->  				PAGE_SIZE is used as alignment.
->  				PCI-PCI bridge can be specified, if resource
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 97acba712e4e..bec1bef6f326 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -191,6 +191,88 @@ void __iomem *pci_ioremap_wc_bar(struct pci_dev *pdev, int bar)
->  EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
->  #endif
->  
-> +/**
-> + * pci_dev_str_match - test if a string matches a device
-> + * @dev:    the PCI device to test
-> + * @p:      string to match the device against
-> + * @endptr: pointer to the string after the match
-> + *
-> + * Test if a string (typically from a kernel parameter) matches a
-> + * specified. The string may be of one of two forms formats:
-> + *
-> + *   [<domain>:]<bus>:<slot>.<func>
-> + *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
-> + *
-> + * The first format specifies a PCI bus/slot/function address which
-> + * may change if new hardware is inserted, if motherboard firmware changes,
-> + * or due to changes caused in kernel parameters.
-> + *
-> + * The second format matches devices using IDs in the configuration
-> + * space which may match multiple devices in the system. A value of 0
-> + * for any field will match all devices.
-
-I realize this is not a change in behavior, but since we're spelling it
-out in a proper comment rather than burying it in the implementation,
-using 0 as a wildcard is rather questionable behavior.  It always
-surprises me when I read this because pci_match_one_device() uses
-PCI_ANY_ID (~0) as a wildcard and as a result of struct pci_device_id
-using __u32 for these fields, we actually need to specify ffffffff on
-the commandline to get a wildcard match for dynamic ids.  The latter is
-tedious to use, but I think it's more correct, and the use of a __u32 is
-probably attributed to the fact that 0xffff is only reserved for vendor
-ID, the spec doesn't seem to reserve any entries from the vendor's
-device ID range.
-
-There's probably really no path to resolve these, but acknowledging the
-difference in this comment block might be helpful in the future.
-
-> + *
-> + * Returns 1 if the string matches the device, 0 if it does not and
-> + * a negative error code if the string cannot be parsed.
-> + */
-> +static int pci_dev_str_match(struct pci_dev *dev, const char *p,
-> +			     const char **endptr)
-> +{
-> +	int ret;
-> +	int seg, bus, slot, func, count;
-> +	unsigned short vendor, device, subsystem_vendor, subsystem_device;
-> +
-> +	if (strncmp(p, "pci:", 4) == 0) {
-> +		/* PCI vendor/device (subvendor/subdevice) ids are specified */
-> +		p += 4;
-> +		ret = sscanf(p, "%hx:%hx:%hx:%hx%n", &vendor, &device,
-> +			     &subsystem_vendor, &subsystem_device, &count);
-> +		if (ret != 4) {
-> +			ret = sscanf(p, "%hx:%hx%n", &vendor, &device, &count);
-> +			if (ret != 2)
-> +				return -EINVAL;
-> +
-> +			subsystem_vendor = 0;
-> +			subsystem_device = 0;
-> +		}
-> +
-> +		p += count;
-> +
-> +		if ((!vendor || vendor == dev->vendor) &&
-> +		    (!device || device == dev->device) &&
-> +		    (!subsystem_vendor ||
-> +			    subsystem_vendor == dev->subsystem_vendor) &&
-> +		    (!subsystem_device ||
-> +			    subsystem_device == dev->subsystem_device))
-> +			goto found;
-> +
-> +	} else {
-> +		/* PCI Bus,Slot,Function ids are specified */
-> +		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
-> +			     &func, &count);
-> +		if (ret != 4) {
-> +			seg = 0;
-> +			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
-> +				     &func, &count);
-> +			if (ret != 3)
-> +				return -EINVAL;
-> +		}
-> +
-> +		p += count;
-> +
-> +		if (seg == pci_domain_nr(dev->bus) &&
-> +		    bus == dev->bus->number &&
-> +		    slot == PCI_SLOT(dev->devfn) &&
-> +		    func == PCI_FUNC(dev->devfn))
-> +			goto found;
-> +	}
-> +
-> +	*endptr = p;
-> +	return 0;
-> +
-> +found:
-> +	*endptr = p;
-> +	return 1;
-> +}
->  
->  static int __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
->  				   u8 pos, int cap, int *ttl)
-> @@ -5454,10 +5536,10 @@ static DEFINE_SPINLOCK(resource_alignment_lock);
->  static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
->  							bool *resize)
->  {
-> -	int seg, bus, slot, func, align_order, count;
-> -	unsigned short vendor, device, subsystem_vendor, subsystem_device;
-> +	int align_order, count;
->  	resource_size_t align = pcibios_default_alignment();
-> -	char *p;
-> +	const char *p;
-> +	int ret;
->  
->  	spin_lock(&resource_alignment_lock);
->  	p = resource_alignment_param;
-> @@ -5477,58 +5559,21 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
->  		} else {
->  			align_order = -1;
->  		}
-> -		if (strncmp(p, "pci:", 4) == 0) {
-> -			/* PCI vendor/device (subvendor/subdevice) ids are specified */
-> -			p += 4;
-> -			if (sscanf(p, "%hx:%hx:%hx:%hx%n",
-> -				&vendor, &device, &subsystem_vendor, &subsystem_device, &count) != 4) {
-> -				if (sscanf(p, "%hx:%hx%n", &vendor, &device, &count) != 2) {
-> -					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: pci:%s\n",
-> -						p);
-> -					break;
-> -				}
-> -				subsystem_vendor = subsystem_device = 0;
-> -			}
-> -			p += count;
-> -			if ((!vendor || (vendor == dev->vendor)) &&
-> -				(!device || (device == dev->device)) &&
-> -				(!subsystem_vendor || (subsystem_vendor == dev->subsystem_vendor)) &&
-> -				(!subsystem_device || (subsystem_device == dev->subsystem_device))) {
-> -				*resize = true;
-> -				if (align_order == -1)
-> -					align = PAGE_SIZE;
-> -				else
-> -					align = 1 << align_order;
-> -				/* Found */
-> -				break;
-> -			}
-> -		}
-> -		else {
-> -			if (sscanf(p, "%x:%x:%x.%x%n",
-> -				&seg, &bus, &slot, &func, &count) != 4) {
-> -				seg = 0;
-> -				if (sscanf(p, "%x:%x.%x%n",
-> -						&bus, &slot, &func, &count) != 3) {
-> -					/* Invalid format */
-> -					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: %s\n",
-> -						p);
-> -					break;
-> -				}
-> -			}
-> -			p += count;
-> -			if (seg == pci_domain_nr(dev->bus) &&
-> -				bus == dev->bus->number &&
-> -				slot == PCI_SLOT(dev->devfn) &&
-> -				func == PCI_FUNC(dev->devfn)) {
-> -				*resize = true;
-> -				if (align_order == -1)
-> -					align = PAGE_SIZE;
-> -				else
-> -					align = 1 << align_order;
-> -				/* Found */
-> -				break;
-> -			}
-> +
-> +		ret = pci_dev_str_match(dev, p, &p);
-> +		if (ret == 1) {
-> +			*resize = true;
-> +			if (align_order == -1)
-> +				align = PAGE_SIZE;
-> +			else
-> +				align = 1 << align_order;
-> +			break;
-> +		} else if (ret < 0) {
-> +			pr_info("PCI: Can't parse resource_alignment parameter: pci:%s\n",
-
-
-The "pci:" prefix on %s doesn't make sense now, it was used above when
-the pointer was already advanced past this token, now I believe it would
-lead to "pci:pci:xxxx:yyyy" or "pci:xx:yy.z".  Thanks,
-
-Alex
+Anyone who does that is nuts.  The whole point of user space threads
+is speed, and signals are very slow.  For userspace threads to work,
+we need an API to allocate new shadow stacks, and we need to use the
+extremely awkwardly defined RSTORSSP stuff to switch.  (I assume this
+is possible on an ISA level.  The docs are bad, and the mnemonics for
+the relevant instructions are nonsensical.)
