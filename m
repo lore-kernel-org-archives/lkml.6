@@ -6,129 +6,143 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72A9EC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:20:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A24D9C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 344AF208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:20:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 344AF208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 656FA208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:20:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656FA208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966606AbeFRJTa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:19:30 -0400
-Received: from mx2.suse.de ([195.135.220.15]:38532 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S936545AbeFRJS3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:18:29 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id E829FAE14;
-        Mon, 18 Jun 2018 09:18:27 +0000 (UTC)
-From:   Vlastimil Babka <vbabka@suse.cz>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
-        David Rientjes <rientjes@google.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>
-Subject: [PATCH v2 7/7] mm, slab: shorten kmalloc cache names for large sizes
-Date:   Mon, 18 Jun 2018 11:18:08 +0200
-Message-Id: <20180618091808.4419-8-vbabka@suse.cz>
+        id S966626AbeFRJUi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:20:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58438 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966544AbeFRI16 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 04:27:58 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E4A8C5C;
+        Mon, 18 Jun 2018 08:27:57 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellermen <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 243/279] x86/pkeys/selftests: Add PROT_EXEC test
+Date:   Mon, 18 Jun 2018 10:13:48 +0200
+Message-Id: <20180618080618.833101852@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618091808.4419-1-vbabka@suse.cz>
-References: <20180618091808.4419-1-vbabka@suse.cz>
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Kmalloc cache names can get quite long for large object sizes, when the sizes
-are expressed in bytes. Use 'k' and 'M' prefixes to make the names as short
-as possible e.g. in /proc/slabinfo. This works, as we mostly use power-of-two
-sizes, with exceptions only below 1k.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-Example: 'kmalloc-4194304' becomes 'kmalloc-4M'
+------------------
 
-Suggested-by: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+From: Dave Hansen <dave.hansen@linux.intel.com>
+
+[ Upstream commit 6af17cf89e99b64cf1f660bf848755442ab2f047 ]
+
+Under the covers, implement executable-only memory with
+protection keys when userspace calls mprotect(PROT_EXEC).
+
+But, we did not have a selftest for that.  Now we do.
+
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171348.9EEE4BEF@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- mm/slab_common.c | 38 ++++++++++++++++++++++++++------------
- 1 file changed, 26 insertions(+), 12 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   44 ++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
 
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 8a30d6979936..462509978ec0 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1045,15 +1045,15 @@ const struct kmalloc_info_struct kmalloc_info[] __initconst = {
- 	{"kmalloc-16",             16},		{"kmalloc-32",             32},
- 	{"kmalloc-64",             64},		{"kmalloc-128",           128},
- 	{"kmalloc-256",           256},		{"kmalloc-512",           512},
--	{"kmalloc-1024",         1024},		{"kmalloc-2048",         2048},
--	{"kmalloc-4096",         4096},		{"kmalloc-8192",         8192},
--	{"kmalloc-16384",       16384},		{"kmalloc-32768",       32768},
--	{"kmalloc-65536",       65536},		{"kmalloc-131072",     131072},
--	{"kmalloc-262144",     262144},		{"kmalloc-524288",     524288},
--	{"kmalloc-1048576",   1048576},		{"kmalloc-2097152",   2097152},
--	{"kmalloc-4194304",   4194304},		{"kmalloc-8388608",   8388608},
--	{"kmalloc-16777216", 16777216},		{"kmalloc-33554432", 33554432},
--	{"kmalloc-67108864", 67108864}
-+	{"kmalloc-1k",           1024},		{"kmalloc-2k",           2048},
-+	{"kmalloc-4k",           4096},		{"kmalloc-8k",           8192},
-+	{"kmalloc-16k",         16384},		{"kmalloc-32k",         32768},
-+	{"kmalloc-64k",         65536},		{"kmalloc-128k",       131072},
-+	{"kmalloc-256k",       262144},		{"kmalloc-512k",       524288},
-+	{"kmalloc-1M",        1048576},		{"kmalloc-2M",        2097152},
-+	{"kmalloc-4M",        4194304},		{"kmalloc-8M",        8388608},
-+	{"kmalloc-16M",      16777216},		{"kmalloc-32M",      33554432},
-+	{"kmalloc-64M",      67108864}
- };
- 
- /*
-@@ -1103,6 +1103,21 @@ void __init setup_kmalloc_cache_index_table(void)
- 	}
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -1303,6 +1303,49 @@ void test_executing_on_unreadable_memory
+ 	expected_pk_fault(pkey);
  }
  
-+static const char *
-+kmalloc_cache_name(const char *prefix, unsigned int size)
++void test_implicit_mprotect_exec_only_memory(int *ptr, u16 pkey)
 +{
++	void *p1;
++	int scratch;
++	int ptr_contents;
++	int ret;
 +
-+	static const char units[3] = "\0kM";
-+	int idx = 0;
++	dprintf1("%s() start\n", __func__);
 +
-+	while (size >= 1024 && (size % 1024 == 0)) {
-+		size /= 1024;
-+		idx++;
-+	}
++	p1 = get_pointer_to_instructions();
++	lots_o_noops_around_write(&scratch);
++	ptr_contents = read_ptr(p1);
++	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
 +
-+	return kasprintf(GFP_NOWAIT, "%s-%u%c", prefix, size, units[idx]);
++	/* Use a *normal* mprotect(), not mprotect_pkey(): */
++	ret = mprotect(p1, PAGE_SIZE, PROT_EXEC);
++	pkey_assert(!ret);
++
++	dprintf2("pkru: %x\n", rdpkru());
++
++	/* Make sure this is an *instruction* fault */
++	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
++	lots_o_noops_around_write(&scratch);
++	do_not_expect_pk_fault("executing on PROT_EXEC memory");
++	ptr_contents = read_ptr(p1);
++	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
++	expected_pk_fault(UNKNOWN_PKEY);
++
++	/*
++	 * Put the memory back to non-PROT_EXEC.  Should clear the
++	 * exec-only pkey off the VMA and allow it to be readable
++	 * again.  Go to PROT_NONE first to check for a kernel bug
++	 * that did not clear the pkey when doing PROT_NONE.
++	 */
++	ret = mprotect(p1, PAGE_SIZE, PROT_NONE);
++	pkey_assert(!ret);
++
++	ret = mprotect(p1, PAGE_SIZE, PROT_READ|PROT_EXEC);
++	pkey_assert(!ret);
++	ptr_contents = read_ptr(p1);
++	do_not_expect_pk_fault("plain read on recently PROT_EXEC area");
 +}
 +
- static void __init
- new_kmalloc_cache(int idx, int type, slab_flags_t flags)
+ void test_mprotect_pkey_on_unsupported_cpu(int *ptr, u16 pkey)
  {
-@@ -1110,7 +1125,7 @@ new_kmalloc_cache(int idx, int type, slab_flags_t flags)
- 
- 	if (type == KMALLOC_RECLAIM) {
- 		flags |= SLAB_RECLAIM_ACCOUNT;
--		name = kasprintf(GFP_NOWAIT, "kmalloc-rcl-%u",
-+		name = kmalloc_cache_name("kmalloc-rcl",
- 						kmalloc_info[idx].size);
- 		BUG_ON(!name);
- 	} else {
-@@ -1159,8 +1174,7 @@ void __init create_kmalloc_caches(slab_flags_t flags)
- 
- 		if (s) {
- 			unsigned int size = kmalloc_size(i);
--			char *n = kasprintf(GFP_NOWAIT,
--				 "dma-kmalloc-%u", size);
-+			const char *n = kmalloc_cache_name("dma-kmalloc", size);
- 
- 			BUG_ON(!n);
- 			kmalloc_caches[KMALLOC_DMA][i] = create_kmalloc_cache(
--- 
-2.17.1
+ 	int size = PAGE_SIZE;
+@@ -1327,6 +1370,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
+ 	test_kernel_gup_of_access_disabled_region,
+ 	test_kernel_gup_write_to_write_disabled_region,
+ 	test_executing_on_unreadable_memory,
++	test_implicit_mprotect_exec_only_memory,
+ 	test_ptrace_of_child,
+ 	test_pkey_syscalls_on_non_allocated_pkey,
+ 	test_pkey_syscalls_bad_args,
+
 
