@@ -6,40 +6,38 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60406C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9F93C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 259C420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 259C420864
+	by mail.kernel.org (Postfix) with ESMTP id 6B77B20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B77B20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967870AbeFRIfW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:35:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35994 "EHLO
+        id S967885AbeFRIf1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:35:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36022 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967323AbeFRIfU (ORCPT
+        with ESMTP id S967323AbeFRIfY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:35:20 -0400
+        Mon, 18 Jun 2018 04:35:24 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 574EEC8A;
-        Mon, 18 Jun 2018 08:35:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id AC74FCB0;
+        Mon, 18 Jun 2018 08:35:23 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
+        stable@vger.kernel.org, Gaurav Kohli <gkohli@codeaurora.org>,
         "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Matt Fleming <matt@codeblueprint.co.uk>,
+        Oleg Nesterov <oleg@redhat.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Mike Galbraith <umgwanakikbuti@gmail.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 105/189] stop_machine, sched: Fix migrate_swap() vs. active_balance() deadlock
-Date:   Mon, 18 Jun 2018 10:13:21 +0200
-Message-Id: <20180618081213.495467797@linuxfoundation.org>
+Subject: [PATCH 4.14 106/189] kthread, sched/wait: Fix kthread_parkme() wait-loop
+Date:   Mon, 18 Jun 2018 10:13:22 +0200
+Message-Id: <20180618081213.535323359@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -58,118 +56,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peter Zijlstra <peterz@infradead.org>
 
-[ Upstream commit 0b26351b910fb8fe6a056f8a1bbccabe50c0e19f ]
+[ Upstream commit 741a76b350897604c48fb12beff1c9b77724dc96 ]
 
-Matt reported the following deadlock:
+Gaurav reported a problem with __kthread_parkme() where a concurrent
+try_to_wake_up() could result in competing stores to ->state which,
+when the TASK_PARKED store got lost bad things would happen.
 
-CPU0					CPU1
+The comment near set_current_state() actually mentions this competing
+store, but only mentions the case against TASK_RUNNING. This same
+store, with different timing, can happen against a subsequent !RUNNING
+store.
 
-schedule(.prev=migrate/0)		<fault>
-  pick_next_task()			  ...
-    idle_balance()			    migrate_swap()
-      active_balance()			      stop_two_cpus()
-						spin_lock(stopper0->lock)
-						spin_lock(stopper1->lock)
-						ttwu(migrate/0)
-						  smp_cond_load_acquire() -- waits for schedule()
-        stop_one_cpu(1)
-	  spin_lock(stopper1->lock) -- waits for stopper lock
+This normally is not a problem, because as per that same comment, the
+!RUNNING state store is inside a condition based wait-loop:
 
-Fix this deadlock by taking the wakeups out from under stopper->lock.
-This allows the active_balance() to queue the stop work and finish the
-context switch, which in turn allows the wakeup from migrate_swap() to
-observe the context and complete the wakeup.
+  for (;;) {
+    set_current_state(TASK_UNINTERRUPTIBLE);
+    if (!need_sleep)
+      break;
+    schedule();
+  }
+  __set_current_state(TASK_RUNNING);
 
+If we loose the (first) TASK_UNINTERRUPTIBLE store to a previous
+(concurrent) wakeup, the schedule() will NO-OP and we'll go around the
+loop once more.
+
+The problem here is that the TASK_PARKED store is not inside the
+KTHREAD_SHOULD_PARK condition wait-loop.
+
+There is a genuine issue with sleeps that do not have a condition;
+this is addressed in a subsequent patch.
+
+Reported-by: Gaurav Kohli <gkohli@codeaurora.org>
 Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Reported-by: Matt Fleming <matt@codeblueprint.co.uk>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Acked-by: Matt Fleming <matt@codeblueprint.co.uk>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Mike Galbraith <umgwanakikbuti@gmail.com>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/20180420095005.GH4064@hirez.programming.kicks-ass.net
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/stop_machine.c |   19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
+ kernel/kthread.c |    7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -21,6 +21,7 @@
- #include <linux/smpboot.h>
- #include <linux/atomic.h>
- #include <linux/nmi.h>
-+#include <linux/sched/wake_q.h>
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -169,12 +169,13 @@ void *kthread_probe_data(struct task_str
  
- /*
-  * Structure to determine completion condition and record errors.  May
-@@ -65,27 +66,31 @@ static void cpu_stop_signal_done(struct
- }
- 
- static void __cpu_stop_queue_work(struct cpu_stopper *stopper,
--					struct cpu_stop_work *work)
-+					struct cpu_stop_work *work,
-+					struct wake_q_head *wakeq)
+ static void __kthread_parkme(struct kthread *self)
  {
- 	list_add_tail(&work->list, &stopper->works);
--	wake_up_process(stopper->thread);
-+	wake_q_add(wakeq, stopper->thread);
- }
- 
- /* queue @work to @stopper.  if offline, @work is completed immediately */
- static bool cpu_stop_queue_work(unsigned int cpu, struct cpu_stop_work *work)
- {
- 	struct cpu_stopper *stopper = &per_cpu(cpu_stopper, cpu);
-+	DEFINE_WAKE_Q(wakeq);
- 	unsigned long flags;
- 	bool enabled;
- 
- 	spin_lock_irqsave(&stopper->lock, flags);
- 	enabled = stopper->enabled;
- 	if (enabled)
--		__cpu_stop_queue_work(stopper, work);
-+		__cpu_stop_queue_work(stopper, work, &wakeq);
- 	else if (work->done)
- 		cpu_stop_signal_done(work->done);
- 	spin_unlock_irqrestore(&stopper->lock, flags);
- 
-+	wake_up_q(&wakeq);
-+
- 	return enabled;
- }
- 
-@@ -229,6 +234,7 @@ static int cpu_stop_queue_two_works(int
- {
- 	struct cpu_stopper *stopper1 = per_cpu_ptr(&cpu_stopper, cpu1);
- 	struct cpu_stopper *stopper2 = per_cpu_ptr(&cpu_stopper, cpu2);
-+	DEFINE_WAKE_Q(wakeq);
- 	int err;
- retry:
- 	spin_lock_irq(&stopper1->lock);
-@@ -252,8 +258,8 @@ retry:
- 			goto unlock;
- 
- 	err = 0;
--	__cpu_stop_queue_work(stopper1, work1);
--	__cpu_stop_queue_work(stopper2, work2);
-+	__cpu_stop_queue_work(stopper1, work1, &wakeq);
-+	__cpu_stop_queue_work(stopper2, work2, &wakeq);
- unlock:
- 	spin_unlock(&stopper2->lock);
- 	spin_unlock_irq(&stopper1->lock);
-@@ -263,6 +269,9 @@ unlock:
- 			cpu_relax();
- 		goto retry;
+-	__set_current_state(TASK_PARKED);
+-	while (test_bit(KTHREAD_SHOULD_PARK, &self->flags)) {
++	for (;;) {
++		set_current_state(TASK_PARKED);
++		if (!test_bit(KTHREAD_SHOULD_PARK, &self->flags))
++			break;
+ 		if (!test_and_set_bit(KTHREAD_IS_PARKED, &self->flags))
+ 			complete(&self->parked);
+ 		schedule();
+-		__set_current_state(TASK_PARKED);
  	}
-+
-+	wake_up_q(&wakeq);
-+
- 	return err;
- }
- /**
+ 	clear_bit(KTHREAD_IS_PARKED, &self->flags);
+ 	__set_current_state(TASK_RUNNING);
 
 
