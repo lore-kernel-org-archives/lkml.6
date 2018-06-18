@@ -2,218 +2,334 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8824C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:43:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39916C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:44:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AC3220693
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:43:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3uYHWa3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AC3220693
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D32E620836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:44:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D32E620836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936041AbeFRVny (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 17:43:54 -0400
-Received: from mail-it0-f67.google.com ([209.85.214.67]:54869 "EHLO
-        mail-it0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933241AbeFRVnv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 17:43:51 -0400
-Received: by mail-it0-f67.google.com with SMTP id 76-v6so14267786itx.4;
-        Mon, 18 Jun 2018 14:43:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=/gGtEXR/lxRYAVlA1pSE60aCTJ+5VXSLezaexBh7SVo=;
-        b=Z3uYHWa3SzLYExVDr4/4mtwCe1lSzcJaO29RYg1WSPz5oHdyBEC9r/OG5lTFJiVFO9
-         F450xZuJefyTQxHJ4oEhHssSCR9W3OgVu0AjJOyfH1mNOH8Xl+vSAABAhc2aNGDp6pRI
-         pDMj/6LC5t3fAhujg8Pnz8e5eNoJjvJp9WMsGIECGbc06UbvzAXTf5n2im7KfKSPpjxg
-         boMQSISvTI5BEbi0nJ1R7C4Uh/6ZtFU1thFqd/CzuDEVZS0eze4PNs/lS+oUU5Sc/jGi
-         UmD4nxThaqXNB0LQR91+kSypKAGFguY4R1XAeCCFQKjqGvr/H6CM0HbrlWP3NCxyKGtg
-         S03g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=/gGtEXR/lxRYAVlA1pSE60aCTJ+5VXSLezaexBh7SVo=;
-        b=N1U3I5Q0jUqDlVg4SUnPuFWLv8n2O9z1yAyX/ycDHFbOqaRrOdrmoVWdA5pk+Ws656
-         nFhvTpHqlzvIu4guy5cDkQNXJGSbzyeN8DHnHITijS+0UrYjU7lmF4EX0wM5W4QZ4fBc
-         xF8+SoqGtIDI6OvIhFK2DOsmlyW/Lqe9y+rtJCrHP3IXl4q7vEay7M++h/ajqlIn9DRU
-         cDNUtATb1/UqL8R7S1G3qcwTyzMl0U+8Zo6Hdc52obUAKpyjJaYZmx9ITDc1zJ2mW8GH
-         POHuSg0XKyL4+R6cZWUIlPdlLD5QShO5gjpSYI9abOYi1u5bzFd/sPk7n8IzeODdgiJC
-         cg7A==
-X-Gm-Message-State: APt69E0+E3wIGy3B3++ihwldTxPAq6XnLq0+eoO+RUrWjP8XQd/Omcki
-        ++B89a5hGAvsF5t1h/KJNC4IqxHbQJtH0eKYI7A=
-X-Google-Smtp-Source: ADUXVKLaxu225cRyg+W1blw2G8W1ZblYd2x6i4sJYGzNrzsDtn594waJPfrj2i6wojYj+iTrqCzyFMlhMXiKKiiZInw=
-X-Received: by 2002:a24:c246:: with SMTP id i67-v6mr11751155itg.45.1529358230689;
- Mon, 18 Jun 2018 14:43:50 -0700 (PDT)
+        id S936412AbeFRVof convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 17:44:35 -0400
+Received: from mx1.redhat.com ([209.132.183.28]:33694 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933241AbeFRVod (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 17:44:33 -0400
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B07A2308FBA4;
+        Mon, 18 Jun 2018 21:44:32 +0000 (UTC)
+Received: from t450s.home (ovpn-116-135.phx2.redhat.com [10.3.116.135])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 17D23308BDAE;
+        Mon, 18 Jun 2018 21:44:31 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 15:44:30 -0600
+From:   Alex Williamson <alex.williamson@redhat.com>
+To:     Logan Gunthorpe <logang@deltatee.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Christian =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>
+Subject: Re: [PATCH v3 1/3] PCI: Make specifying PCI devices in kernel
+ parameters reusable
+Message-ID: <20180618154430.1af3d42f@t450s.home>
+In-Reply-To: <20180618193636.16210-2-logang@deltatee.com>
+References: <20180618193636.16210-1-logang@deltatee.com>
+        <20180618193636.16210-2-logang@deltatee.com>
 MIME-Version: 1.0
-Received: by 2002:ac0:a7aa:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 14:43:50
- -0700 (PDT)
-In-Reply-To: <CAFqt6zaVbJWCvCf8AF5nKPCpqrSi1Aweog2=V9xzJFzWGbmd3w@mail.gmail.com>
-References: <20180521172948.GA18605@jordon-HP-15-Notebook-PC>
- <CAFqt6zY8VJ791_6C_pqrGgjG91T1kirEmUyA3JC+3JsN8QjFAw@mail.gmail.com>
- <20180531175902.GC11565@jcrouse-lnx.qualcomm.com> <CAFqt6zaVbJWCvCf8AF5nKPCpqrSi1Aweog2=V9xzJFzWGbmd3w@mail.gmail.com>
-From:   Rob Clark <robdclark@gmail.com>
-Date:   Mon, 18 Jun 2018 17:43:50 -0400
-Message-ID: <CAF6AEGvEkC9WiEC79W-Wny0mVCnjDJq4xhgduEZSSx6WaiSjmw@mail.gmail.com>
-Subject: Re: [Freedreno] [PATCH] gpu: drm: msm: Change return type to vm_fault_t
-To:     Souptick Joarder <jrdr.linux@gmail.com>
-Cc:     David Airlie <airlied@linux.ie>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Mon, 18 Jun 2018 21:44:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 11:40 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
-> On Thu, May 31, 2018 at 11:29 PM, Jordan Crouse <jcrouse@codeaurora.org> wrote:
->> On Mon, May 28, 2018 at 12:38:41PM +0530, Souptick Joarder wrote:
->>> On Mon, May 21, 2018 at 10:59 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
->>> > Use new return type vm_fault_t for fault handler. For
->>> > now, this is just documenting that the function returns
->>> > a VM_FAULT value rather than an errno. Once all instances
->>> > are converted, vm_fault_t will become a distinct type.
->>> >
->>> > Ref- commit 1c8f422059ae ("mm: change return type to vm_fault_t")
->>> >
->>> > Previously vm_insert_mixed() returns err which driver
->>> > mapped into VM_FAULT_* type. The new function
->>> > vmf_insert_mixed() will replace this inefficiency by
->>> > returning VM_FAULT_* type.
->>> >
->>> > vmf_error() is the newly introduce inline function
->>> > in 4.17-rc6.
->>> >
->>> > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
->>> > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
->>> > ---
->>> >  drivers/gpu/drm/msm/msm_drv.h |  3 ++-
->>> >  drivers/gpu/drm/msm/msm_gem.c | 33 ++++++++++-----------------------
->>> >  2 files changed, 12 insertions(+), 24 deletions(-)
->>> >
->>> > diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
->>> > index 0a653dd..44b4ca7 100644
->>> > --- a/drivers/gpu/drm/msm/msm_drv.h
->>> > +++ b/drivers/gpu/drm/msm/msm_drv.h
->>> > @@ -33,6 +33,7 @@
->>> >  #include <linux/of_graph.h>
->>> >  #include <linux/of_device.h>
->>> >  #include <asm/sizes.h>
->>> > +#include <linux/mm_types.h>
->>> >
->>> >  #include <drm/drmP.h>
->>> >  #include <drm/drm_atomic.h>
->>> > @@ -188,7 +189,7 @@ int msm_ioctl_gem_submit(struct drm_device *dev, void *data,
->>> >  int msm_gem_mmap_obj(struct drm_gem_object *obj,
->>> >                         struct vm_area_struct *vma);
->>> >  int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
->>> > -int msm_gem_fault(struct vm_fault *vmf);
->>> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf);
->>> >  uint64_t msm_gem_mmap_offset(struct drm_gem_object *obj);
->>> >  int msm_gem_get_iova(struct drm_gem_object *obj,
->>> >                 struct msm_gem_address_space *aspace, uint64_t *iova);
->>> > diff --git a/drivers/gpu/drm/msm/msm_gem.c b/drivers/gpu/drm/msm/msm_gem.c
->>> > index 07376de..27a5ab5 100644
->>> > --- a/drivers/gpu/drm/msm/msm_gem.c
->>> > +++ b/drivers/gpu/drm/msm/msm_gem.c
->>> > @@ -217,7 +217,7 @@ int msm_gem_mmap(struct file *filp, struct vm_area_struct *vma)
->>> >         return msm_gem_mmap_obj(vma->vm_private_data, vma);
->>> >  }
->>> >
->>> > -int msm_gem_fault(struct vm_fault *vmf)
->>> > +vm_fault_t msm_gem_fault(struct vm_fault *vmf)
->>> >  {
->>> >         struct vm_area_struct *vma = vmf->vma;
->>> >         struct drm_gem_object *obj = vma->vm_private_data;
->>> > @@ -225,15 +225,18 @@ int msm_gem_fault(struct vm_fault *vmf)
->>> >         struct page **pages;
->>> >         unsigned long pfn;
->>> >         pgoff_t pgoff;
->>> > -       int ret;
->>> > +       int err;
->>> > +       vm_fault_t ret;
->>> >
->>> >         /*
->>> >          * vm_ops.open/drm_gem_mmap_obj and close get and put
->>> >          * a reference on obj. So, we dont need to hold one here.
->>> >          */
->>> > -       ret = mutex_lock_interruptible(&msm_obj->lock);
->>> > -       if (ret)
->>> > +       err = mutex_lock_interruptible(&msm_obj->lock);
->>> > +       if (err) {
->>> > +               ret = VM_FAULT_NOPAGE;
->>> >                 goto out;
->>> > +       }
->>> >
->>> >         if (WARN_ON(msm_obj->madv != MSM_MADV_WILLNEED)) {
->>> >                 mutex_unlock(&msm_obj->lock);
->>> > @@ -243,7 +246,7 @@ int msm_gem_fault(struct vm_fault *vmf)
->>> >         /* make sure we have pages attached now */
->>> >         pages = get_pages(obj);
->>> >         if (IS_ERR(pages)) {
->>> > -               ret = PTR_ERR(pages);
->>> > +               ret = vmf_error(PTR_ERR(pages));
->>> >                 goto out_unlock;
->>> >         }
->>> >
->>> > @@ -255,27 +258,11 @@ int msm_gem_fault(struct vm_fault *vmf)
->>> >         VERB("Inserting %p pfn %lx, pa %lx", (void *)vmf->address,
->>> >                         pfn, pfn << PAGE_SHIFT);
->>> >
->>> > -       ret = vm_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
->>> > -
->>> > +       ret = vmf_insert_mixed(vma, vmf->address, __pfn_to_pfn_t(pfn, PFN_DEV));
->>> >  out_unlock:
->>> >         mutex_unlock(&msm_obj->lock);
->>> >  out:
->>> > -       switch (ret) {
->>> > -       case -EAGAIN:
->>> > -       case 0:
->>> > -       case -ERESTARTSYS:
->>> > -       case -EINTR:
->>> > -       case -EBUSY:
->>> > -               /*
->>> > -                * EBUSY is ok: this just means that another thread
->>> > -                * already did the job.
->>> > -                */
->>> > -               return VM_FAULT_NOPAGE;
->>> > -       case -ENOMEM:
->>> > -               return VM_FAULT_OOM;
->>> > -       default:
->>> > -               return VM_FAULT_SIGBUS;
->>> > -       }
->>> > +       return ret;
->>> >  }
->>> >
->>> >  /** get mmap offset */
->>> > --
->>> > 1.9.1
->>> >
->>>
->>> Any comment for this patch ?
->>
->> Sorry for the delay, I wanted to get a chance to test it. It seems to pass the
->> usual regression tests. LGTM.
->>
->
-> Jordan, This patch is not merged in 4.18-rc-1.
+On Mon, 18 Jun 2018 13:36:34 -0600
+Logan Gunthorpe <logang@deltatee.com> wrote:
 
-this was on my list to pull into msm-next for 4.19 as soon as I have a
-chance to do my next round of pulling patches from patchwork, so it
-should show up in linux-next shortly..
+> Separate out the code to match a PCI device with a string (typically
+> originating from a kernel parameter) from the
+> pci_specified_resource_alignment() function into its own helper
+> function.
+> 
+> While we are at it, this change fixes the kernel style of the function
+> (fixing a number of long lines and extra parentheses).
+> 
+> Additionally, make the analogous change to the kernel parameter
+> documentation: Separating the description of how to specify a PCI device
+> into it's own section at the head of the pci= parameter.
+> 
+> This patch should have no functional alterations.
+> 
+> Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
+> Reviewed-by: Stephen Bates <sbates@raithlin.com>
+> Acked-by: Christian König <christian.koenig@amd.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  26 +++-
+>  drivers/pci/pci.c                               | 153 +++++++++++++++---------
+>  2 files changed, 120 insertions(+), 59 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index efc7aa7a0670..760fb2b0b349 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2994,7 +2994,24 @@
+>  			See header of drivers/block/paride/pcd.c.
+>  			See also Documentation/blockdev/paride.txt.
+>  
+> -	pci=option[,option...]	[PCI] various PCI subsystem options:
+> +	pci=option[,option...]	[PCI] various PCI subsystem options.
+> +
+> +				Some options herein operate on a specific device
+> +				or a set of devices (<pci_dev>). These are
+> +				specified in one of the following formats:
+> +
+> +				[<domain>:]<bus>:<slot>.<func>
+> +				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+> +
+> +				Note: the first format specifies a PCI
+> +				bus/slot/function address which may change
+> +				if new hardware is inserted, if motherboard
+> +				firmware changes, or due to changes caused
+> +				by other kernel parameters. The second format
 
-BR,
--R
+Nit, is it worth noting that when unspecified, domain is zero?
+
+> +				selects devices using IDs from the
+> +				configuration space which may match multiple
+> +				devices in the system.
+> +
+>  		earlydump	[X86] dump PCI config space before the kernel
+>  				changes anything
+>  		off		[X86] don't probe for the PCI bus
+> @@ -3123,11 +3140,10 @@
+>  				window. The default value is 64 megabytes.
+>  		resource_alignment=
+>  				Format:
+> -				[<order of align>@][<domain>:]<bus>:<slot>.<func>[; ...]
+> -				[<order of align>@]pci:<vendor>:<device>\
+> -						[:<subvendor>:<subdevice>][; ...]
+> +				[<order of align>@]<pci_dev>[; ...]
+>  				Specifies alignment and device to reassign
+> -				aligned memory resources.
+> +				aligned memory resources. How to
+> +				specify the device is described above.
+>  				If <order of align> is not specified,
+>  				PAGE_SIZE is used as alignment.
+>  				PCI-PCI bridge can be specified, if resource
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 97acba712e4e..bec1bef6f326 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -191,6 +191,88 @@ void __iomem *pci_ioremap_wc_bar(struct pci_dev *pdev, int bar)
+>  EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
+>  #endif
+>  
+> +/**
+> + * pci_dev_str_match - test if a string matches a device
+> + * @dev:    the PCI device to test
+> + * @p:      string to match the device against
+> + * @endptr: pointer to the string after the match
+> + *
+> + * Test if a string (typically from a kernel parameter) matches a
+> + * specified. The string may be of one of two forms formats:
+> + *
+> + *   [<domain>:]<bus>:<slot>.<func>
+> + *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
+> + *
+> + * The first format specifies a PCI bus/slot/function address which
+> + * may change if new hardware is inserted, if motherboard firmware changes,
+> + * or due to changes caused in kernel parameters.
+> + *
+> + * The second format matches devices using IDs in the configuration
+> + * space which may match multiple devices in the system. A value of 0
+> + * for any field will match all devices.
+
+I realize this is not a change in behavior, but since we're spelling it
+out in a proper comment rather than burying it in the implementation,
+using 0 as a wildcard is rather questionable behavior.  It always
+surprises me when I read this because pci_match_one_device() uses
+PCI_ANY_ID (~0) as a wildcard and as a result of struct pci_device_id
+using __u32 for these fields, we actually need to specify ffffffff on
+the commandline to get a wildcard match for dynamic ids.  The latter is
+tedious to use, but I think it's more correct, and the use of a __u32 is
+probably attributed to the fact that 0xffff is only reserved for vendor
+ID, the spec doesn't seem to reserve any entries from the vendor's
+device ID range.
+
+There's probably really no path to resolve these, but acknowledging the
+difference in this comment block might be helpful in the future.
+
+> + *
+> + * Returns 1 if the string matches the device, 0 if it does not and
+> + * a negative error code if the string cannot be parsed.
+> + */
+> +static int pci_dev_str_match(struct pci_dev *dev, const char *p,
+> +			     const char **endptr)
+> +{
+> +	int ret;
+> +	int seg, bus, slot, func, count;
+> +	unsigned short vendor, device, subsystem_vendor, subsystem_device;
+> +
+> +	if (strncmp(p, "pci:", 4) == 0) {
+> +		/* PCI vendor/device (subvendor/subdevice) ids are specified */
+> +		p += 4;
+> +		ret = sscanf(p, "%hx:%hx:%hx:%hx%n", &vendor, &device,
+> +			     &subsystem_vendor, &subsystem_device, &count);
+> +		if (ret != 4) {
+> +			ret = sscanf(p, "%hx:%hx%n", &vendor, &device, &count);
+> +			if (ret != 2)
+> +				return -EINVAL;
+> +
+> +			subsystem_vendor = 0;
+> +			subsystem_device = 0;
+> +		}
+> +
+> +		p += count;
+> +
+> +		if ((!vendor || vendor == dev->vendor) &&
+> +		    (!device || device == dev->device) &&
+> +		    (!subsystem_vendor ||
+> +			    subsystem_vendor == dev->subsystem_vendor) &&
+> +		    (!subsystem_device ||
+> +			    subsystem_device == dev->subsystem_device))
+> +			goto found;
+> +
+> +	} else {
+> +		/* PCI Bus,Slot,Function ids are specified */
+> +		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
+> +			     &func, &count);
+> +		if (ret != 4) {
+> +			seg = 0;
+> +			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
+> +				     &func, &count);
+> +			if (ret != 3)
+> +				return -EINVAL;
+> +		}
+> +
+> +		p += count;
+> +
+> +		if (seg == pci_domain_nr(dev->bus) &&
+> +		    bus == dev->bus->number &&
+> +		    slot == PCI_SLOT(dev->devfn) &&
+> +		    func == PCI_FUNC(dev->devfn))
+> +			goto found;
+> +	}
+> +
+> +	*endptr = p;
+> +	return 0;
+> +
+> +found:
+> +	*endptr = p;
+> +	return 1;
+> +}
+>  
+>  static int __pci_find_next_cap_ttl(struct pci_bus *bus, unsigned int devfn,
+>  				   u8 pos, int cap, int *ttl)
+> @@ -5454,10 +5536,10 @@ static DEFINE_SPINLOCK(resource_alignment_lock);
+>  static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+>  							bool *resize)
+>  {
+> -	int seg, bus, slot, func, align_order, count;
+> -	unsigned short vendor, device, subsystem_vendor, subsystem_device;
+> +	int align_order, count;
+>  	resource_size_t align = pcibios_default_alignment();
+> -	char *p;
+> +	const char *p;
+> +	int ret;
+>  
+>  	spin_lock(&resource_alignment_lock);
+>  	p = resource_alignment_param;
+> @@ -5477,58 +5559,21 @@ static resource_size_t pci_specified_resource_alignment(struct pci_dev *dev,
+>  		} else {
+>  			align_order = -1;
+>  		}
+> -		if (strncmp(p, "pci:", 4) == 0) {
+> -			/* PCI vendor/device (subvendor/subdevice) ids are specified */
+> -			p += 4;
+> -			if (sscanf(p, "%hx:%hx:%hx:%hx%n",
+> -				&vendor, &device, &subsystem_vendor, &subsystem_device, &count) != 4) {
+> -				if (sscanf(p, "%hx:%hx%n", &vendor, &device, &count) != 2) {
+> -					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: pci:%s\n",
+> -						p);
+> -					break;
+> -				}
+> -				subsystem_vendor = subsystem_device = 0;
+> -			}
+> -			p += count;
+> -			if ((!vendor || (vendor == dev->vendor)) &&
+> -				(!device || (device == dev->device)) &&
+> -				(!subsystem_vendor || (subsystem_vendor == dev->subsystem_vendor)) &&
+> -				(!subsystem_device || (subsystem_device == dev->subsystem_device))) {
+> -				*resize = true;
+> -				if (align_order == -1)
+> -					align = PAGE_SIZE;
+> -				else
+> -					align = 1 << align_order;
+> -				/* Found */
+> -				break;
+> -			}
+> -		}
+> -		else {
+> -			if (sscanf(p, "%x:%x:%x.%x%n",
+> -				&seg, &bus, &slot, &func, &count) != 4) {
+> -				seg = 0;
+> -				if (sscanf(p, "%x:%x.%x%n",
+> -						&bus, &slot, &func, &count) != 3) {
+> -					/* Invalid format */
+> -					printk(KERN_ERR "PCI: Can't parse resource_alignment parameter: %s\n",
+> -						p);
+> -					break;
+> -				}
+> -			}
+> -			p += count;
+> -			if (seg == pci_domain_nr(dev->bus) &&
+> -				bus == dev->bus->number &&
+> -				slot == PCI_SLOT(dev->devfn) &&
+> -				func == PCI_FUNC(dev->devfn)) {
+> -				*resize = true;
+> -				if (align_order == -1)
+> -					align = PAGE_SIZE;
+> -				else
+> -					align = 1 << align_order;
+> -				/* Found */
+> -				break;
+> -			}
+> +
+> +		ret = pci_dev_str_match(dev, p, &p);
+> +		if (ret == 1) {
+> +			*resize = true;
+> +			if (align_order == -1)
+> +				align = PAGE_SIZE;
+> +			else
+> +				align = 1 << align_order;
+> +			break;
+> +		} else if (ret < 0) {
+> +			pr_info("PCI: Can't parse resource_alignment parameter: pci:%s\n",
+
+
+The "pci:" prefix on %s doesn't make sense now, it was used above when
+the pointer was already advanced past this token, now I believe it would
+lead to "pci:pci:xxxx:yyyy" or "pci:xx:yy.z".  Thanks,
+
+Alex
