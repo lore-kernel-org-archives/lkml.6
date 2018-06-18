@@ -3,142 +3,123 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D482C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:16:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53312C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:17:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88D2A208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:16:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88D2A208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.alibaba.com
+	by mail.kernel.org (Postfix) with ESMTP id 1436720864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:17:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1436720864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966789AbeFRJQn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:16:43 -0400
-Received: from out30-131.freemail.mail.aliyun.com ([115.124.30.131]:41924 "EHLO
-        out30-131.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S965495AbeFRJQk (ORCPT
+        id S966865AbeFRJRG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:17:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:59162 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S966613AbeFRI2W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:16:40 -0400
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R861e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04455;MF=xlpang@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0T2wux.s_1529313378;
-Received: from localhost(mailfrom:xlpang@linux.alibaba.com fp:SMTPD_---0T2wux.s_1529313378)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 18 Jun 2018 17:16:35 +0800
-From:   Xunlei Pang <xlpang@linux.alibaba.com>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, Ben Segall <bsegall@google.com>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] sched/fair: Fix bandwidth timer clock drift condition
-Date:   Mon, 18 Jun 2018 17:16:17 +0800
-Message-Id: <20180618091618.21480-1-xlpang@linux.alibaba.com>
-X-Mailer: git-send-email 2.14.1.40.g8e62ba1
+        Mon, 18 Jun 2018 04:28:22 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 11857D1E;
+        Mon, 18 Jun 2018 08:28:21 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 277/279] ARM: kexec: fix kdump register saving on panic()
+Date:   Mon, 18 Jun 2018 10:14:22 +0200
+Message-Id: <20180618080620.133552872@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The current condition to judge clock drift in expire_cfs_rq_runtime()
-is wrong, the two runtime_expires are actually the same when clock
-drift happens, so this condtion can never hit. The orginal design was
-correctly done by commit a9cf55b28610 ("sched: Expire invalid runtime"),
-but was changed to be the current one due to its locking issue.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-This patch introduces another way, it adds a new field in both structure
-cfs_rq and cfs_bandwidth to record the expiration update sequence, and
-use them to figure out if clock drift happens(true if they equal).
+------------------
 
-This fix is also needed by the following patch.
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-Fixes: 51f2176d74ac ("sched/fair: Fix unlocked reads of some cfs_b->quota/period")
-Cc: Ben Segall <bsegall@google.com>
-Signed-off-by: Xunlei Pang <xlpang@linux.alibaba.com>
+[ Upstream commit 2d7b3c64431245c95b05a441669c074da10db943 ]
+
+When a panic() occurs, the kexec code uses smp_send_stop() to stop
+the other CPUs, but this results in the CPU register state not being
+saved, and gdb is unable to inspect the state of other CPUs.
+
+Commit 0ee59413c967 ("x86/panic: replace smp_send_stop() with kdump
+friendly version in panic path") addressed the issue on x86, but
+ignored other architectures.  Address the issue on ARM by splitting
+out the crash stop implementation to crash_smp_send_stop() and
+adding the necessary protection.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- kernel/sched/fair.c  | 14 ++++++++------
- kernel/sched/sched.h |  6 ++++--
- 2 files changed, 12 insertions(+), 8 deletions(-)
+ arch/arm/kernel/machine_kexec.c |   34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e497c05aab7f..9f384264e832 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4590,6 +4590,7 @@ void __refill_cfs_bandwidth_runtime(struct cfs_bandwidth *cfs_b)
- 	now = sched_clock_cpu(smp_processor_id());
- 	cfs_b->runtime = cfs_b->quota;
- 	cfs_b->runtime_expires = now + ktime_to_ns(cfs_b->period);
-+	cfs_b->expires_seq++;
+--- a/arch/arm/kernel/machine_kexec.c
++++ b/arch/arm/kernel/machine_kexec.c
+@@ -95,6 +95,27 @@ void machine_crash_nonpanic_core(void *u
+ 		cpu_relax();
  }
  
- static inline struct cfs_bandwidth *tg_cfs_bandwidth(struct task_group *tg)
-@@ -4612,6 +4613,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	struct task_group *tg = cfs_rq->tg;
- 	struct cfs_bandwidth *cfs_b = tg_cfs_bandwidth(tg);
- 	u64 amount = 0, min_amount, expires;
-+	int expires_seq;
- 
- 	/* note: this is a positive sum as runtime_remaining <= 0 */
- 	min_amount = sched_cfs_bandwidth_slice() - cfs_rq->runtime_remaining;
-@@ -4629,6 +4631,7 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 		}
- 	}
- 	expires = cfs_b->runtime_expires;
-+	expires_seq = cfs_b->expires_seq;
- 	raw_spin_unlock(&cfs_b->lock);
- 
- 	cfs_rq->runtime_remaining += amount;
-@@ -4637,8 +4640,10 @@ static int assign_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	 * spread between our sched_clock and the one on which runtime was
- 	 * issued.
- 	 */
--	if ((s64)(expires - cfs_rq->runtime_expires) > 0)
-+	if ((s64)(expires - cfs_rq->runtime_expires) > 0) {
- 		cfs_rq->runtime_expires = expires;
-+		cfs_rq->expires_seq = expires_seq;
++void crash_smp_send_stop(void)
++{
++	static int cpus_stopped;
++	unsigned long msecs;
++
++	if (cpus_stopped)
++		return;
++
++	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
++	smp_call_function(machine_crash_nonpanic_core, NULL, false);
++	msecs = 1000; /* Wait at most a second for the other cpus to stop */
++	while ((atomic_read(&waiting_for_crash_ipi) > 0) && msecs) {
++		mdelay(1);
++		msecs--;
 +	}
++	if (atomic_read(&waiting_for_crash_ipi) > 0)
++		pr_warn("Non-crashing CPUs did not react to IPI\n");
++
++	cpus_stopped = 1;
++}
++
+ static void machine_kexec_mask_interrupts(void)
+ {
+ 	unsigned int i;
+@@ -120,19 +141,8 @@ static void machine_kexec_mask_interrupt
  
- 	return cfs_rq->runtime_remaining > 0;
- }
-@@ -4664,12 +4669,9 @@ static void expire_cfs_rq_runtime(struct cfs_rq *cfs_rq)
- 	 * has not truly expired.
- 	 *
- 	 * Fortunately we can check determine whether this the case by checking
--	 * whether the global deadline has advanced. It is valid to compare
--	 * cfs_b->runtime_expires without any locks since we only care about
--	 * exact equality, so a partial write will still work.
-+	 * whether the global deadline(cfs_b->expires_seq) has advanced.
- 	 */
+ void machine_crash_shutdown(struct pt_regs *regs)
+ {
+-	unsigned long msecs;
 -
--	if (cfs_rq->runtime_expires != cfs_b->runtime_expires) {
-+	if (cfs_rq->expires_seq == cfs_b->expires_seq) {
- 		/* extend local deadline, drift is bounded above by 2 ticks */
- 		cfs_rq->runtime_expires += TICK_NSEC;
- 	} else {
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 6601baf2361c..e977e04f8daf 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -334,9 +334,10 @@ struct cfs_bandwidth {
- 	u64			runtime;
- 	s64			hierarchical_quota;
- 	u64			runtime_expires;
-+	int			expires_seq;
+ 	local_irq_disable();
+-
+-	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
+-	smp_call_function(machine_crash_nonpanic_core, NULL, false);
+-	msecs = 1000; /* Wait at most a second for the other cpus to stop */
+-	while ((atomic_read(&waiting_for_crash_ipi) > 0) && msecs) {
+-		mdelay(1);
+-		msecs--;
+-	}
+-	if (atomic_read(&waiting_for_crash_ipi) > 0)
+-		pr_warn("Non-crashing CPUs did not react to IPI\n");
++	crash_smp_send_stop();
  
--	int			idle;
--	int			period_active;
-+	short			idle;
-+	short			period_active;
- 	struct hrtimer		period_timer;
- 	struct hrtimer		slack_timer;
- 	struct list_head	throttled_cfs_rq;
-@@ -551,6 +552,7 @@ struct cfs_rq {
- 
- #ifdef CONFIG_CFS_BANDWIDTH
- 	int			runtime_enabled;
-+	int			expires_seq;
- 	u64			runtime_expires;
- 	s64			runtime_remaining;
- 
--- 
-2.14.1.40.g8e62ba1
+ 	crash_save_cpu(regs, smp_processor_id());
+ 	machine_kexec_mask_interrupts();
+
 
