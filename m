@@ -6,206 +6,135 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57851C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:33:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5935C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F02F120836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:33:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7711320836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:39:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kSwqLodM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F02F120836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rs9l0F20"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7711320836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=acm.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935427AbeFRRc6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:32:58 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:59422 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755035AbeFRRc4 (ORCPT
+        id S935445AbeFRRjN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:39:13 -0400
+Received: from mail-pg0-f67.google.com ([74.125.83.67]:39719 "EHLO
+        mail-pg0-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935230AbeFRRjL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:32:56 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ho0gJWy2VGgxHH6mYV3NUrZdpqN7Q6wqf6v0EGTdqQs=; b=kSwqLodMxyZdgT1fqTsNlabo2
-        ZuFDS79ShSgqFOHojU//AJjPOFFibu2vjnQvXxOp2xW5Un5/0e+tlDpD/eFr/X5XU+mKGCo0PL4OR
-        croTvhtLtVdteBVqkPSbEOkgAp2FupkMoGLyMblC9a4pEZs6B7zaBiOmyrodeoFOpVRD6zFbtIJQr
-        0JUTuFCE9D98yh5mQfSVj65gak+MGPZ1x5nAkoTyxyDagZADGoER57wv5q430T4azS+4XJ21sKcJw
-        MGkOWPOULLGIqxGBKPDHKUg8fId8IV+2Mzqi1VqABSlANYqVVt6PbtXwFZA+jWT33m+UlMwZh8O3u
-        6UIH9nalQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUy1O-00065M-Ur; Mon, 18 Jun 2018 17:32:56 +0000
-Subject: Re: [PATCH 11/11] docs/mm: add description of boot time memory
- management
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <1529341199-17682-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1529341199-17682-12-git-send-email-rppt@linux.vnet.ibm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <3d0f5f7f-7444-4559-c993-f85e7198eb38@infradead.org>
-Date:   Mon, 18 Jun 2018 10:32:46 -0700
+        Mon, 18 Jun 2018 13:39:11 -0400
+Received: by mail-pg0-f67.google.com with SMTP id w12-v6so7855099pgc.6
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 10:39:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:reply-to:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=k2s+Fhu1TE8dZhPc6ZjDSqP5rpq5CNAh5CTwScldGBQ=;
+        b=rs9l0F20zXrCcMBEcCwEp/e9PVzkLd7pOfOjCa6kTaF9fkgZI/Of7aOdSxTKZrMvfU
+         YQNDpvZU0AsURtxPyU5vPu8qpSs+8YsaD3mxaaRivHRYbx6lNcHTNrJSKoa9PANL1Kq1
+         NdZLusF3axSEZVcnZKSKz9lGXL1ykiXqYG8SAMc4A3uaXsRC/Bp6YCS3FMHdNRD19VPn
+         lQCw5aC298fdDCug85hLM8DSTFrILh+rI4wF+qc7Y/wgnzfuDTqgdG0YoE7Jm7y48T3E
+         CWqGPplgROcaE6Q3u2vDwoaK3QFyCAtQ4MPZvLpWZThQ0lD2kRKqy6xhgbzYF10AMHev
+         W/UA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=k2s+Fhu1TE8dZhPc6ZjDSqP5rpq5CNAh5CTwScldGBQ=;
+        b=JDlnakeM5bPqVzJEVar0KNZ7+DsKZlapbLUZ8as0y3gCHX9fnUn1MdVzhA7FztRygK
+         swEDt5VttV0CyMO6nRPkicwYkR6hhOWAehoktXphsSX5wGzvFSirYB6aaIxK2db9063A
+         +R/Y9zvU8I/+W+IALmEti05Zspeg0mh1BzumTObTATETrDih4P07Vg16l9ViWF94cIJV
+         7cb6uwkxPtfG55jGuQxE3KkHU667H3X+kPQj4OoyCYV2DccgwyBT25M/rD7szGSaXwuO
+         e2+sD23qDNju8SJSSkjDEekdSc67KmyF+xMYRf0UnxsWNADF4tFtnjN9gJYRe06qHjK+
+         x1Wg==
+X-Gm-Message-State: APt69E3HH7BlejbCVQooFu4txZmNqcPcLV8HS390AYL4w7s1js1WjDMH
+        +Sx0iw2k5M2C1+gajpMfm0W/bug=
+X-Google-Smtp-Source: ADUXVKJFa4MJjbzhgGPnMVNBr5bs1qC5Q3X+VLKPQXDZleMpxKAdri2ndXz5wMc9RlGjdleYZCnsfg==
+X-Received: by 2002:a62:c809:: with SMTP id z9-v6mr14358363pff.5.1529343550742;
+        Mon, 18 Jun 2018 10:39:10 -0700 (PDT)
+Received: from serve.minyard.net ([47.184.170.59])
+        by smtp.gmail.com with ESMTPSA id n68-v6sm28662249pfk.145.2018.06.18.10.39.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 10:39:09 -0700 (PDT)
+Received: from [192.168.27.3] (t430m.minyard.net [192.168.27.3])
+        by serve.minyard.net (Postfix) with ESMTPSA id 06FB98AE;
+        Mon, 18 Jun 2018 12:39:08 -0500 (CDT)
+Reply-To: minyard@acm.org
+Subject: Re: [PATCH] ipmi: Change to ktime_get_ts64()
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, openipmi-developer@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+References: <20180618142717.3683096-1-arnd@arndb.de>
+From:   Corey Minyard <minyard@acm.org>
+Message-ID: <59c7f897-4280-5f45-81a1-45b070377c22@acm.org>
+Date:   Mon, 18 Jun 2018 12:39:06 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.8.0
 MIME-Version: 1.0
-In-Reply-To: <1529341199-17682-12-git-send-email-rppt@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20180618142717.3683096-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-GB
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 09:59 AM, Mike Rapoport wrote:
-> Both bootmem and memblock are have pretty good internal documentation
-> coverage. With addition of some overview we get a nice description of the
-> early memory management.
-> 
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+On 06/18/2018 09:27 AM, Arnd Bergmann wrote:
+> getnstimeofday64() is deprecated because of the inconsistent naming,
+> it is only a wrapper around ktime_get_real_ts64() now, which could be
+> used as a direct replacement.
+>
+> However, it is generally better to use CLOCK_MONOTONIC timestamps
+> where possible, to avoid glitches with a concurrent settimeofday()
+> or leap second.
+>
+> The uses in ipmi are either for debugging prints or for comparing against
+> a prior timestamp, so using a monotonic ktime_get_ts64() is probably
+> best here.
+
+This is definitely better.  Queued for 4.19 (or whatever it will be called).
+
+Thanks,
+
+-corey
+
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  Documentation/core-api/boot-time-mm.rst | 92 +++++++++++++++++++++++++++++++++
->  Documentation/core-api/index.rst        |  1 +
->  2 files changed, 93 insertions(+)
->  create mode 100644 Documentation/core-api/boot-time-mm.rst
-> 
-> diff --git a/Documentation/core-api/boot-time-mm.rst b/Documentation/core-api/boot-time-mm.rst
-> new file mode 100644
-> index 0000000..379e5a3
-> --- /dev/null
-> +++ b/Documentation/core-api/boot-time-mm.rst
-> @@ -0,0 +1,92 @@
-> +===========================
-> +Boot time memory management
-> +===========================
-> +
-> +Early system initialization cannot use "normal" memory management
-> +simply because it is not set up yet. But there is still need to
-> +allocate memory for various data structures, for instance for the
-> +physical page allocator. To address this, a specialized allocator
-> +called the :ref:`Boot Memory Allocator <bootmem>`, or bootmem, was
-> +introduced. Several years later PowerPC developers added a "Logical
-> +Memory Blocks" which was later adopted by other architectures and
-
-   Memory Blocks" allocator, which was later ...
-
-> +renamed to :ref:`memblock <memblock>`. There is also a compatibility
-> +layer called `nobootmem` that translates bootmem allocation interfaces
-> +to memblock calls.
-> +
-> +The selection of the early alocator is done using
-
-                              allocator
-
-> +``CONFIG_NO_BOOTMEM`` and ``CONFIG_HAVE_MEMBLOCK`` kernel
-> +configuration options. These options are enabled or disabled
-> +statically by the architectures' Kconfig files.
-> +
-> +* Architectures that rely only on bootmem select ``CONFIG_NO_BOOTMEM=n
-> +  && CONFIG_HAVE_MEMBLOCK=n``.
-> +* The users of memblock with the nobootmem compatibility layer set
-> +  ``CONFIG_NO_BOOTMEM=y && CONFIG_HAVE_MEMBLOCK=y``.
-> +* And for those that use both memblock and bootmem the configuration
-> +  includes ``CONFIG_NO_BOOTMEM=n && CONFIG_HAVE_MEMBLOCK=y
-
-             fix ending:                                   =y``.
-
-> +
-> +Whichever allocator is used, it is the responsibility of the
-> +architecture specific initialization to set it up in
-> +:c:func:`setup_arch` and tear it down in :c:func:`mem_init` functions.
-> +
-> +Once the early memory manegement is available it offers variety of
-
-                         management                 offers a variety of
-
-> +functions and macros for memory allocations. The allocation request
-> +may be directed to the first (and probably the only) node or to a
-> +particular node in a NUMA system. There are API variants that panic
-> +when an allocation fails and those that don't. And more recent and
-> +advanced memblock even allows controlling its own behaviour.
-> +
-> +.. _bootmem:
-> +
-> +Bootmem
-> +=======
-> +
-> +(mostly stolen from Mel Gorman's "Understanding the Linux Virtual
-> +Memory Manager" `book`_)
-> +
-> +.. _book: https://www.kernel.org/doc/gorman/
-> +
-> +.. kernel-doc:: mm/bootmem.c
-> +   :doc: bootmem overview
-> +
-> +.. _memblock:
-> +
-> +Memblock
-> +========
-> +
-> +.. kernel-doc:: mm/memblock.c
-> +   :doc: memblock overview
-> +
-> +
-> +Functions and structures
-> +========================
-> +
-> +Common API
-> +----------
-> +
-> +The functions that are described in this section are available
-> +regardless of what early memory manager is enabled.
-> +
-> +.. kernel-doc:: mm/nobootmem.c
-> +
-> +Bootmem specific API
-> +--------------------
-> +
-> +The interfaces available only with bootmem, i.e when ``CONFIG_NO_BOOTMEM=n``
-
-                                               i.e.
-How about:
-
-  These interfaces are available only with bootmem, i.e. when ``CONFIG_NO_BOOTMEM=n``.
-
-> +
-> +.. kernel-doc:: include/linux/bootmem.h
-> +.. kernel-doc:: mm/bootmem.c
-> +   :nodocs:
-> +
-> +Memblock specific API
-> +---------------------
-> +
-> +Here is the description of memblock data structures, functions and
-> +macros. Some of them are actually internal, but since they are
-> +documented it would be silly to omit them. Besides, reading the
-> +descriptions for the internal functions can help to understand what
-> +really happens under the hood.
-> +
-> +.. kernel-doc:: include/linux/memblock.h
-> +.. kernel-doc:: mm/memblock.c
-> +   :nodocs:
-> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
-> index f5a66b7..93d5a46 100644
-> --- a/Documentation/core-api/index.rst
-> +++ b/Documentation/core-api/index.rst
-> @@ -28,6 +28,7 @@ Core utilities
->     printk-formats
->     circular-buffers
->     gfp_mask-from-fs-io
-> +   boot-time-mm
->  
->  Interfaces for kernel debugging
->  ===============================
-> 
+>   drivers/char/ipmi/ipmi_si_intf.c | 6 +++---
+>   1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+> index ad353be871bf..fb19c796f0fa 100644
+> --- a/drivers/char/ipmi/ipmi_si_intf.c
+> +++ b/drivers/char/ipmi/ipmi_si_intf.c
+> @@ -269,7 +269,7 @@ void debug_timestamp(char *msg)
+>   {
+>   	struct timespec64 t;
+>   
+> -	getnstimeofday64(&t);
+> +	ktime_get_ts64(&t);
+>   	pr_debug("**%s: %lld.%9.9ld\n", msg, (long long) t.tv_sec, t.tv_nsec);
+>   }
+>   #else
+> @@ -961,12 +961,12 @@ static inline int ipmi_thread_busy_wait(enum si_sm_result smi_result,
+>   	if (max_busy_us == 0 || smi_result != SI_SM_CALL_WITH_DELAY)
+>   		ipmi_si_set_not_busy(busy_until);
+>   	else if (!ipmi_si_is_busy(busy_until)) {
+> -		getnstimeofday64(busy_until);
+> +		ktime_get_ts64(busy_until);
+>   		timespec64_add_ns(busy_until, max_busy_us*NSEC_PER_USEC);
+>   	} else {
+>   		struct timespec64 now;
+>   
+> -		getnstimeofday64(&now);
+> +		ktime_get_ts64(&now);
+>   		if (unlikely(timespec64_compare(&now, busy_until) > 0)) {
+>   			ipmi_si_set_not_busy(busy_until);
+>   			return 0;
 
 
--- 
-~Randy
