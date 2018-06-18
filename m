@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1958C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37617C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16A320874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16A320874
+	by mail.kernel.org (Postfix) with ESMTP id E796B20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E796B20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967815AbeFRIfF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:35:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35912 "EHLO
+        id S967828AbeFRIfI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:35:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35928 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967772AbeFRIfC (ORCPT
+        with ESMTP id S967772AbeFRIfG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:35:02 -0400
+        Mon, 18 Jun 2018 04:35:06 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCD97BAD;
-        Mon, 18 Jun 2018 08:35:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 60A18BAD;
+        Mon, 18 Jun 2018 08:35:05 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -33,9 +33,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 124/189] drm/omap: fix uninitialized ret variable
-Date:   Mon, 18 Jun 2018 10:13:40 +0200
-Message-Id: <20180618081214.229313379@linuxfoundation.org>
+Subject: [PATCH 4.14 125/189] drm/omap: fix possible NULL ref issue in tiler_reserve_2d
+Date:   Mon, 18 Jun 2018 10:13:41 +0200
+Message-Id: <20180618081214.264958183@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -54,45 +54,41 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit 77eeac24b10fc84d3ffd5b11a897dff88dde244d ]
+[ Upstream commit 6a0f0c55619f0b82a677cab72e77c3444a5eee58 ]
 
-audio_config function for both HDMI4 and HDMI5 return uninitialized
-value as the error code if the display is not currently enabled. For
-some reason this has not caused any issues.
+tiler_reserve_2d allocates memory but does not check if it got the
+memory. Add the check and return ENOMEM on failure.
 
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180329104038.29154-1-tomi.valkeinen@ti.com
+Link: https://patchwork.freedesktop.org/patch/msgid/20180329104038.29154-2-tomi.valkeinen@ti.com
 Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/dss/hdmi4.c |    2 +-
- drivers/gpu/drm/omapdrm/dss/hdmi5.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/omapdrm/omap_dmm_tiler.c |    6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/omapdrm/dss/hdmi4.c
-+++ b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
-@@ -634,7 +634,7 @@ static int hdmi_audio_config(struct devi
- 			     struct omap_dss_audio *dss_audio)
+--- a/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
++++ b/drivers/gpu/drm/omapdrm/omap_dmm_tiler.c
+@@ -389,12 +389,16 @@ int tiler_unpin(struct tiler_block *bloc
+ struct tiler_block *tiler_reserve_2d(enum tiler_fmt fmt, uint16_t w,
+ 		uint16_t h, uint16_t align)
  {
- 	struct omap_hdmi *hd = dev_get_drvdata(dev);
--	int ret;
-+	int ret = 0;
+-	struct tiler_block *block = kzalloc(sizeof(*block), GFP_KERNEL);
++	struct tiler_block *block;
+ 	u32 min_align = 128;
+ 	int ret;
+ 	unsigned long flags;
+ 	u32 slot_bytes;
  
- 	mutex_lock(&hd->lock);
++	block = kzalloc(sizeof(*block), GFP_KERNEL);
++	if (!block)
++		return ERR_PTR(-ENOMEM);
++
+ 	BUG_ON(!validfmt(fmt));
  
---- a/drivers/gpu/drm/omapdrm/dss/hdmi5.c
-+++ b/drivers/gpu/drm/omapdrm/dss/hdmi5.c
-@@ -660,7 +660,7 @@ static int hdmi_audio_config(struct devi
- 			     struct omap_dss_audio *dss_audio)
- {
- 	struct omap_hdmi *hd = dev_get_drvdata(dev);
--	int ret;
-+	int ret = 0;
- 
- 	mutex_lock(&hd->lock);
- 
+ 	/* convert width/height to slots */
 
 
