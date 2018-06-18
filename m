@@ -2,266 +2,94 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEDECC5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:48:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AC86C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A629A20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:48:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A629A20836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
+	by mail.kernel.org (Postfix) with ESMTP id D276B20693
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:53:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jPr6aJPO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D276B20693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936958AbeFRUsq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 16:48:46 -0400
-Received: from s3.sipsolutions.net ([144.76.63.242]:58256 "EHLO
-        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935425AbeFRUsT (ORCPT
+        id S936346AbeFRUxB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 16:53:01 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:45116 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935531AbeFRUw6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 16:48:19 -0400
-Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <johannes@sipsolutions.net>)
-        id 1fV14T-0003SC-UP; Mon, 18 Jun 2018 22:48:18 +0200
-From:   Johannes Berg <johannes@sipsolutions.net>
-To:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: [PATCH v5 3/3] bitfield: add tests
-Date:   Mon, 18 Jun 2018 22:48:16 +0200
-Message-Id: <20180618204816.30806-3-johannes@sipsolutions.net>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20180618204816.30806-1-johannes@sipsolutions.net>
-References: <20180618204816.30806-1-johannes@sipsolutions.net>
+        Mon, 18 Jun 2018 16:52:58 -0400
+Received: by mail-pl0-f66.google.com with SMTP id c23-v6so9662275plz.12
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 13:52:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=xXLdOe+TEivcD1MfhOKCVphqd2SeaiSR+SNu1OBqM6g=;
+        b=jPr6aJPO8zIQPEdQEVM12NpaBLgd3lTH73GnZOz+o/2MzcMQnqCG0gIlWqtBkgRlZo
+         dyJsVUQuC0vikv/OdhdlYWVZ2zw+OSCsKi+HgekOz+mOvJDxyooL9vU3k+GSvopA+0CH
+         K3njNB5YgWUOnyq/9yKSZalad3mXCu0XvoW/w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=xXLdOe+TEivcD1MfhOKCVphqd2SeaiSR+SNu1OBqM6g=;
+        b=szkCTAUa6Z1ySUpNlPNpX7//RJO8/Jq7yYPdtr0HhjZ4clwywPnePS3PGQp6b17KQl
+         o5oV+u/JnYVMjGHG5/7RdwFXzdnzu4LnKEksq6m9GdBO+aq1aFTYJ31GQubAZbdhJRGG
+         Ta/QTo2qQu2cwL5D1efVoVytmzvWnBR+7oeEXiVqvyOBfLujtRX2boMWOJROzoBYbwGc
+         17LCe/vhfaSjYU3V6U+06hVWk1jy81du+fZ5a+2hNUBmczQNMP3m0Vqnq+tClbrmBU0i
+         3qQqfR6ghCA48BBUEKE4zNm6EkdmFEkJk37zQ5wjIPzWelw1dBe9bfl95b4iMdTI3Unc
+         8hMA==
+X-Gm-Message-State: APt69E3TDPOwoaOwyDpfycnGC2+RmAmrQcrFSadBX5Em9lixFO/y177+
+        00TgCdOktvJLmkWdieYii+EjVw==
+X-Google-Smtp-Source: ADUXVKJ9a6eJK0iA/lY3e/9RFXjLUTH+HS2pQsA+3/ciInP+HA/l/MW62mMwKlhAgUOOwJiduQomAw==
+X-Received: by 2002:a17:902:f83:: with SMTP id 3-v6mr15516016plz.282.1529355178150;
+        Mon, 18 Jun 2018 13:52:58 -0700 (PDT)
+Received: from swboyd.mtv.corp.google.com ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
+        by smtp.gmail.com with ESMTPSA id a27-v6sm27052196pfc.18.2018.06.18.13.52.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 13:52:57 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Doug Anderson <dianders@chromium.org>
+Subject: [PATCH 0/3] pinctrl: msm interrupt and muxing fixes
+Date:   Mon, 18 Jun 2018 13:52:52 -0700
+Message-Id: <20180618205255.246104-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add tests for the bitfield helpers. The constant ones will all
-be folded to nothing by the compiler (if everything is correct
-in the header file), and the variable ones do some tests against
-open-coding the necessary shifts.
+Here's a collection of pinctrl fixes for the qcom driver that
+make things a little smoother for DT writers while also fixing
+a problem seen with level triggered interrupts.
 
-A few test cases that should fail/warn compilation are provided
-under ifdef.
+The first patch fixes an issue where we always see one extra level
+triggered interrupt when the interrupt triggers. The second and third
+patches make things nice for DT writers so they don't have to explicitly
+mux out pins as 'GPIO' function and as 'input' instead of output so that
+interrupts work properly and also makes sure that a gpio is muxed out
+properly to 'GPIO' function when a gpio is requested by gpiod_request()
+and friends.
 
-Suggested-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Johannes Berg <johannes@sipsolutions.net>
----
- lib/Kconfig.debug   |   7 +++
- lib/Makefile        |   1 +
- lib/test_bitfield.c | 168 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 176 insertions(+)
- create mode 100644 lib/test_bitfield.c
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Doug Anderson <dianders@chromium.org>
 
-diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
-index eb885942eb0f..b0870377b4d1 100644
---- a/lib/Kconfig.debug
-+++ b/lib/Kconfig.debug
-@@ -1799,6 +1799,13 @@ config TEST_BITMAP
- 
- 	  If unsure, say N.
- 
-+config TEST_BITFIELD
-+	tristate "Test bitfield functions at runtime"
-+	help
-+	  Enable this option to test the bitfield functions at boot.
-+
-+	  If unsure, say N.
-+
- config TEST_UUID
- 	tristate "Test functions located in the uuid module at runtime"
- 
-diff --git a/lib/Makefile b/lib/Makefile
-index 84c6dcb31fbb..02ab4c1a64d1 100644
---- a/lib/Makefile
-+++ b/lib/Makefile
-@@ -68,6 +68,7 @@ obj-$(CONFIG_TEST_STATIC_KEYS) += test_static_keys.o
- obj-$(CONFIG_TEST_STATIC_KEYS) += test_static_key_base.o
- obj-$(CONFIG_TEST_PRINTF) += test_printf.o
- obj-$(CONFIG_TEST_BITMAP) += test_bitmap.o
-+obj-$(CONFIG_TEST_BITFIELD) += test_bitfield.o
- obj-$(CONFIG_TEST_UUID) += test_uuid.o
- obj-$(CONFIG_TEST_PARMAN) += test_parman.o
- obj-$(CONFIG_TEST_KMOD) += test_kmod.o
-diff --git a/lib/test_bitfield.c b/lib/test_bitfield.c
-new file mode 100644
-index 000000000000..5b8f4108662d
---- /dev/null
-+++ b/lib/test_bitfield.c
-@@ -0,0 +1,168 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Test cases for bitfield helpers.
-+ */
-+
-+#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-+
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/bitfield.h>
-+
-+#define CHECK_ENC_GET_U(tp, v, field, res) do {				\
-+		{							\
-+			u##tp _res;					\
-+									\
-+			_res = u##tp##_encode_bits(v, field);		\
-+			if (_res != res) {				\
-+				pr_warn("u" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != " #res "\n",\
-+					(u64)_res);			\
-+				return -EINVAL;				\
-+			}						\
-+			if (u##tp##_get_bits(_res, field) != v)		\
-+				return -EINVAL;				\
-+		}							\
-+	} while (0)
-+
-+#define CHECK_ENC_GET_LE(tp, v, field, res) do {			\
-+		{							\
-+			__le##tp _res;					\
-+									\
-+			_res = le##tp##_encode_bits(v, field);		\
-+			if (_res != cpu_to_le##tp(res)) {		\
-+				pr_warn("le" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != 0x%llx\n",\
-+					(u64)le##tp##_to_cpu(_res),	\
-+					(u64)(res));			\
-+				return -EINVAL;				\
-+			}						\
-+			if (le##tp##_get_bits(_res, field) != v)	\
-+				return -EINVAL;				\
-+		}							\
-+	} while (0)
-+
-+#define CHECK_ENC_GET_BE(tp, v, field, res) do {			\
-+		{							\
-+			__be##tp _res;					\
-+									\
-+			_res = be##tp##_encode_bits(v, field);		\
-+			if (_res != cpu_to_be##tp(res)) {		\
-+				pr_warn("be" #tp "_encode_bits(" #v ", " #field ") is 0x%llx != 0x%llx\n",\
-+					(u64)be##tp##_to_cpu(_res),	\
-+					(u64)(res));			\
-+				return -EINVAL;				\
-+			}						\
-+			if (be##tp##_get_bits(_res, field) != v)	\
-+				return -EINVAL;				\
-+		}							\
-+	} while (0)
-+
-+#define CHECK_ENC_GET(tp, v, field, res) do {				\
-+		CHECK_ENC_GET_U(tp, v, field, res);			\
-+		CHECK_ENC_GET_LE(tp, v, field, res);			\
-+		CHECK_ENC_GET_BE(tp, v, field, res);			\
-+	} while (0)
-+
-+static int test_constants(void)
-+{
-+	/*
-+	 * NOTE
-+	 * This whole function compiles (or at least should, if everything
-+	 * is going according to plan) to nothing after optimisation.
-+	 */
-+
-+	CHECK_ENC_GET(16,  1, 0x000f, 0x0001);
-+	CHECK_ENC_GET(16,  3, 0x00f0, 0x0030);
-+	CHECK_ENC_GET(16,  5, 0x0f00, 0x0500);
-+	CHECK_ENC_GET(16,  7, 0xf000, 0x7000);
-+	CHECK_ENC_GET(16, 14, 0x000f, 0x000e);
-+	CHECK_ENC_GET(16, 15, 0x00f0, 0x00f0);
-+
-+	CHECK_ENC_GET_U(8,  1, 0x0f, 0x01);
-+	CHECK_ENC_GET_U(8,  3, 0xf0, 0x30);
-+	CHECK_ENC_GET_U(8, 14, 0x0f, 0x0e);
-+	CHECK_ENC_GET_U(8, 15, 0xf0, 0xf0);
-+
-+	CHECK_ENC_GET(32,  1, 0x00000f00, 0x00000100);
-+	CHECK_ENC_GET(32,  3, 0x0000f000, 0x00003000);
-+	CHECK_ENC_GET(32,  5, 0x000f0000, 0x00050000);
-+	CHECK_ENC_GET(32,  7, 0x00f00000, 0x00700000);
-+	CHECK_ENC_GET(32, 14, 0x0f000000, 0x0e000000);
-+	CHECK_ENC_GET(32, 15, 0xf0000000, 0xf0000000);
-+
-+	CHECK_ENC_GET(64,  1, 0x00000f0000000000ull, 0x0000010000000000ull);
-+	CHECK_ENC_GET(64,  3, 0x0000f00000000000ull, 0x0000300000000000ull);
-+	CHECK_ENC_GET(64,  5, 0x000f000000000000ull, 0x0005000000000000ull);
-+	CHECK_ENC_GET(64,  7, 0x00f0000000000000ull, 0x0070000000000000ull);
-+	CHECK_ENC_GET(64, 14, 0x0f00000000000000ull, 0x0e00000000000000ull);
-+	CHECK_ENC_GET(64, 15, 0xf000000000000000ull, 0xf000000000000000ull);
-+
-+	return 0;
-+}
-+
-+#define CHECK(tp, mask) do {						\
-+		u64 v;							\
-+									\
-+		for (v = 0; v < 1 << hweight32(mask); v++)		\
-+			if (tp##_encode_bits(v, mask) != v << __ffs64(mask)) \
-+				return -EINVAL;				\
-+	} while (0)
-+
-+static int test_variables(void)
-+{
-+	CHECK(u8, 0x0f);
-+	CHECK(u8, 0xf0);
-+	CHECK(u8, 0x38);
-+
-+	CHECK(u16, 0x0038);
-+	CHECK(u16, 0x0380);
-+	CHECK(u16, 0x3800);
-+	CHECK(u16, 0x8000);
-+
-+	CHECK(u32, 0x80000000);
-+	CHECK(u32, 0x7f000000);
-+	CHECK(u32, 0x07e00000);
-+	CHECK(u32, 0x00018000);
-+
-+	CHECK(u64, 0x8000000000000000ull);
-+	CHECK(u64, 0x7f00000000000000ull);
-+	CHECK(u64, 0x0001800000000000ull);
-+	CHECK(u64, 0x0000000080000000ull);
-+	CHECK(u64, 0x000000007f000000ull);
-+	CHECK(u64, 0x0000000018000000ull);
-+	CHECK(u64, 0x0000001f8000000ull);
-+
-+	return 0;
-+}
-+
-+static int __init test_bitfields(void)
-+{
-+	int ret = test_constants();
-+
-+	if (ret) {
-+		pr_warn("constant tests failed!\n");
-+		return ret;
-+	}
-+
-+	ret = test_variables();
-+	if (ret) {
-+		pr_warn("variable tests failed!\n");
-+		return ret;
-+	}
-+
-+#ifdef TEST_BITFIELD_COMPILE
-+	/* these should fail compilation */
-+	CHECK_ENC_GET(16, 16, 0x0f00, 0x1000);
-+	u32_encode_bits(7, 0x06000000);
-+
-+	/* this should at least give a warning */
-+	u16_encode_bits(0, 0x60000);
-+#endif
-+
-+	pr_info("tests passed\n");
-+
-+	return 0;
-+}
-+module_init(test_bitfields)
-+
-+MODULE_AUTHOR("Johannes Berg <johannes@sipsolutions.net>");
-+MODULE_LICENSE("GPL");
+Stephen Boyd (3):
+  pinctrl: msm: Really mask level interrupts to prevent latching
+  pinctrl: msm: Mux out gpio function with gpio_request()
+  pinctrl: msm: Configure interrupts as input and gpio mode
+
+ drivers/pinctrl/qcom/pinctrl-msm.c | 70 ++++++++++++++++++++++++++++++
+ 1 file changed, 70 insertions(+)
+
 -- 
-2.14.4
+Sent by a computer through tubes
 
