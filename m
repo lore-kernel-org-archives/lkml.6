@@ -2,205 +2,144 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1FEC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC27C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:50:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F6320020
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:49:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F6320020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E59EE20020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:50:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="jTzjRASm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E59EE20020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755374AbeFRQtK (ORCPT
+        id S1755381AbeFRQuf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:49:10 -0400
-Received: from fw-tnat.cambridge.arm.com ([217.140.96.140]:53288 "EHLO
-        cam-smtp0.cambridge.arm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1752835AbeFRQtJ (ORCPT
+        Mon, 18 Jun 2018 12:50:35 -0400
+Received: from mail-oi0-f66.google.com ([209.85.218.66]:37758 "EHLO
+        mail-oi0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755119AbeFRQue (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:49:09 -0400
-Received: from e110455-lin.cambridge.arm.com (e110455-lin.cambridge.arm.com [10.2.131.61])
-        by cam-smtp0.cambridge.arm.com (8.13.8/8.13.8) with ESMTP id w5IGn2Vg020899;
-        Mon, 18 Jun 2018 17:49:02 +0100
-From:   Liviu Dudau <Liviu.Dudau@arm.com>
-To:     Mali DP Maintainers <malidp@foss.arm.com>
-Cc:     DRI-devel <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Brian Starkey <brian.starkey@arm.com>,
-        Alexandru-Cosmin Gheorghe <alexandru-cosmin.gheorghe@arm.com>,
-        Ayan Halder <ayan.halder@arm.com>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Subject: [PATCH] drm/mali-dp: Improve writeback handling for DP500.
-Date:   Mon, 18 Jun 2018 17:49:02 +0100
-Message-Id: <20180618164902.10153-1-Liviu.Dudau@arm.com>
-X-Mailer: git-send-email 2.17.1
+        Mon, 18 Jun 2018 12:50:34 -0400
+Received: by mail-oi0-f66.google.com with SMTP id l22-v6so15472452oib.4
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 09:50:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=zceNZnGkDjzzhptHZsGNVcVvwAsWQKK9OlqOY+WU1Kc=;
+        b=jTzjRASmQZGfwe/UlzI4P6jffO7l9YagsSSQaG9HmZsnQ7iuYxxLacn6bZKwvy7Y0b
+         VbMZg7NFc+zOwhTzP/O5gwazYh2GzVyPyt/Wjnqa5mCHr8R2J74OZdE0LZk0Km3ZY9RK
+         LiSakcOYrqrQbsvyj6QFz1JCmbfSbh6cMyuR1sNIEGLflecBpwa+RtyhxvSKjKvYjb7a
+         zHFavldvUHsffhz3iOWo9vnwYpI4kWuNCnFE4PNC1qLtwXkL7w6QPp415vxSbwjHGuXf
+         vSqhOVR4qan4vmkQraxK5FrAjbeygyV4vsHsQzbFNNBP9zlMSd7NTTIM5xWXFqEZdLx1
+         3Pdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=zceNZnGkDjzzhptHZsGNVcVvwAsWQKK9OlqOY+WU1Kc=;
+        b=V0d3cGje1fFUnAvwAaETExLwzrh/8UQvBzcv6HWGLg1+0noppAvrAv49vetpSWjuLx
+         LcwgveS2v8XVdVVOAz7RmzENuMVVesGV3y1RZenOSRDqYji2XCq7xRjV57xvpyExBsuV
+         qcrNpoA87a63QUMWOr42U4mGkSpIvCJm7M57KBk86DFAT93NG7AYBTgwjbUaQMyw3iXr
+         63ADa09Drq/ltc+QYgx3ltBXUHiVeRANoF7CaPCw59nC1MFC+2W5A7N6JNo4QhQci3uT
+         dxstQqWT2GH4y45xJoj5f5nig/hSWWc2RbTeEtDIfZrVOfFpZu1UONnIzIDPsSfCAfir
+         rz2w==
+X-Gm-Message-State: APt69E208vnrKLQB5b/FewJIAu7cJMGUUWQbM0tpPEEi3h2ECnK1BITH
+        HM+9JmCQTN1xVBcYKEhdeKKRtrqrC6Xw0GKH3pYwpQ==
+X-Google-Smtp-Source: ADUXVKJUeJeX0D7aDsSW/8Ap4N61Rtea6sNLt7/6Rj0fhuu9lYeFoY3M33AattyDl1VWdXVaTlAcNukjqAQsOq4Iwq4=
+X-Received: by 2002:aca:ab15:: with SMTP id u21-v6mr7703426oie.272.1529340633488;
+ Mon, 18 Jun 2018 09:50:33 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 09:50:33
+ -0700 (PDT)
+In-Reply-To: <20180618132712.4b4eddc9@canb.auug.org.au>
+References: <20180618132712.4b4eddc9@canb.auug.org.au>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 18 Jun 2018 09:50:33 -0700
+Message-ID: <CAPcyv4idNE8ErxNm5bb3rG4jUeZU9HJRmO03omMJxSN-8FYN+w@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the xarray tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Mali DP500 operates in continuous writeback mode (writes frame content
-until stopped) and it needs special handling in order to behave like
-a one-shot writeback engine. The original state machine added for DP500
-was a bit fragile, as it did not handle correctly cases where a new
-atomic commit was in progress when the SE IRQ happens and it would
-commit some partial updates.
+On Sun, Jun 17, 2018 at 8:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> After merging the xarray tree, today's linux-next build (powerpc
+> ppc64_defconfig) failed like this:
+>
+> In file included from arch/powerpc/include/asm/bug.h:128:0,
+>                  from include/linux/bug.h:5,
+>                  from arch/powerpc/include/asm/cmpxchg.h:9,
+>                  from arch/powerpc/include/asm/atomic.h:11,
+>                  from include/linux/atomic.h:5,
+>                  from fs/dax.c:17:
+> fs/dax.c: In function 'dax_lock_page':
+> fs/dax.c:392:21: error: implicit declaration of function 'radix_tree_exceptional_entry'; did you mean 'radix_tree_exception'? [-Werror=implicit-function-declaration]
+>        WARN_ON_ONCE(!radix_tree_exceptional_entry(entry))) {
+>                      ^
+> include/asm-generic/bug.h:69:25: note: in definition of macro 'WARN_ON_ONCE'
+>   int __ret_warn_on = !!(condition);   \
+>                          ^~~~~~~~~
+> fs/dax.c:395:15: error: implicit declaration of function 'slot_locked'; did you mean 'iget_locked'? [-Werror=implicit-function-declaration]
+>    } else if (!slot_locked(mapping, slot)) {
+>                ^~~~~~~~~~~
+>                iget_locked
+> fs/dax.c:396:4: error: implicit declaration of function 'lock_slot'; did you mean 'local_set'? [-Werror=implicit-function-declaration]
+>     lock_slot(mapping, slot);
+>     ^~~~~~~~~
+>     local_set
+> fs/dax.c:402:28: error: passing argument 1 of 'dax_entry_waitqueue' from incompatible pointer type [-Werror=incompatible-pointer-types]
+>    wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
+>                             ^~~~~~~
+> fs/dax.c:152:27: note: expected 'struct xa_state *' but argument is of type 'struct address_space *'
+>  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
+>                            ^~~~~~~~~~~~~~~~~~~
+> fs/dax.c:402:37: warning: passing argument 2 of 'dax_entry_waitqueue' makes pointer from integer without a cast [-Wint-conversion]
+>    wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
+>                                      ^~~~~
+> fs/dax.c:152:27: note: expected 'void *' but argument is of type 'long unsigned int'
+>  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
+>                            ^~~~~~~~~~~~~~~~~~~
+> fs/dax.c:402:8: error: too many arguments to function 'dax_entry_waitqueue'
+>    wq = dax_entry_waitqueue(mapping, index, entry, &ewait.key);
+>         ^~~~~~~~~~~~~~~~~~~
+> fs/dax.c:152:27: note: declared here
+>  static wait_queue_head_t *dax_entry_waitqueue(struct xa_state *xas,
+>                            ^~~~~~~~~~~~~~~~~~~
+> fs/dax.c: In function 'dax_unlock_page':
+> fs/dax.c:424:2: error: implicit declaration of function 'dax_unlock_mapping_entry'; did you mean 'dax_delete_mapping_entry'? [-Werror=implicit-function-declaration]
+>   dax_unlock_mapping_entry(mapping, page->index);
+>   ^~~~~~~~~~~~~~~~~~~~~~~~
+>   dax_delete_mapping_entry
+>
+> Caused by commits in the xarray tree interacting with commit
+>
+>   9b3d53936caa ("filesystem-dax: Introduce dax_lock_page()")
+>
+> from the nvdimm tree.
+>
+> Willy thanks for the heads up about this.
+>
+> I have applied the following merge fix patch (taken from the diff between
+> the -next tree at this point and the xarray-20180615 branch from the
+> xarray tree) for today.
 
-Improve the handling by adding a parameter to the set_config_valid()
-function to clear the config valid bit in hardware before starting a
-new commit and by introducing a MW_RESTART state in the writeback
-state machine to cater for the case where a new writeback commit
-gets submitted while the last one is still being active.
+I was hoping that dax_lock_page() and the memory_failure() handling
+could go in before the xarray rework. This helps -stable and distros
+that need to backport this error handling support. Willy, would you be
+amenable to rebasing on top of the next rev of the
+dax+memory_failure() work?
 
-Reported-by: Brian Starkey <brian.starkey@arm.com>
-Reviewed-by: Brian Starkey <brian.starkey@arm.com>
-Signed-off-by: Liviu Dudau <liviu.dudau@arm.com>
----
- drivers/gpu/drm/arm/malidp_drv.c |  3 ++-
- drivers/gpu/drm/arm/malidp_hw.c  | 39 +++++++++++++++++++++++---------
- drivers/gpu/drm/arm/malidp_hw.h  | 11 +++++----
- 3 files changed, 36 insertions(+), 17 deletions(-)
-
-diff --git a/drivers/gpu/drm/arm/malidp_drv.c b/drivers/gpu/drm/arm/malidp_drv.c
-index fc264554c5035..83e8f911f1579 100644
---- a/drivers/gpu/drm/arm/malidp_drv.c
-+++ b/drivers/gpu/drm/arm/malidp_drv.c
-@@ -171,7 +171,7 @@ static int malidp_set_and_wait_config_valid(struct drm_device *drm)
- 	struct malidp_hw_device *hwdev = malidp->dev;
- 	int ret;
- 
--	hwdev->hw->set_config_valid(hwdev);
-+	hwdev->hw->set_config_valid(hwdev, 1);
- 	/* don't wait for config_valid flag if we are in config mode */
- 	if (hwdev->hw->in_config_mode(hwdev)) {
- 		atomic_set(&malidp->config_valid, MALIDP_CONFIG_VALID_DONE);
-@@ -230,6 +230,7 @@ static void malidp_atomic_commit_tail(struct drm_atomic_state *state)
- 	 * know that we are updating registers
- 	 */
- 	atomic_set(&malidp->config_valid, MALIDP_CONFIG_START);
-+	malidp->dev->hw->set_config_valid(malidp->dev, 0);
- 
- 	drm_atomic_helper_commit_modeset_disables(drm, state);
- 
-diff --git a/drivers/gpu/drm/arm/malidp_hw.c b/drivers/gpu/drm/arm/malidp_hw.c
-index e0de7a35a0beb..8759f90c313d9 100644
---- a/drivers/gpu/drm/arm/malidp_hw.c
-+++ b/drivers/gpu/drm/arm/malidp_hw.c
-@@ -27,7 +27,8 @@ enum {
- 	MW_NOT_ENABLED = 0,	/* SE writeback not enabled */
- 	MW_ONESHOT,		/* SE in one-shot mode for writeback */
- 	MW_START,		/* SE started writeback */
--	MW_STOP,		/* SE finished writeback */
-+	MW_RESTART,		/* SE will start another writeback after this one */
-+	MW_STOP,		/* SE needs to stop after this writeback */
- };
- 
- static const struct malidp_format_id malidp500_de_formats[] = {
-@@ -231,9 +232,12 @@ static bool malidp500_in_config_mode(struct malidp_hw_device *hwdev)
- 	return false;
- }
- 
--static void malidp500_set_config_valid(struct malidp_hw_device *hwdev)
-+static void malidp500_set_config_valid(struct malidp_hw_device *hwdev, u8 value)
- {
--	malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP500_CONFIG_VALID);
-+	if (value)
-+		malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP500_CONFIG_VALID);
-+	else
-+		malidp_hw_clearbits(hwdev, MALIDP_CFG_VALID, MALIDP500_CONFIG_VALID);
- }
- 
- static void malidp500_modeset(struct malidp_hw_device *hwdev, struct videomode *mode)
-@@ -386,7 +390,11 @@ static int malidp500_enable_memwrite(struct malidp_hw_device *hwdev,
- 	/* enable the scaling engine block */
- 	malidp_hw_setbits(hwdev, MALIDP_SCALE_ENGINE_EN, de_base + MALIDP_DE_DISPLAY_FUNC);
- 
--	hwdev->mw_state = MW_START;
-+	/* restart the writeback if already enabled */
-+	if (hwdev->mw_state != MW_NOT_ENABLED)
-+		hwdev->mw_state = MW_RESTART;
-+	else
-+		hwdev->mw_state = MW_START;
- 
- 	malidp_hw_write(hwdev, fmt_id, base + MALIDP_MW_FORMAT);
- 	switch (num_planes) {
-@@ -415,7 +423,7 @@ static void malidp500_disable_memwrite(struct malidp_hw_device *hwdev)
- {
- 	u32 base = malidp_get_block_base(hwdev, MALIDP_DE_BLOCK);
- 
--	if (hwdev->mw_state == MW_START)
-+	if (hwdev->mw_state == MW_START || hwdev->mw_state == MW_RESTART)
- 		hwdev->mw_state = MW_STOP;
- 	malidp_hw_clearbits(hwdev, MALIDP_SE_MEMWRITE_EN, MALIDP500_SE_CONTROL);
- 	malidp_hw_clearbits(hwdev, MALIDP_SCALE_ENGINE_EN, base + MALIDP_DE_DISPLAY_FUNC);
-@@ -500,9 +508,12 @@ static bool malidp550_in_config_mode(struct malidp_hw_device *hwdev)
- 	return false;
- }
- 
--static void malidp550_set_config_valid(struct malidp_hw_device *hwdev)
-+static void malidp550_set_config_valid(struct malidp_hw_device *hwdev, u8 value)
- {
--	malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP550_CONFIG_VALID);
-+	if (value)
-+		malidp_hw_setbits(hwdev, MALIDP_CFG_VALID, MALIDP550_CONFIG_VALID);
-+	else
-+		malidp_hw_clearbits(hwdev, MALIDP_CFG_VALID, MALIDP550_CONFIG_VALID);
- }
- 
- static void malidp550_modeset(struct malidp_hw_device *hwdev, struct videomode *mode)
-@@ -1004,15 +1015,21 @@ static irqreturn_t malidp_se_irq(int irq, void *arg)
- 			/* disable writeback after stop */
- 			hwdev->mw_state = MW_NOT_ENABLED;
- 			break;
-+		case MW_RESTART:
-+			drm_writeback_signal_completion(&malidp->mw_connector, 0);
-+			/* fall through to a new start */
- 		case MW_START:
- 			/* writeback started, need to emulate one-shot mode */
- 			hw->disable_memwrite(hwdev);
- 			/*
--			 * only set config_valid HW bit if there is no
--			 * other update in progress
-+			 * only set config_valid HW bit if there is no other update
-+			 * in progress or if we raced ahead of the DE IRQ handler
-+			 * and config_valid flag will not be update until later
- 			 */
--			if (atomic_read(&malidp->config_valid) != MALIDP_CONFIG_START)
--				hw->set_config_valid(hwdev);
-+			status = malidp_hw_read(hwdev, hw->map.dc_base + MALIDP_REG_STATUS);
-+			if ((atomic_read(&malidp->config_valid) != MALIDP_CONFIG_START) ||
-+			    (status & hw->map.dc_irq_map.vsync_irq))
-+				hw->set_config_valid(hwdev, 1);
- 			break;
- 		}
- 	}
-diff --git a/drivers/gpu/drm/arm/malidp_hw.h b/drivers/gpu/drm/arm/malidp_hw.h
-index c479738b81af5..bd41aa6974a06 100644
---- a/drivers/gpu/drm/arm/malidp_hw.h
-+++ b/drivers/gpu/drm/arm/malidp_hw.h
-@@ -152,12 +152,13 @@ struct malidp_hw {
- 	bool (*in_config_mode)(struct malidp_hw_device *hwdev);
- 
- 	/*
--	 * Set configuration valid flag for hardware parameters that can
--	 * be changed outside the configuration mode. Hardware will use
--	 * the new settings when config valid is set after the end of the
--	 * current buffer scanout
-+	 * Set/clear configuration valid flag for hardware parameters that can
-+	 * be changed outside the configuration mode to the given value.
-+	 * Hardware will use the new settings when config valid is set,
-+	 * after the end of the current buffer scanout, and will ignore
-+	 * any new values for those parameters if config valid flag is cleared
- 	 */
--	void (*set_config_valid)(struct malidp_hw_device *hwdev);
-+	void (*set_config_valid)(struct malidp_hw_device *hwdev, u8 value);
- 
- 	/*
- 	 * Set a new mode in hardware. Requires the hardware to be in
--- 
-2.17.1
-
+Apologies for the thrash.
