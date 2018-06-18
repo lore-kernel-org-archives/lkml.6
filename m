@@ -6,177 +6,105 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DCA7C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 978DAC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ED61208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ED61208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 50FD6208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50FD6208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935293AbeFRKFV convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:05:21 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:57902 "EHLO mail.bootlin.com"
+        id S935350AbeFRKFg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:05:36 -0400
+Received: from mga06.intel.com ([134.134.136.31]:33469 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934635AbeFRKFT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:05:19 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 76CFE20850; Mon, 18 Jun 2018 12:05:17 +0200 (CEST)
-Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 11744207A5;
-        Mon, 18 Jun 2018 12:04:39 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 12:04:39 +0200
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Abhishek Sahu <absahu@codeaurora.org>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, Andy Gross <andy.gross@linaro.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH v3 01/16] mtd: rawnand: helper function for setting up
- ECC configuration
-Message-ID: <20180618120439.09b41495@xps13>
-In-Reply-To: <7cf002e3d7ebd46476554477dd92716f@codeaurora.org>
-References: <1527250904-21988-1-git-send-email-absahu@codeaurora.org>
-        <1527250904-21988-2-git-send-email-absahu@codeaurora.org>
-        <20180526095807.5caf5800@xps13>
-        <44d4939cf8411a0dc693b8dd11fb57c7@codeaurora.org>
-        <20180607143759.361edb3f@xps13>
-        <7cf002e3d7ebd46476554477dd92716f@codeaurora.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        id S934927AbeFRKFU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:05:20 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 03:05:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
+   d="scan'208";a="58164420"
+Received: from zhuyixin-mobl1.gar.corp.intel.com (HELO [10.226.38.83]) ([10.226.38.83])
+  by FMSMGA003.fm.intel.com with ESMTP; 18 Jun 2018 03:05:16 -0700
+Subject: Re: [PATCH 2/7] clk: intel: Add clock driver for GRX500 SoC
+To:     Rob Herring <robh@kernel.org>
+Cc:     Songjun Wu <songjun.wu@linux.intel.com>, hua.ma@linux.intel.com,
+        chuanhua.lei@linux.intel.com,
+        Linux-MIPS <linux-mips@linux-mips.org>, qi-ming.wu@intel.com,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:SERIAL DRIVERS" <linux-serial@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-3-songjun.wu@linux.intel.com>
+ <20180612223725.GC2197@rob-hp-laptop>
+ <41163f48-ce5c-efae-2b6d-b93d75e422e5@linux.intel.com>
+ <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
+From:   yixin zhu <yixin.zhu@linux.intel.com>
+Message-ID: <4bb8f16e-2663-3a62-3c09-dc58fcb11831@linux.intel.com>
+Date:   Mon, 18 Jun 2018 18:05:15 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAL_JsqJVcKPexrVrnGnr-zga1n6n00nYdUmKZWOz2VQJ7BV-oA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Abhishek,
-
-On Mon, 11 Jun 2018 14:46:00 +0530, Abhishek Sahu
-<absahu@codeaurora.org> wrote:
-
-> On 2018-06-07 18:07, Miquel Raynal wrote:
-> > Hi Abhishek,  
-> > > On Mon, 28 May 2018 11:16:29 +0530, Abhishek Sahu  
-> > <absahu@codeaurora.org> wrote:  
-> > >> On 2018-05-26 14:12, Miquel Raynal wrote:
-> >> > Hi Abhishek,  
-> >> > > On Fri, 25 May 2018 17:51:29 +0530, Abhishek Sahu  
-> >> > <absahu@codeaurora.org> wrote:  
-> >> > >> commit 2c8f8afa7f92 ("mtd: nand: add generic helpers to check,  
-> >> >> match, maximize ECC settings") provides generic helpers which
-> >> >> drivers can use for setting up ECC parameters.  
-> >> >> >> Since same board can have different ECC strength nand chips so  
-> >> >> following is the logic for setting up ECC strength and ECC step
-> >> >> size, which can be used by most of the drivers.  
-> >> >> >> 1. If both ECC step size and ECC strength are already set  
-> >> >>    (usually by DT) then just check whether this setting
-> >> >>    is supported by NAND controller.
-> >> >> 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength
-> >> >>    supported by NAND controller.
-> >> >> 3. Otherwise, try to match the ECC step size and ECC strength closest
-> >> >>    to the chip's requirement. If available OOB size can't fit the chip
-> >> >>    requirement then select maximum ECC strength which can be fit with
-> >> >>    available OOB size.  
-> >> >> >> This patch introduces nand_ecc_choose_conf function which calls the  
-> >> >> required helper functions for the above logic. The drivers can use
-> >> >> this single function instead of calling the 3 helper functions
-> >> >> individually.  
-> >> >> >> CC: Masahiro Yamada <yamada.masahiro@socionext.com>  
-> >> >> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> >> >> ---
-> >> >> * Changes from v2:  
-> >> >> >>   1. Renamed function to nand_ecc_choose_conf.  
-> >> >>   2. Minor code reorganization to remove warning and 2 function calls
-> >> >>      for nand_maximize_ecc.  
-> >> >> >> * Changes from v1:  
-> >> >>   NEW PATCH  
-> >> >> >>  drivers/mtd/nand/raw/nand_base.c | 42 >> ++++++++++++++++++++++++++++++++++++++++  
-> >> >>  drivers/mtd/nand/raw/nand_base.c | 31 +++++++++++++++++++++++++++++++
-> >> >>  include/linux/mtd/rawnand.h      |  3 +++
-> >> >>  2 files changed, 34 insertions(+)  
-> >> >> >> diff --git a/drivers/mtd/nand/raw/nand_base.c >> b/drivers/mtd/nand/raw/nand_base.c  
-> >> >> index 72f3a89..e52019d 100644
-> >> >> --- a/drivers/mtd/nand/raw/nand_base.c
-> >> >> +++ b/drivers/mtd/nand/raw/nand_base.c
-> >> >> @@ -6249,6 +6249,37 @@ int nand_maximize_ecc(struct nand_chip *chip,
-> >> >>  }
-> >> >>  EXPORT_SYMBOL_GPL(nand_maximize_ecc);  
-> >> >> >> +/**  
-> >> >> + * nand_ecc_choose_conf - Set the ECC strength and ECC step size
-> >> >> + * @chip: nand chip info structure
-> >> >> + * @caps: ECC engine caps info structure
-> >> >> + * @oobavail: OOB size that the ECC engine can use
-> >> >> + *
-> >> >> + * Choose the ECC configuration according to following logic
-> >> >> + *
-> >> >> + * 1. If both ECC step size and ECC strength are already set (usually >> by DT)
-> >> >> + *    then check if it is supported by this controller.
-> >> >> + * 2. If NAND_ECC_MAXIMIZE is set, then select maximum ECC strength.
-> >> >> + * 3. Otherwise, try to match the ECC step size and ECC strength >> closest
-> >> >> + *    to the chip's requirement. If available OOB size can't fit the >> chip
-> >> >> + *    requirement then fallback to the maximum ECC step size and ECC >> strength.
-> >> >> + *
-> >> >> + * On success, the chosen ECC settings are set.
-> >> >> + */
-> >> >> +int nand_ecc_choose_conf(struct nand_chip *chip,
-> >> >> +			 const struct nand_ecc_caps *caps, int oobavail)
-> >> >> +{
-> >> >> +	if (chip->ecc.size && chip->ecc.strength)
-> >> >> +		return nand_check_ecc_caps(chip, caps, oobavail);
-> >> >> +
-> >> >> +	if (!(chip->ecc.options & NAND_ECC_MAXIMIZE) &&
-> >> >> +	    !nand_match_ecc_req(chip, caps, oobavail))
-> >> >> +		return 0;
-> >> >> +
-> >> >> +	return nand_maximize_ecc(chip, caps, oobavail);
-> >> > > I personally don't mind if nand_maximize_ecc() is called twice in  
-> >> > the function if it clarifies the logic. Maybe the following will be
-> >> > more clear for the user?  
-> >> >>   Thanks Miquel.  
-> >>   Both the implementations are fine.
-> >>   The above implementation (which was in Denali NAND driver) code was >> also
-> >>   clear. We can go for any of these implementation.  
-> >> >>   Shall I update this ?  
-> > > Yes, please :)  
-> >   
->   Thanks Miquel for confirming.
->   I will update accordingly.
-> 
->   Also, one more question.
-> 
->   Shall I make other functions (nand_check_ecc_caps, nand_maximize_ecc
->   and nand_match_ecc_req) static.  Since currently,
->   Denali NAND driver was only using these functions.
-> 
->   And Now, this nand_ecc_choose_conf will be help
->   in all the cases.
-> 
->   For nand_check_ecc_caps: call nand_ecc_choose_conf with
->                             chip->ecc.size && chip->ecc.strength
-> 
->   For nand_maximize_ecc: call nand_ecc_choose_conf with
->                          NAND_ECC_MAXIMIZE
-> 
->   For other cases, nand_match_ecc_req will be called.
-> 
->   So we will have one external function which will be
->   easy to maintain in future.
-
-If nobody else uses these function outside of the core, then the
-symbols should not be exported, their prototypes not in rawnand.h and
-they should be declared static.
 
 
-Regards,
-Miquèl
+On 6/14/2018 10:09 PM, Rob Herring wrote:
+> On Thu, Jun 14, 2018 at 2:40 AM, yixin zhu <yixin.zhu@linux.intel.com> wrote:
+>>
+>>
+>> On 6/13/2018 6:37 AM, Rob Herring wrote:
+>>>
+>>> On Tue, Jun 12, 2018 at 01:40:29PM +0800, Songjun Wu wrote:
+>>>>
+>>>> From: Yixin Zhu <yixin.zhu@linux.intel.com>
+>>>>
+>>>> PLL of GRX500 provide clock to DDR, CPU, and peripherals as show below
+> 
+> [...]
+> 
+>>>> +Example:
+>>>> +       clkgate0: clkgate0 {
+>>>> +               #clock-cells = <1>;
+>>>> +               compatible = "intel,grx500-gate0-clk";
+>>>> +               reg = <0x114>;
+>>>> +               clock-output-names = "gate_xbar0", "gate_xbar1",
+>>>> "gate_xbar2",
+>>>> +               "gate_xbar3", "gate_xbar6", "gate_xbar7";
+>>>> +       };
+>>>
+>>>
+>>> We generally don't do a clock node per clock or few clocks but rather 1
+>>> clock node per clock controller block. See any recent clock bindings.
+>>>
+>>> Rob
+>>
+>> Do you mean only one example is needed per clock controller block?
+>> cpuclk is not needed in the document?
+> 
+> No, I mean generally we have 1 DT node for the h/w block with all the
+> clock control registers rather than nodes with a single register and 1
+> or a couple of clocks. Sometimes the clock registers are mixed with
+> other functions which complicates things a bit. But I can't tell that
+> here because you haven't documented what's in the rest of the register
+> space.
+> 
+> Rob
+> 
+Thanks
+Will update to use one DT node for the whole clock controller.
