@@ -3,38 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3569AC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F80BC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5AD20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5AD20864
+	by mail.kernel.org (Postfix) with ESMTP id C588020864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C588020864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965911AbeFRJaO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:30:14 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56254 "EHLO
+        id S965946AbeFRJae (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:30:34 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56202 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936013AbeFRIZU (ORCPT
+        with ESMTP id S932792AbeFRIZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:25:20 -0400
+        Mon, 18 Jun 2018 04:25:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7872C7F;
-        Mon, 18 Jun 2018 08:25:19 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1070FBAD;
+        Mon, 18 Jun 2018 08:25:11 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
-        Steve French <stfrench@microsoft.com>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Tom Talpey <ttalpey@microsoft.com>,
+        stable@vger.kernel.org, Alexander Graf <agraf@suse.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mark Brown <broonie@kernel.org>, Eric Anholt <eric@anholt.net>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        bcm-kernel-feedback-list@broadcom.com, linux-spi@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        Rob Herring <robh@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 208/279] cifs: Allocate validate negotiation request through kmalloc
-Date:   Mon, 18 Jun 2018 10:13:13 +0200
-Message-Id: <20180618080617.491899318@linuxfoundation.org>
+Subject: [PATCH 4.16 178/279] spi: bcm2835aux: ensure interrupts are enabled for shared handler
+Date:   Mon, 18 Jun 2018 10:12:43 +0200
+Message-Id: <20180618080616.307818426@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,175 +59,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Long Li <longli@microsoft.com>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit 2796d303e3c5ec213c578ed3a66872205c126eb8 ]
+[ Upstream commit bc519d9574618e47a0c788000fb78da95e18d953 ]
 
-The data buffer allocated on the stack can't be DMA'ed, ib_dma_map_page will
-return an invalid DMA address for a buffer on stack. Even worse, this
-incorrect address can't be detected by ib_dma_mapping_error. Sending data
-from this address to hardware will not fail, but the remote peer will get
-junk data.
+The BCM2835 AUX SPI has a shared interrupt line (with AUX UART).
+Downstream fixes this with an AUX irqchip to demux the IRQ sources and a
+DT change which breaks compatibility with older kernels. The AUX irqchip
+was already rejected for upstream[1] and the DT change would break
+working systems if the DTB is updated to a newer one. The latter issue
+was brought to my attention by Alex Graf.
 
-Fix this by allocating the request on the heap in smb3_validate_negotiate.
+The root cause however is a bug in the shared handler. Shared handlers
+must check that interrupts are actually enabled before servicing the
+interrupt. Add a check that the TXEMPTY or IDLE interrupts are enabled.
 
-Changes in v2:
-Removed duplicated code on freeing buffers on function exit.
-(Thanks to Parav Pandit <parav@mellanox.com>)
-Fixed typo in the patch title.
+[1] https://patchwork.kernel.org/patch/9781221/
 
-Changes in v3:
-Added "Fixes" to the patch.
-Changed several sizeof() to use *pointer in place of struct.
-
-Changes in v4:
-Added detailed comments on the failure through RDMA.
-Allocate request buffer using GPF_NOFS.
-Fixed possible memory leak.
-
-Changes in v5:
-Removed variable ret for checking return value.
-Changed to use pneg_inbuf->Dialects[0] to calculate unused space in pneg_inbuf.
-
-Fixes: ff1c038addc4 ("Check SMB3 dialects against downgrade attacks")
-Signed-off-by: Long Li <longli@microsoft.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Reviewed-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Reviewed-by: Tom Talpey <ttalpey@microsoft.com>
+Cc: Alexander Graf <agraf@suse.de>
+Cc: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: Eric Anholt <eric@anholt.net>
+Cc: Stefan Wahren <stefan.wahren@i2se.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Ray Jui <rjui@broadcom.com>
+Cc: Scott Branden <sbranden@broadcom.com>
+Cc: bcm-kernel-feedback-list@broadcom.com
+Cc: linux-spi@vger.kernel.org
+Cc: linux-rpi-kernel@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/cifs/smb2pdu.c |   68 ++++++++++++++++++++++++++++++------------------------
- 1 file changed, 38 insertions(+), 30 deletions(-)
+ drivers/spi/spi-bcm2835aux.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
---- a/fs/cifs/smb2pdu.c
-+++ b/fs/cifs/smb2pdu.c
-@@ -621,8 +621,8 @@ neg_exit:
+--- a/drivers/spi/spi-bcm2835aux.c
++++ b/drivers/spi/spi-bcm2835aux.c
+@@ -184,6 +184,11 @@ static irqreturn_t bcm2835aux_spi_interr
+ 	struct bcm2835aux_spi *bs = spi_master_get_devdata(master);
+ 	irqreturn_t ret = IRQ_NONE;
  
- int smb3_validate_negotiate(const unsigned int xid, struct cifs_tcon *tcon)
- {
--	int rc = 0;
--	struct validate_negotiate_info_req vneg_inbuf;
-+	int rc;
-+	struct validate_negotiate_info_req *pneg_inbuf;
- 	struct validate_negotiate_info_rsp *pneg_rsp = NULL;
- 	u32 rsplen;
- 	u32 inbuflen; /* max of 4 dialects */
-@@ -656,63 +656,69 @@ int smb3_validate_negotiate(const unsign
- 	if (tcon->ses->session_flags & SMB2_SESSION_FLAG_IS_NULL)
- 		cifs_dbg(VFS, "Unexpected null user (anonymous) auth flag sent by server\n");
- 
--	vneg_inbuf.Capabilities =
-+	pneg_inbuf = kmalloc(sizeof(*pneg_inbuf), GFP_NOFS);
-+	if (!pneg_inbuf)
-+		return -ENOMEM;
++	/* IRQ may be shared, so return if our interrupts are disabled */
++	if (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_CNTL1) &
++	      (BCM2835_AUX_SPI_CNTL1_TXEMPTY | BCM2835_AUX_SPI_CNTL1_IDLE)))
++		return ret;
 +
-+	pneg_inbuf->Capabilities =
- 			cpu_to_le32(tcon->ses->server->vals->req_capabilities);
--	memcpy(vneg_inbuf.Guid, tcon->ses->server->client_guid,
-+	memcpy(pneg_inbuf->Guid, tcon->ses->server->client_guid,
- 					SMB2_CLIENT_GUID_SIZE);
- 
- 	if (tcon->ses->sign)
--		vneg_inbuf.SecurityMode =
-+		pneg_inbuf->SecurityMode =
- 			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_REQUIRED);
- 	else if (global_secflags & CIFSSEC_MAY_SIGN)
--		vneg_inbuf.SecurityMode =
-+		pneg_inbuf->SecurityMode =
- 			cpu_to_le16(SMB2_NEGOTIATE_SIGNING_ENABLED);
- 	else
--		vneg_inbuf.SecurityMode = 0;
-+		pneg_inbuf->SecurityMode = 0;
- 
- 
- 	if (strcmp(tcon->ses->server->vals->version_string,
- 		SMB3ANY_VERSION_STRING) == 0) {
--		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
--		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
--		vneg_inbuf.DialectCount = cpu_to_le16(2);
-+		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB30_PROT_ID);
-+		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB302_PROT_ID);
-+		pneg_inbuf->DialectCount = cpu_to_le16(2);
- 		/* structure is big enough for 3 dialects, sending only 2 */
--		inbuflen = sizeof(struct validate_negotiate_info_req) - 2;
-+		inbuflen = sizeof(*pneg_inbuf) -
-+				sizeof(pneg_inbuf->Dialects[0]);
- 	} else if (strcmp(tcon->ses->server->vals->version_string,
- 		SMBDEFAULT_VERSION_STRING) == 0) {
--		vneg_inbuf.Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
--		vneg_inbuf.Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
--		vneg_inbuf.Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
--		vneg_inbuf.DialectCount = cpu_to_le16(3);
-+		pneg_inbuf->Dialects[0] = cpu_to_le16(SMB21_PROT_ID);
-+		pneg_inbuf->Dialects[1] = cpu_to_le16(SMB30_PROT_ID);
-+		pneg_inbuf->Dialects[2] = cpu_to_le16(SMB302_PROT_ID);
-+		pneg_inbuf->DialectCount = cpu_to_le16(3);
- 		/* structure is big enough for 3 dialects */
--		inbuflen = sizeof(struct validate_negotiate_info_req);
-+		inbuflen = sizeof(*pneg_inbuf);
- 	} else {
- 		/* otherwise specific dialect was requested */
--		vneg_inbuf.Dialects[0] =
-+		pneg_inbuf->Dialects[0] =
- 			cpu_to_le16(tcon->ses->server->vals->protocol_id);
--		vneg_inbuf.DialectCount = cpu_to_le16(1);
-+		pneg_inbuf->DialectCount = cpu_to_le16(1);
- 		/* structure is big enough for 3 dialects, sending only 1 */
--		inbuflen = sizeof(struct validate_negotiate_info_req) - 4;
-+		inbuflen = sizeof(*pneg_inbuf) -
-+				sizeof(pneg_inbuf->Dialects[0]) * 2;
- 	}
- 
- 	rc = SMB2_ioctl(xid, tcon, NO_FILE_ID, NO_FILE_ID,
- 		FSCTL_VALIDATE_NEGOTIATE_INFO, true /* is_fsctl */,
--		(char *)&vneg_inbuf, sizeof(struct validate_negotiate_info_req),
--		(char **)&pneg_rsp, &rsplen);
-+		(char *)pneg_inbuf, inbuflen, (char **)&pneg_rsp, &rsplen);
- 
- 	if (rc != 0) {
- 		cifs_dbg(VFS, "validate protocol negotiate failed: %d\n", rc);
--		return -EIO;
-+		rc = -EIO;
-+		goto out_free_inbuf;
- 	}
- 
--	if (rsplen != sizeof(struct validate_negotiate_info_rsp)) {
-+	rc = -EIO;
-+	if (rsplen != sizeof(*pneg_rsp)) {
- 		cifs_dbg(VFS, "invalid protocol negotiate response size: %d\n",
- 			 rsplen);
- 
- 		/* relax check since Mac returns max bufsize allowed on ioctl */
--		if ((rsplen > CIFSMaxBufSize)
--		     || (rsplen < sizeof(struct validate_negotiate_info_rsp)))
--			goto err_rsp_free;
-+		if (rsplen > CIFSMaxBufSize || rsplen < sizeof(*pneg_rsp))
-+			goto out_free_rsp;
- 	}
- 
- 	/* check validate negotiate info response matches what we got earlier */
-@@ -729,15 +735,17 @@ int smb3_validate_negotiate(const unsign
- 		goto vneg_out;
- 
- 	/* validate negotiate successful */
-+	rc = 0;
- 	cifs_dbg(FYI, "validate negotiate info successful\n");
--	kfree(pneg_rsp);
--	return 0;
-+	goto out_free_rsp;
- 
- vneg_out:
- 	cifs_dbg(VFS, "protocol revalidation - security settings mismatch\n");
--err_rsp_free:
-+out_free_rsp:
- 	kfree(pneg_rsp);
--	return -EIO;
-+out_free_inbuf:
-+	kfree(pneg_inbuf);
-+	return rc;
- }
- 
- enum securityEnum
+ 	/* check if we have data to read */
+ 	while (bs->rx_len &&
+ 	       (!(bcm2835aux_rd(bs, BCM2835_AUX_SPI_STAT) &
 
 
