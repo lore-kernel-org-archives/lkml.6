@@ -2,149 +2,122 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C9E2C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2410C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:41:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A08F20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:40:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OknFUT0w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A08F20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 93279208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:41:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93279208E8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755268AbeFRJkc (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:40:32 -0400
-Received: from mail-vk0-f43.google.com ([209.85.213.43]:38081 "EHLO
-        mail-vk0-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965662AbeFRIXD (ORCPT
+        id S935905AbeFRJlN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:41:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55648 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964853AbeFRIWv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:23:03 -0400
-Received: by mail-vk0-f43.google.com with SMTP id b77-v6so9003718vkb.5;
-        Mon, 18 Jun 2018 01:23:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0rbw6qFzddhXd99LjyW8P10WgW6Qg+GLTzMTWA859hE=;
-        b=OknFUT0wDsvBuZs5pWQPO1lOfNHiddI2NSlLFBxiznUFz8qMEM01y55Q5v+rHN+h16
-         O4DhMYmGxysdyjmwTAYn5F3frQPEIPy9LPdnIXE1Hv3ejiKxf5NwpKCFTvQHIcukkmKI
-         KT+HbFQvFOVnKwWeCV8HqpQmysN9B4c8jjzy1KJEE5eeot1e0Q/BfFYTRrjaLcv6fYzF
-         zR32cPNVjAonPf5LEQlr3bAVEG2iQiG+yq242cSCb9nFNOyO6cteXw8CuoQrea8J9wgu
-         480wt6Uw+rA9HcCFpxRTEMIcrmxxW9n2ZeHd0Vvt/bPEVwsTHOFJCEBZwJFFahWwu/XN
-         bfxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0rbw6qFzddhXd99LjyW8P10WgW6Qg+GLTzMTWA859hE=;
-        b=QYekLhIrBMJ6Xus4XoXEg0kzEKkA+q8izQ8Xvzt35OAzb1WtVave6p/EPcrPWv8XMv
-         pMCu949SK5HXwv6BpDs/kSN6tYGzncrVs1ALqldr4xhsuYoQTODEaTH89eS+ct1Ek2CS
-         ypP2Q7EsmL5Ri8TVpeMSgx/tv7BcqO580NnUeVjMUgn3Gwi0PWZLn+FRu5qZpHxj9rDN
-         aQ5hDn6A8rojRaecUz6iUzs9OEk/PmBGkwTgKYNGv9yspoz6aKywFj2XW74f+i84GcMk
-         pK/D7xQ5YtF1AEsrjnYcqFAvEKGLCKfWfS0QmvJFBhIE73yuw96E2WPXBKnGvJFfCq8c
-         KEdg==
-X-Gm-Message-State: APt69E0OmOa2yfrw+s8BK3KCxRSPaEC0vKSxxh1ZZrKn9rNuVFqjrdL/
-        jtNTDVvJXDsNpFwEkhovTWie/p7DJ6iKtE6RXozyTzF6
-X-Google-Smtp-Source: ADUXVKLqytsoW9Wf70iEcLvP2EK1LTODQWZzRebc18yVZjn121Gn/o0XXzznCdPZb3Th1SC4VIPR5CCHOWdY0dpK6E8=
-X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr6464695vkd.15.1529310182715;
- Mon, 18 Jun 2018 01:23:02 -0700 (PDT)
+        Mon, 18 Jun 2018 04:22:51 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14DEFC7A;
+        Mon, 18 Jun 2018 08:22:50 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Changbin Du <changbin.du@intel.com>,
+        Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 164/279] iommu/vt-d: fix shift-out-of-bounds in bug checking
+Date:   Mon, 18 Jun 2018 10:12:29 +0200
+Message-Id: <20180618080615.609044157@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-References: <F20BD6B3-D4D7-4D5D-B464-64402650BDE5@goldelico.com>
- <20180614120157.GE112168@atomide.com> <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com>
- <20180615065810.GI112168@atomide.com> <20180615111318.GJ112168@atomide.com>
- <029F115C-480E-485A-B547-9D5873925CEF@goldelico.com> <4DE2E482-B0D3-4799-9E2D-74E2180B305B@goldelico.com>
-In-Reply-To: <4DE2E482-B0D3-4799-9E2D-74E2180B305B@goldelico.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 18 Jun 2018 11:22:50 +0300
-Message-ID: <CAHp75Vf7-xcsoSJ--9nJYbxpwSfDv201UwnxJHoFbwtD187SPw@mail.gmail.com>
-Subject: Re: [Letux-kernel] BUG: drivers/pinctrl/core: races in pinctrl_groups
- and deferred probing
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Tony Lindgren <tony@atomide.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        kernel@pyra-handheld.com,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 2:08 PM H. Nikolaus Schaller <hns@goldelico.com> wrote:
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-> [    0.739501] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_hsusb2_pins selector=0
-> [    0.741638] pinctrl_generic_add_group: pctldev=ee481f80 name=pinmux_hsusb2_2_pins selector=0
-> [    0.742401] pinctrl_generic_add_group: pctldev=ee481e00 name=pinmux_mcbsp1_devconf0_pins selector=0
-> [    0.743072] pinctrl_generic_add_group: pctldev=ee481d00 name=pinmux_tv_acbias_devconf1_pins selector=0
-> [    0.760437] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_uart1_pins selector=1
-> [    0.762268] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_uart2_pins selector=2
-> [    0.763610] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_uart3_pins selector=3
-> [    1.790527] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_twl4030_pins selector=4
-> [    1.799835] pinctrl_generic_add_group: pctldev=ee3cd000 name=pinmux_twl4030_vpins selector=0
-> [    1.969635] pinctrl_generic_add_group: pctldev=ee481f80 name=spi_gpio_pinmux selector=1
-> [    2.164093] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_mmc1_pins selector=5
-> [    2.198242] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_wlan_irq_pin selector=6
-> [    2.374328] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_gpmc_pins selector=7
-> [    2.769989] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_wlan_pins selector=8
-> [    2.785888] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_bt_pins selector=9
-> [    2.802154] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_wlan_irq_pin selector=10
-> [    5.415222] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_dss_dpi_pins selector=11
-> [    6.080566] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_mcbsp1_pins selector=12
-> [    6.182617] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_mcbsp2_pins selector=13
-> [    6.271240] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_mcbsp3_pins selector=14
-> [    6.330718] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_penirq_pins selector=15
-> [    6.368927] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_mcbsp4_pins selector=16
-> [    6.616546] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=17
-> [    6.835418] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=18
-> [    6.874694] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=19
-> [    6.900299] pinctrl_generic_add_group: pctldev=ee3cd180 name=hdq_pins selector=20
-> [    6.937042] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=21
-> [    7.062744] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=22
-> [    7.108032] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=23
-> [    7.145080] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=24
-> [    7.197723] pinctrl_generic_add_group: pctldev=ee3cd180 name=backlight_pins_pinmux selector=25
-> [    7.427398] pinctrl_generic_add_group: pctldev=ee3cd180 name=modem_pins selector=26
-> [    7.476562] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=27
-> [    7.505981] pinctrl_generic_add_group: pctldev=ee3cd180 name=backlight_pins_pinmux selector=28
-> [    7.564910] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=29
-> [    7.894439] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=30
-> [    8.207489] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=31
-> [    8.311096] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_pps_pins selector=32
-> [    8.340667] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=33
-> [    8.414428] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=34
-> [    9.231445] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=35
-> [    9.446716] pinctrl_generic_add_group: pctldev=ee3cd180 name=pinmux_camera_pins selector=36
-> root@letux:~#
->
-> But it looks as if we still have duplicate assignments by deferred probing, i.e. some cleanup is
-> missing (or is this intended behaviour?).
+------------------
 
-> But I think the fundamental problem is that the same driver assigns multiple slots if
-> probing is deferred.
+From: Changbin Du <changbin.du@intel.com>
 
-Indeed.
+[ Upstream commit 0dfc0c792d691f8056f38b5c30789f504be0e467 ]
 
-I think there is a simple way to clean up pinctrl stuff on failed probe. See
-https://elixir.bootlin.com/linux/v4.18-rc1/source/drivers/base/dd.c#L416
+It allows to flush more than 4GB of device TLBs. So the mask should be
+64bit wide. UBSAN captured this fault as below.
 
-We only bind pins, and do not perform any actions when failure happens later on.
+[    3.760024] ================================================================================
+[    3.768440] UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1348:3
+[    3.774864] shift exponent 64 is too large for 32-bit type 'int'
+[    3.780853] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G     U            4.17.0-rc1+ #89
+[    3.788661] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.2.8 01/26/2016
+[    3.796034] Call Trace:
+[    3.798472]  <IRQ>
+[    3.800479]  dump_stack+0x90/0xfb
+[    3.803787]  ubsan_epilogue+0x9/0x40
+[    3.807353]  __ubsan_handle_shift_out_of_bounds+0x10e/0x170
+[    3.812916]  ? qi_flush_dev_iotlb+0x124/0x180
+[    3.817261]  qi_flush_dev_iotlb+0x124/0x180
+[    3.821437]  iommu_flush_dev_iotlb+0x94/0xf0
+[    3.825698]  iommu_flush_iova+0x10b/0x1c0
+[    3.829699]  ? fq_ring_free+0x1d0/0x1d0
+[    3.833527]  iova_domain_flush+0x25/0x40
+[    3.837448]  fq_flush_timeout+0x55/0x160
+[    3.841368]  ? fq_ring_free+0x1d0/0x1d0
+[    3.845200]  ? fq_ring_free+0x1d0/0x1d0
+[    3.849034]  call_timer_fn+0xbe/0x310
+[    3.852696]  ? fq_ring_free+0x1d0/0x1d0
+[    3.856530]  run_timer_softirq+0x223/0x6e0
+[    3.860625]  ? sched_clock+0x5/0x10
+[    3.864108]  ? sched_clock+0x5/0x10
+[    3.867594]  __do_softirq+0x1b5/0x6f5
+[    3.871250]  irq_exit+0xd4/0x130
+[    3.874470]  smp_apic_timer_interrupt+0xb8/0x2f0
+[    3.879075]  apic_timer_interrupt+0xf/0x20
+[    3.883159]  </IRQ>
+[    3.885255] RIP: 0010:poll_idle+0x60/0xe7
+[    3.889252] RSP: 0018:ffffb1b201943e30 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+[    3.896802] RAX: 0000000080200000 RBX: 000000000000008e RCX: 000000000000001f
+[    3.903918] RDX: 0000000000000000 RSI: 000000002819aa06 RDI: 0000000000000000
+[    3.911031] RBP: ffff9e93c6b33280 R08: 00000010f717d567 R09: 000000000010d205
+[    3.918146] R10: ffffb1b201943df8 R11: 0000000000000001 R12: 00000000e01b169d
+[    3.925260] R13: 0000000000000000 R14: ffffffffb12aa400 R15: 0000000000000000
+[    3.932382]  cpuidle_enter_state+0xb4/0x470
+[    3.936558]  do_idle+0x222/0x310
+[    3.939779]  cpu_startup_entry+0x78/0x90
+[    3.943693]  start_secondary+0x205/0x2e0
+[    3.947607]  secondary_startup_64+0xa5/0xb0
+[    3.951783] ================================================================================
 
-> 3.  I could not observe calls to pinctrl_generic_remove_group()
-> 4.  this means a stale pointer to the group_desc is still stored in the radix tree
->     if driver probing fails
+Signed-off-by: Changbin Du <changbin.du@intel.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/iommu/dmar.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Exactly.
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -1345,7 +1345,7 @@ void qi_flush_dev_iotlb(struct intel_iom
+ 	struct qi_desc desc;
+ 
+ 	if (mask) {
+-		BUG_ON(addr & ((1 << (VTD_PAGE_SHIFT + mask)) - 1));
++		BUG_ON(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
+ 		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
+ 		desc.high = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
+ 	} else
 
--- 
-With Best Regards,
-Andy Shevchenko
+
