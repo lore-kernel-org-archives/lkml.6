@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2BAC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B571C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0F1A20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0F1A20864
+	by mail.kernel.org (Postfix) with ESMTP id 1071F20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:28:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1071F20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966570AbeFRI2D (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:28:03 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58466 "EHLO
+        id S966585AbeFRI2I (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:28:08 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:58496 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966524AbeFRI2B (ORCPT
+        with ESMTP id S966524AbeFRI2E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:28:01 -0400
+        Mon, 18 Jun 2018 04:28:04 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 667E3C7A;
-        Mon, 18 Jun 2018 08:28:00 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C222DC94;
+        Mon, 18 Jun 2018 08:28:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,9 +38,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 244/279] x86/pkeys/selftests: Fix pkey exhaustion test off-by-one
-Date:   Mon, 18 Jun 2018 10:13:49 +0200
-Message-Id: <20180618080618.870305371@linuxfoundation.org>
+Subject: [PATCH 4.16 245/279] x86/pkeys/selftests: Fix pointer math
+Date:   Mon, 18 Jun 2018 10:13:50 +0200
+Message-Id: <20180618080618.910985893@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -59,17 +59,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit f50b4878329ab61d8e05796f655adeb6f5fb57c6 ]
+[ Upstream commit 3d64f4ed15c3c53dba4c514bf59c334464dee373 ]
 
-In our "exhaust all pkeys" test, we make sure that there
-is the expected number available.  Turns out that the
-test did not cover the execute-only key, but discussed
-it anyway.  It did *not* discuss the test-allocated
-key.
+We dump out the entire area of the siginfo where the si_pkey_ptr is
+supposed to be.  But, we do some math on the poitner, which is a u32.
+We intended to do byte math, not u32 math on the pointer.
 
-Now that we have a test for the mprotect(PROT_EXEC) case,
-this off-by-one issue showed itself.  Correct the off-by-
-one and add the explanation for the case we missed.
+Cast it over to a u8* so it works.
+
+Also, move this block of code to below th si_code check.  It doesn't
+hurt anything, but the si_pkey field is gibberish for other signal
+types.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -81,36 +81,43 @@ Cc: Ram Pai <linuxram@us.ibm.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171350.E1656B95@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180509171352.9BE09819@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 --- a/tools/testing/selftests/x86/protection_keys.c
 +++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1163,12 +1163,15 @@ void test_pkey_alloc_exhaust(int *ptr, u
- 	pkey_assert(i < NR_PKEYS*2);
+@@ -303,13 +303,6 @@ void signal_handler(int signum, siginfo_
+ 		dump_mem(pkru_ptr - 128, 256);
+ 	pkey_assert(*pkru_ptr);
  
- 	/*
--	 * There are 16 pkeys supported in hardware.  One is taken
--	 * up for the default (0) and another can be taken up by
--	 * an execute-only mapping.  Ensure that we can allocate
--	 * at least 14 (16-2).
-+	 * There are 16 pkeys supported in hardware.  Three are
-+	 * allocated by the time we get here:
-+	 *   1. The default key (0)
-+	 *   2. One possibly consumed by an execute-only mapping.
-+	 *   3. One allocated by the test code and passed in via
-+	 *      'pkey' to this function.
-+	 * Ensure that we can allocate at least another 13 (16-3).
- 	 */
--	pkey_assert(i >= NR_PKEYS-2);
-+	pkey_assert(i >= NR_PKEYS-3);
+-	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
+-	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
+-	dump_mem(si_pkey_ptr - 8, 24);
+-	siginfo_pkey = *si_pkey_ptr;
+-	pkey_assert(siginfo_pkey < NR_PKEYS);
+-	last_si_pkey = siginfo_pkey;
+-
+ 	if ((si->si_code == SEGV_MAPERR) ||
+ 	    (si->si_code == SEGV_ACCERR) ||
+ 	    (si->si_code == SEGV_BNDERR)) {
+@@ -317,6 +310,13 @@ void signal_handler(int signum, siginfo_
+ 		exit(4);
+ 	}
  
- 	for (i = 0; i < nr_allocated_pkeys; i++) {
- 		err = sys_pkey_free(allocated_pkeys[i]);
++	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
++	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
++	dump_mem((u8 *)si_pkey_ptr - 8, 24);
++	siginfo_pkey = *si_pkey_ptr;
++	pkey_assert(siginfo_pkey < NR_PKEYS);
++	last_si_pkey = siginfo_pkey;
++
+ 	dprintf1("signal pkru from xsave: %08x\n", *pkru_ptr);
+ 	/* need __rdpkru() version so we do not do shadow_pkru checking */
+ 	dprintf1("signal pkru from  pkru: %08x\n", __rdpkru());
 
 
