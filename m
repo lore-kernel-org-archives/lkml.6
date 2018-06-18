@@ -2,89 +2,111 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61386C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:54:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B640CC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:55:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0956520693
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:54:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="qO7mc4kG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0956520693
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	by mail.kernel.org (Postfix) with ESMTP id 764D720693
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 22:55:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 764D720693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=decadent.org.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964875AbeFRWyd (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 18:54:33 -0400
-Received: from ozlabs.org ([203.11.71.1]:58633 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755329AbeFRWyc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 18:54:32 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 418mck3nypz9s3C;
-        Tue, 19 Jun 2018 08:54:30 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529362470;
-        bh=iha6Kt7qSpyiehy+i76zXIuOCTB5MDZ9P/2YGyU6lms=;
-        h=Date:From:To:Cc:Subject:From;
-        b=qO7mc4kGHi61KC0xAFR6UaQedq1hp8GvJxhhCHA+7d1Gv/0pzUU79ODaqdwVyMyus
-         fhl1fGB6WcwVD3etyZJhdGQLcTzNtTt7GxGHvN0f0LQqSvKgZjpHE9SLxEFyWdKUj1
-         0dd/TaEZAw8bJcNCc5x6FvlQbq8+nE/JqA0OcUTPBWfcTNIRcaqCQLuLSW5F9O7skE
-         eNGbcMGSC0FmhPoXHqnhjkDmHk3LS7FR+S665Zrbvm2Mt8xZ6/onxcfl/kEFFPLHVH
-         5Rph7vrVjbLPyGeS8wdGCfwFbuadsDZrEWyA90HojjDCsLMR5iubQRXJxb5Nl4XJ/w
-         C7ImlQLSFqXAA==
-Date:   Tue, 19 Jun 2018 08:54:29 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Al Viro <viro@ZenIV.linux.org.uk>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        David Howells <dhowells@redhat.com>
-Subject: linux-next: Signed-off-by missing for commit in the vfs tree
-Message-ID: <20180619085429.419e4ef3@canb.auug.org.au>
+        id S1755474AbeFRWzn (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 18:55:43 -0400
+Received: from shadbolt.e.decadent.org.uk ([88.96.1.126]:56272 "EHLO
+        shadbolt.e.decadent.org.uk" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1755329AbeFRWzm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 18:55:42 -0400
+Received: from ben by shadbolt.decadent.org.uk with local (Exim 4.84_2)
+        (envelope-from <ben@decadent.org.uk>)
+        id 1fV33k-0006Ca-JR; Mon, 18 Jun 2018 23:55:40 +0100
+Date:   Mon, 18 Jun 2018 23:55:40 +0100
+From:   Ben Hutchings <ben@decadent.org.uk>
+To:     Julius Werner <jwerner@chromium.org>,
+        Thierry Escande <thierry.escande@collabora.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Paul Menzel <pm.debian@googlemail.com>
+Message-ID: <20180618225540.GD14131@decadent.org.uk>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/D.lJffreIR4FyuYkinIIu4N"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="TeJTyD9hb8KJN2Jy"
+Content-Disposition: inline
+User-Agent: Mutt/1.5.23 (2014-03-12)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: ben@decadent.org.uk
+Subject: [PATCH v2] firmware: Update Kconfig help text for Google firmware
+X-SA-Exim-Version: 4.2.1 (built Mon, 26 Dec 2011 16:24:06 +0000)
+X-SA-Exim-Scanned: Yes (on shadbolt.decadent.org.uk)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/D.lJffreIR4FyuYkinIIu4N
-Content-Type: text/plain; charset=US-ASCII
+
+--TeJTyD9hb8KJN2Jy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Al,
+The help text for GOOGLE_FIRMWARE states that it should only be
+enabled when building a kernel for Google's own servers.  However,
+many of the drivers dependent on it are also useful on Chromebooks or
+on any platform using coreboot.
 
-Commit
+Update the help text to reflect this double duty.
 
-  a6eae6a1f05a ("teach move_mount(2) to work with OPEN_TREE_CLONE")
+Fixes: d384d6f43d1e ("firmware: google memconsole: Add coreboot support")
+Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
+---
+v2: Mention coreboot, and don't touch GSMI help text
 
-is missing a Signed-off-by from its committer.
+ drivers/firmware/google/Kconfig | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
---=20
-Cheers,
-Stephen Rothwell
+diff --git a/drivers/firmware/google/Kconfig b/drivers/firmware/google/Kcon=
+fig
+index f16b381a569c..ca049ecf5cfd 100644
+--- a/drivers/firmware/google/Kconfig
++++ b/drivers/firmware/google/Kconfig
+@@ -2,9 +2,9 @@ menuconfig GOOGLE_FIRMWARE
+ 	bool "Google Firmware Drivers"
+ 	default n
+ 	help
+-	  These firmware drivers are used by Google's servers.  They are
+-	  only useful if you are working directly on one of their
+-	  proprietary servers.  If in doubt, say "N".
++	  These firmware drivers are used by Google servers,
++	  Chromebooks and other devices using coreboot firmware.
++	  If in doubt, say "N".
+=20
+ if GOOGLE_FIRMWARE
+=20
 
---Sig_/D.lJffreIR4FyuYkinIIu4N
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+--TeJTyD9hb8KJN2Jy
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsoOCUACgkQAVBC80lX
-0Gx2DQf+JyqVy30YHiGlc0ozHfKDCG+G2TWmh5O9vGzeh+X4gVEv/J+vbwC8D2Q8
-3L4m/BxtGKSZxytPNgiHJsih+epHU5aNznu3Wd3bpHWGb5mvKdYW+qtsT1uKy906
-wwpseZ+ilyhrlKrDA7EW66xtwmmCGMxpmyqsFHpatXV4Gf+zPqCFVSdxR8ofUe22
-0Ybkx06yCInK+LeHpcZSMULRaM+0myCOg3k1+YfZa6iNZXg0IJc61elYuB0MU33y
-PYJUnJn4yNkGjG/FvnnxjzjHCNzAZGrCCXKXWKx9J3hS+S5Saa8GXZNHRKibum1G
-e1ZYWm73EvO/Th0cZbbPFdmw/OUYgA==
-=ZsFb
+iQIVAwUBWyg4bOe/yOyVhhEJAQqkyg/8CeECZPQ2v6XVnYUBrgXdLSeIK08dcxed
+R3qAx+tDpiSj0dvMsA7f5yABtOW7Xb91iMK/Oc4J5xe184DhbCW3n+5cO7ywHEyS
+3PDXZfLZbCOm9Z/7dI5zUTsXgMsjLi16kpmerN5z9ueXbCfVE1jbGYJJHdHxXj/a
+UjfkZXc621NzNlBC7wtrDwTS0Y6hfGposg2WZXAtBMugseNTJNdUAUc0U7PfwKN9
+p97DeX2iMaEVDHAhWEZXu3nNBbE11QUStY8rK4wmTefJMmOCR5L4t/gInZxLKXv+
+w9ZHdGI5CajVEJr29couRiKygna3Z/vvRwu93D++7uWt0cmpp9veeTpHXsK9hnry
+vQ2UTqEQgVqGGw3RQxECdKk49Z3Q+fCAy3WLRQtLJ9/Wi69JTOjb6ZgDpeq4pHuv
+7XOWhqx89IlCPJ61TJWlR6VfsmKvlA2RHuPGAkxVQ+PByWRmE4QzVswWYzkTCG1k
+aV+afvNUxXqEtoKzhUnikTq5vimWHrGWU3RZQUf3fiqSm9IINKK6BBWqRHHtHUMw
+UzyMB9BP0TxZUnLqx4Uavjv6a18mTOMQi8MJb8OadW8n5iDyfTskDcWx3ApmewRh
+ggCspOFztqFK37AhNrR9WmomOW1wuls0LLWU9kQ08JibMkJ4FfSa3R/ZZfWTjluK
+/E5Rj4QsSKs=
+=/wOI
 -----END PGP SIGNATURE-----
 
---Sig_/D.lJffreIR4FyuYkinIIu4N--
+--TeJTyD9hb8KJN2Jy--
