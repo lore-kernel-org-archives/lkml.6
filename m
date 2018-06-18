@@ -3,115 +3,180 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82883C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:37:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE8F8C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4687D20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:37:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4687D20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 7DAB820864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:38:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DAB820864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965981AbeFRJhX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:37:23 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:37814 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S965060AbeFRJhU (ORCPT
+        id S935977AbeFRJiR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:38:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55824 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935723AbeFRIXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:37:20 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5I9XYWX029204;
-        Mon, 18 Jun 2018 11:36:37 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2jn1pgsd3k-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 18 Jun 2018 11:36:37 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 89CB33A;
-        Mon, 18 Jun 2018 09:36:29 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5801659E3;
-        Mon, 18 Jun 2018 09:36:29 +0000 (GMT)
-Received: from SFHDAG5NODE1.st.com (10.75.127.13) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 18 Jun
- 2018 11:36:28 +0200
-Received: from SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6]) by
- SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6%20]) with mapi id
- 15.00.1347.000; Mon, 18 Jun 2018 11:36:29 +0200
-From:   Hugues FRUCHET <hugues.fruchet@st.com>
-To:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] media: stm32-dcmi: simplify of_node_put usage
-Thread-Topic: [PATCH] media: stm32-dcmi: simplify of_node_put usage
-Thread-Index: AQHUAnJCosrPhFSe1UmPkANMLwEVU6RlqT4A
-Date:   Mon, 18 Jun 2018 09:36:28 +0000
-Message-ID: <1b951a4b-4583-5cc2-c54a-4de1196e1653@st.com>
-References: <1528824196-19149-1-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1528824196-19149-1-git-send-email-hofrat@osadl.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A66A17569BFC51408F223D8818E234CC@st.com>
-Content-Transfer-Encoding: base64
+        Mon, 18 Jun 2018 04:23:31 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A71CCC5C;
+        Mon, 18 Jun 2018 08:23:30 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 171/279] usb: typec: tps6598x: handle block reads separately with plain-I2C adapters
+Date:   Mon, 18 Jun 2018 10:12:36 +0200
+Message-Id: <20180618080615.892081270@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-18_03:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTmljaG9sYXMsDQpUaGFua3MgZm9yIHBhdGNoLA0KDQpPbiAwNi8xMi8yMDE4IDA3OjIzIFBN
-LCBOaWNob2xhcyBNYyBHdWlyZSB3cm90ZToNCj4gVGhpcyBkb2VzIG5vdCBmaXggYW55IGJ1ZyAt
-IHRoaXMgaXMganVzdCBhIGNvZGUgc2ltcGxpZmljYXRpb24uIEFzDQo+IG5wIGlzIG5vdCB1c2Vk
-IGFmdGVyIHBhc3NpbmcgaXQgdG8gdjRsMl9md25vZGVfZW5kcG9pbnRfcGFyc2UoKSBpdHMNCj4g
-cmVmY291bnQgY2FuIGJlIGRlY3JlbWVudGVkIGltbWVkaWF0ZWx5IGFuZCBhdCBvbmUgbG9jYXRp
-b24uDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBOaWNob2xhcyBNYyBHdWlyZSA8aG9mcmF0QG9zYWRs
-Lm9yZz4NCkFja2VkLWJ5OiBIdWd1ZXMgRnJ1Y2hldCA8aHVndWVzLmZydWNoZXRAc3QuY29tPg0K
-DQo+IC0tLQ0KPiANCj4gSXNzdWUgZm91bmQgZHVyaW5nIGNvZGUgcmVhZGluZy4NCj4gDQo+IFBh
-dGNoIHdhcyBjb21waWxlIHRlc3RlZCB3aXRoOiB4ODZfNjRfZGVmY29uZmlnLCBNRURJQV9TVVBQ
-T1JUPXkNCj4gTUVESUFfQ0FNRVJBX1NVUFBPUlQ9eSwgVjRMX1BMQVRGT1JNX0RSSVZFUlM9eSwg
-T0Y9eSwgQ09NUElMRV9URVNUPXkNCj4gQ09ORklHX1ZJREVPX1NUTTMyX0RDTUk9eQ0KPiAoVGhl
-cmUgYXJlIGEgZmV3IHNwYXJzZSB3YXJuaW5ncyAtIGJ1dCB1bnJlbGF0ZWQgdG8gdGhlIGxpbmVz
-IGNoYW5nZWQpDQo+IA0KPiBQYXRjaCBpcyBhZ2FpbnN0IDQuMTcuMCAobG9jYWx2ZXJzaW9uLW5l
-eHQgaXMgbmV4dC0yMDE4MDYwOCkNCj4gDQo+ICAgZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdG0z
-Mi9zdG0zMi1kY21pLmMgfCA1ICstLS0tDQo+ICAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9u
-KCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxh
-dGZvcm0vc3RtMzIvc3RtMzItZGNtaS5jIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdG0zMi9z
-dG0zMi1kY21pLmMNCj4gaW5kZXggMmUxOTMzZC4uMGI2MTA0MiAxMDA2NDQNCj4gLS0tIGEvZHJp
-dmVycy9tZWRpYS9wbGF0Zm9ybS9zdG0zMi9zdG0zMi1kY21pLmMNCj4gKysrIGIvZHJpdmVycy9t
-ZWRpYS9wbGF0Zm9ybS9zdG0zMi9zdG0zMi1kY21pLmMNCj4gQEAgLTE2OTYsMjMgKzE2OTYsMjAg
-QEAgc3RhdGljIGludCBkY21pX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpDQo+
-ICAgCX0NCj4gICANCj4gICAJcmV0ID0gdjRsMl9md25vZGVfZW5kcG9pbnRfcGFyc2Uob2ZfZndu
-b2RlX2hhbmRsZShucCksICZlcCk7DQo+ICsJb2Zfbm9kZV9wdXQobnApOw0KPiAgIAlpZiAocmV0
-KSB7DQo+ICAgCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJDb3VsZCBub3QgcGFyc2UgdGhlIGVuZHBv
-aW50XG4iKTsNCj4gLQkJb2Zfbm9kZV9wdXQobnApOw0KPiAgIAkJcmV0dXJuIC1FTk9ERVY7DQo+
-ICAgCX0NCj4gICANCj4gICAJaWYgKGVwLmJ1c190eXBlID09IFY0TDJfTUJVU19DU0kyKSB7DQo+
-ICAgCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJDU0kgYnVzIG5vdCBzdXBwb3J0ZWRcbiIpOw0KPiAt
-CQlvZl9ub2RlX3B1dChucCk7DQo+ICAgCQlyZXR1cm4gLUVOT0RFVjsNCj4gICAJfQ0KPiAgIAlk
-Y21pLT5idXMuZmxhZ3MgPSBlcC5idXMucGFyYWxsZWwuZmxhZ3M7DQo+ICAgCWRjbWktPmJ1cy5i
-dXNfd2lkdGggPSBlcC5idXMucGFyYWxsZWwuYnVzX3dpZHRoOw0KPiAgIAlkY21pLT5idXMuZGF0
-YV9zaGlmdCA9IGVwLmJ1cy5wYXJhbGxlbC5kYXRhX3NoaWZ0Ow0KPiAgIA0KPiAtCW9mX25vZGVf
-cHV0KG5wKTsNCj4gLQ0KPiAgIAlpcnEgPSBwbGF0Zm9ybV9nZXRfaXJxKHBkZXYsIDApOw0KPiAg
-IAlpZiAoaXJxIDw9IDApIHsNCj4gICAJCWRldl9lcnIoJnBkZXYtPmRldiwgIkNvdWxkIG5vdCBn
-ZXQgaXJxXG4iKTsNCj4g
+4.16-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+
+[ Upstream commit 1a2f474d328f292ee706414824ec4ca690cdf5ba ]
+
+If the I2C adapter that the PD controller is attached to
+does not support SMBus protocol, the driver needs to handle
+block reads separately. The first byte returned in block
+read protocol will show the total number of bytes. It needs
+to be stripped away.
+
+This is handled separately in the driver only because right
+now we have no way of requesting the used protocol with
+regmap-i2c. This is in practice a workaround for what is
+really a problem in regmap-i2c. The other option would have
+been to register custom regmap, or not use regmap at all,
+however, since the solution is very simple, I choose to use
+it in this case for convenience. It is easy to remove once
+we figure out how to handle this kind of cases in
+regmap-i2c.
+
+Fixes: 0a4c005bd171 ("usb: typec: driver for TI TPS6598x USB Power Delivery controllers")
+Reviewed-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ drivers/usb/typec/tps6598x.c |   47 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 39 insertions(+), 8 deletions(-)
+
+--- a/drivers/usb/typec/tps6598x.c
++++ b/drivers/usb/typec/tps6598x.c
+@@ -73,6 +73,7 @@ struct tps6598x {
+ 	struct device *dev;
+ 	struct regmap *regmap;
+ 	struct mutex lock; /* device lock */
++	u8 i2c_protocol:1;
+ 
+ 	struct typec_port *port;
+ 	struct typec_partner *partner;
+@@ -80,19 +81,39 @@ struct tps6598x {
+ 	struct typec_capability typec_cap;
+ };
+ 
++static int
++tps6598x_block_read(struct tps6598x *tps, u8 reg, void *val, size_t len)
++{
++	u8 data[len + 1];
++	int ret;
++
++	if (!tps->i2c_protocol)
++		return regmap_raw_read(tps->regmap, reg, val, len);
++
++	ret = regmap_raw_read(tps->regmap, reg, data, sizeof(data));
++	if (ret)
++		return ret;
++
++	if (data[0] < len)
++		return -EIO;
++
++	memcpy(val, &data[1], len);
++	return 0;
++}
++
+ static inline int tps6598x_read16(struct tps6598x *tps, u8 reg, u16 *val)
+ {
+-	return regmap_raw_read(tps->regmap, reg, val, sizeof(u16));
++	return tps6598x_block_read(tps, reg, val, sizeof(u16));
+ }
+ 
+ static inline int tps6598x_read32(struct tps6598x *tps, u8 reg, u32 *val)
+ {
+-	return regmap_raw_read(tps->regmap, reg, val, sizeof(u32));
++	return tps6598x_block_read(tps, reg, val, sizeof(u32));
+ }
+ 
+ static inline int tps6598x_read64(struct tps6598x *tps, u8 reg, u64 *val)
+ {
+-	return regmap_raw_read(tps->regmap, reg, val, sizeof(u64));
++	return tps6598x_block_read(tps, reg, val, sizeof(u64));
+ }
+ 
+ static inline int tps6598x_write16(struct tps6598x *tps, u8 reg, u16 val)
+@@ -121,8 +142,8 @@ static int tps6598x_read_partner_identit
+ 	struct tps6598x_rx_identity_reg id;
+ 	int ret;
+ 
+-	ret = regmap_raw_read(tps->regmap, TPS_REG_RX_IDENTITY_SOP,
+-			      &id, sizeof(id));
++	ret = tps6598x_block_read(tps, TPS_REG_RX_IDENTITY_SOP,
++				  &id, sizeof(id));
+ 	if (ret)
+ 		return ret;
+ 
+@@ -223,13 +244,13 @@ static int tps6598x_exec_cmd(struct tps6
+ 	} while (val);
+ 
+ 	if (out_len) {
+-		ret = regmap_raw_read(tps->regmap, TPS_REG_DATA1,
+-				      out_data, out_len);
++		ret = tps6598x_block_read(tps, TPS_REG_DATA1,
++					  out_data, out_len);
+ 		if (ret)
+ 			return ret;
+ 		val = out_data[0];
+ 	} else {
+-		ret = regmap_read(tps->regmap, TPS_REG_DATA1, &val);
++		ret = tps6598x_block_read(tps, TPS_REG_DATA1, &val, sizeof(u8));
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -384,6 +405,16 @@ static int tps6598x_probe(struct i2c_cli
+ 	if (!vid)
+ 		return -ENODEV;
+ 
++	/*
++	 * Checking can the adapter handle SMBus protocol. If it can not, the
++	 * driver needs to take care of block reads separately.
++	 *
++	 * FIXME: Testing with I2C_FUNC_I2C. regmap-i2c uses I2C protocol
++	 * unconditionally if the adapter has I2C_FUNC_I2C set.
++	 */
++	if (i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
++		tps->i2c_protocol = true;
++
+ 	ret = tps6598x_read32(tps, TPS_REG_STATUS, &status);
+ 	if (ret < 0)
+ 		return ret;
+
+
