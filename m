@@ -2,79 +2,99 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9369EC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 012B9C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:48:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F222086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:48:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WZhhwWlp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48F222086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B7E6D2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:48:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7E6D2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935157AbeFROsE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:48:04 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934657AbeFROsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:48:02 -0400
-Received: from localhost (unknown [27.59.118.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C4ED2086A;
-        Mon, 18 Jun 2018 14:48:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529333281;
-        bh=WgkM3FEf8YpO15m0oI6RE2X4dQogcofMfbzet31jSzU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WZhhwWlpcPjJMDH+artSmxwsCf/91VTWyvU89ID6VPj4meogw3+0vZvhCOMqvrJAC
-         FKNUcnjE2ubsF90baKxhul3j1PMKb28jOwZK+fmw1+6ye3TAVTkmUhE6dXVpiLuVAe
-         xodVPlCOKBMYRvhMrbp+MxjmKAXz0Kp6VjYGQwlA=
-Date:   Mon, 18 Jun 2018 20:17:57 +0530
-From:   Vinod <vkoul@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Kyle Spiers <ksspiers@google.com>,
-        David Miller <davem@davemloft.net>,
-        Kees Cook <keescook@chromium.org>, ray.jui@broadcom.com,
-        linux-crypto <linux-crypto@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-raid <linux-raid@vger.kernel.org>
-Subject: Re: [PATCH v3] async_pq: Remove VLA usage
-Message-ID: <20180618144757.GH25852@vkoul-mobl>
-References: <20180601202016.169085-1-ksspiers@google.com>
- <CAPcyv4gOhnEcJuZZwCoZyMuLsA65Q0EMx1y94xMyRCySv8XcQw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4gOhnEcJuZZwCoZyMuLsA65Q0EMx1y94xMyRCySv8XcQw@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        id S935289AbeFROsK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:48:10 -0400
+Received: from mout.kundenserver.de ([212.227.126.135]:59631 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934657AbeFROsH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 10:48:07 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue001 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0MYoWQ-1fhYW21AcU-00VOfw; Mon, 18 Jun 2018 16:47:44 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Davidlohr Bueso <dave@stgolabs.net>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Josh Triplett <josh@joshtriplett.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH] rcutorture: use monotonic timestamp for stall detection
+Date:   Mon, 18 Jun 2018 16:47:34 +0200
+Message-Id: <20180618144741.339763-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:vHQmKBVQmbjqX8hGvUq/PTs0ZFDIM5QqFCxlcg2mhhWAPtLJ9II
+ fkd61PAsHo2zVj7qQmvN+ga5P/M/q/G8SBWoA31j79z7IPGnleZt89uEtZOe+vcse0TbUVu
+ jwz1TtGZso2CILqUwug7ZuLe4Lb72KEZaXfRvogvE0fp82i74uEMuOp/Ms+q06AeUWvfRgP
+ 0GrLwyJVD0F/8s+ZGl5cA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:VeRCssyuIjo=:LGtcUsmCIH6anEfa61ggIW
+ W1IDusg/Jt0sLr9uu47yIZhjp3LtdU9fv3fC69iajy7qlTUSLpRLipTL4/cyuspxJHWZ0HnPk
+ 6cBCFFALtIZVo4N3ff10aL72WPw3emC+vzlheiwJ/FI4KoZ9oZeKXtZ7CApqiR9kvzEAplaQy
+ 8EQZhaC9GIrep1UhV7PlmskWZanupMxhzrV5aaZKiMvzVbJYVVQzxAcjYUQ1YJ/6mDZfZGF3i
+ vVuA4wxC7VdsxCd7gKseZdadVyop2NI0PDT4mdZoQ2tNmH3wGCI/hn8DggaA7hmkeGnvHWV2Y
+ dFDQwdmRNttR/sl99PcCXVuG1jEoETx2r30RaQrQLcQwgsYKBCfu/ftv90NjRAUsXdZVpNm0R
+ sC2UGK2AlQc8mt3vSAv8YaXz7why169qg31moaN2weH27+HGvJC79106SqqdkMY4/De5G7vUx
+ jgkZj//EM5WKlSj9xvcH5rb25YUeHrfi0hOESv+PTlhyBwFL6ZfqlLUxjhNea37D6IIvRRxql
+ mE7OgTzy4qMMMZEZaSvwq/De1Sy7BQPROvAcZbLh6wpoIscySAgEFY5tLcccRZ93lzbrLdR+a
+ bhb3drQPTFREFUOtPDGr4eap2acXXdZFy6woHiom3LomwcGyjj8DgdJQDGhyM5Wf17Bjmo7ez
+ XuyHGr3QuuVQ4NlJJEgI94XmfWNsG9x9Wc82xmEpJlmNWoVeNko+7qCY7+gZR+Z2Mvfk=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01-06-18, 13:54, Dan Williams wrote:
-> On Fri, Jun 1, 2018 at 1:20 PM, Kyle Spiers <ksspiers@google.com> wrote:
-> > In the quest to remove VLAs from the kernel[1], this adjusts the
-> > allocation of coefs and blocks to use the existing maximum values
-> > (with one new define, MAX_DISKS for coefs, and a reuse of the
-> > existing NDISKS for blocks).
-> >
-> > [1] https://lkml.org/lkml/2018/3/7/621
-> >
-> > Signed-off-by: Kyle Spiers <ksspiers@google.com>
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> 
-> Reviewed-by: Dan Williams <dan.j.williams@intel.com>
-> 
-> Vinod, will you have a chance to pick this and carry through dmaengine.git?
+The get_seconds() call is deprecated because it overflows on 32-bit
+architectures. The algorithm in rcu_torture_stall() can deal with
+the overflow, but another problem here is that using a CLOCK_REALTIME
+stamp can lead to a false-positive stall warning when a settimeofday()
+happens concurrently.
 
-Applied now, thanks
+Using ktime_get_seconds() instead avoids those issues and will never
+overflow. The added cast to 'unsigned long' however is necessary to
+make ULONG_CMP_LT() work correctly.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ kernel/rcu/rcutorture.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
+index 42fcb7f05fac..f42cf69ef539 100644
+--- a/kernel/rcu/rcutorture.c
++++ b/kernel/rcu/rcutorture.c
+@@ -1446,7 +1446,7 @@ static int rcu_torture_stall(void *args)
+ 		VERBOSE_TOROUT_STRING("rcu_torture_stall end holdoff");
+ 	}
+ 	if (!kthread_should_stop()) {
+-		stop_at = get_seconds() + stall_cpu;
++		stop_at = ktime_get_seconds() + stall_cpu;
+ 		/* RCU CPU stall is expected behavior in following code. */
+ 		rcu_read_lock();
+ 		if (stall_cpu_irqsoff)
+@@ -1455,7 +1455,8 @@ static int rcu_torture_stall(void *args)
+ 			preempt_disable();
+ 		pr_alert("rcu_torture_stall start on CPU %d.\n",
+ 			 smp_processor_id());
+-		while (ULONG_CMP_LT(get_seconds(), stop_at))
++		while (ULONG_CMP_LT((unsigned long)ktime_get_seconds(),
++				    stop_at))
+ 			continue;  /* Induce RCU CPU stall warning. */
+ 		if (stall_cpu_irqsoff)
+ 			local_irq_enable();
 -- 
-~Vinod
+2.9.0
+
