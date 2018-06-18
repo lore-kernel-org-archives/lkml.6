@@ -6,35 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FC9C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1958C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71CAB20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71CAB20874
+	by mail.kernel.org (Postfix) with ESMTP id B16A320874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:35:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16A320874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967800AbeFRIfB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:35:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35896 "EHLO
+        id S967815AbeFRIfF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:35:05 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35912 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967772AbeFRIe7 (ORCPT
+        with ESMTP id S967772AbeFRIfC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:34:59 -0400
+        Mon, 18 Jun 2018 04:35:02 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 65322C49;
-        Mon, 18 Jun 2018 08:34:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DCD97BAD;
+        Mon, 18 Jun 2018 08:35:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dan Carpenter <dan.carpenter@oracle.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
         Sean Paul <seanpaul@chromium.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 123/189] drm/omap: silence unititialized variable warning
-Date:   Mon, 18 Jun 2018 10:13:39 +0200
-Message-Id: <20180618081214.189133369@linuxfoundation.org>
+Subject: [PATCH 4.14 124/189] drm/omap: fix uninitialized ret variable
+Date:   Mon, 18 Jun 2018 10:13:40 +0200
+Message-Id: <20180618081214.229313379@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,36 +52,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Tomi Valkeinen <tomi.valkeinen@ti.com>
 
-[ Upstream commit 4a9fbfcab19d3f71ad2bf0bcb653c4ee84e69c7f ]
+[ Upstream commit 77eeac24b10fc84d3ffd5b11a897dff88dde244d ]
 
-Smatch complains that "area_free" could be used without being
-initialized.  This code is several years old and premusably works fine
-so this can't be a very serious bug.  But it's easy enough to silence
-the warning.  If "area_free" is false at the end of the function then
-we return -ENOMEM.
+audio_config function for both HDMI4 and HDMI5 return uninitialized
+value as the error code if the display is not currently enabled. For
+some reason this has not caused any issues.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
 Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180418142937.GA13828@mwanda
+Link: https://patchwork.freedesktop.org/patch/msgid/20180329104038.29154-1-tomi.valkeinen@ti.com
+Reviewed-by: Emil Velikov <emil.velikov@collabora.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 Signed-off-by: Sean Paul <seanpaul@chromium.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/tcm-sita.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/omapdrm/dss/hdmi4.c |    2 +-
+ drivers/gpu/drm/omapdrm/dss/hdmi5.c |    2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/omapdrm/tcm-sita.c
-+++ b/drivers/gpu/drm/omapdrm/tcm-sita.c
-@@ -92,7 +92,7 @@ static int l2r_t2b(uint16_t w, uint16_t
+--- a/drivers/gpu/drm/omapdrm/dss/hdmi4.c
++++ b/drivers/gpu/drm/omapdrm/dss/hdmi4.c
+@@ -634,7 +634,7 @@ static int hdmi_audio_config(struct devi
+ 			     struct omap_dss_audio *dss_audio)
  {
- 	int i;
- 	unsigned long index;
--	bool area_free;
-+	bool area_free = false;
- 	unsigned long slots_per_band = PAGE_SIZE / slot_bytes;
- 	unsigned long bit_offset = (offset > 0) ? offset / slot_bytes : 0;
- 	unsigned long curr_bit = bit_offset;
+ 	struct omap_hdmi *hd = dev_get_drvdata(dev);
+-	int ret;
++	int ret = 0;
+ 
+ 	mutex_lock(&hd->lock);
+ 
+--- a/drivers/gpu/drm/omapdrm/dss/hdmi5.c
++++ b/drivers/gpu/drm/omapdrm/dss/hdmi5.c
+@@ -660,7 +660,7 @@ static int hdmi_audio_config(struct devi
+ 			     struct omap_dss_audio *dss_audio)
+ {
+ 	struct omap_hdmi *hd = dev_get_drvdata(dev);
+-	int ret;
++	int ret = 0;
+ 
+ 	mutex_lock(&hd->lock);
+ 
 
 
