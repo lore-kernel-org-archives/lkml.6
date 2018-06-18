@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE76C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E81C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFC40208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFC40208A6
+	by mail.kernel.org (Postfix) with ESMTP id A028C20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A028C20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935029AbeFRISL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:18:11 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54436 "EHLO
+        id S933585AbeFRISP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:18:15 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54488 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934957AbeFRISF (ORCPT
+        with ESMTP id S935027AbeFRISL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:18:05 -0400
+        Mon, 18 Jun 2018 04:18:11 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0D098C75;
-        Mon, 18 Jun 2018 08:18:04 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 595A1C84;
+        Mon, 18 Jun 2018 08:18:10 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Young <dyoung@redhat.com>,
-        joeyli <jlee@suse.com>, Randy Wright <rwright@hpe.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Tobias Regnery <tobias.regnery@gmail.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 070/279] kexec_file: do not add extra alignment to efi memmap
-Date:   Mon, 18 Jun 2018 10:10:55 +0200
-Message-Id: <20180618080611.713708796@linuxfoundation.org>
+Subject: [PATCH 4.16 072/279] usb: typec: ucsi: fix tracepoint related build error
+Date:   Mon, 18 Jun 2018 10:10:57 +0200
+Message-Id: <20180618080611.795004695@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,64 +50,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Young <dyoung@redhat.com>
+From: Tobias Regnery <tobias.regnery@gmail.com>
 
-[ Upstream commit a841aa83dff0af75c88aa846ba610a8af4c5ee21 ]
+[ Upstream commit 2f860691c2d2e3af1404ffeb2d22dd5c3dbca811 ]
 
-Chun-Yi reported a kernel warning message below:
+There is the following build error with CONFIG_TYPEC_UCSI=m, CONFIG_FTRACE=y
+and CONFIG_TRACING=n:
 
-  WARNING: CPU: 0 PID: 0 at ../mm/early_ioremap.c:182 early_iounmap+0x4f/0x12c()
-  early_iounmap(ffffffffff200180, 00000118) [0] size not consistent 00000120
+ERROR: "__tracepoint_ucsi_command" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
+ERROR: "__tracepoint_ucsi_register_port" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
+ERROR: "__tracepoint_ucsi_notify" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
+ERROR: "__tracepoint_ucsi_reset_ppm" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
+ERROR: "__tracepoint_ucsi_run_command" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
+ERROR: "__tracepoint_ucsi_ack" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
+ERROR: "__tracepoint_ucsi_connector_change" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
 
-The problem is x86 kexec_file_load adds extra alignment to the efi
-memmap: in bzImage64_load():
+This compination is quite hard to create because CONFIG_TRACING gets selected
+only in rare cases without CONFIG_FTRACE.
 
-        efi_map_sz = efi_get_runtime_map_size();
-        efi_map_sz = ALIGN(efi_map_sz, 16);
+The build failure is caused by conditionally compiling trace.c depending on
+the wrong option CONFIG_FTRACE. Change this to depend on CONFIG_TRACING like
+other users of tracepoints do.
 
-And __efi_memmap_init maps with the size including the alignment bytes
-but efi_memmap_unmap use nr_maps * desc_size which does not include the
-extra bytes.
-
-The alignment in kexec code is only needed for the kexec buffer internal
-use Actually kexec should pass exact size of the efi memmap to 2nd
-kernel.
-
-Link: http://lkml.kernel.org/r/20180417083600.GA1972@dhcp-128-65.nay.redhat.com
-Signed-off-by: Dave Young <dyoung@redhat.com>
-Reported-by: joeyli <jlee@suse.com>
-Tested-by: Randy Wright <rwright@hpe.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: c1b0bc2dabfa ("usb: typec: Add support for UCSI interface")
+Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
+Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/kexec-bzimage64.c |    5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/usb/typec/ucsi/Makefile |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/x86/kernel/kexec-bzimage64.c
-+++ b/arch/x86/kernel/kexec-bzimage64.c
-@@ -398,11 +398,10 @@ static void *bzImage64_load(struct kimag
- 	 * little bit simple
- 	 */
- 	efi_map_sz = efi_get_runtime_map_size();
--	efi_map_sz = ALIGN(efi_map_sz, 16);
- 	params_cmdline_sz = sizeof(struct boot_params) + cmdline_len +
- 				MAX_ELFCOREHDR_STR_LEN;
- 	params_cmdline_sz = ALIGN(params_cmdline_sz, 16);
--	kbuf.bufsz = params_cmdline_sz + efi_map_sz +
-+	kbuf.bufsz = params_cmdline_sz + ALIGN(efi_map_sz, 16) +
- 				sizeof(struct setup_data) +
- 				sizeof(struct efi_setup_data);
+--- a/drivers/usb/typec/ucsi/Makefile
++++ b/drivers/usb/typec/ucsi/Makefile
+@@ -5,6 +5,6 @@ obj-$(CONFIG_TYPEC_UCSI)	+= typec_ucsi.o
  
-@@ -410,7 +409,7 @@ static void *bzImage64_load(struct kimag
- 	if (!params)
- 		return ERR_PTR(-ENOMEM);
- 	efi_map_offset = params_cmdline_sz;
--	efi_setup_data_offset = efi_map_offset + efi_map_sz;
-+	efi_setup_data_offset = efi_map_offset + ALIGN(efi_map_sz, 16);
+ typec_ucsi-y			:= ucsi.o
  
- 	/* Copy setup header onto bootparams. Documentation/x86/boot.txt */
- 	setup_header_size = 0x0202 + kernel[0x0201] - setup_hdr_offset;
+-typec_ucsi-$(CONFIG_FTRACE)	+= trace.o
++typec_ucsi-$(CONFIG_TRACING)	+= trace.o
+ 
+ obj-$(CONFIG_UCSI_ACPI)		+= ucsi_acpi.o
 
 
