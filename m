@@ -2,159 +2,402 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 042E2C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F71C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02F120836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:15:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B02F120836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0529D20836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:17:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oX06bcav"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0529D20836
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936177AbeFRTPk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:15:40 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:50507 "EHLO mail.bootlin.com"
+        id S936217AbeFRTRP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:17:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34540 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935860AbeFRTPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:15:38 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0A09B207C2; Mon, 18 Jun 2018 21:15:37 +0200 (CEST)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 84F0A20733;
-        Mon, 18 Jun 2018 21:15:36 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 21:15:36 +0200
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>,
-        David Wolfe <david.wolfe@nxp.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "richard@nod.at" <richard@nod.at>,
-        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
-        Han Xu <han.xu@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        Frieder Schrempf <frieder.schrempf@exceet.de>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>
-Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Message-ID: <20180618211536.0bf44f55@bbrezillon>
-In-Reply-To: <DB6PR0402MB2838C4F67D17337ADBC5D5F899710@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-References: <1527686082-15142-1-git-send-email-frieder.schrempf@exceet.de>
-        <DB6PR0402MB283845A1A98672FE63C89550997B0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180608145130.09f979f9@bbrezillon>
-        <DB6PR0402MB2838D514CF38AC5E6C004E8499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180611094616.5c8f82cf@bbrezillon>
-        <DB6PR0402MB283825171DF93AD3C8590DD799780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180611121618.40f4b609@bbrezillon>
-        <DB6PR0402MB28388D9DEB86629BB58DD5E499780@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <DB6PR0402MB2838563F1BA71A9A21ABBE01997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180612091328.67734adb@bbrezillon>
-        <DB6PR0402MB28387FE79F2742C9BEBD4037997F0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180615145019.734f23a9@bbrezillon>
-        <DB6PR0402MB28382767652782E0CC6C14A0997C0@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-        <20180615155541.4f43e9bb@bbrezillon>
-        <DB6PR0402MB2838C4F67D17337ADBC5D5F899710@DB6PR0402MB2838.eurprd04.prod.outlook.com>
-X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S935948AbeFRTRN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:17:13 -0400
+Received: from localhost.localdomain (adsl-84-227-236-43.adslplus.ch [84.227.236.43])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 188D32075E;
+        Mon, 18 Jun 2018 19:17:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529349433;
+        bh=I+2yHtqLLXaHaGKAj7dKHIbXpiYm9b7iiY2ZyQZE/gw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=oX06bcavXXEnl8Ojjv3RJwKHiZ3y6VTzP1W4P7EeAikLG2RMU1/PhkGsHJfqpW4HJ
+         cFm0UKmT/YewkINK8fkGvgByAJZdZlcpNtDloWqX+0i2V53VJnLtL2nvxRjZjVQN26
+         bRUXpHGWqU9GpTedBK5TFYnsvSNUJf5FjYUcMJMo=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
+        devicetree@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Cc:     Joe Perches <joe@perches.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH] ARC: dts: Remove leading 0x from node unit addresses
+Date:   Mon, 18 Jun 2018 21:16:45 +0200
+Message-Id: <20180618191645.15247-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yogesh,
+Remove leading 0x from all node unit addresses with a sed command:
 
-On Mon, 18 Jun 2018 13:32:27 +0000
-Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
+    sed -E -i -e "s/@0x([0-9a-fA-F\.]+)\s?\{/@\L\1 \{/g" arch/arc/boot/dts/*.dts*
 
-> -----Original Message-----
-> From: Boris Brezillon [mailto:boris.brezillon@bootlin.com] 
-> Sent: Friday, June 15, 2018 7:26 PM
-> To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>; Fabio Estevam <fabio.estevam@nxp.com>; David Wolfe <david.wolfe@nxp.com>; dwmw2@infradead.org
-> Cc: richard@nod.at; Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>; Han Xu <han.xu@nxp.com>; linux-kernel@vger.kernel.org; linux-spi@vger.kernel.org; marek.vasut@gmail.com; Frieder Schrempf <frieder.schrempf@exceet.de>; broonie@kernel.org; linux-mtd@lists.infradead.org; miquel.raynal@bootlin.com; computersforpeace@gmail.com
-> Subject: Re: [PATCH 03/11] spi: Add a driver for the Freescale/NXP QuadSPI controller
-> 
-> On Fri, 15 Jun 2018 13:42:12 +0000
-> Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> 
-> > Hi Boris,
-> > 
-> > I am still debugging the issue.
-> > With some analysis, able to check that proper values are not being written for QUADSPI_SFA2AD/ QUADSPI_SFB1AD/ QUADSPI_SFB2AD register.
-> > 
-> > In current code, value of map_addr are being assigned to these register.
-> >              map_addr = q->memmap_phy +
-> >                         2 * q->devtype_data->ahb_buf_size;
-> > 
-> >      qspi_writel(q, map_addr, q->iobase + QUADSPI_SFA1AD + (i * 4));
-> > 
-> > But instead of "q->devtype_data->ahb_buf_size" it should be flash size.  
-> 
-> No, because we're only using 2 * ->ahb_buf_size in the direct mapping for each device, and we're modifying the mapping dynamically based on the selected device. Maybe we got the logic wrong though.
-> 
-> Yes, for register QUADSPI_SFA2AD/ QUADSPI_SFB1AD/ QUADSPI_SFB2AD, we need to save starting actual address from where this flash is getting started.
-> Thus, if my first flash size is 64MB, then register QUADSPI_SFA2AD would have value of q->memmap_phy + 0x4000000 i.e. (QUADSPI_SFA1AD + sizeof First Flash)
-> If second flash is of size 32MB, then register QUADSPI_SFB1AD would have value of value of QUADSPI_SFA2AD + sizeof second flash.
+This fixes DTC warnings like:
 
-Again, no, that's not what I'm trying to do, and the fact that it
-worked fine with CS0 makes me think you don't need to map the whole
-device to get it to work, just 2 * ->ahb_buf_size per device.
+    Warning (unit_address_format): /cpu_card/dw-apb-gpio@0x2000: unit name should not have leading "0x"
 
-> 
-> > For my case flash size is 0x4000000 and with this hard coded value I am able to perform Write and Erase operation.
-> > One more change, I have to do is adding the flash_size when writing the base_address in SFAR register for case when "mem->spi->chip_select == 1"
-> > 	qspi_writel(q, q->memmap_phy + 0x4000000, base + QUADSPI_SFAR);  
-> 
-> I don't want to expose the full device in the direct mapping yet (that's part of the direct-mapping API I posted here [1]). What this version of the driver does is, map only 2 time the ahb_size so that we can bypass the internal cache of the QSPI engine.
-> 
-> To perform any operation on second flash, we need to provide it's base address should be saved in SFAR register for this particular operation.
+Reported-by: Joe Perches <joe@perches.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ arch/arc/boot/dts/abilis_tb10x.dtsi   |  4 ++--
+ arch/arc/boot/dts/axc001.dtsi         |  6 +++---
+ arch/arc/boot/dts/axc003.dtsi         |  6 +++---
+ arch/arc/boot/dts/axc003_idu.dtsi     |  6 +++---
+ arch/arc/boot/dts/axs10x_mb.dtsi      | 22 +++++++++++-----------
+ arch/arc/boot/dts/vdk_axc003.dtsi     |  4 ++--
+ arch/arc/boot/dts/vdk_axc003_idu.dtsi |  4 ++--
+ arch/arc/boot/dts/vdk_axs10x_mb.dtsi  | 14 +++++++-------
+ 8 files changed, 33 insertions(+), 33 deletions(-)
 
-That's what we tried to do, we tried to make all CS start at 0 when they
-are used and declare unused CS at having a size of 0.
+diff --git a/arch/arc/boot/dts/abilis_tb10x.dtsi b/arch/arc/boot/dts/abilis_tb10x.dtsi
+index 3121536b25a3..593cdd96535d 100644
+--- a/arch/arc/boot/dts/abilis_tb10x.dtsi
++++ b/arch/arc/boot/dts/abilis_tb10x.dtsi
+@@ -178,7 +178,7 @@
+ 			clocks = <&ahb_clk>;
+ 		};
+ 
+-		spi0: spi@0xFE010000 {
++		spi0: spi@fe010000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			cell-index = <0>;
+@@ -189,7 +189,7 @@
+ 			interrupts = <26 8>;
+ 			clocks = <&ahb_clk>;
+ 		};
+-		spi1: spi@0xFE011000 {
++		spi1: spi@fe011000 {
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+ 			cell-index = <1>;
+diff --git a/arch/arc/boot/dts/axc001.dtsi b/arch/arc/boot/dts/axc001.dtsi
+index fdc266504ada..37be3bf03ad6 100644
+--- a/arch/arc/boot/dts/axc001.dtsi
++++ b/arch/arc/boot/dts/axc001.dtsi
+@@ -41,7 +41,7 @@
+ 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
+ 		 * to uplink only 1 IRQ to ARC core intc
+ 		 */
+-		dw-apb-gpio@0x2000 {
++		dw-apb-gpio@2000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = < 0x2000 0x80 >;
+ 			#address-cells = <1>;
+@@ -60,7 +60,7 @@
+ 			};
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <33333000>;
+@@ -88,7 +88,7 @@
+ 	 * avoid duplicating the MB dtsi file given that IRQ from
+ 	 * this intc to cpu intc are different for axs101 and axs103
+ 	 */
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0x0 0xe0012000 0x0 0x200 >;
+diff --git a/arch/arc/boot/dts/axc003.dtsi b/arch/arc/boot/dts/axc003.dtsi
+index dc91c663bcc0..817e2f5ee834 100644
+--- a/arch/arc/boot/dts/axc003.dtsi
++++ b/arch/arc/boot/dts/axc003.dtsi
+@@ -55,7 +55,7 @@
+ 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
+ 		 * to uplink only 1 IRQ to ARC core intc
+ 		 */
+-		dw-apb-gpio@0x2000 {
++		dw-apb-gpio@2000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = < 0x2000 0x80 >;
+ 			#address-cells = <1>;
+@@ -74,7 +74,7 @@
+ 			};
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <33333000>;
+@@ -106,7 +106,7 @@
+ 	 * avoid duplicating the MB dtsi file given that IRQ from
+ 	 * this intc to cpu intc are different for axs101 and axs103
+ 	 */
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0x0 0xe0012000 0x0 0x200 >;
+diff --git a/arch/arc/boot/dts/axc003_idu.dtsi b/arch/arc/boot/dts/axc003_idu.dtsi
+index 69ff4895f2ba..5d912f9957fe 100644
+--- a/arch/arc/boot/dts/axc003_idu.dtsi
++++ b/arch/arc/boot/dts/axc003_idu.dtsi
+@@ -62,7 +62,7 @@
+ 		 * this GPIO block ORs all interrupts on CPU card (creg,..)
+ 		 * to uplink only 1 IRQ to ARC core intc
+ 		 */
+-		dw-apb-gpio@0x2000 {
++		dw-apb-gpio@2000 {
+ 			compatible = "snps,dw-apb-gpio";
+ 			reg = < 0x2000 0x80 >;
+ 			#address-cells = <1>;
+@@ -81,7 +81,7 @@
+ 			};
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <33333000>;
+@@ -112,7 +112,7 @@
+ 	 * avoid duplicating the MB dtsi file given that IRQ from
+ 	 * this intc to cpu intc are different for axs101 and axs103
+ 	 */
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0x0 0xe0012000 0x0 0x200 >;
+diff --git a/arch/arc/boot/dts/axs10x_mb.dtsi b/arch/arc/boot/dts/axs10x_mb.dtsi
+index 47b74fbc403c..c550364e0550 100644
+--- a/arch/arc/boot/dts/axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/axs10x_mb.dtsi
+@@ -68,7 +68,7 @@
+ 			};
+ 		};
+ 
+-		ethernet@0x18000 {
++		ethernet@18000 {
+ 			#interrupt-cells = <1>;
+ 			compatible = "snps,dwmac";
+ 			reg = < 0x18000 0x2000 >;
+@@ -83,13 +83,13 @@
+ 			reset-names = "stmmaceth";
+ 		};
+ 
+-		ehci@0x40000 {
++		ehci@40000 {
+ 			compatible = "generic-ehci";
+ 			reg = < 0x40000 0x100 >;
+ 			interrupts = < 8 >;
+ 		};
+ 
+-		ohci@0x60000 {
++		ohci@60000 {
+ 			compatible = "generic-ohci";
+ 			reg = < 0x60000 0x100 >;
+ 			interrupts = < 8 >;
+@@ -113,7 +113,7 @@
+ 		 * dw_mci_pltfm_prepare_command() is used in generic platform
+ 		 * code.
+ 		 */
+-		mmc@0x15000 {
++		mmc@15000 {
+ 			compatible = "altr,socfpga-dw-mshc";
+ 			reg = < 0x15000 0x400 >;
+ 			fifo-depth = < 16 >;
+@@ -124,7 +124,7 @@
+ 			bus-width = < 4 >;
+ 		};
+ 
+-		uart@0x20000 {
++		uart@20000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x20000 0x100>;
+ 			clock-frequency = <33333333>;
+@@ -134,7 +134,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		uart@0x21000 {
++		uart@21000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x21000 0x100>;
+ 			clock-frequency = <33333333>;
+@@ -145,7 +145,7 @@
+ 		};
+ 
+ 		/* UART muxed with USB data port (ttyS3) */
+-		uart@0x22000 {
++		uart@22000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x22000 0x100>;
+ 			clock-frequency = <33333333>;
+@@ -155,7 +155,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		i2c@0x1d000 {
++		i2c@1d000 {
+ 			compatible = "snps,designware-i2c";
+ 			reg = <0x1d000 0x100>;
+ 			clock-frequency = <400000>;
+@@ -172,7 +172,7 @@
+ 			#sound-dai-cells = <0>;
+ 		};
+ 
+-		i2c@0x1f000 {
++		i2c@1f000 {
+ 			compatible = "snps,designware-i2c";
+ 			#address-cells = <1>;
+ 			#size-cells = <0>;
+@@ -213,13 +213,13 @@
+ 				};
+ 			};
+ 
+-			eeprom@0x54{
++			eeprom@54 {
+ 				compatible = "atmel,24c01";
+ 				reg = <0x54>;
+ 				pagesize = <0x8>;
+ 			};
+ 
+-			eeprom@0x57{
++			eeprom@57 {
+ 				compatible = "atmel,24c04";
+ 				reg = <0x57>;
+ 				pagesize = <0x8>;
+diff --git a/arch/arc/boot/dts/vdk_axc003.dtsi b/arch/arc/boot/dts/vdk_axc003.dtsi
+index 0fd6ba985b16..84e8766c8ca2 100644
+--- a/arch/arc/boot/dts/vdk_axc003.dtsi
++++ b/arch/arc/boot/dts/vdk_axc003.dtsi
+@@ -36,7 +36,7 @@
+ 			#interrupt-cells = <1>;
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -49,7 +49,7 @@
+ 
+ 	};
+ 
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0xe0012000 0x200 >;
+diff --git a/arch/arc/boot/dts/vdk_axc003_idu.dtsi b/arch/arc/boot/dts/vdk_axc003_idu.dtsi
+index 28956f9a9f3d..eb7e705e8a27 100644
+--- a/arch/arc/boot/dts/vdk_axc003_idu.dtsi
++++ b/arch/arc/boot/dts/vdk_axc003_idu.dtsi
+@@ -44,7 +44,7 @@
+ 			#interrupt-cells = <1>;
+ 		};
+ 
+-		debug_uart: dw-apb-uart@0x5000 {
++		debug_uart: dw-apb-uart@5000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x5000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -57,7 +57,7 @@
+ 
+ 	};
+ 
+-	mb_intc: dw-apb-ictl@0xe0012000 {
++	mb_intc: dw-apb-ictl@e0012000 {
+ 		#interrupt-cells = <1>;
+ 		compatible = "snps,dw-apb-ictl";
+ 		reg = < 0xe0012000 0x200 >;
+diff --git a/arch/arc/boot/dts/vdk_axs10x_mb.dtsi b/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
+index 48bb4b4cd234..f21ade2931eb 100644
+--- a/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
++++ b/arch/arc/boot/dts/vdk_axs10x_mb.dtsi
+@@ -36,7 +36,7 @@
+ 			};
+ 		};
+ 
+-		ethernet@0x18000 {
++		ethernet@18000 {
+ 			#interrupt-cells = <1>;
+ 			compatible = "snps,dwmac";
+ 			reg = < 0x18000 0x2000 >;
+@@ -49,13 +49,13 @@
+ 			clock-names = "stmmaceth";
+ 		};
+ 
+-		ehci@0x40000 {
++		ehci@40000 {
+ 			compatible = "generic-ehci";
+ 			reg = < 0x40000 0x100 >;
+ 			interrupts = < 8 >;
+ 		};
+ 
+-		uart@0x20000 {
++		uart@20000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x20000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -65,7 +65,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		uart@0x21000 {
++		uart@21000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x21000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -75,7 +75,7 @@
+ 			reg-io-width = <4>;
+ 		};
+ 
+-		uart@0x22000 {
++		uart@22000 {
+ 			compatible = "snps,dw-apb-uart";
+ 			reg = <0x22000 0x100>;
+ 			clock-frequency = <2403200>;
+@@ -101,7 +101,7 @@
+ 			interrupt-names = "arc_ps2_irq";
+ 		};
+ 
+-		mmc@0x15000 {
++		mmc@15000 {
+ 			compatible = "snps,dw-mshc";
+ 			reg = <0x15000 0x400>;
+ 			fifo-depth = <1024>;
+@@ -119,7 +119,7 @@
+ 	 * This node is intentionally put outside of MB above becase
+ 	 * it maps areas outside of MB's 0xEz-0xFz.
+ 	 */
+-	uio_ev: uio@0xD0000000 {
++	uio_ev: uio@d0000000 {
+ 		compatible = "generic-uio";
+ 		reg = <0xD0000000 0x2000 0xD1000000 0x2000 0x90000000 0x10000000 0xC0000000 0x10000000>;
+ 		reg-names = "ev_gsa", "ev_ctrl", "ev_shared_mem", "ev_code_mem";
+-- 
+2.14.1
 
-So, say you're trying to access CS1, you should have the following
-ranges:
-
-CS0: 0 -> 0 (size = 0)
-CS1: 0 -> 2 * ->ahb_buf_size (size = 2 * ->ahb_buf_size)
-CS2: 2 * ->ahb_buf_size -> 2 * ->ahb_buf_size (size = 0)
-CS3: 2 * ->ahb_buf_size -> 2 * ->ahb_buf_size (size = 0)
-
-now, if you're trying to access CS3:
-
-CS0: 0 -> 0 (size = 0)
-CS1: 0 -> 0 (size = 0)
-CS2: 0 -> 0 (size = 0)
-CS3: 0 -> 2 * ->ahb_buf_size (size = 2 * ->ahb_buf_size)
-
-maybe this approach does not work, but that's not clearly stated as
-'not supported' in the datasheet.
-
-> Exposing only 2 time of ahb_size is design decision but value in SFAR register should be correct.
-> 
-> > 
-> > Thus, there should be mechanism or the entry in structure where we can have the information of the size of the connected slave device.  
-> 
-> Because that's exactly the kind of thing I'd like to avoid. What if the device is bigger than the reserved memory region? What if the sum of all devices does not fit in there? Here I tried to support all cases by just mapping the portion of memory we need.
-> 
-> So IMO, there should be mechanism to have value of start address of each slave device. This might can be done from DTS entry of each slave device connected to the controller.
-
-Let's not put that in the DT. If we really can't re-use 0 as the start
-address and make some ranges 0 in size, then let's reserve 2 *
-->ahb_buf_size per chip, and be done with it.
-
-This should leave us enough space in the AHB mem range to then support
-temporary direct mappings through the direct mapping API.
-
-Regards,
-
-Boris
