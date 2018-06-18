@@ -6,280 +6,118 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C57C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:37:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20206C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D64020836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:37:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D64020836
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id BE60820836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:39:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE60820836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=hpe.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936747AbeFRThO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:37:14 -0400
-Received: from ale.deltatee.com ([207.54.116.67]:43768 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935923AbeFRThJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:37:09 -0400
-Received: from cgy1-donard.priv.deltatee.com ([172.16.1.31])
-        by ale.deltatee.com with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fUzxX-0001Ha-NM; Mon, 18 Jun 2018 13:37:08 -0600
-Received: from gunthorp by cgy1-donard.priv.deltatee.com with local (Exim 4.89)
-        (envelope-from <gunthorp@deltatee.com>)
-        id 1fUzxS-0004EH-2v; Mon, 18 Jun 2018 13:36:58 -0600
-From:   Logan Gunthorpe <logang@deltatee.com>
-To:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc:     Stephen Bates <sbates@raithlin.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ingo Molnar <mingo@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>,
-        =?UTF-8?q?J=C3=A9r=C3=B4me=20Glisse?= <jglisse@redhat.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        Logan Gunthorpe <logang@deltatee.com>
-Date:   Mon, 18 Jun 2018 13:36:35 -0600
-Message-Id: <20180618193636.16210-3-logang@deltatee.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20180618193636.16210-1-logang@deltatee.com>
-References: <20180618193636.16210-1-logang@deltatee.com>
+        id S936817AbeFRTjl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:39:41 -0400
+Received: from g2t2353.austin.hpe.com ([15.233.44.26]:50170 "EHLO
+        g2t2353.austin.hpe.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935743AbeFRTjj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:39:39 -0400
+Received: from G9W8454.americas.hpqcorp.net (exchangepmrr1.us.hpecorp.net [16.216.161.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by g2t2353.austin.hpe.com (Postfix) with ESMTPS id 21919CC;
+        Mon, 18 Jun 2018 19:39:38 +0000 (UTC)
+Received: from G9W8455.americas.hpqcorp.net (2002:10d8:a15e::10d8:a15e) by
+ G9W8454.americas.hpqcorp.net (2002:10d8:a104::10d8:a104) with Microsoft SMTP
+ Server (TLS) id 15.0.1178.4; Mon, 18 Jun 2018 19:39:38 +0000
+Received: from NAM05-CO1-obe.outbound.protection.outlook.com (15.241.52.13) by
+ G9W8455.americas.hpqcorp.net (16.216.161.94) with Microsoft SMTP Server (TLS)
+ id 15.0.1178.4 via Frontend Transport; Mon, 18 Jun 2018 19:39:38 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM (10.169.8.22) by
+ AT5PR8401MB1009.NAMPRD84.PROD.OUTLOOK.COM (10.169.7.137) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.863.15; Mon, 18 Jun 2018 19:39:35 +0000
+Received: from AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51c9:8d4d:952d:94c8]) by AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM
+ ([fe80::51c9:8d4d:952d:94c8%5]) with mapi id 15.20.0863.016; Mon, 18 Jun 2018
+ 19:39:35 +0000
+From:   "Kani, Toshi" <toshi.kani@hpe.com>
+To:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "robert.moore@intel.com" <robert.moore@intel.com>,
+        "juston.li@intel.com" <juston.li@intel.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with ACPI
+ 6.1
+Thread-Topic: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with ACPI
+ 6.1
+Thread-Index: AQHUBzbZn+ValLciZ02HwEaaHBM//KRmaT2A
+Date:   Mon, 18 Jun 2018 19:39:35 +0000
+Message-ID: <1529350667.14039.119.camel@hpe.com>
+References: <1461620099-11933-1-git-send-email-toshi.kani@hpe.com>
+         <1461620099-11933-2-git-send-email-toshi.kani@hpe.com>
+         <CAA9_cmenbY9GStibRjO0BfTq0kzzzqThiLeOygJsT9L03BFsBQ@mail.gmail.com>
+In-Reply-To: <CAA9_cmenbY9GStibRjO0BfTq0kzzzqThiLeOygJsT9L03BFsBQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=toshi.kani@hpe.com; 
+x-originating-ip: [15.219.147.8]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AT5PR8401MB1009;7:cI3m8lEbmzftdVUyFoQ6rCROOX+EI/QNOeuMcjRX5RzJ4PT7QbUytYjzWI9vNgCpbKfKPRPTjsKwjQqnaislmOVCjoHxl4nQeG1HVZ4jwmCPPK60sawa5VTmO4vuG2sd3z2/BJIDJND+NzHMvhfSxG6NKtEMbOP2YNadXiowja3QwvcnDJ/hbH0KAinopeMeZDILmBgGWqJjG1M7amFU6Lap/Vu+w9rIPGht1JbEWw4eMVJoy1aqILJUC5cgr/Mc
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10019020)(396003)(366004)(376002)(39860400002)(346002)(39380400002)(189003)(199004)(36756003)(99286004)(5640700003)(8936002)(6306002)(6116002)(6512007)(486006)(2501003)(6436002)(2616005)(14454004)(229853002)(5250100002)(54906003)(76176011)(102836004)(53546011)(6486002)(476003)(103116003)(25786009)(106356001)(6916009)(11346002)(4326008)(7736002)(8676002)(966005)(53936002)(5660300001)(3846002)(305945005)(6506007)(2900100001)(81166006)(81156014)(316002)(2351001)(6246003)(26005)(478600001)(186003)(86362001)(105586002)(68736007)(3660700001)(15650500001)(2906002)(446003)(3280700002)(97736004)(66066001);DIR:OUT;SFP:1102;SCL:1;SRVR:AT5PR8401MB1009;H:AT5PR8401MB1121.NAMPRD84.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: bcd17055-39de-437c-7e97-08d5d55338c8
+x-microsoft-antispam: UriScan:(222181515654134);BCL:0;PCL:0;RULEID:(7020095)(4652020)(8989080)(4534165)(4627221)(201703031133081)(201702281549075)(8990040)(48565401081)(5600026)(711020)(2017052603328)(7153060)(7193020);SRVR:AT5PR8401MB1009;
+x-ms-traffictypediagnostic: AT5PR8401MB1009:
+x-microsoft-antispam-prvs: <AT5PR8401MB100944E0E7A705D02536752682710@AT5PR8401MB1009.NAMPRD84.PROD.OUTLOOK.COM>
+x-exchange-antispam-report-test: UriScan:(227479698468861)(222181515654134);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(93006095)(93001095)(3231254)(944501410)(52105095)(6055026)(149027)(150027)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(20161123564045)(6072148)(201708071742011)(7699016);SRVR:AT5PR8401MB1009;BCL:0;PCL:0;RULEID:;SRVR:AT5PR8401MB1009;
+x-forefront-prvs: 0707248B64
+received-spf: None (protection.outlook.com: hpe.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: NhIN/YLspJzi6lRvhculNMT2s+sUTAOGG3YW47crKd3LbtAuuw5j+ar/33hVzWe8H8fH3eNDIEAQHVtg6+rnzlsvxJXl23iRAC53cFbj9qyUxIdXs5C1FQ0Ny/ZE0QcAN86PXY2DOzAq+VNbwbytwZF/JuJFd5XlgNUpAYNu1C+8cItAush2pZ2F+IjHQxWCUG1E6vK9EaII08ZDk3vdpGW1TkkXHKhXL0HgVW1B7+df5QH744nhBxcQwkvGkJseN+6EwPO/Ot61R/IaE31YOyv/cogzXrgvyXTxJvKz7YxWdY3ytbj6KNxO4L0I3pCOtytpUvmwIw17fb3k/EE74g==
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <DA7E9EEEE7D0534C854733E9A6DF8D30@NAMPRD84.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 172.16.1.31
-X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, linux-doc@vger.kernel.org, sbates@raithlin.com, hch@lst.de, bhelgaas@google.com, corbet@lwn.net, tglx@linutronix.de, paulmck@linux.vnet.ibm.com, marc.zyngier@arm.com, kai.heng.feng@canonical.com, mingo@kernel.org, frederic@kernel.org, dan.j.williams@intel.com, benh@kernel.crashing.org, jglisse@redhat.com, alex.williamson@redhat.com, christian.koenig@amd.com, logang@deltatee.com
-X-SA-Exim-Mail-From: gunthorp@deltatee.com
-Subject: [PATCH v3 2/3] PCI: Allow specifying devices using a base bus and path of devfns
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcd17055-39de-437c-7e97-08d5d55338c8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jun 2018 19:39:35.3364
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 105b2061-b669-4b31-92ac-24d304d195dc
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AT5PR8401MB1009
+X-OriginatorOrg: hpe.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When specifying PCI devices on the kernel command line using a
-BDF, the bus numbers can change when adding or replacing a device,
-changing motherboard firmware, or applying kernel parameters like
-pci=assign-buses. When this happens, it is usually undesirable to
-apply whatever command line tweak to the wrong device.
-
-Therefore, it is useful to be able to specify devices with a base
-bus number and the path of devfns needed to get to it. (Similar to
-the "device scope" structure in the Intel VT-d spec, Section 8.3.1.)
-
-Thus, we add an option to specify devices in the following format:
-
-[<domain>:]<bus>:<slot>.<func>[/<slot>.<func>][/ ...]
-
-The path can be any segment within the PCI hierarchy of any length and
-determined through the use of 'lspci -t'. When specified this way, it is
-less likely that a renumbered bus will result in a valid device specification
-and the tweak won't be applied to the wrong device.
-
-Signed-off-by: Logan Gunthorpe <logang@deltatee.com>
-Reviewed-by: Stephen Bates <sbates@raithlin.com>
-Acked-by: Christian König <christian.koenig@amd.com>
----
- Documentation/admin-guide/kernel-parameters.txt |   8 +-
- drivers/pci/pci.c                               | 120 ++++++++++++++++++++----
- 2 files changed, 106 insertions(+), 22 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 760fb2b0b349..d45285e1ab6a 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -3000,14 +3000,18 @@
- 				or a set of devices (<pci_dev>). These are
- 				specified in one of the following formats:
- 
--				[<domain>:]<bus>:<slot>.<func>
-+				[<domain>:]<bus>:<slot>.<func>[/<slot>.<func>][/ ...]
- 				pci:<vendor>:<device>[:<subvendor>:<subdevice>]
- 
- 				Note: the first format specifies a PCI
- 				bus/slot/function address which may change
- 				if new hardware is inserted, if motherboard
- 				firmware changes, or due to changes caused
--				by other kernel parameters. The second format
-+				by other kernel parameters. Optionally
-+				a path from a device through multiple
-+				slot/function addresses can be specified
-+				after the base address (this is more robust
-+				against renumbering issues). The second format
- 				selects devices using IDs from the
- 				configuration space which may match multiple
- 				devices in the system.
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index bec1bef6f326..6fbad0492461 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -192,22 +192,111 @@ EXPORT_SYMBOL_GPL(pci_ioremap_wc_bar);
- #endif
- 
- /**
-+ * pci_dev_str_match_path - test if a path string matches a device
-+ * @dev:    the PCI device to test
-+ * @p:      string to match the device against
-+ * @endptr: pointer to the string after the match
-+ *
-+ * Test if a string (typically from a kernel parameter) formated as a
-+ * path of slot/function addresses matches a PCI device. The string must
-+ * be of the form:
-+ *
-+ *   [<domain>:]<bus>:<slot>.<func>/<slot>.<func>[/ ...]
-+ *
-+ * A path for a device can be obtained using 'lspci -t'. Using a path
-+ * is more robust against renumbering of devices than using only
-+ * a single bus, slot and function address.
-+ *
-+ * Returns 1 if the string matches the device, 0 if it does not and
-+ * a negative error code if it fails to parse the string.
-+ */
-+static int pci_dev_str_match_path(struct pci_dev *dev, const char *path,
-+				  const char **endptr)
-+{
-+	int ret;
-+	int seg, bus, slot, func;
-+	char *wpath, *p;
-+	char end;
-+
-+	*endptr = strchrnul(path, ';');
-+
-+	wpath = kmemdup_nul(path, *endptr - path, GFP_KERNEL);
-+	if (!wpath)
-+		return -ENOMEM;
-+
-+	while (1) {
-+		p = strrchr(wpath, '/');
-+		if (!p)
-+			break;
-+		ret = sscanf(p, "/%x.%x%c", &slot, &func, &end);
-+		if (ret != 2) {
-+			ret = -EINVAL;
-+			goto free_and_exit;
-+		}
-+
-+		if (dev->devfn != PCI_DEVFN(slot, func)) {
-+			ret = 0;
-+			goto free_and_exit;
-+		}
-+
-+		/*
-+		 * Note: we don't need to get a reference to the upstream
-+		 * bridge because we hold a reference to the top level
-+		 * device which should hold a reference to the bridge,
-+		 * and so on.
-+		 */
-+		dev = pci_upstream_bridge(dev);
-+		if (!dev) {
-+			ret = 0;
-+			goto free_and_exit;
-+		}
-+
-+		*p = 0;
-+	}
-+
-+	ret = sscanf(wpath, "%x:%x:%x.%x%c", &seg, &bus, &slot,
-+		     &func, &end);
-+	if (ret != 4) {
-+		seg = 0;
-+		ret = sscanf(wpath, "%x:%x.%x%c", &bus, &slot, &func, &end);
-+		if (ret != 3) {
-+			ret = -EINVAL;
-+			goto free_and_exit;
-+		}
-+	}
-+
-+	ret = (seg == pci_domain_nr(dev->bus) &&
-+	       bus == dev->bus->number &&
-+	       dev->devfn == PCI_DEVFN(slot, func));
-+
-+free_and_exit:
-+	kfree(wpath);
-+	return ret;
-+}
-+
-+/**
-  * pci_dev_str_match - test if a string matches a device
-  * @dev:    the PCI device to test
-  * @p:      string to match the device against
-  * @endptr: pointer to the string after the match
-  *
-  * Test if a string (typically from a kernel parameter) matches a
-- * specified. The string may be of one of two forms formats:
-+ * specified. The string may be of one of three formats:
-  *
-  *   [<domain>:]<bus>:<slot>.<func>
-+ *   path:[<domain>:]<bus>:<slot>.<func>/<slot>.<func>[/ ...]
-  *   pci:<vendor>:<device>[:<subvendor>:<subdevice>]
-  *
-  * The first format specifies a PCI bus/slot/function address which
-  * may change if new hardware is inserted, if motherboard firmware changes,
-  * or due to changes caused in kernel parameters.
-  *
-- * The second format matches devices using IDs in the configuration
-+ * The second format specifies a PCI bus/slot/function root address and
-+ * a path of slot/function addresses to the specific device from the root.
-+ * The path for a device can be determined through the use of 'lspci -t'.
-+ * This format is more robust against renumbering issues than the first format.
-+
-+ * The third format matches devices using IDs in the configuration
-  * space which may match multiple devices in the system. A value of 0
-  * for any field will match all devices.
-  *
-@@ -218,7 +307,7 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
- 			     const char **endptr)
- {
- 	int ret;
--	int seg, bus, slot, func, count;
-+	int count;
- 	unsigned short vendor, device, subsystem_vendor, subsystem_device;
- 
- 	if (strncmp(p, "pci:", 4) == 0) {
-@@ -244,25 +333,16 @@ static int pci_dev_str_match(struct pci_dev *dev, const char *p,
- 		    (!subsystem_device ||
- 			    subsystem_device == dev->subsystem_device))
- 			goto found;
--
- 	} else {
--		/* PCI Bus,Slot,Function ids are specified */
--		ret = sscanf(p, "%x:%x:%x.%x%n", &seg, &bus, &slot,
--			     &func, &count);
--		if (ret != 4) {
--			seg = 0;
--			ret = sscanf(p, "%x:%x.%x%n", &bus, &slot,
--				     &func, &count);
--			if (ret != 3)
--				return -EINVAL;
--		}
--
--		p += count;
-+		/*
-+		 * PCI Bus,Slot,Function ids are specified
-+		 *  (optionally, may include a path of devfns following it)
-+		 */
- 
--		if (seg == pci_domain_nr(dev->bus) &&
--		    bus == dev->bus->number &&
--		    slot == PCI_SLOT(dev->devfn) &&
--		    func == PCI_FUNC(dev->devfn))
-+		ret = pci_dev_str_match_path(dev, p, &p);
-+		if (ret < 0)
-+			return ret;
-+		else if (ret)
- 			goto found;
- 	}
- 
--- 
-2.11.0
-
+T24gTW9uLCAyMDE4LTA2LTE4IGF0IDEyOjAxIC0wNzAwLCBEYW4gV2lsbGlhbXMgd3JvdGU6DQo+
+IE9uIE1vbiwgQXByIDI1LCAyMDE2IGF0IDI6NDMgUE0gVG9zaGkgS2FuaSA8dG9zaGkua2FuaUBo
+cGUuY29tPiB3cm90ZToNCj4gPiANCj4gPiBBQ1BJIDYuMSwgVGFibGUgNS0xMzMsIHVwZGF0ZXMg
+TlZESU1NIENvbnRyb2wgUmVnaW9uIFN0cnVjdHVyZQ0KPiA+IGFzIGZvbGxvd3MuDQo+ID4gIC0g
+VmFsaWQgRmllbGRzLCBNYW51ZmFjdHVyaW5nIExvY2F0aW9uLCBhbmQgTWFudWZhY3R1cmluZyBE
+YXRlDQo+ID4gICAgYXJlIGFkZGVkIGZyb20gcmVzZXJ2ZWQgcmFuZ2UuICBObyBjaGFuZ2UgaW4g
+dGhlIHN0cnVjdHVyZSBzaXplLg0KPiA+ICAtIElEcyAoU1BEIHZhbHVlcykgYXJlIHN0b3JlZCBh
+cyBhcnJheXMgb2YgYnl0ZXMgKGkuZS4gYmlnLWVuZGlhbg0KPiA+ICAgIGZvcm1hdCkuICBUaGUg
+c3BlYyBjbGFyaWZpZXMgdGhhdCB0aGV5IG5lZWQgdG8gYmUgcmVwcmVzZW50ZWQNCj4gPiAgICBh
+cyBhcnJheXMgb2YgYnl0ZXMgYXMgd2VsbC4NCj4gPiANCj4gDQo+IENpcmNsaW5nIGJhY2sgb24g
+dGhpcyBhIGNvdXBsZSB5ZWFycyB0b28gbGF0ZS4uLiB3aGVyZSBhcmUgeW91IHJlYWRpbmcNCj4g
+dGhpcyAiYXJyYXlzIG9mIGJ5dGVzIiBub3RlLiBBcyBmYXIgYXMgSSBjYW4gc2VlIHRoaXMgaXMg
+d3JvbmcuIEpFREVDDQo+IHNheXMgdGhhdCB2ZW5kb3IgaWQgaXMgc3RvcmVkIExTQiBvZiB0aGUg
+aWQgaXMgc3RvcmVkIGF0IHRoZSBsb3dlc3QNCj4gYnl0ZSBpbiBTUEQsIHdoaWNoIGlzIGxpdHRs
+ZSBlbmRpYW4uIFNvIGl0IHNlZW1zIExpbnV4IGhhcyBzaG93aW5nIHRoZQ0KPiBpbmNvcnJlY3Qg
+dmFsdWUgZm9yIGEgbG9uZyB0aW1lIG5vdy4NCg0KVGhpcyBmb2xsb3dzIEFDUEkgNi4yYSBzZWN0
+aW9uIDUuMi4yNS4xMCBOVkRJTU0gUmVwcmVzZW50YXRpb24gRm9ybWF0LA0Kd2hpY2ggUm9iZXJ0
+IGNpdGVkIGluIGhpcyBjb21tZW50IGJlbG93Og0KaHR0cHM6Ly9wYXRjaHdvcmsua2VybmVsLm9y
+Zy9wYXRjaC8xMDIzNzYwOS8NCg0KVGhhbmtzLA0KLVRvc2hpDQo=
