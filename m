@@ -6,37 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 845DEC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78759C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485C620874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 485C620874
+	by mail.kernel.org (Postfix) with ESMTP id 3EBE120864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EBE120864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967443AbeFRIdM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:33:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35408 "EHLO
+        id S967457AbeFRIdR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:33:17 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35424 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967430AbeFRIdK (ORCPT
+        with ESMTP id S967430AbeFRIdN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:10 -0400
+        Mon, 18 Jun 2018 04:33:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D7CD7BAD;
-        Mon, 18 Jun 2018 08:33:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id ACF93BBE;
+        Mon, 18 Jun 2018 08:33:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Srinivas Eeda <srinivas.eeda@oracle.com>,
-        Junxiao Bi <junxiao.bi@oracle.com>,
-        Zhu Yanjun <yanjun.zhu@oracle.com>,
-        Yuval Shaia <yuval.shaia@oracle.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 088/189] IB/rxe: avoid double kfree_skb
-Date:   Mon, 18 Jun 2018 10:13:04 +0200
-Message-Id: <20180618081212.775556097@linuxfoundation.org>
+Subject: [PATCH 4.14 089/189] <linux/stringhash.h>: fix end_name_hash() for 64bit long
+Date:   Mon, 18 Jun 2018 10:13:05 +0200
+Message-Id: <20180618081212.816961840@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -53,97 +50,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Zhu Yanjun <yanjun.zhu@oracle.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-[ Upstream commit 9fd4350ba8953804f05215999e11a6cfb7b41f2b ]
+[ Upstream commit 19b9ad67310ed2f685062a00aec602bec33835f0 ]
 
-When skb is sent, it will pass the following functions in soft roce.
+The comment claims that this helper will try not to loose bits, but for
+64bit long it looses the high bits before hashing 64bit long into 32bit
+int.  Use the helper hash_long() to do the right thing for 64bit long.
+For 32bit long, there is no change.
 
-rxe_send [rdma_rxe]
-    ip_local_out
-        __ip_local_out
-        ip_output
-            ip_finish_output
-                ip_finish_output2
-                    dev_queue_xmit
-                        __dev_queue_xmit
-                            dev_hard_start_xmit
+All the callers of end_name_hash() either assign the result to
+qstr->hash, which is u32 or return the result as an int value (e.g.
+full_name_hash()).  Change the helper return type to int to conform to
+its users.
 
-In the above functions, if error occurs in the above functions or
-iptables rules drop skb after ip_local_out, kfree_skb will be called.
-So it is not necessary to call kfree_skb in soft roce module again.
-Or else crash will occur.
+[ It took me a while to apply this, because my initial reaction to it
+  was - incorrectly - that it could make for slower code.
 
-The steps to reproduce:
+  After having looked more at it, I take back all my complaints about
+  the patch, Amir was right and I was mis-reading things or just being
+  stupid.
 
-     server                       client
-    ---------                    ---------
-    |1.1.1.1|<----rxe-channel--->|1.1.1.2|
-    ---------                    ---------
+  I also don't worry too much about the possible performance impact of
+  this on 64-bit, since most architectures that actually care about
+  performance end up not using this very much (the dcache code is the
+  most performance-critical, but the word-at-a-time case uses its own
+  hashing anyway).
 
-On server: rping -s -a 1.1.1.1 -v -C 10000 -S 512
-On client: rping -c -a 1.1.1.1 -v -C 10000 -S 512
+  So this ends up being mostly used for filesystems that do their own
+  degraded hashing (usually because they want a case-insensitive
+  comparison function).
 
-The kernel configs CONFIG_DEBUG_KMEMLEAK and
-CONFIG_DEBUG_OBJECTS are enabled on both server and client.
+  A _tiny_ worry remains, in that not everybody uses DCACHE_WORD_ACCESS,
+  and then this potentially makes things more expensive on 64-bit
+  architectures with slow or lacking multipliers even for the normal
+  case.
 
-When rping runs, run the following command in server:
+  That said, realistically the only such architecture I can think of is
+  PA-RISC. Nobody really cares about performance on that, it's more of a
+  "look ma, I've got warts^W an odd machine" platform.
 
-iptables -I OUTPUT -p udp  --dport 4791 -j DROP
+  So the patch is fine, and all my initial worries were just misplaced
+  from not looking at this properly.   - Linus ]
 
-Without this patch, crash will occur.
-
-CC: Srinivas Eeda <srinivas.eeda@oracle.com>
-CC: Junxiao Bi <junxiao.bi@oracle.com>
-Signed-off-by: Zhu Yanjun <yanjun.zhu@oracle.com>
-Reviewed-by: Yuval Shaia <yuval.shaia@oracle.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/sw/rxe/rxe_req.c  |    1 -
- drivers/infiniband/sw/rxe/rxe_resp.c |    6 +-----
- 2 files changed, 1 insertion(+), 6 deletions(-)
+ include/linux/stringhash.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_req.c
-+++ b/drivers/infiniband/sw/rxe/rxe_req.c
-@@ -728,7 +728,6 @@ next_wqe:
- 		rollback_state(wqe, qp, &rollback_wqe, rollback_psn);
+--- a/include/linux/stringhash.h
++++ b/include/linux/stringhash.h
+@@ -50,9 +50,9 @@ partial_name_hash(unsigned long c, unsig
+  * losing bits).  This also has the property (wanted by the dcache)
+  * that the msbits make a good hash table index.
+  */
+-static inline unsigned long end_name_hash(unsigned long hash)
++static inline unsigned int end_name_hash(unsigned long hash)
+ {
+-	return __hash_32((unsigned int)hash);
++	return hash_long(hash, 32);
+ }
  
- 		if (ret == -EAGAIN) {
--			kfree_skb(skb);
- 			rxe_run_task(&qp->req.task, 1);
- 			goto exit;
- 		}
---- a/drivers/infiniband/sw/rxe/rxe_resp.c
-+++ b/drivers/infiniband/sw/rxe/rxe_resp.c
-@@ -742,7 +742,6 @@ static enum resp_states read_reply(struc
- 	err = rxe_xmit_packet(rxe, qp, &ack_pkt, skb);
- 	if (err) {
- 		pr_err("Failed sending RDMA reply.\n");
--		kfree_skb(skb);
- 		return RESPST_ERR_RNR;
- 	}
- 
-@@ -955,10 +954,8 @@ static int send_ack(struct rxe_qp *qp, s
- 	}
- 
- 	err = rxe_xmit_packet(rxe, qp, &ack_pkt, skb);
--	if (err) {
-+	if (err)
- 		pr_err_ratelimited("Failed sending ack\n");
--		kfree_skb(skb);
--	}
- 
- err1:
- 	return err;
-@@ -1151,7 +1148,6 @@ static enum resp_states duplicate_reques
- 			if (rc) {
- 				pr_err("Failed resending result. This flow is not handled - skb ignored\n");
- 				rxe_drop_ref(qp);
--				kfree_skb(skb_copy);
- 				rc = RESPST_CLEANUP;
- 				goto out;
- 			}
+ /*
 
 
