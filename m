@@ -2,133 +2,88 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18939C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:59:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39324C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3BD0208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:59:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pCJlympP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3BD0208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id E87AB20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:59:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E87AB20852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934709AbeFRK7b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:59:31 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:44247 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933605AbeFRK71 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:59:27 -0400
-Received: by mail-lf0-f66.google.com with SMTP id p23-v6so12242603lfh.11;
-        Mon, 18 Jun 2018 03:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=RqspwjyWW5d1MpGjILadsGerXh6vodVcZI2gsZCaqdo=;
-        b=pCJlympPtgSmJqm4YVSEE05siiWyCLgTvJwL6m72jitgjwbMQ4+dag49K7BszhixYi
-         0T3leTIMjcXy0DN7Y5svJJyOjUBCKh66Tc+Zk0eqRG2AgTRuWR3c6vjtaZnfhRLTOQqN
-         BO5zXdkGdydQdeMW7oryULbojFFLulpNmzZezENasb9DKk88NEjiiXnhrUbMY2IDD0A1
-         Zw2H8KJTjpuVd6NWUg7z59irfJtQ0Y1uNRCJ1+7P/hQv/SS9LGWxkfVuw+jogcdtqSjO
-         ed1gWp4fgeGhObcAT8E63RvS3ToYpOMnnxoMPTxONnY4CsXei+BbdlSMJ+wdLkm6TJDm
-         op8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=RqspwjyWW5d1MpGjILadsGerXh6vodVcZI2gsZCaqdo=;
-        b=PQh8vKlK8HrIGIAbV3Dq2F+0e/D5FWC1vVaoSJ+afu85P3S9jZRWVMmINUOBS0wH0T
-         efIJ6anqKQB9BCeyXXhinelaQEk/+R3/I50YB3YUVBWsQ3NR6NJgaMT3ges2FHA2YR84
-         Q6PWId5MH1Sw4lu2vOZ+JcoYPj68/0kgJ5KtnqxOZtCu+K4XLPz+yLYSYCfEnYXQ2EEL
-         KyJwvWPqXPCynaTxKGI78Wseq6Q1vZxpGrckWOnghdmfFis/YVewbgX2v/JtSIIrjILb
-         mhh+jVRJNO8eTtNLCsnUxbuynoFpeEUtMxQxmT5q52wkGdG2mHBoIKdJwkDMj5S3ZtbN
-         DQoA==
-X-Gm-Message-State: APt69E23kx73r+t4+j1Nb+0L9uL1XdK6MfQy8fuIOAqB2xDqVgj7AN7N
-        38qMPY1eWYnpOIw0/D/eGx9N7BGbGOTgfHMELwc=
-X-Google-Smtp-Source: ADUXVKJMgXWeh9+X3zdwaoqccLsssoMFt3j5Ctj5FUgJ+S8iT4cxXMrzFCdABOQeiAxdDbuXFhWUd8ONOdKjMqYKfaA=
-X-Received: by 2002:a2e:40d9:: with SMTP id r86-v6mr7852423lje.19.1529319565609;
- Mon, 18 Jun 2018 03:59:25 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 03:59:24
- -0700 (PDT)
-In-Reply-To: <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
-References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
- <20180612054034.4969-2-songjun.wu@linux.intel.com> <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
- <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 18 Jun 2018 12:59:24 +0200
-X-Google-Sender-Auth: gu4KI2rTFfqxs5zpg0x6cE7uD9o
-Message-ID: <CAK8P3a0WVxHU98zjY6d8jN0bDtwabFkrbcxr3a7xRkxSjD2ZLg@mail.gmail.com>
-Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
-To:     "Wu, Songjun" <songjun.wu@linux.intel.com>
-Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
-        chuanhua.lei@intel.com,
-        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
-        qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
-        linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
-        James Hogan <jhogan@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        id S935759AbeFRK7e (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:59:34 -0400
+Received: from mga17.intel.com ([192.55.52.151]:15938 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933605AbeFRK7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:59:32 -0400
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 03:59:31 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
+   d="scan'208";a="60094810"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga003.jf.intel.com with ESMTP; 18 Jun 2018 03:59:28 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+        id 604ED124; Mon, 18 Jun 2018 13:59:29 +0300 (EEST)
+Date:   Mon, 18 Jun 2018 13:59:29 +0300
+From:   "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Dave Hansen <dave.hansen@intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>
-Content-Type: text/plain; charset="UTF-8"
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCHv3 12/17] x86/mm: Allow to disable MKTME after enumeration
+Message-ID: <20180618105928.oblisvtr2cpitilj@black.fi.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-13-kirill.shutemov@linux.intel.com>
+ <13ba89bb-9df3-6272-96ea-005200c3198f@intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <13ba89bb-9df3-6272-96ea-005200c3198f@intel.com>
+User-Agent: NeoMutt/20170714-126-deb55f (1.8.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 11:42 AM, Wu, Songjun
-<songjun.wu@linux.intel.com> wrote:
-> On 6/14/2018 6:03 PM, Arnd Bergmann wrote:
->>
->> On Tue, Jun 12, 2018 at 7:40 AM, Songjun Wu <songjun.wu@linux.intel.com>
->> wrote:
->>>
->>> Previous implementation uses a hard-coded register value to check if
->>> the current serial entity is the console entity.
->>> Now the lantiq serial driver uses the aliases for the index of the
->>> serial port.
->>> The lantiq danube serial dts are updated with aliases to support this.
->>>
->>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
->>> ---
->>>
->>>   arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
->>>   1 file changed, 5 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi
->>> b/arch/mips/boot/dts/lantiq/danube.dtsi
->>> index 2dd950181f8a..7a9e15da6bd0 100644
->>> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
->>> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
->>> @@ -4,6 +4,10 @@
->>>          #size-cells = <1>;
->>>          compatible = "lantiq,xway", "lantiq,danube";
->>>
->>> +       aliases {
->>> +               serial0 = &asc1;
->>> +       };
->>> +
->>
->> You generally want the aliases to be part of the board specific file,
->> not every board numbers their serial ports in the same way.
->>
->
-> In this chip only asc1 can be used as console,  so serial0 is defined in
-> chip specific file.
+On Wed, Jun 13, 2018 at 06:30:02PM +0000, Dave Hansen wrote:
+> On 06/12/2018 07:39 AM, Kirill A. Shutemov wrote:
+> > Separate MKTME enumaration from enabling. We need to postpone enabling
+> > until initialization is complete.
+> 
+> 	         ^ enumeration
 
-This was a more general comment about 'aliases' being board specific
-in principle (though we've had exceptions in the past). Even if there
-is only one uart on the chip, I'd recommend following the same
-conventions as the other chips that have more than one uart.
+Nope.
 
-       Arnd
+I want to differentiate enumeration in detect_tme() and the point where
+MKTME is usable: after mktme_init().
+
+> > The new helper mktme_disable() allows to disable MKTME even if it's
+> 
+> s/to disable/disabling/
+
+> > enumerated successfully. MKTME initialization may fail and this
+> > functionallity allows system to boot regardless of the failure.
+> 
+> What can make it fail?
+
+I'll add this to commit message:
+
+MKTME needs per-KeyID direct mapping. It requires a lot more virtual
+address space which may be a problem in 4-level paging mode. If the
+system has more physical memory than we can handle with MKTME.
+The feature allows to fail MKTME, but boot the system successfully.
+
+-- 
+ Kirill A. Shutemov
