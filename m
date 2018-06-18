@@ -6,48 +6,40 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44138C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:49:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D07C4C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D9E208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:49:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D9E208D5
+	by mail.kernel.org (Postfix) with ESMTP id 923B8208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:49:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 923B8208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030255AbeFRIgf (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:36:35 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36358 "EHLO
+        id S968142AbeFRItJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:49:09 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36412 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968045AbeFRIg2 (ORCPT
+        with ESMTP id S1030244AbeFRIge (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:28 -0400
+        Mon, 18 Jun 2018 04:36:34 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 669F1C8A;
-        Mon, 18 Jun 2018 08:36:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8BD15CB9;
+        Mon, 18 Jun 2018 08:36:33 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-        Francis Deslauriers <francis.deslauriers@efficios.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        "H . Peter Anvin" <hpa@zytor.com>, Yonghong Song <yhs@fb.com>,
-        Borislav Petkov <bp@suse.de>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        akpm@linux-foundation.org, dave.hansen@intel.com,
+        linux-mm@kvack.org, linuxram@us.ibm.com, mpe@ellerman.id.au,
+        shakeelb@google.com, shuah@kernel.org,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 151/189] objtool, kprobes/x86: Sync the latest <asm/insn.h> header with tools/objtool/arch/x86/include/asm/insn.h
-Date:   Mon, 18 Jun 2018 10:14:07 +0200
-Message-Id: <20180618081215.301908917@linuxfoundation.org>
+Subject: [PATCH 4.14 153/189] x86/mpx/selftests: Adjust the self-test to fresh distros that export the MPX ABI
+Date:   Mon, 18 Jun 2018 10:14:09 +0200
+Message-Id: <20180618081215.375936556@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -66,64 +58,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ingo Molnar <mingo@kernel.org>
 
-[ Upstream commit 4fe875e4bd3cae85ae6f6eaf77f63fabe613b66e ]
+[ Upstream commit 73bb4d6cd192b8629c5125aaada9892d9fc986b6 ]
 
-The following commit:
+Fix this warning:
 
-  ee6a7354a362: kprobes/x86: Prohibit probing on exception masking instructions
+  mpx-mini-test.c:422:0: warning: "SEGV_BNDERR" redefined
 
-Modified <asm/insn.h>, adding the insn_masking_exception() function.
-
-Sync the tooling version of the header to it, to fix this warning:
-
-  Warning: synced file at 'tools/objtool/arch/x86/include/asm/insn.h' differs from latest kernel version at 'arch/x86/include/asm/insn.h'
-
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Cc: Francis Deslauriers <francis.deslauriers@efficios.com>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Alexei Starovoitov <ast@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: "H . Peter Anvin" <hpa@zytor.com>
-Cc: Yonghong Song <yhs@fb.com>
-Cc: Borislav Petkov <bp@suse.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: "David S . Miller" <davem@davemloft.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: akpm@linux-foundation.org
+Cc: dave.hansen@intel.com
+Cc: linux-mm@kvack.org
+Cc: linuxram@us.ibm.com
+Cc: mpe@ellerman.id.au
+Cc: shakeelb@google.com
+Cc: shuah@kernel.org
+Link: http://lkml.kernel.org/r/20180514085908.GA12798@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/objtool/arch/x86/include/asm/insn.h |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ tools/testing/selftests/x86/mpx-mini-test.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/tools/objtool/arch/x86/include/asm/insn.h
-+++ b/tools/objtool/arch/x86/include/asm/insn.h
-@@ -208,4 +208,22 @@ static inline int insn_offset_immediate(
- 	return insn_offset_displacement(insn) + insn->displacement.nbytes;
- }
+--- a/tools/testing/selftests/x86/mpx-mini-test.c
++++ b/tools/testing/selftests/x86/mpx-mini-test.c
+@@ -368,6 +368,11 @@ static int expected_bnd_index = -1;
+ uint64_t shadow_plb[NR_MPX_BOUNDS_REGISTERS][2]; /* shadow MPX bound registers */
+ unsigned long shadow_map[NR_MPX_BOUNDS_REGISTERS];
  
-+#define POP_SS_OPCODE 0x1f
-+#define MOV_SREG_OPCODE 0x8e
++/* Failed address bound checks: */
++#ifndef SEGV_BNDERR
++# define SEGV_BNDERR	3
++#endif
 +
-+/*
-+ * Intel SDM Vol.3A 6.8.3 states;
-+ * "Any single-step trap that would be delivered following the MOV to SS
-+ * instruction or POP to SS instruction (because EFLAGS.TF is 1) is
-+ * suppressed."
-+ * This function returns true if @insn is MOV SS or POP SS. On these
-+ * instructions, single stepping is suppressed.
-+ */
-+static inline int insn_masking_exception(struct insn *insn)
-+{
-+	return insn->opcode.bytes[0] == POP_SS_OPCODE ||
-+		(insn->opcode.bytes[0] == MOV_SREG_OPCODE &&
-+		 X86_MODRM_REG(insn->modrm.bytes[0]) == 2);
-+}
-+
- #endif /* _ASM_X86_INSN_H */
+ /*
+  * The kernel is supposed to provide some information about the bounds
+  * exception in the siginfo.  It should match what we have in the bounds
+@@ -419,8 +424,6 @@ void handler(int signum, siginfo_t *si,
+ 		br_count++;
+ 		dprintf1("#BR 0x%jx (total seen: %d)\n", status, br_count);
+ 
+-#define SEGV_BNDERR     3  /* failed address bound checks */
+-
+ 		dprintf2("Saw a #BR! status 0x%jx at %016lx br_reason: %jx\n",
+ 				status, ip, br_reason);
+ 		dprintf2("si_signo: %d\n", si->si_signo);
 
 
