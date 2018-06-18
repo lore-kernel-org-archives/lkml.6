@@ -6,134 +6,97 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E51EC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F0AC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:08:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 128022083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:07:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 128022083A
+	by mail.kernel.org (Postfix) with ESMTP id 1751F20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:08:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1751F20852
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934657AbeFROHL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:07:11 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:50317 "EHLO
+        id S1754587AbeFROIf (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:08:35 -0400
+Received: from mout.kundenserver.de ([212.227.17.10]:34079 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932860AbeFROHH (ORCPT
+        with ESMTP id S1752835AbeFROIe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:07:07 -0400
+        Mon, 18 Jun 2018 10:08:34 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
- 0MfDvq-1fsbnv22xO-00OkyB; Mon, 18 Jun 2018 16:05:37 +0200
+ (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0MfYYl-1fsKpY3PKt-00P2Sb; Mon, 18 Jun 2018 16:08:24 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Joshua Thompson <funaho@jurai.org>
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, y2038@lists.linaro.org,
-        Meelis Roos <mroos@linux.ee>, Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH 1/3] powerpc: mac: fix rtc read functions
-Date:   Mon, 18 Jun 2018 16:05:16 +0200
-Message-Id: <20180618140518.2920804-1-arnd@arndb.de>
+To:     Thomas Gleixner <tglx@linutronix.de>,
+        John Stultz <john.stultz@linaro.org>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org
+Subject: [PATCH 2/3] time: use ktime_get_real_seconds() in time syscall
+Date:   Mon, 18 Jun 2018 16:08:00 +0200
+Message-Id: <20180618140811.2998503-2-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:qw0DyR+gpzEw843/ptQGa6wwShb3h3BNudQco/SiKzF5yUUk/IY
- qLziZsVSYqGEmXJhRnsl+nqnUSUXsPoJhZuK7yspQcug116WrWM5y1EHSKdSKC0aNmcr0UR
- tD5srfzkiG86sOFeQQnmXsscuB7Wi28ZopYvaISyXZJxxOLLvGkATk7F8eowWB+MHuf4j+x
- xaboq2b4YaX6JCbXeRKMw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:d1MntMH0Q9U=:LGB6oG6CgQZPSS4MEd5lMO
- doL8NURgPUXBDkYnarAjASTHF5fiFbYKxQFQFVUuuOzRWBPoFbCGrQNKmQmMiYZ03xje467QH
- sStwLQ1Uiv+NF0fJI/v4a2lZ/9WwtUGoqso25LN/aHdews4+9AOjrjeB2EZDDM2h4m/Jahi5p
- 770MVfGIjwvgpLG50HfBqprm0yzrcV69jyIiaKrkGP7Lm1BCOLHcEbr+IXSuHHuo5AyKIGKgk
- 9sITAvLijPcvHxvksNAc4LPwH4iKQZN7Rx3oUCsBSCrvzKx+gsJYOiNQqzWUNBuHgLb44+vK5
- nHJfEOtooeORShp7n2JWapfvT2U8AXdrF6CS4elvY8tYK8apjT83i2VBSV2dXOlht9W1kVpQY
- 5GtGDEJPk6TVNBUIrK000UQSoCNA+mj3l9ghoIlG6YEBh2EvBLgblAHMSrE0Ra+pOeLCkbTTr
- +F+rle0/PdogRL0mZG1ncgl28pc0gHGctTsCZYHkLjTv7R0iGhTc6VuoJdunOoe3zBydOY3L5
- cvMdjzMogwRZOzTepY8iULGNXUcZHgyMmSvhawNERojkeawk1L/e5LQcKwsrwy5OK6g+Hn6aL
- +u/fYtTyxCiszjCJEchTJNcdiFWU+QKffFMhx9vJsZtsNI/Q8wfAQJy+5v8Yqym6QJQuRe9iq
- /cOo4D5t4YpW/68S7knD0Y6ji11qDQ8URgUsi1h1bYjEo43jpcOoh1VRxbN8YOwMHWJE=
+In-Reply-To: <20180618140811.2998503-1-arnd@arndb.de>
+References: <20180618140811.2998503-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:ILctjl/yi2BLphw2pskkao6oJ1ToCOp+B/AJwZs18nQpYNtvlOe
+ 9mNdKLmwZU1Yy8ZjGLfqu23CdJmz1ci8C0eQRtkTe4MMW0LCweOgkYrP5I4KPixq6sXGGkG
+ t1dcn2q+bWodb8KOoY67m7OB2hfm4nyr2yN2beoMYW2YmhGmSKsIuNmrNakHHHU/t/KrH+s
+ KnxJDxHjyeqKmpMqcO4bw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:2OuSd07hyLY=:5HYrRiud3+Bbs0BYbiQsiE
+ rNPhy+4ujHOtjNxdaKBS/3lUyaYv/2xnn9xj4dxcGM49CXMjf2oiYzc8tfoW1jN5GZXbj/ot6
+ D1s66894aKieyog88EBhwbmjt1U2+RitfY7V/38xJFbmV5lI9tFBjEtFMNJ62INcBp/hGGjkz
+ g9reXhkZLcsZdV17br26pJo8VMfID+hU241BpR5hpRtlXKBdhEpCiSDFOa/YtCxGZLcI5NMDb
+ NhesmhMoV5VRzFMc+PGlkWX7DLB6bP5UggTJrWw4epRFufKcM9jV+R+hlZmHASHzxFBdlrR5h
+ i3Qbz/wnvLKwegAS1ZFFwhqgepAjq9Apfekyya81mwWX1wvgplyjBhxXo+R4vIIqLLRb+VJ5f
+ PfhGhnfItg49VmgEJDsBTaknTPxNcbQdCEiIAYrY3CGxXyH1DSdtjyfzVEpP9YdPm2I1MIMLv
+ paK7YarypxGpN9n/MbxJtjMRdsy8KMnZPbS37/kS5AoFNG3YdaY5lpvG/SQ/xl2VCLJVVnSsG
+ czzoDei7iliBbfwlztCasB9vS2D2Z2f+1XOBc1/MOoSq6Ifb5b6maJmlIHMX4xGOeNiHFjmg7
+ dHtMa9M594G/dkRc4q6fPgKOdKjZPxKByyMFZPEp+NbkwqfX9QSo0/KpSTL0YnZx4snC/Y2+8
+ G9XgZ0zHIJXvbDdkgPqiQbUT6vIdMKcBqUDYT8msRdkztfM9CzRntddoysWZ3TdrqdxY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As Mathieu pointed out, my conversion to time64_t was incorrect and resulted
-in negative times to be read from the RTC. The problem is that during the
-conversion from a byte array to a time64_t, the 'unsigned char' variable
-holding the top byte gets turned into a negative signed 32-bit integer
-before being assigned to the 64-bit variable for any times after 1972.
+Both get_seconds() and do_gettimeofday() are deprecated. Let's
+change the time() implementation to use the replacement function
+instead.
 
-This changes the logic to cast to an unsigned 32-bit number first for
-the Macintosh time and then convert that to the Unix time, which then gives
-us a time in the documented 1904..2040 year range. I decided not to use
-the longer 1970..2106 range that other drivers use, for consistency with
-the literal interpretation of the register, but that could be easily
-changed if we decide we want to support any Mac after 2040.
+Obviously the system call will still overflow in 2038, but this
+gets us closer to removing the old helper functions.
 
-Just to be on the safe side, I'm also adding a WARN_ON that will trigger
-if either the year 2040 has come and is observed by this driver, or we
-run into an RTC that got set back to a pre-1970 date for some reason
-(the two are indistinguishable).
-
-The same code exists in arch/m68k/ and is patched in an identical way now
-in a separate patch.
-
-Fixes: 5bfd643583b2 ("powerpc: use time64_t in read_persistent_clock")
-Reported-by: Mathieu Malaterre <malat@debian.org>
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/powerpc/platforms/powermac/time.c | 21 ++++++++++++++++-----
- 1 file changed, 16 insertions(+), 5 deletions(-)
+ kernel/time/time.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powermac/time.c b/arch/powerpc/platforms/powermac/time.c
-index 7c968e46736f..173a80630169 100644
---- a/arch/powerpc/platforms/powermac/time.c
-+++ b/arch/powerpc/platforms/powermac/time.c
-@@ -42,7 +42,11 @@
- #define DBG(x...)
- #endif
+diff --git a/kernel/time/time.c b/kernel/time/time.c
+index 8e4f3fd2f84b..90867ece5c09 100644
+--- a/kernel/time/time.c
++++ b/kernel/time/time.c
+@@ -63,7 +63,7 @@ EXPORT_SYMBOL(sys_tz);
+  */
+ SYSCALL_DEFINE1(time, time_t __user *, tloc)
+ {
+-	time_t i = get_seconds();
++	time_t i = (time_t)ktime_get_real_seconds();
  
--/* Apparently the RTC stores seconds since 1 Jan 1904 */
-+/*
-+ * Offset between Unix time (1970-based) and Mac time (1904-based). Cuda and PMU
-+ * times wrap in 2040. If we need to handle later times, the read_time functions
-+ * need to be changed to interpret wrapped times as post-2040.
-+ */
- #define RTC_OFFSET	2082844800
+ 	if (tloc) {
+ 		if (put_user(i,tloc))
+@@ -106,11 +106,9 @@ SYSCALL_DEFINE1(stime, time_t __user *, tptr)
+ /* compat_time_t is a 32 bit "long" and needs to get converted. */
+ COMPAT_SYSCALL_DEFINE1(time, compat_time_t __user *, tloc)
+ {
+-	struct timeval tv;
+ 	compat_time_t i;
  
- /*
-@@ -97,8 +101,11 @@ static time64_t cuda_get_time(void)
- 	if (req.reply_len != 7)
- 		printk(KERN_ERR "cuda_get_time: got %d byte reply\n",
- 		       req.reply_len);
--	now = (req.reply[3] << 24) + (req.reply[4] << 16)
--		+ (req.reply[5] << 8) + req.reply[6];
-+	now = (u32)((req.reply[3] << 24) + (req.reply[4] << 16) +
-+		    (req.reply[5] << 8) + req.reply[6]);
-+	/* it's either after year 2040, or the RTC has gone backwards */
-+	WARN_ON(now < RTC_OFFSET);
-+
- 	return now - RTC_OFFSET;
- }
+-	do_gettimeofday(&tv);
+-	i = tv.tv_sec;
++	i = (compat_time_t)ktime_get_real_seconds();
  
-@@ -140,8 +147,12 @@ static time64_t pmu_get_time(void)
- 	if (req.reply_len != 4)
- 		printk(KERN_ERR "pmu_get_time: got %d byte reply from PMU\n",
- 		       req.reply_len);
--	now = (req.reply[0] << 24) + (req.reply[1] << 16)
--		+ (req.reply[2] << 8) + req.reply[3];
-+	now = (u32)((req.reply[0] << 24) + (req.reply[1] << 16)	+
-+		    (req.reply[2] << 8) + req.reply[3]);
-+
-+	/* it's either after year 2040, or the RTC has gone backwards */
-+	WARN_ON(now < RTC_OFFSET);
-+
- 	return now - RTC_OFFSET;
- }
- 
+ 	if (tloc) {
+ 		if (put_user(i,tloc))
 -- 
 2.9.0
 
