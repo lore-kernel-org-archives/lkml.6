@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E48CC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 522DEC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8A4C208E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8A4C208E0
+	by mail.kernel.org (Postfix) with ESMTP id 1510A20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1510A20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967417AbeFRIdI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:33:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35374 "EHLO
+        id S967536AbeFRJBY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:01:24 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35398 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967385AbeFRIdD (ORCPT
+        with ESMTP id S967404AbeFRIdH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:03 -0400
+        Mon, 18 Jun 2018 04:33:07 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 584E8BAD;
-        Mon, 18 Jun 2018 08:32:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9F7ABAD;
+        Mon, 18 Jun 2018 08:33:06 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Jianchao Wang <jianchao.w.wang@oracle.com>,
+        Zhu Yanjun <yanjun.zhu@oracle.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 076/189] i2c: sprd: Prevent i2c accesses after suspend is called
-Date:   Mon, 18 Jun 2018 10:12:52 +0200
-Message-Id: <20180618081212.328517008@linuxfoundation.org>
+Subject: [PATCH 4.14 087/189] IB/rxe: add RXE_START_MASK for rxe_opcode IB_OPCODE_RC_SEND_ONLY_INV
+Date:   Mon, 18 Jun 2018 10:13:03 +0200
+Message-Id: <20180618081212.737607806@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,65 +51,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Jianchao Wang <jianchao.w.wang@oracle.com>
 
-[ Upstream commit da33aa03fa34c918faf2c371ebda0dd961d7ccb2 ]
+[ Upstream commit 2da36d44a9d54a2c6e1f8da1f7ccc26b0bc6cfec ]
 
-Add one flag to indicate if the i2c controller has been in suspend state,
-which can prevent i2c accesses after i2c controller is suspended following
-system suspend.
+w/o RXE_START_MASK, the last_psn of IB_OPCODE_RC_SEND_ONLY_INV
+will not be updated in update_wqe_psn, and the corresponding
+wqe will not be acked in rxe_completer due to its last_psn is
+zero. Finally, the other wqe will also not be able to be acked,
+because the wqe of IB_OPCODE_RC_SEND_ONLY_INV with last_psn 0
+is still there. This causes large amount of io timeout when
+nvmeof is over rxe.
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Add RXE_START_MASK for IB_OPCODE_RC_SEND_ONLY_INV to fix this.
+
+Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
+Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-sprd.c |   16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/infiniband/sw/rxe/rxe_opcode.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -86,6 +86,7 @@ struct sprd_i2c {
- 	u32 count;
- 	int irq;
- 	int err;
-+	bool is_suspended;
- };
- 
- static void sprd_i2c_set_count(struct sprd_i2c *i2c_dev, u32 count)
-@@ -283,6 +284,9 @@ static int sprd_i2c_master_xfer(struct i
- 	struct sprd_i2c *i2c_dev = i2c_adap->algo_data;
- 	int im, ret;
- 
-+	if (i2c_dev->is_suspended)
-+		return -EBUSY;
-+
- 	ret = pm_runtime_get_sync(i2c_dev->dev);
- 	if (ret < 0)
- 		return ret;
-@@ -586,11 +590,23 @@ static int sprd_i2c_remove(struct platfo
- 
- static int __maybe_unused sprd_i2c_suspend_noirq(struct device *pdev)
- {
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+
-+	i2c_lock_adapter(&i2c_dev->adap);
-+	i2c_dev->is_suspended = true;
-+	i2c_unlock_adapter(&i2c_dev->adap);
-+
- 	return pm_runtime_force_suspend(pdev);
- }
- 
- static int __maybe_unused sprd_i2c_resume_noirq(struct device *pdev)
- {
-+	struct sprd_i2c *i2c_dev = dev_get_drvdata(pdev);
-+
-+	i2c_lock_adapter(&i2c_dev->adap);
-+	i2c_dev->is_suspended = false;
-+	i2c_unlock_adapter(&i2c_dev->adap);
-+
- 	return pm_runtime_force_resume(pdev);
- }
- 
+--- a/drivers/infiniband/sw/rxe/rxe_opcode.c
++++ b/drivers/infiniband/sw/rxe/rxe_opcode.c
+@@ -390,7 +390,7 @@ struct rxe_opcode_info rxe_opcode[RXE_NU
+ 		.name	= "IB_OPCODE_RC_SEND_ONLY_INV",
+ 		.mask	= RXE_IETH_MASK | RXE_PAYLOAD_MASK | RXE_REQ_MASK
+ 				| RXE_COMP_MASK | RXE_RWR_MASK | RXE_SEND_MASK
+-				| RXE_END_MASK,
++				| RXE_END_MASK  | RXE_START_MASK,
+ 		.length = RXE_BTH_BYTES + RXE_IETH_BYTES,
+ 		.offset = {
+ 			[RXE_BTH]	= 0,
 
 
