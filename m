@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86848C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:59:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB11EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29C72208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:59:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29C72208D5
+	by mail.kernel.org (Postfix) with ESMTP id 79E09208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:00:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 79E09208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936469AbeFRI7i (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:59:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35552 "EHLO
+        id S967591AbeFRJAS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:00:18 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35476 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967497AbeFRIdi (ORCPT
+        with ESMTP id S966965AbeFRIdW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:38 -0400
+        Mon, 18 Jun 2018 04:33:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5CEA0C49;
-        Mon, 18 Jun 2018 08:33:37 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C1D47BBE;
+        Mon, 18 Jun 2018 08:33:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
+        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 096/189] ARM: OMAP2+: powerdomain: use raw_smp_processor_id() for trace
-Date:   Mon, 18 Jun 2018 10:13:12 +0200
-Message-Id: <20180618081213.080135239@linuxfoundation.org>
+Subject: [PATCH 4.14 092/189] ARM: davinci: board-da850-evm: fix GPIO lookup for MMC/SD
+Date:   Mon, 18 Jun 2018 10:13:08 +0200
+Message-Id: <20180618081212.924840775@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,49 +50,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tero Kristo <t-kristo@ti.com>
+From: Sekhar Nori <nsekhar@ti.com>
 
-[ Upstream commit 33e9572483031a79ad0a4468064675144d9269ec ]
+[ Upstream commit 67c6b6ff221f807180aea6dd597246f87e1dd98a ]
 
-smp_processor_id() checks preemption if CONFIG_DEBUG_PREEMPT is enabled,
-causing a warning dump during boot:
+The GPIO chip is called davinci_gpio.0 in legacy mode. Fix it, so that
+mmc can correctly lookup the wp and cp gpios. Also fix the GPIO numbers
+as they are not offsets within a bank.
 
-[    5.042377] BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
-[    5.050281] caller is pwrdm_set_next_pwrst+0x48/0x88
-[    5.055330] CPU: 1 PID: 1 Comm: swapper/0 Not tainted 4.14.24-g57341df0b4 #1
+Note that it is the gpio-davinci driver that sets the gpiochip label to
+davinci_gpio.0.
 
-Use the raw_smp_processor_id() for the trace instead, this value does
-not need to be perfectly correct. The alternative of disabling preempt
-is too heavy weight operation to be applied in PM hot path for just
-tracing purposes.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: bdf0e8364fd3 ("ARM: davinci: da850-evm: use gpio descriptor for mmc pins")
+Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm/mach-omap2/powerdomain.c |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/mach-davinci/board-da850-evm.c |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/arch/arm/mach-omap2/powerdomain.c
-+++ b/arch/arm/mach-omap2/powerdomain.c
-@@ -188,7 +188,7 @@ static int _pwrdm_state_switch(struct po
- 				       ((prev & OMAP_POWERSTATE_MASK) << 0));
- 			trace_power_domain_target_rcuidle(pwrdm->name,
- 							  trace_state,
--							  smp_processor_id());
-+							  raw_smp_processor_id());
- 		}
- 		break;
- 	default:
-@@ -518,7 +518,7 @@ int pwrdm_set_next_pwrst(struct powerdom
- 	if (arch_pwrdm && arch_pwrdm->pwrdm_set_next_pwrst) {
- 		/* Trace the pwrdm desired target state */
- 		trace_power_domain_target_rcuidle(pwrdm->name, pwrst,
--						  smp_processor_id());
-+						  raw_smp_processor_id());
- 		/* Program the pwrdm desired target state */
- 		ret = arch_pwrdm->pwrdm_set_next_pwrst(pwrdm, pwrst);
- 	}
+--- a/arch/arm/mach-davinci/board-da850-evm.c
++++ b/arch/arm/mach-davinci/board-da850-evm.c
+@@ -763,12 +763,17 @@ static const short da850_evm_mcasp_pins[
+ 	-1
+ };
+ 
++#define DA850_MMCSD_CD_PIN		GPIO_TO_PIN(4, 0)
++#define DA850_MMCSD_WP_PIN		GPIO_TO_PIN(4, 1)
++
+ static struct gpiod_lookup_table mmc_gpios_table = {
+ 	.dev_id = "da830-mmc.0",
+ 	.table = {
+ 		/* gpio chip 2 contains gpio range 64-95 */
+-		GPIO_LOOKUP("davinci_gpio.2", 0, "cd", GPIO_ACTIVE_LOW),
+-		GPIO_LOOKUP("davinci_gpio.2", 1, "wp", GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("davinci_gpio.0", DA850_MMCSD_CD_PIN, "cd",
++			    GPIO_ACTIVE_LOW),
++		GPIO_LOOKUP("davinci_gpio.0", DA850_MMCSD_WP_PIN, "wp",
++			    GPIO_ACTIVE_LOW),
+ 	},
+ };
+ 
 
 
