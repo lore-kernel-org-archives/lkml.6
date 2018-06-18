@@ -6,36 +6,39 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AB9C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEEC4C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A84CA20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A84CA20874
+	by mail.kernel.org (Postfix) with ESMTP id 84A8C20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A8C20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967384AbeFRIdB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:33:01 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35256 "EHLO
+        id S967431AbeFRIdK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:33:10 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35364 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966870AbeFRIc6 (ORCPT
+        with ESMTP id S966870AbeFRIdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:32:58 -0400
+        Mon, 18 Jun 2018 04:33:03 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 43202C9F;
-        Mon, 18 Jun 2018 08:32:52 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 617C2CAB;
+        Mon, 18 Jun 2018 08:32:55 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Andres Rodriguez <andres.rodriguez@amd.com>,
-        Felix Kuehling <Felix.Kuehling@amd.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
+        stable@vger.kernel.org, Minchan Kim <minchan@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 057/189] drm/amdkfd: fix clock counter retrieval for node without GPU
-Date:   Mon, 18 Jun 2018 10:12:33 +0200
-Message-Id: <20180618081211.617167186@linuxfoundation.org>
+Subject: [PATCH 4.14 048/189] mm: memcg: add __GFP_NOWARN in __memcg_schedule_kmem_cache_create()
+Date:   Mon, 18 Jun 2018 10:12:24 +0200
+Message-Id: <20180618081211.270256999@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -52,48 +55,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Andres Rodriguez <andres.rodriguez@amd.com>
+From: Minchan Kim <minchan@kernel.org>
 
-[ Upstream commit 1cf6cc74bbeb85bb87c3ca3f3df97a283c3aa737 ]
+[ Upstream commit c892fd82cc0632d425ae011a4dd75eb59e9f84ee ]
 
-Currently if a user requests clock counters for a node without a GPU
-resource we will always return EINVAL.
+If there is heavy memory pressure, page allocation with __GFP_NOWAIT
+fails easily although it's order-0 request.  I got below warning 9 times
+for normal boot.
 
-Instead if no GPU resource is attached, fill the gpu_clock_counter
-argument with zeroes so that we may proceed and return valid CPU
-counters.
+     <snip >: page allocation failure: order:0, mode:0x2200000(GFP_NOWAIT|__GFP_NOTRACK)
+     .. snip ..
+     Call trace:
+       dump_backtrace+0x0/0x4
+       dump_stack+0xa4/0xc0
+       warn_alloc+0xd4/0x15c
+       __alloc_pages_nodemask+0xf88/0x10fc
+       alloc_slab_page+0x40/0x18c
+       new_slab+0x2b8/0x2e0
+       ___slab_alloc+0x25c/0x464
+       __kmalloc+0x394/0x498
+       memcg_kmem_get_cache+0x114/0x2b8
+       kmem_cache_alloc+0x98/0x3e8
+       mmap_region+0x3bc/0x8c0
+       do_mmap+0x40c/0x43c
+       vm_mmap_pgoff+0x15c/0x1e4
+       sys_mmap+0xb0/0xc8
+       el0_svc_naked+0x24/0x28
+     Mem-Info:
+     active_anon:17124 inactive_anon:193 isolated_anon:0
+      active_file:7898 inactive_file:712955 isolated_file:55
+      unevictable:0 dirty:27 writeback:18 unstable:0
+      slab_reclaimable:12250 slab_unreclaimable:23334
+      mapped:19310 shmem:212 pagetables:816 bounce:0
+      free:36561 free_pcp:1205 free_cma:35615
+     Node 0 active_anon:68496kB inactive_anon:772kB active_file:31592kB inactive_file:2851820kB unevictable:0kB isolated(anon):0kB isolated(file):220kB mapped:77240kB dirty:108kB writeback:72kB shmem:848kB writeback_tmp:0kB unstable:0kB all_unreclaimable? no
+     DMA free:142188kB min:3056kB low:3820kB high:4584kB active_anon:10052kB inactive_anon:12kB active_file:312kB inactive_file:1412620kB unevictable:0kB writepending:0kB present:1781412kB managed:1604728kB mlocked:0kB slab_reclaimable:3592kB slab_unreclaimable:876kB kernel_stack:400kB pagetables:52kB bounce:0kB free_pcp:1436kB local_pcp:124kB free_cma:142492kB
+     lowmem_reserve[]: 0 1842 1842
+     Normal free:4056kB min:4172kB low:5212kB high:6252kB active_anon:58376kB inactive_anon:760kB active_file:31348kB inactive_file:1439040kB unevictable:0kB writepending:180kB present:2000636kB managed:1923688kB mlocked:0kB slab_reclaimable:45408kB slab_unreclaimable:92460kB kernel_stack:9680kB pagetables:3212kB bounce:0kB free_pcp:3392kB local_pcp:688kB free_cma:0kB
+     lowmem_reserve[]: 0 0 0
+     DMA: 0*4kB 0*8kB 1*16kB (C) 0*32kB 0*64kB 0*128kB 1*256kB (C) 1*512kB (C) 0*1024kB 1*2048kB (C) 34*4096kB (C) = 142096kB
+     Normal: 228*4kB (UMEH) 172*8kB (UMH) 23*16kB (UH) 24*32kB (H) 5*64kB (H) 1*128kB (H) 0*256kB 0*512kB 0*1024kB 0*2048kB 0*4096kB = 3872kB
+     721350 total pagecache pages
+     0 pages in swap cache
+     Swap cache stats: add 0, delete 0, find 0/0
+     Free swap  = 0kB
+     Total swap = 0kB
+     945512 pages RAM
+     0 pages HighMem/MovableOnly
+     63408 pages reserved
+     51200 pages cma reserved
 
-Signed-off-by: Andres Rodriguez <andres.rodriguez@amd.com>
-Signed-off-by: Felix Kuehling <Felix.Kuehling@amd.com>
-Reviewed-by: Oded Gabbay <oded.gabbay@gmail.com>
-Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+__memcg_schedule_kmem_cache_create() tries to create a shadow slab cache
+and the worker allocation failure is not really critical because we will
+retry on the next kmem charge.  We might miss some charges but that
+shouldn't be critical.  The excessive allocation failure report is not
+very helpful.
+
+[mhocko@kernel.org: changelog update]
+Link: http://lkml.kernel.org/r/20180418022912.248417-1-minchan@kernel.org
+Signed-off-by: Minchan Kim <minchan@kernel.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
+Cc: Minchan Kim <minchan@kernel.org>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/amd/amdkfd/kfd_chardev.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ mm/memcontrol.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-+++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
-@@ -716,12 +716,13 @@ static int kfd_ioctl_get_clock_counters(
- 	struct timespec64 time;
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -2205,7 +2205,7 @@ static void __memcg_schedule_kmem_cache_
+ {
+ 	struct memcg_kmem_cache_create_work *cw;
  
- 	dev = kfd_device_by_id(args->gpu_id);
--	if (dev == NULL)
--		return -EINVAL;
--
--	/* Reading GPU clock counter from KGD */
--	args->gpu_clock_counter =
--		dev->kfd2kgd->get_gpu_clock_counter(dev->kgd);
-+	if (dev)
-+		/* Reading GPU clock counter from KGD */
-+		args->gpu_clock_counter =
-+			dev->kfd2kgd->get_gpu_clock_counter(dev->kgd);
-+	else
-+		/* Node without GPU resource */
-+		args->gpu_clock_counter = 0;
+-	cw = kmalloc(sizeof(*cw), GFP_NOWAIT);
++	cw = kmalloc(sizeof(*cw), GFP_NOWAIT | __GFP_NOWARN);
+ 	if (!cw)
+ 		return;
  
- 	/* No access to rdtsc. Using raw monotonic time */
- 	getrawmonotonic64(&time);
 
 
