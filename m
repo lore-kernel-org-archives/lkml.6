@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D375AC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:07:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68112C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:08:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98C2520852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:07:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98C2520852
+	by mail.kernel.org (Postfix) with ESMTP id 1BF9B208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:08:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1BF9B208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936868AbeFRJH5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:07:57 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34002 "EHLO
+        id S936852AbeFRJIr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:08:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33818 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967070AbeFRIbO (ORCPT
+        with ESMTP id S966792AbeFRIay (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:31:14 -0400
+        Mon, 18 Jun 2018 04:30:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id EC8FAC75;
-        Mon, 18 Jun 2018 08:31:13 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 04F41C75;
+        Mon, 18 Jun 2018 08:30:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Simon Gaiser <simon@invisiblethingslab.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        stable@vger.kernel.org, Colin Ian King <colin.king@canonical.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 025/189] xen: xenbus_dev_frontend: Really return response string
-Date:   Mon, 18 Jun 2018 10:12:01 +0200
-Message-Id: <20180618081210.293191342@linuxfoundation.org>
+Subject: [PATCH 4.14 044/189] scsi: isci: Fix infinite loop in while loop
+Date:   Mon, 18 Jun 2018 10:12:20 +0200
+Message-Id: <20180618081211.113014964@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -52,41 +50,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Simon Gaiser <simon@invisiblethingslab.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit ebf04f331fa15a966262341a7dc6b1a0efd633e4 ]
+[ Upstream commit 4bc83b3f272fe8f36450f9c003df49cf07ffe5fd ]
 
-xenbus_command_reply() did not actually copy the response string and
-leaked stack content instead.
+In the case when the phy_mask is bitwise anded with the phy_index bit is
+zero the continue statement currently jumps to the next iteration of the
+while loop and phy_index is never actually incremented, potentially
+causing an infinite loop if phy_index is less than SCI_MAX_PHS. Fix this
+by turning the while loop into a for loop.
 
-Fixes: 9a6161fe73bd ("xen: return xenstore command failures via response instead of rc")
-Signed-off-by: Simon Gaiser <simon@invisiblethingslab.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/xen/xenbus/xenbus_dev_frontend.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/isci/port_config.c |    3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
---- a/drivers/xen/xenbus/xenbus_dev_frontend.c
-+++ b/drivers/xen/xenbus/xenbus_dev_frontend.c
-@@ -403,7 +403,7 @@ static int xenbus_command_reply(struct x
- {
- 	struct {
- 		struct xsd_sockmsg hdr;
--		const char body[16];
-+		char body[16];
- 	} msg;
- 	int rc;
+--- a/drivers/scsi/isci/port_config.c
++++ b/drivers/scsi/isci/port_config.c
+@@ -291,7 +291,7 @@ sci_mpc_agent_validate_phy_configuration
+ 		 * Note: We have not moved the current phy_index so we will actually
+ 		 *       compare the startting phy with itself.
+ 		 *       This is expected and required to add the phy to the port. */
+-		while (phy_index < SCI_MAX_PHYS) {
++		for (; phy_index < SCI_MAX_PHYS; phy_index++) {
+ 			if ((phy_mask & (1 << phy_index)) == 0)
+ 				continue;
+ 			sci_phy_get_sas_address(&ihost->phys[phy_index],
+@@ -311,7 +311,6 @@ sci_mpc_agent_validate_phy_configuration
+ 					      &ihost->phys[phy_index]);
  
-@@ -412,6 +412,7 @@ static int xenbus_command_reply(struct x
- 	msg.hdr.len = strlen(reply) + 1;
- 	if (msg.hdr.len > sizeof(msg.body))
- 		return -E2BIG;
-+	memcpy(&msg.body, reply, msg.hdr.len);
+ 			assigned_phy_mask |= (1 << phy_index);
+-			phy_index++;
+ 		}
  
- 	mutex_lock(&u->reply_mutex);
- 	rc = queue_reply(&u->read_buffers, &msg, sizeof(msg.hdr) + msg.hdr.len);
+ 	}
 
 
