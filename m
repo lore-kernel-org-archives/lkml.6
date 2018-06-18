@@ -2,107 +2,114 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCDEC5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49A31C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:26:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A873820020
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02D8F20020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:26:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KCEdLaND"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A873820020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="O7fIOlGr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02D8F20020
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935495AbeFRRZ3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:25:29 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:58100 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934963AbeFRRZ1 (ORCPT
+        id S935527AbeFRR0J (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:26:09 -0400
+Received: from mail-pl0-f66.google.com ([209.85.160.66]:43473 "EHLO
+        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754642AbeFRR0H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:25:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=M87h/tftk1QAZelX0jtKbsPMx6CqKhWupzXoNkS25R0=; b=KCEdLaNDKGyh1TSxPJ5LIveRo
-        Je0C3PjRLavv+AyCSpfjOlMUUAW4GWcHaFHpur2CPqaDJUOYhnyL3f/50bK6BQCcwGlkU4eAst+Fv
-        1jObsA955/KnR5Yu0RXW7rVSFQ8VKIHsImzTVvlrmibrZPDG8iyrX6nPX9FYaLUbtyHs7jy5CQYki
-        txfPFZJbi3UNrjU3ARIgSkPN+/qjftAlWdCTtb7SYTd/E4eIRno5gm4eRDZa0iPInhMwSkjBPtzQU
-        PJV0lI2BAruAdpPq3dcJdNfylyVkuMNrVFZLIR2ASKhSEfThDrWmXkGNcMUexRgqKXnpDmtz7vbgb
-        snOoLiHhg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUxuB-00045s-Jn; Mon, 18 Jun 2018 17:25:27 +0000
-Subject: Re: [PATCH 04/11] docs/mm: bootmem: add kernel-doc description of
- 'struct bootmem_data'
-To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Jonathan Corbet <corbet@lwn.net>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-doc <linux-doc@vger.kernel.org>,
-        linux-mm <linux-mm@kvack.org>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <1529341199-17682-1-git-send-email-rppt@linux.vnet.ibm.com>
- <1529341199-17682-5-git-send-email-rppt@linux.vnet.ibm.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <f276789a-f6c0-6a98-5e21-3c3c15112e80@infradead.org>
-Date:   Mon, 18 Jun 2018 10:25:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 18 Jun 2018 13:26:07 -0400
+Received: by mail-pl0-f66.google.com with SMTP id c41-v6so9389099plj.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 10:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FTwPQv27wuexWI11SsYTJ/Jcg511fw1brRSTvDsMTCo=;
+        b=O7fIOlGruQGihbbLzCi6atsw+N5C6WUO6gtxZr/ERnoCoziK1Wxk4XHdJgmOaBIqPQ
+         HRj1Ww6Jc5iHfVj0HBanob6vFivjtxZj5VnWvaRr1zbhmZOxnD3xaLbIMKTwN+NLcBQy
+         eMxVfS414B2PhO4F5CN5QRXepANRv4FNg4G+B/7Q08ikQmeKR9rm5+Fv+zb1Q+bCRcPf
+         8GEPWlrgbZt41d6uBsu3/2FQRCAMQq3XRfATw41XctOpD3lrccNgnp+Dutwx03fddFWF
+         lRyeXBsbR99sbdEQJeh2cVfRNVojfA/i9QxK1gaW+k0cKEdV6vCv0wLHmOd5SjJ8eUlz
+         mFiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FTwPQv27wuexWI11SsYTJ/Jcg511fw1brRSTvDsMTCo=;
+        b=IADGMAdgIUfQDJ63/UA778sGa8p3bpSMCuePJnKChzLNjQQMMWHNV8xi/q0VWdoLjO
+         fdbmaYpjBSB21zQxvzJ6m3YycXb1dq/1Hmr8ylMYcgXZ+XKuIy84IXRdP+F64dMRDYuu
+         LhSmn4Ua5mNZSHG9udqMRcVm0xcokrwb6+QbZio/OU9E6Wv0irQL/eCc9CA5ihtMt1oo
+         ZtapzUTNtQb5fuwbdilvWNiZK702sBJtcntyevJudO8yU3MBKaGP1LUpICP/yDfaaID6
+         xZ/8OloQTV9kovVNtNPkt8MijdPHANb30EgGold6nVBJqneiDD15EpAbFK9pbzOfXgrt
+         m2Uw==
+X-Gm-Message-State: APt69E3g16mCuc+hx6cODInDByFsFuTrvhnNkJo+vX5Wey7jS7Yi+ygf
+        DUKVgnA6sxz43PctkDsRQk4tOQ==
+X-Google-Smtp-Source: ADUXVKIO7bEYGxEtmaRsim86IXXQCgLtC3R5oiNGsmWzSH3LWnyoE/gdXtJGxHWbbL4JnC6463jVjw==
+X-Received: by 2002:a17:902:8d86:: with SMTP id v6-v6mr11530365plo.325.1529342766655;
+        Mon, 18 Jun 2018 10:26:06 -0700 (PDT)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id 63-v6sm22076910pfo.1.2018.06.18.10.26.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 10:26:06 -0700 (PDT)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.86_2)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1fUxun-0008Ke-Bh; Mon, 18 Jun 2018 11:26:05 -0600
+Date:   Mon, 18 Jun 2018 11:26:05 -0600
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     willy@infradead.org
+Cc:     hans.westgaard.ry@oracle.com, Doug Ledford <dledford@redhat.com>,
+        linux-rdma@vger.kernel.org,
+        =?utf-8?B?SMOla29u?= Bugge <haakon.bugge@oracle.com>,
+        Parav Pandit <parav@mellanox.com>,
+        Jack Morgenstein <jackm@dev.mellanox.co.il>,
+        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        linux-kernel@vger.kernel.org,
+        Matthew Wilcox <mawilcox@microsoft.com>
+Subject: Re: [PATCH v3 2/2] IB/mad: Use IDR for agent IDs
+Message-ID: <20180618172605.GA32003@ziepe.ca>
+References: <20180613123403.25233-1-willy@infradead.org>
+ <20180613123403.25233-3-willy@infradead.org>
 MIME-Version: 1.0
-In-Reply-To: <1529341199-17682-5-git-send-email-rppt@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180613123403.25233-3-willy@infradead.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 09:59 AM, Mike Rapoport wrote:
-> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+On Wed, Jun 13, 2018 at 05:34:03AM -0700, willy@infradead.org wrote:
+> Allocate agent IDs from a global IDR instead of an atomic variable.
+> This eliminates the possibility of reusing an ID which is already in
+> use after 4 billion registrations.  We limit the assigned ID to be less
+> than 2^24 as the mlx4 driver uses the most significant byte of the agent
+> ID to store the slave number.  Users unlucky enough to see a collision
+> between agent numbers and slave numbers see messages like:
+> 
+>  mlx4_ib: egress mad has non-null tid msb:1 class:4 slave:0
+> 
+> and the MAD layer stops working.
+> 
+> We look up the agent under protection of the RCU lock, which means we
+> have to free the agent using kfree_rcu, and only increment the reference
+> counter if it is not 0.
+> 
+> Signed-off-by: Matthew Wilcox <mawilcox@microsoft.com>
+> Reported-by: Hans Westgaard Ry <hans.westgaard.ry@oracle.com>
+> Acked-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
+> Tested-by: Jack Morgenstein <jackm@dev.mellanox.co.il>
 > ---
->  include/linux/bootmem.h | 17 ++++++++++++++---
->  1 file changed, 14 insertions(+), 3 deletions(-)
-> 
-> diff --git a/include/linux/bootmem.h b/include/linux/bootmem.h
-> index 7942a96..1526ba1 100644
-> --- a/include/linux/bootmem.h
-> +++ b/include/linux/bootmem.h
-> @@ -27,9 +27,20 @@ extern unsigned long max_pfn;
->  extern unsigned long long max_possible_pfn;
->  
->  #ifndef CONFIG_NO_BOOTMEM
-> -/*
-> - * node_bootmem_map is a map pointer - the bits represent all physical 
-> - * memory pages (including holes) on the node.
-> +/**
-> + * struct bootmem_data - per-node information used by the bootmem allocator
-> + * @node_min_pfn: the starting physical address of the node's memory
-> + * @node_low_pfn: the end physical address of the directly addressable memory
-> + * @node_bootmem_map: is a bitmap pointer - the bits represent all physical
-> + *		     memory pages (including holes) on the node.
-> + * @last_end_off: the offset within the page of the end of the last allocation;
-> + *                if 0, the page used is full
-> + * @hint_idx: the the PFN of the page used with the last allocation;
+>  drivers/infiniband/core/mad.c      | 83 ++++++++++++++++++------------
+>  drivers/infiniband/core/mad_priv.h |  7 +--
+>  2 files changed, 55 insertions(+), 35 deletions(-)
 
-            drop one "the" above.
+Applied to for-next, thanks everyone
 
-> + *	       together with using this with the @last_end_offset field,
-> + *	       a test can be made to see if allocations can be merged
-> + *	       with the page used for the last allocation rather than
-> + *	       using up a full new page.
-> + * @list: list entry in the linked list ordered by the memory addresses
->   */
->  typedef struct bootmem_data {
->  	unsigned long node_min_pfn;
-> 
-
-
--- 
-~Randy
+Jason
