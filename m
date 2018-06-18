@@ -2,86 +2,117 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2633C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57448C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7859220852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NgF9nKEi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7859220852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1B4EC20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:13:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B4EC20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934595AbeFRONT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:13:19 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:40402 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933134AbeFRONR (ORCPT
+        id S934834AbeFRON3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:13:29 -0400
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:37824 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934733AbeFRON1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:13:17 -0400
-Received: by mail-pl0-f66.google.com with SMTP id t12-v6so9101948plo.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:13:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=IEgwgEQof0yD7MJNlHDTvloee/uaBX8orQ7UFMT0mjs=;
-        b=NgF9nKEibdFNEd+SL/G4MXRM9EC/VgE/QSX5Ppj5pH/l6cfx0uZFy8OVOqaTepqfGw
-         EzfKDjy9yzO/Ei27JsPo0ZGOUU7pjBdqh0w5yq1qmcYK71wcgSkozpPjT12eQmneiVwW
-         8Cn+5HbA+D8eoO4ek4IyZYdiwe96Dsr0dg0Uw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=IEgwgEQof0yD7MJNlHDTvloee/uaBX8orQ7UFMT0mjs=;
-        b=oGt9/PCDLoUYWGsYD5DzqSuF1RAZbocmcBUHbYyXUgRU9y4aDYapbZ8QEXvGdDChWO
-         FGgxATrZj2hktLPbo0x9qo6jApWM6VCOeerV7CpnsvyFIbmOGuTQa6Yap19U3V6XUWor
-         cLpEGrs9x2XcDHirn1K36mNuvNN4Jwhhwb+mDE1j8qRpVlXMdvxexQ2IlHP36L9EsBh9
-         5CeRr4JTurxxZjefLD5TsVvZgTNKGenemiGjxTb0aYxCi9N8rPjii4briLvVKvnByJwv
-         63Xx6g7M+WPqX0zS11DCkJalKCb/b016V7DgZiNMGI4/qjGp+s0/9VyuT49uSslMrlo2
-         PEvQ==
-X-Gm-Message-State: APt69E2YtdWlAzwctUweBZpJpFFy5uWXkfHxzaKT5CPSjL2qptW1009W
-        GLt5EmAoHZ9CdJ/ttMQoF9uGNt3FC38=
-X-Google-Smtp-Source: ADUXVKJ/06mC2uuS0nnykJCLL0W5pWKIlzogG9bsrkkUB9dqi47UPUXRP0p6747mTvk2QeXbSb46vQ==
-X-Received: by 2002:a17:902:70ca:: with SMTP id l10-v6mr1352203plt.174.1529331197037;
-        Mon, 18 Jun 2018 07:13:17 -0700 (PDT)
-Received: from localhost.localdomain ([27.59.118.133])
-        by smtp.gmail.com with ESMTPSA id t17-v6sm25813339pfj.75.2018.06.18.07.13.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 07:13:16 -0700 (PDT)
-From:   Vinod Koul <vinod.koul@linaro.org>
-X-Google-Original-From: Vinod Koul <vkoul@kernel.org>
-To:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-Subject: [PATCH 0/3]: hwrng: Add support for qcpm v2 hwrng
-Date:   Mon, 18 Jun 2018 19:42:56 +0530
-Message-Id: <20180618141259.23141-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.14.4
+        Mon, 18 Jun 2018 10:13:27 -0400
+X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
+   d="scan'208";a="15039446"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 18 Jun 2018 07:13:26 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.76.4) by
+ chn-sv-exch06.mchp-main.com (10.10.76.107) with Microsoft SMTP Server id
+ 14.3.352.0; Mon, 18 Jun 2018 07:13:23 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <alsa-devel@alsa-project.org>,
+        <nicolas.ferre@microchip.com>, <boris.brezillon@bootlin.com>,
+        <alexandre.belloni@bootlin.com>, <robh+dt@kernel.org>,
+        <broonie@kernel.org>, <sboyd@kernel.org>
+CC:     <Cristian.Birsan@microchip.com>
+Subject: [PATCH v5 1/5] dt-bindings: clk: at91: add an I2S mux clock
+Date:   Mon, 18 Jun 2018 17:12:35 +0300
+Message-ID: <20180618141239.10892-2-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+References: <20180618141239.10892-1-codrin.ciubotariu@microchip.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds support for newer version of hwrng as found in
-Qualcomm SoCs. To do that refactor the msm hwrng driver and add
-support for v2 ops
+The I2S mux clock can be used to select the I2S input clock. The
+available parents are the peripheral and the generated clocks.
 
-Vinod Koul (3):
-  hwrng: msm - Move hwrng to a table
-  dt-bindings: rng: Add new compatible qcom,prng-v2
-  hwrng: msm - Add support for prng v2
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
 
- .../devicetree/bindings/rng/qcom,prng.txt          |  3 +-
- drivers/char/hw_random/msm-rng.c                   | 36 +++++++++++++++-------
- 2 files changed, 27 insertions(+), 12 deletions(-)
+Changes in v5:
+	- specified clock's parent;
+	- added a newline before adding the clock's compatible string;
 
+ .../devicetree/bindings/clock/at91-clock.txt  | 35 +++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/clock/at91-clock.txt b/Documentation/devicetree/bindings/clock/at91-clock.txt
+index 51c259a92d02..d0adbf5ae144 100644
+--- a/Documentation/devicetree/bindings/clock/at91-clock.txt
++++ b/Documentation/devicetree/bindings/clock/at91-clock.txt
+@@ -91,6 +91,9 @@ Required properties:
+ 		at91 audio pll output on AUDIOPLLCLK that feeds the PMC
+ 		and can be used by peripheral clock or generic clock
+ 
++	"atmel,sama5d2-clk-i2s-mux" (under pmc node):
++		at91 I2S clock source selection
++
+ Required properties for SCKC node:
+ - reg : defines the IO memory reserved for the SCKC.
+ - #size-cells : shall be 0 (reg is used to encode clk id).
+@@ -507,3 +510,35 @@ For example:
+ 			atmel,clk-output-range = <0 83000000>;
+ 		};
+ 	};
++
++Required properties for I2S mux clocks:
++- #size-cells : shall be 0 (reg is used to encode I2S bus id).
++- #address-cells : shall be 1 (reg is used to encode I2S bus id).
++- name: device tree node describing a specific mux clock.
++	* #clock-cells : from common clock binding; shall be set to 0.
++	* clocks : shall be the mux clock parent phandles; shall be 2 phandles:
++	  peripheral and generated clock; the first phandle shall belong to the
++	  peripheral clock and the second one shall belong to the generated
++	  clock; "clock-indices" property can be user to specify
++	  the correct order.
++	* reg: I2S bus id of the corresponding mux clock.
++	  e.g. reg = <0>; for i2s0, reg = <1>; for i2s1
++
++For example:
++	i2s_clkmux {
++		compatible = "atmel,sama5d2-clk-i2s-mux";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		i2s0muxck: i2s0_muxclk {
++			clocks = <&i2s0_clk>, <&i2s0_gclk>;
++			#clock-cells = <0>;
++			reg = <0>;
++		};
++
++		i2s1muxck: i2s1_muxclk {
++			clocks = <&i2s1_clk>, <&i2s1_gclk>;
++			#clock-cells = <0>;
++			reg = <1>;
++		};
++	};
 -- 
-2.14.4
+2.17.1
 
