@@ -6,149 +6,98 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CBE6C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 566FEC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F5E1208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:36:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F5E1208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1E731208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E731208A5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934581AbeFRNgn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:36:43 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:54954 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S933527AbeFRNgl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:36:41 -0400
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8AF34401EF16;
-        Mon, 18 Jun 2018 13:36:40 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B7B7410194;
-        Mon, 18 Jun 2018 13:36:37 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 09:36:37 -0400
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     kbuild test robot <lkp@intel.com>, mika.westerberg@linux.intel.com,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
-        dm-devel@redhat.com, Yury Norov <ynorov@caviumnetworks.com>,
-        kbuild-all@01.org, linux-input@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shaohua Li <shli@kernel.org>, Alasdair Kergon <agk@redhat.com>
-Subject: Re: [PATCH v2 1/5] md: Avoid namespace collision with bitmap API
-Message-ID: <20180618133637.GB25400@redhat.com>
-References: <20180615132017.23889-2-andriy.shevchenko@linux.intel.com>
- <201806152251.xRJyWhS2%fengguang.wu@intel.com>
- <e4524ae9650c308245ecf398a0c27c6f7924be03.camel@linux.intel.com>
+        id S934670AbeFRNhG convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:37:06 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:37640 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933818AbeFRNhF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:37:05 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CFF7520798; Mon, 18 Jun 2018 15:37:03 +0200 (CEST)
+Received: from xps13 (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 82FED20703;
+        Mon, 18 Jun 2018 15:37:03 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 15:37:03 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc:     boris.brezillon@bootlin.com, dwmw2@infradead.org,
+        computersforpeace@gmail.com, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Richard Weinberger <richard@nod.at>,
+        Marek Vasut <marek.vasut@gmail.com>
+Subject: Re: [RFC PATCH 2/2] mtd: rawnand: marvell: Support page size of
+ 2048 with 8-bit ECC
+Message-ID: <20180618153703.77bc01c1@xps13>
+In-Reply-To: <20180618045255.8015-3-chris.packham@alliedtelesis.co.nz>
+References: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
+        <20180618045255.8015-3-chris.packham@alliedtelesis.co.nz>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e4524ae9650c308245ecf398a0c27c6f7924be03.camel@linux.intel.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.11.54.5
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 18 Jun 2018 13:36:40 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.5]); Mon, 18 Jun 2018 13:36:40 +0000 (UTC) for IP:'10.11.54.5' DOMAIN:'int-mx05.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'msnitzer@redhat.com' RCPT:''
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15 2018 at 10:58am -0400,
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+Hi Chris,
 
-> On Fri, 2018-06-15 at 23:09 +0800, kbuild test robot wrote:
-> > Hi Andy,
-> > 
-> > I love your patch! Yet something to improve:
+On Mon, 18 Jun 2018 16:52:55 +1200, Chris Packham
+<chris.packham@alliedtelesis.co.nz> wrote:
+
+> The MT29F1G08ABAFAWP-ITE:F chip has 2048 byte pages and requires a
+> minimum ECC strength of 8-bits. Allow for this combination of
+> requirements using the marvell_nand controller.
 > 
-> Thanks!
+> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> ---
+> I've tried to follow the recommended AN-379 from Marvell. They do seem
+> to have information that covers this particular set of chip requirements
+> but I'm not confident I've translated their code correctly into the
+> current marvell_nand implementation.
 > 
-> I fixed that locally (definitely that module wasn't compiled by
-> default). Though I would wait to gather more comments before sending v3.
+> This is enough to make the nand_scan work but ubi/ubifs fails to initialise
+> and/or mount so I may have something completely wrong. This may also be
+> because this chip has internal ECC enabled which cannot be disabled. I
+> turned up an old thread on this from April last year[1] but I didn't see
+> anything resulting from this. Can this combination of ECC
+> implementations even co-exist?
 > 
-
-Hi,
-
-DM is not MD.  drivers/md/persistent-data/* is only used by DM.
-
-Please rename all the drivers/md/persistent-data/ changes to use a
-"dm_bitmap" prefix.
-
-Thanks,
-Mike
-
-> > [auto build test ERROR on next-20180615]
-> > [also build test ERROR on v4.17]
-> > [cannot apply to md/for-next linus/master dm/for-next v4.17 v4.17-rc7
-> > v4.17-rc6]
-> > [if your patch is applied to the wrong git tree, please drop us a note
-> > to help improve the system]
-> > 
-> > url:    https://github.com/0day-ci/linux/commits/Andy-Shevchenko/bitma
-> > p-Introduce-alloc-free-helpers/20180615-214724
-> > config: i386-randconfig-b0-06141412 (attached as .config)
-> > compiler: gcc-4.9 (Debian 4.9.4-2) 4.9.4
-> > reproduce:
-> >         # save the attached .config to linux build tree
-> >         make ARCH=i386 
-> > 
-> > All errors (new ones prefixed by >>):
-> > 
-> > > > drivers/md/persistent-data/dm-space-map-common.c:111:23: error:
-> > > > 'bitmap_prepare_for_write' undeclared here (not in a function)
-> > 
-> >      .prepare_for_write = bitmap_prepare_for_write,
-> >                           ^
-> > > > drivers/md/persistent-data/dm-space-map-common.c:112:11: error:
-> > > > 'bitmap_check' undeclared here (not in a function)
-> > 
-> >      .check = bitmap_check
-> >               ^
-> >    drivers/md/persistent-data/dm-space-map-common.c:72:13: warning:
-> > 'md_bitmap_prepare_for_write' defined but not used [-Wunused-function]
-> >     static void md_bitmap_prepare_for_write(struct dm_block_validator
-> > *v,
-> >                 ^
-> >    drivers/md/persistent-data/dm-space-map-common.c:84:12: warning:
-> > 'md_bitmap_check' defined but not used [-Wunused-function]
-> >     static int md_bitmap_check(struct dm_block_validator *v,
-> >                ^
-> > 
-> > vim +/bitmap_prepare_for_write +111 drivers/md/persistent-data/dm-
-> > space-map-common.c
-> > 
-> > 3241b1d3 Joe Thornber 2011-10-31  108  
-> > 3241b1d3 Joe Thornber 2011-10-31  109  static struct
-> > dm_block_validator dm_sm_bitmap_validator = {
-> > 3241b1d3 Joe Thornber 2011-10-31  110  	.name = "sm_bitmap",
-> > 3241b1d3 Joe Thornber 2011-10-31 @111  	.prepare_for_write =
-> > bitmap_prepare_for_write,
-> > 3241b1d3 Joe Thornber 2011-10-31 @112  	.check = bitmap_check
-> > 3241b1d3 Joe Thornber 2011-10-31  113  };
-> > 3241b1d3 Joe Thornber 2011-10-31  114  
-> > 
-> > :::::: The code at line 111 was first introduced by commit
-> > :::::: 3241b1d3e0aaafbfcd320f4d71ade629728cc4f4 dm: add persistent
-> > data library
-> > 
-> > :::::: TO: Joe Thornber <thornber@redhat.com>
-> > :::::: CC: Alasdair G Kergon <agk@redhat.com>
-> > 
-> > ---
-> > 0-DAY kernel test infrastructure                Open Source Technology
-> > Center
-> > https://lists.01.org/pipermail/kbuild-all                   Intel
-> > Corporation
+> [1] - http://lists.infradead.org/pipermail/linux-mtd/2017-April/073370.html
 > 
-> -- 
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Intel Finland Oy
+>  drivers/mtd/nand/raw/marvell_nand.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> --
-> dm-devel mailing list
-> dm-devel@redhat.com
-> https://www.redhat.com/mailman/listinfo/dm-devel
+> diff --git a/drivers/mtd/nand/raw/marvell_nand.c b/drivers/mtd/nand/raw/marvell_nand.c
+> index ebb1d141b900..5712df553a8e 100644
+> --- a/drivers/mtd/nand/raw/marvell_nand.c
+> +++ b/drivers/mtd/nand/raw/marvell_nand.c
+> @@ -217,6 +217,7 @@ static const struct marvell_hw_ecc_layout marvell_nfc_layouts[] = {
+>  	MARVELL_LAYOUT(  512,   512,  1,  1,  1,  512,  8,  8,  0,  0,  0),
+>  	MARVELL_LAYOUT( 2048,   512,  1,  1,  1, 2048, 40, 24,  0,  0,  0),
+>  	MARVELL_LAYOUT( 2048,   512,  4,  1,  1, 2048, 32, 30,  0,  0,  0),
+> +	MARVELL_LAYOUT( 2048,   512,  8,  1,  1, 1024, 0, 30,  1024,  32,  30),
+
+I suppose you should not use HW_ECC for this chip. Hence this line is
+useless. However I think it should be:
+
+	MARVELL_LAYOUT( 2048,   512,  8,  2,  1, 1024, 0, 30, 1024, 32,	30),
+
+                                          ^
+
+>  	MARVELL_LAYOUT( 4096,   512,  4,  2,  2, 2048, 32, 30,  0,  0,  0),
+>  	MARVELL_LAYOUT( 4096,   512,  8,  5,  4, 1024,  0, 30,  0, 64, 30),
+>  };
+
+Regards,
+Miquèl
