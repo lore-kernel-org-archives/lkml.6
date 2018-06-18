@@ -2,146 +2,127 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7836C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56395C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8947820852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8947820852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1DE6A20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DE6A20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935061AbeFROdF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:33:05 -0400
-Received: from mail-it0-f70.google.com ([209.85.214.70]:39804 "EHLO
-        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934882AbeFROdD (ORCPT
+        id S935148AbeFROdP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:33:15 -0400
+Received: from mout.kundenserver.de ([212.227.126.131]:33837 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935072AbeFROdM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:33:03 -0400
-Received: by mail-it0-f70.google.com with SMTP id o7-v6so8448636itf.4
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:33:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Cepo5oeo3tzRCJ2FcewOumPG1eGPriC7kCbPj6fUDAc=;
-        b=VmTAKRH7EWxrB4FdP8BBX1H8zPY7hskrvJqbnhkHk5Qv5FrbiYe/Ab7a+cFM7fb43c
-         2TGqxCB+bFBEBbBYqXCw2z9Li0e2XqCb295a593LGBLelYqM2b36D+6Nj1mZyIQh4PJn
-         65UVTAMnmmEcdGZ9ilkVB+AG0wF717zDqnltyqPdVguQLwAs7P6WFgEOyrVtVvl2XM35
-         MfPdoHfeOInGg3B+/yARa+QIUhzhx90gK3OSEoyyrY3BEtrTUjFxDx0Y1FBRghJjHOFh
-         /omvz1y+CVBQAsdxVdW0Wah+sePq544wh/QaP7YmckPbAJNO6mMQAJu94o8pay7kVfvC
-         FIjg==
-X-Gm-Message-State: APt69E1LeTpLxz5/FfWaG9iNKb5SzalkHZt+czzkmXJc1hb+idGyzURT
-        q+eUyYSdfqcTq87nMsgp9rxz78xrwuRuBerqLLqwou06+WEo
-X-Google-Smtp-Source: ADUXVKL+TnWRfzT/jYG8MgYQUeknhM0dqi0YpWNsIDBwxNZFT8y+8xf8BfCyd9aNZEzJKvKAEFft7l983PlVO3vkJ8l95rMHt/0s
-MIME-Version: 1.0
-X-Received: by 2002:a24:42cf:: with SMTP id i198-v6mr5000297itb.9.1529332382717;
- Mon, 18 Jun 2018 07:33:02 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 07:33:02 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000006a6282056eeb71da@google.com>
-Subject: general protection fault in loop_validate_file
-From:   syzbot <syzbot+2f228435b0b9ec0ba068@syzkaller.appspotmail.com>
-To:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Mon, 18 Jun 2018 10:33:12 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue005 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0Mcj5x-1fmB700mET-00Htdb; Mon, 18 Jun 2018 16:32:47 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Thomas Gleixner <tglx@linutronix.de>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] posix-timers: Use new ktime_get_*_ts64() helpers
+Date:   Mon, 18 Jun 2018 16:32:24 +0200
+Message-Id: <20180618143246.3865099-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:6bdONtQglpD7vXCZAWKArAanS0s6iJC5f39/7U5GGeHM58V24+M
+ WN5t1/kgBWJZNiqzZf+Nm17hIRuoZ0ooEbtW5TOM+AKXkj+A8iq1A7yLc6mP9AlWcn7uvar
+ Nq9rHU8NWBgnXDd1tGF4ZzAMoGxMyhhsBjYCACxzAR2fnW9g/0frsvv2+iYvqDpy8bp/dS3
+ Kyg1I/nW9yXvGTsrFmqEw==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:lNxvMUgOGuc=:C/SAJ7m79JrPM4iFanYgy3
+ 7xMvUNod/qSM6c+o8LzW6U4NpRAPoV4MCqyynVKNpLxcdC/0X5yRMCBgwPfrHlXHeb3FRZ9z7
+ ca08QI2JuKc9Jnr17dgJ24SiNBNCrhWoihDiWX4mrie5hE7zsNaHMNsVVFUzyICSNlBw3qYJK
+ sgKHY6AzxnY2rI59I6WjAQBE0Aj/D2S1M7FArsqun/OroAEcH7V7AHpRCV/Kzf2KLXVGct4QS
+ o14862BFUg8Ed/7vORYPl4LwdWuLXN+TtqjA2py2mZKLy/9MBvgcoq3fSd6p4M6km0kwxqGBK
+ DER5JAcLbheJq27nNJiWD1Xf0Gx8/Mve59gxtAnDiYcSMAIhXT0ZmQwIuDKeGmD+5F7GdNmZu
+ JWNx7MutidMMzIkn0btBIChNEOytDseA92tPHjgESM8lmZou84Qpa1RucoJi04W9l1m3ZxC6r
+ Ey6lzOpqqh88gkq3t6VjS1Mo/xYcftTOiOjKM4lyvXq7QrtgXfY17eyQy9eg8beX8Rs6wSrLt
+ ewoipF04norHHAUzdBIO9Sm8Y9H7GVuPCbsCQu9EW/QOPOwbL4dRMpUZV9P0H5vFQDxIB04ZF
+ WHojXP1YRcJF7hHP50hdJVSuXkmVa5jW7B1BAJ2ILddY0dpmLr+vWCeTN7zyzFpH17Mdlb5YF
+ L555Uc/IoyA7SyF7Vocge+R7r9hk2VIGojEXkps4/TsMnvmdwbmKxZZ/erE1q9RZ12+k=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Some of the oddly named time accessor functions now have a more
+consistent naming, which should be used from now on so we can
+remove the aliases.
 
-syzbot found the following crash on:
-
-HEAD commit:    ce397d215ccd Linux 4.18-rc1
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=129dfccf800000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f390986c4f7cd566
-dashboard link: https://syzkaller.appspot.com/bug?extid=2f228435b0b9ec0ba068
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-
-Unfortunately, I don't have any reproducer for this crash yet.
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2f228435b0b9ec0ba068@syzkaller.appspotmail.com
-
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] SMP KASAN
-CPU: 0 PID: 16780 Comm: syz-executor1 Not tainted 4.18.0-rc1+ #107
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-RIP: 0010:loop_validate_file+0x247/0x470 drivers/block/loop.c:664
-Code: 00 00 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2e 02 00 00 4d 8b a4 24  
-f0 00 00 00 49 8d bc 24 b8 01 00 00 48 89 f8 48 c1 e8 03 <80> 3c 18 00 0f  
-85 03 02 00 00 4d 8b a4 24 b8 01 00 00 4c 89 e0 48
-RSP: 0018:ffff8801b2f2f8f8 EFLAGS: 00010202
-RAX: 0000000000000037 RBX: dffffc0000000000 RCX: ffffc90002a12000
-RDX: 0000000000000047 RSI: ffffffff84c20bf7 RDI: 00000000000001b8
-RBP: ffff8801b2f2f918 R08: ffff8801c9498380 R09: ffffed003b5c46d6
-R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff8801b38f71c0 R14: 0000000000000002 R15: ffff8801cfb60500
-FS:  00007f40b01d1700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f222000 CR3: 00000001c542a000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
-  loop_set_fd drivers/block/loop.c:928 [inline]
-  lo_ioctl+0x54d/0x1d10 drivers/block/loop.c:1411
-  __blkdev_driver_ioctl block/ioctl.c:303 [inline]
-  blkdev_ioctl+0x9cd/0x2030 block/ioctl.c:601
-  block_ioctl+0xee/0x130 fs/block_dev.c:1880
-  vfs_ioctl fs/ioctl.c:46 [inline]
-  file_ioctl fs/ioctl.c:500 [inline]
-  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
-  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
-  __do_sys_ioctl fs/ioctl.c:708 [inline]
-  __se_sys_ioctl fs/ioctl.c:706 [inline]
-  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x455b29
-Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f40b01d0c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f40b01d16d4 RCX: 0000000000455b29
-RDX: 0000000000000014 RSI: 0000000000004c00 RDI: 0000000000000015
-RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 00000000004be118 R14: 00000000004cc118 R15: 0000000000000000
-Modules linked in:
-Dumping ftrace buffer:
-    (ftrace buffer empty)
----[ end trace 3a5a065777b1499b ]---
-RIP: 0010:loop_validate_file+0x247/0x470 drivers/block/loop.c:664
-Code: 00 00 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2e 02 00 00 4d 8b a4 24  
-f0 00 00 00 49 8d bc 24 b8 01 00 00 48 89 f8 48 c1 e8 03 <80> 3c 18 00 0f  
-85 03 02 00 00 4d 8b a4 24 b8 01 00 00 4c 89 e0 48
-RSP: 0018:ffff8801b2f2f8f8 EFLAGS: 00010202
-RAX: 0000000000000037 RBX: dffffc0000000000 RCX: ffffc90002a12000
-RDX: 0000000000000047 RSI: ffffffff84c20bf7 RDI: 00000000000001b8
-RBP: ffff8801b2f2f918 R08: ffff8801c9498380 R09: ffffed003b5c46d6
-R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff8801b38f71c0 R14: 0000000000000002 R15: ffff8801cfb60500
-FS:  00007f40b01d1700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b2f222000 CR3: 00000001c542a000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ kernel/time/posix-stubs.c  |  2 +-
+ kernel/time/posix-timers.c | 10 +++++-----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/kernel/time/posix-stubs.c b/kernel/time/posix-stubs.c
+index 26203a705011..706e2c7338d2 100644
+--- a/kernel/time/posix-stubs.c
++++ b/kernel/time/posix-stubs.c
+@@ -81,7 +81,7 @@ int do_clock_gettime(clockid_t which_clock, struct timespec64 *tp)
+ 		ktime_get_ts64(tp);
+ 		break;
+ 	case CLOCK_BOOTTIME:
+-		get_monotonic_boottime64(tp);
++		ktime_get_boottime_ts64(tp);
+ 		break;
+ 	default:
+ 		return -EINVAL;
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 4cb8316bb042..234fb699caf1 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -228,21 +228,21 @@ static int posix_ktime_get_ts(clockid_t which_clock, struct timespec64 *tp)
+  */
+ static int posix_get_monotonic_raw(clockid_t which_clock, struct timespec64 *tp)
+ {
+-	getrawmonotonic64(tp);
++	ktime_get_raw_ts64(tp);
+ 	return 0;
+ }
+ 
+ 
+ static int posix_get_realtime_coarse(clockid_t which_clock, struct timespec64 *tp)
+ {
+-	*tp = current_kernel_time64();
++	ktime_get_coarse_real_ts64(tp);
+ 	return 0;
+ }
+ 
+ static int posix_get_monotonic_coarse(clockid_t which_clock,
+ 						struct timespec64 *tp)
+ {
+-	*tp = get_monotonic_coarse64();
++	ktime_get_coarse_ts64(tp);
+ 	return 0;
+ }
+ 
+@@ -254,13 +254,13 @@ static int posix_get_coarse_res(const clockid_t which_clock, struct timespec64 *
+ 
+ static int posix_get_boottime(const clockid_t which_clock, struct timespec64 *tp)
+ {
+-	get_monotonic_boottime64(tp);
++	ktime_get_boottime_ts64(tp);
+ 	return 0;
+ }
+ 
+ static int posix_get_tai(clockid_t which_clock, struct timespec64 *tp)
+ {
+-	timekeeping_clocktai64(tp);
++	ktime_get_clocktai_ts64(tp);
+ 	return 0;
+ }
+ 
+-- 
+2.9.0
+
