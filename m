@@ -2,156 +2,232 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC811C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCEBC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92BE220864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:22:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="LQxgY2Pe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92BE220864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 97E05208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:23:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E05208B1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754714AbeFRPWi (ORCPT
+        id S1754940AbeFRPXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:22:38 -0400
-Received: from smtprelay.synopsys.com ([198.182.37.59]:42284 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1750910AbeFRPWg (ORCPT
+        Mon, 18 Jun 2018 11:23:11 -0400
+Received: from mout.kundenserver.de ([217.72.192.74]:59731 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1750910AbeFRPXJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:22:36 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 1414F1E04F7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 17:22:35 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529335355; bh=j8bpD2P10Hw8KsaNJZo7pwdYbCn/Fa2xcyJgnfZo/1E=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=LQxgY2PeO/D/N8QJvtRZfpAJ0CbzezBPsysahOWyEQmLqx6+2uCM85zHZALLAfQR5
-         crXWxNRYzb92UYTc4K4kRZ29ieaI3pASKmzYpTmUxHfa1FU6KNrR76tPahSPn984zw
-         lMKV4OYr5lKPhFUf/+JzO6JAOI91zvHrjOme4ZVbyV3fqwGvIZwSnfLExSpc5S1DIn
-         EJYy+xSGm6GMCADwg8CAI5R3KGxhmRAabWVwyBVLSXd2qlXz0JIGgmyCaUeyNmeuHc
-         QrF2O85Af+t/UmGBzRbBz2jsKWkTJ7S2N42/ukgmNdCPlMepd2tthf29j3ThYMzjx0
-         nSOwH0y3cXvYw==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2.internal.synopsys.com [10.12.239.237])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 72D66583A;
-        Mon, 18 Jun 2018 08:22:34 -0700 (PDT)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 18 Jun 2018 08:20:50 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCB.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 18 Jun 2018 17:20:47 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: Re: [PATCH] ARC: Add PCIe support for ARC HSDK platform
-Thread-Topic: [PATCH] ARC: Add PCIe support for ARC HSDK platform
-Thread-Index: AQHUBxUCRm/JCNyjD0Wi++lZvsvcaKRmACsA
-Date:   Mon, 18 Jun 2018 15:20:46 +0000
-Message-ID: <ba4b10e967fb39d18eba7a5c70abb167308481f5.camel@synopsys.com>
-References: <3e9a2f384fd831fb2639ad99ec43ce0f019ac17c.1529333762.git.gustavo.pimentel@synopsys.com>
-In-Reply-To: <3e9a2f384fd831fb2639ad99ec43ce0f019ac17c.1529333762.git.gustavo.pimentel@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.121.8.87]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <56FB54FF338EB24BB3236994BEF0B834@internal.synopsys.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
+        Mon, 18 Jun 2018 11:23:09 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue104 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0M8iqK-1fNFxj1kUu-00C6RC; Mon, 18 Jun 2018 17:22:47 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Steffen Klassert <steffen.klassert@secunet.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Florian Westphal <fw@strlen.de>,
+        Eric Dumazet <edumazet@google.com>,
+        Kirill Tkhai <ktkhai@virtuozzo.com>,
+        Lorenzo Colitti <lorenzo@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 1/3] xfrm: use time64_t for in-kernel timestamps
+Date:   Mon, 18 Jun 2018 17:22:13 +0200
+Message-Id: <20180618152242.1566661-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:YDM89EYLc97ArtFrjQTZBNvz2IcWh0tqsY+SSdl47X9836aok9V
+ a8FMh1HsyU8JZhh/h9kyhL5vSol5FDtB0FswCmZ3lH72pM7/ckTWMdRSOXD/ysaDTJjo4qE
+ FcxfClAxpiTFc9IIT8oRBpjPZ0l7N4QJAimAxXH/u6AMEcMY6oSIThLmJaWyJtwLNvwWHEW
+ 4fil9jJG8uBYZDibuKNNg==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:rBt5a3aPgVA=:T4lqh41oShp+kH2mVwezeB
+ uvPeeKtcvyfCXGs6ye2QSXdBAMtWW0mfcrZ+KUkAinOQ+EYUkIjJTGyi7ql08Wl0XRpg5y+l+
+ gGXmD3wj9bWUGyexbKJ/8h/3rRsAqsICP0qYzSY90N8X+vscxJhwfPeVtfMnEmLB2uL6i4v3L
+ 9u/S2ikNbFvSAa/ApazOwUY9MBDlDHBYm1q/J7cKYAMG7qr4keaBE3bwFU5WLzVfsy7NmSCqF
+ g1ueTk9JEcaiWb9MxvNxgL6igHAO3qEeasJwluQkDlnHTYQTxVLydU+fzvIpj01W7Ni1/WUf7
+ CE5axfQYCEZLWiY59uZXYUQ1GgSULrmHk/JxTq3Z4m/DiIpIVHiPr3Y12zS+9gi+gAJNEsk1m
+ ZMnaVuUTPTqO409/mIp1/zw2sMvc3docPLiPrdDIjYNieSn4NcdCf5Vt9/rsKwMUqJHoynobs
+ pb1p1q/0gn91oALWwlbH/mjFOrnTKLqKQRm4bpG5Vu5NxxgY9rT3gIi5uxMkQOqZFOXdDLG+W
+ s837/EUzPT0JO7hLlGnG9FiwDnDqFuKgYKKVvSJHVRBxj9CuW9h427CrXsVzPBVjPAr/AxSEu
+ RT50ZKz6jrseP7jlXCFlUvbc1FMCzqND78kkiEj34tFtyJX0d7jkDUY0wXj1q7qbmUkjrps+Q
+ Zf/8okQOU5Ppk+b6BWkPvp6aoKkNBl0jwwuAuJBDLQ2CJG9VCrXt72FzsBWmpDJQFKsw=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgR3VzdGF2bywNCg0KT24gTW9uLCAyMDE4LTA2LTE4IGF0IDE1OjU5ICswMTAwLCBHdXN0YXZv
-IFBpbWVudGVsIHdyb3RlOg0KPiBBZGQgUENJIHN1cHBvcnQgdG8gdGhlIEFSQyBIU0RLIHBsYXRm
-b3JtIGFsbG93aW5nIHRvIHVzZSB0aGUgZ2VuZXJpYyBQQ0kNCj4gc2V0dXAgZnVuY3Rpb25zLg0K
-DQpUaGlzIGlzIHRoZSBmaXJzdCBsb2dpY2FsbHkgaW5kZXBlbmRlbnQgY2hhbmdlLCBzbyBwdXQg
-aXQgaW4gYSBzZXBhcmF0ZSBwYXRjaC4NCg0KPiBBZGQgR1BJTyBpbnRlcnJ1cHQgY29uZmlndXJh
-dGlvbiBmdW5jdGlvbiBvbiBBUkMgSFNESyBwbGF0Zm9ybSBhbmQNCj4gY29uZmlndXJlcyBpdCB0
-byBQQ0kgc3VwcG9ydC4NCg0KVGhhdCdzIHRoZSBzZWNvbmQgY2hhbmdlIHdoaWNoIGlzIG5vdCBk
-aXJlY3RseSB0aWVkIHRvIHRoZSBmaXJzdCBvbmUNCnNvIHBsZWFzZSBwdXQgaXQgaW4gYSBzZXBh
-cmF0ZSBwYXRjaC4NCg0KVGhhbiBhcyBjb21wYXJlZCB0byB0aGUgZmlyc3QgW3Zlcnkgc2ltcGxl
-IGFuZCBvYnZpb3VzXSBjaGFuZ2UgdGhpcw0Kb25lIHdhcnJhbnRzIG1vcmUgdmVyYm9zZSBqdXN0
-aWZpY2F0aW9uLg0KDQoxLiBJTUhPIGl0IHdvcnRoIGFkZGluZyBtb3JlIGluZm8gdG8gY29tbWl0
-IG1lc3NhZ2UgZXhwbGFpbmluZyB3aGF0IHByb2JsZW0NCiAgIHlvdSdyZSBzb2x2aW5nIGFuZCB3
-aHkgeW91IGRvIGl0IGluIHRoaXMgcGFydGljdWxhciB3YXkuDQogICBJbiBjYXNlIG9mIEhTREsg
-d2UgaGF2ZSBpbnRlcm1lZGlhdGUgSU5UQyBpbiBmb3Igb2YgRFcgQVBCIEdQSU8gY29udHJvbGxl
-cg0KICAgd2hpY2ggaXMgdXNlZCBhcyBhIGRlLWJvdW5jZSBsb2dpYyBmb3IgaW50ZXJydXB0IHdp
-cmVzIHRoYXQgY29tZSBmcm9tIG91dHNpZGUgdGhlIGJvYXJkLg0KICAgV2UgY2Fubm90IHVzZSBl
-eGlzdGluZyAiaXJxLWR3LWFwYi1pY3RsIiBkcml2ZXIgaGVyZSBiZWNhdXNlIGFsbCBpbnB1dCBs
-aW5lcw0KICAgYXJlIHJvdXRlZCB0byBjb3JyZXNwb25kaW5nIG91dHB1dCBsaW5lcyBidXQgbm90
-IG11eGVkIGludG8gb25lIGxpbmUgKHRoaXMgaXMNCiAgIGNvbmZpZ3VyZWQgaW4gUlRMIGFuZCB3
-ZSBjYW5ub3QgY2hhbmdlIHRoaXMgaW4gc29mdHdhcmUpLiBCdXQgZXZlbiBpZiB3ZSBhZGQgc3Vj
-aA0KICAgYSBmZWF0dXJlIHRvICJpcnEtZHctYXBiLWljdGwiIGRyaXZlciB0aGF0IHdvbid0IGJl
-bmVmaXQgdXMgYXMgaGlnaGVyLWxldmVsIElOVEMNCiAgIChpbiBjYXNlIG9mIEhTREsgaXQgaXMg
-SURVKSBhbnl3YXlzIGhhcyBwZXItaW5wdXQgY29udHJvbCBzbyBhZGRpbmcgZnVsbHktY29udHJv
-bGxlcg0KICAgaW50ZXJtZWRpYXRlIElOVEMgd2lsbCBvbmx5IGJyaW5nIHNvbWUgb3ZlcmhlYWQg
-b24gaW50ZXJydXB0IHByb2Nlc3NpbmcgYnV0IG5vIG90aGVyDQogICBiZW5lZml0cy4NCiAgIFRo
-dXMgd2UganVzdCBkbyBvbmUtdGltZSBjb25maWd1cmF0aW9uIG9mIERXIEFQUCBHUElPIGNvbnRy
-b2xsZXIgYW5kIGZvcmdldCBhYm91dCBpdC4NCg0KDQo+IFNpZ25lZC1vZmYtYnk6IEd1c3Rhdm8g
-UGltZW50ZWwgPGd1c3Rhdm8ucGltZW50ZWxAc3lub3BzeXMuY29tPg0KPiAtLS0NCj4gIGFyY2gv
-YXJjL3BsYXQtaHNkay9LY29uZmlnICAgIHwgIDEgKw0KPiAgYXJjaC9hcmMvcGxhdC1oc2RrL3Bs
-YXRmb3JtLmMgfCA0MSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKw0K
-PiAgMiBmaWxlcyBjaGFuZ2VkLCA0MiBpbnNlcnRpb25zKCspDQo+IA0KPiBkaWZmIC0tZ2l0IGEv
-YXJjaC9hcmMvcGxhdC1oc2RrL0tjb25maWcgYi9hcmNoL2FyYy9wbGF0LWhzZGsvS2NvbmZpZw0K
-PiBpbmRleCAxOWFiM2NmLi41NTZiYzVlIDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FyYy9wbGF0LWhz
-ZGsvS2NvbmZpZw0KPiArKysgYi9hcmNoL2FyYy9wbGF0LWhzZGsvS2NvbmZpZw0KPiBAQCAtOSwz
-ICs5LDQgQEAgbWVudWNvbmZpZyBBUkNfU09DX0hTREsNCj4gIAlib29sICJBUkMgSFMgRGV2ZWxv
-cG1lbnQgS2l0IFNPQyINCj4gIAlzZWxlY3QgQ0xLX0hTREsNCj4gIAlzZWxlY3QgUkVTRVRfSFNE
-Sw0KPiArCXNlbGVjdCBNSUdIVF9IQVZFX1BDSQ0KPiBkaWZmIC0tZ2l0IGEvYXJjaC9hcmMvcGxh
-dC1oc2RrL3BsYXRmb3JtLmMgYi9hcmNoL2FyYy9wbGF0LWhzZGsvcGxhdGZvcm0uYw0KPiBpbmRl
-eCAyOTU4YWVkLi4zMWFkZGE3IDEwMDY0NA0KPiAtLS0gYS9hcmNoL2FyYy9wbGF0LWhzZGsvcGxh
-dGZvcm0uYw0KPiArKysgYi9hcmNoL2FyYy9wbGF0LWhzZGsvcGxhdGZvcm0uYw0KPiBAQCAtNDIs
-NiArNDIsNDUgQEAgc3RhdGljIHZvaWQgX19pbml0IGhzZGtfaW5pdF9wZXJfY3B1KHVuc2lnbmVk
-IGludCBjcHUpDQo+ICAjZGVmaW5lIFNESU9fVUhTX1JFR19FWFQJKFNESU9fQkFTRSArIDB4MTA4
-KQ0KPiAgI2RlZmluZSBTRElPX1VIU19SRUdfRVhUX0RJVl8yCSgyIDw8IDMwKQ0KPiAgDQo+ICsj
-ZGVmaW5lIEhTREtfR1BJT19JTlRDICAgICAgICAgIChBUkNfUEVSSVBIRVJBTF9CQVNFICsgMHgz
-MDAwKQ0KPiArI2RlZmluZSBHUElPX0lOVEVOICAgICAgICAgICAgICAoSFNES19HUElPX0lOVEMg
-KyAweDMwKQ0KPiArI2RlZmluZSBHUElPX0lOVE1BU0sgICAgICAgICAgICAoSFNES19HUElPX0lO
-VEMgKyAweDM0KQ0KPiArI2RlZmluZSBHUElPX0lOVFRZUEVfTEVWRUwgICAgICAoSFNES19HUElP
-X0lOVEMgKyAweDM4KQ0KPiArI2RlZmluZSBHUElPX0lOVF9QT0xBUklUWSAgICAgICAoSFNES19H
-UElPX0lOVEMgKyAweDNjKQ0KPiArDQo+ICsjZGVmaW5lIEdQSU9fQkxVRVRPT1RIX0lOVAkweDAw
-MDAwMDAxDQo+ICsjZGVmaW5lIEdQSU9fSEFQU19JTlQJCTB4MDAwMDAwMDQNCj4gKyNkZWZpbmUg
-R1BJT19BVURJT19JTlQJCTB4MDAwMDAwMDgNCj4gKy8qIFBNT0RfQSBoZWFkZXIgKi8NCj4gKyNk
-ZWZpbmUgR1BJT19QSU5fMDhfSU5UCQkweDAwMDAwMTAwDQo+ICsjZGVmaW5lIEdQSU9fUElOXzA5
-X0lOVAkJMHgwMDAwMDIwMA0KPiArI2RlZmluZSBHUElPX1BJTl8xMF9JTlQJCTB4MDAwMDA0MDAN
-Cj4gKyNkZWZpbmUgR1BJT19QSU5fMTFfSU5UCQkweDAwMDAwODAwDQo+ICsvKiBQTU9EX0IgaGVh
-ZGVyICovDQo+ICsjZGVmaW5lIEdQSU9fUElOXzEyX0lOVAkJMHgwMDAwMTAwMA0KPiArI2RlZmlu
-ZSBHUElPX1BJTl8xM19JTlQJCTB4MDAwMDIwMDANCj4gKyNkZWZpbmUgR1BJT19QSU5fMTRfSU5U
-CQkweDAwMDA0MDAwDQo+ICsjZGVmaW5lIEdQSU9fUElOXzE1X0lOVAkJMHgwMDAwODAwMA0KPiAr
-LyogUE1PRF9DIGhlYWRlciAqLw0KPiArI2RlZmluZSBHUElPX1BJTl8xNl9JTlQJCTB4MDAwMTAw
-MDANCj4gKyNkZWZpbmUgR1BJT19QSU5fMTdfSU5UCQkweDAwMDIwMDAwDQo+ICsjZGVmaW5lIEdQ
-SU9fUElOXzE4X0lOVAkJMHgwMDA0MDAwMA0KPiArI2RlZmluZSBHUElPX1BJTl8xOV9JTlQJCTB4
-MDAwODAwMDANCj4gKyNkZWZpbmUgR1BJT19QSU5fMjBfSU5UCQkweDAwMTAwMDAwDQo+ICsjZGVm
-aW5lIEdQSU9fUElOXzIxX0lOVAkJMHgwMDIwMDAwMA0KPiArI2RlZmluZSBHUElPX1BJTl8yMl9J
-TlQJCTB4MDA0MDAwMDANCj4gKyNkZWZpbmUgR1BJT19QSU5fMjNfSU5UCQkweDAwODAwMDAwDQoN
-CkNvdWxkIHlvdSBwbGVhc2UgcnVuIHlvdXIgcGF0Y2ggdGhyb3VnaCBjaGVja3BhdGNoLnBsPw0K
-SGVyZSBJIGd1c3MgbmV3bGluZSBpcyBtaXNzaW5nLg0KDQpBbHNvIHdoeSBhZGRpbmcgdGhvc2Ug
-bWFueSBkZWZpbmVzIGlmIHRoZXkgYXJlIG5vdCByZWFsbHkgdXNlZA0KYW55d2hlcmU/DQoNCklu
-c3RlYWQgbWF5YmUganVzdCBhZGQgbW9yZSBpbmZvcm1hdGl2ZSBwc2V1ZG8tZ3JhcGhpY3MgYXMg
-d2UNCmhhdmUgaW4gYXhzMTB4IHBsYXRmb3JtPyBTZWUNCmh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcv
-cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L3RvcnZhbGRzL2xpbnV4LmdpdC90cmVlL2FyY2gvYXJj
-L3BsYXQtYXhzMTB4L2F4czEweC5jDQoNCj4gK3N0YXRpYyB2b2lkIF9faW5pdCBoc2RrX2VuYWJs
-ZV9ncGlvX2ludGNfd2lyZSh2b2lkKQ0KPiArew0KPiArCXUzMiB2YWwgPSBHUElPX0hBUFNfSU5U
-Ow0KPiArDQo+ICsJaW93cml0ZTMyKDB4ZmZmZmZmZmYsICh2b2lkIF9faW9tZW0gKikgR1BJT19J
-TlRNQVNLKTsNCj4gKwlpb3dyaXRlMzIofnZhbCwgKHZvaWQgX19pb21lbSAqKSBHUElPX0lOVE1B
-U0spOw0KPiArCWlvd3JpdGUzMigweDAwMDAwMDAwLCAodm9pZCBfX2lvbWVtICopIEdQSU9fSU5U
-VFlQRV9MRVZFTCk7DQo+ICsJaW93cml0ZTMyKDB4ZmZmZmZmZmYsICh2b2lkIF9faW9tZW0gKikg
-R1BJT19JTlRfUE9MQVJJVFkpOw0KPiArCWlvd3JpdGUzMih2YWwsICh2b2lkIF9faW9tZW0gKikg
-R1BJT19JTlRFTik7DQo+ICt9DQoNCkkgd291bGQgc3VnZ2VzdCB0byBoYXZlIGEgbWFwIG9mIHJl
-YWxseSB1c2VkIGxpbmVzIGFuZCBlbmFibGUgYWxsIG9mIHRoZW0NCmluc3RlYWQgb2YgYWRkaW5n
-IG9uZS1ieS1vbmUgb2NjYXNpb25hbGx5Lg0KDQotQWxleGV5
+The lifetime managment uses '__u64' timestamps on the user space
+interface, but 'unsigned long' for reading the current time in the kernel
+with get_seconds().
+
+While this is probably safe beyond y2038, it will still overflow in 2106,
+and the get_seconds() call is deprecated because fo that.
+
+This changes the xfrm time handling to use time64_t consistently, along
+with reading the time using the safer ktime_get_real_seconds(). It still
+suffers from problems that can happen from a concurrent settimeofday()
+call or (to a lesser degree) a leap second update, but since the time
+stamps are part of the user API, there is nothing we can do to prevent
+that.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ net/xfrm/xfrm_policy.c | 24 ++++++++++++------------
+ net/xfrm/xfrm_state.c  | 10 +++++-----
+ 2 files changed, 17 insertions(+), 17 deletions(-)
+
+diff --git a/net/xfrm/xfrm_policy.c b/net/xfrm/xfrm_policy.c
+index 5f48251c1319..9f4afca8b4f5 100644
+--- a/net/xfrm/xfrm_policy.c
++++ b/net/xfrm/xfrm_policy.c
+@@ -182,8 +182,8 @@ static inline unsigned long make_jiffies(long secs)
+ static void xfrm_policy_timer(struct timer_list *t)
+ {
+ 	struct xfrm_policy *xp = from_timer(xp, t, timer);
+-	unsigned long now = get_seconds();
+-	long next = LONG_MAX;
++	time64_t now = ktime_get_real_seconds();
++	time64_t next = TIME64_MAX;
+ 	int warn = 0;
+ 	int dir;
+ 
+@@ -195,7 +195,7 @@ static void xfrm_policy_timer(struct timer_list *t)
+ 	dir = xfrm_policy_id2dir(xp->index);
+ 
+ 	if (xp->lft.hard_add_expires_seconds) {
+-		long tmo = xp->lft.hard_add_expires_seconds +
++		time64_t tmo = xp->lft.hard_add_expires_seconds +
+ 			xp->curlft.add_time - now;
+ 		if (tmo <= 0)
+ 			goto expired;
+@@ -203,7 +203,7 @@ static void xfrm_policy_timer(struct timer_list *t)
+ 			next = tmo;
+ 	}
+ 	if (xp->lft.hard_use_expires_seconds) {
+-		long tmo = xp->lft.hard_use_expires_seconds +
++		time64_t tmo = xp->lft.hard_use_expires_seconds +
+ 			(xp->curlft.use_time ? : xp->curlft.add_time) - now;
+ 		if (tmo <= 0)
+ 			goto expired;
+@@ -211,7 +211,7 @@ static void xfrm_policy_timer(struct timer_list *t)
+ 			next = tmo;
+ 	}
+ 	if (xp->lft.soft_add_expires_seconds) {
+-		long tmo = xp->lft.soft_add_expires_seconds +
++		time64_t tmo = xp->lft.soft_add_expires_seconds +
+ 			xp->curlft.add_time - now;
+ 		if (tmo <= 0) {
+ 			warn = 1;
+@@ -221,7 +221,7 @@ static void xfrm_policy_timer(struct timer_list *t)
+ 			next = tmo;
+ 	}
+ 	if (xp->lft.soft_use_expires_seconds) {
+-		long tmo = xp->lft.soft_use_expires_seconds +
++		time64_t tmo = xp->lft.soft_use_expires_seconds +
+ 			(xp->curlft.use_time ? : xp->curlft.add_time) - now;
+ 		if (tmo <= 0) {
+ 			warn = 1;
+@@ -233,7 +233,7 @@ static void xfrm_policy_timer(struct timer_list *t)
+ 
+ 	if (warn)
+ 		km_policy_expired(xp, dir, 0, 0);
+-	if (next != LONG_MAX &&
++	if (next != TIME64_MAX &&
+ 	    !mod_timer(&xp->timer, jiffies + make_jiffies(next)))
+ 		xfrm_pol_hold(xp);
+ 
+@@ -783,7 +783,7 @@ int xfrm_policy_insert(int dir, struct xfrm_policy *policy, int excl)
+ 	}
+ 	policy->index = delpol ? delpol->index : xfrm_gen_index(net, dir, policy->index);
+ 	hlist_add_head(&policy->byidx, net->xfrm.policy_byidx+idx_hash(net, policy->index));
+-	policy->curlft.add_time = get_seconds();
++	policy->curlft.add_time = ktime_get_real_seconds();
+ 	policy->curlft.use_time = 0;
+ 	if (!mod_timer(&policy->timer, jiffies + HZ))
+ 		xfrm_pol_hold(policy);
+@@ -1268,7 +1268,7 @@ int xfrm_sk_policy_insert(struct sock *sk, int dir, struct xfrm_policy *pol)
+ 	old_pol = rcu_dereference_protected(sk->sk_policy[dir],
+ 				lockdep_is_held(&net->xfrm.xfrm_policy_lock));
+ 	if (pol) {
+-		pol->curlft.add_time = get_seconds();
++		pol->curlft.add_time = ktime_get_real_seconds();
+ 		pol->index = xfrm_gen_index(net, XFRM_POLICY_MAX+dir, 0);
+ 		xfrm_sk_policy_link(pol, dir);
+ 	}
+@@ -2234,7 +2234,7 @@ struct dst_entry *xfrm_lookup(struct net *net, struct dst_entry *dst_orig,
+ 	}
+ 
+ 	for (i = 0; i < num_pols; i++)
+-		pols[i]->curlft.use_time = get_seconds();
++		pols[i]->curlft.use_time = ktime_get_real_seconds();
+ 
+ 	if (num_xfrms < 0) {
+ 		/* Prohibit the flow */
+@@ -2446,7 +2446,7 @@ int __xfrm_policy_check(struct sock *sk, int dir, struct sk_buff *skb,
+ 		return 1;
+ 	}
+ 
+-	pol->curlft.use_time = get_seconds();
++	pol->curlft.use_time = ktime_get_real_seconds();
+ 
+ 	pols[0] = pol;
+ 	npols++;
+@@ -2460,7 +2460,7 @@ int __xfrm_policy_check(struct sock *sk, int dir, struct sk_buff *skb,
+ 				XFRM_INC_STATS(net, LINUX_MIB_XFRMINPOLERROR);
+ 				return 0;
+ 			}
+-			pols[1]->curlft.use_time = get_seconds();
++			pols[1]->curlft.use_time = ktime_get_real_seconds();
+ 			npols++;
+ 		}
+ 	}
+diff --git a/net/xfrm/xfrm_state.c b/net/xfrm/xfrm_state.c
+index 8308281f3253..1c2b6fdd9518 100644
+--- a/net/xfrm/xfrm_state.c
++++ b/net/xfrm/xfrm_state.c
+@@ -475,8 +475,8 @@ static enum hrtimer_restart xfrm_timer_handler(struct hrtimer *me)
+ {
+ 	struct tasklet_hrtimer *thr = container_of(me, struct tasklet_hrtimer, timer);
+ 	struct xfrm_state *x = container_of(thr, struct xfrm_state, mtimer);
+-	unsigned long now = get_seconds();
+-	long next = LONG_MAX;
++	time64_t now = ktime_get_real_seconds();
++	time64_t next = TIME64_MAX;
+ 	int warn = 0;
+ 	int err = 0;
+ 
+@@ -537,7 +537,7 @@ static enum hrtimer_restart xfrm_timer_handler(struct hrtimer *me)
+ 	if (warn)
+ 		km_state_expired(x, 0, 0);
+ resched:
+-	if (next != LONG_MAX) {
++	if (next != TIME64_MAX) {
+ 		tasklet_hrtimer_start(&x->mtimer, ktime_set(next, 0), HRTIMER_MODE_REL);
+ 	}
+ 
+@@ -577,7 +577,7 @@ struct xfrm_state *xfrm_state_alloc(struct net *net)
+ 		tasklet_hrtimer_init(&x->mtimer, xfrm_timer_handler,
+ 					CLOCK_BOOTTIME, HRTIMER_MODE_ABS);
+ 		timer_setup(&x->rtimer, xfrm_replay_timer_handler, 0);
+-		x->curlft.add_time = get_seconds();
++		x->curlft.add_time = ktime_get_real_seconds();
+ 		x->lft.soft_byte_limit = XFRM_INF;
+ 		x->lft.soft_packet_limit = XFRM_INF;
+ 		x->lft.hard_byte_limit = XFRM_INF;
+@@ -1571,7 +1571,7 @@ EXPORT_SYMBOL(xfrm_state_update);
+ int xfrm_state_check_expire(struct xfrm_state *x)
+ {
+ 	if (!x->curlft.use_time)
+-		x->curlft.use_time = get_seconds();
++		x->curlft.use_time = ktime_get_real_seconds();
+ 
+ 	if (x->curlft.bytes >= x->lft.hard_byte_limit ||
+ 	    x->curlft.packets >= x->lft.hard_packet_limit) {
+-- 
+2.9.0
+
