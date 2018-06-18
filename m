@@ -6,62 +6,62 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 783D9C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0EF9C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:34:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28034208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DDFE208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c2DEpzXC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28034208A5
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="abvWTwWX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DDFE208A5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754481AbeFRMeL (ORCPT
+        id S1754561AbeFRMe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:34:11 -0400
-Received: from mail-wr0-f195.google.com ([209.85.128.195]:46142 "EHLO
-        mail-wr0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754256AbeFRMeH (ORCPT
+        Mon, 18 Jun 2018 08:34:27 -0400
+Received: from mail-wm0-f68.google.com ([74.125.82.68]:38297 "EHLO
+        mail-wm0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754315AbeFRMeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:34:07 -0400
-Received: by mail-wr0-f195.google.com with SMTP id v13-v6so16625409wrp.13
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 05:34:07 -0700 (PDT)
+        Mon, 18 Jun 2018 08:34:09 -0400
+Received: by mail-wm0-f68.google.com with SMTP id 69-v6so15245845wmf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 05:34:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=8TKcrMuDrxFgkykv3aO6c7baToNKqSNkLMAlZ65S3dg=;
-        b=c2DEpzXCmCl3RLYW3itIfh47FuEKZrbwebe9PTL9IKYEgCHkc3rmfHu0aLjnX1UZwe
-         e5XzYov5r5WtmhtoVvKI8iCp+LEnCq0NPGdWgUhwGDPmV4qriYW+O/gHezBOdLlU1eAA
-         WIGC7EZXRjeH3odc30vNyb4+ixcTJTP6SRpDM=
+        bh=Vx8TlFkg5GYV7lFQXfNT+lRC4bhizL4OBcbu8QAXzh4=;
+        b=abvWTwWXzTxST3/NnXfsa/MmUSDa25WbwGyx8fGbv7Dj1D6kKx+0vdPgUI8mFWOc4c
+         tQGK2wnm1EGle5HRdeS++DhXchUkFtOpdsi7Z7zM+97fvHafCWguuWInWFtcVR4CrHKC
+         mSVgnUJMKwhVSU7LD9OqGc4LK1me9NZG7P5OI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=8TKcrMuDrxFgkykv3aO6c7baToNKqSNkLMAlZ65S3dg=;
-        b=TDsJDERnInDiGSSzGoxtMoOol446JHAIxH65nFhSr6Peu3VdjAW3A4UpRIVb+Za8xO
-         NamvqyMoCn1ABfegSDwwGxrfBlPiAh6a3jSKjTlKpwYrqZuOHCEe9ARlTJrWpiQ28zSL
-         YnVfgj7p+hJrSASHFQLe/SJWn5mRTsNcclplC9ldO5r1uJqarxe+z9Nk9bIGfg/JINRx
-         Iv6MXBoXxdFEKw+GDDB9HQTGwJ6wVuOPmXu+GG4Mo5VvV5GfjItelOG1z2biQysMaKFN
-         o+gSbhM1s4xkzjVYGKej6jnRzTuNHsxrfVtfF/ajVpQgpKR8aNJEEGH7Wd5wP3e3oA+N
-         0xwQ==
-X-Gm-Message-State: APt69E1TmLcB5WI/TuiNr1AZe2PE3sEOpJpi/sf3JxPg1p+sgp1doxua
-        G7yhFQ0O0BTL224tBUTgLDtGXA==
-X-Google-Smtp-Source: ADUXVKJxbptleJ7FZyuvKWDKCisOTUBa9zWpX5+lHrA7iMyKl7n+bj0vn0R5ljzALr5UFHfE/0EBkg==
-X-Received: by 2002:adf:afe3:: with SMTP id y35-v6mr11156570wrd.176.1529325246570;
-        Mon, 18 Jun 2018 05:34:06 -0700 (PDT)
+        bh=Vx8TlFkg5GYV7lFQXfNT+lRC4bhizL4OBcbu8QAXzh4=;
+        b=XmKJaTN3Q3b2eyOtDoQ/CbnHZXoKos0rWn4AAZIdXpe8QseiI360DwLndkgRHJMDnt
+         1IHekxpnl+NppytHdnqZVJVYNujPqZgW7K7Q14GLq95wf96ieE75ptOAuJT9aR62F+J5
+         XioN4J6pUW8CSmdq7NatoQN8N9KRyfQU9LIuIb1+vL9Ly30s4nsLn5nT1iB9aryOmGEh
+         924TDKcp8U03xBU9/Rr+zRj5ry0ncgzYLUrnlYE/X9sMPi4XjfovUrife6+UEolRJjrX
+         k2YCYJySSe05oaRocOXhDdn0QyUw0d6o0BJ2qXxn61L+4UPovMvNxVxDG8edayI9XxCx
+         oKAw==
+X-Gm-Message-State: APt69E2QdrDEHBOwApQIZWhsvTl4xNfoHnsTguQAvZyE/TPVPGP1mX6I
+        L51QYfoxouPnjHRPRqRgwJL5LA==
+X-Google-Smtp-Source: ADUXVKIuea6gwuBUJovq6AnEahbmJIZRzmTqHXTihYiGimVbxKf/9VrnLfXJyP1dW8MMpOwhEAMnbQ==
+X-Received: by 2002:a1c:e0c6:: with SMTP id x189-v6mr9088535wmg.52.1529325248046;
+        Mon, 18 Jun 2018 05:34:08 -0700 (PDT)
 Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id r10-v6sm24291318wrm.66.2018.06.18.05.34.05
+        by smtp.gmail.com with ESMTPSA id r10-v6sm24291318wrm.66.2018.06.18.05.34.06
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 18 Jun 2018 05:34:05 -0700 (PDT)
+        Mon, 18 Jun 2018 05:34:07 -0700 (PDT)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     ohad@wizery.com, bjorn.andersson@linaro.org
 Cc:     linux-remoteproc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH 2/3] rpmsg: glink: Fix various kerneldoc warnings.
-Date:   Mon, 18 Jun 2018 13:33:38 +0100
-Message-Id: <20180618123339.24115-3-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 3/3] rpmsg: smd: fix kerneldoc warnings
+Date:   Mon, 18 Jun 2018 13:33:39 +0100
+Message-Id: <20180618123339.24115-4-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.16.2
 In-Reply-To: <20180618123339.24115-1-srinivas.kandagatla@linaro.org>
 References: <20180618123339.24115-1-srinivas.kandagatla@linaro.org>
@@ -70,132 +70,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix below kerneldoc warnings while building with W=1
-qcom_glink_native.c:53: warning: Function parameter or member 'data' not described in 'glink_defer_cmd'
-qcom_glink_native.c:75: warning: Function parameter or member 'data' not described in 'glink_core_rx_intent'
-qcom_glink_native.c:75: warning: Function parameter or member 'id' not described in 'glink_core_rx_intent'
-qcom_glink_native.c:75: warning: Function parameter or member 'size' not described in 'glink_core_rx_intent'
-qcom_glink_native.c:75: warning: Function parameter or member 'reuse' not described in 'glink_core_rx_intent'
-qcom_glink_native.c:75: warning: Function parameter or member 'in_use' not described in 'glink_core_rx_intent'
-qcom_glink_native.c:75: warning: Function parameter or member 'offset' not described in 'glink_core_rx_intent'
-qcom_glink_native.c:75: warning: Function parameter or member 'node' not described in 'glink_core_rx_intent'
-qcom_glink_native.c:116: warning: Function parameter or member 'features' not described in 'qcom_glink'
-qcom_glink_native.c:116: warning: Function parameter or member 'intentless' not described in 'qcom_glink'
-qcom_glink_native.c:524: warning: Function parameter or member 'version' not described in 'qcom_glink_receive_version'
-qcom_glink_native.c:524: warning: Function parameter or member 'features' not described in 'qcom_glink_receive_version'
-qcom_glink_native.c:524: warning: Excess function parameter 'r_version' description in 'qcom_glink_receive_version'
-qcom_glink_native.c:524: warning: Excess function parameter 'r_features' description in 'qcom_glink_receive_version'
-qcom_glink_native.c:551: warning: Function parameter or member 'version' not described in 'qcom_glink_receive_version_ack'
-qcom_glink_native.c:551: warning: Function parameter or member 'features' not described in 'qcom_glink_receive_version_ack'
-qcom_glink_native.c:551: warning: Excess function parameter 'r_version' description in 'qcom_glink_receive_version_ack'
-qcom_glink_native.c:551: warning: Excess function parameter 'r_features' description in 'qcom_glink_receive_version_ack'
-qcom_glink_native.c:570: warning: bad line:                                       wire format and transmit
-qcom_glink_native.c:604: warning: Function parameter or member 'intent' not described in 'qcom_glink_advertise_intent'
-qcom_glink_native.c:604: warning: Excess function parameter 'size' description in 'qcom_glink_advertise_intent'
-qcom_glink_native.c:710: warning: Function parameter or member 'glink' not described in 'qcom_glink_handle_intent_req'
-qcom_glink_native.c:710: warning: Function parameter or member 'cid' not described in 'qcom_glink_handle_intent_req'
-qcom_glink_native.c:710: warning: Function parameter or member 'size' not described in 'qcom_glink_handle_intent_req'
+This patch fixes below kerneldoc warnings
+
+qcom_smd.c:141: warning: Function parameter or member 'dev' not described in 'qcom_smd_edge'
+qcom_smd.c:141: warning: Function parameter or member 'name' not described in 'qcom_smd_edge'
+qcom_smd.c:141: warning: Function parameter or member 'new_channel_event' not described in 'qcom_smd_edge'
+qcom_smd.c:222: warning: Function parameter or member 'qsept' not described in 'qcom_smd_channel'
+qcom_smd.c:222: warning: Function parameter or member 'registered' not described in 'qcom_smd_channel'
+qcom_smd.c:222: warning: Function parameter or member 'state_change_event' not described in 'qcom_smd_channel'
+qcom_smd.c:222: warning: Function parameter or member 'drvdata' not described in 'qcom_smd_channel'
+qcom_smd.c:737: warning: Function parameter or member 'wait' not described in '__qcom_smd_send'
 
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/rpmsg/qcom_glink_native.c | 35 +++++++++++++++++++----------------
- 1 file changed, 19 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/rpmsg/qcom_glink_native.c b/drivers/rpmsg/qcom_glink_native.c
-index e4eb5a1f417a..df1d923c0db5 100644
---- a/drivers/rpmsg/qcom_glink_native.c
-+++ b/drivers/rpmsg/qcom_glink_native.c
-@@ -40,7 +40,7 @@ struct glink_msg {
-  * struct glink_defer_cmd - deferred incoming control message
-  * @node:	list node
-  * @msg:	message header
-- * data:	payload of the message
-+ * @data:	payload of the message
-  *
-  * Copy of a received control message, to be added to @rx_queue and processed
-  * by @rx_work of @qcom_glink.
-@@ -56,12 +56,13 @@ struct glink_defer_cmd {
-  * struct glink_core_rx_intent - RX intent
-  * RX intent
-  *
-- * data: pointer to the data (may be NULL for zero-copy)
-- * id: remote or local intent ID
-- * size: size of the original intent (do not modify)
-- * reuse: To mark if the intent can be reused after first use
-- * in_use: To mark if intent is already in use for the channel
-- * offset: next write offset (initially 0)
-+ * @data: pointer to the data (may be NULL for zero-copy)
-+ * @id: remote or local intent ID
-+ * @size: size of the original intent (do not modify)
-+ * @reuse: To mark if the intent can be reused after first use
-+ * @in_use: To mark if intent is already in use for the channel
-+ * @offset: next write offset (initially 0)
-+ * @node:	list node
-  */
- struct glink_core_rx_intent {
- 	void *data;
-@@ -89,6 +90,8 @@ struct glink_core_rx_intent {
-  * @idr_lock:	synchronizes @lcids and @rcids modifications
-  * @lcids:	idr of all channels with a known local channel id
-  * @rcids:	idr of all channels with a known remote channel id
-+ * @features:	remote features
-+ * @intentless:	flag to indicate that there is no intent
-  */
- struct qcom_glink {
- 	struct device *dev;
-@@ -512,8 +515,8 @@ static void qcom_glink_rx_done(struct qcom_glink *glink,
-  * qcom_glink_receive_version() - receive version/features from remote system
-  *
-  * @glink:	pointer to transport interface
-- * @r_version:	remote version
-- * @r_features:	remote features
-+ * @version:	remote version
-+ * @features:	remote features
-  *
-  * This function is called in response to a remote-initiated version/feature
-  * negotiation sequence.
-@@ -538,8 +541,8 @@ static void qcom_glink_receive_version(struct qcom_glink *glink,
-  * qcom_glink_receive_version_ack() - receive negotiation ack from remote system
-  *
-  * @glink:	pointer to transport interface
-- * @r_version:	remote version response
-- * @r_features:	remote features response
-+ * @version:	remote version response
-+ * @features:	remote features response
-  *
-  * This function is called in response to a local-initiated version/feature
-  * negotiation sequence and is the counter-offer from the remote side based
-@@ -567,7 +570,7 @@ static void qcom_glink_receive_version_ack(struct qcom_glink *glink,
+qcom_smd.c
+---
+ drivers/rpmsg/qcom_smd.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/rpmsg/qcom_smd.c b/drivers/rpmsg/qcom_smd.c
+index 6437bbeebc91..8c6a142050f8 100644
+--- a/drivers/rpmsg/qcom_smd.c
++++ b/drivers/rpmsg/qcom_smd.c
+@@ -93,6 +93,8 @@ static const struct {
  
  /**
-  * qcom_glink_send_intent_req_ack() - convert an rx intent request ack cmd to
--				      wire format and transmit
-+ * 	wire format and transmit
-  * @glink:	The transport to transmit on.
-  * @channel:	The glink channel
-  * @granted:	The request response to encode.
-@@ -594,7 +597,7 @@ static int qcom_glink_send_intent_req_ack(struct qcom_glink *glink,
-  *			   transmit
-  * @glink:	The transport to transmit on.
-  * @channel:	The local channel
-- * @size:	The intent to pass on to remote.
-+ * @intent:	The intent to pass on to remote.
-  *
-  * Return: 0 on success or standard Linux error code.
+  * struct qcom_smd_edge - representing a remote processor
++ * @dev:		device associated with this edge
++ * @name:		name of this edge
+  * @of_node:		of_node handle for information related to this edge
+  * @edge_id:		identifier of this edge
+  * @remote_pid:		identifier of remote processor
+@@ -106,6 +108,7 @@ static const struct {
+  * @channels_lock:	guard for modifications of @channels
+  * @allocated:		array of bitmaps representing already allocated channels
+  * @smem_available:	last available amount of smem triggering a channel scan
++ * @new_channel_event:	wait queue for new channel events
+  * @scan_work:		work item for discovering new channels
+  * @state_work:		work item for edge state changes
   */
-@@ -698,9 +701,9 @@ static void qcom_glink_handle_rx_done(struct qcom_glink *glink,
+@@ -172,10 +175,12 @@ struct qcom_smd_endpoint {
  /**
-  * qcom_glink_handle_intent_req() - Receive a request for rx_intent
-  *					    from remote side
-- * if_ptr:      Pointer to the transport interface
-- * rcid:	Remote channel ID
-- * size:	size of the intent
-+ * @glink:      Pointer to the transport interface
-+ * @cid:	Remote channel ID
-+ * @size:	size of the intent
+  * struct qcom_smd_channel - smd channel struct
+  * @edge:		qcom_smd_edge this channel is living on
+- * @qsdev:		reference to a associated smd client device
++ * @qsept:		reference to a associated smd endpoint
++ * @registered:		flag to indicate if the channel is registered
+  * @name:		name of the channel
+  * @state:		local state of the channel
+  * @remote_state:	remote state of the channel
++ * @state_change_event:	state change event
+  * @info:		byte aligned outgoing/incoming channel info
+  * @info_word:		word aligned outgoing/incoming channel info
+  * @tx_lock:		lock to make writes to the channel mutually exclusive
+@@ -187,6 +192,7 @@ struct qcom_smd_endpoint {
+  * @cb:			callback function registered for this channel
+  * @recv_lock:		guard for rx info modifications and cb pointer
+  * @pkt_size:		size of the currently handled packet
++ * @drvdata:		driver private data
+  * @list:		lite entry for @channels in qcom_smd_edge
+  */
+ struct qcom_smd_channel {
+@@ -726,6 +732,7 @@ static int qcom_smd_write_fifo(struct qcom_smd_channel *channel,
+  * @channel:	channel handle
+  * @data:	buffer of data to write
+  * @len:	number of bytes to write
++ * @wait:	flag to indicate if write has ca wait
   *
-  * The function searches for the local channel to which the request for
-  * rx_intent has arrived and allocates and notifies the remote back
+  * This is a blocking write of len bytes into the channel's tx ring buffer and
+  * signal the remote end. It will sleep until there is enough space available
 -- 
 2.16.2
 
