@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AACEC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 198A3C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:10:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 500E52086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:10:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 500E52086A
+	by mail.kernel.org (Postfix) with ESMTP id D0E99208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:10:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D0E99208A5
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934130AbeFRNKP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:10:15 -0400
-Received: from mga18.intel.com ([134.134.136.126]:32956 "EHLO mga18.intel.com"
+        id S933847AbeFRNKJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 09:10:09 -0400
+Received: from mga04.intel.com ([192.55.52.120]:48585 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933929AbeFRNKL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:10:11 -0400
+        id S932585AbeFRNKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 09:10:07 -0400
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 06:10:10 -0700
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 06:10:06 -0700
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
-   d="scan'208";a="49862980"
+   d="scan'208";a="47943424"
 Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga007.jf.intel.com with ESMTP; 18 Jun 2018 06:10:07 -0700
+  by fmsmga007.fm.intel.com with ESMTP; 18 Jun 2018 06:10:03 -0700
 Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id A0769553; Mon, 18 Jun 2018 16:10:04 +0300 (EEST)
+        id 8A3CD212; Mon, 18 Jun 2018 16:10:04 +0300 (EEST)
 From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To:     Alasdair Kergon <agk@redhat.com>,
         Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
@@ -43,9 +43,9 @@ To:     Alasdair Kergon <agk@redhat.com>,
         linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
         Joe Perches <joe@perches.com>
 Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 5/5] Input: evdev - Switch to bitmap API
-Date:   Mon, 18 Jun 2018 16:10:03 +0300
-Message-Id: <20180618131003.88110-6-andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v3 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
+Date:   Mon, 18 Jun 2018 16:10:01 +0300
+Message-Id: <20180618131003.88110-4-andriy.shevchenko@linux.intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618131003.88110-1-andriy.shevchenko@linux.intel.com>
 References: <20180618131003.88110-1-andriy.shevchenko@linux.intel.com>
@@ -54,85 +54,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Switch to bitmap API, i.e. bitmap_alloc(), bitmap_zalloc(), to show
-clearly what we are allocating. Besides that it returns pointer of
-bitmap type instead of opaque void *.
+A lot of code become ugly because of open coding allocations for bitmaps.
 
-While here, replace memcpy() with bitmap_copy() for sake of consistency.
+Introduce three helpers to allow users be more clear of intention
+and keep their code neat.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/input/evdev.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ include/linux/bitmap.h |  8 ++++++++
+ lib/bitmap.c           | 19 +++++++++++++++++++
+ 2 files changed, 27 insertions(+)
 
-diff --git a/drivers/input/evdev.c b/drivers/input/evdev.c
-index c81c79d01d93..370206f987f9 100644
---- a/drivers/input/evdev.c
-+++ b/drivers/input/evdev.c
-@@ -481,7 +481,7 @@ static int evdev_release(struct inode *inode, struct file *file)
- 	evdev_detach_client(evdev, client);
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 1ee46f492267..acf5e8df3504 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -104,6 +104,14 @@
+  * contain all bit positions from 0 to 'bits' - 1.
+  */
  
- 	for (i = 0; i < EV_CNT; ++i)
--		kfree(client->evmasks[i]);
-+		bitmap_free(client->evmasks[i]);
++/*
++ * Allocation and deallocation of bitmap.
++ * Provided in lib/bitmap.c to avoid circular dependency.
++ */
++extern unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
++extern unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
++extern void bitmap_free(const unsigned long *bitmap);
++
+ /*
+  * lib/bitmap.c provides these functions:
+  */
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index 33e95cd359a2..09acf2fd6a35 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -13,6 +13,7 @@
+ #include <linux/bitops.h>
+ #include <linux/bug.h>
+ #include <linux/kernel.h>
++#include <linux/slab.h>
+ #include <linux/string.h>
+ #include <linux/uaccess.h>
  
- 	kvfree(client);
+@@ -1125,6 +1126,24 @@ void bitmap_copy_le(unsigned long *dst, const unsigned long *src, unsigned int n
+ EXPORT_SYMBOL(bitmap_copy_le);
+ #endif
  
-@@ -925,17 +925,15 @@ static int evdev_handle_get_val(struct evdev_client *client,
- {
- 	int ret;
- 	unsigned long *mem;
--	size_t len;
- 
--	len = BITS_TO_LONGS(maxbit) * sizeof(unsigned long);
--	mem = kmalloc(len, GFP_KERNEL);
-+	mem = bitmap_alloc(maxbit, GFP_KERNEL);
- 	if (!mem)
- 		return -ENOMEM;
- 
- 	spin_lock_irq(&dev->event_lock);
- 	spin_lock(&client->buffer_lock);
- 
--	memcpy(mem, bits, len);
-+	bitmap_copy(mem, bits, maxbit);
- 
- 	spin_unlock(&dev->event_lock);
- 
-@@ -947,7 +945,7 @@ static int evdev_handle_get_val(struct evdev_client *client,
- 	if (ret < 0)
- 		evdev_queue_syn_dropped(client);
- 
--	kfree(mem);
-+	bitmap_free(mem);
- 
- 	return ret;
- }
-@@ -1003,13 +1001,13 @@ static int evdev_set_mask(struct evdev_client *client,
- 	if (!cnt)
- 		return 0;
- 
--	mask = kcalloc(sizeof(unsigned long), BITS_TO_LONGS(cnt), GFP_KERNEL);
-+	mask = bitmap_zalloc(cnt, GFP_KERNEL);
- 	if (!mask)
- 		return -ENOMEM;
- 
- 	error = bits_from_user(mask, cnt - 1, codes_size, codes, compat);
- 	if (error < 0) {
--		kfree(mask);
-+		bitmap_free(mask);
- 		return error;
- 	}
- 
-@@ -1018,7 +1016,7 @@ static int evdev_set_mask(struct evdev_client *client,
- 	client->evmasks[type] = mask;
- 	spin_unlock_irqrestore(&client->buffer_lock, flags);
- 
--	kfree(oldmask);
-+	bitmap_free(oldmask);
- 
- 	return 0;
- }
++unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
++{
++	return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
++}
++EXPORT_SYMBOL(bitmap_alloc);
++
++unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
++{
++	return bitmap_alloc(nbits, flags | __GFP_ZERO);
++}
++EXPORT_SYMBOL(bitmap_zalloc);
++
++void bitmap_free(const unsigned long *bitmap)
++{
++	kfree(bitmap);
++}
++EXPORT_SYMBOL(bitmap_free);
++
+ #if BITS_PER_LONG == 64
+ /**
+  * bitmap_from_arr32 - copy the contents of u32 array of bits to bitmap
 -- 
 2.17.1
 
