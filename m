@@ -5,144 +5,518 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A0F6C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:35:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 727AAC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AA7020852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:35:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AA7020852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 17EFE20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:35:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17EFE20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933730AbeFRPe6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:34:58 -0400
-Received: from mout.kundenserver.de ([217.72.192.73]:59135 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933182AbeFRPe4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:34:56 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0LheU5-1fzN6O2RQ9-00mulX; Mon, 18 Jun 2018 17:29:05 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     James Smart <james.smart@broadcom.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        Hannes Reinecke <hare@suse.com>,
-        Johannes Thumshirn <jthumshirn@suse.de>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: lpfc: use monotonic timestamps for statistics
-Date:   Mon, 18 Jun 2018 17:28:23 +0200
-Message-Id: <20180618152903.1756535-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:sOAHvqvEiOcZJEaHx8bevgvBvesCUPcgHr3jXbxBeawoWzbMcii
- CHXaCNZGU12mOz72din3exeXhc6eyL71fOq5OGEqyp7yhYus5iefsRLs4WPNURnM7ScEMaf
- NYZqbWS6z50NITypcD6ldQmi4LrRVh04DlfhWg3O34f3+aNVFMpZB/2H2gG+Ry4C2csRGAS
- swejuZj+9K6P8hKz3PThw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:nhJAGbqAfxg=:IKOFyy9NuZaQkoFZh9wiF0
- LAQtE8u9D6x8Uw7DWuHaEiSciebVJ79HtkFaRf+fgRSi/oh3c1FPafkTmoSLPMLLQcbhAXlUY
- LuywPGOFaFwjjI0Qw48G4Y3k6Dq3rDIxjoyw47sT9j5/aoEV3s4bGgKzB56GgaKud7BFVbSwr
- 8WNBibcqJKEMTiecEOF1g0u6jAp/dvdpq+XJXDO9/J64WyvLDkK53Y7jYfabAIsY/Wsv9qki0
- QPZ93v7UoPN5RdqLR9eqnKjz7KbcKdqI4/ceVPcV0Mw+e8T+cncN7V2iL1S5ygbRYe4xJj2fA
- fK6FiLUpih9VQEyhFtifBreDz3tt1L/21vm56daXBeBpZJSJPCdOj7FbwUioQoNW0H5eE28H7
- eaxJpHZgwrga8G9cFzJE0EakaUL8yeZURRsUwSZy+rfWpbSni49vSbRI2OQvh4nJar5zFXZOZ
- cZlONvhVJz3oQVCVAMipF9HLTkABV/qwy2psAvlI5lCe6fyJCMaJkVs4xSJyoYn8/Wt+czHCD
- Kb4IUzvSlrnceVfFiYTqogWE6O6gltZLk5ME8zTXh+kepWx8pLlfh0IANwDxuuSxv/2946bGr
- FhyfmG9R0vuqtsR864+cfuA+H7cxfzo33w7+XhziJgKCm7vW7NnQ3NYmLoF4kqxB6YUVsz38W
- DsgjVO91ZFNuf6ADamOwoJfBUT+b5i3E07RdtYvXObPEqmOTe35Jr/dd3U6rR3XVcLBU=
+        id S1754662AbeFRPfW (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:35:22 -0400
+Received: from mx2.suse.de ([195.135.220.15]:45561 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752849AbeFRPfU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:35:20 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id 283F5ABA5;
+        Mon, 18 Jun 2018 15:35:19 +0000 (UTC)
+Date:   Mon, 18 Jun 2018 17:35:18 +0200
+Message-ID: <s5h1sd4xg3t.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Pali =?UTF-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+Cc:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+In-Reply-To: <20180618112618.hcwiacfzzu4swwd2@pali>
+References: <20180608111057.4wxpg7m7nm7suf6n@pali>
+        <s5hk1r01acc.wl-tiwai@suse.de>
+        <20180615190959.pqipwnm6a3tf3lxc@pali>
+        <s5hmuvvtdmi.wl-tiwai@suse.de>
+        <20180616154309.ualrx2py6ndr5xgz@pali>
+        <s5hh8m2u3cp.wl-tiwai@suse.de>
+        <20180618102806.vwm4rhvxhn6hi43z@pali>
+        <s5ha7rsz8i8.wl-tiwai@suse.de>
+        <20180618112121.cl76a3oozsbbbqnb@pali>
+        <20180618112618.hcwiacfzzu4swwd2@pali>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: multipart/mixed;
+ boundary="Multipart_Mon_Jun_18_17:35:18_2018-1"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The get_seconds() function suffers from a possible overflow in 2038
-or 2106, as well as jitter due to settimeofday or leap second updates,
-and is deprecated.
+--Multipart_Mon_Jun_18_17:35:18_2018-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-As we are interested in elapsed time only, using ktime_get_seconds()
-to read the CLOCK_MONOTONIC timebase is ideal here. This also lets us
-remove the hack that tries to deal with get_seconds() going slightly
-backwards, which cannot happen with montonic timestamps.
+On Mon, 18 Jun 2018 13:26:18 +0200,
+Pali Rohár wrote:
+> 
+> On Monday 18 June 2018 13:21:21 Pali Rohár wrote:
+> > Now I see that in Debian backports is some 4.16.12 kernel version. I can
+> > try this one (and later compile one from Linus tree).
+> 
+> Tested, this version is working fine and leds works as expected. And now
+> also snd_hda_codec_realtek is loaded.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Good to hear :)
+
+Below are test patches to allow user choosing the mic mute LED
+behavior on Thinkpad, too.  Note: totally untested!
+
+Let me know if these work for you.
+
+
+thanks,
+
+Takashi
+
+
+--Multipart_Mon_Jun_18_17:35:18_2018-1
+Content-Type: application/octet-stream; type=patch
+Content-Disposition: attachment; filename="0001-ALSA-hda-Move-mic-mute-LED-helper-to-the-generic-par.patch"
+Content-Transfer-Encoding: 7bit
+
+From 1cd2cac7e1fb62a733bcc3e202d5e68de8001b61 Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 18 Jun 2018 17:26:12 +0200
+Subject: [PATCH 1/2] ALSA: hda - Move mic mute LED helper to the generic
+ parser
+
+Move the code for setting up and controlling the mic mute LED hook
+from dell-wmi helper to the generic parser, so that it can be referred
+from the multiple driver codes.
+
+No functional change.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
 ---
- drivers/scsi/lpfc/lpfc_attr.c | 10 ++--------
- drivers/scsi/lpfc/lpfc_sli.c  |  4 ++--
- drivers/scsi/lpfc/lpfc_sli.h  |  2 +-
- 3 files changed, 5 insertions(+), 11 deletions(-)
+ sound/pci/hda/dell_wmi_helper.c | 115 ++------------------------
+ sound/pci/hda/hda_generic.c     | 141 ++++++++++++++++++++++++++++++++
+ sound/pci/hda/hda_generic.h     |  16 ++++
+ 3 files changed, 163 insertions(+), 109 deletions(-)
 
-diff --git a/drivers/scsi/lpfc/lpfc_attr.c b/drivers/scsi/lpfc/lpfc_attr.c
-index 729d343861f4..15c07481fe23 100644
---- a/drivers/scsi/lpfc/lpfc_attr.c
-+++ b/drivers/scsi/lpfc/lpfc_attr.c
-@@ -5891,7 +5891,6 @@ lpfc_get_stats(struct Scsi_Host *shost)
- 	struct lpfc_lnk_stat * lso = &psli->lnk_stat_offsets;
- 	LPFC_MBOXQ_t *pmboxq;
- 	MAILBOX_t *pmb;
--	unsigned long seconds;
- 	int rc = 0;
+diff --git a/sound/pci/hda/dell_wmi_helper.c b/sound/pci/hda/dell_wmi_helper.c
+index 1b48a8c19d28..28780772008e 100644
+--- a/sound/pci/hda/dell_wmi_helper.c
++++ b/sound/pci/hda/dell_wmi_helper.c
+@@ -6,107 +6,15 @@
+ #if IS_ENABLED(CONFIG_DELL_LAPTOP)
+ #include <linux/dell-led.h>
  
- 	/*
-@@ -5992,12 +5991,7 @@ lpfc_get_stats(struct Scsi_Host *shost)
+-enum {
+-	MICMUTE_LED_ON,
+-	MICMUTE_LED_OFF,
+-	MICMUTE_LED_FOLLOW_CAPTURE,
+-	MICMUTE_LED_FOLLOW_MUTE,
+-};
+-
+-static int dell_led_mode = MICMUTE_LED_FOLLOW_MUTE;
+-static int dell_capture;
+-static int dell_led_value;
+ static int (*dell_micmute_led_set_func)(int);
+-static void (*dell_old_cap_hook)(struct hda_codec *,
+-			         struct snd_kcontrol *,
+-				 struct snd_ctl_elem_value *);
+-
+-static void call_micmute_led_update(void)
+-{
+-	int val;
+-
+-	switch (dell_led_mode) {
+-	case MICMUTE_LED_ON:
+-		val = 1;
+-		break;
+-	case MICMUTE_LED_OFF:
+-		val = 0;
+-		break;
+-	case MICMUTE_LED_FOLLOW_CAPTURE:
+-		val = dell_capture;
+-		break;
+-	case MICMUTE_LED_FOLLOW_MUTE:
+-	default:
+-		val = !dell_capture;
+-		break;
+-	}
+-
+-	if (val == dell_led_value)
+-		return;
+-	dell_led_value = val;
+-	dell_micmute_led_set_func(dell_led_value);
+-}
+-
+-static void update_dell_wmi_micmute_led(struct hda_codec *codec,
+-				        struct snd_kcontrol *kcontrol,
+-					struct snd_ctl_elem_value *ucontrol)
+-{
+-	if (dell_old_cap_hook)
+-		dell_old_cap_hook(codec, kcontrol, ucontrol);
+-
+-	if (!ucontrol || !dell_micmute_led_set_func)
+-		return;
+-	if (strcmp("Capture Switch", ucontrol->id.name) == 0 && ucontrol->id.index == 0) {
+-		/* TODO: How do I verify if it's a mono or stereo here? */
+-		dell_capture = (ucontrol->value.integer.value[0] ||
+-				ucontrol->value.integer.value[1]);
+-		call_micmute_led_update();
+-	}
+-}
  
- 	hs->dumped_frames = -1;
+-static int dell_mic_mute_led_mode_info(struct snd_kcontrol *kcontrol,
+-				       struct snd_ctl_elem_info *uinfo)
++static void dell_micmute_update(struct hda_codec *codec)
+ {
+-	static const char * const texts[] = {
+-		"On", "Off", "Follow Capture", "Follow Mute",
+-	};
+-
+-	return snd_ctl_enum_info(uinfo, 1, ARRAY_SIZE(texts), texts);
+-}
++	struct hda_gen_spec *spec = codec->spec;
  
--	seconds = get_seconds();
--	if (seconds < psli->stats_start)
--		hs->seconds_since_last_reset = seconds +
--				((unsigned long)-1 - psli->stats_start);
--	else
--		hs->seconds_since_last_reset = seconds - psli->stats_start;
-+	hs->seconds_since_last_reset = ktime_get_seconds() - psli->stats_start;
+-static int dell_mic_mute_led_mode_get(struct snd_kcontrol *kcontrol,
+-				      struct snd_ctl_elem_value *ucontrol)
+-{
+-	ucontrol->value.enumerated.item[0] = dell_led_mode;
+-	return 0;
++	dell_micmute_led_set_func(spec->micmute_led.led_value);
+ }
  
- 	mempool_free(pmboxq, phba->mbox_mem_pool);
+-static int dell_mic_mute_led_mode_put(struct snd_kcontrol *kcontrol,
+-				      struct snd_ctl_elem_value *ucontrol)
+-{
+-	unsigned int mode;
+-
+-	mode = ucontrol->value.enumerated.item[0];
+-	if (mode > MICMUTE_LED_FOLLOW_MUTE)
+-		mode = MICMUTE_LED_FOLLOW_MUTE;
+-	if (mode == dell_led_mode)
+-		return 0;
+-	dell_led_mode = mode;
+-	call_micmute_led_update();
+-	return 1;
+-}
+-
+-static const struct snd_kcontrol_new dell_mic_mute_mode_ctls[] = {
+-	{
+-		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+-		.name = "Mic Mute-LED Mode",
+-		.info = dell_mic_mute_led_mode_info,
+-		.get = dell_mic_mute_led_mode_get,
+-		.put = dell_mic_mute_led_mode_put,
+-	},
+-	{}
+-};
+-
+ static void alc_fixup_dell_wmi(struct hda_codec *codec,
+ 			       const struct hda_fixup *fix, int action)
+ {
+@@ -121,25 +29,14 @@ static void alc_fixup_dell_wmi(struct hda_codec *codec,
+ 			return;
+ 		}
  
-@@ -6076,7 +6070,7 @@ lpfc_reset_stats(struct Scsi_Host *shost)
- 	else
- 		lso->link_events = (phba->fc_eventTag >> 1);
+-		removefunc = true;
+-		if (dell_micmute_led_set_func(false) >= 0) {
+-			dell_led_value = 0;
+-			if (spec->gen.num_adc_nids > 1 && !spec->gen.dyn_adc_switch)
+-				codec_dbg(codec, "Skipping micmute LED control due to several ADCs");
+-			else {
+-				dell_old_cap_hook = spec->gen.cap_sync_hook;
+-				spec->gen.cap_sync_hook = update_dell_wmi_micmute_led;
+-				removefunc = false;
+-				add_mixer(spec, dell_mic_mute_mode_ctls);
+-			}
+-		}
+-
++		removefunc = (dell_micmute_led_set_func(false) < 0) ||
++			(snd_hda_gen_add_micmute_led(codec,
++						     dell_micmute_update) <= 0);
+ 	}
  
--	psli->stats_start = get_seconds();
-+	psli->stats_start = ktime_get_seconds();
+ 	if (dell_micmute_led_set_func && (action == HDA_FIXUP_ACT_FREE || removefunc)) {
+ 		symbol_put(dell_micmute_led_set);
+ 		dell_micmute_led_set_func = NULL;
+-		dell_old_cap_hook = NULL;
+ 	}
+ }
  
- 	mempool_free(pmboxq, phba->mbox_mem_pool);
+diff --git a/sound/pci/hda/hda_generic.c b/sound/pci/hda/hda_generic.c
+index db773e219aaa..707614e38aeb 100644
+--- a/sound/pci/hda/hda_generic.c
++++ b/sound/pci/hda/hda_generic.c
+@@ -3899,6 +3899,147 @@ static int parse_mic_boost(struct hda_codec *codec)
+ 	return 0;
+ }
  
-diff --git a/drivers/scsi/lpfc/lpfc_sli.c b/drivers/scsi/lpfc/lpfc_sli.c
-index 6f3c00a233ec..e6786a5db502 100644
---- a/drivers/scsi/lpfc/lpfc_sli.c
-+++ b/drivers/scsi/lpfc/lpfc_sli.c
-@@ -4591,7 +4591,7 @@ lpfc_sli_brdrestart_s3(struct lpfc_hba *phba)
- 	spin_unlock_irq(&phba->hbalock);
++/*
++ * mic mute LED hook helpers
++ */
++enum {
++	MICMUTE_LED_ON,
++	MICMUTE_LED_OFF,
++	MICMUTE_LED_FOLLOW_CAPTURE,
++	MICMUTE_LED_FOLLOW_MUTE,
++};
++
++static void call_micmute_led_update(struct hda_codec *codec)
++{
++	struct hda_gen_spec *spec = codec->spec;
++	unsigned int val;
++
++	switch (spec->micmute_led.led_mode) {
++	case MICMUTE_LED_ON:
++		val = 1;
++		break;
++	case MICMUTE_LED_OFF:
++		val = 0;
++		break;
++	case MICMUTE_LED_FOLLOW_CAPTURE:
++		val = spec->micmute_led.capture;
++		break;
++	case MICMUTE_LED_FOLLOW_MUTE:
++	default:
++		val = !spec->micmute_led.capture;
++		break;
++	}
++
++	if (val == spec->micmute_led.led_value)
++		return;
++	spec->micmute_led.led_value = val;
++	if (spec->micmute_led.update)
++		spec->micmute_led.update(codec);
++}
++
++
++static void update_micmute_led(struct hda_codec *codec,
++			       struct snd_kcontrol *kcontrol,
++			       struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_gen_spec *spec = codec->spec;
++
++	if (spec->micmute_led.old_hook)
++		spec->micmute_led.old_hook(codec, kcontrol, ucontrol);
++
++	if (!ucontrol)
++		return;
++	if (!strcmp("Capture Switch", ucontrol->id.name) &&
++	    !ucontrol->id.index) {
++		/* TODO: How do I verify if it's a mono or stereo here? */
++		spec->micmute_led.capture = (ucontrol->value.integer.value[0] ||
++					     ucontrol->value.integer.value[1]);
++		call_micmute_led_update(codec);
++	}
++}
++
++static int micmute_led_mode_info(struct snd_kcontrol *kcontrol,
++				 struct snd_ctl_elem_info *uinfo)
++{
++	static const char * const texts[] = {
++		"On", "Off", "Follow Capture", "Follow Mute",
++	};
++
++	return snd_ctl_enum_info(uinfo, 1, ARRAY_SIZE(texts), texts);
++}
++
++static int micmute_led_mode_get(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct hda_gen_spec *spec = codec->spec;
++
++	ucontrol->value.enumerated.item[0] = spec->micmute_led.led_mode;
++	return 0;
++}
++
++static int micmute_led_mode_put(struct snd_kcontrol *kcontrol,
++				struct snd_ctl_elem_value *ucontrol)
++{
++	struct hda_codec *codec = snd_kcontrol_chip(kcontrol);
++	struct hda_gen_spec *spec = codec->spec;
++	unsigned int mode;
++
++	mode = ucontrol->value.enumerated.item[0];
++	if (mode > MICMUTE_LED_FOLLOW_MUTE)
++		mode = MICMUTE_LED_FOLLOW_MUTE;
++	if (mode == spec->micmute_led.led_mode)
++		return 0;
++	spec->micmute_led.led_mode = mode;
++	call_micmute_led_update(codec);
++	return 1;
++}
++
++static const struct snd_kcontrol_new micmute_led_mode_ctl = {
++	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
++	.name = "Mic Mute-LED Mode",
++	.info = micmute_led_mode_info,
++	.get = micmute_led_mode_get,
++	.put = micmute_led_mode_put,
++};
++
++/**
++ * snd_hda_gen_add_micmute_led - helper for setting up mic mute LED hook
++ * @codec: the HDA codec
++ * @hook: the callback for updating LED
++ *
++ * Called from the codec drivers for offering the mic mute LED controls.
++ * Only valid for a single ADC (or a single input).  When established, it
++ * sets up cap_sync_hook and triggers the callback at each time when the
++ * capture mixer switch changes.  The callback is supposed to update the LED
++ * accordingly.
++ *
++ * Returns 1 if the hook is established, 0 if skipped (no valid config), or
++ * a negative error code.
++ */
++int snd_hda_gen_add_micmute_led(struct hda_codec *codec,
++				void (*hook)(struct hda_codec *))
++{
++	struct hda_gen_spec *spec = codec->spec;
++
++	if (spec->num_adc_nids > 1 && !spec->dyn_adc_switch) {
++		codec_dbg(codec,
++			  "Skipping micmute LED control due to several ADCs");
++		return 0;
++	}
++
++	spec->micmute_led.led_mode = MICMUTE_LED_FOLLOW_MUTE;
++	spec->micmute_led.capture = 0;
++	spec->micmute_led.led_value = 0;
++	spec->micmute_led.old_hook = spec->cap_sync_hook;
++	spec->micmute_led.update = hook;
++	spec->cap_sync_hook = update_micmute_led;
++	if (!snd_hda_gen_add_kctl(spec, NULL, &micmute_led_mode_ctl))
++		return -ENOMEM;
++	return 1;
++}
++EXPORT_SYMBOL_GPL(snd_hda_gen_add_micmute_led);
++
+ /*
+  * parse digital I/Os and set up NIDs in BIOS auto-parse mode
+  */
+diff --git a/sound/pci/hda/hda_generic.h b/sound/pci/hda/hda_generic.h
+index 61772317de46..10123664fa61 100644
+--- a/sound/pci/hda/hda_generic.h
++++ b/sound/pci/hda/hda_generic.h
+@@ -86,6 +86,16 @@ struct badness_table {
+ extern const struct badness_table hda_main_out_badness;
+ extern const struct badness_table hda_extra_out_badness;
  
- 	memset(&psli->lnk_stat_offsets, 0, sizeof(psli->lnk_stat_offsets));
--	psli->stats_start = get_seconds();
-+	psli->stats_start = ktime_get_seconds();
++struct hda_micmute_hook {
++	unsigned int led_mode;
++	unsigned int capture;
++	unsigned int led_value;
++	void (*update)(struct hda_codec *codec);
++	void (*old_hook)(struct hda_codec *codec,
++			 struct snd_kcontrol *kcontrol,
++			 struct snd_ctl_elem_value *ucontrol);
++};
++
+ struct hda_gen_spec {
+ 	char stream_name_analog[32];	/* analog PCM stream */
+ 	const struct hda_pcm_stream *stream_analog_playback;
+@@ -276,6 +286,9 @@ struct hda_gen_spec {
+ 			      struct snd_kcontrol *kcontrol,
+ 			      struct snd_ctl_elem_value *ucontrol);
  
- 	/* Give the INITFF and Post time to settle. */
- 	mdelay(100);
-@@ -4638,7 +4638,7 @@ lpfc_sli_brdrestart_s4(struct lpfc_hba *phba)
- 	spin_unlock_irq(&phba->hbalock);
++	/* mic mute LED hook; called via cap_sync_hook */
++	struct hda_micmute_hook micmute_led;
++
+ 	/* PCM hooks */
+ 	void (*pcm_playback_hook)(struct hda_pcm_stream *hinfo,
+ 				  struct hda_codec *codec,
+@@ -342,4 +355,7 @@ unsigned int snd_hda_gen_path_power_filter(struct hda_codec *codec,
+ void snd_hda_gen_stream_pm(struct hda_codec *codec, hda_nid_t nid, bool on);
+ int snd_hda_gen_fix_pin_power(struct hda_codec *codec, hda_nid_t pin);
  
- 	memset(&psli->lnk_stat_offsets, 0, sizeof(psli->lnk_stat_offsets));
--	psli->stats_start = get_seconds();
-+	psli->stats_start = ktime_get_seconds();
- 
- 	/* Reset HBA AER if it was enabled, note hba_flag was reset above */
- 	if (hba_aer_enabled)
-diff --git a/drivers/scsi/lpfc/lpfc_sli.h b/drivers/scsi/lpfc/lpfc_sli.h
-index 431754195505..80b191d73190 100644
---- a/drivers/scsi/lpfc/lpfc_sli.h
-+++ b/drivers/scsi/lpfc/lpfc_sli.h
-@@ -339,7 +339,7 @@ struct lpfc_sli {
- 	struct lpfc_iocbq ** iocbq_lookup; /* array to lookup IOCB by IOTAG */
- 	size_t iocbq_lookup_len;           /* current lengs of the array */
- 	uint16_t  last_iotag;              /* last allocated IOTAG */
--	unsigned long  stats_start;        /* in seconds */
-+	time64_t  stats_start;		   /* in seconds */
- 	struct lpfc_lnk_stat lnk_stat_offsets;
- };
- 
++int snd_hda_gen_add_micmute_led(struct hda_codec *codec,
++				void (*hook)(struct hda_codec *));
++
+ #endif /* __SOUND_HDA_GENERIC_H */
 -- 
-2.9.0
+2.17.1
 
+
+--Multipart_Mon_Jun_18_17:35:18_2018-1
+Content-Type: application/octet-stream; type=patch
+Content-Disposition: attachment; filename="0002-ALSA-hda-Use-the-common-helper-for-thinkpad_acpi-mic.patch"
+Content-Transfer-Encoding: 7bit
+
+From 2730426826f8dbc702efb0f4723abe7795d8e4a2 Mon Sep 17 00:00:00 2001
+From: Takashi Iwai <tiwai@suse.de>
+Date: Mon, 18 Jun 2018 17:28:45 +0200
+Subject: [PATCH 2/2] ALSA: hda - Use the common helper for thinkpad_acpi mic
+ mute LED handling
+
+Use the new common helper for setting up and controlling the mic mute
+LED over thinkpad_acpi.  This also provides a new mixer enum "Mic
+Mute-LED Mode" (that was present only for Dell models), which allows
+user to choose the mic mute LED behavior.  For example, if you want
+the mic mute LED turned on only while mic is on, choose "Follow
+Capture" there.
+
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ sound/pci/hda/thinkpad_helper.c | 27 ++++++++-------------------
+ 1 file changed, 8 insertions(+), 19 deletions(-)
+
+diff --git a/sound/pci/hda/thinkpad_helper.c b/sound/pci/hda/thinkpad_helper.c
+index 65bb3ac6af4c..97f49b751e6e 100644
+--- a/sound/pci/hda/thinkpad_helper.c
++++ b/sound/pci/hda/thinkpad_helper.c
+@@ -27,17 +27,11 @@ static void update_tpacpi_mute_led(void *private_data, int enabled)
+ 		led_set_func(TPACPI_LED_MUTE, !enabled);
+ }
+ 
+-static void update_tpacpi_micmute_led(struct hda_codec *codec,
+-				      struct snd_kcontrol *kcontrol,
+-				      struct snd_ctl_elem_value *ucontrol)
++static void update_tpacpi_micmute(struct hda_codec *codec)
+ {
+-	if (!ucontrol || !led_set_func)
+-		return;
+-	if (strcmp("Capture Switch", ucontrol->id.name) == 0 && ucontrol->id.index == 0) {
+-		/* TODO: How do I verify if it's a mono or stereo here? */
+-		bool val = ucontrol->value.integer.value[0] || ucontrol->value.integer.value[1];
+-		led_set_func(TPACPI_LED_MICMUTE, !val);
+-	}
++	struct hda_gen_spec *spec = codec->spec;
++
++	led_set_func(TPACPI_LED_MICMUTE, spec->micmute_led.led_value);
+ }
+ 
+ static void hda_fixup_thinkpad_acpi(struct hda_codec *codec,
+@@ -63,15 +57,10 @@ static void hda_fixup_thinkpad_acpi(struct hda_codec *codec,
+ 			spec->vmaster_mute.hook = update_tpacpi_mute_led;
+ 			removefunc = false;
+ 		}
+-		if (led_set_func(TPACPI_LED_MICMUTE, false) >= 0) {
+-			if (spec->num_adc_nids > 1 && !spec->dyn_adc_switch)
+-				codec_dbg(codec,
+-					  "Skipping micmute LED control due to several ADCs");
+-			else {
+-				spec->cap_sync_hook = update_tpacpi_micmute_led;
+-				removefunc = false;
+-			}
+-		}
++		if (led_set_func(TPACPI_LED_MICMUTE, false) >= 0 &&
++		    snd_hda_gen_add_micmute_led(codec,
++						update_tpacpi_micmute) > 0)
++			removefunc = false;
+ 	}
+ 
+ 	if (led_set_func && (action == HDA_FIXUP_ACT_FREE || removefunc)) {
+-- 
+2.17.1
+
+
+--Multipart_Mon_Jun_18_17:35:18_2018-1--
