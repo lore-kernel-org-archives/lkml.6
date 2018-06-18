@@ -2,150 +2,136 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EFECC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:51:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08605C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:54:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9D242075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:51:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9D242075A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=thebollingers.org
+	by mail.kernel.org (Postfix) with ESMTP id A62482075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:54:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="Tw92OFaS";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a638L2ic"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A62482075A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936820AbeFRTv4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:51:56 -0400
-Received: from resqmta-po-02v.sys.comcast.net ([96.114.154.161]:53876 "EHLO
-        resqmta-po-02v.sys.comcast.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S936284AbeFRTvy (ORCPT
+        id S936852AbeFRTyL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:54:11 -0400
+Received: from mail-ua0-f193.google.com ([209.85.217.193]:39150 "EHLO
+        mail-ua0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935923AbeFRTyJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:51:54 -0400
-Received: from resomta-po-01v.sys.comcast.net ([96.114.154.225])
-        by resqmta-po-02v.sys.comcast.net with ESMTP
-        id UzsofAqYhQNWZV0Bufj21A; Mon, 18 Jun 2018 19:51:54 +0000
-Received: from thebollingers.org ([73.223.250.230])
-        by resomta-po-01v.sys.comcast.net with ESMTPA
-        id V0Brf30vGVGSOV0Btf1gtm; Mon, 18 Jun 2018 19:51:54 +0000
-Date:   Mon, 18 Jun 2018 12:41:27 -0700
-From:   Don Bollinger <don@thebollingers.org>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     Tom Lendacky <thomas.lendacky@amd.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, brandon_chuang@edge-core.com,
-        wally_wang@accton.com, roy_lee@edge-core.com,
-        rick_burchett@edge-core.com, quentin.chang@quantatw.com,
-        steven.noble@bigswitch.com, jeffrey.townsend@bigswitch.com,
-        scotte@cumulusnetworks.com, roopa@cumulusnetworks.com,
-        David Ahern <dsa@cumulusnetworks.com>,
-        luke.williams@canonical.com, Guohan Lu <gulv@microsoft.com>,
-        Russell King <rmk+kernel@arm.linux.org.uk>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        don@thebollingers.org
-Subject: Re: [PATCH] optoe: driver to read/write SFP/QSFP EEPROMs
-Message-ID: <20180618194127.uaeqlo3dy35qs3ip@thebollingers.org>
-References: <20180611042515.ml6zbcmz6dlvjmrp@thebollingers.org>
- <496e06b9-9f02-c4ae-4156-ab6221ba23fd@amd.com>
- <20180612181109.GD12251@lunn.ch>
- <20180615022652.t6oqpnwwvdmbooab@thebollingers.org>
- <20180615075417.GA28730@lunn.ch>
+        Mon, 18 Jun 2018 15:54:09 -0400
+Received: by mail-ua0-f193.google.com with SMTP id n4-v6so11497932uad.6
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 12:54:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=fc7LexULpLHjtP2f2ChwGyh0HQOEZEoqBECfn68kBo0=;
+        b=Tw92OFaSP0H0z/GY1lW9JAFAjyOhnE1dGm17JaLyZpFybal5lwTVDIFo49jsgYPfku
+         GhYYig4qVWYq/rxQ8tLzaTEG6vpDOtTfX33UBDQ9JbfloY82Eu3BA52YiSV+NCFNFNXI
+         0ntRu5MaYTMgYJKAZq9BI7xD8yD7YdSh0P9+YbOBxY/3N/CczXT4Uab41aNsAF5KI97l
+         yipjOGJO/hCQPOAdPLaE4Shazqf6WCWcaJBzudrC1Vweya4UyaIAGigeuIldk9Z00W2p
+         JrEB8aKwXwihYnkMwRNeCa5pgfv17U/ps2ayX2UrZ58HopwiLBMVj7VGz6xjGSVuhxkW
+         LsYA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=fc7LexULpLHjtP2f2ChwGyh0HQOEZEoqBECfn68kBo0=;
+        b=a638L2ic4xvCyp58tkJ8Rd7XXjGTPvUsrsKjPklAq6lVFiXpdexSrLnovMB0pRq4oY
+         PfRu0IxrIQif8DWV0KRiLVu3hqxdjiuR2/ZEm4RVc4FSE9pPNx5E9nBCMcAlGL4BTykh
+         HmUS5e2iPkD4+GaubhWbWyJifCzO3oMQGna78=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=fc7LexULpLHjtP2f2ChwGyh0HQOEZEoqBECfn68kBo0=;
+        b=WL/rmk8lVl/CDJpFrPaZCxGKpHe8Jim9UuFdXBrjPOnlsJOLOM5dUmsPQHBMEGwhe/
+         yL7OazXGF8oe28xD7GLH6ALvXlk05OLc98YfjM3T/NXVeO38pdayMOkMa9HK5vdmIVrx
+         vMCLQfUNg+RkHUoJEx3QuGP9MoBV09+qxuToKius46pWFcUGAAPwwad8tkxHG63tS3Xr
+         dtHQuQnhCwzS6XAxja0GicAEDs7eugNGUgFq7ru99hX8OGM5uXdrt/vpn0DG5kj1HgkM
+         Q62SYp9yRDJcDmCH4iN/xyLOYbRTmpAcLs7QVT0TrsZh+Iq7xl94Y3xqT8CpBYXfFstq
+         0Chw==
+X-Gm-Message-State: APt69E0yrar69KzKiLDnrHBe8/Gzw3fCeGT8R/CS80HBjhSdGydGwCxB
+        HRKY+MVC2tdEnvbU8H6CuNYYxTqa5++RnPheSQUxug==
+X-Google-Smtp-Source: ADUXVKLO7UP73GaY95yDvkq+y4YiqBXhNSjH65IZu+N0z2UZh8l9KUdaxMK+Ko3p6sAL50MmJplznQeFAgTEsMnL4FI=
+X-Received: by 2002:ab0:2015:: with SMTP id v21-v6mr8738548uak.46.1529351648113;
+ Mon, 18 Jun 2018 12:54:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180615075417.GA28730@lunn.ch>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-CMAE-Envelope: MS4wfF2B9Ti3wMK4ENwtQsiIgUpzsaO8K833EAIrsJZV14/qHr4WENJLMNL7kM1tkguI2/Iz8qY0H927aYriE3ZZoiupw77iz9J+V5pnz6S0gDHUOhZO1K0K
- oQ7gk7ajb0XD0IoM5ipm5we9ihnwMkX8U2ZcnkphF8c+EHm/3YDve7FxqFqVmZ0dPk1jz4SXvSIwGoe1CN+KFYiqrTOUYEXFmGSEPd3KG5F0oFx1XHkdakXN
- xBSBg7+zQ/V7XO0qFtS/d7gG/hwdqBcNX7lL7d/C+yoXx7FZ91Li2Os9qAQRcejWENkv7DekburBsgBz9L5L3Xq8F00OgXKjicVj4oU34Ah8lDTkoEu+OZdu
- szluLUKn4+dQiL2dfKARGHe0VzsDV+cap1h5n2KAQRMGNS9bnHeKsCye14u79w74z7T9gkldvOMKxOVY++MgWBNqM4hCovR9EVJowfPf39+A99AMDXxvZfsL
- vZ1jTukHVwjPyyDbIV9egKCezMNbo1mzLZsOrSVS8bXs8PQeNwWIrHACig3+NEep5tDcDPcA/GTBoSS5JSHqPixDfABnmU1t6GOzNind6a4rCDDXuu+z/yCF
- 3DdBxKQMSQE174QuLn6o8ovuvhh8T8bVFC9jUMSi2WnKjo6HLge3xnVAKZNT+KadBfwNS25+z15kPCNYgLWBIIZ4eOkxGAfTIH6CQeKVD9wLRqplTx3ge5bO
- B8BRMlWKhW9CT/TE5FQUmL/rRpbSNDgyzjdIrk1qbAs29DiNpA3jsMxsuKpgKR+b13uUcSiX/DglfxrK0Bvv33956OshsgfUy0N9Mo130jXHXvVeWRMGiIST
- bWxyEGFPE2pN+OAXtcV2YMNWgh2nytQIJvMgymJeRJ7QEK9N6zKs/mU6ZKUT4g==
+Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 12:54:07
+ -0700 (PDT)
+In-Reply-To: <20180618190637.GG21724@codeaurora.org>
+References: <1529329040-2606-1-git-send-email-rplsssn@codeaurora.org>
+ <1529329040-2606-5-git-send-email-rplsssn@codeaurora.org> <20180618163945.GE21724@codeaurora.org>
+ <CAD=FV=W_tKb2n2x9AY4T_17Q_KJcu9wsfFv4vio08W76t0d00A@mail.gmail.com> <20180618190637.GG21724@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 18 Jun 2018 12:54:07 -0700
+X-Google-Sender-Auth: R7Jlcvs4PEXO0b9Ez3wB6iO4Aec
+Message-ID: <CAD=FV=VVLGR-ynvURvQB2yU5HNb0-Z5e-1_McJ1Wu5PFpJ72Yg@mail.gmail.com>
+Subject: Re: [PATCH v11 04/10] drivers: qcom: rpmh: add RPMH helper functions
+To:     Lina Iyer <ilina@codeaurora.org>
+Cc:     Raju P L S S S N <rplsssn@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jun 15, 2018 at 09:54:17AM +0200, Andrew Lunn wrote:
-> > Actually this is better described by a third use case.  The target
-> > switches are PHY-less (see various designs at
-> > www.compute.org/wiki/Networking/SpecsAndDesigns). The AS5712 for example
-> > says "The AS5712-54X is a PHY-Less design with the SFP+ and QSFP+
-> > connections directly attaching to the Serdes interfaces of the Broadcom
-> > BCM56854 720G Trident 2 switching silicon..."
-> 
-> We consider the SFP+ and QSFP+ as being the PHY. You need something to
-> control that PHY. Either it is firmware running in the switch, or it
-> is the Linux kernel, via PHYLINK.
+Hi,
 
-Actually in the environment I'm working in (at least 3 different NOS
-vendors, and 3 different switch vendors), the {Q}SFP devices are
-controlled by a platform specific driver that pokes CPLD registers.  I'm
-not sure where the actual control logic is, but it doesn't appear to use
-any of the frameworks you are describing.
+On Mon, Jun 18, 2018 at 12:06 PM, Lina Iyer <ilina@codeaurora.org> wrote:
+> On Mon, Jun 18 2018 at 12:33 -0600, Doug Anderson wrote:
+>>
+>> Lina,
+>>
+>> On Mon, Jun 18, 2018 at 9:39 AM, Lina Iyer <ilina@codeaurora.org> wrote:
+>>>>
+>>>> +/**
+>>>>  * struct rsc_drv: the Direct Resource Voter (DRV) of the
+>>>>  * Resource State Coordinator controller (RSC)
+>>>>  *
+>>>> @@ -52,6 +78,7 @@ struct tcs_group {
+>>>>  * @tcs:        TCS groups
+>>>>  * @tcs_in_use: s/w state of the TCS
+>>>>  * @lock:       synchronize state of the controller
+>>>> + * @ctrl:       controller to handle cases like batch requests
+>>>
+>>>
+>>> This is not only for batch requests.
+>>> This is handle to the DRV's client. @client might be a better name than
+>>> @ctrlr.
+>>
+>>
+>> The name "ctrlr" also matches the name of the structure.  Are you
+>> suggesting also renaming "struct rpmh_ctrlr" to "struct rpmh_client",
+>> or you think they should be different names?
+>>
+> Just the name of the variable. I was just a nice to have. I wouldn't
+> block for this though.
+>
+> I also got a couple Bot reported issues on this and the previous
+> revision that I have sent to Raju. He is planning to the post the v12
+> tomorrow his time after fixing them. If you can wait until then, I would
+> recommend picking up the v12 instead of this.
 
-> 
-> > The i2c bus is muxed from the CPU to all of the {Q}SFP devices, which
-> > are set up as standard linux i2c devices
-> > (/sys/bus/i2c/devices/i2c-xxxx).
-> 
-> Having a standard i2c bus driver is correct. This is what PHYLINK
-> assumes. It knows about the different addresses the SFP uses on the
-> i2c bus.
+OK, if Raju can post the v12 tomorrow his time then that sounds like a
+great plan to me.  While you're at it, I noticed that checkpatch
+yelled about a few lines that were > 80 characters long for no good
+reason.  Those would be nice to fix too.
 
-Great.  Then plugging optoe into it should be easy.
-
-> 
-> > There is no MDIO bus between the CPU and the {Q}SFP devices.
-> 
-> There is no physical MDIO bus for SFP devices. If the SFP module
-> implements copper 1G, there is often MDIO tunnelled over i2c. PHYLINK
-> knows how to do this, and will instantiate a normal Linux MDIO bus
-> driver, and then you can use the Linux kernel copper PHY state
-> machines as normal.
-> 
-> > And, there isn't actually 'a wish to expose' the EEPROM data to linux
-> > (the kernel).  It turns out that none of the NOS partners I'm working
-> > with use that data *in the kernel*.  It is all managed from user space.
-> 
-> Ah. O.K. We can stop here then.
-> 
-> If you are using Linux as a boot loader, i doubt you will find any
-> network kernel developers who are willing to consider this driver. The
-
-It isn't a boot loader.  It is the kernel that is running on the switch
-when it is doing its switch thing.  The kernel hosts the drivers and the
-switch SDK and all the apps that configure and manage the networking.
-
-> kernel community as decided switchdev is how the Linux kernel supports
-
-I'm sure switchdev works very well.  It is not being used in the
-environment I am trying to support.  I've checked all 3 NOSs that have
-adopted optoe, none of them have switchdev configured in their .config
-file:
-
-# CONFIG_NET_SWITCHDEV is not set
-
-> switches. We are unlikely to add drivers for supporting user space
-> drivers of switches.
-
-That's not the request.  I'm offering an improved driver to access {Q}SFP
-EEPROMs.  It can be easily called by your framework, so the sfp.c users
-can also get improved access to the EEPROMs.
-
-As designed it fits the need in the linux based community I'm
-working with.  It is in production in two NOSs on three switches.  Less
-complete variants of this driver are in production on all three NOSs
-I've worked with, on dozens of platforms.  This is real code, that fits
-a real need, and would like the benefits of being maintained as part of
-the mainline kernel.
-
-> 
-> NACK.
-> 
-> 	Andrew
-> 
-
-Don
+-Doug
