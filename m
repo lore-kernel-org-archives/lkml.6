@@ -6,130 +6,180 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1764AC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5874CC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:18:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAE8920864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:18:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAE8920864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 1DAC620864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:18:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DAC620864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966707AbeFRJSK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:18:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:58682 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966524AbeFRI2L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:28:11 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1585BCC9;
-        Mon, 18 Jun 2018 08:28:10 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellermen <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 247/279] x86/pkeys/selftests: Add a test for pkey 0
-Date:   Mon, 18 Jun 2018 10:13:52 +0200
-Message-Id: <20180618080618.983261598@linuxfoundation.org>
+        id S966884AbeFRJSe (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:18:34 -0400
+Received: from mx2.suse.de ([195.135.220.15]:38580 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S966624AbeFRJSc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 05:18:32 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id DEF0EADCA;
+        Mon, 18 Jun 2018 09:18:27 +0000 (UTC)
+From:   Vlastimil Babka <vbabka@suse.cz>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-api@vger.kernel.org, Christoph Lameter <cl@linux.com>,
+        David Rientjes <rientjes@google.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vijayanand Jitta <vjitta@codeaurora.org>,
+        Laura Abbott <labbott@redhat.com>,
+        Sumit Semwal <sumit.semwal@linaro.org>
+Subject: [PATCH v2 5/7] mm: rename and change semantics of nr_indirectly_reclaimable_bytes
+Date:   Mon, 18 Jun 2018 11:18:06 +0200
+Message-Id: <20180618091808.4419-6-vbabka@suse.cz>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
-References: <20180618080608.851973560@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20180618091808.4419-1-vbabka@suse.cz>
+References: <20180618091808.4419-1-vbabka@suse.cz>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
+The vmstat counter NR_INDIRECTLY_RECLAIMABLE_BYTES was introduced by commit
+eb59254608bc ("mm: introduce NR_INDIRECTLY_RECLAIMABLE_BYTES") with the goal of
+accounting objects that can be reclaimed, but cannot be allocated via a
+SLAB_RECLAIM_ACCOUNT cache. This is now possible via kmalloc() with
+__GFP_RECLAIMABLE flag, and the dcache external names user is converted.
 
-------------------
+The counter is however still useful for accounting direct page allocations
+(i.e. not slab) with a shrinker, such as the ION page pool. So keep it, and:
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+- change granularity to pages to be more like other counters; sub-page
+  allocations should be able to use kmalloc
+- rename the counter to NR_KERNEL_MISC_RECLAIMABLE
+- expose the counter again in vmstat as "nr_kernel_misc_reclaimable"; we can
+  again remove the check for not printing "hidden" counters
 
-[ Upstream commit 3488a600d90bcaf061b104dbcfbdc8d99b398312 ]
-
-Protection key 0 is the default key for all memory and will
-not normally come back from pkey_alloc().  But, you might
-still want pass it to mprotect_pkey().
-
-This check ensures that you can use pkey 0.
-
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171356.9E40B254@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Vijayanand Jitta <vjitta@codeaurora.org>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Sumit Semwal <sumit.semwal@linaro.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   30 ++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
+ drivers/staging/android/ion/ion_page_pool.c |  4 ++--
+ include/linux/mmzone.h                      |  2 +-
+ mm/page_alloc.c                             | 19 +++++++------------
+ mm/util.c                                   |  3 +--
+ mm/vmstat.c                                 |  6 +-----
+ 5 files changed, 12 insertions(+), 22 deletions(-)
 
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -1184,6 +1184,35 @@ void test_pkey_alloc_exhaust(int *ptr, u
+diff --git a/drivers/staging/android/ion/ion_page_pool.c b/drivers/staging/android/ion/ion_page_pool.c
+index 9bc56eb48d2a..b7ad2d2449ac 100644
+--- a/drivers/staging/android/ion/ion_page_pool.c
++++ b/drivers/staging/android/ion/ion_page_pool.c
+@@ -33,8 +33,8 @@ static void ion_page_pool_add(struct ion_page_pool *pool, struct page *page)
+ 		pool->low_count++;
  	}
+ 
+-	mod_node_page_state(page_pgdat(page), NR_INDIRECTLY_RECLAIMABLE_BYTES,
+-			    (1 << (PAGE_SHIFT + pool->order)));
++	mod_node_page_state(page_pgdat(page), NR_KERNEL_MISC_RECLAIMABLE,
++							1 << pool->order);
+ 	mutex_unlock(&pool->mutex);
  }
  
-+/*
-+ * pkey 0 is special.  It is allocated by default, so you do not
-+ * have to call pkey_alloc() to use it first.  Make sure that it
-+ * is usable.
-+ */
-+void test_mprotect_with_pkey_0(int *ptr, u16 pkey)
-+{
-+	long size;
-+	int prot;
-+
-+	assert(pkey_last_malloc_record);
-+	size = pkey_last_malloc_record->size;
-+	/*
-+	 * This is a bit of a hack.  But mprotect() requires
-+	 * huge-page-aligned sizes when operating on hugetlbfs.
-+	 * So, make sure that we use something that's a multiple
-+	 * of a huge page when we can.
-+	 */
-+	if (size >= HPAGE_SIZE)
-+		size = HPAGE_SIZE;
-+	prot = pkey_last_malloc_record->prot;
-+
-+	/* Use pkey 0 */
-+	mprotect_pkey(ptr, size, prot, 0);
-+
-+	/* Make sure that we can set it back to the original pkey. */
-+	mprotect_pkey(ptr, size, prot, pkey);
-+}
-+
- void test_ptrace_of_child(int *ptr, u16 pkey)
- {
- 	__attribute__((__unused__)) int peek_result;
-@@ -1378,6 +1407,7 @@ void (*pkey_tests[])(int *ptr, u16 pkey)
- 	test_kernel_gup_write_to_write_disabled_region,
- 	test_executing_on_unreadable_memory,
- 	test_implicit_mprotect_exec_only_memory,
-+	test_mprotect_with_pkey_0,
- 	test_ptrace_of_child,
- 	test_pkey_syscalls_on_non_allocated_pkey,
- 	test_pkey_syscalls_bad_args,
-
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index 32699b2dc52a..c2f6bc4c9e8a 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -180,7 +180,7 @@ enum node_stat_item {
+ 	NR_VMSCAN_IMMEDIATE,	/* Prioritise for reclaim when writeback ends */
+ 	NR_DIRTIED,		/* page dirtyings since bootup */
+ 	NR_WRITTEN,		/* page writings since bootup */
+-	NR_INDIRECTLY_RECLAIMABLE_BYTES, /* measured in bytes */
++	NR_KERNEL_MISC_RECLAIMABLE,	/* reclaimable non-slab kernel pages */
+ 	NR_VM_NODE_STAT_ITEMS
+ };
+ 
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 1521100f1e63..8ceb45e11b97 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -4704,6 +4704,7 @@ long si_mem_available(void)
+ 	unsigned long pagecache;
+ 	unsigned long wmark_low = 0;
+ 	unsigned long pages[NR_LRU_LISTS];
++	unsigned long reclaimable;
+ 	struct zone *zone;
+ 	int lru;
+ 
+@@ -4729,19 +4730,13 @@ long si_mem_available(void)
+ 	available += pagecache;
+ 
+ 	/*
+-	 * Part of the reclaimable slab consists of items that are in use,
+-	 * and cannot be freed. Cap this estimate at the low watermark.
++	 * Part of the reclaimable slab and other kernel memory consists of
++	 * items that are in use, and cannot be freed. Cap this estimate at the
++	 * low watermark.
+ 	 */
+-	available += global_node_page_state(NR_SLAB_RECLAIMABLE) -
+-		     min(global_node_page_state(NR_SLAB_RECLAIMABLE) / 2,
+-			 wmark_low);
+-
+-	/*
+-	 * Part of the kernel memory, which can be released under memory
+-	 * pressure.
+-	 */
+-	available += global_node_page_state(NR_INDIRECTLY_RECLAIMABLE_BYTES) >>
+-		PAGE_SHIFT;
++	reclaimable = global_node_page_state(NR_SLAB_RECLAIMABLE) +
++			global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
++	available += reclaimable - min(reclaimable / 2, wmark_low);
+ 
+ 	if (available < 0)
+ 		available = 0;
+diff --git a/mm/util.c b/mm/util.c
+index 3351659200e6..891f0654e7b5 100644
+--- a/mm/util.c
++++ b/mm/util.c
+@@ -675,8 +675,7 @@ int __vm_enough_memory(struct mm_struct *mm, long pages, int cap_sys_admin)
+ 		 * Part of the kernel memory, which can be released
+ 		 * under memory pressure.
+ 		 */
+-		free += global_node_page_state(
+-			NR_INDIRECTLY_RECLAIMABLE_BYTES) >> PAGE_SHIFT;
++		free += global_node_page_state(NR_KERNEL_MISC_RECLAIMABLE);
+ 
+ 		/*
+ 		 * Leave reserved pages. The pages are not for anonymous pages.
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index 75eda9c2b260..7c677d3a61ec 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1161,7 +1161,7 @@ const char * const vmstat_text[] = {
+ 	"nr_vmscan_immediate_reclaim",
+ 	"nr_dirtied",
+ 	"nr_written",
+-	"", /* nr_indirectly_reclaimable */
++	"nr_kernel_misc_reclaimable",
+ 
+ 	/* enum writeback_stat_item counters */
+ 	"nr_dirty_threshold",
+@@ -1704,10 +1704,6 @@ static int vmstat_show(struct seq_file *m, void *arg)
+ 	unsigned long *l = arg;
+ 	unsigned long off = l - (unsigned long *)m->private;
+ 
+-	/* Skip hidden vmstat items. */
+-	if (*vmstat_text[off] == '\0')
+-		return 0;
+-
+ 	seq_puts(m, vmstat_text[off]);
+ 	seq_put_decimal_ull(m, " ", *l);
+ 	seq_putc(m, '\n');
+-- 
+2.17.1
 
