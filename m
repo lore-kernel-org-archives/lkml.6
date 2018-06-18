@@ -2,83 +2,108 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74506C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:47:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7849C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EAB720836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:47:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2UKpQ3k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EAB720836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 57D3120693
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:50:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57D3120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964811AbeFRVrU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 17:47:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40750 "EHLO mail.kernel.org"
+        id S936300AbeFRVuL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 17:50:11 -0400
+Received: from ale.deltatee.com ([207.54.116.67]:44692 "EHLO ale.deltatee.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755347AbeFRVrS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 17:47:18 -0400
-Received: from mail-wm0-f49.google.com (mail-wm0-f49.google.com [74.125.82.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13B4020852
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:47:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529358438;
-        bh=MCS0vo9fUt2JrQLC8B4aN1g9EmGSfbG/GbNOGDPWcwc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=G2UKpQ3k61BvYEuD807vxFB5iY0le9YKLF+XSy+5guGqqGG0ev2cU3hNuHyhKRESx
-         oUlokqL1ZkrFM456yW4OH10OX1IPbvzAaODg3NuCi8p5YDm3xy/bEwfFn6/EYzZYb5
-         ZkRbpdRNVDeGS7yuqpX+JHYRTVLKMsECz1avHqrE=
-Received: by mail-wm0-f49.google.com with SMTP id r15-v6so16492399wmc.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 14:47:18 -0700 (PDT)
-X-Gm-Message-State: APt69E22yZX+fBUedlnG3ETPJcJrs+s94U+8xlB1Bzui/6tomNGIEKEM
-        w3vdIKBStIiQV534kNolMqNb/t/Hi5GV53DOfDX7OA==
-X-Google-Smtp-Source: ADUXVKIHyI/e9lOCkaULNZqbzMLu8DDpZOTPiRWja9qRHZGIZ2ypBtb0BAJzNT+GzbsfILvXXmcxsJ+3gWNCPdnTV7A=
-X-Received: by 2002:a1c:b947:: with SMTP id j68-v6mr9330493wmf.144.1529358436552;
- Mon, 18 Jun 2018 14:47:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com>
-In-Reply-To: <DM5PR11MB201156F1CAB2592B07C79A03B17D0@DM5PR11MB2011.namprd11.prod.outlook.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 18 Jun 2018 14:47:05 -0700
-X-Gmail-Original-Message-ID: <CALCETrXUdLZTnf0EF2LVM4ru2G6nkFX--gQ=6JpBRNZ7Gm+MsQ@mail.gmail.com>
-Message-ID: <CALCETrXUdLZTnf0EF2LVM4ru2G6nkFX--gQ=6JpBRNZ7Gm+MsQ@mail.gmail.com>
-Subject: Re: [PATCH] x86: Call fixup_exception() before notify_die() in math_error()
-To:     Siarhei.Liakh@concurrent-rt.com
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
+        id S933073AbeFRVuJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 17:50:09 -0400
+Received: from guinness.priv.deltatee.com ([172.16.1.162])
+        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <logang@deltatee.com>)
+        id 1fV224-0002q1-Kt; Mon, 18 Jun 2018 15:49:53 -0600
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-doc@vger.kernel.org, Stephen Bates <sbates@raithlin.com>,
+        Christoph Hellwig <hch@lst.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andrew Lutomirski <luto@kernel.org>,
-        Borislav Petkov <bpetkov@suse.de>
-Content-Type: text/plain; charset="UTF-8"
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>
+References: <20180618193636.16210-1-logang@deltatee.com>
+ <20180618193636.16210-2-logang@deltatee.com>
+ <20180618154430.1af3d42f@t450s.home>
+From:   Logan Gunthorpe <logang@deltatee.com>
+Message-ID: <c2053508-0880-5b7b-fd2f-260d260f33f9@deltatee.com>
+Date:   Mon, 18 Jun 2018 15:49:49 -0600
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <20180618154430.1af3d42f@t450s.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 172.16.1.162
+X-SA-Exim-Rcpt-To: christian.koenig@amd.com, benh@kernel.crashing.org, jglisse@redhat.com, dan.j.williams@intel.com, frederic@kernel.org, kai.heng.feng@canonical.com, marc.zyngier@arm.com, paulmck@linux.vnet.ibm.com, tglx@linutronix.de, mingo@kernel.org, corbet@lwn.net, bhelgaas@google.com, hch@lst.de, sbates@raithlin.com, linux-doc@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, alex.williamson@redhat.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+Subject: Re: [PATCH v3 1/3] PCI: Make specifying PCI devices in kernel
+ parameters reusable
+X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jun 14, 2018 at 10:10 PM Siarhei Liakh
-<Siarhei.Liakh@concurrent-rt.com> wrote:
->
-> fpu__drop() has an explicit fwait which under some conditions can trigger
-> a fixable FPU exception while in kernel. Thus, we should attempt to fixup
-> the exception first, and only call notify_die() if the fixup failed just
-> like in do_general_protection(). The original call sequence incorrectly
-> triggers KDB entry on debug kernels under particular FPU-intensive
-> workloads. This issue had been privately observed, fixed, and tested
-> on 4.9.98, while this patch brings the fix to the upstream.
+On 6/18/2018 3:44 PM, Alex Williamson wrote:
+>> + *
+>> + * The second format matches devices using IDs in the configuration
+>> + * space which may match multiple devices in the system. A value of 0
+>> + * for any field will match all devices.
+> 
+> I realize this is not a change in behavior, but since we're spelling it
+> out in a proper comment rather than burying it in the implementation,
+> using 0 as a wildcard is rather questionable behavior.  It always
+> surprises me when I read this because pci_match_one_device() uses
+> PCI_ANY_ID (~0) as a wildcard and as a result of struct pci_device_id
+> using __u32 for these fields, we actually need to specify ffffffff on
+> the commandline to get a wildcard match for dynamic ids.  The latter is
+> tedious to use, but I think it's more correct, and the use of a __u32 is
+> probably attributed to the fact that 0xffff is only reserved for vendor
+> ID, the spec doesn't seem to reserve any entries from the vendor's
+> device ID range.
+> 
+> There's probably really no path to resolve these, but acknowledging the
+> difference in this comment block might be helpful in the future.
 
-Reviewed-by: Andy Lutomirski <luto@kernel.org>
+Ok, I'll add a note in the comment.
+>> +		ret = pci_dev_str_match(dev, p, &p);
+>> +		if (ret == 1) {
+>> +			*resize = true;
+>> +			if (align_order == -1)
+>> +				align = PAGE_SIZE;
+>> +			else
+>> +				align = 1 << align_order;
+>> +			break;
+>> +		} else if (ret < 0) {
+>> +			pr_info("PCI: Can't parse resource_alignment parameter: pci:%s\n",
+> 
+> 
+> The "pci:" prefix on %s doesn't make sense now, it was used above when
+> the pointer was already advanced past this token, now I believe it would
+> lead to "pci:pci:xxxx:yyyy" or "pci:xx:yy.z".  Thanks,
 
-With the caveat that you are perpetuating what is arguably a bug in
-some of the other entries: math_error() can now be called with IRQs
-off and return with IRQs on.  If we actually start asserting good
-behavior in the entry code, we'll need to fix this.
+Yup, nice catch. I'll fix it for v4.
 
---Andy
+Logan
