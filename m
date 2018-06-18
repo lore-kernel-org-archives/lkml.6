@@ -3,38 +3,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23270C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:43:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6373C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:44:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9BB220864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:43:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9BB220864
+	by mail.kernel.org (Postfix) with ESMTP id 7A8A7208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:44:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A8A7208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935936AbeFRJne (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:43:34 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55506 "EHLO
+        id S935938AbeFRJoT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:44:19 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55464 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965449AbeFRIWV (ORCPT
+        with ESMTP id S965326AbeFRIWJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:22:21 -0400
+        Mon, 18 Jun 2018 04:22:09 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 77BFCC7F;
-        Mon, 18 Jun 2018 08:22:20 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 67E89C7A;
+        Mon, 18 Jun 2018 08:22:08 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Sultan Alsawaf <sultanxda@gmail.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        stable@vger.kernel.org, Jim Gill <jgill@vmware.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 154/279] pinctrl: cherryview: Associate IRQ descriptors to irqdomain
-Date:   Mon, 18 Jun 2018 10:12:19 +0200
-Message-Id: <20180618080615.206240615@linuxfoundation.org>
+Subject: [PATCH 4.16 151/279] scsi: vmw-pvscsi: return DID_BUS_BUSY for adapter-initated aborts
+Date:   Mon, 18 Jun 2018 10:12:16 +0200
+Message-Id: <20180618080615.090898131@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,72 +50,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
+From: Jim Gill <jgill@vmware.com>
 
-[ Upstream commit 83b9dc11312f48a561594a895672abb6cb2a2250 ]
+[ Upstream commit f4b024271ae3e9786e5d6f1c05b01b57a74e1d6d ]
 
-When we dropped the custom Linux GPIO translation it resulted that the
-IRQ numbers changed slightly as well. Normally this would be fine
-because everyone is expected to use controller relative GPIO numbers and
-ACPI GpioIo/GpioInt resources. However, there is a certain set of
-Intel_Strago based Chromebooks where i8042 keyboard controller IRQ
-number is hardcoded be 182 (this is corrected with newer coreboot but
-the older ones still have the hardcoded Linux IRQ number). Because of
-this hardcoded IRQ number keyboard on those systems accidentally broke
-again.
+The vmw_pvscsi driver returns DID_ABORT for commands aborted internally
+by the adapter, leading to the filesystem going read-only. Change the
+result to DID_BUS_BUSY, causing the kernel to retry the command.
 
-Fix this by iteratively associating IRQ descriptors to the chip irqdomain
-so that there are no gaps on those systems. Other systems are not
-affected.
-
-Fixes: 03c4749dd6c7 ("gpio / ACPI: Drop unnecessary ACPI GPIO to Linux GPIO translation")
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199463
-Reported-by: Sultan Alsawaf <sultanxda@gmail.com>
-Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Jim Gill <jgill@vmware.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/pinctrl/intel/pinctrl-cherryview.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/scsi/vmw_pvscsi.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/pinctrl/intel/pinctrl-cherryview.c
-+++ b/drivers/pinctrl/intel/pinctrl-cherryview.c
-@@ -1622,22 +1622,30 @@ static int chv_gpio_probe(struct chv_pin
+--- a/drivers/scsi/vmw_pvscsi.c
++++ b/drivers/scsi/vmw_pvscsi.c
+@@ -609,7 +609,7 @@ static void pvscsi_complete_request(stru
+ 			break;
  
- 	if (!need_valid_mask) {
- 		irq_base = devm_irq_alloc_descs(pctrl->dev, -1, 0,
--						chip->ngpio, NUMA_NO_NODE);
-+						community->npins, NUMA_NO_NODE);
- 		if (irq_base < 0) {
- 			dev_err(pctrl->dev, "Failed to allocate IRQ numbers\n");
- 			return irq_base;
- 		}
--	} else {
--		irq_base = 0;
- 	}
+ 		case BTSTAT_ABORTQUEUE:
+-			cmd->result = (DID_ABORT << 16);
++			cmd->result = (DID_BUS_BUSY << 16);
+ 			break;
  
--	ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, irq_base,
-+	ret = gpiochip_irqchip_add(chip, &chv_gpio_irqchip, 0,
- 				   handle_bad_irq, IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_err(pctrl->dev, "failed to add IRQ chip\n");
- 		return ret;
- 	}
- 
-+	if (!need_valid_mask) {
-+		for (i = 0; i < community->ngpio_ranges; i++) {
-+			range = &community->gpio_ranges[i];
-+
-+			irq_domain_associate_many(chip->irq.domain, irq_base,
-+						  range->base, range->npins);
-+			irq_base += range->npins;
-+		}
-+	}
-+
- 	gpiochip_set_chained_irqchip(chip, &chv_gpio_irqchip, irq,
- 				     chv_gpio_irq_handler);
- 	return 0;
+ 		case BTSTAT_SCSIPARITY:
 
 
