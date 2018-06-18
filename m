@@ -2,115 +2,123 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4EBDC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:18:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1A3C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:19:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91928208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:18:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sagWuCYj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91928208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B081E208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:19:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B081E208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755176AbeFRPSL (ORCPT
+        id S1754989AbeFRPTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:18:11 -0400
-Received: from mail-lf0-f65.google.com ([209.85.215.65]:44984 "EHLO
-        mail-lf0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754482AbeFRPSI (ORCPT
+        Mon, 18 Jun 2018 11:19:22 -0400
+Received: from mout.kundenserver.de ([212.227.17.24]:51469 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752765AbeFRPTU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:18:08 -0400
-Received: by mail-lf0-f65.google.com with SMTP id p23-v6so13556505lfh.11
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Z+LEQQ8JBL0DS0DQ7G0AfJwPosJOoq+uRJ+HTKeifj0=;
-        b=sagWuCYjv3/1ebtUO4BGpMGzUdDC5iSpflYX2GvF89nuPBlEzEYB698Ovr7lc9zE5H
-         +fMxqb07Z7TDBf00Wc7gZSzy1a/ukQ/f8fPHVMa4zw7/XgsO+vjyxnmWsz65uhCQN6Mv
-         EhZrsCw4BSTuyvPSeNAoHpRtFL1vUmR9tZ8NuSuvmr6XTw1+Ngjc6JflSrDvl81JtyJO
-         2fIaa5oLm9Drskok+pDyZILAD1zwXck+eoaPkFNwlKP+zWw9ajGbcDVAqcf7jq2M0LWA
-         GunCCSL9/WV6Mrp0/KsuPJhdFoye/6spdsSZgr1TKoPJEJ8YusVXx9nQ7BijDeeXlNIQ
-         eO4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Z+LEQQ8JBL0DS0DQ7G0AfJwPosJOoq+uRJ+HTKeifj0=;
-        b=DBq+JQnVVJNm3DOxCjE24xUAZ07ySJ/741R2XDVKcdXt6fITnwa7sS/pyNNIwUcEnK
-         HHTNgQisPGnc3RVnrUVyiSxt4TEaX2qyBMSz0WAPgZ4wL8qODDNL1BGy3sEY5oy8kG/Q
-         RCYauyAD3Az2jd1M8wVufYhEITWXqzk6edoQwNzvZzh5mSGSaDoBa+FkmVTD7CclI8Ax
-         +DhaeoUK5yP7NxoyyTwcQiuC8E7Mq6/W/gurKT6egFMVrz80LmKuXDft9AnAMjSVK55X
-         jDcfllt64x6cOU5qHN3oAw7Wi1q0iE68O/uUH7GaloFroZ75tU0C8x3iEUU0rYgFIzPD
-         /rwg==
-X-Gm-Message-State: APt69E2ds1wU/WBHVA0JyXUh1W+WJTieRRB9JXjyHLIzslal+cSs9Vnp
-        6fZt8JVz7VOoJxxbEtSzNPw=
-X-Google-Smtp-Source: ADUXVKK3e6brRPMgcsMxHDb5gfbhgR91EbtBP2EuYLM8Bqov2wpqgRKKAaZf63PBLUJEI0dOUbGsXw==
-X-Received: by 2002:a2e:1710:: with SMTP id l16-v6mr8994684lje.74.1529335087274;
-        Mon, 18 Jun 2018 08:18:07 -0700 (PDT)
-Received: from uranus.localdomain ([5.18.103.226])
-        by smtp.gmail.com with ESMTPSA id t6-v6sm2731516lje.18.2018.06.18.08.18.06
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 08:18:06 -0700 (PDT)
-Received: by uranus.localdomain (Postfix, from userid 1000)
-        id E38E2460859; Mon, 18 Jun 2018 18:18:05 +0300 (MSK)
-Date:   Mon, 18 Jun 2018 18:18:05 +0300
-From:   Cyrill Gorcunov <gorcunov@gmail.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, y2038@lists.linaro.org,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sysinfo: remove get_monotonic_boottime()
-Message-ID: <20180618151805.GC1998@uranus.lan>
-References: <20180618150114.849216-1-arnd@arndb.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180618150114.849216-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Mon, 18 Jun 2018 11:19:20 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0Mecsy-1ft4Uf0xtQ-00ODYn; Mon, 18 Jun 2018 17:19:09 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     Karan Tilak Kumar <kartilak@cisco.com>,
+        Sesidhar Baddela <sebaddel@cisco.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] snic: fix printing time intervals
+Date:   Mon, 18 Jun 2018 17:18:41 +0200
+Message-Id: <20180618151907.1453733-1-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+X-Provags-ID: V03:K1:gPPt4IKuuoCYM7qjB85xXgyNhcEVi0mEJ75+NE2X/A5ZxEIgUo9
+ cmB4f+qHqU7xW7f2aS5JaaozLy/YvrfT/hPCWwQa1CZUTsUzBlSQCDb0TcwPLjfm1cWE7uM
+ LBct/ugz5o+p1Vu/g4zoFuu6DhB41W4SK1wpqTDx8osj6ZwNLj6pmrHVycBZFe8+csVaUIB
+ uVe6E6hFsINzFvv1HPR2w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:zFOWDC0Pkmw=:rbs4s/zJgP2qRZFK7pQqn6
+ K0xy0npsmzvLBdrYepGKA/3T8nlH35lydOau3HnrupcudtBRLwuxQ7GdC61HI7LZ0bIW/qMur
+ a/2Pz7SUubCHTmo3TqYrLGOsT9psJ+LLSmws0YCCdXX89wtO/NF8A9fri/iTyp8VQcH7IXS0H
+ hKugmxlMUjQAFlSRwsTx+m0Prmkla/K/QhDFhX9PAW6GSna1gJKNhRWTK7lE1lj2ax7vLh2iL
+ GUsyR8/J8nLIZ51r7zakkLrygnuTqApaxmLIuWQzch7l3xUO8O48cQvZS6+5RyD5OtzGN+PWI
+ vyOezwTVl+CJTrWrlVtXf2byzIeBC8VZysZWYi1+hPUfA7lPMaYXzexA4SsTth/lB5XykJTSg
+ v2dbnQhdAKY+WlTIYObaOuE1Giu+DIa86O7OrJaK0DhcOBPkK/9lgngeR+ytCEqsELjfSpXPu
+ Qt2lqOqt+2a9rqBgQ5B9fLVfjbeJCPLjShIaDjI3niyRHFO/wJ2E4dHTi/8TPkViKzxpsbJ6y
+ PmC1XIefH1cL3P0a3JadHxLcnpT/YKMeQGZ3pHwSM5NlclkLw7mb/kZbGXYAZjfsHE3I3HdHN
+ LSyNL9im/mzRDV7v5J4trOibJNFyliFkzefwvDPrA4m+12Vkb14G47bxr7UfjPSMvlcKlgEJe
+ QVY6Ma4N75dYjCt46IMCfrXKTBzJ5xWJhsxkTX82i1MHX3Xh5qPDPWTuJWPvUD98ms4k=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 05:00:38PM +0200, Arnd Bergmann wrote:
-> get_monotonic_boottime() is deprecated because it uses the
-> old 'timespec' structure. This replaces one of the last callers
-> with a call to ktime_get_boottime.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  kernel/sys.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sys.c b/kernel/sys.c
-> index ccaeffa2171b..24f838da8ca1 100644
-> --- a/kernel/sys.c
-> +++ b/kernel/sys.c
-> @@ -2574,11 +2574,11 @@ static int do_sysinfo(struct sysinfo *info)
->  {
->  	unsigned long mem_total, sav_total;
->  	unsigned int mem_unit, bitcount;
-> -	struct timespec tp;
-> +	struct timespec64 tp;
->  
->  	memset(info, 0, sizeof(struct sysinfo));
->  
-> -	get_monotonic_boottime(&tp);
-> +	ktime_get_boottime_ts64(&tp);
->  	info->uptime = tp.tv_sec + (tp.tv_nsec ? 1 : 0);
->  
->  	get_avenrun(info->loads, 0, SI_LOAD_SHIFT - FSHIFT);
+We don't want to use 'struct timespec' because of the y2038 overflow
+problem. The overflow is not actually an issue here, but it's easy to
+replace with 'timespec64' for consistency. However, it's worth pointing
+out that nanosecond values have nine digits, not eight or ten, so I'm
+fixing the format strings accordingly as well.
 
-The change is pretty obvious. Looks ok to me (though I missed
-the moment when timespec became old ;)
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/scsi/snic/snic_debugfs.c | 10 +++++-----
+ drivers/scsi/snic/snic_trc.c     |  6 +++---
+ 2 files changed, 8 insertions(+), 8 deletions(-)
 
-Reviewed-by: Cyrill Gorcunov <gorcunov@gmail.com>
+diff --git a/drivers/scsi/snic/snic_debugfs.c b/drivers/scsi/snic/snic_debugfs.c
+index 269ddf791a73..0abe17c1a73b 100644
+--- a/drivers/scsi/snic/snic_debugfs.c
++++ b/drivers/scsi/snic/snic_debugfs.c
+@@ -200,7 +200,7 @@ snic_stats_show(struct seq_file *sfp, void *data)
+ {
+ 	struct snic *snic = (struct snic *) sfp->private;
+ 	struct snic_stats *stats = &snic->s_stats;
+-	struct timespec last_isr_tms, last_ack_tms;
++	struct timespec64 last_isr_tms, last_ack_tms;
+ 	u64 maxio_tm;
+ 	int i;
+ 
+@@ -312,12 +312,12 @@ snic_stats_show(struct seq_file *sfp, void *data)
+ 		   "\t\t Other Statistics\n"
+ 		   "\n---------------------------------------------\n");
+ 
+-	jiffies_to_timespec(stats->misc.last_isr_time, &last_isr_tms);
+-	jiffies_to_timespec(stats->misc.last_ack_time, &last_ack_tms);
++	jiffies_to_timespec64(stats->misc.last_isr_time, &last_isr_tms);
++	jiffies_to_timespec64(stats->misc.last_ack_time, &last_ack_tms);
+ 
+ 	seq_printf(sfp,
+-		   "Last ISR Time               : %llu (%8lu.%8lu)\n"
+-		   "Last Ack Time               : %llu (%8lu.%8lu)\n"
++		   "Last ISR Time               : %llu (%8llu.%09lu)\n"
++		   "Last Ack Time               : %llu (%8llu.%09lu)\n"
+ 		   "Ack ISRs                    : %llu\n"
+ 		   "IO Cmpl ISRs                : %llu\n"
+ 		   "Err Notify ISRs             : %llu\n"
+diff --git a/drivers/scsi/snic/snic_trc.c b/drivers/scsi/snic/snic_trc.c
+index f00ebf4717e0..fc60c933d6c0 100644
+--- a/drivers/scsi/snic/snic_trc.c
++++ b/drivers/scsi/snic/snic_trc.c
+@@ -65,12 +65,12 @@ static int
+ snic_fmt_trc_data(struct snic_trc_data *td, char *buf, int buf_sz)
+ {
+ 	int len = 0;
+-	struct timespec tmspec;
++	struct timespec64 tmspec;
+ 
+-	jiffies_to_timespec(td->ts, &tmspec);
++	jiffies_to_timespec64(td->ts, &tmspec);
+ 
+ 	len += snprintf(buf, buf_sz,
+-			"%lu.%10lu %-25s %3d %4x %16llx %16llx %16llx %16llx %16llx\n",
++			"%llu.%09lu %-25s %3d %4x %16llx %16llx %16llx %16llx %16llx\n",
+ 			tmspec.tv_sec,
+ 			tmspec.tv_nsec,
+ 			td->fn,
+-- 
+2.9.0
+
