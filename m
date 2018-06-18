@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9ADC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA89C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E21E20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:27:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E21E20864
+	by mail.kernel.org (Postfix) with ESMTP id 62704208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:28:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62704208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966176AbeFRJ1x (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:27:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56984 "EHLO
+        id S966060AbeFRJ2U (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:28:20 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56780 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965621AbeFRIZu (ORCPT
+        with ESMTP id S965354AbeFRIZl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:25:50 -0400
+        Mon, 18 Jun 2018 04:25:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E4847CAA;
-        Mon, 18 Jun 2018 08:25:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1CBDAC9D;
+        Mon, 18 Jun 2018 08:25:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Mashak <mrv@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Rich Felker <dalias@libc.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rob Herring <robh@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 226/279] net sched actions: fix invalid pointer dereferencing if skbedit flags missing
-Date:   Mon, 18 Jun 2018 10:13:31 +0200
-Message-Id: <20180618080618.176909216@linuxfoundation.org>
+Subject: [PATCH 4.16 223/279] sh: switch to NO_BOOTMEM
+Date:   Mon, 18 Jun 2018 10:13:28 +0200
+Message-Id: <20180618080618.068832202@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,99 +51,204 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Mashak <mrv@mojatatu.com>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit af5d01842fe1fbfb9f5e1c1d957ba02ab6f4569a ]
+[ Upstream commit ac21fc2dcb405cf250ad3f1228f64f64930d9211 ]
 
-When application fails to pass flags in netlink TLV for a new skbedit action,
-the kernel results in the following oops:
+Commit 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
+inadvertently switched the DT unflattening allocations from memblock to
+bootmem which doesn't work because the unflattening happens before
+bootmem is initialized. Swapping the order of bootmem init and
+unflattening could also fix this, but removing bootmem is desired. So
+enable NO_BOOTMEM on SH like other architectures have done.
 
-[    8.307732] BUG: unable to handle kernel paging request at 0000000000021130
-[    8.309167] PGD 80000000193d1067 P4D 80000000193d1067 PUD 180e0067 PMD 0
-[    8.310595] Oops: 0000 [#1] SMP PTI
-[    8.311334] Modules linked in: kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd glue_helper serio_raw
-[    8.314190] CPU: 1 PID: 397 Comm: tc Not tainted 4.17.0-rc3+ #357
-[    8.315252] RIP: 0010:__tcf_idr_release+0x33/0x140
-[    8.316203] RSP: 0018:ffffa0718038f840 EFLAGS: 00010246
-[    8.317123] RAX: 0000000000000001 RBX: 0000000000021100 RCX: 0000000000000000
-[    8.319831] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000021100
-[    8.321181] RBP: 0000000000000000 R08: 000000000004adf8 R09: 0000000000000122
-[    8.322645] R10: 0000000000000000 R11: ffffffff9e5b01ed R12: 0000000000000000
-[    8.324157] R13: ffffffff9e0d3cc0 R14: 0000000000000000 R15: 0000000000000000
-[    8.325590] FS:  00007f591292e700(0000) GS:ffff8fcf5bc40000(0000) knlGS:0000000000000000
-[    8.327001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    8.327987] CR2: 0000000000021130 CR3: 00000000180e6004 CR4: 00000000001606a0
-[    8.329289] Call Trace:
-[    8.329735]  tcf_skbedit_init+0xa7/0xb0
-[    8.330423]  tcf_action_init_1+0x362/0x410
-[    8.331139]  ? try_to_wake_up+0x44/0x430
-[    8.331817]  tcf_action_init+0x103/0x190
-[    8.332511]  tc_ctl_action+0x11a/0x220
-[    8.333174]  rtnetlink_rcv_msg+0x23d/0x2e0
-[    8.333902]  ? _cond_resched+0x16/0x40
-[    8.334569]  ? __kmalloc_node_track_caller+0x5b/0x2c0
-[    8.335440]  ? rtnl_calcit.isra.31+0xf0/0xf0
-[    8.336178]  netlink_rcv_skb+0xdb/0x110
-[    8.336855]  netlink_unicast+0x167/0x220
-[    8.337550]  netlink_sendmsg+0x2a7/0x390
-[    8.338258]  sock_sendmsg+0x30/0x40
-[    8.338865]  ___sys_sendmsg+0x2c5/0x2e0
-[    8.339531]  ? pagecache_get_page+0x27/0x210
-[    8.340271]  ? filemap_fault+0xa2/0x630
-[    8.340943]  ? page_add_file_rmap+0x108/0x200
-[    8.341732]  ? alloc_set_pte+0x2aa/0x530
-[    8.342573]  ? finish_fault+0x4e/0x70
-[    8.343332]  ? __handle_mm_fault+0xbc1/0x10d0
-[    8.344337]  ? __sys_sendmsg+0x53/0x80
-[    8.345040]  __sys_sendmsg+0x53/0x80
-[    8.345678]  do_syscall_64+0x4f/0x100
-[    8.346339]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    8.347206] RIP: 0033:0x7f591191da67
-[    8.347831] RSP: 002b:00007fff745abd48 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[    8.349179] RAX: ffffffffffffffda RBX: 00007fff745abe70 RCX: 00007f591191da67
-[    8.350431] RDX: 0000000000000000 RSI: 00007fff745abdc0 RDI: 0000000000000003
-[    8.351659] RBP: 000000005af35251 R08: 0000000000000001 R09: 0000000000000000
-[    8.352922] R10: 00000000000005f1 R11: 0000000000000246 R12: 0000000000000000
-[    8.354183] R13: 00007fff745afed0 R14: 0000000000000001 R15: 00000000006767c0
-[    8.355400] Code: 41 89 d4 53 89 f5 48 89 fb e8 aa 20 fd ff 85 c0 0f 84 ed 00
-00 00 48 85 db 0f 84 cf 00 00 00 40 84 ed 0f 85 cd 00 00 00 45 84 e4 <8b> 53 30
-74 0d 85 d2 b8 ff ff ff ff 0f 8f b3 00 00 00 8b 43 2c
-[    8.358699] RIP: __tcf_idr_release+0x33/0x140 RSP: ffffa0718038f840
-[    8.359770] CR2: 0000000000021130
-[    8.360438] ---[ end trace 60c66be45dfc14f0 ]---
-
-The caller calls action's ->init() and passes pointer to "struct tc_action *a",
-which later may be initialized to point at the existing action, otherwise
-"struct tc_action *a" is still invalid, and therefore dereferencing it is an
-error as happens in tcf_idr_release, where refcnt is decremented.
-
-So in case of missing flags tcf_idr_release must be called only for
-existing actions.
-
-v2:
-    - prepare patch for net tree
-
-Fixes: 5e1567aeb7fe ("net sched: skbedit action fix late binding")
-Signed-off-by: Roman Mashak <mrv@mojatatu.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 0fa1c579349f ("of/fdt: use memblock_virt_alloc for early alloc")
+Reported-by: Rich Felker <dalias@libc.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Rich Felker <dalias@libc.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_skbedit.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/sh/Kconfig        |    1 
+ arch/sh/kernel/setup.c |    1 
+ arch/sh/mm/init.c      |   68 ++++---------------------------------------------
+ arch/sh/mm/numa.c      |   19 -------------
+ 4 files changed, 7 insertions(+), 82 deletions(-)
 
---- a/net/sched/act_skbedit.c
-+++ b/net/sched/act_skbedit.c
-@@ -121,7 +121,8 @@ static int tcf_skbedit_init(struct net *
- 		return 0;
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -9,6 +9,7 @@ config SUPERH
+ 	select HAVE_IDE if HAS_IOPORT_MAP
+ 	select HAVE_MEMBLOCK
+ 	select HAVE_MEMBLOCK_NODE_MAP
++	select NO_BOOTMEM
+ 	select ARCH_DISCARD_MEMBLOCK
+ 	select HAVE_OPROFILE
+ 	select HAVE_GENERIC_DMA_COHERENT
+--- a/arch/sh/kernel/setup.c
++++ b/arch/sh/kernel/setup.c
+@@ -11,7 +11,6 @@
+ #include <linux/ioport.h>
+ #include <linux/init.h>
+ #include <linux/initrd.h>
+-#include <linux/bootmem.h>
+ #include <linux/console.h>
+ #include <linux/root_dev.h>
+ #include <linux/utsname.h>
+--- a/arch/sh/mm/init.c
++++ b/arch/sh/mm/init.c
+@@ -211,59 +211,15 @@ void __init allocate_pgdat(unsigned int
  
- 	if (!flags) {
--		tcf_idr_release(*a, bind);
-+		if (exists)
-+			tcf_idr_release(*a, bind);
- 		return -EINVAL;
- 	}
+ 	NODE_DATA(nid) = __va(phys);
+ 	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+-
+-	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+ #endif
+ 
+ 	NODE_DATA(nid)->node_start_pfn = start_pfn;
+ 	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
+ }
+ 
+-static void __init bootmem_init_one_node(unsigned int nid)
+-{
+-	unsigned long total_pages, paddr;
+-	unsigned long end_pfn;
+-	struct pglist_data *p;
+-
+-	p = NODE_DATA(nid);
+-
+-	/* Nothing to do.. */
+-	if (!p->node_spanned_pages)
+-		return;
+-
+-	end_pfn = pgdat_end_pfn(p);
+-
+-	total_pages = bootmem_bootmap_pages(p->node_spanned_pages);
+-
+-	paddr = memblock_alloc(total_pages << PAGE_SHIFT, PAGE_SIZE);
+-	if (!paddr)
+-		panic("Can't allocate bootmap for nid[%d]\n", nid);
+-
+-	init_bootmem_node(p, paddr >> PAGE_SHIFT, p->node_start_pfn, end_pfn);
+-
+-	free_bootmem_with_active_regions(nid, end_pfn);
+-
+-	/*
+-	 * XXX Handle initial reservations for the system memory node
+-	 * only for the moment, we'll refactor this later for handling
+-	 * reservations in other nodes.
+-	 */
+-	if (nid == 0) {
+-		struct memblock_region *reg;
+-
+-		/* Reserve the sections we're already using. */
+-		for_each_memblock(reserved, reg) {
+-			reserve_bootmem(reg->base, reg->size, BOOTMEM_DEFAULT);
+-		}
+-	}
+-
+-	sparse_memory_present_with_active_regions(nid);
+-}
+-
+ static void __init do_init_bootmem(void)
+ {
+ 	struct memblock_region *reg;
+-	int i;
+ 
+ 	/* Add active regions with valid PFNs. */
+ 	for_each_memblock(memory, reg) {
+@@ -279,9 +235,12 @@ static void __init do_init_bootmem(void)
+ 
+ 	plat_mem_setup();
+ 
+-	for_each_online_node(i)
+-		bootmem_init_one_node(i);
++	for_each_memblock(memory, reg) {
++		int nid = memblock_get_region_node(reg);
+ 
++		memory_present(nid, memblock_region_memory_base_pfn(reg),
++			memblock_region_memory_end_pfn(reg));
++	}
+ 	sparse_init();
+ }
+ 
+@@ -322,7 +281,6 @@ void __init paging_init(void)
+ {
+ 	unsigned long max_zone_pfns[MAX_NR_ZONES];
+ 	unsigned long vaddr, end;
+-	int nid;
+ 
+ 	sh_mv.mv_mem_init();
+ 
+@@ -377,21 +335,7 @@ void __init paging_init(void)
+ 	kmap_coherent_init();
+ 
+ 	memset(max_zone_pfns, 0, sizeof(max_zone_pfns));
+-
+-	for_each_online_node(nid) {
+-		pg_data_t *pgdat = NODE_DATA(nid);
+-		unsigned long low, start_pfn;
+-
+-		start_pfn = pgdat->bdata->node_min_pfn;
+-		low = pgdat->bdata->node_low_pfn;
+-
+-		if (max_zone_pfns[ZONE_NORMAL] < low)
+-			max_zone_pfns[ZONE_NORMAL] = low;
+-
+-		printk("Node %u: start_pfn = 0x%lx, low = 0x%lx\n",
+-		       nid, start_pfn, low);
+-	}
+-
++	max_zone_pfns[ZONE_NORMAL] = max_low_pfn;
+ 	free_area_init_nodes(max_zone_pfns);
+ }
+ 
+--- a/arch/sh/mm/numa.c
++++ b/arch/sh/mm/numa.c
+@@ -8,7 +8,6 @@
+  * for more details.
+  */
+ #include <linux/module.h>
+-#include <linux/bootmem.h>
+ #include <linux/memblock.h>
+ #include <linux/mm.h>
+ #include <linux/numa.h>
+@@ -26,9 +25,7 @@ EXPORT_SYMBOL_GPL(node_data);
+  */
+ void __init setup_bootmem_node(int nid, unsigned long start, unsigned long end)
+ {
+-	unsigned long bootmap_pages;
+ 	unsigned long start_pfn, end_pfn;
+-	unsigned long bootmem_paddr;
+ 
+ 	/* Don't allow bogus node assignment */
+ 	BUG_ON(nid >= MAX_NUMNODES || nid <= 0);
+@@ -48,25 +45,9 @@ void __init setup_bootmem_node(int nid,
+ 					     SMP_CACHE_BYTES, end));
+ 	memset(NODE_DATA(nid), 0, sizeof(struct pglist_data));
+ 
+-	NODE_DATA(nid)->bdata = &bootmem_node_data[nid];
+ 	NODE_DATA(nid)->node_start_pfn = start_pfn;
+ 	NODE_DATA(nid)->node_spanned_pages = end_pfn - start_pfn;
+ 
+-	/* Node-local bootmap */
+-	bootmap_pages = bootmem_bootmap_pages(end_pfn - start_pfn);
+-	bootmem_paddr = memblock_alloc_base(bootmap_pages << PAGE_SHIFT,
+-				       PAGE_SIZE, end);
+-	init_bootmem_node(NODE_DATA(nid), bootmem_paddr >> PAGE_SHIFT,
+-			  start_pfn, end_pfn);
+-
+-	free_bootmem_with_active_regions(nid, end_pfn);
+-
+-	/* Reserve the pgdat and bootmap space with the bootmem allocator */
+-	reserve_bootmem_node(NODE_DATA(nid), start_pfn << PAGE_SHIFT,
+-			     sizeof(struct pglist_data), BOOTMEM_DEFAULT);
+-	reserve_bootmem_node(NODE_DATA(nid), bootmem_paddr,
+-			     bootmap_pages << PAGE_SHIFT, BOOTMEM_DEFAULT);
+-
+ 	/* It's up */
+ 	node_set_online(nid);
  
 
 
