@@ -6,38 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC43FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8672AC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:32:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AECA120864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:31:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AECA120864
+	by mail.kernel.org (Postfix) with ESMTP id 4AF72208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:32:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AF72208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965914AbeFRJb0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:31:26 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56160 "EHLO
+        id S936283AbeFRIYw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:24:52 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56112 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936363AbeFRIZD (ORCPT
+        with ESMTP id S936091AbeFRIYs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:25:03 -0400
+        Mon, 18 Jun 2018 04:24:48 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6FA7CC5C;
-        Mon, 18 Jun 2018 08:25:02 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CDDAEBAD;
+        Mon, 18 Jun 2018 08:24:47 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
-        Sebastian Sanchez <sebastian.sanchez@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Doug Ledford <dledford@redhat.com>,
+        "Long, Nicholas" <nicholas.a.long@baesystems.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 175/279] IB/hfi1: Fix memory leak in exception path in get_irq_affinity()
-Date:   Mon, 18 Jun 2018 10:12:40 +0200
-Message-Id: <20180618080616.155373602@linuxfoundation.org>
+Subject: [PATCH 4.16 203/279] net: aquantia: Limit number of vectors to actually allocated irqs
+Date:   Mon, 18 Jun 2018 10:13:08 +0200
+Message-Id: <20180618080617.297253514@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -54,72 +52,89 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sebastian Sanchez <sebastian.sanchez@intel.com>
+From: Igor Russkikh <igor.russkikh@aquantia.com>
 
-[ Upstream commit 59482a14918b282ca2a98f38c69da5ebeb1107d2 ]
+[ Upstream commit a09bd81b5413d1b4d705c6c5303b5d311069da22 ]
 
-When IRQ affinity is set and the interrupt type is unknown, a cpu
-mask allocated within the function is never freed. Fix this memory
-leak by allocating memory within the scope where it is used.
+Driver should use pci_alloc_irq_vectors return value to correct number
+of allocated vectors and napi instances. Otherwise it'll panic later
+in pci_irq_vector.
 
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Reviewed-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
-Signed-off-by: Sebastian Sanchez <sebastian.sanchez@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+Driver also should allow more than one MSI vectors to be allocated.
+
+Error return path from pci_alloc_irq_vectors is also fixed to revert
+resources in a correct sequence when error happens.
+
+Reported-by: Long, Nicholas <nicholas.a.long@baesystems.com>
+Fixes: 23ee07a ("net: aquantia: Cleanup pci functions module")
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/hfi1/affinity.c |   11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c      |    1 
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.h      |    1 
+ drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c |   20 +++++++++----------
+ 3 files changed, 12 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/hw/hfi1/affinity.c
-+++ b/drivers/infiniband/hw/hfi1/affinity.c
-@@ -412,7 +412,6 @@ static void hfi1_cleanup_sdma_notifier(s
- static int get_irq_affinity(struct hfi1_devdata *dd,
- 			    struct hfi1_msix_entry *msix)
- {
--	int ret;
- 	cpumask_var_t diff;
- 	struct hfi1_affinity_node *entry;
- 	struct cpu_mask_set *set = NULL;
-@@ -424,10 +423,6 @@ static int get_irq_affinity(struct hfi1_
- 	extra[0] = '\0';
- 	cpumask_clear(&msix->mask);
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -95,6 +95,7 @@ void aq_nic_cfg_start(struct aq_nic_s *s
+ 	/*rss rings */
+ 	cfg->vecs = min(cfg->aq_hw_caps->vecs, AQ_CFG_VECS_DEF);
+ 	cfg->vecs = min(cfg->vecs, num_online_cpus());
++	cfg->vecs = min(cfg->vecs, self->irqvecs);
+ 	/* cfg->vecs should be power of 2 for RSS */
+ 	if (cfg->vecs >= 8U)
+ 		cfg->vecs = 8U;
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.h
+@@ -80,6 +80,7 @@ struct aq_nic_s {
  
--	ret = zalloc_cpumask_var(&diff, GFP_KERNEL);
--	if (!ret)
--		return -ENOMEM;
+ 	struct pci_dev *pdev;
+ 	unsigned int msix_entry_mask;
++	u32 irqvecs;
+ };
+ 
+ static inline struct device *aq_nic_get_dev(struct aq_nic_s *self)
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_pci_func.c
+@@ -267,16 +267,16 @@ static int aq_pci_probe(struct pci_dev *
+ 	numvecs = min(numvecs, num_online_cpus());
+ 	/*enable interrupts */
+ #if !AQ_CFG_FORCE_LEGACY_INT
+-	err = pci_alloc_irq_vectors(self->pdev, numvecs, numvecs,
+-				    PCI_IRQ_MSIX);
 -
- 	entry = node_affinity_lookup(dd->node);
- 
- 	switch (msix->type) {
-@@ -458,6 +453,9 @@ static int get_irq_affinity(struct hfi1_
- 	 * finds its CPU here.
- 	 */
- 	if (cpu == -1 && set) {
-+		if (!zalloc_cpumask_var(&diff, GFP_KERNEL))
-+			return -ENOMEM;
+-	if (err < 0) {
+-		err = pci_alloc_irq_vectors(self->pdev, 1, 1,
+-					    PCI_IRQ_MSI | PCI_IRQ_LEGACY);
+-		if (err < 0)
+-			goto err_hwinit;
++	numvecs = pci_alloc_irq_vectors(self->pdev, 1, numvecs,
++					PCI_IRQ_MSIX | PCI_IRQ_MSI |
++					PCI_IRQ_LEGACY);
 +
- 		if (cpumask_equal(&set->mask, &set->used)) {
- 			/*
- 			 * We've used up all the CPUs, bump up the generation
-@@ -469,6 +467,8 @@ static int get_irq_affinity(struct hfi1_
- 		cpumask_andnot(diff, &set->mask, &set->used);
- 		cpu = cpumask_first(diff);
- 		cpumask_set_cpu(cpu, &set->used);
-+
-+		free_cpumask_var(diff);
++	if (numvecs < 0) {
++		err = numvecs;
++		goto err_hwinit;
  	}
+ #endif
++	self->irqvecs = numvecs;
  
- 	cpumask_set_cpu(cpu, &msix->mask);
-@@ -482,7 +482,6 @@ static int get_irq_affinity(struct hfi1_
- 		hfi1_setup_sdma_notifier(msix);
- 	}
- 
--	free_cpumask_var(diff);
- 	return 0;
+ 	/* net device init */
+ 	aq_nic_cfg_start(self);
+@@ -298,9 +298,9 @@ err_free_aq_hw:
+ 	kfree(self->aq_hw);
+ err_ioremap:
+ 	free_netdev(ndev);
+-err_pci_func:
+-	pci_release_regions(pdev);
+ err_ndev:
++	pci_release_regions(pdev);
++err_pci_func:
+ 	pci_disable_device(pdev);
+ 	return err;
  }
- 
 
 
