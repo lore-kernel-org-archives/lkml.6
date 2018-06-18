@@ -2,101 +2,128 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 880ECC5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B466EC5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C4AD20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:24:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ANqylmC7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C4AD20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E35B2075A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:28:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E35B2075A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sipsolutions.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935341AbeFRUYT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 16:24:19 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:45942 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755310AbeFRUYQ (ORCPT
+        id S935546AbeFRU2H (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 16:28:07 -0400
+Received: from s3.sipsolutions.net ([144.76.63.242]:57924 "EHLO
+        sipsolutions.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754801AbeFRU2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 16:24:16 -0400
-Received: by mail-pl0-f66.google.com with SMTP id c23-v6so9624527plz.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 13:24:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
-         :references:message-id:user-agent:subject:date;
-        bh=Kx1DsHBZCqF/P76ODHHbeTa0o+finkCNcCRAs1TZ5g4=;
-        b=ANqylmC7P54f1R+9Noeef4tOY2gWIsf1rpi2vYbtNC7Qi2THMGGLiiJoctdba90W0F
-         T68qew201/eNSHCAr6stKUnJDHYFctnUh32pwBgKT8K4HZpE/Louxk5CkTKCNCYoYH68
-         bedYaY8kKqlKkt1yes+mdBU4+WJkIAMoMRgn8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
-         :in-reply-to:cc:references:message-id:user-agent:subject:date;
-        bh=Kx1DsHBZCqF/P76ODHHbeTa0o+finkCNcCRAs1TZ5g4=;
-        b=HMM5B6kDdm9VWuHYiZgJf6K714TgK81gjn4S2ziEd7fn3e3Z0FGn3P7Vgc/ROBG/i7
-         PdIvVUkRpEPbKq9cs+50nWA5z1oRoQzYwFphAnzdASyvTjUT3OJYMag5Rkt4Ekv5gOBe
-         sUIbezJmyKrTN+RQSdp/2imRc+iJTQmTKNsAKgrqOHkXZWGKAIrGrGz/dF8JZmAxT9FP
-         hg6um0cqkgDVPdx7EZFZH3Gj9r7kNoMrRhi3WCz0IxcarE8K662DaDylR2O0R5FIcs3e
-         bMtnzISvU0TDJYMzOaKaCGGNtXnnGPV6nUsTj59dCtz0I6xnWhVVgVfmixD3rJJbXRr/
-         moxg==
-X-Gm-Message-State: APt69E36EnF4bNEjUnPh0U83a5LrPnvYFeRdi5J/UWed4+5MJInv6pWl
-        /7qRfcQJaIiesNBQBgkWCsKaRg==
-X-Google-Smtp-Source: ADUXVKIoXQIOGqfG/s02EKcb18W1idu/sPU8SPnCWQlTRovbLRpVDpD0E7w19MMCxFj61AMH93Il0g==
-X-Received: by 2002:a17:902:28c8:: with SMTP id f66-v6mr15772592plb.60.1529353455814;
-        Mon, 18 Jun 2018 13:24:15 -0700 (PDT)
-Received: from localhost ([2620:0:1000:1511:d30e:62c6:f82c:ff40])
-        by smtp.gmail.com with ESMTPSA id h8-v6sm19309340pgv.29.2018.06.18.13.24.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 18 Jun 2018 13:24:15 -0700 (PDT)
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vinod.koul@linaro.org>
-From:   Stephen Boyd <swboyd@chromium.org>
-In-Reply-To: <20180618182123.GT14924@minitux>
-Cc:     linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-arm-msm@vger.kernel.org, Vinod Koul <vkoul@kernel.org>
-References: <20180618141259.23141-1-vkoul@kernel.org>
- <20180618141259.23141-4-vkoul@kernel.org> <20180618182123.GT14924@minitux>
-Message-ID: <152935345439.16708.16472364970375601294@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 3/3] hwrng: msm - Add support for prng v2
-Date:   Mon, 18 Jun 2018 13:24:14 -0700
+        Mon, 18 Jun 2018 16:28:06 -0400
+Received: by sipsolutions.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.91)
+        (envelope-from <johannes@sipsolutions.net>)
+        id 1fV0ku-00032F-Mx; Mon, 18 Jun 2018 22:28:04 +0200
+Message-ID: <1529353683.3092.32.camel@sipsolutions.net>
+Subject: Re: [PATCH v3] bitfield: fix *_encode_bits()
+From:   Johannes Berg <johannes@sipsolutions.net>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        netdev <netdev@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon, 18 Jun 2018 22:28:03 +0200
+In-Reply-To: <CAHp75VdY+PF0Edm_py+UiD3nz77HTQps_8uaRh+Sa3C+UKECKA@mail.gmail.com> (sfid-20180618_222109_796813_69F8BCFA)
+References: <20180618195618.17536-1-johannes@sipsolutions.net>
+         <CAHp75VdY+PF0Edm_py+UiD3nz77HTQps_8uaRh+Sa3C+UKECKA@mail.gmail.com>
+         (sfid-20180618_222109_796813_69F8BCFA)
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 (3.26.6-1.fc27) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Bjorn Andersson (2018-06-18 11:21:23)
-> On Mon 18 Jun 07:12 PDT 2018, Vinod Koul wrote:
-> =
 
-> > Qcom 8996 and later chips support prng v2 where we need to only
-> > implement .read callback for hwrng.
-> > =
+> I think would be better to add test cases first, followed by fix. (1
+> patch -> 2 patches)
+> In this case Fixes tag would be only for the fix part and backporting
+> (if needed) will be much easier.
 
-> =
+Can't, unless I introduce a compilation issue in the tests first? That
+seems weird. But I guess I can do it the other way around.
 
-> The hardware still needs initialization, so I think you should expand
-> this to mention that the initialization is moved to secure world and
-> that's the reason why we only implement read.
-> =
+> > @@ -143,6 +143,7 @@ static __always_inline base type##_get_bits(__##type v, base field) \
+> >         ____MAKE_OP(le##size,u##size,cpu_to_le##size,le##size##_to_cpu) \
+> >         ____MAKE_OP(be##size,u##size,cpu_to_be##size,be##size##_to_cpu) \
+> >         ____MAKE_OP(u##size,u##size,,)
+> > +____MAKE_OP(u8,u8,,)
+> 
+> Is this one you need, or it's just for sake of tests?
 
-> The question is what happens in projects with other security models.
+All three ;-)
 
-Can we still read the PRNG_CONFIG register to see if it's already been
-configured or not and then bail out if it isn't configured? That would
-be better as long as we the system doesn't blow up if non-secure mode
-tries to read the config register.
+We'll probably need it eventually (we do have bytes to take bits out
+of), for consistency I think we want it, and I wanted to add it to the
+tests too.
 
+> For me looks like for consistency we may add fake conversion macros
+> for this, such as
+> 
+> #define cpu_to_le8(x) x
+> #define le8_to_cpu(x) x
+> ...
+> #undef le8_to_cpu
+> #undef cpu_to_le8
+> 
+> And do in the same way like below
+> 
+> __MAKE_OP(8)
+
+I disagree with this. I don't see why we should have le8_encode_bits()
+and be8_encode_bits() and friends, that makes no sense.
+
+> Perhaps
+> // SPDX... GPL-2.0+
+
+Yeah, I guess I should have that.
+
+> > +/*
+> > + * Test cases for bitfield helpers.
+> > + */
+> > +
+> > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> > +
+> > +#include <linux/init.h>
+> > +#include <linux/kernel.h>
+> > +#include <linux/module.h>
+> 
+> Either module.h (if we can compile as a module) or just init.h otherwise.
+
+It can be a module ... guess I cargo-culted that from another test.
+
+> > +/*
+> > + * This should fail compilation:
+> > + *     CHECK_ENC_GET(16, 16, 0x0f00, 0x1000);
+> > + */
+> 
+> Perhaps we need some ifdeffery around this. It would allow you to try
+> w/o altering the source code.
+> 
+> #ifdef TEST_BITFIELD_COMPILE
+> ...
+> #endif
+
+Yeah, I guess we could do that.
+
+> I guess you rather continue and print a statistics X passed out of Y.
+> Check how it's done, for example, in other test_* modules.
+> (test_printf.c comes first to my mind).
+
+I see it's done that way elsewhere, but I don't really see the point. It
+makes the test code more complex, and if you fail here you'd better fix
+it, and if you need a few iterations for that it's not really a problem?
+
+johannes
