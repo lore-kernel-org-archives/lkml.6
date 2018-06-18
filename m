@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A976C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7DF4C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E850420864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E850420864
+	by mail.kernel.org (Postfix) with ESMTP id AC599208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC599208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030486AbeFRIio (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:38:44 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37170 "EHLO
+        id S968093AbeFRIj4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:39:56 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37178 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968228AbeFRIij (ORCPT
+        with ESMTP id S1030477AbeFRIim (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:38:39 -0400
+        Mon, 18 Jun 2018 04:38:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 78A9FC49;
-        Mon, 18 Jun 2018 08:38:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CF983C5C;
+        Mon, 18 Jun 2018 08:38:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sasha Levin <alexander.levin@microsoft.com>,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.14 186/189] Revert "Btrfs: fix scrub to repair raid6 corruption"
-Date:   Mon, 18 Jun 2018 10:14:42 +0200
-Message-Id: <20180618081216.693015697@linuxfoundation.org>
+        stable@vger.kernel.org, Liu Bo <bo.li.liu@oracle.com>,
+        David Sterba <dsterba@suse.com>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.14 187/189] Btrfs: fix scrub to repair raid6 corruption
+Date:   Mon, 18 Jun 2018 10:14:43 +0200
+Message-Id: <20180618081216.729929955@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,65 +50,124 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Sasha Levin <Alexander.Levin@microsoft.com>
 
-This reverts commit d91bb7c6988bd6450284c762b33f2e1ea3fe7c97.
+From: Liu Bo <bo.li.liu@oracle.com>
 
-This commit used an incorrect log message.
+[ Upstream commit 762221f095e3932669093466aaf4b85ed9ad2ac1 ]
 
+The raid6 corruption is that,
+suppose that all disks can be read without problems and if the content
+that was read out doesn't match its checksum, currently for raid6
+btrfs at most retries twice,
+
+- the 1st retry is to rebuild with all other stripes, it'll eventually
+  be a raid5 xor rebuild,
+- if the 1st fails, the 2nd retry will deliberately fail parity p so
+  that it will do raid6 style rebuild,
+
+however, the chances are that another non-parity stripe content also
+has something corrupted, so that the above retries are not able to
+return correct content.
+
+We've fixed normal reads to rebuild raid6 correctly with more retries
+in Patch "Btrfs: make raid6 rebuild retry more"[1], this is to fix
+scrub to do the exactly same rebuild process.
+
+[1]: https://patchwork.kernel.org/patch/10091755/
+
+Signed-off-by: Liu Bo <bo.li.liu@oracle.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Reported-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/raid56.c  |   18 ++++--------------
- fs/btrfs/volumes.c |    9 +--------
- 2 files changed, 5 insertions(+), 22 deletions(-)
+ fs/btrfs/scrub.c |   44 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 32 insertions(+), 12 deletions(-)
 
---- a/fs/btrfs/raid56.c
-+++ b/fs/btrfs/raid56.c
-@@ -2172,21 +2172,11 @@ int raid56_parity_recover(struct btrfs_f
- 	}
+--- a/fs/btrfs/scrub.c
++++ b/fs/btrfs/scrub.c
+@@ -301,6 +301,11 @@ static void __scrub_blocked_if_needed(st
+ static void scrub_blocked_if_needed(struct btrfs_fs_info *fs_info);
+ static void scrub_put_ctx(struct scrub_ctx *sctx);
  
- 	/*
--	 * Loop retry:
--	 * for 'mirror == 2', reconstruct from all other stripes.
--	 * for 'mirror_num > 2', select a stripe to fail on every retry.
-+	 * reconstruct from the q stripe if they are
-+	 * asking for mirror 3
++static inline int scrub_is_page_on_raid56(struct scrub_page *page)
++{
++	return page->recover &&
++	       (page->recover->bbio->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK);
++}
+ 
+ static void scrub_pending_bio_inc(struct scrub_ctx *sctx)
+ {
+@@ -1323,15 +1328,34 @@ nodatasum_case:
+ 	 * could happen otherwise that a correct page would be
+ 	 * overwritten by a bad one).
  	 */
--	if (mirror_num > 2) {
--		/*
--		 * 'mirror == 3' is to fail the p stripe and
--		 * reconstruct from the q stripe.  'mirror > 3' is to
--		 * fail a data stripe and reconstruct from p+q stripe.
--		 */
--		rbio->failb = rbio->real_stripes - (mirror_num - 1);
--		ASSERT(rbio->failb > 0);
--		if (rbio->failb <= rbio->faila)
--			rbio->failb--;
--	}
-+	if (mirror_num == 3)
-+		rbio->failb = rbio->real_stripes - 2;
+-	for (mirror_index = 0;
+-	     mirror_index < BTRFS_MAX_MIRRORS &&
+-	     sblocks_for_recheck[mirror_index].page_count > 0;
+-	     mirror_index++) {
++	for (mirror_index = 0; ;mirror_index++) {
+ 		struct scrub_block *sblock_other;
  
- 	ret = lock_stripe_add(rbio);
+ 		if (mirror_index == failed_mirror_index)
+ 			continue;
+-		sblock_other = sblocks_for_recheck + mirror_index;
++
++		/* raid56's mirror can be more than BTRFS_MAX_MIRRORS */
++		if (!scrub_is_page_on_raid56(sblock_bad->pagev[0])) {
++			if (mirror_index >= BTRFS_MAX_MIRRORS)
++				break;
++			if (!sblocks_for_recheck[mirror_index].page_count)
++				break;
++
++			sblock_other = sblocks_for_recheck + mirror_index;
++		} else {
++			struct scrub_recover *r = sblock_bad->pagev[0]->recover;
++			int max_allowed = r->bbio->num_stripes -
++						r->bbio->num_tgtdevs;
++
++			if (mirror_index >= max_allowed)
++				break;
++			if (!sblocks_for_recheck[1].page_count)
++				break;
++
++			ASSERT(failed_mirror_index == 0);
++			sblock_other = sblocks_for_recheck + 1;
++			sblock_other->pagev[0]->mirror_num = 1 + mirror_index;
++		}
  
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -5110,14 +5110,7 @@ int btrfs_num_copies(struct btrfs_fs_inf
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID5)
- 		ret = 2;
- 	else if (map->type & BTRFS_BLOCK_GROUP_RAID6)
--		/*
--		 * There could be two corrupted data stripes, we need
--		 * to loop retry in order to rebuild the correct data.
--		 *
--		 * Fail a stripe at a time on every retry except the
--		 * stripe under reconstruction.
--		 */
--		ret = map->num_stripes;
-+		ret = 3;
- 	else
- 		ret = 1;
- 	free_extent_map(em);
+ 		/* build and submit the bios, check checksums */
+ 		scrub_recheck_block(fs_info, sblock_other, 0);
+@@ -1679,18 +1703,13 @@ static void scrub_bio_wait_endio(struct
+ 	complete(&ret->event);
+ }
+ 
+-static inline int scrub_is_page_on_raid56(struct scrub_page *page)
+-{
+-	return page->recover &&
+-	       (page->recover->bbio->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK);
+-}
+-
+ static int scrub_submit_raid56_bio_wait(struct btrfs_fs_info *fs_info,
+ 					struct bio *bio,
+ 					struct scrub_page *page)
+ {
+ 	struct scrub_bio_ret done;
+ 	int ret;
++	int mirror_num;
+ 
+ 	init_completion(&done.event);
+ 	done.status = 0;
+@@ -1698,9 +1717,10 @@ static int scrub_submit_raid56_bio_wait(
+ 	bio->bi_private = &done;
+ 	bio->bi_end_io = scrub_bio_wait_endio;
+ 
++	mirror_num = page->sblock->pagev[0]->mirror_num;
+ 	ret = raid56_parity_recover(fs_info, bio, page->recover->bbio,
+ 				    page->recover->map_length,
+-				    page->mirror_num, 0);
++				    mirror_num, 0);
+ 	if (ret)
+ 		return ret;
+ 
 
 
