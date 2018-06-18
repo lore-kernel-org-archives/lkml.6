@@ -2,106 +2,138 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00480C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:13:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2489CC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD96A2075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C652F20020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:18:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bUTkDr6w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD96A2075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="r0L9XqVl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C652F20020
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755481AbeFRXNz (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 19:13:55 -0400
-Received: from mail-vk0-f68.google.com ([209.85.213.68]:43465 "EHLO
+        id S936834AbeFRXSw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 19:18:52 -0400
+Received: from mail-vk0-f68.google.com ([209.85.213.68]:38501 "EHLO
         mail-vk0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755408AbeFRXNy (ORCPT
+        with ESMTP id S934807AbeFRXSu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 19:13:54 -0400
-Received: by mail-vk0-f68.google.com with SMTP id d74-v6so10592092vke.10
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 16:13:54 -0700 (PDT)
+        Mon, 18 Jun 2018 19:18:50 -0400
+Received: by mail-vk0-f68.google.com with SMTP id b77-v6so10591864vkb.5;
+        Mon, 18 Jun 2018 16:18:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=nuqKmbScvrJ0GfyWHtzlE8vGIg4yoSd0Y7Bv6tYkIaY=;
-        b=bUTkDr6wAf2KCvQe6cD5qgiNCuKmGYB6lvwt4sDMUmdjSTX7ktOt14iW7dwn/pqrjG
-         8aeEYMH+eVkF1CgWfzDBjjbvqbUBqqbuKJdF8156DE6I+HmYE4tqmbz1mkdYHLuIt5T7
-         X+qdLpv4r3gCQ7Dt59ID+OFFEYxZ4MWJyrcz4=
+        bh=jy+h40C7dggu3pV2v4jLVnODDyvO2+jkraS+VhVrIig=;
+        b=r0L9XqVl/PniDXUd+KhYbCJjuEePark+2AWEMStn9Y9IfjkSa/YGOtxoocowPeo+s4
+         BSvMB4TpRpn+bGXd+2MEfFFds5OXSOC6i9nW5ka7wvqRNI1Yud80wcBpwZ9QFG0behYh
+         wAIzPlhRlkv1pZIjq6Aj+TbHzD135CVxohvRV5vR1weYrU1BbYK2aep6/fOwaf6Mt4kD
+         3Ip4FtF6F0URW3NOqahYlwKW8o4DUimgihGi99o5UPetS+HON6XuuiHJMNoocxGU6Ivr
+         EKoNbshHX8KfsWkMCb1SnveWYwz6+FQImDUdbEw71bvqs+fCnhPG7YjHeFMyP7Ph7JDH
+         C4FQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=nuqKmbScvrJ0GfyWHtzlE8vGIg4yoSd0Y7Bv6tYkIaY=;
-        b=EIgqhwPmEwdUniz0G9cvSxMBJ1U1pozDxlHh9dkJLtLqGrEJCrVBAKtrV/5AykVDrd
-         N3bPXffoEywHrBsfontKj3mVHkxqJyVxZW8cplZxqv8TFrw6xL2rK5fca+enYmXgQxPj
-         xXfCkMKTUz03mhhOkQn3+ufD3ySAefW3PZ4h/2jNaP5md8+NIwvt+2/YuN74HgRStWdo
-         J4bUS3urjyqGnk/Ihcx/vVNfIlXvoydPAEREbDqiVJjjYaLGN9Je2ZIahVKfkaLfEs09
-         1F0dSO9mUZVL95Soj0YUyKOAqsCv3fAGkM8yJ7aCnPUXyxNMvKhG87xw0qy6W+2qKyj0
-         jV7g==
-X-Gm-Message-State: APt69E3QtNH8uMYqkHzg+yMxT6TI0YrKd2PB8r/4pv4t9c+9jFvr/JnI
-        abepMY8qEGWCWbqjYVCVq6g6r8ZVOif2jVMeGsVVCg==
-X-Google-Smtp-Source: ADUXVKKK0vlyp4zboggAKyhG83MwATWdhPvyFcZOCcZrODAinb6jdFj/M53jP0kW4kCcl6bBjUmRsp3omySGdLOdNX4=
-X-Received: by 2002:a1f:18d4:: with SMTP id 203-v6mr8127836vky.139.1529363633507;
- Mon, 18 Jun 2018 16:13:53 -0700 (PDT)
+        bh=jy+h40C7dggu3pV2v4jLVnODDyvO2+jkraS+VhVrIig=;
+        b=qZM/RTt6LBC6pNx4zEcYtF8UF1M98EIhroYA+HfEFbvO7+r2/jnpgkvdN+Paf4Y1eD
+         QMsLY6tan29iRdDcI4HbfqUOCFy7z+9lbC7hLMjx/95Xi+yYJjJ6aQYbW2xvmsQdbSS1
+         rsKDOC+NhaK9+SZ6+kHCfDXQ1ykUc5WeDIcIdBcXPKhtMTowEyTo9+h4HBt9bQFzEBt9
+         gp7p9QkYu0EzYoNWzd9G1pOakyMasv3LyHrImgwNCVyPnx4Qfa3qVEXv5EssXCO8Q7Av
+         i7gMX+eXamG/tr99jR6v3IOPghRO/Yo4WZyHcgVAgalX/i0074e83s0heEAUJZ0fMc9f
+         HeBw==
+X-Gm-Message-State: APt69E2vBs4C+rZrSaHf9svqAi0+nHjSGrIbsQYxrTGdPdQ/P5j2bt6x
+        Vd84/tALBUnYn824ueySIzMOXCStnwcbqrMk0sTygFj8
+X-Google-Smtp-Source: ADUXVKIFM1DWKVPHOL9ooo4e3OnRWVtPgYHznLN+6xM+AvXz8nXyIag+lqdjxCOyzJfpxr9+9Dza6j4G26nl8G1P7qc=
+X-Received: by 2002:a1f:860b:: with SMTP id i11-v6mr8288770vkd.15.1529363929334;
+ Mon, 18 Jun 2018 16:18:49 -0700 (PDT)
 MIME-Version: 1.0
-References: <20180618225540.GD14131@decadent.org.uk>
-In-Reply-To: <20180618225540.GD14131@decadent.org.uk>
-From:   Julius Werner <jwerner@chromium.org>
-Date:   Mon, 18 Jun 2018 16:13:39 -0700
-Message-ID: <CAODwPW92-7NBjpyxq1v-8v7H=JFDvrrh=i_bW+BfMjsfgm-ErQ@mail.gmail.com>
-Subject: Re: [PATCH v2] firmware: Update Kconfig help text for Google firmware
-To:     ben@decadent.org.uk
-Cc:     Julius Werner <jwerner@chromium.org>,
-        Thierry Escande <thierry.escande@collabora.com>,
-        LKML <linux-kernel@vger.kernel.org>, pm.debian@googlemail.com
+Received: by 2002:a67:8b02:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 16:18:48
+ -0700 (PDT)
+In-Reply-To: <20180618161056.e52efd0e8bd36211e60705a2@linux-foundation.org>
+References: <20180618131003.88110-1-andriy.shevchenko@linux.intel.com>
+ <20180618131003.88110-4-andriy.shevchenko@linux.intel.com>
+ <20180618141404.68124daab97bd0f3a3051544@linux-foundation.org>
+ <CAKdAkRTHOORds7aEauv4rp3_=PnGi=Nv-VS3-nAb9MztJPKG=Q@mail.gmail.com> <20180618161056.e52efd0e8bd36211e60705a2@linux-foundation.org>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 19 Jun 2018 02:18:48 +0300
+Message-ID: <CAHp75VcQWO36SVmYOJQyVo8uCoA2Wec_CWw2sjRyCd73TfCpTQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] bitmap: Add bitmap_alloc(), bitmap_zalloc() and bitmap_free()
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        agk@redhat.com, Mike Snitzer <snitzer@redhat.com>,
+        device-mapper development <dm-devel@redhat.com>,
+        shli@kernel.org, linux-raid@vger.kernel.org,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        Yury Norov <ynorov@caviumnetworks.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        Joe Perches <joe@perches.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-LGTM
+On Tue, Jun 19, 2018 at 2:10 AM, Andrew Morton
+<akpm@linux-foundation.org> wrote:
+> On Mon, 18 Jun 2018 15:01:43 -0700 Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
+>
+>> > > +unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags)
+>> > > +{
+>> > > +     return kmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), flags);
+>> > > +}
+>> > > +EXPORT_SYMBOL(bitmap_alloc);
+>> > > +
+>> > > +unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags)
+>> > > +{
+>> > > +     return bitmap_alloc(nbits, flags | __GFP_ZERO);
+>> > > +}
+>> > > +EXPORT_SYMBOL(bitmap_zalloc);
+>> > > +
+>> > > +void bitmap_free(const unsigned long *bitmap)
+>> > > +{
+>> > > +     kfree(bitmap);
+>> > > +}
+>> > > +EXPORT_SYMBOL(bitmap_free);
+>> > > +
+>> >
+>> > I suggest these functions are small and simple enough to justify
+>> > inlining them.
+>> >
+>>
+>> We can't as we end up including bitmap.h (by the way of cpumask.h)
+>> form slab.h, so we gen circular dependency.
+>
+> That info should have been in the changelog,
 
-Reviewed-by: Julius Werner <jwerner@chromium.org>
-On Mon, Jun 18, 2018 at 3:55 PM Ben Hutchings <ben@decadent.org.uk> wrote:
+I put it in cover letter, though it perhaps better to have in commit
+message itself.
+
+> and probably a code
+> comment.
+
+This is done in header file. You meant C-file?
+
+
+>> Maybe if we removed memcg
+>> stuff from slab.h so we do not need to include workqueue.h...
 >
-> The help text for GOOGLE_FIRMWARE states that it should only be
-> enabled when building a kernel for Google's own servers.  However,
-> many of the drivers dependent on it are also useful on Chromebooks or
-> on any platform using coreboot.
->
-> Update the help text to reflect this double duty.
->
-> Fixes: d384d6f43d1e ("firmware: google memconsole: Add coreboot support")
-> Signed-off-by: Ben Hutchings <ben@decadent.org.uk>
-> ---
-> v2: Mention coreboot, and don't touch GSMI help text
->
->  drivers/firmware/google/Kconfig | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/firmware/google/Kconfig b/drivers/firmware/google/Kconfig
-> index f16b381a569c..ca049ecf5cfd 100644
-> --- a/drivers/firmware/google/Kconfig
-> +++ b/drivers/firmware/google/Kconfig
-> @@ -2,9 +2,9 @@ menuconfig GOOGLE_FIRMWARE
->         bool "Google Firmware Drivers"
->         default n
->         help
-> -         These firmware drivers are used by Google's servers.  They are
-> -         only useful if you are working directly on one of their
-> -         proprietary servers.  If in doubt, say "N".
-> +         These firmware drivers are used by Google servers,
-> +         Chromebooks and other devices using coreboot firmware.
-> +         If in doubt, say "N".
->
->  if GOOGLE_FIRMWARE
->
+> Or move the basic slab API stuff out of slab.h into a new header.  Or
+> create a new, standalone work_struct.h - that looks pretty simple.
+
+Latter one seems requires least effort without potentially breaking things.
+I take it as your suggestion, though I would still give a glance if it
+is possible to split exactly memcg part out of slab.
+
+-- 
+With Best Regards,
+Andy Shevchenko
