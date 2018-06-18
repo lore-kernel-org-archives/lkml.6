@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76F5C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:55:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A827C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FD2B208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:55:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FD2B208A6
+	by mail.kernel.org (Postfix) with ESMTP id D3F7020652
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:55:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3F7020652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936343AbeFRJzI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:55:08 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55088 "EHLO
+        id S964895AbeFRIUX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:20:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55056 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964849AbeFRIU2 (ORCPT
+        with ESMTP id S935637AbeFRIUU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:20:28 -0400
+        Mon, 18 Jun 2018 04:20:20 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C8192C87;
-        Mon, 18 Jun 2018 08:20:27 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4A1C6C3C;
+        Mon, 18 Jun 2018 08:20:19 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Baolin Wang <baolin.wang@linaro.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
+        stable@vger.kernel.org, Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 116/279] i2c: sprd: Fix the i2c count issue
-Date:   Mon, 18 Jun 2018 10:11:41 +0200
-Message-Id: <20180618080613.615384453@linuxfoundation.org>
+Subject: [PATCH 4.16 113/279] powerpc/kvm/booke: Fix altivec related build break
+Date:   Mon, 18 Jun 2018 10:11:38 +0200
+Message-Id: <20180618080613.488481268@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,54 +50,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Baolin Wang <baolin.wang@linaro.org>
+From: Laurentiu Tudor <laurentiu.tudor@nxp.com>
 
-[ Upstream commit 2a010461207cc96bee5ab81748325dec1972976f ]
+[ Upstream commit b2d7ecbe355698010a6b7a15eb179e09eb3d6a34 ]
 
-We found the I2C controller count register is unreliable sometimes,
-that will cause I2C to lose data. Thus we can read the data count
-from 'i2c_dev->count' instead of the I2C controller count register.
+Add missing "altivec unavailable" interrupt injection helper
+thus fixing the linker error below:
 
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+  arch/powerpc/kvm/emulate_loadstore.o: In function `kvmppc_check_altivec_disabled':
+  arch/powerpc/kvm/emulate_loadstore.c: undefined reference to `.kvmppc_core_queue_vec_unavail'
+
+Fixes: 09f984961c137c4b ("KVM: PPC: Book3S: Add MMIO emulation for VMX instructions")
+Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/i2c/busses/i2c-sprd.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ arch/powerpc/kvm/booke.c |    7 +++++++
+ 1 file changed, 7 insertions(+)
 
---- a/drivers/i2c/busses/i2c-sprd.c
-+++ b/drivers/i2c/busses/i2c-sprd.c
-@@ -368,13 +368,12 @@ static irqreturn_t sprd_i2c_isr_thread(i
- 	struct sprd_i2c *i2c_dev = dev_id;
- 	struct i2c_msg *msg = i2c_dev->msg;
- 	bool ack = !(readl(i2c_dev->base + I2C_STATUS) & I2C_RX_ACK);
--	u32 i2c_count = readl(i2c_dev->base + I2C_COUNT);
- 	u32 i2c_tran;
+--- a/arch/powerpc/kvm/booke.c
++++ b/arch/powerpc/kvm/booke.c
+@@ -305,6 +305,13 @@ void kvmppc_core_queue_fpunavail(struct
+ 	kvmppc_booke_queue_irqprio(vcpu, BOOKE_IRQPRIO_FP_UNAVAIL);
+ }
  
- 	if (msg->flags & I2C_M_RD)
- 		i2c_tran = i2c_dev->count >= I2C_FIFO_FULL_THLD;
- 	else
--		i2c_tran = i2c_count;
-+		i2c_tran = i2c_dev->count;
- 
- 	/*
- 	 * If we got one ACK from slave when writing data, and we did not
-@@ -412,14 +411,13 @@ static irqreturn_t sprd_i2c_isr(int irq,
++#ifdef CONFIG_ALTIVEC
++void kvmppc_core_queue_vec_unavail(struct kvm_vcpu *vcpu)
++{
++	kvmppc_booke_queue_irqprio(vcpu, BOOKE_IRQPRIO_ALTIVEC_UNAVAIL);
++}
++#endif
++
+ void kvmppc_core_queue_dec(struct kvm_vcpu *vcpu)
  {
- 	struct sprd_i2c *i2c_dev = dev_id;
- 	struct i2c_msg *msg = i2c_dev->msg;
--	u32 i2c_count = readl(i2c_dev->base + I2C_COUNT);
- 	bool ack = !(readl(i2c_dev->base + I2C_STATUS) & I2C_RX_ACK);
- 	u32 i2c_tran;
- 
- 	if (msg->flags & I2C_M_RD)
- 		i2c_tran = i2c_dev->count >= I2C_FIFO_FULL_THLD;
- 	else
--		i2c_tran = i2c_count;
-+		i2c_tran = i2c_dev->count;
- 
- 	/*
- 	 * If we did not get one ACK from slave when writing data, then we
+ 	kvmppc_booke_queue_irqprio(vcpu, BOOKE_IRQPRIO_DECREMENTER);
 
 
