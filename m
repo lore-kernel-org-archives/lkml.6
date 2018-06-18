@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522DEC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EA5C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1510A20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1510A20874
+	by mail.kernel.org (Postfix) with ESMTP id D1936208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:01:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1936208D5
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967536AbeFRJBY (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:01:24 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35398 "EHLO
+        id S967402AbeFRIdG (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:33:06 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35384 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967404AbeFRIdH (ORCPT
+        with ESMTP id S967386AbeFRIdE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:07 -0400
+        Mon, 18 Jun 2018 04:33:04 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E9F7ABAD;
-        Mon, 18 Jun 2018 08:33:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3C0FBBBE;
+        Mon, 18 Jun 2018 08:33:01 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jianchao Wang <jianchao.w.wang@oracle.com>,
-        Zhu Yanjun <yanjun.zhu@oracle.com>,
+        stable@vger.kernel.org, Parav Pandit <parav@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
         Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 087/189] IB/rxe: add RXE_START_MASK for rxe_opcode IB_OPCODE_RC_SEND_ONLY_INV
-Date:   Mon, 18 Jun 2018 10:13:03 +0200
-Message-Id: <20180618081212.737607806@linuxfoundation.org>
+Subject: [PATCH 4.14 085/189] RDMA/cma: Fix use after destroy access to net namespace for IPoIB
+Date:   Mon, 18 Jun 2018 10:13:01 +0200
+Message-Id: <20180618081212.662016762@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,39 +51,152 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jianchao Wang <jianchao.w.wang@oracle.com>
+From: Parav Pandit <parav@mellanox.com>
 
-[ Upstream commit 2da36d44a9d54a2c6e1f8da1f7ccc26b0bc6cfec ]
+[ Upstream commit 2918c1a900252b4a0c730715ec205437c7daf79d ]
 
-w/o RXE_START_MASK, the last_psn of IB_OPCODE_RC_SEND_ONLY_INV
-will not be updated in update_wqe_psn, and the corresponding
-wqe will not be acked in rxe_completer due to its last_psn is
-zero. Finally, the other wqe will also not be able to be acked,
-because the wqe of IB_OPCODE_RC_SEND_ONLY_INV with last_psn 0
-is still there. This causes large amount of io timeout when
-nvmeof is over rxe.
+There are few issues with validation of netdevice and listen id lookup
+for IB (IPoIB) while processing incoming CM request as below.
 
-Add RXE_START_MASK for IB_OPCODE_RC_SEND_ONLY_INV to fix this.
+1. While performing lookup of bind_list in cma_ps_find(), net namespace
+of the netdevice can get deleted in cma_exit_net(), resulting in use
+after free access of idr and/or net namespace structures.
+This lookup occurs from the workqueue context (and not userspace
+context where net namespace is always valid).
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
-Reviewed-by: Zhu Yanjun <yanjun.zhu@oracle.com>
+           CPU0                              CPU1
+           ====                              ====
+
+ bind_list = cma_ps_find();
+                                     move netdevice to new namespace
+                                     delete net namespace
+                                        cma_exit_net()
+                                           idr_destroy(idr);
+
+ [..]
+ cma_find_listener(bind_list, ..);
+
+2. While netdevice is validated for IP address in given net namespace,
+netdevice's net namespace and/or ifindex can change in
+cma_get_net_dev() and cma_match_net_dev().
+
+Above issues are overcome by using rcu lock along with netdevice
+UP/DOWN state as described below.
+When a net namespace is getting deleted, netdevice is closed and
+shutdown before moving it back to init_net namespace.
+change_net_namespace() synchronizes with any existing use of netdevice
+before changing the netdev properties such as net or ifindex.
+Once netdevice IFF_UP flags is cleared, such fields are not guaranteed
+to be valid.
+Therefore, rcu lock along with netdevice state check ensures that,
+while route lookup and cm_id lookup is in progress, netdevice of
+interest won't migrate to any other net namespace.
+This ensures that associated net namespace of netdevice won't get
+deleted while rcu lock is held for netdevice which is in IFF_UP state.
+
+Fixes: fa20105e09e9 ("IB/cma: Add support for network namespaces")
+Fixes: 4be74b42a6d0 ("IB/cma: Separate port allocation to network namespaces")
+Fixes: f887f2ac87c2 ("IB/cma: Validate routing of incoming requests")
+Signed-off-by: Parav Pandit <parav@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/sw/rxe/rxe_opcode.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/infiniband/core/cma.c |   53 ++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 43 insertions(+), 10 deletions(-)
 
---- a/drivers/infiniband/sw/rxe/rxe_opcode.c
-+++ b/drivers/infiniband/sw/rxe/rxe_opcode.c
-@@ -390,7 +390,7 @@ struct rxe_opcode_info rxe_opcode[RXE_NU
- 		.name	= "IB_OPCODE_RC_SEND_ONLY_INV",
- 		.mask	= RXE_IETH_MASK | RXE_PAYLOAD_MASK | RXE_REQ_MASK
- 				| RXE_COMP_MASK | RXE_RWR_MASK | RXE_SEND_MASK
--				| RXE_END_MASK,
-+				| RXE_END_MASK  | RXE_START_MASK,
- 		.length = RXE_BTH_BYTES + RXE_IETH_BYTES,
- 		.offset = {
- 			[RXE_BTH]	= 0,
+--- a/drivers/infiniband/core/cma.c
++++ b/drivers/infiniband/core/cma.c
+@@ -420,6 +420,8 @@ struct cma_hdr {
+ #define CMA_VERSION 0x00
+ 
+ struct cma_req_info {
++	struct sockaddr_storage listen_addr_storage;
++	struct sockaddr_storage src_addr_storage;
+ 	struct ib_device *device;
+ 	int port;
+ 	union ib_gid local_gid;
+@@ -1372,11 +1374,11 @@ static bool validate_net_dev(struct net_
+ }
+ 
+ static struct net_device *cma_get_net_dev(struct ib_cm_event *ib_event,
+-					  const struct cma_req_info *req)
++					  struct cma_req_info *req)
+ {
+-	struct sockaddr_storage listen_addr_storage, src_addr_storage;
+-	struct sockaddr *listen_addr = (struct sockaddr *)&listen_addr_storage,
+-			*src_addr = (struct sockaddr *)&src_addr_storage;
++	struct sockaddr *listen_addr =
++			(struct sockaddr *)&req->listen_addr_storage;
++	struct sockaddr *src_addr = (struct sockaddr *)&req->src_addr_storage;
+ 	struct net_device *net_dev;
+ 	const union ib_gid *gid = req->has_gid ? &req->local_gid : NULL;
+ 	int err;
+@@ -1391,11 +1393,6 @@ static struct net_device *cma_get_net_de
+ 	if (!net_dev)
+ 		return ERR_PTR(-ENODEV);
+ 
+-	if (!validate_net_dev(net_dev, listen_addr, src_addr)) {
+-		dev_put(net_dev);
+-		return ERR_PTR(-EHOSTUNREACH);
+-	}
+-
+ 	return net_dev;
+ }
+ 
+@@ -1531,15 +1528,51 @@ static struct rdma_id_private *cma_id_fr
+ 		}
+ 	}
+ 
++	/*
++	 * Net namespace might be getting deleted while route lookup,
++	 * cm_id lookup is in progress. Therefore, perform netdevice
++	 * validation, cm_id lookup under rcu lock.
++	 * RCU lock along with netdevice state check, synchronizes with
++	 * netdevice migrating to different net namespace and also avoids
++	 * case where net namespace doesn't get deleted while lookup is in
++	 * progress.
++	 * If the device state is not IFF_UP, its properties such as ifindex
++	 * and nd_net cannot be trusted to remain valid without rcu lock.
++	 * net/core/dev.c change_net_namespace() ensures to synchronize with
++	 * ongoing operations on net device after device is closed using
++	 * synchronize_net().
++	 */
++	rcu_read_lock();
++	if (*net_dev) {
++		/*
++		 * If netdevice is down, it is likely that it is administratively
++		 * down or it might be migrating to different namespace.
++		 * In that case avoid further processing, as the net namespace
++		 * or ifindex may change.
++		 */
++		if (((*net_dev)->flags & IFF_UP) == 0) {
++			id_priv = ERR_PTR(-EHOSTUNREACH);
++			goto err;
++		}
++
++		if (!validate_net_dev(*net_dev,
++				 (struct sockaddr *)&req.listen_addr_storage,
++				 (struct sockaddr *)&req.src_addr_storage)) {
++			id_priv = ERR_PTR(-EHOSTUNREACH);
++			goto err;
++		}
++	}
++
+ 	bind_list = cma_ps_find(*net_dev ? dev_net(*net_dev) : &init_net,
+ 				rdma_ps_from_service_id(req.service_id),
+ 				cma_port_from_service_id(req.service_id));
+ 	id_priv = cma_find_listener(bind_list, cm_id, ib_event, &req, *net_dev);
++err:
++	rcu_read_unlock();
+ 	if (IS_ERR(id_priv) && *net_dev) {
+ 		dev_put(*net_dev);
+ 		*net_dev = NULL;
+ 	}
+-
+ 	return id_priv;
+ }
+ 
 
 
