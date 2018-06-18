@@ -2,140 +2,260 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AF6C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A9DFC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7320208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7320208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id C1504208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:01:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="aMvJYnQI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1504208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964886AbeFRPAm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:00:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41782 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964811AbeFRPAi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:00:38 -0400
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 3093120850; Mon, 18 Jun 2018 17:00:36 +0200 (CEST)
-Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id E299820DCC;
-        Mon, 18 Jun 2018 17:00:23 +0200 (CEST)
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Marco Franchi <marco.franchi@nxp.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tom Saeger <tom.saeger@oracle.com>,
-        Smitha T Murthy <smitha.t@samsung.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "David S . Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ramesh Shanmugasundaram <ramesh.shanmugasundaram@bp.renesas.com>,
-        Jacob Chen <jacob-chen@iotwrt.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        Sami Tolvanen <samitolvanen@google.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-sunxi@googlegroups.com,
-        Hugues Fruchet <hugues.fruchet@st.com>,
-        Randy Li <ayaka@soulik.info>
-Subject: [PATCH v4 19/19] ARM: dts: sun8i-a33: Add Video Engine and reserved memory nodes
-Date:   Mon, 18 Jun 2018 16:58:43 +0200
-Message-Id: <20180618145843.14631-20-paul.kocialkowski@bootlin.com>
-X-Mailer: git-send-email 2.17.0
-In-Reply-To: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
-References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
+        id S965093AbeFRPBK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:01:10 -0400
+Received: from smtprelay.synopsys.com ([198.182.37.59]:42210 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964921AbeFRPBD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:01:03 -0400
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id DB0B61E1410;
+        Mon, 18 Jun 2018 17:01:01 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1529334062; bh=Yx1wb3mNI+8Cwb4baqQH8pQG455FUKreFNlpJVs6lFw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
+         References:From;
+        b=aMvJYnQIehp7EPo+JRoXDQaJyhAVGzrOVySTdVBQMQ+K113wQvgvCokz4N4SdoGFg
+         X73hCxRwnjNpDXmti8Rsxnww1qCcfwrvu6O1IDTqN0PTpLUJyzBLsdqyi3HSFasyhD
+         iaZ+EzQdfaE9MDdWEUqxNwvgxFYGsoVFsERWMyPps4hjkOfbJ8uH5knLJ5sMKAr2un
+         W7vFR+UzsHkJIphxNL2otwAFajvBbKn0twAB6kf3enVh1FmJYlMh9IPWv0RBOhRRFl
+         aiACKcFtSHjSVhs6KyLFOnT66UXQJcguzkPZwedh+z1r37Bpzqm8/Ju6KByf+QPRNh
+         hXn/elFVIts5g==
+Received: from pt02.synopsys.com (pt02.synopsys.com [10.107.23.240])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 90A82367D;
+        Mon, 18 Jun 2018 08:01:00 -0700 (PDT)
+Received: from UbuntuMate-64Bits.internal.synopsys.com (gustavo-e7480.internal.synopsys.com [10.107.25.102])
+        by pt02.synopsys.com (Postfix) with ESMTP id E66533D740;
+        Mon, 18 Jun 2018 16:00:59 +0100 (WEST)
+From:   Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+To:     bhelgaas@google.com, lorenzo.pieralisi@arm.com,
+        Joao.Pinto@synopsys.com, jingoohan1@gmail.com, kishon@ti.com,
+        adouglas@cadence.com, jesper.nilsson@axis.com
+Cc:     linux-pci@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Subject: [PATCH v4 01/10] PCI: endpoint: Add MSI-X interfaces
+Date:   Mon, 18 Jun 2018 16:00:20 +0100
+Message-Id: <80e29cd7dc34363f27e74a099b727175f94242d4.1529329262.git.gustavo.pimentel@synopsys.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+In-Reply-To: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
+References: <cover.1529329262.git.gustavo.pimentel@synopsys.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds nodes for the Video Engine and the associated reserved memory
-for the A33. Up to 96 MiB of memory are dedicated to the CMA pool.
+Add PCI_EPC_IRQ_MSIX type.
 
-The VPU can only map the first 256 MiB of DRAM, so the reserved memory
-pool has to be located in that area. Following Allwinner's decision in
-downstream software, the last 96 MiB of the first 256 MiB of RAM are
-reserved for this purpose.
+Add MSI-X callbacks signatures to the ops structure.
 
-Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Add sysfs interface for set/get MSI-X capability maximum number.
 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index 97a976b3b1ef..c5c108a11285 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -181,6 +181,21 @@
- 		reg = <0x40000000 0x80000000>;
- 	};
+Signed-off-by: Gustavo Pimentel <gustavo.pimentel@synopsys.com>
+Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+Change v1->v2:
+ - Nothing changed, just to follow the patch set version.
+Change v2->v3:
+ - Moved pci_epc_raise_irq() signature changes to patch file #3.
+Change v3->v4:
+ - Rebased to Lorenzo's master branch v4.18-rc1.
+
+ drivers/pci/endpoint/pci-ep-cfs.c   | 24 ++++++++++++++++
+ drivers/pci/endpoint/pci-epc-core.c | 57 +++++++++++++++++++++++++++++++++++++
+ include/linux/pci-epc.h             |  9 ++++++
+ include/linux/pci-epf.h             |  1 +
+ 4 files changed, 91 insertions(+)
+
+diff --git a/drivers/pci/endpoint/pci-ep-cfs.c b/drivers/pci/endpoint/pci-ep-cfs.c
+index 018ea34..d1288a0 100644
+--- a/drivers/pci/endpoint/pci-ep-cfs.c
++++ b/drivers/pci/endpoint/pci-ep-cfs.c
+@@ -286,6 +286,28 @@ static ssize_t pci_epf_msi_interrupts_show(struct config_item *item,
+ 		       to_pci_epf_group(item)->epf->msi_interrupts);
+ }
  
-+	reserved-memory {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
++static ssize_t pci_epf_msix_interrupts_store(struct config_item *item,
++					     const char *page, size_t len)
++{
++	u16 val;
++	int ret;
 +
-+		/* Address must be kept in the lower 256 MiBs of DRAM for VE. */
-+		cma_pool: cma@4a000000 {
-+			compatible = "shared-dma-pool";
-+			size = <0x6000000>;
-+			alloc-ranges = <0x4a000000 0x6000000>;
-+			reusable;
-+			linux,cma-default;
-+		};
-+	};
++	ret = kstrtou16(page, 0, &val);
++	if (ret)
++		return ret;
 +
- 	sound: sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,name = "sun8i-a33-audio";
-@@ -262,6 +277,20 @@
- 			};
- 		};
++	to_pci_epf_group(item)->epf->msix_interrupts = val;
++
++	return len;
++}
++
++static ssize_t pci_epf_msix_interrupts_show(struct config_item *item,
++					    char *page)
++{
++	return sprintf(page, "%d\n",
++		       to_pci_epf_group(item)->epf->msix_interrupts);
++}
++
+ PCI_EPF_HEADER_R(vendorid)
+ PCI_EPF_HEADER_W_u16(vendorid)
  
-+		vpu: video-codec@01c0e000 {
-+			compatible = "allwinner,sun8i-a33-video-engine";
-+			reg = <0x01c0e000 0x1000>;
+@@ -327,6 +349,7 @@ CONFIGFS_ATTR(pci_epf_, subsys_vendor_id);
+ CONFIGFS_ATTR(pci_epf_, subsys_id);
+ CONFIGFS_ATTR(pci_epf_, interrupt_pin);
+ CONFIGFS_ATTR(pci_epf_, msi_interrupts);
++CONFIGFS_ATTR(pci_epf_, msix_interrupts);
+ 
+ static struct configfs_attribute *pci_epf_attrs[] = {
+ 	&pci_epf_attr_vendorid,
+@@ -340,6 +363,7 @@ static struct configfs_attribute *pci_epf_attrs[] = {
+ 	&pci_epf_attr_subsys_id,
+ 	&pci_epf_attr_interrupt_pin,
+ 	&pci_epf_attr_msi_interrupts,
++	&pci_epf_attr_msix_interrupts,
+ 	NULL,
+ };
+ 
+diff --git a/drivers/pci/endpoint/pci-epc-core.c b/drivers/pci/endpoint/pci-epc-core.c
+index b0ee427..7d77bd0 100644
+--- a/drivers/pci/endpoint/pci-epc-core.c
++++ b/drivers/pci/endpoint/pci-epc-core.c
+@@ -218,6 +218,63 @@ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts)
+ EXPORT_SYMBOL_GPL(pci_epc_set_msi);
+ 
+ /**
++ * pci_epc_get_msix() - get the number of MSI-X interrupt numbers allocated
++ * @epc: the EPC device to which MSI-X interrupts was requested
++ * @func_no: the endpoint function number in the EPC device
++ *
++ * Invoke to get the number of MSI-X interrupts allocated by the RC
++ */
++int pci_epc_get_msix(struct pci_epc *epc, u8 func_no)
++{
++	int interrupt;
++	unsigned long flags;
 +
-+			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>,
-+				 <&ccu CLK_DRAM_VE>;
-+			clock-names = "ahb", "mod", "ram";
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions)
++		return 0;
 +
-+			resets = <&ccu RST_BUS_VE>;
++	if (!epc->ops->get_msix)
++		return 0;
 +
-+			interrupts = <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+			allwinner,sram = <&ve_sram 1>;
-+		};
++	spin_lock_irqsave(&epc->lock, flags);
++	interrupt = epc->ops->get_msix(epc, func_no);
++	spin_unlock_irqrestore(&epc->lock, flags);
 +
- 		crypto: crypto-engine@1c15000 {
- 			compatible = "allwinner,sun4i-a10-crypto";
- 			reg = <0x01c15000 0x1000>;
++	if (interrupt < 0)
++		return 0;
++
++	return interrupt + 1;
++}
++EXPORT_SYMBOL_GPL(pci_epc_get_msix);
++
++/**
++ * pci_epc_set_msix() - set the number of MSI-X interrupt numbers required
++ * @epc: the EPC device on which MSI-X has to be configured
++ * @func_no: the endpoint function number in the EPC device
++ * @interrupts: number of MSI-X interrupts required by the EPF
++ *
++ * Invoke to set the required number of MSI-X interrupts.
++ */
++int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts)
++{
++	int ret;
++	unsigned long flags;
++
++	if (IS_ERR_OR_NULL(epc) || func_no >= epc->max_functions ||
++	    interrupts < 1 || interrupts > 2048)
++		return -EINVAL;
++
++	if (!epc->ops->set_msix)
++		return 0;
++
++	spin_lock_irqsave(&epc->lock, flags);
++	ret = epc->ops->set_msix(epc, func_no, interrupts - 1);
++	spin_unlock_irqrestore(&epc->lock, flags);
++
++	return ret;
++}
++EXPORT_SYMBOL_GPL(pci_epc_set_msix);
++
++/**
+  * pci_epc_unmap_addr() - unmap CPU address from PCI address
+  * @epc: the EPC device on which address is allocated
+  * @func_no: the endpoint function number in the EPC device
+diff --git a/include/linux/pci-epc.h b/include/linux/pci-epc.h
+index 243eaa5..89f079f 100644
+--- a/include/linux/pci-epc.h
++++ b/include/linux/pci-epc.h
+@@ -17,6 +17,7 @@ enum pci_epc_irq_type {
+ 	PCI_EPC_IRQ_UNKNOWN,
+ 	PCI_EPC_IRQ_LEGACY,
+ 	PCI_EPC_IRQ_MSI,
++	PCI_EPC_IRQ_MSIX,
+ };
+ 
+ /**
+@@ -30,6 +31,10 @@ enum pci_epc_irq_type {
+  *	     capability register
+  * @get_msi: ops to get the number of MSI interrupts allocated by the RC from
+  *	     the MSI capability register
++ * @set_msix: ops to set the requested number of MSI-X interrupts in the
++ *	     MSI-X capability register
++ * @get_msix: ops to get the number of MSI-X interrupts allocated by the RC
++ *	     from the MSI-X capability register
+  * @raise_irq: ops to raise a legacy or MSI interrupt
+  * @start: ops to start the PCI link
+  * @stop: ops to stop the PCI link
+@@ -48,6 +53,8 @@ struct pci_epc_ops {
+ 			      phys_addr_t addr);
+ 	int	(*set_msi)(struct pci_epc *epc, u8 func_no, u8 interrupts);
+ 	int	(*get_msi)(struct pci_epc *epc, u8 func_no);
++	int	(*set_msix)(struct pci_epc *epc, u8 func_no, u16 interrupts);
++	int	(*get_msix)(struct pci_epc *epc, u8 func_no);
+ 	int	(*raise_irq)(struct pci_epc *epc, u8 func_no,
+ 			     enum pci_epc_irq_type type, u8 interrupt_num);
+ 	int	(*start)(struct pci_epc *epc);
+@@ -144,6 +151,8 @@ void pci_epc_unmap_addr(struct pci_epc *epc, u8 func_no,
+ 			phys_addr_t phys_addr);
+ int pci_epc_set_msi(struct pci_epc *epc, u8 func_no, u8 interrupts);
+ int pci_epc_get_msi(struct pci_epc *epc, u8 func_no);
++int pci_epc_set_msix(struct pci_epc *epc, u8 func_no, u16 interrupts);
++int pci_epc_get_msix(struct pci_epc *epc, u8 func_no);
+ int pci_epc_raise_irq(struct pci_epc *epc, u8 func_no,
+ 		      enum pci_epc_irq_type type, u8 interrupt_num);
+ int pci_epc_start(struct pci_epc *epc);
+diff --git a/include/linux/pci-epf.h b/include/linux/pci-epf.h
+index 4e77649..ec02f587 100644
+--- a/include/linux/pci-epf.h
++++ b/include/linux/pci-epf.h
+@@ -119,6 +119,7 @@ struct pci_epf {
+ 	struct pci_epf_header	*header;
+ 	struct pci_epf_bar	bar[6];
+ 	u8			msi_interrupts;
++	u16			msix_interrupts;
+ 	u8			func_no;
+ 
+ 	struct pci_epc		*epc;
 -- 
-2.17.0
+2.7.4
+
 
