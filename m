@@ -2,105 +2,99 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F8B9C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:55:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0FCC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:55:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE7C0208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:55:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7C0208D5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8609F208D5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:55:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oT7sUNmy";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="C7zn+ohZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8609F208D5
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967844AbeFRIzX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:55:23 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35772 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967706AbeFRIeb (ORCPT
+        id S967886AbeFRIzk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:55:40 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54660 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S967755AbeFRIzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:34:31 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3F7AC8A;
-        Mon, 18 Jun 2018 08:34:30 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shiraz Saleem <shiraz.saleem@intel.com>,
-        Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Doug Ledford <dledford@redhat.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 115/189] RDMA/cma: Do not query GID during QP state transition to RTR
-Date:   Mon, 18 Jun 2018 10:13:31 +0200
-Message-Id: <20180618081213.876959590@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
-References: <20180618081209.254234434@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 18 Jun 2018 04:55:36 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6A8F160B13; Mon, 18 Jun 2018 08:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529312135;
+        bh=UM91ZcWhOytsdAMYSOLN4FTPbMxmPt7Xtm72oH1GhGk=;
+        h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+        b=oT7sUNmyodyGYwJUPtHXtaTqS7C1fKuBQDsRtRSKC3obw8dB15TCbEcCkhlk20P68
+         LSL5gGMrvlbHvQxji8EO0z7ks1aC9ly4vKcwxjHgARJTj/lYftnbzFXOdA6hAmcZUO
+         2HhpIdK5GdTu8pV06wMzek/4O1rE9+ETH78PWfS8=
+Received: from potku.adurom.net (88-114-240-52.elisa-laajakaista.fi [88.114.240.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id EFED360227;
+        Mon, 18 Jun 2018 08:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1529312135;
+        bh=UM91ZcWhOytsdAMYSOLN4FTPbMxmPt7Xtm72oH1GhGk=;
+        h=Subject:From:In-Reply-To:References:To:Cc:From;
+        b=C7zn+ohZbBfXK9klne7XUMAp9E89ZCOGMMOtvB9rUU8zCED4ngrktZlyrAqJHk+SU
+         4cm2Xx7rCkkF3diDgwuI2TeQnlDGjdzqGUufWKG/b4Bf5ZuriBdxG4eYwUZei6TQi7
+         oXcZyFCV0VENqoDHIZFBmgEHXN+hzMl8JQ/RXRFs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org EFED360227
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Subject: Re: qtnfmac: fix NULL pointer dereference
+From:   Kalle Valo <kvalo@codeaurora.org>
+In-Reply-To: <20180601132408.GA2572@embeddedor.com>
+References: <20180601132408.GA2572@embeddedor.com>
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     Igor Mitsyanko <imitsyanko@quantenna.com>,
+        Avinash Patil <avinashp@quantenna.com>,
+        Sergey Matyukevich <smatyukevich@quantenna.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        kernel-janitors@vger.kernel.org
+User-Agent: pwcli/0.0.0-git (https://github.com/kvalo/pwcli/) Python/2.7.12
+Message-Id: <20180618085535.6A8F160B13@smtp.codeaurora.org>
+Date:   Mon, 18 Jun 2018 08:55:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+"Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
 
-------------------
+> In case *vif* is NULL at 655: if (!vif), the execution path jumps to
+> label out, where *vif* is dereferenced at 679:
+> 
+> if (vif->sta_state == QTNF_STA_CONNECTING)
+> 
+> Fix this by immediately returning when *vif* is NULL instead of
+> jumping to label out.
+> 
+> Addresses-Coverity-ID: 1469567 ("Dereference after null check")
+> Fixes: 480daa9cb62c ("qtnfmac: fix invalid STA state on EAPOL failure")
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> Reviewed-by: Sergey Matyukevich <sergey.matyukevich.os@quanenna.com>
 
-From: Parav Pandit <parav@mellanox.com>
+Patch applied to wireless-drivers.git, thanks.
 
-[ Upstream commit 9aa169213d1166d30ae357a44abbeae93459339d ]
+c1e3f64f8738 qtnfmac: fix NULL pointer dereference
 
-When commit [1] was added, SGID was queried to derive the SMAC address.
-Then, later on during a refactor [2], SMAC was no longer needed. However,
-the now useless GID query remained.  Then during additional code changes
-later on, the GID query was being done in such a way that it caused iWARP
-queries to start breaking.  Remove the useless GID query and resolve the
-iWARP breakage at the same time.
+-- 
+https://patchwork.kernel.org/patch/10443507/
 
-This is discussed in [3].
-
-[1] commit dd5f03beb4f7 ("IB/core: Ethernet L2 attributes in verbs/cm structures")
-[2] commit 5c266b2304fb ("IB/cm: Remove the usage of smac and vid of qp_attr and cm_av")
-[3] https://www.spinics.net/lists/linux-rdma/msg63951.html
-
-Suggested-by: Shiraz Saleem <shiraz.saleem@intel.com>
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- drivers/infiniband/core/cma.c |    7 -------
- 1 file changed, 7 deletions(-)
-
---- a/drivers/infiniband/core/cma.c
-+++ b/drivers/infiniband/core/cma.c
-@@ -900,7 +900,6 @@ static int cma_modify_qp_rtr(struct rdma
- {
- 	struct ib_qp_attr qp_attr;
- 	int qp_attr_mask, ret;
--	union ib_gid sgid;
- 
- 	mutex_lock(&id_priv->qp_mutex);
- 	if (!id_priv->id.qp) {
-@@ -923,12 +922,6 @@ static int cma_modify_qp_rtr(struct rdma
- 	if (ret)
- 		goto out;
- 
--	ret = ib_query_gid(id_priv->id.device, id_priv->id.port_num,
--			   rdma_ah_read_grh(&qp_attr.ah_attr)->sgid_index,
--			   &sgid, NULL);
--	if (ret)
--		goto out;
--
- 	BUG_ON(id_priv->cma_dev->device != id_priv->id.device);
- 
- 	if (conn_param)
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
