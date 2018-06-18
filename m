@@ -2,64 +2,128 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE429C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DBEC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:14:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 737992083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:12:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 737992083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1A4A420850
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:14:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=horus.com header.i=@horus.com header.b="DRXvIljL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A4A420850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=horus.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935417AbeFRRMg (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:12:36 -0400
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38402 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932762AbeFRRMf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:12:35 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 043651529;
-        Mon, 18 Jun 2018 10:12:35 -0700 (PDT)
-Received: from armageddon.cambridge.arm.com (armageddon.cambridge.arm.com [10.1.206.84])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3845C3F25D;
-        Mon, 18 Jun 2018 10:12:33 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 18:12:30 +0100
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Zhizhou Zhang <zhizhouzhang@asrmicro.com>
-Cc:     will.deacon@arm.com, james.morse@arm.com, mark.rutland@arm.com,
-        julien.thierry@arm.com, suzuki.poulose@arm.com,
-        hoeun.ryu@gmail.com, ard.biesheuvel@linaro.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] arm64: make secondary_start_kernel() notrace
-Message-ID: <20180618171230.tmqkyv4w62mt5diq@armageddon.cambridge.arm.com>
-References: <1528794457-14129-1-git-send-email-zhizhouzhang@asrmicro.com>
+        id S935282AbeFRROO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:14:14 -0400
+Received: from mail.horus.com ([78.46.148.228]:34897 "EHLO mail.horus.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S934857AbeFRRON (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 13:14:13 -0400
+Received: from [192.168.1.20] (193-83-224-126.adsl.highway.telekom.at [193.83.224.126])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "E-Mail Matthias Reichl", Issuer "HiassofT CA 2014" (verified OK))
+        by mail.horus.com (Postfix) with ESMTPSA id C7D506409F;
+        Mon, 18 Jun 2018 19:14:11 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=horus.com;
+        s=20180324; t=1529342051;
+        bh=wzPTYkYAdPQGpcD6vjWo+ibAScnLKRUoQCuMSZBqmxg=;
+        h=Date:From:To:Cc:Subject:From;
+        b=DRXvIljLA4feVNTw1RylzVHWNwIB2bZdXzsB8ezr/iC+oBGa/L1PNLyvLcFHdiY06
+         MO0L5BtDQYGEpaMTczeAUY5ltN/Jh7ixxApD7LXNtXpbIjze42geMHz1e4jtcr/zEd
+         ON57BrlsrsUSJK8S/piDz1OTYgQDWC3wct2vBIfs=
+Received: by camel2.lan (Postfix, from userid 1000)
+        id 082E71C78CB; Mon, 18 Jun 2018 19:14:10 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 19:14:10 +0200
+From:   Matthias Reichl <hias@horus.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     patches@opensource.cirrus.com,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        linux-kernel@vger.kernel.org
+Subject: Regression in 4.18-rc1 caused by regulator: arizona-ldo1: Look up a
+ descriptor and pass to the core
+Message-ID: <20180618171410.z3bshzmwu7x5yylj@camel2.lan>
+Mail-Followup-To: Matthias Reichl <hias@horus.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, patches@opensource.cirrus.com,
+        Richard Fitzgerald <rf@opensource.cirrus.com>,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        linux-kernel@vger.kernel.org
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1528794457-14129-1-git-send-email-zhizhouzhang@asrmicro.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 05:07:37PM +0800, Zhizhou Zhang wrote:
-> We can't call function trace hook before setup percpu offset.
-> When entering secondary_start_kernel(), percpu offset has not
-> been initialized.  So this lead hotplug malfunction.
-> Here is the flow to reproduce this bug:
-> 
-> echo 0 > /sys/devices/system/cpu/cpu1/online
-> echo function > /sys/kernel/debug/tracing/current_tracer
-> echo 1 > /sys/kernel/debug/tracing/tracing_on
-> echo 1 > /sys/devices/system/cpu/cpu1/online
-> 
-> Signed-off-by: Zhizhou Zhang <zhizhouzhang@asrmicro.com>
+Commit e1739e86f0cb9c48e8745a610e6981a4e24cadad breaks reading
+the wlf,ldoena property from device tree. This causes ldo1 to
+stay off and thus arizona device detection to fail:
 
-Queued for 4.18. Thanks.
+[    4.495958] of_get_named_gpiod_flags: parsed 'wlf,reset' property of node '/s
+oc/spi@7e204000/wm5102@1[0]' - status (0)
+[    4.509756] arizona-ldo1 arizona-ldo1: GPIO lookup for consumer wlf,ldoena
+[    4.511339] arizona-ldo1 arizona-ldo1: using lookup tables for GPIO lookup
+[    4.511351] arizona-ldo1 arizona-ldo1: No GPIO consumer wlf,ldoena found
+[    4.511413] LDO1: supplied by RPi-Cirrus 1v8
+[    4.549164] arizona spi0.1: Unknown device ID: 0
 
--- 
-Catalin
+With this commit reverted the ldoena GPIO is properly found and
+asserted high and the arizona device type is read successfully:
+
+[    4.630445] of_get_named_gpiod_flags: parsed 'wlf,reset' property of node '/s
+oc/spi@7e204000/wm5102@1[0]' - status (0)
+[    4.647622] of_get_named_gpiod_flags: parsed 'wlf,ldoena' property of node '/soc/spi@7e204000/wm5102@1[0]' - status (0)
+[    4.666100] arizona spi0.1: WM5102 revision C
+
+I've tested this on a Raspberry Pi 3 with upstream 4.18-rc1,
+the Cirrus Logic Audio Card from Element 14 (using a WM5102
+connected via SPI) and the downstream card driver added as
+a module.
+
+Both wlf,reset and wlf,ldoena properties are defined in
+the wm5102 devicetree node:
+
+wm5102@1{
+	compatible = "wlf,wm5102";
+	reg = <1>;
+	...
+	wlf,reset = <&gpio 17 0>;
+	wlf,ldoena = <&gpio 22 0>;
+	...
+};
+
+If I understand the code correctly the cuplrit seems to be that
+with this patch the gpio is looked up from the arizona-ldo1 dev,
+which has a NULL of_node:
+
+config.ena_gpiod = devm_gpiod_get_optional(&pdev->dev, "wlf,ldoena", ...
+
+The old version did an of lookup in the parent (arizona) dev, which
+contains the of_node with wlf,ldoena:
+
+arizona_ldo1_common_init:
+	struct device *parent_dev = pdev->dev.parent;
+	struct regulator_config config = { };
+	...
+	config.dev = parent_dev;
+	...
+	arizona_ldo1_of_get_pdata(pdata, config, ...
+
+arizona_ldo1_of_get_pdata:
+	struct device_node *np = config->dev->of_node;
+	...
+	pdata->ldoena = of_get_named_gpio(np, "wlf,ldoena", 0);
+
+so long,
+
+Hias
