@@ -2,131 +2,114 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28314C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C9D3C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E165B20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:29:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E165B20864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8427020864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:29:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="cEzj8ERz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8427020864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goldelico.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965699AbeFRIZW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:25:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56244 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935774AbeFRIZR (ORCPT
+        id S965947AbeFRJ3n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:29:43 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:17751 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S965795AbeFRJ3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:25:17 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1ABDFC7A;
-        Mon, 18 Jun 2018 08:25:16 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Graeme Smecher <gsmecher@threespeedlogic.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 170/279] ARM: dts: correct missing "compatible" entry for ti81xx SoCs
-Date:   Mon, 18 Jun 2018 10:12:35 +0200
-Message-Id: <20180618080615.853866984@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
-References: <20180618080608.851973560@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+        Mon, 18 Jun 2018 05:29:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1529314175;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=H0E3ZocxlplOSMipf87iLjMSJYBycfQmrfHDfDwvSO0=;
+        b=cEzj8ERzFq/4NzJsxZIjoU8XKPRV/dZsgeiYEo56/nh032mGJ8BtS34r7LmefclIDV
+        GbwQ3L/Qj2FsorUfQlO87VwsLlSuMxNx5PnCDOXKX/HJX8afcrITimYFqdO9t2Vpvyy6
+        TgY4pDb4nV+fdBA8w5bYUukExaQJn/5UBvnzDz31rDhArrpywt5O0fuHQszizRLi2E9b
+        mX1MmoXlttrMZ3xXciuf54HI0jX11bbJmTPwfXA/jo0cEwUQkqcjv+mnNekva9gcKclc
+        0TehFEvob6X60qKFTYRkrGydWNJYGP+lHTCYMZQ9HqW8vC/Yp7Jj8IXQiPW5OciWnGgn
+        27bg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw87Wiuc1qEjr9Tw=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 43.10 DYNA|AUTH)
+        with ESMTPSA id D025bfu5I9TVCtI
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 18 Jun 2018 11:29:31 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [Letux-kernel] BUG: drivers/pinctrl/core: races in pinctrl_groups and deferred probing
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20180618091433.GP112168@atomide.com>
+Date:   Mon, 18 Jun 2018 11:29:30 +0200
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        kernel@pyra-handheld.com,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BB5DB278-9827-4351-99DF-54C875B1879F@goldelico.com>
+References: <F20BD6B3-D4D7-4D5D-B464-64402650BDE5@goldelico.com> <20180614120157.GE112168@atomide.com> <FC373DE9-6D6B-40C5-ACED-C07B1B524469@goldelico.com> <20180615065810.GI112168@atomide.com> <20180615111318.GJ112168@atomide.com> <029F115C-480E-485A-B547-9D5873925CEF@goldelico.com> <4DE2E482-B0D3-4799-9E2D-74E2180B305B@goldelico.com> <CAHp75Vf7-xcsoSJ--9nJYbxpwSfDv201UwnxJHoFbwtD187SPw@mail.gmail.com> <20180618091433.GP112168@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.16-stable review patch.  If anyone has any objections, please let me know.
 
-------------------
+> Am 18.06.2018 um 11:14 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> * Andy Shevchenko <andy.shevchenko@gmail.com> [180618 08:25]:
+>> On Sat, Jun 16, 2018 at 2:08 PM H. Nikolaus Schaller =
+<hns@goldelico.com> wrote:
+>>> But it looks as if we still have duplicate assignments by deferred =
+probing, i.e. some cleanup is
+>>> missing (or is this intended behaviour?).
+>>=20
+>>> But I think the fundamental problem is that the same driver assigns =
+multiple slots if
+>>> probing is deferred.
+>>=20
+>> Indeed.
+>>=20
+>> I think there is a simple way to clean up pinctrl stuff on failed =
+probe. See
+>> =
+https://elixir.bootlin.com/linux/v4.18-rc1/source/drivers/base/dd.c#L416
+>>=20
+>> We only bind pins, and do not perform any actions when failure =
+happens later on.
+>=20
+> Yup seems like a good approach. I'll take a look if we can just
+> check if the function or group name already exists and return
+> the existing selector in that case.
 
-From: Graeme Smecher <gsmecher@threespeedlogic.com>
+Ok, that would also solve the duplication issue.
 
-[ Upstream commit 647efef69de483f1dd7944ede31b4cae16acb124 ]
+On the other hand we still have a stale entry if the probing process
+finally fails after several attempts.
 
-The missing "compatible" entries are needed by drivers/clk/ti/clkctrl.c,
-and without them the structures initialized in drivers/clk/ti/clk-814x.c
-are not passed to configuration code. The result is a "not found from
-clkctrl data" error message, although boot proceeds anyway.
+This may happen if a driver with a valid DT entry is blacklisted in
+/etc/modprobe.d/blacklist.conf. Then, the kernel will try to modprobe
+it several times through udev until it gives up. The reason seems to
+be that the deferred probing thread does not know why the driver did
+not probe successfully.
 
-The reason why the compatible is not found is because the board specific
-files override the SoC compatible without including it. This did not
-cause any issues until with the clkctrl nodes got introduced.
+BR and thanks,
+Nikolaus
 
-Very lightly tested on a (lurching) AM3874 design that's in the middle
-of a kernel upgrade from TI's abandoned 2.6.37 tree.
-
-Also tested on j5eco-evm and hp-t410 to verify the clkctrl clocks are
-found.
-
-Fixes: bb30465b5902 ("ARM: dts: dm814x: add clkctrl nodes")
-Fixes: 80a06c0d8357 ("ARM: dts: dm816x: add clkctrl nodes")
-Signed-off-by: Graeme Smecher <gsmecher@threespeedlogic.com>
-[tony: updated to fix for 8168-evm, updated comments]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- arch/arm/boot/dts/dm8148-evm.dts       |    2 +-
- arch/arm/boot/dts/dm8148-t410.dts      |    2 +-
- arch/arm/boot/dts/dm8168-evm.dts       |    2 +-
- arch/arm/boot/dts/dra62x-j5eco-evm.dts |    2 +-
- 4 files changed, 4 insertions(+), 4 deletions(-)
-
---- a/arch/arm/boot/dts/dm8148-evm.dts
-+++ b/arch/arm/boot/dts/dm8148-evm.dts
-@@ -10,7 +10,7 @@
- 
- / {
- 	model = "DM8148 EVM";
--	compatible = "ti,dm8148-evm", "ti,dm8148";
-+	compatible = "ti,dm8148-evm", "ti,dm8148", "ti,dm814";
- 
- 	memory@80000000 {
- 		device_type = "memory";
---- a/arch/arm/boot/dts/dm8148-t410.dts
-+++ b/arch/arm/boot/dts/dm8148-t410.dts
-@@ -9,7 +9,7 @@
- 
- / {
- 	model = "HP t410 Smart Zero Client";
--	compatible = "hp,t410", "ti,dm8148";
-+	compatible = "hp,t410", "ti,dm8148", "ti,dm814";
- 
- 	memory@80000000 {
- 		device_type = "memory";
---- a/arch/arm/boot/dts/dm8168-evm.dts
-+++ b/arch/arm/boot/dts/dm8168-evm.dts
-@@ -10,7 +10,7 @@
- 
- / {
- 	model = "DM8168 EVM";
--	compatible = "ti,dm8168-evm", "ti,dm8168";
-+	compatible = "ti,dm8168-evm", "ti,dm8168", "ti,dm816";
- 
- 	memory@80000000 {
- 		device_type = "memory";
---- a/arch/arm/boot/dts/dra62x-j5eco-evm.dts
-+++ b/arch/arm/boot/dts/dra62x-j5eco-evm.dts
-@@ -10,7 +10,7 @@
- 
- / {
- 	model = "DRA62x J5 Eco EVM";
--	compatible = "ti,dra62x-j5eco-evm", "ti,dra62x", "ti,dm8148";
-+	compatible = "ti,dra62x-j5eco-evm", "ti,dra62x", "ti,dm8148", "ti,dm814";
- 
- 	memory@80000000 {
- 		device_type = "memory";
-
+>=20
+> Regards,
+>=20
+> Tony
 
