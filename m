@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D585C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE760C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A3020864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A3020864
+	by mail.kernel.org (Postfix) with ESMTP id 807CC208EA
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:22:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807CC208EA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965335AbeFRIWA (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:22:00 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55416 "EHLO
+        id S965358AbeFRIWE (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:22:04 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55428 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965094AbeFRIV5 (ORCPT
+        with ESMTP id S965326AbeFRIWA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:21:57 -0400
+        Mon, 18 Jun 2018 04:22:00 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 73F5DC7F;
-        Mon, 18 Jun 2018 08:21:56 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3B25FC7A;
+        Mon, 18 Jun 2018 08:21:59 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        stable@vger.kernel.org, Nick Dyer <nick.dyer@shmanahar.org>,
+        Benson Leung <bleung@chromium.org>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Sebastian Reichel <sebastian.reichel@collabora.co.uk>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 147/279] xprtrdma: Fix list corruption / DMAR errors during MR recovery
-Date:   Mon, 18 Jun 2018 10:12:12 +0200
-Message-Id: <20180618080614.902591107@linuxfoundation.org>
+Subject: [PATCH 4.16 148/279] Input: atmel_mxt_ts - fix the firmware update
+Date:   Mon, 18 Jun 2018 10:12:13 +0200
+Message-Id: <20180618080614.945030493@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,130 +53,412 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Nick Dyer <nick@shmanahar.org>
 
-[ Upstream commit 054f155721d7af1f343ed52bea246626d8450ca8 ]
+[ Upstream commit 068bdb67ef74df0ad1627b7247a163e3e252ac11 ]
 
-The ro_release_mr methods check whether mr->mr_list is empty.
-Therefore, be sure to always use list_del_init when removing an MR
-linked into a list using that field. Otherwise, when recovering from
-transport failures or device removal, list corruption can result, or
-MRs can get mapped or unmapped an odd number of times, resulting in
-IOMMU-related failures.
+The automatic update mechanism will trigger an update if the
+info block CRCs are different between maxtouch configuration
+file (maxtouch.cfg) and chip.
 
-In general this fix is appropriate back to v4.8. However, code
-changes since then make it impossible to apply this patch directly
-to stable kernels. The fix would have to be applied by hand or
-reworked for kernels earlier than v4.16.
+The driver compared the CRCs without retrieving the chip CRC,
+resulting always in a failure and firmware flashing action
+triggered. Fix this issue by retrieving the chip info block
+CRC before the check.
 
-Backport guidance -- there are several cases:
-- When creating an MR, initialize mr_list so that using list_empty
-  on an as-yet-unused MR is safe.
-- When an MR is being handled by the remote invalidation path,
-  ensure that mr_list is reinitialized when it is removed from
-  rl_registered.
-- When an MR is being handled by rpcrdma_destroy_mrs, it is removed
-  from mr_all, but it may still be on an rl_registered list. In
-  that case, the MR needs to be removed from that list before being
-  released.
-- Other cases are covered by using list_del_init in rpcrdma_mr_pop.
+Note that this solution has the benefit that by reading the
+information block and the object table into a contiguous region
+of memory, we can verify the checksum at probe time. This means
+we make sure that we are indeed talking to a chip that supports
+object protocol correctly.
 
-Fixes: 9d6b04097882 ('xprtrdma: Place registered MWs on a ... ')
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Using this patch on a kevin chromebook, the touchscreen and
+touchpad drivers are able to match the CRC:
+
+  atmel_mxt_ts 3-004b: Family: 164 Variant: 14 Firmware V2.3.AA Objects: 40
+  atmel_mxt_ts 5-004a: Family: 164 Variant: 17 Firmware V2.0.AA Objects: 31
+  atmel_mxt_ts 3-004b: Resetting device
+  atmel_mxt_ts 5-004a: Resetting device
+  atmel_mxt_ts 3-004b: Config CRC 0x573E89: OK
+  atmel_mxt_ts 3-004b: Touchscreen size X4095Y2729
+  input: Atmel maXTouch Touchscreen as /devices/platform/ff130000.i2c/i2c-3/3-004b/input/input5
+  atmel_mxt_ts 5-004a: Config CRC 0x0AF6BA: OK
+  atmel_mxt_ts 5-004a: Touchscreen size X1920Y1080
+  input: Atmel maXTouch Touchpad as /devices/platform/ff140000.i2c/i2c-5/5-004a/input/input6
+
+Signed-off-by: Nick Dyer <nick.dyer@shmanahar.org>
+Acked-by: Benson Leung <bleung@chromium.org>
+[Ezequiel: minor patch massage]
+Signed-off-by: Ezequiel Garcia <ezequiel@collabora.com>
+Tested-by: Sebastian Reichel <sebastian.reichel@collabora.co.uk>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sunrpc/xprtrdma/fmr_ops.c   |    5 +----
- net/sunrpc/xprtrdma/frwr_ops.c  |    9 +++------
- net/sunrpc/xprtrdma/verbs.c     |    5 +++++
- net/sunrpc/xprtrdma/xprt_rdma.h |    2 +-
- 4 files changed, 10 insertions(+), 11 deletions(-)
+ drivers/input/touchscreen/atmel_mxt_ts.c |  186 ++++++++++++++++++-------------
+ 1 file changed, 110 insertions(+), 76 deletions(-)
 
---- a/net/sunrpc/xprtrdma/fmr_ops.c
-+++ b/net/sunrpc/xprtrdma/fmr_ops.c
-@@ -72,6 +72,7 @@ fmr_op_init_mr(struct rpcrdma_ia *ia, st
- 	if (IS_ERR(mr->fmr.fm_mr))
- 		goto out_fmr_err;
- 
-+	INIT_LIST_HEAD(&mr->mr_list);
- 	return 0;
- 
- out_fmr_err:
-@@ -102,10 +103,6 @@ fmr_op_release_mr(struct rpcrdma_mr *mr)
- 	LIST_HEAD(unmap_list);
- 	int rc;
- 
--	/* Ensure MW is not on any rl_registered list */
--	if (!list_empty(&mr->mr_list))
--		list_del(&mr->mr_list);
--
- 	kfree(mr->fmr.fm_physaddrs);
- 	kfree(mr->mr_sg);
- 
---- a/net/sunrpc/xprtrdma/frwr_ops.c
-+++ b/net/sunrpc/xprtrdma/frwr_ops.c
-@@ -110,6 +110,7 @@ frwr_op_init_mr(struct rpcrdma_ia *ia, s
- 	if (!mr->mr_sg)
- 		goto out_list_err;
- 
-+	INIT_LIST_HEAD(&mr->mr_list);
- 	sg_init_table(mr->mr_sg, depth);
- 	init_completion(&frwr->fr_linv_done);
- 	return 0;
-@@ -133,10 +134,6 @@ frwr_op_release_mr(struct rpcrdma_mr *mr
+--- a/drivers/input/touchscreen/atmel_mxt_ts.c
++++ b/drivers/input/touchscreen/atmel_mxt_ts.c
+@@ -275,7 +275,8 @@ struct mxt_data {
+ 	char phys[64];		/* device physical location */
+ 	const struct mxt_platform_data *pdata;
+ 	struct mxt_object *object_table;
+-	struct mxt_info info;
++	struct mxt_info *info;
++	void *raw_info_block;
+ 	unsigned int irq;
+ 	unsigned int max_x;
+ 	unsigned int max_y;
+@@ -450,12 +451,13 @@ static int mxt_lookup_bootloader_address
  {
- 	int rc;
+ 	u8 appmode = data->client->addr;
+ 	u8 bootloader;
++	u8 family_id = data->info ? data->info->family_id : 0;
  
--	/* Ensure MR is not on any rl_registered list */
--	if (!list_empty(&mr->mr_list))
--		list_del(&mr->mr_list);
--
- 	rc = ib_dereg_mr(mr->frwr.fr_mr);
- 	if (rc)
- 		pr_err("rpcrdma: final ib_dereg_mr for %p returned %i\n",
-@@ -195,7 +192,7 @@ frwr_op_recover_mr(struct rpcrdma_mr *mr
- 	return;
+ 	switch (appmode) {
+ 	case 0x4a:
+ 	case 0x4b:
+ 		/* Chips after 1664S use different scheme */
+-		if (retry || data->info.family_id >= 0xa2) {
++		if (retry || family_id >= 0xa2) {
+ 			bootloader = appmode - 0x24;
+ 			break;
+ 		}
+@@ -682,7 +684,7 @@ mxt_get_object(struct mxt_data *data, u8
+ 	struct mxt_object *object;
+ 	int i;
  
- out_release:
--	pr_err("rpcrdma: FRWR reset failed %d, %p release\n", rc, mr);
-+	pr_err("rpcrdma: FRWR reset failed %d, %p released\n", rc, mr);
- 	r_xprt->rx_stats.mrs_orphaned++;
+-	for (i = 0; i < data->info.object_num; i++) {
++	for (i = 0; i < data->info->object_num; i++) {
+ 		object = data->object_table + i;
+ 		if (object->type == type)
+ 			return object;
+@@ -1453,12 +1455,12 @@ static int mxt_update_cfg(struct mxt_dat
+ 		data_pos += offset;
+ 	}
  
- 	spin_lock(&r_xprt->rx_buf.rb_mrlock);
-@@ -458,7 +455,7 @@ frwr_op_reminv(struct rpcrdma_rep *rep,
+-	if (cfg_info.family_id != data->info.family_id) {
++	if (cfg_info.family_id != data->info->family_id) {
+ 		dev_err(dev, "Family ID mismatch!\n");
+ 		return -EINVAL;
+ 	}
  
- 	list_for_each_entry(mr, mrs, mr_list)
- 		if (mr->mr_handle == rep->rr_inv_rkey) {
--			list_del(&mr->mr_list);
-+			list_del_init(&mr->mr_list);
- 			trace_xprtrdma_remoteinv(mr);
- 			mr->frwr.fr_state = FRWR_IS_INVALID;
- 			rpcrdma_mr_unmap_and_put(mr);
---- a/net/sunrpc/xprtrdma/verbs.c
-+++ b/net/sunrpc/xprtrdma/verbs.c
-@@ -1244,6 +1244,11 @@ rpcrdma_mrs_destroy(struct rpcrdma_buffe
- 		list_del(&mr->mr_all);
+-	if (cfg_info.variant_id != data->info.variant_id) {
++	if (cfg_info.variant_id != data->info->variant_id) {
+ 		dev_err(dev, "Variant ID mismatch!\n");
+ 		return -EINVAL;
+ 	}
+@@ -1503,7 +1505,7 @@ static int mxt_update_cfg(struct mxt_dat
  
- 		spin_unlock(&buf->rb_mrlock);
-+
-+		/* Ensure MW is not on any rl_registered list */
-+		if (!list_empty(&mr->mr_list))
-+			list_del(&mr->mr_list);
-+
- 		ia->ri_ops->ro_release_mr(mr);
- 		count++;
- 		spin_lock(&buf->rb_mrlock);
---- a/net/sunrpc/xprtrdma/xprt_rdma.h
-+++ b/net/sunrpc/xprtrdma/xprt_rdma.h
-@@ -381,7 +381,7 @@ rpcrdma_mr_pop(struct list_head *list)
- 	struct rpcrdma_mr *mr;
- 
- 	mr = list_first_entry(list, struct rpcrdma_mr, mr_list);
--	list_del(&mr->mr_list);
-+	list_del_init(&mr->mr_list);
- 	return mr;
+ 	/* Malloc memory to store configuration */
+ 	cfg_start_ofs = MXT_OBJECT_START +
+-			data->info.object_num * sizeof(struct mxt_object) +
++			data->info->object_num * sizeof(struct mxt_object) +
+ 			MXT_INFO_CHECKSUM_SIZE;
+ 	config_mem_size = data->mem_size - cfg_start_ofs;
+ 	config_mem = kzalloc(config_mem_size, GFP_KERNEL);
+@@ -1554,20 +1556,6 @@ release_mem:
+ 	return ret;
  }
  
+-static int mxt_get_info(struct mxt_data *data)
+-{
+-	struct i2c_client *client = data->client;
+-	struct mxt_info *info = &data->info;
+-	int error;
+-
+-	/* Read 7-byte info block starting at address 0 */
+-	error = __mxt_read_reg(client, 0, sizeof(*info), info);
+-	if (error)
+-		return error;
+-
+-	return 0;
+-}
+-
+ static void mxt_free_input_device(struct mxt_data *data)
+ {
+ 	if (data->input_dev) {
+@@ -1582,9 +1570,10 @@ static void mxt_free_object_table(struct
+ 	video_unregister_device(&data->dbg.vdev);
+ 	v4l2_device_unregister(&data->dbg.v4l2);
+ #endif
+-
+-	kfree(data->object_table);
+ 	data->object_table = NULL;
++	data->info = NULL;
++	kfree(data->raw_info_block);
++	data->raw_info_block = NULL;
+ 	kfree(data->msg_buf);
+ 	data->msg_buf = NULL;
+ 	data->T5_address = 0;
+@@ -1600,34 +1589,18 @@ static void mxt_free_object_table(struct
+ 	data->max_reportid = 0;
+ }
+ 
+-static int mxt_get_object_table(struct mxt_data *data)
++static int mxt_parse_object_table(struct mxt_data *data,
++				  struct mxt_object *object_table)
+ {
+ 	struct i2c_client *client = data->client;
+-	size_t table_size;
+-	struct mxt_object *object_table;
+-	int error;
+ 	int i;
+ 	u8 reportid;
+ 	u16 end_address;
+ 
+-	table_size = data->info.object_num * sizeof(struct mxt_object);
+-	object_table = kzalloc(table_size, GFP_KERNEL);
+-	if (!object_table) {
+-		dev_err(&data->client->dev, "Failed to allocate memory\n");
+-		return -ENOMEM;
+-	}
+-
+-	error = __mxt_read_reg(client, MXT_OBJECT_START, table_size,
+-			object_table);
+-	if (error) {
+-		kfree(object_table);
+-		return error;
+-	}
+-
+ 	/* Valid Report IDs start counting from 1 */
+ 	reportid = 1;
+ 	data->mem_size = 0;
+-	for (i = 0; i < data->info.object_num; i++) {
++	for (i = 0; i < data->info->object_num; i++) {
+ 		struct mxt_object *object = object_table + i;
+ 		u8 min_id, max_id;
+ 
+@@ -1651,8 +1624,8 @@ static int mxt_get_object_table(struct m
+ 
+ 		switch (object->type) {
+ 		case MXT_GEN_MESSAGE_T5:
+-			if (data->info.family_id == 0x80 &&
+-			    data->info.version < 0x20) {
++			if (data->info->family_id == 0x80 &&
++			    data->info->version < 0x20) {
+ 				/*
+ 				 * On mXT224 firmware versions prior to V2.0
+ 				 * read and discard unused CRC byte otherwise
+@@ -1707,24 +1680,102 @@ static int mxt_get_object_table(struct m
+ 	/* If T44 exists, T5 position has to be directly after */
+ 	if (data->T44_address && (data->T5_address != data->T44_address + 1)) {
+ 		dev_err(&client->dev, "Invalid T44 position\n");
+-		error = -EINVAL;
+-		goto free_object_table;
++		return -EINVAL;
+ 	}
+ 
+ 	data->msg_buf = kcalloc(data->max_reportid,
+ 				data->T5_msg_size, GFP_KERNEL);
+-	if (!data->msg_buf) {
+-		dev_err(&client->dev, "Failed to allocate message buffer\n");
++	if (!data->msg_buf)
++		return -ENOMEM;
++
++	return 0;
++}
++
++static int mxt_read_info_block(struct mxt_data *data)
++{
++	struct i2c_client *client = data->client;
++	int error;
++	size_t size;
++	void *id_buf, *buf;
++	uint8_t num_objects;
++	u32 calculated_crc;
++	u8 *crc_ptr;
++
++	/* If info block already allocated, free it */
++	if (data->raw_info_block)
++		mxt_free_object_table(data);
++
++	/* Read 7-byte ID information block starting at address 0 */
++	size = sizeof(struct mxt_info);
++	id_buf = kzalloc(size, GFP_KERNEL);
++	if (!id_buf)
++		return -ENOMEM;
++
++	error = __mxt_read_reg(client, 0, size, id_buf);
++	if (error)
++		goto err_free_mem;
++
++	/* Resize buffer to give space for rest of info block */
++	num_objects = ((struct mxt_info *)id_buf)->object_num;
++	size += (num_objects * sizeof(struct mxt_object))
++		+ MXT_INFO_CHECKSUM_SIZE;
++
++	buf = krealloc(id_buf, size, GFP_KERNEL);
++	if (!buf) {
+ 		error = -ENOMEM;
+-		goto free_object_table;
++		goto err_free_mem;
++	}
++	id_buf = buf;
++
++	/* Read rest of info block */
++	error = __mxt_read_reg(client, MXT_OBJECT_START,
++			       size - MXT_OBJECT_START,
++			       id_buf + MXT_OBJECT_START);
++	if (error)
++		goto err_free_mem;
++
++	/* Extract & calculate checksum */
++	crc_ptr = id_buf + size - MXT_INFO_CHECKSUM_SIZE;
++	data->info_crc = crc_ptr[0] | (crc_ptr[1] << 8) | (crc_ptr[2] << 16);
++
++	calculated_crc = mxt_calculate_crc(id_buf, 0,
++					   size - MXT_INFO_CHECKSUM_SIZE);
++
++	/*
++	 * CRC mismatch can be caused by data corruption due to I2C comms
++	 * issue or else device is not using Object Based Protocol (eg i2c-hid)
++	 */
++	if ((data->info_crc == 0) || (data->info_crc != calculated_crc)) {
++		dev_err(&client->dev,
++			"Info Block CRC error calculated=0x%06X read=0x%06X\n",
++			calculated_crc, data->info_crc);
++		error = -EIO;
++		goto err_free_mem;
++	}
++
++	data->raw_info_block = id_buf;
++	data->info = (struct mxt_info *)id_buf;
++
++	dev_info(&client->dev,
++		 "Family: %u Variant: %u Firmware V%u.%u.%02X Objects: %u\n",
++		 data->info->family_id, data->info->variant_id,
++		 data->info->version >> 4, data->info->version & 0xf,
++		 data->info->build, data->info->object_num);
++
++	/* Parse object table information */
++	error = mxt_parse_object_table(data, id_buf + MXT_OBJECT_START);
++	if (error) {
++		dev_err(&client->dev, "Error %d parsing object table\n", error);
++		mxt_free_object_table(data);
++		goto err_free_mem;
+ 	}
+ 
+-	data->object_table = object_table;
++	data->object_table = (struct mxt_object *)(id_buf + MXT_OBJECT_START);
+ 
+ 	return 0;
+ 
+-free_object_table:
+-	mxt_free_object_table(data);
++err_free_mem:
++	kfree(id_buf);
+ 	return error;
+ }
+ 
+@@ -2039,7 +2090,7 @@ static int mxt_initialize(struct mxt_dat
+ 	int error;
+ 
+ 	while (1) {
+-		error = mxt_get_info(data);
++		error = mxt_read_info_block(data);
+ 		if (!error)
+ 			break;
+ 
+@@ -2070,16 +2121,9 @@ static int mxt_initialize(struct mxt_dat
+ 		msleep(MXT_FW_RESET_TIME);
+ 	}
+ 
+-	/* Get object table information */
+-	error = mxt_get_object_table(data);
+-	if (error) {
+-		dev_err(&client->dev, "Error %d reading object table\n", error);
+-		return error;
+-	}
+-
+ 	error = mxt_acquire_irq(data);
+ 	if (error)
+-		goto err_free_object_table;
++		return error;
+ 
+ 	error = request_firmware_nowait(THIS_MODULE, true, MXT_CFG_NAME,
+ 					&client->dev, GFP_KERNEL, data,
+@@ -2087,14 +2131,10 @@ static int mxt_initialize(struct mxt_dat
+ 	if (error) {
+ 		dev_err(&client->dev, "Failed to invoke firmware loader: %d\n",
+ 			error);
+-		goto err_free_object_table;
++		return error;
+ 	}
+ 
+ 	return 0;
+-
+-err_free_object_table:
+-	mxt_free_object_table(data);
+-	return error;
+ }
+ 
+ static int mxt_set_t7_power_cfg(struct mxt_data *data, u8 sleep)
+@@ -2155,7 +2195,7 @@ recheck:
+ static u16 mxt_get_debug_value(struct mxt_data *data, unsigned int x,
+ 			       unsigned int y)
+ {
+-	struct mxt_info *info = &data->info;
++	struct mxt_info *info = data->info;
+ 	struct mxt_dbg *dbg = &data->dbg;
+ 	unsigned int ofs, page;
+ 	unsigned int col = 0;
+@@ -2483,7 +2523,7 @@ static const struct video_device mxt_vid
+ 
+ static void mxt_debug_init(struct mxt_data *data)
+ {
+-	struct mxt_info *info = &data->info;
++	struct mxt_info *info = data->info;
+ 	struct mxt_dbg *dbg = &data->dbg;
+ 	struct mxt_object *object;
+ 	int error;
+@@ -2569,7 +2609,6 @@ static int mxt_configure_objects(struct
+ 				 const struct firmware *cfg)
+ {
+ 	struct device *dev = &data->client->dev;
+-	struct mxt_info *info = &data->info;
+ 	int error;
+ 
+ 	error = mxt_init_t7_power_cfg(data);
+@@ -2594,11 +2633,6 @@ static int mxt_configure_objects(struct
+ 
+ 	mxt_debug_init(data);
+ 
+-	dev_info(dev,
+-		 "Family: %u Variant: %u Firmware V%u.%u.%02X Objects: %u\n",
+-		 info->family_id, info->variant_id, info->version >> 4,
+-		 info->version & 0xf, info->build, info->object_num);
+-
+ 	return 0;
+ }
+ 
+@@ -2607,7 +2641,7 @@ static ssize_t mxt_fw_version_show(struc
+ 				   struct device_attribute *attr, char *buf)
+ {
+ 	struct mxt_data *data = dev_get_drvdata(dev);
+-	struct mxt_info *info = &data->info;
++	struct mxt_info *info = data->info;
+ 	return scnprintf(buf, PAGE_SIZE, "%u.%u.%02X\n",
+ 			 info->version >> 4, info->version & 0xf, info->build);
+ }
+@@ -2617,7 +2651,7 @@ static ssize_t mxt_hw_version_show(struc
+ 				   struct device_attribute *attr, char *buf)
+ {
+ 	struct mxt_data *data = dev_get_drvdata(dev);
+-	struct mxt_info *info = &data->info;
++	struct mxt_info *info = data->info;
+ 	return scnprintf(buf, PAGE_SIZE, "%u.%u\n",
+ 			 info->family_id, info->variant_id);
+ }
+@@ -2656,7 +2690,7 @@ static ssize_t mxt_object_show(struct de
+ 		return -ENOMEM;
+ 
+ 	error = 0;
+-	for (i = 0; i < data->info.object_num; i++) {
++	for (i = 0; i < data->info->object_num; i++) {
+ 		object = data->object_table + i;
+ 
+ 		if (!mxt_object_readable(object->type))
 
 
