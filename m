@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E81C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10A6EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A028C20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A028C20864
+	by mail.kernel.org (Postfix) with ESMTP id C1ABE20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1ABE20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933585AbeFRISP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:18:15 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54488 "EHLO
+        id S935080AbeFRISX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:18:23 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54528 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935027AbeFRISL (ORCPT
+        with ESMTP id S935027AbeFRISR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:18:11 -0400
+        Mon, 18 Jun 2018 04:18:17 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 595A1C84;
-        Mon, 18 Jun 2018 08:18:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 46174C87;
+        Mon, 18 Jun 2018 08:18:16 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tobias Regnery <tobias.regnery@gmail.com>,
-        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        stable@vger.kernel.org, Julian Wiedmann <jwi@linux.vnet.ibm.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 072/279] usb: typec: ucsi: fix tracepoint related build error
-Date:   Mon, 18 Jun 2018 10:10:57 +0200
-Message-Id: <20180618080611.795004695@linuxfoundation.org>
+Subject: [PATCH 4.16 074/279] s390/qeth: fix request-side race during cmd IO timeout
+Date:   Mon, 18 Jun 2018 10:10:59 +0200
+Message-Id: <20180618080611.886474287@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,47 +50,209 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tobias Regnery <tobias.regnery@gmail.com>
+From: Julian Wiedmann <jwi@linux.vnet.ibm.com>
 
-[ Upstream commit 2f860691c2d2e3af1404ffeb2d22dd5c3dbca811 ]
+[ Upstream commit db71bbbd11a4d314f0fa3fbf3369b71cf33ce33c ]
 
-There is the following build error with CONFIG_TYPEC_UCSI=m, CONFIG_FTRACE=y
-and CONFIG_TRACING=n:
+Submitting a cmd IO request (usually on the WRITE device, but for IDX
+also on the READ device) is currently done with ccw_device_start()
+and a manual timeout in the caller.
+On timeout, the caller cleans up the related resources (eg. IO buffer).
+But 1) the IO might still be active and utilize those resources, and
+    2) when the IO completes, qeth_irq() will attempt to clean up the
+       same resources again.
 
-ERROR: "__tracepoint_ucsi_command" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
-ERROR: "__tracepoint_ucsi_register_port" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
-ERROR: "__tracepoint_ucsi_notify" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
-ERROR: "__tracepoint_ucsi_reset_ppm" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
-ERROR: "__tracepoint_ucsi_run_command" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
-ERROR: "__tracepoint_ucsi_ack" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
-ERROR: "__tracepoint_ucsi_connector_change" [drivers/usb/typec/ucsi/typec_ucsi.ko] undefined!
+Instead of introducing additional resource locking, switch to
+ccw_device_start_timeout() to ensure IO termination after timeout, and
+let the IRQ handler alone deal with cleaning up after a request.
 
-This compination is quite hard to create because CONFIG_TRACING gets selected
-only in rare cases without CONFIG_FTRACE.
+This also removes a stray write->irq_pending reset from
+clear_ipacmd_list(). The routine doesn't terminate any pending IO on
+the WRITE device, so this should be handled properly via IO timeout
+in the IRQ handler.
 
-The build failure is caused by conditionally compiling trace.c depending on
-the wrong option CONFIG_FTRACE. Change this to depend on CONFIG_TRACING like
-other users of tracepoints do.
-
-Fixes: c1b0bc2dabfa ("usb: typec: Add support for UCSI interface")
-Signed-off-by: Tobias Regnery <tobias.regnery@gmail.com>
-Acked-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Julian Wiedmann <jwi@linux.vnet.ibm.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/usb/typec/ucsi/Makefile |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/s390/net/qeth_core_main.c |   51 +++++++++++++++++++-------------------
+ drivers/s390/net/qeth_core_mpc.h  |   12 ++++++++
+ drivers/s390/net/qeth_l2_main.c   |    4 +-
+ 3 files changed, 40 insertions(+), 27 deletions(-)
 
---- a/drivers/usb/typec/ucsi/Makefile
-+++ b/drivers/usb/typec/ucsi/Makefile
-@@ -5,6 +5,6 @@ obj-$(CONFIG_TYPEC_UCSI)	+= typec_ucsi.o
+--- a/drivers/s390/net/qeth_core_main.c
++++ b/drivers/s390/net/qeth_core_main.c
+@@ -706,7 +706,6 @@ void qeth_clear_ipacmd_list(struct qeth_
+ 		qeth_put_reply(reply);
+ 	}
+ 	spin_unlock_irqrestore(&card->lock, flags);
+-	atomic_set(&card->write.irq_pending, 0);
+ }
+ EXPORT_SYMBOL_GPL(qeth_clear_ipacmd_list);
  
- typec_ucsi-y			:= ucsi.o
+@@ -1101,14 +1100,9 @@ static void qeth_irq(struct ccw_device *
+ {
+ 	int rc;
+ 	int cstat, dstat;
++	struct qeth_cmd_buffer *iob = NULL;
+ 	struct qeth_channel *channel;
+ 	struct qeth_card *card;
+-	struct qeth_cmd_buffer *iob;
+-
+-	if (__qeth_check_irb_error(cdev, intparm, irb))
+-		return;
+-	cstat = irb->scsw.cmd.cstat;
+-	dstat = irb->scsw.cmd.dstat;
  
--typec_ucsi-$(CONFIG_FTRACE)	+= trace.o
-+typec_ucsi-$(CONFIG_TRACING)	+= trace.o
+ 	card = CARD_FROM_CDEV(cdev);
+ 	if (!card)
+@@ -1126,6 +1120,19 @@ static void qeth_irq(struct ccw_device *
+ 		channel = &card->data;
+ 		QETH_CARD_TEXT(card, 5, "data");
+ 	}
++
++	if (qeth_intparm_is_iob(intparm))
++		iob = (struct qeth_cmd_buffer *) __va((addr_t)intparm);
++
++	if (__qeth_check_irb_error(cdev, intparm, irb)) {
++		/* IO was terminated, free its resources. */
++		if (iob)
++			qeth_release_buffer(iob->channel, iob);
++		atomic_set(&channel->irq_pending, 0);
++		wake_up(&card->wait_q);
++		return;
++	}
++
+ 	atomic_set(&channel->irq_pending, 0);
  
- obj-$(CONFIG_UCSI_ACPI)		+= ucsi_acpi.o
+ 	if (irb->scsw.cmd.fctl & (SCSW_FCTL_CLEAR_FUNC))
+@@ -1149,6 +1156,10 @@ static void qeth_irq(struct ccw_device *
+ 		/* we don't have to handle this further */
+ 		intparm = 0;
+ 	}
++
++	cstat = irb->scsw.cmd.cstat;
++	dstat = irb->scsw.cmd.dstat;
++
+ 	if ((dstat & DEV_STAT_UNIT_EXCEP) ||
+ 	    (dstat & DEV_STAT_UNIT_CHECK) ||
+ 	    (cstat)) {
+@@ -1187,11 +1198,8 @@ static void qeth_irq(struct ccw_device *
+ 	    channel->state == CH_STATE_UP)
+ 		__qeth_issue_next_read(card);
+ 
+-	if (intparm) {
+-		iob = (struct qeth_cmd_buffer *) __va((addr_t)intparm);
+-		if (iob->callback)
+-			iob->callback(iob->channel, iob);
+-	}
++	if (iob && iob->callback)
++		iob->callback(iob->channel, iob);
+ 
+ out:
+ 	wake_up(&card->wait_q);
+@@ -1862,8 +1870,8 @@ static int qeth_idx_activate_get_answer(
+ 		   atomic_cmpxchg(&channel->irq_pending, 0, 1) == 0);
+ 	QETH_DBF_TEXT(SETUP, 6, "noirqpnd");
+ 	spin_lock_irqsave(get_ccwdev_lock(channel->ccwdev), flags);
+-	rc = ccw_device_start(channel->ccwdev,
+-			      &channel->ccw, (addr_t) iob, 0, 0);
++	rc = ccw_device_start_timeout(channel->ccwdev, &channel->ccw,
++				      (addr_t) iob, 0, 0, QETH_TIMEOUT);
+ 	spin_unlock_irqrestore(get_ccwdev_lock(channel->ccwdev), flags);
+ 
+ 	if (rc) {
+@@ -1880,7 +1888,6 @@ static int qeth_idx_activate_get_answer(
+ 	if (channel->state != CH_STATE_UP) {
+ 		rc = -ETIME;
+ 		QETH_DBF_TEXT_(SETUP, 2, "3err%d", rc);
+-		qeth_clear_cmd_buffers(channel);
+ 	} else
+ 		rc = 0;
+ 	return rc;
+@@ -1934,8 +1941,8 @@ static int qeth_idx_activate_channel(str
+ 		   atomic_cmpxchg(&channel->irq_pending, 0, 1) == 0);
+ 	QETH_DBF_TEXT(SETUP, 6, "noirqpnd");
+ 	spin_lock_irqsave(get_ccwdev_lock(channel->ccwdev), flags);
+-	rc = ccw_device_start(channel->ccwdev,
+-			      &channel->ccw, (addr_t) iob, 0, 0);
++	rc = ccw_device_start_timeout(channel->ccwdev, &channel->ccw,
++				      (addr_t) iob, 0, 0, QETH_TIMEOUT);
+ 	spin_unlock_irqrestore(get_ccwdev_lock(channel->ccwdev), flags);
+ 
+ 	if (rc) {
+@@ -1956,7 +1963,6 @@ static int qeth_idx_activate_channel(str
+ 		QETH_DBF_MESSAGE(2, "%s IDX activate timed out\n",
+ 			dev_name(&channel->ccwdev->dev));
+ 		QETH_DBF_TEXT_(SETUP, 2, "2err%d", -ETIME);
+-		qeth_clear_cmd_buffers(channel);
+ 		return -ETIME;
+ 	}
+ 	return qeth_idx_activate_get_answer(channel, idx_reply_cb);
+@@ -2158,8 +2164,8 @@ int qeth_send_control_data(struct qeth_c
+ 
+ 	QETH_CARD_TEXT(card, 6, "noirqpnd");
+ 	spin_lock_irqsave(get_ccwdev_lock(card->write.ccwdev), flags);
+-	rc = ccw_device_start(card->write.ccwdev, &card->write.ccw,
+-			      (addr_t) iob, 0, 0);
++	rc = ccw_device_start_timeout(CARD_WDEV(card), &card->write.ccw,
++				      (addr_t) iob, 0, 0, event_timeout);
+ 	spin_unlock_irqrestore(get_ccwdev_lock(card->write.ccwdev), flags);
+ 	if (rc) {
+ 		QETH_DBF_MESSAGE(2, "%s qeth_send_control_data: "
+@@ -2191,8 +2197,6 @@ int qeth_send_control_data(struct qeth_c
+ 		}
+ 	}
+ 
+-	if (reply->rc == -EIO)
+-		goto error;
+ 	rc = reply->rc;
+ 	qeth_put_reply(reply);
+ 	return rc;
+@@ -2203,9 +2207,6 @@ time_err:
+ 	list_del_init(&reply->list);
+ 	spin_unlock_irqrestore(&reply->card->lock, flags);
+ 	atomic_inc(&reply->received);
+-error:
+-	atomic_set(&card->write.irq_pending, 0);
+-	qeth_release_buffer(iob->channel, iob);
+ 	rc = reply->rc;
+ 	qeth_put_reply(reply);
+ 	return rc;
+--- a/drivers/s390/net/qeth_core_mpc.h
++++ b/drivers/s390/net/qeth_core_mpc.h
+@@ -35,6 +35,18 @@ extern unsigned char IPA_PDU_HEADER[];
+ #define QETH_HALT_CHANNEL_PARM	-11
+ #define QETH_RCD_PARM -12
+ 
++static inline bool qeth_intparm_is_iob(unsigned long intparm)
++{
++	switch (intparm) {
++	case QETH_CLEAR_CHANNEL_PARM:
++	case QETH_HALT_CHANNEL_PARM:
++	case QETH_RCD_PARM:
++	case 0:
++		return false;
++	}
++	return true;
++}
++
+ /*****************************************************************************/
+ /* IP Assist related definitions                                             */
+ /*****************************************************************************/
+--- a/drivers/s390/net/qeth_l2_main.c
++++ b/drivers/s390/net/qeth_l2_main.c
+@@ -1346,8 +1346,8 @@ static int qeth_osn_send_control_data(st
+ 	qeth_prepare_control_data(card, len, iob);
+ 	QETH_CARD_TEXT(card, 6, "osnoirqp");
+ 	spin_lock_irqsave(get_ccwdev_lock(card->write.ccwdev), flags);
+-	rc = ccw_device_start(card->write.ccwdev, &card->write.ccw,
+-			      (addr_t) iob, 0, 0);
++	rc = ccw_device_start_timeout(CARD_WDEV(card), &card->write.ccw,
++				      (addr_t) iob, 0, 0, QETH_IPA_TIMEOUT);
+ 	spin_unlock_irqrestore(get_ccwdev_lock(card->write.ccwdev), flags);
+ 	if (rc) {
+ 		QETH_DBF_MESSAGE(2, "qeth_osn_send_control_data: "
 
 
