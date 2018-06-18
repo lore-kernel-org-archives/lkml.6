@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2FF7C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D19C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:03:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CAC1208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FFCF208E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:03:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Lopu/qVr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CAC1208D5
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="diock0gh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FFCF208E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935139AbeFRMDR (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:03:17 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45304 "EHLO
+        id S964835AbeFRMDo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:03:44 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45166 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933572AbeFRMAL (ORCPT
+        with ESMTP id S934643AbeFRMAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:00:11 -0400
+        Mon, 18 Jun 2018 08:00:07 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=DUGPtRxE1TXRhoRsaRpLFCZslJ0I5GcYtvXyNGydM18=; b=Lopu/qVriC7H
-        Mh/J84MhJ8oqDsm1nXnUHtPPL0uxpjnvqNMzruQe3MMBOYTIiamVHWub3Pec1I6726PX/a1J2WAwA
-        yBZW/8ZBtdhjz+oyt0/Uo1/HZpV9ZyKkjTtg+S+M4EkI82W+VPzQuan/o2IDpmPrvPil0KBAhybnM
-        iWPIY=;
+        List-Archive; bh=1XeOUz9Fy0udKdzT47p9WC1xs1USEGQnpt6+lobHc2o=; b=diock0ghM2Sq
+        U2OnbfoUqc5fokj+WIcGiLbFc355t7AHhHl5DJ/xxTqg7570H5QE9XOL6MWDk4q52/c8wkLp2GQLy
+        F+xVpXyIDwuN4uIay3w72U1LMD+hI/vQglQBRdPG1X3trobx5jh0UoUmvuI5/tx/Q05wXwuGbuf1J
+        Q42is=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspJ-0007xZ-U5; Mon, 18 Jun 2018 12:00:06 +0000
+        id 1fUspD-0007x4-DW; Mon, 18 Jun 2018 11:59:59 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspJ-00005s-Fk; Mon, 18 Jun 2018 13:00:05 +0100
+        id 1fUspC-0008U3-Uz; Mon, 18 Jun 2018 12:59:58 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Rohit Kumar <rohitkr@codeaurora.org>
-Cc:     Rohit kumar <rohitkr@codeaurora.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>, plai@codeaurora.org,
-        bgoswami@codeaurora.org, srinivas.kandagatla@linaro.org,
-        rohkumar@qti.qualcomm.com, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Rohit kumar <rohitkr@codeaurora.org>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qcom: apq8096: set card as device drvdata" to the asoc tree
-In-Reply-To:  <1528275324-4878-1-git-send-email-rohitkr@codeaurora.org>
-Message-Id: <E1fUspJ-00005s-Fk@debutante>
-Date:   Mon, 18 Jun 2018 13:00:05 +0100
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Cosmin-Gabriel Samoila <cosmin.samoila@nxp.com>,
+        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: ak4458: make structure soc_codec_dev_ak4458 static const" to the asoc tree
+In-Reply-To:  <20180606103123.31719-1-colin.king@canonical.com>
+Message-Id: <E1fUspC-0008U3-Uz@debutante>
+Date:   Mon, 18 Jun 2018 12:59:58 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +63,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: qcom: apq8096: set card as device drvdata
+   ASoC: ak4458: make structure soc_codec_dev_ak4458 static const
 
 has been applied to the asoc tree at
 
@@ -88,34 +88,38 @@ to this mail.
 Thanks,
 Mark
 
-From d5c4e972d512ae0b59108ca92b9b35bc5cf5c14e Mon Sep 17 00:00:00 2001
-From: Rohit Kumar <rohitkr@codeaurora.org>
-Date: Wed, 6 Jun 2018 14:25:24 +0530
-Subject: [PATCH] ASoC: qcom: apq8096: set card as device drvdata
+From 62624f72592b1d8e756e699cd6ade2be379f95a9 Mon Sep 17 00:00:00 2001
+From: Colin Ian King <colin.king@canonical.com>
+Date: Wed, 6 Jun 2018 11:31:23 +0100
+Subject: [PATCH] ASoC: ak4458: make structure soc_codec_dev_ak4458 static
+ const
 
-snd_soc_card is retrieved as device drvdata during unbind().
-Set it as drvdata during bind() to avoid memory corruption during
-unbind().
+The structure soc_codec_dev_ak4458 is local to the source and do not
+need to be in global scope and can be const, make it static const.
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cleans up sparse warnings:
+warning: symbol 'soc_codec_dev_ak4458' was not declared. Should it
+be static?
+
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/qcom/apq8096.c | 1 +
- 1 file changed, 1 insertion(+)
+ sound/soc/codecs/ak4458.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/qcom/apq8096.c b/sound/soc/qcom/apq8096.c
-index 561cd429e6f2..239b8cb77bdb 100644
---- a/sound/soc/qcom/apq8096.c
-+++ b/sound/soc/qcom/apq8096.c
-@@ -140,6 +140,7 @@ static int apq8096_bind(struct device *dev)
+diff --git a/sound/soc/codecs/ak4458.c b/sound/soc/codecs/ak4458.c
+index 31ec0ba2e639..299ada4dfaa0 100644
+--- a/sound/soc/codecs/ak4458.c
++++ b/sound/soc/codecs/ak4458.c
+@@ -558,7 +558,7 @@ static int __maybe_unused ak4458_runtime_resume(struct device *dev)
+ }
+ #endif /* CONFIG_PM */
  
- 	component_bind_all(dev, card);
- 	card->dev = dev;
-+	dev_set_drvdata(dev, card);
- 	ret = apq8096_sbc_parse_of(card);
- 	if (ret) {
- 		dev_err(dev, "Error parsing OF data\n");
+-struct snd_soc_component_driver soc_codec_dev_ak4458 = {
++static const struct snd_soc_component_driver soc_codec_dev_ak4458 = {
+ 	.probe			= ak4458_probe,
+ 	.remove			= ak4458_remove,
+ 	.controls		= ak4458_snd_controls,
 -- 
 2.17.1
 
