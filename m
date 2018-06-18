@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1FB8C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:32:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D622C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:32:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 961B220864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:32:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 961B220864
+	by mail.kernel.org (Postfix) with ESMTP id CB34720864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:32:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB34720864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967330AbeFRIci (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:32:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:34648 "EHLO
+        id S967343AbeFRIcr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:32:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:34980 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966870AbeFRIcf (ORCPT
+        with ESMTP id S966870AbeFRIco (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:32:35 -0400
+        Mon, 18 Jun 2018 04:32:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 12E5EC9F;
-        Mon, 18 Jun 2018 08:32:31 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A111C50;
+        Mon, 18 Jun 2018 08:32:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chen Yu <yu.c.chen@intel.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        stable@vger.kernel.org, Balbir Singh <bsingharora@gmail.com>,
+        Rashmica Gupta <rashmica.g@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 051/189] ACPI / PM: Blacklist Low Power S0 Idle _DSM for ThinkPad X1 Tablet(2016)
-Date:   Mon, 18 Jun 2018 10:12:27 +0200
-Message-Id: <20180618081211.384348511@linuxfoundation.org>
+Subject: [PATCH 4.14 053/189] powerpc/powernv/memtrace: Let the arch hotunplug code flush cache
+Date:   Mon, 18 Jun 2018 10:12:29 +0200
+Message-Id: <20180618081211.459231516@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -50,47 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chen Yu <yu.c.chen@intel.com>
+From: Balbir Singh <bsingharora@gmail.com>
 
-[ Upstream commit 855c1c2fce8bdbd796cba1d1456ca8f0e876c2f1 ]
+[ Upstream commit 7fd6641de28fe9b5bce0c38d2adee0a72a72619e ]
 
-ThinkPad X1 Tablet(2016) is reported to have issues with
-the Low Power S0 Idle _DSM interface and since this machine
-model generally can do ACPI S3 just fine, and user would
-like to use S3 as default sleep model, add a blacklist
-entry to disable that interface for ThinkPad X1 Tablet(2016).
+Don't do this via custom code, instead now that we have support in the
+arch hotplug/hotunplug code, rely on those routines to do the right
+thing.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=199057
-Reported-and-tested-by: Robin Lee <robinlee.sysu@gmail.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+The existing flush doesn't work because it uses ppc64_caches.l1d.size
+instead of ppc64_caches.l1d.line_size.
+
+Fixes: 9d5171a8f248 ("powerpc/powernv: Enable removal of memory for in memory tracing")
+Signed-off-by: Balbir Singh <bsingharora@gmail.com>
+Reviewed-by: Rashmica Gupta <rashmica.g@gmail.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/acpi/sleep.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/powerpc/platforms/powernv/memtrace.c |   17 -----------------
+ 1 file changed, 17 deletions(-)
 
---- a/drivers/acpi/sleep.c
-+++ b/drivers/acpi/sleep.c
-@@ -364,6 +364,19 @@ static const struct dmi_system_id acpisl
- 		DMI_MATCH(DMI_PRODUCT_NAME, "XPS 13 9360"),
- 		},
- 	},
-+	/*
-+	 * ThinkPad X1 Tablet(2016) cannot do suspend-to-idle using
-+	 * the Low Power S0 Idle firmware interface (see
-+	 * https://bugzilla.kernel.org/show_bug.cgi?id=199057).
-+	 */
-+	{
-+	.callback = init_no_lps0,
-+	.ident = "ThinkPad X1 Tablet(2016)",
-+	.matches = {
-+		DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
-+		DMI_MATCH(DMI_PRODUCT_NAME, "20GGA00L00"),
-+		},
-+	},
- 	{},
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -82,19 +82,6 @@ static const struct file_operations memt
+ 	.open	= simple_open,
  };
  
+-static void flush_memory_region(u64 base, u64 size)
+-{
+-	unsigned long line_size = ppc64_caches.l1d.size;
+-	u64 end = base + size;
+-	u64 addr;
+-
+-	base = round_down(base, line_size);
+-	end = round_up(end, line_size);
+-
+-	for (addr = base; addr < end; addr += line_size)
+-		asm volatile("dcbf 0,%0" : "=r" (addr) :: "memory");
+-}
+-
+ static int check_memblock_online(struct memory_block *mem, void *arg)
+ {
+ 	if (mem->state != MEM_ONLINE)
+@@ -132,10 +119,6 @@ static bool memtrace_offline_pages(u32 n
+ 	walk_memory_range(start_pfn, end_pfn, (void *)MEM_OFFLINE,
+ 			  change_memblock_state);
+ 
+-	/* RCU grace period? */
+-	flush_memory_region((u64)__va(start_pfn << PAGE_SHIFT),
+-			    nr_pages << PAGE_SHIFT);
+-
+ 	lock_device_hotplug();
+ 	remove_memory(nid, start_pfn << PAGE_SHIFT, nr_pages << PAGE_SHIFT);
+ 	unlock_device_hotplug();
 
 
