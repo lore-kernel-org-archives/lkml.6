@@ -6,38 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C52C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E773C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C87220864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C87220864
+	by mail.kernel.org (Postfix) with ESMTP id 647E4208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:17:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 647E4208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934806AbeFRIRU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:17:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54054 "EHLO
+        id S934828AbeFRIRZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:17:25 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54100 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934694AbeFRIRQ (ORCPT
+        with ESMTP id S934084AbeFRIRV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:17:16 -0400
+        Mon, 18 Jun 2018 04:17:21 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6A27FC75;
-        Mon, 18 Jun 2018 08:17:15 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0C91C7F;
+        Mon, 18 Jun 2018 08:17:20 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Wakko Warner <wakko@animx.eu.org>,
-        Bart Van Assche <Bart.VanAssche@wdc.com>,
-        target-devel@vger.kernel.org, linux-scsi@vger.kernel.org,
-        "Nicholas A. Bellinger" <nab@linux-iscsi.org>,
-        Christoph Hellwig <hch@lst.de>, Ming Lei <ming.lei@redhat.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rob Herring <robh@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 053/279] scsi: target: fix crash with iscsi target and dvd
-Date:   Mon, 18 Jun 2018 10:10:38 +0200
-Message-Id: <20180618080611.038102648@linuxfoundation.org>
+Subject: [PATCH 4.16 021/279] dt-bindings: serial: sh-sci: Add support for r8a77965 (H)SCIF
+Date:   Mon, 18 Jun 2018 10:10:06 +0200
+Message-Id: <20180618080609.682358150@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -54,49 +51,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Jacopo Mondi <jacopo+renesas@jmondi.org>
 
-[ Upstream commit 8e1ceafe50ec4d1bcfae154dd70e7cb6946a6177 ]
+[ Upstream commit 7de5b7e5f6a67c285b86d1478e8e150929c93482 ]
 
-When the current page can't be added to bio, one new bio should be
-created for adding this page again, instead of ignoring this page.
+Add documentation for r8a77965 compatible string to Renesas sci-serial
+device tree bindings documentation.
 
-This patch fixes kernel crash with iscsi target and dvd, as reported by
-Wakko.
-
-Cc: Wakko Warner <wakko@animx.eu.org>
-Cc: Bart Van Assche <Bart.VanAssche@wdc.com>
-Cc: target-devel@vger.kernel.org
-Cc: linux-scsi@vger.kernel.org
-Cc: "Nicholas A. Bellinger" <nab@linux-iscsi.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Fixes: 84c8590646d5b35804 ("target: avoid accessing .bi_vcnt directly")
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/target/target_core_pscsi.c |    2 ++
+ Documentation/devicetree/bindings/serial/renesas,sci-serial.txt |    2 ++
  1 file changed, 2 insertions(+)
 
---- a/drivers/target/target_core_pscsi.c
-+++ b/drivers/target/target_core_pscsi.c
-@@ -890,6 +890,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct
- 			bytes = min(bytes, data_len);
- 
- 			if (!bio) {
-+new_bio:
- 				nr_vecs = min_t(int, BIO_MAX_PAGES, nr_pages);
- 				nr_pages -= nr_vecs;
- 				/*
-@@ -931,6 +932,7 @@ pscsi_map_sg(struct se_cmd *cmd, struct
- 				 * be allocated with pscsi_get_bio() above.
- 				 */
- 				bio = NULL;
-+				goto new_bio;
- 			}
- 
- 			data_len -= bytes;
+--- a/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
++++ b/Documentation/devicetree/bindings/serial/renesas,sci-serial.txt
+@@ -41,6 +41,8 @@ Required properties:
+     - "renesas,hscif-r8a7795" for R8A7795 (R-Car H3) HSCIF compatible UART.
+     - "renesas,scif-r8a7796" for R8A7796 (R-Car M3-W) SCIF compatible UART.
+     - "renesas,hscif-r8a7796" for R8A7796 (R-Car M3-W) HSCIF compatible UART.
++    - "renesas,scif-r8a77965" for R8A77965 (R-Car M3-N) SCIF compatible UART.
++    - "renesas,hscif-r8a77965" for R8A77965 (R-Car M3-N) HSCIF compatible UART.
+     - "renesas,scif-r8a77970" for R8A77970 (R-Car V3M) SCIF compatible UART.
+     - "renesas,hscif-r8a77970" for R8A77970 (R-Car V3M) HSCIF compatible UART.
+     - "renesas,scif-r8a77995" for R8A77995 (R-Car D3) SCIF compatible UART.
 
 
