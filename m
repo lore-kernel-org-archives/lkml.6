@@ -2,105 +2,121 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 808D7C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:15:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB5AC5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:16:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E11F2075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:15:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E11F2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 63FA120693
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:16:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=juliacomputing-com.20150623.gappssmtp.com header.i=@juliacomputing-com.20150623.gappssmtp.com header.b="WgXppqci"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 63FA120693
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=juliacomputing.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935814AbeFRSPD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 14:15:03 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2587 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935533AbeFRSPC (ORCPT
+        id S935834AbeFRSQm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 14:16:42 -0400
+Received: from mail-it0-f68.google.com ([209.85.214.68]:37734 "EHLO
+        mail-it0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935585AbeFRSQl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 14:15:02 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1, AES128-SHA)
-        id <B5b27f6ac0001>; Mon, 18 Jun 2018 11:15:08 -0700
-Received: from HQMAIL107.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Jun 2018 11:15:02 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Jun 2018 11:15:02 -0700
-Received: from [10.2.175.123] (10.2.175.123) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 18 Jun
- 2018 18:15:01 +0000
-Subject: Re: [PATCH 2/2] mm: set PG_dma_pinned on get_user_pages*()
-To:     Dan Williams <dan.j.williams@intel.com>
-CC:     Christoph Hellwig <hch@lst.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        <john.hubbard@gmail.com>, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Christopher Lameter <cl@linux.com>, Jan Kara <jack@suse.cz>,
-        Linux MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>
-References: <20180617012510.20139-1-jhubbard@nvidia.com>
- <20180617012510.20139-3-jhubbard@nvidia.com>
- <CAPcyv4i=eky-QrPcLUEqjsASuRUrFEWqf79hWe0mU8xtz6Jk-w@mail.gmail.com>
- <20180617200432.krw36wrcwidb25cj@ziepe.ca>
- <CAPcyv4gayKk_zHDYAvntware12qMXWjnnL_FDJNUQsJS_zNfDw@mail.gmail.com>
- <311eba48-60f1-b6cc-d001-5cc3ed4d76a9@nvidia.com>
- <20180618081258.GB16991@lst.de>
- <d4817192-6db0-2f3f-7c67-6078b69686d3@nvidia.com>
- <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
-X-Nvconfidentiality: public
-From:   John Hubbard <jhubbard@nvidia.com>
-Message-ID: <3898ef6b-2fa0-e852-a9ac-d904b47320d5@nvidia.com>
-Date:   Mon, 18 Jun 2018 11:14:40 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 18 Jun 2018 14:16:41 -0400
+Received: by mail-it0-f68.google.com with SMTP id l6-v6so13362102iti.2
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 11:16:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=juliacomputing-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=VRpLW9SuN56Yw+NLzQXnYQDllLxPkFTwXJooYhx92lw=;
+        b=WgXppqciBc6HDrsrncwIAw5Q3Qt/CjxK9s2V8xan756+dOmVPhUHoDVSaQzKfPUKiE
+         Aoyf6ZeGG7Gt28jLONlIJucwqQZTQsL2MRWjHsQI2ZBVMb/cGS6kPhKX50fMG0VXRAnV
+         E66d2bFWypykBcGywgk4xg8yBviCvU1yyvNs+8nmhB+992SJhsRO6xzCaSEMTGSR5Otw
+         RTFluu++zXs1/I4pORgYe7s+jdvHgq+NIrCev6UqTD4E5Zhi8zCtlPKhhnuAL4EW7qTk
+         2Sk2FMkE/qrowI/eY5RBg3StAvp/5DLNi+rtQVLFi6DEwh3LHqok6ZJwIyb3+55SiD6S
+         irzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=VRpLW9SuN56Yw+NLzQXnYQDllLxPkFTwXJooYhx92lw=;
+        b=lKOFov47Ug/KjyB7e2sE0ZtR41sInk9LuREj8xWPctmsTuiUopi3nVAIgOnB7pkeM4
+         3nlrDBVYWUBiUBYoYa/fbz6KpZQ5Q57HI7VRiJnOKywT4b4Rfv4Th1LA5yWfmbLMPuD4
+         14OhWB9yCNqE98Vlvj7Xvg6nSbLVNQNHw5MdBNgfs2pAsVW6F1TBzTRYmJGN1eAXmhA6
+         IQ7nZQD0m+PyIu7bc6uqWXdrVenIfXmFFnKYEoibabs6S7rIdAg6PjYKqvx0db+EtXO7
+         98o7mWeH5/qMteqZjOjbhSu3ETz+99Y016MKhulGfhInrK06Jij1A4c+zhIoMVewS2W5
+         eIPg==
+X-Gm-Message-State: APt69E3GuQ2BfH1lqnVCLMKadnEe2deVyXopdgvBSLgTJ6jNgiB5AbDQ
+        mtngmFz0TIECYTk65p3Xf6jd7yzsa8KBq1IgPjZzGw==
+X-Google-Smtp-Source: ADUXVKLSF7I+6saKhmeFqG8zBt0fG1oPre5orncXm/aFjQAzFyIqbawWCqXFf6H+oFqAbqQjNsWbz9m0bu/o/v203qA=
+X-Received: by 2002:a24:2f12:: with SMTP id j18-v6mr10834602itj.28.1529345800541;
+ Mon, 18 Jun 2018 11:16:40 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <CAPcyv4iacHYxGmyWokFrVsmxvLj7=phqp2i0tv8z6AT-mYuEEA@mail.gmail.com>
-X-Originating-IP: [10.2.175.123]
-X-ClientProxiedBy: HQMAIL102.nvidia.com (172.18.146.10) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a02:494a:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 11:16:00
+ -0700 (PDT)
+In-Reply-To: <06f44447-54eb-4644-a905-349cfc82f602@linux.intel.com>
+References: <1529195582-64207-1-git-send-email-keno@alumni.harvard.edu>
+ <d8503ac3-b6a4-d6cc-3db7-4e092724b79d@linux.intel.com> <CABV8kRwhrQ75g9y7v4Mq05CfZ9khhVQCwkp052jcNOvKs6-2Fg@mail.gmail.com>
+ <06f44447-54eb-4644-a905-349cfc82f602@linux.intel.com>
+From:   Keno Fischer <keno@juliacomputing.com>
+Date:   Mon, 18 Jun 2018 14:16:00 -0400
+Message-ID: <CABV8kRzDk7a6QP7mba0xq7da+H-ks=Py29ZtMP1uyDp9mUvutg@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86/arch_prctl: Add ARCH_SET_XCR0 to mask XCR0 per-thread
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@suse.de>,
+        Andi Kleen <andi@firstfloor.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Kyle Huey <khuey@kylehuey.com>,
+        "Robert O'Callahan" <robert@ocallahan.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 10:56 AM, Dan Williams wrote:
-> On Mon, Jun 18, 2018 at 10:50 AM, John Hubbard <jhubbard@nvidia.com> wrote:
->> On 06/18/2018 01:12 AM, Christoph Hellwig wrote:
->>> On Sun, Jun 17, 2018 at 01:28:18PM -0700, John Hubbard wrote:
->>>> Yes. However, my thinking was: get_user_pages() can become a way to indicate that
->>>> these pages are going to be treated specially. In particular, the caller
->>>> does not really want or need to support certain file operations, while the
->>>> page is flagged this way.
->>>>
->>>> If necessary, we could add a new API call.
->>>
->>> That API call is called get_user_pages_longterm.
->>
->> OK...I had the impression that this was just semi-temporary API for dax, but
->> given that it's an exported symbol, I guess it really is here to stay.
-> 
-> The plan is to go back and provide api changes that bypass
-> get_user_page_longterm() for RDMA. However, for VFIO and others, it's
-> not clear what we could do. In the VFIO case the guest would need to
-> be prepared handle the revocation.
- 
-OK, let's see if I understand that plan correctly:
+> So, to be useful, this interface needs to be called before an
+> application can run XGETBV or XSAVE for the first time and caches a
+> "bad" value.  I think that means that it might not be feasible to use
+> outside of cases where you ptrace() something and inject things before
+> it has a chance to run any real instructions.
+>
+> Fundamentally, I think that makes _this_ interface pretty useless in
+> practice.  The only practical option is to have a _future_ XCR0 value
+> set by the prctl() and then have it get made active by the kernel at
+> execve().
 
-1. Change RDMA users (this could be done entirely in the various device drivers'
-code, unless I'm overlooking something) to use mmu notifiers, and to do their
-DMA to/from non-pinned pages.
+Fair enough, but it don't see this as really fundamentally different
+from the cpuid masking use case, which has the same problem and
+the same interface. I'm also not convinced that there is *no* use case
+where one may want to turn on certain XCR0 features while the process
+is running and then turn them off again. To give a concrete example in
+this context, it can useful to write a small program into the memory space
+of the replayed program and use it to analyze the memory state of the
+program (e.g. to checksum the memory - or in our case to perform a
+GC state validation). Such implants may want to use the AVX512
+registers for performance, so it would be nice if that was possible.
 
-2. Return early from get_user_pages_longterm, if the memory is...marked for
-RDMA? (How? Same sort of page flag that I'm floating here, or something else?)
-That would avoid the problem with pinned pages getting their buffer heads
-removed--by disallowing the pinning. Makes sense.
+> IMNHO, if you haven't guessed yet, I think this whole exercise is a dead
+> end.  Just boot an identical XCR0 VM on your new hardware and do replay
+> there.  Done.
 
-Also, is there anything I can help with here, so that things can happen sooner? 
-
-
+I had a hunch ;). However, there are a couple considerations that
+make me still want this in the kernel proper:
+1. The recording side application of this feature - getting our users
+    to do everything in a VM to send us a recording is not easy. Part
+    of the appeal of rr over VM-based record/replay techniques
+    is that it "just works" on basically any linux hosts.
+2. Starting a VM generally requires root permissions, which may
+    not be available.
+3. And probably the biggest from my perspective is performance. rr
+    needs to do a lot twiddling with the performance counters, which
+    I've seen have significant performance overhead in a virtualized
+    environment. There's of course also a per-VM resource consumption,
+    but presumably we could keep one VM per-XCR0 value and replay
+    multiple traces per VM.
