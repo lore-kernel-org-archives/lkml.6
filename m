@@ -2,110 +2,114 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A9FDC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED0CC5CFC3
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:09:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16856205C9
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:09:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Pw+00wzU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16856205C9
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 29B8C205C9
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:09:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29B8C205C9
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=interlog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935166AbeFRRJZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:09:25 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:55762 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752650AbeFRRJX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:09:23 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=ZrPnQq4umouBs46TQGYjkqkDknGgQGaqGKMu2GoGPS4=; b=Pw+00wzUl68/g9ibPj7YZxdse
-        DRBQpit46IgV/CZbBSIHZZCUn7P0eUoCI2DpyX9WZaw1pbtyTP5MolR3A6DGFCgpex4CSvK7k22Dd
-        +ae1gVwfkrU4d6C4VjXPbr2NiJuOkjjhly7kwToHNg3NOyxabpjnQiakKaxO8vll7xj5oX1mh/wwO
-        0ioXbuhjuNgePGnTZGPazEbwzO1jtIZY4RlAqfmlJm9VW0GeYbztbzu9TZ4HYc/lqOupmLOPvanA+
-        5GUMGWIWkzoJ6kH6VNdnMx8e4ypl12EY8V2OoyYZ1rOyNdVv7NceJHcnsQ4LIS22w5eHwi62uW30e
-        ozFLywTKg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUxea-0003ld-LJ; Mon, 18 Jun 2018 17:09:20 +0000
-Date:   Mon, 18 Jun 2018 10:09:20 -0700
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the xarray tree
-Message-ID: <20180618170920.GC28748@bombadil.infradead.org>
-References: <20180618132712.4b4eddc9@canb.auug.org.au>
- <CAPcyv4idNE8ErxNm5bb3rG4jUeZU9HJRmO03omMJxSN-8FYN+w@mail.gmail.com>
+        id S935282AbeFRRJm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:09:42 -0400
+Received: from smtp.infotech.no ([82.134.31.41]:40110 "EHLO smtp.infotech.no"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1755342AbeFRRJk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 13:09:40 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by smtp.infotech.no (Postfix) with ESMTP id 1AC3C20423F;
+        Mon, 18 Jun 2018 19:09:38 +0200 (CEST)
+X-Virus-Scanned: by amavisd-new-2.6.6 (20110518) (Debian) at infotech.no
+Received: from smtp.infotech.no ([127.0.0.1])
+        by localhost (smtp.infotech.no [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YeIam9yBhuH9; Mon, 18 Jun 2018 19:09:38 +0200 (CEST)
+Received: from [10.7.0.18] (unknown [10.7.0.18])
+        by smtp.infotech.no (Postfix) with ESMTPA id 7415A20418A;
+        Mon, 18 Jun 2018 19:09:36 +0200 (CEST)
+Reply-To: dgilbert@interlog.com
+Subject: Re: [PATCH] scsi: scsi_debug: Fix memory leak on module unload
+To:     Luis Henriques <lhenriques@suse.com>,
+        "James E . J . Bottomley" <jejb@linux.vnet.ibm.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20180618160803.11674-1-lhenriques@suse.com>
+From:   Douglas Gilbert <dgilbert@interlog.com>
+Message-ID: <ce35ef87-917e-cb2d-12a0-12a0588b867f@interlog.com>
+Date:   Mon, 18 Jun 2018 13:09:33 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPcyv4idNE8ErxNm5bb3rG4jUeZU9HJRmO03omMJxSN-8FYN+w@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180618160803.11674-1-lhenriques@suse.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-CA
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 09:50:33AM -0700, Dan Williams wrote:
-> On Sun, Jun 17, 2018 at 8:27 PM, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> > Hi all,
-> >
-> > After merging the xarray tree, today's linux-next build (powerpc
-> > ppc64_defconfig) failed like this:
-[...]
-> > from the nvdimm tree.
-> >
-> > Willy thanks for the heads up about this.
-> >
-> > I have applied the following merge fix patch (taken from the diff between
-> > the -next tree at this point and the xarray-20180615 branch from the
-> > xarray tree) for today.
+On 2018-06-18 12:08 PM, Luis Henriques wrote:
+> Since commit 80c49563e250 ("scsi: scsi_debug: implement IMMED bit") there are
+> long delays in F_SYNC_DELAY and F_SSU_DELAY.  This can cause a memory leak in
+> schedule_resp(), which can be invoked while unloading the scsi_debug module:
+> free_all_queued() had already freed all sd_dp and schedule_resp will alloc a new
+> one, which will never get freed.  Here's the kmemleak report while running
+> xfstests generic/350:
 > 
-> I was hoping that dax_lock_page() and the memory_failure() handling
-> could go in before the xarray rework. This helps -stable and distros
-> that need to backport this error handling support. Willy, would you be
-> amenable to rebasing on top of the next rev of the
-> dax+memory_failure() work?
+> unreferenced object 0xffff88007d752b00 (size 128):
+>    comm "rmmod", pid 26940, jiffies 4295816945 (age 7.588s)
+>    hex dump (first 32 bytes):
+>      00 2b 75 7d 00 88 ff ff 00 00 00 00 00 00 00 00  .+u}............
+>      00 00 00 00 00 00 00 00 8e 31 a2 34 5f 03 00 00  .........1.4_...
+>    backtrace:
+>      [<000000002abd83d0>] 0xffffffffa000705e
+>      [<000000004c063fda>] scsi_dispatch_cmd+0xc7/0x1a0
+>      [<000000000c119a00>] scsi_request_fn+0x251/0x550
+>      [<000000009de0c736>] __blk_run_queue+0x3f/0x60
+>      [<000000001c4453c8>] blk_execute_rq_nowait+0x98/0xd0
+>      [<00000000d17ec79f>] blk_execute_rq+0x3a/0x50
+>      [<00000000a7654b6e>] scsi_execute+0x113/0x250
+>      [<00000000fd78f7cd>] sd_sync_cache+0x95/0x160
+>      [<0000000024dacb14>] sd_shutdown+0x9b/0xd0
+>      [<00000000e9101710>] sd_remove+0x5f/0xb0
+>      [<00000000c43f0d63>] device_release_driver_internal+0x13c/0x1f0
+>      [<00000000e8ad57b6>] bus_remove_device+0xe9/0x160
+>      [<00000000713a7b8a>] device_del+0x120/0x320
+>      [<00000000e5db670c>] __scsi_remove_device+0x115/0x150
+>      [<00000000eccbef30>] scsi_forget_host+0x20/0x60
+>      [<00000000cd5a0738>] scsi_remove_host+0x6d/0x120
 > 
-> Apologies for the thrash.
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Luis Henriques <lhenriques@suse.com>
 
-I am absolutely amenable to rebasing.  The only problem is that I'm
-in Tokyo for the next two weeks.  I can put some work in on this, but
-coordination may be a little off.  If somebody else wants to do the work,
-the only (serious) difference between the xarray-20180615 and xarray
-branches in my repo is that the former is based on the dax_lock_page()
-changes having gone in.
+Acked-by: Douglas Gilbert <dgilbert@interlog.com>
 
-The differences sum up to:
+Thanks.
 
-+@@ -414,8 +413,7 @@ struct page *dax_lock_page(unsigned long pfn)
-+ 
-+               entry = __radix_tree_lookup(&mapping->i_pages, index, NULL,
-+                               &slot);
-+-              if (!entry ||
-+-                  WARN_ON_ONCE(!radix_tree_exceptional_entry(entry))) {
-++              if (!entry || WARN_ON_ONCE(!xa_is_value(entry))) {
-+                       xa_unlock_irq(&mapping->i_pages);
-+                       break;
-+               } else if (!slot_locked(mapping, slot)) {
+> ---
+>   drivers/scsi/scsi_debug.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/scsi/scsi_debug.c b/drivers/scsi/scsi_debug.c
+> index 24d7496cd9e2..364e71861bfd 100644
+> --- a/drivers/scsi/scsi_debug.c
+> +++ b/drivers/scsi/scsi_debug.c
+> @@ -5507,9 +5507,9 @@ static void __exit scsi_debug_exit(void)
+>   	int k = sdebug_add_host;
+>   
+>   	stop_all_queued();
+> -	free_all_queued();
+>   	for (; k; k--)
+>   		sdebug_remove_adapter();
+> +	free_all_queued();
+>   	driver_unregister(&sdebug_driverfs_driver);
+>   	bus_unregister(&pseudo_lld_bus);
+>   	root_device_unregister(pseudo_primary);
+> 
 
-(in "xarray: Replace exceptional entries")
-
-then dax_entry_waitqueue() changing its argument in "dax: Hash on XArray instead of mapping".
-
-and finally the patch converting dax_lock_page() and dax_unlock_page().
-
-I really wanted to keep the thrash here to a minimum, but this is the
-best I could come up with in terms of minimising conflicts :-(
