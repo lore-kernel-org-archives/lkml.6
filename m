@@ -6,37 +6,42 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEECBC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CDDDC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2A1208E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F2A1208E0
+	by mail.kernel.org (Postfix) with ESMTP id 1C93020874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C93020874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030293AbeFRIhE (ORCPT
+        id S1030308AbeFRIhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:37:04 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36528 "EHLO
+        Mon, 18 Jun 2018 04:37:07 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36564 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030275AbeFRIg6 (ORCPT
+        with ESMTP id S1030289AbeFRIhE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:58 -0400
+        Mon, 18 Jun 2018 04:37:04 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 862CCC5C;
-        Mon, 18 Jun 2018 08:36:57 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 56389C5C;
+        Mon, 18 Jun 2018 08:37:03 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Michal Kalderon <Michal.Kalderon@cavium.com>,
-        Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Ellermen <mpe@ellerman.id.au>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
+        Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 138/189] qed: Fix l2 initializations over iWARP personality
-Date:   Mon, 18 Jun 2018 10:13:54 +0200
-Message-Id: <20180618081214.768548697@linuxfoundation.org>
+Subject: [PATCH 4.14 156/189] x86/pkeys/selftests: Stop using assert()
+Date:   Mon, 18 Jun 2018 10:14:12 +0200
+Message-Id: <20180618081215.503060714@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -53,45 +58,64 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michal Kalderon <Michal.Kalderon@cavium.com>
+From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit af6858ee423a309d93054c361c61099b8eb12bbf ]
+[ Upstream commit 86b9eea230edf4c67d4d4a70fba9b74505867a25 ]
 
-If qede driver was loaded on a device configured for iWARP
-the l2 mutex wouldn't be allocated, and some l2 related
-resources wouldn't be freed.
+If we use assert(), the program "crashes".  That can be scary to users,
+so stop doing it.  Just exit with a >0 exit code instead.
 
-fixes: c851a9dc4359 ("qed: Introduce iWARP personality")
-Signed-off-by: Michal Kalderon <Michal.Kalderon@cavium.com>
-Signed-off-by: Sudarsana Kalluru <Sudarsana.Kalluru@cavium.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Ellermen <mpe@ellerman.id.au>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ram Pai <linuxram@us.ibm.com>
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-mm@kvack.org
+Link: http://lkml.kernel.org/r/20180509171340.E63EF7DA@viggo.jf.intel.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_l2.c |    6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
---- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-@@ -115,8 +115,7 @@ int qed_l2_alloc(struct qed_hwfn *p_hwfn
+--- a/tools/testing/selftests/x86/protection_keys.c
++++ b/tools/testing/selftests/x86/protection_keys.c
+@@ -72,10 +72,9 @@ extern void abort_hooks(void);
+ 				test_nr, iteration_nr);	\
+ 		dprintf0("errno at assert: %d", errno);	\
+ 		abort_hooks();			\
+-		assert(condition);		\
++		exit(__LINE__);			\
+ 	}					\
+ } while (0)
+-#define raw_assert(cond) assert(cond)
  
- void qed_l2_setup(struct qed_hwfn *p_hwfn)
+ void cat_into_file(char *str, char *file)
  {
--	if (p_hwfn->hw_info.personality != QED_PCI_ETH &&
--	    p_hwfn->hw_info.personality != QED_PCI_ETH_ROCE)
-+	if (!QED_IS_L2_PERSONALITY(p_hwfn))
- 		return;
- 
- 	mutex_init(&p_hwfn->p_l2_info->lock);
-@@ -126,8 +125,7 @@ void qed_l2_free(struct qed_hwfn *p_hwfn
- {
- 	u32 i;
- 
--	if (p_hwfn->hw_info.personality != QED_PCI_ETH &&
--	    p_hwfn->hw_info.personality != QED_PCI_ETH_ROCE)
-+	if (!QED_IS_L2_PERSONALITY(p_hwfn))
- 		return;
- 
- 	if (!p_hwfn->p_l2_info)
+@@ -87,12 +86,17 @@ void cat_into_file(char *str, char *file
+ 	 * these need to be raw because they are called under
+ 	 * pkey_assert()
+ 	 */
+-	raw_assert(fd >= 0);
++	if (fd < 0) {
++		fprintf(stderr, "error opening '%s'\n", str);
++		perror("error: ");
++		exit(__LINE__);
++	}
++
+ 	ret = write(fd, str, strlen(str));
+ 	if (ret != strlen(str)) {
+ 		perror("write to file failed");
+ 		fprintf(stderr, "filename: '%s' str: '%s'\n", file, str);
+-		raw_assert(0);
++		exit(__LINE__);
+ 	}
+ 	close(fd);
+ }
 
 
