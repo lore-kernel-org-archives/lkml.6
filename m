@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C71C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:16:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16DC8C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:16:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E474208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:16:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E474208A6
+	by mail.kernel.org (Postfix) with ESMTP id C9E0520864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:16:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9E0520864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934819AbeFRKQm (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:16:42 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52936 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934117AbeFRIQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        id S934167AbeFRIQC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 18 Jun 2018 04:16:02 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52904 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934117AbeFRIPy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 04:15:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F0153C5C;
-        Mon, 18 Jun 2018 08:16:01 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 5FDD7C5C;
+        Mon, 18 Jun 2018 08:15:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Florian Fainelli <f.fainelli@gmail.com>,
+        stable@vger.kernel.org, Lukasz Majewski <lukma@denx.de>,
+        Rob Herring <robh@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 029/279] soc: bcm: raspberrypi-power: Fix use of __packed
-Date:   Mon, 18 Jun 2018 10:10:14 +0200
-Message-Id: <20180618080610.040164640@linuxfoundation.org>
+Subject: [PATCH 4.16 018/279] doc: Add vendor prefix for Kieback & Peter GmbH
+Date:   Mon, 18 Jun 2018 10:10:03 +0200
+Message-Id: <20180618080609.561897099@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -49,33 +50,30 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+From: Lukasz Majewski <lukma@denx.de>
 
-[ Upstream commit 0a12e80ce4230434c2ed66ad0d65af0b7ccecea8 ]
+[ Upstream commit 99bf8f27f3f94d2a37291354b8dc83f13728f75f ]
 
-Commit a09cd356586d ("ARM: bcm2835: add rpi power domain driver")
-attempted to annotate the structure rpi_power_domain_packet with
-__packed but introduced a typo and made it named __packet instead. Just
-drop the annotation since the structure is naturally aligned already.
+The 'kiebackpeter' entry has been added to vendor-prefixes.txt to indicate
+products from Kieback & Peter GmbH.
 
-Fixes: a09cd356586d ("ARM: bcm2835: add rpi power domain driver")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Signed-off-by: Rob Herring <robh@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/soc/bcm/raspberrypi-power.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ Documentation/devicetree/bindings/vendor-prefixes.txt |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/drivers/soc/bcm/raspberrypi-power.c
-+++ b/drivers/soc/bcm/raspberrypi-power.c
-@@ -45,7 +45,7 @@ struct rpi_power_domains {
- struct rpi_power_domain_packet {
- 	u32 domain;
- 	u32 on;
--} __packet;
-+};
- 
- /*
-  * Asks the firmware to enable or disable power on a specific power
+--- a/Documentation/devicetree/bindings/vendor-prefixes.txt
++++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
+@@ -181,6 +181,7 @@ karo	Ka-Ro electronics GmbH
+ keithkoep	Keith & Koep GmbH
+ keymile	Keymile GmbH
+ khadas	Khadas
++kiebackpeter    Kieback & Peter GmbH
+ kinetic Kinetic Technologies
+ kingnovel	Kingnovel Technology Co., Ltd.
+ kosagi	Sutajio Ko-Usagi PTE Ltd.
 
 
