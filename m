@@ -2,177 +2,301 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1A1C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:22:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 267F8C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:23:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A88B208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:22:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bSR1HA4/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A88B208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D667F208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:23:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D667F208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937066AbeFRKWw (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:22:52 -0400
-Received: from mail-pf0-f193.google.com ([209.85.192.193]:34528 "EHLO
-        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933659AbeFRKWt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:22:49 -0400
-Received: by mail-pf0-f193.google.com with SMTP id a63-v6so7935314pfl.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 03:22:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6usyBiJ9wshzmhynqcRekJ/Jvcfo+fPSSBgTKJ6nheg=;
-        b=bSR1HA4/zSo+9pBl4pAKj6d9EQGRZgAxKScHqWekXUX0ajic9o7VP5U9scOZJsI7K/
-         r+Uk8PkzxryhEgLltDKDRChDx34fnH/KQkKv31yDT+LAyNzSyhQ8MP6jSu86yj8kbLHC
-         U+IPgR3toHXLkhUf9AreGOzTB0oBLpvKFJj/g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6usyBiJ9wshzmhynqcRekJ/Jvcfo+fPSSBgTKJ6nheg=;
-        b=lYURHmApR9iMhW7OYDXz1yLTA2gUwjxiBND7W+Ks6TrTMznOqYIIczIRCGKdzOAOIM
-         4Ac4e2qcIrVQPPtV1OqQE48Nv6zGDAT69u7KizOXOYSXdsrT8sGxFKN69FxrOkMPcE1q
-         YcpHo2z3lufi+ciGnSWQEJHs/jHhpZW6HGterv4ianIILO75J0TOSgez+RvowO3xMeyf
-         3HIS9e7dZuOvAMuPGnDVAKNUSh9K8RB5QyEtS6cwPYCNvjOjQT5v1WUAH8ciNBadQ6ri
-         /a8zudLarUKoctpSlwT/5dpAC4RC6BbzMCDP/leN0uVln3et4eUlD2zsROzDuXhsNSwH
-         QHLg==
-X-Gm-Message-State: APt69E2/um0QWEror2aLl16D+7q0BE+eutr9QLrJ2qKR1G2VHp5uvKEp
-        swM9LW7Lvm4DkBcOtX8BcitmJQ==
-X-Google-Smtp-Source: ADUXVKIc6Vi8PdgpHfTJ6l1VMCQsOX0bDIKzRSL/lw4vIOTv0puGBJbs9rSREIW/hr+ih+PRn9HVaw==
-X-Received: by 2002:a62:8b0a:: with SMTP id j10-v6mr12826002pfe.28.1529317368438;
-        Mon, 18 Jun 2018 03:22:48 -0700 (PDT)
-Received: from localhost ([122.167.164.190])
-        by smtp.gmail.com with ESMTPSA id b2-v6sm30356569pfc.44.2018.06.18.03.22.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 03:22:46 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 15:52:45 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc:     rjw@rjwysocki.net, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>,
-        Javi Merino <javi.merino@kernel.org>,
-        Leo Yan <leo.yan@linaro.org>,
-        Kevin Wangtao <kevin.wangtao@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Rui Zhang <rui.zhang@intel.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>
-Subject: Re: [PATCH V7] powercap/drivers/idle_injection: Add an idle
- injection framework
-Message-ID: <20180618102245.x5cfei3i7voq65zc@vireshk-i7>
-References: <1529054393-27077-1-git-send-email-daniel.lezcano@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1529054393-27077-1-git-send-email-daniel.lezcano@linaro.org>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+        id S937094AbeFRKXQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:23:16 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:59374 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936907AbeFRKTl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:19:41 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC0BE1650;
+        Mon, 18 Jun 2018 03:19:40 -0700 (PDT)
+Received: from lakrids.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8B19F3F25D;
+        Mon, 18 Jun 2018 03:19:39 -0700 (PDT)
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     linux-kernel@vger.kernel.org, will.deacon@arm.com,
+        peterz@infradead.org, boqun.feng@gmail.com
+Cc:     mingo@kernel.org, Mark Rutland <mark.rutland@arm.com>
+Subject: [PATCHv3 05/18] atomics/treewide: make atomic64_inc_not_zero() optional
+Date:   Mon, 18 Jun 2018 11:19:06 +0100
+Message-Id: <20180618101919.51973-6-mark.rutland@arm.com>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20180618101919.51973-1-mark.rutland@arm.com>
+References: <20180618101919.51973-1-mark.rutland@arm.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-06-18, 11:19, Daniel Lezcano wrote:
-> +/**
-> + * idle_injection_stop - stops the idle injections
-> + * @ii_dev: a pointer to an idle injection_device structure
-> + *
-> + * The function stops the idle injection and waits for the threads to
-> + * complete. If we are in the process of injecting an idle cycle, then
-> + * this will wait the end of the cycle.
-> + *
-> + * When the function returns there is no more idle injection
-> + * activity. The kthreads are scheduled out and the periodic timer is
-> + * off.
-> + */
-> +void idle_injection_stop(struct idle_injection_device *ii_dev)
-> +{
-> +	struct idle_injection_thread *iit;
-> +	unsigned int cpu;
-> +
-> +	pr_debug("Stopping injecting idle cycles on CPUs '%*pbl'\n",
-> +		 cpumask_pr_args(to_cpumask(ii_dev->cpumask)));
-> +
-> +	hrtimer_cancel(&ii_dev->timer);
-> +
-> +	/*
-> +	 * We want the guarantee we have a quescient point where
-> +	 * parked threads stay in there state while we are stopping
-> +	 * the idle injection. After exiting the loop, if any CPU is
-> +	 * plugged in, the 'should_run' boolean being false, the
-> +	 * smpboot main loop schedules the task out.
-> +	 */
-> +	cpu_hotplug_disable();
-> +
-> +	for_each_cpu_and(cpu, to_cpumask(ii_dev->cpumask), cpu_online_mask) {
+We define a trivial fallback for atomic_inc_not_zero(), but don't do
+the same for atomic64_inc_not_zero(), leading most architectures to
+define the same boilerplate.
 
-Maybe you should do below for all CPUs in the mask. Is the below usecase
-possible ?
+Let's add a fallback in <linux/atomic.h>, and remove the redundant
+implementations. Note that atomic64_add_unless() is always defined in
+<linux/atomic.h>, and promotes its arguments to the requisite types, so
+we need not do this explicitly.
 
-- CPU0-4 are part of the mask and are all online.
-- hrtimer fires and sets should_run for all of them to 1.
-- Right at this time CPU3 goes offline, so the thread gets parked with
-  should_run == 1. Is there a reason why this can't happen ?
-- Now we unregister the stuff and CPU3 again comes online.
-- Because it had should_run as true, we again run the thread and Crash.
+There should be no functional change as a result of this patch.
 
-makes sense ?
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Acked-by: Palmer Dabbelt <palmer@sifive.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>
+Cc: Will Deacon <will.deacon@arm.com>
+---
+ arch/alpha/include/asm/atomic.h           |  2 --
+ arch/arc/include/asm/atomic.h             |  1 -
+ arch/arm/include/asm/atomic.h             |  1 -
+ arch/arm64/include/asm/atomic.h           |  2 --
+ arch/ia64/include/asm/atomic.h            |  2 --
+ arch/mips/include/asm/atomic.h            |  2 --
+ arch/parisc/include/asm/atomic.h          |  2 --
+ arch/powerpc/include/asm/atomic.h         |  1 +
+ arch/riscv/include/asm/atomic.h           |  7 -------
+ arch/s390/include/asm/atomic.h            |  1 -
+ arch/sparc/include/asm/atomic_64.h        |  2 --
+ arch/x86/include/asm/atomic64_32.h        |  2 +-
+ arch/x86/include/asm/atomic64_64.h        |  2 --
+ include/asm-generic/atomic-instrumented.h |  3 +++
+ include/asm-generic/atomic64.h            |  1 -
+ include/linux/atomic.h                    | 11 +++++++++++
+ 16 files changed, 16 insertions(+), 26 deletions(-)
 
-> +		iit = per_cpu_ptr(&idle_injection_thread, cpu);
-> +		iit->should_run = 0;
-> +
-> +		wait_task_inactive(iit->tsk, 0);
-
-I am not very sure of what guarantees this will provide.
-
-@Peter: Do you see any more race scenarios here ?
-
-> +	}
-> +
-> +	cpu_hotplug_enable();
-> +}
-
-> +struct idle_injection_device *idle_injection_register(struct cpumask *cpumask)
-> +{
-> +	struct idle_injection_device *ii_dev;
-> +	int cpu;
-> +
-> +	ii_dev = kzalloc(sizeof(*ii_dev) + cpumask_size(), GFP_KERNEL);
-> +	if (!ii_dev)
-> +		return NULL;
-> +
-> +	cpumask_copy(to_cpumask(ii_dev->cpumask), cpumask);
-> +	hrtimer_init(&ii_dev->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
-> +	ii_dev->timer.function = idle_injection_wakeup_fn;
-> +
-> +	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask)) {
-> +
-> +		if (per_cpu(idle_injection_device, cpu)) {
-> +			pr_err("cpu%d is already registered\n", cpu);
-> +			goto out_rollback_per_cpu;
-> +		}
-> +
-> +		per_cpu(idle_injection_device, cpu) = ii_dev;
-> +	}
-> +
-> +	return ii_dev;
-> +
-> +out_rollback_per_cpu:
-> +	for_each_cpu(cpu, to_cpumask(ii_dev->cpumask))
-> +		per_cpu(idle_injection_device, cpu) = NULL;
-
-So if two parts of the kernel call this routine with the same cpumask, then the
-second call will also overwrite the masks with NULL and return error. That will
-screw up things a bit here.
-
+diff --git a/arch/alpha/include/asm/atomic.h b/arch/alpha/include/asm/atomic.h
+index 392b15a4dd4f..eb0f25e4c5dd 100644
+--- a/arch/alpha/include/asm/atomic.h
++++ b/arch/alpha/include/asm/atomic.h
+@@ -296,8 +296,6 @@ static inline long atomic64_dec_if_positive(atomic64_t *v)
+ 	return old - 1;
+ }
+ 
+-#define atomic64_inc_not_zero(v) atomic64_add_unless((v), 1, 0)
+-
+ #define atomic_add_negative(a, v) (atomic_add_return((a), (v)) < 0)
+ #define atomic64_add_negative(a, v) (atomic64_add_return((a), (v)) < 0)
+ 
+diff --git a/arch/arc/include/asm/atomic.h b/arch/arc/include/asm/atomic.h
+index cecdf3403caf..1406825b5e7d 100644
+--- a/arch/arc/include/asm/atomic.h
++++ b/arch/arc/include/asm/atomic.h
+@@ -603,7 +603,6 @@ static inline int atomic64_add_unless(atomic64_t *v, long long a, long long u)
+ #define atomic64_dec(v)			atomic64_sub(1LL, (v))
+ #define atomic64_dec_return(v)		atomic64_sub_return(1LL, (v))
+ #define atomic64_dec_and_test(v)	(atomic64_dec_return((v)) == 0)
+-#define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1LL, 0LL)
+ 
+ #endif	/* !CONFIG_GENERIC_ATOMIC64 */
+ 
+diff --git a/arch/arm/include/asm/atomic.h b/arch/arm/include/asm/atomic.h
+index 9d56d0727c9b..02f3894faa48 100644
+--- a/arch/arm/include/asm/atomic.h
++++ b/arch/arm/include/asm/atomic.h
+@@ -534,7 +534,6 @@ static inline int atomic64_add_unless(atomic64_t *v, long long a, long long u)
+ #define atomic64_dec(v)			atomic64_sub(1LL, (v))
+ #define atomic64_dec_return_relaxed(v)	atomic64_sub_return_relaxed(1LL, (v))
+ #define atomic64_dec_and_test(v)	(atomic64_dec_return((v)) == 0)
+-#define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1LL, 0LL)
+ 
+ #endif /* !CONFIG_GENERIC_ATOMIC64 */
+ #endif
+diff --git a/arch/arm64/include/asm/atomic.h b/arch/arm64/include/asm/atomic.h
+index 264d20339f74..ad50412889c5 100644
+--- a/arch/arm64/include/asm/atomic.h
++++ b/arch/arm64/include/asm/atomic.h
+@@ -204,7 +204,5 @@
+ #define atomic64_add_unless(v, a, u)	(___atomic_add_unless(v, a, u, 64) != u)
+ #define atomic64_andnot			atomic64_andnot
+ 
+-#define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1, 0)
+-
+ #endif
+ #endif
+diff --git a/arch/ia64/include/asm/atomic.h b/arch/ia64/include/asm/atomic.h
+index 9d2ddde5f9d5..93d48b823220 100644
+--- a/arch/ia64/include/asm/atomic.h
++++ b/arch/ia64/include/asm/atomic.h
+@@ -246,8 +246,6 @@ static __inline__ long atomic64_add_unless(atomic64_t *v, long a, long u)
+ 	return c != (u);
+ }
+ 
+-#define atomic64_inc_not_zero(v) atomic64_add_unless((v), 1, 0)
+-
+ static __inline__ long atomic64_dec_if_positive(atomic64_t *v)
+ {
+ 	long c, old, dec;
+diff --git a/arch/mips/include/asm/atomic.h b/arch/mips/include/asm/atomic.h
+index 02fc1553cf9b..502e691c6393 100644
+--- a/arch/mips/include/asm/atomic.h
++++ b/arch/mips/include/asm/atomic.h
+@@ -644,8 +644,6 @@ static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
+ 	return c != (u);
+ }
+ 
+-#define atomic64_inc_not_zero(v) atomic64_add_unless((v), 1, 0)
+-
+ #define atomic64_dec_return(v) atomic64_sub_return(1, (v))
+ #define atomic64_inc_return(v) atomic64_add_return(1, (v))
+ 
+diff --git a/arch/parisc/include/asm/atomic.h b/arch/parisc/include/asm/atomic.h
+index 7748abced766..3fd0243bf405 100644
+--- a/arch/parisc/include/asm/atomic.h
++++ b/arch/parisc/include/asm/atomic.h
+@@ -305,8 +305,6 @@ static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
+ 	return c != (u);
+ }
+ 
+-#define atomic64_inc_not_zero(v) atomic64_add_unless((v), 1, 0)
+-
+ /*
+  * atomic64_dec_if_positive - decrement by 1 if old value positive
+  * @v: pointer of type atomic_t
+diff --git a/arch/powerpc/include/asm/atomic.h b/arch/powerpc/include/asm/atomic.h
+index 1483261080a1..e59620ee4f6b 100644
+--- a/arch/powerpc/include/asm/atomic.h
++++ b/arch/powerpc/include/asm/atomic.h
+@@ -582,6 +582,7 @@ static __inline__ int atomic64_inc_not_zero(atomic64_t *v)
+ 
+ 	return t1 != 0;
+ }
++#define atomic64_inc_not_zero(v) atomic64_inc_not_zero((v))
+ 
+ #endif /* __powerpc64__ */
+ 
+diff --git a/arch/riscv/include/asm/atomic.h b/arch/riscv/include/asm/atomic.h
+index 0e27e050ba14..18259e90f57e 100644
+--- a/arch/riscv/include/asm/atomic.h
++++ b/arch/riscv/include/asm/atomic.h
+@@ -375,13 +375,6 @@ static __always_inline int atomic64_add_unless(atomic64_t *v, long a, long u)
+ }
+ #endif
+ 
+-#ifndef CONFIG_GENERIC_ATOMIC64
+-static __always_inline long atomic64_inc_not_zero(atomic64_t *v)
+-{
+-        return atomic64_add_unless(v, 1, 0);
+-}
+-#endif
+-
+ /*
+  * atomic_{cmp,}xchg is required to have exactly the same ordering semantics as
+  * {cmp,}xchg and the operations that return, so they need a full barrier.
+diff --git a/arch/s390/include/asm/atomic.h b/arch/s390/include/asm/atomic.h
+index c2858cdd8c29..66dac30a4fe1 100644
+--- a/arch/s390/include/asm/atomic.h
++++ b/arch/s390/include/asm/atomic.h
+@@ -212,6 +212,5 @@ static inline long atomic64_dec_if_positive(atomic64_t *v)
+ #define atomic64_dec(_v)		atomic64_sub(1, _v)
+ #define atomic64_dec_return(_v)		atomic64_sub_return(1, _v)
+ #define atomic64_dec_and_test(_v)	(atomic64_sub_return(1, _v) == 0)
+-#define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1, 0)
+ 
+ #endif /* __ARCH_S390_ATOMIC__  */
+diff --git a/arch/sparc/include/asm/atomic_64.h b/arch/sparc/include/asm/atomic_64.h
+index f416fd3d2708..07830a316464 100644
+--- a/arch/sparc/include/asm/atomic_64.h
++++ b/arch/sparc/include/asm/atomic_64.h
+@@ -123,8 +123,6 @@ static inline long atomic64_add_unless(atomic64_t *v, long a, long u)
+ 	return c != (u);
+ }
+ 
+-#define atomic64_inc_not_zero(v) atomic64_add_unless((v), 1, 0)
+-
+ long atomic64_dec_if_positive(atomic64_t *v);
+ 
+ #endif /* !(__ARCH_SPARC64_ATOMIC__) */
+diff --git a/arch/x86/include/asm/atomic64_32.h b/arch/x86/include/asm/atomic64_32.h
+index 92212bf0484f..2a33cc17801b 100644
+--- a/arch/x86/include/asm/atomic64_32.h
++++ b/arch/x86/include/asm/atomic64_32.h
+@@ -295,7 +295,7 @@ static inline int arch_atomic64_add_unless(atomic64_t *v, long long a,
+ 	return (int)a;
+ }
+ 
+-
++#define arch_atomic64_inc_not_zero arch_atomic64_inc_not_zero
+ static inline int arch_atomic64_inc_not_zero(atomic64_t *v)
+ {
+ 	int r;
+diff --git a/arch/x86/include/asm/atomic64_64.h b/arch/x86/include/asm/atomic64_64.h
+index 6106b59d3260..6f95023894b7 100644
+--- a/arch/x86/include/asm/atomic64_64.h
++++ b/arch/x86/include/asm/atomic64_64.h
+@@ -207,8 +207,6 @@ static inline bool arch_atomic64_add_unless(atomic64_t *v, long a, long u)
+ 	return true;
+ }
+ 
+-#define arch_atomic64_inc_not_zero(v) arch_atomic64_add_unless((v), 1, 0)
+-
+ /*
+  * arch_atomic64_dec_if_positive - decrement by 1 if old value positive
+  * @v: pointer of type atomic_t
+diff --git a/include/asm-generic/atomic-instrumented.h b/include/asm-generic/atomic-instrumented.h
+index 497faa4a05e3..83bb88d791c4 100644
+--- a/include/asm-generic/atomic-instrumented.h
++++ b/include/asm-generic/atomic-instrumented.h
+@@ -205,11 +205,14 @@ static __always_inline s64 atomic64_dec_return(atomic64_t *v)
+ 	return arch_atomic64_dec_return(v);
+ }
+ 
++#ifdef arch_atomic64_inc_not_zero
++#define atomic64_inc_not_zero atomic64_inc_not_zero
+ static __always_inline bool atomic64_inc_not_zero(atomic64_t *v)
+ {
+ 	kasan_check_write(v, sizeof(*v));
+ 	return arch_atomic64_inc_not_zero(v);
+ }
++#endif
+ 
+ static __always_inline s64 atomic64_dec_if_positive(atomic64_t *v)
+ {
+diff --git a/include/asm-generic/atomic64.h b/include/asm-generic/atomic64.h
+index a951a721e1bb..5105275ac825 100644
+--- a/include/asm-generic/atomic64.h
++++ b/include/asm-generic/atomic64.h
+@@ -63,6 +63,5 @@ extern bool	 atomic64_add_unless(atomic64_t *v, long long a, long long u);
+ #define atomic64_dec(v)			atomic64_sub(1LL, (v))
+ #define atomic64_dec_return(v)		atomic64_sub_return(1LL, (v))
+ #define atomic64_dec_and_test(v)	(atomic64_dec_return((v)) == 0)
+-#define atomic64_inc_not_zero(v) 	atomic64_add_unless((v), 1LL, 0LL)
+ 
+ #endif  /*  _ASM_GENERIC_ATOMIC64_H  */
+diff --git a/include/linux/atomic.h b/include/linux/atomic.h
+index 307a7f6d619a..ae3f30923d05 100644
+--- a/include/linux/atomic.h
++++ b/include/linux/atomic.h
+@@ -1019,6 +1019,17 @@ static inline int atomic_dec_if_positive(atomic_t *v)
+ #define atomic64_try_cmpxchg_release	atomic64_try_cmpxchg
+ #endif /* atomic64_try_cmpxchg */
+ 
++/**
++ * atomic64_inc_not_zero - increment unless the number is zero
++ * @v: pointer of type atomic64_t
++ *
++ * Atomically increments @v by 1, if @v is non-zero.
++ * Returns true if the increment was done.
++ */
++#ifndef atomic64_inc_not_zero
++#define atomic64_inc_not_zero(v)	atomic64_add_unless((v), 1, 0)
++#endif
++
+ #ifndef atomic64_andnot
+ static inline void atomic64_andnot(long long i, atomic64_t *v)
+ {
 -- 
-viresh
+2.11.0
+
