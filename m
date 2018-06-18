@@ -2,203 +2,105 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50ECAC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B385C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5F822075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B905A2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="EMFvbDb0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5F822075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="1BQssVHV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B905A2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964900AbeFRTqP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:46:15 -0400
-Received: from smtprelay6.synopsys.com ([198.182.37.59]:43186 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936040AbeFRTqN (ORCPT
+        id S964952AbeFRTqn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:46:43 -0400
+Received: from mail-oi0-f65.google.com ([209.85.218.65]:34271 "EHLO
+        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964904AbeFRTqm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:46:13 -0400
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id C799B1E04A8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:46:11 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1529351172; bh=G1AV+ziE4gP0zQpJJwsg5EtmnLt+BnXzHqUQt3ZExQE=;
-        h=From:To:CC:Subject:Date:References:In-Reply-To:From;
-        b=EMFvbDb08BfDtYWgyde/zb/2PsZkfjDcRca6ILCp8xuYwBQj9/PjzP1QXJHAjtqhX
-         th8hHwYhaoTzsAaaqRVK7E1RF2CUhJvn3MI6sWZeULVuNisx8iFH9JbGZcJYwbdEUU
-         /mxKxHAycq+KvdEYyjCGRUlhGMhb36FP59b2mULFwp4yBgRAK8o7EzTizj5u4VfIOb
-         +vViWPnVIAMrKcFz1fqBDdv/Vv1dox5gQv++TtYrluPSL8Y9a1phP3MXeTBXRfbtpP
-         PTXzmzh/Bkoq1TmW0QY0rE3g7mxrh6Fod7E1HUL9v6/fq54fx5fcXnpyY+Nskd5eDq
-         9nvG6yZKtbMYg==
-Received: from US01WEHTC3.internal.synopsys.com (us01wehtc3.internal.synopsys.com [10.15.84.232])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 270C856D1;
-        Mon, 18 Jun 2018 12:46:11 -0700 (PDT)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC3.internal.synopsys.com (10.15.84.232) with Microsoft SMTP Server
- (TLS) id 14.3.361.1; Mon, 18 Jun 2018 12:46:11 -0700
-Received: from DE02WEMBXB.internal.synopsys.com ([fe80::95ce:118a:8321:a099])
- by DE02WEHTCA.internal.synopsys.com ([::1]) with mapi id 14.03.0361.001; Mon,
- 18 Jun 2018 21:46:08 +0200
-From:   Alexey Brodkin <Alexey.Brodkin@synopsys.com>
-To:     Vineet Gupta <Vineet.Gupta1@synopsys.com>,
-        "gustavo.pimentel@synopsys.com" <gustavo.pimentel@synopsys.com>
-CC:     "robh@kernel.org" <robh@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Eugeniy.Paltsev@synopsys.com" <Eugeniy.Paltsev@synopsys.com>,
-        "sboyd@codeaurora.org" <sboyd@codeaurora.org>,
-        "linux-snps-arc@lists.infradead.org" 
-        <linux-snps-arc@lists.infradead.org>
-Subject: RE: [PATCH] ARC: Add PCIe support for ARC HSDK platform
-Thread-Topic: [PATCH] ARC: Add PCIe support for ARC HSDK platform
-Thread-Index: AQHUBxUCRm/JCNyjD0Wi++lZvsvcaKRmACsAgAAvhYCAADskAA==
-Date:   Mon, 18 Jun 2018 19:46:06 +0000
-Message-ID: <4881796E12491D4BB15146FE0209CE64680F2862@DE02WEMBXB.internal.synopsys.com>
-References: <3e9a2f384fd831fb2639ad99ec43ce0f019ac17c.1529333762.git.gustavo.pimentel@synopsys.com>
- <ba4b10e967fb39d18eba7a5c70abb167308481f5.camel@synopsys.com>
- <562939df-4c97-c19b-72e3-14196a651c40@synopsys.com>
-In-Reply-To: <562939df-4c97-c19b-72e3-14196a651c40@synopsys.com>
-Accept-Language: en-US, ru-RU
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: =?utf-8?B?UEcxbGRHRStQR0YwSUc1dFBTSmliMlI1TG5SNGRDSWdjRDBpWXpwY2RYTmxj?=
- =?utf-8?B?bk5jWVdKeWIyUnJhVzVjWVhCd1pHRjBZVnh5YjJGdGFXNW5YREE1WkRnME9X?=
- =?utf-8?B?STJMVE15WkRNdE5HRTBNQzA0TldWbExUWmlPRFJpWVRJNVpUTTFZbHh0YzJk?=
- =?utf-8?B?elhHMXpaeTB6WVdOa1lURXlNQzAzTXpNd0xURXhaVGd0WW1VMllpMDRPR0l4?=
- =?utf-8?B?TVRGalpHVXlNVGRjWVcxbExYUmxjM1JjTTJGalpHRXhNakl0TnpNek1DMHhN?=
- =?utf-8?B?V1U0TFdKbE5tSXRPRGhpTVRFeFkyUmxNakUzWW05a2VTNTBlSFFpSUhONlBT?=
- =?utf-8?B?SXhOell6SWlCMFBTSXhNekUzTXpneU5EYzJNamN4TXpVMU1UVWlJR2c5SWxG?=
- =?utf-8?B?YWFERjNTVzEwWm5CalZUWk5SRUpVV1RWcFUzbEhSaTlTT0QwaUlHbGtQU0lp?=
- =?utf-8?B?SUdKc1BTSXdJaUJpYnowaU1TSWdZMms5SW1OQlFVRkJSVkpJVlRGU1UxSlZS?=
- =?utf-8?B?azVEWjFWQlFVaFpTVUZCUVdJeWFWZzVVRUZtVlVGWFdrY3pXWEZUWlhGUk4x?=
- =?utf-8?B?cHJZbVJwY0VvMmNFUnpUa0ZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRklRVUZCUVVGSFEwRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGRlFVRlJRVUpCUVVGQmRXSXZVRkIzUVVGQlFVRkJRVUZCUVVGQlFVRkJT?=
- =?utf-8?B?alJCUVVGQ2JVRkhhMEZpWjBKb1FVYzBRVmwzUW14QlJqaEJZMEZDYzBGSFJV?=
- =?utf-8?B?RmlaMEoxUVVkclFXSm5RbTVCUmpoQlpIZENhRUZJVVVGYVVVSjVRVWN3UVZs?=
- =?utf-8?B?UlFubEJSM05CUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVWQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlowRkJRVUZCUVc1blFVRkJSMWxCWW5kQ01VRkhORUZhUVVKNVFVaHJRVmgz?=
- =?utf-8?B?UW5kQlIwVkJZMmRDTUVGSE5FRmFVVUo1UVVoTlFWaDNRbTVCUjFsQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRlJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRMEZCUVVGQlFVTmxRVUZCUVZwblFuWkJTRlZCWW1kQ2Ew?=
- =?utf-8?B?RklTVUZsVVVKbVFVaEJRVmxSUW5sQlNGRkJZbWRDYkVGSVNVRmpkMEptUVVo?=
- =?utf-8?B?TlFWbFJRblJCU0UxQlpGRkNkVUZIWTBGWWQwSnFRVWM0UVdKblFtMUJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZDUVVGQlFVRkJRVUZCUVVsQlFVRkJRVUZLTkVGQlFVSnRRVWM0?=
- =?utf-8?B?UVdSUlFuVkJSMUZCWTJkQ05VRkdPRUZqUVVKb1FVaEpRV1JCUW5WQlIxVkJZ?=
- =?utf-8?B?MmRDZWtGR09FRmpkMEpvUVVjd1FXTjNRakZCUnpSQlduZENaa0ZJU1VGYVVV?=
- =?utf-8?B?SjZRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlJVRkJRVUZCUVVGQlFVRm5RVUZCUVVGQmJt?=
- =?utf-8?B?ZEJRVUZIV1VGaWQwSXhRVWMwUVZwQlFubEJTR3RCV0hkQ2QwRkhSVUZqWjBJ?=
- =?utf-8?B?d1FVYzBRVnBSUW5sQlNFMUJXSGRDZWtGSE1FRmhVVUpxUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVkZCUVVGQlFVRkJRVUZE?=
- =?utf-8?B?UVVGQlFVRkJRMlZCUVVGQldtZENka0ZJVlVGaVowSnJRVWhKUVdWUlFtWkJT?=
- =?utf-8?B?RUZCV1ZGQ2VVRklVVUZpWjBKc1FVaEpRV04zUW1aQlNFMUJaRUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVKQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlNVRkJRVUZCUVVvMFFVRkJRbTFCUnpoQlpGRkNkVUZIVVVG?=
- =?utf-8?B?alowSTFRVVk0UVdOQlFtaEJTRWxCWkVGQ2RVRkhWVUZqWjBKNlFVWTRRV1JC?=
- =?utf-8?B?UW5wQlJ6QkJXWGRCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkZRVUZCUVVGQlFVRkJRV2RCUVVGQlFVRnVaMEZCUVVkWlFXSjNR?=
- =?utf-8?B?akZCUnpSQldrRkNlVUZJYTBGWWQwSjNRVWRGUVdOblFqQkJSelJCV2xGQ2VV?=
- =?utf-8?B?RklUVUZZZDBJeFFVY3dRVmwzUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCVVVGQlFVRkJRVUZCUVVOQlFVRkJRVUZEWlVG?=
- =?utf-8?B?QlFVRmFkMEl3UVVoTlFWaDNRbmRCU0VsQlluZENhMEZJVlVGWmQwSXdRVVk0?=
- =?utf-8?B?UVdSQlFubEJSMFZCWVZGQ2RVRkhhMEZpWjBKdVFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFrRkJRVUZCUVVGQlFVRkpR?=
- =?utf-8?B?VUZCUVVGQlNqUkJRVUZDZWtGSFJVRmlRVUpzUVVoTlFWaDNRbWhCUjAxQldY?=
- =?utf-8?B?ZENka0ZJVlVGaVowSXdRVVk0UVdOQlFuTkJSMFZCWW1kQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVVZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCWjBGQlFVRkJRVzVuUVVGQlNFMUJXVkZDYzBGSFZVRmpkMEpt?=
- =?utf-8?B?UVVoRlFXUlJRblpCU0ZGQldsRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGUlFVRkJRVUZCUVVGQlEwRkJRVUZCUVVObFFVRkJRV04zUW5WQlNF?=
- =?utf-8?B?RkJZM2RDWmtGSGQwRmhVVUpxUVVkVlFXSm5RbnBCUjFWQldIZENNRUZIVlVG?=
- =?utf-8?B?alowSjBRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkNRVUZCUVVGQlFVRkJRVWxCUVVGQlFVRktORUZC?=
- =?utf-8?B?UVVJeVFVZGpRVmgzUW5KQlIxVkJaVkZDTTBGSE9FRmpaMEpyUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFV?=
- =?utf-8?B?RkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVG?=
- =?utf-8?B?QlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZC?=
- =?utf-8?B?UVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJR?=
- =?utf-8?B?VUZCUVVGQlFVRkJRVUZCUVVGQlFVRkJRVUZCUlVGQlFVRkJRVUZCUVVGblFV?=
- =?utf-8?B?RkJRVUZCSWk4K1BDOXRaWFJoUGc9PQ==?=
-x-dg-rorf: 
-x-originating-ip: [10.13.178.24]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 18 Jun 2018 15:46:42 -0400
+Received: by mail-oi0-f65.google.com with SMTP id i205-v6so15977776oib.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 12:46:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=intel-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=w7eFyN5OjYalMfVm729/qKxnewR+swQiKFOonGtqVNk=;
+        b=1BQssVHVh8/NAwXZYzBqXTHy0NGa99bqL5ZJANHXTveaDCyaFMx7oCFSY2+QcYlWoF
+         PDoKiDewg2e2/nI9q+QVL7Jh14MJi9D81lZMDc+Rb7aNMphMbOxf71yQNEU5FnUjqEcV
+         NZl/+VFKN7yPJV3WQa7w/5kjR85yTvAZVhzIpFQOfpbF4JGbe2J3ajD+YuEYbX8fixuD
+         6fo5McwDX4E8ONrhbh49IoGwVknSgGOeYgI6lcFkIhfmSjoaH+utAwABB+f3QlgsC5tK
+         KUaV+MAi4UfcA8fawtq3idhOGyY0AZ1/yrlD0CGTfYvhnjW0lQav9yRgMdckNteGUrlO
+         molw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=w7eFyN5OjYalMfVm729/qKxnewR+swQiKFOonGtqVNk=;
+        b=MSNbJ+UgzzuntO8Kphm/1txmTlbsdJyUlGOqs9avfY4BZjZi1I/XL5VM+ufgslTLz6
+         tnXZ8GImL5A2jZiGetWx46hqfVgI1/sdMgwf7PV2qdwxXnG3RB7s971eoqTe1/+8DV2M
+         buCWG0Ec5o4w/+RmaOpvkLJuvWTGny9zkztaSawEtaBftn0YikyTIHMj/2MjAKkMh79q
+         E2OZlY5As0r/pPIjBLnJ3BpXYxeK8ADmZ2CEdfgWK1othPb9iZuI3xXD4Z+agSaECRs3
+         vGFoGi6MclOTUhX4zqY5LnB4mrLHACpVruHSGlPB2G9Z0Uo2lbOxqzC5aQNpI+qqXXLc
+         hRHw==
+X-Gm-Message-State: APt69E3Kfyb33pZkUjAST+Joqpj7leKQOdP7hXEU0ERefLxLbziXXkPz
+        IqaUss9sxsrzC36ECrOjTgii5VoZyCLyhkijmiqiGQ==
+X-Google-Smtp-Source: ADUXVKKMkSYSyMFk/S1vVA6pTgxaDPFCsqmbsgi2Cp4yJRIsHgHcSlmiY4e9ogFry3r8gkJ3RiXRc2vhQk26JpVHoHI=
+X-Received: by 2002:aca:3d43:: with SMTP id k64-v6mr7253613oia.166.1529351201846;
+ Mon, 18 Jun 2018 12:46:41 -0700 (PDT)
 MIME-Version: 1.0
+Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 12:46:41
+ -0700 (PDT)
+In-Reply-To: <1529350667.14039.119.camel@hpe.com>
+References: <1461620099-11933-1-git-send-email-toshi.kani@hpe.com>
+ <1461620099-11933-2-git-send-email-toshi.kani@hpe.com> <CAA9_cmenbY9GStibRjO0BfTq0kzzzqThiLeOygJsT9L03BFsBQ@mail.gmail.com>
+ <1529350667.14039.119.camel@hpe.com>
+From:   Dan Williams <dan.j.williams@intel.com>
+Date:   Mon, 18 Jun 2018 12:46:41 -0700
+Message-ID: <CAPcyv4jbctFgCob58sjQZ8msGOT7GBe=+Z_2P6YvNrrK-ztMag@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with ACPI 6.1
+To:     "Kani, Toshi" <toshi.kani@hpe.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "Moore, Robert" <robert.moore@intel.com>,
+        "Li, Juston" <juston.li@intel.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgVmluZWV0LA0KDQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IFZpbmVl
-dCBHdXB0YQ0KPiBTZW50OiBNb25kYXksIEp1bmUgMTgsIDIwMTggOToxMSBQTQ0KPiBUbzogQWxl
-eGV5IEJyb2RraW4gPGFicm9ka2luQHN5bm9wc3lzLmNvbT47IGd1c3Rhdm8ucGltZW50ZWxAc3lu
-b3BzeXMuY29tDQo+IENjOiByb2JoQGtlcm5lbC5vcmc7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5l
-bC5vcmc7IEV1Z2VuaXkuUGFsdHNldkBzeW5vcHN5cy5jb207IHNib3lkQGNvZGVhdXJvcmEub3Jn
-OyBsaW51eC1zbnBzLQ0KPiBhcmNAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTog
-W1BBVENIXSBBUkM6IEFkZCBQQ0llIHN1cHBvcnQgZm9yIEFSQyBIU0RLIHBsYXRmb3JtDQo+IA0K
-PiBPbiAwNi8xOC8yMDE4IDA4OjIwIEFNLCBBbGV4ZXkgQnJvZGtpbiB3cm90ZToNCj4gPj4gK3N0
-YXRpYyB2b2lkIF9faW5pdCBoc2RrX2VuYWJsZV9ncGlvX2ludGNfd2lyZSh2b2lkKQ0KPiA+PiAr
-ew0KPiA+PiArCXUzMiB2YWwgPSBHUElPX0hBUFNfSU5UOw0KPiA+PiArDQo+ID4+ICsJaW93cml0
-ZTMyKDB4ZmZmZmZmZmYsICh2b2lkIF9faW9tZW0gKikgR1BJT19JTlRNQVNLKTsNCj4gPj4gKwlp
-b3dyaXRlMzIofnZhbCwgKHZvaWQgX19pb21lbSAqKSBHUElPX0lOVE1BU0spOw0KPiA+PiArCWlv
-d3JpdGUzMigweDAwMDAwMDAwLCAodm9pZCBfX2lvbWVtICopIEdQSU9fSU5UVFlQRV9MRVZFTCk7
-DQo+ID4+ICsJaW93cml0ZTMyKDB4ZmZmZmZmZmYsICh2b2lkIF9faW9tZW0gKikgR1BJT19JTlRf
-UE9MQVJJVFkpOw0KPiA+PiArCWlvd3JpdGUzMih2YWwsICh2b2lkIF9faW9tZW0gKikgR1BJT19J
-TlRFTik7DQo+ID4+ICt9DQo+ID4gSSB3b3VsZCBzdWdnZXN0IHRvIGhhdmUgYSBtYXAgb2YgcmVh
-bGx5IHVzZWQgbGluZXMgYW5kIGVuYWJsZSBhbGwgb2YgdGhlbQ0KPiA+IGluc3RlYWQgb2YgYWRk
-aW5nIG9uZS1ieS1vbmUgb2NjYXNpb25hbGx5Lg0KPiANCj4gTW9yZSBpbXBvcnRhbnRseSwgYWRk
-aW5nIGFueSBjb2RlIGluIHRoaXMgZmlsZSBpcyBhbiBhYnNvbHV0ZSBhYm9taW5hdGlvbiBhbmQg
-b25seQ0KPiBkZXNpcmVkIGlmIHRoaXMgaXMgYSBwbGF0Zm9ybSBzcGVjaWZpYyBoYWNrIHdoaWNo
-IGNhbid0IGJlIGFkZGVkIGluIHRoZSBnZW5lcmljDQo+IGRyaXZlciBhbmQvb3Igc3BlY2lmaWVk
-IHZpYSB0aGUgRGV2aWNlIFRyZWUuIEhlcmUgaXQgc2VlbXMgbGlrZSB3ZSBhcmUgZW5hYmxpbmcN
-Cj4gc29tZSBncGlvIGxpbmVzIHdoaWNoIGxpa2VseSBjb3VsZCBiZSBkb25lIHZpYSB0aGUgZ3Bp
-byBkcml2ZXIgcGF0aHMgPw0KDQpTZWUgbXkgY29tbWVudCBtdWNoIGhpZ2hlciAtIHdoYXQgd2Un
-cmUgZG9pbmcgaGVyZSBpcyBwcmV0dHkgbXVjaCB0aGUgc2FtZSBhcw0KV2l0aCBBWFMxMHggLSB3
-ZSBpbXBsZW1lbnQgd2lyZXMgd2hpY2ggY29ubmVjdCBpbnB1dCBpbnRlcnJ1cHQgbGluZXMgdG8g
-SURVLg0KVGh1cyBJJ20gbm90IHN1cmUgaWYgaXQgd29ydGggbWVzc2luZyB3aXRoIERXIEFQQiBH
-UElPIElOVEMgZHJpdmVyIHdoaWNoIGFzIEkgbWVudGlvbmVkDQpBcyB3ZWxsIHdvbid0IHdvcmsg
-YXMgaXQgaXMgYW5kIHdlJ2xsIG5lZWQgdG8gcGF0Y2ggaXQgdG8gc3VwcG9ydCBtdWx0aXBsZSBv
-dXRwdXRzIG1vZGUuDQoNCi1BbGV4ZXkNCg==
+On Mon, Jun 18, 2018 at 12:39 PM, Kani, Toshi <toshi.kani@hpe.com> wrote:
+> On Mon, 2018-06-18 at 12:01 -0700, Dan Williams wrote:
+>> On Mon, Apr 25, 2016 at 2:43 PM Toshi Kani <toshi.kani@hpe.com> wrote:
+>> >
+>> > ACPI 6.1, Table 5-133, updates NVDIMM Control Region Structure
+>> > as follows.
+>> >  - Valid Fields, Manufacturing Location, and Manufacturing Date
+>> >    are added from reserved range.  No change in the structure size.
+>> >  - IDs (SPD values) are stored as arrays of bytes (i.e. big-endian
+>> >    format).  The spec clarifies that they need to be represented
+>> >    as arrays of bytes as well.
+>> >
+>>
+>> Circling back on this a couple years too late... where are you reading
+>> this "arrays of bytes" note. As far as I can see this is wrong. JEDEC
+>> says that vendor id is stored LSB of the id is stored at the lowest
+>> byte in SPD, which is little endian. So it seems Linux has showing the
+>> incorrect value for a long time now.
+>
+> This follows ACPI 6.2a section 5.2.25.10 NVDIMM Representation Format,
+> which Robert cited in his comment below:
+> https://patchwork.kernel.org/patch/10237609/
+
+Right, the representation format has the fields big-endian for some
+reason, but the individual values for sysfs should be show
+little-endian as far as I can see. What am I missing?
