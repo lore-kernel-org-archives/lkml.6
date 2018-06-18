@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4F58C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09488C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 798FC208E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 798FC208E0
+	by mail.kernel.org (Postfix) with ESMTP id C2F0B20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:33:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F0B20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967528AbeFRIdk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:33:40 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:35544 "EHLO
+        id S967541AbeFRIdn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:33:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:35566 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S967507AbeFRIdf (ORCPT
+        with ESMTP id S967507AbeFRIdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:33:35 -0400
+        Mon, 18 Jun 2018 04:33:41 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 791AEC3C;
-        Mon, 18 Jun 2018 08:33:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 44003C49;
+        Mon, 18 Jun 2018 08:33:40 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh@kernel.org>,
+        stable@vger.kernel.org, Adam Ford <aford173@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 095/189] dt-bindings: panel: lvds: Fix path to display timing bindings
-Date:   Mon, 18 Jun 2018 10:13:11 +0200
-Message-Id: <20180618081213.040620418@linuxfoundation.org>
+Subject: [PATCH 4.14 097/189] ARM: dts: logicpd-som-lv: Fix WL127x Startup Issues
+Date:   Mon, 18 Jun 2018 10:13:13 +0200
+Message-Id: <20180618081213.119916043@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -52,31 +50,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Adam Ford <aford173@gmail.com>
 
-[ Upstream commit f130307054a59ca21d2396f386be77ebd2e8ca96 ]
+[ Upstream commit 189822cbcbf3ea37c26a15612d8f922c440bc0e0 ]
 
-Fixes: 14da3ed8dd08c581 ("devicetree/bindings: display: Document common
-panel properties")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Signed-off-by: Rob Herring <robh@kernel.org>
+The VAUX3 rail from the PMIC powers a clock driver which clocks
+the WL127x. This corrects a bug which did not correctly associate
+the vin-supply with the proper power rail.
+
+This also fixes a typo in the pinmuxing to properly configure the
+interrupt pin.
+
+Fixes: ab8dd3aed011 ("ARM: DTS: Add minimal Support for Logic PD
+DM3730 SOM-LV")
+
+Signed-off-by: Adam Ford <aford173@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- Documentation/devicetree/bindings/display/panel/panel-common.txt |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/logicpd-som-lv.dtsi |    9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
---- a/Documentation/devicetree/bindings/display/panel/panel-common.txt
-+++ b/Documentation/devicetree/bindings/display/panel/panel-common.txt
-@@ -38,7 +38,7 @@ Display Timings
-   require specific display timings. The panel-timing subnode expresses those
-   timings as specified in the timing subnode section of the display timing
-   bindings defined in
--  Documentation/devicetree/bindings/display/display-timing.txt.
-+  Documentation/devicetree/bindings/display/panel/display-timing.txt.
+--- a/arch/arm/boot/dts/logicpd-som-lv.dtsi
++++ b/arch/arm/boot/dts/logicpd-som-lv.dtsi
+@@ -26,7 +26,7 @@
+ 		gpio = <&gpio1 3 0>;   /* gpio_3 */
+ 		startup-delay-us = <70000>;
+ 		enable-active-high;
+-		vin-supply = <&vmmc2>;
++		vin-supply = <&vaux3>;
+ 	};
  
+ 	/* HS USB Host PHY on PORT 1 */
+@@ -235,7 +235,7 @@
+ 	};
+ 	wl127x_gpio: pinmux_wl127x_gpio_pin {
+ 		pinctrl-single,pins = <
+-			OMAP3_WKUP_IOPAD(0x2a0c, PIN_INPUT | MUX_MODE4)		/* sys_boot0.gpio_2 */
++			OMAP3_WKUP_IOPAD(0x2a0a, PIN_INPUT | MUX_MODE4)		/* sys_boot0.gpio_2 */
+ 			OMAP3_WKUP_IOPAD(0x2a0c, PIN_OUTPUT | MUX_MODE4)	/* sys_boot1.gpio_3 */
+ 		>;
+ 	};
+@@ -270,6 +270,11 @@
+ #include "twl4030.dtsi"
+ #include "twl4030_omap3.dtsi"
  
- Connectivity
++&vaux3 {
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++};
++
+ &twl {
+ 	twl_power: power {
+ 		compatible = "ti,twl4030-power-idle-osc-off", "ti,twl4030-power-idle";
 
 
