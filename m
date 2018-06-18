@@ -2,97 +2,98 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URG_BIZ,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1093C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:52:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4312C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:54:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82F7B208B1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:52:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOYNb5oK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82F7B208B1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id 38C5520864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:54:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38C5520864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754821AbeFRPwr (ORCPT
+        id S1755184AbeFRPyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:52:47 -0400
-Received: from mail-lf0-f66.google.com ([209.85.215.66]:39993 "EHLO
-        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752765AbeFRPwq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:52:46 -0400
-Received: by mail-lf0-f66.google.com with SMTP id q11-v6so25436809lfc.7
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:52:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=AQD6G6yBWFaAofnHIYUzUxsr4JneB/w07fY1sdQAtJw=;
-        b=TOYNb5oKrfS1/fmG6vG2inGd8bG1oE+/9h4WQS6TB1gravokP8u05+sCyGHBSbGiTj
-         3MGyWejjkJ+ChmzkbhVu6XYy54rehO2IsnVjZxLik+LZ+6EPQCHQjhjxXYs8w0+NnSpq
-         htlvmYHnf13j7A1s4ifKzczCbvnFwVaM975JZ5oeq0D6vCv4UEua3DhKM5LZCIFSLDlR
-         D1UCUKfBh07BraugJKzqM1SVIwAz4yx9WVl6zS/NX7OouEGkxP+T9slS7eUXo6bRFU1+
-         qaHDaDXZQWpIqfpYX5wQGf+gi+lkx6V1ZfmSoXP+estN8m46U53urmnaT+bBtJIUVMD+
-         adRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=AQD6G6yBWFaAofnHIYUzUxsr4JneB/w07fY1sdQAtJw=;
-        b=KOya+QRQ4B/D+zFBxC6JlXfIdqI5QgsSb8mYLNMfLz/JT0SvwDCu1RuNxp8sqqfcW6
-         QqpVF/vV7d3DMjnlAetUYYZHTKvGTRtFzqZ8Z0ZpIW81zO2jEfyuRdWH+F7lVuJE7nW0
-         uKWum/oNZLUsrqTMeN629q0MHhxYN9kTsCEQsx8+pf2aEIL2x+9e5TkWJYmmvV4+0FcV
-         qfSfAFT6Kt+Sg8YdouN1GhWx0yh7wyx96yqs1Vu5S0T4ifrRl7mK2nlc8GiuUNatLZ+i
-         ve3oeFxv0D1m2+AZ8wVSOX4cvfjw1nn87JWN1X5v3sdF15G0Mnm6L4MPFUTvB5jjeo7y
-         WV4Q==
-X-Gm-Message-State: APt69E0MlW2FBPN58Ux6+SG8VoND31oEQXXxwGhxbBl3uqO7kZOdO4Ew
-        kGZ4NqOkGRpTSJIPIYZNN14IoLUxa8v0lrCs7Uc=
-X-Google-Smtp-Source: ADUXVKJschH0exks40jGmpuA98ZSkE5n0F1bdIPCykqGYXQ7ZtyvTyCjaORQk1UIxQId/5Ej87hU2/xrJ2+t/ubN5fA=
-X-Received: by 2002:a19:97cb:: with SMTP id z194-v6mr8369747lfd.17.1529337164798;
- Mon, 18 Jun 2018 08:52:44 -0700 (PDT)
+        Mon, 18 Jun 2018 11:54:06 -0400
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:37288 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1754974AbeFRPyF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:54:05 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 172181529;
+        Mon, 18 Jun 2018 08:54:05 -0700 (PDT)
+Received: from edgewater-inn.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DBBCD3F557;
+        Mon, 18 Jun 2018 08:54:04 -0700 (PDT)
+Received: by edgewater-inn.cambridge.arm.com (Postfix, from userid 1000)
+        id 456611AE10A0; Mon, 18 Jun 2018 16:54:40 +0100 (BST)
+Date:   Mon, 18 Jun 2018 16:54:40 +0100
+From:   Will Deacon <will.deacon@arm.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-kernel@vger.kernel.org, peterz@infradead.org,
+        boqun.feng@gmail.com, mingo@kernel.org,
+        Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>
+Subject: Re: [PATCHv3 09/18] atomics/alpha: define atomic64_fetch_add_unless()
+Message-ID: <20180618155439.GD11612@arm.com>
+References: <20180618101919.51973-1-mark.rutland@arm.com>
+ <20180618101919.51973-10-mark.rutland@arm.com>
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:52:43
- -0700 (PDT)
-In-Reply-To: <s5htvq0w12d.wl-tiwai@suse.de>
-References: <20180618154108.2227779-1-arnd@arndb.de> <s5htvq0w12d.wl-tiwai@suse.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 18 Jun 2018 17:52:43 +0200
-X-Google-Sender-Auth: USbGkKeL7L9P6a6ZrRg3DFdCr1k
-Message-ID: <CAK8P3a13rsTxinJ5m6-VOZJx6pXeWav41AQNtS7dSMahYzqXaw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ALSA: use ktime_get_raw_ts64() instead of getrawmonotonic64()
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180618101919.51973-10-mark.rutland@arm.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 5:45 PM, Takashi Iwai <tiwai@suse.de> wrote:
-> On Mon, 18 Jun 2018 17:41:00 +0200,
-> Arnd Bergmann wrote:
->>
->> The API got renamed for consistency and the old name will
->> be removed once the last users are gone.
->>
->> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
->
-> These two fixes can be postponed for 4.19, or urgently needed for
-> 4.18?  I suppose the former, but just to be sure.
+On Mon, Jun 18, 2018 at 11:19:10AM +0100, Mark Rutland wrote:
+> As a step towards unifying the atomic/atomic64/atomic_long APIs, this
+> patch converts the arch/alpha implementation of atomic64_add_unless() into
+> an implementation of atomic64_fetch_add_unless().
+> 
+> A wrapper in <linux/atomic.h> will build atomic_add_unless() atop of
+> this, provided it is given a preprocessor definition.
+> 
+> No functional change is intended as a result of this patch.
+> 
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Cc: Boqun Feng <boqun.feng@gmail.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Richard Henderson <rth@twiddle.net>
+> Cc: Ivan Kokshaysky <ink@jurassic.park.msu.ru>
+> Cc: Matt Turner <mattst88@gmail.com>
+> ---
+>  arch/alpha/include/asm/atomic.h | 23 ++++++++++++-----------
+>  1 file changed, 12 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/alpha/include/asm/atomic.h b/arch/alpha/include/asm/atomic.h
+> index 4a800a3424a3..dcb7bbeeae02 100644
+> --- a/arch/alpha/include/asm/atomic.h
+> +++ b/arch/alpha/include/asm/atomic.h
+> @@ -238,35 +238,36 @@ static __inline__ int atomic_fetch_add_unless(atomic_t *v, int a, int u)
+>  #define atomic_fetch_add_unless atomic_fetch_add_unless
+>  
+>  /**
+> - * atomic64_add_unless - add unless the number is a given value
+> + * atomic64_fetch_add_unless - add unless the number is a given value
+>   * @v: pointer of type atomic64_t
+>   * @a: the amount to add to v...
+>   * @u: ...unless v is equal to u.
+>   *
+>   * Atomically adds @a to @v, so long as it was not @u.
+> - * Returns true iff @v was not @u.
+> + * Returns the old value of @v.
+>   */
+> -static __inline__ int atomic64_add_unless(atomic64_t *v, long a, long u)
+> +static __inline__ int atomic64_fetch_add_unless(atomic64_t *v, long a, long u)
 
-Not urgent at all. I also noticed (slightly too late) that the first one doesn't
-even apply,
-I had written it on top of my tree that contained the previously discussed
-API conversion, which Baolin and I still need to follow up on. I'll fold
-the first patch into that series, please apply just the seconds patch
-for 4.19 for now.
+Don't you want a 64-bit return type (e.g. long) here?
 
-        Arnd
+Will
