@@ -3,97 +3,105 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF0BC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D69CC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2012D20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2012D20874
+	by mail.kernel.org (Postfix) with ESMTP id 52E8B20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E8B20874
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933468AbeFRIHT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:07:19 -0400
-Received: from ns.mm-sol.com ([37.157.136.199]:60036 "EHLO extserv.mm-sol.com"
+        id S933417AbeFRIHS (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:07:18 -0400
+Received: from ns.mm-sol.com ([37.157.136.199]:60037 "EHLO extserv.mm-sol.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932792AbeFRIHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S932763AbeFRIHQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Jun 2018 04:07:16 -0400
 Received: from mms-0439.qualcomm.mm-sol.com (unknown [37.157.136.206])
-        by extserv.mm-sol.com (Postfix) with ESMTPSA id 2D42BCD33;
+        by extserv.mm-sol.com (Postfix) with ESMTPSA id 1BD4DCD2F;
         Mon, 18 Jun 2018 11:07:15 +0300 (EEST)
 From:   Todor Tomov <todor.tomov@linaro.org>
 To:     mchehab@kernel.org, sakari.ailus@linux.intel.com,
         linux-media@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, Todor Tomov <todor.tomov@linaro.org>
-Subject: [PATCH 2/2] media: ov5645: Report number of skip frames
-Date:   Mon, 18 Jun 2018 11:06:59 +0300
-Message-Id: <1529309219-27404-2-git-send-email-todor.tomov@linaro.org>
+Subject: [PATCH 1/2] media: ov5645: Supported external clock is 24MHz
+Date:   Mon, 18 Jun 2018 11:06:58 +0300
+Message-Id: <1529309219-27404-1-git-send-email-todor.tomov@linaro.org>
 X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529309219-27404-1-git-send-email-todor.tomov@linaro.org>
-References: <1529309219-27404-1-git-send-email-todor.tomov@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The OV5645 supports automatic exposure (AE) and automatic white
-balance (AWB). When streaming is started it takes up to 5 frames
-until the AE and AWB converge and output a frame with good quality.
-
-Implement g_skip_frames to report number of frames to be skipped
-when streaming is started.
+The external clock frequency was set to 23.88MHz by mistake
+because of a platform which cannot get closer to 24MHz.
+The supported by the driver external clock is 24MHz so
+set it correctly and also fix the values of the pixel
+clock and link clock.
+However allow 1% tolerance to the external clock as this
+difference is small enough to be insignificant.
 
 Signed-off-by: Todor Tomov <todor.tomov@linaro.org>
 ---
- drivers/media/i2c/ov5645.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ drivers/media/i2c/ov5645.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/media/i2c/ov5645.c b/drivers/media/i2c/ov5645.c
-index 1722cda..00bc3c0 100644
+index b3f7625..1722cda 100644
 --- a/drivers/media/i2c/ov5645.c
 +++ b/drivers/media/i2c/ov5645.c
-@@ -70,6 +70,9 @@
- #define OV5645_SDE_SAT_U		0x5583
- #define OV5645_SDE_SAT_V		0x5584
- 
-+/* Number of frames needed for AE and AWB to converge */
-+#define OV5645_NUM_OF_SKIP_FRAMES 5
-+
- struct reg_value {
- 	u16 reg;
- 	u8 val;
-@@ -1071,6 +1074,13 @@ static int ov5645_s_stream(struct v4l2_subdev *subdev, int enable)
- 	return 0;
- }
- 
-+static int ov5645_get_skip_frames(struct v4l2_subdev *sd, u32 *frames)
-+{
-+	*frames = OV5645_NUM_OF_SKIP_FRAMES;
-+
-+	return 0;
-+}
-+
- static const struct v4l2_subdev_core_ops ov5645_core_ops = {
- 	.s_power = ov5645_s_power,
- };
-@@ -1088,10 +1098,15 @@ static const struct v4l2_subdev_pad_ops ov5645_subdev_pad_ops = {
- 	.get_selection = ov5645_get_selection,
+@@ -510,8 +510,8 @@ static const struct reg_value ov5645_setting_full[] = {
  };
  
-+static const struct v4l2_subdev_sensor_ops ov5645_sensor_ops = {
-+	.g_skip_frames = ov5645_get_skip_frames,
-+};
-+
- static const struct v4l2_subdev_ops ov5645_subdev_ops = {
- 	.core = &ov5645_core_ops,
- 	.video = &ov5645_video_ops,
- 	.pad = &ov5645_subdev_pad_ops,
-+	.sensor = &ov5645_sensor_ops,
+ static const s64 link_freq[] = {
+-	222880000,
+-	334320000
++	224000000,
++	336000000
  };
  
- static int ov5645_probe(struct i2c_client *client,
+ static const struct ov5645_mode_info ov5645_mode_info_data[] = {
+@@ -520,7 +520,7 @@ static const struct ov5645_mode_info ov5645_mode_info_data[] = {
+ 		.height = 960,
+ 		.data = ov5645_setting_sxga,
+ 		.data_size = ARRAY_SIZE(ov5645_setting_sxga),
+-		.pixel_clock = 111440000,
++		.pixel_clock = 112000000,
+ 		.link_freq = 0 /* an index in link_freq[] */
+ 	},
+ 	{
+@@ -528,7 +528,7 @@ static const struct ov5645_mode_info ov5645_mode_info_data[] = {
+ 		.height = 1080,
+ 		.data = ov5645_setting_1080p,
+ 		.data_size = ARRAY_SIZE(ov5645_setting_1080p),
+-		.pixel_clock = 167160000,
++		.pixel_clock = 168000000,
+ 		.link_freq = 1 /* an index in link_freq[] */
+ 	},
+ 	{
+@@ -536,7 +536,7 @@ static const struct ov5645_mode_info ov5645_mode_info_data[] = {
+ 		.height = 1944,
+ 		.data = ov5645_setting_full,
+ 		.data_size = ARRAY_SIZE(ov5645_setting_full),
+-		.pixel_clock = 167160000,
++		.pixel_clock = 168000000,
+ 		.link_freq = 1 /* an index in link_freq[] */
+ 	},
+ };
+@@ -1145,7 +1145,8 @@ static int ov5645_probe(struct i2c_client *client,
+ 		return ret;
+ 	}
+ 
+-	if (xclk_freq != 23880000) {
++	/* external clock must be 24MHz, allow 1% tolerance */
++	if (xclk_freq < 23760000 || xclk_freq > 24240000) {
+ 		dev_err(dev, "external clock frequency %u is not supported\n",
+ 			xclk_freq);
+ 		return -EINVAL;
 -- 
 2.7.4
 
