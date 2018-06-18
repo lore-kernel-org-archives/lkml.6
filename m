@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B811C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 896EBC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52A5220864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52A5220864
+	by mail.kernel.org (Postfix) with ESMTP id 4FF97208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF97208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936162AbeFRIYb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:24:31 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56014 "EHLO
+        id S936199AbeFRIYl (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:24:41 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56066 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936091AbeFRIYW (ORCPT
+        with ESMTP id S936091AbeFRIYh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:24:22 -0400
+        Mon, 18 Jun 2018 04:24:37 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3909CBAD;
-        Mon, 18 Jun 2018 08:24:21 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A53A9BAD;
+        Mon, 18 Jun 2018 08:24:36 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Benoit Parrot <bparrot@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Sean Paul <seanpaul@chromium.org>,
+        stable@vger.kernel.org,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        "Michael J. Ruhl" <michael.j.ruhl@intel.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 195/279] drm/omap: check return value from soc_device_match
-Date:   Mon, 18 Jun 2018 10:13:00 +0200
-Message-Id: <20180618080616.985131718@linuxfoundation.org>
+Subject: [PATCH 4.16 173/279] IB/hfi1 Use correct type for num_user_context
+Date:   Mon, 18 Jun 2018 10:12:38 +0200
+Message-Id: <20180618080616.003228663@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,40 +52,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tomi Valkeinen <tomi.valkeinen@ti.com>
+From: "Michael J. Ruhl" <michael.j.ruhl@intel.com>
 
-[ Upstream commit 4d6cb5e2fee52af17001e92950f0894304706ee4 ]
+[ Upstream commit 5da9e742be44d9b7c68b1bf6e1aaf46a1aa7a52b ]
 
-soc_device_match() can return NULL, so add a check and fail if
-soc_device_match() fails.
+The module parameter num_user_context is defined as 'int' and
+defaults to -1.  The module_param_named() says that it is uint.
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Link: https://patchwork.freedesktop.org/patch/msgid/20180502091159.7071-2-tomi.valkeinen@ti.com
-Reviewed-by: Benoit Parrot <bparrot@ti.com>
-Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Correct module_param_named() type information and update the modinfo
+text to reflect the default value.
+
+Reviewed-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Michael J. Ruhl <michael.j.ruhl@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/omapdrm/dss/hdmi4_core.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/infiniband/hw/hfi1/init.c |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
-+++ b/drivers/gpu/drm/omapdrm/dss/hdmi4_core.c
-@@ -922,8 +922,13 @@ int hdmi4_core_init(struct platform_devi
- {
- 	const struct hdmi4_features *features;
- 	struct resource *res;
-+	const struct soc_device_attribute *soc;
+--- a/drivers/infiniband/hw/hfi1/init.c
++++ b/drivers/infiniband/hw/hfi1/init.c
+@@ -88,9 +88,9 @@
+  * pio buffers per ctxt, etc.)  Zero means use one user context per CPU.
+  */
+ int num_user_contexts = -1;
+-module_param_named(num_user_contexts, num_user_contexts, uint, S_IRUGO);
++module_param_named(num_user_contexts, num_user_contexts, int, 0444);
+ MODULE_PARM_DESC(
+-	num_user_contexts, "Set max number of user contexts to use");
++	num_user_contexts, "Set max number of user contexts to use (default: -1 will use the real (non-HT) CPU count)");
  
--	features = soc_device_match(hdmi4_soc_devices)->data;
-+	soc = soc_device_match(hdmi4_soc_devices);
-+	if (!soc)
-+		return -ENODEV;
-+
-+	features = soc->data;
- 	core->cts_swmode = features->cts_swmode;
- 	core->audio_use_mclk = features->audio_use_mclk;
- 
+ uint krcvqs[RXE_NUM_DATA_VL];
+ int krcvqsset;
 
 
