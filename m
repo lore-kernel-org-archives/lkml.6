@@ -2,344 +2,133 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8446C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18939C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:59:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6450C20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:58:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6450C20852
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id C3BD0208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:59:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pCJlympP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3BD0208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935647AbeFRK6r (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:58:47 -0400
-Received: from foss.arm.com ([217.140.101.70]:59948 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935421AbeFRK4r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:56:47 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 168E91650;
-        Mon, 18 Jun 2018 03:56:47 -0700 (PDT)
-Received: from en101.cambridge.arm.com (en101.cambridge.arm.com [10.1.206.73])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2C7CA3F25D;
-        Mon, 18 Jun 2018 03:56:46 -0700 (PDT)
-From:   Suzuki K Poulose <suzuki.poulose@arm.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, mathieu.poirier@linaro.org,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: [PATCH 5/6] coresight: catu: Add support for scatter gather tables
-Date:   Mon, 18 Jun 2018 11:56:18 +0100
-Message-Id: <1529319379-17895-6-git-send-email-suzuki.poulose@arm.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1529319379-17895-1-git-send-email-suzuki.poulose@arm.com>
-References: <1529319379-17895-1-git-send-email-suzuki.poulose@arm.com>
+        id S934709AbeFRK7b (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:59:31 -0400
+Received: from mail-lf0-f66.google.com ([209.85.215.66]:44247 "EHLO
+        mail-lf0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933605AbeFRK71 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 06:59:27 -0400
+Received: by mail-lf0-f66.google.com with SMTP id p23-v6so12242603lfh.11;
+        Mon, 18 Jun 2018 03:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=RqspwjyWW5d1MpGjILadsGerXh6vodVcZI2gsZCaqdo=;
+        b=pCJlympPtgSmJqm4YVSEE05siiWyCLgTvJwL6m72jitgjwbMQ4+dag49K7BszhixYi
+         0T3leTIMjcXy0DN7Y5svJJyOjUBCKh66Tc+Zk0eqRG2AgTRuWR3c6vjtaZnfhRLTOQqN
+         BO5zXdkGdydQdeMW7oryULbojFFLulpNmzZezENasb9DKk88NEjiiXnhrUbMY2IDD0A1
+         Zw2H8KJTjpuVd6NWUg7z59irfJtQ0Y1uNRCJ1+7P/hQv/SS9LGWxkfVuw+jogcdtqSjO
+         ed1gWp4fgeGhObcAT8E63RvS3ToYpOMnnxoMPTxONnY4CsXei+BbdlSMJ+wdLkm6TJDm
+         op8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=RqspwjyWW5d1MpGjILadsGerXh6vodVcZI2gsZCaqdo=;
+        b=PQh8vKlK8HrIGIAbV3Dq2F+0e/D5FWC1vVaoSJ+afu85P3S9jZRWVMmINUOBS0wH0T
+         efIJ6anqKQB9BCeyXXhinelaQEk/+R3/I50YB3YUVBWsQ3NR6NJgaMT3ges2FHA2YR84
+         Q6PWId5MH1Sw4lu2vOZ+JcoYPj68/0kgJ5KtnqxOZtCu+K4XLPz+yLYSYCfEnYXQ2EEL
+         KyJwvWPqXPCynaTxKGI78Wseq6Q1vZxpGrckWOnghdmfFis/YVewbgX2v/JtSIIrjILb
+         mhh+jVRJNO8eTtNLCsnUxbuynoFpeEUtMxQxmT5q52wkGdG2mHBoIKdJwkDMj5S3ZtbN
+         DQoA==
+X-Gm-Message-State: APt69E23kx73r+t4+j1Nb+0L9uL1XdK6MfQy8fuIOAqB2xDqVgj7AN7N
+        38qMPY1eWYnpOIw0/D/eGx9N7BGbGOTgfHMELwc=
+X-Google-Smtp-Source: ADUXVKJMgXWeh9+X3zdwaoqccLsssoMFt3j5Ctj5FUgJ+S8iT4cxXMrzFCdABOQeiAxdDbuXFhWUd8ONOdKjMqYKfaA=
+X-Received: by 2002:a2e:40d9:: with SMTP id r86-v6mr7852423lje.19.1529319565609;
+ Mon, 18 Jun 2018 03:59:25 -0700 (PDT)
+MIME-Version: 1.0
+Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 03:59:24
+ -0700 (PDT)
+In-Reply-To: <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
+References: <20180612054034.4969-1-songjun.wu@linux.intel.com>
+ <20180612054034.4969-2-songjun.wu@linux.intel.com> <CAK8P3a1=CBahrEE2uDRfdrSi=ALc5LBED1=KbLbLa40c9H8dmQ@mail.gmail.com>
+ <539411c1-82b7-cf76-71cf-d50f3303f50f@linux.intel.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 18 Jun 2018 12:59:24 +0200
+X-Google-Sender-Auth: gu4KI2rTFfqxs5zpg0x6cE7uD9o
+Message-ID: <CAK8P3a0WVxHU98zjY6d8jN0bDtwabFkrbcxr3a7xRkxSjD2ZLg@mail.gmail.com>
+Subject: Re: [PATCH 1/7] MIPS: dts: Add aliases node for lantiq danube serial
+To:     "Wu, Songjun" <songjun.wu@linux.intel.com>
+Cc:     hua.ma@linux.intel.com, yixin.zhu@linux.intel.com,
+        chuanhua.lei@intel.com,
+        "open list:RALINK MIPS ARCHITECTURE" <linux-mips@linux-mips.org>,
+        qi-ming.wu@intel.com, linux-clk <linux-clk@vger.kernel.org>,
+        linux-serial@vger.kernel.org, DTML <devicetree@vger.kernel.org>,
+        James Hogan <jhogan@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the support for setting up a SG table for use
-by the CATU. We reuse the tmc_sg_table to represent the table/data
-pages, even though the table format is different.
+On Mon, Jun 18, 2018 at 11:42 AM, Wu, Songjun
+<songjun.wu@linux.intel.com> wrote:
+> On 6/14/2018 6:03 PM, Arnd Bergmann wrote:
+>>
+>> On Tue, Jun 12, 2018 at 7:40 AM, Songjun Wu <songjun.wu@linux.intel.com>
+>> wrote:
+>>>
+>>> Previous implementation uses a hard-coded register value to check if
+>>> the current serial entity is the console entity.
+>>> Now the lantiq serial driver uses the aliases for the index of the
+>>> serial port.
+>>> The lantiq danube serial dts are updated with aliases to support this.
+>>>
+>>> Signed-off-by: Songjun Wu <songjun.wu@linux.intel.com>
+>>> ---
+>>>
+>>>   arch/mips/boot/dts/lantiq/danube.dtsi | 6 +++++-
+>>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/mips/boot/dts/lantiq/danube.dtsi
+>>> b/arch/mips/boot/dts/lantiq/danube.dtsi
+>>> index 2dd950181f8a..7a9e15da6bd0 100644
+>>> --- a/arch/mips/boot/dts/lantiq/danube.dtsi
+>>> +++ b/arch/mips/boot/dts/lantiq/danube.dtsi
+>>> @@ -4,6 +4,10 @@
+>>>          #size-cells = <1>;
+>>>          compatible = "lantiq,xway", "lantiq,danube";
+>>>
+>>> +       aliases {
+>>> +               serial0 = &asc1;
+>>> +       };
+>>> +
+>>
+>> You generally want the aliases to be part of the board specific file,
+>> not every board numbers their serial ports in the same way.
+>>
+>
+> In this chip only asc1 can be used as console,  so serial0 is defined in
+> chip specific file.
 
-Similar to ETR SG table, CATU uses a 4KB page size for data buffers
-as well as page tables. All table entries are 64bit wide and have
-the following format:
+This was a more general comment about 'aliases' being board specific
+in principle (though we've had exceptions in the past). Even if there
+is only one uart on the chip, I'd recommend following the same
+conventions as the other chips that have more than one uart.
 
-        63                      12      1  0
-        x-----------------------------------x
-        |        Address [63-12] | SBZ  | V |
-        x-----------------------------------x
-
-	Where [V] ->	 0 - Pointer is invalid
-			 1 - Pointer is Valid
-
-CATU uses only first half of the page for data page pointers.
-i.e, single table page will only have 256 page pointers, addressing
-upto 1MB of data. The second half of a table page contains only two
-pointers at the end of the page (i.e, pointers at index 510 and 511),
-which are used as links to the "Previous" and "Next" page tables
-respectively.
-
-The first table page has an "Invalid" previous pointer and the
-next pointer entry points to the second page table if there is one.
-Similarly the last table page has an "Invalid" next pointer to
-indicate the end of the table chain.
-
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
----
- drivers/hwtracing/coresight/coresight-catu.c | 249 +++++++++++++++++++++++++++
- 1 file changed, 249 insertions(+)
-
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index 11c84cb..95064c3 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -16,10 +16,259 @@
- 
- #include "coresight-catu.h"
- #include "coresight-priv.h"
-+#include "coresight-tmc.h"
- 
- #define csdev_to_catu_drvdata(csdev)	\
- 	dev_get_drvdata(csdev->dev.parent)
- 
-+/* Verbose output for CATU table contents */
-+#ifdef CATU_DEBUG
-+#define catu_dbg(x, ...) dev_dbg(x, __VA_ARGS__)
-+#else
-+#define catu_dbg(x, ...) do {} while (0)
-+#endif
-+
-+/*
-+ * CATU uses a page size of 4KB for page tables as well as data pages.
-+ * Each 64bit entry in the table has the following format.
-+ *
-+ *	63			12	1  0
-+ *	------------------------------------
-+ *	|	 Address [63-12] | SBZ	| V|
-+ *	------------------------------------
-+ *
-+ * Where bit[0] V indicates if the address is valid or not.
-+ * Each 4K table pages have upto 256 data page pointers, taking upto 2K
-+ * size. There are two Link pointers, pointing to the previous and next
-+ * table pages respectively at the end of the 4K page. (i.e, entry 510
-+ * and 511).
-+ *  E.g, a table of two pages could look like :
-+ *
-+ *                 Table Page 0               Table Page 1
-+ * SLADDR ===> x------------------x  x--> x-----------------x
-+ * INADDR    ->|  Page 0      | V |  |    | Page 256    | V | <- INADDR+1M
-+ *             |------------------|  |    |-----------------|
-+ * INADDR+4K ->|  Page 1      | V |  |    |                 |
-+ *             |------------------|  |    |-----------------|
-+ *             |  Page 2      | V |  |    |                 |
-+ *             |------------------|  |    |-----------------|
-+ *             |   ...        | V |  |    |    ...          |
-+ *             |------------------|  |    |-----------------|
-+ * INADDR+1020K|  Page 255    | V |  |    |   Page 511  | V |
-+ * SLADDR+2K==>|------------------|  |    |-----------------|
-+ *             |  UNUSED      |   |  |    |                 |
-+ *             |------------------|  |    |                 |
-+ *             |  UNUSED      |   |  |    |                 |
-+ *             |------------------|  |    |                 |
-+ *             |    ...       |   |  |    |                 |
-+ *             |------------------|  |    |-----------------|
-+ *             |   IGNORED    | 0 |  |    | Table Page 0| 1 |
-+ *             |------------------|  |    |-----------------|
-+ *             |  Table Page 1| 1 |--x    | IGNORED     | 0 |
-+ *             x------------------x       x-----------------x
-+ * SLADDR+4K==>
-+ *
-+ * The base input address (used by the ETR, programmed in INADDR_{LO,HI})
-+ * must be aligned to 1MB (the size addressable by a single page table).
-+ * The CATU maps INADDR{LO:HI} to the first page in the table pointed
-+ * to by SLADDR{LO:HI} and so on.
-+ *
-+ */
-+typedef u64 cate_t;
-+
-+#define CATU_PAGE_SHIFT		12
-+#define CATU_PAGE_SIZE		(1UL << CATU_PAGE_SHIFT)
-+#define CATU_PAGES_PER_SYSPAGE	(PAGE_SIZE / CATU_PAGE_SIZE)
-+
-+/* Page pointers are only allocated in the first 2K half */
-+#define CATU_PTRS_PER_PAGE	((CATU_PAGE_SIZE >> 1) / sizeof(cate_t))
-+#define CATU_PTRS_PER_SYSPAGE	(CATU_PAGES_PER_SYSPAGE * CATU_PTRS_PER_PAGE)
-+#define CATU_LINK_PREV		((CATU_PAGE_SIZE / sizeof(cate_t)) - 2)
-+#define CATU_LINK_NEXT		((CATU_PAGE_SIZE / sizeof(cate_t)) - 1)
-+
-+#define CATU_ADDR_SHIFT		12
-+#define CATU_ADDR_MASK		~(((cate_t)1 << CATU_ADDR_SHIFT) - 1)
-+#define CATU_ENTRY_VALID	((cate_t)0x1)
-+#define CATU_VALID_ENTRY(addr) \
-+	(((cate_t)(addr) & CATU_ADDR_MASK) | CATU_ENTRY_VALID)
-+#define CATU_ENTRY_ADDR(entry)	((cate_t)(entry) & ~((cate_t)CATU_ENTRY_VALID))
-+
-+/*
-+ * catu_get_table : Retrieve the table pointers for the given @offset
-+ * within the buffer. The buffer is wrapped around to a valid offset.
-+ *
-+ * Returns : The CPU virtual address for the beginning of the table
-+ * containing the data page pointer for @offset. If @daddrp is not NULL,
-+ * @daddrp points the DMA address of the beginning of the table.
-+ */
-+static inline cate_t *catu_get_table(struct tmc_sg_table *catu_table,
-+				     unsigned long offset,
-+				     dma_addr_t *daddrp)
-+{
-+	unsigned long buf_size = tmc_sg_table_buf_size(catu_table);
-+	unsigned int table_nr, pg_idx, pg_offset;
-+	struct tmc_pages *table_pages = &catu_table->table_pages;
-+	void *ptr;
-+
-+	/* Make sure offset is within the range */
-+	offset %= buf_size;
-+
-+	/*
-+	 * Each table can address 1MB and a single kernel page can
-+	 * contain "CATU_PAGES_PER_SYSPAGE" CATU tables.
-+	 */
-+	table_nr = offset >> 20;
-+	/* Find the table page where the table_nr lies in */
-+	pg_idx = table_nr / CATU_PAGES_PER_SYSPAGE;
-+	pg_offset = (table_nr % CATU_PAGES_PER_SYSPAGE) * CATU_PAGE_SIZE;
-+	if (daddrp)
-+		*daddrp = table_pages->daddrs[pg_idx] + pg_offset;
-+	ptr = page_address(table_pages->pages[pg_idx]);
-+	return (cate_t *)((unsigned long)ptr + pg_offset);
-+}
-+
-+#ifdef CATU_DEBUG
-+static void catu_dump_table(struct tmc_sg_table *catu_table)
-+{
-+	int i;
-+	cate_t *table;
-+	unsigned long table_end, buf_size, offset = 0;
-+
-+	buf_size = tmc_sg_table_buf_size(catu_table);
-+	dev_dbg(catu_table->dev,
-+		"Dump table %p, tdaddr: %llx\n",
-+		catu_table, catu_table->table_daddr);
-+
-+	while (offset < buf_size) {
-+		table_end = offset + SZ_1M < buf_size ?
-+			    offset + SZ_1M : buf_size;
-+		table = catu_get_table(catu_table, offset, NULL);
-+		for (i = 0; offset < table_end; i++, offset += CATU_PAGE_SIZE)
-+			dev_dbg(catu_table->dev, "%d: %llx\n", i, table[i]);
-+		dev_dbg(catu_table->dev, "Prev : %llx, Next: %llx\n",
-+			table[CATU_LINK_PREV], table[CATU_LINK_NEXT]);
-+		dev_dbg(catu_table->dev, "== End of sub-table ===");
-+	}
-+	dev_dbg(catu_table->dev, "== End of Table ===");
-+}
-+
-+#else
-+static inline void catu_dump_table(struct tmc_sg_table *catu_table)
-+{
-+}
-+#endif
-+
-+static inline cate_t catu_make_entry(dma_addr_t addr)
-+{
-+	return addr ? CATU_VALID_ENTRY(addr) : 0;
-+}
-+
-+/*
-+ * catu_populate_table : Populate the given CATU table.
-+ * The table is always populated as a circular table.
-+ * i.e, the "prev" link of the "first" table points to the "last"
-+ * table and the "next" link of the "last" table points to the
-+ * "first" table. The buffer should be made linear by calling
-+ * catu_set_table().
-+ */
-+static void
-+catu_populate_table(struct tmc_sg_table *catu_table)
-+{
-+	int i, dpidx, s_dpidx;
-+	unsigned long offset, buf_size, last_offset;
-+	dma_addr_t data_daddr;
-+	dma_addr_t prev_taddr, next_taddr, cur_taddr;
-+	cate_t *table_ptr, *next_table;
-+
-+	buf_size = tmc_sg_table_buf_size(catu_table);
-+	dpidx = s_dpidx = 0;
-+	offset = 0;
-+
-+	table_ptr = catu_get_table(catu_table, 0, &cur_taddr);
-+	prev_taddr = 0;	/* Prev link for the first table */
-+
-+	while (offset < buf_size) {
-+		/*
-+		 * The @offset is always 1M aligned here and we have an
-+		 * empty table @table_ptr to fill. Each table can address
-+		 * upto 1MB data buffer. The last table may have fewer
-+		 * entries if the buffer size is not aligned.
-+		 */
-+		last_offset = (offset + SZ_1M) < buf_size ?
-+			      (offset + SZ_1M) : buf_size;
-+		for (i = 0; offset < last_offset;
-+		     i++, offset += CATU_PAGE_SIZE) {
-+
-+			data_daddr = catu_table->data_pages.daddrs[dpidx] +
-+				     s_dpidx * CATU_PAGE_SIZE;
-+			catu_dbg(catu_table->dev,
-+				"[table %5ld:%03d] 0x%llx\n",
-+				(offset >> 20), i, data_daddr);
-+			table_ptr[i] = catu_make_entry(data_daddr);
-+			/* Move the pointers for data pages */
-+			s_dpidx = (s_dpidx + 1) % CATU_PAGES_PER_SYSPAGE;
-+			if (s_dpidx == 0)
-+				dpidx++;
-+		}
-+
-+		/*
-+		 * If we have finished all the valid entries, fill the rest of
-+		 * the table (i.e, last table page) with invalid entries,
-+		 * to fail the lookups.
-+		 */
-+		if (offset == buf_size) {
-+			memset(&table_ptr[i], 0,
-+			       sizeof(cate_t) * (CATU_PTRS_PER_PAGE - i));
-+			next_taddr = 0;
-+		} else {
-+			next_table = catu_get_table(catu_table,
-+						    offset, &next_taddr);
-+		}
-+
-+		table_ptr[CATU_LINK_PREV] = catu_make_entry(prev_taddr);
-+		table_ptr[CATU_LINK_NEXT] = catu_make_entry(next_taddr);
-+
-+		catu_dbg(catu_table->dev,
-+			"[table%5ld]: Cur: 0x%llx Prev: 0x%llx, Next: 0x%llx\n",
-+			(offset >> 20) - 1,  cur_taddr, prev_taddr, next_taddr);
-+
-+		/* Update the prev/next addresses */
-+		if (next_taddr) {
-+			prev_taddr = cur_taddr;
-+			cur_taddr = next_taddr;
-+			table_ptr = next_table;
-+		}
-+	}
-+
-+	/* Sync the table for device */
-+	tmc_sg_table_sync_table(catu_table);
-+}
-+
-+static struct tmc_sg_table __maybe_unused *
-+catu_init_sg_table(struct device *catu_dev, int node,
-+		   ssize_t size, void **pages)
-+{
-+	int nr_tpages;
-+	struct tmc_sg_table *catu_table;
-+
-+	/*
-+	 * Each table can address upto 1MB and we can have
-+	 * CATU_PAGES_PER_SYSPAGE tables in a system page.
-+	 */
-+	nr_tpages = DIV_ROUND_UP(size, SZ_1M) / CATU_PAGES_PER_SYSPAGE;
-+	catu_table = tmc_alloc_sg_table(catu_dev, node, nr_tpages,
-+					size >> PAGE_SHIFT, pages);
-+	if (IS_ERR(catu_table))
-+		return catu_table;
-+
-+	catu_populate_table(catu_table);
-+	dev_dbg(catu_dev,
-+		"Setup table %p, size %ldKB, %d table pages\n",
-+		catu_table, (unsigned long)size >> 10,  nr_tpages);
-+	catu_dump_table(catu_table);
-+	return catu_table;
-+}
-+
- coresight_simple_reg32(struct catu_drvdata, devid, CORESIGHT_DEVID);
- coresight_simple_reg32(struct catu_drvdata, control, CATU_CONTROL);
- coresight_simple_reg32(struct catu_drvdata, status, CATU_STATUS);
--- 
-2.7.4
-
+       Arnd
