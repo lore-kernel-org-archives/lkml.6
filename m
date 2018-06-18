@@ -6,112 +6,138 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DE6C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 011D5C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:51:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5922320652
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:50:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5922320652
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id BBBB720652
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:51:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBBB720652
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935948AbeFRJul (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:50:41 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39307 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S934168AbeFRJu2 (ORCPT
+        id S935986AbeFRJvN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:51:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55300 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933337AbeFRIVY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:50:28 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id w5I9muKD006881;
-        Mon, 18 Jun 2018 11:49:46 +0200
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2jpabag29v-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 18 Jun 2018 11:49:46 +0200
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 2886048;
-        Mon, 18 Jun 2018 09:49:45 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B75EA5A56;
-        Mon, 18 Jun 2018 09:49:44 +0000 (GMT)
-Received: from SFHDAG5NODE1.st.com (10.75.127.13) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Mon, 18 Jun
- 2018 11:49:44 +0200
-Received: from SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6]) by
- SFHDAG5NODE1.st.com ([fe80::cc53:528c:36c8:95f6%20]) with mapi id
- 15.00.1347.000; Mon, 18 Jun 2018 11:49:44 +0200
-From:   Hugues FRUCHET <hugues.fruchet@st.com>
-To:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-CC:     Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        "Philipp Zabel" <p.zabel@pengutronix.de>,
-        Niklas Soderlund <niklas.soderlund+renesas@ragnatech.se>,
-        Benjamin Gaignard <benjamin.gaignard@linaro.org>,
-        "Gustavo A. R. Silva" <garsilva@embeddedor.com>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] media: stm32-dcmi: add mandatory of_node_put() in
- success path
-Thread-Topic: [PATCH 2/2] media: stm32-dcmi: add mandatory of_node_put() in
- success path
-Thread-Index: AQHUAnIXQgFv13jwGk6FR46PvILaiKRlrPKA
-Date:   Mon, 18 Jun 2018 09:49:44 +0000
-Message-ID: <7f3ca88b-e1b0-ea2c-da02-63da5cdc9e09@st.com>
-References: <1528824138-19089-1-git-send-email-hofrat@osadl.org>
- <1528824138-19089-2-git-send-email-hofrat@osadl.org>
-In-Reply-To: <1528824138-19089-2-git-send-email-hofrat@osadl.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.44]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <ED13F2B41F034A4AA7F6E8862EA2BF13@st.com>
-Content-Transfer-Encoding: base64
+        Mon, 18 Jun 2018 04:21:24 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 637D8C7A;
+        Mon, 18 Jun 2018 08:21:23 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Gianluca Borello <g.borello@gmail.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 099/279] bpf, x64: fix JIT emission for dead code
+Date:   Mon, 18 Jun 2018 10:11:24 +0200
+Message-Id: <20180618080612.899041223@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-18_03:,,
- signatures=0
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgTmljaG9sYXMsDQpUaGFua3MgZm9yIHBhdGNoLg0KQlIsDQpIdWd1ZXMuDQoNCk9uIDA2LzEy
-LzIwMTggMDc6MjIgUE0sIE5pY2hvbGFzIE1jIEd1aXJlIHdyb3RlOg0KPiBUaGUgZW5kcG9pbnQg
-YWxsb2NhdGVkIGJ5IG9mX2dyYXBoX2dldF9uZXh0X2VuZHBvaW50KCkgbmVlZHMgYW4gb2Zfbm9k
-ZV9wdXQoKQ0KPiBpbiBib3RoIGVycm9yIGFuZCBzdWNjZXNzIHBhdGguIEFzICBlcCAgaXMgbm90
-IHVzZWQgdGhlIHJlZmNvdW50IGRlY3JlbWVudA0KPiBjYW4gYmUgcmlnaHQgYWZ0ZXIgdGhlIGxh
-c3QgdXNlIG9mICBlcC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE5pY2hvbGFzIE1jIEd1aXJlIDxo
-b2ZyYXRAb3NhZGwub3JnPg0KQWNrZWQtYnk6IEh1Z3VlcyBGcnVjaGV0IDxodWd1ZXMuZnJ1Y2hl
-dEBzdC5jb20+DQoNCj4gRml4ZXM6IGNvbW1pdCAzNzQwNGY5MWVmOGIgKCJbbWVkaWFdIHN0bTMy
-LWRjbWk6IFNUTTMyIERDTUkgY2FtZXJhIGludGVyZmFjZSBkcml2ZXIiKQ0KPiAtLS0NCj4gDQo+
-IFByb2JsZW0gbG9jYXRlZCB3aXRoIGFuIGV4cGVyaW1lbnRhbCBjb2NjaW5lbGxlIHNjcmlwdA0K
-PiANCj4gUGF0Y2ggd2FzIGNvbXBpbGUgdGVzdGVkIHdpdGg6IHg4Nl82NF9kZWZjb25maWcsIE1F
-RElBX1NVUFBPUlQ9eQ0KPiBNRURJQV9DQU1FUkFfU1VQUE9SVD15LCBWNExfUExBVEZPUk1fRFJJ
-VkVSUz15LCBPRj15LCBDT01QSUxFX1RFU1Q9eQ0KPiBDT05GSUdfVklERU9fU1RNMzJfRENNST15
-DQo+IChUaGVyZSBhcmUgYSBudW1iZXIgb2Ygc3BhcnNlIHdhcm5pbmdzIC0gbm90IHJlbGF0ZWQg
-dG8gdGhlIGNoYW5nZXMgdGhvdWdoKQ0KPiANCj4gUGF0Y2ggaXMgb24gdG9wIG9mICJbUEFUQ0gg
-MS8yXSBtZWRpYTogc3RtMzItZGNtaTogZHJvcCB1bm5lY2VlYXJ5IHdoaWxlKDEpDQo+IGxvb3Ai
-IGFnYWluc3QgNC4xNy4wIChsb2NhbHZlcnNpb24tbmV4dCBpcyBuZXh0LTIwMTgwNjA4KQ0KPiAN
-Cj4gICBkcml2ZXJzL21lZGlhL3BsYXRmb3JtL3N0bTMyL3N0bTMyLWRjbWkuYyB8IDUgKystLS0N
-Cj4gICAxIGZpbGUgY2hhbmdlZCwgMiBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KPiAN
-Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvcGxhdGZvcm0vc3RtMzIvc3RtMzItZGNtaS5j
-IGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdG0zMi9zdG0zMi1kY21pLmMNCj4gaW5kZXggNzBi
-ODFkMi4uNTQyZDE0OCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdG0z
-Mi9zdG0zMi1kY21pLmMNCj4gKysrIGIvZHJpdmVycy9tZWRpYS9wbGF0Zm9ybS9zdG0zMi9zdG0z
-Mi1kY21pLmMNCj4gQEAgLTE2MTAsMTAgKzE2MTAsOSBAQCBzdGF0aWMgaW50IGRjbWlfZ3JhcGhf
-cGFyc2Uoc3RydWN0IHN0bTMyX2RjbWkgKmRjbWksIHN0cnVjdCBkZXZpY2Vfbm9kZSAqbm9kZSkN
-Cj4gICAJCXJldHVybiAtRUlOVkFMOw0KPiAgIA0KPiAgIAlyZW1vdGUgPSBvZl9ncmFwaF9nZXRf
-cmVtb3RlX3BvcnRfcGFyZW50KGVwKTsNCj4gLQlpZiAoIXJlbW90ZSkgew0KPiAtCQlvZl9ub2Rl
-X3B1dChlcCk7DQo+ICsJb2Zfbm9kZV9wdXQoZXApOw0KPiArCWlmICghcmVtb3RlKQ0KPiAgIAkJ
-cmV0dXJuIC1FSU5WQUw7DQo+IC0JfQ0KPiAgIA0KPiAgIAkvKiBSZW1vdGUgbm9kZSB0byBjb25u
-ZWN0ICovDQo+ICAgCWRjbWktPmVudGl0eS5ub2RlID0gcmVtb3RlOw0KPiA=
+4.16-stable review patch.  If anyone has any objections, please let me know.
+
+------------------
+
+From: Gianluca Borello <g.borello@gmail.com>
+
+[ Upstream commit 1612a981b76688c598dc944bbfbe29a2b33e3973 ]
+
+Commit 2a5418a13fcf ("bpf: improve dead code sanitizing") replaced dead
+code with a series of ja-1 instructions, for safety. That made JIT
+compilation much more complex for some BPF programs. One instance of such
+programs is, for example:
+
+bool flag = false
+...
+/* A bunch of other code */
+...
+if (flag)
+        do_something()
+
+In some cases llvm is not able to remove at compile time the code for
+do_something(), so the generated BPF program ends up with a large amount
+of dead instructions. In one specific real life example, there are two
+series of ~500 and ~1000 dead instructions in the program. When the
+verifier replaces them with a series of ja-1 instructions, it causes an
+interesting behavior at JIT time.
+
+During the first pass, since all the instructions are estimated at 64
+bytes, the ja-1 instructions end up being translated as 5 bytes JMP
+instructions (0xE9), since the jump offsets become increasingly large (>
+127) as each instruction gets discovered to be 5 bytes instead of the
+estimated 64.
+
+Starting from the second pass, the first N instructions of the ja-1
+sequence get translated into 2 bytes JMPs (0xEB) because the jump offsets
+become <= 127 this time. In particular, N is defined as roughly 127 / (5
+- 2) ~= 42. So, each further pass will make the subsequent N JMP
+instructions shrink from 5 to 2 bytes, making the image shrink every time.
+This means that in order to have the entire program converge, there need
+to be, in the real example above, at least ~1000 / 42 ~= 24 passes just
+for translating the dead code. If we add this number to the passes needed
+to translate the other non dead code, it brings such program to 40+
+passes, and JIT doesn't complete. Ultimately the userspace loader fails
+because such BPF program was supposed to be part of a prog array owner
+being JITed.
+
+While it is certainly possible to try to refactor such programs to help
+the compiler remove dead code, the behavior is not really intuitive and it
+puts further burden on the BPF developer who is not expecting such
+behavior. To make things worse, such programs are working just fine in all
+the kernel releases prior to the ja-1 fix.
+
+A possible approach to mitigate this behavior consists into noticing that
+for ja-1 instructions we don't really need to rely on the estimated size
+of the previous and current instructions, we know that a -1 BPF jump
+offset can be safely translated into a 0xEB instruction with a jump offset
+of -2.
+
+Such fix brings the BPF program in the previous example to complete again
+in ~9 passes.
+
+Fixes: 2a5418a13fcf ("bpf: improve dead code sanitizing")
+Signed-off-by: Gianluca Borello <g.borello@gmail.com>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ arch/x86/net/bpf_jit_comp.c |   12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+--- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -992,7 +992,17 @@ emit_cond_jmp:		/* convert BPF opcode to
+ 			break;
+ 
+ 		case BPF_JMP | BPF_JA:
+-			jmp_offset = addrs[i + insn->off] - addrs[i];
++			if (insn->off == -1)
++				/* -1 jmp instructions will always jump
++				 * backwards two bytes. Explicitly handling
++				 * this case avoids wasting too many passes
++				 * when there are long sequences of replaced
++				 * dead code.
++				 */
++				jmp_offset = -2;
++			else
++				jmp_offset = addrs[i + insn->off] - addrs[i];
++
+ 			if (!jmp_offset)
+ 				/* optimize out nop jumps */
+ 				break;
+
+
