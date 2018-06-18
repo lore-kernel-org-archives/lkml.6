@@ -6,92 +6,96 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D40B1C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C685CC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F4A20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98F4A20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 8251520864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:39:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8251520864
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030524AbeFRIjF (ORCPT
+        id S1030537AbeFRIjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:39:05 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37208 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030504AbeFRIit (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:38:49 -0400
-Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 64099C49;
-        Mon, 18 Jun 2018 08:38:48 +0000 (UTC)
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Wei Wang <weiwan@google.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Benjamin Gilbert <benjamin.gilbert@coreos.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 4.14 189/189] tcp: do not overshoot window_clamp in tcp_rcv_space_adjust()
-Date:   Mon, 18 Jun 2018 10:14:45 +0200
-Message-Id: <20180618081216.811616359@linuxfoundation.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
-References: <20180618081209.254234434@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
+        Mon, 18 Jun 2018 04:39:13 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:53675 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1030504AbeFRIjK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 04:39:10 -0400
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id F332A207A5; Mon, 18 Jun 2018 10:39:08 +0200 (CEST)
+Received: from bbrezillon (AAubervilliers-681-1-37-30.w90-88.abo.wanadoo.fr [90.88.156.30])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 9A13220012;
+        Mon, 18 Jun 2018 10:39:08 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 10:39:08 +0200
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Peter Rosin <peda@axentia.se>
+Cc:     linux-kernel@vger.kernel.org,
+        Wenyou Yang <wenyou.yang@microchip.com>,
+        Josh Wu <rainyfeeling@outlook.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Cyrille Pitchen <cyrille.pitchen@wedev4u.fr>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-mtd@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: nand: raw: atmel: add module param to avoid using
+ dma
+Message-ID: <20180618103908.17a04679@bbrezillon>
+In-Reply-To: <20180329131054.22506-1-peda@axentia.se>
+References: <20180329131054.22506-1-peda@axentia.se>
+X-Mailer: Claws Mail 3.15.0-dirty (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+On Thu, 29 Mar 2018 15:10:54 +0200
+Peter Rosin <peda@axentia.se> wrote:
 
-------------------
+> On a sama5d31 with a Full-HD dual LVDS panel (132MHz pixel clock) NAND
+> flash accesses have a tendency to cause display disturbances. Add a
+> module param to disable DMA from the NAND controller, since that fixes
+> the display problem for me.
+> 
+> Signed-off-by: Peter Rosin <peda@axentia.se>
 
-From: Eric Dumazet <edumazet@google.com>
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-commit 02db55718d53f9d426cee504c27fb768e9ed4ffe upstream.
+Miquel, can you queue this one to nand/next.
 
-While rcvbuf is properly clamped by tcp_rmem[2], rcvwin
-is left to a potentially too big value.
-
-It has no serious effect, since :
-1) tcp_grow_window() has very strict checks.
-2) window_clamp can be mangled by user space to any value anyway.
-
-tcp_init_buffer_space() and companions use tcp_full_space(),
-we use tcp_win_from_space() to avoid reloading sk->sk_rcvbuf
-
-Signed-off-by: Eric Dumazet <edumazet@google.com>
-Acked-by: Soheil Hassas Yeganeh <soheil@google.com>
-Acked-by: Wei Wang <weiwan@google.com>
-Acked-by: Neal Cardwell <ncardwell@google.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Cc: Benjamin Gilbert <benjamin.gilbert@coreos.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
----
- net/ipv4/tcp_input.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
---- a/net/ipv4/tcp_input.c
-+++ b/net/ipv4/tcp_input.c
-@@ -647,7 +647,7 @@ void tcp_rcv_space_adjust(struct sock *s
- 			sk->sk_rcvbuf = rcvbuf;
- 
- 			/* Make the window clamp follow along.  */
--			tp->window_clamp = rcvwin;
-+			tp->window_clamp = tcp_win_from_space(rcvbuf);
- 		}
- 	}
- 	tp->rcvq_space.space = copied;
-
+> ---
+>  drivers/mtd/nand/raw/atmel/nand-controller.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/nand/raw/atmel/nand-controller.c b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> index b2f00b398490..2ff7a77c7b8e 100644
+> --- a/drivers/mtd/nand/raw/atmel/nand-controller.c
+> +++ b/drivers/mtd/nand/raw/atmel/nand-controller.c
+> @@ -129,6 +129,11 @@
+>  #define DEFAULT_TIMEOUT_MS			1000
+>  #define MIN_DMA_LEN				128
+>  
+> +static bool atmel_nand_avoid_dma __read_mostly;
+> +
+> +MODULE_PARM_DESC(avoiddma, "Avoid using DMA");
+> +module_param_named(avoiddma, atmel_nand_avoid_dma, bool, 0400);
+> +
+>  enum atmel_nand_rb_type {
+>  	ATMEL_NAND_NO_RB,
+>  	ATMEL_NAND_NATIVE_RB,
+> @@ -1977,7 +1982,7 @@ static int atmel_nand_controller_init(struct atmel_nand_controller *nc,
+>  		return ret;
+>  	}
+>  
+> -	if (nc->caps->has_dma) {
+> +	if (nc->caps->has_dma && !atmel_nand_avoid_dma) {
+>  		dma_cap_mask_t mask;
+>  
+>  		dma_cap_zero(mask);
 
