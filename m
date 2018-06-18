@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FC7FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:25:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82D9C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00F9D208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:25:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00F9D208A6
+	by mail.kernel.org (Postfix) with ESMTP id 6417720864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:25:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6417720864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965828AbeFRIZa (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:25:30 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56262 "EHLO
+        id S965852AbeFRIZj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:25:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56576 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965768AbeFRIZX (ORCPT
+        with ESMTP id S965354AbeFRIZf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:25:23 -0400
+        Mon, 18 Jun 2018 04:25:35 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9BC66C7F;
-        Mon, 18 Jun 2018 08:25:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 85CE7C9E;
+        Mon, 18 Jun 2018 08:25:34 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Howells <dhowells@redhat.com>,
+        stable@vger.kernel.org, Marian Rotariu <mrotariu@bitdefender.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 217/279] rxrpc: Fix error reception on AF_INET6 sockets
-Date:   Mon, 18 Jun 2018 10:13:22 +0200
-Message-Id: <20180618080617.835384607@linuxfoundation.org>
+Subject: [PATCH 4.16 221/279] x86: Delay skip of emulated hypercall instruction
+Date:   Mon, 18 Jun 2018 10:13:26 +0200
+Message-Id: <20180618080617.988782810@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -49,94 +50,85 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Howells <dhowells@redhat.com>
+From: Marian Rotariu <mrotariu@bitdefender.com>
 
-[ Upstream commit f2aeed3a591ff29a82495eeaa92ac4780bad7487 ]
+[ Upstream commit 6356ee0c9602004e0a3b4b2dad68ee2ee9385b17 ]
 
-AF_RXRPC tries to turn on IP_RECVERR and IP_MTU_DISCOVER on the UDP socket
-it just opened for communications with the outside world, regardless of the
-type of socket.  Unfortunately, this doesn't work with an AF_INET6 socket.
+The IP increment should be done after the hypercall emulation, after
+calling the various handlers. In this way, these handlers can accurately
+identify the the IP of the VMCALL if they need it.
 
-Fix this by turning on IPV6_RECVERR and IPV6_MTU_DISCOVER instead if the
-socket is of the AF_INET6 family.
+This patch keeps the same functionality for the Hyper-V handler which does
+not use the return code of the standard kvm_skip_emulated_instruction()
+call.
 
-Without this, kAFS server and address rotation doesn't work correctly
-because the algorithm doesn't detect received network errors.
-
-Fixes: 75b54cb57ca3 ("rxrpc: Add IPv6 support")
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Marian Rotariu <mrotariu@bitdefender.com>
+[Hyper-V hypercalls also need kvm_skip_emulated_instruction() - Paolo]
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/rxrpc/local_object.c |   57 ++++++++++++++++++++++++++++++++++-------------
- 1 file changed, 42 insertions(+), 15 deletions(-)
+ arch/x86/kvm/hyperv.c |    2 +-
+ arch/x86/kvm/x86.c    |   19 +++++++++++--------
+ 2 files changed, 12 insertions(+), 9 deletions(-)
 
---- a/net/rxrpc/local_object.c
-+++ b/net/rxrpc/local_object.c
-@@ -133,22 +133,49 @@ static int rxrpc_open_socket(struct rxrp
- 		}
+--- a/arch/x86/kvm/hyperv.c
++++ b/arch/x86/kvm/hyperv.c
+@@ -1223,7 +1223,7 @@ static int kvm_hv_hypercall_complete_use
+ 	struct kvm_run *run = vcpu->run;
+ 
+ 	kvm_hv_hypercall_set_result(vcpu, run->hyperv.u.hcall.result);
+-	return 1;
++	return kvm_skip_emulated_instruction(vcpu);
+ }
+ 
+ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
+--- a/arch/x86/kvm/x86.c
++++ b/arch/x86/kvm/x86.c
+@@ -6553,12 +6553,13 @@ void kvm_vcpu_deactivate_apicv(struct kv
+ int kvm_emulate_hypercall(struct kvm_vcpu *vcpu)
+ {
+ 	unsigned long nr, a0, a1, a2, a3, ret;
+-	int op_64_bit, r;
++	int op_64_bit;
+ 
+-	r = kvm_skip_emulated_instruction(vcpu);
+-
+-	if (kvm_hv_hypercall_enabled(vcpu->kvm))
+-		return kvm_hv_hypercall(vcpu);
++	if (kvm_hv_hypercall_enabled(vcpu->kvm)) {
++		if (!kvm_hv_hypercall(vcpu))
++			return 0;
++		goto out;
++	}
+ 
+ 	nr = kvm_register_read(vcpu, VCPU_REGS_RAX);
+ 	a0 = kvm_register_read(vcpu, VCPU_REGS_RBX);
+@@ -6579,7 +6580,7 @@ int kvm_emulate_hypercall(struct kvm_vcp
+ 
+ 	if (kvm_x86_ops->get_cpl(vcpu) != 0) {
+ 		ret = -KVM_EPERM;
+-		goto out;
++		goto out_error;
  	}
  
--	/* we want to receive ICMP errors */
--	opt = 1;
--	ret = kernel_setsockopt(local->socket, SOL_IP, IP_RECVERR,
--				(char *) &opt, sizeof(opt));
--	if (ret < 0) {
--		_debug("setsockopt failed");
--		goto error;
--	}
-+	switch (local->srx.transport.family) {
-+	case AF_INET:
-+		/* we want to receive ICMP errors */
-+		opt = 1;
-+		ret = kernel_setsockopt(local->socket, SOL_IP, IP_RECVERR,
-+					(char *) &opt, sizeof(opt));
-+		if (ret < 0) {
-+			_debug("setsockopt failed");
-+			goto error;
-+		}
-+
-+		/* we want to set the don't fragment bit */
-+		opt = IP_PMTUDISC_DO;
-+		ret = kernel_setsockopt(local->socket, SOL_IP, IP_MTU_DISCOVER,
-+					(char *) &opt, sizeof(opt));
-+		if (ret < 0) {
-+			_debug("setsockopt failed");
-+			goto error;
-+		}
-+		break;
-+
-+	case AF_INET6:
-+		/* we want to receive ICMP errors */
-+		opt = 1;
-+		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_RECVERR,
-+					(char *) &opt, sizeof(opt));
-+		if (ret < 0) {
-+			_debug("setsockopt failed");
-+			goto error;
-+		}
-+
-+		/* we want to set the don't fragment bit */
-+		opt = IPV6_PMTUDISC_DO;
-+		ret = kernel_setsockopt(local->socket, SOL_IPV6, IPV6_MTU_DISCOVER,
-+					(char *) &opt, sizeof(opt));
-+		if (ret < 0) {
-+			_debug("setsockopt failed");
-+			goto error;
-+		}
-+		break;
- 
--	/* we want to set the don't fragment bit */
--	opt = IP_PMTUDISC_DO;
--	ret = kernel_setsockopt(local->socket, SOL_IP, IP_MTU_DISCOVER,
--				(char *) &opt, sizeof(opt));
--	if (ret < 0) {
--		_debug("setsockopt failed");
--		goto error;
-+	default:
-+		BUG();
+ 	switch (nr) {
+@@ -6599,12 +6600,14 @@ int kvm_emulate_hypercall(struct kvm_vcp
+ 		ret = -KVM_ENOSYS;
+ 		break;
  	}
+-out:
++out_error:
+ 	if (!op_64_bit)
+ 		ret = (u32)ret;
+ 	kvm_register_write(vcpu, VCPU_REGS_RAX, ret);
++
++out:
+ 	++vcpu->stat.hypercalls;
+-	return r;
++	return kvm_skip_emulated_instruction(vcpu);
+ }
+ EXPORT_SYMBOL_GPL(kvm_emulate_hypercall);
  
- 	/* set the socket up */
 
 
