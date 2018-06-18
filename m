@@ -2,97 +2,166 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5241AC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:10:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97F66C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:13:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F352720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:10:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BCBA20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:13:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XYhfLd06"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F352720874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="ubzrYzLK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BCBA20874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933346AbeFRIKJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:10:09 -0400
-Received: from bombadil.infradead.org ([198.137.202.133]:60844 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932918AbeFRIKI (ORCPT
+        id S933375AbeFRINW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:13:22 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:53896 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932650AbeFRINT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:10:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=x2dJnZekaDdeDwD7hQgNuSNkI/1aHMsETvW1BOmt+Oo=; b=XYhfLd06BixRLxQkFTCa/k4gN
-        71MrJ9OymIMWh5REZIYwAoFR6khRiSqZRMacbTvNzNaCShGKsf3H2dx8KDk3821+2OCQxAPf11H1v
-        aSmuV5YRhPDwkBco6dvb4z5zOOZ83nGkr5i9N/xQ4pgldFshPCirWIaq5uw6gl//5p3GiSMkTSN4C
-        jn7l9MoqWIYLerbYjznoBjC29UUfC1s9U7Errg1K+ZZyH1yTi0cHyE+Dqy19o9IxyyWgXW+u54+HD
-        wufYckbfWwlSiCXfMgN3roLujHHOvErLWtE4O0se1FS6lyTWGpALY0JM7j/KFd0CnFNP6k/nGDlXs
-        Yn9nbTIzQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1fUpEi-0005cB-2G; Mon, 18 Jun 2018 08:10:04 +0000
-Date:   Mon, 18 Jun 2018 01:10:03 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christopher Lameter <cl@linux.com>
-Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-rdma <linux-rdma@vger.kernel.org>,
-        John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH 0/2] mm: gup: don't unmap or drop filesystem buffers
-Message-ID: <20180618081003.GA20927@infradead.org>
-References: <20180617012510.20139-1-jhubbard@nvidia.com>
- <010001640fbe0dd8-f999e7f6-7b6e-4deb-b073-0c572006727d-000000@email.amazonses.com>
+        Mon, 18 Jun 2018 04:13:19 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 841E15C00F6;
+        Mon, 18 Jun 2018 10:13:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529309597;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=2dPFtroTXbedOtBBLnpJvcc/WiudRQXBF9oapdSuPKQ=;
+        b=ubzrYzLKTmJeeEaBdOBIJG4a+L8ceIyimjVU4+nNe4Z05XBJUYJV+TQ135ALtEmy1J09wf
+        jI4uwiu+G6UwN35X0VoOgOW4R5IV1cBW0aPL5aKnt8KYtU09owKo/8QXvVF7tS73L9sovP
+        3SBDtOxJUU02vcyQyVDHmKymXWkIx64=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <010001640fbe0dd8-f999e7f6-7b6e-4deb-b073-0c572006727d-000000@email.amazonses.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 18 Jun 2018 10:13:16 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Marek Vasut <marek.vasut@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sascha Hauer <s.hauer@pengutronix.de>
+Cc:     Leonard Crestez <leonard.crestez@nxp.com>, festevam@gmail.com,
+        marex@denx.de, shawnguo@kernel.org, devicetree@vger.kernel.org,
+        linux-fbdev@vger.kernel.org, marcofrk@gmail.com,
+        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        dl-linux-imx <linux-imx@nxp.com>, kernel@pengutronix.de,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/3] drm: mxsfb: Change driver.name to mxsfb-drm
+In-Reply-To: <20180618074320.GS3438@phenom.ffwll.local>
+References: <cover.1529091248.git.leonard.crestez@nxp.com>
+ <47ea7572011735b68a8a70f0e11bdf00cb2fd86a.1529091248.git.leonard.crestez@nxp.com>
+ <CAOMZO5B8i0gN+rCq-yPrd112NkwJWTxYCtsLVeLhD1JLRuX6EQ@mail.gmail.com>
+ <07be6d9a85b6be655fc2b084be81d8bf9715b57a.camel@nxp.com>
+ <638457fd-85da-8fec-d146-517c43f71813@denx.de>
+ <b3fa74c5110b45e5992920485749869ab1f7ebce.camel@nxp.com>
+ <6995fa4b-47a9-887b-5e4f-4284ca6a2c79@gmail.com>
+ <20180618074320.GS3438@phenom.ffwll.local>
+Message-ID: <85308177b3679d1103feee7a2b6e5879@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-2.35 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[16];
+         TAGGED_RCPT(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         URL_IN_SUBJECT(0.40)[driver.name];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-2.65)[98.45%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jun 17, 2018 at 09:54:31PM +0000, Christopher Lameter wrote:
-> On Sat, 16 Jun 2018, john.hubbard@gmail.com wrote:
+On 18.06.2018 09:43, Daniel Vetter wrote:
+> On Sat, Jun 16, 2018 at 01:32:44AM +0200, Marek Vasut wrote:
+>> On 06/16/2018 12:42 AM, Leonard Crestez wrote:
+>> > On Fri, 2018-06-15 at 23:36 +0200, Marek Vasut wrote:
+>> >> On 06/15/2018 10:58 PM, Leonard Crestez wrote:
+>> >>> On Fri, 2018-06-15 at 16:47 -0300, Fabio Estevam wrote:
+>> >>>> On Fri, Jun 15, 2018 at 4:43 PM, Leonard Crestez
+>> >>>> <leonard.crestez@nxp.com> wrote:
+>> >
+>> >>>>> The FBDEV driver uses the same name and both can't be registered at the
+>> >>>>> same time. Fix this by renaming the drm driver to mxsfb-drm
+>> >>>>
+>> >>>> Stefan sent the same patch a few days ago:
+>> >>>
+>> >>> In that thread there is a proposal for removing the old fbdev/mxsfb
+>> >>> driver entirely.
+>> >>>
+>> >>> That would break old DTBs, isn't this generally considered bad? Also,
+>> >>> are we sure the removal of fbdev/mxsfb wouldn't lose any features?
+>> >>>
+>> >>> What my series does is make both drivers work with the same kernel
+>> >>> image and turns the choice into a board-level dtb decision. Supporting
+>> >>> everything at once seems desirable to me and it allows for a very
+>> >>> smooth upgrade path.
+>> >>
+>> >> Having two drivers in the kernel with different set of bugs is always bad.
+>> >>
+>> >>> The old driver could be removed later, after all users are converted.
+>> >>
+>> >> Both drivers were in for long enough already. And let's be realistic,
+>> >> how many MX23/MX28 users of old DTs with new kernels are there who
+>> >> cannot update the DT as well ?
+>> >
+>> > Grepping for "display =" in arch/arm/boot/dts/imx* I see that old
+>> > bindings are also used by 3rd-party boards for imx6/7:
+>> >  * imx6sx-nitrogen6sx
+>> >  * imx6ul-geam
+>> >  * imx6ul-isiot
+>> >  * imx6ul-opos6uldev
+>> >  * imx6ul-pico-hobbit
+>> >  * imx6ul-tx6ul
+>> >  * imx7d-nitrogen7
+>>
+>> Er, yes, a handful of boards which could be updated :)
+>>
+>> > Converting everything might be quite a bit of work, and explicitly
+>> > supporting old bindings is also work.
+>>
+>> Does adding support for old bindings justify the effort invested ? I
+>> doubt so, it only adds more code to maintain.
+>>
+>> > It is very confusing that there is a whole set of displays for imx6/7
+>> > which are supported by upstream but only with a non-default config.
+>> > While it is extremely common in the embedded field to have custom
+>> > configs the default one in the kernel should try to "just work".
+>> >
+>> > Couldn't this patch series be considered a bugfix? It was also
+>> > surprisingly small.
+>>
+>> I think it's just a workaround which allows you to postpone the real
+>> fix, and I don't like that.
 > 
-> > I've come up with what I claim is a simple, robust fix, but...I'm
-> > presuming to burn a struct page flag, and limit it to 64-bit arches, in
-> > order to get there. Given that the problem is old (Jason Gunthorpe noted
-> > that RDMA has been living with this problem since 2005), I think it's
-> > worth it.
-> >
-> > Leaving the new page flag set "nearly forever" is not great, but on the
-> > other hand, once the page is actually freed, the flag does get cleared.
-> > It seems like an acceptable tradeoff, given that we only get one bit
-> > (and are lucky to even have that).
-> 
-> This is not robust. Multiple processes may register a page with the RDMA
-> subsystem. How do you decide when to clear the flag? I think you would
-> need an additional refcount for the number of times the page was
-> registered.
+> Yeah agreed, imo the proper fix here would be to either update the dts for
+> the affected boards and/or make mxsfb accept the old dt bindings for
+> backwards compat. Artificially extending the life of the fbdev drivers
+> seems silly.
 
-And it's not just RDMA that is using get_user_pages.  We have tons of
-users that do short, spurious get_user_pages do do zero copy operations.
+We shouldn't have merged a DRM driver with a driver name which conflicts
+with an existing driver... If anything, this is artificially shortening
+the lifetime of the fbdev driver :-)
 
-We can't leave the page in a wrecked state after that.
+Again, I am ok with removing the driver. I just think it is silly to do
+it just because of the conflicting driver name.
 
-> I still think the cleanest solution here is to require mmu notifier
-> callbacks and to not pin the page in the first place. If a NIC does not
-> support a hardware mmu then it can still simulate it in software by
-> holding off the ummapping the mmu notifier callback until any pending
-> operation is complete and then invalidate the mapping so that future
-> operations require a remapping (or refaulting).
+Maybe Sascha, original author of the mxs fbdev driver has an opinion on
+this?
 
-Sounds ok for RDMA, not going to help for most other users.
+--
+Stefan
