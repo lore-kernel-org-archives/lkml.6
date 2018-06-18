@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2410C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:41:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44822C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93279208E8
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:41:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93279208E8
+	by mail.kernel.org (Postfix) with ESMTP id EE7B7208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:41:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7B7208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935905AbeFRJlN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:41:13 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55648 "EHLO
+        id S935953AbeFRJli (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:41:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55632 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964853AbeFRIWv (ORCPT
+        with ESMTP id S935852AbeFRIWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:22:51 -0400
+        Mon, 18 Jun 2018 04:22:46 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 14DEFC7A;
-        Mon, 18 Jun 2018 08:22:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8956FC96;
+        Mon, 18 Jun 2018 08:22:45 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Changbin Du <changbin.du@intel.com>,
-        Joerg Roedel <jroedel@suse.de>,
+        stable@vger.kernel.org, Bhadram Varka <vbhadram@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 164/279] iommu/vt-d: fix shift-out-of-bounds in bug checking
-Date:   Mon, 18 Jun 2018 10:12:29 +0200
-Message-Id: <20180618080615.609044157@linuxfoundation.org>
+Subject: [PATCH 4.16 162/279] arm64: tegra: Make BCM89610 PHY interrupt as active low
+Date:   Mon, 18 Jun 2018 10:12:27 +0200
+Message-Id: <20180618080615.529941534@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,74 +50,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Changbin Du <changbin.du@intel.com>
+From: Bhadram Varka <vbhadram@nvidia.com>
 
-[ Upstream commit 0dfc0c792d691f8056f38b5c30789f504be0e467 ]
+[ Upstream commit 9df50ba76ac1485b844beffa1f3f5d9659d9cdaf ]
 
-It allows to flush more than 4GB of device TLBs. So the mask should be
-64bit wide. UBSAN captured this fault as below.
+Need to configure PHY interrupt as active low for P3310 Tegra186
+platform otherwise it results in spurious interrupts.
 
-[    3.760024] ================================================================================
-[    3.768440] UBSAN: Undefined behaviour in drivers/iommu/dmar.c:1348:3
-[    3.774864] shift exponent 64 is too large for 32-bit type 'int'
-[    3.780853] CPU: 2 PID: 0 Comm: swapper/2 Tainted: G     U            4.17.0-rc1+ #89
-[    3.788661] Hardware name: Dell Inc. OptiPlex 7040/0Y7WYT, BIOS 1.2.8 01/26/2016
-[    3.796034] Call Trace:
-[    3.798472]  <IRQ>
-[    3.800479]  dump_stack+0x90/0xfb
-[    3.803787]  ubsan_epilogue+0x9/0x40
-[    3.807353]  __ubsan_handle_shift_out_of_bounds+0x10e/0x170
-[    3.812916]  ? qi_flush_dev_iotlb+0x124/0x180
-[    3.817261]  qi_flush_dev_iotlb+0x124/0x180
-[    3.821437]  iommu_flush_dev_iotlb+0x94/0xf0
-[    3.825698]  iommu_flush_iova+0x10b/0x1c0
-[    3.829699]  ? fq_ring_free+0x1d0/0x1d0
-[    3.833527]  iova_domain_flush+0x25/0x40
-[    3.837448]  fq_flush_timeout+0x55/0x160
-[    3.841368]  ? fq_ring_free+0x1d0/0x1d0
-[    3.845200]  ? fq_ring_free+0x1d0/0x1d0
-[    3.849034]  call_timer_fn+0xbe/0x310
-[    3.852696]  ? fq_ring_free+0x1d0/0x1d0
-[    3.856530]  run_timer_softirq+0x223/0x6e0
-[    3.860625]  ? sched_clock+0x5/0x10
-[    3.864108]  ? sched_clock+0x5/0x10
-[    3.867594]  __do_softirq+0x1b5/0x6f5
-[    3.871250]  irq_exit+0xd4/0x130
-[    3.874470]  smp_apic_timer_interrupt+0xb8/0x2f0
-[    3.879075]  apic_timer_interrupt+0xf/0x20
-[    3.883159]  </IRQ>
-[    3.885255] RIP: 0010:poll_idle+0x60/0xe7
-[    3.889252] RSP: 0018:ffffb1b201943e30 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-[    3.896802] RAX: 0000000080200000 RBX: 000000000000008e RCX: 000000000000001f
-[    3.903918] RDX: 0000000000000000 RSI: 000000002819aa06 RDI: 0000000000000000
-[    3.911031] RBP: ffff9e93c6b33280 R08: 00000010f717d567 R09: 000000000010d205
-[    3.918146] R10: ffffb1b201943df8 R11: 0000000000000001 R12: 00000000e01b169d
-[    3.925260] R13: 0000000000000000 R14: ffffffffb12aa400 R15: 0000000000000000
-[    3.932382]  cpuidle_enter_state+0xb4/0x470
-[    3.936558]  do_idle+0x222/0x310
-[    3.939779]  cpu_startup_entry+0x78/0x90
-[    3.943693]  start_secondary+0x205/0x2e0
-[    3.947607]  secondary_startup_64+0xa5/0xb0
-[    3.951783] ================================================================================
+This issue wasn't seen before because the generic PHY driver without
+interrupt support was used.
 
-Signed-off-by: Changbin Du <changbin.du@intel.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Bhadram Varka <vbhadram@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/iommu/dmar.c |    2 +-
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/iommu/dmar.c
-+++ b/drivers/iommu/dmar.c
-@@ -1345,7 +1345,7 @@ void qi_flush_dev_iotlb(struct intel_iom
- 	struct qi_desc desc;
- 
- 	if (mask) {
--		BUG_ON(addr & ((1 << (VTD_PAGE_SHIFT + mask)) - 1));
-+		BUG_ON(addr & ((1ULL << (VTD_PAGE_SHIFT + mask)) - 1));
- 		addr |= (1ULL << (VTD_PAGE_SHIFT + mask - 1)) - 1;
- 		desc.high = QI_DEV_IOTLB_ADDR(addr) | QI_DEV_IOTLB_SIZE;
- 	} else
+--- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+@@ -46,7 +46,7 @@
+ 				compatible = "ethernet-phy-ieee802.3-c22";
+ 				reg = <0x0>;
+ 				interrupt-parent = <&gpio>;
+-				interrupts = <TEGRA_MAIN_GPIO(M, 5) IRQ_TYPE_LEVEL_HIGH>;
++				interrupts = <TEGRA_MAIN_GPIO(M, 5) IRQ_TYPE_LEVEL_LOW>;
+ 			};
+ 		};
+ 	};
 
 
