@@ -2,94 +2,121 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A63C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:11:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E27AEC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C17A20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:11:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 957E820693
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 20:12:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyHevpfX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C17A20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tpn5Zu7o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 957E820693
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935494AbeFRULz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 16:11:55 -0400
-Received: from mail-pl0-f66.google.com ([209.85.160.66]:33456 "EHLO
-        mail-pl0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932630AbeFRULx (ORCPT
+        id S935570AbeFRUMs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 16:12:48 -0400
+Received: from mail-pg0-f65.google.com ([74.125.83.65]:45392 "EHLO
+        mail-pg0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S933036AbeFRUMq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 16:11:53 -0400
-Received: by mail-pl0-f66.google.com with SMTP id 6-v6so9080884plb.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 13:11:53 -0700 (PDT)
+        Mon, 18 Jun 2018 16:12:46 -0400
+Received: by mail-pg0-f65.google.com with SMTP id z1-v6so8016131pgv.12
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 13:12:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=eGGP3f0VC+tPueeqA/sY74JbbVT+2IwRnKI9mKciZG8=;
-        b=RyHevpfXn/pkwKYmVjiCprxDoexyJL2jdQUgraq3M9EmGhC9uGlWV/Sblka1bqxuXN
-         vncrL+adTrnCRgzGk4fd7GC4P3GbkjwR1KYa+LOJseD4sptuEwPx/Sul7NrFfhTVlt2R
-         Z0jY22ACyKE4z8Jo36/7aEXr29PC4HatSQXOBJODSs0Bs1qtLGbUKKfPFbWGgFR9UPZ1
-         NHx+X1Z9FWSWbQWTBnsYmk/+PhiI+kcyn1h33JMKtGzrEt/TEKnHdVvIb0a8DQhJRClw
-         Ns56pmyEs4AiUyi9nYbggNjHeZYq7Pb3jXGXtpJ69bg3isV73YCKIk+WcIKmG+O32hlD
-         dyRw==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=yvdaya7a/2HhJ4PEAF54f+SXcLTnLYrjMaGWgLllqtc=;
+        b=Tpn5Zu7oNNrNfVytp1meuBl2b7ikgTOvi9sMiKZ8TTE1NHCGh5Sp1tSY99FK8JY4TO
+         tA30g+OL8awOIBx3lzjQSoOQcrHR4GqcBGPSuM2ee3CDzvDbo4uvbXkrCA3R0UZWbzvX
+         VOqgSwoPGF5JAU9aOxWSuwPmj+qFWptWyWWoQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eGGP3f0VC+tPueeqA/sY74JbbVT+2IwRnKI9mKciZG8=;
-        b=QDX/86LkgM177NeTAm5jrjfzhmqZTOlmJ/UXAm6kYHwkImEJIv574n1cnVA3F2k5I3
-         Alw9cM2+m/UOv8U4otuBSsQra5kw8sgwsLXirZlZM9q5XGxly6sDBCPw5BKw1PCzLVT3
-         xzCIYD17qtfgopGPnUH3/2DQBJxTDP7gLoH/7sCr4x42BEdgVMnFr6Tszuyhg03aGobs
-         dJuFxXLru2Ya4b5fcZq9EIv1Yi7kU/4IqVc3tlfnz389MqTJ9nUsi5DksxlraKNA5usP
-         GIhUHMhZCgOnXXF9g8w0ueCLF3GRhorB14CVM6kpH8HITAqvXv07cYnjsGfr9vu8aQeU
-         o5QQ==
-X-Gm-Message-State: APt69E2C20b57BAUGR+IShf3E+BlEpePDgZwI3QhYk5JrMW+wuIJPxvQ
-        GLsePw6tx/jJ5+Ul8mxgbi72rw==
-X-Google-Smtp-Source: ADUXVKLQa5X6L0FY00fO4Ix7/X2DUUgw1nUjWN0Q2EwvgUkJEeW27KnCw5ZDnnnRduVHT/MYOkDT0A==
-X-Received: by 2002:a17:902:b483:: with SMTP id y3-v6mr15790806plr.66.1529352713004;
-        Mon, 18 Jun 2018 13:11:53 -0700 (PDT)
-Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.googlemail.com with ESMTPSA id z18-v6sm22675114pgc.0.2018.06.18.13.11.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 18 Jun 2018 13:11:52 -0700 (PDT)
-From:   Ivid Suvarna <ivid.suvarna@gmail.com>
-To:     arnd@arndb.de, tglx@linutronix.de
-Cc:     deepa.kernel@gmail.com, y2038@lists.linaro.org,
-        o-takashi@sakamocchi.jp, Ivid Suvarna <ivid.suvarna@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] posix-timers: use ktime_get_raw_ts64() instead of getrawmonotonic64()
-Date:   Tue, 19 Jun 2018 01:41:00 +0530
-Message-Id: <20180618201100.2238-1-ivid.suvarna@gmail.com>
-X-Mailer: git-send-email 2.17.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yvdaya7a/2HhJ4PEAF54f+SXcLTnLYrjMaGWgLllqtc=;
+        b=BOnP3o9DcO5bQLNrbpG1q8w/qwdwYm9S0TXzS6ytvTnVW5WQR6g8mQsdXqCcNW9z5x
+         Gj19PksM0ozx5Ul8kyZJLxOTYZj4T3dcol5UEqZClrumrtDTrljSEtuUXI0cxo3Mmw9T
+         uDcfDJlohHpOInnUlQPzasmBtAfTY6CBZ+dtoiXSkj5+BQJ4/6lW2eyu7bVx9i6Ai8Bh
+         Wc11yn7InLku+QIjWbL3g0fd3KYWIflpPFdGErh86yW20eQhYKCsZrTot/2/s+y8fWDJ
+         Me1ryuMZ6M65R09T6g8iOfsfIMnYSxiRmvOBNKe2k5wYHSxENaBjyWQmJhzRhtTw6v9g
+         WhMg==
+X-Gm-Message-State: APt69E3nYCkxUFPj0+Wu69rzpO8zIU6V/Y1DyMtPCa5oVpko4t45wKxB
+        O+f7Fgef3VWtHjJ16xV2m+oWcw==
+X-Google-Smtp-Source: ADUXVKLd9w6Bnq5Cvn0n3Cy6d+vKtnx1W0JTFfeWCxngPQRFiedBN9J2gk2QRj9E55k0YJcpFKv/3w==
+X-Received: by 2002:a63:6fce:: with SMTP id k197-v6mr12302624pgc.307.1529352765755;
+        Mon, 18 Jun 2018 13:12:45 -0700 (PDT)
+Received: from rodete-desktop-imager.corp.google.com ([2620:0:1000:1501:bc2f:3082:9938:5d41])
+        by smtp.gmail.com with ESMTPSA id 8-v6sm27310746pfk.132.2018.06.18.13.12.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 13:12:44 -0700 (PDT)
+Date:   Mon, 18 Jun 2018 13:12:41 -0700
+From:   Brian Norris <briannorris@chromium.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH v3 02/12] PM / devfreq: Fix handling of min/max_freq == 0
+Message-ID: <20180618201239.GA153862@rodete-desktop-imager.corp.google.com>
+References: <20180614194712.102134-1-mka@chromium.org>
+ <20180614194712.102134-3-mka@chromium.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20180614194712.102134-3-mka@chromium.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-getrawmonotonic64() is deprecated. This follows Arnd Bergmann's patch[1]
-for replacing deprecated functions.
+Hi,
 
-[1] https://patchwork.kernel.org/patch/10472141/
+On Thu, Jun 14, 2018 at 12:47:02PM -0700, Matthias Kaehlcke wrote:
+> Commit ab8f58ad72c4 ("PM / devfreq: Set min/max_freq when adding the
+> devfreq device") initializes df->min/max_freq with the min/max OPP when
+> the device is added. Later commit f1d981eaecf8 ("PM / devfreq: Use the
+> available min/max frequency") adds df->scaling_min/max_freq and the
+> following to the frequency adjustment code:
+> 
+>   max_freq = MIN(devfreq->scaling_max_freq, devfreq->max_freq);
+> 
+> With the current handling of min/max_freq this is incorrect:
+> 
+> Even though df->max_freq is now initialized to a value != 0 user space
+> can still set it to 0, in this case max_freq would be 0 instead of
+> df->scaling_max_freq as intended. In consequence the frequency adjustment
+> is not performed:
+> 
+>   if (max_freq && freq > max_freq) {
+> 	freq = max_freq;
+> 
+> To fix this set df->min/max freq to the min/max OPP in max/max_freq_store,
+> when the user passes a value of 0. This also prevents df->max_freq from
+> being set below the min OPP when df->min_freq is 0, and similar for
+> min_freq. Since it is now guaranteed that df->min/max_freq can't be 0 the
+> checks for this case can be removed.
+> 
+> Fixes: f1d981eaecf8 ("PM / devfreq: Use the available min/max frequency")
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 
-Signed-off-by: Ivid Suvarna <ivid.suvarna@gmail.com>
----
- kernel/time/posix-timers.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+FWIW, I've reviewed patches 1-9 (the core devfreq bugfixes and features,
+and a small cpufreq helper fixup), and they seem pretty clear and good
+to me, aside from a minor error in the current subject
+(s/devfreg/devfreq/). So:
 
-diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
-index e08ce3f27447..2f50ac8c258f 100644
---- a/kernel/time/posix-timers.c
-+++ b/kernel/time/posix-timers.c
-@@ -228,7 +228,7 @@ static int posix_ktime_get_ts(clockid_t which_clock, struct timespec64 *tp)
-  */
- static int posix_get_monotonic_raw(clockid_t which_clock, struct timespec64 *tp)
- {
--	getrawmonotonic64(tp);
-+	ktime_get_raw_ts64(tp);
- 	return 0;
- }
- 
+Reviewed-by: Brian Norris <briannorris@chromium.org>
