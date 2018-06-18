@@ -2,141 +2,170 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BDFC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCDBC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:00:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9062086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:59:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D45B7208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:00:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mQx9bFAz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9062086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="T0IdJ828"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D45B7208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934199AbeFRP7l (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:59:41 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:39418 "EHLO
-        mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932442AbeFRP7j (ORCPT
+        id S934599AbeFRQAO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 12:00:14 -0400
+Received: from mail-io0-f194.google.com ([209.85.223.194]:43250 "EHLO
+        mail-io0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932442AbeFRQAM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:59:39 -0400
-Received: by mail-pl0-f68.google.com with SMTP id f1-v6so9266388plt.6;
-        Mon, 18 Jun 2018 08:59:38 -0700 (PDT)
+        Mon, 18 Jun 2018 12:00:12 -0400
+Received: by mail-io0-f194.google.com with SMTP id t6-v6so17257958iob.10
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 09:00:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Kge+Zs8hE+X9b/l9dxCAGdzjoZa19GSIpeoZi0H+Z6c=;
-        b=mQx9bFAzqvx8kuOtJzYm1gTQFSnlRSkxDUXXOE08VVr4adbvOxPGHDC+KGhL2dd7eF
-         7jyDR6RZEGel8MJ9NQhVyIfVeuYTb2wtB4+avAf81rsvqKCR1+aq/yYpYAMcKpiR/8Wk
-         5A/lVJD4pNUN4TxPnXzQhyIVSbCQ8RzomtKGldPH/z2pB4WW0yXKba/GIn2fvdV9QPlz
-         guN8k5WzbUv/bdhXRGgBtB9hbpbppQUOouFsIk49XMAX5w23V+7mR5xj0BJt4Pkhs72m
-         91xOTQj3YbEKT136/fchTTyvwrsgs5xG8aNE2wBu23Mha8hnkmLIkBaJYx8M2+aLmlBj
-         5cHA==
+        d=ffwll.ch; s=google;
+        h=mime-version:sender:in-reply-to:references:from:date:message-id
+         :subject:to:cc;
+        bh=UC5UT7DCoM6UP9KeiiKK6268yi5oWSn9Xg9opObNozA=;
+        b=T0IdJ828PHm7JZwJ1QodpiSu88UfTQOEU3y+jroJkoCXcWZ3EEyMDJVbn5Ela7QRJw
+         b1J2HEoKDuJOUre+F01bvkNDzahKdrIsAEt9DigS60a8bTfkEzYS7DdkSNqutrKK8rzO
+         I4Qz73JsVXtmKBl2oH6Eaa543WH1cJw8XbG9Y=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Kge+Zs8hE+X9b/l9dxCAGdzjoZa19GSIpeoZi0H+Z6c=;
-        b=FoaeZT4V9F3piRhppHkccbBS0Lwm3/VLzf9uoI/NnMVJW/8IBuDb8FYZ/5C1QXhT/l
-         tDzmv+jjNGHh8450ItaMTZFc40bOwKHcYRd9oieaBAVa0QICHjyQeQXL2wlh4BHcCHs4
-         H9qaFIt2Uf22scg2rLPeHXsIh5ZdtqJvDVxveR7muYV8B+G2v0/gp/wJp8bv1RuHuNZ4
-         J8yv9TjT+cQe2H/18en4dkguJFX8/dNvFO7K5qL8l1WbIluaKZ9y0SVM2RpFXk1rAbDL
-         OHvD2XXacXKiRaMtxzYiJehjGaHVi8iqchCIX7HYtCr1YMRN8PXEN9DLKj9lOHbcw+Y8
-         kR4g==
-X-Gm-Message-State: APt69E27TU4kIa6ZM+wTzD998fVigM4mdIzVv4DCUr9dvwsXM5SHRzqL
-        vh4qN16ctoJY3nemV8snp5QTj1he
-X-Google-Smtp-Source: ADUXVKLcGfgt8u6F/RN54jfrCRJ64+YRiN8Tnap9EgYKhLzQdxfOJmArxINdwNocIDXfeux5gcbKIA==
-X-Received: by 2002:a17:902:b611:: with SMTP id b17-v6mr14484279pls.284.1529337578404;
-        Mon, 18 Jun 2018 08:59:38 -0700 (PDT)
-Received: from ?IPv6:2620:15c:2c1:200:55c7:81e6:c7d8:94b? ([2620:15c:2c1:200:55c7:81e6:c7d8:94b])
-        by smtp.gmail.com with ESMTPSA id 10-v6sm35418696pfs.111.2018.06.18.08.59.36
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 08:59:37 -0700 (PDT)
-Subject: Re: [PATCH net-next 3/3] tcp: use monotonic timestamps for PAWS
-To:     Arnd Bergmann <arnd@arndb.de>, Harsh Jain <harsh@chelsio.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Alexey Kuznetsov <kuznet@ms2.inr.ac.ru>,
-        Hideaki YOSHIFUJI <yoshfuji@linux-ipv6.org>,
-        Atul Gupta <atul.gupta@chelsio.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     y2038@lists.linaro.org, Michael Werner <werner@chelsio.com>,
-        Neal Cardwell <ncardwell@google.com>,
-        Yuchung Cheng <ycheng@google.com>,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Christoph Paasch <cpaasch@apple.com>,
-        Lawrence Brakmo <brakmo@fb.com>,
-        Ursula Braun <ubraun@linux.vnet.ibm.com>,
-        Priyaranjan Jha <priyarjha@google.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        David Ahern <dsahern@gmail.com>,
-        Ivan Delalande <colona@arista.com>,
-        =?UTF-8?Q?Maciej_=c5=bbenczykowski?= <maze@google.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org
-References: <20180618152242.1566661-1-arnd@arndb.de>
- <20180618152242.1566661-3-arnd@arndb.de>
-From:   Eric Dumazet <eric.dumazet@gmail.com>
-Message-ID: <67ebb94d-c73f-6c9f-493b-00c86f595120@gmail.com>
-Date:   Mon, 18 Jun 2018 08:59:34 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
+        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
+         :date:message-id:subject:to:cc;
+        bh=UC5UT7DCoM6UP9KeiiKK6268yi5oWSn9Xg9opObNozA=;
+        b=qHymravnke3lQWESKrBuDozfcnOZxAYmUNw56klKe4I/Yn3VhX6PZdTPQvnObcvp87
+         ncsPPu90i2lMjLg8w5H7XEupLfgqUQJiJ4q+gXP3Is2eABSZxVe/IxM7hbNqzPxQC3Dy
+         Q+MRYjTyiXOzIYRKvmQgUOLQ6vCnBDE9UmqTcW2OiSjN75KsJw7MOTX9tMJ+8yRc+4Ma
+         brgLM+0AzYO8TUOrPSLW6fSbz93dNtuvfWSFfHDwC2cpotRN9k+2sNdfHu5pZenfLZCh
+         iOVFoHuowni3rZctDoWNXU9cj6E6uDBJlGsZp3Gwlz0Y6FY29/3lqzfniLWLbaXMqkVQ
+         nI2A==
+X-Gm-Message-State: APt69E2bZ4KwGOei5GajlL2jffkiD2sLG9dHuRFGAQ4wJoIH8hsEpMVF
+        U0gP7YxKJ9ahSSIM0iBjYte069L3DptlkXRCUaofQw==
+X-Google-Smtp-Source: ADUXVKINFubr1CE1ZFwh1GxvXSnXxfsoXtERITNxlZ4/qrj0wc8TSZKRkZGV/I3lSWpuueej1BZ4OzPQSNrP9uUDPqA=
+X-Received: by 2002:a6b:c544:: with SMTP id v65-v6mr10422230iof.278.1529337612073;
+ Mon, 18 Jun 2018 09:00:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180618152242.1566661-3-arnd@arndb.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a4f:e48b:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 09:00:11
+ -0700 (PDT)
+X-Originating-IP: [2a02:168:5628:0:d0c7:bcda:eea:9e5d]
+In-Reply-To: <CAFqt6zZ3NtY6qL2B-ovwMZ3b8R2W8KKgshZuOdZAwuxwPA8aEQ@mail.gmail.com>
+References: <20180416150232.GA26745@jordon-HP-15-Notebook-PC>
+ <CAFqt6zZ6VaPXoPs+3exLjNZ6yzS=v9=2TMXdFqHf_Zv5zEvSAA@mail.gmail.com>
+ <20180510185138.GL33053@art_vandelay> <20180514162617.GD28661@phenom.ffwll.local>
+ <CAFqt6zZ+ExTFKmzRycJiSW-u718pbGm1Ute+1UXF2NPn1WpLfA@mail.gmail.com>
+ <20180524125756.GO3438@phenom.ffwll.local> <CAFqt6zZ3NtY6qL2B-ovwMZ3b8R2W8KKgshZuOdZAwuxwPA8aEQ@mail.gmail.com>
+From:   Daniel Vetter <daniel@ffwll.ch>
+Date:   Mon, 18 Jun 2018 18:00:11 +0200
+X-Google-Sender-Auth: 5rmr5DG7On7fPavoV9asu9EUoc0
+Message-ID: <CAKMK7uGPSJs2CN-RtKS51sHd5doTXYJrpJcLuhPfJF8g4zCQ+g@mail.gmail.com>
+Subject: Re: [PATCH] gpu: drm: vgem: Change return type to vm_fault_t
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Sean Paul <seanpaul@chromium.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 06/18/2018 08:22 AM, Arnd Bergmann wrote:
-> Using get_seconds() for timestamps is deprecated since it can lead
-> to overflows on 32-bit systems. While the interface generally doesn't
-> overflow until year 2106, the specific implementation of the TCP PAWS
-> algorithm breaks in 2038 when the intermediate signed 32-bit timestamps
-> overflow.
+On Mon, Jun 18, 2018 at 1:26 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+> On Thu, May 24, 2018 at 6:27 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>> On Wed, May 23, 2018 at 03:05:35PM +0530, Souptick Joarder wrote:
+>>> On Mon, May 14, 2018 at 9:56 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+>>> > On Thu, May 10, 2018 at 02:51:38PM -0400, Sean Paul wrote:
+>>> >> On Thu, May 10, 2018 at 07:58:11PM +0530, Souptick Joarder wrote:
+>>> >> > Hi Sean,
+>>> >> >
+>>> >> > On Mon, Apr 16, 2018 at 8:32 PM, Souptick Joarder <jrdr.linux@gmail.com> wrote:
+>>> >> > > Use new return type vm_fault_t for fault handler.
+>>> >> > >
+>>> >> > > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+>>> >> > > Reviewed-by: Matthew Wilcox <mawilcox@microsoft.com>
+>>> >> > > ---
+>>> >> > >  drivers/gpu/drm/vgem/vgem_drv.c | 5 ++---
+>>> >> > >  1 file changed, 2 insertions(+), 3 deletions(-)
+>>> >> > >
+>>> >> > > diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+>>> >> > > index 2524ff1..c64a859 100644
+>>> >> > > --- a/drivers/gpu/drm/vgem/vgem_drv.c
+>>> >> > > +++ b/drivers/gpu/drm/vgem/vgem_drv.c
+>>> >> > > @@ -61,13 +61,13 @@ static void vgem_gem_free_object(struct drm_gem_object *obj)
+>>> >> > >         kfree(vgem_obj);
+>>> >> > >  }
+>>> >> > >
+>>> >> > > -static int vgem_gem_fault(struct vm_fault *vmf)
+>>> >> > > +static vm_fault_t vgem_gem_fault(struct vm_fault *vmf)
+>>> >> > >  {
+>>> >> > >         struct vm_area_struct *vma = vmf->vma;
+>>> >> > >         struct drm_vgem_gem_object *obj = vma->vm_private_data;
+>>> >> > >         /* We don't use vmf->pgoff since that has the fake offset */
+>>> >> > >         unsigned long vaddr = vmf->address;
+>>> >> > > -       int ret;
+>>> >> > > +       vm_fault_t ret = VM_FAULT_SIGBUS;
+>>> >> > >         loff_t num_pages;
+>>> >> > >         pgoff_t page_offset;
+>>> >> > >         page_offset = (vaddr - vma->vm_start) >> PAGE_SHIFT;
+>>> >> > > @@ -77,7 +77,6 @@ static int vgem_gem_fault(struct vm_fault *vmf)
+>>> >> > >         if (page_offset > num_pages)
+>>> >> > >                 return VM_FAULT_SIGBUS;
+>>> >> > >
+>>> >> > > -       ret = -ENOENT;
+>>> >> > >         mutex_lock(&obj->pages_lock);
+>>> >> > >         if (obj->pages) {
+>>> >> > >                 get_page(obj->pages[page_offset]);
+>>> >> > > --
+>>> >> > > 1.9.1
+>>> >> > >
+>>> >> >
+>>> >> > Any further comment on this patch ?
+>>> >>
+>>> >> Patch looks good to me. My build test fails, though, since vm_fault_t doesn't
+>>> >> exist in drm-misc-next yet.
+>>> >
+>>> > vm_fault_t is already in upstream, just needs Maarten to do a backmerge.
+>>> > Which I think he's done by now ... Otherwise nag him more :-)
+>>> > -Daniel
+>>> >
+>>> >>
+>>> >> So, for now,
+>>> >>
+>>> >> Reviewed-by: Sean Paul <seanpaul@chromium.org>
+>>> >>
+>>> >>
+>>> >> --
+>>> >> Sean Paul, Software Engineer, Google / Chromium OS
+>>> >> _______________________________________________
+>>> >> dri-devel mailing list
+>>> >> dri-devel@lists.freedesktop.org
+>>> >> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>>> >
+>>> > --
+>>> > Daniel Vetter
+>>> > Software Engineer, Intel Corporation
+>>> > http://blog.ffwll.ch
+>>>
+>>> Daniel/ Sean, is this patch already merged for 4.18 ?
+>>
+>> Nope, fell through the cracks. Thanks for the reminder, queued for 4.18
+>> now.
+>> -Daniel
+>>
 >
-...
+> Daniel, This patch is not available in 4.18-rc-1 :-)
 
->
->  
->  static inline u32 tcp_cookie_time(void)
-> @@ -1361,7 +1362,7 @@ static inline bool tcp_paws_check(const struct tcp_options_received *rx_opt,
->  {
->  	if ((s32)(rx_opt->ts_recent - rx_opt->rcv_tsval) <= paws_win)
->  		return true;
-> -	if (unlikely(get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_24DAYS))
-> +	if (unlikely(ktime_get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_24DAYS))
->  		return true;
->  	/*
->  	 * Some OSes send SYN and SYNACK messages with tsval=0 tsecr=0,
-> @@ -1391,7 +1392,7 @@ static inline bool tcp_paws_reject(const struct tcp_options_received *rx_opt,
->  
->  	   However, we can relax time bounds for RST segments to MSL.
->  	 */
-> -	if (rst && get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_MSL)
-> +	if (rst && ktime_get_seconds() >= rx_opt->ts_recent_stamp + TCP_PAWS_MSL)
->  		return false;
->  	return true;
-
-
-
-Please use the time_after32(), since ktime_get_seconds() is time64_t while ts_recent_stamp is int.
-
-Same remark for tcp_twsk_unique()
-
-Lets clean up this stuff, thanks !
-
+I mixed up my book-keeping, it was queued for 4.19. Should show up in
+linux-next any day (well as soon as drm-misc maintainers get their
+book-keeping updated).
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
++41 (0) 79 365 57 48 - http://blog.ffwll.ch
