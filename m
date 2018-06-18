@@ -6,33 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A16F3C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB9C2C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67D5B20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67D5B20864
+	by mail.kernel.org (Postfix) with ESMTP id 85A2920864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:24:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85A2920864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936326AbeFRIYx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:24:53 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:56122 "EHLO
+        id S936360AbeFRIY5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:24:57 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56130 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936245AbeFRIYv (ORCPT
+        with ESMTP id S936245AbeFRIYy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:24:51 -0400
+        Mon, 18 Jun 2018 04:24:54 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 93422C5C;
-        Mon, 18 Jun 2018 08:24:50 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 59FF7BAD;
+        Mon, 18 Jun 2018 08:24:53 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+        stable@vger.kernel.org,
+        Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>,
+        linux-can@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 204/279] powerpc/pseries: Fix CONFIG_NUMA=n build
-Date:   Mon, 18 Jun 2018 10:13:09 +0200
-Message-Id: <20180618080617.337523186@linuxfoundation.org>
+Subject: [PATCH 4.16 205/279] can: dev: increase bus-off message severity
+Date:   Mon, 18 Jun 2018 10:13:10 +0200
+Message-Id: <20180618080617.377689638@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -49,58 +51,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
 
-[ Upstream commit 6c0a8f6b5a45ac892a763b6299bd3c5324fc5e02 ]
+[ Upstream commit 71c23a821c6bcacba71a094efe49ee689605906b ]
 
-The build is failing with CONFIG_NUMA=n and some compiler versions:
+bus-off is usually caused by hardware malfunction or configuration error
+(baud rate mismatch) and causes a complete loss of communication.
 
-  arch/powerpc/platforms/pseries/hotplug-cpu.o: In function `dlpar_online_cpu':
-  hotplug-cpu.c:(.text+0x12c): undefined reference to `timed_topology_update'
-  arch/powerpc/platforms/pseries/hotplug-cpu.o: In function `dlpar_cpu_remove':
-  hotplug-cpu.c:(.text+0x400): undefined reference to `timed_topology_update'
+Increase the "bus-off" message's severity from netdev_dbg() to
+netdev_info() to make it visible to the user.
 
-Fix it by moving the empty version of timed_topology_update() into the
-existing #ifdef block, which has the right guard of SPLPAR && NUMA.
+A can interface going into bus-off is similar in severity to ethernet's
+"Link is Down" message, which is also printed at info level.
 
-Fixes: cee5405da402 ("powerpc/hotplug: Improve responsiveness of hotplug change")
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+It is debatable whether the the "restarted" message should also be
+changed to netdev_info() to make the interface state changes
+comprehensible from the kernel log. I have chosen to keep the
+"restarted" message at dbg for now as the "bus-off" message should be
+enough for the user to notice and investigate the problem.
+
+Signed-off-by: Jakob Unterwurzacher <jakob.unterwurzacher@theobroma-systems.com>
+Cc: linux-can@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/powerpc/include/asm/topology.h |   13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+ drivers/net/can/dev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/arch/powerpc/include/asm/topology.h
-+++ b/arch/powerpc/include/asm/topology.h
-@@ -91,6 +91,7 @@ extern int start_topology_update(void);
- extern int stop_topology_update(void);
- extern int prrn_is_enabled(void);
- extern int find_and_online_cpu_nid(int cpu);
-+extern int timed_topology_update(int nsecs);
- #else
- static inline int start_topology_update(void)
+--- a/drivers/net/can/dev.c
++++ b/drivers/net/can/dev.c
+@@ -605,7 +605,7 @@ void can_bus_off(struct net_device *dev)
  {
-@@ -108,16 +109,12 @@ static inline int find_and_online_cpu_ni
- {
- 	return 0;
- }
-+static inline int timed_topology_update(int nsecs)
-+{
-+	return 0;
-+}
- #endif /* CONFIG_NUMA && CONFIG_PPC_SPLPAR */
+ 	struct can_priv *priv = netdev_priv(dev);
  
--#if defined(CONFIG_HOTPLUG_CPU) || defined(CONFIG_NEED_MULTIPLE_NODES)
--#if defined(CONFIG_PPC_SPLPAR)
--extern int timed_topology_update(int nsecs);
--#else
--#define	timed_topology_update(nsecs)
--#endif /* CONFIG_PPC_SPLPAR */
--#endif /* CONFIG_HOTPLUG_CPU || CONFIG_NEED_MULTIPLE_NODES */
--
- #include <asm-generic/topology.h>
+-	netdev_dbg(dev, "bus-off\n");
++	netdev_info(dev, "bus-off\n");
  
- #ifdef CONFIG_SMP
+ 	netif_carrier_off(dev);
+ 
 
 
