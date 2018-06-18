@@ -2,142 +2,210 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9368AC5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:30:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57851C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F42E2075A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:30:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F02F120836
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:33:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gsz6F+/q"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F42E2075A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kSwqLodM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F02F120836
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935472AbeFRRay (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:30:54 -0400
-Received: from mail-wm0-f65.google.com ([74.125.82.65]:50450 "EHLO
-        mail-wm0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755076AbeFRRax (ORCPT
+        id S935427AbeFRRc6 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 13:32:58 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:59422 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1755035AbeFRRc4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:30:53 -0400
-Received: by mail-wm0-f65.google.com with SMTP id e16-v6so15428407wmd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 10:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=BW0mPsFy5Hjtsf+iYw1mJMnHI+/88ZFKWRxjkWK7qf0=;
-        b=Gsz6F+/q3I+tlhZ3oIqGv6O8mg97MO29LXg1YpdYY86SQcJSCF6mOBGGWPPPaI8JH8
-         y13xC8cEgr05WqoNCVfeU2p4ATTVFzDwvoVwvoLi++CIqq2hzK8hnEcwzTy41EJIRXj5
-         oKt4p2k7Uf8ynuG+ek7sNFIxkena1PC0VG4MU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=BW0mPsFy5Hjtsf+iYw1mJMnHI+/88ZFKWRxjkWK7qf0=;
-        b=GajuG1CHn+0h+d8RC/cmHFNAn7ZhNwGHWqebMo8aUNcNetdSCQkJLRvXcguJtW1svw
-         Bnk0WhIuZSk2Uks/PBNpyDcwYuCFNoNYM/2Fsy+HkMKv4jFRMth5F1HIV496u+YMb7uB
-         jxhYFV2Dex6qXW1CH/gllwOGKVIzkioK7K8qrXu0MqzUF+s1cuE6e4n1c0VSzoQxik6+
-         ohiVVctwUQRyBPu/vHCdqF5tRMIq+BVJ0P14j8CC0zdZUr0BQq+rAMsYRVplwqoWZNzZ
-         VwwRr0KpCeyIyEm5GvAb7Cj01wVFw5DGOKiuqV1akZSK20HgvsW9shT7Nz2jhzjhKStV
-         Jf1A==
-X-Gm-Message-State: APt69E1Py79TwWO6QFdDz/P1+yoLmG+0EIiiUHFywEq5AFsHoyqampxM
-        /HpcHS2JClU8bs782PQTDlvuVo92r3w=
-X-Google-Smtp-Source: ADUXVKIbCkpxV6gESh4BNA2SKDYCoQ10mnCj17m7Og+nkMh3HUoNAWE8VZPyM7ty4HujlpfgflG4MQ==
-X-Received: by 2002:a1c:c241:: with SMTP id s62-v6mr4620240wmf.146.1529343052019;
-        Mon, 18 Jun 2018 10:30:52 -0700 (PDT)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id t11-v6sm12846787wrp.94.2018.06.18.10.30.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 18 Jun 2018 10:30:51 -0700 (PDT)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org, srinivas.kandagatla@linaro.org,
-        Douglas Anderson <dianders@chromium.org>
-Subject: [PATCH] nvmem: Don't let a NULL cell_id for nvmem_cell_get() crash us
-Date:   Mon, 18 Jun 2018 18:30:43 +0100
-Message-Id: <20180618173043.8880-1-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.16.2
+        Mon, 18 Jun 2018 13:32:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
+        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ho0gJWy2VGgxHH6mYV3NUrZdpqN7Q6wqf6v0EGTdqQs=; b=kSwqLodMxyZdgT1fqTsNlabo2
+        ZuFDS79ShSgqFOHojU//AJjPOFFibu2vjnQvXxOp2xW5Un5/0e+tlDpD/eFr/X5XU+mKGCo0PL4OR
+        croTvhtLtVdteBVqkPSbEOkgAp2FupkMoGLyMblC9a4pEZs6B7zaBiOmyrodeoFOpVRD6zFbtIJQr
+        0JUTuFCE9D98yh5mQfSVj65gak+MGPZ1x5nAkoTyxyDagZADGoER57wv5q430T4azS+4XJ21sKcJw
+        MGkOWPOULLGIqxGBKPDHKUg8fId8IV+2Mzqi1VqABSlANYqVVt6PbtXwFZA+jWT33m+UlMwZh8O3u
+        6UIH9nalQ==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fUy1O-00065M-Ur; Mon, 18 Jun 2018 17:32:56 +0000
+Subject: Re: [PATCH 11/11] docs/mm: add description of boot time memory
+ management
+To:     Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-doc <linux-doc@vger.kernel.org>,
+        linux-mm <linux-mm@kvack.org>,
+        lkml <linux-kernel@vger.kernel.org>
+References: <1529341199-17682-1-git-send-email-rppt@linux.vnet.ibm.com>
+ <1529341199-17682-12-git-send-email-rppt@linux.vnet.ibm.com>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <3d0f5f7f-7444-4559-c993-f85e7198eb38@infradead.org>
+Date:   Mon, 18 Jun 2018 10:32:46 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
+MIME-Version: 1.0
+In-Reply-To: <1529341199-17682-12-git-send-email-rppt@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+On 06/18/2018 09:59 AM, Mike Rapoport wrote:
+> Both bootmem and memblock are have pretty good internal documentation
+> coverage. With addition of some overview we get a nice description of the
+> early memory management.
+> 
+> Signed-off-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+> ---
+>  Documentation/core-api/boot-time-mm.rst | 92 +++++++++++++++++++++++++++++++++
+>  Documentation/core-api/index.rst        |  1 +
+>  2 files changed, 93 insertions(+)
+>  create mode 100644 Documentation/core-api/boot-time-mm.rst
+> 
+> diff --git a/Documentation/core-api/boot-time-mm.rst b/Documentation/core-api/boot-time-mm.rst
+> new file mode 100644
+> index 0000000..379e5a3
+> --- /dev/null
+> +++ b/Documentation/core-api/boot-time-mm.rst
+> @@ -0,0 +1,92 @@
+> +===========================
+> +Boot time memory management
+> +===========================
+> +
+> +Early system initialization cannot use "normal" memory management
+> +simply because it is not set up yet. But there is still need to
+> +allocate memory for various data structures, for instance for the
+> +physical page allocator. To address this, a specialized allocator
+> +called the :ref:`Boot Memory Allocator <bootmem>`, or bootmem, was
+> +introduced. Several years later PowerPC developers added a "Logical
+> +Memory Blocks" which was later adopted by other architectures and
 
-In commit ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on
-Qcom chips") you can see a call like:
+   Memory Blocks" allocator, which was later ...
 
-  devm_nvmem_cell_get(dev, NULL);
+> +renamed to :ref:`memblock <memblock>`. There is also a compatibility
+> +layer called `nobootmem` that translates bootmem allocation interfaces
+> +to memblock calls.
+> +
+> +The selection of the early alocator is done using
 
-Note that the cell ID passed to the function is NULL.  This is because
-the qcom-qusb2 driver is expected to work only on systems where the
-PHY node is hooked up via device-tree and is nameless.
+                              allocator
 
-This works OK for the most part.  The first thing nvmem_cell_get()
-does is to call of_nvmem_cell_get() and there it's documented that a
-NULL name is fine.  The problem happens when the call to
-of_nvmem_cell_get() returns -EINVAL.  In such a case we'll fall back
-to nvmem_cell_get_from_list() and eventually might (if nvmem_cells
-isn't an empty list) crash with something that looks like:
+> +``CONFIG_NO_BOOTMEM`` and ``CONFIG_HAVE_MEMBLOCK`` kernel
+> +configuration options. These options are enabled or disabled
+> +statically by the architectures' Kconfig files.
+> +
+> +* Architectures that rely only on bootmem select ``CONFIG_NO_BOOTMEM=n
+> +  && CONFIG_HAVE_MEMBLOCK=n``.
+> +* The users of memblock with the nobootmem compatibility layer set
+> +  ``CONFIG_NO_BOOTMEM=y && CONFIG_HAVE_MEMBLOCK=y``.
+> +* And for those that use both memblock and bootmem the configuration
+> +  includes ``CONFIG_NO_BOOTMEM=n && CONFIG_HAVE_MEMBLOCK=y
 
- strcmp
- nvmem_find_cell
- __nvmem_device_get
- nvmem_cell_get_from_list
- nvmem_cell_get
- devm_nvmem_cell_get
- qusb2_phy_probe
+             fix ending:                                   =y``.
 
-There are several different ways we could fix this problem:
+> +
+> +Whichever allocator is used, it is the responsibility of the
+> +architecture specific initialization to set it up in
+> +:c:func:`setup_arch` and tear it down in :c:func:`mem_init` functions.
+> +
+> +Once the early memory manegement is available it offers variety of
 
-One could argue that perhaps the qcom-qusb2 driver should be changed
-to use of_nvmem_cell_get() which is allowed to have a NULL name.  In
-that case, we'd need to add a patche to introduce
-devm_of_nvmem_cell_get() since the qcom-qusb2 driver is using devm
-managed resources.
+                         management                 offers a variety of
 
-One could also argue that perhaps we could just add a name to
-qcom-qusb2.  That would be OK but I believe it effectively changes the
-device tree bindings, so maybe it's a no-go.
+> +functions and macros for memory allocations. The allocation request
+> +may be directed to the first (and probably the only) node or to a
+> +particular node in a NUMA system. There are API variants that panic
+> +when an allocation fails and those that don't. And more recent and
+> +advanced memblock even allows controlling its own behaviour.
+> +
+> +.. _bootmem:
+> +
+> +Bootmem
+> +=======
+> +
+> +(mostly stolen from Mel Gorman's "Understanding the Linux Virtual
+> +Memory Manager" `book`_)
+> +
+> +.. _book: https://www.kernel.org/doc/gorman/
+> +
+> +.. kernel-doc:: mm/bootmem.c
+> +   :doc: bootmem overview
+> +
+> +.. _memblock:
+> +
+> +Memblock
+> +========
+> +
+> +.. kernel-doc:: mm/memblock.c
+> +   :doc: memblock overview
+> +
+> +
+> +Functions and structures
+> +========================
+> +
+> +Common API
+> +----------
+> +
+> +The functions that are described in this section are available
+> +regardless of what early memory manager is enabled.
+> +
+> +.. kernel-doc:: mm/nobootmem.c
+> +
+> +Bootmem specific API
+> +--------------------
+> +
+> +The interfaces available only with bootmem, i.e when ``CONFIG_NO_BOOTMEM=n``
 
-In this patch I have chosen to fix the problem by simply not crashing
-when a NULL cell_id is passed to nvmem_cell_get().
+                                               i.e.
+How about:
 
-NOTE: that for the qcom-qusb2 driver the "nvmem-cells" property is
-defined to be optional and thus it's expected to be a common case that
-we would hit this crash and this is more than just a theoretical fix.
+  These interfaces are available only with bootmem, i.e. when ``CONFIG_NO_BOOTMEM=n``.
 
-Fixes: ca04d9d3e1b1 ("phy: qcom-qusb2: New driver for QUSB2 PHY on Qcom chips")
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
-Hi Greg, 
-Can you please pick this one for next possible rc.
+> +
+> +.. kernel-doc:: include/linux/bootmem.h
+> +.. kernel-doc:: mm/bootmem.c
+> +   :nodocs:
+> +
+> +Memblock specific API
+> +---------------------
+> +
+> +Here is the description of memblock data structures, functions and
+> +macros. Some of them are actually internal, but since they are
+> +documented it would be silly to omit them. Besides, reading the
+> +descriptions for the internal functions can help to understand what
+> +really happens under the hood.
+> +
+> +.. kernel-doc:: include/linux/memblock.h
+> +.. kernel-doc:: mm/memblock.c
+> +   :nodocs:
+> diff --git a/Documentation/core-api/index.rst b/Documentation/core-api/index.rst
+> index f5a66b7..93d5a46 100644
+> --- a/Documentation/core-api/index.rst
+> +++ b/Documentation/core-api/index.rst
+> @@ -28,6 +28,7 @@ Core utilities
+>     printk-formats
+>     circular-buffers
+>     gfp_mask-from-fs-io
+> +   boot-time-mm
+>  
+>  Interfaces for kernel debugging
+>  ===============================
+> 
 
-thanks,
-srini
 
- drivers/nvmem/core.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index b5b0cdc21d01..514d1dfc5630 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -936,6 +936,10 @@ struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *cell_id)
- 			return cell;
- 	}
- 
-+	/* NULL cell_id only allowed for device tree; invalid otherwise */
-+	if (!cell_id)
-+		return ERR_PTR(-EINVAL);
-+
- 	return nvmem_cell_get_from_list(cell_id);
- }
- EXPORT_SYMBOL_GPL(nvmem_cell_get);
 -- 
-2.16.2
-
+~Randy
