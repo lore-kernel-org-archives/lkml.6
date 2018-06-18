@@ -2,106 +2,252 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C93DC5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:33:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 788F6C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C9AE20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:33:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzlgSDH1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C9AE20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 2182B2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 21:34:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2182B2075E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xmission.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755423AbeFRVde (ORCPT
+        id S1755449AbeFRVeY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 17:33:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38718 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1755386AbeFRVdd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 17:33:33 -0400
-Received: from mail-wr0-f170.google.com (mail-wr0-f170.google.com [209.85.128.170])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B68120852
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 21:33:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529357612;
-        bh=V85O7nWFSZGjaL46G6qYHcLRh0WWKpLmV16XW3Ow1eg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=gzlgSDH197Hy2Lja5bJ8Rs21VWywpAsyrppy+LDuJLk6Cx9I0YW8SckGYcWbSccVg
-         6tZQSe5dKNdlJejMfMACmTEdbqcLBIDr6aOAWbBpoB5YeN3eH7GJ/p1/g6D5ibnhTn
-         0su/6aBBGLnZBE3Z4/Cd02f3IL6ulgv/JciQSjKs=
-Received: by mail-wr0-f170.google.com with SMTP id d8-v6so18344695wro.4
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 14:33:32 -0700 (PDT)
-X-Gm-Message-State: APt69E1hqd0O5tpa7GFcdl1LE9shhOx60aoR05DLu1/Qu2x7OSUCFdOo
-        wsTGWDN1RH/MAq2u6O4I/JecYwLgpoHQ/0lfafaxRg==
-X-Google-Smtp-Source: ADUXVKL7AGt/ypvImMnoydSDi2BYydfZ0wJJebCqT/ggjdD3aB/7703x5JKaXJ5xPbOLpVRVK05dKnKkQ2ipR7vtKl0=
-X-Received: by 2002:adf:85ec:: with SMTP id 41-v6mr11727642wru.120.1529357610781;
- Mon, 18 Jun 2018 14:33:30 -0700 (PDT)
+        Mon, 18 Jun 2018 17:34:24 -0400
+Received: from out01.mta.xmission.com ([166.70.13.231]:44930 "EHLO
+        out01.mta.xmission.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754519AbeFRVeW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 17:34:22 -0400
+Received: from in01.mta.xmission.com ([166.70.13.51])
+        by out01.mta.xmission.com with esmtps (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fV1ms-0000If-Q2; Mon, 18 Jun 2018 15:34:10 -0600
+Received: from 97-119-124-205.omah.qwest.net ([97.119.124.205] helo=x220.xmission.com)
+        by in01.mta.xmission.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.87)
+        (envelope-from <ebiederm@xmission.com>)
+        id 1fV1md-0008PF-1z; Mon, 18 Jun 2018 15:34:10 -0600
+From:   ebiederm@xmission.com (Eric W. Biederman)
+To:     David Howells <dhowells@redhat.com>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <87in6kptqt.fsf@xmission.com>
+        <152720672288.9073.9868393448836301272.stgit@warthog.procyon.org.uk>
+        <3949.1529353850@warthog.procyon.org.uk>
+Date:   Mon, 18 Jun 2018 16:33:41 -0500
+In-Reply-To: <3949.1529353850@warthog.procyon.org.uk> (David Howells's message
+        of "Mon, 18 Jun 2018 21:30:50 +0100")
+Message-ID: <8736xjdbka.fsf@xmission.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20180608171216.26521-1-jarkko.sakkinen@linux.intel.com>
- <20180608171216.26521-10-jarkko.sakkinen@linux.intel.com> <78982a32-c589-48e2-9a83-fd36903b5588@fortanix.com>
-In-Reply-To: <78982a32-c589-48e2-9a83-fd36903b5588@fortanix.com>
-From:   Andy Lutomirski <luto@kernel.org>
-Date:   Mon, 18 Jun 2018 14:33:18 -0700
-X-Gmail-Original-Message-ID: <CALCETrXTjjiARJf=pc3mqrot3_VDoQtZM=PJg=fpg=P1x63jyw@mail.gmail.com>
-Message-ID: <CALCETrXTjjiARJf=pc3mqrot3_VDoQtZM=PJg=fpg=P1x63jyw@mail.gmail.com>
-Subject: Re: [intel-sgx-kernel-dev] [PATCH v11 09/13] x86, sgx: basic routines
- for enclave page cache
-To:     Jethro Beekman <jethro@fortanix.com>
-Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
-        X86 ML <x86@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        npmccallum@redhat.com, LKML <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        intel-sgx-kernel-dev@lists.01.org,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-XM-SPF: eid=1fV1md-0008PF-1z;;;mid=<8736xjdbka.fsf@xmission.com>;;;hst=in01.mta.xmission.com;;;ip=97.119.124.205;;;frm=ebiederm@xmission.com;;;spf=neutral
+X-XM-AID: U2FsdGVkX1/pUF+iYP0sv4GNN4ctl07iB8w1S3znR98=
+X-SA-Exim-Connect-IP: 97.119.124.205
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+Subject: Re: [PATCH 00/32] VFS: Introduce filesystem context [ver #8]
+X-SA-Exim-Version: 4.2.1 (built Thu, 05 May 2016 13:38:54 -0600)
+X-SA-Exim-Scanned: Yes (on in01.mta.xmission.com)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 8:11 AM Jethro Beekman <jethro@fortanix.com> wrote:
+David Howells <dhowells@redhat.com> writes:
+
+> Eric W. Biederman <ebiederm@xmission.com> wrote:
 >
-> On 2018-06-08 10:09, Jarkko Sakkinen wrote:
-> > +/*
-> > + * Writing the LE hash MSRs is extraordinarily expensive, e.g.
-> > + * 3-4x slower than normal MSRs, so we use a per-cpu cache to
-> > + * track the last known value of the MSRs to avoid unnecessarily
-> > + * writing the MSRs with the current value.  Because most Linux
-> > + * kernels will use an LE that is signed with a non-Intel key,
+>> I have read through these patches and I noticed a significant issue.
+>> 
+>> Today in mount_bdev we do something that looks like:
+>> 
+>> mount_bdev(...)
+>> {
+>> 	s = sget(..., bdev);
+>> 	if (s->s_root) {
+>>         	/* Noop */
+>>         } else {
+>>         	err = fill_super(s, ...);
+>>                 if (err) {
+>>                 	deactivate_locked_super(s);
+>>                         return ERR_PTR(err);
+>>                 }
+>>                 s->s_flags |= SB_ATTIVE;
+>>                 bdev->bd_super = s;
+>>         }
+>>         return dget(s->s_root);
+>> }
+>> 
+>> The key point is that we don't process the mount options at all if
+>> a super block already exists in the kernel.  Similar to what
+>> your fscontext changes are doing (after parsing the options).
 >
-> I don't think you can predict what most Linux kernels will be doing. I
-> think not initializing the cache to the CPU's initial value is fine, but
-> this particular argument shouldn't appear in the rationale.
-
-No, it's quite predictable.  Upstream Linux will not permit the
-Intel-signed LE to be used unless Intel makes some major changes to
-the way the launch process works.
-
+> Actually, no, that's not the case.
 >
-> > + * i.e. the first EINIT will need to write the MSRs regardless
-> > + * of the cache, the cache is intentionally left uninitialized
-> > + * during boot as initializing the cache would be pure overhead
-> > + * for the majority of systems.
+> The fscontext code *requires* you to parse the parameters *before* any attempt
+> to access the superblock is made.  Note that this will actually be a problem
+> for, say, ext4 which passes a text string stored in the superblock through the
+> parser *before* parsing the mount syscall data.  Fun.
+>
+> I'm intending to deal with that particular case by having ext4 create multiple
+> private contexts, one filled in from the user data, and then a second one
+> filled in from the superblock string.  These can then be validated one against
+> the other before the super_block struct is published.
+>
+> And if the super_block struct already exists, the user's specified parameters
+> can be validated against that.
 
-But the comment does need changes.  How about saying that the cache
-either contains all zeros or matches the MSRs?  All zeros is used
-when, for whatever reason, we choose not to care what the current MSR
-values are.  Leaving it genuinely uninitialized would be incorrect.
-(And, of course, we're assuming that no one ever needs the MSRs
-zeroed.)
+I did not say parse.  I said process.   My meaning is that today
+on a second mount of a filesystem like ext2.  But really most of them we
+ignore those options.  
 
-When KVM host support goes in, even this won't be good enough if we
-want to allow passthrough access to the MSRs because we will no longer
-be able to guarantee that all zeros is invalid.  Instead we'd need an
-actual flag saying that the cache is invalid.
+>> Your fscontext changes do not improve upon this area of the mount api at
+>> all and that concerns me.  This is an area where people can and already
+>> do shoot themselves in their feet.
+>
+> This *will* be dealt with, but I wanted to get the core changes upstream
+> before tackling all the filesystems.  The legacy wrapper is just that and
+> should be got rid of when all the filesystems have been converted.
 
---Andy
+This is an area where you are making things explicit, where before
+there was no way to talk about this.   For filesystems that are in
+legacy mode I realize we might miss this corner case, but we should
+still think about it and handle it.  The proc filesystem has the same
+behavior and it is one you are converting.
+
+>> ...
+>>
+>> Creating a new mount and finding an old mount are the same operation in
+>> the kernel today.  This is fundamentally confusing.  In the new api
+>> could we please separate these two operations?
+>>
+>> Perhaps someting like:
+>> x create
+>> x find
+>> 
+>> With the "x create" case failing if the filesystem already exists,
+>> still allowing "x find"?  And with the "x find" case failing if
+>> the superblock is not already created in the kernel.
+>
+> No.  What you're suggesting introduces a userspace-userspace and a
+> userspace-kernel race - unless you're willing to let userspace lock against
+> superblock creation by other parties.
+>
+> Further, some filesystems *have* to be parameterised before you can do the
+> check for the superblock.  Network filesystems, for example, where you have to
+> set the network parameters upfront and the key to the superblock might not be
+> known until you've queried the server.
+
+I am not talking about skipping the parameterization.  I am talking
+about actually acting on those options.  Parsing and validating them
+ahead of time is not my concern.  When we make the super block
+honor those options is my concern.
+
+Further I am not suggesting something that has a meaningful race.
+I am suggesting some that is the equivalent of the O_EXCL logic.
+I am proposing that "x create" fail if the superblock already exists
+in the kernel.  I am proposing that "x find" will fail if the
+superblock does not already exist.
+
+In the worst case you have to iterate a time or two when another
+user is racing with you to create the super block.  But this
+gives you very valuable information.  Knowledge of if the superblock
+is honoring all of your specified mount options or not.
+
+It removes an existing nasty race today where people think they mount a
+filesystem like "proc" with one set of options and those options are
+ignored because an internal kernel mount already exists.
+
+This is at the level of the fscontext API.
+
+I don't care what filesystems that have not been updated to fscontext
+do. I just want to avoid the nasty nasty confusion that is possible
+with the existing API.
+
+My motivation is I am in the middle of closing a regression in option
+parsing in proc that caused a security option to get ignored.
+
+I would be happy even with a result value of "x create" that told
+reported if the superbloc "created" or "found".  Instead of having two
+different options.
+
+But I want to be able to say to userspace very clearly.  If this
+superblock already exists.  You need to go through the
+remount/reconfigure code path to change it's options.
+
+
+>> That should make it clear to a userspace program what is going on
+>> and give it a chance to mount a filesystem anyway.
+>
+> That said, I'm willing to provide a "fail if already extant" option if we
+> think that's actually likely to be of use.  However, you'd still have to
+> provide parameters before the check can be made.
+
+Yes that is what I am asking for, though very much not optionally.  It
+is a rare case and it succeeds in the wrong way today.  Letting people
+think they have set a mount option when they have not.
+
+>> In a similar vein could we please clarify the rules for changing mount
+>> options for an existing superblock are in the new api?
+>
+> You mean remount/reconfigure?  Note that we have to provide backward
+> compatibility with every single filesystem.
+
+Yes.  I am thinking explicitly of reconfigure.  The old remount
+can do whatever is backwards compatible.
+
+>> Today mount assumes that it has to provide all of the existing options to
+>> reconfigure a mount.  What people want to do and what most filesystems
+>> support is just specifying the options that need to be changed.  Can we
+>> please make this the rule of how this are expected to work for fscontext?
+>> That only changing mount options need to be specified before: "x
+>> reconfigure"
+>
+> Fine by me - but it must *also* support every option being specified if that
+> is what mount currently does.
+
+Yes.  That is what ext4 and xfs support today.
+
+I just want it clear that at least if you use the new reconfigure
+interface that you can expect options you have not specified to remain
+the same instead of reverting to a default state.
+
+> I don't really want to supply extra parsers if I can avoid it.  Miklós, for
+> example wanted a different, incompatible interface, so you'd do:
+>
+> 	write(fd, "o +foo");
+> 	write(fd, "o -bar");
+> 	write(fd, "x reconfig");
+>
+> sort of thing to enable or disable options... but this assumes that options
+> are binary and requires a separate parser to the one that does the initial
+> configuration - and you still have to support the old remount data parse.
+>
+> I'm okay with specifying that you should just specify the options you want to
+> change and that the normal way to 'disable' something is to prefix it with
+> "no".
+
+Yes.  That is what I am asking for.  Just so we don't need to specify
+the options that are staying the same.
+
+> I guess I could pass a flag through to indicate that this came from
+> sys_mount(MS_REMOUNT) rather than the new method.
+
+I don't think that would be needed.  As some of the most common
+filesystems implement this semantic already for sys_mount(MS_REMOUNT).
+
+What I think we might need is to cache the option string during the
+transition for unconverted filesystems so that we can give then a full
+set of options.  So that if we have an unconverted filesystem like
+devpts that assumes a missing option should be set to it's default value
+we won't break it.
+
+Eric
+
