@@ -3,27 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F372C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:16:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F731C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2434208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:16:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2434208A6
+	by mail.kernel.org (Postfix) with ESMTP id 44C5E208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:16:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44C5E208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934375AbeFRPQB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:16:01 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41386 "EHLO mail.bootlin.com"
+        id S1755015AbeFRPQa (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:16:30 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41417 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935382AbeFRPAV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:00:21 -0400
+        id S934822AbeFRPAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:00:19 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6AA8020DEC; Mon, 18 Jun 2018 17:00:19 +0200 (CEST)
+        id EFF2D20DE0; Mon, 18 Jun 2018 17:00:17 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DEED420DDD;
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2759420DCC;
         Mon, 18 Jun 2018 17:00:17 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -67,9 +69,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-sunxi@googlegroups.com,
         Hugues Fruchet <hugues.fruchet@st.com>,
         Randy Li <ayaka@soulik.info>
-Subject: [PATCH v4 11/19] ARM: sun7i-a20: Add support for the C1 SRAM region with the SRAM controller
-Date:   Mon, 18 Jun 2018 16:58:35 +0200
-Message-Id: <20180618145843.14631-12-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 10/19] ARM: sun5i: Add support for the C1 SRAM region with the SRAM controller
+Date:   Mon, 18 Jun 2018 16:58:34 +0200
+Message-Id: <20180618145843.14631-11-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
 References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
@@ -81,21 +83,20 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 From: Maxime Ripard <maxime.ripard@bootlin.com>
 
 This adds support for the C1 SRAM region (to be used with the SRAM
-controller driver) for the A20 platform. The region is shared
+controller driver) for sun5i-based platforms. The region is shared
 between the Video Engine and the CPU.
 
 Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index f64eab4ce6f1..9afd82f9ec79 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -274,6 +274,20 @@
- 					status = "disabled";
- 				};
+diff --git a/arch/arm/boot/dts/sun5i.dtsi b/arch/arm/boot/dts/sun5i.dtsi
+index 72433f38b4e4..6fa9e28edc59 100644
+--- a/arch/arm/boot/dts/sun5i.dtsi
++++ b/arch/arm/boot/dts/sun5i.dtsi
+@@ -135,6 +135,20 @@
+ 				status = "disabled";
  			};
-+
+ 
 +			sram_c: sram@1d00000 {
 +				compatible = "mmio-sram";
 +				reg = <0x01d00000 0xd00000>;
@@ -104,14 +105,15 @@ index f64eab4ce6f1..9afd82f9ec79 100644
 +				ranges = <0 0x01d00000 0xd00000>;
 +
 +				ve_sram: sram-section@0 {
-+					compatible = "allwinner,sun7i-a20-sram-c1",
++					compatible = "allwinner,sun5i-a13-sram-c1",
 +						     "allwinner,sun4i-a10-sram-c1";
 +					reg = <0x000000 0x80000>;
 +				};
 +			};
- 		};
- 
- 		nmi_intc: interrupt-controller@1c00030 {
++
+ 			sram_d: sram@10000 {
+ 				compatible = "mmio-sram";
+ 				reg = <0x00010000 0x1000>;
 -- 
 2.17.0
 
