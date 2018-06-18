@@ -6,25 +6,25 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09D50C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF9BC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1E7520874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:40:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1E7520874
+	by mail.kernel.org (Postfix) with ESMTP id 2177D208E8
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:41:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2177D208E8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966700AbeFRIku (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:40:50 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37018 "EHLO
+        id S968115AbeFRIlN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:41:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36986 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030422AbeFRIiX (ORCPT
+        with ESMTP id S968217AbeFRIiT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:38:23 -0400
+        Mon, 18 Jun 2018 04:38:19 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18783C49;
-        Mon, 18 Jun 2018 08:38:22 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 339C2CBB;
+        Mon, 18 Jun 2018 08:38:18 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -38,9 +38,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
         Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 163/189] x86/pkeys/selftests: Save off prot for allocations
-Date:   Mon, 18 Jun 2018 10:14:19 +0200
-Message-Id: <20180618081215.773704547@linuxfoundation.org>
+Subject: [PATCH 4.14 162/189] x86/pkeys/selftests: Fix pointer math
+Date:   Mon, 18 Jun 2018 10:14:18 +0200
+Message-Id: <20180618081215.733540335@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -59,14 +59,17 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dave Hansen <dave.hansen@linux.intel.com>
 
-[ Upstream commit acb25d761d6f2f64e785ccefc71e54f244f1eda4 ]
+[ Upstream commit 3d64f4ed15c3c53dba4c514bf59c334464dee373 ]
 
-This makes it possible to to tell what 'prot' a given allocation
-is supposed to have.  That way, if we want to change just the
-pkey, we know what 'prot' to pass to mprotect_pkey().
+We dump out the entire area of the siginfo where the si_pkey_ptr is
+supposed to be.  But, we do some math on the poitner, which is a u32.
+We intended to do byte math, not u32 math on the pointer.
 
-Also, keep a record of the most recent allocation so the tests
-can easily find it.
+Cast it over to a u8* so it works.
+
+Also, move this block of code to below th si_code check.  It doesn't
+hurt anything, but the si_pkey field is gibberish for other signal
+types.
 
 Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
 Cc: Andrew Morton <akpm@linux-foundation.org>
@@ -78,74 +81,43 @@ Cc: Ram Pai <linuxram@us.ibm.com>
 Cc: Shuah Khan <shuah@kernel.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171354.AA23E228@viggo.jf.intel.com
+Link: http://lkml.kernel.org/r/20180509171352.9BE09819@viggo.jf.intel.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ tools/testing/selftests/x86/protection_keys.c |   14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
 --- a/tools/testing/selftests/x86/protection_keys.c
 +++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -677,10 +677,12 @@ int mprotect_pkey(void *ptr, size_t size
- struct pkey_malloc_record {
- 	void *ptr;
- 	long size;
-+	int prot;
- };
- struct pkey_malloc_record *pkey_malloc_records;
-+struct pkey_malloc_record *pkey_last_malloc_record;
- long nr_pkey_malloc_records;
--void record_pkey_malloc(void *ptr, long size)
-+void record_pkey_malloc(void *ptr, long size, int prot)
- {
- 	long i;
- 	struct pkey_malloc_record *rec = NULL;
-@@ -712,6 +714,8 @@ void record_pkey_malloc(void *ptr, long
- 		(int)(rec - pkey_malloc_records), rec, ptr, size);
- 	rec->ptr = ptr;
- 	rec->size = size;
-+	rec->prot = prot;
-+	pkey_last_malloc_record = rec;
- 	nr_pkey_malloc_records++;
- }
+@@ -303,13 +303,6 @@ void signal_handler(int signum, siginfo_
+ 		dump_mem(pkru_ptr - 128, 256);
+ 	pkey_assert(*pkru_ptr);
  
-@@ -756,7 +760,7 @@ void *malloc_pkey_with_mprotect(long siz
- 	pkey_assert(ptr != (void *)-1);
- 	ret = mprotect_pkey((void *)ptr, PAGE_SIZE, prot, pkey);
- 	pkey_assert(!ret);
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
- 	rdpkru();
+-	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
+-	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
+-	dump_mem(si_pkey_ptr - 8, 24);
+-	siginfo_pkey = *si_pkey_ptr;
+-	pkey_assert(siginfo_pkey < NR_PKEYS);
+-	last_si_pkey = siginfo_pkey;
+-
+ 	if ((si->si_code == SEGV_MAPERR) ||
+ 	    (si->si_code == SEGV_ACCERR) ||
+ 	    (si->si_code == SEGV_BNDERR)) {
+@@ -317,6 +310,13 @@ void signal_handler(int signum, siginfo_
+ 		exit(4);
+ 	}
  
- 	dprintf1("%s() for pkey %d @ %p\n", __func__, pkey, ptr);
-@@ -777,7 +781,7 @@ void *malloc_pkey_anon_huge(long size, i
- 	size = ALIGN_UP(size, HPAGE_SIZE * 2);
- 	ptr = mmap(NULL, size, PROT_NONE, MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
- 	pkey_assert(ptr != (void *)-1);
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
- 	mprotect_pkey(ptr, size, prot, pkey);
- 
- 	dprintf1("unaligned ptr: %p\n", ptr);
-@@ -850,7 +854,7 @@ void *malloc_pkey_hugetlb(long size, int
- 	pkey_assert(ptr != (void *)-1);
- 	mprotect_pkey(ptr, size, prot, pkey);
- 
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
- 
- 	dprintf1("mmap()'d hugetlbfs for pkey %d @ %p\n", pkey, ptr);
- 	return ptr;
-@@ -872,7 +876,7 @@ void *malloc_pkey_mmap_dax(long size, in
- 
- 	mprotect_pkey(ptr, size, prot, pkey);
- 
--	record_pkey_malloc(ptr, size);
-+	record_pkey_malloc(ptr, size, prot);
- 
- 	dprintf1("mmap()'d for pkey %d @ %p\n", pkey, ptr);
- 	close(fd);
++	si_pkey_ptr = (u32 *)(((u8 *)si) + si_pkey_offset);
++	dprintf1("si_pkey_ptr: %p\n", si_pkey_ptr);
++	dump_mem((u8 *)si_pkey_ptr - 8, 24);
++	siginfo_pkey = *si_pkey_ptr;
++	pkey_assert(siginfo_pkey < NR_PKEYS);
++	last_si_pkey = siginfo_pkey;
++
+ 	dprintf1("signal pkru from xsave: %08x\n", *pkru_ptr);
+ 	/* need __rdpkru() version so we do not do shadow_pkru checking */
+ 	dprintf1("signal pkru from  pkru: %08x\n", __rdpkru());
 
 
