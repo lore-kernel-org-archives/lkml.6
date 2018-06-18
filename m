@@ -3,79 +3,130 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE3A1C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B2ECC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 716892086A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:51:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 716892086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 521092086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:54:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521092086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933346AbeFRMvO (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:51:14 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:54608 "EHLO mail.skyhub.de"
+        id S933036AbeFRMyc (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:54:32 -0400
+Received: from mga05.intel.com ([192.55.52.43]:57242 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1752765AbeFRMvL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:51:11 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id zrYsy2geVC7P; Mon, 18 Jun 2018 14:51:09 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BE29C00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be2:9c00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id C64951EC00EE;
-        Mon, 18 Jun 2018 14:51:09 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 14:51:06 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Tony Luck <tony.luck@intel.com>,
+        id S1752765AbeFRMya (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 08:54:30 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 05:54:29 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,239,1526367600"; 
+   d="scan'208";a="47940176"
+Received: from abyunus-mobl.amr.corp.intel.com (HELO [10.254.89.6]) ([10.254.89.6])
+  by fmsmga007.fm.intel.com with ESMTP; 18 Jun 2018 05:54:30 -0700
+Subject: Re: [PATCHv3 09/17] x86/mm: Implement page_keyid() using page_ext
+To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
+ <20180612143915.68065-10-kirill.shutemov@linux.intel.com>
+ <169af1d8-7fb6-5e1a-4f34-0150570018cc@intel.com>
+ <20180618100721.qvm4maovfhxbfoo7@black.fi.intel.com>
+Cc:     Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        y2038@lists.linaro.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Yazen Ghannam <yazen.ghannam@amd.com>,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86: mce: always use 64-bit timestamps
-Message-ID: <20180618125106.GB24921@zn.tnic>
-References: <20180618100759.1921750-1-arnd@arndb.de>
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <7fab87eb-7b6d-6995-b6c6-46c0fd049d2a@intel.com>
+Date:   Mon, 18 Jun 2018 05:54:29 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <20180618100721.qvm4maovfhxbfoo7@black.fi.intel.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20180618100759.1921750-1-arnd@arndb.de>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 12:06:46PM +0200, Arnd Bergmann wrote:
-> The machine check timestamp uses get_seconds(), which returns an 'unsigned long'
-> number that might overflow on 32-bit architectures (in the distant future)
-> and is therefore deprecated.
-> 
-> The normal replacement would be ktime_get_real_seconds(), but that needs to
-> use a sequence lock that might cause a deadlock if the mce happens at just
-> the wrong moment. The __ktime_get_real_seconds() skips that lock and is
-> safer here, but has a miniscule risk of returning the wrong time when we read
-> it on a 32-bit architecture at the same time as updating the epoch, i.e.
-> from before y2106 overflow time to after, or vice versa.
-> 
-> This seems to be an acceptable risk in this particular case, and is the
-> same thing we do in kdb.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/x86/kernel/cpu/mcheck/mce.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+On 06/18/2018 03:07 AM, Kirill A. Shutemov wrote:
+> On Wed, Jun 13, 2018 at 06:20:10PM +0000, Dave Hansen wrote:
+>>> +int page_keyid(const struct page *page)
+>>> +{
+>>> +	if (mktme_status != MKTME_ENABLED)
+>>> +		return 0;
+>>> +
+>>> +	return lookup_page_ext(page)->keyid;
+>>> +}
+>>> +EXPORT_SYMBOL(page_keyid);
+>> Please start using a proper X86_FEATURE_* flag for this.  It will give
+>> you all the fancy static patching that you are missing by doing it this way.
+> There's no MKTME CPU feature.
 
-Applied, thanks.
+Right.  We have tons of synthetic features that have no basis in the
+hardware CPUID feature.
 
--- 
-Regards/Gruss,
-    Boris.
+> Well, I guess we can invent syntactic one or just use static key directly.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Did you mean synthetic?
+
+> Let's see how it behaves performance-wise before optimizing this.
+
+It's not an optimization, it's how we do things in arch/x86, and it has
+a *ton* of optimization infrastructure behind it that you get for free
+if you use it.
+
+I'm just trying to save Thomas's tired fingers from having to say the
+same thing in a week or two when he looks at this.
