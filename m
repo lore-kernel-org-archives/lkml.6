@@ -2,100 +2,141 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF1ACC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1DBAC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:17:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C13A20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:16:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="N3escDGx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C13A20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id A2A1120852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:17:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2A1120852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=de.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934189AbeFRLQV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:16:21 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56138 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932762AbeFRLQU (ORCPT
+        id S933947AbeFRLRb convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 07:17:31 -0400
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38842 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S932720AbeFRLR3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:16:20 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6zBiVaaY1ysWTa0Cy8mM8IYCJ4wH7kKzsq3Os+GP32Y=; b=N3escDGxACoxQVhHo44poHIiq
-        CP1+Of+FaK/YlBurI7rqMiywpXTIflJM4pG5Py6gvnZ3UAUyjcl3jt54nmghUTvenCQ84ElAINi5+
-        eN5wJJG+HT2dTCUbm5kfzc3hDCS5RuHF5vpqffoT4YUEDr4baaYb2c/UWFCy8DcPeiXZc=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fUs8G-0007ul-Hv; Mon, 18 Jun 2018 11:15:36 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fUs8G-00066t-25; Mon, 18 Jun 2018 12:15:36 +0100
-Date:   Mon, 18 Jun 2018 12:15:36 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Olivier Moysan <olivier.moysan@st.com>
-Cc:     lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        mcoquelin.stm32@gmail.com, alexandre.torgue@st.com,
-        alsa-devel@alsa-project.org, linux-arm-kernel@lists.infradead.org,
-        kernel@stlinux.com, linux-kernel@vger.kernel.org,
-        arnaud.pouliquen@st.com, benjamin.gaignard@st.com
-Subject: Re: [PATCH v2 0/1] ASoC: stm32: sai: add iec958 controls support
-Message-ID: <20180618111536.GB6928@sirena.org.uk>
-References: <1528730039-15757-1-git-send-email-olivier.moysan@st.com>
+        Mon, 18 Jun 2018 07:17:29 -0400
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id w5IBEdtC019095
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:17:29 -0400
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2jp9bqnv56-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:17:28 -0400
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <schwidefsky@de.ibm.com>;
+        Mon, 18 Jun 2018 12:17:27 +0100
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 18 Jun 2018 12:17:25 +0100
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id w5IBHOXU25165852
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 18 Jun 2018 11:17:24 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 11C2242041;
+        Mon, 18 Jun 2018 12:07:27 +0100 (BST)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id DC23C42045;
+        Mon, 18 Jun 2018 12:07:26 +0100 (BST)
+Received: from mschwideX1 (unknown [9.152.212.186])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 18 Jun 2018 12:07:26 +0100 (BST)
+Date:   Mon, 18 Jun 2018 13:17:22 +0200
+From:   Martin Schwidefsky <schwidefsky@de.ibm.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-s390 <linux-s390@vger.kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>
+Subject: [GIT PULL] s390 patches for 4.18-rc2
+X-Mailer: Claws Mail 3.13.2 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+X-TM-AS-GCONF: 00
+x-cbid: 18061811-0016-0000-0000-000001DD3A3E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18061811-0017-0000-0000-000032313E01
+Message-Id: <20180618131722.46ed6b3d@mschwideX1>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
-Content-Disposition: inline
-In-Reply-To: <1528730039-15757-1-git-send-email-olivier.moysan@st.com>
-X-Cookie: May be too intense for some viewers.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-06-18_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1805220000 definitions=main-1806180136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
---8P1HSweYDcXXzwPJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+please pull from the 'for-linus' branch of
 
-On Mon, Jun 11, 2018 at 05:13:58PM +0200, Olivier Moysan wrote:
-> Changes v2:
-> - Remove iec958 helpers and implement iec958 controls in sai driver=20
->=20
-> Olivier Moysan (1):
->   ASoC: stm32: sai: add iec958 controls support
+	git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git for-linus
 
-Please don't send cover letters for single patches, if there is anything
-that needs saying put it in the changelog of the patch or after the ---
-if it's administrative stuff.  This reduces mail volume and ensures that=20
-any important information is recorded in the changelog rather than being
-lost.=20
+to receive the following updates:
 
---8P1HSweYDcXXzwPJ
-Content-Type: application/pgp-signature; name="signature.asc"
+  common I/O layer
+    - Fix bit-fields crossing storage-unit boundaries in css_general_char
 
------BEGIN PGP SIGNATURE-----
+  dasd driver
+    - Avoid a sparse warning in regard to the queue lock
+    - Allocate the struct dasd_ccw_req as per request data. Only for
+      internal I/O is the structure allocated separately
+    - Remove the unused function dasd_kmalloc_set_cda
+    - Save a few bytes in struct dasd_ccw_req by reordering fields
+    - Convert remaining users of dasd_kmalloc_request to
+      dasd_smalloc_request and remove the now unused function
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsnlFcACgkQJNaLcl1U
-h9COmgf+NZeQhx8mEwgNi61ycoyHKgoTRSLM/VDnAu3vrL186K5ShnXF6INDoZVv
-CbgkTlKnRC354vn+fNMWR0bAuwRznhyDNObMlprS6RRk2O2nW8Z7f0j2LTZ5pJ1M
-IAIh4yhBFIMYSsYO156zJL0LNlQyw4CPepH28RA8eJDhFcE4SLl10O5yCyTnkvmi
-MW/C+J3KrSk2gjGS2JuGQ7aB2rzZuMp8JcqpXgkIx94RjwijANhQtI8MlnEaenV2
-HmjkxHbP8bcyKVuOqLvQvIUEImv0+L3gPOv6Vu5TkytIOIDPBcI3V55RXyQoXdT7
-tTxtAC+EO+4ovA2r/3MhUC0uEV113Q==
-=2A+u
------END PGP SIGNATURE-----
+  vfio/ccw
+    - Refactor and improve pfn_array_alloc_pin/pfn_array_pin
+    - Add a new tracepoint for failed vfio/ccw requests
+    - Add a CCW translation improvement to accept more requests as valid
+    - Bug fixes
 
---8P1HSweYDcXXzwPJ--
+Shortlog:
+
+Dong Jia Shi (4):
+      vfio: ccw: fix error return in vfio_ccw_sch_event
+      vfio: ccw: shorten kernel doc description for pfn_array_pin()
+      vfio: ccw: refactor and improve pfn_array_alloc_pin()
+      vfio: ccw: set ccw->cda to NULL defensively
+
+Halil Pasic (2):
+      vfio: ccw: push down unsupported IDA check
+      vfio: ccw: add tracepoints for interesting error paths
+
+Sebastian Ott (6):
+      s390/cio: sanitize css_general_characteristics definition
+      s390/dasd: simplify locking in process_final_queue
+      s390/dasd: move dasd_ccw_req to per request data
+      s390/dasd: remove dasd_kmalloc_set_cda
+      s390/dasd: reshuffle struct dasd_ccw_req
+      s390/dasd: only use preallocated requests
+
+ arch/s390/include/asm/css_chars.h |  62 +++++++-------
+ drivers/s390/block/dasd.c         | 171 +++++++++++++-------------------------
+ drivers/s390/block/dasd_alias.c   |   6 +-
+ drivers/s390/block/dasd_diag.c    |   3 +-
+ drivers/s390/block/dasd_eckd.c    |  46 +++++-----
+ drivers/s390/block/dasd_eer.c     |  10 +--
+ drivers/s390/block/dasd_fba.c     |   6 +-
+ drivers/s390/block/dasd_int.h     |  26 ++----
+ drivers/s390/cio/Makefile         |   1 +
+ drivers/s390/cio/vfio_ccw_cp.c    | 140 ++++++++++++++++---------------
+ drivers/s390/cio/vfio_ccw_drv.c   |   5 +-
+ drivers/s390/cio/vfio_ccw_fsm.c   |  17 +++-
+ drivers/s390/cio/vfio_ccw_trace.h |  54 ++++++++++++
+ 13 files changed, 282 insertions(+), 265 deletions(-)
+ create mode 100644 drivers/s390/cio/vfio_ccw_trace.h
+
