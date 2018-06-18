@@ -6,34 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7E11C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:56:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C55C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:56:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AF7820652
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:56:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AF7820652
+	by mail.kernel.org (Postfix) with ESMTP id 64263208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:56:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64263208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965011AbeFRJ4V (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:56:21 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55002 "EHLO
+        id S965614AbeFRJ4v (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:56:51 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54956 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935308AbeFRIUI (ORCPT
+        with ESMTP id S935593AbeFRITw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:20:08 -0400
+        Mon, 18 Jun 2018 04:19:52 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 8DE2AC3C;
-        Mon, 18 Jun 2018 08:20:07 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3D5ABBAD;
+        Mon, 18 Jun 2018 08:19:51 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jacek Tomaka <jacek.tomaka@poczta.fm>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        stable@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 110/279] x86/cpu/intel: Add missing TLB cpuid values
-Date:   Mon, 18 Jun 2018 10:11:35 +0200
-Message-Id: <20180618080613.375395183@linuxfoundation.org>
+Subject: [PATCH 4.16 106/279] arm64: fix possible spectre-v1 in ptrace_hbp_get_event()
+Date:   Mon, 18 Jun 2018 10:11:31 +0200
+Message-Id: <20180618080613.211434591@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,42 +51,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "jacek.tomaka@poczta.fm" <jacek.tomaka@poczta.fm>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit b837913fc2d9061bf9b8c0dd6bf2d24e2f98b84a ]
+[ Upstream commit 19791a7ca674fb3009bb068260e852a2f05b605c ]
 
-Make kernel print the correct number of TLB entries on Intel Xeon Phi 7210
-(and others)
+It's possible for userspace to control idx. Sanitize idx when using it
+as an array index.
 
-Before:
-[ 0.320005] Last level dTLB entries: 4KB 0, 2MB 0, 4MB 0, 1GB 0
-After:
-[ 0.320005] Last level dTLB entries: 4KB 256, 2MB 128, 4MB 128, 1GB 16
+Found by smatch.
 
-The entries do exist in the official Intel SMD but the type column there is
-incorrect (states "Cache" where it should read "TLB"), but the entries for
-the values 0x6B, 0x6C and 0x6D are correctly described as 'Data TLB'.
-
-Signed-off-by: Jacek Tomaka <jacek.tomaka@poczta.fm>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lkml.kernel.org/r/20180423161425.24366-1-jacekt@dugeo.com
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/kernel/cpu/intel.c |    3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/kernel/ptrace.c |   14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
 
---- a/arch/x86/kernel/cpu/intel.c
-+++ b/arch/x86/kernel/cpu/intel.c
-@@ -751,6 +751,9 @@ static const struct _tlb_table intel_tlb
- 	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
- 	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
- 	{ 0x63, TLB_DATA_1G,		4,	" TLB_DATA 1 GByte pages, 4-way set associative" },
-+	{ 0x6b, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 8-way associative" },
-+	{ 0x6c, TLB_DATA_2M_4M,		128,	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
-+	{ 0x6d, TLB_DATA_1G,		16,	" TLB_DATA 1 GByte pages, fully associative" },
- 	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
- 	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
- 	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
+--- a/arch/arm64/kernel/ptrace.c
++++ b/arch/arm64/kernel/ptrace.c
+@@ -25,6 +25,7 @@
+ #include <linux/sched/signal.h>
+ #include <linux/sched/task_stack.h>
+ #include <linux/mm.h>
++#include <linux/nospec.h>
+ #include <linux/smp.h>
+ #include <linux/ptrace.h>
+ #include <linux/user.h>
+@@ -249,15 +250,20 @@ static struct perf_event *ptrace_hbp_get
+ 
+ 	switch (note_type) {
+ 	case NT_ARM_HW_BREAK:
+-		if (idx < ARM_MAX_BRP)
+-			bp = tsk->thread.debug.hbp_break[idx];
++		if (idx >= ARM_MAX_BRP)
++			goto out;
++		idx = array_index_nospec(idx, ARM_MAX_BRP);
++		bp = tsk->thread.debug.hbp_break[idx];
+ 		break;
+ 	case NT_ARM_HW_WATCH:
+-		if (idx < ARM_MAX_WRP)
+-			bp = tsk->thread.debug.hbp_watch[idx];
++		if (idx >= ARM_MAX_WRP)
++			goto out;
++		idx = array_index_nospec(idx, ARM_MAX_WRP);
++		bp = tsk->thread.debug.hbp_watch[idx];
+ 		break;
+ 	}
+ 
++out:
+ 	return bp;
+ }
+ 
 
 
