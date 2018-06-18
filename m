@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50648C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B677C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FC39208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:01:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC39208A6
+	by mail.kernel.org (Postfix) with ESMTP id 47805208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:02:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47805208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965674AbeFRKBZ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:01:25 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54742 "EHLO
+        id S965731AbeFRKCB (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:02:01 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54704 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935307AbeFRISu (ORCPT
+        with ESMTP id S935192AbeFRISm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:18:50 -0400
+        Mon, 18 Jun 2018 04:18:42 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 84AF4BAD;
-        Mon, 18 Jun 2018 08:18:49 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 82FE4C3C;
+        Mon, 18 Jun 2018 08:18:41 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Stefan Agner <stefan@agner.ch>,
-        Archit Taneja <architt@codeaurora.org>,
-        Rob Clark <robdclark@gmail.com>,
+        stable@vger.kernel.org, David Lechner <david@lechnology.com>,
+        Sekhar Nori <nsekhar@ti.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 058/279] drm/msm/dsi: use correct enum in dsi_get_cmd_fmt
-Date:   Mon, 18 Jun 2018 10:10:43 +0200
-Message-Id: <20180618080611.235948994@linuxfoundation.org>
+Subject: [PATCH 4.16 082/279] ARM: dts: da850: fix W=1 warnings with pinmux node
+Date:   Mon, 18 Jun 2018 10:11:07 +0200
+Message-Id: <20180618080612.201258049@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,39 +50,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Stefan Agner <stefan@agner.ch>
+From: Sekhar Nori <nsekhar@ti.com>
 
-[ Upstream commit a4af89286f8fc382459308764ea05935dc477cdc ]
+[ Upstream commit 94a82284ad4711b7f9fd78981fdc7a1cb645030b ]
 
-The function dsi_get_cmd_fmt returns enum dsi_cmd_dst_format,
-use the correct enum value also for MIPI_DSI_FMT_RGB666/_PACKED.
+Remove unused #address-cells and #size-cells from pinmux
+node. This fixes W=1 warnings of the type:
 
-This has been discovered using clang:
-  drivers/gpu/drm/msm/dsi/dsi_host.c:743:35: warning: implicit conversion
-        from enumeration type 'enum dsi_vid_dst_format' to different
-        enumeration type 'enum dsi_cmd_dst_format' [-Wenum-conversion]
-          case MIPI_DSI_FMT_RGB666:       return VID_DST_FORMAT_RGB666;
-                                          ~~~~~~ ^~~~~~~~~~~~~~~~~~~~~
+arch/arm/boot/dts/da850-lcdk.dtb: Warning (avoid_unnecessary_addr_size): /soc@1c00000/pinmux@14120: unnecessary #address-cells/#size-cells without "ranges" or child "reg" property
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
-Reviewed-by: Archit Taneja <architt@codeaurora.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Tested on DA850 LCDK by checking output of:
+
+/sys/kernel/debug/pinctrl/1c14120.pinmux-pinctrl-single/pins
+
+before and after the change.
+
+Reviewed-by: David Lechner <david@lechnology.com>
+Signed-off-by: Sekhar Nori <nsekhar@ti.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/dsi/dsi_host.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/da850.dtsi |    2 --
+ 1 file changed, 2 deletions(-)
 
---- a/drivers/gpu/drm/msm/dsi/dsi_host.c
-+++ b/drivers/gpu/drm/msm/dsi/dsi_host.c
-@@ -740,7 +740,7 @@ static inline enum dsi_cmd_dst_format ds
- 	switch (mipi_fmt) {
- 	case MIPI_DSI_FMT_RGB888:	return CMD_DST_FORMAT_RGB888;
- 	case MIPI_DSI_FMT_RGB666_PACKED:
--	case MIPI_DSI_FMT_RGB666:	return VID_DST_FORMAT_RGB666;
-+	case MIPI_DSI_FMT_RGB666:	return CMD_DST_FORMAT_RGB666;
- 	case MIPI_DSI_FMT_RGB565:	return CMD_DST_FORMAT_RGB565;
- 	default:			return CMD_DST_FORMAT_RGB888;
- 	}
+--- a/arch/arm/boot/dts/da850.dtsi
++++ b/arch/arm/boot/dts/da850.dtsi
+@@ -46,8 +46,6 @@
+ 		pmx_core: pinmux@14120 {
+ 			compatible = "pinctrl-single";
+ 			reg = <0x14120 0x50>;
+-			#address-cells = <1>;
+-			#size-cells = <0>;
+ 			#pinctrl-cells = <2>;
+ 			pinctrl-single,bit-per-mux;
+ 			pinctrl-single,register-width = <32>;
 
 
