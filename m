@@ -6,42 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8735C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C0EC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6962C20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6962C20874
+	by mail.kernel.org (Postfix) with ESMTP id 3D87920874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:38:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D87920874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030469AbeFRIid (ORCPT
+        id S1030282AbeFRIij (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:38:33 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:37130 "EHLO
+        Mon, 18 Jun 2018 04:38:39 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:37162 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030439AbeFRIi3 (ORCPT
+        with ESMTP id S967158AbeFRIig (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:38:29 -0400
+        Mon, 18 Jun 2018 04:38:36 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D28C5CB9;
-        Mon, 18 Jun 2018 08:38:28 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B0DA2C5C;
+        Mon, 18 Jun 2018 08:38:35 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Hansen <dave.hansen@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Ellermen <mpe@ellerman.id.au>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ram Pai <linuxram@us.ibm.com>, Shuah Khan <shuah@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>, linux-mm@kvack.org,
-        Ingo Molnar <mingo@kernel.org>,
+        stable@vger.kernel.org, Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 155/189] x86/pkeys/selftests: Give better unexpected fault error messages
-Date:   Mon, 18 Jun 2018 10:14:11 +0200
-Message-Id: <20180618081215.462194707@linuxfoundation.org>
+Subject: [PATCH 4.14 185/189] ARM: kexec: fix kdump register saving on panic()
+Date:   Mon, 18 Jun 2018 10:14:41 +0200
+Message-Id: <20180618081216.651706376@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -58,72 +50,77 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Hansen <dave.hansen@linux.intel.com>
+From: Russell King <rmk+kernel@armlinux.org.uk>
 
-[ Upstream commit 55556b0b2016806b2e16a20b62d143383983a34a ]
+[ Upstream commit 2d7b3c64431245c95b05a441669c074da10db943 ]
 
-do_not_expect_pk_fault() is a helper that we call when we do not expect
-a PK fault to have occurred.  But, it is a function, which means that
-it obscures the line numbers from pkey_assert().  It also gives no
-details.
+When a panic() occurs, the kexec code uses smp_send_stop() to stop
+the other CPUs, but this results in the CPU register state not being
+saved, and gdb is unable to inspect the state of other CPUs.
 
-Replace it with an implementation that gives nice line numbers and
-also lets callers pass in a more descriptive message about what
-happened that caused the unexpected fault.
+Commit 0ee59413c967 ("x86/panic: replace smp_send_stop() with kdump
+friendly version in panic path") addressed the issue on x86, but
+ignored other architectures.  Address the issue on ARM by splitting
+out the crash stop implementation to crash_smp_send_stop() and
+adding the necessary protection.
 
-Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dave Hansen <dave.hansen@intel.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Ellermen <mpe@ellerman.id.au>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ram Pai <linuxram@us.ibm.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-mm@kvack.org
-Link: http://lkml.kernel.org/r/20180509171338.55D13B64@viggo.jf.intel.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- tools/testing/selftests/x86/protection_keys.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/arm/kernel/machine_kexec.c |   34 ++++++++++++++++++++++------------
+ 1 file changed, 22 insertions(+), 12 deletions(-)
 
---- a/tools/testing/selftests/x86/protection_keys.c
-+++ b/tools/testing/selftests/x86/protection_keys.c
-@@ -954,10 +954,11 @@ void expected_pk_fault(int pkey)
- 	last_si_pkey = -1;
+--- a/arch/arm/kernel/machine_kexec.c
++++ b/arch/arm/kernel/machine_kexec.c
+@@ -95,6 +95,27 @@ void machine_crash_nonpanic_core(void *u
+ 		cpu_relax();
  }
  
--void do_not_expect_pk_fault(void)
--{
--	pkey_assert(last_pkru_faults == pkru_faults);
--}
-+#define do_not_expect_pk_fault(msg)	do {			\
-+	if (last_pkru_faults != pkru_faults)			\
-+		dprintf0("unexpected PK fault: %s\n", msg);	\
-+	pkey_assert(last_pkru_faults == pkru_faults);		\
-+} while (0)
++void crash_smp_send_stop(void)
++{
++	static int cpus_stopped;
++	unsigned long msecs;
++
++	if (cpus_stopped)
++		return;
++
++	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
++	smp_call_function(machine_crash_nonpanic_core, NULL, false);
++	msecs = 1000; /* Wait at most a second for the other cpus to stop */
++	while ((atomic_read(&waiting_for_crash_ipi) > 0) && msecs) {
++		mdelay(1);
++		msecs--;
++	}
++	if (atomic_read(&waiting_for_crash_ipi) > 0)
++		pr_warn("Non-crashing CPUs did not react to IPI\n");
++
++	cpus_stopped = 1;
++}
++
+ static void machine_kexec_mask_interrupts(void)
+ {
+ 	unsigned int i;
+@@ -120,19 +141,8 @@ static void machine_kexec_mask_interrupt
  
- int test_fds[10] = { -1 };
- int nr_test_fds;
-@@ -1243,7 +1244,7 @@ void test_ptrace_of_child(int *ptr, u16
- 	pkey_assert(ret != -1);
- 	/* Now access from the current task, and expect NO exception: */
- 	peek_result = read_ptr(plain_ptr);
--	do_not_expect_pk_fault();
-+	do_not_expect_pk_fault("read plain pointer after ptrace");
+ void machine_crash_shutdown(struct pt_regs *regs)
+ {
+-	unsigned long msecs;
+-
+ 	local_irq_disable();
+-
+-	atomic_set(&waiting_for_crash_ipi, num_online_cpus() - 1);
+-	smp_call_function(machine_crash_nonpanic_core, NULL, false);
+-	msecs = 1000; /* Wait at most a second for the other cpus to stop */
+-	while ((atomic_read(&waiting_for_crash_ipi) > 0) && msecs) {
+-		mdelay(1);
+-		msecs--;
+-	}
+-	if (atomic_read(&waiting_for_crash_ipi) > 0)
+-		pr_warn("Non-crashing CPUs did not react to IPI\n");
++	crash_smp_send_stop();
  
- 	ret = ptrace(PTRACE_DETACH, child_pid, ignored, 0);
- 	pkey_assert(ret != -1);
-@@ -1287,7 +1288,7 @@ void test_executing_on_unreadable_memory
- 	 */
- 	madvise(p1, PAGE_SIZE, MADV_DONTNEED);
- 	lots_o_noops_around_write(&scratch);
--	do_not_expect_pk_fault();
-+	do_not_expect_pk_fault("executing on PROT_EXEC memory");
- 	ptr_contents = read_ptr(p1);
- 	dprintf2("ptr (%p) contents@%d: %x\n", p1, __LINE__, ptr_contents);
- 	expected_pk_fault(pkey);
+ 	crash_save_cpu(regs, smp_processor_id());
+ 	machine_kexec_mask_interrupts();
 
 
