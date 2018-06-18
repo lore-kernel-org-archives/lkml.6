@@ -2,105 +2,150 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_MED,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B385C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D268C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:47:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B905A2075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:46:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="1BQssVHV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B905A2075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3DBEE2075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:47:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBEE2075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964952AbeFRTqn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:46:43 -0400
-Received: from mail-oi0-f65.google.com ([209.85.218.65]:34271 "EHLO
-        mail-oi0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964904AbeFRTqm (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:46:42 -0400
-Received: by mail-oi0-f65.google.com with SMTP id i205-v6so15977776oib.1
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 12:46:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=w7eFyN5OjYalMfVm729/qKxnewR+swQiKFOonGtqVNk=;
-        b=1BQssVHVh8/NAwXZYzBqXTHy0NGa99bqL5ZJANHXTveaDCyaFMx7oCFSY2+QcYlWoF
-         PDoKiDewg2e2/nI9q+QVL7Jh14MJi9D81lZMDc+Rb7aNMphMbOxf71yQNEU5FnUjqEcV
-         NZl/+VFKN7yPJV3WQa7w/5kjR85yTvAZVhzIpFQOfpbF4JGbe2J3ajD+YuEYbX8fixuD
-         6fo5McwDX4E8ONrhbh49IoGwVknSgGOeYgI6lcFkIhfmSjoaH+utAwABB+f3QlgsC5tK
-         KUaV+MAi4UfcA8fawtq3idhOGyY0AZ1/yrlD0CGTfYvhnjW0lQav9yRgMdckNteGUrlO
-         molw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=w7eFyN5OjYalMfVm729/qKxnewR+swQiKFOonGtqVNk=;
-        b=MSNbJ+UgzzuntO8Kphm/1txmTlbsdJyUlGOqs9avfY4BZjZi1I/XL5VM+ufgslTLz6
-         tnXZ8GImL5A2jZiGetWx46hqfVgI1/sdMgwf7PV2qdwxXnG3RB7s971eoqTe1/+8DV2M
-         buCWG0Ec5o4w/+RmaOpvkLJuvWTGny9zkztaSawEtaBftn0YikyTIHMj/2MjAKkMh79q
-         E2OZlY5As0r/pPIjBLnJ3BpXYxeK8ADmZ2CEdfgWK1othPb9iZuI3xXD4Z+agSaECRs3
-         vGFoGi6MclOTUhX4zqY5LnB4mrLHACpVruHSGlPB2G9Z0Uo2lbOxqzC5aQNpI+qqXXLc
-         hRHw==
-X-Gm-Message-State: APt69E3Kfyb33pZkUjAST+Joqpj7leKQOdP7hXEU0ERefLxLbziXXkPz
-        IqaUss9sxsrzC36ECrOjTgii5VoZyCLyhkijmiqiGQ==
-X-Google-Smtp-Source: ADUXVKKMkSYSyMFk/S1vVA6pTgxaDPFCsqmbsgi2Cp4yJRIsHgHcSlmiY4e9ogFry3r8gkJ3RiXRc2vhQk26JpVHoHI=
-X-Received: by 2002:aca:3d43:: with SMTP id k64-v6mr7253613oia.166.1529351201846;
- Mon, 18 Jun 2018 12:46:41 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a9d:2ea9:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 12:46:41
- -0700 (PDT)
-In-Reply-To: <1529350667.14039.119.camel@hpe.com>
-References: <1461620099-11933-1-git-send-email-toshi.kani@hpe.com>
- <1461620099-11933-2-git-send-email-toshi.kani@hpe.com> <CAA9_cmenbY9GStibRjO0BfTq0kzzzqThiLeOygJsT9L03BFsBQ@mail.gmail.com>
- <1529350667.14039.119.camel@hpe.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 18 Jun 2018 12:46:41 -0700
-Message-ID: <CAPcyv4jbctFgCob58sjQZ8msGOT7GBe=+Z_2P6YvNrrK-ztMag@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] acpi/nfit: Update nfit driver to comply with ACPI 6.1
-To:     "Kani, Toshi" <toshi.kani@hpe.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "Moore, Robert" <robert.moore@intel.com>,
-        "Li, Juston" <juston.li@intel.com>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "Elliott, Robert (Persistent Memory)" <elliott@hpe.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S936489AbeFRTrr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:47:47 -0400
+Received: from mga04.intel.com ([192.55.52.120]:2356 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S936040AbeFRTrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:47:45 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 12:47:45 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
+   d="scan'208";a="64250531"
+Received: from spandruv-desk.jf.intel.com ([10.54.75.31])
+  by fmsmga004.fm.intel.com with ESMTP; 18 Jun 2018 12:47:45 -0700
+From:   Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+To:     rjw@rjwysocki.net, lenb@kernel.org, viresh.kumar@linaro.org
+Cc:     linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: [PATCH v2] cpufreq: intel_pstate: Fix scaling max/min limits with Turbo 3.0
+Date:   Mon, 18 Jun 2018 12:47:45 -0700
+Message-Id: <20180618194745.36879-1-srinivas.pandruvada@linux.intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 12:39 PM, Kani, Toshi <toshi.kani@hpe.com> wrote:
-> On Mon, 2018-06-18 at 12:01 -0700, Dan Williams wrote:
->> On Mon, Apr 25, 2016 at 2:43 PM Toshi Kani <toshi.kani@hpe.com> wrote:
->> >
->> > ACPI 6.1, Table 5-133, updates NVDIMM Control Region Structure
->> > as follows.
->> >  - Valid Fields, Manufacturing Location, and Manufacturing Date
->> >    are added from reserved range.  No change in the structure size.
->> >  - IDs (SPD values) are stored as arrays of bytes (i.e. big-endian
->> >    format).  The spec clarifies that they need to be represented
->> >    as arrays of bytes as well.
->> >
->>
->> Circling back on this a couple years too late... where are you reading
->> this "arrays of bytes" note. As far as I can see this is wrong. JEDEC
->> says that vendor id is stored LSB of the id is stored at the lowest
->> byte in SPD, which is little endian. So it seems Linux has showing the
->> incorrect value for a long time now.
->
-> This follows ACPI 6.2a section 5.2.25.10 NVDIMM Representation Format,
-> which Robert cited in his comment below:
-> https://patchwork.kernel.org/patch/10237609/
+When scaling max/min settings are changed, internally they are converted
+to a ratio using the max turbo 1 core turbo frequency. This works fine
+when 1 core max is same irrespective of the core. But under Turbo 3.0,
+this will not be the case. For example:
+Core 0: max turbo pstate: 43 (4.3GHz)
+Core 1: max turbo pstate: 45 (4.5GHz)
+In this case 1 core turbo ratio will be maximum of all, so it will be
+45 (4.5GHz). Suppose scaling max is set to 4GHz (ratio 40) for all cores
+,then on core one it will be
+ = max_state * policy->max / max_freq;
+ = 43 * (4000000/4500000) = 38 (3.8GHz)
+ = 38
+which is 200MHz less than the desired.
+On core2, it will be correctly set to ratio 40 (4GHz). Same holds true
+for scaling min frequency limit. So this requires usage of correct turbo
+max frequency for core one, which in this case is 4.3GHz. So we need to
+adjust per CPU cpu->pstate.turbo_freq using the maximum HWP ratio of that
+core.
 
-Right, the representation format has the fields big-endian for some
-reason, but the individual values for sysfs should be show
-little-endian as far as I can see. What am I missing?
+This change uses the HWP capability of a core to adjust max turbo
+frequency. But since Broadwell HWP doesn't use ratios in the HWP
+capabilities, we have use legacy max 1 core turbo ratio. This is not a
+problem as the HWP capabilities don't differ among cores in Broadwell.
+So we need to check for non Broadwell CPU model for applying this change.
+
+Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: 4.6+ <stable@vger.kernel.org> # 4.6+
+---
+v2
+Backport friendly without any dependency on recent features.
+
+ drivers/cpufreq/intel_pstate.c | 27 ++++++++++++++++++++++-----
+ 1 file changed, 22 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
+index 1de5ec8d5ea3..ece120da3353 100644
+--- a/drivers/cpufreq/intel_pstate.c
++++ b/drivers/cpufreq/intel_pstate.c
+@@ -294,6 +294,7 @@ struct pstate_funcs {
+ static struct pstate_funcs pstate_funcs __read_mostly;
+ 
+ static int hwp_active __read_mostly;
++static int hwp_mode_bdw __read_mostly;
+ static bool per_cpu_limits __read_mostly;
+ static bool hwp_boost __read_mostly;
+ 
+@@ -1413,7 +1414,15 @@ static void intel_pstate_get_cpu_pstates(struct cpudata *cpu)
+ 	cpu->pstate.turbo_pstate = pstate_funcs.get_turbo();
+ 	cpu->pstate.scaling = pstate_funcs.get_scaling();
+ 	cpu->pstate.max_freq = cpu->pstate.max_pstate * cpu->pstate.scaling;
+-	cpu->pstate.turbo_freq = cpu->pstate.turbo_pstate * cpu->pstate.scaling;
++
++	if (hwp_active && !hwp_mode_bdw) {
++		unsigned int phy_max, current_max;
++
++		intel_pstate_get_hwp_max(cpu->cpu, &phy_max, &current_max);
++		cpu->pstate.turbo_freq = phy_max * cpu->pstate.scaling;
++	} else {
++		cpu->pstate.turbo_freq = cpu->pstate.turbo_pstate * cpu->pstate.scaling;
++	}
+ 
+ 	if (pstate_funcs.get_aperf_mperf_shift)
+ 		cpu->aperf_mperf_shift = pstate_funcs.get_aperf_mperf_shift();
+@@ -2467,28 +2476,36 @@ static inline bool intel_pstate_has_acpi_ppc(void) { return false; }
+ static inline void intel_pstate_request_control_from_smm(void) {}
+ #endif /* CONFIG_ACPI */
+ 
++#define INTEL_PSTATE_HWP_BROADWELL	0x01
++
++#define ICPU_HWP(model, hwp_mode) \
++	{ X86_VENDOR_INTEL, 6, model, X86_FEATURE_HWP, hwp_mode }
++
+ static const struct x86_cpu_id hwp_support_ids[] __initconst = {
+-	{ X86_VENDOR_INTEL, 6, X86_MODEL_ANY, X86_FEATURE_HWP },
++	ICPU_HWP(INTEL_FAM6_BROADWELL_X, INTEL_PSTATE_HWP_BROADWELL),
++	ICPU_HWP(INTEL_FAM6_BROADWELL_XEON_D, INTEL_PSTATE_HWP_BROADWELL),
++	ICPU_HWP(X86_MODEL_ANY, 0),
+ 	{}
+ };
+ 
+ static int __init intel_pstate_init(void)
+ {
++	const struct x86_cpu_id *id;
+ 	int rc;
+ 
+ 	if (no_load)
+ 		return -ENODEV;
+ 
+-	if (x86_match_cpu(hwp_support_ids)) {
++	id = x86_match_cpu(hwp_support_ids);
++	if (id) {
+ 		copy_cpu_funcs(&core_funcs);
+ 		if (!no_hwp) {
+ 			hwp_active++;
++			hwp_mode_bdw = id->driver_data;
+ 			intel_pstate.attr = hwp_cpufreq_attrs;
+ 			goto hwp_cpu_matched;
+ 		}
+ 	} else {
+-		const struct x86_cpu_id *id;
+-
+ 		id = x86_match_cpu(intel_pstate_cpu_ids);
+ 		if (!id)
+ 			return -ENODEV;
+-- 
+2.17.0
+
