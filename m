@@ -6,35 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 901C3C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38C61C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5634820874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5634820874
+	by mail.kernel.org (Postfix) with ESMTP id F30A120864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F30A120864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966945AbeFRIaW (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:30:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33618 "EHLO
+        id S966960AbeFRIa1 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:30:27 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33672 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966920AbeFRIaL (ORCPT
+        with ESMTP id S966920AbeFRIaX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:30:11 -0400
+        Mon, 18 Jun 2018 04:30:23 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0DDDAC75;
-        Mon, 18 Jun 2018 08:30:10 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 18EEAC87;
+        Mon, 18 Jun 2018 08:30:22 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chris Leech <cleech@redhat.com>,
-        Lee Duncan <lduncan@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 030/189] scsi: iscsi: respond to netlink with unicast when appropriate
-Date:   Mon, 18 Jun 2018 10:12:06 +0200
-Message-Id: <20180618081210.497431061@linuxfoundation.org>
+Subject: [PATCH 4.14 034/189] netfilter: nf_tables: fix out-of-bounds in nft_chain_commit_update
+Date:   Mon, 18 Jun 2018 10:12:10 +0200
+Message-Id: <20180618081210.648276962@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -51,124 +50,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chris Leech <cleech@redhat.com>
+From: Taehee Yoo <ap420073@gmail.com>
 
-[ Upstream commit af17092810a887178195276255b7b31f8fbe7dbe ]
+[ Upstream commit d71efb599ad42ef1e564c652d8084252bdc85edf ]
 
-Instead of always multicasting responses, send a unicast netlink message
-directed at the correct pid.  This will be needed if we ever want to
-support multiple userspace processes interacting with the kernel over
-iSCSI netlink simultaneously.  Limitations can currently be seen if you
-attempt to run multiple iscsistart commands in parallel.
+When chain name is changed, nft_chain_commit_update is called.
+In the nft_chain_commit_update, trans->ctx.chain->name has old chain name
+and nft_trans_chain_name(trans) has new chain name.
+If new chain name is longer than old chain name, KASAN warns
+slab-out-of-bounds.
 
-We've fixed up the userspace issues in iscsistart that prevented
-multiple instances from running, so now attempts to speed up booting by
-bringing up multiple iscsi sessions at once in the initramfs are just
-running into misrouted responses that this fixes.
+[  175.015012] BUG: KASAN: slab-out-of-bounds in strcpy+0x9e/0xb0
+[  175.022735] Write of size 1 at addr ffff880114e022da by task iptables-compat/1458
 
-Signed-off-by: Chris Leech <cleech@redhat.com>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+[  175.031353] CPU: 0 PID: 1458 Comm: iptables-compat Not tainted 4.16.0-rc7+ #146
+[  175.031353] Hardware name: To be filled by O.E.M. To be filled by O.E.M./Aptio CRB, BIOS 5.6.5 07/08/2015
+[  175.031353] Call Trace:
+[  175.031353]  dump_stack+0x68/0xa0
+[  175.031353]  print_address_description+0xd0/0x260
+[  175.031353]  ? strcpy+0x9e/0xb0
+[  175.031353]  kasan_report+0x234/0x350
+[  175.031353]  __asan_report_store1_noabort+0x1c/0x20
+[  175.031353]  strcpy+0x9e/0xb0
+[  175.031353]  nf_tables_commit+0x1ccc/0x2990
+[  175.031353]  nfnetlink_rcv+0x141e/0x16c0
+[  175.031353]  ? nfnetlink_net_init+0x150/0x150
+[  175.031353]  ? lock_acquire+0x370/0x370
+[  175.031353]  ? lock_acquire+0x370/0x370
+[  175.031353]  netlink_unicast+0x444/0x640
+[  175.031353]  ? netlink_attachskb+0x700/0x700
+[  175.031353]  ? _copy_from_iter_full+0x180/0x740
+[  175.031353]  ? kasan_check_write+0x14/0x20
+[  175.031353]  ? _copy_from_user+0x9b/0xd0
+[  175.031353]  netlink_sendmsg+0x845/0xc70
+[ ... ]
+
+Steps to reproduce:
+   iptables-compat -N 1
+   iptables-compat -E 1 aaaaaaaaa
+
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/scsi/scsi_transport_iscsi.c |   29 ++++++++++++++++++-----------
- 1 file changed, 18 insertions(+), 11 deletions(-)
+ net/netfilter/nf_tables_api.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/scsi/scsi_transport_iscsi.c
-+++ b/drivers/scsi/scsi_transport_iscsi.c
-@@ -2322,6 +2322,12 @@ iscsi_multicast_skb(struct sk_buff *skb,
- 	return nlmsg_multicast(nls, skb, 0, group, gfp);
- }
+--- a/net/netfilter/nf_tables_api.c
++++ b/net/netfilter/nf_tables_api.c
+@@ -4977,7 +4977,7 @@ static void nft_chain_commit_update(stru
+ 	struct nft_base_chain *basechain;
  
-+static int
-+iscsi_unicast_skb(struct sk_buff *skb, u32 portid)
-+{
-+	return nlmsg_unicast(nls, skb, portid);
-+}
-+
- int iscsi_recv_pdu(struct iscsi_cls_conn *conn, struct iscsi_hdr *hdr,
- 		   char *data, uint32_t data_size)
- {
-@@ -2524,14 +2530,11 @@ void iscsi_ping_comp_event(uint32_t host
- EXPORT_SYMBOL_GPL(iscsi_ping_comp_event);
+ 	if (nft_trans_chain_name(trans))
+-		strcpy(trans->ctx.chain->name, nft_trans_chain_name(trans));
++		swap(trans->ctx.chain->name, nft_trans_chain_name(trans));
  
- static int
--iscsi_if_send_reply(uint32_t group, int seq, int type, int done, int multi,
--		    void *payload, int size)
-+iscsi_if_send_reply(u32 portid, int type, void *payload, int size)
- {
- 	struct sk_buff	*skb;
- 	struct nlmsghdr	*nlh;
- 	int len = nlmsg_total_size(size);
--	int flags = multi ? NLM_F_MULTI : 0;
--	int t = done ? NLMSG_DONE : type;
- 
- 	skb = alloc_skb(len, GFP_ATOMIC);
- 	if (!skb) {
-@@ -2539,10 +2542,9 @@ iscsi_if_send_reply(uint32_t group, int
- 		return -ENOMEM;
- 	}
- 
--	nlh = __nlmsg_put(skb, 0, 0, t, (len - sizeof(*nlh)), 0);
--	nlh->nlmsg_flags = flags;
-+	nlh = __nlmsg_put(skb, 0, 0, type, (len - sizeof(*nlh)), 0);
- 	memcpy(nlmsg_data(nlh), payload, size);
--	return iscsi_multicast_skb(skb, group, GFP_ATOMIC);
-+	return iscsi_unicast_skb(skb, portid);
- }
- 
- static int
-@@ -3470,6 +3472,7 @@ static int
- iscsi_if_recv_msg(struct sk_buff *skb, struct nlmsghdr *nlh, uint32_t *group)
- {
- 	int err = 0;
-+	u32 portid;
- 	struct iscsi_uevent *ev = nlmsg_data(nlh);
- 	struct iscsi_transport *transport = NULL;
- 	struct iscsi_internal *priv;
-@@ -3490,10 +3493,12 @@ iscsi_if_recv_msg(struct sk_buff *skb, s
- 	if (!try_module_get(transport->owner))
- 		return -EINVAL;
- 
-+	portid = NETLINK_CB(skb).portid;
-+
- 	switch (nlh->nlmsg_type) {
- 	case ISCSI_UEVENT_CREATE_SESSION:
- 		err = iscsi_if_create_session(priv, ep, ev,
--					      NETLINK_CB(skb).portid,
-+					      portid,
- 					      ev->u.c_session.initial_cmdsn,
- 					      ev->u.c_session.cmds_max,
- 					      ev->u.c_session.queue_depth);
-@@ -3506,7 +3511,7 @@ iscsi_if_recv_msg(struct sk_buff *skb, s
- 		}
- 
- 		err = iscsi_if_create_session(priv, ep, ev,
--					NETLINK_CB(skb).portid,
-+					portid,
- 					ev->u.c_bound_session.initial_cmdsn,
- 					ev->u.c_bound_session.cmds_max,
- 					ev->u.c_bound_session.queue_depth);
-@@ -3664,6 +3669,8 @@ iscsi_if_recv_msg(struct sk_buff *skb, s
- static void
- iscsi_if_rx(struct sk_buff *skb)
- {
-+	u32 portid = NETLINK_CB(skb).portid;
-+
- 	mutex_lock(&rx_queue_mutex);
- 	while (skb->len >= NLMSG_HDRLEN) {
- 		int err;
-@@ -3699,8 +3706,8 @@ iscsi_if_rx(struct sk_buff *skb)
- 				break;
- 			if (ev->type == ISCSI_UEVENT_GET_CHAP && !err)
- 				break;
--			err = iscsi_if_send_reply(group, nlh->nlmsg_seq,
--				nlh->nlmsg_type, 0, 0, ev, sizeof(*ev));
-+			err = iscsi_if_send_reply(portid, nlh->nlmsg_type,
-+						  ev, sizeof(*ev));
- 		} while (err < 0 && err != -ECONNREFUSED && err != -ESRCH);
- 		skb_pull(skb, rlen);
- 	}
+ 	if (!nft_is_base_chain(trans->ctx.chain))
+ 		return;
 
 
