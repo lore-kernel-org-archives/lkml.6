@@ -6,36 +6,48 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D360C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E7AC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6CF120864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6CF120864
+	by mail.kernel.org (Postfix) with ESMTP id 46CAD20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46CAD20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030215AbeFRIgK (ORCPT
+        id S1030228AbeFRIgN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:36:10 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36182 "EHLO
+        Mon, 18 Jun 2018 04:36:13 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36200 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1030200AbeFRIgH (ORCPT
+        with ESMTP id S1030200AbeFRIgK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:07 -0400
+        Mon, 18 Jun 2018 04:36:10 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 05A67C5C;
-        Mon, 18 Jun 2018 08:36:06 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 001C6C5C;
+        Mon, 18 Jun 2018 08:36:09 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Roman Mashak <mrv@mojatatu.com>,
-        Cong Wang <xiyou.wangcong@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>,
+        Timur Tabi <timur@codeaurora.org>,
+        Jan Glauber <jan.glauber@caviumnetworks.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 145/189] net sched actions: fix invalid pointer dereferencing if skbedit flags missing
-Date:   Mon, 18 Jun 2018 10:14:01 +0200
-Message-Id: <20180618081215.063126192@linuxfoundation.org>
+Subject: [PATCH 4.14 146/189] init: fix false positives in W+X checking
+Date:   Mon, 18 Jun 2018 10:14:02 +0200
+Message-Id: <20180618081215.105095824@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -52,99 +64,80 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Roman Mashak <mrv@mojatatu.com>
+From: Jeffrey Hugo <jhugo@codeaurora.org>
 
-[ Upstream commit af5d01842fe1fbfb9f5e1c1d957ba02ab6f4569a ]
+[ Upstream commit ae646f0b9ca135b87bc73ff606ef996c3029780a ]
 
-When application fails to pass flags in netlink TLV for a new skbedit action,
-the kernel results in the following oops:
+load_module() creates W+X mappings via __vmalloc_node_range() (from
+layout_and_allocate()->move_module()->module_alloc()) by using
+PAGE_KERNEL_EXEC.  These mappings are later cleaned up via
+"call_rcu_sched(&freeinit->rcu, do_free_init)" from do_init_module().
 
-[    8.307732] BUG: unable to handle kernel paging request at 0000000000021130
-[    8.309167] PGD 80000000193d1067 P4D 80000000193d1067 PUD 180e0067 PMD 0
-[    8.310595] Oops: 0000 [#1] SMP PTI
-[    8.311334] Modules linked in: kvm_intel kvm irqbypass crct10dif_pclmul crc32_pclmul ghash_clmulni_intel pcbc aesni_intel aes_x86_64 crypto_simd cryptd glue_helper serio_raw
-[    8.314190] CPU: 1 PID: 397 Comm: tc Not tainted 4.17.0-rc3+ #357
-[    8.315252] RIP: 0010:__tcf_idr_release+0x33/0x140
-[    8.316203] RSP: 0018:ffffa0718038f840 EFLAGS: 00010246
-[    8.317123] RAX: 0000000000000001 RBX: 0000000000021100 RCX: 0000000000000000
-[    8.319831] RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000021100
-[    8.321181] RBP: 0000000000000000 R08: 000000000004adf8 R09: 0000000000000122
-[    8.322645] R10: 0000000000000000 R11: ffffffff9e5b01ed R12: 0000000000000000
-[    8.324157] R13: ffffffff9e0d3cc0 R14: 0000000000000000 R15: 0000000000000000
-[    8.325590] FS:  00007f591292e700(0000) GS:ffff8fcf5bc40000(0000) knlGS:0000000000000000
-[    8.327001] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[    8.327987] CR2: 0000000000021130 CR3: 00000000180e6004 CR4: 00000000001606a0
-[    8.329289] Call Trace:
-[    8.329735]  tcf_skbedit_init+0xa7/0xb0
-[    8.330423]  tcf_action_init_1+0x362/0x410
-[    8.331139]  ? try_to_wake_up+0x44/0x430
-[    8.331817]  tcf_action_init+0x103/0x190
-[    8.332511]  tc_ctl_action+0x11a/0x220
-[    8.333174]  rtnetlink_rcv_msg+0x23d/0x2e0
-[    8.333902]  ? _cond_resched+0x16/0x40
-[    8.334569]  ? __kmalloc_node_track_caller+0x5b/0x2c0
-[    8.335440]  ? rtnl_calcit.isra.31+0xf0/0xf0
-[    8.336178]  netlink_rcv_skb+0xdb/0x110
-[    8.336855]  netlink_unicast+0x167/0x220
-[    8.337550]  netlink_sendmsg+0x2a7/0x390
-[    8.338258]  sock_sendmsg+0x30/0x40
-[    8.338865]  ___sys_sendmsg+0x2c5/0x2e0
-[    8.339531]  ? pagecache_get_page+0x27/0x210
-[    8.340271]  ? filemap_fault+0xa2/0x630
-[    8.340943]  ? page_add_file_rmap+0x108/0x200
-[    8.341732]  ? alloc_set_pte+0x2aa/0x530
-[    8.342573]  ? finish_fault+0x4e/0x70
-[    8.343332]  ? __handle_mm_fault+0xbc1/0x10d0
-[    8.344337]  ? __sys_sendmsg+0x53/0x80
-[    8.345040]  __sys_sendmsg+0x53/0x80
-[    8.345678]  do_syscall_64+0x4f/0x100
-[    8.346339]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-[    8.347206] RIP: 0033:0x7f591191da67
-[    8.347831] RSP: 002b:00007fff745abd48 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-[    8.349179] RAX: ffffffffffffffda RBX: 00007fff745abe70 RCX: 00007f591191da67
-[    8.350431] RDX: 0000000000000000 RSI: 00007fff745abdc0 RDI: 0000000000000003
-[    8.351659] RBP: 000000005af35251 R08: 0000000000000001 R09: 0000000000000000
-[    8.352922] R10: 00000000000005f1 R11: 0000000000000246 R12: 0000000000000000
-[    8.354183] R13: 00007fff745afed0 R14: 0000000000000001 R15: 00000000006767c0
-[    8.355400] Code: 41 89 d4 53 89 f5 48 89 fb e8 aa 20 fd ff 85 c0 0f 84 ed 00
-00 00 48 85 db 0f 84 cf 00 00 00 40 84 ed 0f 85 cd 00 00 00 45 84 e4 <8b> 53 30
-74 0d 85 d2 b8 ff ff ff ff 0f 8f b3 00 00 00 8b 43 2c
-[    8.358699] RIP: __tcf_idr_release+0x33/0x140 RSP: ffffa0718038f840
-[    8.359770] CR2: 0000000000021130
-[    8.360438] ---[ end trace 60c66be45dfc14f0 ]---
+This is a problem because call_rcu_sched() queues work, which can be run
+after debug_checkwx() is run, resulting in a race condition.  If hit,
+the race results in a nasty splat about insecure W+X mappings, which
+results in a poor user experience as these are not the mappings that
+debug_checkwx() is intended to catch.
 
-The caller calls action's ->init() and passes pointer to "struct tc_action *a",
-which later may be initialized to point at the existing action, otherwise
-"struct tc_action *a" is still invalid, and therefore dereferencing it is an
-error as happens in tcf_idr_release, where refcnt is decremented.
+This issue is observed on multiple arm64 platforms, and has been
+artificially triggered on an x86 platform.
 
-So in case of missing flags tcf_idr_release must be called only for
-existing actions.
+Address the race by flushing the queued work before running the
+arch-defined mark_rodata_ro() which then calls debug_checkwx().
 
-v2:
-    - prepare patch for net tree
-
-Fixes: 5e1567aeb7fe ("net sched: skbedit action fix late binding")
-Signed-off-by: Roman Mashak <mrv@mojatatu.com>
-Acked-by: Cong Wang <xiyou.wangcong@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Link: http://lkml.kernel.org/r/1525103946-29526-1-git-send-email-jhugo@codeaurora.org
+Fixes: e1a58320a38d ("x86/mm: Warn on W^X mappings")
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+Reported-by: Timur Tabi <timur@codeaurora.org>
+Reported-by: Jan Glauber <jan.glauber@caviumnetworks.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Laura Abbott <labbott@redhat.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Stephen Smalley <sds@tycho.nsa.gov>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/sched/act_skbedit.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ init/main.c     |    7 +++++++
+ kernel/module.c |    5 +++++
+ 2 files changed, 12 insertions(+)
 
---- a/net/sched/act_skbedit.c
-+++ b/net/sched/act_skbedit.c
-@@ -121,7 +121,8 @@ static int tcf_skbedit_init(struct net *
- 		return 0;
- 
- 	if (!flags) {
--		tcf_idr_release(*a, bind);
-+		if (exists)
-+			tcf_idr_release(*a, bind);
- 		return -EINVAL;
- 	}
- 
+--- a/init/main.c
++++ b/init/main.c
+@@ -974,6 +974,13 @@ __setup("rodata=", set_debug_rodata);
+ static void mark_readonly(void)
+ {
+ 	if (rodata_enabled) {
++		/*
++		 * load_module() results in W+X mappings, which are cleaned up
++		 * with call_rcu_sched().  Let's make sure that queued work is
++		 * flushed so that we don't hit false positives looking for
++		 * insecure pages which are W+X.
++		 */
++		rcu_barrier_sched();
+ 		mark_rodata_ro();
+ 		rodata_test();
+ 	} else
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -3506,6 +3506,11 @@ static noinline int do_init_module(struc
+ 	 * walking this with preempt disabled.  In all the failure paths, we
+ 	 * call synchronize_sched(), but we don't want to slow down the success
+ 	 * path, so use actual RCU here.
++	 * Note that module_alloc() on most architectures creates W+X page
++	 * mappings which won't be cleaned up until do_free_init() runs.  Any
++	 * code such as mark_rodata_ro() which depends on those mappings to
++	 * be cleaned up needs to sync with the queued work - ie
++	 * rcu_barrier_sched()
+ 	 */
+ 	call_rcu_sched(&freeinit->rcu, do_free_init);
+ 	mutex_unlock(&module_mutex);
 
 
