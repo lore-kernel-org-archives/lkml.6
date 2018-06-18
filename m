@@ -2,95 +2,131 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AC26C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2740C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0550220852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:06:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="V8cNSqDj"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0550220852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B502420852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:07:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B502420852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935920AbeFRLG5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:06:57 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40360 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933895AbeFRLGz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:06:55 -0400
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Ij+s0KXV8LUpB/YEIXez1WGvqoDnpchCX5g49dQgF0g=; b=V8cNSqDjEDxvd/S+7Hl4femlQ
-        4oah/lE7+PisWdCgkKMt3GEh7guwQzoilFz9GIQGfgSu02Z+Ao5UlCldvp9OpoNHwvzrR1CBgNzUM
-        qp/p+vDUE7qqpzJ+tP2919SjLVKBQC36Mei9wt7mZD2g+p2RIKcyaxOKTxHN8mLxbm7G0=;
-Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fUrze-0007uY-N6; Mon, 18 Jun 2018 11:06:42 +0000
-Received: from broonie by debutante with local (Exim 4.91)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1fUrze-0005jW-3N; Mon, 18 Jun 2018 12:06:42 +0100
-Date:   Mon, 18 Jun 2018 12:06:42 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     andy.gross@linaro.org, Patrick Lai <plai@codeaurora.org>,
-        Banajit Goswami <bgoswami@codeaurora.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-arm-msm@vger.kernel.org,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/7] ASoC: qdsp6: Add depends on OF
-Message-ID: <20180618110642.GA6928@sirena.org.uk>
-References: <20180614111138.8923-1-niklas.cassel@linaro.org>
- <20180614111138.8923-6-niklas.cassel@linaro.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-Content-Disposition: inline
-In-Reply-To: <20180614111138.8923-6-niklas.cassel@linaro.org>
-X-Cookie: May be too intense for some viewers.
-User-Agent: Mutt/1.10.0 (2018-05-17)
+        id S936092AbeFRLHi (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 07:07:38 -0400
+Received: from mga14.intel.com ([192.55.52.115]:37633 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S933537AbeFRLHd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 07:07:33 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 04:07:33 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
+   d="scan'208";a="65472672"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga001.jf.intel.com with ESMTP; 18 Jun 2018 04:07:30 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+        id 8BC09182; Mon, 18 Jun 2018 14:07:31 +0300 (EEST)
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Christian Kellner <christian@kellner.me>,
+        Mario Limonciello <mario.limonciello@dell.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: [PATCH 2/5] thunderbolt: Do not unnecessarily call ICM get route
+Date:   Mon, 18 Jun 2018 14:07:28 +0300
+Message-Id: <20180618110731.57427-3-mika.westerberg@linux.intel.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618110731.57427-1-mika.westerberg@linux.intel.com>
+References: <20180618110731.57427-1-mika.westerberg@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This command is not really fast and can make resume time slower. We only
+need to get route again if the link was changed and during initial
+device connected message.
 
---GvXjxJ+pjyke8COw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+---
+ drivers/thunderbolt/icm.c | 35 ++++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-On Thu, Jun 14, 2018 at 01:11:36PM +0200, Niklas Cassel wrote:
-> of_platform_device_destroy is only defined when building
-> with CONFIG_OF=y. Add a depends on OF.
+diff --git a/drivers/thunderbolt/icm.c b/drivers/thunderbolt/icm.c
+index 500911f16498..ad4eeaa59b16 100644
+--- a/drivers/thunderbolt/icm.c
++++ b/drivers/thunderbolt/icm.c
+@@ -534,20 +534,13 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		return;
+ 	}
+ 
+-	ret = icm->get_route(tb, link, depth, &route);
+-	if (ret) {
+-		tb_err(tb, "failed to find route string for switch at %u.%u\n",
+-		       link, depth);
+-		return;
+-	}
+-
+ 	sw = tb_switch_find_by_uuid(tb, &pkg->ep_uuid);
+ 	if (sw) {
+ 		u8 phy_port, sw_phy_port;
+ 
+ 		parent_sw = tb_to_switch(sw->dev.parent);
+-		sw_phy_port = phy_port_from_route(tb_route(sw), sw->depth);
+-		phy_port = phy_port_from_route(route, depth);
++		sw_phy_port = tb_phy_port_from_link(sw->link);
++		phy_port = tb_phy_port_from_link(link);
+ 
+ 		/*
+ 		 * On resume ICM will send us connected events for the
+@@ -559,6 +552,22 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		 */
+ 		if (sw->depth == depth && sw_phy_port == phy_port &&
+ 		    !!sw->authorized == authorized) {
++			/*
++			 * It was enumerated through another link so update
++			 * route string accordingly.
++			 */
++			if (sw->link != link) {
++				ret = icm->get_route(tb, link, depth, &route);
++				if (ret) {
++					tb_err(tb, "failed to update route string for switch at %u.%u\n",
++					       link, depth);
++					tb_switch_put(sw);
++					return;
++				}
++			} else {
++				route = tb_route(sw);
++			}
++
+ 			update_switch(parent_sw, sw, route, pkg->connection_id,
+ 				      pkg->connection_key, link, depth, boot);
+ 			tb_switch_put(sw);
+@@ -607,6 +616,14 @@ icm_fr_device_connected(struct tb *tb, const struct icm_pkg_header *hdr)
+ 		return;
+ 	}
+ 
++	ret = icm->get_route(tb, link, depth, &route);
++	if (ret) {
++		tb_err(tb, "failed to find route string for switch at %u.%u\n",
++		       link, depth);
++		tb_switch_put(parent_sw);
++		return;
++	}
++
+ 	add_switch(parent_sw, route, &pkg->ep_uuid, pkg->connection_id,
+ 		   pkg->connection_key, link, depth, security_level,
+ 		   authorized, boot);
+-- 
+2.17.1
 
-Is it sensible that of_platform_device_destroy() is only defined when
-building with CONFIG_OF=y?
-
---GvXjxJ+pjyke8COw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlsnkj4ACgkQJNaLcl1U
-h9AVVwf/VkuPxov3tJzTawHKXw0n000NRSxme0b13/p1sM5sEOLHLsj+tCaYPfy/
-TsY0kHTJ6NDmr9YRm/vFbDRxUc19/6LAH021VsFrg3kz0mH/fNgifFfbYxoIjCCf
-2YyW5Ei1SLVFARQIN9BiphjwsZL6i/aEKlg7Q7b95OjVnA2/E/fh3ZGMhrUQ17t/
-HhCaw1EQ9yqhefxtCD8meRFZbrYrIT2tWIxZuXA/cBQplR8HIOu9NcUD7Pz+rJcO
-b1bwNTAEDfG8KSOZTTcTuASrumJLze1gOi6RVoQlSidG30ya3regKB4sJ0VndECL
-+JUXsvVr/HCOHFsS+rYWIzV0rWtpFA==
-=ATMi
------END PGP SIGNATURE-----
-
---GvXjxJ+pjyke8COw--
