@@ -2,190 +2,107 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46861C5CFC1
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 02:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD60C5CFC1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 02:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7B9C208B6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 02:28:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E7B9C208B6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 955BF20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 02:33:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cREPv35K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955BF20864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754534AbeFRC2w (ORCPT
+        id S1754541AbeFRCd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 17 Jun 2018 22:28:52 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:58626 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754440AbeFRC2u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 17 Jun 2018 22:28:50 -0400
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AFDE57D654;
-        Mon, 18 Jun 2018 02:28:49 +0000 (UTC)
-Received: from redhat.com (ovpn-121-19.rdu2.redhat.com [10.10.121.19])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 310E2111DCF0;
-        Mon, 18 Jun 2018 02:28:43 +0000 (UTC)
-Date:   Mon, 18 Jun 2018 05:28:43 +0300
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     "Wang, Wei W" <wei.w.wang@intel.com>
-Cc:     "virtio-dev@lists.oasis-open.org" <virtio-dev@lists.oasis-open.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "liliang.opensource@gmail.com" <liliang.opensource@gmail.com>,
-        "yang.zhang.wz@gmail.com" <yang.zhang.wz@gmail.com>,
-        "quan.xu0@gmail.com" <quan.xu0@gmail.com>,
-        "nilal@redhat.com" <nilal@redhat.com>,
-        "riel@redhat.com" <riel@redhat.com>,
-        "peterx@redhat.com" <peterx@redhat.com>
-Subject: Re: [PATCH v33 2/4] virtio-balloon: VIRTIO_BALLOON_F_FREE_PAGE_HINT
-Message-ID: <20180618051637-mutt-send-email-mst@kernel.org>
-References: <1529037793-35521-1-git-send-email-wei.w.wang@intel.com>
- <1529037793-35521-3-git-send-email-wei.w.wang@intel.com>
- <20180615144000-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396A3D04@shsmsx102.ccr.corp.intel.com>
- <20180615171635-mutt-send-email-mst@kernel.org>
- <286AC319A985734F985F78AFA26841F7396A5CB0@shsmsx102.ccr.corp.intel.com>
+        Sun, 17 Jun 2018 22:33:56 -0400
+Received: from mail-qk0-f178.google.com ([209.85.220.178]:37207 "EHLO
+        mail-qk0-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754426AbeFRCdy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 17 Jun 2018 22:33:54 -0400
+Received: by mail-qk0-f178.google.com with SMTP id j12-v6so8616430qkk.4;
+        Sun, 17 Jun 2018 19:33:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=/WjzpAZkEAk8bp8eJ3LmXeo1shXlK6zbo53o2vdU2Dg=;
+        b=cREPv35KXvUcdc9MYh6v3AmZs2CLDn0+4x/q25bJKhMAkRuMhYNpqoN+kZ0Du1PV+X
+         AYVEVDL3U7JZ1PqAsz1j4fB23+AKTvKXouBi910eqDkDfo5rEKKxo2nq8OZu6ifRnPCj
+         rlfDmR813ojVwpEJztFgNQy8SlELerQslGezCrGitHwfxoHiL77mLqgbDoOTXtkVYG1u
+         l8+iFQe56doZtewlChhao3RvWmj075KwITTw1B0T8wYr/4LVB5r3MHWApF5qZzGG3ot5
+         Q0vO9T4TeKlBKJaBVrUrnTEIfYvCAnqC+aVb/tpGXX6/dzDINBFUblXu1RO4XIkpDVhl
+         mH+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=/WjzpAZkEAk8bp8eJ3LmXeo1shXlK6zbo53o2vdU2Dg=;
+        b=WZL5ugum0V16jzhBOlIeczUa++WV0p5ncLS8fbwl4ad6FJg/SWASytc6CVTjeI+CrI
+         5z40IhuwVD5m0AxbYhmOvLHLxN740s2YB1lTRRx2jSlXjHQ3qqmkHBpbbaeLotEuDt97
+         epYJLdh2ycvjBe+4+glsHm62uBjkJE36hUIktOb4T5LFr++Q332Sujlm33trAu0qdzr4
+         MlPbV/mro+Nn6N+kE0OEygs/cuuymek/wGuGwYcJ0pBL63lbULmdz/olZLLEOmYhZEux
+         GC/JERSnEz7ACx6Q5FxtGOcxIDL28F995a3bqGBNbnwuXouZf1x9teq9Rw4EUzcBsnxx
+         U5pQ==
+X-Gm-Message-State: APt69E3YAubQ1oEnpFn9DVdegPLu4giAA5SAh0ea95wugIXiteCpG+Ov
+        mPIAibc3UW7sXvF3vMaqhzo1H/0SQlekOvdlhpA=
+X-Google-Smtp-Source: ADUXVKICNkECmTMqNEzb/MPt50J634gBDccwi39psEiTUX7zjC+Y0o1yj0KMY16fbKljAqAIooDPs3PNRX+kZWZjIwI=
+X-Received: by 2002:a37:5e46:: with SMTP id s67-v6mr8622637qkb.202.1529289233452;
+ Sun, 17 Jun 2018 19:33:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <286AC319A985734F985F78AFA26841F7396A5CB0@shsmsx102.ccr.corp.intel.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.3
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 18 Jun 2018 02:28:49 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 18 Jun 2018 02:28:49 +0000 (UTC) for IP:'10.11.54.3' DOMAIN:'int-mx03.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'mst@redhat.com' RCPT:''
+Received: by 2002:aed:3f3d:0:0:0:0:0 with HTTP; Sun, 17 Jun 2018 19:33:52
+ -0700 (PDT)
+In-Reply-To: <20180617110200.GA19216@kroah.com>
+References: <1529163551.16103.16.camel@gmx.de> <20180617093607.GA27652@kroah.com>
+ <1529231886.5303.6.camel@gmx.de> <20180617110200.GA19216@kroah.com>
+From:   Dave Airlie <airlied@gmail.com>
+Date:   Mon, 18 Jun 2018 12:33:52 +1000
+Message-ID: <CAPM=9tzkKWM2wjeQvWG2qKM-xgFwGD3bjWfgmDUDTQO+tXF-ig@mail.gmail.com>
+Subject: Re: v4.14.21+: ATOMIC_SLEEP splat bisected to 9428088c90b6 ("drm/qxl:
+ reapply cursor after resetting primary")
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Mike Galbraith <efault@gmx.de>, Ray Strode <rstrode@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        stable <stable@vger.kernel.org>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Dave Airlie <airlied@redhat.com>,
+        "open list:VIRTIO CORE, NET..." 
+        <virtualization@lists.linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jun 16, 2018 at 01:09:44AM +0000, Wang, Wei W wrote:
-> On Friday, June 15, 2018 10:29 PM, Michael S. Tsirkin wrote:
-> > On Fri, Jun 15, 2018 at 02:11:23PM +0000, Wang, Wei W wrote:
-> > > On Friday, June 15, 2018 7:42 PM, Michael S. Tsirkin wrote:
-> > > > On Fri, Jun 15, 2018 at 12:43:11PM +0800, Wei Wang wrote:
-> > > > > Negotiation of the VIRTIO_BALLOON_F_FREE_PAGE_HINT feature
-> > > > > indicates the support of reporting hints of guest free pages to host via
-> > virtio-balloon.
-> > > > >
-> > > > > Host requests the guest to report free page hints by sending a
-> > > > > command to the guest via setting the
-> > > > VIRTIO_BALLOON_HOST_CMD_FREE_PAGE_HINT
-> > > > > bit of the host_cmd config register.
-> > > > >
-> > > > > As the first step here, virtio-balloon only reports free page
-> > > > > hints from the max order (10) free page list to host. This has
-> > > > > generated similar good results as reporting all free page hints during
-> > our tests.
-> > > > >
-> > > > > TODO:
-> > > > > - support reporting free page hints from smaller order free page lists
-> > > > >   when there is a need/request from users.
-> > > > >
-> > > > > Signed-off-by: Wei Wang <wei.w.wang@intel.com>
-> > > > > Signed-off-by: Liang Li <liang.z.li@intel.com>
-> > > > > Cc: Michael S. Tsirkin <mst@redhat.com>
-> > > > > Cc: Michal Hocko <mhocko@kernel.org>
-> > > > > Cc: Andrew Morton <akpm@linux-foundation.org>
-> > > > > ---
-> > > > >  drivers/virtio/virtio_balloon.c     | 187
-> > +++++++++++++++++++++++++++++--
-> > > > -----
-> > > > >  include/uapi/linux/virtio_balloon.h |  13 +++
-> > > > >  2 files changed, 163 insertions(+), 37 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/virtio/virtio_balloon.c
-> > > > > b/drivers/virtio/virtio_balloon.c index 6b237e3..582a03b 100644
-> > > > > --- a/drivers/virtio/virtio_balloon.c
-> > > > > +++ b/drivers/virtio/virtio_balloon.c
-> > > > > @@ -43,6 +43,9 @@
-> > > > >  #define OOM_VBALLOON_DEFAULT_PAGES 256  #define
-> > > > > VIRTBALLOON_OOM_NOTIFY_PRIORITY 80
-> > > > >
-> > > > > +/* The size of memory in bytes allocated for reporting free page
-> > > > > +hints */ #define FREE_PAGE_HINT_MEM_SIZE (PAGE_SIZE * 16)
-> > > > > +
-> > > > >  static int oom_pages = OOM_VBALLOON_DEFAULT_PAGES;
-> > > > > module_param(oom_pages, int, S_IRUSR | S_IWUSR);
-> > > > > MODULE_PARM_DESC(oom_pages, "pages to free on OOM");
-> > > >
-> > > > Doesn't this limit memory size of the guest we can report?
-> > > > Apparently to several gigabytes ...
-> > > > OTOH huge guests with lots of free memory is exactly where we would
-> > > > gain the most ...
-> > >
-> > > Yes, the 16-page array can report up to 32GB (each page can hold 512
-> > addresses of 4MB free page blocks, i.e. 2GB free memory per page) free
-> > memory to host. It is not flexible.
-> > >
-> > > How about allocating the buffer according to the guest memory size
-> > > (proportional)? That is,
-> > >
-> > > /* Calculates the maximum number of 4MB (equals to 1024 pages) free
-> > > pages blocks that the system can have */ 4m_page_blocks =
-> > > totalram_pages / 1024;
-> > >
-> > > /* Allocating one page can hold 512 free page blocks, so calculates
-> > > the number of pages that can hold those 4MB blocks. And this
-> > > allocation should not exceed 1024 pages */ pages_to_allocate =
-> > > min(4m_page_blocks / 512, 1024);
-> > >
-> > > For a 2TB guests, which has 2^19 page blocks (4MB each), we will allocate
-> > 1024 pages as the buffer.
-> > >
-> > > When the guest has large memory, it should be easier to succeed in
-> > allocation of large buffer. If that allocation fails, that implies that nothing
-> > would be got from the 4MB free page list.
-> > >
-> > > I think the proportional allocation is simpler compared to other
-> > > approaches like
-> > > - scattered buffer, which will complicate the get_from_free_page_list
-> > > implementation;
-> > > - one buffer to call get_from_free_page_list multiple times, which needs
-> > get_from_free_page_list to maintain states.. also too complicated.
-> > >
-> > > Best,
-> > > Wei
-> > >
-> > 
-> > That's more reasonable, but question remains what to do if that value
-> > exceeds MAX_ORDER. I'd say maybe tell host we can't report it.
-> 
-> Not necessarily, I think. We have min(4m_page_blocks / 512, 1024) above, so the maximum memory that can be reported is 2TB. For larger guests, e.g. 4TB, the optimization can still offer 2TB free memory (better than no optimization).
+On 17 June 2018 at 21:02, Greg KH <gregkh@linuxfoundation.org> wrote:
+> On Sun, Jun 17, 2018 at 12:38:06PM +0200, Mike Galbraith wrote:
+>> On Sun, 2018-06-17 at 11:36 +0200, Greg KH wrote:
+>> >
+>> > And if you revert that patch, does everything work again?
+>>
+>> Yes.
+>
+> Great, Dave, care to revert this in 4.18 so I can queue up that revert
+> in older kernels as well?
+>
+> thanks,
+>
+> greg k-h
 
-Maybe it's better, maybe it isn't. It certainly muddies the waters even
-more.  I'd rather we had a better plan. From that POV I like what
-Matthew Wilcox suggested for this which is to steal the necessary #
-of entries off the list.
+Hi MIke,
 
-If that doesn't fly, we can allocate out of the loop and just retry with more
-pages.
+Does
+https://patchwork.freedesktop.org/patch/229980/
 
-> On the other hand, large guests being large mostly because the guests need to use large memory. In that case, they usually won't have that much free memory to report.
+fix it?
 
-And following this logic small guests don't have a lot of memory to report at all.
-Could you remind me why are we considering this optimization then?
+I can queue up a revert asap, but since a revert just brings us back
+another broken behaviour, I'd rather we just hurry the fix up.
 
-> > 
-> > Also allocating it with GFP_KERNEL is out. You only want to take it off the free
-> > list. So I guess __GFP_NOMEMALLOC and __GFP_ATOMIC.
-> 
-> Sounds good, thanks.
-> 
-> > Also you can't allocate this on device start. First totalram_pages can change.
-> > Second that's too much memory to tie up forever.
-> 
-> Yes, makes sense.
-> 
-> Best,
-> Wei
+Dave.
