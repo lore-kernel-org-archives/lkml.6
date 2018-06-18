@@ -6,102 +6,142 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 073FDC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:48:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D014DC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:54:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64D98208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8001B2086A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 13:54:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="wvLnvBbs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64D98208A6
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="mCHZUHgv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8001B2086A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754542AbeFRNsf (ORCPT
+        id S1754583AbeFRNyX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 09:48:35 -0400
-Received: from conssluserg-04.nifty.com ([210.131.2.83]:44612 "EHLO
-        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1753825AbeFRNse (ORCPT
+        Mon, 18 Jun 2018 09:54:23 -0400
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:20504 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752901AbeFRNyW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 09:48:34 -0400
-Received: from mail-ua0-f177.google.com (mail-ua0-f177.google.com [209.85.217.177]) (authenticated)
-        by conssluserg-04.nifty.com with ESMTP id w5IDmUUX012646
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 22:48:31 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com w5IDmUUX012646
+        Mon, 18 Jun 2018 09:54:22 -0400
+Received: from mail-vk0-f52.google.com (mail-vk0-f52.google.com [209.85.213.52]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id w5IDrwq1002183;
+        Mon, 18 Jun 2018 22:53:58 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com w5IDrwq1002183
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1529329711;
-        bh=yB9Iu+fOxayt0OXnxQ1OUR+Eaq48J2IAuj9sTw6timE=;
+        s=dec2015msa; t=1529330038;
+        bh=NRDJDvY/e6MvQ5m+Pdmm7CUdGR++gHjO7t+14n/56KQ=;
         h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=wvLnvBbso0s4ESBaniMhkeHQqA6k0KT0hoZ+TtqRbcyujasD29ZgKJllfrNPTsrRf
-         C8T6EFL3+W6Z7bu7IWGTUBrR/ercJUucCKDyPU5Zlj4zAVuZpiEaFj0Jjpdyku5/JT
-         20xRHlTbXPZN4LXoFjA4rQMWD6jHR2L+dwqrp4ug7XyUMH+SD9n+v2xqfu/H88M8l9
-         HVrmqkUWidIgDMEGwFS635XlGq5Omvrn2k7bAehrEv9mul8GidNe5kzQnCisWJDl0Q
-         sTqBibYNbsqfVdR5XdyXoDEDoJfWdhzjgGxcU8TYLb6kjpjomRmixlg0VPjB/rFZds
-         BQNWNxzWl+MlA==
-X-Nifty-SrcIP: [209.85.217.177]
-Received: by mail-ua0-f177.google.com with SMTP id n4-v6so10706052uad.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 06:48:31 -0700 (PDT)
-X-Gm-Message-State: APt69E06YjQXOifl4tib/SBSQ4JxxCOAX75Jvd9vsnUSLJPcEjVxl2TG
-        9Ltho9bWGs2mowGkthz14wKK03NYsmZl/qAyrPs=
-X-Google-Smtp-Source: ADUXVKJVZB50Ctkfav2FCtUimL7WqNhE3+f3ZIFxdLFddMBAQm938EIXhopbDOfDFHjgBgZI8UIHgrWstzkXLuKtuXM=
-X-Received: by 2002:ab0:13c8:: with SMTP id n8-v6mr7698006uae.140.1529329710271;
- Mon, 18 Jun 2018 06:48:30 -0700 (PDT)
+        b=mCHZUHgvoFkkVjtLY2lytREOEuIxDqORihpfgxJBEjUQJeUJXR0V5AfcJUQnZqPwL
+         FaCgtXBlfxou4UQcphdBu5ltJyoeew/quvAtE4GoYumNsgJuAzpiQF5Q1CGnkyJngV
+         n95rBng9riX99nbDYo2NObEXWSzAKexUsEPjT0TwuejLMwnpx0R9K92WGQQOOrjPJq
+         ovUzV8qqTTPXGdn1fdYGqpdDhtpGSVc6p2zsVJm2CCOJqEq26y8C2xd1lwRYD6zwwz
+         eF82qS41X37aC/0RKnVzx3VpHOdzhrb86g/nRFqi9JamTbJaeFM4osiSVMpRfDFEpq
+         FuoWsCGuQaYqw==
+X-Nifty-SrcIP: [209.85.213.52]
+Received: by mail-vk0-f52.google.com with SMTP id 128-v6so9555670vkf.8;
+        Mon, 18 Jun 2018 06:53:58 -0700 (PDT)
+X-Gm-Message-State: APt69E3PM2C2uK5wvMoLVGkBibzBD88/QAdXwwHxS//JwEmv33MESxMg
+        A2tIVW13kTL+TbBWHgjbi7biFbVoz69uWjOPdiw=
+X-Google-Smtp-Source: ADUXVKIiuyQy5ll+/YY5qMBehcnBV0KmGRUmdOwOki2j4UnypOIVU2X6a5kaeXvEv8VVIkeGpohF0uybpDCkmxgJlTA=
+X-Received: by 2002:a1f:2348:: with SMTP id j69-v6mr7154593vkj.160.1529330037618;
+ Mon, 18 Jun 2018 06:53:57 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 06:47:49
+Received: by 2002:ab0:20ab:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 06:53:17
  -0700 (PDT)
-In-Reply-To: <alpine.DEB.2.20.1806150705540.2565@hadrien>
-References: <1504258820-2122-1-git-send-email-elena.reshetova@intel.com>
- <CAGXu5jK-6fNvaEiX1Wvp98BKv+uF17KdFyPQKi5hgE-Jz3-+Tg@mail.gmail.com> <alpine.DEB.2.20.1806150705540.2565@hadrien>
+In-Reply-To: <34780659.LX1KsSZy9L@blindfold>
+References: <1529025532-22087-1-git-send-email-yamada.masahiro@socionext.com>
+ <1529025532-22087-4-git-send-email-yamada.masahiro@socionext.com> <34780659.LX1KsSZy9L@blindfold>
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Mon, 18 Jun 2018 22:47:49 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
-Message-ID: <CAK7LNAT=7E0HFd+MM92VcNdA1i6AME6qyFA9sN-2dabibxkiJg@mail.gmail.com>
-Subject: Re: [PATCH] Coccinelle: add atomic_as_refcounter script
-To:     Julia Lawall <julia.lawall@lip6.fr>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Elena Reshetova <elena.reshetova@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>, cocci@systeme.lip6.fr,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <mmarek@suse.com>,
-        Hans Liljestrand <ishkamiel@gmail.co>
+Date:   Mon, 18 Jun 2018 22:53:17 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAR8QTP6nMuR9j5-+Yxg5yzP2Dyq-rKGN-MaYg8xgr-3Ng@mail.gmail.com>
+Message-ID: <CAK7LNAR8QTP6nMuR9j5-+Yxg5yzP2Dyq-rKGN-MaYg8xgr-3Ng@mail.gmail.com>
+Subject: Re: [PATCH v3 3/3] mtd: rawnand: denali: optimize timing parameters
+ for data interface
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-mtd <linux-mtd@lists.infradead.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-2018-06-15 14:06 GMT+09:00 Julia Lawall <julia.lawall@lip6.fr>:
->
->
-> On Thu, 14 Jun 2018, Kees Cook wrote:
->
->> On Fri, Sep 1, 2017 at 2:40 AM, Elena Reshetova
->> <elena.reshetova@intel.com> wrote:
->> > atomic_as_refcounter.cocci script allows detecting
->> > cases when refcount_t type and API should be used
->> > instead of atomic_t.
->> >
->> > Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
->> > Acked-by: Julia Lawall <julia.lawall@lip6.fr>
+Hi Richard,
+
+
+2018-06-18 16:22 GMT+09:00 Richard Weinberger <richard@nod.at>:
+> Am Freitag, 15. Juni 2018, 03:18:52 CEST schrieb Masahiro Yamada:
+>> This commit improves the ->setup_data_interface() hook.
 >>
->> Reviewed-by: Kees Cook <keescook@chromium.org>
+>> The denali_setup_data_interface() needs the frequency of clk_x
+>> and the ratio of clk_x / clk.
 >>
->> Oops, I think this got lost. Who can take this patch? I thought Julia
->> ran the scripts/coccinelle/ tree, but looking at git log, it looks
->> more like it's Masahiro? Either way, let's get this in the tree. Who
->> can take it?
+>> The latter is currently hardcoded in the driver, like this:
+>>
+>>   #define DENALI_CLK_X_MULT       6
+>>
+>> The IP datasheet requires that clk_x / clk be 4, 5, or 6.  I just
+>> chose 6 because it is the most defensive value, but it is not optimal.
+>> By getting the clock rate of both "clk" and "clk_x", the driver can
+>> compute the timing values more precisely.
 >
-> Masahiro takes patches.
+> What datasheet do you have, is it public?
+
+No.  Not available in public.
+
+I got the datasheet
+because Socionext (formerly, Panasonic) bought this IP.
+
+
+> Mine clearly states that the factor is 4.
+> "The frequency of nand_x_clk is four times the frequency of nand_clk."
+
+I checked
+"Denali NAND Flash Memory Controller User's Guide"
+released by Denali.
+
+I also get access to a newer version
+"Cadence Design IP - NAND Flash Memory Controller User's Guide"
+because Cadence acquired Denali.
+
+
+My datasheet says:
+"clk_x - Cadence NAND Flash Memory Controller bus
+interface clock. This runs at a configured
+multiple of clk as is phase aligned. Configured
+multiple can be between 4-6 times."
+
+
+
+Various parts of this IP are configurable.
+Is yours talking about this IP,
+or about a particular configuration for SOCFPGA?
+
+
+
+>> To not break the existing platforms, the fallback value, 50 MHz is
+>> provided.  It is true for all upstreamed platforms.
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 >
-> julia
+> Reviewed-by: Richard Weinberger <richard@nod.at>
+>
+> Thanks,
+> //richard
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kbuild" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-
-Somehow I missed this one.
-Now, applied to linux-kbuild.  Thanks for the reminder.
-
-(If Julia hosted a git repository, that would be better, though.)
 
 
 -- 
