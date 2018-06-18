@@ -2,70 +2,135 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B88C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CADCC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1EBE20020
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:44:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1EBE20020
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id DF8C8208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:48:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g7rHcpGn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF8C8208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934783AbeFRQoj (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:44:39 -0400
-Received: from mail.skyhub.de ([5.9.137.197]:35826 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754743AbeFRQoi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:44:38 -0400
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id v1_tEBNumVyp; Mon, 18 Jun 2018 18:44:37 +0200 (CEST)
-Received: from zn.tnic (p200300EC2BE29C00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be2:9c00:329c:23ff:fea6:a903])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 41FE71EC0136;
-        Mon, 18 Jun 2018 18:44:37 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 18:44:34 +0200
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 8/8] x86/microcode/AMD: Don't scan past the CPU
- equivalence table data
-Message-ID: <20180618164434.GC24921@zn.tnic>
-References: <cover.1526767245.git.mail@maciej.szmigiero.name>
- <04a252b1e06673b8a1f62196093d0573d302fc1b.1526767245.git.mail@maciej.szmigiero.name>
- <20180605085506.GB27701@nazgul.tnic>
- <957d6884-f24b-0d40-7584-d4386d05af21@maciej.szmigiero.name>
+        id S1755357AbeFRQsY (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 12:48:24 -0400
+Received: from mail-pf0-f193.google.com ([209.85.192.193]:37624 "EHLO
+        mail-pf0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1752835AbeFRQsV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 12:48:21 -0400
+Received: by mail-pf0-f193.google.com with SMTP id y5-v6so8459170pfn.4;
+        Mon, 18 Jun 2018 09:48:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Q11XRtjbqqMUasQGLsI7jy0txfH61VaWuivAZxYYUEU=;
+        b=g7rHcpGnrUrUwW63ltXuTKvdzPFUNB3PJsGK+6wgEZorjxnmFeGpnAs3E2QaDW6lp7
+         u66oJjLcq1KC9gT7QSZyXknggl3EcL2wduW12gSO2SKXY64aOA3Qz9mIdYVxq9eqBAox
+         bWYsPBgMrLAQkecNfzYT1cdgJH6qojydzntGtGNf1Oz4PSRjJkT4Hdr/WKmsuVDlqHEI
+         erFPaGqY1SJ8Vi0TNUhDecsJ/cOxgRT1oixB1LDKR3ueVht02LYvKFIUKSv2oscndvkZ
+         3TuvMW3+kr9Ri2SoJXKPsWNarrsw4ULbnwolmZdqOI0PVRiKnTUpswyVt2/fo2xQFzzb
+         Hs7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Q11XRtjbqqMUasQGLsI7jy0txfH61VaWuivAZxYYUEU=;
+        b=atRMS8bvGZH7f6nIsi4lERb9sgHh8LEh8G5/31eGuT47bZP0mrCboUD3PN5jHP9GpL
+         4QvyNJecdXbXCDjt8y4uG+DubF7IQNw6Qt4MpZ/ACDiHDOgHUkr3Wit+JarBtbyidjn+
+         M8vSFyo3+J6OZ/VFO+TEUiIwfAyUYBwtVulRXPhePXZuwpCbc/pEoHj+Fb8z/3snuJx9
+         4YpTThUoMKwu5FOzCKzyw3vn3mCBvAt0TjK1sR48mBbZvgpOy8gXoypeCyKfWXMOv4vw
+         Q6kN2v3MUUzpCf8FvwNbOdTRCYrEkEX/0CmlsLRGbb7DVBlG5DZlh5aCr8RcS9/qLRLt
+         cRgQ==
+X-Gm-Message-State: APt69E1/A91lxUDQNrfYtkuPqw2aIWQg21jY1vVqsobQpUBQMQm47ppw
+        8oR0T9bo/asjijFzvrRw+ZysNXnl
+X-Google-Smtp-Source: ADUXVKLCbxlqFdE20Nhx9aJHhBZzg+KPulTtLvqWcfldhfuHAV08ibrJb5NugF+xiwQtp/tmgPPwQw==
+X-Received: by 2002:a65:51cb:: with SMTP id i11-v6mr11874408pgq.320.1529340501056;
+        Mon, 18 Jun 2018 09:48:21 -0700 (PDT)
+Received: from [10.69.41.93] ([192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id a23-v6sm18401197pgd.85.2018.06.18.09.48.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 09:48:19 -0700 (PDT)
+Subject: Re: [PATCH 0/5] Fix Cygnus, NS2, Stingray interrupt type
+To:     Ray Jui <ray.jui@broadcom.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com
+References: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+Message-ID: <ac955f7d-6770-63a1-db85-024b0ee0b8af@gmail.com>
+Date:   Mon, 18 Jun 2018 09:48:18 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
+In-Reply-To: <1528834891-17807-1-git-send-email-ray.jui@broadcom.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <957d6884-f24b-0d40-7584-d4386d05af21@maciej.szmigiero.name>
-User-Agent: Mutt/1.9.5 (2018-04-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jun 12, 2018 at 11:08:31PM +0200, Maciej S. Szmigiero wrote:
-> That was the solution before this patch series version (6) - there was
-> a variable holding the CPU equivalence table size for the late loader,
-> but you didn't like it:> Instead of adding yet another global var which needs handling too,
-> > and touching so many places, just do all checks and preparations in
-> > install_equiv_cpu_table() so that the rest of the code can get what it
-> > expects: terminating zero entry and proper size.
+On 06/12/2018 01:21 PM, Ray Jui wrote:
+> This patch series fixes incorrect interrupt types for I2C and PCIe in DT
+> for Broadcom Cygnus, NS2, and Stingray SoCs
+> 
+> This patch series is based off v4.17 and is available on GIHUB:
+> repo: https://github.com/Broadcom/arm64-linux.git
+> branch: cygnus-ns2-dt-irq-type-fix-v1
 
-So what's wrong with computing the size in the late loader just like you
-do in parse_container()?
+Series applied to:
 
+- 1&2: devicetree/fixes
+- 3-5: devicetree-arm64/fixes
+
+Thanks Ray.
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Florian
