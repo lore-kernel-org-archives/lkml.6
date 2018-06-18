@@ -2,182 +2,131 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.9 required=3.0 tests=BODY_8BITS,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A1FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:53:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C998C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:53:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CDDA20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:53:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C69B220864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 07:53:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="HVlqOi4A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CDDA20864
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=broadcom.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JN80mRwA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C69B220864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S932860AbeFRHx0 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 03:53:26 -0400
-Received: from mail-ot0-f195.google.com ([74.125.82.195]:39232 "EHLO
-        mail-ot0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932524AbeFRHxY (ORCPT
+        id S933073AbeFRHxr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 03:53:47 -0400
+Received: from mail-qt0-f193.google.com ([209.85.216.193]:36949 "EHLO
+        mail-qt0-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932524AbeFRHxq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 03:53:24 -0400
-Received: by mail-ot0-f195.google.com with SMTP id l15-v6so17446407oth.6
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 00:53:24 -0700 (PDT)
+        Mon, 18 Jun 2018 03:53:46 -0400
+Received: by mail-qt0-f193.google.com with SMTP id a18-v6so14347785qtj.4
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 00:53:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=nhZycJGVyrXIzxkjWQ4ltxWSdLV2UeWVBP21LEJXP+8=;
-        b=HVlqOi4AS5qaVTWmhlRyuxgKjQkiujCFvaGiSnDYTH+KlZnAQHNmMozkgrvQlPu/oH
-         BnJd0KwWX8kB5NCV3oZtQa/K7Lsxe2uKEqfIOrwfH/CJAB8r32Dl9M9e/nqqWUlB8zts
-         nV4BtulpSQhaapkBURA5rpZpyNL//FAoUqmW8=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=AmUobRNTjYaDhgAgBl3NJxgUVdQ62evKL5qfSawOGhQ=;
+        b=JN80mRwAjH1F/6zlvgioI6Bh4nvrzZFVUvQdA/hEY2JHuyddviIp7aMpky2GonpmTd
+         T34Gjw8Kx5j+wmdyEnbPXedccfXO1i4eNcdZFvY/p3UE07pF/c63ftVpp4qXspnu7Lvw
+         UTCDC82qcNRDBxn4vpZE5vHlTDUN3u3ocSBXyn9hsK4RO5X2pj2Se7f0PN+wYFav/N4U
+         JA7M6YQuIashIzK4QWGzj/zCC4YqBtduGI0sBrgonFWVO8mZ7HHi4Oky6XhJpsqKDDMG
+         kijFTiNCR/dulMHiyB4F0f+qaAFvFRNb/9h82whIEdYcIlazv/uPBgUe/ZRVGCy1Pi8A
+         tq5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=nhZycJGVyrXIzxkjWQ4ltxWSdLV2UeWVBP21LEJXP+8=;
-        b=Qro2ekywvzjBH+wIxaKCDqGVJoC6Hdr1fItTRuHq6MsazO1izg6gmHjtfETt1VnaeL
-         npzmRHUPJQDsnUI5v6uFf3hcpRV26cjZwjuu3s0Wzd67WGY2r9+JNavOHRCTPGxRmcbW
-         zHWvxSaMonb7+ztHqKBCaClNXgOTXe5WLkEyq0w643wjdjr1qGhyGV8yR+nyvAuvSEUQ
-         5CeaABYYGdM7yyryapRx/KlkVfAq/dOPALepHHCEuGNa7IvOT/W7ED9CST9AM4QxznEG
-         beKVgxm9Jgm34qtjUISQasg33tLPMlkyxSG6+GBoTPOaKlRUPmnGLeDODin4RyeT3AWS
-         M+xQ==
-X-Gm-Message-State: APt69E28u7fxO2Hc+9dbjPffvWZoh7rYjK0CIqS7xIpjGDtsZllzSRtW
-        XLqe8CDx4amHO63jnW9Nk/fuFQeBKXTJ/Z7l6ezMfQ==
-X-Google-Smtp-Source: ADUXVKL99SaJgx67GKjR/fuEoiwNyue3mZI8aziSx2H7j91XKHdRCrHTwKVYx8W8wiS36D0/ePeEDnsR3IsOOavL18Q=
-X-Received: by 2002:a9d:4894:: with SMTP id d20-v6mr7558092otf.399.1529308403515;
- Mon, 18 Jun 2018 00:53:23 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=AmUobRNTjYaDhgAgBl3NJxgUVdQ62evKL5qfSawOGhQ=;
+        b=r/WCk+hswkNMB/ormWU2+chl4MwLo9hSKYxQgBGgBikG2rluD1+8Q2olYan/BXhlwn
+         7NnlbKbFE3dS8sbLVxBnsNpq5IufBE0jOfMI2A2Pb9gHdIQvbfqxhisPO1JlFEwM/J60
+         Zs4cceyIAjp5h+vdf19P/hVN4/cZPUYMrNrMOpr3q80U2EjJApWW7NVzHmwAdv/S8kyn
+         A9wEhssLh4vg8vQGC2dB4aEompzjgqhsHQofes2KJHfo33wZK+izkCVEC58U4a71cUnj
+         HRAZx4jj+SEZ7NhL4RLqQP/qhDEAgXx9jkOyFp3Ik9W5S+LkCe98hVEdc2kmcTFj4/bC
+         2IgQ==
+X-Gm-Message-State: APt69E0Fu9/jaqqAUveQN7RODMOBfW5GBzNB3R87+JcRNdqnB5niyo55
+        doxbv9Rs2MoiSxxVN+fMYbSeQ7URKB9m1ld7mr0=
+X-Google-Smtp-Source: ADUXVKLESIw5cPlFHs7uB5s9/dbHJDEbXti/sRacUZ2Gl/TTIghtWyRj7y4Y9T9UGpQzEocfwokS0aQnb53l7DMcdTU=
+X-Received: by 2002:a0c:93ec:: with SMTP id g41-v6mr9842588qvg.243.1529308425893;
+ Mon, 18 Jun 2018 00:53:45 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a9d:4044:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 00:53:22
- -0700 (PDT)
-In-Reply-To: <CABe79T7gGJ1mcBV4W9nFy1ZyBL4sFpB+DFJjgpLgOtRJGjJbpw@mail.gmail.com>
-References: <1527486084-4636-1-git-send-email-srinath.mannam@broadcom.com>
- <1527486084-4636-2-git-send-email-srinath.mannam@broadcom.com>
- <20180531164820.GA23074@rob-hp-laptop> <CABe79T7=LK=PgaftQeCRE8kmMMztFBNeJ4cdnZhv8ULDO=6+Jw@mail.gmail.com>
- <CAL_JsqJsGouQjWAu01fR4LpwanKbSj1d_CvyPXyMBe2vVBHqdw@mail.gmail.com> <CABe79T7gGJ1mcBV4W9nFy1ZyBL4sFpB+DFJjgpLgOtRJGjJbpw@mail.gmail.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Mon, 18 Jun 2018 13:23:22 +0530
-Message-ID: <CABe79T5Mk+40860kXhnMaB6j5wV3ALRfVxe2ZTQRjJyBs38M5g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: thermal: Add binding document for SR thermal
-To:     Rob Herring <robh@kernel.org>
-Cc:     Zhang Rui <rui.zhang@intel.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Pramod Kumar <pramod.kumar@broadcom.com>
+References: <20180606150900.8342-1-enric.balletbo@collabora.com>
+ <20180606150900.8342-4-enric.balletbo@collabora.com> <20180618071801.GI31141@dell>
+ <20180618072021.GJ31141@dell>
+In-Reply-To: <20180618072021.GJ31141@dell>
+From:   Enric Balletbo Serra <eballetbo@gmail.com>
+Date:   Mon, 18 Jun 2018 09:53:34 +0200
+Message-ID: <CAFqH_51Fsyr-zE4zzKLxqPZeep9gj7X_1HOnBeEbg9jXju8S4A@mail.gmail.com>
+Subject: Re: [PATCH v3 03/12] mfd: cros_ec: Make license text and module
+ license match.
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-Please let me know if you have any comments to this patch.
-If not can you please accept this patch.
-
-Regards,
-Srinath.
-
-On Mon, Jun 4, 2018 at 11:36 AM, Srinath Mannam
-<srinath.mannam@broadcom.com> wrote:
-> Hi Rob Herring,
+Hi Lee,
+Missatge de Lee Jones <lee.jones@linaro.org> del dia dl., 18 de juny
+2018 a les 9:21:
 >
-> Please find my comments in line..
+> On Mon, 18 Jun 2018, Lee Jones wrote:
 >
-> On Fri, Jun 1, 2018 at 7:59 PM, Rob Herring <robh@kernel.org> wrote:
->> On Fri, Jun 1, 2018 at 3:51 AM, Srinath Mannam
->> <srinath.mannam@broadcom.com> wrote:
->>> Hi Rob Herring,
->>>
->>> Thank you for the review.
->>> Please find my answers inline..
->>>
->>> On Thu, May 31, 2018 at 10:18 PM, Rob Herring <robh@kernel.org> wrote:
->>>> On Mon, May 28, 2018 at 11:11:22AM +0530, Srinath Mannam wrote:
->>>>> From: Pramod Kumar <pramod.kumar@broadcom.com>
->>>>>
->>>>> Add binding document for supported thermal implementation
->>>>> in Stingray.
->>>>>
->>>>> Signed-off-by: Pramod Kumar <pramod.kumar@broadcom.com>
->>>>> Reviewed-by: Ray Jui <ray.jui@broadcom.com>
->>>>> Reviewed-by: Scott Branden <scott.branden@broadcom.com>
->>>>> Reviewed-by: Srinath Mannam <srinath.mannam@broadcom.com>
->>>>> ---
->>>>>  .../bindings/thermal/brcm,sr-thermal.txt           | 45 ++++++++++++++++++++++
->>>>>  1 file changed, 45 insertions(+)
->>>>>  create mode 100644 Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>>> new file mode 100644
->>>>> index 0000000..33f9e11
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/thermal/brcm,sr-thermal.txt
->>>>> @@ -0,0 +1,45 @@
->>>>> +* Broadcom Stingray Thermal
->>>>> +
->>>>> +This binding describes thermal sensors that is part of Stingray SoCs.
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible : Must be "brcm,sr-thermal"
->>>>> +- reg : memory where tmon data will be available.
->>>>
->>>> What type of memory is this?
->>> This is shared memory(cache-able) which is shared between two micro controllers.
->>
->> What else is in this shared memory? You should probably be
->> representing that as a whole somewhere in DT.
-> Nothing else except 4 byte memory containing temperature value of one
-> thermal zone.
-> At present we configured 6 thermal zones. So six separate 4byte
-> memories provided in
-> shared memory.
->>
->>> One micro controller update temperature of all thermal zones in this
->>> shared memory.
->>> thermal driver running on another micro controller monitors
->>> temperature data of all thermal zones.
->>>>
->>>>> +
->>>>> +Example:
->>>>> +     tmons {
->>>>> +             compatible = "simple-bus";
->>>>> +             #address-cells = <1>;
->>>>> +             #size-cells = <1>;
->>>>> +             ranges;
->>>>> +
->>>>> +             tmon_ihost0: thermal@8f100000 {
->>>>> +                     compatible = "brcm,sr-thermal";
->>>>> +                     reg = <0x8f100000 0x4>;
->>>>> +             };
->>>>
->>>> Convince me that you need a node per register. This can all be
->>>> accomplished with a single node and either a single reg entry or a
->>>> series of reg entries.
->>>>
->>> In our system we have 6 different thermal zones. each node belongs to
->>> one thermal zone.
->>> thermal driver detects each node as separate thermal zone and monitors
->>> separately.
->>> register entry is only 4byte memory which contains the temperature
->>> value of respective thermal zone.
->>> Based on requirement we can increase or decrease the number thermal
->>> zones need to monitor.
->>
->> Still, all this can be accomplished with a single node. Having a node
->> per register in DT doesn't scale.
-> Our approach is like we have individual controllers have one driver
-> with multiple DT nodes.
-> In coming future we will add more thermal zones based on our
-> requirement. then we can just
-> add new DT node, instead of having driver changes.
-> With this approach we can configure each thermal zone at different trip values.
-> So we must have all thermal zones are independent.
->>
->> Rob
+> > On Wed, 06 Jun 2018, Enric Balletbo i Serra wrote:
+> >
+> > > The license text is specifying "GPLv2" but the MODULE_LICENSE is set =
+to
+> > > GPL which means GNU Public License v2 or later. When MODULE_LICENSE a=
+nd
+> > > boiler plate does not match, go for boiler plate license.
+> > >
+> > > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> > > ---
+> > >
+> > > Changes in v3: None
+> > > Changes in v2: None
+> > >
+> > >  drivers/mfd/cros_ec.c     | 2 +-
+> > >  drivers/mfd/cros_ec_i2c.c | 2 +-
+> > >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > Applied, thanks.
+>
+> I've just seen Joe's comment.
+>
+
+Did you read my answer [1] to the Joe's email?
+
+According to the doc if MODULE_LICENSE is GPL that means  GPL-2.0 or
+later which to be strict is wrong if your file is GPL-2.0 only. It's
+right that there are modules in the kernel that have this mismatch but
+IMHO is wrong, there are also some examples where people fix this, i.e
+[2]
+
+Best regards,
+  Enric
+
+[1] https://lkml.org/lkml/2018/6/8/144
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3D75dc344145190bf53aed7a28dbc27c11180d94e5
+
+
+
+
+> Unapplied, for now.
+>
+> --
+> Lee Jones [=E6=9D=8E=E7=90=BC=E6=96=AF]
+> Linaro Services Technical Lead
+> Linaro.org =E2=94=82 Open source software for ARM SoCs
+> Follow Linaro: Facebook | Twitter | Blog
