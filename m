@@ -2,110 +2,217 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA00C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:07:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F4008C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37A520852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37A520852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id A149F208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:07:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="aripGAga"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A149F208A6
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965471AbeFRPH3 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:07:29 -0400
-Received: from mx1.redhat.com ([209.132.183.28]:49330 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S964942AbeFRPHZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S965503AbeFRPHb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:07:31 -0400
+Received: from mail-pf0-f194.google.com ([209.85.192.194]:45869 "EHLO
+        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S964906AbeFRPHZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 18 Jun 2018 11:07:25 -0400
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.phx2.redhat.com [10.5.11.24])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 35A3130820CA;
-        Mon, 18 Jun 2018 15:07:25 +0000 (UTC)
-Received: from llong.remote.csb (ovpn-117-25.phx2.redhat.com [10.3.117.25])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A69F6308BDA2;
-        Mon, 18 Jun 2018 15:07:17 +0000 (UTC)
-Subject: Re: [PATCH v10 0/9] cpuset: Enable cpuset controller in default
- hierarchy
-To:     Juri Lelli <juri.lelli@redhat.com>
-Cc:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@fb.com, pjt@google.com, luto@amacapital.net,
-        Mike Galbraith <efault@gmx.de>, torvalds@linux-foundation.org,
-        Roman Gushchin <guro@fb.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>
-References: <1529295249-5207-1-git-send-email-longman@redhat.com>
- <20180618142036.GA13097@localhost.localdomain>
-From:   Waiman Long <longman@redhat.com>
-Organization: Red Hat
-Message-ID: <dc91e2ad-239d-3144-0814-c5da181f4ac6@redhat.com>
-Date:   Mon, 18 Jun 2018 23:07:16 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.0
-MIME-Version: 1.0
-In-Reply-To: <20180618142036.GA13097@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.24
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Mon, 18 Jun 2018 15:07:25 +0000 (UTC)
+Received: by mail-pf0-f194.google.com with SMTP id a22-v6so8316279pfo.12
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:07:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=android.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=B6Z2Yxp10H9ZUhz2OCbIS04Vyjh/4MN4jba+2LuzTic=;
+        b=aripGAgagar7hqzH98wR/kmvzN8nmgmUw7cLY5GLA8xzgi/YdqOy1YyB6AELAp2Kr/
+         HZJ9wrbW8b9Y5uymLDrPsYR5Sg2C4HMwSa3ZlBeS4NMV+4Ug8FwzAy+i3qE64uKt/FpU
+         WngxhyovqlHfbjdG/U7K/rEBsUq8TbeZ8o0nCqRPZ2KAcXj0otw6ShcisNdyAlwi5hpc
+         mJ6HxsmycgMyBGSqZRp5OJ7kmrW8AhxQgvpcHz/pIpJatU055U/e9BGK8eA1kGvdsY7S
+         BwbateZAB50LTI1B8x4Wl7CGGEAt6JqLAZYIPsmURRyyVO3mkuA7vVLFBeuo8wflmX5v
+         h6Sw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=B6Z2Yxp10H9ZUhz2OCbIS04Vyjh/4MN4jba+2LuzTic=;
+        b=dwSnVWecicOpSJ09dJvkxR3fb6wyav3CFrzB9AXAri1+Z+QobFkPM50wqPDq1qx/py
+         SHhGD8+jD/SrAQtq8vDM/iJ0Kz42tXo5G+bx0bvLiV6Nzz5ktNqEVhPa6eWhw+pUqLIW
+         8VjPM0ILXjidmQhJ5q6Wt7F2VM0FzrhTIsHg+KixzHo8hc91NkLLCAdrCgbqR3+PUiIP
+         RuswCxBQGXTEGrpx3EOr8eTBFReNi1sMDKQfwf6bwE5/u9tso/sX/XvH/8TuOXgWDfmj
+         mXwNmI76UsN6k1SQv1VNBHwsVi1XWTGaJBHdfHyBHBhdEXv5THZ5a2icpRxodugr+eBv
+         LAiw==
+X-Gm-Message-State: APt69E2sy3g9MRfv0+7gWKGV4ZYECSJ5h/6sDM8YbwpG3ttZJauVeZXp
+        Bf2Z28GG17ahjfyRY0LhtAeO8UtfYRA=
+X-Google-Smtp-Source: ADUXVKKpztKg/Qq5SsJ4vRI9oyD5IkHNF0Aku6gyslsuxt/Z1BShQ0hHHJUpXs7qxFeDHtv1hOOZEQ==
+X-Received: by 2002:a63:7b0e:: with SMTP id w14-v6mr11159950pgc.165.1529334444882;
+        Mon, 18 Jun 2018 08:07:24 -0700 (PDT)
+Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:6077:8eec:bc7e:d0f4])
+        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.07.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 18 Jun 2018 08:07:24 -0700 (PDT)
+From:   Mark Salyzyn <salyzyn@android.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Mark Salyzyn <salyzyn@android.com>,
+        James Morse <james.morse@arm.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Dmitry Safonov <dsafonov@virtuozzo.com>,
+        John Stultz <john.stultz@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Kevin Brodsky <kevin.brodsky@arm.com>,
+        Andrew Pinski <apinski@cavium.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-arm-kernel@lists.infradead.org,
+        Jeremy Linton <Jeremy.Linton@arm.com>,
+        Mark Salyzyn <salyzyn@google.com>,
+        Jinbum Park <jinb.park7@gmail.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
+Subject: RESEND [PATCH v5 06/12] arm: vdso: add support for clock_getres
+Date:   Mon, 18 Jun 2018 08:05:52 -0700
+Message-Id: <20180618150613.10322-7-salyzyn@android.com>
+X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
+In-Reply-To: <20180618150613.10322-1-salyzyn@android.com>
+References: <20180618150613.10322-1-salyzyn@android.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18/2018 10:20 PM, Juri Lelli wrote:
-> Hi,
->
-> On 18/06/18 12:13, Waiman Long wrote:
->> v10:
->>  - Remove the cpuset.sched.load_balance patch for now as it may not
->>    be that useful.
->>  - Break the large patch 2 into smaller patches to make them a bit
->>    easier to review.
->>  - Test and fix issues related to changing "cpuset.cpus" and cpu
->>    online/offline in a domain root.
->>  - Rename isolated_cpus to reserved_cpus as this cpumask holds CPUs
->>    reserved for child sched domains.
->>  - Rework the scheduling domain debug printing code in the last patch.
->>  - Document update to the newly moved
->>    Documentation/admin-guide/cgroup-v2.rst.
-> There seem to be two (similar but different) 6/9 in the set. Something
-> went wrong?
+Take an effort to recode the arm64 vdso code from assembler to C
+previously submitted by Andrew Pinski <apinski@cavium.com>, rework
+it for use in both arm and arm64, overlapping any optimizations
+for each architecture. But instead of landing it in arm64, land the
+result into lib/vdso and unify both implementations to simplify
+future maintenance.
 
-The isolated_cpus patch is old, I forgot to remove it before sending out
-the patch.
+Add clock_getres vdso support to match up with existing support in
+the arm64's vdso.
 
+Signed-off-by: Mark Salyzyn <salyzyn@android.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will.deacon@arm.com>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
+Cc: John Stultz <john.stultz@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Cc: Laura Abbott <labbott@redhat.com>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Andy Gross <andy.gross@linaro.org>
+Cc: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: Andrew Pinski <apinski@cavium.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 
-> Also I can't seem to be able to create a subgroup with an isolated
-> domain root. I think that, when doing the following
->
->  # mount -t cgroup2 none /sys/fs/cgroup
->  # echo "+cpuset" >/sys/fs/cgroup/cgroup.subtree_control 
->  # mkdir /sys/fs/cgroup/g1
->  # echo 0-1 >/sys/fs/cgroup/g1/cpuset.cpus
->  # echo 1 >/sys/fs/cgroup/g1/cpuset.sched.domain_root
->
-> rebuild_sched_domains_locked exits early, since
-> top_cpuset.effective_cpus != cpu_active_mask. (effective_cpus being 2-3
-> at this point since I'm testing this on a 0-3 system)
->
-> In your v9 this [1] was adding a special condition to make rebuilding of
-> domains happen. Was the change intentional?
+v2:
+- split first CL into 7 of 7 pieces
 
-Can you reply to the relevant patch to pinpoint what condition are you
-talking about? I do try to eliminate domain rebuild as much as possible,
-but I am just not sure which condition you have question about.
+v4:
+- update commit message to reflect overall reasoning.
+- replace typeof() with long for nsec
+- replace clock_id with clock to match usage elsewhere.
 
-Cheers,
-Longman
+v5:
+- add linux/hrtimer.h to compiler.h to supply for LOW_RES_NSEC and
+  MONOTONIC_RES_NSEC.
+---
+ arch/arm/kernel/vdso.c        |  1 +
+ arch/arm/vdso/compiler.h      |  1 +
+ arch/arm/vdso/vdso.lds.S      |  1 +
+ arch/arm/vdso/vgettimeofday.c | 23 +++++++++++++++++++++++
+ 4 files changed, 26 insertions(+)
 
-
+diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
+index 9c13a32fa5f0..c299967df63c 100644
+--- a/arch/arm/kernel/vdso.c
++++ b/arch/arm/kernel/vdso.c
+@@ -191,6 +191,7 @@ static void __init patch_vdso(void *ehdr)
+ 	if (!cntvct_ok) {
+ 		vdso_nullpatch_one(&einfo, "__vdso_gettimeofday");
+ 		vdso_nullpatch_one(&einfo, "__vdso_clock_gettime");
++		vdso_nullpatch_one(&einfo, "__vdso_clock_getres");
+ 	}
+ }
+ 
+diff --git a/arch/arm/vdso/compiler.h b/arch/arm/vdso/compiler.h
+index 3edddb705a1b..c7751019246a 100644
+--- a/arch/arm/vdso/compiler.h
++++ b/arch/arm/vdso/compiler.h
+@@ -27,6 +27,7 @@
+ #include <asm/processor.h>	/* for cpu_relax()			*/
+ #include <asm/unistd.h>
+ #include <linux/compiler.h>
++#include <linux/hrtimer.h>	/* for LOW_RES_NSEC and MONOTONIC_RES_NSEC */
+ #include <linux/time.h>		/* for NSEC_PER_SEC			*/
+ 
+ #ifndef CONFIG_AEABI
+diff --git a/arch/arm/vdso/vdso.lds.S b/arch/arm/vdso/vdso.lds.S
+index 89ca89f12d23..1d81e8c3acf6 100644
+--- a/arch/arm/vdso/vdso.lds.S
++++ b/arch/arm/vdso/vdso.lds.S
+@@ -82,6 +82,7 @@ VERSION
+ 	global:
+ 		__vdso_clock_gettime;
+ 		__vdso_gettimeofday;
++		__vdso_clock_getres;
+ 	local: *;
+ 	};
+ }
+diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
+index a2c4db83edc4..a354586f8a65 100644
+--- a/arch/arm/vdso/vgettimeofday.c
++++ b/arch/arm/vdso/vgettimeofday.c
+@@ -32,6 +32,7 @@
+ 
+ DEFINE_FALLBACK(gettimeofday, struct timeval *, tv, struct timezone *, tz)
+ DEFINE_FALLBACK(clock_gettime, clockid_t, clock, struct timespec *, ts)
++DEFINE_FALLBACK(clock_getres, clockid_t, clock, struct timespec *, ts)
+ 
+ static notrace u32 vdso_read_begin(const struct vdso_data *vd)
+ {
+@@ -301,3 +302,25 @@ notrace int __vdso_gettimeofday(struct timeval *tv, struct timezone *tz)
+ 
+ 	return 0;
+ }
++
++int __vdso_clock_getres(clockid_t clock, struct timespec *res)
++{
++	long nsec;
++
++	if (clock == CLOCK_REALTIME ||
++	    clock == CLOCK_MONOTONIC ||
++	    clock == CLOCK_MONOTONIC_RAW)
++		nsec = MONOTONIC_RES_NSEC;
++	else if (clock == CLOCK_REALTIME_COARSE ||
++		 clock == CLOCK_MONOTONIC_COARSE)
++		nsec = LOW_RES_NSEC;
++	else
++		return clock_getres_fallback(clock, res);
++
++	if (likely(res != NULL)) {
++		res->tv_sec = 0;
++		res->tv_nsec = nsec;
++	}
++
++	return 0;
++}
+-- 
+2.18.0.rc1.244.gcf134e6275-goog
 
