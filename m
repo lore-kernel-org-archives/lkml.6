@@ -3,147 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BE35C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:55:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B53C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDBD6208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:55:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDBD6208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E1031208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 06:58:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1031208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755015AbeFRGzi (ORCPT
+        id S1755043AbeFRG6Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 02:55:38 -0400
-Received: from mga03.intel.com ([134.134.136.65]:9437 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754722AbeFRGzh (ORCPT <rfc822;Linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 02:55:37 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Jun 2018 23:55:36 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,238,1526367600"; 
-   d="scan'208";a="58448407"
-Received: from yjin15-mobl.ccr.corp.intel.com (HELO [10.254.208.136]) ([10.254.208.136])
-  by fmsmga002.fm.intel.com with ESMTP; 17 Jun 2018 23:55:33 -0700
-Subject: Re: [PATCH v1 1/2] perf/core: Use sysctl to turn on/off dropping
- leaked kernel samples
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     acme@kernel.org, jolsa@kernel.org, peterz@infradead.org,
-        mingo@redhat.com, alexander.shishkin@linux.intel.com,
-        me@kylehuey.com, Linux-kernel@vger.kernel.org,
-        vincent.weaver@maine.edu, will.deacon@arm.com, eranian@google.com,
-        namhyung@kernel.org, ak@linux.intel.com, kan.liang@intel.com,
-        yao.jin@intel.com
-References: <1529057003-2212-1-git-send-email-yao.jin@linux.intel.com>
- <1529057003-2212-2-git-send-email-yao.jin@linux.intel.com>
- <20180615113608.6m74sm7gpl5p6oqe@lakrids.cambridge.arm.com>
-From:   "Jin, Yao" <yao.jin@linux.intel.com>
-Message-ID: <52c75f12-1f91-405d-0b05-0aa6a9c09306@linux.intel.com>
-Date:   Mon, 18 Jun 2018 14:55:32 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 18 Jun 2018 02:58:25 -0400
+Received: from mail-vk0-f65.google.com ([209.85.213.65]:34286 "EHLO
+        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754884AbeFRG6Y (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 02:58:24 -0400
+Received: by mail-vk0-f65.google.com with SMTP id q135-v6so8894654vkh.1;
+        Sun, 17 Jun 2018 23:58:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/smcjl1Ha+ltFrV+ReNIiGBGjjtIHxKfKyP50YiJGMU=;
+        b=s+c+xJTyM4QnRFimICwaL+UKkOnAowlGa520onHnwDdAcVWMthJ04Hs2nK3FPgAdTw
+         ojvLFdOL3Yah4ZxCnRzNp8JtHkmCF+yeuUNjGf4Hd055Yi+AF4ZVUR5a8JtAlGSBGUdT
+         5lqW2D/FYTO8O268FeLfGCjKqQSl2Ew7vdpwxJ8uG+pr6q0axOoD9Aj1sGeCBKMRc1pY
+         /te5PPjEfbpLBPZCqoGdSZ1OJO/1TGzyh29ecgCT5HNP00IbYwgAI/ds+mxJaoP/uh5K
+         W+wtU9WjAT9F79WZCEKSon7eUOo2mvweRGc3keumyQPYJBCmC0PGagoKrG+Yqe3M8Ksj
+         A7Sg==
+X-Gm-Message-State: APt69E0Qqx3ANSgNKwHvcJigqnBTvyLWyjdJ7L5mm/ecCXUyjCKeStAr
+        gCG4tR+AdntePTd+qA3IhAI6/tIgmC52xs7IlZc=
+X-Google-Smtp-Source: ADUXVKLwYYxI3JYfi0+wUCtEBl6cR4dRIIa7TzJHr7dMQf+Fg4quCFEOVnHT3TUfdzmGeHBO0tD+LGZA74b/XcdwIqY=
+X-Received: by 2002:a1f:2c0d:: with SMTP id s13-v6mr6255299vks.106.1529305103243;
+ Sun, 17 Jun 2018 23:58:23 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180615113608.6m74sm7gpl5p6oqe@lakrids.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20180618060426.24497-1-gerg@linux-m68k.org>
+In-Reply-To: <20180618060426.24497-1-gerg@linux-m68k.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 18 Jun 2018 08:58:11 +0200
+Message-ID: <CAMuHMdXSaGtremvLCRzKm68s_dUEigL-VCmM-ar=T4PPJrECLw@mail.gmail.com>
+Subject: Re: [PATCH] m68k: fix "bad page state" oops on ColdFire boot
+To:     Greg Ungerer <gerg@linux-m68k.org>
+Cc:     Matthew Wilcox <mawilcox@microsoft.com>,
+        "Linux/m68k" <linux-m68k@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Greg,
 
+On Mon, Jun 18, 2018 at 8:06 AM Greg Ungerer <gerg@linux-m68k.org> wrote:
+> Booting a ColdFire m68k core with MMU enabled causes a "bad page state"
+> oops since commit 1d40a5ea01d5 ("mm: mark pages in use for page tables"):
+>
+>  BUG: Bad page state in process sh  pfn:01ce2
+>  page:004fefc8 count:0 mapcount:-1024 mapping:00000000 index:0x0
+>  flags: 0x0()
+>  raw: 00000000 00000000 00000000 fffffbff 00000000 00000100 00000200 00000000
+>  raw: 039c4000
+>  page dumped because: nonzero mapcount
+>  Modules linked in:
+>  CPU: 0 PID: 22 Comm: sh Not tainted 4.17.0-07461-g1d40a5ea01d5 #13
+>
+> Fix by calling pgtable_page_dtor() in our __pte_free_tlb() code path,
+> so that the PG_table flag is cleared before we free the pte page.
+>
+> Signed-off-by: Greg Ungerer <gerg@linux-m68k.org>
+> CC: Matthew Wilcox <mawilcox@microsoft.com>
+> ---
+>  arch/m68k/include/asm/mcf_pgalloc.h | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> Matthew: I came across this thread at https://lkml.org/lkml/2018/6/17/163
+>          about a similar problem with openrisc. Based on that I came up
+>          with this fix for m68k/ColdFire. Fixes the issue for me.
+>
+> diff --git a/arch/m68k/include/asm/mcf_pgalloc.h b/arch/m68k/include/asm/mcf_pgalloc.h
+> index 8b707c249026..8c441eb57b80 100644
+> --- a/arch/m68k/include/asm/mcf_pgalloc.h
+> +++ b/arch/m68k/include/asm/mcf_pgalloc.h
+> @@ -44,6 +44,7 @@ extern inline pmd_t *pmd_alloc_kernel(pgd_t *pgd, unsigned long address)
+>  static inline void __pte_free_tlb(struct mmu_gather *tlb, pgtable_t page,
+>                                   unsigned long address)
+>  {
+> +       pgtable_page_dtor(page);
+>         __free_page(page);
+>  }
 
-On 6/15/2018 7:36 PM, Mark Rutland wrote:
-> On Fri, Jun 15, 2018 at 06:03:22PM +0800, Jin Yao wrote:
->> When doing sampling, for example:
->>
->> perf record -e cycles:u ...
->>
->> On workloads that do a lot of kernel entry/exits we see kernel
->> samples, even though :u is specified. This is due to skid existing.
->>
->> This might be a security issue because it can leak kernel addresses even
->> though kernel sampling support is disabled.
->>
->> One patch "perf/core: Drop kernel samples even though :u is specified"
->> was posted in last year but it was reverted because it introduced a
->> regression issue that broke the rr-project, which used sampling
->> events to receive a signal on overflow. These signals were critical
->> to the correct operation of rr.
->>
->> See '6a8a75f32357 ("Revert "perf/core: Drop kernel samples even
->> though :u is specified"")' for detail.
->>
->> Now the idea is to use sysctl to control the dropping of leaked
->> kernel samples.
->>
->> /sys/devices/cpu/perf_allow_sample_leakage:
->>
->> 0 - default, drop the leaked kernel samples.
->> 1 - don't drop the leaked kernel samples.
-> 
-> Does this need to be conditional at all?
-> 
-> At least for sampling the GPRs, we could do something like below
-> unconditionally, which seems sufficient for my test cases.
-> 
-> Mark.
-> 
-> ---->8----
-> diff --git a/kernel/events/core.c b/kernel/events/core.c
-> index 67612ce359ad..79a21531d57c 100644
-> --- a/kernel/events/core.c
-> +++ b/kernel/events/core.c
-> @@ -6359,6 +6359,24 @@ perf_callchain(struct perf_event *event, struct pt_regs *regs)
->          return callchain ?: &__empty_callchain;
->   }
->   
-> +static struct pt_regs *perf_get_sample_regs(struct perf_event *event, struct pt_regs *regs)
-> +{
-> +       /*
-> +        * Due to interrupt latency (AKA "skid"), we may enter the kernel
-> +        * before taking an overflow, even if the PMU is only counting user
-> +        * events.
-> +        *
-> +        * If we're not counting kernel events, always use the user regs when
-> +        * sampling.
-> +        *
-> +        * TODO: how does this interact with guest sampling?
-> +        */
-> +       if (event->attr.exclude_kernel && !user_mode(regs))
-> +               return task_pt_regs(current);
-> +
-> +       return regs;
-> +}
-> +
->   void perf_prepare_sample(struct perf_event_header *header,
->                           struct perf_sample_data *data,
->                           struct perf_event *event,
-> @@ -6366,6 +6384,8 @@ void perf_prepare_sample(struct perf_event_header *header,
->   {
->          u64 sample_type = event->attr.sample_type;
->   
-> +       regs = perf_get_sample_regs(event, regs);
-> +
->          header->type = PERF_RECORD_SAMPLE;
->          header->size = sizeof(*header) + event->header_size;
->   
-> 
+Do you need a call to pgtable_page_dtor() in pte_free(), too?
+On x86 (and motorola_pgalloc.h and sun3_pgalloc.h FWIW), both functions
+call pgtable_page_dtor().
 
-Hi Mark,
+Gr{oetje,eeting}s,
 
-Thanks for providing the patch. I understand this approach.
+                        Geert
 
-In my opinion, the skid window is from counter overflow to interrupt 
-delivered. While if the skid window is too *big* (e.g. user -> kernel), 
-it should be not very useful. So personally, I'd prefer to drop the samples.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Thanks
-Jin Yao
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
