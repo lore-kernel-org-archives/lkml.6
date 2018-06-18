@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6F03C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:29:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95104C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:29:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8277E20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:29:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8277E20864
+	by mail.kernel.org (Postfix) with ESMTP id 5B82E20874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:29:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B82E20874
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966834AbeFRI3j (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:29:39 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33458 "EHLO
+        id S966848AbeFRI3n (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:29:43 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33470 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966796AbeFRI3f (ORCPT
+        with ESMTP id S966831AbeFRI3j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:29:35 -0400
+        Mon, 18 Jun 2018 04:29:39 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3490BBE;
-        Mon, 18 Jun 2018 08:29:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 4E77FBBE;
+        Mon, 18 Jun 2018 08:29:38 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Andrew Duggan <aduggan@synaptics.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        stable@vger.kernel.org, hu huajun <huhuajun@linux.alibaba.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 002/189] Input: synaptics-rmi4 - fix an unchecked out of memory error path
-Date:   Mon, 18 Jun 2018 10:11:38 +0200
-Message-Id: <20180618081209.348982966@linuxfoundation.org>
+Subject: [PATCH 4.14 003/189] KVM: X86: fix incorrect reference of trace_kvm_pi_irte_update
+Date:   Mon, 18 Jun 2018 10:11:39 +0200
+Message-Id: <20180618081209.386284482@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -52,40 +50,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: hu huajun <huhuajun@linux.alibaba.com>
 
-[ Upstream commit 839c42273617787318da7baf6151d553108f5e17 ]
+[ Upstream commit 2698d82e519413c6ad287e6f14b29e0373ed37f8 ]
 
-When extending the rmi_spi buffers, we must check that no out of memory
-error occurs, otherwise we may access data above the currently allocated
-memory.
+In arch/x86/kvm/trace.h, this function is declared as host_irq the
+first input, and vcpu_id the second, instead of otherwise.
 
-Propagate the error code returned by 'rmi_spi_manage_pools()' instead.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Reviewed-by: Andrew Duggan <aduggan@synaptics.com>
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: hu huajun <huhuajun@linux.alibaba.com>
+Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/input/rmi4/rmi_spi.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ arch/x86/kvm/svm.c |    5 ++---
+ arch/x86/kvm/vmx.c |    2 +-
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
---- a/drivers/input/rmi4/rmi_spi.c
-+++ b/drivers/input/rmi4/rmi_spi.c
-@@ -147,8 +147,11 @@ static int rmi_spi_xfer(struct rmi_spi_x
- 	if (len > RMI_SPI_XFER_SIZE_LIMIT)
- 		return -EINVAL;
+--- a/arch/x86/kvm/svm.c
++++ b/arch/x86/kvm/svm.c
+@@ -4756,9 +4756,8 @@ static int svm_update_pi_irte(struct kvm
+ 		}
  
--	if (rmi_spi->xfer_buf_size < len)
--		rmi_spi_manage_pools(rmi_spi, len);
-+	if (rmi_spi->xfer_buf_size < len) {
-+		ret = rmi_spi_manage_pools(rmi_spi, len);
-+		if (ret < 0)
-+			return ret;
-+	}
+ 		if (!ret && svm) {
+-			trace_kvm_pi_irte_update(svm->vcpu.vcpu_id,
+-						 host_irq, e->gsi,
+-						 vcpu_info.vector,
++			trace_kvm_pi_irte_update(host_irq, svm->vcpu.vcpu_id,
++						 e->gsi, vcpu_info.vector,
+ 						 vcpu_info.pi_desc_addr, set);
+ 		}
  
- 	if (addr == 0)
- 		/*
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -12171,7 +12171,7 @@ static int vmx_update_pi_irte(struct kvm
+ 		vcpu_info.pi_desc_addr = __pa(vcpu_to_pi_desc(vcpu));
+ 		vcpu_info.vector = irq.vector;
+ 
+-		trace_kvm_pi_irte_update(vcpu->vcpu_id, host_irq, e->gsi,
++		trace_kvm_pi_irte_update(host_irq, vcpu->vcpu_id, e->gsi,
+ 				vcpu_info.vector, vcpu_info.pi_desc_addr, set);
+ 
+ 		if (set)
 
 
