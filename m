@@ -6,56 +6,56 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0506EC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC61C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:10:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A97B8208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D338208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:10:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="Rxz7ecyK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A97B8208A6
+	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="EHsBfzvL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D338208A6
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935863AbeFRPK3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:10:29 -0400
-Received: from mail-pf0-f195.google.com ([209.85.192.195]:33245 "EHLO
-        mail-pf0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935259AbeFRPK0 (ORCPT
+        id S935880AbeFRPKr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:10:47 -0400
+Received: from mail-pl0-f65.google.com ([209.85.160.65]:34707 "EHLO
+        mail-pl0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935444AbeFRPKV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:10:26 -0400
-Received: by mail-pf0-f195.google.com with SMTP id b17-v6so8330911pfi.0
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:10:26 -0700 (PDT)
+        Mon, 18 Jun 2018 11:10:21 -0400
+Received: by mail-pl0-f65.google.com with SMTP id g20-v6so9207174plq.1
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:10:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=android.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=2MXq3p35T1+4CmZV9awmDquunefUxpEpZhc9mjTgjHg=;
-        b=Rxz7ecyK3t2LeWZnVKzMup8z76WwpnH7omJFTO4GqnNte7tsrLJJ4oCBjIn2xrP6qG
-         3K0Whwn97svdrejXBhbxIBg+LgXeqyX420F5j7tpwXYgL9+bWzYNZHJxiHG1bS+TY+Hw
-         JOEayVhBXPH74fySXr/ES2jmBqOCvBogl2IfOFATI3gCBNTqrQoSzjKQcostI19093v4
-         dW4Q8CCeGSBf3uuCwuTTzfx+U9L2Y5kdEixgpZ2JsLPgwzpIFJugLgVupwQEJ58RjwrV
-         Zuv8f64pMvJ6lrUNQQG0yLy/bxobUHOD2g9jIWCb2jYAhEAIVaVVnsxK5xJk9UezGOB3
-         vfkw==
+        bh=2pfESoiXW7kZE4xChCGGKPZSQMnBX5sI3eDemQAvvzk=;
+        b=EHsBfzvL8GWOY24pk8dwcVmsQX2cOQ0pKwpoxENUIb++3Ak+5K7M2P9wT3WE8RLgrh
+         YLmDCFUWV+dJSQillLfx/BlCDG8Ut250QNQEXyQ8hsXfVefFraX44rgAwco9OvUMKIlF
+         1apURrqENPQRF9vCL6ezGMfBoG2MfOQrx2QuhKIIzokNvMzYkQTunfK7t2wDs463ND2/
+         mKQyaodXlYp+E1t8PUQgFGYwa29m/EU9g3SDmGzic1u7TuMkpHqidK6ZFgIT/D1CUUH7
+         nAXfLnjzGOAAF7ykD4wlhJ9ZQyBTKbp4RB4ee7R0LxUDJqR333ZjZmxCnQUnP7h3uLiy
+         q97Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=2MXq3p35T1+4CmZV9awmDquunefUxpEpZhc9mjTgjHg=;
-        b=dfi+qopesd4Q1xOzNqc+wWBEvPKHAfbKD12IOkUTOhgeziTFD5Zbru4e71ed/vU1Xo
-         MbYNGvivbvijZm9ATGktqCdQMzP8FrPe5WNjgjvXA16TI8s8/YURdBVozLb7pzomMgAz
-         CwPSD55Ly4lp2lnY/p2RqiZWpU2BDG0HWjYOidPEFIAAD0yIOls4+2kUOwy4HFBUI4p0
-         zGZJM6wVpwD+DrEXWWnEiJOOV+wjEMqBX5Q3xnYNt+478Y42nhuh5RXXOaSh9bhPFCe7
-         YVIsPUnhCUjdQY0h48hO7qbOvTBk8MXSLOqXF5xPJn1020p03aR7IKg1Dt0ViiMxVPIk
-         YiuA==
-X-Gm-Message-State: APt69E3Sg3qhv/hEExLJqi0qdOKNKaj83hBEx9Sp4oaZDp0X7/AOcct/
-        pDT4kPAhwcTZboZOqNSzGS62D/dIaUI=
-X-Google-Smtp-Source: ADUXVKKYnhGtaxbDhkChbYe+74rPE0X8EiFBUZQgTKCnF3jiQf6y1BxRNhxs+lLRnqBrhy+56COiLw==
-X-Received: by 2002:a63:b543:: with SMTP id u3-v6mr11460602pgo.365.1529334625370;
-        Mon, 18 Jun 2018 08:10:25 -0700 (PDT)
+        bh=2pfESoiXW7kZE4xChCGGKPZSQMnBX5sI3eDemQAvvzk=;
+        b=esMtQyngpeo+G8K9k+of1LU7siHueaO9hTinGOGVYrtkunxOpmA/RaCXYmK/tmzDAJ
+         HAvbDcqNcjDg6pEtVtk+l28MNe9CZnnDDL3nv1PVA3UVoVJpEAifhy4JHXHMvFcXhnZB
+         57rZQbgsPk954ePV0ruwrx15pNlew9aSii1L3oG53oAI93hrPXydelWg9wZBTrcxcBUX
+         A0m0LySy73wJPkrJk5Fw68AwWCi5Za3X70yjXthn6WJhqnrX0lzqOLTNyawAph1Mi/kl
+         E0PcSC+nkHlVsX9iP5HU65mHVTJZ+I7X1/c0ZZL0S6cBOK6Qo5rciIdt9d2pTAbhywI2
+         Hx9w==
+X-Gm-Message-State: APt69E1CSBfyC34BRLRueg7xyyLO90odb1lbBx4Xokaapzal22cNnUeO
+        SNlQR3ZUCcCogjNLxkWKVynRq0uoCyI=
+X-Google-Smtp-Source: ADUXVKJHY0ybKm9xMrCU22gORgxP/w9WdqNmWtVqvQUESgTcsUYd136P0K6z0lNXx0xAv4sktLcGcQ==
+X-Received: by 2002:a17:902:7105:: with SMTP id a5-v6mr14448095pll.171.1529334620971;
+        Mon, 18 Jun 2018 08:10:20 -0700 (PDT)
 Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:6077:8eec:bc7e:d0f4])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.10.24
+        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.10.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 08:10:24 -0700 (PDT)
+        Mon, 18 Jun 2018 08:10:20 -0700 (PDT)
 From:   Mark Salyzyn <salyzyn@android.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
@@ -75,13 +75,10 @@ Cc:     Kevin Brodsky <kevin.brodsky@arm.com>,
         Andrew Pinski <apinski@cavium.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-arm-kernel@lists.infradead.org,
-        Jeremy Linton <Jeremy.Linton@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: RESEND [PATCH 6/6] arm64: Wire up and expose the new compat vDSO
-Date:   Mon, 18 Jun 2018 08:06:09 -0700
-Message-Id: <20180618150613.10322-24-salyzyn@android.com>
+        Jeremy Linton <Jeremy.Linton@arm.com>
+Subject: RESEND [PATCH 5/6] arm64: compat: 32-bit vDSO setup
+Date:   Mon, 18 Jun 2018 08:06:08 -0700
+Message-Id: <20180618150613.10322-23-salyzyn@android.com>
 X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
 In-Reply-To: <20180618150613.10322-1-salyzyn@android.com>
 References: <20180618150613.10322-1-salyzyn@android.com>
@@ -92,23 +89,9 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kevin Brodsky <kevin.brodsky@arm.com>
 
-Expose the new compat vDSO via the COMPAT_VDSO config option.
-
-The option is not enabled in defconfig because we really need a 32-bit
-compiler this time, and we rely on the user to provide it themselves
-by setting CROSS_COMPILE_ARM32. Therefore enabling the option by
-default would make little sense, since the user must explicitly set a
-non-standard environment variable anyway.
-
-CONFIG_COMPAT_VDSO is not directly used in the code, because we want
-to ignore it (build as if it were not set) if the user didn't set
-CROSS_COMPILE_ARM32. If the variable has been set to a valid prefix,
-CONFIG_VDSO32 will be set; this is the option that the code and
-Makefiles test.
-
-For more flexibility, like CROSS_COMPILE, CROSS_COMPILE_ARM32 can also
-be set via CONFIG_CROSS_COMPILE_ARM32 (the environment variable
-overrides the config option, as expected).
+If the compat vDSO is enabled, install it in compat processes. In this
+case, the compat vDSO replaces the sigreturn page (it provides its own
+sigreturn trampolines).
 
 Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
 Signed-off-by: Mark Salyzyn <salyzyn@android.com>
@@ -130,123 +113,137 @@ Cc: linux-kernel@vger.kernel.org
 Cc: linux-arm-kernel@lists.infradead.org
 Cc: Jeremy Linton <Jeremy.Linton@arm.com>
 ---
- arch/arm64/Kconfig         | 24 ++++++++++++++++++++++++
- arch/arm64/Makefile        | 36 ++++++++++++++++++++++++++++++++++--
- arch/arm64/kernel/Makefile |  3 +++
- 3 files changed, 61 insertions(+), 2 deletions(-)
+ arch/arm64/kernel/vdso.c | 55 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 11b4c6aef7d7..eb9d3fc45f6b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -1330,6 +1330,30 @@ config SYSVIPC_COMPAT
- 	def_bool y
- 	depends on COMPAT && SYSVIPC
+diff --git a/arch/arm64/kernel/vdso.c b/arch/arm64/kernel/vdso.c
+index 8529e85a521f..9fb1e0d380ab 100644
+--- a/arch/arm64/kernel/vdso.c
++++ b/arch/arm64/kernel/vdso.c
+@@ -58,6 +58,7 @@ struct vdso_data *vdso_data = &vdso_data_store.data;
+ /*
+  * Create and map the vectors page for AArch32 tasks.
+  */
++#if !defined(CONFIG_VDSO32) || defined(CONFIG_KUSER_HELPERS)
+ static struct page *vectors_page[] __ro_after_init;
+ static const struct vm_special_mapping compat_vdso_spec[] = {
+ 	{
+@@ -73,6 +74,7 @@ static const struct vm_special_mapping compat_vdso_spec[] = {
+ #endif
+ };
+ static struct page *vectors_page[ARRAY_SIZE(compat_vdso_spec)] __ro_after_init;
++#endif
  
-+config COMPAT_VDSO
-+	bool "32-bit vDSO"
-+	depends on COMPAT
-+	default n
-+	help
-+	  Warning: a 32-bit toolchain is necessary to build the vDSO. You
-+	  must explicitly define which toolchain should be used by setting
-+	  CROSS_COMPILE_ARM32 to the prefix of the 32-bit toolchain (same format
-+	  as CROSS_COMPILE). If CROSS_COMPILE_ARM32 is empty, a warning will be
-+	  printed and the kernel will be built as if COMPAT_VDSO had not been
-+	  set. If CROSS_COMPILE_ARM32 is set to an invalid prefix, compilation
-+	  will be aborted.
+ static int __init alloc_vectors_page(void)
+ {
+@@ -82,6 +84,7 @@ static int __init alloc_vectors_page(void)
+ 	unsigned long kuser_vpage;
+ #endif
+ 
++#ifndef CONFIG_VDSO32
+ 	extern char __aarch32_sigret_code_start[], __aarch32_sigret_code_end[];
+ 	size_t sigret_sz =
+ 		__aarch32_sigret_code_end - __aarch32_sigret_code_start;
+@@ -90,19 +93,24 @@ static int __init alloc_vectors_page(void)
+ 	sigret_vpage = get_zeroed_page(GFP_ATOMIC);
+ 	if (!sigret_vpage)
+ 		return -ENOMEM;
++#endif
+ 
+ #ifdef CONFIG_KUSER_HELPERS
+ 	kuser_vpage = get_zeroed_page(GFP_ATOMIC);
+ 	if (!kuser_vpage) {
++#ifndef CONFIG_VDSO32
+ 		free_page(sigret_vpage);
++#endif
+ 		return -ENOMEM;
+ 	}
+ #endif
+ 
++#ifndef CONFIG_VDSO32
+ 	/* sigreturn code */
+ 	memcpy((void *)sigret_vpage, __aarch32_sigret_code_start, sigret_sz);
+ 	flush_icache_range(sigret_vpage, sigret_vpage + PAGE_SIZE);
+ 	vectors_page[0] = virt_to_page(sigret_vpage);
++#endif
+ 
+ #ifdef CONFIG_KUSER_HELPERS
+ 	/* kuser helpers */
+@@ -116,6 +124,7 @@ static int __init alloc_vectors_page(void)
+ }
+ arch_initcall(alloc_vectors_page);
+ 
++#ifndef CONFIG_VDSO32
+ int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
+ {
+ 	struct mm_struct *mm = current->mm;
+@@ -151,6 +160,7 @@ int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
+ 
+ 	return PTR_ERR_OR_ZERO(ret);
+ }
++#endif /* !CONFIG_VDSO32 */
+ #endif /* CONFIG_COMPAT */
+ 
+ static int vdso_mremap(const struct vm_special_mapping *sm,
+@@ -221,6 +231,23 @@ static int __init vdso_mappings_init(const char *name,
+ 	return 0;
+ }
+ 
++#ifdef CONFIG_COMPAT
++#ifdef CONFIG_VDSO32
 +
-+	  Provide a vDSO to 32-bit processes. It includes the symbols provided
-+	  by the vDSO from the 32-bit kernel, so that a 32-bit libc can use
-+	  the compat vDSO without modification. It also provides sigreturn
-+	  trampolines, replacing the sigreturn page.
++static struct vdso_mappings vdso32_mappings __ro_after_init;
 +
-+config CROSS_COMPILE_ARM32
-+	string "32-bit toolchain prefix"
-+	help
-+	  Same as setting CROSS_COMPILE_ARM32 in the environment, but saved for
-+	  future builds. The environment variable overrides this config option.
++static int __init vdso32_init(void)
++{
++	extern char vdso32_start[], vdso32_end[];
 +
- endmenu
- 
- menu "Power management options"
-diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
-index 45272266dafb..f548123e1609 100644
---- a/arch/arm64/Makefile
-+++ b/arch/arm64/Makefile
-@@ -49,9 +49,39 @@ $(warning Detected assembler with broken .inst; disassembly will be unreliable)
-   endif
- endif
- 
--KBUILD_CFLAGS	+= -mgeneral-regs-only $(lseinstr) $(brokengasinst)
-+ifeq ($(CONFIG_COMPAT_VDSO), y)
-+  CROSS_COMPILE_ARM32 ?= $(CONFIG_CROSS_COMPILE_ARM32:"%"=%)
++	return vdso_mappings_init("vdso32", vdso32_start, vdso32_end,
++				  &vdso32_mappings);
++}
++arch_initcall(vdso32_init);
 +
-+  # Check that the user has provided a valid prefix for the 32-bit toolchain.
-+  # To prevent selecting the system $(cc-name) by default, the prefix is not
-+  # allowed to be empty, unlike CROSS_COMPILE. In the unlikely event that the
-+  # system $(cc-name) is actually the 32-bit ARM compiler to be used, the
-+  # variable can be set to the dirname (e.g. CROSS_COMPILE_ARM32=/usr/bin/).
-+  # Note: this Makefile is read both before and after regenerating the config
-+  # (if needed). Any warning appearing before the config has been regenerated
-+  # should be ignored. If the error is triggered and you set
-+  # CONFIG_CROSS_COMPILE_ARM32, set CROSS_COMPILE_ARM32 to an appropriate value
-+  # when invoking make and fix CONFIG_CROSS_COMPILE_ARM32.
-+  ifeq ($(CROSS_COMPILE_ARM32),)
-+    $(error CROSS_COMPILE_ARM32 not defined or empty, the compat vDSO will not be built)
-+  else ifeq ($(cc-name),clang)
-+    export CLANG_TRIPLE_ARM32 ?= $(CROSS_COMPILE_ARM32)
-+    export CLANG_TARGET_ARM32 := --target=$(notdir $(CLANG_TRIPLE_ARM32:%-=%))
-+    export CONFIG_VDSO32 := y
-+    vdso32 := -DCONFIG_VDSO32=1
-+  else ifeq ($(shell which $(CROSS_COMPILE_ARM32)$(cc-name) 2> /dev/null),)
-+    $(error $(CROSS_COMPILE_ARM32)$(cc-name) not found, check CROSS_COMPILE_ARM32)
-+  else
-+    export CROSS_COMPILE_ARM32
-+    export CONFIG_VDSO32 := y
-+    vdso32 := -DCONFIG_VDSO32=1
-+  endif
-+endif
++#endif /* CONFIG_VDSO32 */
++#endif /* CONFIG_COMPAT */
 +
-+KBUILD_CFLAGS	+= -mgeneral-regs-only $(lseinstr) $(brokengasinst) $(vdso32)
- KBUILD_CFLAGS	+= -fno-asynchronous-unwind-tables
--KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst)
-+KBUILD_CFLAGS	+= $(call cc-option, -mpc-relative-literal-loads)
-+KBUILD_AFLAGS	+= $(lseinstr) $(brokengasinst) $(vdso32)
+ static struct vdso_mappings vdso_mappings __ro_after_init;
  
- KBUILD_CFLAGS	+= $(call cc-option,-mabi=lp64)
- KBUILD_AFLAGS	+= $(call cc-option,-mabi=lp64)
-@@ -155,6 +185,8 @@ archclean:
- prepare: vdso_prepare
- vdso_prepare: prepare0
- 	$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso include/generated/vdso-offsets.h
-+	$(if $(CONFIG_VDSO32),$(Q)$(MAKE) $(build)=arch/arm64/kernel/vdso32 \
-+					  include/generated/vdso32-offsets.h)
+ static int __init vdso_init(void)
+@@ -263,6 +290,34 @@ static int vdso_setup(struct mm_struct *mm,
+ 	return PTR_ERR_OR_ZERO(ret);
+ }
  
- define archhelp
-   echo  '* Image.gz      - Compressed kernel image (arch/$(ARCH)/boot/Image.gz)'
-diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
-index c16be3cf39bf..628d0308d809 100644
---- a/arch/arm64/kernel/Makefile
-+++ b/arch/arm64/kernel/Makefile
-@@ -28,7 +28,9 @@ $(obj)/%.stub.o: $(obj)/%.o FORCE
- 
- arm64-obj-$(CONFIG_COMPAT)		+= sys32.o signal32.o	\
- 					   sys_compat.o entry32.o
-+ifneq ($(CONFIG_VDSO32),y)
- arm64-obj-$(CONFIG_COMPAT)		+= sigreturn32.o
-+endif
- arm64-obj-$(CONFIG_KUSER_HELPERS)	+= kuser32.o
- arm64-obj-$(CONFIG_FUNCTION_TRACER)	+= ftrace.o entry-ftrace.o
- arm64-obj-$(CONFIG_MODULES)		+= arm64ksyms.o module.o
-@@ -59,6 +61,7 @@ arm64-obj-$(CONFIG_ARM_SDE_INTERFACE)	+= sdei.o
- arm64-obj-$(CONFIG_ARM64_SSBD)		+= ssbd.o
- 
- obj-y					+= $(arm64-obj-y) vdso/ probes/
-+obj-$(CONFIG_VDSO32)			+= vdso32/
- obj-m					+= $(arm64-obj-m)
- head-y					:= head.o
- extra-y					+= $(head-y) vmlinux.lds
++#ifdef CONFIG_COMPAT
++#ifdef CONFIG_VDSO32
++int aarch32_setup_vectors_page(struct linux_binprm *bprm, int uses_interp)
++{
++	struct mm_struct *mm = current->mm;
++	void *ret;
++
++	if (down_write_killable(&mm->mmap_sem))
++		return -EINTR;
++
++	ret = ERR_PTR(vdso_setup(mm, &vdso32_mappings));
++#ifdef CONFIG_KUSER_HELPERS
++	if (!IS_ERR(ret))
++		/* Map the kuser helpers at the ABI-defined high address. */
++		ret = _install_special_mapping(mm, AARCH32_KUSER_HELPERS_BASE,
++					       PAGE_SIZE,
++					       VM_READ|VM_EXEC|
++					       VM_MAYREAD|VM_MAYEXEC,
++					       &compat_vdso_spec[1]);
++#endif
++
++	up_write(&mm->mmap_sem);
++
++	return PTR_ERR_OR_ZERO(ret);
++}
++#endif /* CONFIG_VDSO32 */
++#endif /* CONFIG_COMPAT */
++
+ int arch_setup_additional_pages(struct linux_binprm *bprm, int uses_interp)
+ {
+ 	struct mm_struct *mm = current->mm;
 -- 
 2.18.0.rc1.244.gcf134e6275-goog
 
