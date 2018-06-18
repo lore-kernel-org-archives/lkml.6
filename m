@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7650C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:59:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78088C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 837E6208E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:59:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31B7420850
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="C7uaeGNf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 837E6208E0
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="bcklLpHw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31B7420850
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934465AbeFRL76 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:59:58 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44648 "EHLO
+        id S934574AbeFRL77 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 07:59:59 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44682 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934190AbeFRL7x (ORCPT
+        with ESMTP id S934215AbeFRL7y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:59:53 -0400
+        Mon, 18 Jun 2018 07:59:54 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=9Wnu1kPCcIz+2HUkwuOE/RsXWcSLVTkYGeMxsjCGShQ=; b=C7uaeGNf8+c9
-        GQJaT6/zh5/e9H2owNajvW5TMoLWfO2bekostlesjUDIbUwetD6Su20U2bRN5cYsKaZZJmvY3vMZv
-        y60KF6j8rP2n66bpgdNmNfIJueItSPNs+c3EuKmNKnpkH+qo+yiLRmZJu8tNnG4MNhN8rx3Ji3cFs
-        HDlcc=;
+        List-Archive; bh=vczOLRD7+HcqhRcFNi3/Dox1q9WSnKKsfYgu+T9/UZY=; b=bcklLpHwDxRf
+        41NNHbq5A3e5RIirRsIiImZnMy0tRGBgfUyWGYkclww244WInMxin1u1994gW+B0DreUXkcu/bvYL
+        7fg0FsmDMcROfDNT1PJDFJ3a+Go7D1MGzfrqUA+Bgt/1Ync7KwXlW1mrLs/Tm0r0la13csxs+8IIX
+        HVosk=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUsow-0007vz-Ii; Mon, 18 Jun 2018 11:59:42 +0000
+        id 1fUsoy-0007w2-Mv; Mon, 18 Jun 2018 11:59:44 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUsow-0008N6-3J; Mon, 18 Jun 2018 12:59:42 +0100
+        id 1fUsoy-0008OD-95; Mon, 18 Jun 2018 12:59:44 +0100
 From:   Mark Brown <broonie@kernel.org>
 To:     Robert Jarzmik <robert.jarzmik@free.fr>
 Cc:     Mark Brown <broonie@kernel.org>,
@@ -55,10 +55,10 @@ Cc:     Mark Brown <broonie@kernel.org>,
         Takashi Iwai <tiwai@suse.com>, devicetree@vger.kernel.org,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: pxa: add devicetree support" to the asoc tree
-In-Reply-To:  <20180617105001.17784-2-robert.jarzmik@free.fr>
-Message-Id: <E1fUsow-0008N6-3J@debutante>
-Date:   Mon, 18 Jun 2018 12:59:42 +0100
+Subject: Applied "ASoC: pxa: add binding for pxa2xx-ac97 audio complex" to the asoc tree
+In-Reply-To:  <20180617105001.17784-1-robert.jarzmik@free.fr>
+Message-Id: <E1fUsoy-0008OD-95@debutante>
+Date:   Mon, 18 Jun 2018 12:59:44 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -66,7 +66,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: pxa: add devicetree support
+   ASoC: pxa: add binding for pxa2xx-ac97 audio complex
 
 has been applied to the asoc tree at
 
@@ -91,81 +91,54 @@ to this mail.
 Thanks,
 Mark
 
-From a4519526ebbd261e36425fa1c269515ee0648ab2 Mon Sep 17 00:00:00 2001
+From e2b35e468c89000cf3b8b5beb63fd73dfa8a5435 Mon Sep 17 00:00:00 2001
 From: Robert Jarzmik <robert.jarzmik@free.fr>
-Date: Sun, 17 Jun 2018 12:50:01 +0200
-Subject: [PATCH] ASoC: pxa: add devicetree support
+Date: Sun, 17 Jun 2018 12:50:00 +0200
+Subject: [PATCH] ASoC: pxa: add binding for pxa2xx-ac97 audio complex
 
-Add the devicetree support, so that the driver can be used in a
-devictree platform.
+This adds a binding for the Marvell PXA audio complex, available in
+pxa2xx and pxa3xx variants.
 
 Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/arm/pxa2xx-ac97-lib.c | 12 ++++++++++++
- sound/soc/pxa/pxa2xx-ac97.c | 12 ++++++++++++
- 2 files changed, 24 insertions(+)
+ .../bindings/sound/marvell,pxa2xx-ac97.txt    | 27 +++++++++++++++++++
+ 1 file changed, 27 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
 
-diff --git a/sound/arm/pxa2xx-ac97-lib.c b/sound/arm/pxa2xx-ac97-lib.c
-index 5950a9e218d9..8eafd3d3dff6 100644
---- a/sound/arm/pxa2xx-ac97-lib.c
-+++ b/sound/arm/pxa2xx-ac97-lib.c
-@@ -19,6 +19,7 @@
- #include <linux/module.h>
- #include <linux/io.h>
- #include <linux/gpio.h>
-+#include <linux/of_gpio.h>
- 
- #include <sound/pxa2xx-lib.h>
- 
-@@ -337,6 +338,17 @@ int pxa2xx_ac97_hw_probe(struct platform_device *dev)
- 			dev_err(&dev->dev, "Invalid reset GPIO %d\n",
- 				pdata->reset_gpio);
- 		}
-+	} else if (!pdata && dev->dev.of_node) {
-+		pdata = devm_kzalloc(&dev->dev, sizeof(*pdata), GFP_KERNEL);
-+		if (!pdata)
-+			return -ENOMEM;
-+		pdata->reset_gpio = of_get_named_gpio(dev->dev.of_node,
-+						      "reset-gpios", 0);
-+		if (pdata->reset_gpio == -ENOENT)
-+			pdata->reset_gpio = -1;
-+		else if (pdata->reset_gpio < 0)
-+			return pdata->reset_gpio;
-+		reset_gpio = pdata->reset_gpio;
- 	} else {
- 		if (cpu_is_pxa27x())
- 			reset_gpio = 113;
-diff --git a/sound/soc/pxa/pxa2xx-ac97.c b/sound/soc/pxa/pxa2xx-ac97.c
-index 803818aabee9..5738a0abcd6a 100644
---- a/sound/soc/pxa/pxa2xx-ac97.c
-+++ b/sound/soc/pxa/pxa2xx-ac97.c
-@@ -238,6 +238,17 @@ static const struct snd_soc_component_driver pxa_ac97_component = {
- 	.name		= "pxa-ac97",
- };
- 
-+#ifdef CONFIG_OF
-+static const struct of_device_id pxa2xx_ac97_dt_ids[] = {
-+	{ .compatible = "marvell,pxa250-ac97", },
-+	{ .compatible = "marvell,pxa270-ac97", },
-+	{ .compatible = "marvell,pxa300-ac97", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, pxa2xx_ac97_dt_ids);
+diff --git a/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt b/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
+new file mode 100644
+index 000000000000..2ea85d5be6a4
+--- /dev/null
++++ b/Documentation/devicetree/bindings/sound/marvell,pxa2xx-ac97.txt
+@@ -0,0 +1,27 @@
++Marvell PXA2xx audio complex
 +
-+#endif
++This descriptions matches the AC97 controller found in pxa2xx and pxa3xx series.
 +
- static int pxa2xx_ac97_dev_probe(struct platform_device *pdev)
- {
- 	int ret;
-@@ -296,6 +307,7 @@ static struct platform_driver pxa2xx_ac97_driver = {
- #ifdef CONFIG_PM_SLEEP
- 		.pm	= &pxa2xx_ac97_pm_ops,
- #endif
-+		.of_match_table = of_match_ptr(pxa2xx_ac97_dt_ids),
- 	},
- };
- 
++Required properties:
++  - compatible: should be one of the following:
++    "marvell,pxa250-ac97"
++    "marvell,pxa270-ac97"
++    "marvell,pxa300-ac97"
++  - reg: device MMIO address space
++  - interrupts: single interrupt generated by AC97 IP
++  - clocks: input clock of the AC97 IP, refer to clock-bindings.txt
++
++Optional properties:
++  - pinctrl-names, pinctrl-0: refer to pinctrl-bindings.txt
++  - reset-gpios: gpio used for AC97 reset, refer to gpio.txt
++
++Example:
++	ac97: sound@40500000 {
++		compatible = "marvell,pxa250-ac97";
++		reg = < 0x40500000 0x1000 >;
++		interrupts = <14>;
++		reset-gpios = <&gpio 113 GPIO_ACTIVE_HIGH>;
++		#sound-dai-cells = <1>;
++		pinctrl-names = "default";
++		pinctrl-0 = < &pmux_ac97_default >;
++	};
 -- 
 2.17.1
 
