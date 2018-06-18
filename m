@@ -3,80 +3,108 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2A59C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:13:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9C80C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:14:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B67FA20836
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:13:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67FA20836
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 80EEE20850
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 19:14:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80EEE20850
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936156AbeFRTM7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 15:12:59 -0400
-Received: from mga07.intel.com ([134.134.136.100]:27769 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S935860AbeFRTM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 15:12:57 -0400
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 12:12:57 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
-   d="scan'208";a="60214678"
-Received: from vverma7-mobl4.lm.intel.com ([10.254.25.146])
-  by orsmga003.jf.intel.com with ESMTP; 18 Jun 2018 12:12:56 -0700
-Date:   Mon, 18 Jun 2018 13:12:56 -0600
-From:   Vishal Verma <vishal.l.verma@intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] libnvdimm, pmem: Fix memcpy_mcsafe() return code
- handling in nsio_rw_bytes()
-Message-ID: <20180618191255.GA4226@vverma7-mobl4.lm.intel.com>
-References: <152934432951.24427.11070204367866836632.stgit@dwillia2-desk3.amr.corp.intel.com>
+        id S936119AbeFRTOx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 15:14:53 -0400
+Received: from mx3-rdu2.redhat.com ([66.187.233.73]:40296 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S935860AbeFRTOw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 15:14:52 -0400
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 8EF4B401BF87;
+        Mon, 18 Jun 2018 19:14:51 +0000 (UTC)
+Received: from darcari.bos.csb (dhcp-17-203.bos.redhat.com [10.18.17.203])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D553F2018063;
+        Mon, 18 Jun 2018 19:14:50 +0000 (UTC)
+Subject: Re: [PATCH] perf/x86: read the FREEZE_WHILE_SMM bit during boot
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        Andi Kleen <ak@linux.intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Donald Zickus <dzickus@redhat.com>,
+        Prarit Bhargava <prarit@redhat.com>,
+        Jerry Hoemann <jerry.hoemann@hpe.com>
+References: <1528050223-144925-1-git-send-email-darcari@redhat.com>
+ <20180604082414.GO12217@hirez.programming.kicks-ass.net>
+ <e420bcc1-c75d-e6a1-0ca6-b668b6818f16@redhat.com>
+ <20180612165635.GT12198@hirez.programming.kicks-ass.net>
+From:   David Arcari <darcari@redhat.com>
+Organization: Red Hat
+Message-ID: <4fad5d31-0e04-2a1e-68e6-5512f8dd93bf@redhat.com>
+Date:   Mon, 18 Jun 2018 15:14:50 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <152934432951.24427.11070204367866836632.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20180612165635.GT12198@hirez.programming.kicks-ass.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.78 on 10.11.54.4
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 18 Jun 2018 19:14:51 +0000 (UTC)
+X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.7]); Mon, 18 Jun 2018 19:14:51 +0000 (UTC) for IP:'10.11.54.4' DOMAIN:'int-mx04.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'darcari@redhat.com' RCPT:''
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/18, Dan Williams wrote:
-> Commit 60622d68227d "x86/asm/memcpy_mcsafe: Return bytes remaining"
-> converted callers of memcpy_mcsafe() to expect a positive 'bytes
-> remaining' value rather than a negative error code. The nsio_rw_bytes()
-> conversion failed to return success. The failure is benign in that
-> nsio_rw_bytes() will end up writing back what it just read.
-> 
-> Fixes: 60622d68227d ("x86/asm/memcpy_mcsafe: Return bytes remaining")
-> Cc: Dan Williams <dan.j.williams@intel.com>
-> Cc: Vishal Verma <vishal.l.verma@intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  drivers/nvdimm/claim.c |    1 +
->  1 file changed, 1 insertion(+)
-
-Ah good catch. Looks good to me.
-Reviewed-by: Vishal Verma <vishal.l.verma@intel.com>
+On 06/12/2018 12:56 PM, Peter Zijlstra wrote:
 
 > 
-> diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
-> index 2e96b34bc936..fb667bf469c7 100644
-> --- a/drivers/nvdimm/claim.c
-> +++ b/drivers/nvdimm/claim.c
-> @@ -278,6 +278,7 @@ static int nsio_rw_bytes(struct nd_namespace_common *ndns,
->  			return -EIO;
->  		if (memcpy_mcsafe(buf, nsio->addr + offset, size) != 0)
->  			return -EIO;
-> +		return 0;
->  	}
->  
->  	if (unlikely(is_bad_pmem(&nsio->bb, sector, sz_align))) {
+>> Ultimately, my solution was to restore the previous behavior by reading and
+>> storing the firmware setting of the bit rather than to always clear it.
 > 
+> Ah, urgh.. what a mess. So the OS setting the bit to a known and
+> consistent value is 'good' IMO. The firmware magically frobbing things
+> is 'bad'.
+
+I had actually considered changing the code to enable the FREEZE_WHILE_SMM by
+default, but decided against this approach as I was concerned that setting the
+bit on a system where it is initially cleared by the firmware could also have
+negative side effects.
+
+> 
+> Now, explain to me why an IO-check results in an external NMI, and why
+> there are long running SMI handlers around? Why can't the IO error not
+> be propagated through the regular device interrupt/state? Why are long
+> running SMIs required at all, ever? Why doesn't the OS handler whatever
+> it is the SMM does?
+> 
+> Are you not solving the wrong problem here?
+> 
+
+I didn't think so.
+
+1) This functionality was working reasonably well before this commit was
+   introduced into the OS.
+
+2) As discussed, the problem cannot be addressed in the NMI handler.
+
+3) The work around that I proposed is quite unobtrusive. You are correct in
+   this is not an actual "fix" since the problem will be present if the user
+   decides to change the setting of FREEZE_WHILE_SMM via sysfs, but at least
+   external NMIs are functional by default.
+
+IIUC, you are proposing a complete rewrite of the external NMI infrastructure
+along with modification to system firmware.  I also believe this would be
+somewhat problematic as an external NMI would not function when interrupts are
+disabled.
+
+Is there an alternate solution that could provide relief in the short term?  I
+think that what I have proposed accomplishes this, but perhaps there is a better
+more palatable alternative.
+
