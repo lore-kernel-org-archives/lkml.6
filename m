@@ -3,29 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B90ACC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CC9C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 748E9208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:15:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 748E9208A6
+	by mail.kernel.org (Postfix) with ESMTP id 0550B208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:15:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0550B208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1752765AbeFRPPm (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:15:42 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:41417 "EHLO mail.bootlin.com"
+        id S935407AbeFRPAV (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:00:21 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:41124 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934944AbeFRPAW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:00:22 -0400
+        id S934944AbeFRPAN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:00:13 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9BCE820DDD; Mon, 18 Jun 2018 17:00:20 +0200 (CEST)
+        id 2A3C1207D4; Mon, 18 Jun 2018 17:00:11 +0200 (CEST)
 Received: from localhost.localdomain (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 9FF1920DE8;
-        Mon, 18 Jun 2018 17:00:18 +0200 (CEST)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5C42520703;
+        Mon, 18 Jun 2018 17:00:10 +0200 (CEST)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
@@ -68,9 +68,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-sunxi@googlegroups.com,
         Hugues Fruchet <hugues.fruchet@st.com>,
         Randy Li <ayaka@soulik.info>
-Subject: [PATCH v4 12/19] ARM: sun8i-a33: Add SRAM controller node and C1 SRAM region
-Date:   Mon, 18 Jun 2018 16:58:36 +0200
-Message-Id: <20180618145843.14631-13-paul.kocialkowski@bootlin.com>
+Subject: [PATCH v4 01/19] dt-bindings: sram: sunxi: Add A13, A20 and A33 SRAM controller bindings
+Date:   Mon, 18 Jun 2018 16:58:25 +0200
+Message-Id: <20180618145843.14631-2-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.17.0
 In-Reply-To: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
 References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
@@ -79,47 +79,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Maxime Ripard <maxime.ripard@bootlin.com>
+This introduces dedicated bindings for the SRAM controllers found on the
+A13, A20 and A33 sunxi platforms.
 
-This adds a SRAM controller node for the A33, with support for the C1
-SRAM region that is shared between the Video Engine and the CPU.
-
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index a21f2ed07a52..97a976b3b1ef 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -204,6 +204,28 @@
- 	};
+diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+index d087f04a4d7f..19cc0b892672 100644
+--- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
++++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
+@@ -11,6 +11,9 @@ Controller Node
+ Required properties:
+ - compatible : should be:
+     - "allwinner,sun4i-a10-sram-controller"
++    - "allwinner,sun5i-a13-sram-controller"
++    - "allwinner,sun7i-a20-sram-controller"
++    - "allwinner,sun8i-a33-sram-controller"
+     - "allwinner,sun50i-a64-sram-controller"
+ - reg : sram controller register offset + length
  
- 	soc@1c00000 {
-+		sram-controller@1c00000 {
-+			compatible = "allwinner,sun8i-a33-sram-controller";
-+			reg = <0x01c00000 0x30>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges;
-+
-+			sram_c: sram@1d00000 {
-+				compatible = "mmio-sram";
-+				reg = <0x01d00000 0xd00000>;
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+				ranges = <0 0x01d00000 0xd00000>;
-+
-+				ve_sram: sram-section@0 {
-+					compatible = "allwinner,sun8i-a33-sram-c1",
-+						     "allwinner,sun4i-a10-sram-c1";
-+					reg = <0x000000 0x80000>;
-+				};
-+			};
-+		};
-+
- 		tcon0: lcd-controller@1c0c000 {
- 			compatible = "allwinner,sun8i-a33-tcon";
- 			reg = <0x01c0c000 0x1000>;
 -- 
 2.17.0
 
