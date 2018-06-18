@@ -6,119 +6,131 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1A3C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:19:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4982DC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:21:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B081E208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:19:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B081E208A6
+	by mail.kernel.org (Postfix) with ESMTP id 0BA2220864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:21:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BA2220864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754989AbeFRPTW (ORCPT
-        <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:19:22 -0400
-Received: from mout.kundenserver.de ([212.227.17.24]:51469 "EHLO
+        id S933496AbeFRPVD (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:21:03 -0400
+Received: from mout.kundenserver.de ([212.227.126.130]:55187 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752765AbeFRPTU (ORCPT
+        with ESMTP id S1750910AbeFRPVB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:19:20 -0400
+        Mon, 18 Jun 2018 11:21:01 -0400
 Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue103 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0Mecsy-1ft4Uf0xtQ-00ODYn; Mon, 18 Jun 2018 17:19:09 +0200
+ (mreue002 [212.227.15.129]) with ESMTPA (Nemesis) id
+ 0Lup4D-1gCTyO1tjd-0104PC; Mon, 18 Jun 2018 17:20:53 +0200
 From:   Arnd Bergmann <arnd@arndb.de>
-To:     Karan Tilak Kumar <kartilak@cisco.com>,
-        Sesidhar Baddela <sebaddel@cisco.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>
+To:     Jakub Kicinski <jakub.kicinski@netronome.com>,
+        "David S. Miller" <davem@davemloft.net>
 Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] snic: fix printing time intervals
-Date:   Mon, 18 Jun 2018 17:18:41 +0200
-Message-Id: <20180618151907.1453733-1-arnd@arndb.de>
+        Simon Horman <simon.horman@netronome.com>,
+        John Hurley <john.hurley@netronome.com>,
+        Pieter Jansen van Vuuren 
+        <pieter.jansenvanvuuren@netronome.com>,
+        Jiri Pirko <jiri@mellanox.com>, oss-drivers@netronome.com,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] nfp: avoid using getnstimeofday64()
+Date:   Mon, 18 Jun 2018 17:20:17 +0200
+Message-Id: <20180618152051.1510142-1-arnd@arndb.de>
 X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:gPPt4IKuuoCYM7qjB85xXgyNhcEVi0mEJ75+NE2X/A5ZxEIgUo9
- cmB4f+qHqU7xW7f2aS5JaaozLy/YvrfT/hPCWwQa1CZUTsUzBlSQCDb0TcwPLjfm1cWE7uM
- LBct/ugz5o+p1Vu/g4zoFuu6DhB41W4SK1wpqTDx8osj6ZwNLj6pmrHVycBZFe8+csVaUIB
- uVe6E6hFsINzFvv1HPR2w==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zFOWDC0Pkmw=:rbs4s/zJgP2qRZFK7pQqn6
- K0xy0npsmzvLBdrYepGKA/3T8nlH35lydOau3HnrupcudtBRLwuxQ7GdC61HI7LZ0bIW/qMur
- a/2Pz7SUubCHTmo3TqYrLGOsT9psJ+LLSmws0YCCdXX89wtO/NF8A9fri/iTyp8VQcH7IXS0H
- hKugmxlMUjQAFlSRwsTx+m0Prmkla/K/QhDFhX9PAW6GSna1gJKNhRWTK7lE1lj2ax7vLh2iL
- GUsyR8/J8nLIZ51r7zakkLrygnuTqApaxmLIuWQzch7l3xUO8O48cQvZS6+5RyD5OtzGN+PWI
- vyOezwTVl+CJTrWrlVtXf2byzIeBC8VZysZWYi1+hPUfA7lPMaYXzexA4SsTth/lB5XykJTSg
- v2dbnQhdAKY+WlTIYObaOuE1Giu+DIa86O7OrJaK0DhcOBPkK/9lgngeR+ytCEqsELjfSpXPu
- Qt2lqOqt+2a9rqBgQ5B9fLVfjbeJCPLjShIaDjI3niyRHFO/wJ2E4dHTi/8TPkViKzxpsbJ6y
- PmC1XIefH1cL3P0a3JadHxLcnpT/YKMeQGZ3pHwSM5NlclkLw7mb/kZbGXYAZjfsHE3I3HdHN
- LSyNL9im/mzRDV7v5J4trOibJNFyliFkzefwvDPrA4m+12Vkb14G47bxr7UfjPSMvlcKlgEJe
- QVY6Ma4N75dYjCt46IMCfrXKTBzJ5xWJhsxkTX82i1MHX3Xh5qPDPWTuJWPvUD98ms4k=
+X-Provags-ID: V03:K1:UiQT+MNRfCF33W85M08QghYMG35BP+29OnqhlH3qLGGwjGUSxE+
+ 8UNfoZBin7m1dLHNBstbYBUPD8+FxsnPnn5CmdHhPuVS24mHSoqo3QBiSIMYYNWFxK1xz7y
+ Nb8Y4tWJM8350q73ULtpR0HpguUczXAqC2EPsicg3owzhgiqGAvH8lcDlLnsHEcqOahGQa3
+ YA4x3zClSEwIwQw2KjszA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:5u4lt1EdB/o=:ZD2XYXjEMxXcpQnByPCIkC
+ 41KwWj78hmrRiI8CEVLaAxa5oJF8mIjMPWjf7Wj7M6UlcbKZ1gcLKTPV/jOEF553pGs3+g+SV
+ sLd3M59f2rFMLpDHJ8ByfBFiPU9MoZYqnv9/wMhG+5FzR4tuQb9QvuQ7t76Gq63BJg/ZmlUpd
+ j31Hwzu/1sLoD7dmNiEfemBF0MkYowRS9CZ8ssq2IC1o5Q91Jw4HXZaGB0Xye2elHL1wsA/Lk
+ Ry4vwxAfIqJsuE1NfJLYzWFySHf3MDml9iE7ScE82n7sILaNO1STMpZC0pQi+G5qhPDSbk05q
+ /r61q+3/XkTbSp9MpauslFP6gRj4UPwl90Lnk7H+pzoIAIKf0iWiYjgzNxQb6BOio77v9Pn9W
+ RalG5xebMurP+/HHoe4TzVp8NLmZESbEJ6e3FBWQSEcdk8f8VPyRur8Jz+5o5lqlCVFeKPIrf
+ NSiGdbDaTQ/tM/x2gETvZzoGWYmHIC1UXbV2qpGbgu/4ZKyXRRk/STwIjbtrZ73iPWM37Icss
+ NwWFSUqTAkPDYcD1uyTnvpEj7EN6rwekvyGCqV/9qnUfPq8a+FalcGvhTrn6SQI/cxfdl+tJs
+ It84oJDYc19Db3ZZKpg2GUzpwpfcaUXJT2rp1EUiSEFyMDcQPuNQSGj6DAk/seVRpGX3C7VbA
+ Qt7jZd+Z5nRcAFUQKXAacT8264uT0/3SrtFoxUuqbbHr/vA5YkFkSq7tws4SZcXLLfDY=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We don't want to use 'struct timespec' because of the y2038 overflow
-problem. The overflow is not actually an issue here, but it's easy to
-replace with 'timespec64' for consistency. However, it's worth pointing
-out that nanosecond values have nine digits, not eight or ten, so I'm
-fixing the format strings accordingly as well.
+getnstimeofday64 is deprecated in favor of the ktime_get() family of
+functions. The direct replacement would be ktime_get_real_ts64(),
+but I'm picking the basic ktime_get() instead:
+
+- using a ktime_t simplifies the code compared to timespec64
+- using monotonic time instead of real time avoids issues caused
+  by a concurrent settimeofday() or during a leap second adjustment.
 
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/scsi/snic/snic_debugfs.c | 10 +++++-----
- drivers/scsi/snic/snic_trc.c     |  6 +++---
- 2 files changed, 8 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/netronome/nfp/flower/main.h     |  2 +-
+ drivers/net/ethernet/netronome/nfp/flower/metadata.c | 12 +++++-------
+ 2 files changed, 6 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/scsi/snic/snic_debugfs.c b/drivers/scsi/snic/snic_debugfs.c
-index 269ddf791a73..0abe17c1a73b 100644
---- a/drivers/scsi/snic/snic_debugfs.c
-+++ b/drivers/scsi/snic/snic_debugfs.c
-@@ -200,7 +200,7 @@ snic_stats_show(struct seq_file *sfp, void *data)
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/main.h b/drivers/net/ethernet/netronome/nfp/flower/main.h
+index bbe5764d26cb..ef2114d13387 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/main.h
++++ b/drivers/net/ethernet/netronome/nfp/flower/main.h
+@@ -73,7 +73,7 @@ struct nfp_app;
+ 
+ struct nfp_fl_mask_id {
+ 	struct circ_buf mask_id_free_list;
+-	struct timespec64 *last_used;
++	ktime_t *last_used;
+ 	u8 init_unallocated;
+ };
+ 
+diff --git a/drivers/net/ethernet/netronome/nfp/flower/metadata.c b/drivers/net/ethernet/netronome/nfp/flower/metadata.c
+index 93fb809f50d1..c098730544b7 100644
+--- a/drivers/net/ethernet/netronome/nfp/flower/metadata.c
++++ b/drivers/net/ethernet/netronome/nfp/flower/metadata.c
+@@ -158,7 +158,6 @@ static int nfp_release_mask_id(struct nfp_app *app, u8 mask_id)
  {
- 	struct snic *snic = (struct snic *) sfp->private;
- 	struct snic_stats *stats = &snic->s_stats;
--	struct timespec last_isr_tms, last_ack_tms;
-+	struct timespec64 last_isr_tms, last_ack_tms;
- 	u64 maxio_tm;
- 	int i;
+ 	struct nfp_flower_priv *priv = app->priv;
+ 	struct circ_buf *ring;
+-	struct timespec64 now;
  
-@@ -312,12 +312,12 @@ snic_stats_show(struct seq_file *sfp, void *data)
- 		   "\t\t Other Statistics\n"
- 		   "\n---------------------------------------------\n");
+ 	ring = &priv->mask_ids.mask_id_free_list;
+ 	/* Checking if buffer is full. */
+@@ -169,8 +168,7 @@ static int nfp_release_mask_id(struct nfp_app *app, u8 mask_id)
+ 	ring->head = (ring->head + NFP_FLOWER_MASK_ELEMENT_RS) %
+ 		     (NFP_FLOWER_MASK_ENTRY_RS * NFP_FLOWER_MASK_ELEMENT_RS);
  
--	jiffies_to_timespec(stats->misc.last_isr_time, &last_isr_tms);
--	jiffies_to_timespec(stats->misc.last_ack_time, &last_ack_tms);
-+	jiffies_to_timespec64(stats->misc.last_isr_time, &last_isr_tms);
-+	jiffies_to_timespec64(stats->misc.last_ack_time, &last_ack_tms);
+-	getnstimeofday64(&now);
+-	priv->mask_ids.last_used[mask_id] = now;
++	priv->mask_ids.last_used[mask_id] = ktime_get();
  
- 	seq_printf(sfp,
--		   "Last ISR Time               : %llu (%8lu.%8lu)\n"
--		   "Last Ack Time               : %llu (%8lu.%8lu)\n"
-+		   "Last ISR Time               : %llu (%8llu.%09lu)\n"
-+		   "Last Ack Time               : %llu (%8llu.%09lu)\n"
- 		   "Ack ISRs                    : %llu\n"
- 		   "IO Cmpl ISRs                : %llu\n"
- 		   "Err Notify ISRs             : %llu\n"
-diff --git a/drivers/scsi/snic/snic_trc.c b/drivers/scsi/snic/snic_trc.c
-index f00ebf4717e0..fc60c933d6c0 100644
---- a/drivers/scsi/snic/snic_trc.c
-+++ b/drivers/scsi/snic/snic_trc.c
-@@ -65,12 +65,12 @@ static int
- snic_fmt_trc_data(struct snic_trc_data *td, char *buf, int buf_sz)
+ 	return 0;
+ }
+@@ -178,7 +176,7 @@ static int nfp_release_mask_id(struct nfp_app *app, u8 mask_id)
+ static int nfp_mask_alloc(struct nfp_app *app, u8 *mask_id)
  {
- 	int len = 0;
--	struct timespec tmspec;
-+	struct timespec64 tmspec;
+ 	struct nfp_flower_priv *priv = app->priv;
+-	struct timespec64 delta, now;
++	ktime_t reuse_timeout;
+ 	struct circ_buf *ring;
+ 	u8 temp_id, freed_id;
  
--	jiffies_to_timespec(td->ts, &tmspec);
-+	jiffies_to_timespec64(td->ts, &tmspec);
+@@ -198,10 +196,10 @@ static int nfp_mask_alloc(struct nfp_app *app, u8 *mask_id)
+ 	memcpy(&temp_id, &ring->buf[ring->tail], NFP_FLOWER_MASK_ELEMENT_RS);
+ 	*mask_id = temp_id;
  
- 	len += snprintf(buf, buf_sz,
--			"%lu.%10lu %-25s %3d %4x %16llx %16llx %16llx %16llx %16llx\n",
-+			"%llu.%09lu %-25s %3d %4x %16llx %16llx %16llx %16llx %16llx\n",
- 			tmspec.tv_sec,
- 			tmspec.tv_nsec,
- 			td->fn,
+-	getnstimeofday64(&now);
+-	delta = timespec64_sub(now, priv->mask_ids.last_used[*mask_id]);
++	reuse_timeout = ktime_add_ns(priv->mask_ids.last_used[*mask_id],
++				     NFP_FL_MASK_REUSE_TIME_NS);
+ 
+-	if (timespec64_to_ns(&delta) < NFP_FL_MASK_REUSE_TIME_NS)
++	if (ktime_before(ktime_get(), reuse_timeout))
+ 		goto err_not_found;
+ 
+ 	memcpy(&ring->buf[ring->tail], &freed_id, NFP_FLOWER_MASK_ELEMENT_RS);
 -- 
 2.9.0
 
