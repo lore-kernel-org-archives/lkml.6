@@ -2,258 +2,239 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A836C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:13:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA695C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBBE7208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:13:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="MLCQr/BQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBBE7208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=android.com
+	by mail.kernel.org (Postfix) with ESMTP id 955BC208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:13:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 955BC208A6
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965386AbeFRPHT (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:07:19 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:45853 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S964868AbeFRPHP (ORCPT
+        id S1755076AbeFRPNw (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:13:52 -0400
+Received: from mout.kundenserver.de ([217.72.192.75]:54153 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754976AbeFRPNs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:07:15 -0400
-Received: by mail-pf0-f194.google.com with SMTP id a22-v6so8316036pfo.12
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:07:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EZFagnmCmPK0jrqUJhwS419qQ/3Q5gFAyyKlvnDaAhc=;
-        b=MLCQr/BQaCnVGuJPlPTrde1inIyPbrwSQSqChFmPikEz6AsmTtrKv32TL/DFiNpgQB
-         m5IRvqo2kfgJK13x3vjfBzppMv9HFTa53DDZeQoDTfDUzXylEj/f24F/oqnV39xkKxh7
-         qS4b3+xY94Etbi7Ky1Io4IdtOp3MmSQ2zSoVANkLUjI/70+hFpKR+qCHlrd1TFVi/dE8
-         m7QmHhPuF/rryS0HSziAV7pd4GrI/tG8NT4qHebfF5vn1ZMMiceBvHP7N5y5vdqszatk
-         60C80ix/21EbOmtcRITV9QnwTzyKR5bT3cXSe66FsQ/B9FA1P+h7p4m8cDOvZQKfMHth
-         4koQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EZFagnmCmPK0jrqUJhwS419qQ/3Q5gFAyyKlvnDaAhc=;
-        b=Rhz77S0vROG0hCznABb8uLK+6mpdXfCU318mRXY+JvskyEawg+e8fgAYiNL+jPKImt
-         b7/KoQMd5OxkfFE6zCTzFJhcLkUvcvj409EgagjQm+Nfktl+q+1yiwLKGtdq0MkNKNAo
-         kXjK8kuhCiZEYBIZ6SkxvXSy5XzD4Cyy7zJ/ebfTk3nxy2LOFi42zUPyweOS7F5b4nFB
-         dq8Q0Px0OGXTmIGpLUzoqOTCQ8R1tvX5RSMpD0m4Feb4t7H3KMPmJlwMen6qxlyb3e8I
-         5VeysCXvOBrI3Bs5rJly/3uqRFuRQ+KQXE/En9ely0ancD3r/oJN5kV8ruiXdig+97Wm
-         U7rw==
-X-Gm-Message-State: APt69E0QUrl1Y7QeOSHidKdzB//Y84dfpT/W5tO0BfDRJtFRn5tckfYR
-        agvDHxhDxqgOzNhuXWeXbgRMBRSy3h8=
-X-Google-Smtp-Source: ADUXVKIWYc11sW82eHt+xorGYHDiwUO9A1AjDU7VsVX2ugiQ+izmbEIMJymxw5oxwdGAQnbRGYwMrA==
-X-Received: by 2002:a62:8f8c:: with SMTP id n134-v6mr14052821pfd.66.1529334434735;
-        Mon, 18 Jun 2018 08:07:14 -0700 (PDT)
-Received: from nebulus.mtv.corp.google.com ([2620:0:1000:1611:6077:8eec:bc7e:d0f4])
-        by smtp.gmail.com with ESMTPSA id i7-v6sm54830660pfa.34.2018.06.18.08.07.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 08:07:14 -0700 (PDT)
-From:   Mark Salyzyn <salyzyn@android.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Salyzyn <salyzyn@android.com>,
-        James Morse <james.morse@arm.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Dmitry Safonov <dsafonov@virtuozzo.com>,
-        John Stultz <john.stultz@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Kevin Brodsky <kevin.brodsky@arm.com>,
-        Andrew Pinski <apinski@cavium.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-arm-kernel@lists.infradead.org,
-        Jeremy Linton <Jeremy.Linton@arm.com>,
-        Jinbum Park <jinb.park7@gmail.com>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>,
-        Ingo Molnar <mingo@kernel.org>
-Subject: RESEND [PATCH v6 05/12] arm: vdso: Add support for CLOCK_MONOTONIC_RAW
-Date:   Mon, 18 Jun 2018 08:05:51 -0700
-Message-Id: <20180618150613.10322-6-salyzyn@android.com>
-X-Mailer: git-send-email 2.18.0.rc1.244.gcf134e6275-goog
-In-Reply-To: <20180618150613.10322-1-salyzyn@android.com>
-References: <20180618150613.10322-1-salyzyn@android.com>
+        Mon, 18 Jun 2018 11:13:48 -0400
+Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
+ (mreue101 [212.227.15.145]) with ESMTPA (Nemesis) id
+ 0LnSVK-1g8wtL3SLm-00haYA; Mon, 18 Jun 2018 17:13:21 +0200
+From:   Arnd Bergmann <arnd@arndb.de>
+To:     QCA ath9k Development <ath9k-devel@qca.qualcomm.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
+        Johannes Berg <johannes.berg@intel.com>,
+        =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Wojciech Dubowik <Wojciech.Dubowik@neratec.com>,
+        Russell Hu <rhu@qti.qualcomm.com>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 4/4] ath9k: use timespec64 for tsf_ts
+Date:   Mon, 18 Jun 2018 17:11:17 +0200
+Message-Id: <20180618151142.1214422-4-arnd@arndb.de>
+X-Mailer: git-send-email 2.9.0
+In-Reply-To: <20180618151142.1214422-1-arnd@arndb.de>
+References: <20180618151142.1214422-1-arnd@arndb.de>
+X-Provags-ID: V03:K1:CQkvaqPLDQ4YTNsn6CwqHcpw6n5wUEYFsvijcgTibnlEJro4puX
+ KNgreg+IVlOdONLTaY4sj4CWpvzO4CGm7esaxL3XVj4cxGsjids489Tvg116gQuMvF6zbh8
+ cn0PfmYawoh4TVuXgybqdNqXoGyFWIS1I6LhhaV+iMSVFzkbUNY0cvJDa/9tXoElwrGfYfh
+ hOf24nUBEm47RP5DzrjrA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:jrg5u2Y4750=:huiLQQGVCQI+NYGY7rCSPB
+ HLQgTr5lpBi4Pz0LqQRbz/t7yMazJdejvZ1MChrTbLMjr4olBfu3dnpNHxPwNes26+OqZds8G
+ Kz8FpB3AADKMU7W+7/22wKFEtwBf4leoDmlNRHnAYUBnrNCS8boGcYfvEKo02OALbqOziz89m
+ loiK8RUc7xB1sQB+L7TaX9+DMF/ALJHZOHIBL6W+FtGOcOgA6SM2HLFzJ2pAolGes2S4gI1Gi
+ 01YL8juv0a698uaurccEBwg83UXrV05+2tW7iyHqw7d9ldsqtCS6YBXsC1YvSaUKyUCG79J+a
+ 2Oe7qW/51/AyG9tnwkMOyCIUaAS/0/+g/G0WkqkySWHFsf/IEEOlQ0WXmlWaqfgH9YdLeZ+8P
+ wGJCXbwkwsO+SVaTBzsnFdw0qVJV/f27M12nA7Vic+J3+jtSR2kocyK4obtrv7ookfVo1yR65
+ 3ob9wdW4ZwW8bido7QIffXHA1RT982NhrE84aKsaotjWGwzR/LhL0rEhd9jqRXNFvCYQ6dyLV
+ DhISL3dq1cvI7WWVqnRN6Y95nnmFss+V7ugk23Bd14WWc1+FowkynIuKfyQVcN0VraNl89ebr
+ wsFGnBfTKKRChV2E56+y51HrEeRiekBRZjZcs559Rr6YW8599myxrrbDXg6tw5QEJYw0lw74V
+ kwgtpzdsDejat7dEZmdPycKGr52qdU1faUmcEUeBQP4T9/MSoMjtiGo65171JmxbMQVs=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Take an effort to recode the arm64 vdso code from assembler to C
-previously submitted by Andrew Pinski <apinski@cavium.com>, rework
-it for use in both arm and arm64, overlapping any optimizations
-for each architecture. But instead of landing it in arm64, land the
-result into lib/vdso and unify both implementations to simplify
-future maintenance.
+ath9k is the last remaining user of the deprecated getrawmonotonic()
+interface. There is nothing wrong with this usage, but migrating
+to a timespec64 based interface lets us clean up the old API.
 
-Add a case for CLOCK_MONOTONIC_RAW to match up with support that
-is available in arm64's vdso.
-
-Signed-off-by: Mark Salyzyn <salyzyn@android.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Cc: Andy Lutomirski <luto@amacapital.net>
-Cc: Dmitry Safonov <dsafonov@virtuozzo.com>
-Cc: John Stultz <john.stultz@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Laura Abbott <labbott@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Andy Gross <andy.gross@linaro.org>
-Cc: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: Andrew Pinski <apinski@cavium.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: Jeremy Linton <Jeremy.Linton@arm.com>
-
-v2:
-- split first CL into 6 of 7 pieces
-
-v4:
-- Move out ARCH_CLOCK_FIXED_MASK to later adjustment.
-- update commit message to reflect overall reasoning.
-- replace typeof() with type vdso_raw_time_sec_t.
-
-v5:
-- replace erroneous tk->raw_time.shift with tk->tkr_raw.shift
-
-v6:
-- fixup raw_time_sec and raw_time_nsec in vdso.c
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- arch/arm/include/asm/vdso_datapage.h | 11 +++++++
- arch/arm/kernel/vdso.c               |  3 ++
- arch/arm/vdso/vgettimeofday.c        | 44 ++++++++++++++++++++++++++++
- 3 files changed, 58 insertions(+)
+ drivers/net/wireless/ath/ath9k/ath9k.h   |  4 ++--
+ drivers/net/wireless/ath/ath9k/channel.c | 14 +++++++-------
+ drivers/net/wireless/ath/ath9k/hw.c      | 10 +++++-----
+ drivers/net/wireless/ath/ath9k/hw.h      |  2 +-
+ drivers/net/wireless/ath/ath9k/main.c    |  4 ++--
+ 5 files changed, 17 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm/include/asm/vdso_datapage.h b/arch/arm/include/asm/vdso_datapage.h
-index 8dd7303db4ec..1c6e6a5d5d9d 100644
---- a/arch/arm/include/asm/vdso_datapage.h
-+++ b/arch/arm/include/asm/vdso_datapage.h
-@@ -34,6 +34,11 @@ typedef u32 vdso_wtm_clock_nsec_t;
- typedef u32 vdso_xtime_clock_sec_t;
+diff --git a/drivers/net/wireless/ath/ath9k/ath9k.h b/drivers/net/wireless/ath/ath9k/ath9k.h
+index ef0de4f1312c..21ba20981a80 100644
+--- a/drivers/net/wireless/ath/ath9k/ath9k.h
++++ b/drivers/net/wireless/ath/ath9k/ath9k.h
+@@ -342,7 +342,7 @@ struct ath_chanctx {
+ 
+ 	struct ath_beacon_config beacon;
+ 	struct ath9k_hw_cal_data caldata;
+-	struct timespec tsf_ts;
++	struct timespec64 tsf_ts;
+ 	u64 tsf_val;
+ 	u32 last_beacon;
+ 
+@@ -1021,7 +1021,7 @@ struct ath_softc {
+ 	struct ath_offchannel offchannel;
+ 	struct ath_chanctx *next_chan;
+ 	struct completion go_beacon;
+-	struct timespec last_event_time;
++	struct timespec64 last_event_time;
  #endif
  
-+#ifndef _VDSO_RAW_TIME_SEC_T
-+#define _VDSO_RAW_TIME_SEC_T
-+typedef u32 vdso_raw_time_sec_t;
-+#endif
-+
- /* Try to be cache-friendly on systems that don't implement the
-  * generic timer: fit the unconditionally updated fields in the first
-  * 32 bytes.
-@@ -58,6 +63,12 @@ struct vdso_data {
- 	u64 xtime_clock_snsec;	/* CLOCK_REALTIME sub-ns base */
- 	u32 tz_minuteswest;	/* timezone info for gettimeofday(2) */
- 	u32 tz_dsttime;
-+
-+	/* Raw clocksource multipler */
-+	u32 cs_raw_mult;
-+	/* Raw time */
-+	vdso_raw_time_sec_t raw_time_sec;
-+	u32 raw_time_nsec;
- };
+ 	unsigned long driver_data;
+diff --git a/drivers/net/wireless/ath/ath9k/channel.c b/drivers/net/wireless/ath/ath9k/channel.c
+index 1b05b5d7a038..fd61ae4782b6 100644
+--- a/drivers/net/wireless/ath/ath9k/channel.c
++++ b/drivers/net/wireless/ath/ath9k/channel.c
+@@ -233,9 +233,9 @@ static const char *chanctx_state_string(enum ath_chanctx_state state)
+ static u32 chanctx_event_delta(struct ath_softc *sc)
+ {
+ 	u64 ms;
+-	struct timespec ts, *old;
++	struct timespec64 ts, *old;
  
- union vdso_data_store {
-diff --git a/arch/arm/kernel/vdso.c b/arch/arm/kernel/vdso.c
-index c2c57f6b8c60..9c13a32fa5f0 100644
---- a/arch/arm/kernel/vdso.c
-+++ b/arch/arm/kernel/vdso.c
-@@ -337,9 +337,12 @@ void update_vsyscall(struct timekeeper *tk)
+-	getrawmonotonic(&ts);
++	ktime_get_raw_ts64(&ts);
+ 	old = &sc->last_event_time;
+ 	ms = ts.tv_sec * 1000 + ts.tv_nsec / 1000000;
+ 	ms -= old->tv_sec * 1000 + old->tv_nsec / 1000000;
+@@ -334,7 +334,7 @@ ath_chanctx_get_next(struct ath_softc *sc, struct ath_chanctx *ctx)
+ static void ath_chanctx_adjust_tbtt_delta(struct ath_softc *sc)
+ {
+ 	struct ath_chanctx *prev, *cur;
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	u32 cur_tsf, prev_tsf, beacon_int;
+ 	s32 offset;
  
- 	if (!vdso_data->use_syscall) {
- 		vdso_data->cs_cycle_last	= tk->tkr_mono.cycle_last;
-+		vdso_data->raw_time_sec		= tk->raw_sec;
-+		vdso_data->raw_time_nsec	= tk->tkr_raw.xtime_nsec;
- 		vdso_data->xtime_clock_sec	= tk->xtime_sec;
- 		vdso_data->xtime_clock_snsec	= tk->tkr_mono.xtime_nsec;
- 		vdso_data->cs_mono_mult		= tk->tkr_mono.mult;
-+		vdso_data->cs_raw_mult		= tk->tkr_raw.mult;
- 		/* tkr_mono.shift == tkr_raw.shift */
- 		vdso_data->cs_shift		= tk->tkr_mono.shift;
- 		vdso_data->cs_mask		= tk->tkr_mono.mask;
-diff --git a/arch/arm/vdso/vgettimeofday.c b/arch/arm/vdso/vgettimeofday.c
-index 59893fca03b3..a2c4db83edc4 100644
---- a/arch/arm/vdso/vgettimeofday.c
-+++ b/arch/arm/vdso/vgettimeofday.c
-@@ -194,6 +194,40 @@ static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
- 	return 0;
- }
+@@ -346,7 +346,7 @@ static void ath_chanctx_adjust_tbtt_delta(struct ath_softc *sc)
+ 	if (!prev->switch_after_beacon)
+ 		return;
  
-+static notrace int do_monotonic_raw(const struct vdso_data *vd,
-+				    struct timespec *ts)
-+{
-+	u32 seq, mult, shift;
-+	u64 nsec, cycle_last;
-+	u64 mask;
-+	vdso_raw_time_sec_t sec;
-+
-+	do {
-+		seq = vdso_read_begin(vd);
-+
-+		if (vd->use_syscall)
-+			return -1;
-+
-+		cycle_last = vd->cs_cycle_last;
-+
-+		mult = vd->cs_raw_mult;
-+		shift = vd->cs_shift;
-+		mask = vd->cs_mask;
-+
-+		sec = vd->raw_time_sec;
-+		nsec = vd->raw_time_nsec;
-+
-+	} while (unlikely(vdso_read_retry(vd, seq)));
-+
-+	nsec += get_clock_shifted_nsec(cycle_last, mult, mask);
-+	nsec >>= shift;
-+	/* open coding timespec_add_ns to save a ts->tv_nsec = 0 */
-+	ts->tv_sec = sec + __iter_div_u64_rem(nsec, NSEC_PER_SEC, &nsec);
-+	ts->tv_nsec = nsec;
-+
-+	return 0;
-+}
-+
- #else /* CONFIG_ARM_ARCH_TIMER */
+-	getrawmonotonic(&ts);
++	ktime_get_raw_ts64(&ts);
+ 	cur_tsf = (u32) cur->tsf_val +
+ 		  ath9k_hw_get_tsf_offset(&cur->tsf_ts, &ts);
  
- static notrace int do_realtime(const struct vdso_data *vd, struct timespec *ts)
-@@ -206,6 +240,12 @@ static notrace int do_monotonic(const struct vdso_data *vd, struct timespec *ts)
- 	return -1;
- }
+@@ -1230,7 +1230,7 @@ void ath_chanctx_set_next(struct ath_softc *sc, bool force)
+ {
+ 	struct ath_common *common = ath9k_hw_common(sc->sc_ah);
+ 	struct ath_chanctx *old_ctx;
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	bool measure_time = false;
+ 	bool send_ps = false;
+ 	bool queues_stopped = false;
+@@ -1260,7 +1260,7 @@ void ath_chanctx_set_next(struct ath_softc *sc, bool force)
+ 		spin_unlock_bh(&sc->chan_lock);
  
-+static notrace int do_monotonic_raw(const struct vdso_data *vd,
-+				    struct timespec *ts)
-+{
-+	return -1;
-+}
-+
- #endif /* CONFIG_ARM_ARCH_TIMER */
+ 		if (sc->next_chan == &sc->offchannel.chan) {
+-			getrawmonotonic(&ts);
++			ktime_get_raw_ts64(&ts);
+ 			measure_time = true;
+ 		}
  
- notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
-@@ -227,6 +267,10 @@ notrace int __vdso_clock_gettime(clockid_t clock, struct timespec *ts)
- 		if (do_monotonic(vd, ts))
- 			goto fallback;
- 		break;
-+	case CLOCK_MONOTONIC_RAW:
-+		if (do_monotonic_raw(vd, ts))
-+			goto fallback;
-+		break;
- 	default:
- 		goto fallback;
+@@ -1277,7 +1277,7 @@ void ath_chanctx_set_next(struct ath_softc *sc, bool force)
+ 		spin_lock_bh(&sc->chan_lock);
+ 
+ 		if (sc->cur_chan != &sc->offchannel.chan) {
+-			getrawmonotonic(&sc->cur_chan->tsf_ts);
++			ktime_get_raw_ts64(&sc->cur_chan->tsf_ts);
+ 			sc->cur_chan->tsf_val = ath9k_hw_gettsf64(sc->sc_ah);
+ 		}
  	}
+diff --git a/drivers/net/wireless/ath/ath9k/hw.c b/drivers/net/wireless/ath/ath9k/hw.c
+index e60bea4604e4..e8e1f785bc5c 100644
+--- a/drivers/net/wireless/ath/ath9k/hw.c
++++ b/drivers/net/wireless/ath/ath9k/hw.c
+@@ -1835,13 +1835,13 @@ static int ath9k_hw_do_fastcc(struct ath_hw *ah, struct ath9k_channel *chan)
+ 	return -EINVAL;
+ }
+ 
+-u32 ath9k_hw_get_tsf_offset(struct timespec *last, struct timespec *cur)
++u32 ath9k_hw_get_tsf_offset(struct timespec64 *last, struct timespec64 *cur)
+ {
+-	struct timespec ts;
++	struct timespec64 ts;
+ 	s64 usec;
+ 
+ 	if (!cur) {
+-		getrawmonotonic(&ts);
++		ktime_get_raw_ts64(&ts);
+ 		cur = &ts;
+ 	}
+ 
+@@ -1859,7 +1859,7 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
+ 	u32 saveLedState;
+ 	u32 saveDefAntenna;
+ 	u32 macStaId1;
+-	struct timespec tsf_ts;
++	struct timespec64 tsf_ts;
+ 	u32 tsf_offset;
+ 	u64 tsf = 0;
+ 	int r;
+@@ -1905,7 +1905,7 @@ int ath9k_hw_reset(struct ath_hw *ah, struct ath9k_channel *chan,
+ 	macStaId1 = REG_READ(ah, AR_STA_ID1) & AR_STA_ID1_BASE_RATE_11B;
+ 
+ 	/* Save TSF before chip reset, a cold reset clears it */
+-	getrawmonotonic(&tsf_ts);
++	ktime_get_raw_ts64(&tsf_ts);
+ 	tsf = ath9k_hw_gettsf64(ah);
+ 
+ 	saveLedState = REG_READ(ah, AR_CFG_LED) &
+diff --git a/drivers/net/wireless/ath/ath9k/hw.h b/drivers/net/wireless/ath/ath9k/hw.h
+index 9804a24a2dc0..68956cdc8c9a 100644
+--- a/drivers/net/wireless/ath/ath9k/hw.h
++++ b/drivers/net/wireless/ath/ath9k/hw.h
+@@ -1060,7 +1060,7 @@ u32 ath9k_hw_gettsf32(struct ath_hw *ah);
+ u64 ath9k_hw_gettsf64(struct ath_hw *ah);
+ void ath9k_hw_settsf64(struct ath_hw *ah, u64 tsf64);
+ void ath9k_hw_reset_tsf(struct ath_hw *ah);
+-u32 ath9k_hw_get_tsf_offset(struct timespec *last, struct timespec *cur);
++u32 ath9k_hw_get_tsf_offset(struct timespec64 *last, struct timespec64 *cur);
+ void ath9k_hw_set_tsfadjust(struct ath_hw *ah, bool set);
+ void ath9k_hw_init_global_settings(struct ath_hw *ah);
+ u32 ar9003_get_pll_sqsum_dvc(struct ath_hw *ah);
+diff --git a/drivers/net/wireless/ath/ath9k/main.c b/drivers/net/wireless/ath/ath9k/main.c
+index b6663c80e7dd..acb681b096d9 100644
+--- a/drivers/net/wireless/ath/ath9k/main.c
++++ b/drivers/net/wireless/ath/ath9k/main.c
+@@ -1865,7 +1865,7 @@ static void ath9k_set_tsf(struct ieee80211_hw *hw,
+ 	mutex_lock(&sc->mutex);
+ 	ath9k_ps_wakeup(sc);
+ 	tsf -= le64_to_cpu(avp->tsf_adjust);
+-	getrawmonotonic(&avp->chanctx->tsf_ts);
++	ktime_get_raw_ts64(&avp->chanctx->tsf_ts);
+ 	if (sc->cur_chan == avp->chanctx)
+ 		ath9k_hw_settsf64(sc->sc_ah, tsf);
+ 	avp->chanctx->tsf_val = tsf;
+@@ -1881,7 +1881,7 @@ static void ath9k_reset_tsf(struct ieee80211_hw *hw, struct ieee80211_vif *vif)
+ 	mutex_lock(&sc->mutex);
+ 
+ 	ath9k_ps_wakeup(sc);
+-	getrawmonotonic(&avp->chanctx->tsf_ts);
++	ktime_get_raw_ts64(&avp->chanctx->tsf_ts);
+ 	if (sc->cur_chan == avp->chanctx)
+ 		ath9k_hw_reset_tsf(sc->sc_ah);
+ 	avp->chanctx->tsf_val = 0;
 -- 
-2.18.0.rc1.244.gcf134e6275-goog
+2.9.0
 
