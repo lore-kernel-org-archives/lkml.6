@@ -2,132 +2,146 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D20C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:31:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7836C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AD05208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:31:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/8555gY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AD05208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8947820852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 14:33:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8947820852
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934864AbeFROb4 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 10:31:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S934470AbeFRObz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 10:31:55 -0400
-Received: from jouet.infradead.org (unknown [187.65.76.49])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EC0720852;
-        Mon, 18 Jun 2018 14:31:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1529332314;
-        bh=UyFM/mdQBXQTqQEBDRVobpnTK15uQ0JBtdOMZ2HTFxM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=o/8555gYgYuUIW34nTy1ZuAy+gM/QQtZJLXEZJXwpe0dHCin3fx7Uwdy38b59IChz
-         oINwD4MZfYOSKlmRx9dOyuHu6xaHowX2YZ75bOPTZYi0MzrJLUY2fzXopGeAVfqFu3
-         3x5Aa28Tp5VPq3Gyyzf2bbXx8qIPnZqrbJPJVUtc=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 676451457B8; Mon, 18 Jun 2018 11:31:39 -0300 (-03)
-Date:   Mon, 18 Jun 2018 11:31:39 -0300
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Yonghong Song <yhs@fb.com>
-Cc:     Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@fb.com>,
-        Martin KaFai Lau <kafai@fb.com>,
-        Daniel Borkmann <daniel@iogearbox.net>
-Subject: Re: perf tools: LIBCLANGLLVM=1 build broken with llvm 7/clang 6
-Message-ID: <20180618143139.GA20477@kernel.org>
-References: <20180616122608.GM30043@kernel.org>
- <91a76633-54e4-984d-cb68-ca0445146b15@fb.com>
+        id S935061AbeFROdF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 10:33:05 -0400
+Received: from mail-it0-f70.google.com ([209.85.214.70]:39804 "EHLO
+        mail-it0-f70.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S934882AbeFROdD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 10:33:03 -0400
+Received: by mail-it0-f70.google.com with SMTP id o7-v6so8448636itf.4
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 07:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=Cepo5oeo3tzRCJ2FcewOumPG1eGPriC7kCbPj6fUDAc=;
+        b=VmTAKRH7EWxrB4FdP8BBX1H8zPY7hskrvJqbnhkHk5Qv5FrbiYe/Ab7a+cFM7fb43c
+         2TGqxCB+bFBEBbBYqXCw2z9Li0e2XqCb295a593LGBLelYqM2b36D+6Nj1mZyIQh4PJn
+         65UVTAMnmmEcdGZ9ilkVB+AG0wF717zDqnltyqPdVguQLwAs7P6WFgEOyrVtVvl2XM35
+         MfPdoHfeOInGg3B+/yARa+QIUhzhx90gK3OSEoyyrY3BEtrTUjFxDx0Y1FBRghJjHOFh
+         /omvz1y+CVBQAsdxVdW0Wah+sePq544wh/QaP7YmckPbAJNO6mMQAJu94o8pay7kVfvC
+         FIjg==
+X-Gm-Message-State: APt69E1LeTpLxz5/FfWaG9iNKb5SzalkHZt+czzkmXJc1hb+idGyzURT
+        q+eUyYSdfqcTq87nMsgp9rxz78xrwuRuBerqLLqwou06+WEo
+X-Google-Smtp-Source: ADUXVKL+TnWRfzT/jYG8MgYQUeknhM0dqi0YpWNsIDBwxNZFT8y+8xf8BfCyd9aNZEzJKvKAEFft7l983PlVO3vkJ8l95rMHt/0s
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <91a76633-54e4-984d-cb68-ca0445146b15@fb.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-Received: by 2002:a24:42cf:: with SMTP id i198-v6mr5000297itb.9.1529332382717;
+ Mon, 18 Jun 2018 07:33:02 -0700 (PDT)
+Date:   Mon, 18 Jun 2018 07:33:02 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000006a6282056eeb71da@google.com>
+Subject: general protection fault in loop_validate_file
+From:   syzbot <syzbot+2f228435b0b9ec0ba068@syzkaller.appspotmail.com>
+To:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Sat, Jun 16, 2018 at 10:20:21AM -0700, Yonghong Song escreveu:
-> 
-> 
-> On 6/16/18 5:26 AM, Arnaldo Carvalho de Melo wrote:
-> > Hi Wang, Yogong,
-> > 
-> > 	While reviewing the BTF patches for pahole, I updated llvm/clang
-> > to HEAD and then building perf with clang embedded I noticed this, will
-> > investigate, posting here to document the regression, maybe this is
-> > something you came across in other scenario:
-> > 
-> >   $ make LIBCLANGLLVM=1 -C tools/perf/
-> >   <SNIP>
-> >    CC       /tmp/tmp.t53Qo38zci/tests/kmod-path.o
-> > util/c++/clang.cpp: In function ‘std::unique_ptr<llvm::SmallVectorImpl<char> > perf::getBPFObjectFromModule(llvm::Module*)’:
-> > util/c++/clang.cpp:150:43: error: no matching function for call to ‘llvm::TargetMachine::addPassesToEmitFile(llvm::legacy::PassManager&, llvm::raw_svector_ostream&, llvm::TargetMachine::CodeGenFileType)’
-> >               TargetMachine::CGFT_ObjectFile)) {
-> >                                             ^
-> > In file included from util/c++/clang.cpp:25:0:
-> > /usr/local/include/llvm/Target/TargetMachine.h:254:16: note: candidate: virtual bool llvm::TargetMachine::addPassesToEmitFile(llvm::legacy::PassManagerBase&, llvm::raw_pwrite_stream&, llvm::raw_pwrite_stream*, llvm::TargetMachine::CodeGenFileType, bool, llvm::MachineModuleInfo*)
-> >     virtual bool addPassesToEmitFile(PassManagerBase &, raw_pwrite_stream &,
-> >                  ^~~~~~~~~~~~~~~~~~~
-> > /usr/local/include/llvm/Target/TargetMachine.h:254:16: note:   candidate expects 6 arguments, 3 provided
-> > mv: cannot stat '/tmp/tmp.t53Qo38zci/util/c++/.clang.o.tmp': No such file or directory
-> > make[7]: *** [/home/acme/git/perf/tools/build/Makefile.build:101: /tmp/tmp.t53Qo38zci/util/c++/clang.o] Error 1
-> > make[6]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: c++] Error 2
-> > make[5]: *** [/home/acme/git/perf/tools/build/Makefile.build:139: util] Error 2
-> > make[5]: *** Waiting for unfinished jobs....
-> >    CC       /tmp/tmp.t53Qo38zci/tests/thread-map.o
-> 
-> There is an interface change in llvm 7.0 (trunk) for function
-> llvm::TargetMachine::addPassesToEmitFile. The following patch
-> should fix the problem.
+Hello,
 
-Please submit it, I just tested and the the build finishes Ok.
+syzbot found the following crash on:
 
-- Arnaldo
- 
-> -bash-4.2$ git diff
-> diff --git a/tools/perf/util/c++/clang.cpp b/tools/perf/util/c++/clang.cpp
-> index bf31cea..11dee58 100644
-> --- a/tools/perf/util/c++/clang.cpp
-> +++ b/tools/perf/util/c++/clang.cpp
-> @@ -146,8 +146,15 @@ getBPFObjectFromModule(llvm::Module *Module)
->         raw_svector_ostream ostream(*Buffer);
-> 
->         legacy::PassManager PM;
-> -       if (TargetMachine->addPassesToEmitFile(PM, ostream,
-> - TargetMachine::CGFT_ObjectFile)) {
-> +       bool NotAdded;
-> +#if CLANG_VERSION_MAJOR < 7
-> +       NotAdded = TargetMachine->addPassesToEmitFile(PM, ostream,
-> + TargetMachine::CGFT_ObjectFile);
-> +#else
-> +       NotAdded = TargetMachine->addPassesToEmitFile(PM, ostream, nullptr,
-> + TargetMachine::CGFT_ObjectFile);
-> +#endif
-> +       if (!NotAdded) {
->                 llvm::errs() << "TargetMachine can't emit a file of this
-> type\n";
->                 return
-> std::unique_ptr<llvm::SmallVectorImpl<char>>(nullptr);;
->         }
-> -bash-4.2$
-> 
-> Will submit a formal patch soon.
-> 
-> > 
-> > - Arnaldo
-> > 
+HEAD commit:    ce397d215ccd Linux 4.18-rc1
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=129dfccf800000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=f390986c4f7cd566
+dashboard link: https://syzkaller.appspot.com/bug?extid=2f228435b0b9ec0ba068
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+
+Unfortunately, I don't have any reproducer for this crash yet.
+
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+2f228435b0b9ec0ba068@syzkaller.appspotmail.com
+
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] SMP KASAN
+CPU: 0 PID: 16780 Comm: syz-executor1 Not tainted 4.18.0-rc1+ #107
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:loop_validate_file+0x247/0x470 drivers/block/loop.c:664
+Code: 00 00 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2e 02 00 00 4d 8b a4 24  
+f0 00 00 00 49 8d bc 24 b8 01 00 00 48 89 f8 48 c1 e8 03 <80> 3c 18 00 0f  
+85 03 02 00 00 4d 8b a4 24 b8 01 00 00 4c 89 e0 48
+RSP: 0018:ffff8801b2f2f8f8 EFLAGS: 00010202
+RAX: 0000000000000037 RBX: dffffc0000000000 RCX: ffffc90002a12000
+RDX: 0000000000000047 RSI: ffffffff84c20bf7 RDI: 00000000000001b8
+RBP: ffff8801b2f2f918 R08: ffff8801c9498380 R09: ffffed003b5c46d6
+R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
+R13: ffff8801b38f71c0 R14: 0000000000000002 R15: ffff8801cfb60500
+FS:  00007f40b01d1700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2f222000 CR3: 00000001c542a000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  loop_set_fd drivers/block/loop.c:928 [inline]
+  lo_ioctl+0x54d/0x1d10 drivers/block/loop.c:1411
+  __blkdev_driver_ioctl block/ioctl.c:303 [inline]
+  blkdev_ioctl+0x9cd/0x2030 block/ioctl.c:601
+  block_ioctl+0xee/0x130 fs/block_dev.c:1880
+  vfs_ioctl fs/ioctl.c:46 [inline]
+  file_ioctl fs/ioctl.c:500 [inline]
+  do_vfs_ioctl+0x1de/0x1720 fs/ioctl.c:684
+  ksys_ioctl+0xa9/0xd0 fs/ioctl.c:701
+  __do_sys_ioctl fs/ioctl.c:708 [inline]
+  __se_sys_ioctl fs/ioctl.c:706 [inline]
+  __x64_sys_ioctl+0x73/0xb0 fs/ioctl.c:706
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x455b29
+Code: 1d ba fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 eb b9 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f40b01d0c68 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f40b01d16d4 RCX: 0000000000455b29
+RDX: 0000000000000014 RSI: 0000000000004c00 RDI: 0000000000000015
+RBP: 000000000072bea0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000ffffffff
+R13: 00000000004be118 R14: 00000000004cc118 R15: 0000000000000000
+Modules linked in:
+Dumping ftrace buffer:
+    (ftrace buffer empty)
+---[ end trace 3a5a065777b1499b ]---
+RIP: 0010:loop_validate_file+0x247/0x470 drivers/block/loop.c:664
+Code: 00 00 48 89 f8 48 c1 e8 03 80 3c 18 00 0f 85 2e 02 00 00 4d 8b a4 24  
+f0 00 00 00 49 8d bc 24 b8 01 00 00 48 89 f8 48 c1 e8 03 <80> 3c 18 00 0f  
+85 03 02 00 00 4d 8b a4 24 b8 01 00 00 4c 89 e0 48
+RSP: 0018:ffff8801b2f2f8f8 EFLAGS: 00010202
+RAX: 0000000000000037 RBX: dffffc0000000000 RCX: ffffc90002a12000
+RDX: 0000000000000047 RSI: ffffffff84c20bf7 RDI: 00000000000001b8
+RBP: ffff8801b2f2f918 R08: ffff8801c9498380 R09: ffffed003b5c46d6
+R10: 0000000000000003 R11: 0000000000000001 R12: 0000000000000000
+R13: ffff8801b38f71c0 R14: 0000000000000002 R15: ffff8801cfb60500
+FS:  00007f40b01d1700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000001b2f222000 CR3: 00000001c542a000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
