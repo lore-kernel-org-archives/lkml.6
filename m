@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70354C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5EC4C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35F2320864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35F2320864
+	by mail.kernel.org (Postfix) with ESMTP id 791FA20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:23:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 791FA20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S965740AbeFRIXM (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:23:12 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55734 "EHLO
+        id S935703AbeFRIXQ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:23:16 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55742 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S965687AbeFRIXK (ORCPT
+        with ESMTP id S965687AbeFRIXN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:23:10 -0400
+        Mon, 18 Jun 2018 04:23:13 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CBB66BAD;
-        Mon, 18 Jun 2018 08:23:09 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A9691BAD;
+        Mon, 18 Jun 2018 08:23:12 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lijun Ou <oulijun@huawei.com>,
-        Doug Ledford <dledford@redhat.com>,
+        stable@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 136/279] RDMA/hns: Submit bad wr
-Date:   Mon, 18 Jun 2018 10:12:01 +0200
-Message-Id: <20180618080614.462815337@linuxfoundation.org>
+Subject: [PATCH 4.16 137/279] <linux/stringhash.h>: fix end_name_hash() for 64bit long
+Date:   Mon, 18 Jun 2018 10:12:02 +0200
+Message-Id: <20180618080614.500944826@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -50,39 +50,70 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: oulijun <oulijun@huawei.com>
+From: Amir Goldstein <amir73il@gmail.com>
 
-[ Upstream commit 137ae3208416278aabef3b71e0ea1052940ca362 ]
+[ Upstream commit 19b9ad67310ed2f685062a00aec602bec33835f0 ]
 
-When generated bad work reqeust, it needs to
-report to user. This patch mainly fixes it.
+The comment claims that this helper will try not to loose bits, but for
+64bit long it looses the high bits before hashing 64bit long into 32bit
+int.  Use the helper hash_long() to do the right thing for 64bit long.
+For 32bit long, there is no change.
 
-Signed-off-by: Lijun Ou <oulijun@huawei.com>
-Signed-off-by: Doug Ledford <dledford@redhat.com>
+All the callers of end_name_hash() either assign the result to
+qstr->hash, which is u32 or return the result as an int value (e.g.
+full_name_hash()).  Change the helper return type to int to conform to
+its users.
+
+[ It took me a while to apply this, because my initial reaction to it
+  was - incorrectly - that it could make for slower code.
+
+  After having looked more at it, I take back all my complaints about
+  the patch, Amir was right and I was mis-reading things or just being
+  stupid.
+
+  I also don't worry too much about the possible performance impact of
+  this on 64-bit, since most architectures that actually care about
+  performance end up not using this very much (the dcache code is the
+  most performance-critical, but the word-at-a-time case uses its own
+  hashing anyway).
+
+  So this ends up being mostly used for filesystems that do their own
+  degraded hashing (usually because they want a case-insensitive
+  comparison function).
+
+  A _tiny_ worry remains, in that not everybody uses DCACHE_WORD_ACCESS,
+  and then this potentially makes things more expensive on 64-bit
+  architectures with slow or lacking multipliers even for the normal
+  case.
+
+  That said, realistically the only such architecture I can think of is
+  PA-RISC. Nobody really cares about performance on that, it's more of a
+  "look ma, I've got warts^W an odd machine" platform.
+
+  So the patch is fine, and all my initial worries were just misplaced
+  from not looking at this properly.   - Linus ]
+
+Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ include/linux/stringhash.h |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -153,7 +153,7 @@ static int hns_roce_v2_post_send(struct
- 		     ibqp->qp_type != IB_QPT_GSI &&
- 		     ibqp->qp_type != IB_QPT_UD)) {
- 		dev_err(dev, "Not supported QP(0x%x)type!\n", ibqp->qp_type);
--		*bad_wr = NULL;
-+		*bad_wr = wr;
- 		return -EOPNOTSUPP;
- 	}
+--- a/include/linux/stringhash.h
++++ b/include/linux/stringhash.h
+@@ -50,9 +50,9 @@ partial_name_hash(unsigned long c, unsig
+  * losing bits).  This also has the property (wanted by the dcache)
+  * that the msbits make a good hash table index.
+  */
+-static inline unsigned long end_name_hash(unsigned long hash)
++static inline unsigned int end_name_hash(unsigned long hash)
+ {
+-	return __hash_32((unsigned int)hash);
++	return hash_long(hash, 32);
+ }
  
-@@ -461,6 +461,7 @@ static int hns_roce_v2_post_send(struct
- 		} else {
- 			dev_err(dev, "Illegal qp_type(0x%x)\n", ibqp->qp_type);
- 			spin_unlock_irqrestore(&qp->sq.lock, flags);
-+			*bad_wr = wr;
- 			return -EOPNOTSUPP;
- 		}
- 	}
+ /*
 
 
