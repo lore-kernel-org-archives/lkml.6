@@ -5,136 +5,147 @@ X-Spam-Level:
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FBAFC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19142C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:22:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52355208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:16:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52355208A6
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C189F20852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:22:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C189F20852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754690AbeFREQV (ORCPT
+        id S1754237AbeFREWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 00:16:21 -0400
-Received: from mx3-rdu2.redhat.com ([66.187.233.73]:33612 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1754459AbeFREPM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 00:15:12 -0400
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9DA817D654;
-        Mon, 18 Jun 2018 04:15:11 +0000 (UTC)
-Received: from llong.com (ovpn-121-11.rdu2.redhat.com [10.10.121.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D9ECD201E288;
-        Mon, 18 Jun 2018 04:15:06 +0000 (UTC)
-From:   Waiman Long <longman@redhat.com>
-To:     Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, kernel-team@fb.com, pjt@google.com,
-        luto@amacapital.net, Mike Galbraith <efault@gmx.de>,
-        torvalds@linux-foundation.org, Roman Gushchin <guro@fb.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Patrick Bellasi <patrick.bellasi@arm.com>,
-        Waiman Long <longman@redhat.com>
-Subject: [PATCH v10 6/9] cpuset: Make generate_sched_domains() recognize isolated_cpus
-Date:   Mon, 18 Jun 2018 12:14:05 +0800
-Message-Id: <1529295249-5207-7-git-send-email-longman@redhat.com>
-In-Reply-To: <1529295249-5207-1-git-send-email-longman@redhat.com>
-References: <1529295249-5207-1-git-send-email-longman@redhat.com>
-X-Scanned-By: MIMEDefang 2.78 on 10.11.54.6
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 18 Jun 2018 04:15:11 +0000 (UTC)
-X-Greylist: inspected by milter-greylist-4.5.16 (mx1.redhat.com [10.11.55.2]); Mon, 18 Jun 2018 04:15:11 +0000 (UTC) for IP:'10.11.54.6' DOMAIN:'int-mx06.intmail.prod.int.rdu2.redhat.com' HELO:'smtp.corp.redhat.com' FROM:'longman@redhat.com' RCPT:''
+        Mon, 18 Jun 2018 00:22:50 -0400
+Received: from mx2.suse.de ([195.135.220.15]:58189 "EHLO mx2.suse.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1753569AbeFREWt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 00:22:49 -0400
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
+        by mx2.suse.de (Postfix) with ESMTP id E8049ABC7;
+        Mon, 18 Jun 2018 04:22:47 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     paulmck@linux.vnet.ibm.com
+Date:   Mon, 18 Jun 2018 14:22:40 +1000
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        trondmy@hammerspace.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
+Subject: [PATCH] rculist: improve documentation for list_for_each_entry_from_rcu()
+In-Reply-To: <20180613100607.GH3593@linux.vnet.ibm.com>
+References: <e5c90488937d14e9df81752a024be9d1e73ed398.camel@hammerspace.com> <CA+55aFxYMg+F9Jdi_25X-Qtt=7imqjQhLnjEyQXOQ6+eJvy83A@mail.gmail.com> <CA+55aFw+2+xCRAaMo8qgvZ7qNgRMo6D=WkwP7APQndG-y5b3dw@mail.gmail.com> <CA+55aFz3jmGST_cOB+qH6qZTFa5HJcw2JoeWxJEZdWgeO4=vNQ@mail.gmail.com> <20180613010427.GD3593@linux.vnet.ibm.com> <CA+55aFyWS-MC44k=LnGWr-Kq4_DRkJmub00Fj-tVrGxCL-PxGA@mail.gmail.com> <20180613013914.GE3593@linux.vnet.ibm.com> <87muvzihr8.fsf@notabene.neil.brown.name> <20180613100607.GH3593@linux.vnet.ibm.com>
+Message-ID: <874li0g1v3.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The generate_sched_domains() function and the hotplug code are modified
-to make them use the newly introduced isolated_cpus mask for schedule
-domains generation.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Waiman Long <longman@redhat.com>
----
- kernel/cgroup/cpuset.c | 24 ++++++++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index cfc9b7b..5ee4239 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -672,13 +672,14 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	int ndoms = 0;		/* number of sched domains in result */
- 	int nslot;		/* next empty doms[] struct cpumask slot */
- 	struct cgroup_subsys_state *pos_css;
-+	bool root_load_balance = is_sched_load_balance(&top_cpuset);
- 
- 	doms = NULL;
- 	dattr = NULL;
- 	csa = NULL;
- 
- 	/* Special case for the 99% of systems with one, full, sched domain */
--	if (is_sched_load_balance(&top_cpuset)) {
-+	if (root_load_balance && !top_cpuset.isolation_count) {
- 		ndoms = 1;
- 		doms = alloc_sched_domains(ndoms);
- 		if (!doms)
-@@ -701,6 +702,8 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 	csn = 0;
- 
- 	rcu_read_lock();
-+	if (root_load_balance)
-+		csa[csn++] = &top_cpuset;
- 	cpuset_for_each_descendant_pre(cp, pos_css, &top_cpuset) {
- 		if (cp == &top_cpuset)
- 			continue;
-@@ -711,6 +714,9 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 		 * parent's cpus, so just skip them, and then we call
- 		 * update_domain_attr_tree() to calc relax_domain_level of
- 		 * the corresponding sched domain.
-+		 *
-+		 * If root is load-balancing, we can skip @cp if it
-+		 * is a subset of the root's effective_cpus.
- 		 */
- 		if (!cpumask_empty(cp->cpus_allowed) &&
- 		    !(is_sched_load_balance(cp) &&
-@@ -718,11 +724,16 @@ static int generate_sched_domains(cpumask_var_t **domains,
- 					 housekeeping_cpumask(HK_FLAG_DOMAIN))))
- 			continue;
- 
-+		if (root_load_balance &&
-+		    cpumask_subset(cp->cpus_allowed, top_cpuset.effective_cpus))
-+			continue;
-+
- 		if (is_sched_load_balance(cp))
- 			csa[csn++] = cp;
- 
--		/* skip @cp's subtree */
--		pos_css = css_rightmost_descendant(pos_css);
-+		/* skip @cp's subtree if not a scheduling domain root */
-+		if (!is_sched_domain_root(cp))
-+			pos_css = css_rightmost_descendant(pos_css);
- 	}
- 	rcu_read_unlock();
- 
-@@ -849,7 +860,12 @@ static void rebuild_sched_domains_locked(void)
- 	 * passing doms with offlined cpu to partition_sched_domains().
- 	 * Anyways, hotplug work item will rebuild sched domains.
- 	 */
--	if (!cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
-+	if (!top_cpuset.isolation_count &&
-+	    !cpumask_equal(top_cpuset.effective_cpus, cpu_active_mask))
-+		goto out;
-+
-+	if (top_cpuset.isolation_count &&
-+	   !cpumask_subset(top_cpuset.effective_cpus, cpu_active_mask))
- 		goto out;
- 
- 	/* Generate domain masks and attrs */
--- 
-1.8.3.1
+Unfortunately the patch for adding list_for_each_entry_from_rcu()
+wasn't the final patch after all review.  It is functionally
+correct but the documentation was incomplete.
 
+This patch adds this missing documentation which includes an update to
+the documentation for list_for_each_entry_continue_rcu() to match the
+documentation for the new list_for_each_entry_from_rcu(), and adds
+list_for_each_entry_from_rcu() and the already existing
+hlist_for_each_entry_from_rcu() to section 7 of whatisRCU.txt.
+
+Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+Signed-off-by: NeilBrown <neilb@suse.com>
+=2D--
+ Documentation/RCU/whatisRCU.txt |  2 ++
+ include/linux/rculist.h         | 19 ++++++++++++++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/RCU/whatisRCU.txt b/Documentation/RCU/whatisRCU.=
+txt
+index 65eb856526b7..d43524493fb3 100644
+=2D-- a/Documentation/RCU/whatisRCU.txt
++++ b/Documentation/RCU/whatisRCU.txt
+@@ -816,11 +816,13 @@ RCU list traversal:
+ 	list_next_rcu
+ 	list_for_each_entry_rcu
+ 	list_for_each_entry_continue_rcu
++	list_for_each_entry_from_rcu
+ 	hlist_first_rcu
+ 	hlist_next_rcu
+ 	hlist_pprev_rcu
+ 	hlist_for_each_entry_rcu
+ 	hlist_for_each_entry_rcu_bh
++	hlist_for_each_entry_from_rcu
+ 	hlist_for_each_entry_continue_rcu
+ 	hlist_for_each_entry_continue_rcu_bh
+ 	hlist_nulls_first_rcu
+diff --git a/include/linux/rculist.h b/include/linux/rculist.h
+index 36df6ccbc874..4786c2235b98 100644
+=2D-- a/include/linux/rculist.h
++++ b/include/linux/rculist.h
+@@ -396,7 +396,16 @@ static inline void list_splice_tail_init_rcu(struct li=
+st_head *list,
+  * @member:	the name of the list_head within the struct.
+  *
+  * Continue to iterate over list of given type, continuing after
+=2D * the current position.
++ * the current position which must have been in the list when the RCU read
++ * lock was taken.
++ * This would typically require either that you obtained the node from a
++ * previous walk of the list in the same RCU read-side critical section, or
++ * that you held some sort of non-RCU reference (such as a reference count)
++ * to keep the node alive *and* in the list.
++ *
++ * This iterator is similar to list_for_each_entry_from_rcu() except
++ * this starts after the given position and that one starts at the given
++ * position.
+  */
+ #define list_for_each_entry_continue_rcu(pos, head, member) 		\
+ 	for (pos =3D list_entry_rcu(pos->member.next, typeof(*pos), member); \
+@@ -411,6 +420,14 @@ static inline void list_splice_tail_init_rcu(struct li=
+st_head *list,
+  *
+  * Iterate over the tail of a list starting from a given position,
+  * which must have been in the list when the RCU read lock was taken.
++ * This would typically require either that you obtained the node from a
++ * previous walk of the list in the same RCU read-side critical section, or
++ * that you held some sort of non-RCU reference (such as a reference count)
++ * to keep the node alive *and* in the list.
++ *
++ * This iterator is similar to list_for_each_entry_continue_rcu() except
++ * this starts from the given position and that one starts from the positi=
+on
++ * after the given position.
+  */
+ #define list_for_each_entry_from_rcu(pos, head, member)			\
+ 	for (; &(pos)->member !=3D (head);					\
+=2D-=20
+2.14.0.rc0.dirty
+
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlsnM5AACgkQOeye3VZi
+gbmEsQ/+MSPCAMzBIMqVEHJKY0GyWBgmBMOg0Rv+BMTSM3rN67iuafzsYH1cEbsB
+O+c7RvtgDUdWxYfLAhNs1w+PlgmTruV48+pnfbLx1zR+O3sjir3Pm82u6VZigeNt
+icv+kOBWH0fLQZaRvmTvzLCy9TpwBJ937iDPW0Rl0rNlbAFPBBRTf2WnovaTKRk3
+yNM6FfVj6SjGFXnfBv7JtKMLhFhL9gJ5q+kf0ygyOKZtcSkPTSa+EkSaEJ/AAaIT
+h50P6xrUtY1yRvvXbwKb/LqNq3XpJXkCfmAh++EUW7AreauyJokP4RHbVg92t0MG
+s7xMt0taFjqakJt/892c8fiw/85M3Ln4I4ztI34FDmAo2RXTeqjwtXasEQ+85FDs
+8ic2GIHxXBfEgPkROwC6tfEDHSQyU5M3Kwb37XTJYnEKsIa+F4mNJQWfQkdC8JKw
+OtZhalvmuZvmjQsst2xyM4LiZzJvP3UApo2N9ZQu1pmCvzqW/9cfNQgFyv/+4ZtZ
+ngWqDEQ3yaDw9czMaGasuRyJefKxYXjLTSBjmSy0XpuXwlUQFMB8Brm3C4AvpGV0
+q6P3hmbYJH1y77TCA6XaR9KR745XigNutgMSlM6K6bsQIdcZMWSPF7AKZCmtKxRO
+oWHK0EeZyNsiV7NybSr+9rzUlL1JNl861837LqSwAzrcqFKjgeM=
+=A31H
+-----END PGP SIGNATURE-----
+--=-=-=--
