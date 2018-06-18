@@ -3,143 +3,218 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA25C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E5FEC433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 479CC20852
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1C0220852
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:52:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="COplA6en"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 479CC20852
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="QrdruBvq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1C0220852
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935031AbeFRKvh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:51:37 -0400
-Received: from mail-pf0-f194.google.com ([209.85.192.194]:37747 "EHLO
-        mail-pf0-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932612AbeFRKvf (ORCPT
+        id S935194AbeFRKv7 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:51:59 -0400
+Received: from mail.kmu-office.ch ([178.209.48.109]:55778 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932612AbeFRKv4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 06:51:35 -0400
-Received: by mail-pf0-f194.google.com with SMTP id y5-v6so7965448pfn.4
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 03:51:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Egvan1XyZ7FGCwZLdqypInvGyX6TjoGIN8CY0tIhQbA=;
-        b=COplA6enWxN1ZBhooQEbtRPdjnZ+q9GPM13X2/HUmj7MiV15w2PbsF/jk+l0b7NJyF
-         j84bulVw2uKq/kp+h0sMiNZzr+158XuBrJA7QFu62ft2GdjJfKzBmd/z8xli2H3u3ucx
-         rB8UCTr9TYKcdtbz2J4n4Fzb9vss1zQoEcDio=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Egvan1XyZ7FGCwZLdqypInvGyX6TjoGIN8CY0tIhQbA=;
-        b=pN6d8uBwMO/WMmPQ7SgpDLo09aZhEG4GqKU8B6nZnIqN5Ni0AZ7lJ3e4YJ72v7xc4z
-         /XdNEI4J7FYZHlyjPmL0dpxguTjjGzLYbzvn594Kgl46Df1RKAZudwI5pmP8L57m8FNS
-         i+YwNYfLbXKS6/VvohM4fPGsg9l1pJbTkFxdTxDmH3gFw30JKXMPNi06WrLavI4PDRSC
-         cDqzMEaJWXZesnFVSbbI8ynZ5DdOyuOKILa3UKFifkQlUdmkhPFHWHtWAFgGjMf+Pt7Y
-         juI3UpilCuMl9NHw4X+wtyWCgFJ81uBStMkJ0MfmIsCdqfIYYBtL77ss2NSF/lL4jpam
-         umLA==
-X-Gm-Message-State: APt69E0sL4PsnGIRg+tMK6o4IW1K91Hdei3BoPHUQvXpBOv7Jzu6zIov
-        QBTR69SgwsjFexd36GRH/AZSHQ==
-X-Google-Smtp-Source: ADUXVKJufwrJZTCUm05WamtBqYrOwdjliaTj22J2+7KRlqZIoqUWchiBHFBLKt8tX/58I7tSS8jgZA==
-X-Received: by 2002:a65:4a51:: with SMTP id a17-v6mr10616815pgu.168.1529319095250;
-        Mon, 18 Jun 2018 03:51:35 -0700 (PDT)
-Received: from localhost ([122.171.103.96])
-        by smtp.gmail.com with ESMTPSA id s75-v6sm35934079pfj.125.2018.06.18.03.51.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 03:51:34 -0700 (PDT)
-Date:   Mon, 18 Jun 2018 16:21:32 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
-Cc:     Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PM / OPP: Update voltage in case freq == old_freq
-Message-ID: <20180618105132.xky2ayan7q24jsp3@vireshk-i7>
-References: <20180614135609.20574-1-waldemar.rymarkiewicz@gmail.com>
+        Mon, 18 Jun 2018 06:51:56 -0400
+Received: from webmail.kmu-office.ch (unknown [IPv6:2a02:418:6a02::a3])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id F052E5C00F6;
+        Mon, 18 Jun 2018 12:51:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1529319114;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9Wtp+OMiqpQa9hbGe/uDtSIE1vEfRcochXnZGooTROM=;
+        b=QrdruBvqbBOHTIZ77QzY/6VJ6ukphcaTFxOy8/KW9+uP2kyIxN7470dFl8xz1254A56Rwd
+        0eT+rrVB+Pd/BVA7exwIdS+cJ/CbE1PMPEKlcDniqvHV4Qp3MaPy7pJTPVMGl9GpecFSmp
+        t38ii5b7NTMlm5qUQqbwXoCUJX5GfmM=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20180614135609.20574-1-waldemar.rymarkiewicz@gmail.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 18 Jun 2018 12:51:52 +0200
+From:   Stefan Agner <stefan@agner.ch>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     dwmw2@infradead.org, computersforpeace@gmail.com,
+        marek.vasut@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com,
+        thierry.reding@gmail.com, dev@lynxeye.de,
+        miquel.raynal@bootlin.com, richard@nod.at, marcel@ziswiler.com,
+        krzk@kernel.org, digetx@gmail.com, benjamin.lindqvist@endian.se,
+        jonathanh@nvidia.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mirza.krak@gmail.com, gaireg@gaireg.de,
+        linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 0/6] mtd: rawnand: add NVIDIA Tegra NAND flash support
+In-Reply-To: <20180618115806.7be25499@bbrezillon>
+References: <20180617204605.4648-1-stefan@agner.ch>
+ <20180618115806.7be25499@bbrezillon>
+Message-ID: <95279b61ce2630c1276669359b163933@agner.ch>
+X-Sender: stefan@agner.ch
+User-Agent: Roundcube Webmail/1.3.4
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MID_RHS_MATCH_FROM(0.00)[];
+         RCPT_COUNT_TWELVE(0.00)[23];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         FROM_HAS_DN(0.00)[];
+         FROM_EQ_ENVFROM(0.00)[];
+         DKIM_SIGNED(0.00)[];
+         TO_DN_SOME(0.00)[];
+         RCVD_COUNT_ZERO(0.00)[0];
+         ASN(0.00)[asn:29691, ipnet:2a02:418::/29, country:CH];
+         RCVD_TLS_ALL(0.00)[];
+         BAYES_HAM(-0.00)[32.81%];
+         ARC_NA(0.00)[]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14-06-18, 15:56, Waldemar Rymarkiewicz wrote:
-> This commit fixes a rare but possible case when the clk rate is updated
-> without update of the regulator voltage.
+On 18.06.2018 11:58, Boris Brezillon wrote:
+> On Sun, 17 Jun 2018 22:45:59 +0200
+> Stefan Agner <stefan@agner.ch> wrote:
 > 
-> At boot up, CPUfreq checks if the system is running at the right freq. This
-> is a sanity check in case a bootloader set clk rate that is outside of freq
-> table present with cpufreq core. In such cases system can be unstable so
-> better to change it to a freq that is preset in freq-table.
+>> Changes definitly calm down, most noteably probably the changes
+>> around checking whether a page is empty if the stack reports ECC
+>> errors.. I verified the code using raw nandwrites with OOB to
+>> simulate an empty page which has some bits flipped in the OOB area,
+>> everthing seems to work as I would expect it.
+>>
+>> For now I do not check extra OOB bytes since those are at variable
+>> locations depending on algorithm.
 > 
-> The CPUfreq takes next freq that is >= policy->cur and this is our
-> target_freq that needs to be set now.
+> Hm, if you expose them as free OOB bytes, you should also check them,
+> otherwise you might end up with corrupted data without noticing it. Note
+> that, depending on whether those free OOB bytes are ECC-protected or
+> not, you should change the way you do the check:
 > 
-> dev_pm_opp_set_rate(dev, target_freq) checks the target_freq and the
-> old_freq (a current rate). If these are equal it returns early. If not,
-> it searches for OPP (old_opp) that fits best to old_freq (not listed in
-> the table) and updates old_freq (!).
-> 
-> Here, we can end up with old_freq = old_opp.rate = target_freq, which
-> is not handled in _generic_set_opp_regulator(). It's supposed to update
-> voltage only when freq > old_freq  || freq > old_freq.
-> 
-> if (freq > old_freq) {
-> 		ret = _set_opp_voltage(dev, reg, new_supply);
-> [...]
-> if (freq < old_freq) {
-> 		ret = _set_opp_voltage(dev, reg, new_supply);
-> 		if (ret)
-> 
-> It results in, no voltage update while clk rate is updated.
-> 
-> Example:
-> freq-table = {
-> 	1000MHz   1.15V
-> 	 666MHZ   1.10V
-> 	 333MHz   1.05V
-> }
-> boot-up-freq        = 800MHz   # not listed in freq-table
-> freq = target_freq  = 1GHz
-> old_freq            = 800Mhz
-> old_opp = _find_freq_ceil(opp_table, &old_freq);  #(old_freq is modified!)
-> old_freq            = 1GHz
-> 
-> Signed-off-by: Waldemar Rymarkiewicz <waldemar.rymarkiewicz@gmail.com>
-> ---
->  drivers/opp/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-> index ab2f3fe..31ff03d 100644
-> --- a/drivers/opp/core.c
-> +++ b/drivers/opp/core.c
-> @@ -598,7 +598,7 @@ static int _generic_set_opp_regulator(const struct opp_table *opp_table,
->  	}
->  
->  	/* Scaling up? Scale voltage before frequency */
-> -	if (freq > old_freq) {
-> +	if (freq >= old_freq) {
->  		ret = _set_opp_voltage(dev, reg, new_supply);
->  		if (ret)
->  			goto restore_voltage;
+> - non-protected OOB bytes: all bytes should be 0xff (no bitflips
+>   allowed)
+> - data+free OOB bytes protected by the same ECC bytes: you should pass
+>   the free OOB bytes buffer to nand_check_erased_ecc_chunk() along with
+>   the data and ECC buffers
+> - free OOB bytes have their own ECC bytes: call
+>   nand_check_erased_ecc_chunk() separately and pass it the ECC + free
+>   OOB buffers.
 
-Applied with:
+This graphic taken from the public Tegra 2 Technical Reference Manual is
+quite useful:
+https://imgur.com/a/0Hqzbkc
 
-Fixes: 6a0712f6f199 ("PM / OPP: Add dev_pm_opp_set_rate()")
-Cc: 4.6+ <stable@vger.kernel.org> # v4.6+
+Tegra basically has all of the above, which makes the whole business
+really tricky...
 
-Thanks.
+I am not sure if we really could do variant 1, non-protected OOB, but
+since we have the option of protected OOB, we probably anyway would do
+that.
 
--- 
-viresh
+RS/Hamming implements variant 3.
+
+BCH implements variant 2. OOB is protected with the last data buffer.
+
+So this would require a algorithm depending implementation, which is
+probably not a big deal.
+
+But there is one more issue with BCH: Only if extra data are actually
+transferred, tag space is actually allocated. If no tag bytes are
+transferred, parity follows immediately skip bytes. As far as I know the
+MTD stacks OOB layout assumes that is always the same layout, no matter
+whether we write extra OOB data or not. For the Tegra NAND controller
+this would mean that we have to always transfer tag bytes and therefor
+penalize the use case we are most interested in (which is no extra OOB
+bytes, since UBI does not make use of it)...
+
+Furthermore I realized that testing is not easily possible since
+nandwrite with --oob seems not to make use of "oob_required" in the main
+page write but issues a separate OOB write command. I did not found a
+way to issue a write from user space which sets oob_required...
+
+Due to all this I rather prefer to not implement extra OOB support at
+this point.
+
+How do I do this properly? Set mtd_ooblayout_ops.free to NULL?
+
+--
+Stefan
+
+> 
+>>
+>> --
+>> Stefan
+>>
+>> Changes since v1:
+>> - Split controller and NAND chip structure
+>> - Add BCH support
+>> - Allow to select algorithm and strength using device tree
+>> - Improve HW ECC error reporting and use DEC_STATUS_BUF only
+>> - Use SPDX license identifier
+>> - Use per algorithm mtd_ooblayout_ops
+>> - Use setup_data_interface callback for NAND timing configuration
+>>
+>> Changes since v2:
+>> - Set clock rate using assigned-clocks
+>> - Use BIT() macro
+>> - Fix and improve timing calculation
+>> - Improve ECC error handling
+>> - Store OOB layout for tag area in Tegra chip structure
+>> - Update/fix bindings
+>> - Use more specific variable names (replace "value")
+>> - Introduce nand-is-boot-medium
+>> - Choose sensible ECC strenght automatically
+>> - Use wait_for_completion_timeout
+>> - Print register dump on completion timeout
+>> - Unify tegra_nand_(read|write)_page in tegra_nand_page_xfer
+>>
+>> Changes since v3:
+>> - Implement tegra_nand_(read|write)_raw using DMA
+>> - Implement tegra_nand_(read|write)_oob using DMA
+>> - Name registers according to Tegra 2 Technical Reference Manual (v02p)
+>> - Use wait_for_completion_io_timeout to account for IO
+>> - Get chip select id from device tree reg property
+>> - Clear interrupts and reinit wait queues in case command/DMA times out
+>> - Set default MTD name after nand_set_flash_node
+>> - Move MODULE_DEVICE_TABLE after declaration of tegra_nand_of_match
+>> - Make (rs|bch)_strength static
+>>
+>> Changes since v4:
+>> - Pass OOB area to nand_check_erased_ecc_chunk
+>> - Pass algorithm specific bits_per_step to tegra_nand_get_strength
+>> - Store ECC layout in chip structure
+>> - Fix pointer assignment (use NULL)
+>> - Removed obsolete header delay.h
+>> - Fixed newlines
+>> - Use non-_io variant of wait_for_completion_timeout
+>>
+>> Lucas Stach (1):
+>>   ARM: dts: tegra: add Tegra20 NAND flash controller node
+>>
+>> Stefan Agner (5):
+>>   mtd: rawnand: add Reed-Solomon error correction algorithm
+>>   mtd: rawnand: add an option to specify NAND chip as a boot device
+>>   mtd: rawnand: tegra: add devicetree binding
+>>   mtd: rawnand: add NVIDIA Tegra NAND Flash controller driver
+>>   ARM: dts: tegra: enable NAND flash on Colibri T20
+>>
+>>  .../devicetree/bindings/mtd/nand.txt          |    6 +-
+>>  .../bindings/mtd/nvidia-tegra20-nand.txt      |   64 +
+>>  MAINTAINERS                                   |    7 +
+>>  arch/arm/boot/dts/tegra20-colibri-512.dtsi    |   16 +
+>>  arch/arm/boot/dts/tegra20.dtsi                |   15 +
+>>  drivers/mtd/nand/raw/Kconfig                  |    6 +
+>>  drivers/mtd/nand/raw/Makefile                 |    1 +
+>>  drivers/mtd/nand/raw/nand_base.c              |    4 +
+>>  drivers/mtd/nand/raw/tegra_nand.c             | 1268 +++++++++++++++++
+>>  include/linux/mtd/rawnand.h                   |    7 +
+>>  10 files changed, 1393 insertions(+), 1 deletion(-)
+>>  create mode 100644 Documentation/devicetree/bindings/mtd/nvidia-tegra20-nand.txt
+>>  create mode 100644 drivers/mtd/nand/raw/tegra_nand.c
+>>
