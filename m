@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC86AC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:53:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5B44C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2C5D20652
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:53:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2C5D20652
+	by mail.kernel.org (Postfix) with ESMTP id 81EB820652
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:53:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81EB820652
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S936071AbeFRJxU (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:53:20 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:55168 "EHLO
+        id S936089AbeFRJxq (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:53:46 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55128 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935368AbeFRIUt (ORCPT
+        with ESMTP id S935688AbeFRIUj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:20:49 -0400
+        Mon, 18 Jun 2018 04:20:39 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E8470C7A;
-        Mon, 18 Jun 2018 08:20:48 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 39368C8D;
+        Mon, 18 Jun 2018 08:20:39 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Ganzhorn <peter.ganzhorn@gmail.com>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Peter De Wachter <pdewacht@gmail.com>,
-        Jiri Kosina <jkosina@suse.cz>,
+        stable@vger.kernel.org, Greg Thelen <gthelen@google.com>,
+        Tarick Bedeir <tarick@google.com>,
+        Doug Ledford <dledford@redhat.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 096/279] HID: lenovo: Add support for IBM/Lenovo Scrollpoint mice
-Date:   Mon, 18 Jun 2018 10:11:21 +0200
-Message-Id: <20180618080612.775536111@linuxfoundation.org>
+Subject: [PATCH 4.16 120/279] nvme: depend on INFINIBAND_ADDR_TRANS
+Date:   Mon, 18 Jun 2018 10:11:45 +0200
+Message-Id: <20180618080613.779500423@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,135 +51,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: pgzh <peter.ganzhorn@gmail.com>
+From: Greg Thelen <gthelen@google.com>
 
-[ Upstream commit a230cd52b8a2be39cd6e9a13b3e62af57f21372a ]
+[ Upstream commit 3af7a156bdc356946098e13180be66b6420619bf ]
 
-The IBM/Lenovo Scrollpoint mice feature a trackpoint-like stick instead of a
-scrolling wheel capable of 2-D (vertical+horizontal) scrolling.  hid-generic
-does only expose 1-D (vertical) scrolling functionality for these mice.  This
-patch adds support for horizontal scrolling for the IBM/Lenovo Scrollpoint mice
-to hid-lenovo.
+NVME_RDMA code depends on INFINIBAND_ADDR_TRANS provided symbols.  So
+declare the kconfig dependency.  This is necessary to allow for enabling
+INFINIBAND without INFINIBAND_ADDR_TRANS.
 
-[jkosina@suse.cz: remove change versioning from git changelog]
-Signed-off-by: Peter Ganzhorn <peter.ganzhorn@gmail.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Peter De Wachter <pdewacht@gmail.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Greg Thelen <gthelen@google.com>
+Cc: Tarick Bedeir <tarick@google.com>
+Signed-off-by: Doug Ledford <dledford@redhat.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/hid/Kconfig      |    7 ++++---
- drivers/hid/hid-ids.h    |    8 ++++++++
- drivers/hid/hid-lenovo.c |   36 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 48 insertions(+), 3 deletions(-)
+ drivers/nvme/host/Kconfig |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/hid/Kconfig
-+++ b/drivers/hid/Kconfig
-@@ -448,10 +448,11 @@ config HID_LENOVO
- 	select NEW_LEDS
- 	select LEDS_CLASS
- 	---help---
--	Support for Lenovo devices that are not fully compliant with HID standard.
-+	Support for IBM/Lenovo devices that are not fully compliant with HID standard.
+--- a/drivers/nvme/host/Kconfig
++++ b/drivers/nvme/host/Kconfig
+@@ -27,7 +27,7 @@ config NVME_FABRICS
  
--	Say Y if you want support for the non-compliant features of the Lenovo
--	Thinkpad standalone keyboards, e.g:
-+	Say Y if you want support for horizontal scrolling of the IBM/Lenovo
-+	Scrollpoint mice or the non-compliant features of the Lenovo Thinkpad
-+	standalone keyboards, e.g:
- 	- ThinkPad USB Keyboard with TrackPoint (supports extra LEDs and trackpoint
- 	  configuration)
- 	- ThinkPad Compact Bluetooth Keyboard with TrackPoint (supports Fn keys)
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -546,6 +546,13 @@
- #define USB_VENDOR_ID_HUION		0x256c
- #define USB_DEVICE_ID_HUION_TABLET	0x006e
- 
-+#define USB_VENDOR_ID_IBM					0x04b3
-+#define USB_DEVICE_ID_IBM_SCROLLPOINT_III			0x3100
-+#define USB_DEVICE_ID_IBM_SCROLLPOINT_PRO			0x3103
-+#define USB_DEVICE_ID_IBM_SCROLLPOINT_OPTICAL			0x3105
-+#define USB_DEVICE_ID_IBM_SCROLLPOINT_800DPI_OPTICAL		0x3108
-+#define USB_DEVICE_ID_IBM_SCROLLPOINT_800DPI_OPTICAL_PRO	0x3109
-+
- #define USB_VENDOR_ID_IDEACOM		0x1cb6
- #define USB_DEVICE_ID_IDEACOM_IDC6650	0x6650
- #define USB_DEVICE_ID_IDEACOM_IDC6651	0x6651
-@@ -678,6 +685,7 @@
- #define USB_DEVICE_ID_LENOVO_TPKBD	0x6009
- #define USB_DEVICE_ID_LENOVO_CUSBKBD	0x6047
- #define USB_DEVICE_ID_LENOVO_CBTKBD	0x6048
-+#define USB_DEVICE_ID_LENOVO_SCROLLPOINT_OPTICAL	0x6049
- #define USB_DEVICE_ID_LENOVO_TPPRODOCK	0x6067
- #define USB_DEVICE_ID_LENOVO_X1_COVER	0x6085
- #define USB_DEVICE_ID_LENOVO_X1_TAB	0x60a3
---- a/drivers/hid/hid-lenovo.c
-+++ b/drivers/hid/hid-lenovo.c
-@@ -6,6 +6,17 @@
-  *
-  *  Copyright (c) 2012 Bernhard Seibold
-  *  Copyright (c) 2014 Jamie Lentin <jm@lentin.co.uk>
-+ *
-+ * Linux IBM/Lenovo Scrollpoint mouse driver:
-+ * - IBM Scrollpoint III
-+ * - IBM Scrollpoint Pro
-+ * - IBM Scrollpoint Optical
-+ * - IBM Scrollpoint Optical 800dpi
-+ * - IBM Scrollpoint Optical 800dpi Pro
-+ * - Lenovo Scrollpoint Optical
-+ *
-+ *  Copyright (c) 2012 Peter De Wachter <pdewacht@gmail.com>
-+ *  Copyright (c) 2018 Peter Ganzhorn <peter.ganzhorn@gmail.com>
-  */
- 
- /*
-@@ -160,6 +171,17 @@ static int lenovo_input_mapping_cptkbd(s
- 	return 0;
- }
- 
-+static int lenovo_input_mapping_scrollpoint(struct hid_device *hdev,
-+		struct hid_input *hi, struct hid_field *field,
-+		struct hid_usage *usage, unsigned long **bit, int *max)
-+{
-+	if (usage->hid == HID_GD_Z) {
-+		hid_map_usage(hi, usage, bit, max, EV_REL, REL_HWHEEL);
-+		return 1;
-+	}
-+	return 0;
-+}
-+
- static int lenovo_input_mapping(struct hid_device *hdev,
- 		struct hid_input *hi, struct hid_field *field,
- 		struct hid_usage *usage, unsigned long **bit, int *max)
-@@ -172,6 +194,14 @@ static int lenovo_input_mapping(struct h
- 	case USB_DEVICE_ID_LENOVO_CBTKBD:
- 		return lenovo_input_mapping_cptkbd(hdev, hi, field,
- 							usage, bit, max);
-+	case USB_DEVICE_ID_IBM_SCROLLPOINT_III:
-+	case USB_DEVICE_ID_IBM_SCROLLPOINT_PRO:
-+	case USB_DEVICE_ID_IBM_SCROLLPOINT_OPTICAL:
-+	case USB_DEVICE_ID_IBM_SCROLLPOINT_800DPI_OPTICAL:
-+	case USB_DEVICE_ID_IBM_SCROLLPOINT_800DPI_OPTICAL_PRO:
-+	case USB_DEVICE_ID_LENOVO_SCROLLPOINT_OPTICAL:
-+		return lenovo_input_mapping_scrollpoint(hdev, hi, field,
-+							usage, bit, max);
- 	default:
- 		return 0;
- 	}
-@@ -883,6 +913,12 @@ static const struct hid_device_id lenovo
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_CUSBKBD) },
- 	{ HID_BLUETOOTH_DEVICE(USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_CBTKBD) },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_TPPRODOCK) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_IBM, USB_DEVICE_ID_IBM_SCROLLPOINT_III) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_IBM, USB_DEVICE_ID_IBM_SCROLLPOINT_PRO) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_IBM, USB_DEVICE_ID_IBM_SCROLLPOINT_OPTICAL) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_IBM, USB_DEVICE_ID_IBM_SCROLLPOINT_800DPI_OPTICAL) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_IBM, USB_DEVICE_ID_IBM_SCROLLPOINT_800DPI_OPTICAL_PRO) },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_LENOVO, USB_DEVICE_ID_LENOVO_SCROLLPOINT_OPTICAL) },
- 	{ }
- };
- 
+ config NVME_RDMA
+ 	tristate "NVM Express over Fabrics RDMA host driver"
+-	depends on INFINIBAND && BLOCK
++	depends on INFINIBAND && INFINIBAND_ADDR_TRANS && BLOCK
+ 	select NVME_CORE
+ 	select NVME_FABRICS
+ 	select SG_POOL
 
 
