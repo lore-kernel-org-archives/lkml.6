@@ -6,36 +6,34 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A84FC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 690E0C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E91BB20864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E91BB20864
+	by mail.kernel.org (Postfix) with ESMTP id 2E6D220864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:30:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E6D220864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S967003AbeFRIai (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:30:38 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:33724 "EHLO
+        id S936793AbeFRIap (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:30:45 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:33768 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S966982AbeFRIae (ORCPT
+        with ESMTP id S935955AbeFRIan (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:30:34 -0400
+        Mon, 18 Jun 2018 04:30:43 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 299A6C83;
-        Mon, 18 Jun 2018 08:30:34 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id E5426C87;
+        Mon, 18 Jun 2018 08:30:42 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Rob Clark <robdclark@gmail.com>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org,
-        Emil Velikov <emil.velikov@collabora.com>,
+        stable@vger.kernel.org, dann frazier <dann.frazier@canonical.com>,
+        "David S. Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 038/189] drm/msm: dont deref error pointer in the msm_fbdev_create error path
-Date:   Mon, 18 Jun 2018 10:12:14 +0200
-Message-Id: <20180618081210.885917775@linuxfoundation.org>
+Subject: [PATCH 4.14 040/189] net: hns: Avoid action name truncation
+Date:   Mon, 18 Jun 2018 10:12:16 +0200
+Message-Id: <20180618081210.962128683@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -52,55 +50,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Emil Velikov <emil.velikov@collabora.com>
+From: dann frazier <dann.frazier@canonical.com>
 
-[ Upstream commit 789d4c300e10eb2096ee83c3497118e67ccc951e ]
+[ Upstream commit f4ea89110df237da6fbcaab76af431e85f07d904 ]
 
-Currently the error pointer returned by msm_alloc_stolen_fb gets passed
-to drm_framebuffer_remove. The latter handles only NULL pointers, thus
-a nasty crash will occur.
+When longer interface names are used, the action names exposed in
+/proc/interrupts and /proc/irq/* maybe truncated. For example, when
+using the predictable name algorithm in systemd on a HiSilicon D05,
+I see:
 
-Drop the unnecessary fail label and the associated checks - both err and
-fb will be set at this stage.
+  ubuntu@d05-3:~$  grep enahisic2i0-tx /proc/interrupts | sed 's/.* //'
+  enahisic2i0-tx0
+  enahisic2i0-tx1
+  [...]
+  enahisic2i0-tx8
+  enahisic2i0-tx9
+  enahisic2i0-tx1
+  enahisic2i0-tx1
+  enahisic2i0-tx1
+  enahisic2i0-tx1
+  enahisic2i0-tx1
+  enahisic2i0-tx1
 
-Cc: Rob Clark <robdclark@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org
-Signed-off-by: Emil Velikov <emil.velikov@collabora.com>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Increase the max ring name length to allow for an interface name
+of IFNAMSIZE. After this change, I now see:
+
+  $ grep enahisic2i0-tx /proc/interrupts | sed 's/.* //'
+  enahisic2i0-tx0
+  enahisic2i0-tx1
+  enahisic2i0-tx2
+  [...]
+  enahisic2i0-tx8
+  enahisic2i0-tx9
+  enahisic2i0-tx10
+  enahisic2i0-tx11
+  enahisic2i0-tx12
+  enahisic2i0-tx13
+  enahisic2i0-tx14
+  enahisic2i0-tx15
+
+Signed-off-by: dann frazier <dann.frazier@canonical.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/gpu/drm/msm/msm_fbdev.c |   11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/hisilicon/hns/hnae.h |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/msm/msm_fbdev.c
-+++ b/drivers/gpu/drm/msm/msm_fbdev.c
-@@ -92,8 +92,7 @@ static int msm_fbdev_create(struct drm_f
+--- a/drivers/net/ethernet/hisilicon/hns/hnae.h
++++ b/drivers/net/ethernet/hisilicon/hns/hnae.h
+@@ -87,7 +87,7 @@ do { \
  
- 	if (IS_ERR(fb)) {
- 		dev_err(dev->dev, "failed to allocate fb\n");
--		ret = PTR_ERR(fb);
--		goto fail;
-+		return PTR_ERR(fb);
- 	}
+ #define HNAE_AE_REGISTER 0x1
  
- 	bo = msm_framebuffer_bo(fb, 0);
-@@ -151,13 +150,7 @@ static int msm_fbdev_create(struct drm_f
+-#define RCB_RING_NAME_LEN 16
++#define RCB_RING_NAME_LEN (IFNAMSIZ + 4)
  
- fail_unlock:
- 	mutex_unlock(&dev->struct_mutex);
--fail:
--
--	if (ret) {
--		if (fb)
--			drm_framebuffer_remove(fb);
--	}
--
-+	drm_framebuffer_remove(fb);
- 	return ret;
- }
- 
+ #define HNAE_LOWEST_LATENCY_COAL_PARAM	30
+ #define HNAE_LOW_LATENCY_COAL_PARAM	80
 
 
