@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C58CAC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8668C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A376208E2
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A376208E2
+	by mail.kernel.org (Postfix) with ESMTP id 9C7A820864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:18:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C7A820864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935277AbeFRISn (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:18:43 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54688 "EHLO
+        id S935299AbeFRISr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:18:47 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54716 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S935241AbeFRISj (ORCPT
+        with ESMTP id S935241AbeFRISo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:18:39 -0400
+        Mon, 18 Jun 2018 04:18:44 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D3345C75;
-        Mon, 18 Jun 2018 08:18:38 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 2C37ABAD;
+        Mon, 18 Jun 2018 08:18:44 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jingju Hou <Jingju.Hou@synaptics.com>,
-        Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Peter Milley <pbmilley@gmail.com>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 081/279] net: phy: marvell: clear wol event before setting it
-Date:   Mon, 18 Jun 2018 10:11:06 +0200
-Message-Id: <20180618080612.159657869@linuxfoundation.org>
+Subject: [PATCH 4.16 083/279] ACPI / watchdog: Prefer iTCO_wdt on Lenovo Z50-70
+Date:   Mon, 18 Jun 2018 10:11:08 +0200
+Message-Id: <20180618080612.242764308@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -51,41 +51,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jingju Hou <Jingju.Hou@synaptics.com>
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-[ Upstream commit b6a930fa88083b41d26ddf1cab95cbd740936c22 ]
+[ Upstream commit a0a37862a4e1844793d39aca9ccb8fecbdcb8659 ]
 
-If WOL event happened once, the LED[2] interrupt pin will not be
-cleared unless we read the CSISR register. If interrupts are in use,
-the normal interrupt handling will clear the WOL event. Let's clear the
-WOL event before enabling it if !phy_interrupt_is_valid().
+WDAT table on Lenovo Z50-70 is using RTC SRAM (ports 0x70 and 0x71) to
+store state of the timer. This conflicts with Linux RTC driver
+(rtc-cmos.c) who fails to reserve those ports for itself preventing RTC
+from functioning. In addition the WDAT table seems not to be fully
+functional because it does not reset the system when the watchdog times
+out.
 
-Signed-off-by: Jingju Hou <Jingju.Hou@synaptics.com>
-Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+On this system iTCO_wdt works just fine so we simply prefer to use it
+instead of WDAT. This makes RTC working again and also results working
+watchdog via iTCO_wdt.
+
+Reported-by: Peter Milley <pbmilley@gmail.com>
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=199033
+Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/phy/marvell.c |    9 +++++++++
- 1 file changed, 9 insertions(+)
+ drivers/acpi/acpi_watchdog.c |   59 +++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 49 insertions(+), 10 deletions(-)
 
---- a/drivers/net/phy/marvell.c
-+++ b/drivers/net/phy/marvell.c
-@@ -1377,6 +1377,15 @@ static int m88e1318_set_wol(struct phy_d
- 		if (err < 0)
- 			goto error;
+--- a/drivers/acpi/acpi_watchdog.c
++++ b/drivers/acpi/acpi_watchdog.c
+@@ -12,23 +12,64 @@
+ #define pr_fmt(fmt) "ACPI: watchdog: " fmt
  
-+		/* If WOL event happened once, the LED[2] interrupt pin
-+		 * will not be cleared unless we reading the interrupt status
-+		 * register. If interrupts are in use, the normal interrupt
-+		 * handling will clear the WOL event. Clear the WOL event
-+		 * before enabling it if !phy_interrupt_is_valid()
+ #include <linux/acpi.h>
++#include <linux/dmi.h>
+ #include <linux/ioport.h>
+ #include <linux/platform_device.h>
+ 
+ #include "internal.h"
+ 
++static const struct dmi_system_id acpi_watchdog_skip[] = {
++	{
++		/*
++		 * On Lenovo Z50-70 there are two issues with the WDAT
++		 * table. First some of the instructions use RTC SRAM
++		 * to store persistent information. This does not work well
++		 * with Linux RTC driver. Second, more important thing is
++		 * that the instructions do not actually reset the system.
++		 *
++		 * On this particular system iTCO_wdt seems to work just
++		 * fine so we prefer that over WDAT for now.
++		 *
++		 * See also https://bugzilla.kernel.org/show_bug.cgi?id=199033.
 +		 */
-+		if (!phy_interrupt_is_valid(phydev))
-+			phy_read(phydev, MII_M1011_IEVENT);
++		.ident = "Lenovo Z50-70",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "20354"),
++			DMI_MATCH(DMI_PRODUCT_VERSION, "Lenovo Z50-70"),
++		},
++	},
++	{}
++};
 +
- 		/* Enable the WOL interrupt */
- 		err = __phy_modify(phydev, MII_88E1318S_PHY_CSIER, 0,
- 				   MII_88E1318S_PHY_CSIER_WOL_EIE);
++static const struct acpi_table_wdat *acpi_watchdog_get_wdat(void)
++{
++	const struct acpi_table_wdat *wdat = NULL;
++	acpi_status status;
++
++	if (acpi_disabled)
++		return NULL;
++
++	if (dmi_check_system(acpi_watchdog_skip))
++		return NULL;
++
++	status = acpi_get_table(ACPI_SIG_WDAT, 0,
++				(struct acpi_table_header **)&wdat);
++	if (ACPI_FAILURE(status)) {
++		/* It is fine if there is no WDAT */
++		return NULL;
++	}
++
++	return wdat;
++}
++
+ /**
+  * Returns true if this system should prefer ACPI based watchdog instead of
+  * the native one (which are typically the same hardware).
+  */
+ bool acpi_has_watchdog(void)
+ {
+-	struct acpi_table_header hdr;
+-
+-	if (acpi_disabled)
+-		return false;
+-
+-	return ACPI_SUCCESS(acpi_get_table_header(ACPI_SIG_WDAT, 0, &hdr));
++	return !!acpi_watchdog_get_wdat();
+ }
+ EXPORT_SYMBOL_GPL(acpi_has_watchdog);
+ 
+@@ -41,12 +82,10 @@ void __init acpi_watchdog_init(void)
+ 	struct platform_device *pdev;
+ 	struct resource *resources;
+ 	size_t nresources = 0;
+-	acpi_status status;
+ 	int i;
+ 
+-	status = acpi_get_table(ACPI_SIG_WDAT, 0,
+-				(struct acpi_table_header **)&wdat);
+-	if (ACPI_FAILURE(status)) {
++	wdat = acpi_watchdog_get_wdat();
++	if (!wdat) {
+ 		/* It is fine if there is no WDAT */
+ 		return;
+ 	}
 
 
