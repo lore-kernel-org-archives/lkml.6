@@ -2,769 +2,251 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH,URIBL_BLOCKED autolearn=no
+X-Spam-Status: No, score=-0.5 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF595C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:20:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25BE0C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:21:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B96E208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:20:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBB2A208A5
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 11:21:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="CZU94WqG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B96E208A5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gw4Yxy8E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB2A208A5
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934416AbeFRLUk (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 07:20:40 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:38584 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S932657AbeFRLUh (ORCPT
+        id S934537AbeFRLV3 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 07:21:29 -0400
+Received: from mail-wm0-f66.google.com ([74.125.82.66]:50905 "EHLO
+        mail-wm0-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932657AbeFRLV0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 07:20:37 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20180618112035euoutp01ac55d6ba9ed15f8fe520c99aef6aec1b~5PTJrECE00046400464euoutp01O
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 11:20:35 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20180618112035euoutp01ac55d6ba9ed15f8fe520c99aef6aec1b~5PTJrECE00046400464euoutp01O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1529320835;
-        bh=0t1tXSwvpdmJ17qkubwCzP4CRAtV21qomnkwKX9/EUg=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=CZU94WqGJOErwkArL7J7GESvfjiHWG6J+zulBNxa5yTqGSe6//UL43zvJYve3GMwm
-         IqOx7rYRGqwGBNSWdKqxMBDvI2ZmiDewM/umH+ovbdRP5FFJcNCLxorvo1HjLtZbtp
-         bqvWklMId6hxQG4xxf6DSwWK8kHETy8LglL7icgE=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20180618112033eucas1p226538fd0574b137302f92370d094a727~5PTIISpxT0894108941eucas1p2E;
-        Mon, 18 Jun 2018 11:20:33 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id B9.BE.17380.185972B5; Mon, 18
-        Jun 2018 12:20:33 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20180618112032eucas1p2b1c15c7b5e6460259a11f8475dc33119~5PTHTVqJo1884818848eucas1p2R;
-        Mon, 18 Jun 2018 11:20:32 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20180618112032eusmtrp1e87ed32dfdcea8e88fd1b31fa0265645~5PTHDXGdA1307813078eusmtrp1p;
-        Mon, 18 Jun 2018 11:20:32 +0000 (GMT)
-X-AuditID: cbfec7f4-6f9ff700000043e4-5b-5b279581c73a
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id A5.40.04178.085972B5; Mon, 18
-        Jun 2018 12:20:32 +0100 (BST)
-Received: from [106.120.51.25] (unknown [106.120.51.25]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20180618112031eusmtip149887174fd4792de611a99a3136a7e54~5PTGMGghs1813818138eusmtip1T;
-        Mon, 18 Jun 2018 11:20:31 +0000 (GMT)
-Subject: Re: [PATCH v2 08/10] drm/bridge: tc358764: Add DSI to LVDS bridge
- driver
-To:     Archit Taneja <architt@codeaurora.org>,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Joonyoung Shim <jy0922.shim@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        David Airlie <airlied@linux.ie>,
-        Seung-Woo Kim <sw0312.kim@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Inki Dae <inki.dae@samsung.com>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>
-From:   Maciej Purski <m.purski@samsung.com>
-Date:   Mon, 18 Jun 2018 13:20:30 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
-        Thunderbird/52.6.0
+        Mon, 18 Jun 2018 07:21:26 -0400
+Received: by mail-wm0-f66.google.com with SMTP id e16-v6so13425091wmd.0;
+        Mon, 18 Jun 2018 04:21:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=wb6LoUxRpbJzPEA7M5NxI9zn23O46QGX1p0y0REoLo4=;
+        b=gw4Yxy8EQAfNgnaYi76NTcbV/BkOktRzEXLrYDxOii9sWeNete4xSbzv42/GVP9OE7
+         hGnrPHuCVbBKkYCHvI00cn6Y4hckqPRfFxADEvGXswBdqw/ihnuMeSYgSn8eWOtzQpzh
+         v7XEjj0Pvrq61eJSklPZxW7ReGlFCtQqXUvoRRsjNzOZdgjBJ7+2I56Xy867+moulR2j
+         QZm8xqEusuWze3krsTFfDhe+oFCUyNtuN75ZhmgjkAAC/+FmVW7vcXKrJ0NMKCIlnl7O
+         i46+wmUHmsMODeELBM6ABGgrpGTKmJ0zELUEITfMUC0QWr7/crC6zEzE2f66ScA/mq3D
+         jrcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=wb6LoUxRpbJzPEA7M5NxI9zn23O46QGX1p0y0REoLo4=;
+        b=OWySFU2JdhDQuvMYh2mVruTRwA678qfj5N2xYXQeEYR/Hi7+U1+930au7d2RvMcaew
+         Z8L3NBt0LogVoCzNR4gAJlBUcCM0mbXiF+6veML1rDKZ3z8EYqTstv2OMHSFMPar8QMq
+         h73p16fAUQu2JBQaWNpQy6nq1cWehyISldRoD3AvhhhEP+tkTbHO2BrMcVIPsz8o9mCp
+         u7sKOccE27LlqOhVXGQAoX14y1E6ANphvuzaGMiRBa0CM7vGWYJeyCGvbMs/XyA4jd4R
+         H17phQqy2RFEsD5UdI2ea0TddYWQF9eTpQd4ALlSNqB8O+ui5JSHCspLoijeW3jycQAK
+         pAlA==
+X-Gm-Message-State: APt69E33lHtUsDwk+vE3EdSuAJPRHb3cA0s54bLvYESGtPlIKrTKdGs2
+        DhlUb36JA7h17TPcaxJslxSm/g==
+X-Google-Smtp-Source: ADUXVKKzfLgc3hr59UmZ2GONsl7uNPd53KQIxiPUkNVLov861xWuGGuZunLdv+QAbaULNJYMbD+EIQ==
+X-Received: by 2002:a1c:8012:: with SMTP id b18-v6mr7855660wmd.13.1529320884552;
+        Mon, 18 Jun 2018 04:21:24 -0700 (PDT)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id k82-v6sm11013714wmg.10.2018.06.18.04.21.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 18 Jun 2018 04:21:23 -0700 (PDT)
+Date:   Mon, 18 Jun 2018 13:21:21 +0200
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Henrique de Moraes Holschuh <ibm-acpi@hmh.eng.br>,
+        ibm-acpi-devel@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: ThinkPad T480s & LED_MUTE, LED_MICMUTE
+Message-ID: <20180618112121.cl76a3oozsbbbqnb@pali>
+References: <20180608111057.4wxpg7m7nm7suf6n@pali>
+ <s5hk1r01acc.wl-tiwai@suse.de>
+ <20180615190959.pqipwnm6a3tf3lxc@pali>
+ <s5hmuvvtdmi.wl-tiwai@suse.de>
+ <20180616154309.ualrx2py6ndr5xgz@pali>
+ <s5hh8m2u3cp.wl-tiwai@suse.de>
+ <20180618102806.vwm4rhvxhn6hi43z@pali>
+ <s5ha7rsz8i8.wl-tiwai@suse.de>
 MIME-Version: 1.0
-In-Reply-To: <9eec949c-f2b8-4d8d-e30e-ade5159255d6@codeaurora.org>
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SfSyUcRzf73m7x9XV42i+UWy3UG2klz9+rTdZW8/6J61/GlNOnmFedxcp
-        W0krQjrs1jmViCn0dlFeiiZzKHdDpcxLi4y41JClKHcPy3+f7+fz/fy+n8/2Y0l5KuPMRsSc
-        ElQxyigFI6WeNv8yeV3Qegb6WPrluOeBicZXTa0ETkmz0Pix7iGNC5oWuLfTEwzOGdBQeKS/
-        g8LXBsdIbDY/kuD2lHEJvpJdLMGGwfc07qq9wWCduZ7A95v6JLiku4PAl140SbAud5TBv2pv
-        Ub6OfMWtCsR3ZV0l+Bp9n4TPT8ujeUPZFYZ/9vMTzQ9kGAn+SfF5PquyDPGTBld/aYB0d6gQ
-        FZEgqLbsDZaGp5tfknGmapQ4OptHJqM/+Sgd2bHA7YAybQuZjqSsnLuLoCSrfHGYQtA2XojE
-        YRLBaHcLvWRpHmqWiEIpgv7Ze4tbFgQv2k22LQfuKNTXmSmr4Mh1Iiiae0dYB5IzUjDTk71w
-        hWUZbjNUpJ6wGijOHTLGL1NWvIY7BoXaL7aEMs4eWvOGbLwd5wcZxinGiknOCXqGCggRu8HF
-        qnxbcOCqWciaLKVFcwJobndIxNwHYCK3kxGxA3w1Vi7y6+B1biYl4iS4N1pKiQ8lI5jq6yJF
-        YRe8MnbQ1tAktwke1m4R6f2QenfaRgO3Cj5Y7MU8qyDn6XVSpGWQdlkubitgRDdHiBigpPUz
-        rUEK/bKW+mXN9Mua6f/fvY2oMuQkxKujwwT1thjhtLdaGa2OjwnzPhkbbUAL3/P1vHGqGtX+
-        CWlEHIsUK2U42yNQTisT1GeiGxGwpMJR5rnOM1AuC1WeOSuoYk+o4qMEdSNyYSmFk+z4xnMB
-        ci5MeUqIFIQ4QbWkEqydczJyrArf1/csyPlwyN/k7+5twfI3vK+/B31QtX7a+Lb394a8TYLD
-        5/K9QR8Vvn6Tz2tc5iqlibl7fhfkzNdFxuVnzw07hDhNbGzQ3NmeUmUp2unW0z/g5TNTWu52
-        s1fnOrzCU6vJTDzUMH/A8ONIV2/Q2LQhqXl1jV03W6lt6s1cG/ZNQanDlVs3kyq18h9Z71mf
-        mgMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJKsWRmVeSWpSXmKPExsVy+t/xu7oNU9WjDSZcErS4te4cq0XvuZNM
-        Fk0db1ktNs5Yz2ox/whQ7MrX92wWk+5PYLF4ce8ii0X/49fMFufPb2C3ONv0ht2ic+ISdotN
-        j6+xWlzeNYfNYsb5fUwWa4/cZbdYev0ik0Xr3iPsFjMmv2Sz+LlrHouDiMeaeWsYPS739TJ5
-        7Jx1l91jdsdMVo9NqzrZPLZ/e8Dqcb/7OJPH5iX1Hn1bVjF6fN4kF8AVpWdTlF9akqqQkV9c
-        YqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+XoJfRdf4Ac8G5HYwVL3/NZG5g
-        /DObsYuRk0NCwETi2JNj7F2MXBxCAksZJQ7PfMYKkZCQOHv/P5QtLPHnWhcbRNFrRolNi06x
-        gySEBYIl9u0+zwKSEBG4xChxcNFJsA5mgZMsEru3aEN0dDJJHPp8GKiKg4NNQEtiTXs8SA2v
-        gJ3EtR+rwOpZBFQlut+0sYDYogIREp0r57NA1AhKnJz5BMzmFHCS6D7+hQ1ivpnEvM0PmSFs
-        cYlbT+YzQdjyEs1bZzNPYBSahaR9FpKWWUhaZiFpWcDIsopRJLW0ODc9t9hQrzgxt7g0L10v
-        OT93EyMwWWw79nPzDsZLG4MPMQpwMCrx8D7oU4sWYk0sK67MPcQowcGsJMKrLqMeLcSbklhZ
-        lVqUH19UmpNafIjRFOi5icxSosn5wESWVxJvaGpobmFpaG5sbmxmoSTOe96gMkpIID2xJDU7
-        NbUgtQimj4mDU6qB0fHTWwe2dwHvtAtb2QVSns5Pab+375rqlIOBrYGnph2MMt/F08KvsK7y
-        WmiTb8mZxSsmViy9e7dZ1/vh1c/bTTauFCkOM/f81Rnwc13G7tq9H2svGHLL96p8jDdlmce0
-        f8HDuh653+W96/rdSzpY59wzdLANXx3s90iBeUkva9DPLL4/lRZCSizFGYmGWsxFxYkAEyPJ
-        KCwDAAA=
-Message-Id: <20180618112032eucas1p2b1c15c7b5e6460259a11f8475dc33119~5PTHTVqJo1884818848eucas1p2R@eucas1p2.samsung.com>
-X-CMS-MailID: 20180618112032eucas1p2b1c15c7b5e6460259a11f8475dc33119
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20180530121628eucas1p291c2774152145231a0a5c4ed56354d7f
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20180530121628eucas1p291c2774152145231a0a5c4ed56354d7f
-References: <1527682561-1386-1-git-send-email-m.purski@samsung.com>
-        <CGME20180530121628eucas1p291c2774152145231a0a5c4ed56354d7f@eucas1p2.samsung.com>
-        <1527682561-1386-9-git-send-email-m.purski@samsung.com>
-        <9eec949c-f2b8-4d8d-e30e-ade5159255d6@codeaurora.org>
+In-Reply-To: <s5ha7rsz8i8.wl-tiwai@suse.de>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 05/31/2018 08:51 AM, Archit Taneja wrote:
-> Hi,
+On Monday 18 June 2018 12:36:31 Takashi Iwai wrote:
+> On Mon, 18 Jun 2018 12:28:06 +0200,
+> Pali Rohár wrote:
+> > 
+> > On Saturday 16 June 2018 18:02:14 Takashi Iwai wrote:
+> > > On Sat, 16 Jun 2018 17:43:09 +0200,
+> > > Pali Rohár wrote:
+> > > > 
+> > > > On Saturday 16 June 2018 09:05:41 Takashi Iwai wrote:
+> > > > > On Fri, 15 Jun 2018 21:09:59 +0200,
+> > > > > Pali Rohár wrote:
+> > > > > > 
+> > > > > > On Friday 15 June 2018 14:51:47 Takashi Iwai wrote:
+> > > > > > > On Fri, 08 Jun 2018 13:10:57 +0200,
+> > > > > > > Pali Rohár wrote:
+> > > > > > > > 
+> > > > > > > > Hi! With up-to-date thinkpad_acpi.ko driver on ThinkPad T480s I'm seeing
+> > > > > > > > a strange behavior of LEDs which are integrated into mic mute (Fn+F4)
+> > > > > > > > and mute (Fn+F1) keys.
+> > > > > > > > 
+> > > > > > > > When thinkpad_acpi.ko is not loaded, then mute key is working fine. When
+> > > > > > > > pressed, it correctly generates KEY_MUTE on AT Translated Set 2 keyboard
+> > > > > > > > input device and also turn on/of mute led. But when micmute key is
+> > > > > > > > pressed then, nothing happen. No key event is reported and also led is
+> > > > > > > > not turned on/off.
+> > > > > > > > 
+> > > > > > > > On the other hand, when thinkpad_acpi.ko is loaded, then both buttons
+> > > > > > > > mute and micmute correctly generates input events; mute via AT keyboard
+> > > > > > > > and micmute via ThinkPad Extra Buttons. But led is not changed. When
+> > > > > > > > thinkpad_acpi.ko is loaded it turn off both leds (mute and micmute) and
+> > > > > > > > leds after pressing any of those buttons, leds are not turned on again.
+> > > > > > > > 
+> > > > > > > > When thinkpad_acpi.ko is unloaded, then pressing mute button again start
+> > > > > > > > switching led on/off.
+> > > > > > > > 
+> > > > > > > > So it seems that some init sequence of thinkpad_acpi.ko breaks mute led.
+> > > > > > > > And fini sequence of thinkpad_acpi.ko makes mute led working again.
+> > > > > > > 
+> > > > > > > Usually the mute LED on Thinkpad is triggered from HD-audio driver
+> > > > > > > (sound/pci/hda/thinkpad_helper.c), and it's a soft-bound via
+> > > > > > > symbol_request(tpacpi_led_set).  I thought thinkpad_acpi is
+> > > > > > > auto-loaded when the module gets bound.
+> > > > > > > 
+> > > > > > > A possible explanation would be that TPT480s has neither IBM0068,
+> > > > > > > LEN0068 nor LEN0268 ACPI HIDs, hence the driver is not auto-loaded.
+> > > > > > 
+> > > > > > I have Debian Stretch kernel (4.9) which does not have LEN0268 alias for
+> > > > > > thinkpad_acpi.ko. So thinkpad_acpi.ko is not loaded automatically. But I
+> > > > > > have put thinkpad_acpi into /etc/modules and it is now automatically
+> > > > > > loaded at boot.
+> > > > > 
+> > > > > That's odd.  It's exposed via
+> > > > >   MODULE_DEVICE_TABLE(acpi, ibm_htk_device_ids);
+> > > > > 
+> > > > > It's been already in 4.9.  At this point, something is fishy.
+> > > > 
+> > > > $ /sbin/modinfo thinkpad_acpi | grep alias
+> > > > alias:          dmi:bvnIBM:bvrI[MU]ET??WW*
+> > > > alias:          tpacpi
+> > > > alias:          acpi*:LEN0068:*
+> > > > alias:          acpi*:IBM0068:*
+> > > > 
+> > > > No there is no LEN0268 on 4.9.
+> > > 
+> > > OK, that's the cause.  It's really old.
+> > > 
+> > > The commit a3c42a467a25 ("platform/x86: thinkpad_acpi: Adding new
+> > > hotkey ID for Lenovo thinkpad") has to be backported.
+> > 
+> > This commit just autoloads thinkpad_acpi driver, right? So manual
+> > modprobe (for now) is OK too?
 > 
-> On Wednesday 30 May 2018 05:45 PM, Maciej Purski wrote:
->> From: Andrzej Hajda <a.hajda@samsung.com>
->>
->> Add a drm_bridge driver for the Toshiba TC358764 DSI to LVDS bridge.
->>
->> Signed-off-by: Andrzej Hajda <a.hajda@samsung.com>
->> Signed-off-by: Maciej Purski <m.purski@samsung.com>
->> ---
->>   drivers/gpu/drm/bridge/Kconfig    |   9 +
->>   drivers/gpu/drm/bridge/Makefile   |   1 +
->>   drivers/gpu/drm/bridge/tc358764.c | 547 ++++++++++++++++++++++++++++++++++++++
->>   3 files changed, 557 insertions(+)
->>   create mode 100644 drivers/gpu/drm/bridge/tc358764.c
->>
->> diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
->> index fa2c799..9bd3eb8 100644
->> --- a/drivers/gpu/drm/bridge/Kconfig
->> +++ b/drivers/gpu/drm/bridge/Kconfig
->> @@ -110,6 +110,15 @@ config DRM_THINE_THC63LVD1024
->>       ---help---
->>         Thine THC63LVD1024 LVDS/parallel converter driver.
->> +config DRM_TOSHIBA_TC358764
->> +    tristate "TC358764 DSI/LVDS bridge"
->> +    depends on DRM && DRM_PANEL
->> +    depends on OF
->> +    select DRM_MIPI_DSI
->> +    select VIDEOMODE_HELPERS
+> Well, the manual modprobe is superfluous if it's properly bound with
+> HD-audio driver.  The HD-audio driver calls symbol_request(), so it
+> should do modprobe by itself.
 > 
-> I don't see videomode usage in the driver, can we drop this if it isn't
-> used?
+> > > Also, in the HD-audio side, the commit 2ecb704a1290 ("ALSA: hda - add
+> > > a new condition to check if it is thinkpad") is needed, too.
+> > 
+> > This commit was introduced in 4.9 and Debian kernel has it. I looked
+> > into Debian source code and there is check for LEN0268 in file
+> > sound/pci/hda/thinkpad_helper.c
 > 
+> Then check whether the function gets really called.
 
-It seems that those are some remains of old versions. It is not required now.
+Checked, no it is not called.
 
->> +    help
->> +      Toshiba TC358764 DSI/LVDS bridge driver
->> +
->>   config DRM_TOSHIBA_TC358767
->>       tristate "Toshiba TC358767 eDP bridge"
->>       depends on OF
->> diff --git a/drivers/gpu/drm/bridge/Makefile b/drivers/gpu/drm/bridge/Makefile
->> index 35f88d4..bf7c0ce 100644
->> --- a/drivers/gpu/drm/bridge/Makefile
->> +++ b/drivers/gpu/drm/bridge/Makefile
->> @@ -10,6 +10,7 @@ obj-$(CONFIG_DRM_SIL_SII8620) += sil-sii8620.o
->>   obj-$(CONFIG_DRM_SII902X) += sii902x.o
->>   obj-$(CONFIG_DRM_SII9234) += sii9234.o
->>   obj-$(CONFIG_DRM_THINE_THC63LVD1024) += thc63lvd1024.o
->> +obj-$(CONFIG_DRM_TOSHIBA_TC358764) += tc358764.o
->>   obj-$(CONFIG_DRM_TOSHIBA_TC358767) += tc358767.o
->>   obj-$(CONFIG_DRM_ANALOGIX_DP) += analogix/
->>   obj-$(CONFIG_DRM_I2C_ADV7511) += adv7511/
->> diff --git a/drivers/gpu/drm/bridge/tc358764.c b/drivers/gpu/drm/bridge/tc358764.c
->> new file mode 100644
->> index 0000000..3109eba
->> --- /dev/null
->> +++ b/drivers/gpu/drm/bridge/tc358764.c
->> @@ -0,0 +1,547 @@
-> 
-> We'd need a SPDX license here?
->> +/*
->> + * Copyright (C) 2018 Samsung Electronics Co., Ltd
->> + *
->> + * Authors:
->> + *    Andrzej Hajda <a.hajda@samsung.com>
->> + *    Maciej Purski <m.purski@samsung.com>
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program.
->> + *
->> + */
->> +
->> +#include <drm/drm_atomic_helper.h>
->> +
->> +#include <drm/drmP.h>
->> +#include <drm/drm_mipi_dsi.h>
->> +#include <drm/drm_panel.h>
->> +
->> +#include <drm/drm_crtc.h>
->> +#include <drm/drm_crtc_helper.h>
->> +
->> +#include <linux/gpio/consumer.h>
->> +#include <linux/of_graph.h>
->> +#include <linux/regulator/consumer.h>
->> +
->> +#include <video/mipi_display.h>
->> +#include <video/of_videomode.h>
->> +#include <video/videomode.h>
->> +
->> +#define FLD_MASK(start, end)    (((1 << ((start) - (end) + 1)) - 1) << (end))
->> +#define FLD_VAL(val, start, end) (((val) << (end)) & FLD_MASK(start, end))
->> +
->> +/* PPI layer registers */
->> +#define PPI_STARTPPI        0x0104 /* START control bit */
->> +#define PPI_LPTXTIMECNT        0x0114 /* LPTX timing signal */
->> +#define PPI_LANEENABLE        0x0134 /* Enables each lane */
->> +#define PPI_TX_RX_TA        0x013C /* BTA timing parameters */
->> +#define PPI_D0S_CLRSIPOCOUNT    0x0164 /* Assertion timer for Lane 0 */
->> +#define PPI_D1S_CLRSIPOCOUNT    0x0168 /* Assertion timer for Lane 1 */
->> +#define PPI_D2S_CLRSIPOCOUNT    0x016C /* Assertion timer for Lane 2 */
->> +#define PPI_D3S_CLRSIPOCOUNT    0x0170 /* Assertion timer for Lane 3 */
->> +#define PPI_START_FUNCTION    1
->> +
->> +/* DSI layer registers */
->> +#define DSI_STARTDSI        0x0204 /* START control bit of DSI-TX */
->> +#define DSI_LANEENABLE        0x0210 /* Enables each lane */
->> +#define DSI_RX_START        1
->> +
->> +/* Video path registers */
->> +#define VP_CTRL            0x0450 /* Video Path Control */
->> +#define VP_CTRL_MSF(v)        FLD_VAL(v, 0, 0) /* Magic square in RGB666 */
->> +#define VP_CTRL_VTGEN(v)    FLD_VAL(v, 4, 4) /* Use chip clock for timing */
->> +#define VP_CTRL_EVTMODE(v)    FLD_VAL(v, 5, 5) /* Event mode */
->> +#define VP_CTRL_RGB888(v)    FLD_VAL(v, 8, 8) /* RGB888 mode */
->> +#define VP_CTRL_VSDELAY(v)    FLD_VAL(v, 31, 20) /* VSYNC delay */
->> +#define VP_CTRL_HSPOL        BIT(17) /* Polarity of HSYNC signal */
->> +#define VP_CTRL_DEPOL        BIT(18) /* Polarity of DE signal */
->> +#define VP_CTRL_VSPOL        BIT(19) /* Polarity of VSYNC signal */
->> +#define VP_HTIM1        0x0454 /* Horizontal Timing Control 1 */
->> +#define VP_HTIM1_HBP(v)        FLD_VAL(v, 24, 16)
->> +#define VP_HTIM1_HSYNC(v)    FLD_VAL(v, 8, 0)
->> +#define VP_HTIM2        0x0458 /* Horizontal Timing Control 2 */
->> +#define VP_HTIM2_HFP(v)        FLD_VAL(v, 24, 16)
->> +#define VP_HTIM2_HACT(v)    FLD_VAL(v, 10, 0)
->> +#define VP_VTIM1        0x045C /* Vertical Timing Control 1 */
->> +#define VP_VTIM1_VBP(v)        FLD_VAL(v, 23, 16)
->> +#define VP_VTIM1_VSYNC(v)    FLD_VAL(v, 7, 0)
->> +#define VP_VTIM2        0x0460 /* Vertical Timing Control 2 */
->> +#define VP_VTIM2_VFP(v)        FLD_VAL(v, 23, 16)
->> +#define VP_VTIM2_VACT(v)    FLD_VAL(v, 10, 0)
->> +#define VP_VFUEN        0x0464 /* Video Frame Timing Update Enable */
->> +
->> +/* LVDS registers */
->> +#define LV_MX0003        0x0480 /* Mux input bit 0 to 3 */
->> +#define LV_MX0407        0x0484 /* Mux input bit 4 to 7 */
->> +#define LV_MX0811        0x0488 /* Mux input bit 8 to 11 */
->> +#define LV_MX1215        0x048C /* Mux input bit 12 to 15 */
->> +#define LV_MX1619        0x0490 /* Mux input bit 16 to 19 */
->> +#define LV_MX2023        0x0494 /* Mux input bit 20 to 23 */
->> +#define LV_MX2427        0x0498 /* Mux input bit 24 to 27 */
->> +#define LV_MX(b0, b1, b2, b3)    (FLD_VAL(b0, 4, 0) | FLD_VAL(b1, 12, 8) | \
->> +                FLD_VAL(b2, 20, 16) | FLD_VAL(b3, 28, 24))
->> +
->> +/* Input bit numbers used in mux registers */
->> +enum {
->> +    LVI_R0,
->> +    LVI_R1,
->> +    LVI_R2,
->> +    LVI_R3,
->> +    LVI_R4,
->> +    LVI_R5,
->> +    LVI_R6,
->> +    LVI_R7,
->> +    LVI_G0,
->> +    LVI_G1,
->> +    LVI_G2,
->> +    LVI_G3,
->> +    LVI_G4,
->> +    LVI_G5,
->> +    LVI_G6,
->> +    LVI_G7,
->> +    LVI_B0,
->> +    LVI_B1,
->> +    LVI_B2,
->> +    LVI_B3,
->> +    LVI_B4,
->> +    LVI_B5,
->> +    LVI_B6,
->> +    LVI_B7,
->> +    LVI_HS,
->> +    LVI_VS,
->> +    LVI_DE,
->> +    LVI_L0
->> +};
->> +
->> +#define LV_CFG            0x049C /* LVDS Configuration */
->> +#define LV_PHY0            0x04A0 /* LVDS PHY 0 */
->> +#define LV_PHY0_RST(v)        FLD_VAL(v, 22, 22) /* PHY reset */
->> +#define LV_PHY0_IS(v)        FLD_VAL(v, 15, 14)
->> +#define LV_PHY0_ND(v)        FLD_VAL(v, 4, 0) /* Frequency range select */
->> +#define LV_PHY0_PRBS_ON(v)    FLD_VAL(v, 20, 16) /* Clock/Data Flag pins */
->> +
->> +/* System registers */
->> +#define SYS_RST            0x0504 /* System Reset */
->> +#define SYS_ID            0x0580 /* System ID */
->> +
->> +#define SYS_RST_I2CS        BIT(0) /* Reset I2C-Slave controller */
->> +#define SYS_RST_I2CM        BIT(1) /* Reset I2C-Master controller */
->> +#define SYS_RST_LCD        BIT(2) /* Reset LCD controller */
->> +#define SYS_RST_BM        BIT(3) /* Reset Bus Management controller */
->> +#define SYS_RST_DSIRX        BIT(4) /* Reset DSI-RX and App controller */
->> +#define SYS_RST_REG        BIT(5) /* Reset Register module */
->> +
->> +#define LPX_PERIOD        2
->> +#define TTA_SURE        3
->> +#define TTA_GET            0x20000
->> +
->> +/* Lane enable PPI and DSI register bits */
->> +#define LANEENABLE_CLEN        BIT(0)
->> +#define LANEENABLE_L0EN        BIT(1)
->> +#define LANEENABLE_L1EN        BIT(2)
->> +#define LANEENABLE_L2EN        BIT(3)
->> +#define LANEENABLE_L3EN        BIT(4)
->> +
->> +/* LVCFG fields */
->> +#define LV_CFG_LVEN        BIT(0)
->> +#define LV_CFG_LVDLINK        BIT(1)
->> +#define LV_CFG_CLKPOL1        BIT(2)
->> +#define LV_CFG_CLKPOL2        BIT(3)
->> +
->> +static const char * const tc358764_supplies[] = {
->> +    "vddc", "vddio", "vddmipi", "vddlvds133", "vddlvds112"
->> +};
->> +
->> +struct tc358764 {
->> +    struct device *dev;
->> +    struct drm_bridge bridge;
->> +    struct drm_connector connector;
->> +    struct regulator_bulk_data supplies[ARRAY_SIZE(tc358764_supplies)];
->> +    struct gpio_desc *gpio_reset;
->> +
->> +    struct drm_panel *panel;
->> +};
->> +
->> +static int tc358764_read(struct tc358764 *ctx, u16 addr, u32 *val)
->> +{
->> +    struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
->> +    const struct mipi_dsi_host_ops *ops = dsi->host->ops;
->> +    struct mipi_dsi_msg msg = {
->> +        .type = MIPI_DSI_GENERIC_READ_REQUEST_2_PARAM,
->> +        .channel = dsi->channel,
->> +        .flags = MIPI_DSI_MSG_USE_LPM,
->> +        .tx_buf = &addr,
->> +        .tx_len = 2,
->> +        .rx_buf = val,
->> +        .rx_len = 4
->> +    };
->> +    ssize_t ret;
->> +
->> +    if (!ops || !ops->transfer)
->> +        return -EINVAL;
->> +
->> +    cpu_to_le16s(&addr);
->> +
->> +    ret = ops->transfer(dsi->host, &msg);
->> +    if (ret >= 0)
->> +        le32_to_cpus(val); > +
->> +    dev_dbg(ctx->dev, "read: %d, addr: %d\n", addr, *val);
->> +
->> +    return ret;
->> +}
->> +
->> +static int tc358764_write(struct tc358764 *ctx, u16 addr, u32 val)
->> +{
->> +    struct mipi_dsi_device *dsi = to_mipi_dsi_device(ctx->dev);
->> +    const struct mipi_dsi_host_ops *ops = dsi->host->ops;
->> +    u8 data[6];
->> +    int ret;
->> +    struct mipi_dsi_msg msg = {
->> +        .type = MIPI_DSI_GENERIC_LONG_WRITE,
->> +        .channel = dsi->channel,
->> +        .flags = MIPI_DSI_MSG_USE_LPM | MIPI_DSI_MSG_REQ_ACK,
->> +        .tx_buf = data,
->> +        .tx_len = 6
->> +    };
->> +
->> +    if (!ops || !ops->transfer)
->> +        return -EINVAL;
->> +
->> +    data[0] = addr;
->> +    data[1] = addr >> 8;
->> +    data[2] = val;
->> +    data[3] = val >> 8;
->> +    data[4] = val >> 16;
->> +    data[5] = val >> 24;
->> +
->> +    ret = ops->transfer(dsi->host, &msg);
->> +
->> +    return ret;
->> +}
->> +
->> +static inline struct tc358764 *bridge_to_tc358764(struct drm_bridge *bridge)
->> +{
->> +    return container_of(bridge, struct tc358764, bridge);
->> +}
->> +
->> +static inline
->> +struct tc358764 *connector_to_tc358764(struct drm_connector *connector)
->> +{
->> +    return container_of(connector, struct tc358764, connector);
->> +}
->> +
->> +static int tc358764_init(struct tc358764 *ctx)
->> +{
->> +    u32 v = 0;
->> +
->> +    tc358764_read(ctx, SYS_ID, &v);
->> +    dev_info(ctx->dev, "ID: %#x\n", v);
->> +
->> +    /* configure PPI counters */
->> +    tc358764_write(ctx, PPI_TX_RX_TA, TTA_GET | TTA_SURE);
->> +    tc358764_write(ctx, PPI_LPTXTIMECNT, LPX_PERIOD);
->> +    tc358764_write(ctx, PPI_D0S_CLRSIPOCOUNT, 5);
->> +    tc358764_write(ctx, PPI_D1S_CLRSIPOCOUNT, 5);
->> +    tc358764_write(ctx, PPI_D2S_CLRSIPOCOUNT, 5);
->> +    tc358764_write(ctx, PPI_D3S_CLRSIPOCOUNT, 5);
->> +
->> +    /* enable four data lanes and clock lane */
->> +    tc358764_write(ctx, PPI_LANEENABLE, LANEENABLE_L3EN | LANEENABLE_L2EN |
->> +               LANEENABLE_L1EN | LANEENABLE_L0EN | LANEENABLE_CLEN);
->> +    tc358764_write(ctx, DSI_LANEENABLE, LANEENABLE_L3EN | LANEENABLE_L2EN |
->> +               LANEENABLE_L1EN | LANEENABLE_L0EN | LANEENABLE_CLEN);
->> +
->> +    /* start */
->> +    tc358764_write(ctx, PPI_STARTPPI, PPI_START_FUNCTION);
->> +    tc358764_write(ctx, DSI_STARTDSI, DSI_RX_START);
->> +
->> +    /* configure video path */
->> +    tc358764_write(ctx, VP_CTRL, VP_CTRL_VSDELAY(15) | VP_CTRL_RGB888(1) |
->> +               VP_CTRL_EVTMODE(1) | VP_CTRL_HSPOL | VP_CTRL_VSPOL);
-> 
-> Could we specify somewhere that
+Now I see that snd_hda_codec_generic is visible in lsmod and thinkpad
+helper is compiled only into snd-hda-codec-realtek and
+snd-hda-codec-conexant... Therefore nobody is even trying to use that
+function.
 
-Could you clarify, what do you mean here?
+And yes, sound playback and microphone recording is working.
 
->> +
->> +    /* reset PHY */
->> +    tc358764_write(ctx, LV_PHY0, LV_PHY0_RST(1) |
->> +               LV_PHY0_PRBS_ON(4) | LV_PHY0_IS(2) | LV_PHY0_ND(6));
->> +    tc358764_write(ctx, LV_PHY0, LV_PHY0_PRBS_ON(4) | LV_PHY0_IS(2) |
->> +               LV_PHY0_ND(6));
->> +
->> +    /* reset bridge */
->> +    tc358764_write(ctx, SYS_RST, SYS_RST_LCD);
->> +
->> +    /* set bit order */
->> +    tc358764_write(ctx, LV_MX0003, LV_MX(LVI_R0, LVI_R1, LVI_R2, LVI_R3));
->> +    tc358764_write(ctx, LV_MX0407, LV_MX(LVI_R4, LVI_R7, LVI_R5, LVI_G0));
->> +    tc358764_write(ctx, LV_MX0811, LV_MX(LVI_G1, LVI_G2, LVI_G6, LVI_G7));
->> +    tc358764_write(ctx, LV_MX1215, LV_MX(LVI_G3, LVI_G4, LVI_G5, LVI_B0));
->> +    tc358764_write(ctx, LV_MX1619, LV_MX(LVI_B6, LVI_B7, LVI_B1, LVI_B2));
->> +    tc358764_write(ctx, LV_MX2023, LV_MX(LVI_B3, LVI_B4, LVI_B5, LVI_L0));
->> +    tc358764_write(ctx, LV_MX2427, LV_MX(LVI_HS, LVI_VS, LVI_DE, LVI_R6));
->> +    tc358764_write(ctx, LV_CFG, LV_CFG_CLKPOL2 | LV_CFG_CLKPOL1 |
->> +               LV_CFG_LVEN);
->> +
->> +    return 0;
->> +}
->> +
->> +static void tc358764_reset(struct tc358764 *ctx)
->> +{
->> +    msleep(20);
->> +    gpiod_set_value(ctx->gpio_reset, 0);
->> +    msleep(20);
->> +    gpiod_set_value(ctx->gpio_reset, 1);
->> +    msleep(40);
->> +}
->> +
->> +static void tc358764_poweroff(struct tc358764 *ctx)
->> +{
->> +    int ret;
->> +
->> +    tc358764_reset(ctx);
->> +
->> +    drm_panel_disable(ctx->panel);
->> +    msleep(40);
->> +
->> +    ret = regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
->> +    if (ret < 0)
->> +        dev_err(ctx->dev, "error disabling regulators (%d)\n", ret);
->> +}
->> +
->> +static int tc358764_get_modes(struct drm_connector *connector)
->> +{
->> +    struct tc358764 *ctx = connector_to_tc358764(connector);
->> +
->> +    if (ctx->panel && ctx->panel->funcs && ctx->panel->funcs->get_modes)
->> +        return ctx->panel->funcs->get_modes(ctx->panel);
->> +
->> +    return 0;
->> +}
->> +
->> +static const
->> +struct drm_connector_helper_funcs tc358764_connector_helper_funcs = {
->> +    .get_modes = tc358764_get_modes,
->> +};
->> +
->> +static const struct drm_connector_funcs tc358764_connector_funcs = {
->> +    .fill_modes = drm_helper_probe_single_connector_modes,
->> +    .destroy = drm_connector_cleanup,
->> +    .reset = drm_atomic_helper_connector_reset,
->> +    .atomic_duplicate_state = drm_atomic_helper_connector_duplicate_state,
->> +    .atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
->> +};
->> +
->> +static void tc358764_disable(struct drm_bridge *bridge)
->> +{
->> +    struct tc358764 *ctx = bridge_to_tc358764(bridge);
->> +
->> +    tc358764_poweroff(ctx);
->> +}
->> +
->> +static void tc358764_pre_enable(struct drm_bridge *bridge)
->> +{
->> +    struct tc358764 *ctx = bridge_to_tc358764(bridge);
->> +    int ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies),
->> +                    ctx->supplies);
->> +    if (ret < 0)
->> +        dev_err(ctx->dev, "error enabling regulators (%d)\n", ret);
->> +
->> +    tc358764_reset(ctx);
->> +    tc358764_init(ctx);
->> +}
->> +
->> +static void tc358764_enable(struct drm_bridge *bridge)
->> +{
->> +    struct tc358764 *ctx = bridge_to_tc358764(bridge);
->> +    int ret;
->> +
->> +    drm_panel_prepare(ctx->panel);
->> +
->> +    ret = drm_panel_enable(ctx->panel);
->> +    if (ret < 0)
->> +        pr_err("panel enable failed\n");
->> +
->> +    msleep(40);
->> +}
->> +
->> +static int tc358764_attach(struct drm_bridge *bridge)
->> +{
->> +    struct tc358764 *ctx = bridge_to_tc358764(bridge);
->> +    struct drm_device *drm = bridge->dev;
->> +    int ret;
->> +
->> +    if (!bridge->encoder) {
->> +        DRM_ERROR("Encoder not found\n");
->> +        return -ENODEV;
->> +    }
->> +
->> +    ctx->connector.polled = DRM_CONNECTOR_POLL_HPD;
->> +    ret = drm_connector_init(drm, &ctx->connector,
->> +                 &tc358764_connector_funcs,
->> +                 DRM_MODE_CONNECTOR_LVDS);
->> +    if (ret) {
->> +        DRM_ERROR("Failed to initialize connector\n");
->> +        return ret;
->> +    }
->> +
->> +    drm_connector_helper_add(&ctx->connector,
->> +                 &tc358764_connector_helper_funcs);
->> +
->> +    drm_mode_connector_attach_encoder(&ctx->connector, bridge->encoder);
->> +
->> +    if (ctx->panel)
->> +        drm_panel_attach(ctx->panel, &ctx->connector);
->> +
->> +    drm_atomic_helper_connector_reset(&ctx->connector);
->> +    drm_connector_register(&ctx->connector);
->> +
->> +    return 0;
->> +}
->> +
->> +static const struct drm_bridge_funcs tc358764_bridge_funcs = {
->> +    .disable = tc358764_disable,
->> +    .enable = tc358764_enable,
->> +    .pre_enable = tc358764_pre_enable,
->> +    .attach = tc358764_attach,
->> +};
->> +
->> +static struct device_node *tc358764_of_find_panel_node(struct device *dev)
->> +{
->> +    struct device_node *np, *ep;
->> +
->> +    ep = of_graph_get_endpoint_by_regs(dev->of_node, 1, 0);
->> +    if (!ep) {
->> +        pr_err("faile to get endpoint\n");
->> +        return NULL;
->> +    }
->> +
->> +    np = of_graph_get_remote_port_parent(ep);
->> +
->> +    return np;
->> +}
->> +
->> +static int tc358764_parse_dt(struct tc358764 *ctx)
->> +{
->> +    struct device *dev = ctx->dev;
->> +    struct device_node *np = dev->of_node;
->> +    struct device_node *lvds;
->> +
->> +    ctx->gpio_reset = devm_gpiod_get_from_of_node(dev, np, "reset", 0,
->> +                              GPIOD_OUT_LOW,
->> +                              "tc358764-reset");
->> +    if (IS_ERR(ctx->gpio_reset)) {
->> +        dev_err(dev, "no reset GPIO pin provided\n");
->> +        return PTR_ERR(ctx->gpio_reset);
->> +    }
->> +
->> +    lvds = tc358764_of_find_panel_node(ctx->dev);
->> +    if (!lvds) {
->> +        dev_err(dev, "cannot find panel node\n");
->> +        return -EINVAL;
->> +    }
->> +
->> +    ctx->panel = of_drm_find_panel(lvds);
->> +    if (!ctx->panel) {
->> +        dev_err(dev, "panel not registered\n");
->> +        return -EPROBE_DEFER;
->> +    }
->> +
->> +    return 0;
->> +}
->> +
->> +static int tc358764_configure_regulators(struct tc358764 *ctx)
->> +{
->> +    int i, ret;
->> +
->> +    for (i = 0; i < ARRAY_SIZE(ctx->supplies); ++i)
->> +        ctx->supplies[i].supply = tc358764_supplies[i];
->> +
->> +    ret = devm_regulator_bulk_get(ctx->dev, ARRAY_SIZE(ctx->supplies),
->> +                      ctx->supplies);
->> +    if (ret < 0)
->> +        dev_err(ctx->dev, "failed to get regulators: %d\n", ret);
->> +
->> +    return ret;
->> +}
->> +
->> +static int tc358764_probe(struct mipi_dsi_device *dsi)
->> +{
->> +    struct device *dev = &dsi->dev;
->> +    struct tc358764 *ctx;
->> +    int ret;
->> +
->> +    ctx = devm_kzalloc(dev, sizeof(struct tc358764), GFP_KERNEL);
->> +    if (!ctx)
->> +        return -ENOMEM;
->> +
->> +    mipi_dsi_set_drvdata(dsi, ctx);
->> +
->> +    ctx->dev = dev;
->> +
->> +    dsi->lanes = 4;
->> +    dsi->format = MIPI_DSI_FMT_RGB888;
->> +    dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST
->> +        | MIPI_DSI_MODE_VIDEO_AUTO_VERT;
 > 
-> if you use the mipi_dsi_device_transfer() helper, I guess you'd need to
-> add the LPM flag here.
+> > > > > > I also compiled upstream version of thinkpad_acpi.ko, loaded it in
+> > > > > > Stretch kernel, but it behaves in same way.
+> > > > > >
+> > > > > > Maybe... there could be a problem that thinkpad_acpi.ko must be already
+> > > > > > loaded when sound subsystem is doing initialization? If yes, this could
+> > > > > > explain it as /etc/modules is loaded at later stage and manually loading
+> > > > > > of new version of thinkpad_acpi.ko at runtime does not help when sound
+> > > > > > subsystem is already running.
+> > > > > 
+> > > > > Not really.  The HD-audio driver tries to bind with tpacpi_led_set()
+> > > > > via symbol_request().  i.e. if it's not present, it tries to load a
+> > > > > module.
+> > > > > 
+> > > > > Check whether hda_fixup_thinkpad_acpi() is called and the symbol gets
+> > > > > loaded or not.
+> > > > > 
+> > > > > But, I don't think it's worth to debug such an old kernel primarily.
+> > > > 
+> > > > It is default one used by the last released Debian stable version.
+> > > 
+> > > Heh, that explains :)
+> > > 
+> > > And there was a recent regression in HD-audio that was addressed in
+> > > 4.9.104.  If you're using some earlier 4.9.x, you might hit the
+> > > problem regarding HD-audio thinkpad_acpi binding.
+> > 
+> > Debian has currently 4.9.88.
+> > 
+> > > (But I guess it doesn't work in anyway without the backport of the
+> > >  commit above.)
+> > 
+> > Which change/regression it is? As 2ecb704a1290 is already part of 4.9 I
+> > think this is a problem why it is not working...
 > 
+> It's 71bff398b0d4 that is in 4.9.104.
+> 
+> But you should really try the latest upstream kernel before spending
+> too much time (not only yours but also others).
 
-I'll check, if we can use the helper instead of calling ops->transfer() directly.
+Now I see that in Debian backports is some 4.16.12 kernel version. I can
+try this one (and later compile one from Linus tree).
 
-Thanks,
+> 
+> Takashi
+> 
+> 
+> > > > > Could you test the latest Linus tree or 4.17.x at least as a test
+> > > > > basis?
+> > > > 
+> > > > Ok, will do that later.
+> > > 
+> > > If my analysis above is correct, everything should work with the
+> > > recent upstream kernel as is.
+> > > 
+> > > Once after you confirm it, I can cook a patch to add the mixer enum to
+> > > change LED behavior as you wanted.
+> > > 
+> > > 
+> > > Takashi
+> > 
+> > -- 
+> > Pali Rohár
+> > pali.rohar@gmail.com
+> > 
 
-Maciej Purski
-
-> Looks good to me otherwise. Once the DT port issue is concluded:
-> 
-> Reviewed-by: Archit Taneja <architt@codeaurora.org>
-> 
->> +
->> +    ret = tc358764_parse_dt(ctx);
->> +    if (ret < 0)
->> +        return ret;
->> +
->> +    ret = tc358764_configure_regulators(ctx);
->> +    if (ret < 0)
->> +        return ret;
->> +
->> +    ctx->bridge.funcs = &tc358764_bridge_funcs;
->> +    ctx->bridge.of_node = dev->of_node;
->> +
->> +    drm_bridge_add(&ctx->bridge);
->> +
->> +    ret = mipi_dsi_attach(dsi);
->> +    if (ret < 0) {
->> +        drm_bridge_remove(&ctx->bridge);
->> +        dev_err(dev, "failed to attach dsi\n");
->> +    }
->> +
->> +    return ret;
->> +}
->> +
->> +static int tc358764_remove(struct mipi_dsi_device *dsi)
->> +{
->> +    struct tc358764 *ctx = mipi_dsi_get_drvdata(dsi);
->> +
->> +    tc358764_poweroff(ctx);
->> +
->> +    mipi_dsi_detach(dsi);
->> +    drm_bridge_remove(&ctx->bridge);
->> +
->> +    return 0;
->> +}
->> +
->> +static const struct of_device_id tc358764_of_match[] = {
->> +    { .compatible = "toshiba,tc358764" },
->> +    { }
->> +};
->> +MODULE_DEVICE_TABLE(of, tc358764_of_match);
->> +
->> +static struct mipi_dsi_driver tc358764_driver = {
->> +    .probe = tc358764_probe,
->> +    .remove = tc358764_remove,
->> +    .driver = {
->> +        .name = "tc358764",
->> +        .owner = THIS_MODULE,
->> +        .of_match_table = tc358764_of_match,
->> +    },
->> +};
->> +module_mipi_dsi_driver(tc358764_driver);
->> +
->> +MODULE_AUTHOR("Andrzej Hajda <a.hajda@samsung.com>");
->> +MODULE_AUTHOR("Maciej Purski <m.purski@samsung.com>");
->> +MODULE_DESCRIPTION("MIPI-DSI based Driver for TC358764 DSI/LVDS Bridge");
->> +MODULE_LICENSE("GPL v2");
->>
-> 
-> 
-> 
+-- 
+Pali Rohár
+pali.rohar@gmail.com
