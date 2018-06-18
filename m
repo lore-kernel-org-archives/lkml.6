@@ -6,110 +6,103 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E35FC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:52:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06271C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB26820864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:52:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29FE820864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 04:53:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Et2pugS8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB26820864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (1024-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="W4Ee4sXU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29FE820864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=alliedtelesis.co.nz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1754229AbeFREww (ORCPT
+        id S1754637AbeFRExM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 00:52:52 -0400
-Received: from ozlabs.org ([203.11.71.1]:51399 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1751462AbeFREwv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 00:52:51 -0400
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        Mon, 18 Jun 2018 00:53:12 -0400
+Received: from gate2.alliedtelesis.co.nz ([202.36.163.20]:43533 "EHLO
+        gate2.alliedtelesis.co.nz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754264AbeFRExJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 00:53:09 -0400
+Received: from mmarshal3.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 418Jcb32bFz9s19;
-        Mon, 18 Jun 2018 14:52:47 +1000 (AEST)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1529297569;
-        bh=IbUwjOT7XkQoHbO/poxdscWaOnabfkhsCC6FnLHcPOw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Et2pugS8ioU9PeYy+6t0z2ik4/U1JBAXeySMR5LArFlC4ovNQ6nsBVYrXIwsHR7tw
-         yI4qkNY65Yhg/wKUbAhu/CVCy1cxM4E0dGiCWhK7z136rA/qRe2br7XwSFu70UIKa8
-         xHL3TnhAy5PAzJ2+ThQvrJQIYOJu4PaOyLj0sQqzozna4ylzYsXqwhFCHMBDr1guu8
-         aOGufbUvbEAJgeaSJ7djY9EEoNz5lpRyJNR3PJdomyfuzCrPipFT/F0n1pHL1G2Ey6
-         7KKF1N67Cs/UmjDBUEqAZyill+b4Qjp/O6eF4IHu1SWf5QTStpzLwiBG/A14EhO/sp
-         MmHOfDzW8VBow==
-Date:   Mon, 18 Jun 2018 14:52:46 +1000
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Dmitry Vyukov <dvyukov@google.com>
-Cc:     "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Guenter Roeck <groeck@google.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        syzkaller <syzkaller@googlegroups.com>,
-        David Miller <davem@davemloft.net>,
-        Wu Fengguang <fengguang.wu@intel.com>
-Subject: Re: what trees/branches to test on syzbot
-Message-ID: <20180618145246.7e143279@canb.auug.org.au>
-In-Reply-To: <CACT4Y+adoSOyhLNuWF7ZCS-e7SxZu89O1VLXV5NZjg_c6U3B-w@mail.gmail.com>
-References: <CACT4Y+bvA6hrVT5u-Cy_zJLNTM5SYf9kt+sXYmfq13rPGfiqFQ@mail.gmail.com>
-        <CABXOdTf+CoB6EkhG1yPtB4NNtohbex=ebHLX7YW5TyQQGn9byw@mail.gmail.com>
-        <CACT4Y+aGMoobn069+Lq1BT2YGqi9qYY9vHFtiXT2DLsJ5ZUh9Q@mail.gmail.com>
-        <873735n3dy.fsf@xmission.com>
-        <20180116173440.GA15893@kroah.com>
-        <CACT4Y+Yy4YZG54xXfR1QNM0i8aS66BZyCnaD2YuooYo2sGuSLg@mail.gmail.com>
-        <81a0eb59-c204-9e36-13b7-88c2ea99ceab@I-love.SAKURA.ne.jp>
-        <CA+55aFzJaHyKBg_PTS85Y5RxUsQEerJ_Lc5HY1dd1YNztf==Wg@mail.gmail.com>
-        <20180610015107.GC5020@thunk.org>
-        <CACT4Y+Z-+5XhmyVcLjEf6531GKC-b+JL9kes-vjWF5PXJNvqrw@mail.gmail.com>
-        <20180611012250.GD5020@thunk.org>
-        <CACT4Y+adoSOyhLNuWF7ZCS-e7SxZu89O1VLXV5NZjg_c6U3B-w@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/vokJnPJiC/RY+Iik7_Ox5pl"; protocol="application/pgp-signature"
+        (Client did not present a certificate)
+        by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 0392284482;
+        Mon, 18 Jun 2018 16:53:05 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+        s=mail; t=1529297585;
+        bh=3eYD2wmwBCAIbnK67fTH6Tf0uFLuelNiNR/YxcbSwlY=;
+        h=From:To:Cc:Subject:Date;
+        b=W4Ee4sXU1u6zYiZiAWxYqQPnSylyDsgR9QGycRWkm5/MaveJjFmT+lMUbPodi+b6v
+         XOE2FW4F3uFq8P91D00Tl5SeQuDq6smhBWHLg07YAMxc0seqtt9/qRIQMn7jxt2hBu
+         /hGHELAMzJqip+e1tqDLJHxuyIYRDyq9ci+v/cSM=
+Received: from smtp (Not Verified[10.32.16.33]) by mmarshal3.atlnz.lc with Trustwave SEG (v7,5,8,10121)
+        id <B5b273ab00000>; Mon, 18 Jun 2018 16:53:04 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+        by smtp (Postfix) with ESMTP id D7C6A13EED3;
+        Mon, 18 Jun 2018 16:53:07 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+        id BE0C71E2626; Mon, 18 Jun 2018 16:53:04 +1200 (NZST)
+From:   Chris Packham <chris.packham@alliedtelesis.co.nz>
+To:     miquel.raynal@bootlin.com, boris.brezillon@bootlin.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com,
+        linux-mtd@lists.infradead.org
+Cc:     linux-kernel@vger.kernel.org,
+        Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [RFC PATCH 0/2] mtd: rawnand: support MT29F1G08ABAFAWP-ITE:F
+Date:   Mon, 18 Jun 2018 16:52:53 +1200
+Message-Id: <20180618045255.8015-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/vokJnPJiC/RY+Iik7_Ox5pl
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-Hi Dmitry,
+I'm looking at adding support for the Micron MT29F1G08ABAFAWP-ITE:F chip
+to one of our boards which uses the Marvell NFCv2 controller.
 
-On Fri, 15 Jun 2018 11:54:16 +0200 Dmitry Vyukov <dvyukov@google.com> wrote:
->
-> Re backwards bisection (when bug is introduced), we can actually test
-> linux-next-history instead of linux-next, right?
+This particular chip is a bit odd in that the datasheet states support
+for ONFI 1.0 but the revision number field is 00 00. It also is marked
+ABAFA but reports internally as ABAGA. Finally it has internal 8-bit ECC
+which cannot be disabled.
 
-I don't see why using linux-next-history would be any better, it just
-contains all the linux-next releases while the linux-next tree contains
-the last 3 months worth.
+I think that last point may cause some hassle since the internal ECC
+implementation is probably not compatible with the Marvell NFCv2
+implementation.
 
---=20
-Cheers,
-Stephen Rothwell
+This series is very much RFC because even with these changes so far I
+don't have a working system.
 
---Sig_/vokJnPJiC/RY+Iik7_Ox5pl
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+Here's a dump of the parameter page if anyone is interested
 
------BEGIN PGP SIGNATURE-----
+00000000: 4f 4e 46 49 00 00 18 00 3f 00 00 00 00 00 00 00 ONFI....?.......
+00000010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000020: 4d 49 43 52 4f 4e 20 20 20 20 20 20 4d 54 32 39  MICRON MT29
+00000030: 46 31 47 30 38 41 42 41 47 41 57 50 20 20 20 20  F1G08ABAGAWP    
+00000040: 2c 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ,...............
+00000050: 00 08 00 00 80 00 00 02 00 00 20 00 40 00 00 00  ..........  .@...
+00000060: 00 04 00 00 01 22 01 14 00 01 05 08 00 00 04 00 ....."..........
+00000070: 08 01 0e 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+00000080: 08 3f 00 3f 00 58 02 10 27 46 00 64 00 00 00 00 .?.?.X..'F.d....
+00000090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000a0: 00 00 00 00 01 00 00 00 00 02 04 80 01 81 04 03 ................
+000000b0: 02 01 1e 90 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000c0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000d0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000e0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ................
+000000f0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 85 a6 ................
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlsnOp4ACgkQAVBC80lX
-0GwCMgf/fwfAXLhXEKHOGrZrGQG8ai8ev6yibBw5a+qABsGmHvR34HNszTNHIcgQ
-Kfqgl1yuQJXQyGvtwg70JbfkxvNs1ktg62Xlc2oa6CDQpiUKUfF5EgCuGG880wUa
-9mpe4bDT7wXUOgi0JugMgY5Mdcg1Ys/QfjxDvbEJSeMOoxb6LRI1OONvvQDHpwIW
-r6m0Fs8d+xan8oBUoJZU04ZddyvpvN8VynQnhZXONOCY02x+Tr7qsCBWAmUBIrI5
-taUbYq0ZtIps5n2bOXZIbuFmtwLs6LKHR8ogg2PdAhizX765oO7Gz8r7SdnAiEYQ
-a84izGXfR7/E+vA+SaSDMU0SQQIj1A==
-=D18L
------END PGP SIGNATURE-----
+Chris Packham (2):
+  mtd: rawnand: handle ONFI revision number field being 0
+  mtd: rawnand: marvell: Support page size of 2048 with 8-bit ECC
 
---Sig_/vokJnPJiC/RY+Iik7_Ox5pl--
+ drivers/mtd/nand/raw/marvell_nand.c | 1 +
+ drivers/mtd/nand/raw/nand_base.c    | 2 ++
+ 2 files changed, 3 insertions(+)
+
+-- 
+2.17.1
+
