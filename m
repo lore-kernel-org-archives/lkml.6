@@ -2,150 +2,98 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6418CC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:28:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 754B1C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:32:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE2EF208D5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:28:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE2EF208D5
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 236332083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:32:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uyrz08e9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 236332083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755192AbeFRQ23 (ORCPT
+        id S1755300AbeFRQcR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:28:29 -0400
-Received: from mga18.intel.com ([134.134.136.126]:42777 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1754136AbeFRQ22 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:28:28 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 09:28:28 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
-   d="scan'208";a="233521229"
-Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
-  by orsmga005.jf.intel.com with ESMTP; 18 Jun 2018 09:28:27 -0700
-Subject: Re: [PATCHv3 15/17] x86/mm: Implement sync_direct_mapping()
-To:     "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, x86@kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-References: <20180612143915.68065-1-kirill.shutemov@linux.intel.com>
- <20180612143915.68065-16-kirill.shutemov@linux.intel.com>
-Cc:     Kai Huang <kai.huang@linux.intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <848a6836-1f54-4775-0b87-e926d7b7991d@intel.com>
-Date:   Mon, 18 Jun 2018 09:28:27 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 18 Jun 2018 12:32:17 -0400
+Received: from mail-ot0-f196.google.com ([74.125.82.196]:33172 "EHLO
+        mail-ot0-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1754587AbeFRQcQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 12:32:16 -0400
+Received: by mail-ot0-f196.google.com with SMTP id h6-v6so19217631otj.0
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 09:32:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=hzDvwOg37zlqHvHZUx5d0S4ZP+RU8rXMZ8sb3ohVwtI=;
+        b=uyrz08e9sKTwim9n+p+GLhfoYxeeml7bneji9wAkEvwaTXlW3dULWCZTbk2VGc0mOS
+         COmUyosd30J2RmuTyX7qtE9a5tqCCFH2bUoLoCP6G9H/OW5ZQQE5//4PaSYSQtlAYWoT
+         Hwqfk2HNVjHsAvkunuRteiRw79Alu6GPA/qpSgTooad8VvIqcBcyxnbs4Odfl5N6OC5k
+         zpwNipsG4oGEuxMrTXFWIy1x4c0n/BNVdCuXN49y7Gdhk3DEyT1cb0JoopVObq1bdYEK
+         2oVuslHm3uVBllQ/6tWcX+c/XQVYw296ITp4zb4wvLUuGZvU8QQwYo8CanuY6PDLDi1Y
+         mCeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=hzDvwOg37zlqHvHZUx5d0S4ZP+RU8rXMZ8sb3ohVwtI=;
+        b=gRrQfeNCqFeOHIsHvlHczf0KMpSi4oVyzW35Q0euGSnl5XGOdHitXNPxs3V4BFHFUf
+         ehRu2NJNN60IbBDaKnB6xqmfgDcIBnoonJe1NkynytBJ06y4grWmgAJTBmQTjCkzqWDG
+         8ZgJ1wuBaQUAxw0tlt2oemuo64Ya1iufuJRBy0VO6XxGpL0MsXzVIDZv6NB9WQ73W0zN
+         41XyqxQg6caB1Wp3OSYetbFDNVLZBsLrv4RTRCCDz5zdE6BTOquOxDUi3KqPkhyZBfJ8
+         OAVJkdW7pA0q8nHp7nsrpkMQcD2MH63PXrNn0FaRADMkyI6BNA4ZCntPhDWe7gk/hqOS
+         NhMQ==
+X-Gm-Message-State: APt69E3EFqU55WkCHeaUvMaFWMyMnbZZmz/SrrpIeJDpKiqGyXzJDsXk
+        tX37AqdpGjyX15n6TKX75DPo2xOlz2kEM833/z8=
+X-Google-Smtp-Source: ADUXVKLtSOby72XvN6AEULuSe4wxCZRbolp7xPwE43Xc7dkCsy7PGwKrghx/iIHnH5PvjSuDKON6znzy63Ck8OOdamo=
+X-Received: by 2002:a9d:30c2:: with SMTP id r2-v6mr8615409otg.25.1529339535235;
+ Mon, 18 Jun 2018 09:32:15 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20180612143915.68065-16-kirill.shutemov@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Received: by 2002:a9d:1049:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 09:32:14
+ -0700 (PDT)
+In-Reply-To: <abacbb7485b0c9b908eae8ae87be9d8e0eab87b3.1529327283.git.leonard.crestez@nxp.com>
+References: <abacbb7485b0c9b908eae8ae87be9d8e0eab87b3.1529327283.git.leonard.crestez@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Mon, 18 Jun 2018 13:32:14 -0300
+Message-ID: <CAOMZO5AJH=Ay4MPt1Gi8LxmUSfhg3dMdcHRjsFzzQ9ZxD72TjA@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: imx7d-sdb: Remove duplicate regulator-can2-3v3
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Robby Cai <robby.cai@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> index 17383f9677fa..032b9a1ba8e1 100644
-> --- a/arch/x86/mm/init_64.c
-> +++ b/arch/x86/mm/init_64.c
-> @@ -731,6 +731,8 @@ kernel_physical_mapping_init(unsigned long paddr_start,
->  		pgd_changed = true;
->  	}
->  
-> +	sync_direct_mapping();
-> +
->  	if (pgd_changed)
->  		sync_global_pgds(vaddr_start, vaddr_end - 1);
->  
-> @@ -1142,10 +1144,13 @@ void __ref vmemmap_free(unsigned long start, unsigned long end,
->  static void __meminit
->  kernel_physical_mapping_remove(unsigned long start, unsigned long end)
->  {
-> +	int ret;
->  	start = (unsigned long)__va(start);
->  	end = (unsigned long)__va(end);
->  
->  	remove_pagetable(start, end, true, NULL);
-> +	ret = sync_direct_mapping();
-> +	WARN_ON(ret);
->  }
+On Mon, Jun 18, 2018 at 10:11 AM, Leonard Crestez
+<leonard.crestez@nxp.com> wrote:
+> Two different regulators are defined with the same name and label but
+> distinct properties.
+>
+> The first definition was added with the first board dts and the second
+> was added when upstream added flexcan support.
+>
+> Looking at schematics it is indeed gpio2 14 connected to the STB pin of
+> the CAN transceiver so remove the first definition.
+>
+> The second definition entirely overrides the first so this already
+> worked and this patch results in no DTB change, just a cleanup.
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-I understand why you implemented it this way, I really do.  It's
-certainly the quickest way to hack something together and make a
-standalone piece of code.  But, I don't think it's maintainable.
-
-For instance, this call to sync_direct_mapping() could be entirely
-replaced by a call to:
-
-	for_each_keyid(k)...
-		remove_pagetable(start + offset_per_keyid * k,
-			         end   + offset_per_keyid * k,
-				 true, NULL);
-
-No?
-
->  int __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *altmap)
-> @@ -1290,6 +1295,7 @@ void mark_rodata_ro(void)
->  			(unsigned long) __va(__pa_symbol(rodata_end)),
->  			(unsigned long) __va(__pa_symbol(_sdata)));
->  
-> +	sync_direct_mapping();
->  	debug_checkwx();
-
-Huh, checking the return code in some cases and not others.  Curious.
-Why is it that way?
+Reviewed-by: Fabio Estevam <fabio.estevam@nxp.com>
