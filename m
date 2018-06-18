@@ -2,107 +2,97 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB188C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5241AC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:10:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7013A20874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:07:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7013A20874
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id F352720874
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:10:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XYhfLd06"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F352720874
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933487AbeFRIHx (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:07:53 -0400
-Received: from mx2.suse.de ([195.135.220.15]:55646 "EHLO mx2.suse.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S932650AbeFRIHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:07:52 -0400
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (charybdis-ext-too.suse.de [195.135.220.254])
-        by mx2.suse.de (Postfix) with ESMTP id DEF97ACCB;
-        Mon, 18 Jun 2018 08:07:50 +0000 (UTC)
-Subject: Re: [PATCH v2] x86/pti: don't report XenPV as vulnerable
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@suse.de>,
-        Mike Latimer <mlatimer@suse.com>, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-References: <nycvar.YFH.7.76.1806150025220.6203@cbobk.fhfr.pm>
- <a5bfcabb-827b-fbf7-9395-de9332697c25@suse.com>
- <nycvar.YFH.7.76.1806150801530.6203@cbobk.fhfr.pm>
- <ff9f4a24-6e69-cc7b-ba75-e82c9182a805@suse.com>
- <nycvar.YFH.7.76.1806150815440.6203@cbobk.fhfr.pm>
- <821642fe-775b-e68c-2a66-73b73c810289@suse.com>
- <nycvar.YFH.7.76.1806150837100.6203@cbobk.fhfr.pm>
- <37a18a24-7825-9e75-39a7-a66086a5e3a6@suse.com>
- <nycvar.YFH.7.76.1806152304400.6203@cbobk.fhfr.pm>
- <c8d238e9-2109-3fd2-01b8-37a7c5815fce@suse.com>
- <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
-From:   Juergen Gross <jgross@suse.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jgross@suse.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <457f3e13-12e6-ed2f-5165-e413801a2172@suse.com>
-Date:   Mon, 18 Jun 2018 10:07:49 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S933346AbeFRIKJ (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 04:10:09 -0400
+Received: from bombadil.infradead.org ([198.137.202.133]:60844 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S932918AbeFRIKI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 04:10:08 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=x2dJnZekaDdeDwD7hQgNuSNkI/1aHMsETvW1BOmt+Oo=; b=XYhfLd06BixRLxQkFTCa/k4gN
+        71MrJ9OymIMWh5REZIYwAoFR6khRiSqZRMacbTvNzNaCShGKsf3H2dx8KDk3821+2OCQxAPf11H1v
+        aSmuV5YRhPDwkBco6dvb4z5zOOZ83nGkr5i9N/xQ4pgldFshPCirWIaq5uw6gl//5p3GiSMkTSN4C
+        jn7l9MoqWIYLerbYjznoBjC29UUfC1s9U7Errg1K+ZZyH1yTi0cHyE+Dqy19o9IxyyWgXW+u54+HD
+        wufYckbfWwlSiCXfMgN3roLujHHOvErLWtE4O0se1FS6lyTWGpALY0JM7j/KFd0CnFNP6k/nGDlXs
+        Yn9nbTIzQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1fUpEi-0005cB-2G; Mon, 18 Jun 2018 08:10:04 +0000
+Date:   Mon, 18 Jun 2018 01:10:03 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Christopher Lameter <cl@linux.com>
+Cc:     john.hubbard@gmail.com, Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@kernel.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Jan Kara <jack@suse.cz>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-rdma <linux-rdma@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>
+Subject: Re: [PATCH 0/2] mm: gup: don't unmap or drop filesystem buffers
+Message-ID: <20180618081003.GA20927@infradead.org>
+References: <20180617012510.20139-1-jhubbard@nvidia.com>
+ <010001640fbe0dd8-f999e7f6-7b6e-4deb-b073-0c572006727d-000000@email.amazonses.com>
 MIME-Version: 1.0
-In-Reply-To: <nycvar.YFH.7.76.1806180959080.6203@cbobk.fhfr.pm>
-Content-Type: text/plain; charset=utf-8
-Content-Language: de-DE
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <010001640fbe0dd8-f999e7f6-7b6e-4deb-b073-0c572006727d-000000@email.amazonses.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18/06/18 09:59, Jiri Kosina wrote:
-> From: Jiri Kosina <jkosina@suse.cz>
+On Sun, Jun 17, 2018 at 09:54:31PM +0000, Christopher Lameter wrote:
+> On Sat, 16 Jun 2018, john.hubbard@gmail.com wrote:
 > 
-> Xen PV domain kernel is not by design affected by meltdown as it's 
-> enforcing split CR3 itself. Let's not report such systems as "Vulnerable" 
-> in sysfs (we're also already forcing PTI to off in X86_HYPER_XEN_PV 
-> cases); the security of the system ultimately depends on presence of 
-> mitigation in Hypervisor, which can't be easily detected from DomU; let's 
-> report that.
+> > I've come up with what I claim is a simple, robust fix, but...I'm
+> > presuming to burn a struct page flag, and limit it to 64-bit arches, in
+> > order to get there. Given that the problem is old (Jason Gunthorpe noted
+> > that RDMA has been living with this problem since 2005), I think it's
+> > worth it.
+> >
+> > Leaving the new page flag set "nearly forever" is not great, but on the
+> > other hand, once the page is actually freed, the flag does get cleared.
+> > It seems like an acceptable tradeoff, given that we only get one bit
+> > (and are lucky to even have that).
 > 
-> Reported-and-tested-by: Mike Latimer <mlatimer@suse.com>
-> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> This is not robust. Multiple processes may register a page with the RDMA
+> subsystem. How do you decide when to clear the flag? I think you would
+> need an additional refcount for the number of times the page was
+> registered.
 
-Acked-by: Juergen Gross <jgross@suse.com>
+And it's not just RDMA that is using get_user_pages.  We have tons of
+users that do short, spurious get_user_pages do do zero copy operations.
 
+We can't leave the page in a wrecked state after that.
 
-Juergen
+> I still think the cleanest solution here is to require mmu notifier
+> callbacks and to not pin the page in the first place. If a NIC does not
+> support a hardware mmu then it can still simulate it in software by
+> holding off the ummapping the mmu notifier callback until any pending
+> operation is complete and then invalidate the mapping so that future
+> operations require a remapping (or refaulting).
+
+Sounds ok for RDMA, not going to help for most other users.
