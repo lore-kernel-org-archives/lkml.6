@@ -2,110 +2,79 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,T_DKIMWL_WL_HIGH autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C98CBC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:37:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA75C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:37:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E921208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:37:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E921208A5
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id CD1CE208E1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:37:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JaRT/mE4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1CE208E1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S933524AbeFRPhK (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:37:10 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:56165 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1754315AbeFRPhG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:37:06 -0400
-Received: from wuerfel.lan ([95.208.111.237]) by mrelayeu.kundenserver.de
- (mreue102 [212.227.15.145]) with ESMTPA (Nemesis) id
- 0MBCPl-1fKnjt2bAr-00AIhq; Mon, 18 Jun 2018 17:36:52 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>
-Cc:     y2038@lists.linaro.org, Arnd Bergmann <arnd@arndb.de>,
-        David Airlie <airlied@linux.ie>,
-        Harry Wentland <harry.wentland@amd.com>,
-        Tony Cheng <tony.cheng@amd.com>,
-        Dave Airlie <airlied@redhat.com>, Rex Zhu <Rex.Zhu@amd.com>,
-        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
-        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] amdgpu: display: use modern ktime accessors
-Date:   Mon, 18 Jun 2018 17:35:10 +0200
-Message-Id: <20180618153649.2015346-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.9.0
-X-Provags-ID: V03:K1:umsIqZTYk65nIOAMmpzwLpWL5u8ImQJ5rWj9gtL+ZRvrmMMC8xm
- Aw7nhgvySm0hxF74R58WsTbwxPV9hnwSh6Q+l9hfmDwZY2MyzMUCv4an74skto9qtYOSNi3
- 7mmePBstEtb40MigtaBIT4e2sNsM62nxLj4VXbUYzM43uP5jTLyf2BKtUeEpSI9TaV44GgE
- Ajvji/GbHsbU6cChgRzgw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:NEAG4fL1p+g=:cKodtql/M4riIKlQ8m1QVU
- 03qz6tEq65SMrszdHGIZ2I6K1Wmk432P+kCf3nTtABUCDr02L/R7pXC28sb1ZF1jpjn5JecDw
- 2oUBr31b/WS1EMTZFVP5OpQbGkndfdAwAC942cCgFGndMz+K0P79G6F6h6/8NlyC3zIEbpVyR
- baurbEy+0NJu1VLbjbg5h/tOFO+l+ywMaGVNWofZJkE/Rzb73vNJoi6T2x/Lp8G1Q4CNWtSFJ
- Mi6Jmwp2Y77FffingxZtK9DwzL61xOm946fGCKKojQzmDeHvMAh5ksSmzf7+MZSSYDGl1/rDc
- dywLqw2V+qHcvfzi7z6ZDkAnIuiKiseCkG8Oz3tinlgLZvgukxzWvKEEZc1/nin/jCC0uIonb
- FtZ4uh539V1WqTLtzHqQLYyqMemQk+uheEYHHcwMdb2cF+BDJxGrmg8FZOHj7eX0JeunuVGcK
- 7KsO4WrL6BgMSmXdZeX7IL4IIXraLm+o443irddYYTuPHjv+Ehy6Y9tvDV5KKhMLPKDu2Vf64
- FODrXj5tur55J891p8orxrgyuRbEhz84SrdCfnomAABMg4qrdKD8Guo+lQfNEy1VSdU93Ex3J
- PMCGRuGPdX4shF/xy5PadlEgLMrT7QeSGByeh73Plce+NaMyWn5DeNY2HL3plW0xS4d4a8KpB
- +Y+ivFKxLCn+gQwvnwUe3qT34itFt0zHIw76AxecyEArrAduFStXSJw+2BMAg7ZU3uJA=
+        id S1755263AbeFRPh2 (ORCPT
+        <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 11:37:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48962 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1752849AbeFRPhZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 11:37:25 -0400
+Received: from jouet.infradead.org (unknown [187.65.76.49])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC391208A5;
+        Mon, 18 Jun 2018 15:37:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1529336245;
+        bh=p7oJ4/FI75CilAmQ8QJTHel+mPrEsWaGX4MfD7s6Beo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=JaRT/mE4Ht9aNT4QBkjbrWP0heu6DRM17O0+ztMl63OjGaKTICd+xfnND7IJtapK7
+         E/IPEqsP/7pMYkdt+DCl+xxeDUAT8cWq3u7D5XE3FnINtLEAy3FaSIb1ce/jSNE0Pv
+         1kTWj6zkTBXbHD/N3e4XnZF8ZmDoNeVBI2zPCLug=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 88B451457B8; Mon, 18 Jun 2018 12:37:22 -0300 (-03)
+Date:   Mon, 18 Jun 2018 12:37:22 -0300
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Yonghong Song <yhs@fb.com>
+Cc:     Wang Nan <wangnan0@huawei.com>, Jiri Olsa <jolsa@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@fb.com>,
+        Martin KaFai Lau <kafai@fb.com>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Subject: Re: perf tools: LIBCLANGLLVM=1 build broken with llvm 7/clang 6
+Message-ID: <20180618153722.GD20477@kernel.org>
+References: <20180616122608.GM30043@kernel.org>
+ <91a76633-54e4-984d-cb68-ca0445146b15@fb.com>
+ <20180618143139.GA20477@kernel.org>
+ <9dcfeab4-3324-1e26-74b5-4d182a47f834@fb.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <9dcfeab4-3324-1e26-74b5-4d182a47f834@fb.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-getrawmonotonic64() is deprecated because of the nonstandard naming.
+Em Mon, Jun 18, 2018 at 08:10:27AM -0700, Yonghong Song escreveu:
+> On 6/18/18 7:31 AM, Arnaldo Carvalho de Melo wrote:
+> > Em Sat, Jun 16, 2018 at 10:20:21AM -0700, Yonghong Song escreveu:
+> > > There is an interface change in llvm 7.0 (trunk) for function
+> > > llvm::TargetMachine::addPassesToEmitFile. The following patch
+> > > should fix the problem.
+> > 
+> > Please submit it, I just tested and the the build finishes Ok.
+> 
+> The formal patch is here:
+> https://lkml.org/lkml/2018/6/16/92
 
-The replacement functions ktime_get_raw_ns() also simplifies the callers.
+Thanks, hadn't noticed, applied,
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_services.c | 8 --------
- drivers/gpu/drm/amd/display/dc/dm_services.h               | 5 ++++-
- 2 files changed, 4 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_services.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_services.c
-index 5a3346124a01..e861929dd981 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_services.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_services.c
-@@ -35,14 +35,6 @@
- #include "amdgpu_dm_irq.h"
- #include "amdgpu_pm.h"
- 
--unsigned long long dm_get_timestamp(struct dc_context *ctx)
--{
--	struct timespec64 time;
--
--	getrawmonotonic64(&time);
--	return timespec64_to_ns(&time);
--}
--
- unsigned long long dm_get_elapse_time_in_ns(struct dc_context *ctx,
- 		unsigned long long current_time_stamp,
- 		unsigned long long last_time_stamp)
-diff --git a/drivers/gpu/drm/amd/display/dc/dm_services.h b/drivers/gpu/drm/amd/display/dc/dm_services.h
-index 4ff9b2bba178..eb5ab3978e84 100644
---- a/drivers/gpu/drm/amd/display/dc/dm_services.h
-+++ b/drivers/gpu/drm/amd/display/dc/dm_services.h
-@@ -339,7 +339,10 @@ bool dm_dmcu_set_pipe(struct dc_context *ctx, unsigned int controller_id);
- #define dm_log_to_buffer(buffer, size, fmt, args)\
- 	vsnprintf(buffer, size, fmt, args)
- 
--unsigned long long dm_get_timestamp(struct dc_context *ctx);
-+static inline unsigned long long dm_get_timestamp(struct dc_context *ctx)
-+{
-+	return ktime_get_raw_ns();
-+}
- 
- unsigned long long dm_get_elapse_time_in_ns(struct dc_context *ctx,
- 		unsigned long long current_time_stamp,
--- 
-2.9.0
-
+- Arnaldo
