@@ -6,84 +6,92 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A97FC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:36:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77EE7C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0538720864
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:36:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0538720864
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mev.co.uk
+	by mail.kernel.org (Postfix) with ESMTP id 36D20208E2
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 09:36:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36D20208E2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S966122AbeFRJgC (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 05:36:02 -0400
-Received: from smtp113.ord1c.emailsrvr.com ([108.166.43.113]:39244 "EHLO
-        smtp113.ord1c.emailsrvr.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S964990AbeFRJfp (ORCPT
+        id S966244AbeFRJgz (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 05:36:55 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:55892 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S935942AbeFRIXt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 05:35:45 -0400
-Received: from smtp15.relay.ord1c.emailsrvr.com (localhost [127.0.0.1])
-        by smtp15.relay.ord1c.emailsrvr.com (SMTP Server) with ESMTP id 7500D201BD;
-        Mon, 18 Jun 2018 05:35:44 -0400 (EDT)
-X-Auth-ID: siepeng@mev.co.uk
-Received: by smtp15.relay.ord1c.emailsrvr.com (Authenticated sender: siepeng-AT-mev.co.uk) with ESMTPSA id C1C2420180;
-        Mon, 18 Jun 2018 05:35:43 -0400 (EDT)
-X-Sender-Id: siepeng@mev.co.uk
-Received: from [10.0.0.185] (remote.quintadena.com [81.133.34.160])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA)
-        by 0.0.0.0:465 (trex/5.7.12);
-        Mon, 18 Jun 2018 05:35:44 -0400
-Subject: Re: can we drop the comedi serial2002 drivers from staging?
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@lst.de>
-Cc:     H Hartley Sweeten <hsweeten@visionengravers.com>,
-        linux-kernel@vger.kernel.org,
-        Anders Blomdell <anders.blomdell@control.lth.se>
-References: <20180616090645.GA3997@lst.de> <20180616093740.GA9816@kroah.com>
-From:   Ian Abbott <abbotti@mev.co.uk>
-Organization: MEV Ltd.
-Message-ID: <9fa51c9d-b56f-01be-0822-8b2f4e525a47@mev.co.uk>
-Date:   Mon, 18 Jun 2018 10:35:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        Mon, 18 Jun 2018 04:23:49 -0400
+Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 6452FC5C;
+        Mon, 18 Jun 2018 08:23:48 +0000 (UTC)
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Kees Cook <keescook@chromium.org>,
+        Sasha Levin <alexander.levin@microsoft.com>
+Subject: [PATCH 4.16 185/279] gcc-plugins: fix build condition of SANCOV plugin
+Date:   Mon, 18 Jun 2018 10:12:50 +0200
+Message-Id: <20180618080616.594507233@linuxfoundation.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
+References: <20180618080608.851973560@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
 MIME-Version: 1.0
-In-Reply-To: <20180616093740.GA9816@kroah.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16/06/18 10:37, Greg Kroah-Hartman wrote:
-> On Sat, Jun 16, 2018 at 11:06:45AM +0200, Christoph Hellwig wrote:
->> As far as I can tell there has been no targeted work on the driver
->> since merging it at all, and since 2014 even the comedi-wide
->> cleanups stopped, laving just drive by tree wide changes since.
->>
->> At the same time the driver badly abuses the tty layer and is one
->> of only two major abusers of the poll code for in-kernel waits.
-> 
-> Yeah, it's an ugly driver.  It should be rewritten to use the new serdev
-> api instead of trying to open a tty device node from within the kernel.
+4.16-stable review patch.  If anyone has any objections, please let me know.
 
-I was thinking about that, but it looks tricky to use for a "normal" 
-PC-based distro due to typical lack of device-tree support.
+------------------
 
-Another possibility is to support comedi drivers in userspace via CUSE, 
-which would require a comedi-cuse interface library that user-space 
-comedi drivers could link to similar to how kernel-mode comedi drivers 
-link to the comedi core.
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> I don't object to dropping it.  Ian and Hartley, do you know of any
-> users of this driver anymore?
+[ Upstream commit 642ef99be932c4071274b28eaf3d3d85bbb6e78c ]
 
-The only place I know it was in use was in Anders Blomdell's lab at Lund 
-University.  I've added him to the Cc: list.
+Since commit d677a4d60193 ("Makefile: support flag
+-fsanitizer-coverage=trace-cmp"), you miss to build the SANCOV
+plugin under some circumstances.
 
--- 
--=( Ian Abbott <abbotti@mev.co.uk> || Web: www.mev.co.uk )=-
--=( MEV Ltd. is a company registered in England & Wales. )=-
--=( Registered number: 02862268.  Registered address:    )=-
--=( 15 West Park Road, Bramhall, STOCKPORT, SK7 3JZ, UK. )=-
+  CONFIG_KCOV=y
+  CONFIG_KCOV_ENABLE_COMPARISONS=y
+  Your compiler does not support -fsanitize-coverage=trace-pc
+  Your compiler does not support -fsanitize-coverage=trace-cmp
+
+Under this condition, $(CFLAGS_KCOV) is not empty but contains a
+space, so the following ifeq-conditional is false.
+
+    ifeq ($(CFLAGS_KCOV),)
+
+Then, scripts/Makefile.gcc-plugins misses to add sancov_plugin.so to
+gcc-plugin-y while the SANCOV plugin is necessary as an alternative
+means.
+
+Fixes: d677a4d60193 ("Makefile: support flag -fsanitizer-coverage=trace-cmp")
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ scripts/Makefile.gcc-plugins |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/scripts/Makefile.gcc-plugins
++++ b/scripts/Makefile.gcc-plugins
+@@ -14,7 +14,7 @@ ifdef CONFIG_GCC_PLUGINS
+   endif
+ 
+   ifdef CONFIG_GCC_PLUGIN_SANCOV
+-    ifeq ($(CFLAGS_KCOV),)
++    ifeq ($(strip $(CFLAGS_KCOV)),)
+       # It is needed because of the gcc-plugin.sh and gcc version checks.
+       gcc-plugin-$(CONFIG_GCC_PLUGIN_SANCOV)           += sancov_plugin.so
+ 
+
+
