@@ -6,36 +6,35 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF16CC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FAFC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69F54208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:04:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69F54208A6
+	by mail.kernel.org (Postfix) with ESMTP id DDCDE208A6
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 10:05:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCDE208A6
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935122AbeFRKEr (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 06:04:47 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54376 "EHLO
+        id S935257AbeFRKFL (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 06:05:11 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:54296 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933902AbeFRIR7 (ORCPT
+        with ESMTP id S934927AbeFRIRt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:17:59 -0400
+        Mon, 18 Jun 2018 04:17:49 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 1455BC7A;
-        Mon, 18 Jun 2018 08:17:58 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id F3762C75;
+        Mon, 18 Jun 2018 08:17:48 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexey Dobriyan <adobriyan@gmail.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Long Li <longli@microsoft.com>,
+        Michael Kelley <mikelley@microsoft.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.16 068/279] proc: revalidate kernel thread inodes to root:root
-Date:   Mon, 18 Jun 2018 10:10:53 +0200
-Message-Id: <20180618080611.636974557@linuxfoundation.org>
+Subject: [PATCH 4.16 065/279] scsi: storvsc: Set up correct queue depth values for IDE devices
+Date:   Mon, 18 Jun 2018 10:10:50 +0200
+Message-Id: <20180618080611.520345544@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618080608.851973560@linuxfoundation.org>
 References: <20180618080608.851973560@linuxfoundation.org>
@@ -52,47 +51,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Alexey Dobriyan <adobriyan@gmail.com>
+From: Long Li <longli@microsoft.com>
 
-[ Upstream commit 2e0ad552f5f8cd0fda02bc45fcd2b89821c62fd1 ]
+[ Upstream commit f286299c1d0ba5e2ca0377610307b370fe178767 ]
 
-task_dump_owner() has the following code:
+Unlike SCSI and FC, we don't use multiple channels for IDE.  Also fix
+the calculation for sub-channels.
 
-	mm = task->mm;
-	if (mm) {
-		if (get_dumpable(mm) != SUID_DUMP_USER) {
-			uid = ...
-		}
-	}
-
-Check for ->mm is buggy -- kernel thread might be borrowing mm
-and inode will go to some random uid:gid pair.
-
-Link: http://lkml.kernel.org/r/20180412220109.GA20978@avx2
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Long Li <longli@microsoft.com>
+Reviewed-by: Michael Kelley <mikelley@microsoft.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/proc/base.c |    6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/scsi/storvsc_drv.c |    7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -1693,6 +1693,12 @@ void task_dump_owner(struct task_struct
- 	kuid_t uid;
- 	kgid_t gid;
+--- a/drivers/scsi/storvsc_drv.c
++++ b/drivers/scsi/storvsc_drv.c
+@@ -1722,11 +1722,14 @@ static int storvsc_probe(struct hv_devic
+ 		max_targets = STORVSC_MAX_TARGETS;
+ 		max_channels = STORVSC_MAX_CHANNELS;
+ 		/*
+-		 * On Windows8 and above, we support sub-channels for storage.
++		 * On Windows8 and above, we support sub-channels for storage
++		 * on SCSI and FC controllers.
+ 		 * The number of sub-channels offerred is based on the number of
+ 		 * VCPUs in the guest.
+ 		 */
+-		max_sub_channels = (num_cpus / storvsc_vcpus_per_sub_channel);
++		if (!dev_is_ide)
++			max_sub_channels =
++				(num_cpus - 1) / storvsc_vcpus_per_sub_channel;
+ 	}
  
-+	if (unlikely(task->flags & PF_KTHREAD)) {
-+		*ruid = GLOBAL_ROOT_UID;
-+		*rgid = GLOBAL_ROOT_GID;
-+		return;
-+	}
-+
- 	/* Default to the tasks effective ownership */
- 	rcu_read_lock();
- 	cred = __task_cred(task);
+ 	scsi_driver.can_queue = (max_outstanding_req_per_channel *
 
 
