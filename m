@@ -2,125 +2,158 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEC77C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144D2C5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:44:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92FE72075E
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:39:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82CF32075E
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 23:43:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=google.com header.i=@google.com header.b="VmQ3LaDx";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n9mGz1uL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92FE72075E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="1kJhLxuP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82CF32075E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=zx2c4.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S937058AbeFRXjN (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 19:39:13 -0400
-Received: from mail-vk0-f65.google.com ([209.85.213.65]:41426 "EHLO
-        mail-vk0-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S936974AbeFRXjJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 19:39:09 -0400
-Received: by mail-vk0-f65.google.com with SMTP id 128-v6so10606264vkf.8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 16:39:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KlBT3YKstFwk+e1OE7tvlZ0To5wwHhjmjL13nA0MBJo=;
-        b=VmQ3LaDxgtq3QidnuOiGwky2jjOOERXnU4VioJBYDC5RWLOge1Ew1+JHyUJMC4Q0NG
-         tkQcJsCzV1XWJetlJmk3PBebSHYuQb7nkHlqB+16baDj6sImYqJ8GcRUnQjNPZBmwO0M
-         gM0ZorenApck2KxG0WMM+o1mTVhPta19xnkuaPqMiH0uclp3cBFPSXSZAXClJIqa0jnl
-         1R6kGi2qGP0GoqQU19OM0K7DozM8kS9+00z78OhMnu+72+zypLYOPsLPueUvJOfEDWu7
-         FkE4HLOKUXGbZVQOj+ym3i/GHFO+bg6RyjrYND+NnkKlHEV9nyd0X8hyfCCobyexHrJq
-         uFXw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=KlBT3YKstFwk+e1OE7tvlZ0To5wwHhjmjL13nA0MBJo=;
-        b=n9mGz1uLyID7Yt52CdpNE6/vUe0ZpsrngGMmUNCLBBpq5Ip91oZUim1FqdiCmKZ7EF
-         Hqo4mwLUI788jxy2VQJG/ZrJCfRoTmMpKbQZz3psz286mDN181Ai5F90tFt0QTuZzpso
-         dWhFv4ctZpfWnTQ6C/oQh4FB1KlGwVZcsimdo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=KlBT3YKstFwk+e1OE7tvlZ0To5wwHhjmjL13nA0MBJo=;
-        b=hKo49du1X5tW+EaNYU13YT053MrA1ktCV0H5kyF7VkN4UYi7AAN60K/r1wxZWaBEiA
-         LfX5nBTPcXwAohSNn3V345D3dJaeZSNwA8BHhR/JUUpd7ZInELIb3OPvYOndQR+fGZ4w
-         H8LvXICZarbL0tZCryoPFOS5uI68ORjGqbSZ/2UtY+X7vdOy/HSsHgDbFCw/c4jXK/qh
-         GCQoGZgod1HYT54xdTub4qzzVEoOTejSOmy2Igtr/rLmwYJe42bBbcv8yKZZh6bjNQRD
-         f+P6aDlvNRLF2v2YQvJ/fCPgqDuCN4Hj4pzi8L0f4gIIgfv+RKnCQNgBMJum5GsUak5p
-         4cdw==
-X-Gm-Message-State: APt69E3UO0MGmtBvJIc6GPVGaIH6fYh6jtu55qHkOHrp654ZffE02lHi
-        KSIQKoFtg/hnHQsVU38Je/w6tPLATQGidMvm6tI7Vrpd
-X-Google-Smtp-Source: ADUXVKL4KlXO1fFItHkioISX93DK+F7a65e7MHybpBqEeHHo4r9452G1ZDBqe14eCMGdyJhWLxIhGkor/f5NKtOpEIk=
-X-Received: by 2002:a1f:c007:: with SMTP id q7-v6mr8806848vkf.144.1529365148440;
- Mon, 18 Jun 2018 16:39:08 -0700 (PDT)
-MIME-Version: 1.0
-Received: by 2002:a1f:9495:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 16:38:27
- -0700 (PDT)
-In-Reply-To: <152936452512.16708.5405608343995548468@swboyd.mtv.corp.google.com>
-References: <20180618205255.246104-1-swboyd@chromium.org> <20180618205255.246104-2-swboyd@chromium.org>
- <CAD=FV=WvsY_=Ko2QXvzmHOuy4O5Rh6+sRWZZOuSXyGC829ANag@mail.gmail.com> <152936452512.16708.5405608343995548468@swboyd.mtv.corp.google.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Mon, 18 Jun 2018 16:38:27 -0700
-X-Google-Sender-Auth: Pt2ayzVrn79TH3jGaAYto0kYcRU
-Message-ID: <CAD=FV=UhfffG__41+5yeiDEdN1DYeTkXEoqasc23fb1YKg9F9Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] pinctrl: msm: Really mask level interrupts to prevent latching
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-gpio@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S964926AbeFRXn5 (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 19:43:57 -0400
+Received: from frisell.zx2c4.com ([192.95.5.64]:56633 "EHLO frisell.zx2c4.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S937005AbeFRXn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 19:43:56 -0400
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTP id b01b4633;
+        Mon, 18 Jun 2018 23:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha1; c=relaxed; d=zx2c4.com; h=from:to:cc
+        :subject:date:message-id; s=mail; bh=Cky+58ddiHbyISVuNxrQsSSBdRo
+        =; b=1kJhLxuPAnj/uglw+Ol6TR35b0K4NaZOdlRfO/4oPH9hT+54/6et/WGZYOn
+        69K+QgA7WTJws24OyzVF7+2qYMds+dZyWR3nvqzGc5+449Eny1D9xMrz1VDc28Nb
+        qZ8TlT407JoCF5jJuvknTO9UqWFAdWMPv32ScY1xRoRqNeRL8NO8XNxgSCsL6ZsR
+        PJU3A9NBkkKhW4m78F/35jG8ayJC4cUuHzvuQ01EYyxPN+uAc8IRAvT1F/1No5ML
+        R7XS+0IqnAp4JH3mVKdy7mPt7M3SD0TCv6S1RBN/i0Rtdp+6Cd+oU0I+TtTJ6ecc
+        Gb6KeGKEdqLMJn5XknCoCNIUNMQ==
+Received: by frisell.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 12b75323 (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256:NO);
+        Mon, 18 Jun 2018 23:38:07 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     tytso@mit.edu, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Subject: [PATCH] random: make crng state queryable
+Date:   Tue, 19 Jun 2018 01:43:47 +0200
+Message-Id: <20180618234347.13282-1-Jason@zx2c4.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+It is extremely useful to be able to know whether or not get_random_
+bytes_wait / wait_for_random_bytes is going to block or not, or whether
+plain get_random_bytes is going to return good randomness or bad
+randomness.
 
-On Mon, Jun 18, 2018 at 4:28 PM, Stephen Boyd <swboyd@chromium.org> wrote:
-> Quoting Doug Anderson (2018-06-18 15:43:06)
->>
->> On Mon, Jun 18, 2018 at 1:52 PM, Stephen Boyd <swboyd@chromium.org> wrote:
->>
->> > +        */
->> > +       if (irqd_get_trigger_type(d) & IRQ_TYPE_LEVEL_MASK) {
->> > +               val &= ~BIT(g->intr_raw_status_bit);
->> > +               writel(val, pctrl->regs + g->intr_cfg_reg);
->>
->> Do you know if it's important to do a 2nd write here, or could this be
->> combined with the next writel()?
->
-> I haven't tried combining the writes. It felt safer to keep them split
-> up so that both bits don't toggle at the same time, but I don't know if
-> it actually matters.
+My particular use case is mitigating certain attacks in WireGuard. A
+handshake packet arrives and is queued up. Elsewhere a worker thread
+takes items from the queue and processes them. In replying to these
+items, it needs to use some random data, and it has to be good random
+data. If we simply block until we can have good randomness, then it's
+possible for an attacker to fill the queue up with packets waiting to be
+processed. Upon realizing the queue is full, WireGuard will detect that
+it's under a denial of service attack, and behave accordingly. A better
+approach is just to drop incoming handshake packets if the crng is not
+yet initialized. Currently the below awful code is necessary to do such
+a thing.
 
-Maybe I'm a glutton for punishment, but I'd say go for it, unless
-someone from Qualcomm says "no way".
+This patch, therefore, makes that information directly accessible.
 
-In the very least in the "unmask" case it seems pretty safe.  IMHO if
-re-enabling the "raw" status caused a glitch we'd already be hitting
-problems.  Specifically the glitch would end up getting latched
-(whee!) and then we'd unmask and see the glitch anyway.
+~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~
 
-...and actually for the "mask" case it seems like you've written it
-the less-safe way anyway.  We know that masking can't cause some sort
-of glitch (since that's the old code), but I guess we don't know
-whether disabling the "raw" status could cause a glitch.  To be the
-absolutely safest you'd do the new disable of the "raw" status _after_
-the old masking.  ...but as per above I'd just go whole hog and
-combine them.  :-P
+The wrong way to do things:
 
-As with everything I write, feel free to tell me I'm being stupid and
-I'll try to shut up.  ;-)
+struct rng_is_initialized_callback {
+  struct random_ready_callback cb;
+  atomic_t *rng_state;
+};
+static void rng_is_initialized_callback(struct random_ready_callback *cb)
+{
+  struct rng_is_initialized_callback *rdy = container_of(cb, struct rng_is_initialized_callback, cb);
+  atomic_set(rdy->rng_state, 2);
+  kfree(rdy);
+}
+static bool rng_is_initialized(void)
+{
+  static atomic_t rng_state = ATOMIC_INIT(0);
 
+  if (atomic_read(&rng_state) == 2)
+    return true;
 
--Doug
+  if (atomic_cmpxchg(&rng_state, 0, 1) == 0) {
+    int ret;
+    struct rng_is_initialized_callback *rdy = kmalloc(sizeof(*rdy), GFP_ATOMIC);
+    if (!rdy) {
+      atomic_set(&rng_state, 0);
+      return false;
+    }
+    rdy->cb.owner = THIS_MODULE;
+    rdy->cb.func = rng_is_initialized_callback;
+    rdy->rng_state = &rng_state;
+    ret = add_random_ready_callback(&rdy->cb);
+    if (ret)
+      kfree(rdy);
+    if (ret == -EALREADY) {
+      atomic_set(&rng_state, 2);
+      return true;
+    } else if (ret)
+      atomic_set(&rng_state, 0);
+    return false;
+  }
+  return false;
+}
+
+Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+---
+ drivers/char/random.c  | 15 +++++++++++++++
+ include/linux/random.h |  1 +
+ 2 files changed, 16 insertions(+)
+
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index a8fb0020ba5c..871724f7b810 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -1657,6 +1657,21 @@ int wait_for_random_bytes(void)
+ }
+ EXPORT_SYMBOL(wait_for_random_bytes);
+ 
++/*
++ * Returns whether or not the urandom pool has been seeded and thus guaranteed
++ * to supply cryptographically secure random numbers. This applies to: the
++ * /dev/urandom device, the get_random_bytes function, and the get_random_{u32,
++ * ,u64,int,long} family of functions.
++ *
++ * Returns: true if the urandom pool has been seeded.
++ *          false if the urandom pool has not been seeded.
++ */
++bool rng_is_initialized(void)
++{
++	return crng_ready();
++}
++EXPORT_SYMBOL(rng_is_initialized);
++
+ /*
+  * Add a callback function that will be invoked when the nonblocking
+  * pool is initialised.
+diff --git a/include/linux/random.h b/include/linux/random.h
+index 2ddf13b4281e..c8208e0ff227 100644
+--- a/include/linux/random.h
++++ b/include/linux/random.h
+@@ -36,6 +36,7 @@ extern void add_interrupt_randomness(int irq, int irq_flags) __latent_entropy;
+ 
+ extern void get_random_bytes(void *buf, int nbytes);
+ extern int wait_for_random_bytes(void);
++extern bool rng_is_initialized(void);
+ extern int add_random_ready_callback(struct random_ready_callback *rdy);
+ extern void del_random_ready_callback(struct random_ready_callback *rdy);
+ extern void get_random_bytes_arch(void *buf, int nbytes);
+-- 
+2.17.1
+
