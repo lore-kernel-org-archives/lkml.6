@@ -3,92 +3,74 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2E66C5AE59
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:59:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A40DC5AE59
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75BB22083A
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 17:59:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75BB22083A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F60A2083A
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 18:02:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F60A2083A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935610AbeFRR7y (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 13:59:54 -0400
-Received: from gateway20.websitewelcome.com ([192.185.62.46]:20454 "EHLO
-        gateway20.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S935347AbeFRR7x (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 13:59:53 -0400
-X-Greylist: delayed 1483 seconds by postgrey-1.27 at vger.kernel.org; Mon, 18 Jun 2018 13:59:53 EDT
-Received: from cm15.websitewelcome.com (cm15.websitewelcome.com [100.42.49.9])
-        by gateway20.websitewelcome.com (Postfix) with ESMTP id 588A7400C40E8
-        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 12:35:09 -0500 (CDT)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id Uy3AfL6ozbXuJUy3OfYA90; Mon, 18 Jun 2018 12:35:09 -0500
-X-Authority-Reason: nr=8
-Received: from [189.250.78.11] (port=50012 helo=[192.168.1.71])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1fUy3A-003bj1-2O; Mon, 18 Jun 2018 12:34:44 -0500
-Subject: Re: [smb3] unreachable code and memory leaks
-To:     Steve French <smfrench@gmail.com>
-Cc:     Steve French <sfrench@samba.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        samba-technical <samba-technical@lists.samba.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20180618130737.GA13880@embeddedor.com>
- <CAH2r5muZJkx0eR0uAyuRBkkTf7-97x5oSMWPXdfb1TUK4rwGJw@mail.gmail.com>
- <CAH2r5mvu7e2ec6fb0Aay5OAr8S31jy=j7_7sL_VRfi6U2G_mZA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Message-ID: <c447e18b-439d-f125-f74c-9c50a0d55e5b@embeddedor.com>
-Date:   Mon, 18 Jun 2018 12:34:39 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.8.0
+        id S935648AbeFRSCI (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 14:02:08 -0400
+Received: from mga01.intel.com ([192.55.52.88]:35567 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S935505AbeFRSCH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 14:02:07 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 18 Jun 2018 11:02:06 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.51,240,1526367600"; 
+   d="scan'208";a="67958382"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga002.jf.intel.com with ESMTP; 18 Jun 2018 11:02:06 -0700
+Subject: [PATCH] libnvdimm,
+ pmem: Fix memcpy_mcsafe() return code handling in nsio_rw_bytes()
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     linux-nvdimm@lists.01.org
+Cc:     Vishal Verma <vishal.l.verma@intel.com>,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 18 Jun 2018 10:52:09 -0700
+Message-ID: <152934432951.24427.11070204367866836632.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-In-Reply-To: <CAH2r5mvu7e2ec6fb0Aay5OAr8S31jy=j7_7sL_VRfi6U2G_mZA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.78.11
-X-Source-L: No
-X-Exim-ID: 1fUy3A-003bj1-2O
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.71]) [189.250.78.11]:50012
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 5
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Steve,
+Commit 60622d68227d "x86/asm/memcpy_mcsafe: Return bytes remaining"
+converted callers of memcpy_mcsafe() to expect a positive 'bytes
+remaining' value rather than a negative error code. The nsio_rw_bytes()
+conversion failed to return success. The failure is benign in that
+nsio_rw_bytes() will end up writing back what it just read.
 
-On 06/18/2018 12:18 PM, Steve French wrote:
-> Gustavo,
-> Thx for pointing this out.  Let me know if this patch addresses what
-> you found.  Code is experimental mount option but extremely important
-> to get right due to move away from SMB1/CIFS which had posix
-> extensions.
-> 
+Fixes: 60622d68227d ("x86/asm/memcpy_mcsafe: Return bytes remaining")
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Vishal Verma <vishal.l.verma@intel.com>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+---
+ drivers/nvdimm/claim.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-Yep. It seems correct.
+diff --git a/drivers/nvdimm/claim.c b/drivers/nvdimm/claim.c
+index 2e96b34bc936..fb667bf469c7 100644
+--- a/drivers/nvdimm/claim.c
++++ b/drivers/nvdimm/claim.c
+@@ -278,6 +278,7 @@ static int nsio_rw_bytes(struct nd_namespace_common *ndns,
+ 			return -EIO;
+ 		if (memcpy_mcsafe(buf, nsio->addr + offset, size) != 0)
+ 			return -EIO;
++		return 0;
+ 	}
+ 
+ 	if (unlikely(is_bad_pmem(&nsio->bb, sector, sz_align))) {
 
-Reviewed-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-
-Thanks!
---
-Gustavo
