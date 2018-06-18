@@ -7,83 +7,84 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AC8C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AF6C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:37:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15C0F208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C17620020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:37:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pms6wj3g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15C0F208A5
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciGW6Emb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C17620020
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934623AbeFRQhP (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:37:15 -0400
-Received: from mail-pl0-f68.google.com ([209.85.160.68]:46856 "EHLO
+        id S934880AbeFRQhX (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 12:37:23 -0400
+Received: from mail-pl0-f68.google.com ([209.85.160.68]:37017 "EHLO
         mail-pl0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1755306AbeFRQhN (ORCPT
+        with ESMTP id S934667AbeFRQhU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:37:13 -0400
-Received: by mail-pl0-f68.google.com with SMTP id 30-v6so9315756pld.13;
-        Mon, 18 Jun 2018 09:37:13 -0700 (PDT)
+        Mon, 18 Jun 2018 12:37:20 -0400
+Received: by mail-pl0-f68.google.com with SMTP id 31-v6so9328578plc.4;
+        Mon, 18 Jun 2018 09:37:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=AAwVr97IXUAADIcsBUErozuSYjldtJhwtlCzpdzWZ0s=;
-        b=pms6wj3gkF3wxBjAP4ri38iNaQfjtUZw/tKlr5qIWfV89+iGHtlXygaBxoXcIMji5s
-         dTapCtNSQ8bKFS3rI4tXrmzVTQA9PfE4MJgezCJocWn37ClA5fKUydN4zAJJesnvDRkT
-         Xtxk+ozZhhNkMoBvPRH6dEQtB4qzkjr7BGQF6/7vc+KztXK4+bvHaQC/mgAlnTtw5i2a
-         LHEwYmeMbCpd9Z/9FwJx28twkwP9160DAatCdwckRCI+Ty6A1cmcLXD57+BO5MhgIANY
-         Mn3/4GBedFxxCZCrOqwnP/T+3QobLzkt0R8vecbJkXibDLDjBk3xhxKL2skraDRJTa01
-         /tQg==
+        bh=aHHyHZ44vfmsVCV3V+H+lKRkUSI/2JhJ7fMLmAkLN3k=;
+        b=ciGW6EmbHkgIMhFpgsX3UDrZOQBbFDPayG11nUDTxZ6WK3KOIHW8WC1Miu4RZLqd5P
+         rdM5q9jIFUIjjjtEUQ+ve2dsBIUMOVjdHnR6wrCjkVqlZFJBaYeJzwUrFdzEqtISXth7
+         dFeFY0Eu7/aRBBxnBBFhjHxBW3Dw5yJAqwIYNttY90hlj8eJnamacGWGVl4aXpKfF9Ul
+         wgeirRrWvTWN+MRXrmKuSjv7vJpIB6kLQaAfjwCuRdx1GXCVw3iQ5JbcG2msdaIfWs30
+         I5bAySW9v+zeKMziWRkx4HKk384/iqmUbd+XOPeYhdVpxeNK0wZ4fwOtomsXT4ByGvA0
+         QuoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=AAwVr97IXUAADIcsBUErozuSYjldtJhwtlCzpdzWZ0s=;
-        b=Ftz2am5+YULr7/KeX3ZB8+cx+3aGqcTijsrzL6nZtDjTgLKkW3CaqyJylJNFe5PNAz
-         P7VkFceB1E8lu2OWbeCa6TbClpnRrbQGWxlsoN6kA+4xIs01jc/6zBGSgaRiba/eeZys
-         7WdPx3bOseYLT/cpIFVp+Myz1F0rYmEMWeGJ4gAJvk05DdGnZr1l+7QIxcnqkFKwSkgJ
-         yB1lpdseGvuAAwEsbDJMG8q/E7qsQ0RPZbcB6vCLyDgxrWqpyw4CsiAsvOvB9fQ+GKF4
-         lnw7wzduoL5zBEPgSmKRQ0vX5W9//o/3DCV4YtzRqAIq8CgfNuBtzNco9kyHVKjYyNJC
-         PkNQ==
-X-Gm-Message-State: APt69E0MfFrJW2F9le2nzWsj1R/0zIZM+XeIdsKWN2CEgFYS5Cw6W4bZ
-        v/NLDqP+vx2XaP7DZnVGi+I=
-X-Google-Smtp-Source: ADUXVKK3OCUgeSFamENntedryKKiyXOBBw6E3EyxqCN2+E39WgX8vRalWh8OmLsicfn7EuY+kS2dtw==
-X-Received: by 2002:a17:902:7686:: with SMTP id m6-v6mr15024420pll.340.1529339832994;
-        Mon, 18 Jun 2018 09:37:12 -0700 (PDT)
+        bh=aHHyHZ44vfmsVCV3V+H+lKRkUSI/2JhJ7fMLmAkLN3k=;
+        b=sv+83DiXYcw6e4dvA76e0Tu3ARddbGynvs+6BnaPYgHRwPaQ8Mp8EOE+zciHdaSO+/
+         YviHdsvBGyW+OCsEcFCFjch1NuFNv1V06xpdxNfXW9YzQLgPF4YfT/H93KASfwycl2+i
+         ZPcMWyCNOoaRZvTqXLCWlbB0G5WUsI81nCGmMDI8j/h1HhFET/zVh3O90V+5cQrQ/Mqj
+         gLiaPAf+8xzBS5eXREOVCRhMn+R+Rv6UYJiWgb0NxZyGEu7x3O6XV5gZ3dVLxCWgdK7u
+         U6/Qk5/5bkfI0ookip3lvY5ZpQvP9w/udoZYVIvi/7okvrYRpXkqfBDoTN2Gq6mrBOGu
+         BFBg==
+X-Gm-Message-State: APt69E0nDHNZcx/7SzCpj/+RUPD0nlxZjTK+bPzQByAn4RjoI11deGRn
+        wcocuDVtPtSPZ2IhXo3TWDs=
+X-Google-Smtp-Source: ADUXVKKujOOfOnE2zsLuEEqG0alF+pfubN+2QV/fO2B6c1CUiom/uWaKN7hnnhi2rrOidaF64+0CWw==
+X-Received: by 2002:a17:902:7688:: with SMTP id m8-v6mr14719718pll.54.1529339839840;
+        Mon, 18 Jun 2018 09:37:19 -0700 (PDT)
 Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id g80-v6sm33460704pfd.21.2018.06.18.09.37.11
+        by smtp.gmail.com with ESMTPSA id a11-v6sm19186157pgq.32.2018.06.18.09.37.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 18 Jun 2018 09:37:11 -0700 (PDT)
+        Mon, 18 Jun 2018 09:37:18 -0700 (PDT)
 From:   Florian Fainelli <f.fainelli@gmail.com>
 To:     bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
+        linux-arm-kernel@infradead.org
+Cc:     Hauke Mehrtens <hauke@hauke-m.de>,
+        =?iso-8859-2?q?Rafa=B3_Mi=B3ecki?= <zajec5@gmail.com>,
         Jon Mason <jonmason@broadcom.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:BROADCOM BCM5301X ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
         "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
         <devicetree@vger.kernel.org>,
         open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] ARM: dts: HR2: Fix interrupt types for i2c and PCIe
-Date:   Mon, 18 Jun 2018 09:37:10 -0700
-Message-Id: <20180618163710.27207-1-f.fainelli@gmail.com>
+Subject: Re: [PATCH] ARM: dts: BCM5301x: Fix i2c controller interrupt type
+Date:   Mon, 18 Jun 2018 09:37:17 -0700
+Message-Id: <20180618163717.27294-1-f.fainelli@gmail.com>
 X-Mailer: git-send-email 2.14.1
-In-Reply-To: <20180611224714.7007-4-f.fainelli@gmail.com>
-References: <20180611224714.7007-1-f.fainelli@gmail.com> <20180611224714.7007-4-f.fainelli@gmail.com>
+In-Reply-To: <20180611225340.12733-1-f.fainelli@gmail.com>
+References: <20180611225340.12733-1-f.fainelli@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 11 Jun 2018 15:47:14 -0700, Florian Fainelli <f.fainelli@gmail.com> wrote:
-> The i2c and PCIe controllers had an incorrect type which should have
-> been set to IRQ_TYPE_LEVEL_HIGH, fix that.
+On Mon, 11 Jun 2018 15:53:40 -0700, Florian Fainelli <f.fainelli@gmail.com> wrote:
+> The i2c controller should be using IRQ_TYPE_LEVEL_HIGH, fix that.
 > 
-> Fixes: b9099ec754b5 ("ARM: dts: Add Broadcom Hurricane 2 DTS include file")
+> Fixes: bb097e3e0045 ("ARM: dts: BCM5301X: Add I2C support to the DT")
 > Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 > ---
 
