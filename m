@@ -2,118 +2,110 @@ Return-Path: <SRS0=Clcj=JE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656EBC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71814C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15982208A6
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C98520864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 15:54:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqU3NKR8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15982208A6
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WADP2CkM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C98520864
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1755263AbeFRPyM (ORCPT
+        id S1755289AbeFRPyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 11:54:12 -0400
-Received: from mail-lf0-f68.google.com ([209.85.215.68]:43240 "EHLO
-        mail-lf0-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1752765AbeFRPyJ (ORCPT
+        Mon, 18 Jun 2018 11:54:20 -0400
+Received: from mail-io0-f195.google.com ([209.85.223.195]:39320 "EHLO
+        mail-io0-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1751704AbeFRPyR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 11:54:09 -0400
-Received: by mail-lf0-f68.google.com with SMTP id x13-v6so9994774lff.10;
-        Mon, 18 Jun 2018 08:54:08 -0700 (PDT)
+        Mon, 18 Jun 2018 11:54:17 -0400
+Received: by mail-io0-f195.google.com with SMTP id f1-v6so17270951ioh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 18 Jun 2018 08:54:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:sender:in-reply-to:references:from:date:message-id
-         :subject:to:cc;
-        bh=3hKAVLzfIifDOnQ5GcUZCgn4Xvs5h8QJDhIf9NJHqt8=;
-        b=XqU3NKR84B6Vy5NNZWJSYcwKvsh8uZcVYsIoycQ+d3iTHe/s9wOVGTLtGU0AnM2Xfz
-         gZ6TvdDrBw4yeZHe1YnuCtLF2V/kodzzGdMIjKOCzTXO0r/j4t+Jm8XBuMGm/My8D+D5
-         gpftF8Np9cT7Dpcm1Ki9p8OW8I4lptL9ptrUKvNSYxMlwSqCG4qLAUCIAIOMqpr4gKwX
-         6T6I1UxxZB2ZLRglWtUIXOyTlcD39H3fwSEG4iKzkuIb3JTSUD4IGeqlp1VBX0b5nxVA
-         WShedKKEd4I61QSFxeoSU+emv/gfQWzrM29tMXzSppLGcuyjdSI5Tl90SWLaZPqAjKbV
-         j44A==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=kR64JuxiPEqajCbq3a4ZRhr/5YNhAG40WQeOAJ8mYCM=;
+        b=WADP2CkMzJso99qu+Zo6l1oZogru9Lj2VViwmkxAdWwxeZqMwc0zxWazyI/f3BmN6O
+         89m25cSIM7PUmHIQkBHq8sktGqATQf74joHB25imU/hLYG1CZjwGFJRZIkfQQ28Ob407
+         I0EYF0daxjgOyVaAWT3nS7PCL0ggs0ODgXzJKPeagRPdwlPwCS+vR+kQTqyTtHm+UvEv
+         fHmLgRGpoABTDIxeocOvkzq1V1gS1DTLKsPNQOsDCkbCQXqSUPmWOXZVmHHo05eD9qGv
+         wmqL4CKk3dE+egZ4AN9+E0WCiBQwIsmK5PFbylPbwJKeikYhJPVFxOUtu556GvpOpcB/
+         JxEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:sender:in-reply-to:references:from
-         :date:message-id:subject:to:cc;
-        bh=3hKAVLzfIifDOnQ5GcUZCgn4Xvs5h8QJDhIf9NJHqt8=;
-        b=cZWmbYth1LY5WMJbyAyHHEtXQygZ8olSjWe4XUBvca0LX9O9KLxnTWdTBq7P76BKjZ
-         5XRCkGRMnv+1QCQCY0sFgb4F5DjQ4O86gH4CbVWdMmR5Jt7SzWgJFNQc2E/9F9vV+FOE
-         foSkfDettdHMssn4huHnwEV4rbD/tavdZRR7jCu8pGCfPCXQOLHd7TvcM53ScJjdKs/p
-         lpMtzs7oKBuzK2XLJn3j0SIG9fWYlmrrQYgrIyP9RhkI9jUFeYIxHBL2VnkHXcgvFb1U
-         rY4bqd7EnsWorxenzRe1pf09Rwiw0mVAXFOUoHo3PjG4tezJU5FxwFyfWWeAYu+vE9F8
-         78hg==
-X-Gm-Message-State: APt69E2geZ965IhWlDmjVrtm5fKA+DG8Qp4Yprbvv9DUx3MgBz8wCD3h
-        Mdu35IJPPICNeWoHkpc3TFpHkcHHpk6q1surv+I=
-X-Google-Smtp-Source: ADUXVKJItGfsISV6O5mIM15+fGQ2ue1fHU9i1ZcNb/IB7pBOr9ZIIgxEqLhh05CsbSTHA1pwx0yak181fqTI2cEhtCM=
-X-Received: by 2002:a2e:9ac4:: with SMTP id p4-v6mr8542682ljj.60.1529337247509;
- Mon, 18 Jun 2018 08:54:07 -0700 (PDT)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kR64JuxiPEqajCbq3a4ZRhr/5YNhAG40WQeOAJ8mYCM=;
+        b=A5a97MLmakt8I2gBTLJHDEKNrFFV7GCjQYHOM5XDcOY0gs0GhuBGXFJUY4TJXhr3Ov
+         f9PfjxQC0oSoMNtKGBysePq6ewbvcM2seD+hEwHgq34iADzRv6BeNyOOtGc3eV/juyRe
+         P7hu/jrxtorfiRMmCEVyQ0xXg0upfaEn4IB42r1Y3TdYKzAetAZXALoHG6rF+qzq5/g8
+         N5LqW8fEpgzdnv0SogxdOFx+qLV+1t5sDufPpe1xtA8ySW158VDqVO/09VpLJR1YqmVc
+         mCasfoxXiqbe8EHP4KHdt7NMwWOHhXV7rC4jnGS0i2APDBP4gynt05JEVPP3bf4aaZZL
+         ysnA==
+X-Gm-Message-State: APt69E2iCMY2eriMSlN5OeWonrnaap1763BE7Aw+zawUNTMaCCOZqhhq
+        yar5lljA92RzPfsSZIgSCbaq1eAEl3iAmXE1mKZmzVGJ
+X-Google-Smtp-Source: ADUXVKJCGFStZN8mIAJgBX32H1HUgkllyQbk5Np+AA5g5UST0KyPTr5aE8L1QkPX+Z1JbpQSC9BjGYQCh0TeDUemo80=
+X-Received: by 2002:a6b:88aa:: with SMTP id s42-v6mr10430422ioi.146.1529337257365;
+ Mon, 18 Jun 2018 08:54:17 -0700 (PDT)
 MIME-Version: 1.0
-Received: by 2002:a2e:56c8:0:0:0:0:0 with HTTP; Mon, 18 Jun 2018 08:54:06
- -0700 (PDT)
-In-Reply-To: <CAKv+Gu9OD6s24Aq1bLBr-yq_tn6wPR0TAkddO+VTwM7jR76dOQ@mail.gmail.com>
-References: <20180618141811.3353245-1-arnd@arndb.de> <CAKv+Gu-r_+b_tCXeZeE6=EN3=1N98rheODOwV_4mpb9GMzdqrQ@mail.gmail.com>
- <CAK8P3a0dP+zvucn=_um1zRgBYQCskrhqa2KNSDtnpSu199baWw@mail.gmail.com> <CAKv+Gu9OD6s24Aq1bLBr-yq_tn6wPR0TAkddO+VTwM7jR76dOQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 18 Jun 2018 17:54:06 +0200
-X-Google-Sender-Auth: SJkqwjjQWb-hW8abZFQwZnEr2u8
-Message-ID: <CAK8P3a0xkPrDhoHaUzcN++b7TEh3v_a=VkP6VX9_FD56pG1A6w@mail.gmail.com>
-Subject: Re: [PATCH] efi: cper: avoid using get_seconds()
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc:     y2038 Mailman List <y2038@lists.linaro.org>,
-        Tyler Baicar <tbaicar@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@suse.de>,
-        Yazen Ghannam <yazen.ghannam@amd.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        gengdongjiu <gengdongjiu@huawei.com>,
-        linux-efi <linux-efi@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20180618144404.21055-1-mika.westerberg@linux.intel.com>
+In-Reply-To: <20180618144404.21055-1-mika.westerberg@linux.intel.com>
+From:   Yehezkel Bernat <yehezkelshb@gmail.com>
+Date:   Mon, 18 Jun 2018 18:54:00 +0300
+Message-ID: <CA+CmpXuACmU_S69tQmtC1CGbx-jn0g5NJF_p1dNTTaRMPCp+5g@mail.gmail.com>
+Subject: Re: [PATCH] thunderbolt: Notify userspace when boot_acl is changed
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, christian@kellner.me,
+        Mario Limonciello <mario.limonciello@dell.com>, lukas@wunner.de
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jun 18, 2018 at 5:50 PM, Ard Biesheuvel
-<ard.biesheuvel@linaro.org> wrote:
-> On 18 June 2018 at 17:49, Arnd Bergmann <arnd@arndb.de> wrote:
->> On Mon, Jun 18, 2018 at 5:47 PM, Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On 18 June 2018 at 16:17, Arnd Bergmann <arnd@arndb.de> wrote:
->>
->>>> -               atomic64_set(&seq, ((u64)get_seconds()) << 32);
->>>> +       if (!atomic64_read(&seq)) {
->>>> +               time64_t time = ktime_get_real_seconds();
->>>> +
->>>> +               /*
->>>> +                * This code is unlikely to still be needed in year 2106,
->>>> +                * but just in case, let's use a few more bits for timestamps
->>>> +                * after y2038 to be sure they keep increasing monotonically
->>>> +                * for the next few hundred years...
->>>> +                */
->>>> +               if (time < 0x80000000)
->>>> +                       atomic64_set(&seq, (ktime_get_real_seconds()) << 32);
->>>> +               else
->>>> +                       atomic64_set(&seq, 0x8000000000000000ull |
->>>> +                                          ktime_get_real_seconds() << 24);
->>>> +       }
->>>
->>> Given that these values are never decoded and interpreted as
->>> timestamps, can't we simply switch to the second flavour immediately?
->>
->> I considered that, but the downside would be that all future filenames would
->> come before all past file names.
+On Mon, Jun 18, 2018 at 5:44 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
 >
-> Won't we have that same problem in 2038?
+> The commit 9aaa3b8b4c56 ("thunderbolt: Add support for preboot ACL")
+> introduced boot_acl attribute but missed the fact that now userspace
+> needs to poll the attribute constantly to find out whether it has
+> changed or not. Fix this by sending notification to the userspace
+> whenever the boot_acl attribute is changed.
+>
+> Fixes: 9aaa3b8b4c56 ("thunderbolt: Add support for preboot ACL")
+> Reported-by: Christian Kellner <ckellner@redhat.com>
+> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+> ---
+>  drivers/thunderbolt/domain.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/thunderbolt/domain.c b/drivers/thunderbolt/domain.c
+> index 6281266b8ec0..a923ebdeb73c 100644
+> --- a/drivers/thunderbolt/domain.c
+> +++ b/drivers/thunderbolt/domain.c
+> @@ -213,6 +213,10 @@ static ssize_t boot_acl_store(struct device *dev, struct device_attribute *attr,
+>                 goto err_free_acl;
+>         }
+>         ret = tb->cm_ops->set_boot_acl(tb, acl, tb->nboot_acl);
+> +       if (!ret) {
+> +               /* Notify userspace about the change */
+> +               kobject_uevent(&tb->dev.kobj, KOBJ_CHANGE);
+> +       }
+>         mutex_unlock(&tb->lock);
+>
+>  err_free_acl:
+> --
+> 2.17.1
+>
 
-No, it goes from 0x7fffffff00000000 to 0x8000000000000000, followed
-by 0x8000000001000000.
-
-       Arnd
+Acked-by: Yehezkel Bernat <yehezkelshb@gmail.com>
