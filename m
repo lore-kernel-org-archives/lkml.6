@@ -3,30 +3,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D45EAC433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:03:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7A0C433EF
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:04:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9973B20020
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:03:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9973B20020
+	by mail.kernel.org (Postfix) with ESMTP id C737D20020
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 16:04:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C737D20020
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S934763AbeFRQDo (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 12:03:44 -0400
-Received: from mail.bootlin.com ([62.4.15.54]:46380 "EHLO mail.bootlin.com"
+        id S934891AbeFRQEh (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 12:04:37 -0400
+Received: from mail.bootlin.com ([62.4.15.54]:46516 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S933036AbeFRQDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 12:03:41 -0400
+        id S933773AbeFRQEe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 18 Jun 2018 12:04:34 -0400
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B009A20DD7; Mon, 18 Jun 2018 18:03:39 +0200 (CEST)
+        id D9C8120DE1; Mon, 18 Jun 2018 18:04:32 +0200 (CEST)
 Received: from localhost (AAubervilliers-681-1-50-153.w90-88.abo.wanadoo.fr [90.88.168.153])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 7D9B020DBE;
-        Mon, 18 Jun 2018 18:02:50 +0200 (CEST)
-Date:   Mon, 18 Jun 2018 18:02:50 +0200
+        by mail.bootlin.com (Postfix) with ESMTPSA id E53CF208B3;
+        Mon, 18 Jun 2018 18:04:00 +0200 (CEST)
+Date:   Mon, 18 Jun 2018 18:04:01 +0200
 From:   Maxime Ripard <maxime.ripard@bootlin.com>
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
@@ -68,16 +67,16 @@ Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-sunxi@googlegroups.com,
         Hugues Fruchet <hugues.fruchet@st.com>,
         Randy Li <ayaka@soulik.info>
-Subject: Re: [PATCH v4 01/19] dt-bindings: sram: sunxi: Add A13, A20 and A33
- SRAM controller bindings
-Message-ID: <20180618160250.ik44c3gcbdxylmyd@flea>
+Subject: Re: [PATCH v4 04/19] dt-bindings: sram: sunxi: Add A20 binding for
+ the C1 SRAM region
+Message-ID: <20180618160401.c6aqkeh6suime7xb@flea>
 References: <20180618145843.14631-1-paul.kocialkowski@bootlin.com>
- <20180618145843.14631-2-paul.kocialkowski@bootlin.com>
+ <20180618145843.14631-5-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="dhcros4rwsnjx5pm"
+        protocol="application/pgp-signature"; boundary="4nxzqk2qbkg4dawg"
 Content-Disposition: inline
-In-Reply-To: <20180618145843.14631-2-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20180618145843.14631-5-paul.kocialkowski@bootlin.com>
 User-Agent: NeoMutt/20180512
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -85,34 +84,33 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---dhcros4rwsnjx5pm
+--4nxzqk2qbkg4dawg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 18, 2018 at 04:58:25PM +0200, Paul Kocialkowski wrote:
-> This introduces dedicated bindings for the SRAM controllers found on the
-> A13, A20 and A33 sunxi platforms.
+1;5202;0c
+On Mon, Jun 18, 2018 at 04:58:28PM +0200, Paul Kocialkowski wrote:
+> This introduces a dedicated binding for the C1 SRAM region for the A20
+> sunxi platform.
 >=20
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-
-Explaining why you need to add these new compatibles would be great.
-
+>=20
 > diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Docu=
 mentation/devicetree/bindings/sram/sunxi-sram.txt
-> index d087f04a4d7f..19cc0b892672 100644
+> index ddc82cbd7f4d..221fa7b42c18 100644
 > --- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
 > +++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-> @@ -11,6 +11,9 @@ Controller Node
->  Required properties:
->  - compatible : should be:
->      - "allwinner,sun4i-a10-sram-controller"
-> +    - "allwinner,sun5i-a13-sram-controller"
-> +    - "allwinner,sun7i-a20-sram-controller"
-> +    - "allwinner,sun8i-a33-sram-controller"
+> @@ -35,6 +35,9 @@ The valid sections compatible for A10 are:
+>  The valid sections compatible for A13 are:
+>      - allwinner,sun5i-a13-sram-c1
+> =20
+> +The valid sections compatible for A20 are:
+> +    - allwinner,sun7i-a20-sram-c1
 
-And I think Chen-Yu asked you to rename this compatible to
--system-controller for the previous iteration?
+Same thing here, there's more supported SRAM than that. And maybe we
+should just merge everything into the first patch? This looks like the
+same commit over and over again.
 
 Maxime
 
@@ -121,24 +119,24 @@ Maxime Ripard, Bootlin (formerly Free Electrons)
 Embedded Linux and Kernel engineering
 https://bootlin.com
 
---dhcros4rwsnjx5pm
+--4nxzqk2qbkg4dawg
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsn16kACgkQ0rTAlCFN
-r3TWxg//a3+WkZe+uYoDymoAWFta2KXmEVuk4QL0Rq9r/B9tlwcpApjlC6l+EL0B
-v+Raoj7mTvAR6xubG8JAyCWMuhnQtEuFiJXUaOTy7EHb4So7BMag7W7dR5Y14tdi
-OidnEnykgxMQFcfReKuXReM5WasXs3mdq780oaMXfV0P6Oo4mW63GyXBRc3QosKO
-g1hgruXQF/goR9LfIFGkJe0Z0+X0jZ81z2kpTKby12/X6dG6ZwoHUPe06oSOFIhk
-QlcIydIsX27EqrAaU3FBpJGdlgSOo2YsntOVaZGorYnNXHFflDNGDPl3CK97CiYc
-gvACa9GJHCxUT3GI3fDE3qmqih5jbD0Ti8Zp9coVcYTHdniAG9KdhpD1XPHcZh/H
-yEUOVV2+cJUmagIyGNXe/UXHCIApjl2UCwcukp4aB7llgkaTDv4ubEOyLEtB47zC
-+lU4XZFKReoZvH130luDyWpNOZrqwM8yD9isWwkFVTsLahEMrCXXtzZVpO/gc63/
-kY3KXB3n+1qSUlcVoa3+/FM7PVLUqjKF4A++bZUcaE4vmBpqVz8d5sa3NnWUxlM3
-y/oYdBiPmhOPmynK9iFf7f/f7hU5PwHsNt7IwniW1qGzarSs3EKLrpiVEemUlkC0
-EQZYFFJ6hpES5Fm9LzG7xu7lLI96KydYgd/8HQLhjRDsAjVpln4=
-=SUBL
+iQIzBAABCAAdFiEE0VqZU19dR2zEVaqr0rTAlCFNr3QFAlsn1/AACgkQ0rTAlCFN
+r3SiCRAAiZ0bv1Jj9SWLG1S5rEcQ0h1+du3g1PpMBPhx4WGG04MZJNLBjG9gdRkk
+uRZz/H3nV4WbajFBQrP7N1XghxE7pDLKcuH+dSRoentVEJk1COaJ6WHBsfp85Fyy
+4hR5KJ5I+195piJcCG6crdkOqYzbtCBmZloJzxna44m7nE+mewhcxHtmuPdzQCny
+dsi3YUdadL/Q3X3U0IuiY8MYlvCLBeYnN4XZYkgSJkIigu7Cu5DpeatTL9B5zJEp
+wbLpF0JyiQ3cqxUqAtnBwXeZfsi1xhU7yLPFJphcJN1jpqFbjiiTpjaC8RaqdkNX
+LdygQ5IPg6Uzbzhs/qwWa6e+Wsi8UNEIyk6RepsmthBFA9I59sz54ebIheimc7Q7
+5fdQjyJsDCbQJENp28/Y56sTnkXUTVKNvxg3b/EtZ4VPvfSp4Ooydr3o74iKtFyp
+17VRmxKXKEr6bFfrD8NjnZbUyqN/qh5VXoBIKKQa/be6oNJPVg1+e/5Nd2JBS+MI
+NXrfPvN2jR1ohKDJ6PdDiIgC4izFZEuXUIzhFyTcPkJSbVKjLCbZV0DV67ru+SxN
+Rh6xySetDQZfasehYAU2KzkLBic5IIKHhZkfOCnqEeX++4meh8FSy/yPJoU3jOVy
+Kp18L4zsKA/kbdyf+0J2CdaZ6VFEkQ0eO9d/VvnHaYmBjCeooyQ=
+=kEQ3
 -----END PGP SIGNATURE-----
 
---dhcros4rwsnjx5pm--
+--4nxzqk2qbkg4dawg--
