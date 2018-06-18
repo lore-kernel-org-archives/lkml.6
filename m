@@ -6,40 +6,45 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24742C433EF
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA9DC5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF63720874
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF63720874
+	by mail.kernel.org (Postfix) with ESMTP id D663F20864
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 08:36:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D663F20864
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1030242AbeFRIgW (ORCPT
+        id S1030266AbeFRIgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 04:36:22 -0400
-Received: from mail.linuxfoundation.org ([140.211.169.12]:36262 "EHLO
+        Mon, 18 Jun 2018 04:36:38 -0400
+Received: from mail.linuxfoundation.org ([140.211.169.12]:36288 "EHLO
         mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S968045AbeFRIgT (ORCPT
+        with ESMTP id S1030239AbeFRIgW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 04:36:19 -0400
+        Mon, 18 Jun 2018 04:36:22 -0400
 Received: from localhost (LFbn-1-12247-202.w90-92.abo.wanadoo.fr [90.92.61.202])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id C6833CB6;
-        Mon, 18 Jun 2018 08:36:18 +0000 (UTC)
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B72E1CB6;
+        Mon, 18 Jun 2018 08:36:21 +0000 (UTC)
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Frank van der Linden <fllinden@amazon.com>,
-        Eduardo Valentin <eduval@amazon.com>,
-        Alakesh Haloi <alakeshh@amazon.com>,
-        Vallish Vaidyeshwara <vallish@amazon.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
-        xen-devel@lists.xenproject.org,
+        stable@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+        Francis Deslauriers <francis.deslauriers@efficios.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        "H . Peter Anvin" <hpa@zytor.com>, Yonghong Song <yhs@fb.com>,
+        Borislav Petkov <bp@suse.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <alexander.levin@microsoft.com>
-Subject: [PATCH 4.14 131/189] x86/xen: Reset VCPU0 info pointer after shared_info remap
-Date:   Mon, 18 Jun 2018 10:13:47 +0200
-Message-Id: <20180618081214.494031535@linuxfoundation.org>
+Subject: [PATCH 4.14 149/189] kprobes/x86: Prohibit probing on exception masking instructions
+Date:   Mon, 18 Jun 2018 10:14:05 +0200
+Message-Id: <20180618081215.224009953@linuxfoundation.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20180618081209.254234434@linuxfoundation.org>
 References: <20180618081209.254234434@linuxfoundation.org>
@@ -56,94 +61,83 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: "van der Linden, Frank" <fllinden@amazon.com>
+From: Masami Hiramatsu <mhiramat@kernel.org>
 
-[ Upstream commit d1ecfa9d1f402366b1776fbf84e635678a51414f ]
+[ Upstream commit ee6a7354a3629f9b65bc18dbe393503e9440d6f5 ]
 
-This patch fixes crashes during boot for HVM guests on older (pre HVM
-vector callback) Xen versions. Without this, current kernels will always
-fail to boot on those Xen versions.
+Since MOV SS and POP SS instructions will delay the exceptions until the
+next instruction is executed, single-stepping on it by kprobes must be
+prohibited.
 
-Sample stack trace:
+However, kprobes usually executes those instructions directly on trampoline
+buffer (a.k.a. kprobe-booster), except for the kprobes which has
+post_handler. Thus if kprobe user probes MOV SS with post_handler, it will
+do single-stepping on the MOV SS.
 
-   BUG: unable to handle kernel paging request at ffffffffff200000
-   IP: __xen_evtchn_do_upcall+0x1e/0x80
-   PGD 1e0e067 P4D 1e0e067 PUD 1e10067 PMD 235c067 PTE 0
-    Oops: 0002 [#1] SMP PTI
-   Modules linked in:
-   CPU: 0 PID: 512 Comm: kworker/u2:0 Not tainted 4.14.33-52.13.amzn1.x86_64 #1
-   Hardware name: Xen HVM domU, BIOS 3.4.3.amazon 11/11/2016
-   task: ffff88002531d700 task.stack: ffffc90000480000
-   RIP: 0010:__xen_evtchn_do_upcall+0x1e/0x80
-   RSP: 0000:ffff880025403ef0 EFLAGS: 00010046
-   RAX: ffffffff813cc760 RBX: ffffffffff200000 RCX: ffffc90000483ef0
-   RDX: ffff880020540a00 RSI: ffff880023c78000 RDI: 000000000000001c
-   RBP: 0000000000000001 R08: 0000000000000000 R09: 0000000000000000
-   R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
-   R13: ffff880025403f5c R14: 0000000000000000 R15: 0000000000000000
-   FS:  0000000000000000(0000) GS:ffff880025400000(0000) knlGS:0000000000000000
-   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-   CR2: ffffffffff200000 CR3: 0000000001e0a000 CR4: 00000000000006f0
-    Call Trace:
-   <IRQ>
-   do_hvm_evtchn_intr+0xa/0x10
-   __handle_irq_event_percpu+0x43/0x1a0
-   handle_irq_event_percpu+0x20/0x50
-   handle_irq_event+0x39/0x60
-   handle_fasteoi_irq+0x80/0x140
-   handle_irq+0xaf/0x120
-   do_IRQ+0x41/0xd0
-   common_interrupt+0x7d/0x7d
-   </IRQ>
+This means it is safe that if it is used via ftrace or perf/bpf since those
+don't use the post_handler.
 
-During boot, the HYPERVISOR_shared_info page gets remapped to make it work
-with KASLR. This means that any pointer derived from it needs to be
-adjusted.
+Anyway, since the stack switching is a rare case, it is safer just
+rejecting kprobes on such instructions.
 
-The only value that this applies to is the vcpu_info pointer for VCPU 0.
-For PV and HVM with the callback vector feature, this gets done via the
-smp_ops prepare_boot_cpu callback. Older Xen versions do not support the
-HVM callback vector, so there is no Xen-specific smp_ops set up in that
-scenario. So, the vcpu_info pointer for VCPU 0 never gets set to the proper
-value, and the first reference of it will be bad. Fix this by resetting it
-immediately after the remap.
-
-Signed-off-by: Frank van der Linden <fllinden@amazon.com>
-Reviewed-by: Eduardo Valentin <eduval@amazon.com>
-Reviewed-by: Alakesh Haloi <alakeshh@amazon.com>
-Reviewed-by: Vallish Vaidyeshwara <vallish@amazon.com>
-Reviewed-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: Juergen Gross <jgross@suse.com>
-Cc: Boris Ostrovsky <boris.ostrovsky@oracle.com>
-Cc: xen-devel@lists.xenproject.org
-Signed-off-by: Boris Ostrovsky <boris.ostrovsky@oracle.com>
+Signed-off-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Cc: Francis Deslauriers <francis.deslauriers@efficios.com>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: "H . Peter Anvin" <hpa@zytor.com>
+Cc: Yonghong Song <yhs@fb.com>
+Cc: Borislav Petkov <bp@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "David S . Miller" <davem@davemloft.net>
+Link: https://lkml.kernel.org/r/152587069574.17316.3311695234863248641.stgit@devbox
 Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/x86/xen/enlighten_hvm.c |   13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/include/asm/insn.h    |   18 ++++++++++++++++++
+ arch/x86/kernel/kprobes/core.c |    4 ++++
+ 2 files changed, 22 insertions(+)
 
---- a/arch/x86/xen/enlighten_hvm.c
-+++ b/arch/x86/xen/enlighten_hvm.c
-@@ -64,6 +64,19 @@ static void __init xen_hvm_init_mem_mapp
- {
- 	early_memunmap(HYPERVISOR_shared_info, PAGE_SIZE);
- 	HYPERVISOR_shared_info = __va(PFN_PHYS(shared_info_pfn));
-+
-+	/*
-+	 * The virtual address of the shared_info page has changed, so
-+	 * the vcpu_info pointer for VCPU 0 is now stale.
-+	 *
-+	 * The prepare_boot_cpu callback will re-initialize it via
-+	 * xen_vcpu_setup, but we can't rely on that to be called for
-+	 * old Xen versions (xen_have_vector_callback == 0).
-+	 *
-+	 * It is, in any case, bad to have a stale vcpu_info pointer
-+	 * so reset it now.
-+	 */
-+	xen_vcpu_info_reset(0);
+--- a/arch/x86/include/asm/insn.h
++++ b/arch/x86/include/asm/insn.h
+@@ -208,4 +208,22 @@ static inline int insn_offset_immediate(
+ 	return insn_offset_displacement(insn) + insn->displacement.nbytes;
  }
  
- static void __init init_hvm_pv_info(void)
++#define POP_SS_OPCODE 0x1f
++#define MOV_SREG_OPCODE 0x8e
++
++/*
++ * Intel SDM Vol.3A 6.8.3 states;
++ * "Any single-step trap that would be delivered following the MOV to SS
++ * instruction or POP to SS instruction (because EFLAGS.TF is 1) is
++ * suppressed."
++ * This function returns true if @insn is MOV SS or POP SS. On these
++ * instructions, single stepping is suppressed.
++ */
++static inline int insn_masking_exception(struct insn *insn)
++{
++	return insn->opcode.bytes[0] == POP_SS_OPCODE ||
++		(insn->opcode.bytes[0] == MOV_SREG_OPCODE &&
++		 X86_MODRM_REG(insn->modrm.bytes[0]) == 2);
++}
++
+ #endif /* _ASM_X86_INSN_H */
+--- a/arch/x86/kernel/kprobes/core.c
++++ b/arch/x86/kernel/kprobes/core.c
+@@ -369,6 +369,10 @@ int __copy_instruction(u8 *dest, u8 *src
+ 	if (insn->opcode.bytes[0] == BREAKPOINT_INSTRUCTION)
+ 		return 0;
+ 
++	/* We should not singlestep on the exception masking instructions */
++	if (insn_masking_exception(insn))
++		return 0;
++
+ #ifdef CONFIG_X86_64
+ 	/* Only x86_64 has RIP relative instructions */
+ 	if (insn_rip_relative(insn)) {
 
 
