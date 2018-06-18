@@ -3,59 +3,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BDC5C5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81518C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:05:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBFE020850
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:04:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36E8A208B1
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:05:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="kcsP7KQg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBFE020850
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="igHiV++s"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36E8A208B1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S964868AbeFRMEb (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:04:31 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45132 "EHLO
+        id S934974AbeFRMFF (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:05:05 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44852 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S934634AbeFRMAH (ORCPT
+        with ESMTP id S934377AbeFRL76 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:00:07 -0400
+        Mon, 18 Jun 2018 07:59:58 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=sD26fmjgKCP70Lgaehvq6+qEc29PSWL6R8YNjp9jgOM=; b=kcsP7KQgE6FO
-        BZbe070UGvqe8R+0HIfCCnEfKkZgJgqgk4t8EiTEm27LTSzJJ+r5NIXNuRv46Dw0yqGps1TA2WRan
-        x11Hv9l6ZRe0HUw2vEBVwgbfz+OEJNLXSo4QClNPZu8PyiTMXehw/QqahU7MQvlfhffROUG7Bk2UF
-        9mcvo=;
+        List-Archive; bh=KSJwDwDWp4/bMyBC/eay2ZTfFXYg6/zZByFRK8Gxq7s=; b=igHiV++sv0oG
+        6AvSkDV5IJXDGtgnxx+TSCqlxelQ55sKS3f4Q6PHo8Dx6/2XnA4iJvnuW18NRBqOf6oEu2orUf2u0
+        e5oIOP3fwZOF7vOWrjtRl5f47IfzijBX2d39if3cAGNVyZuqHGIpWwcnoBwHIb0kcktqvEJKjFAmV
+        ByKhI=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspF-0007xG-L8; Mon, 18 Jun 2018 12:00:01 +0000
+        id 1fUspB-0007ww-8R; Mon, 18 Jun 2018 11:59:57 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspF-0008VA-60; Mon, 18 Jun 2018 13:00:01 +0100
+        id 1fUspA-0008T3-QW; Mon, 18 Jun 2018 12:59:56 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Colin Ian King <colin.king@canonical.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
+To:     Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         Takashi Iwai <tiwai@suse.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        alsa-devel@alsa-project.org, kernel-janitors@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: ak5558: make two structures static" to the asoc tree
-In-Reply-To:  <20180606095719.30831-1-colin.king@canonical.com>
-Message-Id: <E1fUspF-0008VA-60@debutante>
-Date:   Mon, 18 Jun 2018 13:00:01 +0100
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org
+Subject: Applied "ASoC: TSCS42xx: Add mic bias boost control" to the asoc tree
+In-Reply-To:  <91e206cbabd7c7a7c8d7715b5e51ffef384ac6ec.1528143829.git.steven.eckhoff.opensource@gmail.com>
+Message-Id: <E1fUspA-0008T3-QW@debutante>
+Date:   Mon, 18 Jun 2018 12:59:56 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -63,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: ak5558: make two structures static
+   ASoC: TSCS42xx: Add mic bias boost control
 
 has been applied to the asoc tree at
 
@@ -88,47 +85,33 @@ to this mail.
 Thanks,
 Mark
 
-From e380be7c557c4ddb1cb71404c10e0bfb3daf4644 Mon Sep 17 00:00:00 2001
-From: Colin Ian King <colin.king@canonical.com>
-Date: Wed, 6 Jun 2018 10:57:19 +0100
-Subject: [PATCH] ASoC: ak5558: make two structures static
+From 58f7d470c85801f55bbae2d3c93fe1a3d34aa143 Mon Sep 17 00:00:00 2001
+From: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
+Date: Mon, 4 Jun 2018 15:45:40 -0500
+Subject: [PATCH] ASoC: TSCS42xx: Add mic bias boost control
 
-The structure ak5558_pm and soc_codec_dev_ak5558 are local to the
-source and do not need to be in global scope, so make them static.
-Also make soc_codec_dev_ak5558 static.
+Add mic bias boost control
 
-Cleans up sparse warnings:
-warning: symbol 'ak5558_pm' was not declared. Should it be static?
-warning: symbol 'soc_codec_dev_ak5558' was not declared. Should it be
-static?
-
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Reviewed-by: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Steven Eckhoff <steven.eckhoff.opensource@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/ak5558.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ sound/soc/codecs/tscs42xx.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/sound/soc/codecs/ak5558.c b/sound/soc/codecs/ak5558.c
-index f4ed5cc40661..448bb90c9c8e 100644
---- a/sound/soc/codecs/ak5558.c
-+++ b/sound/soc/codecs/ak5558.c
-@@ -322,13 +322,13 @@ static int __maybe_unused ak5558_runtime_resume(struct device *dev)
- 	return regcache_sync(ak5558->regmap);
- }
+diff --git a/sound/soc/codecs/tscs42xx.c b/sound/soc/codecs/tscs42xx.c
+index d18ff17719cc..743194052fc4 100644
+--- a/sound/soc/codecs/tscs42xx.c
++++ b/sound/soc/codecs/tscs42xx.c
+@@ -644,6 +644,9 @@ static const struct snd_kcontrol_new tscs42xx_snd_controls[] = {
+ 	/* Input Channel Map */
+ 	SOC_ENUM("Input Channel Map", ch_map_select_enum),
  
--const struct dev_pm_ops ak5558_pm = {
-+static const struct dev_pm_ops ak5558_pm = {
- 	SET_RUNTIME_PM_OPS(ak5558_runtime_suspend, ak5558_runtime_resume, NULL)
- 	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
- 				pm_runtime_force_resume)
- };
- 
--struct snd_soc_component_driver soc_codec_dev_ak5558 = {
-+static const struct snd_soc_component_driver soc_codec_dev_ak5558 = {
- 	.probe			= ak5558_probe,
- 	.remove			= ak5558_remove,
- 	.controls		= ak5558_snd_controls,
++	/* Mic Bias */
++	SOC_SINGLE("Mic Bias Boost Switch", 0x71, 0x07, 1, 0),
++
+ 	/* Coefficient Ram */
+ 	COEFF_RAM_CTL("Cascade1L BiQuad1", BIQUAD_SIZE, 0x00),
+ 	COEFF_RAM_CTL("Cascade1L BiQuad2", BIQUAD_SIZE, 0x05),
 -- 
 2.17.1
 
