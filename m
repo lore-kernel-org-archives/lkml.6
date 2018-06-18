@@ -6,58 +6,52 @@ X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,
 	MAILING_LIST_MULTI,SPF_PASS,T_DKIM_INVALID,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DBAAC5CFC0
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C173C5CFC0
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:01:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3317208A5
-	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:00:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3BC43208E2
+	for <linux-kernel@archiver.kernel.org>; Mon, 18 Jun 2018 12:01:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EzRl/uoY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3317208A5
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="or27itsh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BC43208E2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S935026AbeFRMAs (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 18 Jun 2018 08:00:48 -0400
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46056 "EHLO
+        id S935068AbeFRMBH (ORCPT <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 18 Jun 2018 08:01:07 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47024 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S933575AbeFRMAd (ORCPT
+        with ESMTP id S933575AbeFRMBF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 18 Jun 2018 08:00:33 -0400
+        Mon, 18 Jun 2018 08:01:05 -0400
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=eTWgGsHLWrLfdk3CjNcQhRfrR4Is4SVG47RkqKb2Yjg=; b=EzRl/uoYGowG
-        cDRymknFmUDWE0pUIFmqgML/AFljllzjo5j20nQyfrWg7Zzys8ATuWWxlR43ySu8ltpi5c9w2OhIR
-        xpqH761pkmX0PNP3zPD7ba0F6kC3CzUa5o7EKo/fYFiJV2kBoWbsQn3NPz97lcOuqy4sU6CIKVeRh
-        8GtFQ=;
+        List-Archive; bh=IKwQXWkadES+wT+gBkJ6JMb2gugJB510eblj2JBJjsE=; b=or27itshy6Bx
+        5coXnAc/XSQOeIvCSIH0KMzyo2ClOBkA7wXNeVLFCIEaXn7GpQLGpRGhinxTecfnC55Mzy39Qil2L
+        1/8f+AocZ/hmi88IWL38/9dv/BCBQjGyWkHHguiPaEjAZy+dWGr4K0BXajkctpZHFMWrtS9MhcYFW
+        VhWP4=;
 Received: from debutante.sirena.org.uk ([2001:470:1f1d:6b5::3] helo=debutante)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspW-0007yX-Rn; Mon, 18 Jun 2018 12:00:18 +0000
+        id 1fUsqF-00080u-Jj; Mon, 18 Jun 2018 12:01:03 +0000
 Received: from broonie by debutante with local (Exim 4.91)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1fUspW-0000CY-C2; Mon, 18 Jun 2018 13:00:18 +0100
+        id 1fUsqF-0000XA-5h; Mon, 18 Jun 2018 13:01:03 +0100
 From:   Mark Brown <broonie@kernel.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
 Cc:     Mark Brown <broonie@kernel.org>,
-        Shuming Fan <shumingf@realtek.com>,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        alsa-devel@alsa-project.org
-Subject: Applied "ASoC: rt1305: Use ULL suffixes for 64-bit constants" to the asoc tree
-In-Reply-To:  <1528379448-3937-1-git-send-email-geert@linux-m68k.org>
-Message-Id: <E1fUspW-0000CY-C2@debutante>
-Date:   Mon, 18 Jun 2018 13:00:18 +0100
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+        trivial@kernel.org, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: Fix typo in comment of struct regulator_linear_range" to the regulator tree
+In-Reply-To:  <20180607235138.92819-1-mka@chromium.org>
+Message-Id: <E1fUsqF-0000XA-5h@debutante>
+Date:   Mon, 18 Jun 2018 13:01:03 +0100
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -65,11 +59,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: rt1305: Use ULL suffixes for 64-bit constants
+   regulator: Fix typo in comment of struct regulator_linear_range
 
-has been applied to the asoc tree at
+has been applied to the regulator tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
@@ -90,51 +84,33 @@ to this mail.
 Thanks,
 Mark
 
-From 4f29b663c08d369fe320a148179996c94cf7d01b Mon Sep 17 00:00:00 2001
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 7 Jun 2018 15:50:48 +0200
-Subject: [PATCH] ASoC: rt1305: Use ULL suffixes for 64-bit constants
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From 7bd0c7ba62e8a9840f15fc4ff0122b29fe1b6413 Mon Sep 17 00:00:00 2001
+From: Matthias Kaehlcke <mka@chromium.org>
+Date: Thu, 7 Jun 2018 16:51:38 -0700
+Subject: [PATCH] regulator: Fix typo in comment of struct
+ regulator_linear_range
 
-With gcc 4.1.2:
+regulator_map_linar_range() => regulator_map_linear_range()
 
-    sound/soc/codecs/rt1305.c: In function ‘rt1305_calibrate’:
-    sound/soc/codecs/rt1305.c:1069: warning: integer constant is too large for ‘long’ type
-    sound/soc/codecs/rt1305.c:1086: warning: integer constant is too large for ‘long’ type
-
-Add the missing "ULL" suffixes to fix this.
-
-Fixes: 29bc643ddd7efb74 ("ASoC: rt1305: Add RT1305/RT1306 amplifier driver")
-Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/codecs/rt1305.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ include/linux/regulator/driver.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/sound/soc/codecs/rt1305.c b/sound/soc/codecs/rt1305.c
-index f4c8c45f4010..421b8fb2fa04 100644
---- a/sound/soc/codecs/rt1305.c
-+++ b/sound/soc/codecs/rt1305.c
-@@ -1066,7 +1066,7 @@ static void rt1305_calibrate(struct rt1305_priv *rt1305)
- 	pr_debug("Left_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
- 	pr_info("Left channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
- 
--	r0l = 562949953421312;
-+	r0l = 562949953421312ULL;
- 	if (rhl != 0)
- 		do_div(r0l, rhl);
- 	pr_debug("Left_r0 = 0x%llx\n", r0l);
-@@ -1083,7 +1083,7 @@ static void rt1305_calibrate(struct rt1305_priv *rt1305)
- 	pr_debug("Right_rhl = 0x%x rh=0x%x rl=0x%x\n", rhl, rh, rl);
- 	pr_info("Right channel %d.%dohm\n", (r0ohm/10), (r0ohm%10));
- 
--	r0r = 562949953421312;
-+	r0r = 562949953421312ULL;
- 	if (rhl != 0)
- 		do_div(r0r, rhl);
- 	pr_debug("Right_r0 = 0x%llx\n", r0r);
+diff --git a/include/linux/regulator/driver.h b/include/linux/regulator/driver.h
+index fc2dc8df476f..dea96ee39fdc 100644
+--- a/include/linux/regulator/driver.h
++++ b/include/linux/regulator/driver.h
+@@ -46,7 +46,7 @@ enum regulator_status {
+ /**
+  * struct regulator_linear_range - specify linear voltage ranges
+  *
+- * Specify a range of voltages for regulator_map_linar_range() and
++ * Specify a range of voltages for regulator_map_linear_range() and
+  * regulator_list_linear_range().
+  *
+  * @min_uV:  Lowest voltage in range
 -- 
 2.17.1
 
